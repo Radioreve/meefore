@@ -18,7 +18,7 @@
 		//Loading the server
 	var port = process.env.PORT || 1337;
 		server.listen(port, function(){
-			console.log('Served listening on '+port);
+			console.log('Server listening on '+port);
 		});
 
 		//Middleware
