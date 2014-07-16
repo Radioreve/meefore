@@ -5,6 +5,12 @@
 		server = require('http').createServer(app),
 		io = require('socket.io')(server);
 
+		io.set('log level', 1);
+		io.configure(function () {
+		  	io.set("transports", ["xhr-polling"]);
+		  	io.set("polling duration", 10);
+		});
+
 		//configuration : database, cloudify...
 	var config = require('./config');
 		db = require('./db')(config);
