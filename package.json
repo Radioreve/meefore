@@ -1,0 +1,17 @@
+{
+  "name": "app",
+  "version": "0.0.0",
+  "description": "playing around",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Radioreve",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "express": "^4.6.1",
+    "mongoose": "^3.8.13",
+    "socket.io": "^1.0.6"
+  }
+}
