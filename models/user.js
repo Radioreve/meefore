@@ -1,35 +1,30 @@
 
-	var mongoose = require('mongoose'),
-		bcrypt = require('bcrypt-nodejs');
+	var mongoose = require("mongoose"),
+		bcrypt = require("bcrypt-nodejs");
 
-		var userSchema = mongoose.Schema({
 
-			name: {
-				type : String,
-				required: true
-			},
-			email:{
-				type : String,
-				required: true,
-				unique: true
-			},
-			password: String,
-			city: String
+	var UserSchema = new mongoose.Schema({
+				
+		local     : {
+			name	  : String,
+			email     : {
+						type:String, required:true
+					},	
+			password  :  {type: String, required:true}
+		},
+		isAdmin : {
+			type: Boolean, default: false
+		}
 
-		});
+	});
+	
+	
+	UserSchema.methods.generateHash = function(password){
+		return bcrypt.hashSync(password, bcrypt.genSaltSync(8),null);
+	};
 
-		userSchema.pre('save',function(next){
-			if(this.email=='jean@gmail.com'){
-				console.log('Alert aux gogoles');
-				return;
-			}
-			this.findOne({email:this.email},function(err,user){
-				if(user){
-					console.log('People already exist!');
-					return;
-				}
-			});
-			next();
-		})
+	UserSchema.methods.validPassword = function(password){
+		return bcrypt.compareSync(password, this.local.password);
+	};
 
-	module.exports = mongoose.model('SocketUsers', userSchema);
+	module.exports = mongoose.model('SocketUsers', UserSchema);

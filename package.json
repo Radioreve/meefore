@@ -4,17 +4,21 @@
   "description": "playing around",
   "main": "index.js",
   "scripts": {
-    "start":"node app.js"
+    "start": "node app.js"
   },
   "author": "Radioreve",
   "license": "ISC",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.4.3",
     "express": "4.6.1",
     "mongoose": "3.8.13",
-    "socket.io": "1.0.6"
+    "passport": "^0.2.0",
+    "passport-local": "^1.0.0",
+    "socket.io": "1.0.6",
+    "socketio-jwt": "^2.3.4"
   },
-    "engines": {
+  "engines": {
     "node": "0.10.x",
     "npm": "1.2.x"
   }
