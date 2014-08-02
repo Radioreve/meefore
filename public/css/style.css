@@ -1,69 +1,209 @@
+	*{
+
+	}
+
 	html{
 		height:100%; 
+		background: #E6E6E6;
+} 
+	body{  
+		/* min-height:100%; */
+		background: white;
+		margin: 10px;
+		box-shadow: 0 0 5px #C0C0C0;
+}
+	p,textarea,input{
+		font-size: 14px;
+		line-height: 20px;
+		font-family:'Ubuntu','Calibri','sans serif';
+		resize: none;
+		outline: none;
+
 	}
-	body{ 
-		min-height:100%;
-	}    
+		    h2{
+		font: bold 16px 'Francois One';
+		text-transform: uppercase;
+		text-align: center;
+	}
+	h3{
+		font:bold 14px 'Francois One';
+		text-transform:uppercase;
+	}
+	.b-space{
+		margin-bottom: 40px;
+	}
+	.r-space{
+	}
 	.right{float:right;}
 	.left{float:left;}
 	.none{display: none !important;}
-
-	#mainWrap{
-		height: 100vh;
-	}
-	#profileWrap{
-		width: 26%;
 	
-		margin-top: 150px;
-		padding: 50px;
+	#loader{
+	width: 32px;
+	position: absolute;
+	right: -33px;
+	top: 13px;
+	
 }
-	#profileWrap h2{
-		font: bold 14px 'Francois One';
-		text-transform: uppercase;
-		text-align: center;
+	#mainWrap{
+		height: 96vh;
+}	
+	#menu, #contact{
+		color: #444;
+		position: absolute;
+		z-index: 9;
+		font-family: 'Calibri';
+		font-size: 1.2em;
+		}
+	#menu{
+		top: 40px; 
+		left: 50px;
+	}
+	#contact{
+		top:40px;
+		right:50px;
+	
+}
+	#menu:hover,#contact:hover{
+		cursor:pointer;
+	}
+	#loginWrap, #signupWrap,#contactWrap{
+	  bottom: 0;
+	  left: 0;
+	  height: 280px;
+	  margin: auto; 
+	  padding:10px;
+	  position: absolute;
+	  top: 0;
+	  right: 0;
+	  width: 350px;
+	
 }
 
-	#profileWrap #formWrap{
+	#loginWrap #formWrap, #signupWrap #formWrap{
 		margin-top:20px;
 	}
-	#profileWrap #submitWrap{
+	#loginWrap #submitWrap, #signupWrap #submitWrap{
 		border:none;
-	
 		width: 80%;
+		height: 80px;
+		position: relative;
 }
-	#profileWrap #submitWrap input{
-		width: 49%;
+	#loginWrap #submitWrap input, #signupWrap #submitWrap input{
+		width: 100%;
 		border: none;
-		padding: 8px;
+		padding: 9px;
 		color:white;
-	
 		text-transform: uppercase;
-		font-size: 10px;
-}
-	#profileWrap #submitWrap #login{
-		background: lavender;  
-		color: #000;  
-		font-weight: bolder;
-		border: 1px solid #BDBDBD;
+		font-size: 10px;		
 	}
-	#profileWrap #submitWrap #signup{
+	
+#loginWrap #submitWrap input:hover{
+		box-shadow: 1px 1px 1px rgb(131, 131, 131); 
+}
+
+
+	#loginWrap #submitWrap #login, #signupWrap #submitWrap #signup{
 		background: rgb(46, 46, 46);
 		color: #FFF;
-		border: 1px solid #0A0A0A;}
+		border: 1px solid #0A0A0A;
+	}   
+
+		
 	.input-field{
     	width: 70%;
-    	border: 1px solid #98B1DD;
-	    margin: 7px auto;
-	    
+    	border: 1px solid #A3A3A3;
+	    margin: 7px auto;		 
     	display: block; 
     	padding: 9px;	
     	border-radius: 3px;
+    	transition: all ease-in 0.1s;
 }
+	.input-field:focus{
+		box-shadow: 1px 1px 5px #CECECE;
+	}
+	#loginWrap #submitWrap .sub-actions, #signupWrap #submitWrap .sub-actions{
+		margin-top: 10px;
+		font: 12px 'Ubuntu';
+		text-decoration: underline;
+		width: 100x;
+}
+	 .sub-actions:hover{
+		cursor:pointer;
+	}
 
-	.container{
-		margin: 0 auto;
-		padding-top: 10px;
-		background:white;
+	/*    CSS concernant le profile utilisateur   */
+	#profileWrap{
+		width: 260px;
+		height: 300px;
+		margin: 0;
+		padding: 20px;
+		position: absolute;
+		top: 70px;
+		left: 100px;
+		right: 0;
+		bottom: 0;
+}
+	#pictureWrap{
+		text-align:center;
 	
-		border: 1px solid rgb(193, 187, 255);
+}
+	.fieldsWrap{
+		width:100%;
+		height: 170px;
+}
+	.fieldsWrap *{
+		padding:10px;
+	
+		border: none;
+		border-bottom: 1px solid #ddd;
+}
+	#profileWrap h2{  
+	}
+	
+	#age{
+		width: 30px;
+	}
+	#profileWrap textarea{
+	width: 90%;
+}
+	#profileWrap option{
+		padding:5px;
+	}
+	#profileWrap #validate{
+		width: 100px;
+	    height: 34px;
+	    border: 1px solid rgb(73, 153, 70);
+	    background: rgb(94, 180, 94);
+	    color: white;
+	    margin: 10px 20px 0 0;
+	}
+	#contactWrap{
+	width: 530px;
+	}
+
+	#contactWrap input{
+		width: 40%;
+		padding:5px;
+		margin: 30px 38px 30px 0;
+		border: none;
+		border-bottom: 1px solid rgb(197, 197, 197);
+	}
+	#contactWrap form #contactName{
+	}
+	#contactWrap #contactBody{
+		padding: 5px;
+		width:90%; 
+		border: none;
+		border-bottom: 1px solid rgb(201, 201, 201);
+		min-height: 100px;
+		outline: none;
+	}
+	#contactWrap #sendContactForm{
+    width: 100px;
+    height: 34px;
+    border: 1px solid rgb(104, 175, 101);
+    background: rgb(94, 180, 94);
+    color: white;
+    margin: 10px 20px 0 0;
 }

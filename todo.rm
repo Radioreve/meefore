@@ -1,0 +1,18 @@
+
+
+Mandatory
+________________
+
+	- nodemailer 
+	- mot de passe oublié  (send reset form)
+	- cloudinary           (save url in db)
+	- contact form ?       (voir avec mike pour les soirées)
+
+
+
+Autre
+__________________
+
+	- validation inputs
+	- appli mobile ?
+

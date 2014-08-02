@@ -14,8 +14,9 @@
 		},
 		isAdmin : {
 			type: Boolean, default: false
-		}
-
+		},
+		age : Number,
+		location : String
 	});
 	
 	

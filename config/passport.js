@@ -19,7 +19,7 @@
 					User.findOne({'local.email' : email}, function(err,user){
 						if(err){
 							console.log(1);
-							return next(err);
+							return next(err,false,{msg:"Missing credentials"});
 						}
 						if(user){
 							console.log(2);
@@ -50,7 +50,7 @@
 	    		    User.findOne({ 'local.email' :  email }, function(err, user) {
  
  	          		  if (err)
-	             	   return done(err);
+	             	   return done(err,false,{msg:"Missing credentials"});
 
 		            if (!user)
 		                return done(null, false,{msg:"No email matched"});

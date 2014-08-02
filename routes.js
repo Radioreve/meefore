@@ -1,10 +1,15 @@
-
 	
+	var express = require('express'),
+		config = require('./config/config'),
+		jwt = require('jsonwebtoken');
 
-	module.exports = function(app,passport){
+	module.exports = function(app,passport,io){
 
-		app.get('/home', function(req,req){
-			res.sendfile('index.html');
+		app.get('/home', function(req,res){
+			res.sendfile( __dirname + '/index.html');
+		});
+		app.get('*', function(req,res){
+			res.redirect('/home');
 		});
 
 		app.post('/signup', function(req,res,next){
@@ -39,11 +44,14 @@
 				}
 				else{
 					console.log('info : '+info.msg);
-	  				res.json(200,{msg:info.msg});
-					res.end();;
+					var token = jwt.sign(user, config.jwtSecret, { expiresInMinutes: 60*5 });
+	  				res.json(200,{
+	  					msg:info.msg,
+	  					token:token
+	  				});
+					res.end();
 				}
-			})(req,res,next);
+		})(req,res,next);
+	});
 
-		});
-
-	}
+}
