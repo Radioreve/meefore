@@ -24,10 +24,11 @@
 		io.use(socketioJwt.authorize({
 			secret:config.jwtSecret,
 			handshake:true
-		}));  
+		})); 
 
 		io.on('connection', function(socket){
 			 console.log(socket.decoded_token.local.email + ' has joined the stream');
+			 require('./events')(socket);
 		});
 
 		//Loading the server

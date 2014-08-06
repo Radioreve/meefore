@@ -5,66 +5,140 @@
 	html{
 		height:100%; 
 		background: #E6E6E6;
-} 
+	} 
+
 	body{  
 		/* min-height:100%; */
 		background: white;
 		margin: 10px;
+		
 		box-shadow: 0 0 5px #C0C0C0;
+	
+		font-family: 'Ubuntu';
 }
-	p,textarea,input{
+
+	p,
+	textarea,
+	input{
 		font-size: 14px;
 		line-height: 20px;
 		font-family:'Ubuntu','Calibri','sans serif';
 		resize: none;
 		outline: none;
-
 	}
-		    h2{
+
+   h2{
 		font: bold 16px 'Francois One';
 		text-transform: uppercase;
 		text-align: center;
 	}
+
 	h3{
 		font:bold 14px 'Francois One';
 		text-transform:uppercase;
 	}
-	.b-space{
-		margin-bottom: 40px;
-	}
-	.r-space{
-	}
+	
 	.right{float:right;}
 	.left{float:left;}
 	.none{display: none !important;}
-	
-	#loader{
-	width: 32px;
+
+	.loader{
+	width: 22px;
 	position: absolute;
-	right: -33px;
-	top: 13px;
-	
-}
-	#mainWrap{
-		height: 96vh;
-}	
-	#menu, #contact{
+	right: -23px;
+	top: 17px;
+	}
+
+	#mainWrap{ height: 96vh; }	
+	#toastSuccess,
+	#toastError{
+		position: absolute;
+		font: .8em 'Ubuntu';
+		margin: auto;
+		height: 16px;
+		background: rgb(255, 255, 242);
+		border-bottom: 1px solid rgb(255, 226, 226);
+		color: rgb(93, 94, 59);
+		border-radius: 3px;
+		padding: 7px;
+		padding-top: 8px;
+		left: 0;
+		right: 0;
+		top: 20px;
+		width: 210px;
+		text-align: center;
+	}
+	.toast-icon{
+	    position: absolute;	
+	    left: 0px;
+	    background: #65C765;
+	    height: 25px;
+	    border-radius: 3px 0 0 3px;
+	    width: 30px;
+	    padding-top: 7px;
+	    top: 0px;
+	    color: white;
+	}
+	#toastError .toast-icon{
+		background: rgb(243, 143, 143);
+	}
+
+	.menuBtn{
+    left: 50px;
+    -webkit-transition: all .6s;
+    transition: all .6s;
+	}
+	.menuBtnActive{
+		left:30px;
+		color: #919191!important;
+	}
+ 	#menuWrap{
+ 		top:40px;
+ 	}
+	#contact{
+    top: 130px;
+ }
+	#events{
+    top: 100px;
+ }
+	#profile{
+ 	}
+	.menu{
+		top:40px;
 		color: #444;
 		position: absolute;
 		z-index: 9;
 		font-family: 'Calibri';
 		font-size: 1.2em;
-		}
-	#menu{
-		top: 40px; 
-		left: 50px;
+	}
+	.menu-item{
+    font-size: 1em;
+    left: 50px;
+    top: 70px;
+    padding: 2px;
+    padding-top: 4px;
+    padding-left: 12px;
+    width: 100px;
+    height: 21px;
+    border-radius: 2px;
+}	
+	.menu-item:hover{
+		cursor:pointer;
+		background: #F3F3F3;
+	} 
+	.menu-item-active,
+	.menu-item-active:hover{
+    background: #73E073;
+    color: white;
+	}
+	.menu-item div{
+		display:inline;
+		margin-left: 5px;
 	}
 	#contact{
-		top:40px;
-		right:50px;
-	
-}
-	#menu:hover,#contact:hover{
+	}
+	.menuBtn:hover,
+	#contact:hover{
 		cursor:pointer;
 	}
 	#loginWrap, #signupWrap,#contactWrap{
@@ -76,9 +150,11 @@
 	  position: absolute;
 	  top: 0;
 	  right: 0;
-	  width: 350px;
-	
-}
+	}
+	#loginWrap,
+	#signupWrap{
+		width:400px;
+	}
 
 	#loginWrap #formWrap, #signupWrap #formWrap{
 		margin-top:20px;
@@ -89,7 +165,8 @@
 		height: 80px;
 		position: relative;
 }
-	#loginWrap #submitWrap input, #signupWrap #submitWrap input{
+	#loginWrap #submitWrap input,
+	#signupWrap #submitWrap input{
 		width: 100%;
 		border: none;
 		padding: 9px;
@@ -98,15 +175,16 @@
 		font-size: 10px;		
 	}
 	
-#loginWrap #submitWrap input:hover{
-		box-shadow: 1px 1px 1px rgb(131, 131, 131); 
+.themeBtn:hover{
+		box-shadow: 1px 1px 1px rgb(73, 117, 62); 
 }
 
 
-	#loginWrap #submitWrap #login, #signupWrap #submitWrap #signup{
-		background: rgb(46, 46, 46);
+	#loginWrap #submitWrap #login,
+	#signupWrap #submitWrap #signup{
+		background: #73E073;
 		color: #FFF;
-		border: 1px solid #0A0A0A;
+		border: none;
 	}   
 
 		
@@ -116,13 +194,14 @@
 	    margin: 7px auto;		 
     	display: block; 
     	padding: 9px;	
-    	border-radius: 3px;
+    	border-radius: 3px 3px 0 0;
     	transition: all ease-in 0.1s;
-}
+} 
 	.input-field:focus{
 		box-shadow: 1px 1px 5px #CECECE;
 	}
-	#loginWrap #submitWrap .sub-actions, #signupWrap #submitWrap .sub-actions{
+	#loginWrap #submitWrap .sub-actions,
+	#signupWrap #submitWrap .sub-actions{
 		margin-top: 10px;
 		font: 12px 'Ubuntu';
 		text-decoration: underline;
@@ -140,29 +219,46 @@
 		padding: 20px;
 		position: absolute;
 		top: 70px;
-		left: 100px;
+		left: 300px;
 		right: 0;
 		bottom: 0;
 }
 	#pictureWrap{
 		text-align:center;
+		background: rgb(245, 245, 245);
+		box-shadow: 0 2px 2px #DFDFDF;
+		padding-bottom: 15px;
+		border:1px dashed transparent;
+		width: 180px;
+		padding-top: 6px;
+		margin: 0 auto;
+		margin-bottom: 30px;
+		height: 160px;
+		-webkit-transition: all .4s;
+		transition: all .4s;
+	}
+	#pictureWrap:hover{
+		border:1px double #dde;
+	}
 	
-}
 	.fieldsWrap{
 		width:100%;
 		height: 170px;
 }
 	.fieldsWrap *{
-		padding:10px;
-	
+		padding:10px;	
 		border: none;
 		border-bottom: 1px solid #ddd;
 }
-	#profileWrap h2{  
+	#profileWrap h2{
+    margin-bottom: 40px;
 	}
 	
 	#age{
 		width: 30px;
+	}
+	#location{
+		height:37px;
 	}
 	#profileWrap textarea{
 	width: 90%;
@@ -171,15 +267,44 @@
 		padding:5px;
 	}
 	#profileWrap #validate{
-		width: 100px;
-	    height: 34px;
-	    border: 1px solid rgb(73, 153, 70);
-	    background: rgb(94, 180, 94);
-	    color: white;
-	    margin: 10px 20px 0 0;
+		width: 80px;
+	    
+		border-radius: 3px;
+		height: 30px; 
+		background: #73E073;   
+		border: none;
+		color: white;
+		margin: 6px 6px 0 0;
 	}
+	.profileInput{
+		-webkit-transition: all .5s;
+		transition: all .5s;	
+	}
+	.validating{
+		background: #F3F3F3;
+        border-radius: 3px 3px 0 0; 
+	}
+	.mainPicture{
+		padding:9px;
+		background:white;
+	}
+	.progress_bar{
+		height: 3px;
+		width: 0%;
+		background: #73E073;
+		border-radius: 3px;
+		margin-bottom: 10px;
+		-webkit-transition: width .9s;
+		transition: width .9s; 
+		text-align: center;
+		box-shadow: 0 2px 1px rgb(182, 255, 197);
+		color: white;
+		font-size: 0.8em;
+}
+		
+
 	#contactWrap{
-	width: 530px;
+		width:600px;
 	}
 
 	#contactWrap input{
@@ -189,6 +314,7 @@
 		border: none;
 		border-bottom: 1px solid rgb(197, 197, 197);
 	}
+	
 	#contactWrap form #contactName{
 	}
 	#contactWrap #contactBody{
@@ -202,8 +328,37 @@
 	#contactWrap #sendContactForm{
     width: 100px;
     height: 34px;
-    border: 1px solid rgb(104, 175, 101);
-    background: rgb(94, 180, 94);
+    border: none;
+    background: #73E073;
     color: white;
     margin: 10px 20px 0 0;
+	}
+
+	#eventsWrap{
+		width:500px;
+		height:1px;
+		position:absolute;
+		margin:auto;
+		top:0;
+		left:0;
+		bottom:0;
+		right:0;
+	}
+
+
+
+
+/*various hacks*/
+.upload_form{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.cloudinary-fileupload{
+	width: 180px;
+	height: 180px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0.01;
 }

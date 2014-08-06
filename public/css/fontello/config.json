@@ -25,6 +25,12 @@
       "src": "fontelico"
     },
     {
+      "uid": "cfaa8fbbdcc7bb8d636cb974aad1f9b9",
+      "css": "glass",
+      "code": 59416,
+      "src": "fontawesome"
+    },
+    {
       "uid": "bf882b30900da12fca090d9796bc3030",
       "css": "mail",
       "code": 59397,
@@ -145,9 +151,27 @@
       "src": "mfglabs"
     },
     {
+      "uid": "bcbb9470c9ba0699d5a0e4e97b3d5be9",
+      "css": "glass-1",
+      "code": 59419,
+      "src": "elusive"
+    },
+    {
       "uid": "50e664a6f12199784c02600b2ccfd60a",
       "css": "th-list",
       "code": 59408,
+      "src": "elusive"
+    },
+    {
+      "uid": "b622423405bcc984de6553e2f23c9fb6",
+      "css": "barcode",
+      "code": 59417,
+      "src": "elusive"
+    },
+    {
+      "uid": "82c1a53a806cc33aab8bdef9dabf3e42",
+      "css": "delicious",
+      "code": 59418,
       "src": "elusive"
     }
   ]

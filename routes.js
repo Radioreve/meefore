@@ -1,13 +1,26 @@
 	
 	var express = require('express'),
-		config = require('./config/config'),
-		jwt = require('jsonwebtoken');
+		swig = require('swig'),
+		cloudinary = require('cloudinary'),
+		jwt = require('jsonwebtoken'),
+		config = require('./config/config');
 
-	module.exports = function(app,passport,io){
+		cloudinary.config({ 
+							cloud_name: config.cloudinary.cloud_name,
+						    api_key: config.cloudinary.api_key,
+						    api_secret: config.cloudinary.api_secret
+						});
+
+		var cloudTag = cloudinary.uploader.image_upload_tag('helloWorld')
+
+		var mainTpl = swig.compileFile(__dirname + '/index.html');
+
+	module.exports = function(app,passport){
 
 		app.get('/home', function(req,res){
 			res.sendfile( __dirname + '/index.html');
 		});
+
 		app.get('*', function(req,res){
 			res.redirect('/home');
 		});
@@ -46,8 +59,15 @@
 					console.log('info : '+info.msg);
 					var token = jwt.sign(user, config.jwtSecret, { expiresInMinutes: 60*5 });
 	  				res.json(200,{
+	  					_id:user._id,
+	  					email:user.local.email,
+	  					name:user.name,
+	  					age:user.age,
+	  					location:user.location,
+	  					description:user.description,
 	  					msg:info.msg,
-	  					token:token
+	  					token:token,
+	  					cloudTag:cloudTag
 	  				});
 					res.end();
 				}

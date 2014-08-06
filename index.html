@@ -1,91 +1,82 @@
 
 	<!DOCTYPE html>
-	<html>
+	<html lang="fr">
 	<head>
 		<title>Socket auth</title>
 		<link href='http://fonts.googleapis.com/css?family=Francois+One' rel='stylesheet' type='text/css'>
-		<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'>	
-		<link rel="stylesheet" type="text/css" href="/css/meyer.css">
-		<link rel="stylesheet" type="text/css" href="/css/fontello/css/fontello.css">
-		<link rel="stylesheet" type="text/css" href="/css/animate.css">
-		<link rel="stylesheet" type="text/css" href="/css/hint.css">
-
-		<link rel="stylesheet" type="text/css" href="/css/style.css">
-
+		<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'><link rel="stylesheet" href="/css/meyer.css">
+		<link rel="stylesheet" href="/css/fontello/css/fontello.css">
+		<link rel="stylesheet" href="/css/animate.css">
+		<link rel="stylesheet" href="/css/hint.css">
+		<link rel="stylesheet" href="/css/style.css">
 	</head>
 	<body>
-
 	<div id="mainWrap">
-	<span id="menu" class="icon icon-menu" >
-		Menu
-	</span>
-	<span id="contact" class="icon icon-mail" >
-		Contact
-	</span>
-		<section id="contentWrap" class="animated">
-			<section id="loginWrap" class="animated onscreen">
-				<h2>
-					Identifiez-vous!
-				</h2>
-				<div id="formWrap"  class="animated">
-					<form autocomplete="off">
-							<input class="input-field" type="text" id="email" placeholder="email">
-							<input class="input-field" type="text" id="pw" placeholder="password">
-						<div class="input-field" id="submitWrap">
-							<input type="submit" id="login" value="login">
-						<div id="bcm_member" class="animated sub-actions right">Devenir membre</div>
-						<div id="lost_pw" class="sub-actions left">Mot de passe oublié ?</div>
-						<div id="loaderWrap" class="none"> <img id="loader" src="/img/ajax-loader.gif"></div>	
-						</div>
-					</form>
-				</div>
-			</section>
-
-
-			<section id="signupWrap" class="animated none">
-			<h2>
-					Inscrivez-vous
-				</h2>
+	  <div id="toastSuccess" class="animated none"><span class="toast-icon icon icon-check"></span><span class="toastMsg"></span></div>
+	  <div id="toastError" class="animated none"><span class="toast-icon icon icon-cancel"></span><span class="toastMsg"></span></div>
+	  <span class="menuBtn menu icon icon-menu"   > Menu</span>
+	  <div id="menuWrap" class="none animated fadeOutLeftSmall">
+		<span id="contact" class="menu menu-item icon icon-mail"   ><div>Contact</div></span>
+		<span id="events"  class="menu menu-item menu-item-active icon icon-glass" ><div>Events</div></span>
+		<span id="profile" class="menu menu-item icon icon-user"    ><div>Settings</div></span>
+	  </div>
+	  <section id="contentWrap" class="animated">
+	    <section id="loginWrap" class="animated onscreen">
+		  <h2>Identifiez-vous!</h2>
+		  <div id="formWrap"  class="animated">
+		    <form autocomplete="off">
+			  <input class="input-field" type="text" id="email" placeholder="email">
+			  <input class="input-field" type="text" id="pw" placeholder="password">
+			  <div class="input-field" id="submitWrap">
+			    <input type="submit" class="themeBtn" id="login" value="login">
+			      <div id="bcm_member" class="animated sub-actions right">Devenir membre</div>
+			      <div id="lost_pw" class="sub-actions left">Mot de passe oublié ?</div>
+				  <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>	
+			  </div>
+			</form>
+		  </div>
+		</section>
+		<section id="signupWrap" class="animated none">
+			<h2>Inscrivez-vous</h2>
 				<div id="formWrap" class="animated">
 					<form>
-						<input class="input-field" type="text" id="email" placeholder="email">
-						<input class="input-field" type="text" id="pw" placeholder="password">
-						<input class="input-field" type="text" id="pw_check" placeholder="password again">
+						<input class="input-field" type="text" id="emailSignup" placeholder="email">
+						<input class="input-field" type="text" id="pwSignup" placeholder="password">
+						<input class="input-field" type="text" id="pwCheckSignup" placeholder="password again">
 						<div class="input-field" id="submitWrap">
-							<input type="submit" id="login" value="login" class="none">
-							<input type="submit" id="signup" class="" value="S'inscrire ">
-							<div id="b_to_login" class="sub-actions left">S'identifier</div>
-							<div id="loaderWrap"class="none"> <img id="loader" src="/img/ajax-loader.gif"></div>	
-
-
+							<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
+							<div id="b_to_login" class="animated sub-actions left">S'identifier</div>
+							<div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>	
 						</div>
 					</form>
 				</div>
-				
 			</section>
 
 
 			<section id="profileWrap" class="none animated">
-				<div id="pictureWrap"class="b-space">
-					<img src="/img/person-placeholder.jpg" width="150">
+		      	<h2>Account settings</h2>
+		      	<div class="progress_bar"></div>
+				<div id="pictureWrap"class="hint--right" data-hint="click to edit your picture">
+					<img src="/img/person-placeholder.jpg" class="mainPicture" width="150">
+					<form class="upload_form"></form>
 				</div>
 				<div class="fieldsWrap">
-						<input id="name" class="left" value="Michel Essentiel" type="text">
-						<input id="age" class="left " value="25" type="number">
+						<input id="name" class="left profileInput" value="Jean Ronfleur" type="text" maxlength="25">
+						<input id="age" class="left profileInput" value="25" type="number">
 
-				<textarea id="description" class="left">Je suis un enthousiaste de première classe!</textarea>
-				<select id="quartier" class="left">
-							<option value="75001">75001</option>
+				<textarea id="description" class="left profileInput">Je suis un enthousiaste de première classe!</textarea>
+				<select id="location" class="left profileInput">
+							<option selected="selected" value="75001">75001</option>
 							<option value="75002">75002</option>
 							<option value="75003">75003</option>
 							<option value="75004">75004</option>
 							<option value="75005">75005</option>
 				</select>
 				</div>
-				<button id="validate" class="right">Validate</button>
+				<button id="validate" class="right themeBtn">Validate</button>
 			</section>
-			<section id="eventsWrap" class="left animated">
-				
+			<section id="eventsWrap" class="none animated">
+				<h2>Evènements à venir</h2>
 			</section>
 		</section>
 
@@ -96,14 +87,13 @@
 				<input id="contactMail" type="text" placeholder="email">
 				<textarea id="contactBody" placeholder="Hello, ..."></textarea>
 			</form>
-			<button id="sendContactForm" class="right">Envoyer</button>
+			<button id="sendContactForm" class="right themeBtn">Envoyer</button>
 		</section>
-	
+
 	</div>
 	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
-	<script type="text/javascript" src="/js/spin.js"></script>
-	<script type="text/javascript" src="/js/laddajquery.js"></script>
-	<script type="text/javascript" src="/js/lj.js"></script>
+	<script src="/js/jquery.cloudinary.js"></script>
+	<script src="/js/lj.js"></script>
 	</body>
 	</html>
