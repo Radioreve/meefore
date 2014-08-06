@@ -26,7 +26,8 @@ var LJ = {
 		name:'',
 		email:'',
 		age:'',
-		location:''
+		location:'',
+		img_id:''
 	},
 	DOM:{
 		loginWrap		 	 : $('#loginWrap'),
@@ -230,6 +231,8 @@ var LJ = {
 					// User Interface Update
 					LJ.DOM.loaderWrap.addClass('none');
 					LJ.fn.displayContent(LJ.DOM.eventsWrap);
+					LJ.fn.replaceMainImage(LJ.user.img_id,LJ.cloudinary.displayParams);
+
 					sleep(350,function(){LJ.fn.toggleMenu(); });
 			});
 		},
@@ -330,6 +333,7 @@ var LJ = {
 			LJ.user.description = data.description;
 			LJ.user.age 	    = data.age;
 			LJ.user.name 	    = data.name;
+			LJ.user.img_id	 	= data.img_id;
 			//User Interface Update
 			LJ.fn.updateSettingsDOM();
 		},
@@ -358,7 +362,7 @@ var LJ = {
 			})
 		},
 		replaceMainImage : function(id,d){
-		//	var d = d || LJ.cloudinary.displayParams();
+		    var d = d || LJ.cloudinary.displayParams();
 			var previousImg = $('#pictureWrap').find('img'),
 				newImg      = $.cloudinary.image(id, d); 
 				newImg.addClass('mainPicture').hide();
@@ -390,10 +394,11 @@ var LJ = {
 
   								LJ.fn.toastMsgSuccess('Your face has changed');
 
-  								var id=data.result.public_id;
-  								LJ.params.socket.emit('update picture',{id:id});
+  								var img_id=data.result.public_id;
+  								LJ.params.socket.emit('update picture',{_id: LJ.user._id,
+  																		img_id: img_id });
 
-  								LJ.fn.replaceMainImage(id,LJ.cloudinary.displayParams);
+  								LJ.fn.replaceMainImage(img_id,LJ.cloudinary.displayParams);
 					
   							});
 

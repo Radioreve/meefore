@@ -59,15 +59,16 @@
 					console.log('info : '+info.msg);
 					var token = jwt.sign(user, config.jwtSecret, { expiresInMinutes: 60*5 });
 	  				res.json(200,{
-	  					_id:user._id,
-	  					email:user.local.email,
-	  					name:user.name,
-	  					age:user.age,
-	  					location:user.location,
-	  					description:user.description,
-	  					msg:info.msg,
-	  					token:token,
-	  					cloudTag:cloudTag
+	  					_id:         user._id,
+	  					email:       user.local.email,
+	  					name:        user.name,
+	  					age:         user.age,
+	  					location:    user.location,
+	  					description: user.description,
+	  					img_id:      user.img_id,
+	  					msg:         info.msg,
+	  					token:       token,
+	  					cloudTag:    cloudTag
 	  				});
 					res.end();
 				}

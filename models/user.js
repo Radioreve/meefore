@@ -39,6 +39,10 @@ var UserSchema = new mongoose.Schema({
   phone: {
     type: String,
     default: '+33...'
+  },
+  img_id: {   // id is used client side by cloudinary to build url
+    type: String,
+    default:'placeholder_spjmx7'
   }
 
 });

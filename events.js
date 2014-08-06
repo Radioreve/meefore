@@ -20,16 +20,27 @@
 				else{
 					console.log('Emtting event update profile success')
 					socket.emit('update profile success', {user:user});
+					display(user);
 				}
 				
-				display(user);
 			});	
 		});
 
 
-		socket.on('update picture',function(data){
-			console.log(data.id);
-		})
+		socket.on('update picture', function(data){
+			User.findByIdAndUpdate(data._id,{
+				name:"birdy!!",
+				img_id:data.img_id
+			},{}, function(err,user){
+				if(err){console.log('err : '+err); socket.emit('update picture error');}
+				else{
+					console.log('img up success');
+					socket.emit('update image success', {user:user});
+					display(user);
+				}
+				
+			});
+		});
 
 
 
