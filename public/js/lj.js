@@ -1,8 +1,42 @@
 function sleep(ms,cb,p2){setTimeout(function(){cb(p2);},ms)}
 
+var myEvents = [
+	{
+		status:"",
+		name:"Apéro sur les quais",
+		host_name:"Marinette",
+		location:"75005",
+		hour:"20h30",
+		maxGuests:"10"
+	},
+	{
+		status:"nouveau",
+		name:"Rex club",
+		host_name:"Goldman",
+		location:"75005",
+		hour:"20h30",
+		maxGuests:"5"
+	},
+	{
+		status:"",
+		name:"Pool Party",
+		host_name:"Jean",
+		location:"75019",
+		hour:"22h30",
+		maxGuests:"30"
+	},
+	{
+		status:"vip",
+		name:"Soirée K",
+		host_name:"Marion",
+		location:"75005",
+		hour:"20h00",
+		maxGuests:"5"
+	}
+]
 
 
-var LJ = {
+LJ = {
 	params:{
 		socket    :  null,
 		domain	  : "http://192.168.1.87:1337"
@@ -27,39 +61,47 @@ var LJ = {
 		email:'',
 		age:'',
 		location:'',
-		img_id:''
+		img_id:'',
+		img_version:''
 	},
-	DOM:{
-		loginWrap		 	 : $('#loginWrap'),
-		signupWrap			 : $('#signupWrap'),
-		profileWrap		     : $('#profileWrap'),
-		eventsWrap		     : $('#eventsWrap'),
-		loginBtn  	         : $('#login'),
-		signupBtn            : $('#signup'),
-		emailInput           : $('#email'),
-		passwordInput        : $('#pw'),
-		lostPassword         : $('#lost_pw'),
-		emailInputSignup     : $('#emailSignup'),
-		passwordInputSignup  : $('#pwSignup'),
-		passwordCheckInput   : $('#pwCheckSignup'),
-		backToLogin          : $('#b_to_login'),
-		becomeMember         : $('#bcm_member'),
-		validateBtn          : $('#validate'),
-		nameInput            : $('#name'),
-		ageInput             : $('#age'),
-		descInput	         : $('#description'),
-		locationInput        : $('#location'),
-		loaderWrap 	         : $('.loaderWrap'),
-		menuBtn		         : $('.menuBtn'),
-		contactMenu	         : $('#contact'),
-		profileMenu          : $('#profile'),
-		eventsMenu           : $('#events'),
-		contentWrap          : $('#contentWrap'),
-		contactWrap          : $('#contactWrap'),
-		menuWrap             : $('#menuWrap'),
-		toastSuccess         : $('#toastSuccess'),
-		toastError           : $('#toastError')
-	},
+		$loginWrap		 	  : $('#loginWrap'),
+		$signupWrap			  : $('#signupWrap'),
+		$profileWrap	      : $('#profileWrap'),
+		$eventsWrap		      : $('#eventsWrap'),
+		$loginBtn  	          : $('#login'),
+		$signupBtn            : $('#signup'),
+		$emailInput           : $('#email'),
+		$passwordInput        : $('#pw'),
+		$lostPassword         : $('#lost_pw'),
+		$emailInputSignup     : $('#emailSignup'),
+		$passwordInputSignup  : $('#pwSignup'),
+		$passwordCheckInput   : $('#pwCheckSignup'),
+		$backToLogin          : $('#b_to_login'),
+		$becomeMember         : $('#bcm_member'),
+		$validateBtn          : $('#validate'),
+		$nameInput            : $('#name'),
+		$ageInput             : $('#age'),
+		$descInput	          : $('#description'),
+		$locationInput        : $('#location'),
+		$loaderWrap 	      : $('.loaderWrap'),
+		$menuBtn		      : $('.menuBtn'),
+		$contactMenu          : $('#contact'),
+		$profileMenu          : $('#profile'),
+		$eventsMenu           : $('#events'),
+		$createMenu			  : $('#create'),
+		$createEventWrap	  : $('#createEventWrap'),
+		$createEventBtn       : $('#createEventBtn'),
+		$eventNameInput       : $('#eventName'),
+		$eventHourInput       : $('#eventHour'),
+		$eventMinutInput      : $('#eventMin'),
+		$eventDescriptionInput: $('#eventDescription'),
+		$contentWrap          : $('#contentWrap'),
+		$contactWrap          : $('#contactWrap'),
+		$menuWrap             : $('#menuWrap'),
+		$toastSuccess         : $('#toastSuccess'),
+		$toastError           : $('#toastError'),
+		$eventsListWrap       : $('#eventsListWrap'),
+
 	fn:{
 		init : function(){
 				/*Bind any UI action with the proper handler */
@@ -67,6 +109,7 @@ var LJ = {
 
 				/*Global UI Settings ehanced UX*/
 				LJ.fn.initEhancements();
+
 
 		},
 		initSocketConnection : function(jwt){
@@ -95,49 +138,57 @@ var LJ = {
 		},
 		handleDomEvents : function(){
 			//============= LOGIN AND SIGNUP=========
-			LJ.DOM.signupBtn.click(function(e){ 
+			LJ.$signupBtn.click(function(e){ 
 				e.preventDefault(); 
 				console.log('About to SU User')
 				LJ.fn.signupUser(); 
 			});
 
-			LJ.DOM.loginBtn.click(function(e){	
+			LJ.$loginBtn.click(function(e){	
 				e.preventDefault();
 				LJ.fn.loginUser();	
 			});
 
-			LJ.DOM.becomeMember.click(function(){
-				LJ.fn.displayContent(LJ.DOM.signupWrap);
+			LJ.$becomeMember.click(function(){
+				LJ.fn.displayContent(LJ.$signupWrap);
 			});
 
-			LJ.DOM.backToLogin.click(function(){
-				LJ.fn.displayContent(LJ.DOM.loginWrap);
+			LJ.$backToLogin.click(function(){
+				LJ.fn.displayContent(LJ.$loginWrap);
 			});
 
 
 			//===============MENU=================
-			LJ.DOM.menuBtn.click(function(){
+			LJ.$menuBtn.click(function(){
 				LJ.fn.toggleMenu();
 			});
-			LJ.DOM.contactMenu.click(function(){
-				LJ.fn.displayContent(LJ.DOM.contactWrap);
+			LJ.$contactMenu.click(function(){
+				LJ.fn.displayContent(LJ.$contactWrap);
+			});
+			LJ.$createMenu.click(function(){
+				LJ.fn.displayContent(LJ.$createEventWrap);
+			})
+			LJ.$profileMenu.click(function(){
+				LJ.fn.displayContent(LJ.$profileWrap);
 			});
 
-			LJ.DOM.profileMenu.click(function(){
-				LJ.fn.displayContent(LJ.DOM.profileWrap);
-			});
-
-			LJ.DOM.eventsMenu.click(function(){
-				LJ.fn.displayContent(LJ.DOM.eventsWrap);
+			LJ.$eventsMenu.click(function(){
+				LJ.fn.displayContent(LJ.$eventsWrap);
 			})
 
-			LJ.DOM.validateBtn.click(function(){
+			LJ.$validateBtn.click(function(){
 				LJ.fn.updateProfile();
 			});
 
 			$('#menuWrap').on('click','.menu-item',function(){
 				LJ.fn.updateMenuView($(this));
 			});
+
+			//============EVENTS====================
+			LJ.$createEventBtn.click(function(){
+				LJ.fn.createEvent();
+			});
+			
 
 
 
@@ -146,8 +197,8 @@ var LJ = {
 
 			var credentials = {} ;
 
-				credentials.email = LJ.DOM.emailInputSignup.val();
-				credentials.password = LJ.DOM.passwordInputSignup.val();	
+				credentials.email = LJ.$emailInputSignup.val();
+				credentials.password = LJ.$passwordInputSignup.val();	
 				console.log("Posting this : " +JSON.stringify(credentials,0,4))
 
 			$.ajax({
@@ -175,8 +226,8 @@ var LJ = {
 
 			var credentials = credentials || {} ;
 
-				credentials.email    = credentials.email    || LJ.DOM.emailInput.val();
-				credentials.password = credentials.password || LJ.DOM.passwordInput.val();
+				credentials.email    = credentials.email    || LJ.$emailInput.val();
+				credentials.password = credentials.password || LJ.$passwordInput.val();
 
 			$.ajax({
 				method:'POST',
@@ -199,9 +250,9 @@ var LJ = {
 		},
 		updateProfile: function(){
 			var _id 		 = LJ.user._id,
-				age   		 = LJ.DOM.ageInput.val(),
-				name  		 = LJ.DOM.nameInput.val(),
-				description  = LJ.DOM.descInput.val();
+				age   		 = LJ.$ageInput.val(),
+				name  		 = LJ.$nameInput.val(),
+				description  = LJ.$descInput.val();
 
 			var profile = {
 				_id			: _id,
@@ -209,29 +260,31 @@ var LJ = {
 				name 		: name,
 				description : description
 			}
-				LJ.params.socket.emit('update profile', profile);	
-				$('.profileInput').addClass('validating');			
+				LJ.params.socket.emit('update profile', profile);
+				LJ.$loaderWrap.removeClass('none');	
 		},
 		handleBeforeSendLogin : function(){
-			LJ.DOM.loginBtn.val('Loading');
-			LJ.fn.fadeOut(LJ.DOM.becomeMember);
-			LJ.DOM.loaderWrap.removeClass('none');
+			LJ.$loginBtn.val('Loading');
+			LJ.fn.fadeOut(LJ.$becomeMember);
+			LJ.$loaderWrap.removeClass('none');
 			$('input.input-field').addClass('validating');
 		},
-		handleSuccessLogin : function(data){
+		handleSuccessLogin : function(user,events){
 			sleep(1000,function(){ 
 
-					LJ.fn.initSocketConnection(data.token);
-					LJ.fn.initCloudinary(data.cloudTag);
+					LJ.fn.initSocketConnection(user.token);
+					LJ.fn.initCloudinary(user.cloudTag);
 
 					// Internal State Update
-					LJ.fn.logUser(data);
-					LJ.fn.setClientSettings(data);
+					LJ.fn.setClientSettings(user);
+					var el = LJ.fn.renderEventsListView(myEvents);
 
+					LJ.$eventsListWrap.append(el);
 					// User Interface Update
-					LJ.DOM.loaderWrap.addClass('none');
-					LJ.fn.displayContent(LJ.DOM.eventsWrap);
-					LJ.fn.replaceMainImage(LJ.user.img_id,LJ.cloudinary.displayParams);
+					LJ.$loaderWrap.addClass('none');
+					$('#codebar').text(user._id);
+					LJ.fn.displayContent(LJ.$eventsWrap);
+					LJ.fn.replaceMainImage(LJ.user.img_id,LJ.user.img_version,LJ.cloudinary.displayParams);
 
 					sleep(350,function(){LJ.fn.toggleMenu(); });
 			});
@@ -241,13 +294,13 @@ var LJ = {
 			sleep(1000,function(){
 				LJ.fn.toastMsgError(data.msg);
 				$('input.input-field').removeClass('validating');
-				LJ.fn.fadeIn(LJ.DOM.becomeMember);
-				LJ.DOM.loaderWrap.addClass('none');
-				LJ.DOM.loginBtn.val('Login');
+				LJ.fn.fadeIn(LJ.$becomeMember);
+				LJ.$loaderWrap.addClass('none');
+				LJ.$loginBtn.val('Login');
 			});
 		},
 		handleBeforeSendSignup : function(){
-			LJ.fn.fadeOut(LJ.DOM.backToLogin);
+			LJ.fn.fadeOut(LJ.$backToLogin);
 			$('.loaderWrap').removeClass('none');
 			$('input.input-field').addClass('validating');
 		},
@@ -262,7 +315,7 @@ var LJ = {
 			sleep(1000,function(){
 				$('input.input-field').removeClass('validating');
 				LJ.fn.toastMsgError(data.msg);
-				LJ.fn.fadeIn(LJ.DOM.backToLogin);
+				LJ.fn.fadeIn(LJ.$backToLogin);
 				$('.loaderWrap').addClass('none');
 			});
 		},
@@ -305,14 +358,14 @@ var LJ = {
 			};
 		},
 		toggleMenu : function(){
-			var that = LJ.DOM.menuBtn;
+			var that = LJ.$menuBtn;
 				if(that.hasClass('menuBtnActive')){
 					that.removeClass('menuBtnActive');
 				}
 				else{
 					that.addClass('menuBtnActive');
 				}
-				LJ.fn.displayInAndOutSmall(LJ.DOM.menuWrap);
+				LJ.fn.displayInAndOutSmall(LJ.$menuWrap);
 		},
 		updateMenuView : function(el){
 			if(!el.hasClass('menu-item-active')){
@@ -321,11 +374,11 @@ var LJ = {
 				}
 		},
 		showProfile : function(){
-			var el = LJ.DOM.profileMenu;
-				LJ.fn.displayContent(LJ.DOM.profileWrap);
+			var el = LJ.$profileMenu;
+				LJ.fn.displayContent(LJ.$profileWrap);
 		},
 		setClientSettings : function(data){
-			console.log('Updating client state : '+JSON.stringify(data,0,4));
+			//console.log('Updating client state : '+JSON.stringify(data,0,4));
 			//Internal state update
             LJ.user._id 	    = data._id;
 			LJ.user.email 	    = data.email;
@@ -334,19 +387,20 @@ var LJ = {
 			LJ.user.age 	    = data.age;
 			LJ.user.name 	    = data.name;
 			LJ.user.img_id	 	= data.img_id;
+			LJ.user.img_version = data.img_version;
 			//User Interface Update
 			LJ.fn.updateSettingsDOM();
 		},
 		updateSettingsDOM : function(){
-			LJ.DOM.nameInput.val(LJ.user.name);
-			LJ.DOM.ageInput.val(LJ.user.age);
-			LJ.DOM.descInput.val(LJ.user.description);
+			LJ.$nameInput.val(LJ.user.name);
+			LJ.$ageInput.val(LJ.user.age);
+			LJ.$descInput.val(LJ.user.description);
 		},
 		logUser : function(data){
 			console.log(JSON.stringify(LJ.user,0,4));
 		},
 		toastMsgSuccess : function(msg){
-			var toast = LJ.DOM.toastSuccess;
+			var toast = LJ.$toastSuccess;
 				toast.find('.toastMsg').text(msg);
 			LJ.fn.fadeInSmall(toast);
 			sleep(3000,function(){
@@ -354,15 +408,17 @@ var LJ = {
 			})
 		},
 		toastMsgError : function(msg){
-			var toast = LJ.DOM.toastError;
+			var toast = LJ.$toastError;
 				toast.find('.toastMsg').text(msg);
 			LJ.fn.fadeInSmall(toast);
 			sleep(3000,function(){
 				LJ.fn.fadeOutSmall(toast);
 			})
 		},
-		replaceMainImage : function(id,d){
-		    var d = d || LJ.cloudinary.displayParams();
+		replaceMainImage : function(id,version,d){
+		    var d = d || LJ.cloudinary.displayParams;
+		    	d.version = version;
+
 			var previousImg = $('#pictureWrap').find('img'),
 				newImg      = $.cloudinary.image(id, d); 
 				newImg.addClass('mainPicture').hide();
@@ -395,16 +451,33 @@ var LJ = {
   								LJ.fn.toastMsgSuccess('Your face has changed');
 
   								var img_id=data.result.public_id;
+  								var img_version = data.result.version;
   								LJ.params.socket.emit('update picture',{_id: LJ.user._id,
-  																		img_id: img_id });
+  																		img_id: img_id,
+  																		img_version:img_version });
 
-  								LJ.fn.replaceMainImage(img_id,LJ.cloudinary.displayParams);
+  								LJ.fn.replaceMainImage(img_id,img_version,LJ.cloudinary.displayParams);
 					
   							});
 
   				}).cloudinary_fileupload();
   				
 
+		},
+		renderEventsListView : function(arr,max){
+				var html ='';
+				var max = max || arr.length;
+				for(i=0;i<arr.length;i++){ html += LJ.fn.renderEventRowView(arr[i]); }
+				return html;
+		},
+		renderEventRowView : function(event){
+			var html = '<div class="eventItemWrap">'
+						+'<div class="e-itm e-hour e-weak">'+event.hour+'</div>'
+						+'<div class="e-itm e-name">'+event.name+'</div>'
+						+'<div class="e-itm e-location e-weak">'+event.location+'</div>'
+						+'<div class="e-itm e-host e-weak">Soirée proposée par '+event.host_name+'</div>'
+						+'</div>';
+			return html;
 		},
 		initEventListeners : function(){
 
@@ -415,26 +488,40 @@ var LJ = {
 				LJ.params.socket.on('update profile success', function(data){
 				sleep(1000,function(){
 					LJ.fn.toastMsgSuccess("User settings modified");
-						//LJ.fn.displayContent(LJ.DOM.profileWrap);
-						$('.profileInput').removeClass('validating');
+					LJ.$loaderWrap.addClass('none');
+						//LJ.fn.displayContent(LJ.$profileWrap);
 					});
 				});	
 
 				LJ.params.socket.on('update profile error',function(){
 					sleep(1000,function(){
-						$('.profileInput').removeClass('validating');
+					LJ.$loaderWrap.addClass('none');
+					alert('Error updating profile');
 					});			
 				});
 
 				LJ.params.socket.on('client connected',function(){
 					console.log('Client authenticated on the socket stream');
-				})
+				});
+		},
+		createEvent: function(){
+			var e = {};
+				e.host_id	  = LJ.user._id;
+				e.name 		  = LJ.$eventNameInput.val();
+				e.hour 		  = LJ.$eventHourInput.val();
+				e.min  		  = LJ.$eventMinutInput.val();
+				e.description = LJ.$eventDescriptionInput.val();
+
+				LJ.params.socket.emit('create event', e);
+				LJ.$loaderWrap.removeClass('none');
+
 		}
 	}//end fn
 
 }//end LJ
 
 $('document').ready(function(){
-	LJ.fn.init();
-	console.log('Application ready');
+		LJ.fn.init();
+		console.log('Application ready');
+	
 });

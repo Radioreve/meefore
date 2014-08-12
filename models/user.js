@@ -24,10 +24,6 @@ var UserSchema = new mongoose.Schema({
     type: Number,
     default: 25
   },
-  location: {
-    type: String,
-    default: "75001"
-  },
   description: {
     type: String,
     default: "Tell us something special about you"
@@ -38,11 +34,17 @@ var UserSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    default: '+33...'
+    default: '06...'
   },
-  img_id: {   // id is used client side by cloudinary to build url
+  img: {
+    id:{   // id is used client side by cloudinary to build url
     type: String,
     default:'placeholder_spjmx7'
+    },
+    version:{
+      type:String,
+      default:'1407342805'
+    }
   }
 
 });

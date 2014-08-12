@@ -9,19 +9,21 @@
 		<link rel="stylesheet" href="/css/animate.css">
 		<link rel="stylesheet" href="/css/hint.css">
 		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/events.css">
 	</head>
 	<body>
-	<div id="mainWrap">
+	<div id="mainWrap" class="">
 	  <div id="toastSuccess" class="animated none"><span class="toast-icon icon icon-check"></span><span class="toastMsg"></span></div>
 	  <div id="toastError" class="animated none"><span class="toast-icon icon icon-cancel"></span><span class="toastMsg"></span></div>
 	  <span class="menuBtn menu icon icon-menu"   > Menu</span>
-	  <div id="menuWrap" class="none animated fadeOutLeftSmall">
-		<span id="contact" class="menu menu-item icon icon-mail"   ><div>Contact</div></span>
-		<span id="events"  class="menu menu-item menu-item-active icon icon-glass" ><div>Events</div></span>
-		<span id="profile" class="menu menu-item icon icon-user"    ><div>Settings</div></span>
-	  </div>
+	  <ul id="menuWrap" class="none animated fadeOutLeftSmall">
+		<li id="profile" class="left menu menu-item icon icon-user"    ><div>Settings</div></li>
+		<li id="events"  class="left menu menu-item menu-item-active icon icon-glass" ><div>Events</div></li>
+		<li id="create" class="left menu menu-item icon icon-plus"   ><div>Create</div></li>  
+		<li id="contact" class="left menu menu-item icon icon-mail"   ><div>Contact</div></li>
+	  </ul>
 	  <section id="contentWrap" class="animated">
-	    <section id="loginWrap" class="animated onscreen">
+	    <section id="loginWrap" class="animated onscreen centered">
 		  <h2>Identifiez-vous!</h2>
 		  <div id="formWrap"  class="animated">
 		    <form autocomplete="off">
@@ -31,12 +33,12 @@
 			    <input type="submit" class="themeBtn" id="login" value="login">
 			      <div id="bcm_member" class="animated sub-actions right">Devenir membre</div>
 			      <div id="lost_pw" class="sub-actions left">Mot de passe oublié ?</div>
-				  <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>	
+				  <div class="loaderWrap none"> <img class="loader-login-signup" src="/img/ajax-loader.gif"></div>	
 			  </div>
 			</form>
 		  </div>
 		</section>
-		<section id="signupWrap" class="animated none">
+		<section id="signupWrap" class="animated none centered">
 			<h2>Inscrivez-vous</h2>
 				<div id="formWrap" class="animated">
 					<form>
@@ -46,41 +48,57 @@
 						<div class="input-field" id="submitWrap">
 							<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
 							<div id="b_to_login" class="animated sub-actions left">S'identifier</div>
-							<div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>	
+							<div class="loaderWrap none"> <img class="loader-login-signup" src="/img/ajax-loader.gif"></div>	
 						</div>
 					</form>
 				</div>
 			</section>
 
 
-			<section id="profileWrap" class="none animated">
+			<section id="profileWrap" class="none animated centered">
 		      	<h2>Account settings</h2>
+
 		      	<div class="progress_bar"></div>
-				<div id="pictureWrap"class="hint--right" data-hint="click to edit your picture">
+				<div id="pictureWrap"class="left hint--right" data-hint="click to edit your picture">
 					<img src="/img/person-placeholder.jpg" class="mainPicture" width="150">
 					<form class="upload_form"></form>
+					 <h5 id="codebarre"><span class="icon icon-barcode"></span>53ef548dgk0847j6H7Y</h5>
 				</div>
-				<div class="fieldsWrap">
-						<input id="name" class="left profileInput" value="Jean Ronfleur" type="text" maxlength="25">
-						<input id="age" class="left profileInput" value="25" type="number">
+				<div class="fieldsWrap left">
+						<label for="name">Name</label>
+						<input id="name" class="profileInput" value="Jean Ronfleur" type="text" maxlength="25">
+						<label for="age">Age</label>
+						<input id="age" class="profileInput" value="25" type="number">
+						<textarea id="description" class="profileInput">Je suis un enthousiaste de première classe!</textarea>
+						
+				</div>
+				<button id="validate" class="left themeBtn">Validate</button>
+			    <div class="loaderWrap none"> <img class="loader-profile" src="/img/ajax-loader.gif"></div>	
 
-				<textarea id="description" class="left profileInput">Je suis un enthousiaste de première classe!</textarea>
-				<select id="location" class="left profileInput">
-							<option selected="selected" value="75001">75001</option>
-							<option value="75002">75002</option>
-							<option value="75003">75003</option>
-							<option value="75004">75004</option>
-							<option value="75005">75005</option>
-				</select>
-				</div>
-				<button id="validate" class="right themeBtn">Validate</button>
 			</section>
-			<section id="eventsWrap" class="none animated">
+			<section id="eventsWrap" class="none animated centered">
 				<h2>Evènements à venir</h2>
+
+				<section id="eventsListWrap"></section>		
+			</section>
+			<section id="createEventWrap" class="animated none centered"> 
+			<h2>Créer votre évènement</h2>
+			<div id="createEventInputsWrap">
+			<label for="eventName">Event name</label>
+				<input id="eventName" type="text" class="input-field_create">
+			<label for="hour">A partir de</label>
+				<input id="eventHour" class="input-field_create" type="text" placeholder="20" maxlength="2"><b>h</b>
+				<input id="eventMinut" class="input-field_create" type="text" placeholder="00" maxlength="2">
+
+				<textarea id="eventDescription" type="text" placeholder="What is this all about"></textarea>
+				<button id="createEventBtn" class="left themeBtn">Create event</button>
+				<div class="loaderWrap none"> <img class="loader-event" src="/img/ajax-loader.gif"></div>	
+
+			</div>
 			</section>
 		</section>
 
-		<section id="contactWrap" class="animated none">
+		<section id="contactWrap" class="animated none centered">
 			<h2>We would like to hear from you</h2>
 			<form>
 				<input id="contactName" type="text" placeholder="full name">

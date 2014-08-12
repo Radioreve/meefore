@@ -34,6 +34,13 @@
 <glyph glyph-name="barcode" unicode="&#xe819;" d="m0-82l0 864 84 0 0-864-84 0z m123 0l0 864 20 0 0-864-20 0z m70 0l0 864 63 0 0-864-63 0z m92 0l0 864 28 0 0-864-28 0z m104 0l0 864 41 0 0-864-41 0z m56 0l0 864 18 0 0-864-18 0z m61 0l0 864 19 0 0-864-19 0z m45 0l0 864 82 0 0-864-82 0z m111 0l0 864 43 0 0-864-43 0z m102 0l0 864 9 0 0-864-9 0z m25 0l0 864 27 0 0-864-27 0z m68 0l0 864 20 0 0-864-20 0z m61 0l0 864 82 0 0-864-82 0z" horiz-adv-x="1000" />
 <glyph glyph-name="delicious" unicode="&#xe81a;" d="m0 350l0 500 500 0 0-500 500 0 0-500-500 0 0 500-500 0z" horiz-adv-x="1000" />
 <glyph glyph-name="glass-1" unicode="&#xe81b;" d="m0 811l1000 0-420-420 0-412 156 0 0-90-470 0 0 90 154 0 0 412z" horiz-adv-x="1000" />
+<glyph glyph-name="down-open-big" unicode="&#xe81c;" d="m63 570l370-356 372 356q22 26 48 0 26-22 0-48l-396-392q-22-22-48 0l-396 392q-26 26 0 48 24 24 50 0z" horiz-adv-x="866" />
+<glyph glyph-name="left-open-big" unicode="&#xe81d;" d="m452-20q26-26 0-48-26-26-48 0l-392 394q-24 24 0 50l392 394q22 26 48 0 26-22 0-48l-358-372z" horiz-adv-x="465" />
+<glyph glyph-name="right-open-big" unicode="&#xe81e;" d="m13-20l358 370-358 372q-26 26 0 48 26 26 48 0l392-394q24-26 0-50l-392-394q-22-26-48 0-26 22 0 48z" horiz-adv-x="465" />
+<glyph glyph-name="up-open-big" unicode="&#xe81f;" d="m804 130l-372 358-370-358q-26-22-50 0-24 24 0 50l396 390q26 26 48 0l396-390q24-26 0-50-26-22-48 0z" horiz-adv-x="864" />
+<glyph glyph-name="ok" unicode="&#xe820;" d="m625 676q38-20 49-63t-9-80l-260-469q-30-53-91-53-43 0-74 31l-209 207q-31 32-31 74t31 74 74 31 74-31l111-110 193 347q20 38 62 50t80-8z" horiz-adv-x="679" />
+<glyph glyph-name="plus" unicode="&#xe821;" d="m911 462l0-223-335 0 0-336-223 0 0 336-335 0 0 223 335 0 0 335 223 0 0-335 335 0z" horiz-adv-x="928" />
+<glyph glyph-name="minus" unicode="&#xe822;" d="m18 239l0 223 893 0 0-223-893 0z" horiz-adv-x="928" />
 </font>
 </defs>
 </svg>

@@ -1,0 +1,189 @@
+
+	#eventsWrap{
+		width: 750px;
+		height: 500px;
+		position:absolute;
+		margin:auto; 
+		top:0;
+		left:0;
+		bottom:0;
+		right:0; 
+	}
+	#createEvent{
+    margin-top: 4px;	
+    margin-right: 5px;
+    text-align: center; 
+    width: 39px;
+    height: 27px;
+    border: none;
+    color: rgb(255, 255, 255);
+    font-family: 'Ubuntu';
+    font-size: 1.2em;
+	
+    background: beige;
+}
+
+	#createEventIcon{
+		font-size: .8em;
+	
+		text-shadow: 0 0 1px rgb(131, 131, 131);
+		color: #2B2B2B;
+	
+}
+
+	#eventsListWrap{
+	margin-top:80px;
+	}
+	#eventsListWrap div:last-child{
+	border-bottom:none;
+	display: inline-block;
+}
+
+	#eventListWrap *{
+		color:#555;
+	}
+	#e-status{
+
+	}
+
+	#e-name{
+    text-align: left;
+
+	}
+	#e-host{
+
+	}
+
+	#e-location{
+
+	}
+
+	#e-hour{
+
+	}
+
+	#e-maxGuest{
+
+	}
+	
+	.eventItemWrap{
+    font-size: .9em;
+    height: 100px;
+    margin-bottom: 2px;
+    padding-top: 15px;
+	
+    -webkit-transition: all .15s;
+    transition: all .15s;
+    border-bottom: 1px solid #eee;
+    color: rgb(124, 124, 124);
+}
+	.eventItemWrap:hover{ 
+	   background: rgb(245, 245, 245);
+}
+	
+	.e-item{
+
+	}
+	.e-infos{
+    	border-bottom: 1px solid #dde;
+	
+    	height: 100%;
+}
+	.e-status{
+		width: 70px;	
+		font-size: .75em;
+		font-family: 'calibri';
+	
+		padding-top: 1px;
+		text-align: center;
+}
+	.e-weak{
+		font-size:.8em;
+		padding-top:1px;
+	}
+	.e-new{
+		color: green;
+	}
+
+	.e-name{
+	
+    font-weight: bolder;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+	.e-host{
+	
+}
+	.e-location{
+    display: inline-block;
+	
+    margin-right: 6px;
+}
+
+	.e-hour{
+	
+    float: left;
+    text-align: center;
+    font: bolder 1.1em 'Calibri';
+    width: 60px;
+    height: 20px;
+    padding: 5px;
+    margin: 0px 10px 0 0;
+    border: 1px solid rgb(255, 79, 79);
+    border-radius: 3px;
+    color: #FF6254;
+}
+	.e-max-guest{
+		width:100px;
+	}
+
+
+
+	/* CSS pour créer un évenements */
+
+	#createEventWrap{
+		width:400px;
+		height:300px;
+	}
+	#createEventInputsWrap{
+    margin-top: 50px;		
+	}
+
+	.input-field_create{
+    border: none;
+    outline: none;
+    width: 260px;
+    border-bottom: 1px solid #C2C2C2;
+
+} 
+#eventHour,  
+#eventMinut{
+	width:18px; 
+	border:none; 
+}
+#createEventWrap b {
+	padding-left:2px;
+	color:#353535;
+}
+	#createEventWrap label{
+		font-weight: bolder;
+		width: 80px;
+		padding-left: 2px;
+}
+#eventDescription{
+	border:none;
+	border-bottom:1px dashed #C7C7C7;
+	width:90%;
+	height:70px;
+	margin-top:10px;
+}
+#createEventBtn{
+	width: 30%;
+	margin-top: 20px;
+	border: none;
+	padding: 9px;
+	color:white;
+	background: #73E073;
+	text-transform: uppercase;
+	font-size: 10px;
+}

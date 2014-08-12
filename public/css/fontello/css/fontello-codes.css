@@ -27,3 +27,10 @@
 .icon-barcode:before { content: '\e819'; } /* '' */
 .icon-delicious:before { content: '\e81a'; } /* '' */
 .icon-glass-1:before { content: '\e81b'; } /* '' */
+.icon-down-open-big:before { content: '\e81c'; } /* '' */
+.icon-left-open-big:before { content: '\e81d'; } /* '' */
+.icon-right-open-big:before { content: '\e81e'; } /* '' */
+.icon-up-open-big:before { content: '\e81f'; } /* '' */
+.icon-ok:before { content: '\e820'; } /* '' */
+.icon-plus:before { content: '\e821'; } /* '' */
+.icon-minus:before { content: '\e822'; } /* '' */

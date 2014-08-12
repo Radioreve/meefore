@@ -11,9 +11,7 @@
 						    api_secret: config.cloudinary.api_secret
 						});
 
-		var cloudTag = cloudinary.uploader.image_upload_tag('helloWorld')
-
-		var mainTpl = swig.compileFile(__dirname + '/index.html');
+		var mainTpl  = swig.compileFile(__dirname + '/index.html');
 
 	module.exports = function(app,passport){
 
@@ -26,7 +24,6 @@
 		});
 
 		app.post('/signup', function(req,res,next){
-
 			passport.authenticate('local-signup',function(err,user,info){
 				if(err){
 					console.log('error with the database query');	
@@ -46,7 +43,6 @@
 		});
 
 		app.post('/login', function(req,res,next){
-
 			passport.authenticate('local-login',function(err,user,info){
 				if(err){
 					console.log('error with the database query');	
@@ -56,7 +52,8 @@
 					res.end();
 				}
 				else{
-					console.log('info : '+info.msg);
+					// Generating cloud uploadg tag with a specific signature, valid 1 hour
+					var cloudTag = cloudinary.uploader.image_upload_tag('hello_world',{public_id:user._id});
 					var token = jwt.sign(user, config.jwtSecret, { expiresInMinutes: 60*5 });
 	  				res.json(200,{
 	  					_id:         user._id,
@@ -65,7 +62,8 @@
 	  					age:         user.age,
 	  					location:    user.location,
 	  					description: user.description,
-	  					img_id:      user.img_id,
+	  					img_id:      user.img.id,
+	  					img_version: user.img.version,
 	  					msg:         info.msg,
 	  					token:       token,
 	  					cloudTag:    cloudTag
