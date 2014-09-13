@@ -8,7 +8,7 @@
 		});
 		mongoose.connection.on('error',function(err){
 			console.log('Connection to the database failed : '+err);
-		})
+		});
 	}
 
 	module.exports = db

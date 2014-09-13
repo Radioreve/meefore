@@ -1,189 +1,168 @@
-
-	#eventsWrap{
-		width: 750px;
-		height: 500px;
-		position:absolute;
-		margin:auto; 
-		top:0;
-		left:0;
-		bottom:0;
-		right:0; 
-	}
-	#createEvent{
-    margin-top: 4px;	
-    margin-right: 5px;
-    text-align: center; 
-    width: 39px;
-    height: 27px;
-    border: none;
-    color: rgb(255, 255, 255);
-    font-family: 'Ubuntu';
-    font-size: 1.2em;
-	
-    background: beige;
+#eventsWrap{
+	width: 750px;
+	position: absolute;
+	margin:auto;
+	margin-top: 80px;
+	top:0;
+	left:0;
+	bottom:0;
+	right:0;
 }
+#createEventIcon{
+	font-size: .8em;
+	text-shadow: 0 0 1px rgb(131, 131, 131);
+	color: #2B2B2B;
 
-	#createEventIcon{
-		font-size: .8em;
-	
-		text-shadow: 0 0 1px rgb(131, 131, 131);
-		color: #2B2B2B;
-	
 }
-
-	#eventsListWrap{
-	margin-top:80px;
-	}
-	#eventsListWrap div:last-child{
+#eventsListWrap{
+	margin-top: 50px;
+}
+#eventsListWrap div:last-child{
 	border-bottom:none;
+}
+#eventListWrap *{
+	color:#555;
+}
+#e-status{
+}
+#e-name{
+	text-align: left;
+}
+#e-host{
+}
+#e-location{
+}
+#e-hour{
+}
+#e-maxGuest{
+}
+.eventItemWrap{
+	font-size: .9em;
+	height: 200px;
+	margin-bottom: 2px;
+	padding-top: 15px;
+
+	-webkit-transition: all .15s;
+	transition: all .15s;
+	border-bottom: 1px solid #eee;
+	color: rgb(56, 56, 56);
+}
+.eventItemWrap:hover{
+	/* background: rgb(245, 245, 245); */
+}
+.e-item{
+}
+.e-infos{
+	border-bottom: 1px solid #dde;
+
+	height: 100%;
+}
+.e-status{
+	width: 70px;
+	font-size: .75em;
+	font-family: 'calibri';
+
+	padding-top: 1px;
+	text-align: center;
+}
+.e-weak{
+	font-size: .9em;
+
+	padding-top: 1px;
+}
+.e-new{
+	color: green;
+}
+.e-name{
+	font-weight: bolder;
+	text-transform: uppercase;
+	margin-bottom: 20px;
+	margin-right: 10px;
+	text-align: center;
+}
+.e-location{
 	display: inline-block;
+
+	margin-bottom: 5px;
+}
+.e-hour{
+	position: relative;
+	text-align: center;
+	font: bolder 1.7em 'Arial';
+	letter-spacing: -1px;
+	color: #64C55B;
+	bottom: 15px;
+	z-index: 20;
+	background: white;
+	border-top: 2px solid rgb(201, 201, 201);
+}
+.e-max-guest{
+	width:100px;
+}
+.e-head{
+	margin-right:20px;
+	height: 80px;
+	display:inline-block;
+}
+.e-body{
+	display:inline-block;
+	vertical-align: top;
+	margin-top: 15px;
+	margin-right: 10px;
+	width: 500px;
+}
+.e-body i.icon-lamp{
+	height:50px;
+	padding-top: 2px;
+}
+.e-row{
+	line-height:1.2em;
 }
 
-	#eventListWrap *{
-		color:#555;
-	}
-	#e-status{
-
-	}
-
-	#e-name{
-    text-align: left;
-
-	}
-	#e-host{
-
-	}
-
-	#e-location{
-
-	}
-
-	#e-hour{
-
-	}
-
-	#e-maxGuest{
-
-	}
-	
-	.eventItemWrap{
-    font-size: .9em;
-    height: 100px;
-    margin-bottom: 2px;
-    padding-top: 15px;
-	
-    -webkit-transition: all .15s;
-    transition: all .15s;
-    border-bottom: 1px solid #eee;
-    color: rgb(124, 124, 124);
+.askInWrap{
+	display: inline-block;
+	margin-top: 110px;
+	margin-bottom: 5px;
 }
-	.eventItemWrap:hover{ 
-	   background: rgb(245, 245, 245);
+/* CSS pour créer un évenements */
+#createEventWrap{
+	width: 500px;
+	height:300px;
 }
-	
-	.e-item{
-
-	}
-	.e-infos{
-    	border-bottom: 1px solid #dde;
-	
-    	height: 100%;
+#createEventInputsWrap{
+	margin-top: 50px;
 }
-	.e-status{
-		width: 70px;	
-		font-size: .75em;
-		font-family: 'calibri';
-	
-		padding-top: 1px;
-		text-align: center;
+.input-field_create{
+	border: none;
+	outline: none;
+	width: 260px;
+	/* border-bottom: 1px solid #C2C2C2; */
 }
-	.e-weak{
-		font-size:.8em;
-		padding-top:1px;
-	}
-	.e-new{
-		color: green;
-	}
-
-	.e-name{
-	
-    font-weight: bolder;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-}
-	.e-host{
-	
-}
-	.e-location{
-    display: inline-block;
-	
-    margin-right: 6px;
-}
-
-	.e-hour{
-	
-    float: left;
-    text-align: center;
-    font: bolder 1.1em 'Calibri';
-    width: 60px;
-    height: 20px;
-    padding: 5px;
-    margin: 0px 10px 0 0;
-    border: 1px solid rgb(255, 79, 79);
-    border-radius: 3px;
-    color: #FF6254;
-}
-	.e-max-guest{
-		width:100px;
-	}
-
-
-
-	/* CSS pour créer un évenements */
-
-	#createEventWrap{
-		width:400px;
-		height:300px;
-	}
-	#createEventInputsWrap{
-    margin-top: 50px;		
-	}
-
-	.input-field_create{
-    border: none;
-    outline: none;
-    width: 260px;
-    border-bottom: 1px solid #C2C2C2;
-
-} 
-#eventHour,  
+#eventHour,
 #eventMinut{
-	width:18px; 
-	border:none; 
+	width:18px;
+	border:none;
 }
 #createEventWrap b {
 	padding-left:2px;
 	color:#353535;
 }
-	#createEventWrap label{
-		font-weight: bolder;
-		width: 80px;
-		padding-left: 2px;
+#createEventWrap label{
+	/* font-weight: bolder; */
+	width: 110px;
+	padding-left: 2px;
+	text-align: right;
+}
+#createEventWrap .input-row-wrap{
+	margin-bottom:10px;
 }
 #eventDescription{
 	border:none;
 	border-bottom:1px dashed #C7C7C7;
 	width:90%;
 	height:70px;
-	margin-top:10px;
+	margin-top: 30px;
 }
 #createEventBtn{
-	width: 30%;
 	margin-top: 20px;
-	border: none;
-	padding: 9px;
-	color:white;
-	background: #73E073;
-	text-transform: uppercase;
-	font-size: 10px;
 }

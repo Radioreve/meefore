@@ -1,0 +1,70 @@
+.chatWrap{
+	position: absolute;
+	top: 37px;
+	left: 80px;
+	width: 500px;
+	height: 230px;
+	background: rgba(255,255,255,0.95);
+	box-shadow: 0px 0px 3px #73E073;
+	border: 2px solid #73E073;
+	padding: 30px 0 30px 0;
+	border-radius: 300px;
+}
+.chatLineWrap{
+	height: 80%;
+	overflow-x: hidden;
+}
+.chatInputWrap{
+	height: 20%;
+	text-align: center;
+	padding-top: 21px;
+}
+.chatLine{
+	padding: 0 70px 0 70px;
+
+	width: 360px;
+	text-align: center;
+}
+.cha{
+	font-size: .75em;
+	color: white;
+	padding: 10px;
+	border-radius: 4px;
+
+	display: inline-block;
+}
+.cha1{
+	background: #73E073;
+}
+.cha2{
+
+	border: 1px solid #73E073;
+	color: rgb(44, 43, 38);
+	margin: 10px 0 10px 0;
+}
+.chatInputWrap input[type="text"]{
+	width: 200px;
+	padding: 0 0 4px 13px;
+	font-size: .8em;
+	border: none;
+	border-bottom: 1px dashed #ccc;
+}
+.chatInputWrap input[type="submit"]{
+	width: 20px;
+	height: 20px;
+	border: none;
+	color: white;
+	background: #73E073;
+	border-radius: 30px;
+	font-size: .8em;
+}
+.tri{
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 20px 18px 20px 0;
+	border-color: transparent #73E073 transparent transparent;
+	position: absolute;
+	top: 125px;
+	left: -17px;
+}

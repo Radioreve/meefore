@@ -56,17 +56,21 @@
 					var cloudTag = cloudinary.uploader.image_upload_tag('hello_world',{public_id:user._id});
 					var token = jwt.sign(user, config.jwtSecret, { expiresInMinutes: 60*5 });
 	  				res.json(200,{
-	  					_id:         user._id,
-	  					email:       user.local.email,
-	  					name:        user.name,
-	  					age:         user.age,
-	  					location:    user.location,
-	  					description: user.description,
-	  					img_id:      user.img.id,
-	  					img_version: user.img.version,
-	  					msg:         info.msg,
-	  					token:       token,
-	  					cloudTag:    cloudTag
+	  					_id:         	 user._id,
+	  					email:       	 user.local.email,
+	  					name:        	 user.name,
+	  					age:         	 user.age,
+	  					phone:       	 user.phone,
+	  					status:      	 user.status,
+	  					location:    	 user.location,
+	  					description: 	 user.description,
+	  					img_id:      	 user.img.id,
+	  					img_version: 	 user.img.version,
+	  					eventsAskedList: user.eventsAskedList,
+	  					hostedEventId:   user.hostedEventId,
+	  					msg:         	 info.msg,
+	  					token:       	 token,
+	  					cloudTag:    	 cloudTag
 	  				});
 					res.end();
 				}

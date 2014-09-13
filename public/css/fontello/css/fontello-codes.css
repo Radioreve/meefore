@@ -34,3 +34,5 @@
 .icon-ok:before { content: '\e820'; } /* '' */
 .icon-plus:before { content: '\e821'; } /* '' */
 .icon-minus:before { content: '\e822'; } /* '' */
+.icon-direction:before { content: '\e823'; } /* '' */
+.icon-chat-alt:before { content: '\e824'; } /* '' */

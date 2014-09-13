@@ -1,7 +1,7 @@
 	
 			var passport  = require("passport"),
 			LocalStrategy = require("passport-local").Strategy,
-			User          = require("../models/user");
+			User          = require("../models/UserModel");
 
 
 	module.exports = function(passport){
@@ -54,6 +54,10 @@
 
 		            if (!user)
 		                return done(null, false,{msg:"No email matched"});
+
+		            if(!email)
+		            	return done(null,false,{msg:"No email provided"});
+		            
 
 		            if (!user.validPassword(password))
 		                return done(null, false, {msg:"Invalid credentials"});

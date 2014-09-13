@@ -1,103 +1,139 @@
-
-	<!DOCTYPE html>
-	<html lang="fr">
+<!DOCTYPE html>
+<html lang="fr">
 	<head>
 		<title>Socket auth</title>
 		<link href='http://fonts.googleapis.com/css?family=Francois+One' rel='stylesheet' type='text/css'>
-		<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'><link rel="stylesheet" href="/css/meyer.css">
-		<link rel="stylesheet" href="/css/fontello/css/fontello.css">
-		<link rel="stylesheet" href="/css/animate.css">
-		<link rel="stylesheet" href="/css/hint.css">
-		<link rel="stylesheet" href="/css/style.css">
-		<link rel="stylesheet" href="/css/events.css">
-	</head>
-	<body>
-	<div id="mainWrap" class="">
-	  <div id="toastSuccess" class="animated none"><span class="toast-icon icon icon-check"></span><span class="toastMsg"></span></div>
-	  <div id="toastError" class="animated none"><span class="toast-icon icon icon-cancel"></span><span class="toastMsg"></span></div>
-	  <span class="menuBtn menu icon icon-menu"   > Menu</span>
-	  <ul id="menuWrap" class="none animated fadeOutLeftSmall">
-		<li id="profile" class="left menu menu-item icon icon-user"    ><div>Settings</div></li>
-		<li id="events"  class="left menu menu-item menu-item-active icon icon-glass" ><div>Events</div></li>
-		<li id="create" class="left menu menu-item icon icon-plus"   ><div>Create</div></li>  
-		<li id="contact" class="left menu menu-item icon icon-mail"   ><div>Contact</div></li>
-	  </ul>
-	  <section id="contentWrap" class="animated">
-	    <section id="loginWrap" class="animated onscreen centered">
-		  <h2>Identifiez-vous!</h2>
-		  <div id="formWrap"  class="animated">
-		    <form autocomplete="off">
-			  <input class="input-field" type="text" id="email" placeholder="email">
-			  <input class="input-field" type="text" id="pw" placeholder="password">
-			  <div class="input-field" id="submitWrap">
-			    <input type="submit" class="themeBtn" id="login" value="login">
-			      <div id="bcm_member" class="animated sub-actions right">Devenir membre</div>
-			      <div id="lost_pw" class="sub-actions left">Mot de passe oublié ?</div>
-				  <div class="loaderWrap none"> <img class="loader-login-signup" src="/img/ajax-loader.gif"></div>	
-			  </div>
-			</form>
-		  </div>
-		</section>
-		<section id="signupWrap" class="animated none centered">
-			<h2>Inscrivez-vous</h2>
-				<div id="formWrap" class="animated">
-					<form>
-						<input class="input-field" type="text" id="emailSignup" placeholder="email">
-						<input class="input-field" type="text" id="pwSignup" placeholder="password">
-						<input class="input-field" type="text" id="pwCheckSignup" placeholder="password again">
-						<div class="input-field" id="submitWrap">
-							<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
-							<div id="b_to_login" class="animated sub-actions left">S'identifier</div>
-							<div class="loaderWrap none"> <img class="loader-login-signup" src="/img/ajax-loader.gif"></div>	
+			<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'><link rel="stylesheet" href="/css/meyer.css">
+			<link rel="stylesheet" href="/css/fontello/css/fontello.css">
+			<link rel="stylesheet" href="/css/animate.css">
+			<link rel="stylesheet" href="/css/hint.css">
+			<link rel="stylesheet" href="/css/style.css">
+			<link rel="stylesheet" href="/css/events.css">
+			<link rel="stylesheet" href="/css/manage.css">
+			<link rel="stylesheet" href="/css/chat.css">
+		</head>
+		<body>
+			<div id="mainWrap" class="">
+				<div id="toastSuccess" class="animated none"><span class="toast-icon icon icon-check"></span><span class="toastMsg"></span></div>
+				<div id="toastError" class="animated none"><span class="toast-icon icon icon-cancel"></span><span class="toastMsg"></span></div>
+				<div id="toastInfo" class="animated none"><span class="toast-icon icon icon-right-open-big"></span><span class="toastMsg"></span></div>
+				<span class="menuBtn menu icon icon-menu"   > Menu</span>
+				<ul id="menuWrap" class="none animated fadeOutLeftSmall">
+					<li id="profile" class="left menu menu-item menu-item-active icon icon-user"    ><span>Settings</span></li>
+					<li id="events"  class="left menu menu-item icon icon-glass" ><div class="none notif notif-events">5</div><span>Events</span></li>
+					<li id="create" class="left menu menu-item icon icon-plus"   ><div class="none notif notif-management">2</div><span>Create</span></li>
+					<li id="contact" class="left menu menu-item icon icon-mail"   ><span>Contact</span></li>
+				</ul>
+				<div id="thumbWrap" class="none animated">
+					<div id="thumbInfos">
+						<h2 id="thumbName"></h2>
+						<span id="logout">Log out</span>
+					</div>
+				</div>
+				<section id="contentWrap" class="animated">
+					<section id="loginWrap" class="animated onscreen centered">
+						<h2>Identifiez-vous!</h2>
+						<div id="formWrap"  class="animated">
+							<form autocomplete="off">
+								<input class="input-field" type="text" id="email" placeholder="email">
+								<input class="input-field" type="password" id="pw" placeholder="password">
+								<div class="input-field" id="submitWrap">
+									<input type="submit" class="themeBtn" id="login" value="login">
+									<div id="bcm_member" class="animated sub-actions right">Devenir membre</div>
+									<div id="lost_pw" class="sub-actions left">Mot de passe oublié ?</div>
+									<div class="loaderWrap none"> <img class="loader-login-signup" src="/img/ajax-loader.gif"></div>
+								</div>
+							</form>
 						</div>
-					</form>
+					</section>
+					<section id="signupWrap" class="animated none centered">
+						<h2>Inscrivez-vous</h2>
+						<div id="formWrap" class="animated">
+							<form>
+								<input class="input-field" type="text" id="emailSignup" placeholder="email">
+								<input class="input-field" type="password" id="pwSignup" placeholder="password">
+								<input class="input-field" type="password" id="pwCheckSignup" placeholder="password again">
+								<div class="input-field" id="submitWrap">
+									<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
+									<div id="b_to_login" class="animated sub-actions left">S'identifier</div>
+									<div class="loaderWrap none"> <img class="loader-login-signup" src="/img/ajax-loader.gif"></div>
+								</div>
+							</form>
+						</div>
+					</section>
+					<section id="profileWrap" class="none animated centered">
+						<h2>Account settings</h2>
+						<div class="progress_bar"></div>
+						<div id="pictureWrap"class="left hint--right" data-hint="click to edit your picture">
+							<img src="/img/person-placeholder.jpg" class="mainPicture" width="150">
+						<form class="upload_form"></form>
+						<h5 id="codebarre"><span class="icon icon-barcode"></span>53ef548dgk0847j6H7Y</h5>
+					</div>
+					<div class="fieldsWrap left">
+						<div class="input-row-wrap">
+							<label for="name">Name</label>
+							<input id="name" class="profileInput" placeholder="Prad Bitt" type="text" maxlength="25">
+						</div>
+						<div class="input-row-wrap">
+							<label for="age">Age</label>
+							<input id="age" class="profileInput" placeholder="25" type="number" max="50" min="18">
+						</div>
+						<div class="input-row-wrap">
+							<label for="phone">Tèl</label>
+							<div class="phoneWrap hint--right" data-hint="Uniquement affiché à l'organisateur de l'évènement">
+								<input id="phone" class="profileInput" placeholder="06" type="text" maxlength="10">
+							</div>
+						</div>
+						<div class="input-row-wrap">
+							<label class="labelTextArea" for="description">Who are you?</label>
+							<textarea id="description" class="profileInput" placeholder="Tell the world what you like"></textarea>
+						</div>
+					</div>
+					<button id="validate" class="right themeBtn">Validate</button>
+					<div class="loaderWrap none"> <img class="loader-profile" src="/img/ajax-loader.gif"></div>
+				</section>
+				<section id="eventsWrap" class="none animated centered">
+					<h2>Soirées à venir</h2>
+				<section id="eventsListWrap"></section>
+			</section>
+			<section id="createEventWrap" class="animated none centered">
+				<h2>Créer votre évènement</h2>
+				<div id="createEventInputsWrap">
+					<div class="input-row-wrap hint--right" data-hint="Restez simple et précis">
+						<label for="eventName">C'est quoi ? </label>
+						<input id="eventName" placeholder="Apéro, before, afterwork ..." type="text" class="input-field_create">
+					</div>
+					<div class="input-row-wrap hint--right" data-hint="Ne dévoilez jamais votre adresse exacte">
+						<label for="eventLocation">Où ça ? </label>
+						<input id="eventLocation" class="input-field_create" placeholder="Rue, métro, quartier..." maxlength="30" type="text">
+					</div>
+					<div class="input-row-wrap">
+						<label for="hour">Quand ça ?</label>
+						<input id="eventHour" class="input-field_create" type="text" placeholder="20" maxlength="2"><b>h</b>
+						<input id="eventMinut" class="input-field_create" type="text" placeholder="00" maxlength="2">
+					</div>
+					<textarea id="eventDescription" type="text" placeholder="What is this all about"></textarea>
+					<div class="loaderWrap none"> <img class="loader-event" src="/img/ajax-loader.gif"></div>
+					<button id="createEventBtn" class="right themeBtn">Create event</button>
 				</div>
 			</section>
-
-
-			<section id="profileWrap" class="none animated centered">
-		      	<h2>Account settings</h2>
-
-		      	<div class="progress_bar"></div>
-				<div id="pictureWrap"class="left hint--right" data-hint="click to edit your picture">
-					<img src="/img/person-placeholder.jpg" class="mainPicture" width="150">
-					<form class="upload_form"></form>
-					 <h5 id="codebarre"><span class="icon icon-barcode"></span>53ef548dgk0847j6H7Y</h5>
+			<section id="manageEventWrap" class="animated none centered">
+				<h2>Management de la soirée</h2>
+				<div id="cancelEvent">Annuler l'évènement</div>
+				<div id="askersListWrap">
 				</div>
-				<div class="fieldsWrap left">
-						<label for="name">Name</label>
-						<input id="name" class="profileInput" value="Jean Ronfleur" type="text" maxlength="25">
-						<label for="age">Age</label>
-						<input id="age" class="profileInput" value="25" type="number">
-						<textarea id="description" class="profileInput">Je suis un enthousiaste de première classe!</textarea>
-						
+				<div class="chatWrap">
+					<div class="tri"></div>
+					<div class="chatLineWrap">
+						<div class="chatLine"><div class="cha cha1">Salut! Je peux venir avec un ami?</div></div>
+						<div class="chatLine"><div class="cha cha2">Hum... ça dépend, il est mignon?^^</div></div>
+						<div class="chatLine"><div class="cha cha1">Je pense que tu seras pas déçu =) Est-ce que tu aurais un numéro ? </div></div>
+						<div class="chatLine"><div class="cha cha2">Envoi directement sa photo sur mon numéro ou sur le wall </div></div>
+					</div>
+					<div class="chatInputWrap"><input type="text" value="" placeholder="say something.."> <input type="submit" value="" </div>
 				</div>
-				<button id="validate" class="left themeBtn">Validate</button>
-			    <div class="loaderWrap none"> <img class="loader-profile" src="/img/ajax-loader.gif"></div>	
-
-			</section>
-			<section id="eventsWrap" class="none animated centered">
-				<h2>Evènements à venir</h2>
-
-				<section id="eventsListWrap"></section>		
-			</section>
-			<section id="createEventWrap" class="animated none centered"> 
-			<h2>Créer votre évènement</h2>
-			<div id="createEventInputsWrap">
-			<label for="eventName">Event name</label>
-				<input id="eventName" type="text" class="input-field_create">
-			<label for="hour">A partir de</label>
-				<input id="eventHour" class="input-field_create" type="text" placeholder="20" maxlength="2"><b>h</b>
-				<input id="eventMinut" class="input-field_create" type="text" placeholder="00" maxlength="2">
-
-				<textarea id="eventDescription" type="text" placeholder="What is this all about"></textarea>
-				<button id="createEventBtn" class="left themeBtn">Create event</button>
-				<div class="loaderWrap none"> <img class="loader-event" src="/img/ajax-loader.gif"></div>	
-
-			</div>
 			</section>
 		</section>
-
 		<section id="contactWrap" class="animated none centered">
 			<h2>We would like to hear from you</h2>
 			<form>
@@ -107,11 +143,11 @@
 			</form>
 			<button id="sendContactForm" class="right themeBtn">Envoyer</button>
 		</section>
-
 	</div>
 	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="/js/jquery.cloudinary.js"></script>
+	<script src="/js/lodash.js"></script>
 	<script src="/js/lj.js"></script>
-	</body>
-	</html>
+</body>
+</html>

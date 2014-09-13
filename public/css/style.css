@@ -1,383 +1,405 @@
-	*{
-
-	}
-
-	html{
-		height:100%; 
-		background: #E6E6E6;
-	} 
-
-	body{  
-		/* min-height:100%; */
-		background: white;
-		margin: 10px;
-		box-shadow: 0 0 5px #C0C0C0;
-		font-family: 'Ubuntu';
-		} 
-
-	p,
-	textarea,
-	input{
-		font-size: 14px;
-		line-height: 20px;
-		font-family:'Ubuntu','Calibri','sans serif';
-		resize: none;
-		outline: none;
-	}
-
-   h2{
-		font: bold 16px 'Francois One';
-		text-transform: uppercase;
-		text-align: center;
-	}
-
-	h3{
-		font:bold 14px 'Francois One';
-		text-transform:uppercase;
-	}
-	label{
-		font-size:.9em;
-		font-weight:bolder;
-		margin-right: 15px;
-		padding-top:10px;
-		height:30px;
-		width:33px;
-		display:inline-block;
-	}
-	.right{float:right;}
-	.left{float:left;}
-	.none{display: none !important;}
-
-	.centered{
-		position:absolute;
-		margin:auto;
-		top:0;
-		left:0;
-		right:0;
-		bottom:0;
-		height:0;
-	}
-
-	.loader-login-signup{
+*{
+}
+html{
+}
+body{
+	/* min-height:100%; */
+	background: white;
+	margin: 10px;
+	box-shadow: 0 0 5px #C0C0C0;
+	font-family: 'Ubuntu';
+}
+p,
+textarea,
+input{
+	font-size: 14px;
+	line-height: 20px;
+	font-family:'Ubuntu','Calibri','sans serif';
+	resize: none;
+	outline: none;
+}
+h2{
+	font: bold 16px 'Francois One';
+	text-transform: uppercase;
+	text-align: center;
+}
+h3{
+	font:bold 14px 'Francois One';
+	text-transform:uppercase;
+}
+label{
+	font-size:.9em;
+	font-family: 'Corbel';
+	font-weight:bolder;
+	margin-right: 15px;
+	padding-top:10px;
+	width: 95px;
+	text-align: right;
+	display:inline-block;
+}
+.labelTextArea{
+	vertical-align:top;
+}
+.right{float:right;}
+.left{float:left;}
+.none{display: none !important;}
+.centered{
+	position:absolute;
+	margin:auto;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
+	height:0;
+}
+.loader-login-signup{
 	width: 22px;
 	position: absolute;
 	right: -23px;
 	top: 17px;
-	}
-
-	.loader-profile{
-    margin-top: 10px;	
-    width: 22px;
-	}
-
-	.loader-event{
-    margin-top: 24px;
-    margin-left: 5px;
-    width: 22px;
-	}
-
-	#mainWrap{ height: 96vh; }	
-	#toastSuccess,
-	#toastError{
-		position: absolute;
-		font: .8em 'Ubuntu';
-		margin: auto;
-		height: 16px;
-		background: rgb(234, 255, 219);
-		color: rgb(83, 100, 53);
-		border-radius: 3px;
-		border: 1px solid rgb(173, 241, 124);
-		padding: 7px;
-		padding-top: 8px;
-		left: 0;
-		right: 0;
-		top: 20px;
-		width: 210px;
-		text-align: center;
-	}
-	#toastError{
-		background: rgb(255, 228, 232);
-	
-		border: 1px solid rgb(255, 190, 190);
 }
-	
-	.toast-icon{
-	    position: absolute;	
-	    left: 0px;
-	    background: #65C765;
-	    height: 25px;
-	    border-radius: 3px 0 0 3px;
-	    width: 30px;
-	    padding-top: 7px;
-	    top: 0px;
-	    color: white;
-	}
-	#toastError .toast-icon{
-		background: rgb(243, 143, 143);
-	}
-
-	.menuBtn{
-    left: 50px;
-    -webkit-transition: all .6s;
-    transition: all .6s;
-	}
-	.menuBtnActive{
-		left:30px;
-		color: #919191!important;
-	}
- 	#menuWrap{
- 		top:40px;
- 		width: 200px;
- 		height: 330px;
- 		position: relative;
- 		margin-left: 50px;
-	}
-	#contact{
- 	}
-	#events{ 
- 	}
-	#profile{   
- 	} 
-	.menu{
-		top:40px;
-		color: #444;
-		position: absolute;
-		z-index: 9;
-		font-family: 'Calibri';
-		font-size: 1.2em;
-	}
-	.menu-item{
-	    font-size: 1em;
-	    padding: 2px;
-	    padding-top: 4px;
-	    padding-left: 12px;
-	    margin-bottom: 3px;
-	    width: 100px;
-	    height: 21px;
-	    border-radius: 2px;
-	    position: relative;
-	}	
-	.menu-item:hover{
-		cursor:pointer;
-		background: #F3F3F3;
-	} 
-	.menu-item-active,
-	.menu-item-active:hover{
-    background: #73E073;
-    color: white;
-	}
-	.menu-item div{
-		display:inline;
-		margin-left: 5px;
-	}
-	#contact{
-	}
-	.menuBtn:hover,
-	#contact:hover{
-		cursor:pointer;
-	}
-	#loginWrap, #signupWrap,#contactWrap{
-	  height: 280px;
-	  margin: auto; 
-	  padding:10px;
-	}
-	#loginWrap,
-	#signupWrap{
-		width:400px;
-	}
-
-	#loginWrap #formWrap, #signupWrap #formWrap{
-		margin-top:20px;
-	}
-	#loginWrap #submitWrap, #signupWrap #submitWrap{
-		border:none;
-		width: 80%;
-		height: 80px;
-		position: relative;
+.loader-profile{
+	width: 22px;
+	position: absolute;
+	bottom: -47px;
+	right: -5px;
 }
-	#loginWrap #submitWrap input,
-	#signupWrap #submitWrap input{
-		width: 100%;
-		border: none;
-		padding: 9px;
-		color:white;
-		text-transform: uppercase;
-		font-size: 10px;		
-	}
-	
+.loader-event{
+	margin-top: 24px;
+	width: 22px;
+	float: right;
+	position: absolute;
+	right: -30px;
+}
+#mainWrap{
+}
+#toastSuccess,
+#toastError,
+#toastInfo{
+	position: absolute;
+	font: .8em 'Ubuntu';
+	margin: auto;
+	height: 16px;
+	background: rgb(218, 255, 192);
+	color: rgb(68, 68, 68);
+	border-radius: 5px 5px 0 0;
+	padding: 7px;
+	padding-top: 8px;
+	left: 0;
+	right: 0;
+	top: 20px;
+	width: 410px;
+	text-align: center;
+}
+#toastError{
+	background: rgb(255, 228, 232);
+}
+#toastInfo{
+	background: rgb(231, 229, 255);
+}
+.toast-icon{
+	position: absolute;
+	left: 0px;
+	background: #7BBE7B;
+	height: 24px;
+	border-radius: 3px 0 0 3px;
+	width: 30px;
+	padding-top: 7px;
+	top: 0px;
+	color: white;
+}
+#toastError .toast-icon{
+	background: rgb(243, 143, 143);
+}
+#toastInfo .toast-icon{
+	background: rgb(164, 185, 216);
+}
+.menuBtn{
+	left: 50px;
+	-webkit-transition: all .6s;
+	transition: all .6s;
+}
+.menuBtnActive{
+	left:30px;
+	color: #919191!important;
+}
+#menuWrap{
+	top:40px;
+	width: 200px;
+	height: 330px;
+	position: relative;
+	display: inline-block;
+	margin-left: 50px;
+}
+#contact{
+}
+#events{
+}
+#profile{
+}
+.menu{
+	top:40px;
+	color: #444;
+	position: absolute;
+	z-index: 9;
+	font-family: 'Calibri';
+	font-size: 1.2em;
+}
+.menu-item{
+	font-size: 1em;
+	padding: 2px;
+	padding-top: 4px;
+	padding-left: 12px;
+	margin-bottom: 3px;
+	width: 130px;
+	height: 21px;
+	border-radius: 2px;
+	position: relative;
+}
+.menu-item span{
+	margin-left:10px;
+}
+.menu-item:hover{
+	cursor:pointer;
+	background: #F3F3F3;
+}
+.menu-item-active,
+.menu-item-active:hover{
+	background: #73E073;
+	color: white;
+}
+.menu-item div{
+	display:inline;
+	margin-left: 5px;
+}
+.notif{
+	color: white;
+	text-align: center;
+	background: rgb(74, 182, 74);
+	font-size: 0.9em;
+	width: 23px;
+	height: 17px;
+	position: absolute;
+	right: -30px;
+	top: 3px;
+	border-radius: 40px;
+	padding-top: 3px;
+}
+.notif-events{
+
+}
+#contact{
+}
+.menuBtn:hover,
+#contact:hover{
+	cursor:pointer;
+}
+#loginWrap, #signupWrap,#contactWrap{
+	height: 280px;
+	margin: auto;
+	padding:10px;
+}
+#loginWrap,
+#signupWrap{
+	width:400px;
+}
+#loginWrap #formWrap, #signupWrap #formWrap{
+	margin-top:20px;
+}
+#loginWrap #submitWrap, #signupWrap #submitWrap{
+	border:none;
+	width: 80%;
+	height: 80px;
+	position: relative;
+}
+#loginWrap #submitWrap input,
+#signupWrap #submitWrap input{
+	width: 100%;
+	height: 40px;
+	border: none;
+	padding: 9px;
+	color:white;
+	text-transform: uppercase;
+	font-size: 10px;
+}
+.themeBtn{
+	width: 120px;
+	height: 34px;
+	border: none;
+	padding:9px;
+	background: #73E073;
+	color: white;
+	text-transform: uppercase;
+	font-size: 10px;
+	outline:none;
+	-webkit-transition: all 0.1s;
+	transition: all 0.1s;
+}
 .themeBtn:hover{
-		box-shadow: 1px 1px 1px rgb(104, 165, 89); 
-		opacity: .9;
+	box-shadow: 1px 1px 1px rgb(104, 165, 89);
+	opacity: .9;
+}
+#loginWrap #submitWrap #login,
+#signupWrap #submitWrap #signup{
+	background: #73E073;
+	color: #FFF;
+	border: none;
 }
 
-
-	#loginWrap #submitWrap #login,
-	#signupWrap #submitWrap #signup{
-		background: #73E073;
-		color: #FFF;
-		border: none;
-	}   
-
-		
-	.input-field{
-    	width: 70%;
-    	border: 1px solid #A3A3A3;
-	    margin: 7px auto;		 
-    	display: block; 
-    	padding: 9px;	
-    	border-radius: 3px 3px 0 0;
-	} 
-	.input-field:focus{
-		box-shadow: 1px 1px 5px #CECECE;
-	}
-	#loginWrap #submitWrap .sub-actions,
-	#signupWrap #submitWrap .sub-actions{
-		margin-top: 10px;
-		font: 12px 'Ubuntu';
-		text-decoration: underline;
-		width: 100x;
-}
-	 .sub-actions:hover{
-		cursor:pointer;
-	}
-
-	/*    CSS concernant le profile utilisateur   */
-	#profileWrap{
-		width: 750px;
-		height: 300px;
-		margin: 0;
-		padding: 20px;
-		position: absolute;
-		top: 70px;
-		left: 300px;
-		right: 0;
-		bottom: 0;
-}
-	#pictureWrap{
-		text-align:center;
-		background: rgb(245,245,245);
-		box-shadow: 0 2px 2px #DFDFDF;
-		padding-bottom: 15px;
-		border:1px dashed transparent;
-		width: 180px;
-		padding-top: 6px;
-		margin: 0 auto;
-		height: 160px;
-		-webkit-transition: all .4s;
-		transition: all .4s;
-	}
-	#pictureWrap:hover{
-		border:1px double #dde;
-	}
-	
-	.fieldsWrap{
-		width: 520px;
-		margin-left: 40px;
-		height: 170px;
-}
-	.fieldsWrap input, .fieldsWrap textarea{
-		padding: 10px 0 5px 0px;	
-		border: none;
-		border-bottom: 1px solid #ddd;
-}
-	#profileWrap h2{
-    margin-bottom: 40px;
-	}
-
-	#profileWrap h5{
-    font-size: .7em;
-    text-align: center;
-    color: #888;
-    margin-top: 20px;
-    width: 100%;
-	}
-	#profileWrap h5 span{
-		margin-right:5px;
-		font-size:1.1em;
-	}
-	#name{
-		width:180px;
-		margin-right: 30px;
-	}
-	#age{
-		width: 40px;
-		margin-right: 160px;
-}
-
-	#profileWrap textarea{
+.input-field{
 	width: 70%;
-	height: 25px;
+	border: 1px solid #A3A3A3;
+	margin: 7px auto;
+	display: block;
+	padding: 9px;
+	border-radius: 3px 3px 0 0;
+}
+.input-field:focus{
+	box-shadow: 1px 1px 5px #CECECE;
+}
+#loginWrap #submitWrap .sub-actions,
+#signupWrap #submitWrap .sub-actions{
+	margin-top: 10px;
+	font: 12px 'Ubuntu';
+	text-decoration: underline;
+	width: 100x;
+}
+.sub-actions:hover{
+	cursor:pointer;
+}
+/*    CSS concernant le profile utilisateur   */
+#profileWrap{
+	width: 750px;
+	height: 300px;
+	margin: 0;
+	padding: 20px;
+	position: absolute;
+	top: 70px;
+	left: 300px;
+	right: 0;
+	bottom: 0;
+}
+#pictureWrap{
+	text-align:center;
+	background: rgb(245,245,245);
+	box-shadow: 0 2px 2px #DFDFDF;
+	padding-bottom: 15px;
+	border:1px dashed transparent;
+	width: 180px;
+	padding-top: 6px;
+	margin: 0 auto;
+	height: 160px;
+	-webkit-transition: all .4s;
+	transition: all .4s;
+}
+#pictureWrap:hover{
+	border:1px double #dde;
+}
+.fieldsWrap{
+	width: 520px;
+	margin-left: 40px;
+	height: 250px;
+}
+.fieldsWrap input{
+	padding: 10px 0 5px 10px;
+	border: none;
+	/* border-bottom: 1px solid #ddd; */
+}
+.fieldsWrap textarea{
+	padding-top:6px;
+}
+.fieldsWrap .input-row-wrap:last-child{
+	margin-top:10px;
+}
+#profileWrap h2{
+	margin-bottom: 40px;
+}
+#profileWrap h5{
+	font-size: .7em;
+	text-align: center;
+	color: #888;
+	margin-top: 20px;
+	width: 100%;
+}
+#profileWrap h5 span{
+	margin-right:5px;
+	font-size:1.1em;
+}
+#name{
+	width:180px;
+}
+#age{
+	width: 40px;
+}
+#profileWrap textarea{
+	width: 70%;
+	padding-top: 6px;
+	padding-left: 10px;
+	height: 100px;
+	border: none;
+}
+#profileWrap #validate{
+
+	margin: 6px 6px 0 35px;
+}
+.profileInput{
+	-webkit-transition: all .5s;
+	transition: all .5s;
+}
+.modified{
+	color: rgb(233, 52, 7);
+}
+.validating{
+	background: #F3F3F3;
+	border-radius: 3px 3px 0 0;
+}
+.validating-btn{
+	background:#E6E6E6;
+	color:rgb(60,60,60);
+}
+.validating-btn:hover{
+	box-shadow:none;
+}
+.mainPicture{
+	padding:9px;
+	background:white;
+}
+.progress_bar{
+	height: 3px;
+	width: 0%;
+	background: #73E073;
+	border-radius: 3px;
+	margin-bottom: 20px;
+	-webkit-transition: width .9s;
+	transition: width .9s;
+	text-align: center;
+	box-shadow: 0 2px 1px rgb(182, 255, 197);
+	color: white;
+	font-size: 0.8em;
 }
 
-	#profileWrap #validate{
-		width: 80px;
-	    
-		border-radius: 3px;
-		height: 30px; 
-		background: #73E073;   
-		border: none;
-		color: white;
-		margin: 6px 6px 0 35px;
-	}
-	.profileInput{
-		-webkit-transition: all .5s;
-		transition: all .5s;	
-	}
-	.validating{
-		background: #F3F3F3;
-        border-radius: 3px 3px 0 0; 
-	}
-	.mainPicture{
-		padding:9px;
-		background:white;
-	}
-	.progress_bar{
-		height: 3px;
-		width: 0%;
-		background: #73E073;
-		border-radius: 3px;
-		margin-bottom: 20px;
-		-webkit-transition: width .9s;
-		transition: width .9s; 
-		text-align: center;
-		box-shadow: 0 2px 1px rgb(182, 255, 197);
-		color: white;
-		font-size: 0.8em;
+#contactWrap{
+	width:600px;
+	top: 0;
 }
-		
-
-	#contactWrap{
-		width:600px;
-	}
-
-	#contactWrap input{
-		width: 40%;
-		padding:5px;
-		margin: 30px 38px 30px 0;
-		border: none;
-		border-bottom: 1px solid rgb(197, 197, 197);
-	}
-	
-	#contactWrap form #contactName{
-	}
-	#contactWrap #contactBody{
-		padding: 5px;
-		width:90%; 
-		border: none;
-		border-bottom: 1px solid rgb(201, 201, 201);
-		min-height: 100px;
-		outline: none;
-	}
-	#contactWrap #sendContactForm{
-    width: 100px;
-    height: 34px;
-    border: none;
-    background: #73E073;
-    color: white;
-    margin: 10px 20px 0 0;
-	}
-
-
+#contactWrap input{
+	width: 40%;
+	padding:5px;
+	margin: 30px 38px 30px 0;
+	border: none;
+	/* border-bottom: 1px solid rgb(197, 197, 197); */
+}
+#contactWrap #contactBody{
+	padding: 5px;
+	width:90%;
+	border: none;
+	border-bottom: 1px dashed rgb(201, 201, 201);
+	min-height: 100px;
+	outline: none;
+}
+#contactWrap #sendContactForm{
+	margin: 10px 20px 0 0;
+}
 /*various hacks*/
 .upload_form{
 	position: absolute;
@@ -391,4 +413,31 @@
 	top: 0;
 	left: 0;
 	opacity: 0.01;
+}
+#thumbWrap{
+	display: inline-block;
+	position: absolute;
+	width: 220px;
+	height: 50px;
+	top: 50px;
+	left: 1110px;
+}
+#thumbInfos{
+	margin-left:8px;
+	margin-top: 2px;
+	display: inline-block;
+}
+#thumbName{
+	font-weight:normal;
+	text-align: left;
+	/* display: inline-block; */
+}
+#logout{
+	font-size: .8em;
+
+}
+#logout:hover,
+#cancelEvent:hover{
+	cursor:pointer;
+	text-decoration:underline;
 }
