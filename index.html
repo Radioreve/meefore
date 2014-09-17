@@ -4,6 +4,7 @@
 		<title>Socket auth</title>
 		<link href='http://fonts.googleapis.com/css?family=Francois+One' rel='stylesheet' type='text/css'>
 			<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'><link rel="stylesheet" href="/css/meyer.css">
+			<link rel="stylesheet" href="/css/jscrollpane.css">
 			<link rel="stylesheet" href="/css/fontello/css/fontello.css">
 			<link rel="stylesheet" href="/css/animate.css">
 			<link rel="stylesheet" href="/css/hint.css">
@@ -79,12 +80,6 @@
 							<input id="age" class="profileInput" placeholder="25" type="number" max="50" min="18">
 						</div>
 						<div class="input-row-wrap">
-							<label for="phone">Tèl</label>
-							<div class="phoneWrap hint--right" data-hint="Uniquement affiché à l'organisateur de l'évènement">
-								<input id="phone" class="profileInput" placeholder="06" type="text" maxlength="10">
-							</div>
-						</div>
-						<div class="input-row-wrap">
 							<label class="labelTextArea" for="description">Who are you?</label>
 							<textarea id="description" class="profileInput" placeholder="Tell the world what you like"></textarea>
 						</div>
@@ -122,16 +117,6 @@
 				<div id="cancelEvent">Annuler l'évènement</div>
 				<div id="askersListWrap">
 				</div>
-				<div class="chatWrap">
-					<div class="tri"></div>
-					<div class="chatLineWrap">
-						<div class="chatLine"><div class="cha cha1">Salut! Je peux venir avec un ami?</div></div>
-						<div class="chatLine"><div class="cha cha2">Hum... ça dépend, il est mignon?^^</div></div>
-						<div class="chatLine"><div class="cha cha1">Je pense que tu seras pas déçu =) Est-ce que tu aurais un numéro ? </div></div>
-						<div class="chatLine"><div class="cha cha2">Envoi directement sa photo sur mon numéro ou sur le wall </div></div>
-					</div>
-					<div class="chatInputWrap"><input type="text" value="" placeholder="say something.."> <input type="submit" value="" </div>
-				</div>
 			</section>
 		</section>
 		<section id="contactWrap" class="animated none centered">
@@ -143,11 +128,12 @@
 			</form>
 			<button id="sendContactForm" class="right themeBtn">Envoyer</button>
 		</section>
-	</div>
+		
 	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="/js/jquery.cloudinary.js"></script>
 	<script src="/js/lodash.js"></script>
+	<script src="/js/jscrollpane.js"></script>
 	<script src="/js/lj.js"></script>
 </body>
 </html>

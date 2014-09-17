@@ -76,7 +76,7 @@ label{
 #toastSuccess,
 #toastError,
 #toastInfo{
-	position: absolute;
+	position: fixed;
 	font: .8em 'Ubuntu';
 	margin: auto;
 	height: 16px;
@@ -90,6 +90,7 @@ label{
 	top: 20px;
 	width: 410px;
 	text-align: center;
+	z-index:100;
 }
 #toastError{
 	background: rgb(255, 228, 232);

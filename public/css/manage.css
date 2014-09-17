@@ -2,7 +2,7 @@
 	width: 800px;
 	height: 400px;
 }
-
+ 
 #cancelEvent{
 	width: 130px; 
 	font-size: .8em;
@@ -11,7 +11,6 @@
 }
 #askersListWrap{
     font-size: .9em;
-
     margin-top: 50px;
 }
 .a-row{
@@ -24,7 +23,8 @@
 	padding: 5px 5px 3px 5px;
 	border: 1px solid rgb(231, 231, 231);
 	border-radius: 3px;
-	box-shadow: 0 0 10px rgb(236, 236, 236);
+	transition: all .4s;
+	transition: siblings('.askInWrap').find('button').hasClass('validating-btn');
 }
 .askerInfos{
 	height: 100%;
@@ -41,10 +41,14 @@
 }
 .a-desc{
     margin-left: 10px;
-
 }
 .a-age{
 	font-size: .9em;
 	color: #aaa;
 	width: 40px;
+}
+.a-active{
+	-webkit-box-shadow: 0 0 15px #73E073;
+	box-shadow: 0 0 15px #73E073;
+	border: 1px solid rgb(112, 213, 112);
 }

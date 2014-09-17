@@ -28,7 +28,7 @@
 
 		io.on('connection', function(socket){
 			 console.log(socket.decoded_token.local.email + ' has joined the stream');
-			 require('./events')(socket);
+			 require('./events')(socket,io);
 		});
 
 		//Loading the server

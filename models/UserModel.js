@@ -31,9 +31,6 @@ var UserSchema = new mongoose.Schema({
     type: String,
     default:"Inconnu"
   },
-  phone: {
-    type: String
-  },
   img: {
     id:{   // id is used client side by cloudinary to build url
     type: String,
@@ -54,6 +51,10 @@ var UserSchema = new mongoose.Schema({
   },
   hostedEventId:{
     type:String
+  },
+  socketRooms:{
+    type:Array,
+    default:[]
   }
 
 });

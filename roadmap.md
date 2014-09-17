@@ -1,23 +1,22 @@
 
-	
+#Currently
+
+	- Intégrer le chat 
 
 #Mandatory
-
-	- nodemailer  
-	- mot de passe oublié  (send reset form)
-	- critère de recherche. Typeahead? 
-	- validation clientside
-	- socials signins with passport !important 
-	- check phone avant de postuler pour event
-	- faire une homepage avec possibilité de Logout quand m..
-	- admin page de l'event
-	- lazy loading sur les events
-	- fonction showModal, notamment pour la première vue, avec background blanc transparent
+	
+	- Gérer la fin/suspension/annulation 
+	- AddOneEvent & UpdateThumbPicture à dev
+	- Lazy loading sur les events
+	- Nodemailer (email bienvenue + mot de passe oublié)  
+	- Critère de recherche. Typeahead? 
+	- Validation clientside, validaton server side
+	- Socials signins with passport 
+	- Fonction showModal(), notamment pour la première vue, avec background blanc transparent
 
 
 #Autre 
 
-	- validation serverside
 	- Intégrer une vue générale avec une MAP et des pins correspondant aux soirées
 	- appli mobile ?
 	- cloudinary : public_id , signed.isValid() & regen Timer

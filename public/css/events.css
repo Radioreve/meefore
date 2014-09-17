@@ -17,8 +17,8 @@
 #eventsListWrap{
 	margin-top: 50px;
 }
-#eventsListWrap div:last-child{
-	border-bottom:none;
+#eventsListWrap div.eventItemWrap:last-child{
+	 border-bottom:none;
 }
 #eventListWrap *{
 	color:#555;
@@ -38,8 +38,7 @@
 }
 .eventItemWrap{
 	font-size: .9em;
-	height: 200px;
-	margin-bottom: 2px;
+	height: 150px;
 	padding-top: 15px;
 
 	-webkit-transition: all .15s;
@@ -82,7 +81,6 @@
 }
 .e-location{
 	display: inline-block;
-
 	margin-bottom: 5px;
 }
 .e-hour{
@@ -101,8 +99,17 @@
 }
 .e-head{
 	margin-right:20px;
-	height: 80px;
+	-webkit-transition: box-shadow 0.4s;
+	transition: box-shadow 0.4s;
+	height: 70px;
 	display:inline-block;
+}
+.e-head:hover{
+	cursor:pointer;
+}
+.e-active{
+	-webkit-box-shadow: 0 0 25px green;
+	box-shadow: 0 0 25px green;
 }
 .e-body{
 	display:inline-block;

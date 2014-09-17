@@ -15,7 +15,7 @@ window.LJ = {
 				cloud_name :"radioreve",
 				width:150,
 				height:150,
-				effect:'grayscale',
+			//	effect:'grayscale',
 				crop:'fill',
 				gravity:'face'
 		},
@@ -23,7 +23,7 @@ window.LJ = {
 				cloud_name :"radioreve",
 				width:80,
 				height:80,
-				effect:'grayscale',
+			//	effect:'sepia',
 				crop:'fill',
 				gravity:'face',
 				radius:'max'
@@ -32,7 +32,7 @@ window.LJ = {
 				cloud_name :"radioreve",
 				width:50,
 				height:50,
-				effect:'grayscale',
+			//	effect:'grayscale',
 				crop:'fill',
 				gravity:'face',
 				radius:'max'
@@ -43,7 +43,7 @@ window.LJ = {
                 height:45,
                 crop:'fill',
                 gravity:'face',
-                effect:'grayscale',
+            //   effect:'grayscale',
                 radius:7
         }
 	},
@@ -65,7 +65,9 @@ window.LJ = {
 	state: {
 		fetchingEvents: false,
         fetchingAskers: false,
-		animating: false
+		animatingContent: false,
+		animatingChat: false,
+		jspAPI:{}
 	},
 
 		$loginWrap		 	  : $('#loginWrap'),
@@ -176,33 +178,40 @@ window.LJ = {
 						$(this).removeClass('text-active').val('');}
 					else{$(this).addClass('text-active');}
 				}); 
+
+				$('body').on('mousedown','.chatWrap',function(){
+              		 if(!$(this).hasClass('chat-active')){
+	                	 $('.chatWrap').removeClass('chat-active');
+	                	 $(this).addClass('chat-active');
+	                	 $(this).find('input[type="text"]').focus();
+               		}
+            	});
+
+            	$('body').on('keypress','.chatInputWrap input[type="text"]', function(e){
+            		if(e.which=='13'){
+            			$(this).siblings('input[type="submit"]').click();
+            		}
+            	});
 			
 			})();
 				
 		},
 		handleDomEvents: function(){
-			//============= LOGIN AND SIGNUP=========
 			LJ.$signupBtn.click(function(e){ 
 				e.preventDefault(); 
 				console.log('About to Signup User')
 				LJ.fn.signupUser(); 
 			});
-
 			LJ.$loginBtn.click(function(e){	
 				e.preventDefault();
 				LJ.fn.loginUser();	
 			});
-
 			LJ.$becomeMember.click(function(){
 				LJ.fn.displayContent(LJ.$signupWrap);
 			});
-
 			LJ.$backToLogin.click(function(){
 				LJ.fn.displayContent(LJ.$loginWrap);
 			});
-
-
-			//===============MENU=================
 			LJ.$menuBtn.click(function(){
 				LJ.fn.toggleMenu();
 			});
@@ -230,26 +239,33 @@ window.LJ = {
 				  LJ.fn.displayContent(LJ.$eventsWrap);
 				}
 			});
-
 			LJ.$validateBtn.click(function(){
 				LJ.fn.updateProfile();
 			});
-
 			$('body').on('click','.askIn',function(){
 				if(!$(this).hasClass('validating-btn')){
 					LJ.fn.requestIn($(this)); 
 					$(this).text('En attente');
 				}
-			});
-			
-			//============EVENTS====================
+			});		
 			LJ.$createEventBtn.click(function(){
 				LJ.fn.createEvent();
 			});
-
 			LJ.$logout.click(function(){
 				location.reload();
 			});	
+            LJ.$askersListWrap.on('click','.askerPicture img',function(){
+            	LJ.fn.toggleChatWrapAskers($(this));     
+            });
+            LJ.$eventsListWrap.on('click', '.e-head', function(){
+                LJ.fn.toggleChatWrapEvents($(this));
+            });
+            $('body').on('click','.chatInputWrap input[type="submit"]', function(e){
+            	e.preventDefault();
+            	e.stopPropagation();
+            	LJ.fn.sendChat($(this));
+            	//LJ.fn.addChatLine($(this));
+            });
 			
 
 
@@ -351,6 +367,7 @@ window.LJ = {
 				// Internal State Update
 				LJ.fn.setClientSettings(user);
 				LJ.fn.fetchEvents();
+				LJ.fn.loadRooms(LJ.user._id);
 
 				// User Interface Update
 				LJ.$loaderWrap.addClass('none');
@@ -411,13 +428,14 @@ window.LJ = {
 				$('.loaderWrap').addClass('none');
 			});
 		},
-		fadeIn: function(el){
+		fadeIn: function(el,none){
 			el.removeClass('fadeOutRight none').addClass('fadeInLeft');
 		},
 		fadeOut: function(el,none){
-			el.addClass('fadeOutRight');
-			if(none){el.addClass('none')}
-		},
+			el.removeClass('fadeInLeft').addClass('fadeOutRight');
+			if(none){sleep(600,function(){el.addClass('none');})}
+
+			},
 		fadeInSmall: function(el){
 			el.removeClass('fadeOutRightSmall none').addClass('fadeInLeftSmall');
 		},
@@ -426,16 +444,16 @@ window.LJ = {
 			if(none){el.addClass('none')}
 		},
 		displayContent: function(content){
-			if(!LJ.state.animating){
-				LJ.state.animating = true;
+			if(!LJ.state.animatingContent){
+				LJ.state.animatingContent = true;
 				var onScreen = $('.onscreen');
 				onScreen.removeClass('fadeInLeft onscreen')
 						.addClass('fadeOutRight');
 				setTimeout(function(){
 						onScreen.addClass('none').removeClass('fadeOutRight');
 						content.removeClass('none').addClass('fadeInLeft onscreen');
-						LJ.state.animating = false;
-				}, 350 );
+						LJ.state.animatingContent = false;
+				}, 500 );
 			}	
 		},
 		displayInAndOutSmall: function(content){ //small version only
@@ -481,6 +499,34 @@ window.LJ = {
 				}
 				LJ.fn.displayInAndOutSmall(LJ.$menuWrap);
 		},
+		toggleChatWrapAskers: function(el){
+			var row = el.parents('.a-row');
+                var imgTag = el.parents('.askerPicture');
+                if(!imgTag.hasClass('a-active')){
+                    imgTag.addClass('a-active');
+                    var index = $('a-row').index(self);
+                    LJ.fn.displayChat(row);
+                }else{
+                    imgTag.removeClass('a-active');
+                    LJ.fn.hideChat(row);
+                }          
+		},
+		toggleChatWrapEvents: function(el){
+			 var chat = el.siblings('.chatWrap');
+                if(el.siblings('.askInWrap').find('button').hasClass('validating-btn')){
+                    if(!el.hasClass('e-active')){
+                        LJ.fn.fadeIn(chat);
+                        el.addClass('e-active');
+                    }
+                    else{
+                        LJ.fn.fadeOut(chat,true);
+                        el.removeClass('e-active');
+                    }
+                }
+                else{
+                    LJ.fn.toastMsgInfo('You need to ask participation to chat with the host');
+                }
+		}, 
 		toggleCreateEventMenu: function(){
 			var el = LJ.$createMenu;
 			if(el.hasClass('created')){
@@ -498,7 +544,7 @@ window.LJ = {
 			}
 		},
 		updateMenuView: function(el){
-			if(!LJ.state.animating){
+			if(!LJ.state.animatingContent){
 			if(!el.hasClass('menu-item-active')){
 					$('.menu-item-active').removeClass('menu-item-active');
 					el.addClass('menu-item-active');
@@ -643,6 +689,15 @@ window.LJ = {
         },
 		renderEvent: function(e){
 			var d = LJ.cloudinary.displayParamsEvent;
+			 var chatId = e._id+'#'+e.host_id+'#'+LJ.user._id;
+             var chatWrap = '<div class="chatWrap none chat-asker animated" data-chatid="'+chatId+'">'
+                           +'<div class="tri"></div>'
+                            +'<div class="chatLineWrap"></div>'    
+                            +'<div class="chatInputWrap">'
+                            +  '<input type="text" value="" placeholder="say something..">'
+                            +  '<input type="submit" value="">'
+                            +'</div>'
+                           +'</div>';
 			
 			var imgTag = $.cloudinary.image(e.host_img_id, d).prop('outerHTML'); // Thanks StackoverFlow	
 
@@ -651,7 +706,7 @@ window.LJ = {
 				LJ.user.eventsAskedList.indexOf(e._id)>-1? button+=' validating-btn "> En attente' : button+='">Demander';
 				button+="</button></div>";
 
-			var html = '<div class="eventItemWrap" data-eventid="'+e._id+'">'
+			var html = '<div class="eventItemWrap" data-eventid="'+e._id+'" data-hostid="'+e.host_id+'">'
 						+'<div class="e-head hint--left" data-hint="'+e.host_name+'">' + imgTag 
 						+'<div class="e-itm e-hour e-weak">'+LJ.utils.dateHHMM(new Date(e.begins_at))+'</div>'
 						+'</div>'
@@ -665,6 +720,7 @@ window.LJ = {
 						   +'</div>'
 						+'</div>'
 						+ button
+                        + chatWrap
 						+'</div>';
 			return html;
 		},
@@ -673,15 +729,27 @@ window.LJ = {
 
             var imgTag = $.cloudinary.image(a.img_id,d).prop('outerHTML');
 
+            var chatId = LJ.user.hostedEventId+'#'+LJ.user._id+'#'+a.id;
+
+            var chatWrap = '<div class="chatWrap chat-host none animated" data-chatid="'+chatId+'">'
+                           +'<div class="tri"></div>'
+                            +'<div class="chatLineWrap"></div>'    
+                            +'<div class="chatInputWrap">'
+                            +  '<input type="text" value="" placeholder="say something..">'
+                            +  '<input type="submit" value="">'
+                            +'</div>'
+                           +'</div>';
+
             var html =  '<div class="a-row">'
                         +'<div class="askerPicture">'
                           + imgTag
                         +'</div>'
-                        +'<div class="askerInfos">'
+                        +'<div class="askerInfos" data-userid="'+a.id+'">'
                           +'<div class="a-name">'+a.name+'</div>'
                           +'<div class="a-age">'+a.age+' ans'+'</div>'
                           +'<div class="a-desc">'+a.description+'</div>'
                         +'</div>'
+                        + chatWrap
                     +'</div>';
             return html;
         },
@@ -696,6 +764,15 @@ window.LJ = {
 			LJ.$thumbWrap.find('h2#thumbName').text(LJ.user.name);
 
 		},
+        displayChat: function(el){
+        	$('.chatWrap').removeClass('chat-active');
+        	el.find('.chatWrap').addClass('chat-active');
+            LJ.fn.fadeIn(el.find('.chatWrap'));                      
+        },
+        hideChat: function(el){
+        	el.find('.chatWrap').removeClass('chat-active');
+            LJ.fn.fadeOut(el.find('.chatWrap'),true);
+        },
 		initEventListeners: function(){
 
 				LJ.params.socket.on('update profile success', function(data){
@@ -708,8 +785,6 @@ window.LJ = {
 						//LJ.fn.displayContent(LJ.$profileWrap);
 					});
 				});
-
-
 
 				LJ.params.socket.on('update profile error',function(){
 					sleep(1000,function(){
@@ -759,7 +834,7 @@ window.LJ = {
 				});
 
 				LJ.params.socket.on('request participation success',function(){
-					LJ.fn.toastMsgInfo("Votre numéro a été donné a l'organisateur");
+					LJ.fn.toastMsgInfo("Vous pouvez à présent parler à l'organisateur");
 				});
 
 				LJ.params.socket.on('disconnect', function(){
@@ -773,6 +848,10 @@ window.LJ = {
                         LJ.myAskers[i] = askersList[i];
                     }
                    LJ.fn.displayAskers();
+                });
+
+                LJ.params.socket.on('receive message', function(data){
+                	LJ.fn.addChatLine(data);
                 });
 		},
 		createEvent: function(){
@@ -806,11 +885,35 @@ window.LJ = {
                 LJ.params.socket.emit('fetch askers',{eventId:LJ.user.hostedEventId});
             }
         },
+        setChatPositions: function(type){
+            if(type === 'host'){
+                var chatTab = $('.chat-host');
+                var step = 60;
+                var startset = -25;
+                var left = '75px'
+            }
+            if(type === 'asker'){
+                var chatTab = $('.chat-asker');
+                var step = 165;
+                var startset = 20;
+                var left = "100px";
+            }
+            for(i=0;i<chatTab.length;i++){
+                    var top = startset + step*i +'px';
+                    var chatTarget = $(chatTab[i]);
+                     chatTarget.css({
+                        top:top,
+                        left:left
+                    });
+                }          
+        },
         displayEvents: function(){
             LJ.$eventsListWrap.append(LJ.fn.renderEvents(LJ.myEvents));
+            LJ.fn.setChatPositions('asker');
         },
         displayAskers: function(){
             LJ.$askersListWrap.append(LJ.fn.renderAskers(LJ.myAskers));
+            LJ.fn.setChatPositions('host');
         },
         requestIn: function(askInBtn){
             var eventId = askInBtn.parents('.eventItemWrap').data('eventid');
@@ -820,7 +923,63 @@ window.LJ = {
                             userInfos:LJ.user,
                             eventId:eventId,
                             msg:msg});
+        },
+        sendChat: function(submitInput){
+        	var textInput = submitInput.siblings('input[type="text"]');
+        	var msg = textInput.val();
+        		textInput.val('');
+
+        		asker_id = submitInput.parents('.a-row').find('.askerInfos').data('userid')
+        				 || LJ.user._id;
+        		host_id  = submitInput.parents('.eventItemWrap').data('hostid')
+        				 || LJ.user._id;
+        		event_id = submitInput.parents('.eventItemWrap').data('eventid') 
+        		         || LJ.user.hostedEventId;
+
+        		console.log(event_id + ' and '+ host_id + ' and '+asker_id);
+
+        		LJ.params.socket.emit('send message',{
+        			msg:msg,
+        			event_id:event_id,
+        			host_id:host_id,
+        			asker_id:asker_id,
+        			sender_id:LJ.user._id
+        		});
+        },
+        /*
+        	Ajoute une ligne en prennant comme paramètre:
+        		- Le message (data.msg)
+        		- Les ids définissant de manière unique un message entre 2 personnes
+        		  (data.event_id - data.host_id - data.asker_id) 
+        		  utilisés pour construire une room unique 
+        */
+        addChatLine: function(data){
+
+        	var cha12='';
+        	data.sender_id === LJ.user._id ? cha12 = 'cha1' : cha12 = 'cha2';
+        	var chatLineHtml = '<div class="chatLine">'
+								+'<div class="cha '+cha12+'">'+data.msg+'</div>'
+        						+'</div>';
+        					 
+        	var chatId = data.event_id + '#' + data.host_id +'#'+data.asker_id;
+
+        	var $chatLineWrap = $('.chatWrap[data-chatid="'+chatId+'"]').find('.chatLineWrap');
+       		var chatId = $chatLineWrap.parents('.chatWrap').data('chatid');
+
+        		if(!$chatLineWrap.hasClass('jspScrollable')){
+        			$chatLineWrap.jScrollPane();
+        			LJ.state.jspAPI[chatId] =  $chatLineWrap.data('jsp');
+        		}
+        		$chatLineWrap.find('.jspPane').append(chatLineHtml);
+        		LJ.state.jspAPI[chatId].reinitialise();
+        		LJ.state.jspAPI[chatId].scrollToBottom();
+
+
+        },
+        loadRooms: function(id){
+        	LJ.params.socket.emit('load rooms',{_id:id});
         }
+
     }//end fn
 
 }//end LJ
