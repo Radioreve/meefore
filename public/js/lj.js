@@ -957,7 +957,7 @@ window.LJ = {
 
         	var cha12='';
         	data.sender_id === LJ.user._id ? cha12 = 'cha1' : cha12 = 'cha2';
-        	var chatLineHtml = '<div class="chatLine">'
+        	var chatLineHtml = '<div class="chatLine animated none">'
 								+'<div class="cha '+cha12+'">'+data.msg+'</div>'
         						+'</div>';
         					 
@@ -971,6 +971,7 @@ window.LJ = {
         			LJ.state.jspAPI[chatId] =  $chatLineWrap.data('jsp');
         		}
         		$chatLineWrap.find('.jspPane').append(chatLineHtml);
+        		LJ.fn.fadeInSmall($chatLineWrap.find('.chatLine'));
         		LJ.state.jspAPI[chatId].reinitialise();
         		LJ.state.jspAPI[chatId].scrollToBottom();
 

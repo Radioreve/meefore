@@ -35,13 +35,17 @@
 }
 .cha{
 	font-size: .8em;
+	line-height: 1.3em;
+	max-width: 260px;
 	color: white;
 	padding: 10px;
 	border-radius: 4px;
 	display: inline-block;
 }
 .cha1{
-	background: #73E073;
+	border: 1px solid#73E073;
+	background: rgb(237, 255, 234);
+	color: rgb(39, 20, 20);
 }
 .cha2{
 	border: 1px solid #C5BE88;
