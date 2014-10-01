@@ -5,12 +5,10 @@
 .chatWrap{
 	width: 500px;
 	height: 230px;
-	background: rgba(255,255,255,0.95);
-	-webkit-box-shadow: 0 0 3px #73E073;
-	box-shadow: 0px 0px 3px #73E073;
-	border: 2px solid #73E073;
-	padding: 30px 0 30px 0;
-	border-radius: 300px;
+	background: rgba(255,255,255,0.85);
+	border: 2px solid #CACACA;
+	padding: 30px 0px;
+	border-radius: 4px;
 	position: absolute;
 }
 .chatLineWrap{
@@ -43,14 +41,12 @@
 	display: inline-block;
 }
 .cha1{
-	border: 1px solid#73E073;
-	background: rgb(237, 255, 234);
-	color: rgb(39, 20, 20);
+	background: #7ED57E;
+	color: white;
 }
 .cha2{
-	border: 1px solid #C5BE88;
 	color: rgb(44, 43, 38);
-	background: rgb(255, 255, 244);
+	background: #E6E6E6;
 }
 .chatInputWrap input[type="text"]{
 	width: 200px;
@@ -68,6 +64,14 @@
 	border-radius: 3px;
 	font-size: .8em;
 }
+.chat-host{
+	left:75px;
+	top:-116px;
+}
+.chat-asker{
+	left:100px;
+	top: -55px;
+}
 .tri{
 	width: 0;
 	height: 0;
@@ -76,7 +80,7 @@
 	border-color: transparent #73E073 transparent transparent;
 	position: absolute;
 	top: 125px;
-	left: -17px;
+	left: -18px;
 }
 .chat-active{
 	z-index: 1000;

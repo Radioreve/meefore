@@ -1,5 +1,14 @@
 
 function sleep(ms,cb,p2){setTimeout(function(){cb(p2);},ms)}
+function testCreate(){
+
+	LJ.fn.createEvent({
+		name:"Super apéro entre amis",
+		beginsAt:"20h00",
+		desc:"Super soirée sur les quais de la seine, venez nombreux!"
+
+	});
+}
 
 window.LJ = {
 	params:{
@@ -54,10 +63,10 @@ window.LJ = {
 		age:'',
 		location:'',
 		description:'',
-		phone:'',
-		img_id:'',
-		img_version:'',
+		imgId:'',
+		imgVersion:'',
 		status:'',
+		hostedEventId:'',
 		eventsAskedList:[]
 	},
 	myEvents:[],
@@ -69,7 +78,7 @@ window.LJ = {
 		animatingChat: false,
 		jspAPI:{}
 	},
-
+        $body                 : $('body'), 
 		$loginWrap		 	  : $('#loginWrap'),
 		$signupWrap			  : $('#signupWrap'),
 		$profileWrap	      : $('#profileWrap'),
@@ -91,7 +100,6 @@ window.LJ = {
 		$nameInput            : $('#name'),
 		$ageInput             : $('#age'),
 		$descInput	          : $('#description'),
-		$phoneInput           : $('#phone'),
 		$locationInput        : $('#location'),
 		$loaderWrap 	      : $('.loaderWrap'),
 		$menuBtn		      : $('.menuBtn'),
@@ -123,12 +131,6 @@ window.LJ = {
      	     if(d.getUTCMinutes()<10){dS+='0';}
               dS+=d.getUTCMinutes();
    		     return dS;
-		},
-		isInArray: function(arr,el){
-			for(var i=0;i<arr.length;i++){
-				if(arr[i]==el){return true}
-				else{return false}
-			}
 		}
 	},
 	fn:{
@@ -169,17 +171,17 @@ window.LJ = {
 					$(this).addClass('modified');
 				});
 
-				$('body').on('click', '.themeBtn',function(){
+				LJ.$body.on('click', '.themeBtn',function(){
 					$(this).addClass('validating-btn');
 				});
  
-				$('body').on('focusout', '.askInMsgWrap input', function(e){
+				LJ.$body.on('focusout', '.askInMsgWrap input', function(e){
 					if($(this).val().trim().length==0){
 						$(this).removeClass('text-active').val('');}
 					else{$(this).addClass('text-active');}
 				}); 
 
-				$('body').on('mousedown','.chatWrap',function(){
+				LJ.$body.on('mousedown','.chatWrap',function(){
               		 if(!$(this).hasClass('chat-active')){
 	                	 $('.chatWrap').removeClass('chat-active');
 	                	 $(this).addClass('chat-active');
@@ -187,7 +189,7 @@ window.LJ = {
                		}
             	});
 
-            	$('body').on('keypress','.chatInputWrap input[type="text"]', function(e){
+            	LJ.$body.on('keypress','.chatInputWrap input[type="text"]', function(e){
             		if(e.which=='13'){
             			$(this).siblings('input[type="submit"]').click();
             		}
@@ -197,74 +199,103 @@ window.LJ = {
 				
 		},
 		handleDomEvents: function(){
+
 			LJ.$signupBtn.click(function(e){ 
 				e.preventDefault(); 
 				console.log('About to Signup User')
 				LJ.fn.signupUser(); 
 			});
+
 			LJ.$loginBtn.click(function(e){	
 				e.preventDefault();
 				LJ.fn.loginUser();	
 			});
+
 			LJ.$becomeMember.click(function(){
 				LJ.fn.displayContent(LJ.$signupWrap);
 			});
+
 			LJ.$backToLogin.click(function(){
 				LJ.fn.displayContent(LJ.$loginWrap);
 			});
+
 			LJ.$menuBtn.click(function(){
 				LJ.fn.toggleMenu();
 			});
+
 			LJ.$contactMenu.click(function(){
 				if(!$(this).hasClass('menu-item-active')){
 			   	  LJ.fn.updateMenuView(LJ.$contactMenu);
 				  LJ.fn.displayContent(LJ.$contactWrap);
 				}
 			});
+
 			LJ.$createMenu.click(function(){
 				if(!$(this).hasClass('menu-item-active')){
 				  LJ.fn.updateMenuView(LJ.$createMenu);
 				 $(this).hasClass('created') ? LJ.fn.displayContent(LJ.$manageEventsWrap) : LJ.fn.displayContent(LJ.$createEventWrap);
 				}
 			});
+
 			LJ.$profileMenu.click(function(){
 				if(!$(this).hasClass('menu-item-active')){
 				  LJ.fn.updateMenuView(LJ.$profileMenu);
 				  LJ.fn.displayContent(LJ.$profileWrap);
 				}
 			});
+
 			LJ.$eventsMenu.click(function(){
 				if(!$(this).hasClass('menu-item-active')){
 			  	  LJ.fn.updateMenuView(LJ.$eventsMenu);
 				  LJ.fn.displayContent(LJ.$eventsWrap);
 				}
 			});
+
 			LJ.$validateBtn.click(function(){
 				LJ.fn.updateProfile();
 			});
-			$('body').on('click','.askIn',function(){
-				if(!$(this).hasClass('validating-btn')){
-					LJ.fn.requestIn($(this)); 
-					$(this).text('En attente');
+
+			LJ.$body.on('click','.askIn',function(){
+				var $self = $(this);
+				if(!$self.hasClass('validating-btn')){
+					$self.addClass('validating-btn');
+					$self.text('En attente');
+					LJ.fn.requestIn($self); 
+				}else{
+					$self.removeClass('validating-btn');
+					$self.text('Je veux y aller');
+					LJ.fn.requestOut($self);
 				}
-			});		
+			});
+
 			LJ.$createEventBtn.click(function(){
 				LJ.fn.createEvent();
 			});
+
 			LJ.$logout.click(function(){
 				location.reload();
-			});	
-            LJ.$askersListWrap.on('click','.askerPicture img',function(){
+			});
+
+            LJ.$askersListWrap.on('click','.askerPicture',function(){
             	LJ.fn.toggleChatWrapAskers($(this));     
             });
+
             LJ.$eventsListWrap.on('click', '.e-head', function(){
                 LJ.fn.toggleChatWrapEvents($(this));
             });
-            $('body').on('click','.chatInputWrap input[type="submit"]', function(e){
+
+            LJ.$body.on('click','.chatInputWrap input[type="submit"]', function(e){
             	e.preventDefault();
             	e.stopPropagation();
             	LJ.fn.sendChat($(this));
-            	//LJ.fn.addChatLine($(this));
+            });
+
+            LJ.$body.on('click','#cancelEvent', function(){
+            	var $self = $(this),
+            	    hostId = LJ.user._id,
+            	    eventId = LJ.user.hostedEventId;
+
+            	LJ.fn.cancelEvent(eventId, hostId);
             });
 			
 
@@ -273,7 +304,7 @@ window.LJ = {
 		},
 		signupUser: function(credentials){
 
-			var credentials = {} ;
+			   credentials = {} ;
 
 				credentials.email = LJ.$emailInputSignup.val();
 				credentials.password = LJ.$passwordInputSignup.val();	
@@ -302,7 +333,7 @@ window.LJ = {
 		},
 		loginUser: function(credentials){
 
-			var credentials = credentials || {} ;
+			    credentials = credentials || {} ;
 
 				credentials.email    = credentials.email    || LJ.$emailInput.val();
 				credentials.password = credentials.password || LJ.$passwordInput.val();
@@ -330,8 +361,7 @@ window.LJ = {
 			var _id 		 = LJ.user._id,
 				age   		 = LJ.$ageInput.val(),
 				name  		 = LJ.$nameInput.val(),
-				description  = LJ.$descInput.val(),
-				phone        = LJ.$phoneInput.val();
+				description  = LJ.$descInput.val();
 
 			if(LJ.user.status == 'new'){LJ.user.status = 'idle'}
 
@@ -340,9 +370,8 @@ window.LJ = {
 				age 		: age,
 				name 		: name,
 				description : description,
-				phone       : phone,
 				status      : LJ.user.status
-			}
+			};
 				LJ.params.socket.emit('update profile', profile);
 				LJ.$loaderWrap.removeClass('none');	
 		},
@@ -374,8 +403,8 @@ window.LJ = {
 				$('#codebar').text(user._id);
 				LJ.fn.renderMainThumb();
 
-				LJ.fn.replaceMainImage(LJ.user.img_id,
-							           LJ.user.img_version,
+				LJ.fn.replaceMainImage(LJ.user.imgId,
+							           LJ.user.imgVersion,
 							           LJ.cloudinary.displayParamsProfile);
 
 				sleep(350,function(){
@@ -399,7 +428,7 @@ window.LJ = {
 			});
 		},
 		handleFailedLogin: function(data){
-			var data = JSON.parse(data.responseText);
+			data = JSON.parse(data.responseText);
 			sleep(1000,function(){
 				LJ.fn.toastMsgInfo(data.msg);
 				$('input.input-field').removeClass('validating');
@@ -420,7 +449,7 @@ window.LJ = {
 			});		
 		},
 		handleFailedSignup: function(data){
-			var data = JSON.parse(data.responseText);
+			data = JSON.parse(data.responseText);
 			sleep(1000,function(){
 				$('input.input-field').removeClass('validating');
 				LJ.fn.toastMsgInfo(data.msg);
@@ -428,12 +457,15 @@ window.LJ = {
 				$('.loaderWrap').addClass('none');
 			});
 		},
-		fadeIn: function(el,none){
-			el.removeClass('fadeOutRight none').addClass('fadeInLeft');
+		fadeIn: function(el){
+			el.removeClass('fadeOutRight').removeClass('none').addClass('fadeInLeft');
 		},
-		fadeOut: function(el,none){
+		fadeOut: function(el,remove){
 			el.removeClass('fadeInLeft').addClass('fadeOutRight');
-			if(none){sleep(600,function(){el.addClass('none');})}
+			sleep(600,function(){
+				el.addClass('none');
+				if(remove){ el.remove();}
+			});
 
 			},
 		fadeInSmall: function(el){
@@ -454,7 +486,7 @@ window.LJ = {
 						content.removeClass('none').addClass('fadeInLeft onscreen');
 						LJ.state.animatingContent = false;
 				}, 500 );
-			}	
+			}
 		},
 		displayInAndOutSmall: function(content){ //small version only
 			if(content.hasClass('fadeOutLeftSmall')){
@@ -499,28 +531,30 @@ window.LJ = {
 				}
 				LJ.fn.displayInAndOutSmall(LJ.$menuWrap);
 		},
-		toggleChatWrapAskers: function(el){
-			var row = el.parents('.a-row');
-                var imgTag = el.parents('.askerPicture');
-                if(!imgTag.hasClass('a-active')){
-                    imgTag.addClass('a-active');
-                    var index = $('a-row').index(self);
-                    LJ.fn.displayChat(row);
+		toggleChatWrapAskers: function(askerPictureTag){
+
+			var $chatWrap = askerPictureTag.parents('.a-row').find('.chatWrap');
+        	$('.chatWrap').removeClass('chat-active');
+        	$chatWrap.addClass('chat-active');
+        	
+                if(!askerPictureTag.hasClass('a-active')){
+                    askerPictureTag.addClass('a-active');
+                    LJ.fn.displayChat($chatWrap);
                 }else{
-                    imgTag.removeClass('a-active');
-                    LJ.fn.hideChat(row);
+                    askerPictureTag.removeClass('a-active');
+                    LJ.fn.hideChat($chatWrap);
                 }          
 		},
-		toggleChatWrapEvents: function(el){
-			 var chat = el.siblings('.chatWrap');
-                if(el.siblings('.askInWrap').find('button').hasClass('validating-btn')){
-                    if(!el.hasClass('e-active')){
-                        LJ.fn.fadeIn(chat);
-                        el.addClass('e-active');
+		toggleChatWrapEvents: function(eHeadTag){
+			 var $chatWrap = eHeadTag.siblings('.chatWrap');
+                if(eHeadTag.siblings('.askInWrap').find('button').hasClass('validating-btn')){
+                    if(!eHeadTag.hasClass('e-active')){
+                        eHeadTag.addClass('e-active');
+                        LJ.fn.displayChat($chatWrap);
                     }
                     else{
-                        LJ.fn.fadeOut(chat,true);
-                        el.removeClass('e-active');
+                        eHeadTag.removeClass('e-active');
+                        LJ.fn.hideChat($chatWrap);
                     }
                 }
                 else{
@@ -551,52 +585,21 @@ window.LJ = {
 				}
 			}
 		},
-		showProfile: function(){
-			var el = LJ.$profileMenu;
-				LJ.fn.displayContent(LJ.$profileWrap);
-		},
 		setClientSettings: function(data){
 			//console.log('Updating client state : '+JSON.stringify(data,0,4));
             LJ.user = data;
 			//User Interface Update
 			LJ.fn.updateSettingsDOM();
 		},
-		resetClientSettings: function(){
-			LJ.user._id 	        = '';
-			LJ.user.email 	        = '';
-			LJ.user.location        = '';
-			LJ.user.phone           = '';
-			LJ.user.description     = '';
-			LJ.user.age 	        = '';
-			LJ.user.name 	        = '';
-			LJ.user.img_id	 	    = '';
-			LJ.user.img_version     = '';
-			LJ.user.status          = '';
-			LJ.user.eventsAskedList = [];
-
-			LJ.$loginWrap.find('input.input-field')
-						 .removeClass('validating')
-						 .val('');
-			$('#login').text('login');
-
-			
-			LJ.fn.fadeOut(LJ.$thumbWrap);
-			sleep(2000,function(){
-				LJ.$thumbWrap.find('img').remove();
-				$('h2#thumbName').text('');
+		updateClientSettings: function(newSettings){
+			_.keys(newSettings).forEach(function(el){
+				LJ.user[el] = newSettings[el];
 			});
-				
-		
-
 		},
 		updateSettingsDOM: function(){
 			LJ.$nameInput.val(LJ.user.name);
 			LJ.$ageInput.val(LJ.user.age);
 			LJ.$descInput.val(LJ.user.description);
-			LJ.$phoneInput.val(LJ.user.phone);
-		},
-		logUser : function(data){
-			console.log(JSON.stringify(LJ.user,0,4));
 		},
 		toastMsgSuccess: function(msg){
 			var toast = LJ.$toastSuccess;
@@ -623,7 +626,7 @@ window.LJ = {
 			});
 		},
 		replaceMainImage: function(id,version,d){
-		    var d = d || LJ.cloudinary.displayParamsProfile;
+		        d = d || LJ.cloudinary.displayParamsProfile;
 		    	d.version = version;
 
 			var previousImg = $('#pictureWrap').find('img'),
@@ -631,11 +634,26 @@ window.LJ = {
 				newImg.addClass('mainPicture').hide();
 				$('#pictureWrap').prepend(newImg);
  													
-				previousImg.fadeOut(700,function(){
+				previousImg.fadeOut(700, function(){
 					$(this).remove();
 					newImg.fadeIn(700);
 				});
 
+		},
+		replaceThumbImage: function(id,version,d){
+			    d = d || LJ.cloudinary.displayParamsMainThumb;
+				d.version = version;
+
+			var previousImg = $('#thumbWrap').find('img'),
+				newImg      = $.cloudinary.image(id,d);
+				newImg.hide();
+
+				$('#thumbWrap').prepend(newImg);
+
+				previousImg.fadeOut(700, function(){
+					$(this).remove();
+					newImg.fadeIn(700);
+				});
 		},
 		initCloudinary: function(upload_tag){
 
@@ -657,17 +675,18 @@ window.LJ = {
 
   								LJ.fn.toastMsgInfo('Votre photo de profile a été modifiée');
 
-  								var img_id=data.result.public_id;
-  								var img_version = data.result.version;
+  								var imgId=data.result.public_id;
+  								var imgVersion = data.result.version;
 
-                                LJ.user.img_version = img_version;
-                                LJ.user.img_id = img_id;
+                                LJ.user.imgVersion = imgVersion;
+                                LJ.user.imgId = imgId;
 
   								LJ.params.socket.emit('update picture',{_id: LJ.user._id,
-  																		img_id: img_id,
-  																		img_version:img_version });
+  																		imgId: imgId,
+  																		imgVersion:imgVersion });
 
-  								LJ.fn.replaceMainImage(img_id,img_version,LJ.cloudinary.displayParamsProfile);
+  								LJ.fn.replaceMainImage(imgId,imgVersion,LJ.cloudinary.displayParamsProfile);
+  								LJ.fn.replaceThumbImage(imgId,imgVersion,LJ.cloudinary.displayParamsMainThumb);
 					
   							});
 
@@ -677,19 +696,19 @@ window.LJ = {
 		},
 		renderEvents: function(arr,max){
 				var html =''; 
-				var max = max || arr.length;
-				for(var i=0;i<arr.length;i++){ html += LJ.fn.renderEvent(arr[i]); }
+				    max = max || arr.length;
+				for(var i=0;i<max;i++){ html += LJ.fn.renderEvent(arr[i]); }
 				return html;
 		},
         renderAskers: function(arr,max){
                 var html =''; 
-                var max = max || arr.length;
-                for(var i=0;i<arr.length;i++){ html += LJ.fn.renderAsker(arr[i]); }
+                    max = max || arr.length;
+                for(var i=0;i<max;i++){ html += LJ.fn.renderAsker(arr[i]); }
                 return html;
         },
 		renderEvent: function(e){
 			var d = LJ.cloudinary.displayParamsEvent;
-			 var chatId = e._id+'#'+e.host_id+'#'+LJ.user._id;
+			 var chatId = e._id+'_'+e.hostId+'-'+LJ.user._id;
              var chatWrap = '<div class="chatWrap none chat-asker animated" data-chatid="'+chatId+'">'
                            +'<div class="tri"></div>'
                             +'<div class="chatLineWrap"></div>'    
@@ -699,16 +718,16 @@ window.LJ = {
                             +'</div>'
                            +'</div>';
 			
-			var imgTag = $.cloudinary.image(e.host_img_id, d).prop('outerHTML'); // Thanks StackoverFlow	
+			var imgTag = $.cloudinary.image(e.hostImgId, d).prop('outerHTML'); // Thanks StackoverFlow	
 
 			var button = '<div class="askInWrap"><button ';
-				button += 'class="askIn themeBtn right';
-				LJ.user.eventsAskedList.indexOf(e._id)>-1? button+=' validating-btn "> En attente' : button+='">Demander';
+				button += 'class="askIn themeBtnToggle right';
+				LJ.user.eventsAskedList.indexOf(e._id)>-1? button+=' validating-btn "> En attente' : button+='">Je veux y aller';
 				button+="</button></div>";
 
-			var html = '<div class="eventItemWrap" data-eventid="'+e._id+'" data-hostid="'+e.host_id+'">'
-						+'<div class="e-head hint--left" data-hint="'+e.host_name+'">' + imgTag 
-						+'<div class="e-itm e-hour e-weak">'+LJ.utils.dateHHMM(new Date(e.begins_at))+'</div>'
+			var html = '<div class="eventItemWrap animated none" data-eventid="'+e._id+'" data-hostid="'+e.hostId+'">'
+						+'<div class="e-head hint--left" data-hint="'+e.hostName+'">' + imgTag 
+						+'<div class="e-itm e-hour e-weak">'+LJ.utils.dateHHMM(new Date(e.beginsAt))+'</div>'
 						+'</div>'
 						+'<div class="e-body">'
 						   +'<div class="e-itm e-name">'+e.name+'</div>'
@@ -727,9 +746,9 @@ window.LJ = {
         renderAsker: function(a){
             var d = LJ.cloudinary.displayParamsAsker;
 
-            var imgTag = $.cloudinary.image(a.img_id,d).prop('outerHTML');
+            var imgTag = $.cloudinary.image(a.imgId,d).prop('outerHTML');
 
-            var chatId = LJ.user.hostedEventId+'#'+LJ.user._id+'#'+a.id;
+            var chatId = LJ.user.hostedEventId+'_'+LJ.user._id+'-'+a.id;
 
             var chatWrap = '<div class="chatWrap chat-host none animated" data-chatid="'+chatId+'">'
                            +'<div class="tri"></div>'
@@ -740,7 +759,7 @@ window.LJ = {
                             +'</div>'
                            +'</div>';
 
-            var html =  '<div class="a-row">'
+            var html =  '<div class="a-row animated">'
                         +'<div class="askerPicture">'
                           + imgTag
                         +'</div>'
@@ -755,34 +774,38 @@ window.LJ = {
         },
 		renderMainThumb: function(){
 			var d = LJ.cloudinary.displayParamsMainThumb;
-				d.version = LJ.user.img_version;
+				d.version = LJ.user.imgVersion;
 
-			var imgTag = $.cloudinary.image(LJ.user.img_id, d);
+			var imgTag = $.cloudinary.image(LJ.user.imgId, d);
 				imgTag.addClass('left');
 
 			LJ.$thumbWrap.prepend(imgTag);
 			LJ.$thumbWrap.find('h2#thumbName').text(LJ.user.name);
 
 		},
-        displayChat: function(el){
-        	$('.chatWrap').removeClass('chat-active');
-        	el.find('.chatWrap').addClass('chat-active');
-            LJ.fn.fadeIn(el.find('.chatWrap'));                      
+        displayChat: function(chatWrap){
+        	var chatId = chatWrap.data('chatid');
+            LJ.fn.fadeIn(chatWrap);
+            if(LJ.state.jspAPI[chatId] != undefined){
+	            LJ.state.jspAPI[chatId].reinitialise();
+	        	LJ.state.jspAPI[chatId].scrollToBottom();   
+        	}                 
         },
-        hideChat: function(el){
-        	el.find('.chatWrap').removeClass('chat-active');
-            LJ.fn.fadeOut(el.find('.chatWrap'),true);
+        hideChat: function(chatWrap){
+        	chatWrap.removeClass('chat-active');
+            LJ.fn.fadeOut(chatWrap);
         },
 		initEventListeners: function(){
 
 				LJ.params.socket.on('update profile success', function(data){
 				sleep(1000,function(){
+					LJ.fn.updateClientSettings(data);
+					$('#thumbName').text(data.name);
 					LJ.fn.toastMsgInfo("Vos informations ont été modifiées");
 					$('.modified').removeClass('modified');
 					LJ.$loaderWrap.addClass('none');
 					$('.themeBtn').removeClass('validating-btn');
 					$('.themeBtn').removeClass('validating-btn');
-						//LJ.fn.displayContent(LJ.$profileWrap);
 					});
 				});
 
@@ -797,16 +820,28 @@ window.LJ = {
 					console.log('Client authenticated on the socket stream');
 				});
 
-				LJ.params.socket.on('create event success', function(){
-					sleep(1000,function(){
-						LJ.fn.toastMsgSuccess("Done !");
-						LJ.$loaderWrap.addClass('none');
-						$('.themeBtn').removeClass('validating-btn');
-						LJ.$createEventWrap.find('input').val('');
-						LJ.fn.toggleCreateEventMenu();
-						LJ.fn.displayContent(LJ.$manageEventsWrap);
-						
-					});
+				LJ.params.socket.on('create event success', function(myEvent){
+					
+					if(LJ.user._id == myEvent.hostId){
+						sleep(1000,function(){
+							LJ.user.status = 'hosting';
+							LJ.user.hostedEventId = myEvent._id;
+							LJ.fn.toastMsgInfo("Evènement créé avec succès !");
+							LJ.$loaderWrap.addClass('none');
+							$('.themeBtn').removeClass('validating-btn');
+							LJ.$createEventWrap.find('input').val('');
+							LJ.fn.displayContent(LJ.$manageEventsWrap);
+							LJ.fn.toggleCreateEventMenu(); 
+						});
+					}else{
+						//rien de spécial so far
+					}
+					/* Pour tous les users */
+					LJ.myEvents.push(myEvent);
+					var eventHTML = LJ.fn.renderEvent(myEvent);
+					LJ.$eventsListWrap.append(eventHTML);
+					LJ.fn.fadeIn( LJ.$eventsListWrap.children() );
+					
 				});
 
 				LJ.params.socket.on('create event error', function(data){
@@ -814,10 +849,35 @@ window.LJ = {
 						LJ.fn.toastMsgError(data.msg);
 						LJ.$loaderWrap.addClass('none');
 						$('.themeBtn').removeClass('validating-btn');
-						LJ.fn.toggleCreateEventMenu();
-						LJ.fn.displayContent(LJ.$manageEventsWrap);
 					});
 				});
+
+				LJ.params.socket.on('cancel event success', function(data){
+                	if(data.hostId == LJ.user._id){
+                		LJ.user.status = 'idle';
+                		LJ.fn.toggleCreateEventMenu();
+                		LJ.fn.displayContent(LJ.$createEventWrap);
+						$('.menu-item-active').removeClass('menu-item-active');
+						LJ.$createMenu.addClass('menu-item-active')
+						  .removeClass('icon-minus created')
+						  .addClass('icon-plus')
+						  .find('span')
+						  .text('Create');		
+                	} else {
+                		/* 
+                			Les clients sont toujours dans les rooms des évents annulés,
+               				pour leur session active. En revanche, les events auxquels
+               				ils sont inscrits sont supprimé de leur liste dans la base 
+               			*/
+                	}
+                	var canceledEvent = LJ.$eventsListWrap.find('.eventItemWrap[data-hostid="'+data.hostId+'"]');
+                		LJ.fn.fadeOut(canceledEvent);
+                		sleep(600, function(){ canceledEvent.remove(); });
+
+                	_.remove(LJ.myEvents, function(el){
+                		return el.hostId == data.hostId; 
+                	});
+                });
  
 				LJ.params.socket.on('fetch events success', function(events){
 					LJ.state.fetchingEvents = false;
@@ -827,24 +887,33 @@ window.LJ = {
 					LJ.fn.displayEvents();
 				});
 
-				LJ.params.socket.on('event asked in', function(data){
-					if(data.eventAskedIn.host_id === LJ.user._id){
-						LJ.fn.toastMsgSuccess("Someone joined your event");
+				LJ.params.socket.on('request participation in success',function(data){
+					if(LJ.user._id === data.userId){
+
+					}else{
+						var askerHTML = LJ.fn.renderAsker(data.asker);
+						    $(askerHTML).appendTo(LJ.$askersListWrap).addClass('none')
+						    									     .removeClass('none')
+						    									     .addClass('fadeInLeft');
+						LJ.fn.loadRooms(LJ.user._id);
 					}
+
 				});
 
-				LJ.params.socket.on('request participation success',function(){
-					LJ.fn.toastMsgInfo("Vous pouvez à présent parler à l'organisateur");
+				LJ.params.socket.on('request participation out success', function(data){
+						var userId = data.userId;
+						var $aRow = LJ.$askersListWrap.find('.askerInfos[data-userid="'+userId+'"]').parents('.a-row');
+							LJ.fn.fadeOut($aRow, true);
 				});
 
 				LJ.params.socket.on('disconnect', function(){
-					LJ.fn.toastMsgInfo("You have been disconnected from the stream");
+					LJ.fn.toastMsgError("You have been disconnected from the stream");
 					LJ.params.socket.disconnect();
 				});
 
                 LJ.params.socket.on('fetch askers success', function(askersList){
                     LJ.state.fetchingAskers = false;
-                    for(var i=0;i<askersList.length;i++){
+                    for(var i=0;i<askersList.length;i++) {
                         LJ.myAskers[i] = askersList[i];
                     }
                    LJ.fn.displayAskers();
@@ -853,13 +922,15 @@ window.LJ = {
                 LJ.params.socket.on('receive message', function(data){
                 	LJ.fn.addChatLine(data);
                 });
+
+                
 		},
 		createEvent: function(){
 			var e = {};
-				e.host_id	  = LJ.user._id;
-				e.host_name   = LJ.user.name;
-				e.host_img_id = LJ.user.img_id;
-				e.host_img_version  = LJ.user.img_version;
+				e.hostId	  = LJ.user._id;
+				e.hostName   = LJ.user.name;
+				e.hostImgId = LJ.user.imgId;
+				e.hostImgVersion  = LJ.user.imgVersion;
 				e.name 		  = LJ.$eventNameInput.val();
 				e.location    = LJ.$eventLocationInput.val();
 				e.hour 		  = LJ.$eventHourInput.val();
@@ -885,100 +956,90 @@ window.LJ = {
                 LJ.params.socket.emit('fetch askers',{eventId:LJ.user.hostedEventId});
             }
         },
-        setChatPositions: function(type){
-            if(type === 'host'){
-                var chatTab = $('.chat-host');
-                var step = 60;
-                var startset = -25;
-                var left = '75px'
-            }
-            if(type === 'asker'){
-                var chatTab = $('.chat-asker');
-                var step = 165;
-                var startset = 20;
-                var left = "100px";
-            }
-            for(i=0;i<chatTab.length;i++){
-                    var top = startset + step*i +'px';
-                    var chatTarget = $(chatTab[i]);
-                     chatTarget.css({
-                        top:top,
-                        left:left
-                    });
-                }          
-        },
         displayEvents: function(){
             LJ.$eventsListWrap.append(LJ.fn.renderEvents(LJ.myEvents));
-            LJ.fn.setChatPositions('asker');
+            LJ.fn.fadeIn($('.eventItemWrap'));
         },
         displayAskers: function(){
             LJ.$askersListWrap.append(LJ.fn.renderAskers(LJ.myAskers));
-            LJ.fn.setChatPositions('host');
         },
         requestIn: function(askInBtn){
             var eventId = askInBtn.parents('.eventItemWrap').data('eventid');
-            var msg = askInBtn.parents('.eventItemWrap').find('.askInMsgWrap input').val();
-            console.log("requesting in with id : "+eventId);
-            LJ.params.socket.emit("request participation", {
+            var hostId = askInBtn.parents('.eventItemWrap').data('hostid');
+            console.log("requesting IN with id : "+eventId);
+            LJ.params.socket.emit("request participation in", {
                             userInfos:LJ.user,
-                            eventId:eventId,
-                            msg:msg});
+                            hostId:hostId,
+                            eventId:eventId});
+        },
+        requestOut: function(askInBtn){
+        	var eventId = askInBtn.parents('.eventItemWrap').data('eventid');
+        	var hostId = askInBtn.parents('.eventItemWrap').data('hostid');        	
+        	console.log("requesting OUT with id : "+eventId);
+        	LJ.params.socket.emit("request participation out", {
+        					userInfos:LJ.user,
+        					hostId:hostId,
+        					eventId:eventId
+        	});
+
         },
         sendChat: function(submitInput){
         	var textInput = submitInput.siblings('input[type="text"]');
         	var msg = textInput.val();
         		textInput.val('');
 
-        		asker_id = submitInput.parents('.a-row').find('.askerInfos').data('userid')
+        		var askerId = submitInput.parents('.a-row').find('.askerInfos').data('userid')
         				 || LJ.user._id;
-        		host_id  = submitInput.parents('.eventItemWrap').data('hostid')
+        		var hostId  = submitInput.parents('.eventItemWrap').data('hostid')
         				 || LJ.user._id;
-        		event_id = submitInput.parents('.eventItemWrap').data('eventid') 
+        		var eventId = submitInput.parents('.eventItemWrap').data('eventid')
         		         || LJ.user.hostedEventId;
 
-        		console.log(event_id + ' and '+ host_id + ' and '+asker_id);
+        		console.log(eventId + ' and '+ hostId + ' and '+askerId);
 
         		LJ.params.socket.emit('send message',{
         			msg:msg,
-        			event_id:event_id,
-        			host_id:host_id,
-        			asker_id:asker_id,
-        			sender_id:LJ.user._id
+        			eventId:eventId,
+        			hostId:hostId,
+        			askerId:askerId,
+        			senderId:LJ.user._id
         		});
         },
         /*
         	Ajoute une ligne en prennant comme paramètre:
         		- Le message (data.msg)
         		- Les ids définissant de manière unique un message entre 2 personnes
-        		  (data.event_id - data.host_id - data.asker_id) 
+        		  (data.eventId - data.hostId - data.askerId) 
         		  utilisés pour construire une room unique 
         */
         addChatLine: function(data){
-
-        	var cha12='';
-        	data.sender_id === LJ.user._id ? cha12 = 'cha1' : cha12 = 'cha2';
-        	var chatLineHtml = '<div class="chatLine animated none">'
+        	
+            var cha12 = '';
+            data.senderId === LJ.user._id ?  cha12 = 'cha1' : cha12 = 'cha2';
+            var chatLineHtml = '<div class="chatLine animated none">'
 								+'<div class="cha '+cha12+'">'+data.msg+'</div>'
         						+'</div>';
-        					 
-        	var chatId = data.event_id + '#' + data.host_id +'#'+data.asker_id;
 
+       		var chatId = data.chatId;
+       		
         	var $chatLineWrap = $('.chatWrap[data-chatid="'+chatId+'"]').find('.chatLineWrap');
-       		var chatId = $chatLineWrap.parents('.chatWrap').data('chatid');
-
+        		
         		if(!$chatLineWrap.hasClass('jspScrollable')){
         			$chatLineWrap.jScrollPane();
         			LJ.state.jspAPI[chatId] =  $chatLineWrap.data('jsp');
         		}
         		$chatLineWrap.find('.jspPane').append(chatLineHtml);
-        		LJ.fn.fadeInSmall($chatLineWrap.find('.chatLine'));
+        		LJ.fn.fadeInSmall($chatLineWrap.find('.chatLine:last-child'));
         		LJ.state.jspAPI[chatId].reinitialise();
         		LJ.state.jspAPI[chatId].scrollToBottom();
-
+        
 
         },
         loadRooms: function(id){
         	LJ.params.socket.emit('load rooms',{_id:id});
+        },
+        cancelEvent: function(eventId, hostId){
+        	LJ.params.socket.emit('cancel event',{eventId:eventId, hostId:hostId});
         }
 
     }//end fn

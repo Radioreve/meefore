@@ -45,6 +45,7 @@
 	transition: all .15s;
 	border-bottom: 1px solid #eee;
 	color: rgb(56, 56, 56);
+	position: relative;
 }
 .eventItemWrap:hover{
 	/* background: rgb(245, 245, 245); */
@@ -65,7 +66,6 @@
 	text-align: center;
 }
 .e-weak{
-	font-size: .9em;
 
 	padding-top: 1px;
 }
@@ -133,8 +133,7 @@
 }
 /* CSS pour créer un évenements */
 #createEventWrap{
-	width: 500px;
-	height:300px;
+	/* width: 500px; */
 }
 #createEventInputsWrap{
 	margin-top: 50px;
@@ -172,4 +171,5 @@
 }
 #createEventBtn{
 	margin-top: 20px;
+	position: relative;
 }

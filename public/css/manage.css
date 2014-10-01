@@ -1,13 +1,8 @@
 #manageEventWrap{
-	width: 800px;
-	height: 400px;
+	width: 700px;
 }
  
-#cancelEvent{
-	width: 130px; 
-	font-size: .8em;
-	margin: 0 auto;
-	margin-top: 10px;
+#cancelEvent{ 
 }
 #askersListWrap{
     font-size: .9em;
@@ -16,6 +11,7 @@
 .a-row{
 	width:100%;
 	height: 60px;
+	position: relative;
 }
 .askerPicture{
 	float:left;

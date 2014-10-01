@@ -19,6 +19,10 @@
 			res.sendfile( __dirname + '/index.html');
 		});
 
+		app.get('/test',function(req,res){
+			res.sendfile(__dirname + '/test.html');
+		})
+
 		app.get('*', function(req,res){
 			res.redirect('/home');
 		});
@@ -64,8 +68,8 @@
 	  					status:      	 user.status,
 	  					location:    	 user.location,
 	  					description: 	 user.description,
-	  					img_id:      	 user.img.id,
-	  					img_version: 	 user.img.version,
+	  					imgId:      	 user.img.id,
+	  					imgVersion: 	 user.img.version,
 	  					eventsAskedList: user.eventsAskedList,
 	  					hostedEventId:   user.hostedEventId,
 	  					msg:         	 info.msg,

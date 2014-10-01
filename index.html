@@ -3,7 +3,9 @@
 	<head>
 		<title>Socket auth</title>
 		<link href='http://fonts.googleapis.com/css?family=Francois+One' rel='stylesheet' type='text/css'>
-			<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'><link rel="stylesheet" href="/css/meyer.css">
+			<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'>
+			<link href='http://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
+			<link rel="stylesheet" href="/css/meyer.css">
 			<link rel="stylesheet" href="/css/jscrollpane.css">
 			<link rel="stylesheet" href="/css/fontello/css/fontello.css">
 			<link rel="stylesheet" href="/css/animate.css">
@@ -28,7 +30,7 @@
 				<div id="thumbWrap" class="none animated">
 					<div id="thumbInfos">
 						<h2 id="thumbName"></h2>
-						<span id="logout">Log out</span>
+						  <span id="logout" class="action">Log out</span>
 					</div>
 				</div>
 				<section id="contentWrap" class="animated">
@@ -39,10 +41,12 @@
 								<input class="input-field" type="text" id="email" placeholder="email">
 								<input class="input-field" type="password" id="pw" placeholder="password">
 								<div class="input-field" id="submitWrap">
-									<input type="submit" class="themeBtn" id="login" value="login">
+								  <div class="rel">
+									<input type="submit" class="themeBtn" id="login" value="login"><div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div></input>
+								  </div>
 									<div id="bcm_member" class="animated sub-actions right">Devenir membre</div>
 									<div id="lost_pw" class="sub-actions left">Mot de passe oublié ?</div>
-									<div class="loaderWrap none"> <img class="loader-login-signup" src="/img/ajax-loader.gif"></div>
+									
 								</div>
 							</form>
 						</div>
@@ -55,9 +59,11 @@
 								<input class="input-field" type="password" id="pwSignup" placeholder="password">
 								<input class="input-field" type="password" id="pwCheckSignup" placeholder="password again">
 								<div class="input-field" id="submitWrap">
+								  <div class="rel">
 									<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
+									<div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
+								  </div>
 									<div id="b_to_login" class="animated sub-actions left">S'identifier</div>
-									<div class="loaderWrap none"> <img class="loader-login-signup" src="/img/ajax-loader.gif"></div>
 								</div>
 							</form>
 						</div>
@@ -84,11 +90,11 @@
 							<textarea id="description" class="profileInput" placeholder="Tell the world what you like"></textarea>
 						</div>
 					</div>
-					<button id="validate" class="right themeBtn">Validate</button>
-					<div class="loaderWrap none"> <img class="loader-profile" src="/img/ajax-loader.gif"></div>
+					<button id="validate" class="right themeBtn">Validate <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
+</button>
 				</section>
 				<section id="eventsWrap" class="none animated centered">
-					<h2>Soirées à venir</h2>
+					<h2>Tous les évènements</h2>
 				<section id="eventsListWrap"></section>
 			</section>
 			<section id="createEventWrap" class="animated none centered">
@@ -103,18 +109,21 @@
 						<input id="eventLocation" class="input-field_create" placeholder="Rue, métro, quartier..." maxlength="30" type="text">
 					</div>
 					<div class="input-row-wrap">
-						<label for="hour">Quand ça ?</label>
+						<label for="eventHour">Quand ça ?</label>
 						<input id="eventHour" class="input-field_create" type="text" placeholder="20" maxlength="2"><b>h</b>
 						<input id="eventMinut" class="input-field_create" type="text" placeholder="00" maxlength="2">
 					</div>
-					<textarea id="eventDescription" type="text" placeholder="What is this all about"></textarea>
-					<div class="loaderWrap none"> <img class="loader-event" src="/img/ajax-loader.gif"></div>
-					<button id="createEventBtn" class="right themeBtn">Create event</button>
+					<textarea id="eventDescription" placeholder="What is this all about"></textarea>
+					<button id="createEventBtn" class="right themeBtn">Create event <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
+</button>
 				</div>
 			</section>
 			<section id="manageEventWrap" class="animated none centered">
 				<h2>Management de la soirée</h2>
-				<div id="cancelEvent">Annuler l'évènement</div>
+			  <div class="actionsWrap actionsStyle">
+				<span id="cancelEvent" class="action">Annuler l'évènement</span>
+				<span id="suspendEvent" class="action">Suspendre les demandes </span>
+			  </div>
 				<div id="askersListWrap">
 				</div>
 			</section>
@@ -128,8 +137,8 @@
 			</form>
 			<button id="sendContactForm" class="right themeBtn">Envoyer</button>
 		</section>
-		
-	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="/js/jquery.js"></script>	
+	<!--<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script> -->
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="/js/jquery.cloudinary.js"></script>
 	<script src="/js/lodash.js"></script>

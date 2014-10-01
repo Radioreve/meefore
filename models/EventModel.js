@@ -13,22 +13,22 @@
 			type:String,
 			default:'Paris 75001'
 		},
-		host_id:{
+		hostId:{
 			type:String
 		},
-		host_img_id:{
+		hostImgId:{
 			type:String
 		},
-		host_img_version:{
+		hostImgVersion:{
 			type:String
 		},
-		host_name:{
+		hostName:{
 			type:String
 		},
-		begins_at:{
+		beginsAt:{
 			type:Date
 		},
-		created_at:{
+		createdAt:{
 			type:Date
 		},
 		askersList:{
