@@ -30,7 +30,7 @@ h3{
 	text-transform:uppercase;
 }
 label{
-	/**/
+	/*Hello git*/
 	font-size:.9em;
 	font-family: 'Corbel';
 	font-weight:bolder;
@@ -44,7 +44,7 @@ label{
 .rel{position:relative;}
 .right{float:right;}
 .left{float:left;}
-.none{display: none !important;}
+.none{display: none !important;} 
 .centered{
 	position:absolute;
 	margin:auto;
