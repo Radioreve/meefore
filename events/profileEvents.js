@@ -6,41 +6,48 @@
 
 
 	var updateProfile = function(data) {
-		    User.findByIdAndUpdate(data._id, {
+
+			var userId = data._id;
+
+		    User.findByIdAndUpdate(userId, {
 		        name: data.name,
 		        description: data.description,
 		        age: data.age,
 		        status: data.status
 		    }, {}, function(err, user) {
-		        if (err) {
-		            global.socket.emit('update profile error');
-		        } else {
+		        if (err) { global.sockets[userId].emit('update profile error');  return; }
 		            console.log('Emtting event update profile success')
-		            global.socket.emit('update profile success', user);
-		        }
+		            global.sockets[userId].emit('update profile success', user);
+		        
 		    });
 	};
 
 	var updatePicture = function(data) {
-		    var newImg = {
-		        id: data.imgId,
-		        version: data.imgVersion
-		    };
+		   	var userId = data._id,
+		        newImgId = data.imgId,
+		    	newImgVersion = data.imgVersion;
 
-		    User.findByIdAndUpdate(data._id, {
-		        img: newImg
+		    User.findByIdAndUpdate(userId, {
+		        imgId: newImgId,
+		        imgVersion: newImgVersion
 		    }, {}, function(err, user) {
-		        if (err) {
-		            console.log('err : ' + err);
-		            socket.emit('update picture error');
-		        } else {
-		            console.log('img up success');
-		            socket.emit('update image success', {
-		                user: user
-		            });
-		        }
-		    });
-	};
+		        if (err) { global.sockets[userId].emit('update picture error');
+		        		   return;
+		        		}
+		            global.sockets[userId].emit('update image success', user );
+		             if(user.status === 'hosting'){
+		            	Event.findByIdAndUpdate(user.hostedEventId, {
+		            		hostImgId: newImgId,
+		            		hostImgVersion: newImgVersion
+		            	},{}, function(err,event){
+		            		if(err){
+		            			console.log('Error '+ err); return;
+		            		}
+		            	});
+		            }
+		    	 });
+
+		    };
 
 	module.exports = {
 	    updateProfile: updateProfile,

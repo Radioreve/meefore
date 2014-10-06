@@ -4,23 +4,28 @@
 	    eventUtils = require('./eventUtils'),
 	    _ = require('lodash');
 
-	    var fetchEvents = function(data){
+	    var fetchEvents = function(userId){
 
 			console.log('Fetching all events');
 			Event.find({state: {$ne: 'canceled'}}, function(err,events){
 				if(err){console.log(err); return;}
-					global.socket.emit('fetch events success', events);
+					global.sockets[userId].emit('fetch events success', events);
 			});
-	    };
-
+	    }; 
+	  
 	    var requestIn = function(data){
+
 			var eventId = data.eventId,
-			 	hostId  = data.hostId,
+			 	hostId  = data.hostId ,
 			 	userId = data.userInfos._id;
 
 			var room = eventUtils.buildRoomId(eventId, hostId, userId);
-				socket.join(room);
 
+				global.sockets[userId].join(room);
+				global.sockets[hostId].join(room);
+				console.log('User '+userId+' has joined the room : \n'+room +'\n');
+				console.log('Host '+hostId+' has joined the room : \n'+room + '\n');
+		
 			Event.findById(eventId,{},function(err,myEvent){
 
 					User.findById(userId,{},function(err,user){
@@ -39,15 +44,14 @@
 										name:user.name,
 										description:user.description,
 										age:user.age,
-										imgId:user.img.id,
-										imgVersion:user.img.version,
+										imgId:user.imgId,
+										imgVersion:user.imgVersion,
 										msg:data.msg
-									};
+									}; 
 									myEvent.askersList.push(asker);
 									myEvent.save(function(err){
 										if(!err){
-											console.log('Array augmented');
-											socket.broadcast.emit('request participation in success', {hostId:hostId,
+											global.io.emit('request participation in success', {hostId:hostId,
 																							 userId:userId,
 																							 asker:asker});
 										}else{
@@ -76,27 +80,42 @@
 	    };
 
 	    var requestOut = function(data){
+
 				var eventId = data.eventId,
 					hostId  = data.hostId,
 					userId  = data.userInfos._id,
-					chatId  = eventUtils.buildRoomId(eventId,hostId,userId),
+					room  = eventUtils.buildRoomId(eventId,hostId,userId);
+
+					global.sockets[userId].leave(room);
+					if(global.sockets[hostId] != undefined){
+						global.sockets[hostId].leave(room); 
+					}
+					
+					console.log('User '+userId+' has left the room : \n'+room + '\n');
+					console.log('Host '+hostId+' has left the room : \n'+room + '\n');
 
 				    eventCondition = { _id: eventId },
 					eventUpdate    = { $pull: {'askersList': { 'id': userId }}},
 
 					userCondition  = { _id: userId },
-					userUpdate     = { $pull: { 'socketRooms': chatId, 'eventsAskedList': eventId }},
+					userUpdate     = { $pull: { 'socketRooms': room, 'eventsAskedList': eventId }},
 
 					hostCondition  = { _id: hostId },
-					hostUpdate	   = { $pull: { 'socketRooms': chatId }},
+					hostUpdate	   = { $pull: { 'socketRooms': room }},
 
 					option = {},
 					callback = function(err){ 
 						if(err){console.log(err); }
-						else{ global.io.to(hostId).emit('request participation out success', {userId: userId});}
+						else{ 
+							global.io.to(hostId).emit('request participation out success', 
+								{
+									userId: userId,
+								 	eventId: eventId,
+									hostId: hostId
+								});
+						}
 					};
 
-				global.socket.leave(chatId);
 
 				Event.update(eventCondition, eventUpdate, option, callback);
 				User.update(userCondition, userUpdate, option, callback);

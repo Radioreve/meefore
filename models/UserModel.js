@@ -31,30 +31,28 @@ var UserSchema = new mongoose.Schema({
     type: String,
     default:"Inconnu"
   },
-  img: {
-    id:{   // id is used client side by cloudinary to build url
+  imgId:{  // id is used client side by cloudinary to build url
     type: String,
     default:'placeholder_spjmx7'
-    },
-    version:{
-      type:String,
-      default:'1407342805'
-    }
+  },
+  imgVersion:{
+      type: String,
+      default: '1407342805'
   },
   status:{
-    type:String,
-    default:'new'
+    type: String,
+    default: 'new'
   },
   eventsAskedList:{
-    type:Array,
-    default:[]
+    type: Array,
+    default: []
   },
   hostedEventId:{
-    type:String
+    type: String
   },
   socketRooms:{
-    type:Array,
-    default:[]
+    type: Array,
+    default: []
   }
 
 

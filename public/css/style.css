@@ -1,6 +1,6 @@
 *{
 }
-html{ 
+html{
 }
 body{
 	/* min-height:100%; */
@@ -30,6 +30,7 @@ h3{
 	text-transform:uppercase;
 }
 label{
+	/**/
 	font-size:.9em;
 	font-family: 'Corbel';
 	font-weight:bolder;
@@ -68,15 +69,15 @@ label{
 	position: fixed;
 	font: .8em 'Ubuntu';
 	margin: auto;
-	height: 16px;
+	height: 22px;
 	background: rgb(218, 255, 192);
 	color: rgb(68, 68, 68);
-	border-radius: 5px 5px 0 0;
+	border-radius: 0 0 5px 5px;
 	padding: 7px;
-	padding-top: 8px;
+	padding-top: 12px;
 	left: 0;
 	right: 0;
-	top: 20px;
+	top: -1px;
 	width: 410px;
 	text-align: center;
 	z-index:100;
@@ -92,10 +93,10 @@ label{
 	position: absolute;
 	left: 0;
 	background: #7BBE7B;
-	height: 24px;
-	border-radius: 3px 0 0 3px;
+	height: 29px;
+	border-radius: 0 0 0 2px;
 	width: 30px;
-	padding-top: 7px;
+	padding-top: 12px;
 	top: 0;
 }
 #toastError .toast-icon{
@@ -176,7 +177,6 @@ label{
 	padding-top: 3px;
 }
 .notif-events{
-
 }
 #contact{
 }
@@ -230,13 +230,21 @@ label{
 	box-shadow: 1px 1px 1px rgb(104, 165, 89);
 	opacity: .9;
 }
+.themeBtnToggleHost{
+	background: white;
+	font-weight: bolder;
+	color: #333;
+	border: 1px solid #aaa;
+}
+.themeBtnToggleHost:hover{
+	text-decoration: underline;
+}
 #loginWrap #submitWrap #login,
 #signupWrap #submitWrap #signup{
 	background: #73E073;
 	color: #FFF;
 	border: none;
 }
-
 .input-field{
 	width: 70%;
 	border: 1px solid #A3A3A3;
@@ -278,7 +286,7 @@ label{
 	width: 180px;
 	padding-top: 6px;
 	margin: 0 auto;
-	height: 160px; 
+	height: 160px;
 	transition: .4s;
 }
 #pictureWrap:hover{
@@ -301,7 +309,7 @@ label{
 	margin-top:10px;
 }
 #loginWrap h2,
-#signupWrap h2{ 
+#signupWrap h2{
 	text-align:center;
 }
 #profileWrap h2{
@@ -332,12 +340,8 @@ label{
 	border: none;
 }
 #profileWrap #validate{
-
 	margin: 6px 6px 0 35px;
-	
-
 	position: relative;
-
 }
 .profileInput{
 	-webkit-transition: all .5s;
@@ -372,9 +376,7 @@ label{
 	text-align: center;
 	box-shadow: 0 2px 1px rgb(182, 255, 197);
 	color: white;
-	font-size: 0.8em;
 }
-
 #contactWrap{
 }
 #contactWrap form{
@@ -421,7 +423,7 @@ label{
 	left: 1110px;
 }
 #thumbWrap img{
-	
+
 }
 #thumbInfos{
 	margin-left:8px;
@@ -440,12 +442,11 @@ label{
 	margin-top:10px;
 }
 .actionsStyle span:before{
-	content:""; 
+	content:"";
 	margin-right:5px;
 	border: 1px solid #ccc;
 	border-radius: 5px;
 	padding-left: 15px;
-
 }
 .action{
 	font-size: .8em;

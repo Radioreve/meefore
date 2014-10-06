@@ -2,6 +2,9 @@
 	width:700px;
 	height:400px;
 }
+.on-top{
+	z-index:9999;
+}
 .chatWrap{
 	width: 500px;
 	height: 230px;

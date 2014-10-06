@@ -1,40 +1,34 @@
 
-		/* Models */
-   	var	User = require('../models/UserModel'),
-		Event = require('../models/EventModel'),
-		Chat = require('../models/ChatModel'),
-
-		/* Socket events handlers */
+//global.sockets[id] events handlers
 		profileEvents = require('./profileEvents'),
 		manageEvents = require('./manageEvents'),
 		otherEvents = require('./otherEvents'),
 		clientEvents = require('./clientEvents');
 
 
-	module.exports = function(socket, io){
+module.exports = function(id){
 
-		socket.emit('client connected');
-		socket.on('disconnect', otherEvents.disconnectClient);
 
-		/* Events relatifs au profile utilisateur */
-		socket.on('update profile', profileEvents.updateProfile);
-		socket.on('update picture', profileEvents.updatePicture);
+//Events d'initialisation
+		otherEvents.init();
+		//global.sockets[id].on('disconnect', otherEvents.disconnectClient);
 
-		/* Events relatif à la gestion d'un évènement */
-		socket.on('create event', manageEvents.createEvent);
-		socket.on('cancel event', manageEvents.cancelEvent);
-		socket.on('fetch askers', manageEvents.fetchAskers);
+//Events relatifs au profile utilisateur
+		global.sockets[id].on('update profile', profileEvents.updateProfile);
+		global.sockets[id].on('update picture', profileEvents.updatePicture);
 
-		/* Events inclassables */
-		socket.on('send message', otherEvents.sendMessage);
-		socket.on('load rooms', otherEvents.loadRooms);
+//Events relatif à la gestion d'un évènement
+		global.sockets[id].on('create event', manageEvents.createEvent);
+		global.sockets[id].on('cancel event', manageEvents.cancelEvent);
+		global.sockets[id].on('fetch askers', manageEvents.fetchAskers);
 
-		/* Events relatifs au démarrage d'une session client */
-		socket.on('fetch events', clientEvents.fetchEvents);
-		socket.on('request participation in', clientEvents.requestIn)		
-		socket.on('request participation out', clientEvents.requestOut);
+//Events inclassables
+		global.sockets[id].on('send message', otherEvents.sendMessage);
+		global.sockets[id].on('load rooms', otherEvents.reloadRooms);
 
-		
-		
+//Events relatifs au démarrage d'une session client
+		global.sockets[id].on('fetch events', clientEvents.fetchEvents);
+		global.sockets[id].on('request participation in', clientEvents.requestIn)		
+		global.sockets[id].on('request participation out', clientEvents.requestOut);
 
 	};

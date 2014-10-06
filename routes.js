@@ -56,20 +56,20 @@
 					res.end();
 				}
 				else{
+
 					// Generating cloud uploadg tag with a specific signature, valid 1 hour
 					var cloudTag = cloudinary.uploader.image_upload_tag('hello_world',{public_id:user._id});
 					var token = jwt.sign(user, config.jwtSecret, { expiresInMinutes: 60*5 });
+
 	  				res.json(200,{
 	  					_id:         	 user._id,
 	  					email:       	 user.local.email,
 	  					name:        	 user.name,
 	  					age:         	 user.age,
-	  					phone:       	 user.phone,
 	  					status:      	 user.status,
-	  					location:    	 user.location,
 	  					description: 	 user.description,
-	  					imgId:      	 user.img.id,
-	  					imgVersion: 	 user.img.version,
+	  					imgId:      	 user.imgId,
+	  					imgVersion: 	 user.imgVersion,
 	  					eventsAskedList: user.eventsAskedList,
 	  					hostedEventId:   user.hostedEventId,
 	  					msg:         	 info.msg,
