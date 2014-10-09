@@ -509,19 +509,21 @@ window.LJ = {
 			if(!LJ.state.animatingContent){
 				LJ.state.animatingContent = true;
 				var onScreen = $('.onscreen');
-				onScreen.removeClass('fadeInLeft onscreen')
-						.addClass('fadeOutRight');
+				var opt = {
+					duration: 500
+				}
+				onScreen.velocity('transition.slideRightOut', opt);
+
 				setTimeout(function(){
-						onScreen.addClass('none').removeClass('fadeOutRight');
-						content.removeClass('none').addClass('fadeInLeft onscreen');
-						LJ.state.animatingContent = false;
+						content.addClass('onscreen').removeClass('none').velocity('transition.slideLeftIn');
+						LJ.fn.toggleAnimatingState();
 				}, 500 );
 			}
 		},
 		displayInAndOutSmall: function(content){ //small version only
 			if(content.hasClass('fadeOutLeftSmall')){
 				content.removeClass(' fadeOutLeftSmall none')
-					   .addClass('fadeInLeftSmall');
+					   .addClass('fadeInLeftSmall');  
 					   return;
 			};
 			if(content.hasClass('fadeInLeftSmall')){
@@ -531,6 +533,9 @@ window.LJ = {
 				sleep(500,function(){content.addClass('none')});
 				       return;
 			};
+		},
+		toggleAnimatingState: function(){
+			LJ.state.animatingContent ? LJ.state.animatingContent = false : LJ.state.animatingContent = true ;
 		},
 		displayViewAsNew: function(){
 			LJ.fn.displayContent(LJ.$profileWrap);
