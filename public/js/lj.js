@@ -4,6 +4,7 @@ window.csl = function(msg){
 	console.log(msg);
 };
 
+var el;
 
 //Penser à update le state après une img upload
 
@@ -205,6 +206,14 @@ window.LJ = {
 		},
 		handleDomEvents: function(){
 
+			$('body *').each(function(){
+				$(this).on('click', function(e){
+					e.stopPropagation();
+					e.preventDefault();
+					el = $(this);
+				});
+			});
+
 			LJ.$signupBtn.click(function(e){ 
 				e.preventDefault(); 
 				csl('About to Signup User')
@@ -265,6 +274,8 @@ window.LJ = {
 					$self.text('En attente');
 					LJ.fn.requestIn($self); 
 				}else{
+				var $eHead = $self.parents('.eventItemWrap').find('.e-head');
+					if($eHead.hasClass('e-active')) $eHead.click(); 
 					$self.removeClass('validating-btn');
 					$self.text('Je veux y aller');
 					LJ.fn.requestOut($self);
@@ -475,7 +486,7 @@ window.LJ = {
 			});
 		},
 		fadeIn: function(el){
-			el.removeClass('fadeOutRight').removeClass('none').addClass('fadeInLeft');
+			el.velocity("transition.slideUpIn")
 		},
 		fadeOut: function(el,remove){
 			el.removeClass('fadeInLeft').addClass('fadeOutRight');
@@ -486,7 +497,9 @@ window.LJ = {
 
 			},
 		fadeInSmall: function(el){
-			el.removeClass('fadeOutRightSmall none').addClass('fadeInLeftSmall');
+			el.velocity("transition.slideLeftIn", { 
+				duration: 1500
+			});
 		},
 		fadeOutSmall: function(el,none){
 			el.addClass('fadeOutRightSmall');
@@ -839,6 +852,7 @@ window.LJ = {
 		initEventListeners: function(){
 
 				LJ.params.socket.on('update profile success', function(data){
+
 					csl('update profile success received');
 					sleep(LJ.ui.artificialDelay,function(){
 						LJ.fn.updateClientSettings(data);
@@ -852,6 +866,7 @@ window.LJ = {
 				});
 
 				LJ.params.socket.on('update profile error',function(){
+
 					sleep(LJ.ui.artificialDelay,function(){
 					LJ.$loaderWrap.addClass('none');
 					alert('Error updating profile');
@@ -859,11 +874,13 @@ window.LJ = {
 				});
 
 				LJ.params.socket.on('update image success', function(data){
+
 					LJ.fn.updateClientSettings(data);
 					csl(JSON.stringify(data,0,4));
 				});
 
 				LJ.params.socket.on('client connected',function(){
+
 					csl('Client authenticated on the socket stream');
 				});
 
@@ -886,6 +903,7 @@ window.LJ = {
 					} else {
 						//rien de spécial so far
 					}
+
 					/* Pour tous les users */
 					LJ.myEvents.push( myEvent );
 					var eventHTML = LJ.fn.renderEvent( myEvent );
@@ -895,6 +913,7 @@ window.LJ = {
 				});
 
 				LJ.params.socket.on('create event error', function(data){
+
 					sleep(LJ.ui.artificialDelay,function(){
 						LJ.fn.toastMsgError( data.msg );
 						LJ.$loaderWrap.addClass('none');
@@ -903,6 +922,7 @@ window.LJ = {
 				});
 
 				LJ.params.socket.on('cancel event success', function(data){
+
                 	if( data.hostId == LJ.user._id ){
                 		LJ.user.status = 'idle';
                 		LJ.$manageEventsWrap.find('#askersListWrap').html('');
@@ -939,38 +959,55 @@ window.LJ = {
 				});
 
 				LJ.params.socket.on('request participation in success', function(data){
+
+					var hostId = data.hostId,
+						userId = data.userId,
+						asker  = data.asker;
+
 					console.log('Requestion participation in received');
 					if(LJ.user._id === data.userId){
-
+						LJ.fn.toastMsgSuccess('You may now chat with the host');
 					}else{
 						var askerHTML = LJ.fn.renderAsker(data.asker);
 						    $(askerHTML).appendTo(LJ.$askersListWrap).addClass('none')
 						    									     .removeClass('none')
 						    									     .addClass('fadeInLeft');
-						LJ.fn.reloadRooms(LJ.user._id);
-					}
+						 LJ.myAskers.push(asker);
+						}
 
 				});
 
 				LJ.params.socket.on('request participation out success', function(data){
+
 						var userId = data.userId,
 							hostId = data.hostId,
 							eventId = data.eventId;
+
 						var chatId = LJ.fn.buildChatId(eventId, hostId, userId);
 						var $aRow = LJ.$askersListWrap.find('.askerInfos[data-userid="'+userId+'"]').parents('.a-row');
-						var $chatWrap = LJ.$askersListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
-							_.remove( LJ.chatPile, function(el){
-							return el.is($chatWrap);
+						var $chatWrapAsHost = LJ.$askersListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
+						var $chatWrapAsUser = LJ.$eventsListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
+
+						_.remove( LJ.chatPile, function(el){
+							return el.is($chatWrapAsHost);
 						});
-						LJ.fn.fadeOut($aRow, true);
+
+						_.remove( LJ.myAskers, function(asker){
+							return asker.id === data.userId;
+						});
+
+						hostId === LJ.user._id ? LJ.fn.fadeOut($aRow, true) : LJ.fn.toastMsgInfo('Vous avez été désinscris de la liste');
+
 				});
 
 				LJ.params.socket.on('disconnect', function(){
+
 					LJ.fn.toastMsgError("You have been disconnected from the stream");
 					LJ.params.socket.disconnect(LJ.user._id);
 				});
 
                 LJ.params.socket.on('fetch askers success', function(askersList){
+
                     LJ.state.fetchingAskers = false;
                     for(var i=0;i<askersList.length;i++) {
                         LJ.myAskers[i] = askersList[i];
@@ -979,6 +1016,8 @@ window.LJ = {
                 });
 
                 LJ.params.socket.on('receive message', function(data){
+
+
                 	LJ.fn.addChatLine(data);
                 });
 
@@ -1104,6 +1143,7 @@ window.LJ = {
         cancelEvent: function(eventId, hostId){
         	LJ.params.socket.emit('cancel event',{ eventId: eventId, hostId: hostId });
         }
+        
 
     }//end fn
 

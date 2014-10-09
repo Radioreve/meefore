@@ -19,10 +19,13 @@
 			 	hostId  = data.hostId ,
 			 	userId = data.userInfos._id;
 
+			if(hostId == userId) return;  /* Send back un msg au client éventuellement */
+
 			var room = eventUtils.buildRoomId(eventId, hostId, userId);
 
 				global.sockets[userId].join(room);
-				global.sockets[hostId].join(room);
+		     if(global.sockets[hostId] != undefined) global.sockets[hostId].join(room);
+	
 				console.log('User '+userId+' has joined the room : \n'+room +'\n');
 				console.log('Host '+hostId+' has joined the room : \n'+room + '\n');
 		
@@ -107,12 +110,15 @@
 					callback = function(err){ 
 						if(err){console.log(err); }
 						else{ 
-							global.io.to(hostId).emit('request participation out success', 
-								{
-									userId: userId,
-								 	eventId: eventId,
-									hostId: hostId
-								});
+							var data = {
+								userId: userId,
+								eventId: eventId,
+								hostId: hostId
+							};
+							if(global.sockets[hostId] != undefined){
+							global.sockets[hostId].emit('request participation out success', data );
+							}
+							global.sockets[userId].emit('request participation out success', data );								
 						}
 					};
 

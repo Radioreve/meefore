@@ -4,6 +4,7 @@ var User = require('../models/UserModel'),
     _ = require('lodash');
 
 var createEvent = function(data) {
+	
     var hostId = data.hostId;
 
     /* Pour pouvoir push des events à l'host ultérieurement*/
