@@ -8,7 +8,6 @@
 	<link rel="stylesheet" href="/css/meyer.css">
 	<link rel="stylesheet" href="/css/jscrollpane.css">
 	<link rel="stylesheet" href="/css/fontello/css/fontello.css">
-	<link rel="stylesheet" href="/css/animate.css">
 	<link rel="stylesheet" href="/css/hint.css">
 	<link rel="stylesheet" href="/css/style.css">
 	<link rel="stylesheet" href="/css/events.css">
@@ -17,26 +16,26 @@
 </head>
 <body>
 	<div id="mainWrap" class="">
-		<div id="toastSuccess" class="animated none"><span class="toast-icon icon icon-check"></span><span class="toastMsg"></span></div>
+		<div id="toastSuccess" class=" none"><span class="toast-icon icon icon-check"></span><span class="toastMsg"></span></div>
 		<div id="toastError" class=" none"><span class="toast-icon icon icon-cancel"></span><span class="toastMsg"></span></div>
-		<div id="toastInfo" class="animated none"><span class="toast-icon icon icon-right-open-big"></span><span class="toastMsg"></span></div>
+		<div id="toastInfo" class=" none"><span class="toast-icon icon icon-right-open-big"></span><span class="toastMsg"></span></div>
 		<span class="menuBtn menu icon icon-menu"   > Menu</span>
-		<ul id="menuWrap" class="none animated fadeOutLeftSmall">
+		<ul id="menuWrap" class="">
 			<li id="profile" class="left menu menu-item menu-item-active icon icon-user"    ><span>Settings</span></li>
-			<li id="events"  class="left menu menu-item icon icon-glass" ><div class="none notif notif-events">5</div><span>Events</span></li>
-			<li id="create" class="left menu menu-item icon icon-plus"   ><div class="none notif notif-management">2</div><span>Create</span></li>
-			<li id="contact" class="left menu menu-item icon icon-mail"   ><span>Contact</span></li>
+			<li id="events"  class="left menu menu-item icon icon-glass"><div class="none notif notif-events">5</div><span>Events</span></li>
+			<li id="create" class="left menu menu-item icon icon-plus" ><div class="none notif notif-management">2</div><span>Create</span></li>
+			<li id="contact" class="left menu menu-item icon icon-mail" ><span>Contact</span></li>
 		</ul>
-		<div id="thumbWrap" class="none animated">
+		<div id="thumbWrap" class="none ">
 			<div id="thumbInfos">
 				<h2 id="thumbName"></h2>
 				<span id="logout" class="action">Log out</span>
 			</div>
 		</div>
-		<section id="contentWrap" class="animated">
-			<section id="loginWrap" class="animated onscreen centered">
+		<section id="contentWrap" class="">
+			<section id="loginWrap" class="revealed centered">
 				<h2>Identifiez-vous!</h2>
-				<div id="formWrap"  class="animated">
+				<div id="formWrap"  class="">
 					<form autocomplete="off">
 						<input class="input-field" type="text" id="email" placeholder="email">
 						<input class="input-field" type="password" id="pw" placeholder="password">
@@ -44,16 +43,16 @@
 							<div class="rel">
 								<input type="submit" class="themeBtn" id="login" value="login"><div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div></input>
 							</div>
-							<div id="bcm_member" class="animated sub-actions right">Devenir membre</div>
+							<div id="bcm_member" class=" sub-actions right">Devenir membre</div>
 							<div id="lost_pw" class="sub-actions left">Mot de passe oublié ?</div>
 							
 						</div>
 					</form>
 				</div>
 			</section>
-			<section id="signupWrap" class="animated none centered">
+			<section id="signupWrap" class="none centered">
 				<h2>Inscrivez-vous</h2>
-				<div id="formWrap" class="animated">
+				<div id="formWrap" class="">
 					<form>
 						<input class="input-field" type="text" id="emailSignup" placeholder="email">
 						<input class="input-field" type="password" id="pwSignup" placeholder="password">
@@ -63,12 +62,12 @@
 								<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
 								<div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
 							</div>
-							<div id="b_to_login" class="animated sub-actions left">S'identifier</div>
+							<div id="b_to_login" class=" sub-actions left">S'identifier</div>
 						</div>
 					</form>
 				</div>
 			</section>
-			<section id="profileWrap" class="none animated centered">
+			<section id="profileWrap" class="none centered">
 				<h2>Account settings</h2>
 				<div class="progress_bar"></div>
 				<div id="pictureWrap"class="left hint--right" data-hint="click to edit your picture">
@@ -93,11 +92,11 @@
 				<button id="validate" class="right themeBtn">Validate <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
 				</button>
 			</section>
-			<section id="eventsWrap" class="none animated centered">
+			<section id="eventsWrap" class="none  centered">
 				<h2>Tous les évènements</h2>
 				<section id="eventsListWrap"></section>
 			</section>
-			<section id="createEventWrap" class="animated none centered">
+			<section id="createEventWrap" class=" none centered">
 				<h2>Créer votre évènement</h2>
 				<div id="createEventInputsWrap">
 					<div class="input-row-wrap hint--right" data-hint="Restez simple et précis">
@@ -118,7 +117,7 @@
 					</button>
 				</div>
 			</section>
-			<section id="manageEventWrap" class="animated none centered">
+			<section id="manageEventWrap" class=" none centered">
 				<h2>Management de la soirée</h2>
 				<div class="actionsWrap actionsStyle">
 					<span id="cancelEvent" class="action">Annuler l'évènement</span>
@@ -128,7 +127,7 @@
 				</div>
 			</section>
 		</section>
-		<section id="contactWrap" class="animated none centered">
+		<section id="contactWrap" class=" none centered">
 			<h2>We would like to hear from you</h2>
 			<form>
 				<input id="contactName" type="text" placeholder="full name">

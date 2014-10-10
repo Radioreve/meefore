@@ -57,6 +57,15 @@ window.LJ = {
                 radius:7
         }
 	},
+	vel:{
+		duration:400,
+		begin: function(){
+			csl('Animating begin from globals');
+		},
+		complete: function(){
+			csl('Animating completed from globals');
+		}
+	},
 	user:{
 		_id:'',
 		name:'',
@@ -226,11 +235,11 @@ window.LJ = {
 			});
 
 			LJ.$becomeMember.click(function(){
-				LJ.fn.displayContent(LJ.$signupWrap);
+				LJ.fn.updateView(LJ.$signupWrap);
 			});
 
 			LJ.$backToLogin.click(function(){
-				LJ.fn.displayContent(LJ.$loginWrap);
+				LJ.fn.updateView(LJ.$loginWrap);
 			});
 
 			LJ.$menuBtn.click(function(){
@@ -240,28 +249,28 @@ window.LJ = {
 			LJ.$contactMenu.click(function(){
 				if(!$(this).hasClass('menu-item-active')){
 			   	  LJ.fn.updateMenuView(LJ.$contactMenu);
-				  LJ.fn.displayContent(LJ.$contactWrap);
+				  LJ.fn.updateView(LJ.$contactWrap);
 				}
 			});
 
 			LJ.$createMenu.click(function(){
 				if(!$(this).hasClass('menu-item-active')){
 				  LJ.fn.updateMenuView(LJ.$createMenu);
-				 $(this).hasClass('created') ? LJ.fn.displayContent(LJ.$manageEventsWrap) : LJ.fn.displayContent(LJ.$createEventWrap);
+				 $(this).hasClass('created') ? LJ.fn.updateView(LJ.$manageEventsWrap) : LJ.fn.updateView(LJ.$createEventWrap);
 				}
 			});
 
 			LJ.$profileMenu.click(function(){
 				if(!$(this).hasClass('menu-item-active')){
 				  LJ.fn.updateMenuView(LJ.$profileMenu);
-				  LJ.fn.displayContent(LJ.$profileWrap);
+				  LJ.fn.updateView(LJ.$profileWrap);
 				}
 			});
 
 			LJ.$eventsMenu.click(function(){
 				if(!$(this).hasClass('menu-item-active')){
 			  	  LJ.fn.updateMenuView(LJ.$eventsMenu);
-				  LJ.fn.displayContent(LJ.$eventsWrap);
+				  LJ.fn.updateView(LJ.$eventsWrap);
 				}
 			});
 
@@ -485,70 +494,70 @@ window.LJ = {
 				$('.loaderWrap').addClass('none');
 			});
 		},
-		fadeIn: function(el){
-			el.velocity("transition.slideUpIn")
-		},
-		fadeOut: function(el,remove){
-			el.removeClass('fadeInLeft').addClass('fadeOutRight');
-			sleep(600,function(){
-				el.addClass('none');
-				if(remove){ el.remove();}
-			});
-
-			},
-		fadeInSmall: function(el){
-			el.velocity("transition.slideLeftIn", { 
-				duration: 1500
-			});
-		},
-		fadeOutSmall: function(el,none){
-			el.addClass('fadeOutRightSmall');
-			if(none){el.addClass('none')}
-		},
-		displayContent: function(content){
-			if(!LJ.state.animatingContent){
-				LJ.state.animatingContent = true;
-				var onScreen = $('.onscreen');
-				var opt = {
-					duration: 500
-				}
-				onScreen.velocity('transition.slideRightOut', opt);
-
-				setTimeout(function(){
-						content.addClass('onscreen').removeClass('none').velocity('transition.slideLeftIn');
-						LJ.fn.toggleAnimatingState();
-				}, 500 );
+		fadeInLeft: function(el, options){
+			var o = LJ.vel;
+			if( _.isObject(options)){
+				o = LJ.fn.updateObject(o, options);
 			}
+			el.velocity("transition.slideLeftIn");    
 		},
-		displayInAndOutSmall: function(content){ //small version only
-			if(content.hasClass('fadeOutLeftSmall')){
-				content.removeClass(' fadeOutLeftSmall none')
-					   .addClass('fadeInLeftSmall');  
-					   return;
-			};
-			if(content.hasClass('fadeInLeftSmall')){
-				csl(2);
-				content.addClass('fadeOutLeftSmall');
+		fadeOutRight: function(el, options){ 
+			var o = LJ.vel; 
+			if( _.isObject(options)){
+				o = LJ.fn.updateObject(o, options);
+			}
+			console.log(o);
+			el.velocity("transition.slideRightOut",o); 
+		},
+		updateView: function(){
 
-				sleep(500,function(){content.addClass('none')});
-				       return;
+			for(var i=0; i<arguments.length; i++){
+
+				if(! _.isObject(arguments[i]) ){
+					console.log('Wrong format for updating view');
+					return;
+				}
+
+				switch arguments[i].anim{
+					case 'slideLeftIn':
+						arguments[i].$el.velocity('transition.slideLeftIn');
+					break;
+
+					case 'slideRightIn':
+						arguments[i].$el.velocity('transition.slideRightIn');
+					break;
+
+					case 'slideLeftOut':
+						arguments[i].$el.velocity('transition.slideLeftOut');
+					break;
+
+					case 'slideRightOut':
+						arguments[i].$el.velocity('transition.slideRightOut');
+					break;
+
+					default:
+						alert('Animation not recognized');
+					break;
+				}
+
 			};
+					
 		},
 		toggleAnimatingState: function(){
 			LJ.state.animatingContent ? LJ.state.animatingContent = false : LJ.state.animatingContent = true ;
 		},
 		displayViewAsNew: function(){
-			LJ.fn.displayContent(LJ.$profileWrap);
+			LJ.fn.updateView(LJ.$profileWrap);
 		},
 		displayViewAsIdle: function(){
-			LJ.fn.displayContent(LJ.$eventsWrap);
+			LJ.fn.updateView(LJ.$eventsWrap);
             $('.menu-item-active').removeClass('menu-item-active');
             LJ.$eventsMenu.addClass('menu-item-active');
 
 		},
 		displayViewAsHost: function(){
             LJ.fn.fetchAskers();
-			LJ.fn.displayContent(LJ.$manageEventsWrap);
+			LJ.fn.updateView(LJ.$manageEventsWrap);
 			$('.menu-item-active').removeClass('menu-item-active');
 			LJ.$createMenu.addClass('created menu-item-active')
 						  .removeClass('icon-plus')
@@ -564,7 +573,6 @@ window.LJ = {
 				else{
 					that.addClass('menuBtnActive');
 				}
-				LJ.fn.displayInAndOutSmall(LJ.$menuWrap);
 		},
 		toggleChatWrapAskers: function(askerPictureTag){
 
@@ -636,6 +644,15 @@ window.LJ = {
 				LJ.user[el] = newSettings[el];
 			});
 		},
+		/* Updates o1 with o2 properties, if existants in o1 only
+		   Example of usage : var o = LJ.updateObject(LJ.params, preferences); 
+		*/
+		updateObject: function(o1,o2){
+			_.keys(o2).forEach(function(key){
+					o1[key] = o2[key];
+			});
+			return o1;
+		},
 		updateSettingsDOM: function(){
 			LJ.$nameInput.val(LJ.user.name);
 			LJ.$ageInput.val(LJ.user.age);
@@ -644,9 +661,9 @@ window.LJ = {
 		toastMsgSuccess: function(msg){
 			var toast = LJ.$toastSuccess;
 				toast.find('.toastMsg').text(msg);
-			LJ.fn.fadeInSmall(toast);
+			LJ.fn.fadeInLeft(toast);
 			sleep(3000,function(){
-				LJ.fn.fadeOutSmall(toast);
+				LJ.fn.fadeOutRight(toast);
 			});
 		},
 		toastMsgError: function(msg){
@@ -657,15 +674,13 @@ window.LJ = {
 				toast.on('click', function(){
 					 	$(this).addClass('none');
 					 });
-					
-
 		},
 		toastMsgInfo: function(msg){
 			var toast = LJ.$toastInfo;
 				toast.find('.toastMsg').text(msg);
-			LJ.fn.fadeInSmall(toast);
+			LJ.fn.fadeInLeft(toast);
 			sleep(3000,function(){
-				LJ.fn.fadeOutSmall(toast);
+				LJ.fn.fadeOutRight(toast);
 			});
 		},
 		replaceMainImage: function(id,version,d){
@@ -754,7 +769,7 @@ window.LJ = {
 				d.version = e.hostImgVersion;
 
 			var chatId = LJ.fn.buildChatId(e._id, e.hostId, LJ.user._id);
-            var chatWrap = '<div class="chatWrap none chat-asker animated" data-chatid="'+chatId+'">'
+            var chatWrap = '<div class="chatWrap chat-asker" data-chatid="'+chatId+'">'
                            +'<div class="tri"></div>'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
@@ -775,7 +790,7 @@ window.LJ = {
 			}
 				button+="</button></div>";
 
-			var html = '<div class="eventItemWrap animated none" data-eventid="'+e._id+'" data-hostid="'+e.hostId+'">'
+			var html = '<div class="eventItemWrap none" data-eventid="'+e._id+'" data-hostid="'+e.hostId+'">'
 						+'<div class="e-head hint--left" data-hint="'+e.hostName+'">' + imgTag 
 						+'<div class="e-itm e-hour e-weak">'+LJ.utils.dateHHMM(new Date(e.beginsAt))+'</div>'
 						+'</div>'
@@ -801,7 +816,7 @@ window.LJ = {
 
             var chatId = LJ.fn.buildChatId( LJ.user.hostedEventId, LJ.user._id, a.id );
 
-            var chatWrap = '<div class="chatWrap chat-host none animated" data-chatid="'+chatId+'">'
+            var chatWrap = '<div class="chatWrap chat-host none" data-chatid="'+chatId+'">'
                            +'<div class="tri"></div>'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
@@ -810,7 +825,7 @@ window.LJ = {
                             +'</div>'
                            +'</div>';
 
-            var html =  '<div class="a-row animated">'
+            var html =  '<div class="a-row">'
                         +'<div class="askerPicture">'
                           + imgTag
                         +'</div>'
@@ -902,7 +917,7 @@ window.LJ = {
 							LJ.$loaderWrap.addClass('none');
 							$('.themeBtn').removeClass('validating-btn');
 							LJ.$createEventWrap.find('input').val('');
-							LJ.fn.displayContent(LJ.$manageEventsWrap);
+							LJ.fn.updateView(LJ.$manageEventsWrap);
 							LJ.fn.toggleCreateEventMenu(); 
 						});
 					} else {
@@ -932,7 +947,7 @@ window.LJ = {
                 		LJ.user.status = 'idle';
                 		LJ.$manageEventsWrap.find('#askersListWrap').html('');
                 		LJ.fn.toggleCreateEventMenu();
-                		LJ.fn.displayContent(LJ.$createEventWrap);
+                		LJ.fn.updateView(LJ.$createEventWrap);
 						$('.menu-item-active').removeClass('menu-item-active');
 						LJ.$createMenu.addClass('menu-item-active')
 						  .removeClass('icon-minus created')
@@ -974,9 +989,8 @@ window.LJ = {
 						LJ.fn.toastMsgSuccess('You may now chat with the host');
 					}else{
 						var askerHTML = LJ.fn.renderAsker(data.asker);
-						    $(askerHTML).appendTo(LJ.$askersListWrap).addClass('none')
-						    									     .removeClass('none')
-						    									     .addClass('fadeInLeft');
+						    $(askerHTML).appendTo(LJ.$askersListWrap);
+
 						 LJ.myAskers.push(asker);
 						}
 
@@ -1122,7 +1136,7 @@ window.LJ = {
         	csl('Adding chatLine');
             var cha12 = '';
             data.senderId === LJ.user._id ?  cha12 = 'cha1' : cha12 = 'cha2';
-            var chatLineHtml = '<div class="chatLine animated none">'
+            var chatLineHtml = '<div class="chatLine none">'
 								+'<div class="cha '+cha12+'">'+data.msg+'</div>'
         						+'</div>';
 
@@ -1136,7 +1150,7 @@ window.LJ = {
         			LJ.state.jspAPI[chatId] =  $chatLineWrap.data('jsp');
         		}
         		$chatLineWrap.find('.jspPane').append(chatLineHtml);
-        		LJ.fn.fadeInSmall($chatLineWrap.find('.chatLine:last-child'));
+        		LJ.fn.fadeInLeft($chatLineWrap.find('.chatLine:last-child'));
         		LJ.state.jspAPI[chatId].reinitialise();
         		LJ.state.jspAPI[chatId].scrollToBottom();
         
