@@ -7,7 +7,6 @@
 #Currently
 
  ~> Today
-	- Tout refactor avec Velocity.js - Changer le fadinEffect (double slide)
 	- Gérer la suspension/annulation/terminaison
 
 #Mandatory 
