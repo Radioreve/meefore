@@ -4,8 +4,6 @@ window.csl = function(msg){
 	console.log(msg);
 };
 
-var el;
-
 //Penser à update le state après une img upload
 
 window.LJ = {
@@ -57,15 +55,6 @@ window.LJ = {
                 radius:7
         }
 	},
-	vel:{
-		duration:400,
-		begin: function(){
-			csl('Animating begin from globals');
-		},
-		complete: function(){
-			csl('Animating completed from globals');
-		}
-	},
 	user:{
 		_id:'',
 		name:'',
@@ -94,7 +83,7 @@ window.LJ = {
 		$signupWrap			  : $('#signupWrap'),
 		$profileWrap	      : $('#profileWrap'),
 		$eventsWrap		      : $('#eventsWrap'),
-		$manageEventsWrap     : $('#manageEventWrap'),
+		$manageEventsWrap     : $('#manageEventsWrap'),
         $askersListWrap       : $('#askersListWrap'),
 		$thumbWrap			  : $('#thumbWrap'),
 		$loginBtn  	          : $('#login'),
@@ -114,10 +103,7 @@ window.LJ = {
 		$locationInput        : $('#location'),
 		$loaderWrap 	      : $('.loaderWrap'),
 		$menuBtn		      : $('.menuBtn'),
-		$contactMenu          : $('#contact'),
-		$profileMenu          : $('#profile'),
-		$eventsMenu           : $('#events'),
-		$createMenu			  : $('#create'),
+
 		$createEventWrap	  : $('#createEventWrap'),
 		$createEventBtn       : $('#createEventBtn'),
 		$eventNameInput       : $('#eventName'),
@@ -149,6 +135,9 @@ window.LJ = {
 				/*Bind any UI action with the proper handler */
 				LJ.fn.handleDomEvents();
 
+				/*Bind UI Animating moves */
+				LJ.fn.initAnimations();
+
 				/*Global UI Settings ehanced UX*/
 				LJ.fn.initEhancements();
 
@@ -159,6 +148,20 @@ window.LJ = {
 				query:'token='+jwt
 			});
 			LJ.fn.initEventListeners();
+
+		},
+		initAnimations: function(){
+
+			LJ.$becomeMember.click(function(){
+				LJ.fn.displayContent( LJ.$signupWrap );
+			});
+
+			LJ.$backToLogin.click(function(){
+				LJ.fn.displayContent( LJ.$loginWrap, {
+					myWayOut: "transition.slideLeftOut",
+					myWayIn: "transition.slideRightIn"}
+					);
+			});
 
 		},
 		initEhancements: function(){
@@ -215,14 +218,6 @@ window.LJ = {
 		},
 		handleDomEvents: function(){
 
-			$('body *').each(function(){
-				$(this).on('click', function(e){
-					e.stopPropagation();
-					e.preventDefault();
-					el = $(this);
-				});
-			});
-
 			LJ.$signupBtn.click(function(e){ 
 				e.preventDefault(); 
 				csl('About to Signup User')
@@ -234,45 +229,31 @@ window.LJ = {
 				LJ.fn.loginUser();	
 			});
 
-			LJ.$becomeMember.click(function(){
-				LJ.fn.updateView(LJ.$signupWrap);
-			});
-
-			LJ.$backToLogin.click(function(){
-				LJ.fn.updateView(LJ.$loginWrap);
-			});
-
 			LJ.$menuBtn.click(function(){
 				LJ.fn.toggleMenu();
 			});
 
-			LJ.$contactMenu.click(function(){
-				if(!$(this).hasClass('menu-item-active')){
-			   	  LJ.fn.updateMenuView(LJ.$contactMenu);
-				  LJ.fn.updateView(LJ.$contactWrap);
-				}
+			['#contact', '#create', '#profile', '#events', '#management'].forEach(function(menuItem){
+
+				$(menuItem).click(function(){
+		
+				  if( ! LJ.state.animatingContent && !$(menuItem).hasClass('menu-item-active') && !($(menuItem).hasClass('disabled')) ){
+				  		LJ.state.animatingContent = true;
+						
+						var linkedContent = $(menuItem).data('linkedcontent');
+						
+						$('.menu-item-active').removeClass('menu-item-active');
+						$(menuItem).addClass('menu-item-active');
+
+						LJ.fn.displayContent( $(linkedContent), {
+							myWayOut: "transition.slideLeftOut",
+							duration: 250
+						});
+					
+				  }
+				});
 			});
 
-			LJ.$createMenu.click(function(){
-				if(!$(this).hasClass('menu-item-active')){
-				  LJ.fn.updateMenuView(LJ.$createMenu);
-				 $(this).hasClass('created') ? LJ.fn.updateView(LJ.$manageEventsWrap) : LJ.fn.updateView(LJ.$createEventWrap);
-				}
-			});
-
-			LJ.$profileMenu.click(function(){
-				if(!$(this).hasClass('menu-item-active')){
-				  LJ.fn.updateMenuView(LJ.$profileMenu);
-				  LJ.fn.updateView(LJ.$profileWrap);
-				}
-			});
-
-			LJ.$eventsMenu.click(function(){
-				if(!$(this).hasClass('menu-item-active')){
-			  	  LJ.fn.updateMenuView(LJ.$eventsMenu);
-				  LJ.fn.updateView(LJ.$eventsWrap);
-				}
-			});
 
 			LJ.$validateBtn.click(LJ.fn.updateProfile);
 
@@ -292,7 +273,7 @@ window.LJ = {
 			});
 
 			LJ.$body.on('click','.themeBtnToggleHost', function(){
-				LJ.$createMenu.click();
+				$('#management').click();
 			});
 
 			LJ.$createEventBtn.click(function(){
@@ -334,9 +315,6 @@ window.LJ = {
             	LJ.fn.cancelEvent(eventId, hostId);
             });
 			
-
-
-
 		},
 		signupUser: function(credentials){
 
@@ -414,7 +392,8 @@ window.LJ = {
 		},
 		handleBeforeSendLogin: function(){
 			LJ.$loginBtn.val('Loading');
-			LJ.fn.fadeOut(LJ.$becomeMember);
+			$('#bcm_member').velocity('transition.slideRightOut', { duration: 500 });
+			$('#lost_pw').velocity('transition.slideLeftOut', { duration: 500 });
 			LJ.$loaderWrap.removeClass('none');
 			$('input.input-field').addClass('validating');
 		},
@@ -444,11 +423,6 @@ window.LJ = {
 							           LJ.user.imgVersion,
 							           LJ.cloudinary.displayParamsProfile);
 
-				sleep(350,function(){
-					LJ.fn.toggleMenu();
-					LJ.fn.fadeIn(LJ.$thumbWrap);
-				});
-
 				switch (LJ.user.status){
 					case 'new':
 						LJ.fn.displayViewAsNew();
@@ -462,20 +436,29 @@ window.LJ = {
 					default:
 						alert('No status available');
 				}
+				$('.menu-item').velocity('transition.slideLeftIn', {
+					display:'inline-block',
+					stagger: 250,
+					complete: function(){
+						LJ.fn.toastMsgInfo("Welcome onboard " + LJ.user.name);
+					}
+				});
+				
 			});
 		},
 		handleFailedLogin: function(data){
 			data = JSON.parse(data.responseText);
 			sleep(LJ.ui.artificialDelay,function(){
-				LJ.fn.toastMsgInfo(data.msg);
+				LJ.fn.toastMsgError(data.msg);
 				$('input.input-field').removeClass('validating');
-				LJ.fn.fadeIn(LJ.$becomeMember);
+				$('#bcm_member').velocity('transition.slideRightIn', { duration: 400 });
+				$('#lost_pw').velocity('transition.slideLeftIn', { duration: 400 });
 				LJ.$loaderWrap.addClass('none');
 				LJ.$loginBtn.val('Login');
 			});
 		},
 		handleBeforeSendSignup: function(){
-			LJ.fn.fadeOut(LJ.$backToLogin);
+			LJ.$backToLogin.velocity("transition.slideLeftOut", { duration:300 });
 			$('.loaderWrap').removeClass('none');
 			$('input.input-field').addClass('validating');
 		},
@@ -489,81 +472,58 @@ window.LJ = {
 			data = JSON.parse(data.responseText);
 			sleep(LJ.ui.artificialDelay,function(){
 				$('input.input-field').removeClass('validating');
-				LJ.fn.toastMsgInfo(data.msg);
-				LJ.fn.fadeIn(LJ.$backToLogin);
+				LJ.fn.toastMsgError(data.msg);
+				LJ.$backToLogin.velocity('transition.slideRightIn', { duration: 400 });
 				$('.loaderWrap').addClass('none');
 			});
-		},
-		fadeInLeft: function(el, options){
-			var o = LJ.vel;
-			if( _.isObject(options)){
-				o = LJ.fn.updateObject(o, options);
-			}
-			el.velocity("transition.slideLeftIn");    
-		},
-		fadeOutRight: function(el, options){ 
-			var o = LJ.vel; 
-			if( _.isObject(options)){
-				o = LJ.fn.updateObject(o, options);
-			}
-			console.log(o);
-			el.velocity("transition.slideRightOut",o); 
-		},
-		updateView: function(){
-
-			for(var i=0; i<arguments.length; i++){
-
-				if(! _.isObject(arguments[i]) ){
-					console.log('Wrong format for updating view');
-					return;
-				}
-
-				switch arguments[i].anim{
-					case 'slideLeftIn':
-						arguments[i].$el.velocity('transition.slideLeftIn');
-					break;
-
-					case 'slideRightIn':
-						arguments[i].$el.velocity('transition.slideRightIn');
-					break;
-
-					case 'slideLeftOut':
-						arguments[i].$el.velocity('transition.slideLeftOut');
-					break;
-
-					case 'slideRightOut':
-						arguments[i].$el.velocity('transition.slideRightOut');
-					break;
-
-					default:
-						alert('Animation not recognized');
-					break;
-				}
-
-			};
-					
 		},
 		toggleAnimatingState: function(){
 			LJ.state.animatingContent ? LJ.state.animatingContent = false : LJ.state.animatingContent = true ;
 		},
 		displayViewAsNew: function(){
-			LJ.fn.updateView(LJ.$profileWrap);
+			 $('#thumbWrap').velocity('transition.slideUpIn');
+			 LJ.fn.displayContent(LJ.$profileWrap, {
+			 	myWayIn: 'transition.slideUpIn'
+			 });
+
 		},
 		displayViewAsIdle: function(){
-			LJ.fn.updateView(LJ.$eventsWrap);
+            $('#thumbWrap').velocity('transition.slideUpIn');
             $('.menu-item-active').removeClass('menu-item-active');
-            LJ.$eventsMenu.addClass('menu-item-active');
+            $('#events').addClass('menu-item-active');
+            LJ.fn.displayContent(LJ.$eventsWrap, {
+			 	myWayIn: 'transition.slideUpIn'
+            });
+
 
 		},
 		displayViewAsHost: function(){
+			$('#thumbWrap').velocity('transition.slideUpIn');
+			LJ.fn.displayContent(LJ.$manageEventsWrap, {
+			 	myWayIn: 'transition.slideUpIn'
+			});
             LJ.fn.fetchAskers();
-			LJ.fn.updateView(LJ.$manageEventsWrap);
 			$('.menu-item-active').removeClass('menu-item-active');
-			LJ.$createMenu.addClass('created menu-item-active')
-						  .removeClass('icon-plus')
-						  .addClass('icon-minus')
-						  .find('span')
-						  .text('Management');
+			$('#management').addClass('menu-item-active')
+		},
+		displayContent: function(content,options){
+			
+				options = options || {};			
+				var rev = $('.revealed');
+
+				rev.velocity( options.myWayOut || "transition.slideRightOut", {
+					duration: options.duration || 300,
+					complete: function(){
+						rev.removeClass('revealed');
+						content.addClass('revealed')
+							   .velocity( options.myWayIn || "transition.slideLeftIn", {
+							   	complete: function(){
+							   		LJ.state.animatingContent = false;
+							   	}
+							   });
+					}
+				});
+
 		},
 		toggleMenu: function(){
 			var that = LJ.$menuBtn;
@@ -608,30 +568,6 @@ window.LJ = {
                 else{
                     LJ.fn.toastMsgInfo('You need to ask participation to chat with the host');
                 }
-		}, 
-		toggleCreateEventMenu: function(){
-			var el = LJ.$createMenu;
-			if(el.hasClass('created')){
-				el.removeClass('created')
-				  .removeClass('icon-minus')
-				  .addClass('icon-plus')
-				  .find('span')
-				  .text('Create');
-			}else{
-				el.addClass('created')
-				  .removeClass('icon-plus')
-				  .addClass('icon-minus')
-				  .find('span')
-				  .text('Management');
-			}
-		},
-		updateMenuView: function(el){
-			if(!LJ.state.animatingContent){
-			if(!el.hasClass('menu-item-active')){
-					$('.menu-item-active').removeClass('menu-item-active');
-					el.addClass('menu-item-active');
-				}
-			}
 		},
 		setClientSettings: function(data){
 			//csl('Updating client state : '+JSON.stringify(data,0,4));
@@ -658,30 +594,27 @@ window.LJ = {
 			LJ.$ageInput.val(LJ.user.age);
 			LJ.$descInput.val(LJ.user.description);
 		},
-		toastMsgSuccess: function(msg){
-			var toast = LJ.$toastSuccess;
-				toast.find('.toastMsg').text(msg);
-			LJ.fn.fadeInLeft(toast);
-			sleep(3000,function(){
-				LJ.fn.fadeOutRight(toast);
-			});
-		},
 		toastMsgError: function(msg){
 			var toast = LJ.$toastError;
 				toast.find('.toastMsg')
 					 .text(msg);
-				toast.removeClass('none');
-				toast.on('click', function(){
-					 	$(this).addClass('none');
-					 });
+			toast.velocity("transition.slideDownIn",{
+		    	duration: 600,
+		    	complete: function(){
+		    		toast.velocity('transition.slideUpOut', { duration: 300, delay: 3000 });
+		    	}
+		    });
+				
 		},
 		toastMsgInfo: function(msg){
 			var toast = LJ.$toastInfo;
 				toast.find('.toastMsg').text(msg);
-			LJ.fn.fadeInLeft(toast);
-			sleep(3000,function(){
-				LJ.fn.fadeOutRight(toast);
-			});
+		    toast.velocity("transition.slideDownIn",{
+		    	duration: 600,
+		    	complete: function(){
+		    		toast.velocity('transition.slideUpOut', { duration: 300, delay: 3000 });
+		    	}
+		    });
 		},
 		replaceMainImage: function(id,version,d){
 		        d = d || LJ.cloudinary.displayParamsProfile;
@@ -769,7 +702,7 @@ window.LJ = {
 				d.version = e.hostImgVersion;
 
 			var chatId = LJ.fn.buildChatId(e._id, e.hostId, LJ.user._id);
-            var chatWrap = '<div class="chatWrap chat-asker" data-chatid="'+chatId+'">'
+            var chatWrap = '<div class="chatWrap chat-asker none" data-chatid="'+chatId+'">'
                            +'<div class="tri"></div>'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
@@ -851,14 +784,14 @@ window.LJ = {
 		},
         displayChat: function(chatWrap){
         	var chatId = chatWrap.data('chatid');
-            LJ.fn.fadeIn(chatWrap);
+            chatWrap.velocity("transition.slideRightIn");
             if(LJ.state.jspAPI[chatId] != undefined){
 	            LJ.state.jspAPI[chatId].reinitialise();
 	        	LJ.state.jspAPI[chatId].scrollToBottom();   
         	}                 
         },
         hideChat: function(chatWrap){
-            LJ.fn.fadeOut(chatWrap);
+           	chatWrap.velocity("transition.slideLeftOut");
         },
         setChatIndexes: function(chatPile){
         	var l = chatPile.length;
@@ -910,16 +843,15 @@ window.LJ = {
 						hostId = myEvent.hostId;
 
 					if( LJ.user._id === hostId ){
-						sleep( LJ.ui.artificialDelay, function(){
 							LJ.user.status = 'hosting';
 							LJ.user.hostedEventId = eventId;
 							LJ.fn.toastMsgInfo("Evènement créé avec succès !");
 							LJ.$loaderWrap.addClass('none');
 							$('.themeBtn').removeClass('validating-btn');
 							LJ.$createEventWrap.find('input').val('');
-							LJ.fn.updateView(LJ.$manageEventsWrap);
-							LJ.fn.toggleCreateEventMenu(); 
-						});
+							$('.menu-item-active').removeClass('menu-item-active');
+							$('#management').addClass('menu-item-active');
+							LJ.fn.displayContent(LJ.$manageEventsWrap);
 					} else {
 						//rien de spécial so far
 					}
@@ -928,7 +860,7 @@ window.LJ = {
 					LJ.myEvents.push( myEvent );
 					var eventHTML = LJ.fn.renderEvent( myEvent );
 					LJ.$eventsListWrap.append( eventHTML );
-					LJ.fn.fadeIn( LJ.$eventsListWrap.children() );
+					LJ.$eventsListWrap.children().velocity("transition.slideLeftIn");
 					
 				});
 
@@ -946,14 +878,10 @@ window.LJ = {
                 	if( data.hostId == LJ.user._id ){
                 		LJ.user.status = 'idle';
                 		LJ.$manageEventsWrap.find('#askersListWrap').html('');
-                		LJ.fn.toggleCreateEventMenu();
-                		LJ.fn.updateView(LJ.$createEventWrap);
 						$('.menu-item-active').removeClass('menu-item-active');
-						LJ.$createMenu.addClass('menu-item-active')
-						  .removeClass('icon-minus created')
-						  .addClass('icon-plus')
-						  .find('span')
-						  .text('Create');		
+						$('#create').addClass('menu-item-active');
+						LJ.fn.displayContent(LJ.$createEventWrap);
+						  		
                 	} else {
                 		/* 
                 			Les clients sont toujours dans les rooms des évents annulés,
@@ -962,8 +890,11 @@ window.LJ = {
                			*/
                 	}
                 	var canceledEvent = LJ.$eventsListWrap.find('.eventItemWrap[data-hostid="'+data.hostId+'"]');
-                		LJ.fn.fadeOut(canceledEvent);
-                		sleep(600, function(){ canceledEvent.remove(); });
+                		canceledEvent.velocity("transition.slideRightOut", {
+                			complete: function(){
+                				canceledEvent.remove();
+                			}
+                		});
 
                 	_.remove(LJ.myEvents, function(el){
                 		return el.hostId == data.hostId; 
@@ -986,7 +917,7 @@ window.LJ = {
 
 					console.log('Requestion participation in received');
 					if(LJ.user._id === data.userId){
-						LJ.fn.toastMsgSuccess('You may now chat with the host');
+						LJ.fn.toastMsgInfo('You may now chat with the host');
 					}else{
 						var askerHTML = LJ.fn.renderAsker(data.asker);
 						    $(askerHTML).appendTo(LJ.$askersListWrap);
@@ -1014,8 +945,8 @@ window.LJ = {
 						_.remove( LJ.myAskers, function(asker){
 							return asker.id === data.userId;
 						});
-
-						hostId === LJ.user._id ? LJ.fn.fadeOut($aRow, true) : LJ.fn.toastMsgInfo('Vous avez été désinscris de la liste');
+						console.log('once');
+						hostId === LJ.user._id ? $aRow.velocity("transition.slideLeftOut") : LJ.fn.toastMsgInfo('Vous avez été désinscris de la liste');
 
 				});
 
@@ -1075,7 +1006,7 @@ window.LJ = {
         },
         displayEvents: function(){
             LJ.$eventsListWrap.append(LJ.fn.renderEvents(LJ.myEvents));
-            LJ.fn.fadeIn($('.eventItemWrap'));
+            $('.eventItemWrap').velocity("transition.slideLeftIn");
         },
         displayAskers: function(){
             LJ.$askersListWrap.append(LJ.fn.renderAskers(LJ.myAskers));
@@ -1150,7 +1081,14 @@ window.LJ = {
         			LJ.state.jspAPI[chatId] =  $chatLineWrap.data('jsp');
         		}
         		$chatLineWrap.find('.jspPane').append(chatLineHtml);
-        		LJ.fn.fadeInLeft($chatLineWrap.find('.chatLine:last-child'));
+
+        		var anim = '';
+        		cha12 == 'cha1' ? anim = "slideLeftIn" : anim = "slideRightIn" ;  
+
+        		$chatLineWrap.find('.chatLine:last-child')
+        					  .velocity("transition."+anim, {
+        					  });
+
         		LJ.state.jspAPI[chatId].reinitialise();
         		LJ.state.jspAPI[chatId].scrollToBottom();
         

@@ -44,7 +44,8 @@ label{
 .rel{position:relative;}
 .right{float:right;}
 .left{float:left;}
-.none{display: none; !important;} 
+.none{display: none; !important;}
+.hidden{visibility:hidden;}
 .centered{
 	position:absolute;
 	margin:auto;
@@ -55,11 +56,32 @@ label{
 	right:0;
 	bottom:0;
 }
+.disabled{
+	opacity: .3 !important; !important 
+}
 .loader{
 	width: 22px;
 	position: absolute;
 	top: 5px;
 	right: -27px;
+}
+body > header{
+	width: 100%;
+height: 30px;
+
+	background: #181818;
+
+	box-shadow: 0 0 5px rgb(37, 37, 37);
+	position: fixed;
+top: 0;
+left: 0;
+}
+body > header > h1{
+	color: rgb(236, 236, 236);
+font-size: 1.3em;
+margin: 4px 0 0 60px;
+letter-spacing: -1px;
+font-family: 'Raleway';
 }
 #mainWrap{
 }
@@ -69,46 +91,44 @@ label{
 	position: fixed;
 	font: .8em 'Ubuntu';
 	margin: auto;
-	height: 22px;
+	height: 16px;
 	background: rgb(218, 255, 192);
-	color: rgb(68, 68, 68);
-	border-radius: 0 0 5px 5px;
+	color: rgb(255, 255, 255);
 	padding: 7px;
-	padding-top: 12px;
+	padding-top: 8px;
 	left: 0;
 	right: 0;
 	top: -1px;
 	width: 410px;
 	text-align: center;
-	z-index:100;
+	z-index: 100;
 }
 #toastError{
-	background: rgb(255, 228, 232);
+	background: rgb(189, 64, 64);
+	/* border: 1px solid rgb(175, 49, 49); */
+	color: white;
 }
 #toastInfo{
-	background: white;
-	border: 1px solid #73E073;
+	background: #5367A7;
+	border: 1px solid #3D5292;
 }
 .toast-icon{
 	position: absolute;
 	left: 0;
-	background: #7BBE7B;
-	height: 29px;
-	border-radius: 0 0 0 2px;
+	height: 23px;
 	width: 30px;
-	padding-top: 12px;
+	padding-top: 8px;
 	top: 0;
 }
 #toastError .toast-icon{
-	background: rgb(243, 143, 143);
+	background: rgb(160, 49, 49);
 }
 #toastInfo .toast-icon{
-	background: #73E073;
+	background: #3D5292;
 	color: white;
 }
 .menuBtn{
-	left: 50px;
-	transition: all .6s;
+	display:none;
 }
 .menuBtnActive{
 	left:30px;
@@ -119,7 +139,6 @@ label{
 	width: 200px;
 	height: 330px;
 	position: relative;
-	display: inline-block;
 	margin-left: 50px;
 }
 #contact{
@@ -146,6 +165,8 @@ label{
 	height: 21px;
 	border-radius: 2px;
 	position: relative;
+	-webkit-user-select: none;
+	user-select: none;
 }
 .menu-item span{
 	margin-left:10px;
@@ -156,7 +177,8 @@ label{
 }
 .menu-item-active,
 .menu-item-active:hover{
-	background: #73E073;
+	background: #636363;
+	border-radius: 0px;
 	color: white;
 }
 .menu-item div{
@@ -166,14 +188,15 @@ label{
 .notif{
 	color: white;
 	text-align: center;
-	background: rgb(74, 182, 74);
+	background: rgb(255, 102, 102);
+	border: 1px solid rgb(214, 87, 87);
 	font-size: 0.9em;
 	width: 23px;
 	height: 17px;
 	position: absolute;
 	right: -30px;
-	top: 3px;
-	border-radius: 40px;
+	top: 1px;
+	border-radius: 0px;
 	padding-top: 3px;
 }
 .notif-events{
@@ -218,7 +241,7 @@ label{
 	height: 34px;
 	border: none;
 	padding:9px;
-	background: #73E073;
+	background: #535353;
 	color: white;
 	text-transform: uppercase;
 	font-size: 10px;
@@ -227,7 +250,7 @@ label{
 	transition: all 0.1s;
 }
 .themeBtn:hover{
-	box-shadow: 1px 1px 1px rgb(104, 165, 89);
+	box-shadow: 1px 1px 1px rgb(196, 196, 196);
 	opacity: .9;
 }
 .themeBtnToggleHost{
@@ -241,9 +264,9 @@ label{
 }
 #loginWrap #submitWrap #login,
 #signupWrap #submitWrap #signup{
-	background: #73E073;
-	color: #FFF;
-	border: none;
+	background: #F5F5F5;
+	color: #414141;
+	border: 1px solid #DFDFDF;
 }
 .input-field{
 	width: 70%;
@@ -348,7 +371,7 @@ label{
 	transition: all .5s;
 }
 .modified{
-	color: rgb(240, 67, 0);
+	color: rgb(240, 0, 0);
 }
 .validating{
 	background: #F3F3F3;
@@ -368,13 +391,13 @@ label{
 .progress_bar{
 	height: 3px;
 	width: 0%;
-	background: #73E073;
+	background: #FF3A3A;
 	border-radius: 3px;
 	margin-bottom: 20px;
 	-webkit-transition: width .9s;
 	transition: width .9s;
 	text-align: center;
-	box-shadow: 0 2px 1px rgb(182, 255, 197);
+	box-shadow: 0 2px 1px rgb(255, 185, 145);
 	color: white;
 }
 #contactWrap{
@@ -415,12 +438,16 @@ label{
 	opacity: 0.01;
 }
 #thumbWrap{
-	display: inline-block;
-	position: absolute;
+	position: fixed;
 	width: 220px;
 	height: 50px;
-	top: 50px;
-	left: 1110px;
+	top: 20px;
+	right: 30px;
+	background: white;
+	box-shadow: 1px 2px 3px #C9C9C9;
+	border: 1px solid #C4C4C4;
+	padding: 10px;
+	border-radius: 2px;
 }
 #thumbWrap img{
 
@@ -429,7 +456,7 @@ label{
 	margin-left:8px;
 	display: inline-block;
 	position: absolute;
-	top: 4px;
+	top: 10px;
 }
 #thumbName{
 	font-weight:normal;

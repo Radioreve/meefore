@@ -87,11 +87,15 @@ var cancelEvent = function(data) {
                     }
                 })
             });
-        });
+        }); 
     });
 
     User.findById(hostId, {}, function(err, myHost) {
 
+        if (err) {
+            console.log('Error finding host '+ err);
+            return;
+        }
         var hostId = myHost._id.toString();
 
         myHost.socketRooms.forEach(function(room) {
@@ -105,6 +109,7 @@ var cancelEvent = function(data) {
         myHost.save(function(err) {
             if (err) {
                 console.log('Error canceling event (Host)');
+                return;
             }
         });
     });

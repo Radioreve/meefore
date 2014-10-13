@@ -1,4 +1,4 @@
-#manageEventWrap{
+#manageEventsWrap{
 	width: 700px;
 }
  
@@ -44,7 +44,7 @@
 	width: 40px;
 }
 .a-active{
-	-webkit-box-shadow: 0 0 15px #73E073;
-	box-shadow: 0 0 15px #73E073;
-	border: 1px solid rgb(112, 213, 112);
+	-webkit-box-shadow: 0 0 15px #FF3232;
+	box-shadow: 0 0 15px #FF3232;
+	border: 1px solid rgb(255, 153, 153);
 }

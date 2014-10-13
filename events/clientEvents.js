@@ -24,10 +24,12 @@
 			var room = eventUtils.buildRoomId(eventId, hostId, userId);
 
 				global.sockets[userId].join(room);
-		     if(global.sockets[hostId] != undefined) global.sockets[hostId].join(room);
-	
-				console.log('User '+userId+' has joined the room : \n'+room +'\n');
+		     if(global.sockets[hostId] != undefined){ 
+		     	global.sockets[hostId].join(room); 
 				console.log('Host '+hostId+' has joined the room : \n'+room + '\n');
+			}
+			
+				console.log('User '+userId+' has joined the room : \n'+room +'\n');
 		
 			Event.findById(eventId,{},function(err,myEvent){
 
@@ -84,19 +86,22 @@
 
 	    var requestOut = function(data){
 
+	    									console.log('Here once 1');
+
+
 				var eventId = data.eventId,
 					hostId  = data.hostId,
 					userId  = data.userInfos._id,
 					room  = eventUtils.buildRoomId(eventId,hostId,userId);
 
 					global.sockets[userId].leave(room);
+					console.log('User '+userId+' has left the room : \n'+room + '\n');
+					
 					if(global.sockets[hostId] != undefined){
 						global.sockets[hostId].leave(room); 
+						console.log('Host '+hostId+' has left the room : \n'+room + '\n');
 					}
 					
-					console.log('User '+userId+' has left the room : \n'+room + '\n');
-					console.log('Host '+hostId+' has left the room : \n'+room + '\n');
-
 				    eventCondition = { _id: eventId },
 					eventUpdate    = { $pull: {'askersList': { 'id': userId }}},
 
@@ -110,6 +115,8 @@
 					callback = function(err){ 
 						if(err){console.log(err); }
 						else{ 
+														console.log('Here once 2');
+
 							var data = {
 								userId: userId,
 								eventId: eventId,
@@ -117,11 +124,12 @@
 							};
 							if(global.sockets[hostId] != undefined){
 							global.sockets[hostId].emit('request participation out success', data );
+														console.log('emitting out for host');
+
 							}
 							global.sockets[userId].emit('request participation out success', data );								
 						}
 					};
-
 
 				Event.update(eventCondition, eventUpdate, option, callback);
 				User.update(userCondition, userUpdate, option, callback);

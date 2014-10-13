@@ -15,16 +15,22 @@
 	<link rel="stylesheet" href="/css/chat.css">
 </head>
 <body>
+	<header>
+		<h1>Teamsters</h1>
+
+	</header>
 	<div id="mainWrap" class="">
-		<div id="toastSuccess" class=" none"><span class="toast-icon icon icon-check"></span><span class="toastMsg"></span></div>
 		<div id="toastError" class=" none"><span class="toast-icon icon icon-cancel"></span><span class="toastMsg"></span></div>
 		<div id="toastInfo" class=" none"><span class="toast-icon icon icon-right-open-big"></span><span class="toastMsg"></span></div>
 		<span class="menuBtn menu icon icon-menu"   > Menu</span>
 		<ul id="menuWrap" class="">
-			<li id="profile" class="left menu menu-item menu-item-active icon icon-user"    ><span>Settings</span></li>
-			<li id="events"  class="left menu menu-item icon icon-glass"><div class="none notif notif-events">5</div><span>Events</span></li>
-			<li id="create" class="left menu menu-item icon icon-plus" ><div class="none notif notif-management">2</div><span>Create</span></li>
-			<li id="contact" class="left menu menu-item icon icon-mail" ><span>Contact</span></li>
+			<li id="profile" class="left none menu menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span>Profile</span></li>
+			<li id="events"  class="left none menu menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><div class="none notif notif-events">5</div><span>Events</span></li>
+			<li id="create" class="left none menu menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><div class="none notif notif-management">2</div><span>Create</span></li>
+			<li id="management" class="disabled left none menu menu-item icon icon-users" data-linkedcontent="#manageEventsWrap" ><span>Management</span></li>
+			<li id="settings" class="left none menu menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span>Settings</span></li>
+			<li id="contact" class="left none menu menu-item icon icon-mail" data-linkedcontent="#contactWrap" ><span>Contact</span></li>
+
 		</ul>
 		<div id="thumbWrap" class="none ">
 			<div id="thumbInfos">
@@ -34,7 +40,10 @@
 		</div>
 		<section id="contentWrap" class="">
 			<section id="loginWrap" class="revealed centered">
+			  <div class="slideLeftOut">
 				<h2>Identifiez-vous!</h2>
+			  </div>
+			  <div class="slideRightOut">
 				<div id="formWrap"  class="">
 					<form autocomplete="off">
 						<input class="input-field" type="text" id="email" placeholder="email">
@@ -45,10 +54,10 @@
 							</div>
 							<div id="bcm_member" class=" sub-actions right">Devenir membre</div>
 							<div id="lost_pw" class="sub-actions left">Mot de passe oublié ?</div>
-							
 						</div>
 					</form>
-				</div>
+			    </div>
+			  </div>
 			</section>
 			<section id="signupWrap" class="none centered">
 				<h2>Inscrivez-vous</h2>
@@ -104,11 +113,11 @@
 						<input id="eventName" placeholder="Apéro, before, afterwork ..." type="text" class="input-field_create">
 					</div>
 					<div class="input-row-wrap hint--right" data-hint="Ne dévoilez jamais votre adresse exacte">
-						<label for="eventLocation">Où ça ? </label>
+						<label for="eventLocation">C'est où ? </label>
 						<input id="eventLocation" class="input-field_create" placeholder="Rue, métro, quartier..." maxlength="30" type="text">
 					</div>
 					<div class="input-row-wrap">
-						<label for="eventHour">Quand ça ?</label>
+						<label for="eventHour">C'est quand ?</label>
 						<input id="eventHour" class="input-field_create" type="text" placeholder="20" maxlength="2"><b>h</b>
 						<input id="eventMinut" class="input-field_create" type="text" placeholder="00" maxlength="2">
 					</div>
@@ -117,7 +126,7 @@
 					</button>
 				</div>
 			</section>
-			<section id="manageEventWrap" class=" none centered">
+			<section id="manageEventsWrap" class=" none centered">
 				<h2>Management de la soirée</h2>
 				<div class="actionsWrap actionsStyle">
 					<span id="cancelEvent" class="action">Annuler l'évènement</span>
@@ -126,8 +135,7 @@
 				<div id="askersListWrap">
 				</div>
 			</section>
-		</section>
-		<section id="contactWrap" class=" none centered">
+			<section id="contactWrap" class=" none centered">
 			<h2>We would like to hear from you</h2>
 			<form>
 				<input id="contactName" type="text" placeholder="full name">
@@ -135,6 +143,7 @@
 				<textarea id="contactBody" placeholder="Hello, ..."></textarea>
 			</form>
 			<button id="sendContactForm" class="right themeBtn">Envoyer</button>
+			</section>
 		</section>
 		<script src="/js/jquery.js"></script>
 		<!--<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script> -->

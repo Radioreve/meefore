@@ -1,10 +1,10 @@
 @font-face {
-  font-family: 'fontello';
-  src: url('../font/fontello.eot?91377216');
-  src: url('../font/fontello.eot?91377216#iefix') format('embedded-opentype'),
-       url('../font/fontello.woff?91377216') format('woff'),
-       url('../font/fontello.ttf?91377216') format('truetype'),
-       url('../font/fontello.svg?91377216#fontello') format('svg');
+  font-family: 'tool';
+  src: url('../font/tool.eot?66617668');
+  src: url('../font/tool.eot?66617668#iefix') format('embedded-opentype'),
+       url('../font/tool.woff?66617668') format('woff'),
+       url('../font/tool.ttf?66617668') format('truetype'),
+       url('../font/tool.svg?66617668#tool') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -13,14 +13,14 @@
 /*
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
-    font-family: 'fontello';
-    src: url('../font/fontello.svg?91377216#fontello') format('svg');
+    font-family: 'tool';
+    src: url('../font/tool.svg?66617668#tool') format('svg');
   }
 }
 */
  
  [class^="icon-"]:before, [class*=" icon-"]:before {
-  font-family: "fontello";
+  font-family: "tool";
   font-style: normal;
   font-weight: normal;
   speak: none;

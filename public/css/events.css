@@ -74,7 +74,9 @@
 }
 .e-name{
 	font-weight: bolder;
+	color: rgb(255, 115, 115);
 	text-transform: uppercase;
+	font-family: 'Raleway';
 	margin-bottom: 20px;
 	margin-right: 10px;
 	text-align: center;
@@ -88,7 +90,7 @@
 	text-align: center;
 	font: bolder 1.7em 'Arial';
 	letter-spacing: -1px;
-	color: #64C55B;
+	color: #7C7C7C;
 	bottom: 15px;
 	z-index: 20;
 	background: white;
@@ -108,15 +110,15 @@
 	cursor:pointer;
 }
 .e-active{
-	-webkit-box-shadow: 0 0 25px green;
-	box-shadow: 0 0 25px green;
+	-webkit-box-shadow: 0 0 25px rgb(255, 48, 48);
+	box-shadow: 0 0 25px rgb(255, 48, 48);
 }
 .e-body{
 	display:inline-block;
 	vertical-align: top;
 	margin-top: 15px;
 	margin-right: 10px;
-	width: 500px;
+	width: 450px;
 }
 .e-body i.icon-lamp{
 	height:50px;
@@ -151,7 +153,7 @@
 }
 #createEventWrap b {
 	padding-left:2px;
-	color:#353535;
+	color: #9C9C9C;
 }
 #createEventWrap label{
 	/* font-weight: bolder; */

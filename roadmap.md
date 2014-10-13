@@ -1,7 +1,8 @@
 
 #Bugs! :@
 	
-	- Bug d'affichage avec z-index & multichat (HostView);	
+	- Bug d'affichage avec z-index & multichat (HostView);
+	- Bug d'affichage sur les chatMsg (affiche le dernier en retard)
 
 #Currently
 

@@ -127,6 +127,12 @@
       "src": "entypo"
     },
     {
+      "uid": "29e7f6072d5935d7818204d9b088508b",
+      "css": "block",
+      "code": 59429,
+      "src": "entypo"
+    },
+    {
       "uid": "289b5f92f23acf1059c93fbf401c1ad5",
       "css": "down-open-big",
       "code": 59420,
@@ -227,6 +233,12 @@
       "css": "delicious",
       "code": 59418,
       "src": "elusive"
+    },
+    {
+      "uid": "26aba7edd46944209b4961670675a813",
+      "css": "cog",
+      "code": 59430,
+      "src": "websymbols"
     }
   ]
 }
