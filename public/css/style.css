@@ -5,7 +5,6 @@ html{
 body{
 	/* min-height:100%; */
 	background: white;
-	margin: 10px;
 	box-shadow: 0 0 5px #C0C0C0;
 	font-family: 'Ubuntu';
 }
@@ -22,7 +21,7 @@ h2{
 	font: 800 2em 'Raleway';
 	letter-spacing: -1px;
 	color: #383838;
-	text-align: left;
+	text-align: center;
 	text-shadow: 0 0 1px rgb(209, 209, 209);
 }
 h3{
@@ -65,23 +64,31 @@ label{
 	top: 5px;
 	right: -27px;
 }
+#signupWrap .loader,
+#loginWrap .loader{
+	top: 8px;
+}
 body > header{
 	width: 100%;
-height: 30px;
-
+	height: 33px;
 	background: #181818;
-
 	box-shadow: 0 0 5px rgb(37, 37, 37);
 	position: fixed;
 top: 0;
 left: 0;
 }
+body > header > img{
+	float:left;
+	position:relative;
+	top:-23px;
+	left:23px;
+}
 body > header > h1{
 	color: rgb(236, 236, 236);
-font-size: 1.3em;
-margin: 4px 0 0 60px;
-letter-spacing: -1px;
-font-family: 'Raleway';
+	font-size: 1.1em;
+	letter-spacing: -1px;
+	margin: 8px 7px 0 60px;
+	font-family: Raleway;
 }
 #mainWrap{
 }
@@ -91,8 +98,7 @@ font-family: 'Raleway';
 	position: fixed;
 	font: .8em 'Ubuntu';
 	margin: auto;
-	height: 16px;
-	background: rgb(218, 255, 192);
+	height: 17px;
 	color: rgb(255, 255, 255);
 	padding: 7px;
 	padding-top: 8px;
@@ -109,13 +115,13 @@ font-family: 'Raleway';
 	color: white;
 }
 #toastInfo{
-	background: #5367A7;
-	border: 1px solid #3D5292;
+	background: #6EAC6E;
+	border: 1px solid #34743E;
 }
 .toast-icon{
 	position: absolute;
 	left: 0;
-	height: 23px;
+	height: 24px;
 	width: 30px;
 	padding-top: 8px;
 	top: 0;
@@ -124,7 +130,7 @@ font-family: 'Raleway';
 	background: rgb(160, 49, 49);
 }
 #toastInfo .toast-icon{
-	background: #3D5292;
+	background: #34743E;
 	color: white;
 }
 .menuBtn{
@@ -135,13 +141,14 @@ font-family: 'Raleway';
 	color: #919191!important;
 }
 #menuWrap{
-	top:40px;
-	width: 200px;
-	height: 330px;
-	position: relative;
-	margin-left: 50px;
+	position: fixed;
+	top: -38px;
+	left: 240px;
+	width: 80%;
 }
-#contact{
+
+.align-top{
+	vertical-align: top;
 }
 #events{
 }
@@ -156,12 +163,14 @@ font-family: 'Raleway';
 	font-size: 1.2em;
 }
 .menu-item{
+	display:none;
 	font-size: 1em;
+	color: rgb(143, 143, 143);
 	padding: 2px;
-	padding-top: 4px;
+	padding-top: 6px;
 	padding-left: 12px;
 	margin-bottom: 3px;
-	width: 130px;
+	width: 33px;
 	height: 21px;
 	border-radius: 2px;
 	position: relative;
@@ -173,11 +182,12 @@ font-family: 'Raleway';
 }
 .menu-item:hover{
 	cursor:pointer;
-	background: #F3F3F3;
+	background: #222222;
+	color: white;
 }
 .menu-item-active,
 .menu-item-active:hover{
-	background: #636363;
+	background: #181818;
 	border-radius: 0px;
 	color: white;
 }
@@ -406,15 +416,15 @@ font-family: 'Raleway';
 	margin: 50px 0 0 50px;
 }
 #contactWrap input{
-	width: 40%;
+	width: 200px;
 	padding:5px;
-	margin: 30px 38px 30px 0;
+	margin: 30px 0 30px 0;
 	border: none;
 	/* border-bottom: 1px solid rgb(197, 197, 197); */
 }
 #contactWrap #contactBody{
 	padding: 5px;
-	width:90%;
+	width: 400px;
 	border: none;
 	border-bottom: 1px dashed rgb(201, 201, 201);
 	min-height: 100px;
@@ -441,11 +451,9 @@ font-family: 'Raleway';
 	position: fixed;
 	width: 220px;
 	height: 50px;
-	top: 20px;
+	top: 60px;
 	right: 30px;
 	background: white;
-	box-shadow: 1px 2px 3px #C9C9C9;
-	border: 1px solid #C4C4C4;
 	padding: 10px;
 	border-radius: 2px;
 }
@@ -460,13 +468,14 @@ font-family: 'Raleway';
 }
 #thumbName{
 	font-weight:normal;
-	text-align: left;
+	text-align: center;
 	font-size: 1.2em;
 	margin-left: 8px;
 	/* display: inline-block; */
 }
 .actionsWrap{
 	margin-top:10px;
+	text-align: center;
 }
 .actionsStyle span:before{
 	content:"";
@@ -486,4 +495,29 @@ font-family: 'Raleway';
 .action:hover::before{
 	background-color: rgb(250, 250, 250);
 	border-color:gr
+}
+
+#settingsWrap .input-row-wrap{
+	margin-top:16px;
+}
+#settingsWrap .input-row-wrap:first-child{
+	margin-top: 40px;
+	padding-bottom: 15px;
+	border-bottom:1px dashed #ccc;
+	width:1
+}
+#settingsWrap .input-row-wrap:nth-child(4){
+	padding-bottom: 15px;
+	border-bottom:1px dashed #ccc;
+}
+#settingsWrap label{
+	width:150px;
+} 
+#settingsWrap input#currentPw:hover{
+	cursor:not-allowed;
+}
+#settingsWrap #newsletter{
+	width:15px;
+}
+body > footer{
 }

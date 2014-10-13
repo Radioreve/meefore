@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
 	<title>Socket auth</title>
-		<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="/css/meyer.css">
@@ -16,22 +17,21 @@
 </head>
 <body>
 	<header>
-		<h1>Teamsters</h1>
-
+		<h1>Bamboo nights</h1>
+		<img src="img/bamboo-black.png" height="27">
+		  <ul id="menuWrap" class="">
+			<li id="profile" class="left menu menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span></span></li>
+			<li id="events"  class="left menu menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span></span></li>
+			<li id="create" class="left menu menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><span></span></li>
+			<li id="management" class="left menu menu-item icon icon-users" data-linkedcontent="#manageEventsWrap" ><span></span></li>
+			<li id="settings" class="right menu menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span></span></li>
+			<li id="contact" class="right menu menu-item icon icon-mail" data-linkedcontent="#contactWrap" ><span></span></li>
+		  </ul>
 	</header>
 	<div id="mainWrap" class="">
 		<div id="toastError" class=" none"><span class="toast-icon icon icon-cancel"></span><span class="toastMsg"></span></div>
 		<div id="toastInfo" class=" none"><span class="toast-icon icon icon-right-open-big"></span><span class="toastMsg"></span></div>
 		<span class="menuBtn menu icon icon-menu"   > Menu</span>
-		<ul id="menuWrap" class="">
-			<li id="profile" class="left none menu menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span>Profile</span></li>
-			<li id="events"  class="left none menu menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><div class="none notif notif-events">5</div><span>Events</span></li>
-			<li id="create" class="left none menu menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><div class="none notif notif-management">2</div><span>Create</span></li>
-			<li id="management" class="disabled left none menu menu-item icon icon-users" data-linkedcontent="#manageEventsWrap" ><span>Management</span></li>
-			<li id="settings" class="left none menu menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span>Settings</span></li>
-			<li id="contact" class="left none menu menu-item icon icon-mail" data-linkedcontent="#contactWrap" ><span>Contact</span></li>
-
-		</ul>
 		<div id="thumbWrap" class="none ">
 			<div id="thumbInfos">
 				<h2 id="thumbName"></h2>
@@ -101,11 +101,11 @@
 				<button id="validate" class="right themeBtn">Validate <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
 				</button>
 			</section>
-			<section id="eventsWrap" class="none  centered">
+			<section id="eventsWrap" class="none centered">
 				<h2>Tous les évènements</h2>
 				<section id="eventsListWrap"></section>
 			</section>
-			<section id="createEventWrap" class=" none centered">
+			<section id="createEventWrap" class="none centered">
 				<h2>Créer votre évènement</h2>
 				<div id="createEventInputsWrap">
 					<div class="input-row-wrap hint--right" data-hint="Restez simple et précis">
@@ -135,16 +135,49 @@
 				<div id="askersListWrap">
 				</div>
 			</section>
+			<section id="settingsWrap" class="none centered">
+				<h2> Settings </h2>
+				<div id="settingsInputsWrap">
+					<div class="input-row-wrap">
+						<label for="emailInput">Email</label>
+						<input id="emailInput" placeholder="Email" type="text" class="input-field_create">
+					</div>
+					<div class="input-row-wrap">
+						<label for="currentPw">Current password </label>
+						<input id="currentPw" class="input-field_create" readonly value="**********" maxlength="40" type="text">
+					</div>
+					<div class="input-row-wrap">
+						<label for="newPw">New password</label>
+						<input id="newPw" class="input-field_create" placeholder="New password" maxlength="40" type="password">
+					</div>
+					<div class="input-row-wrap">
+						<label for="newPw">Confirm new password</label>
+						<input id="newPw" class="input-field_create" placeholder="Confirm new password" maxlength="40" type="password">
+					</div>
+					<div class="input-row-wrap">
+						<label for="newPw">Receive newsletter</label>
+						<input id="newsletter" class="input-field_create" type="checkbox">
+					</div>
+					<button id="createEventBtn" class="right themeBtn">Modifier <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
+					</button>
+				</div>
+			</section>
 			<section id="contactWrap" class=" none centered">
 			<h2>We would like to hear from you</h2>
 			<form>
-				<input id="contactName" type="text" placeholder="full name">
-				<input id="contactMail" type="text" placeholder="email">
-				<textarea id="contactBody" placeholder="Hello, ..."></textarea>
+			<label for="contactName">Your name</label>
+				<input id="contactName" type="text" placeholder="Jack Bamboo">
+			<label for="contactMail">Your email</label>
+				<input id="contactMail" type="text" placeholder="jack@bamboomail.com">
+			<label for="contactBody" class="align-top">Your words</label>
+				<textarea id="contactBody" placeholder="Hi there, ..."></textarea>
 			</form>
 			<button id="sendContactForm" class="right themeBtn">Envoyer</button>
 			</section>
 		</section>
+	</div>
+		<footer>
+		</footer>
 		<script src="/js/jquery.js"></script>
 		<!--<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script> -->
 		<script src="/socket.io/socket.io.js"></script>

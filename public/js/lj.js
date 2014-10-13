@@ -233,7 +233,7 @@ window.LJ = {
 				LJ.fn.toggleMenu();
 			});
 
-			['#contact', '#create', '#profile', '#events', '#management'].forEach(function(menuItem){
+			['#contact', '#create', '#profile', '#events', '#management', '#settings'].forEach(function(menuItem){
 
 				$(menuItem).click(function(){
 		
@@ -388,13 +388,12 @@ window.LJ = {
 			};
 				LJ.params.socket.emit('update profile', profile);
 				csl('Emetting update profile');
-				LJ.$loaderWrap.removeClass('none');	
+				LJ.fn.showLoaders();
 		},
 		handleBeforeSendLogin: function(){
 			LJ.$loginBtn.val('Loading');
 			$('#bcm_member').velocity('transition.slideRightOut', { duration: 500 });
 			$('#lost_pw').velocity('transition.slideLeftOut', { duration: 500 });
-			LJ.$loaderWrap.removeClass('none');
 			$('input.input-field').addClass('validating');
 		},
 		handleSuccessLogin: function(user){
@@ -415,8 +414,8 @@ window.LJ = {
 				LJ.fn.reloadRooms(LJ.user._id);
 
 				// User Interface Update
-				LJ.$loaderWrap.addClass('none');
 				$('#codebar').text(user._id);
+				$('#emailInput').val(user.email);
 				LJ.fn.renderMainThumb();
 
 				LJ.fn.replaceMainImage(LJ.user.imgId,
@@ -453,18 +452,18 @@ window.LJ = {
 				$('input.input-field').removeClass('validating');
 				$('#bcm_member').velocity('transition.slideRightIn', { duration: 400 });
 				$('#lost_pw').velocity('transition.slideLeftIn', { duration: 400 });
-				LJ.$loaderWrap.addClass('none');
+				LJ.fn.hideLoaders();
 				LJ.$loginBtn.val('Login');
 			});
 		},
 		handleBeforeSendSignup: function(){
 			LJ.$backToLogin.velocity("transition.slideLeftOut", { duration:300 });
-			$('.loaderWrap').removeClass('none');
+			LJ.fn.showLoaders();
 			$('input.input-field').addClass('validating');
 		},
 		handleSuccessSignup: function(data){
 			sleep(LJ.ui.artificialDelay,function(){
-				$('.loaderWrap').addClass('none');
+				LJ.fn.hideLoaders();
 				LJ.fn.loginUser(data);
 			});		
 		},
@@ -474,7 +473,7 @@ window.LJ = {
 				$('input.input-field').removeClass('validating');
 				LJ.fn.toastMsgError(data.msg);
 				LJ.$backToLogin.velocity('transition.slideRightIn', { duration: 400 });
-				$('.loaderWrap').addClass('none');
+				LJ.fn.hideLoaders();
 			});
 		},
 		toggleAnimatingState: function(){
@@ -601,7 +600,7 @@ window.LJ = {
 			toast.velocity("transition.slideDownIn",{
 		    	duration: 600,
 		    	complete: function(){
-		    		toast.velocity('transition.slideUpOut', { duration: 300, delay: 3000 });
+		    		toast.velocity('transition.slideUpOut', { duration: 300, delay: 2000 });
 		    	}
 		    });
 				
@@ -612,7 +611,7 @@ window.LJ = {
 		    toast.velocity("transition.slideDownIn",{
 		    	duration: 600,
 		    	complete: function(){
-		    		toast.velocity('transition.slideUpOut', { duration: 300, delay: 3000 });
+		    		toast.velocity('transition.slideUpOut', { duration: 300, delay: 2000 });
 		    	}
 		    });
 		},
@@ -812,7 +811,7 @@ window.LJ = {
 						$('#thumbName').text(data.name);
 						LJ.fn.toastMsgInfo("Vos informations ont été modifiées");
 						$('.modified').removeClass('modified');
-						LJ.$loaderWrap.addClass('none');
+						LJ.fn.hideLoaders();
 						$('.themeBtn').removeClass('validating-btn');
 						$('.themeBtn').removeClass('validating-btn');
 						});
@@ -821,7 +820,7 @@ window.LJ = {
 				LJ.params.socket.on('update profile error',function(){
 
 					sleep(LJ.ui.artificialDelay,function(){
-					LJ.$loaderWrap.addClass('none');
+					LJ.fn.hideLoaders();
 					alert('Error updating profile');
 					});			
 				});
@@ -846,7 +845,7 @@ window.LJ = {
 							LJ.user.status = 'hosting';
 							LJ.user.hostedEventId = eventId;
 							LJ.fn.toastMsgInfo("Evènement créé avec succès !");
-							LJ.$loaderWrap.addClass('none');
+							LJ.fn.hideLoaders();
 							$('.themeBtn').removeClass('validating-btn');
 							LJ.$createEventWrap.find('input').val('');
 							$('.menu-item-active').removeClass('menu-item-active');
@@ -868,7 +867,7 @@ window.LJ = {
 
 					sleep(LJ.ui.artificialDelay,function(){
 						LJ.fn.toastMsgError( data.msg );
-						LJ.$loaderWrap.addClass('none');
+						LJ.fn.hideLoaders();
 						$('.themeBtn').removeClass('validating-btn');
 					});
 				});
@@ -986,7 +985,7 @@ window.LJ = {
 				e.description = LJ.$eventDescriptionInput.val();
 
 				LJ.params.socket.emit('create event', e);
-				LJ.$loaderWrap.removeClass('none');
+				LJ.fn.showLoaders();
 		},
 		fetchEvents: function(){
 			if(LJ.state.fetchingEvents){ 
@@ -1099,6 +1098,12 @@ window.LJ = {
         },
         cancelEvent: function(eventId, hostId){
         	LJ.params.socket.emit('cancel event',{ eventId: eventId, hostId: hostId });
+        },
+        showLoaders: function(){
+        	$('.loaderWrap').velocity("fadeIn", { duration: 400 });
+        },
+        hideLoaders: function(){
+            $('.loaderWrap').velocity("fadeOut", { duration: 250 });
         }
         
 
