@@ -71,11 +71,12 @@ label{
 body > header{
 	width: 100%;
 	height: 33px;
-	background: #181818;
+	background: url('/img/elements/texture-png1.png');
 	box-shadow: 0 0 5px rgb(37, 37, 37);
 	position: fixed;
 top: 0;
 left: 0;
+	z-index: 140;
 }
 body > header > img{
 	float:left;
@@ -107,11 +108,11 @@ body > header > h1{
 	top: -1px;
 	width: 410px;
 	text-align: center;
-	z-index: 100;
+	z-index: 150;
 }
 #toastError{
 	background: rgb(189, 64, 64);
-	/* border: 1px solid rgb(175, 49, 49); */
+	border: 1px solid rgb(175, 49, 49);
 	color: white;
 }
 #toastInfo{
@@ -176,9 +177,19 @@ body > header > h1{
 	position: relative;
 	-webkit-user-select: none;
 	user-select: none;
+	transition: all linear 0.2s;
 }
 .menu-item span{
-	margin-left:10px;
+	width: 46px;
+	background: rgb(247, 0, 0);
+	box-shadow: 0 1px 1px rgb(255, 0, 0);
+	height: 4px;
+	border-radius: 1px;
+	position: relative;
+	top: -2px;
+	left: -11px;
+	display: inline-block;
+	opacity:0;
 }
 .menu-item:hover{
 	cursor:pointer;
@@ -187,7 +198,7 @@ body > header > h1{
 }
 .menu-item-active,
 .menu-item-active:hover{
-	background: #181818;
+	background: #000000;
 	border-radius: 0px;
 	color: white;
 }
@@ -401,13 +412,13 @@ body > header > h1{
 .progress_bar{
 	height: 3px;
 	width: 0%;
-	background: #FF3A3A;
+	background: #999999;
 	border-radius: 3px;
 	margin-bottom: 20px;
 	-webkit-transition: width .9s;
 	transition: width .9s;
 	text-align: center;
-	box-shadow: 0 2px 1px rgb(255, 185, 145);
+	box-shadow: 0 2px 1px rgb(202, 202, 202);
 	color: white;
 }
 #contactWrap{
@@ -449,16 +460,20 @@ body > header > h1{
 }
 #thumbWrap{
 	position: fixed;
-	width: 220px;
+	width: 120px;
 	height: 50px;
-	top: 60px;
-	right: 30px;
-	background: white;
+	top: 0;
+	right: 300px;
+	/* background: white; */
 	padding: 10px;
 	border-radius: 2px;
+	z-index: 145;
 }
 #thumbWrap img{
+    border-radius: 40px;
 
+    border: 3px solid white;
+    box-shadow: 0 0 2px rgb(218, 218, 218);
 }
 #thumbInfos{
 	margin-left:8px;
@@ -471,6 +486,10 @@ body > header > h1{
 	text-align: center;
 	font-size: 1.2em;
 	margin-left: 8px;
+	margin-bottom: 3px;
+	position: relative;
+	top: -4px;
+	color: white;
 	/* display: inline-block; */
 }
 .actionsWrap{
@@ -478,11 +497,11 @@ body > header > h1{
 	text-align: center;
 }
 .actionsStyle span:before{
-	content:"";
-	margin-right:5px;
-	border: 1px solid #ccc;
+	content: "";
+	margin-right: 10px;
+	border: 4px solid #FF3D3D;
 	border-radius: 5px;
-	padding-left: 15px;
+	display: inline-block;
 }
 .action{
 	font-size: .8em;
@@ -520,4 +539,24 @@ body > header > h1{
 	width:15px;
 }
 body > footer{
+}
+
+.overlay{
+	display:none;
+	width:100%;
+	height:100%;
+	position:absolute;
+	top:0;
+	left:0;
+	background: rgba(0,0,0,.8);
+	z-index:500;
+}
+.overlay .overlayMsgWrap{	
+    width: 900px;
+    margin: 0 auto;
+    position: relative;
+    top: 150px;
+}
+.overlay h2{
+	color:white;
 }

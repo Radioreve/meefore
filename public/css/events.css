@@ -1,13 +1,6 @@
 #eventsWrap{
-	width: 750px;
-	position: absolute;
-	margin:auto;
-	margin-top: 80px;
-	top:0;
-	left:0;
-	bottom:0;
-	right:0;
-}
+    width: 80%;
+} 
 #createEventIcon{
 	font-size: .8em;
 	text-shadow: 0 0 1px rgb(131, 131, 131);
@@ -38,14 +31,16 @@
 }
 .eventItemWrap{
 	font-size: .9em;
-	height: 150px;
-	padding-top: 15px;
 
 	-webkit-transition: all .15s;
 	transition: all .15s;
-	border-bottom: 1px solid #eee;
 	color: rgb(56, 56, 56);
-	position: relative;
+	width: 25%;
+	height: 300px;
+	margin: 10px 0;
+	padding-right: 20px;
+	box-sizing: border-box;
+	float: left;
 }
 .eventItemWrap:hover{
 	/* background: rgb(245, 245, 245); */
@@ -88,13 +83,11 @@
 .e-hour{
 	position: relative;
 	text-align: center;
-	font: bolder 1.7em 'Arial';
+	font: bolder 2.7em 'Arial';
 	letter-spacing: -1px;
-	color: #7C7C7C;
-	bottom: 15px;
-	z-index: 20;
-	background: white;
-	border-top: 2px solid rgb(201, 201, 201);
+	color: #CF4747;
+	display: inline-block;
+	top: -30px;
 }
 .e-max-guest{
 	width:100px;
@@ -110,15 +103,12 @@
 	cursor:pointer;
 }
 .e-active{
-	-webkit-box-shadow: 0 0 25px rgb(255, 48, 48);
-	box-shadow: 0 0 25px rgb(255, 48, 48);
+	-webkit-box-shadow: 0 0 25px rgb(128, 128, 128);
+	box-shadow: 0 0 25px rgb(128, 128, 128);
 }
 .e-body{
-	display:inline-block;
-	vertical-align: top;
-	margin-top: 15px;
-	margin-right: 10px;
-	width: 450px;
+	display: block;
+	margin: 20px 0;
 }
 .e-body i.icon-lamp{
 	height:50px;
@@ -129,8 +119,7 @@
 }
 
 .askInWrap{
-	display: inline-block;
-	margin-top: 110px;
+	float: right;
 	margin-bottom: 5px;
 }
 /* CSS pour créer un évenements */

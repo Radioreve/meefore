@@ -5,10 +5,11 @@ var User = require('../models/UserModel'),
 
 var createEvent = function(data) {
 	
-    var hostId = data.hostId;
+    var hostId = data.hostId,
+        socket = global.sockets[hostId];
 
     /* Pour pouvoir push des events à l'host ultérieurement*/
-    global.sockets[data.hostId].join(hostId);
+    socket.join(hostId);
 
     var beginsAt = new Date();
     beginsAt.setHours(parseInt(data.hour));
@@ -20,11 +21,14 @@ var createEvent = function(data) {
     newEvent.beginsAt = beginsAt;
 
     User.findById(hostId, {}, function(err, user) {
-        if (!err) {
+        if (!err ) {
             if (user.status === 'hosting') {
-                global.sockets[hostId].emit('create event error', {
-                    msg: "Can't host multiple events"
-                });
+                
+                eventUtils.raiseError({
+                    toClient:"Can't host multiple events",
+                    toServer:"Can't host multiple events",
+                    socket: socket
+                })
                 return;
             }
             newEvent.save(function(err, myEvent) {

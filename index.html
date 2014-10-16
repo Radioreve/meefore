@@ -16,6 +16,12 @@
 	<link rel="stylesheet" href="/css/chat.css">
 </head>
 <body>
+<div class="overlay">
+	<div class="overlayMsgWrap">
+		<h2> Bienvenue sur Bamboo Nights </h2>
+	</div>	
+
+</div>
 	<header>
 		<h1>Bamboo nights</h1>
 		<img src="img/bamboo-black.png" height="27">
@@ -25,7 +31,7 @@
 			<li id="create" class="left menu menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><span></span></li>
 			<li id="management" class="left menu menu-item icon icon-users" data-linkedcontent="#manageEventsWrap" ><span></span></li>
 			<li id="settings" class="right menu menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span></span></li>
-			<li id="contact" class="right menu menu-item icon icon-mail" data-linkedcontent="#contactWrap" ><span></span></li>
+			<li id="contact" class="right menu menu-item icon icon-mail-alt" data-linkedcontent="#contactWrap" ><span></span></li>
 		  </ul>
 	</header>
 	<div id="mainWrap" class="">
@@ -103,6 +109,9 @@
 			</section>
 			<section id="eventsWrap" class="none centered">
 				<h2>Tous les évènements</h2>
+				<div class="actionsWrap actionsStyle">
+					<span id="activateFilters" class="action">Activer les filtres</span>
+				</div>
 				<section id="eventsListWrap"></section>
 			</section>
 			<section id="createEventWrap" class="none centered">
@@ -126,11 +135,12 @@
 					</button>
 				</div>
 			</section>
-			<section id="manageEventsWrap" class=" none centered">
+			<section id="manageEventsWrap" class="none centered">
 				<h2>Management de la soirée</h2>
 				<div class="actionsWrap actionsStyle">
-					<span id="cancelEvent" class="action">Annuler l'évènement</span>
-					<span id="suspendEvent" class="action">Suspendre les demandes </span>
+					<span id="cancelEvent" class="action">Annuler</span>
+					<span id="suspendEvent" class="action">Suspendre </span>
+					<span id="terminateEvent" class="action">Terminer</span>
 				</div>
 				<div id="askersListWrap">
 				</div>
@@ -139,30 +149,30 @@
 				<h2> Settings </h2>
 				<div id="settingsInputsWrap">
 					<div class="input-row-wrap">
-						<label for="emailInput">Email</label>
-						<input id="emailInput" placeholder="Email" type="text" class="input-field_create">
+						<label for="currentEmail">Email</label>
+						<input id="currentEmail" placeholder="Email" type="text" class="input-field_create">
 					</div>
 					<div class="input-row-wrap">
 						<label for="currentPw">Current password </label>
-						<input id="currentPw" class="input-field_create" readonly value="**********" maxlength="40" type="text">
+						<input id="currentPw" class="input-field_create" readonly value="**********" type="text">
 					</div>
 					<div class="input-row-wrap">
 						<label for="newPw">New password</label>
 						<input id="newPw" class="input-field_create" placeholder="New password" maxlength="40" type="password">
 					</div>
 					<div class="input-row-wrap">
-						<label for="newPw">Confirm new password</label>
-						<input id="newPw" class="input-field_create" placeholder="Confirm new password" maxlength="40" type="password">
+						<label for="newPwConf">Confirm new password</label>
+						<input id="newPwConf" class="input-field_create" placeholder="Confirm new password" maxlength="40" type="password">
 					</div>
 					<div class="input-row-wrap">
-						<label for="newPw">Receive newsletter</label>
+						<label for="newsletter">Receive newsletter</label>
 						<input id="newsletter" class="input-field_create" type="checkbox">
 					</div>
-					<button id="createEventBtn" class="right themeBtn">Modifier <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
+					<button id="submitSettingsBtn" class="right themeBtn">Modifier <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
 					</button>
 				</div>
 			</section>
-			<section id="contactWrap" class=" none centered">
+			<section id="contactWrap" class="none centered">
 			<h2>We would like to hear from you</h2>
 			<form>
 			<label for="contactName">Your name</label>

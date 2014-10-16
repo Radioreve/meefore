@@ -6,10 +6,12 @@
 
 	    var fetchEvents = function(userId){
 
+	    	var socket = global.sockets[userId];
+
 			console.log('Fetching all events');
 			Event.find({state: {$ne: 'canceled'}}, function(err,events){
 				if(err){console.log(err); return;}
-					global.sockets[userId].emit('fetch events success', events);
+					socket.emit('fetch events success', events);
 			});
 	    }; 
 	  
@@ -17,31 +19,33 @@
 
 			var eventId = data.eventId,
 			 	hostId  = data.hostId ,
-			 	userId = data.userInfos._id;
+			 	userId  = data.userInfos._id;
 
-			if(hostId == userId) return;  /* Send back un msg au client éventuellement */
+			if( hostId == userId ) return;  /* Send back un msg au client éventuellement */
 
-			var room = eventUtils.buildRoomId(eventId, hostId, userId);
+			var room   = eventUtils.buildRoomId(eventId, hostId, userId),
+				userSocket = global.sockets[userId],
+				hostSocket = global.sockets[hostId];
 
-				global.sockets[userId].join(room);
-		     if(global.sockets[hostId] != undefined){ 
-		     	global.sockets[hostId].join(room); 
+				userSocket.join(room);
+				console.log('User '+userId+' has joined the room : \n'+room +'\n');
+
+		     if( hostSocket != undefined ){ 
+		     	hostSocket.join(room); 
 				console.log('Host '+hostId+' has joined the room : \n'+room + '\n');
 			}
-			
-				console.log('User '+userId+' has joined the room : \n'+room +'\n');
 		
-			Event.findById(eventId,{},function(err,myEvent){
+			Event.findById( eventId, {}, function(err,myEvent){
 
-					User.findById(userId,{},function(err,user){
-						if(err){
+					User.findById( userId, {}, function(err,user){
+						if( err ){
 							console.log('Error finding user : '+err);
 						}
 						else{
 							user.socketRooms.push(room);
 							user.eventsAskedList.push(myEvent._id.toString());
 							user.save(function(err,user){
-								if(err){
+								if( err ){
 									console.log("Error updating User Model : "+err);
 								}else{
 									var asker = {
@@ -55,7 +59,7 @@
 									}; 
 									myEvent.askersList.push(asker);
 									myEvent.save(function(err){
-										if(!err){
+										if( !err ){
 											global.io.emit('request participation in success', {hostId:hostId,
 																							 userId:userId,
 																							 asker:asker});
@@ -69,13 +73,13 @@
 					});	
 			});
 
-			User.findById(hostId,{},function(err,host){
-						if(err){
+			User.findById( hostId, {},function(err,host){
+						if( err ){
 							console.log('Error finding host');
 						}else{
 							host.socketRooms.push(room);
 							host.save(function(err,host){
-								if(err){
+								if( err ){
 									console.log('Error saving host new room');
 								}
 							});
@@ -86,19 +90,18 @@
 
 	    var requestOut = function(data){
 
-	    									console.log('Here once 1');
-
-
 				var eventId = data.eventId,
 					hostId  = data.hostId,
 					userId  = data.userInfos._id,
-					room  = eventUtils.buildRoomId(eventId,hostId,userId);
+					room  = eventUtils.buildRoomId(eventId,hostId,userId),
+					userSocket = global.sockets[userId],
+					hostSocket = global.sockets[hostId];
 
-					global.sockets[userId].leave(room);
+					userSocket.leave(room);
 					console.log('User '+userId+' has left the room : \n'+room + '\n');
 					
-					if(global.sockets[hostId] != undefined){
-						global.sockets[hostId].leave(room); 
+					if( hostSocket != undefined ){
+						hostSocket.leave(room); 
 						console.log('Host '+hostId+' has left the room : \n'+room + '\n');
 					}
 					
@@ -112,28 +115,29 @@
 					hostUpdate	   = { $pull: { 'socketRooms': room }},
 
 					option = {},
+
 					callback = function(err){ 
 						if(err){console.log(err); }
 						else{ 
-														console.log('Here once 2');
 
 							var data = {
 								userId: userId,
 								eventId: eventId,
 								hostId: hostId
 							};
-							if(global.sockets[hostId] != undefined){
-							global.sockets[hostId].emit('request participation out success', data );
-														console.log('emitting out for host');
 
+							if( hostSocket != undefined ){
+							hostSocket.emit('request participation out success', data );
+							console.log('emitting out for host');
 							}
-							global.sockets[userId].emit('request participation out success', data );								
+							
+							hostSocket.emit('request participation out success', data );								
 						}
 					};
 
-				Event.update(eventCondition, eventUpdate, option, callback);
-				User.update(userCondition, userUpdate, option, callback);
-			  	User.update(hostCondition, hostUpdate, option, callback);
+				Event.update( eventCondition, eventUpdate, option, callback );
+				User.update( userCondition, userUpdate, option, callback );
+			  	User.update( hostCondition, hostUpdate, option, callback );
 			  
 	    };
 

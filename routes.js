@@ -72,6 +72,7 @@
 	  					imgVersion: 	 user.imgVersion,
 	  					eventsAskedList: user.eventsAskedList,
 	  					hostedEventId:   user.hostedEventId,
+	  					newsletter:      user.newsletter,
 	  					msg:         	 info.msg,
 	  					token:       	 token,
 	  					cloudTag:    	 cloudTag

@@ -38,6 +38,10 @@
 		state:{
 			type:String,
 			default:'open'
+		},
+		newsletter:{
+			type: Boolean,
+			default:false
 		}
 	});
 

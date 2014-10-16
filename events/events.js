@@ -8,27 +8,29 @@
 
 module.exports = function(id){
 
+		var socket = global.sockets[id];
 
 //Events d'initialisation
 		otherEvents.init();
 		//global.sockets[id].on('disconnect', otherEvents.disconnectClient);
 
 //Events relatifs au profile utilisateur
-		global.sockets[id].on('update profile', profileEvents.updateProfile);
-		global.sockets[id].on('update picture', profileEvents.updatePicture);
+		socket.on( 'update profile', profileEvents.updateProfile   		);
+		socket.on( 'update picture', profileEvents.updatePicture   		);
+		socket.on( 'update settings', profileEvents.updateSettings 		);
 
 //Events relatif à la gestion d'un évènement
-		global.sockets[id].on('create event', manageEvents.createEvent);
-		global.sockets[id].on('cancel event', manageEvents.cancelEvent);
-		global.sockets[id].on('fetch askers', manageEvents.fetchAskers);
+		socket.on( 'create event', manageEvents.createEvent		   		);
+		socket.on( 'cancel event', manageEvents.cancelEvent		   		);
+		socket.on( 'fetch askers', manageEvents.fetchAskers		   		);
 
 //Events inclassables
-		global.sockets[id].on('send message', otherEvents.sendMessage);
-		global.sockets[id].on('load rooms', otherEvents.reloadRooms);
+		socket.on( 'send message', otherEvents.sendMessage		   		);
+		socket.on( 'load rooms', otherEvents.reloadRooms		   		);
 
 //Events relatifs au démarrage d'une session client
-		global.sockets[id].on('fetch events', clientEvents.fetchEvents);
-		global.sockets[id].on('request participation in', clientEvents.requestIn)		
-		global.sockets[id].on('request participation out', clientEvents.requestOut);
+		socket.on( 'fetch events', clientEvents.fetchEvents		   		);
+		socket.on( 'request participation in', clientEvents.requestIn	);		
+		socket.on( 'request participation out', clientEvents.requestOut );
 
 	};

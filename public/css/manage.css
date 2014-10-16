@@ -45,6 +45,6 @@
 }
 .a-active{
 	-webkit-box-shadow: 0 0 15px #FF3232;
-	box-shadow: 0 0 15px #FF3232;
-	border: 1px solid rgb(255, 153, 153);
+	box-shadow: 0 0 11px #A3A3A3;
+	border: 1px solid rgb(190, 190, 190);
 }

@@ -53,6 +53,10 @@ var UserSchema = new mongoose.Schema({
   socketRooms:{
     type: Array,
     default: []
+  },
+  newsletter:{
+    type: Boolean,
+    default: true
   }
 
 

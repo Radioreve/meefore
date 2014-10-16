@@ -18,20 +18,17 @@
 					//  next(null || err , true || false [populates with users if true],  {key:msg})
 					User.findOne({'local.email' : email}, function(err,user){
 						if(err){
-							console.log(1);
-							return next(err,false,{msg:"Missing credentials"});
+							return next( err, false,{ msg: "Missing credentials" });
 						}
 						if(user){
-							console.log(2);
-							return next(null,false,{msg:"User already exists"});
+							return next( null, false,{ msg: "User already exists" });
 						}else{
-							console.log(3);
 							var newUser = new User();
 							newUser.local.email = email;
 							newUser.local.password = newUser.generateHash(password);
-							newUser.save(function(err){
-								if(err){throw err;}
-									return next(null,newUser,{msg:"User created"});
+							newUser.save( function( err ){
+								if( err ){ throw err; }
+									return next( null, newUser, { msg: "User created" });
 							});
 						} 
 					});
@@ -47,22 +44,22 @@
 		    },
 		    function(req, email, password, done) {
 
-	    		    User.findOne({ 'local.email' :  email }, function(err, user) {
+	    		    User.findOne({ 'local.email' :  email }, function( err, user) {
  
- 	          		  if (err)
-	             	   return done(err,false,{msg:"Missing credentials"});
+ 	          	    if( err )
+	             	   return done( err, false, { msg:"Missing credentials" });
 
-		            if (!user)
-		                return done(null, false,{msg:"No email matched"});
+		            if( !user )
+		                return done( null, false, { msg:"No email matched" });
 
-		            if(!email)
-		            	return done(null,false,{msg:"No email provided"});
+		            if( !email )
+		            	return done( null, false, { msg:"No email provided" });
 		            
 
-		            if (!user.validPassword(password))
-		                return done(null, false, {msg:"Invalid credentials"});
+		            if( !user.validPassword(password) )
+		                return done( null, false, { msg: "Invalid credentials"} );
 
-	            return done(null, user, {msg:"Welcome "+user.local.email});
+	            return done( null, user, { msg: "Welcome " + user.local.email });
 
 	        });
 

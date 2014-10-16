@@ -66,7 +66,8 @@ window.LJ = {
 		imgVersion:'',
 		status:'',
 		hostedEventId:'',
-		eventsAskedList:[]
+		eventsAskedList:[],
+		newsletter:false
 	},
 	myEvents:[],
     myAskers:[],
@@ -242,18 +243,37 @@ window.LJ = {
 						
 						var linkedContent = $(menuItem).data('linkedcontent');
 						
-						$('.menu-item-active').removeClass('menu-item-active');
-						$(menuItem).addClass('menu-item-active');
+						var indexActive = $('.menu-item-active').offset().left,
+							indexTarget = $(menuItem).offset().left;
+
+						if( indexActive > indexTarget ){
+							var myWayOut = "transition.slideRightOut",
+								myWayIn = "transition.slideLeftIn";
+						}else{
+							var myWayOut = "transition.slideLeftOut",
+								myWayIn = "transition.slideRightIn";
+						}
+
+						$('.menu-item-active').removeClass('menu-item-active')
+											  .find('span')
+											  .velocity({ opacity: [0, 1], translateY: [-2, 0]   },
+											   { duration: 300,
+											   complete: function(){
+											   	$(menuItem).addClass('menu-item-active')
+														   .find('span')
+													   	   .velocity({ opacity: [1, 0], translateY: [0, -2]   }, { duration: 300 });
+											   	} 
+											});
 
 						LJ.fn.displayContent( $(linkedContent), {
-							myWayOut: "transition.slideLeftOut",
+							myWayOut: myWayOut,
+							myWayIn : myWayIn, 
 							duration: 250
 						});
 					
 				  }
 				});
 			});
-
 
 			LJ.$validateBtn.click(LJ.fn.updateProfile);
 
@@ -280,6 +300,10 @@ window.LJ = {
 				LJ.fn.createEvent();
 			});
 
+			$('#submitSettingsBtn').click(function(){
+				LJ.fn.updateSettings();
+			});
+
 			LJ.$logout.click(function(){
 				location.reload();
 			});
@@ -294,7 +318,6 @@ window.LJ = {
             			$that.removeClass('moving');
             		});
             	}
-
             });
 
             LJ.$eventsListWrap.on('click', '.e-head', function(){
@@ -315,6 +338,10 @@ window.LJ = {
             	LJ.fn.cancelEvent(eventId, hostId);
             });
 			
+            $('.overlay').click(function(){
+            	$(this).velocity("fadeOut", { duration: 400 });
+            });
+
 		},
 		signupUser: function(credentials){
 
@@ -390,6 +417,19 @@ window.LJ = {
 				csl('Emetting update profile');
 				LJ.fn.showLoaders();
 		},
+		updateSettings: function(){
+
+			var currentEmail    = $('#currentEmail').val(),
+				newPw 	   		= $('#newPw').val(),
+				newPwConf  		= $('#newPwConf').val(),
+				newsletter 		= $('#newsletter').is(':checked'),
+				userId     		= LJ.user._id;
+
+			var o = { currentEmail: currentEmail, newPw: newPw, newPwConf: newPwConf, newsletter: newsletter, userId: userId }; 
+
+			LJ.params.socket.emit('update settings', o);
+
+		},
 		handleBeforeSendLogin: function(){
 			LJ.$loginBtn.val('Loading');
 			$('#bcm_member').velocity('transition.slideRightOut', { duration: 500 });
@@ -414,8 +454,9 @@ window.LJ = {
 				LJ.fn.reloadRooms(LJ.user._id);
 
 				// User Interface Update
-				$('#codebar').text(user._id);
-				$('#emailInput').val(user.email);
+				$('#codebar').text( user._id );
+				$('#currentEmail').val( user.email );
+				$('#newsletter').prop( 'checked', LJ.user.newsletter );
 				LJ.fn.renderMainThumb();
 
 				LJ.fn.replaceMainImage(LJ.user.imgId,
@@ -439,7 +480,7 @@ window.LJ = {
 					display:'inline-block',
 					stagger: 250,
 					complete: function(){
-						LJ.fn.toastMsgInfo("Welcome onboard " + LJ.user.name);
+						LJ.fn.toastMsgInfo("Welcome back " + LJ.user.name);
 					}
 				});
 				
@@ -480,30 +521,39 @@ window.LJ = {
 			LJ.state.animatingContent ? LJ.state.animatingContent = false : LJ.state.animatingContent = true ;
 		},
 		displayViewAsNew: function(){
+
 			 $('#thumbWrap').velocity('transition.slideUpIn');
-			 LJ.fn.displayContent(LJ.$profileWrap, {
-			 	myWayIn: 'transition.slideUpIn'
-			 });
+
+			 $('.menu-item-active').removeClass('menu-item-active');
+			 $('#profile').addClass('menu-item-active')
+            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
+
+			 LJ.fn.displayContent(LJ.$profileWrap, { myWayIn: 'transition.slideDownIn' });
 
 		},
 		displayViewAsIdle: function(){
+
             $('#thumbWrap').velocity('transition.slideUpIn');
+
             $('.menu-item-active').removeClass('menu-item-active');
-            $('#events').addClass('menu-item-active');
-            LJ.fn.displayContent(LJ.$eventsWrap, {
-			 	myWayIn: 'transition.slideUpIn'
-            });
+            $('#events').addClass('menu-item-active')
+            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
+
+            LJ.fn.displayContent(LJ.$eventsWrap, { myWayIn: 'transition.slideDownIn' });
 
 
 		},
 		displayViewAsHost: function(){
+
 			$('#thumbWrap').velocity('transition.slideUpIn');
-			LJ.fn.displayContent(LJ.$manageEventsWrap, {
-			 	myWayIn: 'transition.slideUpIn'
-			});
-            LJ.fn.fetchAskers();
+
 			$('.menu-item-active').removeClass('menu-item-active');
 			$('#management').addClass('menu-item-active')
+            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
+
+			LJ.fn.displayContent(LJ.$manageEventsWrap, { myWayIn: 'transition.slideDownIn' });
+
+            LJ.fn.fetchAskers();
 		},
 		displayContent: function(content,options){
 			
@@ -518,6 +568,9 @@ window.LJ = {
 							   .velocity( options.myWayIn || "transition.slideLeftIn", {
 							   	complete: function(){
 							   		LJ.state.animatingContent = false;
+							   		if(LJ.user.status === 'new'){
+							   			$('.overlay').velocity('fadeIn', { duration: 800 });
+							   		}
 							   	}
 							   });
 					}
@@ -536,8 +589,14 @@ window.LJ = {
 		toggleChatWrapAskers: function(askerPictureTag){
 
 			var $chatWrap = askerPictureTag.parents('.a-row').find('.chatWrap');
-        	
-                if(!askerPictureTag.hasClass('a-active')){
+        	var $previous = $('.a-active');
+
+			$previous.removeClass('a-active')
+				 	 .parents('.a-row')
+				  	 .find('.chatWrap')
+				  	 .velocity('transition.slideLeftOut', { duration: 300 }); 
+
+                if( !askerPictureTag.hasClass('a-active') && ! askerPictureTag.is($previous) ){
                     askerPictureTag.addClass('a-active');
                 	LJ.chatPile.push($chatWrap);
                     LJ.fn.displayChat($chatWrap);
@@ -565,14 +624,14 @@ window.LJ = {
                     }
                 }
                 else{
-                    LJ.fn.toastMsgInfo('You need to ask participation to chat with the host');
+                    LJ.fn.toastMsgError('You need to ask participation to chat with the host');
                 }
 		},
 		setClientSettings: function(data){
 			//csl('Updating client state : '+JSON.stringify(data,0,4));
             LJ.user = data;
 			//User Interface Update
-			LJ.fn.updateSettingsDOM();
+			LJ.fn.updateUserObject();
 		},
 		updateClientSettings: function(newSettings){
 			_.keys(newSettings).forEach(function(el){
@@ -588,7 +647,7 @@ window.LJ = {
 			});
 			return o1;
 		},
-		updateSettingsDOM: function(){
+		updateUserObject: function(){
 			LJ.$nameInput.val(LJ.user.name);
 			LJ.$ageInput.val(LJ.user.age);
 			LJ.$descInput.val(LJ.user.description);
@@ -724,12 +783,12 @@ window.LJ = {
 
 			var html = '<div class="eventItemWrap none" data-eventid="'+e._id+'" data-hostid="'+e.hostId+'">'
 						+'<div class="e-head hint--left" data-hint="'+e.hostName+'">' + imgTag 
-						+'<div class="e-itm e-hour e-weak">'+LJ.utils.dateHHMM(new Date(e.beginsAt))+'</div>'
 						+'</div>'
+						+'<div class="e-itm e-hour e-weak">'+LJ.utils.dateHHMM(new Date(e.beginsAt))+'</div>'
 						+'<div class="e-body">'
 						   +'<div class="e-itm e-name">'+e.name+'</div>'
 						   +'<div class="e-row">'
-						     +'<i class="left icon icon-direction"></i><div class="e-itm e-location e-weak">'+e.location+'</div>'
+						     +'<i class="left icon icon-map"></i><div class="e-itm e-location e-weak">'+e.location+'</div>'
 						   +'</div>'
 						   +'<div class="e-row">'
 						     +'<i class="left icon icon-lamp"></i><div class="e-itm e-description e-weak">'+e.description+'</div>'
@@ -783,14 +842,19 @@ window.LJ = {
 		},
         displayChat: function(chatWrap){
         	var chatId = chatWrap.data('chatid');
-            chatWrap.velocity("transition.slideRightIn");
-            if(LJ.state.jspAPI[chatId] != undefined){
-	            LJ.state.jspAPI[chatId].reinitialise();
-	        	LJ.state.jspAPI[chatId].scrollToBottom();   
-        	}                 
+            chatWrap.velocity("transition.slideLeftIn", {
+            	duration: 450,
+            	complete: function(){
+            		if(LJ.state.jspAPI[chatId] != undefined){
+	           		  LJ.state.jspAPI[chatId].reinitialise();
+	        		  LJ.state.jspAPI[chatId].scrollToBottom();   
+        			} 
+            	}
+            });
+                            
         },
         hideChat: function(chatWrap){
-           	chatWrap.velocity("transition.slideLeftOut");
+           	chatWrap.velocity("transition.slideLeftOut", { duration: 300 });
         },
         setChatIndexes: function(chatPile){
         	var l = chatPile.length;
@@ -817,14 +881,6 @@ window.LJ = {
 						});
 				});
 
-				LJ.params.socket.on('update profile error',function(){
-
-					sleep(LJ.ui.artificialDelay,function(){
-					LJ.fn.hideLoaders();
-					alert('Error updating profile');
-					});			
-				});
-
 				LJ.params.socket.on('update image success', function(data){
 
 					LJ.fn.updateClientSettings(data);
@@ -848,9 +904,7 @@ window.LJ = {
 							LJ.fn.hideLoaders();
 							$('.themeBtn').removeClass('validating-btn');
 							LJ.$createEventWrap.find('input').val('');
-							$('.menu-item-active').removeClass('menu-item-active');
-							$('#management').addClass('menu-item-active');
-							LJ.fn.displayContent(LJ.$manageEventsWrap);
+							$('#management').click();
 					} else {
 						//rien de spécial so far
 					}
@@ -863,23 +917,12 @@ window.LJ = {
 					
 				});
 
-				LJ.params.socket.on('create event error', function(data){
-
-					sleep(LJ.ui.artificialDelay,function(){
-						LJ.fn.toastMsgError( data.msg );
-						LJ.fn.hideLoaders();
-						$('.themeBtn').removeClass('validating-btn');
-					});
-				});
-
 				LJ.params.socket.on('cancel event success', function(data){
 
                 	if( data.hostId == LJ.user._id ){
                 		LJ.user.status = 'idle';
                 		LJ.$manageEventsWrap.find('#askersListWrap').html('');
-						$('.menu-item-active').removeClass('menu-item-active');
-						$('#create').addClass('menu-item-active');
-						LJ.fn.displayContent(LJ.$createEventWrap);
+						$('#create').click();
 						  		
                 	} else {
                 		/* 
@@ -949,6 +992,25 @@ window.LJ = {
 
 				});
 
+				LJ.params.socket.on('update settings success', function(data){
+
+					sleep( 600, function(){
+						LJ.fn.toastMsgInfo(data.msg);
+						$('.validating-btn').removeClass('validating-btn');
+						LJ.fn.hideLoaders();
+					});
+
+
+				});
+
+				LJ.params.socket.on('server error', function(msg){
+					sleep( 600, function(){
+						LJ.fn.toastMsgError(msg);
+						$('.validating-btn').removeClass('validating-btn');
+						LJ.fn.hideLoaders();
+					});
+				});
+
 				LJ.params.socket.on('disconnect', function(){
 
 					LJ.fn.toastMsgError("You have been disconnected from the stream");
@@ -965,8 +1027,6 @@ window.LJ = {
                 });
 
                 LJ.params.socket.on('receive message', function(data){
-
-
                 	LJ.fn.addChatLine(data);
                 });
 
@@ -1005,7 +1065,10 @@ window.LJ = {
         },
         displayEvents: function(){
             LJ.$eventsListWrap.append(LJ.fn.renderEvents(LJ.myEvents));
-            $('.eventItemWrap').velocity("transition.slideLeftIn");
+            $('.eventItemWrap').velocity("transition.slideLeftIn", {
+            	stagger: 250,
+            	display:'inline-block'
+            });
         },
         displayAskers: function(){
             LJ.$askersListWrap.append(LJ.fn.renderAskers(LJ.myAskers));
@@ -1085,12 +1148,14 @@ window.LJ = {
         		cha12 == 'cha1' ? anim = "slideLeftIn" : anim = "slideRightIn" ;  
 
         		$chatLineWrap.find('.chatLine:last-child')
-        					  .velocity("transition."+anim, {
+        					  .velocity("fadeIn", {
+        					  	duration: 500,
+        					  	complete: function(){
+        					  	}
         					  });
 
-        		LJ.state.jspAPI[chatId].reinitialise();
-        		LJ.state.jspAPI[chatId].scrollToBottom();
-        
+        		sleep(30, function(){ LJ.state.jspAPI[chatId].reinitialise();
+        							LJ.state.jspAPI[chatId].scrollToBottom(); })
 
         },
         reloadRooms: function(id){
