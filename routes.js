@@ -1,4 +1,4 @@
-	
+
 	var express = require('express'),
 		swig = require('swig'),
 		cloudinary = require('cloudinary'),
@@ -15,44 +15,44 @@
 
 	module.exports = function(app,passport){
 
-		app.get('/home', function(req,res){
+		app.get('/home', function( req, res){
 			res.sendfile( __dirname + '/index.html');
 		});
 
-		app.get('/test',function(req,res){
+		app.get('/test', function( req, res){
 			res.sendfile(__dirname + '/test.html');
 		})
 
-		app.get('*', function(req,res){
+		app.get('*', function( req, res){
 			res.redirect('/home');
 		});
 
-		app.post('/signup', function(req,res,next){
-			passport.authenticate('local-signup',function(err,user,info){
-				if(err){
+		app.post('/signup', function( req, res, next ){
+			passport.authenticate('local-signup', function( err, user, info ){
+				if( err ){
 					console.log('error with the database query');	
 				}
-				if(!user){
+				if( !user ){
 					console.log('info : '+info.msg);
-	  				res.json(401,{msg:info.msg});
+	  				res.json( 401, { msg: info.msg });
 					res.end();
 				}
 				else{
 					console.log('info : '+info.msg);
-	  				res.json(200,{msg:info.msg });
+	  				res.json( 200, {msg: info.msg });
 					res.end();;
 				}
 			})(req,res,next);
 
 		});
 
-		app.post('/login', function(req,res,next){
-			passport.authenticate('local-login',function(err,user,info){
-				if(err){
+		app.post('/login', function( req, res, next ){
+			passport.authenticate('local-login', function( err, user, info ){
+				if( err ){
 					console.log('error with the database query');	
 				}
-				if(!user){
-	  				res.json(401,{msg:info.msg});
+				if( !user ){
+	  				res.json( 401, { msg: info.msg });
 					res.end();
 				}
 				else{

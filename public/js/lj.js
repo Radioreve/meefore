@@ -71,7 +71,6 @@ window.LJ = {
 	},
 	myEvents:[],
     myAskers:[],
-    chatPile:[],
 	state: {
 		fetchingEvents: false,
         fetchingAskers: false,
@@ -104,14 +103,8 @@ window.LJ = {
 		$locationInput        : $('#location'),
 		$loaderWrap 	      : $('.loaderWrap'),
 		$menuBtn		      : $('.menuBtn'),
-
 		$createEventWrap	  : $('#createEventWrap'),
 		$createEventBtn       : $('#createEventBtn'),
-		$eventNameInput       : $('#eventName'),
-		$eventLocationInput   : $('#eventLocation'),
-		$eventHourInput       : $('#eventHour'),
-		$eventMinutInput      : $('#eventMinut'),
-		$eventDescriptionInput: $('#eventDescription'),
 		$contentWrap          : $('#contentWrap'),
 		$contactWrap          : $('#contactWrap'),
 		$menuWrap             : $('#menuWrap'),
@@ -199,11 +192,6 @@ window.LJ = {
 				LJ.$body.on('mousedown','.chatWrap',function(){
 					csl('Hello');
 					var $that = $(this);
-					_.remove( LJ.chatPile, function(el){
-						return el.is($that);
-					});
-					LJ.chatPile.push($that);
-					LJ.fn.setChatIndexes(LJ.chatPile);               
 	                $that.find('input[type="text"]').focus();
                		
             	});
@@ -598,29 +586,33 @@ window.LJ = {
 
                 if( !askerPictureTag.hasClass('a-active') && ! askerPictureTag.is($previous) ){
                     askerPictureTag.addClass('a-active');
-                	LJ.chatPile.push($chatWrap);
                     LJ.fn.displayChat($chatWrap);
-             		LJ.fn.setChatIndexes(LJ.chatPile);
+
 
                 }else{
                     askerPictureTag.removeClass('a-active');
-                    _.remove(LJ.chatPile, function(el){
-                    	return el.is($chatWrap);
-                    });
-                 	LJ.fn.setChatIndexes(LJ.chatPile);
                     LJ.fn.hideChat($chatWrap);
                 }          
 		},
 		toggleChatWrapEvents: function(eHeadTag){
+
 			 var $chatWrap = eHeadTag.siblings('.chatWrap');
-                if(eHeadTag.siblings('.askInWrap').find('button').hasClass('validating-btn')){
-                    if(!eHeadTag.hasClass('e-active')){
+			 var $previous = $('.e-active');
+
+			 $previous.removeClass('e-active')
+			 		  .siblings('.chatWrap')
+			 		  .velocity('transition.slideLeftOut', { duration: 300 });
+
+                if( eHeadTag.siblings('.askInWrap').find('button').hasClass('validating-btn') ){
+                    if( !eHeadTag.hasClass('e-active') && ! eHeadTag.is($previous) ){
                         eHeadTag.addClass('e-active');
+
                         LJ.fn.displayChat($chatWrap);
                     }
                     else{
                         eHeadTag.removeClass('e-active');
-                        LJ.fn.hideChat($chatWrap);
+      
+                    	LJ.fn.hideChat($chatWrap);
                     }
                 }
                 else{
@@ -785,6 +777,8 @@ window.LJ = {
 						+'<div class="e-head hint--left" data-hint="'+e.hostName+'">' + imgTag 
 						+'</div>'
 						+'<div class="e-itm e-hour e-weak">'+LJ.utils.dateHHMM(new Date(e.beginsAt))+'</div>'
+						+'<div class="e-itm e-guests">'
+						  +'<i class="icon icon-users"></i><span>'+e.askersList.length+'</span>/'+'<span>'+e.maxGuest+'</span></div>'
 						+'<div class="e-body">'
 						   +'<div class="e-itm e-name">'+e.name+'</div>'
 						   +'<div class="e-row">'
@@ -855,15 +849,6 @@ window.LJ = {
         },
         hideChat: function(chatWrap){
            	chatWrap.velocity("transition.slideLeftOut", { duration: 300 });
-        },
-        setChatIndexes: function(chatPile){
-        	var l = chatPile.length;
-        	chatPile.forEach(function(chatEl){
-        		var i = chatPile.indexOf(chatEl);
-        		var z = '0'
-        		i == l - 1 ? z = '100'  :  z = '1' ;
-        		chatEl.css({"z-index": z});  
-        	});
         },
 		initEventListeners: function(){
 
@@ -980,10 +965,6 @@ window.LJ = {
 						var $chatWrapAsHost = LJ.$askersListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
 						var $chatWrapAsUser = LJ.$eventsListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
 
-						_.remove( LJ.chatPile, function(el){
-							return el.is($chatWrapAsHost);
-						});
-
 						_.remove( LJ.myAskers, function(asker){
 							return asker.id === data.userId;
 						});
@@ -1034,15 +1015,16 @@ window.LJ = {
 		},
 		createEvent: function(){
 			var e = {};
-				e.hostId	  = LJ.user._id;
-				e.hostName   = LJ.user.name;
-				e.hostImgId = LJ.user.imgId;
+				e.hostId	  	  = LJ.user._id;
+				e.hostName   	  = LJ.user.name;
+				e.hostImgId 	  = LJ.user.imgId;
 				e.hostImgVersion  = LJ.user.imgVersion;
-				e.name 		  = LJ.$eventNameInput.val();
-				e.location    = LJ.$eventLocationInput.val();
-				e.hour 		  = LJ.$eventHourInput.val();
-				e.min  		  = LJ.$eventMinutInput.val();
-				e.description = LJ.$eventDescriptionInput.val();
+				e.name 		  	  = $('#eventName').val();
+				e.location    	  = $('#eventLocation').val();
+				e.hour 		  	  = $('#eventHour').val();
+				e.min  		  	  = $('#eventMinut').val();
+				e.description 	  = $('#eventDescription').val();
+				e.maxGuest        = $('#eventMaxGuest').val();
 
 				LJ.params.socket.emit('create event', e);
 				LJ.fn.showLoaders();

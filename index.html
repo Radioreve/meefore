@@ -3,7 +3,7 @@
 <head>
 	<title>Socket auth</title>
 	<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Din' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="/css/meyer.css">
@@ -130,7 +130,14 @@
 						<input id="eventHour" class="input-field_create" type="text" placeholder="20" maxlength="2"><b>h</b>
 						<input id="eventMinut" class="input-field_create" type="text" placeholder="00" maxlength="2">
 					</div>
-					<textarea id="eventDescription" placeholder="What is this all about"></textarea>
+					<div class="input-row-wrap hint--right" data-hint="Restez raisonnable ;-)">
+						<label for="eventMaxGuest">Nombre d'invités </label>
+						<input id="eventMaxGuest" class="input-field_create" placeholder="5" max="100" min="2" type="number">
+					</div>
+					<div class="input-row-wrap">
+					<label for="eventDescription">About</label>
+					<textarea id="eventDescription" placeholder="Winter is coming..."></textarea>
+					</div>
 					<button id="createEventBtn" class="right themeBtn">Create event <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
 					</button>
 				</div>

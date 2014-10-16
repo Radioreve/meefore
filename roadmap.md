@@ -1,12 +1,12 @@
 
 #Bugs! :@
 	
-	- Toast msg vide (lorsqu'on login sans ID)
-	- Ajouter une petite croix pour fermer un chat
-	- Ajouter le nombre de participants genre (4/25), avec possibilité de l'aug dans le manage panel. 
 
 #Currently
   ~> Today
+	- Toast msg vide (lorsqu'on login sans pw)
+	- Ajouter une petite croix pour fermer un chat
+	- Ajouter le nombre de participants genre (4/25), avec possibilité de l'aug dans le manage panel. 
 
 #Mandatory 
   ~> First steps 

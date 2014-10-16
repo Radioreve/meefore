@@ -474,6 +474,9 @@ body > header > h1{
 
     border: 3px solid white;
     box-shadow: 0 0 2px rgb(218, 218, 218);
+    position: relative;
+    top: -4px;
+    left: 8px;
 }
 #thumbInfos{
 	margin-left:8px;

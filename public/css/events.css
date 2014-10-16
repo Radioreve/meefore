@@ -47,6 +47,13 @@
 }
 .e-item{
 }
+.e-guests{
+	font-size: 1.1em;
+	height: 0;
+	position: relative;
+	bottom: 30px;
+	left: 124px;
+}
 .e-infos{
 	border-bottom: 1px solid #dde;
 
@@ -83,9 +90,9 @@
 .e-hour{
 	position: relative;
 	text-align: center;
-	font: bolder 2.7em 'Arial';
+	font: bold 2.7em 'Ubuntu';
 	letter-spacing: -1px;
-	color: #CF4747;
+	color: #B3B3B3;
 	display: inline-block;
 	top: -30px;
 }
@@ -117,10 +124,16 @@
 .e-row{
 	line-height:1.2em;
 }
-
+.e-description{
+	height:50px;
+}
 .askInWrap{
 	float: right;
 	margin-bottom: 5px;
+	width: 100%;
+}
+.askInWrap .themeBtnToggle{
+	width:100%;
 }
 /* CSS pour créer un évenements */
 #createEventWrap{
@@ -156,11 +169,18 @@
 #eventDescription{
 	border:none;
 	border-bottom:1px dashed #C7C7C7;
-	width:90%;
+	width: 50%;
 	height:70px;
-	margin-top: 30px;
+	margin-top: 5px;
+}
+#createEventWrap label[for="eventDescription"]{
+	vertical-align:top;
 }
 #createEventBtn{
 	margin-top: 20px;
 	position: relative;
+}
+
+#eventMaxGuest{
+	width:40px;
 }

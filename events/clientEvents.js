@@ -127,11 +127,11 @@
 							};
 
 							if( hostSocket != undefined ){
-							hostSocket.emit('request participation out success', data );
-							console.log('emitting out for host');
+								hostSocket.emit('request participation out success', data );
+								console.log('emitting out for host');
 							}
 							
-							hostSocket.emit('request participation out success', data );								
+							userSocket.emit('request participation out success', data );								
 						}
 					};
 

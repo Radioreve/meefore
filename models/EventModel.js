@@ -13,6 +13,10 @@
 			type:String,
 			default:'Paris 75001'
 		},
+		maxGuest:{
+			type:Number,
+			default:10
+		},
 		hostId:{
 			type:String
 		},
@@ -38,11 +42,8 @@
 		state:{
 			type:String,
 			default:'open'
-		},
-		newsletter:{
-			type: Boolean,
-			default:false
 		}
+
 	});
 
 	module.exports = mongoose.model('SocketEvents', EventSchema);
