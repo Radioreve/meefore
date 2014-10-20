@@ -53,41 +53,111 @@ var createEvent = function(data) {
 
 var suspendEvent = function(data) {
 
+    var eventId = data.eventId,
+        hostId  = data.hostId,
+        hostSocket = global.sockets[hostId];
+
+    Event.findById( eventId, {}, function( err, myEvent ){
+
+        if( err ){
+             return eventUtils.raiseError({
+                toClient: "Could not find event",
+                toServer: "Error finding event to suspend",
+                err: err,
+                socket: hostSocket
+            });
+        }
+
+        myEvent.state === 'suspended' ?  myEvent.state = 'open' : myEvent.state = 'suspended';
+
+        myEvent.save( function( err, newEvent ){
+            if( !err ){
+                global.io.emit( 'change state event success', {
+                    eventId: eventId,
+                    hostId: hostId,
+                    myEvent: newEvent
+                });
+            }
+        })
+        
+    });
+};
+
+var terminateEvent = function(data) {
+
+    var eventId = data.eventId,
+        hostId  = data.hostId,
+        hostSocket = global.sockets[hostId];
+
+    Event.findById( eventId, {}, function( err, myEvent ){
+
+        if( err ){
+             return eventUtils.raiseError({
+                toClient: "Could not find event",
+                toServer: "Error finding event to suspend",
+                err: err,
+                socket: hostSocket
+            });
+        }
+
+        myEvent.state = 'completed';
+        myEvent.review = /* Ajouter une review ici ? */
+
+        myEvent.save( function( err, newEvent ){
+            if( !err ){
+                /* Notifier l'host */
+            }
+        });
+        
+    });
+
 };
 
 var cancelEvent = function(data) {
-    var eventId = data.eventId,
-        hostId = data.hostId;
 
-    Event.findById(eventId, {}, function(err, myEvent) {
-        if (err) {
-            console.log('Error finding event : ' + err);
-            return;
+    var eventId = data.eventId,
+        hostId = data.hostId,
+        socket = global.sockets[hostId];
+
+    Event.findById( eventId, {}, function( err, myEvent ) {
+
+        if( err ){
+    
+            return eventUtils.raiseError({
+                toClient: "Could not find event",
+                toServer: "Error finding event to cancel",
+                err: err,
+                socket: socket
+            });
         }
+
         myEvent.state = 'canceled';
 
-        myEvent.save(function(err) {
-            if (err) {
-                console.log('Error canceling event');
-                return;
+        myEvent.save( function( err, newEvent ){
+            if( err ){
+                return console.log('Error canceling event');
             }
-            global.io.emit('cancel event success', {
+            global.io.emit('change state event success', {
                 eventId: eventId,
-                hostId: hostId
+                hostId: hostId,
+                 myEvent: newEvent
+
             });
         });
 
-        myEvent.askersList.forEach(function(asker) {
-            User.findById(asker.id, {}, function(err, myUser) {
+        myEvent.askersList.forEach( function( asker ){
+
+            User.findById( asker.id, {}, function( err, myUser ){
+
                 User.update({
                     _id: myUser._id
                 }, {
                     $pull: {
                         'eventsAskedList': eventId
                     }
-                }, {}, function(err) {
-                    if (err) {
-                        console.log('Error updating user on cancelation ');
+                }, {}, function( err ){
+                    if( err ){
+                        return console.log('Error updating user on cancelation ');
                     }
                 })
             });
@@ -97,8 +167,7 @@ var cancelEvent = function(data) {
     User.findById(hostId, {}, function(err, myHost) {
 
         if (err) {
-            console.log('Error finding host '+ err);
-            return;
+            return console.log('Error finding host '+ err);
         }
         var hostId = myHost._id.toString();
 
@@ -112,24 +181,31 @@ var cancelEvent = function(data) {
 
         myHost.save(function(err) {
             if (err) {
-                console.log('Error canceling event (Host)');
-                return;
+                return console.log('Error canceling event (Host)');
             }
         });
     });
 };
 
 var fetchAskers = function(data) {
-    console.log('Fetching all askers');
-    var hostId = data.hostId;
-    eventId = data.eventId;
-    Event.findById(eventId, {}, function(err, myEvent) {
+
+    var hostId      = data.hostId,
+        eventId     = data.eventId,
+        hostSocket  = global.sockets[hostId];
+
+    Event.findById( eventId, {}, function( err, myEvent ) {
+
         if (err) {
-            console.log('error finding event based on hostId');
-        } else {
+            return eventUtils.raiseError({
+                toClient: "Problem fetching askers",
+                toServer: "Problem fetching askers",
+                err: err,
+                socket: hostSocket
+            });
+        } 
             var askersList = myEvent.askersList;
-            global.sockets[hostId].emit('fetch askers success', askersList);
-        }
+            hostSocket.emit( 'fetch askers success', askersList );
+        
     });
 };
 
@@ -137,6 +213,7 @@ var fetchAskers = function(data) {
 module.exports = {
     createEvent: createEvent,
     suspendEvent: suspendEvent,
+    terminateEvent: terminateEvent,
     cancelEvent: cancelEvent,
     fetchAskers: fetchAskers
 };

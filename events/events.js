@@ -15,6 +15,7 @@ module.exports = function(id){
 		//global.sockets[id].on('disconnect', otherEvents.disconnectClient);
 
 //Events relatifs au profile utilisateur
+		socket.on( 'fetch user', profileEvents.fetchUser				);
 		socket.on( 'update profile', profileEvents.updateProfile   		);
 		socket.on( 'update picture', profileEvents.updatePicture   		);
 		socket.on( 'update settings', profileEvents.updateSettings 		);
@@ -22,6 +23,8 @@ module.exports = function(id){
 //Events relatif à la gestion d'un évènement
 		socket.on( 'create event', manageEvents.createEvent		   		);
 		socket.on( 'cancel event', manageEvents.cancelEvent		   		);
+		socket.on( 'suspend event', manageEvents.suspendEvent	   		);
+		socket.on( 'terminate event', manageEvents.terminateEvent  		);
 		socket.on( 'fetch askers', manageEvents.fetchAskers		   		);
 
 //Events inclassables
@@ -33,4 +36,9 @@ module.exports = function(id){
 		socket.on( 'request participation in', clientEvents.requestIn	);		
 		socket.on( 'request participation out', clientEvents.requestOut );
 
+		socket.on('test', function(data){
+			
+			console.log(global.sockets);
+
+		});
 	};

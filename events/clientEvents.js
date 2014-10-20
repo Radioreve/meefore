@@ -60,9 +60,10 @@
 									myEvent.askersList.push(asker);
 									myEvent.save(function(err){
 										if( !err ){
-											global.io.emit('request participation in success', {hostId:hostId,
-																							 userId:userId,
-																							 asker:asker});
+											global.io.emit('request participation in success', { hostId:hostId,
+																							 	 userId:userId,
+																							 	 asker:asker });
+
 										}else{
 											console.log("Error updating Event Model: "+err);
 										}
@@ -116,28 +117,31 @@
 
 					option = {},
 
-					callback = function(err){ 
-						if(err){console.log(err); }
-						else{ 
-
+					callback = function(err, result){ 
+						if( err ){
+							return eventUtils.raiseError({
+								toClient: "Something happened! :o",
+								socket: [ userSocket, hostSocket ],
+								err: err
+							});
+						 }
 							var data = {
 								userId: userId,
 								eventId: eventId,
 								hostId: hostId
 							};
 
-							if( hostSocket != undefined ){
-								hostSocket.emit('request participation out success', data );
-								console.log('emitting out for host');
-							}
-							
-							userSocket.emit('request participation out success', data );								
-						}
+						if ( result._id == userId ) 
+							return userSocket.emit('request participation out success', data );
+
+						if ( result._id == hostId && hostSocket != undefined ) 
+							return hostSocket.emit('request participation out success', data );
+
 					};
 
-				Event.update( eventCondition, eventUpdate, option, callback );
-				User.update( userCondition, userUpdate, option, callback );
-			  	User.update( hostCondition, hostUpdate, option, callback );
+				Event.findOneAndUpdate( eventCondition, eventUpdate, option, callback );
+				User.findOneAndUpdate( userCondition, userUpdate, option, callback );
+			  	User.findOneAndUpdate( hostCondition, hostUpdate, option, callback );
 			  
 	    };
 

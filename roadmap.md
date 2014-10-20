@@ -4,22 +4,20 @@
 
 #Currently
   ~> Today
-	- Toast msg vide (lorsqu'on login sans pw)
 	- Ajouter une petite croix pour fermer un chat
-	- Ajouter le nombre de participants genre (4/25), avec possibilité de l'aug dans le manage panel. 
+	- Ajouter le nombre de participants genre (4/25) 
 
 #Mandatory 
   ~> First steps 
+	- Rendre le design responsive @media queries et/ou bootstrap
 	- Gérer la suspension/annulation/terminaison
-	- Penser à styliser la page *events*, plein de carrés?
-	- Lazy loading sur les events (dabord click, puis scroll)
-	- Critère de recherche (HOUR+TAG) Typeahead? [women only, boy only, apéro, afterwork, nightclub, etc..]
-	- Socials signins with passport 
+	- Lazy loading sur les events 
+	- Socials signins with passport
+	- Incorporer Google Material Design pour "Ask In Click" 
 
   ~> Second Steps
-	- Fonction showModal(), notamment pour la première vue, avec background blanc transparent
+	- Fonction showModal(), notamment pour la première vue, avec background black transparent
 	- Nodemailer (email bienvenue + mot de passe oublié) 
-	- Intégrer une vue générale avec une MAP et des pins correspondant aux soirées
 
   ~> Deployment Steps
 	- Validation clientside, validaton server side
@@ -28,9 +26,10 @@
 	- Avec une mise à jour dynamique des events... 
 
 #Refactor
-	- Nothing
+	- Utiliser le Module Pattern
 
 #Autre 
+	- Intégrer une vue générale avec une MAP et des pins correspondant aux soirées
 	- appli mobile ?
 	- cloudinary : public_id , signed.isValid() & regen Timer
 	- clientside routing

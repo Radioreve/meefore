@@ -169,8 +169,16 @@
 		});
 	};
 
+	var fetchUser = function( userId ){
+
+		userSocket = global.sockets[userId];
+		var informations = User.fetchUser( userId, userSocket );
+	
+	};
+
 	module.exports = {
-	    updateProfile: updateProfile,
-	    updatePicture: updatePicture,
-	    updateSettings: updateSettings
+		fetchUser      : fetchUser,
+	    updateProfile  : updateProfile,
+	    updatePicture  : updatePicture,
+	    updateSettings : updateSettings
 	};

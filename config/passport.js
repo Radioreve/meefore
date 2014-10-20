@@ -44,10 +44,6 @@
 		    },
 		    function(req, email, password, done) {
 
-		    	if( req.body.email == '' || req.body.password == '' ){
-		            return done( null, false, { msg: "No email and/or password provided" } );
-		        }
-		         
 	    		    User.findOne({ 'local.email' :  email }, function( err, user) {
  
  	          	    if( err )

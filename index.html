@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-	<title>Socket auth</title>
+	<title>Bamboo Nights</title>
 	<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Din' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="/css/meyer.css">
@@ -23,7 +22,7 @@
 
 </div>
 	<header>
-		<h1>Bamboo nights</h1>
+		<h1>Night Friends</h1>
 		<img src="img/bamboo-black.png" height="27">
 		  <ul id="menuWrap" class="">
 			<li id="profile" class="left menu menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span></span></li>
@@ -35,8 +34,6 @@
 		  </ul>
 	</header>
 	<div id="mainWrap" class="">
-		<div id="toastError" class=" none"><span class="toast-icon icon icon-cancel"></span><span class="toastMsg"></span></div>
-		<div id="toastInfo" class=" none"><span class="toast-icon icon icon-right-open-big"></span><span class="toastMsg"></span></div>
 		<span class="menuBtn menu icon icon-menu"   > Menu</span>
 		<div id="thumbWrap" class="none ">
 			<div id="thumbInfos">
@@ -85,7 +82,7 @@
 			<section id="profileWrap" class="none centered">
 				<h2>Account settings</h2>
 				<div class="progress_bar"></div>
-				<div id="pictureWrap"class="left hint--right" data-hint="click to edit your picture">
+				<div id="pictureWrap"class="left hint--left" data-hint="click to edit your picture">
 					<img src="/img/person-placeholder.jpg" class="mainPicture" width="150">
 					<form class="upload_form"></form>
 					<h5 id="codebarre"><span class="icon icon-barcode"></span>53ef548dgk0847j6H7Y</h5>
@@ -112,6 +109,19 @@
 				<div class="actionsWrap actionsStyle">
 					<span id="activateFilters" class="action">Activer les filtres</span>
 				</div>
+				<div class="filtersWrap">
+				  <div class="filters-tags-row">
+						<div class="tag tag-afterwork">afterwork</div>
+						<div class="tag tag-before">before</div>
+						<div class="tag tag-club">boite</div>
+						<div class="tag tag-apero">apéro</div>
+						<div class="tag tag-apparte">appart'</div>
+						<div class="tag tag-bar">bar</div>
+						<div class="tag tag-rencontre">rencontre</div>
+						<div class="tag tag-ivresse">ivresse</div>
+						<div class="tag tag-nuitblanche">nuit blanche</div>
+				  </div>
+				</div>
 				<section id="eventsListWrap"></section>
 			</section>
 			<section id="createEventWrap" class="none centered">
@@ -133,6 +143,19 @@
 					<div class="input-row-wrap hint--right" data-hint="Restez raisonnable ;-)">
 						<label for="eventMaxGuest">Nombre d'invités </label>
 						<input id="eventMaxGuest" class="input-field_create" placeholder="5" max="100" min="2" type="number">
+					</div>
+					<div class="input-row-wrap">
+						<label for="name">Tags</label>
+						<div class="tag tag-afterwork">afterwork</div>
+						<div class="tag tag-before">before</div>
+						<div class="tag tag-club">boite</div>
+						<div class="tag tag-apero">apéro</div>
+						<div class="tag tag-apparte">appart'</div>
+						<div class="tag tag-bar">bar</div>
+						<div class="tag tag-rencontre">rencontre</div>
+						<div class="tag tag-ivresse">ivresse</div>
+						<div class="tag tag-nuitblanche">nuit blanche</div>
+
 					</div>
 					<div class="input-row-wrap">
 					<label for="eventDescription">About</label>

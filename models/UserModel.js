@@ -62,6 +62,35 @@ var UserSchema = new mongoose.Schema({
 
 });
 
+UserSchema.statics.fetchUser = function( userId, userSocket ){
+
+  var userInformations = {};
+
+   this.findById( userId, function(err, user ){
+    if(err){
+      return console.log('Error ---- ' + err );
+    }
+
+      userInformations = {
+
+              _id             :  user._id,
+              email           :  user.local.email,
+              name            :  user.name,
+              age             :  user.age,
+              status          :  user.status,
+              description     :  user.description,
+              imgId           :  user.imgId,
+              imgVersion      :  user.imgVersion,
+              eventsAskedList :  user.eventsAskedList,
+              hostedEventId   :  user.hostedEventId,
+              newsletter      :  user.newsletter
+      };
+
+     userSocket.emit('fetch user success', userInformations );
+
+   });
+
+};
 
 UserSchema.methods.generateHash = function(password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);

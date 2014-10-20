@@ -4,44 +4,48 @@
 	var EventSchema = mongoose.Schema({
 
 		name:{
-			type:String
+			type: String
 		},
 		description:{
-			type:String
+			type: String
 		},
 		location:{
-			type:String,
-			default:'Paris 75001'
+			type: String,
+			default: 'Paris 75001'
 		},
 		maxGuest:{
-			type:Number,
-			default:10
+			type: Number,
+			default: 10
 		},
 		hostId:{
-			type:String
+			type: String
 		},
 		hostImgId:{
-			type:String
+			type: String
 		},
 		hostImgVersion:{
-			type:String
+			type: String
 		},
 		hostName:{
-			type:String
+			type: String
 		},
 		beginsAt:{
-			type:Date
+			type: Date
 		},
 		createdAt:{
-			type:Date
+			type: Date
 		},
 		askersList:{
-			type:Array,
-			default:[]
+			type: Array,
+			default: []
 		},
 		state:{
-			type:String,
-			default:'open'
+			type: String,
+			default: 'open'
+		},
+		tags:{
+			type: Array,
+			default: []
 		}
 
 	});

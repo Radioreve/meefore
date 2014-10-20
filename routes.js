@@ -33,7 +33,7 @@
 					console.log('error with the database query');	
 				}
 				if( !user ){
-					console.log('info : '+info.msg);
+					console.log('info : '+info.msg);	
 	  				res.json( 401, { msg: info.msg });
 					res.end();
 				}
@@ -52,13 +52,13 @@
 					console.log('error with the database query');	
 				}
 				if( !user ){
-	  				res.json( 401, { msg: info.msg });
+	  				res.json( 401, { msg: "Invalid credentials" });
 					res.end();
 				}
 				else{
 
 					// Generating cloud uploadg tag with a specific signature, valid 1 hour
-					var cloudTag = cloudinary.uploader.image_upload_tag('hello_world',{public_id:user._id});
+					var cloudTag = cloudinary.uploader.image_upload_tag( 'hello_world' , { public_id: user._id });
 					var token = jwt.sign(user, config.jwtSecret, { expiresInMinutes: 60*5 });
 
 	  				res.json(200,{

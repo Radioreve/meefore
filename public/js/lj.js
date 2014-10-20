@@ -76,7 +76,16 @@ window.LJ = {
         fetchingAskers: false,
 		animatingContent: false,
 		animatingChat: false,
+		toastAdded: false,
 		jspAPI:{}
+	},
+	tpl:{
+		toastInfo : '<div class="toastInfo" class="none"><span class="toast-icon icon icon-right-open-big">'
+					+'</span><span class="toastMsg"></span></div>',
+		toastError: '<div class="toastError" class="none"><span class="toast-icon icon icon-cancel">'
+					+'</span><span class="toastMsg"></span></div>',
+		toastSuccess: '<div class="toastSuccess" class="none"><span class="toast-icon icon icon-right-open-big">'
+					+'</span><span class="toastMsg"></span></div>'
 	},
         $body                 : $('body'), 
 		$loginWrap		 	  : $('#loginWrap'),
@@ -108,9 +117,6 @@ window.LJ = {
 		$contentWrap          : $('#contentWrap'),
 		$contactWrap          : $('#contactWrap'),
 		$menuWrap             : $('#menuWrap'),
-		$toastSuccess         : $('#toastSuccess'),
-		$toastError           : $('#toastError'),
-		$toastInfo  		  : $('#toastInfo'),
 		$eventsListWrap       : $('#eventsListWrap'),
 		$logout				  : $('#logout'),
 		 
@@ -201,6 +207,19 @@ window.LJ = {
             			$(this).siblings('input[type="submit"]').click();
             		}
             	});
+
+            	$('.filters-tag-row .tag').click( function(){ 
+            		$(this).toggleClass('selected');
+            	});
+
+            	$('#createEventWrap .tag').click( function(){
+            			$(this).toggleClass('selected');
+            		 	if( $('#createEventWrap .selected').length > 3 ){
+            				$(this).toggleClass('selected');
+            				return LJ.fn.toastMsg("Can't have more than 3 tags", 'error' );
+            		}
+            		
+            	});
 			
 			})();
 				
@@ -256,25 +275,54 @@ window.LJ = {
 						LJ.fn.displayContent( $(linkedContent), {
 							myWayOut: myWayOut,
 							myWayIn : myWayIn, 
-							duration: 250
+							duration: 200
 						});
 					
 				  }
 				});
 			});
 
-			LJ.$validateBtn.click(LJ.fn.updateProfile);
+		 [ '#cancelEvent', '#suspendEvent', '#terminateEvent' ].forEach( function(item){ 
 
-			LJ.$body.on('click','.askIn',function(){
+		 	var $item = $( item );
+
+        		$item.click( function() {
+
+	            		var hostId = LJ.user._id,
+	            			eventId = LJ.user.hostedEventId;
+
+        			switch( item ){
+        				case '#cancelEvent':
+        				LJ.fn.cancelEvent( eventId, hostId );
+        				break;
+
+        				case '#suspendEvent':
+        				LJ.fn.suspendEvent( eventId, hostId );
+        				break;
+
+        				case '#terminateEvent':
+        				LJ.fn.terminateEvent( eventId, hostId );
+        				break;
+
+        				default:
+        				break;
+        			}
+
+        		});
+        });
+
+			LJ.$validateBtn.click( LJ.fn.updateProfile );
+
+			LJ.$body.on('click', '.askIn', function(){
 				var $self = $(this);
-				if(!$self.hasClass('validating-btn')){
-					$self.addClass('validating-btn');
+				if(!$self.hasClass('asked')){
+					$self.addClass('asked');
 					$self.text('En attente');
 					LJ.fn.requestIn($self); 
 				}else{
 				var $eHead = $self.parents('.eventItemWrap').find('.e-head');
 					if($eHead.hasClass('e-active')) $eHead.click(); 
-					$self.removeClass('validating-btn');
+					$self.removeClass('asked');
 					$self.text('Je veux y aller');
 					LJ.fn.requestOut($self);
 				}
@@ -316,14 +364,6 @@ window.LJ = {
             	e.preventDefault();
             	e.stopPropagation();
             	LJ.fn.sendChat($(this));
-            });
-
-            LJ.$body.on('click','#cancelEvent', function(){
-            	var $self = $(this),
-            	    hostId = LJ.user._id,
-            	    eventId = LJ.user.hostedEventId;
-
-            	LJ.fn.cancelEvent(eventId, hostId);
             });
 			
             $('.overlay').click(function(){
@@ -442,16 +482,14 @@ window.LJ = {
 				LJ.fn.reloadRooms(LJ.user._id);
 
 				// User Interface Update
-				$('#codebar').text( user._id );
-				$('#currentEmail').val( user.email );
-				$('#newsletter').prop( 'checked', LJ.user.newsletter );
+				LJ.fn.renderUserPreferences();
 				LJ.fn.renderMainThumb();
 
 				LJ.fn.replaceMainImage(LJ.user.imgId,
 							           LJ.user.imgVersion,
 							           LJ.cloudinary.displayParamsProfile);
 
-				switch (LJ.user.status){
+				switch( LJ.user.status ){
 					case 'new':
 						LJ.fn.displayViewAsNew();
 						break;
@@ -463,12 +501,13 @@ window.LJ = {
 						break;
 					default:
 						alert('No status available');
+						break;
 				}
-				$('.menu-item').velocity('transition.slideLeftIn', {
+
+				$('.menu-item').velocity({ opacity: [1, 0] }, {
 					display:'inline-block',
-					stagger: 250,
 					complete: function(){
-						LJ.fn.toastMsgInfo("Welcome back " + LJ.user.name);
+						LJ.fn.toastMsg("Welcome back " + LJ.user.name, 'info');
 					}
 				});
 				
@@ -477,7 +516,7 @@ window.LJ = {
 		handleFailedLogin: function(data){
 			data = JSON.parse(data.responseText);
 			sleep(LJ.ui.artificialDelay,function(){
-				LJ.fn.toastMsgError(data.msg);
+				LJ.fn.toastMsg( data.msg, 'error');
 				$('input.input-field').removeClass('validating');
 				$('#bcm_member').velocity('transition.slideRightIn', { duration: 400 });
 				$('#lost_pw').velocity('transition.slideLeftIn', { duration: 400 });
@@ -500,7 +539,7 @@ window.LJ = {
 			data = JSON.parse(data.responseText);
 			sleep(LJ.ui.artificialDelay,function(){
 				$('input.input-field').removeClass('validating');
-				LJ.fn.toastMsgError(data.msg);
+				LJ.fn.toastMsg( data.msg, 'error');
 				LJ.$backToLogin.velocity('transition.slideRightIn', { duration: 400 });
 				LJ.fn.hideLoaders();
 			});
@@ -535,6 +574,8 @@ window.LJ = {
 
 			$('#thumbWrap').velocity('transition.slideUpIn');
 
+			$('#suspendEvent').text
+
 			$('.menu-item-active').removeClass('menu-item-active');
 			$('#management').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
@@ -543,7 +584,17 @@ window.LJ = {
 
             LJ.fn.fetchAskers();
 		},
-		displayContent: function(content,options){
+		renderUserPreferences: function(){
+
+				$('#codebar').text( LJ.user._id );
+				$('#currentEmail').val( LJ.user.email );
+				$('#newsletter').prop( 'checked', LJ.user.newsletter );
+
+				if( LJ.user.status === 'hosting' ){
+
+				}
+		},
+		displayContent: function( content, options ){
 			
 				options = options || {};			
 				var rev = $('.revealed');
@@ -557,7 +608,7 @@ window.LJ = {
 							   	complete: function(){
 							   		LJ.state.animatingContent = false;
 							   		if(LJ.user.status === 'new'){
-							   			$('.overlay').velocity('fadeIn', { duration: 800 });
+							   			$('.overlay').velocity('fadeIn', { duration: 700 });
 							   		}
 							   	}
 							   });
@@ -566,6 +617,7 @@ window.LJ = {
 
 		},
 		toggleMenu: function(){
+
 			var that = LJ.$menuBtn;
 				if(that.hasClass('menuBtnActive')){
 					that.removeClass('menuBtnActive');
@@ -603,20 +655,18 @@ window.LJ = {
 			 		  .siblings('.chatWrap')
 			 		  .velocity('transition.slideLeftOut', { duration: 300 });
 
-                if( eHeadTag.siblings('.askInWrap').find('button').hasClass('validating-btn') ){
+                if( eHeadTag.siblings('.askInWrap').find('button').hasClass('asked') ){
                     if( !eHeadTag.hasClass('e-active') && ! eHeadTag.is($previous) ){
                         eHeadTag.addClass('e-active');
-
                         LJ.fn.displayChat($chatWrap);
                     }
                     else{
                         eHeadTag.removeClass('e-active');
-      
                     	LJ.fn.hideChat($chatWrap);
                     }
                 }
                 else{
-                    LJ.fn.toastMsgError('You need to ask participation to chat with the host');
+                    LJ.fn.toastMsg('You need to ask participation to chat with the host', 'error');
                 }
 		},
 		setClientSettings: function(data){
@@ -644,27 +694,53 @@ window.LJ = {
 			LJ.$ageInput.val(LJ.user.age);
 			LJ.$descInput.val(LJ.user.description);
 		},
-		toastMsgError: function(msg){
-			var toast = LJ.$toastError;
-				toast.find('.toastMsg')
-					 .text(msg);
-			toast.velocity("transition.slideDownIn",{
-		    	duration: 600,
-		    	complete: function(){
-		    		toast.velocity('transition.slideUpOut', { duration: 300, delay: 2000 });
-		    	}
-		    });
-				
-		},
-		toastMsgInfo: function(msg){
-			var toast = LJ.$toastInfo;
-				toast.find('.toastMsg').text(msg);
-		    toast.velocity("transition.slideDownIn",{
-		    	duration: 600,
-		    	complete: function(){
-		    		toast.velocity('transition.slideUpOut', { duration: 300, delay: 2000 });
-		    	}
-		    });
+		toastMsg: function(msg, status, fixed){
+
+			if( status == 'error' ){
+				var toastStatus = '.toastError',
+					tpl = LJ.tpl.toastError;
+			}
+			if( status == 'info' ){
+				var toastStatus = '.toastInfo',
+					tpl = LJ.tpl.toastInfo;
+			}
+			if( status == 'success'){
+				var toastStatus = '.toastSuccess',
+					tpl = LJ.tpl.toastSuccess;
+			}
+
+			if( $( toastStatus ).length == 0 ){
+				$( tpl ).prependTo('#mainWrap');
+				var toast = $( toastStatus );
+					toastMsg = toast.find('.toastMsg');
+					toastMsg.text( msg );
+					toast.velocity('transition.slideDownIn', {
+					duration: 600,
+					complete: function(){
+					  if( !fixed ){
+						toast.velocity('transition.slideUpOut', {
+							duration:300,
+							delay:2000,
+							complete: function(){
+								toast.remove();
+							}
+							});
+						}
+					  }
+					});
+			}
+
+			else{
+				var toast = $( toastStatus );
+					toast.finish().velocity('transition.slideUpOut',{
+						duration: 200,
+						complete: function(){
+							toast.remove();
+							LJ.fn.toastMsg( msg, status );
+						}
+					});
+			
+			}
 		},
 		replaceMainImage: function(id,version,d){
 		        d = d || LJ.cloudinary.displayParamsProfile;
@@ -714,7 +790,7 @@ window.LJ = {
   									$(this).css({width:"0%"}).fadeIn();
   									});
 
-  								LJ.fn.toastMsgInfo('Votre photo de profile a été modifiée');
+  								LJ.fn.toastMsg('Votre photo de profile a été modifiée', 'info');
 
   								var imgId=data.result.public_id;
   								var imgVersion = data.result.version;
@@ -765,13 +841,19 @@ window.LJ = {
 
 			var button = '<div class="askInWrap"><button class=" ';
 			
-			if(e.hostId == LJ.user._id){
+			if( e.hostId == LJ.user._id ){
 				button += 'right themeBtnToggle themeBtnToggleHost"> Management'	
-			} else {
+			}else{
 				button += 'askIn themeBtnToggle right';
-				LJ.user.eventsAskedList.indexOf(e._id)>-1? button+=' validating-btn "> En attente' : button+='">Je veux y aller';
+				LJ.user.eventsAskedList.indexOf(e._id)>-1? button+=' asked "> En attente' : button+='">Je veux y aller';
 			}
 				button+="</button></div>";
+
+			var eventTags = '<div class="tag-row">';
+				for (var i=0; i<e.tags.length ;i++){
+					eventTags += '<div class="tag tag-'+e.tags[i]+' selected" >' + LJ.fn.matchTagName(e.tags[i]) + '</div>';
+				}
+				eventTags +='</div>';
 
 			var html = '<div class="eventItemWrap none" data-eventid="'+e._id+'" data-hostid="'+e.hostId+'">'
 						+'<div class="e-head hint--left" data-hint="'+e.hostName+'">' + imgTag 
@@ -787,11 +869,19 @@ window.LJ = {
 						   +'<div class="e-row">'
 						     +'<i class="left icon icon-lamp"></i><div class="e-itm e-description e-weak">'+e.description+'</div>'
 						   +'</div>'
+						   + eventTags
 						+'</div>'
 						+ button
                         + chatWrap
 						+'</div>';
 			return html;
+		},
+		matchTagName: function(tagClass){
+			if( tagClass == 'apparte' ) return 'appart\'';
+			if( tagClass == 'apero' ) return 'apéro';
+			if( tagClass == 'nuitblanche' ) return 'nuit blanche';
+
+			return tagClass
 		},
         renderAsker: function(a){
             var d = LJ.cloudinary.displayParamsAsker;
@@ -858,7 +948,7 @@ window.LJ = {
 					sleep(LJ.ui.artificialDelay,function(){
 						LJ.fn.updateClientSettings(data);
 						$('#thumbName').text(data.name);
-						LJ.fn.toastMsgInfo("Vos informations ont été modifiées");
+						LJ.fn.toastMsg("Vos informations ont été modifiées", 'info');
 						$('.modified').removeClass('modified');
 						LJ.fn.hideLoaders();
 						$('.themeBtn').removeClass('validating-btn');
@@ -882,17 +972,21 @@ window.LJ = {
 					var eventId = myEvent._id,
 						hostId = myEvent.hostId;
 
+					sleep( LJ.ui.artificialDelay , function(){ 
+
 					if( LJ.user._id === hostId ){
 							LJ.user.status = 'hosting';
 							LJ.user.hostedEventId = eventId;
-							LJ.fn.toastMsgInfo("Evènement créé avec succès !");
+							LJ.fn.toastMsg("Evènement créé avec succès !", 'info');
 							LJ.fn.hideLoaders();
 							$('.themeBtn').removeClass('validating-btn');
-							LJ.$createEventWrap.find('input').val('');
+							LJ.$createEventWrap.find('input, #eventDescription').val('');
+							LJ.$createEventWrap.find('.selected').removeClass('selected');
+
 							$('#management').click();
-					} else {
-						//rien de spécial so far
-					}
+					} 
+					});
+
 
 					/* Pour tous les users */
 					LJ.myEvents.push( myEvent );
@@ -902,52 +996,70 @@ window.LJ = {
 					
 				});
 
-				LJ.params.socket.on('cancel event success', function(data){
+				LJ.params.socket.on('change state event success', function(data){
+				
+				sleep( LJ.ui.artificialDelay , function(){ 
 
-                	if( data.hostId == LJ.user._id ){
-                		LJ.user.status = 'idle';
-                		LJ.$manageEventsWrap.find('#askersListWrap').html('');
-						$('#create').click();
-						  		
-                	} else {
-                		/* 
-                			Les clients sont toujours dans les rooms des évents annulés,
-               				pour leur session active. En revanche, les events auxquels
-               				ils sont inscrits sont supprimés de leur liste dans la base 
-               			*/
-                	}
-                	var canceledEvent = LJ.$eventsListWrap.find('.eventItemWrap[data-hostid="'+data.hostId+'"]');
-                		canceledEvent.velocity("transition.slideRightOut", {
-                			complete: function(){
-                				canceledEvent.remove();
-                			}
-                		});
+					var eventState = data.myEvent.state;
 
-                	_.remove(LJ.myEvents, function(el){
-                		return el.hostId == data.hostId; 
-                	});
-                });
+					switch( eventState ){
+
+					case 'canceled':
+						LJ.fn.handleCancelEvent( data );
+					break;
+
+					case 'suspended':
+						LJ.fn.handleSuspendEvent( data );
+					break;
+
+					case 'open':
+						LJ.fn.handleSuspendEvent( data );
+					break;
+
+					case 'completed':
+						LJ.fn.handleTerminateEvent( data );
+					break;
+
+					default:
+						LJ.fn.toastMsg('Strange thing happend', 'error');
+					break;
+
+					}
+
+				});				
+
+		        });
+
+				LJ.params.socket.on('fetch user success', function( data ){
+
+					console.log(data);
+					
+				});
  
-				LJ.params.socket.on('fetch events success', function(events){
+				LJ.params.socket.on('fetch events success', function( events ){
 					LJ.state.fetchingEvents = false;
-					for(var i=0;i<events.length;i++){
+					for( var i=0; i<events.length; i++ ){
 						LJ.myEvents[i] = events[i];
 					}
 					LJ.fn.displayEvents();
 				});
 
-				LJ.params.socket.on('request participation in success', function(data){
+				LJ.params.socket.on('request participation in success', function( data ){
 
 					var hostId = data.hostId,
 						userId = data.userId,
 						asker  = data.asker;
 
 					console.log('Requestion participation in received');
-					if(LJ.user._id === data.userId){
-						LJ.fn.toastMsgInfo('You may now chat with the host');
+					if( LJ.user._id === data.userId ){
+						LJ.fn.toastMsg('You may now chat with the host', 'info');
 					}else{
 						var askerHTML = LJ.fn.renderAsker(data.asker);
-						    $(askerHTML).appendTo(LJ.$askersListWrap);
+						    $(askerHTML).appendTo(LJ.$askersListWrap)
+						    			.hide()
+						    			.velocity("transition.slideLeftIn",{
+						    				duration:300
+						    			});
 
 						 LJ.myAskers.push(asker);
 						}
@@ -968,15 +1080,15 @@ window.LJ = {
 						_.remove( LJ.myAskers, function(asker){
 							return asker.id === data.userId;
 						});
-						console.log('once');
-						hostId === LJ.user._id ? $aRow.velocity("transition.slideLeftOut") : LJ.fn.toastMsgInfo('Vous avez été désinscris de la liste');
+
+						hostId === LJ.user._id ? $aRow.velocity("transition.slideLeftOut", { duration: 200 }) : LJ.fn.toastMsg('Vous avez été désinscris de la liste', 'info');
 
 				});
 
 				LJ.params.socket.on('update settings success', function(data){
 
 					sleep( 600, function(){
-						LJ.fn.toastMsgInfo(data.msg);
+						LJ.fn.toastMsg( data.msg, 'info');
 						$('.validating-btn').removeClass('validating-btn');
 						LJ.fn.hideLoaders();
 					});
@@ -986,22 +1098,24 @@ window.LJ = {
 
 				LJ.params.socket.on('server error', function(msg){
 					sleep( 600, function(){
-						LJ.fn.toastMsgError(msg);
+						LJ.fn.toastMsg( msg, 'error');
 						$('.validating-btn').removeClass('validating-btn');
+						$('.pending').removeClass('pending');
 						LJ.fn.hideLoaders();
 					});
 				});
 
 				LJ.params.socket.on('disconnect', function(){
 
-					LJ.fn.toastMsgError("You have been disconnected from the stream");
+					LJ.fn.toastMsg("You have been disconnected from the stream", 'error');
 					LJ.params.socket.disconnect(LJ.user._id);
 				});
 
                 LJ.params.socket.on('fetch askers success', function(askersList){
 
                     LJ.state.fetchingAskers = false;
-                    for(var i=0;i<askersList.length;i++) {
+
+                    for( var i=0; i<askersList.length; i++) {
                         LJ.myAskers[i] = askersList[i];
                     }
                    LJ.fn.displayAskers();
@@ -1013,7 +1127,58 @@ window.LJ = {
 
                 
 		},
+		handleCancelEvent: function(data){
+			
+			if( data.hostId == LJ.user._id ){
+		                		$('.pending').removeClass('pending');
+		                		LJ.user.status = 'idle';
+		                		LJ.$manageEventsWrap.find('#askersListWrap').html('');
+								$('#create').click();
+							}	  		
+		                	 
+        	var canceledEvent = LJ.$eventsListWrap.find('.eventItemWrap[data-hostid="'+data.hostId+'"]');
+        		canceledEvent.velocity("transition.slideRightOut", {
+        			complete: function(){
+        				canceledEvent.remove();
+        			}
+        		});
+
+        	_.remove(LJ.myEvents, function(el){
+        		return el.hostId == data.hostId; 
+        	});
+
+
+		},
+		handleSuspendEvent: function(data){
+
+			$('.pending').removeClass('pending');
+			var $li = $('#suspendEvent');
+
+			if( data.hostId == LJ.user._id ){
+				if( data.myEvent.state == 'suspended' ){
+					LJ.fn.toastMsg( "Les inscriptions sont momentanément suspendues", 'info' );
+					$li.text('Reprendre');
+				}
+				if( data.myEvent.state == 'open' ){
+					LJ.fn.toastMsg( "Les inscriptions sont à nouveau possible", 'info' );
+					$li.text('Suspendre');
+				}
+			}
+
+
+		},
+		handleTerminateEvent: function(data){
+
+		},
 		createEvent: function(){
+
+			var tags = [];
+
+			$('#createEventWrap .selected').each( function( i, $el ){
+				var tag = $( $el) .attr('class').split(' ')[1].split('-')[1];						 
+				tags.push(tag);
+			});
+
 			var e = {};
 				e.hostId	  	  = LJ.user._id;
 				e.hostName   	  = LJ.user.name;
@@ -1025,13 +1190,14 @@ window.LJ = {
 				e.min  		  	  = $('#eventMinut').val();
 				e.description 	  = $('#eventDescription').val();
 				e.maxGuest        = $('#eventMaxGuest').val();
+				e.tags            = tags;
 
 				LJ.params.socket.emit('create event', e);
 				LJ.fn.showLoaders();
 		},
 		fetchEvents: function(){
 			if(LJ.state.fetchingEvents){ 
-				LJ.fn.toastMsgError('Aleady fetching events');
+				LJ.fn.toastMsg('Aleady fetching events', 'error');
 			}else{
 				LJ.state.fetchingEvents = true;
                 LJ.params.socket.emit('fetch events', LJ.user._id );
@@ -1039,7 +1205,7 @@ window.LJ = {
 		},
         fetchAskers: function(){
             if(LJ.state.fetchingAskers){
-                LJ.fn.toastMsgError("Already fetching askers");
+                LJ.fn.toastMsg("Already fetching askers", 'error');
             }else{
                 LJ.state.fetchingAskers = true;
                 LJ.params.socket.emit('fetch askers',{ eventId: LJ.user.hostedEventId, hostId: LJ.user._id });
@@ -1140,17 +1306,38 @@ window.LJ = {
         							LJ.state.jspAPI[chatId].scrollToBottom(); })
 
         },
-        reloadRooms: function(id){
-        	LJ.params.socket.emit('load rooms', id );
+        reloadRooms: function( id ){
+
+        	LJ.params.socket.emit( 'load rooms' , id );
+
         },
-        cancelEvent: function(eventId, hostId){
-        	LJ.params.socket.emit('cancel event',{ eventId: eventId, hostId: hostId });
+        cancelEvent: function( eventId, hostId ){
+
+        	csl('canceling event : '+eventId+'  with hostId : '+hostId);
+        	LJ.params.socket.emit( 'cancel event', { eventId: eventId, hostId: hostId });
+        	$( '#cancelEvent' ).addClass( 'pending' );
+
+        },
+        suspendEvent: function( eventId, hostId ){
+
+        	LJ.params.socket.emit( 'suspend event', { eventId: eventId, hostId: hostId });
+        	$( '#suspendEvent' ).addClass( 'pending' );
+
+        },
+        terminateEvent: function( eventId, hostId ){
+
+        	LJ.params.socket.emit( 'terminate event', { eventId: eventId, hostId: hostId });
+        	$( '#terminateEvent' ).addClass( 'pending' );
+
         },
         showLoaders: function(){
-        	$('.loaderWrap').velocity("fadeIn", { duration: 400 });
+
+        	$( '.loaderWrap' ).velocity( 'fadeIn', { duration: 400 });
+
         },
         hideLoaders: function(){
-            $('.loaderWrap').velocity("fadeOut", { duration: 250 });
+
+            $( '.loaderWrap' ).velocity( 'fadeOut', { duration: 250 });
         }
         
 

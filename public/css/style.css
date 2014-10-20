@@ -93,9 +93,9 @@ body > header > h1{
 }
 #mainWrap{
 }
-#toastSuccess,
-#toastError,
-#toastInfo{
+.toastSuccess,
+.toastError,
+.toastInfo{
 	position: fixed;
 	font: .8em 'Ubuntu';
 	margin: auto;
@@ -110,14 +110,20 @@ body > header > h1{
 	text-align: center;
 	z-index: 150;
 }
-#toastError{
+.toastError{
 	background: rgb(189, 64, 64);
 	border: 1px solid rgb(175, 49, 49);
 	color: white;
 }
-#toastInfo{
+.toastInfo{
+	background: black;
+	border: 1px solid #000000;
+	opacity: 0;
+}
+.toastSuccess{
 	background: #6EAC6E;
 	border: 1px solid #34743E;
+	opacity: 0;
 }
 .toast-icon{
 	position: absolute;
@@ -127,10 +133,14 @@ body > header > h1{
 	padding-top: 8px;
 	top: 0;
 }
-#toastError .toast-icon{
+.toastError .toast-icon{
 	background: rgb(160, 49, 49);
 }
-#toastInfo .toast-icon{
+.toastInfo .toast-icon{
+	background: #000000;
+	color: white;
+}
+.toastSuccess .toast-icon{
 	background: #34743E;
 	color: white;
 }
@@ -154,6 +164,9 @@ body > header > h1{
 #events{
 }
 #profile{
+}
+.pending{
+	color:#A5A5A5;
 }
 .menu{
 	top:40px;
@@ -398,11 +411,13 @@ body > header > h1{
 	background: #F3F3F3;
 	border-radius: 3px 3px 0 0;
 }
-.validating-btn{
+.validating-btn,
+.asked{
 	background: #E6E6E6;
 	color:rgb(60,60,60);
 }
-.validating-btn:hover{
+.validating-btn:hover,
+.asked:hover{
 	box-shadow:none;
 }
 .mainPicture{
@@ -497,6 +512,7 @@ body > header > h1{
 }
 .actionsWrap{
 	margin-top:10px;
+	margin-bottom: 10px;
 	text-align: center;
 }
 .actionsStyle span:before{
@@ -509,6 +525,7 @@ body > header > h1{
 .action{
 	font-size: .8em;
 	margin-left: 10px;
+	transition: all .7s;
 }
 .action:hover{
 	cursor:pointer;

@@ -8,7 +8,7 @@
 
 }
 #eventsListWrap{
-	margin-top: 50px;
+	margin-top: 30px;
 }
 #eventsListWrap div.eventItemWrap:last-child{
 	 border-bottom:none;
@@ -125,7 +125,7 @@
 	line-height:1.2em;
 }
 .e-description{
-	height:50px;
+	margin-bottom: 16px;
 }
 .askInWrap{
 	float: right;
@@ -183,4 +183,37 @@
 
 #eventMaxGuest{
 	width:40px;
+}
+
+.tag{
+	display:inline-block;
+	transition: all .3s;
+	font-size: .7em;
+	color: #8F8F8F;
+	padding: 4px 10px;
+	border-radius: 2px;
+	margin: 0 3px;
+	/* border: 1px solid #FFFFFF; */
+	background: #F7F7F7;
+}
+#createEventWrap .tag:hover,
+.filters-tags-row .tag:hover{
+	cursor:pointer;
+}
+.tag.selected{
+	background: rgb(238, 62, 62);
+	color:white;
+	box-shadow: 0 1px 1px rgb(187, 50, 50);
+}
+.tag-row{
+	display: inline-block;
+	position: relative;
+	left: -20px;
+	font-size: 1.2em;
+}
+.filters-location-row,
+.filters-tags-row{
+	text-align:center;
+	margin-top: 15px;
+	font-size: 1.1em;
 }
