@@ -208,7 +208,7 @@ window.LJ = {
             		}
             	});
 
-            	$('.filters-tag-row .tag').click( function(){ 
+            	$('.filters-tags-row .tag').click( function(){ 
             		$(this).toggleClass('selected');
             	});
 
@@ -368,6 +368,18 @@ window.LJ = {
 			
             $('.overlay').click(function(){
             	$(this).velocity("fadeOut", { duration: 400 });
+            });
+
+            $('#activateFilters').click( function() {
+
+            	var tags = [];
+
+				$('.filters-tags-row .selected').each( function( i, $el ){
+					var tag = $( $el) .attr('class').split(' ')[1];						 
+					tags.push(tag);
+				});
+
+				LJ.fn.filterEvents(tags);
             });
 
 		},
@@ -1196,7 +1208,7 @@ window.LJ = {
 				LJ.fn.showLoaders();
 		},
 		fetchEvents: function(){
-			if(LJ.state.fetchingEvents){ 
+			if( LJ.state.fetchingEvents ){ 
 				LJ.fn.toastMsg('Aleady fetching events', 'error');
 			}else{
 				LJ.state.fetchingEvents = true;
@@ -1204,7 +1216,7 @@ window.LJ = {
             }
 		},
         fetchAskers: function(){
-            if(LJ.state.fetchingAskers){
+            if( LJ.state.fetchingAskers ){
                 LJ.fn.toastMsg("Already fetching askers", 'error');
             }else{
                 LJ.state.fetchingAskers = true;
@@ -1212,7 +1224,7 @@ window.LJ = {
             }
         },
         displayEvents: function(){
-            LJ.$eventsListWrap.append(LJ.fn.renderEvents(LJ.myEvents));
+            LJ.$eventsListWrap.append( LJ.fn.renderEvents( LJ.myEvents ) );
             $('.eventItemWrap').velocity("transition.slideLeftIn", {
             	stagger: 250,
             	display:'inline-block'
@@ -1220,6 +1232,48 @@ window.LJ = {
         },
         displayAskers: function(){
             LJ.$askersListWrap.append(LJ.fn.renderAskers(LJ.myAskers));
+        },
+        filterEvents: function(tags){
+
+        	if( !tags ){
+        		return LJ.fn.displayEvents();
+        	}
+
+        	console.log('Filering events based on tags array : '+ tags);
+        	var arr = $();
+        	var eventsToDisplay = [];
+        	$('.eventItemWrap').find('.tag-row')
+        					   .each( function(i, el) {
+        					    	$( el ).find('.tag')
+        					    			.each( function(j, elem){
+		        					   			var l = $( elem ).prop('class').split(' ')[1];
+		        					   			if( tags.indexOf( l ) != -1 ){
+		        					   				eventsToDisplay.push( $( elem ).parents('.eventItemWrap') );
+		        					    		}
+			        					    });
+        						});
+
+        	var $eventsToDisplay = $();
+        	eventsToDisplay.each( function(i, el){
+        		$eventsToDisplay = $eventsToDipslay.add(el);
+        	});
+
+        	$eventsToDisplay.fadeOut();
+        	/*
+        	if( eventsToDisplay.length != 0 )
+        	{
+        		$('.eventItemWrap').velocity('transition.slideUpOut', {
+        			duration:300,
+        			complete: function(){
+        				eventsToDisplay.velocity('transition.slideLeftIn', { duration: 300 });
+        			}
+        		});
+        	}
+        	else
+        	{
+        		LJ.fn.toastMsg('Aucun évènement pour ces filtres', 'error');
+        	} */
+
         },
         requestIn: function(askInBtn){
             var eventId = askInBtn.parents('.eventItemWrap').data('eventid');

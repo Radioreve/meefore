@@ -2,7 +2,7 @@
 	var mongoose = require('mongoose');
 
 	var db = function(config){
-		mongoose.connect(config.db.local_uri);
+		mongoose.connect(config.db.mongohq_uri);
 		mongoose.connection.on('open',function(){
 			console.log('Connected the the MongoHQ databased!');
 		});

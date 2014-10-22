@@ -7,6 +7,7 @@
 	- Ajouter une petite croix pour fermer un chat
 	- Ajouter le nombre de participants genre (4/25) 
 
+
 #Mandatory 
   ~> First steps 
 	- Rendre le design responsive @media queries et/ou bootstrap
@@ -23,7 +24,7 @@
 	- Validation clientside, validaton server side
 
 #Design issues
-	- Avec une mise à jour dynamique des events... 
+	- Eventuellement pictogramms en fin 
 
 #Refactor
 	- Utiliser le Module Pattern
@@ -36,4 +37,9 @@
 
 #Warning
 	- Valider la signature cloudinary des image uploaded (!)
+
+#Vracs
+	- Faut que les users puissent lacher un commentaire, genre 24H après la fin d'une soirée, sur la fiche de l'host
+	- Filtrer sur l'arondissement et l'heure
+	- Rajouter un data--hint type "attention si vous faites des events chez vous!"
  
