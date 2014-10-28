@@ -193,7 +193,7 @@ input[type="number"]{
 	transition: all .3s;
 	font-size: .7em;
 	color: #7A7A7A;
-	padding: 4px 10px;
+	padding: 10px 12px;
 	border-radius: 2px;
 	margin: 0 3px;
 	/* border: 1px solid #FFFFFF; */
@@ -243,4 +243,10 @@ input[type="number"]{
 }
 .filtersWrap{
 	margin:25px 0;
+}
+#noEvents{
+	color: #888;
+	margin-top: 100px;
+	letter-spacing: 1px;
+	font-size: .9em;
 }

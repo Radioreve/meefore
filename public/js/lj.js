@@ -56,7 +56,7 @@ window.LJ = {
                 radius:7
         }
 	},
-	user:{   //Lol
+	user:{  
 		_id:'',
 		name:'',
 		email:'',
@@ -90,7 +90,7 @@ window.LJ = {
 					+'</span><span class="toastMsg"></span></div>',
 		toastSuccess: '<div class="toastSuccess" class="none"><span class="toast-icon icon icon-right-open-big">'
 					+'</span><span class="toastMsg"></span></div>',
-		eventItemWrap : $('#eventItemWrap_tpl')
+		noResult: '<center id="noEvents" class="filtered"> Aucun évènement pour ce choix de filtre </center>'
 	},
 	tagList: [
 		'afterwork',
@@ -100,11 +100,9 @@ window.LJ = {
 		'apparte',
 		'bar',
 		'rencontre',
-		'ivresse',
-		'nuitblanche',
 		'vodka'
 	],
-	locList: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ] ,
+	locList: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ],
         $body                 : $('body'), 
 		$loginWrap		 	  : $('#loginWrap'),
 		$signupWrap			  : $('#signupWrap'),
@@ -137,6 +135,7 @@ window.LJ = {
 		$menuWrap             : $('#menuWrap'),
 		$eventsListWrap       : $('#eventsListWrap'),
 		$logout				  : $('#logout'),
+
 	fn:{
 		init: function(){
 
@@ -379,32 +378,31 @@ window.LJ = {
             	$(this).velocity("fadeOut", { duration: 400 });
             });
 
+            $('#resetFilters').click( function() {
+            	LJ.$eventsWrap.find('.selected').removeClass('selected');
+            	$('#activateFilters').click();
+            });
+
             $('#activateFilters').click( function() {
 
             	var tags 	  = [];
-            	/*		locations = [];  */
+            		locations = [];  
 
 				$('.filters-tags-row .selected').each( function( i, el ){
 					var tag = $( el ).attr('class').split(' ')[1];						 
 					tags.push( tag );
 				});
 
-				/*
+				
 				$('.filters-locs-row .selected').each( function( i, el ){
 					var loc = parseInt( $( el ).attr('class').split(' ')[1].split('loc-')[1] );				 
 					locations.push( loc );
-				});  */
-
-				if( tags.length === LJ.selectedTags.length && _.intersection( tags, LJ.selectedTags ).length == tags.length )
-				{
-					$('.pending').removeClass('pending');
-					return LJ.fn.toastMsg('Les évènements se mettent à jour automatiquement', 'info');
-				}
+				});  
 
 				LJ.selectedTags 	 = tags;
-				//LJ.selectedLocations = locations;
+				LJ.selectedLocations = locations;
 
-				LJ.fn.filterEvents( LJ.selectedTags );
+				LJ.fn.filterEvents( LJ.selectedTags, LJ.selectedLocations );
             	
             });
 
@@ -1014,6 +1012,7 @@ window.LJ = {
 
         	$( '.tags-wrap' ).append( LJ.fn.renderTagsFilters() );
         	$( '.locs-wrap' ).append( LJ.fn.renderLocsFilters() );
+        	$( '#eventsListWrap' ).append( LJ.tpl.noResult );
 
         },
         renderTagsFilters: function(){
@@ -1389,48 +1388,58 @@ window.LJ = {
             LJ.$askersListWrap.append( LJ.fn.renderAskers( LJ.myAskers ));
 
         },
-        filterEvents: function(tags){
+        filterEvents: function(tags, locations){
 
         	LJ.$eventsListWrap.find('.selected').removeClass('selected');
 
-        	if( tags.length == 0 ){
-        		LJ.$eventsToDisplay = $('.eventItemWrap');
-        	}
-        	else{
+        	    isFilteredByLoc = ( locations.length != 0 ),
+        		isFilteredByTag = ( tags.length      != 0 );
 
-	        	var arr = $();
 	        	var eventsToDisplay = [];
-	        	var skip; /* Pour ne pas ajouter plusieurs fois un event qui matcherai pour plus d'un tag */
+	        	var matchLocation = false;
+	        	var matchTags = false;
 
-	        	$('.eventItemWrap').find('.tag-row')
-	        					   .each( function(i, el) {
-	        					   	skip = false;
-        					    	$( el ).find('.tag')
-    					    			   .each( function(j, elem){
-	        					   			var l = $( elem ).prop('class').split(' ')[1];
-	        					   			var itemWrap = $( elem ).parents('.eventItemWrap');
-		        					   			if( tags.indexOf( l ) != -1 ){ 
-		        					   				$( elem ).addClass('selected');
-		        					   				if( !skip ){
-		        					   				  skip = true;
-		        					   				  eventsToDisplay.push( itemWrap );
-		        					   				}
-		        					    		}
-	        					  		    });
-	        						});
+	        	$('.eventItemWrap').each( function( i, itemWrap ) {
 
-	        	if( eventsToDisplay.length == 0 ){
-	        		$('.pending').removeClass('pending');
-	        		return LJ.fn.toastMsg(' Aucun évènement pour ces filtres :/', 'error');
-	        	}else{
-	        		/* Transforme un Array de jQuery objects, en un jQuery-Array */
-	        		LJ.$eventsToDisplay = $(eventsToDisplay).map( function(){ return this.toArray(); });
-	        	}
-       		}
+	        		matchLocation = matchTags = false;
 
-       		$('.eventItemWrap').addClass('filtered');
+	        		if( locations.indexOf( $(itemWrap).data('location') ) != -1 ){
+	        			matchLocation = true;
+	        		}
+
+	        		$( itemWrap ).find('.tag')
+	        					 .each( function( i, tag ){
+	        					 	var l = $( tag ).prop('class').split(' ')[1];
+	        					 	if( tags.indexOf( l ) != -1 ){
+	        					 		$( tag ).addClass('selected');
+	        					 		matchTags = true;
+	        					 	}
+	        					 });
+
+			        function addItem(){ eventsToDisplay.push( $(itemWrap) ); } /*For readability */	
+
+			    	if ( !isFilteredByTag && !isFilteredByLoc 								 ){ addItem(); }
+			    	if (  isFilteredByTag &&  isFilteredByLoc && matchTags && matchLocation  ){ addItem(); }
+			    	if (  isFilteredByTag && !isFilteredByLoc && matchTags 					 ){ addItem(); }
+			    	if ( !isFilteredByTag &&  isFilteredByLoc && matchLocation 				 ){ addItem(); }
+
+	      		});
+
+	        	console.log('Events to display : ' + eventsToDisplay );
+
+        		/* Transforme un Array de jQuery objects, en un jQuery-Array */
+        		LJ.$eventsToDisplay = $(eventsToDisplay).map( function(){ return this.toArray(); });
+	        	
+       		$('.eventItemWrap, #noEvents ').addClass('filtered');
        		LJ.$eventsToDisplay.removeClass('filtered');
-       		LJ.fn.toastMsg( LJ.$eventsToDisplay.length + ' events matched!', 'info');
+       		if( LJ.$eventsToDisplay.length == 0){
+       			LJ.fn.toastMsg( 'Aucun évènement trouvés', 'info');
+       			$('#noEvents').removeClass('filtered').addClass('none')	
+       						  .velocity('transition.slideLeftIn', { duration: 700 });
+
+       		}else{
+       			LJ.fn.toastMsg( LJ.$eventsToDisplay.length + ' events matched!', 'info');	
+       		}
 
         },
         requestIn: function( askInBtn ){
