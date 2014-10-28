@@ -24,7 +24,6 @@ module.exports = function(id){
 		socket.on( 'create event', manageEvents.createEvent		   		);
 		socket.on( 'cancel event', manageEvents.cancelEvent		   		);
 		socket.on( 'suspend event', manageEvents.suspendEvent	   		);
-		socket.on( 'terminate event', manageEvents.terminateEvent  		);
 		socket.on( 'fetch askers', manageEvents.fetchAskers		   		);
 
 //Events inclassables

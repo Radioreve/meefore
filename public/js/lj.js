@@ -1,5 +1,6 @@
 
 function sleep(ms,cb,p2){setTimeout(function(){cb(p2);},ms)}
+function look(json){ return JSON.stringify(json, null, '\t'); }
 window.csl = function(msg){
 	console.log(msg);
 };
@@ -34,7 +35,7 @@ window.LJ = {
 			//	effect:'sepia',
 				crop:'fill',
 				gravity:'face',
-				radius:'max'
+				radius:'15'
 		},
 		displayParamsMainThumb: {
 				cloud_name :"radioreve",
@@ -60,7 +61,7 @@ window.LJ = {
 		name:'',
 		email:'',
 		age:'',
-		location:'',
+		location:1,
 		description:'',
 		imgId:'',
 		imgVersion:'',
@@ -69,8 +70,11 @@ window.LJ = {
 		eventsAskedList:[],
 		newsletter:false
 	},
-	myEvents:[],
-    myAskers:[],
+	myEvents: [],
+    myAskers: [],
+    selectedTags: [],
+    selectedLocations: [],
+    $eventsToDisplay: $(),
 	state: {
 		fetchingEvents: false,
         fetchingAskers: false,
@@ -85,8 +89,22 @@ window.LJ = {
 		toastError: '<div class="toastError" class="none"><span class="toast-icon icon icon-cancel">'
 					+'</span><span class="toastMsg"></span></div>',
 		toastSuccess: '<div class="toastSuccess" class="none"><span class="toast-icon icon icon-right-open-big">'
-					+'</span><span class="toastMsg"></span></div>'
+					+'</span><span class="toastMsg"></span></div>',
+		eventItemWrap : $('#eventItemWrap_tpl')
 	},
+	tagList: [
+		'afterwork',
+		'before',
+		'club',
+		'apero',
+		'apparte',
+		'bar',
+		'rencontre',
+		'ivresse',
+		'nuitblanche',
+		'vodka'
+	],
+	locList: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ] ,
         $body                 : $('body'), 
 		$loginWrap		 	  : $('#loginWrap'),
 		$signupWrap			  : $('#signupWrap'),
@@ -119,19 +137,9 @@ window.LJ = {
 		$menuWrap             : $('#menuWrap'),
 		$eventsListWrap       : $('#eventsListWrap'),
 		$logout				  : $('#logout'),
-		 
-	utils:{
-		dateHHMM: function(d){
-	    	 var dS = '';
-    	     if(d.getUTCHours()==0){dS = '0';}
-	       	  dS += d.getUTCHours() + "h";
-     	     if(d.getUTCMinutes()<10){dS+='0';}
-              dS+=d.getUTCMinutes();
-   		     return dS;
-		}
-	},
 	fn:{
 		init: function(){
+
 				/*Bind any UI action with the proper handler */
 				LJ.fn.handleDomEvents();
 
@@ -141,6 +149,8 @@ window.LJ = {
 				/*Global UI Settings ehanced UX*/
 				LJ.fn.initEhancements();
 
+				/* Dynamically generated DOM */
+				LJ.fn.initLayout();
 
 		},
 		initSocketConnection: function(jwt){
@@ -208,7 +218,7 @@ window.LJ = {
             		}
             	});
 
-            	$('.filters-tags-row .tag').click( function(){ 
+            	$('body').on('click', '.filtersWrap .tag, .filtersWrap .loc, #createEventInputsWrap .tag', function(){ 
             		$(this).toggleClass('selected');
             	});
 
@@ -217,10 +227,8 @@ window.LJ = {
             		 	if( $('#createEventWrap .selected').length > 3 ){
             				$(this).toggleClass('selected');
             				return LJ.fn.toastMsg("Can't have more than 3 tags", 'error' );
-            		}
-            		
+            		}       		
             	});
-			
 			})();
 				
 		},
@@ -282,7 +290,7 @@ window.LJ = {
 				});
 			});
 
-		 [ '#cancelEvent', '#suspendEvent', '#terminateEvent' ].forEach( function(item){ 
+		 [ '#cancelEvent', '#suspendEvent' ].forEach( function(item){ 
 
 		 	var $item = $( item );
 
@@ -298,10 +306,6 @@ window.LJ = {
 
         				case '#suspendEvent':
         				LJ.fn.suspendEvent( eventId, hostId );
-        				break;
-
-        				case '#terminateEvent':
-        				LJ.fn.terminateEvent( eventId, hostId );
         				break;
 
         				default:
@@ -360,6 +364,11 @@ window.LJ = {
                 LJ.fn.toggleChatWrapEvents($(this));
             });
 
+            $('body').on('click', '.close-chat', function(){
+            	var $chatWrap = $(this).parents('.chatWrap');
+                    LJ.fn.hideChat($chatWrap);
+            });
+
             LJ.$body.on('click','.chatInputWrap input[type="submit"]', function(e){
             	e.preventDefault();
             	e.stopPropagation();
@@ -372,14 +381,31 @@ window.LJ = {
 
             $('#activateFilters').click( function() {
 
-            	var tags = [];
+            	var tags 	  = [];
+            	/*		locations = [];  */
 
-				$('.filters-tags-row .selected').each( function( i, $el ){
-					var tag = $( $el) .attr('class').split(' ')[1];						 
-					tags.push(tag);
+				$('.filters-tags-row .selected').each( function( i, el ){
+					var tag = $( el ).attr('class').split(' ')[1];						 
+					tags.push( tag );
 				});
 
-				LJ.fn.filterEvents(tags);
+				/*
+				$('.filters-locs-row .selected').each( function( i, el ){
+					var loc = parseInt( $( el ).attr('class').split(' ')[1].split('loc-')[1] );				 
+					locations.push( loc );
+				});  */
+
+				if( tags.length === LJ.selectedTags.length && _.intersection( tags, LJ.selectedTags ).length == tags.length )
+				{
+					$('.pending').removeClass('pending');
+					return LJ.fn.toastMsg('Les évènements se mettent à jour automatiquement', 'info');
+				}
+
+				LJ.selectedTags 	 = tags;
+				//LJ.selectedLocations = locations;
+
+				LJ.fn.filterEvents( LJ.selectedTags );
+            	
             });
 
 		},
@@ -471,12 +497,15 @@ window.LJ = {
 
 		},
 		handleBeforeSendLogin: function(){
+
 			LJ.$loginBtn.val('Loading');
 			$('#bcm_member').velocity('transition.slideRightOut', { duration: 500 });
 			$('#lost_pw').velocity('transition.slideLeftOut', { duration: 500 });
 			$('input.input-field').addClass('validating');
+
 		},
 		handleSuccessLogin: function(user){
+
 			sleep(LJ.ui.artificialDelay,function(){ 
 
 				/*
@@ -526,6 +555,7 @@ window.LJ = {
 			});
 		},
 		handleFailedLogin: function(data){
+
 			data = JSON.parse(data.responseText);
 			sleep(LJ.ui.artificialDelay,function(){
 				LJ.fn.toastMsg( data.msg, 'error');
@@ -535,19 +565,23 @@ window.LJ = {
 				LJ.fn.hideLoaders();
 				LJ.$loginBtn.val('Login');
 			});
+
 		},
 		handleBeforeSendSignup: function(){
+
 			LJ.$backToLogin.velocity("transition.slideLeftOut", { duration:300 });
 			LJ.fn.showLoaders();
 			$('input.input-field').addClass('validating');
 		},
 		handleSuccessSignup: function(data){
+
 			sleep(LJ.ui.artificialDelay,function(){
 				LJ.fn.hideLoaders();
 				LJ.fn.loginUser(data);
 			});		
 		},
 		handleFailedSignup: function(data){
+
 			data = JSON.parse(data.responseText);
 			sleep(LJ.ui.artificialDelay,function(){
 				$('input.input-field').removeClass('validating');
@@ -557,7 +591,9 @@ window.LJ = {
 			});
 		},
 		toggleAnimatingState: function(){
+
 			LJ.state.animatingContent ? LJ.state.animatingContent = false : LJ.state.animatingContent = true ;
+
 		},
 		displayViewAsNew: function(){
 
@@ -643,6 +679,10 @@ window.LJ = {
 			var $chatWrap = askerPictureTag.parents('.a-row').find('.chatWrap');
         	var $previous = $('.a-active');
 
+        	var $eventWrap = $chatWrap.parents('.eventItemWrap');
+        		$('.surfacing').removeClass('surfacing');
+        		$eventWrap.addClass('surfacing');
+
 			$previous.removeClass('a-active')
 				 	 .parents('.a-row')
 				  	 .find('.chatWrap')
@@ -662,6 +702,10 @@ window.LJ = {
 
 			 var $chatWrap = eHeadTag.siblings('.chatWrap');
 			 var $previous = $('.e-active');
+
+			 var $eventWrap = $chatWrap.parents('.eventItemWrap');
+        		$('.surfacing').removeClass('surfacing');
+        		$eventWrap.addClass('surfacing');
 
 			 $previous.removeClass('e-active')
 			 		  .siblings('.chatWrap')
@@ -688,6 +732,7 @@ window.LJ = {
 			LJ.fn.updateUserObject();
 		},
 		updateClientSettings: function(newSettings){
+
 			_.keys(newSettings).forEach(function(el){
 				LJ.user[el] = newSettings[el];
 			});
@@ -696,15 +741,18 @@ window.LJ = {
 		   Example of usage : var o = LJ.updateObject(LJ.params, preferences); 
 		*/
 		updateObject: function(o1,o2){
+
 			_.keys(o2).forEach(function(key){
 					o1[key] = o2[key];
 			});
 			return o1;
 		},
 		updateUserObject: function(){
+
 			LJ.$nameInput.val(LJ.user.name);
 			LJ.$ageInput.val(LJ.user.age);
 			LJ.$descInput.val(LJ.user.description);
+
 		},
 		toastMsg: function(msg, status, fixed){
 
@@ -755,6 +803,7 @@ window.LJ = {
 			}
 		},
 		replaceMainImage: function(id,version,d){
+
 		        d = d || LJ.cloudinary.displayParamsProfile;
 		    	d.version = version;
 
@@ -769,6 +818,7 @@ window.LJ = {
 				});
 
 		},
+
 		replaceThumbImage: function(id,version,d){
 			    d = d || LJ.cloudinary.displayParamsMainThumb;
 				d.version = version;
@@ -824,27 +874,32 @@ window.LJ = {
 
 		},
 		renderEvents: function(arr,max){
+
 				var html =''; 
 				    max = max || arr.length;
 				for(var i=0;i<max;i++){ html += LJ.fn.renderEvent(arr[i]); }
 				return html;
+
 		},
         renderAskers: function(arr,max){
+
                 var html =''; 
                     max = max || arr.length;
                 for(var i=0;i<max;i++){ html += LJ.fn.renderAsker(arr[i]); }
                 return html;
+
         },
 		renderEvent: function(e){
+
 			var d = LJ.cloudinary.displayParamsEvent;
 				d.version = e.hostImgVersion;
 
 			var chatId = LJ.fn.buildChatId(e._id, e.hostId, LJ.user._id);
             var chatWrap = '<div class="chatWrap chat-asker none" data-chatid="'+chatId+'">'
-                           +'<div class="tri"></div>'
+                           +'<div class="close-chat hint--right" data-hint="close"><span class="icon icon-cancel"></span></div>'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
-                            +  '<input type="text" value="" placeholder="say something..">'
+                            +  '<input type="text" value="" placeholder="Can I come with my friends ?">'
                             +  '<input type="submit" value="">'
                             +'</div>'
                            +'</div>';
@@ -861,25 +916,30 @@ window.LJ = {
 			}
 				button+="</button></div>";
 
-			var eventTags = '<div class="tag-row">';
-				for (var i=0; i<e.tags.length ;i++){
-					eventTags += '<div class="tag tag-'+e.tags[i]+' selected" >' + LJ.fn.matchTagName(e.tags[i]) + '</div>';
+			var eventTags = '<div class="tag-row">',
+				L = e.tags.length;
+
+				for ( var i=0; i<L; i++ ){
+					eventTags += '<div class="tag tag-'+e.tags[i]+'">' + LJ.fn.matchTagName(e.tags[i]) + '</div>';
 				}
 				eventTags +='</div>';
-
-			var html = '<div class="eventItemWrap none" data-eventid="'+e._id+'" data-hostid="'+e.hostId+'">'
+		
+			var html = '<div class="eventItemWrap none" data-eventid="'+e._id+'" data-hostid="'+e.hostId+'" data-location="'+e.location+'">'
 						+'<div class="e-head hint--left" data-hint="'+e.hostName+'">' + imgTag 
 						+'</div>'
-						+'<div class="e-itm e-hour e-weak">'+LJ.utils.dateHHMM(new Date(e.beginsAt))+'</div>'
-						+'<div class="e-itm e-guests">'
-						  +'<i class="icon icon-users"></i><span>'+e.askersList.length+'</span>/'+'<span>'+e.maxGuest+'</span></div>'
+						+'<div class="e-hour e-weak">'+LJ.fn.matchDateHHMM( e.beginsAt )+'</div>'
+						+'<div class="e-guests">'
+						  +'<i class="icon icon-users"></i><span>'+e.askersList.length+'</span>/'+'<span>'+e.maxGuest+'</span>'
+						+'</div>'
+						+'<div class="e-location">'
+						  +'<span>'+ LJ.fn.matchLocation( e.location ) +'</span>'
+						+'</div>'
 						+'<div class="e-body">'
-						   +'<div class="e-itm e-name">'+e.name+'</div>'
+						   +'<div class="e-name">'+e.name+' </div>'
 						   +'<div class="e-row">'
-						     +'<i class="left icon icon-map"></i><div class="e-itm e-location e-weak">'+e.location+'</div>'
 						   +'</div>'
 						   +'<div class="e-row">'
-						     +'<i class="left icon icon-lamp"></i><div class="e-itm e-description e-weak">'+e.description+'</div>'
+						     +'<div class="e-description e-weak">'+e.description+'</div>'
 						   +'</div>'
 						   + eventTags
 						+'</div>'
@@ -889,13 +949,38 @@ window.LJ = {
 			return html;
 		},
 		matchTagName: function(tagClass){
+
 			if( tagClass == 'apparte' ) return 'appart\'';
 			if( tagClass == 'apero' ) return 'apéro';
 			if( tagClass == 'nuitblanche' ) return 'nuit blanche';
 
 			return tagClass
 		},
+		matchLocation: function( loc ){
+
+			if( loc == 1){
+				return '1er';
+			}
+			
+				return loc + 'ème';
+			
+		},
+		matchDateHHMM: function(d){
+
+	    	 var dS = '';
+
+    	     if( d.getHours() == 0){
+    	     	dS = '0';
+    	     }
+	       	 dS += d.getHours() + "h";
+     	     if( d.getMinutes() < 10){
+     	     	dS+='0';
+     	     }
+             dS += d.getMinutes();
+   		     return dS;
+		},
         renderAsker: function(a){
+
             var d = LJ.cloudinary.displayParamsAsker;
             	d.version = a.imgVersion; // Ne fonctionne pas car le param 'a' provient de la base qui est pas MAJ
 
@@ -904,7 +989,7 @@ window.LJ = {
             var chatId = LJ.fn.buildChatId( LJ.user.hostedEventId, LJ.user._id, a.id );
 
             var chatWrap = '<div class="chatWrap chat-host none" data-chatid="'+chatId+'">'
-                           +'<div class="tri"></div>'
+                           +'<div class="close-chat hint--right" data-hint="close"><span class="icon icon-cancel"></span></div>'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
                             +  '<input type="text" value="" placeholder="say something..">'
@@ -925,7 +1010,38 @@ window.LJ = {
                     +'</div>';
             return html;
         },
+        initLayout: function(){
+
+        	$( '.tags-wrap' ).append( LJ.fn.renderTagsFilters() );
+        	$( '.locs-wrap' ).append( LJ.fn.renderLocsFilters() );
+
+        },
+        renderTagsFilters: function(){
+
+        	var html = '',
+        		tagList = LJ.tagList,
+        		L = tagList.length;
+
+        		for( var i=0; i < L; i++){
+        			html += '<div class="tag tag-' + tagList[i] + '">' + LJ.fn.matchTagName( tagList[i] ) + '</div>';
+        		}
+        	return html;
+
+        },
+        renderLocsFilters: function(){
+
+        	var html = '',
+        		locList = LJ.locList,
+        		L = locList.length;
+
+        		for( var i=0; i < L; i++){
+        			html += '<div class="loc loc-' + locList[i] + '">' + locList[i] + '</div>';
+        		}
+        	return html;
+
+        },
 		renderMainThumb: function(){
+
 			var d = LJ.cloudinary.displayParamsMainThumb;
 				d.version = LJ.user.imgVersion;
 
@@ -937,6 +1053,7 @@ window.LJ = {
 
 		},
         displayChat: function(chatWrap){
+
         	var chatId = chatWrap.data('chatid');
             chatWrap.velocity("transition.slideLeftIn", {
             	duration: 450,
@@ -950,6 +1067,7 @@ window.LJ = {
                             
         },
         hideChat: function(chatWrap){
+
            	chatWrap.velocity("transition.slideLeftOut", { duration: 300 });
         },
 		initEventListeners: function(){
@@ -968,7 +1086,7 @@ window.LJ = {
 						});
 				});
 
-				LJ.params.socket.on('update image success', function(data){
+				LJ.params.socket.on('update image success', function( data ){
 
 					LJ.fn.updateClientSettings(data);
 					csl(JSON.stringify(data,0,4));
@@ -979,13 +1097,16 @@ window.LJ = {
 					csl('Client authenticated on the socket stream');
 				});
 
-				LJ.params.socket.on('create event success', function(myEvent){
+				LJ.params.socket.on('create event success', function( myEvent ){
 					
 					var eventId = myEvent._id,
 						hostId = myEvent.hostId;
+					
+					myEvent.beginsAt = new Date ( myEvent.beginsAt );
 
 					sleep( LJ.ui.artificialDelay , function(){ 
 
+					/* Host Only */
 					if( LJ.user._id === hostId ){
 							LJ.user.status = 'hosting';
 							LJ.user.hostedEventId = eventId;
@@ -999,60 +1120,87 @@ window.LJ = {
 					} 
 					});
 
-
 					/* Pour tous les users */
-					LJ.myEvents.push( myEvent );
+					var idx = _.sortedIndex( LJ.myEvents, myEvent, 'beginsAt' );
+					LJ.myEvents.splice( idx, 0, myEvent );
 					var eventHTML = LJ.fn.renderEvent( myEvent );
-					LJ.$eventsListWrap.append( eventHTML );
-					LJ.$eventsListWrap.children().velocity("transition.slideLeftIn");
-					
-				});
+					$( eventHTML ).insertBefore( $( $('.eventItemWrap')[idx] ) )
+								  .addClass('inserted');
 
-				LJ.params.socket.on('change state event success', function(data){
-				
-				sleep( LJ.ui.artificialDelay , function(){ 
+					LJ.fn.toastMsg( myEvent.hostName + ' a créé un évènement !', 'info' );
 
-					var eventState = data.myEvent.state;
+					/* On affiche directement l'event <=> au moins 1 tag correspond à ce qui été dernièrement filtré */
+					var eventTags = myEvent.tags,
+								L = eventTags.length;
 
-					switch( eventState ){
-
-					case 'canceled':
-						LJ.fn.handleCancelEvent( data );
-					break;
-
-					case 'suspended':
-						LJ.fn.handleSuspendEvent( data );
-					break;
-
-					case 'open':
-						LJ.fn.handleSuspendEvent( data );
-					break;
-
-					case 'completed':
-						LJ.fn.handleTerminateEvent( data );
-					break;
-
-					default:
-						LJ.fn.toastMsg('Strange thing happend', 'error');
-					break;
-
+					for( var k = 0; k < L; k++ ){
+						eventTags[k] = "tag-" + eventTags[k];
 					}
 
-				});				
+					if( _.intersection( eventTags, LJ.selectedTags ).length != 0 || LJ.selectedTags.length == 0){
+
+						var $inserted = $('.inserted');
+
+							$inserted.find('.tag').each( function( i, el ){
+								if( LJ.selectedTags.indexOf( $( el ).attr('class').split(' ')[1] ) != -1 ){
+									$( el ).addClass( 'selected' );
+								}
+							});
+
+						$inserted.velocity('transition.slideLeftIn', { duration: 400 })
+								 .removeClass('inserted');
+					}
+				});
+
+				LJ.params.socket.on('change state event success', function( data ){
+					
+					sleep( LJ.ui.artificialDelay , function(){ 
+
+						var eventState = data.myEvent.state;
+
+						switch( eventState ){
+
+						case 'canceled':
+							LJ.fn.handleCancelEvent( data );
+						break;
+
+						case 'suspended':
+							LJ.fn.handleSuspendEvent( data );
+						break;
+
+						case 'open':
+							LJ.fn.handleSuspendEvent( data );
+						break;
+
+						default:
+							LJ.fn.toastMsg('Strange thing happend', 'error');
+						break;
+
+						}
+
+					});				
 
 		        });
 
-				LJ.params.socket.on('fetch user success', function( data ){
-
-					console.log(data);
-					
-				});
+				LJ.params.socket.on('fetch user success', function( data ){ console.log(data); });
  
 				LJ.params.socket.on('fetch events success', function( events ){
+
 					LJ.state.fetchingEvents = false;
-					for( var i=0; i<events.length; i++ ){
+					var L = events.length;
+
+					for( var i=0; i<L; i++ ){
+
 						LJ.myEvents[i] = events[i];
+						LJ.myEvents[i].createdAt = new Date( events[i].createdAt );
+						LJ.myEvents[i].beginsAt  = new Date( events[i].beginsAt );
 					}
+
+					/* L'array d'event est trié à l'initialisation */
+					LJ.myEvents.sort( function( e1, e2 ){
+						return e1.beginsAt -  e2.beginsAt ;
+					});
+
 					LJ.fn.displayEvents();
 				});
 
@@ -1066,14 +1214,16 @@ window.LJ = {
 					if( LJ.user._id === data.userId ){
 						LJ.fn.toastMsg('You may now chat with the host', 'info');
 					}else{
+
 						var askerHTML = LJ.fn.renderAsker(data.asker);
-						    $(askerHTML).appendTo(LJ.$askersListWrap)
+
+						    $( askerHTML ).appendTo(LJ.$askersListWrap)
 						    			.hide()
 						    			.velocity("transition.slideLeftIn",{
 						    				duration:300
 						    			});
 
-						 LJ.myAskers.push(asker);
+						 LJ.myAskers.push( asker );
 						}
 
 				});
@@ -1105,10 +1255,10 @@ window.LJ = {
 						LJ.fn.hideLoaders();
 					});
 
-
 				});
 
 				LJ.params.socket.on('server error', function(msg){
+
 					sleep( 600, function(){
 						LJ.fn.toastMsg( msg, 'error');
 						$('.validating-btn').removeClass('validating-btn');
@@ -1119,18 +1269,20 @@ window.LJ = {
 
 				LJ.params.socket.on('disconnect', function(){
 
-					LJ.fn.toastMsg("You have been disconnected from the stream", 'error');
+					LJ.fn.toastMsg("You have been disconnected from the stream", 'error', true);
 					LJ.params.socket.disconnect(LJ.user._id);
 				});
 
                 LJ.params.socket.on('fetch askers success', function(askersList){
 
                     LJ.state.fetchingAskers = false;
+                    var L = askersList.length;
 
-                    for( var i=0; i<askersList.length; i++) {
+                    for( var i=0; i<L; i++) {
                         LJ.myAskers[i] = askersList[i];
                     }
                    LJ.fn.displayAskers();
+
                 });
 
                 LJ.params.socket.on('receive message', function(data){
@@ -1141,6 +1293,7 @@ window.LJ = {
 		},
 		handleCancelEvent: function(data){
 			
+			LJ.fn.toastMsg("L'évènement a été annulé !")
 			if( data.hostId == LJ.user._id ){
 		                		$('.pending').removeClass('pending');
 		                		LJ.user.status = 'idle';
@@ -1179,9 +1332,6 @@ window.LJ = {
 
 
 		},
-		handleTerminateEvent: function(data){
-
-		},
 		createEvent: function(){
 
 			var tags = [];
@@ -1208,6 +1358,7 @@ window.LJ = {
 				LJ.fn.showLoaders();
 		},
 		fetchEvents: function(){
+
 			if( LJ.state.fetchingEvents ){ 
 				LJ.fn.toastMsg('Aleady fetching events', 'error');
 			}else{
@@ -1216,77 +1367,89 @@ window.LJ = {
             }
 		},
         fetchAskers: function(){
+
             if( LJ.state.fetchingAskers ){
                 LJ.fn.toastMsg("Already fetching askers", 'error');
             }else{
                 LJ.state.fetchingAskers = true;
                 LJ.params.socket.emit('fetch askers',{ eventId: LJ.user.hostedEventId, hostId: LJ.user._id });
             }
+
         },
         displayEvents: function(){
+
             LJ.$eventsListWrap.append( LJ.fn.renderEvents( LJ.myEvents ) );
             $('.eventItemWrap').velocity("transition.slideLeftIn", {
-            	stagger: 250,
             	display:'inline-block'
             });
+
         },
         displayAskers: function(){
-            LJ.$askersListWrap.append(LJ.fn.renderAskers(LJ.myAskers));
+
+            LJ.$askersListWrap.append( LJ.fn.renderAskers( LJ.myAskers ));
+
         },
         filterEvents: function(tags){
 
-        	if( !tags ){
-        		return LJ.fn.displayEvents();
-        	}
+        	LJ.$eventsListWrap.find('.selected').removeClass('selected');
 
-        	console.log('Filering events based on tags array : '+ tags);
-        	var arr = $();
-        	var eventsToDisplay = [];
-        	$('.eventItemWrap').find('.tag-row')
-        					   .each( function(i, el) {
+        	if( tags.length == 0 ){
+        		LJ.$eventsToDisplay = $('.eventItemWrap');
+        	}
+        	else{
+
+	        	var arr = $();
+	        	var eventsToDisplay = [];
+	        	var skip; /* Pour ne pas ajouter plusieurs fois un event qui matcherai pour plus d'un tag */
+
+	        	$('.eventItemWrap').find('.tag-row')
+	        					   .each( function(i, el) {
+	        					   	skip = false;
         					    	$( el ).find('.tag')
-        					    			.each( function(j, elem){
-		        					   			var l = $( elem ).prop('class').split(' ')[1];
-		        					   			if( tags.indexOf( l ) != -1 ){
-		        					   				eventsToDisplay.push( $( elem ).parents('.eventItemWrap') );
+    					    			   .each( function(j, elem){
+	        					   			var l = $( elem ).prop('class').split(' ')[1];
+	        					   			var itemWrap = $( elem ).parents('.eventItemWrap');
+		        					   			if( tags.indexOf( l ) != -1 ){ 
+		        					   				$( elem ).addClass('selected');
+		        					   				if( !skip ){
+		        					   				  skip = true;
+		        					   				  eventsToDisplay.push( itemWrap );
+		        					   				}
 		        					    		}
-			        					    });
-        						});
+	        					  		    });
+	        						});
 
-        	var $eventsToDisplay = $();
-        	eventsToDisplay.each( function(i, el){
-        		$eventsToDisplay = $eventsToDipslay.add(el);
-        	});
+	        	if( eventsToDisplay.length == 0 ){
+	        		$('.pending').removeClass('pending');
+	        		return LJ.fn.toastMsg(' Aucun évènement pour ces filtres :/', 'error');
+	        	}else{
+	        		/* Transforme un Array de jQuery objects, en un jQuery-Array */
+	        		LJ.$eventsToDisplay = $(eventsToDisplay).map( function(){ return this.toArray(); });
+	        	}
+       		}
 
-        	$eventsToDisplay.fadeOut();
-        	/*
-        	if( eventsToDisplay.length != 0 )
-        	{
-        		$('.eventItemWrap').velocity('transition.slideUpOut', {
-        			duration:300,
-        			complete: function(){
-        				eventsToDisplay.velocity('transition.slideLeftIn', { duration: 300 });
-        			}
-        		});
-        	}
-        	else
-        	{
-        		LJ.fn.toastMsg('Aucun évènement pour ces filtres', 'error');
-        	} */
+       		$('.eventItemWrap').addClass('filtered');
+       		LJ.$eventsToDisplay.removeClass('filtered');
+       		LJ.fn.toastMsg( LJ.$eventsToDisplay.length + ' events matched!', 'info');
 
         },
-        requestIn: function(askInBtn){
+        requestIn: function( askInBtn ){
+
             var eventId = askInBtn.parents('.eventItemWrap').data('eventid');
             var hostId = askInBtn.parents('.eventItemWrap').data('hostid');
+
             csl("requesting IN with id : "+eventId);
             LJ.params.socket.emit("request participation in", {
                             userInfos: LJ.user,
                             hostId: hostId,
                             eventId: eventId});
+
         },
-        requestOut: function(askInBtn){
+        requestOut: function( askInBtn ){
+
         	var eventId = askInBtn.parents('.eventItemWrap').data('eventid');
-        	var hostId = askInBtn.parents('.eventItemWrap').data('hostid');        	
+        	var hostId = askInBtn.parents('.eventItemWrap').data('hostid');    
+
         	csl("requesting OUT with id : "+eventId);
         	LJ.params.socket.emit("request participation out", {
         					userInfos: LJ.user,
@@ -1296,8 +1459,10 @@ window.LJ = {
 
         },
         sendChat: function(submitInput){
+
         	var textInput = submitInput.siblings('input[type="text"]');
         	var msg = textInput.val();
+
         		textInput.val('');
 
         		var askerId = submitInput.parents('.a-row').find('.askerInfos').data('userid')
@@ -1328,6 +1493,7 @@ window.LJ = {
         		  utilisés pour construire une room unique 
         */
         addChatLine: function(data){
+
         	csl('Adding chatLine');
             var cha12 = '';
             data.senderId === LJ.user._id ?  cha12 = 'cha1' : cha12 = 'cha2';
@@ -1378,12 +1544,6 @@ window.LJ = {
         	$( '#suspendEvent' ).addClass( 'pending' );
 
         },
-        terminateEvent: function( eventId, hostId ){
-
-        	LJ.params.socket.emit( 'terminate event', { eventId: eventId, hostId: hostId });
-        	$( '#terminateEvent' ).addClass( 'pending' );
-
-        },
         showLoaders: function(){
 
         	$( '.loaderWrap' ).velocity( 'fadeIn', { duration: 400 });
@@ -1392,9 +1552,16 @@ window.LJ = {
         hideLoaders: function(){
 
             $( '.loaderWrap' ).velocity( 'fadeOut', { duration: 250 });
-        }
-        
 
+        },
+        swapNodes: function(a, b) {
+
+		    var aparent= a.parentNode;
+		    var asibling= a.nextSibling===b? a : a.nextSibling;
+		    b.parentNode.insertBefore(a, b);
+		    aparent.insertBefore(b, asibling);
+
+		}		       
     }//end fn
 
 }//end LJ

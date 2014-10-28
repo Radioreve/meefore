@@ -77,6 +77,7 @@
 	  					token:       	 token,
 	  					cloudTag:    	 cloudTag
 	  				});
+	  				
 					res.end();
 				}
 		})(req,res,next);

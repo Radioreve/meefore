@@ -107,20 +107,11 @@
 			<section id="eventsWrap" class="none centered">
 				<h2>Tous les évènements</h2>
 				<div class="actionsWrap actionsStyle">
-					<span id="activateFilters" class="action">Activer les filtres</span>
+					<span id="activateFilters" class="action">Appliquer les filtres</span>
 				</div>
 				<div class="filtersWrap">
-				  <div class="filters-tags-row">
-						<div class="tag tag-afterwork">afterwork</div>
-						<div class="tag tag-before">before</div>
-						<div class="tag tag-club">boite</div>
-						<div class="tag tag-apero">apéro</div>
-						<div class="tag tag-apparte">appart'</div>
-						<div class="tag tag-bar">bar</div>
-						<div class="tag tag-rencontre">rencontre</div>
-						<div class="tag tag-ivresse">ivresse</div>
-						<div class="tag tag-nuitblanche">nuit blanche</div>
-				  </div>
+				  <div class="filters-tags-row tags-wrap"> <!-- Static Content dynamically added on load--></div>
+				  <div class="filters-locs-row locs-wrap"> <!-- Static Content dynamically added on load --></div>
 				</div>
 				<section id="eventsListWrap"></section>
 			</section>
@@ -131,31 +122,21 @@
 						<label for="eventName">C'est quoi ? </label>
 						<input id="eventName" placeholder="Apéro, before, afterwork ..." type="text" class="input-field_create">
 					</div>
-					<div class="input-row-wrap hint--right" data-hint="Ne dévoilez jamais votre adresse exacte">
-						<label for="eventLocation">C'est où ? </label>
-						<input id="eventLocation" class="input-field_create" placeholder="Rue, métro, quartier..." maxlength="30" type="text">
+					<div class="input-row-wrap">
+						<label for="eventLocation">Arrondissement </label>
+						<input id="eventLocation" class="input-field_create" placeholder="1" max="20" min="1" type="number">
 					</div>
 					<div class="input-row-wrap">
-						<label for="eventHour">C'est quand ?</label>
+						<label for="eventHour">Heure de début</label>
 						<input id="eventHour" class="input-field_create" type="text" placeholder="20" maxlength="2"><b>h</b>
 						<input id="eventMinut" class="input-field_create" type="text" placeholder="00" maxlength="2">
 					</div>
 					<div class="input-row-wrap hint--right" data-hint="Restez raisonnable ;-)">
 						<label for="eventMaxGuest">Nombre d'invités </label>
-						<input id="eventMaxGuest" class="input-field_create" placeholder="5" max="100" min="2" type="number">
+						<input id="eventMaxGuest" class="input-field_create" value = "3" max="100" min="2" type="number">
 					</div>
-					<div class="input-row-wrap">
+					<div class="input-row-wrap tags-wrap">
 						<label for="name">Tags</label>
-						<div class="tag tag-afterwork">afterwork</div>
-						<div class="tag tag-before">before</div>
-						<div class="tag tag-club">boite</div>
-						<div class="tag tag-apero">apéro</div>
-						<div class="tag tag-apparte">appart'</div>
-						<div class="tag tag-bar">bar</div>
-						<div class="tag tag-rencontre">rencontre</div>
-						<div class="tag tag-ivresse">ivresse</div>
-						<div class="tag tag-nuitblanche">nuit blanche</div>
-
 					</div>
 					<div class="input-row-wrap">
 					<label for="eventDescription">About</label>
@@ -170,7 +151,6 @@
 				<div class="actionsWrap actionsStyle">
 					<span id="cancelEvent" class="action">Annuler</span>
 					<span id="suspendEvent" class="action">Suspendre </span>
-					<span id="terminateEvent" class="action">Terminer</span>
 				</div>
 				<div id="askersListWrap">
 				</div>
@@ -218,14 +198,17 @@
 	</div>
 		<footer>
 		</footer>
+
+		<<!--> Third party libraries </!-->
 		<script src="/js/jquery.js"></script>
-		<!--<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script> -->
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/js/jquery.cloudinary.js"></script>
 		<script src="/js/lodash.js"></script>
 		<script src="/js/jscrollpane.js"></script>
 		<script src="//cdn.jsdelivr.net/velocity/1.1.0/velocity.min.js"></script>		
 		<script src="//cdn.jsdelivr.net/velocity/1.1.0/velocity.ui.min.js"></script>
+
+		<<!--> Application script </!-->
 		<script src="/js/lj.js"></script>
 	</body>
 	</html>

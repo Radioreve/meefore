@@ -1,5 +1,5 @@
 #eventsWrap{
-    width: 80%;
+    width: 82%;
 } 
 #createEventIcon{
 	font-size: .8em;
@@ -21,17 +21,9 @@
 #e-name{
 	text-align: left;
 }
-#e-host{
-}
-#e-location{
-}
-#e-hour{
-}
-#e-maxGuest{
-}
+
 .eventItemWrap{
 	font-size: .9em;
-
 	-webkit-transition: all .15s;
 	transition: all .15s;
 	color: rgb(56, 56, 56);
@@ -41,11 +33,11 @@
 	padding-right: 20px;
 	box-sizing: border-box;
 	float: left;
+	position: relative;
+	z-index: -1;
 }
 .eventItemWrap:hover{
 	/* background: rgb(245, 245, 245); */
-}
-.e-item{
 }
 .e-guests{
 	font-size: 1.1em;
@@ -56,19 +48,31 @@
 }
 .e-infos{
 	border-bottom: 1px solid #dde;
-
 	height: 100%;
+}
+.e-location{
+    
+
+    color: rgb(233, 90, 90);
+    
+    
+
+    font-family: 'Raleway';
+
+    text-align: center;
+    
+
+    text-transform: none;
+    border-radius: 20px;
 }
 .e-status{
 	width: 70px;
 	font-size: .75em;
 	font-family: 'calibri';
-
 	padding-top: 1px;
 	text-align: center;
 }
 .e-weak{
-
 	padding-top: 1px;
 }
 .e-new{
@@ -79,14 +83,11 @@
 	color: rgb(70, 70, 70);
 	text-transform: uppercase;
 	font-family: 'Raleway';
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	margin-right: 10px;
 	text-align: center;
 }
-.e-location{
-	display: inline-block;
-	margin-bottom: 5px;
-}
+
 .e-hour{
 	position: relative;
 	text-align: center;
@@ -126,6 +127,7 @@
 }
 .e-description{
 	margin-bottom: 16px;
+	text-align: center;
 }
 .askInWrap{
 	float: right;
@@ -181,39 +183,64 @@
 	position: relative;
 }
 
-#eventMaxGuest{
+input[type="number"]{
 	width:40px;
 }
 
-.tag{
+.tag,
+.loc{
 	display:inline-block;
 	transition: all .3s;
 	font-size: .7em;
-	color: #8F8F8F;
+	color: #7A7A7A;
 	padding: 4px 10px;
 	border-radius: 2px;
 	margin: 0 3px;
 	/* border: 1px solid #FFFFFF; */
-	background: #F7F7F7;
+	background: #F5F5F5;
+}
+.loc{
+	background: white;
+	border-bottom: 2px solid white;
+	width: 20px;
+	padding-right: 14px;
+	text-align: center;
+	margin: 0 -2px;
 }
 #createEventWrap .tag:hover,
-.filters-tags-row .tag:hover{
+.filters-tags-row .tag:hover,
+.filters-locs-row .loc:hover{
 	cursor:pointer;
 }
+#refreshEvents{
+	
+}
+#lastEvents{
+	display:inline;
+	color: rgb(213, 47, 47);
+}
 .tag.selected{
-	background: rgb(238, 62, 62);
+	background: rgb(229, 83, 83);
 	color:white;
 	box-shadow: 0 1px 1px rgb(187, 50, 50);
 }
-.tag-row{
+.loc.selected{
+	border-bottom: 2px solid rgb(243, 131, 131);
+	color: rgb(243, 131, 131);
+	font-weight: bolder;
+}
+.tag-row,
+.loc-row{
 	display: inline-block;
 	position: relative;
-	left: -20px;
 	font-size: 1.2em;
 }
-.filters-location-row,
+.filters-locs-row,
 .filters-tags-row{
 	text-align:center;
 	margin-top: 15px;
 	font-size: 1.1em;
+}
+.filtersWrap{
+	margin:25px 0;
 }

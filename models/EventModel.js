@@ -3,51 +3,50 @@
 
 	var EventSchema = mongoose.Schema({
 
-		name:{
+		name: {
 			type: String
 		},
-		description:{
+		description: {
 			type: String
 		},
-		location:{
-			type: String,
-			default: 'Paris 75001'
+		location: {
+			type: Number,
+			default: 1
 		},
 		maxGuest:{
 			type: Number,
 			default: 10
 		},
-		hostId:{
+		hostId: {
 			type: String
 		},
-		hostImgId:{
+		hostImgId: {
 			type: String
 		},
-		hostImgVersion:{
+		hostImgVersion: {
 			type: String
 		},
-		hostName:{
+		hostName: {
 			type: String
 		},
-		beginsAt:{
+		beginsAt: {
 			type: Date
 		},
-		createdAt:{
+		createdAt: {
 			type: Date
 		},
-		askersList:{
+		askersList: {
 			type: Array,
 			default: []
 		},
-		state:{
+		state: {
 			type: String,
 			default: 'open'
 		},
-		tags:{
+		tags: {
 			type: Array,
 			default: []
 		}
-
 	});
 
 	module.exports = mongoose.model('SocketEvents', EventSchema);

@@ -21,18 +21,38 @@ var createEvent = function(data) {
     newEvent.beginsAt = beginsAt;
 
     User.findById(hostId, {}, function(err, user) {
-        if (!err ) {
-            if (user.status === 'hosting') {
+        if (!err ){
+
+            if( user.status === 'hosting' ){
                 
-                eventUtils.raiseError({
+                return eventUtils.raiseError({
                     toClient:"Can't host multiple events",
                     toServer:"Can't host multiple events",
                     socket: socket
-                })
-                return;
+                });
+                
             }
-            newEvent.save(function(err, myEvent) {
-                if (!err) {
+
+            if( data.tags.length == 0 ){
+
+                return eventUtils.raiseError({
+                    toClient:"Please provide at least one tag ;-)",
+                    toServer:"no tag provided",
+                    socket: socket
+                });
+            }
+
+            if( 0 ){
+
+                return eventUtils.raiseError({
+                    toClient:"Renseignez tous les champs svp ;-)",
+                    toServer :"Not all fields filled",
+                    socket: socket
+                });
+            }
+
+            newEvent.save( function( err, myEvent ){
+                if( !err ) {
                     global.io.emit('create event success', myEvent);
 
                     user.status = 'hosting';
@@ -40,7 +60,7 @@ var createEvent = function(data) {
                     user.hostedEventId = myEvent._id;
 
                     user.save(function(err, user) {
-                        if (!err) {
+                        if( !err ){
                             console.log(user.local.email + ' is hosting event with id : ' + user.hostedEventId);
                         }
                     });
@@ -83,35 +103,6 @@ var suspendEvent = function(data) {
     });
 };
 
-var terminateEvent = function(data) {
-
-    var eventId = data.eventId,
-        hostId  = data.hostId,
-        hostSocket = global.sockets[hostId];
-
-    Event.findById( eventId, {}, function( err, myEvent ){
-
-        if( err ){
-             return eventUtils.raiseError({
-                toClient: "Could not find event",
-                toServer: "Error finding event to suspend",
-                err: err,
-                socket: hostSocket
-            });
-        }
-
-        myEvent.state = 'completed';
-        myEvent.review = /* Ajouter une review ici ? */
-
-        myEvent.save( function( err, newEvent ){
-            if( !err ){
-                /* Notifier l'host */
-            }
-        });
-        
-    });
-
-};
 
 var cancelEvent = function(data) {
 
@@ -135,7 +126,7 @@ var cancelEvent = function(data) {
 
         myEvent.save( function( err, newEvent ){
             if( err ){
-                return console.log('Error canceling event');
+                return console.log('Error canceling event : err = ' + err);
             }
             global.io.emit('change state event success', {
                 eventId: eventId,
@@ -213,7 +204,6 @@ var fetchAskers = function(data) {
 module.exports = {
     createEvent: createEvent,
     suspendEvent: suspendEvent,
-    terminateEvent: terminateEvent,
     cancelEvent: cancelEvent,
     fetchAskers: fetchAskers
 };
