@@ -56,7 +56,7 @@ window.LJ = {
                 radius:7
         }
 	},
-	user:{
+	user:{   //Lol
 		_id:'',
 		name:'',
 		email:'',
