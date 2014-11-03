@@ -37,10 +37,20 @@ var createEvent = function(data) {
 
                 return eventUtils.raiseError({
                     toClient:"Please provide at least one tag ;-)",
-                    toServer:"no tag provided",
+                    toServer:"Wrong Tags Inputs",
                     socket: socket
                 });
             }
+
+            if( data.tags.length > 3 ){
+
+                return eventUtils.raiseError({
+                    toClient:"Three tags maximum. Be wise !",
+                    toServer:"Wrong Tags Inputs",
+                    socket: socket
+                });
+            }
+
 
             if( 0 ){
 

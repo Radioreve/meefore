@@ -1,6 +1,5 @@
 
 	var express = require('express'),
-		swig = require('swig'),
 		cloudinary = require('cloudinary'),
 		jwt = require('jsonwebtoken'),
 		config = require('./config/config');
@@ -10,8 +9,6 @@
 						    api_key: config.cloudinary.api_key,
 						    api_secret: config.cloudinary.api_secret
 						});
-
-		var mainTpl  = swig.compileFile(__dirname + '/index.html');
 
 	module.exports = function(app,passport){
 

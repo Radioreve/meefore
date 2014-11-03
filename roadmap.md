@@ -8,16 +8,13 @@
 #Schedule 
 
   ~ Lundi
-	- Filtrer sur l'heure, sur le lieu. Incorporer l'arondissement dans l'EventModel
-	- Incorporer Google Material Design pour "Ask In Click" 
-  ~ Mardi
 	- Nodemailer (email bienvenue + mot de passe oublié) 
+  ~ Mardi
 	- Gérer la terminaison automatique
   ~ Mercredi
 	- Ajouter dynamiquement nombre de participants 
-	- Rendre le design responsive @media queries et/ou bootstrap
   ~ Jeudi
-    - Révisions TelRes + Mises à jours BDA
+	- Rendre le design responsive @media queries et/ou bootstrap
   ~ Vendredi
   ~ Weekend
 	- Socials signins with passport (Facebook & Google)

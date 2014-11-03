@@ -2,8 +2,8 @@
 	var config = function(){
 		return {
 			db:{
-				mongohq_uri:"mongodb://radioreve:R4dioreve@kahana.mongohq.com:10063/Testers",
-				local_uri:"localhost:27017"
+				composeUri:"mongodb://radioreve:R4dioreve@kahana.mongohq.com:10063/Testers",
+				localUri:"localhost:27017"
 			},
 			jwtSecret:"R4dioreve",
 			mail:{

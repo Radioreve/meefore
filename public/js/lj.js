@@ -922,7 +922,7 @@ window.LJ = {
 				}
 				eventTags +='</div>';
 		
-			var html = '<div class="eventItemWrap none" data-eventid="'+e._id+'" data-hostid="'+e.hostId+'" data-location="'+e.location+'">'
+			var html = '<div class="eventItemWrap" data-eventid="'+e._id+'" data-hostid="'+e.hostId+'" data-location="'+e.location+'">'
 						+'<div class="e-head hint--left" data-hint="'+e.hostName+'">' + imgTag 
 						+'</div>'
 						+'<div class="e-hour e-weak">'+LJ.fn.matchDateHHMM( e.beginsAt )+'</div>'
@@ -1121,10 +1121,20 @@ window.LJ = {
 
 					/* Pour tous les users */
 					var idx = _.sortedIndex( LJ.myEvents, myEvent, 'beginsAt' );
+					console.log('idx = ' + idx);
 					LJ.myEvents.splice( idx, 0, myEvent );
 					var eventHTML = LJ.fn.renderEvent( myEvent );
-					$( eventHTML ).insertBefore( $( $('.eventItemWrap')[idx] ) )
-								  .addClass('inserted');
+
+					/* Prise en compte des effets de bords sinon le jQuery return undefined */
+					if( ( idx == 0 ) ){
+						$( eventHTML ).insertAfter( $('#noEvents') );
+					}else if( idx == LJ.myEvents.length - 1){ // myEvents just got incremented, hence the - 1
+						$( eventHTML ).insertAfter( $( $('.eventItemWrap')[idx-1] ) );
+					}else{
+						$( eventHTML ).insertAfter( $( $('.eventItemWrap')[idx] ) );
+					}
+
+					$( eventHTML ).addClass('inserted');
 
 					LJ.fn.toastMsg( myEvent.hostName + ' a créé un évènement !', 'info' );
 
