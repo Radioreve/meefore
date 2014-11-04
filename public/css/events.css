@@ -196,8 +196,8 @@ input[type="number"]{
 	padding: 10px 12px; 
 	border-radius: 2px;
 	margin: 4px;
-	/* border: 1px solid #FFFFFF; */
-	background: #F5F5F5;
+	/* background: #F5F5F5; */
+	text-align: center;
 }
 .loc{
 	background: white;

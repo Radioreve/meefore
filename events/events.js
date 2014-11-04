@@ -11,11 +11,10 @@ module.exports = function(id){
 		var socket = global.sockets[id];
 
 //Events d'initialisation
-		otherEvents.init();
-		//global.sockets[id].on('disconnect', otherEvents.disconnectClient);
+		socket.on( 'fetch user and configuration', otherEvents.fetchUserAndConfiguration );
 
 //Events relatifs au profile utilisateur
-		socket.on( 'fetch user', profileEvents.fetchUser				);
+		socket.on( 'fetch user', profileEvents.fetchUser				);  // useless 
 		socket.on( 'update profile', profileEvents.updateProfile   		);
 		socket.on( 'update picture', profileEvents.updatePicture   		);
 		socket.on( 'update settings', profileEvents.updateSettings 		);

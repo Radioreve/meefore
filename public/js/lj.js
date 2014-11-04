@@ -92,19 +92,7 @@ window.LJ = {
 					+'</span><span class="toastMsg"></span></div>',
 		noResult: '<center id="noEvents" class="filtered"> Aucun évènement pour ce choix de filtre </center>'
 	},
-	tagList: [
-		'afterwork',
-		'before',
-		'club',
-		'apero',
-		'apparte',
-		'bar',
-		'rencontre',
-		'vodka',
-		'cameltoe',
-		'erasmus',
-		'firsttime'
-	],
+	tagList: [],
 	locList: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ],
         $body                 : $('body'), 
 		$loginWrap		 	  : $('#loginWrap'),
@@ -123,11 +111,7 @@ window.LJ = {
 		$passwordInputSignup  : $('#pwSignup'),
 		$passwordCheckInput   : $('#pwCheckSignup'),
 		$backToLogin          : $('#b_to_login'),
-		$becomeMember         : $('#bcm_member'),
 		$validateBtn          : $('#validate'),
-		$nameInput            : $('#name'),
-		$ageInput             : $('#age'),
-		$descInput	          : $('#description'),
 		$locationInput        : $('#location'),
 		$loaderWrap 	      : $('.loaderWrap'),
 		$menuBtn		      : $('.menuBtn'),
@@ -139,7 +123,7 @@ window.LJ = {
 		$eventsListWrap       : $('#eventsListWrap'),
 		$logout				  : $('#logout'),
 
-	fn:{
+	fn: {
 		init: function(){
 
 				/*Bind any UI action with the proper handler */
@@ -150,9 +134,6 @@ window.LJ = {
 
 				/*Global UI Settings ehanced UX*/
 				LJ.fn.initEhancements();
-
-				/* Dynamically generated DOM */
-				LJ.fn.initLayout();
 
 		},
 		initSocketConnection: function(jwt){
@@ -167,7 +148,7 @@ window.LJ = {
 		},
 		initAnimations: function(){
 
-			LJ.$becomeMember.click(function(){
+			$('#bcm_member').click(function(){
 				LJ.fn.displayContent( LJ.$signupWrap );
 			});
 
@@ -470,9 +451,9 @@ window.LJ = {
 		},
 		updateProfile: function(){
 			var _id 		 = LJ.user._id,
-				age   		 = LJ.$ageInput.val(),
-				name  		 = LJ.$nameInput.val(),
-				description  = LJ.$descInput.val();
+				age   		 = $('#age').val(),
+				name  		 = $('#name').val(),
+				description  = $('#description').val();
 
 			if(LJ.user.status == 'new'){LJ.user.status = 'idle'}
 
@@ -508,55 +489,11 @@ window.LJ = {
 			$('input.input-field').addClass('validating');
 
 		},
-		handleSuccessLogin: function(user){
+		handleSuccessLogin: function( user ){
 
-			sleep(LJ.ui.artificialDelay,function(){ 
+			LJ.user._id = user._id; /* Nécessaire pour aller chercher toutes les infos, mais par socket.*/
+			LJ.fn.initSocketConnection( user.token );
 
-				/*
-				/* La requête AJAX ne revoit que les données sur l'utilisateurs.
-				/* On va ensuite chercher immédiatement les informations sur les events
-				/* Via la connexion socket authentifiée 
-				*/
-
-				LJ.fn.initSocketConnection( user.token );
-				LJ.fn.initCloudinary( user.cloudTag );
-
-				// Internal State Update
-				LJ.fn.setClientSettings( user );
-				LJ.fn.fetchEvents();
-				LJ.fn.reloadRooms( LJ.user._id );
-
-				// User Interface Update
-				LJ.fn.renderUserPreferences();
-				LJ.fn.renderMainThumb();
-
-				LJ.fn.replaceMainImage( LJ.user.imgId,
-							            LJ.user.imgVersion,
-							            LJ.cloudinary.displayParamsProfile );
-
-				switch( LJ.user.status ){
-					case 'new':
-						LJ.fn.displayViewAsNew();
-						break;
-					case 'idle':
-						LJ.fn.displayViewAsIdle();
-						break;
-					case 'hosting':
-						LJ.fn.displayViewAsHost();
-						break;
-					default:
-						alert('No status available');
-						break;
-				}
-
-				$('.menu-item').velocity({ opacity: [1, 0] }, {
-					display:'inline-block',
-					complete: function(){
-						LJ.fn.toastMsg("Welcome back " + LJ.user.name, 'info');
-					}
-				});
-				
-			});
 		},
 		handleFailedLogin: function(data){
 
@@ -631,15 +568,30 @@ window.LJ = {
 
             LJ.fn.fetchAskers();
 		},
-		renderUserPreferences: function(){
+		displayUserSettings: function(){
 
+				/* Mise à jour des inputs, checkbox...*/
 				$('#codebar').text( LJ.user._id );
 				$('#currentEmail').val( LJ.user.email );
 				$('#newsletter').prop( 'checked', LJ.user.newsletter );
+				$('#name').val( LJ.user.name );
+				$('#age').val( LJ.user.age );
+				$('#description').val( LJ.user.description );
+				LJ.$thumbWrap.find( 'h2#thumbName' ).text( LJ.user.name );
 
-				if( LJ.user.status === 'hosting' ){
+				/* Update du thumb ( image et informations ) */
+				var d = LJ.cloudinary.displayParamsMainThumb;
+					d.version = LJ.user.imgVersion;
 
-				}
+				var imgTag = $.cloudinary.image( LJ.user.imgId, d );
+					imgTag.addClass('left');
+
+				LJ.$thumbWrap.prepend( imgTag );
+
+				/* Update de l'image de profile */
+				LJ.fn.replaceMainImage( LJ.user.imgId,
+								            LJ.user.imgVersion,
+								            LJ.cloudinary.displayParamsProfile );
 		},
 		displayContent: function( content, options ){
 			
@@ -724,34 +676,23 @@ window.LJ = {
                     LJ.fn.toastMsg('You need to ask participation to chat with the host', 'error');
                 }
 		},
-		setClientSettings: function(data){
-			//csl('Updating client state : '+JSON.stringify(data,0,4));
-            LJ.user = data;
-			//User Interface Update
-			LJ.fn.updateUserObject();
+		initAppSettings: function(data){
+
+			var user     = data.user,
+				settings = data.settings;
+
+			/* Init user settings */
+            LJ.user = user;	
+
+            /* Init app settings */
+            LJ.tagList = settings.tagList;
+
 		},
 		updateClientSettings: function(newSettings){
 
 			_.keys(newSettings).forEach(function(el){
 				LJ.user[el] = newSettings[el];
 			});
-		},
-		/* Updates o1 with o2 properties, if existants in o1 only
-		   Example of usage : var o = LJ.updateObject(LJ.params, preferences); 
-		*/
-		updateObject: function(o1,o2){
-
-			_.keys(o2).forEach(function(key){
-					o1[key] = o2[key];
-			});
-			return o1;
-		},
-		updateUserObject: function(){
-
-			LJ.$nameInput.val(LJ.user.name);
-			LJ.$ageInput.val(LJ.user.age);
-			LJ.$descInput.val(LJ.user.description);
-
 		},
 		toastMsg: function(msg, status, fixed){
 
@@ -801,7 +742,7 @@ window.LJ = {
 			
 			}
 		},
-		replaceMainImage: function(id,version,d){
+		replaceMainImage: function( id, version, d ){
 
 		        d = d || LJ.cloudinary.displayParamsProfile;
 		    	d.version = version;
@@ -817,8 +758,7 @@ window.LJ = {
 				});
 
 		},
-
-		replaceThumbImage: function(id,version,d){
+		replaceThumbImage: function( id, version, d ){
 			    d = d || LJ.cloudinary.displayParamsMainThumb;
 				d.version = version;
 
@@ -826,7 +766,7 @@ window.LJ = {
 				newImg      = $.cloudinary.image(id,d);
 				newImg.hide();
 
-				$('#thumbWrap').prepend(newImg);
+				$('#thumbWrap').prepend( newImg );
 
 				previousImg.fadeOut(700, function(){
 					$(this).remove();
@@ -835,42 +775,43 @@ window.LJ = {
 		},
 		initCloudinary: function(upload_tag){
 
-			$.cloudinary.config(LJ.cloudinary.uploadParams);
-			$('.upload_form').append(upload_tag);
+			$.cloudinary.config( LJ.cloudinary.uploadParams );
+			$('.upload_form').append( upload_tag );
 			$('.cloudinary-fileupload')
 
-				.bind('fileuploadprogress',function(e,data){
+				.bind('fileuploadprogress', function( e,data ){
   							$('.progress_bar').css('width', 
-    						Math.round((data.loaded * 100.0) / data.total) + '%');
+    						Math.round( (data.loaded * 100.0) / data.total ) + '%');
 
-				}).bind('cloudinarydone',function(e,data){
+				}).bind('cloudinarydone',function(e, data){
   							//csl(JSON.stringify(data.result,0,4));
 
-  							sleep(LJ.ui.artificialDelay,function(){
+  							sleep( LJ.ui.artificialDelay,function(){
   								$('.progress_bar').fadeOut(function(){
   									$(this).css({width:"0%"}).fadeIn();
   									});
 
   								LJ.fn.toastMsg('Votre photo de profile a été modifiée', 'info');
 
-  								var imgId=data.result.public_id;
+  								var imgId      = data.result.public_id;
   								var imgVersion = data.result.version;
 
                                 LJ.user.imgVersion = imgVersion;
-                                LJ.user.imgId = imgId;
+                                LJ.user.imgId      = imgId;
 
-  								LJ.params.socket.emit('update picture',{_id: LJ.user._id,
-  																		imgId: imgId,
-  																		imgVersion:imgVersion });
+  								LJ.params.socket.emit('update picture', {
+																			_id        : LJ.user._id,
+																			imgId      : imgId,
+																			imgVersion : imgVersion 
+  																		});
 
-  								LJ.fn.replaceMainImage(imgId,imgVersion,LJ.cloudinary.displayParamsProfile);
-  								LJ.fn.replaceThumbImage(imgId,imgVersion,LJ.cloudinary.displayParamsMainThumb);
+  								LJ.fn.replaceMainImage( imgId, imgVersion, LJ.cloudinary.displayParamsProfile );
+  								LJ.fn.replaceThumbImage( imgId, imgVersion, LJ.cloudinary.displayParamsMainThumb );
 					
   							});
 
   				}).cloudinary_fileupload();
   				
-
 		},
 		renderEvents: function(arr,max){
 
@@ -1041,18 +982,6 @@ window.LJ = {
         	return html;
 
         },
-		renderMainThumb: function(){
-
-			var d = LJ.cloudinary.displayParamsMainThumb;
-				d.version = LJ.user.imgVersion;
-
-			var imgTag = $.cloudinary.image(LJ.user.imgId, d);
-				imgTag.addClass('left');
-
-			LJ.$thumbWrap.prepend( imgTag );
-			LJ.$thumbWrap.find( 'h2#thumbName' ).text( LJ.user.name );
-
-		},
         displayChat: function(chatWrap){
 
         	var chatId = chatWrap.data('chatid');
@@ -1093,9 +1022,64 @@ window.LJ = {
 					csl(JSON.stringify(data,0,4));
 				});
 
-				LJ.params.socket.on('client connected',function(){
+				LJ.params.socket.on('connect', function(){
 
 					csl('Client authenticated on the socket stream');
+					var userId = LJ.user._id;
+
+					/* Request all informations */
+					LJ.params.socket.emit('fetch user and configuration', userId );
+
+				});
+
+				LJ.params.socket.on('fetch user and configuration success', function( data ){
+
+					/* L'ordre de l'appel est important, car certaines 
+					/* informations sont cachées par les premières 
+
+							- On cache les informations sur l'user 
+							- On fait les mises à jours du DOM (checkbox, thumbPic, input) à partir du cache
+							- On envoie une demande des derniers évènements
+							- On envoie une demande pour rejoindre les chatrooms en cours
+							- On active le pluggin d'upload de photos
+							- On génère la partie HTML dynamique type Tags...
+					*/
+
+					var user = data.user;
+
+					LJ.fn.initAppSettings( data );
+					LJ.fn.displayUserSettings();
+					LJ.fn.fetchEvents();
+					LJ.fn.initRooms( LJ.user._id );					
+					LJ.fn.initCloudinary( user.cloudTag );
+					LJ.fn.initLayout();
+
+					sleep( LJ.ui.artificialDelay, function(){   
+
+						switch( LJ.user.status ){
+							case 'new':
+								LJ.fn.displayViewAsNew();
+								break;
+							case 'idle':
+								LJ.fn.displayViewAsIdle();
+								break;
+							case 'hosting':
+								LJ.fn.displayViewAsHost();
+								break;
+							default:
+								alert('No status available, contact us');
+								break;
+						}
+
+						$('.menu-item').velocity({ opacity: [1, 0] }, {
+							display:'inline-block',
+							complete: function(){
+								LJ.fn.toastMsg("Welcome back " + LJ.user.name, 'info');
+							}
+						});
+
+					});
+
 				});
 
 				LJ.params.socket.on('create event success', function( myEvent ){
@@ -1549,7 +1533,7 @@ window.LJ = {
         							LJ.state.jspAPI[chatId].scrollToBottom(); })
 
         },
-        reloadRooms: function( id ){
+        initRooms: function( id ){
 
         	LJ.params.socket.emit( 'load rooms' , id );
 

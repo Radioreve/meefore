@@ -1,14 +1,7 @@
 
 	var express = require('express'),
-		cloudinary = require('cloudinary'),
 		jwt = require('jsonwebtoken'),
 		config = require('./config/config');
-
-		cloudinary.config({ 
-							cloud_name: config.cloudinary.cloud_name,
-						    api_key: config.cloudinary.api_key,
-						    api_secret: config.cloudinary.api_secret
-						});
 
 	module.exports = function(app,passport){
 
@@ -54,25 +47,12 @@
 				}
 				else{
 
-					// Generating cloud uploadg tag with a specific signature, valid 1 hour
-					var cloudTag = cloudinary.uploader.image_upload_tag( 'hello_world' , { public_id: user._id });
-					var token = jwt.sign(user, config.jwtSecret, { expiresInMinutes: 60*5 });
+					var token = jwt.sign( user, config.jwtSecret, { expiresInMinutes: 60*5 });
 
-	  				res.json(200,{
+	  				res.json( 200, {
 	  					_id:         	 user._id,
-	  					email:       	 user.local.email,
-	  					name:        	 user.name,
-	  					age:         	 user.age,
-	  					status:      	 user.status,
-	  					description: 	 user.description,
-	  					imgId:      	 user.imgId,
-	  					imgVersion: 	 user.imgVersion,
-	  					eventsAskedList: user.eventsAskedList,
-	  					hostedEventId:   user.hostedEventId,
-	  					newsletter:      user.newsletter,
 	  					msg:         	 info.msg,
 	  					token:       	 token,
-	  					cloudTag:    	 cloudTag
 	  				});
 	  				
 					res.end();
