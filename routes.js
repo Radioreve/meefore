@@ -12,15 +12,15 @@
 
 	module.exports = function(app,passport){
 
-		app.get('/home', function( req, res){
+		app.get('/home', function( req, res ){
 			res.sendfile( __dirname + '/index.html');
 		});
 
-		app.get('/test', function( req, res){
+		app.get('/test', function( req, res ){
 			res.sendfile(__dirname + '/test.html');
 		})
 
-		app.get('*', function( req, res){
+		app.get('*', function( req, res ){
 			res.redirect('/home');
 		});
 

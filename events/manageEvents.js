@@ -21,6 +21,7 @@ var createEvent = function(data) {
     newEvent.beginsAt = beginsAt;
 
     User.findById(hostId, {}, function(err, user) {
+
         if (!err ){
 
             if( user.status === 'hosting' ){
@@ -62,6 +63,7 @@ var createEvent = function(data) {
             }
 
             newEvent.save( function( err, myEvent ){
+                
                 if( !err ) {
                     global.io.emit('create event success', myEvent);
 

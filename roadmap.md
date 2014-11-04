@@ -1,7 +1,6 @@
 
 #Idées
 	- Faut que les users puissent lacher un commentaire, genre 24H après la fin d'une soirée, sur la fiche de l'host
-	- Filtrer sur l'arondissement et l'heure
 	- Rajouter un data--hint type "attention si vous faites des events chez vous!" 
 	- Donner à 'host la possibilité de valider un user, et le nombre de personnes prévues'
 
@@ -10,7 +9,7 @@
   ~ Lundi
 	- Nodemailer (email bienvenue + mot de passe oublié) 
   ~ Mardi
-	- Gérer la terminaison automatique
+	- Gérer la terminaison automatique, implémenter le state "frozen" entre 7h du mat, et 14h.
   ~ Mercredi
 	- Ajouter dynamiquement nombre de participants 
   ~ Jeudi
@@ -32,6 +31,7 @@
 	- Eventuellement pictogramms en fin 
 
 #Refactor
+	- Faire en sort qu'à chaque connecion socket, on load tous les params d'un coup. (User infos + Settings + Globals...)
 	- Utiliser le Module Pattern
 	- Utiliser JsRender
 

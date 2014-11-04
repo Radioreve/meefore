@@ -100,7 +100,10 @@ window.LJ = {
 		'apparte',
 		'bar',
 		'rencontre',
-		'vodka'
+		'vodka',
+		'cameltoe',
+		'erasmus',
+		'firsttime'
 	],
 	locList: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ],
         $body                 : $('body'), 
@@ -153,10 +156,13 @@ window.LJ = {
 
 		},
 		initSocketConnection: function(jwt){
+
 			LJ.params.socket = io.connect({
 				query:'token='+jwt
 			});
-			LJ.fn.initEventListeners();
+
+			/* Initialisation des socket.on('event',...); */
+			LJ.fn.initSocketEventListeners();
 
 		},
 		initAnimations: function(){
@@ -512,21 +518,21 @@ window.LJ = {
 				/* Via la connexion socket authentifiée 
 				*/
 
-				LJ.fn.initSocketConnection(user.token);
-				LJ.fn.initCloudinary(user.cloudTag);
+				LJ.fn.initSocketConnection( user.token );
+				LJ.fn.initCloudinary( user.cloudTag );
 
 				// Internal State Update
-				LJ.fn.setClientSettings(user);
+				LJ.fn.setClientSettings( user );
 				LJ.fn.fetchEvents();
-				LJ.fn.reloadRooms(LJ.user._id);
+				LJ.fn.reloadRooms( LJ.user._id );
 
 				// User Interface Update
 				LJ.fn.renderUserPreferences();
 				LJ.fn.renderMainThumb();
 
-				LJ.fn.replaceMainImage(LJ.user.imgId,
-							           LJ.user.imgVersion,
-							           LJ.cloudinary.displayParamsProfile);
+				LJ.fn.replaceMainImage( LJ.user.imgId,
+							            LJ.user.imgVersion,
+							            LJ.cloudinary.displayParamsProfile );
 
 				switch( LJ.user.status ){
 					case 'new':
@@ -587,11 +593,6 @@ window.LJ = {
 				LJ.$backToLogin.velocity('transition.slideRightIn', { duration: 400 });
 				LJ.fn.hideLoaders();
 			});
-		},
-		toggleAnimatingState: function(){
-
-			LJ.state.animatingContent ? LJ.state.animatingContent = false : LJ.state.animatingContent = true ;
-
 		},
 		displayViewAsNew: function(){
 
@@ -951,6 +952,7 @@ window.LJ = {
 			if( tagClass == 'apparte' ) return 'appart\'';
 			if( tagClass == 'apero' ) return 'apéro';
 			if( tagClass == 'nuitblanche' ) return 'nuit blanche';
+			if( tagClass == 'firsttime' ) return 'première fois';
 
 			return tagClass
 		},
@@ -1069,7 +1071,7 @@ window.LJ = {
 
            	chatWrap.velocity("transition.slideLeftOut", { duration: 300 });
         },
-		initEventListeners: function(){
+		initSocketEventListeners: function(){
 
 				LJ.params.socket.on('update profile success', function(data){
 
@@ -1502,7 +1504,9 @@ window.LJ = {
         		});
         },
         buildChatId: function(eventId, hostId, userId){
+
         	return eventId + '_' + hostId + '-' + userId;
+
         },
         /*
         	Ajoute une ligne en prennant comme paramètre:
@@ -1572,15 +1576,7 @@ window.LJ = {
 
             $( '.loaderWrap' ).velocity( 'fadeOut', { duration: 250 });
 
-        },
-        swapNodes: function(a, b) {
-
-		    var aparent= a.parentNode;
-		    var asibling= a.nextSibling===b? a : a.nextSibling;
-		    b.parentNode.insertBefore(a, b);
-		    aparent.insertBefore(b, asibling);
-
-		}		       
+        }	       
     }//end fn
 
 }//end LJ
