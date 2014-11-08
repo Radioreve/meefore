@@ -137,6 +137,10 @@
 .askInWrap .themeBtnToggle{
 	width:100%;
 }
+.askInWrap .suspended{
+	color: rgb(61, 51, 51); 
+	background: rgb(255, 240, 220); 
+	}
 /* CSS pour créer un évenements */
 #createEventWrap{
 	/* width: 500px; */
@@ -196,7 +200,7 @@ input[type="number"]{
 	padding: 10px 12px; 
 	border-radius: 2px;
 	margin: 4px;
-	/* background: #F5F5F5; */
+	background: #F5F5F5;
 	text-align: center;
 }
 .loc{

@@ -120,15 +120,32 @@
 						toServer: "Error updating profile, invalid email (regex)" 
 					}); 
 			}
-			*/
+			
 
 			if( newPw.length < 6 && newPw.length != 0){
 				return eventUtils.raiseError({
 					socket: socket,
-					toClient: "Password must be at least 6 characters long",
+					toClient: "Email is too short ( < 6 )",
 					toServer: "Error updating profile, invalid email (too short)" 
 				}); 
 				
+			}
+
+			if( newPw.length > 30 && newPw.length != 0){
+				return eventUtils.raiseError({
+					socket: socket,
+					toClient: "Email is too long ( > 30 )",
+					toServer: "Error updating profile, invalid email (too short)" 
+				}); 
+				
+			}
+
+			if( /^a-zA-Z0-9$/.test( newPw.trim() ) == false ){
+				return eventUtils.raiseError({
+					socket: socket,
+					toClient: "Password contains invalid char!",
+					toServer: "Error updating profile, invalid char" 
+				});
 			}
 
 			if( newPw != newPwConf ){
@@ -138,6 +155,7 @@
 					toServer: "Passwords didn't match" 
 				}); 
 			}
+			*/
 
 			/* No error was raised */
 			if ( user.local.email != newEmail){

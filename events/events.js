@@ -1,38 +1,41 @@
+	
+	initEvents    = require('./initEvents'),
+	profileEvents = require('./profileEvents'),
+	manageEvents  = require('./manageEvents'),
+	otherEvents   = require('./otherEvents'),
+	clientEvents  = require('./clientEvents'),
+	mailEvents    = require('./mailEvents');
 
-//global.sockets[id] events handlers
-		profileEvents = require('./profileEvents'),
-		manageEvents = require('./manageEvents'),
-		otherEvents = require('./otherEvents'),
-		clientEvents = require('./clientEvents');
-
-
-module.exports = function(id){
+	module.exports = function(id){
 
 		var socket = global.sockets[id];
 
-//Events d'initialisation
-		socket.on( 'fetch user and configuration', otherEvents.fetchUserAndConfiguration );
+	//Events d'initialisation
+		socket.on( 'fetch user and configuration', initEvents.fetchUserAndConfiguration );
 
-//Events relatifs au profile utilisateur
-		socket.on( 'fetch user', profileEvents.fetchUser				);  // useless 
-		socket.on( 'update profile', profileEvents.updateProfile   		);
-		socket.on( 'update picture', profileEvents.updatePicture   		);
-		socket.on( 'update settings', profileEvents.updateSettings 		);
+	//Events relatifs au profile utilisateur
+		socket.on( 'fetch user', profileEvents.fetchUser					);  // useless 
+		socket.on( 'update profile', profileEvents.updateProfile   			);
+		socket.on( 'update picture', profileEvents.updatePicture   			);
+		socket.on( 'update settings', profileEvents.updateSettings 			);
 
-//Events relatif à la gestion d'un évènement
-		socket.on( 'create event', manageEvents.createEvent		   		);
-		socket.on( 'cancel event', manageEvents.cancelEvent		   		);
-		socket.on( 'suspend event', manageEvents.suspendEvent	   		);
-		socket.on( 'fetch askers', manageEvents.fetchAskers		   		);
+	//Events relatif à la gestion d'un évènement
+		socket.on( 'create event', manageEvents.createEvent		   			);
+		socket.on( 'cancel event', manageEvents.cancelEvent		   			);
+		socket.on( 'suspend event', manageEvents.suspendEvent	   			);
+		socket.on( 'fetch askers', manageEvents.fetchAskers		   			);
 
-//Events inclassables
-		socket.on( 'send message', otherEvents.sendMessage		   		);
-		socket.on( 'load rooms', otherEvents.reloadRooms		   		);
+	//Events inclassables
+		socket.on( 'send message', otherEvents.sendMessage		   			);
+		socket.on( 'load rooms', otherEvents.reloadRooms		   			);
 
-//Events relatifs au démarrage d'une session client
-		socket.on( 'fetch events', clientEvents.fetchEvents		   		);
-		socket.on( 'request participation in', clientEvents.requestIn	);		
-		socket.on( 'request participation out', clientEvents.requestOut );
+	//Events relatifs au démarrage d'une session client
+		socket.on( 'fetch events', clientEvents.fetchEvents		   			);
+		socket.on( 'request participation in', clientEvents.requestIn		);		
+		socket.on( 'request participation out', clientEvents.requestOut 	);
+
+	//Events de mails
+		socket.on( 'request welcome email', mailEvents.requestWelcomeEmail	);
 
 		socket.on('test', function(data){
 			

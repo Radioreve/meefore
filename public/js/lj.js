@@ -97,6 +97,7 @@ window.LJ = {
         $body                 : $('body'), 
 		$loginWrap		 	  : $('#loginWrap'),
 		$signupWrap			  : $('#signupWrap'),
+		$resetWrap   	      : $('#resetWrap'),
 		$profileWrap	      : $('#profileWrap'),
 		$eventsWrap		      : $('#eventsWrap'),
 		$manageEventsWrap     : $('#manageEventsWrap'),
@@ -104,6 +105,7 @@ window.LJ = {
 		$thumbWrap			  : $('#thumbWrap'),
 		$loginBtn  	          : $('#login'),
 		$signupBtn            : $('#signup'),
+		$resetBtn			  : $('#reset'),
 		$emailInput           : $('#email'),
 		$passwordInput        : $('#pw'),
 		$lostPassword         : $('#lost_pw'),
@@ -149,13 +151,30 @@ window.LJ = {
 		initAnimations: function(){
 
 			$('#bcm_member').click(function(){
-				LJ.fn.displayContent( LJ.$signupWrap );
+				LJ.fn.displayContent( LJ.$signupWrap, {
+					myWayOut: "transition.slideLeftOut",
+					myWayIn: "transition.slideRightIn"
+				});
+			});
+
+			$('#lost_pw').click(function(){
+				LJ.fn.displayContent( LJ.$resetWrap, {
+					myWayOut: "transition.slideRightOut",
+					myWayIn: "transition.slideLeftIn"
+				});
+			});
+
+			$('#pw_remember').click(function(){
+				LJ.fn.displayContent( LJ.$loginWrap, {
+					myWayOut: "transition.slideLeftOut",
+					myWayIn: "transition.slideRightIn"
+				});
 			});
 
 			LJ.$backToLogin.click(function(){
 				LJ.fn.displayContent( LJ.$loginWrap, {
-					myWayOut: "transition.slideLeftOut",
-					myWayIn: "transition.slideRightIn"}
+					myWayOut: "transition.slideRightOut",
+					myWayIn: "transition.slideLeftIn"}
 					);
 			});
 
@@ -222,13 +241,17 @@ window.LJ = {
 
 			LJ.$signupBtn.click(function(e){ 
 				e.preventDefault(); 
-				csl('About to Signup User')
 				LJ.fn.signupUser(); 
 			});
 
 			LJ.$loginBtn.click(function(e){	
 				e.preventDefault();
 				LJ.fn.loginUser();	
+			});
+
+			LJ.$resetBtn.click(function(e){
+				e.preventDefault();
+				LJ.fn.resetPassword();
 			});
 
 			LJ.$menuBtn.click(function(){
@@ -304,18 +327,32 @@ window.LJ = {
 			LJ.$validateBtn.click( LJ.fn.updateProfile );
 
 			LJ.$body.on('click', '.askIn', function(){
+
 				var $self = $(this);
-				if(!$self.hasClass('asked')){
-					$self.addClass('asked');
-					$self.text('En attente');
-					LJ.fn.requestIn($self); 
-				}else{
-				var $eHead = $self.parents('.eventItemWrap').find('.e-head');
-					if($eHead.hasClass('e-active')) $eHead.click(); 
-					$self.removeClass('asked');
-					$self.text('Je veux y aller');
-					LJ.fn.requestOut($self);
+
+				if( $self.hasClass('open') ){
+
+					if( ! $self.hasClass('asked') )
+					{
+						$self.addClass('asked');
+						$self.text('En attente');
+						LJ.fn.requestIn( $self ); 
+					}
+
+					else
+					{
+						var $eHead = $self.parents('.eventItemWrap').find('.e-head');
+						if( $eHead.hasClass('e-active') ) $eHead.click(); 
+						$self.removeClass('asked');
+						$self.text('Je veux y aller');
+						LJ.fn.requestOut( $self );
+					}
 				}
+				else
+				{
+					LJ.fn.toastMsg('Event is currently suspended', 'info');
+				}
+
 			});
 
 			LJ.$body.on('click','.themeBtnToggleHost', function(){
@@ -379,7 +416,6 @@ window.LJ = {
 					var tag = $( el ).attr('class').split(' ')[1];						 
 					tags.push( tag );
 				});
-
 				
 				$('.filters-locs-row .selected').each( function( i, el ){
 					var loc = parseInt( $( el ).attr('class').split(' ')[1].split('loc-')[1] );				 
@@ -396,11 +432,23 @@ window.LJ = {
 		},
 		signupUser: function(credentials){
 
-			   credentials = {} ;
+		    credentials = {} ;
 
-				credentials.email = LJ.$emailInputSignup.val();
-				credentials.password = LJ.$passwordInputSignup.val();	
-				//csl("Posting this : " +JSON.stringify(credentials,0,4))
+			credentials.email = LJ.$emailInputSignup.val();
+			credentials.password = LJ.$passwordInputSignup.val();	
+			//csl("Posting this : " +JSON.stringify(credentials,0,4))
+
+			LJ.$backToLogin.velocity("transition.slideLeftOut", { duration:300 });
+			LJ.fn.showLoaders();
+			$('input.input-field').addClass('validating');
+
+			if( "" ===  $('#pwSignup').val().trim() || "" === $('#pwCheckSignup').val().trim() || "" === $('#emailSignup').val().trim() ){
+				return LJ.fn.handleFailedSignup( { msg: "Input is missing" });
+			}
+
+			if( $('#pwSignup').val() != $('#pwCheckSignup').val() ){
+				return LJ.fn.handleFailedSignup( { msg: "Passwords don't match" });
+			}
 
 			$.ajax({
 				method:'POST',
@@ -409,9 +457,6 @@ window.LJ = {
 				data : {
 					email    : credentials.email,
 					password : credentials.password
-				},
-				beforeSend : function(){
-					LJ.fn.handleBeforeSendSignup();
 				},
 				success: function(data){
 					data.email    = credentials.email;
@@ -448,6 +493,30 @@ window.LJ = {
 					LJ.fn.handleFailedLogin(data);
 				}
 			});
+		},
+		resetPassword: function(){
+
+			var email = $('#pwResetInput').val().trim();
+
+			LJ.fn.showLoaders();
+			$('input.input-field').addClass('validating');
+			$('#pw_remember').velocity('transition.slideRightOut', { duration: 300 });
+
+			$.ajax({
+				method:'POST',
+				url:'/reset',
+				dataType:'json',
+				data : {
+					email: email
+				},
+				success: function(data){
+					LJ.fn.handleSuccessReset(data);
+				},
+				error : function(data){
+					LJ.fn.handleFailedReset(data);
+				}
+			});
+
 		},
 		updateProfile: function(){
 			var _id 		 = LJ.user._id,
@@ -508,28 +577,69 @@ window.LJ = {
 			});
 
 		},
-		handleBeforeSendSignup: function(){
-
-			LJ.$backToLogin.velocity("transition.slideLeftOut", { duration:300 });
-			LJ.fn.showLoaders();
-			$('input.input-field').addClass('validating');
-		},
 		handleSuccessSignup: function(data){
 
 			sleep(LJ.ui.artificialDelay,function(){
+
 				LJ.fn.hideLoaders();
 				LJ.fn.loginUser(data);
+
 			});		
+
 		},
 		handleFailedSignup: function(data){
 
-			data = JSON.parse(data.responseText);
+			if ( data.responseText )
+				data = JSON.parse(data.responseText);
+
+			var errorMsg = data.msg;
+
 			sleep(LJ.ui.artificialDelay,function(){
+
 				$('input.input-field').removeClass('validating');
-				LJ.fn.toastMsg( data.msg, 'error');
+				LJ.fn.toastMsg( errorMsg, 'error' );
 				LJ.$backToLogin.velocity('transition.slideRightIn', { duration: 400 });
 				LJ.fn.hideLoaders();
+
 			});
+
+		},
+		handleSuccessReset: function(data){
+
+			sleep(LJ.ui.artificialDelay,function(){
+
+				LJ.fn.hideLoaders();
+				$('input.input-field').removeClass('validating');
+				$('#email').val( $('#pwResetInput').val() );
+
+				LJ.fn.displayContent( LJ.$loginWrap );
+
+				sleep(1000, function(){
+					LJ.fn.toastMsg( data.msg , 'info');
+					$('#pwResetInput').val('');
+					$('#pw_remember').velocity('transition.slideRightIn', { duration: 400 });
+				
+				});
+
+			});		
+
+		},
+		handleFailedReset: function(data){
+
+			if ( data.responseText )
+				data = JSON.parse(data.responseText);
+
+			var errorMsg = data.msg;
+
+			sleep(LJ.ui.artificialDelay,function(){
+
+				$('input.input-field').removeClass('validating');
+				LJ.fn.toastMsg( errorMsg, 'error');
+				$('#pw_remember').velocity('transition.slideRightIn', { duration: 400 });
+				LJ.fn.hideLoaders();
+
+			});
+
 		},
 		displayViewAsNew: function(){
 
@@ -551,7 +661,6 @@ window.LJ = {
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
             LJ.fn.displayContent(LJ.$eventsWrap, { myWayIn: 'transition.slideDownIn' });
-
 
 		},
 		displayViewAsHost: function(){
@@ -851,7 +960,7 @@ window.LJ = {
 			if( e.hostId == LJ.user._id ){
 				button += 'right themeBtnToggle themeBtnToggleHost"> Management'	
 			}else{
-				button += 'askIn themeBtnToggle right';
+				button += 'askIn themeBtnToggle right ' + e.state;
 				LJ.user.eventsAskedList.indexOf(e._id)>-1? button+=' asked "> En attente' : button+='">Je veux y aller';
 			}
 				button+="</button></div>";
@@ -867,19 +976,19 @@ window.LJ = {
 			var html = '<div class="eventItemWrap" data-eventid="'+e._id+'" data-hostid="'+e.hostId+'" data-location="'+e.location+'">'
 						+'<div class="e-head hint--left" data-hint="'+e.hostName+'">' + imgTag 
 						+'</div>'
-						+'<div class="e-hour e-weak">'+LJ.fn.matchDateHHMM( e.beginsAt )+'</div>'
+						+'<div class="e-hour e-weak">'+ LJ.fn.matchDateHHMM( e.beginsAt ) +'</div>'
 						+'<div class="e-guests">'
-						  +'<i class="icon icon-users"></i><span>'+e.askersList.length+'</span>/'+'<span>'+e.maxGuest+'</span>'
+						  +'<i class="icon icon-users"></i><span>'+ e.askersList.length +'</span>/'+'<span>'+ e.maxGuest +'</span>'
 						+'</div>'
 						+'<div class="e-location">'
 						  +'<span>'+ LJ.fn.matchLocation( e.location ) +'</span>'
 						+'</div>'
 						+'<div class="e-body">'
-						   +'<div class="e-name">'+e.name+' </div>'
+						   +'<div class="e-name">'+ e.name +' </div>'
 						   +'<div class="e-row">'
 						   +'</div>'
 						   +'<div class="e-row">'
-						     +'<div class="e-description e-weak">'+e.description+'</div>'
+						     +'<div class="e-description e-weak">'+ e.description +'</div>'
 						   +'</div>'
 						   + eventTags
 						+'</div>'
@@ -925,7 +1034,7 @@ window.LJ = {
             var d = LJ.cloudinary.displayParamsAsker;
             	d.version = a.imgVersion; // Ne fonctionne pas car le param 'a' provient de la base qui est pas MAJ
 
-            var imgTag = $.cloudinary.image(a.imgId,d).prop('outerHTML');
+            var imgTag = $.cloudinary.image( a.imgId, d ).prop('outerHTML');
 
             var chatId = LJ.fn.buildChatId( LJ.user.hostedEventId, LJ.user._id, a.id );
 
@@ -1036,13 +1145,14 @@ window.LJ = {
 
 					/* L'ordre de l'appel est important, car certaines 
 					/* informations sont cachées par les premières 
+					/* et utilsiées par celles d'après 
 
 							- On cache les informations sur l'user 
 							- On fait les mises à jours du DOM (checkbox, thumbPic, input) à partir du cache
 							- On envoie une demande des derniers évènements
 							- On envoie une demande pour rejoindre les chatrooms en cours
 							- On active le pluggin d'upload de photos
-							- On génère la partie HTML dynamique type Tags...
+							- On génère le HTML dynamique à partir de données server ( Tags... )
 					*/
 
 					var user = data.user;
@@ -1058,6 +1168,7 @@ window.LJ = {
 
 						switch( LJ.user.status ){
 							case 'new':
+								LJ.params.socket.emit('request welcome email', LJ.user._id );
 								LJ.fn.displayViewAsNew();
 								break;
 							case 'idle':
@@ -1151,7 +1262,8 @@ window.LJ = {
 					
 					sleep( LJ.ui.artificialDelay , function(){ 
 
-						var eventState = data.myEvent.state;
+						var eventState = data.myEvent.state,
+							eventId    = data.eventId;
 
 						switch( eventState ){
 
@@ -1160,11 +1272,11 @@ window.LJ = {
 						break;
 
 						case 'suspended':
-							LJ.fn.handleSuspendEvent( data );
+							LJ.fn.handleSuspendEvent( data, 'suspended' );
 						break;
 
 						case 'open':
-							LJ.fn.handleSuspendEvent( data );
+							LJ.fn.handleSuspendEvent( data, 'open' );
 						break;
 
 						default:
@@ -1307,24 +1419,33 @@ window.LJ = {
         		return el.hostId == data.hostId; 
         	});
 
-
 		},
-		handleSuspendEvent: function(data){
+		handleSuspendEvent: function(data, state){
 
-			$('.pending').removeClass('pending');
-			var $li = $('#suspendEvent');
+			var eventId = data.eventId;
 
 			if( data.hostId == LJ.user._id ){
-				if( data.myEvent.state == 'suspended' ){
-					LJ.fn.toastMsg( "Les inscriptions sont momentanément suspendues", 'info' );
-					$li.text('Reprendre');
-				}
-				if( data.myEvent.state == 'open' ){
-					LJ.fn.toastMsg( "Les inscriptions sont à nouveau possible", 'info' );
-					$li.text('Suspendre');
-				}
+
+				var $li = $('#suspendEvent');
+				$('.pending').removeClass('pending');
+
+					if( data.myEvent.state == 'suspended' ){
+						LJ.fn.toastMsg( "Les inscriptions sont momentanément suspendues", 'info' );
+						$li.text('Reprendre');
+					}
+
+					if( data.myEvent.state == 'open' ){
+						LJ.fn.toastMsg( "Les inscriptions sont à nouveau possible", 'info' );
+						$li.text('Suspendre');
+					}
 			}
 
+			/* Pour tous les users */
+			var eventWrap = LJ.$eventsWrap.find('.eventItemWrap[data-eventid="' + eventId + '"]');
+
+			eventWrap.find('button.askIn')
+					 .text('Suspendu')
+					 .removeClass('open').removeClass('suspended').addClass( state );
 
 		},
 		createEvent: function(){

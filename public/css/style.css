@@ -133,7 +133,8 @@ body > header > h1{
 	position: absolute;
 	left: 0;
 	height: 24px;
-	width: 30px;
+	width: 33px;
+	padding-right: 2px;
 	padding-top: 8px;
 	top: 0;
 }
@@ -245,26 +246,34 @@ body > header > h1{
 #contact:hover{
 	cursor:pointer;
 }
-#loginWrap, #signupWrap{
+#loginWrap, 
+#signupWrap,
+#resetWrap{
 	height: 280px;
 	margin: auto;
 	padding:10px;
 }
 #loginWrap,
-#signupWrap{
+#signupWrap,
+#resetWrap{
 	width:400px;
 }
-#loginWrap #formWrap, #signupWrap #formWrap{
+#loginWrap .formWrap,
+#signupWrap .formWrap,
+#resetWrap .formWrap{
 	margin-top:20px;
 }
-#loginWrap #submitWrap, #signupWrap #submitWrap{
+#loginWrap .submitWrap,
+#signupWrap .submitWrap,
+#resetWrap .submitWrap{
 	border:none;
 	width: 80%;
 	height: 80px;
 	position: relative;
 }
-#loginWrap #submitWrap input,
-#signupWrap #submitWrap input{
+#loginWrap .submitWrap input,
+#signupWrap .submitWrap input,
+#resetWrap .submitWrap input{
 	width: 100%;
 	height: 40px;
 	border: none;
@@ -300,8 +309,10 @@ body > header > h1{
 .themeBtnToggleHost:hover{
 	text-decoration: underline;
 }
-#loginWrap #submitWrap #login,
-#signupWrap #submitWrap #signup{
+#loginWrap   #login,
+#signupWrap  #signup,
+#resetWrap   #reset
+{
 	background: #F5F5F5;
 	color: #414141;
 	border: 1px solid #DFDFDF;
@@ -317,8 +328,9 @@ body > header > h1{
 .input-field:focus{
 	box-shadow: 1px 1px 5px #CECECE;
 }
-#loginWrap #submitWrap .sub-actions,
-#signupWrap #submitWrap .sub-actions{
+#loginWrap  .sub-actions,
+#signupWrap .sub-actions,
+#resetWrap  .sub-actions{
 	margin-top: 10px;
 	font: 12px 'Ubuntu';
 	text-decoration: underline;
@@ -525,7 +537,7 @@ body > header > h1{
 .actionsStyle span:before{
 	content: "";
 	margin-right: 10px;
-	border: 4px solid #FF3D3D;
+	border: 4px solid #E83333;
 	border-radius: 5px;
 	display: inline-block;
 }

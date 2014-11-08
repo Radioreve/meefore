@@ -4,14 +4,24 @@
 	    eventUtils = require('./eventUtils'),
 	    _ = require('lodash');
 
+
 	    var fetchEvents = function(userId){
 
 	    	var socket = global.sockets[userId];
 
-			console.log('Fetching all events');
-			Event.find({state: {$ne: 'canceled'}}, function(err,events){
-				if(err){console.log(err); return;}
-					socket.emit('fetch events success', events);
+			console.log('Fetching all events for user with socket : ' + socket);
+			Event.find({ state: { $ne: 'canceled' }}, function( err, events ){
+
+				if( err )
+					return eventUtils.raiseError({
+						socket: socket,
+						err: err,
+						toServer: "Error fetching event",
+						toClient: "Error loading recent events..."
+					});
+
+				socket.emit('fetch events success', events);
+
 			});
 	    }; 
 	  
@@ -23,30 +33,30 @@
 
 			if( hostId == userId ) return;  /* Send back un msg au client éventuellement */
 
-			var room   = eventUtils.buildRoomId(eventId, hostId, userId),
+			var room   = eventUtils.buildRoomId( eventId, hostId, userId ),
 				userSocket = global.sockets[userId],
 				hostSocket = global.sockets[hostId];
 
-				userSocket.join(room);
+				userSocket.join( room );
 				console.log('User '+userId+' has joined the room : \n'+room +'\n');
 
 		     if( hostSocket != undefined ){ 
-		     	hostSocket.join(room); 
+		     	hostSocket.join( room ); 
 				console.log('Host '+hostId+' has joined the room : \n'+room + '\n');
 			}
 		
-			Event.findById( eventId, {}, function(err,myEvent){
+			Event.findById( eventId, {}, function( err, myEvent ){
 
-					User.findById( userId, {}, function(err,user){
+					User.findById( userId, {}, function( err, user ){
 						if( err ){
-							console.log('Error finding user : '+err);
+							console.log('Error finding user : ' + err );
 						}
 						else{
-							user.socketRooms.push(room);
-							user.eventsAskedList.push(myEvent._id.toString());
-							user.save(function(err,user){
+							user.socketRooms.push( room );
+							user.eventsAskedList.push( myEvent._id.toString() );
+							user.save(function( err, user ){
 								if( err ){
-									console.log("Error updating User Model : "+err);
+									console.log("Error updating User Model : " + err );
 								}else{
 									var asker = {
 										id:user._id.toString(),
@@ -57,8 +67,8 @@
 										imgVersion:user.imgVersion,
 										msg:data.msg
 									}; 
-									myEvent.askersList.push(asker);
-									myEvent.save(function(err){
+									myEvent.askersList.push( asker );
+									myEvent.save( function( err ){
 										if( !err ){
 											global.io.emit('request participation in success', { hostId:hostId,
 																							 	 userId:userId,

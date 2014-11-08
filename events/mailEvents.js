@@ -1,0 +1,59 @@
+
+	var User 		= require('../models/UserModel'),
+	    Event 		= require('../models/EventModel'),
+	    _ 			= require('lodash'),
+	    cloudinary  = require('cloudinary'),
+		eventUtils  = require('./eventUtils'),
+		config      = require('../config/config'),
+	    appSettings = require('../config/settings'),
+	    nodemailer  = require('nodemailer');
+
+
+	var sendEmail = function( userId ){
+
+		
+	};
+
+	var requestWelcomeEmail = function( userId ){
+
+		var userSocket = global.sockets[userId];
+
+		User.findById( userId, {}, function( err, user ){
+
+			if( err ){
+
+		        return eventUtils.raiseError({
+					socket: userSocket,
+					err: err,
+					toServer: "Can't send mail (no user found)",
+					toClient: "Can't send mail (no user found)"
+				});
+
+			}
+
+			var email = user.local.email;
+
+			var mailOptions = config.mailOptionsWelcome,
+				transporter = config.transporter;
+
+				mailOptions.to  = email;
+
+			transporter.sendMail( mailOptions, function( err, info ){
+
+			    if( err ){
+			        console.log( err );
+			    }
+			    else{
+			        console.log('Message sent: ' + info.response );
+			    }
+			});
+
+		});
+
+	};
+
+	module.exports = {
+
+		requestWelcomeEmail: requestWelcomeEmail
+
+	}

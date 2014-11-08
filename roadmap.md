@@ -10,7 +10,7 @@
 #Schedule 
 
   ~ Lundi
-	- Nodemailer (email bienvenue + mot de passe oublié) 
+	- Quand on clique sur une photo avec la class ".zoomable", fond noir puis photo affichée en grand avec radius max
   ~ Mardi
 	- Gérer la terminaison automatique, implémenter le state "frozen" entre 7h du mat, et 14h.
   ~ Mercredi

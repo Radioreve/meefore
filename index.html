@@ -22,7 +22,7 @@
 	</div>	
 </div>
 	<header>
-		<h1>Night Friends</h1>
+		<h1>We Nighters</h1>
 		<img src="img/bamboo-black.png" height="27">
 		  <ul id="menuWrap" class="">
 			<li id="profile" class="left menu menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span></span></li>
@@ -43,15 +43,15 @@
 		</div>
 		<section id="contentWrap" class="">
 			<section id="loginWrap" class="revealed centered">
-			  <div class="slideLeftOut">
+			  <div class="">
 				<h2>Identifiez-vous!</h2>
 			  </div>
-			  <div class="slideRightOut">
-				<div id="formWrap"  class="">
+			  <div class="">
+				<div class="formWrap">
 					<form autocomplete="off">
 						<input class="input-field" type="text" id="email" placeholder="email">
 						<input class="input-field" type="password" id="pw" placeholder="password">
-						<div class="input-field" id="submitWrap">
+						<div class="input-field submitWrap">
 							<div class="rel">
 								<input type="submit" class="themeBtn" id="login" value="login"><div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div></input>
 							</div>
@@ -64,20 +64,38 @@
 			</section>
 			<section id="signupWrap" class="none centered">
 				<h2>Inscrivez-vous</h2>
-				<div id="formWrap" class="">
+				<div class="formWrap">
 					<form>
 						<input class="input-field" type="text" id="emailSignup" placeholder="email">
 						<input class="input-field" type="password" id="pwSignup" placeholder="password">
 						<input class="input-field" type="password" id="pwCheckSignup" placeholder="password again">
-						<div class="input-field" id="submitWrap">
+						<div class="input-field submitWrap">
 							<div class="rel">
 								<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
 								<div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
 							</div>
-							<div id="b_to_login" class=" sub-actions left">S'identifier</div>
+							<div id="b_to_login" class="sub-actions left">S'identifier</div>
 						</div>
 					</form>
 				</div>
+			</section>
+			<section id="resetWrap" class="none centered">
+			  <div class="">
+				<h2>Trop de vodka ? </h2>
+			  </div>
+			  <div class="">
+				<div class="formWrap">
+					<form autocomplete="off">
+						<input class="input-field" type="text" id="pwResetInput" placeholder="email">
+						<div class="input-field submitWrap">
+							<div class="rel">
+								<input type="submit" class="themeBtn" id="reset" value="Reset password"><div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div></input>
+							</div>
+							<div id="pw_remember" class=" sub-actions right">Je m'en souviens!</div>
+						</div>
+					</form>
+			    </div>
+			  </div>
 			</section>
 			<section id="profileWrap" class="none centered">
 				<h2>Account settings</h2>
@@ -119,7 +137,7 @@
 			<section id="createEventWrap" class="none centered">
 				<h2>Créer votre évènement</h2>
 				<div id="createEventInputsWrap">
-					<div class="input-row-wrap hint--right" data-hint="Restez simple et précis">
+					<div class="input-row-wrap">
 						<label for="eventName">C'est quoi ? </label>
 						<input id="eventName" placeholder="Apéro, before, afterwork ..." type="text" class="input-field_create">
 					</div>

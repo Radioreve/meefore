@@ -93,23 +93,28 @@ var suspendEvent = function(data) {
     Event.findById( eventId, {}, function( err, myEvent ){
 
         if( err ){
+
              return eventUtils.raiseError({
                 toClient: "Could not find event",
                 toServer: "Error finding event to suspend",
                 err: err,
                 socket: hostSocket
             });
+             
         }
 
         myEvent.state === 'suspended' ?  myEvent.state = 'open' : myEvent.state = 'suspended';
 
         myEvent.save( function( err, newEvent ){
+
             if( !err ){
+
                 global.io.emit( 'change state event success', {
                     eventId: eventId,
                     hostId: hostId,
                     myEvent: newEvent
                 });
+
             }
         })
         
@@ -199,7 +204,7 @@ var fetchAskers = function(data) {
 
     Event.findById( eventId, {}, function( err, myEvent ) {
 
-        if (err) {
+        if( err ){
             return eventUtils.raiseError({
                 toClient: "Problem fetching askers",
                 toServer: "Problem fetching askers",
@@ -207,8 +212,8 @@ var fetchAskers = function(data) {
                 socket: hostSocket
             });
         } 
-            var askersList = myEvent.askersList;
-            hostSocket.emit( 'fetch askers success', askersList );
+        var askersList = myEvent.askersList;
+        hostSocket.emit( 'fetch askers success', askersList );
         
     });
 };
