@@ -13,19 +13,23 @@
 
 		});
 
-		var mailOptions = {  welcome: {}, reset: {}  };
+		var mailOptions = {  welcome: {}, reset: {}, contact: {}  };
 
-			mailOptions.welcome.from    = 'John Bamboo ✔ <ljayame@gmail.com>',
-			mailOptions.welcome.subject = 'Are you ready ?',
+			mailOptions.welcome.from    = 'Jenny <ljayame@gmail.com>';
+			mailOptions.welcome.subject = 'Are you ready ?';
 			mailOptions.welcome.html    = '<body style="padding:10px;">'
 										   + '<p style="background:#eee; padding:20px">Hello world, welcome on board.</p>'
 									       + '</body>';
 
-			mailOptions.reset.from    = 'John Bamboo ✔ <ljayame@gmail.com>',
+			mailOptions.reset.from    = 'Marianne <ljayame@gmail.com>';
 			mailOptions.reset.subject = 'So you forgot your password, huh?';
 
+			mailOptions.contact.from  = 'Feedbacks <ljayame@gmail.com>';
+			mailOptions.contact.to    = 'methodezela@gmail.com';
+
 		var mailOptionsWelcome = mailOptions.welcome,
-			mailOptionsReset   = mailOptions.reset;
+			mailOptionsReset   = mailOptions.reset,
+			mailOptionsContact = mailOptions.contact;
 		
 		return {
 
@@ -45,7 +49,8 @@
 			},
 			transporter: transporter,
 			mailOptionsWelcome: mailOptionsWelcome,
-			mailOptionsReset: mailOptionsReset
+			mailOptionsReset: mailOptionsReset,
+			mailOptionsContact: mailOptionsContact
 
 		}
 	};

@@ -11,6 +11,7 @@
 
   ~ Lundi
 	- Quand on clique sur une photo avec la class ".zoomable", fond noir puis photo affichée en grand avec radius max
+	- Mettre un unique loader, sur le bandeau, en format gauche à droite. Plus élégant et cohérent
   ~ Mardi
 	- Gérer la terminaison automatique, implémenter le state "frozen" entre 7h du mat, et 14h.
   ~ Mercredi
@@ -23,6 +24,7 @@
 	- Socials signins with passport (Facebook & Google)
 
 #Bugs! :@
+	- Validation des caractères invalides !!!!!
 
 #Mandatory 
   ~> Dev steps

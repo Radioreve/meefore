@@ -9,8 +9,32 @@
 	    nodemailer  = require('nodemailer');
 
 
-	var sendEmail = function( userId ){
+	var sendContactEmail = function( data ){
 
+		var userId = data.userId,
+			name   = data.username,
+			email  = data.email,
+			body   = data.bodytext;
+
+		var socket = global.sockets[userId];
+
+		var mailOptions = config.mailOptionsContact,
+				transporter = config.transporter;
+
+				mailOptions.from = name + ' <' + email +'>';
+				mailOptions.subject = 'Someone has left a comment';
+				mailOptions.html = body;
+
+			transporter.sendMail( mailOptions, function( err, info ){
+
+			    if( err ){
+			        console.log( err );
+			    }
+			    else{
+			        console.log('Message sent: ' + info.response );
+			        socket.emit('send contact email success');
+			    }
+			});
 		
 	};
 
@@ -54,6 +78,7 @@
 
 	module.exports = {
 
-		requestWelcomeEmail: requestWelcomeEmail
+		requestWelcomeEmail: requestWelcomeEmail,
+		sendContactEmail: sendContactEmail
 
 	}

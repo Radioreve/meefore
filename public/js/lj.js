@@ -258,6 +258,22 @@ window.LJ = {
 				LJ.fn.toggleMenu();
 			});
 
+			$('#sendContactForm').click( function(){
+
+				var userId   = LJ.user._id,
+					username = $('#contactName').val(),
+					email = $('#contactMail').val(),
+					bodytext = $('#contactBody').val();
+
+				var data = { userId: userId, username: username, email: email, bodytext: bodytext };
+
+				LJ.fn.showLoaders();
+				$(this).addClass('validating-btn');
+
+				LJ.params.socket.emit('send contact email', data);
+
+			});
+
 			['#contact', '#create', '#profile', '#events', '#management', '#settings'].forEach(function(menuItem){
 
 				$(menuItem).click(function(){
@@ -1358,6 +1374,16 @@ window.LJ = {
 
 					sleep( 600, function(){
 						LJ.fn.toastMsg( data.msg, 'info');
+						$('.validating-btn').removeClass('validating-btn');
+						LJ.fn.hideLoaders();
+					});
+
+				});
+
+				LJ.params.socket.on('send contact email success', function(){
+
+					sleep( 600, function(){
+						LJ.fn.toastMsg( "Mail successfully sent", 'info');
 						$('.validating-btn').removeClass('validating-btn');
 						LJ.fn.hideLoaders();
 					});

@@ -4,7 +4,8 @@
 		config = require('./config/config'),
 		User = require('./models/UserModel'),
 		nodemailer = require('nodemailer'),
-		randtoken = require('rand-token');
+		randtoken = require('rand-token'),
+		validator = require('validator');
 
 
 	module.exports = function(app,passport){
@@ -69,9 +70,9 @@
 
 			var email = req.body.email;
 
-			if( email.trim() === '' ){
+			if( email.trim() === '' || !validator.isEmail( email.trim() )){
 
-				res.json( 500, { msg: "Are you drunk ?" });
+				res.json( 500, { msg: "Are you still drunk ?" });
 				res.end();
 				return;
 			}
