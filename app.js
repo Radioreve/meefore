@@ -23,7 +23,7 @@
 		require('./routes')( app, passport );
 
 		io.use( socketioJwt.authorize({
-			secret:config.jwtSecret,
+			secret:config.jwtSecret,  
 			handshake:true
 		})); 
 

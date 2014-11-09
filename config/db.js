@@ -3,7 +3,7 @@
 
 	var db = function(config){ 
 
-		mongoose.connect( config.db.localUri );
+		mongoose.connect( config.db.composeUri );
 
 		mongoose.connection.on( 'open', function(){
 			console.log('Connected the the MongoHQ databased!');
