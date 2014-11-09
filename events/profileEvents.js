@@ -140,7 +140,7 @@
 				
 			}
 
-			if( /^a-zA-Z0-9$/.test( newPw.trim() ) == false ){
+			if( /[-!$%^&*()@_#+|~=`{}\[\]:";'<>?,.\/]/.test( newPw.trim() ) ){
 				return eventUtils.raiseError({
 					socket: socket,
 					toClient: "Password contains invalid char!",

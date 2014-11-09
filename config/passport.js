@@ -36,7 +36,7 @@
 				    if ( password.trim().length > 30)
 				        return next( null, false, { msg: "Email is too long ( > 30 )" });
 
-				    if ( /^a-zA-Z0-9$/.test( password.trim() ) == false ){
+				    if ( /[-!$%^&*()_#+|@~=`{}\[\]:";'<>?,.\/]/.test( password.trim() ) ){
 				        return next( null, false, { msg: "Email contains invalid char!" });
 				    }
 

@@ -268,7 +268,7 @@ window.LJ = {
 			
             LJ.$body.on('click','.overlay', function(){
 
-            	LJ.fn.toggleOverlay();
+            	LJ.fn.toggleOverlay(); 
 
             });
 
@@ -359,22 +359,19 @@ window.LJ = {
 
 			LJ.$body.on('click', '.askIn', function(){
 
-				// Make sure client doesn't spam ask
-				if( $('.asking').length > 1 ) return LJ.fn.toastMsg("One moment please", 'error');
-
 				var $self = $(this);
 
 				if( $self.hasClass('open') ){
 
-					if( !$self.hasClass('asked') )
-					{	
-						$self.addClass('asking');
-						LJ.fn.showLoaders()
+					if( ! $self.hasClass('asked') )
+					{
+						$self.addClass('asked');
+						$self.text('En attente');
 						LJ.fn.requestIn( $self ); 
 					}
 
 					else
-					{	// To be removed in production for freemium considerations?
+					{
 						var $eHead = $self.parents('.eventItemWrap').find('.e-head');
 						if( $eHead.hasClass('e-active') ) $eHead.click(); 
 						$self.removeClass('asked');
@@ -389,11 +386,11 @@ window.LJ = {
 
 			});
 
-			 LJ.$eventsListWrap.on('click', 'img.zoomable', function(){
+			 LJ.$eventsListWrap.on('click', '.e-head', function(){
 
 			 	/* Extracting the img id from the dom */
-			 	var imgId      = $( this ).data('imgid'),
-			 		imgVersion = $( this ).data('imgversion'); 
+			 	var imgId      = $( this ).find('img').data('imgid'),
+			 		imgVersion = $( this ).find('img').data('imgversion'); 
 
                 LJ.fn.toggleOverlay( LJ.fn.renderLargeThumb( imgId, imgVersion ));
 
@@ -962,28 +959,18 @@ window.LJ = {
 			$('.upload_form').append( upload_tag );
 			$('.cloudinary-fileupload')
 
-				.bind('fileuploadstart', function(){
+				.bind('fileuploadprogress', function( e,data ){
+  							$('.progress_bar').css('width', 
+    						Math.round( (data.loaded * 100.0) / data.total ) + '%');
 
-					LJ.fn.showLoaders();
-
-				})
-				.bind('fileuploadprogress', function( e, data ){
-
-  					$('.progress_bar').css('width', Math.round( (data.loaded * 100.0) / data.total ) + '%');
-
-				}).bind('cloudinarydone',function( e, data ){
+				}).bind('cloudinarydone',function(e, data){
+  							//csl(JSON.stringify(data.result,0,4));
 
   							sleep( LJ.ui.artificialDelay,function(){
+  								$('.progress_bar').fadeOut(function(){
+  									$(this).css({width:"0%"}).fadeIn();
+  									});
 
-  								$('.progress_bar').velocity('transition.slideUpOut', {
-  								 	duration: 400,
-  								 	complete: function(){
-  								 		$(this).css({ width: '0%' })
-  								 			   .velocity('transition.slideUpIn');
-  									} 
-  								});
-
-  								LJ.fn.hideLoaders();
   								LJ.fn.toastMsg('Votre photo de profile a été modifiée', 'info');
 
   								var imgId      = data.result.public_id;
@@ -1038,7 +1025,6 @@ window.LJ = {
                            +'</div>';
 			
 			var imgTag = $.cloudinary.image( e.hostImgId, d )
-						  .addClass('zoomable')
 						  .attr('data-imgid', e.hostImgId )
 						  .attr('data-imgversion', e.hostImgVersion );
 
@@ -1303,67 +1289,60 @@ window.LJ = {
 
 					sleep( LJ.ui.artificialDelay , function(){ 
 
-						if( LJ.user._id === hostId ){
+					/* Host Only */
+					if( LJ.user._id === hostId ){
+							LJ.user.status = 'hosting';
+							LJ.user.hostedEventId = eventId;
+							LJ.fn.toastMsg("Evènement créé avec succès !", 'info');
+							LJ.fn.hideLoaders();
+							$('.themeBtn').removeClass('validating-btn');
+							LJ.$createEventWrap.find('input, #eventDescription').val('');
+							LJ.$createEventWrap.find('.selected').removeClass('selected');
 
-								LJ.user.status = 'hosting';
-								LJ.user.hostedEventId = eventId;
-								LJ.fn.toastMsg("Evènement créé avec succès !", 'info');
-								LJ.fn.hideLoaders();
-								$('.themeBtn').removeClass('validating-btn');
-								LJ.$createEventWrap.find('input, #eventDescription').val('');
-								LJ.$createEventWrap.find('.selected').removeClass('selected');
-
-								$('#management').click();
-
-						}else{
-							
-							LJ.fn.toastMsg( myEvent.hostName + ' a créé un évènement !', 'info' );
-							}
-
-						/* Pour tous les users */
-						var idx = _.sortedIndex( LJ.myEvents, myEvent, 'beginsAt' );
-						console.log('idx = ' + idx);
-						LJ.myEvents.splice( idx, 0, myEvent );
-						var eventHTML = LJ.fn.renderEvent( myEvent );
-
-						/* Prise en compte des effets de bords sinon le jQuery return undefined */
-						if( ( idx == 0 ) ){
-							$( eventHTML ).insertAfter( $('#noEvents') );
-						}else if( idx == LJ.myEvents.length - 1){ // myEvents just got incremented, hence the - 1
-							$( eventHTML ).insertAfter( $( $('.eventItemWrap')[idx-1] ) );
-						}else{
-							$( eventHTML ).insertAfter( $( $('.eventItemWrap')[idx] ) );
-						}
-
-						$( eventHTML ).addClass('inserted');
-
-						/* On affiche directement l'event <=> au moins 1 tag correspond à ce qui été dernièrement filtré */
-						var eventTags = myEvent.tags,
-									L = eventTags.length;
-
-						for( var k = 0; k < L; k++ ){
-							eventTags[k] = "tag-" + eventTags[k];
-						}
-
-						if( _.intersection( eventTags, LJ.selectedTags ).length != 0 || LJ.selectedTags.length == 0){
-
-							var $inserted = $('.inserted');
-
-								$inserted.find('.tag').each( function( i, el ){
-									if( LJ.selectedTags.indexOf( $( el ).attr('class').split(' ')[1] ) != -1 ){
-										$( el ).addClass( 'selected' );
-									}
-								});
-
-							$inserted.velocity('transition.slideLeftIn', { duration: 400 })
-									 .removeClass('inserted');
-						}
-
-
+							$('#management').click();
+					} 
 					});
 
+					/* Pour tous les users */
+					var idx = _.sortedIndex( LJ.myEvents, myEvent, 'beginsAt' );
+					console.log('idx = ' + idx);
+					LJ.myEvents.splice( idx, 0, myEvent );
+					var eventHTML = LJ.fn.renderEvent( myEvent );
 
+					/* Prise en compte des effets de bords sinon le jQuery return undefined */
+					if( ( idx == 0 ) ){
+						$( eventHTML ).insertAfter( $('#noEvents') );
+					}else if( idx == LJ.myEvents.length - 1){ // myEvents just got incremented, hence the - 1
+						$( eventHTML ).insertAfter( $( $('.eventItemWrap')[idx-1] ) );
+					}else{
+						$( eventHTML ).insertAfter( $( $('.eventItemWrap')[idx] ) );
+					}
 
+					$( eventHTML ).addClass('inserted');
+
+					LJ.fn.toastMsg( myEvent.hostName + ' a créé un évènement !', 'info' );
+
+					/* On affiche directement l'event <=> au moins 1 tag correspond à ce qui été dernièrement filtré */
+					var eventTags = myEvent.tags,
+								L = eventTags.length;
+
+					for( var k = 0; k < L; k++ ){
+						eventTags[k] = "tag-" + eventTags[k];
+					}
+
+					if( _.intersection( eventTags, LJ.selectedTags ).length != 0 || LJ.selectedTags.length == 0){
+
+						var $inserted = $('.inserted');
+
+							$inserted.find('.tag').each( function( i, el ){
+								if( LJ.selectedTags.indexOf( $( el ).attr('class').split(' ')[1] ) != -1 ){
+									$( el ).addClass( 'selected' );
+								}
+							});
+
+						$inserted.velocity('transition.slideLeftIn', { duration: 400 })
+								 .removeClass('inserted');
+					}
 				});
 
 				LJ.params.socket.on('change state event success', function( data ){
@@ -1421,38 +1400,26 @@ window.LJ = {
 
 				LJ.params.socket.on('request participation in success', function( data ){
 
-					var hostId  = data.hostId,
-						userId  = data.userId,
-						eventId = data.eventId,
-						asker   = data.asker;						
+					var hostId = data.hostId,
+						userId = data.userId,
+						asker  = data.asker;
 
-					sleep( LJ.ui.artificialDelay, function(){
+					console.log('Requestion participation in received');
+					if( LJ.user._id === data.userId ){
+						LJ.fn.toastMsg('You may now chat with the host', 'info');
+					}else{
 
-						if( LJ.user._id === data.userId ){
+						var askerHTML = LJ.fn.renderAsker(data.asker);
 
-							LJ.fn.hideLoaders();
-							LJ.fn.toastMsg('Your request has been sent', 'info');
-							$('.asking').removeClass('asking').addClass('asked').text('En attente');
+						    $( askerHTML ).appendTo(LJ.$askersListWrap)
+						    			.hide()
+						    			.velocity("transition.slideLeftIn",{
+						    				duration:300
+						    			});
 
-						}else{
+						 LJ.myAskers.push( asker );
+						}
 
-							var askerHTML = LJ.fn.renderAsker(data.asker);
-
-							    $( askerHTML ).appendTo(LJ.$askersListWrap)
-							    			.hide()
-							    			.velocity("transition.slideLeftIn",{
-							    				duration:300
-							    			});
-
-							 LJ.myAskers.push( asker );
-
-							}
-
-						var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span').first();
-							$nbAskers.text( parseInt( $nbAskers.text() ) + 1 );
-
-
-					});
 				});
 
 				LJ.params.socket.on('request participation out success', function(data){
@@ -1471,9 +1438,6 @@ window.LJ = {
 						});
 
 						hostId === LJ.user._id ? $aRow.velocity("transition.slideLeftOut", { duration: 200 }) : LJ.fn.toastMsg('Vous avez été désinscris de la liste', 'info');
-
-						var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span').first();
-							$nbAskers.text( parseInt( $nbAskers.text() ) - 1 );
 
 				});
 
@@ -1502,9 +1466,7 @@ window.LJ = {
 					sleep( LJ.ui.artificialDelay, function(){
 						LJ.fn.toastMsg( msg, 'error');
 						$('.validating-btn').removeClass('validating-btn');
-						$('.asking').removeClass('asking');
 						$('.pending').removeClass('pending');
-
 						LJ.fn.hideLoaders();
 					});
 				});
@@ -1819,7 +1781,7 @@ window.LJ = {
         },
         toggleOverlay: function(html){
 
-        	var html = html;
+        	var html = html || '<h2>Every chance we get we run </h2>';
 
 			var $overlay = $('.overlay'),
 				$overlayMsgWrap = $('.overlayMsgWrap');
@@ -1829,20 +1791,12 @@ window.LJ = {
 			if( $overlay.hasClass('active') )
 			{
 				$overlay.removeClass('active')
-						.velocity('fadeOut', { 
-						duration: 700,
-						complete: function(){
-							$overlayMsgWrap.html('')
-							$overlay.find('.largeThumb').remove();
-						} 
-					});
+						.velocity('fadeOut', { duration: 700 });
 			}
 			else
 			{
 				$overlay.addClass('active')
-						.velocity('fadeIn', { 
-						duration: 700
-					 });
+						.velocity('fadeIn', { duration: 700 });
 			}
 
 		}

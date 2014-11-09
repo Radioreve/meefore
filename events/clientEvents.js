@@ -31,7 +31,7 @@
 			 	hostId  = data.hostId ,
 			 	userId  = data.userInfos._id;
 
-			if( hostId == userId ) return;  /* Send back un msg au client éventuellement */
+			if( hostId == userId ) return;
 
 			var room   = eventUtils.buildRoomId( eventId, hostId, userId ),
 				userSocket = global.sockets[userId],
@@ -44,58 +44,81 @@
 		     	hostSocket.join( room ); 
 				console.log('Host '+hostId+' has joined the room : \n'+room + '\n');
 			}
-		
-			Event.findById( eventId, {}, function( err, myEvent ){
 
-					User.findById( userId, {}, function( err, user ){
-						if( err ){
-							console.log('Error finding user : ' + err );
-						}
-						else{
-							user.socketRooms.push( room );
-							user.eventsAskedList.push( myEvent._id.toString() );
-							user.save(function( err, user ){
-								if( err ){
-									console.log("Error updating User Model : " + err );
-								}else{
-									var asker = {
-										id:user._id.toString(),
-										name:user.name,
-										description:user.description,
-										age:user.age,
-										imgId:user.imgId,
-										imgVersion:user.imgVersion,
-										msg:data.msg
-									}; 
-									myEvent.askersList.push( asker );
-									myEvent.save( function( err ){
-										if( !err ){
-											global.io.emit('request participation in success', { hostId:hostId,
-																							 	 userId:userId,
-																							 	 asker:asker });
+		/* On commence par l'Event pour savoir s'il est full */
+		Event.findById( eventId, {}, function( err, myEvent ){
 
-										}else{
-											console.log("Error updating Event Model: "+err);
-										}
-									});
-								}
-							});
+			if( myEvent.askersList.length === myEvent.maxGuest ){
+
+				return eventUtils.raiseError({
+					socket: userSocket,
+					toServer: "max user reached for that event",
+					toClient: "This event is full, try another one"
+				});
+
+			}
+
+			User.findById( userId, {}, function( err, user ){
+
+				if( err ){
+					return eventUtils.raiseError({
+						err: err,
+						socket: userSocket,
+						toServer: "Request failed [1]",
+						toClient: "Couldn't join event"
+					});
+				}
+
+					user.socketRooms.push( room );
+					user.eventsAskedList.push( eventId );
+
+					user.save(function( err, user ){
+
+						if( !err ){
+
+							var asker = {
+
+								id            : user._id.toString(),
+								name          : user.name,
+								description   : user.description,
+								age           : user.age,
+								imgId         : user.imgId,
+								imgVersion    : user.imgVersion,
+								msg           : data.msg
+
+							}; 
+
+								myEvent.askersList.push( asker );
+
+								myEvent.save( function( err ){
+
+									if( !err ){
+										global.io.emit('request participation in success', 
+										{ hostId: hostId,  userId: userId, asker: asker, eventId: eventId });
+									}
+								});
 						}
-					});	
+					});
+				}); 	
 			});
 
 			User.findById( hostId, {},function(err,host){
+
 						if( err ){
-							console.log('Error finding host');
-						}else{
-							host.socketRooms.push(room);
-							host.save(function(err,host){
-								if( err ){
-									console.log('Error saving host new room');
-								}
+							return eventUtils.raiseError({
+								err: err,
+								socket: hostSocket,
+								toClient: "Error CE1",
+								toServer: "Error CE1"
 							});
 						}
-					});
+
+							host.socketRooms.push(room);
+							host.save(function( err, host ){
+								if( ! err ) { }
+							});
+						
+			});
 		
 	    };
 
@@ -103,17 +126,16 @@
 
 				var eventId = data.eventId,
 					hostId  = data.hostId,
-					userId  = data.userInfos._id,
-					room  = eventUtils.buildRoomId(eventId,hostId,userId),
+					userId  = data.userInfos._id;
+
+				var room  = eventUtils.buildRoomId(eventId,hostId,userId),
 					userSocket = global.sockets[userId],
 					hostSocket = global.sockets[hostId];
 
 					userSocket.leave(room);
-					console.log('User '+userId+' has left the room : \n'+room + '\n');
 					
 					if( hostSocket != undefined ){
 						hostSocket.leave(room); 
-						console.log('Host '+hostId+' has left the room : \n'+room + '\n');
 					}
 					
 				    eventCondition = { _id: eventId },
@@ -128,6 +150,7 @@
 					option = {},
 
 					callback = function(err, result){ 
+
 						if( err ){
 							return eventUtils.raiseError({
 								toClient: "Something happened! :o",

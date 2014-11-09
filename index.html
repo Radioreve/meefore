@@ -18,23 +18,23 @@
 <body>
 <div class="overlay">
 	<div class="overlayMsgWrap">
-		<h2> Bienvenue sur Bamboo Nights </h2>
 	</div>	
 </div>
+<div class="progress_bar"></div>
+<div class="loaderWrap"> <img class="loader" src="/img/ajax-loader-black.gif"></div>
 	<header>
 		<h1>We Nighters</h1>
 		<img src="img/bamboo-black.png" height="27">
 		  <ul id="menuWrap" class="">
-			<li id="profile" class="left menu menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span></span></li>
-			<li id="events"  class="left menu menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span></span></li>
-			<li id="create" class="left menu menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><span></span></li>
-			<li id="management" class="left menu menu-item icon icon-users" data-linkedcontent="#manageEventsWrap" ><span></span></li>
-			<li id="settings" class="right menu menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span></span></li>
-			<li id="contact" class="right menu menu-item icon icon-mail-alt" data-linkedcontent="#contactWrap" ><span></span></li>
+			<li id="profile" class="left menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span></span></li>
+			<li id="events"  class="left menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span></span></li>
+			<li id="create" class="left menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><span></span></li>
+			<li id="management" class="left menu-item icon icon-users" data-linkedcontent="#manageEventsWrap" ><span></span></li>
+			<li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span></span></li>
+			<li id="contact" class="right menu-item icon icon-mail-alt" data-linkedcontent="#contactWrap" ><span></span></li>
 		  </ul>
 	</header>
 	<div id="mainWrap" class="">
-		<span class="menuBtn menu icon icon-menu"   > Menu</span>
 		<div id="thumbWrap" class="none ">
 			<div id="thumbInfos">
 				<h2 id="thumbName"></h2>
@@ -53,7 +53,7 @@
 						<input class="input-field" type="password" id="pw" placeholder="password">
 						<div class="input-field submitWrap">
 							<div class="rel">
-								<input type="submit" class="themeBtn" id="login" value="login"><div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div></input>
+								<input type="submit" class="themeBtn" id="login" value="login"></input>
 							</div>
 							<div id="bcm_member" class=" sub-actions right">Devenir membre</div>
 							<div id="lost_pw" class="sub-actions left">Mot de passe oublié ?</div>
@@ -72,7 +72,6 @@
 						<div class="input-field submitWrap">
 							<div class="rel">
 								<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
-								<div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
 							</div>
 							<div id="b_to_login" class="sub-actions left">S'identifier</div>
 						</div>
@@ -89,7 +88,7 @@
 						<input class="input-field" type="text" id="pwResetInput" placeholder="email">
 						<div class="input-field submitWrap">
 							<div class="rel">
-								<input type="submit" class="themeBtn" id="reset" value="Reset password"><div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div></input>
+								<input type="submit" class="themeBtn" id="reset" value="Reset password"></input>
 							</div>
 							<div id="pw_remember" class=" sub-actions right">Je m'en souviens!</div>
 						</div>
@@ -99,7 +98,6 @@
 			</section>
 			<section id="profileWrap" class="none centered">
 				<h2>Account settings</h2>
-				<div class="progress_bar"></div>
 				<div id="pictureWrap"class="left hint--left" data-hint="click to edit your picture">
 					<img src="/img/person-placeholder.jpg" class="mainPicture" width="150">
 					<form class="upload_form"></form>
@@ -119,8 +117,7 @@
 						<textarea id="description" class="profileInput" placeholder="Tell the world what you like"></textarea>
 					</div>
 				</div>
-				<button id="validate" class="right themeBtn">Validate <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
-				</button>
+				<button id="validate" class="right themeBtn">Validate </button>
 			</section>
 			<section id="eventsWrap" class="none centered">
 				<h2>Tous les évènements</h2>
@@ -162,8 +159,7 @@
 					<label for="eventDescription">About</label>
 					<textarea id="eventDescription" placeholder="Winter is coming..."></textarea>
 					</div>
-					<button id="createEventBtn" class="right themeBtn">Create event <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
-					</button>
+					<button id="createEventBtn" class="right themeBtn">Create event </button>
 				</div>
 			</section>
 			<section id="manageEventsWrap" class="none centered">
@@ -198,8 +194,7 @@
 						<label for="newsletter">Receive newsletter</label>
 						<input id="newsletter" class="input-field_create" type="checkbox">
 					</div>
-					<button id="submitSettingsBtn" class="right themeBtn">Modifier <div class="loaderWrap none"> <img class="loader" src="/img/ajax-loader.gif"></div>
-					</button>
+					<button id="submitSettingsBtn" class="right themeBtn">Modifier </button>
 				</div>
 			</section>
 			<section id="contactWrap" class="none centered">

@@ -141,6 +141,10 @@
 	color: rgb(61, 51, 51); 
 	background: rgb(255, 240, 220); 
 	}
+.askInWrap .asking{
+	/* color: rgb(61, 51, 51); */ 
+	background: rgb(140, 140, 140); 
+	}
 /* CSS pour créer un évenements */
 #createEventWrap{
 	/* width: 500px; */
@@ -262,5 +266,18 @@ input[type="number"]{
 
 label[for="tags"]{
 	vertical-align: top
+}
+
+.largeThumb{
+
+	text-align: center;
+}
+.largeThumb img{ 
+	border-radius:150px;
+	border: 5px solid white;
+	padding: 0;
+	background: none;
+	box-shadow: 0 0 30px rgb(0, 0, 0);
+	-webkit-user-select: none;  /* Chrome all / Safari all */    -moz-user-select: none;     /* Firefox all */    -ms-user-select: none;
 }
 
