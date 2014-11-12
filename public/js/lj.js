@@ -695,7 +695,6 @@ window.LJ = {
 		},
 		handleSuccessLogin: function( user ){
 
-			LJ.fn.hideLoaders();
 			LJ.user._id = user._id; /* Nécessaire pour aller chercher toutes les infos, mais par socket.*/
 			LJ.fn.initSocketConnection( user.token );
 
@@ -1389,6 +1388,7 @@ window.LJ = {
 							- On active le pluggin d'upload de photos
 							- On génère le HTML dynamique à partir de données server ( Tags... )
 					*/
+					LJ.fn.hideLoaders();
 
 					var user 	 = data.user,
 						settings = data.settings;
