@@ -69,6 +69,7 @@ window.LJ = {
         placeholder_id: "placeholder_jmr9zq",
         displayParamsPlaceholder:{
                 cloud_name :"radioreve",
+				html: { 'class': 'mainPicture'}                
                 width:150,
         }
 	},
