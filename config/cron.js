@@ -72,7 +72,7 @@ function changeStateToEnded(){
 
 		var ruleEnded = new schedule.RecurrenceRule();
 			ruleEnded.hour = eventsEndAt;
-			ruleFrozen.minute = 0; 
+			ruleEnded.minute = 0; 
 
 		var job_f = schedule.scheduleJob( ruleEnded, changeStateToEnded );
 
