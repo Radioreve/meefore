@@ -5,7 +5,7 @@
 	    cloudinary  = require('cloudinary'),
 		eventUtils  = require('./eventUtils'),
 		config      = require('../config/config'),
-	    appSettings = require('../config/settings');
+	    settings = require('../config/settings');
 
 		cloudinary.config({ 
 							cloud_name: config.cloudinary.cloud_name,
@@ -35,6 +35,7 @@
 				/* Contient toutes les informations exposées publiquement lors de la première connection */
 				var expose = {};
 
+				expose.settings = settings;
 				expose.user = {
 
 							_id:         	 user._id,
@@ -52,13 +53,6 @@
 		  					
 				};
 
-				var tagList = appSettings.tagList;
-
-				expose.settings = {
-
-					tagList : appSettings.tagList
-
-				};
 
 			userSocket.emit('fetch user and configuration success', expose );
 

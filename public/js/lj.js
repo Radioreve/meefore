@@ -60,6 +60,16 @@ window.LJ = {
                 gravity:'face',
             //   effect:'grayscale',
                 radius:7
+        },
+        loader_id: "ajax-loader-black_frpjdb",
+        displayParamsLoader:{
+                cloud_name :"radioreve",
+                html: { 'class': 'loader'}
+        },
+        placeholder_id: "placeholder_jmr9zq",
+        displayParamsPlaceholder:{
+                cloud_name :"radioreve",
+                width:150,
         }
 	},
 	user:{  
@@ -96,7 +106,7 @@ window.LJ = {
 					+'</span><span class="toastMsg"></span></div>',
 		toastSuccess: '<div class="toastSuccess" class="none"><span class="toast-icon icon icon-right-open-big">'
 					+'</span><span class="toastMsg"></span></div>',
-		noResult: '<center id="noEvents" class="filtered"> Aucun évènement pour ce choix de filtre </center>'
+		noResult: '<center id="noEvents" class="filtered"><h3>Aucun évènement pour ce choix de filtre </h3></center>'
 	},
 	tagList: [],
 	locList: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ],
@@ -139,6 +149,9 @@ window.LJ = {
 
 				/*Bind UI Animating moves */
 				LJ.fn.initAnimations();
+
+				/* Gif loader and placeholder */
+				LJ.fn.initStaticImages();
 
 				/*Global UI Settings ehanced UX*/
 				LJ.fn.initEhancements();
@@ -183,6 +196,15 @@ window.LJ = {
 					myWayIn: "transition.slideLeftIn"}
 					);
 			});
+
+		},
+		initStaticImages: function(){
+
+			var $loader = $.cloudinary.image( LJ.cloudinary.loader_id, LJ.cloudinary.displayParamsLoader );
+				$loader.appendTo( $('.loaderWrap') );
+
+			var $placeholder = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsPlaceholder );
+				$('#pictureWrap').prepend( $placeholder );
 
 		},
 		initEhancements: function(){
@@ -266,9 +288,15 @@ window.LJ = {
 
             });
 			
-            LJ.$body.on('click','.overlay', function(){
+            LJ.$body.on('click','.overlay-high', function(){
 
-            	LJ.fn.toggleOverlay();
+            	LJ.fn.toggleOverlay('high');
+
+            });
+
+            LJ.$body.on('click','.overlay-low', function(){
+
+            	LJ.fn.toastMsg('Relax, things start back at 12:00', 'info');
 
             });
 
@@ -362,9 +390,11 @@ window.LJ = {
 				// Make sure client doesn't spam ask
 				if( $('.asking').length > 1 ) return LJ.fn.toastMsg("One moment please", 'error');
 
-				var $self = $(this);
+				var $self = $(this),
+					$itemWrap = $self.parents('.eventItemWrap');
 
-				if( $self.hasClass('open') ){
+				if( $itemWrap.attr('data-eventstate') == 'open' )
+				{
 
 					if( !$self.hasClass('asked') )
 					{	
@@ -395,7 +425,7 @@ window.LJ = {
 			 	var imgId      = $( this ).data('imgid'),
 			 		imgVersion = $( this ).data('imgversion'); 
 
-                LJ.fn.toggleOverlay( LJ.fn.renderLargeThumb( imgId, imgVersion ));
+                LJ.fn.toggleOverlay( 'high', LJ.fn.renderLargeThumb( imgId, imgVersion ));
 
             });
 
@@ -406,14 +436,36 @@ window.LJ = {
 			 });
 */
             LJ.$body.on('click', '.close-chat', function(){
+
             	var $chatWrap = $(this).parents('.chatWrap');
                     LJ.fn.hideChat($chatWrap);
+
             });
 
-             $('#resetFilters').click( function() {
+             $('#resetFilters').click( function(){
+
             	LJ.$eventsWrap.find('.selected').removeClass('selected');
             	$('#activateFilters').click();
+
             });
+
+             $('#displayFilters').click( function(){
+
+             	var $filtersWrap = $('.filtersWrap');
+
+             	if( $filtersWrap.css('opacity') != 0 ){
+             		
+             		$filtersWrap.velocity('transition.slideUpOut', { duration: 400 });
+             		$(this).find('span').text('Afficher');
+
+             	}else{
+
+             		$filtersWrap.velocity('transition.slideDownIn', { duration: 400 });
+             		$(this).find('span').text('Masquer');
+
+             	}
+
+             });
 
             $('#activateFilters').click( function() {
 
@@ -587,13 +639,13 @@ window.LJ = {
 				method:'POST',
 				url:'/reset',
 				dataType:'json',
-				data : {
+				data: {
 					email: email
 				},
 				success: function(data){
 					LJ.fn.handleSuccessReset(data);
 				},
-				error : function(data){
+				error: function(data){
 					LJ.fn.handleFailedReset(data);
 				}
 			});
@@ -725,6 +777,34 @@ window.LJ = {
 			});
 
 		},
+		displayViewAsFrozen: function(){
+
+			$('.eventItemWrap').remove();
+			LJ.myEvents = [];
+
+			$('.eventsHeader').velocity('transition.slideUpOut', 
+				{ 
+				  duration: 400,
+				  complete: function(){
+				  	$('#frozenTimezone').velocity('transition.slideLeftIn', { duration: 700 });
+				}
+			});
+
+		},
+		displayViewAsNormal: function(){
+
+			$('.eventItemWrap').remove();
+			LJ.myEvents = [];
+
+			$('#frozenTimezone').velocity('transition.slideRightOut', 
+				{ 
+				  duration: 400,
+				  complete: function(){
+				  	$('.eventsHeader').velocity('transition.slideUpIn', { duration: 700 });
+				}
+			});
+
+		},
 		displayViewAsNew: function(){
 
 			 $('#thumbWrap').velocity('transition.slideUpIn');
@@ -800,7 +880,7 @@ window.LJ = {
 							   	complete: function(){
 							   		LJ.state.animatingContent = false;
 							   		if(LJ.user.status === 'new'){
-							   			LJ.fn.toggleOverlay();
+							   			LJ.fn.toggleOverlay('high');
 							   		}
 							   	}
 							   });
@@ -1006,11 +1086,16 @@ window.LJ = {
   				}).cloudinary_fileupload();
   				
 		},
-		renderEvents: function(arr,max){
+		renderEvents: function( arr, max ){
 
 				var html =''; 
 				    max = max || arr.length;
-				for(var i=0;i<max;i++){ html += LJ.fn.renderEvent(arr[i]); }
+
+				for( var i=0; i < max; i++ ){
+
+					html += LJ.fn.renderEvent( arr[i] ); 
+
+				}
 				return html;
 
 		},
@@ -1018,7 +1103,12 @@ window.LJ = {
 
                 var html =''; 
                     max = max || arr.length;
-                for(var i=0;i<max;i++){ html += LJ.fn.renderAsker(arr[i]); }
+
+                for( var i=0; i < max; i++ ){ 
+
+                	html += LJ.fn.renderAsker( arr[i] ); 
+
+                }
                 return html;
 
         },
@@ -1028,6 +1118,7 @@ window.LJ = {
 				d.version = e.hostImgVersion;
 
 			var chatId = LJ.fn.buildChatId(e._id, e.hostId, LJ.user._id);
+
             var chatWrap = '<div class="chatWrap chat-asker none" data-chatid="'+chatId+'">'
                            +'<div class="close-chat hint--right" data-hint="close"><span class="icon icon-cancel"></span></div>'
                             +'<div class="chatLineWrap"></div>'    
@@ -1046,13 +1137,16 @@ window.LJ = {
 
 			var button = '<div class="askInWrap"><button class=" ';
 			
-			if( e.hostId == LJ.user._id ){
+			if( e.hostId == LJ.user._id )
+			{
 				button += 'right themeBtnToggle themeBtnToggleHost"> Management'	
-			}else{
-				button += 'askIn themeBtnToggle right ' + e.state;
-				LJ.user.eventsAskedList.indexOf(e._id)>-1? button+=' asked "> En attente' : button+='">Je veux y aller';
 			}
-				button+="</button></div>";
+			else
+			{
+				button += 'askIn themeBtnToggle right';
+				LJ.user.eventsAskedList.indexOf(e._id) > -1 ? button += ' asked "> En attente' : button += '">Je veux y aller';
+			}
+				button += "</button></div>";
 
 			var eventTags = '<div class="tag-row">',
 				L = e.tags.length;
@@ -1062,28 +1156,32 @@ window.LJ = {
 				}
 				eventTags +='</div>';
 		
-			var html = '<div class="eventItemWrap" data-eventid="'+e._id+'" data-hostid="'+e.hostId+'" data-location="'+e.location+'">'
-						+'<div class="e-head hint--left" data-hint="'+e.hostName+'">' + imgTagHTML 
-						+'</div>'
-						+'<div class="e-hour e-weak">'+ LJ.fn.matchDateHHMM( e.beginsAt ) +'</div>'
-						+'<div class="e-guests">'
-						  +'<i class="icon icon-users"></i><span>'+ e.askersList.length +'</span>/'+'<span>'+ e.maxGuest +'</span>'
-						+'</div>'
-						+'<div class="e-location">'
-						  +'<span>'+ LJ.fn.matchLocation( e.location ) +'</span>'
-						+'</div>'
-						+'<div class="e-body">'
-						   +'<div class="e-name">'+ e.name +' </div>'
-						   +'<div class="e-row">'
-						   +'</div>'
-						   +'<div class="e-row">'
-						     +'<div class="e-description e-weak">'+ e.description +'</div>'
-						   +'</div>'
+			var html = '<div class="eventItemWrap" '
+						+ 'data-eventid="'+e._id+'" '
+						+ 'data-hostid="'+e.hostId+'" '
+						+ 'data-location="'+e.location+'"'
+						+ 'data-eventstate="'+e.state+'">'
+						+ '<div class="e-head hint--left" data-hint="'+e.hostName+'">' + imgTagHTML 
+						+ '</div>'
+						+ '<div class="e-hour e-weak">'+ LJ.fn.matchDateHHMM( e.beginsAt ) +'</div>'
+						+ '<div class="e-guests">'
+						  + '<i class="icon icon-users"></i><span>'+ e.askersList.length +'</span>/'+'<span>'+ e.maxGuest +'</span>'
+						+ '</div>'
+						+ '<div class="e-location">'
+						  + '<span>'+ LJ.fn.matchLocation( e.location ) +'</span>'
+						+ '</div>'
+						+ '<div class="e-body">'
+						   + '<div class="e-name">'+ e.name +' </div>'
+						   + '<div class="e-row">'
+						   + '</div>'
+						   + '<div class="e-row">'
+						     + '<div class="e-description e-weak">'+ e.description +'</div>'
+						   + '</div>'
 						   + eventTags
-						+'</div>'
+						+ '</div>'
 						+ button
                         + chatWrap
-						+'</div>';
+						+ '</div>';
 			return html;
 		},
 		matchTagName: function(tagClass){
@@ -1161,11 +1259,43 @@ window.LJ = {
 					    +'</div>'
 
         },
-        initLayout: function(){
+        initLayout: function( settings ){
 
         	$( '.tags-wrap' ).append( LJ.fn.renderTagsFilters() );
         	$( '.locs-wrap' ).append( LJ.fn.renderLocsFilters() );
         	$( '#eventsListWrap' ).append( LJ.tpl.noResult );
+
+        	var hour = (new Date).getHours();
+        	if( hour < settings.eventsEndAt && hour >= settings.eventsFreezeAt ){
+        		LJ.fn.displayViewAsFrozen();
+        	}
+
+        	sleep( LJ.ui.artificialDelay, function(){   
+
+				switch( LJ.user.status ){
+					case 'new':
+						LJ.params.socket.emit('request welcome email', LJ.user._id );
+						LJ.fn.displayViewAsNew();
+						break;
+					case 'idle':
+						LJ.fn.displayViewAsIdle();
+						break;
+					case 'hosting':
+						LJ.fn.displayViewAsHost();
+						break;
+					default:
+						alert('No status available, contact us');
+						break;
+				}
+
+				$('.menu-item').velocity({ opacity: [1, 0] }, {
+					display:'inline-block',
+					complete: function(){
+						LJ.fn.toastMsg("Welcome back " + LJ.user.name, 'info');
+					}
+				});
+
+			});
 
         },
         renderTagsFilters: function(){
@@ -1212,6 +1342,66 @@ window.LJ = {
         },
 		initSocketEventListeners: function(){
 
+				LJ.params.socket.on('connect', function(){
+
+					csl('Client authenticated on the socket stream');
+					var userId = LJ.user._id;
+
+					/* Request all informations */
+					LJ.params.socket.emit('fetch user and configuration', userId );
+
+				});
+
+				LJ.params.socket.on('freeze events', function(){
+
+					LJ.fn.toastMsg('Events are frozen!', 'info', true);
+					$('.eventItemWrap').attr('data-eventstate','frozen')
+									   .click( function(e){
+									   	e.stopPropagation();
+									   });
+
+					LJ.fn.displayViewAsFrozen();
+
+
+				});
+
+				LJ.params.socket.on('end events', function(){
+
+					LJ.fn.toastMsg('Events hostings have started!', 'info', true);
+					$('.eventItemWrap').remove();
+					LJ.myEvents = [];
+
+					LJ.fn.displayViewAsNormal();
+
+
+				});
+
+				LJ.params.socket.on('fetch user and configuration success', function( data ){
+
+					/* L'ordre de l'appel est important, car certaines 
+					/* informations sont cachées par les premières 
+					/* et utilsiées par celles d'après 
+
+							- On cache les informations sur l'user 
+							- On fait les mises à jours du DOM (checkbox, thumbPic, input) à partir du cache
+							- On envoie une demande des derniers évènements
+							- On envoie une demande pour rejoindre les chatrooms en cours
+							- On active le pluggin d'upload de photos
+							- On génère le HTML dynamique à partir de données server ( Tags... )
+					*/
+
+					var user 	 = data.user,
+						settings = data.settings;
+
+					LJ.fn.initAppSettings( data );
+					LJ.fn.displayUserSettings();
+					LJ.fn.fetchEvents();
+					LJ.fn.initRooms( LJ.user._id );					
+					LJ.fn.initCloudinary( user.cloudTag );
+					LJ.fn.initLayout( settings );
+
+				});
+
 				LJ.params.socket.on('update profile success', function(data){
 
 					csl('update profile success received');
@@ -1230,68 +1420,6 @@ window.LJ = {
 
 					LJ.fn.updateClientSettings(data);
 					csl(JSON.stringify(data,0,4));
-				});
-
-				LJ.params.socket.on('connect', function(){
-
-					csl('Client authenticated on the socket stream');
-					var userId = LJ.user._id;
-
-					/* Request all informations */
-					LJ.params.socket.emit('fetch user and configuration', userId );
-
-				});
-
-				LJ.params.socket.on('fetch user and configuration success', function( data ){
-
-					/* L'ordre de l'appel est important, car certaines 
-					/* informations sont cachées par les premières 
-					/* et utilsiées par celles d'après 
-
-							- On cache les informations sur l'user 
-							- On fait les mises à jours du DOM (checkbox, thumbPic, input) à partir du cache
-							- On envoie une demande des derniers évènements
-							- On envoie une demande pour rejoindre les chatrooms en cours
-							- On active le pluggin d'upload de photos
-							- On génère le HTML dynamique à partir de données server ( Tags... )
-					*/
-
-					var user = data.user;
-
-					LJ.fn.initAppSettings( data );
-					LJ.fn.displayUserSettings();
-					LJ.fn.fetchEvents();
-					LJ.fn.initRooms( LJ.user._id );					
-					LJ.fn.initCloudinary( user.cloudTag );
-					LJ.fn.initLayout();
-
-					sleep( LJ.ui.artificialDelay, function(){   
-
-						switch( LJ.user.status ){
-							case 'new':
-								LJ.params.socket.emit('request welcome email', LJ.user._id );
-								LJ.fn.displayViewAsNew();
-								break;
-							case 'idle':
-								LJ.fn.displayViewAsIdle();
-								break;
-							case 'hosting':
-								LJ.fn.displayViewAsHost();
-								break;
-							default:
-								alert('No status available, contact us');
-								break;
-						}
-
-						$('.menu-item').velocity({ opacity: [1, 0] }, {
-							display:'inline-block',
-							complete: function(){
-								LJ.fn.toastMsg("Welcome back " + LJ.user.name, 'info');
-							}
-						});
-
-					});
-
 				});
 
 				LJ.params.socket.on('create event success', function( myEvent ){
@@ -1575,12 +1703,11 @@ window.LJ = {
 					}
 			}
 
-			/* Pour tous les users */
 			var eventWrap = LJ.$eventsWrap.find('.eventItemWrap[data-eventid="' + eventId + '"]');
 
-			eventWrap.find('button.askIn')
-					 .text('Suspendu')
-					 .removeClass('open').removeClass('suspended').addClass( state );
+			eventWrap.attr('data-eventstate', state )
+					 .find('button.askIn');
+					
 
 		},
 		createEvent: function(){
@@ -1817,12 +1944,12 @@ window.LJ = {
             $( '.loaderWrap' ).velocity( 'fadeOut', { duration: 250 });
 
         },
-        toggleOverlay: function(html){
+        toggleOverlay: function(type, html){
 
-        	var html = html;
+    			var $overlay = $('.overlay-'+type ),
+					$overlayMsgWrap = $('.overlayMsgWrap');
 
-			var $overlay = $('.overlay'),
-				$overlayMsgWrap = $('.overlayMsgWrap');
+        	var html = html || '';
 
 				$overlayMsgWrap.html( html );
 

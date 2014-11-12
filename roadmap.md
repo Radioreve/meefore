@@ -11,14 +11,14 @@
 #Schedule 
 
   ~ Lundi
-	- Gérer la terminaison automatique, implémenter le state "frozen" entre 7h du mat, et 14h.
+	- Design la page Management, et amélioration du système de chat
   ~ Mardi
   ~ Mercredi
   ~ Jeudi
-	- Design la page Management...
   ~ Vendredi
 	- Socials signins with passport (Facebook & Google)
   ~ Weekend
+	- Système d'admin avec privilèe pour monitor (se poser pour réfléchir)
 	- Rendre le design responsive @media queries et/ou bootstrap
 
 #Bugs! :@

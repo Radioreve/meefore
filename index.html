@@ -17,12 +17,16 @@
 	<link rel="stylesheet" href="/css/chat.css">
 </head>
 <body>
-<div class="overlay">
+<div class="overlay overlay-high">
+	<div class="overlayMsgWrap">
+	</div>	
+</div>
+<div class="overlay overlay-low">
 	<div class="overlayMsgWrap">
 	</div>	
 </div>
 <div class="progress_bar"></div>
-<div class="loaderWrap"> <img class="loader" src="img/ajax-loader-black.gif"></div>
+<div class="loaderWrap"></div>
 	<header>
 		<h1>We Nighters</h1>
 		<img src="img/bamboo-black.png" height="27">
@@ -100,7 +104,6 @@
 			<section id="profileWrap" class="none centered">
 				<h2>Account settings</h2>
 				<div id="pictureWrap"class="left hint--left" data-hint="click to edit your picture">
-					<img src="img/person-placeholder.jpg" class="mainPicture" width="150">
 					<form class="upload_form"></form>
 					<h5 id="codebarre"><span class="icon icon-barcode"></span>53ef548dgk0847j6H7Y</h5>
 				</div>
@@ -121,14 +124,21 @@
 				<button id="validate" class="right themeBtn">Validate </button>
 			</section>
 			<section id="eventsWrap" class="none centered">
+			  <div class="eventsHeader">
 				<h2>Tous les évènements</h2>
 				<div class="actionsWrap actionsStyle">
 					<span id="activateFilters" class="action">Appliquer les filtres</span>
+					<span id="displayFilters" class="action"><span>Masquer</span> tous les filtres</span>
 					<span id="resetFilters" class="action">Enlever tous les filtres</span>
 				</div>
 				<div class="filtersWrap">
-				  <div class="filters-tags-row tags-wrap"> <!-- Static Content dynamically added on load--></div>
-				  <div class="filters-locs-row locs-wrap"> <!-- Static Content dynamically added on load --></div>
+				  <div class="filters-tags-row tags-wrap"> <!-- Content dynamically loaded --></div>
+				  <div class="filters-locs-row locs-wrap"> <!-- Content dynamically loaded --></div>
+				</div>
+			  </div>
+			  	<div id="frozenTimezone" class="none">
+					<h2>Have a break</h2>
+					<center><h3>Events are closed from 9am to 1pm. Time to sleep.</h3></center>
 				</div>
 				<section id="eventsListWrap"></section>
 			</section>
@@ -215,7 +225,6 @@
 		<footer>
 		</footer>
 
-		<!--> Third party libraries </!-->
 		<script src="/js/jquery.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/js/jquery.cloudinary.js"></script>
@@ -225,7 +234,6 @@
 		<script src="//cdn.jsdelivr.net/velocity/1.1.0/velocity.ui.min.js"></script>
 		<script src="/js/waves.js"></script>
 
-		<!--> Application script </!-->
 		<script src="/js/lj.js"></script>
 	</body>
 	</html>

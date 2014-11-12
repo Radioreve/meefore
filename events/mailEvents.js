@@ -4,8 +4,7 @@
 	    _ 			= require('lodash'),
 	    cloudinary  = require('cloudinary'),
 		eventUtils  = require('./eventUtils'),
-		config      = require('../config/config'),
-	    appSettings = require('../config/settings'),
+		config      = require('../config/mailer'),
 	    nodemailer  = require('nodemailer');
 
 

@@ -2,15 +2,18 @@
 	var User = require('../models/UserModel'),
 	    Event = require('../models/EventModel'),
 	    eventUtils = require('./eventUtils'),
-	    _ = require('lodash');
+	    _ = require('lodash'),
+	    settings = require('../config/settings');
 
 
 	    var fetchEvents = function(userId){
 
+	    	if( settings.isFrozenTime() ) return ;
+
 	    	var socket = global.sockets[userId];
 
 			console.log('Fetching all events for user with socket : ' + socket);
-			Event.find({ state: { $ne: 'canceled' }}, function( err, events ){
+			Event.find({ state: { $in: settings.activeEventStates }}, function( err, events ){
 
 				if( err )
 					return eventUtils.raiseError({
@@ -65,7 +68,16 @@
 						err: err,
 						socket: userSocket,
 						toServer: "Request failed [1]",
-						toClient: "Couldn't join event"
+						toClient: "Error happened - We have been notified"
+					});
+				}
+
+				if( user.status === 'hosting' ){
+					return eventUtils.raiseError({
+						err: err,
+						socket: userSocket,
+						toServer: "Request failed [2]",
+						toClient: "Can't host and join at the same time"
 					});
 				}
 

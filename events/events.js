@@ -6,7 +6,7 @@
 	clientEvents  = require('./clientEvents'),
 	mailEvents    = require('./mailEvents');
 
-	module.exports = function(id){
+	module.exports = function( id ){
 
 		var socket = global.sockets[id];
 

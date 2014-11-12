@@ -28,8 +28,6 @@ h2{
 	text-shadow: 0 0 1px rgb(209, 209, 209);
 }
 h3{
-	font:bold 14px 'Francois One';
-	text-transform:uppercase;
 }
 label{
 	/*Hello git*/
@@ -45,7 +43,7 @@ label{
 .labelTextArea{vertical-align:top;}
 .rel{position:relative;}
 .right{float:right;}
-.left{float:left;}
+img.left{float:left;}
 .none{display: none; !important;}
 .filtered{display: none !important;}
 .hidden{visibility:hidden;}
@@ -116,7 +114,7 @@ body > header > h1{
 	z-index: 9999;
 } 
 .toastError{
-	background: rgb(175, 49, 49);
+	background: rgb(131, 52, 52);
 	border: 1px solid rgb(150, 34, 34);
 	color: white;
 }
@@ -132,7 +130,7 @@ body > header > h1{
 }
 .toast-icon{
 	position: absolute;
-	left: 0;
+	left: -1px;
 	height: 24px;
 	width: 33px;
 	padding-right: 2px;
@@ -140,7 +138,7 @@ body > header > h1{
 	top: 0;
 }
 .toastError .toast-icon{
-	background: rgb(148, 40, 40);
+	background: rgb(105, 49, 49);
 }
 .toastInfo .toast-icon{
 	background: #000000;
@@ -525,7 +523,7 @@ body > header > h1{
 	margin-bottom: 10px;
 	text-align: center;
 }
-.actionsStyle span:before{
+.actionsStyle span.action:before{
 	content: "";
 	margin-right: 10px;
 	border: 4px solid #E83333;
@@ -578,8 +576,14 @@ body > footer{
 	position:absolute;
 	top:0;
 	left:0;
+}
+.overlay-high{
 	background: rgba(0,0,0,.84);
 	z-index:500;
+}
+.overlay-low{
+	background: white; 
+	z-index:139;
 }
 .overlay .overlayMsgWrap{	
     width: 900px;
@@ -587,6 +591,9 @@ body > footer{
     position: relative;
     top: 150px;
 }
-.overlay h2{
+.overlay-high h2{
 	color:white;
+}
+.overlay-low h2{
+	color:black; 
 }

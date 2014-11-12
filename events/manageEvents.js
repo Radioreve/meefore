@@ -2,12 +2,25 @@
 var User = require('../models/UserModel'),
     Event = require('../models/EventModel'),
     eventUtils = require('./eventUtils'),
+    settings = require('../config/settings'),
     _ = require('lodash');
 
 var createEvent = function(data) {
 	
     var hostId = data.hostId,
         socket = global.sockets[hostId];
+
+    var currentDate = new Date(),
+        currentHour = currentDate.getHours();
+
+    if( settings.isFrozenTime() ){
+
+        return eventUtils.raiseError({
+            socket: socket,
+            toClient:"Opening start at " + settings.eventsEndAt +"h"
+        });
+
+    }
 
     /* Pour pouvoir push des events à l'host ultérieurement*/
     socket.join( hostId );
@@ -18,7 +31,7 @@ var createEvent = function(data) {
     beginsAt.setSeconds(0);
 
     var newEvent = new Event(data);
-    newEvent.createdAt = new Date();
+    newEvent.createdAt = currentDate;
     newEvent.beginsAt = beginsAt;
 
     User.findById( hostId, {}, function(err, user) {
@@ -38,7 +51,7 @@ var createEvent = function(data) {
             if( data.tags.length == 0 ){
 
                 return eventUtils.raiseError({
-                    toClient:"Please provide at least one tag ;-)",
+                    toClient:"One tag minimum. Be wise !",
                     toServer:"Wrong Tags Inputs",
                     socket: socket
                 });

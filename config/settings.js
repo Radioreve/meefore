@@ -1,11 +1,12 @@
 
-/* Variable globales modifiant le comportement de l'application */
 
 var settings = {
 
-	openingTime: "",  
-	closingTime: "",
-	tagList: [ 'afterwork',
+	eventsFreezeAt: 9,
+	eventsEndAt: 13,
+
+	tagList: 
+			 [  'afterwork',
 				'before',
 				'club',
 				'apero',
@@ -16,7 +17,21 @@ var settings = {
 				'vodka',
 				'erasmus',
 				'firsttime'
-			 ]
+			 ],
+
+	activeEventStates:
+			 [
+			 	'open',
+			 	'suspended',
+			 	'full',
+			 	'frozen'
+			 ],
+	isFrozenTime: function(){
+		var hour = (new Date).getHours();
+		return ( hour >= settings.eventsFreezeAt && hour < settings.eventsEndAt );
+	}
+
+
 };
 
-module.exports = settings 
+module.exports = settings;
