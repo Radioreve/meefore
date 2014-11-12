@@ -1,6 +1,6 @@
 *{
 }
-html{
+html{  
 }
 body{
 	/* min-height:100%; */
@@ -355,9 +355,10 @@ body > header > h1{
 	border:1px double #dde;
 }
 .fieldsWrap{
-	width: 520px;
+	width: 420px;
 	margin-left: 40px;
 	height: 250px;
+	display: inline-block;
 }
 .fieldsWrap input{
 	padding: 10px 0 5px 10px;
