@@ -16,7 +16,7 @@
   ~ Mercredi
   ~ Jeudi
   ~ Vendredi
-	- Socials signins with passport (Facebook & Google)
+	- Socials signins with passport (Facebook )
   ~ Weekend
 	- Système d'admin avec privilèe pour monitor (se poser pour réfléchir)
 	- Rendre le design responsive @media queries et/ou bootstrap

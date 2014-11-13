@@ -329,15 +329,8 @@ body > header > h1{
 }
 /*    CSS concernant le profile utilisateur   */
 #profileWrap{
-	width: 750px;
 	height: 300px;
-	margin: 0;
 	padding: 20px;
-	position: absolute;
-	top: 70px;
-	left: 300px;
-	right: 0;
-	bottom: 0;
 }
 #pictureWrap{
 	text-align:center;
