@@ -18,7 +18,7 @@
   ~ Vendredi
 	- Socials signins with passport (Facebook )
   ~ Weekend
-	- Système d'admin avec privilèe pour monitor (se poser pour réfléchir)
+	- Système d'admin monitoring pour voir les gens connectés
 	- Rendre le design responsive @media queries et/ou bootstrap
 
 #Bugs! :@
