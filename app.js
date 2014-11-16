@@ -16,10 +16,11 @@
 		app.use( bodyParser.urlencoded({ extended: true }) );
 
 	//configuration object (db, auth, services...)
-	var config   = require('./config/config');
+	var config = require('./config/config'),
+		uri    = config[ process.env.NODE_ENV ].dbUri ;
 
 		require('./config/cron');
-		require('./config/db')( config );
+		require('./config/db')( uri );
 		require('./config/passport')( passport );
 		require('./routes')( app, passport );
 

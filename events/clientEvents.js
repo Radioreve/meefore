@@ -170,17 +170,6 @@
 								err: err
 							});
 						 }
-							var data = {
-								userId: userId,
-								eventId: eventId,
-								hostId: hostId
-							};
-
-						if ( result._id == userId ) 
-							return userSocket.emit('request participation out success', data );
-
-						if ( result._id == hostId && hostSocket != undefined ) 
-							return hostSocket.emit('request participation out success', data );
 
 					};
 
@@ -188,6 +177,13 @@
 				User.findOneAndUpdate( userCondition, userUpdate, option, callback );
 			  	User.findOneAndUpdate( hostCondition, hostUpdate, option, callback );
 			  
+			  var data = {
+								userId: userId,
+								eventId: eventId,
+								hostId: hostId
+							};
+
+						 global.io.emit('request participation out success', data );
 	    };
 
 	    module.exports = {

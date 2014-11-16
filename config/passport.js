@@ -24,6 +24,7 @@
 					if( err )
 						return next( err, false,{ msg: "Missing credentials" });
 
+					/*
 					if( user )
 						return next( null, false,{ msg: "User already exists" });
 
@@ -39,6 +40,7 @@
 				    if ( /[-!$%^&*()_#+|@~=`{}\[\]:";'<>?,.\/]/.test( password.trim() ) ){
 				        return next( null, false, { msg: "Email contains invalid char!" });
 				    }
+				    */
 
 					var newUser = new User();
 
@@ -68,7 +70,7 @@
 
 		    User.findOne({ 'local.email' :  email }, function( err, user ) {
 
-          	    if( err )
+          	if( err )
          	   return done( err, false, { msg: "Missing credentials" });
 
             if( !user )

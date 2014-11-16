@@ -33,7 +33,7 @@ window.LJ = {
 				height:80,
 				crop:'fill',
 				gravity:'face',
-				radius:'15'
+				radius:'2'
 		},
 		displayParamsMainThumb: {
 				cloud_name :"radioreve",
@@ -171,6 +171,7 @@ window.LJ = {
 		initAnimations: function(){
 
 			$('#bcm_member').click(function(){
+
 				LJ.fn.displayContent( LJ.$signupWrap, {
 					myWayOut: "transition.slideLeftOut",
 					myWayIn: "transition.slideRightIn"
@@ -178,6 +179,7 @@ window.LJ = {
 			});
 
 			$('#lost_pw').click(function(){
+
 				LJ.fn.displayContent( LJ.$resetWrap, {
 					myWayOut: "transition.slideRightOut",
 					myWayIn: "transition.slideLeftIn"
@@ -185,6 +187,7 @@ window.LJ = {
 			});
 
 			$('#pw_remember').click(function(){
+
 				LJ.fn.displayContent( LJ.$loginWrap, {
 					myWayOut: "transition.slideLeftOut",
 					myWayIn: "transition.slideRightIn"
@@ -192,10 +195,11 @@ window.LJ = {
 			});
 
 			LJ.$backToLogin.click(function(){
+
 				LJ.fn.displayContent( LJ.$loginWrap, {
 					myWayOut: "transition.slideRightOut",
 					myWayIn: "transition.slideLeftIn"}
-					);
+				);
 			});
 
 		},
@@ -240,7 +244,6 @@ window.LJ = {
 				}); 
 
 				LJ.$body.on('mousedown','.chatWrap',function(){
-					csl('Hello');
 					var $that = $(this);
 	                $that.find('input[type="text"]').focus();
                		
@@ -386,30 +389,32 @@ window.LJ = {
 				$('#management').click();
 			});
 
+			LJ.$body.on('click', '.chatIconWrap', function(){
+
+				$( this ).toggleClass('active');
+				LJ.fn.toggleChatWrapEvents( $( this ) );
+
+			});
+
 			LJ.$body.on('click', '.askIn', function(){
 
 				// Make sure client doesn't spam ask
-				if( $('.asking').length > 1 ) return LJ.fn.toastMsg("One moment please", 'error');
+				if( $('.asking').length > 0 ) return;
 
 				var $self = $(this),
 					$itemWrap = $self.parents('.eventItemWrap');
 
 				if( $itemWrap.attr('data-eventstate') == 'open' )
 				{
+					LJ.fn.showLoaders();
+					$self.addClass('asking');
 
-					if( !$self.hasClass('asked') )
+					if( $self.hasClass('idle') )
 					{	
-						$self.addClass('asking');
-						LJ.fn.showLoaders()
 						LJ.fn.requestIn( $self ); 
 					}
-
 					else
 					{	// To be removed in production for freemium considerations?
-						var $eHead = $self.parents('.eventItemWrap').find('.e-head');
-						if( $eHead.hasClass('e-active') ) $eHead.click(); 
-						$self.removeClass('asked');
-						$self.text('Je veux y aller');
 						LJ.fn.requestOut( $self );
 					}
 				}
@@ -427,19 +432,6 @@ window.LJ = {
 			 		imgVersion = $( this ).data('imgversion'); 
 
                 LJ.fn.toggleOverlay( 'high', LJ.fn.renderLargeThumb( imgId, imgVersion ));
-
-            });
-
-			/* LJ.$eventsListWrap.on('click', ' .... CHAT .... ', function(){
-
-			 	LJ.fn.toggleChatWrapEvents($(this));
-
-			 });
-*/
-            LJ.$body.on('click', '.close-chat', function(){
-
-            	var $chatWrap = $(this).parents('.chatWrap');
-                    LJ.fn.hideChat($chatWrap);
 
             });
 
@@ -617,14 +609,14 @@ window.LJ = {
 					email   :  credentials.email,
 					password : credentials.password
 				},
-				beforeSend:function(){
+				beforeSend: function(){
 					LJ.fn.handleBeforeSendLogin();
 				},
-				success:function(data){
-					LJ.fn.handleSuccessLogin(data);
+				success: function( data ){
+					LJ.fn.handleSuccessLogin( data );
 				},
-				error:function(data){
-					LJ.fn.handleFailedLogin(data);
+				error: function( data ){
+					LJ.fn.handleFailedLogin( data );
 				}
 			});
 		},
@@ -702,14 +694,18 @@ window.LJ = {
 		},
 		handleFailedLogin: function(data){
 
+			csl('handling fail login');
 			data = JSON.parse(data.responseText);
-			sleep(LJ.ui.artificialDelay,function(){
+
+			sleep( LJ.ui.artificialDelay, function(){
+
 				LJ.fn.toastMsg( data.msg, 'error');
 				$('input.input-field').removeClass('validating');
-				$('#bcm_member').velocity('transition.slideRightIn', { duration: 400 });
-				$('#lost_pw').velocity('transition.slideLeftIn', { duration: 400 });
+				$('#bcm_member').velocity('transition.slideRightIn', { duration: 400, display:"inline-block" });
+				$('#lost_pw').velocity('transition.slideLeftIn', { duration: 400, display:"inline-block" });
 				LJ.fn.hideLoaders();
 				LJ.$loginBtn.val('Login');
+
 			});
 
 		},
@@ -904,40 +900,43 @@ window.LJ = {
 
                 if( !askerPictureTag.hasClass('a-active') && ! askerPictureTag.is($previous) ){
                     askerPictureTag.addClass('a-active');
-                    LJ.fn.displayChat($chatWrap);
+                    LJ.fn.displayChat( $chatWrap );
 
 
                 }else{
                     askerPictureTag.removeClass('a-active');
-                    LJ.fn.hideChat($chatWrap);
+                    LJ.fn.hideChat( $chatWrap );
                 }          
 		},
-		toggleChatWrapEvents: function(eHeadTag){
+		toggleChatWrapEvents: function( chatIconWrap ){
 
-			 var $chatWrap = eHeadTag.siblings('.chatWrap');
-			 var $previous = $('.e-active');
+			var $eventWrap = chatIconWrap.parents('.eventItemWrap');
+			    $chatWrap  = $eventWrap.find('.chatWrap');
+			    $previous  = $('.prev'),
+			    $surfacing = $('.surfacing');
 
-			 var $eventWrap = $chatWrap.parents('.eventItemWrap');
-        		$('.surfacing').removeClass('surfacing');
-        		$eventWrap.addClass('surfacing');
+			     if( !$surfacing )
+			     {
+			     	$eventWrap.addClass('surfacing');
+			     	LJ.fn.displayChat( $chatWrap );
+			     	return;
+			     }
 
-			 $previous.removeClass('e-active')
-			 		  .siblings('.chatWrap')
-			 		  .velocity('transition.slideLeftOut', { duration: 300 });
+			     if( $surfacing.is( $eventWrap ))
+			     {
+			     	$eventWrap.removeClass('surfacing');
+			     	LJ.fn.hideChat( $chatWrap );
+			     	return;
+			     }
 
-                if( eHeadTag.siblings('.askInWrap').find('button').hasClass('asked') ){
-                    if( !eHeadTag.hasClass('e-active') && ! eHeadTag.is($previous) ){
-                        eHeadTag.addClass('e-active');
-                        LJ.fn.displayChat($chatWrap);
-                    }
-                    else{
-                        eHeadTag.removeClass('e-active');
-                    	LJ.fn.hideChat($chatWrap);
-                    }
-                }
-                else{
-                    LJ.fn.toastMsg('You need to ask participation to chat with the host', 'error');
-                }
+        		$surfacing.removeClass('surfacing')
+        				  .find('.chatWrap')
+        				  .velocity('transition.slideDownOut', { duration: 300 });
+
+        		$eventWrap.addClass('surfacing')
+        				  .find('.chatWrap')
+        				  .velocity('transition.slideUpIn', { duration: 300 });
+             
 		},
 		initAppSettings: function(data){
 
@@ -1120,7 +1119,6 @@ window.LJ = {
 			var chatId = LJ.fn.buildChatId(e._id, e.hostId, LJ.user._id);
 
             var chatWrap = '<div class="chatWrap chat-asker none" data-chatid="'+chatId+'">'
-                           +'<div class="close-chat hint--right" data-hint="close"><span class="icon icon-cancel"></span></div>'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
                             +  '<input type="text" value="" placeholder="Can I come with my friends ?">'
@@ -1139,20 +1137,20 @@ window.LJ = {
 			
 			if( e.hostId == LJ.user._id )
 			{
-				button += 'right themeBtnToggle themeBtnToggleHost"> Management'	
+				button += 'themeBtnToggle themeBtnToggleHost"> Management'	
 			}
 			else
 			{
-				button += 'askIn themeBtnToggle right';
-				LJ.user.eventsAskedList.indexOf(e._id) > -1 ? button += ' asked "> En attente' : button += '">Je veux y aller';
+				button += 'askIn themeBtnToggle';
+				LJ.user.eventsAskedList.indexOf(e._id) > -1 ? button += ' asked"> En attente' : button += ' idle">Je veux y aller';
 			}
-				button += "</button></div>";
+				button += '</button><div class="chatIconWrap"><i class="icon icon-chat"/></div></div>';
 
 			var eventTags = '<div class="tag-row">',
 				L = e.tags.length;
 
 				for ( var i=0; i<L; i++ ){
-					eventTags += '<div class="tag tag-'+e.tags[i]+'">' + LJ.fn.matchTagName(e.tags[i]) + '</div>';
+					eventTags += '<div class="tag tag-'+e.tags[i]+'">' + LJ.fn.matchTagName( e.tags[i] ) + '</div>';
 				}
 				eventTags +='</div>';
 		
@@ -1161,27 +1159,25 @@ window.LJ = {
 						+ 'data-hostid="'+e.hostId+'" '
 						+ 'data-location="'+e.location+'"'
 						+ 'data-eventstate="'+e.state+'">'
-						+ '<div class="e-head hint--left" data-hint="'+e.hostName+'">' + imgTagHTML 
-						+ '</div>'
-						+ '<div class="e-hour e-weak">'+ LJ.fn.matchDateHHMM( e.beginsAt ) +'</div>'
-						+ '<div class="e-guests">'
-						  + '<i class="icon icon-users"></i><span>'+ e.askersList.length +'</span>/'+'<span>'+ e.maxGuest +'</span>'
+						+'<div class="eventItemLayer">'
+						+ '<div class="e-head">' 
+						   + '<div class="e-image left">'+ imgTagHTML +'</div>'
+						     + '<div class="e-hour e-weak">'+ LJ.fn.matchDateHHMM( e.beginsAt ) +'</div>'
+						   + '<div class="e-guests right">'
+						     + '<i class="icon icon-users"></i><span>'+ e.askersList.length +'</span>/'+'<span>'+ e.maxGuest +'</span>'
+						   + '</div>'
 						+ '</div>'
 						+ '<div class="e-location">'
 						  + '<span>'+ LJ.fn.matchLocation( e.location ) +'</span>'
 						+ '</div>'
 						+ '<div class="e-body">'
 						   + '<div class="e-name">'+ e.name +' </div>'
-						   + '<div class="e-row">'
-						   + '</div>'
-						   + '<div class="e-row">'
-						     + '<div class="e-description e-weak">'+ e.description +'</div>'
-						   + '</div>'
+						   + '<div class="e-desc">' + e.description + '</div>'
 						   + eventTags
 						+ '</div>'
 						+ button
                         + chatWrap
-						+ '</div>';
+						+ '</div></div>';
 			return html;
 		},
 		matchTagName: function(tagClass){
@@ -1226,7 +1222,6 @@ window.LJ = {
             var chatId = LJ.fn.buildChatId( LJ.user.hostedEventId, LJ.user._id, a.id );
 
             var chatWrap = '<div class="chatWrap chat-host none" data-chatid="'+chatId+'">'
-                           +'<div class="close-chat hint--right" data-hint="close"><span class="icon icon-cancel"></span></div>'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
                             +  '<input type="text" value="" placeholder="say something..">'
@@ -1322,10 +1317,10 @@ window.LJ = {
         	return html;
 
         },
-        displayChat: function(chatWrap){
+        displayChat: function( chatWrap ){
 
         	var chatId = chatWrap.data('chatid');
-            chatWrap.velocity("transition.slideLeftIn", {
+            chatWrap.velocity("transition.slideUpIn", {
             	duration: 450,
             	complete: function(){
             		if(LJ.state.jspAPI[chatId] != undefined){
@@ -1336,9 +1331,18 @@ window.LJ = {
             });
                             
         },
-        hideChat: function(chatWrap){
+        hideChat: function( chatWrap ){
 
-           	chatWrap.velocity("transition.slideLeftOut", { duration: 300 });
+           	chatWrap.velocity("transition.slideDownOut", { duration: 300 });
+        },
+        handleServerError: function( msg ){
+
+        	LJ.fn.toastMsg( msg, 'error');
+						$('.validating-btn').removeClass('validating-btn');
+						$('.asking').removeClass('asking');
+						$('.pending').removeClass('pending');
+						LJ.fn.hideLoaders();
+
         },
 		initSocketEventListeners: function(){
 
@@ -1432,8 +1436,8 @@ window.LJ = {
 
 					sleep( LJ.ui.artificialDelay , function(){ 
 
-						if( LJ.user._id === hostId ){
-
+						if( LJ.user._id === hostId )
+						{
 								LJ.user.status = 'hosting';
 								LJ.user.hostedEventId = eventId;
 								LJ.fn.toastMsg("Evènement créé avec succès !", 'info');
@@ -1443,11 +1447,11 @@ window.LJ = {
 								LJ.$createEventWrap.find('.selected').removeClass('selected');
 
 								$('#management').click();
-
-						}else{
-							
+						}
+						else
+						{
 							LJ.fn.toastMsg( myEvent.hostName + ' a créé un évènement !', 'info' );
-							}
+						}
 
 						/* Pour tous les users */
 						var idx = _.sortedIndex( LJ.myEvents, myEvent, 'beginsAt' );
@@ -1561,13 +1565,14 @@ window.LJ = {
 
 							LJ.fn.hideLoaders();
 							LJ.fn.toastMsg('Your request has been sent', 'info');
-							$('.asking').removeClass('asking').addClass('asked').text('En attente');
+							$('.asking').removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
+										.siblings('.chatIconWrap').velocity('transition.slideLeftIn', { duration: 400, display:'inline-block'});
 
 						}else{
 
-							var askerHTML = LJ.fn.renderAsker(data.asker);
+							var askerHTML = LJ.fn.renderAsker( data.asker );
 
-							    $( askerHTML ).appendTo(LJ.$askersListWrap)
+							    $( askerHTML ).appendTo( LJ.$askersListWrap )
 							    			.hide()
 							    			.velocity("transition.slideLeftIn",{
 							    				duration:300
@@ -1599,10 +1604,18 @@ window.LJ = {
 							return asker.id === data.userId;
 						});
 
-						hostId === LJ.user._id ? $aRow.velocity("transition.slideLeftOut", { duration: 200 }) : LJ.fn.toastMsg('Vous avez été désinscris de la liste', 'info');
+						sleep( LJ.ui.artificialDelay, function(){
 
-						var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span').first();
-							$nbAskers.text( parseInt( $nbAskers.text() ) - 1 );
+							LJ.fn.hideLoaders();
+							$('.asking').removeClass('asked').removeClass('asking').addClass('idle').text('Je veux y aller!')
+										.siblings('.chatIconWrap').velocity('transition.slideLeftOut', { duration: 400, display:'inline-block'});
+
+							hostId === LJ.user._id ? $aRow.velocity("transition.slideLeftOut", { duration: 200 }) : LJ.fn.toastMsg('Vous avez été désinscris de la liste', 'info');
+
+							var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span').first();
+								$nbAskers.text( parseInt( $nbAskers.text() ) - 1 );
+
+						});
 
 				});
 
@@ -1626,15 +1639,16 @@ window.LJ = {
 
 				});
 
-				LJ.params.socket.on('server error', function(msg){
+				LJ.params.socket.on('server error', function( data ){
 
+					var msg   = data.msg,
+						flash = data.flash;
+
+					if( flash ){
+						return LJ.fn.handleServerError( msg );
+					}
 					sleep( LJ.ui.artificialDelay, function(){
-						LJ.fn.toastMsg( msg, 'error');
-						$('.validating-btn').removeClass('validating-btn');
-						$('.asking').removeClass('asking');
-						$('.pending').removeClass('pending');
-
-						LJ.fn.hideLoaders();
+						LJ.fn.handleServerError( msg );
 					});
 				});
 

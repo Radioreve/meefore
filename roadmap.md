@@ -7,19 +7,22 @@
 	- Donner à 'host la possibilité de valider un user, et le nombre de personnes prévues'
 	- Faire un système de badges par tag et par palier ET/OU de niveaux. Cadeaux offert à chaque palier
 	- Faire un smooth scrolling sur la page events (fixé le semi header, mettre 1 bar semi transparente dégradée en overlay)
+	- Augmenter les Models (genre date d'inscription etc, notamment par rapport à la fiche Management )
 
 #Schedule 
 
   ~ Lundi
-	- Design la page Management, et amélioration du système de chat
+	- Améliorer le design global
+	- Tester et fixer le chat once and fo'all 
+	- Implémenter le système de validation des gens
+	- Socials signins with passport (Facebook )
+	- Système d'admin monitoring pour voir les gens connectés
+	- Rendre le design responsive @media queries et/ou bootstrap
   ~ Mardi
   ~ Mercredi
   ~ Jeudi
   ~ Vendredi
-	- Socials signins with passport (Facebook )
   ~ Weekend
-	- Système d'admin monitoring pour voir les gens connectés
-	- Rendre le design responsive @media queries et/ou bootstrap
 
 #Bugs! :@
 

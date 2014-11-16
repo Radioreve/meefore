@@ -7,6 +7,30 @@
 	
 	var sendMessage = function(data){
 
+	  var askerId = data.askerId,
+	  	  hostId  = data.hostId,
+	  	  eventId = data.eventId;
+
+	  var askerSocket = global.sockets[ askerId ],
+	  	  hostSocket  = global.sockets[ hostId ];
+
+	  if( !hostSocket ){
+	  	return eventUtils.raiseError({
+	  		socket: askerSocket,
+	  		toClient: "Host is not online",
+	  		flash: true
+	  	});
+	  }
+
+	  if( !askerSocket ){
+	  	return eventUtils.raiseError({
+	  		err: err,
+	  		socket: askerSocket,
+	  		toClient: "Asker is not online",
+	  		flash: true
+	  	});
+	  }
+
 	  var room = eventUtils.buildRoomId( data.eventId, data.hostId, data.askerId );
 
  		  data.chatId = room;

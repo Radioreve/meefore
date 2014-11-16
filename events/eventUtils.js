@@ -3,7 +3,7 @@
 		return eventId+'_'+hostId+'-'+userId;
 	};
 
-	var raiseError = function(p){
+	var raiseError = function( p ){
 
 		console.log('Raising error');
 
@@ -21,7 +21,10 @@
 				}
 			}
 			else{
-				p.socket.emit('server error', p.toClient );
+				var clientMsg = p.toClient,
+					flash     = p.flash || false;
+				var data = { msg: clientMsg, flash: flash };
+				p.socket.emit('server error', data );
 			}
 		}
 

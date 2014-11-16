@@ -1,9 +1,9 @@
 *{
 }
-html{  
+html{
+  
 }
 body{
-	/* min-height:100%; */
 	background: white;
 	box-shadow: 0 0 5px #C0C0C0;
 	font-family: 'Ubuntu';
@@ -51,6 +51,7 @@ img.left{float:left;}
 	position:absolute;
 	margin:auto;
 	margin-top: 100px;
+	background: white;
 	width: 750px;
 	top:0;
 	left:0;
@@ -273,7 +274,7 @@ body > header > h1{
 }
 .themeBtn,
 .themeBtnToggle{
-	width: 120px;
+	width: 135px;
 	height: 34px;
 	border: none;
 	padding:9px;
@@ -282,8 +283,8 @@ body > header > h1{
 	text-transform: uppercase;
 	font-size: 10px;
 	outline:none;
-	-webkit-transition: all 0.1s;
-	transition: all 0.1s;
+	-webkit-transition: all 0.3s;
+	transition: all 0.3s;
 }
 .themeBtn:hover{
 	box-shadow: 1px 1px 1px rgb(196, 196, 196);
@@ -294,6 +295,9 @@ body > header > h1{
 	font-weight: bolder;
 	color: #333;
 	border: 1px solid #aaa;
+	width: 100%;
+	z-index: 1;
+	position: relative;
 }
 .themeBtnToggleHost:hover{
 	text-decoration: underline;
@@ -574,6 +578,11 @@ body > footer{
 .overlay-high{
 	background: rgba(0,0,0,.84);
 	z-index:500;
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
 }
 .overlay-low{
 	background: white; 

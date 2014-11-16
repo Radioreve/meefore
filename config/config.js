@@ -1,15 +1,14 @@
 	
-	var config = function(){
 
-		return {
+	var config = {
 
-			db:
-			{
-				composeUri:"mongodb://radioreve:R4dioreve@kahana.mongohq.com:10063/Testers",
-				localUri:"localhost:27017"
+			dev: {
+				dbUri: "localhost:27017"
 			},
-
-			jwtSecret:"R4dioreve",
+			prod: {
+				dbUri: "mongodb://radioreve:"+process.env.PW+"@kahana.mongohq.com:10063/Testers"
+			},
+			jwtSecret:"Wenighters",
 
 			cloudinary:
 			{
@@ -19,6 +18,5 @@
 			}
 
 		}
-	};
 
-	module.exports = config();
+	module.exports = config;

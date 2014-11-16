@@ -3,12 +3,12 @@
 		schedule = require('node-schedule'),
 		Event         = require('../models/EventModel');
 
-	var db = function( config ){ 
+	var db = function( uri ){ 
 
-		mongoose.connect( config.db.composeUri );
+		mongoose.connect( uri );
 
 		mongoose.connection.on( 'open', function(){
-			console.log('Connected the the MongoHQ databased!');
+			console.log('Connected to the database!');
 		});
 
 		mongoose.connection.on('error', function(err){

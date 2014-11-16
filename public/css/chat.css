@@ -1,5 +1,5 @@
 #allChatsWrap{
-	width:700px;
+	width:700px; 
 	height:400px;
 }
 .surfacing{
@@ -7,11 +7,10 @@
 }
 
 .chatWrap{
-	width: 93%;
-	height: 100%;
-	background: rgba(255,255,255,0.85);
+	width: 259px;
+	height: 255px;
+	background: white;
 	border: 1px solid #D5D5D5;
-	border-radius: 4px;
 	position: absolute;
 	box-sizing: border-box;
 }
@@ -19,22 +18,22 @@
 	outline:none;
 }
 .chatLineWrap{
-	height: 88%;
+	height: 87%;
 	overflow-x: hidden;
 	box-sizing: border-box;
 }
 .chatInputWrap{
-	height: 12%;
+	height: 14%;
 	/* border-radius: 0 0 3px 3px; */
 	width: 100%;
 	text-align: center;
 	box-sizing: border-box;
-	background: #535353;
-	border: 1px solid #535353;
-	border-top: none;
+	background: #E6E6E6;
+	border: none;
+	border-radius: 0;
 }
 .chatLine{
-	padding: 0 70px 0 70px;
+	padding: 0 30px;
 	margin: 5px 0;
 	text-align: center;
 }
@@ -64,9 +63,9 @@
 .chatInputWrap input[type="text"]{
 	width: 100%;
 	height: 100%;
-	padding: 0 0 1px 13px;
+	padding: 0 20px 1px 13px;
 	font-size: .8em;
-	color: rgb(241, 241, 241);
+	color: rgb(89, 89, 89);
 	border: none;
 	border-top: 1px solid #B4B4B4;
 	background: none;
@@ -74,14 +73,13 @@
 }
 .chatInputWrap input[type="submit"]{
 	width: 5px;
-	height: 32px;
+	height: 35px;
 	border: none;
-	background: #424242;
+	background: #D0D0D0;
 	border-radius: 0 0 2px 0;
 	font-size: .8em;
 	position: relative;
-	top: -32px;
-	right: -1px;
+	top: -35px;
 	float: right;
 }
 .chat-host{
@@ -92,8 +90,7 @@
 	height:250px
 }
 .chat-asker{
-	left: 0;
-	top: -25px;
+	top: 0;
 }
 .tri{
 	width: 0;
