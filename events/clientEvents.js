@@ -95,8 +95,7 @@
 								description   : user.description,
 								age           : user.age,
 								imgId         : user.imgId,
-								imgVersion    : user.imgVersion,
-								msg           : data.msg
+								imgVersion    : user.imgVersion
 
 							}; 
 
@@ -138,13 +137,14 @@
 
 				var eventId = data.eventId,
 					hostId  = data.hostId,
-					userId  = data.userInfos._id;
+					userId  = data.userInfos._id,
+					asker   = {};
 
 				var room  = eventUtils.buildRoomId(eventId,hostId,userId),
 					userSocket = global.sockets[userId],
 					hostSocket = global.sockets[hostId];
 
-					userSocket.leave(room);
+					userSocket.leave( room );
 					
 					if( hostSocket != undefined ){
 						hostSocket.leave(room); 
@@ -170,20 +170,47 @@
 								err: err
 							});
 						 }
+					};
+
+					userCallback = function(err, user){ 
+
+						if( err ){
+							return eventUtils.raiseError({
+								toClient: "Something happened! :o",
+								socket: [ userSocket, hostSocket ],
+								err: err
+							});
+						 }
+
+					 	asker = {
+
+							id            : user._id.toString(),
+							name          : user.name,
+							description   : user.description,
+							age           : user.age,
+							imgId         : user.imgId,
+							imgVersion    : user.imgVersion
+
+						}; 
+
+						var data = {
+
+							userId: userId,
+							eventId: eventId,
+							hostId: hostId,
+							asker: asker
+
+						};
+
+			 			global.io.emit('request participation out success', data );
 
 					};
 
 				Event.findOneAndUpdate( eventCondition, eventUpdate, option, callback );
-				User.findOneAndUpdate( userCondition, userUpdate, option, callback );
 			  	User.findOneAndUpdate( hostCondition, hostUpdate, option, callback );
-			  
-			  var data = {
-								userId: userId,
-								eventId: eventId,
-								hostId: hostId
-							};
+				User.findOneAndUpdate( userCondition, userUpdate, option, userCallback );
 
-						 global.io.emit('request participation out success', data );
+			  
 	    };
 
 	    module.exports = {

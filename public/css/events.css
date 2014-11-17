@@ -1,6 +1,6 @@
 #eventsWrap{
     width: 90%;
-    background: white;
+    background: white; 
 }  
 #createEventIcon{
 	font-size: .8em;
@@ -18,8 +18,9 @@
 .eventItemLayer{
 	background:white;
 	padding: 10px;
+	position: relative;
 }
-#eventListWrap *{
+#eventListWrap *{ 
 	color:#555;
 }
 
@@ -27,6 +28,7 @@
 	background: rgb(249, 249, 249);
 	font-size: .9em;
 	-webkit-transition: all .15s;
+	display: inline-block;
 	transition: all .15s;
 	color: rgb(56, 56, 56);
 	width: 290px;
@@ -36,7 +38,7 @@
 	box-sizing: border-box;
 	position: relative;
 	text-align: left;
-	display: inline-block;
+	border-bottom: none;
 }
 .eventItemWrap:hover{
 	/* background: rgb(245, 245, 245); */
@@ -50,13 +52,28 @@
 	width: 178px;
 	text-align:center;
 
-	margin-top: 10px;
+	margin-top: 12px;
 	color: rgb(163, 163, 163);
 }
+.guestsWrap{
+	padding: 4px 8px;
+	border-radius: 3px;
+}
+.guestsWrap:hover{
+	cursor:pointer;
+	color: rgb(108, 108, 108);
+}
+.guestsWrap.active{
+	color: white!important;
+	background: rgb(83, 83, 83);
+}
 .e-desc{
-	margin: 10px 0;
+	margin-bottom: 10px;
+	height: 31px;
+	font-size: .8em;
 	margin-left: 6px;
 	color: #838383;
+	font-family: Lato;
 }
 .e-infos{
 	border-bottom: 1px solid #dde;
@@ -72,12 +89,13 @@
     
     
 
-    font-family: 'Raleway';
+    font-family: Lato;
 
+    font-weight: bold;
     text-align: right;
     
 
-    margin: 5px 0;
+    margin-top: 5px 0;
 }
 .e-status{
 	width: 70px;
@@ -93,13 +111,11 @@
 	color: green;
 }
 .e-name{
-	font-weight: bolder;
-	font-size: 1.1em;
 	color: rgb(70, 70, 70);
 	text-transform: uppercase;
-	font-family: 'Raleway';
+	font: bolder 1.1em 'Lato';
 	position:relative;
-	margin-bottom: 7px;
+	margin-bottom: 4px;
 	padding-left: 5px;
 	text-align: left;
 }
@@ -113,30 +129,48 @@
 	letter-spacing: -1px;
 	text-decoration: underline;
 }
-.e-head{
+.headWrap{
 	height: 70px;
 	margin-bottom:10px;
 	padding-bottom:20px;
-	border-bottom:1px solid #eec;
+	border-bottom: 1px solid #E0E0E0;
 }
+.bodyWrap{
 
-{
 }
-.e-head div{
+.askedInWrap{	
+    width: 258px;
+    height: 164px;
+    position: absolute;
+    z-index: 10;
+    background: whitesmoke;
+    padding:5px;
+    box-sizing: border-box; 
+    display: none;
+}
+.askedInWrap.active{
+}
+.askedInWrap img
+{
+	border: 1px solid rgb(229, 229, 229);
+	margin:2px
+
+;
+	background: white;
+	padding: 5px;
+}
+.headWrap div{
 	display:inline-block;
 }
 .e-active{
 	-webkit-box-shadow: 0 0 25px rgb(128, 128, 128);
 	box-shadow: 0 0 25px rgb(128, 128, 128);
 }
-.e-body{
+.bodyWrap{
 	display: block;
 	margin: 10px 0;
 }
-.e-body i.icon-lamp{
-	height:50px;
-	padding-top: 2px;
-}
+
 .e-row{
 	line-height:1.2em;
 }

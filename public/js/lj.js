@@ -16,77 +16,20 @@ window.LJ = {
 		artificialDelay: 600
 	},
 	cloudinary:{
-		uploadParams: {
-			cloud_name:"radioreve",
-			api_key:"835413516756943"
-		},
-		displayParamsProfile: {
-				cloud_name :"radioreve",
-				width:150,
-				height:150,
-				crop:'fill',
-				gravity:'face'
-		},
-		displayParamsEvent: {
-				cloud_name :"radioreve",
-				width:80,
-				height:80,
-				crop:'fill',
-				gravity:'face',
-				radius:'2'
-		},
-		displayParamsMainThumb: {
-				cloud_name :"radioreve",
-				width:50,
-				height:50,
-			//	effect:'grayscale',
-				crop:'fill',
-				gravity:'face',
-				radius:'max'
-		},
-		displayParamsLargeThumb: {
-				cloud_name :"radioreve",
-				width:280,
-				height:280,
-				crop:'fill',
-				gravity:'face',
-				radius:'max'
-		},
-        displayParamsAsker:{
-                cloud_name :"radioreve",
-                width:45,
-                height:45,
-                crop:'fill',
-                gravity:'face',
-            //   effect:'grayscale',
-                radius:7
-        },
+		uploadParams: { cloud_name:"radioreve", api_key:"835413516756943" },
+		displayParamsProfile: { cloud_name: "radioreve", width: 150, height: 150, crop: 'fill', gravity: 'face' },
+		displayParamsEvent: { cloud_name :"radioreve", width: 80, height: 80, crop: 'fill', gravity: 'face', radius: '2' },
+		displayParamsMainThumb: { cloud_name: "radioreve",width: 50,height: 50, crop: 'fill', gravity: 'face', radius: 'max' },
+		displayParamsLargeThumb: { cloud_name: "radioreve", width: 280, height: 280, crop: 'fill', gravity: 'face', radius: 'max' },
+        displayParamsAsker: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:7 },
+        displayParamsAskerThumb: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:'5', effect:'grayscale' },
         loader_id: "ajax-loader-black_frpjdb",
-        displayParamsLoader:{
-                cloud_name :"radioreve",
-                html: { 'class': 'loader'}
-        },
+        displayParamsLoader:{ cloud_name :"radioreve", html: { 'class': 'loader'} },
         placeholder_id: "placeholder_jmr9zq",
-        displayParamsPlaceholder:{
-                cloud_name :"radioreve",
-				html: { 'class': 'mainPicture'},                
-                width:150,
-        }
+        displayParamsPlaceholder:{ cloud_name :"radioreve", html: { 'class': 'mainPicture' }, width:150 }
 	},
-	user:{  
-		_id:'',
-		name:'',
-		email:'',
-		age:'',
-		location:1,
-		description:'',
-		imgId:'',
-		imgVersion:'',
-		status:'',
-		hostedEventId:'',
-		eventsAskedList:[],
-		newsletter:false
-	},
+	/* To be dynamically filled on login */
+	user:{},
 	myEvents: [],
     myAskers: [],
     selectedTags: [],
@@ -396,6 +339,23 @@ window.LJ = {
 
 			});
 
+			LJ.$body.on('click', '.guestsWrap', function(){
+
+				$(this).toggleClass('active');
+				var $askersWrap = $(this).parents('.eventItemWrap').find('.askedInWrap');
+
+				if( $(this).hasClass('active') )
+				{
+					$askersWrap.toggleClass('active')
+						       .velocity('transition.fadeIn');
+				}else
+				{
+					$askersWrap.toggleClass('active')
+						       .velocity('transition.fadeOut');
+				}
+
+			});
+
 			LJ.$body.on('click', '.askIn', function(){
 
 				// Make sure client doesn't spam ask
@@ -577,10 +537,11 @@ window.LJ = {
 			}
 
 			$.ajax({
+
 				method:'POST',
 				url:'/signup',
 				dataType:'json',
-				data : {
+				data: {
 					email    : credentials.email,
 					password : credentials.password
 				},
@@ -588,8 +549,9 @@ window.LJ = {
 					data.email    = credentials.email;
 					data.password = credentials.password;
 					LJ.fn.handleSuccessSignup(data);
+
 				},
-				error : function(data){
+				error: function(data){
 					LJ.fn.handleFailedSignup(data);
 				}
 			});
@@ -1004,23 +966,43 @@ window.LJ = {
 			
 			}
 		},
-		replaceMainImage: function( id, version, d ){
+		replaceThumbImage: function( imgId, imgVersion, d, previousImg ){
 
-		        d = d || LJ.cloudinary.displayParamsProfile;
-		    	d.version = version;
+			d.version = imgVersion;
 
-			var previousImg = $('#pictureWrap').find('img'),
-				newImg      = $.cloudinary.image(id, d); 
-				newImg.addClass('mainPicture').hide();
-				$('#pictureWrap').prepend(newImg);
+			var newImg = $.cloudinary.img( imgId, d )
+						  .addClass('none')
+						  .insertAfter( previousImg );
+
+				previousImg.velocity('transition.fadeOut', {
+					duration: 300,
+					complete: function(){
+						previousImg.remove();
+						newImg.velocity('transition.fadeIn')
+					}
+				})
+
+		},
+		replaceMainImage: function( imgId, imgVersion, d ){
+
+		    	d.version = imgVersion;
+
+			var $previousImg = $('#pictureWrap').find('img'),
+				$newImg      = $.cloudinary.image( imgId, d ); 
+				$newImg.addClass('mainPicture').hide();
+				$('#pictureWrap').prepend( $newImg );
  													
-				previousImg.fadeOut(700, function(){
-					$(this).remove();
-					newImg.fadeIn(700);
+				$previousImg.velocity('transition.fadeOut', { 
+					duration: 600,
+					complete: function(){
+						$previousImg.remove();
+						$newImg.velocity('transition.fadeIn', { duration: 700 });
+					}
 				});
 
 		},
 		replaceThumbImage: function( id, version, d ){
+
 			    d = d || LJ.cloudinary.displayParamsMainThumb;
 				d.version = version;
 
@@ -1038,7 +1020,10 @@ window.LJ = {
 		initCloudinary: function(upload_tag){
 
 			$.cloudinary.config( LJ.cloudinary.uploadParams );
+			LJ.tpl.$placeholderImg = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsAskerThumb );
+
 			$('.upload_form').append( upload_tag );
+
 			$('.cloudinary-fileupload')
 
 				.bind('fileuploadstart', function(){
@@ -1111,70 +1096,151 @@ window.LJ = {
                 return html;
 
         },
-		renderEvent: function(e){
+        renderChatWrap: function( chatId ){
 
-			var d = LJ.cloudinary.displayParamsEvent;
-				d.version = e.hostImgVersion;
-
-			var chatId = LJ.fn.buildChatId(e._id, e.hostId, LJ.user._id);
-
-            var chatWrap = '<div class="chatWrap chat-asker none" data-chatid="'+chatId+'">'
+        	return '<div class="chatWrap chat-asker none" data-chatid="'+chatId+'">'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
                             +  '<input type="text" value="" placeholder="Can I come with my friends ?">'
                             +  '<input type="submit" value="">'
                             +'</div>'
                            +'</div>';
-			
-			var imgTag = $.cloudinary.image( e.hostImgId, d )
-						  .addClass('zoomable')
-						  .attr('data-imgid', e.hostImgId )
-						  .attr('data-imgversion', e.hostImgVersion );
 
-			var imgTagHTML = imgTag.prop('outerHTML');
+        },
+        renderEventTags: function( tags ){
 
-			var button = '<div class="askInWrap"><button class=" ';
+        	var eventTags = '<div class="tag-row">',
+				L = tags.length;
+
+				for ( var i=0; i<L; i++ )
+				{
+					eventTags += '<div class="tag tag-'+tags[i]+'">' + LJ.fn.matchTagName( tags[i] ) + '</div>';
+				}
+				eventTags +='</div>';
+
+				return eventTags;
+
+        },
+        renderEventButton: function( eventId, hostId ){
+
+        	var button = '<div class="askInWrap"><button class=" ';
 			
-			if( e.hostId == LJ.user._id )
+			if( hostId == LJ.user._id )
 			{
 				button += 'themeBtnToggle themeBtnToggleHost"> Management'	
 			}
 			else
 			{
 				button += 'askIn themeBtnToggle';
-				LJ.user.eventsAskedList.indexOf(e._id) > -1 ? button += ' asked"> En attente' : button += ' idle">Je veux y aller';
+				LJ.user.eventsAskedList.indexOf( eventId ) > -1 ? button += ' asked"> En attente' : button += ' idle">Je veux y aller';
 			}
 				button += '</button><div class="chatIconWrap"><i class="icon icon-chat"/></div></div>';
 
-			var eventTags = '<div class="tag-row">',
-				L = e.tags.length;
+				return button;
+        },
+        renderHostImg: function( hostImgId, hostImgVersion ){
 
-				for ( var i=0; i<L; i++ ){
-					eventTags += '<div class="tag tag-'+e.tags[i]+'">' + LJ.fn.matchTagName( e.tags[i] ) + '</div>';
-				}
-				eventTags +='</div>';
-		
+        	var d = LJ.cloudinary.displayParamsEvent;
+				d.version = hostImgVersion;
+
+
+			var imgTag = $.cloudinary.image( hostImgId, d )
+						  .addClass('zoomable')
+						  .attr('data-imgid', hostImgId )
+						  .attr('data-imgversion', hostImgVersion );
+
+			var imgTagHTML = imgTag.prop('outerHTML');
+
+			return imgTagHTML
+        },
+        renderAskerThumb: function( imgId, o){
+
+        	var $img = $.cloudinary.image( imgId, LJ.cloudinary.displayParamsAskerThumb );
+ 
+        	if( o ){ 
+	        	if( o.dataList.length > 0 )
+	        	{
+	        		for( var i = 0; i < o.dataList.length ; i++ ){
+	        			$img.attr('data-'+o.dataList[i].dataName, o.dataList[i].dataValue );
+	        		}
+	        	}
+        		
+        	}
+
+        	return $img;
+
+        },
+        renderAskersThumbs: function( askersList, maxGuest ){
+
+        	var L = askersList.length,
+        	    html='';
+        	
+        	for ( i = 0; i < maxGuest ; i++ )
+        	{ 
+        		var o = { classList: ['hello'], dataList: [] };
+	        	var d = LJ.cloudinary.displayParamsAskerThumb;
+
+        		if( i < L )
+        		{
+	        		var imgId        = askersList[i].imgId;
+	        			d.imgVersion = askersList[i].imgVersion;
+	        			o.classList = ['askedInThumb'];
+	        			o.dataList   = [ { dataName: 'askerid', dataValue:  askersList[i].id } ];
+
+        		}else //On affiche via placeholder le nb de places restantes.
+        		{
+        			var imgId = LJ.cloudinary.placeholder_id;
+        				o.classList = ['askedInRemaining'];
+        		}
+
+        		html += LJ.fn.renderAskerThumb( imgId, o ).prop('outerHTML');
+        	}
+        		
+        		return html
+        },
+		renderEvent: function( e ){
+
+			var eventId        = e._id,
+				hostId         = e.hostId,
+				hostImgId      = e.hostImgId,
+				hostImgVersion = e.hostImgVersion,
+				tags           = e.tags,
+				chatId 		   = LJ.fn.buildChatId( eventId, hostId, LJ.user._id );
+
+			var imgTagHTML   = LJ.fn.renderHostImg( hostImgId, hostImgVersion ),
+			    button       = LJ.fn.renderEventButton( e._id, hostId ),
+				eventTags    = LJ.fn.renderEventTags( tags ),
+            	chatWrap     = LJ.fn.renderChatWrap( chatId ),
+            	askersThumbs = LJ.fn.renderAskersThumbs( e.askersList, e.maxGuest );
+
 			var html = '<div class="eventItemWrap" '
 						+ 'data-eventid="'+e._id+'" '
 						+ 'data-hostid="'+e.hostId+'" '
 						+ 'data-location="'+e.location+'"'
 						+ 'data-eventstate="'+e.state+'">'
 						+'<div class="eventItemLayer">'
-						+ '<div class="e-head">' 
+						+ '<div class="headWrap">' 
 						   + '<div class="e-image left">'+ imgTagHTML +'</div>'
 						     + '<div class="e-hour e-weak">'+ LJ.fn.matchDateHHMM( e.beginsAt ) +'</div>'
 						   + '<div class="e-guests right">'
-						     + '<i class="icon icon-users"></i><span>'+ e.askersList.length +'</span>/'+'<span>'+ e.maxGuest +'</span>'
+						     + '<span class="guestsWrap">'
+						       + '<i class="icon icon-users"></i>'
+						       + '<span class="nbAskers">'+ e.askersList.length +'</span>/'
+						       + '<span class="nbAskersMax">'+ e.maxGuest +'</span>'
+						     + '</span>'
 						   + '</div>'
 						+ '</div>'
-						+ '<div class="e-location">'
-						  + '<span>'+ LJ.fn.matchLocation( e.location ) +'</span>'
+						+ '<div class="askedInWrap">'
+						+ askersThumbs
 						+ '</div>'
-						+ '<div class="e-body">'
-						   + '<div class="e-name">'+ e.name +' </div>'
-						   + '<div class="e-desc">' + e.description + '</div>'
-						   + eventTags
-						+ '</div>'
+						+ '<div class="bodyWrap">'
+							+ '<div class="e-location">'
+							  + '<span>'+ LJ.fn.matchLocation( e.location ) +'</span>'
+							+ '</div>'
+							   + '<div class="e-name">'+ e.name +' </div>'
+							   + '<div class="e-desc">' + e.description + '</div>'
+							   + eventTags
+							+ '</div>'
 						+ button
                         + chatWrap
 						+ '</div></div>';
@@ -1561,15 +1627,16 @@ window.LJ = {
 
 					sleep( LJ.ui.artificialDelay, function(){
 
-						if( LJ.user._id === data.userId ){
+						if( LJ.user._id === data.userId )
+						{
 
 							LJ.fn.hideLoaders();
 							LJ.fn.toastMsg('Your request has been sent', 'info');
 							$('.asking').removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
 										.siblings('.chatIconWrap').velocity('transition.slideLeftIn', { duration: 400, display:'inline-block'});
 
-						}else{
-
+						}else
+						{
 							var askerHTML = LJ.fn.renderAsker( data.asker );
 
 							    $( askerHTML ).appendTo( LJ.$askersListWrap )
@@ -1579,23 +1646,31 @@ window.LJ = {
 							    			});
 
 							 LJ.myAskers.push( asker );
+						}
 
-							}
-
-						var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span').first();
+						var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
 							$nbAskers.text( parseInt( $nbAskers.text() ) + 1 );
 
+						var d = LJ.cloudinary.displayParamsAskerThumb;
+							d.version = asker.imgVersion;
+
+						var $askerImg = LJ.fn.renderAskerThumb( asker.imgId, { dataList: [{ dataName: 'askerid', dataValue: asker.id }]});
+						var $askedInWrap = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap');
+							$askedInWrap.prepend( $askerImg );
+							$askedInWrap.find('img').last().remove();
 
 					});
+
 				});
 
 				LJ.params.socket.on('request participation out success', function(data){
 
-						var userId = data.userId,
-							hostId = data.hostId,
-							eventId = data.eventId;
+						var userId  = data.userId,
+							hostId  = data.hostId,
+							eventId = data.eventId,
+							asker   = data.asker;
 
-						var chatId = LJ.fn.buildChatId(eventId, hostId, userId);
+						var chatId = LJ.fn.buildChatId( eventId, hostId, userId );
 						var $aRow = LJ.$askersListWrap.find('.askerInfos[data-userid="'+userId+'"]').parents('.a-row');
 						var $chatWrapAsHost = LJ.$askersListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
 						var $chatWrapAsUser = LJ.$eventsListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
@@ -1612,11 +1687,15 @@ window.LJ = {
 
 							hostId === LJ.user._id ? $aRow.velocity("transition.slideLeftOut", { duration: 200 }) : LJ.fn.toastMsg('Vous avez été désinscris de la liste', 'info');
 
-							var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span').first();
+							var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
 								$nbAskers.text( parseInt( $nbAskers.text() ) - 1 );
 
+							$('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap')
+																		   .append( LJ.tpl.$placeholderImg.clone() )
+																		   .find('img[data-askerid="'+asker.id+'"]')
+																		   .remove();
 						});
-
+	
 				});
 
 				LJ.params.socket.on('update settings success', function(data){
@@ -1826,6 +1905,7 @@ window.LJ = {
 	        	
        		$('.eventItemWrap, #noEvents ').addClass('filtered');
        		LJ.$eventsToDisplay.removeClass('filtered');
+
        		if( LJ.$eventsToDisplay.length == 0){
        			LJ.fn.toastMsg( 'Aucun évènement trouvés', 'info');
        			$('#noEvents').removeClass('filtered').addClass('none')	
