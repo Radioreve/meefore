@@ -1,5 +1,5 @@
 #allChatsWrap{
-	width:700px; 
+	width:700px;  
 	height:400px;
 }
 .surfacing{
@@ -7,30 +7,32 @@
 }
 
 .chatWrap{
-	width: 259px;
-	height: 255px;
-	background: white;
+	width: 258px;
+	height: 235px;
+	background: rgba(255,255,255,.95);
 	border: 1px solid #D5D5D5;
 	position: absolute;
 	box-sizing: border-box;
+	font: normal .85em 'Lato';
 }
 .chatLineWrap{
 	outline:none;
 }
 .chatLineWrap{
-	height: 87%;
+	height: 85%;
 	overflow-x: hidden;
 	box-sizing: border-box;
 }
 .chatInputWrap{
-	height: 14%;
+	height: 16%;
 	/* border-radius: 0 0 3px 3px; */
 	width: 100%;
 	text-align: center;
 	box-sizing: border-box;
-	background: #E6E6E6;
+	/* background: #E6E6E6; */
 	border: none;
 	border-radius: 0;
+	font: normal 1.1em 'Lato'!important;
 }
 .chatLine{
 	padding: 0 30px;
@@ -38,7 +40,6 @@
 	text-align: center;
 }
 .cha{
-	font-size: .8em;
 	line-height: 1.3em;
 	max-width: 260px;
 	color: white;
@@ -52,13 +53,14 @@
 .chatLineWrap .chatLine:last-child{
 	margin-bottom:30px;
 }
-.cha1{
+.cha-user{
 	background: #636363;
 	color: white;
 }
-.cha2{
-	color: rgb(44, 43, 38);
-	background: #E6E6E6;
+.cha-other{
+	color: rgb(44, 44, 44);
+	background: white;
+	border: 1px solid #6E6E6E;
 }
 .chatInputWrap input[type="text"]{
 	width: 100%;
@@ -72,25 +74,25 @@
 	box-sizing: border-box;
 }
 .chatInputWrap input[type="submit"]{
-	width: 5px;
-	height: 35px;
+	width: 20px;
+	height: 36px;
 	border: none;
-	background: #D0D0D0;
+	background: #FFFFFF;
+	border: 1px solid rgb(207, 207, 207);
 	border-radius: 0 0 2px 0;
 	font-size: .8em;
 	position: relative;
-	top: -35px;
+	top: -37px;
+	right: -1px;
 	float: right;
 }
 .chat-host{
 	left:75px;
 	top: -96px;
 }
-.chatWrap.chat-host{
-	height:250px
-}
+.chatWrap.chat-host{}
 .chat-asker{
-	top: 0;
+	top: 9px;
 }
 .tri{
 	width: 0;

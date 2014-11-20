@@ -3,26 +3,23 @@
 	- Faut que les users puissent lacher un commentaire, genre 24H après la fin d'une soirée, sur la fiche de l'host
 	- Implémenter un délire de points, de rewards (visuel), définir hiérarchie, ambassadeur, vip etc...
 	- Limiter le nombre de participations possibles par jours
-	- Rajouter un data--hint type "attention si vous faites des events chez vous!" 
-	- Donner à 'host la possibilité de valider un user, et le nombre de personnes prévues'
 	- Faire un système de badges par tag et par palier ET/OU de niveaux. Cadeaux offert à chaque palier
-	- Faire un smooth scrolling sur la page events (fixé le semi header, mettre 1 bar semi transparente dégradée en overlay)
-	- Augmenter les Models (genre date d'inscription etc, notamment par rapport à la fiche Management )
 
 #Schedule 
 
-  ~ Lundi
+  ~ MUST HAVE
+	- Rajouter un data--hint type "attention si vous faites des events chez vous!" 
+	- Donner à 'host la possibilité de valider un user, et le nombre de personnes prévues'
+	- Augmenter les Models (genre date d'inscription etc, notamment par rapport à la fiche Management )
 	- Améliorer le design global
-	- Tester et fixer le chat once and fo'all 
-	- Implémenter le système de validation des gens
+	
+	- Implémenter le système de validation des gens ( et)
 	- Socials signins with passport (Facebook )
+  ~ NICE TO HAVE
 	- Système d'admin monitoring pour voir les gens connectés
-	- Rendre le design responsive @media queries et/ou bootstrap
-  ~ Mardi
-  ~ Mercredi
-  ~ Jeudi
-  ~ Vendredi
-  ~ Weekend
+	- Améliorer le système de logout
+  
+
 
 #Bugs! :@
 
@@ -31,6 +28,7 @@
 	- Rédiger le contenu de "First Connexion"
 
   ~> Deployment Steps
+	- Rendre le design responsive @media queries et/ou bootstrap
 	- Empêcher les double connexion socket
 	- Validation clientside, validaton server side
 

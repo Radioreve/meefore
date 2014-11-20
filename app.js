@@ -44,7 +44,7 @@
 		});
 
 	//Loading the server
-	var port = process.env.PORT || 1338;
+	var port = process.env.PORT || 1337;
 
 		server.listen( port, function(){
 			console.log('Server listening on '+ port);

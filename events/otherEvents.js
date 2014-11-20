@@ -39,9 +39,9 @@
  
 	var reloadRooms = function(userId){
  
-			User.findById(userId,{},function(err, user){
+			User.findById( userId, {}, function(err, user){
 
-				if(err){
+				if( err ){
 					console.log('Error fetching user for load rooms');
 				}else{
 					user.socketRooms.forEach( function( room ){

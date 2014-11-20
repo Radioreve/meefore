@@ -53,7 +53,7 @@
 				}
 				else{
 
-					var token = jwt.sign( user, config.jwtSecret, { expiresInMinutes: 60*5 });
+					var token = jwt.sign( user, config.jwtSecret, { expiresInMinutes: 600 });
 
 	  				res.json( 200, {
 	  					_id:     user._id,

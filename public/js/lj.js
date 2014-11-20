@@ -22,6 +22,7 @@ window.LJ = {
 		displayParamsMainThumb: { cloud_name: "radioreve",width: 50,height: 50, crop: 'fill', gravity: 'face', radius: 'max' },
 		displayParamsLargeThumb: { cloud_name: "radioreve", width: 280, height: 280, crop: 'fill', gravity: 'face', radius: 'max' },
         displayParamsAsker: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:7 },
+        displayParamsAskerDetails: { cloud_name: "radioreve", width:150, height:150, crop:'fill', gravity:'face', radius:3 },
         displayParamsAskerThumb: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:'5', effect:'grayscale' },
         loader_id: "ajax-loader-black_frpjdb",
         displayParamsLoader:{ cloud_name :"radioreve", html: { 'class': 'loader'} },
@@ -334,7 +335,6 @@ window.LJ = {
 
 			LJ.$body.on('click', '.chatIconWrap', function(){
 
-				$( this ).toggleClass('active');
 				LJ.fn.toggleChatWrapEvents( $( this ) );
 
 			});
@@ -391,7 +391,7 @@ window.LJ = {
 			 	var imgId      = $( this ).data('imgid'),
 			 		imgVersion = $( this ).data('imgversion'); 
 
-                LJ.fn.toggleOverlay( 'high', LJ.fn.renderLargeThumb( imgId, imgVersion ));
+                LJ.fn.toggleOverlay( 'high', LJ.fn.renderLargeThumb( imgId, imgVersion ), 300);
 
             });
 
@@ -478,10 +478,13 @@ window.LJ = {
        		 });
 
        		  LJ.$askersListWrap.on('click','.askerPicture',function(){
+
+       		  	if( $(this).parents('.a-row').data('askerid') == 'placeholder' ) return;
+
             	var $that = $(this);
             	if(! $that.hasClass('moving') ){
             		$that.addClass('moving');
-            		LJ.fn.toggleChatWrapAskers($that);     
+            		LJ.fn.toggleChatWrapAskers( $that );     
             	
             		sleep( LJ.ui.artificialDelay, function(){
             			$that.removeClass('moving');
@@ -489,6 +492,27 @@ window.LJ = {
             	}
             });	
 
+       		LJ.$body.on('click', '.a-row', function(){
+
+       			if( $(this).data('askerid') == 'placeholder') return;
+       			var $aBody = $(this).find('.askerBody'),
+       				askerId = $(this).data('askerid');
+
+       			if( $aBody.hasClass('active') ) return;
+
+       			$('.askerBody').removeClass('active');
+       			$aBody.addClass('active');
+
+       			$('.a-details.active').velocity('transition.fadeOut',
+       				{ 
+       					duration: 200,
+       					complete: function(){
+       						$('.a-details[data-askerid="'+askerId+'"]').addClass('active')
+       															   	   .velocity('transition.fadeIn', { duration: 300 });
+       					}
+       				});
+
+       		});
 		},
 		handleDomEvents_Contact: function(){
 
@@ -846,29 +870,47 @@ window.LJ = {
 				});
 
 		},
-		toggleChatWrapAskers: function(askerPictureTag){
+		toggleChatWrapAskers: function( askerPictureTag ){
 
-			var $chatWrap = askerPictureTag.parents('.a-row').find('.chatWrap');
-        	var $previous = $('.a-active');
+			var $aRow      = askerPictureTag.parents('.a-row'),
+			    $chatWrap  = $aRow.find('.chatWrap'),
+        	    $previous  = $('.a-active'),
+        		$surfacing = $('.surfacing');
 
-        	var $eventWrap = $chatWrap.parents('.eventItemWrap');
-        		$('.surfacing').removeClass('surfacing');
-        		$eventWrap.addClass('surfacing');
+        	var chatId = $chatWrap.data('id');
 
-			$previous.removeClass('a-active')
-				 	 .parents('.a-row')
-				  	 .find('.chatWrap')
-				  	 .velocity('transition.slideLeftOut', { duration: 300 }); 
+        	 if( !$surfacing )
+			     {
+			     	$aRow.addClass('surfacing')
+			     			  .find('.chatWrap')
+			     			  .velocity('transition.slideLeftIn', { duration: 400 });
+			     	return;
+			     }
 
-                if( !askerPictureTag.hasClass('a-active') && ! askerPictureTag.is($previous) ){
-                    askerPictureTag.addClass('a-active');
-                    LJ.fn.displayChat( $chatWrap );
+		     if( $surfacing.is( $aRow ))
+		     {
+		     	$aRow.removeClass('surfacing')
+		     			  .find('.chatWrap')
+		     			  .velocity('transition.slideLeftOut', { duration: 300 });
+		     	return;
+		     }
 
+    		$surfacing.removeClass('surfacing')
+    				  .find('.chatWrap')
+    				  .velocity('transition.slideLeftOut', { duration: 300 });
 
-                }else{
-                    askerPictureTag.removeClass('a-active');
-                    LJ.fn.hideChat( $chatWrap );
-                }          
+    		$aRow.addClass('surfacing')
+    				  .find('.chatWrap')
+    				  .velocity('transition.slideLeftIn', { duration: 400 });
+
+    		sleep(30, function(){ 
+    			if( LJ.state.jspAPI[chatId] != undefined )
+    			{
+           		  LJ.state.jspAPI[chatId].reinitialise();
+        		  LJ.state.jspAPI[chatId].scrollToBottom();   
+    			} 
+    		});
+
 		},
 		toggleChatWrapEvents: function( chatIconWrap ){
 
@@ -877,19 +919,28 @@ window.LJ = {
 			    $previous  = $('.prev'),
 			    $surfacing = $('.surfacing');
 
+			var chatId = $chatWrap.data('chatid');
+
 			     if( !$surfacing )
 			     {
-			     	$eventWrap.addClass('surfacing');
-			     	LJ.fn.displayChat( $chatWrap );
+			     	chatIconWrap.addClass('active');
+			     	$eventWrap.addClass('surfacing')
+			     			  .find('.chatWrap')
+			     			  .velocity('transition.slideUpIn', { duration: 400 });
 			     	return;
 			     }
 
 			     if( $surfacing.is( $eventWrap ))
 			     {
-			     	$eventWrap.removeClass('surfacing');
-			     	LJ.fn.hideChat( $chatWrap );
+			     	chatIconWrap.removeClass('active');
+			     	$eventWrap.removeClass('surfacing')
+			     			  .find('.chatWrap')
+			     			  .velocity('transition.slideDownOut', { duration: 300 });
 			     	return;
 			     }
+
+			    $('.chatIconWrap').removeClass('active');
+			    chatIconWrap.addClass('active');
 
         		$surfacing.removeClass('surfacing')
         				  .find('.chatWrap')
@@ -897,7 +948,14 @@ window.LJ = {
 
         		$eventWrap.addClass('surfacing')
         				  .find('.chatWrap')
-        				  .velocity('transition.slideUpIn', { duration: 300 });
+        				  .velocity('transition.slideUpIn', { duration: 400 });
+
+        		sleep(30, function(){ 
+        			if( LJ.state.jspAPI[chatId] != undefined ){
+	           		  LJ.state.jspAPI[chatId].reinitialise();
+	        		  LJ.state.jspAPI[chatId].scrollToBottom();   
+        			} 
+        		});
              
 		},
 		initAppSettings: function(data){
@@ -1088,9 +1146,11 @@ window.LJ = {
                 var html =''; 
                     max = max || arr.length;
 
-                for( var i=0; i < max; i++ ){ 
-
+                for( var i=0; i < max ; i++ ){ 
+                if( i < max )
+                {
                 	html += LJ.fn.renderAsker( arr[i] ); 
+                }
 
                 }
                 return html;
@@ -1278,7 +1338,22 @@ window.LJ = {
              dS += d.getMinutes();
    		     return dS;
 		},
-        renderAsker: function(a){
+		renderAskerPlaceholder: function(){
+
+			var asker = {
+
+				id: "placeholder",
+				imgId: LJ.cloudinary.placeholder_id,
+				name:"White",
+				age: 25,
+				description:""
+
+			}
+
+			return LJ.fn.renderAsker( asker );
+
+		},
+        renderAsker: function( a ){
 
             var d = LJ.cloudinary.displayParamsAsker;
             	d.version = a.imgVersion; // Ne fonctionne pas car le param 'a' provient de la base qui est pas MAJ
@@ -1295,18 +1370,58 @@ window.LJ = {
                             +'</div>'
                            +'</div>';
 
-            var html =  '<div class="a-row">'
-                        +'<div class="askerPicture">'
-                          + imgTag
-                        +'</div>'
-                        +'<div class="askerInfos" data-userid="'+a.id+'">'
-                          +'<div class="a-name">'+a.name+'</div>'
-                          +'<div class="a-age">'+a.age+' ans'+'</div>'
-                          +'<div class="a-desc">'+a.description+'</div>'
-                        +'</div>'
+            var html =  '<div class="a-item" data-askerid="'+a.id+'">'
+                           +'<div class="a-picture">'
+                             + imgTag
+                           +'</div>'
+                           +'<div class="a-head">'
+                             +'<div class="a-name">'+a.name+'</div>'
+                             +'<div class="a-age">'+a.age+' ans'+'</div>'
+                           +'</div>'
+                           +'<div class="a-body">'
+                             +'<div class="a-desc"><span>'+a.description+'</span></div>'
+                           +'</div>'
+                           +'<div class"a-btnWrap">'
+                             +'<button class="btn-accept">Accepter</button>'
+                             +'<button class="btn-refuse">Refuser</button>'
+                           +'</div>'
                         + chatWrap
                     +'</div>';
+
             return html;
+
+        },
+        renderAskerDetails: function( a ){
+
+        	var d = LJ.cloudinary.displayParamsAskerDetails;
+        		d.version = a.imgVersion;
+
+        	var imgTag = $.cloudinary.image( a.imgId, d ).prop('outerHTML');
+
+        	var btnWrap =  '<div class="btnWrap">'
+        				   + '<button class="themeBtn accept">Accepter</button>'
+        				   + '<button class="themeBtn refuse">Next time</button>'
+        				  +'</div>'
+
+        	var html = '<div class="a-details none" data-askerid="'+a.id+'">'
+ 					      + imgTag
+ 					      + btnWrap       		
+        				+'</div>';
+
+        	return html;
+
+        },
+        renderAskersDetails: function(){
+
+        	var L = LJ.myAskers.length,
+        		  html = '';
+
+        	for( var i = 0; i<L ; i++ ){
+        		html += LJ.fn.renderAskerDetails( LJ.myAskers[i] );
+        	}
+
+        	return html;
+
         },
         renderLargeThumb: function( imgId, imgVersion ){
 
@@ -1382,24 +1497,6 @@ window.LJ = {
         		}
         	return html;
 
-        },
-        displayChat: function( chatWrap ){
-
-        	var chatId = chatWrap.data('chatid');
-            chatWrap.velocity("transition.slideUpIn", {
-            	duration: 450,
-            	complete: function(){
-            		if(LJ.state.jspAPI[chatId] != undefined){
-	           		  LJ.state.jspAPI[chatId].reinitialise();
-	        		  LJ.state.jspAPI[chatId].scrollToBottom();   
-        			} 
-            	}
-            });
-                            
-        },
-        hideChat: function( chatWrap ){
-
-           	chatWrap.velocity("transition.slideDownOut", { duration: 300 });
         },
         handleServerError: function( msg ){
 
@@ -1557,12 +1654,7 @@ window.LJ = {
 							$inserted.velocity('transition.slideLeftIn', { duration: 400 })
 									 .removeClass('inserted');
 						}
-
-
 					});
-
-
-
 				});
 
 				LJ.params.socket.on('change state event success', function( data ){
@@ -1637,13 +1729,17 @@ window.LJ = {
 
 						}else
 						{
-							var askerHTML = LJ.fn.renderAsker( data.asker );
+							var askerHTML 		 = LJ.fn.renderAsker( data.asker ),
+								askerDetailsHTML = LJ.fn.renderAskerDetails ( data.asker );
 
-							    $( askerHTML ).appendTo( LJ.$askersListWrap )
+							    $( askerHTML ).appendTo( $('#askersRows') )
 							    			.hide()
 							    			.velocity("transition.slideLeftIn",{
 							    				duration:300
 							    			});
+							    $( askerDetailsHTML ).appendTo( $('#askersDetailsWrap') )
+							    					 .hide();
+							    					 
 
 							 LJ.myAskers.push( asker );
 						}
@@ -1670,10 +1766,10 @@ window.LJ = {
 							eventId = data.eventId,
 							asker   = data.asker;
 
-						var chatId = LJ.fn.buildChatId( eventId, hostId, userId );
-						var $aRow = LJ.$askersListWrap.find('.askerInfos[data-userid="'+userId+'"]').parents('.a-row');
-						var $chatWrapAsHost = LJ.$askersListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
-						var $chatWrapAsUser = LJ.$eventsListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
+						var chatId = LJ.fn.buildChatId( eventId, hostId, userId ),
+						    $aRow = LJ.$askersListWrap.find('.askerInfos[data-userid="'+userId+'"]').parents('.a-row'),
+						    $chatWrapAsHost = LJ.$askersListWrap.find('.chatWrap[data-chatid="'+chatId+'"]'),
+						    $chatWrapAsUser = LJ.$eventsListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
 
 						_.remove( LJ.myAskers, function(asker){
 							return asker.id === data.userId;
@@ -1682,10 +1778,20 @@ window.LJ = {
 						sleep( LJ.ui.artificialDelay, function(){
 
 							LJ.fn.hideLoaders();
+							LJ.fn.toggleChatWrapEvents( $chatWrapAsUser.find('.chatIconWrap') );
+
 							$('.asking').removeClass('asked').removeClass('asking').addClass('idle').text('Je veux y aller!')
 										.siblings('.chatIconWrap').velocity('transition.slideLeftOut', { duration: 400, display:'inline-block'});
 
-							hostId === LJ.user._id ? $aRow.velocity("transition.slideLeftOut", { duration: 200 }) : LJ.fn.toastMsg('Vous avez été désinscris de la liste', 'info');
+							if( hostId === LJ.user._id )
+							{
+								$aRow.velocity("transition.slideLeftOut", { duration: 200 });
+								$('.a-row').first().click();
+							}
+							else
+							{
+								LJ.fn.toastMsg('Vous avez été désinscris de la liste', 'info');
+							}	
 
 							var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
 								$nbAskers.text( parseInt( $nbAskers.text() ) - 1 );
@@ -1745,12 +1851,15 @@ window.LJ = {
                     for( var i=0; i<L; i++) {
                         LJ.myAskers[i] = askersList[i];
                     }
+
                    LJ.fn.displayAskers();
 
                 });
 
                 LJ.params.socket.on('receive message', function(data){
+
                 	LJ.fn.addChatLine(data);
+
                 });
 
                 
@@ -1761,7 +1870,7 @@ window.LJ = {
 			if( data.hostId == LJ.user._id ){
 		                		$('.pending').removeClass('pending');
 		                		LJ.user.status = 'idle';
-		                		LJ.$manageEventsWrap.find('#askersListWrap').html('');
+		                		LJ.$manageEventsWrap.find('#askersRows, #askersDetails').html('');
 								$('#create').click();
 							}	  		
 		                	 
@@ -1831,18 +1940,24 @@ window.LJ = {
 		},
 		fetchEvents: function(){
 
-			if( LJ.state.fetchingEvents ){ 
-				LJ.fn.toastMsg('Aleady fetching events', 'error');
-			}else{
+			if( LJ.state.fetchingEvents )
+			{ 
+				LJ.fn.toastMsg('Already fetching events', 'error');
+			}
+			else
+			{
 				LJ.state.fetchingEvents = true;
                 LJ.params.socket.emit('fetch events', LJ.user._id );
             }
 		},
         fetchAskers: function(){
 
-            if( LJ.state.fetchingAskers ){
+            if( LJ.state.fetchingAskers )
+            {
                 LJ.fn.toastMsg("Already fetching askers", 'error');
-            }else{
+            }
+            else
+            {
                 LJ.state.fetchingAskers = true;
                 LJ.params.socket.emit('fetch askers',{ eventId: LJ.user.hostedEventId, hostId: LJ.user._id });
             }
@@ -1858,7 +1973,8 @@ window.LJ = {
         },
         displayAskers: function(){
 
-            LJ.$askersListWrap.append( LJ.fn.renderAskers( LJ.myAskers ));
+            $('#askersRows').append( LJ.fn.renderAskers( LJ.myAskers ));
+            $('#askersDetailsWrap').append( LJ.fn.renderAskersDetails );
 
         },
         filterEvents: function(tags, locations){
@@ -1941,7 +2057,7 @@ window.LJ = {
         	});
 
         },
-        sendChat: function(submitInput){
+        sendChat: function( submitInput ){
 
         	var textInput = submitInput.siblings('input[type="text"]');
         	var msg = textInput.val();
@@ -1957,49 +2073,42 @@ window.LJ = {
 
         		csl('Sending chat with id : '+eventId + ' and '+ hostId + ' and '+askerId);
 
-        		LJ.params.socket.emit('send message',{
+        		LJ.params.socket.emit('send message',
+        		{
         			msg: msg,
         			eventId: eventId,
         			hostId: hostId,
         			askerId: askerId,
-        			senderId: LJ.user._id
+        			senderId: LJ.user._id  /* = hostId ou askerId, selon le cas*/
         		});
         },
-        buildChatId: function(eventId, hostId, userId){
+        buildChatId: function( eventId, hostId, userId ){
 
         	return eventId + '_' + hostId + '-' + userId;
 
         },
-        /*
-        	Ajoute une ligne en prennant comme paramètre:
-        		- Le message (data.msg)
-        		- Les ids définissant de manière unique un message entre 2 personnes
-        		  (data.eventId - data.hostId - data.askerId) 
-        		  utilisés pour construire une room unique 
-        */
         addChatLine: function(data){
 
-        	csl('Adding chatLine');
-            var cha12 = '';
-            data.senderId === LJ.user._id ?  cha12 = 'cha1' : cha12 = 'cha2';
+        	csl('Adding chatline');
+            var cha;
+            data.senderId === LJ.user._id ?  cha = 'cha-user' : cha = 'cha-other';
+
             var chatLineHtml = '<div class="chatLine none">'
-								+'<div class="cha '+cha12+'">'+data.msg+'</div>'
+								+'<div class="cha '+cha+'">'+data.msg+'</div>'
         						+'</div>';
 
        		var chatId = data.chatId;
        		
         	var $chatLineWrap = $('.chatWrap[data-chatid="'+chatId+'"]').find('.chatLineWrap');
-        		if($chatLineWrap){csl('DOM Found');}
         		
-        		if(!$chatLineWrap.hasClass('jspScrollable')){
+        		if( !$chatLineWrap.hasClass('jspScrollable') )
+        		{
+        			csl('Turning chatLineWrap scrollable');
         			$chatLineWrap.jScrollPane();
         			LJ.state.jspAPI[chatId] =  $chatLineWrap.data('jsp');
         		}
-        		$chatLineWrap.find('.jspPane').append(chatLineHtml);
 
-        		var anim = '';
-        		cha12 == 'cha1' ? anim = "slideLeftIn" : anim = "slideRightIn" ;  
-
+        		$chatLineWrap.find('.jspPane').append( chatLineHtml );
         		$chatLineWrap.find('.chatLine:last-child')
         					  .velocity("fadeIn", {
         					  	duration: 500,
@@ -2007,8 +2116,11 @@ window.LJ = {
         					  	}
         					  });
 
-        		sleep(30, function(){ LJ.state.jspAPI[chatId].reinitialise();
-        							LJ.state.jspAPI[chatId].scrollToBottom(); })
+        		sleep(30, function(){
+        							csl('Refreshing jsp API');
+        							LJ.state.jspAPI[chatId].reinitialise();
+        							LJ.state.jspAPI[chatId].scrollToBottom(); 
+        						  });
 
         },
         initRooms: function( id ){
@@ -2039,7 +2151,7 @@ window.LJ = {
             $( '.loaderWrap' ).velocity( 'fadeOut', { duration: 250 });
 
         },
-        toggleOverlay: function(type, html){
+        toggleOverlay: function(type, html, speed){
 
     			var $overlay = $('.overlay-'+type ),
 					$overlayMsgWrap = $('.overlayMsgWrap');
@@ -2052,7 +2164,7 @@ window.LJ = {
 			{
 				$overlay.removeClass('active')
 						.velocity('fadeOut', { 
-						duration: 700,
+						duration: speed || 700,
 						complete: function(){
 							$overlayMsgWrap.html('')
 							$overlay.find('.largeThumb').remove();

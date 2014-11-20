@@ -46,6 +46,9 @@
 .e-asker{
 	display:inline-block; 
 }
+.e-hostName{
+	font: bold 0.9em 'Lato';
+}
 .e-guests{
 	font-size: 1.1em;
 	position: relative;
@@ -95,7 +98,7 @@
     text-align: right;
     
 
-    margin-top: 5px 0;
+    margin: 10px 0;
 }
 .e-status{
 	width: 70px;
@@ -139,12 +142,13 @@
 
 }
 .askedInWrap{	
-    width: 258px;
-    height: 164px;
+    width: 260px;
+    min-height: 173px;
     position: absolute;
+    border: 1px solid rgb(232, 232, 232);
     z-index: 10;
     background: whitesmoke;
-    padding:5px;
+    padding: 5px;
     box-sizing: border-box; 
     display: none;
 }
@@ -375,4 +379,26 @@ label[for="tags"]{
 
 #frozenTimezone{
 	margin-top:130px;
+}
+
+#askersRows{
+	box-sizing: border-box;
+	width: 500px;
+	display: inline-block;
+}
+#askersDetails{
+	width: 200px;
+	float: right;
+	display: inline-block;
+	position:relative;
+	height: 239px;
+	background: rgb(247, 247, 247);
+	border: 1px solid rgb(215, 215, 215);
+	padding: 5px;
+	box-sizing: border-box;
+}
+.white{
+	background:white;
+	height:100%;
+	width: 100%;
 }
