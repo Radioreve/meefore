@@ -72,7 +72,6 @@
 }
 .e-desc{
 	margin-bottom: 10px;
-	height: 31px;
 	font-size: .8em;
 	margin-left: 6px;
 	color: #838383;
@@ -98,7 +97,7 @@
     text-align: right;
     
 
-    margin: 10px 0;
+    margin: 10px 0 -5px 0;
 }
 .e-status{
 	width: 70px;
@@ -289,16 +288,25 @@ input[type="number"]{
 }
 
 .tag,
-.loc{
+.loc,
+.drink,
+.day{
 	display:inline-block;
 	transition: all .3s;
 	font-size: .7em;
 	color: #7A7A7A;
-	padding: 10px 12px; 
+	padding: 8px 12px; 
 	border-radius: 2px;
 	margin: 4px;
 	background: #F5F5F5;
 	text-align: center;
+}
+.drink,
+.day{
+	min-width: 37px;
+	padding:5px 8px;
+	background:white; 
+	border-bottom: 2px solid white;
 }
 .loc{
 	background: white;
@@ -310,7 +318,9 @@ input[type="number"]{
 }
 #createEventWrap .tag:hover,
 .filters-tags-row .tag:hover,
-.filters-locs-row .loc:hover{
+.filters-locs-row .loc:hover,
+.day:hover,
+.drink:hover{
 	cursor:pointer;
 }
 #refreshEvents{
@@ -320,7 +330,10 @@ input[type="number"]{
 	display:inline;
 	color: rgb(213, 47, 47);
 }
-.tag.selected{
+
+.tag.selected,
+.drink.selected, 
+.day.selected{
 	background: rgb(229, 83, 83);
 	color:white;
 	box-shadow: 0 1px 1px rgb(187, 50, 50);
@@ -401,4 +414,14 @@ label[for="tags"]{
 	background:white;
 	height:100%;
 	width: 100%;
+}
+.drink.selected{
+	background:white;
+	box-shadow:none;
+	color: rgb(0, 0, 0);
+	font-weight: bolder;
+	border-bottom: 2px solid rgb(92, 92, 92);
+	border-radius:0px
+;
+	transition: all .2s;
 }

@@ -13,12 +13,17 @@ textarea,
 input{
 	font-size: 14px;
 	line-height: 20px;
-	font-family:'Ubuntu','Calibri','sans serif';
+	font-family: 'Lato','Calibri','sans serif';
 	resize: none;
 	outline: none;
 }
-.hl{
-	background: rgb(255, 236, 236);
+hl{
+	font: 800 2em 'Raleway';
+	letter-spacing: -1px;
+	color: #383838;
+	text-align: center;
+	text-shadow: 0 0 1px rgb(209, 209, 209);
+	
 }
 h2{
 	font: 800 2em 'Raleway';
@@ -35,8 +40,8 @@ div,span{
 }
 label{
 	/*Hello git*/
-	font-size:.9em;
-	font-family: 'Corbel';
+	font-size: .8em;
+	font-family: 'Lato';
 	font-weight:bolder;
 	margin-right: 15px;
 	padding-top:10px;
@@ -45,7 +50,7 @@ label{
 	display:inline-block;
 }
 .labelTextArea{vertical-align:top;}
-.rel{position:relative;}
+.rel{}
 .right{float:right;}
 img.left{float:left;}
 .none{display: none; !important;}
@@ -89,8 +94,8 @@ body > header{
 body > header > img{
 	float:left;
 	position:relative;
-	top:-23px;
-	left:23px;
+	left: 55px;
+	top: 3px;
 }
 body > header > h1{
 	color: rgb(236, 236, 236);
@@ -98,6 +103,7 @@ body > header > h1{
 	letter-spacing: -1px;
 	margin: 8px 7px 0 60px;
 	font-family: Raleway;
+	display: inline-block;
 }
 #mainWrap{
 }
@@ -179,7 +185,7 @@ top: 33px;
 	position: fixed;
 	left: 240px;
 	width: 79%;
-	top: 3px;
+	top: 2px;
 	left: 0;
 	padding-left: 20%;
 }
@@ -263,13 +269,15 @@ top: 33px;
 #signupWrap,
 #resetWrap{
 	height: 280px;
-	margin: auto;
+	/* margin: auto; */
 	padding:10px;
 }
 #loginWrap,
 #signupWrap,
 #resetWrap{
 	width:400px;
+	left: -470px;
+	margin: auto;
 }
 #loginWrap .formWrap,
 #signupWrap .formWrap,
@@ -296,9 +304,11 @@ top: 33px;
 	font-size: 10px;
 }
 .themeBtn,
-.themeBtnToggle{
-	width: 135px;
-	height: 34px;
+.themeBtnToggle,
+#landingWrap button{
+	width: 103px;
+	height: 31px;
+	border-radius: 2px;
 	border: none;
 	padding:9px;
 	background: #535353;
@@ -312,6 +322,27 @@ top: 33px;
 .themeBtn:hover{
 	box-shadow: 1px 1px 1px rgb(196, 196, 196);
 	opacity: .9;
+}
+#socialWrap{
+    right: -423px;
+	
+    width: 400px;
+    height: 270px;
+    border-left: 1px solid rgb(226, 226, 226);
+    padding-top: 13px;
+    margin: auto;
+}
+#facebook, #gmail{
+	background: #3b5998;
+	width: 180px;
+	height: 38px;
+	position: relative;
+	top: 100px;
+	left: 111px;
+	z-index: 2000000;
+}
+#login{
+	
 }
 .themeBtnToggleHost{
 	background: white;
@@ -350,6 +381,7 @@ top: 33px;
 	margin-top: 10px;
 	font: 12px 'Ubuntu';
 	text-decoration: underline;
+	display: inline-block;
 }
 .sub-actions:hover{
 	cursor:pointer;
@@ -358,6 +390,7 @@ top: 33px;
 #profileWrap{
 	height: 300px;
 	padding: 20px;
+	width: 880px;
 }
 #pictureWrap{
 	text-align:center;
@@ -370,12 +403,13 @@ top: 33px;
 	margin: 0 auto;
 	height: 160px;
 	transition: .4s;
+	display: inline-block;
+	vertical-align: top;
 }
 #pictureWrap:hover{
 	border:1px double #dde;
 }
 .fieldsWrap{
-	width: 420px;
 	margin-left: 40px;
 	height: 250px;
 	display: inline-block;
@@ -391,8 +425,11 @@ top: 33px;
 .profileInput{
 	color: #999;
 }
+.fieldsWrap .input-row-wrap{
+	margin: 7px 0;
+}
 .fieldsWrap .input-row-wrap:last-child{
-	margin-top:10px;
+	margin-top: 3px;
 }
 #loginWrap h2,
 #signupWrap h2{
@@ -422,11 +459,12 @@ top: 33px;
 	width: 70%;
 	padding-top: 6px;
 	padding-left: 10px;
-	height: 100px;
+	height: 50px;
 	border: none;
+	border-bottom: 1px dashed #C0C0C0;
 }
 #profileWrap #validate{
-	margin: 6px 6px 0 35px;
+	margin: 0px 100px 0 35px;
 	position: relative;
 }
 .profileInput{
@@ -506,7 +544,7 @@ top: 33px;
 	position: fixed;
 	width: 120px;
 	height: 50px;
-	top: 0;
+	top: -2px;
 	right: 300px;
 	/* background: white; */
 	padding: 10px;
@@ -526,7 +564,7 @@ top: 33px;
 	margin-left:8px;
 	display: inline-block;
 	position: absolute;
-	top: 10px;
+	top: 14px;
 }
 #thumbName{
 	font-weight:normal;
@@ -535,7 +573,7 @@ top: 33px;
 	margin-left: 8px;
 	margin-bottom: 3px;
 	position: relative;
-	top: -4px;
+	top: -5px;
 	color: white;
 	/* display: inline-block; */
 }
@@ -555,6 +593,9 @@ top: 33px;
 	font-size: .8em;
 	margin-left: 10px;
 	transition: all .7s;
+	font-family: 'Lato';
+	position: relative;
+	top: -5px;
 }
 .action:hover{
 	cursor:pointer;
@@ -622,4 +663,8 @@ body > footer{
 }
 .overlay-low h2{
 	color:black; 
+}
+#favoriteDrink,
+#favoriteDay{
+	display:inline-block;
 }

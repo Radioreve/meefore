@@ -30,6 +30,16 @@ var UserSchema = new mongoose.Schema({
     type: String,
     default:"Inconnu"
   },
+  favoriteDrink: {
+    type: String
+  },
+  favoriteDay: {
+    type: String
+  },
+  location: {
+    type: Number,
+    default: 1
+  },
   imgId:{  // id is used client side by cloudinary to build url
     type: String,
     default:'placeholder_spjmx7'

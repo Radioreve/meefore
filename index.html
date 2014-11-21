@@ -9,13 +9,13 @@
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="/css/reset.css">
 	<link rel="stylesheet" href="/css/jscrollpane.css">
-	<link rel="stylesheet" href="/css/waves.min.css">
 	<link rel="stylesheet" href="/css/fontello/css/fontello.css">
 	<link rel="stylesheet" href="/css/hint.css">
 	<link rel="stylesheet" href="/css/style.css">
 	<link rel="stylesheet" href="/css/events.css">
 	<link rel="stylesheet" href="/css/manage.css">
 	<link rel="stylesheet" href="/css/chat.css">
+	<link rel="stylesheet" href="/css/landing.css">
 </head>
 <body>
 <div class="overlay overlay-high">
@@ -28,7 +28,7 @@
 </div>
 <div class="progress_bar"></div>
 <div class="loaderWrap"></div>
-	<header>
+	<header class="none">
 		<h1>We Nighters</h1>
 		<img src="img/bamboo-black.png" height="27">
 		  <ul id="menuWrap" class="">
@@ -48,7 +48,34 @@
 			</div>
 		</div>
 		<section id="contentWrap" class="">
-			<section id="loginWrap" class="revealed centered">
+		<section id="landingWrap" class="centered ">
+			<h2>S'ennuyer en soirée, c'est terminé.</h2>
+			<section id="landingIntro">
+				<div class="l-item">
+					<div class="l-image"><img width="80" src="img/connect.png"></div>
+					<div class="l-step">Connect</div>
+					<div class="l-desc">Inscriptions uniquement réservée aux personnes possédant un nom, un âge et un alcool préféré.</div>
+				</div>
+				<div class="l-item">
+					<div class="l-image"><img width="80" src="img/meet.png"></div>
+					<div class="l-step">Meet</div>
+					<div class="l-desc">Dialoguer avec les dizaines de personnes qui proposent des soirées près de chez vous.</div>
+				</div>
+				<div class="l-item">
+					<div class="l-image"><img width="80" src="img/whatever-1.png"></div>
+					<div class="l-step">Whatever</div>
+					<div class="l-desc">Before, apéro, soirée apparte, prendre une bouteille en boite… la nuit vous appartient ! </div>
+				</div>
+			</section>
+			<section id="landingGo">
+				<center>Le prochain évènement commence dans exactement : 45min </center>
+				<button class="themeBtn">Ce soir, c'est la folie !</button>
+			</section>
+		</section>
+			<section id="socialWrap" class="none centered">
+				<input type="submit" class="themeBtn" id="facebook" value="facebook"></input>
+			</section>
+			<section id="loginWrap" class="none centered">
 			  <div class="">
 				<h2>Identifiez-vous!</h2>
 			  </div>
@@ -58,9 +85,9 @@
 						<input class="input-field" type="text" id="email" placeholder="email">
 						<input class="input-field" type="password" id="pw" placeholder="password">
 						<div class="input-field submitWrap">
-							<div class="rel">
-								<input type="submit" class="themeBtn" id="login" value="login"></input>
-							</div>
+						<div class="rel">
+							<input type="submit" class="themeBtn" id="login" value="login"></input>
+						</div>
 							<div id="bcm_member" class=" sub-actions right">Devenir membre</div>
 							<div id="lost_pw" class="sub-actions left">Mot de passe oublié ?</div>
 						</div>
@@ -120,6 +147,17 @@
 					<div class="input-row-wrap">
 						<label class="labelTextArea" for="description">Who are you?</label>
 						<textarea id="description" class="profileInput" placeholder="Tell the world what you like"></textarea>
+					</div>
+					<div class="input-row-wrap">
+						<label for="favoriteDrink">Your drink</label>
+						<div id="favoriteDrink">
+							<div class="drink" data-drink="water">water</div>
+							<div class="drink" data-drink="soft">soft</div>
+							<div class="drink" data-drink="hard">hard</div>
+							<div class="drink" data-drink="shots">shots</div>
+							<div class="drink" data-drink="wine">wine</div>
+							<div class="drink" data-drink="kro">kro</div>
+						</div>
 					</div>
 				</div>
 				<button id="validate" class="right themeBtn">Validate </button>
@@ -181,8 +219,10 @@
 					<span id="suspendEvent" class="action">Suspendre </span>
 				</div>
 				<div id="askersListWrap">
-					<div id="askersItemsDetails"></div>
-					<div id="askersItemsThumbs"></div>
+					<i class="icon icon-left-open-big next-left"></i>
+					<div id="askersMain"></div>
+					<div id="askersThumbs"></div>
+					<i class="icon icon-right-open-big next-right"></i>
 				</div>
 			</section>
 			<section id="settingsWrap" class="none centered">

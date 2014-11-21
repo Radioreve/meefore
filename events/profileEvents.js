@@ -20,10 +20,11 @@
 			}
 
 			var update = {
-				name     	: data.name,
-				description : data.description,
-				age			: data.age,
-				status		: data.status
+				name     	  : data.name,
+				age			  : data.age,
+				description   : data.description,
+				favoriteDrink : data.favoriteDrink,
+				status	 	  : data.status
 			};
 
 			var callback = function(err, user) {

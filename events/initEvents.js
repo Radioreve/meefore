@@ -42,6 +42,7 @@
 		  					email:       	 user.local.email,
 		  					name:        	 user.name,
 		  					age:         	 user.age,
+		  					favoriteDrink:   user.favoriteDrink,
 		  					status:      	 user.status,
 		  					description: 	 user.description,
 		  					imgId:      	 user.imgId,

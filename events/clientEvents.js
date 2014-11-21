@@ -94,6 +94,7 @@
 								name          : user.name,
 								description   : user.description,
 								age           : user.age,
+								favoriteDrink : user.favoriteDrink,
 								imgId         : user.imgId,
 								imgVersion    : user.imgVersion
 

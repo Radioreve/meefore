@@ -103,6 +103,18 @@
       "src": "entypo"
     },
     {
+      "uid": "884cfc3e6e2d456dd2a2ca0dbb9e6337",
+      "css": "left-open-big",
+      "code": 59411,
+      "src": "entypo"
+    },
+    {
+      "uid": "004882ab2d5c418c5b2060e80596279b",
+      "css": "right-open-big",
+      "code": 59413,
+      "src": "entypo"
+    },
+    {
       "uid": "dbd39eb5a1d67beb54cfcb535e840e0f",
       "css": "plus",
       "code": 59406,

@@ -17,13 +17,20 @@ window.LJ = {
 	},
 	cloudinary:{
 		uploadParams: { cloud_name:"radioreve", api_key:"835413516756943" },
+		/* Image de profile */
 		displayParamsProfile: { cloud_name: "radioreve", width: 150, height: 150, crop: 'fill', gravity: 'face' },
-		displayParamsEvent: { cloud_name :"radioreve", width: 80, height: 80, crop: 'fill', gravity: 'face', radius: '2' },
-		displayParamsMainThumb: { cloud_name: "radioreve",width: 50,height: 50, crop: 'fill', gravity: 'face', radius: 'max' },
-		displayParamsLargeThumb: { cloud_name: "radioreve", width: 280, height: 280, crop: 'fill', gravity: 'face', radius: 'max' },
-        displayParamsAsker: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:7 },
-        displayParamsAskerDetails: { cloud_name: "radioreve", width:150, height:150, crop:'fill', gravity:'face', radius:3 },
-        displayParamsAskerThumb: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:'5', effect:'grayscale' },
+		/* Image de l'host dans un event */
+		displayParamsEventHost: { cloud_name :"radioreve", width: 80, height: 80, crop: 'fill', gravity: 'face', radius: '2' },
+        /* Image des askers dans la vue event */
+        displayParamsEventAsker: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:'5', effect:'grayscale' },
+		/* Image du user dans le header */
+		displayParamsHeaderUser: { cloud_name: "radioreve",width: 50,height: 50, crop: 'fill', gravity: 'face', radius: 'max' },
+		/* Image zoom lorsqu'on clique sur une photo*/
+		displayParamsOverlayUser: { cloud_name: "radioreve", width: 280, height: 280, crop: 'fill', gravity: 'face', radius: 'max' },
+        /* Image principale des askers dans vue managemnt */
+        displayParamsAskerMain: { cloud_name: "radioreve", width:120, height:120, crop:'fill', gravity:'face', radius:3 },
+		/* Image secondaire des askers dans vue management */
+        displayParamsAskerThumb: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:7 },
         loader_id: "ajax-loader-black_frpjdb",
         displayParamsLoader:{ cloud_name :"radioreve", html: { 'class': 'loader'} },
         placeholder_id: "placeholder_jmr9zq",
@@ -157,6 +164,7 @@ window.LJ = {
 
 		},
 		initEhancements: function(){
+
 			(function bindEnterKey(){ //Petite IIEF pour le phun
 
 				$('#loginWrap').on('keypress','input.input-field',function(e){
@@ -216,6 +224,7 @@ window.LJ = {
 		handleDomEvents: function(){
 
 			LJ.fn.handleDomEvents_Globals();
+			LJ.fn.handleDomEvents_Landing();
 			LJ.fn.handleDomEvents_FrontPage();
 			LJ.fn.handleDomEvents_Navbar();
 			LJ.fn.handleDomEvents_Profile();
@@ -247,6 +256,25 @@ window.LJ = {
             	LJ.fn.toastMsg('Relax, things start back at 12:00', 'info');
 
             });
+
+            LJ.$body.on('click', 'img.zoomable', function(){
+
+			 	/* Extracting the img id from the dom */
+			 	var imgId      = $( this ).data('imgid'),
+			 		imgVersion = $( this ).data('imgversion'); 
+
+                LJ.fn.toggleOverlay( 'high', LJ.fn.renderOverlayUser( imgId, imgVersion ), 300);
+
+            });
+
+		},
+		handleDomEvents_Landing: function(){
+
+			$('#landingWrap button').click(function(){
+
+				LJ.fn.displayContent( $('#loginWrap') );
+
+			});
 
 		},
 		handleDomEvents_FrontPage: function(){
@@ -326,6 +354,11 @@ window.LJ = {
 
 			LJ.$validateBtn.click( LJ.fn.updateProfile );
 
+			$('#profileWrap .drink').click( function(){
+				$('#profileWrap .drink.selected').removeClass('selected');
+				$(this).addClass('selected');
+			});
+
 		},
 		handleDomEvents_Events: function(){
 
@@ -385,16 +418,6 @@ window.LJ = {
 
 			});
 
-			 LJ.$eventsListWrap.on('click', 'img.zoomable', function(){
-
-			 	/* Extracting the img id from the dom */
-			 	var imgId      = $( this ).data('imgid'),
-			 		imgVersion = $( this ).data('imgversion'); 
-
-                LJ.fn.toggleOverlay( 'high', LJ.fn.renderLargeThumb( imgId, imgVersion ), 300);
-
-            });
-
              $('#resetFilters').click( function(){
 
             	LJ.$eventsWrap.find('.selected').removeClass('selected');
@@ -451,6 +474,26 @@ window.LJ = {
 
 		},
 		handleDomEvents_Management: function(){
+
+			$('#manageEventsWrap i.icon').click(function(){
+
+				if( LJ.state.animatingContent ) return;
+				LJ.state.animatingContent = true;
+
+				var $currentItem = $('.a-item.active');
+
+				if( $(this).hasClass('next-right') )
+				{
+					$nextItem = $currentItem.next();
+				}
+				else if( $(this).hasClass('next-left') )
+				{
+					$nextItem = $currentItem.prev();
+				}
+
+				LJ.fn.displayAskerItem( $currentItem, $nextItem );
+
+			});
 
 			 [ '#cancelEvent', '#suspendEvent' ].forEach( function(item){ 
 
@@ -631,23 +674,29 @@ window.LJ = {
 
 		},
 		updateProfile: function(){
-			var _id 		 = LJ.user._id,
-				age   		 = $('#age').val(),
-				name  		 = $('#name').val(),
-				description  = $('#description').val();
 
-			if(LJ.user.status == 'new'){LJ.user.status = 'idle'}
+			var _id 		  = LJ.user._id,
+				age   		  = $('#age').val(),
+				name  		  = $('#name').val(),
+				description   = $('#description').val(),
+				favoriteDrink = $('.drink.selected').text();
+
+			if( LJ.user.status == 'new' ){ LJ.user.status = 'idle' }
 
 			var profile = {
-				_id			: _id,
-				age 		: age,
-				name 		: name,
-				description : description,
-				status      : LJ.user.status
+
+				_id			  : _id,
+				age 		  : age,
+				name 		  : name,
+				description   : description,
+				favoriteDrink : favoriteDrink,
+				status        : LJ.user.status,
+
 			};
 				LJ.params.socket.emit('update profile', profile);
 				csl('Emetting update profile');
 				LJ.fn.showLoaders();
+
 		},
 		updateSettings: function(){
 
@@ -813,8 +862,6 @@ window.LJ = {
 
 			$('#thumbWrap').velocity('transition.slideUpIn');
 
-			$('#suspendEvent').text
-
 			$('.menu-item-active').removeClass('menu-item-active');
 			$('#management').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
@@ -825,17 +872,30 @@ window.LJ = {
 		},
 		displayUserSettings: function(){
 
-				/* Mise à jour des inputs, checkbox...*/
+				/* Profile View*/
 				$('#codebar').text( LJ.user._id );
-				$('#currentEmail').val( LJ.user.email );
-				$('#newsletter').prop( 'checked', LJ.user.newsletter );
 				$('#name').val( LJ.user.name );
 				$('#age').val( LJ.user.age );
 				$('#description').val( LJ.user.description );
-				LJ.$thumbWrap.find( 'h2#thumbName' ).text( LJ.user.name );
+				$('.drink[data-drink="'+LJ.user.favoriteDrink+'"]').addClass('selected');
+				/* Update de l'image de profile */
+				LJ.fn.replaceMainImage( LJ.user.imgId,
+								            LJ.user.imgVersion,
+								            LJ.cloudinary.displayParamsProfile );
 
-				/* Update du thumb ( image et informations ) */
-				var d = LJ.cloudinary.displayParamsMainThumb;
+				/* Settings View */
+				$('#newsletter').prop( 'checked', LJ.user.newsletter );
+				$('#currentEmail').val( LJ.user.email );
+
+				/* Management View */
+				if( LJ.user.state == 'hosting' )
+				{
+					$('#suspendEvent').text( LJ.my)
+				}
+
+				/* ThumbHeader View */
+				LJ.$thumbWrap.find( 'h2#thumbName' ).text( LJ.user.name );
+				var d = LJ.cloudinary.displayParamsHeaderUser;
 					d.version = LJ.user.imgVersion;
 
 				var imgTag = $.cloudinary.image( LJ.user.imgId, d );
@@ -843,10 +903,6 @@ window.LJ = {
 
 				LJ.$thumbWrap.prepend( imgTag );
 
-				/* Update de l'image de profile */
-				LJ.fn.replaceMainImage( LJ.user.imgId,
-								            LJ.user.imgVersion,
-								            LJ.cloudinary.displayParamsProfile );
 		},
 		displayContent: function( content, options ){
 			
@@ -1061,7 +1117,7 @@ window.LJ = {
 		},
 		replaceThumbImage: function( id, version, d ){
 
-			    d = d || LJ.cloudinary.displayParamsMainThumb;
+			    d = d || LJ.cloudinary.displayParamsHeaderUser;
 				d.version = version;
 
 			var previousImg = $('#thumbWrap').find('img'),
@@ -1078,7 +1134,7 @@ window.LJ = {
 		initCloudinary: function(upload_tag){
 
 			$.cloudinary.config( LJ.cloudinary.uploadParams );
-			LJ.tpl.$placeholderImg = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsAskerThumb );
+			LJ.tpl.$placeholderImg = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsEventAsker );
 
 			$('.upload_form').append( upload_tag );
 
@@ -1121,12 +1177,84 @@ window.LJ = {
   																		});
 
   								LJ.fn.replaceMainImage( imgId, imgVersion, LJ.cloudinary.displayParamsProfile );
-  								LJ.fn.replaceThumbImage( imgId, imgVersion, LJ.cloudinary.displayParamsMainThumb );
+  								LJ.fn.replaceThumbImage( imgId, imgVersion, LJ.cloudinary.displayParamsHeaderUser );
 					
   							});
 
   				}).cloudinary_fileupload();
   				
+		},
+		refreshArrowDisplay: function(){
+
+			var $arrLeft  = $('#manageEventsWrap i.next-left'),
+				$arrRight = $('#manageEventsWrap i.next-right');
+
+			$arrLeft.removeClass('none');
+			$arrRight.removeClass('none');
+
+			if( $('.a-item').length == ( 0 || 1 ) ){
+				$arrLeft.addClass('none');
+				$arrRight.addClass('none');
+				return;
+			}
+
+			if( $('.a-item.active').is( $('.a-item').last() ) ){
+				$arrRight.addClass('none');
+				return;
+			}
+
+			if( $('.a-item.active').is( $('.a-item').first() ) ){
+				$arrLeft.addClass('none');
+				return;
+			}
+
+
+
+		},
+		displayAskerItem: function( current, next ){
+
+			var currentIndex = current.index(),
+				nextIndex    = next.index();
+
+				LJ.state.animatingContent = false;
+
+			if( currentIndex < nextIndex )
+			{
+				current.velocity('transition.slideLeftOut', 
+					{ 
+						duration: 200,
+						complete: function(){ 
+							current.removeClass('active');
+							next.addClass('active');
+							LJ.fn.refreshArrowDisplay();
+							next.velocity('transition.slideRightIn', { 
+									duration: 500,
+									complete: function(){
+									} 
+								});
+						}
+					});
+				return;
+			}
+			if( currentIndex > nextIndex )
+			{
+				current.velocity('transition.slideRightOut', 
+					{ 
+						duration: 200,
+						complete: function(){ 
+							current.removeClass('active');
+							next.addClass('active');
+							LJ.fn.refreshArrowDisplay();
+							next.velocity('transition.slideLeftIn', { 
+									duration: 500,
+									complete: function(){
+									} 
+								});
+						}
+					});
+				return;
+			}		
+				
 		},
 		renderEvents: function( arr, max ){
 
@@ -1141,15 +1269,21 @@ window.LJ = {
 				return html;
 
 		},
-        renderAskers: function(arr,max){
+        renderAskersMain: function(arr,max){
 
                 var html =''; 
-                    max = max || arr.length;
+                var arr = LJ.myAskers;
+                var max = max || arr.length;
 
                 for( var i=0; i < max ; i++ ){ 
                 if( i < max )
-                {
-                	html += LJ.fn.renderAsker( arr[i] ); 
+                {	
+                	if(i == 0){
+                		html += LJ.fn.renderAskerMain( arr[i], 'active' );
+                	}else
+                	{
+                	html += LJ.fn.renderAskerMain( arr[i] ); 
+                	}
                 }
 
                 }
@@ -1200,7 +1334,7 @@ window.LJ = {
         },
         renderHostImg: function( hostImgId, hostImgVersion ){
 
-        	var d = LJ.cloudinary.displayParamsEvent;
+        	var d = LJ.cloudinary.displayParamsEventHost;
 				d.version = hostImgVersion;
 
 
@@ -1213,9 +1347,9 @@ window.LJ = {
 
 			return imgTagHTML
         },
-        renderAskerThumb: function( imgId, o){
+        renderAskerInEvent: function( imgId, o){
 
-        	var $img = $.cloudinary.image( imgId, LJ.cloudinary.displayParamsAskerThumb );
+        	var $img = $.cloudinary.image( imgId, LJ.cloudinary.displayParamsEventAsker );
  
         	if( o ){ 
 	        	if( o.dataList.length > 0 )
@@ -1230,7 +1364,7 @@ window.LJ = {
         	return $img;
 
         },
-        renderAskersThumbs: function( askersList, maxGuest ){
+        renderAskersInEvent: function( askersList, maxGuest ){
 
         	var L = askersList.length,
         	    html='';
@@ -1238,7 +1372,7 @@ window.LJ = {
         	for ( i = 0; i < maxGuest ; i++ )
         	{ 
         		var o = { classList: ['hello'], dataList: [] };
-	        	var d = LJ.cloudinary.displayParamsAskerThumb;
+	        	var d = LJ.cloudinary.displayParamsEventAsker;
 
         		if( i < L )
         		{
@@ -1253,7 +1387,7 @@ window.LJ = {
         				o.classList = ['askedInRemaining'];
         		}
 
-        		html += LJ.fn.renderAskerThumb( imgId, o ).prop('outerHTML');
+        		html += LJ.fn.renderAskerInEvent( imgId, o ).prop('outerHTML');
         	}
         		
         		return html
@@ -1271,7 +1405,7 @@ window.LJ = {
 			    button       = LJ.fn.renderEventButton( e._id, hostId ),
 				eventTags    = LJ.fn.renderEventTags( tags ),
             	chatWrap     = LJ.fn.renderChatWrap( chatId ),
-            	askersThumbs = LJ.fn.renderAskersThumbs( e.askersList, e.maxGuest );
+            	askersThumbs = LJ.fn.renderAskersInEvent( e.askersList, e.maxGuest );
 
 			var html = '<div class="eventItemWrap" '
 						+ 'data-eventid="'+e._id+'" '
@@ -1350,82 +1484,80 @@ window.LJ = {
 
 			}
 
-			return LJ.fn.renderAsker( asker );
+			return LJ.fn.renderAskerMain( asker );
 
 		},
-        renderAsker: function( a ){
+        renderAskerMain: function( a, className ){
 
-            var d = LJ.cloudinary.displayParamsAsker;
+        	className = className || '';
+
+            var d = LJ.cloudinary.displayParamsAskerMain;
             	d.version = a.imgVersion; // Ne fonctionne pas car le param 'a' provient de la base qui est pas MAJ
 
-            var imgTag = $.cloudinary.image( a.imgId, d ).prop('outerHTML');
+            var imgTag = $.cloudinary.image( a.imgId, d );
+            	imgTag.addClass('zoomable')
+            		  .attr('data-imgid', a.imgId)
+            		  .attr('data-imgversion', a.imgVersion);
+
+            var imgTagHTML = imgTag.prop('outerHTML');
 
             var chatId = LJ.fn.buildChatId( LJ.user.hostedEventId, LJ.user._id, a.id );
 
             var chatWrap = '<div class="chatWrap chat-host none" data-chatid="'+chatId+'">'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
-                            +  '<input type="text" value="" placeholder="say something..">'
+                            +  '<input type="text" value="" placeholder="Are you alone ?">'
                             +  '<input type="submit" value="">'
                             +'</div>'
                            +'</div>';
 
-            var html =  '<div class="a-item" data-askerid="'+a.id+'">'
+            var html =  '<div class="a-item '+className+'" data-askerid="'+a.id+'">'
                            +'<div class="a-picture">'
-                             + imgTag
+                             + imgTagHTML
                            +'</div>'
-                           +'<div class="a-head">'
-                             +'<div class="a-name">'+a.name+'</div>'
-                             +'<div class="a-age">'+a.age+' ans'+'</div>'
+	                           +'<div class="a-body">'
+	                             +'<div class="a-name"><span class="label">Name</span>'+a.name+'</div>'
+	                             +'<div class="a-age"><span class="label">Age</span>'+a.age+' ans'+'</div>'
+	                             +'<div class="a-desc"><span class="label">Style</span><div>'+a.description+'</div></div>'
+	                             +'<div class="a-drink"><span class="label">Drink</span><div class="drink selected">'+a.favoriteDrink+'</div></div>'
                            +'</div>'
-                           +'<div class="a-body">'
-                             +'<div class="a-desc"><span>'+a.description+'</span></div>'
-                           +'</div>'
-                           +'<div class"a-btnWrap">'
-                             +'<button class="btn-accept">Accepter</button>'
-                             +'<button class="btn-refuse">Refuser</button>'
-                           +'</div>'
+	                             +'<div class="a-btn">'
+	                                 +'<button class="themeBtn btn-accept"><i class="icon icon-ok"></i>Accepter</button>'
+	                            	 +'<button class="themeBtn btn-refuse"><i class="icon icon-cancel"></i>Refuser</button>'
+	                           +'</div>'
                         + chatWrap
                     +'</div>';
 
             return html;
 
         },
-        renderAskerDetails: function( a ){
+        renderAskerThumb: function( a ){
 
-        	var d = LJ.cloudinary.displayParamsAskerDetails;
+        	var d = LJ.cloudinary.displayParamsAskerThumb;
         		d.version = a.imgVersion;
 
         	var imgTag = $.cloudinary.image( a.imgId, d ).prop('outerHTML');
 
-        	var btnWrap =  '<div class="btnWrap">'
-        				   + '<button class="themeBtn accept">Accepter</button>'
-        				   + '<button class="themeBtn refuse">Next time</button>'
-        				  +'</div>'
-
-        	var html = '<div class="a-details none" data-askerid="'+a.id+'">'
- 					      + imgTag
- 					      + btnWrap       		
-        				+'</div>';
+        	var html = '';
 
         	return html;
 
         },
-        renderAskersDetails: function(){
+        renderAskersThumbs: function(){
 
         	var L = LJ.myAskers.length,
         		  html = '';
 
         	for( var i = 0; i<L ; i++ ){
-        		html += LJ.fn.renderAskerDetails( LJ.myAskers[i] );
+        		html += LJ.fn.renderAskerThumb( LJ.myAskers[i] );
         	}
 
         	return html;
 
         },
-        renderLargeThumb: function( imgId, imgVersion ){
+        renderOverlayUser: function( imgId, imgVersion ){
 
-        	var d = LJ.cloudinary.displayParamsLargeThumb;
+        	var d = LJ.cloudinary.displayParamsOverlayUser;
 					d.version = imgVersion;
 
 				var imgTag = $.cloudinary.image( imgId, d ).prop('outerHTML');
@@ -1448,6 +1580,7 @@ window.LJ = {
 
         	sleep( LJ.ui.artificialDelay, function(){   
 
+        		$('#socialWrap').velocity('transition.fadeOut', {duration: 300})
 				switch( LJ.user.status ){
 					case 'new':
 						LJ.params.socket.emit('request welcome email', LJ.user._id );
@@ -1729,8 +1862,8 @@ window.LJ = {
 
 						}else
 						{
-							var askerHTML 		 = LJ.fn.renderAsker( data.asker ),
-								askerDetailsHTML = LJ.fn.renderAskerDetails ( data.asker );
+							var askerMainHTML  = LJ.fn.renderAskerMain( data.asker ),
+								askerThumbHTML = LJ.fn.renderAskerThumb ( data.asker );
 
 							    $( askerHTML ).appendTo( $('#askersRows') )
 							    			.hide()
@@ -1747,10 +1880,10 @@ window.LJ = {
 						var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
 							$nbAskers.text( parseInt( $nbAskers.text() ) + 1 );
 
-						var d = LJ.cloudinary.displayParamsAskerThumb;
+						var d = LJ.cloudinary.displayParamsEventAsker;
 							d.version = asker.imgVersion;
 
-						var $askerImg = LJ.fn.renderAskerThumb( asker.imgId, { dataList: [{ dataName: 'askerid', dataValue: asker.id }]});
+						var $askerImg = LJ.fn.renderAskerInEvent( asker.imgId, { dataList: [{ dataName: 'askerid', dataValue: asker.id }]});
 						var $askedInWrap = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap');
 							$askedInWrap.prepend( $askerImg );
 							$askedInWrap.find('img').last().remove();
@@ -1973,8 +2106,9 @@ window.LJ = {
         },
         displayAskers: function(){
 
-            $('#askersRows').append( LJ.fn.renderAskers( LJ.myAskers ));
-            $('#askersDetailsWrap').append( LJ.fn.renderAskersDetails );
+            $('#askersMain').append( LJ.fn.renderAskersMain() );
+            $('#askersThumbs').append( LJ.fn.renderAskersThumbs() );
+            LJ.fn.refreshArrowDisplay();
 
         },
         filterEvents: function(tags, locations){
