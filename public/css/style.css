@@ -34,7 +34,7 @@ h2{
 }
 h3{
 }
-div,span{
+.bodyWrap{
 	-webkit-user-select: none;
 	user-select: none; 
 }
@@ -101,9 +101,11 @@ body > header > h1{
 	color: rgb(236, 236, 236);
 	font-size: 1.1em;
 	letter-spacing: -1px;
-	margin: 8px 7px 0 60px;
-	font-family: Raleway;
+	margin: 8px 7px 0 30px;
+	text-shadow: 0 0 2px white;
+	font-family: 'Lato';
 	display: inline-block;
+
 }
 #mainWrap{
 }
@@ -111,10 +113,12 @@ body > header > h1{
 .toastError,
 .toastInfo{
 	position: fixed;
-	font: .8em 'Ubuntu';
+	font: .8em 'Lato';
 	margin: auto;
 	height: 17px;
 	color: rgb(255, 255, 255);
+	text-shadow: 0 0 1px white;
+	letter-spacing: 0.5px;
 	padding: 7px;
 	padding-top: 8px;
 	left: 0;

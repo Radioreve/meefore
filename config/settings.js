@@ -22,9 +22,7 @@ var settings = {
 	activeEventStates:
 			 [
 			 	'open',
-			 	'suspended',
-			 	'full',
-			 	'frozen'
+			 	'suspended'
 			 ],
 	isFrozenTime: function(){
 		var hour = (new Date).getHours();

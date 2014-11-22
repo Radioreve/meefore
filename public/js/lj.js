@@ -22,7 +22,7 @@ window.LJ = {
 		/* Image de l'host dans un event */
 		displayParamsEventHost: { cloud_name :"radioreve", width: 80, height: 80, crop: 'fill', gravity: 'face', radius: '2' },
         /* Image des askers dans la vue event */
-        displayParamsEventAsker: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:'5', effect:'grayscale' },
+        displayParamsEventAsker: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:'5' },
 		/* Image du user dans le header */
 		displayParamsHeaderUser: { cloud_name: "radioreve",width: 50,height: 50, crop: 'fill', gravity: 'face', radius: 'max' },
 		/* Image zoom lorsqu'on clique sur une photo*/
@@ -261,7 +261,7 @@ window.LJ = {
 
 			 	/* Extracting the img id from the dom */
 			 	var imgId      = $( this ).data('imgid'),
-			 		imgVersion = $( this ).data('imgversion'); 
+			 		imgVersion = $( this ).data('imgversion')|| ''; 
 
                 LJ.fn.toggleOverlay( 'high', LJ.fn.renderOverlayUser( imgId, imgVersion ), 300);
 
@@ -1350,6 +1350,8 @@ window.LJ = {
         renderAskerInEvent: function( imgId, o){
 
         	var $img = $.cloudinary.image( imgId, LJ.cloudinary.displayParamsEventAsker );
+        		$img.attr('data-imgid', imgId)
+        			.addClass('zoomable');
  
         	if( o ){ 
 	        	if( o.dataList.length > 0 )
