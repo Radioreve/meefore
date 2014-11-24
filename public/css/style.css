@@ -101,11 +101,21 @@ body > header > h1{
 	color: rgb(236, 236, 236);
 	font-size: 1.1em;
 	letter-spacing: -1px;
-	margin: 8px 7px 0 30px;
+	margin: 8px 7px 0 65px;
 	text-shadow: 0 0 2px white;
 	font-family: 'Lato';
 	display: inline-block;
-
+}
+body > header i{
+	position: absolute;
+top: 6px;
+left: 32px;
+color: white;
+background: rgb(199, 42, 42);
+padding: 4px;
+border-radius: 4px;
+text-shadow: none;
+font-size: .8em;
 }
 #mainWrap{
 }
@@ -276,12 +286,23 @@ top: 33px;
 	/* margin: auto; */
 	padding:10px;
 }
+#signupWrap{
+	border-right: 1px solid #eee;
+}
+#signupWrapp{
+	border-bottom: 1px solid #eee;
+	height: 350px;
+}
+#signupWrapp img{
+	margin: 80px 40px;
+	vertical-align:top;
+}
 #loginWrap,
 #signupWrap,
 #resetWrap{
-	width:400px;
-	left: -470px;
-	margin: auto;
+	width: 400px;
+	text-align: center;
+	display: inline-block;
 }
 #loginWrap .formWrap,
 #signupWrap .formWrap,
@@ -292,7 +313,7 @@ top: 33px;
 #signupWrap .submitWrap,
 #resetWrap .submitWrap{
 	border:none;
-	width: 80%;
+	width: 338px;
 	height: 80px;
 	position: relative;
 }
@@ -315,11 +336,11 @@ top: 33px;
 	border-radius: 2px;
 	border: none;
 	padding:9px;
-	background: #535353;
 	color: white;
 	text-transform: uppercase;
 	font-size: 10px;
 	outline:none;
+	background: #4F4F4F;
 	-webkit-transition: all 0.3s;
 	transition: all 0.3s;
 }
@@ -327,24 +348,7 @@ top: 33px;
 	box-shadow: 1px 1px 1px rgb(196, 196, 196);
 	opacity: .9;
 }
-#socialWrap{
-    right: -423px;
-	
-    width: 400px;
-    height: 270px;
-    border-left: 1px solid rgb(226, 226, 226);
-    padding-top: 13px;
-    margin: auto;
-}
-#facebook, #gmail{
-	background: #3b5998;
-	width: 180px;
-	height: 38px;
-	position: relative;
-	top: 100px;
-	left: 111px;
-	z-index: 2000000;
-}
+
 #login{
 	
 }
@@ -369,10 +373,10 @@ top: 33px;
 	border: 1px solid #DFDFDF;
 }
 .input-field{
-	width: 70%;
+	width: 300px;
 	border: 1px solid #A3A3A3;
-	margin: 7px auto;
-	display: block;
+	margin: 7px 10px;
+	display: inline-block;
 	padding: 9px;
 	border-radius: 3px 3px 0 0;
 }
@@ -437,7 +441,6 @@ top: 33px;
 }
 #loginWrap h2,
 #signupWrap h2{
-	text-align:center;
 }
 #profileWrap h2{
 	margin-bottom: 40px;
@@ -653,7 +656,7 @@ body > footer{
 	right: 0;
 }
 .overlay-low{
-	background: white; 
+	background: rgba(255, 255, 255, 0.78); 
 	z-index:139;
 }
 .overlay .overlayMsgWrap{	
@@ -671,4 +674,138 @@ body > footer{
 #favoriteDrink,
 #favoriteDay{
 	display:inline-block;
+}
+
+#loginWrapp,
+#resetWrapp{
+	margin-top: 5px;
+	margin-right: 12px;
+}
+#loginWrapp *,
+#resetWrapp *{
+	display:inline-block;
+	font: normal 13px 'Lato';
+	color:white;
+}
+#loginWrapp > div,
+#resetWrapp > div{
+	margin-right:5px;
+	font-weight:bolder;
+}
+.formWrap{
+	position:relative;
+}
+#loginWrapp input,
+#resetWrapp input{
+	width: 105px;
+	height: 16px;
+	padding: 3px 7px;
+	margin: 0 1px;
+	border-radius: 3px;
+	border: 1px solid rgb(35, 35, 35);
+	color: rgb(44, 44, 44);
+	font-weight:bolder;
+	-webkit-transition: .5 s;
+	transition: all .5s;
+}
+#loginWrapp i.icon-facebook{
+    position: absolute;
+    left: 324px;
+    background: none;
+    top: 0px;
+}
+
+#resetWrapp input{
+	width:150px;
+}
+#loginWrapp input[type="submit"],
+#resetWrapp input[type="submit"]{
+	width: 66px;
+	background: rgb(216, 67, 67);
+	height: 24px;
+	color: white;
+	/* text-shadow: 0 0 1px rgb(113, 37, 37); */
+}
+#loginWrapp input[type="submit"]#login-fb{
+	width: 31px;
+text-align: right;
+
+	background: #D84343;
+/* display: none; */
+color: white;
+}
+#lost_pw,
+#pw_remember{
+	position: absolute;
+	margin-top: 7px;
+	margin-left: 197px;
+	color: black;
+	font-size: 12px;
+	font-weight: normal!important;
+	display: block;
+}
+#pw_remember{
+    margin-left: 99px;
+	
+}
+#lost_pw:hover,
+#pw_remember:hover{
+	text-decoration:underline;
+}
+.header-field.validated{
+	color:white!important;
+	background: rgb(38, 38, 38);
+	border: 1px solid rgb(126, 126, 126)!important;
+	border-radius: 3px!important;
+}
+::-webkit-input-placeholder {
+   color: #666;
+   font-weight:normal;
+}
+:-moz-placeholder { /* Firefox 18- */
+   color: #666;
+   font-weight:normal;
+}
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #666;
+   font-weight:normal; 
+}
+:-ms-input-placeholder {  
+   color: #666;
+   font-weight:normal; 
+}
+input[type="submit"]:hover,
+button:hover{
+	cursor:pointer;
+}
+
+header input.validating-btn{
+	background: rgb(38, 38, 38)!important;
+}
+
+#landingGo button i{
+	position: absolute;
+	font-size: 17px;
+	border-radius: 100px;
+	height: 24px;
+	width: 30px;
+	padding-top: 5px;
+	top: 6px;
+	left: 13px;
+	text-align: center;
+}
+#landingGo button.fb{
+	background: white;
+	color: black;
+	border: 1px solid;
+}
+
+#landingGo button i.icon-facebook{
+	color: black;
+	border: 1px solid;
+}
+#landingGo button i.icon-user{
+	color: rgb(107, 107, 107);
+	border: 1px solid;
+
 }

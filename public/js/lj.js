@@ -65,9 +65,9 @@ window.LJ = {
 	tagList: [],
 	locList: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ],
         $body                 : $('body'), 
-		$loginWrap		 	  : $('#loginWrap'),
-		$signupWrap			  : $('#signupWrap'),
-		$resetWrap   	      : $('#resetWrap'),
+		$loginWrap		 	  : $('#loginWrapp'),
+		$signupWrap			  : $('#signupWrapp'),
+		$resetWrap   	      : $('#resetWrapp'),
 		$profileWrap	      : $('#profileWrap'),
 		$eventsWrap		      : $('#eventsWrap'),
 		$manageEventsWrap     : $('#manageEventsWrap'),
@@ -169,14 +169,14 @@ window.LJ = {
 
 			(function bindEnterKey(){ //Petite IIEF pour le phun
 
-				$('#loginWrap').on('keypress','input.input-field',function(e){
+				$('#loginWrapp').on('keypress','input.input-field',function(e){
 					if(e.which=='13'){
 						e.preventDefault();
 						$('#login').click();
 					}
 				});
 
-				$('#signupWrap').on('keypress','input.input-field',function(e){
+				$('#signupWrapp').on('keypress','input.input-field',function(e){
 					if(e.which=='13'){
 						e.preventDefault();
 						$('#signup').click();
@@ -274,7 +274,17 @@ window.LJ = {
 
 			$('#landingWrap button').click(function(){
 
+<<<<<<< HEAD
 				LJ.fn.displayContent( $('#signupWrap') );
+=======
+				$('#landingWrap').velocity('transition.fadeOut', {
+					duration: 300,
+					complete: function(){
+						LJ.$signupWrap.velocity('transition.slideLeftIn');
+					}
+
+				});
+>>>>>>> newlogin
 
 			});
 
@@ -656,7 +666,7 @@ window.LJ = {
 			var email = $('#pwResetInput').val().trim();
 
 			LJ.fn.showLoaders();
-			$('input.input-field').addClass('validating');
+			$('#resetWrapp input[type="submit"]').addClass('validating-btn');
 			$('#pw_remember').velocity('transition.slideRightOut', { duration: 300 });
 
 			$.ajax({
@@ -717,6 +727,7 @@ window.LJ = {
 		handleBeforeSendLogin: function(){
 
 			LJ.$loginBtn.val('Loading');
+			LJ.$loginBtn.addClass('validating-btn');
 			LJ.fn.showLoaders();
 			$('#bcm_member').velocity('transition.slideRightOut', { duration: 500 });
 			$('#lost_pw').velocity('transition.slideLeftOut', { duration: 500 });
@@ -727,6 +738,7 @@ window.LJ = {
 
 			LJ.user._id = user._id; /* Nécessaire pour aller chercher toutes les infos, mais par socket.*/
 			LJ.fn.initSocketConnection( user.token );
+			LJ.$loginWrap.find('.header-field').addClass('validated');
 
 		},
 		handleFailedLogin: function(data){
@@ -736,11 +748,9 @@ window.LJ = {
 
 			sleep( LJ.ui.artificialDelay, function(){
 
-				LJ.fn.toastMsg( data.msg, 'error');
-				$('input.input-field').removeClass('validating');
+				LJ.fn.handleServerError( data.msg );
 				$('#bcm_member').velocity('transition.slideRightIn', { duration: 400, display:"inline-block" });
 				$('#lost_pw').velocity('transition.slideLeftIn', { duration: 400, display:"inline-block" });
-				LJ.fn.hideLoaders();
 				LJ.$loginBtn.val('Login');
 
 			});
@@ -802,10 +812,8 @@ window.LJ = {
 
 			sleep(LJ.ui.artificialDelay,function(){
 
-				$('input.input-field').removeClass('validating');
-				LJ.fn.toastMsg( errorMsg, 'error');
+				LJ.fn.handleServerError( errorMsg );
 				$('#pw_remember').velocity('transition.slideRightIn', { duration: 400 });
-				LJ.fn.hideLoaders();
 
 			});
 
@@ -846,7 +854,8 @@ window.LJ = {
 			 $('#profile').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
-			 LJ.fn.displayContent(LJ.$profileWrap, { myWayIn: 'transition.slideDownIn' });
+             $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('none');}})
+			 LJ.fn.displayContent(LJ.$profileWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut' });
 
 		},
 		displayViewAsIdle: function(){
@@ -857,7 +866,8 @@ window.LJ = {
             $('#events').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
-            LJ.fn.displayContent(LJ.$eventsWrap, { myWayIn: 'transition.slideDownIn' });
+            $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('none');}})
+            LJ.fn.displayContent(LJ.$eventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut'  });
 
 		},
 		displayViewAsHost: function(){
@@ -868,7 +878,8 @@ window.LJ = {
 			$('#management').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
-			LJ.fn.displayContent(LJ.$manageEventsWrap, { myWayIn: 'transition.slideDownIn' });
+             $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('none');}})
+			LJ.fn.displayContent(LJ.$manageEventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut'  });
 
             LJ.fn.fetchAskers();
 		},
@@ -1586,7 +1597,6 @@ window.LJ = {
 
         	sleep( LJ.ui.artificialDelay, function(){   
 
-        		$('#socialWrap').velocity('transition.fadeOut', {duration: 300})
 				switch( LJ.user.status ){
 					case 'new':
 						LJ.params.socket.emit('request welcome email', LJ.user._id );
@@ -1640,6 +1650,7 @@ window.LJ = {
         handleServerError: function( msg ){
 
         	LJ.fn.toastMsg( msg, 'error');
+        				$('.validating').removeClass('validating');
 						$('.validating-btn').removeClass('validating-btn');
 						$('.asking').removeClass('asking');
 						$('.pending').removeClass('pending');

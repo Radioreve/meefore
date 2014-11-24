@@ -24,10 +24,11 @@
 					if( err )
 						return next( err, false,{ msg: "Missing credentials" });
 
-					/*
+					
 					if( user )
 						return next( null, false,{ msg: "User already exists" });
 
+					/*
 					if( !validator.isEmail( email ) )
 						return next( null, false, { msg: "Email is incorrect" });
 
