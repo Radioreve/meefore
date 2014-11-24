@@ -17,9 +17,13 @@
 #landingGo button{
     margin-top: 20px;
     padding-top: 10px;
+    position: relative;
     height: 44px;
-    width: 380px;
-    background: rgb(66, 66, 66);
+    width: 250px;
+    padding-right: 18px;
+    background: rgb(60, 60, 60);
+    color: rgb(255, 255, 255);
+    border: 1px solid #343434;
     font-weight: bolder;
     font-size: .7em;
 }

@@ -29,7 +29,7 @@
 <div class="progress_bar"></div>
 <div class="loaderWrap"></div>
 	<header>
-		<h1>Vodsky et Whika</h1>
+		<h1><i class="icon icon-users"></i>Vodsky et Whika</h1>
 		  <ul id="menuWrap" class="">
 			<li id="profile" class="left menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span></span></li>
 			<li id="events"  class="left menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span></span></li>
@@ -38,6 +38,32 @@
 			<li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span></span></li>
 			<li id="contact" class="right menu-item icon icon-mail-alt" data-linkedcontent="#contactWrap" ><span></span></li>
 		  </ul>
+		  <section id="loginWrapp" class="revealed right">
+			  <div>
+				Connexion
+			  </div>
+				<div class="formWrap">
+					<form autocomplete="off">
+						<input class="header-field" type="text" id="email" placeholder="email">
+						<input class="header-field" type="password" id="pw" placeholder="password">
+						<input type="submit" class="" id="login" value="Login"></input>
+						<div><i class="icon icon-facebook"></i>
+						<input type="submit" class="" id="login-fb" value=" "></input>
+						</div>
+					</form>
+			    </div>
+		<div id="lost_pw" class="sub-actions right">Mot de passe oublié ?</div>
+		</section>
+		<section id="resetWrapp" class="none right">
+				<div>Trop de vodka ? </div>
+				<div class="formWrap">
+					<form autocomplete="off">
+						<input class="input-field" type="text" id="pwResetInput" placeholder="email">
+						<input type="submit" class="" id="reset" value="Reset"></input>
+					</form>
+			  </div>
+		<div id="pw_remember" class="sub-actions right">Je m'en souviens!</div>
+		</section>
 	</header>
 	<div id="mainWrap" class="">
 		<div id="thumbWrap" class="none ">
@@ -47,7 +73,7 @@
 			</div>
 		</div>
 		<section id="contentWrap" class="">
-		<section id="landingWrap" class="centered revealed">
+		<section id="landingWrap" class="centered">
 			<h2>Une soirée en moins d'une minute</h2> 
 			<section id="landingIntro">
 				<div class="l-item">
@@ -68,33 +94,11 @@
 			</section>
 			<section id="landingGo">
 				<center>Le prochain évènement commence dans exactement : 45min </center>
-				<button class="themeBtn">Ce soir, c'est la folie !</button>
+				<button class="themeBtn">Inscription</button>
 			</section>
 		</section>
-			<section id="socialWrap" class="none centered">
-				<input type="submit" class="themeBtn" id="facebook" value="facebook"></input>
-			</section>
-			<section id="loginWrap" class="none centered">
-			  <div class="">
-				<h2>Identifiez-vous!</h2>
-			  </div>
-			  <div class="">
-				<div class="formWrap">
-					<form autocomplete="off">
-						<input class="input-field" type="text" id="email" placeholder="email">
-						<input class="input-field" type="password" id="pw" placeholder="password">
-						<div class="input-field submitWrap">
-						<div class="rel">
-							<input type="submit" class="themeBtn" id="login" value="login"></input>
-						</div>
-							<div id="bcm_member" class=" sub-actions right">Devenir membre</div>
-							<div id="lost_pw" class="sub-actions left">Mot de passe oublié ?</div>
-						</div>
-					</form>
-			    </div>
-			  </div>
-			</section>
-			<section id="signupWrap" class="none centered">
+			<section id="signupWrapp" class="none centered">
+			<div id="signupWrap">
 				<h2>Inscrivez-vous</h2>
 				<div class="formWrap">
 					<form>
@@ -105,28 +109,11 @@
 							<div class="rel">
 								<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
 							</div>
-							<div id="b_to_login" class="sub-actions left">S'identifier</div>
 						</div>
 					</form>
 				</div>
-			</section>
-			<section id="resetWrap" class="none centered">
-			  <div class="">
-				<h2>Trop de vodka ? </h2>
-			  </div>
-			  <div class="">
-				<div class="formWrap">
-					<form autocomplete="off">
-						<input class="input-field" type="text" id="pwResetInput" placeholder="email">
-						<div class="input-field submitWrap">
-							<div class="rel">
-								<input type="submit" class="themeBtn" id="reset" value="Reset password"></input>
-							</div>
-							<div id="pw_remember" class=" sub-actions right">Je m'en souviens!</div>
-						</div>
-					</form>
-			    </div>
-			  </div>
+			</div>
+				<img src="/img/drunkwork.png" width="200">
 			</section>
 			<section id="profileWrap" class="none centered">
 				<h2>Account settings</h2>

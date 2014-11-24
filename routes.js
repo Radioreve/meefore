@@ -44,18 +44,21 @@
 		app.post('/login', function( req, res, next ){
 			passport.authenticate('local-login', function( err, user, info ){
 
-				if( err ){
+				if( err )
+				{
 					console.log('error with the database query');	
 				}
-				if( !user ){
+				if( !user )
+				{
 	  				res.json( 401, { msg: "Invalid credentials" });
 					res.end();
 				}
-				else{
-
+				else
+				{
 					var token = jwt.sign( user, config.jwtSecret, { expiresInMinutes: 600 });
 
-	  				res.json( 200, {
+	  				res.json( 200, 
+	  				{
 	  					_id:     user._id,
 	  					msg:     info.msg,
 	  					token:   token,
