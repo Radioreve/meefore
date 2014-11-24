@@ -13,7 +13,9 @@ window.LJ = {
 		domain	  : "http://87.247.105.70:1337"
 	},
 	ui:{
-		artificialDelay: 600
+		artificialDelay: 600,
+		displayIn:  { opacity: [1, 0], translateX: [-8, 0]   },
+		displayOut: { opacity: [0, 1], translateX: [10, 0]   }
 	},
 	cloudinary:{
 		uploadParams: { cloud_name:"radioreve", api_key:"835413516756943" },
@@ -272,7 +274,7 @@ window.LJ = {
 
 			$('#landingWrap button').click(function(){
 
-				LJ.fn.displayContent( $('#loginWrap') );
+				LJ.fn.displayContent( $('#signupWrap') );
 
 			});
 
@@ -909,12 +911,14 @@ window.LJ = {
 				options = options || {};			
 				var rev = $('.revealed');
 
-				rev.velocity( options.myWayOut || "transition.slideRightOut", {
+				rev.velocity( options.myWayOut || 'transition.fadeOut', {
 					duration: options.duration || 300,
 					complete: function(){
 						rev.removeClass('revealed');
 						content.addClass('revealed')
-							   .velocity( options.myWayIn || "transition.slideLeftIn", {
+							   .velocity( options.myWayIn || 'transition.fadeIn', {
+							   	duration: 700,
+							   	display:'block',
 							   	complete: function(){
 							   		LJ.state.animatingContent = false;
 							   		if(LJ.user.status === 'new'){

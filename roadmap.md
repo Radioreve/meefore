@@ -11,7 +11,7 @@
 	- Rajouter un data--hint type "attention si vous faites des events chez vous!" 
 	- Donner à 'host la possibilité de valider un user, et le nombre de personnes prévues'
 	- Augmenter les Models (genre date d'inscription etc, notamment par rapport à la fiche Management )
-	- Améliorer le design global
+	- Améliorer le design global et la largeur des animations slide
 	
 	- Implémenter le système de validation des gens ( et)
 	- Socials signins with passport (Facebook )
