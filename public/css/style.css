@@ -296,6 +296,7 @@ top: 33px;
 #signupWrapp img{
 	margin: 80px 40px;
 	vertical-align:top;
+	float: right;
 }
 #loginWrap,
 #signupWrap,
@@ -728,11 +729,10 @@ body > footer{
 }
 #loginWrapp input[type="submit"]#login-fb{
 	width: 31px;
-text-align: right;
-
+	text-align: right;
 	background: #D84343;
-/* display: none; */
-color: white;
+	/* display: none; */
+	color: white;
 }
 #lost_pw,
 #pw_remember{
@@ -746,7 +746,6 @@ color: white;
 }
 #pw_remember{
     margin-left: 99px;
-	
 }
 #lost_pw:hover,
 #pw_remember:hover{
@@ -807,5 +806,4 @@ header input.validating-btn{
 #landingGo button i.icon-user{
 	color: rgb(107, 107, 107);
 	border: 1px solid;
-
 }

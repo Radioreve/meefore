@@ -274,17 +274,13 @@ window.LJ = {
 
 			$('#landingWrap button').click(function(){
 
-<<<<<<< HEAD
-				LJ.fn.displayContent( $('#signupWrap') );
-=======
 				$('#landingWrap').velocity('transition.fadeOut', {
 					duration: 300,
 					complete: function(){
-						LJ.$signupWrap.velocity('transition.slideLeftIn');
+						LJ.$signupWrap.velocity('transition.slideLeftIn', { display:'inline-block'});
 					}
 
 				});
->>>>>>> newlogin
 
 			});
 
