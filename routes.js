@@ -18,9 +18,13 @@
 			res.sendfile(__dirname + '/test.html');
 		});
 
+
 		app.get('*', function( req, res ){
 			res.redirect('/home');
 		});
+		
+		app.post('/auth/facebook', handleFacebookAuth );
+
 
 		app.post('/signup', function( req, res, next ){
 			passport.authenticate('local-signup', function( err, user, info ){
@@ -134,4 +138,60 @@
 
 		});
 
-}
+} 
+
+
+	function handleFacebookAuth( req, res ){
+
+			var fbId = req.body.facebookId;
+
+		console.log('Authenticating with Facebook with id : ' + fbId );
+
+			User.findOne({ 'facebookId': fbId }, function( err, user ){
+
+				if( err )
+					return console.log('Error with Facebook : ' + err );
+
+				if( user )
+				{
+					console.log('Used found based on Facebook id ');
+					var token = jwt.sign( user, config.jwtSecret, { expiresInMinutes: 600 });
+
+						res.json(200,
+						{
+							_id: user._id,
+							token: token
+						});
+						res.end();
+						return;
+
+				}
+
+
+				var newUser = new User();
+
+				newUser.facebookId = fbId;
+				newUser.name = "hey";
+				newUser.signupDate = new Date();
+				
+				newUser.save( function( err, user ){
+
+					if( err ) return console.log('User was NOT saved : ' + err );
+
+						var token = jwt.sign( user, config.jwtSecret, { expiresInMinutes: 600 });
+
+						res.json( 200, 
+		  				{
+		  					_id:     user._id,
+		  					token:   token
+		  				});
+		  				res.end();
+
+				});
+
+				
+
+			});
+
+	}
+

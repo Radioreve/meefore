@@ -36,7 +36,7 @@
 
 		io.on('connection', function( socket ){
 
-			 console.log( socket.decoded_token.local.email + ' has joined the stream' );
+			 console.log( 'New user has joined the stream' );
 			 var id = socket.decoded_token._id.toString();
 			 global.sockets[id] = socket;
 

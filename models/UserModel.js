@@ -7,12 +7,16 @@ var UserSchema = new mongoose.Schema({
   local: {
     email: {
       type: String,
-      required: true
     },
     password: {
       type: String,
-      required: true 
-    }
+    },
+  },
+  facebookId: {
+    type:String
+  },
+  signupDate: {
+    type: Date
   },
   isAdmin: {
     type: Boolean,
@@ -31,9 +35,6 @@ var UserSchema = new mongoose.Schema({
     default:"Inconnu"
   },
   favoriteDrink: {
-    type: String
-  },
-  favoriteDay: {
     type: String
   },
   location: {

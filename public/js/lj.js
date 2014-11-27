@@ -107,8 +107,47 @@ window.LJ = {
 				/* Gif loader and placeholder */
 				LJ.fn.initStaticImages();
 
-				/*Global UI Settings ehanced UX*/
+				/* Global UI Settings ehanced UX*/
 				LJ.fn.initEhancements();
+
+				/* Init Facebook state */
+				LJ.fn.initFacebookState();
+
+		},
+		initFacebookState: function(){
+
+			  window.fbAsyncInit = function(){
+
+				  FB.init({
+				    appId      : '1509405206012202',
+				    xfbml      : true,  // parse social plugins on this page
+				    version    : 'v2.1' // use version 2.1
+				  });
+
+				  FB.getLoginStatus( function( res ){
+
+				  	var status = res.status;
+				  	console.log('Facebook status : ' + status);
+
+				  	console.log('status : '+status);
+				  	if( status != 'connected' )
+				  		 return;
+
+				  	LJ.fn.toastMsg('Facebook account detected, login in...', 'info' );
+
+				  	sleep(1000, function(){
+
+				  	FB.api('/me', function(res){
+
+				  		var facebookId = res.id;
+				  		LJ.fn.loginWithFacebook( facebookId );
+				  		
+				  	});
+				  });
+			  	
+				  });
+
+			  };
 
 		},
 		initSocketConnection: function(jwt){
@@ -305,6 +344,25 @@ window.LJ = {
 
 				e.preventDefault();
 				LJ.fn.resetPassword();
+
+			});
+
+			$('#login-fb').click(function(e){
+
+				e.preventDefault();
+				console.log('Login in with Facebook');
+
+				FB.login( function(res){
+
+					if( res.status =! 'connected' ) return;
+
+						FB.api('/me', function(res){
+
+					  		var facebookId = res.id;
+					  		LJ.fn.loginWithFacebook( facebookId );
+
+				  		});
+				}, { scope: ['public_profile', 'email']});
 
 			});
 
@@ -728,6 +786,26 @@ window.LJ = {
 			$('#bcm_member').velocity('transition.slideRightOut', { duration: 500 });
 			$('#lost_pw').velocity('transition.slideLeftOut', { duration: 500 });
 			$('input.input-field').addClass('validating');
+
+		},
+		loginWithFacebook: function( facebookId ){
+
+				$.ajax({
+
+					method:'POST',
+					data: { facebookId: facebookId },
+					dataType:'json',
+					url:'/auth/facebook',
+					success: function(data){
+
+						LJ.fn.handleSuccessLogin( data );
+
+					},
+					error: function(err){
+
+					}
+
+				});
 
 		},
 		handleSuccessLogin: function( user ){

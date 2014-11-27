@@ -15,6 +15,10 @@
 				cloud_name:"radioreve",
 				api_key:"835413516756943",
 				api_secret:"MMKeDsJlgYDvDdR2wsep0DZRggo"
+			},
+			facebook:{
+				clientID:"1509405206012202",
+				clientSecret:"4525e27d90dcc73f716dae4fa36c6885"
 			}
 
 		}

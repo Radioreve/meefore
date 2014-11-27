@@ -1,8 +1,10 @@
-	
-	var passport  = require("passport"),
-	LocalStrategy = require("passport-local").Strategy,
-	User          = require("../models/UserModel"),
-	validator     = require('validator');
+
+	var passport  	  = require("passport"),
+	LocalStrategy 	  = require("passport-local").Strategy,
+	FacebookStrategy  = require('passport-facebook').Strategy,
+	User        	  = require("../models/UserModel"),
+	validator     	  = require('validator'),
+	config        	  = require('./config');
 
 
 	module.exports = function(passport){
@@ -47,7 +49,8 @@
 
 					newUser.local.email = email;
 					newUser.local.password = newUser.generateHash( password );
-
+					newUser.signupDate = new Date();
+					
 					newUser.save( function( err ){
 
 						if( err ){ throw err; }
@@ -87,5 +90,4 @@
 	    }));
 
 	};
-
-	
+	  

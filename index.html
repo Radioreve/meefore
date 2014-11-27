@@ -18,6 +18,12 @@
 	<link rel="stylesheet" href="/css/landing.css">
 </head>
 <body>
+<script src="/js/fb.js"></script>
+<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+</fb:login-button>
+
+<div id="status">
+</div>
 <div class="overlay overlay-high">
 	<div class="overlayMsgWrap">
 	</div>	
@@ -30,6 +36,7 @@
 <div class="loaderWrap"></div>
 	<header>
 		<h1><i class="icon icon-users"></i>Vodsky et Whika</h1>
+		<h5>L'abus de soirées est dangereux pour la santé</h5>
 		  <ul id="menuWrap" class="">
 			<li id="profile" class="left menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span></span></li>
 			<li id="events"  class="left menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span></span></li>
@@ -47,8 +54,8 @@
 						<input class="header-field" type="text" id="email" placeholder="email">
 						<input class="header-field" type="password" id="pw" placeholder="password">
 						<input type="submit" class="" id="login" value="Login"></input>
-						<div><i class="icon icon-facebook"></i>
-						<input type="submit" class="" id="login-fb" value=" "></input>
+						<div id="login-fb"><i class="icon icon-facebook"></i>
+						<a href="/auth/facebook" type="submit"></a>
 						</div>
 					</form>
 			    </div>
@@ -102,13 +109,11 @@
 				<h2>Inscrivez-vous</h2>
 				<div class="formWrap">
 					<form>
-						<input class="input-field" type="text" id="emailSignup" placeholder="email">
-						<input class="input-field" type="password" id="pwSignup" placeholder="password">
+						<input class="input-field" type="text"     id="emailSignup"   placeholder="email">
+						<input class="input-field" type="password" id="pwSignup"      placeholder="password">
 						<input class="input-field" type="password" id="pwCheckSignup" placeholder="password again">
 						<div class="input-field submitWrap">
-							<div class="rel">
-								<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
-							</div>
+						<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
 						</div>
 					</form>
 				</div>
@@ -117,7 +122,7 @@
 			</section>
 			<section id="profileWrap" class="none centered">
 				<h2>Account settings</h2>
-				<div id="pictureWrap"class="left hint--left" data-hint="click to edit your picture">
+				<div id="pictureWrap"class="left hint--top" data-hint="click to edit your picture">
 					<form class="upload_form"></form>
 					<h5 id="codebarre"><span class="icon icon-barcode-1"></span>53ef548dgk0847j6H7Y</h5>
 				</div>
