@@ -116,12 +116,12 @@ window.LJ = {
 		},
 		initFacebookState: function(){
 
-			  window.fbAsyncInit = function(){
-
 				  FB.init({
+
 				    appId      : '1509405206012202',
-				    xfbml      : true,  // parse social plugins on this page
-				    version    : 'v2.0' // use version 2.1
+				    xfbml      : true,  
+				    version    : 'v2.0' 
+
 				  });
 
 				  FB.getLoginStatus( function( res ){
@@ -137,17 +137,16 @@ window.LJ = {
 
 				  	sleep(1000, function(){
 
-				  	FB.api('/me', function(res){
+					  	FB.api('/me', function(res){
 
-				  		var facebookId = res.id;
-				  		LJ.fn.loginWithFacebook( facebookId );
-				  		
+					  		var facebookId = res.id;
+					  		LJ.fn.loginWithFacebook( facebookId );
+					  		
+					  	});
 				  	});
-				  });
 			  	
 				  });
 
-			  };
 
 		},
 		initSocketConnection: function(jwt){
@@ -2413,12 +2412,14 @@ window.LJ = {
 }//end LJ
 
 $('document').ready(function(){
-		LJ.fn.init();
-		csl('Application ready');
+
+
 		  FB.init({
 				    appId      : '1509405206012202',
 				    xfbml      : true,  // parse social plugins on this page
-				    version    : 'v2.0' // use version 2.1
+				    version    : 'v2.1' // use version 2.1
 				  });
 	
+		csl('Application ready');
+		LJ.fn.init();
 });
