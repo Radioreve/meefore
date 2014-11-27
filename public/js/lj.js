@@ -2415,5 +2415,10 @@ window.LJ = {
 $('document').ready(function(){
 		LJ.fn.init();
 		csl('Application ready');
+		  FB.init({
+				    appId      : '1509405206012202',
+				    xfbml      : true,  // parse social plugins on this page
+				    version    : 'v2.0' // use version 2.1
+				  });
 	
 });
