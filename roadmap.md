@@ -15,7 +15,6 @@
 	- Augmenter les Models (genre date d'inscription etc, notamment par rapport à la fiche Management )
 	- Rédiger le first message à la première connexion (notamment..)
 	- Implémenter le système de validation des gens (et)
-	- Socials signins with passport ( Facebook )
 	- Validation clientside, validaton server side
 	- Empêcher les double connexion socket
 

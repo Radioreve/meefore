@@ -116,14 +116,6 @@ window.LJ = {
 		},
 		initFacebookState: function(){
 
-				  FB.init({
-
-				    appId      : '1509405206012202',
-				    xfbml      : true,  
-				    version    : 'v2.0' 
-
-				  });
-
 				  FB.getLoginStatus( function( res ){
 
 				  	var status = res.status;
@@ -2415,9 +2407,11 @@ $('document').ready(function(){
 
 
 		  FB.init({
+
 				    appId      : '1509405206012202',
 				    xfbml      : true,  // parse social plugins on this page
 				    version    : 'v2.1' // use version 2.1
+
 				  });
 	
 		csl('Application ready');
