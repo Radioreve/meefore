@@ -121,7 +121,7 @@ window.LJ = {
 				  FB.init({
 				    appId      : '1509405206012202',
 				    xfbml      : true,  // parse social plugins on this page
-				    version    : 'v2.1' // use version 2.1
+				    version    : 'v2.0' // use version 2.1
 				  });
 
 				  FB.getLoginStatus( function( res ){
@@ -354,7 +354,9 @@ window.LJ = {
 
 				FB.login( function(res){
 
-					if( res.status =! 'connected' ) return;
+					console.log('Client status is now : ' + res.status ) ;
+
+					if( res.status != 'connected' ) return;
 
 						FB.api('/me', function(res){
 
