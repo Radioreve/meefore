@@ -2405,6 +2405,7 @@ window.LJ = {
 
 $('document').ready(function(){
 
+		sleep(100, function(){
 
 		  FB.init({
 
@@ -2416,4 +2417,6 @@ $('document').ready(function(){
 	
 		csl('Application ready');
 		LJ.fn.init();
+
+		});
 });
