@@ -1,12 +1,13 @@
 *{
 }
 html{
+    background: none; 
   
 }
 body{
-	background: white;
 	box-shadow: 0 0 5px #C0C0C0;
-	font-family: 'Ubuntu';
+	font-family: 'Lato';
+	height: 100%;
 }
 p,
 textarea,
@@ -49,7 +50,7 @@ label{
 	text-align: right;
 	display:inline-block;
 }
-.labelTextArea{vertical-align:top;}
+.labelTextArea{vertical-align:top;margin-top: 12px;}
 .rel{}
 .right{float:right;}
 img.left{float:left;}
@@ -60,7 +61,6 @@ img.left{float:left;}
 	position:absolute;
 	margin:auto;
 	margin-top: 100px;
-	background: white;
 	width: 750px;
 	top:0;
 	left:0;
@@ -127,7 +127,17 @@ border-radius: 4px;
 text-shadow: none;
 font-size: .8em;
 }
-#mainWrap{
+#mainWrap{ /* FF3.6+ */
+ /* Chrome,Safari4+ */
+ /* Chrome10+,Safari5.1+ */
+ /* Opera 11.10+ */
+ /* IE10+ */
+ /* W3C */
+ /* IE6-9 */
+
+}
+#contentWrap{
+   
 }
 .toastSuccess,
 .toastError,
@@ -159,8 +169,8 @@ font-size: .8em;
 	opacity: 0;
 }
 .toastSuccess{
-	background: #6EAC6E;
-	border: 1px solid #34743E;
+	background: #487DC3;
+	border: 1px solid #25315F;
 	opacity: 0;
 }
 .toast-icon{
@@ -180,7 +190,7 @@ font-size: .8em;
 	color: white;
 }
 .toastSuccess .toast-icon{
-	background: #34743E;
+	background: #355C90;
 	color: white;
 }
 
@@ -297,7 +307,6 @@ top: 33px;
 	padding:10px;
 }
 #signupWrap{
-	border-right: 1px solid #eee;
 }
 #signupWrapp{
 	border-bottom: 1px solid #eee;
@@ -312,8 +321,8 @@ top: 33px;
 #signupWrap,
 #resetWrap{
 	width: 400px;
+	margin: 0 auto;
 	text-align: center;
-	display: inline-block;
 }
 #loginWrap .formWrap,
 #signupWrap .formWrap,
@@ -342,7 +351,7 @@ top: 33px;
 .themeBtn,
 .themeBtnToggle,
 #landingWrap button{
-	width: 103px;
+	width: 100px;
 	height: 31px;
 	border-radius: 2px;
 	border: none;
@@ -417,10 +426,10 @@ top: 33px;
 	box-shadow: 0 2px 2px #DFDFDF;
 	padding-bottom: 15px;
 	border:1px dashed transparent;
-	width: 180px;
-	padding-top: 6px;
+	width: 176px;
+	padding-top: 5px;
 	margin: 0 auto;
-	height: 160px;
+	height: 157px;
 	transition: .4s;
 	display: inline-block;
 	vertical-align: top;
@@ -434,7 +443,7 @@ top: 33px;
 	display: inline-block;
 }
 .fieldsWrap input{
-	padding: 10px 0 5px 10px;
+	padding: 10px 0 5px 0px;
 	border: none;
 	/* border-bottom: 1px solid #ddd; */
 }
@@ -445,7 +454,6 @@ top: 33px;
 	color: #999;
 }
 .fieldsWrap .input-row-wrap{
-	margin: 7px 0;
 }
 .fieldsWrap .input-row-wrap:last-child{
 	margin-top: 3px;
@@ -470,19 +478,21 @@ top: 33px;
 #name{
 	width:180px;
 }
-#age{
-	width: 40px;
+ 
+#age,
+#mood{
+	padding-bottom: 20px;
 }
 #profileWrap textarea{
 	width: 70%;
-	padding-top: 6px;
+	padding-top: 20px;
 	padding-left: 10px;
 	height: 50px;
 	border: none;
 	border-bottom: 1px dashed #C0C0C0;
 }
 #profileWrap #validate{
-	margin: 0px 100px 0 35px;
+	margin: 30px 100px 0 35px;
 	position: relative;
 }
 .profileInput{
@@ -490,7 +500,13 @@ top: 33px;
 	transition: all .5s;
 }
 .modified{
-	color: rgb(240, 0, 0);
+	color: rgb(240, 0, 0)!important;
+	font-weight: bolder;
+}
+.drink.modified,
+.mood.modified{
+	font-weight:bolder;
+	border-bottom: 2px solid;
 }
 .validating{
 	background: #F3F3F3;
@@ -510,7 +526,7 @@ top: 33px;
 	background:white;
 }
 .progress_bar{
-	position: absolute;
+	position: fixed;
 	top: 33px;
 	height: 4px;
 	width: 0%;
@@ -568,6 +584,9 @@ top: 33px;
 	padding: 10px;
 	border-radius: 2px;
 	z-index: 145;
+}
+#thumbWrap > div.imgWrap{
+	display:inline-block;
 }
 #thumbWrap img{
     border-radius: 40px;
@@ -666,6 +685,15 @@ body > footer{
 	bottom: 0;
 	right: 0;
 }
+.overlay-veryhigh{
+	background: rgba(0, 0, 0, 0.97);
+	z-index:10000;
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
 .overlay-low{
 	background: rgba(255, 255, 255, 0.78); 
 	z-index:139;
@@ -682,8 +710,7 @@ body > footer{
 .overlay-low h2{
 	color:black; 
 }
-#favoriteDrink,
-#favoriteDay{
+#favoriteDrink, #mood{
 	display:inline-block;
 }
 
@@ -774,7 +801,7 @@ body > footer{
 	border-radius: 3px!important;
 }
 ::-webkit-input-placeholder {
-   color: #999;
+   color: #666;
    font-weight:normal;
 }
 :-moz-placeholder { /* Firefox 18- */
@@ -786,6 +813,24 @@ body > footer{
    font-weight:normal; 
 }
 :-ms-input-placeholder {  
+   color: #666;
+   font-weight:normal; 
+}
+
+#searchBar ::-webkit-input-placeholder {
+   color: #ccc;
+   font-style:italic;
+   font-size: .85em
+}
+#searchBar :-moz-placeholder { /* Firefox 18- */
+   color: #666;
+   font-weight:normal;
+}
+#searchBar ::-moz-placeholder {  /* Firefox 19+ */
+   color: #666;
+   font-weight:normal; 
+}
+#searchBar :-ms-input-placeholder {  
    color: #666;
    font-weight:normal; 
 }
@@ -822,4 +867,168 @@ header input.validating-btn{
 #landingGo button i.icon-user{
 	color: rgb(107, 107, 107);
 	border: 1px solid;
+}
+#searchUsersWrap{
+	width:400px; 
+}
+#searchBarWrap{
+	margin-top: 30px;
+	text-align:center;
+}
+
+#searchBar{
+	width:400px;
+	position:relative;
+	margin:0 auto;
+}
+#searchBar i{
+	color:#ccc;
+	position:absolute;
+	top: 8px;
+	right: 40px;}
+
+#searchBar input[type="text"]{
+    border: 1px solid #ccc;
+	-webkit-transition: all .2s;
+	transition: all .2s;
+    border-radius: 10px 10px 0 0;
+    width: 80%;
+    padding: 5px;
+    padding-left: 14px;
+    color: #565656;
+}
+#searchBar input:focus{
+	box-shadow: 0px -2px 3px rgb(229, 229, 229);
+}
+
+#searchUsers{
+	text-align:center;
+	border-top: 1px solid #ccc;
+	position: relative;
+	top: -1px;
+}
+#searchUsers active{
+	opacity: .8;
+}
+#searchUsers button{
+	width: 36px;
+	height: 34px;
+	font-size: 15px;
+	border-radius: 3px;
+	margin-top: 13px;
+}
+.u-item button:hover{
+	cursor:default;
+}
+
+
+#searchBar input[type="submit"]{
+    width: 15%;
+    border: none;
+    background: #252525;
+    color: white;
+}
+
+.u-item{
+	height: 50px;
+	margin: 9px 0;
+	display: inline-block;
+	width: 100%;
+	opacity: 0;
+	-webkit-transition: opacity.3s;
+	transition: opacity .3s;
+}
+.u-item button{
+	opacity:0;
+}
+
+.u-item button:hover{
+	opacity:0;
+} 
+.u-item.match button{
+	opacity:1;
+}
+.u-item.match button:hover,
+.f-item button:hover{
+	cursor:pointer;
+	opacity: .8; 
+}
+.u-item:first-child{ 
+	margin-top:40px;
+}
+.u-item.match{
+	opacity:1;
+}
+.u-head,
+.u-body,
+.f-head,
+.f-body{
+	display:inline-block;
+}
+.u-item:not(.match) .u-head{
+	box-shadow:none!important;
+}
+.u-item:not(.match) button{
+
+}
+#friendListWrap .f-body{
+	width: 130px;
+	margin-top: 17px;
+}
+#friendListWrap i.icon-ok{
+	position:relative;
+	top: -2px;
+	left: -1px;
+}
+#friendListWrap button.themeBtn{
+	position:relative;
+	vertical-align: top;
+	margin-top: 17px;
+	width: 36px;
+	font-size: 1em;
+}
+.u-body,
+.f-body{
+	vertical-align:top;
+	margin: 18px 0 0 10px;
+	text-align: left;
+	color: #555;
+	font-size: .9em;
+	width: 150px;
+}
+.u-body > *,
+.f-body{
+	vertical-align:top;
+}
+span.u-name,
+span.f-name{
+	font-weight:bolder;
+	display: block;
+	margin-bottom: -1px;
+}
+span.u-age, span.u-favdrink, span.f-age, span.f-favdrink{
+	color: #A9A9A9;
+	font-size: 12px;
+	margin-right: 3px;
+	position: relative; 
+	top: 3px;
+}
+span.f-age, span.f-favdrink{
+	top:0px;
+}
+.u-item button,
+.f-item{
+	/* display:inline-block; */
+	width:80px;
+	font-size:10px;
+	vertical-align:top;
+	margin-top:10px;
+}
+.u-item button i{
+	position:relative;
+	top: -1px;
+	left: 0px;
+}
+.u-head img{ 
+    opacity: 1!important;
 }

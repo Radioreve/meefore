@@ -27,6 +27,27 @@
 
 			});
 	    }; 
+
+	   var fetchUsers = function( userId ){
+
+	   		var socket = global.sockets[userId];
+
+	   		User.find({}, function( err, users ){
+
+	   			if( err )
+	   				return eventUtils.raiseError({
+	   					socket: socket,
+	   					err: err,
+	   					toServer: "Error fetching all users",
+	   					toClient: "Error loading users..."
+	   				});
+
+	   			console.log('Emitting...')
+	   			socket.emit('fetch users success', users );
+
+	   		});
+
+	   }
 	  
 	    var requestIn = function(data){
 
@@ -95,6 +116,8 @@
 								description   : user.description,
 								age           : user.age,
 								favoriteDrink : user.favoriteDrink,
+								mood          : user.mood,
+								signupDate    : user.signupDate,
 								imgId         : user.imgId,
 								imgVersion    : user.imgVersion
 
@@ -216,6 +239,7 @@
 
 	    module.exports = {
 	    	fetchEvents: fetchEvents,
+	    	fetchUsers: fetchUsers,
 	    	requestIn: requestIn,
 	    	requestOut: requestOut
 	    };

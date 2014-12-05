@@ -1,12 +1,16 @@
 #allChatsWrap{
 	width:700px;  
-	height:400px; 
-}
+	height:400px;  
+} 
 .surfacing{
-	z-index:1 !important;
+	z-index: 1!important;
 }
 
-.chatWrap{
+.surfacing .btn-chat{
+	background: #E6E6E6;
+	color:rgb(60,60,60);
+}
+.chatWrap, #friendListWrap{
 	width: 258px;
 	height: 330px;
 	background: rgba(255,255,255,.95);
@@ -14,6 +18,33 @@
 	position: absolute;
 	box-sizing: border-box;
 	font: normal .85em 'Lato';
+}
+#friendListWrap{
+	text-align:center;
+	padding-top:10px;
+	top: -126px;
+	overflow: visible;
+}
+.f-item{
+	margin: 7px 0;
+	width: 100%;
+	background: white;
+	border: 1px solid #ccc;
+	border-left: none;
+	border-right: none;
+	text-align:left;
+	font-size: 15px;
+}
+.f-name{
+	display: inline-block;
+	position:relative;
+	font-size:15px;
+	font-weight:bolder;
+	vertical-align: top;
+}
+.f-img{
+	display:inline-block;
+	margin-top:2px;
 }
 .chatLineWrap{
 	outline:none;
@@ -41,6 +72,7 @@
 }
 .cha{
 	line-height: 1.3em;
+	font-size: 12px;
 	max-width: 260px;
 	color: white;
 	padding: 10px;
@@ -56,6 +88,7 @@
 .cha-user{
 	background: #636363;
 	color: white;
+	font-size: 12px;
 }
 .cha-other{
 	color: rgb(44, 44, 44);
@@ -88,9 +121,10 @@
 }
 .chat-host{
 	left:75px;
-	top: -96px;
+	top: -14px;
 }
-.chatWrap.chat-host{}
+.chatWrap.chat-host{
+}
 .chat-asker{
 	top: -125px;
 }
@@ -124,4 +158,9 @@ background: white;
 }
 .close-chat:hover{
 	cursor:pointer
+}
+.btn-chat{
+	width: 37px!important;
+	border-radius:100px!important;
+	font-size:11px!important; 
 }

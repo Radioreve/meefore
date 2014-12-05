@@ -3,16 +3,16 @@
 /* Contient les variables modifiant le comportant de l'application */
  
 var Event    = require('../models/EventModel'),
-	User     = require('../models/UserModel'),
-	schedule = require('node-schedule'),
-	settings = require('./settings');
+	  User     = require('../models/UserModel'),
+  	schedule = require('node-schedule'),
+  	settings = require('./settings');
 
 var eventsFreezeAt = settings.eventsFreezeAt,
-	eventsEndAt    = settings.eventsEndAt;
+	  eventsEndAt    = settings.eventsEndAt;
 
 function changeStateToFrozen(){
 
-	var conditions = { 'state': { $in : ['canceled'] } },
+	var conditions   = { 'state': { $in : ['canceled'] } },
    	    update     = { 'state': 'frozen' },
    	    options    = {  multi : true };
 
@@ -31,7 +31,7 @@ function changeStateToFrozen(){
 
 function changeStateToEnded(){
 
-	var eventConditions = { 'state': 'frozen' },
+	var eventConditions   = { 'state': 'frozen' },
    	    eventUpdate     = { 'state': 'ended' },
    	    eventOptions    = {  multi : true };
 

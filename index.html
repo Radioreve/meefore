@@ -3,7 +3,6 @@
 <html lang="fr">
 <head>
 	<title>WeNighters</title>
-	<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
@@ -38,16 +37,18 @@
 	<div class="overlayMsgWrap">
 	</div>	
 </div>
+<div class="overlay overlay-veryhigh"></div>
 <div class="progress_bar"></div>
 <div class="loaderWrap"></div>
-	<header>
-		<h1><i class="icon icon-users"></i>Vodsky et Whika</h1>
+	<header class="">
+		<h1><i class="icon icon-help-1"></i>Vodsky et Whika</h1>
 		<h5>L'abus de soirées est dangereux pour la santé</h5>
 		  <ul id="menuWrap" class="">
 			<li id="profile" class="left menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span></span></li>
 			<li id="events"  class="left menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span></span></li>
 			<li id="create" class="left menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><span></span></li>
 			<li id="management" class="left menu-item icon icon-users" data-linkedcontent="#manageEventsWrap" ><span></span></li>
+			<li id="search" class="left menu-item icon icon-search" data-linkedcontent="#searchUsersWrap" ><span></span></li>
 			<li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span></span></li>
 			<li id="contact" class="right menu-item icon icon-mail-alt" data-linkedcontent="#contactWrap" ><span></span></li>
 		  </ul>
@@ -80,6 +81,8 @@
 	</header>
 	<div id="mainWrap" class="">
 		<div id="thumbWrap" class="none ">
+			<div class="imgWrap">
+			</div>
 			<div id="thumbInfos">
 				<h2 id="thumbName"></h2>
 				<span id="logout" class="action">Log out</span>
@@ -87,7 +90,8 @@
 		</div>
 		<section id="contentWrap" class="">
 		<section id="landingWrap" class="centered">
-			<h2>Une soirée en moins d'une minute</h2> 
+			<h2>L'abus de soirées est dangereux pour la santé</h2> 
+			<!--
 			<section id="landingIntro">
 				<div class="l-item">
 					<div class="l-image"><img width="80" src="img/connect.png"></div>
@@ -105,9 +109,10 @@
 					<div class="l-desc">Before, apéro, soirée apparte, prendre une bouteille en boite… la nuit vous appartient ! </div>
 				</div>
 			</section>
+		-->
 			<section id="landingGo">
-				<center>Le prochain évènement commence dans exactement : 45min </center>
-				<button class="themeBtn">Inscription</button>
+				<center>Site de rencontres amicales pour êtres humains hautement sociables</center>
+				<button class="themeBtn">On s'en fou</button>
 			</section>
 		</section>
 			<section id="signupWrapp" class="none centered">
@@ -124,7 +129,6 @@
 					</form>
 				</div>
 			</div>
-				<img src="/img/drunkwork.png" width="200">
 			</section>
 			<section id="profileWrap" class="none centered">
 				<h2>Account settings</h2>
@@ -142,10 +146,6 @@
 						<input id="age" class="profileInput" placeholder="25" type="number" max="50" min="18">
 					</div>
 					<div class="input-row-wrap">
-						<label class="labelTextArea" for="description">Who are you?</label>
-						<textarea id="description" class="profileInput" placeholder="Tell the world what you like"></textarea>
-					</div>
-					<div class="input-row-wrap">
 						<label for="favoriteDrink">Your drink</label>
 						<div id="favoriteDrink">
 							<div class="drink" data-drink="water">water</div>
@@ -156,8 +156,23 @@
 							<div class="drink" data-drink="kro">kro</div>
 						</div>
 					</div>
+					<div class="input-row-wrap">
+						<label for="mood">Your mood</label>
+						<div id="mood">
+							<div class="mood" data-mood="whatever">whatever</div>
+							<div class="mood" data-mood="tired">tired</div>
+							<div class="mood" data-mood="drunk">still drunk</div>
+							<div class="mood" data-mood="happy">happy</div>
+							<div class="mood" data-mood="happy">fail</div>
+							<div class="mood" data-mood="fired">on fire</div>
+						</div>
+					</div>
+					<div class="input-row-wrap">
+						<label class="labelTextArea" for="description">Who are you?</label>
+						<textarea id="description" class="profileInput" placeholder="Tell the world what you like"></textarea>
+					</div>
 				</div>
-				<button id="validate" class="right themeBtn">Validate </button>
+				<button id="validate" class="right themeBtn">Modifier</button>
 			</section>
 			<section id="eventsWrap" class="none centered">
 			  <div class="eventsHeader">
@@ -168,7 +183,9 @@
 					<span id="resetFilters" class="action">Enlever tous les filtres</span>
 				</div>
 				<div class="filtersWrap">
-				  <div class="filters-tags-row tags-wrap"> <!-- Content dynamically loaded --></div>
+				
+				  <div class="filters-tags-row tags-wrap"> <span>Tags</span><!-- Content dynamically loaded --></div>
+
 				  <div class="filters-locs-row locs-wrap"> <!-- Content dynamically loaded --></div>
 				</div>
 			  </div>
@@ -176,17 +193,22 @@
 					<h2>Have a break</h2>
 					<center><h3>Events are closed from 9am to 1pm. Time to sleep.</h3></center>
 				</div>
-				<section id="eventsListWrap"></section>
+				<section id="eventsListWrap"> <!-- Content dynamically loaded --> </section>
+				<div id="friendListWrap" class="none">
+						<div id="myFriends">
+						<!-- Content dynamically loaded -->	
+						</div>
+					</div>
 			</section>
 			<section id="createEventWrap" class="none centered">
 				<h2>Créer votre évènement</h2>
 				<div id="createEventInputsWrap">
 					<div class="input-row-wrap">
-						<label for="eventName">C'est quoi ? </label>
+						<label for="eventName">C'est quoi ?</label>
 						<input id="eventName" placeholder="Apéro, before, afterwork ..." type="text" class="input-field_create">
 					</div>
 					<div class="input-row-wrap">
-						<label for="eventLocation">Arrondissement </label>
+						<label for="eventLocation">Arrondissement</label>
 						<input id="eventLocation" class="input-field_create" placeholder="1" max="20" min="1" type="number">
 					</div>
 					<div class="input-row-wrap">
@@ -206,20 +228,35 @@
 					<label for="eventDescription">About</label>
 					<textarea id="eventDescription" placeholder="Winter is coming..."></textarea>
 					</div>
-					<button id="createEventBtn" class="right themeBtn">Create event </button>
+					<button id="createEventBtn" class="right themeBtn">Create event</button>
 				</div>
 			</section>
 			<section id="manageEventsWrap" class="none centered">
 				<h2>Management de la soirée</h2>
 				<div class="actionsWrap actionsStyle">
 					<span id="cancelEvent" class="action">Annuler</span>
-					<span id="suspendEvent" class="action">Suspendre </span>
+					<span id="suspendEvent" class="action">Suspendre</span>
 				</div>
 				<div id="askersListWrap">
-					<i class="icon icon-left-open-big next-left"></i>
-					<div id="askersMain"></div>
 					<div id="askersThumbs"></div>
-					<i class="icon icon-right-open-big next-right"></i>
+					<div class="askersMainWrap">
+					    <i class="icon icon-left-open-big next-left"></i>
+					    <i class="icon icon-right-open-big next-right"></i>
+					  <div id="askersMain">
+					  </div>
+					</div>
+				</div>
+			</section>
+			<section id="searchUsersWrap" class="none centered">
+				<h2>Find your friends</h2>
+				<div id="searchBarWrap">
+					<div id="searchBar">
+						<i class="icon icon-search"></i>
+					   <input type="text" placeholder="Search by name, age or drink">
+					</div>
+				</div>
+				<div id="searchUsers">
+					
 				</div>
 			</section>
 			<section id="settingsWrap" class="none centered">
@@ -249,7 +286,7 @@
 				</div>
 			</section>
 			<section id="contactWrap" class="none centered">
-			<h2>We would like to hear from you</h2>
+			<h2>Tell us everything</h2>
 			<form>
 			<label for="contactName">Your name</label>
 				<input id="contactName" type="text" placeholder="Jack Bamboo">
@@ -264,15 +301,20 @@
 	</div>
 		<footer>
 		</footer>
-
+		
+		<script src="/js/lib/lodash.js"></script>
 		<script src="/js/lib/jquery.js"></script>
+
+		<script src="/js/lib/bloodhound.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/js/lib/jquery.cloudinary.js"></script>
-		<script src="/js/lib/lodash.js"></script>
 		<script src="/js/lib/jscrollpane.js"></script>
 		<script src="//cdn.jsdelivr.net/velocity/1.1.0/velocity.min.js"></script>		
 		<script src="//cdn.jsdelivr.net/velocity/1.1.0/velocity.ui.min.js"></script>
 
-		<script src="/js/lj.js"></script>
+		<script src="/js/lj-params.js"></script>
+		<script src="/js/lj-render.js"></script>
+		<script src="/js/lj-domEvents.js"></script> 
+		<script src="/js/lj.js"></script> 
 	</body>
 	</html>

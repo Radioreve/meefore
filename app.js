@@ -38,7 +38,17 @@
 
 			 console.log( 'New user has joined the stream' );
 			 var id = socket.decoded_token._id.toString();
-			 global.sockets[id] = socket;
+
+			 if( !global.sockets[id] )
+			 {
+			 	global.sockets[id] = socket;
+			 }
+			 else
+			 {
+			 	global.sockets[id].emit('server error',{ msg: 'You logged in from another device' });
+			 	global.sockets[id].disconnect();
+			 	global.sockets[id] = socket;
+			 }
 
 			 require('./events/events')( id );
 		});

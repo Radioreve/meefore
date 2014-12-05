@@ -15,9 +15,11 @@
 
 	//Events relatifs au profile utilisateur
 		socket.on( 'fetch user', profileEvents.fetchUser					);  // useless 
+		socket.on( 'fetch friends', profileEvents.fetchFriends              );
 		socket.on( 'update profile', profileEvents.updateProfile   			);
 		socket.on( 'update picture', profileEvents.updatePicture   			);
 		socket.on( 'update settings', profileEvents.updateSettings 			);
+		socket.on( 'friend request in', profileEvents.friendRequestIn       );
 
 	//Events relatif à la gestion d'un évènement
 		socket.on( 'create event', manageEvents.createEvent		   			);
@@ -31,12 +33,13 @@
 
 	//Events relatifs au démarrage d'une session client
 		socket.on( 'fetch events', clientEvents.fetchEvents		   			);
+		socket.on('fetch users', clientEvents.fetchUsers                    );
 		socket.on( 'request participation in', clientEvents.requestIn		);		
 		socket.on( 'request participation out', clientEvents.requestOut 	);
 
 	//Events de mails
-		socket.on( 'request welcome email', mailEvents.requestWelcomeEmail	);
-		socket.on( 'send contact email', mailEvents.sendContactEmail	    );
+		//socket.on( 'request welcome email', mailEvents.requestWelcomeEmail	);
+		//socket.on( 'send contact email', mailEvents.sendContactEmail	    );
 
 		socket.on('test', function(data){
 			

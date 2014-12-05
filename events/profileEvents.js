@@ -24,6 +24,7 @@
 				age			  : data.age,
 				description   : data.description,
 				favoriteDrink : data.favoriteDrink,
+				mood          : data.mood,
 				status	 	  : data.status
 			};
 
@@ -31,7 +32,8 @@
 		        if (err) { 
 		        	eventUtils.raiseError({
 		        		toClient: 'Something went wrong, pleasy try again later',
-		        		toServer: 'Error updating profile'
+		        		toServer: 'Error updating profile 1',
+		        		err: err
 		        	});
 		        	return;
 		         }
@@ -62,7 +64,7 @@
 		    		eventUtils.raiseError({
 		    			err: err,
 		    			toClient: 'Something went wrong, pleasy try again later',
-		        		toServer: 'Error updating profile' 
+		        		toServer: 'Error updating profile 2' 
 		    		});
 		    		return;
 		    	}
@@ -195,9 +197,99 @@
 	
 	};
 
+	var fetchFriends = function( userId ){
+
+		console.log('Fetching friends...');
+		var userSocket = global.sockets[userId];
+
+		User.find({ 'friendList.friendId' : userId,
+				    'friendList.status' : { $in: ['askedMe', 'mutual'] } }
+				    , function( err, friendList ){
+
+			if( err ){
+				return eventUtils.raiseError({
+					err: err,
+					toServer: 'LJ-53',
+					toClient: 'Error raising friends',
+					socket: userSocket
+				});
+			}
+
+		userSocket.emit('fetch friends success', friendList );
+
+		});
+
+	};
+
+	var friendRequestIn = function( data ){
+
+		console.log('Friend request ... ');
+
+		var userId   = data.userId,
+			friendId = data.friendId;
+
+		var userSocket   = global.sockets[ userId ],
+			friendSocket = global.sockets[ friendId ];
+
+		if( userId === friendId )
+		{
+			return eventUtils.raiseError({
+				toServer:"Cant add himself as friend",
+				toClient:"Can't be friend with yourself",
+				socket: userSocket
+			});
+		}
+
+		User.findById( userId, function( err, myUser ){
+
+			if( err )
+			{
+				return eventUtils.raiseError({
+					err: err,
+					toServer: 'Problem requestin friend in',
+					toClient: 'Please try later',
+					socket: userSocket
+				});
+			}
+
+			myUser.friendList.push({
+				friendId: friendId,
+				status  : 'askedHim'
+			});
+
+			myUser.save( function( err ){
+
+					if( err ) return console.log('Error LJ-50' );
+
+					userSocket.emit('friend request in success', { friendId: friendId, userId: userId });
+					
+				});
+		});
+
+		User.findById( friendId, function( err, myFriend ){
+
+			myFriend.friendList.push({
+				friendId : userId,
+				status   : 'askedMe'
+			});
+
+			myFriend.save( function( err ){
+
+				if( err ) return console.log('Error LJ-51' );
+
+				if(  friendSocket != undefined )
+					friendSocket.emit('friend request in success', { friendId: friendId, userId: userId });
+			});
+
+		});
+
+	};
+
 	module.exports = {
-		fetchUser      : fetchUser,
-	    updateProfile  : updateProfile,
-	    updatePicture  : updatePicture,
-	    updateSettings : updateSettings
+		fetchUser       : fetchUser,
+		fetchFriends    : fetchFriends,
+	    updateProfile   : updateProfile,
+	    updatePicture   : updatePicture,
+	    updateSettings  : updateSettings,
+	    friendRequestIn : friendRequestIn
 	};

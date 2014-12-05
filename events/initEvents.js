@@ -26,6 +26,7 @@
 					toClient: "Something went wrong initialising the app",
 					socket: userSocket,
 					err: err
+					
 				});
 
 			}
@@ -43,6 +44,7 @@
 		  					name:        	 user.name,
 		  					age:         	 user.age,
 		  					favoriteDrink:   user.favoriteDrink,
+		  					mood:            user.mood,
 		  					status:      	 user.status,
 		  					description: 	 user.description,
 		  					imgId:      	 user.imgId,

@@ -1,6 +1,5 @@
 #eventsWrap{
-    width: 90%;
-    background: white; 
+    width: 90%; 
 }  
 #createEventIcon{
 	font-size: .8em;
@@ -50,16 +49,16 @@
 	font: bold 0.9em 'Lato';
 }
 .e-guests{
-	font-size: 1.1em;
+	font-size: 1.05em;
 	position: relative;
-	width: 178px;
+	width: 176px;
 	text-align:center;
 
 	margin-top: 12px;
 	color: rgb(163, 163, 163);
 }
 .guestsWrap{
-	padding: 4px 8px;
+	padding: 4px 7px;
 	border-radius: 3px;
 }
 .guestsWrap:hover{
@@ -67,8 +66,8 @@
 	color: rgb(108, 108, 108);
 }
 .guestsWrap.active{
-	color: white!important;
-	background: rgb(83, 83, 83);
+	color: rgb(100, 100, 100)!important;
+	background: rgb(239, 239, 239);
 }
 .e-desc{
 	margin-bottom: 10px;
@@ -133,15 +132,17 @@
 
 }
 .askedInWrap{	
-    width: 260px;
+    width: 308px;
     min-height: 173px;
     position: absolute;
     border: 1px solid rgb(232, 232, 232);
     z-index: 10;
-    background: whitesmoke;
+    background: white;
+    box-shadow: 0 0 3px #eee;
     padding: 5px;
     box-sizing: border-box; 
     display: none;
+    left: -15px;
 }
 .askedInWrap.active{
 }
@@ -152,6 +153,7 @@
 
 ;
 	background: white;
+	opacity: .6;
 	padding: 5px;
 }
 .headWrap div{
@@ -184,38 +186,40 @@
 	z-index: 1;
 }
 .askInWrap .asked{
-	width: 77%;
+	width: 56%;
 }
-.askInWrap .chatIconWrap{
-	width: 22%;
-
+.askInWrap .chatIconWrap,
+.askInWrap  .friendAddIconWrap{
+	width: 17%;
+	-webkit-transition: all .3s;
+	transition: all .3s;
 	height: 100%; 
-box-sizing: border-box;
-position: absolute;
-right: 0;
-
+	box-sizing: border-box;
+	position: absolute;
+	right: 0;
 	top: 0;
-
-text-align: center; 
-padding-top: 7px;
-
+	text-align: center; 
+	padding-top: 7px;
 	color: rgb(107, 107, 107);
 	background: #E6E6E6;
+	border-radius: 100px;
+	font-size: 15px;
 }
-.chatIconWrap.active{
+.askInWrap .chatIconWrap:hover,
+.askInWrap  .friendAddIconWrap:hover{
+	cursor:pointer;
+	opacity: .75;
 
-	border-radius: 1px;
-	
-
+} 
+.askInWrap .friendAddIconWrap{
+	right:44px;
+}
+.chatIconWrap.active,
+.friendAddIconWrap.active{
 	color: rgb(255, 255, 255);
-	
-
 	background: rgb(86, 86, 86);
+}
 
-}
-.chatIconWrap i{
-	font-size:1.3em;
-}
 .eventItemWrap[data-eventstate="suspended"] .askIn{ 
 	color: rgb(61, 51, 51); 
 	background: rgb(255, 240, 220);  
@@ -241,10 +245,12 @@ padding-top: 7px;
 	}
 /* CSS pour créer un évenements */
 #createEventWrap{
-	/* width: 500px; */
 }
-#createEventInputsWrap{
-	margin-top: 50px;
+section#createEventWrap{
+	width: 600px;
+}
+#createEventWrap h2{
+	margin-bottom: 50px;
 }
 .input-field_create{
 	border: none;
@@ -252,6 +258,7 @@ padding-top: 7px;
 	width: 260px;
 	/* border-bottom: 1px solid #C2C2C2; */
 }
+
 #eventHour,
 #eventMinut{
 	width:18px;
@@ -292,7 +299,7 @@ input[type="number"]{
 .tag,
 .loc,
 .drink,
-.day{
+.mood{
 	display:inline-block;
 	transition: all .3s;
 	font-size: .7em;
@@ -304,7 +311,7 @@ input[type="number"]{
 	text-align: center;
 }
 .drink,
-.day{
+.mood{
 	min-width: 37px;
 	padding:5px 8px;
 	background:white; 
@@ -321,7 +328,7 @@ input[type="number"]{
 #createEventWrap .tag:hover,
 .filters-tags-row .tag:hover,
 .filters-locs-row .loc:hover,
-.day:hover,
+.mood:hover,
 .drink:hover{
 	cursor:pointer;
 }
@@ -335,7 +342,7 @@ input[type="number"]{
 
 .tag.selected,
 .drink.selected, 
-.day.selected{
+.day.selected{  
 	background: rgb(229, 83, 83);
 	color:white;
 	box-shadow: 0 1px 1px rgb(187, 50, 50);
@@ -369,10 +376,10 @@ h3{
 	letter-spacing: 1px;
 	font-size: .9em;
 }
-
+ 
 #createEventWrap .tags-wrap{
 	display: inline-block;
-	width: 80%;
+	width: 70%;
 }
 
 label[for="tags"]{
@@ -417,13 +424,11 @@ label[for="tags"]{
 	height:100%;
 	width: 100%;
 }
-.drink.selected{
+.drink.selected, .mood.selected{
 	background:white;
 	box-shadow:none;
-	color: rgb(0, 0, 0);
+	color: rgb(50, 50, 50);
 	font-weight: bolder;
-	border-bottom: 2px solid rgb(92, 92, 92);
-	border-radius:0px
-;
+	border-bottom: 2px solid;
 	transition: all .2s;
 }

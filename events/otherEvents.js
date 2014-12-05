@@ -24,8 +24,7 @@
 
 	  if( !askerSocket ){
 	  	return eventUtils.raiseError({
-	  		err: err,
-	  		socket: askerSocket,
+	  		socket: hostSocket,
 	  		toClient: "Asker is not online",
 	  		flash: true
 	  	});
