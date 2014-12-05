@@ -885,12 +885,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	$( '.locs-wrap' ).html('').append( LJ.fn.renderLocsFilters() );
         	$( '#eventsListWrap' ).html('').append( LJ.tpl.noResult );
 
-        	/* Mise à jour de la vue des évènements */
-        	var hour = (new Date).getHours();
-        	if( hour < settings.eventsEndAt && hour >= settings.eventsFreezeAt ){
-        		LJ.fn.displayViewAsFrozen();
-        	}
-
 			/* Affichage de la vue en fonction du state user */
         	sleep( LJ.ui.artificialDelay, function(){   
 
@@ -1520,10 +1514,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         displayEvents: function(){
 
+            /* Mise à jour de la vue des évènements si morning*/
+        	var hour = (new Date).getHours();
+        	if( hour < settings.eventsEndAt && hour >= settings.eventsFreezeAt ){
+        		return LJ.fn.displayViewAsFrozen();
+        	}
+
             LJ.$eventsListWrap.html('').append( LJ.fn.renderEvents( LJ.myEvents ) );
             $('.eventItemWrap').velocity("transition.slideLeftIn", {
             	display:'inline-block'
             });
+
 
         },
         displayAskers: function(){
