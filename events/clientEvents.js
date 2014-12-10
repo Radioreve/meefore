@@ -8,8 +8,6 @@
 
 	    var fetchEvents = function(userId){
 
-	    	if( settings.isFrozenTime() ) return ;
-
 	    	var socket = global.sockets[userId];
 
 			console.log('Fetching all events for user with socket : ' + socket);
@@ -51,9 +49,10 @@
 	  
 	    var requestIn = function(data){
 
-			var eventId = data.eventId,
-			 	hostId  = data.hostId ,
-			 	userId  = data.userInfos._id;
+			var eventId     = data.eventId,
+			 	hostId      = data.hostId ,
+			 	userId 		= data.userInfos._id,
+			 	requesterId = data.requesterId;
 
 			if( hostId == userId ) return;
 
@@ -61,10 +60,12 @@
 				userSocket = global.sockets[userId],
 				hostSocket = global.sockets[hostId];
 
+			if( userSocket != undefined ){
 				userSocket.join( room );
 				console.log('User '+userId+' has joined the room : \n'+room +'\n');
+			}
 
-		     if( hostSocket != undefined ){ 
+		    if( hostSocket != undefined ){ 
 		     	hostSocket.join( room ); 
 				console.log('Host '+hostId+' has joined the room : \n'+room + '\n');
 			}
@@ -111,7 +112,7 @@
 
 							var asker = {
 
-								id            : user._id.toString(),
+								_id           : user._id.toString(),
 								name          : user.name,
 								description   : user.description,
 								age           : user.age,
@@ -119,7 +120,8 @@
 								mood          : user.mood,
 								signupDate    : user.signupDate,
 								imgId         : user.imgId,
-								imgVersion    : user.imgVersion
+								imgVersion    : user.imgVersion,
+								friendList    : user.friendList
 
 							}; 
 
@@ -129,7 +131,7 @@
 
 									if( !err ){
 										global.io.emit('request participation in success', 
-										{ hostId: hostId,  userId: userId, asker: asker, eventId: eventId });
+										{ hostId: hostId,  userId: userId, asker: asker, eventId: eventId, requesterId: requesterId });
 									}
 								});
 						}
@@ -148,7 +150,7 @@
 							});
 						}
 
-							host.socketRooms.push(room);
+							host.socketRooms.push( room );
 							host.save(function( err, host ){
 								if( ! err ) { }
 							});
@@ -159,23 +161,25 @@
 
 	    var requestOut = function(data){
 
-				var eventId = data.eventId,
-					hostId  = data.hostId,
-					userId  = data.userInfos._id,
-					asker   = {};
+				var eventId 	= data.eventId,
+					hostId  	= data.hostId,
+					userId  	= data.userInfos._id,
+					requesterId = data.requesterId,
+					asker   	= {};
 
-				var room  = eventUtils.buildRoomId(eventId,hostId,userId),
+				var room  = eventUtils.buildRoomId( eventId, hostId, userId ),
+
 					userSocket = global.sockets[userId],
 					hostSocket = global.sockets[hostId];
 
 					userSocket.leave( room );
 					
 					if( hostSocket != undefined ){
-						hostSocket.leave(room); 
+						hostSocket.leave( room ); 
 					}
 					
 				    eventCondition = { _id: eventId },
-					eventUpdate    = { $pull: {'askersList': { 'id': userId }}},
+					eventUpdate    = { $pull: {'askersList': { '_id': userId }}},
 
 					userCondition  = { _id: userId },
 					userUpdate     = { $pull: { 'socketRooms': room, 'eventsAskedList': eventId }},
@@ -208,7 +212,7 @@
 
 					 	asker = {
 
-							id            : user._id.toString(),
+							_id           : user._id.toString(),
 							name          : user.name,
 							description   : user.description,
 							age           : user.age,
@@ -222,7 +226,8 @@
 							userId: userId,
 							eventId: eventId,
 							hostId: hostId,
-							asker: asker
+							asker: asker,
+							requesterId: requesterId
 
 						};
 

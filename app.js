@@ -53,7 +53,6 @@
 			 require('./events/events')( id );
 		});
 
-	//Loading the server
 	var port = process.env.PORT || 1337;
 
 		server.listen( port, function(){

@@ -169,7 +169,7 @@ var cancelEvent = function(data) {
 
         myEvent.askersList.forEach( function( asker ){
 
-            User.findById( asker.id, {}, function( err, myUser ){
+            User.findById( asker._id, {}, function( err, myUser ){
 
                 User.update({
                     _id: myUser._id
@@ -226,7 +226,7 @@ var fetchAskers = function(data) {
             });
         } 
         var askersList = myEvent.askersList;
-        hostSocket.emit( 'fetch askers success', askersList );
+        hostSocket.emit( 'fetch askers success', { askersList: askersList });
         
     });
 };

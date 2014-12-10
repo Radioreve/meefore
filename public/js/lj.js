@@ -620,7 +620,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         				  .find('.chatWrap')
         				  .velocity('transition.slideUpIn', { duration: 400 });
 
-        		sleep(30, function(){ 
+        		sleep( 30, function(){ 
         			if( LJ.state.jspAPI[chatId] != undefined ){ 
 	           		  LJ.state.jspAPI[chatId].reinitialise();
 	        		  LJ.state.jspAPI[chatId].scrollToBottom();   
@@ -637,7 +637,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.user = user;	
 
             /* Init app settings */
-            LJ.tagList = settings.tagList;
+            LJ.settings = settings;
 
 		},
 		updateClientSettings: function(newSettings){
@@ -834,8 +834,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			var currentIndex = current.index(),
 				nextIndex    = next.index();
 
-			var $askerThumb = $('#askersThumbs').find('.imgWrapThumbAsker[data-askerid="'+askerId+'"]');
-				$('.imgWrapThumbAsker.active').removeClass('active');
+			var $askerThumb = $('#askersThumbs').find('.imgWrapThumb[data-askerid="'+askerId+'"]');
+				$('.imgWrapThumb.active').removeClass('active');
 				$askerThumb.addClass('active');
 
 				LJ.state.animatingContent = false;
@@ -963,6 +963,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
 
+				LJ.params.socket.on('refetch askers success', function( askers ){
+					csl('Refetch askers success, askers = ' + askers );
+					LJ.myAskers = askers;
+					LJ.fn.addFriendLinks();
+
+				});
+
+
 				LJ.params.socket.on('freeze events', function(){
 
 					LJ.fn.toastMsg('Events are frozen!', 'info', true);
@@ -1005,7 +1013,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					var user 	 = data.user,
 						settings = data.settings;
 
-					LJ.fn.initAppSettings( data );
+					LJ.fn.initAppSettings( data, settings );
 					LJ.fn.displayUserSettings();
 					LJ.fn.fetchEvents();
 					LJ.fn.fetchUsers();
@@ -1158,53 +1166,70 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				LJ.params.socket.on('request participation in success', function( data ){
 
-					var hostId  = data.hostId,
-						userId  = data.userId,
-						eventId = data.eventId,
-						asker   = data.asker;						
+					var hostId  	= data.hostId,
+						userId 		= data.userId,
+						eventId 	= data.eventId,
+						requesterId = data.requesterId,
+						asker   	= data.asker;						
 
 					sleep( LJ.ui.artificialDelay, function(){
 
-						/* Pour l'asker */
-						if( LJ.user._id === data.userId )
-						{
-
-							LJ.fn.hideLoaders();
-							LJ.fn.toastMsg('Your request has been sent', 'info');
-							 $('.asking').removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
-									  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
-										
-
-
-						}
-						else /* Pour l'Host */
-						{
-							 LJ.myAskers.push( asker );
-
-							var askerMainHTML  = LJ.fn.renderAskerMain( asker ),
-								askerThumbHTML = LJ.fn.renderAskerThumb ( {asker: asker} );
-
-							    $( askerMainHTML ).appendTo( $('#askersMain') ).hide();
-
-							    $( askerThumbHTML ).appendTo( $('#askersThumbs') );
-
-							    
-								if( $('.a-item').length == 1 )
-								{
-									$('.a-item, .imgWrapThumbAsker').addClass('active').velocity('transition.fadeIn',{ duration: 300 });
-								}
-
-							    LJ.fn.refreshArrowDisplay();
-
-						}
 
 						var d = LJ.cloudinary.displayParamsEventAsker;
 							d.version = asker.imgVersion;
 
-						var $askerImg = LJ.fn.renderAskerInEvent( asker.imgId, { dataList: [{ dataName: 'askerid', dataValue: asker.id }]});
+						var $askerImg = LJ.fn.renderAskerInEvent( asker.imgId, { dataList: [{ dataName: 'askerid', dataValue: asker._id }]});
 						var $askedInWrap = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap');
 							$askedInWrap.prepend( $askerImg );
 							$askedInWrap.find('img').last().remove();
+
+						
+							if( LJ.user._id == requesterId && LJ.user._id == userId )
+							{
+								LJ.fn.hideLoaders();
+								LJ.fn.toastMsg('Your request has been sent', 'info');
+								 $('.asking').removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
+										  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
+							}
+
+							if( LJ.user._id != requesterId && LJ.user._id == userId )
+							{
+								LJ.fn.toastMsg('A friend added you to an event', 'info');
+								$('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askIn')
+								          .removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
+										  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
+							}
+
+							if( LJ.user._id == requesterId && LJ.user._id != userId )
+							{
+								LJ.fn.toastMsg('Your friend has been added!', 'info');
+								LJ.fn.hideLoaders();
+								LJ.fn.displayAddFriendToPartyButton();
+							}
+
+						/* Pour l'host */
+						if( LJ.user._id == hostId )
+						{
+
+							var askerMainHTML  = LJ.fn.renderAskerMain( asker ),
+								askerThumbHTML = LJ.fn.renderAskerThumb ({ asker: asker });
+
+							    $( askerMainHTML ).appendTo( $('#askersMain') ).hide();
+							    $( askerThumbHTML ).appendTo( $('#askersThumbs') );
+
+								if( $('.a-item').length == 1 )
+								{
+									$('#manageEventsWrap .a-item, #manageEventsWrap .imgWrapThumb')
+									.addClass('active')
+									.velocity('transition.fadeIn',{
+									 duration: 300,
+									 display:'inline-block'
+									 });
+								}
+
+								LJ.fn.refetchAskers();
+							    LJ.fn.refreshArrowDisplay();
+						}
 
 					});
 
@@ -1214,10 +1239,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 						console.log(data.asker.name +' asked out');
 
-						var userId  = data.userId,
-							hostId  = data.hostId,
-							eventId = data.eventId,
-							asker   = data.asker;
+						var userId  	= data.userId,
+							hostId  	= data.hostId,
+							eventId 	= data.eventId,
+							asker   	= data.asker,
+							requesterId = data.requesterId;
+
 
 						var chatId = LJ.fn.buildChatId( eventId, hostId, userId ),
 						    $aItemMain = LJ.$askersListWrap.find('.a-item[data-askerid="'+userId+'"]'),
@@ -1226,7 +1253,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						    $chatWrapAsUser = LJ.$eventsListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
 
 						_.remove( LJ.myAskers, function( asker ){
-							return asker.id === data.userId;
+							return asker._id === data.userId;
 						});
 
 						sleep( LJ.ui.artificialDelay, function(){
@@ -1234,15 +1261,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 							LJ.fn.hideLoaders();
 
 							/* Pour l'Host */
-							if( hostId === LJ.user._id )
+							if( hostId === LJ.user._id)
 							{		
-									$('.imgWrapThumbAsker[data-askerid="' + asker.id + '"]').remove();
+									$('.imgWrapThumb[data-askerid="' + asker._id + '"]').remove();
 									$aItemMain.velocity("transition.fadeOut", { 
 										duration: 200,
 										complete: function(){
 											$aItemMain.remove();
 											if( !$aItemMain.hasClass('active') ) return LJ.fn.refreshArrowDisplay();
-											$('.imgWrapThumbAsker').first().addClass('active');
+											$('.imgWrapThumb').first().addClass('active');
 											$('.a-item').first().addClass('active').velocity('transition.fadeIn', 
 												{ 
 													duration: 300,
@@ -1253,20 +1280,24 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 										} 
 									});
 							}
-							else /* Pour l'asker */
+							if( requesterId == userId && LJ.user._id == userId )
 							{
+								
 								LJ.fn.toggleChatWrapEvents( $chatWrapAsUser.find('.chatIconWrap') );
 								LJ.fn.toastMsg('Vous avez été désinscris de la liste', 'info');
 								$('.asking').removeClass('asked').removeClass('asking').addClass('idle').text('Je veux y aller!')
 										.siblings('.chatIconWrap, .friendAddIconWrap').hide();
 							}	
 
+							/*
 							var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
 								$nbAskers.text( parseInt( $nbAskers.text() ) - 1 );
 
+							*/
+
 							$('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap')
 																		   .append( LJ.tpl.$placeholderImg.clone() )
-																		   .find('img[data-askerid="'+asker.id+'"]')
+																		   .find('img[data-askerid="'+asker._id+'"]')
 																		   .remove();
 						});
 	
@@ -1333,16 +1364,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
 
-                LJ.params.socket.on('fetch askers success', function( askersList ){
+                LJ.params.socket.on('fetch askers success', function( data ){
 
+                	console.log(data);
                     LJ.state.fetchingAskers = false;
-                    var L = askersList.length;
-
-                    for( var i=0; i<L; i++) {
-                        LJ.myAskers[i] = askersList[i];
-                    }
-
-                   LJ.fn.displayAskers();
+                    LJ.myAskers = data.askersList;
+                    LJ.fn.displayAskers();
+                    LJ.fn.addFriendLinks();
 
                 });
 
@@ -1354,12 +1382,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 LJ.params.socket.on('fetch friends success', function( data ){
 
-                	csl('Fetching friends success : ' + data );
-                	/* Mise à jour du friendlist template */
+                	csl('Friends fetched');
                 	LJ.myFriends = data;
-
-                	/* Everytime dynamically adding friend */
-                	$('#myFriends').html( LJ.fn.renderFriendList() );
+                	$('#myFriends').html( LJ.fn.renderUsersInFriendlist() );
+                	LJ.fn.displayAddFriendToPartyButton();
 
                 });
 
@@ -1367,11 +1393,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 	csl('Users fetched');
                 	LJ.myUsers = _.shuffle( data ); /*Not to have always the same user first*/
+                    $('#searchUsers').html( LJ.fn.renderUsersInSearch() );
 
-                	$('#searchUsers').append( LJ.fn.renderSearchUsers );
-
-                	/* Mise à jour de l'onglet Finders */
-        			$( $('.u-item:not(.match)')[0] ).css({ opacity: '.5 '});
+                    $( $('.u-item:not(.match)')[0] ).css({ opacity: '.5 '});
 					$( $('.u-item:not(.match)')[1] ).css({ opacity: '.4 '});
 					$( $('.u-item:not(.match)')[2] ).css({ opacity: '.3 '});
 					$( $('.u-item:not(.match)')[3] ).css({ opacity: '.15 '});
@@ -1380,23 +1404,40 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 LJ.params.socket.on('friend request in success', function( data ){
 
-                	var userId   = data.userId,
-                		friendId = data.friendId;
+                	var userId     = data.userId,
+                		friendId   = data.friendId,
+                		upType     = data.updateType,
+                		friendList = data.friendList;
 
+                	LJ.user.friendList = data.friendList;
                 	LJ.fn.fetchFriends();
+
                 		
 	                sleep( LJ.ui.artificialDelay, function(){
 
-	                	if( LJ.user._id == userId )
+	                	if( upType == 'askedhim' )
 	                	{
-	                		LJ.fn.handleServerSuccess('Friend request success');
+	                		LJ.fn.handleServerSuccess('Votre demande a été envoyée');
+	                		return;
 	             	  	}
 
-	                	if( LJ.user._id == friendId )
+	                	if( upType == 'askedme' )
 	                	{
-
+	                		LJ.fn.handleServerSuccess('Vous avez une demande d\'ami');
+	                		return;
 	                	}
 
+	                	if( (upType == 'mutual') && (userId == LJ.user._id) )
+	                	{
+	                		LJ.fn.handleServerSuccess('Vous êtes à présent amis');
+	                		return;
+	                	}
+
+	                	if( (upType == 'mutual') && (friendId == LJ.user._id) )
+	                	{
+	                		LJ.fn.handleServerSuccess('Votre demande a été acceptée!');
+	                		return;
+	                	}
 	                });
                 });
                 
@@ -1450,18 +1491,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					
 
 		},
-		fetchUsers: function(){
-
-			csl('Fetching all users');
-			LJ.params.socket.emit('fetch users', LJ.user._id );
-
-		},
-		fetchFriends: function(){
-
-			csl('Fetching all friends');
-			LJ.params.socket.emit('fetch friends', LJ.user._id );
-
-		},
+		fetchUsers: function(){ LJ.params.socket.emit('fetch users', LJ.user._id ); },
+		fetchFriends: function(){ LJ.params.socket.emit('fetch friends', LJ.user._id ); },
 		createEvent: function(){
 
 			var tags = [];
@@ -1514,17 +1545,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         displayEvents: function(){
 
-            /* Mise à jour de la vue des évènements si morning*/
-        	var hour = (new Date).getHours();
-        	if( hour < settings.eventsEndAt && hour >= settings.eventsFreezeAt ){
-        		return LJ.fn.displayViewAsFrozen();
-        	}
+        	/* Mise à jour de la vue des évènements */
+        		csl('Displaying events frozen state');
+	        	var hour = (new Date).getHours();
+	        	if( hour < LJ.settings.eventsEndAt && hour >= LJ.settings.eventsFreezeAt ){
+	        		return LJ.fn.displayViewAsFrozen();
+	        	}     		
 
             LJ.$eventsListWrap.html('').append( LJ.fn.renderEvents( LJ.myEvents ) );
             $('.eventItemWrap').velocity("transition.slideLeftIn", {
             	display:'inline-block'
             });
-
 
         },
         displayAskers: function(){
@@ -1533,6 +1564,44 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('#askersThumbs').html('').append( LJ.fn.renderAskersThumbs() );
 
             LJ.fn.refreshArrowDisplay();
+
+        },
+        refetchAskers: function(){
+
+        	var idArray = _.pluck( LJ.myAskers, '_id' );
+        	LJ.params.socket.emit('refetch askers', { userId: LJ.user._id, idArray: idArray });
+
+        },
+        addFriendLinks: function(){
+
+        	var idArray = _.pluck( LJ.myAskers, '_id' );
+	
+        	for( var i = 0; i < LJ.myAskers.length ; i ++ )
+        	{	
+        		$('#askersThumbs .team-'+i).removeClass('team-'+i);
+        		$('#askersThumbs .head-'+i).removeClass('head-'+i);
+        		
+        		console.log('Browsing for : '+ LJ.myAskers[i].name );
+        		$('#askersThumbs div[data-askerid="'+ LJ.myAskers[i]._id +'"]').addClass('team-'+i).addClass('head-'+i);
+        		
+        		for( var k = 0 ; k < LJ.myAskers[i].friendList.length ; k++ )
+        		{	
+        			if( idArray.indexOf( LJ.myAskers[i].friendList[k].friendId ) == -1 )
+        			{
+        				console.log( 'Friend n° : '+k+'  '+LJ.myAskers[i].friendList[k].name + ' is not in the event' );
+        			}
+        			else
+        			{	
+        				console.log( LJ.myAskers[i].friendList[k].name + ' is in the event, status : ' + LJ.myAskers[i].friendList[k].status );
+        				if( LJ.myAskers[i].friendList[k].status == 'mutual' )
+        				{	
+        					console.log('Adding link team-'+i+' , for  ' + LJ.myAskers[i].friendList[k].name );
+        					$('#askersThumbs div[data-askerid="'+ LJ.myAskers[i].friendList[k].friendId+'"]').addClass('team-'+i);		  
+        				}
+        			}
+        		} 
+        	}
+        	
 
         },
         filterEvents: function(tags, locations){
@@ -1590,28 +1659,30 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
        		}
 
         },
-        requestIn: function( askInBtn ){
+        requestIn: function( eventId, hostId, user, requesterId ){
 
-            var eventId = askInBtn.parents('.eventItemWrap').data('eventid');
-            var hostId = askInBtn.parents('.eventItemWrap').data('hostid');
+            csl("requesting IN with id : "+ eventId);
 
-            csl("requesting IN with id : "+eventId);
             LJ.params.socket.emit("request participation in", {
-                            userInfos: LJ.user,
+
+                            userInfos: user,
                             hostId: hostId,
-                            eventId: eventId});
+                            eventId: eventId,
+                            requesterId: requesterId
+
+            });
 
         },
-        requestOut: function( askInBtn ){
+        requestOut: function( eventId, hostId, user, requesterId ){  
 
-        	var eventId = askInBtn.parents('.eventItemWrap').data('eventid');
-        	var hostId = askInBtn.parents('.eventItemWrap').data('hostid');    
+        	csl("requesting OUT with id : "+ eventId);
 
-        	csl("requesting OUT with id : "+eventId);
         	LJ.params.socket.emit("request participation out", {
+
         					userInfos: LJ.user,
         					hostId: hostId,
-        					eventId: eventId
+        					eventId: eventId,
+        					requesterId: requesterId
         	});
 
         },
@@ -1639,6 +1710,36 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         			askerId: askerId,
         			senderId: LJ.user._id  /* = hostId ou askerId, selon le cas, utile pour le display only*/
         		});
+        },
+        displayAddFriendToPartyButton: function(){
+
+        	var $friendListWrap = $('#friendListWrap'),
+        		$eventWrap = $friendListWrap.parents('.eventItemWrap'),
+        		$askedInWrap = $friendListWrap.parents('.eventItemWrap').find('.askedInWrap');
+
+        	$friendListWrap.find('.f-item').each( function(i, el){
+
+        		var $friend = $(el),
+        			friendId = $friend.data('userid');
+
+        		var myFriend = _.find( LJ.myFriends, function(el){ return el._id == friendId ; });
+
+	        	if( $askedInWrap.find('img[data-askerid="'+friendId+'"]').length == 1 )
+	        	{
+	        		var inEvent = true;
+	        	}
+	        	else
+	        	{
+	        		var inEvent = false;
+	        	}
+
+	        	/* On sait que le friend est déjà dans la liste. On update addFriendButton */
+	        	$friend.find('button').remove();
+	        	$friend.append( LJ.fn.renderAddFriendToPartyButton( myFriend , inEvent ) );
+
+        	});
+
+
         },
         buildChatId: function( eventId, hostId, userId ){
 
@@ -1746,6 +1847,7 @@ $('document').ready(function(){
 		//penser à remplacer ça par une récursion sur un setTimeout toutes les 300ms
 		sleep(1000, function(){
 
+		/*
 		  FB.init({
 
 				    appId      : '1509405206012202',
@@ -1753,7 +1855,8 @@ $('document').ready(function(){
 				    version    : 'v2.1' // use version 2.1
 
 				  });
-	
+		*/
+
 		csl('Application ready');
 		LJ.fn.init();
 

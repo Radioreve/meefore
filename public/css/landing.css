@@ -20,15 +20,15 @@
     position: relative;
     margin-top: 40px;
     height: 40px;
-    width: 130px;
+    width: 180px;
     text-align: center;
-    background: rgb(255, 255, 255);
-    color: black;
-    border: 1px solid #343434;
+    background: none;
+    color: rgb(37, 37, 37);
+    /* border: 1px solid #343434; */
     font-weight: bolder;
     font-size: .7em;
     font-family: 'Lato';
-    border-radius: 300px;
+    border-radius: 6px;
 }
 
 #landingWrap h2{

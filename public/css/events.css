@@ -132,7 +132,7 @@
 
 }
 .askedInWrap{	
-    width: 308px;
+    width: 317px;
     min-height: 173px;
     position: absolute;
     border: 1px solid rgb(232, 232, 232);
@@ -142,7 +142,7 @@
     padding: 5px;
     box-sizing: border-box; 
     display: none;
-    left: -15px;
+    left: -20px;
 }
 .askedInWrap.active{
 }

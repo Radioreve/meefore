@@ -20,6 +20,27 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		},
 		handleDomEvents_Globals: function(){
 
+			/*
+			$('body').on('initdata', function(){
+				
+				var arr = [ LJ.myUsers, LJ.myFriends, LJ.user.friendList ]
+
+				for( var i = 0; i< arr.length; i++) if( arr[i].length == 0 ) return
+
+				$('#searchUsers').append( LJ.fn.renderSearchUsers() );
+				$('#myFriends').html( LJ.fn.renderFriendList() );
+
+        			$( $('.u-item:not(.match)')[0] ).css({ opacity: '.5 '});
+					$( $('.u-item:not(.match)')[1] ).css({ opacity: '.4 '});
+					$( $('.u-item:not(.match)')[2] ).css({ opacity: '.3 '});
+					$( $('.u-item:not(.match)')[3] ).css({ opacity: '.15 '});
+
+				LJ.$body.unbind('init data');
+				LJ.state.dataLoaded = true;
+				
+			});
+*/
+
 			LJ.$body.on('click','.chatInputWrap input[type="submit"]', function(e){
 
             	e.preventDefault();
@@ -123,7 +144,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 				$(menuItem).click(function(){
 		
-				  if( ! LJ.state.animatingContent && !$(menuItem).hasClass('menu-item-active') && !($(menuItem).hasClass('disabled')) ){
+				  if( LJ.state.animatingContent || $(menuItem).hasClass('menu-item-active') || ($(menuItem).hasClass('disabled')) )
+				  	return;
+
 				  		LJ.state.animatingContent = true;
 						
 						var linkedContent = $(menuItem).data('linkedcontent');
@@ -153,10 +176,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 						LJ.fn.displayContent( $(linkedContent), {
 							myWayOut: myWayOut,
 							myWayIn : myWayIn, 
-							duration: 200
+							duration: 170
 						});
 					
-				  }
+				  
 				});
 			});
 
@@ -183,6 +206,27 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		},
 		handleDomEvents_Events: function(){
 
+			LJ.$body.on('click', '.f-item button', function(){
+
+				csl('Asking for someone else');
+				var $that = $(this);
+
+				if( ! $that.hasClass('ready') ) return;
+
+				var eventId  = $that.parents('.eventItemWrap').attr('data-eventid'),
+					hostId   = $that.parents('.eventItemWrap').attr('data-hostid'),
+					friendId = $that.parents('.f-item').attr('data-userid'),
+					friend   = _.find( LJ.myFriends, function(el){ return el._id == friendId ; });
+
+				$that.removeClass('ready');
+
+				csl('eventId : ' + eventId+ '\n hostId : '+hostId +'\n friend : '+friend );
+				LJ.fn.showLoaders();
+				LJ.fn.requestIn( eventId, hostId, friend, LJ.user._id );
+				
+
+			});
+
 			LJ.$body.on('click','.themeBtnToggleHost', function(){
 
 				$('#management').click();
@@ -200,10 +244,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				$('.eventItemWrap.surfacing').find('.chatWrap').velocity('transition.slideDownOut', { duration: 300 });
 				$('.chatIconWrap.active').removeClass('active');
 
+
 				if( $(this).hasClass('active') )
 				{
 					$(this).removeClass('active');
 					$('#friendListWrap').velocity('transition.slideUpOut', { duration: 300 });
+					LJ.fn.displayAddFriendToPartyButton();
 					return;
 				}
 
@@ -215,6 +261,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 									{
 										duration: 400
 									});
+				LJ.fn.displayAddFriendToPartyButton();
 
 			});
 
@@ -243,6 +290,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				var $self = $(this),
 					$itemWrap = $self.parents('.eventItemWrap');
 
+				var eventId = $self.parents('.eventItemWrap').data('eventid');
+           		var hostId  = $self.parents('.eventItemWrap').data('hostid');
+
 				if( $itemWrap.attr('data-eventstate') == 'open' )
 				{
 					LJ.fn.showLoaders();
@@ -250,11 +300,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 					if( $self.hasClass('idle') )
 					{	
-						LJ.fn.requestIn( $self ); 
+						LJ.fn.requestIn( eventId, hostId, LJ.user, LJ.user._id ); 
 					}
 					else
 					{	// To be removed in production for freemium considerations?
-						LJ.fn.requestOut( $self );
+						LJ.fn.requestOut( eventId, hostId, LJ.user, LJ.user._id );
 					}
 				}
 				else
@@ -354,7 +404,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			var $button = $(this);
 
-			if( $button.parents('.u-item').hasClass('sent') ) return;
+			//if( $button.parents('.u-item').hasClass('sent') ) return;
 
 			$button.parents('.u-item').addClass('sent');
 
@@ -394,13 +444,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			});
 
-			LJ.$body.on('click', '.imgWrapThumbAsker', function(){
+			LJ.$body.on('click', '#askersListWrap .imgWrapThumb', function(){
 
+				/* Displaying asker profile */
 				var askerId      = $(this).data('askerid'),
 					$currentItem = $('.a-item.active'), 
 					$nextItem    = $('.a-item[data-askerid="'+askerId+'"]');
 
-					if( $(this).hasClass('next-right') )
+				if( $(this).hasClass('next-right') )
 				{
 					$nextItem = $currentItem.next();
 					askerId = $nextItem.data('askerid');
@@ -413,6 +464,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				}
 
 				LJ.fn.displayAskerItem( $currentItem, $nextItem, askerId );
+
+				/* Highlighting friends */
+
+				$('#askersListWrap .activated').removeClass('activated');
+				var j = parseInt( $(this).attr('class').match(/head-\d/)[0][5] );					
+				$('#askersListWrap .imgWrapThumb.team-'+j+':not(.active)').addClass('activated')
+				  
 
 			});
 

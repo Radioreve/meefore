@@ -25,8 +25,7 @@
 					toServer: "Problem finding user via socket.io during first connection attempt ",
 					toClient: "Something went wrong initialising the app",
 					socket: userSocket,
-					err: err
-					
+					err: err			
 				});
 
 			}
@@ -49,6 +48,7 @@
 		  					description: 	 user.description,
 		  					imgId:      	 user.imgId,
 		  					imgVersion: 	 user.imgVersion,
+		  					friendList:      user.friendList,
 		  					eventsAskedList: user.eventsAskedList,
 		  					hostedEventId:   user.hostedEventId,
 		  					newsletter:      user.newsletter,

@@ -264,7 +264,7 @@
 
             var imgTagHTML = imgTag.prop('outerHTML');
 
-            var chatId = LJ.fn.buildChatId( LJ.user.hostedEventId, LJ.user._id, a.id );
+            var chatId = LJ.fn.buildChatId( LJ.user.hostedEventId, LJ.user._id, a._id );
 
             var chatWrap = '<div class="chatWrap chat-host none" data-chatid="'+chatId+'">'
                             +'<div class="chatLineWrap"></div>'    
@@ -274,7 +274,7 @@
                             +'</div>'
                            +'</div>';
 
-            var html =  '<div class="a-item '+className+'" data-askerid="'+a.id+'">'
+            var html =  '<div class="a-item '+className+'" data-askerid="'+a._id+'">'
                            +'<div class="a-picture">'
                              + imgTagHTML
                            +'</div>'
@@ -316,7 +316,7 @@
         	var imgTagHTML = imgTag.prop('outerHTML'),
         		imgTagBlackWhiteHTML = imgTagBlackWhite.prop('outerHTML');
 
-        	var html = '<div data-hint="'+a.name+'"data-askerid="' + a.id + '" class="imgWrapThumbAsker hint--top '+ myClass + '">'
+        	var html = '<div data-hint="'+a.name+'"data-askerid="' + a._id + '" class="imgWrapThumb hint--top '+ myClass + '">'
         				+'<i class="icon icon-cancel-1 askerRefused none"></i>'
         				+'<i class="icon icon-ok-1     askerAccepted none"></i>'
         				//+'<i class="icon icon-help-1 "></i>'
@@ -346,7 +346,7 @@
         		else
         		{
         			o.asker = {}
-        			o.asker.id 		= 'placeholder';
+        			o.asker._id 	= 'placeholder';
         			o.asker.imgId 	= LJ.cloudinary.placeholder_id;
         			o.myClass 		= 'placeholder';
 		
@@ -375,7 +375,7 @@
         renderTagsFilters: function(){
 
         	var html = '',
-        		tagList = LJ.tagList,
+        		tagList = LJ.settings.tagList,
         		L = tagList.length;
 
         		for( var i=0; i < L; i++){
@@ -396,33 +396,67 @@
         	return html;
 
         },
-        renderFriendUser: function(options){
+        renderFriendRequestButton: function( user ){
 
-            if( !options.user || !options.wrap ){
+            var html = '';
+                html += '<button class="themeBtn"><i class="icon icon-ok"></i></button>';
+            return html;
+
+        },
+        renderAddFriendToPartyButton: function( user, inEvent ){
+
+            var html = '';
+            
+            if( !inEvent )
+            {
+                html += '<button class="themeBtn ready">'
+                      + '<i class="icon icon-user-add"></i>'
+                      +'</button>';
+                return html;
+            }
+
+            if( inEvent )
+            {
+                html += '<button class="themeBtn onHold">'
+                      + '<i class="icon icon-ok-1"></i>'
+                      +'</button>';
+                return html;
+            }
+            
+
+        },
+        renderUser: function( options ){
+
+            var u = options.user,
+                w = options.wrap,
+                html = '';
+
+
+            if( !u || !w ){
                 return alert('Cannot format user');
             }
 
-            if( options.wrap == 'searchWrap' )
+            if( w == 'searchWrap' )
             {
-                var friendButton = '<button class="themeBtn"><i class="icon icon-user-add"></i></button>';
-                var cl = 'u';
+                var cl     = 'u';
+                var friendButton = LJ.fn.renderFriendRequestButton( u );
             }
 
-            if( options.wrap == 'eventsWrap' )
+            if( w == 'eventsWrap' )
             {
-                var friendButton = '<button class="themeBtn"><i class="icon icon-ok"></i></button>';
+                var cl = 'f'; 
+                var friendButton = '<button class="none"></button>' // sera remove tout de suite par displayButtons...();       
+            }
+            /*TBI*/
+            if( w == 'friendsWrap' )
+            {
                 var cl = 'f';
             }
- 
-            var u = options.user;
-
-            var html = '';
 
                 var d = LJ.cloudinary.displayParamsAskerThumb;
                     imgId = u.imgId;
                     d.version = u.imgVersion;
                     d.radius = '5';
-
 
                 var imgTagHTML = $.cloudinary.image( imgId, d ).prop('outerHTML');
 
@@ -430,7 +464,7 @@
                           + 'data-userid="'+u._id+'"'
                           + 'data-userdrink="'+u.favoriteDrink.toLowerCase()+'"'
                           + 'data-userage="'+u.age+'">'
-                          +'<div class="u-head imgWrapThumbAsker">'
+                          +'<div class="u-head imgWrapThumb">'
                             + imgTagHTML
                           +'</div>'
                           +'<div class="'+cl+'-body">'
@@ -444,19 +478,19 @@
             return html;
 
         },
-        renderSearchUsers: function(){
+        renderUsersInSearch: function(){
 
         	var html = '';
 
         	for( var i = 0; i < LJ.myUsers.length ; i++ )
             {   
-                html += LJ.fn.renderFriendUser( { user: LJ.myUsers[i], wrap: 'searchWrap'} );
+                html += LJ.fn.renderUser( { user: LJ.myUsers[i], wrap: 'searchWrap'} );
         	}
 
         	return html;
 
         },
-        renderFriendList: function(){
+        renderUsersInFriendlist: function(){
 
             var html = '';
 
@@ -465,17 +499,20 @@
 
                 for( var i = 0 ; i < L ; i++ )
                 {
-                    html += LJ.fn.renderFriendItem( fL[i] );
+                    html += LJ.fn.renderUserInFriendlist( fL[i] );
                 }
                         
                 html += '</div></div>';
 
-                return html
+                return html;
 
         },
-        renderFriendItem: function( friend ){
-
-            return LJ.fn.renderFriendUser({ user: friend, wrap: 'eventsWrap' });
+        renderUserInFriendlist: function( friend ){
+			if(!friend) return ''
+            if( friend.status == 'hosting' ) return '';
+            if( _.find( LJ.user.friendList, function(el){ return el.friendId == friend._id }).status == 'askedMe' ) return '';
+            if( _.find( LJ.user.friendList, function(el){ return el.friendId == friend._id }).status == 'askedHim' ) return '';
+            return LJ.fn.renderUser({ user: friend, wrap: 'eventsWrap' });
         }
 
 });

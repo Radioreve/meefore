@@ -49,6 +49,7 @@
 	myEvents: [],
     myAskers: [],
     myUsers: [],
+    myFriends: [],
     selectedTags: [],
     selectedLocations: [],
     $eventsToDisplay: $(),
