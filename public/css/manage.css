@@ -2,7 +2,7 @@
 	width: 700px;
 } 
   
-#cancelEvent{ 
+#cancelEvent{  
 }
 #askersMain{
     position:relative;
@@ -10,7 +10,7 @@
 #askersListWrap{
 }
 .askersMainWrap{
-    position:relative;
+    position: relative;
 }
 #askersListWrap i.next-left,
 .askersMainWrap i.next-right{
@@ -24,6 +24,7 @@
 #askersListWrap i.next-right:hover{
     color:black;
 }
+
 #askersListWrap > i.icon-left-open-big{
     
 }
@@ -41,7 +42,7 @@
     display: none;
     padding: 22px;
     padding-top: 32px;
-    overflow: auto;
+    /* overflow: auto; */
 }
 .a-item.active{
     display:block;
@@ -111,8 +112,8 @@
     vertical-align:top;
 }
 .a-btn{
-    margin-top: 20px!important;
-    margin-left: 80px;
+    margin-top: 10px!important;
+    margin-left: -12px;
     position: relative;
 }
 
@@ -131,7 +132,8 @@
 }
 .btn-chat i{
     position:relative;
-    left:-2px; 
+    left: -2px; 
+    top: -1px;
 }
 
 .a-btn .btn-refuse{
@@ -162,13 +164,22 @@
 }
 .imgWrapThumb.activated img.normal{
     display:inline;
-    opacity:.5;
+    opacity: .7;
 }
 .imgWrapThumb img{
     border-radius:100px;
     opacity: .20;
 }
-.imgWrapThumb i{
+.imgWrapThumb i.icon-up-dir{
+    position:absolute;
+    font-size: 20px;
+    bottom: -17px;
+    right: 12px;
+    
+    color: rgb(207, 207, 207);
+}
+.imgWrapThumb i.icon-ok-1,
+.imgWrapThumb i.icon-cancel-1{
     position: absolute;
     color: #5c5c5c;
     bottom: 0;
@@ -197,6 +208,5 @@
 #askersThumbs{
     text-align:center;
     margin-top:20px;
-}
-.imgWrapThumb i.askerAccepted{
+    position: relative;
 }

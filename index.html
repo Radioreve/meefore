@@ -2,10 +2,9 @@
 
 <html lang="fr">
 <head>
-	<title>WeNighters</title>
+	<title>Before the crash</title>
 	<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="/css/reset.css">
 	<link rel="stylesheet" href="/css/jscrollpane.css">
 	<link rel="stylesheet" href="/css/fontello/css/fontello.css">
@@ -29,29 +28,24 @@
   }(document, 'script', 'facebook-jssdk'));
   </script>
 
-<div class="overlay overlay-high">
-	<div class="overlayMsgWrap">
-	</div>	
-</div>
-<div class="overlay overlay-low">
-	<div class="overlayMsgWrap">
-	</div>	
-</div>
+<div class="overlay overlay-high"></div>
+<div class="overlay overlay-low"></div>
 <div class="overlay overlay-veryhigh"></div>
 <div class="progress_bar"></div>
 <div class="loaderWrap"></div>
 	<header class="">
-		<h1><i class="icon icon-help-1"></i>Vodsky et Whika</h1>
-		<h5>L'abus de soirées est dangereux pour la santé</h5>
+	  <div id="headerContent">
+		<h1><i class="icon icon-attention-alt"></i>V&W</h1>
 		  <ul id="menuWrap" class="">
-			<li id="profile" class="left menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span></span></li>
-			<li id="search" class="left menu-item icon icon-search" data-linkedcontent="#searchUsersWrap" ><span></span></li>
-			<li id="events"  class="left menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span></span></li>
-			<li id="create" class="left menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><span></span></li>
-			<li id="management" class="left menu-item icon icon-users" data-linkedcontent="#manageEventsWrap" ><span></span></li>
-			<li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span></span></li>
-			<li id="contact" class="right menu-item icon icon-mail-alt" data-linkedcontent="#contactWrap" ><span></span></li>
+			<li id="profile" class="left menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
+			<li id="search" class="left menu-item icon icon-search" data-linkedcontent="#searchUsersWrap" ><span class="underlay"></span></li>
+			<li id="events"  class="left menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
+			<li id="create" class="left menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><span class="underlay"></span></li>
+			<li id="management" class="left menu-item icon icon-users" data-linkedcontent="#manageEventsWrap" ><span class="underlay"></span></li>
+			<li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span class="underlay"></span></li>
+			<li id="contact" class="right menu-item icon icon-mail-alt" data-linkedcontent="#contactWrap" ><span class="underlay"></span></li>
 		  </ul>
+	</div>
 		  <section id="loginWrapp" class="revealed right">
 			  <div>
 				Connexion
@@ -79,7 +73,7 @@
 		<div id="pw_remember" class="sub-actions right">Je m'en souviens!</div>
 		</section>
 	</header>
-	<div id="mainWrap" class="">
+	<div id="mainWrap" class="centered">
 		<div id="thumbWrap" class="none ">
 			<div class="imgWrap">
 			</div>
@@ -90,8 +84,8 @@
 		</div>
 		<section id="contentWrap" class="">
 		<section id="landingWrap" class="centered">
-			<h2>L'abus de soirées est dangereux pour la santé</h2> 
-			<!--
+			<h2><i class="icon icon-attention"></i>L'abus de soirées est dangereux pour la santé<i class="icon icon-attention"></i></h2> 
+			
 			<section id="landingIntro">
 				<div class="l-item">
 					<div class="l-image"><img width="80" src="img/connect.png"></div>
@@ -109,10 +103,10 @@
 					<div class="l-desc">Before, apéro, soirée apparte, prendre une bouteille en boite… la nuit vous appartient ! </div>
 				</div>
 			</section>
-		-->
+		
 			<section id="landingGo">
-				<center>Site de rencontres amicales pour êtres humains hautement sociables</center>
-				<button class="themeBtn">Je m'inscris quand même</button>
+				<center>Sociable people only</center>
+				<button class="themeBtn"><i class="icon icon-thumbs-up-alt"></i>Je m'inscris quand même</button>
 			</section>
 		</section>
 			<section id="signupWrapp" class="none centered">
@@ -179,13 +173,13 @@
 				<h2>Tous les évènements</h2>
 				<div class="actionsWrap actionsStyle">
 					<span id="activateFilters" class="action">Appliquer les filtres</span>
-					<span id="displayFilters" class="action"><span>Masquer</span> tous les filtres</span>
+					<span id="displayFilters" class="action"><span>Afficher</span> tous les filtres</span>
 					<span id="resetFilters" class="action">Enlever tous les filtres</span>
+					<span id="refreshEventsFilters" class="action">Rafraîchir les events</span>
 				</div>
-				<div class="filtersWrap">
+				<div class="filtersWrap none">
 				
 				  <div class="filters-tags-row tags-wrap"> <span>Tags</span><!-- Content dynamically loaded --></div>
-
 				  <div class="filters-locs-row locs-wrap"> <!-- Content dynamically loaded --></div>
 				</div>
 			  </div>
@@ -249,15 +243,16 @@
 			</section>
 			<section id="searchUsersWrap" class="none centered">
 				<h2>Find your friends</h2>
+				<div class="actionsWrap actionsStyle">
+					<span id="friendsOnly" class="action">Amis uniquement</span>
+				</div>
 				<div id="searchBarWrap">
 					<div id="searchBar">
 						<i class="icon icon-search"></i>
 					   <input type="text" placeholder="Search by name, age or drink">
 					</div>
 				</div>
-				<div id="searchUsers">
-					
-				</div>
+				<div id="searchUsers"> <!-- Content dynamicall loaded --> </div>
 			</section>
 			<section id="settingsWrap" class="none centered">
 				<h2> Settings </h2>
@@ -286,12 +281,16 @@
 				</div>
 			</section>
 			<section id="contactWrap" class="none centered">
-			<h2>Tell us everything</h2>
+			<h2>Share your thoughts</h2>
 			<form>
+			<div>
 			<label for="contactName">Your name</label>
 				<input id="contactName" type="text" placeholder="Jack Bamboo">
+			</div>
+			<div>
 			<label for="contactMail">Your email</label>
 				<input id="contactMail" type="text" placeholder="jack@bamboomail.com">
+			</div>
 			<label for="contactBody" class="align-top">Your words</label>
 				<textarea id="contactBody" placeholder="Hi there, ..."></textarea>
 			</form>

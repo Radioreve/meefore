@@ -40,7 +40,7 @@ var UserSchema = new mongoose.Schema({
   },
   mood: {
     type: String,
-    default:'normal'
+    default:'whatever'
   },
   location: {
     type: Number,

@@ -40,7 +40,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				  	LJ.fn.toastMsg('Facebook account detected, login in...', 'info' );
 
-				  	sleep(1000, function(){
+				  	sleep(1500, function(){
 
 					  	FB.api('/me', function(res){
 
@@ -333,7 +333,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					error: function(err){
 
 					}
-
 				});
 
 		},
@@ -347,7 +346,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		handleFailedLogin: function(data){
 
 			csl('handling fail login');
-			data = JSON.parse(data.responseText);
+			data = JSON.parse( data.responseText );
 
 			sleep( LJ.ui.artificialDelay, function(){
 
@@ -450,30 +449,33 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 		},
 		displayViewAsNew: function(){
-
-			 $('#profile').addClass('menu-item-active')
+			
+			$('#management').addClass('filtered');
+			$('#profile').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
-             $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('none');}})
-			 LJ.fn.displayContent(LJ.$profileWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut' });
+            $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('none');}})
+			LJ.fn.displayContent( LJ.$profileWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut' });
 
 		},
 		displayViewAsIdle: function(){
 
+			$('#management').addClass('filtered');
             $('#events').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
             $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('none');}})
-            LJ.fn.displayContent(LJ.$eventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut'  });
+            LJ.fn.displayContent( LJ.$eventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut'  });
 
 		},
 		displayViewAsHost: function(){
 
+			$('#create').addClass('filtered');
 			$('#management').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
              $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('none');}})
-			LJ.fn.displayContent(LJ.$manageEventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut'  });
+			LJ.fn.displayContent( LJ.$manageEventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut'  });
 
             LJ.fn.fetchAskers();
 		},
@@ -524,12 +526,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						rev.removeClass('revealed');
 						content.addClass('revealed')
 							   .velocity( options.myWayIn || 'transition.fadeIn', {
-							   	duration: 700,
+							   	duration: 800,
 							   	display:'block',
 							   	complete: function(){
 							   		LJ.state.animatingContent = false;
 							   		if(LJ.user.status === 'new'){
-							   			LJ.fn.toggleOverlay('high');
+							   			LJ.fn.toggleOverlay('high', LJ.tpl.charte );
 							   		}
 							   	}
 							   });
@@ -596,7 +598,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			     	chatIconWrap.addClass('active');
 			     	$eventWrap.addClass('surfacing')
 			     			  .find('.chatWrap')
-			     			  .velocity('transition.slideUpIn', { duration: 400 });
+			     			  .velocity('transition.slideUpIn', { duration: 550 });
 			     	return;
 			     }
 
@@ -618,7 +620,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         		$eventWrap.addClass('surfacing')
         				  .find('.chatWrap')
-        				  .velocity('transition.slideUpIn', { duration: 400 });
+        				  .velocity('transition.slideUpIn', { duration: 550 });
 
         		sleep( 30, function(){ 
         			if( LJ.state.jspAPI[chatId] != undefined ){ 
@@ -885,6 +887,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	$( '.locs-wrap' ).html('').append( LJ.fn.renderLocsFilters() );
         	$( '#eventsListWrap' ).html('').append( LJ.tpl.noResult );
 
+        	$('#friendListWrap').jScrollPane();
+        	LJ.state.jspAPI['#friendListWrap'] = $('#friendListWrap').data('jsp');
+
 			/* Affichage de la vue en fonction du state user */
         	sleep( LJ.ui.artificialDelay, function(){   
 
@@ -896,7 +901,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				{ 
 
 				 LJ.state.connected = true;
-				 $('#thumbWrap').velocity('transition.slideUpIn');
+				$('#thumbWrap').velocity('transition.slideUpIn');
 				 $('.menu-item-active').removeClass('menu-item-active');
 				 
 					switch( LJ.user.status )
@@ -916,12 +921,18 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 							break;
 					}
 
-
-					$('.menu-item').velocity({ opacity: [1, 0] }, {
-						display:'inline-block',
-						complete: function(){
-							//LJ.fn.toastMsg("Welcome back " + LJ.user.name, 'info');
-						}
+					LJ.fn.toastMsg('Welcome back '+LJ.user.name,'info');
+					sleep( 2400, function() {
+						
+						$('.menu-item').velocity({ opacity: [1, 0] }, {
+							display:'inline-block',
+							duration: 800,
+							complete: function(){
+								$('.menu-item').each( function( i, el ){
+									$(el).append('<span class="bubble filtered"></span>')
+								});	
+							}
+						});
 					});
 				}
 
@@ -967,7 +978,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					csl('Refetch askers success, askers = ' + askers );
 					LJ.myAskers = askers;
 					LJ.fn.addFriendLinks();
-
+					$('#askersListWrap div.active').click(); // force update
+					LJ.fn.refreshArrowDisplay();
 				});
 
 
@@ -980,7 +992,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 									   });
 
 					LJ.fn.displayViewAsFrozen();
-
 
 				});
 
@@ -1049,65 +1060,30 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					var eventId = myEvent._id,
 						hostId = myEvent.hostId;
 					
-					myEvent.beginsAt = new Date ( myEvent.beginsAt );
-
 					sleep( LJ.ui.artificialDelay , function(){ 
+
 
 						if( LJ.user._id === hostId )
 						{
 								LJ.user.status = 'hosting';
+								LJ.fn.displayMenuStatus( function(){ $('#management').click(); } );
 								LJ.user.hostedEventId = eventId;
-								LJ.fn.toastMsg("Evènement créé avec succès !", 'info');
 								LJ.fn.hideLoaders();
 								$('.themeBtn').removeClass('validating-btn');
 								LJ.$createEventWrap.find('input, #eventDescription').val('');
 								LJ.$createEventWrap.find('.selected').removeClass('selected');
-
-								$('#management').click();
+								LJ.fn.refreshArrowDisplay();
 						}
 						else
-						{
+						{	
+							/* Réagir si un ami créé un évènement, MAJ les buttons */ 
 							LJ.fn.toastMsg( myEvent.hostName + ' a créé un évènement !', 'info' );
+							LJ.fn.bubbleUp( '#events' );
 						}
+ 
+						LJ.fn.insertEvent( myEvent );
+						$('#refreshEventsFilters').click();
 
-						/* Pour tous les users */
-						var idx = _.sortedIndex( LJ.myEvents, myEvent, 'beginsAt' );
-						console.log('idx = ' + idx);
-						LJ.myEvents.splice( idx, 0, myEvent );
-						var eventHTML = LJ.fn.renderEvent( myEvent );
-
-						/* Prise en compte des effets de bords sinon le jQuery return undefined */
-						if( ( idx == 0 ) ){
-							$( eventHTML ).insertAfter( $('#noEvents') );
-						}else if( idx == LJ.myEvents.length - 1){ // myEvents just got incremented, hence the - 1
-							$( eventHTML ).insertAfter( $( $('.eventItemWrap')[idx-1] ) );
-						}else{
-							$( eventHTML ).insertAfter( $( $('.eventItemWrap')[idx] ) );
-						}
-
-						$( eventHTML ).addClass('inserted');
-
-						/* On affiche directement l'event <=> au moins 1 tag correspond à ce qui été dernièrement filtré */
-						var eventTags = myEvent.tags,
-									L = eventTags.length;
-
-						for( var k = 0; k < L; k++ ){
-							eventTags[k] = "tag-" + eventTags[k];
-						}
-
-						if( _.intersection( eventTags, LJ.selectedTags ).length != 0 || LJ.selectedTags.length == 0){
-
-							var $inserted = $('.inserted');
-
-								$inserted.find('.tag').each( function( i, el ){
-									if( LJ.selectedTags.indexOf( $( el ).attr('class').split(' ')[1] ) != -1 ){
-										$( el ).addClass( 'selected' );
-									}
-								});
-
-							$inserted.velocity('transition.slideLeftIn', { duration: 400 })
-									 .removeClass('inserted');
-						}
 					});
 				});
 
@@ -1143,6 +1119,18 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		        });
 
 				LJ.params.socket.on('fetch user success', function( data ){ console.log(data); });
+
+				LJ.params.socket.on('friend already in', function( data ){
+					
+					csl('Friend already in');
+					sleep( LJ.ui.artificialDelay, function(){
+
+						LJ.fn.hideLoaders();
+						LJ.fn.displayAddFriendToPartyButton();
+						LJ.fn.toastMsg('Your friend was already in ;-)', 'info');
+					});
+
+				});
  
 				LJ.params.socket.on('fetch events success', function( events ){
 
@@ -1174,6 +1162,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 					sleep( LJ.ui.artificialDelay, function(){
 
+						LJ.fn.bubbleUp( '#management' )
 
 						var d = LJ.cloudinary.displayParamsEventAsker;
 							d.version = asker.imgVersion;
@@ -1181,7 +1170,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						var $askerImg = LJ.fn.renderAskerInEvent( asker.imgId, { dataList: [{ dataName: 'askerid', dataValue: asker._id }]});
 						var $askedInWrap = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap');
 							$askedInWrap.prepend( $askerImg );
-							$askedInWrap.find('img').last().remove();
+							//$askedInWrap.find('img').last().remove();
 
 						
 							if( LJ.user._id == requesterId && LJ.user._id == userId )
@@ -1211,6 +1200,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						if( LJ.user._id == hostId )
 						{
 
+							LJ.myAskers.push( asker );
+
 							var askerMainHTML  = LJ.fn.renderAskerMain( asker ),
 								askerThumbHTML = LJ.fn.renderAskerThumb ({ asker: asker });
 
@@ -1231,13 +1222,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 							    LJ.fn.refreshArrowDisplay();
 						}
 
+						var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
+							$nbAskers.text( parseInt( $nbAskers.text() ) + 1 );
+
 					});
 
 				});
 
 				LJ.params.socket.on('request participation out success', function(data){
 
-						console.log(data.asker.name +' asked out');
+						console.log( data.asker.name +' asked out' );
 
 						var userId  	= data.userId,
 							hostId  	= data.hostId,
@@ -1248,7 +1242,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 						var chatId = LJ.fn.buildChatId( eventId, hostId, userId ),
 						    $aItemMain = LJ.$askersListWrap.find('.a-item[data-askerid="'+userId+'"]'),
-						    //$aItemThumb = LJ.$askersListWrap.find('.a-item[data-userid="'+userId+'"]'),
 						    $chatWrapAsHost = LJ.$askersListWrap.find('.chatWrap[data-chatid="'+chatId+'"]'),
 						    $chatWrapAsUser = LJ.$eventsListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
 
@@ -1289,16 +1282,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 										.siblings('.chatIconWrap, .friendAddIconWrap').hide();
 							}	
 
-							/*
+							
 							var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
 								$nbAskers.text( parseInt( $nbAskers.text() ) - 1 );
 
-							*/
-
 							$('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap')
-																		   .append( LJ.tpl.$placeholderImg.clone() )
 																		   .find('img[data-askerid="'+asker._id+'"]')
-																		   .remove();
+																		   .remove(); 
 						});
 	
 				});
@@ -1348,6 +1338,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					var msg   = data.msg,
 						flash = data.flash;
 
+					csl('Receiving error from the server');
+
 					if( flash ){
 						return LJ.fn.handleServerError( msg );
 					}
@@ -1361,16 +1353,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					LJ.fn.toastMsg("You have been disconnected from the stream", 'error', true);
 					LJ.params.socket.disconnect(LJ.user._id);
 
-
 				});
 
                 LJ.params.socket.on('fetch askers success', function( data ){
-
-                	console.log(data);
+                	
                     LJ.state.fetchingAskers = false;
                     LJ.myAskers = data.askersList;
-                    LJ.fn.displayAskers();
-                    LJ.fn.addFriendLinks();
+
+                    LJ.fn.displayAskers();   
+                    LJ.fn.refetchAskers();
 
                 });
 
@@ -1384,9 +1375,18 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 	csl('Friends fetched');
                 	LJ.myFriends = data;
+
                 	$('#myFriends').html( LJ.fn.renderUsersInFriendlist() );
+
                 	LJ.fn.displayAddFriendToPartyButton();
 
+                	if( LJ.nextCallback.context == 'fetch friends' )
+                	{	
+                		csl('Calling method, context detected');
+                		LJ.nextCallback.fn();
+                		LJ.nextCallback = {};
+                	}
+ 
                 });
 
                 LJ.params.socket.on('fetch users success', function( data ){
@@ -1395,10 +1395,25 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 	LJ.myUsers = _.shuffle( data ); /*Not to have always the same user first*/
                     $('#searchUsers').html( LJ.fn.renderUsersInSearch() );
 
-                    $( $('.u-item:not(.match)')[0] ).css({ opacity: '.5 '});
-					$( $('.u-item:not(.match)')[1] ).css({ opacity: '.4 '});
-					$( $('.u-item:not(.match)')[2] ).css({ opacity: '.3 '});
-					$( $('.u-item:not(.match)')[3] ).css({ opacity: '.15 '});
+                    $( $('.u-item:not(.match)')[0] ).removeClass('none').css({ opacity: '.5 '});
+					$( $('.u-item:not(.match)')[1] ).removeClass('none').css({ opacity: '.4 '});
+					$( $('.u-item:not(.match)')[2] ).removeClass('none').css({ opacity: '.3 '});
+					$( $('.u-item:not(.match)')[3] ).removeClass('none').css({ opacity: '.15 '});
+
+                });
+
+                LJ.params.socket.on('friend request in success host', function( data ){
+
+                	var userId     = data.userId,
+                		friendId   = data.friendId;
+
+                	/* Host checks if he has to update his friendLinks, hence reload friends status*/
+                	if( LJ.myAskers.length != 0 )
+                	{
+                		var askersId = _.pluck( LJ.myAskers, '_id' );
+                		if( askersId.indexOf( userId ) != -1 && askersId.indexOf( friendId ) != -1 )
+                			{ LJ.fn.refetchAskers(); }
+                	}
 
                 });
 
@@ -1409,48 +1424,70 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 		upType     = data.updateType,
                 		friendList = data.friendList;
 
+                	/* Host checks if he has to update his friendLinks, hence reload friends status*/
+                	if( LJ.myAskers.length != 0 )
+                	{
+                		var askersId = _.pluck( LJ.myAskers, '_id' );
+                		console.log(userId);
+                		console.log(friendId);
+                		console.log( askersId.indexOf( userId ) != -1 && askersId.indexOf( friendId ) != -1 )
+                		if( askersId.indexOf( userId ) != -1 && askersId.indexOf( friendId ) != -1 )
+                			{ LJ.fn.refetchAskers(); }
+
+                	}
+
                 	LJ.user.friendList = data.friendList;
-                	LJ.fn.fetchFriends();
+					
+					LJ.nextCallback.context = 'fetch friends';
+					LJ.nextCallback.fn = function(){
+                		 
+                		csl('Calling function');
+						sleep( LJ.ui.artificialDelay, function(){
 
-                		
-	                sleep( LJ.ui.artificialDelay, function(){
+						LJ.fn.displayAddUserAsFriendButton();
 
-	                	if( upType == 'askedhim' )
-	                	{
-	                		LJ.fn.handleServerSuccess('Votre demande a été envoyée');
-	                		return;
-	             	  	}
+							if( upType == 'askedhim' )
+							{
+								LJ.fn.handleServerSuccess('Votre demande a été envoyée');
+								return;
+							}
 
-	                	if( upType == 'askedme' )
-	                	{
-	                		LJ.fn.handleServerSuccess('Vous avez une demande d\'ami');
-	                		return;
-	                	}
+							if( upType == 'askedme' )
+							{
+								LJ.fn.handleServerSuccess('Vous avez une demande d\'ami');
+								LJ.fn.bubbleUp( '#search' )
+								return;
+							}
 
-	                	if( (upType == 'mutual') && (userId == LJ.user._id) )
-	                	{
-	                		LJ.fn.handleServerSuccess('Vous êtes à présent amis');
-	                		return;
-	                	}
+							if( (upType == 'mutual') && (userId == LJ.user._id) )
+							{
+								LJ.fn.handleServerSuccess('Vous êtes à présent amis');
+								return;
+							}
 
-	                	if( (upType == 'mutual') && (friendId == LJ.user._id) )
-	                	{
-	                		LJ.fn.handleServerSuccess('Votre demande a été acceptée!');
-	                		return;
-	                	}
-	                });
+							if( (upType == 'mutual') && (friendId == LJ.user._id) )
+							{
+								LJ.fn.handleServerSuccess('Votre demande a été acceptée!');
+								LJ.fn.bubbleUp( '#search' )
+								return;
+							}
+						});
+					}
+					LJ.fn.fetchFriends();
                 });
                 
 		},
 		handleCancelEvent: function(data){
 			
-			LJ.fn.toastMsg("L'évènement a été annulé !")
-			if( data.hostId == LJ.user._id ){
-		                		$('.pending').removeClass('pending');
-		                		LJ.user.status = 'idle';
-		                		LJ.$manageEventsWrap.find('#askersRows, #askersDetails').html('');
-								$('#create').click();
-							}	  		
+			if( data.hostId == LJ.user._id )
+			{
+        		$('.pending').removeClass('pending');
+        		LJ.user.status = 'idle';
+        		LJ.myAskers = [];
+        		LJ.$manageEventsWrap.find('#askersRows, #askersDetails').html('');
+        		LJ.fn.displayMenuStatus( function(){ $('#create').click(); } );
+				
+			}	  		
 		                	 
         	var canceledEvent = LJ.$eventsListWrap.find('.eventItemWrap[data-hostid="'+data.hostId+'"]');
         		canceledEvent.velocity("transition.slideRightOut", {
@@ -1489,6 +1526,31 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			eventWrap.attr('data-eventstate', state )
 					 .find('button.askIn');
 					
+
+		},
+		insertEvent: function( myEvent ){
+
+			csl('Inserting new event');
+			myEvent.beginsAt = new Date ( myEvent.beginsAt );
+
+			/* On ajoute l'event au bon endroit pour maintenir l'ordre*/
+			var idx = _.sortedIndex( LJ.myEvents, myEvent, 'beginsAt' );
+			LJ.myEvents.splice( idx, 0, myEvent );
+
+			var eventHTML = LJ.fn.renderEvent( myEvent );
+
+			/* Prise en compte des effets de bords sinon le jQuery return undefined */
+			if( idx == 0 )
+			{
+				$( eventHTML ).insertAfter( $('#noEvents') );
+				$('#noEvents').addClass('none');
+			}
+			// myEvents just got incremented, hence the - 1
+			if( idx == LJ.myEvents.length - 1){
+				$( eventHTML ).insertAfter( $( $('.eventItemWrap')[idx-1] ) ).addClass('inserted');
+			}else{
+				$( eventHTML ).insertAfter( $( $('.eventItemWrap')[idx] ) ).addClass('inserted');
+			}
 
 		},
 		fetchUsers: function(){ LJ.params.socket.emit('fetch users', LJ.user._id ); },
@@ -1546,13 +1608,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         displayEvents: function(){
 
         	/* Mise à jour de la vue des évènements */
-        		csl('Displaying events frozen state');
 	        	var hour = (new Date).getHours();
 	        	if( hour < LJ.settings.eventsEndAt && hour >= LJ.settings.eventsFreezeAt ){
+        			csl('Displaying events frozen state');
 	        		return LJ.fn.displayViewAsFrozen();
 	        	}     		
 
-            LJ.$eventsListWrap.html('').append( LJ.fn.renderEvents( LJ.myEvents ) );
+            LJ.$eventsListWrap.html( LJ.fn.renderEvents( LJ.myEvents ) );
             $('.eventItemWrap').velocity("transition.slideLeftIn", {
             	display:'inline-block'
             });
@@ -1711,34 +1773,88 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         			senderId: LJ.user._id  /* = hostId ou askerId, selon le cas, utile pour le display only*/
         		});
         },
+        bubbleUp: function( el ){
+
+        	var $el = $(el);
+
+        	var $bubble = $el.find('.bubble'),
+        		n = $bubble.text() == 0 ? 0 : parseInt( $bubble.text() );
+
+        	$bubble.removeClass('filtered');
+
+        		if( n == 99 ) 
+        			return $bubble.text(n+'+');
+
+        	return $bubble.text( n + 1 );
+
+        },
+        displayAddUserAsFriendButton: function(){
+
+        	var $users = $('#searchUsers .u-item.match');
+
+        		$users.each( function( i, user ){
+
+        			var $user = $(user),
+        				userId = $user.attr('data-userid');
+
+        			if( _.pluck( LJ.user.friendList, 'friendId' ).indexOf( userId ) != -1 )
+        			{
+        				if( _.find( LJ.user.friendList, function(el){ return el.friendId == userId ; }).status == 'mutual' )
+        				var button =  '<button class="themeBtn onHold"><i class="icon icon-ok-1"></i></button>' ;
+
+        				if( _.find( LJ.user.friendList, function(el){ return el.friendId == userId ; }).status == 'askedMe' )
+        				var button = '<button class="themeBtn"><i class="icon icon-ellipsis"></i></button>' ;
+
+        				if( _.find( LJ.user.friendList, function(el){ return el.friendId == userId ; }).status == 'askedHim' )
+        				var button = '<button class="themeBtn onHold"><i class="icon icon-ellipsis"></i></button>' ; 
+        			}
+        			else
+        			{
+        				var button = '<button class="themeBtn"><i class="icon icon-user-add"></i></button>' ; 
+        			}
+
+        				$user.find('button').replaceWith( button );
+
+
+
+        		});
+
+        },
         displayAddFriendToPartyButton: function(){
 
         	var $friendListWrap = $('#friendListWrap'),
         		$eventWrap = $friendListWrap.parents('.eventItemWrap'),
         		$askedInWrap = $friendListWrap.parents('.eventItemWrap').find('.askedInWrap');
 
-        	$friendListWrap.find('.f-item').each( function(i, el){
+        	$friendListWrap.find('.f-item').each( function( i, el ){
 
         		var $friend = $(el),
         			friendId = $friend.data('userid');
-
+        		
         		var myFriend = _.find( LJ.myFriends, function(el){ return el._id == friendId ; });
 
+           		if( myFriend.status == 'hosting' )
+           		{
+	                var button = '<button class="themeBtn isHosting">'
+	                  + '<i class="icon icon-forward-1"></i>'
+	                  +'</button>';
+	                return $friend.find('button').replaceWith( button );
+              	}
+
 	        	if( $askedInWrap.find('img[data-askerid="'+friendId+'"]').length == 1 )
-	        	{
-	        		var inEvent = true;
-	        	}
-	        	else
-	        	{
-	        		var inEvent = false;
+	        	{  
+              		var button = '<button class="themeBtn onHold">'
+                      + '<i class="icon icon-ok-1"></i>'
+                      +'</button>';
+	              	return $friend.find('button').replaceWith( button );
 	        	}
 
-	        	/* On sait que le friend est déjà dans la liste. On update addFriendButton */
-	        	$friend.find('button').remove();
-	        	$friend.append( LJ.fn.renderAddFriendToPartyButton( myFriend , inEvent ) );
-
+        		var button = '<button class="themeBtn ready">'
+                  + '<i class="icon icon-user-add"></i>'
+                  +'</button>';
+	        	return $friend.find('button').replaceWith( button );
+	        	
         	});
-
 
         },
         buildChatId: function( eventId, hostId, userId ){
@@ -1746,7 +1862,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	return eventId + '_' + hostId + '-' + userId;
 
         },
-        addChatLine: function(data){
+        addChatLine: function( data ){
 
         	csl('Adding chatline');
             var cha;
@@ -1767,19 +1883,20 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         			LJ.state.jspAPI[chatId] =  $chatLineWrap.data('jsp');
         		}
 
-        		$chatLineWrap.find('.jspPane').append( chatLineHtml );
-        		$chatLineWrap.find('.chatLine:last-child')
-        					  .velocity("fadeIn", {
-        					  	duration: 500,
-        					  	complete: function(){
-        					  	}
-        					  });
+    		$chatLineWrap.find('.jspPane').append( chatLineHtml );
+    		$chatLineWrap.find('.chatLine:last-child')
+    					  .velocity("fadeIn", {
+    					  	duration: 350,
+    					  	complete: function(){
+    					  	}
+    					  });
 
-        		sleep(30, function(){
-        							csl('Refreshing jsp API');
-        							LJ.state.jspAPI[chatId].reinitialise();
-        							LJ.state.jspAPI[chatId].scrollToBottom(); 
-        						  });
+    		sleep( 60, function(){
+    							csl('Refreshing jsp API');
+    							LJ.state.jspAPI[chatId].reinitialise();
+    							LJ.state.jspAPI[chatId].scrollToBottom(); 
+    						  });
+
 
         },
         initRooms: function( id ){
@@ -1809,15 +1926,34 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
             $( '.loaderWrap' ).velocity( 'fadeOut', { duration: 250 });
 
-        },
+        }, 
+        displayMenuStatus: function( cb ){
+ 
+			var status = LJ.user.status;
+
+			if( status == 'idle' )
+			{
+				$('#management').velocity('transition.slideRightOut', {
+					duration: 200,
+					complete: function(){ $('#create').removeClass('filtered').velocity('transition.slideLeftIn', { 
+						duration: 200, display:'inline-block', complete: function(){ cb(); } }); }
+				});
+			}
+
+			 if( status == 'hosting' )
+			{
+				$('#create').velocity('transition.slideRightOut', {
+					duration: 200,
+					complete: function(){ $('#management').removeClass('filtered').velocity('transition.slideLeftIn', { 
+						duration: 200, display: 'inline-block', complete: function(){ cb(); } }); }
+				});
+			}
+        }, 
         toggleOverlay: function(type, html, speed){
 
-    			var $overlay = $('.overlay-'+type ),
-					$overlayMsgWrap = $('.overlayMsgWrap');
+    		var $overlay = $('.overlay-'+type );
 
-        	var html = html || '';
-
-				$overlayMsgWrap.html( html );
+    			$overlay.append( html );
 
 			if( $overlay.hasClass('active') )
 			{
@@ -1825,7 +1961,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						.velocity('fadeOut', { 
 						duration: speed || 700,
 						complete: function(){
-							$overlayMsgWrap.html('')
 							$overlay.find('.largeThumb').remove();
 						} 
 					});
@@ -1854,7 +1989,7 @@ $('document').ready(function(){
 				    xfbml      : true,  // parse social plugins on this page
 				    version    : 'v2.1' // use version 2.1
 
-				  });
+				  }); 
 		*/
 
 		csl('Application ready');

@@ -9,7 +9,7 @@
 }
 #eventsListWrap{
 	margin-top: 30px;
-	margin-bottom: 50px;
+	padding-bottom: 50px;
 	text-align: center;
 }
 #eventsListWrap div.eventItemWrap:last-child{
@@ -31,10 +31,11 @@
 	transition: all .15s;
 	color: rgb(56, 56, 56);
 	width: 290px;
-	margin: 10px 10px;
+	margin: 15px;
 	padding: 5px;
 	border: 1px solid rgb(236, 236, 236);
 	box-sizing: border-box;
+	box-shadow: 0 0 3px rgb(195, 195, 195);
 	position: relative;
 	text-align: left;
 	border-bottom: none;
@@ -49,21 +50,26 @@
 	font: bold 0.9em 'Lato';
 }
 .e-guests{
-	font-size: 1.05em;
 	position: relative;
 	width: 176px;
 	text-align:center;
 
-	margin-top: 12px;
-	color: rgb(163, 163, 163);
+	margin-top: 11px;
 }
 .guestsWrap{
-	padding: 4px 7px;
+	padding: 4px 9px;
 	border-radius: 3px;
+	color: rgb(76, 76, 76); 
+	font-size: 12px;
+}
+.guestsWrap > span{
+    margin-right: 2px;
+	
 }
 .guestsWrap:hover{
 	cursor:pointer;
-	color: rgb(108, 108, 108);
+	color: rgb(68, 68, 68);
+	background: #FAFAFA;
 }
 .guestsWrap.active{
 	color: rgb(100, 100, 100)!important;
@@ -132,29 +138,29 @@
 
 }
 .askedInWrap{	
-    width: 317px;
+    width: 259px;
     min-height: 173px;
     position: absolute;
     border: 1px solid rgb(232, 232, 232);
     z-index: 10;
     background: white;
     box-shadow: 0 0 3px #eee;
-    padding: 5px;
+    padding: 16px;
     box-sizing: border-box; 
     display: none;
-    left: -20px;
+    left: 10px;
 }
 .askedInWrap.active{
 }
 .askedInWrap img
 {
-	border: 1px solid rgb(229, 229, 229);
-	margin:2px
+	/* border: 1px solid rgb(229, 229, 229); */
+	/* margin:2px
 
-;
+; */
 	background: white;
-	opacity: .6;
-	padding: 5px;
+	opacity: .9;
+	/* padding: 5px; */
 }
 .headWrap div{
 	display:inline-block;
@@ -179,6 +185,8 @@
 	width: 80%;
 	position: relative;
 	margin: auto;
+}
+.askHost{
 }
 .askInWrap .idle{
 	width:100%;
@@ -248,6 +256,7 @@
 }
 section#createEventWrap{
 	width: 600px;
+	overflow: auto;
 }
 #createEventWrap h2{
 	margin-bottom: 50px;
@@ -301,7 +310,7 @@ input[type="number"]{
 .drink,
 .mood{
 	display:inline-block;
-	transition: all .3s;
+	transition: all .1s;
 	font-size: .7em;
 	color: #7A7A7A;
 	padding: 8px 12px; 
@@ -318,12 +327,14 @@ input[type="number"]{
 	border-bottom: 2px solid white;
 }
 .loc{
-	background: white;
+	background: whitesmoke;
 	border-bottom: 2px solid white;
-	width: 20px;
-	padding-right: 14px;
+	padding: 9px 5px;
+	height: 10px;
+	border-radius: 16px;
+	width: 21px;
 	text-align: center;
-	margin: 0 -2px;
+	margin: 0 4px;
 }
 #createEventWrap .tag:hover,
 .filters-tags-row .tag:hover,
@@ -340,17 +351,13 @@ input[type="number"]{
 	color: rgb(213, 47, 47);
 }
 
-.tag.selected,
-.drink.selected, 
-.day.selected{  
+.tag.selected, .drink.selected, .day.selected, .loc.selected{  
 	background: rgb(229, 83, 83);
 	color:white;
 	box-shadow: 0 1px 1px rgb(187, 50, 50);
 }
 .loc.selected{
-	border-bottom: 2px solid rgb(243, 131, 131);
-	color: rgb(243, 131, 131);
-	font-weight: bolder;
+	border-bottom: none;
 }
 .tag-row,
 .loc-row{
@@ -366,6 +373,7 @@ input[type="number"]{
 }
 .filtersWrap{
 	margin:25px 0;
+	opacity: 0;
 }
 #noEvents{
 	margin-top:85px; 
@@ -389,6 +397,10 @@ label[for="tags"]{
 .largeThumb{
 
 	text-align: center;
+	
+
+	margin-top: 12%;
+
 }
 .largeThumb img{ 
 	border-radius:150px;
@@ -431,4 +443,22 @@ label[for="tags"]{
 	font-weight: bolder;
 	border-bottom: 2px solid;
 	transition: all .2s;
+}
+#noFriendsYet{
+	font-size:12px;
+	margin: 50% auto;
+	width:80%;
+	line-height:1.5em;
+}
+.inserted{
+	display:none;
+}
+#noFriendsYet span{
+	font-weight:bolder;
+	font-size:15px;
+}
+#noFriendsYet span:hover{
+	font-weight:bolder;
+	text-decoration:underline;
+	cursor:pointer;
 }

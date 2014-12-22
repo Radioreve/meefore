@@ -8,6 +8,10 @@
 			var html =''; 
 			    max = max || arr.length;
 
+            if( max == 0 )
+            {
+                return '<h3 id="noEvents">Aucun évènement à afficher pour le moment.</h3>'
+            }
 			for( var i=0; i < max; i++ ){
 
 				html += LJ.fn.renderEvent( arr[i] ); 
@@ -64,23 +68,28 @@
         },
         renderEventButton: function( eventId, hostId ){
 
-        	var button = '<div class="askInWrap"><button class=" ';
-			
-			if( hostId == LJ.user._id )
-			{
-				button += 'themeBtnToggle themeBtnToggleHost"> Management'	
-			}
-			else
-			{
-				button += 'askIn themeBtnToggle';
-				LJ.user.eventsAskedList.indexOf( eventId ) > -1 ? button += ' asked"> En attente' : button += ' idle">Je veux y aller';
-			}
-				button += '</button>'
-                         +'<div class="chatIconWrap"><i class="icon icon-chat"/></div>'
-                         +'<div class="friendAddIconWrap"><i class="icon icon-user-add"/></div>'
-                         +'</div>';
+            if( hostId == LJ.user._id )
+            {
+                return '<div class="askInWrap"><button class="themeBtnToggle themeBtnToggleHost">Management</button></div>';
+            }
 
-				return button;
+            if( LJ.user.eventsAskedList.indexOf( eventId ) > -1 )
+            {
+                return '<div class="askInWrap">\
+                           <button class="themeBtnToggle askIn asked"> En attente </button> \
+                           <div class="chatIconWrap"><i class="icon icon-chat"/></div>\
+                           <div class="friendAddIconWrap"><i class="icon icon-user-add"/></div>\
+                        </div>';
+            }
+
+            /* Default */
+                return '<div class="askInWrap">\
+                           <button class="themeBtnToggle askIn idle"> Je veux y aller </button> \
+                           <div class="chatIconWrap none"><i class="icon icon-chat"/></div>\
+                           <div class="friendAddIconWrap none"><i class="icon icon-user-add"/></div>\
+                        </div>';
+
+			
         },
         renderHostImg: function( hostImgId, hostImgVersion ){
 
@@ -97,7 +106,7 @@
 
 			return imgTagHTML
         },
-        renderAskerInEvent: function( imgId, o){
+        renderAskerInEvent: function( imgId, o ){
 
         	var $img = $.cloudinary.image( imgId, LJ.cloudinary.displayParamsEventAsker );
         		$img.attr('data-imgid', imgId)
@@ -121,7 +130,7 @@
         	var L = askersList.length,
         	    html='';
         	
-        	for ( i = 0; i < maxGuest ; i++ )
+        	for ( i = 0; i < L ; i++ )
         	{ 
         		var o = { classList: ['hello'], dataList: [] };
 	        	var d = LJ.cloudinary.displayParamsEventAsker;
@@ -131,12 +140,14 @@
 	        		var imgId        = askersList[i].imgId;
 	        			d.imgVersion = askersList[i].imgVersion;
 	        			o.classList = ['askedInThumb'];
-	        			o.dataList   = [ { dataName: 'askerid', dataValue:  askersList[i].id } ];
+	        			o.dataList   = [ { dataName: 'askerid', dataValue:  askersList[i]._id } ];
 
         		}else //On affiche via placeholder le nb de places restantes.
-        		{
+        		{     
+                    /* Deprecated
         			var imgId = LJ.cloudinary.placeholder_id;
         				o.classList = ['askedInRemaining'];
+                    */
         		}
 
         		html += LJ.fn.renderAskerInEvent( imgId, o ).prop('outerHTML');
@@ -170,9 +181,9 @@
 						     + '<div class="e-hour e-weak">'+ LJ.fn.matchDateHHMM( e.beginsAt ) +'</div>'
 						   + '<div class="e-guests right">'
 						     + '<span class="guestsWrap">'
+                               +'<span>Liste d\invités </span>'
 						       + '<i class="icon icon-users"></i>'
-						       + '<span class="nbAskers">'+ e.askersList.length +'</span>/'
-						       + '<span class="nbAskersMax">'+ e.maxGuest +'</span>'
+						       + '<span class="nbAskers"> '+ e.askersList.length +'</span>'
 						     + '</span>'
 						   + '</div>'
 						+ '</div>'
@@ -287,8 +298,7 @@
                            +'</div>'
 	                             +'<div class="a-btn">'
 	                             	 +'<button class="themeBtnToggle btn-chat"><i class="icon icon-chat"></i></button>'
-	                                 +'<button class="themeBtn btn-accept"><i class="icon icon-ok-1"></i></button>'
-	                            	 +'<button class="themeBtn btn-refuse"><i class="icon icon-cancel-1"></i></button>'
+
 	                           +'</div>'
                         + chatWrap
                     +'</div>';
@@ -319,6 +329,7 @@
         	var html = '<div data-hint="'+a.name+'"data-askerid="' + a._id + '" class="imgWrapThumb hint--top '+ myClass + '">'
         				+'<i class="icon icon-cancel-1 askerRefused none"></i>'
         				+'<i class="icon icon-ok-1     askerAccepted none"></i>'
+                        +'<i class="icon icon-up-dir  none"></i>'
         				//+'<i class="icon icon-help-1 "></i>'
         				+ imgTagHTML
         				+ imgTagBlackWhiteHTML
@@ -396,19 +407,20 @@
         	return html;
 
         },
-        renderFriendRequestButton: function( user ){
-
-            var html = '';
-                html += '<button class="themeBtn"><i class="icon icon-ok"></i></button>';
-            return html;
-
-        },
         renderAddFriendToPartyButton: function( user, inEvent ){
 
             var html = '';
             
-            if( !inEvent )
+            if( user.status == 'hosting' )
             {
+                html += '<button class="themeBtn isHosting">'
+                  + '<i class="icon icon-forward-1"></i>'
+                  +'</button>';
+                return html;
+            }
+
+            if( !inEvent )
+            {             
                 html += '<button class="themeBtn ready">'
                       + '<i class="icon icon-user-add"></i>'
                       +'</button>';
@@ -429,6 +441,7 @@
 
             var u = options.user,
                 w = options.wrap,
+                myClass = options.myClass,
                 html = '';
 
 
@@ -439,18 +452,13 @@
             if( w == 'searchWrap' )
             {
                 var cl     = 'u';
-                var friendButton = LJ.fn.renderFriendRequestButton( u );
+                var friendButton = '<button></button>'
             }
 
             if( w == 'eventsWrap' )
             {
                 var cl = 'f'; 
                 var friendButton = '<button class="none"></button>' // sera remove tout de suite par displayButtons...();       
-            }
-            /*TBI*/
-            if( w == 'friendsWrap' )
-            {
-                var cl = 'f';
             }
 
                 var d = LJ.cloudinary.displayParamsAskerThumb;
@@ -460,7 +468,7 @@
 
                 var imgTagHTML = $.cloudinary.image( imgId, d ).prop('outerHTML');
 
-                html += '<div class="'+cl+'-item" data-username="'+u.name.toLowerCase()+'"'
+                html += '<div class="'+cl+'-item '+myClass+'" data-username="'+u.name.toLowerCase()+'"'
                           + 'data-userid="'+u._id+'"'
                           + 'data-userdrink="'+u.favoriteDrink.toLowerCase()+'"'
                           + 'data-userage="'+u.age+'">'
@@ -484,7 +492,8 @@
 
         	for( var i = 0; i < LJ.myUsers.length ; i++ )
             {   
-                html += LJ.fn.renderUser( { user: LJ.myUsers[i], wrap: 'searchWrap'} );
+                if( LJ.myUsers[i]._id != LJ.user._id )
+                html += LJ.fn.renderUser( { user: LJ.myUsers[i], wrap: 'searchWrap', myClass: 'none'} );
         	}
 
         	return html;
@@ -497,6 +506,10 @@
                 var fL = LJ.myFriends,
                     L = fL.length;
 
+                if( L == 0 )
+                {
+                    return '<div id="noFriendsYet">You dont have any friends to invite <span>Find your friends</span></div>'
+                }
                 for( var i = 0 ; i < L ; i++ )
                 {
                     html += LJ.fn.renderUserInFriendlist( fL[i] );
@@ -508,11 +521,19 @@
 
         },
         renderUserInFriendlist: function( friend ){
+
 			if(!friend) return ''
-            if( friend.status == 'hosting' ) return '';
-            if( _.find( LJ.user.friendList, function(el){ return el.friendId == friend._id }).status == 'askedMe' ) return '';
-            if( _.find( LJ.user.friendList, function(el){ return el.friendId == friend._id }).status == 'askedHim' ) return '';
-            return LJ.fn.renderUser({ user: friend, wrap: 'eventsWrap' });
+
+            if( friend.status == 'hosting' )
+                return LJ.fn.renderUser({ user: friend, wrap: 'eventsWrap'  });
+
+            if( _.find( LJ.user.friendList, function(el){ return el.friendId == friend._id }).status == 'askedMe' )
+                return '';
+
+            if( _.find( LJ.user.friendList, function(el){ return el.friendId == friend._id }).status == 'askedHim' ) 
+                return LJ.fn.renderUser({ user: friend, wrap: 'eventsWrap' });
+
+            return LJ.fn.renderUser({ user: friend, wrap: 'eventsWrap'});
         }
 
 });

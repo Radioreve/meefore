@@ -61,7 +61,7 @@ img.left{float:left;}
 .none{
     display: none;
 }
-.filtered, .nonei {display: none !important;}
+.filtered{display: none !important;}
 .hidden{visibility:hidden;}
 .centered{
 	position: relative;
@@ -979,7 +979,8 @@ header input.validating-btn{
 .u-item{
 	height: 50px;
 	margin: 9px 0;
-	display: inline-block;
+	/* display: inline-block; */
+	width: 100%;
 	opacity: 0;
 	-webkit-transition: opacity.3s;
 	transition: opacity .3s;

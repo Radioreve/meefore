@@ -32,8 +32,9 @@
 
 		console.log('Friend request ... ');
 
-		var userId   = data.userId,
-			friendId = data.friendId;
+		var userId    = data.userId,
+			hostIds   = data.hostIds,
+			friendId  = data.friendId;
 
 		var userSocket   = global.sockets[ userId ],
 			friendSocket = global.sockets[ friendId ];
@@ -97,6 +98,14 @@
 							friendId: friendId, userId: userId, updateType: updateTypeUser, friendList: myUser.friendList });				
 				});
 
+				for( var k = 0; k < hostIds.length; k++ )
+				{
+					var hostSocket = global.sockets[ hostIds[k] ];
+					if( hostSocket != undefined )
+						hostSocket.emit('friend request in success host', { 
+							friendId: friendId, userId: userId  });				
+				}
+
 			});
 		});
 
@@ -104,10 +113,11 @@
 	
 	var refetchAskers = function( data ){
 
+		console.log('Refetching...');
 		var userId  = data.userId,
 			idArray = data.idArray;
 
-		var socket = global.sockets[userId];
+		var socket = global.sockets[ userId ];
 
 		User.find({ '_id' : { $in : idArray } },
 		{
@@ -132,6 +142,7 @@
 					toClient:'Can\t find friends relationships'
 				});
 
+		 console.log('Emitting refetch askers');
 		 socket.emit('refetch askers success', users );
 			
 		});

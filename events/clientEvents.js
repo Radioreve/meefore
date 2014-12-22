@@ -58,7 +58,9 @@
 
 			var room   = eventUtils.buildRoomId( eventId, hostId, userId ),
 				userSocket = global.sockets[userId],
-				hostSocket = global.sockets[hostId];
+				hostSocket = global.sockets[hostId],
+		   requesterSocket = global.sockets[requesterId];
+
 
 			if( userSocket != undefined ){
 				userSocket.join( room );
@@ -70,9 +72,10 @@
 				console.log('Host '+hostId+' has joined the room : \n'+room + '\n');
 			}
 
-		/* On commence par l'Event pour savoir s'il est full */
+
 		Event.findById( eventId, {}, function( err, myEvent ){
 
+			/* On commence par l'Event pour savoir s'il est full */
 			if( myEvent.askersList.length === myEvent.maxGuest ){
 
 				return eventUtils.raiseError({
@@ -81,6 +84,11 @@
 					toClient: "This event is full, try another one"
 				});
 
+			}
+			/* Ensuite on regarde si la personne n'est pas déjà dans la liste pour éviter toute incohérence Data */
+			if(  _.pluck( myEvent.askersList, '_id' ).indexOf( userId ) != -1 )
+			{
+				return requesterSocket.emit('friend already in', { eventId: eventId, userId: userId });
 			}
 
 			User.findById( userId, {}, function( err, user ){
@@ -95,12 +103,25 @@
 				}
 
 				if( user.status === 'hosting' ){
-					return eventUtils.raiseError({
-						err: err,
-						socket: userSocket,
-						toServer: "Request failed [2]",
-						toClient: "Can't host and join at the same time"
-					});
+					if( requesterId == userId )
+					{
+						return eventUtils.raiseError({
+							err: err,
+							socket: userSocket,
+							toServer: "Request failed [2a]",
+							toClient: "Can't host and join at the same time"
+						});
+					}
+					if( requesterId != userId )
+					{
+						return eventUtils.raiseError({
+							err: err,
+							socket: requesterSocket,
+							toServer: "Request failed [2b]",
+							toClient: "This friend is hosting an event"
+						});
+					}
+
 				}
 
 					user.socketRooms.push( room );

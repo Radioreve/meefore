@@ -10,33 +10,28 @@
 	- Implémenter un délire de points, de rewards (visuel), définir hiérarchie, ambassadeur, vip etc...
 	  + faire un système de badges par tag et par palier ET/OU de niveaux. Cadeaux offert à chaque palier
 	- Limiter le nombre de participations possibles par jours
+	- Pagination latérale par paquet de 6 sur la page évènements
+	- Mettre un timeout de 10 secondes et gérer l'erreur server
+	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription
 
 #Schedule 
 
-  0----------
-	- Régler le problème de l'initialisation parallèle fetchuser/fetchfriends
-	- Implémenter l'UI friendship (les 3 state dans /search, ainsi que dans /addfriend )
-	- Faire merger les chats lorsque des amis ont rejoint le même event
-	- Fixer les z-indx sur le chat
-  1----------
-	- Donner à l'host la possibilité de valider un user
-	- Pouvoir /f add des gens et gérer le status
-	- Incorporer le chat dans la vue Management & fix le design
-  2----------
+  Lundi
+	- Faire merger les chats lorsque des amis ont rejoint le même event ( problème des amis d'amis )
+	- Landing page StoryRoad
 	- Rédiger le first message à la première connexion (notamment..)
-	- Changer l'affichage de "Settings", si l'utilisateur est inscris via Facebook
-	- Mettre un timeout de 10 secondes et gérer l'erreur server
-  3----------
+  Mardi
 	- Rendre le design responsive @media queries et/ou bootstrap
-  4----------
-	- Système d'admin monitoring pour voir les gens connectés
-	- Google Analytics
-  5---------- 
+	- Système d'admin minimal pour monitorer les gens connectés
+  Mercredi
 	- Déploiement live
+	- Validation clientside, validaton server side
 	- SEO
+  3----------
+  4----------
+  5---------- 
 
   ~ NICE TO HAVE
-	- Validation clientside, validaton server side
 	- Améliorer le système de logout
 	- "Someone is typing..."
 	- Clientside routing

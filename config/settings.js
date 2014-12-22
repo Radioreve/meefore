@@ -3,20 +3,18 @@
 var settings = {
 
 	eventsFreezeAt: 9,
-	eventsEndAt: 10,
+	eventsEndAt: 13,
 
 	tagList: 
 			 [  'afterwork',
 				'before',
 				'club',
 				'apero',
-				'cameltoe',
 				'apparte',
 				'bar',
 				'rencontre',
-				'vodka',
 				'erasmus',
-				'firsttime'
+				'blackout'
 			 ],
 
 	activeEventStates:

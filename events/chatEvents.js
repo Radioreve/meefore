@@ -2,8 +2,7 @@
 	var User = require('../models/UserModel'),
 	    Event = require('../models/EventModel'),
 	    eventUtils = require('./eventUtils'),
-	    _ = require('lodash'),
-	    config = require('../config/config');
+	    _ = require('lodash');
 	
 	var sendMessage = function(data){
 

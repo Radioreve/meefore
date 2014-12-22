@@ -50,7 +50,7 @@
 			 	global.sockets[id] = socket;
 			 }
 
-			 require('./events/events')( id );
+			 require('./events/allEvents')( id );
 		});
 
 	var port = process.env.PORT || 1337;

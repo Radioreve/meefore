@@ -2,7 +2,7 @@
 	initEvents    = require('./initEvents'),
 	profileEvents = require('./profileEvents'),
 	manageEvents  = require('./manageEvents'),
-	otherEvents   = require('./otherEvents'),
+	chatEvents   = require('./chatEvents'),
 	clientEvents  = require('./clientEvents'),
 	friendEvents  = require('./friendEvents'),
 	mailEvents    = require('./mailEvents');
@@ -27,8 +27,8 @@
 		socket.on( 'fetch askers', manageEvents.fetchAskers );
 
 	//Events inclassables
-		socket.on( 'send message', otherEvents.sendMessage );
-		socket.on( 'load rooms', otherEvents.reloadRooms );
+		socket.on( 'send message', chatEvents.sendMessage );
+		socket.on( 'load rooms', chatEvents.reloadRooms );
 
 	//Events relatifs au démarrage d'une session client
 		socket.on( 'fetch events', clientEvents.fetchEvents );

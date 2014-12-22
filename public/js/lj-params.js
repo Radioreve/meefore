@@ -22,7 +22,7 @@
 		displayParamsEventHost: { cloud_name :"radioreve", width: 80, height: 80, crop: 'fill', gravity: 'face', radius: '2' },
 
         /* Image des askers dans la vue event */
-        displayParamsEventAsker: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:'5' },
+        displayParamsEventAsker: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:'0' },
 
 		/* Image du user dans le header */
 		displayParamsHeaderUser: { cloud_name: "radioreve",width: 50,height: 50, crop: 'fill', gravity: 'face', radius: 'max' },
@@ -53,6 +53,7 @@
     selectedTags: [],
     selectedLocations: [],
     $eventsToDisplay: $(),
+    nextCallback:{},
 	state: {
 		connected: false,
 		fetchingEvents: false,
@@ -69,7 +70,15 @@
 					+'</span><span class="toastMsg"></span></div>',
 		toastSuccess: '<div class="toast toastSuccess" class="none"><span class="toast-icon icon icon-right-open-big">'
 					+'</span><span class="toastMsg"></span></div>',
-		noResult: '<center id="noEvents" class="filtered"><h3>Aucun évènement pour ce choix de filtre </h3></center>'
+		noResult: '<center id="noEvents" class="filtered"><h3>Aucun évènement pour ce choix de filtre </h3></center>',
+		charte: '<div id="charte" class="centered"> \
+					<h2>Charte d\'engagement V&W </h2> \
+					<div class="subcharte"><span>1</span> Ne jamais se présenter à un event les mains vides </div> \
+					<div class="subcharte"><span>2</span> Toujours respecter les autres utilisateurs </div> \
+					<div class="subcharte"><span>3</span> Parler de V&W à vos amis </div> \
+					<div class="charte-accept">Accepter</div> \
+					<div class="charte-accept">"Refuser"</div> \
+				 </div>'
 	},
 	tagList: [],
 	locList: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ],

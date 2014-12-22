@@ -26,9 +26,18 @@ var createEvent = function(data) {
     socket.join( hostId );
 
     var beginsAt = new Date();
-    beginsAt.setHours(parseInt(data.hour));
-    beginsAt.setMinutes(parseInt(data.min));
+    var hour = parseInt( data.hour );
+    beginsAt.setHours( hour );
+    beginsAt.setMinutes( parseInt( data.min ));
     beginsAt.setSeconds(0);
+
+    console.log( parseInt( data.hour ) );
+    if( hour < 14  || hour > 23 )
+     return eventUtils.raiseError({
+                    toClient:"Les évènements ont lieu entre 14h00 et 23h59",
+                    toServer:"EC-6",
+                    socket: socket
+                });
 
     var newEvent = new Event(data);
     newEvent.createdAt = currentDate;
@@ -136,6 +145,7 @@ var suspendEvent = function(data) {
 
 
 var cancelEvent = function(data) {
+    console.log('Cancel event received');
 
     var eventId = data.eventId,
         hostId = data.hostId,

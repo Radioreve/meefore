@@ -7,8 +7,8 @@
 }
 
 .surfacing .btn-chat{
-	background: #E6E6E6;
-	color:rgb(60,60,60);
+	background: rgb(60,60,60);
+	color: white;
 }
 .chatWrap, #friendListWrap{
 	width: 258px;
@@ -95,8 +95,8 @@
 	float: right;
 }
 .chat-host{
-	left:75px;
-	top: -14px;
+	left: 75px;
+	top: -60px;
 }
 .chatWrap.chat-host{
 }
@@ -138,6 +138,8 @@ background: white;
 	width: 37px!important;
 	border-radius:100px!important;
 	font-size:11px!important; 
+	background: #E6E6E6;
+	color: rgb(107,107,107);
 }
 
 
@@ -148,6 +150,7 @@ background: white;
 	padding-top:10px;
 	top: -126px;
 	overflow: visible;
+	z-index: 10;
 }
 #friendListWrap button::after{
 	display:none;
@@ -162,7 +165,7 @@ background: white;
 }
 .f-item{
 	margin: 7px 0;
-	width: 100%;
+	width: 102.2%;
 	padding-left: 7px;
 	box-sizing: border-box;
 	background: white;
@@ -172,13 +175,21 @@ background: white;
 	text-align:left;
 	font-size: 15px;
 }
-.f-item button.onHold{
+button.onHold,
+button.onHold{
 	color: #595959;
 	background: none;
 }
-.f-item button.onHold:hover{
+button.onHold:hover,
+button.onHold:hover{
 	box-shadow:none;
 	cursor:default;
+}
+button.isHosting{
+	background: white;
+	color: rgb(55, 55, 55);
+	padding-top: 7px;
+	padding-left: 7px
 }
 .f-item i.icon{
 	position:relative;

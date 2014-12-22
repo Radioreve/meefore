@@ -12,7 +12,7 @@ var eventsFreezeAt = settings.eventsFreezeAt,
 
 function changeStateToFrozen(){
 
-	var conditions   = { 'state': { $in : ['canceled'] } },
+	var conditions   = { 'state': { $in : ['open', 'suspended'] } },
    	    update     = { 'state': 'frozen' },
    	    options    = {  multi : true };
 
@@ -25,6 +25,27 @@ function changeStateToFrozen(){
   			global.io.emit('freeze events');
    		};
 
+   	var userConditions = {},
+   	    userUpdate     = 
+   	    { 
+   	    	$set : { 
+   	    		'status': 'idle',
+   	    		'eventsAskedList': [],
+   	    		'hostedEventId':'',
+   	    		'socketRooms': []
+   	    	 }},
+
+   	    userOptions    = {  multi : true };
+
+   		var userCallback   = function( err, numberAffected, raw ){
+
+   			if( err ) return console.log( err );
+   			console.log('The number of updated documents was %d', numberAffected);
+  			console.log('The raw response from Mongo was ', raw);
+
+   		};
+
+   		User.update( userConditions, userUpdate, userOptions, userCallback );
 		Event.update( conditions, update, options, callback );
 
 }
@@ -44,21 +65,8 @@ function changeStateToEnded(){
   			global.io.emit('end events');
 
    		};
-
-   	var userConditions = { 'state': 'hosting' },
-   	    userUpdate     = { 'state': 'idle' },
-   	    userOptions    = {  multi : true };
-
-   		var userCallback   = function( err, numberAffected, raw ){
-
-   			if( err ) return console.log( err );
-   			console.log('The number of updated documents was %d', numberAffected);
-  			console.log('The raw response from Mongo was ', raw);
-
-   		};
-
-   		User.update( userConditions, userUpdate, userOptions, userCallback );
-		Event.update( eventConditions, eventUpdate, eventOptions, eventCallback );
+   	
+	   Event.update( eventConditions, eventUpdate, eventOptions, eventCallback );
 
 }
 
@@ -66,13 +74,13 @@ function changeStateToEnded(){
 	
 		var ruleFrozen = new schedule.RecurrenceRule();
 			ruleFrozen.hour = eventsFreezeAt;
-			ruleFrozen.minute = 0; // Sinon il l'envoie toutes les minutes
+			//ruleFrozen.minute = 0; // Sinon il l'envoie toutes les minutes
 
 		var job_e = schedule.scheduleJob( ruleFrozen, changeStateToFrozen );
 
 		var ruleEnded = new schedule.RecurrenceRule();
 			ruleEnded.hour = eventsEndAt;
-			ruleEnded.minute = 0; 
+			//ruleEnded.minute = 0; 
 
 		var job_f = schedule.scheduleJob( ruleEnded, changeStateToEnded );
 
