@@ -1,6 +1,6 @@
 *{
 } 
-html{ 
+html{   
   
 }
 body{
@@ -66,8 +66,8 @@ img.left{float:left;}
 .centered{
 	position: relative;
 	margin:auto;
-	padding-top: 50px;
 	width: 750px;
+	padding-top: 50px;
 	/* top:0; */
 	/* left:0; */
 	/* right:0; */
@@ -268,14 +268,14 @@ top: 33px;
 	padding-top: 8px;
 	padding-left: 12px;
 	margin-bottom: 3px;
-	width: 33px;
+	width: 31px;
 	height: 24px;
 	border-radius: 2px;
 	position: relative;
 	transition: all linear 0.2s;
 }
 .menu-item span.underlay{
-	width: 46px;
+	width: 44px;
 	background: rgb(247, 0, 0);
 	box-shadow: 0 1px 1px rgb(255, 0, 0);
 	height: 4px;
@@ -320,6 +320,7 @@ top: 33px;
 .menu-item-active:hover{
 	border-radius: 0px;
 	color: white;
+	background: rgb(23, 23, 23);
 }
 .menu-item div{
 	display:inline;
@@ -358,8 +359,6 @@ top: 33px;
 #signupWrap{
 }
 #signupWrapp{
-	border-bottom: 1px solid #eee;
-	height: 350px;
 }
 #signupWrapp img{
 	margin: 80px 40px;
@@ -369,7 +368,7 @@ top: 33px;
 #loginWrap,
 #signupWrap,
 #resetWrap{
-	width: 400px;
+	width: 520px;
 	margin: 0 auto;
 	text-align: center;
 }
@@ -382,8 +381,6 @@ top: 33px;
 #signupWrap .submitWrap,
 #resetWrap .submitWrap{
 	border:none;
-	width: 338px;
-	height: 80px;
 	position: relative;
 }
 #loginWrap .submitWrap input,
@@ -398,8 +395,8 @@ top: 33px;
 	font-size: 10px;
 }
 .themeBtn,
-.themeBtnToggle,
-#landingWrap button{
+.themeBtnToggle
+{
 	width: 100px;
 	height: 31px;
 	border-radius: 2px;
@@ -431,24 +428,27 @@ top: 33px;
 }
 .themeBtnToggleHost:hover{
 }
-#loginWrap   #login,
-#signupWrap  #signup,
-#resetWrap   #reset
-{
-	background: #F5F5F5;
-	color: #414141;
-	border: 1px solid #DFDFDF;
+#signup
+{	
+	height: 40px;
+	margin-top: 20px;
+	margin-right: 40px;
+	width: px;
 }
 .input-field{
-	width: 300px;
-	border: 1px solid #A3A3A3;
-	margin: 7px 10px;
+	width: 60%;
+	border: none;
+	border-bottom: 1px dashed #E8E8E8;
+	margin: 8px 10px;
 	display: inline-block;
-	padding: 9px;
+	padding: 10px;
+	padding-left: 10px;
 	border-radius: 3px 3px 0 0;
+	transition: all .3s;
+	font-size: 14px;
+	color: #645E5E;
 }
 .input-field:focus{
-	box-shadow: 1px 1px 5px #CECECE;
 }
 #loginWrap  .sub-actions,
 #signupWrap .sub-actions,
@@ -501,10 +501,11 @@ top: 33px;
 .fieldsWrap .input-row-wrap{
 }
 .fieldsWrap .input-row-wrap:last-child{
-	margin-top: 3px;
+	margin-top: -7px;
 }
 #loginWrap h2,
 #signupWrap h2{
+    font-size: 23px;
 }
 #profileWrap h2{
 	margin-bottom: 40px;
@@ -516,7 +517,8 @@ top: 33px;
 	font-size: .7em;
 	text-align: center;
 	color: #888;
-	margin-top: 20px;
+	position: absolute;
+	bottom: -30px;
 	width: 100%;
 }
 #profileWrap h5 span{
@@ -895,27 +897,6 @@ header input.validating-btn{
 	background: rgb(38, 38, 38)!important;
 }
 
-#landingGo button i{
-	font-size: 17px;
-	margin-right: 5px;
-	position: absolute;
-	top: 12px;
-	left: 14px;
-}
-#landingGo button.fb{
-	background: white;
-	color: black;
-	border: 1px solid;
-}
-
-#landingGo button i.icon-facebook{
-	color: black;
-	border: 1px solid;
-}
-#landingGo button i.icon-user{
-	color: rgb(107, 107, 107);
-	border: 1px solid;
-}
 #searchUsersWrap{
 	width:400px; 
 	overflow: auto;
@@ -1099,4 +1080,84 @@ span.f-age, span.f-favdrink{
 .hint--right{
 	text-transform:none!important;
 	font-family:'Lato'; 
+}
+
+.landing-row{
+    height: 100px;
+    transition: all .3s;
+}
+
+.landing-row div{
+	display:inline-block;
+	vertical-align: top;
+	transtion: all .3s;
+}
+
+.landing-row div.time{
+
+    /* font-weight: bolder; */
+    text-align: center;
+    font-size: 30px;
+    position: relative;
+    top: -3px;
+    width: 110px;
+    margin-right: 11px;
+
+}
+
+.landing-row div.path{
+    width: 3px;
+    height: 100%;
+    position: relative;
+    background: rgb(42, 42, 42);
+}
+.landing-row div.message{
+    margin: 0 30px;
+}
+
+.landing-row:last-of-type{
+	height:0;
+}
+
+.landing-row div.message div{
+	display:block;
+	margin-bottom: 5px;
+}
+.landing-row div.head{
+	font-family:'Raleway';
+	font-size: 1.7em;
+}
+
+.landing-row div.round{
+	width: 21px;
+	border-radius: 30px;
+	height:20px;
+	background: rgb(216, 67, 67);
+	border: 2px solid rgb(0, 0, 0);
+	position: relative;
+	left: -11px;
+	top: 0px;
+}
+
+.landing-row:not(.active) div.round{
+	background:white;
+	border: 2px solid #ccc;
+}
+.landing-row:not(.active) div.time{
+    font-size: 20px;
+    color: #ccc;
+    top: 1px;
+}
+.landing-row:not(.active) div.path{
+    background: #ccc;
+}
+.landing-row:not(.active) div.message{
+    color: #ccc;
+}
+.landing-row button{
+	width: 140px; 
+	margin-left: 55px;
+	height: 34px;
+	background: rgb(199, 42, 42);
+	border: 1px solid rgb(163, 30, 30);
 }

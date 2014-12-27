@@ -28,22 +28,22 @@
 
 					
 					if( user )
-						return next( null, false,{ msg: "User already exists" });
+						return next( null, false,{ msg: "Cet email est déjà utilisé" });
 
 					/*
 					if( !validator.isEmail( email ) )
-						return next( null, false, { msg: "Email is incorrect" });
+						return next( null, false, { msg: "L'email est incorrect" });
 
 					if ( password.trim().length < 6) 
-				        return next( null, false, { msg: "Email is too short ( < 6 )" });
+				        return next( null, false, { msg: "Le mot de passe est trop court ( < 6 )" });
 
 				    if ( password.trim().length > 30)
-				        return next( null, false, { msg: "Email is too long ( > 30 )" });
+				        return next( null, false, { msg: "Le mot de passe est trop long ( > 30 )" });
+				    */
 
 				    if ( /[-!$%^&*()_#+|@~=`{}\[\]:";'<>?,.\/]/.test( password.trim() ) ){
-				        return next( null, false, { msg: "Email contains invalid char!" });
+				        return next( null, false, { msg: "Le mot de passe contient des caractères invalides!" });
 				    }
-				    */
 
 					var newUser = new User();
 
@@ -75,15 +75,15 @@
 		    User.findOne({ 'local.email' :  email }, function( err, user ) {
 
           	if( err )
-         	   return done( err, false, { msg: "Missing credentials" });
+         	   return done( err, false, { msg: "Identifiants incorrects" });
 
             if( !user )
-                return done( null, false, { msg: "No email matched" });
+                return done( null, false, { msg: "Identifiants incorrects" });
 
             if( !user.validPassword(password) )
-                return done( null, false, { msg: "Invalid credentials" });
+                return done( null, false, { msg: "Identifiants incorrects" });
 
-            return done( null, user, { msg: "Welcome " + user.local.email });
+            return done( null, user, { msg: "Bienvenue " + user.local.email });
 
     	    });
 	

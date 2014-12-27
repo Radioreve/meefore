@@ -54,7 +54,7 @@
 				}
 				if( !user )
 				{
-	  				res.json( 401, { msg: "Invalid credentials" });
+	  				res.json( 401, { msg: "Identifiants incorrects" });
 					res.end();
 				}
 				else

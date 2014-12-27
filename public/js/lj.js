@@ -38,7 +38,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				  	if( status != 'connected' )
 				  		 return;
 
-				  	LJ.fn.toastMsg('Facebook account detected, login in...', 'info' );
+				  	LJ.fn.toastMsg('Compte Facebook détecté, login in...', 'info' );
 
 				  	sleep(1500, function(){
 
@@ -162,7 +162,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             			$(this).toggleClass('selected');
             		 	if( $('#createEventWrap .selected').length > 3 ){
             				$(this).toggleClass('selected');
-            				return LJ.fn.toastMsg("Can't have more than 3 tags", 'error' );
+            				return LJ.fn.toastMsg("3 tags maximum", 'error' );
             		}       		
             	});
 			})();
@@ -181,11 +181,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('input.input-field').addClass('validating');
 
 			if( "" ===  $('#pwSignup').val().trim() || "" === $('#pwCheckSignup').val().trim() || "" === $('#emailSignup').val().trim() ){
-				return LJ.fn.handleFailedSignup( { msg: "Input is missing" });
+				return LJ.fn.handleFailedSignup( { msg: "Il manque un champs!" });
 			}
 
 			if( $('#pwSignup').val() != $('#pwCheckSignup').val() ){
-				return LJ.fn.handleFailedSignup( { msg: "Passwords don't match" });
+				return LJ.fn.handleFailedSignup( { msg: "Les mots se passe sont différents" });
 			}
 
 			$.ajax({
@@ -377,10 +377,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			sleep(LJ.ui.artificialDelay,function(){
 
-				$('input.input-field').removeClass('validating');
-				LJ.fn.toastMsg( errorMsg, 'error' );
+				LJ.fn.handleServerError( errorMsg );
 				LJ.$backToLogin.velocity('transition.slideRightIn', { duration: 400 });
-				LJ.fn.hideLoaders();
 
 			});
 
@@ -454,7 +452,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('#profile').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
-            $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('none');}})
+            $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap, #signupWrapp').addClass('nonei');}})
 			LJ.fn.displayContent( LJ.$profileWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut' });
 
 		},
@@ -464,7 +462,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('#events').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
-            $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('none');}})
+            $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap, #signupWrapp').addClass('nonei');}})
             LJ.fn.displayContent( LJ.$eventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut'  });
 
 		},
@@ -474,7 +472,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('#management').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
-             $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('none');}})
+             $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap, #signupWrapp').addClass('nonei');}})
 			LJ.fn.displayContent( LJ.$manageEventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut'  });
 
             LJ.fn.fetchAskers();
@@ -501,7 +499,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				/* Management View */
 				if( LJ.user.state == 'hosting' )
 				{
-					$('#suspendEvent').text( LJ.my)
+					$('#suspendEvent').text()
 				}
 
 				/* ThumbHeader View */
@@ -720,15 +718,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			var $previousImg = $('#pictureWrap').find('img'),
 				$newImg      = $.cloudinary.image( imgId, d ); 
-				$newImg.addClass('mainPicture').hide();
+				$newImg.addClass('mainPicture').addClass('none');
 				$('#pictureWrap').prepend( $newImg );
  													
 				$previousImg.velocity('transition.fadeOut', { 
 					duration: 600,
 					complete: function(){
+						$newImg.velocity('transition.fadeIn', { duration: 700, complete: function(){} });
 						$previousImg.remove();
-						$newImg.velocity('transition.fadeIn', { duration: 700 });
-					}
+					} 
 				});
 
 		},
@@ -893,48 +891,43 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			/* Affichage de la vue en fonction du state user */
         	sleep( LJ.ui.artificialDelay, function(){   
 
-				if( LJ.state.connected )
-				{
-					LJ.fn.toastMsg('You have been reconnected', 'success');
-				}
-				else
-				{ 
+				if( LJ.state.connected ) return LJ.fn.toastMsg('Vous avez été reconnecté', 'success');
+				
+				LJ.state.connected = true;
+				LJ.fn.toastMsg('Bienvenue '+LJ.user.name,'info');
 
-				 LJ.state.connected = true;
 				$('#thumbWrap').velocity('transition.slideUpIn');
-				 $('.menu-item-active').removeClass('menu-item-active');
+				$('.menu-item-active').removeClass('menu-item-active');
 				 
-					switch( LJ.user.status )
-					{
-						case 'new':
-							LJ.params.socket.emit('request welcome email', LJ.user._id );
-							LJ.fn.displayViewAsNew();
-							break;
-						case 'idle':
-							LJ.fn.displayViewAsIdle();
-							break;
-						case 'hosting':
-							LJ.fn.displayViewAsHost();
-							break;
-						default:
-							alert('No status available, contact us');
-							break;
-					}
-
-					LJ.fn.toastMsg('Welcome back '+LJ.user.name,'info');
-					sleep( 2400, function() {
-						
-						$('.menu-item').velocity({ opacity: [1, 0] }, {
-							display:'inline-block',
-							duration: 800,
-							complete: function(){
-								$('.menu-item').each( function( i, el ){
-									$(el).append('<span class="bubble filtered"></span>')
-								});	
-							}
-						});
-					});
+				switch( LJ.user.status )
+				{
+					case 'new':
+						LJ.params.socket.emit('request welcome email', LJ.user._id );
+						LJ.fn.displayViewAsNew();
+						break;
+					case 'idle':
+						LJ.fn.displayViewAsIdle();
+						break;
+					case 'hosting':
+						LJ.fn.displayViewAsHost();
+						break;
+					default:
+						alert('No status available, contact us');
+						break;
 				}
+
+				sleep( 2400, function() {
+					
+					$('.menu-item').velocity({ opacity: [1, 0] }, {
+						display:'inline-block',
+						duration: 800,
+						complete: function(){
+							$('.menu-item').each( function( i, el ){
+								$(el).append('<span class="bubble filtered"></span>')
+							});	
+						}
+					});
+				});
 
 			});
 
@@ -983,24 +976,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				});
 
 
-				LJ.params.socket.on('freeze events', function(){
+				LJ.params.socket.on('terminate events', function(){
 
-					LJ.fn.toastMsg('Events are frozen!', 'info', true);
-					$('.eventItemWrap').attr('data-eventstate','frozen')
-									   .click( function(e){
-									   	e.stopPropagation();
-									   });
-
+					LJ.fn.toastMsg('Les évènements sont maintenant terminés!', 'info');
 					LJ.fn.displayViewAsFrozen();
 
 				});
 
-				LJ.params.socket.on('end events', function(){
+				LJ.params.socket.on('restart events', function(){
 
-					LJ.fn.toastMsg('Events hostings have started!', 'info', true);
-					$('.eventItemWrap').remove();
-					LJ.myEvents = [];
-
+					LJ.fn.toastMsg('Les évènements sont à présent ouverts!', 'info');
 					LJ.fn.displayViewAsNormal();
 
 
@@ -1026,12 +1011,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 					LJ.fn.initAppSettings( data, settings );
 					LJ.fn.displayUserSettings();
-					LJ.fn.fetchEvents();
-					LJ.fn.fetchUsers();
-					LJ.fn.fetchFriends();
+
 					LJ.fn.initRooms( LJ.user._id );					
 					LJ.fn.initCloudinary( user.cloudTag );
 					LJ.fn.initLayout( settings );
+
+					LJ.fn.fetchEvents();
+					LJ.fn.fetchUsers();
+					LJ.fn.fetchFriends();
 
 				});
 
@@ -1127,7 +1114,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 						LJ.fn.hideLoaders();
 						LJ.fn.displayAddFriendToPartyButton();
-						LJ.fn.toastMsg('Your friend was already in ;-)', 'info');
+						LJ.fn.toastMsg('Votre ami s\'est ajouté à l\évènement entre temps', 'info');
 					});
 
 				});
@@ -1176,14 +1163,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 							if( LJ.user._id == requesterId && LJ.user._id == userId )
 							{
 								LJ.fn.hideLoaders();
-								LJ.fn.toastMsg('Your request has been sent', 'info');
+								LJ.fn.toastMsg('Votre demande a été envoyée', 'info');
 								 $('.asking').removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
 										  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
 							}
 
 							if( LJ.user._id != requesterId && LJ.user._id == userId )
 							{
-								LJ.fn.toastMsg('A friend added you to an event', 'info');
+								LJ.fn.toastMsg('Un ami vous a ajouté à une soirée', 'info');
 								$('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askIn')
 								          .removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
 										  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
@@ -1191,7 +1178,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 							if( LJ.user._id == requesterId && LJ.user._id != userId )
 							{
-								LJ.fn.toastMsg('Your friend has been added!', 'info');
+								LJ.fn.toastMsg('Votre ami a été ajouté', 'info');
 								LJ.fn.hideLoaders();
 								LJ.fn.displayAddFriendToPartyButton();
 							}
@@ -1326,7 +1313,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				LJ.params.socket.on('send contact email success', function(){
 
 					sleep( LJ.ui.artificialDelay, function(){
-						LJ.fn.toastMsg( "Mail successfully sent", 'info');
+						LJ.fn.toastMsg( "Merci beaucoup!", 'info');
 						$('.validating-btn').removeClass('validating-btn');
 						LJ.fn.hideLoaders();
 					});
@@ -1350,7 +1337,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				LJ.params.socket.on('disconnect', function(){
 
-					LJ.fn.toastMsg("You have been disconnected from the stream", 'error', true);
+					LJ.fn.toastMsg("Quelque chose s'est produit, vous avez été déconnecté", 'error', true);
 					LJ.params.socket.disconnect(LJ.user._id);
 
 				});
@@ -1609,7 +1596,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         	/* Mise à jour de la vue des évènements */
 	        	var hour = (new Date).getHours();
-	        	if( hour < LJ.settings.eventsEndAt && hour >= LJ.settings.eventsFreezeAt ){
+	        	if( hour < LJ.settings.eventsRestartAt && hour >= LJ.settings.eventsTerminateAt ){
         			csl('Displaying events frozen state');
 	        		return LJ.fn.displayViewAsFrozen();
 	        	}     		
@@ -1717,7 +1704,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
        						  .velocity('transition.slideLeftIn', { duration: 700 });
 
        		}else{
-       			LJ.fn.toastMsg( LJ.$eventsToDisplay.length + ' events matched!', 'info');	
+       			LJ.fn.toastMsg( LJ.$eventsToDisplay.length + ' soirées pour ces filtres!', 'info');	
        		}
 
         },

@@ -1,99 +1,72 @@
 
+		
+	/* Contient les variables modifiant le comportant de l'application */
+	 
+	var Event    = require('../models/EventModel'),
+		  User     = require('../models/UserModel'),
+	  	schedule = require('node-schedule'),
+	  	settings = require('./settings');
+
+	var eventsTerminateAt = settings.eventsTerminateAt;
+
+	function terminateEvents(){
+
+		var conditions   = { 'state': { $in : ['open', 'suspended'] } },
+	   	    update     = { 'state': 'ended' },
+	   	    options    = {  multi : true };
+
+	   		var callback   = function( err, numberAffected, raw ){
+		
+	   			if( err ) return console.log( err );
+	   			console.log('The number of updated documents was %d', numberAffected);
+	  			console.log('The raw response from Mongo was ', raw);
+
+	  			global.io.emit('terminate events');
+	   		};
+
+	   	var userConditions = {},
+	   	    userUpdate     = 
+	   	    { 
+	   	    	$set : { 
+	   	    		'status': 'idle',
+	   	    		'eventsAskedList': [],
+	   	    		'hostedEventId':'',
+	   	    		'socketRooms': []
+	   	    	 }},
+
+	   	    userOptions    = {  multi : true };
+
+	   		var userCallback   = function( err, numberAffected, raw ){
+
+	   			if( err ) return console.log( err );
+	   			console.log('The number of updated documents was %d', numberAffected);
+	  			console.log('The raw response from Mongo was ', raw);
+
+	   		};
+
+	   		User.update( userConditions, userUpdate, userOptions, userCallback );
+			Event.update( conditions, update, options, callback );
+
+	}
+
+	(function eventAutoUpdate(){
+		
+			var ruleTerminate = new schedule.RecurrenceRule();
+				ruleTerminate.hour = eventsTerminateAt;
+				ruleTerminate.minute = 0; // Sinon il l'envoie toutes les minutes
+
+			var job_terminate = schedule.scheduleJob( ruleTerminate, terminateEvents );
+
+		})();
+
+	var min = 0;
 	
-/* Contient les variables modifiant le comportant de l'application */
- 
-var Event    = require('../models/EventModel'),
-	  User     = require('../models/UserModel'),
-  	schedule = require('node-schedule'),
-  	settings = require('./settings');
+	(function checkingTime(){
 
-var eventsFreezeAt = settings.eventsFreezeAt,
-	  eventsEndAt    = settings.eventsEndAt;
-
-function changeStateToFrozen(){
-
-	var conditions   = { 'state': { $in : ['open', 'suspended'] } },
-   	    update     = { 'state': 'frozen' },
-   	    options    = {  multi : true };
-
-   		var callback   = function( err, numberAffected, raw ){
-	
-   			if( err ) return console.log( err );
-   			console.log('The number of updated documents was %d', numberAffected);
-  			console.log('The raw response from Mongo was ', raw);
-
-  			global.io.emit('freeze events');
-   		};
-
-   	var userConditions = {},
-   	    userUpdate     = 
-   	    { 
-   	    	$set : { 
-   	    		'status': 'idle',
-   	    		'eventsAskedList': [],
-   	    		'hostedEventId':'',
-   	    		'socketRooms': []
-   	    	 }},
-
-   	    userOptions    = {  multi : true };
-
-   		var userCallback   = function( err, numberAffected, raw ){
-
-   			if( err ) return console.log( err );
-   			console.log('The number of updated documents was %d', numberAffected);
-  			console.log('The raw response from Mongo was ', raw);
-
-   		};
-
-   		User.update( userConditions, userUpdate, userOptions, userCallback );
-		Event.update( conditions, update, options, callback );
-
-}
-
-function changeStateToEnded(){
-
-	var eventConditions   = { 'state': 'frozen' },
-   	    eventUpdate     = { 'state': 'ended' },
-   	    eventOptions    = {  multi : true };
-
-   		var eventCallback   = function( err, numberAffected, raw ){
-
-   			if( err ) return console.log( err );
-   			console.log('The number of updated documents was %d', numberAffected);
-  			console.log('The raw response from Mongo was ', raw);
-
-  			global.io.emit('end events');
-
-   		};
-   	
-	   Event.update( eventConditions, eventUpdate, eventOptions, eventCallback );
-
-}
-
-(function eventAutoUpdate(){
-	
-		var ruleFrozen = new schedule.RecurrenceRule();
-			ruleFrozen.hour = eventsFreezeAt;
-			//ruleFrozen.minute = 0; // Sinon il l'envoie toutes les minutes
-
-		var job_e = schedule.scheduleJob( ruleFrozen, changeStateToFrozen );
-
-		var ruleEnded = new schedule.RecurrenceRule();
-			ruleEnded.hour = eventsEndAt;
-			//ruleEnded.minute = 0; 
-
-		var job_f = schedule.scheduleJob( ruleEnded, changeStateToEnded );
-
+				min += 1;
+				console.log( 'App running for ' + min + ' minutes now. ');
+				setTimeout( checkingTime, 60000)
 
 	})();
-
-var min = 0;
-(function checkingTime(){
-
-			min += 1;
-			console.log( 'App running for ' + min + ' minutes now. ');
-			setTimeout( checkingTime, 60000)
-
-})();
 
 

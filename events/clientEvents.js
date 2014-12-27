@@ -81,7 +81,7 @@
 				return eventUtils.raiseError({
 					socket: userSocket,
 					toServer: "max user reached for that event",
-					toClient: "This event is full, try another one"
+					toClient: "L'évènement est complet. Essayez en un autre."
 				});
 
 			}
@@ -109,7 +109,7 @@
 							err: err,
 							socket: userSocket,
 							toServer: "Request failed [2a]",
-							toClient: "Can't host and join at the same time"
+							toClient: "Vous êtes déjà en train d'organiser une soirée!"
 						});
 					}
 					if( requesterId != userId )
@@ -118,7 +118,7 @@
 							err: err,
 							socket: requesterSocket,
 							toServer: "Request failed [2b]",
-							toClient: "This friend is hosting an event"
+							toClient: "Cet ami est en train d'organiser une soirée"
 						});
 					}
 

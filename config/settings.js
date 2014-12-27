@@ -2,9 +2,8 @@
 
 var settings = {
 
-	eventsFreezeAt: 9,
-	eventsEndAt: 13,
-
+	eventsTerminateAt: 9,
+	eventsRestartAt: 13,
 	tagList: 
 			 [  'afterwork',
 				'before',

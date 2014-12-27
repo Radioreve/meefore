@@ -59,7 +59,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					duration: 400,
 					complete: function(){
 						
-						LJ.$signupWrap.velocity('transition.fadeIn', { duration: 2000, display:'inline-block'});
+						LJ.$signupWrap.velocity('transition.slideUpIn', { duration: 1400 });
 					}
 
 				});

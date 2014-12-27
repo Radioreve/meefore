@@ -14,7 +14,7 @@
 			if( ! validator.isInt( data.age ) ){
 				return eventUtils.raiseError({
 						toServer: "Wrong input format for age (must be age)",
-						toClient: "Something is wrong with your age",
+						toClient: "Il y a un problème avec votre âge",
 						socket: socket
 					});	
 			}

@@ -19,7 +19,6 @@
   Lundi
 	- Faire merger les chats lorsque des amis ont rejoint le même event ( problème des amis d'amis )
 	- Landing page StoryRoad
-	- Rédiger le first message à la première connexion (notamment..)
   Mardi
 	- Rendre le design responsive @media queries et/ou bootstrap
 	- Système d'admin minimal pour monitorer les gens connectés

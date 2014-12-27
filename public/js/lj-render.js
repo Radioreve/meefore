@@ -181,7 +181,7 @@
 						     + '<div class="e-hour e-weak">'+ LJ.fn.matchDateHHMM( e.beginsAt ) +'</div>'
 						   + '<div class="e-guests right">'
 						     + '<span class="guestsWrap">'
-                               +'<span>Liste d\invités </span>'
+                               +'<span>Ils veulent y aller</span>'
 						       + '<i class="icon icon-users"></i>'
 						       + '<span class="nbAskers"> '+ e.askersList.length +'</span>'
 						     + '</span>'

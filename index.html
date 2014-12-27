@@ -2,7 +2,7 @@
 
 <html lang="fr">
 <head>
-	<title>Before the crash</title>
+	<title>Vodsky & Whika</title>
 	<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="/css/reset.css">
@@ -35,7 +35,7 @@
 <div class="loaderWrap"></div>
 	<header class="">
 	  <div id="headerContent">
-		<h1><i class="icon icon-attention-alt"></i>V&W</h1>
+		<h1><i class="icon icon-attention-alt"></i>VW</h1>
 		  <ul id="menuWrap" class="">
 			<li id="profile" class="left menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
 			<li id="search" class="left menu-item icon icon-search" data-linkedcontent="#searchUsersWrap" ><span class="underlay"></span></li>
@@ -83,7 +83,53 @@
 			</div>
 		</div>
 		<section id="contentWrap" class="">
+
 		<section id="landingWrap" class="centered">
+		<div class="landing-row active">
+			<div class="time"></div>
+			<div class="path"></div>
+			<div class="message">
+				<div class="head"></div>
+				<div class="body"></div>
+			</div>
+		</div>
+		<div class="landing-row active">
+			<div class="time">10h40</div>
+			<div class="path"><div class="round"></div></div>
+			<div class="message">
+				<div class="head">Etape 1</div>
+				<div class="body">Je sonde ma team pour savoir qui a envie de sortir ce soir.</div>
+			</div>
+		</div>
+		<div class="landing-row active">
+			<div class="time">14h30</div>
+			<div class="path"><div class="round"></div></div>
+			<div class="message">
+				<div class="head">Etape 2</div>
+				<div class="body">Je vais sur V&W, je me connecte à des gens dans le même état d'esprit que moi.</div>
+			</div>
+		</div>
+		<div class="landing-row active">
+			<div class="time">19h34</div>
+			<div class="path"><div class="round"></div></div>
+			<div class="message">
+				<div class="head">Etape 3</div>
+				<div class="body">Je discute avec les organisateurs des différents évènements proposés.</div>
+			</div>
+		</div>
+		<div class="landing-row active">
+			<div class="time">22h24</div>
+			<div class="path"><div class="round"></div></div>
+			<div class="message">
+				<div class="head">Etape 4</div>
+				<div class="body">Je me fais beau, je prends une bouteille et j'arrive à l'heure</div>
+			</div>
+		</div>
+		<div class="landing-row">
+			<button class="themeBtn">Nous rejoindre</button>
+		</div>
+
+		<!--
 			<h2><i class="icon icon-attention"></i>L'abus de soirées est dangereux pour la santé<i class="icon icon-attention"></i></h2> 
 			
 			<section id="landingIntro">
@@ -108,31 +154,33 @@
 				<center>Sociable people only</center>
 				<button class="themeBtn"><i class="icon icon-thumbs-up-alt"></i>Je m'inscris quand même</button>
 			</section>
+		-->
 		</section>
 			<section id="signupWrapp" class="none centered">
 			<div id="signupWrap">
-				<h2>Inscrivez-vous</h2>
+				<h2>Rejoignez-vous</h2>
 				<div class="formWrap">
 					<form>
-						<input class="input-field" type="text"     id="emailSignup"   placeholder="email">
-						<input class="input-field" type="password" id="pwSignup"      placeholder="password">
-						<input class="input-field" type="password" id="pwCheckSignup" placeholder="password again">
-						<div class="input-field submitWrap">
-						<input type="submit" id="signup" class="themeBtn" value="S'inscrire ">
-						</div>
+					<label for="emailSignup">Email</label>
+					<input class="input-field" type="text"     id="emailSignup"   placeholder="you@mail.com">
+					<label for="pwSignup">Mot de passe</label>
+					<input class="input-field" type="password" id="pwSignup"      placeholder="********">
+					<label for="pwCheckSignup">Confirmation</label>
+					<input class="input-field" type="password" id="pwCheckSignup" placeholder="********">
+					<input type="submit" id="signup" class="themeBtn right" value="Rejoindre">
 					</form>
 				</div>
 			</div>
 			</section>
 			<section id="profileWrap" class="none centered">
-				<h2>Account settings</h2>
+				<h2>Mes informations</h2>
 				<div id="pictureWrap"class="left hint--top" data-hint="click to edit your picture">
 					<form class="upload_form"></form>
 					<h5 id="codebarre"><span class="icon icon-barcode-1"></span>53ef548dgk0847j6H7Y</h5>
 				</div>
 				<div class="fieldsWrap left">
 					<div class="input-row-wrap">
-						<label for="name">Name</label>
+						<label for="name">Nom</label>
 						<input id="name" class="profileInput" placeholder="Prad Bitt" type="text" maxlength="25">
 					</div>
 					<div class="input-row-wrap">
@@ -140,7 +188,7 @@
 						<input id="age" class="profileInput" placeholder="25" type="number" max="50" min="18">
 					</div>
 					<div class="input-row-wrap">
-						<label for="favoriteDrink">Your drink</label>
+						<label for="favoriteDrink">Ton verre</label>
 						<div id="favoriteDrink">
 							<div class="drink" data-drink="water">water</div>
 							<div class="drink" data-drink="soft">soft</div>
@@ -151,7 +199,7 @@
 						</div>
 					</div>
 					<div class="input-row-wrap">
-						<label for="mood">Your mood</label>
+						<label for="mood">Humeur du jour</label>
 						<div id="mood">
 							<div class="mood" data-mood="whatever">whatever</div>
 							<div class="mood" data-mood="tired">tired</div>
@@ -162,7 +210,7 @@
 						</div>
 					</div>
 					<div class="input-row-wrap">
-						<label class="labelTextArea" for="description">Who are you?</label>
+						<label class="labelTextArea" for="description">Qui es-tu ?</label>
 						<textarea id="description" class="profileInput" placeholder="Tell the world what you like"></textarea>
 					</div>
 				</div>
@@ -184,8 +232,8 @@
 				</div>
 			  </div>
 			  	<div id="frozenTimezone" class="none">
-					<h2>Have a break</h2>
-					<center><h3>Events are closed from 9am to 1pm. Time to sleep.</h3></center>
+					<h2>Fais un break</h2>
+					<center><h3>Les évènements sont femrés le matin, reprise à 14H. Time to sleep.</h3></center>
 				</div>
 				<section id="eventsListWrap"> <!-- Content dynamically loaded --> </section>
 				<div id="friendListWrap" class="none">
@@ -198,8 +246,8 @@
 				<h2>Créer votre évènement</h2>
 				<div id="createEventInputsWrap">
 					<div class="input-row-wrap">
-						<label for="eventName">C'est quoi ?</label>
-						<input id="eventName" placeholder="Apéro, before, afterwork ..." type="text" class="input-field_create">
+						<label for="eventName">Before</label>
+						<input id="eventName" placeholder="quelle soirée ?" type="text" class="input-field_create">
 					</div>
 					<div class="input-row-wrap">
 						<label for="eventLocation">Arrondissement</label>
@@ -226,7 +274,7 @@
 				</div>
 			</section>
 			<section id="manageEventsWrap" class="none centered">
-				<h2>Management de la soirée</h2>
+				<h2>Ils veulent venir à ta soirée</h2>
 				<div class="actionsWrap actionsStyle">
 					<span id="cancelEvent" class="action">Annuler</span>
 					<span id="suspendEvent" class="action">Suspendre</span>
@@ -242,7 +290,7 @@
 				</div>
 			</section>
 			<section id="searchUsersWrap" class="none centered">
-				<h2>Find your friends</h2>
+				<h2>Retrouve tes amis</h2>
 				<div class="actionsWrap actionsStyle">
 					<span id="friendsOnly" class="action">Amis uniquement</span>
 				</div>
@@ -255,7 +303,7 @@
 				<div id="searchUsers"> <!-- Content dynamicall loaded --> </div>
 			</section>
 			<section id="settingsWrap" class="none centered">
-				<h2> Settings </h2>
+				<h2> Préférences </h2>
 				<div id="settingsInputsWrap">
 					<div class="input-row-wrap">
 						<label for="currentEmail">Email</label>
@@ -281,17 +329,17 @@
 				</div>
 			</section>
 			<section id="contactWrap" class="none centered">
-			<h2>Share your thoughts</h2>
+			<h2>On veut tout savoir</h2>
 			<form>
 			<div>
-			<label for="contactName">Your name</label>
+			<label for="contactName">Nom</label>
 				<input id="contactName" type="text" placeholder="Jack Bamboo">
 			</div>
 			<div>
-			<label for="contactMail">Your email</label>
+			<label for="contactMail">Email</label>
 				<input id="contactMail" type="text" placeholder="jack@bamboomail.com">
 			</div>
-			<label for="contactBody" class="align-top">Your words</label>
+			<label for="contactBody" class="align-top">Ton message</label>
 				<textarea id="contactBody" placeholder="Hi there, ..."></textarea>
 			</form>
 			<button id="sendContactForm" class="right themeBtn">Envoyer</button>

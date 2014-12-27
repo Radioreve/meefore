@@ -27,18 +27,39 @@ var createEvent = function(data) {
 
     var beginsAt = new Date();
     var hour = parseInt( data.hour );
+
     beginsAt.setHours( hour );
     beginsAt.setMinutes( parseInt( data.min ));
     beginsAt.setSeconds(0);
 
-    console.log( parseInt( data.hour ) );
     if( hour < 14  || hour > 23 )
-     return eventUtils.raiseError({
-                    toClient:"Les évènements ont lieu entre 14h00 et 23h59",
-                    toServer:"EC-6",
-                    socket: socket
-                });
+    return eventUtils.raiseError({
+            toClient:"Les évènements ont lieu entre 14h00 et 23h59",
+            toServer:"EC-6",
+            socket: socket
+     });
 
+    if( data.tags.length == 0 )
+    return eventUtils.raiseError({
+            toClient:"Un tag minimum",
+            toServer:"Wrong Tags Inputs",
+            socket: socket
+    });
+
+    if( data.tags.length > 3 )
+    return eventUtils.raiseError({
+            toClient:"Trois tags maximum",
+            toServer:"Wrong Tags Inputs",
+            socket: socket
+    });
+
+    if( data.maxGuest < 2 || data.maxGuest > 10 )
+    return eventUtils.raiseError({
+            toClient:"Le nombre d'invités doit être compris entre 2 et 10",
+            toServer:"Wrong Tags Inputs",
+            socket: socket
+    });
+    
     var newEvent = new Event(data);
     newEvent.createdAt = currentDate;
     newEvent.beginsAt = beginsAt;
@@ -56,25 +77,6 @@ var createEvent = function(data) {
                 });
                 
             }
-
-            if( data.tags.length == 0 ){
-
-                return eventUtils.raiseError({
-                    toClient:"One tag minimum. Be wise !",
-                    toServer:"Wrong Tags Inputs",
-                    socket: socket
-                });
-            }
-
-            if( data.tags.length > 3 ){
-
-                return eventUtils.raiseError({
-                    toClient:"Three tags maximum. Be wise !",
-                    toServer:"Wrong Tags Inputs",
-                    socket: socket
-                });
-            }
-
 
             if( 0 ){
 

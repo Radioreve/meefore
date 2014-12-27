@@ -1,6 +1,7 @@
 
-#landingWrap{ 
-    text-align: center;
+#landingWrap{
+    top: -100px;
+ 
 }
 
 #landingIntro{
@@ -31,8 +32,8 @@
 
 #landingWrap h2{
 	/* font-family:'Lato'; */
-	font-size: 2em;
-	letter-spacing: -2px;
+	font-size: 1.4em;
+	letter-spacing: -1px;
 	margin-top: 30px;
 }
 
