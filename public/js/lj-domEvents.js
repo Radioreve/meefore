@@ -157,7 +157,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 						LJ.fn.displayContent( $(linkedContent), {
 							myWayOut: myWayOut,
 							myWayIn : myWayIn, 
-							duration: 280
+							duration: 320
 						});
 					
 				  

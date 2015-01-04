@@ -260,10 +260,9 @@ section#createEventWrap{
 #createEventWrap h2{
 	margin-bottom: 50px;
 }
-.input-field_create{
+label{
 	border: none;
 	outline: none;
-	width: 260px;
 	/* border-bottom: 1px solid #C2C2C2; */
 }
 
@@ -296,7 +295,6 @@ section#createEventWrap{
 	vertical-align:top;
 }
 #createEventBtn{
-	margin-top: 20px;
 	position: relative;
 }
 
@@ -373,6 +371,7 @@ input[type="number"]{
 .filtersWrap{
 	margin:25px 0;
 	opacity: 0;
+	padding: 0 40px;
 }
 #noEvents{
 	margin-top:85px; 

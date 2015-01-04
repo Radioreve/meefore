@@ -40,6 +40,7 @@
         displayParamsAskerThumbRefused: { cloud_name: "radioreve", width:45, height:45, crop:'fill', effect:'grayscale', gravity:'face', radius:'max' },
         
         loader_id: "ajax-loader-black_frpjdb",
+        m_loader_id: "ajak_lgmgym",
         displayParamsLoader:{ cloud_name :"radioreve", html: { 'class': 'loader'} },
         placeholder_id: "placeholder_jmr9zq",
         displayParamsPlaceholder:{ cloud_name :"radioreve", html: { 'class': 'mainPicture' }, width:150 }

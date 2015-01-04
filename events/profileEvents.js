@@ -184,7 +184,7 @@
 						});
 				}
 
-				socket.emit('update settings success', { user: user, msg: "Updating settings success" });
+				socket.emit('update settings success', { user: user, msg: "Vos préférences ont été modifiées" });
 
 			});
 		});

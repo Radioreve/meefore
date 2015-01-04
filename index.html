@@ -14,6 +14,7 @@
 	<link rel="stylesheet" href="/css/manage.css">
 	<link rel="stylesheet" href="/css/chat.css">
 	<link rel="stylesheet" href="/css/landing.css">
+	<link rel="stylesheet" href="/css/media.css">
 </head>
 <body>
 <div id="fb-root"></div>
@@ -33,6 +34,7 @@
 <div class="overlay overlay-veryhigh"></div>
 <div class="progress_bar"></div>
 <div class="loaderWrap"></div>
+<div class="m-loaderWrap"></div>
 	<header class="">
 	  <div id="headerContent">
 		<h1><i class="icon icon-attention-alt"></i>VW</h1>
@@ -45,33 +47,33 @@
 			<li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span class="underlay"></span></li>
 			<li id="contact" class="right menu-item icon icon-mail-alt" data-linkedcontent="#contactWrap" ><span class="underlay"></span></li>
 		  </ul>
-	</div>
-		  <section id="loginWrapp" class="revealed right">
-			  <div>
-				Connexion
-			  </div>
-				<div class="formWrap">
-					<form autocomplete="off">
-						<input class="header-field" type="text" id="email" placeholder="email">
-						<input class="header-field" type="password" id="pw" placeholder="password">
-						<input type="submit" class="" id="login" value="Login"></input>
-						<div id="login-fb"><i class="icon icon-facebook"></i>
-						<a href="/auth/facebook" type="submit"></a>
-						</div>
-					</form>
-			    </div>
+	  </div>
+	  <section id="loginWrapp" class="revealed right">
+		  <div>
+			Connexion
+		  </div>
+			<div class="formWrap">
+				<form autocomplete="off">
+					<input class="header-field" type="text" id="email" placeholder="email">
+					<input class="header-field" type="password" id="pw" placeholder="password">
+					<input type="submit" class="" id="login" value="Login"></input>
+					<div id="login-fb"><i class="icon icon-facebook"></i>
+					<a href="/auth/facebook" type="submit"></a>
+					</div>
+				</form>
+		    </div>
 		<div id="lost_pw" class="sub-actions right">Mot de passe oublié ?</div>
-		</section>
-		<section id="resetWrapp" class="none right">
-				<div>Trop de vodka ? </div>
-				<div class="formWrap">
-					<form autocomplete="off">
-						<input class="input-field" type="text" id="pwResetInput" placeholder="email">
-						<input type="submit" class="" id="reset" value="Reset"></input>
-					</form>
-			  </div>
-		<div id="pw_remember" class="sub-actions right">Je m'en souviens!</div>
-		</section>
+	  </section>
+	  <section id="resetWrapp" class="none right">
+			<div>Trop de vodka ? </div>
+			<div class="formWrap">
+				<form autocomplete="off">
+					<input class="input-field" type="text" id="pwResetInput" placeholder="email">
+					<input type="submit" class="" id="reset" value="Reset"></input>
+				</form>
+		  </div>
+	    <div id="pw_remember" class="sub-actions right">Je m'en souviens!</div>
+	  </section>
 	</header>
 	<div id="mainWrap" class="centered">
 		<div id="thumbWrap" class="none ">
@@ -83,82 +85,103 @@
 			</div>
 		</div>
 		<section id="contentWrap" class="">
-
-		<section id="landingWrap" class="centered">
-		<div class="landing-row active">
-			<div class="time"></div>
-			<div class="path"></div>
-			<div class="message">
-				<div class="head"></div>
-				<div class="body"></div>
-			</div>
-		</div>
-		<div class="landing-row active">
-			<div class="time">10h40</div>
-			<div class="path"><div class="round"></div></div>
-			<div class="message">
-				<div class="head">Etape 1</div>
-				<div class="body">Je sonde ma team pour savoir qui a envie de sortir ce soir.</div>
-			</div>
-		</div>
-		<div class="landing-row active">
-			<div class="time">14h30</div>
-			<div class="path"><div class="round"></div></div>
-			<div class="message">
-				<div class="head">Etape 2</div>
-				<div class="body">Je vais sur V&W, je me connecte à des gens dans le même état d'esprit que moi.</div>
-			</div>
-		</div>
-		<div class="landing-row active">
-			<div class="time">19h34</div>
-			<div class="path"><div class="round"></div></div>
-			<div class="message">
-				<div class="head">Etape 3</div>
-				<div class="body">Je discute avec les organisateurs des différents évènements proposés.</div>
-			</div>
-		</div>
-		<div class="landing-row active">
-			<div class="time">22h24</div>
-			<div class="path"><div class="round"></div></div>
-			<div class="message">
-				<div class="head">Etape 4</div>
-				<div class="body">Je me fais beau, je prends une bouteille et j'arrive à l'heure</div>
-			</div>
-		</div>
-		<div class="landing-row">
-			<button class="themeBtn">Nous rejoindre</button>
-		</div>
-
-		<!--
-			<h2><i class="icon icon-attention"></i>L'abus de soirées est dangereux pour la santé<i class="icon icon-attention"></i></h2> 
-			
-			<section id="landingIntro">
-				<div class="l-item">
-					<div class="l-image"><img width="80" src="img/connect.png"></div>
-					<div class="l-step">Connect</div>
-					<div class="l-desc">Inscriptions uniquement réservée aux personnes possédant un nom, un âge et un alcool préféré.</div>
-				</div>
-				<div class="l-item">
-					<div class="l-image"><img width="80" src="img/meet.png"></div>
-					<div class="l-step">Meet</div>
-					<div class="l-desc">Dialoguer avec les dizaines de personnes qui proposent des soirées près de chez vous.</div>
-				</div>
-				<div class="l-item">
-					<div class="l-image"><img width="65" src="img/whatever.png"></div>
-					<div class="l-step">Whatever</div>
-					<div class="l-desc">Before, apéro, soirée apparte, prendre une bouteille en boite… la nuit vous appartient ! </div>
-				</div>
+			<section id="landingWrap" class="centered">
+	            <div class="container">
+	                <div class="row">
+	                        <div class="center-heading">
+	                            <h2>Ce soir, partez en soirée près de chez vous</h2>
+	                            <span class="center-line"></span>
+	                        </div>
+	                </div><!--center heading row-->
+	                <div class="row">
+	                    <div class="col">
+	                        <div class="services-box">
+	                            <div class="services-box-icon">
+	                                <i class="icon icon-star"></i>
+	                            </div><!--services icon-->
+	                            <div class="services-box-info">
+	                                <h4>Pourquoi ?</h4>
+	                                <p>
+	                                   Pourquoi attendre d'etre en soirée pour faire des rencontres ? Ca commence dès le before !
+	                                </p>
+	                            </div>
+	                        </div><!--services box-->
+	                    </div><!--services col-->
+	                    <div class="col">
+	                        <div class="services-box">
+	                            <div class="services-box-icon">
+	                                <i class="icon icon-glass"></i>
+	                            </div><!--services icon-->
+	                            <div class="services-box-info">
+	                                <h4>Chacun son délire</h4>
+	                                <p>
+	                                	Bar, apéro, boite, soirée apparte... orienté amitié ou rencontre. Sur V&W, tout est possible.
+	                                </p>
+	                            </div>
+	                        </div><!--services box-->
+	                    </div><!--services col-->
+	                    <div class="col">
+	                        <div class="services-box">
+	                            <div class="services-box-icon">
+	                                <i class="icon icon-thumbs-up-alt"></i>
+	                            </div><!--services icon-->
+	                            <div class="services-box-info">
+	                                <h4>La charte V&W</h4>
+	                                <p>
+	                                    Toujours être à l'heure et surtout... ne jamais venir les mains vides !
+	                                </p>
+	                            </div>
+	                        </div><!--services box-->
+	                    </div><!--services col-->
+	                  </div>
+	                  <div class="row">
+	                     <div class="col">
+	                        <div class="services-box">
+	                            <div class="services-box-icon">
+	                                <i class="icon icon-chat-1"></i>
+	                            </div><!--services icon-->
+	                            <div class="services-box-info">
+	                                <h4>Discutez avant la soirée</h4>
+	                                <p>
+	                                    Demander à rejoindre une soirée en 1 clic. A vous de brancher l'organisateur.
+	                                </p>
+	                            </div>
+	                        </div><!--services box-->
+	                    </div><!--services col-->
+	                    <div class="col">
+	                        <div class="services-box">
+	                            <div class="services-box-icon">
+	                                <i class="icon icon-user-add"></i>
+	                            </div><!--services icon-->
+	                            <div class="services-box-info">
+	                                <h4>Ajoutez vos amis</h4>
+	                                <p>
+	                                    L'organisateur voit les personnes qui se connaissent en vrai. Si vos amis ne sont pas online,
+	                                    vous pouvez quand même les ajouter.                          
+	                                </p>
+	                            </div>
+	                        </div><!--services box-->
+	                    </div><!--services col-->
+	                    <div class="col">
+	                        <div class="services-box">
+	                            <div class="services-box-icon">
+	                                <i class="icon icon-crown"></i>
+	                            </div><!--services icon-->
+	                            <div class="services-box-info">
+	                                <h4>Devenir ambassadeur</h4>
+	                                <p>
+	                                    Les soirées, ça te connait. Tu veux nous aider à lancer le virus sur Paris? Deviens ambassadeur!
+	                                </p>
+	                            </div>
+	                        </div><!--services box-->
+	                    </div><!--services col-->
+	                </div><!--services row-->
+	            </div>
 			</section>
-		
-			<section id="landingGo">
-				<center>Sociable people only</center>
-				<button class="themeBtn"><i class="icon icon-thumbs-up-alt"></i>Je m'inscris quand même</button>
-			</section>
-		-->
-		</section>
-			<section id="signupWrapp" class="none centered">
+
+			<section id="signupWrapp" class="centered none">
 			<div id="signupWrap">
-				<h2>Rejoignez-vous</h2>
+				<h2>Rejoignez-nous</h2>
 				<div class="formWrap">
 					<form>
 					<label for="emailSignup">Email</label>
@@ -174,7 +197,8 @@
 			</section>
 			<section id="profileWrap" class="none centered">
 				<h2>Mes informations</h2>
-				<div id="pictureWrap"class="left hint--top" data-hint="click to edit your picture">
+				<div class="row">
+				<div id="pictureWrap"class="left hint--top" data-hint="cliquez pour changer de photo">
 					<form class="upload_form"></form>
 					<h5 id="codebarre"><span class="icon icon-barcode-1"></span>53ef548dgk0847j6H7Y</h5>
 				</div>
@@ -213,6 +237,7 @@
 						<label class="labelTextArea" for="description">Qui es-tu ?</label>
 						<textarea id="description" class="profileInput" placeholder="Tell the world what you like"></textarea>
 					</div>
+				</div>
 				</div>
 				<button id="validate" class="right themeBtn">Modifier</button>
 			</section>
@@ -258,7 +283,7 @@
 						<input id="eventHour" class="input-field_create" type="text" placeholder="20" maxlength="2"><b>h</b>
 						<input id="eventMinut" class="input-field_create" type="text" placeholder="00" maxlength="2">
 					</div>
-					<div class="input-row-wrap hint--right" data-hint="Restez raisonnable ;-)">
+					<div class="input-row-wrap hint--right" data-hint="Restez raisonnable...">
 						<label for="eventMaxGuest">Nombre d'invités </label>
 						<input id="eventMaxGuest" class="input-field_create" value = "3" max="100" min="2" type="number">
 					</div>
@@ -310,19 +335,19 @@
 						<input id="currentEmail" placeholder="Email" type="text" class="input-field_create">
 					</div>
 					<div class="input-row-wrap">
-						<label for="currentPw">Current password </label>
+						<label for="currentPw">Mot de passe</label>
 						<input id="currentPw" class="input-field_create" readonly value="**********" type="text">
 					</div>
 					<div class="input-row-wrap">
-						<label for="newPw">New password</label>
+						<label for="newPw">Nouveau mdp</label>
 						<input id="newPw" class="input-field_create" placeholder="New password" maxlength="40" type="password">
 					</div>
 					<div class="input-row-wrap">
-						<label for="newPwConf">Confirm new password</label>
+						<label for="newPwConf">Confirmer nouveau mdp</label>
 						<input id="newPwConf" class="input-field_create" placeholder="Confirm new password" maxlength="40" type="password">
 					</div>
 					<div class="input-row-wrap">
-						<label for="newsletter">Receive newsletter</label>
+						<label for="newsletter">Recevoir la newz</label>
 						<input id="newsletter" class="input-field_create" type="checkbox">
 					</div>
 					<button id="submitSettingsBtn" class="right themeBtn">Modifier </button>
@@ -345,9 +370,8 @@
 			<button id="sendContactForm" class="right themeBtn">Envoyer</button>
 			</section>
 		</section>
-	</div>
-		<footer>
-		</footer>
+		</div>
+		 
 		
 		<script src="/js/lib/lodash.js"></script>
 		<script src="/js/lib/jquery.js"></script>
@@ -363,5 +387,8 @@
 		<script src="/js/lj-render.js"></script>
 		<script src="/js/lj-domEvents.js"></script> 
 		<script src="/js/lj.js"></script> 
+
+		<script src="/js/lib/jquery.flexslider-min.js"></script>
+
 	</body>
 	</html>

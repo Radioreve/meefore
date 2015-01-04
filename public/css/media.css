@@ -1,0 +1,296 @@
+
+@media screen and ( min-width: 1100px ){
+    .m-loaderWrap{
+    display:none!important;
+    }
+}
+@media screen and ( max-width: 1100px ){
+  
+  /* Propriétés générales */
+  .centered{
+		width: 100%!important;
+	} 
+  .themeBtn{
+    margin: 20px auto;
+    display:block;
+    float:none;
+    margin-top:20px;
+  }
+  .toast{
+    width:100%!important;
+  }
+  .loaderWrap{
+    display:none!important;
+  }
+/* ========================== settingsWrap ======================== */
+
+    #settingsWrap{
+    
+    }
+    #settingsWrap label{
+      width:auto;
+      margin-bottom:5px;
+    }
+    .input-field_create{
+      width:auto!important;
+    }
+    
+    body > header{
+    }
+    
+    #contactWrap label{
+    text-align: center;
+}
+    #contactWrap form{
+    text-align: center;
+    }
+    #settingsInputsWrap{
+      padding:0 40px;
+    }
+
+    input{
+      margin: 0 auto;
+      margin-top: 10px;
+    }
+/* ========================== ProfileWrap ======================== */
+
+  #pictureWrap{
+    display:block;
+  }
+  .fieldsWrap{
+    display:block;
+    margin: 40px auto;
+    padding: 0 40px;
+  }
+  .input-row-wrap > *{
+    text-align: left!important;
+  }
+  .input-row-wrap *{
+    width:auto!important;
+    margin-bottom: 0!important;
+  
+}
+  .input-row-wrap label{
+    margin-bottom:10px;
+  }
+  .input-row-wrap #name{
+    margin:0;
+  }
+  #favoriteDrink{
+    padding-bottom:10px;
+  }
+
+      #searchBar i{
+      top: 17px;
+    }
+
+}
+@media screen and ( max-width: 650px ){
+    
+/* ========================== menuWrap ======================== */
+    .menu-item.right{
+        float: none;
+    }
+    .col{
+    	float:none!important;
+    }
+    #thumbWrap
+    {
+		display:none!important;
+	}
+	#headerContent{
+	  width:100%;
+	  margin:0;
+	}
+    #headerContent h1{
+      display:none;
+    }
+    #menuWrap{
+      margin-left:0;
+      text-align: center;
+      font-size: 14px;
+      min-width: 230px;
+	}
+    #menuWrap .underlay{
+      height:5px;
+      top: 5px;
+      left: 0px;
+      width: 100%;
+	}
+    #menuWrap .menu-item{
+    width: 13%
+    ;padding-left: 0;
+    padding-right: 0;
+}
+
+	body header.m{
+		display: none!important;
+	}
+	
+	body header{
+	  
+	}
+    body h2{
+        font-size:1.5em;
+    }
+  
+    /* EventsWrap */
+    .action{
+        display:block;
+        margin: 15px 0;
+    
+        font-size: .7em;
+}
+
+    #contactBody{
+      width:auto!important;
+    }
+       
+/* ========================== SearchWrap ======================== */
+
+    #searchUsersWrap,
+    #searchBar{
+      width:auto;
+    }
+
+    
+/* ========================== EventsWrap ======================== */
+
+    .eventItemWrap{
+      display:block;
+      margin-left:0;
+      margin-right:0;
+      width:auto;
+    }
+    .e-desc{
+      display:block;
+    }
+    .e-guests{
+      width:auto;
+    }
+    .e-hour{
+      font-size:30px;
+      width: 143px;
+    }
+    .guestsWrap{
+      width:100px;
+    
+    }
+    .guestsWrap > span{
+      font-size:12px;
+    }
+    .tag,.loc,.drink,.mood{
+      font-size:.60em;
+    }
+    .e-location{
+      position:relative;
+      top:-17px;
+      right:45px;
+      margin-bottom:5px;
+     
+    }
+    .e-location span{
+      background:white;
+      border:1px solid #ccc;
+      padding:5px;
+    }
+  
+    .u-item .u-body{
+      width:auto;
+    }
+    .u-item button{
+      positon:absolute;
+      right:5px;
+    }
+
+/* ========================== createWrap ======================== */
+
+  #eventHour,
+  #eventMinut{
+    width:20px!important;
+  }
+  #createEventInputsWrap{
+    padding: 0 40px;
+  
+}
+  #createEventInputsWrap label{
+    margin-bottom:10px!important;
+  }
+
+}
+
+@media screen and ( max-width: 650px ){
+	
+	.toastMsg{
+		font-size: 12.5px;
+	}
+	.toast-icon{
+		display:none;
+	}
+	.toast{
+		height:22px;
+		padding-top:13px
+	}
+
+}
+
+/* Ugly hacks */
+
+#landingWrap > .container > .row{
+  overflow:hidden;
+}
+
+#profileWrap .row{
+    overflow:hidden!important;
+}
+
+.col{
+    width: 33.333%;
+    float: left;
+    display: inline;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* BOOT MIN */
+
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 1000px;
+  }
+}
+
+#landingWrap .row {
+    text-align: center;
+}
+
+.row {
+    overflow: auto;
+}

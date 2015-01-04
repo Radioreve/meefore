@@ -79,7 +79,7 @@
 
 			if( email.trim() === '' || !validator.isEmail( email.trim() )){
 
-				res.json( 500, { msg: "Are you still drunk ?" });
+				res.json( 500, { msg: "Il faut un email..." });
 				res.end();
 				return;
 			}
@@ -88,7 +88,7 @@
 
 				if( !user ){
 
-					   res.json( 500, { msg: "No email matched" });
+					   res.json( 500, { msg: "Aucun email ne correspond" });
 				       res.end();
 				       return;
 

@@ -26,6 +26,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				/* Init Facebook state */
 				this.initFacebookState();
 
+				$('.main-flex-slider').flexslider({
+			    slideshowSpeed: 10000,
+			    directionNav: false,
+			    animation: "fade"
+				});
+
 		},
 		initFacebookState: function(){
 
@@ -71,23 +77,24 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				LJ.fn.displayContent( LJ.$signupWrap, {
 					myWayOut: "transition.slideLeftOut",
-					myWayIn: "transition.slideRightIn"
+					myWayIn: "transition.slideRightIn",
+					duration:2000
 				});
 			});
 
 			$('#lost_pw').click(function(){
 
 				LJ.fn.displayContent( LJ.$resetWrap, {
-					myWayOut: "transition.slideRightOut",
-					myWayIn: "transition.slideLeftIn"
+					myWayOut: "transition.fadeOut",
+					myWayIn: "transition.fadeIn"
 				});
 			});
 
 			$('#pw_remember').click(function(){
 
 				LJ.fn.displayContent( LJ.$loginWrap, {
-					myWayOut: "transition.slideLeftOut",
-					myWayIn: "transition.slideRightIn"
+					myWayOut: "transition.fadeOut",
+					myWayIn: "transition.fadeIn"
 				});
 			});
 
@@ -104,6 +111,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			var $loader = $.cloudinary.image( LJ.cloudinary.loader_id, LJ.cloudinary.displayParamsLoader );
 				$loader.appendTo( $('.loaderWrap') );
+
+				LJ.cloudinary.displayParamsLoader.width = 20; /* For mobile use */
+			var $mloader = $.cloudinary.image( LJ.cloudinary.m_loader_id, LJ.cloudinary.displayParamsLoader );
+				$mloader.appendTo( $('.m-loaderWrap'));
 
 			var $placeholder = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsPlaceholder );
 				$('#pictureWrap').prepend( $placeholder );
@@ -280,9 +291,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				status        : LJ.user.status,
 
 			};
-				LJ.params.socket.emit('update profile', profile);
 				csl('Emitting update profile');
 				LJ.fn.showLoaders();
+				LJ.params.socket.emit('update profile', profile);
 
 		},
 		updateSettings: function(){
@@ -519,7 +530,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				var rev = $('.revealed');
 
 				rev.velocity( options.myWayOut || 'transition.fadeOut', {
-					duration: options.duration || 300,
+					duration: options.duration || 400,
 					complete: function(){
 						rev.removeClass('revealed');
 						content.addClass('revealed')
@@ -1471,7 +1482,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		$('.pending').removeClass('pending');
         		LJ.user.status = 'idle';
         		LJ.myAskers = [];
-        		LJ.$manageEventsWrap.find('#askersRows, #askersDetails').html('');
+        		LJ.$manageEventsWrap.find('#askersThumbs, #askersMain').html('');
         		LJ.fn.displayMenuStatus( function(){ $('#create').click(); } );
 				
 			}	  		
@@ -1483,7 +1494,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         			}
         		});
 
-        	_.remove(LJ.myEvents, function(el){
+        	_.remove( LJ.myEvents, function(el){
         		return el.hostId == data.hostId; 
         	});
 
@@ -1906,12 +1917,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         showLoaders: function(){
 
-        	$( '.loaderWrap' ).velocity( 'fadeIn', { duration: 400 });
+        	$( '.loaderWrap, .m-loaderWrap' ).velocity( 'fadeIn', { duration: 400 });
 
         },
         hideLoaders: function(){
 
-            $( '.loaderWrap' ).velocity( 'fadeOut', { duration: 250 });
+            $( '.loaderWrap, .m-loaderWrap' ).velocity( 'fadeOut', { duration: 250 });
 
         }, 
         displayMenuStatus: function( cb ){
