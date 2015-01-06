@@ -8,7 +8,7 @@
   
   /* Propriétés générales */
   .centered{
-		width: 100%!important;
+	width: 100%!important;
 	} 
   .themeBtn{
     margin: 20px auto;
@@ -22,6 +22,10 @@
   .loaderWrap{
     display:none!important;
   }
+
+  #searchUsers{
+  	border-top:none;
+  }
 /* ========================== settingsWrap ======================== */
 
     #settingsWrap .input-row-wrap{
@@ -31,18 +35,26 @@
       width:auto;
       margin-bottom:5px;
     }
-    .input-field_create{
-      width:auto!important;
-    }
-    
-    body > header{
-    }
-    
-    #contactWrap label{
-    text-align: center;
-}
+
+   
+	#profileWrap label,
+	#profileWrap input,
+	#profileWrap textarea,
+	#profileWrap .input-row-wrap{
+		width:100%;
+		text-align:center;
+	}
+
     #contactWrap form{
     text-align: center;
+    margin:30px 0;
+    overflow:hidden;
+    }
+
+    #contactWrap label,
+    #contactWrap input{
+    	width:100%;
+    	text-align:center;
     }
     #settingsInputsWrap{
       padding:0 40px;
@@ -63,18 +75,26 @@
     padding: 0 40px;
   }
   .input-row-wrap > *{
-    text-align: left!important;
+    text-align: center!important;
   }
-  .input-row-wrap *{
-    width:auto!important;
-    margin-bottom: 0!important;
-  
-}
-  .input-row-wrap label{
+	
+  .input-row-wrap label{ 
     margin-bottom:10px;
+    width:100%!important;
   }
   .input-row-wrap #name{
     margin:0;
+    margin-bottom:10px;
+    padding:0;
+  }
+  .input-row-wrap #age{
+    margin:0; 
+    padding:0;
+    width:45px;
+    margin-bottom:10px;
+  }
+  .labelTextArea{
+  	margin-top:-10px;
   }
   #favoriteDrink{
     padding-bottom:10px;
@@ -84,8 +104,14 @@
       top: 17px;
     }
 
+  
+  #createEventInputsWrap{
+	padding: 0 100px;
+	text-align: center;
 }
-@media screen and ( max-width: 650px ){
+
+}
+@media screen and ( max-width: 580px ){
     
 /* ========================== menuWrap ======================== */
     .menu-item.right{
@@ -98,6 +124,25 @@
     {
 		display:none!important;
 	}
+  #loginWrapp{
+    display:none!important;
+  }
+  div.sm-header{
+    display:block;
+  }
+   div.sm-header button:first-of-type{
+  	background: rgb(37, 37, 37);
+  	normal 13px 'Lato'
+  ;
+  	font-weight: bolder;
+  	letter-spacing: .5px;
+  	float: left;
+  	margin-left: 10px;
+}
+  div.sm-header button:last-of-type{
+  	/* background: rgb(91, 122, 190); */
+  }
+  
 	#headerContent{
 	  width:100%;
 	  margin:0;
@@ -133,7 +178,10 @@
     body h2{
         font-size:1.5em;
     }
-  
+  	
+  	#createEventWrap h2{
+  		padding:0 10px;
+  	}
     /* EventsWrap */
     .action{
         display:block;
@@ -155,7 +203,10 @@
 
     
 /* ========================== EventsWrap ======================== */
-
+	
+	#noEvents{
+		padding:0 20px;
+	}
     .eventItemWrap{
       display:block;
       margin-left:0;
@@ -215,11 +266,8 @@
 }
   #createEventInputsWrap label{
     margin-bottom:10px!important;
+    display:block;
   }
-
-}
-
-@media screen and ( max-width: 650px ){
 	
 	.toastMsg{
 		font-size: 12.5px;
@@ -232,6 +280,10 @@
 		padding-top:13px
 	}
 
+}
+
+@media screen and ( max-width: 300px ){
+	
 }
 
 /* Ugly hacks */
@@ -250,20 +302,30 @@
     display: inline;
 }
 
+div.sm-header{
+	text-align:center;
+	padding: 6px 0;
+}
+div.sm-header button{
+	padding:5px 10px;
+	margin: 0 -1px;
+	border:none;
+	background: rgb(216, 67, 67);
+	color:white;
+	border-radius:1px;
+	font-weight:bolder;
+	outline:none;
+	font: normal 12px 'Lato';
+	float: right;
+	margin-right: 5px;
+} 
+header.sm-header button:hover{
+	opacity:.9;
+}
 
 
 
-
-
-
-
-
-
-
-
-
-
-/* BOOT MIN */
+/* BOOTSTRAP VERY MIN */
 
 .container {
   padding-right: 15px;

@@ -90,15 +90,14 @@ img.left{float:left;}
 	display: none;
 }
 
-body > header, body header.m{
+body header.lg-header, 
+body header.sm-header{
 	width: 100%;
 	height: 36px;
 	background-image: url('/img/texture-png1.png');
 	box-shadow: 0 0 5px rgb(37, 37, 37);
 	position: fixed;
-
 	top: 0;
-
 	left: 0;
 	z-index: 140;
 }
@@ -121,42 +120,31 @@ body > header > img{
 }
 body > header > h5{
 	display: inline;
-position: relative;
-font-size: 11px;
-font-family: 'Lato';
-color: rgb(48, 48, 48);
-text-shadow: 0 0 1px rgb(208, 208, 208);
-top: 21px;
-left: -157px;
+	position: relative;
+	font-size: 11px;
+	font-family: 'Lato';
+	color: rgb(48, 48, 48);
+	text-shadow: 0 0 1px rgb(208, 208, 208);
+	top: 21px;
+	left: -157px;
 }
 #headerContent i{
 	position: absolute;
-
 	top: -2px;
-
 	left: -35px;
-color: white;
-background: rgb(199, 42, 42);
-padding: 4px;
-border-radius: 4px;
-text-shadow: none;
-font-size: .8em;
+	color: white;
+	background: rgb(199, 42, 42);
+	padding: 4px;
+	border-radius: 4px;
+	text-shadow: none;
+	font-size: .8em;
 }
 #headerContent{
     width: 92%;
-	
     margin: 0 auto;
 }
 #mainWrap{
     width: 92%;
- /* FF3.6+ */
- /* Chrome,Safari4+ */
- /* Chrome10+,Safari5.1+ */
- /* Opera 11.10+ */
- /* IE10+ */
- /* W3C */
- /* IE6-9 */
-
     background: white;
     margin-top: 0;
     min-height: 100vh;
@@ -633,8 +621,8 @@ top: 33px;
 }
 #thumbWrap{
 	position: fixed;
-	width: 220px;
 	height: 50px;
+	margin-right: 130px;
 	top: -2px;
 	right: 10%;
 	/* background: white; */
@@ -643,7 +631,6 @@ top: 33px;
 	z-index: 145;
 }
 #thumbWrap > div.imgWrap{
-	display:inline-block;
 }
 #thumbWrap img{
     border-radius: 40px;

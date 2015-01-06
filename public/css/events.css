@@ -281,7 +281,7 @@ label{
 	padding-left: 2px;
 	text-align: right;
 }
-#createEventWrap .input-row-wrap{
+.input-row-wrap{
 	margin-bottom:10px;
 }
 #eventDescription{
