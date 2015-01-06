@@ -24,8 +24,8 @@
   }
 /* ========================== settingsWrap ======================== */
 
-    #settingsWrap{
-    
+    #settingsWrap .input-row-wrap{
+    text-align:center;
     }
     #settingsWrap label{
       width:auto;
