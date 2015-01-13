@@ -3,7 +3,7 @@
 var settings = {
 
 	eventsTerminateAt: 9,
-	eventsRestartAt: 13,
+	eventsRestartAt: 12,
 	tagList: 
 			 [  'afterwork',
 				'before',

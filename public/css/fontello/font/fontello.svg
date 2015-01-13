@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg">
-<metadata>Copyright (C) 2014 by original authors @ fontello.com</metadata>
+<metadata>Copyright (C) 2015 by original authors @ fontello.com</metadata>
 <defs>
 <font id="fontello" horiz-adv-x="1000" >
 <font-face font-family="fontello" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
@@ -42,6 +42,8 @@
 <glyph glyph-name="attention-alt" unicode="&#xe821;" d="m286 154v-125q0-15-11-25t-25-11h-143q-14 0-25 11t-11 25v125q0 14 11 25t25 10h143q15 0 25-10t11-25z m16 589l-15-429q-1-14-12-25t-25-10h-143q-14 0-25 10t-12 25l-15 429q-1 14 9 25t25 11h179q14 0 25-11t9-25z" horiz-adv-x="357.1" />
 <glyph glyph-name="up-dir" unicode="&#xe822;" d="m571 171q0-14-10-25t-25-10h-500q-15 0-25 10t-11 25 11 26l250 250q10 10 25 10t25-10l250-250q10-11 10-26z" horiz-adv-x="571.4" />
 <glyph glyph-name="forward-1" unicode="&#xe823;" d="m1000 493q0-15-11-25l-285-286q-11-11-25-11t-26 11-10 25v143h-125q-55 0-98-3t-86-12-74-24-59-39-45-56-27-77-10-101q0-31 3-69 0-4 2-13t1-15q0-8-5-14t-13-6q-9 0-15 10-4 5-8 12t-7 17-6 13q-71 159-71 252 0 111 30 186 90 225 488 225h125v143q0 14 10 25t26 10 25-10l285-286q11-11 11-25z" horiz-adv-x="1000" />
+<glyph glyph-name="male" unicode="&#xe824;" d="m571 457v-232q0-22-15-38t-38-16-38 16-16 38v196h-35v-509q0-25-19-44t-44-18-44 18-18 44v259h-36v-259q0-25-19-44t-44-18-44 18-18 44v509h-36v-196q0-22-15-38t-38-16-38 16-16 38v232q0 45 31 76t76 31h357q45 0 76-31t31-76z m-160 250q0-52-37-88t-88-37-89 37-36 88 36 89 89 36 88-36 37-89z" horiz-adv-x="571.4" />
+<glyph glyph-name="female" unicode="&#xe825;" d="m714 261q0-23-15-38t-38-16q-29 0-45 24l-127 190h-25v-73l138-230q5-8 5-18 0-14-10-25t-26-11h-107v-152q0-25-18-44t-44-18h-89q-26 0-45 18t-18 44v152h-107q-15 0-25 11t-11 25q0 10 5 18l138 230v73h-25l-127-190q-16-24-44-24-23 0-38 16t-16 38q0 16 9 29l143 215q41 59 98 59h214q58 0 99-59l142-215q9-13 9-29z m-232 446q0-52-36-88t-89-37-88 37-37 88 37 89 88 36 89-36 36-89z" horiz-adv-x="714.3" />
 </font>
 </defs>
 </svg>

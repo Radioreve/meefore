@@ -1,21 +1,51 @@
 
-@media screen and ( min-width: 1100px ){
+@media screen and ( min-width: 1000px ){
     .m-loaderWrap{
     display:none!important;
     }
 }
-@media screen and ( max-width: 1100px ){
-  
+@media screen and ( max-width: 1000px ){
+
+   #thumbWrap
+    {
+		display:none!important;
+	}
+
+.hint:before, .hint:after, [data-hint]:before, [data-hint]:after {
+	display:none;
+}
+  	
+  #contentWrap input,
+  #signupWrapp input,
+  label,
+  .input-row-wrap{
+		width: 100%!important;
+		text-align:center!important;
+		padding:0;
+	}
+	label{
+		margin-top: 11px!important;
+		padding:0;
+	}
+
+	input,
+	textarea,{
+    	padding: ;
+    	margin: 0;
+    	margin-bottom: 20px!important;
+	}
+
   /* Propriétés générales */
   .centered{
 	width: 100%!important;
 	} 
   .themeBtn{
-    margin: 20px auto;
+    margin: 20px auto!important;
     display:block;
     float:none;
-    margin-top:20px;
-  }
+  
+    margin-bottom: 40px!important;
+}
   .toast{
     width:100%!important;
   }
@@ -31,31 +61,14 @@
     #settingsWrap .input-row-wrap{
     text-align:center;
     }
-    #settingsWrap label{
-      width:auto;
-      margin-bottom:5px;
-    }
-
    
-	#profileWrap label,
-	#profileWrap input,
-	#profileWrap textarea,
-	#profileWrap .input-row-wrap{
-		width:100%;
-		text-align:center;
-	}
 
     #contactWrap form{
     text-align: center;
     margin:30px 0;
     overflow:hidden;
     }
-
-    #contactWrap label,
-    #contactWrap input{
-    	width:100%;
-    	text-align:center;
-    }
+	#signupWrap .formWrap,
     #settingsInputsWrap{
       padding:0 40px;
     }
@@ -63,7 +76,8 @@
     input{
       margin: 0 auto;
       margin-top: 10px;
-    }
+    
+}
 /* ========================== ProfileWrap ======================== */
 
   #pictureWrap{
@@ -74,25 +88,28 @@
     margin: 40px auto;
     padding: 0 40px;
   }
-  .input-row-wrap > *{
-    text-align: center!important;
+  {
   }
 	
   .input-row-wrap label{ 
-    margin-bottom:10px;
-    width:100%!important;
+    /* margin-bottom: 10px!important; */
   }
   .input-row-wrap #name{
-    margin:0;
-    margin-bottom:10px;
-    padding:0;
-  }
+    margin-bottom: 0px;
+    margin-top: 0;
+    padding-top: 2px;
+}
   .input-row-wrap #age{
     margin:0; 
     padding:0;
-    width:45px;
-    margin-bottom:10px;
-  }
+    width: 45px!important;
+    margin-top: 4px;
+}
+	#profileWrap textarea{
+		width:100%;
+		font-size:.8em;
+		overflow:hidden;
+	}
   .labelTextArea{
   	margin-top:-10px;
   }
@@ -103,6 +120,9 @@
       #searchBar i{
       top: 17px;
     }
+    #searchBar input{
+    	width:80%!important;
+    }
 
   
   #createEventInputsWrap{
@@ -110,8 +130,46 @@
 	text-align: center;
 }
 
+	#signupWrapp input[type="text"], #signupWrapp input[type="password"]{
+		border:none;
+		padding:10px 0;
+		margin: 10px 0;
+  }
+  #signupWrapp input[type="radio"]{
+    width:35px!important;
+  }
+  #signupWrapp .input-radio{
+    margin:0;
+    text-align: center;
+  }
+  #signupWrapp .input-radio > div{
+  display:block;
+  }
+	#signupWrapp h2{
+		margin-bottom: 35px;
+		font-size: 2em;
+}
+
+  #contentWrap #eventHour,
+  #contentWrap #eventMinut,
+  #contentWrap #eventLocation,
+  #contentWrap #eventMaxGuest{
+    width:40px!important;
+  }
+
 }
 @media screen and ( max-width: 580px ){
+
+  .toastMsg{
+    font-size: 12.5px;
+  }
+  .toast-icon{
+    display:none;
+  }
+  .toast{
+    height:22px;
+    padding-top:13px
+  }
     
 /* ========================== menuWrap ======================== */
     .menu-item.right{
@@ -120,10 +178,7 @@
     .col{
     	float:none!important;
     }
-    #thumbWrap
-    {
-		display:none!important;
-	}
+   
   #loginWrapp{
     display:none!important;
   }
@@ -131,13 +186,10 @@
     display:block;
   }
    div.sm-header button:first-of-type{
-  	background: rgb(37, 37, 37);
   	normal 13px 'Lato'
   ;
-  	font-weight: bolder;
-  	letter-spacing: .5px;
   	float: left;
-  	margin-left: 10px;
+  	margin-left: 7px;
 }
   div.sm-header button:last-of-type{
   	/* background: rgb(91, 122, 190); */
@@ -186,7 +238,6 @@
     .action{
         display:block;
         margin: 15px 0;
-    
         font-size: .7em;
 }
 
@@ -207,59 +258,10 @@
 	#noEvents{
 		padding:0 20px;
 	}
-    .eventItemWrap{
-      display:block;
-      margin-left:0;
-      margin-right:0;
-      width:auto;
-    }
-    .e-desc{
-      display:block;
-    }
-    .e-guests{
-      width:auto;
-    }
-    .e-hour{
-      font-size:30px;
-      width: 143px;
-    }
-    .guestsWrap{
-      width:100px;
     
-    }
-    .guestsWrap > span{
-      font-size:12px;
-    }
-    .tag,.loc,.drink,.mood{
-      font-size:.60em;
-    }
-    .e-location{
-      position:relative;
-      top:-17px;
-      right:45px;
-      margin-bottom:5px;
-     
-    }
-    .e-location span{
-      background:white;
-      border:1px solid #ccc;
-      padding:5px;
-    }
-  
-    .u-item .u-body{
-      width:auto;
-    }
-    .u-item button{
-      positon:absolute;
-      right:5px;
-    }
 
 /* ========================== createWrap ======================== */
 
-  #eventHour,
-  #eventMinut{
-    width:20px!important;
-  }
   #createEventInputsWrap{
     padding: 0 40px;
   
@@ -268,22 +270,13 @@
     margin-bottom:10px!important;
     display:block;
   }
-	
-	.toastMsg{
-		font-size: 12.5px;
-	}
-	.toast-icon{
-		display:none;
-	}
-	.toast{
-		height:22px;
-		padding-top:13px
-	}
+  
 
 }
 
-@media screen and ( max-width: 300px ){
+@media screen and ( max-width: 320px ){
 	
+
 }
 
 /* Ugly hacks */
@@ -318,11 +311,64 @@ div.sm-header button{
 	font: normal 12px 'Lato';
 	float: right;
 	margin-right: 5px;
+	-webkit-transition: .6s background;
+	transition: .6s background;
 } 
 header.sm-header button:hover{
 	opacity:.9;
 }
 
+@media screen and (max-width:330px){
+
+	.eventItemWrap{
+      display:block;
+      margin-left:0;
+      margin-right:0;
+      width:auto;
+    }
+    .e-desc{
+      display:block;
+
+    }
+    .e-guests{
+      width:auto;
+    }
+    .e-hour{
+      font-size:30px;
+      width: 143px;
+    }
+    .guestsWrap{
+      width:100px;
+    
+    }
+    .guestsWrap > span{
+      font-size:12px;
+    }
+    .tag,.loc,.drink,.mood{
+      font-size:.60em;
+    }
+    .e-location{
+      position:relative;
+      top:-17px;
+      right:45px;
+      margin-bottom:5px;
+     
+    }
+    .e-location span{
+      background:white;
+      border:1px solid #ccc;
+      padding:5px; 
+    }
+  
+    .u-item .u-body{
+      width:auto;
+    }
+    .u-item button{
+      positon:absolute;
+      right:5px;
+    }
+	
+}
 
 
 /* BOOTSTRAP VERY MIN */

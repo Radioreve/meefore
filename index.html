@@ -58,10 +58,19 @@
 		  </ul>
 	  </div>
 	  <div class="sm-header none">
+	    <div class="sm-brand">V&W</div>
 		<button class="sm-signup">S'inscrire</button>
-		<button class="sm-fb">Facebook</button>
+		<button class="sm-fb"><i class="icon icon-facebook"></i></button>
 		<button class="sm-login">Login</button>
 	   </div>
+	  <div class="sm-loginWrap none">
+	  	<h2>Identification old school</h2>
+	  	<form>
+		  	<label for=""></label><input id="m-email"type="text" placeholder="email"></input>
+		  	<label for=""></label><input id="m-pw" type="text" placeholder="password"></input>
+		  	<label for=""></label><input class="themeBtn" type="submit"></input>
+	  	</form>
+	  </div>
 	  <section id="loginWrapp" class="revealed right">
 		  <div> Connexion </div>
 			<div class="formWrap">
@@ -75,6 +84,7 @@
 				</form>
 		    </div>
 		<div id="lost_pw" class="sub-actions right">Mot de passe oublié ?</div>
+		<div id="join" class="sub-actions right">Pas encore inscrit ?</div>
 	  </section>
 	  <section id="resetWrapp" class="none right">
 			<div>Trop de vodka ? </div>
@@ -97,7 +107,7 @@
 			</div>
 		</div>
 		<section id="contentWrap" class="">
-			<section id="landingWrap" class="centered">
+			<section id="landingWrap" class="centered m-revealed">
 	            <div class="container">
 	                <div class="row">
 	                        <div class="center-heading">
@@ -202,15 +212,23 @@
 					<input class="input-field" type="password" id="pwSignup"      placeholder="********">
 					<label for="pwCheckSignup">Confirmation</label>
 					<input class="input-field" type="password" id="pwCheckSignup" placeholder="********">
+					<div class="input-radio">
+					<div>
+						<input class="" type="radio" name="gender" value="male" checked  ><span><i class="icon icon-male"></i>Homme</span></input>
+					</div>
+					<div>
+						<input class="" type="radio" name="gender" value="female"    ><span><i class="icon icon-female"></i>Femme</span>
+					</div>
+					</div>
 					<input type="submit" id="signup" class="themeBtn right" value="Rejoindre">
 					</form>
 				</div>
 			</div>
 			</section>
 			<section id="profileWrap" class="none centered">
-				<h2>Mes informations</h2>
+				<h2>Me, myself & I</h2>
 				<div class="row">
-				<div id="pictureWrap"class="left hint--top" data-hint="cliquez pour changer de photo">
+				<div id="pictureWrap"class="left hint--bottom" data-hint="cliquez pour changer de photo">
 					<form class="upload_form"></form>
 					<h5 id="codebarre"><span class="icon icon-barcode-1"></span>53ef548dgk0847j6H7Y</h5>
 				</div>
@@ -383,24 +401,14 @@
 			</section>
 		</section>
 		</div>
-		 
-		
-		<script src="/js/lib/lodash.js"></script>
-		<script src="/js/lib/jquery.js"></script>
-
-		<script src="/js/lib/bloodhound.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
-		<script src="/js/lib/jquery.cloudinary.js"></script>
-		<script src="/js/lib/jscrollpane.js"></script>
-		<script src="//cdn.jsdelivr.net/velocity/1.1.0/velocity.min.js"></script>		
-		<script src="//cdn.jsdelivr.net/velocity/1.1.0/velocity.ui.min.js"></script>
-
-		<script src="/js/lj-params.js"></script>
-		<script src="/js/lj-render.js"></script>
-		<script src="/js/lj-domEvents.js"></script> 
-		<script src="/js/lj.js"></script> 
-
-		<script src="/js/lib/jquery.flexslider-min.js"></script>
+		<script src="dist/lib.min.js"></script>
+		
+		<!-- custom scripts -->
+		<script src="js/lj-params.js"></script>
+		<script src="js/lj-render.js"></script>
+		<script src="js/lj-domEvents.js"></script>
+		<script src="js/lj.js"></script>
 
 	</body>
 	</html>

@@ -53,13 +53,38 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		},
 		handleDomEvents_Landing: function(){
 
-			$('#landingWrap button').click(function(){
+		['.sm-signup', '.sm-login'].forEach( function(el){
 
-				$('#landingWrap').velocity('transition.fadeOut', {
+			$(el).click(function(){
+
+				var $s = $(this);
+				
+				if( $s.hasClass('active') )
+				{
+					$s.removeClass('active');
+					LJ.fn.displayContent( $('#landingWrap'), { prev: 'm-revealed' } );
+				}
+				else
+				{
+					$('.sm-header button.active').removeClass('active');
+					$s.addClass('active');
+					if( $s.hasClass('sm-signup') )
+						LJ.fn.displayContent( $('#signupWrapp'), { prev: 'm-revealed' } );
+					if( $s.hasClass('sm-login') )
+						LJ.fn.displayContent( $('.sm-loginWrap'), { prev: 'm-revealed' } );
+				}
+				
+			});
+
+		});
+
+			$('#join').click( function(){
+
+				$('#landingWrap').velocity('transition.slideUpOut', {
 					duration: 400,
 					complete: function(){
-						
-						LJ.$signupWrap.velocity('transition.slideUpIn', { duration: 1400 });
+						$('.m-revealed').addClass('none');
+						LJ.$signupWrap.velocity('transition.slideUpIn', { duration: 1000 });
 					}
 
 				});
@@ -83,6 +108,19 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			});
 
+			$('.sm-loginWrap input[type="submit"]').click(function(e){
+
+				var credentials = {
+					email: $('#m-email').val(),
+					password: $('#m-pw').val()
+				};
+
+				csl( credentials );
+				e.preventDefault();
+				LJ.fn.loginUser( credentials );
+
+			});
+
 			LJ.$resetBtn.click(function(e){
 
 				e.preventDefault();
@@ -90,7 +128,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			});
 
-			$('#login-fb').click(function(e){
+			$('#login-fb, .sm-fb').click(function(e){
 
 				e.preventDefault();
 				console.log('Login in with Facebook');
@@ -113,6 +151,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 		},
 		handleDomEvents_Navbar: function(){
+
+			$('#headerContent h1').click( function(){
+
+				LJ.fn.displayContent( $('#landingWrap') );
+
+			});
 
 			LJ.$logout.click(function(){
 				location.reload();
@@ -157,6 +201,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 						LJ.fn.displayContent( $(linkedContent), {
 							myWayOut: myWayOut,
 							myWayIn : myWayIn, 
+							prev:'revealed',
 							duration: 320
 						});
 					

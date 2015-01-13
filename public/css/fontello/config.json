@@ -43,6 +43,18 @@
       "src": "fontawesome"
     },
     {
+      "uid": "ca2d64f8a3ea7cbf6af45898b2dcf35e",
+      "css": "male",
+      "code": 59428,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "9bf7e14698cccdca37a6f1a02cf7d79e",
+      "css": "female",
+      "code": 59429,
+      "src": "fontawesome"
+    },
+    {
       "uid": "12f4ece88e46abd864e40b35e05b11cd",
       "css": "ok",
       "code": 59396,

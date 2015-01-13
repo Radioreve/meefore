@@ -55,7 +55,7 @@ var createEvent = function(data) {
 
     if( data.maxGuest < 2 || data.maxGuest > 10 )
     return eventUtils.raiseError({
-            toClient:"Le nombre d'invités doit être compris entre 2 et 10",
+            toClient:"Le nombre d'invités doit être entre 2 et 10",
             toServer:"Wrong Tags Inputs",
             socket: socket
     });

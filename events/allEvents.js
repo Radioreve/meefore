@@ -2,7 +2,7 @@
 	initEvents    = require('./initEvents'),
 	profileEvents = require('./profileEvents'),
 	manageEvents  = require('./manageEvents'),
-	chatEvents   = require('./chatEvents'),
+	chatEvents    = require('./chatEvents'),
 	clientEvents  = require('./clientEvents'),
 	friendEvents  = require('./friendEvents'),
 	mailEvents    = require('./mailEvents');

@@ -12,6 +12,9 @@
 #landingGo{
 
 }
+#signupWrap label{
+	width:100px;
+}
 #landingGo > center{
     font-size: .86em;
     margin-top: 10px;

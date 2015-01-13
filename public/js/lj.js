@@ -24,13 +24,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				this.initEhancements();
 
 				/* Init Facebook state */
-				this.initFacebookState();
-
-				$('.main-flex-slider').flexslider({
-			    slideshowSpeed: 10000,
-			    directionNav: false,
-			    animation: "fade"
-				});
+				//this.initFacebookState();
 
 		},
 		initFacebookState: function(){
@@ -44,20 +38,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				  	if( status != 'connected' )
 				  		 return;
 
-				  	LJ.fn.toastMsg('Compte Facebook détecté, login in...', 'info' );
-
 				  	sleep(1500, function(){
 
 					  	FB.api('/me', function(res){
 
 					  		var facebookId = res.id;
-					  		LJ.fn.loginWithFacebook( facebookId );
+					  		//LJ.fn.loginWithFacebook( facebookId );
 					  		
 					  	});
 				  	});
 			  	
 				  });
-
 
 		},
 		initSocketConnection: function(jwt){
@@ -65,7 +56,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.params.socket = io.connect({
 				query:'token='+jwt
 			});
-
 
 			/* Initialisation des socket.on('event',...); */
 			LJ.fn.initSocketEventListeners();
@@ -78,6 +68,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				LJ.fn.displayContent( LJ.$signupWrap, {
 					myWayOut: "transition.slideLeftOut",
 					myWayIn: "transition.slideRightIn",
+					prev:'revealed',
 					duration:2000
 				});
 			});
@@ -86,7 +77,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				LJ.fn.displayContent( LJ.$resetWrap, {
 					myWayOut: "transition.fadeOut",
-					myWayIn: "transition.fadeIn"
+					myWayIn: "transition.fadeIn",
+					prev:'revealed'
 				});
 			});
 
@@ -94,7 +86,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				LJ.fn.displayContent( LJ.$loginWrap, {
 					myWayOut: "transition.fadeOut",
-					myWayIn: "transition.fadeIn"
+					myWayIn: "transition.fadeIn",
+					prev:'revealed'
 				});
 			});
 
@@ -102,8 +95,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				LJ.fn.displayContent( LJ.$loginWrap, {
 					myWayOut: "transition.slideRightOut",
-					myWayIn: "transition.slideLeftIn"}
-				);
+					myWayIn: "transition.slideLeftIn",
+					prev:'revealed'
+				});
 			});
 
 		},
@@ -147,7 +141,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				});
  
 				LJ.$body.on('focusout', '.askInMsgWrap input', function(e){
-					if($(this).val().trim().length==0){
+					if($(this).val().trim().length===0){
 						$(this).removeClass('text-active').val('');}
 					else{$(this).addClass('text-active');}
 				}); 
@@ -185,6 +179,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			credentials.email = LJ.$emailInputSignup.val();
 			credentials.password = LJ.$passwordInputSignup.val();	
+			credentials.gender = $('#signupWrapp input[type="radio"]:checked').val();
 			//csl("Posting this : " +JSON.stringify(credentials,0,4))
 
 			LJ.$backToLogin.velocity("transition.slideLeftOut", { duration:300 });
@@ -204,10 +199,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				method:'POST',
 				url:'/signup',
 				dataType:'json',
-				data: {
-					email    : credentials.email,
-					password : credentials.password
-				},
+				data: credentials,
 				success: function(data){
 					data.email    = credentials.email;
 					data.password = credentials.password;
@@ -275,10 +267,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				age   		  = $('#age').val(),
 				name  		  = $('#name').val(),
 				description   = $('#description').val(),
-				favoriteDrink = $('.drink.modified').data('drink') || $('.drink.selected').data('drink') 
-				mood          = $('.mood.modified').data('mood')   || $('.mood.selected').data('mood') 
+				favoriteDrink = $('.drink.modified').data('drink') || $('.drink.selected').data('drink'),
+				mood          = $('.mood.modified').data('mood')   || $('.mood.selected').data('mood');
 
-			if( LJ.user.status == 'new' ){ LJ.user.status = 'idle' }
+			if( LJ.user.status == 'new' ){ LJ.user.status = 'idle'; }
 
 			var profile = {
 
@@ -402,7 +394,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				$('input.input-field').removeClass('validating');
 				$('#email').val( $('#pwResetInput').val() );
 
-				LJ.fn.displayContent( LJ.$loginWrap );
+				LJ.fn.displayContent( LJ.$loginWrap, { prev:'revealed' } );
 
 				sleep(1000, function(){
 					LJ.fn.toastMsg( data.msg , 'info');
@@ -463,8 +455,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('#profile').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
-            $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap, #signupWrapp').addClass('nonei');}})
-			LJ.fn.displayContent( LJ.$profileWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut' });
+            $('#landingWrap, #signupWrapp, .sm-header, .sm-loginWrap').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap, #signupWrapp, .sm-header, .sm-loginWrap').addClass('nonei');}});
+			LJ.fn.displayContent( LJ.$profileWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut', prev:'revealed' });
 
 		},
 		displayViewAsIdle: function(){
@@ -473,8 +465,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('#events').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
-            $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap, #signupWrapp').addClass('nonei');}})
-            LJ.fn.displayContent( LJ.$eventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut'  });
+            $('#landingWrap, #signupWrapp, .sm-header, .sm-loginWrap').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap, #signupWrapp, .sm-header, .sm-loginWrap').addClass('nonei');}});
+            LJ.fn.displayContent( LJ.$eventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut', prev:'revealed'   });
 
 		},
 		displayViewAsHost: function(){
@@ -483,8 +475,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('#management').addClass('menu-item-active')
             			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
 
-             $('#landingWrap, #signupWrapp').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap, #signupWrapp').addClass('nonei');}})
-			LJ.fn.displayContent( LJ.$manageEventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut'  });
+            $('#landingWrap, #signupWrapp, .sm-header, .sm-loginWrap').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap, #signupWrapp, .sm-header, .sm-loginWrap').addClass('nonei');}});
+			LJ.fn.displayContent( LJ.$manageEventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut', prev:'revealed'  });
 
             LJ.fn.fetchAskers();
 		},
@@ -510,7 +502,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				/* Management View */
 				if( LJ.user.state == 'hosting' )
 				{
-					$('#suspendEvent').text()
+					$('#suspendEvent').text('this is a bug');
 				}
 
 				/* ThumbHeader View */
@@ -526,21 +518,23 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		displayContent: function( content, options ){
 			
-				options = options || {};			
-				var rev = $('.revealed');
+				options = options || {};
 
-				rev.velocity( options.myWayOut || 'transition.fadeOut', {
+				var prev = options.prev;			
+				var $prev = $('.'+options.prev);
+
+				$prev.velocity( options.myWayOut || 'transition.fadeOut', {
 					duration: options.duration || 400,
 					complete: function(){
-						rev.removeClass('revealed');
-						content.addClass('revealed')
+						$prev.removeClass( prev );
+						content.addClass( prev )
 							   .velocity( options.myWayIn || 'transition.fadeIn', {
 							   	duration: 800,
 							   	display:'block',
 							   	complete: function(){
 							   		LJ.state.animatingContent = false;
 							   		if(LJ.user.status === 'new'){
-							   			LJ.fn.toggleOverlay('high', LJ.tpl.charte );
+							   			//LJ.fn.toggleOverlay('high', LJ.tpl.charte );
 							   		}
 							   	}
 							   });
@@ -582,7 +576,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
     				  .velocity('transition.slideLeftIn', { duration: 400 });
 
     		sleep(30, function(){ 
-    			if( LJ.state.jspAPI[chatId] != undefined )
+    			if( LJ.state.jspAPI[chatId] !== undefined )
     			{
            		  LJ.state.jspAPI[chatId].reinitialise();
         		  LJ.state.jspAPI[chatId].scrollToBottom();   
@@ -592,8 +586,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		toggleChatWrapEvents: function( chatIconWrap ){
 
-			var $eventWrap = chatIconWrap.parents('.eventItemWrap');
-			    $chatWrap  = $eventWrap.find('.chatWrap');
+			var $eventWrap = chatIconWrap.parents('.eventItemWrap'),
+			    $chatWrap  = $eventWrap.find('.chatWrap'),
 			    $previous  = $('.prev'),
 			    $surfacing = $('.surfacing'); 
 
@@ -632,7 +626,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         				  .velocity('transition.slideUpIn', { duration: 550 });
 
         		sleep( 30, function(){ 
-        			if( LJ.state.jspAPI[chatId] != undefined ){ 
+        			if( LJ.state.jspAPI[chatId] !== undefined ){ 
 	           		  LJ.state.jspAPI[chatId].reinitialise();
 	        		  LJ.state.jspAPI[chatId].scrollToBottom();   
         			} 
@@ -659,69 +653,56 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		toastMsg: function(msg, status, fixed){
 
+			var toastStatus, toast, tpl;
+
 			if( status == 'error' ){
-				var toastStatus = '.toastError',
+				    toastStatus = '.toastError',
 					tpl = LJ.tpl.toastError;
 			}
 			if( status == 'info' ){
-				var toastStatus = '.toastInfo',
+				    toastStatus = '.toastInfo',
 					tpl = LJ.tpl.toastInfo;
 			}
 			if( status == 'success'){
-				var toastStatus = '.toastSuccess',
+				    toastStatus = '.toastSuccess',
 					tpl = LJ.tpl.toastSuccess;
 			}
 
-			if( $( '.toast' ).length == 0 ){
+			if( $( '.toast' ).length === 0 )
+			{
 				$( tpl ).prependTo('#mainWrap');
-				var toast = $( toastStatus );
+
+				    toast = $( toastStatus );
 					toastMsg = toast.find('.toastMsg');
 					toastMsg.text( msg );
+
 					toast.velocity('transition.slideDownIn', {
-					duration: 600,
-					complete: function(){
-					  if( !fixed ){
-						toast.velocity('transition.slideUpOut', {
-							duration:300,
-							delay:2000,
-							complete: function(){
-								toast.remove();
-							}
-							});
-						}
-					  }
-					});
-			}
-
-			else{
-				var toast = $( '.toast' );
-				csl(toast);
-					toast.finish().velocity('transition.slideUpOut',{
-						duration: 200,
+						duration: 600,
 						complete: function(){
-							toast.remove();
-							LJ.fn.toastMsg( msg, status );
-						}
+						  if( !fixed ){
+							toast.velocity('transition.slideUpOut', {
+								duration:300,
+								delay:2000,
+								complete: function(){
+									toast.remove();
+								}
+								});
+							}
+						  }
 					});
-			
 			}
-		},
-		replaceThumbImage: function( imgId, imgVersion, d, previousImg ){
 
-			d.version = imgVersion;
-
-			var newImg = $.cloudinary.img( imgId, d )
-						  .addClass('none')
-						  .insertAfter( previousImg );
-
-				previousImg.velocity('transition.fadeOut', {
-					duration: 300,
+			else
+			{
+				toast = $( '.toast' );
+				toast.finish().velocity('transition.slideUpOut',{
+					duration: 200,
 					complete: function(){
-						previousImg.remove();
-						newImg.velocity('transition.fadeIn')
+						toast.remove();
+						LJ.fn.toastMsg( msg, status );
 					}
-				})
-
+				});
+			}
 		},
 		replaceMainImage: function( imgId, imgVersion, d ){
 
@@ -748,9 +729,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			var previousImg = $('#thumbWrap').find('img'),
 				newImg      = $.cloudinary.image(id,d);
-				newImg.hide();
+				newImg.addClass('none');
 
-				$('#thumbWrap').prepend( newImg );
+				$('#thumbWrap .imgWrap').prepend( newImg );
 
 				previousImg.fadeOut(700, function(){
 					$(this).remove();
@@ -818,7 +799,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$arrLeft.removeClass('none');
 			$arrRight.removeClass('none');
 
-			if( ($('.a-item').length == 0) ||  ($('.a-item').length == 1) ){
+			if( ($('.a-item').length === 0) ||  ($('.a-item').length == 1) ){
 				$arrLeft.addClass('none');
 				$arrRight.addClass('none');
 				return;
@@ -1043,7 +1024,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						$('#thumbName').text( data.name );
 						LJ.fn.handleServerSuccess('Vos informations ont été modifiées');
 				
-						});
+					});
 
 				});
 
@@ -1426,9 +1407,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 	if( LJ.myAskers.length != 0 )
                 	{
                 		var askersId = _.pluck( LJ.myAskers, '_id' );
-                		console.log(userId);
-                		console.log(friendId);
-                		console.log( askersId.indexOf( userId ) != -1 && askersId.indexOf( friendId ) != -1 )
+
                 		if( askersId.indexOf( userId ) != -1 && askersId.indexOf( friendId ) != -1 )
                 			{ LJ.fn.refetchAskers(); }
 
@@ -1606,7 +1585,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         displayEvents: function(){
 
         	/* Mise à jour de la vue des évènements */
-	        	var hour = (new Date).getHours();
+	        	var hour = (new Date()).getHours();
 	        	if( hour < LJ.settings.eventsRestartAt && hour >= LJ.settings.eventsTerminateAt ){
         			csl('Displaying events frozen state');
 	        		return LJ.fn.displayViewAsFrozen();
@@ -1753,12 +1732,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         		textInput.val('');
 
-        		var askerId = submitInput.parents('.a-item').data('askerid')
-        				 || LJ.user._id;
-        		var hostId  = submitInput.parents('.eventItemWrap').data('hostid')
-        				 || LJ.user._id;
-        		var eventId = submitInput.parents('.eventItemWrap').data('eventid')
-        		         || LJ.user.hostedEventId;
+        		var askerId = submitInput.parents('.a-item').data('askerid') || LJ.user._id;
+        		var hostId  = submitInput.parents('.eventItemWrap').data('hostid') || LJ.user._id;
+        		var eventId = submitInput.parents('.eventItemWrap').data('eventid') || LJ.user.hostedEventId;
 
         		csl('Sending chat with id : '+eventId + ' and '+ hostId + ' and '+askerId);
 
@@ -1795,25 +1771,25 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         			var $user = $(user),
         				userId = $user.attr('data-userid');
 
+        			var button;
+
         			if( _.pluck( LJ.user.friendList, 'friendId' ).indexOf( userId ) != -1 )
         			{
         				if( _.find( LJ.user.friendList, function(el){ return el.friendId == userId ; }).status == 'mutual' )
-        				var button =  '<button class="themeBtn onHold"><i class="icon icon-ok-1"></i></button>' ;
+        				    button =  '<button class="themeBtn onHold"><i class="icon icon-ok-1"></i></button>' ;
 
         				if( _.find( LJ.user.friendList, function(el){ return el.friendId == userId ; }).status == 'askedMe' )
-        				var button = '<button class="themeBtn"><i class="icon icon-ellipsis"></i></button>' ;
+        				    button = '<button class="themeBtn"><i class="icon icon-ellipsis"></i></button>' ;
 
         				if( _.find( LJ.user.friendList, function(el){ return el.friendId == userId ; }).status == 'askedHim' )
-        				var button = '<button class="themeBtn onHold"><i class="icon icon-ellipsis"></i></button>' ; 
+        				    button = '<button class="themeBtn onHold"><i class="icon icon-ellipsis"></i></button>' ; 
         			}
         			else
         			{
-        				var button = '<button class="themeBtn"><i class="icon icon-user-add"></i></button>' ; 
+        				    button = '<button class="themeBtn"><i class="icon icon-user-add"></i></button>' ; 
         			}
 
         				$user.find('button').replaceWith( button );
-
-
 
         		});
 
@@ -1828,12 +1804,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         		var $friend = $(el),
         			friendId = $friend.data('userid');
+
+        		var button;
         		
         		var myFriend = _.find( LJ.myFriends, function(el){ return el._id == friendId ; });
 
            		if( myFriend.status == 'hosting' )
            		{
-	                var button = '<button class="themeBtn isHosting">'
+	                button = '<button class="themeBtn isHosting">'
 	                  + '<i class="icon icon-forward-1"></i>'
 	                  +'</button>';
 	                return $friend.find('button').replaceWith( button );
@@ -1841,13 +1819,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 	        	if( $askedInWrap.find('img[data-askerid="'+friendId+'"]').length == 1 )
 	        	{  
-              		var button = '<button class="themeBtn onHold">'
+              		button = '<button class="themeBtn onHold">'
                       + '<i class="icon icon-ok-1"></i>'
                       +'</button>';
 	              	return $friend.find('button').replaceWith( button );
 	        	}
 
-        		var button = '<button class="themeBtn ready">'
+        		    button = '<button class="themeBtn ready">'
                   + '<i class="icon icon-user-add"></i>'
                   +'</button>';
 	        	return $friend.find('button').replaceWith( button );
@@ -1864,7 +1842,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         	csl('Adding chatline');
             var cha;
-            data.senderId === LJ.user._id ?  cha = 'cha-user' : cha = 'cha-other';
+            data.senderId === LJ.user._id ?  ha = 'cha-user' : cha = 'cha-other';
 
             var chatLineHtml = '<div class="chatLine none">'
 								+'<div class="cha '+cha+'">'+data.msg+'</div>'
@@ -1979,8 +1957,7 @@ $('document').ready(function(){
 
 		//penser à remplacer ça par une récursion sur un setTimeout toutes les 300ms
 		sleep(1000, function(){
-
-		/*
+		
 		  FB.init({
 
 				    appId      : '1509405206012202',
@@ -1988,8 +1965,8 @@ $('document').ready(function(){
 				    version    : 'v2.1' // use version 2.1
 
 				  }); 
-		*/
-
+	
+		
 		csl('Application ready');
 		LJ.fn.init();
 

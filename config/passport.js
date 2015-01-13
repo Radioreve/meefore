@@ -1,7 +1,6 @@
 
 	var passport  	  = require("passport"),
 	LocalStrategy 	  = require("passport-local").Strategy,
-	FacebookStrategy  = require('passport-facebook').Strategy,
 	User        	  = require("../models/UserModel"),
 	validator     	  = require('validator'),
 	config        	  = require('./config');
@@ -25,7 +24,6 @@
 
 					if( err )
 						return next( err, false,{ msg: "Missing credentials" });
-
 					
 					if( user )
 						return next( null, false,{ msg: "Cet email est déjà utilisé" });
@@ -49,6 +47,7 @@
 
 					newUser.local.email = email;
 					newUser.local.password = newUser.generateHash( password );
+					newUser.gender = req.body.gender;
 					newUser.signupDate = new Date();
 					
 					newUser.save( function( err ){

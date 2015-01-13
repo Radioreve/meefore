@@ -27,6 +27,9 @@ var UserSchema = new mongoose.Schema({
     type: Number,
     default: 25
   },
+  gender: {
+    type:String
+  },
   description: {
     type: String
   },

@@ -18,13 +18,11 @@
 			res.sendfile(__dirname + '/test.html');
 		});
 
-
 		app.get('*', function( req, res ){
 			res.redirect('/home');
 		});
 		
 		app.post('/auth/facebook', handleFacebookAuth );
-
 
 		app.post('/signup', function( req, res, next ){
 			passport.authenticate('local-signup', function( err, user, info ){
@@ -32,7 +30,7 @@
 					console.log('error with the database query');	
 				}
 				if( !user ){
-					console.log('info : '+info.msg);	
+					console.log('info : '+info.msg );	
 	  				res.json( 401, { msg: info.msg });
 					res.end();
 				}
@@ -164,14 +162,12 @@
 						});
 						res.end();
 						return;
-
 				}
-
 
 				var newUser = new User();
 
 				newUser.facebookId = fbId;
-				newUser.name = "hey";
+				newUser.name = "Inconnu";
 				newUser.signupDate = new Date();
 				
 				newUser.save( function( err, user ){

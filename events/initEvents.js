@@ -1,4 +1,9 @@
 	
+/* 
+	Contient tous les évènements relatifs à l'initialisation de l'application
+	Cet event est automatiquement envoyé par le client dès qu'il a été authentifié
+*/
+
 	var User 		= require('../models/UserModel'),
 	    Event 		= require('../models/EventModel'),
 	    _ 			= require('lodash'),
@@ -16,7 +21,7 @@
 	var fetchUserAndConfiguration = function( userId ){
 
 		var userSocket = global.sockets[userId];
-
+		
 		User.findById( userId, {}, function( err, user ){
 
 			if( err ){
@@ -42,6 +47,7 @@
 		  					email:       	 user.local.email,
 		  					name:        	 user.name,
 		  					age:         	 user.age,
+		  					gender:          user.gender,
 		  					favoriteDrink:   user.favoriteDrink,
 		  					mood:            user.mood,
 		  					status:      	 user.status,

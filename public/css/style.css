@@ -40,8 +40,7 @@ h2{
 h3{
 }
 .bodyWrap{
-	-webkit-user-select: none;
-	user-select: none; 
+	
 }
 label{
 	/*Hello git*/
@@ -90,6 +89,12 @@ img.left{float:left;}
 	display: none;
 }
 
+body header .sm-brand{
+	display:inline-block;
+	
+	color: white;
+	margin-top: 4px;
+}
 body header.lg-header, 
 body header.sm-header{
 	width: 100%;
@@ -106,6 +111,9 @@ body > header > img{
 	position:relative;
 	left: 55px;
 	top: 3px;
+}
+.sm-header button.active{
+	background: #A93232;
 }
 #headerContent h1{
 	color: rgb(236, 236, 236);
@@ -344,13 +352,15 @@ top: 33px;
 #loginWrap, 
 #signupWrap,
 #resetWrap{
-	height: 280px;
-	/* margin: auto; */
+	margin: auto;
 	padding:10px;
 }
-#signupWrap{
+{
 }
 #signupWrapp{
+    width: 450px;
+    overflow: auto;
+    height: auto;
 }
 #signupWrapp img{
 	margin: 80px 40px;
@@ -360,7 +370,7 @@ top: 33px;
 #loginWrap,
 #signupWrap,
 #resetWrap{
-	width: 520px;
+	/* width: 450px; */
 	margin: 0 auto;
 	text-align: center;
 }
@@ -389,7 +399,8 @@ top: 33px;
 .themeBtn,
 .themeBtnToggle
 {
-	width: 100px;
+	width: 100px!important;
+	max-width: 180px;
 	height: 31px;
 	border-radius: 2px;
 	border: none;
@@ -423,10 +434,11 @@ top: 33px;
 }
 #signup
 {	
-	height: 40px;
-	margin-top: 20px;
+	height: 30px;
+	padding-top: 5px;
+	margin-top: 40px!important;
 	margin-right: 40px;
-	width: px;
+	background: rgb(208, 54, 54);
 }
 .input-field{
 	width: 60%;
@@ -441,8 +453,27 @@ top: 33px;
 	font-size: 14px;
 	color: #645E5E;
 }
-.input-field:focus{
+
+.input-radio{
+	text-align:left;
+	margin:10px 0;
+	margin-left: 30%;
 }
+.input-radio > div{
+	display:inline-block;
+}
+input[type="radio"]{
+    width: 20px!important;
+
+}
+input[type="radio"] + span{
+	font-size: 14px;
+	color: #444;
+	padding-right: 25px;
+	position: relative;
+	top: -2px;
+}
+
 #loginWrap  .sub-actions,
 #signupWrap .sub-actions,
 #resetWrap  .sub-actions{
@@ -466,9 +497,9 @@ top: 33px;
 	padding-bottom: 15px;
 	border:1px dashed transparent;
 	width: 176px;
-	padding-top: 5px;
+	padding-top: 4px;
 	margin: 0 auto;
-	height: 157px;
+	height: 156px;
 	transition: .4s;
 	display: inline-block;
 	vertical-align: top;
@@ -544,7 +575,7 @@ top: 33px;
 }
 .modified{
 	color: rgb(205, 95, 95)!important;
-	font-weight: bolder;
+	/* font-weight: bolder; */
 }
 .drink.modified,
 .mood.modified{
@@ -565,7 +596,7 @@ top: 33px;
 	box-shadow:none;
 }
 .mainPicture{
-	padding:9px;
+	padding: 9px;
 	background:white;
 }
 .progress_bar{
@@ -611,8 +642,8 @@ top: 33px;
 	top: 0;
 	left: 0;
 }
-.cloudinary-fileupload{
-	width: 180px;
+#profileWrap .cloudinary-fileupload{
+	width: 180px!important;
 	height: 180px;
 	position: absolute;
 	top: 0;
@@ -621,16 +652,17 @@ top: 33px;
 }
 #thumbWrap{
 	position: fixed;
-	height: 50px;
 	margin-right: 130px;
 	top: -2px;
 	right: 10%;
 	/* background: white; */
 	padding: 10px;
 	border-radius: 2px;
-	z-index: 145;
+	z-index: 9999;
 }
 #thumbWrap > div.imgWrap{
+    position: absolute;
+    left: -48px;
 }
 #thumbWrap img{
     border-radius: 40px;
@@ -643,9 +675,10 @@ top: 33px;
 }
 #thumbInfos{
 	margin-left:8px;
+	top: 3px;
 	display: inline-block;
-	position: absolute;
-	top: 14px;
+	position: relative;
+	width: 100%;
 }
 #thumbName{
 	font-weight:normal;
@@ -654,7 +687,7 @@ top: 33px;
 	margin-left: 8px;
 	margin-bottom: 3px;
 	position: relative;
-	top: -5px;
+	top: -1px;
 	color: white;
 	/* display: inline-block; */
 }
@@ -671,7 +704,7 @@ top: 33px;
 	display: inline-block;
 }
 .action{
-	font-size: .8em;
+	font-size: .75em;
 	margin-left: 10px;
 	transition: all .7s;
 	font-family: 'Lato';
@@ -707,7 +740,7 @@ top: 33px;
 	cursor:not-allowed;
 }
 #settingsWrap #newsletter{
-	width:15px;
+	width: 15px!important;
 }
 body > footer{
 }
@@ -824,7 +857,8 @@ body > footer{
 	cursor:pointer;
 }
 #lost_pw, 
-#pw_remember{
+#pw_remember,
+#join{
 	position: absolute;
 	margin-top: 7px;
 	margin-left: 197px;
@@ -836,8 +870,12 @@ body > footer{
 #pw_remember{
     margin-left: 99px;
 }
+#join{
+	margin-left: 71px;
+}
 #lost_pw:hover,
-#pw_remember:hover{
+#pw_remember:hover,
+#join:hover{
 	text-decoration:underline;
 }
 .header-field.validated{
@@ -935,7 +973,7 @@ header input.validating-btn{
 	opacity: .8;
 }
 #searchUsers button{
-	width: 36px;
+	width: 36px!important;
 	height: 34px;
 	font-size: 15px;
 	border-radius: 0px;

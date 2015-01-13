@@ -12,7 +12,7 @@
  * Demo: http://kushagragour.in/lab/hint/
  *
  * Release under The MIT License
- *
+ * 
  */
 /**
  * source: hint-core.scss
@@ -118,10 +118,10 @@
 .hint--bottom:before {
   margin-top: -12px; }
 .hint--bottom:after {
-  margin-left: -18px; }
+  margin-left: -85px; }
 .hint--bottom:before, .hint--bottom:after {
   top: 100%;
-  left: 50%; }
+  left: 48%; }
 .hint--bottom:hover:after, .hint--bottom:hover:before, .hint--bottom:focus:after, .hint--bottom:focus:before {
   -webkit-transform: translateY(8px);
   -moz-transform: translateY(8px);

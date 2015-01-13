@@ -29,7 +29,6 @@
 			mailOptionsReset   = mailOptions.reset,
 			mailOptionsContact = mailOptions.contact;
 
-
 		var expose = {
 
 			transporter: transporter,
