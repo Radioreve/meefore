@@ -17,6 +17,7 @@
   	
   #contentWrap input,
   #signupWrapp input,
+  .sm-loginWrap input,
   label,
   .input-row-wrap{
 		width: 100%!important;
@@ -147,7 +148,6 @@
   }
 	#signupWrapp h2{
 		margin-bottom: 35px;
-		font-size: 2em;
 }
 
   #contentWrap #eventHour,
@@ -182,6 +182,12 @@
   #loginWrapp{
     display:none!important;
   }
+  .sm-loginWrap{
+  	padding: 50px;
+  	padding-top: 80px;
+  	box-sizing: border-box;
+}
+
   div.sm-header{
     display:block;
   }
@@ -189,7 +195,7 @@
   	normal 13px 'Lato'
   ;
   	float: left;
-  	margin-left: 7px;
+  	margin-left: 31px;
 }
   div.sm-header button:last-of-type{
   	/* background: rgb(91, 122, 190); */
@@ -229,7 +235,9 @@
 	}
     body h2{
         font-size:1.5em;
-    }
+    
+        margin-bottom: 30px;
+}
   	
   	#createEventWrap h2{
   		padding:0 10px;
@@ -313,6 +321,8 @@ div.sm-header button{
 	margin-right: 5px;
 	-webkit-transition: .6s background;
 	transition: .6s background;
+	background: rgb(37, 37, 37);  
+	border-bottom: 0Px solid white;
 } 
 header.sm-header button:hover{
 	opacity:.9;

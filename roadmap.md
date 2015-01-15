@@ -17,15 +17,14 @@
  	Done
 
  	Todo
-	- Créer la vue login mobile 50% (fix bug hidden)
-	- Fixer le loader mobile sur iPhone
-	- Rendre responsive la vue Management (avec le chat)
+	- Créer la vue login mobile 50%
+	- Rendre responsive la vue Management ( avec le chat ) + vue add friend 
 	- Système d'admin minimal pour monitorer les gens connectés
 
   Lundi
   Mardi
 	- Validation clientside, validaton server side
-	- Déploiement live +Nom de domaine
+	- Déploiement live + Nom de domaine
   Mercredi
 	- SEO
   3----------

@@ -90,8 +90,7 @@ img.left{float:left;}
 }
 
 body header .sm-brand{
-	display:inline-block;
-	
+	display:inline-block;	
 	color: white;
 	margin-top: 4px;
 }
@@ -114,6 +113,17 @@ body > header > img{
 }
 .sm-header button.active{
 	background: #A93232;
+}
+.sm-loginWrap input{
+	margin-bottom:20px;
+}
+.sm-loginWrap input[type="submit"].validating-btn, #signupWrapp input[type="submit"].validating-btn{
+	background: #E7E7E7;
+}
+.sm-loginWrap input[type="submit"], .{
+	padding-top: 0px; 
+	background: rgb(208, 54, 54);
+	height: 33px;
 }
 #headerContent h1{
 	color: rgb(236, 236, 236);
@@ -400,7 +410,7 @@ top: 33px;
 .themeBtnToggle
 {
 	width: 100px!important;
-	max-width: 180px;
+	max-width: 210px;
 	height: 31px;
 	border-radius: 2px;
 	border: none;
@@ -410,7 +420,7 @@ top: 33px;
 	font-size: 10px;
 	outline:none;
 	background: #4F4F4F;
-	display: block;
+	/* display: block; */
 	-webkit-transition: all 0.3s;
 	transition: all 0.3s;
 }
@@ -432,13 +442,12 @@ top: 33px;
 }
 .themeBtnToggleHost:hover{
 }
-#signup
+#signup, .sm-loginWrap input[type="submit"]
 {	
-	height: 30px;
-	padding-top: 5px;
 	margin-top: 40px!important;
 	margin-right: 40px;
 	background: rgb(208, 54, 54);
+	height: 35px;
 }
 .input-field{
 	width: 60%;
@@ -523,6 +532,7 @@ input[type="radio"] + span{
 	color: #999;
 }
 .fieldsWrap .input-row-wrap{
+    margin-bottom: 0px;
 }
 .fieldsWrap .input-row-wrap:last-child{
 	margin-top: -7px;
@@ -553,8 +563,7 @@ input[type="radio"] + span{
 	width:180px;
 }
  
-#age,
-#mood{
+.input-row-wrap.split{
 	padding-bottom: 20px;
 }
 #profileWrap textarea{
@@ -923,7 +932,7 @@ button:hover{
 	cursor:pointer;
 }
 
-header input.validating-btn{
+loginWrapp input.validating-btn{
 	background: rgb(38, 38, 38)!important;
 }
 

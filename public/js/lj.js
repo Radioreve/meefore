@@ -1842,7 +1842,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         	csl('Adding chatline');
             var cha;
-            data.senderId === LJ.user._id ?  ha = 'cha-user' : cha = 'cha-other';
+            data.senderId === LJ.user._id ?  cha = 'cha-user' : cha = 'cha-other';
 
             var chatLineHtml = '<div class="chatLine none">'
 								+'<div class="cha '+cha+'">'+data.msg+'</div>'
