@@ -47,6 +47,7 @@
 		  					email:       	 user.local.email,
 		  					name:        	 user.name,
 		  					age:         	 user.age,
+		  					access:          user.access, 
 		  					gender:          user.gender,
 		  					favoriteDrink:   user.favoriteDrink,
 		  					mood:            user.mood,

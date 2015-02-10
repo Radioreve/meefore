@@ -15,14 +15,14 @@
 	   	    update     = { 'state': 'ended' },
 	   	    options    = {  multi : true };
 
-	   		var callback   = function( err, numberAffected, raw ){
-		
-	   			if( err ) return console.log( err );
-	   			console.log('The number of updated documents was %d', numberAffected);
-	  			console.log('The raw response from Mongo was ', raw);
+   		var callback   = function( err, numberAffected, raw ){
+	
+   			if( err ) return console.log( err );
+   			console.log('The number of updated documents was %d', numberAffected);
+  			console.log('The raw response from Mongo was ', raw);
 
-	  			global.io.emit('terminate events');
-	   		};
+  			global.io.emit('terminate events');
+   		};
 
 	   	var userConditions = {},
 	   	    userUpdate     = 
@@ -39,9 +39,10 @@
 	   		var userCallback   = function( err, numberAffected, raw ){
 
 	   			if( err ) return console.log( err );
+	   			console.log('\n\n');
 	   			console.log('The number of updated documents was %d', numberAffected);
 	  			console.log('The raw response from Mongo was ', raw);
-
+	  			console.log('\n\n');
 	   		};
 
 	   		User.update( userConditions, userUpdate, userOptions, userCallback );
@@ -53,7 +54,7 @@
 		
 			var ruleTerminate = new schedule.RecurrenceRule();
 				ruleTerminate.hour = eventsTerminateAt;
-				ruleTerminate.minute = 0; // Sinon il l'envoie toutes les minutes
+				ruleTerminate.minute = 25; // Sinon il l'envoie toutes les minutes
 
 			var job_terminate = schedule.scheduleJob( ruleTerminate, terminateEvents );
 
@@ -65,7 +66,7 @@
 
 				min += 1;
 				console.log( 'App running for ' + min + ' minutes now. ');
-				setTimeout( checkingTime, 60000)
+				setTimeout( checkingTime, 60000);
 
 	})();
 

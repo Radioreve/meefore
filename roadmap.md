@@ -17,9 +17,9 @@
  	Done
 
  	Todo
-	- Créer la vue login mobile 50%
 	- Rendre responsive la vue Management ( avec le chat ) + vue add friend 
 	- Système d'admin minimal pour monitorer les gens connectés
+	- Créer une vue admin
 
   Lundi
   Mardi
@@ -29,26 +29,22 @@
 	- SEO
   3----------
     - Définir de qui j'ai besoin ! 
-  4----------
-  5---------- 
 
   ~ NICE TO HAVE
 	- Améliorer le système de logout
 	- "Someone is typing..."
 	- Clientside routing
 
-  ~ FUCK @deadline = 24/12/14!
-	- Tester sur tous les navigateurs
-	- Tester en production
-	- Tester sur vue mobile
+#BigWarnings
+	- Cron jobs Heroku fail to work when sleeping dynos
+	- [security] Coder une fn qui vérifie que pour certains events, l'id envoyé correspond bien à celle enregistré 
+	  sur le socket qui emet la demande, pour éviter un socket spoofing éventuel (annuler l'event de kk1 d'autre...)
+
+#Warning
+	- Cloudinary : public_id , signed.isValid() & regen Timer
+	- Valider la signature cloudinary des image uploaded (!)
   
 #LTE 
 	- Intégrer une vue générale avec une MAP et des pins correspondant aux soirées
 	- Appli mobile 
 	- Lazy load sur les events et sur les users
-
-#Warning
-	- Cloudinary : public_id , signed.isValid() & regen Timer
-	- Valider la signature cloudinary des image uploaded (!)
-	- [security] Coder une fn qui vérifie que pour certains events, l'id envoyé correspond bien à celle enregistré 
-	  sur le socket qui emet la demande, pour éviter un socket spoofing éventuel (annuler l'event de kk1 d'autre...)

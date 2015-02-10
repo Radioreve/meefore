@@ -1012,6 +1012,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					LJ.fn.fetchUsers();
 					LJ.fn.fetchFriends();
 
+					/* Admin scripts. Every com is secured serverside */
+					if( ['admin','root'].indexOf( LJ.user.access ) != -1 )
+					{
+						LJ.fn.initAdminEvents();
+						LJ.fn.fetchAppData();
+					}
+
 				});
 
 				LJ.params.socket.on('update profile success', function(data){
@@ -1970,7 +1977,9 @@ $('document').ready(function(){
 		csl('Application ready');
 		LJ.fn.init();
 
-	});
+		});
+
+		sleep(2000,function(){LJ.fn.toastMsg('Bienvenue sur Vodsky et Whika', 'info');});
 
 
 });

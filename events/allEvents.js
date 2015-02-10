@@ -1,11 +1,12 @@
 	
-	initEvents    = require('./initEvents'),
-	profileEvents = require('./profileEvents'),
-	manageEvents  = require('./manageEvents'),
-	chatEvents    = require('./chatEvents'),
-	clientEvents  = require('./clientEvents'),
-	friendEvents  = require('./friendEvents'),
-	mailEvents    = require('./mailEvents');
+	var initEvents    = require('./initEvents'),
+		profileEvents = require('./profileEvents'),
+		manageEvents  = require('./manageEvents'),
+		chatEvents    = require('./chatEvents'),
+		clientEvents  = require('./clientEvents'),
+		friendEvents  = require('./friendEvents'),
+		adminEvents  = require('./adminEvents'),
+		mailEvents    = require('./mailEvents');
 
 	module.exports = function( id ){
 
@@ -41,13 +42,14 @@
 		socket.on( 'friend request in', friendEvents.friendRequestIn );
 		socket.on( 'refetch askers', friendEvents.refetchAskers );
 
+	//Events relatifs aux admins
+		socket.on( 'fetch app data', adminEvents.fetchAppData );
+
 	//Events de mails
 		//socket.on( 'request welcome email', mailEvents.requestWelcomeEmail	);
 		//socket.on( 'send contact email', mailEvents.sendContactEmail	    );
 
 		socket.on('test', function(data){
-			
-			console.log(global.sockets);
-
+			console.log( global.sockets );
 		});
 	};

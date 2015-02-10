@@ -359,6 +359,9 @@ top: 33px;
 #contact:hover{
 	cursor:pointer;
 }
+#contactWrap label{
+	min-width: 70px;
+}
 #loginWrap, 
 #signupWrap,
 #resetWrap{

@@ -18,9 +18,9 @@ var UserSchema = new mongoose.Schema({
   signupDate: {
     type: Date
   },
-  isAdmin: {
-    type: Boolean,
-    default: false
+  access: {
+    type: String,
+    default: 'standard'
   },
   tokenAuth: String,
   age: {
