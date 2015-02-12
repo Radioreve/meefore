@@ -288,8 +288,8 @@
             var html =  '<div class="a-item '+className+'" data-askerid="'+a._id+'">'
                            +'<div class="a-picture">'
                              + imgTagHTML
-                           +'</div>'
                            +'<div class="a-birth">Membre depuis le ' + LJ.fn.matchDateDDMMYY( a.signupDate ) + '</div>'
+                           +'</div>'
 	                           +'<div class="a-body">'
 	                             +'<div class="a-name"><span class="label">Nom</span>'+a.name+'</div>'
                                  +'<div class="a-desc"><span class="label">Desc</span>'+a.description+'</div>'

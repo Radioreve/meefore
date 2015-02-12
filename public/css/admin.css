@@ -1,0 +1,9 @@
+#adminPanel{
+	position:fixed;
+	z-index:9999999;
+	background:rgba(0,0,0,.9);
+	height:100%;
+	width:100%;
+	display:none;
+	opacity:0;
+}

@@ -17,23 +17,22 @@
  	Done
 
  	Todo
-	- Rendre responsive la vue Management ( avec le chat ) + vue add friend 
-	- Système d'admin minimal pour monitorer les gens connectés
-	- Créer une vue admin
+	- Système d'admin minimal pour monitorer les gens connectés + panel CTRL+M
+			o Nombre de clients connectés ( garçons, filles )
+			o Ce qu'ils sont en train de regardé 
+			o Nombre d'évènements créés
+			o Nombre de personne inscrites dans un events 
 
-  Lundi
-  Mardi
 	- Validation clientside, validaton server side
 	- Déploiement live + Nom de domaine
-  Mercredi
-	- SEO
-  3----------
-    - Définir de qui j'ai besoin ! 
+	- Faire apparaître le login uniquement lorsque la page est chargée
+	- Clientside routing hashtags #
+	- Réaliser une page "Ambassadors"
 
-  ~ NICE TO HAVE
+	- SEO
+    - Définir de qui j'ai besoin ! 
 	- Améliorer le système de logout
 	- "Someone is typing..."
-	- Clientside routing
 
 #BigWarnings
 	- Cron jobs Heroku fail to work when sleeping dynos

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-	<title>Vodsky & Whika</title>
+	<title>Meefore party </title>
 
 	<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
@@ -22,6 +22,7 @@
 	<link rel="stylesheet" href="/css/chat.css">
 	<link rel="stylesheet" href="/css/landing.css">
 	<link rel="stylesheet" href="/css/media.css">
+	<link rel="stylesheet" href="/css/admin.css">
 
 </head>
 <body>
@@ -40,13 +41,14 @@
 <div class="overlay overlay-high"></div>
 <div class="overlay overlay-low"></div>
 <div class="overlay overlay-veryhigh"></div>
+<div id="adminPanel"></div>
 <div class="progress_bar"></div>
 <div class="loaderWrap"></div>
 <div class="m-loaderWrap"></div>
 	  
 	<header class="lg-header">
 	  <div id="headerContent">
-		<h1><i class="icon icon-attention-alt"></i>VW</h1>
+		<h1><i class="icon icon-attention-alt"></i>MFR</h1>
 		  <ul id="menuWrap" class="">
 			<li id="profile" class="left menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
 			<li id="search" class="left menu-item icon icon-search" data-linkedcontent="#searchUsersWrap" ><span class="underlay"></span></li>
@@ -58,7 +60,7 @@
 		  </ul>
 	  </div>
 	  <div class="sm-header none">
-	    <div class="sm-brand">V&W</div>
+	    <div class="sm-brand">MFR</div>
 		<button class="sm-signup">S'inscrire</button>
 		<button class="sm-fb"><i class="icon icon-facebook"></i></button>
 		<button class="sm-login">Login</button>
@@ -68,7 +70,7 @@
 	  	<form>
 		  	<label for="">Email</label><input id="m-email"type="text" placeholder="email"></input>
 		  	<label for="">Mot de passe</label><input id="m-pw" type="text" placeholder="password"></input>
-		  	<label for=""></label><input class="themeBtn" type="submit" value="login"></input>
+		  	<label for=""></label><input class="themeBtn themeBtnMain" type="submit" value="login"></input>
 	  	</form>
 	  </div>
 	  <section id="loginWrapp" class="revealed right">
@@ -111,7 +113,7 @@
 	            <div class="container">
 	                <div class="row">
 	                        <div class="center-heading">
-	                            <h2>Ce soir, partez en soirée près de chez vous</h2>
+	                            <h2>Pourquoi attendre d'être <span>déchiré en boite</span> en soirée pour faire des rencontres ?</h2>
 	                            <span class="center-line"></span>
 	                        </div>
 	                </div><!--center heading row-->
@@ -122,9 +124,10 @@
 	                                <i class="icon icon-star"></i>
 	                            </div><!--services icon-->
 	                            <div class="services-box-info">
-	                                <h4>Pourquoi ?</h4>
+	                                <h4>Le concept</h4>
 	                                <p>
-	                                   Pourquoi attendre d'etre en soirée pour faire des rencontres ? Ca commence dès le before !
+	                                  89% des 18-30 ans déclarent aller régulièrement en soirée pour faire des rencontres et au final
+	                                  ne rencontrer personne. WTF?
 	                                </p>
 	                            </div>
 	                        </div><!--services box-->
@@ -137,7 +140,7 @@
 	                            <div class="services-box-info">
 	                                <h4>Chacun son délire</h4>
 	                                <p>
-	                                	Bar, apéro, boite, soirée apparte... orienté amitié ou rencontre. Sur V&W, tout est possible.
+	                                	Bar, apéro, boite, soirée apparte... orienté amitié ou rencontre, tout est possible. Liberté, Egalité, Ebriété.
 	                                </p>
 	                            </div>
 	                        </div><!--services box-->
@@ -148,7 +151,7 @@
 	                                <i class="icon icon-thumbs-up-alt"></i>
 	                            </div><!--services icon-->
 	                            <div class="services-box-info">
-	                                <h4>La charte V&W</h4>
+	                                <h4>La charte MFR</h4>
 	                                <p>
 	                                    Toujours être à l'heure et surtout... ne jamais venir les mains vides !
 	                                </p>
@@ -165,7 +168,8 @@
 	                            <div class="services-box-info">
 	                                <h4>Discutez avant la soirée</h4>
 	                                <p>
-	                                    Demander à rejoindre une soirée en 1 clic. A vous de brancher l'organisateur.
+	                                    Inscris toi à un meefore en 1 clic, et chat avec l'organisateur jusqu'à trouver la soirée
+	                                    qui te convient le plus à toi et à tes potes.
 	                                </p>
 	                            </div>
 	                        </div><!--services box-->
@@ -178,8 +182,8 @@
 	                            <div class="services-box-info">
 	                                <h4>Ajoutez vos amis</h4>
 	                                <p>
-	                                    L'organisateur voit les personnes qui se connaissent en vrai. Si vos amis ne sont pas online,
-	                                    vous pouvez quand même les ajouter.                          
+	                                    Si tes amis sont encore au boulot ou en train de dormir aucun problème.
+
 	                                </p>
 	                            </div>
 	                        </div><!--services box-->
@@ -220,7 +224,7 @@
 						<input class="" type="radio" name="gender" value="female"    ><span><i class="icon icon-female"></i>Femme</span>
 					</div>
 					</div>
-					<input type="submit" id="signup" class="themeBtn right" value="Rejoindre">
+					<input type="submit" id="signup" class="themeBtn themeBtnMain right" value="Rejoindre">
 					</form>
 				</div>
 			</div>
@@ -269,16 +273,16 @@
 					</div>
 				</div>
 				</div>
-				<button id="validate" class="right themeBtn">Modifier</button>
+				<button id="validate" class="right themeBtn themeBtnMain">Modifier</button>
 			</section>
 			<section id="eventsWrap" class="none centered">
 			  <div class="eventsHeader">
-				<h2>Tous les évènements</h2>
+				<h2>Tous les meefore</h2>
 				<div class="actionsWrap actionsStyle">
 					<span id="activateFilters" class="action">Appliquer les filtres</span>
 					<span id="displayFilters" class="action"><span>Afficher</span> tous les filtres</span>
 					<span id="resetFilters" class="action">Enlever tous les filtres</span>
-					<span id="refreshEventsFilters" class="action">Rafraîchir les events</span>
+					<span id="refreshEventsFilters" class="action">Rafraîchir</span>
 				</div>
 				<div class="filtersWrap none">
 				
@@ -288,7 +292,7 @@
 			  </div>
 			  	<div id="frozenTimezone" class="none">
 					<h2>Fais un break</h2>
-					<center><h3>Les évènements sont fermés le matin, reprise à 14H. Time to sleep.</h3></center>
+					<center><h3>Les meefores sont fermés le matin, reprise à 14H. Time to sleep.</h3></center>
 				</div>
 				<section id="eventsListWrap"> <!-- Content dynamically loaded --> </section>
 				<div id="friendListWrap" class="none">
@@ -325,11 +329,11 @@
 					<label for="eventDescription">About</label>
 					<textarea id="eventDescription" placeholder="Winter is coming..."></textarea>
 					</div>
-					<button id="createEventBtn" class="right themeBtn">Create event</button>
+					<button id="createEventBtn" class="right themeBtn themeBtnMain">Create event</button>
 				</div>
 			</section>
 			<section id="manageEventsWrap" class="none centered">
-				<h2>Ils veulent venir à ta soirée</h2>
+				<h2>Ils veulent venir à ton meefore</h2>
 				<div class="actionsWrap actionsStyle">
 					<span id="cancelEvent" class="action">Annuler</span>
 					<span id="suspendEvent" class="action">Suspendre</span>
@@ -380,7 +384,7 @@
 						<label for="newsletter">Recevoir la newz</label>
 						<input id="newsletter" class="input-field_create" type="checkbox">
 					</div>
-					<button id="submitSettingsBtn" class="right themeBtn">Modifier </button>
+					<button id="submitSettingsBtn" class="right themeBtn themeBtnMain">Modifier </button>
 				</div>
 			</section>
 			<section id="contactWrap" class="none centered">
@@ -397,7 +401,7 @@
 			<label for="contactBody" class="align-top">Ton message</label>
 				<textarea id="contactBody" placeholder="Hi there, ..."></textarea>
 			</form>
-			<button id="sendContactForm" class="right themeBtn">Envoyer</button>
+			<button id="sendContactForm" class="right themeBtn themeBtnMain">Envoyer</button>
 			</section>
 		</section>
 		</div>
@@ -410,9 +414,6 @@
 		<script src="js/lj-domEvents.js"></script>
 		<script src="js/lj-admin.js"></script>
 		<script src="js/lj.js"></script>
-
-		<!-- Analytics-->
-		<script src="js/ga.js"></script>
 
 	</body>
 	</html>

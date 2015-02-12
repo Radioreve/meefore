@@ -40,7 +40,7 @@
   .centered{
 	width: 100%!important;
 	} 
-  .themeBtn{
+  .themeBtnMain{
     margin: 20px auto!important;
     display:block;
     float:none;
@@ -156,6 +156,21 @@
   #contentWrap #eventMaxGuest{
     width:40px!important;
   }
+ 
+ #contentWrap .chatInputWrap input{
+  	margin:0;
+  }
+  #contentWrap .chatInputWrap input[type="submit"]{
+	width:20px!important;
+  }
+  #contentWrap .chatInputWrap input[type="text"]{
+  
+  }
+ 
+  #manageEventsWrap .a-picture{
+		display: block;
+ 		 margin: 6px auto;
+	}
 
 }
 @media screen and ( max-width: 580px ){
@@ -326,7 +341,12 @@ div.sm-header button{
 } 
 header.sm-header button:hover{
 	opacity:.9;
+} 
+
+	
+
 }
+
 
 @media screen and (max-width:330px){
 

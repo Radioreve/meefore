@@ -1016,6 +1016,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					if( ['admin','root'].indexOf( LJ.user.access ) != -1 )
 					{
 						LJ.fn.initAdminEvents();
+						LJ.fn.handleAdminDomEvents();
 						LJ.fn.fetchAppData();
 					}
 
@@ -1979,7 +1980,7 @@ $('document').ready(function(){
 
 		});
 
-		sleep(2000,function(){LJ.fn.toastMsg('Bienvenue sur Vodsky et Whika', 'info');});
+		sleep(2000,function(){LJ.fn.toastMsg('Le prochain meefore commence dans 22 minutes', 'info');});
 
 
 });

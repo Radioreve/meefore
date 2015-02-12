@@ -36,13 +36,14 @@
 }
 
 #landingWrap h2{
-	font-family: 'Raleway';
-	text-transform: uppercase;
+	/* font-family: Lato; */
+	/* text-transform: uppercase; */
 	font-weight: bolder;
 	text-align: center;
 	margin-bottom: 15px;
 	color: rgb(58, 58, 58);
-	font-size: 25px;
+	font-size: 30px;
+	letter-spacing: -1px;
 }
 
 .l-item{
@@ -110,4 +111,8 @@
 	
 
 	border-radius: 3px;
+}
+
+.center-heading span{
+	text-decoration: line-through;
 }

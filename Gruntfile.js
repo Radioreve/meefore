@@ -13,6 +13,7 @@
 		    	dist: {
 		    		src: [
 		    			'public/js/lib/lodash.js',
+		    			'public/js/lib/mousetrap.js',
 		    			'public/js/lib/jquery.js',
 		    				'public/js/lib/velocity.min.js',
 		    					'public/js/lib/velocityui.min.js',

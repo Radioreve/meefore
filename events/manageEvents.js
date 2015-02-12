@@ -17,7 +17,7 @@ var createEvent = function(data) {
 
         return eventUtils.raiseError({
             socket: socket,
-            toClient:"Opening start at " + settings.eventsEndAt +"h"
+            toClient:"Opening start at " + settings.eventsRestartAt +"h"
         });
 
     }

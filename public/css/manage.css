@@ -8,36 +8,34 @@
     position:relative;
 }
 #askersListWrap{
+   position:relative;
 }
 .askersMainWrap{
     position: relative;
 }
-#askersListWrap i.next-left,
-.askersMainWrap i.next-right{
+i.icon-left-open-big,
+i.icon-right-open-big{
     font-size: 2.4em; 
     color: #ccc;
     position: absolute;
     top: 73px;
-    z-index: 2000;
+    z-index: 100;
 }
 #askersListWrap i.next-left:hover,
 #askersListWrap i.next-right:hover{
     color:black;
 }
 
-#askersListWrap > i.icon-left-open-big{
-    
+#askersListWrap  i.icon-left-open-big{
+    left: 0px;   
 }
 
-.askersMainWrap > i.next-right{
-    right: -30px;
-    
+#askersListWrap i.icon-right-open-big{
+    right: 0px;
 }
 
 .a-item{
     text-align: center;
-    width: 700px;
-    height: 270px;
     margin: 0 auto;
     display: none;
     padding: 22px;
@@ -70,23 +68,22 @@
 .a-body{
     display: inline-block;
     vertical-align: top;
-    width: 300px;
     color: #A8A8A8;
     text-align: left;
 }
 .a-birth{
-    color: #9E9E9E;
-    font-size:.7em;
-    display:inline-block;
-    position:absolute;
-    top: 176px;
-    left: 142px;
+    color: #aaa;
+    font-size:.6em;
+    position:relative;
+    width:123px;
+    margin:5px 0 1px 0;
+    
 }
 .a-body > div{
     margin: 12px 0;
     height: 21px;
-    width: 400px;
     font-size: .8em;  
+    line-height: 15px;
 }
 .a-body .label{
     font: bolder 1em 'Lato';
@@ -105,7 +102,6 @@
 }
 .a-desc div{
     display:inline-block;
-    width: 237px;
     font-size: .9em;
     line-height: 1.35em;
 }
@@ -113,7 +109,7 @@
     vertical-align:top;
 }
 .a-btn{
-    margin-top: 10px!important;
+    margin-top: 30px!important;
     margin-left: -12px;
     position: relative;
 }
@@ -123,6 +119,7 @@
     width: 42px;
     height: 32px;
     border-radius:3px;
+    margin-bottom: 40px;
 }
 .a-btn i{ 
     font-size: 1.5em;
@@ -211,3 +208,9 @@
     margin-top:20px;
     position: relative;
 }
+
+
+#manageEventsWrap .chatWrap{
+	width:80%;
+	left:10%;
+} 

@@ -141,7 +141,7 @@
     width: 259px;
     min-height: 173px;
     position: absolute;
-    border: 1px solid rgb(232, 232, 232);
+    /* border: 1px solid rgb(232, 232, 232); */
     z-index: 10;
     background: white;
     box-shadow: 0 0 3px #eee;

@@ -82,7 +82,7 @@
 	box-sizing: border-box;
 }
 .chatInputWrap input[type="submit"]{
-	width: 20px;
+	width: 20px!important;
 	height: 37px;
 	border: none;
 	background: #FFFFFF;
