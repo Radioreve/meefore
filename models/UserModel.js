@@ -7,13 +7,15 @@ var UserSchema = new mongoose.Schema({
   local: {
     email: {
       type: String,
+      default:''
     },
     password: {
       type: String,
     },
   },
   facebookId: {
-    type:String
+    type:String,
+    default:''
   },
   signupDate: {
     type: Date

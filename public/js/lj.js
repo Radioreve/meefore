@@ -23,11 +23,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				/* Global UI Settings ehanced UX*/
 				this.initEhancements();
 
-				/* Init Facebook state */
-				//this.initFacebookState();
-
 		},
-		initFacebookState: function(){
+		initFacebookState: function(){   /* Legacy Function */
 
 				  FB.getLoginStatus( function( res ){
 
@@ -320,12 +317,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('input.input-field').addClass('validating');
 
 		},
-		loginWithFacebook: function( facebookId ){
+		loginWithFacebook: function( facebookProfile ){
 
 				$.ajax({
 
 					method:'POST',
-					data: { facebookId: facebookId },
+					data: { facebookProfile: facebookProfile },
 					dataType:'json',
 					url:'/auth/facebook',
 					success: function(data){
@@ -959,8 +956,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
 
+				LJ.params.socket.on('new user signed up', function( user ){
+
+						LJ.fn.toastMsg('Un utilisateur vient de s\'inscrire', 'info');
+						LJ.fn.fetchUsers();
+				});
+
 				LJ.params.socket.on('refetch askers success', function( askers ){
-					csl('Refetch askers success, askers = ' + askers );
+					csl('Refetch askers success');
 					LJ.myAskers = askers;
 					LJ.fn.addFriendLinks();
 					$('#askersListWrap div.active').click(); // force update
@@ -1015,8 +1018,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					/* Admin scripts. Every com is secured serverside */
 					if( ['admin','root'].indexOf( LJ.user.access ) != -1 )
 					{
-						LJ.fn.initAdminEvents();
+						LJ.fn.initAdminSocketEvents();
 						LJ.fn.handleAdminDomEvents();
+						LJ.fn.initAdminInterface();
 						LJ.fn.fetchAppData();
 					}
 
@@ -1379,7 +1383,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 LJ.params.socket.on('fetch users success', function( data ){
 
                 	csl('Users fetched');
-                	LJ.myUsers = _.shuffle( data ); /*Not to have always the same user first*/
+                	LJ.myUsers.length === 0 ? LJ.myUsers = _.shuffle( data ) : LJ.myUsers = data ; 
                     $('#searchUsers').html( LJ.fn.renderUsersInSearch() );
 
                     $( $('.u-item:not(.match)')[0] ).removeClass('none').css({ opacity: '.5 '});
@@ -1416,6 +1420,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 	{
                 		var askersId = _.pluck( LJ.myAskers, '_id' );
 
+                		/* Both people have asked to join */
                 		if( askersId.indexOf( userId ) != -1 && askersId.indexOf( friendId ) != -1 )
                 			{ LJ.fn.refetchAskers(); }
 
@@ -1526,7 +1531,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			/* Prise en compte des effets de bords sinon le jQuery return undefined */
 			if( idx == 0 )
-			{
+			{	
+				csl('Inserting after #noEvents');
 				$( eventHTML ).insertAfter( $('#noEvents') );
 				$('#noEvents').addClass('none');
 			}
@@ -1980,7 +1986,7 @@ $('document').ready(function(){
 
 		});
 
-		sleep(2000,function(){LJ.fn.toastMsg('Le prochain meefore commence dans 22 minutes', 'info');});
+		//sleep(2000,function(){LJ.fn.toastMsg('Le prochain meefore commence dans 22 minutes', 'info');});
 
 
 });

@@ -892,6 +892,9 @@ body > footer{
 #join:hover{
 	text-decoration:underline;
 }
+.header-field.blocked{
+	background: rgb(38, 38, 38);
+}
 .header-field.validated{
 	color:white!important;
 	background: rgb(38, 38, 38);
@@ -1029,7 +1032,7 @@ loginWrapp input.validating-btn{
 	
 }
 .u-item.match{
-	opacity:1;
+	opacity: 1;
 }
 .u-head,
 .u-body,

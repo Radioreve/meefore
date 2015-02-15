@@ -54,12 +54,10 @@
 
 			}
 
-			var email = user.local.email;
-
 			var mailOptions = config.mailOptionsWelcome,
 				transporter = config.transporter;
 
-				mailOptions.to  = email;
+				mailOptions.to  = user.local.email;
 
 			transporter.sendMail( mailOptions, function( err, info ){
 

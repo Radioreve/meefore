@@ -1,9 +1,93 @@
-#adminPanel{
+#adminPanelWrap{
 	position:fixed;
 	z-index:9999999;
 	background:rgba(0,0,0,.9);
 	height:100%;
 	width:100%;
 	display:none;
-	opacity:0;
+	opacity:0;  
 }
+
+#adminPanel{
+    width: 80%;
+
+    height: 100%;
+    margin: 0 auto;
+    color: white;
+}
+
+#liveTrack{
+    width: 40%;
+
+    height: 100%;
+    padding: 20px 0px;
+    box-sizing: border-box;
+    text-align: center;
+    border-right: 1px solid #3F3F3F;
+    padding-right: 10px;
+}
+
+#onlineUsers{
+    height: 200px;
+    border-bottom: 1px solid #3F3F3F;
+}
+
+#onlineUsers > div{
+    font-size: 55px;
+    border-radius: 100px;
+    border: 1px solid lightgrey;
+    width: 60px;
+    padding: 20px;
+    margin: 0 auto;
+}
+#onlineUsers > span{
+    position: relative;
+   
+    font-size: 13px;
+    top: 9px;
+}
+
+#adminPanel .wrap{
+    padding-top: 35px;
+
+    box-sizing: border-box;
+}
+
+#menuViewers{
+    border-top: 1px solid black;
+
+}
+
+#menuViewers .menuViewersRow{
+    
+
+    margin: 10px 0;
+    font-size: 12px;
+    text-align: left;
+    position: relative;
+}
+
+#menuViewers .menuViewersRow > div{
+	
+    padding-left: 30px;
+    
+    width: 43px;
+    padding-right: 10px;
+    display: inline-block;
+    
+    border-right: 1px solid rgb(73, 73, 73);
+}
+
+#menuViewers .menuViewersRow .menuViewersBar{
+    background: rgb(123, 178, 114);
+	
+    width: 37px;
+    height: 100%;
+    padding-left: 10px;
+    text-align: center;
+    padding: 0px 0px;
+}
+
+
+
+

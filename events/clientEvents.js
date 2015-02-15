@@ -75,7 +75,8 @@
 
 		Event.findById( eventId, {}, function( err, myEvent ){
 
-			/* On commence par l'Event pour savoir s'il est full */
+			/* On commence par l'Event pour savoir s'il est full 
+
 			if( myEvent.askersList.length === myEvent.maxGuest ){
 
 				return eventUtils.raiseError({
@@ -83,6 +84,8 @@
 					toServer: "max user reached for that event",
 					toClient: "L'évènement est complet. Essayez en un autre."
 				});
+
+			
 
 			}
 			/* Ensuite on regarde si la personne n'est pas déjà dans la liste pour éviter toute incohérence Data */

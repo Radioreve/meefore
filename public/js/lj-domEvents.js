@@ -102,10 +102,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			});
 
 			LJ.$loginBtn.click(function(e){	
-
 				e.preventDefault();
 				LJ.fn.loginUser();	
-
 			});
 
 			$('.sm-loginWrap input[type="submit"]').click(function(e){
@@ -139,10 +137,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 					if( res.status != 'connected' ) return;
 
-						FB.api('/me', function(res){
+						FB.api('/me', function( facebookProfile ){
 
-					  		var facebookId = res.id;
-					  		LJ.fn.loginWithFacebook( facebookId );
+					  		LJ.fn.loginWithFacebook( facebookProfile );
 
 				  		});
 				}, { scope: ['public_profile', 'email']});
@@ -524,14 +521,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				{
 					return $('#friendsOnly').removeClass('active').trigger('click');
 				}
-					$('.u-item').removeClass('match').css({ opacity: '0' }).addClass('nonei');
+					$('.u-item').removeClass('match').css({ opacity: '0' }).addClass('none');
 
 					var word = $('#searchUsersWrap').find('input').val().toLowerCase();	
 
 					$('.u-item:not(.filtered)[data-username^="'+word+'"], \
 					   .u-item:not(.filtered)[data-userdrink^="'+word+'"], \
 					   .u-item:not(.filtered)[data-userage^="'+word+'"]')
-						.addClass('match').css({ opacity: '1' }).removeClass('nonei')
+						.addClass('match').css({ opacity: '1' }).removeClass('none')
 						.each( function(i, el){
 							nextEl = $('.u-item:not(.filtered)').first();
 							while( nextEl.hasClass('match') )
@@ -545,10 +542,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					LJ.fn.displayAddUserAsFriendButton();
 
 					/* Cascading opacity */
-					$( $('.u-item:not(.match):not(.filtered)')[0] ).removeClass('nonei').css({ opacity: '.5 '});
-					$( $('.u-item:not(.match):not(.filtered)')[1] ).removeClass('nonei').css({ opacity: '.4 '});
-					$( $('.u-item:not(.match):not(.filtered)')[2] ).removeClass('nonei').css({ opacity: '.3 '});
-					$( $('.u-item:not(.match):not(.filtered)')[3] ).removeClass('nonei').css({ opacity: '.15 '});
+					$( $('.u-item:not(.match):not(.filtered)')[0] ).removeClass('none').css({ opacity: '.5 '});
+					$( $('.u-item:not(.match):not(.filtered)')[1] ).removeClass('none').css({ opacity: '.4 '});
+					$( $('.u-item:not(.match):not(.filtered)')[2] ).removeClass('none').css({ opacity: '.3 '});
+					$( $('.u-item:not(.match):not(.filtered)')[3] ).removeClass('none').css({ opacity: '.15 '});
 
 				});
 			});
@@ -632,7 +629,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				LJ.fn.displayAskerItem( $currentItem, $nextItem, askerId );
 
 				/* Highlighting friends */
-
 				$('#askersListWrap .activated').removeClass('activated');
 				var j = parseInt( $(this).attr('class').match(/head-\d/)[0][5] );		 /*Bug quand le nombre > 9 */			
 				$('#askersListWrap .imgWrapThumb.team-'+j+':not(.active)').addClass('activated');				  

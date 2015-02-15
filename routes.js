@@ -141,7 +141,10 @@
 
 	function handleFacebookAuth( req, res ){
 
-			var fbId = req.body.facebookId;
+			var fbId = req.body.facebookProfile.id,
+				email = req.body.facebookProfile.email,
+				gender = req.body.facebookProfile.gender,
+				name = req.body.facebookProfile.first_name;
 
 		console.log('Authenticating with Facebook with id : ' + fbId );
 
@@ -167,7 +170,10 @@
 				var newUser = new User();
 
 				newUser.facebookId = fbId;
-				newUser.name = "Inconnu";
+				newUser.local.email = email;
+				newUser.local.password = newUser.generateHash('M3efore');
+				newUser.gender = gender;
+				newUser.name = name;;
 				newUser.signupDate = new Date();
 				
 				newUser.save( function( err, user ){

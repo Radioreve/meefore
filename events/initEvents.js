@@ -66,6 +66,8 @@
 
 			userSocket.emit('fetch user and configuration success', expose );
 
+			if( user.status == 'new' ) userSocket.broadcast.emit('new user signed up', expose.user );
+
 		});
 	};
 

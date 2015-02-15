@@ -3,7 +3,7 @@
 
 	{
 
-		initAdminEvents: function(){
+		initAdminSocketEvents: function(){
 
 			LJ.params.socket.on('fetch app data success', function( data ){
 
@@ -14,16 +14,34 @@
 		},
 		handleAdminDomEvents: function(){
 
-			Mousetrap.bind('shift+m', function(e) {
+			Mousetrap.bind('mod+m', function(e) {
 				LJ.fn.toggleAdminPanel();
 			});
 
 		},
 		initAdminInterface: function(){
 
-			var html = '';
 
-			
+			var html = '<div id="adminPanel">'
+							+'<div id="liveTrack">'
+								+'<div id="onlineUsers" class="wrap">'
+									+'<div>25</div>'
+									+'<span>users online</span>'
+								+'</div>'
+								+'<div id="menuViewers" class="wrap">'									
+										+'<div class="menuViewersRow"><div>Profile</div><div class="menuViewersBar"></div></div>'
+										+'<div class="menuViewersRow"><div>Search</div><div class="menuViewersBar"></div></div>'
+										+'<div class="menuViewersRow"><div>Events</div><div class="menuViewersBar"></div></div>'
+										+'<div class="menuViewersRow"><div>Create</div><div class="menuViewersBar"></div></div>'
+										+'<div class="menuViewersRow"><div>Manage</div><div class="menuViewersBar"></div></div>'
+										+'<div class="menuViewersRow"><div>Contact</div><div class="menuViewersBar"></div></div>'
+										+'<div class="menuViewersRow"><div>Settings</div><div class="menuViewersBar"></div></div>'
+									+'</div>'
+								+'</div>'
+							+'</div>'
+						+'</div>';
+
+			$('#adminPanelWrap').append( html );
 
 		},
 		fetchAppData: function(){
@@ -33,7 +51,7 @@
 		},
 		toggleAdminPanel: function(){
 
-			var $panel = $('#adminPanel');
+			var $panel = $('#adminPanelWrap');
 
 			if( $panel.css('opacity') == 0 )
 				return $panel.velocity('transition.fadeIn', { duration: 150 });

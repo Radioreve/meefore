@@ -35,6 +35,7 @@
 			authAdmin( user, socketAdmin );
 
 			/* Fetching monitoring informations for real time */	
+			socketAdmin.emit('fetch app data success', global.appData );
 
 
 		});

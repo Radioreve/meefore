@@ -48,6 +48,7 @@
 					newUser.local.email = email;
 					newUser.local.password = newUser.generateHash( password );
 					newUser.gender = req.body.gender;
+					newUser.age = 25;
 					newUser.signupDate = new Date();
 					
 					newUser.save( function( err ){

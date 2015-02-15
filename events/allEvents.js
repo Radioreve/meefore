@@ -27,7 +27,7 @@
 		socket.on( 'suspend event', manageEvents.suspendEvent );
 		socket.on( 'fetch askers', manageEvents.fetchAskers );
 
-	//Events inclassables
+	//Events relatif au chat
 		socket.on( 'send message', chatEvents.sendMessage );
 		socket.on( 'load rooms', chatEvents.reloadRooms );
 

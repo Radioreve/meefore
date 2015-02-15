@@ -14,23 +14,23 @@
 	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription
 
 #Schedule 
- 	Done
+ 	Design
+	- Mettre une real time sync sur les données... ( nom, age, desc, drink, mood, photo )
+	- Fix bubbleup pour pas afficher de bubb si active panel
 
  	Todo
 	- Système d'admin minimal pour monitorer les gens connectés + panel CTRL+M
 			o Nombre de clients connectés ( garçons, filles )
 			o Ce qu'ils sont en train de regardé 
 			o Nombre d'évènements créés
-			o Nombre de personne inscrites dans un events 
-
-	- Validation clientside, validaton server side
-	- Déploiement live + Nom de domaine
-	- Faire apparaître le login uniquement lorsque la page est chargée
+			o Nombre de personnes inscrites dans un event
+	
+	- Identifier les users online/offline
+	- Validation clientside, validaton serverside
 	- Clientside routing hashtags #
 	- Réaliser une page "Ambassadors"
 
 	- SEO
-    - Définir de qui j'ai besoin ! 
 	- Améliorer le système de logout
 	- "Someone is typing..."
 

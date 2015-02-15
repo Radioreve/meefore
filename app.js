@@ -25,18 +25,18 @@
 		require('./routes')( app, passport );
 
 		io.use( socketioJwt.authorize({
-
 			secret:config.jwtSecret,  
 			handshake:true
-
 		})); 
 
+		/* Global for ease of use */
 		global.sockets = {};
+		global.appData = {};
 		global.io = io;
 
 		io.on('connection', function( socket ){
-
 			 console.log( 'New user has joined the app' );
+			 
 			 var id = socket.decoded_token._id.toString();
 
 			 if( !global.sockets[id] )
@@ -45,7 +45,7 @@
 			 }
 			 else
 			 {
-			 	global.sockets[id].emit('server error',{ msg: 'You logged in from another device' });
+			 	global.sockets[id].emit('server error', { msg: 'You logged in from another device' });
 			 	global.sockets[id].disconnect();
 			 	global.sockets[id] = socket;
 			 }
