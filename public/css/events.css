@@ -377,7 +377,8 @@ input[type="number"]{
 	opacity: 0;
 	padding: 0 40px;
 }
-#noEvents{
+#noEvents,
+#noResults{
 	margin-top:85px; 
 }
 h3{

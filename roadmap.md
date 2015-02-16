@@ -16,7 +16,7 @@
 #Schedule 
  	Design
 	- Mettre une real time sync sur les données... ( nom, age, desc, drink, mood, photo )
-	- Fix bubbleup pour pas afficher de bubb si active panel
+	- can add friends to event that are not mutual?!
 
  	Todo
 	- Système d'admin minimal pour monitorer les gens connectés + panel CTRL+M

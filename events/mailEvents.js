@@ -21,7 +21,7 @@
 				transporter = config.transporter;
 
 				mailOptions.from = name + ' <' + email +'>';
-				mailOptions.subject = 'Someone has left a comment';
+				mailOptions.subject = 'Someone has left a message!';
 				mailOptions.html = body;
 
 			transporter.sendMail( mailOptions, function( err, info ){

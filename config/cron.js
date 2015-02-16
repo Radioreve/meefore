@@ -1,15 +1,20 @@
 
-		
-	/* Contient les variables modifiant le comportant de l'application */
-	 
+			 
 	var Event    = require('../models/EventModel'),
 		  User     = require('../models/UserModel'),
 	  	schedule = require('node-schedule'),
 	  	settings = require('./settings');
 
 	var eventsTerminateAt = settings.eventsTerminateAt;
+	var eventsRestartAt = settings.eventsRestartAt;
 
-	function terminateEvents(){
+	function restartEvents(){
+
+		global.io.emit('restart events');
+
+	}
+
+	function resetUsersAndEvents(){
 
 		var conditions   = { 'state': { $in : ['open', 'suspended'] } },
 	   	    update     = { 'state': 'ended' },
@@ -21,14 +26,14 @@
    			console.log('The number of updated documents was %d', numberAffected);
   			console.log('The raw response from Mongo was ', raw);
 
-  			global.io.emit('terminate events');
+  			global.io.emit('reset events');
    		};
 
 	   	var userConditions = {},
 	   	    userUpdate     = 
 	   	    { 
 	   	    	$set : { 
-	   	    		'status': 'idle',
+	   	    		'status': 'idle', // attention, ça affecte aussi les 'new'
 	   	    		'eventsAskedList': [],
 	   	    		'hostedEventId':'',
 	   	    		'socketRooms': []
@@ -50,18 +55,18 @@
 
 	}
 
-	(function eventAutoUpdate(){
-		
-			var ruleTerminate = new schedule.RecurrenceRule();
-				ruleTerminate.hour = eventsTerminateAt;
-				ruleTerminate.minute = 25; // Sinon il l'envoie toutes les minutes
-
-			var job_terminate = schedule.scheduleJob( ruleTerminate, terminateEvents );
-
-		})();
+	/* Event Auto Update */
+	var ruleTerminate = new schedule.RecurrenceRule();
+		ruleTerminate.hour = eventsTerminateAt;
+		ruleTerminate.minute = 38; // Sinon il l'envoie toutes les minutes
+	    schedule.scheduleJob( ruleTerminate, resetUsersAndEvents );
+	
+	var ruleRestart = new schedule.RecurrenceRule();
+		ruleRestart.hour = eventsRestartAt;
+		//ruleTerminate.minute = 0;
+	    schedule.scheduleJob( ruleRestart, restartEvents );
 
 	var min = 0;
-	
 	(function checkingTime(){
 
 				min += 1;

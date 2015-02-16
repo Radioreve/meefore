@@ -47,7 +47,7 @@
 
 	//Events de mails
 		//socket.on( 'request welcome email', mailEvents.requestWelcomeEmail	);
-		//socket.on( 'send contact email', mailEvents.sendContactEmail	    );
+		socket.on( 'send contact email', mailEvents.sendContactEmail	    );
 
 		socket.on('test', function(data){
 			console.log( global.sockets );

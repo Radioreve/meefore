@@ -3,7 +3,7 @@
 var settings = {
 
 	eventsTerminateAt: 9,  // utiliser pour le cron job
-	eventsRestartAt: 10,   // utiliser pour empêcher de créer un event trop tôt
+	eventsRestartAt: 14,   // utiliser pour empêcher de créer un event trop tôt
 	tagList: 
 			 [  'afterwork',
 				'before',

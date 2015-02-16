@@ -9,7 +9,8 @@
 			    max = max || arr.length;
 
             if( max == 0 )
-            {
+            {   
+                $('#noResults').addClass('filtered');
                 return '<h3 id="noEvents">Aucun évènement à afficher pour le moment.</h3>'
             }
 			for( var i=0; i < max; i++ ){
@@ -532,7 +533,7 @@
                 return '';
 
             if( _.find( LJ.user.friendList, function(el){ return el.friendId == friend._id }).status == 'askedHim' ) 
-                return LJ.fn.renderUser({ user: friend, wrap: 'eventsWrap' });
+                return '';
 
             return LJ.fn.renderUser({ user: friend, wrap: 'eventsWrap'});
         }

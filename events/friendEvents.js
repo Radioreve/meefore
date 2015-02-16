@@ -47,7 +47,7 @@
 
 			User.findById( friendId, function( err, myFriend ){
 
-				/* L'utilisateur tente de s'ajouter lui même */
+				/* Err */
 				if( err )
 					return eventUtils.raiseError({ err: err, toServer: 'LJ-72-b',
 				      	   toClient: 'Please try again later', socket: userSocket });

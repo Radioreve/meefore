@@ -71,7 +71,8 @@
 					+'</span><span class="toastMsg"></span></div>',
 		toastSuccess: '<div class="toast toastSuccess" class="none"><span class="toast-icon icon icon-right-open-big">'
 					+'</span><span class="toastMsg"></span></div>',
-		noResult: '<center id="noEvents" class="filtered"><h3>Aucun évènement pour ce choix de filtre </h3></center>',
+		noResults: '<center id="noResults" class="filtered"><h3>Aucun évènement pour ce choix de filtre </h3></center>',
+		noEvents: '<center id="noEvents" class=""><h3>Aucun évènement n\'a encore été proposé. Soyez le premier! </h3></center>',
 		charte: '<div id="charte" class="centered"> \
 					<h2>Charte d\'engagement V&W </h2> \
 					<div class="subcharte"><span>1</span> Ne jamais se présenter à un event les mains vides </div> \

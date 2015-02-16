@@ -3,9 +3,11 @@
 
 		var transporter = nodemailer.createTransport({
 
-		    service: 'Gmail',
+			host:'mail.gandi.net',
+			port:'587',
+			use_authentication:true,
 		    auth: {
-		        user: 'ljayame@gmail.com',
+		        user: 'leo@meefore.com',
 		        pass: 'R4dioreve'
 		    }
 
@@ -13,7 +15,7 @@
 
 		var mailOptions = {  welcome: {}, reset: {}, contact: {}  };
 
-			mailOptions.welcome.from    = 'Jenny <ljayame@gmail.com>';
+			mailOptions.welcome.from    = 'Mike Meefore <leo@meefore.com>';
 			mailOptions.welcome.subject = 'Are you ready ?';
 			mailOptions.welcome.html    = '<body style="padding:10px;">'
 										   + '<p style="background:#eee; padding:20px">Hello world, welcome on board.</p>'
@@ -22,8 +24,8 @@
 			mailOptions.reset.from    = 'Marianne <ljayame@gmail.com>';
 			mailOptions.reset.subject = 'So you forgot your password, huh?';
 
-			mailOptions.contact.from  = 'Feedbacks <ljayame@gmail.com>';
-			mailOptions.contact.to    = 'methodezela@gmail.com';
+			mailOptions.contact.from  = 'Mike <leo@meefore.com>';
+			mailOptions.contact.to    = 'leo@meefore.com';
 
 		var mailOptionsWelcome = mailOptions.welcome,
 			mailOptionsReset   = mailOptions.reset,

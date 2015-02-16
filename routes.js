@@ -2,6 +2,7 @@
 	var express = require('express'),
 		jwt = require('jsonwebtoken'),
 		config = require('./config/config'),
+		configMail = require('./config/mailer'),
 		User = require('./models/UserModel'),
 		nodemailer = require('nodemailer'),
 		randtoken = require('rand-token'),
@@ -104,13 +105,13 @@
 						return;
 					}
 
-					var mailOptions = config.mailOptionsReset,
-						transporter = config.transporter;
+					var mailOptions = configMail.mailOptionsReset,
+						transporter = configMail.transporter;
 
 					mailOptions.html =  '<body style="padding:10px;">'
 											   + '<p style="background:#eee; padding:20px">Try to connect with this one : '
 											   + resetToken 
-											   + '</p>'
+											   + '. Don\'t forget to change it soon!</p>'
 										       + '</body>';
 
 					mailOptions.to  = email;

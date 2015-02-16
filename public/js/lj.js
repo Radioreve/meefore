@@ -423,7 +423,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('.eventItemWrap').remove();
 			LJ.myEvents = [];
 
-			$('.eventsHeader').velocity('transition.slideUpOut', 
+			$('.eventsHeader, #noEvents').velocity('transition.slideUpOut', 
 				{ 
 				  duration: 400,
 				  complete: function(){
@@ -436,12 +436,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			$('.eventItemWrap').remove();
 			LJ.myEvents = [];
-
+			
 			$('#frozenTimezone').velocity('transition.slideRightOut', 
 				{ 
 				  duration: 400,
 				  complete: function(){
-				  	$('.eventsHeader').velocity('transition.slideUpIn', { duration: 700 });
+				  	$('.eventsHeader, #no').velocity('transition.slideUpIn', { duration: 700 });
+					LJ.fn.displayEvents();
 				}
 			});
 
@@ -872,7 +873,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	/* Mise à jour dynamique des filters */
         	$( '.tags-wrap' ).html('').append( LJ.fn.renderTagsFilters() );
         	$( '.locs-wrap' ).html('').append( LJ.fn.renderLocsFilters() );
-        	$( '#eventsListWrap' ).html('').append( LJ.tpl.noResult );
+        	$( '#no' ).html('').append( LJ.tpl.noResults );
 
         	$('#friendListWrap').jScrollPane();
         	LJ.state.jspAPI['#friendListWrap'] = $('#friendListWrap').data('jsp');
@@ -891,7 +892,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				switch( LJ.user.status )
 				{
 					case 'new':
-						LJ.params.socket.emit('request welcome email', LJ.user._id );
 						LJ.fn.displayViewAsNew();
 						break;
 					case 'idle':
@@ -971,10 +971,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				});
 
 
-				LJ.params.socket.on('terminate events', function(){
+				LJ.params.socket.on('reset events', function(){
 
 					LJ.fn.toastMsg('Les évènements sont maintenant terminés!', 'info');
-					LJ.fn.displayViewAsFrozen();
+					LJ.fn.displayEvents();
+					if( LJ.user.status == 'hosting') LJ.fn.handleCancelEvent( { hostId: LJ.user._id });
 
 				});
 
@@ -1483,12 +1484,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		canceledEvent.velocity("transition.slideRightOut", {
         			complete: function(){
         				canceledEvent.remove();
+        				if( $('.eventItemWrap').length == 0 ) LJ.fn.displayEvents();
         			}
         		});
 
         	_.remove( LJ.myEvents, function(el){
         		return el.hostId == data.hostId; 
         	});
+
 
 		},
 		handleSuspendEvent: function(data, state){
@@ -1534,7 +1537,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			{	
 				csl('Inserting after #noEvents');
 				$( eventHTML ).insertAfter( $('#noEvents') );
-				$('#noEvents').addClass('none');
+				$('#noEvents').addClass('filtered');
 			}
 			// myEvents just got incremented, hence the - 1
 			if( idx == LJ.myEvents.length - 1){
@@ -1598,7 +1601,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         displayEvents: function(){
 
-        	/* Mise à jour de la vue des évènements */
+        	/* Mise à jour de la vue des évènements
+        	  au cas où quelqu'un se connecte en période creuse
+        	*/
 	        	var hour = (new Date()).getHours();
 	        	if( hour < LJ.settings.eventsRestartAt && hour >= LJ.settings.eventsTerminateAt ){
         			csl('Displaying events frozen state');
@@ -1659,6 +1664,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         filterEvents: function(tags, locations){
 
+        	if( $('.eventItemWrap').length == 0 ) return LJ.fn.toastMsg('Aucun évènement à filtrer', 'error');
+
         	LJ.$eventsListWrap.find('.selected').removeClass('selected');
 
         	    isFilteredByLoc = ( locations.length != 0 ),
@@ -1699,16 +1706,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		/* Transforme un Array de jQuery objects, en un jQuery-Array */
         		LJ.$eventsToDisplay = $(eventsToDisplay).map( function(){ return this.toArray(); });
 	        	
-       		$('.eventItemWrap, #noEvents ').addClass('filtered');
+       		$('.eventItemWrap, #noResults ').addClass('filtered');
        		LJ.$eventsToDisplay.removeClass('filtered');
 
        		if( LJ.$eventsToDisplay.length == 0){
        			LJ.fn.toastMsg( 'Aucun évènement trouvés', 'info');
-       			$('#noEvents').removeClass('filtered').addClass('none')	
+       			$('#noEvents').addClass('filtered');
+       			$('#noResults').removeClass('filtered')
        						  .velocity('transition.slideLeftIn', { duration: 700 });
 
        		}else{
-       			LJ.fn.toastMsg( LJ.$eventsToDisplay.length + ' soirées pour ces filtres!', 'info');	
+       			LJ.fn.toastMsg( LJ.$eventsToDisplay.length + ' soirées pour ces filtres!', 'info');
        		}
 
         },
@@ -1764,6 +1772,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         bubbleUp: function( el ){
 
         	var $el = $(el);
+
+        	if( $el.hasClass('menu-item-active') ) return; 
 
         	var $bubble = $el.find('.bubble'),
         		n = $bubble.text() == 0 ? 0 : parseInt( $bubble.text() );

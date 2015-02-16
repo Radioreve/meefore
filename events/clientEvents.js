@@ -57,9 +57,9 @@
 			if( hostId == userId ) return;
 
 			var room   = eventUtils.buildRoomId( eventId, hostId, userId ),
-				userSocket = global.sockets[userId],
-				hostSocket = global.sockets[hostId],
-		   requesterSocket = global.sockets[requesterId];
+				userSocket = global.sockets[ userId ],
+				hostSocket = global.sockets[ hostId ],
+		   requesterSocket = global.sockets[ requesterId ];
 
 
 			if( userSocket != undefined ){
@@ -94,6 +94,7 @@
 				return requesterSocket.emit('friend already in', { eventId: eventId, userId: userId });
 			}
 
+
 			User.findById( userId, {}, function( err, user ){
 
 				if( err ){
@@ -102,6 +103,16 @@
 						socket: userSocket,
 						toServer: "Request failed [1]",
 						toClient: "Error happened - We have been notified"
+					});
+				}
+
+				if( !_.some( user.friendList, { friendId: requesterId, status:'mutual' }) && userId != requesterId )
+				{
+					return eventUtils.raiseError({
+						err: err,
+						socket: requesterSocket,
+						toServer: "Request failed [3]",
+						toClient: "Cette personne n'est pas un ami mutuel!"
 					});
 				}
 
