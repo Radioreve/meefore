@@ -282,7 +282,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			};
 				csl('Emitting update profile');
 				LJ.fn.showLoaders();
-				LJ.params.socket.emit('update profile', profile);
+				LJ.fn.say('update profile', profile );
 
 		},
 		updateSettings: function(){
@@ -296,7 +296,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			var o = { currentEmail: currentEmail, newPw: newPw, newPwConf: newPwConf, newsletter: newsletter, userId: userId }; 
 
 			LJ.fn.showLoaders();
-			LJ.params.socket.emit('update settings', o);
+			LJ.fn.say('update settings', o);
 
 		},
 		swapNodes: function( a, b ){
@@ -573,7 +573,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
     				  .find('.chatWrap')
     				  .velocity('transition.slideLeftIn', { duration: 400 });
 
-    		sleep(30, function(){ 
+    		sleep(100, function(){ 
     			if( LJ.state.jspAPI[chatId] !== undefined )
     			{
            		  LJ.state.jspAPI[chatId].reinitialise();
@@ -775,7 +775,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                                 LJ.user.imgVersion = imgVersion;
                                 LJ.user.imgId      = imgId;
 
-  								LJ.params.socket.emit('update picture', {
+  								LJ.fn.say('update picture', {
 																			_id        : LJ.user._id,
 																			imgId      : imgId,
 																			imgVersion : imgVersion 
@@ -788,6 +788,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
   				}).cloudinary_fileupload();
   				
+		},
+		refreshOnlineUsers: function(){
+
+			var i=0;
+			for( ; i<LJ.myOnlineUsers.length; i++ )
+			{
+				LJ.fn.displayAsOnline( LJ.myOnlineUsers[i] );
+			}
+
 		},
 		refreshArrowDisplay: function(){
 
@@ -946,23 +955,31 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
 		initSocketEventListeners: function(){
 
-				LJ.params.socket.on('connect', function(){
+				LJ.fn.on('connect', function(){
 
 					csl('Client authenticated on the socket stream');
 					var userId = LJ.user._id;
 
 					/* Request all informations */
-					LJ.params.socket.emit('fetch user and configuration', userId );
+					LJ.fn.say('fetch user and configuration', userId );
 
 				});
 
-				LJ.params.socket.on('new user signed up', function( user ){
+				LJ.fn.on('user connected', LJ.fn.displayAsOnline );
+					
+				LJ.fn.on('user disconnected', LJ.fn.displayAsOffline );
+
+				LJ.fn.on('new user signed up', function( user ){
 
 						LJ.fn.toastMsg('Un utilisateur vient de s\'inscrire', 'info');
 						LJ.fn.fetchUsers();
 				});
 
-				LJ.params.socket.on('refetch askers success', function( askers ){
+				LJ.fn.on('user started typing success', LJ.fn.showUserTyping );
+
+				LJ.fn.on('user stopped typing success', LJ.fn.hideUserTyping );
+
+				LJ.fn.on('refetch askers success', function( askers ){
 					csl('Refetch askers success');
 					LJ.myAskers = askers;
 					LJ.fn.addFriendLinks();
@@ -971,7 +988,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				});
 
 
-				LJ.params.socket.on('reset events', function(){
+				LJ.fn.on('reset events', function(){
 
 					LJ.fn.toastMsg('Les évènements sont maintenant terminés!', 'info');
 					LJ.fn.displayEvents();
@@ -979,7 +996,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
 
-				LJ.params.socket.on('restart events', function(){
+				LJ.fn.on('restart events', function(){
 
 					LJ.fn.toastMsg('Les évènements sont à présent ouverts!', 'info');
 					LJ.fn.displayViewAsNormal();
@@ -987,7 +1004,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
 
-				LJ.params.socket.on('fetch user and configuration success', function( data ){
+				LJ.fn.on('fetch user and configuration success', function( data ){
 
 					/* L'ordre de l'appel est important, car certaines 
 					/* informations sont cachées par les premières 
@@ -1004,6 +1021,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 					var user 	 = data.user,
 						settings = data.settings;
+					
+					LJ.myOnlineUsers = data.onlineUsers;
 
 					LJ.fn.initAppSettings( data, settings );
 					LJ.fn.displayUserSettings();
@@ -1027,7 +1046,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
 
-				LJ.params.socket.on('update profile success', function(data){
+				LJ.fn.on('update profile success', function(data){
 
 					csl('update profile success received');
 
@@ -1041,13 +1060,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
 
-				LJ.params.socket.on('update image success', function( data ){
+				LJ.fn.on('update image success', function( data ){
 
 					LJ.fn.updateClientSettings(data);
 					csl(JSON.stringify(data,0,4));
 				});
 
-				LJ.params.socket.on('create event success', function( myEvent ){
+				LJ.fn.on('create event success', function( myEvent ){
 					
 					var eventId = myEvent._id,
 						hostId = myEvent.hostId;
@@ -1079,7 +1098,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					});
 				});
 
-				LJ.params.socket.on('change state event success', function( data ){
+				LJ.fn.on('change state event success', function( data ){
 					
 					sleep( LJ.ui.artificialDelay , function(){ 
 
@@ -1110,9 +1129,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 		        });
 
-				LJ.params.socket.on('fetch user success', function( data ){ console.log(data); });
+				LJ.fn.on('fetch user success', function( data ){ console.log(data); });
 
-				LJ.params.socket.on('friend already in', function( data ){
+				LJ.fn.on('friend already in', function( data ){
 					
 					csl('Friend already in');
 					sleep( LJ.ui.artificialDelay, function(){
@@ -1124,7 +1143,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
  
-				LJ.params.socket.on('fetch events success', function( events ){
+				LJ.fn.on('fetch events success', function( events ){
 
 					LJ.state.fetchingEvents = false;
 					var L = events.length;
@@ -1144,7 +1163,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					LJ.fn.displayEvents();
 				});
 
-				LJ.params.socket.on('request participation in success', function( data ){
+				LJ.fn.on('request participation in success', function( data ){
 
 					var hostId  	= data.hostId,
 						userId 		= data.userId,
@@ -1212,6 +1231,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 								LJ.fn.refetchAskers();
 							    LJ.fn.refreshArrowDisplay();
+							    LJ.fn.displayAsOnline( userId );
 						}
 
 						var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
@@ -1221,7 +1241,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
 
-				LJ.params.socket.on('request participation out success', function(data){
+				LJ.fn.on('request participation out success', function(data){
 
 						console.log( data.asker.name +' asked out' );
 
@@ -1285,7 +1305,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 	
 				});
 
-				LJ.params.socket.on('accept asker success', function( data ){
+				LJ.fn.on('accept asker success', function( data ){
 
 					csl('Asker has been accepted');
 
@@ -1305,7 +1325,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
 
-				LJ.params.socket.on('update settings success', function(data){
+				LJ.fn.on('update settings success', function(data){
 
 					sleep( LJ.ui.artificialDelay, function(){
 						LJ.fn.toastMsg( data.msg, 'info');
@@ -1315,7 +1335,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
 
-				LJ.params.socket.on('send contact email success', function(){
+				LJ.fn.on('send contact email success', function(){
 
 					sleep( LJ.ui.artificialDelay, function(){
 						LJ.fn.toastMsg( "Merci beaucoup!", 'info');
@@ -1325,7 +1345,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				});
 
-				LJ.params.socket.on('server error', function( data ){
+				LJ.fn.on('server error', function( data ){
 
 					var msg   = data.msg,
 						flash = data.flash;
@@ -1340,14 +1360,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					});
 				});
 
-				LJ.params.socket.on('disconnect', function(){
+				LJ.fn.on('disconnect', function(){
 
 					LJ.fn.toastMsg("Quelque chose s'est produit, vous avez été déconnecté", 'error', true);
 					LJ.params.socket.disconnect(LJ.user._id);
 
 				});
 
-                LJ.params.socket.on('fetch askers success', function( data ){
+                LJ.fn.on('fetch askers success', function( data ){
                 	
                     LJ.state.fetchingAskers = false;
                     LJ.myAskers = data.askersList;
@@ -1357,13 +1377,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 });
 
-                LJ.params.socket.on('receive message', function( data ){
+                LJ.fn.on('receive message', function( data ){
 
                 	LJ.fn.addChatLine(data);
 
                 });
 
-                LJ.params.socket.on('fetch friends success', function( data ){
+                LJ.fn.on('fetch friends success', function( data ){
 
                 	csl('Friends fetched');
                 	LJ.myFriends = data;
@@ -1378,23 +1398,27 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 		LJ.nextCallback.fn();
                 		LJ.nextCallback = {};
                 	}
+
+                	LJ.fn.refreshOnlineUsers();
  
                 });
 
-                LJ.params.socket.on('fetch users success', function( data ){
+                LJ.fn.on('fetch users success', function( data ){
 
                 	csl('Users fetched');
                 	LJ.myUsers.length === 0 ? LJ.myUsers = _.shuffle( data ) : LJ.myUsers = data ; 
                     $('#searchUsers').html( LJ.fn.renderUsersInSearch() );
 
-                    $( $('.u-item:not(.match)')[0] ).removeClass('none').css({ opacity: '.5 '});
-					$( $('.u-item:not(.match)')[1] ).removeClass('none').css({ opacity: '.4 '});
-					$( $('.u-item:not(.match)')[2] ).removeClass('none').css({ opacity: '.3 '});
-					$( $('.u-item:not(.match)')[3] ).removeClass('none').css({ opacity: '.15 '});
+                    $( $('#searchUsers .u-item:not(.match)')[0] ).removeClass('none').css({ opacity: '.5 '});
+					$( $('#searchUsers .u-item:not(.match)')[1] ).removeClass('none').css({ opacity: '.4 '});
+					$( $('#searchUsers .u-item:not(.match)')[2] ).removeClass('none').css({ opacity: '.3 '});
+					$( $('#searchUsers .u-item:not(.match)')[3] ).removeClass('none').css({ opacity: '.15 '});
+
+					LJ.fn.refreshOnlineUsers();
 
                 });
 
-                LJ.params.socket.on('friend request in success host', function( data ){
+                LJ.fn.on('friend request in success host', function( data ){
 
                 	var userId     = data.userId,
                 		friendId   = data.friendId;
@@ -1409,7 +1433,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 });
 
-                LJ.params.socket.on('friend request in success', function( data ){
+                LJ.fn.on('friend request in success', function( data ){
 
                 	var userId     = data.userId,
                 		friendId   = data.friendId,
@@ -1547,8 +1571,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			}
 
 		},
-		fetchUsers: function(){ LJ.params.socket.emit('fetch users', LJ.user._id ); },
-		fetchFriends: function(){ LJ.params.socket.emit('fetch friends', LJ.user._id ); },
+		fetchUsers: function(){ LJ.fn.say('fetch users', LJ.user._id ); },
+		fetchFriends: function(){ LJ.fn.say('fetch friends', LJ.user._id ); },
 		createEvent: function(){
 
 			var tags = [];
@@ -1572,7 +1596,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				e.tags            = tags;
 
 				LJ.fn.showLoaders();
-				LJ.params.socket.emit('create event', e);
+				LJ.fn.say('create event', e);
 		},
 		fetchEvents: function(){
 
@@ -1583,7 +1607,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			else
 			{
 				LJ.state.fetchingEvents = true;
-                LJ.params.socket.emit('fetch events', LJ.user._id );
+                LJ.fn.say('fetch events', LJ.user._id );
             }
 		},
         fetchAskers: function(){
@@ -1595,7 +1619,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             else
             {
                 LJ.state.fetchingAskers = true;
-                LJ.params.socket.emit('fetch askers',{ eventId: LJ.user.hostedEventId, hostId: LJ.user._id });
+                LJ.fn.say('fetch askers',{ eventId: LJ.user.hostedEventId, hostId: LJ.user._id });
             }
 
         },
@@ -1627,7 +1651,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         refetchAskers: function(){
 
         	var idArray = _.pluck( LJ.myAskers, '_id' );
-        	LJ.params.socket.emit('refetch askers', { userId: LJ.user._id, idArray: idArray });
+        	LJ.fn.say('refetch askers', { userId: LJ.user._id, idArray: idArray });
 
         },
         addFriendLinks: function(){
@@ -1659,7 +1683,22 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         			}
         		} 
         	}
-        	
+
+        },
+        displayAsOnline: function( userId ){
+
+        	console.log('User '+userId+' is now online');
+			$('div[data-userid="'+userId+'"],div[data-askerid="'+userId+'"]')
+					.find('.online-marker')
+					.addClass('active');
+
+        },
+        displayAsOffline: function( userId ){
+
+			console.log('User '+userId+' is now online');
+					$('div[data-userid="'+userId+'"],div[data-askerid="'+userId+'"]')
+					.find('.online-marker')
+					.removeClass('active');
 
         },
         filterEvents: function(tags, locations){
@@ -1724,7 +1763,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
             csl("requesting IN with id : "+ eventId);
 
-            LJ.params.socket.emit("request participation in", {
+            LJ.fn.say("request participation in", {
 
                             userInfos: user,
                             hostId: hostId,
@@ -1738,7 +1777,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         	csl("requesting OUT with id : "+ eventId);
 
-        	LJ.params.socket.emit("request participation out", {
+        	LJ.fn.say("request participation out", {
 
         					userInfos: LJ.user,
         					hostId: hostId,
@@ -1747,27 +1786,49 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	});
 
         },
+        say: function(name,data){
+
+        	LJ.params.socket.emit( name, data );
+        	LJ.fn.handleTimeout();
+
+        },
+        on: function(name, cb){
+
+        	LJ.params.socket.on(name, cb);
+
+        },
+        handleTimeout: function(){
+
+        	/* !! Algo ne marche pas si loader success en cours d'affichage après une failure */
+        	sleep( 8000, function(){
+
+        		if( $('.loaderWrap').css('display') == 'none' && $('.m-loaderWrap').css('display') == 'none') return  // pas jolie mais bn
+
+        		LJ.fn.handleServerError('Timeout');
+        	});
+
+        }, 
         sendChat: function( submitInput ){
 
         	var textInput = submitInput.siblings('input[type="text"]');
         	var msg = textInput.val();
 
-        		textInput.val('');
+    		textInput.val('');
 
-        		var askerId = submitInput.parents('.a-item').data('askerid') || LJ.user._id;
-        		var hostId  = submitInput.parents('.eventItemWrap').data('hostid') || LJ.user._id;
-        		var eventId = submitInput.parents('.eventItemWrap').data('eventid') || LJ.user.hostedEventId;
+    		var askerId = submitInput.parents('.a-item').data('askerid') || LJ.user._id;
+    		var hostId  = submitInput.parents('.eventItemWrap').data('hostid') || LJ.user._id;
+    		var eventId = submitInput.parents('.eventItemWrap').data('eventid') || LJ.user.hostedEventId;
 
-        		csl('Sending chat with id : '+eventId + ' and '+ hostId + ' and '+askerId);
+    		csl('Sending chat with id : '+eventId + ' and '+ hostId + ' and '+askerId);
 
-        		LJ.params.socket.emit('send message',
-        		{
-        			msg: msg,
-        			eventId: eventId,
-        			hostId: hostId,
-        			askerId: askerId,
-        			senderId: LJ.user._id  /* = hostId ou askerId, selon le cas, utile pour le display only*/
-        		});
+    		LJ.fn.say('send message',
+    		{
+    			msg: msg,
+    			eventId: eventId,
+    			hostId: hostId,
+    			askerId: askerId,
+    			senderId: LJ.user._id  /* = hostId ou askerId, selon le cas, utile pour le display only*/
+    		});
         },
         bubbleUp: function( el ){
 
@@ -1862,6 +1923,18 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	return eventId + '_' + hostId + '-' + userId;
 
         },
+        showUserTyping: function( chatId ){
+
+        var $liveTypeWrap = $('div[data-chatid="'+chatId+'"]').find('.liveTypeWrap');
+        	$liveTypeWrap.velocity( { translateY: [0,8], opacity: [1,0] }, { duration:300 });
+
+        },
+        hideUserTyping: function( chatId ){
+
+        var $liveTypeWrap = $('div[data-chatid="'+chatId+'"]').find('.liveTypeWrap');
+        	$liveTypeWrap.velocity( { translateY: [-8,0], opacity: [0,1] }, { duration:300 });
+
+        },
         addChatLine: function( data ){
 
         	csl('Adding chatline');
@@ -1901,19 +1974,19 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         initRooms: function( id ){
 
-        	LJ.params.socket.emit( 'load rooms' , id );
+        	LJ.fn.say( 'load rooms' , id );
 
         },
         cancelEvent: function( eventId, hostId ){
 
         	csl('canceling event : '+eventId+'  with hostId : '+hostId);
-        	LJ.params.socket.emit( 'cancel event', { eventId: eventId, hostId: hostId });
+        	LJ.fn.say( 'cancel event', { eventId: eventId, hostId: hostId });
         	$( '#cancelEvent' ).addClass( 'pending' );
 
         },
         suspendEvent: function( eventId, hostId ){
 
-        	LJ.params.socket.emit( 'suspend event', { eventId: eventId, hostId: hostId });
+        	LJ.fn.say( 'suspend event', { eventId: eventId, hostId: hostId });
         	$( '#suspendEvent' ).addClass( 'pending' );
 
         },
@@ -1948,7 +2021,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						duration: 200, display: 'inline-block', complete: function(){ cb(); } }); }
 				});
 			}
-        }, 
+        },
         toggleOverlay: function(type, html, speed){
 
     		var $overlay = $('.overlay-'+type );
@@ -1978,23 +2051,21 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 }); //end LJ
 
 $('document').ready(function(){
-
-		//penser à remplacer ça par une récursion sur un setTimeout toutes les 300ms
-		sleep(1000, function(){
 		
-		  FB.init({
-
-				    appId      : '1509405206012202',
-				    xfbml      : true,  // parse social plugins on this page
-				    version    : 'v2.1' // use version 2.1
-
-				  }); 
-	
-		
-		csl('Application ready');
+		csl('Application ready!');
 		LJ.fn.init();
 
-		});
+		/* Recursive initialisation of FB pluggin*/
+		var initFB = function(time){
+			if( typeof(FB) === 'undefined' ) return sleep(time, initFB )
+			FB.init({
+					    appId      : '1509405206012202',
+					    xfbml      : true,  // parse social plugins on this page
+					    version    : 'v2.1' // use version 2.1
+				});
+		}
+
+		initFB(300);
 
 		//sleep(2000,function(){LJ.fn.toastMsg('Le prochain meefore commence dans 22 minutes', 'info');});
 

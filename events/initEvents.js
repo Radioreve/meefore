@@ -41,6 +41,7 @@
 				var expose = {};
 
 				expose.settings = settings;
+				expose.onlineUsers = global.appData.onlineUsers;
 				expose.user = {
 
 							_id:         	 user._id,
@@ -71,8 +72,18 @@
 		});
 	};
 
+	var disconnectUser = function(){
+
+		console.log( socket );
+		global.io.emit('user disconnected', userId );
+
+	}
+
+
+
 	module.exports = {
 
-		fetchUserAndConfiguration: fetchUserAndConfiguration
+		fetchUserAndConfiguration: fetchUserAndConfiguration,
+		disconnectUser: disconnectUser
 		
 	}

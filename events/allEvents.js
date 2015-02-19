@@ -1,4 +1,6 @@
 	
+	var _ = require('lodash');
+
 	var initEvents    = require('./initEvents'),
 		profileEvents = require('./profileEvents'),
 		manageEvents  = require('./manageEvents'),
@@ -10,9 +12,9 @@
 
 	module.exports = function( id ){
 
-		var socket = global.sockets[id];
+	var socket = global.sockets[id];
 
-	//Events d'initialisation
+	//Events d'initialisation et de déconnexion
 		socket.on( 'fetch user and configuration', initEvents.fetchUserAndConfiguration );
 
 	//Events relatifs au profile utilisateur
@@ -30,10 +32,12 @@
 	//Events relatif au chat
 		socket.on( 'send message', chatEvents.sendMessage );
 		socket.on( 'load rooms', chatEvents.reloadRooms );
+		socket.on( 'user started typing', chatEvents.sayUserStartedTyping );
+		socket.on( 'user stopped typing', chatEvents.sayUserStoppedTyping );
 
 	//Events relatifs au démarrage d'une session client
 		socket.on( 'fetch events', clientEvents.fetchEvents );
-		socket.on('fetch users', clientEvents.fetchUsers );
+		socket.on( 'fetch users', clientEvents.fetchUsers );
 		socket.on( 'request participation in', clientEvents.requestIn );		
 		socket.on( 'request participation out', clientEvents.requestOut );
 
@@ -48,6 +52,15 @@
 	//Events de mails
 		//socket.on( 'request welcome email', mailEvents.requestWelcomeEmail	);
 		socket.on( 'send contact email', mailEvents.sendContactEmail	    );
+
+	//Gestion de la déconnexion
+		socket.on( 'disconnect', function(){
+			var id = socket.decoded_token._id.toString();
+			delete global.sockets[id];
+			_.remove( global.appData.onlineUsers, function(el){ return el == id; });
+			console.log('User '+ id +' has left the app');
+			global.io.emit('user disconnected', id);
+		});
 
 		socket.on('test', function(data){
 			console.log( global.sockets );

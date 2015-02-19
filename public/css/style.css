@@ -1038,7 +1038,15 @@ loginWrapp input.validating-btn{
 .u-body,
 .f-head,
 .f-body{
-	display:inline-block;
+	display:inline-block; 
+}
+.u-head .online-marker{
+	  position: absolute!important;
+	  left: -24px;
+	  top: 13px;
+	  color: rgb(199, 42, 42);
+	  font-size: 23px;
+	  opacity: 0;
 }
 .u-item:not(.match) .u-head{
 	box-shadow:none!important;
@@ -1268,4 +1276,8 @@ margin: 20px 0 20px;
 ::selection{
 	background: rgb(199, 42, 42);
 	color:white;
+}
+
+.online-marker.active{
+	opacity: 1!important;
 }

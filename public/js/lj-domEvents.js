@@ -50,6 +50,29 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
             });
 
+            LJ.$body.on('keyup', '.chatInputWrap input', function(){
+
+            	var $self = $(this);
+            	var chatId = $self.parents('.chatWrap').data('chatid')
+
+            	if( $self.val() === '' ) 
+            	{	
+            		console.log('Ended typing detected...');
+            		LJ.state.typingMsg[ chatId ] = false;
+            		LJ.fn.say('user stopped typing', { userId: LJ.user._id, chatId: chatId });
+            		return;
+            	}
+
+            	if( ! LJ.state.typingMsg[ chatId ] )
+            	{
+            		console.log('Started typing detected!');
+            		LJ.state.typingMsg[ chatId ] = true;
+            		LJ.fn.say('user started typing', { userId: LJ.user._id, chatId: chatId });
+            		return;
+            	}
+
+            });
+
 		},
 		handleDomEvents_Landing: function(){
 
@@ -299,7 +322,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			});
 
-			LJ.$body.on('click', '.chatIconWrap', function(){
+			LJ.$body.on('click', '.chatIconWrap, .closeChat', function(){
 
 				LJ.fn.toggleChatWrapEvents( $(this) );
 
@@ -521,16 +544,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				{
 					return $('#friendsOnly').removeClass('active').trigger('click');
 				}
-					$('.u-item').removeClass('match').css({ opacity: '0' }).addClass('none');
+					$('#searchUsers.u-item').removeClass('match').css({ opacity: '0' }).addClass('none');
 
 					var word = $('#searchUsersWrap').find('input').val().toLowerCase();	
 
-					$('.u-item:not(.filtered)[data-username^="'+word+'"], \
-					   .u-item:not(.filtered)[data-userdrink^="'+word+'"], \
-					   .u-item:not(.filtered)[data-userage^="'+word+'"]')
+					$('#searchUsers .u-item:not(.filtered)[data-username^="'+word+'"], \
+					   #searchUsers .u-item:not(.filtered)[data-userdrink^="'+word+'"], \
+					   #searchUsers .u-item:not(.filtered)[data-userage^="'+word+'"]')
 						.addClass('match').css({ opacity: '1' }).removeClass('none')
 						.each( function(i, el){
-							nextEl = $('.u-item:not(.filtered)').first();
+							nextEl = $('#searchUsers .u-item:not(.filtered)').first();
 							while( nextEl.hasClass('match') )
 							{
 								nextEl = nextEl.next();	
@@ -542,10 +565,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					LJ.fn.displayAddUserAsFriendButton();
 
 					/* Cascading opacity */
-					$( $('.u-item:not(.match):not(.filtered)')[0] ).removeClass('none').css({ opacity: '.5 '});
-					$( $('.u-item:not(.match):not(.filtered)')[1] ).removeClass('none').css({ opacity: '.4 '});
-					$( $('.u-item:not(.match):not(.filtered)')[2] ).removeClass('none').css({ opacity: '.3 '});
-					$( $('.u-item:not(.match):not(.filtered)')[3] ).removeClass('none').css({ opacity: '.15 '});
+					$( $('#searchUsers .u-item:not(.match):not(.filtered)')[0] ).removeClass('none').css({ opacity: '.5 '});
+					$( $('#searchUsers .u-item:not(.match):not(.filtered)')[1] ).removeClass('none').css({ opacity: '.4 '});
+					$( $('#searchUsers .u-item:not(.match):not(.filtered)')[2] ).removeClass('none').css({ opacity: '.3 '});
+					$( $('#searchUsers .u-item:not(.match):not(.filtered)')[3] ).removeClass('none').css({ opacity: '.15 '});
 
 				});
 			});
@@ -568,7 +591,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				hostIds[i] = $('.eventItemWrap[data-eventid="'+LJ.user.eventsAskedList[i]+'"]').attr('data-hostid');
 			}
 			LJ.fn.showLoaders();
-			LJ.params.socket.emit('friend request in', { userId: userId, friendId: friendId, hostIds: hostIds });
+			LJ.fn.say('friend request in', { userId: userId, friendId: friendId, hostIds: hostIds });
 			csl( 'Friending request for : '+friendId );
 
 		});
@@ -660,11 +683,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
         		});
        		 });
 
-       		  LJ.$askersListWrap.on('click','.btn-chat',function(){
+       		  LJ.$askersListWrap.on('click','.btn-chat, .closeChat',function(){
 
             	var $that = $(this);
-
-            	
+     	
             	if(! $that.hasClass('moving') ){
             		$that.addClass('moving');
             		LJ.fn.toggleChatWrapAskers( $that );
@@ -690,7 +712,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				LJ.fn.showLoaders();
 				$(this).addClass('validating-btn');
 
-				LJ.params.socket.emit('send contact email', data);
+				LJ.fn.say('send contact email', data);
 
 			});
 			

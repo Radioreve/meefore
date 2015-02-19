@@ -47,6 +47,10 @@
         	return '<div class="chatWrap chat-asker none" data-chatid="'+chatId+'">'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
+                            +'<div class="liveTypeWrap">'
+                                +'<span >En train d\'écrire...</span>'
+                                +'<img src="/img/gif-talk.gif" width="12">'
+                            +'</div>'
                             +  '<input type="text" value="" placeholder="Can I come with my friends ?">'
                             +  '<input type="submit" value="">'
                             +'</div>'
@@ -281,9 +285,14 @@
             var chatWrap = '<div class="chatWrap chat-host none" data-chatid="'+chatId+'">'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
+                            +'<div class="liveTypeWrap">'
+                                +'<span >En train d\'écrire...</span>'
+                                +'<img src="/img/gif-talk.gif" width="12">'
+                            +'</div>'
                             +  '<input type="text" value="" placeholder="Are you alone ?">'
                             +  '<input type="submit" value="">'
                             +'</div>'
+                            +'<div class="closeChat"><i class="icon icon-cancel"></i></div>'
                            +'</div>';
 
             var html =  '<div class="a-item '+className+'" data-askerid="'+a._id+'">'
@@ -329,9 +338,7 @@
         		imgTagBlackWhiteHTML = imgTagBlackWhite.prop('outerHTML');
 
         	var html = '<div data-hint="'+a.name+'"data-askerid="' + a._id + '" class="imgWrapThumb hint--top '+ myClass + '">'
-        				+'<i class="icon icon-cancel-1 askerRefused none"></i>'
-        				+'<i class="icon icon-ok-1     askerAccepted none"></i>'
-                        +'<i class="icon icon-up-dir  none"></i>'
+                        +'<i class="online-marker icon icon-up-dir"></i>'
         				//+'<i class="icon icon-help-1 "></i>'
         				+ imgTagHTML
         				+ imgTagBlackWhiteHTML
@@ -463,6 +470,12 @@
                 var friendButton = '<button class="none"></button>' // sera remove tout de suite par displayButtons...();       
             }
 
+            if( w == 'adminWrap' )
+            {
+                var cl = 'u';
+                var friendButton = '';
+            }
+
                 var d = LJ.cloudinary.displayParamsAskerThumb;
                     imgId = u.imgId;
                     d.version = u.imgVersion;
@@ -475,6 +488,7 @@
                           + 'data-userdrink="'+u.favoriteDrink.toLowerCase()+'"'
                           + 'data-userage="'+u.age+'">'
                           +'<div class="u-head imgWrapThumb">'
+                            +'<i class="icon online-marker icon-right-dir"></i>'
                             + imgTagHTML
                           +'</div>'
                           +'<div class="'+cl+'-body">'

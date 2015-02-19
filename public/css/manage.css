@@ -171,11 +171,14 @@ i.icon-right-open-big{
 }
 .imgWrapThumb i.icon-up-dir{
     position:absolute;
-    font-size: 20px;
+    font-size: 23px;
     bottom: -17px;
-    right: 12px;
+    right: 10px;
     
-    color: rgb(207, 207, 207);
+    color: rgb(199,42,42);
+    -webkit-transition: all .8s;
+    transition: all .8s;
+    opacity: 0;
 }
 .imgWrapThumb i.icon-ok-1,
 .imgWrapThumb i.icon-cancel-1{

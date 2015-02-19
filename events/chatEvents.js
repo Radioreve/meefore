@@ -44,15 +44,33 @@
 				}else{
 					user.socketRooms.forEach( function( room ){
 						console.log('Joining room : ' + room );
-						global.sockets[userId].join( room );
+						global.sockets[ userId ].join( room );
 					});
 				}
 			});
 	};
 
+	var sayUserStartedTyping = function( data ){
+		var userId = data.userId,
+			chatId = data.chatId,
+			socket = global.sockets[userId];
+
+		socket.broadcast.to( chatId ).emit('user started typing success', chatId );
+	}
+
+	var sayUserStoppedTyping = function( data ){
+		var userId = data.userId,
+			chatId = data.chatId,
+			socket = global.sockets[userId];
+			
+		socket.broadcast.to( chatId ).emit('user stopped typing success', chatId );
+	}
+
 	module.exports = {
 
 		sendMessage: sendMessage,
-		reloadRooms: reloadRooms
+		reloadRooms: reloadRooms,
+		sayUserStartedTyping: sayUserStartedTyping,
+		sayUserStoppedTyping: sayUserStoppedTyping
 
 	};

@@ -10,29 +10,19 @@
 	- Implémenter un délire de points, de rewards (visuel), définir hiérarchie, ambassadeur, vip etc...
 	  + faire un système de badges par tag et par palier ET/OU de niveaux. Cadeaux offert à chaque palier
 	- Limiter le nombre de participations possibles par jours
-	- Mettre un timeout de 10 secondes et gérer l'erreur server
 	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription
 
 #Schedule 
- 	Design
-	- Mettre une real time sync sur les données... ( nom, age, desc, drink, mood, photo )
-	- can add friends to event that are not mutual?!
-
  	Todo
-	- Système d'admin minimal pour monitorer les gens connectés + panel CTRL+M
-			o Nombre de clients connectés ( garçons, filles )
-			o Ce qu'ils sont en train de regardé 
-			o Nombre d'évènements créés
-			o Nombre de personnes inscrites dans un event
-	
-	- Identifier les users online/offline
-	- Validation clientside, validaton serverside
+	- Check le msg d'erreur lors de l'envoi de mail
 	- Clientside routing hashtags #
 	- Réaliser une page "Ambassadors"
 
+	- Validation clientside, validaton serverside
 	- SEO
+	
+	- Mettre une real time sync sur les données... ( nom, age, desc, drink, mood, photo )
 	- Améliorer le système de logout
-	- "Someone is typing..."
 
 #BigWarnings
 	- Cron jobs Heroku fail to work when sleeping dynos

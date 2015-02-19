@@ -51,6 +51,7 @@
     myAskers: [],
     myUsers: [],
     myFriends: [],
+    myOnlineUsers: [],
     selectedTags: [],
     selectedLocations: [],
     $eventsToDisplay: $(),
@@ -62,6 +63,7 @@
 		animatingContent: false,
 		animatingChat: false,
 		toastAdded: false,
+		typingMsg: {},
 		jspAPI:{}
 	},
 	tpl:{

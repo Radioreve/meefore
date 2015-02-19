@@ -37,3 +37,10 @@
 .icon-forward-1:before { content: '\e823'; } /* '' */
 .icon-male:before { content: '\e824'; } /* '' */
 .icon-female:before { content: '\e825'; } /* '' */
+.icon-down-dir:before { content: '\e826'; } /* '' */
+.icon-left-dir:before { content: '\e827'; } /* '' */
+.icon-right-dir:before { content: '\e828'; } /* '' */
+.icon-arrows-cw:before { content: '\e829'; } /* '' */
+.icon-circle:before { content: '\e82a'; } /* '' */
+.icon-circle-empty:before { content: '\e82b'; } /* '' */
+.icon-circle-thin:before { content: '\e82c'; } /* '' */

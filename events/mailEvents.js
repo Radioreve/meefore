@@ -5,7 +5,8 @@
 	    cloudinary  = require('cloudinary'),
 		eventUtils  = require('./eventUtils'),
 		config      = require('../config/mailer'),
-	    nodemailer  = require('nodemailer');
+	    nodemailer  = require('nodemailer'),
+	    validator   = require('validator');
 
 
 	var sendContactEmail = function( data ){
@@ -24,10 +25,29 @@
 				mailOptions.subject = 'Someone has left a message!';
 				mailOptions.html = body;
 
+
+		if( !validator.isEmail(email) )
+		{
+			return eventUtils.raiseError({
+				socket: socket,
+				toClient: "L'email est incorrecte",
+				toServer: "Mail not sent, wrong email input"
+			});
+		}
+
 			transporter.sendMail( mailOptions, function( err, info ){
 
 			    if( err ){
 			        console.log( err );
+			        if( err.responseCode == 550 )
+			        {
+			        	return eventUtils.raiseError({
+			        		err:err,
+			        		socket: socket,
+			        		toServer: "Fake mail",
+			        		toClient: "L'email a été rejetée par nos serveurs"
+			        	});
+			        }
 			    }
 			    else{
 			        console.log('Message sent: ' + info.response );

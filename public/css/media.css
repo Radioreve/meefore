@@ -110,7 +110,9 @@
 		width:100%;
 		font-size:.8em;
 		overflow:hidden;
-	}
+	
+		text-align: center;
+}
   .labelTextArea{
   	margin-top:-10px;
   }

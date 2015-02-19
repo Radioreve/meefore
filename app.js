@@ -32,6 +32,7 @@
 		/* Global for ease of use */
 		global.sockets = {};
 		global.appData = {};
+		global.appData.onlineUsers = [];
 		global.io = io;
 
 		io.on('connection', function( socket ){
@@ -42,8 +43,10 @@
 			 if( !global.sockets[id] )
 			 {
 			 	global.sockets[id] = socket;
+			 	global.io.emit('user connected', id);
+			 	global.appData.onlineUsers.push( id );
 			 }
-			 else
+			 else /*  Multi session -NOT- allowed */
 			 {
 			 	global.sockets[id].emit('server error', { msg: 'You logged in from another device' });
 			 	global.sockets[id].disconnect();
@@ -52,6 +55,7 @@
 
 			 require('./events/allEvents')( id );
 		});
+
 
 	var port = process.env.PORT || 1234;
 

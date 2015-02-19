@@ -34,6 +34,11 @@
 
 			authAdmin( user, socketAdmin );
 
+			/* Fetch last N subscribers */
+			User.find().limit(5).sort('-signupDate').exec(function(err,arr){
+				socketAdmin.emit('fetch last signup success', arr );
+			});
+
 			/* Fetching monitoring informations for real time */	
 			socketAdmin.emit('fetch app data success', global.appData );
 
