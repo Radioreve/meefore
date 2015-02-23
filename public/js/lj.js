@@ -1240,7 +1240,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 								LJ.fn.refetchAskers();
 							    LJ.fn.refreshArrowDisplay();
-							    LJ.fn.displayAsOnline( userId );
+							    LJ.fn.displayAsOnline( requesterId );
 						}
 
 						var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');

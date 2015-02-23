@@ -12,9 +12,9 @@
 	- Limiter le nombre de participations possibles par jours
 	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription
 	- l'host auto add ses amis pr display
+	
 #Schedule 
  	Todo
-	- BUG! auto stack sur le find friends
 	- Logo #favicon 
 	- Clientside routing hashtags #
 	- Réaliser une page "Ambassadors"

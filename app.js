@@ -1,4 +1,12 @@
-		
+	
+	//Nodetime monitoring
+	process.env.NODE_ENV == 'dev' ? var appName = 'Meefore' : var appName = 'Meefore-live';
+
+	require('nodetime').profile({
+	    accountKey: 'edd5a9aa0f61f5e00b797473d624bde0f56104b9', 
+	    appName: appName
+  	});
+
 	//Basic modules
 	var express = require('express'),
 		bodyParser   = require('body-parser'),
