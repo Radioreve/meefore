@@ -41,6 +41,7 @@
         
         loader_id: "ajax-loader-black_frpjdb",
         m_loader_id: "ajak_lgmgym",
+        c_loader_id: "gif-talk_kqromd",
         displayParamsLoader:{ cloud_name :"radioreve", html: { 'class': 'loader'} },
         placeholder_id: "placeholder_jmr9zq",
         displayParamsPlaceholder:{ cloud_name :"radioreve", html: { 'class': 'mainPicture' }, width:150 }
@@ -55,6 +56,7 @@
     selectedTags: [],
     selectedLocations: [],
     $eventsToDisplay: $(),
+    $cLoaderTpl: $(),
     nextCallback:{},
 	state: {
 		connected: false,

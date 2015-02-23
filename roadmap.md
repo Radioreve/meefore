@@ -11,10 +11,11 @@
 	  + faire un système de badges par tag et par palier ET/OU de niveaux. Cadeaux offert à chaque palier
 	- Limiter le nombre de participations possibles par jours
 	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription
-
+	- l'host auto add ses amis pr display
 #Schedule 
  	Todo
-	- Check le msg d'erreur lors de l'envoi de mail
+	- BUG! auto stack sur le find friends
+	- Logo #favicon 
 	- Clientside routing hashtags #
 	- Réaliser une page "Ambassadors"
 

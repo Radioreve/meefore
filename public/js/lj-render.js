@@ -44,12 +44,14 @@
         },
         renderChatWrap: function( chatId ){
 
+            var liveTypeImgHTML = LJ.$cLoaderTpl.prop('outerHTML');
+
         	return '<div class="chatWrap chat-asker none" data-chatid="'+chatId+'">'
                             +'<div class="chatLineWrap"></div>'    
                             +'<div class="chatInputWrap">'
                             +'<div class="liveTypeWrap">'
                                 +'<span >En train d\'écrire...</span>'
-                                +'<img src="/img/gif-talk.gif" width="12">'
+                                + liveTypeImgHTML
                             +'</div>'
                             +  '<input type="text" value="" placeholder="Can I come with my friends ?">'
                             +  '<input type="submit" value="">'
@@ -278,6 +280,8 @@
             		  .attr('data-imgid', a.imgId)
             		  .attr('data-imgversion', a.imgVersion);
 
+            var liveTypeImgHTML = LJ.$cLoaderTpl.prop('outerHTML');
+
             var imgTagHTML = imgTag.prop('outerHTML');
 
             var chatId = LJ.fn.buildChatId( LJ.user.hostedEventId, LJ.user._id, a._id );
@@ -287,7 +291,7 @@
                             +'<div class="chatInputWrap">'
                             +'<div class="liveTypeWrap">'
                                 +'<span >En train d\'écrire...</span>'
-                                +'<img src="/img/gif-talk.gif" width="12">'
+                                + liveTypeImgHTML
                             +'</div>'
                             +  '<input type="text" value="" placeholder="Are you alone ?">'
                             +  '<input type="submit" value="">'

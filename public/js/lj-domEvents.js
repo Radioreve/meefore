@@ -544,7 +544,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				{
 					return $('#friendsOnly').removeClass('active').trigger('click');
 				}
-					$('#searchUsers.u-item').removeClass('match').css({ opacity: '0' }).addClass('none');
+					$('#searchUsers .u-item').removeClass('match').css({ opacity: '0' }).addClass('none');
 
 					var word = $('#searchUsersWrap').find('input').val().toLowerCase();	
 
@@ -685,12 +685,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
        		  LJ.$askersListWrap.on('click','.btn-chat, .closeChat',function(){
 
-            	var $that = $(this);
+            	var $that = $(this),
+            		chatId = $that.parents('#askersListWrap').find('div.chatWrap').data('chatid');
      	
             	if(! $that.hasClass('moving') ){
             		$that.addClass('moving');
             		LJ.fn.toggleChatWrapAskers( $that );
-
             		sleep( LJ.ui.artificialDelay, function(){
             			$that.removeClass('moving');
             		});

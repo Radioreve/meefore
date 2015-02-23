@@ -110,6 +110,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			var $placeholder = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsPlaceholder );
 				$('#pictureWrap').prepend( $placeholder );
 
+			LJ.$cLoaderTpl = $.cloudinary.image( LJ.cloudinary.c_loader_id, { cloud_name:"radioreve", width:12 });
+
 		},
 		initEhancements: function(){
 
@@ -553,7 +555,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			     {
 			     	$aWrap.addClass('surfacing')
 			     			  .find('.chatWrap')
-			     			  .velocity('transition.slideLeftIn', { duration: 400 });
+			     			  .velocity('transition.slideLeftIn', { duration: 400,
+			     			  complete: function(){
+				     			  	console.log('Oops');
+				     			  	LJ.state.jspAPI[ chatId ].reinitialise();
+									LJ.state.jspAPI[ chatId ].scrollToBottom(); 
+			     			  		} 
+			     			  });
 			     	return;
 			     }
 
@@ -571,15 +579,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
     		$aWrap.addClass('surfacing')
     				  .find('.chatWrap')
-    				  .velocity('transition.slideLeftIn', { duration: 400 });
-
-    		sleep(100, function(){ 
-    			if( LJ.state.jspAPI[chatId] !== undefined )
-    			{
-           		  LJ.state.jspAPI[chatId].reinitialise();
-        		  LJ.state.jspAPI[chatId].scrollToBottom();   
-    			} 
-    		});
+    				  .velocity('transition.slideLeftIn', { duration: 400,
+    				   complete: function(){
+				     			  	if( LJ.state.jspAPI[ chatId ] != undefined ) return;
+				     			  	var $chatLineWrap = $aWrap.find('.chatLineWrap');
+				     			  	$chatLineWrap.jScrollPane();
+    								LJ.state.jspAPI[ chatId ] =  $chatLineWrap.data('jsp');
+				     			  	LJ.state.jspAPI[ chatId ].reinitialise();
+									LJ.state.jspAPI[ chatId ].scrollToBottom(); 
+			     			  }
+			     		});
 
 		},
 		toggleChatWrapEvents: function( chatIconWrap ){
@@ -1646,6 +1655,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('#askersThumbs').html('').append( LJ.fn.renderAskersThumbs() );
 
             LJ.fn.refreshArrowDisplay();
+            LJ.fn.refreshOnlineUsers();
 
         },
         refetchAskers: function(){
@@ -1663,21 +1673,18 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		$('#askersThumbs .team-'+i).removeClass('team-'+i);
         		$('#askersThumbs .head-'+i).removeClass('head-'+i);
         		
-        		console.log('Browsing for : '+ LJ.myAskers[i].name );
         		$('#askersThumbs div[data-askerid="'+ LJ.myAskers[i]._id +'"]').addClass('team-'+i).addClass('head-'+i);
         		
         		for( var k = 0 ; k < LJ.myAskers[i].friendList.length ; k++ )
         		{	
         			if( idArray.indexOf( LJ.myAskers[i].friendList[k].friendId ) == -1 )
         			{
-        				console.log( 'Friend n° : '+k+'  '+LJ.myAskers[i].friendList[k].name + ' is not in the event' );
+        				//nada
         			}
         			else
         			{	
-        				console.log( LJ.myAskers[i].friendList[k].name + ' is in the event, status : ' + LJ.myAskers[i].friendList[k].status );
         				if( LJ.myAskers[i].friendList[k].status == 'mutual' )
         				{	
-        					console.log('Adding link team-'+i+' , for  ' + LJ.myAskers[i].friendList[k].name );
         					$('#askersThumbs div[data-askerid="'+ LJ.myAskers[i].friendList[k].friendId+'"]').addClass('team-'+i);		  
         				}
         			}
@@ -1687,7 +1694,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         displayAsOnline: function( userId ){
 
-        	console.log('User '+userId+' is now online');
 			$('div[data-userid="'+userId+'"],div[data-askerid="'+userId+'"]')
 					.find('.online-marker')
 					.addClass('active');
@@ -1695,7 +1701,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         displayAsOffline: function( userId ){
 
-			console.log('User '+userId+' is now online');
 					$('div[data-userid="'+userId+'"],div[data-askerid="'+userId+'"]')
 					.find('.online-marker')
 					.removeClass('active');
@@ -1926,13 +1931,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         showUserTyping: function( chatId ){
 
         var $liveTypeWrap = $('div[data-chatid="'+chatId+'"]').find('.liveTypeWrap');
-        	$liveTypeWrap.velocity( { translateY: [0,8], opacity: [1,0] }, { duration:300 });
+        	$liveTypeWrap.velocity( { translateY: [0,7], opacity: [1,0] }, { duration:300 });
 
         },
         hideUserTyping: function( chatId ){
 
         var $liveTypeWrap = $('div[data-chatid="'+chatId+'"]').find('.liveTypeWrap');
-        	$liveTypeWrap.velocity( { translateY: [-8,0], opacity: [0,1] }, { duration:300 });
+        	$liveTypeWrap.velocity( { translateY: [-7,0], opacity: [0,1] }, { duration:300 });
 
         },
         addChatLine: function( data ){
@@ -1949,12 +1954,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
        		
         	var $chatLineWrap = $('.chatWrap[data-chatid="'+chatId+'"]').find('.chatLineWrap');
         		
-        		if( !$chatLineWrap.hasClass('jspScrollable') )
-        		{
-        			csl('Turning chatLineWrap scrollable');
-        			$chatLineWrap.jScrollPane();
-        			LJ.state.jspAPI[chatId] =  $chatLineWrap.data('jsp');
-        		}
+    		if( LJ.state.jspAPI[ chatId ] == undefined )
+    		{
+    			csl('Turning chatLineWrap scrollable');
+    			$chatLineWrap.jScrollPane();
+    			LJ.state.jspAPI[chatId] =  $chatLineWrap.data('jsp');
+    		}
 
     		$chatLineWrap.find('.jspPane').append( chatLineHtml );
     		$chatLineWrap.find('.chatLine:last-child')
@@ -1964,11 +1969,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
     					  	}
     					  });
 
-    		sleep( 60, function(){
-    							csl('Refreshing jsp API');
-    							LJ.state.jspAPI[chatId].reinitialise();
-    							LJ.state.jspAPI[chatId].scrollToBottom(); 
-    						  });
+    		sleep( 100, function(){
+				csl('Refreshing jsp API');
+				LJ.state.jspAPI[ chatId ].reinitialise();
+				LJ.state.jspAPI[ chatId ].scrollToBottom(); 
+    	    });
 
 
         },
