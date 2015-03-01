@@ -1371,7 +1371,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				LJ.fn.on('disconnect', function(){
 
-					LJ.fn.toastMsg("Quelque chose s'est produit, vous avez été déconnecté", 'error', true);
+					LJ.fn.toastMsg("Vous avez été déconnecté. Reconnexion...", 'error', true);
 					LJ.params.socket.disconnect(LJ.user._id);
 
 				});

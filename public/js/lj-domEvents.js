@@ -57,6 +57,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
             	if( $self.val() === '' ) 
             	{	
+            		if( ! LJ.state.typingMsg[ chatId ] ) return;
+
             		console.log('Ended typing detected...');
             		LJ.state.typingMsg[ chatId ] = false;
             		LJ.fn.say('user stopped typing', { userId: LJ.user._id, chatId: chatId });
@@ -78,7 +80,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 		['.sm-signup', '.sm-login'].forEach( function(el){
 
-			$(el).click(function(){
+			$( el ).click(function(){
 
 				var $s = $(this);
 				
@@ -399,7 +401,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				}
 				else
 				{
-					LJ.fn.toastMsg('Event is currently suspended', 'info');
+					LJ.fn.toastMsg("Ce meefore est complet!", 'info');
 				}
 
 			});

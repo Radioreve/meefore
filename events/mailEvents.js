@@ -69,7 +69,7 @@
 					socket: userSocket,
 					err: err,
 					toServer: "Can't send mail (no user found)",
-					toClient: "Can't send mail (no user found)"
+					toClient: "L'utilisateur n'a pas été trouvé"
 				});
 
 			}

@@ -16,7 +16,7 @@
 	  if( !hostSocket ){
 	  	return eventUtils.raiseError({
 	  		socket: askerSocket,
-	  		toClient: "Host is not online",
+	  		toClient: "Il/elle n'est pas connecté(e)",
 	  		flash: true
 	  	});
 	  }
@@ -24,7 +24,7 @@
 	  if( !askerSocket ){
 	  	return eventUtils.raiseError({
 	  		socket: hostSocket,
-	  		toClient: "Asker is not online",
+	  		toClient: "Il/elle n'est pas connecté(e)",
 	  		flash: true
 	  	});
 	  }

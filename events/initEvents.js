@@ -28,7 +28,7 @@
 
 				return eventUtils.raiseError({
 					toServer: "Problem finding user via socket.io during first connection attempt ",
-					toClient: "Something went wrong initialising the app",
+					toClient: "Erreur d'initialisation",
 					socket: userSocket,
 					err: err			
 				});

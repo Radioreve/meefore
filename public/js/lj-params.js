@@ -39,8 +39,8 @@
         /* Image secondaire des askers dans vue management, lorsqu'ils sont refusé */
         displayParamsAskerThumbRefused: { cloud_name: "radioreve", width:45, height:45, crop:'fill', effect:'grayscale', gravity:'face', radius:'max' },
         
-        loader_id: "ajax-loader-black_frpjdb",
-        m_loader_id: "ajak_lgmgym",
+        loader_id: "ajax-loader-black2_eudxhv",
+        m_loader_id: "ajak2_wh8pub",
         c_loader_id: "gif-talk_kqromd",
         displayParamsLoader:{ cloud_name :"radioreve", html: { 'class': 'loader'} },
         placeholder_id: "placeholder_jmr9zq",

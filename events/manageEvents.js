@@ -17,7 +17,7 @@ var createEvent = function(data) {
 
         return eventUtils.raiseError({
             socket: socket,
-            toClient:"Opening start at " + settings.eventsRestartAt +"h"
+            toClient:"Pas de meefore avant " + settings.eventsRestartAt +"h"
         });
 
     }
@@ -34,7 +34,7 @@ var createEvent = function(data) {
 
     if( hour < 14  || hour > 23 )
     return eventUtils.raiseError({
-            toClient:"Les évènements ont lieu entre 14h00 et 23h59",
+            toClient:"Les meefores ont lieu entre 14h00 et 23h59",
             toServer:"EC-6",
             socket: socket
      });

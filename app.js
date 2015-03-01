@@ -1,14 +1,10 @@
-	
-	//Nodetime monitoring
-	require('nodetime').profile({
-	    accountKey: 'edd5a9aa0f61f5e00b797473d624bde0f56104b9', 
-	    appName: 'MeeforeHeroku'
-  	});
+
 
 	//Basic modules
 	var express = require('express'),
 		bodyParser   = require('body-parser'),
 		app = express(),
+		compression = require('compression'),
 		server = require('http').createServer( app ),
 		socketioJwt = require('socketio-jwt'),
 		passport = require('passport');
@@ -16,6 +12,7 @@
 	var io = require('socket.io')( server );
 
 	//Middleware
+		app.use( compression() );
 		app.use( passport.initialize() );
 		app.use( express.static( __dirname + '/public') )
 		app.use( bodyParser.json() );

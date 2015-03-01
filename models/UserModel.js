@@ -36,8 +36,7 @@ var UserSchema = new mongoose.Schema({
     type: String
   },
   name: {
-    type: String,
-    default:"Inconnu"
+    type: String
   },
   favoriteDrink: {
     type: String,
