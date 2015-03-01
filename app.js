@@ -11,6 +11,12 @@
 
 	var Pusher = require('pusher');
 
+	var pusher = new Pusher({
+	  appId: '108998',
+	  key: 'caff28cb575ee61ffa3f',
+	  secret: '9f861589e40f5789dac7'
+	});
+
 	//Middleware
 		app.use( compression() );
 		app.use( passport.initialize() );
@@ -33,6 +39,10 @@
 		global.appData = {};
 		global.appData.onlineUsers = [];
 		global.io = io;
+
+		pusher.trigger('test_channel', 'my_event', {
+	 	 "message": "hello world"
+		});
 
 		io.on('connection', function( socket ){
 			 console.log( 'New user has joined the app' );

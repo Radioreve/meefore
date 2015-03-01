@@ -48,11 +48,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				  });
 
 		},
-		initSocketConnection: function(jwt){
+		initPusherConnection: function(jwt){
 
-			LJ.params.socket = io.connect({
+			/*LJ.params.socket = io.connect({
 				query:'token='+jwt
-			});
+			}); */
+
+			
 
 			/* Initialisation des socket.on('event',...); */
 			LJ.fn.initSocketEventListeners();
@@ -341,7 +343,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		handleSuccessLogin: function( user ){
 
 			LJ.user._id = user._id; /* Nécessaire pour aller chercher toutes les infos, mais par socket.*/
-			LJ.fn.initSocketConnection( user.token );
+			LJ.fn.initPusherConnection( user.token );
 			LJ.$loginWrap.find('.header-field').addClass('validated');
 
 		},
@@ -1791,10 +1793,21 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	});
 
         },
-        say: function(name,data){
+        say: function( eventName, data ){
 
-        	LJ.params.socket.emit( name, data );
-        	LJ.fn.handleTimeout();
+        	var url = '/' + eventName;
+
+        	$.ajax({
+        		method:'POST',
+        		url:url,
+        		dataType:'json',
+        		data: data,
+        		success: function(data){
+        			console.log('Pusher event sent successfully');
+        		}
+        	});
+
+        	//LJ.fn.handleTimeout();
 
         },
         on: function(name, cb){
