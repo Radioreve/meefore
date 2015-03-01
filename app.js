@@ -9,7 +9,7 @@
 		socketioJwt = require('socketio-jwt'),
 		passport = require('passport');
 
-	var io = require('socket.io')( server );
+	var Pusher = require('pusher');
 
 	//Middleware
 		app.use( compression() );
@@ -27,10 +27,6 @@
 		require('./config/passport')( passport );
 		require('./routes')( app, passport );
 
-		io.use( socketioJwt.authorize({
-			secret:config.jwtSecret,  
-			handshake:true
-		})); 
 
 		/* Global for ease of use */
 		global.sockets = {};
