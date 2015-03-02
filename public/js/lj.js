@@ -1017,7 +1017,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 					/* L'ordre de l'appel est important, car certaines 
 					/* informations sont cachées par les premières 
-					/* et utilsiées par celles d'après 
+					/* et utilisées par celles d'après 
 
 							- On cache les informations sur l'user 
 							- On fait les mises à jours du DOM (checkbox, thumbPic, input) à partir du cache
