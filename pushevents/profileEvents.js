@@ -5,17 +5,21 @@
 	    _ = require('lodash'),
 	    validator = require("validator");
 
+	var pusher = require('../globals/pusher');
 
-	var updateProfile = function(data){
+	var updateProfile = function( req, res ){
 
-			var userId = data._id,
-				socket = global.sockets[userId];
+			var data = req.body;
+
+			var userId = data.userId,
+				age    = data.age;
+				//socket = global.sockets[userId];
 
 			if( ! validator.isInt( data.age ) ){
 				return eventUtils.raiseError({
 						toServer: "Wrong input format for age (must be age)",
 						toClient: "Il y a un problème avec votre âge",
-						socket: socket
+						res: res
 					});	
 			}
 
@@ -28,40 +32,47 @@
 				status	 	  : data.status
 			};
 
-			var callback = function(err, user) {
-		        if (err) { 
+			var callback = function( err, user ) {
+		        if( err ){ 
 		        	eventUtils.raiseError({
 		        		toClient: 'Something went wrong, pleasy try again later',
 		        		toServer: 'Error updating profile 1',
+		        		res: res,
 		        		err: err
 		        	});
 		        	return;
 		         }
 		            console.log('Emtting event update profile success')
-		            socket.emit('update profile success', user);
+
+		            var expose = { user: user };
+
+		            eventUtils.sendSuccess( res, expose, true );
 		    }
 		
 			User.findByIdAndUpdate( userId, update, {}, callback);
 
 	};
 
-	var updatePicture = function(data){
+	var updatePicture = function( req, res ){
+
+			var data = req.body;
 
 		   	var userId 		  = data._id,
 		        newImgId   	  = data.imgId,
 		    	newImgVersion = data.imgVersion;
 
-		    var socket = global.sockets[userId];
+		    //var socket = global.sockets[userId];
 
 		    var update = {
 		        imgId      : newImgId,
 		        imgVersion : newImgVersion
 		    };
 
-		    var callback1 = function(err, user){
+		    var callback1 = function( err, user ){
 
 		    	if( err ){
 		    		eventUtils.raiseError({
+		    			res: res,
 		    			err: err,
 		    			toClient: 'Something went wrong, pleasy try again later',
 		        		toServer: 'Error updating profile 2' 
@@ -69,7 +80,12 @@
 		    		return;
 		    	}
 
-		    	socket.emit('update image success', user);
+		    	var expose = { user: user };
+
+		    	console.log('User new imgId is : ' + user.imgId );
+		    	eventUtils.sendSuccess( res, expose );
+
+		    	//socket.emit('update image success', user);
 
 		    	/* Host picture also needs to be changed in the event layer */
 		    	if( user.status == 'hosting' ){
@@ -93,22 +109,22 @@
 	};
 
 
-	var updateSettings = function(data){
+	var updateSettings = function( req, res ){
 
-		var newEmail 	 = data.currentEmail.trim(),
-			newPw  	     = data.newPw.trim(),
-			newPwConf    = data.newPwConf.trim(),
-			newsletter   = data.newsletter,
-			userId       = data.userId;
+		var newEmail 	 = req.body.currentEmail.trim(),
+			newPw  	     = req.body.newPw.trim(),
+			newPwConf    = req.body.newPwConf.trim(),
+			newsletter   = req.body.newsletter,
+			userId       = req.body.userId;
 
-		var socket = global.sockets[userId];
+		//var socket = global.sockets[userId];
 
 		User.findById( userId, function(err, user){
 
 			if( err ){ 
 			return	eventUtils.raiseError({
 						err: err,
-						socket: socket,
+						res: res,
 						toClient: "Erreur de chargement",
 						toServer: "Erreur lors de UpdateSettings" 
 					}); 
@@ -173,18 +189,21 @@
 
 			user.newsletter = newsletter;
 
-			user.save( function(err, user){
+			user.save( function( err, user ){
 
-				if (err){
+				if( err ){
 					return eventUtils.raiseError({
-							socket: socket,
+							res: res,
 							toClient: "Something happened, please try again later",
 							toServer: "Error saving settings",
 							err: err
 						});
 				}
 
-				socket.emit('update settings success', { user: user, msg: "Vos préférences ont été modifiées" });
+				var expose = { user: user, msg: "Vos préférénces ont été modifées" };
+
+				eventUtils.sendSuccess( res, expose );
+				//socket.emit('update settings success', { user: user, msg: "Vos préférences ont été modifiées" });
 
 			});
 		});

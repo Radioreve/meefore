@@ -168,13 +168,12 @@
 				hostId         = e.hostId,
 				hostImgId      = e.hostImgId,
 				hostImgVersion = e.hostImgVersion,
-				tags           = e.tags,
-				chatId 		   = LJ.fn.buildChatId( eventId, hostId, LJ.user._id );
+				tags           = e.tags;
 
 			var imgTagHTML   = LJ.fn.renderHostImg( hostImgId, hostImgVersion ),
 			    button       = LJ.fn.renderEventButton( e._id, hostId ),
 				eventTags    = LJ.fn.renderEventTags( tags ),
-            	chatWrap     = LJ.fn.renderChatWrap( chatId ),
+            	chatWrap     = LJ.fn.renderChatWrap( hostId ),
             	askersThumbs = LJ.fn.renderAskersInEvent( e.askersList, e.maxGuest );
 
 			var html = '<div class="eventItemWrap" '
@@ -284,7 +283,7 @@
 
             var imgTagHTML = imgTag.prop('outerHTML');
 
-            var chatId = LJ.fn.buildChatId( LJ.user.hostedEventId, LJ.user._id, a._id );
+            var chatId = a._id;
 
             var chatWrap = '<div class="chatWrap chat-host none" data-chatid="'+chatId+'">'
                             +'<div class="chatLineWrap"></div>'    

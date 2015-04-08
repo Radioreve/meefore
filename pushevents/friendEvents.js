@@ -4,13 +4,14 @@
 	    eventUtils = require('./eventUtils'),
 	    _ = require('lodash');
 
-	var fetchFriends = function( userId ){
+	var pusher = require('../globals/pusher');    
+
+	var fetchFriends = function( req, res ){
 
 		console.log('Fetching friends...');
-		var userSocket = global.sockets[userId];
+		var userId = req.body.userId;
 
-		User.find({ 'friendList.friendId' : userId,
-				    'friendList.status' : { $in: [ 'askedMe','askedHim','mutual'] } }
+		User.find({ 'friendList.friendId' : userId }
 				    , function( err, friendList ){
 
 			if( err ){
@@ -18,51 +19,48 @@
 					err: err,
 					toServer: 'LJ-53',
 					toClient: 'Error raising friends',
-					socket: userSocket
+					res: res
 				});
 			}
 
-		userSocket.emit('fetch friends success', friendList );
+			var expose = { myFriends: friendList }
+			eventUtils.sendSuccess( res, expose );
 
 		});
-
 	};
 
-	var friendRequestIn = function( data ){
+	var friendRequestIn = function( req, res ){
 
 		console.log('Friend request ... ');
+		var data = req.body;
 
 		var userId    = data.userId,
 			hostIds   = data.hostIds,
 			friendId  = data.friendId;
 
-		var userSocket   = global.sockets[ userId ],
-			friendSocket = global.sockets[ friendId ];
-
-
 		User.findById( userId, function( err, myUser ){
 
 			if( err )
-				return eventUtils.raiseError({ err: err, toServer: 'LJ-72-a', toClient: 'Please try again later', socket: userSocket });
+				return eventUtils.raiseError({ err: err, toServer: 'LJ-72-a', toClient: 'Please try again later', res: res });
 
 			User.findById( friendId, function( err, myFriend ){
 
 				/* Err */
 				if( err )
 					return eventUtils.raiseError({ err: err, toServer: 'LJ-72-b',
-				      	   toClient: 'Please try again later', socket: userSocket });
+				      	   toClient: 'Please try again later', res: res });
 
 
 				/* L'utilisateur tente de s'ajouter lui même */
 				if( userId == friendId ) 
 					return eventUtils.raiseError({ err: err, toServer: 'LJ-71', 
-						   toClient: 'Can\t be friend with yourself', socket: userSocket });
+						   toClient: 'Can\t be friend with yourself', res: res });
 
 				
 				/* L'utilisateur a déjà fait une demande en ami */
 				if( _.some( myFriend.friendList, { friendId: userId, status:'askedMe' })  )
 					return eventUtils.raiseError({ err: err, toServer: 'LJ-73', 
-						   toClient: 'Request already sent', socket: userSocket });
+						   toClient: 'Request already sent', res: res });
 
 
 				/* L'utilisateur avait déjà demandé : ils passent tous les deux en 'mutual' */
@@ -87,37 +85,44 @@
 
 				myFriend.save( function( err ){
 					if( err ) return console.log('Error LJ-51' );
-					if(  friendSocket != undefined ) 
-						friendSocket.emit('friend request in success', {
-							 friendId: friendId, userId: userId, updateType: updateTypeFriend, friendList: myFriend.friendList });
+						var channelName = myFriend.getChannel(),
+							eventName   = 'friend-request-in-success',
+							data = { friendId: friendId, userId: userId, updateType: updateTypeFriend, friendList: myFriend.friendList };
+						pusher.trigger( channelName, eventName, data );
+
 				});
 
 				myUser.save( function( err ){
 					if( err ) return console.log('Error LJ-50' );
-					userSocket.emit('friend request in success', { 
-							friendId: friendId, userId: userId, updateType: updateTypeUser, friendList: myUser.friendList });				
+					var expose = { friendId: friendId, userId: userId, updateType: updateTypeUser, friendList: myUser.friendList };
+					eventUtils.sendSuccess( res, expose );
+	
 				});
 
-				for( var k = 0; k < hostIds.length; k++ )
-				{
-					var hostSocket = global.sockets[ hostIds[k] ];
-					if( hostSocket != undefined )
-						hostSocket.emit('friend request in success host', { 
-							friendId: friendId, userId: userId  });				
-				}
+				console.log('Alerting host..');
+				console.log(hostIds);
+				User.find( {'_id': { $in: hostIds }}, function( err, hosts ){
 
+					if( err || hosts.length == 0 ) return;
+
+					var expose = { userId: userId, friendId: friendId };
+					for ( var i = 0; i < hosts.length ; i++ ){	
+						pusher.trigger( hosts[i].getChannel(), 'friend-request-in-success-host', expose );
+					}
+
+				});
 			});
 		});
 
 	};
 	
-	var refetchAskers = function( data ){
+	var refetchAskers = function( req, res ){
+
+		var data = req.body;
 
 		console.log('Refetching...');
 		var userId  = data.userId,
 			idArray = data.idArray;
-
-		var socket = global.sockets[ userId ];
 
 		User.find({ '_id' : { $in : idArray } },
 		{
@@ -143,7 +148,9 @@
 				});
 
 		 console.log('Emitting refetch askers');
-		 socket.emit('refetch askers success', users );
+
+		 var expose = users;
+		 eventUtils.sendSuccess( res, expose );
 			
 		});
 

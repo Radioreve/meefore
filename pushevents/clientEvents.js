@@ -5,123 +5,119 @@
 	    _ = require('lodash'),
 	    settings = require('../config/settings');
 
+	var pusher = require('../globals/pusher');
 
-	    var fetchEvents = function(userId){
 
-	    	var socket = global.sockets[userId];
+	    var fetchEvents = function( req, res ){
 
-			console.log('Fetching all events for user with socket : ' + socket);
-			Event.find({ state: { $in: settings.activeEventStates }}, function( err, events ){
+	    	var userId = req.body.userId;
+
+			Event.find({ state: { $in: settings.activeEventStates }}, function( err, myEvents ){
 
 				if( err )
 					return eventUtils.raiseError({
-						socket: socket,
+						res: res,
 						err: err,
 						toServer: "Error fetching event",
 						toClient: "Error loading recent events..."
 					});
 
-				socket.emit('fetch events success', events);
+				console.log('%d event(s) have been fetched!', myEvents.length );
+
+				var expose = { myEvents: myEvents };
+
+				eventUtils.sendSuccess( res, expose );
 
 			});
 	    }; 
 
-	   var fetchUsers = function( userId ){
-
-	   		var socket = global.sockets[userId];
+	   var fetchUsers = function( req, res ){
 
 	   		User.find({}, function( err, users ){
 
 	   			if( err )
 	   				return eventUtils.raiseError({
-	   					socket: socket,
+	   					res: res,
 	   					err: err,
 	   					toServer: "Error fetching all users",
 	   					toClient: "Error loading users..."
 	   				});
 
-	   			console.log('Emitting...')
-	   			socket.emit('fetch users success', users );
+	   			console.log('%d user(s) have been fetched!', users.length );
+
+	   			var expose = { users: users };
+
+	   			eventUtils.sendSuccess( res, expose );
 
 	   		});
-
 	   }
 	  
-	    var requestIn = function(data){
+	    var requestIn = function( req, res ){
+
+	    	var data = req.body;
 
 			var eventId     = data.eventId,
 			 	hostId      = data.hostId ,
-			 	userId 		= data.userInfos._id,
+			 	userId 		= data.userId,
 			 	requesterId = data.requesterId;
 
-			if( hostId == userId ) return;
+			if( hostId == userId ) return; /* Test for fun */
 
-			var room   = eventUtils.buildRoomId( eventId, hostId, userId ),
-				userSocket = global.sockets[ userId ],
-				hostSocket = global.sockets[ hostId ],
-		   requesterSocket = global.sockets[ requesterId ];
-
-
-			if( userSocket != undefined ){
-				userSocket.join( room );
-				console.log('User '+userId+' has joined the room : \n'+room +'\n');
-			}
-
-		    if( hostSocket != undefined ){ 
-		     	hostSocket.join( room ); 
-				console.log('Host '+hostId+' has joined the room : \n'+room + '\n');
-			}
-
+		var expose = {};
+		var query = { '_id': { $in: [ hostId, userId, requesterId ]}};
 
 		Event.findById( eventId, {}, function( err, myEvent ){
 
-			/* On commence par l'Event pour savoir s'il est full 
-
-			if( myEvent.askersList.length === myEvent.maxGuest ){
-
-				return eventUtils.raiseError({
-					socket: userSocket,
-					toServer: "max user reached for that event",
-					toClient: "L'évènement est complet. Essayez en un autre."
-				});
-
-			
-
-			}
-			/* Ensuite on regarde si la personne n'est pas déjà dans la liste pour éviter toute incohérence Data */
-			if(  _.pluck( myEvent.askersList, '_id' ).indexOf( userId ) != -1 )
+			if( err )
 			{
-				return requesterSocket.emit('friend already in', { eventId: eventId, userId: userId });
+				return console.log('Error finding event...');
 			}
 
+			User.find( query, function( err, users ){
 
-			User.findById( userId, {}, function( err, user ){
+				if(err) return console.error('error');
 
-				if( err ){
-					return eventUtils.raiseError({
-						err: err,
-						socket: userSocket,
-						toServer: "Request failed [1]",
-						toClient: "Error happened - We have been notified"
-					});
+				/* On populate les users en les associant à leurs id respectives */
+				for( var i = 0; i< users.length; i++)
+				{
+					if( users[i]._id == hostId )
+						var myHost = users[i];
+
+					if( users[i]._id == requesterId )
+						var myRequester = users[i];
+
+					if( users[i]._id == userId )
+						var myUser = users[i];
+
 				}
 
-				if( !_.some( user.friendList, { friendId: requesterId, status:'mutual' }) && userId != requesterId )
+				// Validation des erreurs et conflits potentiels
+
+				// Check si la personne n'est pas déjà dans la liste pour éviter toute incohérence data 
+				if(  _.pluck( myEvent.askersList, '_id' ).indexOf( userId ) != -1 )
+				{
+					expose.alreadyIn = true;
+					return eventUtils.sendSuccess( expose, res )
+				}
+
+				// Check si l'ami est bien un ami mutuel en cas de masquerade
+				if( !_.some( myUser.friendList, { friendId: requesterId, status:'mutual' }) && userId != requesterId )
 				{
 					return eventUtils.raiseError({
 						err: err,
-						socket: requesterSocket,
+						res: res,
 						toServer: "Request failed [3]",
 						toClient: "Cette personne n'est pas un ami mutuel!"
 					});
 				}
 
-				if( user.status === 'hosting' ){
+				// Check si on est soit même en train d'HOST, ou si notre ami a HOST entre temps (non MAJ de l'UI)
+				if( myUser.status === 'hosting' ){
 					if( requesterId == userId )
 					{
 						return eventUtils.raiseError({
 							err: err,
-							socket: userSocket,
+							res: res,
 							toServer: "Request failed [2a]",
 							toClient: "Vous êtes déjà en train d'organiser une soirée!"
 						});
@@ -130,7 +126,7 @@
 					{
 						return eventUtils.raiseError({
 							err: err,
-							socket: requesterSocket,
+							res: res,
 							toServer: "Request failed [2b]",
 							toClient: "Cet ami est en train d'organiser une soirée"
 						});
@@ -138,144 +134,132 @@
 
 				}
 
-					user.socketRooms.push( room );
-					user.eventsAskedList.push( eventId );
+				// Requester response
+				expose = {
+					eventId: eventId,
+					hostId: hostId,
+					requesterId: requesterId,
+					userId: userId,
+					alreadyIn: false,
+					asker: myUser
+				}
 
-					user.save(function( err, user ){
+				eventUtils.sendSuccess( res, expose );
 
-						if( !err ){
 
-							var asker = {
+				/* Host update */
+				myHost.save();
 
-								_id           : user._id.toString(),
-								name          : user.name,
-								description   : user.description,
-								age           : user.age,
-								favoriteDrink : user.favoriteDrink,
-								mood          : user.mood,
-								signupDate    : user.signupDate,
-								imgId         : user.imgId,
-								imgVersion    : user.imgVersion,
-								friendList    : user.friendList
+				/* User update : either it's requester or an other */
+				myUser.eventsAskedList.push( eventId );
+				myUser.save();
 
-							}; 
+				/* Event update */
+				var asker = {   _id           : myUser._id.toString(),
+								name          : myUser.name,
+								description   : myUser.description,
+								age           : myUser.age,
+								favoriteDrink : myUser.favoriteDrink,
+								mood          : myUser.mood,
+								signupDate    : myUser.signupDate,
+								imgId         : myUser.imgId,
+								imgVersion    : myUser.imgVersion,
+								friendList    : myUser.friendList 
+							};
 
-								myEvent.askersList.push( asker );
+				myEvent.askersList.push( asker );
+				myEvent.save( function( err, myEvent ){
+					if( err ) return console.log('ERR-92');
 
-								myEvent.save( function( err ){
+					/* On envoit la notification de succès sur user que si user != requester */
+					pusher.trigger( myHost.getChannel(), 'request-participation-in-success', expose );
+					if( requesterId != userId )
+						pusher.trigger( myUser.getChannel(), 'request-participation-in-success', expose );
+				});
 
-									if( !err ){
-										global.io.emit('request participation in success', 
-										{ hostId: hostId,  userId: userId, asker: asker, eventId: eventId, requesterId: requesterId });
-									}
-								});
-						}
-					});
-				}); 	
+
 			});
 
-			User.findById( hostId, {},function(err,host){
+		});
 
-						if( err ){
-							return eventUtils.raiseError({
-								err: err,
-								socket: hostSocket,
-								toClient: "Error CE1",
-								toServer: "Error CE1"
-							});
-						}
-
-							host.socketRooms.push( room );
-							host.save(function( err, host ){
-								if( ! err ) { }
-							});
-						
-			});
-		
 	    };
 
-	    var requestOut = function(data){
+	    var requestOut = function( req, res ){
+
+	    		var data = req.body;
 
 				var eventId 	= data.eventId,
 					hostId  	= data.hostId,
-					userId  	= data.userInfos._id,
+					userId  	= data.userId,
 					requesterId = data.requesterId,
 					asker   	= {};
 
-				var room  = eventUtils.buildRoomId( eventId, hostId, userId ),
-
-					userSocket = global.sockets[userId],
-					hostSocket = global.sockets[hostId];
-
-					userSocket.leave( room );
-					
-					if( hostSocket != undefined ){
-						hostSocket.leave( room ); 
-					}
-					
-				    eventCondition = { _id: eventId },
+			    var eventCondition = { _id: eventId },
 					eventUpdate    = { $pull: {'askersList': { '_id': userId }}},
-
-					userCondition  = { _id: userId },
-					userUpdate     = { $pull: { 'socketRooms': room, 'eventsAskedList': eventId }},
-
-					hostCondition  = { _id: hostId },
-					hostUpdate	   = { $pull: { 'socketRooms': room }},
-
-					option = {},
-
-					callback = function(err, result){ 
-
+					callback = function( err, result ){
 						if( err ){
 							return eventUtils.raiseError({
 								toClient: "Something happened! :o",
-								socket: [ userSocket, hostSocket ],
+								res: res,
 								err: err
 							});
 						 }
-					};
+				};
 
-					userCallback = function(err, user){ 
+				Event.findOneAndUpdate( eventCondition, eventUpdate, {}, callback );
 
-						if( err ){
-							return eventUtils.raiseError({
-								toClient: "Something happened! :o",
-								socket: [ userSocket, hostSocket ],
-								err: err
-							});
-						 }
+				User.find({ '_id': { $in: [ userId, hostId ]}}, function( err, users ){
 
-					 	asker = {
+					if( err || users.length!=2 )
+					{
+						return eventUtils.raiseError({
+							toClient:"Oups, une erreur s'est produite",
+							err:err,
+							res:res
+						});
+					}
 
-							_id           : user._id.toString(),
-							name          : user.name,
-							description   : user.description,
-							age           : user.age,
-							imgId         : user.imgId,
-							imgVersion    : user.imgVersion
+					for( var i = 0; i < 2; i++ )
+					{
+						if( users[i]._id == userId )
+							var myUser = users[i];
+						if( users[i]._id == hostId )
+							var myHost = users[i];
+					}
 
-						}; 
-
-						var data = {
-
+					var expose = {
 							userId: userId,
 							eventId: eventId,
 							hostId: hostId,
-							asker: asker,
-							requesterId: requesterId
-
-						};
-
-			 			global.io.emit('request participation out success', data );
-
+							requesterId: requesterId,
+							asker: {
+								_id           : myUser._id.toString(),
+								name          : myUser.name,
+								description   : myUser.description,
+								age           : myUser.age,
+								imgId         : myUser.imgId,
+								imgVersion    : myUser.imgVersion
+						    }
 					};
 
-				Event.findOneAndUpdate( eventCondition, eventUpdate, option, callback );
-			  	User.findOneAndUpdate( hostCondition, hostUpdate, option, callback );
-				User.findOneAndUpdate( userCondition, userUpdate, option, userCallback );
+					myUser.unaskForEvent( eventId )
+						  .save( function( err ){
 
-			  
-	    };
+						  	if( err )
+						  	{
+						  		return eventUtils.raiseError({
+						  			toClient:'Error requesting out',
+						  			res:res,
+						  			err:err
+						  		});
+						  	}
+
+						eventUtils.sendSuccess( res, expose );
+						pusher.trigger( myHost.getChannel(), 'request-participation-out-success', expose );
+
+					  });
+				});
+		};
 
 	    module.exports = {
 	    	fetchEvents: fetchEvents,

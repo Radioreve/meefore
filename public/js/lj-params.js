@@ -8,7 +8,7 @@
 		domain	  : "http://87.247.105.70:1337"
 	},
 	ui:{
-		artificialDelay: 600,
+		artificialDelay: 700,
 		displayIn:  { opacity: [1, 0], translateX: [-8, 0]   },
 		displayOut: { opacity: [0, 1], translateX: [10, 0]   }
 	},
@@ -52,6 +52,9 @@
     myAskers: [],
     myUsers: [],
     myFriends: [],
+    myChannels: { 
+    	myChats: []
+    },
     myOnlineUsers: [],
     selectedTags: [],
     selectedLocations: [],

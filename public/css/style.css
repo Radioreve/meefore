@@ -127,14 +127,12 @@ body > header > img{
 }
 #headerContent h1{
 	color: rgb(236, 236, 236);
-	font-weight: normal;
-	margin: 10px 7px 0 48px;
-	text-shadow: 0 0 2px white;
-	/* display: inline-block; */
-	text-transform: uppercase;
-	font-size: 16px;
-	font-family: 'Lato';
+	margin: 12px 7px 0 48px;
+	text-shadow: 0 0 1px white;
+	font-family: 'Viga';
+	font-size: 15px;
 	position: absolute;
+	text-transform: uppercase;
 }
 body > header > h5{
 	display: inline;
@@ -148,14 +146,14 @@ body > header > h5{
 }
 #headerContent i{
 	position: absolute;
-	top: -2px;
-	left: -35px;
-	color: white;
-	background: rgb(199, 42, 42);
-	padding: 4px;
-	border-radius: 4px;
+	font-size: 18px;
+	left: -37px;
+	top: -8px;
+	color: rgb(253, 253, 253);
+	background: none;
+	padding: 5px;
+	border-radius: 44px;
 	text-shadow: none;
-	font-size: .8em;
 }
 #headerContent{
     width: 92%;
@@ -254,7 +252,7 @@ top: 33px;
 	position: relative;
 	display: block;
 	margin: 0 auto;
-	margin-left: 121px;
+	margin-left: 140px;
 	top: 1px;
 }
 
@@ -1271,7 +1269,7 @@ margin: 20px 0 20px;
 .center-heading{
 	text-align: center;
 	margin-bottom: 10px;
-}
+}  
 
 ::selection{
 	background: rgb(199, 42, 42);

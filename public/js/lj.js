@@ -23,41 +23,68 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				/* Global UI Settings ehanced UX*/
 				this.initEhancements();
 
+				/* Init Pusher Connexion via public chan */
+				this.initPusherConnection();
+
+		},
+		initPusherConnection: function(){
+
+			LJ.pusher = new Pusher('caff28cb575ee61ffa3f');
+
+			LJ.pusher.connection.bind('state_change', function( states ) {
+				csl('Pusher state is noww : ' + states.current );
+
+				if( (states.current == 'connecting') && LJ.state.connected  )
+				{
+					LJ.fn.toastMsg("Reconnexion...", 'success', true);
+				}
+				if( states.current == 'disconnected' )
+				{
+					LJ.fn.toastMsg("Vous avez été déconnecté.", 'error', true);
+				}
+				if( states.current == 'unavailable' )
+				{
+					LJ.fn.toastMsg("Une erreur s'est produite, essayez de relancer l'application ", 'error', true);
+				}
+				if( states.current == 'connected' && LJ.state.connected )
+				{
+					LJ.fn.say('fetch-user-and-configuration', { id: LJ.user._id }, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
+
+				}
+			});
+
+			LJ.pusher.connection.bind('connected', function() {
+				csl('Pusher connexion is initialized');
+			});
+
+			LJ.pusher.connection.bind('disconnected', function(){
+				alert('hey');
+			});
+
+
 		},
 		initFacebookState: function(){   /* Legacy Function */
 
-				  FB.getLoginStatus( function( res ){
+			FB.getLoginStatus( function( res ){
 
-				  	var status = res.status;
-				  	console.log('Facebook status : ' + status);
+			  	var status = res.status;
+			  	console.log('Facebook status : ' + status);
 
-				  	console.log('status : '+status);
-				  	if( status != 'connected' )
-				  		 return;
+			  	console.log('status : '+status);
+			  	if( status != 'connected' )
+			  		 return;
 
-				  	sleep(1500, function(){
+			  	sleep(1500, function(){
 
-					  	FB.api('/me', function(res){
+				  	FB.api('/me', function(res){
 
-					  		var facebookId = res.id;
-					  		//LJ.fn.loginWithFacebook( facebookId );
-					  		
-					  	});
+				  		var facebookId = res.id;
+				  		//LJ.fn.loginWithFacebook( facebookId );
+				  		
 				  	});
-			  	
-				  });
-
-		},
-		initPusherConnection: function(jwt){
-
-			/*LJ.params.socket = io.connect({
-				query:'token='+jwt
-			}); */
-
-			
-
-			/* Initialisation des socket.on('event',...); */
-			LJ.fn.initSocketEventListeners();
+			  	});
+		  	
+			});
 
 		},
 		initAnimations: function(){
@@ -219,6 +246,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				credentials.email    = credentials.email    || LJ.$emailInput.val();
 				credentials.password = credentials.password || LJ.$passwordInput.val();
 
+			LJ.fn.handleBeforeSendLogin();
+			LJ.fn.say('login', credentials, { success: LJ.fn.handleSuccessLogin, error: LJ.fn.handleFailedLogin } );
+
+		/*
 			$.ajax({
 				method:'POST',
 				url:'/login',
@@ -228,7 +259,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					password : credentials.password
 				},
 				beforeSend: function(){
-					LJ.fn.handleBeforeSendLogin();
 				},
 				success: function( data ){
 					LJ.fn.handleSuccessLogin( data );
@@ -237,6 +267,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					LJ.fn.handleFailedLogin( data );
 				}
 			});
+
+		*/
 		},
 		resetPassword: function(){
 
@@ -275,18 +307,43 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			var profile = {
 
-				_id			  : _id,
+				userId		  : _id,
 				age 		  : age,
 				name 		  : name,
 				description   : description,
 				favoriteDrink : favoriteDrink,
 				mood          : mood,
-				status        : LJ.user.status,
+				status        : LJ.user.status
 
 			};
 				csl('Emitting update profile');
 				LJ.fn.showLoaders();
-				LJ.fn.say('update profile', profile );
+
+			var eventName = 'update-profile',
+				data = profile
+				, cb = {
+					success: function( data ){
+
+						csl('update profile success received, user is : ' + data.user );
+						var user = data.user;
+
+						sleep( LJ.ui.artificialDelay, function(){
+
+							LJ.fn.updateClientSettings( user );
+							$('#thumbName').text( user.name );
+							LJ.fn.handleServerSuccess('Vos informations ont été modifiées');
+					
+						});
+
+					},
+					error: function( xhr ){
+						sleep( LJ.ui.artificialDelay, function(){
+							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
+						});
+					}
+				};
+
+				LJ.fn.say( eventName, data, cb );
 
 		},
 		updateSettings: function(){
@@ -300,7 +357,25 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			var o = { currentEmail: currentEmail, newPw: newPw, newPwConf: newPwConf, newsletter: newsletter, userId: userId }; 
 
 			LJ.fn.showLoaders();
-			LJ.fn.say('update settings', o);
+
+			var eventName = 'update-settings',
+				data = o
+				, cb = {
+					success: function( data ){
+						sleep( LJ.ui.artificialDelay, function(){
+							LJ.fn.toastMsg( data.msg, 'info');
+							$('.validating-btn').removeClass('validating-btn');
+							LJ.fn.hideLoaders();
+						});
+					},
+					error: function( xhr ){
+						sleep( LJ.ui.artificialDelay, function(){
+							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
+						});
+					}
+				};
+
+			LJ.fn.say( eventName, o, cb );
 
 		},
 		swapNodes: function( a, b ){
@@ -340,16 +415,19 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				});
 
 		},
-		handleSuccessLogin: function( user ){
+		handleSuccessLogin: function( data ){
 
-			LJ.user._id = user._id; /* Nécessaire pour aller chercher toutes les infos, mais par socket.*/
-			LJ.fn.initPusherConnection( user.token );
+			//console.log( data );
+			LJ.user._id = data.id; /* Nécessaire pour aller chercher toutes les infos, mais par socket.*/
+			LJ.user.token = data.token; /* Passport de communication */
+			LJ.fn.say('fetch-user-and-configuration', { id: LJ.user._id, token: data.token }, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
 			LJ.$loginWrap.find('.header-field').addClass('validated');
 
 		},
-		handleFailedLogin: function(data){
+		handleFailedLogin: function( data ){
 
-			csl('handling fail login');
+			csl('Login has failed');
+
 			data = JSON.parse( data.responseText );
 
 			sleep( LJ.ui.artificialDelay, function(){
@@ -387,7 +465,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			});
 
 		},
-		handleSuccessReset: function(data){
+		handleSuccessReset: function( data ){
 
 			sleep(LJ.ui.artificialDelay,function(){
 
@@ -397,24 +475,23 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				LJ.fn.displayContent( LJ.$loginWrap, { prev:'revealed' } );
 
-				sleep(1000, function(){
+				sleep( 1000, function(){
 					LJ.fn.toastMsg( data.msg , 'info');
 					$('#pwResetInput').val('');
 					$('#pw_remember').velocity('transition.slideRightIn', { duration: 400 });
-				
 				});
 
 			});		
 
 		},
-		handleFailedReset: function(data){
+		handleFailedReset: function( data ){
 
 			if ( data.responseText )
-				data = JSON.parse(data.responseText);
+				data = JSON.parse( data.responseText );
 
 			var errorMsg = data.msg;
 
-			sleep(LJ.ui.artificialDelay,function(){
+			sleep( LJ.ui.artificialDelay, function(){
 
 				LJ.fn.handleServerError( errorMsg );
 				$('#pw_remember').velocity('transition.slideRightIn', { duration: 400 });
@@ -493,7 +570,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				$('.mood[data-mood="'+LJ.user.mood+'"]').addClass('selected');
 
 				/* Update de l'image de profile */
-				LJ.fn.replaceMainImage( LJ.user.imgId,
+				LJ.fn.replaceMainImage( 	LJ.user.imgId,
 								            LJ.user.imgVersion,
 								            LJ.cloudinary.displayParamsProfile );
 
@@ -642,7 +719,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		});
              
 		},
-		initAppSettings: function(data){
+		initAppSettings: function( data ){
 
 			var user     = data.user,
 				settings = data.settings;
@@ -654,13 +731,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.settings = settings;
 
 		},
-		updateClientSettings: function(newSettings){
+		updateClientSettings: function( newSettings ){
 
 			_.keys(newSettings).forEach(function(el){
 				LJ.user[el] = newSettings[el];
 			});
 		},
-		toastMsg: function(msg, status, fixed){
+		toastMsg: function( msg, status, fixed ){
 
 			var toastStatus, toast, tpl;
 
@@ -747,7 +824,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					newImg.fadeIn(700);
 				});
 		},
-		initCloudinary: function(upload_tag){
+		initCloudinary: function( upload_tag ){
 
 			$.cloudinary.config( LJ.cloudinary.uploadParams );
 			LJ.tpl.$placeholderImg = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsEventAsker );
@@ -767,35 +844,43 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				}).bind('cloudinarydone',function( e, data ){
 
-  							sleep( LJ.ui.artificialDelay,function(){
+					LJ.user.imgId = data.result.public_id;
+					LJ.user.imgVersion = data.result.version;
 
-  								$('.progress_bar').velocity('transition.slideUpOut', {
-  								 	duration: 400,
-  								 	complete: function(){
-  								 		$(this).css({ width: '0%' })
-  								 			   .velocity('transition.slideUpIn');
-  									} 
-  								});
+	                    var eventName = 'update-picture',
+	                    	data = {
+	                    				_id        : LJ.user._id,
+										imgId      : LJ.user.imgId,
+										imgVersion : LJ.user.imgVersion 
+									}
+							, cb = {
+								success: function( data ){
+									sleep( LJ.ui.artificialDelay, function(){
+										$('.progress_bar').velocity('transition.slideUpOut', {
+										 	duration: 400,
+										 	complete: function(){
+										 		$(this).css({ width: '0%' })
+										 			   .velocity('transition.slideUpIn');
+											} 
+										});
 
-  								LJ.fn.hideLoaders();
-  								LJ.fn.toastMsg('Votre photo de profile a été modifiée', 'info');
+										LJ.fn.hideLoaders();
+										LJ.fn.toastMsg('Votre photo de profile a été modifiée', 'info');
 
-  								var imgId      = data.result.public_id;
-  								var imgVersion = data.result.version;
+										var user = data.user;
+										//LJ.fn.updateClientSettings( user );
+										console.log('User after img upload:' + user );
 
-                                LJ.user.imgVersion = imgVersion;
-                                LJ.user.imgId      = imgId;
+		  								LJ.fn.replaceMainImage( LJ.user.imgId, LJ.user.imgVersion, LJ.cloudinary.displayParamsProfile );
+		  								LJ.fn.replaceThumbImage( LJ.user.imgId, LJ.user.imgVersion, LJ.cloudinary.displayParamsHeaderUser );
+		  							});
+								},
+								error: function( xhr ){
+									console.log('Error saving image identifiers to the base');
+								}
+							};
 
-  								LJ.fn.say('update picture', {
-																			_id        : LJ.user._id,
-																			imgId      : imgId,
-																			imgVersion : imgVersion 
-  																		});
-
-  								LJ.fn.replaceMainImage( imgId, imgVersion, LJ.cloudinary.displayParamsProfile );
-  								LJ.fn.replaceThumbImage( imgId, imgVersion, LJ.cloudinary.displayParamsHeaderUser );
-					
-  							});
+							LJ.fn.say( eventName, data, cb );
 
   				}).cloudinary_fileupload();
   				
@@ -805,7 +890,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			var i=0;
 			for( ; i<LJ.myOnlineUsers.length; i++ )
 			{
-				LJ.fn.displayAsOnline( LJ.myOnlineUsers[i] );
+				LJ.fn.displayAsOnline( { userId: LJ.myOnlineUsers[i] } );
 			}
 
 		},
@@ -964,387 +1049,18 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						LJ.fn.hideLoaders();
 
         },
+        handleNewUserSignedUp: function( data ){
+
+        	var user = data.user;
+
+        	LJ.fn.toastMsg('Un utilisateur vient de s\'inscrire', 'info');
+			LJ.fn.fetchUsers();
+
+        },
 		initSocketEventListeners: function(){
+			
+				//LJ.fn.on('fetch user success', function( data ){ console.log(data); });
 
-				LJ.fn.on('connect', function(){
-
-					csl('Client authenticated on the socket stream');
-					var userId = LJ.user._id;
-
-					/* Request all informations */
-					LJ.fn.say('fetch user and configuration', userId );
-
-				});
-
-				LJ.fn.on('user connected', LJ.fn.displayAsOnline );
-					
-				LJ.fn.on('user disconnected', LJ.fn.displayAsOffline );
-
-				LJ.fn.on('new user signed up', function( user ){
-
-						LJ.fn.toastMsg('Un utilisateur vient de s\'inscrire', 'info');
-						LJ.fn.fetchUsers();
-				});
-
-				LJ.fn.on('user started typing success', LJ.fn.showUserTyping );
-
-				LJ.fn.on('user stopped typing success', LJ.fn.hideUserTyping );
-
-				LJ.fn.on('refetch askers success', function( askers ){
-					csl('Refetch askers success');
-					LJ.myAskers = askers;
-					LJ.fn.addFriendLinks();
-					$('#askersListWrap div.active').click(); // force update
-					LJ.fn.refreshArrowDisplay();
-				});
-
-
-				LJ.fn.on('reset events', function(){
-
-					LJ.fn.toastMsg('Les évènements sont maintenant terminés!', 'info');
-					LJ.fn.displayEvents();
-					if( LJ.user.status == 'hosting') LJ.fn.handleCancelEvent( { hostId: LJ.user._id });
-
-				});
-
-				LJ.fn.on('restart events', function(){
-
-					LJ.fn.toastMsg('Les évènements sont à présent ouverts!', 'info');
-					LJ.fn.displayViewAsNormal();
-
-
-				});
-
-				LJ.fn.on('fetch user and configuration success', function( data ){
-
-					/* L'ordre de l'appel est important, car certaines 
-					/* informations sont cachées par les premières 
-					/* et utilsiées par celles d'après 
-
-							- On cache les informations sur l'user 
-							- On fait les mises à jours du DOM (checkbox, thumbPic, input) à partir du cache
-							- On envoie une demande des derniers évènements / utilisateurs / amis
-							- On envoie une demande pour rejoindre les chatrooms en cours
-							- On active le pluggin d'upload de photos
-							- On génère le HTML dynamique à partir de données server ( Tags... )
-					*/
-					LJ.fn.hideLoaders();
-
-					var user 	 = data.user,
-						settings = data.settings;
-					
-					LJ.myOnlineUsers = data.onlineUsers;
-
-					LJ.fn.initAppSettings( data, settings );
-					LJ.fn.displayUserSettings();
-
-					LJ.fn.initRooms( LJ.user._id );					
-					LJ.fn.initCloudinary( user.cloudTag );
-					LJ.fn.initLayout( settings );
-
-					LJ.fn.fetchEvents();
-					LJ.fn.fetchUsers();
-					LJ.fn.fetchFriends();
-
-					/* Admin scripts. Every com is secured serverside */
-					if( ['admin','root'].indexOf( LJ.user.access ) != -1 )
-					{
-						LJ.fn.initAdminSocketEvents();
-						LJ.fn.handleAdminDomEvents();
-						LJ.fn.initAdminInterface();
-						LJ.fn.fetchAppData();
-					}
-
-				});
-
-				LJ.fn.on('update profile success', function(data){
-
-					csl('update profile success received');
-
-					sleep( LJ.ui.artificialDelay, function(){
-
-						LJ.fn.updateClientSettings( data );
-						$('#thumbName').text( data.name );
-						LJ.fn.handleServerSuccess('Vos informations ont été modifiées');
-				
-					});
-
-				});
-
-				LJ.fn.on('update image success', function( data ){
-
-					LJ.fn.updateClientSettings(data);
-					csl(JSON.stringify(data,0,4));
-				});
-
-				LJ.fn.on('create event success', function( myEvent ){
-					
-					var eventId = myEvent._id,
-						hostId = myEvent.hostId;
-					
-					sleep( LJ.ui.artificialDelay , function(){ 
-
-
-						if( LJ.user._id === hostId )
-						{
-								LJ.user.status = 'hosting';
-								LJ.fn.displayMenuStatus( function(){ $('#management').click(); } );
-								LJ.user.hostedEventId = eventId;
-								LJ.fn.hideLoaders();
-								$('.themeBtn').removeClass('validating-btn');
-								LJ.$createEventWrap.find('input, #eventDescription').val('');
-								LJ.$createEventWrap.find('.selected').removeClass('selected');
-								LJ.fn.refreshArrowDisplay();
-						}
-						else
-						{	
-							/* Réagir si un ami créé un évènement, MAJ les buttons */ 
-							LJ.fn.toastMsg( myEvent.hostName + ' a créé un évènement !', 'info' );
-							LJ.fn.bubbleUp( '#events' );
-						}
- 
-						LJ.fn.insertEvent( myEvent );
-						$('#refreshEventsFilters').click();
-
-					});
-				});
-
-				LJ.fn.on('change state event success', function( data ){
-					
-					sleep( LJ.ui.artificialDelay , function(){ 
-
-						var eventState = data.myEvent.state,
-							eventId    = data.eventId;
-
-						switch( eventState ){
-
-						case 'canceled':
-							LJ.fn.handleCancelEvent( data );
-						break;
-
-						case 'suspended':
-							LJ.fn.handleSuspendEvent( data, 'suspended' );
-						break;
-
-						case 'open':
-							LJ.fn.handleSuspendEvent( data, 'open' );
-						break;
-
-						default:
-							LJ.fn.toastMsg('Strange thing happend', 'error');
-						break;
-
-						}
-
-					});				
-
-		        });
-
-				LJ.fn.on('fetch user success', function( data ){ console.log(data); });
-
-				LJ.fn.on('friend already in', function( data ){
-					
-					csl('Friend already in');
-					sleep( LJ.ui.artificialDelay, function(){
-
-						LJ.fn.hideLoaders();
-						LJ.fn.displayAddFriendToPartyButton();
-						LJ.fn.toastMsg('Votre ami s\'est ajouté à l\évènement entre temps', 'info');
-					});
-
-				});
- 
-				LJ.fn.on('fetch events success', function( events ){
-
-					LJ.state.fetchingEvents = false;
-					var L = events.length;
-
-					for( var i=0; i<L; i++ ){
-
-						LJ.myEvents[i] = events[i];
-						LJ.myEvents[i].createdAt = new Date( events[i].createdAt );
-						LJ.myEvents[i].beginsAt  = new Date( events[i].beginsAt );
-					}
-
-					/* L'array d'event est trié à l'initialisation */
-					LJ.myEvents.sort( function( e1, e2 ){
-						return e1.beginsAt -  e2.beginsAt ;
-					});
-
-					LJ.fn.displayEvents();
-				});
-
-				LJ.fn.on('request participation in success', function( data ){
-
-					var hostId  	= data.hostId,
-						userId 		= data.userId,
-						eventId 	= data.eventId,
-						requesterId = data.requesterId,
-						asker   	= data.asker;						
-
-					sleep( LJ.ui.artificialDelay, function(){
-
-						LJ.fn.bubbleUp( '#management' )
-
-						var d = LJ.cloudinary.displayParamsEventAsker;
-							d.version = asker.imgVersion;
-
-						var $askerImg = LJ.fn.renderAskerInEvent( asker.imgId, { dataList: [{ dataName: 'askerid', dataValue: asker._id }]});
-						var $askedInWrap = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap');
-							$askedInWrap.prepend( $askerImg );
-							//$askedInWrap.find('img').last().remove();
-
-						
-							if( LJ.user._id == requesterId && LJ.user._id == userId )
-							{
-								LJ.fn.hideLoaders();
-								LJ.fn.toastMsg('Votre demande a été envoyée', 'info');
-								 $('.asking').removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
-										  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
-							}
-
-							if( LJ.user._id != requesterId && LJ.user._id == userId )
-							{
-								LJ.fn.toastMsg('Un ami vous a ajouté à une soirée', 'info');
-								$('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askIn')
-								          .removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
-										  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
-							}
-
-							if( LJ.user._id == requesterId && LJ.user._id != userId )
-							{
-								LJ.fn.toastMsg('Votre ami a été ajouté', 'info');
-								LJ.fn.hideLoaders();
-								LJ.fn.displayAddFriendToPartyButton();
-							}
-
-						/* Pour l'host */
-						if( LJ.user._id == hostId )
-						{
-
-							LJ.myAskers.push( asker );
-
-							var askerMainHTML  = LJ.fn.renderAskerMain( asker ),
-								askerThumbHTML = LJ.fn.renderAskerThumb ({ asker: asker });
-
-							    $( askerMainHTML ).appendTo( $('#askersMain') ).hide();
-							    $( askerThumbHTML ).appendTo( $('#askersThumbs') );
-
-								if( $('.a-item').length == 1 )
-								{
-									$('#manageEventsWrap .a-item, #manageEventsWrap .imgWrapThumb')
-									.addClass('active')
-									.velocity('transition.fadeIn',{
-									 duration: 300,
-									 display:'inline-block'
-									 });
-								}
-
-								LJ.fn.refetchAskers();
-							    LJ.fn.refreshArrowDisplay();
-							    LJ.fn.displayAsOnline( requesterId );
-						}
-
-						var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
-							$nbAskers.text( parseInt( $nbAskers.text() ) + 1 );
-
-					});
-
-				});
-
-				LJ.fn.on('request participation out success', function(data){
-
-						console.log( data.asker.name +' asked out' );
-
-						var userId  	= data.userId,
-							hostId  	= data.hostId,
-							eventId 	= data.eventId,
-							asker   	= data.asker,
-							requesterId = data.requesterId;
-
-
-						var chatId = LJ.fn.buildChatId( eventId, hostId, userId ),
-						    $aItemMain = LJ.$askersListWrap.find('.a-item[data-askerid="'+userId+'"]'),
-						    $chatWrapAsHost = LJ.$askersListWrap.find('.chatWrap[data-chatid="'+chatId+'"]'),
-						    $chatWrapAsUser = LJ.$eventsListWrap.find('.chatWrap[data-chatid="'+chatId+'"]');
-
-						_.remove( LJ.myAskers, function( asker ){
-							return asker._id === data.userId;
-						});
-
-						sleep( LJ.ui.artificialDelay, function(){
-
-							LJ.fn.hideLoaders();
-
-							/* Pour l'Host */
-							if( hostId === LJ.user._id)
-							{		
-									$('.imgWrapThumb[data-askerid="' + asker._id + '"]').remove();
-									$aItemMain.velocity("transition.fadeOut", { 
-										duration: 200,
-										complete: function(){
-											$aItemMain.remove();
-											if( !$aItemMain.hasClass('active') ) return LJ.fn.refreshArrowDisplay();
-											$('.imgWrapThumb').first().addClass('active');
-											$('.a-item').first().addClass('active').velocity('transition.fadeIn', 
-												{ 
-													duration: 300,
-													complete: function(){
-
-														LJ.fn.refreshArrowDisplay();
-												}})
-										} 
-									});
-							}
-							if( requesterId == userId && LJ.user._id == userId )
-							{
-								
-								LJ.fn.toggleChatWrapEvents( $chatWrapAsUser.find('.chatIconWrap') );
-								LJ.fn.toastMsg('Vous avez été désinscris de la liste', 'info');
-								$('.asking').removeClass('asked').removeClass('asking').addClass('idle').text('Je veux y aller!')
-										.siblings('.chatIconWrap, .friendAddIconWrap').hide();
-							}	
-
-							
-							var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
-								$nbAskers.text( parseInt( $nbAskers.text() ) - 1 );
-
-							$('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap')
-																		   .find('img[data-askerid="'+asker._id+'"]')
-																		   .remove(); 
-						});
-	
-				});
-
-				LJ.fn.on('accept asker success', function( data ){
-
-					csl('Asker has been accepted');
-
-					var eventId = data.eventId,
-						hostId  = data.hostId,
-						askerId = data.askerId;
-
-					/* For everyone */
-					var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
-							$nbAskers.text( parseInt( $nbAskers.text() ) + 1 );
-
-					/* Host exclusively */
-					if( hostId = LJ.user._id )
-					{
-
-					}
-
-				});
-
-				LJ.fn.on('update settings success', function(data){
-
-					sleep( LJ.ui.artificialDelay, function(){
-						LJ.fn.toastMsg( data.msg, 'info');
-						$('.validating-btn').removeClass('validating-btn');
-						LJ.fn.hideLoaders();
-					});
-
-				});
 
 				LJ.fn.on('send contact email success', function(){
 
@@ -1371,139 +1087,20 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					});
 				});
 
-				LJ.fn.on('disconnect', function(){
-
-					LJ.fn.toastMsg("Vous avez été déconnecté. Reconnexion...", 'error', true);
-					LJ.params.socket.disconnect(LJ.user._id);
-
-				});
-
-                LJ.fn.on('fetch askers success', function( data ){
-                	
-                    LJ.state.fetchingAskers = false;
-                    LJ.myAskers = data.askersList;
-
-                    LJ.fn.displayAskers();   
-                    LJ.fn.refetchAskers();
-
-                });
-
-                LJ.fn.on('receive message', function( data ){
-
-                	LJ.fn.addChatLine(data);
-
-                });
-
-                LJ.fn.on('fetch friends success', function( data ){
-
-                	csl('Friends fetched');
-                	LJ.myFriends = data;
-
-                	$('#myFriends').html( LJ.fn.renderUsersInFriendlist() );
-
-                	LJ.fn.displayAddFriendToPartyButton();
-
-                	if( LJ.nextCallback.context == 'fetch friends' )
-                	{	
-                		csl('Calling method, context detected');
-                		LJ.nextCallback.fn();
-                		LJ.nextCallback = {};
-                	}
-
-                	LJ.fn.refreshOnlineUsers();
- 
-                });
-
-                LJ.fn.on('fetch users success', function( data ){
-
-                	csl('Users fetched');
-                	LJ.myUsers.length === 0 ? LJ.myUsers = _.shuffle( data ) : LJ.myUsers = data ; 
-                    $('#searchUsers').html( LJ.fn.renderUsersInSearch() );
-
-                    $( $('#searchUsers .u-item:not(.match)')[0] ).removeClass('none').css({ opacity: '.5 '});
-					$( $('#searchUsers .u-item:not(.match)')[1] ).removeClass('none').css({ opacity: '.4 '});
-					$( $('#searchUsers .u-item:not(.match)')[2] ).removeClass('none').css({ opacity: '.3 '});
-					$( $('#searchUsers .u-item:not(.match)')[3] ).removeClass('none').css({ opacity: '.15 '});
-
-					LJ.fn.refreshOnlineUsers();
-
-                });
-
-                LJ.fn.on('friend request in success host', function( data ){
-
-                	var userId     = data.userId,
-                		friendId   = data.friendId;
-
-                	/* Host checks if he has to update his friendLinks, hence reload friends status*/
-                	if( LJ.myAskers.length != 0 )
-                	{
-                		var askersId = _.pluck( LJ.myAskers, '_id' );
-                		if( askersId.indexOf( userId ) != -1 && askersId.indexOf( friendId ) != -1 )
-                			{ LJ.fn.refetchAskers(); }
-                	}
-
-                });
-
-                LJ.fn.on('friend request in success', function( data ){
-
-                	var userId     = data.userId,
-                		friendId   = data.friendId,
-                		upType     = data.updateType,
-                		friendList = data.friendList;
-
-                	/* Host checks if he has to update his friendLinks, hence reload friends status*/
-                	if( LJ.myAskers.length != 0 )
-                	{
-                		var askersId = _.pluck( LJ.myAskers, '_id' );
-
-                		/* Both people have asked to join */
-                		if( askersId.indexOf( userId ) != -1 && askersId.indexOf( friendId ) != -1 )
-                			{ LJ.fn.refetchAskers(); }
-
-                	}
-
-                	LJ.user.friendList = data.friendList;
-					
-					LJ.nextCallback.context = 'fetch friends';
-					LJ.nextCallback.fn = function(){
-                		 
-                		csl('Calling function');
-						sleep( LJ.ui.artificialDelay, function(){
-
-						LJ.fn.displayAddUserAsFriendButton();
-
-							if( upType == 'askedhim' )
-							{
-								LJ.fn.handleServerSuccess('Votre demande a été envoyée');
-								return;
-							}
-
-							if( upType == 'askedme' )
-							{
-								LJ.fn.handleServerSuccess('Vous avez une demande d\'ami');
-								LJ.fn.bubbleUp( '#search' )
-								return;
-							}
-
-							if( (upType == 'mutual') && (userId == LJ.user._id) )
-							{
-								LJ.fn.handleServerSuccess('Vous êtes à présent amis');
-								return;
-							}
-
-							if( (upType == 'mutual') && (friendId == LJ.user._id) )
-							{
-								LJ.fn.handleServerSuccess('Votre demande a été acceptée!');
-								LJ.fn.bubbleUp( '#search' )
-								return;
-							}
-						});
-					}
-					LJ.fn.fetchFriends();
-                });
                 
 		},
-		handleCancelEvent: function(data){
+		handleResetEvents: function(){
+
+					LJ.fn.toastMsg('Les évènements sont maintenant terminés!', 'info');
+					LJ.fn.displayEvents();
+					if( LJ.user.status == 'hosting') LJ.fn.handleCancelEvent( { hostId: LJ.user._id });
+		},
+		handleRestartEvents: function(){
+					
+					LJ.fn.toastMsg('Les évènements sont à présent ouverts!', 'info');
+					LJ.fn.displayEvents();
+		},
+		handleCancelEvent: function( data ){
 			
 			if( data.hostId == LJ.user._id )
 			{
@@ -1527,6 +1124,204 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		return el.hostId == data.hostId; 
         	});
 
+
+		},
+		handleRequestParticipationInSuccess: function( data ){
+
+			console.log('Handling request participation in success');
+
+			var hostId  	= data.hostId,
+				userId 		= data.userId,
+				eventId 	= data.eventId,
+				requesterId = data.requesterId,
+				asker   	= data.asker,
+				alreadyIn   = data.alreadyIn || false;	
+
+			sleep( LJ.ui.artificialDelay, function(){
+
+				if( alreadyIn )
+				{
+					LJ.fn.hideLoaders();
+					LJ.fn.displayAddFriendToPartyButton();
+					LJ.fn.toastMsg('Votre ami s\'est ajouté à l\évènement entre temps', 'info');
+					return;
+				}
+
+				LJ.fn.bubbleUp( '#management' )
+
+				var d = LJ.cloudinary.displayParamsEventAsker;
+					d.version = asker.imgVersion;
+
+				var $askerImg = LJ.fn.renderAskerInEvent( asker.imgId, { dataList: [{ dataName: 'askerid', dataValue: asker._id }]});
+				var $askedInWrap = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap');
+					$askedInWrap.prepend( $askerImg );
+					//$askedInWrap.find('img').last().remove();
+
+				
+					if( LJ.user._id == requesterId && LJ.user._id == userId )
+					{
+						LJ.fn.hideLoaders();
+						LJ.fn.toastMsg('Votre demande a été envoyée', 'info');
+						 $('.asking').removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
+								  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
+					}
+
+					if( LJ.user._id != requesterId && LJ.user._id == userId )
+					{	
+						LJ.fn.toastMsg('Un ami vous a ajouté à une soirée', 'info');
+						$('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askIn')
+						          .removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
+								  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
+					}
+
+					if( LJ.user._id == requesterId && LJ.user._id != userId )
+					{
+						LJ.fn.toastMsg('Votre ami a été ajouté', 'info');
+						LJ.fn.hideLoaders();
+						LJ.fn.displayAddFriendToPartyButton();
+					}
+
+				/* Pour l'host */
+				if( LJ.user._id == hostId )
+				{
+
+					LJ.myAskers.push( asker );
+
+					var askerMainHTML  = LJ.fn.renderAskerMain( asker ),
+						askerThumbHTML = LJ.fn.renderAskerThumb ({ asker: asker });
+
+					    $( askerMainHTML ).appendTo( $('#askersMain') ).hide();
+					    $( askerThumbHTML ).appendTo( $('#askersThumbs') );
+
+						if( $('.a-item').length == 1 )
+						{
+							$('#manageEventsWrap .a-item, #manageEventsWrap .imgWrapThumb')
+							.addClass('active')
+							.velocity('transition.fadeIn',{
+							 duration: 300,
+							 display:'inline-block'
+							 });
+						}
+
+						LJ.fn.refetchAskers();
+					    LJ.fn.refreshArrowDisplay();
+					    LJ.fn.displayAsOnline( requesterId );
+				}
+
+				var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
+					$nbAskers.text( parseInt( $nbAskers.text() ) + 1 );
+
+			});
+
+		},
+		handleRequestParticipationOutSuccess: function( data ){
+
+			console.log( data.asker.name +' asked out' );
+
+				var userId  	= data.userId,
+					hostId  	= data.hostId,
+					eventId 	= data.eventId,
+					asker   	= data.asker,
+					requesterId = data.requesterId;
+
+
+				var $aItemMain = LJ.$askersListWrap.find('.a-item[data-askerid="'+userId+'"]'),
+				    $chatWrapAsUser = LJ.$eventsListWrap.find('.chatWrap[data-chatid="'+hostId+'"]');
+
+				_.remove( LJ.myAskers, function( asker ){
+					return asker._id === data.userId;
+				});
+
+				sleep( LJ.ui.artificialDelay, function(){
+
+					LJ.fn.hideLoaders();
+
+					/* Pour l'Host */
+					if( hostId === LJ.user._id)
+					{		
+							$('.imgWrapThumb[data-askerid="' + asker._id + '"]').remove();
+							LJ.state.jspAPI[ asker._id ] = undefined; // sinon chat fail lorsqu'ask in/out/in...
+							$aItemMain.velocity("transition.fadeOut", { 
+								duration: 200,
+								complete: function(){
+									$aItemMain.remove();
+									if( !$aItemMain.hasClass('active') ) return LJ.fn.refreshArrowDisplay();
+									$('.imgWrapThumb').first().addClass('active');
+									$('.a-item').first().addClass('active').velocity('transition.fadeIn', 
+										{ 
+											duration: 300,
+											complete: function(){
+
+												LJ.fn.refreshArrowDisplay();
+										}})
+								} 
+							});
+					}
+					if( requesterId == userId && LJ.user._id == userId )
+					{
+						
+						LJ.fn.toggleChatWrapEvents( $chatWrapAsUser.find('.chatIconWrap') );
+						LJ.fn.toastMsg('Vous avez été désinscris de la liste', 'info');
+						$('.asking').removeClass('asked').removeClass('asking').addClass('idle').text('Je veux y aller!')
+								.siblings('.chatIconWrap, .friendAddIconWrap').hide();
+					}	
+
+					
+					var $nbAskers = $('.eventItemWrap[data-eventid="'+eventId+'"]').find('.e-guests span.nbAskers');
+						$nbAskers.text( parseInt( $nbAskers.text() ) - 1 );
+
+					$('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap')
+																   .find('img[data-askerid="'+asker._id+'"]')
+																   .remove(); 
+				});
+
+		},
+		handleFetchUserAndConfigurationSuccess: function( data ){
+
+			/* L'ordre de l'appel est important, car certaines 
+			/* informations sont cachées par les premières 
+			/* et utilsiées par celles d'après 
+
+					- On cache les informations sur l'user 
+					- On fait les mises à jours du DOM (checkbox, thumbPic, input) à partir du cache
+					- On envoie une demande des derniers évènements / utilisateurs / amis
+					- On envoie une demande pour rejoindre les chatrooms en cours
+					- On active le pluggin d'upload de photos
+					- On génère le HTML dynamique à partir de données server ( Tags... )
+			*/
+			console.log('User and configuration successfully fetched');
+			LJ.fn.hideLoaders();
+
+			var user 	 = data.user,
+				settings = data.settings;
+			
+			LJ.myOnlineUsers = data.onlineUsers;
+
+			LJ.fn.initAppSettings( data, settings );
+			LJ.fn.displayUserSettings();
+
+			LJ.fn.subscribeToChannels();
+			LJ.fn.initChannelListeners();
+			
+			LJ.fn.initCloudinary( user.cloudTag );
+			LJ.fn.initLayout( settings );
+
+			LJ.fn.fetchEvents();
+			LJ.fn.fetchUsers();
+			LJ.fn.fetchFriends();
+
+
+			/* Admin scripts. Every com is secured serverside */
+
+			/*
+			if( ['admin','root'].indexOf( LJ.user.access ) != -1 )
+			{
+				LJ.fn.initAdminSocketEvents();
+				LJ.fn.handleAdminDomEvents();
+				LJ.fn.initAdminInterface();
+				LJ.fn.fetchAppData();
+			}
+			*/
 
 		},
 		handleSuspendEvent: function(data, state){
@@ -1582,15 +1377,75 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			}
 
 		},
-		fetchUsers: function(){ LJ.fn.say('fetch users', LJ.user._id ); },
-		fetchFriends: function(){ LJ.fn.say('fetch friends', LJ.user._id ); },
+		fetchUsers: function(){
+
+			var eventName = 'fetch-users',
+				data = { userId: LJ.user._id };
+
+			var cb = {
+				success: function( data ){
+
+					var users = data.users;
+				//	csl('Users fetched from the server');
+                	LJ.myUsers.length === 0 ? LJ.myUsers = _.shuffle( users ) : LJ.myUsers = users ; 
+                    $('#searchUsers').html( LJ.fn.renderUsersInSearch() );
+
+                    $( $('#searchUsers .u-item:not(.match)')[0] ).removeClass('none').css({ opacity: '.5 '});
+					$( $('#searchUsers .u-item:not(.match)')[1] ).removeClass('none').css({ opacity: '.4 '});
+					$( $('#searchUsers .u-item:not(.match)')[2] ).removeClass('none').css({ opacity: '.3 '});
+					$( $('#searchUsers .u-item:not(.match)')[3] ).removeClass('none').css({ opacity: '.15 '});
+
+					LJ.fn.refreshOnlineUsers();
+					
+				},
+				error: function( xhr ){
+					console.log('API Error');
+				}
+			};
+
+			LJ.fn.say( eventName, data, cb ); 
+
+		},
+		fetchFriends: function(){ 
+
+			var eventName = 'fetch-friends',
+				data = { userId: LJ.user._id }
+
+				, cb = {
+					success: function( data ){
+
+						//csl('Friends fetched');
+	                	LJ.myFriends = data.myFriends ;
+
+	                	$('#myFriends').html( LJ.fn.renderUsersInFriendlist() );
+
+	                	LJ.fn.displayAddFriendToPartyButton();
+
+	                	if( LJ.nextCallback.context == 'fetch friends' )
+	                	{	
+	                		csl('Calling method, context detected');
+	                		LJ.nextCallback.fn();
+	                		LJ.nextCallback = {};
+	                	}
+
+	                	LJ.fn.refreshOnlineUsers();
+
+					},
+					error: function( xhr ){
+						console.log('Error fetching friends');
+					}
+				};
+
+			LJ.fn.say( eventName, data, cb );
+
+		},
 		createEvent: function(){
 
 			var tags = [];
 
 			$('#createEventWrap .selected').each( function( i, $el ){
 				var tag = $( $el) .attr('class').split(' ')[1].split('-')[1];						 
-				tags.push(tag);
+				tags.push( tag );
 			});
 
 			var e = {};
@@ -1607,7 +1462,42 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				e.tags            = tags;
 
 				LJ.fn.showLoaders();
-				LJ.fn.say('create event', e);
+
+				var eventName = 'create-event',
+					data = e
+					data.socketId = LJ.pusher.connection.socket_id
+					, cb = {
+						success: function( data ){
+
+							var myEvent = data.myEvent;
+
+							var eventId = myEvent._id,
+							hostId = myEvent.hostId;
+						
+							sleep( LJ.ui.artificialDelay , function(){ 
+
+								LJ.user.status = 'hosting';
+								LJ.user.hostedEventId = eventId;
+
+								LJ.fn.displayMenuStatus( function(){ $('#management').click(); } );
+								LJ.fn.hideLoaders();
+								$('.themeBtn').removeClass('validating-btn');
+								LJ.$createEventWrap.find('input, #eventDescription').val('');
+								LJ.$createEventWrap.find('.selected').removeClass('selected');
+								LJ.fn.refreshArrowDisplay();
+
+								LJ.fn.insertEvent( myEvent );
+								$('#refreshEventsFilters').click();
+
+							});
+
+						},
+						error: function( xhr ){
+							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
+						}
+					};
+
+				LJ.fn.say( eventName, data, cb );
 		},
 		fetchEvents: function(){
 
@@ -1618,20 +1508,69 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			else
 			{
 				LJ.state.fetchingEvents = true;
-                LJ.fn.say('fetch events', LJ.user._id );
+
+				var eventName = 'fetch-events',
+					data = { userId: LJ.user._id };
+
+				var cb = {
+					success: function( data ){
+						//console.log(data);
+						var myEvents = data.myEvents;
+						LJ.state.fetchingEvents = false;
+
+						var L = myEvents.length;
+						csl('Events fetched from the server, number of events : ' + L);
+
+						for( var i=0; i<L; i++ ){
+
+							LJ.myEvents[i] = myEvents[i];
+							LJ.myEvents[i].createdAt = new Date( myEvents[i].createdAt );
+							LJ.myEvents[i].beginsAt  = new Date( myEvents[i].beginsAt );
+						}
+
+						/* L'array d'event est trié à l'initialisation */
+						LJ.myEvents.sort( function( e1, e2 ){
+							return e1.beginsAt -  e2.beginsAt ;
+						});
+
+						LJ.fn.displayEvents();
+					},
+					error: function( xhr ){
+						csl('Error fetching events');
+					}
+				};
+					
+                LJ.fn.say( eventName, data, cb );
             }
 		},
         fetchAskers: function(){
 
             if( LJ.state.fetchingAskers )
-            {
-                LJ.fn.toastMsg("Already fetching askers", 'error');
-            }
-            else
-            {
-                LJ.state.fetchingAskers = true;
-                LJ.fn.say('fetch askers',{ eventId: LJ.user.hostedEventId, hostId: LJ.user._id });
-            }
+                return LJ.fn.toastMsg("Already fetching askers", 'error');
+
+        	console.log('Fetching event with id : ' + LJ.user.hostedEventId );
+
+            LJ.state.fetchingAskers = true;
+
+            var eventName = 'fetch-askers',
+            	data = { eventId: LJ.user.hostedEventId };
+
+            var cb = {
+            	success: function( data ){
+
+                	LJ.state.fetchingAskers = false;
+                    LJ.myAskers = data.askersList;
+                    LJ.fn.displayAskers();
+                    LJ.fn.addFriendLinks();
+					$('#askersListWrap div.active').click(); // force update
+					LJ.fn.refreshArrowDisplay();   
+            	},
+            	error: function( xhr ){
+            		console.log('Error fetching askers');
+            	}
+            };
+
+            LJ.fn.say( eventName, data, cb );
 
         },
         displayEvents: function(){
@@ -1639,7 +1578,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	/* Mise à jour de la vue des évènements
         	  au cas où quelqu'un se connecte en période creuse
         	*/
-	        	var hour = (new Date()).getHours();
+        	//csl('Displaying events');
+
+	        	var hour = ( new Date() ).getHours();
 	        	if( hour < LJ.settings.eventsRestartAt && hour >= LJ.settings.eventsTerminateAt ){
         			csl('Displaying events frozen state');
 	        		return LJ.fn.displayViewAsFrozen();
@@ -1663,7 +1604,25 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         refetchAskers: function(){
 
         	var idArray = _.pluck( LJ.myAskers, '_id' );
-        	LJ.fn.say('refetch askers', { userId: LJ.user._id, idArray: idArray });
+        	var eventName = 'refetch-askers',
+        		data = {  userId: LJ.user._id, idArray: idArray },
+        		cb = {
+        			success: function( data ){
+
+        				csl('Refetch askers success');
+						LJ.myAskers = data;
+						LJ.fn.addFriendLinks();
+						$('#askersListWrap div.active').click(); // force update
+						LJ.fn.refreshArrowDisplay();
+
+        			},
+        			error: function( xhr ){
+
+        				console.log('Error fetching askers');
+        			}
+        		};
+
+        	LJ.fn.say( eventName, data, cb );
 
         },
         addFriendLinks: function(){
@@ -1694,15 +1653,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	}
 
         },
-        displayAsOnline: function( userId ){
+        displayAsOnline: function( data ){
 
+        	var userId = data.userId;
 			$('div[data-userid="'+userId+'"],div[data-askerid="'+userId+'"]')
 					.find('.online-marker')
 					.addClass('active');
 
         },
-        displayAsOffline: function( userId ){
+        displayAsOffline: function( data ){
 
+        	var userId = data.userId;
 					$('div[data-userid="'+userId+'"],div[data-askerid="'+userId+'"]')
 					.find('.online-marker')
 					.removeClass('active');
@@ -1747,7 +1708,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 	      		});
 
-	        	console.log('Events to display : ' + eventsToDisplay );
+	        	//console.log('Events to display : ' + eventsToDisplay );
 
         		/* Transforme un Array de jQuery objects, en un jQuery-Array */
         		LJ.$eventsToDisplay = $(eventsToDisplay).map( function(){ return this.toArray(); });
@@ -1766,34 +1727,54 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
        		}
 
         },
-        requestIn: function( eventId, hostId, user, requesterId ){
+        requestIn: function( eventId, hostId, userId, requesterId ){
 
             csl("requesting IN with id : "+ eventId);
 
-            LJ.fn.say("request participation in", {
+            var eventName = 'request-participation-in',
+            	data = {
+            		eventId: eventId,
+            		hostId: hostId,
+            		userId: userId,
+            		requesterId: requesterId
+            	},
+            	cb = {
+            		success: function( data ){
+            			LJ.fn.handleRequestParticipationInSuccess( data );
+            		},
+            		error: function( xhr ){
+            			console.log('Error :(');
+            		}
+            	};
 
-                            userInfos: user,
-                            hostId: hostId,
-                            eventId: eventId,
-                            requesterId: requesterId
-
-            });
+            LJ.fn.say( eventName, data, cb );
 
         },
-        requestOut: function( eventId, hostId, user, requesterId ){  
+        requestOut: function( eventId, hostId, userId, requesterId ){  
 
         	csl("requesting OUT with id : "+ eventId);
 
-        	LJ.fn.say("request participation out", {
+        	var eventName = 'request-participation-out',
+        		data = {
+        			userId: userId,
+					hostId: hostId,
+					eventId: eventId,
+					requesterId: requesterId
+        		},
+        		cb = {
+        			success: function( data ){
+        				LJ.fn.handleRequestParticipationOutSuccess( data );
+        			},
+        			error: function( xhr ){
 
-        					userInfos: LJ.user,
-        					hostId: hostId,
-        					eventId: eventId,
-        					requesterId: requesterId
-        	});
+        			}
+        		}
 
-        },
-        say: function( eventName, data ){
+        	LJ.fn.say( eventName, data, cb );
+
+
+        },/*sayfn*/
+        say: function( eventName, data, cb ){
 
         	var url = '/' + eventName;
 
@@ -1802,8 +1783,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		url:url,
         		dataType:'json',
         		data: data,
-        		success: function(data){
-        			console.log('Pusher event sent successfully');
+        		success: function( data ){
+        			if( typeof( cb.success ) == 'function' ) cb.success( data );
+        		},
+        		error: function( data ){
+        			if( typeof( cb.error ) == 'function' ) return cb.error( data );
+        			/* Default response to any HTTP error */
+        			LJ.fn.handleServerError( JSON.parse( data.responseText ).msg );
         		}
         	});
 
@@ -1833,20 +1819,108 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
     		textInput.val('');
 
-    		var askerId = submitInput.parents('.a-item').data('askerid') || LJ.user._id;
-    		var hostId  = submitInput.parents('.eventItemWrap').data('hostid') || LJ.user._id;
-    		var eventId = submitInput.parents('.eventItemWrap').data('eventid') || LJ.user.hostedEventId;
+    		// On retreive l'id de la personne avec qui on chat
+    		// En cas de chat multiple, l'id de la room
+    		var senderId   = LJ.user._id,
+    			receiverId = LJ.fn.findReceiverId( submitInput );
 
-    		csl('Sending chat with id : '+eventId + ' and '+ hostId + ' and '+askerId);
+    		csl('Sending chat with receiverId : ' + receiverId );
 
-    		LJ.fn.say('send message',
+    		var eventName = 'send-message', 
+    			data = {
+    				msg: msg,
+	    			senderId: senderId, 
+	    			receiverId: receiverId
+    			},
+    			cb = {
+    				success: function( data ){
+    					var data = {
+    						submitInput: submitInput,
+    						msg: msg,
+    						receiverId: receiverId
+    					};
+    					LJ.fn.handleSendChatSuccess( data );
+    				},
+    				error: function( xhr ){
+    					console.log('Error sending the chat');
+    				}
+    			};
+
+    		LJ.fn.say( eventName, data, cb );
+
+        },
+        findReceiverId: function( submitInput ){
+
+	        var possibleIds = [
+	        	submitInput.parents('.a-item').data('askerid'),
+	        	submitInput.parents('.eventItemWrap').data('hostid')
+	        ]
+
+	        if( _.compact( possibleIds ).length != 1 )
+	        	LJ.fn.toastMsg('No id matched for that chat', 'error', true );	
+
+	        return _.compact( possibleIds )[0];
+        },
+        handleSendChatSuccess: function( data ){
+
+        	csl('Adding chatline (me)');
+
+        	 var chatLineHtml = '<div class="chatLine">'
+								+'<div class="cha cha-user">'+data.msg+'</div>'
+        						+'</div>';
+
+        	var chatId = data.receiverId;
+
+        	var $chatLineWrap = data.submitInput.parents('.chatWrap').find('.chatLineWrap');
+
+        	if( LJ.state.jspAPI[ chatId ] == undefined )
     		{
-    			msg: msg,
-    			eventId: eventId,
-    			hostId: hostId,
-    			askerId: askerId,
-    			senderId: LJ.user._id  /* = hostId ou askerId, selon le cas, utile pour le display only*/
-    		});
+    			csl('Turning chatLineWrap scrollable');
+    			$chatLineWrap.jScrollPane();
+    			LJ.state.jspAPI[ chatId ] =  $chatLineWrap.data('jsp');
+    		}
+
+    		$chatLineWrap.find('.jspPane').append( chatLineHtml );
+    		$chatLineWrap.find('.chatLine:last-child').velocity("fadeIn", { duration: 350 });
+
+    		sleep( 50, function(){
+				csl('Refreshing jsp API');
+				LJ.state.jspAPI[ chatId ].reinitialise();
+				LJ.state.jspAPI[ chatId ].scrollToBottom(); 
+    	    });
+
+        },
+        addChatLine: function( data ){
+
+        	csl('Adding chatline');
+
+        	var chatId = data.senderId;
+
+            var chatLineHtml = '<div class="chatLine none">'
+								+'<div class="cha cha-other">'+data.msg+'</div>'
+        						+'</div>';
+
+        	var $chatLineWrap = $('.chatWrap[data-chatid="'+chatId+'"]').find('.chatLineWrap');
+        	
+    		if( LJ.state.jspAPI[ chatId ] == undefined )
+    		{
+    			csl('Turning chatLineWrap scrollable');
+    			$chatLineWrap.jScrollPane();
+    			console.log( $chatLineWrap.data('jsp') );
+    			LJ.state.jspAPI[ chatId ] =  $chatLineWrap.data('jsp');
+    			console.log( LJ.state.jspAPI );
+    		}
+
+    		$chatLineWrap.find('.jspPane').append( chatLineHtml );
+    		$chatLineWrap.find('.chatLine:last-child').velocity("fadeIn", { duration: 350 });
+
+    		sleep( 50, function(){
+				csl('Refreshing jsp API');
+				console.log( LJ.state.jspAPI );
+				LJ.state.jspAPI[ chatId ].reinitialise();
+				LJ.state.jspAPI[ chatId ].scrollToBottom(); 
+    	    });
+
         },
         bubbleUp: function( el ){
 
@@ -1863,6 +1937,67 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         			return $bubble.text(n+'+');
 
         	return $bubble.text( n + 1 );
+
+        },
+        handleFriendRequestSuccess: function( data ){
+
+        	var userId     = data.userId,
+                		friendId   = data.friendId,
+                		upType     = data.updateType,
+                		friendList = data.friendList;
+
+	                	LJ.user.friendList = data.friendList;
+						
+						LJ.nextCallback.context = 'fetch friends';
+						LJ.nextCallback.fn = function(){
+	                		 
+	                		csl('Calling function');
+							sleep( LJ.ui.artificialDelay, function(){
+
+							LJ.fn.displayAddUserAsFriendButton();
+
+								if( upType == 'askedhim' )
+								{
+									LJ.fn.handleServerSuccess('Votre demande a été envoyée');
+									return;
+								}
+
+								if( upType == 'askedme' )
+								{
+									LJ.fn.handleServerSuccess('Vous avez une demande d\'ami');
+									LJ.fn.bubbleUp( '#search' )
+									return;
+								}
+
+								if( (upType == 'mutual') && (userId == LJ.user._id) )
+								{
+									LJ.fn.handleServerSuccess('Vous êtes à présent amis');
+									return;
+								}
+
+								if( (upType == 'mutual') && (friendId == LJ.user._id) )
+								{
+									LJ.fn.handleServerSuccess('Votre demande a été acceptée!');
+									LJ.fn.bubbleUp( '#search' )
+									return;
+								}
+							});
+						}
+						LJ.fn.fetchFriends();
+
+        },
+        handleFriendRequestSuccessHost: function( data ){
+        	//console.log('Handling friend request success host');
+        	var userId     = data.userId,
+                friendId   = data.friendId;
+
+            	/* Host checks if he has to update his friendLinks, hence reload friends status*/
+            	if( LJ.myAskers.length != 0 )
+            	{
+            		var askersId = _.pluck( LJ.myAskers, '_id' );
+            		if( askersId.indexOf( userId ) != -1 && askersId.indexOf( friendId ) != -1 )
+            			{ LJ.fn.refetchAskers(); }
+            	}
 
         },
         displayAddUserAsFriendButton: function(){
@@ -1936,76 +2071,163 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	});
 
         },
-        buildChatId: function( eventId, hostId, userId ){
+        showUserTyping: function( data ){
 
-        	return eventId + '_' + hostId + '-' + userId;
+        console.log('User typing received...');
+        var chatId = data.chatId,
+        	$liveTypeWrap = $('div[data-chatid="'+chatId+'"]').find('.liveTypeWrap');
 
-        },
-        showUserTyping: function( chatId ){
-
-        var $liveTypeWrap = $('div[data-chatid="'+chatId+'"]').find('.liveTypeWrap');
         	$liveTypeWrap.velocity( { translateY: [0,7], opacity: [1,0] }, { duration:300 });
 
         },
-        hideUserTyping: function( chatId ){
+        hideUserTyping: function( data ){
 
-        var $liveTypeWrap = $('div[data-chatid="'+chatId+'"]').find('.liveTypeWrap');
+        var chatId = data.chatId,
+        	$liveTypeWrap = $('div[data-chatid="'+chatId+'"]').find('.liveTypeWrap');
+
         	$liveTypeWrap.velocity( { translateY: [-7,0], opacity: [0,1] }, { duration:300 });
 
         },
-        addChatLine: function( data ){
+        subscribeToChannels: function(){
 
-        	csl('Adding chatline');
-            var cha;
-            data.senderId === LJ.user._id ?  cha = 'cha-user' : cha = 'cha-other';
+        	var channels = LJ.user.myChannels,
+        		L = channels.length;
+        	for( var i=0; i<L; i++ )
+        	{
+        		LJ.myChannels[ channels[i].accessName ] = LJ.pusher.subscribe( channels[i].channelName )
+        	}
+        	return;
 
-            var chatLineHtml = '<div class="chatLine none">'
-								+'<div class="cha '+cha+'">'+data.msg+'</div>'
-        						+'</div>';
+        },
+        initChannelListeners: function(){
 
-       		var chatId = data.chatId;
-       		
-        	var $chatLineWrap = $('.chatWrap[data-chatid="'+chatId+'"]').find('.chatLineWrap');
-        		
-    		if( LJ.state.jspAPI[ chatId ] == undefined )
-    		{
-    			csl('Turning chatLineWrap scrollable');
-    			$chatLineWrap.jScrollPane();
-    			LJ.state.jspAPI[chatId] =  $chatLineWrap.data('jsp');
-    		}
+        	/* Bind all defaults global events */
+        	LJ.myChannels['defchan'].bind('create-event-success', LJ.fn.handleCreateEventSuccess );
+        	LJ.myChannels['defchan'].bind('suspend-event-success', LJ.fn.handleSuspendEventSuccess );
+        	LJ.myChannels['defchan'].bind('cancel-event-success', LJ.fn.handleCancelEventSuccess );
 
-    		$chatLineWrap.find('.jspPane').append( chatLineHtml );
-    		$chatLineWrap.find('.chatLine:last-child')
-    					  .velocity("fadeIn", {
-    					  	duration: 350,
-    					  	complete: function(){
-    					  	}
-    					  });
+        	LJ.myChannels['defchan'].bind('restart-events', LJ.fn.handleRestartEvents );
+        	LJ.myChannels['defchan'].bind('reset-events', LJ.fn.handleResetEvents );
 
-    		sleep( 100, function(){
-				csl('Refreshing jsp API');
-				LJ.state.jspAPI[ chatId ].reinitialise();
-				LJ.state.jspAPI[ chatId ].scrollToBottom(); 
-    	    });
+        	LJ.myChannels['defchan'].bind('refresh-users-conn-states', LJ.fn.refreshUserConnState );
+
+        	//-----------------------------------------------------
+        	/* Bind personnal events */
+        	LJ.myChannels['mychan'].bind('friend-request-in-success', LJ.fn.handleFriendRequestSuccess );
+        	LJ.myChannels['mychan'].bind('friend-request-in-success-host', LJ.fn.handleFriendRequestSuccessHost );
+        	
+        	LJ.myChannels['mychan'].bind('request-participation-in-success', LJ.fn.handleRequestParticipationInSuccess );
+        	LJ.myChannels['mychan'].bind('request-participation-out-success', LJ.fn.handleRequestParticipationOutSuccess );
+
+        	LJ.myChannels['mychan'].bind('send-message-success', LJ.fn.addChatLine );
+
+        	LJ.myChannels['mychan'].bind('user-started-typing-success', LJ.fn.showUserTyping );
+        	LJ.myChannels['mychan'].bind('user-stopped-typing-success', LJ.fn.hideUserTyping );
+
 
 
         },
-        initRooms: function( id ){
+        refreshUserConnState: function( data ){
 
-        	LJ.fn.say( 'load rooms' , id );
+        	LJ.myOnlineUsers = _.keys( data.onlineUsers );
+        	$('.online-marker').removeClass('active');
+        	LJ.fn.refreshOnlineUsers();
+        },
+        testAllChannels: function(){
+
+        	var userId = LJ.user._id;
+        	var channelName = 'test-all-channels'
+        		, data = { userId: userId }
+        		, cb = {
+        			success: function( data ){
+        				console.log('Test launched...ok');
+        			},
+        			error: function( xhr ){
+        				console.log('Error! :@');
+        			}
+        		};
+
+        	LJ.fn.say( channelName, data, cb );
 
         },
         cancelEvent: function( eventId, hostId ){
 
         	csl('canceling event : '+eventId+'  with hostId : '+hostId);
-        	LJ.fn.say( 'cancel event', { eventId: eventId, hostId: hostId });
         	$( '#cancelEvent' ).addClass( 'pending' );
+
+        	var eventName = 'cancel-event',
+        		data = { eventId: eventId, hostId: hostId, socketId: LJ.pusher.connection.socket_id }
+        		, cb = {
+        			success: function( data ){
+
+        				var hostId = LJ.user._id;
+
+        				/* Host only */
+			        		$('.pending').removeClass('pending');
+			        		LJ.user.status = 'idle';
+			        		LJ.myAskers = [];
+			        		LJ.$manageEventsWrap.find('#askersThumbs, #askersMain').html('');
+			        		LJ.fn.displayMenuStatus( function(){ $('#create').click(); } );
+					
+						/* For all users */							                	 
+			        	var canceledEvent = LJ.$eventsListWrap.find('.eventItemWrap[data-hostid="'+hostId+'"]');
+			        		canceledEvent.velocity("transition.slideRightOut", {
+			        			complete: function(){
+			        				canceledEvent.remove();
+			        				if( $('.eventItemWrap').length == 0 ) LJ.fn.displayEvents();
+			        			}
+			        		});
+
+			        	_.remove( LJ.myEvents, function( el ){
+			        		return el.hostId == hostId; 
+			        	});
+        			},
+        			error: function( xhr ){
+        				console.log('Error canceling event');
+        				LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
+        			}
+        		};
+
+        	LJ.fn.say( eventName, data, cb );
 
         },
         suspendEvent: function( eventId, hostId ){
 
-        	LJ.fn.say( 'suspend event', { eventId: eventId, hostId: hostId });
         	$( '#suspendEvent' ).addClass( 'pending' );
+
+        	var eventName = 'suspend-event',
+        		data = { eventId: eventId, hostId: hostId, socketId: LJ.pusher.connection.socket_id }
+        		, cb = {
+        			success: function( data ){
+        				sleep( LJ.ui.artificialDelay, function(){
+
+	        				var eventState = data.eventState,
+	        					hostId     = data.hostId;
+
+	        				var $li = $('#suspendEvent');
+							$('.pending').removeClass('pending');
+
+							if( eventState == 'suspended' ){
+								LJ.fn.toastMsg( "Les inscriptions sont momentanément suspendues", 'info' );
+								$li.text('Reprendre');
+							}
+
+							if( eventState == 'open' ){
+								LJ.fn.toastMsg( "Les inscriptions sont à nouveau possible", 'info' );
+								$li.text('Suspendre');
+							}
+        				});
+        			},
+        			error: function( xhr ){
+        				sleep( LJ.ui.artificialDelay, function(){
+	        				console.log('Error suspending event');
+	        				LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
+        				});
+        			}
+        		};
+
+        	console.log('Calling say with eventName:' +eventName+'  and data:'+data);
+        	LJ.fn.say( eventName, data, cb );
 
         },
         showLoaders: function(){
@@ -2018,6 +2240,54 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $( '.loaderWrap, .m-loaderWrap' ).velocity( 'fadeOut', { duration: 250 });
 
         }, 
+        handleCreateEventSuccess: function( data ){
+
+        	var myEvent = data.myEvent;
+        		/* Réagir si un ami créé un évènement, MAJ les buttons */ 
+				LJ.fn.toastMsg( myEvent.hostName + ' a créé un évènement !', 'info' );
+				LJ.fn.bubbleUp( '#events' );
+
+				LJ.fn.insertEvent( myEvent );
+				$('#refreshEventsFilters').click();
+
+        },
+        handleSuspendEventSuccess: function( data ){
+
+        	var hostId     = data.hostId,
+			    eventState = data.eventState;			
+
+        		sleep( LJ.ui.artificialDelay , function(){ 
+
+						var eventId = data.eventId;
+
+						var eventWrap = LJ.$eventsWrap.find('.eventItemWrap[data-hostid="' + hostId + '"]');
+
+						eventWrap.attr('data-eventstate', eventState )
+								 .find('button.askIn');
+						
+					});	
+
+        },
+        handleCancelEventSuccess: function( data ){
+
+        	var hostId  = data.hostId;
+
+        		sleep( LJ.ui.artificialDelay , function(){ 
+
+					var canceledEvent = LJ.$eventsListWrap.find('.eventItemWrap[data-hostid="'+data.hostId+'"]');
+	        		canceledEvent.velocity("transition.slideRightOut", {
+	        			complete: function(){
+	        				canceledEvent.remove();
+	        				if( $('.eventItemWrap').length == 0 ) LJ.fn.displayEvents();
+	        			}
+	        		});
+
+		        	_.remove( LJ.myEvents, function( el ){
+		        		return el.hostId == data.hostId; 
+		        	});
+				});	
+
+        },
         displayMenuStatus: function( cb ){
  
 			var status = LJ.user.status;

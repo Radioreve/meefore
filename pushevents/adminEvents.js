@@ -4,6 +4,8 @@
 	    eventUtils = require('./eventUtils'),
 	    _ = require('lodash');
 
+	var pusher = require('../globals/pusher');
+
 
 	function authAdmin( user, socket ){
 
@@ -14,7 +16,6 @@
 					toServer:'Someone tried an admin command',
 					socket: socketAdmin
 				});
-
 	}
 
 
