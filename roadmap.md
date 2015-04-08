@@ -21,8 +21,8 @@
 	- Mailchimp integration 
 
 #Migration
-	- Vérifier qu'on peut ajouter un ami à un event;
-	- Pusher le code sur Heroku
+	- Fix le chat
+	- Implémenter un own logger basé sur une variable d'environnement
 
 #Schedule 
  	Todo

@@ -89,7 +89,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
             					//
             				},
             				error: function( xhr ){
-            					console.log('Error occured notifying typing');
+            					LJ.fn.toastMsg( JSON.parse( xhr.responseText ).msg ,'error');
             				}
             			};
             		LJ.fn.say( eventName, data, cb );

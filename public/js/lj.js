@@ -989,8 +989,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				if( LJ.state.connected ) return LJ.fn.toastMsg('Vous avez été reconnecté', 'success');
 				
 				LJ.state.connected = true;
-				var name = LJ.user.name || ' sur le meilleur site de soirées du monde';
-				LJ.fn.toastMsg('Bienvenue '+name,'info');
 
 				$('#thumbWrap').velocity('transition.slideUpIn');
 				$('.menu-item-active').removeClass('menu-item-active');
@@ -999,12 +997,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				{
 					case 'new':
 						LJ.fn.displayViewAsNew();
+						LJ.fn.toastMsg('Bienvenue sur le meilleur site de soirée du monde','info');
 						break;
 					case 'idle':
 						LJ.fn.displayViewAsIdle();
+						LJ.fn.toastMsg('Bienvenue '+LJ.user.name,'info');
 						break;
 					case 'hosting':
 						LJ.fn.displayViewAsHost();
+						LJ.fn.toastMsg('Bienvenue '+LJ.user.name,'info');
 						break;
 					default:
 						alert('No status available, contact us');

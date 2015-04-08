@@ -14,8 +14,8 @@
 	  	    receiverId  = data.receiverId,
 	  	    msg = data.msg;
 
-	  var userOffline = false;
-	  if( userOffline ){
+	  var user = watcher.accessUser( receiverId );
+	  if( !user ){
 	  	return eventUtils.raiseError({
 	  		res: res,
 	  		toClient: "Il/elle n'est pas connecté(e)",
@@ -28,6 +28,9 @@
 	  	receiverId: receiverId,
 	  	msg: msg
 	  }
+
+	  console.log( watcher.accessUser( receiverId ) );
+	  console.log( watcher.accessUser( receiverId ).channel );
 
 	  eventUtils.sendSuccess( res, expose );
 	  pusher.trigger( watcher.accessUser( receiverId ).channel , 'send-message-success', expose );
@@ -57,12 +60,17 @@
 
 		var expose = { chatId: senderId };
 
-		console.log(receiverId);
-		console.log(watcher.accessUser( receiverId ));
+		var user = watcher.accessUser( receiverId );
+		  if( !user ){
+		  	return eventUtils.raiseError({
+		  		res: res,
+		  		toClient: "Il/elle n'est pas connecté(e)",
+		  		flash: true
+		  	});
+		  }
 		if( !watcher.accessUser( receiverId ) )
 			return eventUtils.sendSuccess( res ,{} );
 
-		console.log('Triggering in channel : ' + watcher.accessUser( receiverId ).channel )
 		pusher.trigger( watcher.accessUser( receiverId ).channel, 'user-started-typing-success', expose );
 		eventUtils.sendSuccess( res, { msg:"Not online" } );
 	}
@@ -73,6 +81,15 @@
 			receiverId = req.body.receiverId;
 
 		var expose = { chatId: senderId };
+
+		var user = watcher.accessUser( receiverId );
+		  if( !user ){
+		  	return eventUtils.raiseError({
+		  		res: res,
+		  		toClient: "Il/elle n'est pas connecté(e)",
+		  		flash: true
+		  	});
+		  }
 
 		if( !watcher.accessUser( receiverId ) )
 			return eventUtils.sendSuccess( res ,{} );
