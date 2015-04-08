@@ -29,7 +29,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		initPusherConnection: function(){
 
-			LJ.pusher = new Pusher('caff28cb575ee61ffa3f');
+			LJ.pusher = new Pusher('9d9e7859b349d1abe8b2');
 
 			LJ.pusher.connection.bind('state_change', function( states ) {
 				csl('Pusher state is noww : ' + states.current );
@@ -989,7 +989,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				if( LJ.state.connected ) return LJ.fn.toastMsg('Vous avez été reconnecté', 'success');
 				
 				LJ.state.connected = true;
-				LJ.fn.toastMsg('Bienvenue '+LJ.user.name,'info');
+				var name = LJ.user.name || ' sur le meilleur site de soirées du monde';
+				LJ.fn.toastMsg('Bienvenue '+name,'info');
 
 				$('#thumbWrap').velocity('transition.slideUpIn');
 				$('.menu-item-active').removeClass('menu-item-active');

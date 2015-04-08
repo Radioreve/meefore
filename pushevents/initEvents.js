@@ -87,8 +87,8 @@
 
 			eventUtils.sendSuccess( res, expose );
 
-			if( user.status == 'new' ) 
-				pusher.trgger( 'default', 'new-user-signed-up', { user: expose.user } );
+			//if( user.status == 'new' ) 
+				//pusher.trgger( 'default', 'new-user-signed-up', { user: expose.user } );
 
 		});
 	};
