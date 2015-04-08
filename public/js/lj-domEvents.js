@@ -20,10 +20,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		},
 		handleDomEvents_Globals: function(){
 
-			LJ.$body.on('click','.chatInputWrap input[type="submit"]', function(e){
+			LJ.$body.on('click','.chatInputWrap input[type="submit"]', function( e ){
 
             	e.preventDefault();
             	e.stopPropagation();
+
             	LJ.fn.sendChat( $(this) );
 
             });
@@ -49,7 +50,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
                 LJ.fn.toggleOverlay( 'high', LJ.fn.renderOverlayUser( imgId, imgVersion ), 300);
 
             });
-
+            
             LJ.$body.on('keyup', '.chatInputWrap input', function(){
 
             	var $self = $(this);
@@ -61,7 +62,18 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
             		console.log('Ended typing detected...');
             		LJ.state.typingMsg[ chatId ] = false;
-            		LJ.fn.say('user stopped typing', { userId: LJ.user._id, chatId: chatId });
+
+            		var eventName = 'user-stopped-typing',
+            			data = { senderId: LJ.user._id, receiverId: chatId },
+            			cb = {
+            				success: function( data ){
+            					//
+            				},
+            				error: function( xhr ){
+            					console.log('Error occured notifying typing');
+            				}
+            			};
+            		LJ.fn.say( eventName, data, cb );
             		return;
             	}
 
@@ -69,39 +81,51 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
             	{
             		console.log('Started typing detected!');
             		LJ.state.typingMsg[ chatId ] = true;
-            		LJ.fn.say('user started typing', { userId: LJ.user._id, chatId: chatId });
+            		
+            		var eventName = 'user-started-typing',
+            			data = { senderId: LJ.user._id, receiverId: chatId },
+            			cb = {
+            				success: function( data ){
+            					//
+            				},
+            				error: function( xhr ){
+            					console.log('Error occured notifying typing');
+            				}
+            			};
+            		LJ.fn.say( eventName, data, cb );
             		return;
             	}
 
             });
 
+
 		},
 		handleDomEvents_Landing: function(){
 
-		['.sm-signup', '.sm-login'].forEach( function(el){
+			['.sm-signup', '.sm-login'].forEach( function(el){
 
-			$( el ).click(function(){
+				$( el ).click(function(){
 
-				var $s = $(this);
-				
-				if( $s.hasClass('active') )
-				{
-					$s.removeClass('active');
-					LJ.fn.displayContent( $('#landingWrap'), { prev: 'm-revealed' } );
-				}
-				else
-				{
-					$('.sm-header button.active').removeClass('active');
-					$s.addClass('active');
-					if( $s.hasClass('sm-signup') )
-						LJ.fn.displayContent( $('#signupWrapp'), { prev: 'm-revealed' } );
-					if( $s.hasClass('sm-login') )
-						LJ.fn.displayContent( $('.sm-loginWrap'), { prev: 'm-revealed' } );
-				}
-				
+					var $s = $(this);
+					
+					if( $s.hasClass('active') )
+					{
+						$s.removeClass('active');
+						LJ.fn.displayContent( $('#landingWrap'), { prev: 'm-revealed' } );
+					}
+					else
+					{
+						$('.sm-header button.active').removeClass('active');
+						$s.addClass('active');
+						if( $s.hasClass('sm-signup') )
+							LJ.fn.displayContent( $('#signupWrapp'), { prev: 'm-revealed' } );
+						if( $s.hasClass('sm-login') )
+							LJ.fn.displayContent( $('.sm-loginWrap'), { prev: 'm-revealed' } );
+					}
+					
+				});
+
 			});
-
-		});
 
 			$('#join').click( function(){
 
@@ -314,7 +338,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 				csl('eventId : ' + eventId+ '\n hostId : '+hostId +'\n friend : '+friend );
 				LJ.fn.showLoaders();
-				LJ.fn.requestIn( eventId, hostId, friend, LJ.user._id );
+				LJ.fn.requestIn( eventId, hostId, friendId, LJ.user._id );
 
 			});
 
@@ -376,6 +400,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			LJ.$body.on('click', '.askIn', function(){
 
+				console.log('Askng participation in...  1');
 				// Make sure client doesn't spam ask
 				if( $('.asking').length > 0 ) return;
 
@@ -392,11 +417,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 					if( $self.hasClass('idle') )
 					{	
-						LJ.fn.requestIn( eventId, hostId, LJ.user, LJ.user._id ); 
+						console.log('Askng participation in...  2');
+						LJ.fn.requestIn( eventId, hostId, LJ.user._id, LJ.user._id ); 
 					}
 					else
 					{	// To be removed in production for freemium considerations?
-						LJ.fn.requestOut( eventId, hostId, LJ.user, LJ.user._id );
+						console.log('Askng participation in...  3');
+						LJ.fn.requestOut( eventId, hostId, LJ.user._id, LJ.user._id );
 					}
 				}
 				else
@@ -589,12 +616,29 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			var hostIds = [];
 			for( var i = 0 ; i < LJ.user.eventsAskedList.length; i++)
-			{
+			{	
 				hostIds[i] = $('.eventItemWrap[data-eventid="'+LJ.user.eventsAskedList[i]+'"]').attr('data-hostid');
-			}
+				console.log('Host found : '+hostIds[i] );
+			} 
 			LJ.fn.showLoaders();
-			LJ.fn.say('friend request in', { userId: userId, friendId: friendId, hostIds: hostIds });
+
+			var eventName = 'friend-request-in',
+				data = {
+					userId: userId,
+					friendId: friendId,
+					hostIds: hostIds
+				},
+				cb = {
+					success: function( data ){
+						LJ.fn.handleFriendRequestSuccess( data );
+					},
+					error: function( xhr ){
+
+					}
+				};
+
 			csl( 'Friending request for : '+friendId );
+			LJ.fn.say( eventName, data, cb );
 
 		});
 

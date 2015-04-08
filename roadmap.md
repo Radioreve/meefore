@@ -1,31 +1,34 @@
 
 #Commands
-	- Reset events  : db.socketevents.update({}, { $set : { 'askersList' : []}}, {upsert:true,multi:true})
+	- Reset events  : db.socketevents.update({}, { $set : { 'askersList' : []}}, {upsert:true,multi:true});
 	- Reset users   : db.socketusers.update({},{ $set: { 'friendList' :[], 'status':'idle', 'socketRooms':[],'eventsAskedList':[] }},{'multi':true, 'upsert':true})
 	- Reset friends : db.socketusers.update({},{ $set: { 'friendList' :[] }},{'multi':true, 'upsert':true})
 					: db.socketusers.update({ 'name' : { $in : ['Karine','Damon','MorganDeToi']}},{ $set : { 'status': 'hosting'} }, {multi:true,upsert:true})
 
 #Idées
 	- Faut que les users puissent lacher un commentaire, genre 24H après la fin d'une soirée, sur la fiche de l'host
-	- Implémenter un délire de points, de rewards (visuel), définir hiérarchie, ambassadeur, vip etc...
-	  + faire un système de badges par tag et par palier ET/OU de niveaux. Cadeaux offert à chaque palier
-	- Limiter le nombre de participations possibles par jours
-	- l'host auto add ses amis pr display
+	- Penser à un back-office analytics (pour faire des reportings)
 
 #Feedbacks
+	- Changer le titre de la page en fn des notifications
 	- Faire apparaître en + obvious le "find your friends"
 	- Traduction de "event suspended" et asker is not online et changement de look
 	- Proposer des messages template
 	- Remplacer "about" par "qui voulez vous"
 
+#Production
+	- Database Replica, pre-production & stuff 
+	- Mailchimp integration 
+
+#Migration
+	- Vérifier qu'on peut ajouter un ami à un event;
+	- Pusher le code sur Heroku
+
 #Schedule 
  	Todo
-	- Favicon
-	- Reduire la taille du background
-	- Logo
 	- Clientside routing hashtags #
 	- Réaliser une page "Ambassadors"
-	- Validation clientside, validaton serverside
+	- Validation clientside, validation serverside
 	- SEO
 	
 	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription

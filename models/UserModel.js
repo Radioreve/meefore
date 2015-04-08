@@ -1,6 +1,7 @@
 
 	var mongoose = require("mongoose"),
- 	      bcrypt = require("bcrypt-nodejs");
+ 	      bcrypt = require("bcrypt-nodejs"),
+        _ = require('lodash');
 
 var UserSchema = new mongoose.Schema({
 
@@ -77,6 +78,10 @@ var UserSchema = new mongoose.Schema({
     type: Array,
     default: []
   },
+  myChannels: {
+    type: Array,
+    default: []
+  },
   newsletter:{
     type: Boolean,
     default: true
@@ -122,5 +127,14 @@ UserSchema.methods.generateHash = function(password) {
 UserSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.local.password);
 };
+
+UserSchema.methods.getChannel = function(){
+  return _.result( _.find( this.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName') ;
+};
+
+UserSchema.methods.unaskForEvent = function( eventId ){
+  this.eventsAskedList.pull( eventId );
+  return this;
+}
 
 module.exports = mongoose.model('SocketUsers', UserSchema);

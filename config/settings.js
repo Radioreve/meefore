@@ -1,5 +1,4 @@
 
-
 var settings = {
 
 	eventsTerminateAt: 0,  // utiliser pour le cron job
@@ -24,8 +23,6 @@ var settings = {
 		var hour = (new Date).getHours();
 		return ( hour >= settings.eventsTerminateAt && hour < settings.eventsRestartAt );
 	}
-
-
 };
 
 module.exports = settings;
