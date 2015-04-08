@@ -96,7 +96,6 @@
 
 	module.exports = {
 
-		fetchUserAndConfiguration: fetchUserAndConfiguration,
-		disconnectUser: disconnectUser
+		fetchUserAndConfiguration: fetchUserAndConfiguration
 		
 	}

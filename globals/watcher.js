@@ -4,8 +4,8 @@
 		pusher = require('./pusher');
 
 	var onlineUsers = {},
-		nextwatch_default = 15*60*1000, // 15 minutes
-		gaptime_default = nextwatch_default * 15;
+		nextwatch_default = 0.5*60*1000, // 15 minutes
+		gaptime_default = nextwatch_default * 20;
 
 	var addUser = function( userId, data ){
 		onlineUsers[ userId ] = data;
@@ -24,6 +24,7 @@
 					channel: user.getChannel(),
 					onlineAt: d
 				};
+				
 			});
 		}
 		return onlineUsers[ userId ];

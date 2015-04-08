@@ -1137,14 +1137,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				asker   	= data.asker,
 				alreadyIn   = data.alreadyIn || false;	
 
-<<<<<<< HEAD
 					/* L'ordre de l'appel est important, car certaines 
 					/* informations sont cachées par les premières 
 					/* et utilisées par celles d'après 
-=======
+					*/
 			sleep( LJ.ui.artificialDelay, function(){
->>>>>>> pusher
-
+				
 				if( alreadyIn )
 				{
 					LJ.fn.hideLoaders();
