@@ -8,7 +8,7 @@
 		compression = require('compression'),
 		server = require('http').createServer( app ),
 		passport = require('passport');
-
+	 
 	//Middleware
 		app.use( compression() );
 		//app.use( morgan('tiny') );

@@ -17,6 +17,10 @@
 			res.sendfile( process.cwd() +'/views/index.html');
 		};
 
+		var sendEarlyAdoptersPage = function( req, res ){
+			res.sendfile( process.cwd() + '/views/earlyadopters.html' );
+		}
+
 		var redirectToHome = function( req, res ){
 			res.redirect('/home');
 		};
@@ -174,6 +178,7 @@
 	module.exports = {
 
 		sendHomepage: sendHomepage,
+		sendEarlyAdoptersPage: sendEarlyAdoptersPage,
 		redirectToHome: redirectToHome,
 		handleFacebookAuth: handleFacebookAuth,
 		handleSignup: handleSignup,

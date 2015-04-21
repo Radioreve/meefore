@@ -14,6 +14,7 @@
 	module.exports = function( app ){
 
 		app.get('/home', baseEvents.sendHomepage );
+		app.get('/earlyadopters', baseEvents.sendEarlyAdoptersPage );
 		app.get('*', baseEvents.redirectToHome );
 		app.post('/auth/facebook', baseEvents.handleFacebookAuth );
 		app.post('/signup', baseEvents.handleSignup );

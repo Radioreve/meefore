@@ -57,6 +57,7 @@ label{
 .labelTextArea{vertical-align:top;margin-top: 12px;}
 .rel{}
 .right{float:right;}
+.left{float:left;}
 img.left{float:left;}
 .none{
     display: none;
@@ -167,6 +168,7 @@ body > header > h5{
     box-sizing: border-box;
     /* box-shadow: 0 0 5px rgb(205, 205, 205); */
     clear: both;
+    overflow: auto;
 }
 #contentWrap{
    

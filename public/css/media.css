@@ -5,6 +5,23 @@
     }
 }
 @media screen and ( max-width: 1000px ){
+	
+	.earl-num{
+		float:none;
+  		display:none;
+	}
+
+	.earl-title{
+		font-size:13px!important;
+	}
+
+	#earlyAdoPointList{
+		text-align:center;
+	}
+	.earl-row{
+		margin-left: 20px;
+		margin-right:20px;
+	}
 
    #thumbWrap
     {
@@ -226,7 +243,7 @@
 	  width:100%;
 	  margin:0;
 	}
-    #headerContent h1{
+    #headerContent h1:not(.stay){
       display:none;
     }
     #menuWrap{
@@ -299,7 +316,6 @@
     margin-bottom:10px!important;
     display:block;
   }
-  
 
 }
 
@@ -311,7 +327,7 @@
 /* Ugly hacks */
 
 #landingWrap > .container > .row{
-  overflow:hidden;
+  overflow: hidden;
 }
 
 #profileWrap .row{

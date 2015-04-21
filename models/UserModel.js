@@ -34,7 +34,8 @@ var UserSchema = new mongoose.Schema({
     type:String
   },
   description: {
-    type: String
+    type: String,
+    default:''
   },
   name: {
     type: String,

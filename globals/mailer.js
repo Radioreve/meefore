@@ -1,7 +1,7 @@
 		
-		var config = require('../config/config');
-
-		var sendgrid  = require('sendgrid')( config.sendgrid.api_user, config.sendgrid.api_key );
+		var config = require('../config/config'),
+			fs = require('fs'),
+			sendgrid = require('sendgrid')( config.sendgrid.api_user, config.sendgrid.api_key );
 
 
 		var sendMail = function( o ){
@@ -18,7 +18,8 @@
 				from:'robot@meefore.com',
 				subject:'Are you ready',
 				to: email,
-				text:'Hello world'
+				text:'Hello world',
+				html: fs.readFileSync( process.cwd() + '/views/welcomeEmail.html', 'utf8')
 			});
 
 			sendMail( welcome_email );
@@ -31,7 +32,8 @@
 				from:'robot@meefore.com',
 				subject:'Are you ready',
 				to: email,
-				text:'Votre nouveau mot de passe est : <b>'+ token +'</b>'
+				text:'Votre nouveau mot de passe est : <b>'+ token +'</b>',
+				html: fs.readFileSync( process.cwd() + '/views/welcomeEmail.html', 'utf8')
 			});
 
 			sendMail( resetpassword_email );
