@@ -174,14 +174,14 @@
 			*/
 
 			/* No error was raised */
-			if ( user.local.email != newEmail){
-				user.local.email = newEmail;
+			if ( user.email != newEmail){
+				user.email = newEmail;
 			}
 
 			var hashed = user.generateHash( newPw );
 
 			if ( ! user.validPassword( hashed ) && newPw.length != 0 ){
-				user.local.password = hashed;
+				user.password = hashed;
 			}
 
 			user.newsletter = newsletter;

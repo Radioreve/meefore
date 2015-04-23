@@ -93,7 +93,7 @@ var createEvent = function( req, res ) {
 
                     user.save( function(err, user) {
                         if( !err ){
-                            console.log(user.local.email + ' is hosting event with id : ' + user.hostedEventId);
+                            console.log(user.email + ' is hosting event with id : ' + user.hostedEventId);
 
                             eventUtils.sendSuccess( res, expose );
                             pusher.trigger('default', 'create-event-success', expose, socketId );

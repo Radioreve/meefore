@@ -60,7 +60,7 @@
 				expose.user = {
 
 					_id:         	 user._id,
-  					email:       	 user.local.email,
+  					email:       	 user.email,
   					name:        	 user.name,
   					age:         	 user.age,
   					access:          user.access, 
