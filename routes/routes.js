@@ -1,5 +1,6 @@
 	
-	var pushEventsDir = '../pushevents/';
+	var pushEventsDir = '../pushevents/',
+		auth = require('../globals/authorize.js');
 
 	var initEvents    = require( pushEventsDir + 'initEvents'),
 		profileEvents = require( pushEventsDir + 'profileEvents'),
@@ -22,11 +23,10 @@
 		app.post('/reset', baseEvents.handleReset );
 
 	//Events d'initialisation et de déconnexion
-		app.post('/fetch-user-and-configuration', initEvents.fetchUserAndConfiguration );
+		app.post('/fetch-user-and-configuration', auth.authenticate(['standard']), initEvents.fetchUserAndConfiguration );
 
 	//Events relatifs au profile utilisateur
-		app.post('/fetch-user', profileEvents.fetchUser );  // useless 
-		app.post('/update-profile', profileEvents.updateProfile );
+		app.post('/update-profile', auth.authenticate(['standard']), profileEvents.updateProfile );
 		app.post('/update-picture', profileEvents.updatePicture );
 		app.post('/update-settings', profileEvents.updateSettings );
 

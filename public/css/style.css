@@ -169,6 +169,7 @@ body > header > h5{
     /* box-shadow: 0 0 5px rgb(205, 205, 205); */
     clear: both;
     overflow: auto;
+    padding-bottom: 30px;
 }
 #contentWrap{
    

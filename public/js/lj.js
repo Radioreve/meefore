@@ -417,10 +417,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		handleSuccessLogin: function( data ){
 
-			//console.log( data );
-			LJ.user._id = data.id; /* Nécessaire pour aller chercher toutes les infos, mais par socket.*/
-			LJ.user.token = data.token; /* Passport de communication */
-			LJ.fn.say('fetch-user-and-configuration', { id: LJ.user._id, token: data.token }, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
+			LJ.user._id = data.id; 
+			LJ.user.accessToken = data.accessToken; 
+			document.cookie = 'token='+data.accessToken;
+
+			LJ.fn.say('fetch-user-and-configuration', {}, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
 			LJ.$loginWrap.find('.header-field').addClass('validated');
 
 		},
@@ -1800,11 +1801,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	});
 
         	//LJ.fn.handleTimeout();
-
-        },
-        on: function(name, cb){
-
-        	LJ.params.socket.on(name, cb);
 
         },
         handleTimeout: function(){

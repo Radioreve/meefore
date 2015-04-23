@@ -49,4 +49,4 @@
 		}
 	});
 
-	module.exports = mongoose.model('SocketEvents', EventSchema);
+	module.exports = mongoose.model('Events', EventSchema);

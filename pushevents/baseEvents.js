@@ -46,31 +46,64 @@
 		var handleLogin = function( req, res, next ){
 			passport.authenticate('local-login', function( err, user, info ){
 
-				if( err ) return console.log('error with the database query');	
+				/* Gestion des erreurs */
+				if( err ) 
+					return eventUtils.raiseError({
+	  					toClient:"Une erreur s'est produite",
+	  					toServer:"Error login in...",
+	  					err:err,
+	  					res:res
+	  				});	
 
 				if( !user )
-				{
 	  				return eventUtils.raiseError({
 	  					toClient:"Identifiants incorrects",
 	  					toServer:"Error login in...",
 	  					err:err,
 	  					res:res
 	  				});
-				}
 
-				// Useless, legacy code?
-				var token = jwt.sign( user, config.jwtSecret, { expiresInMinutes: 600 });
+	  			console.log(user.access);
+	  			/* Création du token */
+				var public_claim = {
+					_id:         	 user._id,
+  					email:       	 user.email,
+  					name:        	 user.name,
+  					age:         	 user.age,
+  					access:          user.access, 
+  					gender:          user.gender,
+  					favoriteDrink:   user.favoriteDrink,
+  					mood:            user.mood,
+  					status:      	 user.status,
+  					description: 	 user.description,
+  					imgId:      	 user.imgId,
+  					imgVersion: 	 user.imgVersion,
+  					friendList:      user.friendList,
+  					eventsAskedList: user.eventsAskedList,
+  					hostedEventId:   user.hostedEventId,
+  					newsletter:      user.newsletter,
+  					myChannels:      user.myChannels,
+				},
+					audience = user.access,
+					registred_claim = {
+						expiresInSecondes: 15,
+						issuer: 'jean@free.fall',
+						audience: audience
+					};
 
-				var expose = { id: user._id, msg: info.msg, token: token },
+				var accessToken = jwt.sign( public_claim, config.jwtSecret, registred_claim );
+
+				/* Envoie de la réponse */
+				var expose = { id: user._id, msg: info.msg, accessToken: accessToken },
 					channel = _.result( _.find( user.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName');
+				
+				eventUtils.sendSuccess( res, expose );
 
+				/* Mise à jour du Watcher */
 				var d = new Date();
 				watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
 
-				//pusher.trigger( 'default', 'user-connected', { userId: user._id } );
-				eventUtils.sendSuccess( res, expose );
 
-	  				
 			})( req, res, next );
 		};
 
@@ -84,7 +117,7 @@
 				return;
 			}
 
-			User.findOne({'local.email': email}, function( err, user ){
+			User.findOne({'email': email}, function( err, user ){
 
 				if( !user ){
 
@@ -95,7 +128,7 @@
 
 				var resetToken = randtoken.generate(8);
 
-				user.local.password = user.generateHash( resetToken );
+				user.password = user.generateHash( resetToken );
 
 				user.save( function( err, user ){
 
@@ -149,8 +182,8 @@
 			var newUser = new User();
 
 			newUser.facebookId = fbId;
-			newUser.local.email = email;
-			newUser.local.password = newUser.generateHash('M3efore');
+			newUser.email = email;
+			newUser.password = newUser.generateHash('M3efore');
 			newUser.gender = gender;
 			newUser.name = name;;
 			newUser.signupDate = new Date();

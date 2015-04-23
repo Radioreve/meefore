@@ -24,7 +24,7 @@
 
 				// Passport.js, the next signature :
 				//  next(null || err , true || false [populates with users if true],  {key:msg})
-				User.findOne({ 'local.email': email }, function( err, user ){
+				User.findOne({ 'email': email }, function( err, user ){
 
 					if( err )
 						return next( err, false,{ msg: "Missing credentials" });
@@ -49,8 +49,8 @@
 
 					var newUser = new User();
 
-					newUser.local.email = email;
-					newUser.local.password = newUser.generateHash( password );
+					newUser.email = email;
+					newUser.password = newUser.generateHash( password );
 
 					mailer.sendWelcomeEmail( email );
 
@@ -91,7 +91,7 @@
 	    },
 	    function( req, email, password, done ) {
 
-		    User.findOne({ 'local.email' :  email }, function( err, user ) {
+		    User.findOne({ 'email' :  email }, function( err, user ) {
 
           	if( err )
          	   return done( err, false, { msg: "Identifiants incorrects" });
@@ -102,7 +102,7 @@
             if( !user.validPassword( password ) )
                 return done( null, false, { msg: "Identifiants incorrects" });
 
-            return done( null, user, { msg: "Bienvenue " + user.local.email });
+            return done( null, user, { msg: "Bienvenue " + user.email });
 
     	    });
 	

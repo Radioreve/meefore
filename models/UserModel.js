@@ -5,14 +5,21 @@
 
 var UserSchema = new mongoose.Schema({
 
-  local: {
+  local:{
     email: {
-      type: String,
-      default:''
-    },
-    password: {
-      type: String,
-    },
+    type: String,
+    default:''
+  },
+  password: {
+    type: String,
+  }
+},
+  email:{
+    type:String,
+    default:''
+  },
+  password:{
+    type:String
   },
   facebookId: {
     type:String,
@@ -22,8 +29,7 @@ var UserSchema = new mongoose.Schema({
     type: Date
   },
   access: {
-    type: String,
-    default: 'standard'
+    type: Array
   },
   tokenAuth: String,
   age: {
@@ -77,10 +83,6 @@ var UserSchema = new mongoose.Schema({
   hostedEventId:{
     type: String
   },
-  socketRooms:{
-    type: Array,
-    default: []
-  },
   myChannels: {
     type: Array,
     default: []
@@ -93,42 +95,17 @@ var UserSchema = new mongoose.Schema({
 
 });
 
-UserSchema.statics.fetchUser = function( userId, userSocket ){
-
-  var userInformations = {};
-
-   this.findById( userId, function(err, user ){
-    if(err){
-      return console.log('Error ---- ' + err );
-    }
-
-      userInformations = {
-
-              _id             :  user._id,
-              email           :  user.local.email,
-              name            :  user.name,
-              age             :  user.age,
-              status          :  user.status,
-              description     :  user.description,
-              imgId           :  user.imgId,
-              imgVersion      :  user.imgVersion,
-              eventsAskedList :  user.eventsAskedList,
-              hostedEventId   :  user.hostedEventId,
-              newsletter      :  user.newsletter
-      };
-
-     userSocket.emit('fetch user success', userInformations );
-
-   });
-
-};
 
 UserSchema.methods.generateHash = function(password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
 
+UserSchema.statics.generateHash = function(password) {
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
+
 UserSchema.methods.validPassword = function(password) {
-  return bcrypt.compareSync(password, this.local.password);
+  return bcrypt.compareSync(password, this.password);
 };
 
 UserSchema.methods.getChannel = function(){
@@ -140,4 +117,4 @@ UserSchema.methods.unaskForEvent = function( eventId ){
   return this;
 }
 
-module.exports = mongoose.model('SocketUsers', UserSchema);
+module.exports = mongoose.model('Users', UserSchema);

@@ -26,14 +26,13 @@
 
 	var fetchUserAndConfiguration = function( req, res ){
 
-		var	userId = req.body.id;
+		var	userId = req.userId;
 		
 		console.log( userId );
 
 		User.findById( userId, {}, function( err, user ){
 
-			if( err ){
-
+			if( err )
 				return eventUtils.raiseError({
 					toServer: "Problem finding user via socket.io during first connection attempt ",
 					toClient: "Erreur d'initialisation",
@@ -41,10 +40,7 @@
 					res: res			
 				});
 
-			}
-
-			if( !user ){
-
+			if( !user )
 				return eventUtils.raiseError({
 					toServer: "User doesn't seem to exist?!",
 					toClient: "Impossible de fetch les informations",
@@ -52,7 +48,6 @@
 					res: res			
 				});
 
-			}
 
 			var cloudTag = cloudinary.uploader.image_upload_tag( 'hello_world' , { public_id: userId });
 
@@ -86,9 +81,6 @@
 				};
 
 			eventUtils.sendSuccess( res, expose );
-
-			//if( user.status == 'new' ) 
-				//pusher.trgger( 'default', 'new-user-signed-up', { user: expose.user } );
 
 		});
 	};

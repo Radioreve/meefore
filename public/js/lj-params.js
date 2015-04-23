@@ -3,10 +3,7 @@
 
 {
 
-	params:{
-		socket    :  null,
-		domain	  : "http://87.247.105.70:1337"
-	},
+	accessToken:'',
 	ui:{
 		artificialDelay: 700,
 		displayIn:  { opacity: [1, 0], translateX: [-8, 0]   },

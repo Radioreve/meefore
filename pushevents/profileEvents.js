@@ -11,9 +11,8 @@
 
 			var data = req.body;
 
-			var userId = data.userId,
+			var userId = req.userId,
 				age    = data.age;
-				//socket = global.sockets[userId];
 
 			if( ! validator.isInt( data.age ) ){
 				return eventUtils.raiseError({
@@ -60,8 +59,6 @@
 		   	var userId 		  = data._id,
 		        newImgId   	  = data.imgId,
 		    	newImgVersion = data.imgVersion;
-
-		    //var socket = global.sockets[userId];
 
 		    var update = {
 		        imgId      : newImgId,
@@ -203,22 +200,14 @@
 				var expose = { user: user, msg: "Vos préférénces ont été modifées" };
 
 				eventUtils.sendSuccess( res, expose );
-				//socket.emit('update settings success', { user: user, msg: "Vos préférences ont été modifiées" });
 
 			});
 		});
 	};
 
-	var fetchUser = function( userId ){
-
-		userSocket = global.sockets[userId];
-		var informations = User.fetchUser( userId, userSocket );
-	
-	};
 
 	module.exports = {
 
-		fetchUser       : fetchUser,
 	    updateProfile   : updateProfile,
 	    updatePicture   : updatePicture,
 	    updateSettings  : updateSettings
