@@ -30,9 +30,8 @@
 			if( (new Date() - el.onlineAt ) > gaptime ){
 				console.log('Removing one user');
 				removeUser( el.userId );
-			}
-
-		});
+		}
+	});
 
 		pusher.trigger('default','refresh-users-conn-states', { onlineUsers: onlineUsers });
 		pusher.trigger('admin', 'refresh-users-conn-states', { onlineUsers: onlineUsers });

@@ -31,7 +31,7 @@
 		handleFetchAppDataSuccess: function( data ){
 			
 
-			/* Afficher les derniers users inscrits */
+			/* Rendu des N derniers users inscrits */
 			var usersArray = data.lastRegisteredUsers;
 
 			var L = usersArray.length,
@@ -40,6 +40,16 @@
 				html += LJ.fn.renderUser( {user: usersArray[i], wrap: 'adminWrap', myClass :'match'});
 			} 
 			$('#lastRegisteredUsers').html( html );
+
+			/*Rendu des bots*/
+			var botsArray = data.bots;
+
+			var L = botsArray.length,
+				html = '';
+			for( var i =0; i < L; i++){
+				html += LJ.fn.renderUser( {user: botsArray[i], wrap: 'adminWrap', myClass : ['match','user-bot'] });
+			} 
+			$('#bots').html( html );
 
 		},
 		handleAdminDomEvents: function(){
@@ -66,7 +76,7 @@
 										+'<div>0</div>'
 										+'<span>bots online</span>'
 									+'</div>'
-									+'<div class="col-body">'
+									+'<div id="bots" class="col-body">'
 										//...
 									+'</div>'
 								+'</div>';

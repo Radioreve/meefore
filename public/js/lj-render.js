@@ -453,7 +453,7 @@
 
             var u = options.user,
                 w = options.wrap,
-                myClass = options.myClass,
+                myClass = Array.isArray( options.myClass ) ? options.myClass.join(' ') : options.myClass ;
                 html = '';
 
 

@@ -4,7 +4,6 @@
 		bodyParser   = require('body-parser'),
 		app = express(),
 		favicon = require('serve-favicon'),
-		morgan = require('morgan'),
 		compression = require('compression'),
 		cookieParser = require('cookie-parser'),
 		server = require('http').createServer( app ),
@@ -13,7 +12,6 @@
 	//Middleware
 		app.use( compression() );
 		app.use( cookieParser() );
-		//app.use( morgan('tiny') );
 		app.use( passport.initialize() );
 		app.use( express.static( __dirname + '/public') )
 		app.use( bodyParser.json() );

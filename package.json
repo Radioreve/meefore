@@ -8,6 +8,7 @@
   },
   "author": "Radioreve",
   "dependencies": {
+    "async": "^0.9.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "1.4.3",
     "cloudinary": "1.0.11",
