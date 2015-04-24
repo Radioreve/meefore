@@ -3,28 +3,43 @@
 
 	{
 
-		initAdminSocketEvents: function(){
+		initAdminMode: function(){
 
-			LJ.fn.on('fetch app data success', function( appData ){
+			LJ.myChannels['admin'] = LJ.pusher.subscribe('admin');
+			LJ.fn.initAdminInterface();
+			LJ.fn.handleAdminDomEvents();
+			LJ.fn.fetchAppData();
 
-				$('#onlineUsers > div').text( appData.onlineUsers.length );
-
+			LJ.myChannels['admin'].bind('refresh-users-conn-states', function(data){
+				console.log('Refreshing online users list');
+				$('#onlineUsers > div').text( _.keys( data.onlineUsers ).length );
 			});
 
-			LJ.fn.on('fetch last signup success', function( usersArray ){
+		},
+		fetchAppData: function(){
 
-				var L = usersArray.length,
-					html = '';
-				for( var i =0; i < L; i++)
-				{
-					html += LJ.fn.renderUser( {user: usersArray[i], wrap: 'adminWrap', myClass :'match'});
+			var eventName = 'fetch-app-data',
+				data = {},
+				cb = {
+					success: LJ.fn.handleFetchAppDataSuccess,
+					error: function(xhr){ console.log('Error fetching [admin] mode'); }
 				}
-				$('#lastRegisteredUsers').html( html );
 
-			});
+			LJ.fn.say( eventName, data, cb ); 
 
-			LJ.fn.on('user connected', function(){ $('#onlineUsers > div').text( parseInt( $('#onlineUsers > div').text() ) + 1 ) });
-			LJ.fn.on('user disconnected', function(){ $('#onlineUsers > div').text( parseInt( $('#onlineUsers > div').text() ) - 1 ) });
+		},
+		handleFetchAppDataSuccess: function( data ){
+			
+
+			/* Afficher les derniers users inscrits */
+			var usersArray = data.lastRegisteredUsers;
+
+			var L = usersArray.length,
+				html = '';
+			for( var i =0; i < L; i++){
+				html += LJ.fn.renderUser( {user: usersArray[i], wrap: 'adminWrap', myClass :'match'});
+			} 
+			$('#lastRegisteredUsers').html( html );
 
 		},
 		handleAdminDomEvents: function(){
@@ -36,25 +51,33 @@
 		},
 		initAdminInterface: function(){
 
+			var liveTrackHTML = '<div id="lastRegisteredWrap" class="adm-col">'
+									+'<div id="onlineUsers" class="col-head wrap">'
+										+'<div>0</div>'
+										+'<span>users online</span>'
+									+'</div>'
+									+'<div id="lastRegisteredUsers" class="col-body wrap">'									
+										
+									+'</div>'
+								+'</div>';
+
+			var botsWrapHTML = '<div id="botsWrap" class="adm-col">'
+									+'<div id="onlineBots" class="col-head wrap">'
+										+'<div>0</div>'
+										+'<span>bots online</span>'
+									+'</div>'
+									+'<div class="col-body">'
+										//...
+									+'</div>'
+								+'</div>';
 
 			var html = '<div id="adminPanel">'
-							+'<div id="liveTrack">'
-								+'<div id="onlineUsers" class="wrap">'
-									+'<div>25</div>'
-									+'<span>users online</span>'
-								+'</div>'
-								+'<div id="lastRegisteredUsers" class="wrap">'									
-									
-								+'</div>'
-							+'</div>'
+							+ liveTrackHTML
+							+ botsWrapHTML;
 						+'</div>';
 
+
 			$('#adminPanelWrap').append( html );
-
-		},
-		fetchAppData: function(){
-
-			LJ.params.socket.emit('fetch app data', LJ.user._id );
 
 		},
 		toggleAdminPanel: function(){

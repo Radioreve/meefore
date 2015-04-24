@@ -1318,17 +1318,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.fn.fetchFriends();
 
 
-			/* Admin scripts. Every com is secured serverside */
-
-			/*
-			if( ['admin','root'].indexOf( LJ.user.access ) != -1 )
-			{
-				LJ.fn.initAdminSocketEvents();
-				LJ.fn.handleAdminDomEvents();
-				LJ.fn.initAdminInterface();
-				LJ.fn.fetchAppData();
-			}
-			*/
+			/* Admin scripts. Every com is secured serverside */	
+			if( LJ.user.access.indexOf('admin') != -1 )
+				LJ.fn.initAdminMode();
+			
+			
 
 		},
 		handleSuspendEvent: function(data, state){

@@ -5,7 +5,8 @@
 		validator     	= require('validator'),
 		config        	= require('../config/config'),
 		randtoken 		= require('rand-token'),
-		mailer 			= require('./mailer');
+		mailer 			= require('./mailer'),
+		moment 			= require('moment');
 
 	var eventUtils = require('../pushevents/eventUtils');
 
@@ -51,6 +52,15 @@
 
 					newUser.email = email;
 					newUser.password = newUser.generateHash( password );
+
+					/* Test si c'est un bot */
+					if( /^bot[\d]*[hf]{1}$/.test(newUser.email) )
+						newUser.access.push('bot');
+
+					if( moment() < moment({year:'2015',month:'6', day:'1'}) )
+						newUser.access.push('early-adopter');
+
+					if( new Date())
 
 					mailer.sendWelcomeEmail( email );
 

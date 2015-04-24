@@ -29,7 +29,8 @@ var UserSchema = new mongoose.Schema({
     type: Date
   },
   access: {
-    type: Array
+    type: Array,
+    default:['standard']
   },
   tokenAuth: String,
   age: {

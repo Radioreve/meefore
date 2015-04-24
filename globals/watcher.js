@@ -4,7 +4,7 @@
 		pusher = require('./pusher');
 
 	var onlineUsers = {},
-		nextwatch_default = 0.1*60*1000, // 15 minutes
+		nextwatch_default = 0.1*60*1000, 
 		gaptime_default = nextwatch_default * 100;
 
 	var addUser = function( userId, data ){
@@ -12,12 +12,9 @@
 	};
 
 	var accessUser = function( userId ){
-
 		if( !onlineUsers[ userId ] )
 			return;
-
 		return onlineUsers[ userId ];
-		
 	};
 
 	var removeUser = function( userId ){
@@ -38,6 +35,7 @@
 		});
 
 		pusher.trigger('default','refresh-users-conn-states', { onlineUsers: onlineUsers });
+		pusher.trigger('admin', 'refresh-users-conn-states', { onlineUsers: onlineUsers });
 
 		var nextwatch = nextwatch_default,
 			gaptime = gaptime_default;

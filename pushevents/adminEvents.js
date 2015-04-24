@@ -6,22 +6,9 @@
 
 	var pusher = require('../globals/pusher');
 
+	var fetchAppData = function( req, res ){	
 
-	function authAdmin( user, socket ){
-
-		if( ['root','admin'].indexOf( user.access ) == -1 )
-				return eventUtils.raiseError({
-					err: err,
-					toClient:'This is an admin command',
-					toServer:'Someone tried an admin command',
-					socket: socketAdmin
-				});
-	}
-
-
-	var fetchAppData = function( userId ){	
-
-		var socketAdmin = global.sockets[ userId ];
+		var userId = req.userId;
 
 		User.findById( userId, {}, function( err, user ){
 
@@ -30,26 +17,19 @@
 					err: err,
 					toClient:'Error finding admin',
 					toServer:'Error finding admin',
-					socket: socketAdmin
+					res: res
 				});
 
-			authAdmin( user, socketAdmin );
-
-			/* Fetch last N subscribers */
+			var expose = {};
 			User.find().limit(5).sort('-signupDate').exec(function(err,arr){
-				socketAdmin.emit('fetch last signup success', arr );
+				expose.lastRegisteredUsers = arr;
+				eventUtils.sendSuccess( res, expose );
 			});
-
-			/* Fetching monitoring informations for real time */	
-			socketAdmin.emit('fetch app data success', global.appData );
-
 
 		});
 
 	};
 
 	 module.exports = {
-
 	 	fetchAppData: fetchAppData
-
 	 }

@@ -20,14 +20,11 @@
 	- Database Replica, pre-production & stuff 
 	- Mailchimp integration 
 
-#Migration
-	- Fix le chat
-	- Implémenter un own logger basé sur une variable d'environnement
-
 #Schedule 
  	Todo
+	- Middleware watcher qui tient à jour la liste des users connected
+	- Bloquer les actions des gens qui n'ont pas mis leur photo de profile!
 	- Clientside routing hashtags #
-	- Réaliser une page "Ambassadors"
 	- Validation clientside, validation serverside
 	- SEO
 	

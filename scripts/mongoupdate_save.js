@@ -1,7 +1,9 @@
 
 	var mongoose = require('mongoose'),
 		User = require('../models/UserModel'),
-		config = require('../config/config');
+		config = require('../config/config'),
+		moment = require('moment'),
+		_ = require('lodash');
 
 		mongoose.connect( config[ process.env.NODE_ENV ].dbUri );
 
@@ -10,32 +12,21 @@
 
 			var select = {};
 
-			var update = { 
-						 $unset :  { 'local' : 1 }	 
-					};
-
-			var options = { multi: true };
-
-
-
-			var callback_update = function(err,docs){
-				if(err)
-					console.log(err);
-				else
-					console.log('Done');
-			};
-
-
-
 			var callback_find = function(err,docs){
 				if(err) 
 					return console.log(err);
 				else
 					docs.forEach( function(el){
 
+						el.access.pull('bot');
+						el.access.pull('early-adopter');
+						
 						/*Update start*/
-						el.email    = el.local.email;
-						el.password = el.local.password
+						if( /^bot[\d]*[hf]{1}$/.test(el.email) )
+						el.access.push('bot');
+
+						if( moment() < moment({year:'2015',month:'6', day:'1'}) )
+						el.access.push('early-adopter');
 						/*Update end*/
 
 						el.save();
@@ -43,8 +34,7 @@
 				console.log('Done');
 			};
 
-			User.update( select, update, options, callback_update );
-			//User.find( select, callback_find );
+			User.find( select, callback_find );
 
 		});
 

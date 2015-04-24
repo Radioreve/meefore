@@ -54,7 +54,7 @@
 		app.post('/refetch-askers', friendEvents.refetchAskers );
 
 	//Events relatifs aux admins
-		app.post('/fetch-app-data', adminEvents.fetchAppData );
+		app.post('/fetch-app-data', auth.authenticate(['admin']), adminEvents.fetchAppData );
 
 		app.post('/hello', function( req, res ){
 			console.log('Hello test command received!');
