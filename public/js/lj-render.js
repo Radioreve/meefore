@@ -73,7 +73,7 @@
 				return eventTags;
 
         },
-        renderEventButton: function( eventId, hostId ){
+        renderEventButton: function( eventId, hostId, eventState ){
 
             if( hostId == LJ.user._id )
             {
@@ -86,6 +86,15 @@
                            <button class="themeBtnToggle askIn asked"> En attente </button> \
                            <div class="chatIconWrap"><i class="icon icon-chat"/></div>\
                            <div class="friendAddIconWrap"><i class="icon icon-user-add"/></div>\
+                        </div>';
+            }
+
+            if( eventState == 'suspended' )
+            {
+                return '<div class="askInWrap">\
+                           <button class="themeBtnToggle askIn idle">L\'évènement est complet</button> \
+                           <div class="chatIconWrap none"><i class="icon icon-chat"/></div>\
+                           <div class="friendAddIconWrap none"><i class="icon icon-user-add"/></div>\
                         </div>';
             }
 
@@ -171,13 +180,14 @@
 				tags           = e.tags;
 
 			var imgTagHTML   = LJ.fn.renderHostImg( hostImgId, hostImgVersion ),
-			    button       = LJ.fn.renderEventButton( e._id, hostId ),
+			    button       = LJ.fn.renderEventButton( e._id, hostId, e.state ),
 				eventTags    = LJ.fn.renderEventTags( tags ),
             	chatWrap     = LJ.fn.renderChatWrap( hostId ),
             	askersThumbs = LJ.fn.renderAskersInEvent( e.askersList, e.maxGuest );
 
 			var html = '<div class="eventItemWrap" '
 						+ 'data-eventid="'+e._id+'" '
+                        + 'data-templateid="'+e.templateId+'"'
 						+ 'data-hostid="'+e.hostId+'" '
 						+ 'data-location="'+e.location+'"'
 						+ 'data-eventstate="'+e.state+'">'
@@ -456,6 +466,8 @@
                 myClass = Array.isArray( options.myClass ) ? options.myClass.join(' ') : options.myClass ;
                 html = '';
 
+            var cl = '', buttons = '', email = '', dataset = '';
+
 
             if( !u || !w ){
                 return alert('Cannot format user');
@@ -463,20 +475,44 @@
 
             if( w == 'searchWrap' )
             {
-                var cl     = 'u';
-                var friendButton = '<button></button>'
+                cl = 'u';
+                buttons = '<button></button>'
             }
 
             if( w == 'eventsWrap' )
             {
-                var cl = 'f'; 
-                var friendButton = '<button class="none"></button>' // sera remove tout de suite par displayButtons...();       
+                cl = 'f'; 
+                buttons = '<button class="none"></button>' // sera remove tout de suite par displayButtons...(); 
             }
 
             if( w == 'adminWrap' )
             {
-                var cl = 'u';
-                var friendButton = '';
+                cl = 'u';              
+            }
+
+            if( w == 'botsWrap' )
+            {
+                cl = 'u';
+                dataset = 'data-imgid="'+u.imgId+'" data-imgversion="'+u.imgVersion+'" '
+                email = ' ( '+u.email+' )';
+
+                var active = '';
+                var locked = '';
+                var none = 'nonei';
+
+                if( $('.eventItemWrap[data-hostid="'+u._id+'"]').length != 0 ){
+                    active = 'active validating-btn';
+                }
+
+                if(  $('.eventItemWrap[data-hostid="'+u._id+'"]').data('eventstate') == 'suspended' ){
+                    locked = 'locked validating-btn';
+                }
+
+                buttons = '<button class="createBotEvent themeBtn '+active+'"><i class="icon icon-glass"></i></button>'
+                          + '<button class="addBotToEvent themeBtn '+none+'" data-gender="male"><i class="icon"></i>M</button>'
+                          + '<button class="addBotToEvent themeBtn '+none+'" data-gender="female"><i class="icon"></i>F</button>'
+                          + '<button class="lockBotEvent themeBtn '+none+' '+locked+'"><i class="icon icon-lock"></i></button>';   
+                          + '<button class="addBotToEvent themeBtn '+none+'"><i class="bot-added onHold">0</i></button>'
             }
 
                 var d = LJ.cloudinary.displayParamsAskerThumb;
@@ -488,18 +524,20 @@
 
                 html += '<div class="'+cl+'-item '+myClass+'" data-username="'+u.name.toLowerCase()+'"'
                           + 'data-userid="'+u._id+'"'
+                          + 'data-useremail="'+u.email+'"'
                           + 'data-userdrink="'+u.favoriteDrink.toLowerCase()+'"'
+                          + dataset
                           + 'data-userage="'+u.age+'">'
                           +'<div class="u-head imgWrapThumb">'
                             +'<i class="icon online-marker icon-right-dir"></i>'
                             + imgTagHTML
                           +'</div>'
                           +'<div class="'+cl+'-body">'
-                            + '<span class="'+cl+'-name">'+ u.name + '</span>'
+                            + '<span class="'+cl+'-name">'+ u.name + email + '</span>'
                             + '<span class="'+cl+'-age">'+ u.age +' ans, drinks</span>'
                             + '<span class="'+cl+'-favdrink">'+ u.favoriteDrink +'</span>'
                           +'</div>'
-                            + friendButton
+                            + buttons
                         +'</div>';
 
             return html;

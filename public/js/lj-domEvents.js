@@ -385,11 +385,23 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 				$(this).toggleClass('active');
 				var $askersWrap = $(this).parents('.eventItemWrap').find('.askedInWrap');
+				var eventId = $(this).parents('.eventItemWrap').data('eventid');
 
 				if( $(this).hasClass('active') )
 				{
 					$askersWrap.toggleClass('active')
 						       .velocity('transition.fadeIn');
+
+					var eventName = 'fetch-asked-in',
+						data = {
+							eventId: eventId
+						},
+						cb = {
+							success: LJ.fn.handleFetchAskedInSuccess,
+							error: LJ.fn.handleErrorDefault
+						}
+					LJ.fn.say( eventName, data, cb );
+
 				}else
 				{
 					$askersWrap.toggleClass('active')
@@ -400,7 +412,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			LJ.$body.on('click', '.askIn', function(){
 
-				console.log('Askng participation in...  1');
 				// Make sure client doesn't spam ask
 				if( $('.asking').length > 0 ) return;
 
@@ -417,18 +428,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 					if( $self.hasClass('idle') )
 					{	
-						console.log('Askng participation in...  2');
 						LJ.fn.requestIn( eventId, hostId, LJ.user._id, LJ.user._id ); 
 					}
 					else
 					{	// To be removed in production for freemium considerations?
-						console.log('Askng participation in...  3');
 						LJ.fn.requestOut( eventId, hostId, LJ.user._id, LJ.user._id );
 					}
 				}
 				else
 				{
-					LJ.fn.toastMsg("Ce meefore est complet!", 'info');
+					LJ.fn.toastMsg("Cet évènement est complet!", 'error');
 				}
 
 			});

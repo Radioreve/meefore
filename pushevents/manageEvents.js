@@ -1,8 +1,10 @@
 
 var User = require('../models/UserModel'),
     Event = require('../models/EventModel'),
+    EventTemplate = require('../models/EventTemplateModel'),
     eventUtils = require('./eventUtils'),
     settings = require('../config/settings'),
+    bots = require('../globals/bots'),
     _ = require('lodash');
 
 var pusher = require('../globals/pusher');
@@ -111,11 +113,11 @@ var suspendEvent = function( req, res ) {
     var data = req.body;
     var eventId  = data.eventId,
         hostId   = data.hostId,
-        socketId = data.socketId;
+        socketId = data.socketId || null;
 
     Event.findById( eventId, {}, function( err, myEvent ){
 
-        if( err ){
+        if( err || !myEvent ){
              return eventUtils.raiseError({
                 toClient: "Could not find event",
                 toServer: "Error finding event to suspend",
@@ -136,7 +138,12 @@ var suspendEvent = function( req, res ) {
 
             if( !err ){
                 eventUtils.sendSuccess( res, expose );
-                pusher.trigger('default', 'suspend-event-success', expose, socketId );
+                if( socketId ){
+                    console.log(socketId);
+                    return pusher.trigger('default', 'suspend-event-success', expose, socketId );
+                }
+                console.log('Triggering normal');
+                pusher.trigger('default', 'suspend-event-success', expose );
             }
         });
     });
@@ -151,11 +158,21 @@ var cancelEvent = function( req, res ) {
         hostId = data.hostId,
         socketId = data.socketId;
 
+    /* Pour le lancement only */
+    if( data.templateId ){
+        console.log('Deactivating event template... : ' + data.templateId );;
+        EventTemplate.update({ '_id': data.templateId }, { $set : { active: false }}, function( err ){
+            if( err )
+                console.log('Error occured releasing event template state');
+            
+        });
+    }
+
     var expose = {} //global for cancelEvent scope
 
     Event.findById( eventId, {}, function( err, myEvent ) {
 
-        if( err ){
+        if( err || !myEvent ){
             return eventUtils.raiseError({
                 toClient: "Could not find event",
                 toServer: "Error finding event to cancel",

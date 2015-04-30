@@ -8,19 +8,18 @@
 		chatEvents    = require( pushEventsDir + 'chatEvents'),
 		clientEvents  = require( pushEventsDir + 'clientEvents'),
 		friendEvents  = require( pushEventsDir + 'friendEvents'),
-		adminEvents   = require( pushEventsDir + 'adminEvents');
-
-	var baseEvents    = require( pushEventsDir + 'baseEvents');
+		adminEvents   = require( pushEventsDir + 'adminEvents'),
+		signEvents    = require( pushEventsDir + 'signEvents');
 
 	module.exports = function( app ){
 
-		app.get('/home', baseEvents.sendHomepage );
-		app.get('/earlyadopters', baseEvents.sendEarlyAdoptersPage );
-		app.get('*', baseEvents.redirectToHome );
-		app.post('/auth/facebook', baseEvents.handleFacebookAuth );
-		app.post('/signup', baseEvents.handleSignup );
-		app.post('/login', baseEvents.handleLogin );
-		app.post('/reset', baseEvents.handleReset );
+		app.get('/home', signEvents.sendHomepage );
+		app.get('/earlyadopters', signEvents.sendEarlyAdoptersPage );
+		app.get('*', signEvents.redirectToHome );
+		app.post('/auth/facebook', signEvents.handleFacebookAuth );
+		app.post('/signup', signEvents.handleSignup );
+		app.post('/login', signEvents.handleLogin );
+		app.post('/reset', signEvents.handleReset );
 
 	//Events d'initialisation et de déconnexion
 		app.post('/fetch-user-and-configuration', auth.authenticate(['standard']), initEvents.fetchUserAndConfiguration );
@@ -45,6 +44,7 @@
 	//Events relatifs au démarrage d'une session client
 		app.post('/fetch-events', clientEvents.fetchEvents );
 		app.post('/fetch-users', clientEvents.fetchUsers );
+		app.post('/fetch-asked-in', clientEvents.fetchAskedIn );
 		app.post('/request-participation-in', clientEvents.requestIn );		
 		app.post('/request-participation-out', clientEvents.requestOut );
 
@@ -55,6 +55,10 @@
 
 	//Events relatifs aux admins
 		app.post('/fetch-app-data', auth.authenticate(['admin']), adminEvents.fetchAppData );
+		app.post('/create-event-bot', auth.authenticate(['admin']), adminEvents.createBotEvent );
+		app.post('/request-participation-in-bot', auth.authenticate(['admin']), adminEvents.requestParticipationInBot );
+		app.post('/add-event-template', auth.authenticate(['admin']), adminEvents.addEventTemplate );
+		app.post('/delete-event-template', auth.authenticate(['admin']), adminEvents.deleteEventTemplate );
 
 		app.post('/hello', function( req, res ){
 			console.log('Hello test command received!');

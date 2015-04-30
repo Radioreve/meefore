@@ -1,9 +1,9 @@
 
 #Commands
-	- Reset events  : db.socketevents.update({}, { $set : { 'askersList' : []}}, {upsert:true,multi:true});
-	- Reset users   : db.socketusers.update({},{ $set: { 'friendList' :[], 'status':'idle', 'socketRooms':[],'eventsAskedList':[] }},{'multi':true, 'upsert':true})
-	- Reset friends : db.socketusers.update({},{ $set: { 'friendList' :[] }},{'multi':true, 'upsert':true})
-					: db.socketusers.update({ 'name' : { $in : ['Karine','Damon','MorganDeToi']}},{ $set : { 'status': 'hosting'} }, {multi:true,upsert:true})
+	- Reset events  : db.events.update({}, { $set : { 'askersList' : []}}, {upsert:true,multi:true});
+	- Reset users   : db.users.update({},{ $set: { 'friendList' :[], 'status':'idle', 'socketRooms':[],'eventsAskedList':[] }},{'multi':true, 'upsert':true})
+	- Reset friends : db.users.update({},{ $set: { 'friendList' :[] }},{'multi':true, 'upsert':true})
+					: db.users.update({ 'name' : { $in : ['Karine','Damon','MorganDeToi']}},{ $set : { 'status': 'hosting'} }, {multi:true,upsert:true})
 
 #Idées
 	- Faut que les users puissent lacher un commentaire, genre 24H après la fin d'une soirée, sur la fiche de l'host
@@ -19,6 +19,10 @@
 #Production
 	- Database Replica, pre-production & stuff 
 	- Mailchimp integration 
+
+#Bugs
+	- Le "Friend add" ne met pas à jour la liste des users qui veulent y aller : faire en sorte que ce soit instantié à la demande
+	  pour éviter des pushevents globaux
 
 #Schedule 
  	Todo

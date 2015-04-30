@@ -10,9 +10,9 @@
 			LJ.fn.handleAdminDomEvents();
 			LJ.fn.fetchAppData();
 
-			LJ.myChannels['admin'].bind('refresh-users-conn-states', function(data){
-				console.log('Refreshing online users list');
-				$('#onlineUsers > div').text( _.keys( data.onlineUsers ).length );
+			LJ.myChannels['admin'].bind('refresh-users-conn-states-admin', function(data){
+				console.log('Refreshing online users list, from admin init');
+				//$('#onlineUsers > div').text( _.keys( data.onlineUsers ).length );
 			});
 
 		},
@@ -28,8 +28,17 @@
 			LJ.fn.say( eventName, data, cb ); 
 
 		},
-		handleFetchAppDataSuccess: function( data ){
-			
+		renderEventTemplate: function( eventTemplate ){
+
+			var html = '<div class="t-event" data-tplid="'+eventTemplate._id+'">'
+						   + '<div class="t-name">'+eventTemplate.name+'</div>'
+						   + '<div class="t-desc">'+eventTemplate.desc+'</div>'
+						   + '<i class="icon icon-cancel"></i>'
+						+'</div>'
+			return html;
+
+		},
+		handleFetchAppDataSuccess: function( data ){	
 
 			/* Rendu des N derniers users inscrits */
 			var usersArray = data.lastRegisteredUsers;
@@ -47,9 +56,19 @@
 			var L = botsArray.length,
 				html = '';
 			for( var i =0; i < L; i++){
-				html += LJ.fn.renderUser( {user: botsArray[i], wrap: 'adminWrap', myClass : ['match','user-bot'] });
+				html += LJ.fn.renderUser( {user: botsArray[i], wrap: 'botsWrap', myClass : ['match','user-bot'] });
 			} 
 			$('#bots').html( html );
+
+			/* Rendu des templates */
+			var eventTemplates = data.eventTemplates;
+
+			var L = eventTemplates.length,
+				html = '';
+			for( var i =0; i < L; i++){
+				html += '<div class="t-eventwrap"><div class="t-number left">'+(i+1)+'</div>' + LJ.fn.renderEventTemplate( eventTemplates[i] ) + '</div>';
+			} 
+			$('#templates').html( html );
 
 		},
 		handleAdminDomEvents: function(){
@@ -58,23 +77,155 @@
 				LJ.fn.toggleAdminPanel();
 			});
 
+			$('body').on('click', '#createEventTemplate button', function(){
+
+				console.log('clicked');
+				var $self = $(this);
+				//if( $self.hasClass('validating-btn') ) return;
+				var name = $('.tpl-add-event-name').val(),
+					desc = $('.tpl-add-event-desc').val();
+
+				var eventName = 'add-event-template',
+					data = { name:name, desc:desc },
+					cb = {
+						success: function(data){
+							LJ.fn.handleServerSuccess("'Le template a été ajouté");
+							$('.tpl-add-event-name').val('');
+							$('.tpl-add-event-desc').val('')
+							var html = '<div class="t-number left">-</div>' + LJ.fn.renderEventTemplate( data );
+							$('#templates').prepend( html ) 
+						},
+						error: function(xhr){
+							LJ.fn.handleServerError(xhr);
+						}
+					}
+
+				LJ.fn.say( eventName, data, cb );
+
+			});
+
+			$('body').on('click', '.t-event .icon-cancel', function(){
+
+				var tplId = $(this).parents('.t-event').data('tplid');
+				var cb = { 
+					success: function(data){
+						LJ.fn.handleServerSuccess(data.msg);
+						$('.t-event[data-tplid="'+tplId+'"]').parents('.t-eventwrap').velocity('transition.fadeOut')
+															 
+					}, error: LJ.fn.handleServerError 
+				}
+				LJ.fn.say('delete-event-template', { tplId: tplId }, cb );
+
+			});
+
+			$('body').on('click','.createBotEvent',function(){
+
+				var $self = $(this);
+				var $papa = $self.parents('.u-item'); 
+
+				var options = {
+					userId : $papa.data('userid'),
+					imgVersion : $papa.data('imgversion'),
+					imgId : $papa.data('imgid'),
+					name : $papa.data('username')
+				}
+
+				if( $self.hasClass('active') )
+				{	
+					var userId = $papa.data('userid');
+					var eventId = $('.eventItemWrap[data-hostid="'+userId+'"]').data('eventid'); 
+					var templateId = $('.eventItemWrap[data-hostid="'+userId+'"]').data('templateid');
+
+					$self.removeClass('validating-btn').removeClass('active');
+					LJ.fn.cancelEvent( eventId, userId, templateId );
+				}
+				else
+				{	
+					$self.addClass('active');
+					LJ.fn.say('create-event-bot', options, 
+						{ 
+							success: function( data ){
+								LJ.fn.handleSuccessDefault();
+							},
+						    error: function( xhr ){
+						    	LJ.fn.toastMsg( JSON.parse( xhr.responseText ).msg, 'error' );
+						    	$self.removeClass('validating-btn').removeClass('active');
+						    }
+						});
+				}
+			});
+
+			$('body').on('click','.lockBotEvent', function(){
+
+				var $self = $(this);
+				var $papa = $self.parents('.u-item'); 
+				
+				var userId  = $papa.data('userid');
+				var eventId =  $('.eventItemWrap[data-hostid="'+userId+'"]').data('eventid');
+
+				var options = {
+					hostId : userId,
+					eventId : eventId
+				}
+ 
+				$self.toggleClass('locked');
+				if( ! $self.hasClass('locked') )
+					$self.removeClass('validating-btn');
+					
+				LJ.fn.say('suspend-event', options, 
+					{ 
+						success: LJ.fn.handleSuccessDefault,
+						error:LJ.fn.handleServerError
+					});
+			});
+
+			$('body').on('click','.addBotToEvent', function(){
+
+				console.log('Adding bot to event...');
+				var $self = $(this);
+				var $papa = $self.parents('.u-item'); 
+				var hostId = $papa.data('userid');
+				var eventId =  $('.eventItemWrap[data-hostid="'+hostId+'"]').data('eventid');
+				var gender = $self.data('gender');
+
+				var options = {
+					eventId: eventId,
+					hostId: hostId,
+					gender: gender
+				};
+
+				var cb = {
+					success: function( data ){
+						setTimeout(function(){ $('#bots .u-item[data-userid="'+data.hostId+'"]').find('.addBotToEvent').removeClass('validating-btn'); }, 1000 );
+					},
+					error: LJ.fn.handleServerError
+				}
+
+				LJ.fn.say('request-participation-in-bot', options, cb );
+
+			});
+
+
 		},
 		initAdminInterface: function(){
 
-			var liveTrackHTML = '<div id="lastRegisteredWrap" class="adm-col">'
-									+'<div id="onlineUsers" class="col-head wrap">'
-										+'<div>0</div>'
-										+'<span>users online</span>'
+			var liveTrackHTML = '<div id="eventPlaceholders" class="adm-col">'
+									+'<div class="col-head wrap">'
+										+'<span>Templates</span>'
 									+'</div>'
-									+'<div id="lastRegisteredUsers" class="col-body wrap">'									
+									+'<div id="createEventTemplate" class="col-head wrap">'
+										+'<input class="tpl-add-event-name" placeholder="name..."></input>'
+										+'<input class="tpl-add-event-desc" placeholder="description..."></input>'
+										+'<button class="themeBtn">Ajouter</button>'
+									+'</div>'
+									+'<div id="templates" class="col-body wrap">'									
 										
 									+'</div>'
 								+'</div>';
 
 			var botsWrapHTML = '<div id="botsWrap" class="adm-col">'
-									+'<div id="onlineBots" class="col-head wrap">'
-										+'<div>0</div>'
-										+'<span>bots online</span>'
+									+'<div class="col-head wrap">'
+										+'<span>Bots</span>'
 									+'</div>'
 									+'<div id="bots" class="col-body">'
 										//...
@@ -98,7 +249,6 @@
 				return $panel.velocity('transition.fadeIn', { duration: 150 });
 
 			$panel.velocity('transition.fadeOut', { duration: 150 });
-
 		}
 
 

@@ -68,8 +68,7 @@
 
 		Event.findById( eventId, {}, function( err, myEvent ){
 
-			if( err )
-			{
+			if( err ){
 				return console.log('Error finding event...');
 			}
 
@@ -101,7 +100,7 @@
 				}
 
 				// Check si l'ami est bien un ami mutuel en cas de masquerade
-				if( !_.some( myUser.friendList, { friendId: requesterId, status:'mutual' }) && userId != requesterId )
+				if( !_.some( myUser.friendList, { friendId: requesterId, status:'mutual' }) && userId != requesterId && myRequester.access.indexOf('admin') == -1 )
 				{
 					return eventUtils.raiseError({
 						err: err,
@@ -145,10 +144,6 @@
 				}
 
 				eventUtils.sendSuccess( res, expose );
-
-
-				/* Host update */
-				myHost.save();
 
 				/* User update : either it's requester or an other */
 				myUser.eventsAskedList.push( eventId );
@@ -261,9 +256,25 @@
 				});
 		};
 
+		var fetchAskedIn = function( req, res ){
+
+			var eventId = req.body.eventId;
+
+			Event.findById( eventId, function( err, myEvent ){
+				if(err) return eventUtils.raiseError({
+					err:err,
+					res:res,
+					toClient:"Une erreur s'est produite"
+				});
+				eventUtils.sendSuccess( res, { eventId: myEvent._id, askersList : myEvent.askersList } );
+			});
+
+		}
+
 	    module.exports = {
 	    	fetchEvents: fetchEvents,
 	    	fetchUsers: fetchUsers,
 	    	requestIn: requestIn,
-	    	requestOut: requestOut
+	    	requestOut: requestOut,
+	    	fetchAskedIn: fetchAskedIn
 	    };

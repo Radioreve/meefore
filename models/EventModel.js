@@ -46,6 +46,13 @@
 		tags: {
 			type: Array,
 			default: []
+		},
+		meta:{
+			type: Array,
+			default: []
+		},
+		templateId:{
+			type:String
 		}
 	});
 

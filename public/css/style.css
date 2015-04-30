@@ -104,7 +104,7 @@ body header.sm-header{
 	position: fixed;
 	top: 0;
 	left: 0;
-	z-index: 140;
+	z-index: 98;
 }
 body > header > img{
 	float:left;
@@ -192,7 +192,7 @@ body > header > h5{
 	top: -1px;
 	width: 410px;
 	text-align: center;
-	z-index: 9999;
+	z-index: 9999999;
 } 
 .toastError{
 	background: rgb(174, 67, 67);
@@ -429,6 +429,8 @@ top: 33px;
 	/* display: block; */
 	-webkit-transition: all 0.3s;
 	transition: all 0.3s;
+	font-family: 'Karla';
+	font-weight: bolder;
 }
 .themeBtn:hover{
 	box-shadow: 1px 1px 1px rgb(196, 196, 196);
@@ -673,7 +675,7 @@ input[type="radio"] + span{
 	/* background: white; */
 	padding: 10px;
 	border-radius: 2px;
-	z-index: 9999;
+	z-index: 99;
 }
 #thumbWrap > div.imgWrap{
     position: absolute;
@@ -990,7 +992,7 @@ loginWrapp input.validating-btn{
 #searchUsers active{
 	opacity: .8;
 }
-#searchUsers button{
+#searchUsers button, #botsWrap button{
 	width: 36px!important;
 	height: 34px;
 	font-size: 15px;
@@ -1281,4 +1283,4 @@ margin: 20px 0 20px;
 
 .online-marker.active{
 	opacity: 1!important;
-}
+} 

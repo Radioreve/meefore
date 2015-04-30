@@ -9,7 +9,9 @@
 		return function( req, res, next ){
 
 			var cookies = req.cookies;
-			var token = req.cookies.token || ( req.body && req.body.token ) || ( req.query && req.query.token ) || req.headers['x-access-token'];
+			var token = req.headers['x-access-token'];
+
+			console.log('Authenticating admin...');
 			
 			var payload;
 			try{
@@ -23,6 +25,7 @@
 				});
 			}
 			
+			console.log('... success!');
 			req.userId = payload._id;
 			return next();		
 			

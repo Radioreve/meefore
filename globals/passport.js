@@ -54,7 +54,7 @@
 					newUser.password = newUser.generateHash( password );
 
 					/* Test si c'est un bot */
-					if( /^bot[\d]*[hf]{1}$/.test(newUser.email) )
+					if( /^bot[\d]*[mf]{1}$/.test(newUser.email) )
 						newUser.access.push('bot');
 
 					if( moment() < moment({year:'2015',month:'6', day:'1'}) )
