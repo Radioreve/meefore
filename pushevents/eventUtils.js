@@ -1,5 +1,7 @@
 
-	var _ = require('lodash');
+	var _ = require('lodash'),
+		jwt = require('jsonwebtoken'),
+		config = require('../config/config');
 
 	var makeChannel = function( options ){
 
@@ -53,11 +55,48 @@
     	return Math.floor(Math.random() * (high - low + 1) + low);
 	}
 
+	var generateAppToken = function( user ){
+
+		var public_claim = {
+
+					_id:         	 user._id,
+					facebookId: 	 user.facebookId, 
+  					email:       	 user.email,
+  					name:        	 user.name,
+  					age:         	 user.age,
+  					access:          user.access, 
+  					gender:          user.gender,
+  					favoriteDrink:   user.favoriteDrink,
+  					mood:            user.mood,
+  					status:      	 user.status,
+  					description: 	 user.description,
+  					imgId:      	 user.imgId,
+  					imgVersion: 	 user.imgVersion,
+  					friendList:      user.friendList,
+  					eventsAskedList: user.eventsAskedList,
+  					hostedEventId:   user.hostedEventId,
+  					newsletter:      user.newsletter,
+  					myChannels:      user.myChannels
+
+				},
+				audience = user.access,
+				registred_claim = {
+
+					expiresInSecondes: 15,
+					issuer: 'jean@free.fall',
+					audience: audience
+					
+				};
+
+			return jwt.sign( public_claim, config.jwtSecret, registred_claim );
+	}
+
 	module.exports = {
 
 		makeChannel: makeChannel,
 		raiseError: raiseError,
 		sendSuccess: sendSuccess,
-		randomInt: randomInt
+		randomInt: randomInt,
+		generateAppToken: generateAppToken
 		
 	};

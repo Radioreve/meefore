@@ -285,7 +285,7 @@ label{
 	text-align: right;
 }
 .input-row-wrap{
-	margin-bottom: 15px;
+	margin-bottom: 10px;
 }
 #eventDescription{
 	border:none;
@@ -389,7 +389,7 @@ h3{
 	line-height: 1.45em;
 }
  
-#createEventWrap .tags-wrap{
+#createEventWrap .tags-wrap, #createEventWrap .event-friends-wrap{
 	display: inline-block;
 	width: 70%;
 	margin-top: 4px;

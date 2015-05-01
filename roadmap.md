@@ -21,8 +21,7 @@
 	- Mailchimp integration 
 
 #Bugs
-	- Le "Friend add" ne met pas à jour la liste des users qui veulent y aller : faire en sorte que ce soit instantié à la demande
-	  pour éviter des pushevents globaux
+	- Rédiger le mail de bienvenu, pr l'instant c celui de melti capital
 
 #Schedule 
  	Todo

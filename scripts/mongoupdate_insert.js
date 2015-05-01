@@ -1,6 +1,7 @@
 
 	var mongoose = require('mongoose'),
 		User = require('../models/UserModel'),
+		EventTemplate = require('../models/EventTemplateModel'),
 		config = require('../config/config'),
 		_ = require('lodash');
 
@@ -12,20 +13,20 @@
 			var select = {};
 
 			var update = { 
-						 $unset :  { 'local' : 1 }	 
+						 $set :  { active : false }	 
 					};
 
 			var options = { multi: true };
 
-			var callback_update = function(err,docs){
+			var callback_update = function( err, nAffected ){
 				if(err)
 					console.log(err);
 				else
-					console.log('Done');
+					console.log('Done on '+ nAffected+' documents.');
 			};
 
 
-			User.update( select, update, options, callback_update );
+			EventTemplate.update( select, update, options, callback_update );
 
 		});
 

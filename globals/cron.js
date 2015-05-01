@@ -2,6 +2,7 @@
 			 
 	var Event    = require('../models/EventModel'),
 		User     = require('../models/UserModel'),
+   EventTemplate = require('../models/EventTemplateModel'),
 	  	settings = require('../config/settings'),
 	  	schedule = require('node-schedule');
 
@@ -11,23 +12,23 @@
 	var eventsRestartAt = settings.eventsRestartAt;
 
 	function restartEvents(){
-
 		pusher.trigger( 'default', 'restart-events', {} );
 	}
 
 	function resetUsersAndEvents(){
 
-		var conditions   = { 'state': { $in : ['open', 'suspended'] } },
-	   	    update     = { 'state': 'ended' },
-	   	    options    = {  multi : true };
+		var eventConditions   = { 'state': { $in : ['open', 'suspended'] } },
+	   	    eventUpdate     = { 'state': 'ended' },
+	   	    eventOptions    = {  multi: true };
 
-   		var callback   = function( err, numberAffected, raw ){
+   		var eventCallback   = function( err, numberAffected, raw ){
 	
    			if( err ) return console.log( err );
-   			console.log('The number of updated documents was %d', numberAffected);
+   			console.log('[events] The number of updated documents was %d', numberAffected);
   			console.log('The raw response from Mongo was ', raw);
 
   			pusher.trigger( 'default', 'reset-events', {} );
+
    		};
 
 	   	var userConditions = {},
@@ -39,20 +40,38 @@
 	   	    		'hostedEventId':''
 	   	    	 }},
 
-	   	    userOptions    = {  multi : true };
+	   	    userOptions    = {  multi: true };
 
-	   		var userCallback   = function( err, numberAffected, raw ){
+   		var userCallback   = function( err, numberAffected, raw ){
 
-	   			if( err ) return console.log( err );
-	   			console.log('\n\n');
-	   			console.log('The number of updated documents was %d', numberAffected);
-	  			console.log('The raw response from Mongo was ', raw);
-	  			console.log('\n\n');
+   			if( err ) return console.log( err );
+   			console.log('\n\n');
+   			console.log('[users] The number of updated documents was %d', numberAffected);
+  			console.log('The raw response from Mongo was ', raw);
+  			console.log('\n\n');
+
 	   		};
 
-	   		User.update( userConditions, userUpdate, userOptions, userCallback );
-			Event.update( conditions, update, options, callback );
+	   	var templateConditions = {},
+	   		templateUpdate = {
+	   			$set : {
+	   				'active': false
+	   			}
+	   		},
+	   		templateOptions = { multi: true };
 
+		var templateCallback   = function( err, numberAffected, raw ){
+
+			if( err ) return console.log( err );
+			console.log('\n\n');
+			console.log('[templates] The number of updated documents was %d', numberAffected);
+			console.log('The raw response from Mongo was ', raw);
+		
+		};
+
+	   		User.update( userConditions, userUpdate, userOptions, userCallback );
+			Event.update( eventConditions, eventUpdate, eventOptions, eventCallback );
+			EventTemplate.update( templateConditions, templateUpdate, templateOptions, templateCallback );
 	}
 
 	/* Event Auto Update */

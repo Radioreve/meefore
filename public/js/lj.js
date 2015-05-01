@@ -404,12 +404,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					data: { facebookProfile: facebookProfile },
 					dataType:'json',
 					url:'/auth/facebook',
-					success: function(data){
+					success: function( data ){
 
 						LJ.fn.handleSuccessLogin( data );
 
 					},
-					error: function(err){
+					error: function( err ){
 
 					}
 				});
@@ -772,6 +772,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 								delay:2000,
 								complete: function(){
 									toast.remove();
+									if( LJ.msgQueue.length != 0 )
+										LJ.fn.toastMsg( LJ.msgQueue[0].msg, LJ.msgQueue[0].type );
+									    LJ.msgQueue.splice( 0, 1 ) //remove le premier élément
 								}
 								});
 							}
@@ -781,6 +784,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			else
 			{
+				LJ.msgQueue.push({ msg: msg, type: status });
+				/*
 				toast = $( '.toast' );
 				toast.finish().velocity('transition.slideUpOut',{
 					duration: 200,
@@ -789,6 +794,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						LJ.fn.toastMsg( msg, status );
 					}
 				});
+	*/
 			}
 		},
 		replaceMainImage: function( imgId, imgVersion, d ){
@@ -1202,7 +1208,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					LJ.myAskers.push( asker );
 
 					var askerMainHTML  = LJ.fn.renderAskerMain( asker ),
-						askerThumbHTML = LJ.fn.renderAskerThumb ({ asker: asker });
+						askerThumbHTML = LJ.fn.renderUserThumb ({ asker: asker });
 
 					    $( askerMainHTML ).appendTo( $('#askersMain') ).hide();
 					    $( askerThumbHTML ).appendTo( $('#askersThumbs') );
@@ -1329,8 +1335,42 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			/* Admin scripts. Every com is secured serverside */	
 			if( LJ.user.access.indexOf('admin') != -1 )
 				LJ.fn.initAdminMode();
+
+			if( LJ.user.status == 'new' && LJ.user.fbId ){
+				LJ.fn.updatePictureWithFacebook( LJ.user._id, LJ.user.fbId );
+				LJ.fn.showLoaders();
+			}
 			
-			
+
+		},
+		updatePictureWithFacebook: function( userId, fbId ){
+
+			var eventName = 'update-picture-fb',
+				data = {
+					userId: userId,
+					fbId: fbId
+				},
+				cb = {
+					success: function( data ){
+
+						LJ.fn.hideLoaders();
+						LJ.fn.toastMsg('Synchronisation avec Facebook terminée!', 'info');
+
+						LJ.fn.updateClientSettings( data );
+
+						LJ.fn.replaceMainImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsProfile );
+						LJ.fn.replaceThumbImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsHeaderUser );
+
+
+					},
+					error: function( xhr ){
+
+						LJ.fn.handleServerError("La synchronisation avec Facebook a échouée");
+
+					}
+				};
+
+			LJ.fn.say( eventName, data, cb );
 
 		},
 		handleSuspendEvent: function(data, state){
@@ -1432,6 +1472,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 	                	LJ.myFriends = data.myFriends ;
 
 	                	$('#myFriends').html( LJ.fn.renderUsersInFriendlist() );
+	                	$('.event-friends-wrap').html( LJ.fn.renderUsersInCreateEvent() );
 
 	                	LJ.fn.displayAddFriendToPartyButton();
 
@@ -1609,7 +1650,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         displayAskers: function(){
 
             $('#askersMain').html('').append( LJ.fn.renderAskersMain() );
-            $('#askersThumbs').html('').append( LJ.fn.renderAskersThumbs() );
+            $('#askersThumbs').html('').append( LJ.fn.renderUsersThumbs() );
 
             LJ.fn.refreshArrowDisplay();
             LJ.fn.refreshOnlineUsers();
@@ -1737,7 +1778,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
        						  .velocity('transition.slideLeftIn', { duration: 700 });
 
        		}else{
-       			LJ.fn.toastMsg( LJ.$eventsToDisplay.length + ' soirées pour ces filtres!', 'info');
+       			//LJ.fn.toastMsg( LJ.$eventsToDisplay.length + ' soirées pour ces filtres!', 'info');
        		}
 
         },

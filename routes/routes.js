@@ -28,6 +28,7 @@
 		app.post('/update-profile', auth.authenticate(['standard']), profileEvents.updateProfile );
 		app.post('/update-picture', profileEvents.updatePicture );
 		app.post('/update-settings', profileEvents.updateSettings );
+		app.post('/update-picture-fb', profileEvents.updatePictureWithFacebook );
 
 	//Events relatif à la gestion d'un évènement
 		app.post('/create-event', manageEvents.createEvent );

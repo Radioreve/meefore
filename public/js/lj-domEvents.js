@@ -168,19 +168,19 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			});
 
-			LJ.$resetBtn.click(function(e){
+			LJ.$resetBtn.click( function( e ){
 
 				e.preventDefault();
 				LJ.fn.resetPassword();
 
 			});
 
-			$('#login-fb, .sm-fb').click(function(e){
+			$('#login-fb, .sm-fb').click( function( e ){
 
 				e.preventDefault();
 				console.log('Login in with Facebook');
 
-				FB.login( function(res){
+				FB.login( function( res ){
 
 					console.log('Client status is now : ' + res.status ) ;
 
@@ -191,7 +191,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					  		LJ.fn.loginWithFacebook( facebookProfile );
 
 				  		});
-				}, { scope: ['public_profile', 'email']});
+				}, { scope: ['public_profile', 'email', 'user_photos']});
 
 			});
 

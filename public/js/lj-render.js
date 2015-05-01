@@ -330,7 +330,7 @@
             return html;
 
         },
-        renderAskerThumb: function( o ){
+        renderUserThumb: function( o ){
 
         		var a = o.asker;
         		var myClass = o.myClass;
@@ -360,7 +360,7 @@
         	return html;
 
         },
-        renderAskersThumbs: function( maxGuest ){
+        renderUsersThumbs: function( maxGuest ){
 
         	var html = '',
         		L = maxGuest || LJ.myAskers.length;
@@ -374,7 +374,7 @@
 	        		o.asker = LJ.myAskers[i];
 	        		i == 0 ?  o.myClass = 'active' : o.myClass = '';
 
-        			html += LJ.fn.renderAskerThumb( o );
+        			html += LJ.fn.renderUserThumb( o );
         		}
         		else
         		{
@@ -383,7 +383,7 @@
         			o.asker.imgId 	= LJ.cloudinary.placeholder_id;
         			o.myClass 		= 'placeholder';
 		
-        			html += LJ.fn.renderAskerThumb( o );
+        			html += LJ.fn.renderUserThumb( o );
 
         		}
         		
@@ -543,6 +543,25 @@
             return html;
 
         },
+        renderUsersInCreateEvent: function(){
+
+            var html = '',
+                friendList = LJ.myFriends,
+                L = fL.length;
+
+            if( L == 0 )
+            {
+                return '<div id="noFriendsYet">You dont have any friends to invite <span>Find your friends</span></div>'
+            }
+            for( var i = 0; i < L; i++ )
+            {
+                html += LJ.fn.renderUser( fL[i] );
+            }
+            return html;
+
+
+
+        },
         renderUsersInSearch: function(){
 
         	var html = '';
@@ -569,7 +588,7 @@
                 }
                 for( var i = 0 ; i < L ; i++ )
                 {
-                    html += LJ.fn.renderUserInFriendlist( fL[i] );
+                    html += LJ.fn.render( fL[i] );
                 }
                         
                 html += '</div></div>';

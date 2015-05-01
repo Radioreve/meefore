@@ -64,37 +64,11 @@
 	  				});
 
 	  			console.log(user.access);
-	  			/* Création du token */
-				var public_claim = {
-					_id:         	 user._id,
-  					email:       	 user.email,
-  					name:        	 user.name,
-  					age:         	 user.age,
-  					access:          user.access, 
-  					gender:          user.gender,
-  					favoriteDrink:   user.favoriteDrink,
-  					mood:            user.mood,
-  					status:      	 user.status,
-  					description: 	 user.description,
-  					imgId:      	 user.imgId,
-  					imgVersion: 	 user.imgVersion,
-  					friendList:      user.friendList,
-  					eventsAskedList: user.eventsAskedList,
-  					hostedEventId:   user.hostedEventId,
-  					newsletter:      user.newsletter,
-  					myChannels:      user.myChannels,
-				},
-					audience = user.access,
-					registred_claim = {
-						expiresInSecondes: 15,
-						issuer: 'jean@free.fall',
-						audience: audience
-					};
-
-				var accessToken = jwt.sign( public_claim, config.jwtSecret, registred_claim );
+	  			/* Création du token */				
+				var accessToken = eventUtils.generateAppToken( user ); 
 
 				/* Envoie de la réponse */
-				var expose = { id: user._id, msg: info.msg, accessToken: accessToken },
+				var expose = { id: user._id, accessToken: accessToken },
 					channel = _.result( _.find( user.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName');
 				
 				eventUtils.sendSuccess( res, expose );
@@ -165,48 +139,65 @@
 			if( err )
 				return console.log('Error with Facebook : ' + err );
 
-			if( user )
-			{
-				console.log('Used found based on Facebook id ');
-				var token = jwt.sign( user, config.jwtSecret, { expiresInMinutes: 600 });
+			if( user ){
+				var accessToken = eventUtils.generateAppToken( user ); 
 
-					res.json(200,
-					{
-						_id: user._id,
-						token: token
-					});
-					res.end();
-					return;
+				/* Envoie de la réponse */
+				var expose = { id: user._id, accessToken: accessToken },
+					channel = _.result( _.find( user.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName');
+				
+				eventUtils.sendSuccess( res, expose );
+
+				/* Mise à jour du Watcher */
+				var d = new Date();
+				watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
+				return;
 			}
 
 			var newUser = new User();
 
 			newUser.facebookId = fbId;
 			newUser.email = email;
-			newUser.password = newUser.generateHash('M3efore');
+			newUser.password = newUser.generateHash('M3efore'); // les gens qui s'authentifient via fb n'ont pas besoin de password
 			newUser.gender = gender;
 			newUser.name = name;;
 			newUser.signupDate = new Date();
+
+			// public one based on global key
+			// personnal one based on randtoken 
+		    var token = randtoken.generate(30);
+			var accessName = 'mychan',
+				channelName = eventUtils.makeChannel({ accessName: accessName, token: token }) 
+
+			newUser.myChannels.push( {accessName:accessName, channelName:channelName} );
+
+			var accessName = 'defchan',
+				channelName = eventUtils.makeChannel({ accessName: accessName }) 
+
+			newUser.myChannels.push( {accessName:accessName, channelName:channelName} );
+			
 			
 			newUser.save( function( err, user ){
 
 				if( err ) return console.log('User was NOT saved : ' + err );
 
-					var token = jwt.sign( user, config.jwtSecret, { expiresInMinutes: 600 });
+					var accessToken = eventUtils.generateAppToken( user ); 
+					/* Envoie de la réponse */
+					var expose = { id: user._id, accessToken: accessToken },
+						channel = _.result( _.find( user.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName');
+					
+					eventUtils.sendSuccess( res, expose );
 
-					res.json( 200, 
-	  				{
-	  					_id:     user._id,
-	  					token:   token
-	  				});
+					/* Mise à jour du Watcher */
+					var d = new Date();
+					watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
 
 					mailer.sendWelcomeEmail( email );
-
-	  				res.end();
 
 			});
 		});
 	};
+
 
 	module.exports = {
 

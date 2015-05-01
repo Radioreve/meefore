@@ -3,7 +3,17 @@
 	    Event = require('../models/EventModel'),
 	    eventUtils = require('./eventUtils'),
 	    _ = require('lodash'),
+	    cloudinary = require('cloudinary'),
+	    config = require('../config/config'),
 	    validator = require("validator");
+
+	    cloudinary.config({ 
+
+			cloud_name: config.cloudinary.cloud_name,
+		    api_key: config.cloudinary.api_key,
+		    api_secret: config.cloudinary.api_secret
+
+		});
 
 	var pusher = require('../globals/pusher');
 
@@ -102,6 +112,49 @@
 		    };
 
 		    User.findByIdAndUpdate( userId, update, {}, callback1 );
+
+	};
+
+	var updatePictureWithFacebook = function( req, res ){
+
+		var userId = req.body.userId,
+			fbId   = req.body.fbId;
+			url    = 'https://graph.facebook.com/' + fbId + '/picture?width=180&height=180';
+
+		console.log(url);
+
+		cloudinary.uploader.upload( url, function( response ){
+
+			User.findById( userId, function( err, user ){
+
+				if( err )
+					return eventUtils.raiseError({
+						res:res,
+						err:err,
+						toClient:"Impossible de charger votre photo Facebook"
+					});
+
+				user.imgId      = response.public_id;
+				user.imgVersion = response.version;
+				user.save( function( err ){
+
+					if( err )
+						return eventUtils.raiseError({
+							res:res,
+							err:err,
+							toClient:"Impossible de sauvegarder votre photo Facebook"
+						});
+
+					res.json({ 
+						msg:       "Votre photo de profile a été chargée à partir de Facebook",
+						imgId:      user.imgId,
+						imgVersion: user.imgVersionn
+					});
+
+				});
+							
+			});
+		});
 
 	};
 
@@ -210,6 +263,7 @@
 
 	    updateProfile   : updateProfile,
 	    updatePicture   : updatePicture,
+	    updatePictureWithFacebook: updatePictureWithFacebook,
 	    updateSettings  : updateSettings
 	    
 	};

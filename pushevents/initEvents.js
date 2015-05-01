@@ -60,6 +60,7 @@
 				expose.user = {
 
 					_id:         	 user._id,
+					fbId:            user.facebookId, 
   					email:       	 user.email,
   					name:        	 user.name,
   					age:         	 user.age,
