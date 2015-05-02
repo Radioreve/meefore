@@ -168,19 +168,19 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			});
 
-			LJ.$resetBtn.click( function( e ){
+			LJ.$resetBtn.click(function(e){
 
 				e.preventDefault();
 				LJ.fn.resetPassword();
 
 			});
 
-			$('#login-fb, .sm-fb').click( function( e ){
+			$('#login-fb, .sm-fb').click(function(e){
 
 				e.preventDefault();
 				console.log('Login in with Facebook');
 
-				FB.login( function( res ){
+				FB.login( function(res){
 
 					console.log('Client status is now : ' + res.status ) ;
 
@@ -191,7 +191,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					  		LJ.fn.loginWithFacebook( facebookProfile );
 
 				  		});
-				}, { scope: ['public_profile', 'email', 'user_photos']});
+				}, { scope: ['public_profile', 'email']});
 
 			});
 
@@ -500,6 +500,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				LJ.fn.createEvent();
 			});
 
+			$('#createEventWrap').on('click', '.imgWrapThumb', function(){
+				var $t = $(this);
+					$t.toggleClass('active');
+			});
+
 		},
 		handleDomEvents_Search: function(){
 
@@ -665,13 +670,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				if( $(this).hasClass('next-right') )
 				{
 					$nextItem = $currentItem.next();
-					askerId = $nextItem.data('askerid');
+					askerId = $nextItem.data('userid');
 
 				}
 				else if( $(this).hasClass('next-left') )
 				{
 					$nextItem = $currentItem.prev();
-					askerId = $nextItem.data('askerid');
+					askerId = $nextItem.data('userid');
 				}
 
 				LJ.fn.displayAskerItem( $currentItem, $nextItem, askerId );
@@ -688,20 +693,20 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				//if( $(this).hasClass('active') ) return;
 				
 				/* Displaying asker profile */
-				var askerId      = $(this).data('askerid'),
+				var askerId      = $(this).data('userid'),
 					$currentItem = $('.a-item.active'), 
-					$nextItem    = $('.a-item[data-askerid="'+askerId+'"]');
+					$nextItem    = $('.a-item[data-userid="'+askerId+'"]');
 
 				if( $(this).hasClass('next-right') )
 				{
 					$nextItem = $currentItem.next();
-					askerId = $nextItem.data('askerid');
+					askerId = $nextItem.data('userid');
 
 				}
 				else if( $(this).hasClass('next-left') )
 				{
 					$nextItem = $currentItem.prev();
-					askerId = $nextItem.data('askerid');
+					askerId = $nextItem.data('userid');
 				}
 
 				LJ.fn.displayAskerItem( $currentItem, $nextItem, askerId );

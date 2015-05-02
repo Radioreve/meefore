@@ -14,7 +14,8 @@ var createEvent = function( req, res ) {
     var data = req.body;
 
     var hostId = data.hostId,
-        socketId = data.socketId;
+        socketId = data.socketId,
+        userIds = data.userIds;
 
     var currentDate = new Date(),
         currentHour = currentDate.getHours();
@@ -66,44 +67,74 @@ var createEvent = function( req, res ) {
     newEvent.createdAt = currentDate;
     newEvent.beginsAt = beginsAt;
 
-    User.findById( hostId, {}, function( err, user ) {
+    User.find({ '_id': { $in: userIds }}, function( err, users ){
 
-        if (!err ){
-
-            if( user.status === 'hosting' )             
+        if( err )
             return eventUtils.raiseError({
-                toClient:"Already hosting !",
-                toServer:"Can't host multiple events",
-                res: res
+                err:err,
+                res:res,
+                toClient:"Impossible d'ajouter certains de vos amis"
             });
-                
-            if( 0 )
+
+        if( users.length == 0 )
             return eventUtils.raiseError({
-                toClient:"Renseignez tous les champs svp ;-)",
-                toServer :"Not all fields filled",
-                res: res
+                err:err,
+                res:res,
+                toClient:"Ajouter au moins une personne!"
             });
 
-            newEvent.save( function(err, myEvent){
-                
-                if( !err ) {
-
-                    user.status = 'hosting';
-                    user.hostedEventId = myEvent._id;
-
-                    var expose = { myEvent: myEvent };
-
-                    user.save( function(err, user) {
-                        if( !err ){
-                            console.log(user.email + ' is hosting event with id : ' + user.hostedEventId);
-
-                            eventUtils.sendSuccess( res, expose );
-                            pusher.trigger('default', 'create-event-success', expose, socketId );
-                        }
-                    });
-                }
-            });
+        for( var i=0; i<users.length; i++ ){
+            newEvent.askersList.push( users[i] );
         }
+
+        User.findById( hostId, {}, function( err, host ) {
+
+            if (!err ){
+
+                if( host.status === 'hosting' )             
+                return eventUtils.raiseError({
+                    toClient:"Already hosting !",
+                    toServer:"Can't host multiple events",
+                    res: res
+                });
+                    
+                if( 0 )
+                return eventUtils.raiseError({
+                    toClient:"Renseignez tous les champs svp ;-)",
+                    toServer :"Not all fields filled",
+                    res: res
+                });
+
+                newEvent.save( function( err, myEvent ){
+                    
+                    if( err )
+                        return eventUtils({
+                            res:res,
+                            err:err,
+                            toClient:"Erreur en sauvegardant l'event"
+                        });
+
+                        host.status = 'hosting';
+                        host.hostedEventId = myEvent._id;
+
+                        var expose = { myEvent: myEvent };
+
+                        host.save( function( err, myHost ){
+                            if( !err ){
+                                console.log( myHost.email + ' is hosting event with id : ' + myHost.hostedEventId );
+                                eventUtils.sendSuccess( res, expose );
+                                pusher.trigger('default', 'create-event-success', expose, socketId );
+                            }
+                        });
+
+                        for( var i=0; i<users.length; i++ ){
+                            users[i].eventsAskedList.push( myEvent._id )
+                            users[i].save();
+                        }
+                    
+                });
+            }
+        });
     });
 };
 

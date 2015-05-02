@@ -87,14 +87,14 @@
 					if( err ) return console.log('Error LJ-51' );
 						var channelName = myFriend.getChannel(),
 							eventName   = 'friend-request-in-success',
-							data = { friendId: friendId, userId: userId, updateType: updateTypeFriend, friendList: myFriend.friendList };
+							data = { friendId: friendId, userId: userId, updateType: updateTypeFriend, friendList: myFriend.friendList, friend: myUser };
 						pusher.trigger( channelName, eventName, data );
 
 				});
 
 				myUser.save( function( err ){
 					if( err ) return console.log('Error LJ-50' );
-					var expose = { friendId: friendId, userId: userId, updateType: updateTypeUser, friendList: myUser.friendList };
+					var expose = { friendId: friendId, userId: userId, updateType: updateTypeUser, friendList: myUser.friendList, friend: myFriend };
 					eventUtils.sendSuccess( res, expose );
 	
 				});

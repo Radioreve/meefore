@@ -192,7 +192,7 @@
 					var d = new Date();
 					watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
 
-					mailer.sendWelcomeEmail( email );
+					mailer.sendWelcomeEmail( email, name );
 
 			});
 		});

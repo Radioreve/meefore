@@ -27,6 +27,7 @@
     "rand-token": "0.2.1",
     "sendgrid": "^1.6.1",
     "serve-favicon": "^2.2.0",
+    "swig": "^1.4.2",
     "validator": "3.19.1"
   },
   "devDependencies": {

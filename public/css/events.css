@@ -285,7 +285,7 @@ label{
 	text-align: right;
 }
 .input-row-wrap{
-	margin-bottom: 10px;
+	margin-bottom: 12px;
 }
 #eventDescription{
 	border:none;
@@ -395,8 +395,13 @@ h3{
 	margin-top: 4px;
 }
 
-label[for="tags"]{
+label[for="tags"], label[for="event-friends-wrap"]{
 	vertical-align: top
+}
+
+.event-friends-wrap .noFriendsYet button{
+	background: whitesmoke!important; 
+	color:black;
 }
 
 .largeThumb{
@@ -450,20 +455,21 @@ label[for="tags"]{
 	border-bottom: 2px solid;
 	transition: all .2s;
 }
-#noFriendsYet{
-	font-size:12px;
-	margin: 50% auto;
-	width:80%;
+#friendListWrap .noFriendsYet button{
+	font-size: 10px;
+	margin-top: 60%;
+	margin-left:33px;
+	width: 60%;
 	line-height:1.5em;
 }
 .inserted{
 	display:none;
 }
-#noFriendsYet span{
+.noFriendsYet span{
 	font-weight:bolder;
 	font-size:15px;
 }
-#noFriendsYet span:hover{
+.noFriendsYet span:hover{
 	font-weight:bolder;
 	text-decoration:underline;
 	cursor:pointer;

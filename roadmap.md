@@ -30,6 +30,7 @@
 	- Clientside routing hashtags #
 	- Validation clientside, validation serverside
 	- SEO
+	- Refactoring pusher event pour savoir qui est online -> presence channels
 	
 	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription
 	- Mettre une real time sync sur les données... ( nom, age, desc, drink, mood, photo )

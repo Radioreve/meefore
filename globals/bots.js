@@ -76,7 +76,7 @@
 				  e.description 	= eventTemplate.desc;
 
 				/* Générer purement aléatoirement */
-				  e.location    	= randomInt(0,20);
+				  e.location    	= randomInt(1,20);
 				  e.beginsAt		= moment({ hour: randomInt(19,23) , minute: randomInt(0,10)*5 });
 				  e.createdAt		= moment();
 				  e.maxGuest        = randomInt(5,9);

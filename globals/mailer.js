@@ -1,7 +1,8 @@
 		
 		var config = require('../config/config'),
 			fs = require('fs'),
-			sendgrid = require('sendgrid')( config.sendgrid.api_user, config.sendgrid.api_key );
+			sendgrid = require('sendgrid')( config.sendgrid.api_user, config.sendgrid.api_key ),
+			swig = require('swig');
 
 
 		var sendMail = function( o ){
@@ -12,14 +13,17 @@
 		}
 
 		
-		var sendWelcomeEmail = function( email ){
+		var sendWelcomeEmail = function( email, name ){
 			
+			var tpl = swig.compileFile( process.cwd() + '/views/welcomeEmail.html' );
+			var html = tpl({ name: name });
+
 			var welcome_email = new sendgrid.Email({
-				from:'robot@meefore.com',
-				subject:'Are you ready',
+				from:'juliette@meefore.com',
+				fromname:'Daenerys',
+				subject:"Les soirées bidon, c'est terminé",
 				to: email,
-				text:'Hello world',
-				html: fs.readFileSync( process.cwd() + '/views/welcomeEmail.html', 'utf8')
+				html: html
 			});
 
 			sendMail( welcome_email );

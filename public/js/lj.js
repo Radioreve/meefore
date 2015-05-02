@@ -164,8 +164,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					$(this).addClass('modified');
 				});
 
-				LJ.$body.on('click', '.themeBtn',function(){
+				LJ.$body.on('click', '.themeBtn:not(.static)',function(){
 					$(this).addClass('validating-btn');
+				});
+
+				LJ.$body.on('click', '.noFriendsYet', function(){
+					$('#search').click();
 				});
  
 				LJ.$body.on('focusout', '.askInMsgWrap input', function(e){
@@ -936,7 +940,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			var currentIndex = current.index(),
 				nextIndex    = next.index();
 
-			var $askerThumb = $('#askersThumbs').find('.imgWrapThumb[data-askerid="'+askerId+'"]');
+			var $askerThumb = $('#askersThumbs').find('.imgWrapThumb[data-userid="'+askerId+'"]');
 				$('.imgWrapThumb.active').removeClass('active');
 				$askerThumb.addClass('active');
 
@@ -1208,7 +1212,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					LJ.myAskers.push( asker );
 
 					var askerMainHTML  = LJ.fn.renderAskerMain( asker ),
-						askerThumbHTML = LJ.fn.renderUserThumb ({ asker: asker });
+						askerThumbHTML = LJ.fn.renderUserThumb ({ user: asker });
 
 					    $( askerMainHTML ).appendTo( $('#askersMain') ).hide();
 					    $( askerThumbHTML ).appendTo( $('#askersThumbs') );
@@ -1241,7 +1245,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					asker   	= data.asker,
 					requesterId = data.requesterId;
 
-				var $aItemMain = LJ.$askersListWrap.find('.a-item[data-askerid="'+userId+'"]'),
+				var $aItemMain = LJ.$askersListWrap.find('.a-item[data-userid="'+userId+'"]'),
 				    $chatWrapAsUser = LJ.$eventsListWrap.find('.chatWrap[data-chatid="'+hostId+'"]');
 
 				_.remove( LJ.myAskers, function( asker ){
@@ -1259,7 +1263,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					/* Pour l'Host */
 					if( hostId === LJ.user._id)
 					{		
-							$('.imgWrapThumb[data-askerid="' + asker._id + '"]').remove();
+							$('.imgWrapThumb[data-userid="' + asker._id + '"]').remove();
 							LJ.state.jspAPI[ asker._id ] = undefined; // sinon chat fail lorsqu'ask in/out/in...
 							$aItemMain.velocity("transition.fadeOut", { 
 								duration: 200,
@@ -1292,7 +1296,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						$nbAskers.text( parseInt( $nbAskers.text() ) - 1 );
 
 					$('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askedInWrap')
-																   .find('img[data-askerid="'+asker._id+'"]')
+																   .find('img[data-userid="'+asker._id+'"]')
 																   .remove();  */
 				});
 
@@ -1496,11 +1500,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		createEvent: function(){
 
-			var tags = [];
+			var tags = [],
+				userIds = [];
 
 			$('#createEventWrap .selected').each( function( i, $el ){
 				var tag = $( $el) .attr('class').split(' ')[1].split('-')[1];						 
 				tags.push( tag );
+			});
+
+			$('#createEventWrap .imgWrapThumb.active').each( function( i, el ){
+				userIds.push( $(el).data('userid') ); 
 			});
 
 			var e = {};
@@ -1515,6 +1524,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				e.description 	  = $('#eventDescription').val();
 				e.maxGuest        = $('#eventMaxGuest').val();
 				e.tags            = tags;
+				e.userIds		  = userIds;
 
 				LJ.fn.showLoaders();
 
@@ -1689,7 +1699,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		$('#askersThumbs .team-'+i).removeClass('team-'+i);
         		$('#askersThumbs .head-'+i).removeClass('head-'+i);
         		
-        		$('#askersThumbs div[data-askerid="'+ LJ.myAskers[i]._id +'"]').addClass('team-'+i).addClass('head-'+i);
+        		$('#askersThumbs div[data-userid="'+ LJ.myAskers[i]._id +'"]').addClass('team-'+i).addClass('head-'+i);
         		
         		for( var k = 0 ; k < LJ.myAskers[i].friendList.length ; k++ )
         		{	
@@ -1701,7 +1711,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         			{	
         				if( LJ.myAskers[i].friendList[k].status == 'mutual' )
         				{	
-        					$('#askersThumbs div[data-askerid="'+ LJ.myAskers[i].friendList[k].friendId+'"]').addClass('team-'+i);		  
+        					$('#askersThumbs div[data-userid="'+ LJ.myAskers[i].friendList[k].friendId+'"]').addClass('team-'+i);		  
         				}
         			}
         		} 
@@ -1711,7 +1721,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         displayAsOnline: function( data ){
 
         	var userId = data.userId;
-			$('div[data-userid="'+userId+'"],div[data-askerid="'+userId+'"]')
+			$('div[data-userid="'+userId+'"]')
 					.find('.online-marker')
 					.addClass('active');
 
@@ -1719,7 +1729,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         displayAsOffline: function( data ){
 
         	var userId = data.userId;
-					$('div[data-userid="'+userId+'"],div[data-askerid="'+userId+'"]')
+					$('div[data-userid="'+userId+'"]')
 					.find('.online-marker')
 					.removeClass('active');
 
@@ -1905,7 +1915,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         findReceiverId: function( submitInput ){
 
 	        var possibleIds = [
-	        	submitInput.parents('.a-item').data('askerid'),
+	        	submitInput.parents('.a-item').data('userid'),
 	        	submitInput.parents('.eventItemWrap').data('hostid')
 	        ]
 
@@ -1994,49 +2004,52 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         handleFriendRequestSuccess: function( data ){
 
-        	var userId     = data.userId,
-                		friendId   = data.friendId,
-                		upType     = data.updateType,
-                		friendList = data.friendList;
+			var userId     = data.userId,
+        		friendId   = data.friendId,
+        		upType     = data.updateType,
+        		friend     = data.friend,
+        		friendList = data.friendList;
 
-	                	LJ.user.friendList = data.friendList;
-						
-						LJ.nextCallback.context = 'fetch friends';
-						LJ.nextCallback.fn = function(){
-	                		 
-	                		csl('Calling function');
-							sleep( LJ.ui.artificialDelay, function(){
+            	LJ.user.friendList = data.friendList;
+				
+				LJ.nextCallback.context = 'fetch friends';
+				LJ.nextCallback.fn = function(){
+            		 
+            		csl('Calling function');
+					sleep( LJ.ui.artificialDelay, function(){
 
-							LJ.fn.displayAddUserAsFriendButton();
+					LJ.fn.displayAddUserAsFriendButton();
 
-								if( upType == 'askedhim' )
-								{
-									LJ.fn.handleServerSuccess('Votre demande a été envoyée');
-									return;
-								}
-
-								if( upType == 'askedme' )
-								{
-									LJ.fn.handleServerSuccess('Vous avez une demande d\'ami');
-									LJ.fn.bubbleUp( '#search' )
-									return;
-								}
-
-								if( (upType == 'mutual') && (userId == LJ.user._id) )
-								{
-									LJ.fn.handleServerSuccess('Vous êtes à présent amis');
-									return;
-								}
-
-								if( (upType == 'mutual') && (friendId == LJ.user._id) )
-								{
-									LJ.fn.handleServerSuccess('Votre demande a été acceptée!');
-									LJ.fn.bubbleUp( '#search' )
-									return;
-								}
-							});
+						if( upType == 'askedhim' )
+						{
+							LJ.fn.handleServerSuccess('Votre demande a été envoyée');
 						}
-						LJ.fn.fetchFriends();
+
+						if( upType == 'askedme' )
+						{
+							LJ.fn.handleServerSuccess('Vous avez une demande d\'ami');
+							LJ.fn.bubbleUp( '#search' )
+						}
+
+						if( (upType == 'mutual') && (userId == LJ.user._id) )
+						{
+							LJ.fn.handleServerSuccess('Vous êtes à présent amis');
+						}
+
+						if( (upType == 'mutual') && (friendId == LJ.user._id) )
+						{
+							LJ.fn.handleServerSuccess('Votre demande a été acceptée!');
+							LJ.fn.bubbleUp( '#search' )
+						}
+
+						if( upType == 'mutual' && LJ.myFriends.length == 1 )
+						{
+							$('#friendListWrap .noFriendsYet').replaceWith( LJ.fn.renderUsersInFriendlist( friend ) );
+							$('#createEventWrap .noFriendsYet').replaceWith( LJ.fn.renderUserThumb({ user:friend }) );
+						}
+					});
+				}
+				LJ.fn.fetchFriends();
 
         },
         handleFetchAskedInSuccess: function( data ){
@@ -2055,7 +2068,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 					d.version = asker.imgVersion;
 
-				var $askerImg = LJ.fn.renderAskerInEvent( asker.imgId, { dataList: [{ dataName: 'askerid', dataValue: asker._id }]});
+				var $askerImg = LJ.fn.renderAskerInEvent( asker.imgId, { dataList: [{ dataName: 'userid', dataValue: asker._id }]});
 					$askersWrap.prepend( $askerImg );					
 
 				var $nbAskers = $itemWrap.find('.e-guests span.nbAskers');
@@ -2138,7 +2151,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 	                return $friend.find('button').replaceWith( button );
               	}
 
-	        	if( $askedInWrap.find('img[data-askerid="'+friendId+'"]').length == 1 )
+	        	if( $askedInWrap.find('img[data-userid="'+friendId+'"]').length == 1 )
 	        	{  
               		button = '<button class="themeBtn onHold">'
                       + '<i class="icon icon-ok-1"></i>'
@@ -2212,6 +2225,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         refreshUserConnState: function( data ){
 
+        	console.log('Refreshing');
         	LJ.myOnlineUsers = _.keys( data.onlineUsers );
         	$('.online-marker').removeClass('active');
         	LJ.fn.refreshOnlineUsers();

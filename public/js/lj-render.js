@@ -156,7 +156,7 @@
 	        		var imgId        = askersList[i].imgId;
 	        			d.imgVersion = askersList[i].imgVersion;
 	        			o.classList = ['askedInThumb'];
-	        			o.dataList   = [ { dataName: 'askerid', dataValue:  askersList[i]._id } ];
+	        			o.dataList   = [ { dataName: 'userid', dataValue:  askersList[i]._id } ];
 
         		}else //On affiche via placeholder le nb de places restantes.
         		{     
@@ -308,7 +308,7 @@
                             +'<div class="closeChat"><i class="icon icon-cancel"></i></div>'
                            +'</div>';
 
-            var html =  '<div class="a-item '+className+'" data-askerid="'+a._id+'">'
+            var html =  '<div class="a-item '+className+'" data-userid="'+a._id+'">'
                            +'<div class="a-picture">'
                              + imgTagHTML
                            +'<div class="a-birth">Membre depuis le ' + LJ.fn.matchDateDDMMYY( a.signupDate ) + '</div>'
@@ -332,7 +332,10 @@
         },
         renderUserThumb: function( o ){
 
-        		var a = o.asker;
+            if( !o.user )
+                return '';
+
+        		var a = o.user;
         		var myClass = o.myClass;
 
         	var d = LJ.cloudinary.displayParamsAskerThumb
@@ -350,7 +353,7 @@
         	var imgTagHTML = imgTag.prop('outerHTML'),
         		imgTagBlackWhiteHTML = imgTagBlackWhite.prop('outerHTML');
 
-        	var html = '<div data-hint="'+a.name+'"data-askerid="' + a._id + '" class="imgWrapThumb hint--top '+ myClass + '">'
+        	var html = '<div data-userid="' + a._id + '" class="imgWrapThumb '+ myClass + '">'
                         +'<i class="online-marker icon icon-up-dir"></i>'
         				//+'<i class="icon icon-help-1 "></i>'
         				+ imgTagHTML
@@ -371,16 +374,16 @@
 
         		if( i < LJ.myAskers.length )
         		{
-	        		o.asker = LJ.myAskers[i];
+	        		o.user = LJ.myAskers[i];
 	        		i == 0 ?  o.myClass = 'active' : o.myClass = '';
 
         			html += LJ.fn.renderUserThumb( o );
         		}
         		else
         		{
-        			o.asker = {}
-        			o.asker._id 	= 'placeholder';
-        			o.asker.imgId 	= LJ.cloudinary.placeholder_id;
+        			o.user = {}
+        			o.user._id 	= 'placeholder';
+        			o.user.imgId 	= LJ.cloudinary.placeholder_id;
         			o.myClass 		= 'placeholder';
 		
         			html += LJ.fn.renderUserThumb( o );
@@ -547,16 +550,18 @@
 
             var html = '',
                 friendList = LJ.myFriends,
-                L = fL.length;
+                L = friendList.length;
 
-            if( L == 0 )
-            {
-                return '<div id="noFriendsYet">You dont have any friends to invite <span>Find your friends</span></div>'
-            }
+
             for( var i = 0; i < L; i++ )
-            {
-                html += LJ.fn.renderUser( fL[i] );
+            {   
+                if( _.find( LJ.user.friendList, function(el){ return el.friendId == friendList[i]._id }).status == 'mutual' )
+                html += LJ.fn.renderUserThumb( { user: friendList[i], myClass:''} );
             }
+
+            if( html == '' )
+                return '<div class="noFriendsYet"><button class="themeBtn static">Ajouter des amis</button></div>'
+
             return html;
 
 
@@ -582,14 +587,13 @@
                 var fL = LJ.myFriends,
                     L = fL.length;
 
-                if( L == 0 )
-                {
-                    return '<div id="noFriendsYet">You dont have any friends to invite <span>Find your friends</span></div>'
-                }
                 for( var i = 0 ; i < L ; i++ )
-                {
-                    html += LJ.fn.render( fL[i] );
+                {   
+                    if( _.find( LJ.user.friendList, function(el){ return el.friendId == fL[i]._id }).status == 'mutual' )
+                        html += LJ.fn.renderUserInFriendlist( fL[i] );
                 }
+                if( html == '' )
+                    return '<div class="noFriendsYet"><button class="themeBtn static">Ajouter des amis</button></div>'
                         
                 html += '</div></div>';
 

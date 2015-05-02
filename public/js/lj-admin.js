@@ -11,7 +11,7 @@
 			LJ.fn.fetchAppData();
 
 			LJ.myChannels['admin'].bind('refresh-users-conn-states-admin', function(data){
-				console.log('Refreshing online users list, from admin init');
+				//console.log('Refreshing online users list, from admin init');
 				//$('#onlineUsers > div').text( _.keys( data.onlineUsers ).length );
 			});
 

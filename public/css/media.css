@@ -318,11 +318,14 @@
     display:block;
   }
 
+  #logo{
+	display:none;
+	}
+
 }
 
 @media screen and ( max-width: 320px ){
 	
-
 }
 
 /* Ugly hacks */

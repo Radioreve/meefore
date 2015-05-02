@@ -126,14 +126,11 @@ body > header > img{
 	background: rgb(208, 54, 54);
 	height: 33px;
 }
-#headerContent h1{
-	color: rgb(236, 236, 236);
-	margin: 12px 7px 0 48px;
-	text-shadow: 0 0 1px white;
-	font-family: 'Viga';
-	font-size: 15px;
-	position: absolute;
-	text-transform: uppercase;
+#logo{
+	  position: absolute;
+	  top: -5px;
+	  left: 107px;
+	  display: inline-block;
 }
 body > header > h5{
 	display: inline;
