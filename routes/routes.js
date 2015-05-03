@@ -56,8 +56,8 @@
 
 	//Events relatifs aux admins
 		app.post('/fetch-app-data', auth.authenticate(['admin']), adminEvents.fetchAppData );
-		app.post('/create-event-bot', auth.authenticate(['admin']), adminEvents.createBotEvent );
-		app.post('/request-participation-in-bot', auth.authenticate(['admin']), adminEvents.requestParticipationInBot );
+		app.post('/create-event-bot', auth.authenticate(['admin-bot']), adminEvents.createBotEvent );
+		app.post('/request-participation-in-bot', auth.authenticate(['admin-bot']), adminEvents.requestParticipationInBot );
 		app.post('/add-event-template', auth.authenticate(['admin']), adminEvents.addEventTemplate );
 		app.post('/delete-event-template', auth.authenticate(['admin']), adminEvents.deleteEventTemplate );
 

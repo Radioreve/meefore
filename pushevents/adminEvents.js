@@ -125,7 +125,7 @@
 					});
 
 				var myUser = myBots[ eventUtils.randomInt( 0, myBots.length - 1 ) ];
-				console.log(myUser);
+				
 				var asker = {   _id           : myUser._id.toString(),
 								name          : myUser.name,
 								description   : myUser.description,

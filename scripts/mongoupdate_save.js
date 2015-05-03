@@ -10,28 +10,26 @@
 		mongoose.connection.on( 'open', function(){
 			console.log('Connected to the database! Running operation... : ');
 
-			var select = {};
+			var select = { "email" : { $regex: /bot/ } };
 
-			var callback_find = function(err,docs){
-				if(err) 
-					return console.log(err);
+			var callback_find = function( err, docs ){
+				if( err ) 
+					return console.log( err );
 				else
-					docs.forEach( function(el){
+					docs.forEach( function( el ){
 
-						el.access.pull('bot');
-						el.access.pull('early-adopter');
 						
 						/*Update start*/
-						if( /^bot[\d]*[hf]{1}$/.test(el.email) )
 						el.access.push('bot');
+						el.gender = "female";
 
-						if( moment() < moment({year:'2015',month:'6', day:'1'}) )
-						el.access.push('early-adopter');
+						//if( moment() < moment({year:'2015',month:'6', day:'1'}) )
+						//el.access.push('early-adopter');
 						/*Update end*/
 
 						el.save();
 					});
-				console.log('Done');
+				console.log('Done  on : '+ docs.length + ' docs');
 			};
 
 			User.find( select, callback_find );

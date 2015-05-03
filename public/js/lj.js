@@ -1555,16 +1555,26 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						
 							sleep( LJ.ui.artificialDelay , function(){ 
 
+								/* Internal */
 								LJ.user.status = 'hosting';
 								LJ.user.hostedEventId = eventId;
+								LJ.myAskers = data.myEvent.askersList;
 
+								/* Display in Manage */
+        						LJ.fn.displayAskers();
+        						LJ.fn.addFriendLinks();
+								LJ.fn.refreshArrowDisplay();
+
+								/* Smooth transition */
 								LJ.fn.displayMenuStatus( function(){ $('#management').click(); } );
+
+								/* CreateEvent UI restore */
 								LJ.fn.hideLoaders();
 								$('.themeBtn').removeClass('validating-btn');
 								LJ.$createEventWrap.find('input, #eventDescription').val('');
 								LJ.$createEventWrap.find('.selected').removeClass('selected');
-								LJ.fn.refreshArrowDisplay();
 
+								/* Display in Events */
 								LJ.fn.insertEvent( myEvent );
 								$('#refreshEventsFilters').click();
 
@@ -2357,6 +2367,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         handleCreateEventSuccess: function( data ){
 
         	var myEvent = data.myEvent;
+
+        		LJ.myAskers = data.myEvent.askersList;
+        		LJ.fn.displayAskers();
+
         		/* Réagir si un ami créé un évènement, MAJ les buttons */ 
 				//LJ.fn.toastMsg( myEvent.hostName + ' a créé un évènement !', 'info' );
 				LJ.fn.bubbleUp( '#events' );

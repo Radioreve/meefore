@@ -34,6 +34,7 @@
 	- Détecter quand les users mettent des photos au mauvais format
 	- Créer un boutton shuffle pour les bots
 	- Rendre le chat un minimum persistant : télécharger les msg non lus au click
+	- Ne pas écrire en dure les choix de drink/mood
 	
 	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription
 	- Mettre une real time sync sur les données... ( nom, age, desc, drink, mood, photo )
