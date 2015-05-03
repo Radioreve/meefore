@@ -15,7 +15,7 @@ var createEvent = function( req, res ) {
 
     var hostId = data.hostId,
         socketId = data.socketId,
-        userIds = data.userIds;
+        userIds = data.userIds || [];
 
     var currentDate = new Date(),
         currentHour = currentDate.getHours();
@@ -76,12 +76,14 @@ var createEvent = function( req, res ) {
                 toClient:"Impossible d'ajouter certains de vos amis"
             });
 
+        /*
         if( users.length == 0 )
             return eventUtils.raiseError({
                 err:err,
                 res:res,
                 toClient:"Ajouter au moins une personne!"
             });
+        */
 
         for( var i=0; i<users.length; i++ ){
             newEvent.askersList.push( users[i] );
