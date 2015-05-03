@@ -14,26 +14,17 @@
 	  	    receiverId  = data.receiverId,
 	  	    msg = data.msg;
 
-	  var user = watcher.accessUser( receiverId );
-	  if( !user ){
-	  	return eventUtils.raiseError({
-	  		res: res,
-	  		toClient: "Il/elle n'est pas connecté(e)",
-	  		flash: true
-	  	});
-	  }
+		  var expose = {
+		  	senderId: senderId,
+		  	receiverId: receiverId,
+		  	msg: msg
+		  }
 
-	  var expose = {
-	  	senderId: senderId,
-	  	receiverId: receiverId,
-	  	msg: msg
-	  }
+		eventUtils.sendSuccess( res, expose );
 
-	  console.log( watcher.accessUser( receiverId ) );
-	  console.log( watcher.accessUser( receiverId ).channel );
-
-	  eventUtils.sendSuccess( res, expose );
-	  pusher.trigger( watcher.accessUser( receiverId ).channel , 'send-message-success', expose );
+		var user = watcher.accessUser( receiverId );
+		if( user )
+			pusher.trigger( watcher.accessUser( receiverId ).channel , 'send-message-success', expose );
 
 	};
  
@@ -58,21 +49,12 @@
 		var senderId = req.body.senderId,
 			receiverId = req.body.receiverId;
 
+			eventUtils.sendSuccess( res, {} );
+
 		var expose = { chatId: senderId };
-
 		var user = watcher.accessUser( receiverId );
-		  if( !user ){
-		  	return eventUtils.raiseError({
-		  		res: res,
-		  		toClient: "Il/elle n'est pas connecté(e)",
-		  		flash: true
-		  	});
-		  }
-		if( !watcher.accessUser( receiverId ) )
-			return eventUtils.sendSuccess( res ,{} );
-
-		pusher.trigger( watcher.accessUser( receiverId ).channel, 'user-started-typing-success', expose );
-		eventUtils.sendSuccess( res, { msg:"Not online" } );
+		if( user )
+			pusher.trigger( user.channel, 'user-started-typing-success', expose );
 	}
 
 	var sayUserStoppedTyping = function( req, res ){
@@ -80,22 +62,14 @@
 		var senderId = req.body.senderId,
 			receiverId = req.body.receiverId;
 
+			eventUtils.sendSuccess( res, {} );
+
 		var expose = { chatId: senderId };
-
 		var user = watcher.accessUser( receiverId );
-		  if( !user ){
-		  	return eventUtils.raiseError({
-		  		res: res,
-		  		toClient: "Il/elle n'est pas connecté(e)",
-		  		flash: true
-		  	});
-		  }
+		if( user )
+			pusher.trigger( user.channel, 'user-stopped-typing-success', expose );
+		  
 
-		if( !watcher.accessUser( receiverId ) )
-			return eventUtils.sendSuccess( res ,{} );
-
-		pusher.trigger( watcher.accessUser( receiverId ).channel, 'user-stopped-typing-success', expose );
-		eventUtils.sendSuccess( res, { msg:"Not online" } );
 	}
 
 	module.exports = {

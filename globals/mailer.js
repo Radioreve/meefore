@@ -1,4 +1,4 @@
-		
+
 		var config = require('../config/config'),
 			fs = require('fs'),
 			sendgrid = require('sendgrid')( config.sendgrid.api_user, config.sendgrid.api_key ),
@@ -20,7 +20,7 @@
 
 			var welcome_email = new sendgrid.Email({
 				from:'juliette@meefore.com',
-				fromname:'Daenerys',
+				fromname:'Littlefinger',
 				subject:"Les soirées bidon, c'est terminé",
 				to: email,
 				html: html

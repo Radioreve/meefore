@@ -317,7 +317,7 @@ top: 33px;
 	height: 14px;
 	border:none;
 	top: -6px;
-	background: rgb(247, 0, 0);
+	background: rgb(214, 92, 92);
 	color: rgb(252, 252, 252);
 }
 .menu-item:hover{
@@ -572,7 +572,7 @@ input[type="radio"] + span{
 	padding-bottom: 20px;
 }
 #profileWrap textarea{
-	width: 70%;
+	width: 80%;
 	padding-top: 20px;
 	padding-left: 10px;
 	height: 50px;
@@ -1281,3 +1281,9 @@ margin: 20px 0 20px;
 .online-marker.active{
 	opacity: 1!important;
 } 
+
+.inspire{
+	float: right;
+	margin: 10px 10px 0 0;
+	color: #bbb;
+}

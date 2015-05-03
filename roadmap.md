@@ -21,7 +21,7 @@
 	- Mailchimp integration 
 
 #Bugs
-	- Rédiger le mail de bienvenu, pr l'instant c celui de melti capital
+	- 
 
 #Schedule 
  	Todo
@@ -31,6 +31,9 @@
 	- Validation clientside, validation serverside
 	- SEO
 	- Refactoring pusher event pour savoir qui est online -> presence channels
+	- Détecter quand les users mettent des photos au mauvais format
+	- Créer un boutton shuffle pour les bots
+	- Rendre le chat un minimum persistant : télécharger les msg non lus au click
 	
 	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription
 	- Mettre une real time sync sur les données... ( nom, age, desc, drink, mood, photo )

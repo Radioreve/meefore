@@ -84,7 +84,7 @@
             {
                 return '<div class="askInWrap">\
                            <button class="themeBtnToggle askIn asked"> En attente </button> \
-                           <div class="chatIconWrap"><i class="icon icon-chat"/></div>\
+                           <div class="chatIconWrap"><i class="icon icon-chat"/><span class="bubble filtered"></span></div>\
                            <div class="friendAddIconWrap"><i class="icon icon-user-add"/></div>\
                         </div>';
             }
@@ -93,7 +93,7 @@
             {
                 return '<div class="askInWrap">\
                            <button class="themeBtnToggle askIn idle">L\'évènement est complet</button> \
-                           <div class="chatIconWrap none"><i class="icon icon-chat"/></div>\
+                           <div class="chatIconWrap none"><i class="icon icon-chat"/><span class="bubble filtered"></span></div>\
                            <div class="friendAddIconWrap none"><i class="icon icon-user-add"/></div>\
                         </div>';
             }
@@ -101,7 +101,7 @@
             /* Default */
                 return '<div class="askInWrap">\
                            <button class="themeBtnToggle askIn idle"> Je veux y aller </button> \
-                           <div class="chatIconWrap none"><i class="icon icon-chat"/></div>\
+                           <div class="chatIconWrap none"><i class="icon icon-chat"/><span class="bubble filtered"></span></div>\
                            <div class="friendAddIconWrap none"><i class="icon icon-user-add"/></div>\
                         </div>';
 
@@ -321,7 +321,9 @@
 	                             +'<div class="a-desc"><span class="label">Verre</span><div>'+a.favoriteDrink+'</div></div>'
                            +'</div>'
 	                             +'<div class="a-btn">'
-	                             	 +'<button class="themeBtnToggle btn-chat"><i class="icon icon-chat"></i></button>'
+	                             	 +'<button class="themeBtnToggle btn-chat">'
+                                        +'<i class="icon icon-chat"></i>'
+                                     +'</button>'
 
 	                           +'</div>'
                         + chatWrap

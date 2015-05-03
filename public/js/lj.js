@@ -36,7 +36,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				if( (states.current == 'connecting') && LJ.state.connected  )
 				{
-					LJ.fn.toastMsg("Reconnexion...", 'success', true);
+					LJ.fn.toastMsg("La connexion a été interrompue", 'success', true);
 				}
 				if( states.current == 'disconnected' )
 				{
@@ -202,6 +202,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             				return LJ.fn.toastMsg("3 tags maximum", 'error' );
             		}       		
             	});
+
+            	$('.inspire').click( function(){
+
+            		var list = LJ.settings.profileDescList;
+            		$(this).siblings('textarea').val( LJ.settings.profileDescList[ LJ.fn.randomInt( 0, list.length - 1) ])
+
+            	});
+
+
 			})();
 				
 		},
@@ -564,6 +573,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
             LJ.fn.fetchAskers();
 		},
+		randomInt: function(low, high) {
+    		return Math.floor(Math.random() * (high - low + 1) + low);
+		},
 		displayUserSettings: function(){
 
 				/* Profile View*/
@@ -686,6 +698,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('.friendAddIconWrap.active').removeClass('active');
 
 			var chatId = $chatWrap.data('chatid');
+
+			$('.chatWrap[data-chatid="'+chatId+'"]').parents('.eventItemWrap').find('span.bubble').addClass('filtered').text('');
 
 			     if( !$surfacing )
 			     {
@@ -1958,6 +1972,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	csl('Adding chatline');
 
         	var chatId = data.senderId;
+
+        	var $chatIconWrap = $('.chatWrap[data-chatid="'+chatId+'"]').parents('.eventItemWrap').find('.chatIconWrap');
+        		if( !$chatIconWrap.hasClass('active') )
+        			LJ.fn.bubbleUp( $chatIconWrap );
 
             var chatLineHtml = '<div class="chatLine none">'
 								+'<div class="cha cha-other">'+data.msg+'</div>'

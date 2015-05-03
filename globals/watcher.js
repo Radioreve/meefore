@@ -4,6 +4,7 @@
 		pusher = require('./pusher');
 
 	var onlineUsers = {},
+		unreadMessages = {},
 		nextwatch_default = 0.1*60*1000, 
 		gaptime_default = nextwatch_default * 100;
 

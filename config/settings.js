@@ -4,15 +4,27 @@ var settings = {
 	eventsTerminateAt: 3,  // utiliser pour le cron job
 	eventsRestartAt: 4,   // utiliser pour empêcher de créer un event trop tôt
 	tagList: 
-			 [  'afterwork',
+			 [  
+			 	'afterwork',
 				'club',
 				'apero',
-				'apparte',
+				'blackout',
 				'bar',
+				'apparte',
+				'rock',
 				'rencontre',
+				'peace',
 				'erasmus',
-				'blackout'
+				'electro',
+				'latino'
 			 ],
+	profileDescList:
+			[
+				'Léo du bon marché',
+				'Mike de Moutain Hike',
+				'Guitou du Chateauroux',
+				'Louis de Rivoli'
+			],
 	activeEventStates:
 			 [
 			 	'open',
