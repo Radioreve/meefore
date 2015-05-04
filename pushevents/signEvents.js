@@ -6,6 +6,7 @@
 		randtoken = require('rand-token'),
 		validator = require('validator'),
 		eventUtils = require('./eventUtils'),
+		moment = require('moment'),
 		_ = require('lodash');
 
 	var passport = global.passport,
@@ -74,7 +75,7 @@
 				eventUtils.sendSuccess( res, expose );
 
 				/* Mise à jour du Watcher */
-				var d = new Date();
+				var d = moment();
 				watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
 
 
@@ -130,7 +131,8 @@
 		var fbId = req.body.facebookProfile.id,
 			email = req.body.facebookProfile.email,
 			gender = req.body.facebookProfile.gender,
-			name = req.body.facebookProfile.first_name;
+			name = req.body.facebookProfile.first_name,
+			offset = req.body.offset;
 
 		console.log('Authenticating with Facebook with id : ' + fbId );
 
@@ -149,7 +151,7 @@
 				eventUtils.sendSuccess( res, expose );
 
 				/* Mise à jour du Watcher */
-				var d = new Date();
+				var d = moment();
 				watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
 				return;
 			}
@@ -161,7 +163,7 @@
 			newUser.password = newUser.generateHash('M3efore'); // les gens qui s'authentifient via fb n'ont pas besoin de password
 			newUser.gender = gender;
 			newUser.name = name;;
-			newUser.signupDate = new Date();
+			newUser.signupDate = moment.utc( offset );
 
 			// public one based on global key
 			// personnal one based on randtoken 
@@ -189,7 +191,7 @@
 					eventUtils.sendSuccess( res, expose );
 
 					/* Mise à jour du Watcher */
-					var d = new Date();
+					var d = moment();
 					watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
 
 					mailer.sendWelcomeEmail( email, name );

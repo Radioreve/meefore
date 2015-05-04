@@ -60,13 +60,11 @@
 					if( moment() < moment({year:'2015',month:'6', day:'1'}) )
 						newUser.access.push('early-adopter');
 
-					if( new Date())
-
 					mailer.sendWelcomeEmail( email );
 
 					newUser.gender = req.body.gender;
 					newUser.age = 25;
-					newUser.signupDate = new Date();
+					newUser.signupDate = moment.utc().utcOffset( req.body.offset );
 					
 					// public one based on global key
 					// personnal one based on randtoken 

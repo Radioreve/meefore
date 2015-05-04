@@ -27,7 +27,7 @@ var createEvent = function( req, res ) {
         });
     }
 
-    var hour = parseInt( data.hour );
+    var hour =  data.hour; var minut = data.min;
     if( hour < 14  || hour > 23 )
     return eventUtils.raiseError({
             toClient:"Les meefores ont lieu entre 14h00 et 23h59",
@@ -58,8 +58,8 @@ var createEvent = function( req, res ) {
     
     var newEvent = new Event( data );
 
-    newEvent.createdAt = moment().utcOffset('+0200');
-    newEvent.beginsAt = moment({ h: data.hour, m: data.min }).utcOffset('+0200');
+        newEvent.beginsAt  = moment.utc({ h: data.hour, m: data.min }).utcOffset( data.offset );
+        newEvent.createdAt = moment.utc().utcOffset( data.offset );
 
     User.find({ '_id': { $in: userIds }}, function( err, users ){
 

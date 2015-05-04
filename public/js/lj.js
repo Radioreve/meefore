@@ -214,13 +214,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			})();
 				
 		},
-		signupUser: function(credentials){
+		signupUser: function( credentials ){
 
 		    credentials = {} ;
 
 			credentials.email = LJ.$emailInputSignup.val();
 			credentials.password = LJ.$passwordInputSignup.val();	
 			credentials.gender = $('#signupWrapp input[type="radio"]:checked').val();
+			credentials.offset = (new Date).getTimezoneOffset();
 			//csl("Posting this : " +JSON.stringify(credentials,0,4))
 
 			LJ.$backToLogin.velocity("transition.slideLeftOut", { duration:300 });
@@ -414,13 +415,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				$.ajax({
 
 					method:'POST',
-					data: { facebookProfile: facebookProfile },
+					data: { facebookProfile: facebookProfile, offset: (new Date).getTimezoneOffset() },
 					dataType:'json',
 					url:'/auth/facebook',
 					success: function( data ){
-
 						LJ.fn.handleSuccessLogin( data );
-
 					},
 					error: function( err ){
 
@@ -1534,7 +1533,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				e.name 		  	  = $('#eventName').val();
 				e.location    	  = $('#eventLocation').val();
 				e.hour 		  	  = $('#eventHour').val();
-				e.min  		  	  = $('#eventMinut').val();
+				e.min  	  		  = $('#eventMinut').val();
+				e.offset          = (new Date()).getTimezoneOffset();
 				e.description 	  = $('#eventDescription').val();
 				e.maxGuest        = $('#eventMaxGuest').val();
 				e.tags            = tags;

@@ -1,5 +1,6 @@
 
 	var mongoose = require('mongoose');
+		require('mongoose-moment')( mongoose );
 
 	var EventSchema = mongoose.Schema({
 
