@@ -77,6 +77,68 @@
 				LJ.fn.toggleAdminPanel();
 			});
 
+			$('body').on('click', '#botbarre div.toggleable', function(){
+				
+				var $self = $(this);
+
+
+				//--------- Seulement ceux qui ont créé un event -------------//
+				if( !$self.hasClass('active') && $self.hasClass('bot-order-event') )
+				{
+					$self.addClass('active');
+					$('.user-bot .createBotEvent:not(.validating-btn)').parents('.user-bot').addClass('filtered');
+					return;
+				}
+				if( $self.hasClass('active') && $self.hasClass('bot-order-event') )
+				{
+					$self.removeClass('active');
+					$('.user-bot .createBotEvent:not(.validating-btn)').parents('.user-bot').removeClass('filtered');
+					return;
+				}
+
+				//--------- Seulement les hommes -------------//
+				if( !$self.hasClass('active') && $self.hasClass('bot-order-male') )
+				{	
+					$('.bot-order-male, .bot-order-female').removeClass('active');
+					$self.addClass('active');
+					$('.user-bot[data-usergender="female"]').addClass('filtered');
+					$('.user-bot[data-usergender="male"]').removeClass('filtered');
+					return;
+				}
+				if( $self.hasClass('active') && $self.hasClass('bot-order-male') )
+				{
+					$self.removeClass('active');
+					$('.user-bot[data-usergender="female"]').removeClass('filtered');
+					return;
+				}
+
+				//--------- Seulement les femmes -------------//
+				if( !$self.hasClass('active') && $self.hasClass('bot-order-female') )
+				{	
+					$('.bot-order-male, .bot-order-female').removeClass('active');
+					$self.addClass('active');
+					$('.user-bot[data-usergender="male"]').addClass('filtered');
+					$('.user-bot[data-usergender="female"]').removeClass('filtered');
+					return;
+				}
+				if( $self.hasClass('active') && $self.hasClass('bot-order-female') )
+				{
+					$self.removeClass('active');
+					$('.user-bot[data-usergender="male"]').removeClass('filtered');
+					return;
+				}
+				
+			});
+
+			$('body').on('click', '.bot-order-shuffle', function(){
+
+				var $arr = $('.user-bot');
+					$arr.each( function( i, el ){ 
+						$(el).insertAfter( $( $('.user-bot')[ LJ.fn.randomInt(0, $arr.length - 1 )]) ) 
+					});
+
+			});
+
 			$('body').on('click', '#createEventTemplate button', function(){
 
 				console.log('clicked');
@@ -227,7 +289,14 @@
 									+'<div class="col-head wrap">'
 										+'<span>Bots</span>'
 									+'</div>'
-									+'<div id="bots" class="col-body">'
+									+'<div id="botsBodyWrap" class="col-body">'
+									+'<div id="botbarre">'
+										+'<div class="bot-order-shuffle"><i class="icon icon-arrows-cw"></i></div>'
+										+'<div class="bot-order-event toggleable"><i class="icon icon-glass"></i></div>'
+										+'<div class="bot-order-male toggleable"><i class="icon icon-male"></i></div>'
+										+'<div class="bot-order-female toggleable"><i class="icon icon-female"></i></div>'
+									+'</div>'
+									+'<div id="bots">'
 										//...
 									+'</div>'
 								+'</div>';

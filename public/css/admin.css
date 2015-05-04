@@ -124,4 +124,18 @@
 	cursor:pointer;
 }
 
+#botbarre div{
+    display: inline-block;
+
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 0 3px;
+    border-radius: 2px;
+}
+#botbarre div.active{
+	background-color:#F0F0F0; 
+}
+#botBarre i{
+
+}
 

@@ -234,7 +234,7 @@
                 return '1er';
 
             return loc + 'ème';
-            
+
 		},
 		matchDateHHMM: function( d ){
 
@@ -517,6 +517,7 @@
                           + 'data-useremail="'+u.email+'"'
                           + 'data-userdrink="'+u.favoriteDrink.toLowerCase()+'"'
                           + dataset
+                          + 'data-usergender="'+u.gender+'"'
                           + 'data-userage="'+u.age+'">'
                           +'<div class="u-head imgWrapThumb">'
                             +'<i class="icon online-marker icon-right-dir"></i>'
