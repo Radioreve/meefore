@@ -68,7 +68,6 @@
 		var user = watcher.accessUser( receiverId );
 		if( user )
 			pusher.trigger( user.channel, 'user-stopped-typing-success', expose );
-		  
 
 	}
 

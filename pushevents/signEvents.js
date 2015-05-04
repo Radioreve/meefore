@@ -131,8 +131,7 @@
 		var fbId = req.body.facebookProfile.id,
 			email = req.body.facebookProfile.email,
 			gender = req.body.facebookProfile.gender,
-			name = req.body.facebookProfile.first_name,
-			offset = req.body.offset;
+			name = req.body.facebookProfile.first_name;
 
 		console.log('Authenticating with Facebook with id : ' + fbId );
 
@@ -163,7 +162,7 @@
 			newUser.password = newUser.generateHash('M3efore'); // les gens qui s'authentifient via fb n'ont pas besoin de password
 			newUser.gender = gender;
 			newUser.name = name;;
-			newUser.signupDate = moment.utc( offset );
+			newUser.signupDate = moment.utc();
 
 			// public one based on global key
 			// personnal one based on randtoken 

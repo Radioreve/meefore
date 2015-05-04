@@ -64,7 +64,7 @@
 
 					newUser.gender = req.body.gender;
 					newUser.age = 25;
-					newUser.signupDate = moment.utc().utcOffset( req.body.offset );
+					newUser.signupDate = moment.utc();
 					
 					// public one based on global key
 					// personnal one based on randtoken 

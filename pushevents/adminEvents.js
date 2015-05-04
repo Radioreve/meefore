@@ -61,10 +61,7 @@
 					res:res,
 					toClient:"Aucune donnée n'a été populated",
 					err:err
-				});
-
-			console.log( eventData );
-			
+				});			
 
 			var myEvent = new Event( eventData );
 			

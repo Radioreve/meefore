@@ -230,37 +230,22 @@
 		},
 		matchLocation: function( loc ){
 
-			if( loc == 1){
-				return '1er';
-			}
-			
-				return loc + 'ème';
-			
+            if( loc == 1 )
+                return '1er';
+
+            return loc + 'ème';
+            
 		},
-		matchDateHHMM: function(d){
+		matchDateHHMM: function( d ){
 
-	    	 var dS = '';
+            var offset = (new Date()).getTimezoneOffset(),
+                date = moment( d ).add( offset, 'minutes' );
 
-    	     if( d.getHours() == 0){
-    	     	dS = '0';
-    	     }
-	       	 dS += d.getHours() + "h";
-     	     if( d.getMinutes() < 10){
-     	     	dS+='0';
-     	     }
-             dS += d.getMinutes();
-   		     return dS;
+	    	return date.format('HH')+'H'+date.format('mm');
+
 		},
 		matchDateDDMMYY: function(d){
-			
-			var d = new Date(d);
-
-			var day = d.getDate();
-			var month = d.getMonth() + 1 + '';
-			var year = (d.getFullYear()+'').substring(4,2);
-
-			return day + '/' + month + '/' + year;
-			
+			return moment(d).format('DD/MM/YYYY')			
 		},
 		renderAskerPlaceholder: function(){
 

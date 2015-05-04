@@ -58,8 +58,8 @@ var createEvent = function( req, res ) {
     
     var newEvent = new Event( data );
 
-        newEvent.beginsAt  = moment.utc({ h: data.hour, m: data.min }).utcOffset( data.offset );
-        newEvent.createdAt = moment.utc().utcOffset( data.offset );
+        newEvent.beginsAt  = moment.utc({ h: data.hour, m: data.min });
+        newEvent.createdAt = moment.utc();
 
     User.find({ '_id': { $in: userIds }}, function( err, users ){
 
