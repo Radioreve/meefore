@@ -5,6 +5,7 @@ var User = require('../models/UserModel'),
     eventUtils = require('./eventUtils'),
     settings = require('../config/settings'),
     bots = require('../globals/bots'),
+    moment = require('moment'),
     _ = require('lodash');
 
 var pusher = require('../globals/pusher');
@@ -17,8 +18,6 @@ var createEvent = function( req, res ) {
         socketId = data.socketId,
         userIds = data.userIds || [];
 
-    var currentDate = new Date(),
-        currentHour = currentDate.getHours();
 
     if( settings.isFrozenTime() ){
 
@@ -28,13 +27,7 @@ var createEvent = function( req, res ) {
         });
     }
 
-    var beginsAt = new Date();
     var hour = parseInt( data.hour );
-
-    beginsAt.setHours( hour );
-    beginsAt.setMinutes( parseInt( data.min ));
-    beginsAt.setSeconds(0);
-
     if( hour < 14  || hour > 23 )
     return eventUtils.raiseError({
             toClient:"Les meefores ont lieu entre 14h00 et 23h59",
@@ -64,8 +57,9 @@ var createEvent = function( req, res ) {
     });
     
     var newEvent = new Event( data );
-    newEvent.createdAt = currentDate;
-    newEvent.beginsAt = beginsAt;
+
+    newEvent.createdAt = moment().utcOffset('+0200');
+    newEvent.beginsAt = moment({ h: data.hour, m: data.min }).utcOffset('+0200');
 
     User.find({ '_id': { $in: userIds }}, function( err, users ){
 
