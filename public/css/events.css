@@ -76,11 +76,13 @@
 	background: rgb(239, 239, 239);
 }
 .e-desc{
-	margin-bottom: 10px;
-	font-size: .8em;
+	margin-bottom: 12px;
+	font-size: 12px;
 	margin-left: 6px;
 	color: #838383;
-	font-family: Lato;
+	font-family: 'Karla';
+	letter-spacing: normal;
+	line-height: 14px;
 }
 .e-infos{
 	border-bottom: 1px solid #dde;

@@ -20,10 +20,17 @@ var settings = {
 			 ],
 	profileDescList:
 			[
-				'Léo du bon marché',
-				'Mike de Moutain Hike',
-				'Guitou du Chateauroux',
-				'Louis de Rivoli'
+				"Liberté, Egalité, Ebriété !",
+				"Nouveau sur Paris, souvent chaud le vendredi",
+				"Asian with attitude",
+				"Sans alcool la fête est plus molle",
+				"Avant je m'ennuyais en soirée. Mais ça c'était avant",
+				"Prenez moi comme je suis (sic)",
+				"Etudiant(e) en médecine",
+				"Etudiant(e) en école de com'",
+				"On a conscience avant, on prend conscience après",
+				"Grand mère sait faire de la bonne D",
+				"Ils m'appelaient mousse"
 			],
 	activeEventStates:
 			 [
