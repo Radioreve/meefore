@@ -46,7 +46,17 @@
 	display:inline-block; 
 }
 .e-hostName{
-	font: bold 0.9em 'Lato';
+	position: absolute;
+    bottom: -9px;
+    left: 0px;
+    min-width: 71px;
+    text-align: center;
+    background-color: white;
+    border: 1px solid #E0E0E0;
+    color: #4A4A4A;
+    padding: 4px;
+    font-size: 11px;
+    font-weight: bolder;
 }
 .e-guests{
 	position: relative;
@@ -135,6 +145,7 @@
 	margin-bottom:10px;
 	padding-bottom:20px;
 	border-bottom: 1px solid #E0E0E0;
+	position: relative;
 }
 .bodyWrap{
 
@@ -165,7 +176,7 @@
 	/* padding: 5px; */
 }
 .headWrap div{
-	display:inline-block;
+    display: inline-block;
 }
 .e-active{
 	-webkit-box-shadow: 0 0 25px rgb(128, 128, 128);

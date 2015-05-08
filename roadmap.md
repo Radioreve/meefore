@@ -15,13 +15,13 @@
 	- Mailchimp integration 
 
 #Bugs
-	- Changer le titre de la page en fn des notifications
+	- Régler le problème de la mise à jour temps réelle des gens qui participent.
 	- Ne pas écrire en dure les choix de drink/mood
-	- Bug lors du /f add
-	- Refactoring pusher event pour savoir qui est online -> presence channels
-	- Clientside routing hashtags #
 	- Rendre le chat un minimum persistant : télécharger les msg non lus au click
+	- Changer le titre de la page en fn des notifications
+	- Refactoring pusher event pour savoir qui est online -> presence channels
 	- Améliorer le système de logout ( mettre en place un mécanisme de session )
+	- Clientside routing hashtags #
 
 #Schedule 
  	Todo

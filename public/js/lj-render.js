@@ -189,6 +189,7 @@
 						+ 'data-eventid="'+e._id+'" '
                         + 'data-templateid="'+e.templateId+'"'
 						+ 'data-hostid="'+e.hostId+'" '
+                        + 'data-hostname="'+e.hostName+'" '
 						+ 'data-location="'+e.location+'"'
 						+ 'data-eventstate="'+e.state+'">'
 						+'<div class="eventItemLayer">'
@@ -202,6 +203,7 @@
 						       + '<span class="nbAskers"> '+ e.askersList.length +'</span>'
 						     + '</span>'
 						   + '</div>'
+                           + '<div class="e-hostName">'+e.hostName+'</div>'
 						+ '</div>'
 						+ '<div class="askedInWrap">'
 						+ askersThumbs
@@ -383,16 +385,22 @@
         	return html;
 
         },
-        renderOverlayUser: function( imgId, imgVersion ){
+        renderOverlayUser: function( user ){
 
         	var d = LJ.cloudinary.displayParamsOverlayUser;
-					d.version = imgVersion;
+					d.version = user.imgVersion;
 
-				var imgTag = $.cloudinary.image( imgId, d ).prop('outerHTML');
+				var imgTag = $.cloudinary.image( user.imgId, d ).prop('outerHTML');
 
 				return '<div class="largeThumb">'
 					     + imgTag
 					    +'</div>'
+                        +'<div class="largeProfile">'
+                            //+'<span>'+user.name+'</span>'
+                            //+'<span>'+user.age+'</span>'
+                            //+'<span>'+user.mood+'</span>'
+                            //+'<span>'+user.favoriteDrink+'</span>'
+                        +'</div>'
 
         },
         renderTagsFilters: function(){
@@ -453,7 +461,7 @@
 
             var u = options.user,
                 w = options.wrap,
-                myClass = Array.isArray( options.myClass ) ? options.myClass.join(' ') : options.myClass ;
+                myClass = Array.isArray( options.myClass ) ? options.myClass.join(' ') : options.myClass || '';
                 html = '';
 
             var cl = '', buttons = '', email = '', dataset = '';

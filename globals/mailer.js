@@ -19,9 +19,9 @@
 			var html = tpl({ name: name });
 
 			var welcome_email = new sendgrid.Email({
-				from:'juliette@meefore.com',
-				fromname:'Littlefinger',
-				subject:"Les soirées bidon, c'est terminé",
+				from:'littlefinger@meefore.com',
+				fromname:'Meefore',
+				subject:"Bienvenue sur meefore",
 				to: email,
 				html: html
 			});

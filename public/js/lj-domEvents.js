@@ -20,6 +20,24 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		},
 		handleDomEvents_Globals: function(){
 
+
+			LJ.$body.click( function( e ){
+
+				var el = $(e.target);
+				if( !el.parents('.eventItemWrap').hasClass('mouseover') )
+					$('.chatIconWrap.active, .friendAddIconWrap.active').click();
+
+			});
+
+
+			LJ.$body.on('mouseenter', '.eventItemWrap', function(){
+				$(this).addClass('mouseover');
+			});
+
+			LJ.$body.on('mouseleave', '.eventItemWrap', function(){
+				$(this).removeClass('mouseover');
+			});
+
 			LJ.$body.on('click','.chatInputWrap input[type="submit"]', function( e ){
 
             	e.preventDefault();
@@ -44,10 +62,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
             LJ.$body.on('click', 'img.zoomable', function(){
 
 			 	/* Extracting the img id from the dom */
-			 	var imgId      = $( this ).data('imgid'),
-			 		imgVersion = $( this ).data('imgversion')|| ''; 
+			 	var user = {
+			 		imgId      : $( this ).data('imgid'),
+			 		imgVersion : $( this ).data('imgversion')|| ''
+			 	};
 
-                LJ.fn.toggleOverlay( 'high', LJ.fn.renderOverlayUser( imgId, imgVersion ), 300);
+                LJ.fn.toggleOverlay( 'high', LJ.fn.renderOverlayUser( user ), 300);
 
             });
             

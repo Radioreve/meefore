@@ -1,8 +1,8 @@
 
 var settings = {
 
-	eventsTerminateAt: 3,  // utiliser pour le cron job
-	eventsRestartAt: 4,   // utiliser pour empêcher de créer un event trop tôt
+	eventsTerminateAt: 1,  // utiliser pour le cron job
+	eventsRestartAt: 9,   // utiliser pour empêcher de créer un event trop tôt
 	tagList: 
 			 [  
 			 	'afterwork',
@@ -13,10 +13,7 @@ var settings = {
 				'apparte',
 				'rock',
 				'rencontre',
-				'peace',
-				'erasmus',
-				'electro',
-				'latino'
+				'erasmus'
 			 ],
 	profileDescList:
 			[
@@ -30,7 +27,13 @@ var settings = {
 				"Etudiant(e) en école de com'",
 				"On a conscience avant, on prend conscience après",
 				"Grand mère sait faire de la bonne D",
-				"Ils m'appelaient mousse"
+				"Ils m'appelaient mousse",
+				"Delphine de porte dauphine",
+				"Boubakar du Dakar",
+				"Stoi le manque d'inspi",
+				"Marjorie. C'est pas grave.",
+				"C'est pas parcequ'il y a un gardien qu'on peut pas marquer de but..."
+
 			],
 	activeEventStates:
 			 [

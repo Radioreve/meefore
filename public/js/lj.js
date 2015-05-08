@@ -1185,14 +1185,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				
 				if( alreadyIn )
 				{
-					LJ.fn.hideLoaders();
-					LJ.fn.displayAddFriendToPartyButton();
 					LJ.fn.toastMsg('Votre ami s\'est ajouté à l\évènement entre temps', 'info');
+					LJ.fn.hideLoaders();
+					var button = '<button class="themeBtn onHold">'
+			                      + '<i class="icon icon-ok-1"></i>'
+			                      +'</button>';
+			            $('.f-item[data-userid="'+userId+'"]').find('button').replaceWith( button );
 					return;
 				}
 
-				LJ.fn.bubbleUp( '#management' )
-				
+					
+					/* Demande pour soi-même */
 					if( LJ.user._id == requesterId && LJ.user._id == userId )
 					{
 						LJ.fn.hideLoaders();
@@ -1202,25 +1205,33 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 								  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
 					}
 
+					/* Demande de la part de quelqu'un d'autre */
 					if( LJ.user._id != requesterId && LJ.user._id == userId )
 					{	
+						LJ.fn.bubbleUp( '#events' )
 						LJ.fn.toastMsg('Un ami vous a ajouté à une soirée', 'info');
 						$('.eventItemWrap[data-eventid="'+eventId+'"]').find('.askIn')
 						          .removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
 								  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
 					}
 
+					/* Demande pour quelqu'un d'autre */
 					if( LJ.user._id == requesterId && LJ.user._id != userId )
 					{
+
 						LJ.fn.toastMsg('Votre ami a été ajouté', 'info');
 						LJ.fn.hideLoaders();
-						LJ.fn.displayAddFriendToPartyButton();
+						var button = '<button class="themeBtn onHold">'
+			                      + '<i class="icon icon-ok-1"></i>'
+			                      +'</button>';
+			            $('.f-item[data-userid="'+userId+'"]').find('button').replaceWith( button );
 					}
 
 				/* Pour l'host */
 				if( LJ.user._id == hostId )
 				{
 
+					LJ.fn.bubbleUp( '#management' )
 					LJ.myAskers.push( asker );
 
 					var askerMainHTML  = LJ.fn.renderAskerMain( asker ),
