@@ -15,10 +15,7 @@
 	- Mailchimp integration 
 
 #Bugs
-	- Régler le problème de la mise à jour temps réelle des gens qui participent.
-	- Ne pas écrire en dure les choix de drink/mood
-	- Rendre le chat un minimum persistant : télécharger les msg non lus au click
-	- Changer le titre de la page en fn des notifications
+	- Repenser complètement le système de chat
 	- Refactoring pusher event pour savoir qui est online -> presence channels
 	- Améliorer le système de logout ( mettre en place un mécanisme de session )
 	- Clientside routing hashtags #
@@ -27,13 +24,11 @@
  	Todo
 	- SEO
 	- Détecter quand les users mettent des photos au mauvais format
-	
 	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription
 	- Mettre une real time sync sur les données... ( nom, age, desc, drink, mood, photo )
 
 #BigWarnings
 	- Bug sur le friend link, lors que i > 9 ?
-	- Cron jobs Heroku fail to work when sleeping dynos
 	- [security] Coder une fn qui vérifie que pour certains events, l'id envoyé correspond bien à celle enregistré 
 	  sur le socket qui emet la demande, pour éviter un socket spoofing éventuel (annuler l'event de kk1 d'autre...)
 

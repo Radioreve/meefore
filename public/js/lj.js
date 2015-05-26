@@ -1001,10 +1001,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	/* Mise à jour dynamique des filters */
         	$( '.tags-wrap' ).html('').append( LJ.fn.renderTagsFilters() );
         	$( '.locs-wrap' ).html('').append( LJ.fn.renderLocsFilters() );
+        	$( '.input-profile-rows').html('').append( LJ.fn.renderProfileRows( _.sortBy( settings.profileRowsList, 'place' )) );
         	$( '#no' ).html('').append( LJ.tpl.noResults );
 
         	$('#friendListWrap').jScrollPane();
         	LJ.state.jspAPI['#friendListWrap'] = $('#friendListWrap').data('jsp');
+
+
 
 			/* Affichage de la vue en fonction du state user */
         	sleep( LJ.ui.artificialDelay, function(){   
@@ -1346,13 +1349,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.myOnlineUsers = data.onlineUsers;
 
 			LJ.fn.initAppSettings( data, settings );
-			LJ.fn.displayUserSettings();
 
 			LJ.fn.subscribeToChannels();
 			LJ.fn.initChannelListeners();
 			
 			LJ.fn.initCloudinary( user.cloudTag );
 			LJ.fn.initLayout( settings );
+			LJ.fn.displayUserSettings();
 
 			LJ.fn.fetchEvents();
 			LJ.fn.fetchUsers();
@@ -1600,46 +1603,43 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		fetchEvents: function(){
 
 			if( LJ.state.fetchingEvents )
-			{ 
-				LJ.fn.toastMsg('Already fetching events', 'error');
-			}
-			else
-			{
-				LJ.state.fetchingEvents = true;
+				return LJ.fn.toastMsg('Already fetching events', 'error');
+			
+			LJ.state.fetchingEvents = true;
 
-				var eventName = 'fetch-events',
-					data = { userId: LJ.user._id };
+			var eventName = 'fetch-events',
+				data = { userId: LJ.user._id };
 
-				var cb = {
-					success: function( data ){
-						//console.log(data);
-						var myEvents = data.myEvents;
-						LJ.state.fetchingEvents = false;
+			var cb = {
+				success: function( data ){
+					//console.log(data);
+					var myEvents = data.myEvents;
+					LJ.state.fetchingEvents = false;
 
-						var L = myEvents.length;
-						csl('Events fetched from the server, number of events : ' + L);
+					var L = myEvents.length;
+					csl('Events fetched from the server, number of events : ' + L);
 
-						for( var i=0; i<L; i++ ){
+					for( var i=0; i<L; i++ ){
 
-							LJ.myEvents[i] = myEvents[i];
-							LJ.myEvents[i].createdAt = new Date( myEvents[i].createdAt );
-							LJ.myEvents[i].beginsAt  = new Date( myEvents[i].beginsAt );
-						}
-
-						/* L'array d'event est trié à l'initialisation */
-						LJ.myEvents.sort( function( e1, e2 ){
-							return e1.beginsAt -  e2.beginsAt ;
-						});
-
-						LJ.fn.displayEvents();
-					},
-					error: function( xhr ){
-						csl('Error fetching events');
+						LJ.myEvents[i] = myEvents[i];
+						LJ.myEvents[i].createdAt = new Date( myEvents[i].createdAt );
+						LJ.myEvents[i].beginsAt  = new Date( myEvents[i].beginsAt );
 					}
-				};
-					
-                LJ.fn.say( eventName, data, cb );
-            }
+
+					/* L'array d'event est trié à l'initialisation */
+					LJ.myEvents.sort( function( e1, e2 ){
+						return e1.beginsAt -  e2.beginsAt ;
+					});
+
+					LJ.fn.displayEvents();
+				},
+				error: function( xhr ){
+					csl('Error fetching events');
+				}
+			};
+				
+            LJ.fn.say( eventName, data, cb );
+            
 		},
         fetchAskers: function(){
 
@@ -2256,6 +2256,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         	LJ.myChannels['mychan'].bind('user-started-typing-success', LJ.fn.showUserTyping );
         	LJ.myChannels['mychan'].bind('user-stopped-typing-success', LJ.fn.hideUserTyping );
+
+        	LJ.myChannels['defchan'].bind('display-msg', function( data ){
+        		LJ.fn.toastMsg( data.msg, 'info' );
+        	});
 
 
 

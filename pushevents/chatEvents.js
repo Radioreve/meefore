@@ -53,6 +53,7 @@
 
 		var expose = { chatId: senderId };
 		var user = watcher.accessUser( receiverId );
+
 		if( user )
 			pusher.trigger( user.channel, 'user-started-typing-success', expose );
 	}
@@ -66,6 +67,7 @@
 
 		var expose = { chatId: senderId };
 		var user = watcher.accessUser( receiverId );
+		
 		if( user )
 			pusher.trigger( user.channel, 'user-stopped-typing-success', expose );
 

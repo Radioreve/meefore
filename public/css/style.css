@@ -537,7 +537,7 @@ input[type="radio"] + span{
 	color: #999;
 }
 .fieldsWrap .input-row-wrap{
-    margin-bottom: 0px;
+    margin-bottom: 3px;
 }
 .fieldsWrap .input-row-wrap:last-child{
 	margin-top: -7px;
@@ -569,7 +569,7 @@ input[type="radio"] + span{
 }
  
 .input-row-wrap.split{
-	padding-bottom: 20px;
+	/* padding-bottom: 20px; */
 }
 #profileWrap textarea{
 	width: 80%;
@@ -802,7 +802,7 @@ body > footer{
 .overlay-low h2{
 	color:black; 
 }
-#favoriteDrink, #mood{
+#drink, #mood{
 	display:inline-block;
 }
 

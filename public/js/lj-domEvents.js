@@ -280,7 +280,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			LJ.$validateBtn.click( LJ.fn.updateProfile );
 
-			$('#profileWrap .drink').click( function(){
+			LJ.$body.on('click', '.drink', function(){
 
 				$('#profileWrap .drink.modified').removeClass('modified');
 				if( $(this).hasClass('selected') ) return; 
@@ -288,7 +288,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			
 			});
 
-			$('#profileWrap .mood').click( function(){
+			LJ.$body.on('click', '.mood', function(){
 
 				$('#profileWrap .mood.modified').removeClass('modified');
 				if( $(this).hasClass('selected') ) return; 

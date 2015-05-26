@@ -15,6 +15,35 @@ var settings = {
 				'rencontre',
 				'erasmus'
 			 ],
+	profileRowsList: 
+			[
+				{
+					"name":"drink",
+					"display":"Ton verre",
+					"place":"1",
+					"values": [ 
+								{ "name":"water", "display":"eau"},
+								{ "name":"soft", "display":"soft"},
+								{ "name":"hard", "display":"hard"},
+								{ "name":"shots", "display":"shots"},
+								{ "name":"wine", "display":"vin"},
+								{ "name":"beer", "display":"bière"},
+							  ]
+				},
+				{
+					"name":"mood",
+					"display":"Humeur du jour",
+					"place":"0",
+					"values": [ 
+								{ "name":"whatever", "display":"whatever"},
+								{ "name":"tired", "display":"fatigué"},
+								{ "name":"drunk", "display":"ivre"},
+								{ "name":"happy", "display":"happy"},
+								{ "name":"fail", "display":"phail"},
+								{ "name":"on fire", "display":"bouillant"},
+							  ]
+				}
+			],
 	profileDescList:
 			[
 				"Liberté, Egalité, Ebriété !",
