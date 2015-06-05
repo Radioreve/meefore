@@ -402,7 +402,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				});
 			}
 
-			if( options.mode == 'curtain' ){
+			if( options.mode == 'curtain' ) {
 
 				var prev = options.prev;			
 				var $prev = $('.'+options.prev);

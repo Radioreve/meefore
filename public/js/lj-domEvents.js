@@ -109,8 +109,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			$('#facebook_connect').click(function(e){
 
-				return window.open('https://www.facebook.com/meefore');
-
 				e.preventDefault();
 				console.log('Login in with Facebook');
 
