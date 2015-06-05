@@ -373,7 +373,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				LJ.$thumbWrap.find('.imgWrap').html('').append( imgTag );
 
-		},
+		}, 
 		displayContent: function( content, options ){
 			
 				options = options || {};
