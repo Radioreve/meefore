@@ -5,27 +5,13 @@
 	- Reset friends : db.users.update({},{ $set: { 'friendList' :[] }},{'multi':true, 'upsert':true})
 					: db.users.update({ 'name' : { $in : ['Karine','Damon','MorganDeToi']}},{ $set : { 'status': 'hosting'} }, {multi:true,upsert:true})
 
-#Idées
-	- 
-
-
 #Production
 	- Database Replica, pre-production & stuff 
 	- Validation clientside, validation serverside
 	- Mailchimp integration 
 
-#V2.0
-	- Repenser complètement le système de chat
-	- Refactoring pusher event pour savoir qui est online -> presence channels
-	- Améliorer le système de logout ( mettre en place un mécanisme de session )
-	- Clientside routing hashtags #
-	- Events layout with masonery
-
 #V2.1 
-	- SEO
-	- Détecter quand les users mettent des photos au mauvais format
 	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription
-	- Mettre une real time sync sur les données... ( nom, age, desc, drink, mood, photo )
 
 #BigWarnings
 	- Bug sur le friend link, lors que i > 9 ?
@@ -38,5 +24,3 @@
   
 #LTE 
 	- Intégrer une vue générale avec une MAP et des pins correspondant aux soirées
-	- Appli mobile 
-	- Lazy load sur les events et sur les users
