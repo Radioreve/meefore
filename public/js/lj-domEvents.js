@@ -7,7 +7,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			LJ.fn.handleDomEvents_Globals();
 			LJ.fn.handleDomEvents_Landing();
-			LJ.fn.handleDomEvents_FrontPage();
 			LJ.fn.handleDomEvents_Navbar();
 			LJ.fn.handleDomEvents_Profile();
 			LJ.fn.handleDomEvents_Events();
@@ -20,13 +19,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		},
 		handleDomEvents_Globals: function(){
 
-
+			/* Faire disparaitre les chats tab lorsqu'on clic à côté */
 			LJ.$body.click( function( e ){
-
 				var el = $(e.target);
 				if( !el.parents('.eventItemWrap').hasClass('mouseover') )
 					$('.chatIconWrap.active, .friendAddIconWrap.active').click();
-
 			});
 
 
@@ -46,28 +43,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
             	LJ.fn.sendChat( $(this) );
 
             });
-			
-            LJ.$body.on('click','.overlay-high', function(){
 
-            	LJ.fn.toggleOverlay('high');
-
-            });
-
-            LJ.$body.on('click','.overlay-low', function(){
-
-            	LJ.fn.toastMsg('Relax, things start back at 12:00', 'info');
-
-            });
-
+            /* Pouvoir zoomer sur une image */
             LJ.$body.on('click', 'img.zoomable', function(){
 
-			 	/* Extracting the img id from the dom */
 			 	var user = {
 			 		imgId      : $( this ).data('imgid'),
 			 		imgVersion : $( this ).data('imgversion')|| ''
 			 	};
 
-                LJ.fn.toggleOverlay( 'high', LJ.fn.renderOverlayUser( user ), 300);
+               // LJ.fn.toggleOverlay( 'high', LJ.fn.renderOverlayUser( user ), 300);
 
             });
             
@@ -122,80 +107,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		},
 		handleDomEvents_Landing: function(){
 
-			['.sm-signup', '.sm-login'].forEach( function(el){
+			$('#facebook_connect').click(function(e){
 
-				$( el ).click(function(){
-
-					var $s = $(this);
-					
-					if( $s.hasClass('active') )
-					{
-						$s.removeClass('active');
-						LJ.fn.displayContent( $('#landingWrap'), { prev: 'm-revealed' } );
-					}
-					else
-					{
-						$('.sm-header button.active').removeClass('active');
-						$s.addClass('active');
-						if( $s.hasClass('sm-signup') )
-							LJ.fn.displayContent( $('#signupWrapp'), { prev: 'm-revealed' } );
-						if( $s.hasClass('sm-login') )
-							LJ.fn.displayContent( $('.sm-loginWrap'), { prev: 'm-revealed' } );
-					}
-					
-				});
-
-			});
-
-			$('#join').click( function(){
-
-				$('#landingWrap').velocity('transition.slideUpOut', {
-					duration: 400,
-					complete: function(){
-						$('.m-revealed').addClass('none');
-						LJ.$signupWrap.velocity('transition.slideUpIn', { duration: 1000 });
-					}
-
-				});
-
-			});
-
-		},
-		handleDomEvents_FrontPage: function(){
-
-			LJ.$signupBtn.click(function(e){ 
-
-				e.preventDefault(); 
-				LJ.fn.signupUser(); 
-
-			});
-
-			LJ.$loginBtn.click(function(e){	
-				e.preventDefault();
-				LJ.fn.loginUser();	
-			});
-
-			$('.sm-loginWrap input[type="submit"]').click(function(e){
-
-				var credentials = {
-					email: $('#m-email').val(),
-					password: $('#m-pw').val()
-				};
-
-				csl( credentials );
-				e.preventDefault();
-				LJ.fn.loginUser( credentials );
-
-			});
-
-			LJ.$resetBtn.click(function(e){
-
-				e.preventDefault();
-				LJ.fn.resetPassword();
-
-			});
-
-			$('#login-fb, .sm-fb').click(function(e){
+				return window.open('https://www.facebook.com/meefore');
 
 				e.preventDefault();
 				console.log('Login in with Facebook');
@@ -217,12 +131,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 		},
 		handleDomEvents_Navbar: function(){
-
-			$('#headerContent h1').click( function(){
-
-				LJ.fn.displayContent( $('#landingWrap') );
-
-			});
 
 			LJ.$logout.click(function(){
 				location.reload();

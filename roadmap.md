@@ -14,14 +14,14 @@
 	- Validation clientside, validation serverside
 	- Mailchimp integration 
 
-#Bugs
+#V2.0
 	- Repenser complètement le système de chat
 	- Refactoring pusher event pour savoir qui est online -> presence channels
 	- Améliorer le système de logout ( mettre en place un mécanisme de session )
 	- Clientside routing hashtags #
+	- Events layout with masonery
 
-#Schedule 
- 	Todo
+#V2.1 
 	- SEO
 	- Détecter quand les users mettent des photos au mauvais format
 	- Définir des routes  GET/events?id="..." et renvoyer un HTML avec des infos sur l'event et un lien d'inscription

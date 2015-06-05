@@ -17,9 +17,6 @@
 		app.get('/earlyadopters', signEvents.sendEarlyAdoptersPage );
 		app.get('*', signEvents.redirectToHome );
 		app.post('/auth/facebook', signEvents.handleFacebookAuth );
-		app.post('/signup', signEvents.handleSignup );
-		app.post('/login', signEvents.handleLogin );
-		app.post('/reset', signEvents.handleReset );
 
 	//Events d'initialisation et de déconnexion
 		app.post('/fetch-user-and-configuration', auth.authenticate(['standard']), initEvents.fetchUserAndConfiguration );
@@ -67,6 +64,4 @@
 		});
 	};
 
-
-	
 

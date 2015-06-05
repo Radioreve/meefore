@@ -49,7 +49,8 @@
 	position: absolute;
     bottom: -9px;
     left: 0px;
-    min-width: 71px;
+    
+	min-width: 80px;
     text-align: center;
     background-color: white;
     border: 1px solid #E0E0E0;
@@ -141,7 +142,7 @@
 	text-decoration: underline;
 }
 .headWrap{
-	height: 70px;
+	height: 81px;
 	margin-bottom:10px;
 	padding-bottom:20px;
 	border-bottom: 1px solid #E0E0E0;
@@ -320,24 +321,26 @@ input[type="number"]{
 
 .tag,
 .loc,
-.drink,
+.drink, 
 .mood{
 	display:inline-block;
 	transition: all .1s;
 	font-size: .7em;
 	color: #7A7A7A;
-	padding: 8px 12px; 
+	padding: 8px 12px;  
 	border-radius: 2px;
 	margin: 4px;
 	background: #F5F5F5;
 	text-align: center;
 	cursor: pointer;
 }
+.mood, .drink{
+	background:none;
+}
 .drink,
 .mood{
 	min-width: 37px;
-	padding:5px 8px;
-	background:white; 
+	padding:5px 8px; 
 	border-bottom: 2px solid white;
 }
 .loc{
@@ -365,7 +368,7 @@ input[type="number"]{
 	color: rgb(213, 47, 47);
 }
 
-.tag.selected, .drink.selected, .day.selected, .loc.selected{  
+.tag.selected, .day.selected, .loc.selected{  
 	background: rgb(229, 83, 83);
 	color:white;
 	box-shadow: 0 1px 1px rgb(187, 50, 50);
@@ -461,7 +464,6 @@ label[for="tags"], label[for="event-friends-wrap"]{
 	width: 100%;
 }
 .drink.selected, .mood.selected{
-	background:white;
 	box-shadow:none;
 	color: rgb(50, 50, 50);
 	font-weight: bolder;

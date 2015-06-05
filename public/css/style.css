@@ -1,6 +1,7 @@
 *{
 } 
-html{   
+html{
+   
    
 }
 body{
@@ -8,7 +9,6 @@ body{
 	/* background-color: rgba(255, 255, 255, 0.71); */
 	/* background-color: rgba(255, 255, 255, 0.86); */
 	background-color: rgba(255, 255, 255, 1);
-	background-image: url('/img/noise.png');
 	background-position: center;
 	background-blend-mode: multiply;
 }
@@ -21,6 +21,7 @@ input{
 	resize: none;
 	outline: none;
 	border: none;
+	background:none;
 }
 hl{
 	font: 800 2em 'Raleway';
@@ -31,9 +32,10 @@ hl{
 	
 }
 h2{
-	font: 800 2em 'Raleway';
+	font: 800 40px  'Gochi Hand';
 	letter-spacing: -1px;
-	color: #383838;
+	text-transform: uppercase;
+	color: #525252;
 	text-align: center;
 	text-shadow: 0 0 1px rgb(209, 209, 209);
 }
@@ -90,6 +92,18 @@ img.left{float:left;}
 	display: none;
 }
 
+.curtain{
+	display: none;
+	position:fixed;
+	top:0;
+	left:0;
+	z-index:1000000;
+	background: rgb(12, 12, 12);
+	width:100%;
+	height:100%;
+}
+
+
 body header .sm-brand{
 	display:inline-block;	
 	color: white;
@@ -112,20 +126,7 @@ body > header > img{
 	left: 55px;
 	top: 3px;
 }
-.sm-header button.active{
-	background: #A93232;
-}
-.sm-loginWrap input{
-	margin-bottom:20px;
-}
-.sm-loginWrap input[type="submit"].validating-btn, #signupWrapp input[type="submit"].validating-btn{
-	background: #E7E7E7;
-}
-.sm-loginWrap input[type="submit"], .{
-	padding-top: 0px; 
-	background: rgb(208, 54, 54);
-	height: 33px;
-}
+
 #logo{
 	  position: absolute;
 	  top: -5px;
@@ -158,19 +159,17 @@ body > header > h5{
     margin: 0 auto;
 }
 #mainWrap{
-    width: 92%;
-    background: white;
+    width: 100%;
+    background: url('/img/crossword.png');
     margin-top: 0;
     min-height: 100vh;
     box-sizing: border-box;
     /* box-shadow: 0 0 5px rgb(205, 205, 205); */
     clear: both;
     overflow: auto;
-    padding-bottom: 30px;
+    padding-bottom: 40px;
 }
-#contentWrap{
-   
-}
+
 .toastSuccess,
 
 .toastError,
@@ -178,7 +177,6 @@ body > header > h5{
 	position: fixed;
 	font: .8em 'Lato';
 	margin: auto;
-	height: 18px;
 	color: rgb(255, 255, 255);
 	text-shadow: 0 0 1px white;
 	letter-spacing: 0.5px;
@@ -275,8 +273,8 @@ top: 33px;
 	padding-top: 8px;
 	padding-left: 12px;
 	margin-bottom: 3px;
-	width: 31px;
-	height: 24px;
+	width: 46px;
+	height: 35px;
 	border-radius: 2px;
 	position: relative;
 	transition: all linear 0.2s;
@@ -360,53 +358,7 @@ top: 33px;
 #contactWrap label{
 	min-width: 70px;
 }
-#loginWrap, 
-#signupWrap,
-#resetWrap{
-	margin: auto;
-	padding:10px;
-}
-{
-}
-#signupWrapp{
-    width: 450px;
-    overflow: auto;
-    height: auto;
-}
-#signupWrapp img{
-	margin: 80px 40px;
-	vertical-align:top;
-	float: right;
-}
-#loginWrap,
-#signupWrap,
-#resetWrap{
-	/* width: 450px; */
-	margin: 0 auto;
-	text-align: center;
-}
-#loginWrap .formWrap,
-#signupWrap .formWrap,
-#resetWrap .formWrap{
-	margin-top:20px;
-}
-#loginWrap .submitWrap,
-#signupWrap .submitWrap,
-#resetWrap .submitWrap{
-	border:none;
-	position: relative;
-}
-#loginWrap .submitWrap input,
-#signupWrap .submitWrap input,
-#resetWrap .submitWrap input{
-	width: 100%;
-	height: 40px;
-	border: none;
-	padding: 9px;
-	color:white;
-	text-transform: uppercase;
-	font-size: 10px;
-}
+
 .themeBtnMain{
 	width:100px!important;
 }
@@ -434,9 +386,6 @@ top: 33px;
 	opacity: .9;
 }
 
-#login{
-	
-}
 .themeBtnToggleHost{
 	background: whitesmoke;
 	font-weight: bolder;
@@ -447,13 +396,7 @@ top: 33px;
 }
 .themeBtnToggleHost:hover{
 }
-#signup, .sm-loginWrap input[type="submit"]
-{	
-	margin-top: 40px!important;
-	margin-right: 40px;
-	background: rgb(208, 54, 54);
-	height: 35px;
-}
+
 .input-field{
 	width: 60%;
 	border: none;
@@ -488,21 +431,9 @@ input[type="radio"] + span{
 	top: -2px;
 }
 
-#loginWrap  .sub-actions,
-#signupWrap .sub-actions,
-#resetWrap  .sub-actions{
-	margin-top: 10px;
-	font: 12px 'Ubuntu';
-	text-decoration: underline;
-	display: inline-block;
-}
-.sub-actions:hover{
-	cursor:pointer;
-}
 /*    CSS concernant le profile utilisateur   */
 #profileWrap{
 	width: 880px;
-	overflow: auto;
 }
 #pictureWrap{
 	text-align:center;
@@ -510,10 +441,10 @@ input[type="radio"] + span{
 	box-shadow: 0 2px 2px #DFDFDF;
 	padding-bottom: 15px;
 	border:1px dashed transparent;
-	width: 176px;
+	width: 162px;
 	padding-top: 4px;
 	margin: 0 auto;
-	height: 156px;
+	height: 160px;
 	transition: .4s;
 	display: inline-block;
 	vertical-align: top;
@@ -542,10 +473,7 @@ input[type="radio"] + span{
 .fieldsWrap .input-row-wrap:last-child{
 	margin-top: -7px;
 }
-#loginWrap h2,
-#signupWrap h2{
-    font-size: 23px;
-}
+
 #profileWrap h2{
 	margin-bottom: 40px;
 }
@@ -615,14 +543,14 @@ input[type="radio"] + span{
 }
 .progress_bar{
 	position: fixed;
-	top: 33px;
-	height: 4px;
+	top: 36px;
+	height: 5px;
 	width: 0%;
 	background: rgb(52, 52, 52);
 	-webkit-transition: width .9s;
 	transition: width .9s;
 	text-align: center;
-	box-shadow: 0 2px 2px rgb(128, 128, 128);
+	box-shadow: 0 2px 2px rgb(175, 175, 175);
 	color: white;
 	z-index: 1;
 }
@@ -697,11 +625,11 @@ input[type="radio"] + span{
 #thumbName{
 	font-weight:normal;
 	text-align: left;
-	font-size: 1.2em;
-	margin-left: 8px;
+	font-size: 23px;
+	margin-left: 2px;
 	margin-bottom: 3px;
 	position: relative;
-	top: -1px;
+	top: -2px;
 	color: white;
 	/* display: inline-block; */
 }
@@ -722,7 +650,7 @@ input[type="radio"] + span{
 	margin-left: 10px;
 	transition: all .7s;
 	position: relative;
-	top: -2px;
+	top: -4px;
 }
 .action:hover{
 	cursor:pointer;
@@ -755,142 +683,16 @@ input[type="radio"] + span{
 #settingsWrap #newsletter{
 	width: 15px!important;
 }
-body > footer{
-}
 
-.overlay{
-	display:none;
-	width:100%;
-	height:100%;
-	position:absolute;
-	top:0;
-	left:0;
-}
-.overlay-high{
-	background: rgba(0,0,0,.94);
-	z-index:500;
-	position: fixed;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-}
-.overlay-veryhigh{
-	background: rgba(0, 0, 0, 0.97);
-	z-index:10000;
-	position: fixed;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-}
-.overlay-low{
-	background: rgba(255, 255, 255, 0.78); 
-	z-index:139;
-}
-.overlay .overlayMsgWrap{	
-    width: 900px;
-    margin: 0 auto;
-    position: relative;
-    top: 150px;
-}
-.overlay-high h2{
-	color:white;
-	margin-bottom: 50px;
-	margin-top: 60px;
-}
-.overlay-low h2{
-	color:black; 
-}
 #drink, #mood{
 	display:inline-block;
+	padding: 7px;
 }
 
-#loginWrapp,
-#resetWrapp{
-	margin-top: 6px;
-	margin-right: 12px;
-}
-#loginWrapp *,
-#resetWrapp *{
-	display:inline-block;
-	font: normal 13px 'Lato';
-	color:white;
-}
-#loginWrapp > div,
-#resetWrapp > div{
-	margin-right:5px;
-	font-weight:bolder;
-}
 .formWrap{
 	position:relative;
 }
-#loginWrapp input,
-#resetWrapp input{
-	width: 105px;
-	height: 16px;
-	padding: 3px 7px;
-	margin: 0 1px;
-	/* border-radius: 3px; */
-	border: 1px solid rgb(35, 35, 35);
-	color: rgb(44, 44, 44);
-	font-weight:bolder;
-	-webkit-transition: .5 s;
-	transition: all .5s;
-}
-#loginWrapp i.icon-facebook{
-    position: absolute;
-    left: 330px;
-    background: none;
-    top: 4px;
-}
 
-#resetWrapp input{
-	width:150px;
-}
-#loginWrapp input[type="submit"],
-#resetWrapp input[type="submit"]{
-	width: 66px;
-	background: rgb(216, 67, 67);
-	height: 24px;
-	color: white;
-	/* text-shadow: 0 0 1px rgb(113, 37, 37); */
-}
-#login-fb{
-	width: 31px;
-	height: 22px;
-	text-align: right;
-	background: #D84343;
-	float: right;
-	margin-top: 1px;
-	margin-left: 5px;
-	color: white;
-}
-#login-fb:hover{
-	cursor:pointer;
-}
-#lost_pw, 
-#pw_remember,
-#join{
-	position: absolute;
-	margin-top: 7px;
-	margin-left: 197px;
-	color: black;
-	font-size: 12px;
-	font-weight: normal!important;
-	display: block;
-}
-#pw_remember{
-    margin-left: 99px;
-}
-#join{
-	margin-left: 71px;
-}
-#lost_pw:hover,
-#pw_remember:hover,
-#join:hover{
-	text-decoration:underline;
-}
 .header-field.blocked{
 	background: rgb(38, 38, 38);
 }
@@ -1136,141 +938,16 @@ span.f-age, span.f-favdrink{
 	font-family:'Lato'; 
 }
 
-.landing-row{
-    height: 100px;
-    transition: all .3s;
-}
-
-.landing-row div{
-	display:inline-block;
-	vertical-align: top;
-	transtion: all .3s;
-}
-
-.landing-row div.time{
-
-    /* font-weight: bolder; */
-    text-align: center;
-    font-size: 30px;
-    position: relative;
-    top: -3px;
-    width: 110px;
-    margin-right: 11px;
-
-}
-
-.landing-row div.path{
-    width: 3px;
-    height: 100%;
-    position: relative;
-    background: rgb(42, 42, 42);
-}
-.landing-row div.message{
-    margin: 0 30px;
-}
-
-.landing-row:last-of-type{
-	height:0;
-}
-
-.landing-row div.message div{
-	display:block;
-	margin-bottom: 5px;
-}
-.landing-row div.head{
-	font-family:'Raleway';
-	font-size: 1.7em;
-}
-
-.landing-row div.round{
-	width: 21px;
-	border-radius: 30px;
-	height:20px;
-	background: rgb(216, 67, 67);
-	border: 2px solid rgb(0, 0, 0);
-	position: relative;
-	left: -11px;
-	top: 0px;
-}
-
-.landing-row:not(.active) div.round{
-	background:white;
-	border: 2px solid #ccc;
-}
-.landing-row:not(.active) div.time{
-    font-size: 20px;
-    color: #ccc;
-    top: 1px;
-}
-.landing-row:not(.active) div.path{
-    background: #ccc;
-}
-.landing-row:not(.active) div.message{
-    color: #ccc;
-}
-.landing-row button{
-	width: 140px; 
-	margin-left: 55px;
-	height: 34px;
-	background: rgb(199, 42, 42);
-	border: 1px solid rgb(163, 30, 30);
-}
-
-.services-box{
-    clear: both;
-    text-align: center;
-    padding: 0 10px 20px 10px;
-}
-.services-box-icon{
-    background: transparent;
-    width: 50px;
-    height: 50px;
-    display: inline-block;
-    height: 35px;
-    line-height: 35px;
-    position: relative;
-    text-align: center;
-    top: 25px;
-}
-.services-box-icon i{
-    color: #D84343;
-    font-size: 30px;
-}
-.services-box-info{
-}
-.services-box-info h4{
-    font-weight: 700;
-    font-size: 18px;
-    margin-top:40px;
-}
-/***services3***/
-#services-bg-wrap{
-    padding: 90px 0;
-    background-color: #f7f9fa;
-}
-.service-3-meta h1{
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 25px;
-}
 p{
-color: #777777;
-line-height: 24px;
-margin: 20px 0 20px;
-font-family: 'Karla','Lato';    letter-spacing: -.5px;
+	color: #777777;
+	line-height: 24px;
+	margin: 20px 0 20px;
+	font-family: 'Karla','Lato';    letter-spacing: -.5px;
 }
-.center-line{
-	display: inline-block;
-	width: 150px;
-	height: 6px;
-	border-top: 1px solid #D84343;
-	border-bottom: 1px solid #D84343;
-	margin: auto;
-	margin-top: 30px;
-}
+
 .center-heading{
 	text-align: center;
-	margin-bottom: 10px;
+	margin-bottom: 40px;
 }  
 
 ::selection{

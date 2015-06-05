@@ -33,8 +33,6 @@
 }
   	
   #contentWrap input,
-  #signupWrapp input,
-  .sm-loginWrap input,
   label,
   .input-row-wrap{
 		width: 100%!important;
@@ -86,7 +84,7 @@
     margin:30px 0;
     overflow:hidden;
     }
-	#signupWrap .formWrap,
+    .formWrap,
     #settingsInputsWrap{
       padding:0 40px;
     }
@@ -107,8 +105,6 @@
     margin: 40px auto;
     padding: 0 40px;
   }
-  {
-  }
 	
   .input-row-wrap label{ 
     /* margin-bottom: 10px!important; */
@@ -117,6 +113,7 @@
     margin-bottom: 0px;
     margin-top: 0;
     padding-top: 2px;
+    text-align: center;
 }
   .input-row-wrap #age{
     margin:0; 
@@ -151,24 +148,6 @@
 	text-align: center;
 }
 
-	#signupWrapp input[type="text"], #signupWrapp input[type="password"]{
-		border:none;
-		padding:10px 0;
-		margin: 10px 0;
-  }
-  #signupWrapp input[type="radio"]{
-    width:35px!important;
-  }
-  #signupWrapp .input-radio{
-    margin:0;
-    text-align: center;
-  }
-  #signupWrapp .input-radio > div{
-  display:block;
-  }
-	#signupWrapp h2{
-		margin-bottom: 35px;
-}
 
   #contentWrap #eventHour,
   #contentWrap #eventMinut,
@@ -218,35 +197,6 @@
     	float:none!important;
     }
    
-  #loginWrapp{
-    display:none!important;
-  }
-  .sm-loginWrap{
-  	padding: 50px;
-  	padding-top: 80px;
-  	box-sizing: border-box;
-}
-
-  div.sm-header{
-    display:block;
-  }
-   div.sm-header button:first-of-type{
-  	normal 13px 'Lato'
-  ;
-  	float: left;
-  	margin-left: 31px;
-}
-  div.sm-header button:last-of-type{
-  	/* background: rgb(91, 122, 190); */
-  }
-  
-	#headerContent{
-	  width:100%;
-	  margin:0;
-	}
-    #headerContent h1:not(.stay){
-      display:none;
-    }
     #menuWrap{
       margin-left:0;
       text-align: center;
@@ -344,34 +294,6 @@
     display: inline;
 }
 
-div.sm-header{
-	text-align:center;
-	padding: 6px 0;
-}
-div.sm-header button{
-	padding:5px 10px;
-	margin: 0 -1px;
-	border:none;
-	background: rgb(216, 67, 67);
-	color:white;
-	border-radius:1px;
-	font-weight:bolder;
-	outline:none;
-	font: normal 12px 'Lato';
-	float: right;
-	margin-right: 5px;
-	-webkit-transition: .6s background;
-	transition: .6s background;
-	background: rgb(37, 37, 37);  
-	border-bottom: 0Px solid white;
-} 
-header.sm-header button:hover{
-	opacity:.9;
-} 
-
-	
-
-}
 
 
 @media screen and (max-width:330px){

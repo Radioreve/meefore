@@ -385,24 +385,6 @@
         	return html;
 
         },
-        renderOverlayUser: function( user ){
-
-        	var d = LJ.cloudinary.displayParamsOverlayUser;
-					d.version = user.imgVersion;
-
-				var imgTag = $.cloudinary.image( user.imgId, d ).prop('outerHTML');
-
-				return '<div class="largeThumb">'
-					     + imgTag
-					    +'</div>'
-                        +'<div class="largeProfile">'
-                            //+'<span>'+user.name+'</span>'
-                            //+'<span>'+user.age+'</span>'
-                            //+'<span>'+user.mood+'</span>'
-                            //+'<span>'+user.favoriteDrink+'</span>'
-                        +'</div>'
-
-        },
         renderTagsFilters: function(){
 
         	var html = '',

@@ -1,117 +1,119 @@
 
 #landingWrap{
-    width: 100%;
- 
-    clear: both;
+    padding-top: 100px;
 }
 
-#landingIntro{
-    padding-top: 30px;
-}
-#landingGo{
-
-}
-#signupWrap label{
-	width:100px;
-}
-#landingGo > center{
-    font-size: .86em;
-    margin-top: 10px;
-    color: rgb(187, 187, 187);
-    font-family: 'Lato';
-}
-#landingGo button{
-    position: relative;
-    margin-top: 40px;
-    margin: 40px 10px 0 10px;
-    height: 46px;
-    width: 210px;
-    padding-right: 16px; 
-    text-align: right; 
-    font-weight: bolder;
-    font-size: .7em;
-    font-family: 'Lato';
-    background: rgb(187, 51, 51);
+.etiquette{
+  background: rgba(255, 255, 255, 0.81);
+  border-bottom: 1px solid #E4E4E4;
+  box-shadow: 0 0 1px #e4e4e4;
+  padding: 15px;
+  border-radius: 2px 2px 0 0;
 }
 
-#landingWrap h2{
-	/* font-family: Lato; */
-	/* text-transform: uppercase; */
-	font-weight: bolder;
-	text-align: center;
-	margin-bottom: 15px;
-	color: rgb(58, 58, 58);
-	font-size: 30px;
-	letter-spacing: -1px;
-}
-
-.l-item{
-    width: 30%;
+.landing-content{
     text-align: center;
-    box-sizing: border-box;
-    display: inline-block;
-    vertical-align: top;
-}
-.l-desc{
-    height: 80px;
-
-    width: 74%;
-    margin: auto;
-    /* border: 1px solid #eee; */
-    padding: 10px;
-    line-height: 1.2em;
-    font-size: .9em;
-    color: #6C6C6C;
-}
-.l-step{
-	height: 25px;
-	font-weight: bold;
-	background: #eee;
-	padding-top: 12px;
-	width: 50%;
-	margin: auto;
-	border-radius: 3px;
-	text-transform: uppercase;
-	font-size: .8em;
-}
-.l-image{
-    padding: 13px;
-
-    height: 75px;
 }
 
-.subcharte{
-	color:white;
-	font-size: 14px;
-	background: rgba(255,255,255,.05);
-	margin: 20px 0;
-	padding: 26px 41px;
-	border-radius: 3px;
-	vertical-align: top;
+.landing-subscribe{
+    margin-top: 40px;
+
 }
 
-#charte span{
-	color: rgb(168, 27, 27);
-	font-size:1.5em;
-	border:1px dashed white;;
-	padding:13px 20px;
-	border-radius:30px;
-	margin-right:30px;
+#facebook_connect{
+    width: 340px;
+    margin: 0 auto;
+    background-color: #6F6FA2;
+    border: 1px solid #565686;
+    color: white;
+    text-shadow: 0 0 1px #8E8E8E;
+    padding: 15px 20px;
+    font-size: 20px;
+    letter-spacing: -1px;
+    position: relative;
+    cursor: pointer;
+    -webkit-transition: all .5s;
+    transition: all .5s;
 }
-.charte-accept{
-	color: white;
-	width: 200px;
-	/* background: rgb(25, 25, 25); */
-	text-align:center;
-	padding:10px;
-	font-size: 12px;
-	text-transform: uppercase;
-	margin: 5px auto;
-	
+#facebook_connect:hover{
+  opacity:.8;
 
-	border-radius: 3px;
+}
+#facebook_connect i{
+  position:absolute;
+  left:10px;
+  border-right: 1px solid white;
+  padding-right: 10px;
 }
 
-.center-heading span{
-	text-decoration: line-through;
+.landing-call{
+    margin-top: 40px;
+    font-size: 24px;
+    font-family: 'Gochi hand';
+    text-shadow: 0 0 1px #989898;
 }
+
+.typed-text{
+
+}
+.landing-hashtags{
+    text-align: center;
+    margin: 0 auto;
+    color: #A5A5A5;
+    font-family: 'Karla';
+    text-transform: uppercase;
+    font-weight: bolder;
+    min-width: 400px;
+    height: 1px;
+}
+.hashtag{
+  display: none;
+  margin: 0 3px;
+}
+
+.typed-cursor{
+    opacity: 1;
+    -webkit-animation: blink 0.7s infinite;
+    -moz-animation: blink 0.7s infinite;
+    animation: blink 0.7s infinite;
+    margin-left: 5px;
+}
+@keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-webkit-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-moz-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+
+#facebook_small_red{
+    float: right;
+    margin-right: 4%;
+    margin-top: 5px;
+    padding: 6px 14px 6px 0;
+    border-radius: 2px;
+    background-color: #E25050;   
+    color: white;
+    font-size: 13px;
+    font-weight: bolder;
+    cursor:pointer;
+    -webkit-transition: all .5s;
+    transition: all .5s;
+
+}
+
+#facebook_small_red i{
+    padding: 0 4px 0 7px;
+    border-right: 1px solid #CA3838;
+    margin-right: 7px;
+
+}
+

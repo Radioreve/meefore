@@ -26,106 +26,7 @@
 			res.redirect('/home');
 		};
 
-		var handleSignup = function( req, res, next ){
-			passport.authenticate('local-signup', function( err, user, info ){
-				if( err ){
-					console.log('error with the database query');	
-				}
-				if( !user ){
-					console.log('info : '+info.msg );	
-	  				res.json( 401, { msg: info.msg });
-					res.end();
-				}
-				else{
-					console.log('info : '+info.msg);
-	  				res.json( 200, {msg: info.msg });
-					res.end();
-				}
-			})( req, res, next );
-		};
-
-		var handleLogin = function( req, res, next ){
-			passport.authenticate('local-login', function( err, user, info ){
-
-				/* Gestion des erreurs */
-				if( err ) 
-					return eventUtils.raiseError({
-	  					toClient:"Une erreur s'est produite",
-	  					toServer:"Error login in...",
-	  					err:err,
-	  					res:res
-	  				});	
-
-				if( !user )
-	  				return eventUtils.raiseError({
-	  					toClient:"Identifiants incorrects",
-	  					toServer:"Error login in...",
-	  					err:err,
-	  					res:res
-	  				});
-
-	  			console.log(user.access);
-	  			/* Création du token */				
-				var accessToken = eventUtils.generateAppToken( user ); 
-
-				/* Envoie de la réponse */
-				var expose = { id: user._id, accessToken: accessToken },
-					channel = _.result( _.find( user.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName');
-				
-				eventUtils.sendSuccess( res, expose );
-
-				/* Mise à jour du Watcher */
-				var d = moment();
-				watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
-
-
-			})( req, res, next );
-		};
-
-		var handleReset = function( req, res ){
-			var email = req.body.email;
-
-			if( email.trim() === '' || !validator.isEmail( email.trim() )){
-
-				res.json( 500, { msg: "Il faut un email..." });
-				res.end();
-				return;
-			}
-
-			User.findOne({'email': email}, function( err, user ){
-
-				if( !user ){
-
-					   res.json( 500, { msg: "Aucun email ne correspond" });
-				       res.end();
-				       return;
-				}
-
-				var resetToken = randtoken.generate(8);
-
-				user.password = user.generateHash( resetToken );
-
-				user.save( function( err, user ){
-
-					if( err ){
-						res.json( 500, { msg: "An error occured. Contact us directly" });
-						res.end();
-						return;
-					}
-
-					// Send ResetPasswordEmail
-					mailer.sendResetPasswordEmail( email, resetToken );
-
-					res.json( 200, { msg: "Ton nouveau mot de passe t'a été envoyé par email" });
-					res.end();
-					return;
-
-				});
-
-			});		
-			
-		};
-
+	
 	var handleFacebookAuth = function( req, res ){
 
 		var fbId = req.body.facebookProfile.id,
@@ -140,21 +41,21 @@
 			if( err )
 				return console.log('Error with Facebook : ' + err );
 
+			/* L'utilisateur existe, on le connecte à l'application */
 			if( user ){
 				var accessToken = eventUtils.generateAppToken( user ); 
 
-				/* Envoie de la réponse */
 				var expose = { id: user._id, accessToken: accessToken },
 					channel = _.result( _.find( user.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName');
 				
 				eventUtils.sendSuccess( res, expose );
 
-				/* Mise à jour du Watcher */
 				var d = moment();
 				watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
 				return;
 			}
 
+			/* L'utilisateur n'existe pas, on crée son compte et on le connecte à l'application */
 			var newUser = new User();
 
 			newUser.facebookId = fbId;
@@ -164,8 +65,6 @@
 			newUser.name = name;;
 			newUser.signupDate = moment.utc();
 
-			// public one based on global key
-			// personnal one based on randtoken 
 		    var token = randtoken.generate(30);
 			var accessName = 'mychan',
 				channelName = eventUtils.makeChannel({ accessName: accessName, token: token }) 
@@ -177,24 +76,22 @@
 
 			newUser.myChannels.push( {accessName:accessName, channelName:channelName} );
 			
-			
 			newUser.save( function( err, user ){
 
 				if( err ) return console.log('User was NOT saved : ' + err );
 
-					var accessToken = eventUtils.generateAppToken( user ); 
-					/* Envoie de la réponse */
-					var expose = { id: user._id, accessToken: accessToken },
-						channel = _.result( _.find( user.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName');
-					
-					eventUtils.sendSuccess( res, expose );
+				var accessToken = eventUtils.generateAppToken( user ); 
+				/* Envoie de la réponse */
+				var expose = { id: user._id, accessToken: accessToken },
+					channel = _.result( _.find( user.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName');
+				
+				eventUtils.sendSuccess( res, expose );
 
-					/* Mise à jour du Watcher */
-					var d = moment();
-					watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
+				/* Mise à jour du Watcher */
+				var d = moment();
+				watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
 
-					mailer.sendWelcomeEmail( email, name );
-
+				mailer.sendWelcomeEmail( email, name );
 			});
 		});
 	};
@@ -205,9 +102,6 @@
 		sendHomepage: sendHomepage,
 		sendEarlyAdoptersPage: sendEarlyAdoptersPage,
 		redirectToHome: redirectToHome,
-		handleFacebookAuth: handleFacebookAuth,
-		handleSignup: handleSignup,
-		handleLogin: handleLogin,
-		handleReset: handleReset
+		handleFacebookAuth: handleFacebookAuth
 
 	}
