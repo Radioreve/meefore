@@ -261,7 +261,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						LJ.fn.handleSuccessLogin( data );
 					},
 					error: function( err ){
-
+						console.log(err);
 					}
 				});
 
@@ -316,12 +316,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		displayViewAsIdle: function(){
 
-			$('#management').addClass('filtered');
-            $('#events').addClass('menu-item-active')
-            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
+			function cb(){
+				$('#facebook_connect').velocity('transition.fadeOut');
+				$('#thumbWrap').velocity('transition.slideUpIn',{duration:1000});
+				$('.menu-item-active').removeClass('menu-item-active');
+				$('#management').addClass('filtered');
+	            $('#events').addClass('menu-item-active')
+	            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
+            	$('#landingWrap').addClass('nonei');
+			};
 
-            $('#landingWrap').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('nonei');}});
-            LJ.fn.displayContent( LJ.$eventsWrap, { mode:'curtain', myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut', prev:'revealed'   });
+            LJ.fn.displayContent( LJ.$eventsWrap, { cb:cb, mode:'curtain', myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut', prev:'revealed'   });
 
 		},
 		displayViewAsHost: function(){
@@ -410,6 +415,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				$('.curtain').velocity('transition.fadeIn',
 					{ duration: 800,
 					complete: function(){
+						options.cb();
 						$prev.removeClass( prev );
 						content.addClass( prev )
 							   .show()
@@ -792,9 +798,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	$('#friendListWrap').jScrollPane();
         	LJ.state.jspAPI['#friendListWrap'] = $('#friendListWrap').data('jsp');
 
-
-
-
 			/* Affichage de la vue en fonction du state user */
         	sleep( LJ.ui.artificialDelay, function(){   
 
@@ -802,10 +805,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				
 				LJ.state.connected = true;
 
-	        	$('#facebook_connect').velocity('transition.fadeOut');
-				$('#thumbWrap').velocity('transition.slideUpIn',{duration:1000});
-				$('.menu-item-active').removeClass('menu-item-active');
-				 
 				switch( LJ.user.status )
 				{
 					case 'new':

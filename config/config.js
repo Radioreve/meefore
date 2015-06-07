@@ -3,7 +3,7 @@
 	var config = {
 
 		dev: {
-			dbUri: "localhost:27017"
+			dbUri: "mongodb://Radioreve:"+process.env.PW+"@dogen.mongohq.com:10008/meefore-staged"
 		}
 		, prod: {
 			dbUri: "mongodb://Radioreve:"+process.env.PW+"@dogen.mongohq.com:10021/Meefore-Sandbox"
