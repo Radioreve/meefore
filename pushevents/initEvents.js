@@ -34,7 +34,7 @@
 
 			if( err )
 				return eventUtils.raiseError({
-					toServer: "Problem finding user via socket.io during first connection attempt ",
+					toServer: "Problem finding user for fetch config during first connection attempt ",
 					toClient: "Erreur d'initialisation",
 					err: err,
 					res: res			

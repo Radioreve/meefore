@@ -1,6 +1,7 @@
 *{
 } 
 html{
+    overflow: hidden;
    
    
 }
@@ -32,7 +33,7 @@ hl{
 	
 }
 h2{
-	font: 800 40px  'Gochi Hand';
+	font: normal 40px  'Gochi Hand';
 	letter-spacing: -1px;
 	text-transform: uppercase;
 	color: #525252;
@@ -92,15 +93,20 @@ img.left{float:left;}
 	display: none;
 }
 
-.curtain{
-	display: none;
+.curtain,.overlay{
 	position:fixed;
 	top:0;
 	left:0;
-	z-index:1000000;
-	background: rgb(12, 12, 12);
+	z-index: 100000;
+	background: rgb(8, 8, 8);
 	width:100%;
 	height:100%;
+}
+
+.overlay{
+	display: block;
+	opacity: .8;
+	z-index: 0;
 }
 
 
@@ -118,7 +124,7 @@ body header.sm-header{
 	position: fixed;
 	top: 0;
 	left: 0;
-	z-index: 98;
+	z-index: 1;
 }
 body > header > img{
 	float:left;
@@ -160,7 +166,7 @@ body > header > h5{
 }
 #mainWrap{
     width: 100%;
-    background: url('/img/crossword.png');
+    /* background: url('/img/crossword.png'); */
     margin-top: 0;
     min-height: 100vh;
     box-sizing: border-box;

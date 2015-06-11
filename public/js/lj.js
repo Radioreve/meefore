@@ -11,7 +11,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 		init: function(){
 
-				/*Bind UI action with the proper handler */
+			$('body').waitForImages(function(){
+				/* Landing page animation */
+				LJ.fn.initLandingPage();				
+			});
+
+				/* Bind UI action with the proper handler */
 				this.handleDomEvents();
 
 				/* Gif loader and placeholder */
@@ -60,30 +65,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 
 		},
-		initFacebookState: function(){   /* Legacy Function */
-
-			FB.getLoginStatus( function( res ){
-
-			  	var status = res.status;
-			  	console.log('Facebook status : ' + status);
-
-			  	console.log('status : '+status);
-			  	if( status != 'connected' )
-			  		 return;
-
-			  	sleep(1500, function(){
-
-				  	FB.api('/me', function(res){
-
-				  		var facebookId = res.id;
-				  		//LJ.fn.loginWithFacebook( facebookId );
-				  		
-				  	});
-			  	});
-		  	
-			});
-
-		},
 		initStaticImages: function(){
 
 			var $loader = $.cloudinary.image( LJ.cloudinary.loader_id, LJ.cloudinary.displayParamsLoader );
@@ -97,6 +78,91 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				$('#pictureWrap').prepend( $placeholder );
 
 			LJ.$cLoaderTpl = $.cloudinary.image( LJ.cloudinary.c_loader_id, { cloud_name:"radioreve", width:12 });
+
+		},
+		initLandingPage: function(){
+        	
+        	var data = [
+        		{
+        			'name':'Rue de lappe',
+        			'hashtags': ["bastille","monop'","roquette","embrouille"]
+        		},
+        		{
+        			'name':'Hôtel de ville',
+        			'hashtags': ['concerts',"keufs","bhv","crowd"],
+        		},
+        		{
+        			'name':'Les quais de seine',
+        			'hashtags': ['pakibière',"sunset","wine"]
+        		},
+        		{
+        			'name':'Event Facebook',
+        			'hashtags':['projetX','peutêtre','whatever']
+        		},
+        		{
+        			'name':'La concrete',
+        			'hashtags':['after','after','after','md','after']
+        		},
+        		{
+        			'name':'Rue princesse',
+        			'hashtags':[ 'lasoif','odéon','bedford','pousseaucrime']
+        		},
+        		{
+        			'name':'Grands boulevards',
+        			'hashtags':['étranger(e)s','help','me','out']
+        		},
+        		{
+        			'name':'Westeros',
+        			'hashtags':['danaerys','is','coming']
+        		}
+        	]
+
+        	var names     = _.pluck( data, 'name' ),
+        		hashtags  = _.pluck( data, 'hashtags' ),
+        		maxLength = names.length,
+        		i 		  = 0;  
+
+        	$('.curtain').velocity('transition.fadeOut', {});
+            $('.typed-text').typed({
+                strings: names,
+                typeSpeed: 200, 
+                backDelay: 4000,
+                loop:true,
+                preStringTyped: function(){
+
+                	/* Display text */
+                	var hashtags = data[i].hashtags, html = '';
+                	for( var j = 0; j < hashtags.length; j++){
+                		html +='<div class="hashtag">#'+hashtags[j]+'</div>';
+                	}
+                	$('.landing-hashtags').html( $(html) );
+                	$('.hashtag').velocity('transition.fadeIn',
+                		{ delay:1000,display:'inline-block', duration:2500
+                	}).delay( data[i].name.length * 250 ).velocity('transition.fadeOut', {duration:1000});
+
+                	/* Zoom in image */
+                	if( i == 0)
+                		return $('.hero-img.active').removeClass('scaled');
+
+                },
+                onStringTyped: function(){
+                	i == maxLength-1 ? i=0 : i++;
+                	setTimeout( function(){
+                		if( LJ.state.loggingIn ) 
+                			return;
+                		$('.curtain').velocity('transition.fadeIn', {
+                			duration: 1200, 
+                			complete: function(){ 
+                				$('.hero-img.active').removeClass('active').addClass('scaled');
+                				$('.hero-img.img-'+i).addClass('active');
+                				setTimeout(function(){ $('.hero-img.img-'+i).removeClass('scaled');
+                					$('.curtain').velocity('transition.fadeOut', {duration:1500});
+                				 },50)
+                			}
+             			});
+                	}, 3500 ); 
+                }
+            });
 
 		},
 		initEhancements: function(){
@@ -261,7 +327,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						LJ.fn.handleSuccessLogin( data );
 					},
 					error: function( err ){
-						console.log(err);
+						LJ.fn.handleServerError( err )
 					}
 				});
 
@@ -304,81 +370,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			});
 
 		},
-		displayViewAsNew: function(){
-			
-			$('#management').addClass('filtered');
-			$('#profile').addClass('menu-item-active')
-            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
-
-            $('#landingWrap').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('nonei');}});
-			LJ.fn.displayContent( LJ.$profileWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut', prev:'revealed' });
-
-		},
-		displayViewAsIdle: function(){
-
-			function cb(){
-				$('#facebook_connect').velocity('transition.fadeOut');
-				$('#thumbWrap').velocity('transition.slideUpIn',{duration:1000});
-				$('.menu-item-active').removeClass('menu-item-active');
-				$('#management').addClass('filtered');
-	            $('#events').addClass('menu-item-active')
-	            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
-            	$('#landingWrap').addClass('nonei');
-			};
-
-            LJ.fn.displayContent( LJ.$eventsWrap, { cb:cb, mode:'curtain', myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut', prev:'revealed'   });
-
-		},
-		displayViewAsHost: function(){
-
-			$('#create').addClass('filtered');
-			$('#management').addClass('menu-item-active')
-            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
-
-            $('#landingWrap').velocity({ opacity: [0, 1]}, { complete: function(){ $('#landingWrap').addClass('nonei');}});
-			LJ.fn.displayContent( LJ.$manageEventsWrap, { myWayIn: 'transition.slideDownIn', myWayOut: 'transition.slideUpOut', prev:'revealed'  });
-
-            LJ.fn.fetchAskers();
-		},
 		randomInt: function(low, high) {
     		return Math.floor(Math.random() * (high - low + 1) + low);
 		},
-		displayUserSettings: function(){
-
-				/* Profile View*/
-				$('#codebar').text( LJ.user._id );
-				$('#name').val( LJ.user.name );
-				$('#age').val( LJ.user.age );
-				$('#description').val( LJ.user.description );
-				$('.drink[data-drink="'+LJ.user.favoriteDrink+'"]').addClass('selected');
-				$('.mood[data-mood="'+LJ.user.mood+'"]').addClass('selected');
-
-				/* Update de l'image de profile */
-				LJ.fn.replaceMainImage( 	LJ.user.imgId,
-								            LJ.user.imgVersion,
-								            LJ.cloudinary.displayParamsProfile );
-
-				/* Settings View */
-				$('#newsletter').prop( 'checked', LJ.user.newsletter );
-				$('#currentEmail').val( LJ.user.email );
-
-				/* Management View */
-				if( LJ.user.state == 'hosting' )
-				{
-					$('#suspendEvent').text('this is a bug');
-				}
-
-				/* ThumbHeader View */
-				LJ.$thumbWrap.find( 'h2#thumbName' ).text( LJ.user.name );
-				var d = LJ.cloudinary.displayParamsHeaderUser;
-					d.version = LJ.user.imgVersion;
-
-				var imgTag = $.cloudinary.image( LJ.user.imgId, d );
-					imgTag.addClass('left');
-
-				LJ.$thumbWrap.find('.imgWrap').html('').append( imgTag );
-
-		}, 
 		displayContent: function( content, options ){
 			
 				options = options || {};
@@ -401,6 +395,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 							   		if(LJ.user.status === 'new'){
 							   			//LJ.fn.toggleOverlay('high', LJ.tpl.charte );
 							   		}
+							   		if( options.after_cb )
+							   			options.after_cb();
 							   	}
 							   });
 					}
@@ -415,14 +411,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				$('.curtain').velocity('transition.fadeIn',
 					{ duration: 800,
 					complete: function(){
-						options.cb();
+						options.during_cb();
 						$prev.removeClass( prev );
 						content.addClass( prev )
 							   .show()
 							   .css({'display':'block'}); }
 					}).delay(500).velocity('transition.fadeOut', {
 							display:'none',
-							duration: 1200
+							duration: 1000,
+							complete: function(){
+								options.after_cb();
+							}
 						});
 			}
 
@@ -526,18 +525,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         			} 
         		});
              
-		},
-		initAppSettings: function( data ){
-
-			var user     = data.user,
-				settings = data.settings;
-
-			/* Init user settings */
-            LJ.user = user;	
-
-            /* Init app settings */
-            LJ.settings = settings;
-
 		},
 		updateClientSettings: function( newSettings ){
 
@@ -795,49 +782,151 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	$( '.input-profile-rows').html('').append( LJ.fn.renderProfileRows( _.sortBy( settings.profileRowsList, 'place' )) );
         	$( '#no' ).html('').append( LJ.tpl.noResults );
 
+
+    		/* Profile View*/
+			$('#codebar').text( LJ.user._id );
+			$('#name').val( LJ.user.name );
+			$('#age').val( LJ.user.age );
+			$('#description').val( LJ.user.description );
+			$('.drink[data-drink="'+LJ.user.favoriteDrink+'"]').addClass('selected');
+			$('.mood[data-mood="'+LJ.user.mood+'"]').addClass('selected');
+
+
+			/* Update de l'image de profile */
+			LJ.fn.replaceMainImage( LJ.user.imgId, LJ.user.imgVersion, LJ.cloudinary.displayParamsProfile );
+
+
+			/* Settings View */
+			$('#newsletter').prop( 'checked', LJ.user.newsletter );
+			$('#currentEmail').val( LJ.user.email );
+
+
+			/* ThumbHeader View */
+			LJ.$thumbWrap.find( 'h2#thumbName' ).text( LJ.user.name );
+			var d = LJ.cloudinary.displayParamsHeaderUser;
+				d.version = LJ.user.imgVersion;
+
+			var imgTag = $.cloudinary.image( LJ.user.imgId, d );
+				imgTag.addClass('left');
+
+			LJ.$thumbWrap.find('.imgWrap').html('').append( imgTag );
+
+
+        	/* Initialisation du friendspanel */
         	$('#friendListWrap').jScrollPane();
         	LJ.state.jspAPI['#friendListWrap'] = $('#friendListWrap').data('jsp');
 
-			/* Affichage de la vue en fonction du state user */
-        	sleep( LJ.ui.artificialDelay, function(){   
-
-				if( LJ.state.connected ) return LJ.fn.toastMsg('Vous avez été reconnecté', 'success');
+    		/* L'user était déjà connecté */
+			if( LJ.state.connected )
+				return LJ.fn.toastMsg('Vous avez été reconnecté', 'success');
 				
-				LJ.state.connected = true;
+			LJ.state.connected = true;
 
-				switch( LJ.user.status )
-				{
-					case 'new':
-						LJ.fn.displayViewAsNew();
-						LJ.fn.toastMsg('Bienvenue sur le meilleur site de soirée du monde','info');
-						break;
-					case 'idle':
-						LJ.fn.displayViewAsIdle();
-						//LJ.fn.toastMsg('Bienvenue '+LJ.user.name,'info');
-						break;
-					case 'hosting':
-						LJ.fn.displayViewAsHost();
-						LJ.fn.toastMsg('Bienvenue '+LJ.user.name,'info');
-						break;
-					default:
-						alert('No status available, contact us');
-						break;
-				}
+			$('.menu-item-active').removeClass('menu-item-active');
 
-				sleep( 2400, function() {
-					
-					$('.menu-item').velocity({ opacity: [1, 0] }, {
-						display:'inline-block',
-						duration: 800,
-						complete: function(){
-							$('.menu-item').each( function( i, el ){
-								$(el).append('<span class="bubble filtered"></span>')
-							});	
-						}
-					});
+			var $landingView;
+			if( LJ.user.status == 'idle' ){
+				$landingView = $('#eventsWrap');
+				$('#management').addClass('filtered');
+	            $('#events').addClass('menu-item-active')
+	            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
+			}
+
+			if( LJ.user.status == 'hosting' ){
+				$landingView = $('#manageEventsWrap');
+				$('#create').addClass('filtered');
+	            $('#management').addClass('menu-item-active')
+	            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
+	            LJ.fn.fetchAskers();
+			}
+
+			if( LJ.user.status == 'new' ){
+				$landingView = $('#profileWrap');
+				$('#management').addClass('filtered');
+	            $('#profile').addClass('menu-item-active')
+	            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
+
+			}
+			function during_cb(){	
+				/* Landing Page View */
+				$('#facebook_connect').hide();
+				$('#logo-hero').hide();
+				$('body > header').removeClass('none');
+				$('#landingWrap').addClass('nonei');
+				$('body').css({'background':'none'});
+        		$('#mainWrap').css({'background':'url(/img/crossword.png)'});	
+			};		
+
+			function after_cb(){
+
+				//if( LJ.user.status == 'new' )
+					//LJ.fn.initTour();
+
+				LJ.fn.updatePictureWithFacebook( LJ.user._id, LJ.user.fbId );
+				$('#thumbWrap').velocity('transition.slideUpIn',{duration:1000});
+				$('.menu-item').velocity({ opacity: [1, 0] }, {
+					display:'inline-block',
+					duration: 800,
+					complete: function(){
+						$('.menu-item').each( function( i, el ){
+							$(el).append('<span class="bubble filtered"></span>')
+						});	
+						LJ.fn.initTour();
+					}
 				});
+			};
 
+            LJ.fn.displayContent( $landingView, {
+            	 during_cb: during_cb,
+            	 after_cb: after_cb,
+            	 mode:'curtain',
+            	 myWayIn: 'transition.slideDownIn',
+            	 myWayOut: 'transition.slideUpOut',
+            	 prev:'revealed'
+            });
+
+        },
+        initTour: function(){
+
+        	var textProfile = "Tes informations ont été synchronisées à partir de ton compte Facebook.";
+        	var textSearch  = "Effectues des recherches à propos de n'importe quel membre.";
+        	var textEvents  = "Tous les before à venir sont visibles ici. Sympathise avec les autres membres.";
+        	var textCreate  = "Si tu as prévu de sortir avec tes amis et que tu te sens ambianceur, n'hésites pas ;-) ";
+
+        	var html = '<ol id="intro">'
+						+ '<li data-class="intro-item" data-id="profile" data-button="Show me around">'+textProfile+'</li>'
+						+ '<li data-class="intro-item" data-id="search">'+textSearch+'</li>'
+						+ '<li data-class="intro-item" data-id="events">'+textEvents+'</li>'
+						+ '<li data-class="intro-item" data-id="create">'+textCreate+'</li>'
+						+ '</ol>';
+
+			$( html ).appendTo( $('body') );
+
+			$('#intro').joyride({
+				  'timer': 6500,                   // 0 = off, all other numbers = time(ms) 
+				  'nextButton': false,              
+				  'tipAnimation': 'fade',           // 'pop' or 'fade' in each tip
+				  'tipAnimationFadeSpeed': 1000,    // if 'fade'- speed in ms of transition
+				  'tipContainer': 'body',            // Where the tip be attached if not inline
+				  'postRideCallback': LJ.fn.handleTourEnded,       // a method to call once the tour closes
+				  'preStepCallback': LJ.fn.handleTourNextStep
 			});
+
+			$('.curtain').css({'display':'block'}).velocity({'opacity':[0.4,0]});
+			$('.joyride-tip-guide').joyride('startTimer');
+
+        },
+        handleTourEnded: function(){
+        	console.log('Tour ended');
+        	$('#profile').click();
+        	$('.curtain').delay(700).velocity({opacity:[0,0.4]}, { complete:function(){ $('.curtain').css({'display':'none'}); }});
+
+        },
+        handleTourNextStep: function(){
+        	console.log('Tour next step');
+        	if( !LJ.state.touring )
+        		return LJ.state.touring = true;
+        	$('.menu-item-active').next().click();
 
         },
         handleServerSuccess: function( msg, ms ){
@@ -863,7 +952,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		msg = JSON.parse( msg.responseText ).msg;
 
         	if( typeof(msg) != 'string' )
-        		return LJ.fn.toastMsg('Erreur interne');
+        		return LJ.fn.toastMsg('Erreur interne','error');
 
         	var ms = ms || 500;
         	setTimeout( function(){ 
@@ -1134,14 +1223,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			
 			LJ.myOnlineUsers = data.onlineUsers;
 
-			LJ.fn.initAppSettings( data, settings );
+			LJ.user = user;
+			LJ.settings = settings;
 
 			LJ.fn.subscribeToChannels();
 			LJ.fn.initChannelListeners();
 			
 			LJ.fn.initCloudinary( user.cloudTag );
 			LJ.fn.initLayout( settings );
-			LJ.fn.displayUserSettings();
 
 			LJ.fn.fetchEvents();
 			LJ.fn.fetchUsers();
@@ -1151,11 +1240,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			/* Admin scripts. Every com is secured serverside */	
 			if( LJ.user.access.indexOf('admin') != -1 )
 				LJ.fn.initAdminMode();
-
-			if( LJ.user.status == 'new' && LJ.user.fbId ){
-				LJ.fn.updatePictureWithFacebook( LJ.user._id, LJ.user.fbId );
-				LJ.fn.showLoaders();
-			}
 			
 
 		},
@@ -1170,13 +1254,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					success: function( data ){
 
 						LJ.fn.hideLoaders();
-						LJ.fn.toastMsg('Synchronisation avec Facebook terminée!', 'info');
-
 						LJ.fn.updateClientSettings( data );
 
 						LJ.fn.replaceMainImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsProfile );
 						LJ.fn.replaceThumbImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsHeaderUser );
-
 
 					},
 					error: function( xhr ){

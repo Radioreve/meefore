@@ -16,6 +16,7 @@
 	<link href='http://fonts.googleapis.com/css?family=Gochi+Hand' rel='stylesheet' type='text/css'>
 	
 	<link rel="stylesheet" href="/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/joyride.css">
 	<link rel="stylesheet" href="/css/reset.css">
 	<link rel="stylesheet" href="/css/jscrollpane.css">
 	<link rel="stylesheet" href="/css/fontello/css/fontello.css">
@@ -27,6 +28,7 @@
 	<link rel="stylesheet" href="/css/landing.css">
 	<link rel="stylesheet" href="/css/media.css">
 	<link rel="stylesheet" href="/css/admin.css">
+
 
 </head>
 <body>
@@ -47,10 +49,20 @@
 	<div class="progress_bar"></div>
 	<div class="loaderWrap"></div>
 	<div class="m-loaderWrap"></div>
+	<div class="overlay"></div>
+	<div id="logo-hero"><img src="/img/logomeefore.png" width="50" alt="Logo meefore soirées"></div>
+	<div class="hero-img scaled animatable img-0 active "></div>
+	<div class="hero-img scaled animatable img-1 "></div>
+	<div class="hero-img scaled animatable img-2 "></div>
+	<div class="hero-img scaled animatable img-3 "></div>
+	<div class="hero-img scaled animatable img-4 "></div>
+	<div class="hero-img scaled animatable img-5 "></div>
+	<div class="hero-img scaled animatable img-6 "></div>
+	<div class="hero-img scaled animatable img-7 "></div>
 	<div class="curtain"></div>
 
 	<!-- Header start -->
-	<header class="lg-header">
+	<header class="lg-header none">
 	  <div id="headerContent">
 		<img id="logo" src="/img/logomeefore.png" width="48"></img>
 		  <ul id="menuWrap" class="">
@@ -77,7 +89,7 @@
 				<div class="landing-hashtags">
 					<!-- Dynamically loaded -->
 				</div>
-				<div class="landing-call etiquette">
+				<div class="landing-call">
 					"Une vraie soirée commence toujours avant la soirée."
 				</div>
 				<div class="landing-subscribe">
@@ -279,80 +291,10 @@
 		<script src="//js.pusher.com/2.2/pusher.min.js"></script>
 		<script src="dist/lib.min.js"></script>
 		<script src="js/lib/moment.min.js"></script>
+		<script src="js/lib/waitForImages.min.js"></script>
+		<script src="js/lib/joyride.js"></script>
 
 		<script src="js/lib/typed.js" type="text/javascript"></script>
-        <script type="text/javascript">
-        
-        (function initLanding(){
-        	
-        	var data = [
-        		{
-        			'name':'Rue de lapp',
-        			'hashtags': ["bastille","monop'","roquette","embrouille"]
-        		},
-        		{
-        			'name':'Oberkampf',
-        			'hashtags': ['massbars',"ivre","wtf","shots"]
-        		},
-        		{
-        			'name':'Les quais de seine',
-        			'hashtags': ['pakibière',"sunset","wine"]
-        		},
-        		{
-        			'name':'Event Facebook',
-        			'hashtags':['projetX','peutêtre','whatever']
-        		},
-        		{
-        			'name':'La concrete',
-        			'hashtags':['after','after','after','md','after']
-        		},
-        		{
-        			'name':'Rue princesse',
-        			'hashtags':[ 'lasoif','odéon','bedford','pousseaucrime']
-        		},
-        		{
-        			'name':'Grands boulevards',
-        			'hashtags':['étranger(e)s','help','me','out']
-        		},
-        		{
-        			'name':'Westeros',
-        			'hashtags':['danaerys','is','coming']
-        		}
-        	]
-
-        	var names     = _.pluck( data, 'name' ),
-        		hashtags  = _.pluck( data, 'hashtags' ),
-        		maxLength = names.length,
-        		i 		  = 0;  
-
-            $('.typed-text').typed({
-                strings: names,
-                typeSpeed: 200, 
-                backDelay: 4000,
-                loop:true,
-                preStringTyped: function(){
-                	var hashtags = data[i].hashtags, html = '';
-                	for( var j = 0; j < hashtags.length; j++){
-                		html +='<div class="hashtag">#'+hashtags[j]+'</div>';
-                	}
-                	$('.landing-hashtags').html( $(html) );
-                	$('.hashtag').velocity('transition.fadeIn',
-                		{ stagger: 400, display:'inline-block', duration:2500
-                	});
-                },
-                onStringTyped: function(){
-                	i == maxLength-1 ? i=0 : i++;
-                	setTimeout( function(){
-                		$('.hashtag').velocity('transition.fadeOut',
-                			{ display:'none', duration:400, complete: function(){ $('.hashtag').remove(); }
-                		});                		
-                	}, 4000 );
-                }
-            });
-
-        })();
-        </script>
-
 		<!-- custom scripts -->
 		<script src="js/lj-params.js"></script>
 		<script src="js/lj-render.js"></script>
@@ -360,5 +302,14 @@
 		<script src="js/lj-admin.js"></script>
 		<script src="js/lj.js"></script>
 
+		<script type="text/javascript" src="http://catmull.uk/downloads/bg-loaded/bg-loaded.js"></script>
+<script type="text/javascript">
+   $('body').bgLoaded({
+      afterLoaded : function() {
+         alert('Background image done loading');
+      }
+   });
+</script>
+	
 	</body>
 </html>

@@ -110,20 +110,22 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			$('#facebook_connect').click(function(e){
 
 				e.preventDefault();
-				console.log('Login in with Facebook');
+				console.log('Login in with Facebook...');
+				LJ.state.loggingIn = true;
 
 				FB.login( function(res){
 
-					console.log('Client status is now : ' + res.status ) ;
+					console.log('Client facebook status is : ' + res.status ) ;
 
-					if( res.status != 'connected' ) return;
+					if( res.status != 'connected' ) return console.log('Exiting');
 
 						FB.api('/me', function( facebookProfile ){
 
+							console.log( facebookProfile );
 					  		LJ.fn.loginWithFacebook( facebookProfile );
 
 				  		});
-				}, { scope: ['public_profile', 'email']});
+				}, { scope: ['public_profile', 'email', 'user_birthday','user_events','user_friends']});
 
 			});
 

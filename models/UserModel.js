@@ -5,25 +5,16 @@
 
 var UserSchema = new mongoose.Schema({
 
-  local:{
-    email: {
-    type: String,
-    default:''
-  },
-  password: {
-    type: String,
-  }
-},
   email:{
     type:String,
     default:''
   },
-  password:{
-    type:String
-  },
   facebookId: {
     type:String,
     default:''
+  },
+  facebookURL:{
+    type:String
   },
   signupDate: {
     type: Date
@@ -96,18 +87,6 @@ var UserSchema = new mongoose.Schema({
 
 });
 
-
-UserSchema.methods.generateHash = function(password) {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-};
-
-UserSchema.statics.generateHash = function(password) {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-};
-
-UserSchema.methods.validPassword = function(password) {
-  return bcrypt.compareSync(password, this.password);
-};
 
 UserSchema.methods.getChannel = function(){
   return _.result( _.find( this.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName') ;

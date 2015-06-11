@@ -29,20 +29,26 @@
 	
 	var handleFacebookAuth = function( req, res ){
 
-		var fbId = req.body.facebookProfile.id,
-			email = req.body.facebookProfile.email,
+		var fbId   = req.body.facebookProfile.id,
+			email  = req.body.facebookProfile.email,
 			gender = req.body.facebookProfile.gender,
-			name = req.body.facebookProfile.first_name;
+			fbURL  = req.body.facebookProfile.link,
+			name   = req.body.facebookProfile.first_name;
 
 		console.log('Authenticating with Facebook with id : ' + fbId );
 
 		User.findOne({ 'facebookId': fbId }, function( err, user ){
 
 			if( err )
-				return console.log('Error with Facebook : ' + err );
+				return eventUtils.raiseError({
+					res:res,
+					err:err,
+					toClient:"Une erreur est survenue"
+				});
 
 			/* L'utilisateur existe, on le connecte à l'application */
 			if( user ){
+				console.log('User found, login in...');
 				var accessToken = eventUtils.generateAppToken( user ); 
 
 				var expose = { id: user._id, accessToken: accessToken },
@@ -55,14 +61,16 @@
 				return;
 			}
 
+			console.log('User not found, creating account...');
 			/* L'utilisateur n'existe pas, on crée son compte et on le connecte à l'application */
 			var newUser = new User();
 
 			newUser.facebookId = fbId;
 			newUser.email = email;
-			newUser.password = newUser.generateHash('M3efore'); // les gens qui s'authentifient via fb n'ont pas besoin de password
 			newUser.gender = gender;
-			newUser.name = name;;
+			newUser.name = name;
+			newUser.age = moment().diff( req.body.facebookProfile.birthday,'years' ); //thanks moments.js!
+			newUser.facebookURL = fbURL;
 			newUser.signupDate = moment.utc();
 
 		    var token = randtoken.generate(30);

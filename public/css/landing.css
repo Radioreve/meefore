@@ -13,18 +13,54 @@
 
 .landing-content{
     text-align: center;
+    color: white;
 }
 
 .landing-subscribe{
     margin-top: 40px;
+}
+.preloading{
+    -webkit-transition: all ease-in-out .5s;
+    -transition: all ease-in-out .5s;
+}
+.grow { transition: all .1s ease-in-out; }
+.grow:hover { transform: scale(1.03); }
+.hero-img {
+    bottom: 0px;
+    left: 0px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    z-index: -1;
+    background-size:cover;
+}
+.hero-img.img-0{ background-image: url('/img/bg0.jpg'); }
+.hero-img.img-1{ background-image: url('/img/bg1.jpg'); }
+.hero-img.img-2{ background-image: url('/img/bg2.jpg'); }
+.hero-img.img-3{ background-image: url('/img/bg3.jpg'); }
+.hero-img.img-4{ background-image: url('/img/bg4.jpg'); }
+.hero-img.img-5{ background-image: url('/img/bg5.jpg'); }
+.hero-img.img-6{ background-image: url('/img/bg6.jpg'); }
+.hero-img.img-7{ background-image: url('/img/bg7.jpg'); }
 
+.hero-img:not(.active){
+    display:none;
+}
+.animatable {
+    -webkit-transition: all 10000ms ease-out;
+    transition: all 10000ms ease-out;
+}
+.scaled {
+    -webkit-transform:scale(1.22);
+    transform: scale(1.22);
 }
 
 #facebook_connect{
     width: 340px;
     margin: 0 auto;
-    background-color: #6F6FA2;
-    border: 1px solid #565686;
+    background-color: #D02C2C;
+    border-bottom: 4px solid #9c2311;      
+    box-shadow: 0 0 1Px #383838;
     color: white;
     text-shadow: 0 0 1px #8E8E8E;
     padding: 15px 20px;
@@ -36,7 +72,7 @@
     transition: all .5s;
 }
 #facebook_connect:hover{
-  opacity:.8;
+  background-color: #D64545;
 
 }
 #facebook_connect i{
@@ -54,12 +90,13 @@
 }
 
 .typed-text{
+    color: white;
 
 }
 .landing-hashtags{
     text-align: center;
     margin: 0 auto;
-    color: #A5A5A5;
+    color: #C5C5C5;
     font-family: 'Karla';
     text-transform: uppercase;
     font-weight: bolder;
@@ -77,6 +114,7 @@
     -moz-animation: blink 0.7s infinite;
     animation: blink 0.7s infinite;
     margin-left: 5px;
+    color:white;
 }
 @keyframes blink{
     0% { opacity:1; }
@@ -117,3 +155,8 @@
 
 }
 
+#logo-hero{
+    position:absolute;
+    z-index:1000;
+    margin:20px 0 0 40px;
+}

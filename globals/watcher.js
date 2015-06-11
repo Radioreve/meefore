@@ -47,7 +47,7 @@
 			var gaptime   = 10*gaptime_default;
 		}
 
-		console.log( N + ' users are currently online ');
+		//console.log( N + ' users are currently online ');
 		setTimeout( function( ){
 			watchThemAll( gaptime );
 		}, nextwatch );
