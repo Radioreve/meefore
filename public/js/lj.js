@@ -11,7 +11,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 		init: function(){
 
-			$('body').waitForImages(function(){
+			$('.hero-img').first().waitForImages(function(){
 				/* Landing page animation */
 				LJ.fn.initLandingPage();				
 			});

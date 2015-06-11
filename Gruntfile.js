@@ -18,7 +18,11 @@
 		    				'public/js/lib/velocity.min.js',
 		    					'public/js/lib/velocityui.min.js',
 		    				'public/js/lib/jscrollpane.js',
-		    				'public/js/lib/jquery.cloudinary.js'
+		    				'public/js/lib/jquery.cloudinary.js',
+		    				'public/js/lib/moment.min.js',
+		    				'public/js/lib/typed.js',
+		    				'public/js/lib/joyride.js',
+		    				'public/js/lib/waitForImages.min.js'
 		    		],
 		    		dest: 
 		    			'public/dist/lib.js'
