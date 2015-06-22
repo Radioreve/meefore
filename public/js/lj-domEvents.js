@@ -117,7 +117,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 					console.log('Client facebook status is : ' + res.status ) ;
 
-					if( res.status != 'connected' ) return console.log('Exiting');
+					if( res.status != 'connected' ){
+						LJ.state.loggingIn = false;
+						console.log('Exiting');
+						return
+					}
 
 						FB.api('/me', function( facebookProfile ){
 
@@ -125,7 +129,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					  		LJ.fn.loginWithFacebook( facebookProfile );
 
 				  		});
-				}, { scope: ['public_profile', 'email', 'user_birthday','user_events','user_friends']});
+				}, { scope: ['public_profile', 'email']});
 
 			});
 
@@ -156,7 +160,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 						if( indexActive > indexTarget ){
 							var myWayOut = 'transition.slideLeftOut' ; //{opacity: [0, 1], translateX:[15,0 ] },
 								myWayIn = 'transition.slideRightIn' ; //{opacity: [1, 0], translateX:[0,-5 ] };
-						}else{
+						} else {
 							var myWayOut = 'transition.slideRightOut' ;// {opacity: [0, 1], translateX:[-15,0 ] },
 								myWayIn = 'transition.slideLeftIn' ; //{opacity: [1, 0], translateX:[0, 5] };
 						}

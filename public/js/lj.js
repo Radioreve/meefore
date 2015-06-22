@@ -85,11 +85,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	var data = [
         		{
         			'name':'Rue de lappe',
-        			'hashtags': ["bastille","monop'","roquette","embrouille"]
+        			'hashtags': ["bastille","monop'","roquette"]
         		},
         		{
         			'name':'Hôtel de ville',
-        			'hashtags': ['concerts',"keufs","bhv","crowd"],
+        			'hashtags': ['concerts',"bhv","crowd"],
         		},
         		{
         			'name':'Les quais de seine',
@@ -560,10 +560,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					toast.velocity('transition.slideDownIn', {
 						duration: 600,
 						complete: function(){
-						  if( !fixed ){
+
+						  if( typeof(fixed) == 'string' )
+						  	return
+
 							toast.velocity('transition.slideUpOut', {
 								duration:300,
-								delay:2000,
+								delay: fixed || 2000,
 								complete: function(){
 									toast.remove();
 									if( LJ.msgQueue.length != 0 )
@@ -571,7 +574,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 									    LJ.msgQueue.splice( 0, 1 ) //remove le premier élément
 								}
 								});
-							}
+							
 						  }
 					});
 			}
@@ -858,11 +861,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			};		
 
 			function after_cb(){
-
-				//if( LJ.user.status == 'new' )
-					//LJ.fn.initTour();
-
-				LJ.fn.updatePictureWithFacebook( LJ.user._id, LJ.user.fbId );
 				$('#thumbWrap').velocity('transition.slideUpIn',{duration:1000});
 				$('.menu-item').velocity({ opacity: [1, 0] }, {
 					display:'inline-block',
@@ -871,7 +869,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						$('.menu-item').each( function( i, el ){
 							$(el).append('<span class="bubble filtered"></span>')
 						});	
-						LJ.fn.initTour();
+						if( LJ.user.status == 'new' )
+							LJ.fn.initTour();
 					}
 				});
 			};
@@ -888,13 +887,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         initTour: function(){
 
-        	var textProfile = "Tes informations ont été synchronisées à partir de ton compte Facebook.";
+        
+        	var textProfile = "Tout commence par ton profile! Nom, âge, boisson préférée et c'est parti.";
         	var textSearch  = "Effectues des recherches à propos de n'importe quel membre.";
-        	var textEvents  = "Tous les before à venir sont visibles ici. Sympathise avec les autres membres.";
-        	var textCreate  = "Si tu as prévu de sortir avec tes amis et que tu te sens ambianceur, n'hésites pas ;-) ";
+        	var textEvents  = "Tous les before à venir sont visibles ici et peuvent être filtrés par préférences.";
+        	var textCreate  = "Si aucun before ne correspond à ce que tu cherches, proposes le tien! ";
 
         	var html = '<ol id="intro">'
-						+ '<li data-class="intro-item" data-id="profile" data-button="Show me around">'+textProfile+'</li>'
+						+ '<li data-class="intro-item" data-id="profile">'+textProfile+'</li>'
 						+ '<li data-class="intro-item" data-id="search">'+textSearch+'</li>'
 						+ '<li data-class="intro-item" data-id="events">'+textEvents+'</li>'
 						+ '<li data-class="intro-item" data-id="create">'+textCreate+'</li>'
@@ -903,12 +903,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$( html ).appendTo( $('body') );
 
 			$('#intro').joyride({
-				  'timer': 6500,                   // 0 = off, all other numbers = time(ms) 
+				  'timer': 5500,                   
 				  'nextButton': false,              
-				  'tipAnimation': 'fade',           // 'pop' or 'fade' in each tip
-				  'tipAnimationFadeSpeed': 1000,    // if 'fade'- speed in ms of transition
-				  'tipContainer': 'body',            // Where the tip be attached if not inline
-				  'postRideCallback': LJ.fn.handleTourEnded,       // a method to call once the tour closes
+				  'tipAnimation': 'fade',           
+				  'tipAnimationFadeSpeed': 1000,    
+				  'postRideCallback': LJ.fn.handleTourEnded,      
 				  'preStepCallback': LJ.fn.handleTourNextStep
 			});
 
@@ -919,13 +918,30 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         handleTourEnded: function(){
         	console.log('Tour ended');
         	$('#profile').click();
-        	$('.curtain').delay(700).velocity({opacity:[0,0.4]}, { complete:function(){ $('.curtain').css({'display':'none'}); }});
+        	$('.curtain').delay(700).velocity({opacity:[0,0.4]}, { 
+        		complete:function(){ 
+        			$('.curtain').css({'display':'none'});
+        			LJ.fn.updatePictureWithFacebook( LJ.user._id, LJ.user.fbId, function( err, data ){
+
+        				if( err )
+        					return LJ.fn.handleServerError("La synchronisation avec Facebook a échouée.");
+
+        				LJ.fn.handleServerSuccess();
+        				LJ.fn.toastMsg("Bienvenue sur Meefore",'info', 4000);
+						LJ.fn.updateClientSettings( data );
+
+						LJ.fn.replaceMainImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsProfile );
+						LJ.fn.replaceThumbImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsHeaderUser );
+
+        			});
+        	}});
 
         },
         handleTourNextStep: function(){
         	console.log('Tour next step');
         	if( !LJ.state.touring )
         		return LJ.state.touring = true;
+        	
         	$('.menu-item-active').next().click();
 
         },
@@ -934,15 +950,23 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	var ms = ms || 500;
         	setTimeout( function(){ 
 
+	        if( msg )
 	        	LJ.fn.toastMsg( msg, 'info');
-	        				if( $('.mood.modified').length != 0 ) $('.mood.selected').removeClass('selected');
-	        				if( $('.drink.modified').length != 0 ) $('.drink.selected').removeClass('selected');
-	        				$('.modified').removeClass('modified').addClass('selected');
-	        				$('.validating').removeClass('validating');
-							$('.validating-btn').removeClass('validating-btn');
-							$('.asking').removeClass('asking');
-							$('.pending').removeClass('pending');
-							LJ.fn.hideLoaders();
+
+	        if( $('.mood.modified').length != 0 )
+	        	$('.mood.selected').removeClass('selected');
+
+	        if( $('.drink.modified').length != 0 )
+	        	$('.drink.selected').removeClass('selected');
+
+			$('.modified').removeClass('modified').addClass('selected');
+			$('.validating').removeClass('validating');
+			$('.validating-btn').removeClass('validating-btn');
+			$('.asking').removeClass('asking');
+			$('.pending').removeClass('pending');
+
+			LJ.fn.hideLoaders();
+
         	}, ms );
 
         },
@@ -1022,25 +1046,25 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			
 			if( data.hostId == LJ.user._id )
 			{
-        		$('.pending').removeClass('pending');
-        		LJ.user.status = 'idle';
-        		LJ.myAskers = [];
-        		LJ.$manageEventsWrap.find('#askersThumbs, #askersMain').html('');
-        		LJ.fn.displayMenuStatus( function(){ $('#create').click(); } );
+      	$('.pending').removeClass('pending');
+    		LJ.user.status = 'idle';
+    		LJ.myAskers = [];
+    		LJ.$manageEventsWrap.find('#askersThumbs, #askersMain').html('');
+    		LJ.fn.displayMenuStatus( function(){ $('#create').click(); } );
 				
 			}	  		
 		                	 
-        	var canceledEvent = LJ.$eventsListWrap.find('.eventItemWrap[data-hostid="'+data.hostId+'"]');
-        		canceledEvent.velocity("transition.slideRightOut", {
-        			complete: function(){
-        				canceledEvent.remove();
-        				if( $('.eventItemWrap').length == 0 ) LJ.fn.displayEvents();
-        			}
-        		});
+    	var canceledEvent = LJ.$eventsListWrap.find('.eventItemWrap[data-hostid="'+data.hostId+'"]');
+  		canceledEvent.velocity("transition.slideRightOut", {
+  			complete: function(){
+  				canceledEvent.remove();
+  				if( $('.eventItemWrap').length == 0 ) LJ.fn.displayEvents();
+  			}
+  		});
 
-        	_.remove( LJ.myEvents, function(el){
-        		return el.hostId == data.hostId; 
-        	});
+	  	_.remove( LJ.myEvents, function(el){
+	  		return el.hostId == data.hostId; 
+	  	});
 
 
 		},
@@ -1048,12 +1072,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			console.log('Handling request participation in success');
 
-			var hostId  	= data.hostId,
-				userId 		= data.userId,
-				eventId 	= data.eventId,
-				requesterId = data.requesterId,
-				asker   	= data.asker,
-				alreadyIn   = data.alreadyIn || false;	
+			var hostId  	  = data.hostId,
+				  userId 		  = data.userId,
+				  eventId 	  = data.eventId,
+				  requesterId = data.requesterId,
+				  asker   	  = data.asker,
+				  alreadyIn   = data.alreadyIn || false;	
 
 					/* L'ordre de l'appel est important, car certaines 
 					/* informations sont cachées par les premières 
@@ -1061,8 +1085,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					*/
 			sleep( LJ.ui.artificialDelay, function(){
 				
-				if( alreadyIn )
-				{
+				if( alreadyIn ) {
 					LJ.fn.toastMsg('Votre ami s\'est ajouté à l\évènement entre temps', 'info');
 					LJ.fn.hideLoaders();
 					var button = '<button class="themeBtn onHold">'
@@ -1243,8 +1266,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			
 
 		},
-		updatePictureWithFacebook: function( userId, fbId ){
+		updatePictureWithFacebook: function( userId, fbId, callback ){
 
+			LJ.fn.showLoaders();
 			var eventName = 'update-picture-fb',
 				data = {
 					userId: userId,
@@ -1252,18 +1276,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				},
 				cb = {
 					success: function( data ){
-
-						LJ.fn.hideLoaders();
-						LJ.fn.updateClientSettings( data );
-
-						LJ.fn.replaceMainImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsProfile );
-						LJ.fn.replaceThumbImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsHeaderUser );
-
+						callback( null, data );
 					},
 					error: function( xhr ){
-
-						LJ.fn.handleServerError("La synchronisation avec Facebook a échouée");
-
+						callback( xhr, null );
 					}
 				};
 

@@ -69,7 +69,7 @@
 			newUser.email = email;
 			newUser.gender = gender;
 			newUser.name = name;
-			newUser.age = moment().diff( req.body.facebookProfile.birthday,'years' ); //thanks moments.js!
+			newUser.age = 18 // default value
 			newUser.facebookURL = fbURL;
 			newUser.signupDate = moment.utc();
 

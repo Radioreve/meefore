@@ -268,7 +268,9 @@
                 opts[$.trim(p[0])] = $.trim(p[1]);
               }
             }
+
             settings.tipSettings = $.extend({}, settings, opts);
+
             settings.tipSettings.tipLocationPattern = settings.tipLocationPatterns[settings.tipSettings.tipLocation];
 
             if(settings.modal && settings.expose){
@@ -810,6 +812,7 @@
 
       startTimer : function () {
         if (settings.$li.length) {
+
           settings.automate = setTimeout(function () {
             methods.hide();
             methods.show();
