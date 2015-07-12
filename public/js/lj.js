@@ -11,10 +11,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 		init: function(){
 
-			$('.hero-img').first().waitForImages(function(){
+			
 				/* Landing page animation */
-				LJ.fn.initLandingPage();				
-			});
+				this.initLandingPage();
+
+				/* Ajax setup */
+				this.initAjaxSetup();				
 
 				/* Bind UI action with the proper handler */
 				this.handleDomEvents();
@@ -27,6 +29,21 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				/* Init Pusher Connexion via public chan */
 				this.initPusherConnection();
+
+		},
+		initAjaxSetup: function(){
+
+			$.ajaxSetup({
+				before: function(){
+					LJ.fn.showLoaders();
+				},
+				error: function( xhr ){
+					LJ.fn.handleServerError( xhr );
+				},
+				complete: function(){
+					LJ.fn.hideLoaders();
+				}
+			})
 
 		},
 		initPusherConnection: function(){
@@ -74,10 +91,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			var $mloader = $.cloudinary.image( LJ.cloudinary.m_loader_id, LJ.cloudinary.displayParamsLoader );
 				$mloader.appendTo( $('.m-loaderWrap'));
 
-			var $placeholder = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsPlaceholder );
-				$('#pictureWrap').prepend( $placeholder );
-
-			LJ.$cLoaderTpl = $.cloudinary.image( LJ.cloudinary.c_loader_id, { cloud_name:"radioreve", width:12 });
+			LJ.$cLoaderTpl = $.cloudinary.image( LJ.cloudinary.c_loader_id, { cloud_name: "radioreve", width: 12 });
 
 		},
 		initLandingPage: function(){
@@ -122,52 +136,62 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		maxLength = names.length,
         		i 		  = 0;  
 
-        	$('.curtain').velocity('transition.fadeOut', {});
-            $('.typed-text').typed({
-                strings: names,
-                typeSpeed: 200, 
-                backDelay: 4000,
-                loop:true,
-                preStringTyped: function(){
+        	$('.hero-img').first().waitForImages(function(){
 
-                	/* Display text */
-                	var hashtags = data[i].hashtags, html = '';
-                	for( var j = 0; j < hashtags.length; j++){
-                		html +='<div class="hashtag">#'+hashtags[j]+'</div>';
-                	}
-                	$('.landing-hashtags').html( $(html) );
-                	$('.hashtag').velocity('transition.fadeIn',
-                		{ delay:1000,display:'inline-block', duration:2500
-                	}).delay( data[i].name.length * 250 ).velocity('transition.fadeOut', {duration:1000});
+	        	$('.curtain').velocity('transition.fadeOut', {});
+	            $('.typed-text').typed({
+	                strings: names,
+	                typeSpeed: 200, 
+	                backDelay: 4000,
+	                loop:true,
+	                preStringTyped: function(){
 
-                	/* Zoom in image */
-                	if( i == 0)
-                		return $('.hero-img.active').removeClass('scaled');
+	                	/* Display text */
+	                	var hashtags = data[i].hashtags, html = '';
+	                	for( var j = 0; j < hashtags.length; j++){
+	                		html +='<div class="hashtag">#'+hashtags[j]+'</div>';
+	                	}
+	                	$('.landing-hashtags').html( $(html) );
+	                	$('.hashtag').velocity('transition.fadeIn',
+	                		{ delay:1000,display:'inline-block', duration:2500
+	                	}).delay( data[i].name.length * 250 ).velocity('transition.fadeOut', {duration:1000});
 
-                },
-                onStringTyped: function(){
-                	i == maxLength-1 ? i=0 : i++;
-                	setTimeout( function(){
-                		if( LJ.state.loggingIn ) 
-                			return;
-                		$('.curtain').velocity('transition.fadeIn', {
-                			duration: 1200, 
-                			complete: function(){ 
-                				$('.hero-img.active').removeClass('active').addClass('scaled');
-                				$('.hero-img.img-'+i).addClass('active');
-                				setTimeout(function(){ $('.hero-img.img-'+i).removeClass('scaled');
-                					$('.curtain').velocity('transition.fadeOut', {duration:1500});
-                				 },50)
-                			}
-             			});
-                	}, 3500 ); 
-                }
-            });
+	                	/* Zoom in image */
+	                	if( i == 0)
+	                		return $('.hero-img.active').removeClass('scaled');
+
+	                },
+	                onStringTyped: function(){
+	                	i == maxLength-1 ? i=0 : i++;
+	                	setTimeout( function(){
+	                		if( LJ.state.loggingIn ){
+	                			$('.hero-img.active').removeClass('active').addClass('scaled');
+	                			return $('html').css({'overflow':'auto'});
+	                		} 
+	                		$('.curtain').velocity('transition.fadeIn', {
+	                			duration: 1200, 
+	                			complete: function(){ 
+	                				$('.hero-img.active').removeClass('active').addClass('scaled');
+	                				$('.hero-img.img-'+i).addClass('active');
+	                				setTimeout(function(){ $('.hero-img.img-'+i).removeClass('scaled');
+	                					$('.curtain').velocity('transition.fadeOut', {
+	                						duration:1500
+	                					});
+	                				 }, 50 )
+	                			}
+	             			});
+	                	}, 3500 ); 
+	                }
+	            });
+			});
 
 		},
 		initEhancements: function(){
 
 			(function bindEnterKey(){ //Petite IIEF pour le phun
+
+				//prevent double click pour UI reasons
+				//$('body:not(input)').mousedown(function(e){ e.preventDefault(); });
 
 				$('.profileInput, #description').on('change keypress',function(){
 					$(this).addClass('modified');
@@ -229,7 +253,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				age   		  = $('#age').val(),
 				name  		  = $('#name').val(),
 				description   = $('#description').val(),
-				favoriteDrink = $('.drink.modified').data('drink') || $('.drink.selected').data('drink'),
+				drink 		  = $('.drink.modified').data('drink') || $('.drink.selected').data('drink'),
 				mood          = $('.mood.modified').data('mood')   || $('.mood.selected').data('mood');
 
 			if( LJ.user.status == 'new' ){ LJ.user.status = 'idle'; }
@@ -240,7 +264,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				age 		  : age,
 				name 		  : name,
 				description   : description,
-				favoriteDrink : favoriteDrink,
+				drink 		  : drink,
 				mood          : mood,
 				status        : LJ.user.status
 
@@ -582,34 +606,61 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			else
 			{
 				LJ.msgQueue.push({ msg: msg, type: status });
-				/*
-				toast = $( '.toast' );
-				toast.finish().velocity('transition.slideUpOut',{
-					duration: 200,
-					complete: function(){
-						toast.remove();
-						LJ.fn.toastMsg( msg, status );
-					}
-				});
-	*/
 			}
 		},
-		replaceMainImage: function( imgId, imgVersion, d ){
+		/* Permet de remplacer les images du profile, ou du thumbWrap uniquement */
+		replaceImage: function( options ){
 
-		    	d.version = imgVersion;
+			var imgId      = options.imgId,
+				imgVersion = options.imgVersion,
+				imgPlace   = options.imgPlace,
+				scope      = options.scope;
 
-			var $previousImg = $('#pictureWrap').find('img'),
-				$newImg      = $.cloudinary.image( imgId, d ); 
-				$newImg.addClass('mainPicture').addClass('none');
-				$('#pictureWrap').prepend( $newImg );
- 													
-				$previousImg.velocity('transition.fadeOut', { 
-					duration: 600,
-					complete: function(){
-						$newImg.velocity('transition.fadeIn', { duration: 700, complete: function(){} });
-						$previousImg.remove();
-					} 
-				});
+			if( scope.indexOf('profile') != -1 )
+			{
+				var $element = $('.picture').eq( imgPlace ),
+					$container = $element.parent('[data-display-settings]');
+					display_settings = LJ.cloudinary[ $container.data('display-settings') ];
+
+				if( display_settings == undefined )
+					return LJ.fn.toastMsg("Options d'affichage manquantes", "error");
+
+				display_settings.version = imgVersion;
+
+				/* En cas de photos identiques, prend celle la plus à gauche avec .first()*/
+				var $previousImg = $element.find('img'),
+					$newImg      = $.cloudinary.image( imgId, display_settings );
+
+					$newImg.addClass('mainPicture').addClass('none');
+					$previousImg.parent().prepend( $newImg );
+	 													
+					$previousImg.velocity('transition.fadeOut', { 
+						duration: 600,
+						complete: function(){
+							$newImg.velocity('transition.fadeIn', { duration: 700, complete: function(){} });
+							$newImg.parent().attr('data-imgid', imgId );
+							$newImg.parent().attr('data-imgversion', imgVersion );
+							$previousImg.remove();
+						} 
+					});
+			}
+
+			if( scope.indexOf('thumb') != -1 )
+			{
+				display_settings = LJ.cloudinary.displayParamsHeaderUser;
+				display_settings.version = imgVersion;
+
+				var previousImg = $('#thumbWrap').find('img'),
+					newImg      = $.cloudinary.image( imgId, display_settings );
+					newImg.addClass('none');
+
+					$('#thumbWrap .imgWrap').prepend( newImg );
+
+					previousImg.fadeOut(700, function(){
+						$(this).remove();
+						newImg.fadeIn(700);
+					});
+			}
 
 		},
 		replaceThumbImage: function( id, version, d ){
@@ -628,17 +679,36 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					newImg.fadeIn(700);
 				});
 		},
-		initCloudinary: function( upload_tag ){
+		initCloudinary: function( cloudTags ){
 
 			$.cloudinary.config( LJ.cloudinary.uploadParams );
 			LJ.tpl.$placeholderImg = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsEventAsker );
 
-			$('.upload_form').html('').append( upload_tag );
+			if( cloudTags.length != $('.upload_form').length )
+				return LJ.fn.toastMsg('Inconsistence data', 'error');
+
+			$('.upload_form').each(function(i,el){
+				$(el).html('').append( cloudTags[i] );
+			});
 
 			$('.cloudinary-fileupload')
 
+				.click( function(e){
+
+					if( LJ.state.uploadingImage ){
+						e.preventDefault();
+						LJ.fn.toastMsg("N'uploadez qu'une seule image à la fois!","info");
+						return;
+					}
+
+					LJ.state.uploadingImgId = $(this).parents('.picture').data('imgid');
+					LJ.state.uploadingImgVersion = $(this).parents('.picture').data('imgversion');
+					LJ.state.uploadingImgPlace = $(this).parents('.picture').data('imgplace');
+				})
+
 				.bind('fileuploadstart', function(){
 
+					LJ.state.uploadingImage = true;
 					LJ.fn.showLoaders();
 
 				})
@@ -648,43 +718,59 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				}).bind('cloudinarydone',function( e, data ){
 
-					LJ.user.imgId = data.result.public_id;
-					LJ.user.imgVersion = data.result.version;
+					LJ.state.uploadingImage = false;
 
-	                    var eventName = 'update-picture',
-	                    	data = {
-	                    				_id        : LJ.user._id,
-										imgId      : LJ.user.imgId,
-										imgVersion : LJ.user.imgVersion 
-									}
-							, cb = {
-								success: function( data ){
-									sleep( LJ.ui.artificialDelay, function(){
-										$('.progress_bar').velocity('transition.slideUpOut', {
-										 	duration: 400,
-										 	complete: function(){
-										 		$(this).css({ width: '0%' })
-										 			   .velocity('transition.slideUpIn');
-											} 
-										});
+					var imgId      		= data.result.public_id;
+					var imgVersion 		= data.result.version;
+					var imgPlace   		= LJ.state.uploadingImgPlace;;
 
-										LJ.fn.hideLoaders();
-										LJ.fn.toastMsg('Votre photo de profile a été modifiée', 'info');
-
-										var user = data.user;
-										//LJ.fn.updateClientSettings( user );
-										console.log('User after img upload:' + user );
-
-		  								LJ.fn.replaceMainImage( LJ.user.imgId, LJ.user.imgVersion, LJ.cloudinary.displayParamsProfile );
-		  								LJ.fn.replaceThumbImage( LJ.user.imgId, LJ.user.imgVersion, LJ.cloudinary.displayParamsHeaderUser );
-		  							});
-								},
-								error: function( xhr ){
-									console.log('Error saving image identifiers to the base');
+                    var eventName = 'update-picture',
+                    	data = {
+                    				_id             : LJ.user._id,
+									imgId           : imgId,
+									imgVersion      : imgVersion,
+									imgPlace        : imgPlace
 								}
-							};
+						, cb = {
+							success: function( data ){
+								sleep( LJ.ui.artificialDelay, function(){
+									$('.progress_bar').velocity('transition.slideUpOut', {
+									 	duration: 400,
+									 	complete: function(){
+									 		$(this).css({ width: '0%' })
+									 			   .velocity('transition.slideUpIn');
+										} 
+									});
 
-							LJ.fn.say( eventName, data, cb );
+									LJ.fn.hideLoaders();
+									LJ.fn.toastMsg('Votre photo de profile a été modifiée', 'info');
+
+									var user = data.user;
+									//LJ.fn.updateClientSettings( user );
+									console.log('User after img upload:' + user );
+
+									// Mise à jour interne sinon plein d'update sur la même photo bug
+									var pic = _.find( LJ.user.pictures, function(el){
+										return el.imgPlace == imgPlace;
+									});
+									pic.imgVersion = imgVersion;
+									var scope = pic.isMain ? ['profile','thumb'] : ['profile'];
+
+	  								LJ.fn.replaceImage( {
+	  									imgId: imgId, 
+	  									imgVersion: imgVersion,
+	  									imgPlace: imgPlace,
+	  									scope: scope
+	  								});
+	  								
+	  							});
+							},
+							error: function( xhr ){
+								console.log('Error saving image identifiers to the base');
+							}
+						};
+
+						LJ.fn.say( eventName, data, cb );
 
   				}).cloudinary_fileupload();
   				
@@ -777,7 +863,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			}		
 				
 		},
+		findMainImage: function(){
+
+			var index = _.findIndex( LJ.user.pictures, function( el ){
+				return el.isMain == true;
+			});
+
+			return LJ.user.pictures[ index ];
+
+		},
         initLayout: function( settings ){
+
 
         	/* Mise à jour dynamique des filters */
         	$( '.tags-wrap' ).html('').append( LJ.fn.renderTagsFilters() );
@@ -787,32 +883,41 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 
     		/* Profile View*/
-			$('#codebar').text( LJ.user._id );
+			//$('#codebar').text( LJ.user._id );
 			$('#name').val( LJ.user.name );
 			$('#age').val( LJ.user.age );
 			$('#description').val( LJ.user.description );
-			$('.drink[data-drink="'+LJ.user.favoriteDrink+'"]').addClass('selected');
+			$('.drink[data-drink="'+LJ.user.drink+'"]').addClass('selected');
 			$('.mood[data-mood="'+LJ.user.mood+'"]').addClass('selected');
 
+			/* Mise à jour des images placeholders */
+			$('.picture-wrap').html( LJ.fn.renderProfilePicturesWraps );
+			var $placeholder = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsPlaceholder );
+				$('.picture').prepend( $placeholder );
 
-			/* Update de l'image de profile */
-			LJ.fn.replaceMainImage( LJ.user.imgId, LJ.user.imgVersion, LJ.cloudinary.displayParamsProfile );
+			/* Update de toutes les images */
+			for( var i = 0; i < LJ.user.pictures.length; i++){
+				LJ.user.pictures[i].scope = ['profile'];
+				LJ.fn.replaceImage( LJ.user.pictures[i] );
+			}
 
-
-			/* Settings View */
-			$('#newsletter').prop( 'checked', LJ.user.newsletter );
-			$('#currentEmail').val( LJ.user.email );
-
+			LJ.fn.displayPictureHashtags();
 
 			/* ThumbHeader View */
 			LJ.$thumbWrap.find( 'h2#thumbName' ).text( LJ.user.name );
 			var d = LJ.cloudinary.displayParamsHeaderUser;
-				d.version = LJ.user.imgVersion;
 
-			var imgTag = $.cloudinary.image( LJ.user.imgId, d );
+			var mainImg = LJ.fn.findMainImage();
+				d.version = mainImg.imgVersion;
+
+			var imgTag = $.cloudinary.image( mainImg.imgId, d );
 				imgTag.addClass('left');
 
 			LJ.$thumbWrap.find('.imgWrap').html('').append( imgTag );
+
+			/* Settings View */
+			$('#newsletter').prop( 'checked', LJ.user.newsletter );
+			$('#currentEmail').val( LJ.user.email );
 
 
         	/* Initialisation du friendspanel */
@@ -868,7 +973,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					complete: function(){
 						$('.menu-item').each( function( i, el ){
 							$(el).append('<span class="bubble filtered"></span>')
-						});	
+						});
+
 						if( LJ.user.status == 'new' )
 							LJ.fn.initTour();
 					}
@@ -930,8 +1036,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         				LJ.fn.toastMsg("Bienvenue sur Meefore",'info', 4000);
 						LJ.fn.updateClientSettings( data );
 
-						LJ.fn.replaceMainImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsProfile );
-						LJ.fn.replaceThumbImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsHeaderUser );
+					//	LJ.fn.replaceMainImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsProfile );
+					//	LJ.fn.replaceThumbImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsHeaderUser );
 
         			});
         	}});
@@ -965,8 +1071,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('.asking').removeClass('asking');
 			$('.pending').removeClass('pending');
 
-			LJ.fn.hideLoaders();
-
         	}, ms );
 
         },
@@ -986,7 +1090,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						$('.validating-btn').removeClass('validating-btn');
 						$('.asking').removeClass('asking');
 						$('.pending').removeClass('pending');
-						LJ.fn.hideLoaders();
 
 			}, ms );
 
@@ -1252,8 +1355,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.fn.subscribeToChannels();
 			LJ.fn.initChannelListeners();
 			
-			LJ.fn.initCloudinary( user.cloudTag );
 			LJ.fn.initLayout( settings );
+			LJ.fn.initCloudinary( user.cloudTags );
 
 			LJ.fn.fetchEvents();
 			LJ.fn.fetchUsers();
@@ -1264,11 +1367,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			if( LJ.user.access.indexOf('admin') != -1 )
 				LJ.fn.initAdminMode();
 			
-
 		},
 		updatePictureWithFacebook: function( userId, fbId, callback ){
 
-			LJ.fn.showLoaders();
 			var eventName = 'update-picture-fb',
 				data = {
 					userId: userId,
@@ -1341,6 +1442,21 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			}else{
 				$( eventHTML ).insertAfter( $( $('.eventItemWrap')[idx] ) ).addClass('inserted');
 			}
+
+		},
+		hashtagify: function( str ){
+			
+			console.log(str); 
+			var hashtag_parts = [];
+				str.trim().split(/[\s_-]/).forEach(function( el, i ){
+					if( i == 0 ){
+						hashtag_parts.push( el );
+					} else {
+							var elm = el[0].toUpperCase() + el.substring(1);
+							hashtag_parts.push( elm );
+					}
+				});
+				return hashtag_parts.join('');
 
 		},
 		fetchUsers: function(){
@@ -1424,8 +1540,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			var e = {};
 				e.hostId	  	  = LJ.user._id;
 				e.hostName   	  = LJ.user.name;
-				e.hostImgId 	  = LJ.user.imgId;
-				e.hostImgVersion  = LJ.user.imgVersion;
+				//e.hostImgId 	  = LJ.user.imgId;
+				//e.hostImgVersion  = LJ.user.imgVersion;
 				e.name 		  	  = $('#eventName').val();
 				e.location    	  = $('#eventLocation').val();
 				e.hour 		  	  = $('#eventHour').val();
@@ -1434,8 +1550,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				e.maxGuest        = $('#eventMaxGuest').val();
 				e.tags            = tags;
 				e.userIds		  = userIds;
-
-				LJ.fn.showLoaders();
 
 				var eventName = 'create-event',
 					data = e
@@ -1988,12 +2102,55 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 					d.version = asker.imgVersion;
 
-				var $askerImg = LJ.fn.renderAskerInEvent( asker.imgId, { dataList: [{ dataName: 'userid', dataValue: asker._id }]});
-					$askersWrap.prepend( $askerImg );					
+				//var $askerImg = LJ.fn.renderAskerInEvent( asker.imgId, { dataList: [{ dataName: 'userid', dataValue: asker._id }]});
+				//	$askersWrap.prepend( $askerImg );					
 
 				var $nbAskers = $itemWrap.find('.e-guests span.nbAskers');
 					$nbAskers.text( askersList.length );
 			}
+
+        },
+        displayPictureHashtags: function(){
+
+        	for( var i = 0; i < LJ.user.pictures.length; i ++ ){
+				var hashtag = LJ.user.pictures[i].hashtag;
+				$('.picture-hashtag').eq(i).find('input').val(hashtag);        		
+        	}
+
+        },
+        handleUpdatePicturesSuccess: function( data ){
+
+        setTimeout( function(){ 
+			LJ.user.pictures = data.pictures;
+			var currentImgPlace = $('.main-picture').data('imgplace');
+
+			$('.row-pictures').find('.icon-edit').click();
+
+			$('.btn-validating').removeClass('btn-validating');
+			$('.icon.selected').removeClass('selected');
+
+			/* Changement de la main picture et update du header associé */
+			var mainImg = LJ.fn.findMainImage();
+			if( currentImgPlace != mainImg.imgPlace ){
+				$('.main-picture').removeClass('main-picture');
+				$('.picture[data-imgplace="'+mainImg.imgPlace+'"]').addClass('main-picture');
+				mainImg.scope = ['thumb'];
+				LJ.fn.replaceImage( mainImg );
+			}
+
+			/* Mise à jour temps réelle des nouvelles photos */
+			for( var i = 0; i < LJ.user.pictures.length; i++){
+				LJ.user.pictures[i].scope = ['profile'];
+				if( $('.picture[data-imgplace="'+i+'"]').attr('data-imgversion') != LJ.user.pictures[i].imgVersion )
+				LJ.fn.replaceImage( LJ.user.pictures[i] );
+			}
+
+			/* Mise à jour des hashtags*/
+			LJ.fn.displayPictureHashtags();
+
+			LJ.fn.handleServerSuccess('Vos photos ont été mises à jour');
+        	
+        }, LJ.ui.artificialDelay );
 
         },
         handleSuccessDefault: function( data ){

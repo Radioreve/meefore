@@ -1,0 +1,308 @@
+/* Générales */
+
+#profileWrap {  
+    width: 880px;  
+}
+.row-title {
+    text-transform: uppercase;
+    font-weight: bolder;
+    font-size: 13px;
+    color: #484848;
+    border-bottom: 1px solid;
+    box-shadow: 0 0 2px black;
+    margin-bottom: 3px;
+}
+.row-title-text {
+    font: bold 22px 'Gochi Hand';
+    display: inline-block;
+    padding: 8px;
+    border-bottom: none;
+}
+.row-title .icon {
+    border: 1px solid black;
+    padding: 7px 5px;
+    border-radius: 20px;
+    position: relative;
+    background-color: white;
+    top: 27px;
+    cursor: pointer;
+}
+.row-title .icon.active,
+.row-pictures i.selected {
+    background: #555;
+    color: white;
+    border: 1px solid black;
+}
+.row-title .icon:not(.active):hover {
+    background: #fff;
+}
+.row-body{
+	font-family: 'Karla';
+}
+.row-subtitle {
+    text-align: center;
+}
+.row-subtitle-text {
+    font-family: 'Karla';
+    font-size: 14px;
+}
+.picture-wrap {
+    margin-top: 50px;
+}
+.row-center {
+    text-align: center;
+}
+.row-profile {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+}
+/* Pictures */
+
+.picture {
+    text-align: center;
+    position: relative;
+    background: white;
+    border: 1px solid rgb(228, 228, 228);
+    width: 160px;
+    padding-top: 4px;
+    margin: 0 3px;
+    transition: .4s;
+    display: inline-block;
+    vertical-align: top;
+}
+.picture:hover {
+    border: 1px double #dde;
+    box-shadow: 0 0 2px #CCCCDC;
+}
+.main-picture {
+    transform: scale(1.2);
+    top: -2px;
+    margin: 0 20px;
+}
+.main-picture i.icon-main,
+.main-picture i.icon-delete {
+    display: none;
+}
+.picture-hashtag {
+    text-align: center;
+    width: 90%;
+    margin: 0 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    auto;
+    position: relative;
+    top: -4px;
+}
+.picture-hashtag input {
+    width: 114px;
+    padding: 3px 3px 3px 6px;
+    color: #B7B7B7;
+    border-bottom: 1px 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    solid 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    transparent;
+    transition: all .5s;
+    font-family: 'Karla';
+}
+.row-pictures.editing .picture-hashtag {
+    border-bottom: 1px solid #C1C1C1;
+    background-color: whitesmoke;
+    color: #312525;
+}
+.picture-edit {
+    display: none;
+}
+.picture-edit {
+    width: 160px;
+    height: 152px;
+    position: absolute;
+    background-color: rgba(254, 254, 254, 0.58);
+    top: 0px;
+    left: -1px;
+    padding-top: 71px;
+}
+.picture-edit i {
+    font-size: 20px;
+    background-color: white;
+    border: 1px solid #696969;
+    padding: 3Px;
+    color: #828282;
+    margin: 3px;
+    cursor: pointer;
+    transition: all .3s;
+}
+.picture-edit i:hover {
+    background: #eee;
+}
+.picture-edit i:first-child {
+    border-radius: 20px;
+    padding: 5px;
+}
+.row-buttons {
+    display: none;
+    margin-top: 36px;
+}
+.picture-edit > div {
+    display: inline-block;
+}
+.mainPicture {
+    padding: 9px;
+    background: white;
+}
+/*various hacks*/
+
+.upload_form {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#profileWrap .cloudinary-fileupload {
+    width: 160px;
+    height: 160px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.01;
+    cursor: pointer;
+}
+/* Informations */
+.row-divider {
+
+margin: 20px 0;
+}
+.row-input {
+
+width: 49%;
+
+display: inline-block;
+
+background-color: white;
+
+padding: 10px 0 10px 13px;
+
+margin: 3px 0;
+
+position: relative;
+
+color: #A5A5A5;
+
+height: 43px;
+
+overflow: hidden; 
+}
+.row-input input[type="text"] {
+
+width: 78%;
+
+padding-left: 7px;
+}
+.row-input label {
+
+}
+.mood-wrap, .drink-wrap {
+
+display: inline-block;
+}
+.mood, .drink {
+
+display: inline-block;
+
+font-size: 13px;
+
+padding: 5px 9px;
+
+border-radius: 2px;
+}
+
+.row.editing label {
+    color:#ccc
+;
+    -webkit-transition: all                                                                                                                                        
+    ease-out .15s;
+    transition: all      
+    
+     
+    
+    
+    ease-out .15s;
+}
+
+.row.editing .row-input:hover label {
+    color:#555;
+}
+
+.row.editing .row-input {
+    color:#555;
+}
+
+.row.editing .mood,
+.row.editing .drink{
+    background: #F7F7F7;
+}
+
+.inspire{
+	float: right;
+	position: relative;
+	opacity:0;
+	font-size: 12px;
+	right: 5px;
+	cursor: pointer;
+	top: 3px;
+	color: #bbb;
+	transition: all 
+	
+	
+	
+	
+	
+	ease-out .3s;
+}
+
+.row.editing .row-motto:hover .inspire {
+    top: -6px;
+    opacity:1;
+}
+
+
+/* Friends */
+/* Questionnaire OKC */

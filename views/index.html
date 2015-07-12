@@ -22,10 +22,11 @@
 	<link rel="stylesheet" href="/css/fontello/css/fontello.css">
 	<link rel="stylesheet" href="/css/hint.css">
 	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/landing.css">
+	<link rel="stylesheet" href="/css/profile.css">
 	<link rel="stylesheet" href="/css/events.css">
 	<link rel="stylesheet" href="/css/manage.css">
 	<link rel="stylesheet" href="/css/chat.css">
-	<link rel="stylesheet" href="/css/landing.css">
 	<link rel="stylesheet" href="/css/media.css">
 	<link rel="stylesheet" href="/css/admin.css">
 
@@ -109,34 +110,125 @@
 		</section>
 
 		<section id="profileWrap" class="none centered">
-			<h2>
-				Mon profile
-			</h2>
-			<div class="row">
-			<div id="pictureWrap"class="hint--bottom" data-hint="cliquez pour changer de photo">
-				<form class="upload_form"></form>
-				<h5 id="codebarre"><span class="icon icon-barcode-1"></span>53ef548dgk0847j6H7Y</h5>
+			
+			<div class="row row-profile">
+				<h2> Mon profile </h2>
 			</div>
-			<div class="fieldsWrap">
-				<div class="input-row-wrap">
+
+			
+			<!-- Edition des photos -->
+			<div class="row row-profile row-pictures">
+				<div class="row-title">
+					<div class="row-title-text">Tes 5 photos</div>
+					<i class="icon icon-edit icon-feather right"></i>
+				</div>
+				<div class="row-subtitle">
+					<div class="row-subtitle-text etiquette">Plusieurs photos valent mieux qu'un long discours! Montre toi sous ton plus beau jour.</div>
+				</div>
+				<div class="row-body row-center picture-wrap" data-display-settings="displayParamsProfile">
+					<!-- Dynamically loaded -->
+				</div>
+				<div class="row-buttons">
+					<button class="theme-btn btn-cancel right">Annuler</button>
+					<button class="theme-btn btn-validate right">Valider</button>
+				</div>
+			</div>
+
+	
+			<!-- Edition des informations  -->
+			<div class="row row-profile row-informations ">
+					
+			<div class="row-title">
+					<div class="row-title-text">Tes informations</div>
+					<i class="icon icon-edit icon-feather right"></i>
+			</div>
+
+			<div class="row-subtitle">
+				<div class="row-subtitle-text etiquette">Dis nous tout, et surtout concentre toi sur l'essentiel</div>
+			</div>
+			
+			<div class="row-body">
+				<div class="row-divider"></div>
+				<div class="row-input row-name">
 					<label for="name">Nom</label>
-					<input id="name" class="profileInput" placeholder="Prad Bitt" type="text" maxlength="25">
+					<input readonly id="name" class="" placeholder="Prad Bitt" type="text" maxlength="25">
 				</div>
-				<div class="input-row-wrap split">
+				<div class="row-input row-age">
 					<label for="age">Age</label>
-					<input id="age" class="profileInput" placeholder="25" type="number" max="50" min="18">
+					<input readonly id="age" class="" placeholder="25" type="number" max="50" min="18">
 				</div>
-				<div class="input-profile-rows">
-						<!-- Dynamically loaded -->
+				<div class="row-input row-mood">
+					<label for="mood">Humeur</label>
+					<div class="mood-wrap">
+						<div class="mood">Happy</div>
+						<div class="mood">Fire</div>
+						<div class="mood">Horney</div>
+						<div class="mood">Fail</div>
+						<div class="mood">Sleepy</div>
+					</div>
 				</div>
-				<div class="input-row-wrap">
-					<label class="labelTextArea" for="description">What's up?</label>
-					<textarea id="description" class="profileInput" placeholder="Tell the world what you like"></textarea>
-					<div class="action inspire">En manque d'inspi?</div>
+				<div class="row-input row-drink">
+					<label for="drink">Verre</label>
+					<div class="drink-wrap">
+						<div class="drink">Eau</div>
+						<div class="drink">Vodka</div>
+						<div class="drink">Sky</div>
+						<div class="drink">Beer</div>
+						<div class="drink">Wine</div>
+					</div>
+				</div>
+				<div class="row-input row-motto">
+					<label class="" for="description">Motto</label>
+					<input readonly type="text" class="" placeholder="Si tu étais une phrase..."></input>
+					<div class="inspire">En manque d'inspi?</div>
+				</div>
+				<div class="row-input row-age">
+					<label readonly for="situation">Situation</label>
+					<input id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
 				</div>
 			</div>
+
+				<div class="row-buttons">
+					<button class="theme-btn btn-cancel right">Annuler</button>
+					<button class="theme-btn btn-validate right">Valider</button>
+				</div>
+
 			</div>
-			<button id="validate" class="right themeBtn themeBtnMain">Modifier</button>
+
+			<!-- Amis sur meefore  -->
+			<div class="row row-profile row-friends">
+				<div class="row-title">
+					<div class="row-title-text">Tout le monde est sur meefore</div>
+					<i class="icon icon-edit icon-feather right"></i>
+				</div>
+				<div class="row-subtitle">
+					<div class="row-subtitle-text etiquette">Tes amis Facebook sont tous sur meefore. Quoi, il en manque ? Invites-les et gagne des points!</div>
+				</div>
+				
+				<div class="row-buttons">
+					<button class="theme-btn btn-cancel right">Annuler</button>
+					<button class="theme-btn btn-validate right">Valider</button>
+				</div>
+			</div>
+
+			<!-- Questionnaire à là OKC  -->
+			<div class="row row-profile row-okc">
+				<div class="row-title">
+					<div class="row-title-text">Tes questions perso</div>
+					<i class="icon icon-edit icon-feather right"></i>
+				</div>
+				<div class="row-subtitle">
+					<div class="row-subtitle-text etiquette">On vous évite de parler des heures. Répondez franchement aux 10 questions ci-dessous, c'est pour vous.</div>
+				</div>
+				
+				<div class="row-buttons">
+					<button class="theme-btn btn-cancel right">Annuler</button>
+					<button class="theme-btn btn-validate right">Valider</button>
+				</div>
+			</div>
+
+			
+
 		</section>
 
 
@@ -172,7 +264,7 @@
 
 
 		<section id="createEventWrap" class="none centered">
-			<h2>Créer votre évènement</h2>
+			<h2>Proposer un before</h2>
 			<div id="createEventInputsWrap">
 				<div class="input-row-wrap">
 					<label for="eventName">Before</label>

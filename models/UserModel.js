@@ -31,6 +31,10 @@ var UserSchema = new mongoose.Schema({
   gender: {
     type:String
   },
+  situation: {
+    type: String,
+    default:''
+  },
   description: {
     type: String,
     default:''
@@ -40,7 +44,7 @@ var UserSchema = new mongoose.Schema({
     required:true,
     default:'Inconnu'
   },
-  favoriteDrink: {
+  drink: {
     type: String,
     default:'water'
   },
@@ -56,13 +60,15 @@ var UserSchema = new mongoose.Schema({
     type:Array,
     default:[]
   },
-  imgId:{  
-    type: String,
-    default:'placeholder_spjmx7'
-  },
-  imgVersion:{
-      type: String,
-      default: '1407342805'
+  pictures: {
+    type: Array,
+    default: [
+      { imgId: 'placeholder_spjmx7', imgVersion: '1407342805', imgPlace: 0, isMain: true , hashtag: 'classic' },
+      { imgId: 'placeholder_spjmx7', imgVersion: '1407342805', imgPlace: 1, isMain: false, hashtag: 'meerofka' },
+      { imgId: 'placeholder_spjmx7', imgVersion: '1407342805', imgPlace: 2, isMain: false, hashtag: 'swag' },
+      { imgId: 'placeholder_spjmx7', imgVersion: '1407342805', imgPlace: 3, isMain: false, hashtag: 'chill' },
+      { imgId: 'placeholder_spjmx7', imgVersion: '1407342805', imgPlace: 4, isMain: false, hashtag: 'hipster' }
+      ]
   },
   status:{
     type: String,

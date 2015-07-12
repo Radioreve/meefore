@@ -121,19 +121,7 @@
     width: 45px!important;
     margin-top: 4px;
 }
-	#profileWrap textarea{
-		width:100%;
-		font-size:.8em;
-		overflow:hidden;
-	
-		text-align: center;
-}
-  .labelTextArea{
-  	margin-top:-10px;
-  }
-  #favoriteDrink{
-    padding-bottom:10px;
-  }
+
 
       #searchBar i{
       top: 17px;

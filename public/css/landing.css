@@ -5,10 +5,17 @@
 
 .etiquette{
   background: rgba(255, 255, 255, 0.81);
-  border-bottom: 1px solid #E4E4E4;
+  border-bottom: 1px 
+  
+  
+  
+  
+  
+  solid #E4E4E4;
   box-shadow: 0 0 1px #e4e4e4;
   padding: 15px;
   border-radius: 2px 2px 0 0;
+  /* display: inline-block; */
 }
 
 .landing-content{

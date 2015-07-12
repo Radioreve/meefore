@@ -154,7 +154,7 @@
 								name          : myUser.name,
 								description   : myUser.description,
 								age           : myUser.age,
-								favoriteDrink : myUser.favoriteDrink,
+								drink 		  : myUser.drink,
 								mood          : myUser.mood,
 								signupDate    : myUser.signupDate,
 								imgId         : myUser.imgId,

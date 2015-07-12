@@ -36,7 +36,7 @@
 				name     	  : data.name,
 				age			  : data.age,
 				description   : data.description,
-				favoriteDrink : data.favoriteDrink,
+				drink         : data.drink,
 				mood          : data.mood,
 				status	 	  : data.status
 			};
@@ -58,61 +58,61 @@
 		            eventUtils.sendSuccess( res, expose, true );
 		    }
 		
-			User.findByIdAndUpdate( userId, update, {}, callback);
+			User.findByIdAndUpdate( userId, update, {}, callback );
 
 	};
 
 	var updatePicture = function( req, res ){
 
-			var data = req.body;
+		var data = req.body;
 
-		   	var userId 		  = data._id,
-		        newImgId   	  = data.imgId,
-		    	newImgVersion = data.imgVersion;
+	   	var userId 		  = data._id,
+	        newImgId   	  = data.imgId,
+	    	newImgVersion = data.imgVersion,
+	    	imgPlace      = data.imgPlace;
 
-		    var update = {
-		        imgId      : newImgId,
-		        imgVersion : newImgVersion
-		    };
+	    User.findById( userId, function( err, myUser ){
 
-		    var callback1 = function( err, user ){
+	    	if( err )
+	    		return eventUtils.raiseError({
+	    			err: err,
+	    			res: res,
+	    			toClient: "Une erreur s'est produite.",
+	    			toServer: "Error uploading picture|| couldn't find user"
+	    		});
 
-		    	if( err ){
-		    		eventUtils.raiseError({
-		    			res: res,
-		    			err: err,
-		    			toClient: 'Something went wrong, pleasy try again later',
-		        		toServer: 'Error updating profile 2' 
-		    		});
-		    		return;
-		    	}
+	    	var i = _.findIndex( myUser.pictures, function( el ){
+	    		return el.imgPlace == imgPlace;
+	    	});
 
-		    	var expose = { user: user };
+	    	var newPicture = myUser.pictures[i];
 
-		    	console.log('User new imgId is : ' + user.imgId );
-		    	eventUtils.sendSuccess( res, expose );
+	    	if( newPicture == undefined )
+	    		return eventUtils.raiseError({
+	    			err: err,
+	    			res: res,
+	    			toClient: "Une erreur s'est produite",
+	    			toServer: "Error uploading picture || pictures[i] undefined"
+	    		});
 
-		    	//socket.emit('update image success', user);
+    		newPicture.imgId = newImgId;
+    		newPicture.imgVersion = newImgVersion;
 
-		    	/* Host picture also needs to be changed in the event layer */
-		    	if( user.status == 'hosting' ){
+	    	myUser.pictures.set( i, newPicture );
+	    	myUser.save(function( err, savedUser ){
 
-		    		var hostedEventId = user.hostedEventId,
-		    			update = {
-		    				hostImgId      : newImgId,
-		    				hostImgVersion : newImgVersion
-		    			};
+	    		if( err )
+	    			return eventUtils.raiseError({
+			    			err: err,
+			    			res: res,
+			    			toClient: "Une erreur s'est produite.",
+			    			toServer: "Error uploading picture|| couldn't save user"
+			    		});
 
-		    		var callback2 = function(err, e){
-		    			if( err ){ console.log( err ); }
-		    		}
+	    		eventUtils.sendSuccess( res, { user: savedUser, msg: "Votre photo a été uploadée" });
 
-		    		Event.findByIdAndUpdate( hostedEventId, update, {}, callback2);
-		    	}
-		    };
-
-		    User.findByIdAndUpdate( userId, update, {}, callback1 );
-
+	    	});
+	    });
 	};
 
 	var updatePictureWithFacebook = function( req, res ){
@@ -156,6 +156,69 @@
 			});
 		});
 
+	};
+
+	var updatePictures = function( req, res ){
+
+		console.log('updating all pictures');
+		var data = req.body;
+
+		var updatedPictures = data.updatedPictures,
+			userId			= data.userId;
+
+		User.findById( userId, function( err, myUser ){
+
+			if( err )
+				return eventUtils.raiseError({
+					res: res,
+					err: err,
+					toClient: "Une erreur serveur s'est produite",
+					toServer: "Impossible de trouver l'user"
+				});
+
+			for( var i = 0; i < updatedPictures.length; i++ ){
+
+				var current_picture = _.find( myUser.pictures, function(el){ return el.imgPlace == updatedPictures[i].imgPlace });
+				
+				if( updatedPictures[i].action == "mainify" )
+				{
+					var currentMain = _.find( myUser.pictures, function(el){ return el.isMain == true });
+						currentMain.isMain = false;
+
+					myUser.pictures.set( parseInt( currentMain.imgPlace ), currentMain );
+					current_picture.isMain = true;
+					myUser.pictures.set( parseInt( current_picture.imgPlace ), current_picture );
+
+				}
+				if( updatedPictures[i].action == "delete" )
+				{
+					current_picture.imgId = "placeholder_spjmx7";
+					current_picture.imgVersion = "1407342805";
+					myUser.pictures.set( parseInt( current_picture.imgPlace ), current_picture );
+				}
+				if( updatedPictures[i].action == "hashtag" )
+				{
+					current_picture.hashtag = updatedPictures[i].new_hashtag;
+					myUser.pictures.set( parseInt( current_picture.imgPlace ), current_picture );
+				}
+
+			}
+
+			myUser.save( function( err, savedUser ){
+
+				if( err )
+				return eventUtils.raiseError({
+					res: res,
+					err: err,
+					toClient: "Une erreur serveur s'est produite",
+					toServer: "Impossible de sauvegarder l'user"
+				});
+
+				console.log('sending success');
+				eventUtils.sendSuccess( res, { msg: "Mise à jour effectuée!", pictures: savedUser.pictures });
+
+			});
+		});
 	};
 
 
@@ -263,6 +326,7 @@
 
 	    updateProfile   : updateProfile,
 	    updatePicture   : updatePicture,
+	    updatePictures  : updatePictures,
 	    updatePictureWithFacebook: updatePictureWithFacebook,
 	    updateSettings  : updateSettings
 	    

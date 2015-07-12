@@ -277,11 +277,6 @@ section#createEventWrap{
 #createEventWrap h2{
 	margin-bottom: 50px;
 }
-label{
-	border: none;
-	outline: none;
-	/* border-bottom: 1px solid #C2C2C2; */
-}
 
 #eventHour,
 #eventMinut{
@@ -313,16 +308,14 @@ label{
 }
 #createEventBtn{
 	position: relative;
-}
+} 
 
 input[type="number"]{
-	width: 40px!important;
+	width: 50px!important;
+	padding-left: 10px;
 }
 
-.tag,
-.loc,
-.drink, 
-.mood{
+.tag, .loc{
 	display:inline-block;
 	transition: all .1s;
 	font-size: .7em;
@@ -334,15 +327,7 @@ input[type="number"]{
 	text-align: center;
 	cursor: pointer;
 }
-.mood, .drink{
-	background:none;
-}
-.drink,
-.mood{
-	min-width: 37px;
-	padding:5px 8px; 
-	border-bottom: 2px solid white;
-}
+
 .loc{
 	background: whitesmoke;
 	border-bottom: 2px solid white;

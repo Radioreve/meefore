@@ -141,10 +141,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			});
 
-			LJ.$body.on('click', '#thumbWrap img', function(){
-				$('#profile').click();
-			});
-
 			['#contact', '#create', '#profile', '#events', '#management','#search', '#settings'].forEach(function(menuItem){
 
 				$(menuItem).click(function(){
@@ -211,53 +207,28 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				$(this).addClass('modified');
 			});
 
-			LJ.$body.on('click', '.row-informations .icon-edit', function(){ 
+			LJ.$body.on('click', '.row-pictures .icon-edit', function(){
 
 				var $self = $(this);
 
 				if( $self.hasClass('active') )
 				{
 					$self.removeClass('active');
-					$self.parents('.row-informations').removeClass('editing');
-					$('.row-informations input').attr('readonly', true);
-					$('.row-informations .row-buttons').hide();
+					$self.parents('.row-pictures').removeClass('editing');
+					$('.picture-hashtag input').attr('readonly', true);
+					$('.picture-edit').velocity('transition.fadeOut',{
+						duration:600
+					});
+					$('.row-buttons').hide();
 					return;
 				}
 
 				$self.addClass('active');
-				$self.parents('.row-informations').addClass('editing');
-				$('.picture-hashtag input').attr('readonly', false);
-				$('.row-informations .row-buttons').velocity('transition.fadeIn',{
-					duration:600
-				});
-
-
-			});
-			LJ.$body.on('click', '.row-pictures .icon-edit:not(.active)', function(){
-
-				var $self = $(this);
-
-				$self.addClass('active');
 				$self.parents('.row-pictures').addClass('editing');
 				$('.picture-hashtag input').attr('readonly', false);
-				$('.picture-edit, .row-pictures .row-buttons').velocity('transition.fadeIn',{
+				$('.picture-edit, .row-buttons').velocity('transition.fadeIn',{
 					duration:600
 				});
-
-			});
-
-			LJ.$body.on('click', '.row-pictures .icon-edit.active, .row-pictures .btn-cancel', function(){
-
-				var $self = $(this);
-
-				$self.removeClass('active');
-				$self.parents('.row-pictures').removeClass('editing');
-				$('.picture-hashtag input').attr('readonly', true);
-				$('.picture-edit').velocity('transition.fadeOut',{
-					duration:600
-				});
-				$('.row-pictures .row-buttons').hide();
-				return;
 
 			});
 
@@ -283,17 +254,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			});
 
 			LJ.$body.on('click', '.row-pictures .btn-cancel', function(){
-				$(this).parents('.row-pictures').find('.icon.selected').click();
-			});
-
-			LJ.$body.on('click', '.row-informations .btn-cancel', function(){
-				$(this).parents('.row-informations').find('.icon.selected').click();
-			});
-
-			LJ.$body.on('focusout', '.picture-hashtag input', function(){
-
-				$(this).val( LJ.fn.hashtagify( $(this).val() ));
-
+				$(this).parents('.row-pictures').find('.picture-edit i').click();
 			});
 
 			LJ.$body.on('click', '.row-pictures .btn-validate', function(){
@@ -302,42 +263,22 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				if( $self.hasClass('btn-validating') )
 					return;
 
-				var updatedPictures  = [],
-					$newMainPicture  = $('.icon-main.selected').parents('.picture'),
+				var updatedPictures = [],
+					$newMainPicture = $('.icon-main.selected').parents('.picture'),
 					$deletedPictures = $('.icon-trash-empty.selected').parents('.picture');
-					$hashtagPictures = $('.picture');
 					
 					$deletedPictures.each(function( i, el ){
 						var $el = $( el ),
-							picture = { 
-								imgPlace: $el.data('imgplace'),
-								action: "delete"
-							};
-							updatedPictures.push( picture );
+							deletedPic = { imgPlace: $el.data('imgplace'), isMain: false };
+							updatedPictures.push( deletedPic );
 					});
 
-					$newMainPicture.each(function( i, el ){
-						var $el = $( el ),
-							picture = {
-								imgPlace: $el.data('imgplace'),
-								action: "mainify"
-							};
-							updatedPictures.push( picture );
-					});
+					var newMainPicture = { imgPlace: $newMainPicture.data('imgplace'), isMain: true };
+					updatedPictures.push( newMainPicture );
 
-					$hashtagPictures.each(function( i, el ){
-						var new_hashtag = $('.picture[data-imgplace="'+i+'"]').find('.picture-hashtag').find('input').val();
-						var $el = $( el ),
-							picture = {
-								imgPlace: $el.data('imgplace'),
-								action: "hashtag",
-								new_hashtag: LJ.fn.hashtagify( new_hashtag )
-							};
-							updatedPictures.push( picture );
-					});
-
-				if( updatedPictures.length == 0 )
+				if( $newMainPicture.length == 0 && $deletedPictures.length == 0 )
 					return LJ.fn.toastMsg("Aucune mise à jour nécessaire!","error");
+
 
 				csl('Emitting update pictures (all)');
 				$self.addClass('btn-validating');

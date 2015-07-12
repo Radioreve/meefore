@@ -130,7 +130,7 @@
 			'name': 1,
 			'description': 1,
 			'age':1,
-			'favoriteDrink':1,
+			'drink':1,
 			'mood':1,
 			'signupDate':1,
 			'imgId':1,

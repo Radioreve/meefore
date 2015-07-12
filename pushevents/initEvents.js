@@ -48,8 +48,10 @@
 					res: res			
 				});
 
-
-			var cloudTag = cloudinary.uploader.image_upload_tag( 'hello_world' , { public_id: userId });
+			var cloudTags = [];
+			for( var i = 0; i < 5; i ++){
+			cloudTags.push( cloudinary.uploader.image_upload_tag( 'hello_world' , { public_id: userId+'--'+i }));
+			}
 
 				/* Contient toutes les informations exposées publiquement lors de la première connection */
 				var expose = {};
@@ -66,18 +68,17 @@
   					age:         	 user.age,
   					access:          user.access, 
   					gender:          user.gender,
-  					favoriteDrink:   user.favoriteDrink,
+  					drink:           user.drink,
   					mood:            user.mood,
   					status:      	 user.status,
   					description: 	 user.description,
-  					imgId:      	 user.imgId,
-  					imgVersion: 	 user.imgVersion,
+  					pictures:        user.pictures,
   					friendList:      user.friendList,
   					eventsAskedList: user.eventsAskedList,
   					hostedEventId:   user.hostedEventId,
   					newsletter:      user.newsletter,
   					myChannels:      user.myChannels,
-  					cloudTag:    	 cloudTag
+  					cloudTags:    	 cloudTags
   					
 				};
 

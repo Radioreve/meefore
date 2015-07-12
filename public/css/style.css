@@ -2,7 +2,7 @@
 } 
 html{
     overflow: hidden;
-   
+     
    
 }
 body{
@@ -17,7 +17,6 @@ p,
 textarea,
 input{
 	font-size: 14px;
-	line-height: 20px;
 	font-family: 'Lato','Calibri','sans serif';
 	resize: none;
 	outline: none;
@@ -45,19 +44,25 @@ h3{
 .bodyWrap{
 	
 }
-label{
-	/*Hello git*/
-	font-size: .8em;
+label{/*Hello git*/
+	font-size: 14px;
 	font-family: 'Lato';
 	font-weight:bolder;
 	margin-right: 15px;
-	/* margin-top: 20px; */
-	padding-top:10px;
-	/* width: 95px; */
-	text-align: right;
+	width: 70px;
 	display:inline-block;
+	color: #555;
+	border-right: 1px 
+	
+	
+	
+	
+	
+	
+	
+	
+	solid #ccc;
 }
-.labelTextArea{vertical-align:top;margin-top: 12px;}
 .rel{}
 .right{float:right;}
 .left{float:left;}
@@ -231,27 +236,6 @@ body > header > h5{
 	color: white;
 }
 
-.whitegradient{ 
-	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0)));
-background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
-background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
-background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
-background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 );
-height: 100px;
-width: 100%; 
-position: fixed;
-z-index: 100;
-top: 33px;
-
-
-
-
-
-
-}
 #menuWrap{
 	position: relative;
 	display: block;
@@ -263,10 +247,7 @@ top: 33px;
 .align-top{
 	vertical-align: top;
 }
-#events{
-}
-#profile{
-}
+
 .pending{
 	color:#A5A5A5;
 }
@@ -368,6 +349,74 @@ top: 33px;
 .themeBtnMain{
 	width:100px!important;
 }
+.theme-btn {
+font-family: 'Karla';
+padding: 5px 10px;
+border: 1px                                                                                                                               
+
+
+
+
+solid #AFAFAF;
+font-size: 13px;
+outline: none;
+margin: 0 2px;
+border-radius: 2px;
+}
+
+.btn-cancel {
+
+background-color: white;
+}
+.btn-validate {
+background-color: #4C4C4C;
+color: white;
+border: 1px                                                                                                                                                                                                                                                                             
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+solid   #6D6D6D;
+}
+
+.btn-validating{
+	opacity: .5;
+}
+
 .themeBtn,
 .themeBtnToggle
 {
@@ -403,25 +452,6 @@ top: 33px;
 .themeBtnToggleHost:hover{
 }
 
-.input-field{
-	width: 60%;
-	border: none;
-	border-bottom: 1px dashed #E8E8E8;
-	margin: 8px 10px;
-	display: inline-block;
-	padding: 10px;
-	padding-left: 10px;
-	border-radius: 3px 3px 0 0;
-	transition: all .3s;
-	font-size: 14px;
-	color: #645E5E;
-}
-
-.input-radio{
-	text-align:left;
-	margin:10px 0;
-	margin-left: 30%;
-}
 .input-radio > div{
 	display:inline-block;
 }
@@ -437,99 +467,8 @@ input[type="radio"] + span{
 	top: -2px;
 }
 
-/*    CSS concernant le profile utilisateur   */
-#profileWrap{
-	width: 880px;
-}
-#pictureWrap{
-	text-align:center;
-	background: rgb(245,245,245);
-	box-shadow: 0 2px 2px #DFDFDF;
-	padding-bottom: 15px;
-	border:1px dashed transparent;
-	width: 162px;
-	padding-top: 4px;
-	margin: 0 auto;
-	height: 160px;
-	transition: .4s;
-	display: inline-block;
-	vertical-align: top;
-}
-#pictureWrap:hover{
-	border:1px double #dde;
-}
-.fieldsWrap{
-	margin-left: 40px;
-	display: inline-block;
-}
-.fieldsWrap input{
-	padding: 10px 0 5px 0px;
-	border: none;
-	/* border-bottom: 1px solid #ddd; */
-}
-.fieldsWrap textarea{
-	padding-top:6px;
-}
-.profileInput{
-	color: #999;
-}
-.fieldsWrap .input-row-wrap{
-    margin-bottom: 3px;
-}
-.fieldsWrap .input-row-wrap:last-child{
-	margin-top: -7px;
-}
 
-#profileWrap h2{
-	margin-bottom: 40px;
-}
-#settingsWrap{
-	overflow:auto;
-}
-#profileWrap h5{
-	font-size: .7em;
-	text-align: center;
-	color: #888;
-	position: absolute;
-	bottom: -30px;
-	width: 100%;
-}
-#profileWrap h5 span{
-	margin-right:5px;
-	font-size:1.1em;
-}
-#name{
-	width:180px;
-}
- 
-.input-row-wrap.split{
-	/* padding-bottom: 20px; */
-}
-#profileWrap textarea{
-	width: 80%;
-	padding-top: 20px;
-	padding-left: 10px;
-	height: 50px;
-	border: none;
-	border-bottom: 1px dashed #C0C0C0;
-}
-#profileWrap #validate{
-	margin: 20px auto;
-	position: relative;
-}
-.profileInput{
-	-webkit-transition: all .5s;
-	transition: all .5s;
-}
-.modified{
-	color: rgb(205, 95, 95)!important;
-	/* font-weight: bolder; */
-}
-.drink.modified,
-.mood.modified{
-	font-weight:bolder;
-	border-bottom: 2px solid;
-}
+
 .validating{
 	background: #F3F3F3;
 	border-radius: 3px 3px 0 0;
@@ -584,20 +523,7 @@ input[type="radio"] + span{
 #contactWrap #sendContactForm{
     margin-top: 20px;
 }
-/*various hacks*/
-.upload_form{
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-#profileWrap .cloudinary-fileupload{
-	width: 180px!important;
-	height: 180px;
-	position: absolute;
-	top: 0;
-	left: 0;
-	opacity: 0.01;
-}
+
 #thumbWrap{
 	position: fixed;
 	margin-right: 130px;
@@ -688,11 +614,6 @@ input[type="radio"] + span{
 }
 #settingsWrap #newsletter{
 	width: 15px!important;
-}
-
-#drink, #mood{
-	display:inline-block;
-	padding: 7px;
 }
 
 .formWrap{
@@ -965,8 +886,3 @@ p{
 	opacity: 1!important;
 } 
 
-.inspire{
-	float: right;
-	margin: 10px 10px 0 0;
-	color: #bbb;
-}

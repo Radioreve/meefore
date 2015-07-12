@@ -305,7 +305,7 @@
                                  +'<div class="a-desc"><span class="label">Desc</span>'+a.description+'</div>'
 	                             +'<div class="a-age"><span class="label">Age</span>'+a.age+' ans'+'</div>'
 	                             +'<div class="a-desc"><span class="label">Humeur</span><div>'+a.mood+'</div></div>'
-	                             +'<div class="a-desc"><span class="label">Verre</span><div>'+a.favoriteDrink+'</div></div>'
+	                             +'<div class="a-desc"><span class="label">Verre</span><div>'+a.drink+'</div></div>'
                            +'</div>'
 	                             +'<div class="a-btn">'
 	                             	 +'<button class="themeBtnToggle btn-chat">'
@@ -505,7 +505,7 @@
                 html += '<div class="'+cl+'-item '+myClass+'" data-username="'+u.name.toLowerCase()+'"'
                           + 'data-userid="'+u._id+'"'
                           + 'data-useremail="'+u.email+'"'
-                          + 'data-userdrink="'+u.favoriteDrink.toLowerCase()+'"'
+                          + 'data-userdrink="'+u.drink.toLowerCase()+'"'
                           + dataset
                           + 'data-usergender="'+u.gender+'"'
                           + 'data-userage="'+u.age+'">'
@@ -516,7 +516,7 @@
                           +'<div class="'+cl+'-body">'
                             + '<span class="'+cl+'-name">'+ u.name + email + '</span>'
                             + '<span class="'+cl+'-age">'+ u.age +' ans, drinks</span>'
-                            + '<span class="'+cl+'-favdrink">'+ u.favoriteDrink +'</span>'
+                            + '<span class="'+cl+'-favdrink">'+ u.drink +'</span>'
                           +'</div>'
                             + buttons
                         +'</div>';
@@ -616,6 +616,29 @@
             }
             return html;
 
+        },
+        renderProfilePicturesWraps: function(){
+
+            var pictures = LJ.user.pictures;
+            var html = '';
+
+            for( var i = 0; i < pictures.length; i++)
+            {
+                var main = '';
+                if( pictures[i].isMain )
+                    var main = " main-picture";
+
+                html += '<div class="picture unselectable'+main+'" data-imgversion="'+pictures[i].imgVersion+'" data-imgplace="'+i+'">'
+                        +'<form class="upload_form"></form>'
+                        +'<div class="picture-hashtag"><span>#</span><input readonly type="text" placeholder="classic"></input></div>'
+                        +'<div class="picture-edit">'
+                          +'<i class="icon icon-main icon-user-1"></i>'
+                          +'<i class="icon icon-delete icon-trash-empty"></i>'
+                        +'</div>'
+                        +'</div>';
+            }
+
+            return html;
         }
 
 });

@@ -66,7 +66,10 @@
 		animatingChat: false,
 		toastAdded: false,
 		typingMsg: {},
-		jspAPI:{}
+		jspAPI:{},
+		uploadingImage: false,
+		uploadingImgId:'',
+		uploadingImgVersion:''
 	},
 	tpl:{
 		toastInfo : '<div class="toast toastInfo" class="none"><span class="toast-icon icon icon-right-open-big">'

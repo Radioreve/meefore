@@ -66,7 +66,7 @@
   					age:         	 user.age,
   					access:          user.access, 
   					gender:          user.gender,
-  					favoriteDrink:   user.favoriteDrink,
+  					drink:   	     user.drink,
   					mood:            user.mood,
   					status:      	 user.status,
   					description: 	 user.description,
