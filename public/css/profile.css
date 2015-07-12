@@ -211,24 +211,14 @@
 margin: 20px 0;
 }
 .row-input {
-
-width: 49%;
-
-display: inline-block;
-
-background-color: white;
-
-padding: 10px 0 10px 13px;
-
-margin: 3px 0;
-
-position: relative;
-
-color: #A5A5A5;
-
-height: 43px;
-
-overflow: hidden; 
+width: 49%;
+display: inline-block;
+background-color: white;
+padding: 10px 0 10px 13px;
+margin: 5px 0;
+position: relative;
+color: #A5A5A5;
+height: 43px;
 }
 .row-input input[type="text"] {
 
@@ -244,14 +234,17 @@ padding-left: 7px;
 display: inline-block;
 }
 .mood, .drink {
-
 display: inline-block;
-
 font-size: 13px;
-
 padding: 5px 9px;
-
 border-radius: 2px;
+transition: all 
+ease-out .3s;
+border-bottom: 2px solid white;}
+
+.mood.selected,
+.drink.selected {
+background: #F7F7F7;
 }
 
 .row.editing label {
@@ -277,9 +270,16 @@ border-radius: 2px;
 
 .row.editing .mood,
 .row.editing .drink{
-    background: #F7F7F7;
+    /* background: #F7F7F7; */
 }
-
+.row.editing .mood.selected,
+.row.editing .drink.selected {
+	background-color: #E4E4E4;
+}
+.row.editing .mood.modified,
+.row.editing .drink.modified {
+	background-color: #E4E4E4;
+}
 .inspire{
 	float: right;
 	position: relative;
@@ -287,9 +287,20 @@ border-radius: 2px;
 	font-size: 12px;
 	right: 5px;
 	cursor: pointer;
-	top: 3px;
+	top: 17px;
 	color: #bbb;
 	transition: all 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -299,7 +310,6 @@ border-radius: 2px;
 }
 
 .row.editing .row-motto:hover .inspire {
-    top: -6px;
     opacity:1;
 }
 

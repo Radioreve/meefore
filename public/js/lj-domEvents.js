@@ -194,7 +194,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		},
 		handleDomEvents_Profile: function(){
 
-			LJ.$validateBtn.click( LJ.fn.updateProfile );
+			LJ.$body.on('click', '.row-informations .btn-validate', function(){
+				if( $(this).hasClass('btn-validating') )
+					return;
+				$(this).addClass('btn-validating');
+				LJ.fn.updateProfile();
+			})
 
 			LJ.$body.on('click', '.drink', function(){
 
@@ -217,17 +222,39 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				$self.addClass('active').parents('.row-informations').addClass('editing');
 				
 				$('.row-informations')
-					.find('input').attr('readonly', false)
-					.end().find('.row-buttons').velocity('transition.fadeIn',{ duration:600 });
+					.find('.row-buttons').velocity('transition.fadeIn',{ duration:600 })
+					.end().find('input').attr('readonly', false)
+					.end().find('.row-input')
+					.each( function( i, el ){
+						var current_val = $(el).find('input').val(),
+					    	current_mood_id = $(el).find('.mood.selected').attr('data-moodid'),
+					    	current_drink_id = $(el).find('.drink.selected').attr('data-drinkid'),
+					    	restore_arr = [ current_val, current_mood_id, current_drink_id ];
+					    	restore_arr.forEach(function( val ){
+					    		if( val != undefined )
+					    			$(el).attr('data-restore', val );
+					    	});
+					});
+					$('.mood.selected, .drink.selected').removeClass('selected').addClass('modified');
 			});
 
-			LJ.$body.on('click', '.row-informations .icon-edit.active, .row-pictures .btn-cancel', function(){
+			LJ.$body.on('click', '.row-informations .icon-edit.active, .row-informations .btn-cancel', function(){
 
 				$('.row-informations')
 					.removeClass('editing')
 					.find('.icon-edit.active').removeClass('active')
 					.end().find('input').attr('readonly',true)
-					.end().find('.row-buttons').hide();
+					.end().find('.row-buttons').hide()
+					.end().find('.modified').removeClass('modified')
+					.end().find('[data-restore]')
+					.each(function( i, el ){
+						var val = $(el).attr('data-restore')
+						if( $(el).hasClass('row-name') || $(el).hasClass('row-age') || $(el).hasClass('row-motto') || $(el).hasClass('row-job')) 
+							$(el).find('input').val( val );
+						if( $(el).hasClass('row-mood') || $(el).hasClass('row-drink') )
+							$(el).find('[data-moodid="'+val+'"], [data-drinkid="'+val+'"]').addClass( 'selected' );
+						
+					});
 
 			});
 
@@ -240,7 +267,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					.find('.picture-hashtag input').attr('readonly', false)
 					.end().find('.row-buttons').velocity('transition.fadeIn',{ duration:600 })
 					.end().find('.picture-edit, .row-pictures .row-buttons').velocity('transition.fadeIn',{ duration:600 });
-				
+
 			});
 
 			LJ.$body.on('click', '.row-pictures .icon-edit.active, .row-pictures .btn-cancel', function(){
@@ -279,9 +306,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 
 			LJ.$body.on('focusout', '.picture-hashtag input', function(){
-
 				$(this).val( LJ.fn.hashtagify( $(this).val() ));
-
 			});
 
 			LJ.$body.on('click', '.row-pictures .btn-validate', function(){
@@ -339,6 +364,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				LJ.fn.say( eventName, data, cb );
 
 			});
+
+			$('.inspire').click( function(){
+        		var list = LJ.settings.profileDescList;
+        		$(this).siblings('input').val( LJ.settings.profileDescList[ LJ.fn.randomInt( 0, list.length - 1) ])
+            });
 
 
 		},

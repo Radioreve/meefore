@@ -38,6 +38,7 @@
 				description   : data.description,
 				drink         : data.drink,
 				mood          : data.mood,
+				job			  : data.job,
 				status	 	  : data.status
 			};
 

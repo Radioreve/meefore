@@ -149,40 +149,40 @@
 			
 			<div class="row-body">
 				<div class="row-divider"></div>
-				<div class="row-input row-name">
+				<div class="row-input row-name etiquette">
 					<label for="name">Nom</label>
 					<input readonly id="name" class="" placeholder="Prad Bitt" type="text" maxlength="25">
 				</div>
-				<div class="row-input row-age">
+				<div class="row-input row-age etiquette">
 					<label for="age">Age</label>
 					<input readonly id="age" class="" placeholder="25" type="number" max="50" min="18">
 				</div>
-				<div class="row-input row-mood">
+				<div class="row-input row-mood etiquette">
 					<label for="mood">Humeur</label>
 					<div class="mood-wrap">
-						<div class="mood">Happy</div>
-						<div class="mood">Fire</div>
-						<div class="mood">Horney</div>
-						<div class="mood">Fail</div>
-						<div class="mood">Sleepy</div>
+						<div class="mood selected" data-moodid="happy">Happy</div>
+						<div class="mood" data-moodid="fire">Fire</div>
+						<div class="mood" data-moodid="horney">Horney</div>
+						<div class="mood" data-moodid="fail">Fail</div>
+						<div class="mood" data-moodid="sleepy ">Sleepy</div>
 					</div>
 				</div>
-				<div class="row-input row-drink">
+				<div class="row-input row-drink etiquette">
 					<label for="drink">Verre</label>
 					<div class="drink-wrap">
-						<div class="drink">Eau</div>
-						<div class="drink">Vodka</div>
-						<div class="drink">Sky</div>
-						<div class="drink">Beer</div>
-						<div class="drink">Wine</div>
+						<div class="drink" data-drinkid="water">Eau</div>
+						<div class="drink selected" data-drinkid="vodka">Vodka</div>
+						<div class="drink" data-drinkid="sky">Sky</div>
+						<div class="drink" data-drinkid="beer">Beer</div>
+						<div class="drink" data-drinkid="wine">Wine</div>
 					</div>
 				</div>
-				<div class="row-input row-motto">
+				<div class="row-input row-motto etiquette">
 					<label class="" for="description">Motto</label>
-					<input readonly type="text" class="" placeholder="Si tu étais une phrase..."></input>
+					<input readonly type="text" class="" placeholder="Si tu étais une phrase...">
 					<div class="inspire">En manque d'inspi?</div>
 				</div>
-				<div class="row-input row-age">
+				<div class="row-input row-job etiquette">
 					<label readonly for="situation">Situation</label>
 					<input id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
 				</div>

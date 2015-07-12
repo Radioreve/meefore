@@ -448,13 +448,7 @@ label[for="tags"], label[for="event-friends-wrap"]{
 	height:100%;
 	width: 100%;
 }
-.drink.selected, .mood.selected{
-	box-shadow:none;
-	color: rgb(50, 50, 50);
-	font-weight: bolder;
-	border-bottom: 2px solid;
-	transition: all .2s;
-}
+
 #friendListWrap .noFriendsYet button{
 	font-size: 10px;
 	margin-top: 60%;

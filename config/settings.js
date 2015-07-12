@@ -22,12 +22,12 @@ var settings = {
 					"display":"Ton verre",
 					"place":"1",
 					"values": [ 
-								{ "name":"water", "display":"eau"},
-								{ "name":"soft", "display":"soft"},
-								{ "name":"hard", "display":"hard"},
-								{ "name":"shots", "display":"shots"},
-								{ "name":"wine", "display":"vin"},
-								{ "name":"beer", "display":"bière"},
+								{ "id":"water", "display":"eau"},
+								{ "id":"soft", "display":"soft"},
+								{ "id":"hard", "display":"hard"},
+								{ "id":"shots", "display":"shots"},
+								{ "id":"wine", "display":"vin"},
+								{ "id":"beer", "display":"bière"},
 							  ]
 				},
 				{
@@ -35,12 +35,12 @@ var settings = {
 					"display":"Humeur du jour",
 					"place":"0",
 					"values": [ 
-								{ "name":"whatever", "display":"whatever"},
-								{ "name":"tired", "display":"fatigué"},
-								{ "name":"drunk", "display":"ivre"},
-								{ "name":"happy", "display":"happy"},
-								{ "name":"fail", "display":"phail"},
-								{ "name":"on fire", "display":"bouillant"},
+								{ "id":"whatever", "display":"whatever"},
+								{ "id":"tired", "display":"fatigué"},
+								{ "id":"drunk", "display":"ivre"},
+								{ "id":"happy", "display":"happy"},
+								{ "id":"fail", "display":"phail"},
+								{ "id":"fired", "display":"bouillant"},
 							  ]
 				}
 			],

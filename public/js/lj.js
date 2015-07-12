@@ -236,13 +236,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             		}       		
             	});
 
-            	$('.inspire').click( function(){
-
-            		var list = LJ.settings.profileDescList;
-            		$(this).siblings('textarea').val( LJ.settings.profileDescList[ LJ.fn.randomInt( 0, list.length - 1) ])
-
-            	});
-
 
 			})();
 				
@@ -250,45 +243,33 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		updateProfile: function(){
 
 			var _id 		  = LJ.user._id,
-				age   		  = $('#age').val(),
-				name  		  = $('#name').val(),
-				description   = $('#description').val(),
-				drink 		  = $('.drink.modified').data('drink') || $('.drink.selected').data('drink'),
-				mood          = $('.mood.modified').data('mood')   || $('.mood.selected').data('mood');
+				$container    = $('.row-informations')
+				name  		  = $container.find('.row-name input').val(),
+				age   		  = $container.find('.row-age input').val(),
+				description   = $container.find('.row-motto input').val(),
+				job			  = $container.find('.row-job input').val(),
+				drink 		  = $container.find('.drink.modified').attr('data-drinkid'),
+				mood          = $container.find('.mood.modified').attr('data-moodid');
 
-			if( LJ.user.status == 'new' ){ LJ.user.status = 'idle'; }
+			if( LJ.user.status == 'new' )
+				LJ.user.status = 'idle';
 
 			var profile = {
-
 				userId		  : _id,
 				age 		  : age,
 				name 		  : name,
 				description   : description,
+				job           : job,
 				drink 		  : drink,
 				mood          : mood,
 				status        : LJ.user.status
-
 			};
 				csl('Emitting update profile');
-				LJ.fn.showLoaders();
 
 			var eventName = 'update-profile',
 				data = profile
 				, cb = {
-					success: function( data ){
-
-						csl('update profile success received, user is : ' + data.user );
-						var user = data.user;
-
-						sleep( LJ.ui.artificialDelay, function(){
-
-							LJ.fn.updateClientSettings( user );
-							$('#thumbName').text( user.name );
-							LJ.fn.handleServerSuccess('Vos informations ont été modifiées');
-					
-						});
-
-					},
+					success: LJ.fn.handleUpdateProfileSuccess,
 					error: function( xhr ){
 						sleep( LJ.ui.artificialDelay, function(){
 							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
@@ -297,6 +278,25 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				};
 
 				LJ.fn.say( eventName, data, cb );
+
+		},
+		handleUpdateProfileSuccess: function( data ){
+
+			csl('update profile success received, user is : ' + data.user );
+			var user = data.user;
+
+			sleep( LJ.ui.artificialDelay, function(){
+
+				$('.row-informations').removeClass('editing')
+					.find('.row-buttons').velocity('transition.fadeOut', {duration: 600 })
+					.end().find('.icon-edit').removeClass('active')
+					.end().find('.btn-validating').removeClass('btn-validating');
+
+				LJ.fn.updateClientSettings( user );
+				$('#thumbName').text( user.name );
+				LJ.fn.handleServerSuccess('Vos informations ont été modifiées');
+		
+			});
 
 		},
 		updateSettings: function(){

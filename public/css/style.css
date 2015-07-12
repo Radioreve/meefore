@@ -61,7 +61,25 @@ label{/*Hello git*/
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	solid #ccc;
+	transition: all 
+	ease-out .3s;
 }
 .rel{}
 .right{float:right;}
@@ -350,18 +368,19 @@ body > header > h5{
 	width:100px!important;
 }
 .theme-btn {
-font-family: 'Karla';
-padding: 5px 10px;
-border: 1px                                                                                                                               
+font-family: 'Karla';
+padding: 5px 10px;
+border: 1px                                                                                                                               
 
 
 
 
-solid #AFAFAF;
-font-size: 13px;
-outline: none;
-margin: 0 2px;
-border-radius: 2px;
+solid #AFAFAF;
+font-size: 13px;
+outline: none;
+margin: 0 2px;
+border-radius: 2px;
+transition: all ease-out .3s;
 }
 
 .btn-cancel {
@@ -369,9 +388,9 @@ body > header > h5{
 background-color: white;
 }
 .btn-validate {
-background-color: #4C4C4C;
-color: white;
-border: 1px                                                                                                                                                                                                                                                                             
+background-color: #4C4C4C;
+color: white;
+border: 1px                                                                                                                                                                                                                                                                             
 
 
 
@@ -410,7 +429,7 @@ background-color: white;
 
 
 
-solid   #6D6D6D;
+solid   #6D6D6D;
 }
 
 .btn-validating{
@@ -540,12 +559,15 @@ input[type="radio"] + span{
 }
 #thumbWrap img{
     border-radius: 40px;
-
-    border: 3px solid white;
-    box-shadow: 0 0 2px rgb(218, 218, 218);
+    border: 3px 
+    solid 
+    white;
+    box-shadow: 0 0 2px 
+    rgb(218, 218, 218);
     position: relative;
     top: -4px;
     left: 8px;
+    cursor: pointer;
 }
 #thumbInfos{
 	margin-left:8px;
