@@ -211,52 +211,47 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				$(this).addClass('modified');
 			});
 
-			LJ.$body.on('click', '.row-informations .icon-edit', function(){ 
+			LJ.$body.on('click', '.row-informations .icon-edit:not(.active)', function(){ 
 
 				var $self = $(this);
+				$self.addClass('active').parents('.row-informations').addClass('editing');
+				
+				$('.row-informations')
+					.find('input').attr('readonly', false)
+					.end().find('.row-buttons').velocity('transition.fadeIn',{ duration:600 });
+			});
 
-				if( $self.hasClass('active') )
-				{
-					$self.removeClass('active');
-					$self.parents('.row-informations').removeClass('editing');
-					$('.row-informations input').attr('readonly', true);
-					$('.row-informations .row-buttons').hide();
-					return;
-				}
+			LJ.$body.on('click', '.row-informations .icon-edit.active, .row-pictures .btn-cancel', function(){
 
-				$self.addClass('active');
-				$self.parents('.row-informations').addClass('editing');
-				$('.picture-hashtag input').attr('readonly', false);
-				$('.row-informations .row-buttons').velocity('transition.fadeIn',{
-					duration:600
-				});
-
+				$('.row-informations')
+					.removeClass('editing')
+					.find('.icon-edit.active').removeClass('active')
+					.end().find('input').attr('readonly',true)
+					.end().find('.row-buttons').hide();
 
 			});
+
 			LJ.$body.on('click', '.row-pictures .icon-edit:not(.active)', function(){
 
 				var $self = $(this);
+				$self.addClass('active').parents('.row-pictures').addClass('editing');
 
-				$self.addClass('active');
-				$self.parents('.row-pictures').addClass('editing');
-				$('.picture-hashtag input').attr('readonly', false);
-				$('.picture-edit, .row-pictures .row-buttons').velocity('transition.fadeIn',{
-					duration:600
-				});
-
+				$('.row-pictures')
+					.find('.picture-hashtag input').attr('readonly', false)
+					.end().find('.row-buttons').velocity('transition.fadeIn',{ duration:600 })
+					.end().find('.picture-edit, .row-pictures .row-buttons').velocity('transition.fadeIn',{ duration:600 });
+				
 			});
 
 			LJ.$body.on('click', '.row-pictures .icon-edit.active, .row-pictures .btn-cancel', function(){
 
-				var $self = $(this);
-
-				$self.removeClass('active');
-				$self.parents('.row-pictures').removeClass('editing');
-				$('.picture-hashtag input').attr('readonly', true);
-				$('.picture-edit').velocity('transition.fadeOut',{
-					duration:600
-				});
-				$('.row-pictures .row-buttons').hide();
+				$('.row-pictures')
+					.removeClass('editing')
+					.find('.icon-edit.active').removeClass('active')
+					.end().find('.selected').removeClass('selected')
+					.end().find('.picture-hashtag input').attr('readonly',true)
+					.end().find('.picture-edit').velocity('transition.fadeOut', { duration: 600 })
+					.end().find('.row-buttons').hide();
 				return;
 
 			});
@@ -282,13 +277,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			});
 
-			LJ.$body.on('click', '.row-pictures .btn-cancel', function(){
-				$(this).parents('.row-pictures').find('.icon.selected').click();
-			});
-
-			LJ.$body.on('click', '.row-informations .btn-cancel', function(){
-				$(this).parents('.row-informations').find('.icon.selected').click();
-			});
 
 			LJ.$body.on('focusout', '.picture-hashtag input', function(){
 
