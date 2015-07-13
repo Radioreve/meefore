@@ -1,6 +1,6 @@
 
 #landingWrap{
-    padding-top: 100px;
+    padding-top: 10%;
 }
 
 .etiquette{
@@ -18,6 +18,18 @@
   /* display: inline-block; */
 }
 
+.fb-overlay {
+    width:100%;
+    height:100%;
+    position:absolute;
+    top:0;
+    left:0;
+    background-color:white;
+    z-index:1;
+    transition: all 
+    ease-out .3s;
+    opacity:0;
+}
 .landing-content{
     text-align: center;
     color: white;
@@ -61,12 +73,43 @@
     -webkit-transform:scale(1.22);
     transform: scale(1.22);
 }
-
+ 
 #facebook_connect{
     width: 340px;
-    margin: 0 auto;
-    background-color: #D02C2C;
-    border-bottom: 4px solid #9c2311;      
+    margin: 0 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    auto;
+    background-image: url('/img/fbbluepattern.png');
+    background-repeat: repeat-x;
+    background-color: #3a5795;
+    border: 1px      
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    solid #133783;
     box-shadow: 0 0 1Px #383838;
     color: white;
     text-shadow: 0 0 1px #8E8E8E;
@@ -78,9 +121,8 @@
     -webkit-transition: all .5s;
     transition: all .5s;
 }
-#facebook_connect:hover{
-  background-color: #D64545;
-
+#facebook_connect:hover .fb-overlay{
+  opacity: .1;
 }
 #facebook_connect i{
   position:absolute;

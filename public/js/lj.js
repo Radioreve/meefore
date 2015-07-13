@@ -34,14 +34,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		initAjaxSetup: function(){
 
 			$.ajaxSetup({
-				before: function(){
-					LJ.fn.showLoaders();
-				},
 				error: function( xhr ){
 					LJ.fn.handleServerError( xhr );
 				},
 				complete: function(){
-					LJ.fn.hideLoaders();
+					setTimeout( function(){
+						LJ.fn.hideLoaders();
+					}, LJ.ui.artificialDelay );
 				}
 			})
 
@@ -318,7 +317,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						sleep( LJ.ui.artificialDelay, function(){
 							LJ.fn.toastMsg( data.msg, 'info');
 							$('.validating-btn').removeClass('validating-btn');
-							LJ.fn.hideLoaders();
 						});
 					},
 					error: function( xhr ){
@@ -362,7 +360,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.accessToken = data.accessToken; 
 			//document.cookie = 'token='+data.accessToken;
 
-			LJ.fn.say('fetch-user-and-configuration', {}, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
+			LJ.fn.say('fetch-user-and-configuration', {}, {
+				beforeSend: function(){ console.log('Fetching user and config...'); },
+				success: LJ.fn.handleFetchUserAndConfigurationSuccess 
+			});
 
 		},
 		displayViewAsFrozen: function(){
@@ -465,7 +466,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			     			  .find('.chatWrap')
 			     			  .velocity('transition.slideLeftIn', { duration: 400,
 			     			  complete: function(){
-				     			  	console.log('Oops');
 				     			  	LJ.state.jspAPI[ chatId ].reinitialise();
 									LJ.state.jspAPI[ chatId ].scrollToBottom(); 
 			     			  		} 
@@ -742,12 +742,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 										} 
 									});
 
-									LJ.fn.hideLoaders();
 									LJ.fn.toastMsg('Votre photo de profile a été modifiée', 'info');
 
 									var user = data.user;
 									//LJ.fn.updateClientSettings( user );
-									console.log('User after img upload:' + user );
 
 									// Mise à jour interne sinon plein d'update sur la même photo bug
 									var pic = _.find( LJ.user.pictures, function(el){
@@ -878,17 +876,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	/* Mise à jour dynamique des filters */
         	$( '.tags-wrap' ).html('').append( LJ.fn.renderTagsFilters() );
         	$( '.locs-wrap' ).html('').append( LJ.fn.renderLocsFilters() );
-        	$( '.input-profile-rows').html('').append( LJ.fn.renderProfileRows( _.sortBy( settings.profileRowsList, 'place' )) );
         	$( '#no' ).html('').append( LJ.tpl.noResults );
 
 
     		/* Profile View*/
-			//$('#codebar').text( LJ.user._id );
+			$('.row-subheader').find('span').text( LJ.user._id );
 			$('#name').val( LJ.user.name );
 			$('#age').val( LJ.user.age );
 			$('#description').val( LJ.user.description );
-			$('.drink[data-drink="'+LJ.user.drink+'"]').addClass('selected');
-			$('.mood[data-mood="'+LJ.user.mood+'"]').addClass('selected');
+			$('.drink[data-drinkid="'+LJ.user.drink+'"]').addClass('selected');
+			$('.mood[data-moodid="'+LJ.user.mood+'"]').addClass('selected');
 
 			/* Mise à jour des images placeholders */
 			$('.picture-wrap').html( LJ.fn.renderProfilePicturesWraps );
@@ -1112,7 +1109,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					sleep( LJ.ui.artificialDelay, function(){
 						LJ.fn.toastMsg( "Merci beaucoup!", 'info');
 						$('.validating-btn').removeClass('validating-btn');
-						LJ.fn.hideLoaders();
 					});
 
 				});
@@ -1190,7 +1186,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				
 				if( alreadyIn ) {
 					LJ.fn.toastMsg('Votre ami s\'est ajouté à l\évènement entre temps', 'info');
-					LJ.fn.hideLoaders();
 					var button = '<button class="themeBtn onHold">'
 			                      + '<i class="icon icon-ok-1"></i>'
 			                      +'</button>';
@@ -1202,7 +1197,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					/* Demande pour soi-même */
 					if( LJ.user._id == requesterId && LJ.user._id == userId )
 					{
-						LJ.fn.hideLoaders();
 						LJ.user.eventsAskedList.push( eventId );
 						LJ.fn.toastMsg('Votre demande a été envoyée', 'info');
 						 $('.asking').removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
@@ -1224,7 +1218,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					{
 
 						LJ.fn.toastMsg('Votre ami a été ajouté', 'info');
-						LJ.fn.hideLoaders();
 						var button = '<button class="themeBtn onHold">'
 			                      + '<i class="icon icon-ok-1"></i>'
 			                      +'</button>';
@@ -1285,8 +1278,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				sleep( LJ.ui.artificialDelay, function(){
 
-					LJ.fn.hideLoaders();
-
 					/* Pour l'Host */
 					if( hostId === LJ.user._id)
 					{		
@@ -1342,7 +1333,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					- On génère le HTML dynamique à partir de données server ( Tags... )
 			*/
 			console.log('User and configuration successfully fetched');
-			LJ.fn.hideLoaders();
 
 			var user 	 = data.user,
 				settings = data.settings;
@@ -1446,7 +1436,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		hashtagify: function( str ){
 			
-			console.log(str); 
 			var hashtag_parts = [];
 				str.trim().split(/[\s_-]/).forEach(function( el, i ){
 					if( i == 0 ){
@@ -1465,6 +1454,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				data = { userId: LJ.user._id };
 
 			var cb = {
+				beforeSend: function(){},
 				success: function( data ){
 
 					var users = data.users;
@@ -1495,6 +1485,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				data = { userId: LJ.user._id }
 
 				, cb = {
+					beforeSend: function(){},
 					success: function( data ){
 
 						//csl('Friends fetched');
@@ -1578,7 +1569,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 								LJ.fn.displayMenuStatus( function(){ $('#management').click(); } );
 
 								/* CreateEvent UI restore */
-								LJ.fn.hideLoaders();
 								$('.themeBtn').removeClass('validating-btn');
 								LJ.$createEventWrap.find('input, #eventDescription').val('');
 								LJ.$createEventWrap.find('.selected').removeClass('selected');
@@ -1608,6 +1598,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				data = { userId: LJ.user._id };
 
 			var cb = {
+				beforeSend: function(){},
 				success: function( data ){
 					//console.log(data);
 					var myEvents = data.myEvents;
@@ -1880,6 +1871,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		data: data,
         		beforeSend: function(req){
         			req.setRequestHeader('x-access-token', LJ.accessToken );
+        			if( typeof( cb.beforeSend ) == 'function' ){
+        				cb.beforeSend(); 
+        			} else { LJ.fn.showLoaders(); }
         		},
         		success: function( data ){
         			if( typeof( cb.success ) == 'function' ) cb.success( data );
@@ -2003,9 +1997,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
     		{
     			csl('Turning chatLineWrap scrollable');
     			$chatLineWrap.jScrollPane();
-    			console.log( $chatLineWrap.data('jsp') );
     			LJ.state.jspAPI[ chatId ] =  $chatLineWrap.data('jsp');
-    			console.log( LJ.state.jspAPI );
     		}
 
     		$chatLineWrap.find('.jspPane').append( chatLineHtml );
@@ -2013,7 +2005,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
     		sleep( 50, function(){
 				csl('Refreshing jsp API');
-				console.log( LJ.state.jspAPI );
 				LJ.state.jspAPI[ chatId ].reinitialise();
 				LJ.state.jspAPI[ chatId ].scrollToBottom(); 
     	    });
@@ -2306,7 +2297,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         refreshUserConnState: function( data ){
 
-        	console.log('Refreshing');
         	LJ.myOnlineUsers = _.keys( data.onlineUsers );
         	$('.online-marker').removeClass('active');
         	LJ.fn.refreshOnlineUsers();

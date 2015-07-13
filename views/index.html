@@ -1,400 +1,450 @@
 <!DOCTYPE html>
 
 <html lang="fr">
+
 <head>
 
-	<meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-	<title>Meefore | Home </title>
+  <title>Meefore | Home </title>
 
-	<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Karla:700,400' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Gochi+Hand' rel='stylesheet' type='text/css'>
-	
-	<link rel="stylesheet" href="/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/css/joyride.css">
-	<link rel="stylesheet" href="/css/reset.css">
-	<link rel="stylesheet" href="/css/jscrollpane.css">
-	<link rel="stylesheet" href="/css/fontello/css/fontello.css">
-	<link rel="stylesheet" href="/css/hint.css">
-	<link rel="stylesheet" href="/css/style.css">
-	<link rel="stylesheet" href="/css/landing.css">
-	<link rel="stylesheet" href="/css/profile.css">
-	<link rel="stylesheet" href="/css/events.css">
-	<link rel="stylesheet" href="/css/manage.css">
-	<link rel="stylesheet" href="/css/chat.css">
-	<link rel="stylesheet" href="/css/media.css">
-	<link rel="stylesheet" href="/css/admin.css">
+  <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Karla:700,400' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Gochi+Hand' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/joyride.css">
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/jscrollpane.css">
+  <link rel="stylesheet" href="/css/fontello/css/fontello.css">
+  <link rel="stylesheet" href="/css/hint.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <link rel="stylesheet" href="/css/events.css">
+  <link rel="stylesheet" href="/css/manage.css">
+  <link rel="stylesheet" href="/css/chat.css">
+  <link rel="stylesheet" href="/css/media.css">
+  <link rel="stylesheet" href="/css/admin.css">
 
 
 </head>
+
 <body>
 
-	<div id="fb-root"></div>
-	<script>
-	  (function(d, s, id) {
-	    var js, fjs = d.getElementsByTagName(s)[0];
-	    if (d.getElementById(id)) return;
-	    js = d.createElement(s); js.id = id;
-	    js.src = "//connect.facebook.net/en_EN/sdk.js";
-	    fjs.parentNode.insertBefore(js, fjs);
-	  }(document, 'script', 'facebook-jssdk'));
-	</script>
+  <div id="fb-root"></div>
+  <script>
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "//connect.facebook.net/en_EN/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
 
-	<!-- Overlay, loader arrows & admin panel -->
-	<div id="adminPanelWrap"></div>
-	<div class="progress_bar"></div>
-	<div class="loaderWrap"></div>
-	<div class="m-loaderWrap"></div>
-	<div class="overlay"></div>
-	<div id="logo-hero"><img src="/img/logomeefore.png" width="50" alt="Logo meefore soirées"></div>
-	<div class="hero-img scaled animatable img-0 active "></div>
-	<div class="hero-img scaled animatable img-1 "></div>
-	<div class="hero-img scaled animatable img-2 "></div>
-	<div class="hero-img scaled animatable img-3 "></div>
-	<div class="hero-img scaled animatable img-4 "></div>
-	<div class="hero-img scaled animatable img-5 "></div>
-	<div class="hero-img scaled animatable img-6 "></div>
-	<div class="hero-img scaled animatable img-7 "></div>
-	<div class="curtain"></div>
+  <!-- Overlay, loader arrows & admin panel -->
+  <div id="adminPanelWrap"></div>
+  <div class="progress_bar"></div>
+  <div class="loaderWrap"></div>
+  <div class="m-loaderWrap"></div>
+  <div class="overlay"></div>
+  <div id="logo-hero"><img src="/img/logomeefore.png" width="50" alt="Logo meefore soirées">
+  </div>
+  <div class="hero-img scaled animatable img-0 active "></div>
+  <div class="hero-img scaled animatable img-1 "></div>
+  <div class="hero-img scaled animatable img-2 "></div>
+  <div class="hero-img scaled animatable img-3 "></div>
+  <div class="hero-img scaled animatable img-4 "></div>
+  <div class="hero-img scaled animatable img-5 "></div>
+  <div class="hero-img scaled animatable img-6 "></div>
+  <div class="hero-img scaled animatable img-7 "></div>
+  <div class="curtain"></div>
 
-	<!-- Header start -->
-	<header class="lg-header none">
-	  <div id="headerContent">
-		<img id="logo" src="/img/logomeefore.png" width="48"></img>
-		  <ul id="menuWrap" class="">
-			<li id="profile" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
-			<li id="search" class="menu-item icon icon-search" data-linkedcontent="#searchUsersWrap" ><span class="underlay"></span></li>
-			<li id="events"  class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
-			<li id="create" class="menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><span class="underlay"></span></li>
-			<li id="management" class="menu-item icon icon-users" data-linkedcontent="#manageEventsWrap" ><span class="underlay"></span></li>
-			<li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap" ><span class="underlay"></span></li>
-			<li id="contact" class="right menu-item icon icon-mail-alt nonei" data-linkedcontent="#contactWrap" ><span class="underlay"></span></li>
-		  </ul>
-	  </div>
-	  <div id="facebook_login" class="none"><i class="icon icon-facebook"></i>Maintenant</div>
-	</header> <!-- Header end -->
+  <!-- Header start -->
+  <header class="lg-header none">
+    <div id="headerContent">
+      <img id="logo" src="/img/logomeefore.png" width="48"></img>
+      <ul id="menuWrap" class="">
+        <li id="profile" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
+        <li id="search" class="menu-item icon icon-search" data-linkedcontent="#searchUsersWrap"><span class="underlay"></span></li>
+        <li id="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
+        <li id="create" class="menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><span class="underlay"></span></li>
+        <li id="management" class="menu-item icon icon-users" data-linkedcontent="#manageEventsWrap"><span class="underlay"></span></li>
+        <li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
+        <li id="contact" class="right menu-item icon icon-mail-alt nonei" data-linkedcontent="#contactWrap"><span class="underlay"></span></li>
+      </ul>
+    </div>
+    <div id="facebook_login" class="none"><i class="icon icon-facebook"></i>Maintenant</div>
+  </header>
+  <!-- Header end -->
 
-	<div id="mainWrap" class="centered">
+  <div id="mainWrap" class="centered">
 
-	<!-- Landing page start -->
-		<section id="landingWrap" class="centered revealed m-revealed">
-			<div class="landing-content">
-				<h2 class="landing-places">
+    <!-- Landing page start -->
+    <section id="landingWrap" class="centered revealed m-revealed">
+      <div class="landing-content">
+        <h2 class="landing-places">
 					<span class="typed-text"></span>
 				</h2>
-				<div class="landing-hashtags">
-					<!-- Dynamically loaded -->
-				</div>
-				<div class="landing-call">
-					"Une vraie soirée commence toujours avant la soirée."
-				</div>
-				<div class="landing-subscribe">
-					 <div id="facebook_connect"><i class="icon icon-facebook"></i>Connexion</div>
-				</div>
-			</div>
-		</section>
-	<!-- Landing page end -->
+        <div class="landing-hashtags">
+          <!-- Dynamically loaded -->
+        </div>
+        <div class="landing-call">
+          "Une vraie soirée commence toujours avant la soirée."
+        </div>
+        <div class="landing-subscribe">
+          <div id="facebook_connect"><i class="icon icon-facebook"></i>Connexion
+            <div class="fb-overlay"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Landing page end -->
 
-		<section id="thumbWrap" class="none ">
-			<div class="imgWrap">
-			</div>
-			<div id="thumbInfos">
-				<h2 id="thumbName"></h2>
-				<span id="logout" class="action">Log out</span>
-			</div>
-		</section>
+    <section id="thumbWrap" class="none ">
+      <div class="imgWrap">
+      </div>
+      <div id="thumbInfos">
+        <h2 id="thumbName"></h2>
+        <span id="logout" class="action">Log out</span>
+      </div>
+    </section>
 
-		<section id="profileWrap" class="none centered">
-			
-			<div class="row row-profile">
-				<h2> Mon profile </h2>
-			</div>
+    <section id="profileWrap" class="none centered">
 
-			
-			<!-- Edition des photos -->
-			<div class="row row-profile row-pictures">
-				<div class="row-title">
-					<div class="row-title-text">Tes 5 photos</div>
-					<i class="icon icon-edit icon-feather right"></i>
-				</div>
-				<div class="row-subtitle">
-					<div class="row-subtitle-text etiquette">Plusieurs photos valent mieux qu'un long discours! Montre toi sous ton plus beau jour.</div>
-				</div>
-				<div class="row-body row-center picture-wrap" data-display-settings="displayParamsProfile">
-					<!-- Dynamically loaded -->
-				</div>
-				<div class="row-buttons">
-					<button class="theme-btn btn-cancel right">Annuler</button>
-					<button class="theme-btn btn-validate right">Valider</button>
-				</div>
-			</div>
+      <!-- Titre et sous-titre  -->
+      <div class="row row-profile">
+        <h2> Mon profile </h2>
+        <div class="row-subheader">
+          <div class="row-subheader-bar"></div>
 
-	
-			<!-- Edition des informations  -->
-			<div class="row row-profile row-informations ">
-					
-			<div class="row-title">
-					<div class="row-title-text">Tes informations</div>
-					<i class="icon icon-edit icon-feather right"></i>
-			</div>
-
-			<div class="row-subtitle">
-				<div class="row-subtitle-text etiquette">Dis nous tout, et surtout concentre toi sur l'essentiel</div>
-			</div>
-			
-			<div class="row-body">
-				<div class="row-divider"></div>
-				<div class="row-input row-name etiquette">
-					<label for="name">Nom</label>
-					<input readonly id="name" class="" placeholder="Prad Bitt" type="text" maxlength="25">
-				</div>
-				<div class="row-input row-age etiquette">
-					<label for="age">Age</label>
-					<input readonly id="age" class="" placeholder="25" type="number" max="50" min="18">
-				</div>
-				<div class="row-input row-mood etiquette">
-					<label for="mood">Humeur</label>
-					<div class="mood-wrap">
-						<div class="mood selected" data-moodid="happy">Happy</div>
-						<div class="mood" data-moodid="fire">Fire</div>
-						<div class="mood" data-moodid="horney">Horney</div>
-						<div class="mood" data-moodid="fail">Fail</div>
-						<div class="mood" data-moodid="sleepy ">Sleepy</div>
-					</div>
-				</div>
-				<div class="row-input row-drink etiquette">
-					<label for="drink">Verre</label>
-					<div class="drink-wrap">
-						<div class="drink" data-drinkid="water">Eau</div>
-						<div class="drink selected" data-drinkid="vodka">Vodka</div>
-						<div class="drink" data-drinkid="sky">Sky</div>
-						<div class="drink" data-drinkid="beer">Beer</div>
-						<div class="drink" data-drinkid="wine">Wine</div>
-					</div>
-				</div>
-				<div class="row-input row-motto etiquette">
-					<label class="" for="description">Motto</label>
-					<input readonly type="text" class="" placeholder="Si tu étais une phrase...">
-					<div class="inspire">En manque d'inspi?</div>
-				</div>
-				<div class="row-input row-job etiquette">
-					<label readonly for="situation">Situation</label>
-					<input id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
-				</div>
-			</div>
-
-				<div class="row-buttons">
-					<button class="theme-btn btn-cancel right">Annuler</button>
-					<button class="theme-btn btn-validate right">Valider</button>
-				</div>
-
-			</div>
-
-			<!-- Amis sur meefore  -->
-			<div class="row row-profile row-friends">
-				<div class="row-title">
-					<div class="row-title-text">Tout le monde est sur meefore</div>
-					<i class="icon icon-edit icon-feather right"></i>
-				</div>
-				<div class="row-subtitle">
-					<div class="row-subtitle-text etiquette">Tes amis Facebook sont tous sur meefore. Quoi, il en manque ? Invites-les et gagne des points!</div>
-				</div>
-				
-				<div class="row-buttons">
-					<button class="theme-btn btn-cancel right">Annuler</button>
-					<button class="theme-btn btn-validate right">Valider</button>
-				</div>
-			</div>
-
-			<!-- Questionnaire à là OKC  -->
-			<div class="row row-profile row-okc">
-				<div class="row-title">
-					<div class="row-title-text">Tes questions perso</div>
-					<i class="icon icon-edit icon-feather right"></i>
-				</div>
-				<div class="row-subtitle">
-					<div class="row-subtitle-text etiquette">On vous évite de parler des heures. Répondez franchement aux 10 questions ci-dessous, c'est pour vous.</div>
-				</div>
-				
-				<div class="row-buttons">
-					<button class="theme-btn btn-cancel right">Annuler</button>
-					<button class="theme-btn btn-validate right">Valider</button>
-				</div>
-			</div>
-
-			
-
-		</section>
+        </div>
+      </div>
 
 
-		<section id="eventsWrap" class="none centered">
-		  <div class="eventsHeader">
-			<h2>Tous les meefore</h2>
-			<div class="actionsWrap actionsStyle">
-				<span id="activateFilters" class="action">Appliquer les filtres</span>
-				<span id="displayFilters" class="action"><span>Afficher</span> tous les filtres</span>
-				<span id="resetFilters" class="action">Enlever tous les filtres</span>
-				<span id="refreshEventsFilters" class="action">Rafraîchir</span>
-			</div>
-			<div class="filtersWrap none">
-			
-			  <div class="filters-tags-row tags-wrap"> <span>Tags</span><!-- Content dynamically loaded --></div>
-			  <div class="filters-locs-row locs-wrap"> <!-- Content dynamically loaded --></div>
-			</div>
-		  </div>
-		  	<div id="frozenTimezone" class="none">
-				<h2>Fais un break</h2>
-				<center><h3>Les meefores sont fermés le matin, reprise à 14H. Time to sleep.</h3></center>
-			</div>
-			<section id="eventsListWrap"> <!-- Content dynamically loaded --> </section>
-			<div id="no">
-				
-			</div>
-			<div id="friendListWrap" class="none">
-					<div id="myFriends">
-					<!-- Content dynamically loaded -->	
-					</div>
-				</div>
-		</section>
+      <!-- Edition des photos -->
+      <div class="row row-profile row-pictures">
+        <div class="row-title">
+          <div class="row-title-text">Tes 5 photos</div>
+          <i class="icon icon-edit icon-feather right"></i>
+        </div>
+        <div class="row-subtitle">
+          <div class="row-subtitle-text etiquette">Plusieurs photos valent mieux qu'un long discours! Montre toi sous ton plus beau jour.</div>
+        </div>
+        <div class="row-body row-center picture-wrap" data-display-settings="displayParamsProfile">
+          <!-- Dynamically loaded -->
+        </div>
+        <div class="row-buttons">
+          <button class="theme-btn btn-cancel right">Annuler</button>
+          <button class="theme-btn btn-validate right">Valider</button>
+        </div>
+      </div>
 
 
-		<section id="createEventWrap" class="none centered">
-			<h2>Proposer un before</h2>
-			<div id="createEventInputsWrap">
-				<div class="input-row-wrap">
-					<label for="eventName">Before</label>
-					<input id="eventName" placeholder="quelle soirée ?" type="text" class="input-field_create">
-				</div>
-				<div class="input-row-wrap">
-					<label for="eventLocation">Arrondissement</label>
-					<input id="eventLocation" class="input-field_create" placeholder="1" max="20" min="1" type="number">
-				</div>
-				<div class="input-row-wrap">
-					<label for="eventHour">Heure de début</label>
-					<input id="eventHour" class="input-field_create" type="text" placeholder="20" maxlength="2"><b>h</b>
-					<input id="eventMinut" class="input-field_create" type="text" placeholder="00" maxlength="2">
-				</div>
-				<div class="input-row-wrap hint--right" data-hint="Restez raisonnable...">
-					<label for="eventMaxGuest">Nombre d'invités </label>
-					<input id="eventMaxGuest" class="input-field_create" value = "3" max="100" min="2" type="number">
-				</div>
-				<div class="input-row-wrap">
-					<label for="event-friends-wrap">Ils y seront </label>
-					<div class="event-friends-wrap"></div>
-				</div>
-				<div class="input-row-wrap">
-					<label for="tags">Tags</label>
-					<div class="tags-wrap"></div>
-				</div>
-				<div class="input-row-wrap">
-				<label for="eventDescription">About</label>
-				<textarea id="eventDescription" placeholder="Winter is coming..."></textarea>
-				</div>
-				<button id="createEventBtn" class="right themeBtn themeBtnMain">Create event</button>
-			</div>
-		</section>
+      <!-- Edition des informations  -->
+      <div class="row row-profile row-informations ">
+
+        <div class="row-title">
+          <div class="row-title-text">Tes informations</div>
+          <i class="icon icon-edit icon-feather right"></i>
+        </div>
+
+        <div class="row-subtitle">
+          <div class="row-subtitle-text etiquette">Dis nous tout, et surtout concentre toi sur l'essentiel</div>
+        </div>
+
+        <div class="row-body">
+          <div class="row-divider"></div>
+          <div class="row-input row-name etiquette">
+            <label for="name">Nom</label>
+            <input readonly id="name" class="" placeholder="Prad Bitt" type="text" maxlength="25">
+          </div>
+          <div class="row-input row-age etiquette">
+            <label for="age">Age</label>
+            <input readonly id="age" class="" placeholder="25" type="number" max="50" min="18">
+          </div>
+          <div class="row-input row-mood etiquette">
+            <label for="mood">Humeur</label>
+            <div class="mood-wrap">
+              <div class="mood" data-moodid="happy">Happy</div>
+              <div class="mood" data-moodid="fire">Fire</div>
+              <div class="mood" data-moodid="horney">Horney</div>
+              <div class="mood" data-moodid="fail">Fail</div>
+              <div class="mood" data-moodid="sleepy ">Sleepy</div>
+            </div>
+          </div>
+          <div class="row-input row-drink etiquette">
+            <label for="drink">Verre</label>
+            <div class="drink-wrap">
+              <div class="drink" data-drinkid="water">Eau</div>
+              <div class="drink" data-drinkid="vodka">Vodka</div>
+              <div class="drink" data-drinkid="sky">Sky</div>
+              <div class="drink" data-drinkid="beer">Beer</div>
+              <div class="drink" data-drinkid="wine">Wine</div>
+            </div>
+          </div>
+          <div class="row-input row-motto etiquette">
+            <label class="" for="description">Motto</label>
+            <input readonly type="text" class="" placeholder="Si tu étais une phrase...">
+            <div class="inspire">En manque d'inspi?</div>
+          </div>
+          <div class="row-input row-job etiquette">
+            <label for="situation">Situation</label>
+            <input readonly id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
+          </div>
+        </div>
+
+        <div class="row-buttons">
+          <button class="theme-btn btn-cancel right">Annuler</button>
+          <button class="theme-btn btn-validate right">Valider</button>
+        </div>
+
+      </div>
+
+      <!-- Amis sur meefore  -->
+      <div class="row row-profile row-friends">
+        <div class="row-title">
+          <div class="row-title-text">Tout le monde est sur meefore</div>
+          <i class="icon icon-edit icon-feather right"></i>
+        </div>
+        <div class="row-subtitle">
+          <div class="row-subtitle-text etiquette">Tes amis Facebook sont tous sur meefore. Quoi, il en manque ? Invites-les et gagne des points!</div>
+        </div>
+        <div class="row-divider"></div>
+        <div class="row-body">
+          <div class="row-friend-item">
+            <div class="row-friend-img"><img src="/img/placeholder.png">
+            </div>
+            <div class="row-friend-name">Léo H.</div>
+            <div class="row-friend-actions"></div>
+          </div>
+          <div class="row-friend-item">
+            <div class="row-friend-img"><img src="/img/placeholder.png">
+            </div>
+            <div class="row-friend-name">Jonathan</div>
+            <div class="row-friend-actions"></div>
+          </div>
+          <div class="row-friend-item">
+            <div class="row-friend-img"><img src="/img/placeholder.png">
+            </div>
+            <div class="row-friend-name">Mathilde</div>
+            <div class="row-friend-actions"></div>
+          </div>
+          <div class="row-friend-item">
+            <div class="row-friend-img"><img src="/img/placeholder.png">
+            </div>
+            <div class="row-friend-name">Ben</div>
+            <div class="row-friend-actions"></div>
+          </div>
+          <div class="row-friend-item">
+            <div class="row-friend-img"><img src="/img/placeholder.png">
+            </div>
+            <div class="row-friend-name">Frankelie</div>
+            <div class="row-friend-actions"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Questionnaire à là OKC  -->
+      <div class="row row-profile row-okc">
+        <div class="row-title">
+          <div class="row-title-text">Tes questions perso</div>
+          <i class="icon icon-edit icon-feather right"></i>
+        </div>
+        <div class="row-subtitle">
+          <div class="row-subtitle-text etiquette">On vous évite de parler des heures. Répondez franchement aux 10 questions ci-dessous, c'est pour vous.</div>
+        </div>
+
+        <div class="row-buttons">
+          <button class="theme-btn btn-cancel right">Annuler</button>
+          <button class="theme-btn btn-validate right">Valider</button>
+        </div>
+      </div>
 
 
-		<section id="manageEventsWrap" class="none centered">
-			<h2>Ils veulent venir à ton meefore</h2>
-			<div class="actionsWrap actionsStyle">
-				<span id="cancelEvent" class="action">Annuler</span>
-				<span id="suspendEvent" class="action">Suspendre</span>
-			</div>
-			<div id="askersListWrap">
-				<div id="askersThumbs"></div>
-				<div class="askersMainWrap">
-				    <i class="icon icon-left-open-big next-left"></i>
-				    <i class="icon icon-right-open-big next-right"></i>
-				  <div id="askersMain">
-				  </div>
-				</div>
-			</div>
-		</section>
+    </section>
 
 
-		<section id="searchUsersWrap" class="none centered">
-			<h2>Team de soirée</h2>
-			<div class="actionsWrap actionsStyle">
-				<span id="friendsOnly" class="action">Amis uniquement</span>
-			</div>
-			<div id="searchBarWrap">
-				<div id="searchBar">
-					<i class="icon icon-search"></i>
-				   <input type="text" placeholder="Rechercher par nom, age, boisson favorite">
-				</div>
-			</div>
-			<div id="searchUsers"> <!-- Content dynamicall loaded --> </div>
-		</section>
+    <section id="eventsWrap" class="none centered">
+      <div class="eventsHeader">
+        <h2>Tous les meefore</h2>
+        <div class="actionsWrap actionsStyle">
+          <span id="activateFilters" class="action">Appliquer les filtres</span>
+          <span id="displayFilters" class="action"><span>Afficher</span> tous les filtres</span>
+          <span id="resetFilters" class="action">Enlever tous les filtres</span>
+          <span id="refreshEventsFilters" class="action">Rafraîchir</span>
+        </div>
+        <div class="filtersWrap none">
+
+          <div class="filters-tags-row tags-wrap"> <span>Tags</span>
+            <!-- Content dynamically loaded -->
+          </div>
+          <div class="filters-locs-row locs-wrap">
+            <!-- Content dynamically loaded -->
+          </div>
+        </div>
+      </div>
+      <div id="frozenTimezone" class="none">
+        <h2>Fais un break</h2>
+        <center>
+          <h3>Les meefores sont fermés le matin, reprise à 14H. Time to sleep.</h3>
+        </center>
+      </div>
+      <section id="eventsListWrap">
+        <!-- Content dynamically loaded -->
+      </section>
+      <div id="no">
+
+      </div>
+      <div id="friendListWrap" class="none">
+        <div id="myFriends">
+          <!-- Content dynamically loaded -->
+        </div>
+      </div>
+    </section>
 
 
-		<section id="settingsWrap" class="none centered">
-			<h2> Préférences </h2>
-			<div id="settingsInputsWrap">
-				<div class="input-row-wrap">
-					<label for="currentEmail">Email</label>
-					<input id="currentEmail" placeholder="Email" type="text" class="input-field_create">
-				</div>
-				<div class="input-row-wrap">
-					<label for="currentPw">Mot de passe</label>
-					<input id="currentPw" class="input-field_create" readonly value="**********" type="text">
-				</div>
-				<div class="input-row-wrap">
-					<label for="newPw">Nouveau mdp</label>
-					<input id="newPw" class="input-field_create" placeholder="New password" maxlength="40" type="password">
-				</div>
-				<div class="input-row-wrap">
-					<label for="newPwConf">Confirmer nouveau mdp</label>
-					<input id="newPwConf" class="input-field_create" placeholder="Confirm new password" maxlength="40" type="password">
-				</div>
-				<div class="input-row-wrap">
-					<label for="newsletter">Recevoir la newz</label>
-					<input id="newsletter" class="input-field_create" type="checkbox">
-				</div>
-				<button id="submitSettingsBtn" class="right themeBtn themeBtnMain">Modifier </button>
-			</div>
-		</section>
+    <section id="createEventWrap" class="none centered">
+      <h2>Proposer un before</h2>
+      <div id="createEventInputsWrap">
+        <div class="input-row-wrap">
+          <label for="eventName">Before</label>
+          <input id="eventName" placeholder="quelle soirée ?" type="text" class="input-field_create">
+        </div>
+        <div class="input-row-wrap">
+          <label for="eventLocation">Arrondissement</label>
+          <input id="eventLocation" class="input-field_create" placeholder="1" max="20" min="1" type="number">
+        </div>
+        <div class="input-row-wrap">
+          <label for="eventHour">Heure de début</label>
+          <input id="eventHour" class="input-field_create" type="text" placeholder="20" maxlength="2"><b>h</b>
+          <input id="eventMinut" class="input-field_create" type="text" placeholder="00" maxlength="2">
+        </div>
+        <div class="input-row-wrap hint--right" data-hint="Restez raisonnable...">
+          <label for="eventMaxGuest">Nombre d'invités </label>
+          <input id="eventMaxGuest" class="input-field_create" value="3" max="100" min="2" type="number">
+        </div>
+        <div class="input-row-wrap">
+          <label for="event-friends-wrap">Ils y seront </label>
+          <div class="event-friends-wrap"></div>
+        </div>
+        <div class="input-row-wrap">
+          <label for="tags">Tags</label>
+          <div class="tags-wrap"></div>
+        </div>
+        <div class="input-row-wrap">
+          <label for="eventDescription">About</label>
+          <textarea id="eventDescription" placeholder="Winter is coming..."></textarea>
+        </div>
+        <button id="createEventBtn" class="right themeBtn themeBtnMain">Create event</button>
+      </div>
+    </section>
 
 
-		<section id="contactWrap" class="none centered">
-			<h2>On veut tout savoir</h2>
-			<form>
-			<div>
-			<label for="contactName">Nom</label>
-				<input id="contactName" type="text" placeholder="Jack Bamboo">
-			</div>
-			<div>
-			<label for="contactMail">Email</label>
-				<input id="contactMail" type="text" placeholder="jack@bamboomail.com">
-			</div>
-			<label for="contactBody" class="align-top">Ton message</label>
-				<textarea id="contactBody" placeholder="Hi there, ..."></textarea>
-			</form>
-			<button id="sendContactForm" class="right themeBtn themeBtnMain">Envoyer</button>
-		</section>
+    <section id="manageEventsWrap" class="none centered">
+      <h2>Ils veulent venir à ton meefore</h2>
+      <div class="actionsWrap actionsStyle">
+        <span id="cancelEvent" class="action">Annuler</span>
+        <span id="suspendEvent" class="action">Suspendre</span>
+      </div>
+      <div id="askersListWrap">
+        <div id="askersThumbs"></div>
+        <div class="askersMainWrap">
+          <i class="icon icon-left-open-big next-left"></i>
+          <i class="icon icon-right-open-big next-right"></i>
+          <div id="askersMain">
+          </div>
+        </div>
+      </div>
+    </section>
 
-	</div>
 
-		<script src="//js.pusher.com/2.2/pusher.min.js"></script>
-		<script src="dist/lib.min.js"></script>
-		<script src="js/lib/moment.min.js"></script>
-		<script src="js/lib/waitForImages.min.js"></script>
-		<script src="js/lib/joyride.js"></script>
+    <section id="searchUsersWrap" class="none centered">
+      <h2>Team de soirée</h2>
+      <div class="actionsWrap actionsStyle">
+        <span id="friendsOnly" class="action">Amis uniquement</span>
+      </div>
+      <div id="searchBarWrap">
+        <div id="searchBar">
+          <i class="icon icon-search"></i>
+          <input type="text" placeholder="Rechercher par nom, age, boisson favorite">
+        </div>
+      </div>
+      <div id="searchUsers">
+        <!-- Content dynamicall loaded -->
+      </div>
+    </section>
 
-		<script src="js/lib/typed.js" type="text/javascript"></script>
-		<!-- custom scripts -->
-		<script src="js/lj-params.js"></script>
-		<script src="js/lj-render.js"></script>
-		<script src="js/lj-domEvents.js"></script>
-		<script src="js/lj-admin.js"></script>
-		<script src="js/lj.js"></script>
 
-		<script type="text/javascript" src="http://catmull.uk/downloads/bg-loaded/bg-loaded.js"></script>
+    <section id="settingsWrap" class="none centered">
+      <h2> Préférences </h2>
+      <div id="settingsInputsWrap">
+        <div class="input-row-wrap">
+          <label for="currentEmail">Email</label>
+          <input id="currentEmail" placeholder="Email" type="text" class="input-field_create">
+        </div>
+        <div class="input-row-wrap">
+          <label for="currentPw">Mot de passe</label>
+          <input id="currentPw" class="input-field_create" readonly value="**********" type="text">
+        </div>
+        <div class="input-row-wrap">
+          <label for="newPw">Nouveau mdp</label>
+          <input id="newPw" class="input-field_create" placeholder="New password" maxlength="40" type="password">
+        </div>
+        <div class="input-row-wrap">
+          <label for="newPwConf">Confirmer nouveau mdp</label>
+          <input id="newPwConf" class="input-field_create" placeholder="Confirm new password" maxlength="40" type="password">
+        </div>
+        <div class="input-row-wrap">
+          <label for="newsletter">Recevoir la newz</label>
+          <input id="newsletter" class="input-field_create" type="checkbox">
+        </div>
+        <button id="submitSettingsBtn" class="right themeBtn themeBtnMain">Modifier </button>
+      </div>
+    </section>
 
-	</body>
+
+    <section id="contactWrap" class="none centered">
+      <h2>On veut tout savoir</h2>
+      <form>
+        <div>
+          <label for="contactName">Nom</label>
+          <input id="contactName" type="text" placeholder="Jack Bamboo">
+        </div>
+        <div>
+          <label for="contactMail">Email</label>
+          <input id="contactMail" type="text" placeholder="jack@bamboomail.com">
+        </div>
+        <label for="contactBody" class="align-top">Ton message</label>
+        <textarea id="contactBody" placeholder="Hi there, ..."></textarea>
+      </form>
+      <button id="sendContactForm" class="right themeBtn themeBtnMain">Envoyer</button>
+    </section>
+
+  </div>
+
+  <script src="//js.pusher.com/2.2/pusher.min.js"></script>
+  <script src="dist/lib.min.js"></script>
+  <script src="js/lib/moment.min.js"></script>
+  <script src="js/lib/waitForImages.min.js"></script>
+  <script src="js/lib/joyride.js"></script>
+
+  <script src="js/lib/typed.js" type="text/javascript"></script>
+  <!-- custom scripts -->
+  <script src="js/lj-params.js"></script>
+  <script src="js/lj-render.js"></script>
+  <script src="js/lj-domEvents.js"></script>
+  <script src="js/lj-admin.js"></script>
+  <script src="js/lj.js"></script>
+
+  <script type="text/javascript" src="http://catmull.uk/downloads/bg-loaded/bg-loaded.js"></script>
+
+</body>
+
 </html>

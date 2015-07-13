@@ -203,16 +203,18 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			LJ.$body.on('click', '.drink', function(){
 
-				$('#profileWrap .drink.modified').removeClass('modified');
-				if( $(this).hasClass('selected') ) return; 
+				if( !$(this).parents('.row-informations').hasClass('editing') )
+					return ;
+				$('.row-informations .drink.modified').removeClass('modified');
 				$(this).addClass('modified');
 			
 			});
 
 			LJ.$body.on('click', '.mood', function(){
 
-				$('#profileWrap .mood.modified').removeClass('modified');
-				if( $(this).hasClass('selected') ) return; 
+				if( !$(this).parents('.row-informations').hasClass('editing') )
+					return ;
+				$('.row-informations .mood.modified').removeClass('modified');
 				$(this).addClass('modified');
 			});
 

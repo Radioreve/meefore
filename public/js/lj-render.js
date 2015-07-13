@@ -593,30 +593,6 @@
 
             return LJ.fn.renderUser({ user: friend, wrap: 'eventsWrap'});
         },
-        renderProfileRows: function( profileRowsList ){
-
-            var html = '',
-                arr = profileRowsList;
-
-            for( var i=0; i<arr.length; i++ )
-            {
-                vals = arr[i].values;
-                var list ='';
-                for( var k=0; k<vals.length; k++ )
-                {
-                    list += '<div class="' + arr[i].name + '" data-' +arr[i].name + '="' +vals[k].name + '">'+ vals[k].display +'</div>';  
-                }
-                
-                html += '<div class="input-row-wrap">'
-                          + '<label for="' + arr[i].name + '">' + arr[i].display + '</label>'
-                          + '<div id="' + arr[i].name + '">'
-                          + list
-                          +'</div>'
-                      + '</div>'
-            }
-            return html;
-
-        },
         renderProfilePicturesWraps: function(){
 
             var pictures = LJ.user.pictures;
