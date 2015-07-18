@@ -8,10 +8,10 @@
 		if( options == {} ) 
 			return 'Error, no arguments passed to makeChannel';
 
-		if( options.accessName == 'mychan')
+		if( options.access_name == 'mychan')
 			return options.token;
 
-		if( options.accessName == 'defchan')
+		if( options.access_name == 'defchan')
 			return 'default';
 
 	};
@@ -40,10 +40,9 @@
 
 		if( p.toClient && p.res ){
 
-				var clientMsg = p.toClient,
-					flash     = p.flash || false;
+				var clientMsg = p.toClient;
 
-				var data = { msg: clientMsg, flash: flash };
+				var data = { msg: clientMsg, err: p.err };
 				
 				p.res.status( 500 ).json( data ).end();
 				return;
@@ -60,7 +59,7 @@
 		var public_claim = {
 
 					_id:         	 user._id,
-					facebookId: 	 user.facebookId, 
+					facebook_id: 	 user.facebook_id, 
   					email:       	 user.email,
   					name:        	 user.name,
   					age:         	 user.age,
@@ -70,13 +69,13 @@
   					mood:            user.mood,
   					status:      	 user.status,
   					description: 	 user.description,
-  					imgId:      	 user.imgId,
-  					imgVersion: 	 user.imgVersion,
-  					friendList:      user.friendList,
-  					eventsAskedList: user.eventsAskedList,
-  					hostedEventId:   user.hostedEventId,
+  					img_id:      	 user.img_id,
+  					img_version: 	 user.img_version,
+  					friends:      user.friends,
+  					asked_events: user.asked_events,
+  					hosted_event_id:   user.hosted_event_id,
   					newsletter:      user.newsletter,
-  					myChannels:      user.myChannels
+  					channels:      user.channels
 
 				},
 				audience = user.access,

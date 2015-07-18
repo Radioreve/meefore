@@ -64,21 +64,21 @@
 
 					newUser.gender = req.body.gender;
 					newUser.age = 25;
-					newUser.signupDate = moment.utc();
+					newUser.signup_date = moment.utc();
 					
 					// public one based on global key
 					// personnal one based on randtoken 
 				    var token = randtoken.generate(30);
 					
-					var accessName = 'mychan',
-						channelName = eventUtils.makeChannel({ accessName: accessName, token: token }) 
+					var access_name = 'mychan',
+						channel_label = eventUtils.makeChannel({ access_name: access_name, token: token }) 
 
-					newUser.myChannels.push( {accessName:accessName, channelName:channelName} );
+					newUser.channels.push( {access_name:access_name, channel_label:channel_label} );
 
-					var accessName = 'defchan',
-						channelName = eventUtils.makeChannel({ accessName: accessName }) 
+					var access_name = 'defchan',
+						channel_label = eventUtils.makeChannel({ access_name: access_name }) 
 
-					newUser.myChannels.push( {accessName:accessName, channelName:channelName} );
+					newUser.channels.push( {access_name:access_name, channel_label:channel_label} );
 
 
 					newUser.save( function( err ){

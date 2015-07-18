@@ -59,13 +59,20 @@
 				expose.settings = settings;
 				expose.onlineUsers = [];
 
+				expose.settings.skill_ladder = settings.initLadder({
+					max_level: settings.ladder_max_level,
+					base_point: settings.ladder_base_point,
+					base_coef: settings.ladder_base_coef
+				});
+
 				expose.user = {
 
 					_id:         	 user._id,
-					fbId:            user.facebookId, 
+					fbId:            user.facebook_id, 
   					email:       	 user.email,
   					name:        	 user.name,
   					age:         	 user.age,
+  					skill:           user.skill,
   					access:          user.access, 
   					gender:          user.gender,
   					drink:           user.drink,
@@ -73,11 +80,11 @@
   					status:      	 user.status,
   					description: 	 user.description,
   					pictures:        user.pictures,
-  					friendList:      user.friendList,
-  					eventsAskedList: user.eventsAskedList,
-  					hostedEventId:   user.hostedEventId,
+  					friends:         user.friends,
+  					asked_events:    user.asked_events,
+  					hosted_event_id: user.hosted_event_id,
   					newsletter:      user.newsletter,
-  					myChannels:      user.myChannels,
+  					channels:        user.channels,
   					cloudTags:    	 cloudTags
   					
 				};

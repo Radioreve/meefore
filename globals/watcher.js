@@ -54,6 +54,10 @@
 
 	})( gaptime_default );
 
+	var updateSkills = function( req, res, next ){
+		
+	}
+
 	module.exports = {
 		addUser: addUser,
 		accessUser: accessUser,

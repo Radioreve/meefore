@@ -67,8 +67,8 @@
 				/* Généré au niveau de la création du bot */
 				  e.hostId	  	  	= data.userId;
 				  e.hostName   	  	= data.name;
-				  e.hostImgId 	  	= data.imgId;
-				  e.hostImgVersion  = data.imgVersion;
+				  e.hostimg_id 	  	= data.img_id;
+				  e.hostimg_version  = data.img_version;
 
 				/* Générer aléatoirement à partir de la liste pré remplie */
 				  e.templateId      = eventTemplate._id;

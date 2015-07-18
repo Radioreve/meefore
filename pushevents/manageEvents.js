@@ -111,20 +111,20 @@ var createEvent = function( req, res ) {
                         });
 
                         host.status = 'hosting';
-                        host.hostedEventId = myEvent._id;
+                        host.hosted_event_id = myEvent._id;
 
                         var expose = { myEvent: myEvent };
 
                         host.save( function( err, myHost ){
                             if( !err ){
-                                console.log( myHost.email + ' is hosting event with id : ' + myHost.hostedEventId );
+                                console.log( myHost.email + ' is hosting event with id : ' + myHost.hosted_event_id );
                                 eventUtils.sendSuccess( res, expose );
                                 pusher.trigger('default', 'create-event-success', expose, socketId );
                             }
                         });
 
                         for( var i=0; i<users.length; i++ ){
-                            users[i].eventsAskedList.push( myEvent._id )
+                            users[i].asked_events.push( myEvent._id )
                             users[i].save();
                         }
                     
@@ -232,7 +232,7 @@ var cancelEvent = function( req, res ) {
 
                 User.update(
                     { _id: myUser._id },
-                    { $pull: { 'eventsAskedList': eventId } },
+                    { $pull: { 'asked_events': eventId } },
                     {},
                     function( err ){
                     if( err ){
@@ -252,11 +252,11 @@ var cancelEvent = function( req, res ) {
         var hostId = myHost._id.toString();
 
         /* On enlève tous les channels sauf les Defaults one */
-        _.remove( myHost.myChannels, function(el){
-            return ( el.accessName != 'defchan' && el.accessName != 'mychan' );
+        _.remove( myHost.channels, function(el){
+            return ( el.access_name != 'defchan' && el.access_name != 'mychan' );
         });
 
-        myHost.hostedEventId = '';
+        myHost.hosted_event_id = '';
         myHost.status = 'idle';
 
         myHost.save(function(err) {

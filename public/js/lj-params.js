@@ -49,7 +49,7 @@
     myAskers: [],
     myUsers: [],
     myFriends: [],
-    myChannels: { 
+    channels: { 
     	myChats: []
     },
     myOnlineUsers: [],
@@ -68,8 +68,8 @@
 		typingMsg: {},
 		jspAPI:{},
 		uploadingImage: false,
-		uploadingImgId:'',
-		uploadingImgVersion:''
+		uploadingimg_id:'',
+		uploadingimg_version:''
 	},
 	tpl:{
 		toastInfo : '<div class="toast toastInfo" class="none"><span class="toast-icon icon icon-right-open-big">'
@@ -79,15 +79,7 @@
 		toastSuccess: '<div class="toast toastSuccess" class="none"><span class="toast-icon icon icon-right-open-big">'
 					+'</span><span class="toastMsg"></span></div>',
 		noResults: '<center id="noResults" class="filtered"><h3>Aucun évènement pour ce choix de filtre </h3></center>',
-		noEvents: '<center id="noEvents" class=""><h3>Aucun évènement n\'a encore été proposé. Soyez le premier! </h3></center>',
-		charte: '<div id="charte" class="centered"> \
-					<h2>Charte d\'engagement V&W </h2> \
-					<div class="subcharte"><span>1</span> Ne jamais se présenter à un event les mains vides </div> \
-					<div class="subcharte"><span>2</span> Toujours respecter les autres utilisateurs </div> \
-					<div class="subcharte"><span>3</span> Parler de V&W à vos amis </div> \
-					<div class="charte-accept">Accepter</div> \
-					<div class="charte-accept">"Refuser"</div> \
-				 </div>'
+		noEvents: '<center id="noEvents" class=""><h3>Aucun évènement n\'a encore été proposé. Soyez le premier! </h3></center>'
 	},
 	tagList: [],
 	msgQueue: [],

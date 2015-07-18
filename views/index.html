@@ -27,10 +27,19 @@
   <link rel="stylesheet" href="/css/profile.css">
   <link rel="stylesheet" href="/css/events.css">
   <link rel="stylesheet" href="/css/manage.css">
+  <link rel="stylesheet" href="/css/search.css">
   <link rel="stylesheet" href="/css/chat.css">
   <link rel="stylesheet" href="/css/media.css">
   <link rel="stylesheet" href="/css/admin.css">
 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-65278026-1', 'none');
+  ga('send', 'pageview');
+</script>
 
 </head>
 
@@ -72,15 +81,15 @@
       <img id="logo" src="/img/logomeefore.png" width="48"></img>
       <ul id="menuWrap" class="">
         <li id="profile" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
-        <li id="search" class="menu-item icon icon-search" data-linkedcontent="#searchUsersWrap"><span class="underlay"></span></li>
         <li id="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
-        <li id="create" class="menu-item icon icon-plus" data-linkedcontent="#createEventWrap"><span class="underlay"></span></li>
+        <li id="search" class="menu-item icon icon-search"><span class="underlay"></span>
+          <div id="searchbar" class=""><input type="text" placeholder="Looking for someone ?" class="search-input"></div>
+        </li>
         <li id="management" class="menu-item icon icon-users" data-linkedcontent="#manageEventsWrap"><span class="underlay"></span></li>
         <li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
         <li id="contact" class="right menu-item icon icon-mail-alt nonei" data-linkedcontent="#contactWrap"><span class="underlay"></span></li>
       </ul>
     </div>
-    <div id="facebook_login" class="none"><i class="icon icon-facebook"></i>Maintenant</div>
   </header>
   <!-- Header end -->
 
@@ -90,8 +99,8 @@
     <section id="landingWrap" class="centered revealed m-revealed">
       <div class="landing-content">
         <h2 class="landing-places">
-					<span class="typed-text"></span>
-				</h2>
+          <span class="typed-text"></span>
+        </h2>
         <div class="landing-hashtags">
           <!-- Dynamically loaded -->
         </div>
@@ -121,12 +130,26 @@
       <!-- Titre et sous-titre  -->
       <div class="row row-profile">
         <h2> Mon profile </h2>
-        <div class="row-subheader">
+        <div class="row-subheader none">
+          <div class="row-subheader-xp"><span class="xp-amount">1000</span><span>pts</span></div>
+          <div class="row-subheader-bar"></div>
+          <div class="row-subheader-xp-bar">
+            <div class="xp-fill"></div>
+          </div>
           <div class="row-subheader-bar"></div>
 
         </div>
       </div>
 
+
+      <div class="none row row-profile row-skills">
+        <div class="row-title">
+          <div class="row-title-text">Status</div>
+        </div>
+        <div class="row-subtitle etiquette">
+          <div class="row-subtitle-text"></div>
+        </div>
+      </div>
 
       <!-- Edition des photos -->
       <div class="row row-profile row-pictures">
@@ -151,7 +174,7 @@
       <div class="row row-profile row-informations ">
 
         <div class="row-title">
-          <div class="row-title-text">Tes informations</div>
+          <div class="row-title-text">Informations</div>
           <i class="icon icon-edit icon-feather right"></i>
         </div>
 
@@ -174,24 +197,24 @@
             <div class="mood-wrap">
               <div class="mood" data-moodid="happy">Happy</div>
               <div class="mood" data-moodid="fire">Fire</div>
+              <div class="mood" data-moodid="drunk">Drunk</div>
               <div class="mood" data-moodid="horney">Horney</div>
-              <div class="mood" data-moodid="fail">Fail</div>
-              <div class="mood" data-moodid="sleepy ">Sleepy</div>
+              <div class="mood" data-moodid="whatever">Whatever</div>
             </div>
           </div>
           <div class="row-input row-drink etiquette">
             <label for="drink">Verre</label>
             <div class="drink-wrap">
               <div class="drink" data-drinkid="water">Eau</div>
-              <div class="drink" data-drinkid="vodka">Vodka</div>
-              <div class="drink" data-drinkid="sky">Sky</div>
               <div class="drink" data-drinkid="beer">Beer</div>
               <div class="drink" data-drinkid="wine">Wine</div>
+              <div class="drink" data-drinkid="shots">Shots</div>
+              <div class="drink" data-drinkid="hard">Hard</div>
             </div>
           </div>
           <div class="row-input row-motto etiquette">
             <label class="" for="description">Motto</label>
-            <input readonly type="text" class="" placeholder="Si tu étais une phrase...">
+            <input readonly maxlength="40" type="text" class="" placeholder="Si tu étais une phrase...">
             <div class="inspire">En manque d'inspi?</div>
           </div>
           <div class="row-input row-job etiquette">

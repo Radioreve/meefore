@@ -101,11 +101,15 @@ img.left{float:left;}
 }
 .loaderWrap{
 	z-index: 100;
-	top: 7px;
+	top: 9px;
 	position: fixed;
-	left: 47%; 
-	opacity: 0;  
+	left: 47%;
+	opacity: 0;
 	display: none
+
+
+
+
 } 
 .m-loaderWrap{
 	display: inline-block;
@@ -159,7 +163,7 @@ body > header > img{
 #logo{
 	  position: absolute;
 	  top: -5px;
-	  left: 107px;
+	  left: 50px;
 	  display: inline-block;
 }
 body > header > h5{
@@ -185,7 +189,9 @@ body > header > h5{
 }
 #headerContent{
     width: 92%;
-    margin: 0 auto;
+    margin: 0 
+    auto;
+    position: relative;
 }
 #mainWrap{
     width: 100%;
@@ -207,25 +213,724 @@ body > header > h5{
 	font: .8em 'Lato';
 	margin: auto;
 	color: rgb(255, 255, 255);
-	text-shadow: 0 0 1px white;
+	text-shadow: 0 0 1px 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	white;
 	letter-spacing: 0.5px;
 	padding: 7px;
 	padding-top: 10px;
+	padding-bottom: 9px;
 	left: 0;
 	right: 0;
 	top: -1px;
-	width: 410px;
+	width: 510px;
 	text-align: center;
 	z-index: 9999999;
 } 
 .toastError{
 	background: rgb(174, 67, 67);
-	border: 1px solid rgb(150, 34, 34);
+	border: 1px 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	solid 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	rgb(150, 34, 34);
 	color: white;
+	background: linear-gradient(    
+	rgb(174, 67, 67),      
+	rgb(138, 52, 52));
 }
 .toastInfo{
 	background: black;
-	border: 1px solid #000000;
+	border: 1px 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	solid #000000;
 	opacity: 0;
 }
 .toastSuccess{
@@ -236,7 +941,7 @@ body > header > h5{
 .toast-icon{
 	position: absolute;
 	left: -1px;
-	height: 26px;
+	height: 35px;
 	width: 33px;
 	padding-right: 2px;
 	padding-top: 10px;
@@ -257,8 +962,41 @@ body > header > h5{
 #menuWrap{
 	position: relative;
 	display: block;
-	margin: 0 auto;
-	margin-left: 140px;
+	margin: 0 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	auto;
+	margin-left: 120px;
 	top: 1px;
 }
 
@@ -274,7 +1012,6 @@ body > header > h5{
 .menu-item{
 	display:none;
 	color: rgb(143, 143, 143);
-	padding: 2px;
 	padding-top: 8px;
 	padding-left: 12px;
 	margin-bottom: 3px;
@@ -282,7 +1019,21 @@ body > header > h5{
 	height: 35px;
 	border-radius: 2px;
 	position: relative;
-	transition: all linear 0.2s;
+	transition: all 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	linear 0.2s;
 }
 .menu-item span.underlay{
 	width: 44px;
@@ -300,15 +1051,79 @@ body > header > h5{
 	position:absolute;
 	width: 19px;
 	padding-right: 1px;
-	height: 14px;
+	height: 19px;
 	padding-top: 3px;
 	border-radius: 30px;
 	text-align:center;
 	background: rgb(245, 0, 0);
 	color: white;
-	border: 1px solid rgb(197, 7, 7);
+	border: 1px 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	solid 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	rgb(197, 7, 7);
 	top: 0px;
-	right: -5px;
+	right: 0px;
 	font-size: 11px;
 	font-weight: bolder;
 	z-index: 1;
@@ -581,6 +1396,8 @@ input[type="radio"] + span{
     left: 8px;
     cursor: pointer;
 }
+
+
 #thumbInfos{
 	margin-left:8px;
 	top: 3px;
@@ -613,10 +1430,10 @@ input[type="radio"] + span{
 }
 .action{
 	font-size: 12px;
-	margin-left: 10px;
+	margin-left: 0px;
 	transition: all .7s;
 	position: relative;
-	top: -4px;
+	top: -5px;
 }
 .action:hover{
 	cursor:pointer;
@@ -663,9 +1480,22 @@ input[type="radio"] + span{
 	border: 1px solid rgb(126, 126, 126)!important;
 	border-radius: 3px!important;
 }
+#search input:focus {
+	
+}
+
+input:focus::-webkit-input-placeholder {
+	color:white;
+}
+
 ::-webkit-input-placeholder {
    color: #ccc;
    font-weight:normal;
+   transition: all ease-out .3s;
+}
+
+input:focus:-moz-placeholder {
+	color:white;
 }
 :-moz-placeholder { /* Firefox 18- */
    color: #ccc;
@@ -674,98 +1504,24 @@ input[type="radio"] + span{
 ::-moz-placeholder {  /* Firefox 19+ */
    color: #ccc;
    font-weight:normal; 
+   transition: all ease-out .3s;
+}
+input:focus:-ms-input-placeholder {
+	color:white;
 }
 :-ms-input-placeholder {  
    color: #ccc;
    font-weight:normal; 
+   transition: all ease-out .3s;
 }
 
-#searchBar ::-webkit-input-placeholder {
-   color: #ccc;
-   font-style:italic;
-   font-size: .85em
-}
-#searchBar :-moz-placeholder { /* Firefox 18- */
-   color: #666;
-   font-weight:normal;
-}
-#searchBar ::-moz-placeholder {  /* Firefox 19+ */
-   color: #666;
-   font-weight:normal; 
-}
-#searchBar :-ms-input-placeholder {  
-   color: #666;
-   font-weight:normal; 
-}
+
+
 input[type="submit"]:hover,
 button:hover{
 	cursor:pointer;
 }
 
-loginWrapp input.validating-btn{
-	background: rgb(38, 38, 38)!important;
-}
-
-#searchUsersWrap{
-	width:400px; 
-	overflow: auto;
-}
-#searchBarWrap{
-	margin-top: 30px;
-	text-align:center;
-}
-
-#searchBar{
-	width:400px;
-	position:relative;
-	margin:0 auto;
-}
-#searchBar i{
-	color:#ccc;
-	position:absolute;
-	top: 8px;
-	right: 10%;}
-
-#searchBar input[type="text"]{
-    border: 1px solid #ccc;
-	-webkit-transition: all .2s;
-	transition: all .2s;
-    border-radius: 10px 10px 0 0;
-    width: 80%;
-    padding: 5px;
-    padding-left: 14px;
-    color: #565656;
-}
-#searchBar input:focus{
-	box-shadow: 0px -2px 3px rgb(229, 229, 229);
-}
-
-#searchUsers{
-	text-align:center;
-	border-top: 1px solid #ccc;
-	position: relative;
-	top: -1px;
-	padding-top: 20px;
-	margin-bottom: 100px;
-}
-#searchUsers active{
-	opacity: .8;
-}
-#searchUsers button, #botsWrap button{
-	width: 36px!important;
-	height: 34px;
-	font-size: 15px;
-	border-radius: 0px;
-	margin-top: 13px;
-	display: inline-block;
-}
-
-#searchBar input[type="submit"]{
-    width: 15%;
-    border: none;
-    background: #252525;
-    color: white;
-}
 
 .u-item{
 	height: 50px;

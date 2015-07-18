@@ -100,7 +100,7 @@
 				}
 
 				// Check si l'ami est bien un ami mutuel en cas de masquerade
-				if( !_.some( myUser.friendList, { friendId: requesterId, status:'mutual' }) && userId != requesterId && myRequester.access.indexOf('admin') == -1 )
+				if( !_.some( myUser.friends, { friendId: requesterId, status:'mutual' }) && userId != requesterId && myRequester.access.indexOf('admin') == -1 )
 				{
 					return eventUtils.raiseError({
 						err: err,
@@ -146,7 +146,7 @@
 				eventUtils.sendSuccess( res, expose );
 
 				/* User update : either it's requester or an other */
-				myUser.eventsAskedList.push( eventId );
+				myUser.asked_events.push( eventId );
 				myUser.save();
 
 				/* Event update */
@@ -156,10 +156,10 @@
 								age           : myUser.age,
 								drink 		  : myUser.drink,
 								mood          : myUser.mood,
-								signupDate    : myUser.signupDate,
-								imgId         : myUser.imgId,
-								imgVersion    : myUser.imgVersion,
-								friendList    : myUser.friendList 
+								signup_date    : myUser.signup_date,
+								img_id         : myUser.img_id,
+								img_version    : myUser.img_version,
+								friends    : myUser.friends 
 							};
 
 				myEvent.askersList.push( asker );
@@ -232,8 +232,8 @@
 								name          : myUser.name,
 								description   : myUser.description,
 								age           : myUser.age,
-								imgId         : myUser.imgId,
-								imgVersion    : myUser.imgVersion
+								img_id         : myUser.img_id,
+								img_version    : myUser.img_version
 						    }
 					};
 

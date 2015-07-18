@@ -1,8 +1,8 @@
 
 #Commands
 	- Reset events  : db.events.update({}, { $set : { 'askersList' : []}}, {upsert:true,multi:true});
-	- Reset users   : db.users.update({},{ $set: { 'friendList' :[], 'status':'idle', 'socketRooms':[],'eventsAskedList':[] }},{'multi':true, 'upsert':true})
-	- Reset friends : db.users.update({},{ $set: { 'friendList' :[] }},{'multi':true, 'upsert':true})
+	- Reset users   : db.users.update({},{ $set: { 'friends' :[], 'status':'idle', 'socketRooms':[],'asked_events':[] }},{'multi':true, 'upsert':true})
+	- Reset friends : db.users.update({},{ $set: { 'friends' :[] }},{'multi':true, 'upsert':true})
 					: db.users.update({ 'name' : { $in : ['Karine','Damon','MorganDeToi']}},{ $set : { 'status': 'hosting'} }, {multi:true,upsert:true})
 
 #Production

@@ -1,5 +1,6 @@
 
 	var mongoose = require("mongoose"),
+      settings = require('../config/settings'),
  	      bcrypt = require("bcrypt-nodejs"),
         _ = require('lodash');
 
@@ -9,21 +10,23 @@ var UserSchema = new mongoose.Schema({
     type:String,
     default:''
   },
-  facebookId: {
+  facebook_id: {
     type:String,
     default:''
   },
-  facebookURL:{
+  facebook_url:{
     type:String
   },
-  signupDate: {
+  facebook_scope: {
+    type: Array
+  },
+  signup_date: {
     type: Date
   },
   access: {
     type: Array,
     default:['standard']
   },
-  tokenAuth: String,
   age: {
     type: Number,
     default: 25
@@ -50,44 +53,58 @@ var UserSchema = new mongoose.Schema({
   },
   mood: {
     type: String,
-    default:'whatever'
+    default:'happy'
   },
   location: {
     type: Number,
     default: 1
   },
-  friendList: {
+  friends: {
     type:Array,
     default:[]
   },
   pictures: {
     type: Array,
     default: [
-      { imgId: 'placeholder_spjmx7', imgVersion: '1407342805', imgPlace: 0, isMain: true , hashtag: 'classic' },
-      { imgId: 'placeholder_spjmx7', imgVersion: '1407342805', imgPlace: 1, isMain: false, hashtag: 'meerofka' },
-      { imgId: 'placeholder_spjmx7', imgVersion: '1407342805', imgPlace: 2, isMain: false, hashtag: 'swag' },
-      { imgId: 'placeholder_spjmx7', imgVersion: '1407342805', imgPlace: 3, isMain: false, hashtag: 'chill' },
-      { imgId: 'placeholder_spjmx7', imgVersion: '1407342805', imgPlace: 4, isMain: false, hashtag: 'hipster' }
+      { img_id: settings.placeholder.img_id, img_version: settings.placeholder.img_version, img_place: 0, is_main: true , hashtag: 'classic' },
+      { img_id: settings.placeholder.img_id, img_version: settings.placeholder.img_version, img_place: 1, is_main: false, hashtag: 'meerofka' },
+      { img_id: settings.placeholder.img_id, img_version: settings.placeholder.img_version, img_place: 2, is_main: false, hashtag: 'swag' },
+      { img_id: settings.placeholder.img_id, img_version: settings.placeholder.img_version, img_place: 3, is_main: false, hashtag: 'chill' },
+      { img_id: settings.placeholder.img_id, img_version: settings.placeholder.img_version, img_place: 4, is_main: false, hashtag: 'hipster' }
       ]
   },
   status:{
     type: String,
     default: 'new'
   },
-  eventsAskedList:{
+  asked_events:{
     type: Array,
     default: []
   },
-  hostedEventId:{
+  hosted_event_id:{
     type: String
   },
-  myChannels: {
+  channels: {
     type: Array,
     default: []
   },
   newsletter:{
     type: Boolean,
     default: true
+  },
+  skill: {
+    type: Object,
+    default: {
+      xp: 1000,
+      medals: [{
+        id:'first_sip',
+        name: 'Première gorgée',
+        img_id:'lala',
+        img_version:'lali', 
+        is_main: true,
+        earned_date: ''
+      }]
+    }
   }
 
 
@@ -95,11 +112,11 @@ var UserSchema = new mongoose.Schema({
 
 
 UserSchema.methods.getChannel = function(){
-  return _.result( _.find( this.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName') ;
+  return _.result( _.find( this.channels, function(el){ return el.access_name == 'mychan'; }), 'channel_label') ;
 };
 
 UserSchema.methods.unaskForEvent = function( eventId ){
-  this.eventsAskedList.pull( eventId );
+  this.asked_events.pull( eventId );
   return this;
 }
 

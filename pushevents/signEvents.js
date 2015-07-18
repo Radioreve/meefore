@@ -37,7 +37,7 @@
 
 		console.log('Authenticating with Facebook with id : ' + fbId );
 
-		User.findOne({ 'facebookId': fbId }, function( err, user ){
+		User.findOne({ 'facebook_id': fbId }, function( err, user ){
 
 			if( err )
 				return eventUtils.raiseError({
@@ -52,7 +52,7 @@
 				var accessToken = eventUtils.generateAppToken( user ); 
 
 				var expose = { id: user._id, accessToken: accessToken },
-					channel = _.result( _.find( user.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName');
+					channel = _.result( _.find( user.channels, function(el){ return el.access_name == 'mychan'; }), 'channel_label');
 				
 				eventUtils.sendSuccess( res, expose );
 
@@ -65,24 +65,24 @@
 			/* L'utilisateur n'existe pas, on crée son compte et on le connecte à l'application */
 			var newUser = new User();
 
-			newUser.facebookId = fbId;
+			newUser.facebook_id = fbId;
 			newUser.email = email;
 			newUser.gender = gender;
 			newUser.name = name;
 			newUser.age = 18 // default value
-			newUser.facebookURL = fbURL;
-			newUser.signupDate = moment.utc();
+			newUser.facebook_url = fbURL;
+			newUser.signup_date = moment.utc();
 
 		    var token = randtoken.generate(30);
-			var accessName = 'mychan',
-				channelName = eventUtils.makeChannel({ accessName: accessName, token: token }) 
+			var access_name = 'mychan',
+				channel_label = eventUtils.makeChannel({ access_name: access_name, token: token }) 
 
-			newUser.myChannels.push( {accessName:accessName, channelName:channelName} );
+			newUser.channels.push( {access_name:access_name, channel_label:channel_label} );
 
-			var accessName = 'defchan',
-				channelName = eventUtils.makeChannel({ accessName: accessName }) 
+			var access_name = 'defchan',
+				channel_label = eventUtils.makeChannel({ access_name: access_name }) 
 
-			newUser.myChannels.push( {accessName:accessName, channelName:channelName} );
+			newUser.channels.push( {access_name:access_name, channel_label:channel_label} );
 			
 			newUser.save( function( err, user ){
 
@@ -91,7 +91,7 @@
 				var accessToken = eventUtils.generateAppToken( user ); 
 				/* Envoie de la réponse */
 				var expose = { id: user._id, accessToken: accessToken },
-					channel = _.result( _.find( user.myChannels, function(el){ return el.accessName == 'mychan'; }), 'channelName');
+					channel = _.result( _.find( user.channels, function(el){ return el.access_name == 'mychan'; }), 'channel_label');
 				
 				eventUtils.sendSuccess( res, expose );
 

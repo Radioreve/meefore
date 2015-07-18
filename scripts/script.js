@@ -27,8 +27,8 @@ var conditions   = { 'state': { $in : ['open', 'suspended'] } },
 	   	    { 
 	   	    	$set : { 
 	   	    		'status': 'idle', // attention, ça affecte aussi les 'new'
-	   	    		'eventsAskedList': [],
-	   	    		'hostedEventId':''
+	   	    		'asked_events': [],
+	   	    		'hosted_event_id':''
 	   	    	 }},
 
 	   	    userOptions    = {  multi : true };

@@ -5,6 +5,7 @@
 	    _ = require('lodash'),
 	    cloudinary = require('cloudinary'),
 	    config = require('../config/config'),
+	    settings = require('../config/settings'),
 	    validator = require("validator");
 
 	    cloudinary.config({ 
@@ -68,9 +69,9 @@
 		var data = req.body;
 
 	   	var userId 		  = data._id,
-	        newImgId   	  = data.imgId,
-	    	newImgVersion = data.imgVersion,
-	    	imgPlace      = data.imgPlace;
+	        newimg_id   	  = data.img_id,
+	    	newimg_version = data.img_version,
+	    	img_place      = data.img_place;
 
 	    User.findById( userId, function( err, myUser ){
 
@@ -83,7 +84,7 @@
 	    		});
 
 	    	var i = _.findIndex( myUser.pictures, function( el ){
-	    		return el.imgPlace == imgPlace;
+	    		return el.img_place == img_place;
 	    	});
 
 	    	var newPicture = myUser.pictures[i];
@@ -96,8 +97,8 @@
 	    			toServer: "Error uploading picture || pictures[i] undefined"
 	    		});
 
-    		newPicture.imgId = newImgId;
-    		newPicture.imgVersion = newImgVersion;
+    		newPicture.img_id = newimg_id;
+    		newPicture.img_version = newimg_version;
 
 	    	myUser.pictures.set( i, newPicture );
 	    	myUser.save(function( err, savedUser ){
@@ -135,21 +136,26 @@
 						toClient:"Impossible de charger votre photo Facebook"
 					});
 
-				user.imgId      = response.public_id;
-				user.imgVersion = response.version;
+				var main_picture = user.pictures[0];
+					main_picture.img_id = response.public_id;
+					main_picture.img_version = response.version + '';
+
+				user.pictures.set( 0, main_picture );
+				user.status = "idle";
+
 				user.save( function( err ){
 
 					if( err )
 						return eventUtils.raiseError({
-							res:res,
-							err:err,
-							toClient:"Impossible de sauvegarder votre photo Facebook"
+							res:      res,
+							err:      err,
+							toClient: "Impossible de sauvegarder votre photo Facebook"
 						});
 
 					res.json({ 
-						msg:       "Votre photo de profile a été chargée à partir de Facebook",
-						imgId:      user.imgId,
-						imgVersion: user.imgVersionn
+						msg:         "Votre photo de profile a été chargée à partir de Facebook",
+						img_id:      response.public_id,
+						img_version: response.version
 					});
 
 				});
@@ -177,30 +183,39 @@
 					toServer: "Impossible de trouver l'user"
 				});
 
+			var mainified_picture = _.find( updatedPictures, function(el){ return el.action == "mainify"});
+			if( mainified_picture && myUser.pictures[ mainified_picture.img_place ].img_id == settings.placeholder.img_id )
+				return eventUtils.raiseError({
+					res: res,
+					err: err,
+					toClient: "Ta photo de profile doit te représenter",
+					toServer: "Tentative de mettre une photo qui n'est pas lui même"
+				});
+
 			for( var i = 0; i < updatedPictures.length; i++ ){
 
-				var current_picture = _.find( myUser.pictures, function(el){ return el.imgPlace == updatedPictures[i].imgPlace });
+				var current_picture = _.find( myUser.pictures, function(el){ return el.img_place == updatedPictures[i].img_place });
 				
 				if( updatedPictures[i].action == "mainify" )
 				{
-					var currentMain = _.find( myUser.pictures, function(el){ return el.isMain == true });
-						currentMain.isMain = false;
+					var currentMain = _.find( myUser.pictures, function(el){ return el.is_main == true });
+						currentMain.is_main = false;
 
-					myUser.pictures.set( parseInt( currentMain.imgPlace ), currentMain );
-					current_picture.isMain = true;
-					myUser.pictures.set( parseInt( current_picture.imgPlace ), current_picture );
+					myUser.pictures.set( parseInt( currentMain.img_place ), currentMain );
+					current_picture.is_main = true;
+					myUser.pictures.set( parseInt( current_picture.img_place ), current_picture );
 
 				}
 				if( updatedPictures[i].action == "delete" )
 				{
-					current_picture.imgId = "placeholder_spjmx7";
-					current_picture.imgVersion = "1407342805";
-					myUser.pictures.set( parseInt( current_picture.imgPlace ), current_picture );
+					current_picture.img_id = "placeholder_spjmx7";
+					current_picture.img_version = "1407342805";
+					myUser.pictures.set( parseInt( current_picture.img_place ), current_picture );
 				}
 				if( updatedPictures[i].action == "hashtag" )
 				{
 					current_picture.hashtag = updatedPictures[i].new_hashtag;
-					myUser.pictures.set( parseInt( current_picture.imgPlace ), current_picture );
+					myUser.pictures.set( parseInt( current_picture.img_place ), current_picture );
 				}
 
 			}

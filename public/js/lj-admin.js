@@ -5,12 +5,12 @@
 
 		initAdminMode: function(){
 
-			LJ.myChannels['admin'] = LJ.pusher.subscribe('admin');
+			LJ.channels['admin'] = LJ.pusher.subscribe('admin');
 			LJ.fn.initAdminInterface();
 			LJ.fn.handleAdminDomEvents();
 			LJ.fn.fetchAppData();
 
-			LJ.myChannels['admin'].bind('refresh-users-conn-states-admin', function(data){
+			LJ.channels['admin'].bind('refresh-users-conn-states-admin', function(data){
 				//console.log('Refreshing online users list, from admin init');
 				//$('#onlineUsers > div').text( _.keys( data.onlineUsers ).length );
 			});
@@ -187,8 +187,8 @@
 
 				var options = {
 					userId : $papa.data('userid'),
-					imgVersion : $papa.data('imgversion'),
-					imgId : $papa.data('imgid'),
+					img_version : $papa.data('img_version'),
+					img_id : $papa.data('img_id'),
 					name : $papa.data('username')
 				}
 

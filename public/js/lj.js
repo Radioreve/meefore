@@ -200,27 +200,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					$(this).addClass('validating-btn');
 				});
 
-				LJ.$body.on('click', '.noFriendsYet', function(){
-					$('#search').click();
-				});
- 
 				LJ.$body.on('focusout', '.askInMsgWrap input', function(e){
 					if($(this).val().trim().length===0){
 						$(this).removeClass('text-active').val('');}
 					else{$(this).addClass('text-active');}
 				}); 
 
-				LJ.$body.on('mousedown','.chatWrap',function(){
-					var $that = $(this);
-	                $that.find('input[type="text"]').focus();
-               		
-            	});
-
-            	LJ.$body.on('keypress','.chatInputWrap input[type="text"]', function(e){
-            		if(e.which=='13'){
-            			$(this).siblings('input[type="submit"]').click();
-            		}
-            	});
 
             	$('body').on('click', '.filtersWrap .tag, .filtersWrap .loc, #createEventInputsWrap .tag', function(){ 
             		$(this).toggleClass('selected');
@@ -265,7 +250,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			};
 				csl('Emitting update profile');
 
-			var eventName = 'update-profile',
+			var eventName = 'me/update-profile',
 				data = profile
 				, cb = {
 					success: LJ.fn.handleUpdateProfileSuccess,
@@ -308,9 +293,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			var o = { currentEmail: currentEmail, newPw: newPw, newPwConf: newPwConf, newsletter: newsletter, userId: userId }; 
 
-			LJ.fn.showLoaders();
-
-			var eventName = 'update-settings',
+			var eventName = 'me/update-settings',
 				data = o
 				, cb = {
 					success: function( data ){
@@ -451,105 +434,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			}
 
 		},
-		toggleChatWrapAskers: function( aBtn ){
-
-			var $aWrap      = aBtn.parents('.a-item'),
-			    $chatWrap  = $aWrap.find('.chatWrap'),
-        	    $previous  = $('.a-active'),
-        		$surfacing = $('.surfacing');
-
-        	var chatId = $chatWrap.data('id');
-
-        	 if( !$surfacing )
-			     {
-			     	$aWrap.addClass('surfacing')
-			     			  .find('.chatWrap')
-			     			  .velocity('transition.slideLeftIn', { duration: 400,
-			     			  complete: function(){
-				     			  	LJ.state.jspAPI[ chatId ].reinitialise();
-									LJ.state.jspAPI[ chatId ].scrollToBottom(); 
-			     			  		} 
-			     			  });
-			     	return;
-			     }
-
-		     if( $surfacing.is( $aWrap ))
-		     {
-		     	$aWrap.removeClass('surfacing')
-		     			  .find('.chatWrap')
-		     			  .velocity('transition.slideLeftOut', { duration: 300 });
-		     	return;
-		     }
-
-    		$surfacing.removeClass('surfacing')
-    				  .find('.chatWrap')
-    				  .velocity('transition.slideLeftOut', { duration: 300 });
-
-    		$aWrap.addClass('surfacing')
-    				  .find('.chatWrap')
-    				  .velocity('transition.slideLeftIn', { duration: 400,
-    				   complete: function(){
-				     			  	if( LJ.state.jspAPI[ chatId ] != undefined ) return;
-				     			  	var $chatLineWrap = $aWrap.find('.chatLineWrap');
-				     			  	$chatLineWrap.jScrollPane();
-    								LJ.state.jspAPI[ chatId ] =  $chatLineWrap.data('jsp');
-				     			  	LJ.state.jspAPI[ chatId ].reinitialise();
-									LJ.state.jspAPI[ chatId ].scrollToBottom(); 
-			     			  }
-			     		});
-
-		},
-		toggleChatWrapEvents: function( chatIconWrap ){
-
-			var $eventWrap = chatIconWrap.parents('.eventItemWrap'),
-			    $chatWrap  = $eventWrap.find('.chatWrap'),
-			    $previous  = $('.prev'),
-			    $surfacing = $('.surfacing'); 
-
-			$('#friendListWrap').velocity('transition.slideUpOut', { duration: 300 });
-			$('.friendAddIconWrap.active').removeClass('active');
-
-			var chatId = $chatWrap.data('chatid');
-
-			$('.chatWrap[data-chatid="'+chatId+'"]').parents('.eventItemWrap').find('span.bubble').addClass('filtered').text('');
-
-			     if( !$surfacing )
-			     {
-			     	chatIconWrap.addClass('active');
-			     	$eventWrap.addClass('surfacing')
-			     			  .find('.chatWrap')
-			     			  .velocity('transition.slideUpIn', { duration: 550 });
-			     	return;
-			     }
-
-			     if( $surfacing.is( $eventWrap ))
-			     {
-			     	chatIconWrap.removeClass('active');
-			     	$eventWrap.removeClass('surfacing') 
-			     			  .find('.chatWrap')
-			     			  .velocity('transition.slideUpOut', { duration: 300 });
-			     	return;
-			     }
-
-			    $('.chatIconWrap').removeClass('active');
-			    chatIconWrap.addClass('active');
-
-        		$surfacing.removeClass('surfacing')
-        				  .find('.chatWrap')
-        				  .velocity('transition.slideUpOut', { duration: 300 });
-
-        		$eventWrap.addClass('surfacing')
-        				  .find('.chatWrap')
-        				  .velocity('transition.slideUpIn', { duration: 550 });
-
-        		sleep( 30, function(){ 
-        			if( LJ.state.jspAPI[chatId] !== undefined ){ 
-	           		  LJ.state.jspAPI[chatId].reinitialise();
-	        		  LJ.state.jspAPI[chatId].scrollToBottom();   
-        			} 
-        		});
-             
-		},
 		updateClientSettings: function( newSettings ){
 
 			_.keys(newSettings).forEach(function(el){
@@ -611,35 +495,36 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		/* Permet de remplacer les images du profile, ou du thumbWrap uniquement */
 		replaceImage: function( options ){
 
-			var imgId      = options.imgId,
-				imgVersion = options.imgVersion,
-				imgPlace   = options.imgPlace,
+			var img_id      = options.img_id,
+				img_version = options.img_version,
+				img_place   = options.img_place,
 				scope      = options.scope;
 
 			if( scope.indexOf('profile') != -1 )
 			{
-				var $element = $('.picture').eq( imgPlace ),
+				var $element = $('.picture').eq( img_place ),
 					$container = $element.parent('[data-display-settings]');
 					display_settings = LJ.cloudinary[ $container.data('display-settings') ];
 
 				if( display_settings == undefined )
 					return LJ.fn.toastMsg("Options d'affichage manquantes", "error");
 
-				display_settings.version = imgVersion;
+				display_settings.version = img_version;
 
 				/* En cas de photos identiques, prend celle la plus à gauche avec .first()*/
 				var $previousImg = $element.find('img'),
-					$newImg      = $.cloudinary.image( imgId, display_settings );
+					$newImg      = $.cloudinary.image( img_id, display_settings );
 
 					$newImg.addClass('mainPicture').addClass('none');
-					$previousImg.parent().prepend( $newImg );
+					$previousImg.parent().prepend( $newImg )
+								.find('.picture-upload').velocity('transition.fadeOut', { duration: 250 });
 	 													
 					$previousImg.velocity('transition.fadeOut', { 
 						duration: 600,
 						complete: function(){
 							$newImg.velocity('transition.fadeIn', { duration: 700, complete: function(){} });
-							$newImg.parent().attr('data-imgid', imgId );
-							$newImg.parent().attr('data-imgversion', imgVersion );
+							$newImg.parent().attr('data-img_id', img_id );
+							$newImg.parent().attr('data-img_version', img_version );
 							$previousImg.remove();
 						} 
 					});
@@ -648,10 +533,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			if( scope.indexOf('thumb') != -1 )
 			{
 				display_settings = LJ.cloudinary.displayParamsHeaderUser;
-				display_settings.version = imgVersion;
+				display_settings.version = img_version;
 
 				var previousImg = $('#thumbWrap').find('img'),
-					newImg      = $.cloudinary.image( imgId, display_settings );
+					newImg      = $.cloudinary.image( img_id, display_settings );
 					newImg.addClass('none');
 
 					$('#thumbWrap .imgWrap').prepend( newImg );
@@ -701,9 +586,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						return;
 					}
 
-					LJ.state.uploadingImgId = $(this).parents('.picture').data('imgid');
-					LJ.state.uploadingImgVersion = $(this).parents('.picture').data('imgversion');
-					LJ.state.uploadingImgPlace = $(this).parents('.picture').data('imgplace');
+					LJ.state.uploadingimg_id = $(this).parents('.picture').data('img_id');
+					LJ.state.uploadingimg_version = $(this).parents('.picture').data('img_version');
+					LJ.state.uploadingimg_place = $(this).parents('.picture').data('img_place');
 				})
 
 				.bind('fileuploadstart', function(){
@@ -720,18 +605,19 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 					LJ.state.uploadingImage = false;
 
-					var imgId      		= data.result.public_id;
-					var imgVersion 		= data.result.version;
-					var imgPlace   		= LJ.state.uploadingImgPlace;;
+					var img_id      		= data.result.public_id;
+					var img_version 		= data.result.version;
+					var img_place   		= LJ.state.uploadingimg_place;;
 
-                    var eventName = 'update-picture',
+                    var eventName = 'me/update-picture',
                     	data = {
                     				_id             : LJ.user._id,
-									imgId           : imgId,
-									imgVersion      : imgVersion,
-									imgPlace        : imgPlace
+									img_id           : img_id,
+									img_version      : img_version,
+									img_place        : img_place
 								}
 						, cb = {
+							beforeSend: function(){ },
 							success: function( data ){
 								sleep( LJ.ui.artificialDelay, function(){
 									$('.progress_bar').velocity('transition.slideUpOut', {
@@ -742,22 +628,22 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 										} 
 									});
 
-									LJ.fn.toastMsg('Votre photo de profile a été modifiée', 'info');
+									LJ.fn.toastMsg('Votre photo a été modifiée', 'info');
 
 									var user = data.user;
 									//LJ.fn.updateClientSettings( user );
 
 									// Mise à jour interne sinon plein d'update sur la même photo bug
 									var pic = _.find( LJ.user.pictures, function(el){
-										return el.imgPlace == imgPlace;
+										return el.img_place == img_place;
 									});
-									pic.imgVersion = imgVersion;
-									var scope = pic.isMain ? ['profile','thumb'] : ['profile'];
+									pic.img_version = img_version;
+									var scope = pic.is_main ? ['profile','thumb'] : ['profile'];
 
 	  								LJ.fn.replaceImage( {
-	  									imgId: imgId, 
-	  									imgVersion: imgVersion,
-	  									imgPlace: imgPlace,
+	  									img_id: img_id, 
+	  									img_version: img_version,
+	  									img_place: img_place,
 	  									scope: scope
 	  								});
 	  								
@@ -864,7 +750,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		findMainImage: function(){
 
 			var index = _.findIndex( LJ.user.pictures, function( el ){
-				return el.isMain == true;
+				return el.is_main == true;
 			});
 
 			return LJ.user.pictures[ index ];
@@ -880,7 +766,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 
     		/* Profile View*/
-			$('.row-subheader').find('span').text( LJ.user._id );
+			//$('.row-subheader').find('span').text( LJ.user._id );
 			$('#name').val( LJ.user.name );
 			$('#age').val( LJ.user.age );
 			$('#description').val( LJ.user.description );
@@ -905,9 +791,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			var d = LJ.cloudinary.displayParamsHeaderUser;
 
 			var mainImg = LJ.fn.findMainImage();
-				d.version = mainImg.imgVersion;
+				d.version = mainImg.img_version;
 
-			var imgTag = $.cloudinary.image( mainImg.imgId, d );
+			var imgTag = $.cloudinary.image( mainImg.img_id, d );
 				imgTag.addClass('left');
 
 			LJ.$thumbWrap.find('.imgWrap').html('').append( imgTag );
@@ -918,8 +804,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 
         	/* Initialisation du friendspanel */
-        	$('#friendListWrap').jScrollPane();
-        	LJ.state.jspAPI['#friendListWrap'] = $('#friendListWrap').data('jsp');
+        	$('#friendsWrap').jScrollPane();
+        	LJ.state.jspAPI['#friendsWrap'] = $('#friendsWrap').data('jsp');
 
     		/* L'user était déjà connecté */
 			if( LJ.state.connected )
@@ -957,7 +843,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				$('#facebook_connect').hide();
 				$('#logo-hero').hide();
 				$('body > header').removeClass('none');
-				$('#landingWrap').addClass('nonei');
+				$('#landingWrap').remove();
 				$('body').css({'background':'none'});
         		$('#mainWrap').css({'background':'url(/img/crossword.png)'});	
 			};		
@@ -991,16 +877,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         initTour: function(){
 
         
-        	var textProfile = "Tout commence par ton profile! Nom, âge, boisson préférée et c'est parti.";
-        	var textSearch  = "Effectues des recherches à propos de n'importe quel membre.";
-        	var textEvents  = "Tous les before à venir sont visibles ici et peuvent être filtrés par préférences.";
-        	var textCreate  = "Si aucun before ne correspond à ce que tu cherches, proposes le tien! ";
+        	var textProfile = "Tout commence par ton profile! Nom, âge, boisson préférée et c'est parti (1/3)";
+        	//var textSearch  = "Effectues des recherches à propos de n'importe quel membre (2/3)";
+        	var textEvents  = "Tous les before à venir sont visibles ici. Rien ne va? Propose en un! (3/3)";
 
         	var html = '<ol id="intro">'
 						+ '<li data-class="intro-item" data-id="profile">'+textProfile+'</li>'
-						+ '<li data-class="intro-item" data-id="search">'+textSearch+'</li>'
+						//+ '<li data-class="intro-item" data-id="search">'+textSearch+'</li>'
 						+ '<li data-class="intro-item" data-id="events">'+textEvents+'</li>'
-						+ '<li data-class="intro-item" data-id="create">'+textCreate+'</li>'
 						+ '</ol>';
 
 			$( html ).appendTo( $('body') );
@@ -1033,8 +917,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         				LJ.fn.toastMsg("Bienvenue sur Meefore",'info', 4000);
 						LJ.fn.updateClientSettings( data );
 
-					//	LJ.fn.replaceMainImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsProfile );
-					//	LJ.fn.replaceThumbImage( data.imgId, data.imgVersion, LJ.cloudinary.displayParamsHeaderUser );
+						$('#intro').remove();
+
+						LJ.fn.replaceImage({
+							img_id: data.img_id,
+							img_version: data.img_version,
+							img_place: 0,
+							scope: ['profile','thumb']
+						});
 
         			});
         	}});
@@ -1084,19 +974,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	
         	LJ.fn.toastMsg( msg, 'error');
         				$('.validating').removeClass('validating');
-						$('.validating-btn').removeClass('validating-btn');
+						$('.btn-validating').removeClass('btn-validating');
 						$('.asking').removeClass('asking');
 						$('.pending').removeClass('pending');
 
 			}, ms );
-
-        },
-        handleNewUserSignedUp: function( data ){
-
-        	var user = data.user;
-
-        	LJ.fn.toastMsg('Un utilisateur vient de s\'inscrire', 'info');
-			LJ.fn.fetchUsers();
 
         },
 		initSocketEventListeners: function(){
@@ -1197,7 +1079,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					/* Demande pour soi-même */
 					if( LJ.user._id == requesterId && LJ.user._id == userId )
 					{
-						LJ.user.eventsAskedList.push( eventId );
+						LJ.user.asked_events.push( eventId );
 						LJ.fn.toastMsg('Votre demande a été envoyée', 'info');
 						 $('.asking').removeClass('asking').removeClass('idle').addClass('asked').text('En attente')
 								  .siblings('.chatIconWrap, .friendAddIconWrap').velocity('transition.fadeIn');
@@ -1247,7 +1129,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 							 });
 						}
 
-						LJ.fn.refetchAskers();
 					    LJ.fn.refreshArrowDisplay();
 					    LJ.fn.displayAsOnline( requesterId );
 				}	
@@ -1272,7 +1153,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					return asker._id === data.userId;
 				});
 
-				_.remove( LJ.user.eventsAskedList, function( el ){
+				_.remove( LJ.user.asked_events, function( el ){
 					return el == eventId;
 				});
 
@@ -1349,8 +1230,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.fn.initCloudinary( user.cloudTags );
 
 			LJ.fn.fetchEvents();
-			LJ.fn.fetchUsers();
-			LJ.fn.fetchFriends();
 
 
 			/* Admin scripts. Every com is secured serverside */	
@@ -1358,9 +1237,56 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				LJ.fn.initAdminMode();
 			
 		},
+		initLadder: function( options ){
+
+			if( typeof( options ) != "object" )
+				return console.log('Param error, object needed');
+
+			var max_level  = options.max_level,
+				base_point = options.base_point,
+				coef_point = options.coef_point;
+
+			if( !max_level || !base_point || !coef_point )
+				return console.log('Param error, missing key');
+
+			var skill_ladder = [];
+			for( var i = 1; i <= max_level; i++ ){
+				var item = {}
+				item.level = i;
+				item.min_xp = ( i * base_point ) + Math.pow( base_coef, i-1 ); 
+				item.max_xp = ( i * base_point ) + Math.pow( base_coef, i   )
+				skill_ladder.push( item );
+			}
+			return skill_ladder;
+
+		},
+		findUserLevel: function(){
+
+			return _.find( LJ.settings.skill_ladder, function(el){ 
+				return ( el.min_xp < LJ.user.skill.xp && el.max_xp > LJ.user.skill.xp ) 
+			}).level
+
+		},
+		setUserXp: function( new_xp ){
+
+			LJ.user.skill.xp = new_xp;
+			$('body').trigger('change-user-xp');
+
+		},
+		updateUserXp: function(){
+
+			var user_level = LJ.fn.findUserLevel(),
+				user_xp = LJ.user.skill.xp,
+				ladder_level = LJ.settings.skill_ladder[ user_level - 1 ],
+				xp_range = ladder_level.max_xp - ladder_level.min_xp;
+
+			$('.xp-amount').html( user_xp );
+			$('.xp-fill').css({ width: ( user_xp - ladder_level.min_xp ) * 100 / xp_range +'%'});
+
+		},
 		updatePictureWithFacebook: function( userId, fbId, callback ){
 
-			var eventName = 'update-picture-fb',
+			var eventName = 'me/update-picture-fb',
 				data = {
 					userId: userId,
 					fbId: fbId
@@ -1448,72 +1374,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				return hashtag_parts.join('');
 
 		},
-		fetchUsers: function(){
-
-			var eventName = 'fetch-users',
-				data = { userId: LJ.user._id };
-
-			var cb = {
-				beforeSend: function(){},
-				success: function( data ){
-
-					var users = data.users;
-
-				//	csl('Users fetched from the server');
-                	LJ.myUsers.length === 0 ? LJ.myUsers = _.shuffle( users ) : LJ.myUsers = users ; 
-                    $('#searchUsers').html( LJ.fn.renderUsersInSearch() );
-
-                    $( $('#searchUsers .u-item:not(.match)')[0] ).removeClass('none').css({ opacity: '.5 '});
-					$( $('#searchUsers .u-item:not(.match)')[1] ).removeClass('none').css({ opacity: '.4 '});
-					$( $('#searchUsers .u-item:not(.match)')[2] ).removeClass('none').css({ opacity: '.3 '});
-					$( $('#searchUsers .u-item:not(.match)')[3] ).removeClass('none').css({ opacity: '.15 '});
-
-					LJ.fn.refreshOnlineUsers();
-					
-				},
-				error: function( xhr ){
-					console.log('API Error');
-				}
-			};
-
-			LJ.fn.say( eventName, data, cb ); 
-
-		},
-		fetchFriends: function(){ 
-
-			var eventName = 'fetch-friends',
-				data = { userId: LJ.user._id }
-
-				, cb = {
-					beforeSend: function(){},
-					success: function( data ){
-
-						//csl('Friends fetched');
-	                	LJ.myFriends = data.myFriends ;
-
-	                	$('#myFriends').html( LJ.fn.renderUsersInFriendlist() );
-	                	$('.event-friends-wrap').html( LJ.fn.renderUsersInCreateEvent() );
-
-	                	LJ.fn.displayAddFriendToPartyButton();
-
-	                	if( LJ.nextCallback.context == 'fetch friends' )
-	                	{	
-	                		csl('Calling method, context detected');
-	                		LJ.nextCallback.fn();
-	                		LJ.nextCallback = {};
-	                	}
-
-	                	LJ.fn.refreshOnlineUsers();
-
-					},
-					error: function( xhr ){
-						console.log('Error fetching friends');
-					}
-				};
-
-			LJ.fn.say( eventName, data, cb );
-
-		},
 		createEvent: function(){
 
 			var tags = [],
@@ -1531,8 +1391,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			var e = {};
 				e.hostId	  	  = LJ.user._id;
 				e.hostName   	  = LJ.user.name;
-				//e.hostImgId 	  = LJ.user.imgId;
-				//e.hostImgVersion  = LJ.user.imgVersion;
+				//e.hostimg_id 	  = LJ.user.img_id;
+				//e.hostimg_version  = LJ.user.img_version;
 				e.name 		  	  = $('#eventName').val();
 				e.location    	  = $('#eventLocation').val();
 				e.hour 		  	  = $('#eventHour').val();
@@ -1542,7 +1402,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				e.tags            = tags;
 				e.userIds		  = userIds;
 
-				var eventName = 'create-event',
+				var eventName = 'event/create',
 					data = e
 					data.socketId = LJ.pusher.connection.socket_id
 					, cb = {
@@ -1557,7 +1417,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 								/* Internal */
 								LJ.user.status = 'hosting';
-								LJ.user.hostedEventId = eventId;
+								LJ.user.hosted_event_id = eventId;
 								LJ.myAskers = data.myEvent.askersList;
 
 								/* Display in Manage */
@@ -1634,12 +1494,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             if( LJ.state.fetchingAskers )
                 return LJ.fn.toastMsg("Already fetching askers", 'error');
 
-        	console.log('Fetching event with id : ' + LJ.user.hostedEventId );
+        	console.log('Fetching event with id : ' + LJ.user.hosted_event_id );
 
             LJ.state.fetchingAskers = true;
 
             var eventName = 'fetch-askers',
-            	data = { eventId: LJ.user.hostedEventId };
+            	data = { eventId: LJ.user.hosted_event_id };
 
             var cb = {
             	success: function( data ){
@@ -1687,30 +1547,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.fn.refreshOnlineUsers();
 
         },
-        refetchAskers: function(){
-
-        	var idArray = _.pluck( LJ.myAskers, '_id' );
-        	var eventName = 'refetch-askers',
-        		data = {  userId: LJ.user._id, idArray: idArray },
-        		cb = {
-        			success: function( data ){
-
-        				csl('Refetch askers success');
-						LJ.myAskers = data;
-						LJ.fn.addFriendLinks();
-						$('#askersListWrap div.active').click(); // force update
-						LJ.fn.refreshArrowDisplay();
-
-        			},
-        			error: function( xhr ){
-
-        				console.log('Error fetching askers');
-        			}
-        		};
-
-        	LJ.fn.say( eventName, data, cb );
-
-        },
         addFriendLinks: function(){
 
         	var idArray = _.pluck( LJ.myAskers, '_id' );
@@ -1722,17 +1558,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		
         		$('#askersThumbs div[data-userid="'+ LJ.myAskers[i]._id +'"]').addClass('team-'+i).addClass('head-'+i);
         		
-        		for( var k = 0 ; k < LJ.myAskers[i].friendList.length ; k++ )
+        		for( var k = 0 ; k < LJ.myAskers[i].friends.length ; k++ )
         		{	
-        			if( idArray.indexOf( LJ.myAskers[i].friendList[k].friendId ) == -1 )
+        			if( idArray.indexOf( LJ.myAskers[i].friends[k].friendId ) == -1 )
         			{
         				//nada
         			}
         			else
         			{	
-        				if( LJ.myAskers[i].friendList[k].status == 'mutual' )
+        				if( LJ.myAskers[i].friends[k].status == 'mutual' )
         				{	
-        					$('#askersThumbs div[data-userid="'+ LJ.myAskers[i].friendList[k].friendId+'"]').addClass('team-'+i);		  
+        					$('#askersThumbs div[data-userid="'+ LJ.myAskers[i].friends[k].friendId+'"]').addClass('team-'+i);		  
         				}
         			}
         		} 
@@ -1899,117 +1735,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	});
 
         }, 
-        sendChat: function( submitInput ){
-
-        	var textInput = submitInput.siblings('input[type="text"]');
-        	var msg = textInput.val();
-
-    		textInput.val('');
-
-    		// On retreive l'id de la personne avec qui on chat
-    		// En cas de chat multiple, l'id de la room
-    		var senderId   = LJ.user._id,
-    			receiverId = LJ.fn.findReceiverId( submitInput );
-
-    		csl('Sending chat with receiverId : ' + receiverId );
-
-    		var eventName = 'send-message', 
-    			data = {
-    				msg: msg,
-	    			senderId: senderId, 
-	    			receiverId: receiverId
-    			},
-    			cb = {
-    				success: function( data ){
-    					var data = {
-    						submitInput: submitInput,
-    						msg: msg,
-    						receiverId: receiverId
-    					};
-    					LJ.fn.handleSendChatSuccess( data );
-    				},
-    				error: function( xhr ){
-    					console.log('Error sending the chat');
-    				}
-    			};
-
-    		LJ.fn.say( eventName, data, cb );
-
-        },
-        findReceiverId: function( submitInput ){
-
-	        var possibleIds = [
-	        	submitInput.parents('.a-item').data('userid'),
-	        	submitInput.parents('.eventItemWrap').data('hostid')
-	        ]
-
-	        if( _.compact( possibleIds ).length != 1 )
-	        	LJ.fn.toastMsg('No id matched for that chat', 'error', true );	
-
-	        return _.compact( possibleIds )[0];
-        },
-        handleSendChatSuccess: function( data ){
-
-        	csl('Adding chatline (me)');
-
-        	 var chatLineHtml = '<div class="chatLine">'
-								+'<div class="cha cha-user">'+data.msg+'</div>'
-        						+'</div>';
-
-        	var chatId = data.receiverId;
-
-        	var $chatLineWrap = data.submitInput.parents('.chatWrap').find('.chatLineWrap');
-
-        	if( LJ.state.jspAPI[ chatId ] == undefined )
-    		{
-    			csl('Turning chatLineWrap scrollable');
-    			$chatLineWrap.jScrollPane();
-    			LJ.state.jspAPI[ chatId ] =  $chatLineWrap.data('jsp');
-    		}
-
-    		$chatLineWrap.find('.jspPane').append( chatLineHtml );
-    		$chatLineWrap.find('.chatLine:last-child').velocity("fadeIn", { duration: 350 });
-
-    		sleep( 50, function(){
-				csl('Refreshing jsp API');
-				LJ.state.jspAPI[ chatId ].reinitialise();
-				LJ.state.jspAPI[ chatId ].scrollToBottom(); 
-    	    });
-
-        },
-        addChatLine: function( data ){
-
-        	csl('Adding chatline');
-
-        	var chatId = data.senderId;
-
-        	var $chatIconWrap = $('.chatWrap[data-chatid="'+chatId+'"]').parents('.eventItemWrap').find('.chatIconWrap');
-        		if( !$chatIconWrap.hasClass('active') )
-        			LJ.fn.bubbleUp( $chatIconWrap );
-
-            var chatLineHtml = '<div class="chatLine none">'
-								+'<div class="cha cha-other">'+data.msg+'</div>'
-        						+'</div>';
-
-        	var $chatLineWrap = $('.chatWrap[data-chatid="'+chatId+'"]').find('.chatLineWrap');
-        	
-    		if( LJ.state.jspAPI[ chatId ] == undefined )
-    		{
-    			csl('Turning chatLineWrap scrollable');
-    			$chatLineWrap.jScrollPane();
-    			LJ.state.jspAPI[ chatId ] =  $chatLineWrap.data('jsp');
-    		}
-
-    		$chatLineWrap.find('.jspPane').append( chatLineHtml );
-    		$chatLineWrap.find('.chatLine:last-child').velocity("fadeIn", { duration: 350 });
-
-    		sleep( 50, function(){
-				csl('Refreshing jsp API');
-				LJ.state.jspAPI[ chatId ].reinitialise();
-				LJ.state.jspAPI[ chatId ].scrollToBottom(); 
-    	    });
-
-        },
         bubbleUp: function( el ){
 
         	var $el = $(el);
@@ -2027,56 +1752,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	return $bubble.text( n + 1 );
 
         },
-        handleFriendRequestSuccess: function( data ){
-
-			var userId     = data.userId,
-        		friendId   = data.friendId,
-        		upType     = data.updateType,
-        		friend     = data.friend,
-        		friendList = data.friendList;
-
-            	LJ.user.friendList = data.friendList;
-				
-				LJ.nextCallback.context = 'fetch friends';
-				LJ.nextCallback.fn = function(){
-            		 
-            		csl('Calling function');
-					sleep( LJ.ui.artificialDelay, function(){
-
-					LJ.fn.displayAddUserAsFriendButton();
-
-						if( upType == 'askedhim' )
-						{
-							LJ.fn.handleServerSuccess('Votre demande a été envoyée');
-						}
-
-						if( upType == 'askedme' )
-						{
-							LJ.fn.handleServerSuccess('Vous avez une demande d\'ami');
-							LJ.fn.bubbleUp( '#search' )
-						}
-
-						if( (upType == 'mutual') && (userId == LJ.user._id) )
-						{
-							LJ.fn.handleServerSuccess('Vous êtes à présent amis');
-						}
-
-						if( (upType == 'mutual') && (friendId == LJ.user._id) )
-						{
-							LJ.fn.handleServerSuccess('Votre demande a été acceptée!');
-							LJ.fn.bubbleUp( '#search' )
-						}
-
-						if( upType == 'mutual' && LJ.myFriends.length == 1 )
-						{
-							$('#friendListWrap .noFriendsYet').replaceWith( LJ.fn.renderUsersInFriendlist( friend ) );
-							$('#createEventWrap .noFriendsYet').replaceWith( LJ.fn.renderUserThumb({ user:friend }) );
-						}
-					});
-				}
-				LJ.fn.fetchFriends();
-
-        },
         handleFetchAskedInSuccess: function( data ){
 
         	var askersList = data.askersList,
@@ -2091,9 +1766,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				
 				var asker = askersList[i];
 
-					d.version = asker.imgVersion;
+					d.version = asker.img_version;
 
-				//var $askerImg = LJ.fn.renderAskerInEvent( asker.imgId, { dataList: [{ dataName: 'userid', dataValue: asker._id }]});
+				//var $askerImg = LJ.fn.renderAskerInEvent( asker.img_id, { dataList: [{ dataName: 'userid', dataValue: asker._id }]});
 				//	$askersWrap.prepend( $askerImg );					
 
 				var $nbAskers = $itemWrap.find('.e-guests span.nbAskers');
@@ -2113,7 +1788,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         setTimeout( function(){ 
 			LJ.user.pictures = data.pictures;
-			var currentImgPlace = $('.main-picture').data('imgplace');
+			var currentimg_place = $('.main-picture').data('img_place');
 
 			$('.row-pictures').find('.icon-edit').click();
 
@@ -2122,9 +1797,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			/* Changement de la main picture et update du header associé */
 			var mainImg = LJ.fn.findMainImage();
-			if( currentImgPlace != mainImg.imgPlace ){
+			if( currentimg_place != mainImg.img_place ){
 				$('.main-picture').removeClass('main-picture');
-				$('.picture[data-imgplace="'+mainImg.imgPlace+'"]').addClass('main-picture');
+				$('.picture[data-img_place="'+mainImg.img_place+'"]').addClass('main-picture');
 				mainImg.scope = ['thumb'];
 				LJ.fn.replaceImage( mainImg );
 			}
@@ -2132,7 +1807,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			/* Mise à jour temps réelle des nouvelles photos */
 			for( var i = 0; i < LJ.user.pictures.length; i++){
 				LJ.user.pictures[i].scope = ['profile'];
-				if( $('.picture[data-imgplace="'+i+'"]').attr('data-imgversion') != LJ.user.pictures[i].imgVersion )
+				if( $('.picture[data-img_place="'+i+'"]').attr('data-img_version') != LJ.user.pictures[i].img_version )
 				LJ.fn.replaceImage( LJ.user.pictures[i] );
 			}
 
@@ -2150,59 +1825,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         handleErrorDefault: function( data ){
         	console.log('Error!');
         },
-        handleFriendRequestSuccessHost: function( data ){
-        	
-        	var userId     = data.userId,
-                friendId   = data.friendId;
-
-            	/* Host checks if he has to update his friendLinks, hence reload friends status*/
-            	if( LJ.myAskers.length != 0 )
-            	{
-            		var askersId = _.pluck( LJ.myAskers, '_id' );
-            		if( askersId.indexOf( userId ) != -1 && askersId.indexOf( friendId ) != -1 )
-            			{ LJ.fn.refetchAskers(); }
-            	}
-
-        },
-        displayAddUserAsFriendButton: function(){
-
-        	var $users = $('#searchUsers .u-item.match');
-
-        		$users.each( function( i, user ){
-
-        			var $user = $(user),
-        				userId = $user.attr('data-userid');
-
-        			var button;
-
-        			if( _.pluck( LJ.user.friendList, 'friendId' ).indexOf( userId ) != -1 )
-        			{
-        				if( _.find( LJ.user.friendList, function(el){ return el.friendId == userId ; }).status == 'mutual' )
-        				    button =  '<button class="themeBtn onHold"><i class="icon icon-ok-1"></i></button>' ;
-
-        				if( _.find( LJ.user.friendList, function(el){ return el.friendId == userId ; }).status == 'askedMe' )
-        				    button = '<button class="themeBtn"><i class="icon icon-ellipsis"></i></button>' ;
-
-        				if( _.find( LJ.user.friendList, function(el){ return el.friendId == userId ; }).status == 'askedHim' )
-        				    button = '<button class="themeBtn onHold"><i class="icon icon-ellipsis"></i></button>' ; 
-        			}
-        			else
-        			{
-        				    button = '<button class="themeBtn"><i class="icon icon-user-add"></i></button>' ; 
-        			}
-
-        				$user.find('button').replaceWith( button );
-
-        		});
-
-        },
         displayAddFriendToPartyButton: function(){
 
-        	var $friendListWrap = $('#friendListWrap'),
-        		$eventWrap = $friendListWrap.parents('.eventItemWrap'),
-        		$askedInWrap = $friendListWrap.parents('.eventItemWrap').find('.askedInWrap');
+        	var $friendsWrap = $('#friendsWrap'),
+        		$eventWrap = $friendsWrap.parents('.eventItemWrap'),
+        		$askedInWrap = $friendsWrap.parents('.eventItemWrap').find('.askedInWrap');
 
-        	$friendListWrap.find('.f-item').each( function( i, el ){
+        	$friendsWrap.find('.f-item').each( function( i, el ){
 
         		var $friend = $(el),
         			friendId = $friend.data('userid');
@@ -2235,30 +1864,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	});
 
         },
-        showUserTyping: function( data ){
-
-        console.log('User typing received...');
-        var chatId = data.chatId,
-        	$liveTypeWrap = $('div[data-chatid="'+chatId+'"]').find('.liveTypeWrap');
-
-        	$liveTypeWrap.velocity( { translateY: [0,7], opacity: [1,0] }, { duration:300 });
-
-        },
-        hideUserTyping: function( data ){
-
-        var chatId = data.chatId,
-        	$liveTypeWrap = $('div[data-chatid="'+chatId+'"]').find('.liveTypeWrap');
-
-        	$liveTypeWrap.velocity( { translateY: [-7,0], opacity: [0,1] }, { duration:300 });
-
-        },
         subscribeToChannels: function(){
 
-        	var channels = LJ.user.myChannels,
+        	var channels = LJ.user.channels,
         		L = channels.length;
         	for( var i=0; i<L; i++ )
         	{
-        		LJ.myChannels[ channels[i].accessName ] = LJ.pusher.subscribe( channels[i].channelName )
+        		LJ.channels[ channels[i].access_name ] = LJ.pusher.subscribe( channels[i].channel_label )
         	}
         	return;
 
@@ -2266,29 +1878,21 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         initChannelListeners: function(){
 
         	/* Bind all defaults global events */
-        	LJ.myChannels['defchan'].bind('create-event-success', LJ.fn.handleCreateEventSuccess );
-        	LJ.myChannels['defchan'].bind('suspend-event-success', LJ.fn.handleSuspendEventSuccess );
-        	LJ.myChannels['defchan'].bind('cancel-event-success', LJ.fn.handleCancelEventSuccess );
+        	LJ.channels['defchan'].bind('create-event-success', LJ.fn.handleCreateEventSuccess );
+        	LJ.channels['defchan'].bind('suspend-event-success', LJ.fn.handleSuspendEventSuccess );
+        	LJ.channels['defchan'].bind('cancel-event-success', LJ.fn.handleCancelEventSuccess );
 
-        	LJ.myChannels['defchan'].bind('restart-events', LJ.fn.handleRestartEvents );
-        	LJ.myChannels['defchan'].bind('reset-events', LJ.fn.handleResetEvents );
+        	LJ.channels['defchan'].bind('restart-events', LJ.fn.handleRestartEvents );
+        	LJ.channels['defchan'].bind('reset-events', LJ.fn.handleResetEvents );
 
-        	LJ.myChannels['defchan'].bind('refresh-users-conn-states', LJ.fn.refreshUserConnState );
+        	LJ.channels['defchan'].bind('refresh-users-conn-states', LJ.fn.refreshUserConnState );
 
         	//-----------------------------------------------------
-        	/* Bind personnal events */
-        	LJ.myChannels['mychan'].bind('friend-request-in-success', LJ.fn.handleFriendRequestSuccess );
-        	LJ.myChannels['mychan'].bind('friend-request-in-success-host', LJ.fn.handleFriendRequestSuccessHost );
-        	
-        	LJ.myChannels['mychan'].bind('request-participation-in-success', LJ.fn.handleRequestParticipationInSuccess );
-        	LJ.myChannels['mychan'].bind('request-participation-out-success', LJ.fn.handleRequestParticipationOutSuccess );
+        	/* Bind personnal events */  	
+        	LJ.channels['mychan'].bind('request-participation-in-success', LJ.fn.handleRequestParticipationInSuccess );
+        	LJ.channels['mychan'].bind('request-participation-out-success', LJ.fn.handleRequestParticipationOutSuccess );
 
-        	LJ.myChannels['mychan'].bind('send-message-success', LJ.fn.addChatLine );
-
-        	LJ.myChannels['mychan'].bind('user-started-typing-success', LJ.fn.showUserTyping );
-        	LJ.myChannels['mychan'].bind('user-stopped-typing-success', LJ.fn.hideUserTyping );
-
-        	LJ.myChannels['defchan'].bind('display-msg', function( data ){
+        	LJ.channels['defchan'].bind('display-msg', function( data ){
         		LJ.fn.toastMsg( data.msg, 'info' );
         	});
 
@@ -2304,7 +1908,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         testAllChannels: function(){
 
         	var userId = LJ.user._id;
-        	var channelName = 'test-all-channels'
+        	var channel_label = 'test-all-channels'
         		, data = { userId: userId }
         		, cb = {
         			success: function( data ){
@@ -2315,7 +1919,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         			}
         		};
 
-        	LJ.fn.say( channelName, data, cb );
+        	LJ.fn.say( channel_label, data, cb );
 
         },
         cancelEvent: function( eventId, hostId, templateId ){
@@ -2323,7 +1927,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	csl('canceling event : '+eventId+'  with hostId : '+hostId);
         	$( '#cancelEvent' ).addClass( 'pending' );
 
-        	var eventName = 'cancel-event',
+        	var eventName = 'event/cancel',
         		data = { eventId: eventId, hostId: hostId, socketId: LJ.pusher.connection.socket_id, templateId: templateId }
         		, cb = {
         			success: function( data ){
@@ -2362,7 +1966,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	console.log('Suspending event with id : ' + eventId + ' and hostId : ' + hostId );
         	$( '#suspendEvent' ).addClass( 'pending' );
 
-        	var eventName = 'suspend-event',
+        	var eventName = 'event/suspend',
         		data = { eventId: eventId, hostId: hostId, socketId: LJ.pusher.connection.socket_id }
         		, cb = {
         			success: function( data ){
@@ -2438,7 +2042,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 						eventWrap.attr('data-eventstate', eventState );
 
-						if( LJ.user.eventsAskedList.indexOf( eventId ) != -1 ){
+						if( LJ.user.asked_events.indexOf( eventId ) != -1 ){
 							return console.log('Exiting');
 						}
 						 eventWrap.find('button.askIn')

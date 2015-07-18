@@ -2,7 +2,9 @@
 
 #profileWrap {
     width: 880px;
-}
+} 
+::-webkit-file-upload-button { cursor:pointer; }
+
 .row-title {
     text-transform: uppercase;
     font-weight: bolder;
@@ -19,13 +21,49 @@
     border-bottom: none;
 }
 .row-title .icon {
-    border: 1px solid black;
+    border: 1px 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    solid 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    black;
     padding: 7px 5px;
     border-radius: 20px;
     position: relative;
     background-color: white;
     top: 27px;
     cursor: pointer;
+    transition: all      
+    ease-out .3s;
 }
 .row-title .icon.active,
 .row-pictures i.selected {
@@ -53,8 +91,8 @@
     text-align: center;
 }
 .row-profile {
-    margin-bottom: 30px;
-    padding-bottom: 30px;
+    margin-bottom: 20px;
+    padding-bottom: 25px;
 }
 /* Pictures */
 
@@ -98,6 +136,7 @@
     transition: all .5s;
     font-family: 'Karla';
 }
+
 .row-pictures.editing .picture-hashtag {
     border-bottom: 1px solid #C1C1C1;
     background-color: whitesmoke;
@@ -106,7 +145,7 @@
 .picture-edit {
     display: none;
 }
-.picture-edit {
+.picture-edit,.picture-upload {
     width: 160px;
     height: 152px;
     position: absolute;
@@ -115,22 +154,72 @@
     left: -1px;
     padding-top: 71px;
 }
-.picture-edit i {
+
+.upload-facebook,
+.upload-desktop {
+    display:inline-block;
+    position: relative;
+    cursor:pointer;
+}
+
+.upload_form + i{
+    cursor:pointer;
+}
+.upload_form:hover + i{
+    background-color: #F3F3F3;
+}
+
+.picture-upload i:hover{
+    background-color: #F3F3F3;
+}
+
+.picture-edit i, .picture-upload i {
     font-size: 20px;
     background-color: white;
-    border: 1px solid #696969;
+    border: 1px 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    solid #696969;
     padding: 3Px;
     color: #828282;
     margin: 3px;
+    transition: all       
+    ease-out .2s;
     cursor: pointer;
-    transition: all .3s;
 }
 .picture-edit i:not(.selected):hover {
     background: #eee;
 }
 .picture-edit i:first-child {
-    border-radius: 20px;
-    padding: 5px;
 }
 .row-buttons {
     display: none;
@@ -151,13 +240,12 @@
     left: 0;
 }
 #profileWrap .cloudinary-fileupload {
-    width: 160px;
-    height: 160px;
+    width: 35px;
+    height: 30px;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: -5px;
+    left: 3px;
     opacity: 0.01;
-    cursor: pointer;
 }
 /* Informations */
 
@@ -229,15 +317,27 @@
     float: right;
     position: relative;
     opacity: 0;
+    visibility: hidden;
     font-size: 12px;
     right: 5px;
     cursor: pointer;
     top: 17px;
-    color: #bbb;
-    transition: all ease-out .3s;
+    color: #696969;
+    transition: all 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ease-out .3s;
 }
 .row.editing .row-motto:hover .inspire {
     opacity: 1;
+    visibility: visible;
 }
 /* Friends */
 
@@ -267,6 +367,32 @@
 }
 .row-subheader-bar {
     border-bottom: 1px                                                                                                                                                                                                                                                                          
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -419,16 +545,105 @@
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     solid           #F3F3F3;
     margin: 3px 10px;
-    width: 130px;
+    width: 30px;
     display:inline-block;
 }
-.row-subheader-text {
-    display:inline-block;
-    color: #AFAFAF;
-    font-size: 12px;
-}
-.row-subheader-text span {
+.row-subheader-xp {
 
+font-size: 11px;
+}
+.xp-amount {
+padding-right: 3px;}
+.xp-fill {
+    width: 20%;
+    height:100%;
+    transition: all                                                                                                                                                                                           
+    
+    ease-in-out .7s;
+    background: #eee;
+}
+.row-subheader-xp-bar {
+    display:inline-block;
+    width: 400px;
+    height: 8px;
+    border: 1px 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    solid #ccc;
+    border-radius: 35px;
 }

@@ -21,10 +21,10 @@
 		hostId: {
 			type: String
 		},
-		hostImgId: {
+		hostimg_id: {
 			type: String
 		},
-		hostImgVersion: {
+		hostimg_version: {
 			type: String
 		},
 		hostName: {

@@ -20,7 +20,7 @@
 	};
 
 	function fetchLastRegisteredUsers(callback){
-		User.find().limit(10).sort('-signupDate').exec(function(err,lastRegisteredUsers){
+		User.find().limit(10).sort('-signup_date').exec(function(err,lastRegisteredUsers){
 			 if(err)
 			 	return callback(err);
 			 callback(null,lastRegisteredUsers);
@@ -75,13 +75,13 @@
 	                	});
 
 		                user.status = 'hosting';
-		                user.hostedEventId = newEvent._id;
+		                user.hosted_event_id = newEvent._id;
 
 		                var expose = { myEvent: newEvent };
 		                
 		                user.save( function(err, user) {
 		                    if( !err ){
-		                        console.log(user.email + ' is hosting [ as bot ] the event with id : ' + user.hostedEventId);
+		                        console.log(user.email + ' is hosting [ as bot ] the event with id : ' + user.hosted_event_id);
 
 		                        eventUtils.sendSuccess( res, expose );
 		                        pusher.trigger('default', 'create-event-success', expose );
@@ -110,8 +110,8 @@
 				'status': 'idle',
 				'gender': gender,
 				'access': 'bot',
-				'eventsAskedList.3': { $exists: false },
-				'eventsAskedList': { $ne: eventId } 
+				'asked_events.3': { $exists: false },
+				'asked_events': { $ne: eventId } 
 			}, function( err2, myBots ){
 
 				if( err1 || err2 || myBots.length == 0 || !myEvent )
@@ -129,13 +129,13 @@
 								age           : myUser.age,
 								drink 		  : myUser.drink,
 								mood          : myUser.mood,
-								signupDate    : myUser.signupDate,
-								imgId         : myUser.imgId,
-								imgVersion    : myUser.imgVersion,
-								friendList    : myUser.friendList 
+								signup_date    : myUser.signup_date,
+								img_id         : myUser.img_id,
+								img_version    : myUser.img_version,
+								friends    : myUser.friends 
 							};
 
-				myUser.eventsAskedList.push( eventId );
+				myUser.asked_events.push( eventId );
 				myEvent.askersList.push( asker );
 
 				myUser.save();

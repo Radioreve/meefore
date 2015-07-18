@@ -1,0 +1,44 @@
+#search:hover {
+    background-color: #202020;
+}
+#searchbar {
+    opacity: 0;
+    background-color: #202020;
+    position: absolute;
+    margin-left: 34px;
+    top: -1px;
+    width: 220px;
+    transition: all                                                                                                                                                                                               
+    
+    
+    
+    
+    
+    
+    
+    
+    ease-out .3s;
+    height: 36px;
+    z-index: 0;
+}
+.search-input {
+    color: #EBEBEB;
+    border-bottom: none;
+    font-size: 13px;
+    border-radius: 1px;
+    width: 80%;
+    padding: 0px;
+    padding-left: 10px;
+    margin: 4px 0 0 5px;
+    position: relative;
+    font-family: 'Karla';
+    height: 31px;
+    transition: all ease-out .3s;
+}
+.search-input.active {
+    border-bottom: 2px solid #F9F9F9;
+    color: white;
+}
+#search:hover #searchbar {
+    opacity: 1;
+}

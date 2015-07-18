@@ -42,23 +42,6 @@
                 return html;
 
         },
-        renderChatWrap: function( chatId ){
-
-            var liveTypeImgHTML = LJ.$cLoaderTpl.prop('outerHTML');
-
-        	return '<div class="chatWrap chat-asker none" data-chatid="'+chatId+'">'
-                            +'<div class="chatLineWrap"></div>'    
-                            +'<div class="chatInputWrap">'
-                            +'<div class="liveTypeWrap">'
-                                +'<span >En train d\'écrire...</span>'
-                                + liveTypeImgHTML
-                            +'</div>'
-                            +  '<input type="text" value="" placeholder="Can I come with my friends ?">'
-                            +  '<input type="submit" value="">'
-                            +'</div>'
-                           +'</div>';
-
-        },
         renderEventTags: function( tags ){
 
         	var eventTags = '<div class="tag-row">',
@@ -80,7 +63,7 @@
                 return '<div class="askInWrap"><button class="themeBtnToggle themeBtnToggleHost">Management</button></div>';
             }
 
-            if( LJ.user.eventsAskedList.indexOf( eventId ) > -1 )
+            if( LJ.user.asked_events.indexOf( eventId ) > -1 )
             {
                 return '<div class="askInWrap">\
                            <button class="themeBtnToggle askIn asked"> Annuler </button> \
@@ -107,25 +90,25 @@
 
 			
         },
-        renderHostImg: function( hostImgId, hostImgVersion ){
+        renderHostImg: function( hostimg_id, hostimg_version ){
 
         	var d = LJ.cloudinary.displayParamsEventHost;
-				d.version = hostImgVersion;
+				d.version = hostimg_version;
 
 
-			var imgTag = $.cloudinary.image( hostImgId, d )
+			var imgTag = $.cloudinary.image( hostimg_id, d )
 						  .addClass('zoomable')
-						  .attr('data-imgid', hostImgId )
-						  .attr('data-imgversion', hostImgVersion );
+						  .attr('data-img_id', hostimg_id )
+						  .attr('data-img_version', hostimg_version );
 
 			var imgTagHTML = imgTag.prop('outerHTML');
 
 			return imgTagHTML
         },
-        renderAskerInEvent: function( imgId, o ){
+        renderAskerInEvent: function( img_id, o ){
 
-        	var $img = $.cloudinary.image( imgId, LJ.cloudinary.displayParamsEventAsker );
-        		$img.attr('data-imgid', imgId)
+        	var $img = $.cloudinary.image( img_id, LJ.cloudinary.displayParamsEventAsker );
+        		$img.attr('data-img_id', img_id)
         			.addClass('zoomable');
  
         	if( o ){ 
@@ -153,20 +136,20 @@
 
         		if( i < L )
         		{
-	        		var imgId        = askersList[i].imgId;
-	        			d.imgVersion = askersList[i].imgVersion;
+	        		var img_id        = askersList[i].img_id;
+	        			d.img_version = askersList[i].img_version;
 	        			o.classList = ['askedInThumb'];
 	        			o.dataList   = [ { dataName: 'userid', dataValue:  askersList[i]._id } ];
 
         		}else //On affiche via placeholder le nb de places restantes.
         		{     
                     /* Deprecated
-        			var imgId = LJ.cloudinary.placeholder_id;
+        			var img_id = LJ.cloudinary.placeholder_id;
         				o.classList = ['askedInRemaining'];
                     */
         		}
 
-        		html += LJ.fn.renderAskerInEvent( imgId, o ).prop('outerHTML');
+        		html += LJ.fn.renderAskerInEvent( img_id, o ).prop('outerHTML');
         	}
         		
         		return html
@@ -175,14 +158,13 @@
 
 			var eventId        = e._id,
 				hostId         = e.hostId,
-				hostImgId      = e.hostImgId,
-				hostImgVersion = e.hostImgVersion,
+				hostimg_id      = e.hostimg_id,
+				hostimg_version = e.hostimg_version,
 				tags           = e.tags;
 
-			var imgTagHTML   = LJ.fn.renderHostImg( hostImgId, hostImgVersion ),
+			var imgTagHTML   = LJ.fn.renderHostImg( hostimg_id, hostimg_version ),
 			    button       = LJ.fn.renderEventButton( e._id, hostId, e.state ),
 				eventTags    = LJ.fn.renderEventTags( tags ),
-            	chatWrap     = LJ.fn.renderChatWrap( hostId ),
             	askersThumbs = LJ.fn.renderAskersInEvent( e.askersList, e.maxGuest );
 
 			var html = '<div class="eventItemWrap" '
@@ -254,7 +236,7 @@
 			var asker = {
 
 				id: "placeholder",
-				imgId: LJ.cloudinary.placeholder_id,
+				img_id: LJ.cloudinary.placeholder_id,
 				name:"White",
 				age: 25,
 				description:""
@@ -269,12 +251,12 @@
         	className = className || '';
 
             var d = LJ.cloudinary.displayParamsAskerMain;
-            	d.version = a.imgVersion; // Ne fonctionne pas car le param 'a' provient de la base qui est pas MAJ
+            	d.version = a.img_version; // Ne fonctionne pas car le param 'a' provient de la base qui est pas MAJ
 
-            var imgTag = $.cloudinary.image( a.imgId, d );
+            var imgTag = $.cloudinary.image( a.img_id, d );
             	imgTag.addClass('zoomable')
-            		  .attr('data-imgid', a.imgId)
-            		  .attr('data-imgversion', a.imgVersion);
+            		  .attr('data-img_id', a.img_id)
+            		  .attr('data-img_version', a.img_version);
 
             var liveTypeImgHTML = LJ.$cLoaderTpl.prop('outerHTML');
 
@@ -298,7 +280,7 @@
             var html =  '<div class="a-item '+className+'" data-userid="'+a._id+'">'
                            +'<div class="a-picture">'
                              + imgTagHTML
-                           +'<div class="a-birth">Membre depuis le ' + LJ.fn.matchDateDDMMYY( a.signupDate ) + '</div>'
+                           +'<div class="a-birth">Membre depuis le ' + LJ.fn.matchDateDDMMYY( a.signup_date ) + '</div>'
                            +'</div>'
 	                           +'<div class="a-body">'
 	                             +'<div class="a-name"><span class="label">Nom</span>'+a.name+'</div>'
@@ -330,11 +312,11 @@
         	var d = LJ.cloudinary.displayParamsAskerThumb
         		dbnw = LJ.cloudinary.displayParamsAskerThumbRefused;
         		 
-        		d.version = a.imgVersion,
-        		dbnw.version = a.imgVersion;
+        		d.version = a.img_version,
+        		dbnw.version = a.img_version;
 
-        	var imgTagBlackWhite = $.cloudinary.image( a.imgId, dbnw ),
-        	    imgTag = $.cloudinary.image( a.imgId, d );
+        	var imgTagBlackWhite = $.cloudinary.image( a.img_id, dbnw ),
+        	    imgTag = $.cloudinary.image( a.img_id, d );
         	
         		imgTagBlackWhite.addClass('grey');
         		imgTag.addClass('normal').addClass('none');
@@ -372,7 +354,7 @@
         		{
         			o.user = {}
         			o.user._id 	= 'placeholder';
-        			o.user.imgId 	= LJ.cloudinary.placeholder_id;
+        			o.user.img_id 	= LJ.cloudinary.placeholder_id;
         			o.myClass 		= 'placeholder';
 		
         			html += LJ.fn.renderUserThumb( o );
@@ -473,7 +455,7 @@
             if( w == 'botsWrap' )
             {
                 cl = 'u';
-                dataset = 'data-imgid="'+u.imgId+'" data-imgversion="'+u.imgVersion+'" '
+                dataset = 'data-img_id="'+u.img_id+'" data-img_version="'+u.img_version+'" '
                 email = ' ( '+u.email+' )';
 
                 var active = '';
@@ -496,11 +478,11 @@
             }
 
                 var d = LJ.cloudinary.displayParamsAskerThumb;
-                    imgId = u.imgId;
-                    d.version = u.imgVersion;
+                    img_id = u.img_id;
+                    d.version = u.img_version;
                     d.radius = '5';
 
-                var imgTagHTML = $.cloudinary.image( imgId, d ).prop('outerHTML');
+                var imgTagHTML = $.cloudinary.image( img_id, d ).prop('outerHTML');
 
                 html += '<div class="'+cl+'-item '+myClass+'" data-username="'+u.name.toLowerCase()+'"'
                           + 'data-userid="'+u._id+'"'
@@ -524,41 +506,7 @@
             return html;
 
         },
-        renderUsersInCreateEvent: function(){
-
-            var html = '',
-                friendList = LJ.myFriends,
-                L = friendList.length;
-
-
-            for( var i = 0; i < L; i++ )
-            {   
-                if( _.find( LJ.user.friendList, function(el){ return el.friendId == friendList[i]._id }).status == 'mutual' )
-                html += LJ.fn.renderUserThumb( { user: friendList[i], myClass:''} );
-            }
-
-            if( html == '' )
-                return '<div class="noFriendsYet"><button class="themeBtn static">Ajouter des amis</button></div>'
-
-            return html;
-
-
-
-        },
-        renderUsersInSearch: function(){
-
-        	var html = '';
-
-        	for( var i = 0; i < LJ.myUsers.length ; i++ )
-            {   
-                if( LJ.myUsers[i]._id != LJ.user._id )
-                html += LJ.fn.renderUser( { user: LJ.myUsers[i], wrap: 'searchWrap', myClass: 'none'} );
-        	}
-
-        	return html;
-
-        },
-        renderUsersInFriendlist: function(){
+        renderUsersInfriends: function(){
 
             var html = '';
 
@@ -567,8 +515,8 @@
 
                 for( var i = 0 ; i < L ; i++ )
                 {   
-                    if( _.find( LJ.user.friendList, function(el){ return el.friendId == fL[i]._id }).status == 'mutual' )
-                        html += LJ.fn.renderUserInFriendlist( fL[i] );
+                    if( _.find( LJ.user.friends, function(el){ return el.friendId == fL[i]._id }).status == 'mutual' )
+                        html += LJ.fn.renderUserInfriends( fL[i] );
                 }
                 if( html == '' )
                     return '<div class="noFriendsYet"><button class="themeBtn static">Ajouter des amis</button></div>'
@@ -578,17 +526,17 @@
                 return html;
 
         },
-        renderUserInFriendlist: function( friend ){
+        renderUserInfriends: function( friend ){
 
 			if(!friend) return ''
 
             if( friend.status == 'hosting' )
                 return LJ.fn.renderUser({ user: friend, wrap: 'eventsWrap'  });
 
-            if( _.find( LJ.user.friendList, function(el){ return el.friendId == friend._id }).status == 'askedMe' )
+            if( _.find( LJ.user.friends, function(el){ return el.friendId == friend._id }).status == 'askedMe' )
                 return '';
 
-            if( _.find( LJ.user.friendList, function(el){ return el.friendId == friend._id }).status == 'askedHim' ) 
+            if( _.find( LJ.user.friends, function(el){ return el.friendId == friend._id }).status == 'askedHim' ) 
                 return '';
 
             return LJ.fn.renderUser({ user: friend, wrap: 'eventsWrap'});
@@ -601,15 +549,23 @@
             for( var i = 0; i < pictures.length; i++)
             {
                 var main = '';
-                if( pictures[i].isMain )
+                if( pictures[i].is_main )
                     var main = " main-picture";
 
-                html += '<div class="picture unselectable'+main+'" data-imgversion="'+pictures[i].imgVersion+'" data-imgplace="'+i+'">'
-                        +'<form class="upload_form"></form>'
+                html += '<div class="picture unselectable'+main+'" data-img_version="'+pictures[i].img_version+'" data-img_place="'+i+'">'
                         +'<div class="picture-hashtag"><span>#</span><input readonly type="text" placeholder="classic"></input></div>'
                         +'<div class="picture-edit">'
                           +'<i class="icon icon-main icon-user-1"></i>'
                           +'<i class="icon icon-delete icon-trash-empty"></i>'
+                        +'</div>'
+                        +'<div class="picture-upload none">'
+                         +'<div class="upload-desktop">'
+                          +'<form class="upload_form"></form>'
+                          +'<i class="icon icon-upload-desktop icon-desktop"></i>'
+                         +'</div>'
+                         +'<div class="upload-facebook">'
+                          +'<i class="icon icon-upload-facebook icon-facebook"></i>'
+                         +'</div>'
                         +'</div>'
                         +'</div>';
             }
