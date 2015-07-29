@@ -18,7 +18,6 @@ var createEvent = function( req, res ) {
         socketId = data.socketId,
         userIds = data.userIds || [];
 
-
     if( settings.isFrozenTime() ){
 
         return eventUtils.raiseError({

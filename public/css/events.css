@@ -389,6 +389,7 @@ h3{
 	font-size: .9em;
 	line-height: 1.45em;
 	font-family: 'Karla';
+	text-align: center;
 }
  
 #createEventWrap .tags-wrap, #createEventWrap .event-friends-wrap{

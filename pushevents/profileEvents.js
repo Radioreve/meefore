@@ -1,5 +1,6 @@
 
 	var User = require('../models/UserModel'),
+		mongoose = require('mongoose'),
 	    Event = require('../models/EventModel'),
 	    eventUtils = require('./eventUtils'),
 	    _ = require('lodash'),
@@ -36,7 +37,7 @@
 			var update = {
 				name     	  : data.name,
 				age			  : data.age,
-				description   : data.description,
+				motto         : data.motto,
 				drink         : data.drink,
 				mood          : data.mood,
 				job			  : data.job,
@@ -57,10 +58,10 @@
 
 		            var expose = { user: user };
 
-		            eventUtils.sendSuccess( res, expose, true );
+		            eventUtils.sendSuccess( res, expose );
 		    }
 		
-			User.findByIdAndUpdate( userId, update, {}, callback );
+			User.findByIdAndUpdate( userId, update, { new: true }, callback );
 
 	};
 
@@ -117,13 +118,12 @@
 	    });
 	};
 
-	var updatePictureWithFacebook = function( req, res ){
 
-		var userId = req.body.userId,
-			fbId   = req.body.fbId;
-			url    = 'https://graph.facebook.com/' + fbId + '/picture?width=180&height=180';
+	var updatePictureWithUrl = function( req, res ){
 
-		console.log(url);
+		var userId    = req.body.userId,
+			url       = req.body.url,
+			img_place = req.body.img_place;
 
 		cloudinary.uploader.upload( url, function( response ){
 
@@ -136,11 +136,11 @@
 						toClient:"Impossible de charger votre photo Facebook"
 					});
 
-				var main_picture = user.pictures[0];
-					main_picture.img_id = response.public_id;
-					main_picture.img_version = response.version + '';
+				var picture 			= _.find( user.pictures, function( pic ){ return pic.img_place == img_place; });
+					picture.img_id  	= response.public_id;
+					picture.img_version = response.version + '';
 
-				user.pictures.set( 0, main_picture );
+				user.pictures.set( img_place, picture );
 				user.status = "idle";
 
 				user.save( function( err ){
@@ -153,7 +153,7 @@
 						});
 
 					res.json({ 
-						msg:         "Votre photo de profile a été chargée à partir de Facebook",
+						msg:         "Votre photo a été chargée à partir de Facebook",
 						img_id:      response.public_id,
 						img_version: response.version
 					});
@@ -208,8 +208,8 @@
 				}
 				if( updatedPictures[i].action == "delete" )
 				{
-					current_picture.img_id = "placeholder_spjmx7";
-					current_picture.img_version = "1407342805";
+					current_picture.img_id = settings.placeholder.img_id;
+					current_picture.img_version = settings.placeholder.img_version;
 					myUser.pictures.set( parseInt( current_picture.img_place ), current_picture );
 				}
 				if( updatedPictures[i].action == "hashtag" )
@@ -237,104 +237,23 @@
 		});
 	};
 
+	var fetchAndSyncFriends = function( req, res ){
 
-	var updateSettings = function( req, res ){
+		var userId = req.body.userId,
+			fb_friends_ids = req.body.fb_friends_ids || [];
 
-		var newEmail 	 = req.body.currentEmail.trim(),
-			newPw  	     = req.body.newPw.trim(),
-			newPwConf    = req.body.newPwConf.trim(),
-			newsletter   = req.body.newsletter,
-			userId       = req.body.userId;
+		User.find({ $or: [{ _id: userId },{ facebook_id: { $in: fb_friends_ids } }]}, function( err, users ){
 
-		//var socket = global.sockets[userId];
-
-		User.findById( userId, function(err, user){
-
-			if( err ){ 
-			return	eventUtils.raiseError({
-						err: err,
-						res: res,
-						toClient: "Erreur de chargement",
-						toServer: "Erreur lors de UpdateSettings" 
-					}); 
-			}
-
-			/* Production only 
-
-			if( ! validator.isEmail(newEmail) ){
-				return eventUtils.raiseError({
-						socket: socket,
-						toClient: "Invalid email. Double check and try again",
-						toServer: "Error updating profile, invalid email (regex)" 
-					}); 
-			}
-			
-
-			if( newPw.length < 6 && newPw.length != 0){
-				return eventUtils.raiseError({
-					socket: socket,
-					toClient: "Email is too short ( < 6 )",
-					toServer: "Error updating profile, invalid email (too short)" 
-				}); 
-				
-			}
-
-			if( newPw.length > 30 && newPw.length != 0){
-				return eventUtils.raiseError({
-					socket: socket,
-					toClient: "Email is too long ( > 30 )",
-					toServer: "Error updating profile, invalid email (too short)" 
-				}); 
-				
-			}
-
-			if( /[-!$%^&*()@_#+|~=`{}\[\]:";'<>?,.\/]/.test( newPw.trim() ) ){
-				return eventUtils.raiseError({
-					socket: socket,
-					toClient: "Password contains invalid char!",
-					toServer: "Error updating profile, invalid char" 
+			var mySelf = _.find( users, function( el ){ return el._id == userId });
+				mySelf.friends = _.pull( users, mySelf );
+				mySelf.save( function( err, mySelf ){
+					if( err )
+						return eventUtils.raiseError({ res: res, toClient: "Something happened, please try again later", toServer: "Error saving to database", err: err });
+					eventUtils.sendSuccess( res, { friends: mySelf.friends });
 				});
-			}
 
-			if( newPw != newPwConf ){
-				return eventUtils.raiseError({
-					socket: socket,
-					toClient: "Passwords didn't match",
-					toServer: "Passwords didn't match" 
-				}); 
-			}
-			*/
-
-			/* No error was raised */
-			if ( user.email != newEmail){
-				user.email = newEmail;
-			}
-
-			var hashed = user.generateHash( newPw );
-
-			if ( ! user.validPassword( hashed ) && newPw.length != 0 ){
-				user.password = hashed;
-			}
-
-			user.newsletter = newsletter;
-
-			user.save( function( err, user ){
-
-				if( err ){
-					return eventUtils.raiseError({
-							res: res,
-							toClient: "Something happened, please try again later",
-							toServer: "Error saving settings",
-							err: err
-						});
-				}
-
-				var expose = { user: user, msg: "Vos préférénces ont été modifées" };
-
-				eventUtils.sendSuccess( res, expose );
-
-			});
 		});
+
 	};
 
 
@@ -343,7 +262,7 @@
 	    updateProfile   : updateProfile,
 	    updatePicture   : updatePicture,
 	    updatePictures  : updatePictures,
-	    updatePictureWithFacebook: updatePictureWithFacebook,
-	    updateSettings  : updateSettings
+	    updatePictureWithUrl: updatePictureWithUrl,
+	    fetchAndSyncFriends: fetchAndSyncFriends
 	    
 	};

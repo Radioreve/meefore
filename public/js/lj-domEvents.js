@@ -8,12 +8,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			LJ.fn.handleDomEvents_Globals();
 			LJ.fn.handleDomEvents_Landing();
 			LJ.fn.handleDomEvents_Navbar();
+			LJ.fn.handleDomEvents_Modal();
 			LJ.fn.handleDomEvents_Profile();
 			LJ.fn.handleDomEvents_Events();
 			LJ.fn.handleDomEvents_Create();
 			LJ.fn.handleDomEvents_Management();
 			LJ.fn.handleDomEvents_Search();
-			LJ.fn.handleDomEvents_Contact();
 			LJ.fn.handleDomEvents_Settings();
 
 		},
@@ -28,19 +28,19 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				$(this).removeClass('mouseover');
 			});
 
+			$('.curtain').click( function(){
+				LJ.fn.hideModal();
+			});
 
-            /* Pouvoir zoomer sur une image */
-            LJ.$body.on('click', 'img.zoomable', function(){
-
-			 	var user = {
-			 		img_id      : $( this ).data('img_id'),
-			 		img_version : $( this ).data('img_version')|| ''
-			 	};
-
-               // LJ.fn.toggleOverlay( 'high', LJ.fn.renderOverlayUser( user ), 300);
-
+            LJ.$body.on('click', '.detailable', function(){
+            	LJ.fn.displayUserProfile( $(this).attr('data-id') );
             });
             
+            LJ.$body.on('click', '.row-input', function(){
+            	var $self = $(this);
+            	if( $self.parents('.row').hasClass('editing') ) return;
+            	$self.parents('.row').find('.icon-edit').toggleClass('slow-down full-rotation');
+            });
 
 		},
 		handleDomEvents_Landing: function(){
@@ -48,7 +48,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			$('#facebook_connect').click(function(e){
 
 				e.preventDefault();
-				console.log('Login in with Facebook...');
 
 				FB.login( function(res){
 
@@ -60,12 +59,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 						return
 					}
 
+				  	$('#facebook_connect').velocity({ opacity: [0,1] }, { duration: 1250 });
+
 					LJ.state.loggingIn = true;
+					var access_token = res.authResponse.accessToken;
+					console.log('short lived access token : ' + access_token );
+
 					FB.api('/me', function( facebookProfile ){
-
-						console.log( facebookProfile );
+						facebookProfile.access_token = access_token;
 				  		LJ.fn.loginWithFacebook( facebookProfile );
-
 			  		});
 				}, { scope: ['public_profile', 'email', 'user_friends']});
 
@@ -80,7 +82,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			});
 
 			LJ.$body.on('click', '#thumbWrap img', function(){
-				$('#profile').click();
+				LJ.fn.displayUserProfile( LJ.user.facebook_id );
 			});
 
 			$('#search').click(function(){
@@ -142,55 +144,71 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			LJ.$body.on('change-user-xp', LJ.fn.updateUserXp );
 
+			LJ.$body.on('click', '.upload-facebook', function(){
+				
+				var img_place = $(this).parents('.picture').data('img_place');
+				LJ.fn.displayInModal({
+					url:'/me/photos/uploaded',
+					source:'facebook',
+					success_cb: LJ.fn.renderFacebookUploadedPictures,
+					error_cb: LJ.fn.renderFacebookUploadedPicturesNone,
+					custom_data: [{ key: 'img-place', val: img_place }]
+				});
+
+			});
+
 			LJ.$body.on('click', '.row-informations .btn-validate', function(){
 				if( $(this).hasClass('btn-validating') )
 					return;
 				$(this).addClass('btn-validating');
 				LJ.fn.updateProfile();
-			})
+			});
 
-			LJ.$body.on('click', '.drink', function(){
-
-				if( !$(this).parents('.row-informations').hasClass('editing') )
+			/* Généric ui update of selectable inputs */
+			LJ.$body.on('click', '.row-select', function(){
+				var $self = $(this);
+				if( !$self.parents('.row-select-daddy').hasClass('editing') )
 					return ;
-				$('.row-informations .drink.modified').removeClass('modified');
-				$(this).addClass('modified');
+
+				var $selectedType = $self.parents('.row-select-wrap');
+				$selectedType.find('.row-select.modified').removeClass('modified');
+				$self.addClass('modified');
 			
 			});
 
-			LJ.$body.on('click', '.mood', function(){
 
-				if( !$(this).parents('.row-informations').hasClass('editing') )
-					return ;
-				$('.row-informations .mood.modified').removeClass('modified');
-				$(this).addClass('modified');
-			});
-
-			LJ.$body.on('click', '.row-informations .icon-edit:not(.active)', function(){ 
+			/* Activate modifications */
+			LJ.$body.on('click', '.row-select-daddy .icon-edit:not(.active)', function(){ 
 
 				var $self = $(this);
-				$self.addClass('active').parents('.row-informations').addClass('editing');
+				var $daddy = $self.parents('.row-select-daddy');
+
+				$self.addClass('active');
+				$daddy.addClass('editing');
 				
-				$('.row-informations')
+				$daddy
 					.find('.row-buttons').velocity('transition.fadeIn',{ duration:600 })
 					.end().find('input').attr('readonly', false)
 					.end().find('.row-input')
 					.each( function( i, el ){
 						var current_val = $(el).find('input').val(),
-					    	current_mood_id = $(el).find('.mood.selected').attr('data-moodid'),
-					    	current_drink_id = $(el).find('.drink.selected').attr('data-drinkid'),
-					    	restore_arr = [ current_val, current_mood_id, current_drink_id ];
+					    	current_select_id = $(el).find('.row-select.selected').attr('data-selectid'),
+					    	restore_arr = [ current_val, current_select_id ];
 					    	restore_arr.forEach(function( val ){
 					    		if( val != undefined )
 					    			$(el).attr('data-restore', val );
 					    	});
 					});
-					$('.mood.selected, .drink.selected').removeClass('selected').addClass('modified');
+
+				$daddy.find('.row-select.selected').removeClass('selected').addClass('modified');
 			});
 
-			LJ.$body.on('click', '.row-informations .icon-edit.active, .row-informations .btn-cancel', function(){
+			/* Cancel ugoing modifications */
+			LJ.$body.on('click', '.row-select-daddy .icon-edit.active, .row-select-daddy .btn-cancel', function(){
 
-				$('.row-informations')
+				var $daddy = $(this).parents('.row-select-daddy');
+
+				$daddy
 					.removeClass('editing')
 					.find('.icon-edit.active').removeClass('active')
 					.end().find('input').attr('readonly',true)
@@ -199,11 +217,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					.end().find('[data-restore]')
 					.each(function( i, el ){
 						var val = $(el).attr('data-restore')
-						if( $(el).hasClass('row-name') || $(el).hasClass('row-age') || $(el).hasClass('row-motto') || $(el).hasClass('row-job')) 
-							$(el).find('input').val( val );
-						if( $(el).hasClass('row-mood') || $(el).hasClass('row-drink') )
-							$(el).find('[data-moodid="'+val+'"], [data-drinkid="'+val+'"]').addClass( 'selected' );
-						
+						$(el).find('input').val( val )
+							 .end()
+							 .find('[data-selectid="'+val+'"]').addClass('selected');						
 					});
 
 			});
@@ -334,6 +350,86 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
         		$(this).siblings('input').val( LJ.settings.profileDescList[ LJ.fn.randomInt( 0, list.length - 1) ])
             });
 
+
+		},
+		handleDomEvents_Modal: function(){
+
+			$('.modal-container').on('click','.modal-thumb-picture', function(){
+
+				var $self = $(this);
+
+				if( $self.hasClass('active') )
+					return;
+
+				if( $self.attr('src').split('/').slice(-1)[0] == 'placeholder_picture')
+					return 
+
+				var img_place = $self.attr('img-place');
+				$('.modal-thumb-picture, .modal-user-picture-hashtag').removeClass('active');
+				$self.add( $('.modal-user-picture-hashtag[img-place="'+ img_place +'"]') ).addClass('active');
+
+				var img_version = $self.attr('img_version');
+
+				$('.modal-main-picture').removeClass('active');
+				$('.modal-main-picture[img_version="'+img_version+'"]').addClass('active');
+
+			});
+
+			$('.modal-container').on('click', '.facebook-image-item', function(){
+
+				var $self = $(this);
+
+				if( $self.hasClass('active') ){
+					$self.removeClass('active');
+					$('.modal-container').find('.btn-validate').addClass('btn-validating');
+				} else {
+					$('.facebook-image-item').removeClass('active')
+					$('.modal-container').find('.btn-validate').removeClass('btn-validating');
+					$self.addClass('active');
+				}
+
+			});
+
+			$('.modal-container').on('click', '.btn-cancel', LJ.fn.hideModal );
+
+			$('.modal-container').on('click', '.btn-validate', function(){
+
+				var $self = $(this);
+				if( $self.hasClass('btn-validating') )
+					return;
+
+				if( $('.facebook-image-item.active').length != 1 )
+					return;
+
+				$self.addClass('btn-validating');
+
+				var url = $('.facebook-image-item.active').find('img').attr('src');
+				var img_place = $self.parents('.modal-container-body').children().last().attr('data-img-place');
+
+				LJ.fn.hideModal();
+
+				LJ.fn.updatePictureWithUrl({
+        				userId: LJ.user._id,
+        				url: url,
+        				img_place: img_place
+        			}, function( err, data ){
+
+					if( err )
+						return LJ.fn.handleServerError("L'upload avec Facebook a échoué.");
+
+					LJ.fn.handleServerSuccess("Vos photos ont été mises à jour");
+
+					LJ.fn.replaceImage({
+							img_id: data.img_id,
+							img_version: data.img_version,
+							img_place: img_place,
+							scope: ['profile']
+						});
+
+				});
+				
+
+			});
 
 		},
 		handleDomEvents_Events: function(){
@@ -560,7 +656,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		},
 		handleDomEvents_Search: function(){
 
-			
+			LJ.$body.bind('typeahead:select', function(ev, suggestion) {
+			  LJ.fn.displayUserProfile( suggestion.facebook_id );
+			  //
+			});
 
 		},
 		handleDomEvents_Management: function(){
@@ -651,29 +750,44 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 
 		},
-		handleDomEvents_Contact: function(){
-
-			$('#sendContactForm').click( function(){
-
-				var userId   = LJ.user._id,
-					username = $('#contactName').val(),
-					email = $('#contactMail').val(),
-					bodytext = $('#contactBody').val();
-
-				var data = { userId: userId, username: username, email: email, bodytext: bodytext };
-
-				LJ.fn.showLoaders();
-				$(this).addClass('validating-btn');
-
-				LJ.fn.say('send contact email', data);
-
-			});
-			
-		},
 		handleDomEvents_Settings: function(){
 
-			$('#submitSettingsBtn').click(function(){
-				LJ.fn.updateSettings();
+			LJ.$body.on('click', '.row-ux .btn-validate', function(){
+
+				var $self = $(this);
+				if( $self.hasClass('btn-validating') )
+					return;
+
+				$self.addClass('btn-validating');
+
+				var _id 		  = LJ.user._id,
+				$container    = $('.row-ux')
+				auto_login    = $container.find('.auto_login.modified').attr('data-selectid'),
+				app_preferences = LJ.user.app_preferences;
+
+				app_preferences.ux.auto_login = auto_login;
+
+			var data = {
+				userId		    : _id,
+				app_preferences : app_preferences
+			};
+
+			csl('Emitting update settings [ui]');
+
+			var eventName = 'me/update-settings-ux',
+				data = data
+				, cb = {
+					success: LJ.fn.handleUpdateSettingsUxSuccess,
+					error: function( xhr ){
+						sleep( LJ.ui.artificialDelay, function(){
+							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
+						});
+					}
+				};
+
+				LJ.fn.say( eventName, data, cb );
+				
+
 			});
 
 		}

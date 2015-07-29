@@ -1,9 +1,7 @@
 *{
 } 
 html{
-    overflow: hidden;
-     
-   
+    overflow: auto;
 }
 body{
 	font-family: 'Lato'; /* FF3.6+ */   /* Chrome,Safari4+ */   /* Chrome10+,Safari5.1+ */   /* Opera 11.10+ */   /* IE10+ */   /* W3C */   /* IE6-9 */;
@@ -32,8 +30,8 @@ hl{
 	
 }
 h2{
-	font: normal 40px  'Gochi Hand';
-	letter-spacing: -1px;
+	font: normal 35px  'Londrina Solid';
+	letter-spacing: 0px;
 	text-transform: uppercase;
 	color: #525252;
 	text-align: center;
@@ -44,42 +42,41 @@ h3{
 .bodyWrap{
 	
 }
-label{/*Hello git*/
+
+.full-rotation {
+	-ms-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+}
+
+.slow-down {
+	transition: all ease-out .6s!important;
+}
+
+.super-centered {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%,-50%);
+}
+
+.label{/*Hello git*/
 	font-size: 14px;
 	font-family: 'Lato';
 	font-weight:bolder;
 	margin-right: 15px;
-	width: 70px;
 	display:inline-block;
 	color: #555;
-	border-right: 1px 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	border-right: 1px  
 	solid #ccc;
 	transition: all 
 	ease-out .3s;
+}
+.label-lg {
+	width: 113px;
+}
+.label-md {
+	width: 70px;
 }
 .rel{}
 .right{float:right;}
@@ -93,7 +90,7 @@ img.left{float:left;}
 .centered{
 	position: relative;
 	margin:auto;
-	width: 750px;
+	width: 900px;
 	padding-top: 50px;
 }
 .disabled{
@@ -1148,8 +1145,8 @@ body > header > h5{
 	color: white;
 	background: rgb(32, 32, 32);
 }
-.menu-item div{
-	display:inline;
+.menu-item div:not(.search-result){
+	/* display:inline; */
 	margin-left: 5px;
 }
 .notif{
@@ -1360,7 +1357,6 @@ input[type="radio"] + span{
 
 #thumbWrap{
 	position: fixed;
-	margin-right: 130px;
 	top: -2px;
 	right: 10%;
 	/* background: white; */
@@ -1405,7 +1401,7 @@ input[type="radio"] + span{
 	position: relative;
 	width: 100%;
 }
-#thumbName{
+#thumbName{ 
 	font-weight:normal;
 	text-align: left;
 	font-size: 23px;
@@ -1414,7 +1410,7 @@ input[type="radio"] + span{
 	position: relative;
 	top: -2px;
 	color: white;
-	/* display: inline-block; */
+	font-family: 'Gochi Hand';
 }
 .actionsWrap{
 	margin-top:10px;
@@ -1444,28 +1440,7 @@ input[type="radio"] + span{
 	border-color:gr
 }
 
-#settingsWrap .input-row-wrap{
-	margin-top:16px;
-	width: 100%;
-}
-#settingsWrap .input-row-wrap:first-child{
-	margin-top: 40px;
-	padding-bottom: 15px;
-	border-bottom:1px dashed #ccc;
-}
-#settingsWrap .input-row-wrap:nth-child(4){
-	padding-bottom: 15px;
-	border-bottom:1px dashed #ccc;
-}
-#settingsWrap label{
-	width:150px;
-} 
-#settingsWrap input#currentPw:hover{
-	cursor:not-allowed;
-}
-#settingsWrap #newsletter{
-	width: 15px!important;
-}
+
 
 .formWrap{
 	position:relative;
@@ -1676,3 +1651,7 @@ p{
 	opacity: 1!important;
 } 
 
+
+.curtain-loader {
+	opacity: 0;
+}

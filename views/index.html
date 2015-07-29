@@ -11,9 +11,8 @@
   <title>Meefore | Home </title>
 
   <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Londrina+Solid' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Karla:700,400' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Raleway:800' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Gochi+Hand' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -31,6 +30,7 @@
   <link rel="stylesheet" href="/css/chat.css">
   <link rel="stylesheet" href="/css/media.css">
   <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/modal.css">
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -63,9 +63,8 @@
   <div class="loaderWrap"></div>
   <div class="m-loaderWrap"></div>
   <div class="overlay"></div>
-  <div id="logo-hero"><img src="/img/logomeefore.png" width="50" alt="Logo meefore soirées">
-  </div>
-  <div class="hero-img scaled animatable img-0 active "></div>
+  <div id="logo-hero"><img src="/img/logomeefore.png" width="50" alt="Logo meefore soirées"></div>
+  <div class="hero-img scaled animatable img-0 "></div>
   <div class="hero-img scaled animatable img-1 "></div>
   <div class="hero-img scaled animatable img-2 "></div>
   <div class="hero-img scaled animatable img-3 "></div>
@@ -74,6 +73,7 @@
   <div class="hero-img scaled animatable img-6 "></div>
   <div class="hero-img scaled animatable img-7 "></div>
   <div class="curtain"></div>
+  <div class="modal-container super-centered none"><div class="modal-container-body"></div></div>
 
   <!-- Header start -->
   <header class="lg-header none">
@@ -160,7 +160,7 @@
         <div class="row-subtitle">
           <div class="row-subtitle-text etiquette">Plusieurs photos valent mieux qu'un long discours! Montre toi sous ton plus beau jour.</div>
         </div>
-        <div class="row-body row-center picture-wrap" data-display-settings="displayParamsProfile">
+        <div class="row-body row-center picture-wrap" >
           <!-- Dynamically loaded -->
         </div>
         <div class="row-buttons">
@@ -171,7 +171,7 @@
 
 
       <!-- Edition des informations  -->
-      <div class="row row-profile row-informations ">
+      <div class="row row-profile row-informations row-select-daddy ">
 
         <div class="row-title">
           <div class="row-title-text">Informations</div>
@@ -184,41 +184,41 @@
 
         <div class="row-body">
           <div class="row-divider"></div>
-          <div class="row-input row-name etiquette">
-            <label for="name">Nom</label>
+          <div class="row-input row-input-md row-name etiquette">
+            <label for="name" class="label label-md">Nom</label>
             <input readonly id="name" class="" placeholder="Prad Bitt" type="text" maxlength="25">
           </div>
-          <div class="row-input row-age etiquette">
-            <label for="age">Age</label>
+          <div class="row-input row-input-md row-age etiquette">
+            <label for="age" class="label label-md" >Age</label>
             <input readonly id="age" class="" placeholder="25" type="number" max="50" min="18">
           </div>
-          <div class="row-input row-mood etiquette">
-            <label for="mood">Humeur</label>
-            <div class="mood-wrap">
-              <div class="mood" data-moodid="happy">Happy</div>
-              <div class="mood" data-moodid="fire">Fire</div>
-              <div class="mood" data-moodid="drunk">Drunk</div>
-              <div class="mood" data-moodid="horney">Horney</div>
-              <div class="mood" data-moodid="whatever">Whatever</div>
+          <div class="row-input row-input-md row-mood etiquette">
+            <label for="mood" class="label label-md" >Humeur</label>
+            <div class="row-select-wrap mood-wrap">
+              <div class="row-select mood" data-selectid="happy">Happy</div>
+              <div class="row-select mood" data-selectid="fire">Fire</div>
+              <div class="row-select mood" data-selectid="drunk">Drunk</div>
+              <div class="row-select mood" data-selectid="horney">Horney</div>
+              <div class="row-select mood" data-selectid="whatever">Whatever</div>
             </div>
           </div>
-          <div class="row-input row-drink etiquette">
-            <label for="drink">Verre</label>
-            <div class="drink-wrap">
-              <div class="drink" data-drinkid="water">Eau</div>
-              <div class="drink" data-drinkid="beer">Beer</div>
-              <div class="drink" data-drinkid="wine">Wine</div>
-              <div class="drink" data-drinkid="shots">Shots</div>
-              <div class="drink" data-drinkid="hard">Hard</div>
+          <div class="row-input row-input-md row-drink etiquette">
+            <label for="drink" class="label label-md" >Verre</label>
+            <div class="row-select-wrap drink-wrap">
+              <div class="row-select drink" data-selectid="water">Eau</div>
+              <div class="row-select drink" data-selectid="beer">Beer</div>
+              <div class="row-select drink" data-selectid="wine">Wine</div>
+              <div class="row-select drink" data-selectid="shots">Shots</div>
+              <div class="row-select drink" data-selectid="hard">Hard</div>
             </div>
           </div>
-          <div class="row-input row-motto etiquette">
-            <label class="" for="description">Motto</label>
-            <input readonly maxlength="40" type="text" class="" placeholder="Si tu étais une phrase...">
+          <div class="row-input row-input-md row-motto etiquette">
+            <label class="label label-md" for="description">Motto</label>
+            <input id="motto" readonly maxlength="40" type="text" class="" placeholder="Si tu étais une phrase...">
             <div class="inspire">En manque d'inspi?</div>
           </div>
-          <div class="row-input row-job etiquette">
-            <label for="situation">Situation</label>
+          <div class="row-input row-input-md row-job etiquette">
+            <label class="label label-md" for="situation">Situation</label>
             <input readonly id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
           </div>
         </div>
@@ -237,40 +237,12 @@
           <i class="icon icon-edit icon-feather right"></i>
         </div>
         <div class="row-subtitle">
-          <div class="row-subtitle-text etiquette">Tes amis Facebook sont tous sur meefore. Quoi, il en manque ? Invites-les et gagne des points!</div>
+          <div class="row-subtitle-text etiquette">Tes amis Facebook sont tous sur meefore. Il en manque ? Invites-les et gagne des points!</div>
         </div>
         <div class="row-divider"></div>
         <div class="row-body">
-          <div class="row-friend-item">
-            <div class="row-friend-img"><img src="/img/placeholder.png">
-            </div>
-            <div class="row-friend-name">Léo H.</div>
-            <div class="row-friend-actions"></div>
-          </div>
-          <div class="row-friend-item">
-            <div class="row-friend-img"><img src="/img/placeholder.png">
-            </div>
-            <div class="row-friend-name">Jonathan</div>
-            <div class="row-friend-actions"></div>
-          </div>
-          <div class="row-friend-item">
-            <div class="row-friend-img"><img src="/img/placeholder.png">
-            </div>
-            <div class="row-friend-name">Mathilde</div>
-            <div class="row-friend-actions"></div>
-          </div>
-          <div class="row-friend-item">
-            <div class="row-friend-img"><img src="/img/placeholder.png">
-            </div>
-            <div class="row-friend-name">Ben</div>
-            <div class="row-friend-actions"></div>
-          </div>
-          <div class="row-friend-item">
-            <div class="row-friend-img"><img src="/img/placeholder.png">
-            </div>
-            <div class="row-friend-name">Frankelie</div>
-            <div class="row-friend-actions"></div>
-          </div>
+          <h3>Vous n'avez aucun ami Facebook inscrit. Participer à des before risque d'être compliqué...</h3>
+           <!-- Dynamically loaded -->
         </div>
       </div>
 
@@ -306,10 +278,10 @@
         <div class="filtersWrap none">
 
           <div class="filters-tags-row tags-wrap"> <span>Tags</span>
-            <!-- Content dynamically loaded -->
+             <!-- Dynamically loaded -->
           </div>
           <div class="filters-locs-row locs-wrap">
-            <!-- Content dynamically loaded -->
+             <!-- Dynamically loaded -->
           </div>
         </div>
       </div>
@@ -320,14 +292,14 @@
         </center>
       </div>
       <section id="eventsListWrap">
-        <!-- Content dynamically loaded -->
+         <!-- Dynamically loaded -->
       </section>
       <div id="no">
 
       </div>
       <div id="friendListWrap" class="none">
         <div id="myFriends">
-          <!-- Content dynamically loaded -->
+           <!-- Dynamically loaded -->
         </div>
       </div>
     </section>
@@ -400,36 +372,89 @@
         </div>
       </div>
       <div id="searchUsers">
-        <!-- Content dynamicall loaded -->
+         <!-- Dynamically loaded -->
       </div>
     </section>
 
 
     <section id="settingsWrap" class="none centered">
-      <h2> Préférences </h2>
-      <div id="settingsInputsWrap">
-        <div class="input-row-wrap">
-          <label for="currentEmail">Email</label>
-          <input id="currentEmail" placeholder="Email" type="text" class="input-field_create">
-        </div>
-        <div class="input-row-wrap">
-          <label for="currentPw">Mot de passe</label>
-          <input id="currentPw" class="input-field_create" readonly value="**********" type="text">
-        </div>
-        <div class="input-row-wrap">
-          <label for="newPw">Nouveau mdp</label>
-          <input id="newPw" class="input-field_create" placeholder="New password" maxlength="40" type="password">
-        </div>
-        <div class="input-row-wrap">
-          <label for="newPwConf">Confirmer nouveau mdp</label>
-          <input id="newPwConf" class="input-field_create" placeholder="Confirm new password" maxlength="40" type="password">
-        </div>
-        <div class="input-row-wrap">
-          <label for="newsletter">Recevoir la newz</label>
-          <input id="newsletter" class="input-field_create" type="checkbox">
-        </div>
-        <button id="submitSettingsBtn" class="right themeBtn themeBtnMain">Modifier </button>
+
+      <div class="row row-settings">
+        <h2> Préférences </h2>
       </div>
+
+      <div class="row-divider"></div>
+
+      <div class="row row-settings row-ux row-select-daddy">
+
+        <div class="row-title">
+          <div class="row-title-text">Expérience utilisateur</div>
+          <i class="icon icon-edit icon-feather right"></i>
+        </div>
+
+        <div class="row-subtitle">
+          <div class="row-subtitle-text etiquette">Modifier le comportement général de l'application</div>
+        </div>
+
+        <div class="row-body">
+        <div class="row-divider"></div>
+          <div class="row-input row-input-lg row-auto_login etiquette">
+            <label class="label label-lg"for="">Auto login</label>
+            <div class="row-select-wrap">
+              <div class="row-select auto_login" data-selectid="yes">Oui</div>
+              <div class="row-select auto_login" data-selectid="no">Non</div>
+            </div>
+            <div class="row-select-description etiquette">Activez cette option pour skipper la page d'accueil</div>
+          </div>
+        </div>
+
+        <div class="row-buttons">
+          <button class="theme-btn btn-cancel right">Annuler</button>
+          <button class="theme-btn btn-validate right">Valider</button>
+        </div>
+
+      </div>  
+
+      <div class="row row-settings row-notifications row-select-daddy">
+
+        <div class="row-title">
+          <div class="row-title-text">Alertes et notifications</div>
+          <i class="icon icon-edit icon-feather right"></i>
+        </div>
+
+        <div class="row-subtitle">
+          <div class="row-subtitle-text etiquette">Restez alerté en temps réel lorsqu'un évènement est créé près de chez vous</div>
+        </div>
+
+        <div class="row-body">
+        <div class="row-divider"></div>
+          <div class="row-input row-input-lg row-newsletter etiquette">
+            <label class="label label-lg"for="">Newsletter</label>
+            <div class="row-select-wrap">
+              <div class="row-select newsletter" data-selectid="yes">Oui</div>
+              <div class="row-select newsletter" data-selectid="no">Non</div>
+            </div>
+             <div class="row-select-description etiquette">Notre newsletter est envoyée tous les dimanches</div>
+          </div>
+
+          <div class="row-input row-input-lg row-invitations etiquette">
+            <label class="label label-lg"for="">Invitations</label>
+            <div class="row-select-wrap">
+              <div class="row-select invitations" data-selectid="yes">Oui</div>
+              <div class="row-select invitations" data-selectid="no">Non</div> 
+            </div>
+             <div class="row-select-description etiquette">Bons plans pour être invités à des soirées en VIP</div>
+          </div>
+
+          <div class="row-buttons">
+            <button class="theme-btn btn-cancel right">Annuler</button>
+            <button class="theme-btn btn-validate right">Valider</button>
+          </div>
+
+        </div>
+      </div>
+
+
     </section>
 
 
@@ -458,7 +483,8 @@
   <script src="js/lib/waitForImages.min.js"></script>
   <script src="js/lib/joyride.js"></script>
 
-  <script src="js/lib/typed.js" type="text/javascript"></script>
+  <script src="js/lib/typed.js"></script>
+  <script src="js/lib/jquery.typeahead.js"></script>
   <!-- custom scripts -->
   <script src="js/lj-params.js"></script>
   <script src="js/lj-render.js"></script>
@@ -466,7 +492,6 @@
   <script src="js/lj-admin.js"></script>
   <script src="js/lj.js"></script>
 
-  <script type="text/javascript" src="http://catmull.uk/downloads/bg-loaded/bg-loaded.js"></script>
 
 </body>
 

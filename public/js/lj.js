@@ -2,18 +2,20 @@
 function sleep(ms,cb,p2){setTimeout(function(){cb(p2);},ms)}
 function look(json){ return JSON.stringify(json, null, '\t'); }
 window.csl = function(msg){
-	console.log(msg);
+	delog(msg);
 };
 
 window.LJ.fn = _.merge( window.LJ.fn || {}, 
 
 {
 
-		init: function(){
+		init: function(o){
 
+				if( o.debug )
+					LJ.state.debug = true;
 			
 				/* Landing page animation */
-				this.initLandingPage();
+				this.initAppBoot();
 
 				/* Ajax setup */
 				this.initAjaxSetup();				
@@ -29,6 +31,129 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				/* Init Pusher Connexion via public chan */
 				this.initPusherConnection();
+
+				/* Augment lodash */
+				this.initAugmentations();
+
+				/* Typeahead pluggin */
+				this.initTypeahead();
+
+		},
+		initTypeahead: function(){
+
+			var users = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/users?name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	delog(res);
+  				 }
+			});
+
+			users.initialize()
+				 .done(function(){ })
+				 .fail(function(){ delog('Bloodhound engine failed to initialized'); })
+
+			$('#search input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1,
+				classNames: LJ.typeahead.users.class_names
+			},
+			{
+				name:'users',
+				display:'names',
+				source: users.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion
+				}
+			});
+
+		},
+		renderTypeaheadNotFound: function(){
+			
+			var display_settings = LJ.cloudinary.search.user.params;
+				img_id  		 = LJ.cloudinary.logo.white_on_black.id;
+
+			var message 		 = "Aucun résultats"
+
+			user_main_img = $.cloudinary.image( img_id, display_settings ).prop('outerHTML');
+
+			var html = '<div class="search-result search-result-empty">'
+					   + '<div class="search-result-images">' 
+				       		+ user_main_img 
+				       + '</div>'
+				       + '<div class="search-result-name-wrap">'
+				       + '<div class="search-result-name">' + message + '</div>'
+				       + '</div>'
+				      +'</div>';
+			return html;
+
+		},
+		renderTypeaheadPending: function(){
+
+			var display_settings = LJ.cloudinary.search.user.params; 
+				img_id  		 = LJ.cloudinary.placeholder.id;
+
+			var message 		 = "Recherche..."
+
+			user_main_img = $.cloudinary.image( img_id, display_settings ).prop('outerHTML');
+
+			var html = '<div class="search-result search-result-empty" >'
+					   + '<div class="search-result-images">' 
+				       		+ '<img class="search-loader super-centered" src="/img/495.gif" width="15">'
+				       + '</div>'
+				       + '<div class="search-result-name-wrap">'
+				       + '<div class="search-result-name">' + message + '</div>'
+				       + '</div>'
+				      +'</div>';
+			return html;
+
+		},
+		renderTypeaheadSuggestion: function( user ){
+
+			var user_main_img = '', user_hashtags = '';
+
+			var main_img = LJ.fn.findMainImage( user ),
+				display_settings = LJ.cloudinary.search.user.params;
+				display_settings.img_version = main_img.img_version;
+
+			user_main_img = $.cloudinary.image( main_img.img_id, display_settings ).prop('outerHTML');
+
+			user_hashtags += '<div>#' +  user.drink + '</div>';
+			user_hashtags += '<div>#' +  user.mood + '</div>';
+
+			var html = '<div data-userid="'+user.facebook_id+'">'
+					   + '<div class="search-result-images">' 
+				       		+ user_main_img 
+				       		+ '<img class="search-loader super-centered" src="/img/495.gif" width="15">'
+				       + '</div>'
+				       + '<div class="search-result-name-wrap">'
+				       + '<div class="search-result-name">' + user.name + '</div>'
+				       + '<div class="search-result-hashtags">' + user_hashtags + '</div>'
+				       + '</div>'
+				      +'</div>';
+			return html;
+
+		},
+		initAugmentations: function(){
+
+			/* La base! */
+			_.mixin({
+			    pluckMany: function() {
+			        var array = arguments[0],
+			            propertiesToPluck = _.rest(arguments, 1);
+			        return _.map(array, function(item) {
+			            return _.partial(_.pick, item).apply(null, propertiesToPluck);
+			        });
+				}
+			});
 
 		},
 		initAjaxSetup: function(){
@@ -66,7 +191,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				}
 				if( states.current == 'connected' && LJ.state.connected )
 				{
-					LJ.fn.say('fetch-user-and-configuration', { id: LJ.user._id }, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
+					LJ.fn.say('fetch-user-and-configuration', { userId: LJ.user._id }, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
 
 				}
 			});
@@ -83,18 +208,80 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		initStaticImages: function(){
 
-			var $loader = $.cloudinary.image( LJ.cloudinary.loader_id, LJ.cloudinary.displayParamsLoader );
-				$loader.appendTo( $('.loaderWrap') );
+			LJ.$main_loader = $.cloudinary.image( LJ.cloudinary.loaders.main.id, LJ.cloudinary.loaders.main.params );
+			LJ.$main_loader.appendTo( $('.loaderWrap') );
 
-				LJ.cloudinary.displayParamsLoader.width = 20; /* For mobile use */
-			var $mloader = $.cloudinary.image( LJ.cloudinary.m_loader_id, LJ.cloudinary.displayParamsLoader );
-				$mloader.appendTo( $('.m-loaderWrap'));
+			LJ.$mobile_loader = $.cloudinary.image( LJ.cloudinary.loaders.mobile.id, LJ.cloudinary.loaders.mobile.params );
+			LJ.$mobile_loader.appendTo( $('.m-loaderWrap'));
 
-			LJ.$cLoaderTpl = $.cloudinary.image( LJ.cloudinary.c_loader_id, { cloud_name: "radioreve", width: 12 });
+			LJ.$chat_loader = $.cloudinary.image( LJ.cloudinary.loaders.chat.id, LJ.cloudinary.loaders.chat.params );
+			/* Dynamically cloned and appended */
+
+			LJ.$curtain_loader = $.cloudinary.image( LJ.cloudinary.loaders.curtain.id, LJ.cloudinary.loaders.curtain.params );
+			/* Dynamically cloned and appended */
+			
+
+		},
+		initAppBoot: function(){
+
+			var ls = window.localStorage;
+
+			if( !ls || !ls.getItem('preferences') ){
+				delog('No local data available, initializing lp...');
+				return LJ.fn.initLandingPage();
+			}
+
+			preferences = JSON.parse( ls.getItem('preferences') );
+
+			tk_valid_until = preferences.tk_valid_until;
+			long_lived_tk  = preferences.long_lived_tk;
+
+			if( !tk_valid_until || !long_lived_tk ){
+				delog('Missing init preference param, initializing lp...');
+				return LJ.fn.initLandingPage();
+			}
+
+			if( new moment( tk_valid_until ) < new moment() ){
+				delog('long lived tk found but has expired');
+				return LJ.fn.initLandingPage();
+			}
+
+			var current_tk_valid_until = new moment( tk_valid_until );
+			var now = new moment();
+			var diff = current_tk_valid_until.diff( now, 'd' );
+
+			if( diff < 30 ) {
+				delog('long lived tk found but will expire soon, refresh is needed');
+				return LJ.fn.initLandingPage();
+			}
+
+			delog('Init data ok, auto logging in...');
+			return LJ.fn.autoLogin();
+				
+
+		},
+		fetchUserState: function(){
+			$.ajax({
+				method:'GET',
+				url:'/api/v1/users/'+LJ.user.facebook_id,
+				success: function( user ){
+					delog('User state has been repaired');
+					LJ.user = user;
+				}, error: function( xhr ){
+					delog('Unable to repaire user state!');
+				}
+			})
+		},
+		autoLogin: function(){
+
+			LJ.fn.GraphAPI('/me', function( facebookProfile ){
+					delog( facebookProfile );
+			  		LJ.fn.loginWithFacebook( facebookProfile );
+		  	});
 
 		},
 		initLandingPage: function(){
-        	
+
         	var data = [
         		{
         			'name':'Rue de lappe',
@@ -135,7 +322,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		maxLength = names.length,
         		i 		  = 0;  
 
-        	$('.hero-img').first().waitForImages(function(){
+        	$('html').css({ 'overflow': 'hidden' });
+        	$('.hero-img').first()
+        				  .addClass('active')
+        				  .waitForImages(function(){
 
 	        	$('.curtain').velocity('transition.fadeOut', {});
 	            $('.typed-text').typed({
@@ -165,7 +355,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 	                	setTimeout( function(){
 	                		if( LJ.state.loggingIn ){
 	                			$('.hero-img.active').removeClass('active').addClass('scaled');
-	                			return $('html').css({'overflow':'auto'});
+	                			$('html').css({'overflow':'auto'});
+	                			return 
 	                		} 
 	                		$('.curtain').velocity('transition.fadeIn', {
 	                			duration: 1200, 
@@ -230,10 +421,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				$container    = $('.row-informations')
 				name  		  = $container.find('.row-name input').val(),
 				age   		  = $container.find('.row-age input').val(),
-				description   = $container.find('.row-motto input').val(),
+				motto         = $container.find('.row-motto input').val(),
 				job			  = $container.find('.row-job input').val(),
-				drink 		  = $container.find('.drink.modified').attr('data-drinkid'),
-				mood          = $container.find('.mood.modified').attr('data-moodid');
+				drink 		  = $container.find('.drink.modified').attr('data-selectid'),
+				mood          = $container.find('.mood.modified').attr('data-selectid');
 
 			if( LJ.user.status == 'new' )
 				LJ.user.status = 'idle';
@@ -242,7 +433,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				userId		  : _id,
 				age 		  : age,
 				name 		  : name,
-				description   : description,
+				motto   	  : motto,
 				job           : job,
 				drink 		  : drink,
 				mood          : mood,
@@ -266,7 +457,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		handleUpdateProfileSuccess: function( data ){
 
-			csl('update profile success received, user is : ' + data.user );
+			csl('update profile success received, user is : \n' + JSON.stringify( data.user, null, 4 ) );
 			var user = data.user;
 
 			sleep( LJ.ui.artificialDelay, function(){
@@ -278,38 +469,49 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				LJ.fn.updateClientSettings( user );
 				$('#thumbName').text( user.name );
-				LJ.fn.handleServerSuccess('Vos informations ont été modifiées');
+				LJ.fn.handleServerSuccess('Vos informations ont été modifiées', '.row-informations');
 		
 			});
 
 		},
-		updateSettings: function(){
+		handleUpdateSettingsUxSuccess: function( data ){
 
-			var currentEmail    = $('#currentEmail').val(),
-				newPw 	   		= $('#newPw').val(),
-				newPwConf  		= $('#newPwConf').val(),
-				newsletter 		= $('#newsletter').is(':checked'),
-				userId     		= LJ.user._id;
+			csl('update settings ux success received' );
 
-			var o = { currentEmail: currentEmail, newPw: newPw, newPwConf: newPwConf, newsletter: newsletter, userId: userId }; 
+			sleep( LJ.ui.artificialDelay, function(){
 
-			var eventName = 'me/update-settings',
-				data = o
-				, cb = {
-					success: function( data ){
-						sleep( LJ.ui.artificialDelay, function(){
-							LJ.fn.toastMsg( data.msg, 'info');
-							$('.validating-btn').removeClass('validating-btn');
-						});
-					},
-					error: function( xhr ){
-						sleep( LJ.ui.artificialDelay, function(){
-							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
-						});
-					}
+				$('.row-ux').removeClass('editing')
+					.find('.row-buttons').velocity('transition.fadeOut', {duration: 600 })
+					.end().find('.icon-edit').removeClass('active')
+					.end().find('.btn-validating').removeClass('btn-validating');
+
+				LJ.user = data.user;
+
+				LJ.fn.setLocalStoragePreferences();
+				LJ.fn.handleServerSuccess('Vos informations ont été modifiées', '.row-ux');
+		
+			});
+
+		},
+		setLocalStoragePreferences: function(){
+
+			var auto_login = LJ.user.app_preferences.ux.auto_login;
+
+			if( auto_login == 'yes' ){
+
+				var preferences = {
+					facebook_id : LJ.user.facebook_id,
+					long_lived_tk: LJ.user.facebook_access_token.long_lived,
+					tk_valid_until: LJ.user.facebook_access_token.long_lived_valid_until
 				};
 
-			LJ.fn.say( eventName, o, cb );
+				window.localStorage.setItem('preferences', JSON.stringify( preferences ));					
+			}
+
+			if( auto_login == 'no' ){
+				window.localStorage.removeItem('preferences');
+			}
+
 
 		},
 		swapNodes: function( a, b ){
@@ -322,6 +524,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		loginWithFacebook: function( facebookProfile ){
 
+				delog('logging in with facebook...');
 				$.ajax({
 
 					method:'POST',
@@ -339,13 +542,34 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		handleSuccessLogin: function( data ){
 
+			delog('Handling success login with fb');
 			LJ.user._id = data.id; 
 			LJ.accessToken = data.accessToken; 
 			//document.cookie = 'token='+data.accessToken;
 
 			LJ.fn.say('fetch-user-and-configuration', {}, {
-				beforeSend: function(){ console.log('Fetching user and config...'); },
+				beforeSend: function(){ delog('Fetching user and configuration'); },
 				success: LJ.fn.handleFetchUserAndConfigurationSuccess 
+			});
+
+		},
+		fetchAndSyncFriends: function( callback ){
+
+			LJ.fn.GraphAPI('/me/friends', function( res ){
+
+				var fb_friends = res.data;
+
+				var fb_friends_ids = _.pluck( res.data, 'id' );
+				var data = { userId: LJ.user._id, fb_friends_ids: fb_friends_ids };
+
+				$.ajax({
+					method:'POST',
+					url:'/me/fetch-and-sync-friends',
+					data: data,
+					success: callback,
+					error: LJ.fn.handleServerError
+				});
+
 			});
 
 		},
@@ -411,27 +635,62 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				});
 			}
 
+
 			if( options.mode == 'curtain' ) {
 
 				var prev = options.prev;			
 				var $prev = $('.'+options.prev);
+				
+				var behindTheScene = function(){
 
-				$('.curtain').velocity('transition.fadeIn',
-					{ duration: 800,
-					complete: function(){
-						options.during_cb();
-						$prev.removeClass( prev );
-						content.addClass( prev )
-							   .show()
-							   .css({'display':'block'}); }
-					}).delay(500).velocity('transition.fadeOut', {
-							display:'none',
-							duration: 1000,
-							complete: function(){
-								options.after_cb();
-							}
-						});
+					options.during_cb();
+					$prev.removeClass( prev );
+					content.addClass( prev )
+						   .show()
+						   .css({'display':'block'});
+
+				};
+
+				var afterTheScene = function(){
+					options.after_cb();
+				}
+
+				LJ.fn.displayCurtain({
+					behindTheScene: behindTheScene,
+					afterTheScene : afterTheScene
+				})
+				
+			} 
+
+
+		},
+		displayCurtain: function( opts ){
+
+			var behindTheScene = opts.behindTheScene || function(){ delog('Behind the scene'); },
+				afterTheScene  = opts.afterTheScene   || function(){ delog('after the scene');  },
+				delay          = opts.delay    || 500,
+				duration       = opts.duration || 800;
+
+			var $curtain = $('.curtain');
+
+			if( $curtain.css('opacity') != '0' || $curtain.css('display') != 'none' ){
+				var init_duration = 10;
 			}
+
+				$curtain
+				.velocity('transition.fadeIn',
+				{ 
+					duration: init_duration || duration, //simuler l'ouverture instantanée
+				  	complete: behindTheScene 
+				})
+				.delay( delay )
+				.velocity('transition.fadeOut',
+				{	
+					display : 'none',
+					duration: duration,
+					complete: afterTheScene
+				});
+		
 
 		},
 		updateClientSettings: function( newSettings ){
@@ -503,8 +762,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			if( scope.indexOf('profile') != -1 )
 			{
 				var $element = $('.picture').eq( img_place ),
-					$container = $element.parent('[data-display-settings]');
-					display_settings = LJ.cloudinary[ $container.data('display-settings') ];
+					display_settings = LJ.cloudinary.profile.me.params;
 
 				if( display_settings == undefined )
 					return LJ.fn.toastMsg("Options d'affichage manquantes", "error");
@@ -567,7 +825,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		initCloudinary: function( cloudTags ){
 
 			$.cloudinary.config( LJ.cloudinary.uploadParams );
-			LJ.tpl.$placeholderImg = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsEventAsker );
+			//LJ.tpl.$placeholderImg = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsEventAsker );
 
 			if( cloudTags.length != $('.upload_form').length )
 				return LJ.fn.toastMsg('Inconsistence data', 'error');
@@ -650,7 +908,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 	  							});
 							},
 							error: function( xhr ){
-								console.log('Error saving image identifiers to the base');
+								delog('Error saving image identifiers to the base');
 							}
 						};
 
@@ -747,13 +1005,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			}		
 				
 		},
-		findMainImage: function(){
+		findMainImage: function( user ){
 
-			var index = _.findIndex( LJ.user.pictures, function( el ){
+			var user = user || LJ.user ;
+			var index = _.findIndex( user.pictures, function( el ){
 				return el.is_main == true;
 			});
 
-			return LJ.user.pictures[ index ];
+			return user.pictures[ index ];
 
 		},
         initLayout: function( settings ){
@@ -765,17 +1024,27 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	$( '#no' ).html('').append( LJ.tpl.noResults );
 
 
-    		/* Profile View*/
+    		/* Profile View */
 			//$('.row-subheader').find('span').text( LJ.user._id );
-			$('#name').val( LJ.user.name );
-			$('#age').val( LJ.user.age );
-			$('#description').val( LJ.user.description );
-			$('.drink[data-drinkid="'+LJ.user.drink+'"]').addClass('selected');
-			$('.mood[data-moodid="'+LJ.user.mood+'"]').addClass('selected');
+			$('.row-name').find('input').val( LJ.user.name );
+			$('.row-age').find('input').val( LJ.user.age );
+			$('.row-motto').find('input').val( LJ.user.motto );
+			$('.row-job').find('input').val( LJ.user.job );
+			$('.drink[data-selectid="'+LJ.user.drink+'"]').addClass('selected');
+			$('.mood[data-selectid="'+LJ.user.mood+'"]').addClass('selected');
+
+			/* Settings View */
+			_.keys( LJ.user.app_preferences ).forEach( function( key ){
+				_.keys( LJ.user.app_preferences[ key ] ).forEach( function( sub_key ){
+					var value = LJ.user.app_preferences[ key ][ sub_key ];
+					$('.row-select.' + sub_key + '[data-selectid="'+value+'"]').addClass('selected');
+				});
+			});
+
 
 			/* Mise à jour des images placeholders */
 			$('.picture-wrap').html( LJ.fn.renderProfilePicturesWraps );
-			var $placeholder = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsPlaceholder );
+			var $placeholder = $.cloudinary.image( LJ.cloudinary.placeholder.id, LJ.cloudinary.placeholder.params );
 				$('.picture').prepend( $placeholder );
 
 			/* Update de toutes les images */
@@ -854,12 +1123,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					display:'inline-block',
 					duration: 800,
 					complete: function(){
+
 						$('.menu-item').each( function( i, el ){
 							$(el).append('<span class="bubble filtered"></span>')
 						});
 
 						if( LJ.user.status == 'new' )
 							LJ.fn.initTour();
+
+						if( LJ.user.friends.length == 0 )
+					 		LJ.fn.toastMsg("Aucun de vos amis Facebook n'est sur meefore. Invitez-en !","info");
+				
 					}
 				});
 			};
@@ -878,13 +1152,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         
         	var textProfile = "Tout commence par ton profile! Nom, âge, boisson préférée et c'est parti (1/3)";
-        	//var textSearch  = "Effectues des recherches à propos de n'importe quel membre (2/3)";
-        	var textEvents  = "Tous les before à venir sont visibles ici. Rien ne va? Propose en un! (3/3)";
+        	var textEvents  = "Tous les before à venir sont visibles ici. Rien ne va? Propose en un! (2/3)";
+        	var textSearch  = "Effectues des recherches à propos de n'importe quel membre (3/3)";
 
         	var html = '<ol id="intro">'
 						+ '<li data-class="intro-item" data-id="profile">'+textProfile+'</li>'
-						//+ '<li data-class="intro-item" data-id="search">'+textSearch+'</li>'
 						+ '<li data-class="intro-item" data-id="events">'+textEvents+'</li>'
+						+ '<li data-class="intro-item" data-id="search">'+textSearch+'</li>'
 						+ '</ol>';
 
 			$( html ).appendTo( $('body') );
@@ -903,12 +1177,21 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         },
         handleTourEnded: function(){
-        	console.log('Tour ended');
+
         	$('#profile').click();
         	$('.curtain').delay(700).velocity({opacity:[0,0.4]}, { 
+
         		complete:function(){ 
         			$('.curtain').css({'display':'none'});
-        			LJ.fn.updatePictureWithFacebook( LJ.user._id, LJ.user.fbId, function( err, data ){
+
+        			var url = 'https://graph.facebook.com/' + LJ.user.facebook_id + '/picture?width=180&height=180';
+        			var img_place = 0;
+
+        			LJ.fn.updatePictureWithUrl({
+        				userId: LJ.user._id,
+        				url: url,
+        				img_place: img_place
+        			}, function( err, data ){
 
         				if( err )
         					return LJ.fn.handleServerError("La synchronisation avec Facebook a échouée.");
@@ -931,34 +1214,28 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         },
         handleTourNextStep: function(){
-        	console.log('Tour next step');
         	if( !LJ.state.touring )
         		return LJ.state.touring = true;
         	
         	$('.menu-item-active').next().click();
 
         },
-        handleServerSuccess: function( msg, ms ){
+        handleServerSuccess: function( msg, selector ){
 
-        	var ms = ms || 500;
         	setTimeout( function(){ 
 
-	        if( msg )
-	        	LJ.fn.toastMsg( msg, 'info');
+		        if( msg )
+		        	LJ.fn.toastMsg( msg, 'info');
 
-	        if( $('.mood.modified').length != 0 )
-	        	$('.mood.selected').removeClass('selected');
+		        var $container = $(selector);
+		        $container.find('.selected').removeClass('selected')
+				$container.find('.modified').removeClass('modified').addClass('selected')
+				$container.find('.validating').removeClass('validating')
+				$container.find('.validating-btn').removeClass('validating-btn')
+				$container.find('.asking').removeClass('asking')
+				$container.find('.pending').removeClass('pending');
 
-	        if( $('.drink.modified').length != 0 )
-	        	$('.drink.selected').removeClass('selected');
-
-			$('.modified').removeClass('modified').addClass('selected');
-			$('.validating').removeClass('validating');
-			$('.validating-btn').removeClass('validating-btn');
-			$('.asking').removeClass('asking');
-			$('.pending').removeClass('pending');
-
-        	}, ms );
+        	}, LJ.ui.artificialDelay );
 
         },
         handleServerError: function( msg, ms ){
@@ -983,7 +1260,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
 		initSocketEventListeners: function(){
 			
-				//LJ.fn.on('fetch user success', function( data ){ console.log(data); });
+				//LJ.fn.on('fetch user success', function( data ){ delog(data); });
 
 
 				LJ.fn.on('send contact email success', function(){
@@ -1051,7 +1328,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		handleRequestParticipationInSuccess: function( data ){
 
-			console.log('Handling request participation in success');
+			delog('Handling request participation in success');
 
 			var hostId  	  = data.hostId,
 				  userId 		  = data.userId,
@@ -1138,7 +1415,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		handleRequestParticipationOutSuccess: function( data ){
 
-			console.log( data.asker.name +' asked out' );
+			delog( data.asker.name +' asked out' );
 
 				var userId  	= data.userId,
 					hostId  	= data.hostId,
@@ -1213,7 +1490,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					- On active le pluggin d'upload de photos
 					- On génère le HTML dynamique à partir de données server ( Tags... )
 			*/
-			console.log('User and configuration successfully fetched');
+			delog('Fetching user and config success');
 
 			var user 	 = data.user,
 				settings = data.settings;
@@ -1227,27 +1504,174 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.fn.initChannelListeners();
 			
 			LJ.fn.initLayout( settings );
-			LJ.fn.initCloudinary( user.cloudTags );
+			LJ.fn.setLocalStoragePreferences();
+			LJ.fn.initCloudinary( data.cloudinary_tags );
 
-			LJ.fn.fetchEvents();
+			LJ.fn.fetchEvents(function(){
 
+			});
 
+			/* Update friends based on facebook activity on each connection */
+			LJ.fn.fetchAndSyncFriends(function( data ){
+
+				var friends = data.friends;
+				LJ.user.friends = friends;
+
+				if( friends.length == 0 )
+					return; 
+
+				var html = '';
+				friends.forEach( function( friend ){
+					html += LJ.fn.renderFriendInProfile( friend );
+				});
+				$('.row-friends').find('.row-body').html( html );
+
+			});
+	
 			/* Admin scripts. Every com is secured serverside */	
 			if( LJ.user.access.indexOf('admin') != -1 )
 				LJ.fn.initAdminMode();
 			
 		},
+		displayInModal: function( options ){
+
+			var options = options || {};
+
+			var call_started = new Date();
+			LJ.fn.displayModal();
+
+			var eventName = 'display-content';
+
+			$('.modal-container').on( eventName, function( e, data ){
+
+				var content = data.html_data;
+				var starts_in = LJ.ui.minimum_loading_time - ( new Date() - call_started )
+				setTimeout(function(){
+					
+					var $content = $(content);
+					$('.curtain-loader').velocity('transition.fadeOut', { duration: 300 });
+					$content.hide().appendTo('.modal-container-body');
+
+					$content.waitForImages(function(){
+
+						var old_height = $('.modal-container').outerHeight(),
+							new_height = old_height + $('.modal-container-body > div').outerHeight();
+
+						var old_width = $('.modal-container').outerWidth(),
+							new_width = old_width + $('.modal-container-body > div').outerWidth();	
+
+						$('.modal-container')
+							.velocity({ height: [ new_height, old_height ]/*, width: [ new_width, old_width ] */}, { 
+									duration: 300,
+									complete: function(){
+										$content.velocity('transition.fadeIn');
+										/*options.custom_data.forEach(function(el){
+											$content.attr('data-'+el.key, el.val );
+										}); */
+									} 
+							});
+					});
+
+
+				}, starts_in );
+
+			});
+
+			if( options.source === 'server' )
+			{
+				$.ajax({
+					method:'GET',
+					url: options.url,
+					success: function( data ){
+						var html_data = options.success_cb( data );
+						$('.modal-container').trigger( eventName, [{ html_data: html_data }]);
+					},
+					error: function(){
+						var html_data = options.error_cb();
+						$('.modal-container').trigger( eventName, [{ html_data: html_data }]);
+					},
+					complete: function(){
+						$('.modal-container').unbind( eventName );
+					}
+				});
+			}
+
+			if( options.source === 'facebook' )
+			{	
+				LJ.fn.GraphAPI( options.url, function(res){
+
+					if( !res || !res.data ) {
+						var html_data = options.error_cb();
+					} else {
+						var html_data = options.success_cb( res.data );
+					}
+					
+					$('.modal-container').trigger( eventName, [{ html_data: html_data }]);
+					$('.modal-container').unbind( eventName );
+
+				});
+			}
+
+		},
+		GraphAPI: function( url, callback, opts ){
+
+			var ls = window.localStorage;
+
+			var access_token = ( LJ.user.facebook_access_token && LJ.user.facebook_access_token.long_lived ) 
+							|| ( ls.preferences && JSON.parse( ls.preferences ).long_lived_tk );
+			FB.api( url, { access_token: access_token }, callback );
+
+		},
+		displayUserProfile: function( facebook_id ){
+			LJ.fn.displayInModal({ 
+				url: '/api/v1/users/' + facebook_id,
+				source: 'server',
+				success_cb: LJ.fn.renderUserProfileInCurtain,
+				error_cb: LJ.fn.renderUserProfileInCurtainNone
+			});
+			
+		},
+		displayModal: function( callback ){
+			
+			$('.curtain')
+				.css({'display':'block'})
+				.velocity({ 'opacity': [0.4,0] });
+
+			$('.modal-container')
+				.find('.modal-container-body').html( LJ.$curtain_loader ).end()
+				.css({'display':'block'})
+				.velocity({ 'opacity': [1,0] });
+
+			$('.curtain-loader').velocity('transition.fadeIn', { delay: 200, duration: 300});
+
+		},
+		hideModal: function(){
+
+			$('.curtain')
+				.velocity({ 'opacity': [0,0.4] }, { complete: function(){
+					$('.curtain').css({ display: 'none' }); }
+			});
+
+			$('.modal-container')
+				.velocity({ 'opacity': [0,1] }, { complete: function(){
+					$('.modal-container').css({ display: 'none', height: 'auto' });
+					$(".modal-container-body *:not('.curtain-loader')").remove(); }
+			});
+
+			$('.curtain-loader').hide();
+
+		},
 		initLadder: function( options ){
 
 			if( typeof( options ) != "object" )
-				return console.log('Param error, object needed');
+				return delog('Param error, object needed');
 
 			var max_level  = options.max_level,
 				base_point = options.base_point,
 				coef_point = options.coef_point;
 
 			if( !max_level || !base_point || !coef_point )
-				return console.log('Param error, missing key');
+				return delog('Param error, missing key');
 
 			var skill_ladder = [];
 			for( var i = 1; i <= max_level; i++ ){
@@ -1284,13 +1708,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('.xp-fill').css({ width: ( user_xp - ladder_level.min_xp ) * 100 / xp_range +'%'});
 
 		},
-		updatePictureWithFacebook: function( userId, fbId, callback ){
+		updatePictureWithUrl: function( options, callback ){
 
 			var eventName = 'me/update-picture-fb',
-				data = {
-					userId: userId,
-					fbId: fbId
-				},
+				data = options,
 				cb = {
 					success: function( data ){
 						callback( null, data );
@@ -1460,7 +1881,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			var cb = {
 				beforeSend: function(){},
 				success: function( data ){
-					//console.log(data);
+					//delog(data);
 					var myEvents = data.myEvents;
 					LJ.state.fetchingEvents = false;
 
@@ -1494,8 +1915,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             if( LJ.state.fetchingAskers )
                 return LJ.fn.toastMsg("Already fetching askers", 'error');
 
-        	console.log('Fetching event with id : ' + LJ.user.hosted_event_id );
-
             LJ.state.fetchingAskers = true;
 
             var eventName = 'fetch-askers',
@@ -1512,7 +1931,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					LJ.fn.refreshArrowDisplay();   
             	},
             	error: function( xhr ){
-            		console.log('Error fetching askers');
+            		delog('Error fetching askers');
             	}
             };
 
@@ -1630,7 +2049,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 	      		});
 
-	        	//console.log('Events to display : ' + eventsToDisplay );
+	        	//delog('Events to display : ' + eventsToDisplay );
 
         		/* Transforme un Array de jQuery objects, en un jQuery-Array */
         		LJ.$eventsToDisplay = $(eventsToDisplay).map( function(){ return this.toArray(); });
@@ -1820,10 +2239,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         },
         handleSuccessDefault: function( data ){
-        	console.log('Success!');
+        	delog('Success!');
         },
         handleErrorDefault: function( data ){
-        	console.log('Error!');
+        	delog('Error!');
         },
         displayAddFriendToPartyButton: function(){
 
@@ -1912,10 +2331,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		, data = { userId: userId }
         		, cb = {
         			success: function( data ){
-        				console.log('Test launched...ok');
+        				delog('Test launched...ok');
         			},
         			error: function( xhr ){
-        				console.log('Error! :@');
+        				delog('Error! :@');
         			}
         		};
 
@@ -1953,7 +2372,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			        	});
         			},
         			error: function( xhr ){
-        				console.log('Error canceling event');
+        				delog('Error canceling event');
         				LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
         			}
         		};
@@ -1963,7 +2382,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         suspendEvent: function( eventId, hostId ){
 
-        	console.log('Suspending event with id : ' + eventId + ' and hostId : ' + hostId );
+        	delog('Suspending event with id : ' + eventId + ' and hostId : ' + hostId );
         	$( '#suspendEvent' ).addClass( 'pending' );
 
         	var eventName = 'event/suspend',
@@ -1991,13 +2410,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         			},
         			error: function( xhr ){
         				sleep( LJ.ui.artificialDelay, function(){
-	        				console.log('Error suspending event');
+	        				delog('Error suspending event');
 	        				LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
         				});
         			}
         		};
 
-        	console.log('Calling say with eventName:' +eventName+'  and data:'+data);
+        	delog('Calling say with eventName:' +eventName+'  and data:'+data);
         	LJ.fn.say( eventName, data, cb );
 
         },
@@ -2043,7 +2462,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						eventWrap.attr('data-eventstate', eventState );
 
 						if( LJ.user.asked_events.indexOf( eventId ) != -1 ){
-							return console.log('Exiting');
+							return delog('Exiting');
 						}
 						 eventWrap.find('button.askIn')
 						 		  .text( textBtn );
@@ -2098,8 +2517,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 $('document').ready(function(){
 		
-		csl('Application ready!');
-		LJ.fn.init();
 
 		/* Recursive initialisation of FB pluggin*/
 		var initFB = function(time){
@@ -2109,9 +2526,177 @@ $('document').ready(function(){
 					    xfbml      : true,  // parse social plugins on this page
 					    version    : 'v2.1' // use version 2.1
 				});
+			LJ.fn.init({ debug: true });
+			csl('Application ready!');
 		}
 
 		initFB(300);
 
-
 });
+
+
+function delog(msg){
+	if( LJ.state.debug )
+		console.log(msg);
+}
+
+
+
+window.dumdata = [
+  {
+    "_id": "55aa651dd00913bc0a5b9eed",
+    "index": 0,
+    "guid": "8c2a16ea-1eb6-4fb4-a2a8-0cf3815cae43",
+    "isActive": true,
+    "picture": "http://placehold.it/32x32",
+    "age": 26,
+    "name": "Fannie Cain",
+    "gender": "female",
+    "email": "fanniecain@telequiet.com",
+    "registered": "2014-02-20T07:16:14 -01:00",
+    "latitude": 79.631695,
+    "longitude": -13.765706,
+    "tags": [
+      "qui",
+      "est",
+      "culpa",
+      "non",
+      "cillum",
+      "aliquip",
+      "laboris"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Rene Reed"
+      },
+      {
+        "id": 1,
+        "name": "Francine Banks"
+      },
+      {
+        "id": 2,
+        "name": "Susan Strong"
+      }
+    ],
+    "greeting": "Hello, Fannie Cain! You have 4 unread messages.",
+    "favoriteFruit": "apple"
+  },
+  {
+    "_id": "55aa651dadb7755339c32793",
+    "index": 1,
+    "guid": "e93dee0b-d865-4c70-86e1-4a0600e95cc0",
+    "isActive": true,
+    "picture": "http://placehold.it/32x32",
+    "age": 40,
+    "name": "Bauer Bird",
+    "gender": "male",
+    "email": "bauerbird@telequiet.com",
+    "registered": "2014-11-02T13:09:28 -01:00",
+    "latitude": 83.599981,
+    "longitude": 127.370264,
+    "tags": [
+      "est",
+      "velit",
+      "in",
+      "veniam",
+      "labore",
+      "laborum",
+      "voluptate"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Stark Wiley"
+      },
+      {
+        "id": 1,
+        "name": "Bonnie George"
+      },
+      {
+        "id": 2,
+        "name": "Higgins Shepard"
+      }
+    ],
+    "greeting": "Hello, Bauer Bird! You have 1 unread messages.",
+    "favoriteFruit": "banana"
+  },
+  {
+    "_id": "55aa651df3ddc578abf5b576",
+    "index": 2,
+    "guid": "65ff1b0f-127f-4549-900b-7bf61cf9f683",
+    "isActive": false,
+    "picture": "http://placehold.it/32x32",
+    "age": 21,
+    "name": "Tessa Anthony",
+    "gender": "female",
+    "email": "tessaanthony@telequiet.com",
+    "registered": "2015-06-12T13:19:33 -02:00",
+    "latitude": -83.109766,
+    "longitude": -90.599844,
+    "tags": [
+      "dolor",
+      "et",
+      "voluptate",
+      "ut",
+      "ipsum",
+      "ut",
+      "exercitation"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Thelma Wagner"
+      },
+      {
+        "id": 1,
+        "name": "Denise Barrera"
+      },
+      {
+        "id": 2,
+        "name": "Alexander David"
+      }
+    ],
+    "greeting": "Hello, Tessa Anthony! You have 1 unread messages.",
+    "favoriteFruit": "banana"
+  },
+  {
+    "_id": "55aa651daa2c00a661e298be",
+    "index": 3,
+    "guid": "008c2b0a-9aff-4767-8a2b-b0f6935ac7e5",
+    "isActive": false,
+    "picture": "http://placehold.it/32x32",
+    "age": 20,
+    "name": "Renee Henry",
+    "gender": "female",
+    "email": "reneehenry@telequiet.com",
+    "registered": "2014-07-13T04:19:49 -02:00",
+    "latitude": -82.359818,
+    "longitude": -110.960972,
+    "tags": [
+      "mollit",
+      "nostrud",
+      "ullamco",
+      "ad",
+      "sit",
+      "eu",
+      "sit"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Rosario Freeman"
+      },
+      {
+        "id": 1,
+        "name": "Blevins Carroll"
+      },
+      {
+        "id": 2,
+        "name": "Elinor Norton"
+      }
+    ],
+    "greeting": "Hello, Renee Henry! You have 8 unread messages.",
+    "favoriteFruit": "apple"
+  }
+]

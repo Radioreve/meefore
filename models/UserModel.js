@@ -20,6 +20,10 @@ var UserSchema = new mongoose.Schema({
   facebook_scope: {
     type: Array
   },
+  facebook_access_token: {
+    type: Object,
+    default: { short_lived: null, long_lived: null, long_lived_valid_until: null }
+  },
   signup_date: {
     type: Date
   },
@@ -38,7 +42,7 @@ var UserSchema = new mongoose.Schema({
     type: String,
     default:''
   },
-  description: {
+  motto: {
     type: String,
     default:''
   },
@@ -88,9 +92,17 @@ var UserSchema = new mongoose.Schema({
     type: Array,
     default: []
   },
-  newsletter:{
-    type: Boolean,
-    default: true
+  app_preferences: {
+    type: Object,
+    default: {
+      email: {
+        'newsletter'  : 'yes',
+        'invitations' : 'no'
+      },
+      ux: {
+        'auto_login': 'no'
+      }
+    }
   },
   skill: {
     type: Object,

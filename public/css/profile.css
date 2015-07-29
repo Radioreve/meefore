@@ -1,7 +1,6 @@
 /* Générales */
 
 #profileWrap {
-    width: 880px;
 } 
 ::-webkit-file-upload-button { cursor:pointer; }
 
@@ -21,45 +20,12 @@
     border-bottom: none;
 }
 .row-title .icon {
-    border: 1px 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    solid 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    black;
+    border: 1px                                                                                                       solid                                                                                                       #BABABA;
     padding: 7px 5px;
     border-radius: 20px;
     position: relative;
-    background-color: white;
+    background-color: #FFFFFF;
+    color: #515151;
     top: 27px;
     cursor: pointer;
     transition: all      
@@ -67,13 +33,12 @@
 }
 .row-title .icon.active,
 .row-pictures i.selected {
-    background: #555;
+    background: #656565;
     color: white;
     border: 1px solid black;
 }
 .row-title .icon:not(.active):hover {
-    background: #fff;
-}
+background: #F3F3F3;}
 .row-body {
     font-family: 'Karla';
 }
@@ -90,7 +55,7 @@
 .row-center {
     text-align: center;
 }
-.row-profile {
+.row {
     margin-bottom: 20px;
     padding-bottom: 25px;
 }
@@ -253,7 +218,6 @@
     margin: 20px 0;
 }
 .row-input {
-    width: 49%;
     display: inline-block;
     background-color: white;
     padding: 10px 0 10px 13px;
@@ -262,33 +226,44 @@
     color: #D6D6D6;
     height: 43px;
 }
+.row-input-md {
+    width: 49%;
+}
+.row-input-lg {
+    width: 100%;
+}
 .row-input input[type="text"] {
     width: 78%;
     padding-left: 7px;
 }
-.row-input label {} .mood-wrap,
-.drink-wrap {
+.row-input label {} 
+.row-select-wrap{
     display: inline-block;
 }
-.mood,
-.drink {
+.row-select {
     display: inline-block;
     font-size: 13px;
     padding: 5px 9px;
     border-radius: 2px;
     transition: all 
-    
-    
-    
-    
     ease-out .3s;
     border: 1px 
     solid white;
+    cursor: pointer;
 }
-.mood.selected,
-.drink.selected {
+.row-select.selected {
     background: #F7F7F7;
     color: #313131;
+}
+.row-select-description {
+    /* font-style: italic; */
+    display: inline-block;
+    font-size: 13px;
+    color: #535353;
+    margin-right: 15px;
+    background: #F7F7F7;
+    padding: 6px;
+    float: right;
 }
 .row.editing label {
     color: #ccc;
@@ -301,18 +276,14 @@
 .row.editing .row-input {
     color: #555;
 }
-.row.editing .mood,
-.row.editing .drink {
-    /* background: #F7F7F7; */
-}
-.row.editing .mood.selected,
-.row.editing .drink.selected {
+
+.row.editing .row-select.selected{
     background-color: #E4E4E4;
 }
-.row.editing .mood.modified,
-.row.editing .drink.modified {
+.row.editing .row-select.modified{
     background-color: #E4E4E4;
 }
+
 .inspire {
     float: right;
     position: relative;
@@ -348,12 +319,13 @@
     margin: 0 3px;
 } .row-friend-img {
     text-align: center;
+    cursor: pointer;
 } .row-friend-img img {
-    width: 80%;
+    /* width: 80%; */
 } .row-friend-name {
     background-color: #FFF;
-    border-top: 1px                                                                                                                                                                                          
-    solid #A0A0A0;
+    /* border-top: 1px                                                                                                                                                                                          
+    solid #A0A0A0; */
     font-size: 14px;
     text-align: center;
     padding: 6px 0px;
@@ -646,4 +618,29 @@ padding-right: 3px;}
     
     solid #ccc;
     border-radius: 35px;
+}
+
+.facebook-image-item-wrap {
+
+}
+
+.facebook-image-item {
+    width:100px;
+    display: inline-block;
+    text-align: center;
+    background: white;
+    padding: 7px;
+    border: 1px solid #F3F3F3;
+    box-shadow: 0 0 1px #ccc;
+    margin: 0 2px;
+    cursor:pointer;
+    opacity:.6;
+}
+
+.facebook-image-item.active {
+   opacity:1; 
+}
+
+.upload-buttons {
+    margin-top:15px;
 }

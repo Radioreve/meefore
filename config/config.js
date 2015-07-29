@@ -2,21 +2,21 @@
 
 	var config = {
 
-		dev: {
+		  dev: {
 			dbUri: "mongodb://Radioreve:"+process.env.PW+"@dogen.mongohq.com:10008/meefore-staged"
 		}
 		, prod: {
 			dbUri: "mongodb://Radioreve:"+process.env.PW+"@dogen.mongohq.com:10021/Meefore-Sandbox"
 		}
-		, jwtSecret:"Wenighters"	
+		, jwtSecret: "Wenighters"	
 		, cloudinary: {
 			cloud_name:"radioreve",
 			api_key:"835413516756943",
 			api_secret:"MMKeDsJlgYDvDdR2wsep0DZRggo"
 		}
 		, facebook: {
-			clientID:"1509405206012202",
-			clientSecret:"4525e27d90dcc73f716dae4fa36c6885"
+			client_id:"1509405206012202",
+			client_secret:"4525e27d90dcc73f716dae4fa36c6885"
 		}
 		, pusher: {
 			appId:'114856',
@@ -26,6 +26,9 @@
 		, sendgrid: {
 			api_user: 'Radioreve',
 			api_key: 'R4dioreve'
+		}
+		, mailchimp: {
+			api_key: '1975e0d603d5cb51d2cabd25dfab1d94-us10'
 		}
 
 	}

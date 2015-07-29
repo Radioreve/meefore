@@ -22,7 +22,7 @@
 		if( !res ) return console.log('Missing res Object from arguments');
 		expose = expose || {};
 		
-		if( print ) console.log('Exposing : '+ JSON.stringify(expose) );
+		if( print ) console.log('Exposing : '+ JSON.stringify(expose, null, 4) );
 		res.status( 200 ).json( expose ).end();
 		return;
 		
@@ -71,11 +71,11 @@
   					description: 	 user.description,
   					img_id:      	 user.img_id,
   					img_version: 	 user.img_version,
-  					friends:      user.friends,
-  					asked_events: user.asked_events,
-  					hosted_event_id:   user.hosted_event_id,
+  					friends:         user.friends,
+  					asked_events:    user.asked_events,
+  					hosted_event_id: user.hosted_event_id,
   					newsletter:      user.newsletter,
-  					channels:      user.channels
+  					channels:        user.channels
 
 				},
 				audience = user.access,

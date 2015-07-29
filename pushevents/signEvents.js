@@ -29,15 +29,16 @@
 	
 	var handleFacebookAuth = function( req, res ){
 
-		var fbId   = req.body.facebookProfile.id,
-			email  = req.body.facebookProfile.email,
-			gender = req.body.facebookProfile.gender,
-			fbURL  = req.body.facebookProfile.link,
-			name   = req.body.facebookProfile.first_name;
+		var facebook_id  	 = req.body.facebookProfile.id,
+				access_token = req.body.facebookProfile.access_token,
+				    email  	 = req.body.facebookProfile.email,
+				     gender  = req.body.facebookProfile.gender,
+				   	  fbURL  = req.body.facebookProfile.link,
+				     	name = req.body.facebookProfile.first_name;
 
-		console.log('Authenticating with Facebook with id : ' + fbId );
+		console.log('Authenticating with Facebook with id : ' + facebook_id );
 
-		User.findOne({ 'facebook_id': fbId }, function( err, user ){
+		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
 
 			if( err )
 				return eventUtils.raiseError({
@@ -51,13 +52,21 @@
 				console.log('User found, login in...');
 				var accessToken = eventUtils.generateAppToken( user ); 
 
-				var expose = { id: user._id, accessToken: accessToken },
-					channel = _.result( _.find( user.channels, function(el){ return el.access_name == 'mychan'; }), 'channel_label');
-				
-				eventUtils.sendSuccess( res, expose );
+				facebook_access_token = user.facebook_access_token;
+				facebook_access_token.short_lived = access_token; 
 
-				var d = moment();
-				watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
+				User.findByIdAndUpdate( user._id, { facebook_access_token: facebook_access_token }, { new: true }, function( err, user ){
+
+					var expose  = { id: user._id, accessToken: accessToken },
+					channel = _.result( _.find( user.channels, function(el){ return el.access_name == 'mychan'; }), 'channel_label');
+					
+					eventUtils.sendSuccess( res, expose );
+
+					var d = moment();
+					watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
+
+				});
+
 				return;
 			}
 
@@ -65,7 +74,8 @@
 			/* L'utilisateur n'existe pas, on crée son compte et on le connecte à l'application */
 			var newUser = new User();
 
-			newUser.facebook_id = fbId;
+			newUser.facebook_id = facebook_id;
+			newUser.facebook_access_token.short_lived = access_token;
 			newUser.email = email;
 			newUser.gender = gender;
 			newUser.name = name;
@@ -77,12 +87,12 @@
 			var access_name = 'mychan',
 				channel_label = eventUtils.makeChannel({ access_name: access_name, token: token }) 
 
-			newUser.channels.push( {access_name:access_name, channel_label:channel_label} );
+			newUser.channels.push({ access_name: access_name, channel_label: channel_label });
 
 			var access_name = 'defchan',
 				channel_label = eventUtils.makeChannel({ access_name: access_name }) 
 
-			newUser.channels.push( {access_name:access_name, channel_label:channel_label} );
+			newUser.channels.push({ access_name: access_name, channel_label: channel_label });
 			
 			newUser.save( function( err, user ){
 

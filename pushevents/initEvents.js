@@ -26,10 +26,8 @@
 
 	var fetchUserAndConfiguration = function( req, res ){
 
-		var	userId = req.userId;
+		var	userId = req.body.userId;
 		
-		console.log( userId );
-
 		User.findById( userId, {}, function( err, user ){
 
 			if( err )
@@ -48,9 +46,9 @@
 					res: res			
 				});
 
-			var cloudTags = [];
+			var cloudinary_tags = [];
 			for( var i = 0; i < 5; i ++){
-			cloudTags.push( cloudinary.uploader.image_upload_tag( 'hello_world' , { public_id: userId+'--'+i }));
+			cloudinary_tags.push( cloudinary.uploader.image_upload_tag( 'hello_world' , { public_id: userId+'--'+i }));
 			}
 
 				/* Contient toutes les informations exposées publiquement lors de la première connection */
@@ -65,29 +63,8 @@
 					base_coef: settings.ladder_base_coef
 				});
 
-				expose.user = {
-
-					_id:         	 user._id,
-					fbId:            user.facebook_id, 
-  					email:       	 user.email,
-  					name:        	 user.name,
-  					age:         	 user.age,
-  					skill:           user.skill,
-  					access:          user.access, 
-  					gender:          user.gender,
-  					drink:           user.drink,
-  					mood:            user.mood,
-  					status:      	 user.status,
-  					description: 	 user.description,
-  					pictures:        user.pictures,
-  					friends:         user.friends,
-  					asked_events:    user.asked_events,
-  					hosted_event_id: user.hosted_event_id,
-  					newsletter:      user.newsletter,
-  					channels:        user.channels,
-  					cloudTags:    	 cloudTags
-  					
-				};
+				expose.user = user;
+				expose.cloudinary_tags = cloudinary_tags;
 
 			eventUtils.sendSuccess( res, expose );
 

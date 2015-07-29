@@ -6,14 +6,27 @@
 	accessToken:'',
 	ui:{
 		artificialDelay: 700,
+		minimum_loading_time: 1000,
 		displayIn:  { opacity: [1, 0], translateX: [-8, 0]   },
 		displayOut: { opacity: [0, 1], translateX: [10, 0]   }
 	},
+	typeahead: {
+		users: {
+			class_names: {
+				input:'',
+				hint:'',
+				menu:'search-results',
+				dataset:'search-wrap',
+				suggestion:'search-result-users search-result',
+				empty:'empty',
+				open:'open',
+				cursor:'cursor',
+				highlight:'highlight'
+			}
+		}
+	},
 	cloudinary:{
 		uploadParams: { cloud_name:"radioreve", api_key:"835413516756943" },
-
-		/* Image de profile */
-		displayParamsProfile: { cloud_name: "radioreve", width: 150, height: 150, crop: 'fill', gravity: 'face' },
 
 		/* Image de l'host dans un event */
 		displayParamsEventHost: { cloud_name :"radioreve", width: 80, height: 80, crop: 'fill', gravity: 'face', radius: '2' },
@@ -36,12 +49,64 @@
         /* Image secondaire des askers dans vue management, lorsqu'ils sont refusé */
         displayParamsAskerThumbRefused: { cloud_name: "radioreve", width:45, height:45, crop:'fill', effect:'grayscale', gravity:'face', radius:'max' },
         
-        loader_id: "ajax-loader-black2_eudxhv",
-        m_loader_id: "ajak2_wh8pub",
-        c_loader_id: "gif-talk_kqromd",
-        displayParamsLoader:{ cloud_name :"radioreve", html: { 'class': 'loader'} },
-        placeholder_id: "placeholder_jmr9zq",
-        displayParamsPlaceholder:{ cloud_name :"radioreve", html: { 'class': 'mainPicture' }, width:150 }
+		/* Image of friends in profile view */
+		profile: {
+			me: {
+				params: { cloud_name: "radioreve", width: 150, height: 150, crop: 'fill', gravity: 'face' }
+			},
+			friends: {
+				params: { cloud_name: "radioreve", width: 50, height: 50, crop: 'fill', gravity: 'face' }
+			}
+		},
+		search: {
+			user: {
+				params: { cloud_name: "radioreve", 'class': 'super-centered', width: 40, height: 40, crop: 'fill', gravity: 'face' }
+			}
+		},
+        curtain: {
+        	main: {
+        		params: { cloud_name: "radioreve", 'class': 'modal-main-picture etiquette', width: 250, height: 250, crop: 'fill', gravity: 'face' }
+        	},
+        	main_active: {
+        		params: { cloud_name: "radioreve", 'class': 'modal-main-picture etiquette active', width: 250, height: 250, crop: 'fill', gravity: 'face' }
+        	},
+        	thumb: {
+        		params: { cloud_name: "radioreve", 'class': 'modal-thumb-picture', crop: 'fill', gravity: 'face' }	
+        	},
+        	thumb_active: {
+        		params: { cloud_name: "radioreve", 'class': 'modal-thumb-picture active', crop: 'fill', gravity: 'face' }
+        	}
+        },
+        logo: {
+        	black_on_white: {
+        		id:'logo_black_on_white'
+        	},
+        	white_on_black: {
+        		id:'logo_white_on_black'
+        	}
+        },
+        placeholder: {
+        	id: 'placeholder_picture',
+        	params: { cloud_name :"radioreve", html: { 'class': 'mainPicture' }, width: 150 }
+        },
+    	loaders: {
+    		main: {
+    			id: 'main_loader',
+    			params: { cloud_name :"radioreve", 'class': 'ajax-loader' }
+    		},
+    		mobile: {
+    			id: 'mobile_loader',
+    			params: { cloud_name :"radioreve", 'class': 'ajax-loader', width: 25 }
+    		},
+    		chat: {
+    			id: 'chat_loader',
+    			params: { cloud_name :"radioreve", 'class': 'chat-loader', width: 12 }
+    		},
+    		curtain: {
+    			id: 'curtain_loader_v4',
+    			params: { cloud_name :"radioreve", 'class': 'curtain-loader super-centered', width: 20 }
+    		}
+    	},
 	},
 	/* To be dynamically filled on login */
 	user:{},
@@ -56,8 +121,10 @@
     selectedTags: [],
     selectedLocations: [],
     $eventsToDisplay: $(),
-    $cLoaderTpl: $(),
-    nextCallback:{},
+    $main_loader: $(),
+    $mobile_loader: $(),
+    $chat_loader: $(),
+    $curtain_loader: $(),
 	state: {
 		connected: false,
 		fetchingEvents: false,

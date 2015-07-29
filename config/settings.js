@@ -42,7 +42,7 @@ var settings = {
 			 ],
 	placeholder: 
 			{
-				img_id:"placeholder_spjmx7",
+				img_id:"placeholder_picture",
 				img_version:"1407342805"
 			},
 	ladder_max_level: 30,

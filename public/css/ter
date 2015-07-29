@@ -1,0 +1,618 @@
+/* Générales */
+
+#profileWrap {
+    width: 880px;
+} 
+::-webkit-file-upload-button { cursor:pointer; }
+
+.row-title {
+    text-transform: uppercase;
+    font-weight: bolder;
+    font-size: 13px;
+    color: #484848;
+    border-bottom: 1px solid;
+    box-shadow: 0 0 2px black;
+    margin-bottom: 3px;
+}
+.row-title-text {
+    font: bold 22px 'Gochi Hand';
+    display: inline-block;
+    padding: 8px;
+    border-bottom: none;
+}
+.row-title .icon {
+    border: 1px                                                                                                       solid                                                                                                       #401414;
+    padding: 7px 5px;
+    border-radius: 20px;
+    position: relative;
+    background-color: #E5E5E5;
+    color: #515151;
+    top: 27px;
+    cursor: pointer;
+    transition: all      
+    ease-out .3s;
+}
+.row-title .icon.active,
+.row-pictures i.selected {
+    background: #656565;
+    color: white;
+    border: 1px solid black;
+}
+.row-title .icon:not(.active):hover {
+background: #F3F3F3;}
+.row-body {
+    font-family: 'Karla';
+}
+.row-subtitle {
+    text-align: center;
+}
+.row-subtitle-text {
+    font-family: 'Karla';
+    font-size: 14px;
+}
+.picture-wrap {
+    margin-top: 50px;
+}
+.row-center {
+    text-align: center;
+}
+.row-profile {
+    margin-bottom: 20px;
+    padding-bottom: 25px;
+}
+/* Pictures */
+
+.picture {
+    text-align: center;
+    position: relative;
+    background: white;
+    border: 1px solid rgb(228, 228, 228);
+    width: 160px;
+    padding-top: 4px;
+    margin: 0 3px;
+    transition: .4s;
+    display: inline-block;
+    vertical-align: top;
+}
+.picture:hover {
+    border: 1px double #dde;
+    box-shadow: 0 0 2px #CCCCDC;
+}
+.main-picture {
+    transform: scale(1.2);
+    top: -2px;
+    margin: 0 20px;
+}
+.main-picture i.icon-main,
+.main-picture i.icon-delete {
+    display: none;
+}
+.picture-hashtag {
+    text-align: center;
+    width: 90%;
+    margin: 0 auto;
+    position: relative;
+    top: -4px;
+}
+.picture-hashtag input {
+    width: 114px;
+    padding: 3px 3px 3px 6px;
+    color: #B7B7B7;
+    border-bottom: 1px solid transparent;
+    transition: all .5s;
+    font-family: 'Karla';
+}
+
+.row-pictures.editing .picture-hashtag {
+    border-bottom: 1px solid #C1C1C1;
+    background-color: whitesmoke;
+    color: #312525;
+}
+.picture-edit {
+    display: none;
+}
+.picture-edit,.picture-upload {
+    width: 160px;
+    height: 152px;
+    position: absolute;
+    background-color: rgba(254, 254, 254, 0.58);
+    top: 0px;
+    left: -1px;
+    padding-top: 71px;
+}
+
+.upload-facebook,
+.upload-desktop {
+    display:inline-block;
+    position: relative;
+    cursor:pointer;
+}
+
+.upload_form + i{
+    cursor:pointer;
+}
+.upload_form:hover + i{
+    background-color: #F3F3F3;
+}
+
+.picture-upload i:hover{
+    background-color: #F3F3F3;
+}
+
+.picture-edit i, .picture-upload i {
+    font-size: 20px;
+    background-color: white;
+    border: 1px 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    solid #696969;
+    padding: 3Px;
+    color: #828282;
+    margin: 3px;
+    transition: all       
+    ease-out .2s;
+    cursor: pointer;
+}
+.picture-edit i:not(.selected):hover {
+    background: #eee;
+}
+.picture-edit i:first-child {
+}
+.row-buttons {
+    display: none;
+    margin-top: 36px;
+}
+.picture-edit > div {
+    display: inline-block;
+}
+.mainPicture {
+    padding: 9px;
+    background: white;
+}
+/*various hacks*/
+
+.upload_form {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#profileWrap .cloudinary-fileupload {
+    width: 35px;
+    height: 30px;
+    position: absolute;
+    top: -5px;
+    left: 3px;
+    opacity: 0.01;
+}
+/* Informations */
+
+.row-divider {
+    margin: 20px 0;
+}
+.row-input {
+    width: 49%;
+    display: inline-block;
+    background-color: white;
+    padding: 10px 0 10px 13px;
+    margin: 5px 0;
+    position: relative;
+    color: #D6D6D6;
+    height: 43px;
+}
+.row-input input[type="text"] {
+    width: 78%;
+    padding-left: 7px;
+}
+.row-input label {} .mood-wrap,
+.drink-wrap {
+    display: inline-block;
+}
+.mood,
+.drink {
+    display: inline-block;
+    font-size: 13px;
+    padding: 5px 9px;
+    border-radius: 2px;
+    transition: all 
+    
+    
+    
+    
+    ease-out .3s;
+    border: 1px 
+    solid white;
+}
+.mood.selected,
+.drink.selected {
+    background: #F7F7F7;
+    color: #313131;
+}
+.row.editing label {
+    color: #ccc;
+    -webkit-transition: all ease-out .15s;
+    transition: all ease-out .15s;
+}
+.row.editing .row-input:hover label {
+    color: #555;
+}
+.row.editing .row-input {
+    color: #555;
+}
+.row.editing .mood,
+.row.editing .drink {
+    /* background: #F7F7F7; */
+}
+.row.editing .mood.selected,
+.row.editing .drink.selected {
+    background-color: #E4E4E4;
+}
+.row.editing .mood.modified,
+.row.editing .drink.modified {
+    background-color: #E4E4E4;
+}
+.inspire {
+    float: right;
+    position: relative;
+    opacity: 0;
+    visibility: hidden;
+    font-size: 12px;
+    right: 5px;
+    cursor: pointer;
+    top: 17px;
+    color: #696969;
+    transition: all 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ease-out .3s;
+}
+.row.editing .row-motto:hover .inspire {
+    opacity: 1;
+    visibility: visible;
+}
+/* Friends */
+
+.row-friend-item {
+    width: 80px;
+    display: inline-block;
+    background-color: white;
+    margin: 0 3px;
+    border-bottom: 1px solid #e4e4e4;
+    box-shadow: 0 0 1px #e4e4e4;
+} .row-friend-img {
+    text-align: center;
+    cursor: pointer;
+} .row-friend-img img {
+    width: 80%;
+} .row-friend-name {
+    background-color: #FFF;
+    border-top: 1px                                                                                                                                                                                          
+    solid #A0A0A0;
+    font-size: 14px;
+    text-align: center;
+    padding: 6px 0px;
+} .row-friend-actions {}
+
+
+
+/* Sous titre */
+.row-subheader {
+    text-align: center;
+}
+.row-subheader-bar {
+    border-bottom: 1px                                                                                                                                                                                                                                                                          
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    solid                                                                                                                                                                                                    #D0D0D0;
+    border-top: 1px           
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    solid           #F3F3F3;
+    margin: 3px 10px;
+    width: 30px;
+    display:inline-block;
+}
+.row-subheader-xp {
+
+font-size: 11px;
+}
+.xp-amount {
+padding-right: 3px;}
+.xp-fill {
+    width: 20%;
+    height:100%;
+    transition: all                                                                                                                                                                                           
+    
+    ease-in-out .7s;
+    background: #eee;
+}
+.row-subheader-xp-bar {
+    display:inline-block;
+    width: 400px;
+    height: 8px;
+    border: 1px 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    solid #ccc;
+    border-radius: 35px;
+}

@@ -75,7 +75,7 @@
 }
  
 #facebook_connect{
-    width: 340px;
+    width: 300px;
     margin: 0 
     
     
@@ -113,13 +113,14 @@
     box-shadow: 0 0 1Px #383838;
     color: white;
     text-shadow: 0 0 1px #8E8E8E;
-    padding: 15px 20px;
-    font-size: 20px;
-    letter-spacing: -1px;
+    padding: 12px 20px;
+    font-size: 23px;
+    letter-spacing: 0px;
     position: relative;
     cursor: pointer;
     -webkit-transition: all .5s;
     transition: all .5s;
+    font-family: 'Gochi hand';
 }
 #facebook_connect:hover .fb-overlay{
   opacity: .1;

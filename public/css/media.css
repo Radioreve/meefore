@@ -366,5 +366,5 @@
 }
 
 .row {
-    overflow: auto;
+    overflow: hidden;
 }
