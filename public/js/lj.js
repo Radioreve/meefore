@@ -528,7 +528,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				$.ajax({
 
 					method:'POST',
-					data: { facebookProfile: facebookProfile },
+					data: { facebook_id: facebookProfile.id, facebookProfile: facebookProfile },
 					dataType:'json',
 					url:'/auth/facebook',
 					success: function( data ){

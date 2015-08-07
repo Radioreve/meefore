@@ -44,7 +44,7 @@
 
 			var url = mailchimp_urls.members;
 
-			request({ method: 'POST', json: user }, function( err, body, response ){
+			request({ method: 'POST', url: url, json: user }, function( err, body, response ){
 
 				if( err )
 					return callback( err, null );
@@ -58,7 +58,7 @@
 
 			var url = mailchimp_urls.members + '/' + mailchimp_user_id;
 
-			request({ method: 'PATCH', json: update }, function( err, body, response ){
+			request({ method: 'PATCH', json: update, url: url }, function( err, body, response ){
 
 				if( err )
 					return callback( err, null );
@@ -71,7 +71,7 @@
 
 		var expose = {
 			sendWelcomeEmail: sendWelcomeEmail,
-			subscribeMailchimpUser: subscribeUserToMailchimp,
+			subscribeMailchimpUser: subscribeMailchimpUser,
 			updateMailchimpUser: updateMailchimpUser
 		};
 		

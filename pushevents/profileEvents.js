@@ -23,8 +23,7 @@
 
 			var data = req.body;
 
-			var userId = req.userId,
-				age    = data.age;
+			var userId = req.body.userId;
 
 			if( ! validator.isInt( data.age ) ){
 				return eventUtils.raiseError({
@@ -45,15 +44,15 @@
 			};
 
 			var callback = function( err, user ) {
-		        if( err ){ 
-		        	eventUtils.raiseError({
+
+		        if( err )
+		        	return eventUtils.raiseError({
 		        		toClient: 'Something went wrong, pleasy try again later',
 		        		toServer: 'Error updating profile 1',
 		        		res: res,
 		        		err: err
 		        	});
-		        	return;
-		         }
+		         
 		            console.log('Emtting event update profile success')
 
 		            var expose = { user: user };
@@ -69,10 +68,10 @@
 
 		var data = req.body;
 
-	   	var userId 		  = data._id,
-	        newimg_id   	  = data.img_id,
-	    	newimg_version = data.img_version,
-	    	img_place      = data.img_place;
+	   	var userId 		    = data._id,
+	        newimg_id   	= data.img_id,
+	    	newimg_version  = data.img_version,
+	    	img_place       = data.img_place;
 
 	    User.findById( userId, function( err, myUser ){
 

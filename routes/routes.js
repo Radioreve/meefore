@@ -3,7 +3,7 @@
 
 	var pushEventsDir = '../pushevents/',
 		apiDir        = '../api/',
-		mdw = require('../globals/middlewares.js');
+		mdw 		  = require('../globals/middlewares');
 
 	var initEvents     = require( pushEventsDir + 'initEvents'),
 		profileEvents  = require( pushEventsDir + 'profileEvents'),
@@ -15,6 +15,7 @@
 		adminEvents    = require( pushEventsDir + 'adminEvents'),
 		apiEventsUser  = require( apiDir + 'users' ),
 		signEvents     = require( pushEventsDir + 'signEvents');
+
 
 	module.exports = function( app ){
 
@@ -37,11 +38,11 @@
 		app.get('/earlyadopters', signEvents.sendEarlyAdoptersPage );
 
 	//Events d'initialisation et de déconnexion
-		app.post('/auth/facebook', mdw.checkUserStatus('facebook_id'), mdw.subscribeMailchimpUser, signEvents.handleFacebookAuth );
+		app.post('/auth/facebook', mdw.populateUser({ force_presence: false }), mdw.subscribeMailchimpUser, signEvents.handleFacebookAuth );
 		app.post('/auth/app', mdw.authenticate(['standard']), mdw.fetchFacebookLongLivedToken('app_id'), initEvents.fetchUserAndConfiguration );
 
 	//Events relatifs au profile utilisateur
-		app.post('/me/update-profile', mdw.authenticate(['standard']), profileEvents.updateProfile );
+		app.post('/me/update-profile', profileEvents.updateProfile );
 		app.post('/me/update-picture', profileEvents.updatePicture );
 		app.post('/me/update-pictures', profileEvents.updatePictures );
 		app.post('/me/update-picture-fb', profileEvents.updatePictureWithUrl );
@@ -80,25 +81,32 @@
 			console.log('Hello test command received!');
 			console.log('Message : ' + req.body.msg );
 		});
-	};
+	
 
 
 		//Events relatif aux tests
-		app.post('/test/app', mdw.fetchUser('app_id'), function( req, res ){
+		app.post('/test/app', mdw.populateUser({ auth_type: 'app_id' }), function( req, res ){
 			var user = req.body.user;
 			if( !user )
 				return res.json({"msg":"no user"});
 			return res.json({ user: user });
 		});
 
-		app.post('/test/facebook', mdw.fetchUser('facebook_id'), function( req, res ){
+		app.post('/test/facebook', mdw.populateUser({ auth_type: 'facebook_id' }), function( req, res ){
 			var user = req.body.user;
 			if( !user )
 				return res.json({"msg":"no user"});
 			return res.json({ user: user });
 		});
 
-		app.post('/test', mdw.fetchUser(), function( req, res ){
+		app.post('/test', mdw.populateUser(), function( req, res ){
+			var user = req.body.user;
+			if( !user )
+				return res.json({"msg":"no user"});
+			return res.json({ user: user });
+		});
+
+		app.post('/test/force', mdw.populateUser({ force_presence: true }), function( req, res ){
 			var user = req.body.user;
 			if( !user )
 				return res.json({"msg":"no user"});
@@ -107,3 +115,4 @@
 
 
 
+};

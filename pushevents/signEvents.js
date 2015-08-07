@@ -28,80 +28,72 @@
 	
 	var handleFacebookAuth = function( req, res ){
 
-		var facebook_id  	 = req.body.facebookProfile.id,
-				access_token = req.body.facebookProfile.access_token,
-				    email  	 = req.body.facebookProfile.email,
-				     gender  = req.body.facebookProfile.gender,
-				   	  fbURL  = req.body.facebookProfile.link,
-				     	name = req.body.facebookProfile.first_name;
+		var fb = req.body.facebookProfile;
 
-		console.log('Authenticating with Facebook with id : ' + facebook_id );
+		if( !fb )
+			return eventUtils.raiseError({
+				toClient: "Missing informations from Facebook", res: res
+			});
 
-		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
+		/* L'utilisateur existe, on le connecte à l'application */
+		if( req.body.user)
+		{	
+			var user = req.body.user;
+			console.log('User has been found, login in...');
 
-			if( err )
-				return eventUtils.raiseError({
-					res:res,
-					err:err,
-					toClient:"Une erreur est survenue"
-				});
+			/* Mise à jour de l'access token */
+			facebook_access_token = user.facebook_access_token;
+			facebook_access_token.short_lived = fb.access_token; 
 
-			/* L'utilisateur existe, on le connecte à l'application */
-			if( user ){
-				console.log('User found, login in...');
-				var accessToken = eventUtils.generateAppToken( user ); 
-
-				facebook_access_token = user.facebook_access_token;
-				facebook_access_token.short_lived = access_token; 
-
-				User.findByIdAndUpdate( user._id, { facebook_access_token: facebook_access_token }, { new: true }, function( err, user ){
-
-					var expose  = { id: user._id, accessToken: accessToken },
-					channel = _.result( _.find( user.channels, function(el){ return el.access_name == 'mychan'; }), 'channel_label');
-					
-					eventUtils.sendSuccess( res, expose );
-
-					var d = moment();
-					watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
-
-				});
-
-				return;
-			}
-
-			console.log('User not found, creating account...');
-			/* L'utilisateur n'existe pas, on crée son compte et on le connecte à l'application */
-			var newUser = new User();
-
-			newUser.facebook_id = facebook_id;
-			newUser.facebook_access_token.short_lived = access_token;
-			newUser.facebook_email = email;
-			newUser.mailchimp_email = email;
-			newUser.gender = gender;
-			newUser.name = name;
-			newUser.age = 18 // default value
-			newUser.facebook_url = fbURL;
-			newUser.signup_date = moment.utc();
-
-			/* Pusher informations for real time channels */
-		    var token = randtoken.generate(30);
-			newUser.channels.push({ access_name: 'mychan', channel_label: token });
-			newUser.channels.push({ access_name: 'defchan', channel_label: 'default' });
-
-			newUser.save( function( err, user ){
-
-				if( err ) return console.log('User was NOT saved : ' + err );
+			User.findByIdAndUpdate( user._id, { facebook_access_token: facebook_access_token }, { new: true }, function( err, user ){
 
 				var accessToken = eventUtils.generateAppToken( user ); 
-				/* Envoie de la réponse */
-				var expose = { id: user._id, accessToken: accessToken },
-					channel = _.result( _.find( user.channels, function(el){ return el.access_name == 'mychan'; }), 'channel_label');
+				var expose  = { id: user._id, accessToken: accessToken };
 				
 				eventUtils.sendSuccess( res, expose );
 
+			});
+
+			return;
+		}
+
+		/* L'utilisateur n'existe pas, on crée son compte */
+		console.log('User not found, creating account...');
+
+
+			var new_user = new User();
+
+			new_user.facebook_id = fb.id;
+			new_user.facebook_access_token.short_lived = fb.access_token;
+			new_user.facebook_email = fb.email;
+			new_user.mailchimp_email = fb.email;
+			new_user.mailchimp_id = req.body.mailchimp_id;
+			new_user.gender = fb.gender;
+			new_user.name = fb.name;
+			new_user.age = 18 // default value
+			new_user.facebook_url = fb.link;
+			new_user.signup_date = new moment();
+
+			/* Pusher informations for real time channels */
+		    var token = randtoken.generate(30);
+			new_user.channels.push({ access_name: 'mychan', channel_label: token });
+			new_user.channels.push({ access_name: 'defchan', channel_label: 'default' });
+
+			new_user.save( function( err, user ){
+
+				if( err )
+					return eventUtils.raiseError({
+						err: err,
+						toClient: "Error trying to create account",
+						res: res
+					});
+
+				var accessToken = eventUtils.generateAppToken( user ); 
+				var expose = { id: user._id, accessToken: accessToken };
+				
+				eventUtils.sendSuccess( res, expose );
 
 			});
-		});
 	};
 
 

@@ -134,27 +134,41 @@
 	    };
 
 
-	var subscribeMailchimpUser = function( email_address ){
+	var subscribeMailchimpUser = function( req, res, next ){
 
-		var email_address = email_address;
+		/* If exists, user has been populated by previous mdw */
+		if( req.body.user ){
+			console.log('User already exists, skipping mailchimp subscription...');
+			return next();
+		}
 
-		return function( req, res, next ){
+		var email_address = req.body.facebookProfile.email;
 
-			mailer.addMailchimpUser( email_address, function( err, response ){
+		console.log('Subscribing user to mailchimp with email adresse: ' + email_address );
+		mailer.subscribeMailchimpUser( email_address, function( err, response ){
 
-				if( err )
-					return eventUtils.raiseError({
-						res: res,
-						err: err,
-						toClient: "Error calling mailchimp api"
-					});
+			if( err )
+				return eventUtils.raiseError({
+					res: res,
+					err: err,
+					toClient: "Error calling mailchimp api"
+				});
 
-				next();		
-			});
-		};
+			/* Saving the mailchimp id for later api calls to modify newsletter preferences (PATCH) */
+			req.body.mailchimp_id = response.id;
+			next();
+
+		});
+
 	};
 
-	var fetchUser = function( auth_type ){
+	var populateUser = function( options ){
+
+		var options = options || { auth_type: null, force_presence: true };
+
+		var auth_type = options.auth_type;
+		var force_presence = options.force_presence;
+
 		return function( req, res, next ){
 
 			/* Détection automatique du mode d'authentification */
@@ -172,8 +186,8 @@
 
 			if( !query )
 				return eventUtils.raiseError({
-					toClient: "No id method provided",
-					res: res,
+					toClient: "The auth type didnt match any parameters",
+					res: res
 				});
 
 			User.findOne( query, function( err, user ){
@@ -184,6 +198,13 @@
 				if( user ){
 					req.body.user = user;
 				} else {
+
+					if( force_presence == true )
+						return eventUtils.raiseError({
+							res: res,
+							toClient: "No user has been found, when necessary"
+						});
+
 					req.body.user = null;
 				}
 			
@@ -198,6 +219,7 @@
 	module.exports = {
 		authenticate: authenticate,
 		subscribeMailchimpUser: subscribeMailchimpUser,
+		populateUser: populateUser,
 		fetchFacebookLongLivedToken: fetchFacebookLongLivedToken
 	}
 
