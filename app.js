@@ -6,13 +6,11 @@
 		favicon = require('serve-favicon'),
 		compression = require('compression'),
 		cookieParser = require('cookie-parser'),
-		server = require('http').createServer( app ),
-		passport = require('passport');
+		server = require('http').createServer( app );
 	 
 	//Middleware
 		app.use( compression() );
 		app.use( cookieParser() );
-		app.use( passport.initialize() );
 		app.use( express.static( __dirname + '/public') )
 		app.use( bodyParser.json() );
 		app.use( bodyParser.urlencoded({ extended: true }) );
@@ -23,10 +21,8 @@
 
 		require('./globals/cron');
 		require('./globals/db')( uri );
-		require('./globals/passport')( passport );
 
 	/* Référence globale */
-		global.passport = passport,
 		global.watcher  = {};
 
 	/* Chargement des routes principales */

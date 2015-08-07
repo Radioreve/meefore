@@ -28,7 +28,20 @@
 			api_key: 'R4dioreve'
 		}
 		, mailchimp: {
-			api_key: '1975e0d603d5cb51d2cabd25dfab1d94-us10'
+			api_key: '1975e0d603d5cb51d2cabd25dfab1d94-us10',
+			list_id: '0e8fd0d396',
+			dc: 'us10',
+			username: 'methodezela@gmail.com',
+			groups: {
+				newsletter: {
+					name: 'newsletter',
+					id: 'bdb7938e4e',
+				},
+				invitations: {
+					name: 'invitations',
+					id: '042add1e79'
+				}
+			}
 		}
 
 	}

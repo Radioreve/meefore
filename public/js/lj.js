@@ -191,7 +191,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				}
 				if( states.current == 'connected' && LJ.state.connected )
 				{
-					LJ.fn.say('fetch-user-and-configuration', { userId: LJ.user._id }, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
+					LJ.fn.say('auth/app', { userId: LJ.user._id }, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
 
 				}
 			});
@@ -547,7 +547,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.accessToken = data.accessToken; 
 			//document.cookie = 'token='+data.accessToken;
 
-			LJ.fn.say('fetch-user-and-configuration', {}, {
+			LJ.fn.say('auth/app', {}, {
 				beforeSend: function(){ delog('Fetching user and configuration'); },
 				success: LJ.fn.handleFetchUserAndConfigurationSuccess 
 			});

@@ -7,38 +7,40 @@
 		User        = require('../models/UserModel'),
 		querystring = require('querystring'),
 		lodash      = require('lodash'),
+		mailer      = require('./mailer'),
 		settings    = require('../config/settings');
 
 
-		var authenticate = function( audience ){
+	var authenticate = function( audience ){
 
-			return function( req, res, next ){
+		return function( req, res, next ){
 
-				var cookies = req.cookies;
-				var token = req.headers['x-access-token'];
+			var cookies = req.cookies;
+			var token = req.headers['x-access-token'];
 
-				console.log('Authenticating for this route...');
-				
-				var payload;
-				try{
-					payload = jwt.verify( token, config.jwtSecret, { audience: audience });
-				} catch (err) {
-					console.log( err.message );
-					return eventUtils.raiseError({
-						res:res,
-						err:err,
-						toClient:"Cette action n'est pas autorisée"
-					});
-				}
-				
-				console.log('... success!');
-				req.body.userId = payload._id;
-				return next();		
-				
-			};
-		};	
+			console.log('Authenticating for this route...');
+			
+			var payload;
+			try{
+				payload = jwt.verify( token, config.jwtSecret, { audience: audience });
+			} catch (err) {
+				console.log( err.message );
+				return eventUtils.raiseError({
+					res:res,
+					err:err,
+					toClient:"Cette action n'est pas autorisée"
+				});
+			}
+			
+			console.log('... success!');
+			req.body.userId = payload._id;
+			return next();		
+			
+		};
+	};	
 
 	var fetchFacebookLongLivedToken = function( auth_type ){
+
 		return function( req, res, next ){
 
 			if( auth_type == 'facebook_id' && req.body.facebook_id )
@@ -52,7 +54,7 @@
 
 			User.findOne( query, function( err, user ){
 
-				if( err )
+				if( err || !user )
 					return eventUtils.raiseError({ err: err, res: res, toClient: "Bad request (E82)" });
 
 				/* 
@@ -100,13 +102,9 @@
 							return eventUtils.raiseError({ err: err, res: res, toClient: "Bad Request (E83)" });
 
 						next();
-
 					});
-
 				});
-
 			});
-
 		};
 	};
 
@@ -136,8 +134,70 @@
 	    };
 
 
+	var subscribeMailchimpUser = function( email_address ){
+
+		var email_address = email_address;
+
+		return function( req, res, next ){
+
+			mailer.addMailchimpUser( email_address, function( err, response ){
+
+				if( err )
+					return eventUtils.raiseError({
+						res: res,
+						err: err,
+						toClient: "Error calling mailchimp api"
+					});
+
+				next();		
+			});
+		};
+	};
+
+	var fetchUser = function( auth_type ){
+		return function( req, res, next ){
+
+			/* Détection automatique du mode d'authentification */
+			if( auth_type == 'facebook_id' && req.body.facebook_id )
+				var query = { 'facebook_id': req.body.facebook_id };
+
+			if( !auth_type && req.body.facebook_id )
+				var query = { 'facebook_id': req.body.facebook_id };
+
+			if( auth_type == 'app_id' && req.body.userId )
+				var query = { '_id' : req.body.userId };
+
+			if( !auth_type && req.body.userId )
+				var query = { '_id' : req.body.userId };
+
+			if( !query )
+				return eventUtils.raiseError({
+					toClient: "No id method provided",
+					res: res,
+				});
+
+			User.findOne( query, function( err, user ){
+
+				if( err )
+					return eventUtils.raiseError({ err: err, res: res, toClient: "Bad request (E83)" });
+
+				if( user ){
+					req.body.user = user;
+				} else {
+					req.body.user = null;
+				}
+			
+				return next();
+
+			});
+
+		};
+	};
+
+
 	module.exports = {
 		authenticate: authenticate,
+		subscribeMailchimpUser: subscribeMailchimpUser,
 		fetchFacebookLongLivedToken: fetchFacebookLongLivedToken
 	}
 

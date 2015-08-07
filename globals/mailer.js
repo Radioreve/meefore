@@ -2,17 +2,22 @@
 		var config = require('../config/config'),
 			fs = require('fs'),
 			sendgrid = require('sendgrid')( config.sendgrid.api_user, config.sendgrid.api_key ),
-			swig = require('swig');
+			config = require('../config/config'),
+			swig = require('swig'),
+			_ = require('lodash'),
+			request = require('request');
 
 
-		var sendMail = function( o ){
-			sendgrid.send( o, function(err, json) {
-			  if (err) { return console.error(err); }
-			  console.log(json);
-			});
-		}
+		var api_key  = config.mailchimp.api_key,
+			dc       = config.mailchimp.dc,
+			username = config.mailchimp.username,
+			list_id  = config.mailchimp.list_id;
 
-		
+		var mailchimp_urls = {
+			members: 'https://'+username+':'+api_key+'@' + dc + '.api.mailchimp.com/3.0/lists/' + list_id + '/members'
+		};
+
+
 		var sendWelcomeEmail = function( email, name ){
 			
 			var tpl = swig.compileFile( process.cwd() + '/views/welcomeEmail.html' );
@@ -28,26 +33,46 @@
 
 			sendMail( welcome_email );
 			
-		}
+		};
 
-		var sendResetPasswordEmail = function( email, token ){
+		var subscribeMailchimpUser = function( email_address, callback ){
 
-			var resetpassword_email = new sendgrid.Email({
-				from:'robot@meefore.com',
-				subject:'Are you ready',
-				to: email,
-				text:'Votre nouveau mot de passe est : <b>'+ token +'</b>',
-				html: fs.readFileSync( process.cwd() + '/views/welcomeEmail.html', 'utf8')
+			var user = {
+				email_address : email_address,
+				status        : 'subscribed'
+			};
+
+			var url = mailchimp_urls.members;
+
+			request({ method: 'POST', json: user }, function( err, body, response ){
+
+				if( err )
+					return callback( err, null );
+
+				return callback( null, response );
+
+			});
+		};
+
+		var updateMailchimpUser = function( mailchimp_user_id, update, callback ){
+
+			var url = mailchimp_urls.members + '/' + mailchimp_user_id;
+
+			request({ method: 'PATCH', json: update }, function( err, body, response ){
+
+				if( err )
+					return callback( err, null );
+
+				return callback( null, response );
+
 			});
 
-			sendMail( resetpassword_email );
-		}
+		};
 
 		var expose = {
-
 			sendWelcomeEmail: sendWelcomeEmail,
-			sendResetPasswordEmail: sendResetPasswordEmail
-
+			subscribeMailchimpUser: subscribeUserToMailchimp,
+			updateMailchimpUser: updateMailchimpUser
 		};
 		
 

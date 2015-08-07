@@ -6,8 +6,16 @@
 
 var UserSchema = new mongoose.Schema({
 
-  email:{
+  facebook_email:{
     type:String,
+    default:''
+  },
+  mailchimp_email: {
+    type: String,
+    default:''
+  },
+  mailchimp_id: {
+    type: String,
     default:''
   },
   facebook_id: {

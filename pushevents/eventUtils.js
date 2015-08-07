@@ -3,18 +3,6 @@
 		jwt = require('jsonwebtoken'),
 		config = require('../config/config');
 
-	var makeChannel = function( options ){
-
-		if( options == {} ) 
-			return 'Error, no arguments passed to makeChannel';
-
-		if( options.access_name == 'mychan')
-			return options.token;
-
-		if( options.access_name == 'defchan')
-			return 'default';
-
-	};
 
 
 	var sendSuccess = function( res, expose, print ){
@@ -92,7 +80,6 @@
 
 	module.exports = {
 
-		makeChannel: makeChannel,
 		raiseError: raiseError,
 		sendSuccess: sendSuccess,
 		randomInt: randomInt,

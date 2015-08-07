@@ -9,10 +9,9 @@
 		moment = require('moment'),
 		_ = require('lodash');
 
-	var passport = global.passport,
-		pusher  = require('../globals/pusher'),
-		mailer = require('../globals/mailer'),
-		watcher = require('../globals/watcher');
+		var pusher  = require('../globals/pusher'),
+			mailer = require('../globals/mailer'),
+			watcher = require('../globals/watcher');
 
 		var sendHomepage = function( req, res ){
 			res.sendfile( process.cwd() +'/views/index.html');
@@ -76,24 +75,19 @@
 
 			newUser.facebook_id = facebook_id;
 			newUser.facebook_access_token.short_lived = access_token;
-			newUser.email = email;
+			newUser.facebook_email = email;
+			newUser.mailchimp_email = email;
 			newUser.gender = gender;
 			newUser.name = name;
 			newUser.age = 18 // default value
 			newUser.facebook_url = fbURL;
 			newUser.signup_date = moment.utc();
 
+			/* Pusher informations for real time channels */
 		    var token = randtoken.generate(30);
-			var access_name = 'mychan',
-				channel_label = eventUtils.makeChannel({ access_name: access_name, token: token }) 
+			newUser.channels.push({ access_name: 'mychan', channel_label: token });
+			newUser.channels.push({ access_name: 'defchan', channel_label: 'default' });
 
-			newUser.channels.push({ access_name: access_name, channel_label: channel_label });
-
-			var access_name = 'defchan',
-				channel_label = eventUtils.makeChannel({ access_name: access_name }) 
-
-			newUser.channels.push({ access_name: access_name, channel_label: channel_label });
-			
 			newUser.save( function( err, user ){
 
 				if( err ) return console.log('User was NOT saved : ' + err );
@@ -105,11 +99,7 @@
 				
 				eventUtils.sendSuccess( res, expose );
 
-				/* Mise à jour du Watcher */
-				var d = moment();
-				watcher.addUser( user._id, { channel: channel, userId: user._id, onlineAt: d });
 
-				mailer.sendWelcomeEmail( email, name );
 			});
 		});
 	};
