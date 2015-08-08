@@ -53,30 +53,35 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 					console.log('Client facebook status is : ' + res.status ) ;
 
-					if( res.status != 'connected' ){
+					if( res.status == 'not_authorized' ){
 						LJ.state.loggingIn = false;
 						console.log('User didnt let Facebook access informations');
 						return
 					}
 
-				  	$('#facebook_connect').velocity({ opacity: [0,1] }, { duration: 1250 });
+					if( res.status == 'connected' ){
 
-					LJ.state.loggingIn = true;
-					var access_token = res.authResponse.accessToken;
-					console.log('short lived access token : ' + access_token );
+					  	$('#facebook_connect').velocity({ opacity: [0,1] }, { duration: 1250 });
 
-					FB.api('/me', function( facebookProfile ){
-						facebookProfile.access_token = access_token;
-				  		LJ.fn.loginWithFacebook( facebookProfile );
-			  		});
-				}, { scope: ['public_profile', 'email', 'user_friends']});
+						LJ.state.loggingIn = true;
+						var access_token = res.authResponse.accessToken;
+						console.log('short lived access token : ' + access_token );
 
+						FB.api('/me', function( facebookProfile ){
+							facebookProfile.access_token = access_token;
+					  		LJ.fn.loginWithFacebook( facebookProfile );
+				  		}); 
+					}
+
+				}, { scope: ['public_profile', 'email', 'user_friends']} );
 			});
 
 		},
 		handleDomEvents_Navbar: function(){
 
 			LJ.$logout.click(function(){
+				LJ.user.app_preferences.ux.auto_login = 'no';
+				LJ.fn.setLocalStoragePreferences();
 				location.reload();
 
 			});
@@ -787,8 +792,48 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 				LJ.fn.say( eventName, data, cb );
 				
-
 			});
+
+			LJ.$body.on('click', '.row-notifications .btn-validate', function(){
+
+				var $self = $(this);
+				if( $self.hasClass('btn-validating') )
+					return;
+
+				$self.addClass('btn-validating');
+
+				var _id 		  = LJ.user._id,
+				$container    = $('.row-notifications')
+				invitations   = $container.find('.invitations.modified').attr('data-selectid'),
+				newsletter    = $container.find('.newsletter.modified').attr('data-selectid'),
+				app_preferences = LJ.user.app_preferences;
+
+				app_preferences.email.invitations = invitations;
+				app_preferences.email.newsletter  = newsletter;
+
+			var data = {
+				userId		    : _id,
+				app_preferences : app_preferences
+			};
+
+			csl('Emitting update settings [mailinglists]');
+
+			var eventName = 'me/update-settings-mailinglists',
+				data = data
+				, cb = {
+					success: LJ.fn.handleUpdateSettingsMailingListsSuccess,
+					error: function( xhr ){
+						sleep( LJ.ui.artificialDelay, function(){
+							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
+						});
+					}
+				};
+
+				LJ.fn.say( eventName, data, cb );
+				
+			});
+
+
 
 		}
 

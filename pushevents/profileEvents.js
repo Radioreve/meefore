@@ -135,9 +135,19 @@
 						toClient:"Impossible de charger votre photo Facebook"
 					});
 
-				var picture 			= _.find( user.pictures, function( pic ){ return pic.img_place == img_place; });
-					picture.img_id  	= response.public_id;
-					picture.img_version = response.version + '';
+				console.log( user );
+
+				var picture = _.find( user.pictures, function( pic ){ return pic.img_place == img_place; });
+
+				if( typeof picture == 'undefined' )
+					return eventUtils.raiseError({
+						res:res,
+						err:"Typeof picture == undefined",
+						toClient:"Impossible de charger votre photo Facebook"
+					});
+
+				picture.img_id  	= response.public_id;
+				picture.img_version = response.version + '';
 
 				user.pictures.set( img_place, picture );
 				user.status = "idle";

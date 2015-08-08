@@ -33,12 +33,12 @@
 			dc: 'us10',
 			username: 'methodezela@gmail.com',
 			groups: {
-				newsletter: {
-					name: 'newsletter',
-					id: 'bdb7938e4e',
-				},
 				invitations: {
 					name: 'invitations',
+					id: 'bdb7938e4e',
+				},
+				newsletter: {
+					name: 'newsletter',
 					id: '042add1e79'
 				}
 			}

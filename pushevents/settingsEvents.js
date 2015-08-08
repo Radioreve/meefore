@@ -26,7 +26,21 @@
 
 		};
 
+		var updateSettingsMailinglists = function( req, res ){
+
+			var app_preferences = req.body.app_preferences,
+	    		userId	     	= req.body.userId;
+
+	    	User.findOneAndUpdate( req.body.query, { app_preferences: app_preferences }, { new: true }, function( err, user ){
+	    		if( err )
+	    			return eventUtils.raiseError({ err: err, res: res, toClient: "Une erreur est survenue!" });
+	    		var expose = { user: user };
+	    		eventUtils.sendSuccess( res, expose );
+	    	});
+
+		};
 
 	    module.exports = {
-	    	updateSettingsUx: updateSettingsUx
+	    	updateSettingsUx: updateSettingsUx,
+	    	updateSettingsMailinglists: updateSettingsMailinglists
 	    };

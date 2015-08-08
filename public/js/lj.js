@@ -274,11 +274,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		autoLogin: function(){
 
-			LJ.fn.GraphAPI('/me', function( facebookProfile ){
-					delog( facebookProfile );
-			  		LJ.fn.loginWithFacebook( facebookProfile );
-		  	});
+    		var $el = $('<div class="auto-login-msg super-centered none">Auto login <b>on</b></div>');
+			$el.appendTo('.curtain').velocity('transition.fadeIn')
+			setTimeout( function(){
 
+			LJ.fn.GraphAPI('/me', function( facebookProfile ){
+				delog( facebookProfile );
+		  		LJ.fn.loginWithFacebook( facebookProfile );
+  			});
+
+			}, 400 );
 		},
 		initLandingPage: function(){
 
@@ -489,6 +494,24 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				LJ.fn.setLocalStoragePreferences();
 				LJ.fn.handleServerSuccess('Vos informations ont été modifiées', '.row-ux');
+		
+			});
+
+		},
+		handleUpdateSettingsMailingListsSuccess: function( data ){
+
+			csl('update settings mailing lists success received' );
+
+			sleep( LJ.ui.artificialDelay, function(){
+
+				$('.row-notifications').removeClass('editing')
+					.find('.row-buttons').velocity('transition.fadeOut', {duration: 600 })
+					.end().find('.icon-edit').removeClass('active')
+					.end().find('.btn-validating').removeClass('btn-validating');
+
+				LJ.user = data.user;
+
+				LJ.fn.handleServerSuccess('Vos informations ont été modifiées', '.row-notifications');
 		
 			});
 
@@ -1108,13 +1131,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			}
 			function during_cb(){	
-				/* Landing Page View */
+				/* Landing Page View */				
 				$('#facebook_connect').hide();
 				$('#logo-hero').hide();
 				$('body > header').removeClass('none');
 				$('#landingWrap').remove();
 				$('body').css({'background':'none'});
         		$('#mainWrap').css({'background':'url(/img/crossword.png)'});	
+        		$('.auto-login-msg').velocity('transition.fadeOut');
+
 			};		
 
 			function after_cb(){
@@ -1565,9 +1590,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 									duration: 300,
 									complete: function(){
 										$content.velocity('transition.fadeIn');
-										/*options.custom_data.forEach(function(el){
+										options.custom_data.forEach(function(el){
 											$content.attr('data-'+el.key, el.val );
-										}); */
+										}); 
 									} 
 							});
 					});

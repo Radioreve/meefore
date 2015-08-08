@@ -6,7 +6,7 @@
 		moment      = require('moment'),
 		User        = require('../models/UserModel'),
 		querystring = require('querystring'),
-		lodash      = require('lodash'),
+		_     	    = require('lodash'),
 		mailer      = require('./mailer'),
 		settings    = require('../config/settings');
 
@@ -162,6 +162,48 @@
 
 	};
 
+	var updateMailchimpUser = function( req, res, next ){
+
+		var user = req.body.user;
+
+		var new_preferences = req.body.app_preferences;
+		var old_preferences = user.app_preferences;
+
+		console.log( 'old_preferences : ' + JSON.stringify( old_preferences ) );
+		console.log( 'new_preferences : ' + JSON.stringify( new_preferences ) );
+
+		var need_to_update = false,
+			update = { interests: {} };
+
+		_.keys( new_preferences.email ).forEach( function( key ){
+			if( new_preferences.email[ key ] != old_preferences.email[ key ] ){
+				need_to_update = true;
+				var bool = new_preferences.email[ key ] == 'yes' ? true : false;
+				update.interests[ config.mailchimp.groups[ key ].id ] = bool;
+			} 
+		});
+
+		if( !need_to_update )
+			return next();
+
+		console.log('Update mailchimp needed');
+		console.log(JSON.stringify(update));
+		console.log('mailchimp user id : ' + user.mailchimp_id );
+		mailer.updateMailchimpUser( user.mailchimp_id, update, function( err, response ){
+
+			if( err )
+				return eventUtils.raiseError({
+					err: err,
+					res: res,
+					toClient: "Une erreur s'est produite, veuillez nous excuser"
+				});
+
+			next();
+
+		});
+
+	};
+
 	var populateUser = function( options ){
 
 		var options = options || { auth_type: null, force_presence: true };
@@ -189,6 +231,8 @@
 					toClient: "The auth type didnt match any parameters",
 					res: res
 				});
+
+			req.body.query = query;
 
 			User.findOne( query, function( err, user ){
 
@@ -219,6 +263,7 @@
 	module.exports = {
 		authenticate: authenticate,
 		subscribeMailchimpUser: subscribeMailchimpUser,
+		updateMailchimpUser: updateMailchimpUser,
 		populateUser: populateUser,
 		fetchFacebookLongLivedToken: fetchFacebookLongLivedToken
 	}

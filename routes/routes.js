@@ -48,6 +48,7 @@
 		app.post('/me/update-picture-fb', profileEvents.updatePictureWithUrl );
 		app.post('/me/fetch-and-sync-friends', profileEvents.fetchAndSyncFriends );
 		app.post('/me/update-settings-ux', settingsEvents.updateSettingsUx );
+		app.post('/me/update-settings-mailinglists', mdw.populateUser({ force_presence: true }), mdw.updateMailchimpUser, settingsEvents.updateSettingsMailinglists );
 
 	//Events relatif à la gestion d'un évènement
 		app.post('/create-event', manageEvents.createEvent );
