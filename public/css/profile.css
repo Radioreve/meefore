@@ -228,16 +228,17 @@ background: #F3F3F3;}
     height: 43px;
 }
 .row-input-md {
-    width: 49%;
+    width: 49.5%;
 }
 .row-input-lg {
     width: 100%;
 }
 .row-input input[type="text"] {
-    width: 78%;
     padding-left: 7px;
 }
-.row-input label {} 
+.row-input label {
+    text-align: left;
+} 
 .row-select-wrap{
     display: inline-block;
 }

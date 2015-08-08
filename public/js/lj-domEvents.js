@@ -51,11 +51,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 				FB.login( function(res){
 
-					console.log('Client facebook status is : ' + res.status ) ;
+					delog('Client facebook status is : ' + res.status ) ;
 
 					if( res.status == 'not_authorized' ){
 						LJ.state.loggingIn = false;
-						console.log('User didnt let Facebook access informations');
+						delog('User didnt let Facebook access informations');
 						return
 					}
 
@@ -65,7 +65,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 						LJ.state.loggingIn = true;
 						var access_token = res.authResponse.accessToken;
-						console.log('short lived access token : ' + access_token );
+						delog('short lived access token : ' + access_token );
 
 						FB.api('/me', function( facebookProfile ){
 							facebookProfile.access_token = access_token;
@@ -649,14 +649,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		},
 		handleDomEvents_Create: function(){
 
-			LJ.$createEventBtn.click(function(){
-				LJ.fn.createEvent();
+			
+			LJ.$body.on('click', '.mixity', function(){
+
+				var $self = $(this);
+				$('.mixity').removeClass('selected');
+				$self.addClass('selected');
+
 			});
 
-			$('#createEventWrap').on('click', '.imgWrapThumb', function(){
-				var $t = $(this);
-					$t.toggleClass('active');
-			});
+
 
 		},
 		handleDomEvents_Search: function(){

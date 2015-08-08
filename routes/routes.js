@@ -13,7 +13,7 @@
 		clientEvents   = require( pushEventsDir + 'clientEvents'),
 		friendEvents   = require( pushEventsDir + 'friendEvents'),
 		adminEvents    = require( pushEventsDir + 'adminEvents'),
-		apiEventsUser  = require( apiDir + 'users' ),
+		api  = require( apiDir + 'api' ),
 		signEvents     = require( pushEventsDir + 'signEvents');
 
 
@@ -31,7 +31,7 @@
 			next();
 		});
 
-		app.post('/api/v1/test/:user_id', apiEventsUser.test );
+		app.post('/api/v1/test/:user_id', api.test );
 
 		app.get('/home', signEvents.sendHomepage );
 		app.get('/', signEvents.redirectToHome );
@@ -58,8 +58,10 @@
 
 
 	//REST API
-		app.get('/api/v1/users/:user_id', apiEventsUser.getUserById );
-		app.get('/api/v1/users', apiEventsUser.searchUsers );
+		app.get('/api/v1/users/:user_id', api.getUserById );
+		app.get('/api/v1/users', api.searchUsers );
+		app.get('/api/v1/places', api.searchPlaces );
+		app.post('/api/v1/places', api.createPlace );
 
 	//Events relatifs au démarrage d'une session client
 		app.post('/fetch-events', clientEvents.fetchEvents );

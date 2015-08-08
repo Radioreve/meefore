@@ -10,21 +10,6 @@
 		displayIn:  { opacity: [1, 0], translateX: [-8, 0]   },
 		displayOut: { opacity: [0, 1], translateX: [10, 0]   }
 	},
-	typeahead: {
-		users: {
-			class_names: {
-				input:'',
-				hint:'',
-				menu:'search-results',
-				dataset:'search-wrap',
-				suggestion:'search-result-users search-result',
-				empty:'empty',
-				open:'open',
-				cursor:'cursor',
-				highlight:'highlight'
-			}
-		}
-	},
 	cloudinary:{
 		uploadParams: { cloud_name:"radioreve", api_key:"835413516756943" },
 

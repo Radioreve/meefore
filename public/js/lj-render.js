@@ -21,6 +21,11 @@
 			return html;
 
 		},
+        renderCreateEvent: function(){
+
+            return 
+
+        },
         renderAskersMain: function(arr,max){
 
                 var html =''; 

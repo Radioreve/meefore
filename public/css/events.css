@@ -1,3 +1,68 @@
+
+
+
+#eventsWrap {
+
+}
+
+#createEvent {
+}
+
+#createEvent label {
+	text-align: left;
+	padding-right: 10px;
+}
+#createEvent input {
+	color: #555;
+}
+
+.create-event-wrap {
+	text-align: center;
+}
+.row-events {
+margin-bottom: 0px;
+}
+.row-title-sub {
+	text-align: center;
+	color: #ABABAB;
+	margin-top: 8px;
+	text-transform: none;
+	margin-bottom: 20px;
+}
+.row-create {
+}
+i.icon-create {
+position: relative;
+font-size: 20px;
+}
+#eventsWrap .btn-create-event {
+width: 170px;
+text-transform: uppercase;
+font-weight: bolder;
+padding: 12px 0;
+color: white;
+font-size: 13px;
+background: linear-gradient(red, #CE6C56);
+background: #C83D3D;
+border: 1px solid #8A3939;
+border-radius: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Old styles */
 #eventsWrap{
     width: 90%; 
 }  
@@ -267,87 +332,7 @@
 	background: rgb(140, 140, 140); 
 	}
 /* CSS pour créer un évenements */
-#createEventWrap{
-}
-section#createEventWrap{
-	width: 600px;
-	overflow: auto;
-}
 
-#createEventWrap h2{
-	margin-bottom: 50px;
-}
-
-#eventHour,
-#eventMinut{
-	width:18px;
-	border:none;
-}
-#createEventWrap b {
-	padding-left:2px;
-	color: #9C9C9C;
-}
-#createEventWrap label{
-	/* font-weight: bolder; */
-	width: 110px;
-	padding-left: 2px;
-	text-align: right;
-}
-.input-row-wrap{
-	margin-bottom: 12px;
-}
-#eventDescription{
-	border:none;
-	border-bottom:1px dashed #C7C7C7;
-	width: 50%;
-	height:70px;
-	margin-top: 5px;
-}
-#createEventWrap label[for="eventDescription"]{
-	vertical-align:top;
-}
-#createEventBtn{
-	position: relative;
-} 
-
-input[type="number"]{
-	width: 50px!important;
-	padding-left: 10px;
-}
-
-.tag, .loc{
-	display:inline-block;
-	transition: all .1s;
-	font-size: .7em;
-	color: #7A7A7A;
-	padding: 8px 12px;  
-	border-radius: 2px;
-	margin: 4px;
-	background: #F5F5F5;
-	text-align: center;
-	cursor: pointer;
-}
-
-.loc{
-	background: whitesmoke;
-	border-bottom: 2px solid white;
-	padding: 9px 5px;
-	height: 10px;
-	border-radius: 16px;
-	width: 21px;
-	text-align: center;
-	margin: 0 4px;
-}
-#createEventWrap .tag:hover,
-.filters-tags-row .tag:hover,
-.filters-locs-row .loc:hover,
-.mood:hover,
-.drink:hover{
-	cursor:pointer;
-}
-#refreshEvents{
-	
-}
 #lastEvents{
 	display:inline;
 	color: rgb(213, 47, 47);

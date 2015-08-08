@@ -38,108 +38,20 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				/* Typeahead pluggin */
 				this.initTypeahead();
 
+				/*
+				LJ.fn.displayInModal({ 
+					source:'local',
+					dom_target: '#createEvent',
+					custom_classes: ['text-left'],
+					predisplay_cb: function(){
+						LJ.fn.adjustAllInputsWidth('#createEvent');
+					} 
+				});
+				*/
 		},
 		initTypeahead: function(){
 
-			var users = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/users?name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	delog(res);
-  				 }
-			});
-
-			users.initialize()
-				 .done(function(){ })
-				 .fail(function(){ delog('Bloodhound engine failed to initialized'); })
-
-			$('#search input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1,
-				classNames: LJ.typeahead.users.class_names
-			},
-			{
-				name:'users',
-				display:'names',
-				source: users.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion
-				}
-			});
-
-		},
-		renderTypeaheadNotFound: function(){
-			
-			var display_settings = LJ.cloudinary.search.user.params;
-				img_id  		 = LJ.cloudinary.logo.white_on_black.id;
-
-			var message 		 = "Aucun résultats"
-
-			user_main_img = $.cloudinary.image( img_id, display_settings ).prop('outerHTML');
-
-			var html = '<div class="search-result search-result-empty">'
-					   + '<div class="search-result-images">' 
-				       		+ user_main_img 
-				       + '</div>'
-				       + '<div class="search-result-name-wrap">'
-				       + '<div class="search-result-name">' + message + '</div>'
-				       + '</div>'
-				      +'</div>';
-			return html;
-
-		},
-		renderTypeaheadPending: function(){
-
-			var display_settings = LJ.cloudinary.search.user.params; 
-				img_id  		 = LJ.cloudinary.placeholder.id;
-
-			var message 		 = "Recherche..."
-
-			user_main_img = $.cloudinary.image( img_id, display_settings ).prop('outerHTML');
-
-			var html = '<div class="search-result search-result-empty" >'
-					   + '<div class="search-result-images">' 
-				       		+ '<img class="search-loader super-centered" src="/img/495.gif" width="15">'
-				       + '</div>'
-				       + '<div class="search-result-name-wrap">'
-				       + '<div class="search-result-name">' + message + '</div>'
-				       + '</div>'
-				      +'</div>';
-			return html;
-
-		},
-		renderTypeaheadSuggestion: function( user ){
-
-			var user_main_img = '', user_hashtags = '';
-
-			var main_img = LJ.fn.findMainImage( user ),
-				display_settings = LJ.cloudinary.search.user.params;
-				display_settings.img_version = main_img.img_version;
-
-			user_main_img = $.cloudinary.image( main_img.img_id, display_settings ).prop('outerHTML');
-
-			user_hashtags += '<div>#' +  user.drink + '</div>';
-			user_hashtags += '<div>#' +  user.mood + '</div>';
-
-			var html = '<div data-userid="'+user.facebook_id+'">'
-					   + '<div class="search-result-images">' 
-				       		+ user_main_img 
-				       		+ '<img class="search-loader super-centered" src="/img/495.gif" width="15">'
-				       + '</div>'
-				       + '<div class="search-result-name-wrap">'
-				       + '<div class="search-result-name">' + user.name + '</div>'
-				       + '<div class="search-result-hashtags">' + user_hashtags + '</div>'
-				       + '</div>'
-				      +'</div>';
-			return html;
+			LJ.fn.initTypeaheadUsers();
 
 		},
 		initAugmentations: function(){
@@ -1056,6 +968,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('.drink[data-selectid="'+LJ.user.drink+'"]').addClass('selected');
 			$('.mood[data-selectid="'+LJ.user.mood+'"]').addClass('selected');
 
+			//LJ.fn.adjustAllInputsWidth('#profileWrap');
+
 			/* Settings View */
 			_.keys( LJ.user.app_preferences ).forEach( function( key ){
 				_.keys( LJ.user.app_preferences[ key ] ).forEach( function( sub_key ){
@@ -1143,6 +1057,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			};		
 
 			function after_cb(){
+
 				$('#thumbWrap').velocity('transition.slideUpIn',{duration:1000});
 				$('.menu-item').velocity({ opacity: [1, 0] }, {
 					display:'inline-block',
@@ -1574,6 +1489,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				setTimeout(function(){
 					
 					var $content = $(content);
+
+					options.custom_classes && options.custom_classes.forEach( function( class_itm ){
+						$content.addClass( class_itm );
+					});
+
+					options.custom_data && options.custom_data.forEach(function( el ){
+						$content.attr('data-'+el.key, el.val );
+					}); 
+
 					$('.curtain-loader').velocity('transition.fadeOut', { duration: 300 });
 					$content.hide().appendTo('.modal-container-body');
 
@@ -1586,13 +1510,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 							new_width = old_width + $('.modal-container-body > div').outerWidth();	
 
 						$('.modal-container')
-							.velocity({ height: [ new_height, old_height ]/*, width: [ new_width, old_width ] */}, { 
+							.velocity({ height: [ new_height, old_height ], width: [ new_width, old_width ] }, { 
 									duration: 300,
 									complete: function(){
+										$content.css({'display':'block','opacity':'0'});
+										options.predisplay_cb && options.predisplay_cb();
 										$content.velocity('transition.fadeIn');
-										options.custom_data.forEach(function(el){
-											$content.attr('data-'+el.key, el.val );
-										}); 
 									} 
 							});
 					});
@@ -1637,6 +1560,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				});
 			}
 
+			if( options.source === 'local' )
+			{
+				setTimeout( function(){
+
+					var html_data = $( options.dom_target ).prop('outerHTML');
+					$('.modal-container').trigger( eventName, [{ html_data: html_data }]);
+					$('.modal-container').unbind( eventName );
+
+				}, 1000 );
+			}
+
 		},
 		GraphAPI: function( url, callback, opts ){
 
@@ -1679,7 +1613,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			$('.modal-container')
 				.velocity({ 'opacity': [0,1] }, { complete: function(){
-					$('.modal-container').css({ display: 'none', height: 'auto' });
+					$('.modal-container').css({ display: 'none', height: 'auto', width: 'auto' });
 					$(".modal-container-body *:not('.curtain-loader')").remove(); }
 			});
 
@@ -1774,6 +1708,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			eventWrap.attr('data-eventstate', state )
 					 .find('button.askIn');
 					
+
+		},
+		fetchEventParameters: function(){
+
+			setTimeout( function(){
+
+				var expose = window.dum_params;
+
+			}, 1000 );
 
 		},
 		insertEvent: function( myEvent ){
@@ -2551,7 +2494,7 @@ $('document').ready(function(){
 					    xfbml      : true,  // parse social plugins on this page
 					    version    : 'v2.1' // use version 2.1
 				});
-			LJ.fn.init({ debug: true });
+			LJ.fn.init({ debug: false });
 			csl('Application ready!');
 		}
 
@@ -2725,3 +2668,39 @@ window.dumdata = [
     "favoriteFruit": "apple"
   }
 ]
+
+
+
+
+window.dum_places = [
+	{
+		id: '1',
+		name:'Le barilleur',
+		address: 'blabla',
+		tag: 'bar'
+	},
+	{
+		id: '2',
+		name:'Le Duplexe',
+		address: 'blabla',
+		tag: 'nightclub'
+	},
+	{
+		id: '3',
+		name:'Le Violondingue',
+		address: 'blabla',
+		tag: 'bar dansant'
+	},
+	{
+		id: '4',
+		name:'Le Rex Club',
+		address: 'blabla',
+		tag: 'nightclub'
+	},
+	{
+		id: '5',
+		name:'O\'Sullivans',
+		address: 'blabla',
+		tag: 'bar'
+	}
+];

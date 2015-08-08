@@ -1,7 +1,7 @@
 
 .modal-container {
 background: white;
-width: 490px;
+min-width: 490px;
 position: fixed;
 z-index: 99999999;
 padding: 12px;
@@ -15,7 +15,7 @@ box-shadow: 0 0 5px #D2D2D2;
 .modal-container-body {
 	background:url('/img/crossword.png');
 	height:100%;
-	padding: 17px;
+	padding: 25px;
 	text-align: center;
 }
 

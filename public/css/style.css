@@ -53,6 +53,11 @@ h3{
 	transition: all ease-out .6s!important;
 }
 
+.visible { display: block!important; }
+.text-left { text-align: left!important; }
+.text-center { text-align: center!important; }
+.text-right { text-align: right!important; }
+
 .super-centered {
 	position: absolute;
 	left: 50%;
@@ -76,7 +81,6 @@ h3{
 	width: 113px;
 }
 .label-md {
-	width: 70px;
 }
 .rel{}
 .right{float:right;}
