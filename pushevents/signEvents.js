@@ -14,7 +14,8 @@
 			watcher = require('../globals/watcher');
 
 		var sendHomepage = function( req, res ){
-			res.sendfile( process.cwd() +'/views/index.html');
+
+			res.sendfile( config.homepage[ process.env.NODE_ENV ] );
 		};
 
 		var sendEarlyAdoptersPage = function( req, res ){

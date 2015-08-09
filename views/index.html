@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-  <title>Meefore | Home </title>
+  <title>Dev Meefore | Home </title>
 
   <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Londrina+Solid' rel='stylesheet' type='text/css'>
@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="/css/landing.css">
   <link rel="stylesheet" href="/css/profile.css">
   <link rel="stylesheet" href="/css/events.css">
+  <link rel="stylesheet" href="/css/create.css">
   <link rel="stylesheet" href="/css/manage.css">
   <link rel="stylesheet" href="/css/search.css">
   <link rel="stylesheet" href="/css/chat.css">
@@ -83,7 +84,7 @@
         <li id="profile" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
         <li id="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
         <li id="search" class="menu-item icon icon-search"><span class="underlay"></span>
-          <div id="searchbar" class=""><input type="text" placeholder="Looking for someone ?" class="search-input"></div>
+          <div id="searchbar" class=""><input type="text" placeholder="Recherche" class="search-input"></div>
         </li>
         <li id="management" class="menu-item icon icon-users" data-linkedcontent="#manageEventsWrap"><span class="underlay"></span></li>
         <li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
@@ -268,74 +269,15 @@
     
     <section id="eventsWrap" class="none centered">
       
-      <div class="row row-events">
+      <div class="row row-events text-center">
         <h2> Tous les before </h2>
         <h5 class="row-title-sub"> L'abus de soirées est excellent pour la santé.</h5>
-      </div>
-
-      <div class="row row-events row-create">
-        <div class="create-event-wrap">
         <button class="theme-btn btn-create-event">Créer un before</button>
-        </div>
       </div>
+  
 
     </section>
   
-    <div id="createEvent" class="none">
-      
-      <div class="row-create">
-        <h2>Faites nous plaisir</h2>
-      </div>
-      <div class="row-title-sub">
-        Tous les befores rapportent 500pts lorsqu'ils donnent lieu à une vraie rencontre
-      </div>
-
-      <div class="row-input row-input-lg etiquette row-create-party-location">
-        <label class="label label-lg" for="cr-party-location">Lieu de la soirée</label>
-        <input id="cr-party-location" type="text" placeholder="Endroit où vous comptez sortir après le before">
-      </div>
-
-      <div class="row-input row-input-lg etiquette row-create-hosts">
-        <label class="label label-lg" for="cr-hosts">Organisateurs</label>
-        <input id="cr-hosts" type="text" placeholder="Sélectionner les organisateurs parmis vos amis">
-      </div>
-
-      <div class="row-input row-input-md etiquette row-create-date">
-        <label class="label label-md" for="cr-date">Date du before</label>
-        <input id="cr-date" type="text" placeholder="">
-      </div>
-
-      <div class="row-input row-input-md etiquette row-create-before-location">
-        <label class="label label-md" for="cr-before-location">Lieu du before</label>
-        <input id="cr-before-location" type="text" placeholder="">
-      </div>
-
-      <div class="row-input row-input-lg etiquette row-create-ambiance">
-        <label class="label label-lg" for="cr-ambiance">Ambiance</label>
-        <input id="cr-ambiance" type="text" placeholder="Nom de la rue">
-      </div>
-
-      <div class="row-input row-input-lg etiquette row-create-age">
-        <label class="label label-lg" for="cr-age">Âge souhaité</label>
-        <input id="cr-age" type="text" placeholder="Nom de la rue">
-      </div>
-
-      <div class="row-input row-input-lg etiquette row-create-mixity">
-        <label class="label label-lg" for="cr-mixity">Type d'invités</label>
-        <div class="row-select-wrap mixity-wrap">
-              <div class="row-select mixity" data-selectid="boys"><i class="icon icon-boys icon-male-1"></i>Plutôt des hommes</div>
-              <div class="row-select mixity" data-selectid="mixed"><i class="icon icon-mix icon-users"></i>Les deux</div>
-              <div class="row-select mixity selected" data-selectid="girls"><i class="icon icon-girls icon-female-1"></i>Plutôt des femmes</div>
-        </div>
-      </div>
-
-      <div class="row-buttons visible">
-          <button class="theme-btn btn-cancel right">Annuler</button>
-          <button class="theme-btn btn-validate right">Créer!</button>
-        </div>
-
-    </div>
-
 
     <section id="searchUsersWrap" class="none centered">
       <h2>Team de soirée</h2>
@@ -437,21 +379,18 @@
   </div>
 
   <script src="//js.pusher.com/2.2/pusher.min.js"></script>
-  <script src="dist/lib.min.js"></script>
-  <script src="js/lib/moment.min.js"></script>
-  <script src="js/lib/waitForImages.min.js"></script>
-  <script src="js/lib/joyride.js"></script>
+  <script src="dist/lib.js"></script>
 
-  <script src="js/lib/typed.js"></script>
-  <script src="js/lib/jquery.typeahead.js"></script>
   <!-- custom scripts -->
-  <script src="js/lj-params.js"></script>
-  <script src="js/lj-render.js"></script>
-  <script src="js/lj-domEvents.js"></script>
-  <script src="js/lj-admin.js"></script>
-  <script src="js/lj-typeaheads.js"></script>
-  <script src="js/lj-helpers.js"></script>
-  <script src="js/lj.js"></script>
+  <script src="js/src/lj-params.js"></script>
+  <script src="js/src/lj-render.js"></script>
+  <script src="js/src/lj-domEvents.js"></script>
+  <script src="js/src/lj-admin.js"></script>
+  <script src="js/src/lj-typeaheads.js"></script>
+  <script src="js/src/lj-helpers.js"></script>
+  <script src="js/src/lj-tour.js"></script>
+  <script src="js/src/lj-landing.js"></script>
+  <script src="js/src/lj.js"></script>
 
 
 </body>

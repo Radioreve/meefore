@@ -5,16 +5,6 @@
 
 }
 
-#createEvent {
-}
-
-#createEvent label {
-	text-align: left;
-	padding-right: 10px;
-}
-#createEvent input {
-	color: #555;
-}
 
 .create-event-wrap {
 	text-align: center;
@@ -35,18 +25,18 @@ i.icon-create {
 position: relative;
 font-size: 20px;
 }
-#eventsWrap .btn-create-event {
-width: 170px;
+.btn-create-event {
+width: 160px;
 text-transform: uppercase;
 font-weight: bolder;
-padding: 12px 0;
+padding: 7px 3px;
 color: white;
-font-size: 13px;
+font-size: 10px;
 background: linear-gradient(red, #CE6C56);
 background: #C83D3D;
-border: 1px solid #8A3939;
-border-radius: 0;
-}
+background: linear-gradient(35deg,#A51313,#A94332);border: 1px solid #B54343;
+border: none;border-radius: 0px;
+cursor: pointer;top: 57px;z-index: 200;}
 
 
 

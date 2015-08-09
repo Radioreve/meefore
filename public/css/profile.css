@@ -256,16 +256,17 @@ background: #F3F3F3;}
 .row-select.selected {
     background: #F7F7F7;
     color: #313131;
-}
+} 
 .row-select-description {
     /* font-style: italic; */
     display: inline-block;
     font-size: 13px;
     color: #535353;
-    margin-right: 15px;
+    margin-right: 10px;
     background: #F7F7F7;
     padding: 6px;
-    float: right;
+    position: absolute;
+    right: 0;
 }
 .row.editing label {
     color: #ccc;
@@ -315,7 +316,7 @@ background: #F3F3F3;}
 /* Friends */
 
 .row-friend-item {
-    width: 80px;
+    min-width: 80px;
     display: inline-block;
     background-color: white;
     margin: 0 3px;
@@ -323,14 +324,14 @@ background: #F3F3F3;}
     text-align: center;
     cursor: pointer;
 } .row-friend-img img {
-    /* width: 80%; */
+    margin-top: 10px;
 } .row-friend-name {
     background-color: #FFF;
     /* border-top: 1px                                                                                                                                                                                          
     solid #A0A0A0; */
     font-size: 14px;
     text-align: center;
-    padding: 6px 0px;
+    padding: 6px 5px;
 } .row-friend-actions {}
 
 

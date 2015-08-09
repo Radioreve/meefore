@@ -1,0 +1,28 @@
+
+#createEvent {
+}
+
+#createEvent label {
+	text-align: left;
+	padding-right: 10px;
+}
+#createEvent input {
+	color: #555;
+}
+
+
+.row-create-date {
+	margin-right: 8px;
+}
+
+.mixity.selected[data-selectid="girls"]{
+	background: #FFEDFC;
+	color: #962596;
+}
+.mixity.selected[data-selectid="boys"]{
+	background: #DDE3FF;
+	color: #2E2E81;
+}
+.mixity.selected[data-selectid="mixed"]{
+	/* background:#FFDDE3; */
+}

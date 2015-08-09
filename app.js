@@ -17,7 +17,7 @@
 		app.use( favicon( __dirname + '/public/favicon.ico' ));
 
 	var config = require('./config/config'),
-		uri    = config[ process.env.NODE_ENV ].dbUri ;
+		uri    = config.db[ process.env.NODE_ENV ].uri ;
 
 		require('./globals/cron');
 		require('./globals/db')( uri );
