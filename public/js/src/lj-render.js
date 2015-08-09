@@ -58,7 +58,7 @@
                       +'</div>'
 
                       +'<div class="row-input row-input-lg etiquette row-create-mixity">'
-                        +'<label class="label label-lg" for="cr-mixity">Type d\'invités</label>'
+                        +'<label class="label label-lg" for="cr-mixity">Invités</label>'
                         +'<div class="row-select-wrap mixity-wrap">'
                               +'<div class="row-select mixity" data-selectid="boys"><i class="icon icon-boys icon-male-1"></i>Plutôt des hommes</div>'
                               +'<div class="row-select mixity" data-selectid="mixed"><i class="icon icon-mix icon-users"></i>Les deux</div>'
@@ -730,6 +730,27 @@
                 html += '</div>';
 
             return html;
+        },
+        renderFriendInCreate: function( friend ){
+
+            /* Rendering friend thumb image */
+            var img_id          = LJ.fn.findMainImage( friend ).img_id,
+                img_version     = LJ.fn.findMainImage( friend ).img_version,
+                display_options = LJ.cloudinary.create.friends.params;
+                display_options.img_version = img_version;
+
+            var image_tag_friend = $.cloudinary.image( img_id, display_options ).prop('outerHTML');
+            var image_tag_loader = LJ.$bar_loader.clone().addClass('host-loader').prop('outerHTML');
+
+            var html =  '<div class="host" data-id="'+friend.facebook_id+'">'
+                            + image_tag_friend
+                            + image_tag_loader
+                            + '<div class="host-name">' + friend.name + '</div>'
+                        +'</div>'
+
+            return html;
+
+
         },
         renderFacebookUploadedPicturesNone: function(){
 

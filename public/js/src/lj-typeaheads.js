@@ -1,4 +1,5 @@
 	
+
 	window.LJ = _.merge( window.LJ || {} , {
 
 		typeahead: {
@@ -16,6 +17,32 @@
 				}
 			},
 			places: {
+				class_names: {
+					input:'',
+					hint:'hint-places',
+					menu:'search-results-places',
+					dataset:'search-wrap',
+					suggestion:'search-result-places search-result',
+					empty:'empty',
+					open:'open',
+					cursor:'cursor',
+					highlight:'highlight'
+				}
+			},
+			hosts: {
+				class_names: {
+					input:'',
+					hint:'hint-places',
+					menu:'search-results-places',
+					dataset:'search-wrap',
+					suggestion:'search-result-places search-result',
+					empty:'empty',
+					open:'open',
+					cursor:'cursor',
+					highlight:'highlight'
+				}
+			},
+			ambiances: {
 				class_names: {
 					input:'',
 					hint:'hint-places',
@@ -66,9 +93,77 @@
 				display:'name',
 				source: users.ttAdapter(),
 				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound_Users,
-					pending    : LJ.fn.renderTypeaheadPending_Users,
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
 					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadHosts: function( friends ){
+
+			var users = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends ,
+  				 transform: function(res){
+  				 	delog(res);
+  				 }
+			});
+
+			users.initialize()
+				 .done(function(){ })
+				 .fail(function(){ delog('Bloodhound engine failed to initialized hosts'); })
+
+			$('.row-create-hosts input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1,
+				classNames: LJ.typeahead.hosts.class_names
+			},
+			{
+				name:'hosts',
+				display:'name',
+				source: users.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
+				}
+			});
+
+		},
+		initTypeaheadAmbiances: function( ambiances ){
+
+			var users = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: ambiances,
+  				 transform: function(res){
+  				 	delog(res);
+  				 }
+			});
+
+			users.initialize()
+				 .done(function(){ })
+				 .fail(function(){ delog('Bloodhound engine failed to initialized ambiances'); })
+
+			$('.row-create-ambiance input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1,
+				classNames: LJ.typeahead.ambiances.class_names
+			},
+			{
+				name:'ambiance',
+				display:'name',
+				source: users.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Ambiances
 				}
 			});
 
@@ -103,34 +198,14 @@
 				display:'name',
 				source: places.ttAdapter(),
 				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound_Places,
-					pending    : LJ.fn.renderTypeaheadPending_Places,
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
 					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
 				}
 			});
 
 		},
-		renderTypeaheadNotFound_Users: function(){
-			
-			var display_settings = LJ.cloudinary.search.user.params;
-				img_id  		 = LJ.cloudinary.logo.black_on_white.id;
-
-			var message 		 = "Aucun résultats";
-
-			user_main_img = $.cloudinary.image( img_id, display_settings ).prop('outerHTML');
-
-			var html = '<div class="search-result-places search-result-places-empty">'
-					   + '<div class="search-result-images">' 
-				       		+ user_main_img 
-				       + '</div>'
-				       + '<div class="search-result-name-wrap">'
-				       + '<div class="search-result-name">' + message + '</div>'
-				       + '</div>'
-				      +'</div>';
-			return html;
-
-		},
-		renderTypeaheadNotFound_Places: function(){
+		renderTypeaheadNotFound: function(){
 			
 			var display_settings = LJ.cloudinary.search.user.params;
 				img_id  		 = LJ.cloudinary.logo.black_on_white.id;
@@ -151,28 +226,14 @@
 			return html;
 
 		},
-		renderTypeaheadPending_Users: function(){
+		renderTypeaheadPending: function(){
 
 			var message 		 = "Recherche..."
+			var image_tag_loader = LJ.$spinner_loader.clone().addClass('search-loader').addClass('super-centered').prop('outerHTML');
 
 			var html = '<div class="search-result-places search-result-places-empty" >'
 					   + '<div class="search-result-images">' 
-				       		+ '<img class="search-loader super-centered" src="/img/495.gif" width="15">'
-				       + '</div>'
-				       + '<div class="search-result-name-wrap">'
-				       + '<div class="search-result-name">' + message + '</div>'
-				       + '</div>'
-				      +'</div>';
-			return html;
-
-		},
-		renderTypeaheadPending_Places: function(){
-
-			var message 		 = "Recherche..."
-
-			var html = '<div class="search-result-places search-result-places-empty" >'
-					   + '<div class="search-result-images">' 
-				       		+ '<img class="search-loader super-centered" src="/img/495.gif" width="15">'
+				       		+ image_tag_loader
 				       + '</div>'
 				       + '<div class="search-result-name-wrap">'
 				       + '<div class="search-result-name">' + message + '</div>'
@@ -192,6 +253,17 @@
 			return html;
 
 		},
+		renderTypeaheadSuggestion_Ambiances:  function( place ){
+
+			var html = '<div data-ambianceid="'+ambiance._id+'" class="place-result">'
+							+'<div class="ambiance-data ambiance-name">'+ambiance.name+'</div>'
+							+'<div class="ambiance-data ambiance-description">'+ambiance.description+'</div>'
+							+'<div class="ambiance-data ambiance-type">'+ambiance.type+'</div>'
+						+'</div>';
+
+			return html;
+
+		},
 		renderTypeaheadSuggestion_Users: function( user ){
 
 			var user_main_img = '', user_hashtags = '';
@@ -205,10 +277,12 @@
 			user_hashtags += '<div>#' +  user.drink + '</div>';
 			user_hashtags += '<div>#' +  user.mood + '</div>';
 
+			var image_tag_loader = LJ.$spinner_loader.clone().addClass('search-loader').addClass('super-centered').prop('outerHTML');
+
 			var html = '<div data-userid="'+user.facebook_id+'">'
 					   + '<div class="search-result-images">' 
 				       		+ user_main_img 
-				       		+ '<img class="search-loader super-centered" src="/img/495.gif" width="15">'
+				       		+ image_tag_loader
 				       + '</div>'
 				       + '<div class="search-result-name-wrap">'
 				       + '<div class="search-result-name">' + user.name + '</div>'

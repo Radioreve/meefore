@@ -256,6 +256,7 @@ background: #F3F3F3;}
 .row-select.selected {
     background: #F7F7F7;
     color: #313131;
+    border: 1px solid #D0D0D0;
 } 
 .row-select-description {
     /* font-style: italic; */
@@ -320,6 +321,7 @@ background: #F3F3F3;}
     display: inline-block;
     background-color: white;
     margin: 0 3px;
+    border: 1px solid #eee;
 } .row-friend-img {
     text-align: center;
     cursor: pointer;

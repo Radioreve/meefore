@@ -26,7 +26,8 @@
 .search-result-name-wrap {
     top:10px;
     margin-left: 45px!important;
-    padding: 18px 10px;
+    padding: 12px 10px;
+    height: 48px;
 }
 .search-result-default {
     padding: 13px!important;
@@ -87,6 +88,10 @@ padding: 5px 5px;border-bottom: 1px solid #4B4B4B;border-top: 1px solid black;tr
 .search-result img {
     z-index: 2;
     position: absolute;
+}
+
+.search-loader {
+    width:15px;
 }
 .search-result img.search-loader{
     z-index: 1!important;
@@ -149,7 +154,8 @@ border: 1px solid #ccc;padding: 1px 5px;cursor: pointer;transition: none;}
 .place-result {
 
 }
-.place-data {
+.place-data,
+.ambiance-data {
 
 display: inline-block;
 
@@ -161,20 +167,23 @@ padding: 9px 5px;
 
 margin: 0 3px;
 }
-.place-name {
+.place-name,
+.ambiance-name {
 
 font-weight: bolder;
 }
-.place-address {
+.place-address,
+.ambiance-description {
 
 color: #ABABAB;
 
 font-style: italic;
 }
 .hint-places {
-    color: #BCBCBC;
+    color: #bcbcbc!important;
 }
-.place-type {
+.place-type,
+.ambiance-type{
 
 float: right;
 

@@ -43,6 +43,11 @@
 				params: { cloud_name: "radioreve", width: 50, height: 50, crop: 'fill', gravity: 'face' }
 			}
 		},
+		create: {
+			friends: {
+				params: { cloud_name: "radioreve", 'class': 'host-img none', width: 24, height: 24, crop: 'fill', gravity: 'face' }
+			}
+		},
 		search: {
 			user: {
 				params: { cloud_name: "radioreve", 'class': 'super-centered', width: 40, height: 40, crop: 'fill', gravity: 'face' }
@@ -83,9 +88,13 @@
     			id: 'mobile_loader',
     			params: { cloud_name :"radioreve", 'class': 'ajax-loader', width: 25 }
     		},
-    		chat: {
-    			id: 'chat_loader',
-    			params: { cloud_name :"radioreve", 'class': 'chat-loader', width: 12 }
+    		bar: {
+    			id: 'bar_loader',
+    			params: { cloud_name :"radioreve" }
+    		},
+    		spinner: {
+    			id: 'spinner_loader',
+    			params: { cloud_name: "radioreve" }
     		},
     		curtain: {
     			id: 'curtain_loader_v4',

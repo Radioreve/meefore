@@ -13,7 +13,7 @@
 		clientEvents   = require( pushEventsDir + 'clientEvents'),
 		friendEvents   = require( pushEventsDir + 'friendEvents'),
 		adminEvents    = require( pushEventsDir + 'adminEvents'),
-		api  = require( apiDir + 'api' ),
+		api   	 	   = require( apiDir + 'api' ),
 		signEvents     = require( pushEventsDir + 'signEvents');
 
 
@@ -62,6 +62,8 @@
 		app.get('/api/v1/users', api.searchUsers );
 		app.get('/api/v1/places', api.searchPlaces );
 		app.post('/api/v1/places', api.createPlace );
+		app.get('/api/v1/ambiances', api.getAmbiances );
+		app.post('/api/v1/ambiances', api.createAmbiance );
 
 	//Events relatifs au démarrage d'une session client
 		app.post('/fetch-events', clientEvents.fetchEvents );

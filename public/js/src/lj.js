@@ -117,7 +117,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.$mobile_loader = $.cloudinary.image( LJ.cloudinary.loaders.mobile.id, LJ.cloudinary.loaders.mobile.params );
 			LJ.$mobile_loader.appendTo( $('.m-loaderWrap'));
 
-			LJ.$chat_loader = $.cloudinary.image( LJ.cloudinary.loaders.chat.id, LJ.cloudinary.loaders.chat.params );
+			LJ.$bar_loader = $.cloudinary.image( LJ.cloudinary.loaders.bar.id, LJ.cloudinary.loaders.bar.params );
+			/* Dynamically cloned and appended */
+
+			LJ.$spinner_loader = $.cloudinary.image( LJ.cloudinary.loaders.spinner.id, LJ.cloudinary.loaders.spinner.params );
 			/* Dynamically cloned and appended */
 
 			LJ.$curtain_loader = $.cloudinary.image( LJ.cloudinary.loaders.curtain.id, LJ.cloudinary.loaders.curtain.params );
@@ -1306,6 +1309,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			var eventName = 'display-content';
 
+			$('.modal-container').css({ width: options.starting_width });
 			$('.modal-container').on( eventName, function( e, data ){
 
 				var content = data.html_data;
@@ -1330,7 +1334,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						var old_height = $('.modal-container').innerHeight(),
 							new_height = old_height + $('.modal-container-body > div').innerHeight() + ( options.fix_height || 0 );
 
-						var old_width = $('.modal-container').innerWidth(),
+						var old_width = options.starting_width,
 							new_width = old_width + $('.modal-container-body > div').innerWidth();
 
 						var duration = new_height > 400 ? 450 : 300;
@@ -1413,6 +1417,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.fn.displayInModal({ 
 				url: '/api/v1/users/' + facebook_id,
 				source: 'server',
+				starting_width: 300,
 				render_cb: LJ.fn.renderUserProfileInCurtain,
 				error_cb: LJ.fn.renderUserProfileInCurtainNone
 			});

@@ -159,6 +159,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				LJ.fn.displayInModal({
 					url:'/me/photos/uploaded',
 					source:'facebook',
+					starting_width: 500,
 					render_cb: LJ.fn.renderFacebookUploadedPictures,
 					error_cb: LJ.fn.renderFacebookUploadedPicturesNone,
 					custom_data: [{ key: 'img-place', val: img_place }]
@@ -667,10 +668,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 				LJ.fn.displayInModal({ 
 					source:'local',
 					fix_height: -43,
+					starting_width: 550,
 					custom_classes: ['text-left'],
 					render_cb: LJ.fn.renderCreateEvent,
 					predisplay_cb: function(){
 						LJ.fn.initTypeaheadPlaces();
+						LJ.fn.initTypeaheadAmbiances();
 						LJ.fn.adjustAllInputsWidth('#createEvent');
 					} 
 				});

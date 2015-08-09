@@ -41,7 +41,7 @@
 			});
 			
 		},
-		shortenString: function( options ){
+		shortenString: function( options ){ //useless
 
 			var options = options || {};
 
@@ -53,7 +53,28 @@
 				max_char = options.max_char || 5;
 
 			return str.substr( 0, max_char ) + end_tpl;
+		},
+		preprendItemToInput: function( options ){
 
+			var options = options || {};
+
+			if( !options.html || typeof( options.html ) != 'string' )
+				return console.log('Invalid input for prepend item fn');
+
+			if( !options.inp || typeof( options.inp ) != 'string' )
+				return console.log('Invalid input for prepend item fn');
+
+			var $input = $(options.inp),
+				html   = options.html;
+
+				var $html = $(html).hide().insertBefore( $input );
+				
+				$input.css({ width: $input.width() - $html.outerWidth(true) });
+				$html.show();
+				$html.waitForImages(function(){
+					$html.find('.host-img').show()
+					//end().find('.host-loader').remove();
+				});
 
 		}
 

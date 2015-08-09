@@ -21,6 +21,7 @@
 
 		require('./globals/cron');
 		require('./globals/db')( uri );
+		require('./globals/loader').loadSettings(['ambiances']);
 
 	/* Référence globale */
 		global.watcher  = {};
