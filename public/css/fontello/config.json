@@ -31,6 +31,12 @@
       "src": "fontawesome"
     },
     {
+      "uid": "9ea0a737ccc45d6c510dcbae56058849",
+      "css": "music",
+      "code": 59452,
+      "src": "fontawesome"
+    },
+    {
       "uid": "bf882b30900da12fca090d9796bc3030",
       "css": "mail",
       "code": 59393,
@@ -211,6 +217,12 @@
       "src": "fontawesome"
     },
     {
+      "uid": "d84a06c5ce6da9ebdc9b0a5cb94db4c4",
+      "css": "relation",
+      "code": 59453,
+      "src": "fontawesome"
+    },
+    {
       "uid": "8e04c98c8f5ca0a035776e3001ad2638",
       "css": "facebook",
       "code": 59401,
@@ -226,6 +238,12 @@
       "uid": "fda731b5a4026685e1a9c7e64228e2b2",
       "css": "note-beamed",
       "code": 59402,
+      "src": "entypo"
+    },
+    {
+      "uid": "25b34dea4784f72c710454f32ff8fa2b",
+      "css": "mindset",
+      "code": 59454,
       "src": "entypo"
     },
     {
@@ -271,6 +289,12 @@
       "src": "entypo"
     },
     {
+      "uid": "8663320a860b00f26e94d3d15c9ba99a",
+      "css": "clock",
+      "code": 59456,
+      "src": "entypo"
+    },
+    {
       "uid": "884cfc3e6e2d456dd2a2ca0dbb9e6337",
       "css": "left-open-big",
       "code": 59411,
@@ -305,6 +329,12 @@
       "css": "mail-1",
       "code": 59407,
       "src": "mfglabs"
+    },
+    {
+      "uid": "bcbb9470c9ba0699d5a0e4e97b3d5be9",
+      "css": "booz",
+      "code": 59455,
+      "src": "elusive"
     },
     {
       "uid": "e36d581e4f2844db345bddc205d15dda",

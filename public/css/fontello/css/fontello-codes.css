@@ -59,3 +59,8 @@
 .icon-lock-open:before { content: '\e839'; } /* '' */
 .icon-male-1:before { content: '\e83a'; } /* '' */
 .icon-female-1:before { content: '\e83b'; } /* '' */
+.icon-music:before { content: '\e83c'; } /* '' */
+.icon-relation:before { content: '\e83d'; } /* '' */
+.icon-mindset:before { content: '\e83e'; } /* '' */
+.icon-booz:before { content: '\e83f'; } /* '' */
+.icon-clock:before { content: '\e840'; } /* '' */

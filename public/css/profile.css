@@ -241,22 +241,26 @@ background: #F3F3F3;}
 } 
 .row-select-wrap{
     display: inline-block;
+    vertical-align: top;
+    position: relative;
+    top: -5px;
 }
 .row-select {
     display: inline-block;
     font-size: 13px;
-    padding: 5px 9px;
+    padding: 9px 9px;
     border-radius: 2px;
     transition: all 
     ease-out .3s;
     border: 1px 
     solid white;
     cursor: pointer;
+    vertical-align: top;
 }
 .row-select.selected {
     background: #F7F7F7;
     color: #313131;
-    border: 1px solid #D0D0D0;
+    /* border: 1px solid #D0D0D0; */
 } 
 .row-select-description {
     /* font-style: italic; */

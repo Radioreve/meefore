@@ -14,29 +14,29 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				if( o.debug )
 					LJ.state.debug = true;
 			
-				/* Landing page animation */
+				// Landing page animation 
 				this.initAppBoot();
 
-				/* Ajax setup */
+				// Ajax setup 
 				this.initAjaxSetup();				
 
-				/* Bind UI action with the proper handler */
+				// Bind UI action with the proper handler 
 				this.handleDomEvents();
 
-				/* Gif loader and placeholder */
+				// Gif loader and placeholder 
 				this.initStaticImages();
 
-				/* Global UI Settings ehanced UX*/
+				// Global UI Settings ehanced UX
 				this.initEhancements();
 
-				/* Init Pusher Connexion via public chan */
+				// Init Pusher Connexion via public chan 
 				this.initPusherConnection();
 
-				/* Augment lodash */
+				// Augment lodash 
 				this.initAugmentations();
 
-				/* Typeahead pluggin */
-				this.initTypeahead();
+				// Typeahead pluggin 
+				this.initTypeahead();		
 
 
 		},
@@ -146,14 +146,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				delog('Missing init preference param, initializing lp...');
 				return LJ.fn.initLandingPage();
 			}
-
-			if( new moment( tk_valid_until ) < new moment() ){
+			
+			if( moment( new Date(tk_valid_until) ) < moment() ){
 				delog('long lived tk found but has expired');
 				return LJ.fn.initLandingPage();
-			}
+			} 
 
-			var current_tk_valid_until = new moment( tk_valid_until );
-			var now = new moment();
+			var current_tk_valid_until = moment( new Date(tk_valid_until) );
+			var now  = moment();
 			var diff = current_tk_valid_until.diff( now, 'd' );
 
 			if( diff < 30 ) {
@@ -851,6 +851,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
         initLayout: function( settings ){
 
+setTimeout(function(){ $('.btn-create-event').click(); }, 1500 );
 
         	/* Mise à jour dynamique des filters */
         	$( '.tags-wrap' ).html('').append( LJ.fn.renderTagsFilters() );

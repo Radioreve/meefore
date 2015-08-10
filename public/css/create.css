@@ -3,7 +3,7 @@
 }
 
 #createEvent label {
-	text-align: left;
+	text-align: right;
 	padding-right: 10px;
 	vertical-align: top;
 	line-height: 21px;
@@ -22,47 +22,47 @@
 .mixity.selected[data-selectid="girls"]{
 	background: #FFEDFC;
 	color: #962596;
-	border: 1px solid #FCCEFC;
 }
 .mixity.selected[data-selectid="boys"]{
-	background: #DDE3FF;
+	background: #F0F8FF;
 	color: #2E2E81;
-	border: 1px solid #BFD2E2;
+	/* border: 1px solid #BFD2E2; */
 }
 .mixity.selected[data-selectid="mixed"]{
 	/* background:#FFDDE3; */
 }
 
+.ambiance-name {
+	margin-left: 0!important;
+}
 
-.host {
 
+.ambiance-hashtag {
+	/* font-weight:bolder; */
+	display: inline-block;
+	vertical-align: top;
+	position: relative;
+	color: #C4C4C4;
+	margin: 6px 1px 0 10px;
+	top: 1px;
+}
+.host, .ambiance, .date {
 display: inline-block;
-
 background: #FBFBFB;
-
 padding: 0px 6px 0 0px;
-
 vertical-align: top;
-
 position: relative;
-
 height: 32px;
-
 top: -4px;
-
-border: 1px solid;
-
+/* border: 1px solid; */
 margin-right: 7px;
+cursor: pointer;
 }
 .host-img {
-	
-position: absolute;
-	
-top: 3px;
-	
-left: 4px; 
-	
-z-index: 1;
+	position: absolute;
+	top: 3px;
+	left: 4px;
+	z-index: 1;
 }
 .host-loader {
 	position: absolute;
@@ -70,7 +70,7 @@ z-index: 1;
 	left: 12px;
 	width: 13px;
 }
-.host-name {
+.host-name, .ambiance-name, .date-name {
 	display: inline-block;
 	line-height: 30px;
 	vertical-align: top;
@@ -78,4 +78,23 @@ z-index: 1;
 	font-size: 13px;
 	color: #555;
 	margin-left: 35px;
-} 
+	padding-right: 10px;
+	font-weight: bolder;
+	position: relative;
+	top: 1px;
+}
+
+.rem-click:hover .ambiance-name, .rem-click:hover .date-name{
+	text-decoration:line-through;
+	opacity: .7;
+}
+
+.icon-date {
+
+position: absolute;
+
+top: 7px;
+
+left: 7px;
+}
+

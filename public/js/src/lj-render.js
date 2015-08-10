@@ -34,22 +34,22 @@
 
                       +'<div class="row-input row-input-lg etiquette row-create-hosts">'
                         +'<label class="label label-lg" for="cr-hosts">Organisateurs</label>'
-                        +'<input id="cr-hosts" type="text" placeholder="Sélectionner les organisateurs parmis tes amis">'
+                        +'<input class="need-sanitize" id="cr-hosts" type="text" placeholder="Sélectionne parmis tes amis ( 3 max )">'
                       +'</div>'
 
                       +'<div class="row-input row-input-md etiquette row-create-date">'
                         +'<label class="label " for="cr-date">Date du before</label>'
-                        +'<input id="cr-date" type="text" placeholder="">'
+                        +'<input class="need-sanitize" readonly data-select="datepicker" id="cr-date" type="text" placeholder="A quelle heure on débarque?">'
                       +'</div>'
 
                       +'<div class="row-input row-input-md etiquette row-create-before-location">'
                         +'<label class="label " for="cr-before-location">Lieu du before</label>'
-                        +'<input id="cr-before-location" type="text" placeholder="">'
+                        +'<input id="cr-before-location" type="text" placeholder="Nom de la rue, du quartier">'
                       +'</div>'
 
                       +'<div class="row-input row-input-lg etiquette row-create-ambiance">'
                         +'<label class="label label-lg" for="cr-ambiance">Ambiance</label>'
-                        +'<input id="cr-ambiance" type="text" placeholder="Nom de la rue">'
+                        +'<input class"need-sanitize" id="cr-ambiance" type="text" placeholder="Hashtag ton before ( 5 max )">'
                       +'</div>'
 
                       +'<div class="row-input row-input-lg etiquette row-create-age">'
@@ -280,17 +280,6 @@
 
             return loc + 'ème';
 
-		},
-		matchDateHHMM: function( d ){
-
-            var offset = (new Date()).getTimezoneOffset(),
-                date = moment( d ).add( offset, 'minutes' );
-
-	    	return date.format('HH')+'H'+date.format('mm');
-
-		},
-		matchDateDDMMYY: function(d){
-			return moment(d).format('DD/MM/YYYY')			
 		},
 		renderAskerPlaceholder: function(){
 
@@ -742,7 +731,7 @@
             var image_tag_friend = $.cloudinary.image( img_id, display_options ).prop('outerHTML');
             var image_tag_loader = LJ.$bar_loader.clone().addClass('host-loader').prop('outerHTML');
 
-            var html =  '<div class="host" data-id="'+friend.facebook_id+'">'
+            var html =  '<div class="rem-click host" data-id="'+friend.facebook_id+'">'
                             + image_tag_friend
                             + image_tag_loader
                             + '<div class="host-name">' + friend.name + '</div>'
@@ -751,6 +740,24 @@
             return html;
 
 
+        },
+        renderAmbianceInCreate: function( hashtag ){
+
+            var html =  '<div class="rem-click ambiance">'
+                            + '<div class="ambiance-hashtag">#</div>'
+                            + '<div class="ambiance-name">' + hashtag + '</div>'
+                        +'</div>'
+
+            return html;
+        },
+        renderDateInCreate: function( date ){
+
+            var html =  '<div class="rem-click date">'
+                            + '<i class="icon icon-date icon-clock"></i>'
+                            + '<div class="date-name">' + date + '</div>'
+                        +'</div>'
+
+            return html;
         },
         renderFacebookUploadedPicturesNone: function(){
 

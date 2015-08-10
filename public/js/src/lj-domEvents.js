@@ -19,6 +19,86 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		},
 		handleDomEvents_Globals: function(){
 
+			LJ.$body.on('mouseover', '#createEvent', function(){
+				LJ.fn.sanitizeCreateInputs();
+			});
+			LJ.$body.on('mouseenter', '#createEvent input', function(){
+				$(this).addClass('no-sanitize');
+			});
+			LJ.$body.on('mouseleave', '#createEvent', function(){
+				$(this).removeClass('no-sanitize');
+			});
+
+			LJ.$body.on('click', '.rem-click', function(){
+
+				var $self   = $(this);
+				if( $self.parents('.row-create-ambiance').length != 0 ){
+					var $input  = $self.parents('.row-input').find('input');
+						$input.css({ width: $input.outerWidth() + $self.outerWidth(true) });
+						$self.remove();
+				}
+				if( $self.parents('.row-create-hosts').length != 0 ){
+					var $input  = $self.parents('.row-input').find('input');
+						$input.css({ width: $input.outerWidth() + $self.outerWidth(true) });
+					var $sug = $('.search-results-autocomplete');
+					var current_offset = parseInt( $sug.css('left').split('px')[0] );
+					$sug.css({ left: current_offset + $self.outerWidth(true) });
+						$self.remove();
+				}	
+
+
+			});
+
+			LJ.$body.on('keydown', 'input', function(e){
+
+				var $self = $(this);
+				var keyCode = e.keyCode || e.which;
+
+				/* Remove des hashtag event  */
+				if( keyCode == 8  && $self.parents('.row-create-ambiance').length != 0 && $self.val().length == 0 ){
+					var $itm = $self.parents('.row-input').find('.rem-click').last();
+						$self.css({ width: $self.outerWidth() + $itm.outerWidth(true) });
+						$itm.remove();
+				}
+
+				/* Remove des hosts event  */
+				if( keyCode == 8  && $self.parents('.row-create-hosts').length != 0 && $self.val().length == 0 ){
+					var $itm = $self.parents('.row-input').find('.rem-click').last();
+						$self.css({ width: $self.outerWidth() + $itm.outerWidth(true) });
+						var $sug = $('.search-results-autocomplete');
+						var current_offset = parseInt( $sug.css('left').split('px')[0] );
+						$sug.css({ left: current_offset + $itm.outerWidth(true) });
+						$itm.remove();
+				}
+
+				/* Ajout des hashtag */
+				if( (keyCode == 9 || keyCode == 13) && $self.parents('.row-create-ambiance').length != 0 && $self.val().length != 0 ){
+					e.preventDefault();
+					var str = LJ.fn.hashtagify( $self.val() );
+					LJ.fn.addItemToInput({ html: LJ.fn.renderAmbianceInCreate( str ), inp: this, max: 5 });
+					$(this).val('');
+				}
+
+					
+			});
+
+			/* Ajout des hosts via la touche tab && click */
+			LJ.$body.bind('typeahead:autocomplete typeahead:select', function(ev, suggestion) {
+				var $input = $('.row-create-hosts input');
+			  	if( $input.is( ev.target ) ){
+			  		$input.parents('.twitter-typeahead').addClass('autocompleted');
+			  		LJ.fn.addItemToInput({ max: 3, inp: '.autocompleted', html: LJ.fn.renderFriendInCreate( suggestion ), suggestions: '.search-results-hosts' });
+			  	}
+			});
+
+			/* make sure always empty when closed */
+			LJ.$body.bind('typeahead:autocomplete typeahead:select typeahead:change', function( ev, suggestion ){
+				var $input = $('.row-create-hosts input');
+					if( $input.is( ev.target ) ){
+			  			$input.typeahead('val','');
+					}
+			});
+
 
 			LJ.$body.on('mouseenter', '.eventItemWrap', function(){
 				$(this).addClass('mouseover');
@@ -663,6 +743,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			});
 
+
 			LJ.$body.on('click', '.btn-create-event', function(){
 
 				LJ.fn.displayInModal({ 
@@ -672,30 +753,98 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					custom_classes: ['text-left'],
 					render_cb: LJ.fn.renderCreateEvent,
 					predisplay_cb: function(){
+
+						/* Typehead on hosts and places */
 						LJ.fn.initTypeaheadPlaces();
-						LJ.fn.initTypeaheadAmbiances();
+						LJ.fn.initTypeaheadHosts( LJ.user.friends );
+
+						/* Adjusting label & input width */
 						LJ.fn.adjustAllInputsWidth('#createEvent');
+
+						/* Date picker */ 
+						LJ.pikaday = new Pikaday({ 
+							field: document.getElementById('cr-date'),
+							format:'DD/MM/YY',
+							minDate: new Date(),
+							bound: false
+						});
+						$('.pika-single').insertAfter('#cr-date');
+
+						LJ.fn.handleDomEvents_Pickaday();
+	
 					} 
 				});
+			});
+
+		},
+		handleDomEvents_Pickaday: function(){
+
+			/* Date picker custom handling for better ux */
+			LJ.$body.on('mousedown', '.pika-day:not(.pika-prev,.pika-next)', function(e){
+
+				var $self = $(this);
+				var date_str =  moment({ 
+					D: $self.attr('data-pika-day'),
+					M: $self.attr('data-pika-month'),
+					Y: $self.attr('data-pika-year') })
+				.format('DD/MM/YY');
+
+				var msg = 'Good choice!';
+				LJ.fn.addDateToInput( date_str, msg );
 
 			});
 
+			LJ.$body.on('mousedown', '.pika-next', function(e){				
+				LJ.pikaday.nextMonth();
+			});
+
+			LJ.$body.on('mousedown', '.pika-prev', function(e){				
+				LJ.pikaday.prevMonth();
+			});
+
+			LJ.$body.on('mouseenter', '.pika-prev, .pika-next', function(){
+				LJ.state.show_picker = true;
+			});
+
+			LJ.$body.on('mouseleave', '.pika-prev, .pika-next', function(){
+				LJ.state.show_picker = false;
+			});
+
+			LJ.$body.on('focus', '#cr-date', function(){
+				LJ.pikaday.show();
+			});
+
+			LJ.$body.on('focusout', '#cr-date', function(){
+				if( LJ.state.show_picker ) return;
+				LJ.pikaday.hide();
+			});
+
+			LJ.$body.on('click', '.date', function(){
+				var msg = 'Ou vient quand?';
+				LJ.fn.removeDateToInput( msg );
+
+			}); 
 
 		},
 		handleDomEvents_Search: function(){
+
+
+
 
 			LJ.$body.bind('typeahead:select', function(ev, suggestion) {
 
 				console.log(suggestion);
 
 				if( $('.row-create-party-location input').is( ev.target ) ){
-					/*setTimeout(function(){
-			  			$('.row-create-party-location input').val( suggestion.name );
-					}, 10 ) */
+					/* Nothing special - default typeahead behavior, copy name on input */	
 				}
 
 			  	if( $('#search input').is( ev.target ) ){
 			  		LJ.fn.displayUserProfile( suggestion.facebook_id );
+			  	}
+
+			  	if( $('.row-create-hosts input').is( ev.target ) ){
+			  		delog('Hosts input selected!');
 			  	}
 
 			  	

@@ -29,12 +29,7 @@
     padding: 12px 10px;
     height: 48px;
 }
-.search-result-default {
-    padding: 13px!important;
-    font-family: 'Karla';
-    font-size: 14px;
-    color: #DDD;
-}
+
 .search-input {
     color: #EBEBEB;
     border-bottom: none;
@@ -70,19 +65,22 @@ margin-left: 8px;
 
 #searchresults div {
 display: inline-block;vertical-align: top;/* position: relative; */}
-.search-result-users, .search-result-places {
-padding: 5px 5px;border-bottom: 1px solid #4B4B4B;border-top: 1px solid black;transition: all ease-out .3s;position: relative;}
-.search-result-users:last-of-type{
-    border-bottom:none;
-    /* border-radius: 0 0 5px 5px; */
-}
-.search-result-users {
-    background-color: #2A2A2A;
-}
-.search-result-places {
+
+
+
+.search-result-default {
+    /* padding: 5px 5px; */
+    border-bottom: 1px solid #4B4B4B;
+    border-top: 1px solid black;
+    transition: all ease-out .3s;
+    position: relative;
     background-color: #F9F9F9;
+    border: 1px solid #ccc;
+    padding: 1px 0px;
+    cursor: pointer;
+    transition: none;
 }
-.search-result-places:hover {
+.search-result-default:hover {
     background-color: #F1F1F1;
 }
 .search-result img {
@@ -92,6 +90,7 @@ padding: 5px 5px;border-bottom: 1px solid #4B4B4B;border-top: 1px solid black;tr
 
 .search-loader {
     width:15px;
+    z-index: 0;
 }
 .search-result img.search-loader{
     z-index: 1!important;
@@ -125,7 +124,7 @@ float: right;}
     margin: 0 3px;
 }
 
-.search-result-users-empty, .search-result-places-empty {
+.search-result-default-empty {
     padding-left:5px;
 }
 
@@ -141,21 +140,29 @@ min-width: 600px;
 
 margin-top: 10px;
 }
+.search-results-ambiances {
+    margin-top: 10px;
+    min-width: 750px;
+}
+
+.search-results-hosts {
+margin-top: 10px;
+    width: 700px;
+}
 #createEvent .search-result-name {
     color: dimgrey;
     padding:5px;
 }
-.search-result-places {
-border: 1px solid #ccc;padding: 1px 5px;cursor: pointer;transition: none;}
 
-.search-result-places:last-of-type {
+.search-result-default:last-of-type {
 }
 
 .place-result {
 
 }
-.place-data,
 .ambiance-data {
+}
+.place-data {
 
 display: inline-block;
 
@@ -163,17 +170,15 @@ font-size: 13px;
 
 color: #555;
 
-padding: 9px 5px;
+padding: 9px 12px;
 
 margin: 0 3px;
 }
-.place-name,
-.ambiance-name {
+.place-name {
 
 font-weight: bolder;
 }
-.place-address,
-.ambiance-description {
+.place-address {
 
 color: #ABABAB;
 
@@ -183,7 +188,7 @@ font-style: italic;
     color: #bcbcbc!important;
 }
 .place-type,
-.ambiance-type{
+.ambiance-description{
 
 float: right;
 
@@ -193,7 +198,40 @@ padding: 5px 17px;
 
 margin-top: 4px;
 
-margin-right: 0px;
+margin-right: 6px;
 
 border-radius: 2px;
 } 
+
+.search-result-ambiances {
+    
+width: 32%;
+    
+display: inline-block;
+    
+text-align: left;
+    
+border: none;
+    
+box-shadow: 0 1px 1px #565656;
+    
+margin: 2px;
+}
+
+.search-result-users {
+    
+}
+
+.search-result-places {
+    
+}
+
+.search-result-hosts {
+    
+}
+.search-result-name-host {
+    font-size: 13px;
+    position: relative;
+    left: -25px;
+    top: 1px;
+}
