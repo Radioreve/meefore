@@ -26,7 +26,7 @@
             var html = '<div id="createEvent" class="">'
       
                       +'<div class="row-create">'
-                        +'<h2>Faites nous plaisir</h2>'
+                        +'<h2>La prochaine soirée, elle commence chez toi !</h2>'
                       +'</div>'
                       +'<div class="row-title-sub">'
                         +'Tous les befores rapportent 500pts lorsqu\'ils donnent lieu à une vraie rencontre'
@@ -39,12 +39,12 @@
 
                       +'<div class="row-input row-input-md etiquette row-create-date">'
                         +'<label class="label " for="cr-date">Date du before</label>'
-                        +'<input class="need-sanitize" readonly data-select="datepicker" id="cr-date" type="text" placeholder="A quelle heure on débarque?">'
+                        +'<input class="need-sanitize" readonly data-select="datepicker" id="cr-date" type="text" placeholder="Quel jour?">'
                       +'</div>'
 
-                      +'<div class="row-input row-input-md etiquette row-create-before-location">'
-                        +'<label class="label " for="cr-before-location">Lieu du before</label>'
-                        +'<input id="cr-before-location" type="text" placeholder="Nom de la rue, du quartier">'
+                      +'<div class="row-input row-input-md etiquette row-create-before-place">'
+                        +'<label class="label " for="cr-before-place">Lieu du before</label>'
+                        +'<input id="cr-before-place" type="text" placeholder="Quel quartier?">'
                       +'</div>'
 
                       +'<div class="row-input row-input-lg etiquette row-create-ambiance">'
@@ -54,21 +54,27 @@
 
                       +'<div class="row-input row-input-lg etiquette row-create-age">'
                         +'<label class="label label-lg" for="cr-age">Âge souhaité</label>'
-                        +'<input id="cr-age" type="text" placeholder="Nom de la rue">'
+                        +'<div class="row-select-wrap agerange-wrap">'
+                              +'<div class="row-select agerange selected" data-selectid="whatever"><i class="icon icon-agerange icon-thumbs-up-alt"></i>Whatever</div>'
+                              +'<div class="row-select agerange " data-selectid="1825"><i class="icon icon-agerange icon-college"></i>Etudiants (18-25)</div>'
+                              +'<div class="row-select agerange" data-selectid="2530"><i class="icon icon-agerange icon-bar"></i>Adultes (25-30)</div>'
+                              +'<div class="row-select agerange" data-selectid="30+"><i class="icon icon-agerange icon-cafe"></i>Adultes responsables (30+)</div>'
+                        +'</div>'
                       +'</div>'
 
                       +'<div class="row-input row-input-lg etiquette row-create-mixity">'
                         +'<label class="label label-lg" for="cr-mixity">Invités</label>'
                         +'<div class="row-select-wrap mixity-wrap">'
-                              +'<div class="row-select mixity" data-selectid="boys"><i class="icon icon-boys icon-male-1"></i>Plutôt des hommes</div>'
-                              +'<div class="row-select mixity" data-selectid="mixed"><i class="icon icon-mix icon-users"></i>Les deux</div>'
-                              +'<div class="row-select mixity selected" data-selectid="girls"><i class="icon icon-girls icon-female-1"></i>Plutôt des femmes</div>'
+                               +'<div class="row-select mixity selected" data-selectid="whatever"><i class="icon icon-mixity icon-thumbs-up-alt"></i>Whatever</div>'
+                              +'<div class="row-select mixity" data-selectid="boys"><i class="icon icon-mixity icon-male-1"></i>Plutôt des hommes</div>'
+                              +'<div class="row-select mixity" data-selectid="girls"><i class="icon icon-mixity icon-female-1"></i>Plutôt des femmes</div>'
+                              +'<div class="row-select mixity " data-selectid="mixed"><i class="icon icon-mixity icon-users"></i>Les deux</div>'
                         +'</div>'
                       +'</div>'
 
-                      +'<div class="row-input row-input-lg etiquette row-create-party-location">'
-                        +'<label class="label label-lg" for="cr-party-location">Soirée prévue</label>'
-                        +'<input id="cr-party-location" type="text" placeholder="Bar, nightclub, évènement facebook...">'
+                      +'<div class="row-input row-input-lg etiquette row-create-party-place">'
+                        +'<label class="label label-lg" for="cr-party-place">Soirée prévue</label>'
+                        +'<input id="cr-party-place" type="text" placeholder="Après le before, on enchaîne où ?">'
                         //+'<div class="row-select-description etiquette">Aide nous à connaître ton état d\'esprit</div>'
                       +'</div>'
 
@@ -750,6 +756,43 @@
 
             return html;
         },
+        renderBeforePlaceInCreate: function( place ){
+
+            var compo = place.address_components,
+                locality = '',
+                main_place = '';
+
+                compo.forEach(function( el ){
+
+                    if( el.types && el.types.indexOf('neighborhood') != -1 )
+                        main_place = el.long_name;
+
+                    if( el.types && el.types.indexOf('route') != -1 )
+                        main_place = el.long_name;
+
+                    if( el.types && el.types.indexOf('locality') != -1 )
+                        locality = el.long_name;
+
+                });
+
+            var html = '<div class="rem-click before-place" data-placeid="' + place.place_id + '">'
+                            + '<i class="icon icon-before-place icon-location"></i>'
+                            + '<div class="before-place-name"><span>'+ main_place +'</span>,<span class="locality"> ' + locality + ' </span></div>'
+                        +'</div>'
+
+            return html;
+
+        },
+        renderPartyPlaceInCreate: function( place ){
+
+            var html = '<div class="rem-click party-place" data-placeid="' + place._id + '">'
+                            + '<i class="icon icon-party-place icon-location"></i>'
+                            + '<div class="party-place-name"><span>'+ place.name +'</span>,<span class="locality"> ' + place.type + ' </span></div>'
+                        +'</div>'
+
+            return html;
+
+        },  
         renderDateInCreate: function( date ){
 
             var html =  '<div class="rem-click date">'

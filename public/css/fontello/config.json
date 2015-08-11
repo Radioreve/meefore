@@ -199,6 +199,18 @@
       "src": "fontawesome"
     },
     {
+      "uid": "2a4e6c99b732a57da40e32fa2a7800a4",
+      "css": "toggle-off",
+      "code": 59457,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "3256ef03b16e7ab51235bc7378b53bb5",
+      "css": "toggle-on",
+      "code": 59458,
+      "src": "fontawesome"
+    },
+    {
       "uid": "130380e481a7defc690dfb24123a1f0c",
       "css": "circle",
       "code": 59434,
@@ -307,6 +319,12 @@
       "src": "entypo"
     },
     {
+      "uid": "ef74ff62feda486fd414410e782b598a",
+      "css": "graduation-cap",
+      "code": 59459,
+      "src": "entypo"
+    },
+    {
       "uid": "dbd39eb5a1d67beb54cfcb535e840e0f",
       "css": "plus",
       "code": 59406,
@@ -331,6 +349,24 @@
       "src": "mfglabs"
     },
     {
+      "uid": "5c8822b310f20896a3c55a25b71008a8",
+      "css": "bar",
+      "code": 59463,
+      "src": "maki"
+    },
+    {
+      "uid": "492fe0ef4cb41d4e4de8502897685399",
+      "css": "cafe",
+      "code": 59461,
+      "src": "maki"
+    },
+    {
+      "uid": "020dbfb0a5a4a25775bc751e5891e161",
+      "css": "college",
+      "code": 59462,
+      "src": "maki"
+    },
+    {
       "uid": "bcbb9470c9ba0699d5a0e4e97b3d5be9",
       "css": "booz",
       "code": 59455,
@@ -346,6 +382,12 @@
       "uid": "a7289537a68b15b24bd4e3ee1ac20dfa",
       "css": "help",
       "code": 59418,
+      "src": "elusive"
+    },
+    {
+      "uid": "22cfc7af2c4f158b37317c65c92b48c2",
+      "css": "location",
+      "code": 59460,
       "src": "elusive"
     },
     {

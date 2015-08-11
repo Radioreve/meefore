@@ -20,9 +20,9 @@
 				class_names: {
 					input:'',
 					hint:'hint-places',
-					menu:'search-results-places',
+					menu:'search-results-party-places',
 					dataset:'search-wrap',
-					suggestion:'search-result-default search-result-places',
+					suggestion:'search-result-default search-result-party-places',
 					empty:'empty',
 					open:'open',
 					cursor:'cursor',
@@ -114,7 +114,7 @@
 				display:'name',
 				source: hosts.ttAdapter(),
 				templates: {
-					notFound   : LJ.fn.renderTypeaheadBlank,
+					notFound   : LJ.fn.renderTypeaheadNotFound,
 					pending    : LJ.fn.renderTypeaheadPending,
 					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
 				}
@@ -140,7 +140,7 @@
 				 .done(function(){ })
 				 .fail(function(){ delog('Bloodhound engine failed to initialized places'); })
 
-			$('.row-create-party-location input').typeahead({
+			$('.row-create-party-place input').typeahead({
 				hint: true,
 				highlight: true,
 				minLength: 1,
@@ -236,8 +236,8 @@
 
 			user_main_img = $.cloudinary.image( main_img.img_id, display_settings ).prop('outerHTML');
 
-			user_hashtags += '<div>#' +  user.drink + '</div>';
-			user_hashtags += '<div>#' +  user.mood + '</div>';
+			user_hashtags += '<div class="ambiance-hashtag adjust">#</div><div class="ambiance-name ">' +  user.drink + '</div>';
+			user_hashtags += '<div class="ambiance-hashtag adjust">#</div><div class="ambiance-name">' +  user.mood + '</div>';
 
 			var image_tag_loader = LJ.$spinner_loader.clone().addClass('search-loader').addClass('super-centered').prop('outerHTML');
 
@@ -247,8 +247,8 @@
 				       		+ image_tag_loader
 				       + '</div>'
 				       + '<div class="search-result-name-wrap">'
-				       + '<div class="search-result-name">' + user.name + '</div>'
-				       + '<div class="search-result-hashtags">' + user_hashtags + '</div>'
+				       		+ '<div class="search-result-name">' + user.name + '</div>'
+				       		+ '<div class="search-result-hashtags">' + user_hashtags + '</div>'
 				       + '</div>'
 				      +'</div>';
 			return html;

@@ -44,14 +44,13 @@ color: #555;}
 .modal-user-drink,
 .modal-user-job {
 	font-family: 'Karla';
-    font-size: 14px;
-    color: #555;
+	font-size: 14px;
+	color: #FFF;
 	margin: 0 4px;
-	border-radius: 3px;
-	padding: 6px;
-	background: white;
+	padding: 6px 10px;
+	background: #383838;
 	display: inline-block;
-	border: 1px solid #ccc;
+	border: 1px solid #242424;
 	box-shadow: 0 0 1px #ECECEC;
 }
 
@@ -76,7 +75,7 @@ margin-bottom: 5px;
 }
 .modal-user-age {
 font-family: 'Karla';
-margin: 10px 0;background: white;padding: 10px 0px;}
+margin: 10px 0;background: #A72323;border: 1px solid #5D1919;padding: 10px 0px;color: white;font-size: 21px;}
 .modal-user-age span {
 }
 .modal-user-motto {

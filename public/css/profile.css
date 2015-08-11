@@ -227,6 +227,12 @@ background: #F3F3F3;}
     color: #D6D6D6;
     height: 43px;
 }
+.row-input-14 {
+    width: 24.5%;
+}
+.row-input-34 {
+    width: 74.5%;
+}
 .row-input-md {
     width: 49.5%;
 }
@@ -256,11 +262,14 @@ background: #F3F3F3;}
     solid white;
     cursor: pointer;
     vertical-align: top;
+    font-family: 'Karla';
 }
 .row-select.selected {
-    background: #F7F7F7;
+    background: #FBFBFB;
     color: #313131;
     /* border: 1px solid #D0D0D0; */
+    font-family: 'Karla';
+    font-weight: bolder;
 } 
 .row-select-description {
     /* font-style: italic; */

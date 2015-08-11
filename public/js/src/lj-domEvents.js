@@ -82,14 +82,20 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					
 			});
 
-			/* Ajout des hosts via la touche tab && click */
+			/* Ajout des hosts / partyplace via la touche tab && click */
 			LJ.$body.bind('typeahead:autocomplete typeahead:select', function(ev, suggestion) {
 				var $input = $('.row-create-hosts input');
 			  	if( $input.is( ev.target ) ){
 			  		$input.parents('.twitter-typeahead').addClass('autocompleted');
 			  		LJ.fn.addItemToInput({ max: 3, inp: '.autocompleted', html: LJ.fn.renderFriendInCreate( suggestion ), suggestions: '.search-results-hosts' });
 			  	}
+			  	var $input = $('.row-create-party-place input');
+			  	if( $input.is( ev.target ) ){
+			  		LJ.fn.addPartyPlaceToInput( suggestion );
+			  	}
 			});
+
+
 
 			/* make sure always empty when closed */
 			LJ.$body.bind('typeahead:autocomplete typeahead:select typeahead:change', function( ev, suggestion ){
@@ -743,6 +749,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			});
 
+			LJ.$body.on('click', '.agerange', function(){
+
+				var $self = $(this);
+				$('.agerange').removeClass('selected');
+				$self.addClass('selected');
+
+			});
+
 
 			LJ.$body.on('click', '.btn-create-event', function(){
 
@@ -769,12 +783,26 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 							bound: false
 						});
 						$('.pika-single').insertAfter('#cr-date');
-
 						LJ.fn.handleDomEvents_Pickaday();
+
+						/* Google Places Autocomplete API */
+						var options = {componentRestrictions: {country: 'fr'}};
+						LJ.google_places_autocomplete = new google.maps.places.Autocomplete( document.getElementById('cr-before-place'), options );
+						LJ.fn.handleDomEvents_GooglePlaces();
 	
 					} 
 				});
 			});
+
+		},
+		handleDomEvents_GooglePlaces: function(){
+
+			$('#cr-before-place').val('');
+			google.maps.event.addListener( LJ.google_places_autocomplete ,'place_changed', function(){
+				var place = LJ.google_places_autocomplete.getPlace();
+				LJ.fn.addBeforePlaceToInput( place );
+			});
+
 
 		},
 		handleDomEvents_Pickaday: function(){
@@ -789,7 +817,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					Y: $self.attr('data-pika-year') })
 				.format('DD/MM/YY');
 
-				var msg = 'Good choice!';
+				var msg = 'Good choice to party';
 				LJ.fn.addDateToInput( date_str, msg );
 
 			});
@@ -822,7 +850,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			LJ.$body.on('click', '.date', function(){
 				var msg = 'Ou vient quand?';
 				LJ.fn.removeDateToInput( msg );
+			}); 
 
+			LJ.$body.on('click', '.before-place', function(){
+				LJ.fn.removeBeforePlaceToInput();
+			}); 
+
+			LJ.$body.on('click', '.party-place', function(){
+				LJ.fn.removePartyPlaceToInput();
 			}); 
 
 		},

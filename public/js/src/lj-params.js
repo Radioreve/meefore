@@ -6,7 +6,7 @@
 	accessToken:'',
 	ui:{
 		artificialDelay: 700,
-		minimum_loading_time: 1000,
+		minimum_loading_time: 600,
 		displayIn:  { opacity: [1, 0], translateX: [-8, 0]   },
 		displayOut: { opacity: [0, 1], translateX: [10, 0]   }
 	},

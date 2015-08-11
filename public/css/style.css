@@ -1159,7 +1159,7 @@ body > header > h5{
 }
 .menu-item div:not(.search-result){
 	/* display:inline; */
-	margin-left: 5px;
+	/* margin-left: 5px; */
 }
 .notif{
 	color: white;

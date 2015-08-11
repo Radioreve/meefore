@@ -29,7 +29,7 @@
 			$container.find('label').each( function( i, label ){
 
 				var $label = $(label);
-				var $inp = $label.siblings('*:not(.inspire, .etiquette)');
+				var $inp = $label.siblings('*:not(.inspire, .etiquette, [type="number"])');
 
 				var label_width = max;
 				var label_full_width = $label.outerWidth(true);
@@ -93,17 +93,67 @@
 				$sug.css({ left: current_offset - $html.outerWidth(true) });
 			}
 		},
+		addBeforePlaceToInput: function( place ){
+
+			var $input = $('#cr-before-place'),
+				place = place;
+
+			$input.val('');
+			$input.hide();
+
+			if( $('.before-place').length != 0 )
+				LJ.fn.removeBeforePlaceToInput();
+
+			var $html = $( LJ.fn.renderBeforePlaceInCreate( place ) );			
+				$html.hide().insertBefore( $input );
+				$html.show();
+
+		},
+		removeBeforePlaceToInput: function( str ){
+
+			var $input = $('#cr-before-place'),
+				$place  = $('.before-place');
+
+			$('.before-place').remove();
+			$input.show();
+
+		},
+		addPartyPlaceToInput: function( place ){
+
+			var $input = $('#cr-party-place'),
+				place = place;
+
+			$input.val('');
+			$input.hide();
+
+			if( $('.party-place').length != 0 )
+				LJ.fn.removePartyPlaceToInput();
+
+			var $html = $( LJ.fn.renderPartyPlaceInCreate( place ) );			
+				$html.hide().insertBefore( $input );
+				$html.show();
+
+		},
+		removePartyPlaceToInput: function( str ){
+
+			var $input = $('#cr-party-place'),
+				$place  = $('.party-place');
+
+			$('.party-place').remove();
+			$input.val('').show();
+
+		},
 		addDateToInput: function( date_str ){
 
 			var $input = $('#cr-date'),
 				date = moment( date_str, 'DD/MM/YY' );
 			
 			$input.val('');
-			/* Clear other date */
+			
 			if( $('.date').length != 0 ) 
 				LJ.fn.removeDateToInput();
 
-			var msg = date.day() == moment().day() ? "Aujourd'hui!" : "Good choice";
+			var msg = date.day() == moment().day() ? "Aujourd'hui !" : "Une belle journée ";
 			$input.attr('placeholder', msg );
 			
 			var $html = $( LJ.fn.renderDateInCreate( date_str ) );
