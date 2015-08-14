@@ -58,6 +58,15 @@
 				params: { cloud_name: "radioreve", 'class': 'super-centered encadred', width: 40, height: 40, crop: 'fill', gravity: 'face' }
 			}
 		},
+		markers: {
+			boys: {
+				url:'http://res.cloudinary.com/radioreve/image/upload/v1439573885/marker-boys.png'
+			},
+			girls: {
+				url2: 'http://res.cloudinary.com/radioreve/image/upload/v1439574888/meefore-marker-girls2.png',
+				url: 'http://res.cloudinary.com/radioreve/image/upload/v1439573889/marker-girls.png'
+			}
+		},
         curtain: {
         	main: {
         		params: { cloud_name: "radioreve", 'class': 'modal-main-picture etiquette', width: 250, height: 250, crop: 'fill', gravity: 'face' }

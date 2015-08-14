@@ -104,16 +104,21 @@ window.LJ = _.merge(window.LJ || {}, {
                     lng: 2.3522219
                 },
                 zoom: 13,
+                disableDefaultUI: true,
+                zoomControl: true,
+                zoomControlOptions: {
+                	style: google.maps.ZoomControlStyle.SMALL,
+                	position: google.maps.ControlPosition.RIGHT_TOP
+                },
                 mapTypeControlOptions: {
                     mapTypeIds: ['sober', 'lunar']
                 }
             });
 
+            /* Map styling */
             LJ.map.mapTypes.set('sober', map_style_sober);
             LJ.map.mapTypes.set('lunar', map_style_lunar);
-
             LJ.map.setMapTypeId('sober');
-
         }
 
     })

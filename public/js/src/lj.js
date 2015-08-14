@@ -1276,24 +1276,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.fn.initLayout( settings );
 			LJ.fn.setLocalStoragePreferences();
 			LJ.fn.initCloudinary( data.cloudinary_tags );
-
-			
-			LJ.fn.fetchEvents(function( err, data ){
-
-				if( err )
-					return console.log('Error fetching and sync friends : ' + err );
-
-				console.log('Events successfully fetched ! ( n = ' + data.length + ' )');
-
-				var event_arr_html = [];
-				data.forEach(function( e ){
-					event_arr_html.push( LJ.fn.renderEvent( e ) );
-				});
-
-				//$('.row-events.row-body').html( event_arr_html );
-
-
-			}); 
+			LJ.fn.initMap();
 
 			/* Update friends based on facebook activity on each connection */
 			LJ.fn.fetchAndSyncFriends(function( err, data ){
@@ -1314,12 +1297,64 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			});
 		
-			LJ.fn.initMap();
+			
+			LJ.fn.fetchEvents(function( err, data ){
+
+				if( err )
+					return console.log('Error fetching and sync friends : ' + err );
+
+				console.log('Events successfully fetched ! ( n = ' + data.length + ' )');
+
+				/* Rendu des évènements les plus proches par rapport à la position de départ*/
+				var nearest_events = LJ.fn.findNearestEvents();
+				var nearest_events_html = [];
+				nearest_events.forEach(function( e ){
+					nearest_events_html.push( LJ.fn.renderNearestEvent( e ) );
+				});
+				$('.row-events-nearest').html( nearest_events_html );
+
+				/* Rendu sur la map */
+				LJ.fn.displayEventsOnMap( data );
+
+			}); 
 
 			/* Admin scripts. Every com is secured serverside */	
 			if( LJ.user.access.indexOf('admin') != -1 )
 				LJ.fn.initAdminMode();
 			
+		},
+		findNearestEvents: function(){
+
+			var max_events = 4;
+				//center     = LJ.maps.
+
+			return [];
+
+		},
+		displayEventsOnMap: function( events ){
+
+			events.forEach(function( itm ){
+				LJ.fn.displayEventOnMap( itm );
+			});
+
+		},
+		displayEventOnMap: function( evt ){
+
+			var service = new google.maps.places.PlacesService( LJ.map );
+
+					service.getDetails({ placeId: evt.address.place_id }, function( res ){
+
+						var lat = res.geometry.location.G;
+						var lng = res.geometry.location.K;
+						var url = LJ.cloudinary.markers[ evt.mixity ].url;
+
+						var event_on_map = new google.maps.Marker({
+					    	position: { lat: lat, lng: lng },
+					    	map: LJ.map,
+					    	icon: url
+					  });
+					});
+
 		},
 		displayInModal: function( options ){
 
@@ -1460,6 +1495,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		hideModal: function(){
 
+			$('.row-events-map').show();
 			$('.curtain')
 				.velocity({ 'opacity': [0,0.4] }, { complete: function(){
 					$('.curtain').css({ display: 'none' }); }
@@ -1469,9 +1505,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				.velocity({ 'opacity': [0,1] }, { complete: function(){
 					$('.modal-container').css({ display: 'none', height: 'auto', width: 'auto' });
 					$(".modal-container-body *:not('.curtain-loader')").remove(); 
-					if( $('.row-events-map').css('display') == 'none' )
-						$('.row-events-map').velocity('transition.fadeIn', { display: 'inline-block' });
-
 				}
 			});
 

@@ -773,7 +773,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					},
 					predisplay_cb: function(){
 
-						$('.row-events-map').velocity('transition.fadeOut');
+						$('.row-events-map').hide();
 						/* Typehead on hosts and places */
 						LJ.fn.initTypeaheadPlaces();
 						LJ.fn.initTypeaheadHosts( LJ.user.friends );
