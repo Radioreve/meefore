@@ -43,6 +43,11 @@
 				params: { cloud_name: "radioreve", width: 50, height: 50, crop: 'fill', gravity: 'face' }
 			}
 		},
+		events: {
+			hosts: {
+				params: { cloud_name: "radioreve", width: 75, height: 75, crop: 'fill', gravity: 'face'}
+			}
+		},
 		create: {
 			friends: {
 				params: { cloud_name: "radioreve", 'class': 'host-img none', width: 24, height: 24, crop: 'fill', gravity: 'face' }
@@ -50,7 +55,7 @@
 		},
 		search: {
 			user: {
-				params: { cloud_name: "radioreve", 'class': 'super-centered', width: 40, height: 40, crop: 'fill', gravity: 'face' }
+				params: { cloud_name: "radioreve", 'class': 'super-centered encadred', width: 40, height: 40, crop: 'fill', gravity: 'face' }
 			}
 		},
         curtain: {

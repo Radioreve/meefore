@@ -2,8 +2,7 @@
 	var _ = require('lodash');
 
 	var pushEventsDir = '../pushevents/',
-		apiDir        = '../api/',
-		mdw 		  = require('../globals/middlewares');
+		apiDir        = '../api/';
 
 	var initEvents     = require( pushEventsDir + 'initEvents'),
 		profileEvents  = require( pushEventsDir + 'profileEvents'),
@@ -13,14 +12,27 @@
 		clientEvents   = require( pushEventsDir + 'clientEvents'),
 		friendEvents   = require( pushEventsDir + 'friendEvents'),
 		adminEvents    = require( pushEventsDir + 'adminEvents'),
-		api   	 	   = require( apiDir + 'api' ),
 		signEvents     = require( pushEventsDir + 'signEvents');
 
+	var api = {}
+		api.tests     = require( apiDir + 'tests');
+		api.users     = require( apiDir + 'users' );
+		api.events    = require( apiDir + 'events' );
+		api.places    = require( apiDir + 'places' );
+		api.ambiances = require( apiDir + 'ambiances' );
+
+	var mdw = {};
+		mdw.auth 	  	  = require('../middlewares/auth');
+		mdw.email 	  	  = require('../middlewares/email');
+		mdw.pop 	 	  = require('../middlewares/pop');
+		mdw.facebook 	  = require('../middlewares/facebook');
+		mdw.validate 	  = require('../middlewares/validate');
+	
 
 	module.exports = function( app ){
 
 		app.all('/api/*', function( req, res, next ){
-			console.log('Request made to the API');
+			console.log('Request made to the api');
 			return next();
 		});
 
@@ -31,15 +43,13 @@
 			next();
 		});
 
-		app.post('/api/v1/test/:user_id', api.test );
-
 		app.get('/home', signEvents.sendHomepage );
 		app.get('/', signEvents.redirectToHome );
 		app.get('/earlyadopters', signEvents.sendEarlyAdoptersPage );
 
 	//Events d'initialisation et de déconnexion
-		app.post('/auth/facebook', mdw.populateUser({ force_presence: false }), mdw.subscribeMailchimpUser, signEvents.handleFacebookAuth );
-		app.post('/auth/app', mdw.authenticate(['standard']), mdw.fetchFacebookLongLivedToken('app_id'), initEvents.fetchUserAndConfiguration );
+		app.post('/auth/facebook', mdw.pop.populateUser({ force_presence: false }), mdw.email.subscribeMailchimpUser, signEvents.handleFacebookAuth );
+		app.post('/auth/app', mdw.auth.authenticate(['standard']), mdw.facebook.fetchFacebookLongLivedToken('app_id'), initEvents.fetchUserAndConfiguration );
 
 	//Events relatifs au profile utilisateur
 		app.post('/me/update-profile', profileEvents.updateProfile );
@@ -48,22 +58,29 @@
 		app.post('/me/update-picture-fb', profileEvents.updatePictureWithUrl );
 		app.post('/me/fetch-and-sync-friends', profileEvents.fetchAndSyncFriends );
 		app.post('/me/update-settings-ux', settingsEvents.updateSettingsUx );
-		app.post('/me/update-settings-mailinglists', mdw.populateUser({ force_presence: true }), mdw.updateMailchimpUser, settingsEvents.updateSettingsMailinglists );
+		app.post('/me/update-settings-mailinglists', mdw.pop.populateUser({ force_presence: true }), mdw.email.updateMailchimpUser, settingsEvents.updateSettingsMailinglists );
 
-	//Events relatif à la gestion d'un évènement
-		app.post('/create-event', manageEvents.createEvent );
-		app.post('/cancel-event', manageEvents.cancelEvent );
-		app.post('/suspend-event', manageEvents.suspendEvent );
-		app.post('/fetch-askers', manageEvents.fetchAskers );
+	//Rest api events
+		app.get('/api/v1/events', api.events.fetchEvents );
+		app.get('/api/v1/events/:event_id', api.events.fetchEventById );
+		app.post('/api/v1/events', mdw.validate.validate('event'), api.events.createEvent );
+		app.patch('api/v1/events/:event_id', api.events.updateEvent );
+		app.post('/api/v1/events/askers', api.events.fetchAskers );
 
+	//Rest api tests
+		app.post('/api/v1/test/:user_id', api.tests.test );
 
-	//REST API
-		app.get('/api/v1/users/:user_id', api.getUserById );
-		app.get('/api/v1/users', api.searchUsers );
-		app.get('/api/v1/places', api.searchPlaces );
-		app.post('/api/v1/places', api.createPlace );
-		app.get('/api/v1/ambiances', api.getAmbiances );
-		app.post('/api/v1/ambiances', api.createAmbiance );
+	//Rest api users
+		app.get('/api/v1/users/:user_id', api.users.fetchUserById );
+		app.get('/api/v1/users', api.users.fetchUsers );
+
+	//Rest api ambiances
+		app.get('/api/v1/ambiances', api.ambiances.fetchAmbiances );
+		app.post('/api/v1/ambiances', api.ambiances.createAmbiance );
+
+	//Rest api places
+		app.get('/api/v1/places', api.places.fetchPlaces );
+		app.post('/api/v1/places', api.places.createPlace );
 
 	//Events relatifs au démarrage d'une session client
 		app.post('/fetch-events', clientEvents.fetchEvents );
@@ -76,11 +93,11 @@
 
 
 	//Events relatifs aux admins
-		app.post('/fetch-app-data', mdw.authenticate(['admin']), adminEvents.fetchAppData );
-		app.post('/create-event-bot', mdw.authenticate(['admin-bot']), adminEvents.createBotEvent );
-		app.post('/request-participation-in-bot', mdw.authenticate(['admin-bot']), adminEvents.requestParticipationInBot );
-		app.post('/add-event-template', mdw.authenticate(['admin']), adminEvents.addEventTemplate );
-		app.post('/delete-event-template', mdw.authenticate(['admin']), adminEvents.deleteEventTemplate );
+		app.post('/fetch-app-data', mdw.auth.authenticate(['admin']), adminEvents.fetchAppData );
+		app.post('/create-event-bot', mdw.auth.authenticate(['admin-bot']), adminEvents.createBotEvent );
+		app.post('/request-participation-in-bot', mdw.auth.authenticate(['admin-bot']), adminEvents.requestParticipationInBot );
+		app.post('/add-event-template', mdw.auth.authenticate(['admin']), adminEvents.addEventTemplate );
+		app.post('/delete-event-template', mdw.auth.authenticate(['admin']), adminEvents.deleteEventTemplate );
 
 		app.post('/hello', function( req, res ){
 			console.log('Hello test command received!');
@@ -90,28 +107,28 @@
 
 
 		//Events relatif aux tests
-		app.post('/test/app', mdw.populateUser({ auth_type: 'app_id' }), function( req, res ){
+		app.post('/test/app', mdw.pop.populateUser({ auth_type: 'app_id' }), function( req, res ){
 			var user = req.body.user;
 			if( !user )
 				return res.json({"msg":"no user"});
 			return res.json({ user: user });
 		});
 
-		app.post('/test/facebook', mdw.populateUser({ auth_type: 'facebook_id' }), function( req, res ){
+		app.post('/test/facebook', mdw.pop.populateUser({ auth_type: 'facebook_id' }), function( req, res ){
 			var user = req.body.user;
 			if( !user )
 				return res.json({"msg":"no user"});
 			return res.json({ user: user });
 		});
 
-		app.post('/test', mdw.populateUser(), function( req, res ){
+		app.post('/test', mdw.pop.populateUser(), function( req, res ){
 			var user = req.body.user;
 			if( !user )
 				return res.json({"msg":"no user"});
 			return res.json({ user: user });
 		});
 
-		app.post('/test/force', mdw.populateUser({ force_presence: true }), function( req, res ){
+		app.post('/test/force', mdw.pop.populateUser({ force_presence: true }), function( req, res ){
 			var user = req.body.user;
 			if( !user )
 				return res.json({"msg":"no user"});

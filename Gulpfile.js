@@ -1,9 +1,10 @@
 
 	
-	var gulp    = require('gulp'),
-        gutil   = require('gulp-util'),
-        uglify  = require('gulp-uglify'),
-        concat  = require('gulp-concat');
+	var gulp       = require('gulp'),
+        gutil       = require('gulp-util'),
+        uglify      = require('gulp-uglify'),
+        concat      = require('gulp-concat'),
+        cssbeautify = require('gulp-cssbeautify');
 
        
     gulp.task('lib-js', function(){
@@ -43,6 +44,18 @@
     		.pipe(gutil.env.type === 'prod' ? uglify() : gutil.noop())
     		.pipe(gulp.dest('./public/dist'))
     }); 
+
+    gulp.task('css', function(){
+        return gulp.src([
+            'public/css/*.css'
+            ])
+        .pipe( cssbeautify({
+            indent: '   ',
+            openbrace: 'end-of-line',
+            autosemicolon: true
+        }))
+        .pipe( gulp.dest('./public/css') );
+    });
 
     gulp.task('default', ['lib-js','src-js'], function() {
     	gutil.log('Gulp is running');

@@ -4,57 +4,55 @@
 
 	var EventSchema = mongoose.Schema({
 
-		name: {
-			type: String
-		},
-		description: {
-			type: String
-		},
-		location: {
-			type: Number,
-			default: 1
-		},
-		maxGuest:{
-			type: Number,
-			default: 10
-		},
-		hostId: {
-			type: String
-		},
-		hostimg_id: {
-			type: String
-		},
-		hostimg_version: {
-			type: String
-		},
-		hostName: {
-			type: String
-		},
-		beginsAt: {
-			type: Date
-		},
-		createdAt: {
-			type: Date
-		},
-		askersList: {
+		hosts: {
 			type: Array,
 			default: []
 		},
-		state: {
+		status: {
 			type: String,
 			default: 'open'
 		},
-		tags: {
+		begins_at: {
+			type: Date
+		},
+		created_at: {
+			type: Date
+		},
+		type: {
+			type: String,
+			default: 'before'
+		},
+		address: {
+			type: Object,
+			default: {}
+		},
+		ambiance: {
+			type: Array,
+			default: ['classique']
+		},
+		agerange: {
+			type: String,
+			default:''
+		},
+		mixity: {
+			type: String
+		},
+		askers: {
 			type: Array,
 			default: []
 		},
-		meta:{
+		scheduled_party: {
+			type: Object,
+			default: {}
+		},
+		meta: {
 			type: Array,
 			default: []
-		},
-		templateId:{
-			type:String
 		}
+
+
+
+
 	});
 
 	module.exports = mongoose.model('Events', EventSchema);

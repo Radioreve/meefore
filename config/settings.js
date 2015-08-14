@@ -1,40 +1,81 @@
 
 var settings = {
 
-	eventsTerminateAt: 1,  // utiliser pour le cron job
-	eventsRestartAt: 9,   // utiliser pour empêcher de créer un event trop tôt
-	tagList: 
-			 [  
-			 	'afterwork',
-				'club',
-				'apero',
-				'blackout',
-				'bar',
-				'apparte',
-				'rock',
-				'rencontre',
-				'erasmus'
-			 ],
-	profileDescList:
+	api_version: 1,
+	app: {
+		max_hosts: 3,
+		max_ambiance: 5,
+		mood: 
+		[
+			{ id: 'happy', display: 'Happy' },
+			{ id: 'drunk', display: 'Drunk' },
+			{ id: 'fire', display: 'Fired' },
+			{ id: 'horney', display: 'Horney' },
+			{ id: 'whatever', display: 'Whatever' }
+		],
+		drink:
+		[
+			{ id: 'water', display: 'H2O' },
+			{ id: 'hard', display: 'Hard' },
+			{ id: 'shots', display: 'Shots' },
+			{ id: 'beer', display: 'Beer' },
+			{ id: 'wine', display: 'Wine' }
+		],
+		agerange: 
+		[
+			{ id: 'whatever', display: 'Whatever', icon_code: 'thumbs-up-alt' },
+			{ id: '1825', display: '18-25', icon_code: 'college' },
+			{ id: '2530', display: '25-30', icon_code: 'bar' },
+			{ id: '30+', display: '30+', icon_code: 'cafe' }
+		],
+		mixity: 
+		[
+			{ id: 'whatever', display: 'Whatever', icon_code: 'thumbs-up-alt' },
+			{ id: 'boys', display: 'Plutôt des hommes', icon_code: 'male-1' },
+			{ id: 'girls', display: 'Plutôt des femmes', icon_code: 'female-1' },
+			{ id: 'mixed', display: 'Les deux', icon_code: 'users' }
+		]
+	},
+	public_properties: {
+		users: 
 			[
-				"Liberté, Egalité, Ebriété !",
-				"Nouveau sur Paris, souvent chaud le vendredi",
-				"Asian with attitude",
-				"Sans alcool la fête est plus molle",
-				"Avant je m'ennuyais en soirée. Mais ça c'était avant",
-				"Prenez moi comme je suis (sic)",
-				"Etudiant(e) en médecine",
-				"Etudiant(e) en école de com'",
-				"On a conscience avant, on prend conscience après",
-				"Grand mère sait faire de la bonne D",
-				"Ils m'appelaient mousse",
-				"Delphine de porte dauphine",
-				"Boubakar du Dakar",
-				"Stoi le manque d'inspi",
-				"Marjorie. C'est pas grave.",
-				"C'est pas parcequ'il y a un gardien qu'on peut pas marquer de but..."
-
+				'facebook_id',
+				'facebook_url', 
+				'signup_date', 
+				'age', 
+				'gender', 
+				'job', 
+				'motto', 
+				'name', 
+				'drink', 
+				'mood', 
+				'pictures', 
+				'skills'
 			],
+		events: []
+	},
+
+	suggestion_list: {
+		motto:
+		[
+			"Liberté, Egalité, Ebriété !",
+			"Nouveau sur Paris, souvent chaud le vendredi",
+			"Asian with attitude",
+			"Sans alcool la fête est plus molle",
+			"Avant je m'ennuyais en soirée. Mais ça c'était avant",
+			"Prenez moi comme je suis (sic)",
+			"Etudiant(e) en médecine",
+			"Etudiant(e) en école de com'",
+			"On a conscience avant, on prend conscience après",
+			"Grand mère sait faire de la bonne D",
+			"Ils m'appelaient mousse",
+			"Delphine de porte dauphine",
+			"Boubakar du Dakar",
+			"Stoi le manque d'inspi",
+			"Marjorie. C'est pas grave.",
+			"C'est pas parcequ'il y a un gardien qu'on peut pas marquer de but..."
+		]
+	},
 	activeEventStates:
 			 [
 			 	"open",

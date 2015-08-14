@@ -67,10 +67,6 @@ var UserSchema = new mongoose.Schema({
     type: String,
     default:'happy'
   },
-  location: {
-    type: Number,
-    default: 1
-  },
   friends: {
     type:Array,
     default:[]
@@ -112,7 +108,7 @@ var UserSchema = new mongoose.Schema({
       }
     }
   },
-  skill: {
+  skills: {
     type: Object,
     default: {
       xp: 1000,

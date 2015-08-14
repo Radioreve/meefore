@@ -10,128 +10,7 @@ var User = require('../models/UserModel'),
 
 var pusher = require('../globals/pusher');
 
-var createEvent = function( req, res ) {
-	       
-    var data = req.body;
 
-    var hostId = data.hostId,
-        socketId = data.socketId,
-        userIds = data.userIds || [];
-
-    if( settings.isFrozenTime() ){
-
-        return eventUtils.raiseError({
-            res: res,
-            toClient:"Pas de meefore avant " + settings.eventsRestartAt +"h"
-        });
-    }
-
-    var hour =  data.hour; var minut = data.min;
-    if( hour < 14  || hour > 23 )
-    return eventUtils.raiseError({
-            toClient:"Les meefores ont lieu entre 14h00 et 23h59",
-            toServer:"EC-6",
-            res:res
-     });
-
-    if( !data.tags )
-    return eventUtils.raiseError({
-            toClient:"Un tag minimum",
-            toServer:"Wrong Tags Inputs",
-            res:res
-    });
-
-    if( data.tags.length > 3 )
-    return eventUtils.raiseError({
-            toClient:"Trois tags maximum",
-            toServer:"Wrong Tags Inputs",
-            res:res
-    });
-
-    if( data.maxGuest < 2 || data.maxGuest > 10 )
-    return eventUtils.raiseError({
-            toClient:"Le nombre d'invités doit être entre 2 et 10",
-            toServer:"Wrong Tags Inputs",
-            res:res
-    });
-    
-    var newEvent = new Event( data );
-
-        newEvent.beginsAt  = moment.utc({ h: data.hour, m: data.min });
-        newEvent.createdAt = moment.utc();
-
-    User.find({ '_id': { $in: userIds }}, function( err, users ){
-
-        if( err )
-            return eventUtils.raiseError({
-                err:err,
-                res:res,
-                toClient:"Impossible d'ajouter certains de vos amis"
-            });
-
-        /*
-        if( users.length == 0 )
-            return eventUtils.raiseError({
-                err:err,
-                res:res,
-                toClient:"Ajouter au moins une personne!"
-            });
-        */
-
-        for( var i=0; i<users.length; i++ ){
-            newEvent.askersList.push( users[i] );
-        }
-
-        User.findById( hostId, {}, function( err, host ) {
-
-            if (!err ){
-
-                if( host.status === 'hosting' )             
-                return eventUtils.raiseError({
-                    toClient:"Already hosting !",
-                    toServer:"Can't host multiple events",
-                    res: res
-                });
-                    
-                if( 0 )
-                return eventUtils.raiseError({
-                    toClient:"Renseignez tous les champs svp ;-)",
-                    toServer :"Not all fields filled",
-                    res: res
-                });
-
-                newEvent.save( function( err, myEvent ){
-                    
-                    if( err )
-                        return eventUtils({
-                            res:res,
-                            err:err,
-                            toClient:"Erreur en sauvegardant l'event"
-                        });
-
-                        host.status = 'hosting';
-                        host.hosted_event_id = myEvent._id;
-
-                        var expose = { myEvent: myEvent };
-
-                        host.save( function( err, myHost ){
-                            if( !err ){
-                                console.log( myHost.email + ' is hosting event with id : ' + myHost.hosted_event_id );
-                                eventUtils.sendSuccess( res, expose );
-                                pusher.trigger('default', 'create-event-success', expose, socketId );
-                            }
-                        });
-
-                        for( var i=0; i<users.length; i++ ){
-                            users[i].asked_events.push( myEvent._id )
-                            users[i].save();
-                        }
-                    
-                });
-            }
-        });
-    });
-};
 
 
 var suspendEvent = function( req, res ) {
@@ -293,7 +172,6 @@ var fetchAskers = function( req, res ) {
 
 
 module.exports = {
-    createEvent: createEvent,
     suspendEvent: suspendEvent,
     cancelEvent: cancelEvent,
     fetchAskers: fetchAskers

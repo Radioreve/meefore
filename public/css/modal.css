@@ -1,126 +1,143 @@
-
 .modal-container {
-background: white;
-min-width: 400px;
-position: fixed;
-z-index: 99999999;
-padding: 12px;
-box-shadow: 0 0 5px #D2D2D2;
+   background: white;
+   min-width: 400px;
+   position: fixed;
+   z-index: 99999999;
+   padding: 12px;
+   box-shadow: 0 0 5px #D2D2D2;
 }
 
 .modal-container .loader {
-	
 }
 
 .modal-container-body {
-	background:url('/img/crossword.png');
-	height:100%;
-	padding: 25px;
-	text-align: center;
+   background: url('/img/crossword.png');
+   height: 100%;
+   padding: 25px;
+   text-align: center;
 }
 
 .modal-user-content {
-
 }
 
 .modal-user-description {
-	display: inline-block;
-	vertical-align:top;
-	margin-bottom: 15px;
-	text-align: center;
+   display: inline-block;
+   vertical-align: top;
+   margin-bottom: 15px;
+   text-align: center;
 }
 
-.modal-user-membersince{
-	color:#ccc;
-	font-size: 12px;
+.modal-user-membersince {
+   color: #ccc;
+   font-size: 12px;
 }
+
 .modal-user-description-head {
-margin-bottom: 5px;}
+   margin-bottom: 5px;
+}
+
 .modal-user-description-body {
-font-family: 'Karla';
-font-size: 14px;
-color: #555;}
+   font-family: 'Karla';
+   font-size: 14px;
+   color: #555;
+}
+
 .modal-user-mood,
 .modal-user-drink,
 .modal-user-job {
-	font-family: 'Karla';
-	font-size: 14px;
-	color: #FFF;
-	margin: 0 4px;
-	padding: 6px 10px;
-	background: #383838;
-	display: inline-block;
-	border: 1px solid #242424;
-	box-shadow: 0 0 1px #ECECEC;
+   font-family: 'Karla';
+   font-size: 14px;
+   color: #FFF;
+   margin: 0 4px;
+   padding: 6px 10px;
+   background: #383838;
+   display: inline-block;
+   border: 1px solid #242424;
+   box-shadow: 0 0 1px #ECECEC;
 }
 
 .modal-user-picture-hashtag {
-	background: rgba(0, 0, 0, 0.62);
-	color:white;
-	position: absolute;
-	bottom: 16px;
-	left: 50%;
-	transform: translate(-50%,0);
-	width: 218px;
-	padding: 10px 0;
-	display: none;
+   background: rgba(0, 0, 0, 0.62);
+   color: white;
+   position: absolute;
+   bottom: 16px;
+   left: 50%;
+   transform: translate(-50%,0);
+   width: 218px;
+   padding: 10px 0;
+   display: none;
 }
+
 .modal-user-picture-hashtag.active {
-	display:block; 
+   display: block;
 }
+
 .modal-user-name {
-font-size: 40px;
-font-family: 'Londrina Solid';
-margin-bottom: 5px;
+   font-size: 40px;
+   font-family: 'Londrina Solid';
+   margin-bottom: 5px;
 }
+
 .modal-user-age {
-font-family: 'Karla';
-margin: 10px 0;background: #A72323;border: 1px solid #5D1919;padding: 10px 0px;color: white;font-size: 21px;}
+   font-family: 'Karla';
+   margin: 10px 0;
+   background: #A72323;
+   border: 1px solid #5D1919;
+   padding: 10px 0px;
+   color: white;
+   font-size: 21px;
+}
+
 .modal-user-age span {
 }
-.modal-user-motto {
-letter-spacing: -1px;
-font-size: 16px;
-color: #333333;
-margin-bottom: 10px;
-padding: 7px;
-font-family: 'Gochi hand';
-}
-.modal-user-mood {
 
+.modal-user-motto {
+   letter-spacing: -1px;
+   font-size: 16px;
+   color: #333333;
+   margin-bottom: 10px;
+   padding: 7px;
+   font-family: 'Gochi hand';
 }
+
+.modal-user-mood {
+}
+
 .modal-user-drink {
- 
 }
+
 .modal-user-job {
-	
 }
+
 .modal-user-pictures {
-text-align: center;
-margin-bottom: 18px;
+   text-align: center;
+   margin-bottom: 18px;
 }
+
 .modal-user-main-picture {
-	position: relative;
+   position: relative;
 }
+
 .modal-user-other-pictures {
-	position: relative;
-	top: 0px;
+   position: relative;
+   top: 0px;
 }
 
 .modal-main-picture {
-	display: none;
+   display: none;
 }
+
 .modal-main-picture.active {
-	display:block;
-	width: auto;
-	margin: 0 auto;
+   display: block;
+   width: auto;
+   margin: 0 auto;
 }
 
 .modal-thumb-picture {
-	margin:0;
-	border-bottom:4px solid transparent;
+   margin: 0;
+   border-bottom: 4px solid transparent;
 }
 
 .modal-thumb-picture.active {
-	border-bottom: 4px solid #E13F3F;
+   border-bottom: 4px solid #E13F3F;
 }

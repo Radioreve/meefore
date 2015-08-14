@@ -32,7 +32,7 @@
 
 				var data = { msg: clientMsg, err: p.err };
 				
-				p.res.status( 500 ).json( data ).end();
+				p.res.status( p.code || 400 ).json( data ).end();
 				return;
 			}
 	};

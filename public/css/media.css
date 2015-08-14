@@ -1,370 +1,382 @@
-
-@media screen and ( min-width: 1000px ){
-    .m-loaderWrap{
-    display:none!important;
-    }
+@media screen and ( min-width: 1000px ) {
+   .m-loaderWrap {
+      display: none!important;
+   }
 }
-@media screen and ( max-width: 1000px ){
+
+@media screen and ( max-width: 1000px ) {
 	
-	.earl-num{
-		float:none;
-  		display:none;
-	}
+   .earl-num {
+      float: none;
+      display: none;
+   }
 
-	.earl-title{
-		font-size:13px!important;
-	}
+   .earl-title {
+      font-size: 13px!important;
+   }
 
-	#earlyAdoPointList{
-		text-align:center;
-	}
-	.earl-row{
-		margin-left: 20px;
-		margin-right:20px;
-	}
+   #earlyAdoPointList {
+      text-align: center;
+   }
 
-   #thumbWrap
-    {
-		display:none!important;
-	}
+   .earl-row {
+      margin-left: 20px;
+      margin-right: 20px;
+   }
 
-.hint:before, .hint:after, [data-hint]:before, [data-hint]:after {
-	display:none;
-}
-  	
-  #contentWrap input,
+   #thumbWrap {
+      display: none!important;
+   }
+
+   .hint:before, .hint:after, [data-hint]:before, [data-hint]:after {
+      display: none;
+   }
+
+   #contentWrap input,
   label,
-  .input-row-wrap{
-		width: 100%!important;
-		text-align:center!important;
-		padding:0;
-	}
-	label{
-		margin-top: 11px!important;
-		padding:0;
-	}
+  .input-row-wrap {
+      width: 100%!important;
+      text-align: center!important;
+      padding: 0;
+   }
 
-	input,
-	textarea,{
-    	padding: ;
+   label {
+      margin-top: 11px!important;
+      padding: 0;
+   }
+
+   input,
+	textarea, {
+      padding: ;
     	margin: 0;
-    	margin-bottom: 20px!important;
-	}
+      margin-bottom: 20px!important;
+   }
 
   /* Propriétés générales */
-  .centered{
-	width: 100%!important;
-	} 
-  .themeBtnMain{
-    margin: 20px auto!important;
-    display:block;
-    float:none;
-  
-    margin-bottom: 40px!important;
-}
-  .toast{
-    width:100%!important;
-  }
-  .loaderWrap{
-    display:none!important;
-  }
+   .centered {
+      width: 100%!important;
+   }
 
-  #searchUsers{
-  	border-top:none;
-  }
+   .themeBtnMain {
+      margin: 20px auto!important;
+      display: block;
+      float: none;
+      margin-bottom: 40px!important;
+   }
+
+   .toast {
+      width: 100%!important;
+   }
+
+   .loaderWrap {
+      display: none!important;
+   }
+
+   #searchUsers {
+      border-top: none;
+   }
 /* ========================== settingsWrap ======================== */
 
-    #settingsWrap .input-row-wrap{
-    text-align:center;
-    }
-   
+   #settingsWrap .input-row-wrap {
+      text-align: center;
+   }
 
-    #contactWrap form{
-    text-align: center;
-    margin:30px 0;
-    overflow:hidden;
-    }
-    .formWrap,
-    #settingsInputsWrap{
-      padding:0 40px;
-    }
+   #contactWrap form {
+      text-align: center;
+      margin: 30px 0;
+      overflow: hidden;
+   }
 
-    input{
+   .formWrap,
+    #settingsInputsWrap {
+      padding: 0 40px;
+   }
+
+   input {
       margin: 0 auto;
       margin-top: 10px;
-    
-}
+   }
 /* ========================== ProfileWrap ======================== */
 
-  #pictureWrap{
-    display:block;
-  
-}
-  .fieldsWrap{
-    display:block;
-    margin: 40px auto;
-    padding: 0 40px;
-  }
-	
-  .input-row-wrap label{ 
+   #pictureWrap {
+      display: block;
+   }
+
+   .fieldsWrap {
+      display: block;
+      margin: 40px auto;
+      padding: 0 40px;
+   }
+
+   .input-row-wrap label {
     /* margin-bottom: 10px!important; */
-  }
-  .input-row-wrap #name{
-    margin-bottom: 0px;
-    margin-top: 0;
-    padding-top: 2px;
-    text-align: center;
-}
-  .input-row-wrap #age{
-    margin:0; 
-    padding:0;
-    width: 45px!important;
-    margin-top: 4px;
-}
+      ;
+   }
 
+   .input-row-wrap #name {
+      margin-bottom: 0px;
+      margin-top: 0;
+      padding-top: 2px;
+      text-align: center;
+   }
 
-      #searchBar i{
+   .input-row-wrap #age {
+      margin: 0;
+      padding: 0;
+      width: 45px!important;
+      margin-top: 4px;
+   }
+
+   #searchBar i {
       top: 17px;
-    }
-    #searchBar input{
-    	width:80%!important;
-    }
+   }
 
-  
-  #createEventInputsWrap{
-	padding: 0 100px;
-	text-align: center;
-}
+   #searchBar input {
+      width: 80%!important;
+   }
 
+   #createEventInputsWrap {
+      padding: 0 100px;
+      text-align: center;
+   }
 
-  #contentWrap #eventHour,
+   #contentWrap #eventHour,
   #contentWrap #eventMinut,
   #contentWrap #eventLocation,
-  #contentWrap #eventMaxGuest{
-    width:40px!important;
-  }
- 
- #contentWrap .chatInputWrap input{
-  	margin:0;
-  }
-  #contentWrap .chatInputWrap input[type="submit"]{
-	width:20px!important;
-  }
-  #contentWrap .chatInputWrap input[type="text"]{
-  
-  }
- 
-  #manageEventsWrap .a-picture{
-		display: block;
- 		 margin: 6px auto;
-	}
+  #contentWrap #eventMaxGuest {
+      width: 40px!important;
+   }
 
+   #contentWrap .chatInputWrap input {
+      margin: 0;
+   }
+
+   #contentWrap .chatInputWrap input[type="submit"] {
+      width: 20px!important;
+   }
+
+   #contentWrap .chatInputWrap input[type="text"] {
+   }
+
+   #manageEventsWrap .a-picture {
+      display: block;
+      margin: 6px auto;
+   }
 }
-@media screen and ( max-width: 580px ){
+
+@media screen and ( max-width: 580px ) {
 	
-	body{
-		cursor:pointer;
-	}
-	
-  .toastMsg{
-    font-size: 12.5px;
-  }
-  .toast-icon{
-    display:none;
-  }
-  .toast{
-    height:22px;
-    padding-top:13px
-  }
+   body {
+      cursor: pointer;
+   }
+
+   .toastMsg {
+      font-size: 12.5px;
+   }
+
+   .toast-icon {
+      display: none;
+   }
+
+   .toast {
+      height: 22px;
+      padding-top: 13px;
+   }
     
 /* ========================== menuWrap ======================== */
-    .menu-item.right{
-        float: none;
-    }
-    .col{
-    	float:none!important;
-    }
-   
-    #menuWrap{
-      margin-left:0;
+   .menu-item.right {
+      float: none;
+   }
+
+   .col {
+      float: none!important;
+   }
+
+   #menuWrap {
+      margin-left: 0;
       text-align: center;
       font-size: 14px;
       min-width: 230px;
-	}
-    #menuWrap .underlay{
-      height:5px;
+   }
+
+   #menuWrap .underlay {
+      height: 5px;
       top: 5px;
       left: 0px;
       width: 100%;
-	}
-    #menuWrap .menu-item{
-    width: 13%
-    ;padding-left: 0;
-    padding-right: 0;
-}
+   }
 
-	body header.m{
-		display: none!important;
-	}
-	
-	body header{
-	  
-	}
-    body h2{
-        font-size:1.5em;
-    
-        margin-bottom: 30px;
-}
-  	
-  	#createEventWrap h2{
-  		padding:0 10px;
-  	}
+   #menuWrap .menu-item {
+      width: 13%;
+      padding-left: 0;
+      padding-right: 0;
+   }
+
+   body header.m {
+      display: none!important;
+   }
+
+   body header {
+   }
+
+   body h2 {
+      font-size: 1.5em;
+      margin-bottom: 30px;
+   }
+
+   #createEventWrap h2 {
+      padding: 0 10px;
+   }
     /* EventsWrap */
-    .action{
-        display:block;
-        margin: 15px 0;
-        font-size: .7em;
-}
+   .action {
+      display: block;
+      margin: 15px 0;
+      font-size: .7em;
+   }
 
-    #contactBody{
-      width:auto!important;
-    }
+   #contactBody {
+      width: auto!important;
+   }
        
 /* ========================== SearchWrap ======================== */
 
-    #searchUsersWrap,
-    #searchBar{
-      width:auto;
-    }
+   #searchUsersWrap,
+    #searchBar {
+      width: auto;
+   }
 
     
 /* ========================== EventsWrap ======================== */
 	
-	#noEvents{
-		padding:0 20px;
-	}
+   #noEvents {
+      padding: 0 20px;
+   }
     
 
 /* ========================== createWrap ======================== */
 
-  #createEventInputsWrap{
-    padding: 0 40px;
-  
+   #createEventInputsWrap {
+      padding: 0 40px;
+   }
+
+   #createEventInputsWrap label {
+      margin-bottom: 10px!important;
+      display: block;
+   }
+
+   #logo {
+      display: none;
+   }
 }
-  #createEventInputsWrap label{
-    margin-bottom:10px!important;
-    display:block;
-  }
 
-  #logo{
-	display:none;
-	}
-
-}
-
-@media screen and ( max-width: 320px ){
-	
+@media screen and ( max-width: 320px ) {
 }
 
 /* Ugly hacks */
 
-#landingWrap > .container > .row{
-  overflow: hidden;
+#landingWrap > .container > .row {
+   overflow: hidden;
 }
 
-#profileWrap .row{
-    overflow:hidden!important;
+#profileWrap .row {
+   overflow: hidden!important;
 }
 
-.col{
-    width: 33.333%;
-    float: left;
-    display: inline;
+.col {
+   width: 33.333%;
+   float: left;
+   display: inline;
 }
 
+@media screen and (max-width:330px) {
 
+   .eventItemWrap {
+      display: block;
+      margin-left: 0;
+      margin-right: 0;
+      width: auto;
+   }
 
-@media screen and (max-width:330px){
+   .e-desc {
+      display: block;
+   }
 
-	.eventItemWrap{
-      display:block;
-      margin-left:0;
-      margin-right:0;
-      width:auto;
-    }
-    .e-desc{
-      display:block;
+   .e-guests {
+      width: auto;
+   }
 
-    }
-    .e-guests{
-      width:auto;
-    }
-    .e-hour{
-      font-size:30px;
+   .e-hour {
+      font-size: 30px;
       width: 143px;
-    }
-    .guestsWrap{
-      width:100px;
-    
-    }
-    .guestsWrap > span{
-      font-size:12px;
-    }
-    .tag,.loc,.drink,.mood{
-      font-size:.60em;
-    }
-    .e-location{
-      position:relative;
-      top:-17px;
-      right:45px;
-      margin-bottom:5px;
-     
-    }
-    .e-location span{
-      background:white;
-      border:1px solid #ccc;
-      padding:5px; 
-    }
-  
-    .u-item .u-body{
-      width:auto;
-    }
-    .u-item button{
-      positon:absolute;
-      right:5px;
-    }
-	
+   }
+
+   .guestsWrap {
+      width: 100px;
+   }
+
+   .guestsWrap > span {
+      font-size: 12px;
+   }
+
+   .tag,.loc,.drink,.mood {
+      font-size: .60em;
+   }
+
+   .e-location {
+      position: relative;
+      top: -17px;
+      right: 45px;
+      margin-bottom: 5px;
+   }
+
+   .e-location span {
+      background: white;
+      border: 1px solid #ccc;
+      padding: 5px;
+   }
+
+   .u-item .u-body {
+      width: auto;
+   }
+
+   .u-item button {
+      positon: absolute;
+      right: 5px;
+   }
 }
 
 
 /* BOOTSTRAP VERY MIN */
 
 .container {
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto;
+   padding-right: 15px;
+   padding-left: 15px;
+   margin-right: auto;
+   margin-left: auto;
 }
+
 @media (min-width: 768px) {
-  .container {
-    width: 750px;
-  }
+   .container {
+      width: 750px;
+   }
 }
+
 @media (min-width: 992px) {
-  .container {
-    width: 970px;
-  }
+   .container {
+      width: 970px;
+   }
 }
+
 @media (min-width: 1200px) {
-  .container {
-    width: 1000px;
-  }
+   .container {
+      width: 1000px;
+   }
 }
 
 #landingWrap .row {
-    text-align: center;
+   text-align: center;
 }
 
 .row {
-    overflow: hidden;
+   overflow: hidden;
 }

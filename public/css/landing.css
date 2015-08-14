@@ -1,219 +1,246 @@
-
-#landingWrap{
-    padding-top: 10%;
+#landingWrap {
+   padding-top: 10%;
 }
 
 .auto-login-msg {
-    color: gainsboro;
-    font-size: 14px;
-    font-family: 'Karla';
-    letter-spacing: 1px;
+   color: gainsboro;
+   font-size: 14px;
+   font-family: 'Karla';
+   letter-spacing: 1px;
 }
 
-.etiquette{
-  background: rgba(255, 255, 255, 0.81);
-  border-bottom: 1px 
-  
-  
-  
-  
-  
-  solid #E4E4E4;
-  box-shadow: 0 0 1px #e4e4e4;
-  padding: 15px;
-  border-radius: 2px 2px 0 0;
-  /* display: inline-block; */
+.etiquette {
+   background: rgba(255, 255, 255, 0.81);
+   border-bottom: 1px solid #E4E4E4;
+   box-shadow: 0 0 1px #e4e4e4;
+   padding: 15px;
+   border-radius: 2px 2px 0 0;
+    /* display: inline-block; */
+   ;
 }
 
 .fb-overlay {
-    width:100%;
-    height:100%;
-    position:absolute;
-    top:0;
-    left:0;
-    background-color:white;
-    z-index:1;
-    transition: all 
-    ease-out .3s;
-    opacity:0;
-}
-.landing-content{
-    text-align: center;
-    color: white;
+   width: 100%;
+   height: 100%;
+   position: absolute;
+   top: 0;
+   left: 0;
+   background-color: white;
+   z-index: 1;
+   transition: all ease-out .3s;
+   opacity: 0;
 }
 
-.landing-subscribe{
-    margin-top: 40px;
+.landing-content {
+   text-align: center;
+   color: white;
 }
-.preloading{
-    -webkit-transition: all ease-in-out .5s;
-    -transition: all ease-in-out .5s;
+
+.landing-subscribe {
+   margin-top: 40px;
 }
-.grow { transition: all .1s ease-in-out; }
-.grow:hover { transform: scale(1.03); }
+
+.preloading {
+   -webkit-transition: all ease-in-out .5s;
+   -transition: all ease-in-out .5s;
+}
+
+.grow {
+   transition: all .1s ease-in-out;
+}
+
+.grow:hover {
+   transform: scale(1.03);
+}
+
 .hero-img {
-    bottom: 0px;
-    left: 0px;
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    z-index: -1;
-    background-size:cover;
+   bottom: 0px;
+   left: 0px;
+   position: absolute;
+   right: 0px;
+   top: 0px;
+   z-index: -1;
+   background-size: cover;
 }
-.hero-img.img-0{ background-image: url('/img/bg0.jpg'); }
-.hero-img.img-1{ background-image: url('/img/bg1.jpg'); }
-.hero-img.img-2{ background-image: url('/img/bg2.jpg'); }
-.hero-img.img-3{ background-image: url('/img/bg3.jpg'); }
-.hero-img.img-4{ background-image: url('/img/bg4.jpg'); }
-.hero-img.img-5{ background-image: url('/img/bg5.jpg'); }
-.hero-img.img-6{ background-image: url('/img/bg6.jpg'); }
-.hero-img.img-7{ background-image: url('/img/bg7.jpg'); }
 
-.hero-img:not(.active){
-    display:none;
+.hero-img.img-0 {
+   background-image: url('/img/bg0.jpg');
 }
+
+.hero-img.img-1 {
+   background-image: url('/img/bg1.jpg');
+}
+
+.hero-img.img-2 {
+   background-image: url('/img/bg2.jpg');
+}
+
+.hero-img.img-3 {
+   background-image: url('/img/bg3.jpg');
+}
+
+.hero-img.img-4 {
+   background-image: url('/img/bg4.jpg');
+}
+
+.hero-img.img-5 {
+   background-image: url('/img/bg5.jpg');
+}
+
+.hero-img.img-6 {
+   background-image: url('/img/bg6.jpg');
+}
+
+.hero-img.img-7 {
+   background-image: url('/img/bg7.jpg');
+}
+
+.hero-img:not(.active) {
+   display: none;
+}
+
 .animatable {
-    -webkit-transition: all 10000ms ease-out;
-    transition: all 10000ms ease-out;
+   -webkit-transition: all 10000ms ease-out;
+   transition: all 10000ms ease-out;
 }
+
 .scaled {
-    -webkit-transform:scale(1.22);
-    transform: scale(1.22);
-}
- 
-#facebook_connect{
-    width: 300px;
-    margin: 0 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    auto;
-    background-image: url('/img/fbbluepattern.png');
-    background-repeat: repeat-x;
-    background-color: #3a5795;
-    border: 1px      
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    solid #133783;
-    box-shadow: 0 0 1Px #383838;
-    color: white;
-    text-shadow: 0 0 1px #8E8E8E;
-    padding: 12px 20px;
-    font-size: 23px;
-    letter-spacing: 0px;
-    position: relative;
-    cursor: pointer;
-    -webkit-transition: all .5s;
-    transition: all .5s;
-    font-family: 'Gochi hand';
-}
-#facebook_connect:hover .fb-overlay{
-  opacity: .1;
-}
-#facebook_connect i{
-  position:absolute;
-  left:10px;
-  border-right: 1px solid white;
-  padding-right: 10px;
+   -webkit-transform: scale(1.22);
+   transform: scale(1.22);
 }
 
-.landing-call{
-    margin-top: 40px;
-    font-size: 24px;
-    font-family: 'Gochi hand';
-    text-shadow: 0 0 1px #989898;
+#facebook_connect {
+   width: 300px;
+   margin: 0 auto;
+   background-image: url('/img/fbbluepattern.png');
+   background-repeat: repeat-x;
+   background-color: #3a5795;
+   border: 1px solid #133783;
+   box-shadow: 0 0 1Px #383838;
+   color: white;
+   text-shadow: 0 0 1px #8E8E8E;
+   padding: 12px 20px;
+   font-size: 23px;
+   letter-spacing: 0px;
+   position: relative;
+   cursor: pointer;
+   -webkit-transition: all .5s;
+   transition: all .5s;
+   font-family: 'Gochi hand';
 }
 
-.typed-text{
-    color: white;
-
-}
-.landing-hashtags{
-    text-align: center;
-    margin: 0 auto;
-    color: #C5C5C5;
-    font-family: 'Karla';
-    text-transform: uppercase;
-    font-weight: bolder;
-    min-width: 400px;
-    height: 1px;
-}
-.hashtag{
-  display: none;
-  margin: 0 3px;
+#facebook_connect:hover .fb-overlay {
+   opacity: .1;
 }
 
-.typed-cursor{
-    opacity: 1;
-    -webkit-animation: blink 0.7s infinite;
-    -moz-animation: blink 0.7s infinite;
-    animation: blink 0.7s infinite;
-    margin-left: 5px;
-    color:white;
-}
-@keyframes blink{
-    0% { opacity:1; }
-    50% { opacity:0; }
-    100% { opacity:1; }
-}
-@-webkit-keyframes blink{
-    0% { opacity:1; }
-    50% { opacity:0; }
-    100% { opacity:1; }
-}
-@-moz-keyframes blink{
-    0% { opacity:1; }
-    50% { opacity:0; }
-    100% { opacity:1; }
+#facebook_connect i {
+   position: absolute;
+   left: 10px;
+   border-right: 1px solid white;
+   padding-right: 10px;
 }
 
-#facebook_small_red{
-    float: right;
-    margin-right: 4%;
-    margin-top: 5px;
-    padding: 6px 14px 6px 0;
-    border-radius: 2px;
-    background-color: #E25050;   
-    color: white;
-    font-size: 13px;
-    font-weight: bolder;
-    cursor:pointer;
-    -webkit-transition: all .5s;
-    transition: all .5s;
-
+.landing-call {
+   margin-top: 40px;
+   font-size: 24px;
+   font-family: 'Gochi hand';
+   text-shadow: 0 0 1px #989898;
 }
 
-#facebook_small_red i{
-    padding: 0 4px 0 7px;
-    border-right: 1px solid #CA3838;
-    margin-right: 7px;
-
+.typed-text {
+   color: white;
 }
 
-#logo-hero{
-    position:absolute;
-    z-index:1000;
-    margin:20px 0 0 40px;
+.landing-hashtags {
+   text-align: center;
+   margin: 0 auto;
+   color: #C5C5C5;
+   font-family: 'Karla';
+   text-transform: uppercase;
+   font-weight: bolder;
+   min-width: 400px;
+   height: 1px;
+}
+
+.hashtag {
+   display: none;
+   margin: 0 3px;
+}
+
+.typed-cursor {
+   opacity: 1;
+   -webkit-animation: blink 0.7s infinite;
+   -moz-animation: blink 0.7s infinite;
+   animation: blink 0.7s infinite;
+   margin-left: 5px;
+   color: white;
+}
+
+@keyframes blink {
+   0% {
+      opacity: 1;
+   }
+
+   50% {
+      opacity: 0;
+   }
+
+   100% {
+      opacity: 1;
+   }
+}
+
+@-webkit-keyframes blink {
+   0% {
+      opacity: 1;
+   }
+
+   50% {
+      opacity: 0;
+   }
+
+   100% {
+      opacity: 1;
+   }
+}
+
+@-moz-keyframes blink {
+   0% {
+      opacity: 1;
+   }
+
+   50% {
+      opacity: 0;
+   }
+
+   100% {
+      opacity: 1;
+   }
+}
+
+#facebook_small_red {
+   float: right;
+   margin-right: 4%;
+   margin-top: 5px;
+   padding: 6px 14px 6px 0;
+   border-radius: 2px;
+   background-color: #E25050;
+   color: white;
+   font-size: 13px;
+   font-weight: bolder;
+   cursor: pointer;
+   -webkit-transition: all .5s;
+   transition: all .5s;
+}
+
+#facebook_small_red i {
+   padding: 0 4px 0 7px;
+   border-right: 1px solid #CA3838;
+   margin-right: 7px;
+}
+
+#logo-hero {
+   position: absolute;
+   z-index: 1000;
+   margin: 20px 0 0 40px;
 }

@@ -396,11 +396,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				var data = { userId: LJ.user._id, fb_friends_ids: fb_friends_ids };
 
 				$.ajax({
-					method:'POST',
+					method:'post',
 					url:'/me/fetch-and-sync-friends',
 					data: data,
-					success: callback,
-					error: LJ.fn.handleServerError
+					success: function( data ){
+						callback( null, data );
+					},
+					error: function( xhr ){
+						callback( JSON.parse( xhr ).responseText, null);
+					}
 				});
 
 			});
@@ -574,12 +578,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 										LJ.fn.toastMsg( LJ.msgQueue[0].msg, LJ.msgQueue[0].type );
 									    LJ.msgQueue.splice( 0, 1 ) //remove le premier élément
 								}
-								});
-							
+								});						
 						  }
 					});
 			}
-
 			else
 			{
 				LJ.msgQueue.push({ msg: msg, type: status });
@@ -851,12 +853,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
         initLayout: function( settings ){
 
-setTimeout(function(){ $('.btn-create-event').click(); }, 1500 );
+//setTimeout(function(){ $('.btn-create-event').click(); }, 1700 );
 
         	/* Mise à jour dynamique des filters */
-        	$( '.tags-wrap' ).html('').append( LJ.fn.renderTagsFilters() );
-        	$( '.locs-wrap' ).html('').append( LJ.fn.renderLocsFilters() );
-        	$( '#no' ).html('').append( LJ.tpl.noResults );
+        	$('.mood-wrap').html( LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
+        	$('.drink-wrap').html( LJ.fn.renderDrinkInProfile( LJ.settings.app.drink ));
+        	$('#no').html('').append( LJ.tpl.noResults );
 
 
     		/* Profile View */
@@ -1275,12 +1277,29 @@ setTimeout(function(){ $('.btn-create-event').click(); }, 1500 );
 			LJ.fn.setLocalStoragePreferences();
 			LJ.fn.initCloudinary( data.cloudinary_tags );
 
-			LJ.fn.fetchEvents(function(){
+			
+			LJ.fn.fetchEvents(function( err, data ){
 
-			});
+				if( err )
+					return console.log('Error fetching and sync friends : ' + err );
+
+				console.log('Events successfully fetched ! ( n = ' + data.length + ' )');
+
+				var event_arr_html = [];
+				data.forEach(function( e ){
+					event_arr_html.push( LJ.fn.renderEvent( e ) );
+				});
+
+				$('.row-events.row-body').html( event_arr_html );
+
+
+			}); 
 
 			/* Update friends based on facebook activity on each connection */
-			LJ.fn.fetchAndSyncFriends(function( data ){
+			LJ.fn.fetchAndSyncFriends(function( err, data ){
+
+				if( err )
+					return console.error('Error fetching and sync friends : ' + err );
 
 				var friends = data.friends;
 				LJ.user.friends = friends;
@@ -1590,8 +1609,10 @@ setTimeout(function(){ $('.btn-create-event').click(); }, 1500 );
 					if( i == 0 ){
 						hashtag_parts.push( el );
 					} else {
+						if( el != '') {
 							var elm = el[0].toUpperCase() + el.substring(1);
 							hashtag_parts.push( elm );
+						}
 					}
 				});
 				return hashtag_parts.join('');
@@ -1670,15 +1691,43 @@ setTimeout(function(){ $('.btn-create-event').click(); }, 1500 );
 
 				LJ.fn.say( eventName, data, cb );
 		},
-		fetchEvents: function(){
+		api: function( method, url, options, callback ){
 
-			if( LJ.state.fetchingEvents )
-				return LJ.fn.toastMsg('Already fetching events', 'error');
-			
-			LJ.state.fetchingEvents = true;
+			if( !callback && typeof(options) == 'function' ){
+				callback = options;
+				options = {};
+			};
 
-			var eventName = 'fetch-events',
-				data = { userId: LJ.user._id };
+			$.ajax({
+				method: method,
+				url: '/api/v' + LJ.settings.api_version + '/' + url,
+				data: options.data,
+				beforeSend: options.beforeSend,
+				success: function( data ){
+					callback( null, data );
+				},
+				error: function( xhr ){
+					callback( JSON.parse( xhr ).responseText, null );
+				},
+				complete: function(){
+					LJ.fn.defaultApiCompleteCallback();
+				}
+			})
+
+		},
+		defaultApiCompleteCallback: function(){
+
+			console.log('api call completed');
+		},
+		fetchEvents: function( callback ){
+
+			if( !LJ.user._id )
+				return console.error("Can't fetch events, userId not found");
+
+			var start_date = moment().format('DD/MM/YY');
+			LJ.fn.api('get','events?start_date='+start_date, callback );
+
+			/*
 
 			var cb = {
 				beforeSend: function(){},
@@ -1697,7 +1746,7 @@ setTimeout(function(){ $('.btn-create-event').click(); }, 1500 );
 						LJ.myEvents[i].beginsAt  = new Date( myEvents[i].beginsAt );
 					}
 
-					/* L'array d'event est trié à l'initialisation */
+					 L'array d'event est trié à l'initialisation 
 					LJ.myEvents.sort( function( e1, e2 ){
 						return e1.beginsAt -  e2.beginsAt ;
 					});
@@ -1708,8 +1757,7 @@ setTimeout(function(){ $('.btn-create-event').click(); }, 1500 );
 					csl('Error fetching events');
 				}
 			};
-				
-            LJ.fn.say( eventName, data, cb );
+				*/
             
 		},
         fetchAskers: function(){
@@ -1747,13 +1795,13 @@ setTimeout(function(){ $('.btn-create-event').click(); }, 1500 );
         	*/
         	//csl('Displaying events');
 
-	        	var hour = ( new Date() ).getHours();
-	        	if( hour < LJ.settings.eventsRestartAt && hour >= LJ.settings.eventsTerminateAt ){
-        			csl('Displaying events frozen state');
-	        		return LJ.fn.displayViewAsFrozen();
-	        	}     		
+        	var hour = ( new Date() ).getHours();
+        	if( hour < LJ.settings.eventsRestartAt && hour >= LJ.settings.eventsTerminateAt ){
+    			csl('Displaying events frozen state');
+        		return LJ.fn.displayViewAsFrozen();
+        	}     		
 
-            LJ.$eventsListWrap.html( LJ.fn.renderEvents( LJ.myEvents ) );
+            LJ.$eventsListWrap.html( '' );
             $('.eventItemWrap').velocity("transition.slideLeftIn", {
             	display:'inline-block'
             });

@@ -1,447 +1,157 @@
-
-
-
 #eventsWrap {
-
-}
-
+width: 1000px;}
 
 .create-event-wrap {
-	text-align: center;
+   text-align: center;
 }
+
 .row-events {
-margin-bottom: 0px;
+   margin-bottom: 0px;
+   text-align: center;
 }
+
 .row-title-sub {
-	text-align: center;
-	color: #ABABAB;
-	margin-top: 8px;
-	text-transform: none;
-	margin-bottom: 20px;
+   text-align: center;
+   color: #ABABAB;
+   margin-top: 8px;
+   text-transform: none;
+   margin-bottom: 20px;
 }
+
 .row-create {
 }
+
 i.icon-create {
-position: relative;
-font-size: 20px;
+   position: relative;
+   font-size: 20px;
 }
+
 .btn-create-event {
-width: 160px;
-text-transform: uppercase;
-font-weight: bolder;
-padding: 7px 3px;
-color: white;
-font-size: 10px;
-background: linear-gradient(red, #CE6C56);
-background: #C83D3D;
-background: linear-gradient(35deg,#A51313,#A94332);border: 1px solid #B54343;
-border: none;border-radius: 0px;
-cursor: pointer;top: 57px;z-index: 200;}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Old styles */
-#eventsWrap{
-    width: 90%; 
-}  
-#createEventIcon{
-	font-size: .8em;
-	text-shadow: 0 0 1px rgb(131, 131, 131);
-	color: #2B2B2B;
-
-}
-#eventsListWrap{
-	margin-top: 30px;
-	padding-bottom: 50px;
-	text-align: center;
-}
-#eventsListWrap div.eventItemWrap:last-child{
-}
-.eventItemLayer{
-	background:white;
-	padding: 10px;
-	position: relative;
-}
-#eventListWrap *{ 
-	color:#555;
+   width: 210px;
+   text-transform: uppercase;
+   font-weight: bolder;
+   padding: 14px 3px;
+   color: white;
+   font-size: 10px;
+   background: linear-gradient(red, #CE6C56);
+   background: #C83D3D;
+   background: linear-gradient(35deg,#A51313,#A94332);
+   border: 1px solid #B54343;
+   border: none;
+   border-radius: 0px;
+   cursor: pointer;
+   top: 57px;
+   z-index: 200;
 }
 
-.eventItemWrap{
-	background: rgb(249, 249, 249);
-	font-size: .9em;
-	-webkit-transition: all .15s;
-	display: inline-block;
-	transition: all .15s;
-	color: rgb(56, 56, 56);
-	width: 290px;
-	margin: 15px;
-	padding: 5px;
-	border: 1px solid rgb(236, 236, 236);
-	box-sizing: border-box;
-	position: relative;
-	text-align: left;
-	border-bottom: none;
-}
-.eventItemWrap:hover{
-	/* background: rgb(245, 245, 245); */
-}
-.e-asker{
-	display:inline-block; 
-}
-.e-hostName{
-	position: absolute;
-    bottom: -9px;
-    left: 0px;
-    
-	min-width: 80px;
-    text-align: center;
-    background-color: white;
-    border: 1px solid #E0E0E0;
-    color: #4A4A4A;
-    padding: 4px;
-    font-size: 11px;
-    font-weight: bolder;
-}
-.e-guests{
-	position: relative;
-	width: 176px;
-	text-align:center;
+#eventsWrap .event-item-wrap {
 
-	margin-top: 11px;
+width: 320px;display: inline-block;text-align: center;box-sizing: border-box;border: 1px solid #C4C4C4;padding: 1px;position: relative;margin: 40px;}
+
+.event-host-picture,
+.event-address,
+.event-address div,
+.event-ambiance,
+.event-ambiance div,
+.event-mixity,
+.event-agerange,
+.event-scheduled-party,
+.event-scheduled-party div
+.event-body-wrap div,
+.event-spliter {
+    display:inline-block;
 }
-.guestsWrap{
-	padding: 4px 9px;
-	border-radius: 3px;
-	color: rgb(76, 76, 76); 
-	font-size: 13px;
-	cursor: pointer;
+.event-head {
+
+margin-bottom: 8px;border-bottom: 1px solid #ccc;background: white;}
+
+.event-host-picture {
+   padding: 3px;
 }
-.guestsWrap > span{
-    margin-right: 2px;
-	
+.event-host-picture img {
+   border: 1px solid #ccc;
+    padding: 2px;
+    background: #FCFCFC;
 }
-.guestsWrap:hover{
-	cursor:pointer;
-	color: rgb(68, 68, 68);
-	background: #FAFAFA;
+.event-body {
+
+text-align: left;padding: 0 10px 10px 10px;background: white;}
+
+.event-address-intro {
+
+display: none;}
+.event-item {
+   background: white;
+   padding: 0 8px;
 }
-.guestsWrap.active{
-	color: rgb(100, 100, 100)!important;
-	background: rgb(239, 239, 239);
+.event-item-sublayer {
+   background: #F8F8F8;
+   padding: 4px;
 }
-.e-desc{
-	margin-bottom: 12px;
-	font-size: 12px;
-	margin-left: 6px;
-	color: #838383;
-	font-family: 'Karla';
-	letter-spacing: normal;
-	line-height: 14px;
-}
-.e-infos{
-	border-bottom: 1px solid #dde;
-	height: 100%;
-}
-.e-image{
-	float:left;
-}
-.e-location{
-    color: rgb(233, 90, 90);
-    font-family: Lato;
-    font-weight: bold;
-    text-align: right;  
-    margin: 10px 0 -5px 0;
-}
-.e-status{
-	width: 70px;
-	font-size: .75em;
-	font-family: 'calibri';
-	padding-top: 1px;
-	text-align: center;
-}
-.e-weak{
-	padding-top: 1px;
-}
-.e-new{
-	color: green;
-}
-.e-name{
-	color: rgb(70, 70, 70);
-	text-transform: uppercase;
-	font: bolder 1.1em 'Lato';
-	position:relative;
-	margin-bottom: 4px;
-	padding-left: 5px;
-	text-align: left;
+.event-item .event-hosts-intro {
+
+color: #888;font-family: 'Karla';margin-bottom: 7px;font-size: 13px;padding-top: 9px;}
+
+.event-address,
+.event-address-intro {
 }
 
-.e-hour{
-	position: relative;
-	width: 178px;
-	text-align: center;
-	font: bolder 2.7em 'Lato';
-	color: #4A4A4A;
-	letter-spacing: -1px;
-	text-decoration: underline;
-}
-.headWrap{
-	height: 81px;
-	margin-bottom:10px;
-	padding-bottom:20px;
-	border-bottom: 1px solid #E0E0E0;
-	position: relative;
-}
-.bodyWrap{
+.event-wrap {
 
-}
-.askedInWrap{	
-    width: 259px;
-    min-height: 173px;
-    position: absolute;
-    /* border: 1px solid rgb(232, 232, 232); */
-    z-index: 10;
-    background: white;
-    box-shadow: 0 0 3px #eee;
-    padding: 16px;
-    box-sizing: border-box; 
-    display: none;
-    left: 10px;
-}
-.askedInWrap.active{
-}
-.askedInWrap img
-{
-	/* border: 1px solid rgb(229, 229, 229); */
-	/* margin:2px
-
-; */
-	background: white;
-	opacity: .9;
-	/* padding: 5px; */
-}
-.headWrap div{
-    display: inline-block;
-}
-.e-active{
-	-webkit-box-shadow: 0 0 25px rgb(128, 128, 128);
-	box-shadow: 0 0 25px rgb(128, 128, 128);
-}
-.bodyWrap{
-	display: block;
-	margin: 10px 0;
+margin-bottom: 5px;}
+.event-button-wrap {
+   text-align: right;
+   margin-top: 14px;
 }
 
-.e-row{
-	line-height:1.2em;
-}
-.e-description{
-	margin-bottom: 16px;
-	text-align: center;
-}
-.askInWrap{
-	width: 80%;
-	position: relative;
-	margin: auto;
-}
-.askHost{
-}
-.askInWrap .idle{
-	width: 100%!important;
-	margin: 0 auto;
-	position: relative;
-	z-index: 1;
-}  
-.askInWrap .asked{
-	width: 56%;
-}
-.askInWrap .chatIconWrap,
-.askInWrap  .friendAddIconWrap{
-	width: 17%;
-	-webkit-transition: all .3s;
-	transition: all .3s;
-	height: 100%; 
-	box-sizing: border-box;
-	position: absolute;
-	right: 0;
-	top: 0;
-	text-align: center; 
-	padding-top: 7px;
-	color: rgb(107, 107, 107);
-	background: #E6E6E6;
-	border-radius: 100px;
-	font-size: 15px;
-}
-.askInWrap .chatIconWrap:hover,
-.askInWrap  .friendAddIconWrap:hover{
-	cursor:pointer;
-	opacity: .75;
-
-} 
-.askInWrap .friendAddIconWrap{
-	right:44px;
-}
-.chatIconWrap.active,
-.friendAddIconWrap.active{
-	color: rgb(255, 255, 255);
-	background: rgb(86, 86, 86); 
-}
-
-.eventItemWrap[data-eventstate="suspended"] .askIn:not(.asked){ 
-	color: rgb(145, 145, 145); 
-	background: white;  
-}
-.eventItemWrap[data-eventstate="frozen"] { 
-	opacity: .5!important; 	
-}
-.eventItemWrap[data-eventstate="frozen"] *{ 
-	color:#666; 	
-}
-.eventItemWrap[data-eventstate="frozen"] *:hover{ 
-	cursor: default; 	
-}
-.eventItemWrap[data-eventstate="frozen"] .askIn{ 
-	background: white!important;	
-	border: 1px solid #9E9E9E;
-	color: black;
-}
-
-.askInWrap .asking{
-	color: white; 
-	background: rgb(140, 140, 140); 
-	}
-/* CSS pour créer un évenements */
-
-#lastEvents{
-	display:inline;
-	color: rgb(213, 47, 47);
-}
-
-.tag.selected, .day.selected, .loc.selected{  
-	background: rgb(229, 83, 83);
-	color:white;
-	box-shadow: 0 1px 1px rgb(187, 50, 50);
-}
-.loc.selected{
-	border-bottom: none;
-}
-.tag-row,
-.loc-row{
-	display: inline-block;
-	position: relative;
-	font-size: 1.2em;
-}
-.filters-locs-row,
-.filters-tags-row{
-	text-align:center;
-	margin-top: 15px;
-	font-size: 1.1em;
-}
-.filtersWrap{
-	margin:25px 0;
-	opacity: 0;
-	padding: 0 40px;
-}
-#noEvents,
-#noResults{
-	margin-top:85px; 
-}
-h3{
-	color: #888;
-	margin-top: 15px;
-	letter-spacing: 1px;
-	font-size: .9em;
-	line-height: 1.45em;
-	font-family: 'Karla';
-	text-align: center;
-}
- 
-#createEventWrap .tags-wrap, #createEventWrap .event-friends-wrap{
-	display: inline-block;
-	width: 70%;
-	margin-top: 4px;
-}
-
-label[for="tags"], label[for="event-friends-wrap"]{
-	vertical-align: top
-}
-
-.event-friends-wrap .noFriendsYet button{
-	background: whitesmoke!important; 
-	color:black;
-}
-
-.largeThumb{
-
-	text-align: center;
-	
-
-	margin-top: 12%;
+.event-main-picture {
 
 }
-.largeThumb img{ 
-	border-radius:150px;
-	border: 5px solid white;
-	padding: 0;
-	background: none;
-	box-shadow: 0 0 30px rgb(0, 0, 0);
-	-webkit-user-select: none;  /* Chrome all / Safari all */    -moz-user-select: none;     /* Firefox all */    -ms-user-select: none;
+
+.event-begins-at {
+
+                        font-size: 22px;      padding: 4px 18px;      background: #FBFBFB;      color: #626262;font-family: 'Londrina solid';position: relative;}
+
+.event-hosts {
+
+margin-bottom: 5px;}
+
+
+.event-address {
+
+display: block;}
+
+.event-address-street {
+
 }
 
-#frozenTimezone{
-	margin-top:130px;
-	padding: 0 30px;
+.event-address-city {
+   font-weight: normal;
+   margin-left: 4px;
+   color: #ccc;
 }
 
-#askersRows{
-	box-sizing: border-box;
-	width: 500px;
-	display: inline-block;
+.event-ambiance {
+
+padding: 6px 5px!important;font-size: 11px;margin: 2px 0;}
+
+.event-ambiance-hashtag {
+
+color: #C2C2C2;margin-right: 2px;}
+.event-ambiance-name {
+   font-weight: bolder;
 }
-#askersDetails{
-	width: 200px;
-	float: right;
-	display: inline-block;
-	position:relative;
-	height: 239px;
-	background: rgb(247, 247, 247);
-	border: 1px solid rgb(215, 215, 215);
-	padding: 5px;
-	box-sizing: border-box;
-}
-.white{
-	background:white;
-	height:100%;
-	width: 100%;
+.event-mixity,
+.event-agerange {
+
 }
 
-#friendListWrap .noFriendsYet button{
-	font-size: 10px;
-	margin-top: 60%;
-	margin-left:33px;
-	width: 60%;
-	line-height:1.5em;
-}
-.inserted{
-	display:none;
-}
-.noFriendsYet span{
-	font-weight:bolder;
-	font-size:15px;
-}
-.noFriendsYet span:hover{
-	font-weight:bolder;
-	text-decoration:underline;
-	cursor:pointer;
+.event-scheduled-party {
+
+font-size: 13px;}
+
+.event-button-wrap button {
+	background: #A8392B;
+	color: white;
+	border: 1px solid #6C231B;
 }

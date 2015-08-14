@@ -1,37 +1,36 @@
-
-#earlyadopters{
-	font-size:10px;
+#earlyadopters {
+   font-size: 10px;
 }
 
-.earl.center-line{
-	margin-top:5px;
+.earl.center-line {
+   margin-top: 5px;
 }
-.earl-num{
-    font-size: 20px;
 
-    clear: both;
-    width: 21px;
-    color: rgb(164, 38, 38);
-    text-align: center;
-    border-radius: 30px;
-    margin-right: 20px;
-    margin-bottom: 10px;
+.earl-num {
+   font-size: 20px;
+   clear: both;
+   width: 21px;
+   color: rgb(164, 38, 38);
+   text-align: center;
+   border-radius: 30px;
+   margin-right: 20px;
+   margin-bottom: 10px;
 }
-.earl-row{
-    margin-bottom: 40px;
 
-    font-family: 'Karla';
-    letter-spacing: -1px;
+.earl-row {
+   margin-bottom: 40px;
+   font-family: 'Karla';
+   letter-spacing: -1px;
 }
-.earl-title{
-    font-weight: bolder;
 
-    font-size: 17px;
-    color: rgb(60, 60, 60);
+.earl-title {
+   font-weight: bolder;
+   font-size: 17px;
+   color: rgb(60, 60, 60);
 }
-.earl-body{
-    font-size: 13px;
-	
-    margin-top: 7px;
-    color: #5F5F5F;
+
+.earl-body {
+   font-size: 13px;
+   margin-top: 7px;
+   color: #5F5F5F;
 }

@@ -1,150 +1,156 @@
-
 #createEvent {
 }
 
 #createEvent label {
-	text-align: right;
-	padding-right: 10px;
-	vertical-align: top;
-	line-height: 21px;
-}
-#createEvent input {
-	color: #555;
-	line-height: 21px;
-	vertical-align: top;
-	font-family: 'Karla';
+   text-align: right;
+   padding-right: 10px;
+   vertical-align: top;
 }
 
+#createEvent input {
+   color: #555;
+   vertical-align: top;
+   font-family: 'Karla';
+}
 
 .row-create-date {
-	margin-right: 8px;
+   margin-right: 8px;
 }
 
-.mixity.selected[data-selectid="girls"]{
+.mixity.selected[data-selectid="girls"] {
 	/* background: #FFEDFC; */
 	/* color: #962596; */
+   ;
 }
-.mixity.selected[data-selectid="boys"]{
+
+.mixity.selected[data-selectid="boys"] {
 	/* background: #F0F8FF; */
 	/* color: #2E2E81; */
 	/* border: 1px solid #BFD2E2; */
+   ;
 }
-.mixity.selected[data-selectid="mixed"]{
+
+.mixity.selected[data-selectid="mixed"] {
 	/* background:#FFDDE3; */
+   ;
 }
 
+.host,
+.ambiance, 
+.before-place,
+.party-place,
+.date {
+	position:relative;
+	top: -7px;
+}
 .ambiance-name {
-	margin-left: 0!important;
+   margin-left: 0!important;
 }
-
 
 .ambiance-hashtag {
 	/* font-weight:bolder; */
-	display: inline-block;
-	vertical-align: top;
-	position: relative;
-	color: #C4C4C4;
-	margin: 6px 1px 0 10px;
-	top: 1px;
+   display: inline-block;
+   vertical-align: top;
+   position: relative;
+   color: #C4C4C4;
+   margin: 6px 1px 0 10px;
+   top: 1px;
+} 
+
+.host, .ambiance, .date, .before-place, .party-place, .event-ambiance {
+   display: inline-block;
+   background: #FBFBFB;
+   padding: 0px 6px 0 0px;
+   vertical-align: top;
+   /* border: 1px solid; */
+   margin-right: 7px;
+   cursor: pointer;
+   position: relative;
 }
-.host, .ambiance, .date, .before-place, .party-place {
-display: inline-block;
-background: #FBFBFB;
-padding: 0px 6px 0 0px;
-vertical-align: top;
-position: relative;
-height: 32px;
-top: -4px;
-/* border: 1px solid; */
-margin-right: 7px;
-cursor: pointer;
-}
+
 .host-img {
-	
-position: absolute;
-	
-top: 3px;
-	
-left: 4px;
-	
-z-index: 1;
+   position: absolute;
+   top: 3px;
+   left: 4px;
+   z-index: 1;
 }
+
 .host-loader {
-	position: absolute;
-	top: 9px;
-	left: 12px;
-	width: 13px;
+   position: absolute;
+   top: 9px;
+   left: 12px;
+   width: 13px;
 }
+
 .host-name, .ambiance-name, .date-name, .before-place-name, .party-place-name {
-	display: inline-block;
-	line-height: 30px;
-	vertical-align: top;
-	font-family: 'Karla';
-	font-size: 13px;
-	color: #555;
-	margin-left: 35px;
-	padding-right: 10px;
-	font-weight: bolder;
-	position: relative;
-	top: 1px;
+   display: inline-block;
+   line-height: 30px;
+   vertical-align: top;
+   font-family: 'Karla';
+   font-size: 13px;
+   color: #555;
+   margin-left: 35px;
+   padding-right: 10px;
+   font-weight: bolder;
+   position: relative;
+   top: 1px;
 }
 
 .rem-click:hover .ambiance-name,
 .rem-click:hover .date-name,
 .rem-click:hover .host-name,
 .rem-click:hover .before-place-name,
-.rem-click:hover .party-place-name{
-	text-decoration:line-through;
-	opacity: .7;
+.rem-click:hover .party-place-name {
+   text-decoration: line-through;
+   opacity: .7;
 }
 
 .icon-date, .icon-before-place, .icon-party-place {
-
-position: absolute;
-
-top: 7px;
-
-left: 7px;
+   position: absolute;
+   top: 7px;
+   left: 7px;
 }
 
 .pac-container {
-	z-index: 99999999;
-	display: block;
-	box-shadow: none;
-	border: 1px solid #ccc;
-	background: rgba(255, 255, 255, 0.81);
-    border-bottom: 1px solid #E4E4E4;
-    box-shadow: 0 0 1px #e4e4e4;
-    padding: 15px;
-    border-radius: 2px 2px 0 0;
-    margin-top:5px;
+   z-index: 99999999;
+   display: block;
+   box-shadow: none;
+   border: 1px solid #ccc;
+   background: rgba(255, 255, 255, 0.81);
+   border-bottom: 1px solid #E4E4E4;
+   box-shadow: 0 0 1px #e4e4e4;
+   padding: 15px;
+   border-radius: 2px 2px 0 0;
+   margin-top: 5px;
 }
 
 .pac-item {
-	font-family:'Karla';
-	cursor:pointer;
-	padding: 4px 10px;
+   font-family: 'Karla';
+   cursor: pointer;
+   padding: 4px 10px;
+}
 
-}
 .pac-container:after {
-  background-image:none!important; 
-  content: "Places by Google"!important;
-  color:#ccc;
-  font-size: 10px;
+   background-image: none!important;
+   content: "Places by Google"!important;
+   color: #ccc;
+   font-size: 10px;
 }
+
 .pac-item:first-of-type {
-	border-top:none;
+   border-top: none;
 }
 
 .agerange, .mixity {
-	font-weight:bolder; 
+   font-weight: bolder;
 }
+
 .icon-agerange, .icon-mixity {
-	color:#ccc;
-	margin-right: 6px;
+   color: #ccc;
+   margin-right: 6px;
 }
 
 .locality {
-	color:#ccc;
-	margin-left: 3px;
+   color: #ccc;
+   margin-left: 3px;
 }
