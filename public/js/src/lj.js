@@ -1290,7 +1290,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					event_arr_html.push( LJ.fn.renderEvent( e ) );
 				});
 
-				$('.row-events.row-body').html( event_arr_html );
+				//$('.row-events.row-body').html( event_arr_html );
 
 
 			}); 
@@ -1311,10 +1311,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				friends.forEach( function( friend ){
 					html += LJ.fn.renderFriendInProfile( friend );
 				});
-				$('.row-friends').find('.row-body').html( html );
 
 			});
-	
+		
+			LJ.fn.initMap();
+
 			/* Admin scripts. Every com is secured serverside */	
 			if( LJ.user.access.indexOf('admin') != -1 )
 				LJ.fn.initAdminMode();
@@ -1467,7 +1468,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('.modal-container')
 				.velocity({ 'opacity': [0,1] }, { complete: function(){
 					$('.modal-container').css({ display: 'none', height: 'auto', width: 'auto' });
-					$(".modal-container-body *:not('.curtain-loader')").remove(); }
+					$(".modal-container-body *:not('.curtain-loader')").remove(); 
+					if( $('.row-events-map').css('display') == 'none' )
+						$('.row-events-map').velocity('transition.fadeIn', { display: 'inline-block' });
+
+				}
 			});
 
 			$('.curtain-loader').hide();

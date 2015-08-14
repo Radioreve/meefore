@@ -197,21 +197,13 @@
           <div class="row-input row-input-md row-mood etiquette">
             <label for="mood" class="label label-md" >Humeur</label>
             <div class="row-select-wrap mood-wrap">
-              <div class="row-select mood" data-selectid="happy">Happy</div>
-              <div class="row-select mood" data-selectid="fire">Fire</div>
-              <div class="row-select mood" data-selectid="drunk">Drunk</div>
-              <div class="row-select mood" data-selectid="horney">Horney</div>
-              <div class="row-select mood" data-selectid="whatever">Whatever</div>
+              <!-- Dynamically loaded -->
             </div>
           </div>
           <div class="row-input row-input-md row-drink etiquette">
             <label for="drink" class="label label-md" >Verre</label>
             <div class="row-select-wrap drink-wrap">
-              <div class="row-select drink" data-selectid="water">Eau</div>
-              <div class="row-select drink" data-selectid="beer">Beer</div>
-              <div class="row-select drink" data-selectid="wine">Wine</div>
-              <div class="row-select drink" data-selectid="shots">Shots</div>
-              <div class="row-select drink" data-selectid="hard">Hard</div>
+              <!-- Dynamically loaded -->
             </div>
           </div>
           <div class="row-input row-input-md row-motto etiquette">
@@ -249,7 +241,7 @@
       </div>
 
       <!-- Questionnaire à là OKC  -->
-      <div class="row row-profile row-okc">
+      <div class="row row-profile row-okc none">
         <div class="row-title">
           <div class="row-title-text">Tes questions perso</div>
           <i class="icon icon-edit icon-feather right"></i>
@@ -276,8 +268,9 @@
         <button class="theme-btn btn-create-event">Créer un before</button>
       </div>
 
-      <div class="row row-events row-body">
-        
+      <div class="row row-events row-main">
+        <div class="row-events-nearest"></div>
+        <div class="row-events-map"></div>
       </div>
   
 
@@ -396,6 +389,7 @@
   <script src="js/src/tpl/lj-render-create.js"></script>
   <script src="js/src/tpl/lj-render-event.js"></script>
   <script src="js/src/tpl/lj-render-typeahead.js"></script>
+  <script src="js/src/lj-map.js"></script>
   <script src="js/src/lj-domEvents.js"></script>
   <script src="js/src/lj-admin.js"></script>
   <script src="js/src/lj-typeaheads.js"></script>

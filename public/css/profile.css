@@ -258,7 +258,7 @@
 
 .row-select {
    display: inline-block;
-   font-size: 13px;
+   font-size: 12px;
    padding: 9px 8px;
    border-radius: 2px;
    transition: all ease-out .3s;
@@ -278,14 +278,15 @@
 
 .row-select-description {
     /* font-style: italic; */
-   display: inline-block;
-   font-size: 13px;
-   color: #535353;
-   margin-right: 10px;
-   background: #F7F7F7;
-   padding: 6px;
-   position: absolute;
-   right: 0;
+    display: inline-block;
+    font-size: 13px;
+    color: #535353;
+    margin-right: 10px;
+    background: #F7F7F7!important;
+    padding: 6px!important;
+    position: absolute;
+    top: 11px;
+    right: 0;
 }
 
 .row.editing label {

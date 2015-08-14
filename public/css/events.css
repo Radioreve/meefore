@@ -1,5 +1,5 @@
 #eventsWrap {
-width: 1000px;}
+width: 1150px;}
 
 .create-event-wrap {
    text-align: center;
@@ -44,114 +44,18 @@ i.icon-create {
    z-index: 200;
 }
 
-#eventsWrap .event-item-wrap {
-
-width: 320px;display: inline-block;text-align: center;box-sizing: border-box;border: 1px solid #C4C4C4;padding: 1px;position: relative;margin: 40px;}
-
-.event-host-picture,
-.event-address,
-.event-address div,
-.event-ambiance,
-.event-ambiance div,
-.event-mixity,
-.event-agerange,
-.event-scheduled-party,
-.event-scheduled-party div
-.event-body-wrap div,
-.event-spliter {
-    display:inline-block;
+.row-main {
+   height:400px;
 }
-.event-head {
-
-margin-bottom: 8px;border-bottom: 1px solid #ccc;background: white;}
-
-.event-host-picture {
-   padding: 3px;
+.row-events-nearest {
+    width:40%
+;
+    display: inline-block;
 }
-.event-host-picture img {
-   border: 1px solid #ccc;
-    padding: 2px;
-    background: #FCFCFC;
-}
-.event-body {
-
-text-align: left;padding: 0 10px 10px 10px;background: white;}
-
-.event-address-intro {
-
-display: none;}
-.event-item {
-   background: white;
-   padding: 0 8px;
-}
-.event-item-sublayer {
-   background: #F8F8F8;
-   padding: 4px;
-}
-.event-item .event-hosts-intro {
-
-color: #888;font-family: 'Karla';margin-bottom: 7px;font-size: 13px;padding-top: 9px;}
-
-.event-address,
-.event-address-intro {
+.row-events-map {
+    width:59%
+;
+    height: 100%;
+    display: inline-block;
 }
 
-.event-wrap {
-
-margin-bottom: 5px;}
-.event-button-wrap {
-   text-align: right;
-   margin-top: 14px;
-}
-
-.event-main-picture {
-
-}
-
-.event-begins-at {
-
-                        font-size: 22px;      padding: 4px 18px;      background: #FBFBFB;      color: #626262;font-family: 'Londrina solid';position: relative;}
-
-.event-hosts {
-
-margin-bottom: 5px;}
-
-
-.event-address {
-
-display: block;}
-
-.event-address-street {
-
-}
-
-.event-address-city {
-   font-weight: normal;
-   margin-left: 4px;
-   color: #ccc;
-}
-
-.event-ambiance {
-
-padding: 6px 5px!important;font-size: 11px;margin: 2px 0;}
-
-.event-ambiance-hashtag {
-
-color: #C2C2C2;margin-right: 2px;}
-.event-ambiance-name {
-   font-weight: bolder;
-}
-.event-mixity,
-.event-agerange {
-
-}
-
-.event-scheduled-party {
-
-font-size: 13px;}
-
-.event-button-wrap button {
-	background: #A8392B;
-	color: white;
-	border: 1px solid #6C231B;
-}

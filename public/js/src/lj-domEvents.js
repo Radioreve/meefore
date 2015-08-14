@@ -762,7 +762,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 				LJ.fn.displayInModal({ 
 					source:'local',
-					fix_height: -43,
+					fix_height: -120,
 					starting_width: 550,
 					custom_classes: ['text-left'],
 					render_cb: function(){
@@ -773,6 +773,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 					},
 					predisplay_cb: function(){
 
+						$('.row-events-map').velocity('transition.fadeOut');
 						/* Typehead on hosts and places */
 						LJ.fn.initTypeaheadPlaces();
 						LJ.fn.initTypeaheadHosts( LJ.user.friends );
