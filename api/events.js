@@ -43,11 +43,9 @@
 	var fetchEvents = function( req, res ){
 
 		var start_date = req.query.start_date;
-		console.log( start_date );
-		console.log( moment( start_date, 'DD/MM/YY' ).toISOString() );
 
 		Event
-			.find({ 'begins_at': { $gte: moment( start_date, 'DD/MM/YY' ).toISOString() } })
+			.find({}) // 'begins_at': { $gte: moment( start_date, 'DD/MM/YY' ).toISOString() } })
 			.limit( 10 )
 			.sort({ 'begins_at': -1 })
 			.exec( function( err, events ){

@@ -36,8 +36,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				this.initAugmentations();
 
 				// Typeahead pluggin 
-				this.initTypeahead();		
+				this.initTypeahead();
 
+				// Country detection
+				this.initCountry();		
+
+
+		},
+		initCountry: function(){
+
+			moment.locale('fr');
 
 		},
 		initTypeahead: function(){
@@ -858,6 +866,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	/* Mise à jour dynamique des filters */
         	$('.mood-wrap').html( LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
         	$('.drink-wrap').html( LJ.fn.renderDrinkInProfile( LJ.settings.app.drink ));
+        	$('.filter-mixity').html( LJ.fn.renderMixityInFilters( LJ.settings.app.mixity ));
+        	$('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));
         	$('#no').html('').append( LJ.tpl.noResults );
 
 
@@ -1295,6 +1305,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					html += LJ.fn.renderFriendInProfile( friend );
 				});
 
+				$('.row-friends').find('.row-body').html( html );
+
 			});
 		
 			
@@ -1305,16 +1317,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				console.log('Events successfully fetched ! ( n = ' + data.length + ' )');
 
-				/* Rendu des évènements les plus proches par rapport à la position de départ*/
-				var nearest_events = LJ.fn.findNearestEvents();
-				var nearest_events_html = [];
-				nearest_events.forEach(function( e ){
-					nearest_events_html.push( LJ.fn.renderNearestEvent( e ) );
-				});
-				$('.row-events-nearest').html( nearest_events_html );
-
 				/* Rendu sur la map */
 				LJ.fn.displayEventsOnMap( data );
+
+				/* Rendu des évènements les plus proches par rapport à la position de départ*/
+				setTimeout(function(){
+					LJ.fn.refreshEventNearest();
+				}, 1000 );
+
 
 			}); 
 
@@ -1323,12 +1333,73 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				LJ.fn.initAdminMode();
 			
 		},
-		findNearestEvents: function(){
+		refreshEventNearest: function( evt ){
 
-			var max_events = 4;
-				//center     = LJ.maps.
+			var nearest_event 		= evt || LJ.fn.findEventsNearests( 1 )[0];
+			var duration 			= 100;
 
-			return [];
+			nearest_event_thumbview_html = LJ.fn.renderNearestEvent( nearest_event );
+
+			var $nearest_event = $('.event-nearest');
+
+			if( $nearest_event.attr('data-eventid') == nearest_event._id )
+				return $('.event-nearest > div').css({ opacity: 1});
+
+			if( $nearest_event.length == 0 ){
+				$('.row-events-nearest').html( nearest_event_thumbview_html );
+				//$('.row-events-selected').html( nearest_event_preview_html  );
+				$('.event-nearest, .event-preview').velocity('transition.fadeIn',
+				{ duration: duration });
+				return;
+			} 
+
+			$('.event-nearest')
+				.velocity('transition.fadeOut', {
+					duration: duration,
+					complete: function(){
+						$('.row-events-nearest').html( nearest_event_thumbview_html );
+						$('.event-nearest')
+							.velocity('transition.fadeIn', {
+								duration: duration
+							});
+					}
+			});		
+
+		},
+		refreshEventSelected: function( evt ){
+
+			nearest_event_preview_html   = LJ.fn.renderEventPreview( evt );
+			$('.event-preview').remove();
+			$('.row-events-selected').html( nearest_event_preview_html );
+			$('.event-preview').velocity('transition.fadeIn', {
+								duration: duration + 300
+							});
+
+		},
+		findEventsNearests: function( max_events ){
+
+			var max_events 	    = max_events;
+			var nearest_events  = [];
+			var center     	    = new google.maps.LatLng( LJ.map.getCenter().G, LJ.map.getCenter().K );
+
+			LJ.cache.events.forEach(function( evt ){
+
+				var evt_latlng     = new google.maps.LatLng( evt.address.lat, evt.address.lng );
+				var dist_to_center = google.maps.geometry.spherical.computeDistanceBetween( center, evt_latlng );
+
+				if( nearest_events.length < max_events ){
+					nearest_events.push({ place_id: evt.address.place_id, dist_to_center: dist_to_center });
+				} else {				
+					nearest_events.push({ place_id: evt.address.place_id, dist_to_center: dist_to_center });
+					var max = _.max( nearest_events, function(el){ return el.dist_to_center; });
+					_.remove( nearest_events, function(el){ return el == max });						
+				}
+
+			});
+
+			return _.filter( LJ.cache.events, function( evt ){
+				return _.pluck( nearest_events, 'place_id' ).indexOf( evt.address.place_id ) != -1 ;
+			});
 
 		},
 		displayEventsOnMap: function( events ){
@@ -1347,13 +1418,48 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 						var lat = res.geometry.location.G;
 						var lng = res.geometry.location.K;
 						var url = LJ.cloudinary.markers[ evt.mixity ].url;
+						url = LJ.cloudinary.markers.white_on_black.url;
+
+						evt.address.lat = lat;
+						evt.address.lng = lng;
+						LJ.cache.events.push( evt );
 
 						var event_on_map = new google.maps.Marker({
 					    	position: { lat: lat, lng: lng },
 					    	map: LJ.map,
 					    	icon: url
-					  });
+					  	});
+
+					  	LJ.markers.push({ marker: event_on_map, evt: evt });
+
+						event_on_map.addListener('click', function(e){
+
+							LJ.fn.removeActiveMarker();
+							//LJ.map.panTo( e.latLng );
+
+							LJ.active_marker = new google.maps.Marker({
+						    	position: { lat: lat, lng: lng },
+						    	map: LJ.map,
+						    	icon: LJ.cloudinary.markers.black_on_white.url
+					  		});
+
+							LJ.fn.refreshEventNearest( evt );
+
+
+						});
+
 					});
+
+
+		},
+		removeActiveMarker: function(){
+
+			if( LJ.active_marker == null )
+				return;
+
+			$('.event-nearest-selected').removeClass('event-nearest-selected');
+			LJ.active_marker.setMap( null );
+			LJ.active_marker = null;
 
 		},
 		displayInModal: function( options ){
@@ -1456,7 +1562,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 					$('.modal-container').trigger( eventName, [{ html_data: html_data }]);
 					$('.modal-container').unbind( eventName );
 
-				}, 1000 );
+				}, LJ.ui.minimum_loading_time );
 			}
 
 		},

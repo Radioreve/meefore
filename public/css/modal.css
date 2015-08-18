@@ -30,10 +30,12 @@
 .modal-user-membersince {
    color: #ccc;
    font-size: 12px;
+   margin-bottom: 9px;
 }
 
 .modal-user-description-head {
    margin-bottom: 5px;
+   position: relative;
 }
 
 .modal-user-description-body {
@@ -47,12 +49,12 @@
 .modal-user-job {
    font-family: 'Karla';
    font-size: 14px;
-   color: #FFF;
+   color: #474747;
    margin: 0 4px;
    padding: 6px 10px;
-   background: #383838;
+   background: #E7E7E7;
    display: inline-block;
-   border: 1px solid #242424;
+   border-radius: 2px;
    box-shadow: 0 0 1px #ECECEC;
 }
 
@@ -81,11 +83,14 @@
 .modal-user-age {
    font-family: 'Karla';
    margin: 10px 0;
-   background: #A72323;
-   border: 1px solid #5D1919;
-   padding: 10px 0px;
-   color: white;
-   font-size: 21px;
+   background: #4F4F4F;
+   width: 40px;
+   padding: 10px 0;
+   /* display: inline-block; */
+   border-radius: 100px;
+   color: #FFFFFF;
+   margin: 9px auto;
+   font-weight: bolder;
 }
 
 .modal-user-age span {

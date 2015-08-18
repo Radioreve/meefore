@@ -45,7 +45,7 @@
                                 + '<div class="modal-user-description-head">'
                                     + '<div class="modal-user-name">' + user.name + '</div>'
                                     + '<div class="modal-user-membersince">Membre depuis le ' + moment(user.signup_date).format('DD/MM/YYYY') + '</div>'
-                                    + '<div class="modal-user-age">' + user.age + '<span> ans</span></div>'
+                                    + '<div class="modal-user-age">' + user.age +'</div>'
                                    // + '<div class="modal-user-motto etiquette">"' + user.motto + '"</div>'
                                     + '<div class="modal-user-mood">#'  + LJ.fn.hashtagify( user.mood ) + '</div>'
                                     + '<div class="modal-user-drink">#' + LJ.fn.hashtagify( user.drink )+ '</div>'

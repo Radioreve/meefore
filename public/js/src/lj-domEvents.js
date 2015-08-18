@@ -223,7 +223,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 							myWayOut: myWayOut,
 							myWayIn : myWayIn, 
 							prev:'revealed',
-							duration: 290
+							duration: 320
 						});
 					
 				  
@@ -762,7 +762,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 				LJ.fn.displayInModal({ 
 					source:'local',
-					fix_height: -120,
+					fix_height: -30,
 					starting_width: 550,
 					custom_classes: ['text-left'],
 					render_cb: function(){

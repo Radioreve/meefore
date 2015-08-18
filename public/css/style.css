@@ -55,9 +55,15 @@ font-size: 14px;text-align: center;color: #ee;}
    -webkit-transform: rotate(360deg);
    transform: rotate(360deg);
 }
-
+.rounded {
+	border-radius:100px;
+}
 .slow-down {
    transition: all ease-out .6s!important;
+}
+
+.slow-down-3 {
+   transition: all ease-out .3s!important;
 }
 
 .visible {
@@ -143,7 +149,7 @@ img.left {
    position: relative;
    margin: auto;
    width: 900px;
-   padding-top: 50px;
+   padding-top: 38px;
 }
 
 .disabled {

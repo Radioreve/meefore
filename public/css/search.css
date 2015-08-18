@@ -100,8 +100,10 @@
 
 .encadred{
     border: 1px solid #ccc;
-    background: white;
+    background: #FCFCFC;
     padding: 1px
+
+;
 }
 
 .search-result-default {

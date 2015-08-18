@@ -40,6 +40,14 @@ window.LJ = _.merge(window.LJ || {}, {
                 }, {
                     "featureType": "road.highway",
                     "elementType": "all",
+                    "stylers":  [{
+                        "saturation": -100
+                    }, {
+                        "lightness": 45
+                    }]
+                },  {
+                    "featureType": "road.highway",
+                    "elementType": "labels.icon",
                     "stylers": [{
                         "visibility": "off"
                     }]
@@ -119,6 +127,25 @@ window.LJ = _.merge(window.LJ || {}, {
             LJ.map.mapTypes.set('sober', map_style_sober);
             LJ.map.mapTypes.set('lunar', map_style_lunar);
             LJ.map.setMapTypeId('sober');
+
+            LJ.map.addListener('center_changed', function(){
+                if( LJ.active_marker )
+                    return;
+            	$('.event-nearest > div').addClass('slow-down-3').css({ opacity: LJ.ui.nearest_event_opacity });
+            });
+
+            var duration_speed = 250;
+            LJ.map.addListener('click', function(){
+            	LJ.fn.removeActiveMarker();
+            });
+
+
+            LJ.map.addListener('dragend', function(){
+                if( LJ.active_marker )
+                    return;
+            	LJ.fn.refreshEventNearest();
+            });
+
         }
 
     })

@@ -336,6 +336,8 @@
    background-color: white;
    margin: 0 3px;
    border: 1px solid #eee;
+   width: 83px;
+   text-align: center;
 }
 
 .row-friend-img {
@@ -348,12 +350,19 @@
 }
 
 .row-friend-name {
-   background-color: #FFF;
-    /* border-top: 1px                                                                                                                                                                                          
-    solid #A0A0A0; */
-   font-size: 14px;
+   font-size: 13px;
    text-align: center;
-   padding: 6px 5px;
+   padding: 3px 5px;
+   overflow: hidden;
+   height: 26px;
+   line-height: 19px;
+   border-top: 1px dashed #eee;
+   margin: 2px auto;
+   display: inline-block;
+   width: 70px;
+   font-family: 'Karla';
+   border-radius: 2px;
+   vertical-align: middle;
 }
 
 .row-friend-actions {

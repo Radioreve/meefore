@@ -3,7 +3,7 @@ var settings = {
 
 	api_version: 1,
 	app: {
-		max_hosts: 3,
+		max_hosts: 5,
 		max_ambiance: 5,
 		mood: 
 		[
@@ -31,9 +31,9 @@ var settings = {
 		mixity: 
 		[
 			{ id: 'whatever', display: 'Whatever', icon_code: 'thumbs-up-alt' },
-			{ id: 'boys', display: 'Plutôt des hommes', icon_code: 'male-1' },
-			{ id: 'girls', display: 'Plutôt des femmes', icon_code: 'female-1' },
-			{ id: 'mixed', display: 'Les deux', icon_code: 'users' }
+			{ id: 'boys', display: 'Des gars', icon_code: 'male-1' },
+			{ id: 'girls', display: 'Des filles', icon_code: 'female-1' },
+			{ id: 'mixed', display: 'Mixte', icon_code: 'users' }
 		]
 	},
 	public_properties: {

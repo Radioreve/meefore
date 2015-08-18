@@ -33,9 +33,9 @@
 
               var html = '<div id="createEvent" class="">'
         
-                        +'<div class="row-create">'
-                          +'<h2>La prochaine soirée, elle commence chez toi !</h2>'
-                        +'</div>'
+                        //+'<div class="row-create">'
+                         // +'<h2>La prochaine soirée, elle commence chez toi !</h2>'
+                       // +'</div>'
                         +'<div class="row-title-sub">'
                           +'Tous les befores rapportent 500pts lorsqu\'ils donnent lieu à une vraie rencontre'
                         +'</div>'

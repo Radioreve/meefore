@@ -5,10 +5,16 @@
 
 	accessToken:'',
 	ui:{
+		nearest_event_opacity: '.5',
 		artificialDelay: 700,
-		minimum_loading_time: 600,
+		minimum_loading_time: 500,
 		displayIn:  { opacity: [1, 0], translateX: [-8, 0]   },
 		displayOut: { opacity: [0, 1], translateX: [10, 0]   }
+	},
+	markers: [],
+	cache: {
+		events: [],
+		users: []
 	},
 	cloudinary:{
 		uploadParams: { cloud_name:"radioreve", api_key:"835413516756943" },
@@ -40,12 +46,20 @@
 				params: { cloud_name: "radioreve", width: 150, height: 150, crop: 'fill', gravity: 'face' }
 			},
 			friends: {
-				params: { cloud_name: "radioreve", width: 50, height: 50, crop: 'fill', gravity: 'face' }
+				params: { cloud_name: "radioreve", 'class': 'rounded', width: 50, height: 50, crop: 'fill', gravity: 'face' }
 			}
 		},
-		events: {
-			hosts: {
-				params: { cloud_name: "radioreve", width: 75, height: 75, crop: 'fill', gravity: 'face'}
+		events:
+		{
+			map: {
+				hosts: {
+					params: { cloud_name: "radioreve", 'class': 'rounded', width: 42, height: 42, crop: 'fill', gravity: 'face'}
+				}
+			},
+			preview: {
+				hosts: {
+					params: { cloud_name: "radioreve", 'class': 'rounded', width: 62, height: 62, crop: 'fill', gravity: 'face'}
+				}
 			}
 		},
 		create: {
@@ -55,16 +69,21 @@
 		},
 		search: {
 			user: {
-				params: { cloud_name: "radioreve", 'class': 'super-centered encadred', width: 40, height: 40, crop: 'fill', gravity: 'face' }
+				params: { cloud_name: "radioreve", 'class': 'super-centered rounded', width: 40, height: 40, crop: 'fill', gravity: 'face'}
 			}
 		},
 		markers: {
 			boys: {
-				url:'http://res.cloudinary.com/radioreve/image/upload/v1439573885/marker-boys.png'
+				url:'http://res.cloudinary.com/radioreve/image/upload/v1439575901/meefore-marker-boy3.png'
 			},
 			girls: {
-				url2: 'http://res.cloudinary.com/radioreve/image/upload/v1439574888/meefore-marker-girls2.png',
-				url: 'http://res.cloudinary.com/radioreve/image/upload/v1439573889/marker-girls.png'
+				url: 'http://res.cloudinary.com/radioreve/image/upload/v1439575607/meefore-marker-girls_3.png'
+			},
+			white_on_black: {
+				url: 'http://res.cloudinary.com/radioreve/image/upload/v1439767180/meefore-marker-white-on-black.png'
+			},
+			black_on_white: {
+				url: 'http://res.cloudinary.com/radioreve/image/upload/v1439767234/meefore-marker-black-on-white.png'
 			}
 		},
         curtain: {
