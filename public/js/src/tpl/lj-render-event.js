@@ -2,90 +2,25 @@
 	window.LJ.fn = _.merge( window.LJ.fn || {}, 
 
 		{
+    renderChatLine: function( options ){
 
-		renderEvent: function( e ){
+      var html   = '';
+      var msg    = options.msg;
+      var author = options.author;
+      var me     = author.facebook_id == LJ.user.facebook_id ? 'me' : '';
 
-      var hosts_pictures_html, begins_at_html, mixity_html, agerange_html, scheduled_party_html, address_html, ambiance_html, button_html;
+      var main_image     = LJ.fn.findMainImage( author );
+      var display_params = _.merge( LJ.cloudinary.events.chat.params, { img_version: main_image.img_version } );
+      var img_tag      = $.cloudinary.image( main_image.img_id, display_params ).prop('outerHTML');
 
-      /* Host images */
-      hosts_pictures_html = '<div class="event-hosts">';
-      e.hosts.forEach(function( host ){
-
-        var display_params = _.merge( LJ.cloudinary.events.hosts.params, { img_version: LJ.fn.findMainImage( host ).img_version } );
-        var img_tag = $.cloudinary.image( LJ.fn.findMainImage( host ).img_id, display_params ).prop('outerHTML');
-        hosts_pictures_html += '<div class="event-host-picture" data-fbid="'+host.facebook_id+'">' + img_tag +'</div>'
-
-      });
-      hosts_pictures_html += '</div>';
-
-      /* Begin date */
-      begins_at_html = '<div class="event-begins-at">' + moment( e.begins_at ).format('DD/MM') + '</div>';
-
-      /* Address */
-      address_html = '<div class="event-body-wrap event-address-wrap">'
-                    + '<div class="event-address-intro"></div>'
-                    + '<div class="event-address" data-placeid="'+e.address.place_id+'">'
-                            + '<div class="event-address-street">' + e.address.street_name + ', </div>'
-                            + '<div class="event-address-city">'   + e.address.city_name + '</div>'
-                      +'</div>'
-                    + '</div>';
-
-      /* Ambiance */
-      ambiance_html = '<div class="event-wrap">'
-      e.ambiance.forEach(function( ambiance ){
-        ambiance_html += '<div class="event-ambiance">'
-                       + '<div class="event-ambiance-hashtag">#</div>'
-                       + '<div class="event-ambiance-name">' + ambiance + '</div>'
-        ambiance_html += '</div>';
-      });
-      ambiance_html += '</div>';
-
-      /* Agerange & Mixity */
-      var mixity   = _.find( LJ.settings.app.mixity,   function( el ){ return el.id == e.mixity;   });
-      var agerange = _.find( LJ.settings.app.agerange, function( el ){ return el.id == e.agerange; });
-
-      mixity_and_agerange_html = '<div class="event-body-wrap">'
-                                    + '<div class="event-mixity" data-mixityid="' + e.mixity         +'">'
-                                       + '<i class="icon icon-mixity-event icon-' + mixity.icon_code +'"></i>'
-                                       + '<div class="event-mixity-name">'        + mixity.display +'</div>' 
-                                    + '</div>'
-                                    + '<div class="event-spliter">, </div>'
-                                    + '<div class="event-agerange" data-agerangeid="' + e.agerange + '">'
-                                       //+ '<i class="icon icon-agerange-event icon-'   + agerange.icon_code + '"></i>'
-                                       + '<div class="event-agerange-name">'          + agerange.display + '</div>'
-                                    + '</div>'
-                               + '</div>';
-
-      /* Scheduled party */
-      scheduled_party_html = '<div class="event-body-wrap event-scheduled-party" data-placeid="' + e.scheduled_party._id     +'">'
-                                + '<div class="event-scheduled-party-name">'     + e.scheduled_party.name    +'</div>'
-                                + '<div class="event-spliter">, </div>'
-                                + '<div class="event-scheduled-party-address">'  + e.scheduled_party.address +'</div>'
-                                + '<div class="event-scheduled-party-type">'     + e.scheduled_party.type    +'</div>' 
-                             +'</div>';
-
-      button_html = '<div class="event-button-wrap">'
-                      +'<button class="theme-btn">Participer</div>'
-                    +'</div>';
-
-      var html = '<div class="event-item-wrap etiquette"><div class="event-item-sublayer"><div class="event-item">'
-                      + '<div class="event-head">'
-                        + '<div class="event-hosts-intro">Proposé par</div>'
-                        + hosts_pictures_html
-                        + begins_at_html
-                      + '</div>'
-                      + '<div class="event-body">'
-                          + address_html
-                          + mixity_and_agerange_html 
-                          + scheduled_party_html
-                          + ambiance_html
-                          + button_html
-                      + '</div>'
-                  +'</div></div></div>';
+      html += '<div class="event-accepted-chat-message ' + me + '" data-authorid="' + author.facebook_id + '" >'
+                  + img_tag
+                  + '<div class="event-accepted-chat-text">' + msg + '</div>'
+                + '</div>';
 
       return html;
 
-		},
+    },
     renderNearestEvent: function( evt ){
 
       var hosts_pictures_html, details_html, hosts_names = []
@@ -149,7 +84,7 @@
         return html;
 
     },
-    renderEventPreview: function( evt ){
+    renderEventPreview_User: function( evt ){
 
       var ambiance_html = '', hosts_html = '', details_html = '', request_html = '';
 
@@ -199,7 +134,146 @@
       return html;
 
     },
-    renderEventInview: function( evt ){
+    renderUserImgTag: function( user, params ){
+
+      var main_image     = LJ.fn.findMainImage( user );
+      var display_params = _.merge( params, { img_version: main_image.img_version } );
+      var img_tag        = $.cloudinary.image( main_image.img_id, display_params ).prop('outerHTML');
+
+      return img_tag;
+
+    },
+    renderEventInview_User: function( evt ){
+
+      var html = '', hosts_html = '', groups_html = '';
+
+      var hosts_html = LJ.fn.renderHostsGroup( evt.hosts );
+      
+      evt.groups.forEach(function( group ){
+        groups_html += LJ.fn.renderUsersGroup( group );
+      });
+
+      html += '<div data-eventid="' + evt._id + '"class="row-events-accepted-inview">'
+                + '<div class="event-accepted-inview">'
+                  + '<div class="event-accepted-users">'
+                    + hosts_html
+                    + groups_html
+                  + '</div>'
+                  + '<div class="event-accepted-chat">'
+                    + '<div class="event-accepted-chat-messages">'
+                      + '<div class="super-centered event-accepted-notification-message">'
+                        + 'Votre demande a bien a été envoyée' 
+                        + '<br>'
+                        + 'Dès que l\'un des organisateurs vous aura accepté, vous aurez accès à la discussion.'
+                      + '</div>'
+                    + '</div>'
+                    + '<div class="event-accepted-chat-typing">'
+                      + '<input type="text"/>'
+                      + '<button class="theme-btn"></button>'
+                    + '</div>'  
+                  + '</div>'
+                + '</div>'
+            + '</div>';
+
+
+
+    },
+    renderHostsGroup: function( group ){
+
+      var hosts_html = '<div class="event-accepted-users-group"><div class="event-accepted-group-name">Organisateurs</div>';
+      hosts.members.forEach(function( member ){
+
+      var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
+      user_group_html += '<div class="event-accepted-user">'
+                        + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
+                        + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
+                        + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
+                        + '<div class="event-accepted-user-hashtag">' + member.drink  + '</div>'
+                      + '</div>';
+      });
+
+      hosts_html += '</div>';
+
+      return hosts_html;
+
+    },
+    renderUsersGroup: function( group ){
+
+      var user_group_html = '<div class="event-accepted-users-group">'
+                            + '<div class="event-accepted-group-name">' + group.name + '</div>';
+
+      group.members.forEach(function( member ){
+
+        var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
+        user_group_html += '<div class="event-accepted-user">'
+                          + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
+                          + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
+                          + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
+                          + '<div class="event-accepted-user-hashtag">' + member.drink  + '</div>'
+                        + '</div>';
+      });
+
+
+      user_group_html += '</div>';
+
+      return user_group_html;
+
+    },
+    renderUsersGroupWithToggle: function( group ){
+
+     var user_group_html = '<div class="event-accepted-users-group">'
+                            + '<i class="icon icon-toggle icon-toggle-off"></i>'
+                            + '<div class="event-accepted-group-name">' + group.name + '</div>';
+
+      group.members.forEach(function( member ){
+
+        var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
+        user_group_html += '<div class="event-accepted-user">'
+                          + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
+                          + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
+                          + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
+                          + '<div class="event-accepted-user-hashtag">' + member.drink  + '</div>'
+                        + '</div>';
+      });
+
+
+      user_group_html += '</div>';
+
+      return user_group_html;
+
+    },
+    renderEventInview_Host: function( evt ){
+
+      var html = '', hosts_html = '', groups_html = '';
+
+      var hosts_html = LJ.fn.renderHostsGroup( evt.hosts );
+
+      evt.groups.forEach(function( group ){
+        groups_html += LJ.fn.renderUsersGroupWithToggle( group );
+      });
+
+      html += '<div data-eventid="' + evt._id + '"class="row-events-accepted-inview">'
+                + '<div class="event-accepted-inview">'
+                  + '<div class="event-accepted-users">'
+                    + hosts_html
+                    + groups_html
+                  + '</div>'
+                  + '<div class="event-accepted-chat">'
+                    + '<div class="event-accepted-chat-messages">'
+                      + '<div class="super-centered event-accepted-notification-message">'
+                        + 'Votre évènement a bien été créé' 
+                        + '<br>'
+                        + 'En attendant que d\'autres membres demandent à venir faire la fête avec vous,'
+                        + 'vous pouvez discuter avec les autres organisateurs"'
+                      + '</div>'
+                    + '</div>'
+                    + '<div class="event-accepted-chat-typing">'
+                      + '<input type="text"/>'
+                      + '<button class="theme-btn"></button>'
+                    + '</div>'  
+                  + '</div>'
+                + '</div>'
+            + '</div>';
 
     }
        

@@ -81,20 +81,16 @@ var UserSchema = new mongoose.Schema({
       { img_id: settings.placeholder.img_id, img_version: settings.placeholder.img_version, img_place: 4, is_main: false, hashtag: 'hipster' }
       ]
   },
-  status:{
+  status: {
     type: String,
     default: 'new'
   },
-  asked_events:{
+  events: {
     type: Array,
     default: []
-  },
-  hosted_event_id:{
-    type: String
   },
   channels: {
-    type: Array,
-    default: []
+    type: Object
   },
   app_preferences: {
     type: Object,
@@ -131,9 +127,5 @@ UserSchema.methods.getChannel = function(){
   return _.result( _.find( this.channels, function(el){ return el.access_name == 'mychan'; }), 'channel_label') ;
 };
 
-UserSchema.methods.unaskForEvent = function( eventId ){
-  this.asked_events.pull( eventId );
-  return this;
-}
 
 module.exports = mongoose.model('Users', UserSchema);

@@ -1,6 +1,7 @@
 	
 	var _          = require('lodash'),
 		eventUtils = require('../pushevents/eventUtils'),
+		User       = require('../models/UserModel'),
 		Event      = require('../models/EventModel'),
 		moment     = require('moment');
 
@@ -22,7 +23,7 @@
 
 	    	/* set by server */
 	    	new_event.created_at = moment();
-	    	new_event.askers 	 = [];
+	    	new_event.groups 	 = [];
 	    	new_event.status 	 = 'open';
 	    	new_event.type       = 'before';
 	    	new_event.meta 		 = [];
@@ -33,10 +34,28 @@
 	    	if( err )
 	    		return eventUtils.raiseError({ err: err, res: res, toClient: "Error saving event"});
 
-	    	console.log('Event created!!');
-	    	eventUtils.sendSuccess( res, new_event );
+	    	var event_item = {
+	    		status: 'hosting',
+	    		event_id: new_event._id,
+	    		begins_at: new_event.begins_at
+	    	};
+
+	    	User.update({ 'facebook_id': { $in: _.pluck( data.hosts, 'facebook_id') } },
+	    				{ $push: { 'events': event_item }},
+	    				{ multi: true },
+	    				function( err, users ){
+
+	    					if( err )
+	    						return eventUtils.raiseError({ err: err, res: res, toClient: "Error updating users"});
+
+					    	console.log('Event created!!');
+					    	eventUtils.sendSuccess( res, new_event );
+
+	    				});
 
 	    });
+
+
 
 	};
 
@@ -69,7 +88,7 @@
 
 	};
 
-	var fetchAskers = function( req, res ){
+	var fetchGroups = function( req, res ){
 
 	};
 
@@ -78,5 +97,5 @@
 		fetchEvents: fetchEvents,
 		fetchEventById: fetchEventById,
 		updateEvent: updateEvent,
-		fetchAskers: fetchAskers
+		fetchGroups: fetchGroups
 	};

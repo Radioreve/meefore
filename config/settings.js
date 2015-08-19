@@ -3,6 +3,7 @@ var settings = {
 
 	api_version: 1,
 	app: {
+		min_group: 2,
 		max_hosts: 5,
 		max_ambiance: 5,
 		mood: 
@@ -49,8 +50,8 @@ var settings = {
 				'name', 
 				'drink', 
 				'mood', 
-				'pictures', 
-				'skills'
+				'pictures'
+				//'skills'
 			],
 		events: []
 	},

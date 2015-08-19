@@ -12,6 +12,7 @@
 		clientEvents   = require( pushEventsDir + 'clientEvents'),
 		friendEvents   = require( pushEventsDir + 'friendEvents'),
 		adminEvents    = require( pushEventsDir + 'adminEvents'),
+		mapEvents	   = require( pushEventsDir + 'mapEvents'),
 		signEvents     = require( pushEventsDir + 'signEvents');
 
 	var api = {}
@@ -65,7 +66,7 @@
 		app.get('/api/v1/events/:event_id', api.events.fetchEventById );
 		app.post('/api/v1/events', mdw.validate.validate('event'), api.events.createEvent );
 		app.patch('api/v1/events/:event_id', api.events.updateEvent );
-		app.post('/api/v1/events/askers', api.events.fetchAskers );
+		app.get('/api/v1/events/groups', api.events.fetchGroups );
 
 	//Rest api tests
 		app.post('/api/v1/test/:user_id', api.tests.test );
@@ -81,6 +82,10 @@
 	//Rest api places
 		app.get('/api/v1/places', api.places.fetchPlaces );
 		app.post('/api/v1/places', api.places.createPlace );
+
+	//Map events
+		app.post('/events/requestin', mdw.validate.validate('requestin'), mapEvents.requestIn );
+
 
 	//Events relatifs au démarrage d'une session client
 		app.post('/fetch-events', clientEvents.fetchEvents );

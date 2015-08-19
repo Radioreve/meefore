@@ -1,6 +1,7 @@
 
+	
 	var mongoose = require('mongoose'),
-		User = require('../models/UserModel'),
+		Event = require('../models/UserModel'),
 		EventTemplate = require('../models/EventTemplateModel'),
 		config = require('../config/config'),
 		_ = require('lodash');
@@ -13,7 +14,7 @@
 			var select = {};
 
 			var update = { 
-						$unset: { skill: '' }
+						$set: { 'groups': ['jean'] }
 						/*$set :  { 
 							"facebook_access_token" : {
 								short_lived: null,
@@ -33,18 +34,16 @@
 			};
 
 
-			//User.update( select, update, options, callback_update );
+			//Event.update( select, update, options, callback_update );
 
-			User.find({}, function(err, users ){
-				users.forEach(function(user){
-					user.channels = {
-						'public_chan': 'default',
-						'me': user.facebook_id
-					};
-					user.save(function(err,svd){
-						console.log('done');
-					});
+			Event.find( select, function( err, events ){
+
+				events.forEach(function(evt){
+
+					
+					
 				});
+
 			});
 
 		});

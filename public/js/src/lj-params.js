@@ -11,6 +11,7 @@
 		displayIn:  { opacity: [1, 0], translateX: [-8, 0]   },
 		displayOut: { opacity: [0, 1], translateX: [10, 0]   }
 	},
+	pusher_channels: {},
 	markers: [],
 	cache: {
 		events: [],
@@ -60,6 +61,12 @@
 				hosts: {
 					params: { cloud_name: "radioreve", 'class': 'rounded', width: 62, height: 62, crop: 'fill', gravity: 'face'}
 				}
+			},
+			group: {
+				params: { cloud_name: "radioreve", 'class': 'rounded', width: 40, height: 40, crop: 'fill', gravity: 'face' }
+			},
+			chat: {
+				params: { cloud_name: "radioreve", 'class': 'rounded', width: 30, height: 30, crop: 'fill', gravity: 'face' }
 			}
 		},
 		create: {
@@ -137,16 +144,6 @@
 	},
 	/* To be dynamically filled on login */
 	user:{},
-	myEvents: [],
-    myAskers: [],
-    myUsers: [],
-    myFriends: [],
-    channels: { 
-    	myChats: []
-    },
-    myOnlineUsers: [],
-    selectedTags: [],
-    selectedLocations: [],
     $eventsToDisplay: $(),
     $main_loader: $(),
     $mobile_loader: $(),

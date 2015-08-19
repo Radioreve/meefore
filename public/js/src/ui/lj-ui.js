@@ -1,0 +1,384 @@
+
+	window.LJ.fn = _.merge( window.LJ.fn || {}, {
+
+		handleDomEvents_Navbar: function(){
+
+			LJ.$logout.click(function(){
+				LJ.user.app_preferences.ux.auto_login = 'no';
+				LJ.fn.setLocalStoragePreferences();
+				location.reload();
+
+			});
+
+			LJ.$body.on('click', '#thumbWrap img', function(){
+				LJ.fn.displayUserProfile( LJ.user.facebook_id );
+			});
+
+			$('#search').click(function(){
+				$(this).find('input').focus();
+			});
+
+			$('#search').mouseover(function(){
+
+			});
+
+			['#contact', '#profile', '#events', '#management', '#settings'].forEach(function(menuItem){
+
+				$(menuItem).click(function(){
+
+				$(menuItem).find('span.bubble').addClass('filtered').text('');
+		
+				  if( LJ.state.animatingContent || $(menuItem).hasClass('menu-item-active') || ($(menuItem).hasClass('disabled')) )
+				  	return;
+
+				  		LJ.state.animatingContent = true;
+						
+						var linkedContent = $(menuItem).data('linkedcontent');
+						
+						var indexActive = $('.menu-item-active').offset().left,
+							indexTarget = $(menuItem).offset().left;
+
+						if( indexActive > indexTarget ){
+							var myWayOut = 'transition.slideRightOut' ; //{opacity: [0, 1], translateX:[15,0 ] },
+								myWayIn = 'transition.slideLeftIn' ; //{opacity: [1, 0], translateX:[0,-5 ] };
+						} else {
+							var myWayOut = 'transition.slideLeftOut' ;// {opacity: [0, 1], translateX:[-15,0 ] },
+								myWayIn = 'transition.slideRightIn' ; //{opacity: [1, 0], translateX:[0, 5] };
+						}
+
+						$('.menu-item-active').removeClass('menu-item-active')
+											  .find('span.underlay')
+											  .velocity({ opacity: [0, 1], translateY: [-2, 0]   },
+											   { duration: 300,
+											   complete: function(){
+											   	$(menuItem).addClass('menu-item-active')
+														   .find('span.underlay')
+													   	   .velocity({ opacity: [1, 0], translateY: [0, -2]   }, { duration: 300 });
+											   	} 
+											});
+
+						LJ.fn.displayContent( linkedContent, {
+							myWayOut: myWayOut,
+							myWayIn : myWayIn, 
+							prev:'revealed',
+							duration: 320
+						});
+					
+				  
+				});
+			});
+
+		},
+		displayContent: function( content, options ){
+			
+				options = options || {};
+
+			if( !options.mode ){
+				
+				var prev = options.prev;			
+				var $prev = $('.'+options.prev);
+
+				$prev.velocity( options.myWayOut || 'transition.fadeOut', {
+					duration: options.duration || 0 || 400,
+					complete: function(){
+						$prev.removeClass( prev );
+						$(content).addClass( prev )
+							   .velocity( options.myWayIn || 'transition.fadeIn', {
+							   	duration: 0 || 800,
+							   	display:'block',
+							   	complete: function(){
+							   		LJ.state.animatingContent = false;
+							   		if(LJ.user.status === 'new'){
+							   			//LJ.fn.toggleOverlay('high', LJ.tpl.charte );
+							   		}
+							   		options.after_cb && options.after_cb();
+							   		LJ.fn.adjustAllInputsWidth( content );
+
+							   	}
+							   });
+					}
+				});
+			}
+
+			if( options.mode == 'curtain' ) {
+
+				var prev = options.prev;			
+				var $prev = $('.'+options.prev);
+				
+				var behindTheScene = function(){
+
+					options.during_cb();
+					$prev.removeClass( prev );
+					$(content).addClass( prev )
+						   .show()
+						   .css({'display':'block'});
+
+				};
+
+				var afterTheScene = function(){
+					options.after_cb();
+				}
+
+				LJ.fn.displayCurtain({
+					behindTheScene: behindTheScene,
+					afterTheScene : afterTheScene
+				})
+				
+			} 
+
+
+		},
+		displayCurtain: function( opts ){
+
+			var behindTheScene = opts.behindTheScene || function(){ delog('Behind the scene'); },
+				afterTheScene  = opts.afterTheScene   || function(){ delog('after the scene');  },
+				delay          = opts.delay    || 500,
+				duration       = opts.duration || 800;
+
+			var $curtain = $('.curtain');
+
+			if( $curtain.css('opacity') != '0' || $curtain.css('display') != 'none' ){
+				var init_duration = 10;
+			}
+
+				$curtain
+				.velocity('transition.fadeIn',
+				{ 
+					duration: init_duration || duration, //simuler l'ouverture instantanée
+				  	complete: behindTheScene 
+				})
+				.delay( delay )
+				.velocity('transition.fadeOut',
+				{	
+					display : 'none',
+					duration: duration,
+					complete: afterTheScene
+				});
+		
+
+		},
+		toastMsg: function( msg, status, fixed ){
+
+			var toastStatus, toast, tpl;
+
+			if( status == 'error' ){
+				    toastStatus = '.toastError',
+					tpl = LJ.tpl.toastError;
+			}
+			if( status == 'info' ){
+				    toastStatus = '.toastInfo',
+					tpl = LJ.tpl.toastInfo;
+			}
+			if( status == 'success'){
+				    toastStatus = '.toastSuccess',
+					tpl = LJ.tpl.toastSuccess;
+			}
+
+			if( $( '.toast' ).length === 0 )
+			{
+				$( tpl ).prependTo('#mainWrap');
+
+				    toast = $( toastStatus );
+					toastMsg = toast.find('.toastMsg');
+					toastMsg.text( msg );
+
+					toast.velocity('transition.slideDownIn', {
+						duration: 600,
+						complete: function(){
+
+						  if( typeof(fixed) == 'string' )
+						  	return
+
+							toast.velocity('transition.slideUpOut', {
+								duration:300,
+								delay: fixed || 2000,
+								complete: function(){
+									toast.remove();
+									if( LJ.msgQueue.length != 0 )
+										LJ.fn.toastMsg( LJ.msgQueue[0].msg, LJ.msgQueue[0].type );
+									    LJ.msgQueue.splice( 0, 1 ) //remove le premier élément
+								}
+								});						
+						  }
+					});
+			}
+			else
+			{
+				LJ.msgQueue.push({ msg: msg, type: status });
+			}
+		},
+		showLoaders: function(){
+
+        	$( '.loaderWrap, .m-loaderWrap' ).velocity( 'fadeIn', { duration: 400 });
+
+        },
+        hideLoaders: function(){
+
+            $( '.loaderWrap, .m-loaderWrap' ).velocity( 'fadeOut', { duration: 250 });
+
+        },
+        		displayModal: function( callback ){
+			
+			$('.curtain')
+				.css({'display':'block'})
+				.velocity({ 'opacity': [0.4,0] });
+
+			$('.modal-container')
+				.find('.modal-container-body').html( LJ.$curtain_loader ).end()
+				.css({'display':'block'})
+				.velocity({ 'opacity': [1,0] });
+
+			$('.curtain-loader').velocity('transition.fadeIn', { delay: 200, duration: 300});
+
+		},
+		hideModal: function(){
+
+			$('.row-events-map').show();
+			$('.curtain')
+				.velocity({ 'opacity': [0,0.4] }, { complete: function(){
+					$('.curtain').css({ display: 'none' }); }
+			});
+
+			$('.modal-container')
+				.velocity({ 'opacity': [0,1] }, { complete: function(){
+					$('.modal-container').css({ display: 'none', height: 'auto', width: 'auto' });
+					$(".modal-container-body *:not('.curtain-loader')").remove(); 
+				}
+			});
+
+			$('.curtain-loader').hide();
+
+		},
+		displayInModal: function( options ){
+
+			var options = options || {};
+
+			var call_started = new Date();
+			LJ.fn.displayModal();
+
+			var eventName = 'display-content';
+
+			$('.modal-container').css({ width: options.starting_width });
+			$('.modal-container').on( eventName, function( e, data ){
+
+				var content = data.html_data;
+				var starts_in = LJ.ui.minimum_loading_time - ( new Date() - call_started )
+				setTimeout(function(){
+					
+					var $content = $(content);
+
+					options.custom_classes && options.custom_classes.forEach( function( class_itm ){
+						$content.addClass( class_itm );
+					});
+
+					options.custom_data && options.custom_data.forEach(function( el ){
+						$content.attr('data-'+el.key, el.val );
+					}); 
+
+					$('.curtain-loader').velocity('transition.fadeOut', { duration: 300 });
+					$content.hide().appendTo('.modal-container-body');
+
+					$content.waitForImages(function(){
+
+						var old_height = $('.modal-container').innerHeight(),
+							new_height = old_height + $('.modal-container-body > div').innerHeight() + ( options.fix_height || 0 );
+
+						var old_width = options.starting_width,
+							new_width = old_width + $('.modal-container-body > div').innerWidth();
+
+						var duration = new_height > 400 ? 450 : 300;
+
+						$('.modal-container')
+							.velocity({ height: [ new_height, old_height ], width: [ new_width, old_width ] }, { 
+									duration: duration,
+									complete: function(){
+										$content.css({'display':'block','opacity':'0'});
+										options.predisplay_cb && options.predisplay_cb();
+										$content.velocity('transition.fadeIn');
+									} 
+							});
+					});
+
+
+				}, starts_in );
+
+			});
+
+			if( options.source === 'server' )
+			{
+				$.ajax({
+					method:'GET',
+					url: options.url,
+					success: function( data ){
+						var html_data = options.render_cb( data );
+						$('.modal-container').trigger( eventName, [{ html_data: html_data }]);
+					},
+					error: function(){
+						var html_data = options.error_cb();
+						$('.modal-container').trigger( eventName, [{ html_data: html_data }]);
+					},
+					complete: function(){
+						$('.modal-container').unbind( eventName );
+					}
+				});
+			}
+
+			if( options.source === 'facebook' )
+			{	
+				LJ.fn.GraphAPI( options.url, function(res){
+
+					if( !res && !res.data ) {
+						console.log('Error, cannot display photos from fb')
+						console.log(res);
+						var html_data = options.error_cb();
+					} else {
+						var html_data = options.render_cb( res.data );
+					}
+					
+					$('.modal-container').trigger( eventName, [{ html_data: html_data }]);
+					$('.modal-container').unbind( eventName );
+
+				});
+			}
+
+			if( options.source === 'local' )
+			{
+				setTimeout( function(){
+
+					var html_data = options.render_cb();
+					$('.modal-container').trigger( eventName, [{ html_data: html_data }]);
+					$('.modal-container').unbind( eventName );
+
+				}, LJ.ui.minimum_loading_time );
+			}
+
+		},
+		bubbleUp: function( el ){
+
+        	var $el = $(el);
+
+        	if( $el.hasClass('menu-item-active') ) return; 
+
+        	var $bubble = $el.find('.bubble'),
+        		n = $bubble.text() == 0 ? 0 : parseInt( $bubble.text() );
+
+        	$bubble.removeClass('filtered');
+
+        		if( n == 99 ) 
+        			return $bubble.text(n+'+');
+
+        	return $bubble.text( n + 1 );
+
+        },
+       	displayUserProfile: function( facebook_id ){
+			LJ.fn.displayInModal({ 
+				url: '/api/v1/users/' + facebook_id,
+				source: 'server',
+				starting_width: 300,
+				render_cb: LJ.fn.renderUserProfileInCurtain,
+				error_cb: LJ.fn.renderUserProfileInCurtainNone
+			});
+			
+		}
+
+	});

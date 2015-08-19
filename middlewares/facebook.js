@@ -1,6 +1,8 @@
 	
 	var eventUtils  = require('../pushevents/eventUtils'),
 		moment      = require('moment'),
+		querystring = require('querystring'),
+		request     = require('request'),
 		_     	    = require('lodash');
 
 	var User        = require('../models/UserModel');

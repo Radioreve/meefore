@@ -1,8 +1,9 @@
 
-	var User = require('../models/UserModel'),
-		Place = require('../models/PlaceModel'),
-		Ambiance = require('../models/AmbianceModel'),
-		_    = require('lodash'),
+	var User 	   = require('../models/UserModel'),
+		Place 	   = require('../models/PlaceModel'),
+		Ambiance   = require('../models/AmbianceModel'),
+		_   	   = require('lodash'),
+		settings   = require('../config/settings'),
 		eventUtils = require('../pushevents/eventUtils');
 
 
@@ -31,6 +32,9 @@
 	/* fetch /users?name=... */
 	var fetchUsers = function( req, res ){
 
+		if( _.keys( req.query ).length == 0 )
+			return fetchUsersAll( req, res );
+
 		var user_name = req.query.name,
 			pattern   = '^'+user_name;
 
@@ -38,7 +42,7 @@
 			.find({ name: { $regex: pattern, $options: 'i' }})
 			.select({ name: 1, pictures: 1, mood: 1, drink: 1, facebook_id: 1 })
 			.limit(10)
-			.exec( function( err, users ){
+			.exec(function( err, users ){
 
 				if( err )
 					return eventUtils.raiseError({ err: err, res: res,
@@ -50,7 +54,28 @@
 			});
 	};
 
+	var fetchUsersAll = function( req, res ){
 
+		var select = {};
+		settings.public_properties.users.forEach(function( prop ){
+			select[ prop ] = 1;
+		});
+
+		User
+			.find({})
+			.select( select )
+			.exec(function( err, users ){
+
+				if( err )
+					return eventUtils.raiseError({ err: err, res: res,
+						toClient: "Erreur de l'API"
+					});
+
+				eventUtils.sendSuccess( res, users );
+
+			});
+
+	};
 
 	module.exports = {
 		fetchUserById: fetchUserById,

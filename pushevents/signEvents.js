@@ -61,7 +61,6 @@
 		/* L'utilisateur n'existe pas, on crée son compte */
 		console.log('User not found, creating account...');
 
-
 			var new_user = new User();
 
 			new_user.facebook_id = fb.id;
@@ -76,9 +75,10 @@
 			new_user.signup_date = new moment();
 
 			/* Pusher informations for real time channels */
-		    var token = randtoken.generate(30);
-			new_user.channels.push({ access_name: 'mychan', channel_label: token });
-			new_user.channels.push({ access_name: 'defchan', channel_label: 'default' });
+			new_user.channels = {
+				public_chan : 'default',
+				me 			: facebook_id
+			};
 
 			new_user.save( function( err, user ){
 

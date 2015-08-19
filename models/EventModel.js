@@ -37,7 +37,7 @@
 		mixity: {
 			type: String
 		},
-		askers: {
+		groups: {
 			type: Array,
 			default: []
 		},

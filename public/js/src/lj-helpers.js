@@ -164,6 +164,32 @@
 			LJ.pikaday.hide();
 
 		},
+		hashtagify: function( str ){
+			
+			var hashtag_parts = [];
+				str.trim().split(/[\s_-]/).forEach(function( el, i ){
+					if( i == 0 ){
+						hashtag_parts.push( el );
+					} else {
+						if( el != '') {
+							var elm = el[0].toUpperCase() + el.substring(1);
+							hashtag_parts.push( elm );
+						}
+					}
+				});
+				return hashtag_parts.join('');
+
+		},
+		findMainImage: function( user ){
+
+			var user = user || LJ.user ;
+			var index = _.findIndex( user.pictures, function( el ){
+				return el.is_main == true;
+			});
+
+			return user.pictures[ index ];
+
+		},
 		removeDateToInput: function( str ){
 
 			var $input = $('#cr-date'),
@@ -176,6 +202,126 @@
 		},
 		sanitizeCreateInputs: function(){
 			$('#createEvent').find('.need-sanitize:not(.no-sanitize)').val('');
-		}
+		},
+		swapNodes: function( a, b ){
+
+		    var aparent = a.parentNode;
+		    var asibling = a.nextSibling === b ? a : a.nextSibling;
+		    b.parentNode.insertBefore(a, b);
+		    aparent.insertBefore(b, asibling);
+
+		},
+		randomInt: function(low, high) {
+    		return Math.floor(Math.random() * (high - low + 1) + low);
+		},
+		/*sayfn*/
+        say: function( eventName, data, cb ){
+
+        	var url = '/' + eventName;
+
+        	$.ajax({
+        		method:'POST',
+        		url:url,
+        		dataType:'json',
+        		data: data,
+        		beforeSend: function(req){
+        			req.setRequestHeader('x-access-token', LJ.accessToken );
+        			if( typeof( cb.beforeSend ) == 'function' ){
+        				cb.beforeSend(); 
+        			} else { LJ.fn.showLoaders(); }
+        		},
+        		success: function( data ){
+        			if( typeof( cb.success ) == 'function' ) cb.success( data );
+        		},
+        		error: function( data ){
+        			if( typeof( cb.error ) == 'function' ) return cb.error( data );
+        			/* Default response to any HTTP error */
+        			LJ.fn.handleServerError( JSON.parse( data.responseText ).msg );
+        		}
+        	});
+
+
+        },
+        handleSuccessDefault: function( data ){
+        	delog('Success!');
+        },
+        handleErrorDefault: function( data ){
+        	delog('Error!');
+        },
+        		GraphAPI: function( url, callback, opts ){
+
+			var ls = window.localStorage;
+
+			var access_token = ( LJ.user.facebook_access_token && LJ.user.facebook_access_token.long_lived ) 
+							|| ( ls.preferences && JSON.parse( ls.preferences ).long_lived_tk );
+			FB.api( url, { access_token: access_token }, callback );
+
+		},
+		api: function( method, url, options, callback ){
+
+			if( !callback && typeof(options) == 'function' ){
+				callback = options;
+				options = {};
+			};
+
+			$.ajax({
+				method: method,
+				url: '/api/v' + LJ.settings.api_version + '/' + url,
+				data: options.data,
+				beforeSend: options.beforeSend,
+				success: function( data ){
+					callback( null, data );
+				},
+				error: function( xhr ){
+					callback( JSON.parse( xhr ).responseText, null );
+				},
+				complete: function(){
+					LJ.fn.defaultApiCompleteCallback();
+				}
+			})
+
+		},
+		defaultApiCompleteCallback: function(){
+
+			console.log('api call completed');
+		},
+		        handleServerSuccess: function( msg, selector ){
+
+        	setTimeout( function(){ 
+
+		        if( msg )
+		        	LJ.fn.toastMsg( msg, 'info');
+
+		        var $container = $(selector);
+		        $container.find('.selected').removeClass('selected')
+				$container.find('.modified').removeClass('modified').addClass('selected')
+				$container.find('.validating').removeClass('validating')
+				$container.find('.validating-btn').removeClass('validating-btn')
+				$container.find('.asking').removeClass('asking')
+				$container.find('.pending').removeClass('pending');
+
+        	}, LJ.ui.artificialDelay );
+
+        },
+        handleServerError: function( msg, ms ){
+
+        	if( typeof(msg) != 'string' )
+        		msg = JSON.parse( msg.responseText ).msg;
+
+        	if( typeof(msg) != 'string' )
+        		return LJ.fn.toastMsg('Erreur interne','error');
+
+        	var ms = ms || 500;
+        	setTimeout( function(){ 
+        	
+        	LJ.fn.toastMsg( msg, 'error');
+        				$('.validating').removeClass('validating');
+						$('.btn-validating').removeClass('btn-validating');
+						$('.asking').removeClass('asking');
+						$('.pending').removeClass('pending');
+
+			}, ms );
+
+        }
 
 	});

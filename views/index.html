@@ -266,6 +266,7 @@
         <h2> Tous les before </h2>
         <h5 class="row-title-sub"> L'abus de soirées est excellent pour la santé.</h5>
       </div>
+
       <div class="row row-events row-events-filters etiquette">
         <div class="row-events-filters-group">
           <div class="event-filter-label">Vous êtes : </div>
@@ -294,6 +295,7 @@
         </div>
         <button class="theme-btn btn-create-event right">Créer un before</button>
       </div>
+      
       <div class="row row-events row-main">
         <div class="row-events-nearest">
               <!-- Dynamically loaded -->
@@ -301,60 +303,11 @@
         <div class="row-events-map">
           <!-- Dynamically loaded -->
         </div>
-        <div class="row-events-accepted-preview">
-          <div class="event-accepted-preview">17/05, Rue princesse</div>
-          <div class="event-accepted-preview">18/05, Odéon</div>
-          <div class="event-accepted-preview">29/05, boulevard des Grands-Maraîchers</div>
+        <div class="row-events-accepted-tabview">
           <!-- Dynamically loaded -->
         </div>
-        <div class="row-events-accepted-inview">
-          <div class="event-accepted-users">
-            <div class="event-accepted-users-group">
-              <div class="event-accepted-group-name">Organisateurs</div>
-              <div class="event-accepted-user">
-                <div class="event-accepted-user-age">26</div>
-                <div class="event-accepted-user-picture"><img src="/img/ph1.jpg" width="40" class="rounded"/></div>
-                <div class="event-accepted-user-name">Léo</div>
-                <div class="event-accepted-user-hashtag">Etudiant</div>
-              </div>
-              <div class="event-accepted-user">
-                <div class="event-accepted-user-age">22</div>
-                <div class="event-accepted-user-picture"><img src="/img/ph2.jpg" width="40" class="rounded"/></div>
-                <div class="event-accepted-user-name">Léa</div>
-                <div class="event-accepted-user-hashtag">Drunk</div>
-              </div>
-            </div>
-            <div class="event-accepted-users-group">
-            <div class="event-accepted-group-name">Groupe 1</div>
-              <div class="event-accepted-user">
-                <div class="event-accepted-user-age">23</div>
-                <div class="event-accepted-user-picture"><img src="/img/ph3.jpg" width="40" class="rounded"/></div>
-                <div class="event-accepted-user-name">Marianne</div>
-                <div class="event-accepted-user-hashtag">Lover</div>
-              </div>
-            </div>
-          </div>
-          <div class="event-accepted-chat">
-            <div class="event-accepted-chat-messages">
-              <div class="event-accepted-chat-message" data-authorid="blabla" >
-                  <img src="/img/ph2.jpg" width="30" class="rounded"/>
-                  <div class="event-accepted-chat-text">Salut, je peux venir avec une personne de + ?</div>
-              </div>
-              <div class="event-accepted-chat-message me" data-authorid="blabla" >
-                  <img src="/img/ph1.jpg" width="30" class="rounded"/>
-                  <div class="event-accepted-chat-text">Oui aucun problèmes!</div>
-              </div>
-            </div>
-            <div class="event-accepted-chat-typing">
-              <input type="text">
-              <button class="theme-btn">Envoyer</button>
-            </div>
-          </div>
-          <!-- Dynamically loaded -->
-        </div>
+          <!-- Dynamicalled loaded [ row events accepted in view are apppended here ] -->
       </div>
-  
-
     </section>
   
 
@@ -471,14 +424,16 @@
   <script src="js/src/tpl/lj-render-create.js"></script>
   <script src="js/src/tpl/lj-render-event.js"></script>
   <script src="js/src/tpl/lj-render-typeahead.js"></script>
-  <script src="js/src/lj-map.js"></script>
   <script src="js/src/lj-domEvents.js"></script>
-  <script src="js/src/lj-admin.js"></script>
-  <script src="js/src/lj-typeaheads.js"></script>
-  <script src="js/src/lj-tour.js"></script>
-  <script src="js/src/lj-landing.js"></script>
-  <script src="js/src/lj.js"></script>
-
+  <script src="js/src/events/lj-events.js"></script>
+  <script src="js/src/admin/lj-admin.js"></script>
+  <script src="js/src/typeaheads/lj-typeaheads.js"></script>
+  <script src="js/src/tour/lj-tour.js"></script>
+  <script src="js/src/landing/lj-landing.js"></script>
+  <script src="js/src/ladder/lj-ladder.js"></script>
+  <script src="js/src/ui/lj-ui.js"></script>
+  <script src="js/src/updates/lj-updates.js"></script>
+  <script src="js/src/init/lj-init.js"></script>
 
 </body>
 
