@@ -1,6 +1,7 @@
 
 	var _ = require('lodash'),
 		jwt = require('jsonwebtoken'),
+		settings = require('../config/settings'),
 		config = require('../config/config');
 
 
@@ -44,38 +45,20 @@
 
 	var generateAppToken = function( user ){
 
-		var public_claim = {
+		var public_claim = { _id: user._id };
+		settings.public_properties.users.forEach(function(prop){
+			public_claim[ prop ] = user[ prop ];
+		});
 
-					_id:         	 user._id,
-					facebook_id: 	 user.facebook_id, 
-  					email:       	 user.email,
-  					name:        	 user.name,
-  					age:         	 user.age,
-  					access:          user.access, 
-  					gender:          user.gender,
-  					drink:   	     user.drink,
-  					mood:            user.mood,
-  					status:      	 user.status,
-  					description: 	 user.description,
-  					img_id:      	 user.img_id,
-  					img_version: 	 user.img_version,
-  					friends:         user.friends,
-  					asked_events:    user.asked_events,
-  					hosted_event_id: user.hosted_event_id,
-  					newsletter:      user.newsletter,
-  					channels:        user.channels
+		var audience = user.access;
 
-				},
-				audience = user.access,
-				registred_claim = {
+		var registred_claim = {
+			expiresInSecondes: 15,
+			issuer: 'leo@meefore.com',
+			audience: audience
+		};
 
-					expiresInSecondes: 15,
-					issuer: 'jean@free.fall',
-					audience: audience
-					
-				};
-
-			return jwt.sign( public_claim, config.jwtSecret, registred_claim );
+		return jwt.sign( public_claim, config.jwtSecret, registred_claim );
 	}
 
 	module.exports = {

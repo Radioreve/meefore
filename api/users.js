@@ -1,5 +1,6 @@
 
 	var User 	   = require('../models/UserModel'),
+		Event 	   = require('../models/EventModel'),
 		Place 	   = require('../models/PlaceModel'),
 		Ambiance   = require('../models/AmbianceModel'),
 		_   	   = require('lodash'),
@@ -77,7 +78,36 @@
 
 	};
 
+	var fetchUserEvents = function( req, res ){
+
+		var facebook_id = req.facebook_id;
+		
+		Event
+			.find(
+				{
+					'status': { $in: ['open','suspended'] },
+					 $or: 
+						[ 
+							{ 'groups.members.facebook_id' : facebook_id },
+							{ 'hosts.facebook_id' : facebook_id }
+						]
+
+				},
+				function( err, events ){
+
+					if( err )
+						return eventUtils.raiseError({ err: err, res: res,
+							toClient: "Erreur de l'API" 
+						});
+
+					eventUtils.sendSuccess( res, events );
+
+				});
+
+	};
+
 	module.exports = {
 		fetchUserById: fetchUserById,
-		fetchUsers: fetchUsers
+		fetchUsers: fetchUsers,
+		fetchUserEvents: fetchUserEvents
 	};

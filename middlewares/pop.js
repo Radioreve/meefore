@@ -14,13 +14,13 @@
 		return function( req, res, next ){
 
 			/* Détection automatique du mode d'authentification */
-			if( auth_type == 'facebook_id' && req.body.facebook_id )
+			if( auth_type == 'facebook_id' )
 				var query = { 'facebook_id': req.body.facebook_id };
 
 			if( !auth_type && req.body.facebook_id )
 				var query = { 'facebook_id': req.body.facebook_id };
 
-			if( auth_type == 'app_id' && req.body.userId )
+			if( auth_type == 'app_id')
 				var query = { '_id' : req.body.userId };
 
 			if( !auth_type && req.body.userId )

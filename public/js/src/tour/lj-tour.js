@@ -51,7 +51,6 @@
 
         				LJ.fn.handleServerSuccess();
         				LJ.fn.toastMsg("Bienvenue sur Meefore",'info', 4000);
-						LJ.fn.updateClientSettings( data );
 
 						$('#intro').remove();
 

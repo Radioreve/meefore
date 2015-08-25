@@ -29,13 +29,26 @@
 					highlight:'highlight'
 				}
 			},
-			hosts: {
+			friends: {
 				class_names: {
 					input:'',
 					hint:'hint-places',
-					menu:'search-results-autocomplete search-results-hosts',
+					menu:'search-results-autocomplete search-results-friends',
 					dataset:'search-wrap',
-					suggestion:'search-result-default search-result-hosts',
+					suggestion:'search-result-default search-result-friend',
+					empty:'empty',
+					open:'open',
+					cursor:'cursor',
+					highlight:'highlight'
+				}
+			},
+			groups: {
+				class_names: {
+					input:'',
+					hint:'hint-places',
+					menu:'search-results-autocomplete search-results-friends search-results-groups',
+					dataset:'search-wrap',
+					suggestion:'search-result-default search-result-friend',
 					empty:'empty',
 					open:'open',
 					cursor:'cursor',
@@ -89,7 +102,7 @@
 		},
 		initTypeaheadHosts: function( friends ){
 
-			var hosts = new Bloodhound({
+			var friends = new Bloodhound({
 				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
   				 queryTokenizer: Bloodhound.tokenizers.whitespace,
   				 identify: function(o){ return o.name; },
@@ -99,20 +112,54 @@
   				 }
 			});
 
-			hosts.initialize()
+			friends.initialize()
 				 .done(function(){ })
-				 .fail(function(){ delog('Bloodhound engine failed to initialized hosts'); })
+				 .fail(function(){ delog('Bloodhound engine failed to initialized friends'); })
 
-			$('.row-create-hosts input').typeahead({
+			$('.row-create-friends input').typeahead({
 				hint: true,
 				highlight: true,
 				minLength: 1,
-				classNames: LJ.typeahead.hosts.class_names
+				classNames: LJ.typeahead.friends.class_names
 			},
 			{
-				name:'hosts',
+				name:'friends',
 				display:'name',
-				source: hosts.ttAdapter(),
+				source: friends.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadGroups: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	delog(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ delog('Bloodhound engine failed to initialized friends groups'); })
+
+			$('.row-requestin-group-members input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1,
+				classNames: LJ.typeahead.groups.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friends.ttAdapter(),
 				templates: {
 					notFound   : LJ.fn.renderTypeaheadNotFound,
 					pending    : LJ.fn.renderTypeaheadPending,

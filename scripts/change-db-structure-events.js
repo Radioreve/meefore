@@ -1,7 +1,8 @@
 
 	
 	var mongoose = require('mongoose'),
-		Event = require('../models/UserModel'),
+		User  = require('../models/UserModel'),
+		Event = require('../models/EventModel'),
 		EventTemplate = require('../models/EventTemplateModel'),
 		config = require('../config/config'),
 		_ = require('lodash');
@@ -36,11 +37,23 @@
 
 			//Event.update( select, update, options, callback_update );
 
-			Event.find( select, function( err, events ){
+			Event.find( {}, function( err, events ){
+
+				if(err){
+					console.log(err);
+					return process.exit(1);
+				}
+				console.log(events.length + ' events found. Executing...');
 
 				events.forEach(function(evt){
 
-					
+					delete evt.address.geometry;
+
+					evt.markModified('address');
+
+					evt.save(function(err,evt){
+						console.log('Done');
+					});
 					
 				});
 

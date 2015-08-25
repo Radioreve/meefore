@@ -33,16 +33,13 @@
 
               var html = '<div id="createEvent" class="">'
         
-                        //+'<div class="row-create">'
-                         // +'<h2>La prochaine soirée, elle commence chez toi !</h2>'
-                       // +'</div>'
-                        +'<div class="row-title-sub">'
-                          +'Tous les befores rapportent 500pts lorsqu\'ils donnent lieu à une vraie rencontre'
+                        +'<div class="row-input row-input-lg">'
+                         +'<div class="modal-title">Proposer un before </div>'
                         +'</div>'
 
-                        +'<div class="row-input row-input-lg etiquette row-create-hosts">'
-                          +'<label class="label label-lg" for="cr-hosts">Organisateurs</label>'
-                          +'<input class="need-sanitize" id="cr-hosts" type="text" placeholder="Sélectionne parmis tes amis ( 3 max )">'
+                        +'<div class="row-input row-input-lg etiquette row-create-friends">'
+                          +'<label class="label label-lg" for="cr-friends">Organisateurs</label>'
+                          +'<input class="need-sanitize" id="cr-friends" type="text" placeholder="Sélectionne parmis tes amis ( 3 max )">'
                         +'</div>'
 
                         +'<div class="row-input row-input-md etiquette row-create-date">'
@@ -81,15 +78,15 @@
                         +'</div>'
 
                         +'<div class="row-buttons visible">'
-                            +'<button class="theme-btn btn-cancel right">Annuler</button>'
-                            +'<button class="theme-btn btn-validate right">Créer!</button>'
+                            +'<button class="theme-btn btn-large btn-cancel right">Annuler</button>'
+                            +'<button class="theme-btn btn-large btn-validate right">Créer un before</button>'
                         +'</div>' 
 
                       +'</div>'
 
                       return html;
         },
-        renderFriendInCreate: function( friend ){
+        renderFriendInInput: function( friend ){
 
             /* Rendering friend thumb image */
             var img_id          = LJ.fn.findMainImage( friend ).img_id,
@@ -98,12 +95,12 @@
                 display_options.img_version = img_version;
 
             var image_tag_friend = $.cloudinary.image( img_id, display_options ).prop('outerHTML');
-            var image_tag_loader = LJ.$bar_loader.clone().addClass('host-loader').prop('outerHTML');
+            var image_tag_loader = LJ.$bar_loader.clone().addClass('friend-loader').prop('outerHTML');
 
-            var html =  '<div class="rem-click host" data-id="'+friend.facebook_id+'">'
+            var html =  '<div class="rem-click friend" data-id="'+friend.facebook_id+'">'
                             + image_tag_friend
                             + image_tag_loader
-                            + '<div class="host-name">' + friend.name + '</div>'
+                            + '<div class="friend-name">' + friend.name + '</div>'
                         +'</div>'
 
             return html;
@@ -121,32 +118,11 @@
         },
         renderBeforePlaceInCreate: function( place ){
 
-            var compo = place.address_components,
-                locality = '',
-                main_place = '';
+            var place = LJ.fn.findPlaceAttributes( place );
 
-                compo.forEach(function( el ){
-
-                    if( el.types && el.types.indexOf('neighborhood') != -1 )
-                        main_place = el.long_name;
-
-                    if( el.types && el.types.indexOf('route') != -1 )
-                        main_place = el.long_name;
-
-                    if( el.types && el.types.indexOf('locality') != -1 )
-                        locality = el.long_name;
-
-                });
-
-            if( main_place === '' )
-              main_place = place.name;
-
-            if( locality === '' )
-              locality = '?'
-
-            var html = '<div class="rem-click before-place" data-placeid="' + place.place_id + '">'
+            var html = '<div class="rem-click before-place" data-placeid="' + place.place_id + '" data-place-lat="'+place.lat+'" data-place-lng="'+place.lng+'">'
                             + '<i class="icon icon-before-place icon-location"></i>'
-                            + '<div class="before-place-name"><span>'+ main_place +'</span>,<span class="locality"> ' + locality + ' </span></div>'
+                            + '<div class="before-place-name"><span>'+ place.place_name +'</span>,<span class="locality"> ' + place.city + ' </span></div>'
                         +'</div>'
 
             return html;

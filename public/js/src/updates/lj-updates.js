@@ -3,6 +3,15 @@
 
 		handleDomEvents_Profile: function(){
 
+			LJ.$body.on('click', '.row-informations .row-input', function(){
+
+				var $edit_btn = $('.row-informations').find('i.icon-edit');
+
+				if( $edit_btn.hasClass('active') )return; 
+				$edit_btn.click(); 
+
+			});
+
 			$('.modal-container').on('click','.modal-thumb-picture', function(){
 
 				var $self = $(this);
@@ -92,6 +101,7 @@
 					url:'/me/photos/uploaded',
 					source:'facebook',
 					starting_width: 500,
+					max_height: 500,
 					render_cb: LJ.fn.renderFacebookUploadedPictures,
 					error_cb: LJ.fn.renderFacebookUploadedPicturesNone,
 					custom_data: [{ key: 'img-place', val: img_place }]

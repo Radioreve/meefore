@@ -161,11 +161,11 @@
     /* display: inline-block; */
     /* padding: 9px 9px; */
     /* background: #F7F7F7; */
-    /* color: #555; */
+    color: #555;
     /* font-family: 'Karla'; */
     /* margin: 0 3px; */
-   position: relative;
-   top: -4px;
+    position: relative;
+    top: -4px;
 }
 
 .search-result-default-empty {
@@ -176,7 +176,7 @@
    top: 40px!important;
 }
 
-.search-results-hosts {
+.search-results-friends {
    top: 30px!important;
 }
 
@@ -185,13 +185,13 @@
 }
 
 .search-results-users.empty,
-.search-results-hosts.empty,
+.search-results-friends.empty,
 .search-results-party-places.empty {
    display: none!important;
 }
 
 .search-results-users,
-.search-results-hosts,
+.search-results-friends,
 .search-results-party-places {
    padding: 10px;
    background: white;
@@ -210,7 +210,7 @@
    min-width: 750px;
 }
 
-.search-results-hosts {
+.search-results-friends {
    margin-top: 10px;
    width: 700px;
    display: none;
@@ -278,22 +278,14 @@
 .search-result-party-places {
 }
 
-.search-result-hosts {
+.search-result-friends {
 }
 
-.search-result-name-host {
+.search-result-name-friend {
    font-size: 13px;
    position: relative;
    left: -25px;
    top: 1px;
-}
-
-top: 0;
-left: 0;
-background-color: white;
-z-index: 1;
-transition: all ease-out .3s;
-opacity: 0;
 }
 
 .landing-content {

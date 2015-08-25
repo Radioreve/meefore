@@ -19,6 +19,7 @@
 		}
 	});
 
+
 	function validateEventTypes( data ){
 
 		var type_errors = [];
@@ -85,8 +86,8 @@
 			}
 
 			if( key === 'address' )
-			{
-				// Do nothing so far
+			{	
+				// Hello world
 			}
 
 			if( key === 'ambiance' && data[ key ].length > settings.app.max_ambiance )
@@ -200,16 +201,20 @@
 				});
 
 			var host_already_hosting = false;
+			var to_client = '';
+
 			hosts.forEach(function( host ){
 				host.events.forEach(function( evt ){
-					if( moment( new Date(evt.begins_at) ).dayOfYear() === moment( data.begins_at, 'DD/MM/YY').dayOfYear() )
+					if( moment( new Date(evt.begins_at) ).dayOfYear() === moment( data.begins_at, 'DD/MM/YY').dayOfYear() ){
 						host_already_hosting = true;
+						to_client = host.name + ' organise déjà un before ce jour là';
+					}
 				});
 			});
 
 			if( host_already_hosting )
 				return eventUtils.raiseError({
-					toClient: 'Un des organisateur organise déjà un before ce jour là',
+					toClient: to_client,
 					res: res
 				});
 
@@ -237,6 +242,10 @@
 					});
 
 				event_data.scheduled_party = place;
+
+				// Dunno why
+				event_data.address.lat = parseFloat( event_data.address.lat );
+				event_data.address.lng = parseFloat( event_data.address.lng );
 
 				/*Everything went fine!*/
 				console.log('Validation success!');

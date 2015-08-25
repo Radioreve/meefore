@@ -20,6 +20,16 @@
 	};	
 
 
+	var testValidate = function( req, res ){
+
+		if( req.app_data )
+			return res.json({ msg: "success" }).end();
+
+		return res.json({ msg: "shouldnt have passed" }).end();
+
+	};
+
 	module.exports = {
-		test: test
+		test: test,
+		testValidate: testValidate
 	};

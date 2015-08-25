@@ -12,6 +12,7 @@
 
 .jspPane {
    position: absolute;
+   padding: 10px 0px!important;
 }
 
 .jspVerticalBar {
@@ -44,14 +45,15 @@
    position: relative;
    margin-top: 20px;
 }
-
+ 
 .jspDrag {
-   background: #FFF;
-   border: 1px solid #ccc;
+   background: #FEFEFE;
+   border: 1px solid #E5E5E5;
    position: relative;
    top: 0;
    left: 0;
    cursor: pointer;
+   border-radius: 3px;
 }
 
 .jspHorizontalBar .jspTrack,

@@ -77,7 +77,7 @@
 			/* Pusher informations for real time channels */
 			new_user.channels = {
 				public_chan : 'default',
-				me 			: facebook_id
+				me 			: fb.id
 			};
 
 			new_user.save( function( err, user ){

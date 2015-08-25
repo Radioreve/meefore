@@ -1,7 +1,7 @@
 
 	window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
-		handleDomEvents_Navbar: function(){
+		handleDomEvents_UI: function(){
 
 			LJ.$logout.click(function(){
 				LJ.user.app_preferences.ux.auto_login = 'no';
@@ -66,6 +66,52 @@
 					
 				  
 				});
+			});
+
+			LJ.$body.on('click', '.event-accepted-tabview', function(){
+
+				var $self = $(this);
+				var event_id = $self.attr('data-eventid');
+				var $inview_wrap_target = $('.row-events-accepted-inview[data-eventid="'+event_id+'"]');
+				var duration = 900;
+				var evt = _.find( LJ.cache.events, function(el){ return el._id === event_id });
+
+				var opts = { transition_in : LJ.ui.slideLeftInLight, transition_out: LJ.ui.slideRightOutLight };
+				
+				if( $self.hasClass('active') ){
+					$inview_wrap_target.velocity('transition.fadeOut', { duration: 700 });
+					$self.removeClass('active');
+					return;
+				}
+
+				if( $('.event-accepted-tabview.active').length == 0 ){
+					$self.addClass('active');
+					$inview_wrap_target.velocity('transition.slideUpIn', { duration: 600 });
+					LJ.fn.addEventPreview( evt, opts );
+					LJ.fn.adjustAllChatPanes();
+					return;
+				}
+
+				var current_event_id = $('.event-accepted-tabview.active').attr('data-eventid');
+				var $inview_wrap_current = $('.row-events-accepted-inview[data-eventid="'+current_event_id+'"]');
+
+				$('.event-accepted-tabview').removeClass('active');
+				$self.addClass('active');
+				
+				$('.row-events-accepted-inview[data-eventid="'+current_event_id+'"]')
+				.velocity('transition.slideUpOut', {
+					duration: duration
+				});
+
+				LJ.fn.addEventPreview( evt, opts );
+
+				setTimeout(function(){
+					$inview_wrap_target.velocity('transition.slideUpIn', { duration: duration });
+					LJ.fn.adjustAllChatPanes();
+					return;
+				}, 220 );
+
+
 			});
 
 		},
@@ -217,9 +263,9 @@
             $( '.loaderWrap, .m-loaderWrap' ).velocity( 'fadeOut', { duration: 250 });
 
         },
-        		displayModal: function( callback ){
+        displayModal: function( callback ){
 			
-			$('.curtain')
+			$('.modal-curtain')
 				.css({'display':'block'})
 				.velocity({ 'opacity': [0.4,0] });
 
@@ -231,13 +277,17 @@
 			$('.curtain-loader').velocity('transition.fadeIn', { delay: 200, duration: 300});
 
 		},
-		hideModal: function(){
+		hideModal: function(callback){
 
 			$('.row-events-map').show();
-			$('.curtain')
+			$('.modal-curtain')
 				.velocity({ 'opacity': [0,0.4] }, { complete: function(){
-					$('.curtain').css({ display: 'none' }); }
-			});
+					$('.modal-curtain').css({ display: 'none' }); }
+			}).delay(500).velocity({
+				complete: function(){
+					typeof( callback ) == 'function' && callback();
+				}
+			})
 
 			$('.modal-container')
 				.velocity({ 'opacity': [0,1] }, { complete: function(){
@@ -262,7 +312,7 @@
 			$('.modal-container').on( eventName, function( e, data ){
 
 				var content = data.html_data;
-				var starts_in = LJ.ui.minimum_loading_time - ( new Date() - call_started )
+				var starts_in = LJ.ui.minimum_loading_time - ( new Date() - call_started );
 				setTimeout(function(){
 					
 					var $content = $(content);
@@ -275,16 +325,20 @@
 						$content.attr('data-'+el.key, el.val );
 					}); 
 
-					$('.curtain-loader').velocity('transition.fadeOut', { duration: 300 });
 					$content.hide().appendTo('.modal-container-body');
 
 					$content.waitForImages(function(){
+
+						$('.curtain-loader').velocity('transition.fadeOut', { duration: 300 });
 
 						var old_height = $('.modal-container').innerHeight(),
 							new_height = old_height + $('.modal-container-body > div').innerHeight() + ( options.fix_height || 0 );
 
 						var old_width = options.starting_width,
 							new_width = old_width + $('.modal-container-body > div').innerWidth();
+
+
+						new_height = new_height > options.max_height ? options.max_height : new_height;
 
 						var duration = new_height > 400 ? 450 : 300;
 
@@ -353,21 +407,23 @@
 			}
 
 		},
-		bubbleUp: function( el ){
+		bubbleUp: function( el, add ){
 
         	var $el = $(el);
 
-        	if( $el.hasClass('menu-item-active') ) return; 
+        	//if( $el.hasClass('menu-item-active') ) return; 
 
         	var $bubble = $el.find('.bubble'),
         		n = $bubble.text() == 0 ? 0 : parseInt( $bubble.text() );
 
         	$bubble.removeClass('filtered');
 
-        		if( n == 99 ) 
-        			return $bubble.text(n+'+');
+        	var add = add || 1;
 
-        	return $bubble.text( n + 1 );
+        		if( add > 99 ) 
+        			return $bubble.text('99+');
+				
+        	return $bubble.text( n + add );
 
         },
        	displayUserProfile: function( facebook_id ){

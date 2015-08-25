@@ -25,7 +25,7 @@
                 html = '<div class="facebook-image-item-wrap">';
 
             urls.forEach(function(url){
-                html += '<div class="facebook-image-item"><img src="' + url + '" width="100%"></div>';
+                html += '<div class="facebook-image-item"><img src="' + url + '" width="100%" height="100%"></div>';
             });
                 html += ['<div class="upload-buttons">',
                           '<button class="theme-btn btn-cancel right">Annuler</button>',

@@ -21,6 +21,18 @@
 			console.log('Maximum label width : ' + max );
 			return max;
 		},
+		adjustAllChatPanes: function(){
+
+			setTimeout(function(){
+
+				_.keys( LJ.jsp_api ).forEach(function( key ){
+					LJ.jsp_api[ key ].users.reinitialise();
+					LJ.jsp_api[ key ].chats.reinitialise();
+					LJ.jsp_api[ key ].chats.scrollToBottom();
+				});
+			}, 50 );
+
+		},
 		adjustAllInputsWidth: function(container){
 
 			var $container = $(container);
@@ -54,6 +66,24 @@
 
 			return str.substr( 0, max_char ) + end_tpl;
 		},
+		removeItemToInput: function( item ){
+
+			var $self = $( item );
+			var $input  = $self.siblings('input');
+
+			$input.css({ width: $input.outerWidth() + $self.outerWidth(true) });
+
+			var $sug = $self.parents('.row-input').find('.search-results-autocomplete');
+			if( $sug.length != 0 ){
+				delog('Sug found');
+				var current_offset = parseInt( $sug.css('left').split('px')[0] );
+				$sug.css({ left: current_offset + $self.outerWidth(true) });
+			}
+
+			$self.remove();
+			
+
+		},
 		addItemToInput: function( options  ){
 
 			var options = options || {};
@@ -65,6 +95,7 @@
 			var $html = $(options.html);
 
 			$html.hide().insertBefore( $input );
+			options.class_names && $html.addClass( options.class_names );
 
 			var item_id = $html.attr('data-id');
 			if( $('.rem-click[data-id="'+item_id+'"]').length > 1 ){
@@ -75,14 +106,15 @@
 				return $html.remove();
 			}
 
+			console.log( $html.outerWidth(true) );
 			$input.css({ width: $input.outerWidth() - $html.outerWidth(true) });
 			$html.show();
 
 			/* If there are images to render, little smooth ux */
 			if( $html.find('img').length != 0 ){
 				$html.waitForImages(function(){
-					$html.find('.host-img').show()
-					.end().find('.host-loader').remove();
+					$html.find('.friend-img').show()
+					.end().find('.friend-loader').remove();
 				});
 			}
 
@@ -92,6 +124,40 @@
 				var current_offset = parseInt( $sug.css('left').split('px')[0] );
 				$sug.css({ left: current_offset - $html.outerWidth(true) });
 			}
+		},
+		findPlaceAttributes: function( place ){
+
+			var compo = place.address_components,
+                locality = '',
+                place_name = '';
+
+                compo.forEach(function( el ){
+
+                    if( el.types && el.types.indexOf('neighborhood') != -1 )
+                        place_name = el.long_name;
+
+                    if( el.types && el.types.indexOf('route') != -1 )
+                        place_name = el.long_name;
+
+                    if( el.types && el.types.indexOf('locality') != -1 )
+                        locality = el.long_name;
+
+                });
+
+            if( place_name === '' )
+              place_name = place.name;
+
+            if( locality === '' )
+              locality = 'Earth';
+
+          return {
+          	place_id: place.place_id,
+          	place_name: place_name,
+          	city: locality,
+          	lat: place.geometry.location.G,
+          	lng: place.geometry.location.K
+          };
+
 		},
 		addBeforePlaceToInput: function( place ){
 
@@ -118,31 +184,6 @@
 			$input.show();
 
 		},
-		addPartyPlaceToInput: function( place ){
-
-			var $input = $('#cr-party-place'),
-				place = place;
-
-			$input.val('');
-			$input.hide();
-
-			if( $('.party-place').length != 0 )
-				LJ.fn.removePartyPlaceToInput();
-
-			var $html = $( LJ.fn.renderPartyPlaceInCreate( place ) );			
-				$html.hide().insertBefore( $input );
-				$html.show();
-
-		},
-		removePartyPlaceToInput: function( str ){
-
-			var $input = $('#cr-party-place'),
-				$place  = $('.party-place');
-
-			$('.party-place').remove();
-			$input.val('').show();
-
-		},
 		addDateToInput: function( date_str ){
 
 			var $input = $('#cr-date'),
@@ -153,7 +194,7 @@
 			if( $('.date').length != 0 ) 
 				LJ.fn.removeDateToInput();
 
-			var msg = date.day() == moment().day() ? "Aujourd'hui !" : "Une belle journée ";
+			var msg = date.day() == moment().day() ? "Tout à l'heure !" : "Une belle journée ";
 			$input.attr('placeholder', msg );
 			
 			var $html = $( LJ.fn.renderDateInCreate( date_str ) );
@@ -264,19 +305,27 @@
 				options = {};
 			};
 
+			var call_started = new Date();
+
 			$.ajax({
 				method: method,
 				url: '/api/v' + LJ.settings.api_version + '/' + url,
 				data: options.data,
 				beforeSend: options.beforeSend,
 				success: function( data ){
-					callback( null, data );
+					setTimeout(function(){
+						callback( null, data );
+					}, LJ.ui.minimum_loading_time*2 - ( new Date() - call_started ) );
 				},
 				error: function( xhr ){
-					callback( JSON.parse( xhr ).responseText, null );
+					setTimeout(function(){
+						callback( xhr, null );
+					}, LJ.ui.minimum_loading_time*2 - ( new Date() - call_started ) );
 				},
 				complete: function(){
-					LJ.fn.defaultApiCompleteCallback();
+					setTimeout(function(){
+						LJ.fn.defaultApiCompleteCallback();
+					}, LJ.ui.minimum_loading_time*2 - ( new Date() - call_started ) );
 				}
 			})
 
@@ -285,7 +334,7 @@
 
 			console.log('api call completed');
 		},
-		        handleServerSuccess: function( msg, selector ){
+		handleServerSuccess: function( msg, selector ){
 
         	setTimeout( function(){ 
 
@@ -321,6 +370,26 @@
 						$('.pending').removeClass('pending');
 
 			}, ms );
+
+        },
+        populateCreateEvent: function(){
+
+        	var suggestion = LJ.user.friends[0];
+        	LJ.fn.addItemToInput({ max: LJ.settings.app.max_hosts, inp: '#cr-friends', html: LJ.fn.renderFriendInInput( suggestion ), suggestions: '.search-results-friends' });
+
+        	['helloWorld','likeYouCare','ThisIsIt'].forEach(function(hashtag){
+        		LJ.fn.addItemToInput({ html: LJ.fn.renderAmbianceInCreate( hashtag ), inp: '#cr-ambiance', max: LJ.settings.app.max_ambiance });
+        	});
+
+        	var suggestion = { _id: '55c613b3eb8ced441405a3a6', type: 'bar', name: 'Le violondingue', adress: 'Near panthéon bitch!' }
+        	LJ.fn.addItemToInput({ max: 1, inp: '#cr-party-place', html: LJ.fn.renderPartyPlaceInCreate(suggestion) });
+
+        	var service = new google.maps.places.PlacesService(LJ.map);
+        		service.getDetails({ placeId: "ChIJyYqjdNxx5kcRQLAaFrnkRlM"}, function(res){
+        			LJ.fn.addBeforePlaceToInput( res );
+        		});
+
+        	LJ.fn.addDateToInput('29/08/15');
 
         }
 

@@ -65,15 +65,19 @@
 		app.get('/api/v1/events', api.events.fetchEvents );
 		app.get('/api/v1/events/:event_id', api.events.fetchEventById );
 		app.post('/api/v1/events', mdw.validate.validate('event'), api.events.createEvent );
-		app.patch('api/v1/events/:event_id', api.events.updateEvent );
+		app.patch('/api/v1/events/:event_id', api.events.updateEvent );
+		app.patch('/api/v1/events/:event_id/requestin', mdw.validate.validate('requestin'), api.events.requestIn );
 		app.get('/api/v1/events/groups', api.events.fetchGroups );
 
 	//Rest api tests
-		app.post('/api/v1/test/:user_id', api.tests.test );
+		//app.post('/api/v1/test/:user_id', api.tests.test );
+		app.post('/api/v1/test/validate', mdw.validate.extendedValidation(), api.tests.testValidate );
 
 	//Rest api users
+		app.all('/api/v1/users/:facebook_id/*', mdw.validate.validate('facebook_id') );
 		app.get('/api/v1/users/:user_id', api.users.fetchUserById );
 		app.get('/api/v1/users', api.users.fetchUsers );
+		app.get('/api/v1/users/:facebook_id/events', api.users.fetchUserEvents );
 
 	//Rest api ambiances
 		app.get('/api/v1/ambiances', api.ambiances.fetchAmbiances );
@@ -82,17 +86,6 @@
 	//Rest api places
 		app.get('/api/v1/places', api.places.fetchPlaces );
 		app.post('/api/v1/places', api.places.createPlace );
-
-	//Map events
-		app.post('/events/requestin', mdw.validate.validate('requestin'), mapEvents.requestIn );
-
-
-	//Events relatifs au démarrage d'une session client
-		app.post('/fetch-events', clientEvents.fetchEvents );
-		app.post('/fetch-users', clientEvents.fetchUsers );
-		app.post('/fetch-asked-in', clientEvents.fetchAskedIn );
-		app.post('/request-participation-in', clientEvents.requestIn );		
-		app.post('/request-participation-out', clientEvents.requestOut );
 
 	//Events relatifs aux friends
 

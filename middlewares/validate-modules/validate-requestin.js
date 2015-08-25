@@ -70,6 +70,11 @@
 					var required_values = ['string between 4 and 15 chars'];
 					value_errors.push({ required_values: required_values, passed_value: val.name, field: 'group.name' });
 				}
+
+				if( typeof( val.message ) != 'string' || !/^[0-9a-zA-Z\s\&]{4,50}$/.test( val.message ) ){
+					var required_values = ['string between 4 and 50 chars'];
+					value_errors.push({ required_values: required_values, passed_value: val.message, field: 'group.message' });
+				}
 			}
 
 			if( key === 'group' && _.uniq( _.pluck( data[ key ].members, 'facebook_id') ).length < settings.app.min_group )
@@ -104,13 +109,15 @@
 
 	};
 
-	
-
 	function validateRequestIn( req, res, next ){
 
 		console.log('Validating request in');
 
-		var data = req.body;
+		var data = {
+			event_id: req.params.event_id,
+			group: req.body
+		};
+
 		var presence_errors  = [],
 			type_errors  	 = [],
 			value_errors 	 = [],

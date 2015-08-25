@@ -7,7 +7,7 @@
    vertical-align: top;
 }
 
-#createEvent input {
+#createEvent input, #requestIn input {
    color: #555;
    vertical-align: top;
    font-family: 'Karla';
@@ -35,7 +35,8 @@
    ;
 }
 
-.host,
+.item,
+.friend,
 .ambiance, 
 .before-place,
 .party-place,
@@ -57,38 +58,39 @@
    top: 1px;
 } 
 
-.host, .ambiance, .date, .before-place, .party-place, .event-ambiance {
+.item, .friend, .ambiance, .date, .before-place, .party-place, .event-ambiance {
    display: inline-block;
    background: #FBFBFB;
    padding: 0px 6px 0 0px;
    vertical-align: top;
    /* border: 1px solid; */
-   margin-right: 7px;
+   color: #555;
+   /* margin-right: 7px; */
    cursor: pointer;
    position: relative;
+   border-bottom: 1px solid #eee;
 }
 
-.host-img {
+.friend-img {
    position: absolute;
    top: 3px;
    left: 4px;
    z-index: 1;
 }
 
-.host-loader {
+.friend-loader {
    position: absolute;
    top: 9px;
    left: 12px;
    width: 13px;
 }
 
-.host-name, .ambiance-name, .date-name, .before-place-name, .party-place-name {
+.item-name, .friend-name, .ambiance-name, .date-name, .before-place-name, .party-place-name {
    display: inline-block;
    line-height: 30px;
    vertical-align: top;
    font-family: 'Karla';
    font-size: 13px;
-   color: #555;
    margin-left: 35px;
    padding-right: 10px;
    font-weight: bolder;
@@ -97,8 +99,9 @@
 }
 
 .rem-click:hover .ambiance-name,
+.rem-click:hover .item-name,
 .rem-click:hover .date-name,
-.rem-click:hover .host-name,
+.rem-click:hover .friend-name,
 .rem-click:hover .before-place-name,
 .rem-click:hover .party-place-name {
    text-decoration: line-through;
@@ -122,6 +125,10 @@
    padding: 15px;
    border-radius: 2px 2px 0 0;
    margin-top: 5px;
+}
+
+.item-name {
+	margin-left:17px;
 }
 
 .pac-item {

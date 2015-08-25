@@ -8,11 +8,13 @@
 		nearest_event_opacity: '.5',
 		artificialDelay: 700,
 		minimum_loading_time: 500,
-		displayIn:  { opacity: [1, 0], translateX: [-8, 0]   },
-		displayOut: { opacity: [0, 1], translateX: [10, 0]   }
+		slideDownInLight:  { opacity: [1, 0], translateY: [0, 10]   },
+		slideUpOutLight: { opacity: [0, 1], translateY: [-10, 0]   },
+		slideLeftInLight:  { opacity: [1, 0], translateX: [0, -10]   },
+		slideRightOutLight: { opacity: [0, 1], translateX: [10, 0]   }
 	},
 	pusher_channels: {},
-	markers: [],
+	jsp_api: {},
 	cache: {
 		events: [],
 		users: []
@@ -71,7 +73,7 @@
 		},
 		create: {
 			friends: {
-				params: { cloud_name: "radioreve", 'class': 'host-img none', width: 24, height: 24, crop: 'fill', gravity: 'face' }
+				params: { cloud_name: "radioreve", 'class': 'friend-img none rounded', width: 24, height: 24, crop: 'fill', gravity: 'face' }
 			}
 		},
 		search: {
@@ -87,10 +89,22 @@
 				url: 'http://res.cloudinary.com/radioreve/image/upload/v1439575607/meefore-marker-girls_3.png'
 			},
 			white_on_black: {
-				url: 'http://res.cloudinary.com/radioreve/image/upload/v1439767180/meefore-marker-white-on-black.png'
+				url: 'http://res.cloudinary.com/radioreve/image/upload/v1440179488/meefore-marker-white-on-black_uvzdtf.png'
 			},
 			black_on_white: {
 				url: 'http://res.cloudinary.com/radioreve/image/upload/v1439767234/meefore-marker-black-on-white.png'
+			},
+			nightclub: {
+				url: 'http://res.cloudinary.com/radioreve/image/upload/v1440178906/bar.png'
+			},
+			bar: {
+				url: 'http://res.cloudinary.com/radioreve/image/upload/v1440178906/bar.png'
+			},
+			facebook_event: {
+				url: 'http://res.cloudinary.com/radioreve/image/upload/v1440178906/bar.png'
+			},
+			transparent: {
+				url: 'http://res.cloudinary.com/radioreve/image/upload/v1440248883/meefore-marker-white-on-black-transparent2_o8nqhf.png'
 			}
 		},
         curtain: {
@@ -157,7 +171,6 @@
 		animatingChat: false,
 		toastAdded: false,
 		typingMsg: {},
-		jspAPI:{},
 		uploadingImage: false,
 		uploadingimg_id:'',
 		uploadingimg_version:''

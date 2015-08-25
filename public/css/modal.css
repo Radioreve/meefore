@@ -2,7 +2,7 @@
    background: white;
    min-width: 400px;
    position: fixed;
-   z-index: 99999999;
+   z-index: 10000;
    padding: 12px;
    box-shadow: 0 0 5px #D2D2D2;
 }
@@ -15,6 +15,7 @@
    height: 100%;
    padding: 25px;
    text-align: center;
+   overflow: auto;
 }
 
 .modal-user-content {
@@ -145,4 +146,13 @@
 
 .modal-thumb-picture.active {
    border-bottom: 4px solid #E13F3F;
+}
+
+label.lighter {
+    color: #CDCDCD;
+}
+.modal-title {
+    color: #555;
+    font-family: 'Londrina solid';
+    font-size: 25px;
 }

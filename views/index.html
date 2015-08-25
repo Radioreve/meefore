@@ -75,6 +75,7 @@
   <div class="hero-img scaled animatable img-6 "></div>
   <div class="hero-img scaled animatable img-7 "></div>
   <div class="curtain"></div>
+  <div class="modal-curtain"></div>
   <div class="modal-container super-centered none"><div class="modal-container-body"></div></div>
 
   <!-- Header start -->
@@ -85,7 +86,7 @@
         <li id="profile" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
         <li id="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
         <li id="search" class="menu-item icon icon-search"><span class="underlay"></span>
-          <div id="searchbar" class=""><input type="text" placeholder="Recherche" class="search-input"></div>
+          <div id="searchbar" class=""><input type="text" placeholder="Rechercher un membre" class="search-input"></div>
         </li>
         <li id="management" class="menu-item icon icon-users" data-linkedcontent="#manageEventsWrap"><span class="underlay"></span></li>
         <li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
@@ -295,9 +296,9 @@
         </div>
         <button class="theme-btn btn-create-event right">Créer un before</button>
       </div>
-      
+
       <div class="row row-events row-main">
-        <div class="row-events-nearest">
+        <div class="row-events-preview">
               <!-- Dynamically loaded -->
         </div>
         <div class="row-events-map">
@@ -413,6 +414,7 @@
   <script src="//js.pusher.com/2.2/pusher.min.js"></script>  
   <script src="dist/lib.js"></script>
   <script src="js/lib/pikaday.js"></script>
+  <script src="js/lib/jscrollpane.mousewheel.js"></script>
   <script src="js/lib/momentwithlocale.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry" type="text/javascript"></script>
 

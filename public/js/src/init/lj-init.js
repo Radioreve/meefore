@@ -82,7 +82,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			LJ.fn.handleDomEvents_Globals();
 			LJ.fn.handleDomEvents_Landing();
-			LJ.fn.handleDomEvents_Navbar();
+			LJ.fn.handleDomEvents_UI();
 			LJ.fn.handleDomEvents_Profile();
 			LJ.fn.handleDomEvents_Create();
 			LJ.fn.handleDomEvents_Search();
@@ -221,10 +221,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			$('#currentEmail').val( LJ.user.email );
 
 
-        	/* Initialisation du friendspanel */
-        	$('#friendsWrap').jScrollPane();
-        	LJ.state.jspAPI['#friendsWrap'] = $('#friendsWrap').data('jsp');
-
     		/* L'user était déjà connecté */
 			if( LJ.state.connected )
 				return LJ.fn.toastMsg('Vous avez été reconnecté', 'success');
@@ -239,14 +235,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				$('#management').addClass('filtered');
 	            $('#events').addClass('menu-item-active')
 	            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
-			}
-
-			if( LJ.user.status == 'hosting' ){
-				$landingView = '#manageEventsWrap';
-				$('#create').addClass('filtered');
-	            $('#management').addClass('menu-item-active')
-	            			.find('span').velocity({ opacity: [1,0], translateY: [0, -5] });
-	            LJ.fn.fetchAskers();
 			}
 
 			if( LJ.user.status == 'new' ){
@@ -330,8 +318,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			/* Update friends based on facebook activity on each connection */
 			LJ.fn.fetchAndSyncFriends( LJ.fn.handleFetchAndSyncFriends );
 
-			/* Fetch and display all events on map and on preview/inview */
+			/* Fetch and display all events on map */
 			LJ.fn.fetchEvents( LJ.fn.handleFetchEvents );
+
+			/* Fetch and display my events on map */
+			LJ.fn.fetchMyEvents( LJ.fn.handleFetchMyEvents );
 
 			/* Convenience, out of tests */
 			LJ.fn.api('get','users', function( err, users ){ LJ.cache.users = users; });
@@ -576,3 +567,874 @@ window.dum_places = [
 		tag: 'bar'
 	}
 ];
+
+var google_places = [
+
+			{
+    "place_id": "ChIJHcrWXNdx5kcRssJewNDrBRM",
+    "geometry": {
+        "location": {
+            "G": 48.8526266,
+            "K": 2.332816600000001
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "Rue du Four",
+            "short_name": "Rue du Four",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "75",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        },
+        {
+            "long_name": "75006",
+            "short_name": "75006",
+            "types": [
+                "postal_code"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJMQN_lNlx5kcRwdvjSp5HeRw",
+    "geometry": {
+        "location": {
+            "G": 48.8523123,
+            "K": 2.334496100000024
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "Rue Princesse",
+            "short_name": "Rue Princesse",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "75",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        },
+        {
+            "long_name": "75006",
+            "short_name": "75006",
+            "types": [
+                "postal_code"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJeY1zJctv5kcRmQRo7bqo_9w",
+    "geometry": {
+        "location": {
+            "G": 48.87439939999999,
+            "K": 2.3227203000000145
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "Boulevard Haussmann",
+            "short_name": "Boulevard Haussmann",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "75",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJpwykDdtx5kcR_eC7_rndRnc",
+    "geometry": {
+        "location": {
+            "G": 48.84985959999999,
+            "K": 2.338692100000003
+        },
+        "viewport": {
+            "Ia": {
+                "G": 48.84032209999999,
+                "j": 48.852885
+            },
+            "Ca": {
+                "j": 2.3322670000000016,
+                "G": 2.342500100000052
+            }
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "Odéon",
+            "short_name": "Odéon",
+            "types": [
+                "neighborhood",
+                "political"
+            ]
+        },
+        {
+            "long_name": "6e arrondissement",
+            "short_name": "6e Arrondissement",
+            "types": [
+                "sublocality_level_1",
+                "sublocality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "75",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
+    "geometry": {
+        "location": {
+            "G": 48.853082,
+            "K": 2.369002000000023
+        }
+    },
+    "name":"Bastille",
+    "address_components": [
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJHbrByclt5kcRn-ZGU8KjU_g",
+    "geometry": {
+        "location": {
+            "G": 48.893849,
+            "K": 2.390260000000012
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "211",
+            "short_name": "211",
+            "types": [
+                "street_number"
+            ]
+        },
+        {
+            "long_name": "Avenue Jean Jaurès",
+            "short_name": "Avenue Jean Jaurès",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "75",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        },
+        {
+            "long_name": "75019",
+            "short_name": "75019",
+            "types": [
+                "postal_code"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJOT-zhv1x5kcRL1VMROKC10U",
+    "geometry": {
+        "location": {
+            "G": 48.855646,
+            "K": 2.358804999999961
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "5",
+            "short_name": "5",
+            "types": [
+                "street_number"
+            ]
+        },
+        {
+            "long_name": "Rue de Rivoli",
+            "short_name": "Rue de Rivoli",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        },
+        {
+            "long_name": "75004",
+            "short_name": "75004",
+            "types": [
+                "postal_code"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJDYQ94pVx5kcRbJ7IgfX0R-M",
+    "geometry": {
+        "location": {
+            "G": 48.831161,
+            "K": 2.343385000000012
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJRXxvdOxv5kcRxV7Y0Lb_Rzg",
+    "geometry": {
+        "location": {
+            "G": 48.87323139999999,
+            "K": 2.2946494999999913
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "Place Charles de Gaulle",
+            "short_name": "Place Charles de Gaulle",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "75",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJHbxOxY1x5kcRnpd3rjQUhos",
+    "geometry": {
+        "location": {
+            "G": 48.830816,
+            "K": 2.355389999999943
+        }
+    },
+    "name": "Place d'Italie",
+    "address_components": [
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJYRNhwB1u5kcR6nGuFaBU8j0",
+    "geometry": {
+        "location": {
+            "G": 48.857494,
+            "K": 2.351791999999932
+        }
+    },
+    "name":"Hôtel de Ville",
+    "address_components": [
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJ1fXA1ERu5kcRcIbgA4VK1H0",
+    "geometry": {
+        "location": {
+            "G": 48.8867148,
+            "K": 2.3388895000000502
+        },
+        "viewport": {
+            "Ia": {
+                "G": 48.8824973,
+                "j": 48.8899191
+            },
+            "Ca": {
+                "j": 2.327685400000064,
+                "G": 2.3481130999999777
+            }
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "Montmartre",
+            "short_name": "Montmartre",
+            "types": [
+                "neighborhood",
+                "political"
+            ]
+        },
+        {
+            "long_name": "18e Arrondissement",
+            "short_name": "18e Arrondissement",
+            "types": [
+                "sublocality_level_1",
+                "sublocality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "75",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        },
+        {
+            "long_name": "75018",
+            "short_name": "75018",
+            "types": [
+                "postal_code"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJmT1JK6Rx5kcRPyHmfYws-xA",
+    "geometry": {
+        "location": {
+            "G": 48.8215,
+            "K": 2.3333599999999706
+        }
+    },
+    "name":"Montsouris",
+    "address_components": [
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJeZSvNDFu5kcRzGO0qYla4ow",
+    "geometry": {
+        "location": {
+            "G": 48.8717109,
+            "K": 2.3305685000000267
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "Rue Scribe",
+            "short_name": "Rue Scribe",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "75",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        },
+        {
+            "long_name": "75009",
+            "short_name": "75009",
+            "types": [
+                "postal_code"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJyWPpag5y5kcRTlTrXVMUpLk",
+    "geometry": {
+        "location": {
+            "G": 48.8467518,
+            "K": 2.3817410000000336
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "Boulevard Diderot",
+            "short_name": "Boulevard Diderot",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "75",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        },
+        {
+            "long_name": "75012",
+            "short_name": "75012",
+            "types": [
+                "postal_code"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJM0qPpvdt5kcR2kSeETMDz_Y",
+    "geometry": {
+        "location": {
+            "G": 48.8576375,
+            "K": 2.380338100000017
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "Boulevard Voltaire",
+            "short_name": "Boulevard Voltaire",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "75",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        },
+        {
+            "long_name": "75011",
+            "short_name": "75011",
+            "types": [
+                "postal_code"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJ_1dbg_9w5kcRcD2LaMOCCwQ",
+    "geometry": {
+        "location": {
+            "G": 48.816363,
+            "K": 2.3173839999999473
+        },
+        "viewport": {
+            "Ia": {
+                "G": 48.809588,
+                "j": 48.822288
+            },
+            "Ca": {
+                "j": 2.30007999999998,
+                "G": 2.332443000000012
+            }
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "Montrouge",
+            "short_name": "Montrouge",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Hauts-de-Seine",
+            "short_name": "92",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        }
+    ]
+},
+{
+    "place_id": "ChIJW3Vm7Mdx5kcRkEScBoLkxck",
+    "geometry": {
+        "location": {
+            "G": 48.8372728,
+            "K": 2.3353872999999794
+        },
+        "viewport": {
+            "Ia": {
+                "G": 48.831789,
+                "j": 48.8436171
+            },
+            "Ca": {
+                "j": 2.321454000000017,
+                "G": 2.342012000000068
+            }
+        }
+    },
+    "address_components": [
+        {
+            "long_name": "Montparnasse",
+            "short_name": "Montparnasse",
+            "types": [
+                "neighborhood",
+                "political"
+            ]
+        },
+        {
+            "long_name": "14e Arrondissement",
+            "short_name": "14e Arrondissement",
+            "types": [
+                "sublocality_level_1",
+                "sublocality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "Paris",
+            "types": [
+                "locality",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Paris",
+            "short_name": "75",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Île-de-France",
+            "short_name": "IDF",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "France",
+            "short_name": "FR",
+            "types": [
+                "country",
+                "political"
+            ]
+        }
+    ]
+}
+
+		];

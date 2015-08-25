@@ -217,12 +217,21 @@
 
 .row-input {
    display: inline-block;
-   background-color: white;
+   /* background-color: white; */
    padding: 10px 0 10px 13px;
    margin: 5px 0;
    position: relative;
    color: #D6D6D6;
    height: 47px;
+   cursor: pointer;
+}
+
+.row-input input, .row-input label {
+    cursor: pointer;
+}
+
+.row-input input:focus {
+    cursor: default;
 }
 
 .row-input-14 {
@@ -274,6 +283,7 @@
    /* border: 1px solid #D0D0D0; */
    font-family: 'Karla';
    font-weight: bolder;
+   border-bottom: 1px solid #eee;
 }
 
 .row-select-description {
@@ -409,6 +419,7 @@
 
 .facebook-image-item {
    width: 100px;
+   height: 100px;
    display: inline-block;
    text-align: center;
    background: white;
