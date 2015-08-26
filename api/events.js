@@ -51,6 +51,8 @@
 					    	console.log('Event created!!');
 					    	eventUtils.sendSuccess( res, new_event );
 
+					    	pusher.trigger('public_chan', new_event, socketId );
+
 	    				});
 
 	    });
@@ -85,7 +87,7 @@
 
 	};
 
-	var requestIn = function( req, res ){
+	var request = function( req, res ){
 				
 		Event.findByIdAndUpdate( req.event_id, { groups: req.groups }, function( err, evt ){
 
@@ -116,7 +118,7 @@
 
 	module.exports = {
 		createEvent: createEvent,
-		requestIn: requestIn,
+		request: request,
 		fetchEvents: fetchEvents,
 		fetchEventById: fetchEventById,
 		updateEvent: updateEvent,

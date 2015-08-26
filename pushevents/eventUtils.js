@@ -31,7 +31,7 @@
 
 				var clientMsg = p.toClient;
 
-				var data = { msg: clientMsg, err: p.err };
+				var data = { msg: clientMsg, err: p.err, errData: p.errData };
 				
 				p.res.status( p.code || 400 ).json( data ).end();
 				return;

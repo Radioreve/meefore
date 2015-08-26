@@ -10,7 +10,9 @@
 		minimum_loading_time: 500,
 		slideDownInLight:  { opacity: [1, 0], translateY: [0, 10]   },
 		slideUpOutLight: { opacity: [0, 1], translateY: [-10, 0]   },
+		slideUpOutVeryLight: { opacity: [0, 1], translateY: [-7, 0]   },
 		slideLeftInLight:  { opacity: [1, 0], translateX: [0, -10]   },
+		slideLeftOutLight:  { opacity: [0, 1], translateX: [-10, 0]   },
 		slideRightOutLight: { opacity: [0, 1], translateX: [10, 0]   }
 	},
 	pusher_channels: {},

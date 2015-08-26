@@ -73,10 +73,10 @@
 				var $self = $(this);
 				var event_id = $self.attr('data-eventid');
 				var $inview_wrap_target = $('.row-events-accepted-inview[data-eventid="'+event_id+'"]');
-				var duration = 900;
 				var evt = _.find( LJ.cache.events, function(el){ return el._id === event_id });
+				var duration = 900;
 
-				var opts = { transition_in : LJ.ui.slideLeftInLight, transition_out: LJ.ui.slideRightOutLight };
+				var opts = { transition_in : LJ.ui.slideUpInLight, transition_out: LJ.ui.slideDownOutLight };
 				
 				if( $self.hasClass('active') ){
 					$inview_wrap_target.velocity('transition.fadeOut', { duration: 700 });

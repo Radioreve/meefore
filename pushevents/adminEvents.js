@@ -10,7 +10,6 @@
 	var pusher = require('../globals/pusher');
 
 	var fetchAppData = function( req, res ){	
-
 		console.log('Fetching app data...');
 
 		async.parallel([ fetchLastRegisteredUsers, fetchBots, fetchTemplates ], function( err, result ){
@@ -45,7 +44,6 @@
 	}
 
 	var createBotEvent = function( req, res ){
-
 		console.log('Creating bot event');
 		var eventData = bots.generateEvent( req.body, function( err, eventData ){
 

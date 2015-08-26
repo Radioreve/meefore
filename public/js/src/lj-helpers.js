@@ -307,10 +307,12 @@
 
 			var call_started = new Date();
 
+			var data = _.merge( options.data || {}, { socket_id: LJ.pusher.connection.socket_id });
+
 			$.ajax({
 				method: method,
 				url: '/api/v' + LJ.settings.api_version + '/' + url,
-				data: options.data,
+				data: data,
 				beforeSend: options.beforeSend,
 				success: function( data ){
 					setTimeout(function(){

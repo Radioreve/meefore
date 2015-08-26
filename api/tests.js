@@ -22,10 +22,8 @@
 
 	var testValidate = function( req, res ){
 
-		if( req.app_data )
-			return res.json({ msg: "success" }).end();
 
-		return res.json({ msg: "shouldnt have passed" }).end();
+		return res.json({ msg: "Has passed" }).end();
 
 	};
 

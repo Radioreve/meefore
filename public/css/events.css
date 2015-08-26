@@ -198,8 +198,8 @@ display: inline-block;}
 }
 
 .btn-preview-edit {
-	background: white;
-	color: black;
+	background: #E94F6A;
+	color: white;
 	border: 1px solid transparent;
 }
 .btn-request-in-disabled {

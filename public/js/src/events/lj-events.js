@@ -481,13 +481,15 @@ window.LJ = _.merge(window.LJ || {}, {
                     LJ.fn.addEvent(evt);
                     LJ.fn.displayRouteToParty( evt );
                     LJ.map.panTo({ lat: evt.address.lat, lng: evt.address.lng });
+                    LJ.map.setZoom(15);
 
                 },
                 afterTheScene: function(){
                     LJ.fn.toastMsg('Votre évènement a été créé avec succès!', 'info');
                     LJ.fn.toastMsg('Que la fête commence...', 'info');
+                    LJ.fn.addEventPreview(evt);
 
-                }
+                }   
             });
 
         },
@@ -670,7 +672,7 @@ window.LJ = _.merge(window.LJ || {}, {
 
             var event_preview = renderFn( evt );
             var $evt = $('.event-preview');
-            var duration = 330;
+            var duration = 270;
 
             if( $evt.length == 0 ){
                 delog('Rendering event at first load');
@@ -682,13 +684,13 @@ window.LJ = _.merge(window.LJ || {}, {
 
             $('.event-preview')
                 .removeClass('slow-down-3')
-                .velocity( options.transition_out || LJ.ui.slideUpOutLight, { 
+                .velocity( options.transition_out || LJ.ui.slideUpOutVeryLight, { 
                     duration: duration,
                     complete: function(){
                         $('.row-events-preview').html( event_preview )
                         .children().removeClass('slow-down-3')
                         .velocity( options.transition_in || LJ.ui.slideDownInLight, {
-                            duration: duration,
+                            duration: duration +  300 ,
                             complete: function(){
                                 $(this).addClass('slow-down-3');
                             }
@@ -714,7 +716,7 @@ window.LJ = _.merge(window.LJ || {}, {
         },
         fetchMyEvents: function( callback ){
 
-            if( !LJ.user._id )
+            if( !LJ.user.facebook_id )
                 return console.error("Can't fetch events, userId not found");
 
             LJ.fn.api('get','users/' + LJ.user.facebook_id + '/events', callback );
@@ -799,7 +801,7 @@ window.LJ = _.merge(window.LJ || {}, {
             LJ.fn.displayMarker({
                 lat: evt.address.lat,
                 lng: evt.address.lng,
-                url: LJ.cloudinary.markers.transparent.url,
+                url: LJ.cloudinary.markers.white_on_black.url,
                 cache: 'event_markers',
                 singleton: false,
                 id: evt._id,

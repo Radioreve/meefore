@@ -341,6 +341,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         initChannelListeners: function(){
 
+        	LJ.pusher_channels.public_chan.bind('new event created', LJ.fn.pushNewEvent );
 
         }
 
