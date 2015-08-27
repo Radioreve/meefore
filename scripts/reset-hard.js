@@ -27,8 +27,11 @@
 
 				user.channels = {
 					"me" : user.facebook_id,
-        			"public_chan" : "default"
+        			"public_chan" : "app"
 				};
+
+				user.markModified('channels');
+
 				user.events = [];
 				user.save(function( err, user ){
 					console.log('User modified');

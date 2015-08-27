@@ -67,10 +67,10 @@
 
 						var event_id = app_events[ randomInt(0, app_events.length-1) ]._id;
 
-						var group_members = [{ facebook_id: user.facebook_id }];
+						var group_members = [ user.facebook_id ];
 						for( var i = 0; i < max_group_size-1; i++ ){
 							var friend = user.friends[ randomInt(0, user.friends.length-1) ];
-							group_members.push({ facebook_id:  friend.facebook_id });
+							group_members.push( friend.facebook_id );
 						}
 
 						var group_members = group_members;
@@ -78,21 +78,22 @@
 						var group_name    = generateWord( 5 );
 
 						var group = {
+							socket_id: '1111.12324',
 							name: group_name,
-							members: group_members,
+							members_facebook_id: group_members,
 							message: group_message
 						};
 
-						var url  = 'http://localhost:1234/api/v1/events/'+event_id+'/requestin';
+						var url  = 'http://localhost:1234/api/v1/events/'+event_id+'/request';
 						var body = group;
 
 						request({ method: 'patch', url: url, json: body }, function( err, body, response ){
 
-							if( err && !response.msg)
+							if( err )
 								return console.log(err);
 
-							if( err && response.msg ){
-								console.log( response.msg  );
+							if( response.errors ){
+								console.log( response.errors[0].message  );
 								requestEvents( ite, app_events )
 							} else {
 								console.log('Participation requested by  : ' + user.name + ' !');

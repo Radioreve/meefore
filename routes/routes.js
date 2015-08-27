@@ -67,24 +67,27 @@
 	    }), mdw.email.updateMailchimpUser, settingsEvents.updateSettingsMailinglists);
 
 	    //Rest api events
-	    app.all('/api/v1/events/:event_id/*', mdw.validate('event_id'));
-	    app.get('/api/v1/events', api.events.fetchEvents);
-	    app.get('/api/v1/events/:event_id', api.events.fetchEventById);
-	    app.post('/api/v1/events', mdw.validate(['socket_id','create_event']), api.events.createEvent);
-	    app.patch('/api/v1/events/:event_id', api.events.updateEvent);
-	    app.patch('/api/v1/events/:event_id/request', mdw.validate('request'), api.events.request);
-	    app.get('/api/v1/events/:event_id/groups', api.events.fetchGroups);
+	    app.all(	'/api/v1/events/:event_id/*', mdw.validate('events',['event_id']));
+	    app.get(	'/api/v1/events/:event_id', api.events.fetchEventById);
+	    app.patch(	'/api/v1/events/:event_id', api.events.updateEvent);
+	    app.patch(	'/api/v1/events/:event_id/request', mdw.validate('request_event', ['socket_id', 'request'] ), api.events.request);
+	    app.get(	'/api/v1/events/:event_id/groups', api.events.fetchGroups);
+	    app.get(	'/api/v1/events', api.events.fetchEvents);
+	    app.post(	'/api/v1/events', mdw.validate('create_event', ['socket_id','create_event']), api.events.createEvent);
 
 	    //Rest api tests
 	    //app.post('/api/v1/test/:user_id', api.tests.test );
-	    app.post('/api/v1/test/validate/:event_id/*', mdw.validate('event_id'));
-	    app.post('/api/v1/test/validate/:event_id/request', mdw.validate('request'), api.tests.testValidate);
+	    app.post('/api/v1/test/validate/:event_id/*', mdw.validate('test','event_id'));
+	    app.post('/api/v1/test/validate/:event_id/request', mdw.validate('test','request'), api.tests.testValidate);
 
 	    //Rest api users
-	    app.all('/api/v1/users/:facebook_id/*', mdw.validate('facebook_id'));
+	    app.all('/api/v1/users/:facebook_id/*', mdw.validate('fetch_init_data', ['facebook_id']));
 	    app.get('/api/v1/users/:user_id', api.users.fetchUserById);
 	    app.get('/api/v1/users', api.users.fetchUsers);
 	    app.get('/api/v1/users/:facebook_id/events', api.users.fetchUserEvents);
+
+	    //Rest api me
+	    app.get('/api/v1/me', mdw.auth.authenticate(['standard']), api.users.fetchMe );
 
 	    //Rest api ambiances
 	    app.get('/api/v1/ambiances', api.ambiances.fetchAmbiances);
@@ -111,7 +114,7 @@
 
 
 	    //Events relatif aux tests
-	    app.post('/test/:test_val', mdw.validate(['socket_id','create_event']), function( req, res ){
+	    app.post('/test/:test_val', mdw.validate('test',['socket_id','create_event']), function( req, res ){
 	    	res.json({ msg: "validaton passed", data: res.event_data });;
 	    });
 

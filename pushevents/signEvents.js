@@ -76,7 +76,7 @@
 
 			/* Pusher informations for real time channels */
 			new_user.channels = {
-				public_chan : 'default',
+				public_chan : 'app',
 				me 			: fb.id
 			};
 

@@ -1,108 +1,12 @@
-window.LJ = _.merge(window.LJ || {}, {
+window.LJ.fn = _.merge(window.LJ.fn || {}, {
 
-    params: _.merge(window.LJ.params || {}, {
-
-        map: {
-            style: {
-                sober: [{
-                    "featureType": "administrative.neighborhood",
-                    "elementType": "labels",
-                    "stylers": [{
-                        //"color": "#444444",
-                        "visibility": "off"
-                    }]
-                }, {
-                    "featureType": "landscape",
-                    "elementType": "all",
-                    "stylers": [{
-                        "color": "#f2f2f2"
-                    }]
-                }, {
-                    "featureType": "poi",
-                    "elementType": "all",
-                    "stylers": [{
-                        "visibility": "off"
-                    }]
-                }, {
-                    "featureType": "poi.business",
-                    "elementType": "all",
-                    "stylers": [{
-                        "visibility": "off"
-                    }]
-                }, {
-                    "featureType": "road",
-                    "elementType": "all",
-                    "stylers": [{
-                        "saturation": -100
-                    }, {
-                        "lightness": 45
-                    }]
-                }, {
-                    "featureType": "road.highway",
-                    "elementType": "all",
-                    "stylers":  [{
-                        "saturation": -100
-                    }, {
-                        "lightness": 45
-                    }]
-                },  {
-                    "featureType": "road.highway",
-                    "elementType": "labels.icon",
-                    "stylers": [{
-                        "visibility": "off"
-                    }]
-                }, {
-                    "featureType": "road.arterial",
-                    "elementType": "labels.icon",
-                    "stylers": [{
-                        "visibility": "off"
-                    }]
-                }, {
-                    "featureType": "transit",
-                    "elementType": "all",
-                    "stylers": [{
-                        "visibility": "off"
-                    }]
-                }, {
-                    "featureType": "water",
-                    "elementType": "all",
-                    "stylers": [{
-                        "color": "#b4d4e1"
-                    }, {
-                        "visibility": "on"
-                    }]
-                }],
-                lunar: [{
-                    "stylers": [{
-                        "hue": "#ff1a00"
-                    }, {
-                        "invert_lightness": true
-                    }, {
-                        "saturation": -100
-                    }, {
-                        "lightness": 33
-                    }, {
-                        "gamma": 0.5
-                    }]
-                }, {
-                    "featureType": "water",
-                    "elementType": "geometry",
-                    "stylers": [{
-                        "color": "#2D333C"
-                    }]
-                }]
-            }
-        }
-    }),
-
-    fn: _.merge(window.LJ.fn || {}, {
 
         handleDomEvents_Create: function(){
 
             LJ.fn.handleDomEvents_EventInview();
             LJ.fn.handleDomEvents_EventFilters();
 
-                LJ.$body.on('mouseover', '#createEvent', function(){
+            LJ.$body.on('mouseover', '#createEvent', function(){
                 LJ.fn.sanitizeCreateInputs();
             });
             LJ.$body.on('mouseenter', '#createEvent input', function(){
@@ -160,7 +64,6 @@ window.LJ = _.merge(window.LJ || {}, {
             /* Ajout des hosts / partyplace via la touche tab && click */
             LJ.$body.bind('typeahead:autocomplete typeahead:select', function(ev, suggestion) {
 
-                
                 var $input = $('.row-create-friends input');
                 if( $input.is( ev.target ) ){
                     $input.parents('.twitter-typeahead').addClass('autocompleted');
@@ -184,6 +87,7 @@ window.LJ = _.merge(window.LJ || {}, {
             /* Make sure always empty when closed */
             LJ.$body.bind('typeahead:autocomplete typeahead:select typeahead:change', function( ev, suggestion ){
 
+            
                 var $input = $('.row-create-friends input');
                     if( $input.is( ev.target ) ){
                         $input.typeahead('val','');
@@ -199,7 +103,6 @@ window.LJ = _.merge(window.LJ || {}, {
                         $input.typeahead('val','');
                     }
 
-
             });
 
             LJ.$body.on('click', '#createEvent .btn-validate', function(){
@@ -212,7 +115,21 @@ window.LJ = _.merge(window.LJ || {}, {
                 LJ.fn.createEvent();
 
             });
-    
+
+            LJ.$body.on('click', '#requestIn .btn-validate', function(){
+
+                if( $(this).hasClass('btn-validating') ) return;
+
+                $(this).addClass('btn-validating');
+                $('#createEvent').find('label').addClass('lighter');
+                LJ.fn.showLoaders();
+                var event_id = $(this).parents('#requestIn').attr('data-eventid');
+                LJ.fn.requestIn( event_id );
+
+            });
+
+
+
             LJ.$body.on('click', '.mixity', function(){
 
                 var $self = $(this);
@@ -275,13 +192,18 @@ window.LJ = _.merge(window.LJ || {}, {
 
             LJ.$body.on('click','.btn-requestin', function(){
 
+                var event_id = $(this).parents('.event-preview').attr('data-eventid');
+
+                if( !event_id )
+                    return console.error('eventid wasnt attached to the dom, cant continue with the request');
+                
                 LJ.fn.displayInModal({
                     source: 'local',
                     fix_height: 0,
                     starting_width: 550,
                     custom_classes: ['text-left'],
                     render_cb: function(){
-                        return LJ.fn.renderEventRequestIn();
+                        return LJ.fn.renderEventRequestIn( event_id );
                     },
                     predisplay_cb: function(){
 
@@ -303,7 +225,7 @@ window.LJ = _.merge(window.LJ || {}, {
             });
 
         },
-                handleDomEvents_EventInview: function(){
+        handleDomEvents_EventInview: function(){
 
             LJ.$body.on('keypress', '.event-accepted-chat-typing input', function(e){
                 var keyCode = e.keyCode || e.which;
@@ -374,11 +296,11 @@ window.LJ = _.merge(window.LJ || {}, {
 
             });
 
-            LJ.$body.on('mousedown', '.pika-next', function(e){             
+            $('#createEvent').on('mousedown', '.pika-next', function(e){             
                 LJ.pikaday.nextMonth();
             });
 
-            LJ.$body.on('mousedown', '.pika-prev', function(e){             
+            $('#createEvent').on('mousedown', '.pika-prev', function(e){             
                 LJ.pikaday.prevMonth();
             });
 
@@ -417,10 +339,12 @@ window.LJ = _.merge(window.LJ || {}, {
             var $wrap = $('#createEvent');
 
             // hosts
-            hosts_facebook_id.push( LJ.user.facebook_id );
-            $wrap.find('.friend').each(function(i, el){
-                hosts_facebook_id.push( $(el).attr('data-id') );
-            });
+            if( $wrap.find('.friend').length != 0 ){
+                hosts_facebook_id.push( LJ.user.facebook_id );
+                $wrap.find('.friend').each(function(i, el){
+                        hosts_facebook_id.push( $(el).attr('data-id') );
+                });
+            }
 
             // ambiance
             $wrap.find('.ambiance-name').each(function(i, el){
@@ -433,11 +357,13 @@ window.LJ = _.merge(window.LJ || {}, {
             mixity    = $wrap.find('.mixity.selected').attr('data-selectid').trim();
 
             // address
-            address.lat        = parseFloat( $wrap.find('.before-place').attr('data-place-lat') );
-            address.lng        = parseFloat( $wrap.find('.before-place').attr('data-place-lng') );
-            address.place_id   = $wrap.find('.before-place').attr('data-placeid');
-            address.place_name = $wrap.find('.before-place-name span').eq(0).text().trim();
-            address.city_name  = $wrap.find('.before-place-name span').eq(1).text().trim();
+            if( $wrap.find('.before-place-name').length != 0 ){
+                address.lat        = parseFloat( $wrap.find('.before-place').attr('data-place-lat') );
+                address.lng        = parseFloat( $wrap.find('.before-place').attr('data-place-lng') );
+                address.place_id   = $wrap.find('.before-place').attr('data-placeid');
+                address.place_name = $wrap.find('.before-place-name span').eq(0).text().trim();
+                address.city_name  = $wrap.find('.before-place-name span').eq(1).text().trim();
+            }
 
             // scheduled_party
             scheduled_party._id = $wrap.find('.party-place').attr('data-placeid');
@@ -463,7 +389,7 @@ window.LJ = _.merge(window.LJ || {}, {
                     .find('.btn-validating').removeClass('btn-validating');
 
                 if( err ){
-                    LJ.fn.handleCreateEventError( err );
+                    LJ.fn.handleApiError( err );
                 } else {
                     LJ.fn.handleCreateEventSuccess( res );
                 }
@@ -483,42 +409,116 @@ window.LJ = _.merge(window.LJ || {}, {
                     LJ.map.panTo({ lat: evt.address.lat, lng: evt.address.lng });
                     LJ.map.setZoom(15);
 
+                    /* the model is the single source of truth... */
+                    LJ.fn.fetchMe();
                 },
                 afterTheScene: function(){
                     LJ.fn.toastMsg('Votre évènement a été créé avec succès!', 'info');
                     LJ.fn.toastMsg('Que la fête commence...', 'info');
                     LJ.fn.addEventPreview(evt);
+                    LJ.fn.joinEventChannel( evt );
 
                 }   
             });
 
         },
-        handleCreateEventError: function( err ){
+        requestIn: function( event_id ){
 
-            delog('Error, event couldnt be created');
+             delog('Requesting in  for event with id : '+ event_id + '...');
 
-            var err_msg = JSON.parse( err.responseText ).msg || "Vous n'êtes pas autorisé à créer d'évènements";
+            var name, message, members_facebook_id = [];
 
-            LJ.fn.toastMsg( err_msg, 'error' );
-            console.log( err );
+            var $wrap = $('#requestIn');
 
+            //name & message
+            name    = $wrap.find('.row-requestin-group-name .item-name').text().trim();
+            message = $wrap.find('.row-requestin-group-message .item-name').text().trim();
+
+            // members
+            if( $wrap.find('.friend').length != 0 ){
+                members_facebook_id.push( LJ.user.facebook_id );
+                $wrap.find('.friend').each(function(i, el){
+                        members_facebook_id.push( $(el).attr('data-id') );
+                });
+            }
+
+            var request = {
+                name    : name,
+                message : message,
+                members_facebook_id : members_facebook_id
+            };
+
+            delog( request );
+            
+            LJ.fn.api('patch', 'events/'+event_id+'/request', { data: request }, function( err, res ){
+
+                LJ.fn.hideLoaders();
+                $('#requestIn')
+                    .find('.lighter').removeClass('lighter')
+                    .end()
+                    .find('.btn-validating').removeClass('btn-validating');
+
+                if( err ){
+                    LJ.fn.handleApiError( err );
+                } else {
+                    LJ.fn.handleRequestInSuccess( res );
+                }
+
+            });
+
+
+        },
+        handleRequestInSuccess: function( evt ){
+
+                delog('Request in success');
+                delog(evt);
+
+                LJ.fn.hideModal(function(){
+
+                    LJ.fn.addEventPreview(evt);
+                    LJ.fn.addEventInviewAndTabview(evt);
+                    $('.event-accepted-tabview').last().click();
+
+                    LJ.fn.toastMsg('Votre demande a été envoyée!', 'info');
+                    LJ.fn.joinEventChannel( evt );
+
+                });
+
+        },
+        joinEventChannel: function( evt ){
+
+            if( !evt )
+                return console.error('Cant join channel, event is null');
+
+            if( LJ.subscribed_channels[ evt._id ] )
+                delete LJ.subscribed_channels[ evt._id ]; //force refresh for no double bind events
+
+            /* storing ref to channel */
+            LJ.subscribed_channels[ evt._id ] = LJ.pusher.subscribe( evt._id );
+
+            /* handlers */
+            LJ.subscribed_channels[ evt._id ].bind('new request', LJ.fn.pushNewGroup );
+            LJ.subscribed_channels[ evt._id ].bind('new chat message', LJ.fn.pushNewChatMessage );
 
         },
         addEvent: function( evt ){
 
-            LJ.fn.bubbleUp('#events');
             LJ.fn.displayEventMarker( evt );
             LJ.fn.addEventInviewAndTabview( evt );
 
         },
         initMap: function() {
 
-            var map_style_sober = new google.maps.StyledMapType(LJ.params.map.style.sober, {
+            var map_style_sober = new google.maps.StyledMapType( LJ.google.map.style.sober, {
                 name: 'sober'
             });
 
-            var map_style_lunar = new google.maps.StyledMapType(LJ.params.map.style.lunar, {
+            var map_style_lunar = new google.maps.StyledMapType( LJ.google.map.style.lunar, {
                 name: 'lunar'
+            });
+
+            var map_style_pinkey = new google.maps.StyledMapType( LJ.google.map.style.pinkey, {
+                name: 'pinkey'
             });
 
             LJ.map = new google.maps.Map(document.getElementsByClassName('row-events-map')[0], {
@@ -544,7 +544,8 @@ window.LJ = _.merge(window.LJ || {}, {
             /* Map styling */
             LJ.map.mapTypes.set('sober', map_style_sober);
             LJ.map.mapTypes.set('lunar', map_style_lunar);
-            LJ.map.setMapTypeId('sober');
+            LJ.map.mapTypes.set('pinkey', map_style_pinkey );
+            LJ.map.setMapTypeId('pinkey');
 
             LJ.map.addListener('center_changed', function(){
                 
@@ -554,28 +555,36 @@ window.LJ = _.merge(window.LJ || {}, {
             	LJ.fn.refreshActiveMarker();
                 $('.event-accepted-tabview.active').click();
                 LJ.path_to_party && LJ.path_to_party.setMap( null );
-                LJ.party_markers && LJ.party_markers.setMap( null )
+                LJ.party_markers && LJ.party_markers.setMap( null );
+                LJ.fn.refreshMap();
             });
 
 
             LJ.map.addListener('dragend', function(){
-                if( LJ.active_marker )
-                    return;
-            	LJ.fn.refreshEventPreview();
+                //if( LJ.active_marker )
+                //    return;
+            	//LJ.fn.refreshEventPreview();
             });
 
         },
-        addEventInviewAndTabview: function( evt ){
-
+        addEventInviewAndTabview: function( evt, options ){
+            
+            var options = options || {};
+            
             var renderFn =  _.pluck( evt.hosts, 'facebook_id').indexOf( LJ.user.facebook_id ) != -1 ? 
                             LJ.fn.renderEventInview_Host :
                             LJ.fn.renderEventInview_User ;
+
+            if( options.host ){
+                renderFn = LJ.fn.renderEventInview_Host;
+            }
 
             $('.row-events').append(  renderFn( evt )  );
             $('.row-events-accepted-tabview').append( LJ.fn.renderEventTabview( evt ) );
 
             /* jsp */
             var $inview =  $('.row-events').children().last();
+            
             LJ.jsp_api[ evt._id ] = {
                 users: $inview.find('.event-accepted-users').jScrollPane().data('jsp'),
                 chats: $inview.find('.event-accepted-chat-messages').jScrollPane({ stickToBottom: true }).data('jsp')
@@ -600,27 +609,6 @@ window.LJ = _.merge(window.LJ || {}, {
             LJ.fn.adjustAllChatPanes();
 
         },
-        handleRequestParticipationIn_Success: function( data ){
-
-            delog('Handling request participation in success');
-
-            var hosts      = data.hosts,
-                requesters = data.requesters,
-                evt        = data.evt;
-
-
-        },
-        handleRequestValidated_Success: function(){
-
-            delog('Handling request validated success');
-
-            var hosts      = data.hosts,
-                requesters = data.requesters,
-                evt        = data.evt;
-
-            //LJ.fn.addEventInviewAndTabview();
-
-        },
         handleFetchEvents: function( err, events ){
 
             if( err )
@@ -641,6 +629,10 @@ window.LJ = _.merge(window.LJ || {}, {
             console.log('Personnal events successfully fetched, n = ' + events.length + ' )');
             LJ.fn.displayEventsInviewsAndTabviews( events );
 
+            events.forEach(function( evt ){
+                LJ.fn.joinEventChannel( evt );
+            });
+
         },
         displayEventsInviewsAndTabviews: function( events ){
 
@@ -655,6 +647,9 @@ window.LJ = _.merge(window.LJ || {}, {
                 return console.error('No event to be added : ' + evt );
 
             options = options || {};
+
+            if( evt._id == $('.event-preview').attr('data-eventid') )
+                return;
 
             //Default value
             var renderFn = LJ.fn.renderEventPreview_User;
@@ -768,6 +763,9 @@ window.LJ = _.merge(window.LJ || {}, {
            
 
         },
+        refreshMap: function(){
+            google.maps.event.trigger( LJ.map, 'resize');
+        },
         displayMarker: function( options ){
 
             if( !options.lat || !options.lng || !options.url )
@@ -776,6 +774,7 @@ window.LJ = _.merge(window.LJ || {}, {
             var new_marker = new google.maps.Marker({
                 position: { lat: options.lat, lng: options.lng },
                 map: LJ.map,
+                animation: options.animation || null,
                 icon: options.url
             });
 
@@ -796,9 +795,9 @@ window.LJ = _.merge(window.LJ || {}, {
             });
 
         },
-        displayEventMarker: function( evt ){
+        displayEventMarker: function( evt, options ){
 
-            LJ.fn.displayMarker({
+            LJ.fn.displayMarker(_.merge({
                 lat: evt.address.lat,
                 lng: evt.address.lng,
                 url: LJ.cloudinary.markers.white_on_black.url,
@@ -816,7 +815,7 @@ window.LJ = _.merge(window.LJ || {}, {
                         }
                     }
                 ]
-            });
+            }, options));
 
 
         },
@@ -848,8 +847,8 @@ window.LJ = _.merge(window.LJ || {}, {
             LJ.path_to_party = new google.maps.Polyline({
                 path: path,
                 geodesic: true,
-                strokeColor: '#4F4FA7',
-                strokeOpacity: 0.3,
+                strokeColor: '#E94F6A',
+                strokeOpacity: 0.7,
                 strokeWeight: 5
             });
 
@@ -904,6 +903,4 @@ window.LJ = _.merge(window.LJ || {}, {
 
         }
 
-    })
-
-});
+    });

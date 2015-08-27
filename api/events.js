@@ -5,6 +5,7 @@
 		Event      = require('../models/EventModel'),
 		moment     = require('moment');
 
+	var pusher     = require('../globals/pusher');
 
 	var createEvent = function( req, res ) {
 	       
@@ -49,9 +50,9 @@
 	    						return eventUtils.raiseError({ err: err, res: res, toClient: "Error updating users"});
 
 					    	console.log('Event created!!');
-					    	eventUtils.sendSuccess( res, new_event );
 
-					    	pusher.trigger('public_chan', new_event, socketId );
+					    	eventUtils.sendSuccess( res, new_event );
+					    	pusher.trigger('app', 'new event created', new_event, req.socket_id );
 
 	    				});
 
@@ -88,20 +89,42 @@
 	};
 
 	var request = function( req, res ){
-				
-		Event.findByIdAndUpdate( req.event_id, { groups: req.groups }, function( err, evt ){
+		
+		console.log('Requesting with event_id = ' + req.event_id );
+
+		Event.findByIdAndUpdate( req.event_id, { groups: req.groups }, { new: true }, function( err, evt ){
 
 			if( err )
-				return eventUtils.raiseError({ err: err, res: res,
-					toClient: "api error fetching event" 
+				return eventUtils.raiseError({ err: err, res: res, toClient: "api error fetching event" });
+
+			var event_to_push = {
+				event_id  : req.event_id,
+				status    : 'pending',
+				begins_at : evt.begins_at
+			};
+			/* Mise à jour de l'event array dans chaque user impliqué */
+			User
+				.update(
+					{ 'facebook_id': { $in: req.group.members_facebook_id } },
+					{ $push: { 'events' : event_to_push } },
+					{ multi: true, new: true },
+					function( w ){
+
+						if( err )
+							return eventUtils.raiseError({ err: err, res: res, toClient: "api error fetching event" });
+
+						eventUtils.sendSuccess( res, evt );
+
+						/* Envoyer une notification aux hosts, et aux users déja présent */
+						pusher.trigger( req.event_id, 'new request', { event_id: req.event_id, group: req.group }, req.socket_id );
+
+						/* Envoyer une notification aux amis au courant de rien à priori */
+						req.users.forEach(function(user){
+							pusher.trigger( user.channels.me, 'new request', { event_id: req.event_id, group: req.group }, req.socket_id );
+						});	
+
+					});
 				});
-
-			eventUtils.sendSuccess( res, { msg: "La demande a été prise en compte" });
-
-			/* Envoyer une notification aux hosts, et aux users */
-
-		});
-
 	};
 
 	var fetchEventById = function( req, res ){

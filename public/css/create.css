@@ -65,7 +65,7 @@
    vertical-align: top;
    /* border: 1px solid; */
    color: #555;
-   /* margin-right: 7px; */
+   margin-right: 7px;
    cursor: pointer;
    position: relative;
    border-bottom: 1px solid #eee;
@@ -112,6 +112,7 @@
    position: absolute;
    top: 7px;
    left: 7px;
+   color: #E94F6A;
 }
 
 .pac-container {

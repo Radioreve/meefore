@@ -26,17 +26,16 @@
 
 		console.log('Validating event');
 
-		var evt = req.body;
+		var evt = req.body;;
 
 		function isHostDuplicated( val, onError ){
-
-			if( _.uniq( val.hosts_facebook_id ).length != val.hosts_facebook_id.length )
-				onError('Hosts with the same id have been provided', 'hosts_facebook_id', val.hosts_facebook_id );
+			if( val.hosts_facebook_id && _.uniq( val.hosts_facebook_id ).length != val.hosts_facebook_id.length )
+				onError('Hosts with the same id have been provided', 'hosts_facebook_id', val.hosts_facebook_id, { err_id: "twin_hosts"} );
 		};
 
 		function isDateAtLeastToday( val, onError ){
 			if(  moment( val.begins_at, 'DD/MM/YY') < moment({'H':0,'m':0}) )
-				onError('Date must be tomorrow or later', 'begins_at', val.begins_at );
+				onError('Date must be tomorrow or later', 'begins_at', val.begins_at, { err_id: "time_travel"} );
 		};
 
 		var checkHostId   = nv.isString({ regex: /^\d{10,}$/ });
@@ -55,7 +54,7 @@
 		var checkEvent = nv.isObject()
 			.withRequired('address'				, checkAddress )
 			.withRequired('scheduled_party'		, checkParty )
-			.withRequired('hosts_facebook_id'	, nv.isArray(  checkHostId, { min: 2, max: 4 }))
+			.withRequired('hosts_facebook_id'	, nv.isArray(  checkHostId, { min: 2, max: 5} ))
 			.withRequired('ambiance'			, nv.isArray(  checkAmbiance, { min: 1, max: 5 }))
 			.withRequired('agerange'			, nv.isString({ expected: _.pluck( settings.app.agerange, 'id' ) }))
 			.withRequired('mixity'				, nv.isString({ expected: _.pluck( settings.app.mixity, 'id' )   }))
@@ -65,13 +64,17 @@
 
 		nv.run( checkEvent, evt, function( n, errors ){
 
-			if( n != 0 )
-				return res.json( errors ).end();
+			if( n != 0 ){
+				req.app_errors = req.app_errors.concat( errors );
+				return next();
+			}
 
 			checkWithDatabase( req, function( errors, event_data ){
 
-				if( errors )
-					return eventUtils.raiseError( _.merge({ res: res }, errors ));
+				if( errors ){
+					req.app_errors = req.app_errors.concat( errors );
+					return next();
+				}
 
 				req.event_data = event_data;
 				next();
@@ -102,23 +105,31 @@
 
 			if( hosts.length != host_number )
 				return callback({
-							toClient: 'Error, couldnt find ' + ( host_number - hosts.length ) + ' members',
-						}, null );
+					message : "Couldn't find " + ( host_number - hosts.length ) + " members",
+					data    : {
+						err_id		: "ghost_hosts",
+						n_sent  	: host_number,
+						n_found		: hosts.length,
+						missing_ids : _.difference( data.hosts_facebook_id, _.pluck( hosts, 'facebook_id' ) )
+					}}, null );
 
-			var host_already_hosting = false;
 			var to_client = '';
+			var err_data = { host_names: [] };
 
 			hosts.forEach(function( host ){
 				host.events.forEach(function( evt ){
-					if( moment( new Date(evt.begins_at) ).dayOfYear() - 1 === moment( data.begins_at, 'DD/MM/YY').dayOfYear() ){
-						host_already_hosting = true;
-						to_client = host.name + ' already hosting an event this day';
+					// known bug : wont catch the equivalent day sometimes...
+					if( moment( new Date(evt.begins_at) ).dayOfYear() === moment( data.begins_at, 'DD/MM/YY').dayOfYear() ){
+						err_data.host_names.push( host.name );
 					}
 				});
 			});
 
-			if( host_already_hosting )
-				return callback({ toClient: to_client }, null );
+			if( err_data.host_names.length != 0 )
+				return callback({
+					message : 'Host(s) already hosting an event this day',
+					data    : _.merge( err_data, { err_id: "already_hosting"} )
+				}, null );
 
 			/* Hosts are validated*/
 			event_data.hosts = _.pluckMany( hosts, settings.public_properties.users );
@@ -127,9 +138,13 @@
 			/* Validating the place provided */
 			Place.findById( data.scheduled_party._id, function( err, place ){
 
-				if( err ) return callback({ toClient: "api error", }, null );
+				if( err ) return callback({ message: "api error" }, null );
 
-				if( !place ) return callback({ toClient: "Error fetching place, make sure you provided a good place_id", }, null );
+				if( !place ) 
+					return callback({ 
+						message : "Error fetching place, make sure you provided a good place_id",
+						data    : { place_id: data.scheduled_party._id }
+					}, null );
 
 				event_data.scheduled_party = place;
 

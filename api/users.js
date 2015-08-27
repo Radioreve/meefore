@@ -8,7 +8,25 @@
 		eventUtils = require('../pushevents/eventUtils');
 
 
-	/*  fetch /users/:user_id */
+	/* get /users/me */
+	var fetchMe = function( req, res ){
+
+		var userId = req.body.userId;
+
+		if( !userId )
+			return eventUtils.raiseError({ res: res, toClient: "api error" });
+
+		User.findById( userId, function( err, user ){
+
+			if( err ) return eventUtils.raiseError({ res: res, toClient: "api error" });
+
+			res.json( user ).end();
+
+		});
+
+	};
+
+	/*  get /users/:user_id */
 	var fetchUserById = function( req, res ){
 
 		var userId = req.params.user_id;
@@ -30,7 +48,7 @@
 
 	};
 
-	/* fetch /users?name=... */
+	/* get /users?name=... */
 	var fetchUsers = function( req, res ){
 
 		if( _.keys( req.query ).length == 0 )
@@ -80,6 +98,7 @@
 
 	var fetchUserEvents = function( req, res ){
 
+		console.log('Fetching personnal event for facebook_id: ' + req.facebook_id );
 		var facebook_id = req.facebook_id;
 		
 		Event
@@ -107,6 +126,7 @@
 	};
 
 	module.exports = {
+		fetchMe: fetchMe,
 		fetchUserById: fetchUserById,
 		fetchUsers: fetchUsers,
 		fetchUserEvents: fetchUserEvents

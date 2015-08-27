@@ -15,40 +15,48 @@
 
 		var group = req.body;
 
-		group.members = _.uniq( group.members, function(member){
-			return member.facebook_id;
-		});
+		function checkNamePattern( val, onError ){
+			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{1,}$/i.test(val.name) )
+				return onError("Name bad pattern", "name", val.name, { err_id: "name_bad_pattern" });
 
+			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{4,20}$/i.test(val.name) )
+				return onError("Name bad length", "name", val.name, { err_id: "name_bad_length", min: 4, max: 20 });
+		};
 
-		var checkPicture 				= nv.isObject()
-			.withRequired('img_id'		, nv.isString())
-			.withRequired('img_version'	, nv.isString())
-			.withRequired('img_place'	, nv.isInteger({ min: 0, max: 5 }))
-			.withRequired('is_main'		, nv.isBoolean())
-			.withRequired('hashtag'		, nv.isString());
+		function checkMessagePattern( val, onError ){
+			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{1,}$/i.test(val.message) )
+				return onError("Message bad pattern", "message", val.message, { err_id: "message_bad_pattern"});
 
-		var checkMember  				= nv.isObject()
-			.withRequired('facebook_id'	, nv.isString({ regex: /^\d{10,}$/ }))
-			.withRequired('age'			, nv.isInteger({ min: 18, max: 78 }))
-			.withRequired('name'		, nv.isString({ regex: /^[A-Za-z0-9\s\u00C0-\u017F]{4,20}$/ }))
-			.withRequired('gender'		, nv.isString({ expected: ['male','female'] }))
-			.withRequired('pictures'	, nv.isArray( checkPicture, { min: 1, max: 5 }))
+			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{4,50}$/i.test(val.message) )
+				return onError("Message bad length", "message", val.message, { err_id: "message_bad_length", min: 4, max: 50 });
+		};
 
-		var checkGroup   				= nv.isObject()
-			.withRequired('name'   		, nv.isString({ regex: /^[A-Za-z0-9\s\u00C0-\u017F]{4,20}$/ }) )
-			.withRequired('message'		, nv.isString({ regex: /^[A-Za-z0-9\s\u00C0-\u017F]{4,20}$/ }) )
-			.withRequired('members'		, nv.isArray( checkMember, { min: 2, max: 4 }));
+		group.members_facebook_id = _.uniq( group.members_facebook_id );
+		if( group.members_facebook_id.length == 0 ){
+			group.members_facebook_id = null
+		};
 
+		var checkGroup = nv.isObject()
+			.withRequired('name', nv.isString())
+			.withRequired('message', nv.isString())
+			.withRequired('members_facebook_id'	, nv.isArray( nv.isString(), { min: 2, max: 4 }))
+			.withCustom( checkNamePattern )
+			.withCustom( checkMessagePattern )
 
+ 
 		nv.run( checkGroup, group, function( n, errors ){
 
-			if( n != 0 )
-				return res.json( errors ).end();
+			if( n != 0 ){
+				req.app_errors = req.app_errors.concat( errors );
+				return next();
+			}
 
 			checkWithDatabase( req, function( errors, groups ){
 
-				if( errors )
-					return eventUtils.raiseError( _.merge({ res: res }, errors ));
+				if( errors ){
+					req.app_errors = req.app_errors.concat( errors );
+					return next();
+				}
 
 				req.groups = groups;
 				next();
@@ -60,56 +68,52 @@
 		function checkWithDatabase( req, callback ){
 
 			var group = req.body;
-			var facebook_ids = _.pluck( group.members, 'facebook_id');
+			var facebook_ids = group.members_facebook_id;
 			var group_number = facebook_ids.length;
 
 			User.find({ 'facebook_id': { $in: facebook_ids }}, function( err, members ){
 
-				if( err ) return callback({ toClient: "api error", }, null );
+				if( err ) return callback({ message: "api error" }, null );
 
 				if( members.length != group_number )
 					return callback({
-							toClient: 'Error, couldnt find ' + ( group_number - members.length ) + ' members',
-						}, null );
+					message : "Couldn't find " + ( group_number - members.length ) + " members",
+					data    : {
+						err_id		: 'ghost_members',
+						n_sent  	: group_number,
+						n_found 	: members.length,
+						missing_ids : _.difference( facebook_ids, _.pluck( members, 'facebook_id' ) )
+					}}, null );
 
 				Event.findById( req.event_id, function( err, evt ){
 
-					if( err ) return callback({ toClient: "api error", }, null );
+					if( err ) return callback({ message: "api error" }, null );
 
 					if( !evt )
 						return callback({
-							toClient: "L'évènement n'existe pas",
-						}, null );
-					
-					var double_presence_host, doublon_id;
-					group.members.forEach(function( member ){
-						if( _.pluck( evt.hosts, 'facebook_id').indexOf( member.facebook_id ) != -1 ){
-							double_presence_host = true;
-							doublon_id = member.facebook_id;
+							message : "Event doesnt seem to exist",
+							}, null );
+						
+					var err_data = { already_there: [] };
+					group.members_facebook_id.forEach(function( fb_id ){
+						if( _.pluck( evt.hosts, 'facebook_id').indexOf( fb_id ) != -1 ){
+							err_data.already_there.push({ id: fb_id, role: 'host' });
 						}
 					});
 
-					if( double_presence_host )
-						return callback({
-							toClient: "un membre du groupe est déjà présent en tant qu'organisateur",
-							errData: { doublon_id: doublon_id }
-						}, null );
-					
-					var double_presence, doublon_id;
 					var groups = evt.groups;
 						groups.forEach(function( other_group ){
-							group.members.forEach(function( member ){
-								if( _.pluck( other_group.members, 'facebook_id').indexOf( member.facebook_id ) != -1 ){
-									double_presence = true;
-									doublon_id = member.facebook_id;
+							group.members_facebook_id.forEach(function( fb_id ){
+								if( _.pluck( other_group.members, 'facebook_id').indexOf( fb_id ) != -1 ){
+									err_data.already_there.push({ id: fb_id, role: 'attendee' });
 								}
 							});
 						});
 
-					if( double_presence )
+					if( err_data.already_there.length != 0 )
 						return callback({
-							toClient: "un membre du groupe est déjà inscrit dans un autre groupe",
-							errData: { doublon_id: doublon_id }
+							message : "Friends are already in this event",
+							data    : _.merge( err_data, { err_id: "already_there" })
 						}, null );
 
 
@@ -117,6 +121,7 @@
 
 					req.group = group;
 
+					req.users = members;
 					req.group.members = _.pluckMany( members, settings.public_properties.users );
 					req.group.status  = 'pending';
 

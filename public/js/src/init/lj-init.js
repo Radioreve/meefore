@@ -91,7 +91,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		initPusherConnection: function(){
 
-			LJ.pusher = new Pusher('9d9e7859b349d1abe8b2');
+			LJ.pusher = new Pusher('8983555fce2089fc3662', {
+				encrypted: true
+			});
 
 			LJ.pusher.connection.bind('state_change', function( states ) {
 				csl('Pusher state is noww : ' + states.current );
@@ -108,10 +110,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				if( states.current == 'connected' && LJ.state.connected )
 					LJ.fn.say('auth/app', { userId: LJ.user._id }, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
 
-			});
-
-			LJ.pusher.connection.bind('connected', function() {
-				csl('Pusher connexion is initialized');
 			});
 
 			LJ.pusher.connection.bind('disconnected', function(){
@@ -300,9 +298,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			/* Register to Pusher based on users channels */
 			LJ.fn.subscribeToChannels( data.user );
 
-			/* Pusher events handlers | functions come from other modules*/
-			LJ.fn.initChannelListeners();
-			
 			/* Set all app ui elements specific to user session */
 			LJ.fn.initLayout( data.settings );
 
@@ -334,14 +329,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
         subscribeToChannels: function( user ){
         	
+          //registering default channels (me and public);
+        	LJ.subscribed_channels = {};
         	_.keys( user.channels ).forEach(function( channel_key ){
-        		LJ.pusher_channels[ channel_key ] = LJ.pusher.subscribe( LJ.user.channels[ channel_key ]);
+        		LJ.subscribed_channels[ channel_key ] = LJ.pusher.subscribe( LJ.user.channels[ channel_key ]);
         	});
-        	
-        },
-        initChannelListeners: function(){
 
-        	LJ.pusher_channels.public_chan.bind('new event created', LJ.fn.pushNewEvent );
+        	LJ.subscribed_channels.public_chan.bind('new event created', LJ.fn.pushNewEvent );
 
         }
 

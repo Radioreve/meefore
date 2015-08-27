@@ -34,7 +34,7 @@
 		}
 	});
 
-		pusher.trigger('default','refresh-users-conn-states', { onlineUsers: onlineUsers });
+		//pusher.trigger('default','refresh-users-conn-states', { onlineUsers: onlineUsers });
 		//pusher.trigger('admin', 'refresh-users-conn-states-admin', { onlineUsers: onlineUsers });
 
 		var nextwatch = nextwatch_default,

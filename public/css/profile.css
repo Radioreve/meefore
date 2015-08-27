@@ -25,12 +25,12 @@
 }
 
 .row-title .icon {
-   border: 1px solid #BABABA;
+   border: 1px solid #A63535;
    padding: 7px 5px;
    border-radius: 20px;
    position: relative;
-   background-color: #FFFFFF;
-   color: #515151;
+   background-color: #E94F6A;
+   color: #FFFFFF;
    top: 27px;
    cursor: pointer;
    transition: all ease-out .3s;
@@ -44,7 +44,7 @@
 }
 
 .row-title .icon:not(.active):hover {
-   background: #F3F3F3;
+   background: #BB3C53;
 }
 
 .row-body {
@@ -218,7 +218,7 @@
 .row-input {
    display: inline-block;
    /* background-color: white; */
-   padding: 10px 0 10px 13px;
+   padding: 15px 0 10px 13px;
    margin: 5px 0;
    position: relative;
    color: #D6D6D6;
@@ -318,7 +318,7 @@
 }
 
 .row.editing .row-select.modified {
-   background-color: #E4E4E4;
+   background-color: #F2F2F2;
 }
 
 .inspire {

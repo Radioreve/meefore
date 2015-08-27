@@ -31,7 +31,7 @@
     renderEventPreview_Member: function( evt ){
 
       return LJ.fn.renderEventPreview( evt, {
-        request_html: '<button class="theme-btn btn-preview-undo btn-preview btn-requested slow-down-3">Quitter</div>'
+        request_html: '<button class="theme-btn btn-preview-undo btn-preview btn-requested slow-down-3">Demandé!</div>'
       });
 
     },
@@ -142,7 +142,7 @@
       group.members.forEach(function( member ){
 
         var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
-        user_group_html += '<div class="event-accepted-user">'
+        user_group_html += '<div class="event-accepted-user data-status="pending">'
                           + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
                           + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
                           + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
@@ -158,7 +158,7 @@
     },
     renderUsersGroupWithToggle: function( group ){
 
-     var user_group_html = '<div class="event-accepted-users-group">'
+     var user_group_html = '<div class="event-accepted-users-group" data-status="pending">'
                             + '<i class="icon icon-toggle icon-toggle-off"></i>'
                             + '<div class="event-accepted-group-name">' + group.name + '</div>';
 
@@ -200,7 +200,7 @@
                       + '<div class="super-centered event-accepted-notification-message">'
                         + 'Votre évènement a bien été créé' 
                         + '<br>'
-                        + 'En attendant que d\'autres membres demandent à venir faire la fête avec vous,'
+                        + 'En attendant que d\'autres membres demandent à rejoindre votre before,'
                         + 'vous pouvez discuter avec les autres organisateurs'
                       + '</div>'
                     + '</div>'
@@ -255,11 +255,11 @@
 
         return html;
     },
-    renderEventRequestIn: function( friends ){
+    renderEventRequestIn: function( event_id ){
 
       var html = [
 
-            '<div id="requestIn">',
+            '<div id="requestIn" data-eventid="'+event_id+'">',
                 '<div class="row-input row-input-lg">',
                   '<div class="modal-title">Demande de participation </div>',
                 '</div>',
@@ -277,7 +277,7 @@
                 '</div>',
                 '<div class="row-buttons visible">',
                   '<button class="theme-btn btn-large btn-cancel right">Annuler</button>',
-                  '<button class="theme-btn btn-large btn-validate right">Créer un before</button>',
+                  '<button class="theme-btn btn-large btn-validate right">Rejoindre ce before</button>',
                 '</div>', 
             '</div>'
 

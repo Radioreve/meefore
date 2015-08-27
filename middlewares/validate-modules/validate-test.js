@@ -15,8 +15,10 @@ var nv = require('node-validator');
 
 		nv.run( checkTest, req.body, function( n, errors ){
 
-			if( n != 0 )
-				return res.json( errors ).end();
+			if( n != 0 ){
+				req.app_errors = req.app_errors.concat( errors );
+				return next();
+			}
 
 			req.event_id = req.params.event_id
 			next();

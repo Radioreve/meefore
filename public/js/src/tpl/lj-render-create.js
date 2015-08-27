@@ -52,6 +52,11 @@
                           +'<input id="cr-before-place" type="text" placeholder="Quel quartier?">'
                         +'</div>'
 
+                        +'<div class="row-input row-input-lg etiquette row-create-party-place">'
+                          +'<label class="label label-lg" for="cr-party-place">Soirée prévue</label>'
+                          +'<input id="cr-party-place" type="text" placeholder="Après le before, on enchaîne où ?">'
+                        +'</div>'
+
                         +'<div class="row-input row-input-lg etiquette row-create-ambiance">'
                           +'<label class="label label-lg" for="cr-ambiance">Ambiance</label>'
                           +'<input class"need-sanitize" id="cr-ambiance" type="text" placeholder="Hashtag ton before ( 5 max )">'
@@ -71,11 +76,6 @@
                           +'</div>'
                         +'</div>'
 
-                        +'<div class="row-input row-input-lg etiquette row-create-party-place">'
-                          +'<label class="label label-lg" for="cr-party-place">Soirée prévue</label>'
-                          +'<input id="cr-party-place" type="text" placeholder="Après le before, on enchaîne où ?">'
-                          //+'<div class="row-select-description etiquette">Aide nous à connaître ton état d\'esprit</div>'
-                        +'</div>'
 
                         +'<div class="row-buttons visible">'
                             +'<button class="theme-btn btn-large btn-cancel right">Annuler</button>'

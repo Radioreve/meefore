@@ -19,7 +19,7 @@
    position: absolute;
    top: 0;
    right: 10px;
-   width: 10px;
+   width: 6px;
    z-index: 1000;
 }
 
@@ -47,8 +47,8 @@
 }
  
 .jspDrag {
-   background: #FEFEFE;
-   border: 1px solid #E5E5E5;
+   background: #FFB6C2;
+   border: 1px solid #F795A6;
    position: relative;
    top: 0;
    left: 0;

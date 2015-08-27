@@ -8,7 +8,6 @@
 
 		return function( req, res, next ){
 
-			var cookies = req.cookies;
 			var token = req.headers['x-access-token'];
 
 			console.log('Authenticating for this route...');

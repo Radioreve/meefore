@@ -8,6 +8,22 @@
 			$input.css({ width: width+'px' });
 
 		},
+		fetchMe: function(){
+
+			LJ.fn.api('get','me', { 
+				beforeSend: function(req){ 
+					req.setRequestHeader('x-access-token', LJ.accessToken );
+				}
+			}, function( err, me ){
+
+				if( err )
+					return console.error('Couldnt refresh profile state : ' + err );
+
+				LJ.user = me;
+
+			});
+
+		},
 		getMaxWidthLabel: function(container){
 
 			var labels = $(container).find('label');
@@ -18,7 +34,7 @@
 			});
 
 			var max = Math.max.apply( null, widthArray );
-			console.log('Maximum label width : ' + max );
+			//console.log('Maximum label width : ' + max );
 			return max;
 		},
 		adjustAllChatPanes: function(){
@@ -94,15 +110,20 @@
 			var $input = $(options.inp);
 			var $html = $(options.html);
 
+			// fucking important!
+			$input.removeClass('autocompleted');
+
 			$html.hide().insertBefore( $input );
 			options.class_names && $html.addClass( options.class_names );
 
 			var item_id = $html.attr('data-id');
 			if( $('.rem-click[data-id="'+item_id+'"]').length > 1 ){
+				//console.log('Removing due to same id');
 				return $html.remove();
 			}
 
 			if( $html.siblings('.rem-click').length > options.max - 1){
+				//console.log('Removing due to overflow');
 				return $html.remove();
 			}
 
@@ -334,7 +355,7 @@
 		},
 		defaultApiCompleteCallback: function(){
 
-			console.log('api call completed');
+			// console.log('api call completed');
 		},
 		handleServerSuccess: function( msg, selector ){
 

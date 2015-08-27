@@ -1,9 +1,12 @@
 
+	var errHandler = require('./errorHandler');
 
-	var validate = function( types ){
+	var validate = function( namespace, types ){
 
 		var types = Array.isArray( types ) ? types : [types];
-		var middlewares = [];
+
+		var middlewares = [ setNamespace(namespace), errHandler.stage ];
+
 		var matches_files = {
 			create_event : 'validate-events',
 			event_id     : 'validate-event-id',
@@ -20,8 +23,18 @@
 			} 
 		});
 
+		/* Will inspect the req.app_errors object and raise error if necessary */
+		middlewares.push( errHandler.handle );
+
 		return middlewares;
 
+	};
+
+	function setNamespace(namespace){
+		return function(req, res, next){
+			req.app_namespace = namespace || 'void_namespace';
+			return next();
+		}
 	};
 
 

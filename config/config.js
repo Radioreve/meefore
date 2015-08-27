@@ -25,9 +25,9 @@
 			client_secret : "4525e27d90dcc73f716dae4fa36c6885"
 		}
 		, pusher: {
-			appId     : '114856',
-			key       : '9d9e7859b349d1abe8b2',
-			secret    : '281887cb54b67a43ae40'
+			appId     : '108998',
+			key       : '8983555fce2089fc3662',
+			secret    : 'be48165148813a886ae3'
 		}
 		, sendgrid: {
 			api_user  : 'Radioreve',

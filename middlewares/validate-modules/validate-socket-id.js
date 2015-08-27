@@ -10,9 +10,11 @@
 
 		nv.run( checkSocketId, data, function( n, errors ){
 
-			if( n != 0 )
-				return res.json( errors ).end();
-
+			if( n != 0 ){
+				req.app_errors = req.app_errors.concat( errors );
+				return next();
+			}
+			
 			req.socket_id = req.body.socket_id;
 			delete req.body.socket_id;
 			next();

@@ -41,7 +41,7 @@ i.icon-create {
    font-size: 10px;
    border: none;
    cursor: pointer;
-   background: #424242;
+   background: #555;
    border-radius: 1px;
    position: absolute;
    right: 8px;
@@ -139,6 +139,7 @@ color: #434343;
   position: relative;
   text-align: left;
   background: #FEFEFE!important;
+  padding-bottom: 15px;
 }
 .row-events-filters-group {
   text-align: left;
@@ -176,7 +177,7 @@ display: inline-block;}
 
 
 .btn-request-in:hover, .btn-create-event:hover {
-  opacity: .9;
+  opacity: .8;
 }
 .btn-preview {
   text-transform: uppercase;
@@ -217,10 +218,11 @@ display: inline-block;}
 display: inline-block;vertical-align: middle;font-size: 12px;background: none;/* border: 1px solid; */border-bottom: 3px solid #DFDFDF;/* border-bottom: 2px solid #eee; *//* border-right: 1px solid #eee; */color: #878787;padding: 10px 20px;position: relative;z-index: 1;cursor: pointer;margin: 0 5px;}
 
 .event-accepted-tabview.active {
-  background: #eee;
+  background: #E94F6A;
+  color: white;
   /* border-right: 1px solid #FCFCFC; */
   /* border-bottom: 2px solid #FCFCFC; */
-  border-bottom: 3px solid #D5D5D5;
+  border-bottom: 3px solid #B03C50;
   text-shadow: 0 0 1px #DBDBDB;
 }
 
@@ -337,6 +339,8 @@ margin-right: 20px;margin-left: 0;}
   margin-right: 30px;
   float: right;
   text-align: right;
+  /* background: #FFF1F3; */
+  /* color: #A20B26; */
 }
 .event-accepted-user-name.female {
   /* background: rgb(255, 241, 243); */
@@ -346,8 +350,7 @@ margin-right: 20px;margin-left: 0;}
   /* background: rgb(247, 241, 255); */
   /* color: #221E51; */
 }
-.row-events-accepted-inview.validating .event-accepted-chat-typing,
-.row-events-accepted-inview.validating .event-accepted-users-group:not(:first-of-type) .event-accepted-user
+.row-events-accepted-inview.validating .event-accepted-chat-typing, .row-events-accepted-inview.validating .event-accepted-users-group:not(:first-of-type) .event-accepted-user, .event-accepted-user[data-status="pending"]
 {
   opacity: .4;
 }
@@ -361,7 +364,7 @@ position: absolute;bottom: 0;left: 0;/* background: #FCFCFC; */border-top: 1px s
 position: relative;z-index: 2;background: #FCFCFC;padding: 6px 0 4px 10px;border-bottom: 1px solid #eee;width: 89%;color: #525252;font-family: 'Karla';font-size: 13px;}
 .event-accepted-chat-typing button {
 
-float: right;background: #3F3F3F;border: 1px solid #FFFFFF;border-radius: 0px;color: white;}
+float: right;background: #E94F6A;border: 1px solid #E94F6A;border-bottom: 2px solid #BD4056;border-radius: 0px;color: white;}
 
 
 

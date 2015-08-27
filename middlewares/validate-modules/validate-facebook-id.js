@@ -7,8 +7,10 @@
 
 		nv.run( checkId, req.params.facebook_id, function( n, errors ){
 
-			if( n != 0 )
-				return res.json( errors ).end();
+			if( n != 0 ){
+				req.app_errors.push( errors );
+				return next();
+			}
 
 			req.facebook_id = req.params.facebook_id
 			next();

@@ -207,7 +207,9 @@
 			//document.cookie = 'token='+data.accessToken;
 
 			LJ.fn.say('auth/app', {}, {
-				beforeSend: function(){ delog('Fetching user and configuration'); },
+				beforeSend: function(){ 
+					delog('Fetching user and configuration');
+				},
 				success: LJ.fn.handleFetchUserAndConfigurationSuccess 
 			});
 

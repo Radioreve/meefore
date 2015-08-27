@@ -39,17 +39,17 @@
 							indexTarget = $(menuItem).offset().left;
 
 						if( indexActive > indexTarget ){
-							var myWayOut = 'transition.slideRightOut' ; //{opacity: [0, 1], translateX:[15,0 ] },
-								myWayIn = 'transition.slideLeftIn' ; //{opacity: [1, 0], translateX:[0,-5 ] };
+							var myWayOut = LJ.ui.slideRightOutVeryLight || 'transition.slideRightOut' ; 
+								myWayIn =  LJ.ui.slideLeftInLight || 'transition.slideLeftIn' ; 
 						} else {
-							var myWayOut = 'transition.slideLeftOut' ;// {opacity: [0, 1], translateX:[-15,0 ] },
-								myWayIn = 'transition.slideRightIn' ; //{opacity: [1, 0], translateX:[0, 5] };
+							var myWayOut = LJ.ui.slideLeftOutVeryLight || 'transition.slideLeftOut' ; 
+								myWayIn =  LJ.ui.slideRightInLight || 'transition.slideRightIn' ; 
 						}
 
 						$('.menu-item-active').removeClass('menu-item-active')
 											  .find('span.underlay')
 											  .velocity({ opacity: [0, 1], translateY: [-2, 0]   },
-											   { duration: 300,
+											   { duration: 250,
 											   complete: function(){
 											   	$(menuItem).addClass('menu-item-active')
 														   .find('span.underlay')
@@ -126,8 +126,9 @@
 
 				$prev.velocity( options.myWayOut || 'transition.fadeOut', {
 					duration: options.duration || 0 || 400,
+					display: 'none',
 					complete: function(){
-						$prev.removeClass( prev );
+						$prev.removeClass( prev )
 						$(content).addClass( prev )
 							   .velocity( options.myWayIn || 'transition.fadeIn', {
 							   	duration: 0 || 800,
@@ -200,7 +201,8 @@
 					duration: duration,
 					complete: afterTheScene
 				});
-		
+
+
 
 		},
 		toastMsg: function( msg, status, fixed ){
@@ -219,6 +221,12 @@
 				    toastStatus = '.toastSuccess',
 					tpl = LJ.tpl.toastSuccess;
 			}
+
+			if( typeof status == 'undefined' ){
+				console.log('undefined');
+				toastStatus = '.toastInfo'; 
+				tpl = LJ.tpl.toastInfo;
+			}			
 
 			if( $( '.toast' ).length === 0 )
 			{
@@ -252,6 +260,18 @@
 			{
 				LJ.msgQueue.push({ msg: msg, type: status });
 			}
+		},
+		replaceModalTitle: function( message, classes ){
+
+			$('.modal-title').velocity( LJ.ui.slideUpOutLight, {
+				complete: function(){
+					$(this).text( message )
+						.addClass( classes && classes.join(' ') )
+						.velocity( LJ.ui.slideDownInLight );
+				}
+			});
+							 
+
 		},
 		showLoaders: function(){
 
