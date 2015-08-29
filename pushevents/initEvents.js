@@ -26,7 +26,7 @@
 
 	var fetchUserAndConfiguration = function( req, res ){
 
-		var	userId = req.body.userId;
+		var	userId = req.user_id;
 		
 		User.findById( userId, {}, function( err, user ){
 

@@ -13,13 +13,17 @@
 
 		console.log('Validating request in');
 
-		var group = req.body;
+		var group = {
+			name 				: req.body.name,
+			message 			: req.body.message,
+			members_facebook_id : req.body.members_facebook_id
+		};
 
 		function checkNamePattern( val, onError ){
-			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{1,}$/i.test(val.name) )
+			if( !/^[a-z0-9\&!-_'?\s\u00C0-\u017F]{1,}$/i.test(val.name) )
 				return onError("Name bad pattern", "name", val.name, { err_id: "name_bad_pattern" });
 
-			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{4,20}$/i.test(val.name) )
+			if( !/^[a-z0-9\&!'?\s\u00C0-\u017F]{4,27}$/i.test(val.name) )
 				return onError("Name bad length", "name", val.name, { err_id: "name_bad_length", min: 4, max: 20 });
 		};
 
@@ -124,6 +128,7 @@
 					req.users = members;
 					req.group.members = _.pluckMany( members, settings.public_properties.users );
 					req.group.status  = 'pending';
+					req.group.group_id = evt.makeGroupId( req.group.members_facebook_id );
 
 					req.groups = evt.groups;
 					req.groups.push( req.group );

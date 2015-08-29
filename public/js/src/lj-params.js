@@ -26,6 +26,16 @@
 		events: [],
 		users: []
 	},
+    bot_profile: {
+        name        : "Meefore",
+        facebook_id : "1337",
+        pictures    : [{ 
+            img_id        : "logo_black_on_white",
+            img_version   : "1438073167",
+            is_main       : true
+        }] 
+
+    },
 	cloudinary:{
 		uploadParams: { cloud_name:"radioreve", api_key:"835413516756943" },
 
@@ -109,9 +119,6 @@
 			},
 			facebook_event: {
 				url: 'http://res.cloudinary.com/radioreve/image/upload/v1440178906/bar.png'
-			},
-			transparent: {
-				url: 'http://res.cloudinary.com/radioreve/image/upload/v1440248883/meefore-marker-white-on-black-transparent2_o8nqhf.png'
 			}
 		},
         curtain: {

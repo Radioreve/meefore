@@ -84,9 +84,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.fn.handleDomEvents_Landing();
 			LJ.fn.handleDomEvents_UI();
 			LJ.fn.handleDomEvents_Profile();
-			LJ.fn.handleDomEvents_Create();
 			LJ.fn.handleDomEvents_Search();
 			LJ.fn.handleDomEvents_Settings();
+
+      LJ.fn.handleDomEventsChat();
+      LJ.fn.handleDomEventsCreate();
+      LJ.fn.handleDomEventsFilters();
+      LJ.fn.handleDomEventsGroups();
+      LJ.fn.handleDomEventsPreview();
+      LJ.fn.handleDomEventsTabview();
+      LJ.fn.handleDomEventsMap();
+      LJ.fn.handleDomEventsSettings();
 
 		},
 		initPusherConnection: function(){
@@ -336,6 +344,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	});
 
         	LJ.subscribed_channels.public_chan.bind('new event created', LJ.fn.pushNewEvent );
+          LJ.subscribed_channels.public_chan.bind('new event status' , LJ.fn.pushNewEventStatus );
 
         }
 

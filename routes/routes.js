@@ -55,7 +55,10 @@
 	    }), mdw.email.subscribeMailchimpUser, signEvents.handleFacebookAuth);
 	    app.post('/auth/app', mdw.auth.authenticate(['standard']), mdw.facebook.fetchFacebookLongLivedToken('app_id'), initEvents.fetchUserAndConfiguration);
 
-	    //Events relatifs au profile utilisateur
+
+
+	   	//---------------------------------------------------------------------------------------
+	   	//Routes about user
 	    app.post('/me/update-profile', profileEvents.updateProfile);
 	    app.post('/me/update-picture', profileEvents.updatePicture);
 	    app.post('/me/update-pictures', profileEvents.updatePictures);
@@ -66,25 +69,42 @@
 	        force_presence: true
 	    }), mdw.email.updateMailchimpUser, settingsEvents.updateSettingsMailinglists);
 
-	    //Rest api events
-	    app.all(	'/api/v1/events/:event_id/*', mdw.validate('events',['event_id']));
-	    app.get(	'/api/v1/events/:event_id', api.events.fetchEventById);
-	    app.patch(	'/api/v1/events/:event_id', api.events.updateEvent);
-	    app.patch(	'/api/v1/events/:event_id/request', mdw.validate('request_event', ['socket_id', 'request'] ), api.events.request);
-	    app.get(	'/api/v1/events/:event_id/groups', api.events.fetchGroups);
-	    app.get(	'/api/v1/events', api.events.fetchEvents);
-	    app.post(	'/api/v1/events', mdw.validate('create_event', ['socket_id','create_event']), api.events.createEvent);
+	    //---------------------------------------------------------------------------------------
 
-	    //Rest api tests
-	    //app.post('/api/v1/test/:user_id', api.tests.test );
-	    app.post('/api/v1/test/validate/:event_id/*', mdw.validate('test','event_id'));
-	    app.post('/api/v1/test/validate/:event_id/request', mdw.validate('test','request'), api.tests.testValidate);
-
-	    //Rest api users
-	    app.all('/api/v1/users/:facebook_id/*', mdw.validate('fetch_init_data', ['facebook_id']));
+// USERS
+	    app.all('/api/v1/users/:facebook_id/*', mdw.validate('fetch_init_data', ['fid_params']));
 	    app.get('/api/v1/users/:user_id', api.users.fetchUserById);
 	    app.get('/api/v1/users', api.users.fetchUsers);
 	    app.get('/api/v1/users/:facebook_id/events', api.users.fetchUserEvents);
+
+
+
+// EVENTS
+	    // Make sure all requests like that have a valid event id field in req.params.event_id
+	    app.all(	'/api/v1/events/:event_id/*', mdw.validate('event_id', ['eid_params']));
+
+	    // Make sure all post and patch requests are done by clients with a valid token
+	    app.post(	'/api/v1/events/*', 		  mdw.auth.authenticate(['test_mode','standard']) );
+	    app.patch(	'/api/v1/events/*', 		  mdw.auth.authenticate(['test_mode','standard']) );
+
+	    // Routes about events
+	    app.get(	'/api/v1/events/:event_id', api.events.fetchEventById );
+	    app.patch(	'/api/v1/events/:event_id', api.events.updateEvent );
+	    app.patch(  '/api/v1/events/:event_id/status', mdw.validate('event_status', ['socket_id', 'event_status']), api.events.changeEventStatus );
+	    app.patch(	'/api/v1/events/:event_id/request', mdw.validate('request_event', ['socket_id', 'request'] ), api.events.request );
+	    app.get(	'/api/v1/events/:event_id/groups', api.events.fetchGroups );
+	    app.patch(  '/api/v1/events/:event_id/groups/:group_id/status', mdw.validate('group_status', ['socket_id', 'group_status']), api.events.changeGroupStatus );
+	    app.get(	'/api/v1/events', api.events.fetchEvents );
+	    app.post(	'/api/v1/events', mdw.validate('create_event', ['socket_id','create_event']), api.events.createEvent );
+
+	    //---------------------------------------------------------------------------------------
+
+
+	    //Rest api tests
+	    //app.post('/api/v1/test/:user_id', api.tests.test );
+	    app.post('/api/v1/test/validate/:event_id/*', mdw.validate('test','eid_params'));
+	    app.post('/api/v1/test/validate/:event_id/request', mdw.validate('test','request'), api.tests.testValidate);
+
 
 	    //Rest api me
 	    app.get('/api/v1/me', mdw.auth.authenticate(['standard']), api.users.fetchMe );
@@ -118,57 +138,15 @@
 	    	res.json({ msg: "validaton passed", data: res.event_data });;
 	    });
 
+	    app.get('/testme', function(req,res){
+	    	var Event = require('../models/EventModel');
+	    	Event.find({},function(err, events){
 
-	    app.post('/test/app', mdw.pop.populateUser({
-	        auth_type: 'app_id'
-	    }), function(req, res) {
-	        var user = req.body.user;
-	        if (!user)
-	            return res.json({
-	                "msg": "no user"
-	            });
-	        return res.json({
-	            user: user
-	        });
-	    });
-
-	    app.post('/test/facebook', mdw.pop.populateUser({
-	        auth_type: 'facebook_id'
-	    }), function(req, res) {
-	        var user = req.body.user;
-	        if (!user)
-	            return res.json({
-	                "msg": "no user"
-	            });
-	        return res.json({
-	            user: user
-	        });
-	    });
-
-	    app.post('/test', mdw.pop.populateUser(), function(req, res) {
-	        var user = req.body.user;
-	        if (!user)
-	            return res.json({
-	                "msg": "no user"
-	            });
-	        return res.json({
-	            user: user
-	        });
-	    });
-
-	    app.post('/test/force', mdw.pop.populateUser({
-	        force_presence: true
-	    }), function(req, res) {
-	        var user = req.body.user;
-	        if (!user)
-	            return res.json({
-	                "msg": "no user"
-	            });
-	        return res.json({
-	            user: user
-	        });
-	    });
-
+	    		res.json({ 
+	    			group_ids: events[0].getGroupIds()
+	    		}).end();
+	    	});
+	    });	
 
 
 	};

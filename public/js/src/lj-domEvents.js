@@ -7,7 +7,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		handleDomEvents_Globals: function(){
 
 
-
 			LJ.$body.on('mouseenter', '.eventItemWrap', function(){
 				$(this).addClass('mouseover');
 			});

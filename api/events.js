@@ -98,9 +98,10 @@
 				return eventUtils.raiseError({ err: err, res: res, toClient: "api error fetching event" });
 
 			var event_to_push = {
-				event_id  : req.event_id,
-				status    : 'pending',
-				begins_at : evt.begins_at
+				event_id    : req.event_id,
+				status      : 'pending',
+				begins_at   : evt.begins_at,
+				accepted_at : null
 			};
 			/* Mise à jour de l'event array dans chaque user impliqué */
 			User
@@ -115,16 +116,87 @@
 
 						eventUtils.sendSuccess( res, evt );
 
+						var data = {
+							evt   : evt,
+							group : req.group 
+						};
 						/* Envoyer une notification aux hosts, et aux users déja présent */
-						pusher.trigger( req.event_id, 'new request', { event_id: req.event_id, group: req.group }, req.socket_id );
+						pusher.trigger( req.event_id, 'new request', data, req.socket_id );
 
 						/* Envoyer une notification aux amis au courant de rien à priori */
 						req.users.forEach(function(user){
-							pusher.trigger( user.channels.me, 'new request', { event_id: req.event_id, group: req.group }, req.socket_id );
+							pusher.trigger( user.channels.me, 'new request', data, req.socket_id );
 						});	
 
 					});
 				});
+	};
+
+	var changeEventStatus = function( req, res ){
+
+		var status = req.event_status;
+		var evt    = req.evt;
+
+		console.log('Changing event status, new status : ' + status + ' for event: ' + req.event_id );
+
+		evt.status = status
+		evt.save(function( err, evt ){
+
+			if( err )
+				return eventUtils.raiseError({
+				 err: err,
+				 res: res,
+				 toClient: "api error"
+			});
+
+			eventUtils.sendSuccess( res, evt );
+			pusher.trigger('app', 'new event status', evt, req.socket_id );
+
+		});
+
+
+	};
+
+	var changeGroupStatus = function( req, res ){
+			
+		console.log('Changing group status, new status : ' + req.group_status );
+
+		var evt = req.evt;
+		var groups = evt.groups;
+
+		/* Find the current group in event, and modify it with req.group object */
+		var updated_group = evt.getGroupById( req.group_id );
+
+		groups.forEach(function(group,i){
+			if( group.group_id === updated_group.group_id ){
+				groups[i].status = req.group_status;
+			}
+		});
+
+		evt.groups = groups;
+		evt.markModified('groups');
+
+		evt.save(function( err, evt ){
+
+			if( err || !evt ) 
+				return eventUtils.raiseError({
+					err: err,
+					res: res,
+					toClient: "api error"
+				});
+
+			var group = evt.getGroupById( req.group_id );
+
+			var data = {
+				evt: evt,
+				group: group
+			};
+
+			eventUtils.sendSuccess( res, data );
+			pusher.trigger( evt._id + '', "new group status",  data, req.socket_id );
+
+		});
+
 	};
 
 	var fetchEventById = function( req, res ){
@@ -142,6 +214,8 @@
 	module.exports = {
 		createEvent: createEvent,
 		request: request,
+		changeEventStatus: changeEventStatus,
+		changeGroupStatus: changeGroupStatus,
 		fetchEvents: fetchEvents,
 		fetchEventById: fetchEventById,
 		updateEvent: updateEvent,

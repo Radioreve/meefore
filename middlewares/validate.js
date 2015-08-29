@@ -8,19 +8,26 @@
 		var middlewares = [ setNamespace(namespace), errHandler.stage ];
 
 		var matches_files = {
-			create_event : 'validate-events',
-			event_id     : 'validate-event-id',
-			request      : 'validate-request',
-			facebook_id  : 'validate-facebook-id',
+
+			eid_params   : 'validate-event-id-params',
+			fid_params   : 'validate-facebook-id-params',
+			fid_body     : 'validate-facebook-id-body',
 			socket_id    : 'validate-socket-id',
+
+			create_event : 'validate-events',
+			request      : 'validate-request',
+			event_status : 'validate-event-status',
+			group_status : 'validate-group-status',
+
 			test         : 'validate-test'
+			
 		};
 
 		var path = './validate-modules/';
 		types.forEach(function( type ){
 			if( matches_files[ type ] ){
 				middlewares.push( require( path + matches_files[ type ] ).check )
-			} 
+			} else { console.log('Couldnt find path for validation module'); }
 		});
 
 		/* Will inspect the req.app_errors object and raise error if necessary */

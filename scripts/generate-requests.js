@@ -14,7 +14,7 @@
 		// Control params // 
 		var max_hosts  	 	= 2;
 		var max_requests 	= flags.get('n');
-		var max_group_size	= 3;
+		var max_group_size	= 2;
 		var app_events      = [];
 
 

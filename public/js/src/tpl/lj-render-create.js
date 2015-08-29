@@ -39,12 +39,12 @@
 
                         +'<div class="row-input row-input-lg etiquette row-create-friends">'
                           +'<label class="label label-lg" for="cr-friends">Organisateurs</label>'
-                          +'<input class="need-sanitize" id="cr-friends" type="text" placeholder="Sélectionne parmis tes amis ( 3 max )">'
+                          +'<input class="" id="cr-friends" type="text" placeholder="Sélectionne parmis tes amis ( 3 max )">'
                         +'</div>'
 
                         +'<div class="row-input row-input-md etiquette row-create-date">'
                           +'<label class="label " for="cr-date">Date du before</label>'
-                          +'<input class="need-sanitize" readonly data-select="datepicker" id="cr-date" type="text" placeholder="Quel jour?">'
+                          +'<input class="" readonly data-select="datepicker" id="cr-date" type="text" placeholder="Quel jour?">'
                         +'</div>'
 
                         +'<div class="row-input row-input-md etiquette row-create-before-place">'
@@ -59,7 +59,7 @@
 
                         +'<div class="row-input row-input-lg etiquette row-create-ambiance">'
                           +'<label class="label label-lg" for="cr-ambiance">Ambiance</label>'
-                          +'<input class"need-sanitize" id="cr-ambiance" type="text" placeholder="Hashtag ton before ( 5 max )">'
+                          +'<input class"" id="cr-ambiance" type="text" placeholder="Hashtag ton before ( 5 max )">'
                         +'</div>'
 
                         +'<div class="row-input row-input-lg etiquette row-create-age">'

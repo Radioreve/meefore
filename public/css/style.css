@@ -1207,12 +1207,7 @@ body > header > h5 {
 .theme-btn {
    font-family: 'Karla';
    padding: 5px 10px;
-   border: 1px                                                                                                                               
-
-
-
-
-solid #AFAFAF;
+   border: none;
    font-size: 13px;
    outline: none;
    margin: 0 2px;
@@ -1232,7 +1227,7 @@ solid #AFAFAF;
 .btn-validate {
    background-color: #E94F6A;
    color: white;
-   border: 1px                                                                                                                                                                                                                                                                                                                    solid   #C4465C;
+   border: none;
 }
 
 .btn-validating {
@@ -1518,7 +1513,6 @@ button:hover {
    border: none;
 }
 .btn-preview-undo:hover {
-	background: white;
 }
 
 .u-item {
@@ -1687,7 +1681,7 @@ p {
 }
 
 ::selection {
-   background: rgb(199, 42, 42);
+   background: rgb(245, 89, 116);
    color: white;
 }
 

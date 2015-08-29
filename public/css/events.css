@@ -39,13 +39,13 @@ i.icon-create {
    padding: 11px 3px;
    color: white;
    font-size: 10px;
-   border: none;
    cursor: pointer;
    background: #555;
    border-radius: 1px;
    position: absolute;
    right: 8px;
-   top: 11px;
+   top: 9px;
+   border: none;
 }
 
 .row-main {
@@ -184,7 +184,7 @@ display: inline-block;}
   padding: 9px 15px;
   border-radius: 0;
   background: #3F3F3F;
-  border: 1px solid #2A2A2A;
+  border: none;
   font-size: 10px;
   color: white;
   margin-left: 15px;
@@ -192,16 +192,15 @@ display: inline-block;}
   vertical-align: middle;
 }
 .btn-preview-undo {
-	background: white;
 	font-weight: bolder;
-	color: #CF3636;
-	border: 1px solid transparent;
+	border: none;
+	background: #E94F6A;
 }
 
 .btn-preview-edit {
 	background: #E94F6A;
 	color: white;
-	border: 1px solid transparent;
+	border: none;
 }
 .btn-request-in-disabled {
   opacity: .7;
@@ -224,6 +223,11 @@ display: inline-block;vertical-align: middle;font-size: 12px;background: none;/*
   /* border-bottom: 2px solid #FCFCFC; */
   border-bottom: 3px solid #B03C50;
   text-shadow: 0 0 1px #DBDBDB;
+}
+.event-accepted-tabview:not(.active):hover {
+  background: #FFE5E9;
+  border-color: #F6D1D7;
+  color: #941A2F;
 }
 
 /* 
@@ -257,7 +261,11 @@ width: 30%;display: inline-block;padding: 8px!important;outline: none;height: 10
 }
 .event-accepted-users-group {
 
-position: relative;margin: 0 10px;}
+position: relative;margin: 0 10px 10px 10px;}
+
+.event-accepted-users-group:hover .event-accepted-group-name {
+  color: #E94F6A;
+}
 
 .event-accepted-notification-message {
   font-size: 14px;
@@ -275,18 +283,34 @@ position: relative;margin: 0 10px;}
 .event-accepted-group-actions {
 cursor:pointer;
 text-align: right;font-size: 10px;color: #BCBCBC;}
-.event-accepted-users-group .icon-toggle{
+.event-accepted-users-group .icon{
 cursor:pointer;
-font-size: 17px;color: #BEBEBE;position: absolute;top: 1.5px;display: inline-block;}
+font-size: 17px;color: #BEBEBE;position: absolute;top: 1.5px;display: inline-block;transition: all ease-out .3s;color: #999999;}
+.event-accepted-users-group .icon:not(.active):hover{
+  opacity: .65;
+}
+.event-accepted-users-group .icon.active{
+  opacity: .35;
+}
+.event-accepted-inview .icon-event-settings{
+  font-size:14px;
+  padding: 4px;
+}
+.event-accepted-inview .icon-event-settings:not(.active):hover{
+  background: #FCFCFC;
+} 
+.event-accepted-inview .icon-event-settings.active{
+  background: #FCFCFC;
+}
 .event-accepted-group-name {
 
-color: #ccc;text-transform: uppercase;text-align: right;font-size: 12px;padding: 7px 8px 0 0;}
+color: #ccc;text-transform: uppercase;text-align: right;font-size: 12px;padding: 7px 8px 0 0;transition: all ease-out .15s;}
 .event-accepted-user {
 
-margin: 3px 0;font-family: 'Karla';padding: 1px;background: #FCFCFC;border-bottom: 1px solid #eee;}
+margin: 3px 0;font-family: 'Karla';padding: 1px;background: #FCFCFC;border-bottom: 1px solid #eee;transition: all ease-out .3s;}
 .event-accepted-user-name {
 
-letter-spacing: -.5px;margin-left: 8px;padding: 8px 10px;background: #F7F7F7;border-radius: 3px;font-size: 12px;font-family: 'Lato';}
+letter-spacing: -.5px;margin-left: 8px;padding: 8px 10px;background: #F7F7F7;border-radius: 3px;font-size: 12px;font-family: 'Lato';cursor: default;border-bottom: 1px solid #eee;}
 .event-accepted-user-picture {
 
 }
@@ -298,7 +322,7 @@ background: white;padding: 2px;position: relative;top: 1px;}
 color: #292929;font-size: 15px;font-family: 'Gochi hand';margin: 0 9px;}
 .event-accepted-user-hashtag {
 
-float: right;font-size: 13px;background: #F7F7F7;color: grey;padding: 7px 12px;border-radius: 2px;margin: 8px 7px 0 0;}
+float: right;font-size: 12px;background: #F7F7F7;color: grey;padding: 7px 12px;border-radius: 3px;margin: 9px 7px 0 0;cursor: default;border-bottom: 1px solid #eee;}
 .event-accepted-chat {
 
 width: 67%;height: 100%;position: relative;}
@@ -308,6 +332,9 @@ height: 80%;background: #FFFFFF;overflow: overlay;position: relative;outline: no
 .event-accepted-chat-message {
 
 overflow: hidden;padding: 0px 20px;position: relative;margin: 8px 0;}
+.event-accepted-chat-message.admin .event-accepted-chat-text {
+  color: #B9B9B9;
+}
 .event-accepted-chat-message img {
 position: absolute;bottom: 0px;transform: translateY(-50%);top: 50%;}
 .event-accepted-chat-date {
@@ -350,7 +377,12 @@ margin-right: 20px;margin-left: 0;}
   /* background: rgb(247, 241, 255); */
   /* color: #221E51; */
 }
-.row-events-accepted-inview.validating .event-accepted-chat-typing, .row-events-accepted-inview.validating .event-accepted-users-group:not(:first-of-type) .event-accepted-user, .event-accepted-user[data-status="pending"]
+.row-events-accepted-inview[data-status="pending"] .event-accepted-chat-typing,
+.row-events-accepted-inview[data-status="pending"] .event-accepted-users-group:not(:first-of-type) .event-accepted-user,
+.row-events-accepted-inview[data-status="kicked"] .event-accepted-chat-typing,
+.row-events-accepted-inview[data-status="kicked"] .event-accepted-users-group:not(:first-of-type) .event-accepted-user,
+.event-accepted-users-group[data-status="pending"] .event-accepted-user,
+.event-accepted-users-group[data-status="kicked"] .event-accepted-user
 {
   opacity: .4;
 }
@@ -382,10 +414,62 @@ float: right;background: #E94F6A;border: 1px solid #E94F6A;border-bottom: 2px so
   background:#eee;
 }
 .event-filter.selected {
-  background: #4B4B4B;
+  background: #E94F6A;
   color: white;
 }
 
 .icon-toggle-off ~ .event-accepted-user {
-  opacity: .4;
 }
+
+.event-inview-settings {
+  display: none;
+  position: absolute;
+  top: 52px;
+  left: 100px;
+  font-size: 12px;
+  background: white;
+  z-index: 2000;
+  box-shadow: 0 2px 6px #D0D0D0;
+}
+.event-settings-group {
+
+border-bottom: 1px solid #F4F4F4;padding-bottom: 8px;}
+.event-settings-group:hover .event-settings-group-name{
+  color: #E94F6A;
+}
+.event-settings-group:last-of-type {
+  margin-top:10px;
+  float: right;
+  border-bottom: none;
+  padding-top: 0px;
+  padding-bottom: 0;
+}
+.event-settings-group:last-of-type button {
+ font-size: 10px;
+ border:none;
+
+}
+.event-settings-group-name {
+  display: inline-block;
+  font-size: 13px;
+  font-family: 'Karla';
+  color: #636363;
+  font-weight: bolder;
+  transition: all ease-out .15s;
+}
+.event-settings-group-action {
+  display: inline-block;
+  padding: 9px;
+  border-radius: 2px;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: all ease-out .15s;
+  border-bottom: 1px solid white;
+}
+.event-settings-group-action.active {
+  background: #F8F8F8;
+  border-bottom: 1px solid #eee;
+}
+.event-settings-group-action:not(.active):hover{
+
+background: #FCFCFC;}

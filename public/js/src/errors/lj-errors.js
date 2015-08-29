@@ -37,7 +37,8 @@
 
 			var handlers = {
 				"create_event"  : LJ.fn.handleErrorMessageCreateEvent,
-                "request_event" : LJ.fn.handleErrorMessageRequest
+                "request_event" : LJ.fn.handleErrorMessageRequest,
+                "event_status"  : LJ.fn.handleErrorMessageEventStatus
 
 			};
 
@@ -112,6 +113,13 @@
             };
 
             return LJ.fn.replaceModalTitle( err_id_messages[ err_data.err_id || 'unknown'] );
+
+        },
+        handleErrorMessageEventStatus: function( err_data ){
+
+            LJ.fn.hideLoaders();
+            LJ.fn.toastMsg('Une erreur est survenue', 'error');
+            $('.btn-validating').removeClass('btn-validating');
 
         }
 

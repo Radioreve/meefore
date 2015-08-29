@@ -26,7 +26,15 @@
 
 		console.log('Validating event');
 
-		var evt = req.body;;
+		var evt = {
+			hosts_facebook_id	: req.body.hosts_facebook_id,
+			scheduled_party		: req.body.scheduled_party,
+			address 			: req.body.address,
+			ambiance 			: req.body.ambiance,
+			agerange			: req.body.agerange,
+			mixity				: req.body.mixity,
+			begins_at			: req.body.begins_at
+		};
 
 		function isHostDuplicated( val, onError ){
 			if( val.hosts_facebook_id && _.uniq( val.hosts_facebook_id ).length != val.hosts_facebook_id.length )

@@ -290,9 +290,9 @@
     /* font-style: italic; */
     display: inline-block;
     font-size: 13px;
-    color: #535353;
+    color: #98001B;
     margin-right: 10px;
-    background: #F7F7F7!important;
+    background: #FFF1F3!important;
     padding: 6px!important;
     position: absolute;
     top: 11px;
@@ -306,7 +306,7 @@
 }
 
 .row.editing .row-input:hover label {
-   color: #555;
+   color: #F55974;
 }
 
 .row.editing .row-input {

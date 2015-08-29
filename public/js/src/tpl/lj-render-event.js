@@ -31,14 +31,14 @@
     renderEventPreview_Member: function( evt ){
 
       return LJ.fn.renderEventPreview( evt, {
-        request_html: '<button class="theme-btn btn-preview-undo btn-preview btn-requested slow-down-3">Demandé!</div>'
+        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">Ouvrir</div>'
       });
 
     },
     renderEventPreview_Host: function( evt ){
 
       return LJ.fn.renderEventPreview( evt, {
-        request_html: '<button class="theme-btn btn-preview-edit btn-preview btn-validated slow-down-3">Modifier</div>'
+        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">Ouvrir</div>'
       });
 
     },
@@ -115,9 +115,59 @@
       return img_tag;
 
     },
+    renderEventSettings: function( evt ){
+
+      var settings_options = [];
+      ['open','suspended', 'canceled'].forEach(function( status ){
+        var active = evt.status == status ? 'active' : '';
+        settings_options.push('<div data-status="'+status+'" class="event-settings-group-action '+active+'" >');
+      });
+
+      var settings_html = [
+          '<div class="event-inview-settings etiquette">',
+            '<div class="event-settings-group settings-group-status">',
+              '<div class="event-settings-group-name">Status de l\'évènement</div>',
+              settings_options[0] + 'Ouvert</div>',
+              settings_options[1] + 'Suspendu/Complet</div>',
+              settings_options[2] + 'Annulé</div>',
+            '</div>',
+            '<div class="event-settings-group">',
+              '<button class="theme-btn btn-validate">Mettre à jour</button>',
+              '<button class="theme-btn btn-cancel">Annuler</button>',
+            '</div>',
+          '</div>'
+      ].join('');
+
+      return settings_html;
+
+    },
     renderHostsGroup: function( hosts ){
 
-      var hosts_html = '<div class="event-accepted-users-group"><div class="event-accepted-group-name">Organisateurs</div>';
+      var hosts_html = '<div class="event-accepted-users-group" data-status="hosts">'
+                            + '<div class="event-accepted-group-name">Organisateurs</div>';
+
+      hosts.forEach(function( member ){
+
+      var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
+      hosts_html += '<div class="event-accepted-user">'
+                        + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
+                        + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
+                        + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
+                        + '<div class="event-accepted-user-hashtag">' + member.drink  + '</div>'
+                      + '</div>';
+      });
+
+      hosts_html += '</div>';
+
+      return hosts_html;
+
+    },
+    renderHostsGroupWithCog: function( hosts ){
+
+      var hosts_html = '<div class="event-accepted-users-group" data-status="hosts">'
+                            + '<i class="icon icon-event-settings icon-cog"></i>'
+                            + '<div class="event-accepted-group-name">Organisateurs</div>';
+
       hosts.forEach(function( member ){
 
       var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
@@ -136,13 +186,15 @@
     },
     renderUsersGroup: function( group ){
 
-      var user_group_html = '<div class="event-accepted-users-group">'
+      var group_id = LJ.fn.makeGroupId( _.pluck( group.members, 'facebook_id' ) );
+
+      var user_group_html = '<div class="event-accepted-users-group" data-status="'+group.status+'" data-groupid="'+group_id+'">'
                             + '<div class="event-accepted-group-name">' + group.name + '</div>';
 
       group.members.forEach(function( member ){
 
         var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
-        user_group_html += '<div class="event-accepted-user data-status="pending">'
+        user_group_html += '<div class="event-accepted-user">'
                           + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
                           + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
                           + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
@@ -158,8 +210,12 @@
     },
     renderUsersGroupWithToggle: function( group ){
 
-     var user_group_html = '<div class="event-accepted-users-group" data-status="pending">'
-                            + '<i class="icon icon-toggle icon-toggle-off"></i>'
+     var group_id = LJ.fn.makeGroupId( _.pluck( group.members, 'facebook_id' ) );
+
+     var toggle_mode = group.status == 'accepted' ? 'on' : 'off';
+
+     var user_group_html = '<div class="event-accepted-users-group" data-status="'+group.status+'" data-groupid="'+group_id+'">'
+                            + '<i class="icon icon-toggle icon-toggle-'+toggle_mode+'"></i>'
                             + '<div class="event-accepted-group-name">' + group.name + '</div>';
 
       group.members.forEach(function( member ){
@@ -183,7 +239,7 @@
 
       var html = '', hosts_html = '', groups_html = '';
 
-      var hosts_html = LJ.fn.renderHostsGroup( evt.hosts );
+      var hosts_html = LJ.fn.renderHostsGroupWithCog( evt.hosts );
 
       evt.groups.forEach(function( group ){
         groups_html += LJ.fn.renderUsersGroupWithToggle( group );
@@ -210,6 +266,8 @@
                     + '</div>'  
                   + '</div>'
                 + '</div>'
+                + LJ.fn.renderEventSettings( evt );
+
             + '</div>';
 
         return html;
@@ -223,15 +281,23 @@
     },
     renderEventInview_User: function( evt ){
 
-      var html = '', hosts_html = '', groups_html = '';
+      var html = '', hosts_html = '', groups_html = '', status = '';
 
       var hosts_html = LJ.fn.renderHostsGroup( evt.hosts );
       
       evt.groups.forEach(function( group ){
+
         groups_html += LJ.fn.renderUsersGroup( group );
+
+        if( group.members_facebook_id.indexOf( LJ.user.facebook_id ) != -1 )
+          status = group.status;
+        
       });
 
-      html += '<div data-eventid="' + evt._id + '"class="row-events-accepted-inview validating">'
+      if( status == '' )
+        return console.error('Cant find group status rendering html');
+
+      html += '<div data-eventid="' + evt._id + '" data-status="'+status+'" class="row-events-accepted-inview" >'
                 + '<div class="event-accepted-inview">'
                   + '<div class="event-accepted-users">'
                     + hosts_html

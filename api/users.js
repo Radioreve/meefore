@@ -11,7 +11,7 @@
 	/* get /users/me */
 	var fetchMe = function( req, res ){
 
-		var userId = req.body.userId;
+		var userId = req.user_id;
 
 		if( !userId )
 			return eventUtils.raiseError({ res: res, toClient: "api error" });

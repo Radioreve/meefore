@@ -262,9 +262,6 @@
 			str && $input.val('').attr('placeholder', str);
 
 		},
-		sanitizeCreateInputs: function(){
-			$('#createEvent').find('.need-sanitize:not(.no-sanitize)').val('');
-		},
 		swapNodes: function( a, b ){
 
 		    var aparent = a.parentNode;
@@ -319,6 +316,21 @@
 			FB.api( url, { access_token: access_token }, callback );
 
 		},
+		iHost: function( evt ){
+
+			if( !evt )
+				return console.error('Cant host an event that doesnt exist!');
+
+			return _.pluck( evt.hosts, 'facebook_id' ).indexOf( LJ.user.facebook_id ) != -1 ;
+
+		},
+		iGroup: function( group ){
+
+			if( !group )
+				return console.error('Cant belong to a group that doesnt exist!');
+
+			return group.members_facebook_id.indexOf( LJ.user.facebook_id ) != -1;
+		},
 		api: function( method, url, options, callback ){
 
 			if( !callback && typeof(options) == 'function' ){
@@ -328,7 +340,11 @@
 
 			var call_started = new Date();
 
-			var data = _.merge( options.data || {}, { socket_id: LJ.pusher.connection.socket_id });
+			var data = _.merge( options.data || {}, { 
+				socket_id   : LJ.pusher.connection.socket_id,
+				facebook_id : LJ.user.facebook_id,
+				token       : LJ.accessToken
+			});
 
 			$.ajax({
 				method: method,
@@ -414,6 +430,35 @@
 
         	LJ.fn.addDateToInput('29/08/15');
 
+        },
+        makeGroupId: function( group_ids ){
+
+        	if( !Array.isArray( group_ids ) || group_ids.length < 2 )
+        		return console.error('Cant make group id, not proper array &| length ');
+        	
+        	return group_ids.sort(function( e1, e2 ){ return parseInt(e1) - parseInt(e2) }).join('.');
+
+        },
+        getGroupById: function( evt, group_id ){
+
+        	return  _.find( evt.groups, function(group){ return group.group_id == group_id; });
+
+        },
+        refreshEventStatusOnMap: function( evt ){
+
+        	var marker = _.find( LJ.event_markers, function(el){ return el.id == evt._id; }).marker;
+
+			if( evt.status == "open" ){
+				marker.setOpacity(1);
+				// marker.setIcon( LJ.cloudinary.markers.white_on_black );
+			}
+			
+			if( evt.status == "suspended" ){
+				marker.setOpacity(0.5);
+				// marker.setIcon( LJ.cloudinary.markers.black_on_white );
+			}
+			
         }
+
 
 	});

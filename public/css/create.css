@@ -50,12 +50,12 @@
 
 .ambiance-hashtag {
 	/* font-weight:bolder; */
-   display: inline-block;
-   vertical-align: top;
-   position: relative;
-   color: #C4C4C4;
-   margin: 6px 1px 0 10px;
-   top: 1px;
+	display: inline-block;
+	vertical-align: top;
+	position: relative;
+	color: #E94F6A;
+	margin: 6px 1px 0 10px;
+	top: 1px;
 } 
 
 .item, .friend, .ambiance, .date, .before-place, .party-place, .event-ambiance {
@@ -156,6 +156,11 @@
 .icon-agerange, .icon-mixity {
    color: #ccc;
    margin-right: 6px;
+}
+
+.agerange.selected .icon-agerange,
+.mixity.selected .icon-mixity {
+	color: #E94F6A;
 }
 
 .locality {
