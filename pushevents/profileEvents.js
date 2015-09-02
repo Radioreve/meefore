@@ -248,13 +248,21 @@
 
 	var fetchAndSyncFriends = function( req, res ){
 
-		var userId = req.body.userId,
-			fb_friends_ids = req.body.fb_friends_ids || [];
+			var userId         = req.body.userId;
+			var fb_friends_ids = req.body.fb_friends_ids || [];
 
 		User.find({ $or: [{ _id: userId },{ facebook_id: { $in: fb_friends_ids } }]}, function( err, users ){
 
-			var mySelf = _.find( users, function( el ){ return el._id == userId });
-				mySelf.friends = _.pull( users, mySelf );
+			var mySelf           = _.find( users, function( el ){ return el._id == userId });
+			var friends          = _.pull( users, mySelf );
+			var filtered_friends = [];
+
+				friends.forEach(function(friend){
+					var filtered_friend = {};
+					filtered_friends.push( _.pick( friend, settings.public_properties.users ) );
+				});
+
+				mySelf.friends = filtered_friends;
 				mySelf.save( function( err, mySelf ){
 					if( err )
 						return eventUtils.raiseError({ res: res, toClient: "Something happened, please try again later", toServer: "Error saving to database", err: err });

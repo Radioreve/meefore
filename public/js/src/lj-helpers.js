@@ -246,7 +246,7 @@
 
 			var user = user || LJ.user ;
 			var index = _.findIndex( user.pictures, function( el ){
-				return el.is_main == true;
+				return el.is_main == ( true || "true" );
 			});
 
 			return user.pictures[ index ];
@@ -346,6 +346,8 @@
 				token       : LJ.accessToken
 			});
 
+			console.log(data);
+			
 			$.ajax({
 				method: method,
 				url: '/api/v' + LJ.settings.api_version + '/' + url,
@@ -441,12 +443,12 @@
         },
         getGroupById: function( evt, group_id ){
 
-        	return  _.find( evt.groups, function(group){ return group.group_id == group_id; });
+        	return  _.find( evt.groups, function( group ){ return group.group_id == group_id; });
 
         },
         refreshEventStatusOnMap: function( evt ){
 
-        	var marker = _.find( LJ.event_markers, function(el){ return el.id == evt._id; }).marker;
+        	var marker = _.find( LJ.event_markers, function( el ){ return el.id == evt._id; }).marker;
 
 			if( evt.status == "open" ){
 				marker.setOpacity(1);
@@ -458,6 +460,22 @@
 				// marker.setIcon( LJ.cloudinary.markers.black_on_white );
 			}
 			
+        },
+        filterUser: function( user ){
+        	return _.pick( user, 
+        		[
+        			'facebook_id',
+					'facebook_url', 
+					'signup_date', 
+					'age', 
+					'gender', 
+					'job', 
+					'motto', 
+					'name', 
+					'drink', 
+					'mood', 
+					'pictures'
+        		]);
         }
 
 

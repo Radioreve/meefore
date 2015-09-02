@@ -38,8 +38,8 @@
 			var handlers = {
 				"create_event"  : LJ.fn.handleErrorMessageCreateEvent,
                 "request_event" : LJ.fn.handleErrorMessageRequest,
-                "event_status"  : LJ.fn.handleErrorMessageEventStatus
-
+                "event_status"  : LJ.fn.handleErrorMessageEventStatus,
+                "chat"          : LJ.fn.handleErrorMessageChat
 			};
 
 			return handlers[ namespace ]( err_data );
@@ -103,11 +103,11 @@
             }
 
             var err_id_messages = {
-            	name_bad_pattern    : "Le nom ne peut contenir que chiffres lettres et ponctuation",
+                unknown             : "Une erreur inconnue s'est produite",
+                name_bad_pattern    : "Le nom ne peut contenir que chiffres lettres et ponctuation",
                 message_bad_pattern : "Le message ne peut contenir que chiffres lettres et ponctuation",
                 name_bad_length     : "Le nom doit avoir entre "+ err_data.min+" et "+ err_data.max+" charactères",
                 message_bad_length  : "Le message doit avoir entre "+ err_data.min+" et "+ err_data.max+" charactères",
-                unknown             : "Une erreur inconnue s'est produite",
                 ghost_members       : "Des members sont inconnus de meefore",
                 already_there       : already_there_message
             };
@@ -120,6 +120,19 @@
             LJ.fn.hideLoaders();
             LJ.fn.toastMsg('Une erreur est survenue', 'error');
             $('.btn-validating').removeClass('btn-validating');
+
+        },
+        handleErrorMessageChat: function( err_data ){
+
+            var err_id_messages = {
+                unknown            : "Une erreur inconnue s'est produite",
+                unauthorized_group : "Vous n'êtes pas autorisé à participer à cette discussion!",
+                unauthorized_fetch : "Vous n'êtes pas autorisé à demander les messages de cette discussion",
+                unauthorized_admin : "Vous n'êtes pas autorisé à participer à cette discussion! (admin)",
+                missing_parameter  : "Il manque un paramètre pour envoyer le message"
+            };
+
+            return LJ.fn.toastMsg( err_id_messages[ err_data.err_id ] || err_id_messages["unknown"], "error" );
 
         }
 

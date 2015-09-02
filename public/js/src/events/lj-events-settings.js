@@ -61,8 +61,10 @@
             LJ.fn.hideLoaders();
             LJ.fn.toastMsg("Le statut de l'évènement a été modifié", 'info');
             // close them all, whatever
-            $('.event-inview-settings').velocity( LJ.ui.slideRightOutLight, {display:'none'} )
-                                       .find('.btn-validating').removeClass('btn-validating');
+            $('.row-events-accepted-inview[data-eventid="'+evt._id+'"]')
+                .find('.icon-event-settings').removeClass('active').end()
+                .find('.event-inview-settings').velocity( LJ.ui.slideRightOutLight, {display:'none'} )
+                .find('.btn-validating').removeClass('btn-validating')
 
         },
         changeEventStatus: function( options ){

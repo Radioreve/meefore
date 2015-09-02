@@ -301,6 +301,8 @@ font-size: 17px;color: #BEBEBE;position: absolute;top: 1.5px;display: inline-blo
 } 
 .event-accepted-inview .icon-event-settings.active{
   background: #FCFCFC;
+  opacity: 1;
+  color: #E94F6A;
 }
 .event-accepted-group-name {
 
@@ -330,8 +332,11 @@ width: 67%;height: 100%;position: relative;}
 
 height: 80%;background: #FFFFFF;overflow: overlay;position: relative;outline: none;}
 .event-accepted-chat-message {
-
+transition: all ease-out .2s;
 overflow: hidden;padding: 0px 20px;position: relative;margin: 8px 0;}
+.event-accepted-chat-message.sending {
+  opacity: .5;
+}
 .event-accepted-chat-message.admin .event-accepted-chat-text {
   color: #B9B9B9;
 }
@@ -348,7 +353,7 @@ position: absolute;bottom: 0px;transform: translateY(-50%);top: 50%;}
 }
 .event-accepted-chat-text {
 
-max-width: 370px;display: inline-block;font-size: 13px;font-family: 'Karla';margin-left: 40px;margin-right: 0px;/* background: #FCFCFC; *//* border-bottom: 1px solid #eee; */color: #464646;padding: 10px 10px 10px 10px;border-radius: 4px;position: relative;}
+max-width: 370px;display: inline-block;font-size: 13.5px;font-family: 'Karla';margin-left: 40px;margin-right: 0px;/* background: #FCFCFC; *//* border-bottom: 1px solid #eee; */color: #464646;padding: 10px 10px 10px 10px;border-radius: 4px;position: relative;}
 
 .event-accepted-chat-text.female {
   /* background: rgb(255, 251, 252); */
@@ -398,7 +403,9 @@ position: relative;z-index: 2;background: #FCFCFC;padding: 6px 0 4px 10px;border
 
 float: right;background: #E94F6A;border: 1px solid #E94F6A;border-bottom: 2px solid #BD4056;border-radius: 0px;color: white;}
 
-
+.event-accepted-chat-typing button.active {
+  opacity: .7;
+}
 
 .event-accepted-group-actions:hover {
   text-decoration: underline;

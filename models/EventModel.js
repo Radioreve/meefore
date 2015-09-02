@@ -53,6 +53,18 @@
 
 	});
 
+	EventSchema.statics.getGroupByMemberId = function( member_id ){
+
+		console.log('Calling static...');
+		console.log( this.groups );
+
+		return _.find( this.groups, function(group){
+			console.log(group);
+			return group.members_facebook_id.indexOf( member_id ) != -1;
+		});
+
+	};
+
 	EventSchema.methods.getGroupById = function( group_id ){
 
 		return  _.find( this.groups, function(group){ return group.group_id == group_id; });

@@ -92,6 +92,7 @@
 
             events.forEach(function( evt ){
                 LJ.fn.joinEventChannel( evt );
+                LJ.fn.fetchMyChats( evt );
             });
 
         },

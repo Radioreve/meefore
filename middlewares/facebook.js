@@ -79,18 +79,18 @@
 
 	function fetchLongLivedToken( access_token, callback ){
 
-				var client_id 	  	  = config.facebook.client_id,
-					client_secret 	  = config.facebook.client_secret,
+				var client_id 	  	  = config.facebook[ process.env.NODE_ENV ].client_id,
+					client_secret 	  = config.facebook[ process.env.NODE_ENV ].client_secret,
 					grant_type    	  = "fb_exchange_token",
 					fb_exchange_token = access_token;
 
 				var url =  'https://graph.facebook.com/oauth/access_token?'
 							+ querystring.stringify
 							({ 
-								grant_type: grant_type,
-								client_id: client_id,
-								client_secret: client_secret,
-								fb_exchange_token: fb_exchange_token 
+								grant_type        : grant_type,
+								client_id         : client_id,
+								client_secret     : client_secret,
+								fb_exchange_token : fb_exchange_token 
 							});
 
 				request.get( url, function( err, response, body ){

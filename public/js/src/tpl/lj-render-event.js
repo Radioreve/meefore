@@ -3,17 +3,23 @@
 
 		{
     renderChatLine: function( options ){
+      
+      if( !options )
+          return; 
 
-      var html   = '';
-      var msg    = options.msg;
-      var author = options.author;
-      var me     = author.facebook_id == LJ.user.facebook_id ? 'me' : '';
+      var html        = '';
+      var msg         = options.msg;
+      var name        = options.name;
+      var img_id      = options.img_id;
+      var img_vs      = options.img_vs;
+      var sent_at     = options.sent_at;
+      var facebook_id = options.facebook_id;
+      var me          = facebook_id == LJ.user.facebook_id ? 'me' : '';
 
-      var main_image     = LJ.fn.findMainImage( author );
-      var display_params = _.merge( LJ.cloudinary.events.chat.params, { img_version: main_image.img_version } );
-      var img_tag      = $.cloudinary.image( main_image.img_id, display_params ).prop('outerHTML');
+      var display_params = _.merge( LJ.cloudinary.events.chat.params, { img_version: img_vs } );
+      var img_tag      = $.cloudinary.image( img_id, display_params ).prop('outerHTML');
 
-      html += '<div class="event-accepted-chat-message ' + me + '" data-authorid="' + author.facebook_id + '" >'
+      html += '<div class="event-accepted-chat-message ' + me +'" data-authorid="' + options.facebook_id + '" >'
                   + img_tag
                   + '<div class="event-accepted-chat-text">' + msg + '</div>'
                 + '</div>';
@@ -149,7 +155,7 @@
       hosts.forEach(function( member ){
 
       var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
-      hosts_html += '<div class="event-accepted-user">'
+      hosts_html += '<div class="event-accepted-user" data-userid="'+member.facebook_id+'">'
                         + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
                         + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
                         + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
@@ -171,7 +177,7 @@
       hosts.forEach(function( member ){
 
       var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
-      hosts_html += '<div class="event-accepted-user">'
+      hosts_html += '<div class="event-accepted-user" data-userid="'+member.facebook_id+'">'
                         + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
                         + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
                         + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
@@ -186,15 +192,18 @@
     },
     renderUsersGroup: function( group ){
 
-      var group_id = LJ.fn.makeGroupId( _.pluck( group.members, 'facebook_id' ) );
+      var group_members_facebook_id =  _.pluck( group.members, 'facebook_id' );
 
-      var user_group_html = '<div class="event-accepted-users-group" data-status="'+group.status+'" data-groupid="'+group_id+'">'
+      var mygroup  = group_members_facebook_id.indexOf( LJ.user.facebook_id ) != -1 ? 'mygroup' : '';
+      var group_id = LJ.fn.makeGroupId( group_members_facebook_id );
+
+      var user_group_html = '<div class="event-accepted-users-group '+mygroup+'" data-status="'+group.status+'" data-groupid="'+group_id+'">'
                             + '<div class="event-accepted-group-name">' + group.name + '</div>';
 
       group.members.forEach(function( member ){
 
         var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
-        user_group_html += '<div class="event-accepted-user">'
+        user_group_html += '<div class="event-accepted-user" data-userid="' + member.facebook_id + '">'
                           + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
                           + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
                           + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
@@ -221,7 +230,7 @@
       group.members.forEach(function( member ){
 
         var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
-        user_group_html += '<div class="event-accepted-user">'
+        user_group_html += '<div class="event-accepted-user" data-userid="'+member.facebook_id+'">'
                           + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
                           + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
                           + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
@@ -245,7 +254,7 @@
         groups_html += LJ.fn.renderUsersGroupWithToggle( group );
       });
 
-      html += '<div data-eventid="' + evt._id + '"class="row-events-accepted-inview">'
+      html += '<div data-eventid="' + evt._id + '"class="row-events-accepted-inview" data-status="hosted">'
                 + '<div class="event-accepted-inview">'
                   + '<div class="event-accepted-users">'
                     + hosts_html
@@ -289,8 +298,9 @@
 
         groups_html += LJ.fn.renderUsersGroup( group );
 
-        if( group.members_facebook_id.indexOf( LJ.user.facebook_id ) != -1 )
-          status = group.status;
+        if( group.members_facebook_id.indexOf( LJ.user.facebook_id ) != -1 ){
+          status  = group.status;
+        }
         
       });
 

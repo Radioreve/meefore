@@ -10,8 +10,7 @@
 		_ = require('lodash');
 
 		var pusher  = require('../globals/pusher'),
-			mailer = require('../globals/mailer'),
-			watcher = require('../globals/watcher');
+			mailer = require('../globals/mailer');
 
 		var sendHomepage = function( req, res ){
 

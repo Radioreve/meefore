@@ -1,14 +1,12 @@
 
-	var mongoose      = require('mongoose'),
-		schedule 	  = require('node-schedule'),
-		Event         = require('../models/EventModel');
+	var mongoose      = require('mongoose');
 
 	var db = function( uri ){ 
 
 		mongoose.connect( uri );
 
 		mongoose.connection.on( 'open', function(){
-			console.log('Connected to the database!');
+			console.log('Connected to MongoDB');
 		});
 
 		mongoose.connection.on('error', function(err){

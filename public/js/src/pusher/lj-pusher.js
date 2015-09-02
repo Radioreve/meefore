@@ -110,12 +110,17 @@
 
 			// Message pour les membres du groupes
 			if( LJ.fn.iGroup(group) ){
+
+				// Update global status of their event
+				$('.row-events-accepted-inview[data-eventid="'+evt._id+'"]').attr('data-status', status );
+
 				if( status == "accepted" ){
 					LJ.fn.toastMsg('Vous avez été accepté dans un before!', 'info', 4000);
 					// Fetch last messages based on accepted date
 				}
 				if( status == "kicked" ){
 					LJ.fn.toastMsg('Votre groupe a été suspendu de la discussion', 'info', 4000);
+					$('.row-events-accepted-inview[data-eventid="'+event_id+'"]').attr('data-status','kicked');
 				}
 			}
 
@@ -132,13 +137,22 @@
 
 			// For everyone in the event channel
 			LJ.fn.updateGroupStatusUI( evt, group );
-			$('.row-events-accepted-inview[data-eventid="'+evt._id+'"]').attr('data-status', status );
 
 
 		},	
 		pushNewChatMessage: function( data ){
 
-			console.log(data);
+			console.log('Pushing chat line...')
+
+			id = data.id;
+
+			if( data.facebook_id == LJ.user.facebook_id ){
+				$('.row-events-accepted-inview[data-eventid="'+id+'"]')
+				.find('.sending').removeClass('sending');
+			} else {
+				LJ.fn.addChatLine( data );
+			}
+
 		}
 
 	});

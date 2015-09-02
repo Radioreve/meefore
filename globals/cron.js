@@ -75,6 +75,7 @@
 	}
 
 	/* Event Auto Update */
+	/*
 	var ruleTerminate = new schedule.RecurrenceRule();
 		ruleTerminate.hour = eventsTerminateAt;
 		ruleTerminate.minute = 0; // Sinon il l'envoie toutes les minutes
@@ -84,7 +85,8 @@
 		ruleRestart.hour = eventsRestartAt;
 		ruleRestart.minute = 0;
 	    schedule.scheduleJob( ruleRestart, restartEvents );
-
+	*/
+	
 	var min = 0;
 	(function checkingTime(){
 

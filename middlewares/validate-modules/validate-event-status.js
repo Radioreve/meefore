@@ -30,8 +30,9 @@
 					return next();
 				}
 
-			req.evt 	= evt;
-			req.event_status  = status;
+			req.evt          = evt;
+			req.event_status = status;
+			
 			next();
 
 			});

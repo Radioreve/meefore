@@ -18,6 +18,8 @@
 			request      : 'validate-request',
 			event_status : 'validate-event-status',
 			group_status : 'validate-group-status',
+			chat_message : 'validate-chat-message',
+			chat_fetch   : 'validate-chat-fetch',
 
 			test         : 'validate-test'
 			

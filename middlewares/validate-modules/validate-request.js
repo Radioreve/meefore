@@ -125,9 +125,9 @@
 
 					req.group = group;
 
-					req.users = members;
-					req.group.members = _.pluckMany( members, settings.public_properties.users );
-					req.group.status  = 'pending';
+					req.users          = members;
+					req.group.members  = _.pluckMany( members, settings.public_properties.users );
+					req.group.status   = 'pending';
 					req.group.group_id = evt.makeGroupId( req.group.members_facebook_id );
 
 					req.groups = evt.groups;

@@ -3,7 +3,8 @@
 		eventUtils = require('../pushevents/eventUtils'),
 		User       = require('../models/UserModel'),
 		Event      = require('../models/EventModel'),
-		moment     = require('moment');
+		moment     = require('moment'),
+		rd		   = require('../globals/rd');
 
 	var pusher     = require('../globals/pusher');
 
@@ -40,6 +41,9 @@
 	    		event_id: new_event._id,
 	    		begins_at: new_event.begins_at
 	    	};
+
+	    	/* Cache hosts ids for chat performance */
+	    	rd.sadd('chat:'+new_event._id+'/hosts', _.pluck( new_event.hosts, 'facebook_id' ) );
 
 	    	User.update({ 'facebook_id': { $in: _.pluck( data.hosts, 'facebook_id') } },
 	    				{ $push: { 'events': event_item }},
@@ -99,9 +103,8 @@
 
 			var event_to_push = {
 				event_id    : req.event_id,
-				status      : 'pending',
 				begins_at   : evt.begins_at,
-				accepted_at : null
+				group_id	: evt.makeGroupId( req.group.members_facebook_id )
 			};
 			/* Mise à jour de l'event array dans chaque user impliqué */
 			User
@@ -124,7 +127,7 @@
 						pusher.trigger( req.event_id, 'new request', data, req.socket_id );
 
 						/* Envoyer une notification aux amis au courant de rien à priori */
-						req.users.forEach(function(user){
+						req.users.forEach(function( user ){
 							pusher.trigger( user.channels.me, 'new request', data, req.socket_id );
 						});	
 
@@ -170,6 +173,14 @@
 		groups.forEach(function(group,i){
 			if( group.group_id === updated_group.group_id ){
 				groups[i].status = req.group_status;
+				rd.set('event:' + evt._id + '/' + 'group:' + updated_group.group_id + '/status', req.group_status);
+				if( req.group_status == 'accepted' ){
+					groups[i].accepted_at = new Date();
+					rd.sadd('chat:' + evt._id + '/' + 'audience', [ updated_group.group_id ]);
+				} else {
+					groups[i].kicked_at = new Date();
+					rd.srem('chat:' + evt._id + '/' + 'audience', [ updated_group.group_id ])
+				}
 			}
 		});
 

@@ -3,30 +3,26 @@
 	var pushEventsDir = '../pushevents/',
 	    apiDir = '../api/';
 
-	var initEvents = require(pushEventsDir + 'initEvents'),
-	    profileEvents = require(pushEventsDir + 'profileEvents'),
-	    manageEvents = require(pushEventsDir + 'manageEvents'),
-	    chatEvents = require(pushEventsDir + 'chatEvents'),
-	    settingsEvents = require(pushEventsDir + 'settingsEvents'),
-	    clientEvents = require(pushEventsDir + 'clientEvents'),
-	    friendEvents = require(pushEventsDir + 'friendEvents'),
-	    adminEvents = require(pushEventsDir + 'adminEvents'),
-	    mapEvents = require(pushEventsDir + 'mapEvents'),
-	    signEvents = require(pushEventsDir + 'signEvents');
+	var initEvents     = require( pushEventsDir + 'initEvents'),
+		profileEvents  = require( pushEventsDir + 'profileEvents'),
+		settingsEvents = require( pushEventsDir + 'settingsEvents'),
+		adminEvents    = require( pushEventsDir + 'adminEvents'),
+		signEvents     = require( pushEventsDir + 'signEvents');
 
 	var api = {}
-	api.tests = require(apiDir + 'tests');
-	api.users = require(apiDir + 'users');
-	api.events = require(apiDir + 'events');
-	api.places = require(apiDir + 'places');
-	api.ambiances = require(apiDir + 'ambiances');
+		api.tests     = require( apiDir + 'tests');
+		api.users     = require( apiDir + 'users');
+		api.events    = require( apiDir + 'events');
+		api.places    = require( apiDir + 'places');
+		api.ambiances = require( apiDir + 'ambiances');
+		api.chats     = require( apiDir + 'chats');
 
 	var mdw = {};
-	mdw.auth = require('../middlewares/auth');
-	mdw.email = require('../middlewares/email');
-	mdw.pop = require('../middlewares/pop');
-	mdw.facebook = require('../middlewares/facebook');
-	mdw.validate = require('../middlewares/validate');
+		mdw.auth     = require('../middlewares/auth');
+		mdw.email    = require('../middlewares/email');
+		mdw.pop      = require('../middlewares/pop');
+		mdw.facebook = require('../middlewares/facebook');
+		mdw.validate = require('../middlewares/validate');
 
 
 	module.exports = function(app) {
@@ -38,10 +34,7 @@
 
 	    /* Debug les appels clients */
 	    app.post('*', function(req, res, next) {
-	        if (req.body)
-	            _.keys(req.body).forEach(function(el) {
-	                console.log(el + ' - ' + req.body[el]);
-	            });
+	        console.log('-> body : ' + JSON.stringify( req.body, null, 4 ));
 	        next();
 	    });
 
@@ -117,7 +110,9 @@
 	    app.get('/api/v1/places', api.places.fetchPlaces);
 	    app.post('/api/v1/places', api.places.createPlace);
 
-	    //Events relatifs aux friends
+	    //Events relatifs aux chats
+	    app.post('/api/v1/chats/:chat_id', mdw.validate('chat', ['chat_message']), api.chats.addChatMessage );
+	    app.get('/api/v1/chats/:chat_id', mdw.auth.authenticate(['standard']), mdw.validate('chat', ['chat_fetch']), api.chats.fetchChatMessages );
 
 
 	    //Events relatifs aux admins
