@@ -56,6 +56,7 @@
 					    	console.log('Event created!!');
 
 					    	eventUtils.sendSuccess( res, new_event );
+					    	pusher.trigger('app', 'new test', { msg: "This channel works" });
 					    	pusher.trigger('app', 'new event created', new_event, req.socket_id );
 
 	    				});
@@ -203,6 +204,7 @@
 				group: group
 			};
 
+			console.log('Pushing new group status to clients');
 			eventUtils.sendSuccess( res, data );
 			pusher.trigger( evt._id + '', "new group status",  data, req.socket_id );
 

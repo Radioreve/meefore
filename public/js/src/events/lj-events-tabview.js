@@ -6,11 +6,10 @@
 			
 			 
 		},
-		addEventInviewAndTabview: function( evt, options ){
+		addEventInviewAndTabview: function( evt ){
             
-            var options = options || {};
             
-            var renderFn =  _.pluck( evt.hosts, 'facebook_id').indexOf( LJ.user.facebook_id ) != -1 ? 
+            var renderFn =  LJ.fn.iHost( evt ) ? 
                             LJ.fn.renderEventInview_Host :
                             LJ.fn.renderEventInview_User ;
 
@@ -25,13 +24,6 @@
                 users: $inview.find('.event-accepted-users').jScrollPane().data('jsp'),
                 chats: $inview.find('.event-accepted-chat-messages').jScrollPane({ stickToBottom: true }).data('jsp')
             };
-
-        },
-        displayEventsInviewsAndTabviews: function( events ){
-
-            events.forEach(function( evt ){
-                LJ.fn.addEventInviewAndTabview( evt );
-            });
 
         }
 

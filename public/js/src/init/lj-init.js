@@ -147,11 +147,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		fetchAndSyncFriends: function( callback ){
 
-			LJ.fn.GraphAPI('/me/friends', function( res ){
+			LJ.fn.GraphAPI('/me/friends', function( res ){ 
 
 				var fb_friends = res.data;
 
-				var fb_friends_ids = _.pluck( res.data, 'id' );
+				var fb_friends_ids = _.pluck( fb_friends, 'id' );
 				var data = { userId: LJ.user._id, fb_friends_ids: fb_friends_ids };
 
 				$.ajax({

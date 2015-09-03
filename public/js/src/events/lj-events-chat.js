@@ -127,8 +127,9 @@
             
             var evt = evt;
             var $wrap = $('.row-events-accepted-tabview').siblings('.row-events-accepted-inview[data-eventid="'+evt._id+'"]');
-            var chats_html = [];
             var group_id = $wrap.find('.mygroup').attr('data-groupid');
+            
+            var chats_html = [];
 
             if( ['accepted','hosted'].indexOf( $wrap.attr('data-status') ) == -1 ){
                 console.log('No fetching necessary, not accepted');

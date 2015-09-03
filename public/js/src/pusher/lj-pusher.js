@@ -13,6 +13,7 @@
             LJ.subscribed_channels[ evt._id ] = LJ.pusher.subscribe( evt._id );
 
             /* handlers */
+            console.log('Binding pusher events for id : ' + evt._id );
             LJ.subscribed_channels[ evt._id ].bind('new request', LJ.fn.pushNewGroup );
             LJ.subscribed_channels[ evt._id ].bind('new group status', LJ.fn.pushNewGroupStatus );
             LJ.subscribed_channels[ evt._id ].bind('new chat message', LJ.fn.pushNewChatMessage );
@@ -37,7 +38,7 @@
             if( LJ.fn.iHost( evt ) ){
             	message = 'Un ami vous a ajouté en tant qu\'organisateur de son before!';
 
-            	LJ.fn.addEventInviewAndTabview( evt, { host: true });
+            	LJ.fn.addEventInviewAndTabview( evt );
             	LJ.fn.joinEventChannel( evt );
             	LJ.fn.fetchMe();
             }

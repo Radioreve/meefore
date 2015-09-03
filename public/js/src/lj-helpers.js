@@ -307,7 +307,7 @@
         handleErrorDefault: function( data ){
         	delog('Error!');
         },
-        		GraphAPI: function( url, callback, opts ){
+        GraphAPI: function( url, callback, opts ){
 
 			var ls = window.localStorage;
 

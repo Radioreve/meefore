@@ -82,10 +82,10 @@
             return console.log('Error fetching and sync friends : ' + err );
 
             console.log('Personnal events successfully fetched, n = ' + events.length + ' )');
-            LJ.fn.displayEventsInviewsAndTabviews( events );
-
             events.forEach(function( evt ){
+
                 LJ.fn.joinEventChannel( evt );
+                LJ.fn.addEventInviewAndTabview( evt );
                 LJ.fn.fetchMyChats( evt );
             });
 

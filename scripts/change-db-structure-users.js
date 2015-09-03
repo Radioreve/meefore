@@ -39,8 +39,9 @@
 				users.forEach(function(user){
 					user.channels = {
 						'public_chan': 'default',
-						'me': user.facebook_id
+						'me': user.facebook_id,
 					};
+					user.facebook_access_token = {}
 					user.save(function(err,svd){
 						console.log('done');
 					});
