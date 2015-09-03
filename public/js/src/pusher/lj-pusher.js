@@ -16,6 +16,7 @@
             LJ.subscribed_channels[ evt._id ].bind('new request', LJ.fn.pushNewGroup );
             LJ.subscribed_channels[ evt._id ].bind('new group status', LJ.fn.pushNewGroupStatus );
             LJ.subscribed_channels[ evt._id ].bind('new chat message', LJ.fn.pushNewChatMessage );
+            LJ.subscribed_channels[ evt._id ].bind('new chat readby', LJ.fn.pushNewChatReadBy );
 
         },
 		pushNewEvent: function( evt ){
@@ -34,7 +35,7 @@
 
             /* Did a friend tag me as host ? */
             if( LJ.fn.iHost( evt ) ){
-            	message = evt.hosts[0].name + ' vous a ajouté en tant qu\'organisateur de son before!';
+            	message = 'Un ami vous a ajouté en tant qu\'organisateur de son before!';
 
             	LJ.fn.addEventInviewAndTabview( evt, { host: true });
             	LJ.fn.joinEventChannel( evt );
@@ -116,6 +117,14 @@
 
 				if( status == "accepted" ){
 					LJ.fn.toastMsg('Vous avez été accepté dans un before!', 'info', 4000);
+					LJ.fn.addChatLine({
+						id          : event_id,
+						msg         : "Votre groupe vient d'être accepté dans la discussion!",
+						name        : LJ.bot_profile.name,
+						img_id      : LJ.bot_profile.img_id,
+						facebook_id : LJ.bot_profile.facebook_id,
+						sent_at 	: new Date()
+					});
 					// Fetch last messages based on accepted date
 				}
 				if( status == "kicked" ){
@@ -145,14 +154,34 @@
 			console.log('Pushing chat line...')
 
 			id = data.id;
+			var $wrap = $('.row-events-accepted-inview[data-eventid="'+id+'"]');
 
 			if( data.facebook_id == LJ.user.facebook_id ){
-				$('.row-events-accepted-inview[data-eventid="'+id+'"]')
-				.find('.sending').removeClass('sending');
+				$wrap.find('.sending').removeClass('sending');
 			} else {
 				LJ.fn.addChatLine( data );
+				/*if( $wrap.find('input').is(':focus') ){
+					LJ.fn.sendReadBy({
+						name : LJ.user.name,
+						id   : id
+					});
+				}*/
 			}
 
+		},
+		pushNewChatReadBy: function( data ){
+
+			var $readby = $('.row-events-accepted-inview[data-eventid="' + data.id + '"]').find('.readby'); 
+			var readby  = data.readby;
+
+			/* On ajoute le name de la personne à la liste de l'attr data-names */
+			var current_names = $readby.attr('data-names');
+
+			if( typeof current_names == 'string' && current_names.length > 0 ){
+            	$readby.attr('data-names', readby );
+			}
+
+			LJ.fn.displayReadBy( data );
 		}
 
 	});

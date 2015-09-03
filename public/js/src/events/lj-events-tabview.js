@@ -14,9 +14,6 @@
                             LJ.fn.renderEventInview_Host :
                             LJ.fn.renderEventInview_User ;
 
-            if( options.host ){
-                renderFn = LJ.fn.renderEventInview_Host;
-            }
 
             $('.row-events').append(  renderFn( evt )  );
             $('.row-events-accepted-tabview').append( LJ.fn.renderEventTabview( evt ) );
@@ -30,7 +27,7 @@
             };
 
         },
-                displayEventsInviewsAndTabviews: function( events ){
+        displayEventsInviewsAndTabviews: function( events ){
 
             events.forEach(function( evt ){
                 LJ.fn.addEventInviewAndTabview( evt );

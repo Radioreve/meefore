@@ -4,12 +4,6 @@
         handleDomEventsMap: function(){
 
         },
-		addEvent: function( evt ){
-
-            LJ.fn.displayEventMarker( evt );
-            LJ.fn.addEventInviewAndTabview( evt );
-
-        },
         initMap: function() {
 
             var map_style_sober = new google.maps.StyledMapType( LJ.google.map.style.sober, {

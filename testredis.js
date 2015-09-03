@@ -11,6 +11,8 @@
 		console.log('client rdy!');
 	});
 
+	
+
 	/*
 	client.flushall(function(err,res){
 

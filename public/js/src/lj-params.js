@@ -27,13 +27,9 @@
 		users: []
 	},
     bot_profile: {
-        name        : "Meefore",
         facebook_id : "1337",
-        pictures    : [{ 
-            img_id        : "logo_black_on_white",
-            img_version   : "1438073167",
-            is_main       : true
-        }] 
+        img_id        : "logo_black_on_white",
+        img_version   : "1438073167"
 
     },
 	cloudinary:{

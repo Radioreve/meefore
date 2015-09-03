@@ -111,8 +111,9 @@
 	    app.post('/api/v1/places', api.places.createPlace);
 
 	    //Events relatifs aux chats
-	    app.post('/api/v1/chats/:chat_id', mdw.validate('chat', ['chat_message']), api.chats.addChatMessage );
 	    app.get('/api/v1/chats/:chat_id', mdw.auth.authenticate(['standard']), mdw.validate('chat', ['chat_fetch']), api.chats.fetchChatMessages );
+	    app.post('/api/v1/chats/:chat_id', mdw.validate('chat', ['chat_message']), api.chats.addChatMessage );
+	    app.post('/api/v1/chats/:chat_id/readby', mdw.auth.authenticate(['standard']), mdw.validate('chat', ['chat_readby']), api.chats.setReadBy );
 
 
 	    //Events relatifs aux admins

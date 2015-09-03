@@ -43,7 +43,7 @@
 	    	};
 
 	    	/* Cache hosts ids for chat performance */
-	    	rd.sadd('chat:'+new_event._id+'/hosts', _.pluck( new_event.hosts, 'facebook_id' ) );
+	    	rd.sadd('chat/'+new_event._id+'/hosts', _.pluck( new_event.hosts, 'facebook_id' ) );
 
 	    	User.update({ 'facebook_id': { $in: _.pluck( data.hosts, 'facebook_id') } },
 	    				{ $push: { 'events': event_item }},
@@ -173,13 +173,13 @@
 		groups.forEach(function(group,i){
 			if( group.group_id === updated_group.group_id ){
 				groups[i].status = req.group_status;
-				rd.set('event:' + evt._id + '/' + 'group:' + updated_group.group_id + '/status', req.group_status);
+				rd.set('event/' + evt._id + '/' + 'group/' + updated_group.group_id + '/status', req.group_status);
 				if( req.group_status == 'accepted' ){
 					groups[i].accepted_at = new Date();
-					rd.sadd('chat:' + evt._id + '/' + 'audience', [ updated_group.group_id ]);
+					rd.sadd('chat/' + evt._id + '/' + 'audience', [ updated_group.group_id ]);
 				} else {
 					groups[i].kicked_at = new Date();
-					rd.srem('chat:' + evt._id + '/' + 'audience', [ updated_group.group_id ])
+					rd.srem('chat/' + evt._id + '/' + 'audience', [ updated_group.group_id ])
 				}
 			}
 		});

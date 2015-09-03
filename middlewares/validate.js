@@ -20,6 +20,7 @@
 			group_status : 'validate-group-status',
 			chat_message : 'validate-chat-message',
 			chat_fetch   : 'validate-chat-fetch',
+			chat_readby  : 'validate-chat-readby',
 
 			test         : 'validate-test'
 			

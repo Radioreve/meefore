@@ -446,6 +446,16 @@
         	return  _.find( evt.groups, function( group ){ return group.group_id == group_id; });
 
         },
+        findMyGroupId: function( child ){
+
+        var group_id = $( child ).parents('.row-events-accepted-inview')
+					     .find('.event-accepted-user[data-userid="'+LJ.user.facebook_id+'"]')
+					     .parents('.event-accepted-users-group').attr('data-groupid');
+
+		return group_id;
+
+
+        },
         refreshEventStatusOnMap: function( evt ){
 
         	var marker = _.find( LJ.event_markers, function( el ){ return el.id == evt._id; }).marker;

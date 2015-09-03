@@ -1,26 +1,29 @@
 
 	var nv = require('node-validator');
 	var rd = require('../../globals/rd');
+	var _  = require('lodash');
 
-	var id, group_id, facebook_id;
+	var id, name, facebook_id, group_id;
 
 	function check( req, res, next ){
-		
-		id          = req.params.chat_id;
-		group_id    = req.query.group_id;
-		facebook_id = req.facebook_id;
 
-		var checkFetch = nv.isAnyObject()
-			.withRequired('id'         , nv.isString())
-			.withRequired('facebook_id', nv.isString())
+		id          = req.params.chat_id;
+		facebook_id = req.facebook_id || req.body.facebook_id;
+		group_id    = req.body.group_id;
+
+		var checkReadbyRequest = nv.isAnyObject()
+			.withRequired('id',		nv.isString())
+			.withRequired('name',	nv.isString());
+
+		console.log('id here is : ' + id );
 
 		var data = {
 			id          : id,
-			group_id    : group_id,
+			name        : req.body.name,
 			facebook_id : facebook_id
 		};
-		console.log(JSON.stringify(data,null,4));
-		nv.run( checkFetch, data, function( n, errors ){
+
+		nv.run( checkReadbyRequest, data, function( n, errors ){
 
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );
@@ -33,15 +36,13 @@
 					req.app_errors = req.app_errors.concat( errors );
 				}
 
-				// Everything went fine
-				_.merge( req, { id: id, group_id: group_id, facebook_id: facebook_id } );
+				_.merge( req, req.body )
+				req.id = id;
 				next();
 
-
 			});
-
 		});
-
+		
 	};
 
 	function checkSenderStatus( req, callback ){
@@ -53,10 +54,10 @@
 					// User that has been validated to fetch messages ?
 					if( group_id && status != 'accepted' )
 						return callback({
-							err_id: "unauthorized_group",
-							data: {
+							err_id : "unauthorized_group",
+							data   : {
 								group_id : group_id,
-								location : "validate chat fetch",
+								location : "validate chat readby",
 								status   : status
 							}
 						});
@@ -64,11 +65,11 @@
 					// One of the hosts?
 					if( !group_id && hosts_id.indexOf( facebook_id ) == -1 )
 						return callback({
-							message: "No group_id passed and you are not an admin",
-							err_id: "unauthorized_admin",
+							message : "No group_id passed and you are not an admin",
+							err_id  : "unauthorized_admin",
 							data: {
-								hosts_id: hosts_id,
-								location : "validate chat fetch"
+								hosts_id : hosts_id,
+								location : "validate chat readby"
 							}
 						});
 
@@ -80,7 +81,6 @@
 
 	};	
 
-
-module.exports = {
-	check: check
-};
+	module.exports = {
+		check: check
+	};

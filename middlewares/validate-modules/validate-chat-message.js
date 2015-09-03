@@ -1,8 +1,7 @@
 
 	var nv = require('node-validator');
 	var rd = require('../../globals/rd');
-
-	var Event = require('../../models/EventModel');
+	var _  = require('lodash');
 
 	var name, facebook_id, img_id, img_vs, id, msg, group_id;
 
@@ -51,15 +50,18 @@
 
 	function checkSenderStatus( req, callback ){
 
-			rd.smembers('chat:'+id+'/hosts', function( err, hosts_id ){
-				rd.get('event:'+id+'/'+'group:'+group_id+'/status', function( err, status ){
+			rd.smembers('chat/'+id+'/hosts', function( err, hosts_id ){
+				
+				rd.get('event/'+id+'/'+'group/'+group_id+'/status', function( err, status ){
 
 					// User that has been validated to send message?
 					if( group_id && status != 'accepted' )
 						return callback({
 							err_id: "unauthorized_group",
 							data: {
-								group_id: group_id
+								group_id : group_id,
+								status   : status,
+								location : "validate chat message"
 							}
 						});
 
@@ -69,7 +71,8 @@
 							message: "No group_id passed and you are not an admin",
 							err_id: "unauthorized_admin",
 							data: {
-								hosts_id: hosts_id
+								hosts_id: hosts_id,
+								location: "validate chat message"
 							}
 						});
 

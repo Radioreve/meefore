@@ -19,9 +19,15 @@
       var display_params = _.merge( LJ.cloudinary.events.chat.params, { img_version: img_vs } );
       var img_tag      = $.cloudinary.image( img_id, display_params ).prop('outerHTML');
 
-      html += '<div class="event-accepted-chat-message ' + me +'" data-authorid="' + options.facebook_id + '" >'
+      var mmt = moment( new Date( sent_at ) );
+      var sent_at_html = mmt.dayOfYear() == moment().dayOfYear() ?
+                         mmt.format('HH') + 'h' + mmt.format('mm') :
+                         mmt.format('DD/MM');
+
+      html += '<div class="event-accepted-chat-message ' + me +'" data-authorid="' + options.facebook_id + '" data-authorname="' + name +'" >'
                   + img_tag
-                  + '<div class="event-accepted-chat-text">' + msg + '</div>'
+                  + '<div class="event-accepted-chat-sent-at">' + sent_at_html + '</div>'
+                  + '<div class="event-accepted-chat-text">'    + msg          + '</div>'
                 + '</div>';
 
       return html;
@@ -270,6 +276,7 @@
                       + '</div>'
                     + '</div>'
                     + '<div class="event-accepted-chat-typing">'
+                      + '<div class="readby" data-names=""></div>'
                       + '<input type="text"/>'
                       + '<button class="theme-btn">Envoyer</button>'
                     + '</div>'  
@@ -322,6 +329,7 @@
                       + '</div>'
                     + '</div>'
                     + '<div class="event-accepted-chat-typing">'
+                      + '<div class="readby"></div>'
                       + '<input type="text"/>'
                       + '<button class="theme-btn">Envoyer</button>'
                     + '</div>'  
