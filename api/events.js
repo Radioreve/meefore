@@ -8,6 +8,8 @@
 
 	var pusher     = require('../globals/pusher');
 
+	var pusher_max_size = 10000;
+
 	var createEvent = function( req, res ) {
 	       
 	    var data = req.event_data;
@@ -60,12 +62,16 @@
 				    	console.log('Event created!!');
 				    	eventUtils.sendSuccess( res, new_event );
 
-				    	var data = new_event;
+				    	var data = new_event.toObject();
 
-				    	if( eventUtils.oSize( data ) > 10000 ){
+				    	if( eventUtils.oSize( data ) > pusher_max_size ){
 				    		pusher.trigger('app', 'new oversize message' );
 				    	} else {
-				    		pusher.trigger('app', 'new event created', new_event, req.socket_id );
+				    		console.log('Pushing new event created');
+				    		pusher.trigger('app', 'new event created', data, req.socket_id, function( err, res, res ){
+				    			if( err )
+				    				console.log(err);
+				    		});
 				    	}
 
 					});
@@ -118,7 +124,7 @@
 				begins_at   : evt.begins_at,
 				group_id	: evt.makeGroupId( req.group.members_facebook_id )
 			};
-			
+
 			/* Mise à jour de l'event array dans chaque user impliqué */
 			User
 				.update(
@@ -140,7 +146,7 @@
 						eventUtils.sendSuccess( res, data );
 					
 						/* Envoyer une notification aux hosts, et aux users déja présent */
-						if( eventUtils.oSize( data ) > 10000 ){
+						if( eventUtils.oSize( data ) > pusher_max_size ){
 					    		pusher.trigger( req.event_id, 'new oversize message' );
 					    } else {
 
@@ -181,7 +187,7 @@
 			}
 
 			eventUtils.sendSuccess( res, data );
-			if( eventUtils.oSize( data ) > 10000 ){
+			if( eventUtils.oSize( data ) > pusher_max_size ){
 	    		pusher.trigger('app', 'new oversize message' );
 			} else {
 				pusher.trigger('app', 'new event status', data, req.socket_id );
@@ -247,7 +253,7 @@
 			eventUtils.sendSuccess( res, data );
 
 			console.log( eventUtils.oSize( data ) );
-			if( eventUtils.oSize( data ) > 10000 ){
+			if( eventUtils.oSize( data ) > pusher_max_size ){
 	    		pusher.trigger( req.event_id, 'new oversize message' );
 	    	} else {
 				console.log('Pushing new group status to clients in eventid: ' + req.event_id );
