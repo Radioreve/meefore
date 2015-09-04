@@ -4,26 +4,26 @@
 
 		db: {
 		  	dev: {
-				uri: "mongodb://Radioreve:"+process.env.PW+"@dogen.mongohq.com:10008/meefore-staged"
+				uri: "mongodb://Radioreve:" + process.env.PW + "@dogen.mongohq.com:10008/meefore-staged"
 			},
 			stage: {
-				uri: "mongodb://Radioreve:"+process.env.PW+"@dogen.mongohq.com:10008/meefore-staged"
+				uri: "mongodb://Radioreve:" + process.env.PW + "@dogen.mongohq.com:10008/meefore-staged"
 			},
 			prod: {
-				uri: "mongodb://Radioreve:"+process.env.PW+"@dogen.mongohq.com:10021/Meefore-Sandbox"
+				uri: "mongodb://Radioreve:" + process.env.PW + "@dogen.mongohq.com:10021/Meefore-Sandbox"
 			}
 		}
 		, redis: {
 			dev: {
-				host  : "aws-eu-west-1-portal.1.dblayer.com",
+				host : "aws-eu-west-1-portal.1.dblayer.com",
 				port : "10576"
 			},
 			stage: {
-				host  : "aws-eu-west-1-portal.1.dblayer.com",
+				host : "aws-eu-west-1-portal.1.dblayer.com",
 				port : "10576"
 			},
 			prod: {
-				host  : "@aws-eu-west-1-portal.1.dblayer.com",
+				host : "@aws-eu-west-1-portal.1.dblayer.com",
 				port : "10576"
 			}
 			
@@ -31,7 +31,7 @@
 		, homepage: {
 			dev   : process.cwd()  + '/views/index-dev.html',
 			stage : process.cwd()  + '/views/index-stage.html',
-			prod  : process.cwd()  + '/views/index-test.live'
+			prod  : process.cwd()  + '/views/index-prod.html'
 		}
 		, jwtSecret: "Wenighters"	
 		, cloudinary: {
@@ -54,9 +54,21 @@
 			}
 		}
 		, pusher: {
-			appId     : '108998',
-			key       : '8983555fce2089fc3662',
-			secret    : 'be48165148813a886ae3'
+			dev: {
+				app_id    : '139958',
+				key       : 'f9e4bf4e8f1e0342ca27',
+				secret    : '316f1677d800392fde21'
+			},
+			stage: {
+				app_id    : '139959',
+				key       : 'eeb38a1856233b29d6df',
+				secret    : '1dff1e9eb62de66a5ae2'
+			},
+			prod: {
+				app_id    : '139960',
+				key       : 'e0e801db688ab26d8581',
+				secret    : '41d03023ab512e98adc1'
+			}
 		}
 		, sendgrid: {
 			api_user  : 'Radioreve',

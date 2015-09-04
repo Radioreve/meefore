@@ -99,7 +99,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		initPusherConnection: function(){
 
-			LJ.pusher = new Pusher('8983555fce2089fc3662', {
+			LJ.pusher = new Pusher( window.pusher_app_id, {
 				encrypted: true
 			});
 
@@ -358,9 +358,6 @@ $('document').ready(function(){
 		var initFB = function(time){
 			if( typeof(FB) === 'undefined' ) return sleep(time, initFB )
 			FB.init({
-					    //appId      : '1509405206012202', //live
-					    //appId	   : '1638104993142222', //test
-					    //appId      : '1638108873141834', // staged
 					    appId  	   : window.facebook_app_id,
 					    xfbml      : true,  // parse social plugins on this page
 					    version    : 'v2.1' // use version 2.1
