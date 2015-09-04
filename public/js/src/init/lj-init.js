@@ -343,8 +343,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         		LJ.subscribed_channels[ channel_key ] = LJ.pusher.subscribe( LJ.user.channels[ channel_key ]);
         	});
 
-        	LJ.subscribed_channels.public_chan.bind('new event created', LJ.fn.pushNewEvent );
-          LJ.subscribed_channels.public_chan.bind('new event status' , LJ.fn.pushNewEventStatus );
+        LJ.subscribed_channels.public_chan.bind('new event created', LJ.fn.pushNewEvent );
+        LJ.subscribed_channels.public_chan.bind('new event status' , LJ.fn.pushNewEventStatus );
+        LJ.subscribed_channels.public_chan.bind('new test', LJ.fn.pushNewTest );
 
         }
 

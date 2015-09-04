@@ -301,7 +301,8 @@
             LJ.fn.displayCurtain({ 
                 behindTheScene: function(){
                     LJ.fn.hideModal();
-                    LJ.fn.addEvent(evt);
+                    LJ.fn.displayEventMarker( evt );
+                    LJ.fn.addEventInviewAndTabview( evt );
                     LJ.fn.displayRouteToParty( evt );
                     LJ.map.panTo({ lat: evt.address.lat, lng: evt.address.lng });
                     LJ.map.setZoom(15);

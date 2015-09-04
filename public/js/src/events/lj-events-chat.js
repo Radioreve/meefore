@@ -167,6 +167,9 @@
                 if( !evt )
                     return console.error('Cannot add chat history without event id');
 
+                if( !messages )
+                        return console.log('Chat is empty, nothing to add');
+
                 messages.forEach(function( msg ){
                         chats_html.push( LJ.fn.renderChatLine( msg ) );
                 });
@@ -227,14 +230,16 @@
                 return el != last_sender_name;
             });
 
+            var display = '';
+            
             if( names.length == n-1 ){
-                var display = 'Vu par tout le monde';
+                display = 'Vu par tout le monde';
             }
-            if( names.length == 1 ){
-                var display = 'Vu par ' + names[0];
+            if( names.length == 1 && names[0] != '' ){
+                display = 'Vu par ' + names[0];
             }
             if( names.length > 1 ){
-                var display = 'Vu par ' + names.slice( 0, names.length -1 ).join(', ') + ' et ' + names[ names.length - 1 ];
+                display = 'Vu par ' + names.slice( 0, names.length -1 ).join(', ') + ' et ' + names[ names.length - 1 ];
             }
 
             /* Debug purposes */

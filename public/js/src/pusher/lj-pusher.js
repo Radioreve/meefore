@@ -20,6 +20,10 @@
             LJ.subscribed_channels[ evt._id ].bind('new chat readby', LJ.fn.pushNewChatReadBy );
 
         },
+        pushNewTest: function( data ){
+        	console.log('Test succeed!');
+        	console.log(data);
+        },
 		pushNewEvent: function( evt ){
 
 			if( !evt )

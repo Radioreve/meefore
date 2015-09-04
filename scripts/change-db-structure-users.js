@@ -38,7 +38,7 @@
 			User.find({}, function(err, users ){
 				users.forEach(function(user){
 					user.channels = {
-						'public_chan': 'default',
+						'public_chan': 'app',
 						'me': user.facebook_id,
 					};
 					user.facebook_access_token = {}
