@@ -99,6 +99,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		initPusherConnection: function(){
 
+			console.log( window.pusher_app_id );
 			LJ.pusher = new Pusher( window.pusher_app_id, {
 				encrypted: true
 			});
@@ -118,10 +119,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				if( states.current == 'connected' && LJ.state.connected )
 					LJ.fn.say('auth/app', { userId: LJ.user._id }, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
 
-			});
-
-			LJ.pusher.connection.bind('disconnected', function(){
-				alert('hey');
 			});
 
 
