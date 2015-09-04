@@ -60,10 +60,16 @@
 				secret    : '316f1677d800392fde21'
 			},
 			stage: {
+				app_id    : '139958',
+				key       : 'f9e4bf4e8f1e0342ca27',
+				secret    : '316f1677d800392fde21'
+			},/*
+			stage: {
 				app_id    : '139959',
 				key       : 'eeb38a1856233b29d6df',
-				secret    : '1dff1e9eb62de66a5ae2'
+				secret    : '1dff1e9eb62de66a5ae2'  // STAGE AND DEV SHARE THE SAME PUSHER ENV FOR TESTS
 			},
+			*/
 			prod: {
 				app_id    : '139960',
 				key       : 'e0e801db688ab26d8581',
