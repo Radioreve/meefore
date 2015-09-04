@@ -317,20 +317,20 @@
 			FB.api( url, { access_token: access_token }, callback );
 
 		},
-		iHost: function( evt ){
+		iHost: function( hosts_facebook_id ){
 
-			if( !evt )
+			if( !hosts_facebook_id )
 				return console.error('Cant host an event that doesnt exist!');
 
-			return _.pluck( evt.hosts, 'facebook_id' ).indexOf( LJ.user.facebook_id ) != -1 ;
+			return hosts_facebook_id.indexOf( LJ.user.facebook_id ) != -1 ;
 
 		},
-		iGroup: function( group ){
+		iGroup: function( members_facebook_id ){
 
-			if( !group )
+			if( !members_facebook_id )
 				return console.error('Cant belong to a group that doesnt exist!');
 
-			return group.members_facebook_id.indexOf( LJ.user.facebook_id ) != -1;
+			return members_facebook_id.indexOf( LJ.user.facebook_id ) != -1;
 		},
 		api: function( method, url, options, callback ){
 
@@ -457,9 +457,9 @@
 
 
         },
-        refreshEventStatusOnMap: function( evt ){
+        refreshEventStatusOnMap: function( event_id ){
 
-        	var marker = _.find( LJ.event_markers, function( el ){ return el.id == evt._id; }).marker;
+        	var marker = _.find( LJ.event_markers, function( el ){ return el.id == event_id; }).marker;
 
 			if( evt.status == "open" ){
 				marker.setOpacity(1);

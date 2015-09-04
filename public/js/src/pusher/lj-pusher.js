@@ -36,13 +36,13 @@
 			var message = evt.hosts[0].name + ' propose un before le ' + moment( evt.begins_at ).format('DD/MM');
 
 			/* Internal */
-			LJ.cache.events.push(evt);
+			LJ.cache.events.push( evt );
 
 			/* External */
             LJ.fn.displayEventMarker( evt );
 
             /* Did a friend tag me as host ? */
-            if( LJ.fn.iHost( evt ) ){
+            if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' ) ) ){
             	message = 'Un ami vous a ajouté en tant qu\'organisateur de son before!';
 
             	LJ.fn.addEventInviewAndTabview( evt );
@@ -57,26 +57,30 @@
 		},
 		pushNewGroup: function( data ){
 			
-			console.log('Pushing new group in event : ' + data.evt._id );
+			console.log('Pushing new group in event : ' + data.event_id );
 
-			var evt 	 = data.evt,
-				group 	 = data.group;
+			var group             = data.group;
+			var event_id      	  = data.event_id;
+			var hosts_facebook_id = data.hosts_facebook_id;
 
-			if( !evt || !group ){
-				console.log(evt); console.log(group);
+			if( !event_id || !group ){
+				console.log( event_id ); console.log( group );
 				return console.error('Missing group and/or evt, cant add request');
 			}
-				
 
-			if( LJ.fn.iHost( evt ) ){
-				var $group_html = $( LJ.fn.renderUsersGroupWithToggle( group ) );
+			if( LJ.fn.iHost( hosts_facebook_id ) ){
+
 				LJ.fn.toastMsg("Un groupe s'est rajouté à votre évènement", "info");
+				var $group_html = $( LJ.fn.renderUsersGroupWithToggle( group ) );
+
 			} else {
+
 				var $group_html = $( LJ.fn.renderUsersGroup( group ) );
+
 			}
 
 			$group_html.insertAfter( 
-				$('.row-events-accepted-inview[data-eventid="'+evt._id+'"]')
+				$('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
 				.find('.event-accepted-users-group')
 				.last()
 			);
@@ -84,47 +88,50 @@
 			LJ.fn.adjustAllChatPanes();
 
 		},
-		pushNewEventStatus: function( evt ){
+		pushNewEventStatus: function( data ){
 
-			delog('Pushing new event status for event id : ' + evt._id );
+			delog('Pushing new event status for event id : ' + data.event_id );
 
-			if( !evt )
+			var status            = data.status;
+			var event_id          = data.event_id;
+			var hosts_facebook_id = data.hosts_facebook_id;
+
+			if( !event_id )
 				return console.error('Cant push new status without event!');
 			
 			// Message pour les autres organisateurs
-			if( LJ.fn.iHost( evt ) ){
+			if( LJ.fn.iHost( hosts_facebook_id ) ){
 
 				LJ.fn.toastMsg("Un de vos ami a modifié le status d'un de vos évènement", "info");
-				$('.row-events-accepted-inview[data-eventid="'+evt._id+'"]')
-				.find('.event-inview-settings .settings-group-status .active')
-				.removeClass('active')
-				.end()
-				.find('.event-inview-settings [data-status="'+evt.status+'"]').addClass('active');
+
+				$('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
+					.find('.event-inview-settings .settings-group-status .active').removeClass('active').end()
+					.find('.event-inview-settings [data-status="' + status + '"]').addClass('active');
 			}
 
 			// For everyone 
-			LJ.fn.refreshEventStatusOnMap( evt );
+			LJ.fn.refreshEventStatusOnMap( event_id, status );
 
 
 		},
 		pushNewGroupStatus: function( data ){
  			
-			var group = data.group,
-				evt   = data.evt;
-
-			delog('Pushing new group status : ' + group.status + ' for event : ' + evt._id );
-
+			var group    = data.group;
 			var status   = group.status;
-			var event_id = evt._id; 
+			var event_id = data.event_id;
+			var hosts_facebook_id = data.hosts_facebook_id
+
+			delog('Pushing new group status : ' + status + ' for event : ' + event_id );
+
 
 			// Message pour les membres du groupes
-			if( LJ.fn.iGroup( group ) ){
+			if( LJ.fn.iGroup( group.members_facebook_id ) ){
 
 				// Update global status of their event
-				$('.row-events-accepted-inview[data-eventid="'+evt._id+'"]').attr('data-status', status );
+				$('.row-events-accepted-inview[data-eventid="' + event_id + '"]').attr('data-status', status );
 
 				if( status == "accepted" ){
-					LJ.fn.toastMsg('Vous avez été accepté dans un before!', 'info', 4000);
+					LJ.fn.toastMsg('Vous avez été accepté dans un before!', 'info', 3500 );
 					LJ.fn.addChatLine({
 						id          : event_id,
 						msg         : "Votre groupe vient d'être accepté dans la discussion!",
@@ -136,7 +143,7 @@
 					
 				}
 				if( status == "kicked" ){
-					LJ.fn.toastMsg('Votre groupe a été suspendu de la discussion', 'info', 4000);
+					LJ.fn.toastMsg('Votre groupe a été suspendu de la discussion', 'info', 3500 );
 					LJ.fn.addChatLine({
 						id          : event_id,
 						msg         : "Votre groupe vient d'être suspendu de la discussion!",
@@ -145,24 +152,26 @@
 						facebook_id : LJ.bot_profile.facebook_id,
 						sent_at 	: new Date()
 					});
-					$('.row-events-accepted-inview[data-eventid="'+event_id+'"]').attr('data-status','kicked');
 				}
 			}
 
 			// Message pour les autres organisateurs
-			if( LJ.fn.iHost( evt ) ){
+			if( LJ.fn.iHost( hosts_facebook_id ) ){
+
 				if( status == "accepted" ){
-					LJ.fn.toastMsg('Un de vos amis a validé un groupe', 'info', 4000);
-					// Fetch last messages based on accepted date
+
+					LJ.fn.toastMsg('Un de vos amis a validé un groupe', 'info', 3500 );
+					
 				}
 				if( status == "kicked" ){
-					LJ.fn.toastMsg('Un de vos amis a suspendu un groupe de la discussion', 'info', 4000);
+
+					LJ.fn.toastMsg('Un de vos amis a suspendu un groupe de la discussion', 'info', 3500 );
 				}
+
 			}
 
 			// For everyone in the event channel
-			LJ.fn.updateGroupStatusUI( evt, group );
-
+			LJ.fn.updateGroupStatusUI( event_id, group );
 
 		},	
 		pushNewChatMessage: function( data ){

@@ -55,13 +55,17 @@
 			
 			 
 		},
-		handleChangeStatusSuccess: function( evt ){
+		handleChangeStatusSuccess: function( data ){
 
-            LJ.fn.refreshEventStatusOnMap( evt );
+            var event_id = data.event_id;
+            var status   = data.status;
+
             LJ.fn.hideLoaders();
+            LJ.fn.refreshEventStatusOnMap( event_id, status );
             LJ.fn.toastMsg("Le statut de l'évènement a été modifié", 'info');
+
             // close them all, whatever
-            $('.row-events-accepted-inview[data-eventid="'+evt._id+'"]')
+            $('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
                 .find('.icon-event-settings').removeClass('active').end()
                 .find('.event-inview-settings').velocity( LJ.ui.slideRightOutLight, {display:'none'} )
                 .find('.btn-validating').removeClass('btn-validating')

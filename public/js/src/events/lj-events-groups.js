@@ -57,15 +57,15 @@
         handleUpdateGroupStatusSuccess: function( res ){
 
             console.log('Updating group status success');
-            var evt = res.evt;
-            var group = res.group;
+            var event_id = res.event_id;
+            var group    = res.group;
 
-            LJ.fn.updateGroupStatusUI( evt, group );
+            LJ.fn.updateGroupStatusUI( event_id, group );
 
             var status = group.status;
-            var $wrap = $('.row-events-accepted-inview[data-eventid="'+evt._id+'"]');
+            var $wrap = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
 
-            $wrap.find('[data-groupid="'+group.group_id+'"]')
+            $wrap.find('[data-groupid="' + group.group_id + '"]')
                  .attr('data-status', status )
 
             if( status == 'accepted' ){
@@ -76,20 +76,22 @@
                 LJ.fn.toastMsg('Le groupe ' + group.name + ' a été mis en attente');
             }     
         },
-        updateGroupStatusUI: function( evt, group ){
+        updateGroupStatusUI: function( event_id, group ){
 
             var status = group.status;
-            var $wrap = $('.row-events-accepted-inview[data-eventid="'+evt._id+'"]');
+            var $wrap = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
 
-            $wrap.find('[data-groupid="'+group.group_id+'"]')
+            $wrap.find('[data-groupid="' + group.group_id + '"]')
                  .attr('data-status', status )
 
             if( status == 'accepted' ){
-                $wrap.find('[data-groupid="'+group.group_id+'"] .icon-toggle').removeClass('icon-toggle-off').addClass('icon-toggle-on').removeClass('active');
+                $wrap.find('[data-groupid="' + group.group_id + '"] .icon-toggle')
+                    .removeClass('icon-toggle-off').addClass('icon-toggle-on').removeClass('active');
             }
 
             if( status == 'kicked' ){
-                $wrap.find('[data-groupid="'+group.group_id+'"] .icon-toggle').removeClass('icon-toggle-on').addClass('icon-toggle-off').removeClass('active');
+                $wrap.find('[data-groupid="' + group.group_id + '"] .icon-toggle')
+                    .removeClass('icon-toggle-on').addClass('icon-toggle-off').removeClass('active');
             }     
 
         }

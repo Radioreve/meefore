@@ -30,7 +30,9 @@
 	    	new_event.type       = 'before';
 	    	new_event.meta 		 = [];
 
+
 	    var new_event = new Event( new_event );
+
 	    new_event.save(function( err, new_event ){
 
 	    	if( err )
@@ -42,31 +44,35 @@
 	    		begins_at: new_event.begins_at
 	    	};
 
-	    	/* Cache hosts ids for chat performance */
-	    	rd.sadd('chat/'+new_event._id+'/hosts', _.pluck( new_event.hosts, 'facebook_id' ) );
+	    	var hosts_ns = 'chat/' + new_event._id + '/hosts';
+	    	/* Cache hoss ids for chat performance */
+	    	rd.sadd( hosts_ns, _.pluck( new_event.hosts, 'facebook_id' ), function( err ){
 
-	    	User.update({ 'facebook_id': { $in: _.pluck( data.hosts, 'facebook_id') } },
-	    				{ $push: { 'events': event_item }},
-	    				{ multi: true },
-	    				function( err, users ){
+		    	User.update({ 'facebook_id': { $in: _.pluck( data.hosts, 'facebook_id') } },
+		    				{ $push: { 'events': event_item }},
+		    				{ multi: true },
 
-	    					if( err )
-	    						return eventUtils.raiseError({ err: err, res: res, toClient: "Error updating users"});
+					function( err, users ){
 
-					    	console.log('Event created!!');
-					    	eventUtils.sendSuccess( res, new_event );
+						if( err )
+							return eventUtils.raiseError({ err: err, res: res, toClient: "Error updating users"});
 
-					    	var data = new_event;
+				    	console.log('Event created!!');
+				    	eventUtils.sendSuccess( res, new_event );
 
-					    	if( eventUtils.oSize(data) > 10000 ){
-					    		pusher.trigger('app', 'new oversize message' );
-					    	} else {
-					    		pusher.trigger('app', 'new event created', new_event, req.socket_id );
-					    	}
+				    	var data = new_event;
 
-	    				});
+				    	if( eventUtils.oSize( data ) > 10000 ){
+				    		pusher.trigger('app', 'new oversize message' );
+				    	} else {
+				    		pusher.trigger('app', 'new event created', new_event, req.socket_id );
+				    	}
 
-	    });
+					});
+
+		    	});
+
+	    	});
 
 
 
@@ -112,6 +118,7 @@
 				begins_at   : evt.begins_at,
 				group_id	: evt.makeGroupId( req.group.members_facebook_id )
 			};
+			
 			/* Mise à jour de l'event array dans chaque user impliqué */
 			User
 				.update(
@@ -123,12 +130,15 @@
 						if( err )
 							return eventUtils.raiseError({ err: err, res: res, toClient: "api error fetching event" });
 
-						eventUtils.sendSuccess( res, evt );
-
-						var data = {
-							evt   : _.pick( evt, ['_id', 'hosts'] ),
-							group : req.group 
+						var data = 
+						{
+							event_id          : evt._id,
+							hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
+							group             : req.group 
 						};
+
+						eventUtils.sendSuccess( res, data );
+					
 						/* Envoyer une notification aux hosts, et aux users déja présent */
 						if( eventUtils.oSize( data ) > 10000 ){
 					    		pusher.trigger( req.event_id, 'new oversize message' );
@@ -163,11 +173,18 @@
 				 toClient: "api error"
 			});
 
-			eventUtils.sendSuccess( res, evt );
-			if( eventUtils.oSize(data) > 10000 ){
+			var data = 
+			{
+				event_id          : evt._id,
+				hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
+				status            : evt.status
+			}
+
+			eventUtils.sendSuccess( res, data );
+			if( eventUtils.oSize( data ) > 10000 ){
 	    		pusher.trigger('app', 'new oversize message' );
 			} else {
-				pusher.trigger('app', 'new event status', evt, req.socket_id );
+				pusher.trigger('app', 'new event status', data, req.socket_id );
 			}
 
 		});
@@ -186,15 +203,23 @@
 		var updated_group = evt.getGroupById( req.group_id );
 
 		groups.forEach(function( group, i ){
+
 			if( group.group_id === updated_group.group_id ){
+
 				groups[i].status = req.group_status;
+
 				rd.set('event/' + evt._id + '/' + 'group/' + updated_group.group_id + '/status', req.group_status);
+
 				if( req.group_status == 'accepted' ){
+
 					groups[i].accepted_at = new Date();
 					rd.sadd('chat/' + evt._id + '/' + 'audience', [ updated_group.group_id ]);
+
 				} else {
+
 					groups[i].kicked_at = new Date();
-					rd.srem('chat/' + evt._id + '/' + 'audience', [ updated_group.group_id ])
+					rd.srem('chat/' + evt._id + '/' + 'audience', [ updated_group.group_id ]);
+
 				}
 			}
 		});
@@ -214,18 +239,19 @@
 			var group = evt.getGroupById( req.group_id );
 
 			var data = {
-				evt   : _.pick( evt, ['_id', 'hosts'] ),
-				group : group
+				event_id          : evt._id,
+				hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
+				group             : group
 			};
 
 			eventUtils.sendSuccess( res, data );
 
-			console.log('Pushing new group status to clients in eventid: ' + req.event_id );
-
-			if( eventUtils.oSize(data) > 10000 ){
+			console.log( eventUtils.oSize( data ) );
+			if( eventUtils.oSize( data ) > 10000 ){
 	    		pusher.trigger( req.event_id, 'new oversize message' );
 	    	} else {
-				pusher.trigger( req.event_id, 'new group status', data );
+				console.log('Pushing new group status to clients in eventid: ' + req.event_id );
+				pusher.trigger( req.event_id, 'new group status', data, req.socket_id );
 			}
 
 
@@ -246,12 +272,12 @@
 	};
 
 	module.exports = {
-		createEvent: createEvent,
-		request: request,
-		changeEventStatus: changeEventStatus,
-		changeGroupStatus: changeGroupStatus,
-		fetchEvents: fetchEvents,
-		fetchEventById: fetchEventById,
-		updateEvent: updateEvent,
-		fetchGroups: fetchGroups
+		createEvent       : createEvent,
+		request           : request,
+		changeEventStatus : changeEventStatus,
+		changeGroupStatus : changeGroupStatus,
+		fetchEvents       : fetchEvents,
+		fetchEventById    : fetchEventById,
+		updateEvent       : updateEvent,
+		fetchGroups       : fetchGroups
 	};

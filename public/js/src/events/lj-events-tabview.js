@@ -9,7 +9,7 @@
 		addEventInviewAndTabview: function( evt ){
             
             
-            var renderFn =  LJ.fn.iHost( evt ) ? 
+            var renderFn =  LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' ) ) ? 
                             LJ.fn.renderEventInview_Host :
                             LJ.fn.renderEventInview_User ;
 
