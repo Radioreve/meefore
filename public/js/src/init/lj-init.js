@@ -343,6 +343,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         LJ.subscribed_channels.public_chan.bind('new event created', LJ.fn.pushNewEvent );
         LJ.subscribed_channels.public_chan.bind('new event status' , LJ.fn.pushNewEventStatus );
+
+        LJ.subscribed_channels.public_chan.bind('new oversize message', function(data){ console.warn('Didnt receive pusher message (oversized)'); })
         LJ.subscribed_channels.public_chan.bind('new test', LJ.fn.pushNewTest );
 
         }

@@ -19,7 +19,8 @@
             LJ.subscribed_channels[ evt._id ].bind('new chat message', LJ.fn.pushNewChatMessage );
             LJ.subscribed_channels[ evt._id ].bind('new chat readby', LJ.fn.pushNewChatReadBy );
 
-            LJ.subscribed_channels[ evt._id ].bind('new test event', function(data){ console.log(data); })
+            LJ.subscribed_channels[ evt._id ].bind('new test event', function(data){ console.log(data); });
+            LJ.subscribed_channels[ evt._id ].bind('new oversize message', function(data){ console.warn('Didnt receive pusher message (oversized)'); })
 
         },
         pushNewTest: function( data ){

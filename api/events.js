@@ -54,10 +54,15 @@
 	    						return eventUtils.raiseError({ err: err, res: res, toClient: "Error updating users"});
 
 					    	console.log('Event created!!');
-
 					    	eventUtils.sendSuccess( res, new_event );
-					    	pusher.trigger('app', 'new test', { msg: "This channel works" });
-					    	pusher.trigger('app', 'new event created', new_event, req.socket_id );
+
+					    	var data = new_event;
+
+					    	if( eventUtils.oSize(data) > 10000 ){
+					    		pusher.trigger('app', 'new oversize message' );
+					    	} else {
+					    		pusher.trigger('app', 'new event created', new_event, req.socket_id );
+					    	}
 
 	    				});
 
@@ -121,16 +126,21 @@
 						eventUtils.sendSuccess( res, evt );
 
 						var data = {
-							evt   : evt,
+							evt   : _.pick( evt, ['_id', 'hosts'] ),
 							group : req.group 
 						};
 						/* Envoyer une notification aux hosts, et aux users déja présent */
-						pusher.trigger( req.event_id, 'new request', data, req.socket_id );
+						if( eventUtils.oSize( data ) > 10000 ){
+					    		pusher.trigger( req.event_id, 'new oversize message' );
+					    } else {
 
-						/* Envoyer une notification aux amis au courant de rien à priori */
-						req.users.forEach(function( user ){
-							pusher.trigger( user.channels.me, 'new request', data, req.socket_id );
-						});	
+							pusher.trigger( req.event_id, 'new request', data, req.socket_id );
+
+							/* Envoyer une notification aux amis au courant de rien à priori */
+							req.users.forEach(function( user ){
+								pusher.trigger( user.channels.me, 'new request', data, req.socket_id );
+							});	
+						}
 
 					});
 				});
@@ -154,7 +164,11 @@
 			});
 
 			eventUtils.sendSuccess( res, evt );
-			pusher.trigger('app', 'new event status', evt, req.socket_id );
+			if( eventUtils.oSize(data) > 10000 ){
+	    		pusher.trigger('app', 'new oversize message' );
+			} else {
+				pusher.trigger('app', 'new event status', evt, req.socket_id );
+			}
 
 		});
 
@@ -171,7 +185,7 @@
 		/* Find the current group in event, and modify it with req.group object */
 		var updated_group = evt.getGroupById( req.group_id );
 
-		groups.forEach(function(group,i){
+		groups.forEach(function( group, i ){
 			if( group.group_id === updated_group.group_id ){
 				groups[i].status = req.group_status;
 				rd.set('event/' + evt._id + '/' + 'group/' + updated_group.group_id + '/status', req.group_status);
@@ -200,13 +214,20 @@
 			var group = evt.getGroupById( req.group_id );
 
 			var data = {
-				evt: evt,
-				group: group
+				evt   : _.pick( evt, ['_id', 'hosts'] ),
+				group : group
 			};
 
-			console.log('Pushing new group status to clients');
 			eventUtils.sendSuccess( res, data );
-			pusher.trigger( evt._id + '', "new group status",  data, req.socket_id );
+
+			console.log('Pushing new group status to clients in eventid: ' + req.event_id );
+
+			if( eventUtils.oSize(data) > 10000 ){
+	    		pusher.trigger( req.event_id, 'new oversize message' );
+	    	} else {
+				pusher.trigger( req.event_id, 'new group status', data );
+			}
+
 
 		});
 
