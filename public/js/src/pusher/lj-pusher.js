@@ -19,6 +19,8 @@
             LJ.subscribed_channels[ evt._id ].bind('new chat message', LJ.fn.pushNewChatMessage );
             LJ.subscribed_channels[ evt._id ].bind('new chat readby', LJ.fn.pushNewChatReadBy );
 
+            LJ.subscribed_channels[ evt._id ].bind('new test event', function(data){ console.log(data); })
+
         },
         pushNewTest: function( data ){
         	console.log('Test succeed!');
@@ -115,7 +117,7 @@
 			var event_id = evt._id; 
 
 			// Message pour les membres du groupes
-			if( LJ.fn.iGroup(group) ){
+			if( LJ.fn.iGroup( group ) ){
 
 				// Update global status of their event
 				$('.row-events-accepted-inview[data-eventid="'+evt._id+'"]').attr('data-status', status );
@@ -130,16 +132,24 @@
 						facebook_id : LJ.bot_profile.facebook_id,
 						sent_at 	: new Date()
 					});
-					// Fetch last messages based on accepted date
+					
 				}
 				if( status == "kicked" ){
 					LJ.fn.toastMsg('Votre groupe a été suspendu de la discussion', 'info', 4000);
+					LJ.fn.addChatLine({
+						id          : event_id,
+						msg         : "Votre groupe vient d'être suspendu de la discussion!",
+						name        : LJ.bot_profile.name,
+						img_id      : LJ.bot_profile.img_id,
+						facebook_id : LJ.bot_profile.facebook_id,
+						sent_at 	: new Date()
+					});
 					$('.row-events-accepted-inview[data-eventid="'+event_id+'"]').attr('data-status','kicked');
 				}
 			}
 
 			// Message pour les autres organisateurs
-			if( LJ.fn.iHost(evt) ){
+			if( LJ.fn.iHost( evt ) ){
 				if( status == "accepted" ){
 					LJ.fn.toastMsg('Un de vos amis a validé un groupe', 'info', 4000);
 					// Fetch last messages based on accepted date

@@ -1,5 +1,7 @@
 	var _ = require('lodash');
 
+	var pusher = require('../globals/pusher');
+
 	var pushEventsDir = '../pushevents/',
 	    apiDir = '../api/';
 
@@ -132,6 +134,15 @@
 	    //Events relatif aux tests
 	    app.post('/test/:test_val', mdw.validate('test',['socket_id','create_event']), function( req, res ){
 	    	res.json({ msg: "validaton passed", data: res.event_data });;
+	    });
+
+	    app.get('/pusher/test', function(req,res){
+	    	pusher.trigger('app', 'new test', { hello: "app" } );
+	    	res.status(200).end();
+	    });
+	    app.get('/pusher/test/event/:event_id', function(req,res){
+	    	pusher.trigger( req.params.event_id, 'new test event', { hello: "event" } );
+	    	res.status(200).end();
 	    });
 
 	    app.get('/testme', function(req,res){

@@ -46,24 +46,39 @@
             });
 
 			/* Ajout des hosts / partyplace via la touche tab && click */
-            LJ.$body.bind('typeahead:autocomplete typeahead:select', function(ev, suggestion) {
+            LJ.$body.bind('typeahead:autocomplete typeahead:select', function( ev, suggestion ) {
 
                 var $input = $('.row-create-friends input');
                 if( $input.is( ev.target ) ){
-                    $input.parents('.twitter-typeahead').addClass('autocompleted');
-                    LJ.fn.addItemToInput({ max: LJ.settings.app.max_hosts, inp: '.autocompleted', html: LJ.fn.renderFriendInInput( suggestion ), suggestions: '.search-results-friends' });
+                    LJ.fn.addItemToInput({
+                       typeahead   : true,
+                       inp         : ev.target,
+                       max         : LJ.settings.app.max_hosts,
+                       html        : LJ.fn.renderFriendInInput( suggestion ),
+                       suggestions : '.search-results-friends' 
+                    });
                 }
 
                 var $input = $('.row-requestin-group-members input');
                 if( $input.is( ev.target ) ){
-                    $input.parents('.twitter-typeahead').addClass('autocompleted');
-                    LJ.fn.addItemToInput({ max: LJ.settings.app.max_hosts, inp: '.autocompleted', html: LJ.fn.renderFriendInInput( suggestion ), suggestions: '.search-results-friends' });
+                    LJ.fn.addItemToInput({
+                        typeahead   : true,
+                        max         : LJ.settings.app.max_hosts,
+                        inp         : ev.target,
+                        html        : LJ.fn.renderFriendInInput( suggestion ),
+                        suggestions : '.search-results-friends'
+                    });
                 }
 
                 var $input = $('.row-create-party-place input');
                 if( $input.is( ev.target ) ){
-                    $input.parents('.twitter-typeahead').addClass('autocompleted');
-                    LJ.fn.addItemToInput({ max: 1, inp: '.autocompleted', html: LJ.fn.renderPartyPlaceInCreate( suggestion ), suggestions: '.search-results-party-places' });
+                    LJ.fn.addItemToInput({
+                        typeahead   : true,
+                        max         : 1,
+                        inp         : ev.target,
+                        html        : LJ.fn.renderPartyPlaceInCreate( suggestion ),
+                        suggestions : '.search-results-party-places'
+                    });
                 }
             });
 
@@ -145,7 +160,16 @@
 
                         /* Google Places Autocomplete API */
                         LJ.fn.initGooglePlaces();
-    
+                        
+                        /* Default views */
+                        LJ.fn.addItemToInput({
+                           typeahead   : true,
+                           inp         : '#cr-friends',
+                           max         : LJ.settings.app.max_hosts,
+                           html        : LJ.fn.renderMeInInput(),
+                           suggestions : '.search-results-friends' 
+                        })
+
                     } 
                 });
             });
@@ -235,12 +259,9 @@
             var $wrap = $('#createEvent');
 
             // hosts
-            if( $wrap.find('.friend').length != 0 ){
-                hosts_facebook_id.push( LJ.user.facebook_id );
-                $wrap.find('.friend').each(function(i, el){
-                        hosts_facebook_id.push( $(el).attr('data-id') );
-                });
-            }
+            $wrap.find('.friend').each(function(i, el){
+                    hosts_facebook_id.push( $(el).attr('data-id') );
+            });
 
             // ambiance
             $wrap.find('.ambiance-name').each(function(i, el){
@@ -316,7 +337,7 @@
                     LJ.fn.toastMsg('Que la fête commence...', 'info');
                     LJ.fn.addEventPreview(evt);
                     LJ.fn.joinEventChannel( evt );
-                     $('.event-accepted-tabview').last().click();
+                    $('.event-accepted-tabview').last().click();
 
                 }   
             });

@@ -86,15 +86,38 @@
 
                       return html;
         },
+        renderMeInInput: function(){
+
+          var friend = LJ.user;
+
+          /* Rendering friend thumb image */
+            var img_id  = LJ.fn.findMainImage( friend ).img_id,
+            img_version = LJ.fn.findMainImage( friend ).img_version;
+
+            var display_options         = LJ.cloudinary.create.friends.params;
+            display_options.img_version = img_version;
+
+            var image_tag_friend = $.cloudinary.image( img_id, display_options ).removeClass('none').prop('outerHTML');
+          
+            var html =  '<label class="friend me" data-id="'+friend.facebook_id+'">'
+                            + image_tag_friend
+                            + '<div class="friend-name">' + friend.name + '</div>'
+                        +'</label>'
+
+            return html;
+
+
+        },
         renderFriendInInput: function( friend ){
 
             /* Rendering friend thumb image */
-            var img_id          = LJ.fn.findMainImage( friend ).img_id,
-                img_version     = LJ.fn.findMainImage( friend ).img_version,
-                display_options = LJ.cloudinary.create.friends.params;
-                display_options.img_version = img_version;
+            var img_id  = LJ.fn.findMainImage( friend ).img_id,
+            img_version = LJ.fn.findMainImage( friend ).img_version;
 
-            var image_tag_friend = $.cloudinary.image( img_id, display_options ).prop('outerHTML');
+            var display_options         = LJ.cloudinary.create.friends.params;
+            display_options.img_version = img_version;
+
+            var image_tag_friend = $.cloudinary.image( img_id, display_options ).removeClass('none').prop('outerHTML');
             var image_tag_loader = LJ.$bar_loader.clone().addClass('friend-loader').prop('outerHTML');
 
             var html =  '<div class="rem-click friend" data-id="'+friend.facebook_id+'">'

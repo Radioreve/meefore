@@ -314,7 +314,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			/* Display Google Map upon which to render event markers */
 			LJ.fn.initMap();
-
+			LJ.fn.refreshMap();
+			
 			/* Update friends based on facebook activity on each connection */
 			LJ.fn.fetchAndSyncFriends( LJ.fn.handleFetchAndSyncFriends );
 

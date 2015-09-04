@@ -49,7 +49,7 @@
 			}, 50 );
 
 		},
-		adjustAllInputsWidth: function(container){
+		adjustAllInputsWidth: function( container ){
 
 			var $container = $(container);
 			var max = LJ.fn.getMaxWidthLabel( container );
@@ -100,18 +100,19 @@
 			
 
 		},
-		addItemToInput: function( options  ){
+		addItemToInput: function( options ){
 
 			var options = options || {};
 
 			if( !options.html || typeof( options.html ) != 'string' )
 				return console.log('Invalid html for prepend item fn');
 
-			var $input = $(options.inp);
-			var $html = $(options.html);
+			var $input = $( options.inp );
+			var $html = $( options.html );
 
-			// fucking important!
-			$input.removeClass('autocompleted');
+			if( options.typeahead ){
+				$input = $input.parents('.twitter-typeahead');
+			}
 
 			$html.hide().insertBefore( $input );
 			options.class_names && $html.addClass( options.class_names );

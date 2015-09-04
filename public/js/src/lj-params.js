@@ -228,6 +228,10 @@
 		$eventsListWrap       : $('#eventsListWrap'),
 		$logout				  : $('#logout'),
 	google: {
+        map_center: {
+            lat: 48.8566140,
+            lng: 2.3522219
+        },
 		map: {
             style: {
                 sober: [{

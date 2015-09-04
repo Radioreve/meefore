@@ -85,6 +85,9 @@
    width: 13px;
 }
 
+.friend.me {
+	color: #555!important;
+}
 .item-name, .friend-name, .ambiance-name, .date-name, .before-place-name, .party-place-name {
    display: inline-block;
    line-height: 30px;

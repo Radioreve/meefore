@@ -4,7 +4,10 @@ var settings = {
 	api_version: 1,
 	app: {
 		min_group: 1,
+		max_group: 4,
+		min_hosts: 1,
 		max_hosts: 5,
+		min_ambiance: 1,
 		max_ambiance: 5,
 		mood: 
 		[

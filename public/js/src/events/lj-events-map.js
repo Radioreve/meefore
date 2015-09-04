@@ -19,10 +19,7 @@
             });
 
             LJ.map = new google.maps.Map(document.getElementsByClassName('row-events-map')[0], {
-                center: {
-                    lat: 48.8566140,
-                    lng: 2.3522219
-                },
+                center: LJ.google.map_center,
                 zoom: 13,
                 scrollwheel: false,
                 disableDefaultUI: true,
@@ -32,7 +29,7 @@
                 	position: google.maps.ControlPosition.RIGHT_TOP
                 },
                 mapTypeControlOptions: {
-                    mapTypeIds: ['sober', 'lunar']
+                    mapTypeIds: ['sober']
                 }
             });
 
@@ -151,6 +148,7 @@
         },
         refreshMap: function(){
             google.maps.event.trigger( LJ.map, 'resize');
+            LJ.map.panTo( LJ.google.map_center );
         },
         displayMarker: function( options ){
 
