@@ -4,9 +4,9 @@
 	
 	var pusher = new Pusher({
 
-		appId		: config.pusher.appId,
-		key			: config.pusher.key,
-		secret		: config.pusher.secret,
+		appId		: config[ process.env.NODE_ENV].pusher.app_id,
+		key			: config[ process.env.NODE_ENV].pusher.key,
+		secret		: config[ process.env.NODE_ENV].pusher.secret,
 		encrypted	: true
 		
 	});
