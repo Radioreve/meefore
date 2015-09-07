@@ -65,42 +65,53 @@
 					// User needs friends to host event!//
 					if( user.friends.length != 0 ){
 
-						var event_id = app_events[ randomInt(0, app_events.length-1) ]._id;
+						getAccessToken( user.facebook_id, function( err, token ){
 
-						var group_members = [ user.facebook_id ];
-						for( var i = 0; i < max_group_size-1; i++ ){
-							var friend = user.friends[ randomInt(0, user.friends.length-1) ];
-							group_members.push( friend.facebook_id );
-						}
+							var event_id = app_events[ randomInt(0, app_events.length-1) ]._id;
 
-						var group_members = group_members;
-						var group_message = generateWord( 10 );
-						var group_name    = generateWord( 5 );
-
-						var group = {
-							socket_id: '1111.12324',
-							name: group_name,
-							members_facebook_id: group_members,
-							message: group_message
-						};
-
-						var url  = 'http://localhost:1234/api/v1/events/'+event_id+'/request';
-						var body = group;
-
-						request({ method: 'patch', url: url, json: body }, function( err, body, response ){
-
-							if( err )
-								return console.log(err);
-
-							if( response.errors ){
-								console.log( response.errors[0].message  );
-								requestEvents( ite, app_events )
-							} else {
-								console.log('Participation requested by  : ' + user.name + ' !');
-								requestEvents( ++ite, app_events );
+							var group_members = [ user.facebook_id ];
+							for( var i = 0; i < max_group_size-1; i++ ){
+								var friend = user.friends[ randomInt(0, user.friends.length-1) ];
+								group_members.push( friend.facebook_id );
 							}
 
-						});
+							var group_members = group_members;
+							var group_message = generateWord( 10 );
+							var group_name    = generateWord( 5 );
+
+							var group = {
+								socket_id: '1111.12324',
+								name: group_name,
+								members_facebook_id: group_members,
+								message: group_message
+							};
+
+							var url  = 'http://localhost:1234/api/v1/events/'+event_id+'/request';
+							var body = group;
+
+							body.token = token;
+
+							request({ method: 'patch', url: url, json: body }, function( err, body, response ){
+
+								if( err )
+									return console.log(err);
+
+								if( response.msg ){
+									console.log( response.msg );
+									requestEvents( ite, app_events );
+									return;
+								}
+								if( response.errors ) {
+									console.log( response.errors[0].message  );
+									requestEvents( ite, app_events )
+								} else {
+									console.log('Participation requested by  : ' + user.name + ' !');
+									requestEvents( ++ite, app_events );
+								}
+
+							});
+
+						});					
 						
 					} else {
 						// Si ite, ça recommence jusqu'à saturation (plus d'erreurs possibles! nice)
@@ -111,7 +122,18 @@
 
 		}
 	
-		
+		function getAccessToken( facebook_id, callback ){
+
+            request({ method: 'post', url: 'http://localhost:1234/auth/token', json: { api_key: 'meeforever', data: { id: facebook_id }} }, function( err, body, res ){
+                
+                if( err )
+                    return callback( err, null );
+                
+                return callback( null, res.token );
+
+            });
+
+        };
 
 		function randomInt(low, high) {
     		return Math.floor(Math.random() * (high - low + 1) + low);

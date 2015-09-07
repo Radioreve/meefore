@@ -70,7 +70,7 @@
   				 queryTokenizer: Bloodhound.tokenizers.whitespace,
   				 identify: function(o){ return o.name; },
   				 remote: {
-  				 	url: '/api/v1/users?name=%query',
+  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
   				 	wildcard: '%query'
   				 },
   				 transform: function(res){
@@ -175,7 +175,7 @@
   				 queryTokenizer: Bloodhound.tokenizers.whitespace,
   				 identify: function(o){ return o.name; },
   				 remote: {
-  				 	url: '/api/v1/places?name=%query',
+  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
   				 	wildcard: '%query'
   				 },
   				 transform: function(res){

@@ -8,19 +8,17 @@
 
 	var nv 			= require('node-validator');
 
-
 	function check( req, res, next ){
 
 		console.log('Validating change group status');
 
-		req.group_id     = req.params.group_id;
-		req.group_status = req.body.group_status;
-
-		var checkReq = nv.isObject()
+		var checkReq = nv.isAnyObject()
+			.withRequired('socket_id'   , nv.isString() )
 			.withRequired('group_status', nv.isString({ expected: ['accepted','kicked'] }) )
-			.withRequired('group_id',	  nv.isString() )
+			.withRequired('group_id'    , nv.isString() )
+			.withRequired('chat_id'		, nv.isString() )
 
-		nv.run( checkReq, { group_id: req.group_id, group_status: req.group_status }, function( n, errors ){
+		nv.run( checkReq, req.sent, function( n, errors ){
 
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );
@@ -34,7 +32,7 @@
 					return next();
 				}
 
-			req.evt = evt;
+			req.sent.evt = evt;
 			next();
 
 			});
@@ -43,8 +41,8 @@
 
 		function checkWithDatabase( req, callback ){
 
-			var event_id = req.event_id,
-				group_id = req.group_id;
+			var event_id = req.sent.event_id,
+				group_id = req.sent.group_id;
 
 			Event.findById( event_id, function( err, evt ){
 

@@ -73,17 +73,32 @@
 
 
         },
+        handleFetchMyEvent: function( err, evt ){
+
+            if( err )
+                return console.log('Error fetching event by id : ' + err );
+            
+            LJ.fn.joinEventChannel( evt ); 
+            LJ.fn.addEventInviewAndTabview( evt, { hide: true });
+            
+            if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' ) ) ){
+                    LJ.fn.fetchMyChat_Host( evt );
+            } else {
+                    LJ.fn.fetchMyChat_Group( evt );
+            }
+
+        },
         handleFetchMyEvents: function( err, events ){
 
           if( err )
             return console.log('Error fetching and sync friends : ' + err );
 
             console.log('Personnal events successfully fetched, n = ' + events.length + ' )');
+            
             events.forEach(function( evt ){
 
-                LJ.fn.joinEventChannel( evt );
-                LJ.fn.addEventInviewAndTabview( evt );
-                LJ.fn.fetchMyChats( evt );
+                LJ.fn.handleFetchMyEvent( null, evt );
+                
             });
 
         },
@@ -92,12 +107,20 @@
             LJ.fn.api('get','events', callback );
 
         },
+        fetchMyEvent: function( event_id, callback ){
+
+            if( !LJ.user.facebook_id )
+                return console.error("Can't fetch events, userId not found");
+
+            LJ.fn.api('get','events/' + event_id, callback );
+
+        },
         fetchMyEvents: function( callback ){
 
             if( !LJ.user.facebook_id )
                 return console.error("Can't fetch events, userId not found");
 
-            LJ.fn.api('get','users/' + LJ.user.facebook_id + '/events', callback );
+            LJ.fn.api('get','me/events', callback );
 
         },
         findEventNearest: function(){

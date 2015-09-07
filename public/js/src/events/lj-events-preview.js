@@ -65,7 +65,6 @@
              delog('Requesting in  for event with id : '+ event_id + '...');
 
             var name, message, members_facebook_id = [];
-
             var $wrap = $('#requestIn');
 
             //name & message
@@ -81,19 +80,18 @@
             }
 
             var request = {
-                name    : name,
-                message : message,
+                name                : name,
+                message             : message,
                 members_facebook_id : members_facebook_id
             };
 
-            delog( request );
             
-            LJ.fn.api('patch', 'events/'+event_id+'/request', { data: request }, function( err, res ){
+            LJ.fn.api('patch', 'events/' + event_id + '/request', { data: request }, function( err, res ){
 
                 LJ.fn.hideLoaders();
+                
                 $('#requestIn')
-                    .find('.lighter').removeClass('lighter')
-                    .end()
+                    .find('.lighter').removeClass('lighter').end()
                     .find('.btn-validating').removeClass('btn-validating');
 
                 if( err ){
@@ -106,23 +104,23 @@
 
 
         },
-        handleRequestInSuccess: function( evt ){
+        handleRequestInSuccess: function( data ){
 
                 delog('Request in success');
+                
+                var event_id          = data.event_id;
+                var group             = data.group;
+                var hosts_facebook_id = data.hosts_facebook_id;
 
                 LJ.fn.hideModal(function(){
 
-                    LJ.fn.addEventPreview(evt);
-                    LJ.fn.addEventInviewAndTabview(evt);
-                    $('.event-accepted-tabview').last().click();
-
+                    LJ.fn.fetchMyEvent( event_id, LJ.fn.handleFetchMyEvent );
                     LJ.fn.toastMsg('Votre demande a été envoyée!', 'info');
-                    LJ.fn.joinEventChannel( evt );
 
                 });
 
         },
-                addEventPreview: function( evt, options ){
+        addEventPreview: function( evt, options ){
 
             if( !evt || evt === {} )
                 return console.error('No event to be added : ' + evt );
@@ -145,8 +143,8 @@
                     renderFn = LJ.fn.renderEventPreview_Member;
             });
 
-
             var event_preview = renderFn( evt );
+
             var $evt = $('.event-preview');
             var duration = 270;
 

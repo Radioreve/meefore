@@ -294,12 +294,10 @@
                 address: address,
                 scheduled_party: scheduled_party
             };
-
-            delog( new_event );
             
             LJ.fn.api('post', 'events', { data: new_event }, function( err, res ){
 
-                 LJ.fn.hideLoaders();
+                LJ.fn.hideLoaders();
                 $('#createEvent')
                     .find('.lighter').removeClass('lighter')
                     .end()
@@ -326,7 +324,7 @@
                     LJ.fn.addEventInviewAndTabview( evt );
                     LJ.fn.displayRouteToParty( evt );
                     LJ.map.panTo({ lat: evt.address.lat, lng: evt.address.lng });
-                    LJ.map.setZoom(15);
+                    LJ.map.setZoom( 15 );
 
                     /* the model is the single source of truth... */
                     LJ.fn.fetchMe();
@@ -335,7 +333,7 @@
                 afterTheScene: function(){
                     LJ.fn.toastMsg('Votre évènement a été créé avec succès!', 'info');
                     LJ.fn.toastMsg('Que la fête commence...', 'info');
-                    LJ.fn.addEventPreview(evt);
+                    LJ.fn.addEventPreview( evt );
                     LJ.fn.joinEventChannel( evt );
                     $('.event-accepted-tabview').last().click();
 

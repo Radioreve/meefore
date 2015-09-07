@@ -28,6 +28,31 @@
                 });
 
             });	
+
+
+            LJ.$body.on('click', '.event-accepted-chatgroup', function(){
+
+                var $self = $(this);
+
+                if( $self.hasClass('active') )
+                    return;
+
+                $('.event-accepted-chatgroup').removeClass('active')
+                $self.addClass('active');
+
+                
+                var group_id = $self.attr('data-groupid');
+
+                // Display proper groups
+                $('.event-accepted-users-group:not([data-groupid="hosts"])').addClass('none');
+                $('.event-accepted-users-group[data-groupid="' + group_id + '"]').removeClass('none');
+
+                // Display proper chat
+                $('.event-accepted-chat-wrap').addClass('none');
+                $('.event-accepted-chat-wrap[data-groupid="' + group_id + '"]').removeClass('none');
+
+                LJ.fn.adjustAllChatPanes();
+            });
 			
 			 
 		},
@@ -40,8 +65,12 @@
             if( !group_status || !group_status || !event_id )
                 return console.error('Missing group_id || group_status || group_id');
 
-            var data = { group_status: group_status };
-            LJ.fn.api('patch', 'events/'+event_id+'/groups/'+group_id+'/status', { data: data }, function( err, res ){
+            var data = {
+                group_status : group_status,
+                chat_id      : LJ.fn.makeChatId({ event_id: event_id, group_id: group_id })
+            };
+
+            LJ.fn.api('patch', 'events/' + event_id + '/groups/' + group_id + '/status', { data: data }, function( err, res ){
 
                 LJ.fn.hideLoaders();
 

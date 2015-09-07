@@ -13,26 +13,22 @@
 
 		console.log('Validating change event status');
 
-		var status   = req.body.status;
-		var checkReq = nv.isString({ expected: ['open','suspended','canceled'] });
+		var checkReq = nv.isAnyObject()
+			.withRequired('status'   , nv.isString({ expected: ['open','suspended','canceled'] }) )
+			.withRequired('socket_id', nv.isString() );
  
-		nv.run( checkReq, status, function( n, errors ){
-
+		nv.run( checkReq, req.sent, function( n, errors ){
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );
 				return next();
 			}
 
 			checkWithDatabase( req, function( errors, evt ){
-
 				if( errors ){
 					req.app_errors = req.app_errors.concat( errors );
 					return next();
 				}
-
-			req.evt          = evt;
-			req.event_status = status;
-			
+			req.sent.evt          = evt;
 			next();
 
 			});
@@ -41,8 +37,8 @@
 
 		function checkWithDatabase( req, callback ){
 
-			var facebook_id = req.facebook_id || req.body.facebook_id;
-			var event_id	= req.event_id;
+			var facebook_id = req.sent.facebook_id;
+			var event_id	= req.sent.event_id;
 
 			Event.findById( event_id, function( err, evt ){
 

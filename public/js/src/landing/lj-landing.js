@@ -206,10 +206,13 @@
 			LJ.accessToken = data.accessToken; 
 			//document.cookie = 'token='+data.accessToken;
 
+			// Make sure all ajax request are don with proper accessToken
+			LJ.fn.initAjaxSetup();
+
+			// Typeahead pluggin 
+			LJ.fn.initTypeahead();
+
 			LJ.fn.say('auth/app', {}, {
-				beforeSend: function(){ 
-					delog('Fetching user and configuration');
-				},
 				success: LJ.fn.handleFetchUserAndConfigurationSuccess 
 			});
 

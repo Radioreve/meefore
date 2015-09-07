@@ -17,9 +17,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				// Landing page animation 
 				this.initAppBoot();
 
-				// Ajax setup 
-				this.initAjaxSetup();				
-
 				// Bind UI action with the proper handler 
 				this.handleDomEvents();
 
@@ -31,9 +28,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 				// Augment lodash 
 				this.initAugmentations();
-
-				// Typeahead pluggin 
-				this.initTypeahead();
 
 				// Country detection
 				this.initCountry();		
@@ -144,24 +138,22 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 		},
 		fetchAndSyncFriends: function( callback ){
 
-			LJ.fn.GraphAPI('/me/friends', function( res ){ 
+			LJ.fn.GraphAPI('/me/friends', function( res ){
 
 				var fb_friends = res.data;
+				var fb_friends_ids = _.pluck( res.data, 'id' );
 
-				var fb_friends_ids = _.pluck( fb_friends, 'id' );
-				var data = { userId: LJ.user._id, fb_friends_ids: fb_friends_ids };
+				var data = { 
+                    userId         : LJ.user._id,
+                    fb_friends_ids : fb_friends_ids
+                };
 
-				$.ajax({
-					method:'post',
-					url:'/me/fetch-and-sync-friends',
-					data: data,
-					success: function( data ){
-						callback( null, data );
-					},
-					error: function( xhr ){
-						callback( JSON.parse( xhr ).responseText, null);
-					}
-				});
+                var cb = {
+                    success: callback,
+                    error  : LJ.fn.handleServerError
+                };
+
+                LJ.fn.say('me/fetch-and-sync-friends', data, cb );
 
 			});
 
@@ -332,22 +324,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			if( LJ.user.access.indexOf('admin') != -1 )
 				LJ.fn.initAdminMode();
 			
-		},
-        subscribeToChannels: function( user ){
-        	
-          //registering default channels (me and public);
-        	LJ.subscribed_channels = {};
-        	_.keys( user.channels ).forEach(function( channel_key ){
-        		LJ.subscribed_channels[ channel_key ] = LJ.pusher.subscribe( LJ.user.channels[ channel_key ]);
-        	});
-
-        LJ.subscribed_channels.public_chan.bind('new event created', LJ.fn.pushNewEvent );
-        LJ.subscribed_channels.public_chan.bind('new event status' , LJ.fn.pushNewEventStatus );
-
-        LJ.subscribed_channels.public_chan.bind('new oversize message', function(data){ console.warn('Didnt receive pusher message (oversized)'); })
-        LJ.subscribed_channels.public_chan.bind('new test', LJ.fn.pushNewTest );
-
-        }
+		}
+   
 
 }); //end LJ
 

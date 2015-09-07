@@ -26,16 +26,6 @@
 
 		console.log('Validating event');
 
-		var evt = {
-			hosts_facebook_id	: req.body.hosts_facebook_id,
-			scheduled_party		: req.body.scheduled_party,
-			address 			: req.body.address,
-			ambiance 			: req.body.ambiance,
-			agerange			: req.body.agerange,
-			mixity				: req.body.mixity,
-			begins_at			: req.body.begins_at
-		};
-
 		function isHostDuplicated( val, onError ){
 			if( val.hosts_facebook_id && _.uniq( val.hosts_facebook_id ).length != val.hosts_facebook_id.length )
 				onError('Hosts with the same id have been provided', 'hosts_facebook_id', val.hosts_facebook_id, { err_id: "twin_hosts"} );
@@ -49,17 +39,21 @@
 		var checkHostId   = nv.isString({ regex: /^\d{10,}$/ });
 		var checkAmbiance = nv.isString();
 
-		var checkParty  = nv.isObject()
+		var checkParty  = nv.isAnyObject()
+
 			.withRequired('_id', nv.isString({ regex: /^[a-z0-9]{24}$/ }));
 
-		var checkAddress = nv.isObject()
+		var checkAddress = nv.isAnyObject()
+
 			.withRequired('lat'			, nv.isNumber({ min: -85, max: 85 }))
 			.withRequired('lng'			, nv.isNumber({ min: -180, max: 180 }))
 			.withRequired('place_id'	, nv.isString() )
 			.withRequired('place_name'	, nv.isString() )
 			.withRequired('city_name'	, nv.isString() )
 
-		var checkEvent = nv.isObject()
+		var checkEvent = nv.isAnyObject()
+
+			.withRequired('socket_id'   		, nv.isString() )
 			.withRequired('address'				, checkAddress )
 			.withRequired('scheduled_party'		, checkParty )
 			.withRequired('hosts_facebook_id'	, nv.isArray(  checkHostId, { min: settings.app.min_hosts , max: settings.app.max_hosts }))
@@ -70,32 +64,26 @@
 			.withCustom( isHostDuplicated )
 			.withCustom( isDateAtLeastToday )
 
-		nv.run( checkEvent, evt, function( n, errors ){
-
+		nv.run( checkEvent, req.sent, function( n, errors ){
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );
 				return next();
 			}
-
 			checkWithDatabase( req, function( errors, event_data ){
-
 				if( errors ){
 					req.app_errors = req.app_errors.concat( errors );
 					return next();
 				}
-
-				req.event_data = event_data;
+				req.sent.event_data = event_data;
 				next();
-
 			});
-
 		});
 	};
 
 
 	function checkWithDatabase( req, callback ){
 
-		var data = req.body;
+		var data = req.sent;
 		var event_data = {};
 
 		event_data.begins_at = data.begins_at;

@@ -20,7 +20,6 @@
         slideRightInVeryLight: { opacity: [1, 0], translateX: [0, 7]   },
         slideRightOutVeryLight: { opacity: [, 1], translateX: [7, 0]   }
 	},
-	pusher_channels: {},
 	jsp_api: {},
 	cache: {
 		events: [],

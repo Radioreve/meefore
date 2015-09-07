@@ -13,42 +13,39 @@
 
 		console.log('Validating request in');
 
-		var group = {
-			name 				: req.body.name,
-			message 			: req.body.message,
-			members_facebook_id : req.body.members_facebook_id
-		};
-
 		function checkNamePattern( val, onError ){
-			if( !/^[a-z0-9\&!-_'?\s\u00C0-\u017F]{1,}$/i.test(val.name) )
+			if( !/^[a-z0-9\&!-_'?\s\u00C0-\u017F]{1,}$/i.test( val.name ) )
 				return onError("Name bad pattern", "name", val.name, { err_id: "name_bad_pattern" });
 
-			if( !/^[a-z0-9\&!'?\s\u00C0-\u017F]{4,27}$/i.test(val.name) )
+			if( !/^[a-z0-9\&!'?\s\u00C0-\u017F]{4,27}$/i.test( val.name ) )
 				return onError("Name bad length", "name", val.name, { err_id: "name_bad_length", min: 4, max: 20 });
 		};
 
 		function checkMessagePattern( val, onError ){
-			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{1,}$/i.test(val.message) )
+			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{1,}$/i.test( val.message ) )
 				return onError("Message bad pattern", "message", val.message, { err_id: "message_bad_pattern"});
 
-			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{4,50}$/i.test(val.message) )
+			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{4,50}$/i.test( val.message ) )
 				return onError("Message bad length", "message", val.message, { err_id: "message_bad_length", min: 4, max: 50 });
 		};
 
-		group.members_facebook_id = _.uniq( group.members_facebook_id );
-		if( group.members_facebook_id.length == 0 ){
-			group.members_facebook_id = null
+		req.sent.members_facebook_id = _.uniq( req.sent.members_facebook_id );
+		
+		if( req.sent.members_facebook_id.length == 0 ){
+			req.sent.members_facebook_id = null
 		};
 
-		var checkGroup = nv.isObject()
-			.withRequired('name', nv.isString())
-			.withRequired('message', nv.isString())
-			.withRequired('members_facebook_id'	, nv.isArray( nv.isString(), { min: 2, max: 4 }))
+		var checkGroup = nv.isAnyObject()
+		
+			.withRequired('name'               , nv.isString())
+			.withRequired('message'            , nv.isString())
+			.withRequired('members_facebook_id', nv.isArray( nv.isString(), { min: 2, max: 4 }))
+			.withRequired('socket_id'          , nv.isString() )
 			.withCustom( checkNamePattern )
 			.withCustom( checkMessagePattern )
 
  
-		nv.run( checkGroup, group, function( n, errors ){
+		nv.run( checkGroup, req.sent, function( n, errors ){
 
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );
@@ -62,7 +59,6 @@
 					return next();
 				}
 
-				req.groups = groups;
 				next();
 
 			});
@@ -71,9 +67,10 @@
 
 		function checkWithDatabase( req, callback ){
 
-			var group = req.body;
+			var group        = req.sent;
 			var facebook_ids = group.members_facebook_id;
 			var group_number = facebook_ids.length;
+			var event_id     = req.sent.event_id;
 
 			User.find({ 'facebook_id': { $in: facebook_ids }}, function( err, members ){
 
@@ -89,7 +86,7 @@
 						missing_ids : _.difference( facebook_ids, _.pluck( members, 'facebook_id' ) )
 					}}, null );
 
-				Event.findById( req.event_id, function( err, evt ){
+				Event.findById( event_id, function( err, evt ){
 
 					if( err ) return callback({ message: "api error" }, null );
 
@@ -123,17 +120,20 @@
 
 					console.log('Validation success!');
 
-					req.group = group;
+					req.sent.new_group = {
+						status              : "pending",
+						name                : req.sent.name,
+						message             : req.sent.message,
+						group_id 			: evt.makeGroupId( req.sent.members_facebook_id ),
+						members             :  _.pluckMany( members, settings.public_properties.users ),
+						members_facebook_id : req.sent.members_facebook_id
+					};
 
-					req.users          = members;
-					req.group.members  = _.pluckMany( members, settings.public_properties.users );
-					req.group.status   = 'pending';
-					req.group.group_id = evt.makeGroupId( req.group.members_facebook_id );
+					// Update les groups de l'event, rdy to save
+					req.sent.groups = evt.groups;
+					req.sent.groups.push( req.sent.new_group );
 
-					req.groups = evt.groups;
-					req.groups.push( req.group );
-
-					callback( null, groups );
+					callback( null );
 					
 
 				});

@@ -47,7 +47,7 @@
 
 			User.findByIdAndUpdate( user._id, { facebook_access_token: facebook_access_token }, { new: true }, function( err, user ){
 
-				var accessToken = eventUtils.generateAppToken( user ); 
+				var accessToken = eventUtils.generateAppToken( "user", user ); 
 				var expose  = { id: user._id, accessToken: accessToken };
 				
 				eventUtils.sendSuccess( res, expose );

@@ -13,6 +13,7 @@
 .jspPane {
    position: absolute;
    padding: 10px 0px!important;
+   z-index: 1;
 }
 
 .jspVerticalBar {

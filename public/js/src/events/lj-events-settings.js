@@ -85,6 +85,7 @@
                 status: status
             };
 
+            LJ.fn.showLoaders();
             LJ.fn.api('patch','events/'+event_id+'/status', { data: data }, function( err, evt ){
                 if( err ){
                     LJ.fn.handleApiError( err );

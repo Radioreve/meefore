@@ -2,72 +2,61 @@
 	var nv = require('node-validator');
 	var rd = require('../../globals/rd');
 
-	var id, group_id, facebook_id;
-
 	function check( req, res, next ){
-		
-		id          = req.params.chat_id;
-		group_id    = req.query.group_id;
-		facebook_id = req.facebook_id;
 
 		var checkFetch = nv.isAnyObject()
-			.withRequired('id'         , nv.isString())
-			.withRequired('facebook_id', nv.isString())
+		
+			.withRequired('group_id'    , nv.isString() )
+			.withRequired('chat_id'		, nv.isString() )
+			.withRequired('event_id'	, nv.isString() )
+			.withRequired('facebook_id' , nv.isString() )
+			.withRequired('socket_id'   , nv.isString() )
 
-		var data = {
-			id          : id,
-			group_id    : group_id,
-			facebook_id : facebook_id
-		};
-		console.log(JSON.stringify(data,null,4));
-		nv.run( checkFetch, data, function( n, errors ){
-
+		nv.run( checkFetch, req.sent, function( n, errors ){
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );
-					return next();
+				return next();
 			}
 
 			checkSenderStatus( req, function( errors, author ){
-
 				if( errors ){
 					req.app_errors = req.app_errors.concat( errors );
 				}
-
-				// Everything went fine
-				_.merge( req, { id: id, group_id: group_id, facebook_id: facebook_id } );
 				next();
-
-
 			});
-
 		});
-
 	};
 
 	function checkSenderStatus( req, callback ){
 
-			rd.smembers('chat/'+id+'/hosts', function( err, hosts_id ){
+			var event_id    = req.sent.event_id;
+			var group_id    = req.sent.group_id;
+			var facebook_id = req.sent.facebook_id;
 
-				rd.get('event/'+id+'/'+'group/'+group_id+'/status', function( err, status ){
+			rd.smembers('event/' + event_id + '/hosts', function( err, hosts_id ){
+				
+				rd.get('event/' + event_id + '/group/' + group_id + '/status', function( err, status ){
 
-					// User that has been validated to fetch messages ?
-					if( group_id && status != 'accepted' )
+					// User that has been validated to fetch message?
+					if( group_id != "hosts" && status != 'accepted' )
 						return callback({
-							err_id: "unauthorized_group",
+							err_id: "unauthorized_fetch",
 							data: {
 								group_id : group_id,
-								location : "validate chat fetch",
-								status   : status
+								status   : status,
+								sent     : req.sent,
+								location : "validate chat fetch [hosts]"
 							}
 						});
 
 					// One of the hosts?
-					if( !group_id && hosts_id.indexOf( facebook_id ) == -1 )
+					if( group_id == "hosts" && hosts_id.indexOf( facebook_id ) == -1 )
 						return callback({
-							message: "No group_id passed and you are not an admin",
-							err_id: "unauthorized_admin",
+							message: "You are not an admin",
+							err_id: "unauthorized_fetch",
 							data: {
-								hosts_id: hosts_id,
+								hosts_id : hosts_id,
+								sent     : req.sent,
 								location : "validate chat fetch"
 							}
 						});

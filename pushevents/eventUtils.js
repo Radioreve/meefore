@@ -43,23 +43,60 @@
     	return Math.floor(Math.random() * (high - low + 1) + low);
 	}
 
-	var generateAppToken = function( user ){
+	var generateAppToken = function( source, data ){
 
-		var public_claim = { _id: user._id };
-		settings.public_properties.users.forEach(function(prop){
-			public_claim[ prop ] = user[ prop ];
-		});
+		var public_claim    = {};
+		var audience        = [];
+		var registred_claim = {};
 
-		var audience = user.access;
+		if( source == "user" ){
 
-		var registred_claim = {
-			expiresInSecondes: 15,
-			issuer: 'leo@meefore.com',
-			audience: audience
-		};
+			var user = data;
+			
+			public_claim = { _id: user._id };
+
+			settings.public_properties.users.forEach(function( prop ){
+				public_claim[ prop ] = user[ prop ];
+			});
+
+			audience = user.access;
+
+			registred_claim = {
+
+				expiresInMinutes  : 600,
+				issuer            : 'leo@meefore.com',
+				audience          : audience
+
+			};
+			
+		}
+
+		if( source == "app" ){
+
+			var app = data; 
+
+			var public_claim = {
+
+				expiresInMinutes : 600,
+				id               : app.id,
+				source           : "generic"
+
+			};
+
+			audience = ["standard"];
+			
+			registred_claim = {
+
+				expiresInSecondes : 15,
+				issuer            : 'leo@meefore.com',
+				audience          : audience
+
+			};
+		}
 
 		return jwt.sign( public_claim, config.jwtSecret, registred_claim );
-	}
+
+	};
 
 	var oSize = function( object ) {
 

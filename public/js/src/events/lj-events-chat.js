@@ -5,22 +5,34 @@
 
             LJ.$body.on('focus', '.event-accepted-chat-typing input', function(){
 
-                var $self   = $(this);
-                var $wrap   = $self.parents('.row-events-accepted-inview');
-                var $readby = $self.siblings('.readby');
+                var $self       = $(this);
+                var $event_wrap = $self.parents('.row-events-accepted-inview');
+                var $chat_wrap  = $self.parents('.event-accepted-chat-wrap');
+                var $readby     = $self.siblings('.readby');
 
-                if( ['accepted', 'hosted'].indexOf( $wrap.attr('data-status')) == -1 ){
+                if( ['accepted', 'hosted'].indexOf( $event_wrap.attr('data-status')) == -1 ){
                     return console.log('Not accepted in event, nothing to send');
                 }
-
-                if( $readby.attr('data-names').split(',').indexOf( LJ.user.name ) == -1 ){
+                
+                var names =  _.pull( $readby.attr('data-names').split(','), '' );
+                if( names.length > 0 && names.indexOf( LJ.user.name ) == -1 ){
 
                     // check éventuel sur l'option oui ou non montrer qu'on a lu les messages
-                    console.log('Calling readyBy...');
+                    console.log('Calling readBy...');
+
+                    var event_id =  $event_wrap.attr('data-eventid');
+                    
+                    if( $event_wrap.attr('data-status') == 'hosted' ){
+                        group_id = 'hosts';
+                    } else {
+                        group_id  = LJ.fn.findMyGroupIdFromDom( this ); 
+                    }
+
                     LJ.fn.sendReadBy({
                         name     : LJ.user.name,
-                        group_id : LJ.fn.findMyGroupId( this ),
-                        chat_id  : $wrap.attr('data-eventid')
+                        group_id : group_id,
+                        event_id : event_id,
+                        chat_id  : $chat_wrap.attr('data-chatid')
                     });
                     return;
                 }
@@ -30,22 +42,34 @@
             });
 			
             LJ.$body.on('keypress', '.event-accepted-chat-typing input', function(e){
+
                 var keyCode = e.keyCode || e.which;
                 if( keyCode === 13 ){
                     $(this).siblings('button').click();
                 }
+
             });
 
             LJ.$body.on('click', '.event-accepted-chat-typing button', function(){
 
-                var $self     = $(this);
-                var $wrap     = $self.parents('.row-events-accepted-inview');
+                var $self       = $(this);
+                var $event_wrap = $self.parents('.row-events-accepted-inview');
+                var $chat_wrap  = $self.parents('.event-accepted-chat-wrap');
                 
                 var msg       = $self.siblings('input').val();
-                var event_id  = $wrap.attr('data-eventid');
-                var group_id  = LJ.fn.findMyGroupId( this ); 
+                var event_id  = $event_wrap.attr('data-eventid');
+                var group_id  = null;
+                var chat_id   = null;
 
-                if( ['accepted','hosted'].indexOf( $wrap.attr('data-status') ) == -1  )
+                if( $event_wrap.attr('data-status') == 'hosted' ){
+                    group_id = 'hosts';
+                } else {
+                    group_id  = LJ.fn.findMyGroupIdFromDom( this ); 
+                }
+
+                var chat_id   = $chat_wrap.attr('data-chatid');
+
+                if( ['accepted','hosted'].indexOf( $event_wrap.attr('data-status') ) == -1  )
                     return LJ.fn.toastMsg("Vous n'avez pas été accepté!", 'info');
 
                 if( msg.trim().length == 0 )
@@ -54,23 +78,25 @@
                 if( $self.hasClass('active') )
                     return LJ.fn.toastMsg('Moins vite!', 'info');
 
-                $self.siblings('input').val('');
-                $self.siblings('.readby').attr('data-names','').text('');
-
                 var data = {
                     msg         : msg,
-                    id          : event_id,
+                    event_id    : event_id,
+                    group_id    : group_id,
+                    chat_id     : chat_id,
                     img_id      : LJ.fn.findMainImage( LJ.user ).img_id,
                     img_vs      : LJ.fn.findMainImage( LJ.user ).img_version,
                     facebook_id : LJ.user.facebook_id,
                     name        : LJ.user.name,
-                    sent_at     : new Date(),
-                    group_id    : group_id
+                    sent_at     : new Date()
                 };
 
+                // Order important cause addChatLine erases .text() property
                 LJ.fn.addChatLine( data );
 
-                LJ.fn.api('post', 'chats/'+event_id, { data: data }, function( err, res ){
+                $self.siblings('input').val('');
+                $self.siblings('.readby').attr('data-names','').append( LJ.$bar_loader.clone().css({ width: '10px' }))
+
+                LJ.fn.api('post', 'chats/' + chat_id, { data: data }, function( err, res ){
                     if( err ){
                         LJ.fn.handleApiError( err );
                     } else {
@@ -83,26 +109,30 @@
 		},
         handleSendChatSuccess: function( res ){
 
-            $('.row-events-accepted-inview[data-eventid="'+res.id+'"]')
-                .find('.event-accepted-chat-typing button')
-                    .removeClass('active');
+            delog('Handling chat success for chat_id : ' + res.chat_id );
+
+            $('.event-accepted-chat-wrap[data-chatid="' + res.chat_id + '"]')
+                .find('.event-accepted-chat-typing button').removeClass('active').end()
+                .find('.readby').text('Envoyé')
+                    .find('img').remove();
+
 
         },
 		addChatLine: function( options ){
             
             delog('Adding chatline...');
             
-            var id = options.id;
+            var chat_id = options.chat_id;
 
-            if( !id )
+            if( !chat_id )
                 return console.error('Cannot add chatline without chat id');
 
             var chat_msg_html = LJ.fn.renderChatLine( options );
 
-            var $wrap = $('.row-events-accepted-inview[data-eventid="' + id + '"]');
+            var $wrap = $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]');
 
                 if( $wrap.length == 0 )
-                    return console.error('Didnt find the container based on id : ' + id );
+                    return console.error('Didnt find the container based on id : ' + chat_id );
 
                 $wrap
                 .find('.event-accepted-notification-message')
@@ -121,64 +151,133 @@
             LJ.fn.adjustAllChatPanes();
 
         },
-        fetchMyChats: function( evt ){
+        fetchMyChat_Host: function( evt ){
 
-            delog('Fetching messages for chat with id : ' + evt._id );
-            
-            var evt = evt;
-            var $wrap = $('.row-events-accepted-tabview').siblings('.row-events-accepted-inview[data-eventid="'+evt._id+'"]');
-            var group_id = $wrap.find('.mygroup').attr('data-groupid');
-            
-            var chats_html = [];
+            console.log('Fetching chat as host');
 
-            if( ['accepted','hosted'].indexOf( $wrap.attr('data-status') ) == -1 ){
-                console.log('No fetching necessary, not accepted');
-                return;
-            }
+            var event_id = evt._id;
+            var $wrap    = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
+
+            // Fetch hosts chat
+            var options_array = [{
+                group_id : "hosts",
+                chat_id  : LJ.fn.makeChatId({ event_id: event_id, group_id: "hosts" }) 
+            }];
+
+            // Fetch other chats
+            evt.groups.forEach(function( group ){
+
+                // User group id to build chatid, but then have to send "hosts" for proper auth
+                var group_id = LJ.fn.makeGroupId( group.members_facebook_id );
+                var chat_id  = LJ.fn.makeChatId({ event_id: event_id, group_id: group_id });
+
+                options_array.push({
+                    chat_id  : chat_id,
+                    group_id : "hosts"
+                });
+
+            });
+
+            options_array.forEach(function( option ){
+
+                LJ.fn.fetchChatHistoryById( _.merge( option, { event_id: event_id } ), function( err, res ){
+
+                    if( err ){
+                        return LJ.fn.handleApiError( err );
+                    } else {
+                        return LJ.fn.handleFetchChatHistoryById( res );
+                    }
+
+                });
+
+            });
+
+        },
+        fetchMyChat_Group: function( evt ){
+
+            console.log('Fetching chat as group');
+
+            var event_id = evt._id;
+            var $wrap    = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
+
+            if( $wrap.attr('data-status') != 'accepted' )
+                return console.warn('No chat to fetch, still waiting approval');
+
+            var group_id = $wrap.find('.event-accepted-users-group.mygroup').attr('data-groupid');
+            var chat_id  = LJ.fn.makeChatId({ event_id: evt._id, group_id: group_id });
 
             var data = {
-                group_id: group_id
+                event_id : event_id,
+                chat_id  : chat_id,
+                group_id : group_id
             };
 
-            LJ.fn.api('get','chats/'+evt._id, { data: data }, function( err, res ){
+            LJ.fn.fetchChatHistoryById( data, function( err, res ){
+                if( err ){
+                    LJ.fn.handleApiError( err );
+                } else {
+                    LJ.fn.handleFetchChatHistoryById( res );
+                }
+            });        
+
+            
+        },
+        fetchChatHistoryById: function( options, callback ){
+
+            delog('Fetching messages for chat with id : ' + options.chat_id );
+
+            var data = {
+                chat_id : options.chat_id,
+                group_id: options.group_id,
+                event_id: options.event_id
+            };
+
+            LJ.fn.api('get','chats/' + options.chat_id, { data: data }, function( err, res ){
 
                 if( err ){
                     return LJ.fn.handleApiError( err );
                 } else {
-                    LJ.fn.handleFetchChatsSuccess({
-                        evt      : evt,
+                    LJ.fn.handleFetchChatHistoryById({
+                        event_id : options.event_id,
                         messages : res.messages,
-                        readby   : res.readby 
+                        readby   : res.readby,
+                        chat_id  : options.chat_id 
                     });
                 }
 
             });
 
         },
-        handleFetchChatsSuccess: function( options ){
+        handleFetchChatHistoryById: function( options ){
                 
-                var evt  = options.evt,
+                var event_id  = options.event_id,
                 messages = options.messages,
                 readby   = options.readby;
+                chat_id  = options.chat_id;
 
                 var chats_html = [];
-                var $wrap      = $('.row-events-accepted-inview[data-eventid="'+evt._id+'"]');
+                var $wrap      = $('.event-accepted-chat-wrap[data-chatid="' + options.chat_id + '"]');
 
-                if( !evt )
+                if( !event_id )
                     return console.error('Cannot add chat history without event id');
 
                 if( !messages )
                         return console.log('Chat is empty, nothing to add');
 
                 messages.forEach(function( msg ){
-                        chats_html.push( LJ.fn.renderChatLine( msg ) );
+                    chats_html.push( LJ.fn.renderChatLine( msg ) );
                 });
 
                 if( chats_html.length != 0 ){
-                    $wrap.find('.event-accepted-chat .jspPane').html( chats_html.length != 0 && chats_html.join('') ).end()
-                         .find('.readby').attr('data-names', readby );
 
-                    LJ.fn.displayReadBy({ readby: readby, id: evt._id });
+                    var $messagesWrap = $wrap.find('.jspPane');
+                    var messages_html =  chats_html.length != 0 && chats_html.join('');
+                    
+                    $messagesWrap
+                        .html( messages_html ).end()
+                        .find('.readby').attr('data-names', readby );
+
+                    LJ.fn.displayReadBy({ event_id: event_id, readby: readby, chat_id: chat_id });
 
                 }
                 LJ.fn.adjustAllChatPanes();
@@ -187,7 +286,8 @@
         sendReadBy: function( options ){
 
             var chat_id  = options.chat_id;
-            var group_id = options.group_id
+            var group_id = options.group_id;
+            var event_id = options.event_id;
             var name     = options.name;
 
             if( !name || !chat_id )
@@ -195,10 +295,11 @@
 
             var data = {
                 name     : name,
-                group_id : group_id
+                group_id : group_id,
+                event_id : event_id
             };
 
-            LJ.fn.api('post', 'chats/'+chat_id+'/readby', { data: data }, function( err, res ){
+            LJ.fn.api('post', 'chats/' + chat_id + '/readby', { data: data }, function( err, res ){
                 if( err ){
                     return LJ.fn.handleApiError( err );
                 } else {
@@ -209,33 +310,34 @@
         },
         displayReadBy: function( options ){
 
-            var readby  = options.readby,
-                id      = options.id;
+            var readby   = options.readby,
+                event_id = options.event_id,
+                chat_id  = options.chat_id;
 
-            if( !id ){
+            if( !chat_id ){
                 return console.error('Cannot display names without id');
             } 
-            
-            var $wrap   = $('.row-events-accepted-inview[data-eventid="' + id + '"]');
-            var $hosts  = $wrap.find('.event-accepted-users-group[data-status="host"]').find('.event-accepted-user');
-            var $users  = $wrap.find('.event-accepted-users-group[data-status="accepted"]').find('.event-accepted-user');
-            var $readby = $wrap.find('.readby');
+                
+            var $chat_wrap  = $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]');
+            var $event_wrap = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
+            var $hosts      = $event_wrap.find('.event-accepted-users-group[data-status="hosts"]').find('.event-accepted-user');
+            var $users      = $event_wrap.find('.event-accepted-users-group[data-status="accepted"]:not(.none)').find('.event-accepted-user');
+            var $readby     = $chat_wrap.find('.readby');
 
             var n = $hosts.length + $users.length;
-            var last_sender_name = $wrap.find('.event-accepted-chat-message').last().attr('data-authorname');
+            var last_sender_name = $chat_wrap.find('.event-accepted-chat-message').last().attr('data-authorname');
 
+            $readby.attr('data-names', readby );
             var names = $readby.attr('data-names').split(',');
 
-            names = _.filter( names, function(el){
-                return el != last_sender_name;
-            });
+            names = _.pull( names, last_sender_name );
 
             var display = '';
             
-            if( names.length == n-1 ){
+            if( names.length == n-1 && name.length > 1 ){
                 display = 'Vu par tout le monde';
             }
-            if( names.length == 1 && names[0] != '' ){
+            if( names.length == 1 && names[0] != '' & display == ''){
                 display = 'Vu par ' + names[0];
             }
             if( names.length > 1 ){

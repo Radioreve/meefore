@@ -1509,7 +1509,7 @@ input:focus:-ms-input-placeholder {
 
 input[type="submit"]:hover,
 button:hover {
-   background: #CD3650;
+   background-color: #CD3650;
    border: none;
 }
 .btn-preview-undo:hover {

@@ -155,7 +155,7 @@
     },
     renderHostsGroup: function( hosts ){
 
-      var hosts_html = '<div class="event-accepted-users-group" data-status="hosts">'
+      var hosts_html = '<div class="event-accepted-users-group" data-status="hosts" data-groupid="hosts">'
                             + '<div class="event-accepted-group-name">Organisateurs</div>';
 
       hosts.forEach(function( member ){
@@ -176,7 +176,7 @@
     },
     renderHostsGroupWithCog: function( hosts ){
 
-      var hosts_html = '<div class="event-accepted-users-group" data-status="hosts">'
+      var hosts_html = '<div class="event-accepted-users-group" data-status="hosts" data-groupid="hosts">'
                             + '<i class="icon icon-event-settings icon-cog"></i>'
                             + '<div class="event-accepted-group-name">Organisateurs</div>';
 
@@ -229,7 +229,7 @@
 
      var toggle_mode = group.status == 'accepted' ? 'on' : 'off';
 
-     var user_group_html = '<div class="event-accepted-users-group" data-status="'+group.status+'" data-groupid="'+group_id+'">'
+     var user_group_html = '<div class="event-accepted-users-group none" data-status="'+group.status+'" data-groupid="'+group_id+'">'
                             + '<i class="icon icon-toggle icon-toggle-'+toggle_mode+'"></i>'
                             + '<div class="event-accepted-group-name">' + group.name + '</div>';
 
@@ -252,12 +252,24 @@
     },
     renderEventInview_Host: function( evt ){
 
-      var html = '', hosts_html = '', groups_html = '';
+      var html = '', hosts_html = '', groups_html = '', chatgroups_html = '', chat_wrap_html = '';
 
       var hosts_html = LJ.fn.renderHostsGroupWithCog( evt.hosts );
 
+      /* Render all group on the left panel, filtered by click on chatgroup after */
       evt.groups.forEach(function( group ){
         groups_html += LJ.fn.renderUsersGroupWithToggle( group );
+      });
+
+      /* Render chatgroup on the top */
+      chatgroups_html += LJ.fn.renderChatGroup_Host();
+      evt.groups.forEach(function( group, i ){
+        chatgroups_html += LJ.fn.renderChatGroup_Group( group );
+      });
+      /* Render a specific chat with chatid per group */
+      chat_wrap_html += LJ.fn.renderChatWrap_Host_Host( evt._id );
+      evt.groups.forEach(function( group, i ){
+        chat_wrap_html += LJ.fn.renderChatWrap_Group_Host( evt._id, group );
       });
 
       html += '<div data-eventid="' + evt._id + '"class="row-events-accepted-inview" data-status="hosted">'
@@ -267,19 +279,12 @@
                     + groups_html
                   + '</div>'
                   + '<div class="event-accepted-chat">'
-                    + '<div class="event-accepted-chat-messages">'
-                      + '<div class="super-centered event-accepted-notification-message">'
-                        + 'Votre évènement a bien été créé' 
-                        + '<br>'
-                        + 'En attendant que d\'autres membres demandent à rejoindre votre before,'
-                        + 'vous pouvez discuter avec les autres organisateurs'
-                      + '</div>'
+                    + '<div class="event-accepted-chatgroups">'
+                      + chatgroups_html
                     + '</div>'
-                    + '<div class="event-accepted-chat-typing">'
-                      + '<div class="readby" data-names=""></div>'
-                      + '<input type="text"/>'
-                      + '<button class="theme-btn">Envoyer</button>'
-                    + '</div>'  
+                    + '<div class="event-accepted-chatwraps">'       
+                      + chat_wrap_html
+                    + '</div>'
                   + '</div>'
                 + '</div>'
                 + LJ.fn.renderEventSettings( evt );
@@ -287,6 +292,101 @@
             + '</div>';
 
         return html;
+
+    },
+    renderChatGroup_Group: function( group ){
+
+      var html =  '<div class="event-accepted-chatgroup" data-groupid="' + LJ.fn.makeGroupId( group.members_facebook_id ) + '">'
+                      + group.name
+                   + '</div>';
+      return html;
+
+    },
+    renderChatGroup_Host: function(){
+
+      var html =  '<div class="event-accepted-chatgroup" data-groupid="hosts" >'
+                      + 'Organisateurs'
+                   + '</div>';
+      return html;
+
+    },
+     renderChatWrap_Host_Host: function( event_id ){
+
+      var html = '<div class="event-accepted-chat-wrap none" data-groupid="hosts" data-chatid="' + LJ.fn.makeChatId({ event_id:event_id, group_id: "hosts" }) + '">'
+                        + '<div class="event-accepted-chat-messages">'
+                        + LJ.fn.renderChatWrapNotification_Host_Host()
+                      + '</div>'
+                      + '<div class="event-accepted-chat-typing">'
+                        + '<div class="readby" data-names=""></div>'
+                        + '<input type="text"/>'
+                        + '<button class="theme-btn">Envoyer</button>'
+                      + '</div>'
+                  + '</div>';
+      return html;
+
+    },
+    renderChatWrap_Host_Group: function( event_id, group ){
+
+      var html = '<div class="event-accepted-chat-wrap none"'
+                  + 'data-groupid="' + LJ.fn.makeGroupId( group.members_facebook_id ) + '"' 
+                  + 'data-chatid="' + LJ.fn.makeChatId({ event_id: event_id, group_id: LJ.fn.makeGroupId( group.members_facebook_id ) }) + '">'
+                    +'<div class="event-accepted-chat-messages">'
+                        + LJ.fn.renderChatWrapNotification_Host_Group( group.name )
+                      + '</div>'
+                      + '<div class="event-accepted-chat-typing">'
+                        + '<div class="readby" data-names=""></div>'
+                        + '<input type="text"/>'
+                        + '<button class="theme-btn">Envoyer</button>'
+                      + '</div>'
+                  + '</div>';
+      return html;
+
+    },
+    renderChatWrap_Group_Host: function( event_id, group ){
+
+      var html = '<div class="event-accepted-chat-wrap none"'
+                  + 'data-groupid="' + LJ.fn.makeGroupId( group.members_facebook_id ) + '"' 
+                  + 'data-chatid="' + LJ.fn.makeChatId({ event_id: event_id, group_id: LJ.fn.makeGroupId( group.members_facebook_id ) }) + '">'
+                    +'<div class="event-accepted-chat-messages">'
+                        + LJ.fn.renderChatWrapNotification_Group_Host()
+                      + '</div>'
+                      + '<div class="event-accepted-chat-typing">'
+                        + '<div class="readby" data-names=""></div>'
+                        + '<input type="text"/>'
+                        + '<button class="theme-btn">Envoyer</button>'
+                      + '</div>'
+                  + '</div>';
+      return html;
+    },
+    renderChatWrapNotification_Host_Host: function( ){
+
+      var html = '<div class="super-centered event-accepted-notification-message">'
+                          + 'Votre évènement a été créé avec succès'
+                          + '<br>'
+                          + 'Vous pouvez discuter ici avec vos amis organisateurs en toute tranquilité. Ce chat '
+                          + 'est reservé aux organisateurs.'
+                        + '</div>';
+      return html;
+
+    },
+    renderChatWrapNotification_Host_Group: function( group_name ){
+
+      var html = '<div class="super-centered event-accepted-notification-message">'
+                          + group_name 
+                          + '<br>'
+                          + 'ont demandé à rejoindre votre before. Ils n\ront pas encore envoyé de message'
+                        + '</div>'
+      return html;
+
+    },
+    renderChatWrapNotification_Group_Host: function(){
+
+      var html =  '<div class="super-centered event-accepted-notification-message">'
+                        + 'Votre demande a bien a été envoyée' 
+                        + '<br>'
+                        + 'Dès que l\'un des organisateurs vous aura accepté, vous aurez accès à la discussion.'
+                      + '</div>'
+      return html;
 
     },
     renderEventTabview: function( evt ){
@@ -297,42 +397,37 @@
     },
     renderEventInview_User: function( evt ){
 
-      var html = '', hosts_html = '', groups_html = '', status = '';
+    var html = '', hosts_html = '', groups_html = '', chatgroups_html = '', chat_wrap_html = '', status = '';
+
 
       var hosts_html = LJ.fn.renderHostsGroup( evt.hosts );
       
       evt.groups.forEach(function( group ){
 
-        groups_html += LJ.fn.renderUsersGroup( group );
-
         if( group.members_facebook_id.indexOf( LJ.user.facebook_id ) != -1 ){
+
+          groups_html += LJ.fn.renderUsersGroup( group );
+          chatgroups_html += LJ.fn.renderChatGroup_Group( group );
+          chat_wrap_html += LJ.fn.renderChatWrap_Group_Host( evt._id, group );
           status  = group.status;
-        }
-        
+
+        }       
       });
 
-      if( status == '' )
-        return console.error('Cant find group status rendering html');
 
-      html += '<div data-eventid="' + evt._id + '" data-status="'+status+'" class="row-events-accepted-inview" >'
+      html += '<div data-eventid="' + evt._id + '" data-status="' + status + '" class="row-events-accepted-inview" >'
                 + '<div class="event-accepted-inview">'
                   + '<div class="event-accepted-users">'
                     + hosts_html
                     + groups_html
                   + '</div>'
                   + '<div class="event-accepted-chat">'
-                    + '<div class="event-accepted-chat-messages">'
-                      + '<div class="super-centered event-accepted-notification-message">'
-                        + 'Votre demande a bien a été envoyée' 
-                        + '<br>'
-                        + 'Dès que l\'un des organisateurs vous aura accepté, vous aurez accès à la discussion.'
+                      + '<div class="event-accepted-chatgroups">'
+                        + chatgroups_html
                       + '</div>'
-                    + '</div>'
-                    + '<div class="event-accepted-chat-typing">'
-                      + '<div class="readby"></div>'
-                      + '<input type="text"/>'
-                      + '<button class="theme-btn">Envoyer</button>'
-                    + '</div>'  
+                      + '<div class="event-accepted-chatwraps">'       
+                        + chat_wrap_html
+                      + '</div>'
                   + '</div>'
                 + '</div>'
             + '</div>';

@@ -1,24 +1,34 @@
+	
+	var _ = require('lodash');
 
 	var handle = function( req, res, next ){
 
 		if( req.app_errors.length == 0 ){
+
 			console.log('Validation passed');
-			return next();
+			next();
+
+		} else {
+
+			res.status(400).json({ 
+
+				namespace : req.app_namespace,
+				errors    : req.app_errors
+
+			}).end();
 		}
-
-		return res.status(400)
-				  .json({ namespace: req.app_namespace, errors: req.app_errors })
-				  .end();
-
 	};
+
 
 	var stage = function( req, res, next ){
 
+		// Errors array. If non empty at the end of the validation steps
+		// http error is returned 
 		req.app_errors = [];
-		
-		req.body       = req.body   || {};
-		req.params     = req.params || {};
 
+		// Need merge params here cause cant access params before it's sent
+		// So need to merge it dynamically in the req.sent global object
+		req.sent = _.merge( req.params, req.sent );
 		next();
 
 	};

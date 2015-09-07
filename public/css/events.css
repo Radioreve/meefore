@@ -246,9 +246,28 @@ display: inline-block;vertical-align: middle;font-size: 12px;background: none;/*
   vertical-align: top;
   height: 83%;
 }
+.event-accepted-chat-messages {
+    height: 189px;
+    background: #FFFFFF;
+    /* overflow: overlay; */
+    position: relative;
+    outline: none;
+}
 .event-accepted-users {
 
-width: 30%;display: inline-block;padding: 8px!important;outline: none;height: 100%;overflow: hidden;}
+width: 30%;
+
+display: inline-block;
+
+padding: 8px!important;
+
+outline: none;
+
+/* height: 100%; */
+
+overflow: hidden;
+
+}
 .event-accepted-user > div {
   display: inline-block;
   vertical-align: middle;
@@ -276,7 +295,7 @@ position: relative;margin: 0 10px 10px 10px;}
   padding: 15px;
   border-radius: 4px;
   border-bottom: 1px solid #eee;
-  top: 125px;
+  top: 95px;
   position: relative;
   width: 430px;
 }
@@ -328,9 +347,7 @@ float: right;font-size: 12px;background: #F7F7F7;color: #333333;padding: 7px 12p
 .event-accepted-chat {
 
 width: 67%;height: 100%;position: relative;}
-.event-accepted-chat-messages {
 
-height: 80%;background: #FFFFFF;overflow: overlay;position: relative;outline: none;}
 .event-accepted-chat-message {
 transition: all ease-out .2s;
 overflow: hidden;padding: 0px 20px;position: relative;margin: 8px 0;}
@@ -412,7 +429,23 @@ margin-right: 20px;margin-left: 0;}
 }
 .event-accepted-chat-typing {
 
-position: absolute;bottom: 0;left: 0;/* background: #FCFCFC; */border-top: 1px solid #eee;height: 42px;width: 100%;padding: 8px 0px 0 20px;}
+position: absolute;
+
+bottom: 0;
+
+left: 0;
+
+/* background: #FCFCFC; */
+
+border-top: 1px solid #eee;
+
+height: 42px;
+
+width: 100%;
+
+padding: 8px 0px 0 20px;
+
+}
 .event-accepted-chat-typing input {
 
 position: relative;z-index: 2;background: #FCFCFC;padding: 6px 0 4px 10px;border-bottom: 1px solid #eee;width: 89%;color: #525252;font-family: 'Karla';font-size: 13px;}
@@ -504,4 +537,39 @@ background: #FCFCFC;}
     top: -20px;
     color: #ccc;
     font-size: 10px;
+}
+
+.event-accepted-chatgroups {
+}
+
+.event-accepted-chatgroup {
+  display: inline-block;
+  border: 1px solid transparent;
+  border-bottom: 1px solid #F6B8C3;
+  font-size: 12px;
+  color: #777;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 57px 50px 0 0;
+  transition: background ease-out .15s;
+}
+
+.event-accepted-chatgroup:hover {
+background: #FFF3F5;
+}
+.event-accepted-chatgroup.active {
+  background: #FCFCFC;
+  border: 1px solid #F6B8C3;
+  border-bottom: none;
+}
+
+.event-accepted-chatwraps {
+  height: 89%;
+}
+.event-accepted-chat-wrap:not(:first-of-type) {
+  
+}
+.row-events-accepted-inview[data-status="pending"] .event-accepted-chat-typing,
+.row-events-accepted-inview[data-status="kicked"] .event-accepted-chat-typing {
+  display: none;
 }

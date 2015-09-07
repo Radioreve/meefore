@@ -2864,9 +2864,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.accessToken = data.accessToken; 
 			//document.cookie = 'token='+data.accessToken;
 
+            console.log('Fetching user and configuration..');
 			LJ.fn.say('auth/app', {}, {
-				beforeSend: function(){ delog('Fetching user and configuration'); },
-				success: LJ.fn.handleFetchUserAndConfigurationSuccess 
+                success    : LJ.fn.handleFetchUserAndConfigurationSuccess 
 			});
 
 		},
@@ -2875,17 +2875,19 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			LJ.fn.GraphAPI('/me/friends', function( res ){
 
 				var fb_friends = res.data;
-
 				var fb_friends_ids = _.pluck( res.data, 'id' );
-				var data = { userId: LJ.user._id, fb_friends_ids: fb_friends_ids };
 
-				$.ajax({
-					method:'POST',
-					url:'/me/fetch-and-sync-friends',
-					data: data,
-					success: callback,
-					error: LJ.fn.handleServerError
-				});
+				var data = { 
+                    userId         : LJ.user._id,
+                    fb_friends_ids : fb_friends_ids
+                };
+
+                var cb = {
+                    success: callback,
+                    error  : LJ.fn.handleServerError
+                };
+
+                LJ.fn.say('me/fetch-and-sync-friends', data, cb );
 
 			});
 

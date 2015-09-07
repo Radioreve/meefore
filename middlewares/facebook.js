@@ -12,11 +12,11 @@
 		return function( req, res, next ){
 
 			//checking out of body ensures its been validated by auth.js before
-			if( auth_type == 'facebook_id' && req.facebook_id )
-				var query = { 'facebook_id': req.facebook_id };
+			if( auth_type == 'facebook_id' && req.sent.facebook_id )
+				var query = { 'facebook_id': req.sent.facebook_id };
 
-			if( auth_type == 'app_id' && req.user_id )
-				var query = { '_id' : req.user_id };
+			if( auth_type == 'app_id' && req.sent.user_id )
+				var query = { '_id' : req.sent.user_id };
 
 			if( !query )
 				return eventUtils.raiseError({ res: res, toClient: "Bad identifier" });

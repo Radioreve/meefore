@@ -8,23 +8,15 @@
 
 		return function( req, res, next ){
 
-			if( audience.indexOf('test_mode') != -1 ){
-				console.log('Test mode activated, passing in with facebook_id : ' + req.body.facebook_id );
-				req.facebook_id = req.body.facebook_id;
-				return next();
-			}
-			
-			var token =    req.headers && req.headers['x-access-token'] 
-						|| req.body    && req.body.token 
-						|| req.params  && req.params.token 
-						|| req.query   && req.query.token 
-
+			var token = req.headers && req.headers['x-access-token'] || req.sent.token
+						
 			if( !token )
 				return eventUtils.raiseError({ res: res,
 					toClient : "Un token est nécessaire pour appeler cette route"
 				});
 
-			console.log('Authenticating for this route...');
+			console.log('Authenticating [api]');
+
 			var payload;
 			try{
 				payload = jwt.verify( token, config.jwtSecret, { audience: audience });
@@ -35,17 +27,33 @@
 				});
 			}
 			
-			console.log('... success!');
+			console.log('Success');
 
-			req.user_id 	= payload._id;
-			req.facebook_id = payload.facebook_id;
+			req.sent.user_id 	 = payload._id;
+			req.sent.facebook_id = payload.facebook_id || payload.id
+
 
 			return next();		
 			
 		};
 	};	
 
+	var makeToken = function( req, res ){
+
+		var api_key = req.body.api_key;
+		var data    = req.body.data;
+
+		if( api_key != 'meeforever' ){
+			return res.json({ err: "Unauthorized - wrong api_key" });
+		}
+
+		var access_token = eventUtils.generateAppToken( "app", data );
+
+		res.json({ token: access_token }).end();
+	};
+
 
 	module.exports = {
-		authenticate: authenticate
+		authenticate : authenticate,
+		makeToken    : makeToken
 	};

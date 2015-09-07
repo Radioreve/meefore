@@ -11,9 +11,7 @@
 		fetchMe: function(){
 
 			LJ.fn.api('get','me', { 
-				beforeSend: function(req){ 
-					req.setRequestHeader('x-access-token', LJ.accessToken );
-				}
+				//no data
 			}, function( err, me ){
 
 				if( err )
@@ -43,8 +41,12 @@
 
 				_.keys( LJ.jsp_api ).forEach(function( key ){
 					LJ.jsp_api[ key ].users.reinitialise();
-					LJ.jsp_api[ key ].chats.reinitialise();
-					LJ.jsp_api[ key ].chats.scrollToBottom();
+					_.keys( LJ.jsp_api[ key ].chats ).forEach(function( chat_key ){
+						if( LJ.jsp_api[ key ].chats[ chat_key ] ){
+							LJ.jsp_api[ key ].chats[ chat_key ].reinitialise();
+							LJ.jsp_api[ key ].chats[ chat_key ].scrollToBottom();
+						}
+					});
 				});
 			}, 50 );
 
@@ -274,21 +276,26 @@
 		randomInt: function(low, high) {
     		return Math.floor(Math.random() * (high - low + 1) + low);
 		},
-		/*sayfn*/
-        say: function( eventName, data, cb ){
+        say: function( eventName, data, options, cb ){
 
         	var url = '/' + eventName;
+
+        	if( typeof options.success == 'function' )
+        		cb = options;
 
         	$.ajax({
         		method:'POST',
         		url:url,
         		dataType:'json',
         		data: data,
-        		beforeSend: function(req){
-        			req.setRequestHeader('x-access-token', LJ.accessToken );
-        			if( typeof( cb.beforeSend ) == 'function' ){
-        				cb.beforeSend(); 
-        			} else { LJ.fn.showLoaders(); }
+        		beforeSend: function( req ){
+
+        			if( options.no_header ){
+        				return
+        			} else {
+						req.setRequestHeader('x-access-token', LJ.accessToken );
+        			}
+
         		},
         		success: function( data ){
         			if( typeof( cb.success ) == 'function' ) cb.success( data );
@@ -346,14 +353,14 @@
 				facebook_id : LJ.user.facebook_id,
 				token       : LJ.accessToken
 			});
-
-			console.log(data);
 			
 			$.ajax({
 				method: method,
 				url: '/api/v' + LJ.settings.api_version + '/' + url,
 				data: data,
-				beforeSend: options.beforeSend,
+				beforeSend: function( req ){
+					req.setRequestHeader('x-access-token', LJ.accessToken );
+        		},
 				success: function( data ){
 					setTimeout(function(){
 						callback( null, data );
@@ -371,6 +378,9 @@
 				}
 			})
 
+		},
+		getToken: function(){
+			return LJ.accessToken;
 		},
 		defaultApiCompleteCallback: function(){
 
@@ -442,12 +452,24 @@
         	return group_ids.sort(function( e1, e2 ){ return parseInt(e1) - parseInt(e2) }).join('.');
 
         },
+        makeChatId: function( options ){
+        	
+        	var event_id = options.event_id;
+        	var group_id = options.group_id;
+
+        	if( !event_id || !group_id ){
+        		console.log(event_id); console.log(group_id);
+        		return console.error('Cant make chat id, missing parameter ')
+        	}
+
+        	return event_id + '-' + group_id;
+        },
         getGroupById: function( evt, group_id ){
 
         	return  _.find( evt.groups, function( group ){ return group.group_id == group_id; });
 
         },
-        findMyGroupId: function( child ){
+        findMyGroupIdFromDom: function( child ){
 
         var group_id = $( child ).parents('.row-events-accepted-inview')
 					     .find('.event-accepted-user[data-userid="'+LJ.user.facebook_id+'"]')
@@ -457,16 +479,30 @@
 
 
         },
-        refreshEventStatusOnMap: function( event_id ){
+        findMyGroupIdFromEvent: function( evt ){
+
+        	var group_id = null;
+
+        	evt.groups.forEach(function( group ){
+
+        		if( group.members_facebook_id.indexOf( LJ.user.facebook_id ) != -1 )
+        			group_id = group.group_id;
+
+        	});
+
+        	return group_id;
+
+        },
+        refreshEventStatusOnMap: function( event_id, status ){
 
         	var marker = _.find( LJ.event_markers, function( el ){ return el.id == event_id; }).marker;
 
-			if( evt.status == "open" ){
+			if( status == "open" ){
 				marker.setOpacity(1);
 				// marker.setIcon( LJ.cloudinary.markers.white_on_black );
 			}
 			
-			if( evt.status == "suspended" ){
+			if( status == "suspended" ){
 				marker.setOpacity(0.5);
 				// marker.setIcon( LJ.cloudinary.markers.black_on_white );
 			}

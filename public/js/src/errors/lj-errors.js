@@ -39,7 +39,9 @@
 				"create_event"  : LJ.fn.handleErrorMessageCreateEvent,
                 "request_event" : LJ.fn.handleErrorMessageRequest,
                 "event_status"  : LJ.fn.handleErrorMessageEventStatus,
-                "chat"          : LJ.fn.handleErrorMessageChat
+                "chat_fetch"    : LJ.fn.handleErrorChatFetch,
+                "chat_message"  : LJ.fn.handleErrorChatMessage,
+                "chat_readby"   : LJ.fn.handleErrorChatReadby
 			};
 
 			return handlers[ namespace ]( err_data );
@@ -122,7 +124,16 @@
             $('.btn-validating').removeClass('btn-validating');
 
         },
-        handleErrorMessageChat: function( err_data ){
+        handleErrorChatMessage: function( err_data ){
+
+            var err_id_messages = {
+                unknown            : "Une erreur inconnue s'est produite suite à l'envoie du message"
+            };
+
+            return LJ.fn.toastMsg( err_id_messages[ err_data.err_id ] || err_id_messages["unknown"], "error" );
+
+        },
+         handleErrorChatFetch: function( err_data ){
 
             var err_id_messages = {
                 unknown            : "Une erreur inconnue s'est produite",
@@ -130,6 +141,15 @@
                 unauthorized_fetch : "Vous n'êtes pas autorisé à demander les messages de cette discussion",
                 unauthorized_admin : "Vous n'êtes pas autorisé à participer à cette discussion! (admin)",
                 missing_parameter  : "Il manque un paramètre pour envoyer le message"
+            };
+
+            return LJ.fn.toastMsg( err_id_messages[ err_data.err_id ] || err_id_messages["unknown"], "error" );
+
+        },
+         handleErrorChatReadby: function( err_data ){
+
+            var err_id_messages = {
+                unknown            : "Une erreur inconnue s'est produite à la lecture du message"
             };
 
             return LJ.fn.toastMsg( err_id_messages[ err_data.err_id ] || err_id_messages["unknown"], "error" );

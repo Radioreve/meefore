@@ -12,7 +12,8 @@
 
 	var createEvent = function( req, res ) {
 	       
-	    var data = req.event_data;
+		var data      = req.sent.event_data;
+		var socket_id = req.sent.socket_id;
 	    
 	    var new_event = {};
 
@@ -46,8 +47,8 @@
 	    		begins_at: new_event.begins_at
 	    	};
 
-	    	var hosts_ns = 'chat/' + new_event._id + '/hosts';
-	    	/* Cache hoss ids for chat performance */
+	    	var hosts_ns = 'event/' + new_event._id + '/hosts';
+	    	/* Cache hosts ids for chat performance */
 	    	rd.sadd( hosts_ns, _.pluck( new_event.hosts, 'facebook_id' ), function( err ){
 
 		    	User.update({ 'facebook_id': { $in: _.pluck( data.hosts, 'facebook_id') } },
@@ -59,7 +60,7 @@
 						if( err )
 							return eventUtils.raiseError({ err: err, res: res, toClient: "Error updating users"});
 
-				    	console.log('Event created!!');
+				    	console.log('Event created!');
 				    	eventUtils.sendSuccess( res, new_event );
 
 				    	var data = new_event.toObject();
@@ -68,7 +69,7 @@
 				    		pusher.trigger('app', 'new oversize message' );
 				    	} else {
 				    		console.log('Pushing new event created');
-				    		pusher.trigger('app', 'new event created', data, req.socket_id, function( err, res, res ){
+				    		pusher.trigger('app', 'new event created', data, socket_id, function( err, res, res ){
 				    			if( err )
 				    				console.log(err);
 				    		});
@@ -86,7 +87,7 @@
 
 	var fetchEvents = function( req, res ){
 
-		var start_date = req.query.start_date;
+		var start_date = req.sent.start_date;
 
 		Event
 			.find(
@@ -104,7 +105,16 @@
 						toClient: "Erreur de l'API"
 					});
 
-				 eventUtils.sendSuccess( res, events );
+				var filtered_events = [];
+				events.forEach(function( evt ){
+
+					evt.n_groups = evt.groups.length;
+					delete evt.groups;
+					filtered_events.push( evt );
+
+				});
+
+				 eventUtils.sendSuccess( res, filtered_events );
 
 			});
 
@@ -112,23 +122,32 @@
 
 	var request = function( req, res ){
 		
-		console.log('Requesting with event_id = ' + req.event_id );
+		var groups    = req.sent.groups;
+		var event_id  = req.sent.event_id;
+		var socket_id = req.sent.socket_id;
 
-		Event.findByIdAndUpdate( req.event_id, { groups: req.groups }, { new: true }, function( err, evt ){
+		var new_group           = req.sent.new_group;
+		var group_id            = req.sent.new_group.group_id;
+		var members 			= req.sent.new_group.members;
+		var members_facebook_id = req.sent.new_group.members_facebook_id;
+
+		console.log('Requesting with event_id = ' + event_id );
+
+		Event.findByIdAndUpdate( event_id, { groups: groups }, { new: true }, function( err, evt ){
 
 			if( err )
 				return eventUtils.raiseError({ err: err, res: res, toClient: "api error fetching event" });
 
 			var event_to_push = {
-				event_id    : req.event_id,
+				event_id    : event_id,
 				begins_at   : evt.begins_at,
-				group_id	: evt.makeGroupId( req.group.members_facebook_id )
+				group_id	: group_id
 			};
 
 			/* Mise à jour de l'event array dans chaque user impliqué */
 			User
 				.update(
-					{ 'facebook_id': { $in: req.group.members_facebook_id } },
+					{ 'facebook_id': { $in: members_facebook_id } },
 					{ $push: { 'events' : event_to_push } },
 					{ multi: true, new: true },
 					function( w ){
@@ -138,23 +157,23 @@
 
 						var data = 
 						{
-							event_id          : evt._id,
+							event_id          : event_id,
 							hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
-							group             : req.group 
+							group             : new_group 
 						};
 
 						eventUtils.sendSuccess( res, data );
 					
 						/* Envoyer une notification aux hosts, et aux users déja présent */
 						if( eventUtils.oSize( data ) > pusher_max_size ){
-					    		pusher.trigger( req.event_id, 'new oversize message' );
+					    		pusher.trigger( event_id, 'new oversize message' );
 					    } else {
 
-							pusher.trigger( req.event_id, 'new request', data, req.socket_id );
+							pusher.trigger( event_id, 'new request', data, socket_id );
 
 							/* Envoyer une notification aux amis au courant de rien à priori */
-							req.users.forEach(function( user ){
-								pusher.trigger( user.channels.me, 'new request', data, req.socket_id );
+							members.forEach(function( user ){
+								pusher.trigger( user.channels.me, 'new request', data, socket_id );
 							});	
 						}
 
@@ -164,10 +183,12 @@
 
 	var changeEventStatus = function( req, res ){
 
-		var status = req.event_status;
-		var evt    = req.evt;
+		var evt       = req.sent.evt;
+		var status    = req.sent.status;
+		var event_id  = req.sent.event_id;
+		var socket_id = req.sent.socket_id;
 
-		console.log('Changing event status, new status : ' + status + ' for event: ' + req.event_id );
+		console.log('Changing event status, new status : ' + status + ' for event: ' + event_id );
 
 		evt.status = status
 		evt.save(function( err, evt ){
@@ -181,16 +202,17 @@
 
 			var data = 
 			{
-				event_id          : evt._id,
+				event_id          : event_id,
 				hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
 				status            : evt.status
 			}
 
 			eventUtils.sendSuccess( res, data );
+
 			if( eventUtils.oSize( data ) > pusher_max_size ){
 	    		pusher.trigger('app', 'new oversize message' );
 			} else {
-				pusher.trigger('app', 'new event status', data, req.socket_id );
+				pusher.trigger('app', 'new event status', data, socket_id );
 			}
 
 		});
@@ -199,34 +221,35 @@
 	};
 
 	var changeGroupStatus = function( req, res ){
-			
-		console.log('Changing group status, new status : ' + req.group_status );
+		
+		var evt       = req.sent.evt;
+		var groups    = evt.groups;
+		var event_id  = req.sent.event_id;
+		var group_id  = req.sent.group_id;
+		var chat_id   = req.sent.chat_id;
+		var status    = req.sent.group_status;
+		var socket_id = req.sent.socket_id;
 
-		var evt = req.evt;
-		var groups = evt.groups;
+		console.log('Changing group status, new status : ' + status );
 
 		/* Find the current group in event, and modify it with req.group object */
-		var updated_group = evt.getGroupById( req.group_id );
+		var updated_group = evt.getGroupById( group_id );
 
 		groups.forEach(function( group, i ){
 
 			if( group.group_id === updated_group.group_id ){
 
-				groups[i].status = req.group_status;
+				groups[i].status = status;
 
-				rd.set('event/' + evt._id + '/' + 'group/' + updated_group.group_id + '/status', req.group_status);
+				rd.set('event/' + event_id + '/' + 'group/' + group_id + '/status', status, function(err){
 
-				if( req.group_status == 'accepted' ){
-
-					groups[i].accepted_at = new Date();
-					rd.sadd('chat/' + evt._id + '/' + 'audience', [ updated_group.group_id ]);
-
-				} else {
-
-					groups[i].kicked_at = new Date();
-					rd.srem('chat/' + evt._id + '/' + 'audience', [ updated_group.group_id ]);
-
-				}
+					if( status == 'accepted' ){
+						groups[i].accepted_at = new Date();
+					} else {
+						groups[i].kicked_at = new Date();
+					}
+					
+				});
 			}
 		});
 
@@ -242,22 +265,22 @@
 					toClient: "api error"
 				});
 
-			var group = evt.getGroupById( req.group_id );
+			var group = evt.getGroupById( group_id );
 
 			var data = {
 				event_id          : evt._id,
 				hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
-				group             : group
+				group             : group,
+				chat_id			  : chat_id
 			};
 
 			eventUtils.sendSuccess( res, data );
 
-			console.log( eventUtils.oSize( data ) );
 			if( eventUtils.oSize( data ) > pusher_max_size ){
-	    		pusher.trigger( req.event_id, 'new oversize message' );
+	    		pusher.trigger( event_id, 'new oversize message' );
 	    	} else {
-				console.log('Pushing new group status to clients in eventid: ' + req.event_id );
-				pusher.trigger( req.event_id, 'new group status', data, req.socket_id );
+				console.log('Pushing new group status to clients in eventid: ' + event_id );
+				pusher.trigger( chat_id, 'new group status', data, socket_id );
 			}
 
 
@@ -266,6 +289,19 @@
 	};
 
 	var fetchEventById = function( req, res ){
+
+		var event_id = req.sent.event_id;
+
+		console.log('Requesting event by id : ' + req.event_id	);
+
+		Event.findById( event_id, function( err, evt ){
+
+			if( err || !evt )
+				eventUtils.raiseError({ err: err, toClient: "api error" });
+
+			res.json( evt ).end();
+
+		});
 
 	};
 

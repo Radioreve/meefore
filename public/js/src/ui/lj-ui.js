@@ -68,52 +68,6 @@
 				});
 			});
 
-			LJ.$body.on('click', '.event-accepted-tabview', function(){
-
-				var $self = $(this);
-				var event_id = $self.attr('data-eventid');
-				var $inview_wrap_target = $('.row-events-accepted-inview[data-eventid="'+event_id+'"]');
-				var evt = _.find( LJ.cache.events, function(el){ return el._id === event_id });
-				var duration = 900;
-
-				var opts = { transition_in : LJ.ui.slideUpInLight, transition_out: LJ.ui.slideDownOutLight };
-				
-				if( $self.hasClass('active') ){
-					$inview_wrap_target.velocity('transition.fadeOut', { duration: 700 });
-					$self.removeClass('active');
-					return;
-				}
-
-				if( $('.event-accepted-tabview.active').length == 0 ){
-					$self.addClass('active');
-					$inview_wrap_target.velocity('transition.slideUpIn', { duration: 600 });
-					LJ.fn.addEventPreview( evt, opts );
-					LJ.fn.adjustAllChatPanes();
-					return;
-				}
-
-				var current_event_id = $('.event-accepted-tabview.active').attr('data-eventid');
-				var $inview_wrap_current = $('.row-events-accepted-inview[data-eventid="'+current_event_id+'"]');
-
-				$('.event-accepted-tabview').removeClass('active');
-				$self.addClass('active');
-				
-				$('.row-events-accepted-inview[data-eventid="'+current_event_id+'"]')
-				.velocity('transition.slideUpOut', {
-					duration: duration
-				});
-
-				LJ.fn.addEventPreview( evt, opts );
-
-				setTimeout(function(){
-					$inview_wrap_target.velocity('transition.slideUpIn', { duration: duration });
-					LJ.fn.adjustAllChatPanes();
-					return;
-				}, 220 );
-
-
-			});
-
 		},
 		displayContent: function( content, options ){
 			
@@ -223,7 +177,6 @@
 			}
 
 			if( typeof status == 'undefined' ){
-				console.log('undefined');
 				toastStatus = '.toastInfo'; 
 				tpl = LJ.tpl.toastInfo;
 			}			
@@ -383,6 +336,9 @@
 				$.ajax({
 					method:'GET',
 					url: options.url,
+					beforeSend: function( req ){
+						req.setRequestHeader('x-access-token', LJ.accessToken );
+					},
 					success: function( data ){
 						var html_data = options.render_cb( data );
 						$('.modal-container').trigger( eventName, [{ html_data: html_data }]);
@@ -447,6 +403,7 @@
 
         },
        	displayUserProfile: function( facebook_id ){
+
 			LJ.fn.displayInModal({ 
 				url: '/api/v1/users/' + facebook_id,
 				source: 'server',

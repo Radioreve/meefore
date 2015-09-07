@@ -11,7 +11,7 @@
 	/* get /users/me */
 	var fetchMe = function( req, res ){
 
-		var userId = req.user_id;
+		var userId = req.sent.user_id;
 
 		if( !userId )
 			return eventUtils.raiseError({ res: res, toClient: "api error" });
@@ -26,15 +26,15 @@
 
 	};
 
-	/*  get /users/:user_id */
+	/*  get /users/:facebook_id */
 	var fetchUserById = function( req, res ){
 
-		var userId = req.params.user_id;
+		var user_facebook_id = req.sent.user_facebook_id;
 
-		if( !userId )
-			return eventUtils.raiseError({ res: res, toClient: "Missing parameter : user id", toServer: "API Error" });
+		if( !user_facebook_id )
+			return eventUtils.raiseError({ res: res, toClient: "Missing parameter : user_facebook_id", toServer: "API Error" });
 
-		User.find({ facebook_id: userId }, function( err, users ){
+		User.find({ facebook_id: user_facebook_id }, function( err, users ){
 
 			if( err )
 				return eventUtils.raiseError({ res: res, toServer: "API Error (database)", toClient: "API Error" });
@@ -51,10 +51,10 @@
 	/* get /users?name=... */
 	var fetchUsers = function( req, res ){
 
-		if( _.keys( req.query ).length == 0 )
+		if( _.keys( req.sent ).length == 0 )
 			return fetchUsersAll( req, res );
 
-		var user_name = req.query.name,
+		var user_name = req.sent.name,
 			pattern   = '^'+user_name;
 
 		User
@@ -98,8 +98,8 @@
 
 	var fetchUserEvents = function( req, res ){
 
-		console.log('Fetching personnal event for facebook_id: ' + req.facebook_id );
-		var facebook_id = req.facebook_id;
+		var facebook_id = req.sent.facebook_id;
+		console.log('Fetching personnal event for facebook_id: ' + facebook_id );
 		
 		Event
 			.find(

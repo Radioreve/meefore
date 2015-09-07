@@ -3,26 +3,23 @@
 
 	var validate = function( namespace, types ){
 
-		var types = Array.isArray( types ) ? types : [types];
+		var types = Array.isArray( types ) ? types : [ types ];
 
-		var middlewares = [ setNamespace(namespace), errHandler.stage ];
+		var middlewares = [ setNamespace( namespace ), errHandler.stage ];
 
 		var matches_files = {
-
-			eid_params   : 'validate-event-id-params',
-			fid_params   : 'validate-facebook-id-params',
-			fid_body     : 'validate-facebook-id-body',
-			socket_id    : 'validate-socket-id',
-
-			create_event : 'validate-events',
-			request      : 'validate-request',
-			event_status : 'validate-event-status',
-			group_status : 'validate-group-status',
-			chat_message : 'validate-chat-message',
-			chat_fetch   : 'validate-chat-fetch',
-			chat_readby  : 'validate-chat-readby',
-
-			test         : 'validate-test'
+			
+			create_event        : 'validate-event-create',
+			event_fetch         : 'validate-event-fetch',
+			event_group_request : 'validate-event-group-request',
+			event_status        : 'validate-event-status',
+			event_group_status  : 'validate-event-group-status',
+			chat_message        : 'validate-chat-message',
+			chat_fetch          : 'validate-chat-fetch',
+			chat_readby         : 'validate-chat-readby',
+			user_fetch 			: 'validate-user-fetch'
+			
+			//test                : 'validate-test'
 			
 		};
 
@@ -30,7 +27,7 @@
 		types.forEach(function( type ){
 			if( matches_files[ type ] ){
 				middlewares.push( require( path + matches_files[ type ] ).check )
-			} else { console.log('Couldnt find path for validation module'); }
+			} else { console.log('Couldnt find path for validation module : ' + type ); }
 		});
 
 		/* Will inspect the req.app_errors object and raise error if necessary */
@@ -40,10 +37,13 @@
 
 	};
 
-	function setNamespace(namespace){
+	function setNamespace( namespace ){
+
 		return function(req, res, next){
+
 			req.app_namespace = namespace || 'void_namespace';
-			return next();
+			next();
+
 		}
 	};
 

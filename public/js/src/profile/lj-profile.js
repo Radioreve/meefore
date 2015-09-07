@@ -299,6 +299,7 @@
 						success: LJ.fn.handleUpdatePicturesSuccess						
 					};
 
+				LJ.fn.showLoaders();
 				LJ.fn.say( eventName, data, cb );
 
 			});
@@ -363,7 +364,6 @@
 									img_place        : img_place
 								}
 						, cb = {
-							beforeSend: function(){ },
 							success: function( data ){
 								sleep( LJ.ui.artificialDelay, function(){
 									$('.progress_bar').velocity('transition.slideUpOut', {
@@ -399,6 +399,8 @@
 							}
 						};
 
+						LJ.fn.showLoaders();
+						// no_header : cloudinary wont let us add custom header
 						LJ.fn.say( eventName, data, cb );
 
   				}).cloudinary_fileupload();
@@ -442,6 +444,7 @@
 					}
 				};
 
+				LJ.fn.showLoaders();
 				LJ.fn.say( eventName, data, cb );
 
 
@@ -617,6 +620,7 @@
 					}
 				};
 
+			LJ.fn.showLoaders();
 			LJ.fn.say( eventName, data, cb );
 
 		},
@@ -640,10 +644,7 @@
 			}
 
 		},
-		handleFetchAndSyncFriends: function( err, data ){
-
-			if( err )
-				return console.error('Error fetching and sync friends : ' + err );
+		handleFetchAndSyncFriends: function( data ){
 
 			var friends = data.friends;
 			LJ.user.friends = friends;

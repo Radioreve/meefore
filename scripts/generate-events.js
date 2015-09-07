@@ -9,7 +9,6 @@
 
         flags.defineInteger('n', 1, 'N max events');
         flags.defineInteger('d', 100, 'Delay in ms between requests');
-        flags.defineString('fid','Watcher facebook id');
         flags.parse();
 
 		mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
@@ -31,7 +30,6 @@
 		var max_hosts  	 = 2;
 		var max_events 	 = flags.get('n');
         var delay        = flags.get('d');
-        var fid          = flags.get('fid');
 		var first_day    = 15;
 		var last_day     = 25;
 		var month        = '/09/15';
@@ -54,69 +52,68 @@
 
 					// User needs friends to host event!//
 					if( user.friends.length != 0 ){
-                        if( user.facebook_id != fid ){
 
-                            // Facebook ids 
-                            var hosts_facebook_id = [ user.facebook_id ];
-                                for( var i = 1; i < max_hosts ; i++ ){
-                                    var n = randomInt(0, user.friends.length-1);
-                                    hosts_facebook_id.push( user.friends[n].facebook_id );
-                                }
+                        getAccessToken( user.facebook_id, function( err, token ){
 
-                            // Agerange & mixity
-                            var agerange = agerange_arr[ randomInt(0,3) ];
-                            var mixity   = mixity_arr[ randomInt(0,3) ];
-
-                            var ambiance = [];
-                            for( var i = 0; i < 5; i++) {
-                                ambiance.push( generateWord(5) );  // 5 syllabes max
-                            }
-
-                            var begins_at = randomInt( first_day, last_day) + month;
-
-                            var google_place = google_places[ randomInt(0, google_places.length - 1 ) ];
-                                // On dégage la place pour éviter les doublons
-                                _.remove( google_places, function(el){ return el.place_id == google_place.place_id });
-
-                            var address = findAddress( google_place );
-
-                            var scheduled_party = { '_id': '55c613d2eb8ced441405a3a8' };
-                            
-                            var url  = 'http://localhost:1234/api/v1/events';
-
-                            var body = {
-                                socket_id: '1337.1337',
-                                hosts_facebook_id: hosts_facebook_id,
-                                agerange: agerange,
-                                mixity: mixity,
-                                ambiance: ambiance,
-                                begins_at: begins_at,
-                                scheduled_party: scheduled_party,
-                                address: address
-
-                            };
-
-                            setTimeout(function(){
-                                request({ method: 'post', url: url, json: body }, function( err, body, response ){
-
-                                    if( err )
-                                        return console.log(err);
-
-                                    if( response.errors ){
-                                        console.log( 'Erreur--' +response.msg  );
-                                        return createEvent( ite );
-                                    } else {
-                                        console.log('Event created by  : ' + user.name + ' !');
-                                        return createEvent( ++ite );
+                                // Facebook ids 
+                                var hosts_facebook_id = [ user.facebook_id ];
+                                    for( var i = 1; i < max_hosts ; i++ ){
+                                        var n = randomInt(0, user.friends.length-1);
+                                        hosts_facebook_id.push( user.friends[n].facebook_id );
                                     }
 
-                                });
-                            }, delay * ite );
-                        
-                        } else {
-                            console.log( user.name + ' is watching, cant host');
-                            createEvent( ite );
-                        }
+                                // Agerange & mixity
+                                var agerange = agerange_arr[ randomInt(0,3) ];
+                                var mixity   = mixity_arr[ randomInt(0,3) ];
+
+                                var ambiance = [];
+                                for( var i = 0; i < 5; i++) {
+                                    ambiance.push( generateWord(5) );  // 5 syllabes max
+                                }
+
+                                var begins_at = randomInt( first_day, last_day) + month;
+
+                                var google_place = google_places[ randomInt(0, google_places.length - 1 ) ];
+                                    // On dégage la place pour éviter les doublons
+                                    _.remove( google_places, function(el){ return el.place_id == google_place.place_id });
+
+                                var address = findAddress( google_place );
+
+                                var scheduled_party = { '_id': '55c613d2eb8ced441405a3a8' };
+                                
+                                var url  = 'http://localhost:1234/api/v1/events';
+
+                                var body = {
+                                    token             : token,
+                                    socket_id         : '133',
+                                    hosts_facebook_id : hosts_facebook_id,
+                                    agerange          : agerange,
+                                    mixity            : mixity,
+                                    ambiance          : ambiance,
+                                    begins_at         : begins_at,
+                                    scheduled_party   : scheduled_party,
+                                    address           : address
+                                };
+
+                                setTimeout(function(){
+                                    request({ method: 'post', url: url, json: body }, function( err, body, response ){
+
+                                        if( err )
+                                            return console.log(err);
+
+                                        if( response.errors || response.msg ){
+                                            console.log( 'Erreur--' +response.msg  );
+                                            return createEvent( ite );
+                                        } else {
+                                            console.log('Event created by  : ' + user.name + ' !');
+                                            return createEvent( ++ite );
+                                        }
+
+                                    });
+                                }, delay * ite );
+                                
+                            });
+
                     } else {
                         // Si ite, ça recommence jusqu'à saturation (plus d'erreurs possibles! nice)
                         console.log( user.name + ' has no friend, hence cant host!');
@@ -125,10 +122,24 @@
             });
 
         }
-        createEvent(0);
 
-        
+
+            createEvent(0);
+
         });
+
+       function getAccessToken( facebook_id, callback ){
+
+            request({ method: 'post', url: 'http://localhost:1234/auth/token', json: { api_key: 'meeforever', data: { id: facebook_id }} }, function( err, body, res ){
+                
+                if( err )
+                    return callback( err, null );
+                
+                return callback( null, res.token );
+
+            });
+
+        };
 	
 		function findAddress( google_place ){
 
