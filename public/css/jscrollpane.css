@@ -12,7 +12,7 @@
 
 .jspPane {
    position: absolute;
-   padding: 10px 0px!important;
+   padding: 10px 0px 10px 0!important;
    z-index: 1;
 }
 
@@ -48,7 +48,7 @@
 }
  
 .jspDrag {
-   background: #FFB6C2;
+   background: #F77188;
    border: 1px solid #F795A6;
    position: relative;
    top: 0;

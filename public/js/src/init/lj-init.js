@@ -23,9 +23,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				// Gif loader and placeholder 
 				this.initStaticImages();
 
-				// Init Pusher Connexion via public chan 
-				this.initPusherConnection();
-
 				// Augment lodash 
 				this.initAugmentations();
 
@@ -91,11 +88,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
       LJ.fn.handleDomEventsSettings();
 
 		},
-		initPusherConnection: function(){
+		initPusherConnection: function( token ){
 
-			console.log( window.pusher_app_id );
 			LJ.pusher = new Pusher( window.pusher_app_id, {
-				encrypted: true
+				encrypted: true,
+        authEndpoint: '/auth/pusher',
+        auth: {
+          headers: { "x-access-token": token } // @48723
+        }
 			});
 
 			LJ.pusher.connection.bind('state_change', function( states ) {
@@ -110,10 +110,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				if( states.current == 'unavailable' )
 					LJ.fn.toastMsg("Le service n'est pas disponible actuellement, essayez de relancer l'application ", 'error', true);
 				
-				if( states.current == 'connected' && LJ.state.connected )
-					LJ.fn.say('auth/app', { userId: LJ.user._id }, { success: LJ.fn.handleFetchUserAndConfigurationSuccess });
-
-			});
+        });
 
 
 		},

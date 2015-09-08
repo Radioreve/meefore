@@ -110,6 +110,7 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 .pika-prev:hover,
 .pika-next:hover {
     opacity: 1;
+    background-color: #eee;
 }
 
 .pika-prev,
@@ -182,9 +183,10 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 }
 
 .is-today .pika-button {
-    color: #383838;
+    color: #fcfcfc;
     font-weight: bold;
-    background: #eee;
+    background: #e94f6a!important;
+    border-radius: 3px;
 }
 
 .is-selected .pika-button {

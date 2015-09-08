@@ -212,6 +212,9 @@
 			// Typeahead pluggin 
 			LJ.fn.initTypeahead();
 
+			// Init Pusher Connexion via public chan 
+			LJ.fn.initPusherConnection( LJ.accessToken );
+
 			LJ.fn.say('auth/app', {}, {
 				success: LJ.fn.handleFetchUserAndConfigurationSuccess 
 			});

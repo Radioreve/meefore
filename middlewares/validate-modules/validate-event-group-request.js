@@ -72,7 +72,9 @@
 			var group_number = facebook_ids.length;
 			var event_id     = req.sent.event_id;
 
-			User.find({ 'facebook_id': { $in: facebook_ids }}, function( err, members ){
+			User.find({ 'facebook_id': { $in: facebook_ids }} ).lean().exec( function( err, members ){
+
+				console.log( eventUtils.oSize( members ) )
 
 				if( err ) return callback({ message: "api error" }, null );
 
@@ -88,7 +90,18 @@
 
 				Event.findById( event_id, function( err, evt ){
 
+
 					if( err ) return callback({ message: "api error" }, null );
+
+					if( evt.status != "open" )
+						return callback({
+							message 	: "Event is not open",
+							data : {
+								err_id : "event_not_open",
+								status : evt.status
+							}
+						});
+
 
 					if( !evt )
 						return callback({

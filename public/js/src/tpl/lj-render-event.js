@@ -40,10 +40,17 @@
       });
 
     },
-    renderEventPreview_Member: function( evt ){
+    renderEventPreview_MemberAccepted: function( evt ){
 
       return LJ.fn.renderEventPreview( evt, {
-        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">Ouvrir</div>'
+        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">Accepté !</div>'
+      });
+
+    },
+    renderEventPreview_MemberPending: function( evt ){
+
+      return LJ.fn.renderEventPreview( evt, {
+        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">En attente</div>'
       });
 
     },
@@ -198,12 +205,12 @@
     },
     renderUsersGroup: function( group ){
 
-      var group_members_facebook_id =  _.pluck( group.members, 'facebook_id' );
+      var group_members_facebook_id =  group.members_facebook_id;
 
       var mygroup  = group_members_facebook_id.indexOf( LJ.user.facebook_id ) != -1 ? 'mygroup' : '';
       var group_id = LJ.fn.makeGroupId( group_members_facebook_id );
 
-      var user_group_html = '<div class="event-accepted-users-group '+mygroup+'" data-status="'+group.status+'" data-groupid="'+group_id+'">'
+      var user_group_html = '<div class="event-accepted-users-group ' + mygroup + '" data-status="' + group.status + '" data-groupid="' + group_id + '">'
                             + '<div class="event-accepted-group-name">' + group.name + '</div>';
 
       group.members.forEach(function( member ){
@@ -297,7 +304,8 @@
     renderChatGroup_Group: function( group ){
 
       var html =  '<div class="event-accepted-chatgroup" data-groupid="' + LJ.fn.makeGroupId( group.members_facebook_id ) + '">'
-                      + group.name
+                      + '<span>' + group.name + '</span>'
+                      + '<span class="bubble none"></span>'
                    + '</div>';
       return html;
 
@@ -305,7 +313,8 @@
     renderChatGroup_Host: function(){
 
       var html =  '<div class="event-accepted-chatgroup" data-groupid="hosts" >'
-                      + 'Organisateurs'
+                      + '<span> Organisateurs </span>'
+                      + '<span class="bubble none"></span>'
                    + '</div>';
       return html;
 
@@ -391,7 +400,10 @@
     },
     renderEventTabview: function( evt ){
 
-      var html = '<div class="event-accepted-tabview slow-down-3" data-eventid="'+evt._id+'">'+ evt.address.place_name +'</div>';
+      var html = '<div class="event-accepted-tabview slow-down-3" data-eventid="' + evt._id + '">'
+                      + '<span>' + evt.address.place_name + '</span>'
+                      + '<span class="bubble none"></span>'
+                  + '</div>';
       return html;
 
     },

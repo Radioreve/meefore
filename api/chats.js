@@ -40,7 +40,7 @@
 							rd.hmset( message_ns + count, data, function( err, response ){
 
 								eventUtils.sendSuccess( res, data );
-								pusher.trigger( req.sent.chat_id, 'new chat message', data );
+								pusher.trigger( 'presence-' + req.sent.chat_id, 'new chat message', data );
 
 							});
 						});
@@ -116,13 +116,14 @@
 				};
 
 				eventUtils.sendSuccess( res, data );
-				pusher.trigger( req.sent.chat_id, 'new chat readby', data );
+				pusher.trigger( 'presence-' + chat_id, 'new chat readby', data );
 
 			});
 
 		});
 
 	};
+
 
 	module.exports = {
 		addChatMessage    : addChatMessage,

@@ -3968,11 +3968,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 		},
 		displayUserProfile: function( facebook_id ){
+
 			LJ.fn.displayInModal({ 
-				url: '/api/v1/users/' + facebook_id,
-				source: 'server',
-				render_cb: LJ.fn.renderUserProfileInCurtain,
-				error_cb: LJ.fn.renderUserProfileInCurtainNone
+
+                url       : '/api/v1/users/' + facebook_id,
+                source    : 'server',
+                render_cb : LJ.fn.renderUserProfileInCurtain,
+                error_cb  : LJ.fn.renderUserProfileInCurtainNone
+                
 			});
 			
 		},

@@ -5,7 +5,7 @@
 
 			LJ.$body.on('click', '.btn-jumpto', function(){
 				var event_id = $(this).parents('.event-preview').attr('data-eventid');
-				var $tab = $('.event-accepted-tabview[data-eventid="'+event_id+'"]');
+				var $tab = $('.event-accepted-tabview[data-eventid="' + event_id + '"]');
 				
 				if( $tab.hasClass('active') )
 					return;
@@ -20,7 +20,9 @@
                 $(this).addClass('btn-validating');
                 $('#createEvent').find('label').addClass('lighter');
                 LJ.fn.showLoaders();
+                
                 var event_id = $(this).parents('#requestIn').attr('data-eventid');
+             
                 LJ.fn.requestIn( event_id );
 
             });
@@ -109,12 +111,10 @@
                 delog('Request in success');
                 
                 var event_id          = data.event_id;
-                var group             = data.group;
-                var hosts_facebook_id = data.hosts_facebook_id;
 
                 LJ.fn.hideModal(function(){
 
-                    LJ.fn.fetchMyEvent( event_id, LJ.fn.handleFetchMyEvent );
+                    LJ.fn.fetchEventById( event_id, LJ.fn.handleFetchEventById );
                     LJ.fn.toastMsg('Votre demande a été envoyée!', 'info');
 
                 });
@@ -139,8 +139,14 @@
 
             evt.groups.forEach(function(group){
                 var mids = _.pluck( group.members, 'facebook_id' )
-                if( mids.indexOf( LJ.user.facebook_id )!= -1 )
-                    renderFn = LJ.fn.renderEventPreview_Member;
+                if( mids.indexOf( LJ.user.facebook_id )!= -1 ){
+                    if( group.status == "accepted" ){
+                        renderFn = LJ.fn.renderEventPreview_MemberAccepted;
+                    }
+                    if( group.status == "pending" ){
+                        renderFn = LJ.fn.renderEventPreview_MemberPending;
+                    }
+                }
             });
 
             var event_preview = renderFn( evt );

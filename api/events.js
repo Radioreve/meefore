@@ -131,7 +131,7 @@
 		var members 			= req.sent.new_group.members;
 		var members_facebook_id = req.sent.new_group.members_facebook_id;
 
-		console.log('Requesting with event_id = ' + event_id );
+		console.log('Requesting in with event_id = ' + event_id );
 
 		Event.findByIdAndUpdate( event_id, { groups: groups }, { new: true }, function( err, evt ){
 
@@ -166,14 +166,18 @@
 					
 						/* Envoyer une notification aux hosts, et aux users déja présent */
 						if( eventUtils.oSize( data ) > pusher_max_size ){
-					    		pusher.trigger( event_id, 'new oversize message' );
+								console.log('Max size reached : ' + eventUtils.oSize( data ) );
+					    		pusher.trigger( event_id, 'new oversize message', {} );
 					    } else {
 
-							pusher.trigger( event_id, 'new request', data, socket_id );
+					    	/* Envoyer une notification aux hosts */
+					    	console.log('Notifying new request has been issued');
+					    	console.log('Host channel: ' + evt.getHostsChannel() );
+							pusher.trigger( evt.getHostsChannel() , 'new request host', data, socket_id );
 
 							/* Envoyer une notification aux amis au courant de rien à priori */
 							members.forEach(function( user ){
-								pusher.trigger( user.channels.me, 'new request', data, socket_id );
+								pusher.trigger( user.channels.me, 'new request group', data, socket_id );
 							});	
 						}
 
@@ -267,6 +271,9 @@
 
 			var group = evt.getGroupById( group_id );
 
+
+			console.log( eventUtils.oSize( group ) );
+
 			var data = {
 				event_id          : evt._id,
 				hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
@@ -280,7 +287,7 @@
 	    		pusher.trigger( event_id, 'new oversize message' );
 	    	} else {
 				console.log('Pushing new group status to clients in eventid: ' + event_id );
-				pusher.trigger( chat_id, 'new group status', data, socket_id );
+				pusher.trigger( 'presence-' + chat_id, 'new group status', data, socket_id );
 			}
 
 

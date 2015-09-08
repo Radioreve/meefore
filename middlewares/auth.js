@@ -3,6 +3,8 @@
 		eventUtils  = require('../pushevents/eventUtils'),
 		config      = require('../config/config');
 
+	var pusher = require('../globals/pusher');
+
 
 		var authenticate = function( audience ){
 
@@ -52,8 +54,29 @@
 		res.json({ token: access_token }).end();
 	};
 
+	var authPusherChannel = function( req, res ){
+
+		var facebook_id = req.sent.facebook_id;
+		var socket_id   = req.sent.socket_id;
+		var channel     = req.sent.channel_name;
+
+		var data = {
+			user_id: facebook_id
+		};
+
+		var auth;	
+		try {
+			auth = pusher.authenticate( socket_id, channel, data );
+		} catch( e ){
+			res.status( 403 ).json({ msg: "Cant sign pusher auth token ", err: e });
+		}
+
+		res.status( 200 ).send( auth );
+	};
+
 
 	module.exports = {
-		authenticate : authenticate,
-		makeToken    : makeToken
+		authenticate      : authenticate,
+		makeToken         : makeToken,
+		authPusherChannel : authPusherChannel
 	};

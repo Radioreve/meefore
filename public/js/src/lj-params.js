@@ -22,13 +22,13 @@
 	},
 	jsp_api: {},
 	cache: {
-		events: [],
-		users: []
+        events : [],
+        users  : []
 	},
     bot_profile: {
         facebook_id : "1337",
-        img_id        : "logo_black_on_white",
-        img_version   : "1438073167"
+        img_id      : "logo_black_on_white",
+        img_version : "1438073167"
 
     },
 	cloudinary:{
@@ -118,10 +118,10 @@
 		},
         curtain: {
         	main: {
-        		params: { cloud_name: "radioreve", 'class': 'modal-main-picture etiquette', width: 250, height: 250, crop: 'fill', gravity: 'face' }
+        		params: { cloud_name: "radioreve", 'class': 'modal-main-picture etiquette', width: 300, height: 300, crop: 'fill', gravity: 'face' }
         	},
         	main_active: {
-        		params: { cloud_name: "radioreve", 'class': 'modal-main-picture etiquette active', width: 250, height: 250, crop: 'fill', gravity: 'face' }
+        		params: { cloud_name: "radioreve", 'class': 'modal-main-picture etiquette active', width: 300, height: 300, crop: 'fill', gravity: 'face' }
         	},
         	thumb: {
         		params: { cloud_name: "radioreve", 'class': 'modal-thumb-picture', crop: 'fill', gravity: 'face' }	

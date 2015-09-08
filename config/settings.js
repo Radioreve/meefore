@@ -53,7 +53,8 @@ var settings = {
 				'name', 
 				'drink', 
 				'mood', 
-				'pictures'
+				'pictures',
+				'channels'
 				//'skills'
 			],
 		events: []

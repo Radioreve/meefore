@@ -93,6 +93,12 @@
 	    	mdw.email.subscribeMailchimpUser,
 	    	signEvents.handleFacebookAuth);
 
+	    // [ @chat ] Make sure a user has authorisation to join a channel
+	    app.post('/auth/pusher',
+	    	mdw.auth.authenticate(['standard']), // token required for magic to happen
+	    	mdw.validate('pusher_auth', ['pusher_auth']),
+	    	mdw.auth.authPusherChannel );
+
 
 	    // Fetch app configuration and user id full profile. Token required
 	    app.post('/auth/app',
@@ -200,10 +206,6 @@
 	    app.post('/api/v1/chats/:chat_id/readby',
 	    	mdw.validate('chat_readby', ['chat_readby']),
 	    	api.chats.setReadBy );
-
-
-
-
 
 
 

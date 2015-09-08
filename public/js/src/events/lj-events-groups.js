@@ -37,21 +37,82 @@
                 if( $self.hasClass('active') )
                     return;
 
+                $self.find('.bubble').addClass('none').text('');
+
                 $('.event-accepted-chatgroup').removeClass('active')
                 $self.addClass('active');
 
-                
                 var group_id = $self.attr('data-groupid');
 
+                var duration = 235;
+
                 // Display proper groups
-                $('.event-accepted-users-group:not([data-groupid="hosts"])').addClass('none');
-                $('.event-accepted-users-group[data-groupid="' + group_id + '"]').removeClass('none');
+                $('.event-accepted-users-group:not([data-groupid="hosts"])')
+                    .velocity('transition.fadeOut',{
+                        duration: duration * 1.82
+                    });
+
+                $('.event-accepted-users-group[data-groupid="' + group_id + '"]:not([data-groupid="hosts"])')
+                    .velocity('transition.fadeIn',
+                        { duration: duration * 1.82
+                    });
 
                 // Display proper chat
-                $('.event-accepted-chat-wrap').addClass('none');
-                $('.event-accepted-chat-wrap[data-groupid="' + group_id + '"]').removeClass('none');
+                var $current_chat =  $('.event-accepted-chat-wrap:not(.none)');
+                var $target_chat  =  $('.event-accepted-chat-wrap[data-groupid="' + group_id + '"]');
 
-                LJ.fn.adjustAllChatPanes();
+                $current_chat
+
+                    .find('.event-accepted-chat-message:not(.me)')
+                    .velocity( LJ.ui.slideRightOutLight, {
+                        duration: duration,
+                        complete: function(){
+                            $('.event-accepted-chat-wrap').addClass('none');
+                        }
+                    }).end()
+
+                    .find('.event-accepted-chat-message.me')
+                    .velocity( LJ.ui.slideLeftOutLight, {
+                        duration: duration,
+                        complete: function(){
+                            $('.event-accepted-chat-wrap').addClass('none');      
+                        }
+                    }).end()
+
+                    .find('.event-accepted-chat-typing')
+                    .velocity('transition.fadeOut', {
+                        duration: duration,
+                        complete: function(){
+
+                            $current_chat.addClass('none');
+
+                            $target_chat
+                                .find('.event-accepted-chat-message').addClass('none').end()
+                                .removeClass('none');
+
+                            LJ.fn.adjustAllChatPanes();
+
+                            $target_chat
+
+                               .find('.event-accepted-chat-message:not(.me)')
+                                    .css({ opacity: 0 })
+                                    .removeClass('none')
+                                    .velocity( LJ.ui.slideRightInLight, {
+                                        duration: duration + 100
+                                    }).end()
+
+                                .find('.event-accepted-chat-message.me')
+                                    .css({ opacity: 0 })
+                                    .removeClass('none')
+                                .velocity( LJ.ui.slideLeftInLight, {
+                                    duration: duration + 100
+                                }).end()
+
+                                .find('.event-accepted-chat-typing')
+                                    .velocity('transition.fadeIn');
+
+                        }
+                    });
             });
 			
 			 

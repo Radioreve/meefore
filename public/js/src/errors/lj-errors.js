@@ -41,7 +41,8 @@
                 "event_status"  : LJ.fn.handleErrorMessageEventStatus,
                 "chat_fetch"    : LJ.fn.handleErrorChatFetch,
                 "chat_message"  : LJ.fn.handleErrorChatMessage,
-                "chat_readby"   : LJ.fn.handleErrorChatReadby
+                "chat_readby"   : LJ.fn.handleErrorChatReadby,
+                "pusher_auth"   : LJ.fn.handleErrorPusherAuth
 			};
 
 			return handlers[ namespace ]( err_data );
@@ -87,7 +88,8 @@
                 "members_facebook_id"   : "Il faut être au moins 2 pour rejoindre un before",
                 "name"                  : "En manque d'inspiration ? Un petit effort! ",
                 "message"               : "Un message de bienvenue est indispensable!",
-                "default"               : "Une des valeurs semble manquer"
+                "default"               : "Une des valeurs semble manquer",
+                "event_no_open"         : "Les organisateurs ont suspendu momentanément l'évènement"
             };
 
             // static errors
@@ -133,7 +135,7 @@
             return LJ.fn.toastMsg( err_id_messages[ err_data.err_id ] || err_id_messages["unknown"], "error" );
 
         },
-         handleErrorChatFetch: function( err_data ){
+        handleErrorChatFetch: function( err_data ){
 
             var err_id_messages = {
                 unknown            : "Une erreur inconnue s'est produite",
@@ -146,13 +148,23 @@
             return LJ.fn.toastMsg( err_id_messages[ err_data.err_id ] || err_id_messages["unknown"], "error" );
 
         },
-         handleErrorChatReadby: function( err_data ){
+        handleErrorChatReadby: function( err_data ){
 
             var err_id_messages = {
                 unknown            : "Une erreur inconnue s'est produite à la lecture du message"
             };
 
             return LJ.fn.toastMsg( err_id_messages[ err_data.err_id ] || err_id_messages["unknown"], "error" );
+
+        },
+        handleErrorPusherAuth: function( err_data ){
+
+            var err_id_messages = {
+                unknown      : "Une erreur inconnue s'est produite lors de l'authentification à Pusher",
+                unauthorized : "Cannot join the channel (access denied, auth failed)"
+            };
+
+            return console.warn( err_id_messages[ err_data.err_id ] || err_id_messages["unknown"] );
 
         }
 

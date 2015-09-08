@@ -53,20 +53,20 @@
    color: #474747;
    margin: 0 4px;
    padding: 6px 10px;
-   background: #E7E7E7;
+   background: #f5f5f5;
    display: inline-block;
    border-radius: 2px;
    box-shadow: 0 0 1px #ECECEC;
 }
 
 .modal-user-picture-hashtag {
-   background: rgba(0, 0, 0, 0.62);
+   background: rgba(0, 0, 0, 0.53);
    color: white;
    position: absolute;
    bottom: 16px;
    left: 50%;
    transform: translate(-50%,0);
-   width: 218px;
+   width: 268px;
    padding: 10px 0;
    display: none;
 }
@@ -84,7 +84,7 @@
 .modal-user-age {
    font-family: 'Karla';
    margin: 10px 0;
-   background: #4F4F4F;
+   background: #e94f6a;
    width: 40px;
    padding: 10px 0;
    /* display: inline-block; */
@@ -98,12 +98,12 @@
 }
 
 .modal-user-motto {
-   letter-spacing: -1px;
-   font-size: 16px;
+   letter-spacing: 0px;
+   font-size: 13px;
    color: #333333;
    margin-bottom: 10px;
    padding: 7px;
-   font-family: 'Gochi hand';
+   /* font-family: 'Gochi hand'; */
 }
 
 .modal-user-mood {
@@ -145,7 +145,7 @@
 }
 
 .modal-thumb-picture.active {
-   border-bottom: 4px solid #E13F3F;
+   border-bottom: 4px solid #e94f6a;
 }
 
 label.lighter {

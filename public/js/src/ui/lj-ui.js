@@ -383,18 +383,23 @@
 			}
 
 		},
-		bubbleUp: function( el, add ){
+		bubbleUp: function( el, opts ){
+			
+			var opts = opts || {};
 
         	var $el = $(el);
 
-        	//if( $el.hasClass('menu-item-active') ) return; 
+        	if( !opts.stack ){
+				if( $el.hasClass('active') )
+				return;
+			}
 
         	var $bubble = $el.find('.bubble'),
-        		n = $bubble.text() == 0 ? 0 : parseInt( $bubble.text() );
+        		n = $bubble.text().trim().length == 0 ? 0 : parseInt( $bubble.text() );
 
-        	$bubble.removeClass('filtered');
+        	$bubble.removeClass('filtered').removeClass('none');
 
-        	var add = add || 1;
+        	var add = opts.add || 1;
 
         		if( add > 99 ) 
         			return $bubble.text('99+');

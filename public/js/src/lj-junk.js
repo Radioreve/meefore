@@ -19,7 +19,7 @@
 
 	function fakeMessage( chatid ){
 		LJ.fn.addChatLine({
-			id          : chatid,
+			chat_id     : chatid,
 			msg         : "Hello the moon",
 			name        : "Meefore",
 			facebook_id : LJ.bot_profile.facebook_id,

@@ -65,6 +65,11 @@
 
 	};
 
+	EventSchema.methods.getHostsChannel = function(){
+
+		return this._id + '-hosts';
+	};
+
 	EventSchema.methods.getGroupById = function( group_id ){
 
 		return  _.find( this.groups, function(group){ return group.group_id == group_id; });

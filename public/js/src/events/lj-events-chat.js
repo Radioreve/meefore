@@ -131,24 +131,43 @@
 
             var $wrap = $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]');
 
-                if( $wrap.length == 0 )
-                    return console.error('Didnt find the container based on id : ' + chat_id );
+            if( $wrap.length == 0 )
+                return console.error('Didnt find the container based on id : ' + chat_id );
 
-                $wrap
-                .find('.event-accepted-notification-message')
-                    .remove().end()
-                .find('.readby')
-                    .attr('data-names', options.name ).text('').end()
-                .find('.event-accepted-chat-messages .jspPane')
-                    .append( chat_msg_html )
-                .find('.event-accepted-chat-message').last()
-                    .addClass( options.class_names && options.class_names.join(' ') );
-
-            if( options.facebook_id == LJ.user.facebook_id ){
-                $wrap.find('.event-accepted-chat-message.me').last().addClass('sending');
-            }
+            $wrap
+            .find('.event-accepted-notification-message')
+                .remove().end()
+            .find('.readby')
+                .attr('data-names', options.name ).text('').end()
+            .find('.event-accepted-chat-messages .jspPane')
+                .append( chat_msg_html )
+            .find('.event-accepted-chat-message').last()
+                .css({ opacity: 0 })
 
             LJ.fn.adjustAllChatPanes();
+            setTimeout(function(){
+                
+                var $last_msg_me = $wrap.find('.event-accepted-chat-message.me').last().addClass(  options.class_names && options.class_names.join(' ')  );
+                var $last_msg_sd = $wrap.find('.event-accepted-chat-message:not(.me)').last().addClass(  options.class_names && options.class_names.join(' ') );
+                
+                if( options.facebook_id == LJ.user.facebook_id ){
+                    $wrap.find('.event-accepted-chat-message.me').last().addClass('sending');
+                    $last_msg_me.velocity({ opacity: [ 0.5, 0 ] }, { duration: 200 });
+                }
+
+                
+                $last_msg_sd.velocity({ opacity: [ 1.0, 0 ] }, { duration: 200 });
+
+                // Bubbling notifications, better ux
+                var event_id = chat_id.split('-')[0];
+                LJ.fn.bubbleUp('.event-accepted-tabview[data-eventid="' + event_id + '"]');
+
+                var group_id = chat_id.split('-')[1];
+                LJ.fn.bubbleUp('.row-events-accepted-inview[data-eventid="' + event_id + '"] \
+                    .event-accepted-chatgroup[data-groupid="' + group_id + '"]');
+
+            }, 50 );
+
 
         },
         fetchMyChat_Host: function( evt ){

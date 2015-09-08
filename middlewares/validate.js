@@ -17,6 +17,7 @@
 			chat_message        : 'validate-chat-message',
 			chat_fetch          : 'validate-chat-fetch',
 			chat_readby         : 'validate-chat-readby',
+			pusher_auth			: 'validate-pusher-auth',
 			user_fetch 			: 'validate-user-fetch'
 			
 			//test                : 'validate-test'

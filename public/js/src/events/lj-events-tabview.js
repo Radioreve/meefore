@@ -14,6 +14,9 @@
 
                 var opts = { transition_in : LJ.ui.slideUpInLight, transition_out: LJ.ui.slideDownOutLight };
                 
+                // Kill bubble no matter what
+                $self.find('.bubble').addClass('none').text('');
+
                 if( $self.hasClass('active') ){
                     $inview_wrap_target.velocity('transition.fadeOut', { duration: 700 });
                     $self.removeClass('active');
@@ -24,6 +27,7 @@
                     $self.addClass('active');
                     $inview_wrap_target.velocity('transition.slideUpIn', { duration: 600 });
                     LJ.fn.addEventPreview( evt, opts );
+
                     LJ.fn.adjustAllChatPanes();
                     return;
                 }
@@ -44,7 +48,6 @@
                 if( $inview_wrap_target.find('.event-accepted-chatgroup.active').length == 0 ){
                     $inview_wrap_target.find('.event-accepted-chatgroup').first().click();
                 }
-
 
                 setTimeout(function(){
                     $inview_wrap_target.velocity('transition.slideUpIn', { duration: duration });
@@ -71,7 +74,7 @@
             $('.row-main').append( renderFn( evt ) );
             $('.row-events-accepted-tabview').append( LJ.fn.renderEventTabview( evt ) );
 
-            if(!options.hide ){
+            if( !options.hide  ){
                 $('.event-accepted-tabview').last().click();
             }
 
@@ -103,7 +106,7 @@
 
             });
 
-            LJ.jsp_api[ evt._id ] = {
+            LJ.jsp_api[ event_id ] = {
                 users: $inview.find('.event-accepted-users').jScrollPane().data('jsp'),
                 chats: chats_jsp
             };
