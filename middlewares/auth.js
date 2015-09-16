@@ -3,7 +3,7 @@
 		eventUtils  = require('../pushevents/eventUtils'),
 		config      = require('../config/config');
 
-	var pusher = require('../globals/pusher');
+	var pusher = require('../services/pusher');
 
 
 		var authenticate = function( audience ){
@@ -61,7 +61,10 @@
 		var channel     = req.sent.channel_name;
 
 		var data = {
-			user_id: facebook_id
+			user_id: facebook_id,
+			user_info: {
+				group_id: channel.split('-')[2]
+			}
 		};
 
 		var auth;	

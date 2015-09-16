@@ -111,6 +111,9 @@
    top: -4px;
 }
 
+.picture-hashtag span {
+    color: #E94F6A;
+}
 .picture-hashtag input {
    width: 114px;
    padding: 3px 3px 3px 6px;

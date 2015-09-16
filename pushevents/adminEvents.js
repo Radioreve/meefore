@@ -5,9 +5,9 @@
 	    eventUtils = require('./eventUtils'),
 	    _ = require('lodash'),
 	    async = require('async'),
-	    bots = require('../globals/bots');
+	    bots = require('../services/bots');
 
-	var pusher = require('../globals/pusher');
+	var pusher = require('../services/pusher');
 
 	var fetchAppData = function( req, res ){	
 		console.log('Fetching app data...');

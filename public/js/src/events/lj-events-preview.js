@@ -7,9 +7,6 @@
 				var event_id = $(this).parents('.event-preview').attr('data-eventid');
 				var $tab = $('.event-accepted-tabview[data-eventid="' + event_id + '"]');
 				
-				if( $tab.hasClass('active') )
-					return;
-				
 				$tab.click();
 			});
 
@@ -143,9 +140,10 @@
                     if( group.status == "accepted" ){
                         renderFn = LJ.fn.renderEventPreview_MemberAccepted;
                     }
-                    if( group.status == "pending" ){
+                    if( group.status == "pending" || group.status == "kicked"  ){
                         renderFn = LJ.fn.renderEventPreview_MemberPending;
                     }
+
                 }
             });
 

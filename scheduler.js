@@ -1,0 +1,16 @@
+	
+	var Event    = require('./models/EventModel');
+	var User     = require('./models/UserModel');
+	var pusher   = require('./services/pusher');
+	var schedule = require('node-schedule');
+	
+
+	// Job #1 - Put "ended" all events of yesterday, every day at 3:00 am	
+	var terminateEvents = require('./jobs/terminate-events').terminateEvents;
+
+	var terminate_events = new schedule.RecurrenceRule();
+		terminate_events.hour   = 3;
+		terminate_events.minute = 0;
+
+	schedule.scheduleJob( terminate_events, terminateEvents );
+

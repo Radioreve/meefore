@@ -5,7 +5,7 @@
     renderChatLine: function( options ){
       
       if( !options )
-          return; 
+          return console.error('Cant render chatline without opts'); 
 
       var html        = '';
       var msg         = options.msg;
@@ -24,7 +24,41 @@
                          mmt.format('HH') + 'h' + mmt.format('mm') :
                          mmt.format('DD/MM');
 
-      html += '<div class="event-accepted-chat-message ' + me +'" data-authorid="' + options.facebook_id + '" data-authorname="' + name +'" >'
+      if( options.whisper_to ){
+        var whisperto = 'data-whisperto="' + options.whisper_to + '"'
+      }
+
+      html  +=    '<div class="event-accepted-chat-message ' + me +'" data-authorid="' + facebook_id + '" data-authorname="' + name + '" '+ whisperto + '>'
+                  + img_tag
+                  + '<div class="event-accepted-chat-sent-at">' + sent_at_html + '</div>'
+                  + '<div class="event-accepted-chat-text">'    + msg          + '</div>'
+                + '</div>'
+
+      return html;
+
+    },
+    renderChatLine_Bot: function( message ){
+      
+      if( !message )
+          return console.error('Il manque le message');
+
+      var html        = '';
+      var msg         = message;
+      var name        = LJ.bot_profile.name;
+      var img_id      = LJ.bot_profile.img_id;
+      var img_vs      = LJ.bot_profile.img_vs;
+      var sent_at     = new Date()
+      var facebook_id = LJ.bot_profile.facebook_id;
+
+      var display_params = _.merge( LJ.cloudinary.events.chat.params, { img_version: img_vs } );
+      var img_tag      = $.cloudinary.image( img_id, display_params ).prop('outerHTML');
+
+      var mmt = moment( new Date( sent_at ) );
+      var sent_at_html = mmt.dayOfYear() == moment().dayOfYear() ?
+                         mmt.format('HH') + 'h' + mmt.format('mm') :
+                         mmt.format('DD/MM');
+
+      html += '<div class="event-accepted-chat-message data-authorid="' + facebook_id + '" data-authorname="' + name +'" >'
                   + img_tag
                   + '<div class="event-accepted-chat-sent-at">' + sent_at_html + '</div>'
                   + '<div class="event-accepted-chat-text">'    + msg          + '</div>'
@@ -43,7 +77,7 @@
     renderEventPreview_MemberAccepted: function( evt ){
 
       return LJ.fn.renderEventPreview( evt, {
-        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">Accepté !</div>'
+        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">Discuter</div>'
       });
 
     },
@@ -57,7 +91,7 @@
     renderEventPreview_Host: function( evt ){
 
       return LJ.fn.renderEventPreview( evt, {
-        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">Ouvrir</div>'
+        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">Organiser</div>'
       });
 
     },
@@ -72,7 +106,8 @@
 
         var display_params = _.merge( LJ.cloudinary.events.map.hosts.params, { img_version: LJ.fn.findMainImage( host ).img_version } );
         var img_tag = $.cloudinary.image( LJ.fn.findMainImage( host ).img_id, display_params ).prop('outerHTML');
-        hosts_pictures_html += '<div class="event-preview-host-picture" data-fbid="'+host.facebook_id+'">' + img_tag +'</div>'
+        var country = '<div class="user-flag"><span class="flag-icon flag-icon-' + host.country_code + '"></span></div>';
+        hosts_pictures_html += '<div class="event-preview-host-picture" data-fbid="'+host.facebook_id+'">' + img_tag + country +'</div>'
 
       });
       hosts_pictures_html += '</div>';
@@ -88,15 +123,21 @@
         }
       });
 
+      var date_html = '<div class="preview-date">'
+                        + '<div class="preview-date-month">' + moment.monthsShort( moment( evt.begins_at ).month() ) + '</div>'
+                        + '<div class="preview-date-day">' + moment( evt.begins_at ).format('DD/MM') + '</div>'
+                    + '</div>';
+
       /* Request html */
       var request_html = options.request_html;
 
       details_html = '<div class="event-preview-details">'
-                      + '<div class="event-preview-address">Rdv '     + evt.address.place_name + ', le '+ moment( evt.begins_at ).format('DD/MM')+'</div>'
+                      + '<div class="event-preview-address">Rdv ' + evt.address.place_name + '</div>'
                       + '<div class="event-preview-hosts-names">' + hosts_names.join('')    + '</div>'
                     +'</div>';
 
       var html = '<div class="event-preview etiquette slow-down-3" data-eventid="' + evt._id + '">'
+                    + date_html
                     + hosts_pictures_html
                     + details_html
                     + request_html
@@ -160,6 +201,18 @@
       return settings_html;
 
     },
+    renderUserInGroup: function( user, img_tag ){
+
+      var country = '<div class="user-flag"><span class="flag-icon flag-icon-' + user.country_code + '"></span></div>';
+
+      var html =  '<div class="event-accepted-user-state offline"></div>'
+                      + '<div class="event-accepted-user-picture">' + img_tag + country +'</div>'
+                      + '<div class="event-accepted-user-name">'    + user.name   + '</div>'
+                      + '<div class="event-accepted-user-age">'     + user.age    + ' ans</div>'
+
+      return html;
+
+    },
     renderHostsGroup: function( hosts ){
 
       var hosts_html = '<div class="event-accepted-users-group" data-status="hosts" data-groupid="hosts">'
@@ -169,10 +222,7 @@
 
       var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
       hosts_html += '<div class="event-accepted-user" data-userid="'+member.facebook_id+'">'
-                        + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
-                        + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
-                        + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
-                        + '<div class="event-accepted-user-hashtag">' + member.drink  + '</div>'
+                        + LJ.fn.renderUserInGroup( member, img_tag )
                       + '</div>';
       });
 
@@ -191,10 +241,7 @@
 
       var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
       hosts_html += '<div class="event-accepted-user" data-userid="'+member.facebook_id+'">'
-                        + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
-                        + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
-                        + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
-                        + '<div class="event-accepted-user-hashtag">' + member.drink  + '</div>'
+                        + LJ.fn.renderUserInGroup( member, img_tag )
                       + '</div>';
       });
 
@@ -217,10 +264,7 @@
 
         var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
         user_group_html += '<div class="event-accepted-user" data-userid="' + member.facebook_id + '">'
-                          + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
-                          + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
-                          + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
-                          + '<div class="event-accepted-user-hashtag">' + member.drink  + '</div>'
+                          + LJ.fn.renderUserInGroup( member, img_tag )
                         + '</div>';
       });
 
@@ -236,18 +280,15 @@
 
      var toggle_mode = group.status == 'accepted' ? 'on' : 'off';
 
-     var user_group_html = '<div class="event-accepted-users-group none" data-status="'+group.status+'" data-groupid="'+group_id+'">'
-                            + '<i class="icon icon-toggle icon-toggle-'+toggle_mode+'"></i>'
+     var user_group_html = '<div class="event-accepted-users-group none" data-status="' + group.status + '" data-groupid="' + group_id + '">'
+                            + '<i class="icon icon-toggle icon-toggle-' + toggle_mode + '"></i>'
                             + '<div class="event-accepted-group-name">' + group.name + '</div>';
 
       group.members.forEach(function( member ){
 
         var img_tag = LJ.fn.renderUserImgTag( member, LJ.cloudinary.events.group.params );
-        user_group_html += '<div class="event-accepted-user" data-userid="'+member.facebook_id+'">'
-                          + '<div class="event-accepted-user-age">'     + member.age    + '</div>'
-                          + '<div class="event-accepted-user-picture">' + img_tag       + '</div>'
-                          + '<div class="event-accepted-user-name">'    + member.name   + '</div>'
-                          + '<div class="event-accepted-user-hashtag">' + member.drink  + '</div>'
+        user_group_html += '<div class="event-accepted-user" data-userid="' + member.facebook_id + '">'
+                          + LJ.fn.renderUserInGroup( member, img_tag )
                         + '</div>';
       });
 
@@ -276,7 +317,7 @@
       /* Render a specific chat with chatid per group */
       chat_wrap_html += LJ.fn.renderChatWrap_Host_Host( evt._id );
       evt.groups.forEach(function( group, i ){
-        chat_wrap_html += LJ.fn.renderChatWrap_Group_Host( evt._id, group );
+        chat_wrap_html += LJ.fn.renderChatWrap_Host_Group( evt._id, group );
       });
 
       html += '<div data-eventid="' + evt._id + '"class="row-events-accepted-inview" data-status="hosted">'
@@ -340,7 +381,7 @@
                   + 'data-groupid="' + LJ.fn.makeGroupId( group.members_facebook_id ) + '"' 
                   + 'data-chatid="' + LJ.fn.makeChatId({ event_id: event_id, group_id: LJ.fn.makeGroupId( group.members_facebook_id ) }) + '">'
                     +'<div class="event-accepted-chat-messages">'
-                        + LJ.fn.renderChatWrapNotification_Host_Group( group.name )
+                        + LJ.fn.renderChatWrapNotification_Host_Group( group )
                       + '</div>'
                       + '<div class="event-accepted-chat-typing">'
                         + '<div class="readby" data-names=""></div>'
@@ -378,12 +419,13 @@
       return html;
 
     },
-    renderChatWrapNotification_Host_Group: function( group_name ){
+    renderChatWrapNotification_Host_Group: function( group ){
 
-      var html = '<div class="super-centered event-accepted-notification-message">'
-                          + group_name 
-                          + '<br>'
-                          + 'ont demandé à rejoindre votre before. Ils n\ront pas encore envoyé de message'
+      var html = '<div class="super-centered event-accepted-notification-message"><div>Le groupe '
+                          + group.name 
+                          + ' a demandé à rejoindre votre before : </div>' 
+                          + '<div class="event-accepted-group-message">' + group.message + '</div>'
+                          + '<button class="theme-btn btn-validate-group">Accepter ce groupe</button>'
                         + '</div>'
       return html;
 
@@ -401,6 +443,7 @@
     renderEventTabview: function( evt ){
 
       var html = '<div class="event-accepted-tabview slow-down-3" data-eventid="' + evt._id + '">'
+                      + '<div class="tabview-date-day">' + moment( evt.begins_at ).format('DD/MM') + '</div>'
                       + '<span>' + evt.address.place_name + '</span>'
                       + '<span class="bubble none"></span>'
                   + '</div>';

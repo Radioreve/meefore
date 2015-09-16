@@ -17,6 +17,10 @@ var messageSchema = new mongoose.Schema({
 	},
 	message: {
 		type: String
+	},
+	type: {
+		type    : String,
+		default : 'normal' // [ normal, bot, whisper ]
 	}
 
 

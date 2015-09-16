@@ -88,8 +88,7 @@
                 "members_facebook_id"   : "Il faut être au moins 2 pour rejoindre un before",
                 "name"                  : "En manque d'inspiration ? Un petit effort! ",
                 "message"               : "Un message de bienvenue est indispensable!",
-                "default"               : "Une des valeurs semble manquer",
-                "event_no_open"         : "Les organisateurs ont suspendu momentanément l'évènement"
+                "default"               : "Une des valeurs semble manquer"
             };
 
             // static errors
@@ -113,6 +112,7 @@
                 name_bad_length     : "Le nom doit avoir entre "+ err_data.min+" et "+ err_data.max+" charactères",
                 message_bad_length  : "Le message doit avoir entre "+ err_data.min+" et "+ err_data.max+" charactères",
                 ghost_members       : "Des members sont inconnus de meefore",
+                event_not_open      : "Les organisateurs ont suspendu momentanément l'évènement",
                 already_there       : already_there_message
             };
 

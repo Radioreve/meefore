@@ -1,6 +1,6 @@
 
 	var nv = require('node-validator');
-	var rd = require('../../globals/rd');
+	var rd = require('../../services/rd');
 	var _  = require('lodash');
 
 
@@ -16,6 +16,7 @@
 			.withRequired('img_id'     , nv.isString() )
 			.withRequired('group_id'   , nv.isString() )
 			.withRequired('facebook_id', nv.isString() )
+			.withOptional('whisper_to' , nv.isArray()  )
 
 		nv.run( checkMessage, req.sent, function( n, errors ){
 			if( n != 0 ){

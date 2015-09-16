@@ -20,7 +20,7 @@
    position: absolute;
    top: 0;
    right: 10px;
-   width: 6px;
+   width: 5px;
    z-index: 1000;
 }
 
@@ -44,7 +44,7 @@
 .jspTrack {
    background: #EBEBEB;
    position: relative;
-   margin-top: 20px;
+   /* margin-top: 20px; */
 }
  
 .jspDrag {

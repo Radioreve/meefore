@@ -70,7 +70,7 @@
                         +'</div>'
 
                         +'<div class="row-input row-input-lg etiquette row-create-mixity">'
-                          +'<label class="label label-lg" for="cr-mixity">Invités</label>'
+                          +'<label class="label label-lg" for="cr-mixity">Type d\'invités</label>'
                           +'<div class="row-select-wrap mixity-wrap">'
                                 + mixity_html
                           +'</div>'

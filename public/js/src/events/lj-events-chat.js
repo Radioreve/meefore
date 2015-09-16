@@ -3,6 +3,34 @@
 
 		handleDomEventsChat: function(){
 
+            LJ.$body.on('click', '.event-accepted-chat-message img', function(){
+
+                var $self       = $(this);
+                var $chat_wrap  = $self.parents('.event-accepted-chat-wrap')
+                var facebook_id = $self.parents().attr('data-authorid');
+                var chat_id     = $chat_wrap.attr('data-chatid');
+
+                // Cant whisper to himself or any other id than user id
+                if( facebook_id == LJ.user.facebook_id || !/^\d{1,}$/i.test( facebook_id ) ){
+                    console.log('Cant whisper to himself');
+                    return;
+                }
+
+                LJ.fn.stageUserForWhisper( facebook_id, chat_id );
+                
+            });
+
+            LJ.$body.on('click', '.btn-validate-group', function(){
+
+                var $self = $(this);
+                var group_id = $self.parents('.event-accepted-chat-wrap').attr('data-groupid');
+
+                $self.parents('.row-events-accepted-inview')
+                    .find('.event-accepted-users-group[data-groupid="' + group_id +'"]')
+                    .find('.icon-toggle').click();
+
+            });
+
             LJ.$body.on('focus', '.event-accepted-chat-typing input', function(){
 
                 var $self       = $(this);
@@ -12,6 +40,10 @@
 
                 if( ['accepted', 'hosted'].indexOf( $event_wrap.attr('data-status')) == -1 ){
                     return console.log('Not accepted in event, nothing to send');
+                }
+
+                if( $chat_wrap.find('.event-accepted-chat-message').last().find('.whisper-text').length != 0 ){
+                    return console.log('Not sending readby for whispers');
                 }
                 
                 var names =  _.pull( $readby.attr('data-names').split(','), '' );
@@ -52,9 +84,9 @@
 
             LJ.$body.on('click', '.event-accepted-chat-typing button', function(){
 
-                var $self       = $(this);
-                var $event_wrap = $self.parents('.row-events-accepted-inview');
-                var $chat_wrap  = $self.parents('.event-accepted-chat-wrap');
+                var $self          = $(this);
+                var $event_wrap    = $self.parents('.row-events-accepted-inview');
+                var $chat_wrap     = $self.parents('.event-accepted-chat-wrap');
                 
                 var msg       = $self.siblings('input').val();
                 var event_id  = $event_wrap.attr('data-eventid');
@@ -79,20 +111,32 @@
                     return LJ.fn.toastMsg('Moins vite!', 'info');
 
                 var data = {
-                    msg         : msg,
-                    event_id    : event_id,
-                    group_id    : group_id,
-                    chat_id     : chat_id,
-                    img_id      : LJ.fn.findMainImage( LJ.user ).img_id,
-                    img_vs      : LJ.fn.findMainImage( LJ.user ).img_version,
-                    facebook_id : LJ.user.facebook_id,
-                    name        : LJ.user.name,
-                    sent_at     : new Date()
+                    msg             : msg,
+                    event_id        : event_id,
+                    group_id        : group_id,
+                    chat_id         : chat_id,
+                    img_id          : LJ.fn.findMainImage( LJ.user ).img_id,
+                    img_vs          : LJ.fn.findMainImage( LJ.user ).img_version,
+                    facebook_id     : LJ.user.facebook_id,
+                    name            : LJ.user.name,
+                    sent_at         : new Date()
                 };
 
-                // Order important cause addChatLine erases .text() property
-                LJ.fn.addChatLine( data );
+                if( $self.hasClass('btn-whisper') ){
 
+                    var whisper_to = [];
+                    $self.siblings('img').each(function( i, img ){
+                        whisper_to.push( $(img).attr('data-authorid') );
+                    });
+
+                    data.whisper_to   = whisper_to;
+                    LJ.fn.addChatLineWhisper( data );
+
+                } else {
+                    LJ.fn.addChatLine( data );
+                }
+
+                // Order important cause addChatLine erases .text() property
                 $self.siblings('input').val('');
                 $self.siblings('.readby').attr('data-names','').append( LJ.$bar_loader.clone().css({ width: '10px' }))
 
@@ -128,7 +172,7 @@
                 return console.error('Cannot add chatline without chat id');
 
             var chat_msg_html = LJ.fn.renderChatLine( options );
-
+            
             var $wrap = $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]');
 
             if( $wrap.length == 0 )
@@ -146,6 +190,10 @@
 
             LJ.fn.adjustAllChatPanes();
             setTimeout(function(){
+
+                if( typeof options.variations == 'function' ){
+                    options.variations( $wrap.find('.event-accepted-chat-message').last() );
+                };
                 
                 var $last_msg_me = $wrap.find('.event-accepted-chat-message.me').last().addClass(  options.class_names && options.class_names.join(' ')  );
                 var $last_msg_sd = $wrap.find('.event-accepted-chat-message:not(.me)').last().addClass(  options.class_names && options.class_names.join(' ') );
@@ -154,19 +202,72 @@
                     $wrap.find('.event-accepted-chat-message.me').last().addClass('sending');
                     $last_msg_me.velocity({ opacity: [ 0.5, 0 ] }, { duration: 200 });
                 }
-
                 
                 $last_msg_sd.velocity({ opacity: [ 1.0, 0 ] }, { duration: 200 });
 
                 // Bubbling notifications, better ux
-                var event_id = chat_id.split('-')[0];
-                LJ.fn.bubbleUp('.event-accepted-tabview[data-eventid="' + event_id + '"]');
+                LJ.fn.bubbleUpMessage( chat_id );
 
-                var group_id = chat_id.split('-')[1];
-                LJ.fn.bubbleUp('.row-events-accepted-inview[data-eventid="' + event_id + '"] \
-                    .event-accepted-chatgroup[data-groupid="' + group_id + '"]');
 
             }, 50 );
+
+
+        },
+        addChatLineWhisper: function( options ){
+
+            options.variations = LJ.fn.whisperify( options );
+            LJ.fn.addChatLine( options );
+
+        },
+        whisperify: function( options ){
+
+            return function( $wrap ){
+
+                if( !$wrap )
+                    return;
+
+                console.log('Applying whisper variations');
+                
+                var user_id = options.facebook_id;
+                $wrap.find('.event-accepted-chat-text').addClass('whisper-text');
+
+                var base_css = {
+                    width      :'20px',
+                    height     :'20px',
+                    top        :'25px',
+                    border     :'1px solid white',
+                    padding    :'1px',
+                    background :'white', 'box-shadow': '1px 1px 2px #a2a2a2'
+                };
+
+                if( user_id != LJ.user.facebook_id ){
+                    options.whisper_to.forEach(function( whisperer_id, i ){
+                        $wrap.parents('.event-accepted-chat')
+                        .siblings('.event-accepted-users')
+                        .find('.event-accepted-user[data-userid="' + whisperer_id + '"] img')
+                        .clone()
+                        .css( base_css )
+                        .css({ left: ( 47 - 14 * i ) + 'px' })
+                        .css({ 'z-index': (10-i) })
+                        .appendTo( $wrap );
+                    });
+                } else {
+                    options.whisper_to.forEach(function( whisperer_id, i ){
+                        $wrap.parents('.event-accepted-chat')
+                        .siblings('.event-accepted-users')
+                        .find('.event-accepted-user[data-userid="' + whisperer_id + '"] img')
+                        .clone()
+                        .css( base_css )
+                        .css({ right: ( 30 - 14 * i ) + 'px' })
+                        .css({ 'z-index': (10-i) })
+                        .appendTo( $wrap );
+                    });
+                }
+                
+                if( options.whisper_to.length > 1 ){
+                    $wrap.find('.event-accepted-chat-sent-at').css({'top':'25%'});
+                }
+            }
 
 
         },
@@ -186,28 +287,24 @@
             // Fetch other chats
             evt.groups.forEach(function( group ){
 
-                // User group id to build chatid, but then have to send "hosts" for proper auth
-                var group_id = LJ.fn.makeGroupId( group.members_facebook_id );
-                var chat_id  = LJ.fn.makeChatId({ event_id: event_id, group_id: group_id });
+                // Only request if not pending. That way, we dont override the message "Validate" 
+                if( group.status == "accepted" ){
 
-                options_array.push({
-                    chat_id  : chat_id,
-                    group_id : "hosts"
-                });
+                    // User group id to build chatid, but then have to send "hosts" for proper auth
+                    var group_id = LJ.fn.makeGroupId( group.members_facebook_id );
+                    var chat_id  = LJ.fn.makeChatId({ event_id: event_id, group_id: group_id });
+
+                    options_array.push({
+                        chat_id  : chat_id,
+                        group_id : "hosts"
+                    });
+                }
 
             });
 
             options_array.forEach(function( option ){
 
-                LJ.fn.fetchChatHistoryById( _.merge( option, { event_id: event_id } ), function( err, res ){
-
-                    if( err ){
-                        return LJ.fn.handleApiError( err );
-                    } else {
-                        return LJ.fn.handleFetchChatHistoryById( res );
-                    }
-
-                });
+                LJ.fn.fetchChatHistoryById( _.merge( option, { event_id: event_id } ) );
 
             });
 
@@ -241,14 +338,15 @@
 
             
         },
-        fetchChatHistoryById: function( options, callback ){
+        fetchChatHistoryById: function( options ){
 
             delog('Fetching messages for chat with id : ' + options.chat_id );
 
             var data = {
-                chat_id : options.chat_id,
-                group_id: options.group_id,
-                event_id: options.event_id
+                chat_id          : options.chat_id,
+                group_id         : options.group_id,
+                event_id         : options.event_id,
+                messages_fetched : options.messages_fetched || 0          
             };
 
             LJ.fn.api('get','chats/' + options.chat_id, { data: data }, function( err, res ){
@@ -257,10 +355,13 @@
                     return LJ.fn.handleApiError( err );
                 } else {
                     LJ.fn.handleFetchChatHistoryById({
-                        event_id : options.event_id,
-                        messages : res.messages,
-                        readby   : res.readby,
-                        chat_id  : options.chat_id 
+
+                        event_id        : options.event_id,
+                        messages        : res.messages,
+                        readby          : res.readby,
+                        chat_id         : options.chat_id,
+                        prepend         : options.prepend
+
                     });
                 }
 
@@ -269,10 +370,11 @@
         },
         handleFetchChatHistoryById: function( options ){
                 
-                var event_id  = options.event_id,
-                messages = options.messages,
-                readby   = options.readby;
-                chat_id  = options.chat_id;
+            var event_id  = options.event_id,
+                messages  = options.messages,
+                readby    = options.readby;
+                chat_id   = options.chat_id;
+                prepend   = options.prepend || false;
 
                 var chats_html = [];
                 var $wrap      = $('.event-accepted-chat-wrap[data-chatid="' + options.chat_id + '"]');
@@ -280,26 +382,102 @@
                 if( !event_id )
                     return console.error('Cannot add chat history without event id');
 
-                if( !messages )
-                        return console.log('Chat is empty, nothing to add');
-
-                messages.forEach(function( msg ){
-                    chats_html.push( LJ.fn.renderChatLine( msg ) );
-                });
+                if( !messages ){
+                    chats_html.push( LJ.fn.renderChatLine_Bot("Cette discussion est vide. Envoyez le premier message!") );
+                } else {                   
+                    messages.forEach(function( msg ){
+                        chats_html.push( LJ.fn.renderChatLine( msg ) );
+                    });
+                }
 
                 if( chats_html.length != 0 ){
 
                     var $messagesWrap = $wrap.find('.jspPane');
-                    var messages_html =  chats_html.length != 0 && chats_html.join('');
+                    var messages_html = chats_html.length != 0 && chats_html.join('');
                     
-                    $messagesWrap
-                        .html( messages_html ).end()
-                        .find('.readby').attr('data-names', readby );
+                    if( prepend ){
+                        
+                        var $new_messages = $( messages_html );
+                        $new_messages
+                            .addClass('none')
+                            .insertBefore( $messagesWrap.children().first() )
 
-                    LJ.fn.displayReadBy({ event_id: event_id, readby: readby, chat_id: chat_id });
+                        var duration = 400;
 
+                        $wrap.find('.load-chat-history, img.super-centered').velocity('transition.fadeOut', {
+                                        duration: duration
+                                     });
+                        
+                        $messagesWrap
+                            .children()
+                            .velocity({ opacity: [ 0, 0.3] }, {
+                                duration: duration,
+                                complete: function(){
+                                    
+                                    $messagesWrap.children().addClass('none');
+
+                                    LJ.fn.adjustChatPaneById({
+                                        stick_to_content: true,
+                                        event_id: event_id,
+                                        chat_id: chat_id
+                                    });
+
+                                     $messagesWrap
+                                        .children()
+                                        .removeClass('none')
+                                        .velocity({ opacity: [ 1, 0] }, {
+                                            duration: duration,
+                                            complete: function(){
+                                                $messagesWrap.parents('.event-accepted-chat-wrap').removeClass('fetching-more');                                                
+                                            }
+                                        });
+                                }
+                            });
+
+                    } else {
+                        
+                        $messagesWrap
+                            .html( messages_html ).end()
+                            .find('.readby').attr('data-names', readby )
+
+                        LJ.fn.displayReadBy({ event_id: event_id, readby: readby, chat_id: chat_id });
+                        
+                        LJ.fn.adjustAllChatPanes();
+                    }
+
+                    // Prepended or appended, whispery anyway
+                    LJ.fn.whisperifyChatMessages( chat_id );
+
+
+                } else {
+                    // Prevent loader from staying eternally
+                    $wrap.find('.load-chat-history, img.super-centered').velocity('transition.fadeOut', {
+                        duration: 900,
+                        complete: function(){
+
+                            $wrap
+                                .find('.load-chat-history').text("Tous les messages ont été chargés !")
+                                .velocity('transition.fadeIn',{
+                                    duration: 900,
+                                    complete: function(){
+
+                                         $wrap
+                                            .find('.load-chat-history')
+                                            .velocity('transition.fadeOut',{
+                                                duration: 900,
+                                            });
+
+                                        $wrap
+                                            .find('.event-accepted-chat-message')
+                                            .velocity({ opacity: [ 1, 0.3 ]},{ 
+                                                duration: 900 
+                                            });
+
+                                    }
+                                });
+                        }
+                     });
                 }
-                LJ.fn.adjustAllChatPanes();
 
         },
         sendReadBy: function( options ){
@@ -363,11 +541,94 @@
                 display = 'Vu par ' + names.slice( 0, names.length -1 ).join(', ') + ' et ' + names[ names.length - 1 ];
             }
 
-            /* Debug purposes */
-            console.log('There are ' + n + ' people in this event, chatting');
-            console.log('Displaying : ' + display );
-
             $readby.text( display );
+
+        },
+        displayChatMembersOnline: function( chat_id ){
+
+            var event_id = chat_id.split('-')[0];
+
+            LJ.subscribed_channels[ event_id ][ chat_id ].members.each(function( member ){
+
+                console.log( member );
+
+            });
+
+        },
+        bindFetchMoreHistory: function( chat_id ){
+
+            var do_nothing_condition;
+            $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]')
+
+            .bind('jsp-scroll-y', function( e, scroll_position_y, is_at_top, is_at_bottom ){
+
+                var $self = $(this);
+
+                // Capture value out of the closure. setTimeout needs to read the real value, refreshed
+                do_nothing_condition = !is_at_top || $self.hasClass('fetching-more');
+
+                if( do_nothing_condition ){
+                    // console.log('Do nothing first round...');
+                    return // Do nothing
+                }
+
+                if( $self.hasClass('fetching-confirm') ){
+                    return;
+                }
+                $self.addClass('fetching-confirm');
+
+                if( $self.hasClass('fetching-more') ){
+                    return;
+                }
+
+                // console.log('Fetching once...');
+                // Condition seems okay. If still ok in 't' ms, then do it.
+                setTimeout(function(){
+
+                    // console.log('Triggering twice...');
+                    $self.removeClass('fetching-confirm');
+
+                    if( do_nothing_condition ){
+                        // console.log('NOT Triggering twice!');
+                        return;
+                    }              
+                    var chat_id  = $self.attr('data-chatid');
+                    var event_id = chat_id.split('-')[0];
+                    var jsp      = LJ.jsp_api[ event_id ].chats[ chat_id ];
+
+                    if( !jsp ){
+                        return console.warn('Jsp undefined');
+                    }
+                    
+                    console.log('Fetching more messages...');
+                    $self.addClass('fetching-more');
+
+                    var chat_id  = chat_id;
+                    var group_id = chat_id.split('-')[1];
+                    var event_id = chat_id.split('-')[0]; 
+
+                    var messages_fetched = $self.find('.event-accepted-chat-message').length;
+                    var $last_message    = $self.find('.event-accepted-chat-message').first();
+
+                    if( $last_message.hasClass('jsp-glue') )
+                        return;
+
+                    $last_message.addClass('jsp-glue');
+
+                    LJ.fn.showLoadersInChat( $self );
+
+                    LJ.fn.fetchChatHistoryById({
+                        chat_id          : chat_id,
+                        event_id         : event_id,
+                        group_id         : group_id,
+                        messages_fetched : messages_fetched,
+                        prepend          : true
+                    });
+                        
+
+                }, 100 );
+
+            });
 
         }
 

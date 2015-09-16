@@ -110,7 +110,7 @@
 	                	setTimeout( function(){
 	                		if( LJ.state.loggingIn ){
 	                			$('.hero-img.active').removeClass('active').addClass('scaled');
-	                			$('html').css({'overflow':'auto'});
+	                			$('html').css({'overflow-y':'scroll'});
 	                			return 
 	                		} 
 	                		$('.curtain').velocity('transition.fadeIn', {

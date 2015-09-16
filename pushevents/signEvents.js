@@ -9,8 +9,8 @@
 		moment = require('moment'),
 		_ = require('lodash');
 
-		var pusher  = require('../globals/pusher'),
-			mailer = require('../globals/mailer');
+		var pusher  = require('../services/pusher'),
+			mailer = require('../services/mailer');
 
 		var sendHomepage = function( req, res ){
 
@@ -62,16 +62,17 @@
 
 			var new_user = new User();
 
-			new_user.facebook_id = fb.id;
+			new_user.facebook_id                       = fb.id;
 			new_user.facebook_access_token.short_lived = fb.access_token;
-			new_user.facebook_email = fb.email;
-			new_user.mailchimp_email = fb.email;
-			new_user.mailchimp_id = req.body.mailchimp_id;
-			new_user.gender = fb.gender;
-			new_user.name = fb.name;
-			new_user.age = 18 // default value
-			new_user.facebook_url = fb.link;
-			new_user.signup_date = new moment();
+			new_user.facebook_email                    = fb.email;
+			new_user.mailchimp_email                   = fb.email;
+			new_user.mailchimp_id                      = req.body.mailchimp_id;
+			new_user.gender                            = fb.gender;
+			new_user.name                              = fb.name;
+			new_user.age                               = 18 // default value
+			new_user.facebook_url                      = fb.link;
+			new_user.country_code					   = fb.locale.substr(0,2) // country code extraction
+			new_user.signup_date                       = new moment();
 
 			/* Pusher informations for real time channels */
 			new_user.channels = {

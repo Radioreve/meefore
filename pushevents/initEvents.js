@@ -12,7 +12,7 @@
 		config      = require('../config/config'),
 	    settings    = require('../config/settings');
 
-	var pusher = require('../globals/pusher');
+	var pusher = require('../services/pusher');
 
 
 		cloudinary.config({ 

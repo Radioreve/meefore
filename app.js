@@ -1,14 +1,14 @@
 
-	//Basic modules
-	var express = require('express'),
-		bodyParser   = require('body-parser'),
-		app = express(),
-		favicon = require('serve-favicon'),
-		compression = require('compression'),
-		cookieParser = require('cookie-parser'),
-		server = require('http').createServer( app );
-	 
-	//Middleware
+	// Basic modules
+		var express      = require('express');
+		var bodyParser   = require('body-parser');
+		var app          = express();
+		var favicon      = require('serve-favicon');
+		var compression  = require('compression');
+		var cookieParser = require('cookie-parser');
+		var server       = require('http').createServer( app );
+		
+	// Middleware
 		app.use( compression() );
 		app.use( cookieParser() );
 		app.use( express.static( __dirname + '/public') )
@@ -16,17 +16,29 @@
 		app.use( bodyParser.urlencoded({ extended: true }) );
 		app.use( favicon( __dirname + '/public/favicon.ico' ));
 
-	var config = require('./config/config'),
-		uri    = config.db[ process.env.NODE_ENV ].uri ;
+	// Database
+		var config = require('./config/config');
+		var uri    = config.db[ process.env.NODE_ENV ].uri ;
 
-		require('./globals/cron');
-		require('./globals/db')( uri );
+		require('./services/db')( uri );
 
-	/* Chargement des routes principales */
+	// Chargement des routes principales 
 		require('./routes/routes')( app );
 
-	var port = process.env.PORT || 1234;
 
+	// Http server
+		var port = process.env.PORT || 1234;
 		server.listen( port, function(){
 			console.log('Server listening on '+ port);
 		});
+
+
+	// Friendly logs
+	var min = 0;
+	(function checkingTime(){
+
+		min += 1;
+		console.log( 'App running for ' + min + ' minutes now. ');
+		setTimeout( checkingTime, 60000);
+
+	})();

@@ -34,10 +34,10 @@ var settings = {
 		],
 		mixity: 
 		[
-			{ id: 'whatever', display: 'Whatever', icon_code: 'thumbs-up-alt' },
-			{ id: 'boys', display: 'Des gars', icon_code: 'male-1' },
-			{ id: 'girls', display: 'Des filles', icon_code: 'female-1' },
-			{ id: 'mixed', display: 'Mixte', icon_code: 'users' }
+			{ id: 'boys', display: 'Un groupe de gars', icon_code: 'mars' },
+			{ id: 'girls', display: 'Un groupe de filles', icon_code: 'venus' },
+			{ id: 'mixed', display: 'Un groupe mixte', icon_code: 'mix' },
+			{ id: 'whatever', display: 'Plusieurs groupes', icon_code: 'group' }
 		]
 	},
 	public_properties: {
@@ -52,7 +52,8 @@ var settings = {
 				'motto', 
 				'name', 
 				'drink', 
-				'mood', 
+				'mood',
+				'country_code', 
 				'pictures',
 				'channels'
 				//'skills'

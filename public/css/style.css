@@ -1,8 +1,9 @@
 * {
 }
 
-html { 
+html {
    overflow: auto;
+   overflow-y: scroll;
 }
 
 body {
@@ -25,6 +26,7 @@ input {
    outline: none;
    border: none;
    background: none;
+   color: #8A8A8A;
 }
 
 hl {
@@ -94,6 +96,13 @@ font-size: 14px;text-align: center;color: #ee;}
    position: absolute;
    left: 50%;
    transform: translate(-50%, 0);
+}
+
+.load-chat-history {
+	font-size: 10px;
+    color: #e94f6a;
+    opacity: .6;
+    z-index: 100;
 }
 
 .label {

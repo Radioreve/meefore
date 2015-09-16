@@ -20,12 +20,14 @@
         slideRightInVeryLight: { opacity: [1, 0], translateX: [0, 7]   },
         slideRightOutVeryLight: { opacity: [, 1], translateX: [7, 0]   }
 	},
+    page_default_title: "Meefore | Home",
 	jsp_api: {},
 	cache: {
         events : [],
         users  : []
 	},
     bot_profile: {
+        name        : "meebot",
         facebook_id : "1337",
         img_id      : "logo_black_on_white",
         img_version : "1438073167"
@@ -94,27 +96,30 @@
 			}
 		},
 		markers: {
-			boys: {
-				url:'http://res.cloudinary.com/radioreve/image/upload/v1439575901/meefore-marker-boy3.png'
-			},
-			girls: {
-				url: 'http://res.cloudinary.com/radioreve/image/upload/v1439575607/meefore-marker-girls_3.png'
-			},
-			white_on_black: {
-				url: 'http://res.cloudinary.com/radioreve/image/upload/v1440179488/meefore-marker-white-on-black_uvzdtf.png'
-			},
-			black_on_white: {
-				url: 'http://res.cloudinary.com/radioreve/image/upload/v1439767234/meefore-marker-black-on-white.png'
-			},
-			nightclub: {
-				url: 'http://res.cloudinary.com/radioreve/image/upload/v1440178906/bar.png'
-			},
-			bar: {
-				url: 'http://res.cloudinary.com/radioreve/image/upload/v1440178906/bar.png'
-			},
-			facebook_event: {
-				url: 'http://res.cloudinary.com/radioreve/image/upload/v1440178906/bar.png'
-			}
+			base: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418376/pin_meefore_creation_zrm3hj.png'
+            },
+            base_hover: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418425/pin_meefore_accepte_onclic_vqqlc6.png'
+            },
+            pending: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/pin_pending_black.png'
+            },
+            pending_hover: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418601/marker_points_pink.png'
+            },
+            accepted: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418560/marker_chat_black.png'
+            },
+            accepted_hover: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418507/marker_chat_pink.png'
+            },
+            club: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418425/pin_meefore_accepte_onclic_vqqlc6.png'
+            },
+            club_hover: {
+                url:'http://res.cloudinary.com/radioreve/image/upload/v1442418425/pin_meefore_accepte_onclic_vqqlc6.png'
+            }
 		},
         curtain: {
         	main: {
@@ -162,7 +167,11 @@
     		curtain: {
     			id: 'curtain_loader_v4',
     			params: { cloud_name :"radioreve", 'class': 'curtain-loader super-centered', width: 20 }
-    		}
+    		},
+            spinner_2: {
+                id: 'spinner_loader_2',
+                params: { cloud_name: "radioreve" }
+            }
     	},
 	},
 	/* To be dynamically filled on login */

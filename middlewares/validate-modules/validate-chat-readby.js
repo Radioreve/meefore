@@ -1,6 +1,6 @@
 
 	var nv = require('node-validator');
-	var rd = require('../../globals/rd');
+	var rd = require('../../services/rd');
 	var _  = require('lodash');
 
 	function check( req, res, next ){

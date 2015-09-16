@@ -335,7 +335,6 @@
                     LJ.fn.toastMsg('Que la fête commence...', 'info');
                     LJ.fn.addEventPreview( evt );
                     LJ.fn.joinEventChannel( evt );
-                    $('.event-accepted-tabview').last().click();
 
                 }   
             });

@@ -76,16 +76,16 @@
 			if( !options.mode ){
 				
 				var prev = options.prev;			
-				var $prev = $('.'+options.prev);
+				var $prev = $('.'+options.prev);	
 
-				$prev.velocity( options.myWayOut || 'transition.fadeOut', {
-					duration: options.duration || 0 || 400,
+				$prev.velocity( options.myWayOut || 'transition.fadeOut', {	
+					duration: options.duration || 0,
 					display: 'none',
 					complete: function(){
 						$prev.removeClass( prev )
 						$(content).addClass( prev )
 							   .velocity( options.myWayIn || 'transition.fadeIn', {
-							   	duration: 0 || 800,
+							   	duration: 0 || 450,
 							   	display:'block',
 							   	complete: function(){
 							   		LJ.state.animatingContent = false;
@@ -403,8 +403,51 @@
 
         		if( add > 99 ) 
         			return $bubble.text('99+');
-				
-        	return $bubble.text( n + add );
+			
+			var set = opts.set || null;
+
+			if( set == 0 )
+				return $bubble.addClass('none').text('');
+
+        	return $bubble.text( set || n + add );
+			
+
+        },
+        bubbleUpMessage: function( chat_id ){
+
+        	var event_id = chat_id.split('-')[0];
+            var group_id = chat_id.split('-')[1];
+
+            LJ.fn.bubbleUp('.row-events-accepted-inview[data-eventid="' + event_id + '"] \
+                .event-accepted-chatgroup[data-groupid="' + group_id + '"]');
+
+            // Update the tabview & page title
+            LJ.fn.updateTabviewBubbles( event_id );
+
+        },
+        updateTabviewBubbles: function( event_id ){
+
+        	var n_messages_unread = 0;
+
+        	$('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
+        		.find('.event-accepted-chatgroup')
+        		.each(function( i, chatgroup ){
+
+        			n_messages_unread += parseInt( $( chatgroup ).find('.bubble').text() || 0 );
+
+        		});
+
+        	LJ.fn.bubbleUp('.event-accepted-tabview[data-eventid="' + event_id + '"]', {
+				set   : n_messages_unread + '',
+				stack : true 
+        	});
+
+        	if( n_messages_unread == 0 ){
+        		document.title = LJ.page_default_title;
+        	} else {
+        		document.title =  n_messages_unread + "  message(s) - " + LJ.page_default_title;
+        	}
+
 
         },
        	displayUserProfile: function( facebook_id ){
@@ -417,6 +460,109 @@
 				error_cb: LJ.fn.renderUserProfileInCurtainNone
 			});
 			
+		},
+		showLoadersInChat: function( $chat_wrap ){
+
+		$chat_wrap.find('.event-accepted-chat-message').velocity({ opacity: [ 0.3, 1 ]});
+
+            $('<div class="load-chat-history">Chargement des messages...</div>')
+                .addClass('super-centered none')
+                .appendTo( $chat_wrap )
+                .velocity('transition.fadeIn', {
+                    duration: 400
+                });
+
+            LJ.$spinner_loader_2
+                .clone()
+                .addClass('super-centered none').css({ "width": "30px", "display": "none" })
+                .appendTo( $chat_wrap )
+                .velocity('transition.fadeIn',{
+                    duraton: 600
+                });
+		},
+		stageUserForWhisper: function( facebook_id, chat_id ){
+
+			var $chat_wrap = $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]');
+			var $user_img  = $chat_wrap.find('.event-accepted-chat-message[data-authorid="' + facebook_id + '"] img');
+
+			if( facebook_id == LJ.user.facebook_id )
+				return console.error('Cant whisper to himself');
+
+			if( $chat_wrap.length != 1 )
+				return console.error('Couldnt find chatwrap for whisper stage');
+
+			if( $user_img.length == 0 )
+				return console.error('Couldnt find img to clone for whisper stage');
+
+			// The img tag is already there as whisper
+			if( $user_img.hasClass('whispering') ){
+				console.log('Already whispering, removing...');
+				$user_img.removeClass('whispering');
+				$chat_wrap.find('.img-input-whisper[data-authorid="' + facebook_id + '"]')
+						  .velocity('transition.slideRightOut', { duration: 500, complete: function(){ 
+						  	$(this).remove();
+						  	LJ.fn.adjustAllWhisperOnInput( $chat_wrap );
+						  } });
+			} else {
+				console.log('First time whispering, adding...');
+				$user_img.addClass('whispering')
+				$user_img.first().clone().addClass('img-input-whisper').attr('data-authorid', facebook_id )
+						 .appendTo( $chat_wrap.find('.event-accepted-chat-typing') )
+						 .velocity('transition.slideLeftIn', { duration: 500 });
+						  LJ.fn.adjustAllWhisperOnInput( $chat_wrap );
+			}
+
+
+		},
+		adjustAllWhisperOnInput: function( $chat_wrap ){
+
+			var imgs = $chat_wrap.find('.img-input-whisper');
+
+			if( imgs.length == 0 ){
+				$chat_wrap.find('.event-accepted-chat-typing').normalify();
+				// return;
+			}
+			if( imgs.length == 1 ){
+				$chat_wrap.find('.event-accepted-chat-typing').whisperify();
+				//return;
+			}
+
+			// Adjust imgs position
+			var step = imgs.first().outerWidth( true ) - 5;
+			imgs.each(function( i, img ){
+				$( img ).css({ "left": ( i * step )+ 'px', "z-index": 10 + i });
+			});
+
+			// Adjust input padding
+			var new_padding = imgs.length == 0 ? 10 : ( step * imgs.length - 5 );
+			$chat_wrap.find('input').css({ "padding-left": new_padding + 'px'});
+
+		},
+		whisperifyChatMessages: function( chat_id ){
+
+			var $chat_wrap = $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]');
+
+			if( $chat_wrap.length != 1 ){
+				return console.warn('Couldnt find one chatwrap based on id : ' + chat_id );
+			}
+
+			$chat_wrap
+				.find('.event-accepted-chat-message')
+				.each(function( i, chat ){
+
+					var $chat = $(chat);
+
+					if( $chat.attr('data-whisperto') == 'null' || !$chat.attr('data-whisperto') )
+						return;
+					
+					LJ.fn.whisperify({
+						whisper_to  : $chat.attr('data-whisperto').split(','),
+						facebook_id : $chat.attr('data-authorid')
+					})( $chat );
+
+				});
+
 		}
+
 
 	});

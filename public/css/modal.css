@@ -15,7 +15,7 @@
    height: 100%;
    padding: 25px;
    text-align: center;
-   overflow: auto;
+   /* overflow: auto; */
 }
 
 .modal-user-content {

@@ -2,7 +2,7 @@
 		eventUtils  = require('../pushevents/eventUtils'),
 		config      = require('../config/config'),
 		_     	    = require('lodash'),
-		mailer      = require('../globals/mailer');
+		mailer      = require('../services/mailer');
 
 
 		var subscribeMailchimpUser = function( req, res, next ){

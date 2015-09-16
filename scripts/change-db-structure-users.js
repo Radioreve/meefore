@@ -10,17 +10,17 @@
 		mongoose.connection.on( 'open', function(){
 			console.log('Connected to the database! Running operation... : ');
 
-			var select = {};
+			/*var select = {};
 
 			var update = { 
 						$unset: { skill: '' }
-						/*$set :  { 
+						$set :  { 
 							"facebook_access_token" : {
 								short_lived: null,
 								long_lived: null,
 								long_lived_valid_until: null
 							} 
-						}	*/
+						}	
 					};
 
 			var options = { multi: true };
@@ -30,18 +30,16 @@
 					console.log(err);
 				else
 					console.log('Done on '+ nAffected.n +' documents.');
-			};
+			}
 
 
-			//User.update( select, update, options, callback_update );
+			User.update( select, update, options, callback_update );*/
+
+			var country_codes = ['fr','fr','fr','us','gb','es','ca','fr']
 
 			User.find({}, function(err, users ){
 				users.forEach(function(user){
-					user.channels = {
-						'public_chan': 'app',
-						'me': user.facebook_id,
-					};
-					user.facebook_access_token = {}
+					user.country_code = country_codes[ randomInt(0, country_codes.length-1 ) ];
 					user.save(function(err,svd){
 						console.log('done');
 					});
@@ -53,3 +51,7 @@
 		mongoose.connection.on('error', function(err){
 			console.log('Connection to the database failed : '+err);
 		});
+
+		function randomInt(low, high) {
+    		return Math.floor(Math.random() * (high - low + 1) + low);
+		};

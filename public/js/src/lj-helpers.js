@@ -22,7 +22,7 @@
 			});
 
 		},
-		getMaxWidthLabel: function(container){
+		getMaxWidthLabel: function( container ){
 
 			var labels = $(container).find('label');
 			var widthArray = [];
@@ -35,19 +35,101 @@
 			//console.log('Maximum label width : ' + max );
 			return max;
 		},
-		adjustAllChatPanes: function(){
+		adjustChatPaneById: function( options ){
+
+			var options = options || {};
+			var jsp = LJ.jsp_api[ options.event_id ].chats[ options.chat_id ];
+
+			setTimeout(function(){
+					
+				if( !jsp ){
+					console.warn('Couldnt find jsp api');
+					return
+				}
+
+				if( options.stick_to_content ){
+
+					console.log('Sticking to content');
+					jsp.reinitialise();
+					var $elem = $('.jsp-glue').first();
+					jsp.scrollToElement( $elem, true );
+					jsp.scrollToY( jsp.getContentPositionY() + 5 ); // perfectionnist 
+					$elem.removeClass('jsp-glue');
+					return;
+
+				}
+
+				// If user is almost at the bottom of chat or is at the very top
+				if( jsp.getPercentScrolledY() > 0.75 ){
+
+					console.log('Scrolling to bottom');
+					jsp.reinitialise();
+					jsp.scrollToBottom();
+					return;
+					
+				} 
+
+				console.log('Staying where we are');
+				// Default, renitialise without scrollingToBottom
+				// For prevent users browsing history to be disturbed by auto scroll to bottom
+				jsp.reinitialise();
+			
+
+			}, 50 );
+
+		},
+		adjustAllChatPanes: function( options ){
+
+			var options = options || {};
 
 			setTimeout(function(){
 
-				_.keys( LJ.jsp_api ).forEach(function( key ){
-					LJ.jsp_api[ key ].users.reinitialise();
-					_.keys( LJ.jsp_api[ key ].chats ).forEach(function( chat_key ){
-						if( LJ.jsp_api[ key ].chats[ chat_key ] ){
-							LJ.jsp_api[ key ].chats[ chat_key ].reinitialise();
-							LJ.jsp_api[ key ].chats[ chat_key ].scrollToBottom();
+				_.keys( LJ.jsp_api ).forEach(function( event_id ){
+
+					// Always scroll users to the top, to show admins first
+					var jsp_event = LJ.jsp_api[ event_id ];
+
+					jsp_event.users.reinitialise();
+					//jsp_event.users.scrollToTop();
+
+					_.keys( jsp_event.chats ).forEach(function( chat_id ){
+
+						var jsp = LJ.jsp_api[ event_id ].chats[ chat_id ];
+							
+						if( !jsp )
+							return
+
+						if( options.stick_to_content ){
+
+							console.log('Sticking to content');
+							jsp.reinitialise();
+							var $elem = $('.jsp-glue').first();
+							jsp.scrollToElement( $elem, true );
+							jsp.scrollToY( jsp.getContentPositionY() + 5 ); // perfectionnist 
+							$elem.removeClass('jsp-glue');
+							return;
+
 						}
+
+						// If user is almost at the bottom of chat or is at the very top
+						if( jsp.getPercentScrolledY() > 0.75 || jsp.getPercentScrolledY() == 0	){
+
+							console.log('Scrolling to bottom');
+							jsp.reinitialise();
+							jsp.scrollToBottom();
+							return;
+							
+						} 
+
+						console.log('Staying where we are');
+						// Default, renitialise without scrollingToBottom
+						// For prevent users browing history to be distrubed by auto scroll to bottom
+						jsp.reinitialise();
+					
+
 					});
 				});
+
 			}, 50 );
 
 		},
@@ -173,13 +255,13 @@
 
             if( locality === '' )
               locality = 'Earth';
-
+				  
           return {
           	place_id: place.place_id,
           	place_name: place_name,
           	city: locality,
-          	lat: place.geometry.location.G,
-          	lng: place.geometry.location.K
+          	lat: place.geometry.location.H,
+          	lng: place.geometry.location.L
           };
 
 		},
@@ -556,6 +638,21 @@
 		        }
 		    }
 		    return bytes;
+		},
+		countUnreadMessages: function(){
+
+			var messages = [];
+			$('.row-events-accepted-inview .bubble').each(function( i, bubble ){
+				messages.push( parseInt(  $(bubble).text() || 0 ) );
+			});
+
+			var n = 0;
+			messages.forEach(function( n_count ){
+				n += n_count;
+			});
+
+			return n
+
 		}
 
 

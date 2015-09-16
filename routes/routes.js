@@ -1,30 +1,32 @@
 	var _ = require('lodash');
 
-	var pusher = require('../globals/pusher');
+	var pusher = require('../services/pusher');
+	
+	var pushEventsDir = '../pushevents';
+	var apiDir        = '../api';
+	var mdwDir        = '../middlewares';
 
-	var pushEventsDir = '../pushevents/',
-	    apiDir = '../api/';
-
-	var initEvents     = require( pushEventsDir + 'initEvents'),
-		profileEvents  = require( pushEventsDir + 'profileEvents'),
-		settingsEvents = require( pushEventsDir + 'settingsEvents'),
-		adminEvents    = require( pushEventsDir + 'adminEvents'),
-		signEvents     = require( pushEventsDir + 'signEvents');
+	var initEvents     = require( pushEventsDir + '/initEvents'),
+		profileEvents  = require( pushEventsDir + '/profileEvents'),
+		settingsEvents = require( pushEventsDir + '/settingsEvents'),
+		adminEvents    = require( pushEventsDir + '/adminEvents'),
+		signEvents     = require( pushEventsDir + '/signEvents');
 
 	var api = {}
-	//	api.tests     = require( apiDir + 'tests');
-		api.users     = require( apiDir + 'users');
-		api.events    = require( apiDir + 'events');
-		api.places    = require( apiDir + 'places');
-		api.ambiances = require( apiDir + 'ambiances');
-		api.chats     = require( apiDir + 'chats');
+	//	api.tests     = require( apiDir + '/tests');
+		api.users     = require( apiDir + '/users');
+		api.events    = require( apiDir + '/events');
+		api.places    = require( apiDir + '/places');
+		api.ambiances = require( apiDir + '/ambiances');
+		api.chats     = require( apiDir + '/chats');
 
 	var mdw = {};
-		mdw.auth     = require('../middlewares/auth');
-		mdw.email    = require('../middlewares/email');
-		mdw.pop      = require('../middlewares/pop');
-		mdw.facebook = require('../middlewares/facebook');
-		mdw.validate = require('../middlewares/validate');
+		mdw.auth     = require( mdwDir + '/auth');
+		mdw.email    = require( mdwDir + '/email');
+		mdw.pop      = require( mdwDir + '/pop');
+		mdw.facebook = require( mdwDir + '/facebook');
+		mdw.validate = require( mdwDir + '/validate');
+		mdw.cache 	 = require( mdwDir + '/cache');
 
 
 	module.exports = function( app ) {
@@ -200,6 +202,7 @@
 	    // [ @chat ] Post un nouvau message
 	    app.post('/api/v1/chats/:chat_id',
 	    	mdw.validate('chat_message', ['chat_message']),
+	    	mdw.cache.watchCache,
 	    	api.chats.addChatMessage );
 
 	    // [ @chat ] Poste le fait qu'un user ai lu un message

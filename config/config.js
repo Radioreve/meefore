@@ -16,15 +16,18 @@
 		, redis: {
 			dev: {
 				host : "aws-eu-west-1-portal.1.dblayer.com",
-				port : "10576"
+				port : "10576",
+				pass : "R4dioreve"
 			},
 			stage: {
 				host : "aws-eu-west-1-portal.1.dblayer.com",
-				port : "10576"
+				port : "10576",
+				pass : "R4dioreve"
 			},
 			prod: {
 				host : "@aws-eu-west-1-portal.1.dblayer.com",
-				port : "10576"
+				port : "10576",
+				pass : "R4dioreve"
 			}
 			
 		}

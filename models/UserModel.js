@@ -43,6 +43,9 @@ var UserSchema = new mongoose.Schema({
     type: Number,
     default: 25
   },
+  country_code: {
+    type: String
+  },
   gender: {
     type:String
   },

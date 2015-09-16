@@ -46,6 +46,7 @@
             });
 
             LJ.map.addListener('click', function(e){
+                console.log(e);
             	LJ.fn.refreshActiveMarker();
                 $('.event-accepted-tabview.active').click();
                 LJ.path_to_party && LJ.path_to_party.setMap( null );
@@ -77,6 +78,7 @@
 
             if( err )
                 return console.log('Error fetching event by id : ' + err );
+            
             
             LJ.fn.joinEventChannel( evt ); 
             LJ.fn.addEventInviewAndTabview( evt, opt );
@@ -134,7 +136,7 @@
 
             var max_events      = max_events;
             var nearest_events  = [];
-            var center          = new google.maps.LatLng( LJ.map.getCenter().G, LJ.map.getCenter().K );
+            var center          = new google.maps.LatLng( LJ.map.getCenter().lat(), LJ.map.getCenter().lng() );
 
             LJ.cache.events.forEach(function( evt ){
 
@@ -181,11 +183,11 @@
                 return console.error('Missing argument for display marker');
 
             var new_marker = new google.maps.Marker({
-                position: { lat: options.lat, lng: options.lng },
-                map: LJ.map,
-                animation: options.animation || null,
-                icon: options.url,
-                zIndex: options.zIndex || 0
+                position  : { lat: options.lat, lng: options.lng },
+                map       : LJ.map,
+                animation : options.animation || null,
+                icon      : options.url,
+                zIndex    : options.zIndex || 0
             });
 
             if( options.singleton ){
@@ -207,15 +209,24 @@
         },
         displayEventMarker: function( evt, options ){
 
+            var url;
+            var my_group = _.find( evt.groups, function( group ){
+                return group.members_facebook_id.indexOf( LJ.user.facebook_id ) != -1; 
+            });
+
+            var status = my_group && my_group.status || 'base';
+
+            console.log('Current status for this event : ' + status );
+
             LJ.fn.displayMarker(_.merge({
-                lat: evt.address.lat,
-                lng: evt.address.lng,
-                url: LJ.cloudinary.markers.white_on_black.url,
-                cache: 'event_markers',
-                singleton: false,
-                id: evt._id,
-                data: evt,
-                listeners: [
+                lat       : evt.address.lat,
+                lng       : evt.address.lng,
+                url       : LJ.cloudinary.markers[status].url,
+                cache     : 'event_markers',
+                singleton : false,
+                id        : evt._id,
+                data      : evt,
+                listeners : [
                     {
                         event_type : 'click',
                         callback   : function(e){
@@ -232,14 +243,14 @@
         displayPartyMarker: function( coord, scheduled_party ){
 
              LJ.fn.displayMarker({
-                lat: coord.G,
-                lng: coord.K,
-                url: LJ.cloudinary.markers[ scheduled_party.type ].url,
-                cache: 'party_markers',
-                singleton: true,
-                id: scheduled_party._id,
-                data: scheduled_party,
-                listeners: [
+                lat       : coord.lat(),
+                lng       : coord.lng(),
+                url       : LJ.cloudinary.markers.club.url,
+                cache     : 'party_markers',
+                singleton : true,
+                id        : scheduled_party._id,
+                data      : scheduled_party,
+                listeners : [
                     {
                         event_type : 'click',
                         callback   : function(e){
@@ -305,9 +316,9 @@
             LJ.active_marker = null;
 
             LJ.active_marker = new google.maps.Marker({
-                position: { lat: lat, lng: lng },
-                map: LJ.map,
-                icon: LJ.cloudinary.markers.black_on_white.url
+                position : { lat: lat, lng: lng },
+                map      : LJ.map,
+                icon     : LJ.cloudinary.markers.base_hover.url
              });
 
 

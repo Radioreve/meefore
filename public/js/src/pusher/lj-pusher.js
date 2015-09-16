@@ -13,6 +13,7 @@
 	        LJ.subscribed_channels.public_chan.bind('new event status' , LJ.fn.pushNewEventStatus );
 
 	        LJ.subscribed_channels.me.bind('new request group', LJ.fn.pushNewGroup_Group );
+	        LJ.subscribed_channels.me.bind('new chat whisper', LJ.fn.pushNewChatWhisper );
 
 	        LJ.subscribed_channels.public_chan.bind('new oversize message', function(data){ console.warn('Didnt receive pusher message (oversized)'); })
 	        LJ.subscribed_channels.public_chan.bind('new test', LJ.fn.pushNewTest );
@@ -29,6 +30,10 @@
 			// Notify @all chatters that new message/readby notification has arrived
 			LJ.subscribed_channels[ event_id ][ chat_id ].bind('new chat message', LJ.fn.pushNewChatMessage );
 			LJ.subscribed_channels[ event_id ][ chat_id ].bind('new chat readby' , LJ.fn.pushNewChatReadBy  );
+
+			LJ.subscribed_channels[ event_id ][ chat_id ].bind('pusher:member_added', LJ.fn.pushNewUserConnected );
+			LJ.subscribed_channels[ event_id ][ chat_id ].bind('pusher:member_removed', LJ.fn.pushNewUserDisconnected );
+			LJ.subscribed_channels[ event_id ][ chat_id ].bind('pusher:subscription_succeeded', LJ.fn.pushMembersConnectionStatus );
 
 
    		 },
@@ -138,7 +143,7 @@
 			var $event_wrap = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
 
 			// Append to dom
-			$chat_wrap_html.insertAfter( $event_wrap.find('.event-accepted-chat-wrap').last()    );
+			$chat_wrap_html.insertAfter( $event_wrap.find('.event-accepted-chat-wrap').last()   );
 			$chatgroup_html.insertAfter( $event_wrap.find('.event-accepted-chatgroup').last()   );
 			$group_html.insertAfter(     $event_wrap.find('.event-accepted-users-group').last() );
 
@@ -223,6 +228,7 @@
 
 				if( status == "accepted" ){
 					LJ.fn.toastMsg('Vous avez été accepté dans un before!', 'info', 3500 );
+					_.find( LJ.event_markers, function(el){ return el.id == event_id }).marker.setIcon( LJ.cloudinary.markers.accepted );
 					LJ.fn.addChatLine({
 						chat_id     : chat_id,
 						msg         : "Votre groupe vient d'être accepté dans la discussion!",
@@ -237,6 +243,7 @@
 				}
 				if( status == "kicked" ){
 					LJ.fn.toastMsg('Votre groupe a été suspendu de la discussion', 'info', 3500 );
+					_.find( LJ.event_markers, function(el){ return el.id == event_id }).marker.setIcon( LJ.cloudinary.markers.pending );
 					LJ.fn.addChatLine({
 						chat_id     : chat_id,
 						msg         : "Votre groupe vient d'être suspendu de la discussion!",
@@ -279,11 +286,38 @@
 
 				var start_opacity = $wrap.find('.sending').css('opacity');
 				$wrap.find('.sending')
+					.first() // in case multiple messages were sent quickly
 					.removeClass('sending')
 					.css({ opacity: start_opacity })
 					.velocity({ opacity: [ 1, start_opacity ] }, { duration: 200 });
 			} else {
 				LJ.fn.addChatLine( data );
+				/*if( $wrap.find('input').is(':focus') ){
+					LJ.fn.sendReadBy({
+						name : LJ.user.name,
+						id   : id
+					});
+				}*/
+			}
+
+		},
+		pushNewChatWhisper: function( data ){
+
+			console.log('Pushing chat whisper...')
+
+			chat_id = data.chat_id;
+			var $wrap = $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]');
+
+			if( data.facebook_id == LJ.user.facebook_id ){
+
+				var start_opacity = $wrap.find('.sending').css('opacity');
+				$wrap.find('.sending')
+					.first() // in case multiple messages were sent quickly
+					.removeClass('sending')
+					.css({ opacity: start_opacity })
+					.velocity({ opacity: [ 1, start_opacity ] }, { duration: 200 });
+			} else {
+				LJ.fn.addChatLineWhisper( data );
 				/*if( $wrap.find('input').is(':focus') ){
 					LJ.fn.sendReadBy({
 						name : LJ.user.name,
@@ -306,6 +340,34 @@
 			}
 
 			LJ.fn.displayReadBy( data );
+		},
+		pushNewUserConnected: function( user ){
+
+			var facebook_id = user.id;
+
+			console.log('User ' + facebook_id + ' has connected to the channel');
+
+			$('.event-accepted-user[data-userid="' + facebook_id + '"]')
+				.find('.event-accepted-user-state')
+				.removeClass('offline').addClass('online');
+
+		},
+		pushNewUserDisconnected: function( user ){
+
+			var facebook_id = user.id;
+
+			console.log('User ' + facebook_id + ' has disconnected to the channel');
+
+			$('.event-accepted-user[data-userid="' + facebook_id + '"]')
+				.find('.event-accepted-user-state')
+				.removeClass('online').addClass('offline');
+		},
+		pushMembersConnectionStatus: function( members ){
+
+			members.each(function( member ){
+				LJ.fn.pushNewUserConnected( member );
+			});
+
 		}
 
 	});

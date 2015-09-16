@@ -23,14 +23,38 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				// Gif loader and placeholder 
 				this.initStaticImages();
 
-				// Augment lodash 
+				// Augment lodash & jQuery
 				this.initAugmentations();
 
 				// Country detection
-				this.initCountry();		
+				this.initCountry();
+
+        // Detect when browser is closed
+       // this.initHandleCloseBrowser();
 
 
 		},
+    initHandleCloseBrowser: function(){
+
+      LJ.mouse_out_window = false;
+
+      LJ.$body
+        .mouseover(function(){
+        LJ.mouse_out_window = false;
+      })
+        .mouseout(function(){
+           LJ.mouse_out_window = true;
+      });
+
+      $(window).bind('beforeunload', function(e){
+
+        if( LJ.mouse_out_window ){
+          LJ.subscribed_channels = 'lol';
+        }
+
+      });
+
+    },
 		initCountry: function(){
 
 			moment.locale('fr');
@@ -53,6 +77,22 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			        });
 				}
 			});
+
+      $.fn.whisperify = function(){
+        this
+          .addClass('whisper-active')
+          .find('input').addClass('whisper-text').end()
+          .find('button').addClass('btn-whisper').text('Whisper');
+        return this;
+      };
+
+      $.fn.normalify = function(){
+        this
+          .removeClass('whisper-active')
+          .find('input').removeClass('whisper-text').end()
+          .find('button').removeClass('btn-whisper').text('Envoyer');
+        return this;
+      };
 
 		},
 		initAjaxSetup: function(){
@@ -127,6 +167,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 			LJ.$spinner_loader = $.cloudinary.image( LJ.cloudinary.loaders.spinner.id, LJ.cloudinary.loaders.spinner.params );
 			/* Dynamically cloned and appended */
+
+      LJ.$spinner_loader_2 = $.cloudinary.image( LJ.cloudinary.loaders.spinner_2.id, LJ.cloudinary.loaders.spinner_2.params );
+      /* Dynamically cloned and appended */
 
 			LJ.$curtain_loader = $.cloudinary.image( LJ.cloudinary.loaders.curtain.id, LJ.cloudinary.loaders.curtain.params );
 			/* Dynamically cloned and appended */

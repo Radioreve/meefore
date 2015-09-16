@@ -17,7 +17,7 @@
 
 		});
 
-	var pusher = require('../globals/pusher');
+	var pusher = require('../services/pusher');
 
 	var updateProfile = function( req, res ){
 

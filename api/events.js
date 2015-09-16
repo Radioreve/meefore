@@ -4,9 +4,9 @@
 		User       = require('../models/UserModel'),
 		Event      = require('../models/EventModel'),
 		moment     = require('moment'),
-		rd		   = require('../globals/rd');
+		rd		   = require('../services/rd');
 
-	var pusher     = require('../globals/pusher');
+	var pusher     = require('../services/pusher');
 
 	var pusher_max_size = 10000;
 
@@ -141,7 +141,8 @@
 			var event_to_push = {
 				event_id    : event_id,
 				begins_at   : evt.begins_at,
-				group_id	: group_id
+				//group_id	: group_id,
+				status 		: 'pending'
 			};
 
 			/* Mise à jour de l'event array dans chaque user impliqué */
@@ -173,7 +174,7 @@
 					    	/* Envoyer une notification aux hosts */
 					    	console.log('Notifying new request has been issued');
 					    	console.log('Host channel: ' + evt.getHostsChannel() );
-							pusher.trigger( evt.getHostsChannel() , 'new request host', data, socket_id );
+							pusher.trigger( 'presence-' + evt.getHostsChannel() , 'new request host', data, socket_id );
 
 							/* Envoyer une notification aux amis au courant de rien à priori */
 							members.forEach(function( user ){

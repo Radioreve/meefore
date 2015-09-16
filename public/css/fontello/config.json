@@ -79,6 +79,12 @@
       "src": "fontawesome"
     },
     {
+      "uid": "1bafeeb1808a5fe24484c7890096901a",
+      "css": "user-plus",
+      "code": 59464,
+      "src": "fontawesome"
+    },
+    {
       "uid": "ca2d64f8a3ea7cbf6af45898b2dcf35e",
       "css": "male",
       "code": 59428,
@@ -232,6 +238,24 @@
       "uid": "d84a06c5ce6da9ebdc9b0a5cb94db4c4",
       "css": "relation",
       "code": 59453,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "95501182783a570088194c41bc63543b",
+      "css": "venus",
+      "code": 59465,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "5d5d8995aa777cb59c88671e89ab5ced",
+      "css": "mars",
+      "code": 59467,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "4ced65e721620e2b3e77b02d54af4100",
+      "css": "mix",
+      "code": 59466,
       "src": "fontawesome"
     },
     {

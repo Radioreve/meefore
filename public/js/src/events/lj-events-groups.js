@@ -37,7 +37,11 @@
                 if( $self.hasClass('active') )
                     return;
 
+                // Remove bubbles, update tabview's
                 $self.find('.bubble').addClass('none').text('');
+
+                var event_id = $self.parents('.row-events-accepted-inview').attr('data-eventid');
+                LJ.fn.updateTabviewBubbles( event_id );
 
                 $('.event-accepted-chatgroup').removeClass('active')
                 $self.addClass('active');
@@ -49,19 +53,25 @@
                 // Display proper groups
                 $('.event-accepted-users-group:not([data-groupid="hosts"])')
                     .velocity('transition.fadeOut',{
-                        duration: duration * 1.82
+                        duration: duration * 1.65
                     });
 
                 $('.event-accepted-users-group[data-groupid="' + group_id + '"]:not([data-groupid="hosts"])')
                     .velocity('transition.fadeIn',
-                        { duration: duration * 1.82
+                        { duration: duration * 1.65
                     });
 
                 // Display proper chat
                 var $current_chat =  $('.event-accepted-chat-wrap:not(.none)');
                 var $target_chat  =  $('.event-accepted-chat-wrap[data-groupid="' + group_id + '"]');
 
+
                 $current_chat
+
+                     .find('.event-accepted-notification-message')
+                        .velocity('transition.fadeOut', { 
+                            duration: duration * 1.65
+                        }).end()
 
                     .find('.event-accepted-chat-message:not(.me)')
                     .velocity( LJ.ui.slideRightOutLight, {
@@ -87,6 +97,7 @@
                             $current_chat.addClass('none');
 
                             $target_chat
+                                .find('.event-accepted-notification-message').addClass('none').end()
                                 .find('.event-accepted-chat-message').addClass('none').end()
                                 .removeClass('none');
 
@@ -104,9 +115,16 @@
                                 .find('.event-accepted-chat-message.me')
                                     .css({ opacity: 0 })
                                     .removeClass('none')
-                                .velocity( LJ.ui.slideLeftInLight, {
-                                    duration: duration + 100
-                                }).end()
+                                    .velocity( LJ.ui.slideLeftInLight, {
+                                        duration: duration + 100
+                                    }).end()
+
+                               .find('.event-accepted-notification-message')
+                                    .css({ opacity: 0 })
+                                    .removeClass('none')
+                                    .velocity('transition.fadeIn', { 
+                                        duration: duration * 4
+                                    }).end()
 
                                 .find('.event-accepted-chat-typing')
                                     .velocity('transition.fadeIn');
@@ -168,21 +186,38 @@
         },
         updateGroupStatusUI: function( event_id, group ){
 
-            var status = group.status;
-            var $wrap = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
+            var status   = group.status;
+            var group_id = group.group_id;
+
+            var $wrap    = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
 
             $wrap.find('[data-groupid="' + group.group_id + '"]')
-                 .attr('data-status', status )
+                 .attr('data-status', status );
 
             if( status == 'accepted' ){
                 $wrap.find('[data-groupid="' + group.group_id + '"] .icon-toggle')
                     .removeClass('icon-toggle-off').addClass('icon-toggle-on').removeClass('active');
+
+                var bot_msg = "Le groupe " + group.name + " a été accepté";
             }
 
             if( status == 'kicked' ){
                 $wrap.find('[data-groupid="' + group.group_id + '"] .icon-toggle')
                     .removeClass('icon-toggle-on').addClass('icon-toggle-off').removeClass('active');
-            }     
+
+                var bot_msg = "Le groupe " + group.name + " a été suspendu de la discussion";
+            }
+
+            LJ.fn.addChatLine({
+                chat_id     : LJ.fn.makeChatId({ event_id: event_id, group_id: group_id }),
+                msg         : bot_msg,
+                name        : LJ.bot_profile.name,
+                img_id      : LJ.bot_profile.img_id,
+                facebook_id : LJ.bot_profile.facebook_id,
+                sent_at     : new Date(),
+                class_names : ["bot"]
+
+            });  
 
         }
 
