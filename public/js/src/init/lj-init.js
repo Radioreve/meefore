@@ -78,7 +78,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				}
 			});
 
-      $.fn.whisperify = function(){
+     /* $.fn.whisperify = function(){
         this
           .addClass('whisper-active')
           .find('input').addClass('whisper-text').end()
@@ -92,7 +92,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
           .find('input').removeClass('whisper-text').end()
           .find('button').removeClass('btn-whisper').text('Envoyer');
         return this;
-      };
+      };*/
+
+      $(document).mousewheel(function(e){
+
+        var $target = $( e.target );
+
+        if( $target.closest('.hp-main').length == 0 ){
+          e.preventDefault();
+        }
+
+      });
 
 		},
 		initAjaxSetup: function(){
@@ -204,7 +214,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         	$('.mood-wrap').html( LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
         	$('.drink-wrap').html( LJ.fn.renderDrinkInProfile( LJ.settings.app.drink ));
         	$('.filter-mixity').html( LJ.fn.renderMixityInFilters( LJ.settings.app.mixity ));
-        	$('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));
+        //	$('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));
         	$('#no').html('').append( LJ.tpl.noResults );
 
 

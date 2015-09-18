@@ -26,6 +26,10 @@
 			type: Object,
 			default: {}
 		},
+		scheduled: {
+			type: Object,
+			default: {}
+		},
 		ambiance: {
 			type: Array,
 			default: ['classique']

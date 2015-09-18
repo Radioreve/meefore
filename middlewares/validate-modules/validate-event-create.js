@@ -32,16 +32,36 @@
 		};
 
 		function isDateAtLeastToday( val, onError ){
-			if(  moment( val.begins_at, 'DD/MM/YY') < moment({'H':0,'m':0}) )
+			if(  moment( val.begins_at ) < moment({'H':0,'m':0}) )
 				onError('Date must be tomorrow or later', 'begins_at', val.begins_at, { err_id: "time_travel"} );
 		};
+
+		function isGoodAgerange( val, onError ){
+
+			console.log(val.agerange);
+			if( !/^\d{2}-\d{2}$/.test( val.agerange ) ){
+				return onError('Agerange must match the required pattern', val.agerange );
+			}
+
+			var min_age = parseInt( val.agerange.split('-')[0] );
+			var max_age = parseInt( val.agerange.split('-')[1] );
+
+			if( min_age > max_age ){
+				return onError('Agerange must be properly ordered', val.agerange );
+			}
+
+			if( min_age < settings.app.agerange_min || max_age > settings.app.agerange_max ){
+				return onError('Agerange must be between ' + settings.app.agerange_min + ' and ' + settings.app.agerange_max, val.agerange );
+			}
+		};
+
 
 		var checkHostId   = nv.isString({ regex: /^\d{10,}$/ });
 		var checkAmbiance = nv.isString();
 
-		var checkParty  = nv.isAnyObject()
+	/*	var checkParty  = nv.isAnyObject()
 
-			.withRequired('_id', nv.isString({ regex: /^[a-z0-9]{24}$/ }));
+			.withRequired('_id', nv.isString({ regex: /^[a-z0-9]{24}$/ }));*/
 
 		var checkAddress = nv.isAnyObject()
 
@@ -51,16 +71,22 @@
 			.withRequired('place_name'	, nv.isString() )
 			.withRequired('city_name'	, nv.isString() )
 
+		var checkScheduled = nv.isAnyObject()
+
+			.withRequired('type'		, nv.isString() )
+			.withRequired('address'		, checkAddress  )
+
 		var checkEvent = nv.isAnyObject()
 
-			.withRequired('socket_id'   		, nv.isString() )
+			.withRequired('begins_at'           , nv.isDate() )
+			.withRequired('socket_id'   		, nv.isString())
 			.withRequired('address'				, checkAddress )
-			.withRequired('scheduled_party'		, checkParty )
+			.withRequired('scheduled'		    , checkScheduled )
 			.withRequired('hosts_facebook_id'	, nv.isArray(  checkHostId, { min: settings.app.min_hosts , max: settings.app.max_hosts }))
 			.withRequired('ambiance'			, nv.isArray(  checkAmbiance, { min: settings.app.min_ambiance, max: settings.app.max_ambiance }))
-			.withRequired('agerange'			, nv.isString({ expected: _.pluck( settings.app.agerange, 'id' ) }))
+			.withRequired('agerange'			, nv.isString() )
 			.withRequired('mixity'				, nv.isString({ expected: _.pluck( settings.app.mixity, 'id' )   }))
-			.withRequired('begins_at'           , nv.isDate({ format: 'DD/MM/YY'}))
+			.withCustom( isGoodAgerange )
 			.withCustom( isHostDuplicated )
 			.withCustom( isDateAtLeastToday )
 
@@ -90,6 +116,7 @@
 		event_data.address   = data.address;
 		event_data.ambiance  = data.ambiance;
 		event_data.agerange  = data.agerange;
+		event_data.scheduled = data.scheduled;
 		event_data.mixity    = data.mixity;
 
 		// No errors in parameters, checking for valid friend and places ids 
@@ -130,8 +157,10 @@
 			/* Hosts are validated*/
 			event_data.hosts = _.pluckMany( hosts, settings.public_properties.users );
 
+			return callback( null, event_data );
 
-			/* Validating the place provided */
+
+		/*	// Validating the place provided 
 			Place.findById( data.scheduled_party._id, function( err, place ){
 
 				if( err ) return callback({ message: "api error" }, null );
@@ -152,7 +181,7 @@
 				console.log('Validation success!');
 				return callback( null, event_data );
 
-			});
+			});*/
 
 		});
 

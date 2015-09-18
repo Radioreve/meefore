@@ -19,12 +19,12 @@
 
 	    	/* set by client */
 	    	new_event.hosts 		  = data.hosts;
-	    	new_event.begins_at 	  = moment( data.begins_at, 'DD/MM/YY' );
+	    	new_event.begins_at 	  = moment( data.begins_at );
 	    	new_event.address 		  = data.address;
+	    	new_event.scheduled 	  = data.scheduled;
 	    	new_event.ambiance 		  = data.ambiance;
 	    	new_event.agerange 		  = data.agerange;
 	    	new_event.mixity   		  = data.mixity;
-	    	new_event.scheduled_party = data.scheduled_party;
 
 	    	/* set by server */
 	    	new_event.created_at = moment();

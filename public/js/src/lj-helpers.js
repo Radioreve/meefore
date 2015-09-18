@@ -281,6 +281,22 @@
 				$html.show();
 
 		},
+		addPartyPlaceToInput: function( place ){
+
+			var $input = $('#cr-party-place'),
+				place = place;
+
+			$input.val('');
+			$input.hide();
+
+			if( $('.party-place').length != 0 )
+				LJ.fn.removePartyPlaceToInput();
+
+			var $html = $( LJ.fn.renderPartyPlaceInCreate( place ) );			
+				$html.hide().insertBefore( $input );
+				$html.show();
+
+		},
 		removeBeforePlaceToInput: function( str ){
 
 			var $input = $('#cr-before-place'),
@@ -290,6 +306,15 @@
 			$input.show();
 
 		},
+		removePartyPlaceToInput: function( str ){
+
+			var $input = $('#cr-party-place'),
+				$place  = $('.party-place');
+
+			$('.party-place').remove();
+			$input.show();
+			
+		},
 		addDateToInput: function( date_str ){
 
 			var $input = $('#cr-date'),
@@ -297,8 +322,9 @@
 			
 			$input.val('');
 			
-			if( $('.date').length != 0 ) 
+			if( $('.date').length != 0 ){
 				LJ.fn.removeDateToInput();
+			} 
 
 			var msg = date.day() == moment().day() ? "Tout à l'heure !" : "Une belle journée ";
 			$input.attr('placeholder', msg );
@@ -309,6 +335,41 @@
 				$html.show();
 
 			LJ.pikaday.hide();
+
+		},
+		addHourToInput: function( hour, min ){
+
+			var $input = $('#cr-hour');
+			var msg    = 'Une belle heure';
+
+			$input.val('');
+
+			if( $('.hour').length != 0 ){
+				LJ.fn.removeHourToInput();
+			}
+
+			var h = parseInt( hour );
+			if( h == 18 ){
+				msg = 'Afterwork!';
+			}
+			if( h == 19 ){
+				msg = 'Apéro';
+			}
+			if( h == 21 ){
+				msg = 'Before time';
+			}
+			if( h == 23 ){
+				msg = 'Ambiance...';
+			}
+
+			$input.attr('placeholder', msg);
+
+			var $html = $( LJ.fn.renderHourInCreate( hour, min ) );
+				$html.hide().insertBefore( $input );
+				$input.css({ width: $input.outerWidth() - $html.outerWidth(true) });
+				$html.show();
+
+			$('.hp-main').hide();
 
 		},
 		hashtagify: function( str ){
@@ -345,6 +406,16 @@
 			$input.css({ width: $input.outerWidth() + $date.outerWidth(true) })
 			$('.date').remove();
 			str && $input.val('').attr('placeholder', str);
+
+		},
+		removeHourToInput: function(){
+
+			var $input = $('#cr-hour'),
+				$hour  = $('.hour');
+
+			$input.css({ width: $input.outerWidth() + $hour.outerWidth(true) })
+			$('.hour').remove();
+			$('.hp-main').show();
 
 		},
 		swapNodes: function( a, b ){

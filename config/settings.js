@@ -25,19 +25,13 @@ var settings = {
 			{ id: 'beer', display: 'Beer' },
 			{ id: 'wine', display: 'Wine' }
 		],
-		agerange: 
-		[
-			{ id: 'whatever', display: 'Whatever', icon_code: 'thumbs-up-alt' },
-			{ id: '1825', display: '18-25', icon_code: 'college' },
-			{ id: '2530', display: '25-30', icon_code: 'bar' },
-			{ id: '30+', display: '30+', icon_code: 'cafe' }
-		],
+		agerange_min: 18,
+		agerange_max: 35,
 		mixity: 
 		[
-			{ id: 'boys', display: 'Un groupe de gars', icon_code: 'mars' },
-			{ id: 'girls', display: 'Un groupe de filles', icon_code: 'venus' },
-			{ id: 'mixed', display: 'Un groupe mixte', icon_code: 'mix' },
-			{ id: 'whatever', display: 'Plusieurs groupes', icon_code: 'group' }
+			{ id: 'boys', display: 'Mars', icon_code: 'mars' },
+			{ id: 'girls', display: 'Vénus', icon_code: 'venus' },
+			{ id: 'mixed', display: 'Mixte', icon_code: 'mix' },
 		]
 	},
 	public_properties: {

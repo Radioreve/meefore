@@ -9,7 +9,7 @@
             var agerange_html = '',
                 mixity_html   = '';
 
-                agerange.forEach(function(agerange,i){
+            /*    agerange.forEach(function(agerange,i){
                   var selected = '';
                   if( i == 0 ){
                     var selected = 'selected';
@@ -19,7 +19,7 @@
                                       + agerange.display
                                     +'</div>';
                 });
-
+*/
                 mixity.forEach(function(mixity,i){
                   var selected = '';
                   if( i == 0 ){
@@ -47,13 +47,18 @@
                           +'<input class="" readonly data-select="datepicker" id="cr-date" type="text" placeholder="Quel jour?">'
                         +'</div>'
 
+                         +'<div class="row-input row-input-md etiquette row-create-hour">'
+                          +'<label class="label " for="cr-hour">Heure du before</label>'
+                          +'<input class="" readonly id="cr-hour" type="text" placeholder="Quel heure?">'
+                        +'</div>'
+
                         +'<div class="row-input row-input-md etiquette row-create-before-place">'
                           +'<label class="label " for="cr-before-place">Lieu du before</label>'
                           +'<input id="cr-before-place" type="text" placeholder="Quel quartier?">'
                         +'</div>'
 
-                        +'<div class="row-input row-input-lg etiquette row-create-party-place">'
-                          +'<label class="label label-lg" for="cr-party-place">Soirée prévue</label>'
+                        +'<div class="row-input row-input-md etiquette row-create-party-place">'
+                          +'<label class="label label-lg" for="cr-party-place">Lieu de la soirée</label>'
                           +'<input id="cr-party-place" type="text" placeholder="Après le before, on enchaîne où ?">'
                         +'</div>'
 
@@ -143,9 +148,9 @@
 
             var place = LJ.fn.findPlaceAttributes( place );
 
-            var html = '<div class="rem-click before-place" data-placeid="' + place.place_id + '" data-place-lat="'+place.lat+'" data-place-lng="'+place.lng+'">'
+            var html = '<div class="rem-click before-place" data-placeid="' + place.place_id + '" data-place-lat="' + place.lat + '" data-place-lng="' + place.lng + '">'
                             + '<i class="icon icon-before-place icon-location"></i>'
-                            + '<div class="before-place-name"><span>'+ place.place_name +'</span>,<span class="locality"> ' + place.city + ' </span></div>'
+                            + '<div class="before-place-name"><span>' + place.place_name +'</span>,<span class="locality"> ' + place.city + ' </span></div>'
                         +'</div>'
 
             return html;
@@ -153,14 +158,16 @@
         },
         renderPartyPlaceInCreate: function( place ){
 
-            var html = '<div class="rem-click party-place" data-placeid="' + place._id + '">'
-                            + '<i class="icon icon-party-place icon-location"></i>'
-                            + '<div class="party-place-name"><span>'+ place.name +'</span>,<span class="locality"> ' + place.type + ' </span></div>'
+            var place = LJ.fn.findPlaceAttributes( place );
+
+            var html = '<div class="rem-click party-place" data-placeid="' + place.place_id + '" data-place-lat="' + place.lat + '" data-place-lng="' + place.lng + '">'
+                            + '<i class="icon icon-before-place icon-location"></i>'
+                            + '<div class="party-place-name"><span>' + place.place_name +'</span>,<span class="locality"> ' + place.city + ' </span></div>'
                         +'</div>'
 
             return html;
 
-        },  
+        },
         renderDateInCreate: function( date ){
 
             var html =  '<div class="rem-click date">'
@@ -169,6 +176,59 @@
                         +'</div>'
 
             return html;
-        }
+        },
+        renderHourInCreate: function( hour, min ){
+
+            var html =  '<div class="rem-click hour hour-fix">'
+                            + '<i class="icon icon-date icon-clock"></i>'
+                            + '<div class="hour-name">' + hour + 'H' + min + '</div>'
+                        +'</div>'
+
+            return html;
+        },
+        renderHourPicker: function( opts ){
+
+          var hour_range = opts.hour_range;
+          var min_range  = opts.min_range;
+
+          var hours_html = '<div class="hp-hour">' + LJ.fn.formatHourAndMin( opts.default_hour[0] ) + '</div>'
+          var min_html   = '<div class="hp-min">' + LJ.fn.formatHourAndMin( opts.default_hour[1] ) + '</div>'
+
+          var html = [
+
+            '<div class="hp-main">',
+              '<div class="hp-layer">',
+                '<div class="hp-upndown hp-upndown-left">',
+                  '<i class="hp-icon hp-icon-up icon-up-dir"></i>',
+                  '<i class="hp-icon hp-icon-down icon-down-dir"></i>',
+                '</div>',
+                '<div class="hp-hourwrap">',
+                  hours_html,
+                '</div>',
+                '<div class="hp-spliter">',
+                  opts.spliter,
+                '</div>',
+                '<div class="hp-minwrap">',
+                  min_html,
+                '</div>',
+                '<div class="hp-upndown hp-upndown-right">',
+                  '<i class="hp-icon hp-icon-up icon-up-dir"></i>',
+                  '<i class="hp-icon hp-icon-down icon-down-dir"></i>',
+                '</div>',
+              '</div>',
+            '</div>'
+
+          ].join('');
+
+          return html;
+
+        },
+        formatHourAndMin: function( hour ){
+          if( hour < 10 ){
+            return '0'+hour;
+          } else {
+            return ''+hour;
+          }
+        },
 
 	});

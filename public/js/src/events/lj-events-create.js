@@ -10,6 +10,10 @@
                     LJ.fn.removeBeforePlaceToInput();
                     return;
                 }
+                if( $self.parents('.row-create-party-place').length != 0 ){
+                    LJ.fn.removePartyPlaceToInput();
+                    return;
+                }
                 LJ.fn.removeItemToInput(this);
             });
 
@@ -136,7 +140,7 @@
 
                 LJ.fn.displayInModal({ 
                     source:'local',
-                    fix_height: -30,
+                    fix_height: -70,
                     starting_width: 550,
                     custom_classes: ['text-left'],
                     render_cb: function(){
@@ -149,14 +153,24 @@
 
                         $('.row-events-map').hide();
                         /* Typehead on hosts and places */
-                        LJ.fn.initTypeaheadPlaces();
+                        //LJ.fn.initTypeaheadPlaces();           // DEPRECATED, TO KEEP FOR FUTURE BUSINESS MODEL //
                         LJ.fn.initTypeaheadHosts( LJ.user.friends );
 
                         /* Adjusting label & input width */
                         LJ.fn.adjustAllInputsWidth('#createEvent');
 
                         /* Date picker */ 
-                        LJ.fn.initPickaday();
+                        LJ.fn.initPickaday(); 
+
+                        /* Custom hour picker */
+                        LJ.fn.initHourPicker({
+                            inp: '#cr-hour',
+                            spliter: 'H',
+                            hour_range: [ 14, 23 ],
+                            min_range: [0, 55],
+                            default_hour: [20,30],
+                            min_step: 5
+                        });
 
                         /* Google Places Autocomplete API */
                         LJ.fn.initGooglePlaces();
@@ -168,7 +182,7 @@
                            max         : LJ.settings.app.max_hosts,
                            html        : LJ.fn.renderMeInInput(),
                            suggestions : '.search-results-friends' 
-                        })
+                        });
 
                     } 
                 });
@@ -179,15 +193,25 @@
 		initGooglePlaces: function(){
 
 			$('#cr-before-place').val('');
+            $('#cr-party-place').val('');
             var options = {componentRestrictions: {country: 'fr'}};
 
-            LJ.google_places_autocomplete = new google.maps.places.Autocomplete( 
+            LJ.google_places_autocomplete_before = new google.maps.places.Autocomplete( 
             	document.getElementById('cr-before-place'), options 
             );
             
-            LJ.google_places_autocomplete.addListener( 'place_changed', function(){
-                var place = LJ.google_places_autocomplete.getPlace();
+            LJ.google_places_autocomplete_before.addListener('place_changed', function(){
+                var place = LJ.google_places_autocomplete_before.getPlace();
                 LJ.fn.addBeforePlaceToInput( place );
+            });
+
+             LJ.google_places_autocomplete_party = new google.maps.places.Autocomplete( 
+                document.getElementById('cr-party-place'), options 
+            );
+            
+            LJ.google_places_autocomplete_party.addListener('place_changed', function(){
+                var place = LJ.google_places_autocomplete_party.getPlace();
+                LJ.fn.addPartyPlaceToInput( place );
             });
 
 		},
@@ -248,13 +272,92 @@
             }); 
 
 		},
-		 createEvent: function( evt ){
+        initHourPicker: function( opts ){
+            var opts = opts || {};
+
+            var $inp = $( opts.inp );
+
+            if( !$inp )
+                return console.warn('Cant initialize hour picker without input');
+
+            var $hourPicker = $( LJ.fn.renderHourPicker( opts ) );
+
+            $hourPicker.insertAfter( $inp )
+                       .css({
+                            'position' : 'absolute',
+                            'top'      : '40px',
+                            'left'     : '180px',
+                            'z-index'  : '100000'
+                       });
+
+            $('.hp-upndown-left .hp-icon-up').click(function(e){
+                LJ.fn.incrHour(e, opts);
+            });
+
+            $('.hp-upndown-left .hp-icon-down').click(function(e){
+                LJ.fn.decrHour(e, opts);
+            });
+
+            $('.hp-upndown-right .hp-icon-up').click(function(e){
+                LJ.fn.incrMint(e, opts);
+            });
+
+            $('.hp-upndown-right .hp-icon-down').click(function(e){
+                LJ.fn.decrMint(e, opts);
+            });
+            
+            $('.hp-main').mousewheel(function(e){
+                if( $(e.target).hasClass('hp-hour')){
+                    if( e.deltaY == 1 ){
+                        LJ.fn.incrHour(e, opts);
+                    }
+                    if( e.deltaY == -1 ){
+                        LJ.fn.decrHour(e, opts);
+                    }
+                }
+                if( $(e.target).hasClass('hp-min')){
+                    if( e.deltaY == 1 ){
+                        LJ.fn.incrMint(e, opts);
+                    }
+                    if( e.deltaY == -1 ){
+                        LJ.fn.decrMint(e, opts);
+                    }
+                }
+            });
+
+            $('.row-create-hour').click(function(){
+                $inp.attr('placeholder','');
+                $('.hp-main').show();
+            });
+
+            LJ.$body.mousedown(function(e){
+                if( $(e.target).closest('.row-create-hour').length == 0 ){
+                    $('.hp-main').hide();
+                }
+            });
+
+            $('.hp-main').on('mousedown', function(e){
+                
+                if( $(e.target).hasClass('hp-icon') ){
+                    return;
+                }
+
+                var hour = $('.hp-hour').text();
+                var min  = $('.hp-min').text();
+
+                LJ.fn.addHourToInput( hour, min );
+
+            });
+
+
+        },
+		createEvent: function( evt ){
 
             delog('Creating event...');
 
             var hosts_facebook_id  = [], ambiance = [],
                 begins_at = '', agerange = '', mixity = '',
-                address = {}, scheduled_party = {};
+                address = {}, scheduled = {};
 
             var $wrap = $('#createEvent');
 
@@ -268,12 +371,27 @@
                 ambiance.push( $(el).text() );
             });
 
-            // begins,agerange,mixity
-            begins_at = $wrap.find('.date-name').text().trim();
-            agerange  = $wrap.find('.agerange.selected').attr('data-selectid').trim();
+            // begins_at
+            var day = $wrap.find('.date-name').text().trim();
+            var hour = $wrap.find('.date-hour').text().trim();
+            var min = $wrap.find('.date-min').text().trim();
+
+            begins_at = moment({
+                hh: hour,
+                mm: min,
+                DD: day.split('/')[0],
+                MM: day.split('/')[1],
+                YY: day.split('/')[2]
+            }).toISOString();
+
+            
+            // age_range
+            agerange  = '18-30'
+
+            // mixity
             mixity    = $wrap.find('.mixity.selected').attr('data-selectid').trim();
 
-            // address
+            // before address
             if( $wrap.find('.before-place-name').length != 0 ){
                 address.lat        = parseFloat( $wrap.find('.before-place').attr('data-place-lat') );
                 address.lng        = parseFloat( $wrap.find('.before-place').attr('data-place-lng') );
@@ -282,17 +400,29 @@
                 address.city_name  = $wrap.find('.before-place-name span').eq(1).text().trim();
             }
 
+            // party address
+            scheduled.address = {};
+            scheduled.type    = "anytype";
+
+            if( $wrap.find('.party-place-name').length != 0 ){
+                scheduled.address.lat        = parseFloat( $wrap.find('.party-place').attr('data-place-lat') );
+                scheduled.address.lng        = parseFloat( $wrap.find('.party-place').attr('data-place-lng') );
+                scheduled.address.place_id   = $wrap.find('.party-place').attr('data-placeid');
+                scheduled.address.place_name = $wrap.find('.party-place-name span').eq(0).text().trim();
+                scheduled.address.city_name  = $wrap.find('.party-place-name span').eq(1).text().trim();
+            }
+
             // scheduled_party
-            scheduled_party._id = $wrap.find('.party-place').attr('data-placeid');
+            //scheduled_party._id = $wrap.find('.party-place').attr('data-placeid');
 
             var new_event = {
-                hosts_facebook_id: hosts_facebook_id,
-                ambiance: ambiance,
-                begins_at: begins_at,
-                agerange: agerange,
-                mixity: mixity,
-                address: address,
-                scheduled_party: scheduled_party
+                hosts_facebook_id : hosts_facebook_id,
+                ambiance          : ambiance,
+                begins_at         : begins_at,
+                agerange          : agerange,
+                mixity            : mixity,
+                address           : address,
+                scheduled         : scheduled
             };
             
             LJ.fn.api('post', 'events', { data: new_event }, function( err, res ){
@@ -322,7 +452,7 @@
                     LJ.fn.hideModal();
                     LJ.fn.displayEventMarker( evt );
                     LJ.fn.addEventInviewAndTabview( evt );
-                    LJ.fn.displayRouteToParty( evt );
+                    LJ.fn.displayPathToParty( evt );
                     LJ.map.panTo({ lat: evt.address.lat, lng: evt.address.lng });
                     LJ.map.setZoom( 15 );
 
@@ -339,6 +469,63 @@
                 }   
             });
 
+        },
+        incrHour: function(e, opts){
+            e.stopPropagation();
+
+            if( parseInt( $('.hp-hour').text() ) == opts.hour_range[1] ){
+                return;
+            }
+
+            $('.hp-hour').text( LJ.fn.formatHourAndMin( parseInt( $('.hp-hour').text() ) + 1 ));
+            if( parseInt( $('.hp-hour').text() ) == opts.hour_range[1] ){
+                $('.hp-upndown-left .hp-icon-up').hide();
+                return;
+            }
+            $('.hp-upndown-left .hp-icon-down').show();
+        },
+        decrHour: function(e, opts){
+            e.stopPropagation();
+
+            if( parseInt( $('.hp-hour').text() ) == opts.hour_range[0] ){
+                return;
+            }
+
+            $('.hp-hour').text( LJ.fn.formatHourAndMin( parseInt( $('.hp-hour').text() ) - 1 ));
+            if( parseInt( $('.hp-hour').text() ) == opts.hour_range[0] ){
+                $('.hp-upndown-left .hp-icon-down').hide();
+                return;
+            }
+            $('.hp-upndown-left .hp-icon-up').show();
+        },
+        incrMint: function(e, opts){
+            e.stopPropagation();
+
+            if( parseInt( $('.hp-min').text() ) == opts.min_range[1] ){
+                return;
+            }
+
+            $('.hp-min').text( LJ.fn.formatHourAndMin( parseInt( $('.hp-min').text() ) + opts.min_step ));
+            if( parseInt( $('.hp-min').text() ) == opts.min_range[1] ){
+                $('.hp-upndown-right .hp-icon-up').hide();
+                return;
+            }
+             $('.hp-upndown-right .hp-icon-down').show();
+
+        },
+        decrMint: function(e, opts){
+            e.stopPropagation();
+
+            if( parseInt( $('.hp-min').text() ) == opts.min_range[0] ){
+                return;
+            }
+
+             $('.hp-min').text( LJ.fn.formatHourAndMin( parseInt( $('.hp-min').text() ) - opts.min_step ));
+             if( parseInt( $('.hp-min').text() ) == opts.min_range[0] ){
+                $('.hp-upndown-right .hp-icon-down').hide();
+                return;
+            }
+             $('.hp-upndown-right .hp-icon-up').show();
         }
 
 

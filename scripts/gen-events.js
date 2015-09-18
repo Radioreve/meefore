@@ -1,11 +1,12 @@
 
-	var mongoose = require('mongoose'),
-		User = require('../models/UserModel'),
-		EventTemplate = require('../models/EventTemplateModel'),
-		config = require('../config/config'),
-		request = require('request'),
-		_ = require('lodash'),
-        flags = require('flags');
+        var mongoose  = require('mongoose'),
+        User          = require('../models/UserModel'),
+        EventTemplate = require('../models/EventTemplateModel'),
+        config        = require('../config/config'),
+        request       = require('request'),
+        moment        = require('moment'),
+        _             = require('lodash'),
+        flags         = require('flags');
 
         flags.defineInteger('n', 1, 'N max events');
         flags.defineInteger('d', 100, 'Delay in ms between requests');
@@ -23,16 +24,13 @@
 		// Display Command:
 		// db.getCollection('events').find({}, {ambiance:1,'hosts.name':1,groups:1,address:1,begins_at:1})
 
-		var agerange_arr = ['whatever','1825','2530','30+'];
-		var mixity_arr   = ['whatever','boys','girls','mixed'];
+		var agerange_arr = [18, 30];
+		var mixity_arr   = ['boys','girls','mixed'];
 
 		// Control params // 
 		var max_hosts  	 = 2;
 		var max_events 	 = flags.get('n');
         var delay        = flags.get('d');
-		var first_day    = 15;
-		var last_day     = 25;
-		var month        = '/09/15';
 
 		function createEvent( ite ){
 
@@ -63,15 +61,23 @@
                                     }
 
                                 // Agerange & mixity
-                                var agerange = agerange_arr[ randomInt(0,3) ];
-                                var mixity   = mixity_arr[ randomInt(0,3) ];
+                                var agerange = randomInt(18,24) + '-' + randomInt(25,35);
+                                var mixity   = mixity_arr[ randomInt(0,2) ];
 
                                 var ambiance = [];
                                 for( var i = 0; i < 5; i++) {
                                     ambiance.push( generateWord(5) );  // 5 syllabes max
                                 }
 
-                                var begins_at = randomInt( first_day, last_day) + month;
+                                var begins_at = new moment({
+                                    hh: randomInt(0, 23),
+                                    mm: randomInt(0, 55)
+                                });
+
+                                begins_at.add({
+                                    DD: randomInt(0,10)
+                                });
+
 
                                 var google_place = google_places[ randomInt(0, google_places.length - 1 ) ];
                                     // On dégage la place pour éviter les doublons
@@ -79,7 +85,11 @@
 
                                 var address = findAddress( google_place );
 
-                                var scheduled_party = { '_id': '55c613d2eb8ced441405a3a8' };
+                                google_place = google_places[ randomInt(0, google_places.length - 1 ) ]; 
+                                var scheduled = {
+                                    type: "anytype",
+                                    address: findAddress( google_place )
+                                };
                                 
                                 var url  = 'http://localhost:1234/api/v1/events';
 
@@ -91,10 +101,11 @@
                                     mixity            : mixity,
                                     ambiance          : ambiance,
                                     begins_at         : begins_at,
-                                    scheduled_party   : scheduled_party,
+                                    scheduled         : scheduled,
                                     address           : address
                                 };
 
+                                console.log('Posting this event : \n\t' + JSON.stringify( body, null, 3 ));
                                 setTimeout(function(){
                                     request({ method: 'post', url: url, json: body }, function( err, body, response ){
 
@@ -102,7 +113,12 @@
                                             return console.log(err);
 
                                         if( response.errors || response.msg ){
-                                            console.log( 'Erreur--' +response.msg  );
+                                            if( response.errors ){
+                                                console.log( 'Erreur--' +response.errors[0].message + ',  ' + response.errors[0].parameter );
+                                            }
+                                            if( response.msg ){
+                                                console.log(' Erreur--' +response.msg );
+                                            }
                                             return createEvent( ite );
                                         } else {
                                             console.log('Event created by  : ' + user.name + ' !');
@@ -153,7 +169,7 @@
 			var neighborhood = _.find( google_place.address_components, function(el){ return el.types.indexOf('neighborhood') != -1 });
 			var locality 	 = _.find( google_place.address_components, function(el){ return el.types.indexOf('locality') != -1 });
 
-			var place_name = route && route.long_name || neighborhood && neighborhood.long_name || google_place.name;
+			var place_name = route && route.long_name || neighborhood && neighborhood.long_name || google_place.name || 'Weird';
 			var city_name   = locality && locality.long_name || ' - ';
 
 			address.place_name = place_name;

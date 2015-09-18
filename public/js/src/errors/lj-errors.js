@@ -53,7 +53,7 @@
         	var missing_parameter_messages = {
         		"hosts_facebook_id"	: "Il faut être au moins 2 pour organiser un before",
         		"ambiance"		 	: "Il manque des hashtag",
-        		"scheduled_party"	: "Et la soirée, ça se passe où ?",
+        		"scheduled"       	: "Et la soirée, ça se passe où ?",
         		"address" 		 	: "Il va nous manquer l'addresse :/ ",
         		"begins_at" 		: "Il va nous manquer la date ",
         		"default"			: "Une des valeurs semble manquer" 

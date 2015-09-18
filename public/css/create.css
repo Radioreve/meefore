@@ -1,4 +1,8 @@
 #createEvent {
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;
 }
 
 #createEvent label {
@@ -11,9 +15,13 @@
    color: #555;
    vertical-align: top;
    font-family: 'Karla';
+   -webkit-user-select: none;/* Chrome all / Safari all */
+   -moz-user-select: none;/* Firefox all */
+   -ms-user-select: none;/* IE 10+ */
+   user-select: none;
 }
 
-.row-create-date {
+.row-create-date, .row-create-before-place {
    margin-right: 8px;
 }
 
@@ -58,7 +66,7 @@
 	top: 1px;
 } 
 
-.item, .friend, .ambiance, .date, .before-place, .party-place, .event-ambiance {
+.item, .friend, .ambiance, .date, .before-place, .party-place, .event-ambiance, .hour {
    display: inline-block;
    background: #FBFBFB;
    padding: 0px 6px 0 0px;
@@ -88,7 +96,7 @@
 .friend.me {
 	color: #555!important;
 }
-.item-name, .friend-name, .ambiance-name, .date-name, .before-place-name, .party-place-name {
+.item-name, .friend-name, .ambiance-name, .date-name, .before-place-name, .party-place-name, .hour-name {
    display: inline-block;
    line-height: 30px;
    vertical-align: top;
@@ -99,14 +107,9 @@
    font-weight: bolder;
    position: relative;
    top: 1px;
-}
+} 
 
-.rem-click:hover .ambiance-name,
-.rem-click:hover .item-name,
-.rem-click:hover .date-name,
-.rem-click:hover .friend-name,
-.rem-click:hover .before-place-name,
-.rem-click:hover .party-place-name {
+.rem-click:hover .ambiance-name, .rem-click:hover .item-name, .rem-click:hover .date-name, .rem-click:hover .hour-name, .rem-click:hover .friend-name, .rem-click:hover .before-place-name, .rem-click:hover .party-place-name {
    text-decoration: line-through;
    opacity: .7;
 }
@@ -123,7 +126,7 @@
    display: block;
    box-shadow: none;
    border: 1px solid #ccc;
-   background: rgba(255, 255, 255, 0.81);
+   background: rgb(255, 255, 255);
    border-bottom: 1px solid #E4E4E4;
    box-shadow: 0 0 1px #e4e4e4;
    padding: 15px;
@@ -169,4 +172,63 @@
 .locality {
    color: #ccc;
    margin-left: 3px;
+}
+
+.hp-main {
+
+width: 250px;height: 85px;background: white;box-shadow: 0 0 1px #BEBEBE;text-align: center;padding: 4px;background: #F9F9F9;font-family: 'Roboto';font-weight: 300;border: 1px solid #DADADA;display: none;}
+.hp-hourwrap, .hp-minwrap, .hp-spliter{
+
+display: inline-block;vertical-align: middle;}
+.hp-hour, .hp-min, .hp-spliter { 
+
+font-size: 32px;color: #5B5B5B;font-family: 'Roboto';font-weight: 300;padding: 0 6px;text-shadow: 0 0 50px #E3E3E3;}
+.hp-min {
+
+}
+.hp-spliter {
+
+display: inline-block;color: #65605B;font-weight: 100;background: #FAFAFA;border-radius: 5px;}
+.hp-layer {
+
+background: #FEFEFE;height: 100%;padding-top: 22px;}
+
+.hp-hourwrap,
+.hp-minwrap {
+   position: relative;
+}
+
+.hp-hour.active,
+.hp-min.active{
+	display: inline-block;
+	color: #727272;
+}
+
+.hp-upndown {
+   position: absolute;
+   color: #E7E7E7;
+   height: 37px;
+   top: 23px;
+}
+
+.hp-upndown-left {
+
+left: 29px;}
+.hp-upndown-right {
+
+right: 51px;}
+
+.hp-icon {
+transition: all ease-out .15s;
+display: block;font-size: 18px;}
+
+.hp-icon:hover {
+	color: #e94f6a;
+}
+.hp-icon-up {
+
+position: absolute;top: 0;}
+.hp-icon-down {
+	position: absolute;
+	bottom: 0;
 }

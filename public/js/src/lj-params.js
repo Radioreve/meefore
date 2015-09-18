@@ -99,26 +99,26 @@
 			base: {
                 url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418376/pin_meefore_creation_zrm3hj.png'
             },
-            base_hover: {
+            base_active: {
                 url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418425/pin_meefore_accepte_onclic_vqqlc6.png'
             },
             pending: {
                 url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/pin_pending_black.png'
             },
-            pending_hover: {
+            pending_active: {
                 url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418601/marker_points_pink.png'
             },
             accepted: {
                 url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418560/marker_chat_black.png'
             },
-            accepted_hover: {
+            accepted_active: {
                 url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418507/marker_chat_pink.png'
             },
-            club: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418425/pin_meefore_accepte_onclic_vqqlc6.png'
+            party: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442436513/pin_party.png'
             },
-            club_hover: {
-                url:'http://res.cloudinary.com/radioreve/image/upload/v1442418425/pin_meefore_accepte_onclic_vqqlc6.png'
+            party_active: {
+                url:'http://res.cloudinary.com/radioreve/image/upload/v1442436750/pin_party_pinkfail.png'
             }
 		},
         curtain: {

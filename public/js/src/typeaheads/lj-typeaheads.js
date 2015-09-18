@@ -16,19 +16,19 @@
 					highlight:'highlight'
 				}
 			},
-			places: {
-				class_names: {
-					input:'',
-					hint:'hint-places',
-					menu:'search-results-autocomplete search-results-party-places',
-					dataset:'search-wrap',
-					suggestion:'search-result-default search-result-party-places',
-					empty:'empty',
-					open:'open',
-					cursor:'cursor',
-					highlight:'highlight'
-				}
-			},
+			// places: {
+			// 	class_names: {
+			// 		input:'',
+			// 		hint:'hint-places',
+			// 		menu:'search-results-autocomplete search-results-party-places',
+			// 		dataset:'search-wrap',
+			// 		suggestion:'search-result-default search-result-party-places',
+			// 		empty:'empty',
+			// 		open:'open',
+			// 		cursor:'cursor',
+			// 		highlight:'highlight'
+			// 	}
+			// },
 			friends: {
 				class_names: {
 					input:'',

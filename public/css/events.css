@@ -865,3 +865,7 @@ background: #FCFCFC;
 }
 .user-flag > *{
 height: 100%;width: 110%;border-radius: 5px 3px 5px 3Px;}
+
+.hour-fix {
+  top: -7px;
+}
