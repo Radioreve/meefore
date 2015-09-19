@@ -177,9 +177,13 @@
 .hp-main {
 
 width: 250px;height: 85px;background: white;box-shadow: 0 0 1px #BEBEBE;text-align: center;padding: 4px;background: #F9F9F9;font-family: 'Roboto';font-weight: 300;border: 1px solid #DADADA;display: none;}
+
+.hp-main:hover .hp-spliter {
+}
+
 .hp-hourwrap, .hp-minwrap, .hp-spliter{
 
-display: inline-block;vertical-align: middle;}
+display: inline-block;vertical-align: middle;background: white;}
 .hp-hour, .hp-min, .hp-spliter { 
 
 font-size: 32px;color: #5B5B5B;font-family: 'Roboto';font-weight: 300;padding: 0 6px;text-shadow: 0 0 50px #E3E3E3;}
@@ -188,10 +192,10 @@ font-size: 32px;color: #5B5B5B;font-family: 'Roboto';font-weight: 300;padding: 0
 }
 .hp-spliter {
 
-display: inline-block;color: #65605B;font-weight: 100;background: #FAFAFA;border-radius: 5px;}
+display: inline-block;color: #65605B;font-weight: 100;transition: all ease-out .5s;border-radius: 5px;}
 .hp-layer {
 
-background: #FEFEFE;height: 100%;padding-top: 22px;}
+background: #FEFEFE;height: 100%;padding-top: 22px;background: radial-gradient(#fff,#FCFEFE);}
 
 .hp-hourwrap,
 .hp-minwrap {

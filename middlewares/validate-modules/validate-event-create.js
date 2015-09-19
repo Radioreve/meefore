@@ -119,6 +119,12 @@
 		event_data.scheduled = data.scheduled;
 		event_data.mixity    = data.mixity;
 
+		// Weird, code auto converts it to string
+		event_data.address.lat = parseFloat( event_data.address.lat );
+		event_data.address.lng = parseFloat( event_data.address.lng );
+		event_data.scheduled.address.lat = parseFloat( event_data.scheduled.address.lat );
+		event_data.scheduled.address.lng = parseFloat( event_data.scheduled.address.lng );
+
 		// No errors in parameters, checking for valid friend and places ids 
 		var host_number = data.hosts_facebook_id.length;
 

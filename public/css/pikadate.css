@@ -35,8 +35,9 @@ http://nicolasgallagher.com/micro-clearfix-hack/
    clear: both;
 }
 
-.pika-single {
-   *zoom: 1;
+.pika-single {*zoom:1;
+   top: 10px!important;
+   left: 285px!important;
 }
 
 .pika-single.is-hidden {

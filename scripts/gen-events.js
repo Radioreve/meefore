@@ -81,11 +81,13 @@
 
                                 var google_place = google_places[ randomInt(0, google_places.length - 1 ) ];
                                     // On dégage la place pour éviter les doublons
-                                    _.remove( google_places, function(el){ return el.place_id == google_place.place_id });
+                                   // _.remove( google_places, function(el){ return el.place_id == google_place.place_id });
+
 
                                 var address = findAddress( google_place );
 
-                                google_place = google_places[ randomInt(0, google_places.length - 1 ) ]; 
+                                // google_place = google_places[ randomInt(0, google_places.length - 1 ) ]; 
+                                google_place = _.find( google_places, function(el){ return el.place_id = "ChIJS_r6rAFy5kcRmEpmy97_TnA"; });    
                                 var scheduled = {
                                     type: "anytype",
                                     address: findAddress( google_place )
@@ -161,8 +163,8 @@
 
 			var address = {
 				place_id: google_place.place_id,
-				lat: google_place.geometry.location.G,
-                lng: google_place.geometry.location.K
+				lat: parseFloat(google_place.geometry.location.G),
+                lng: parseFloat(google_place.geometry.location.K)
 			};
 
 			var route 		 = _.find( google_place.address_components, function(el){ return el.types.indexOf('route') != -1 });
@@ -218,7 +220,7 @@
 
 var google_places = [
 
-			{
+	{
     "place_id": "ChIJHcrWXNdx5kcRssJewNDrBRM",
     "geometry": {
         "location": {

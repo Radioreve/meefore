@@ -92,7 +92,7 @@
 		Event
 			.find(
 				{ 
-					'begins_at': { $gte: moment( start_date, 'DD/MM/YY' ).toISOString() },
+					//'begins_at': { $gte: moment( start_date, 'DD/MM/YY' ).toISOString() },
 					'status' : { $in : ['open','suspended'] } 
 				}
 			)

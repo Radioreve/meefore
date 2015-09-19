@@ -70,7 +70,7 @@
                         +'<div class="row-input row-input-lg etiquette row-create-age">'
                           +'<label class="label label-lg" for="cr-age">Âge souhaité</label>'
                           +'<div class="row-select-wrap agerange-wrap">'
-                                + agerange_html
+                          + '<input class="" id="cr-agerange" type="range" min="' + LJ.settings.app.agerange_min + '" max="' + LJ.settings.app.agerange_max + '">'
                           +'</div>'
                         +'</div>'
 

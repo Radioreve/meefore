@@ -172,6 +172,21 @@
                             min_step: 5
                         });
 
+                        /* Rangeslider */
+                        $('#createEvent').find('input[type="range"]').ionRangeSlider({
+
+                            min           : LJ.settings.app.agerange_min,
+                            max           : LJ.settings.app.agerange_max,
+                            type          : "double",
+                            min_interval  : 1,
+                            drag_interval : true,
+                            keyboard      : true,
+                            from          : 20,
+                            to            : 26,
+                            max_postfix   : "+"
+                        });
+
+
                         /* Google Places Autocomplete API */
                         LJ.fn.initGooglePlaces();
                         
@@ -285,8 +300,8 @@
             $hourPicker.insertAfter( $inp )
                        .css({
                             'position' : 'absolute',
-                            'top'      : '40px',
-                            'left'     : '180px',
+                            'top'      : '10px',
+                            'left'     : '135px',
                             'z-index'  : '100000'
                        });
 
@@ -386,7 +401,7 @@
 
             
             // age_range
-            agerange  = '18-30'
+            agerange  = $('.irs-from').text() + '-' + $('.irs-to').text();
 
             // mixity
             mixity    = $wrap.find('.mixity.selected').attr('data-selectid').trim();
@@ -452,7 +467,7 @@
                     LJ.fn.hideModal();
                     LJ.fn.displayEventMarker( evt );
                     LJ.fn.addEventInviewAndTabview( evt );
-                    LJ.fn.displayPathToParty( evt );
+                    LJ.fn.displayPathToParty({ evt: evt });
                     LJ.map.panTo({ lat: evt.address.lat, lng: evt.address.lng });
                     LJ.map.setZoom( 15 );
 
