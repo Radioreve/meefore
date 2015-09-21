@@ -67,22 +67,24 @@
 				LJ.fn.hideModal();
 
 				LJ.fn.updatePictureWithUrl({
-        				userId: LJ.user._id,
-        				url: url,
-        				img_place: img_place
+						userId    : LJ.user._id,
+						img_id    : LJ.user._id + '--' + img_place,  // id_pattern 
+						url       : url,
+						img_place : img_place
         			}, function( err, data ){
 
-					if( err )
+					if( err ){
 						return LJ.fn.handleServerError("L'upload avec Facebook a échoué.");
+					}
 
 					LJ.fn.handleServerSuccess("Vos photos ont été mises à jour");
 
 					LJ.fn.replaceImage({
-							img_id: data.img_id,
-							img_version: data.img_version,
-							img_place: img_place,
-							scope: ['profile']
-						});
+						img_id      : data.img_id,
+						img_version : data.img_version,
+						img_place   : img_place,
+						scope       : ['profile']
+					});
 
 				});
 				
@@ -333,9 +335,9 @@
 						return;
 					}
 
-					LJ.state.uploadingimg_id = $(this).parents('.picture').data('img_id');
+					LJ.state.uploadingimg_id      = $(this).parents('.picture').data('img_id');
 					LJ.state.uploadingimg_version = $(this).parents('.picture').data('img_version');
-					LJ.state.uploadingimg_place = $(this).parents('.picture').data('img_place');
+					LJ.state.uploadingimg_place   = $(this).parents('.picture').data('img_place');
 				})
 
 				.bind('fileuploadstart', function(){
@@ -352,13 +354,13 @@
 
 					LJ.state.uploadingImage = false;
 
-					var img_id      		= data.result.public_id;
-					var img_version 		= data.result.version;
-					var img_place   		= LJ.state.uploadingimg_place;;
+					var img_id      = data.result.public_id;
+					var img_version = data.result.version;
+					var img_place   = LJ.state.uploadingimg_place;
 
                     var eventName = 'me/update-picture',
                     	data = {
-                    				_id             : LJ.user._id,
+                    				_id              : LJ.user._id,
 									img_id           : img_id,
 									img_version      : img_version,
 									img_place        : img_place
@@ -385,7 +387,7 @@
 									pic.img_version = img_version;
 									var scope = pic.is_main ? ['profile','thumb'] : ['profile'];
 
-	  								LJ.fn.replaceImage( {
+	  								LJ.fn.replaceImage({
 	  									img_id: img_id, 
 	  									img_version: img_version,
 	  									img_place: img_place,
@@ -558,7 +560,7 @@
 			var img_id      = options.img_id,
 				img_version = options.img_version,
 				img_place   = options.img_place,
-				scope      = options.scope;
+				scope       = options.scope;
 
 			if( scope.indexOf('profile') != -1 )
 			{

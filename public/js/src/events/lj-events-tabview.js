@@ -30,6 +30,7 @@
                     $self.addClass('active');
                     $inview_wrap_target.velocity('transition.slideUpIn', { duration: 600 });
                     LJ.fn.addEventPreview( evt, opts );
+                    LJ.fn.addPartyPreview( evt.party, opts );
                     return;
                 }
 
@@ -46,6 +47,7 @@
                 });
 
                 LJ.fn.addEventPreview( evt, opts );
+                LJ.fn.addPartyPreview( evt.party, opts );
 
                 
 

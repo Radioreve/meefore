@@ -372,7 +372,7 @@
 
             var hosts_facebook_id  = [], ambiance = [],
                 begins_at = '', agerange = '', mixity = '',
-                address = {}, scheduled = {};
+                address = {}, party = {};
 
             var $wrap = $('#createEvent');
 
@@ -416,19 +416,19 @@
             }
 
             // party address
-            scheduled.address = {};
-            scheduled.type    = "anytype";
+            party.address = {};
+            party.type    = "anytype";
 
             if( $wrap.find('.party-place-name').length != 0 ){
-                scheduled.address.lat        = parseFloat( $wrap.find('.party-place').attr('data-place-lat') );
-                scheduled.address.lng        = parseFloat( $wrap.find('.party-place').attr('data-place-lng') );
-                scheduled.address.place_id   = $wrap.find('.party-place').attr('data-placeid');
-                scheduled.address.place_name = $wrap.find('.party-place-name span').eq(0).text().trim();
-                scheduled.address.city_name  = $wrap.find('.party-place-name span').eq(1).text().trim();
+                party.address.lat        = parseFloat( $wrap.find('.party-place').attr('data-place-lat') );
+                party.address.lng        = parseFloat( $wrap.find('.party-place').attr('data-place-lng') );
+                party.address.place_id   = $wrap.find('.party-place').attr('data-placeid');
+                party.address.place_name = $wrap.find('.party-place-name span').eq(0).text().trim();
+                party.address.city_name  = $wrap.find('.party-place-name span').eq(1).text().trim();
             }
 
-            // scheduled_party
-            //scheduled_party._id = $wrap.find('.party-place').attr('data-placeid');
+            // party_party
+            //party_party._id = $wrap.find('.party-place').attr('data-placeid');
 
             var new_event = {
                 hosts_facebook_id : hosts_facebook_id,
@@ -437,7 +437,7 @@
                 agerange          : agerange,
                 mixity            : mixity,
                 address           : address,
-                scheduled         : scheduled
+                party         : party
             };
             
             LJ.fn.api('post', 'events', { data: new_event }, function( err, res ){
@@ -460,7 +460,7 @@
         handleCreateEventSuccess: function( evt ){
 
             delog('Event successfully created');
-            LJ.cache.events.push( evt );
+            LJ.fn.updateEventCache( evt );
 
             LJ.fn.displayCurtain({ 
                 behindTheScene: function(){
@@ -479,6 +479,7 @@
                     LJ.fn.toastMsg('Votre évènement a été créé avec succès!', 'info');
                     LJ.fn.toastMsg('Que la fête commence...', 'info');
                     LJ.fn.addEventPreview( evt );
+                    LJ.fn.addPartyPreview( evt.party, opts );
                     LJ.fn.joinEventChannel( evt );
 
                 }   

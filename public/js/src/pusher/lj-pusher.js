@@ -97,13 +97,14 @@
 				return console.error('No arguments were passed (pushNewEvent)')
 
 			/* Default message */
-			var message = evt.hosts[0].name + ' propose un before le ' + moment( evt.begins_at ).format('DD/MM');
+			var message = evt.hosts[0].name + ' propose un meefore le ' + moment( evt.begins_at ).format('DD/MM');
 
 			/* Internal */
-			LJ.cache.events.push( evt );
+			LJ.fn.updateEventCache( evt );
 
 			/* External */
             LJ.fn.displayEventMarker( evt );
+            LJ.fn.displayPartyMarker( evt.party );
 
             /* Did a friend tag me as host ? */
             if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' ) ) ){
@@ -218,7 +219,9 @@
 			var hosts_facebook_id = data.hosts_facebook_id
 
 			delog('Pushing new group status : ' + status + ' for event : ' + event_id );
-
+			LJ.fn.fetchEventById( event_id, function( err, evt ){
+				LJ.fn.updateEventCache( evt );
+			}); // Fetch event
 
 			// Message pour les membres du groupes
 			if( LJ.fn.iGroup( group.members_facebook_id ) ){
@@ -228,7 +231,11 @@
 
 				if( status == "accepted" ){
 					LJ.fn.toastMsg('Vous avez été accepté dans un before!', 'info', 3500 );
-					_.find( LJ.event_markers, function(el){ return el.id == event_id }).marker.setIcon( LJ.cloudinary.markers.accepted );
+
+					_.find( LJ.event_markers, function(el){ 
+						return el.id == event_id 
+					}).marker.setIcon( LJ.cloudinary.markers.accepted );
+
 					LJ.fn.addChatLine({
 						chat_id     : chat_id,
 						msg         : "Votre groupe vient d'être accepté dans la discussion!",
@@ -243,7 +250,11 @@
 				}
 				if( status == "kicked" ){
 					LJ.fn.toastMsg('Votre groupe a été suspendu de la discussion', 'info', 3500 );
-					_.find( LJ.event_markers, function(el){ return el.id == event_id }).marker.setIcon( LJ.cloudinary.markers.pending );
+
+					_.find( LJ.event_markers, 
+						function(el){ return el.id == event_id 
+					}).marker.setIcon( LJ.cloudinary.markers.pending );
+
 					LJ.fn.addChatLine({
 						chat_id     : chat_id,
 						msg         : "Votre groupe vient d'être suspendu de la discussion!",

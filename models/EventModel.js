@@ -26,7 +26,7 @@
 			type: Object,
 			default: {}
 		},
-		scheduled: {
+		party: {
 			type: Object,
 			default: {}
 		},

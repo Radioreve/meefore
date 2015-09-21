@@ -49,8 +49,11 @@
                 
             	LJ.fn.clearAllActiveMarkers();
                 LJ.fn.clearAllActivePaths();
-                LJ.fn.clearAllHalfActiveMarkers();
                 LJ.fn.clearAllHalfActivePaths();
+                
+                LJ.fn.clearActivePartyPreview();
+                LJ.fn.clearActiveEventPreview();
+
 
                 $('.event-accepted-tabview.active').click();
 
@@ -68,8 +71,9 @@
         },
         handleFetchEvents: function( err, events ){
 
-            if( err )
-                return console.log('Error fetching and sync friends : ' + err );
+            if( err ){
+                return console.log('Error fetching and sync friends : ' + JSON.stringify( err, null, 3 ) );
+            }
 
             console.log('Total events successfully fetched, n = ' + events.length + ' )');
 
@@ -81,10 +85,11 @@
         },
         handleFetchEventById: function( err, evt, opt ){
 
-            if( err )
-                return console.log('Error fetching event by id : ' + err );
+            if( err ){
+                return console.log('Error fetching event by id : ' + JSON.stringify( err, null, 3 ));
+            }
             
-            
+            LJ.fn.updateEventCache( evt );
             LJ.fn.joinEventChannel( evt ); 
             LJ.fn.addEventInviewAndTabview( evt, opt );
             
@@ -180,8 +185,8 @@
         },
         displayPartyMarkers: function( events ){
 
-            events.forEach(function( itm ){
-                LJ.fn.displayPartyMarker( itm );
+            events.forEach(function( evt ){
+                LJ.fn.displayPartyMarker( evt.party );
             });
 
 
@@ -276,32 +281,24 @@
                         event_type : 'click',
                         callback   : function(e){
 
-                            if( LJ.fn.isMarkerActivated( evt._id ) ){
+                            if( LJ.fn.isEventMarkerActivated( evt._id ) ){
                                 return console.log('Marker already activated');
                             }
 
+                            // Clear everything
                             LJ.fn.clearAllActiveMarkers();
                             LJ.fn.clearAllActivePaths();
-                            LJ.fn.clearAllHalfActiveMarkers();
-                            //LJ.fn.clearAllHalfActivePaths();
-                            
-                            LJ.fn.displayMarker({
-                                lat       : effective_lat,
-                                lng       : effective_lng,
-                                url       : LJ.cloudinary.markers.base_active,
-                                id        : evt.address.place_id,
-                                cache     : 'active_markers',
-                                singleton : false,
-                                zIndex    : 10,
-                                data      : {}
-                            });
+                            LJ.fn.clearAllHalfActivePaths();
 
-
+                            // Display preview
                             LJ.fn.addEventPreview( evt );
-                            LJ.fn.displayPathToParty({
-                                evt: evt
-                            });
+                            LJ.fn.addPartyPreview( evt.party );
 
+                            // Display active pins, paths and half active paths
+                            LJ.fn.displayPathToParty({ evt: evt });
+                            LJ.fn.displayHalfActivePaths( evt.party );
+                            LJ.fn.displayActiveEventMarker( evt, { lat: effective_lat, lng: effective_lng });
+                            LJ.fn.displayActivePartyMarker( evt.party );
                         }
                     } , {
                         event_type: 'mouseover',
@@ -318,14 +315,135 @@
 
 
         },
+        displayPartyMarker: function( party ){
+
+            // Only display the marker if no other party at the same location exists
+            if( _.find( LJ.party_markers, function( sche ){
+                return sche.id == party.address.place_id; 
+            })){
+                return console.log('No displaying marker, already there');
+            }           
+
+            LJ.fn.displayMarker({
+                lat       : party.address.lat,
+                lng       : party.address.lng,
+                url       : LJ.cloudinary.markers.party.url,
+                cache     : 'party_markers',
+                singleton : false,
+                id        : party.address.place_id,
+                data      : party,
+                zIndex    : 1,
+                listeners : [
+                    {
+                        event_type : 'click',
+                        callback   : function( e ){
+
+                            // Clear everything
+                            LJ.fn.clearAllActiveMarkers();
+                            LJ.fn.clearAllActivePaths();
+                            LJ.fn.clearAllHalfActivePaths();
+
+                            // Display preview
+                            LJ.fn.addPartyPreview( party );
+
+                            // Display active pins, paths and half active paths
+                            LJ.fn.displayHalfActivePaths( party );
+                            LJ.fn.displayActivePartyMarker( party );
+
+                            // Clear event preview
+                            LJ.fn.clearActiveEventPreview();
+                           
+                        }
+                    }
+                ]
+            });
+
+        },
+        displayHalfActivePaths: function( party ){
+
+            // Displays lightened paths
+            LJ.cache.events.forEach(function( other_evt ){
+                if( other_evt.party.address.place_id == party.address.place_id ){
+                    LJ.fn.displayPathToParty({
+                        evt            : other_evt,
+                        stroke_opacity : 0.25,
+                        cache          : "half_active_paths"
+                    });
+                }
+            });
+
+        },
+        displayActivePartyMarker: function( party ){
+
+            if( LJ.fn.isPartyMarkerActivated( party.address.place_id ) ){
+                LJ.active_markers[0].marker.setZIndex(1);
+                return console.log('Marker already activated');
+            }
+
+            // Display active party
+            LJ.fn.displayMarker({
+                lat       : party.address.lat,
+                lng       : party.address.lng,
+                url       : LJ.cloudinary.markers.party_active,
+                id        : party.address.place_id,
+                cache     : 'active_party_marker',
+                singleton : false,
+                zIndex    : 10,
+                data      : {}
+            });
+
+
+        },
+        displayActiveEventMarker: function( evt, opts ){
+
+            if(! opts ){
+                return console.warn('Cant display active event marker without effective lat and lng');
+            }
+
+            var status = null;
+            evt.groups.forEach(function( group ){
+                if( LJ.fn.iGroup( group.members_facebook_id ) ){
+                    status = group.status;
+                }
+            });
+
+            var marker_type = "base";
+
+            if( status == "accepted" ){
+                marker_type = "accepted";
+            }
+
+            if( status == "pending" || status == "kicked" ){
+                marker_type = "pending";
+            }
+
+            LJ.fn.displayMarker({
+                lat       : opts.lat,
+                lng       : opts.lng,
+                url       : LJ.cloudinary.markers[ marker_type + '_active'],
+                id        : evt.address.place_id,
+                cache     : 'active_event_marker',
+                singleton : false,
+                zIndex    : 10,
+                data      : {}
+            });
+
+        },
         clearAllActiveMarkers: function(){
 
-            LJ.active_markers = LJ.active_markers || [];
-            LJ.active_markers.forEach(function( mark ){
+            LJ.active_party_marker = LJ.active_party_marker || [];
+            LJ.active_party_marker.forEach(function( mark ){
                 mark.marker.setMap(null);
             });
 
-            delete LJ.active_markers;
+            delete LJ.active_party_marker;
+
+            LJ.active_event_marker = LJ.active_event_marker || [];
+            LJ.active_event_marker.forEach(function( mark ){
+                mark.marker.setMap(null);
+            });
+
+            delete LJ.active_event_marker;
 
         },
         clearAllActivePaths: function(){
@@ -359,40 +477,33 @@
             delete LJ.half_active_paths;
 
         },
-        displayPartyMarker: function( evt ){
+        clearActiveEventPreview: function(){
 
-            // Only display the marker if no other party at the same location exists
-            if( _.find( LJ.scheduled_markers, function( sche ){
-                return sche.id == evt.scheduled.address.place_id; 
-            })){
-                return console.log('No displaying marker, already there');
-            }           
-
-            LJ.fn.displayMarker({
-                lat       : evt.scheduled.address.lat,
-                lng       : evt.scheduled.address.lng,
-                url       : LJ.cloudinary.markers.party.url,
-                cache     : 'scheduled_markers',
-                singleton : false,
-                id        : evt.scheduled.address.place_id,
-                data      : evt.scheduled,
-                zIndex    : 1,
-                listeners : [
-                    {
-                        event_type : 'click',
-                        callback   : function( e ){
-
-                            LJ.fn.handleClickOnPartyMarker( evt );
-                           
-                        }
+            $('.event-preview').velocity( LJ.ui.slideUpOutLight,{
+                    duration: 270, 
+                    complete: function(){
+                        setTimeout(function(){
+                            $('.event-preview').remove();
+                        }, 200 );
                     }
-                ]
             });
 
         },
-        isMarkerActivated: function( given_id ){
+        clearActivePartyPreview: function(){
 
-            if( _.find( LJ.active_markers, function( mark ){
+             $('.party-preview').velocity( LJ.ui.slideUpOutLight,{
+                    duration: 270, 
+                    complete: function(){
+                        setTimeout(function(){
+                            $('.party-preview').remove();
+                        }, 200 );
+                    }
+            });
+
+        },
+        isPartyMarkerActivated: function( given_id ){
+
+            if( _.find( LJ.active_party_marker, function( mark ){
 
                 if( mark.data._id ){
                     return mark.data._id == given_id;
@@ -407,55 +518,21 @@
             }
 
         },
-        handleClickOnPartyMarker: function( evt ){
+        isEventMarkerActivated: function( given_id ){
 
-            if( LJ.fn.isMarkerActivated( evt.scheduled.address.place_id ) ){
-                LJ.active_markers[0].marker.setZIndex(1);
-                return console.log('Marker already activated');
-            }
+            if( _.find( LJ.active_event_marker, function( mark ){
 
-            LJ.fn.clearAllActiveMarkers();
-            LJ.fn.clearAllActivePaths();
-            LJ.fn.clearAllHalfActiveMarkers();
-            LJ.fn.clearAllHalfActivePaths();
-            
-            // Display active party
-            LJ.fn.displayMarker({
-                lat       : evt.scheduled.address.lat,
-                lng       : evt.scheduled.address.lng,
-                url       : LJ.cloudinary.markers.party_active,
-                id        : evt.scheduled.address.place_id,
-                cache     : 'active_markers',
-                singleton : false,
-                zIndex    : 10,
-                data      : {},
-                listers   : [
-                {
-                    event_type: 'click',
-                    callback: function(){
-                        LJ.fn.handleClickOnPartyMarker( evt );
-                    }
-                }]
-            });
-
-            // Display party preview
-            // LJ.fn.addScheduledPreview
-
-            // Displays lightened paths
-            LJ.cache.events.forEach(function( other_evt ){
-                if( evt._id == other_evt._id ) return;  
-                if( other_evt.scheduled.address.place_id == evt.scheduled.address.place_id ){
-                    LJ.fn.displayPathToParty({
-                        evt            : other_evt,
-                        stroke_opacity : 0.25,
-                        cache          : "half_active_paths"
-                    });
+                if( mark.data._id ){
+                    return mark.data._id == given_id;
+                } else {
+                    return mark.id == given_id;
                 }
-            });
 
-            // LJ.fn.addEventPreview( evt );
-            // LJ.fn.displayPathToParty( evt );
-
+            })){
+                return true;
+            } else {
+                return false;
+            }
 
         },
         displayPath: function( path, opts ){
@@ -503,10 +580,23 @@
 
             var evt = opts.evt;
 
-            LJ.fn.fetchPath( evt.address, evt.scheduled.address, function( response, status ){
+            LJ.cache.paths = LJ.cache.paths || {};
+
+            var cached_path = LJ.cache.paths[ evt._id ]
+            if( cached_path && cached_path.path && cached_path.cached_at && ( (new Date) - cached_path.cached_at < 60*1000) ){
+                console.log('Displaying path from cached value');
+                LJ.fn.displayPath( cached_path.path, opts );
+                return;
+            }
+
+            LJ.fn.fetchPath( evt.address, evt.party.address, function( response, status ){
 
                 if( status === google.maps.DirectionsStatus.OK ){
                     var path = response.routes[0].overview_path;
+                    LJ.cache.paths[ evt._id ] = {
+                        path      : path,
+                        cached_at : new Date()
+                    };
                     LJ.fn.displayPath( path, opts );
                     return;                    
                 } 
@@ -515,7 +605,7 @@
                     console.log('Directions request failed due to ' + status + '. Retrying...');
                     setTimeout(function(){
                         LJ.fn.displayPathToParty( opts );
-                    }, 100 );
+                    }, 600 );
                 }                
 
             });

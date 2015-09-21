@@ -78,7 +78,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 				}
 			});
 
-     /* $.fn.whisperify = function(){
+      $.fn.whisperify = function(){
         this
           .addClass('whisper-active')
           .find('input').addClass('whisper-text').end()
@@ -92,7 +92,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
           .find('input').removeClass('whisper-text').end()
           .find('button').removeClass('btn-whisper').text('Envoyer');
         return this;
-      };*/
+      };
 
       $(document).mousewheel(function(e){
 
@@ -208,14 +208,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 			});
 
 		},
-        initLayout: function( settings ){
+    initLayout: function( settings ){
 
-        	/* Mise à jour dynamique des filters */
-        	$('.mood-wrap').html( LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
-        	$('.drink-wrap').html( LJ.fn.renderDrinkInProfile( LJ.settings.app.drink ));
-        	$('.filter-mixity').html( LJ.fn.renderMixityInFilters( LJ.settings.app.mixity ));
-        //	$('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));
-        	$('#no').html('').append( LJ.tpl.noResults );
+    	/* Mise à jour dynamique des filters */
+    	$('.mood-wrap').html( LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
+    	$('.drink-wrap').html( LJ.fn.renderDrinkInProfile( LJ.settings.app.drink ));
+    	$('.filter-mixity').html( LJ.fn.renderMixityInFilters( LJ.settings.app.mixity ));
+    //	$('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));
+    	$('#no').html('').append( LJ.tpl.noResults );
 
 
     		/* Profile View */

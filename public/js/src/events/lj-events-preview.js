@@ -107,12 +107,18 @@
 
                 delog('Request in success');
                 
-                var event_id          = data.event_id;
+                var event_id = data.event_id;
 
                 LJ.fn.hideModal(function(){
 
                     LJ.fn.fetchEventById( event_id, LJ.fn.handleFetchEventById );
                     LJ.fn.toastMsg('Votre demande a été envoyée!', 'info');
+
+                     LJ.active_event_marker[0].marker.setIcon( LJ.cloudinary.markers.pending_active );
+
+                    _.find( LJ.event_markers, function( marker ) { return marker.id == event_id; })
+                     .marker.setIcon( LJ.cloudinary.markers.pending );
+
 
                 });
 
@@ -147,6 +153,7 @@
                 }
             });
 
+
             var event_preview = renderFn( evt );
 
             var $evt = $('.event-preview');
@@ -166,6 +173,49 @@
                     duration: duration,
                     complete: function(){
                         $('.row-events-preview').html( event_preview )
+                        .children().removeClass('slow-down-3')
+                        .velocity( options.transition_in || LJ.ui.slideDownInLight, {
+                            duration: duration +  300 ,
+                            complete: function(){
+                                $(this).addClass('slow-down-3');
+                            }
+                        });
+                    }
+                });
+
+        },
+        addPartyPreview: function( party, options ){
+
+            if( !party || party === {} )
+                return console.error('No party to be added : ' + party );
+
+            options = options || {};
+
+            if( party.address.place_id == $('.party-preview').attr('data-placeid') )
+                return;
+
+            //Default value
+            var renderFn = LJ.fn.renderPartyPreview;
+
+            var party_preview = renderFn( party );
+
+            var $party = $('.party-preview');
+            var duration = 270;
+
+            if( $party.length == 0 ){
+                delog('Rendering party at first load');
+                $('.row-party-preview').html( party_preview );
+                $('.party-preview').velocity( LJ.ui.slideDownInLight,
+                { duration: duration });
+                return;
+            } 
+
+            $('.party-preview')
+                .removeClass('slow-down-3')
+                .velocity( options.transition_out || LJ.ui.slideUpOutVeryLight, { 
+                    duration: duration,
+                    complete: function(){
+                        $('.row-party-preview').html( party_preview )
                         .children().removeClass('slow-down-3')
                         .velocity( options.transition_in || LJ.ui.slideDownInLight, {
                             duration: duration +  300 ,

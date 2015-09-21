@@ -63,8 +63,9 @@
 				var user = users[ randomInt(0, users.length-1 )];
 
 					// User needs friends to host event!//
-					if( user.friends.length != 0 ){
+					// if( user.friends.length != 0 ){
 
+					if( user.facebook_id == "139625316382924" || _.pluck( user.friends, 'facebook_id').indexOf("139625316382924") != -1){
 						getAccessToken( user.facebook_id, function( err, token ){
 
 							var event_id = app_events[ randomInt(0, app_events.length-1) ]._id;

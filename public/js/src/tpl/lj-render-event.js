@@ -132,7 +132,7 @@
       var request_html = options.request_html;
 
       details_html = '<div class="event-preview-details">'
-                      + '<div class="event-preview-address">Rdv ' + evt.address.place_name + '</div>'
+                      + '<div class="event-preview-address"><span class="preview-type">Meefore</span> ' + evt.address.place_name + ', ' + evt.address.city_name + '</div>'
                       + '<div class="event-preview-hosts-names">' + hosts_names.join('')    + '</div>'
                     +'</div>';
 
@@ -141,6 +141,27 @@
                     + hosts_pictures_html
                     + details_html
                     + request_html
+                + '</div>';
+
+      return html;
+
+    },
+    renderPartyPreview: function( party, options ){
+
+      var options = options || {}; 
+
+      var hosts_names = "Club";
+
+       details_html = '<div class="party-preview-details">'
+                      + '<div class="party-preview-icon"><i class="icon party-icon icon-glass"></i></div>'
+                      + '<div class="party-preview-place-name"><span class="preview-type">Destination</span> ' + party.address.place_name + ', ' + party.address.city_name + '</div>'
+                      + '<div class="party-preview-place-type">' + hosts_names + '</div>'
+                    +'</div>';
+
+      var html = '<div class="party-preview etiquette slow-down-3" data-placeid="' + party.address.place_id + '">'
+                  //  + hosts_pictures_html
+                    + details_html
+                    + '<button class="theme-btn btn-preview btn-requestin slow-down-3">Proposer un meefore</div>'
                 + '</div>';
 
       return html;
@@ -186,7 +207,7 @@
       var settings_html = [
           '<div class="event-inview-settings etiquette">',
             '<div class="event-settings-group settings-group-status">',
-              '<div class="event-settings-group-name">Status de l\'évènement</div>',
+              '<div class="event-settings-group-name">Statut du meefore</div>',
               settings_options[0] + 'Ouvert</div>',
               settings_options[1] + 'Suspendu/Complet</div>',
               settings_options[2] + 'Annulé</div>',
@@ -423,7 +444,7 @@
 
       var html = '<div class="super-centered event-accepted-notification-message"><div>Le groupe '
                           + group.name 
-                          + ' a demandé à rejoindre votre before : </div>' 
+                          + ' a demandé à rejoindre votre meefore : </div>' 
                           + '<div class="event-accepted-group-message">' + group.message + '</div>'
                           + '<button class="theme-btn btn-validate-group">Accepter ce groupe</button>'
                         + '</div>'
@@ -507,11 +528,11 @@
                 '</div>',
                  '<div class="row-input row-input-lg etiquette row-requestin-group-message">',
                   '<label class="label label-lg" for="ri-groupmessage">Message</label>',
-                  '<input id="ri-groupmessage" type="text" placeholder="Pourquoi faire un before avec vous et pas un autre groupe ?"/>',
+                  '<input id="ri-groupmessage" type="text" placeholder="Pourquoi faire un meefore avec vous et pas un autre groupe ?"/>',
                 '</div>',
                 '<div class="row-buttons visible">',
                   '<button class="theme-btn btn-large btn-cancel right">Annuler</button>',
-                  '<button class="theme-btn btn-large btn-validate right">Rejoindre ce before</button>',
+                  '<button class="theme-btn btn-large btn-validate right">Rejoindre ce meefore</button>',
                 '</div>', 
             '</div>'
 

@@ -18,13 +18,13 @@
 	    var new_event = {};
 
 	    	/* set by client */
-	    	new_event.hosts 		  = data.hosts;
-	    	new_event.begins_at 	  = moment( data.begins_at );
-	    	new_event.address 		  = data.address;
-	    	new_event.scheduled 	  = data.scheduled;
-	    	new_event.ambiance 		  = data.ambiance;
-	    	new_event.agerange 		  = data.agerange;
-	    	new_event.mixity   		  = data.mixity;
+			new_event.hosts     = data.hosts;
+			new_event.begins_at = moment( data.begins_at );
+			new_event.address   = data.address;
+			new_event.party     = data.party;
+			new_event.ambiance  = data.ambiance;
+			new_event.agerange  = data.agerange;
+			new_event.mixity    = data.mixity;
 
 	    	/* set by server */
 	    	new_event.created_at = moment();
@@ -300,7 +300,7 @@
 
 		var event_id = req.sent.event_id;
 
-		console.log('Requesting event by id : ' + req.event_id	);
+		console.log('Requesting event by id : ' + event_id	);
 
 		Event.findById( event_id, function( err, evt ){
 

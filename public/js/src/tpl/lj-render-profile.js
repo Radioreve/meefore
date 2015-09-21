@@ -62,10 +62,11 @@
             for( var i = 0; i < pictures.length; i++)
             {
                 var main = '';
-                if( pictures[i].is_main )
+                if( pictures[i].is_main ){
                     var main = " main-picture";
+                }
 
-                html += '<div class="picture unselectable'+main+'" data-img_version="'+pictures[i].img_version+'" data-img_place="'+i+'">'
+                html += '<div class="picture unselectable' + main + '" data-img_version="' + pictures[i].img_version + '" data-img_place="' + i + '">'
                         +'<div class="picture-hashtag"><span>#</span><input readonly type="text" placeholder="classic"></input></div>'
                         +'<div class="picture-edit">'
                           +'<i class="icon icon-main icon-user-1"></i>'

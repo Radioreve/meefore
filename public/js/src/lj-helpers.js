@@ -724,6 +724,22 @@
 
 			return n
 
+		},
+		updateEventCache: function( new_event ){
+
+			var cached_event =_.find( LJ.cache.events, function( evt ){
+				return ( evt._id === new_event._id || evt._id == new_event.event_id );
+			});
+
+			if( !cached_event ){
+				console.log('Adding event in cache since not found');
+				return LJ.cache.events.push( new_event );
+			} else {
+				console.log('Event found in cache, updating it');
+				cached_event = _.merge( cached_event, new_event );
+			}
+
+
 		}
 
 

@@ -71,7 +71,7 @@
 			.withRequired('place_name'	, nv.isString() )
 			.withRequired('city_name'	, nv.isString() )
 
-		var checkScheduled = nv.isAnyObject()
+		var checkParty = nv.isAnyObject()
 
 			.withRequired('type'		, nv.isString() )
 			.withRequired('address'		, checkAddress  )
@@ -81,7 +81,7 @@
 			.withRequired('begins_at'           , nv.isDate() )
 			.withRequired('socket_id'   		, nv.isString())
 			.withRequired('address'				, checkAddress )
-			.withRequired('scheduled'		    , checkScheduled )
+			.withRequired('party'		    	, checkParty )
 			.withRequired('hosts_facebook_id'	, nv.isArray(  checkHostId, { min: settings.app.min_hosts , max: settings.app.max_hosts }))
 			.withRequired('ambiance'			, nv.isArray(  checkAmbiance, { min: settings.app.min_ambiance, max: settings.app.max_ambiance }))
 			.withRequired('agerange'			, nv.isString() )
@@ -116,14 +116,14 @@
 		event_data.address   = data.address;
 		event_data.ambiance  = data.ambiance;
 		event_data.agerange  = data.agerange;
-		event_data.scheduled = data.scheduled;
+		event_data.party     = data.party;
 		event_data.mixity    = data.mixity;
 
 		// Weird, code auto converts it to string
-		event_data.address.lat = parseFloat( event_data.address.lat );
-		event_data.address.lng = parseFloat( event_data.address.lng );
-		event_data.scheduled.address.lat = parseFloat( event_data.scheduled.address.lat );
-		event_data.scheduled.address.lng = parseFloat( event_data.scheduled.address.lng );
+		event_data.address.lat       = parseFloat( event_data.address.lat );
+		event_data.address.lng       = parseFloat( event_data.address.lng );
+		event_data.party.address.lat = parseFloat( event_data.party.address.lat );
+		event_data.party.address.lng = parseFloat( event_data.party.address.lng );
 
 		// No errors in parameters, checking for valid friend and places ids 
 		var host_number = data.hosts_facebook_id.length;

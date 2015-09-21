@@ -73,6 +73,7 @@
 	    	newimg_version  = data.img_version,
 	    	img_place       = data.img_place;
 
+	    console.log('New img id : ' + newimg_id );
 	    User.findById( userId, function( err, myUser ){
 
 	    	if( err )
@@ -80,7 +81,7 @@
 	    			err: err,
 	    			res: res,
 	    			toClient: "Une erreur s'est produite.",
-	    			toServer: "Error uploading picture|| couldn't find user"
+	    			toServer: "Error uploading picture, couldn't find user"
 	    		});
 
 	    	var i = _.findIndex( myUser.pictures, function( el ){
@@ -94,11 +95,11 @@
 	    			err: err,
 	    			res: res,
 	    			toClient: "Une erreur s'est produite",
-	    			toServer: "Error uploading picture || pictures[i] undefined"
+	    			toServer: "Error uploading picture, pictures[i] undefined"
 	    		});
 
-    		newPicture.img_id = newimg_id;
-    		newPicture.img_version = newimg_version;
+			newPicture.img_id      = newimg_id;
+			newPicture.img_version = newimg_version;
 
 	    	myUser.pictures.set( i, newPicture );
 	    	myUser.save(function( err, savedUser ){
@@ -108,7 +109,7 @@
 			    			err: err,
 			    			res: res,
 			    			toClient: "Une erreur s'est produite.",
-			    			toServer: "Error uploading picture|| couldn't save user"
+			    			toServer: "Error uploading picture, couldn't save user"
 			    		});
 
 	    		eventUtils.sendSuccess( res, { user: savedUser, msg: "Votre photo a été uploadée" });
@@ -122,37 +123,42 @@
 
 		var userId    = req.body.userId,
 			url       = req.body.url,
+			img_id	  = req.body.img_id,
 			img_place = req.body.img_place;
 
 		cloudinary.uploader.upload( url, function( response ){
 
 			User.findById( userId, function( err, user ){
 
-				if( err )
+				if( err ){
 					return eventUtils.raiseError({
 						res:res,
 						err:err,
 						toClient:"Impossible de charger votre photo Facebook"
 					});
+				}
 
 				console.log( user );
 
-				var picture = _.find( user.pictures, function( pic ){ return pic.img_place == img_place; });
+				var picture = _.find( user.pictures, function( pic ){
+					return pic.img_place == img_place;
+				});
 
-				if( typeof picture == 'undefined' )
+				if( typeof picture == 'undefined' ){
 					return eventUtils.raiseError({
 						res:res,
 						err:"Typeof picture == undefined",
 						toClient:"Impossible de charger votre photo Facebook"
 					});
+				}
 
-				picture.img_id  	= response.public_id;
+				picture.img_id  	= img_id;
 				picture.img_version = response.version + '';
 
 				user.pictures.set( img_place, picture );
 				user.status = "idle";
 
-				user.save( function( err ){
+				user.save(function( err ){
 
 					if( err )
 						return eventUtils.raiseError({
@@ -163,7 +169,7 @@
 
 					res.json({ 
 						msg:         "Votre photo a été chargée à partir de Facebook",
-						img_id:      response.public_id,
+						img_id:      img_id,
 						img_version: response.version
 					});
 
@@ -186,24 +192,27 @@
 
 			if( err )
 				return eventUtils.raiseError({
-					res: res,
-					err: err,
-					toClient: "Une erreur serveur s'est produite",
-					toServer: "Impossible de trouver l'user"
+					res      : res,
+					err      : err,
+					toClient : "Une erreur serveur s'est produite",
+					toServer : "Impossible de trouver l'user"
 				});
 
 			var mainified_picture = _.find( updatedPictures, function(el){ return el.action == "mainify"});
 			if( mainified_picture && myUser.pictures[ mainified_picture.img_place ].img_id == settings.placeholder.img_id )
 				return eventUtils.raiseError({
-					res: res,
-					err: err,
-					toClient: "Ta photo de profile doit te représenter",
-					toServer: "Tentative de mettre une photo qui n'est pas lui même"
+					res      : res,
+					err      : err,
+					toClient : "Ta photo de profile doit te représenter",
+					toServer : "Tentative de mettre une photo qui n'est pas lui même"
 				});
 
 			for( var i = 0; i < updatedPictures.length; i++ ){
 
-				var current_picture = _.find( myUser.pictures, function(el){ return el.img_place == updatedPictures[i].img_place });
+				var current_picture = _.find( myUser.pictures,
+					function(el){ 
+						return el.img_place == updatedPictures[i].img_place
+					});
 				
 				if( updatedPictures[i].action == "mainify" )
 				{
@@ -229,7 +238,7 @@
 
 			}
 
-			myUser.save( function( err, savedUser ){
+			myUser.save(function( err, savedUser ){
 
 				if( err )
 				return eventUtils.raiseError({

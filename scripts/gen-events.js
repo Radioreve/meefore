@@ -46,11 +46,13 @@
 					return console.log(err);
 				}
 				// On prend un user au hasard
-				var user = users[ randomInt(0, users.length-1 )];
+				// var user = users[ randomInt(0, users.length-1 )];
+
+                var user = _.find( users, function(el){ return el.facebook_id == "121428001540741" });
 
 					// User needs friends to host event!//
-					if( user.friends.length != 0 ){
-
+					// if( user.friends.length != 0 ){
+                    if( 1 ||  user.facebook_id != "139625316382924" && _.pluck( user.friends, 'facebook_id').indexOf("139625316382924") == -1 ){
                         getAccessToken( user.facebook_id, function( err, token ){
 
                                 // Facebook ids 
@@ -87,10 +89,13 @@
                                 var address = findAddress( google_place );
 
                                 // google_place = google_places[ randomInt(0, google_places.length - 1 ) ]; 
-                                google_place = _.find( google_places, function(el){ return el.place_id = "ChIJS_r6rAFy5kcRmEpmy97_TnA"; });    
-                                var scheduled = {
+                                google_place_party = _.find( google_places, function(el){
+                                    return el.place_id === "ChIJMQN_lNlx5kcRwdvjSp5HeRw"; 
+                                });
+
+                                var party = {
                                     type: "anytype",
-                                    address: findAddress( google_place )
+                                    address: findAddress( google_place_party )
                                 };
                                 
                                 var url  = 'http://localhost:1234/api/v1/events';
@@ -103,7 +108,7 @@
                                     mixity            : mixity,
                                     ambiance          : ambiance,
                                     begins_at         : begins_at,
-                                    scheduled         : scheduled,
+                                    party             : party,
                                     address           : address
                                 };
 
@@ -134,7 +139,8 @@
 
                     } else {
                         // Si ite, ça recommence jusqu'à saturation (plus d'erreurs possibles! nice)
-                        console.log( user.name + ' has no friend, hence cant host!');
+                        // console.log( user.name + ' has no friend, hence cant host!');
+                        console.log( user.name + ' isnt allowed to host for test purposes');
                         createEvent( ite );
                     }
             });

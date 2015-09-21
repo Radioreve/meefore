@@ -1236,7 +1236,7 @@ body > header > h5 {
 .btn-validate {
    background-color: #E94F6A;
    color: white;
-   border: none;
+   border: 1px solid #E94F6A;
 }
 
 .btn-validating {
@@ -1248,7 +1248,6 @@ body > header > h5 {
 	font-size: 11px;
 	border-radius: 0px;
 	text-transform: uppercase;
-	border: none;
 }
 
 .themeBtn,
@@ -1519,7 +1518,7 @@ input:focus:-ms-input-placeholder {
 input[type="submit"]:hover,
 button:hover {
    background-color: #CD3650;
-   border: none;
+   /* border: none; */
 }
 .btn-preview-undo:hover {
 }
@@ -1704,4 +1703,15 @@ p {
 
 .modal-container .row-input:hover label {
 	color: #E94F6A;
+}
+
+.preview-type {
+	background: #E94F6A;
+	color: #FFFFFF;
+	position: absolute;
+	left: -11px;
+	top: -8px;
+	padding: 5px 10px;
+	box-shadow: 1px 1px 1px #871111;
+	transform: rotate(-10deg);
 }

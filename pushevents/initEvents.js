@@ -46,9 +46,16 @@
 					res: res			
 				});
 
+
+			// Make sure all HTML Tags internally have a specific img_id pattern
+			// So we can easily find them on cloudinary
 			var cloudinary_tags = [];
 			for( var i = 0; i < 5; i ++){
-			cloudinary_tags.push( cloudinary.uploader.image_upload_tag( 'hello_world' , { public_id: userId+'--'+i }));
+				cloudinary_tags.push( 
+					cloudinary.uploader.image_upload_tag( 'hello_world' , {
+						public_id: userId + '--' + i 
+					})
+				);
 			}
 
 				/* Contient toutes les informations exposées publiquement lors de la première connection */
