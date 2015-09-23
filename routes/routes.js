@@ -1,4 +1,5 @@
 	var _ = require('lodash');
+	var get_ip  	  = require('ipware')().get_ip;
 
 	var pusher = require('../services/pusher');
 	
@@ -73,6 +74,12 @@
 
 	    // Main page
 	    app.get('/home',
+	    	function( req, res, next ){
+
+	    		var ip_info = get_ip( req );
+	    		console.log( JSON.stringify( ip_info, null, 3 ) );
+	    		next();
+	    	},
 	    	signEvents.sendHomepage);
 
 

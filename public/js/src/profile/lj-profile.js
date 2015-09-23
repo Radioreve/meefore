@@ -142,7 +142,7 @@
 				
 				$daddy
 					.find('.row-buttons').velocity('transition.fadeIn',{ duration:600 })
-					.end().find('input').attr('readonly', false)
+					.end().find('input:not(.readonly)').attr('readonly', false)
 					.end().find('.row-input')
 					.each( function( i, el ){
 						var current_val = $(el).find('input').val(),
@@ -306,10 +306,6 @@
 
 			});
 
-			$('.inspire').click( function(){
-        		var list = LJ.settings.suggestion_list.motto;
-        		$(this).siblings('input').val( list[ LJ.fn.randomInt( 0, list.length - 1) ])
-            });
 
 
 		},
@@ -415,7 +411,6 @@
 				$container    = $('.row-informations')
 				name  		  = $container.find('.row-name input').val(),
 				age   		  = $container.find('.row-age input').val(),
-				motto         = $container.find('.row-motto input').val(),
 				job			  = $container.find('.row-job input').val(),
 				drink 		  = $container.find('.drink.modified').attr('data-selectid'),
 				mood          = $container.find('.mood.modified').attr('data-selectid');
@@ -427,7 +422,6 @@
 				userId		  : _id,
 				age 		  : age,
 				name 		  : name,
-				motto   	  : motto,
 				job           : job,
 				drink 		  : drink,
 				mood          : mood,

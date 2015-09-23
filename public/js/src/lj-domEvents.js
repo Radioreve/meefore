@@ -20,7 +20,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			});
 
             LJ.$body.on('click', '.detailable', function(){
-            	LJ.fn.displayUserProfile( $(this).attr('data-id') );
+
+            	var facebook_id = $(this).attr('data-id') || $(this).closest('[data-userid]').attr('data-userid');
+
+            	if( !facebook_id ){
+            		return console.warn('Couldnt find any id to display profile');
+            	}
+
+            	LJ.fn.displayUserProfile( facebook_id );
             });
             
             LJ.$body.on('click', '.row-input', function(){

@@ -107,7 +107,7 @@
         var display_params = _.merge( LJ.cloudinary.events.map.hosts.params, { img_version: LJ.fn.findMainImage( host ).img_version } );
         var img_tag = $.cloudinary.image( LJ.fn.findMainImage( host ).img_id, display_params ).prop('outerHTML');
         var country = '<div class="user-flag"><span class="flag-icon flag-icon-' + host.country_code + '"></span></div>';
-        hosts_pictures_html += '<div class="event-preview-host-picture" data-fbid="'+host.facebook_id+'">' + img_tag + country +'</div>'
+        hosts_pictures_html += '<div class="event-preview-host-picture" data-userid="'+host.facebook_id+'">' + img_tag + country +'</div>'
 
       });
       hosts_pictures_html += '</div>';
@@ -161,7 +161,7 @@
       var html = '<div class="party-preview etiquette slow-down-3" data-placeid="' + party.address.place_id + '">'
                   //  + hosts_pictures_html
                     + details_html
-                    + '<button class="theme-btn btn-preview btn-requestin slow-down-3">Proposer un meefore</div>'
+                    // + '<button class="theme-btn btn-preview btn-requestin slow-down-3">Proposer un meefore</div>'
                 + '</div>';
 
       return html;
@@ -464,8 +464,8 @@
     renderEventTabview: function( evt ){
 
       var html = '<div class="event-accepted-tabview slow-down-3" data-eventid="' + evt._id + '">'
-                      + '<div class="tabview-date-day">' + moment( evt.begins_at ).format('DD/MM') + '</div>'
-                      + '<span>' + evt.address.place_name + '</span>'
+                      + '<span class="tabview-date-day">' + moment( evt.begins_at ).format('DD/MM') + '</span>'
+                      + '<span class="tabview-place">' + evt.address.place_name + '</span>'
                       + '<span class="bubble none"></span>'
                   + '</div>';
       return html;
@@ -543,7 +543,27 @@
     },
     renderItemInInput: function( str ){
 
+       var html =  '<div class="rem-click item">'
+                            + '<div class="item-name">' + str + '</div>'
+                        +'</div>'
+
+        return html;
+
+    },
+    renderItemInInput_GroupName: function( str ){
+
         var html =  '<div class="rem-click item">'
+                            + '<i class="icon icon-group-name icon-mindset"></i>'
+                            + '<div class="item-name">' + str + '</div>'
+                        +'</div>'
+
+        return html;
+
+    },
+    renderItemInInput_GroupMessage: function( str ){
+
+        var html =  '<div class="rem-click item">'
+                            + '<i class="icon icon-group-message icon-chat-1"></i>'
                             + '<div class="item-name">' + str + '</div>'
                         +'</div>'
 

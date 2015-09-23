@@ -10,6 +10,40 @@
 				$tab.click();
 			});
 
+            LJ.$body.on('keydown', 'input', function(e){
+
+                var $self = $(this);
+                var keyCode = e.keyCode || e.which;
+
+                /* Ajout du group name */
+                if( (keyCode == 9 || keyCode == 13) && $self.parents('.row-requestin-group-name').length != 0 && $self.val().length != 0 ){
+                    e.preventDefault();
+                    var str = $self.val().trim();
+                    LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput_GroupName( str ), inp: this, max: 1 });
+                    $(this).val('');
+                }
+                 /* Ajout du group name */
+                if( (keyCode == 9 || keyCode == 13) && $self.parents('.row-requestin-group-message').length != 0 && $self.val().length != 0 ){
+                    e.preventDefault();
+                    var str = $self.val().trim();
+                    LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput_GroupMessage( str ), inp: this, max: 1 });
+                    $(this).val('');
+                }
+
+            });
+
+            LJ.$body.on('focusout', '#requestIn input', function(){
+
+                LJ.fn.formatRequestInInputs();
+
+            });
+
+            LJ.$body.on('mouseenter', '#requestIn .btn-validate', function(){
+
+                LJ.fn.formatRequestInInputs();
+
+            });
+
 			LJ.$body.on('click', '#requestIn .btn-validate', function(){
 
                 if( $(this).hasClass('btn-validating') ) return;
@@ -48,10 +82,10 @@
                         LJ.fn.adjustAllInputsWidth('#requestIn');
 
                         var default_groupname = LJ.user.name + ' & co';
-                        LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput( default_groupname ), inp: '#ri-groupname', max: 1 });
+                        LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput_GroupName( default_groupname ), inp: '#ri-groupname', max: 1 });
 
                          var default_message = 'Ahoy!';
-                        LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput( default_message ), inp: '#ri-groupmessage', max: 1 });
+                        LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput_GroupMessage( default_message ), inp: '#ri-groupmessage', max: 1 });
 
                     }
                 })
@@ -66,9 +100,12 @@
             var name, message, members_facebook_id = [];
             var $wrap = $('#requestIn');
 
+            var $itemname = $wrap.find('.row-requestin-group-name .item-name');
+            var $itemmsge = $wrap.find('.row-requestin-group-message .item-name');
+
             //name & message
-            name    = $wrap.find('.row-requestin-group-name .item-name').text().trim();
-            message = $wrap.find('.row-requestin-group-message .item-name').text().trim();
+            name    = $itemname.text().trim();
+            message = $itemmsge.text().trim();
 
             // members
             if( $wrap.find('.friend').length != 0 ){

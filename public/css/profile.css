@@ -268,6 +268,15 @@
    top: -8px;
 }
 
+.mood.selected .icon-mood{
+    color: #e94f6a;
+}
+.icon-mood {
+    margin-right: 8px;
+}
+.icon-mood.icon-cheers {
+    margin-right: 14px;
+}
 .row-select {
    display: inline-block;
    font-size: 12px;
@@ -293,9 +302,9 @@
     /* font-style: italic; */
     display: inline-block;
     font-size: 13px;
-    color: #98001B;
+    color: #838383;
     margin-right: 10px;
-    background: #FFF1F3!important;
+    background: #FBFBFB!important;
     padding: 6px!important;
     position: absolute;
     top: 11px;
@@ -321,8 +330,8 @@
 }
 
 .row.editing .row-select.modified {
-   background-color: #FFEDF0;
-   color: #C01332;
+   background-color: #F1F1F1;
+   color: #353535;
 }
 
 .inspire {

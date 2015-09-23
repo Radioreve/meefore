@@ -199,26 +199,25 @@
             <label for="age" class="label label-md" >Age</label>
             <input readonly id="age" class="" placeholder="25" type="number" max="50" min="18">
           </div>
-          <div class="row-input row-input-md row-mood etiquette">
-            <label for="mood" class="label label-md" >Humeur</label>
-            <div class="row-select-wrap mood-wrap">
-              <!-- Dynamically loaded -->
-            </div>
-          </div>
-          <div class="row-input row-input-md row-drink etiquette">
-            <label for="drink" class="label label-md" >Verre</label>
-            <div class="row-select-wrap drink-wrap">
-              <!-- Dynamically loaded -->
-            </div>
-          </div>
-          <div class="row-input row-input-md row-motto etiquette">
-            <label class="label label-md" for="description">Motto</label>
-            <input id="motto" readonly maxlength="40" type="text" class="" placeholder="Si tu étais une phrase...">
-            <div class="inspire">En manque d'inspi?</div>
+          <div class="row-input row-input-md row-country etiquette">
+            <label class="label label-md" for="description">Pays</label>
+            <input id="country" readonly maxlength="40" type="text" class="readonly">
           </div>
           <div class="row-input row-input-md row-job etiquette">
             <label class="label label-md" for="situation">Situation</label>
             <input readonly id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
+          </div>
+          <div class="row-input row-input-lg row-mood etiquette">
+            <label for="mood" class="label label-md" >Lifestyle</label>
+            <div class="row-select-wrap mood-wrap">
+              <!-- Dynamically loaded -->
+            </div>
+          </div>
+          <div class="row-input row-input-lg row-drink etiquette">
+            <label for="drink" class="label label-md" >Verre</label>
+            <div class="row-select-wrap drink-wrap">
+              <!-- Dynamically loaded -->
+            </div>
           </div>
         </div>
 
@@ -343,7 +342,7 @@
       <div class="row row-settings row-ux row-select-daddy">
 
         <div class="row-title">
-          <div class="row-title-text">Expérience utilisateur</div>
+          <div class="row-title-text">Application</div>
           <i class="icon icon-edit icon-feather right"></i>
         </div>
 
@@ -419,12 +418,13 @@
     window.pusher_app_id   = "f9e4bf4e8f1e0342ca27";
   </script>
 
-  <script src="//js.pusher.com/3.0/pusher.min.js"></script>  
+ <script src="//js.pusher.com/3.0/pusher.min.js"></script>  
   <script src="dist/lib.js"></script>
   <script src="js/lib/pikaday.js"></script>
   <script src="js/lib/jscrollpane.mousewheel.js"></script>
   <script src="js/lib/momentwithlocale.min.js"></script>
   <script src="js/lib/rangeslider.js"></script>
+  <script src="js/lib/async.min.js"></script>
   <!-- <script src="js/lib/prefixfree.min.js"></script> -->
   <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry" type="text/javascript"></script>
 

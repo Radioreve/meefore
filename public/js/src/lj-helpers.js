@@ -38,33 +38,37 @@
 		adjustChatPaneById: function( options ){
 
 			var options = options || {};
-			var jsp = LJ.jsp_api[ options.event_id ].chats[ options.chat_id ];
+			var jsp_chat = LJ.jsp_api[ options.event_id ].chats[ options.chat_id ];
+			var jsp_users = LJ.jsp_api[ options.event_id ].users;
 
 			setTimeout(function(){
 					
-				if( !jsp ){
+				if( !jsp_chat || !jsp_users ){
 					console.warn('Couldnt find jsp api');
 					return
 				}
 
+				// Reinitialize users panel
+				jsp_users.reinitialise();
+
 				if( options.stick_to_content ){
 
 					console.log('Sticking to content');
-					jsp.reinitialise();
+					jsp_chat.reinitialise();
 					var $elem = $('.jsp-glue').first();
-					jsp.scrollToElement( $elem, true );
-					jsp.scrollToY( jsp.getContentPositionY() + 5 ); // perfectionnist 
+					jsp_chat.scrollToElement( $elem, true );
+					jsp_chat.scrollToY( jsp_chat.getContentPositionY() + 5 ); // perfectionnist 
 					$elem.removeClass('jsp-glue');
 					return;
 
 				}
 
 				// If user is almost at the bottom of chat or is at the very top
-				if( jsp.getPercentScrolledY() > 0.75 ){
+				if( jsp_chat.getPercentScrolledY() > 0.75 || jsp_chat.getPercentScrolledY() == 0 ){
 
 					console.log('Scrolling to bottom');
-					jsp.reinitialise();
-					jsp.scrollToBottom();
+					jsp_chat.reinitialise();
+					jsp_chat.scrollToBottom();
 					return;
 					
 				} 
@@ -72,7 +76,7 @@
 				console.log('Staying where we are');
 				// Default, renitialise without scrollingToBottom
 				// For prevent users browsing history to be disturbed by auto scroll to bottom
-				jsp.reinitialise();
+				jsp_chat.reinitialise();
 			
 
 			}, 50 );
@@ -670,7 +674,6 @@
 					'age', 
 					'gender', 
 					'job', 
-					'motto', 
 					'name', 
 					'drink', 
 					'mood', 
@@ -739,6 +742,63 @@
 				cached_event = _.merge( cached_event, new_event );
 			}
 
+
+		},
+		formatRequestInInputs: function(){
+
+			var $input = $('.row-requestin-group-name').find('input');
+            var $item  = $('.row-requestin-group-name').find('.item');
+            if( $input.val().trim().length != 0 ){
+                $item.remove();
+                LJ.fn.addItemToInput({ 
+                    html: LJ.fn.renderItemInInput_GroupName( $input.val() ),
+                    inp: '#ri-groupname',
+                    max: 1
+                });
+                $input.val('');
+            }
+
+            var $input = $('.row-requestin-group-message').find('input');
+            var $item  = $('.row-requestin-group-message').find('.item');
+            if( $input.val().trim().length != 0 ){
+                $item.remove();
+                LJ.fn.addItemToInput({ 
+                    html: LJ.fn.renderItemInInput_GroupMessage( $input.val() ),
+                    inp: '#ri-groupmessage',
+                    max: 1
+                });
+                $input.val('');
+            }
+
+		},
+		adjustAllTabviews: function(){
+
+			var elements_width = 0;
+			var $tabviews = $('.row-events-accepted-tabview');
+			var n_tabviews = $('.event-accepted-tabview').length;
+			var fix_width  = 20;
+			var max_width = $tabviews.width() - n_tabviews * fix_width;
+			var new_width = parseInt( max_width / n_tabviews ) > 130 ? 130 : parseInt( max_width / n_tabviews );
+			
+/*			$tabviews
+				.children().each(function( i, el ){
+
+					elements_width += $( el ).outerWidth( true );
+
+					if( elements_width >= max_width ){
+						*/
+						// console.log('Adjusting needed dued to the ' + i + ' th element');
+
+						$('.event-accepted-tabview').css({
+							width: new_width
+						});
+
+						$('.tabview-date-day, .tabview-place').css({
+							left: '-' + n_tabviews + 'px'
+						});
+					// }
+					
+			// });
 
 		}
 

@@ -70,16 +70,16 @@
 		{
 			map: {
 				hosts: {
-					params: { cloud_name: "radioreve", 'class': 'rounded', width: 42, height: 42, crop: 'fill', gravity: 'face'}
+					params: { cloud_name: "radioreve", 'class': 'rounded detailable', width: 42, height: 42, crop: 'fill', gravity: 'face'}
 				}
 			},
 			preview: {
 				hosts: {
-					params: { cloud_name: "radioreve", 'class': 'rounded', width: 62, height: 62, crop: 'fill', gravity: 'face'}
+					params: { cloud_name: "radioreve", 'class': 'rounded detailable', width: 62, height: 62, crop: 'fill', gravity: 'face'}
 				}
 			},
 			group: {
-				params: { cloud_name: "radioreve", 'class': 'rounded', width: 40, height: 40, crop: 'fill', gravity: 'face' }
+				params: { cloud_name: "radioreve", 'class': 'rounded detailable', width: 40, height: 40, crop: 'fill', gravity: 'face' }
 			},
 			chat: {
 				params: { cloud_name: "radioreve", 'class': 'rounded', width: 30, height: 30, crop: 'fill', gravity: 'face' }
@@ -106,7 +106,13 @@
                 url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/pin_pending_black.png'
             },
             pending_active: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418601/marker_points_pink.png'
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_points_pink.png'
+            },
+            kicked: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/pin_pending_black.png'
+            },
+            kicked_active: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_points_pink.png'
             },
             accepted: {
                 url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418560/marker_chat_black.png'

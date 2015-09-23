@@ -50,8 +50,6 @@
                 if( names.length > 0 && names.indexOf( LJ.user.name ) == -1 ){
 
                     // check éventuel sur l'option oui ou non montrer qu'on a lu les messages
-                    console.log('Calling readBy...');
-
                     var event_id =  $event_wrap.attr('data-eventid');
                     
                     if( $event_wrap.attr('data-status') == 'hosted' ){
@@ -96,10 +94,10 @@
                 if( $event_wrap.attr('data-status') == 'hosted' ){
                     group_id = 'hosts';
                 } else {
-                    group_id  = LJ.fn.findMyGroupIdFromDom( this ); 
+                    group_id = LJ.fn.findMyGroupIdFromDom( this ); 
                 }
 
-                var chat_id   = $chat_wrap.attr('data-chatid');
+                var chat_id  = $chat_wrap.attr('data-chatid');
 
                 if( ['accepted','hosted'].indexOf( $event_wrap.attr('data-status') ) == -1  )
                     return LJ.fn.toastMsg("Vous n'avez pas été accepté!", 'info');
@@ -201,9 +199,10 @@
                 if( options.facebook_id == LJ.user.facebook_id ){
                     $wrap.find('.event-accepted-chat-message.me').last().addClass('sending');
                     $last_msg_me.velocity({ opacity: [ 0.5, 0 ] }, { duration: 200 });
+                } else {
+                    $last_msg_sd.velocity({ opacity: [ 1.0, 0 ] }, { duration: 200 });
                 }
                 
-                $last_msg_sd.velocity({ opacity: [ 1.0, 0 ] }, { duration: 200 });
 
                 // Bubbling notifications, better ux
                 LJ.fn.bubbleUpMessage( chat_id );
@@ -225,8 +224,6 @@
 
                 if( !$wrap )
                     return;
-
-                console.log('Applying whisper variations');
                 
                 var user_id = options.facebook_id;
                 $wrap.find('.event-accepted-chat-text').addClass('whisper-text');
@@ -310,8 +307,6 @@
 
         },
         fetchMyChat_Group: function( evt ){
-
-            console.log('Fetching chat as group');
 
             var event_id = evt._id;
             var $wrap    = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
@@ -544,17 +539,6 @@
             $readby.text( display );
 
         },
-        displayChatMembersOnline: function( chat_id ){
-
-            var event_id = chat_id.split('-')[0];
-
-            LJ.subscribed_channels[ event_id ][ chat_id ].members.each(function( member ){
-
-                console.log( member );
-
-            });
-
-        },
         bindFetchMoreHistory: function( chat_id ){
 
             var do_nothing_condition;
@@ -626,7 +610,7 @@
                     });
                         
 
-                }, 100 );
+                }, 300 );
 
             });
 

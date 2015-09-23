@@ -14,3 +14,12 @@
 
 	schedule.scheduleJob( terminate_events, terminateEvents );
 
+	// Friendly logs
+	var min = 0;
+	(function checkingTime(){
+
+		min += 1;
+		console.log( 'Scheduler up and running for' + min + ' minutes now. ');
+		setTimeout( checkingTime, 60000);
+
+	})();

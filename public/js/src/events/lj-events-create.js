@@ -23,6 +23,7 @@
                 var $self = $(this);
                 var keyCode = e.keyCode || e.which;
 
+
                 /* Remove des hashtag event  */
                 if( keyCode == 8  && $self.val().length == 0 ){
                     $self.parents('.row-input').find('.rem-click').last().click();
@@ -33,14 +34,6 @@
                     e.preventDefault();
                     var str = LJ.fn.hashtagify( $self.val() );
                     LJ.fn.addItemToInput({ html: LJ.fn.renderAmbianceInCreate( str ), inp: this, max: LJ.settings.app.max_ambiance });
-                    $(this).val('');
-                }
-
-                /* Ajout du group name */
-                if( (keyCode == 9 || keyCode == 13) && $self.parents('.row-requestin-group-name, .row-requestin-group-message').length != 0 && $self.val().length != 0 ){
-                    e.preventDefault();
-                    var str = $self.val().trim();
-                    LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput( str ), inp: this, max: 1 });
                     $(this).val('');
                 }
 
@@ -322,6 +315,9 @@
             });
             
             $('.hp-main').mousewheel(function(e){
+
+                e.preventDefault();
+
                 if( $(e.target).hasClass('hp-hour')){
                     if( e.deltaY == 1 ){
                         LJ.fn.incrHour(e, opts);

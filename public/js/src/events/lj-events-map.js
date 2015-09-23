@@ -78,9 +78,14 @@
             console.log('Total events successfully fetched, n = ' + events.length + ' )');
 
             /* Rendu sur la map */
-            LJ.fn.displayEventsMarkers( events );
-            LJ.fn.displayPartyMarkers( events );
 
+            /* Display Google Map upon which to render event markers */
+            LJ.$body.on('display:layout:during', function(){
+                LJ.fn.initMap();
+                LJ.fn.displayEventsMarkers( events );
+                LJ.fn.displayPartyMarkers( events );
+            });
+                
 
         },
         handleFetchEventById: function( err, evt, opt ){
@@ -107,11 +112,12 @@
 
             console.log('Personnal events successfully fetched, n = ' + events.length + ' )');
             
-            events.forEach(function( evt ){
-
-                LJ.fn.handleFetchEventById( null, evt, { hide: true });
-                
+            LJ.$body.on('display:layout:after', function(){
+                events.forEach(function( evt, i ){
+                    LJ.fn.handleFetchEventById( null, evt, { hide: true });
+                });                
             });
+
 
         },
         fetchEvents: function( callback ){
@@ -245,8 +251,6 @@
 
             var status = my_group && my_group.status || 'base';
 
-            console.log('Current status for this event : ' + status );
-
             var effective_lat = evt.address.lat;
             var effective_lng = evt.address.lng;
 
@@ -259,8 +263,6 @@
                 var distance     = google.maps.geometry.spherical.computeDistanceBetween( other_latlng, evt_latlng );
 
                 if( distance < 100 ){
-                    console.log('There is a before near : ' + distance );
-                    console.log('Offsetting the before');
                     effective_lng = google.maps.geometry.spherical.computeOffset( evt_latlng, 100, LJ.fn.randomInt(0, 180) ).lng()
                     effective_lat = google.maps.geometry.spherical.computeOffset( evt_latlng, 100, LJ.fn.randomInt(0, 180) ).lat();
                 }
@@ -332,7 +334,7 @@
                 singleton : false,
                 id        : party.address.place_id,
                 data      : party,
-                zIndex    : 1,
+                zIndex    : 2,
                 listeners : [
                     {
                         event_type : 'click',
@@ -366,7 +368,7 @@
                 if( other_evt.party.address.place_id == party.address.place_id ){
                     LJ.fn.displayPathToParty({
                         evt            : other_evt,
-                        stroke_opacity : 0.25,
+                        stroke_opacity : 0.15,
                         cache          : "half_active_paths"
                     });
                 }
@@ -468,7 +470,7 @@
         },
         clearAllHalfActivePaths: function(){
 
-            console.log('Clearing all half active paths');
+            // console.log('Clearing all half active paths');
             LJ.half_active_paths = LJ.half_active_paths || [];
             LJ.half_active_paths.forEach(function( path ){
                 path.setMap(null);
@@ -584,7 +586,7 @@
 
             var cached_path = LJ.cache.paths[ evt._id ]
             if( cached_path && cached_path.path && cached_path.cached_at && ( (new Date) - cached_path.cached_at < 60*1000) ){
-                console.log('Displaying path from cached value');
+                // console.log('Displaying path from cached value');
                 LJ.fn.displayPath( cached_path.path, opts );
                 return;
             }
@@ -605,7 +607,7 @@
                     console.log('Directions request failed due to ' + status + '. Retrying...');
                     setTimeout(function(){
                         LJ.fn.displayPathToParty( opts );
-                    }, 600 );
+                    }, 400 );
                 }                
 
             });

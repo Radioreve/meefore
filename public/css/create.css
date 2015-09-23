@@ -114,7 +114,7 @@
    opacity: .7;
 }
 
-.icon-date, .icon-before-place, .icon-party-place {
+.icon-date, .icon-before-place, .icon-party-place, .icon-group-name, .icon-group-message {
    position: absolute;
    top: 7px;
    left: 7px;
@@ -135,7 +135,6 @@
 }
 
 .item-name {
-	margin-left:17px;
 }
 
 .pac-item {

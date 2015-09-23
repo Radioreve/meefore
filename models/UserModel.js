@@ -53,10 +53,6 @@ var UserSchema = new mongoose.Schema({
     type: String,
     default:''
   },
-  motto: {
-    type: String,
-    default:''
-  },
   name: {
     type: String,
     required:true,

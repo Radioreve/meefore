@@ -119,6 +119,9 @@
                 users: $inview.find('.event-accepted-users').jScrollPane().data('jsp'),
                 chats: chats_jsp
             };
+
+            /* Adjust all tabviews*/
+            LJ.fn.adjustAllTabviews();
 	           
 
         }

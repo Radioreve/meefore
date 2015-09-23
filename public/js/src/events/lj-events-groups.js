@@ -47,13 +47,22 @@
                 $self.addClass('active');
 
                 var group_id = $self.attr('data-groupid');
+                var chat_id  = LJ.fn.makeChatId({ event_id: event_id, group_id: group_id });
 
                 var duration = 235;
 
                 // Display proper groups
                 $('.event-accepted-users-group:not([data-groupid="hosts"])')
                     .velocity('transition.fadeOut',{
-                        duration: duration * 1.65
+                        duration: duration * 1.65,
+                        complete: function(){
+
+                                LJ.fn.adjustChatPaneById({
+                                    event_id : event_id,
+                                    chat_id  : chat_id
+                                });
+
+                        }
                     });
 
                 $('.event-accepted-users-group[data-groupid="' + group_id + '"]:not([data-groupid="hosts"])')
@@ -64,7 +73,6 @@
                 // Display proper chat
                 var $current_chat =  $('.event-accepted-chat-wrap:not(.none)');
                 var $target_chat  =  $('.event-accepted-chat-wrap[data-groupid="' + group_id + '"]');
-
 
                 $current_chat
 
@@ -94,14 +102,17 @@
                         duration: duration,
                         complete: function(){
 
+                            LJ.fn.adjustChatPaneById({
+                                event_id : event_id,
+                                chat_id  : chat_id
+                            });
+            	
                             $current_chat.addClass('none');
 
                             $target_chat
                                 .find('.event-accepted-notification-message').addClass('none').end()
                                 .find('.event-accepted-chat-message').addClass('none').end()
                                 .removeClass('none');
-
-                            LJ.fn.adjustAllChatPanes();
 
                             $target_chat
 
@@ -131,6 +142,8 @@
 
                         }
                     });
+
+                          
             });
 			
 			 

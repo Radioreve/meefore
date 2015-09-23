@@ -81,8 +81,8 @@ left: auto;right: 55px;}
    width: 100%;
    border-top: 1px solid #E0E0E0;
    text-align: left;
-   padding: 14px 0 0 40px;
-   z-index: 11;
+   padding: 0 20px;
+   z-index: 71;
 }
 
 .events-accepted-inview {
@@ -233,33 +233,56 @@ display: inline-block;}
   cursor: not-allowed!important;
 }
 
-.event-preview-selected {
+.event-accepted-tabview:first-of-type {
+  z-index: 10;
 }
 
-.event-accepted-tabview {
+.event-accepted-tabview, .event-accepted-tabview:before {
+float: left;
+vertical-align: middle;
+font-size: 12px;
+padding: 10px 14px 10px 0px;
+position: relative;
+z-index: 1;
+cursor: pointer;
+margin: 10px 0 0 19px;
+background: white;
+color: #530606;
+box-shadow: 2px 0px 3px -1px #ccc;
+transform: skewX(20deg);
+width: 130px;
+height: 30px;
+white-space: nowrap;
+border-radius: 5px 5px 0 0;
+border-bottom: 1px solid #FFE5E9;
+}
 
-display: inline-block;
+.event-accepted-tabview:before {
+  content: "";
+  position: absolute;
+  left: -24px;
+  top:0px;
+  transform: skewX(-40deg);
+  width: 43px;
+  box-shadow: none;
+  margin: 0;
+  z-index: 1;
+  border-radius: 5px 0 0 0;
+  transition: all ease-out .3s;
+  box-shadow: none!important;
+}
 
-vertical-align: middle;
-
-font-size: 12px;
-
-padding: 10px 20px;
-
-position: relative;
-
-z-index: 1;
-
-cursor: pointer;
-
-margin: 0 5px;
-
-background: white;
-
-color: black;
-
-box-shadow: 2px 2px 3px #ccc;
-
+.event-accepted-tabview .tabview-date-day, .event-accepted-tabview .tabview-place {
+  transform: skewX(-20deg)!important;
+  display: inline-block;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 3px;
+  vertical-align: middle;
+  z-index: 10;
+  position: relative;
+  top: -3px;
 }
 
 .event-accepted-tabview .bubble {
@@ -274,16 +297,21 @@ box-shadow: 2px 2px 3px #ccc;
   border-radius: 100px;
   transition: all ease-out .15s;
 }
-.event-accepted-tabview.active {
+.event-accepted-tabview.active, .event-accepted-tabview.active:before {
   background: #E94F6A;
   color: white;
-  box-shadow: 1px 1px 2px #ccc;
 }
 .event-accepted-tabview.active .tabview-date-day {
   background: none;
   color: white;
 }
-.event-accepted-tabview:not(.active):hover {
+.event-accepted-tabview.active {
+  z-index: 1000;
+}
+
+
+.event-accepted-tabview:not(.active):hover,
+.event-accepted-tabview:not(.active):hover:before {
   background: #FFE5E9;
   border-color: #F6D1D7;
   color: #941A2F;
@@ -332,8 +360,6 @@ font-family: 'Roboto';
 
 .tabview-date-day {
   
-padding: 3px 7px;
-  
 font-size: 11px;
   
 margin-right: 6px;
@@ -344,12 +370,9 @@ color: #900920;
   
 border-radius: 2px;
   
-display: inline-block;
-  
 transition: all ease-out .4s;
 }
 .event-accepted-tabview:not(.active):hover .bubble {
-  opacity: .8;
 }
 
 /* 
@@ -535,6 +558,9 @@ padding: 4px 12px;
 margin: 12px 7px 0 0;
 
 cursor: default;
+}
+.detailable {
+  cursor: pointer;
 }
 .event-accepted-chat {
 

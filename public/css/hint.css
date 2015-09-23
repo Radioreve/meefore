@@ -121,8 +121,7 @@
 }
 
 .hint--top:after {
-   margin-left: -18px;
-}
+margin-left: -40px;}
 
 .hint--top:before, .hint--top:after {
    bottom: 100%;

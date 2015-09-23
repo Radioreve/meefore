@@ -161,6 +161,9 @@
 			// Adjust chatpanes for visuals
 			LJ.fn.adjustAllChatPanes();
 
+			// Bubbleup someone wanted to join
+			LJ.fn.bubbleUpMessage( chat_id );
+
 			// Finally join channel to listen for further events
 			LJ.fn.joinChatChannel( event_id, chat_id );
 			
