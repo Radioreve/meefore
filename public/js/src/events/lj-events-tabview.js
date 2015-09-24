@@ -74,7 +74,7 @@
                             LJ.fn.renderEventInview_User ;
 
 
-            $('.row-main').append( renderFn( evt ) );
+            $('.row-events-accepted').append( renderFn( evt ) );
             $('.row-events-accepted-tabview').append( LJ.fn.renderEventTabview( evt ) );
 
             if( !options.hide  ){

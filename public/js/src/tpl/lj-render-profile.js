@@ -5,7 +5,7 @@
 
           var html = '';
             mood_array.forEach(function(mood){
-              html += '<div class="row-select mood" data-selectid="' + mood.id + '"><i class="icon icon-mood icon-' + mood.id +'"></i>' + mood.display + '</div>'
+              html += '<div data-lid="p_lifestyle_' + mood.id + '" class="row-select mood" data-selectid="' + mood.id + '"><i class="icon icon-mood icon-' + mood.id +'"></i>' + mood.display + '</div>'
             });
           return html;
 

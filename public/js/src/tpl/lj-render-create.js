@@ -34,48 +34,48 @@
               var html = '<div id="createEvent" class="">'
         
                         +'<div class="row-input row-input-lg">'
-                         +'<div class="modal-title">Proposer un before </div>'
+                         +'<div data-lid="e_create_title" class="modal-title">Proposer un meefore</div>'
                         +'</div>'
 
                         +'<div class="row-input row-input-lg etiquette row-create-friends">'
-                          +'<label class="label label-lg" for="cr-friends">Organisateurs</label>'
-                          +'<input class="" id="cr-friends" type="text" placeholder="Sélectionne parmis tes amis ( 3 max )">'
+                          +'<label data-lid="e_create_hosts" class="label label-lg" for="cr-friends">Organisateurs</label>'
+                          +'<input data-lid="e_create_hosts_placeholder" class="" id="cr-friends" type="text" placeholder="Sélectionne parmis tes amis ( 3 max )">'
                         +'</div>'
 
                         +'<div class="row-input row-input-md etiquette row-create-date">'
-                          +'<label class="label " for="cr-date">Date du before</label>'
-                          +'<input class="" readonly data-select="datepicker" id="cr-date" type="text" placeholder="Quel jour?">'
+                          +'<label data-lid="e_create_begins_at" class="label " for="cr-date">Date du before</label>'
+                          +'<input data-lid="e_create_begins_at_placeholder" class="" readonly data-select="datepicker" id="cr-date" type="text" placeholder="Quel jour?">'
                         +'</div>'
 
                          +'<div class="row-input row-input-md etiquette row-create-hour">'
-                          +'<label class="label " for="cr-hour">Heure du before</label>'
-                          +'<input class="" readonly id="cr-hour" type="text" placeholder="Quel heure?">'
+                          +'<label data-lid="e_create_hour" class="label" for="cr-hour">Heure du before</label>'
+                          +'<input data-lid="e_create_hour_placeholder" class="" readonly id="cr-hour" type="text" placeholder="Quel heure?">'
                         +'</div>'
 
                         +'<div class="row-input row-input-md etiquette row-create-before-place">'
-                          +'<label class="label " for="cr-before-place">Lieu du before</label>'
-                          +'<input id="cr-before-place" type="text" placeholder="Quel quartier?">'
+                          +'<label data-lid="e_create_address" class="label" for="cr-before-place">Lieu du meefore</label>'
+                          +'<input data-lid="e_create_address_placeholder" id="cr-before-place" type="text" placeholder="Quel quartier?">'
                         +'</div>'
 
                         +'<div class="row-input row-input-md etiquette row-create-party-place">'
-                          +'<label class="label label-lg" for="cr-party-place">Lieu de la soirée</label>'
-                          +'<input id="cr-party-place" type="text" placeholder="Après le before, on enchaîne où ?">'
+                          +'<label data-lid="e_create_party" class="label label-lg" for="cr-party-place">Lieu de la soirée</label>'
+                          +'<input data-lid="e_create_party_placeholder" id="cr-party-place" type="text" placeholder="Après le before, on enchaîne où ?">'
                         +'</div>'
 
                         +'<div class="row-input row-input-lg etiquette row-create-ambiance">'
-                          +'<label class="label label-lg" for="cr-ambiance">Ambiance</label>'
-                          +'<input class"" id="cr-ambiance" type="text" placeholder="Hashtag ton before ( 5 max )">'
+                          +'<label data-lid="e_create_ambiance" class="label label-lg" for="cr-ambiance">Ambiance</label>'
+                          +'<input data-lid="e_create_ambiance_placeholder" class"" id="cr-ambiance" type="text" placeholder="Hashtag ton before ( 5 max )">'
                         +'</div>'
 
                         +'<div class="row-input row-input-lg etiquette row-create-age">'
-                          +'<label class="label label-lg" for="cr-age">Âge souhaité</label>'
+                          +'<label data-lid="e_create_agerange" class="label label-lg" for="cr-age">Âge souhaité</label>'
                           +'<div class="row-select-wrap agerange-wrap">'
                           + '<input class="" id="cr-agerange" type="range" min="' + LJ.settings.app.agerange_min + '" max="' + LJ.settings.app.agerange_max + '">'
                           +'</div>'
                         +'</div>'
 
                         +'<div class="row-input row-input-lg etiquette row-create-mixity">'
-                          +'<label class="label label-lg" for="cr-mixity">Type d\'invités</label>'
+                          +'<label data-lid="e_create_guests_type" class="label label-lg" for="cr-mixity">Type d\'invités</label>'
                           +'<div class="row-select-wrap mixity-wrap">'
                                 + mixity_html
                           +'</div>'
@@ -83,8 +83,8 @@
 
 
                         +'<div class="row-buttons visible">'
-                            +'<button class="theme-btn btn-large btn-cancel right">Annuler</button>'
-                            +'<button class="theme-btn btn-large btn-validate right">Créer un before</button>'
+                            +'<button data-lid="e_create_button_cancel" class="theme-btn btn-large btn-cancel right">Annuler</button>'
+                            +'<button data-lid="e_create_button_validate" class="theme-btn btn-large btn-validate right">Créer un before</button>'
                         +'</div>' 
 
                       +'</div>'
@@ -104,10 +104,10 @@
 
             var image_tag_friend = $.cloudinary.image( img_id, display_options ).removeClass('none').prop('outerHTML');
           
-            var html =  '<label class="friend me" data-id="'+friend.facebook_id+'">'
+            var html =  '<div class="friend me" data-id="'+friend.facebook_id+'">'
                             + image_tag_friend
                             + '<div class="friend-name">' + friend.name + '</div>'
-                        +'</label>'
+                        +'</div>'
 
             return html;
 

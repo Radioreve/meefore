@@ -209,11 +209,11 @@ window.LJ.fn = _.merge(window.LJ.fn || {},
         initLayout: function(settings) {
 
             /* Mise à jour dynamique des filters */
-            $('.mood-wrap').html(LJ.fn.renderMoodInProfile(LJ.settings.app.mood));
-            $('.drink-wrap').html(LJ.fn.renderDrinkInProfile(LJ.settings.app.drink));
-            $('.filter-mixity').html(LJ.fn.renderMixityInFilters(LJ.settings.app.mixity));
+            $('.mood-wrap').html(LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
+            $('.drink-wrap').html(LJ.fn.renderDrinkInProfile( LJ.settings.app.drink ));
+            // $('.filter-mixity').html(LJ.fn.renderMixityInFilters(LJ.settings.app.mixity));
             //	$('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));
-            $('#no').html('').append(LJ.tpl.noResults);
+            $('#no').html('').append( LJ.tpl.noResults );
 
 
             /* Profile View */
@@ -225,29 +225,29 @@ window.LJ.fn = _.merge(window.LJ.fn || {},
             $('.mood[data-selectid="' + LJ.user.mood + '"]').addClass('selected');
 
             /* Settings View */
-            _.keys(LJ.user.app_preferences).forEach(function(key) {
-                _.keys(LJ.user.app_preferences[key]).forEach(function(sub_key) {
-                    var value = LJ.user.app_preferences[key][sub_key];
+            _.keys( LJ.user.app_preferences ).forEach(function( key ) {
+                _.keys(LJ.user.app_preferences[key]).forEach(function( sub_key ) {
+                    var value = LJ.user.app_preferences[ key ][ sub_key ];
                     $('.row-select.' + sub_key + '[data-selectid="' + value + '"]').addClass('selected');
                 });
             });
 
 
             /* Mise à jour des images placeholders */
-            $('.picture-wrap').html(LJ.fn.renderProfilePicturesWraps);
-            var $placeholder = $.cloudinary.image(LJ.cloudinary.placeholder.id, LJ.cloudinary.placeholder.params);
-            $('.picture').prepend($placeholder);
+            $('.picture-wrap').html( LJ.fn.renderProfilePicturesWraps );
+            var $placeholder = $.cloudinary.image( LJ.cloudinary.placeholder.id, LJ.cloudinary.placeholder.params );
+            $('.picture').prepend( $placeholder );
 
             /* Update de toutes les images */
             for (var i = 0; i < LJ.user.pictures.length; i++) {
-                LJ.user.pictures[i].scope = ['profile'];
-                LJ.fn.replaceImage(LJ.user.pictures[i]);
+                LJ.user.pictures[ i ].scope = ['profile'];
+                LJ.fn.replaceImage( LJ.user.pictures[ i ] );
             }
 
             LJ.fn.displayPictureHashtags();
 
             /* ThumbHeader View */
-            LJ.$thumbWrap.find('h2#thumbName').text(LJ.user.name);
+            LJ.$thumbWrap.find('h2#thumbName').text( LJ.user.name );
             var d = LJ.cloudinary.displayParamsHeaderUser;
 
             var mainImg = LJ.fn.findMainImage();
@@ -256,11 +256,11 @@ window.LJ.fn = _.merge(window.LJ.fn || {},
             var imgTag = $.cloudinary.image(mainImg.img_id, d);
             imgTag.addClass('left');
 
-            LJ.$thumbWrap.find('.imgWrap').html('').append(imgTag);
+            LJ.$thumbWrap.find('.imgWrap').html('').append( imgTag );
 
             /* Settings View */
             $('#newsletter').prop('checked', LJ.user.newsletter);
-            $('#currentEmail').val(LJ.user.email);
+            $('#currentEmail').val( LJ.user.email );
 
         },
         displayLayout: function() {

@@ -738,7 +738,7 @@
 				console.log('Adding event in cache since not found');
 				return LJ.cache.events.push( new_event );
 			} else {
-				console.log('Event found in cache, updating it');
+				// console.log('Event found in cache, updating it');
 				cached_event = _.merge( cached_event, new_event );
 			}
 
@@ -780,27 +780,21 @@
 			var max_width = $tabviews.width() - n_tabviews * fix_width;
 			var new_width = parseInt( max_width / n_tabviews ) > 130 ? 130 : parseInt( max_width / n_tabviews );
 			
-/*			$tabviews
+			$('.event-accepted-tabview').css({
+				width: new_width
+			});
+
+			$('.tabview-date-day, .tabview-place').css({
+				left: '-' + n_tabviews + 'px'
+			});
+
+			$tabviews
 				.children().each(function( i, el ){
-
-					elements_width += $( el ).outerWidth( true );
-
-					if( elements_width >= max_width ){
-						*/
-						// console.log('Adjusting needed dued to the ' + i + ' th element');
-
-						$('.event-accepted-tabview').css({
-							width: new_width
-						});
-
-						$('.tabview-date-day, .tabview-place').css({
-							left: '-' + n_tabviews + 'px'
-						});
-					// }
-					
-			// });
-
-		}
+					$( el ).css({
+						'z-index': 999 - i
+					});
+				});
+			}
 
 
 	});

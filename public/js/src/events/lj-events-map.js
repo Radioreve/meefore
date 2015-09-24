@@ -115,7 +115,9 @@
             LJ.$body.on('display:layout:after', function(){
                 events.forEach(function( evt, i ){
                     LJ.fn.handleFetchEventById( null, evt, { hide: true });
-                });                
+                });
+
+                $('.row-events-accepted-tabview').velocity('transition.slideUpIn');                
             });
 
 

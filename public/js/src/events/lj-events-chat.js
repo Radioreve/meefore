@@ -151,7 +151,7 @@
 		},
         handleSendChatSuccess: function( res ){
 
-            delog('Handling chat success for chat_id : ' + res.chat_id );
+            // delog('Handling chat success for chat_id : ' + res.chat_id );
 
             $('.event-accepted-chat-wrap[data-chatid="' + res.chat_id + '"]')
                 .find('.event-accepted-chat-typing button').removeClass('active').end()
@@ -162,7 +162,7 @@
         },
 		addChatLine: function( options ){
             
-            delog('Adding chatline...');
+            // delog('Adding chatline...');
             
             var chat_id = options.chat_id;
 
@@ -270,7 +270,7 @@
         },
         fetchMyChat_Host: function( evt ){
 
-            console.log('Fetching chat as host');
+            // console.log('Fetching chat as host');
 
             var event_id = evt._id;
             var $wrap    = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
@@ -335,7 +335,7 @@
         },
         fetchChatHistoryById: function( options ){
 
-            delog('Fetching messages for chat with id : ' + options.chat_id );
+            // delog('Fetching messages for chat with id : ' + options.chat_id );
 
             var data = {
                 chat_id          : options.chat_id,
