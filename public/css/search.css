@@ -48,7 +48,7 @@ height: 69px;/* width: 400px; */}
    top: -1px;
    width: 258px;
    transition: all ease-out .3s;
-   height: 36px;
+   height: 42px;
    z-index: 0;
 }
 
@@ -75,7 +75,7 @@ height: 69px;/* width: 400px; */}
    margin: 4px 0 0 5px;
    position: relative;
    font-family: 'Karla';
-   height: 31px;
+   height: 36px;
    transition: all ease-out .3s;
 }
 

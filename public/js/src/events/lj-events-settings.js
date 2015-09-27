@@ -62,7 +62,7 @@
 
             LJ.fn.hideLoaders();
             LJ.fn.refreshEventStatusOnMap( event_id, status );
-            LJ.fn.toastMsg("Le statut de l'évènement a été modifié", 'info');
+            LJ.fn.toastMsg( LJ.text_source["to_request_event_status_modified"][ LJ.app_language ] , 'info');
 
             // close them all, whatever
             $('.row-events-accepted-inview[data-eventid="' + event_id + '"]')

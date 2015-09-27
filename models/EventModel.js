@@ -15,6 +15,9 @@
 		begins_at: {
 			type: Date
 		},
+		timezone: {
+			type: Number
+		},
 		created_at: {
 			type: Date
 		},

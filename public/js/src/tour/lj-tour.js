@@ -46,20 +46,21 @@
         				img_place: img_place
         			}, function( err, data ){
 
-        				if( err )
-        					return LJ.fn.handleServerError("La synchronisation avec Facebook a échouée.");
+        				if( err ){
+        				    return LJ.fn.handleServerError("La synchronisation avec Facebook a échouée.");
+                                        }
 
         				LJ.fn.handleServerSuccess();
-        				LJ.fn.toastMsg("Bienvenue sur Meefore",'info', 4000);
+        				LJ.fn.toastMsg( LJ.text_source["to_welcome"][ LJ.app_language ],'info', 4000);
 
-						$('#intro').remove();
+					$('#intro').remove();
 
-						LJ.fn.replaceImage({
-							img_id: data.img_id,
-							img_version: data.img_version,
-							img_place: 0,
-							scope: ['profile','thumb']
-						});
+					LJ.fn.replaceImage({
+						img_id: data.img_id,
+						img_version: data.img_version,
+						img_place: 0,
+						scope: ['profile','thumb']
+					});
 
         			});
         	}});

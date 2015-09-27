@@ -451,3 +451,18 @@
 .upload-buttons {
    margin-top: 15px;
 }
+
+#country {
+    display: none;
+}
+
+.item-country {
+}
+.item-country .item-name {
+    margin-left: 14px;
+}
+.item-country .flag-icon{
+    position: relative;
+    top: 7px;
+    left: 5px;
+}

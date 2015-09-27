@@ -22,19 +22,6 @@
 			});
 
 		},
-		getMaxWidthLabel: function( container ){
-
-			var labels = $(container).find('label');
-			var widthArray = [];
-
-			labels.each( function( i, el ){
-				widthArray.push( $(el).innerWidth() );
-			});
-
-			var max = Math.max.apply( null, widthArray );
-			//console.log('Maximum label width : ' + max );
-			return max;
-		},
 		adjustChatPaneById: function( options ){
 
 			var options = options || {};
@@ -140,19 +127,32 @@
 		adjustAllInputsWidth: function( container ){
 
 			var $container = $(container);
-			var max = LJ.fn.getMaxWidthLabel( container );
+			
+			// Find largest label
+			var labels = $container.find('label');
+			var labels_array = [];
+			labels.each( function( i, el ){
+				labels_array.push({
+					$label      : $(el),
+					outer_width : $(el).outerWidth(true),
+					width       : $(el).width()
+				});
+			});
+
+			var largest_label = _.max( labels_array, function( itm ){
+				return itm.width;
+			});
 
 			$container.find('label').each( function( i, label ){
 
+				console.log('Largest label is : ' + largest_label.width );
 				var $label = $(label);
-				var $inp = $label.siblings('*:not(.inspire, .etiquette, [type="number"])');
+				var $inp   = $label.siblings('*:not( .etiquette, [type="number"], .item-country)');
 
-				var label_width = max;
-				var label_full_width = $label.outerWidth(true);
-				var parent_width = $label.parent().width();
+				var parent_width = $label.parent().width(); // width which children are positionned in
 
-				$label.css({ width: label_width });
-				$inp.css({ width: parent_width - label_full_width - 50 }); /* Mega hack, security margin */
+				$label.css({ width: largest_label.width + 10 });
+				$inp.css({ width: parent_width - largest_label.outer_width - 40 }); /* Mega hack needed cause of display:inline-block added whitespace */
 				$inp.children('input').css({ width:'100%' });
 			});
 			
@@ -206,7 +206,7 @@
 			options.class_names && $html.addClass( options.class_names );
 
 			var item_id = $html.attr('data-id');
-			if( $('.rem-click[data-id="'+item_id+'"]').length > 1 ){
+			if( $('.rem-click[data-id="' + item_id + '"]').length > 1 ){
 				//console.log('Removing due to same id');
 				return $html.remove();
 			}
@@ -237,6 +237,12 @@
 		},
 		findPlaceAttributes: function( place ){
 
+			console.log(place);
+
+			if( !place.address_components ){
+				return console.warn('Couldnt find address_components');	
+			} 
+
 			var compo = place.address_components,
                 locality = '',
                 place_name = '';
@@ -254,22 +260,28 @@
 
                 });
 
-            if( place_name === '' )
+            if( place_name === '' ){
               place_name = place.name;
+            }
 
-            if( locality === '' )
+            if( locality === '' ){
               locality = 'Earth';
+            }
 				  
           return {
-          	place_id: place.place_id,
-          	place_name: place_name,
-          	city: locality,
-          	lat: place.geometry.location.H,
-          	lng: place.geometry.location.L
+				place_id   : place.place_id,
+				place_name : place_name,
+				city       : locality,
+				lat        : place.geometry.location.lat(),
+				lng        : place.geometry.location.lng()
           };
 
 		},
 		addBeforePlaceToInput: function( place ){
+
+			if( !place.place_id ){
+				return console.warn('No place_id found, cant add item');
+			}
 
 			var $input = $('#cr-before-place'),
 				place = place;
@@ -277,8 +289,9 @@
 			$input.val('');
 			$input.hide();
 
-			if( $('.before-place').length != 0 )
+			if( $('.before-place').length != 0 ){
 				LJ.fn.removeBeforePlaceToInput();
+			}
 
 			var $html = $( LJ.fn.renderBeforePlaceInCreate( place ) );			
 				$html.hide().insertBefore( $input );
@@ -287,14 +300,19 @@
 		},
 		addPartyPlaceToInput: function( place ){
 
+			if( !place.place_id ){
+				return console.warn('No place_id found, cant add item');
+			}
+
 			var $input = $('#cr-party-place'),
 				place = place;
 
 			$input.val('');
 			$input.hide();
 
-			if( $('.party-place').length != 0 )
+			if( $('.party-place').length != 0 ){
 				LJ.fn.removePartyPlaceToInput();
+			}
 
 			var $html = $( LJ.fn.renderPartyPlaceInCreate( place ) );			
 				$html.hide().insertBefore( $input );
@@ -372,8 +390,6 @@
 				$html.hide().insertBefore( $input );
 				$input.css({ width: $input.outerWidth() - $html.outerWidth(true) });
 				$html.show();
-
-			$('.hp-main').hide();
 
 		},
 		hashtagify: function( str ){
@@ -547,8 +563,9 @@
 
         	setTimeout( function(){ 
 
-		        if( msg )
+		        if( msg ){
 		        	LJ.fn.toastMsg( msg, 'info');
+		        }
 
 		        var $container = $(selector);
 		        $container.find('.selected').removeClass('selected')
@@ -563,20 +580,22 @@
         },
         handleServerError: function( msg, ms ){
 
-        	if( typeof(msg) != 'string' )
+        	if( typeof(msg) != 'string' ){
         		msg = JSON.parse( msg.responseText ).msg;
+        	}
 
-        	if( typeof(msg) != 'string' )
+        	if( typeof(msg) != 'string' ){
         		return LJ.fn.toastMsg('Erreur interne','error');
+        	}
 
         	var ms = ms || 500;
         	setTimeout( function(){ 
         	
-        	LJ.fn.toastMsg( msg, 'error');
-        				$('.validating').removeClass('validating');
-						$('.btn-validating').removeClass('btn-validating');
-						$('.asking').removeClass('asking');
-						$('.pending').removeClass('pending');
+	        	LJ.fn.toastMsg( msg, 'error');
+				$('.validating').removeClass('validating');
+				$('.btn-validating').removeClass('btn-validating');
+				$('.asking').removeClass('asking');
+				$('.pending').removeClass('pending');
 
 			}, ms );
 
@@ -591,7 +610,7 @@
         	});
 
         	var suggestion = { _id: '55c613b3eb8ced441405a3a6', type: 'bar', name: 'Le violondingue', adress: 'Near panthéon bitch!' }
-        	LJ.fn.addItemToInput({ max: 1, inp: '#cr-party-place', html: LJ.fn.renderPartyPlaceInCreate(suggestion) });
+        	LJ.fn.addItemToInput({ max: 1, inp: '#cr-party-place', html: LJ.fn.renderPartyPlaceInCreate( suggestion ) });
 
         	var service = new google.maps.places.PlacesService(LJ.map);
         		service.getDetails({ placeId: "ChIJyYqjdNxx5kcRQLAaFrnkRlM"}, function(res){
@@ -794,7 +813,21 @@
 						'z-index': 999 - i
 					});
 				});
-			}
+		},
+		selectFirstResult: function( $pac, callback ){
+
+		    var first_result = $pac.find('.pac-item:first').text();
+
+		    var geocoder = new google.maps.Geocoder();
+		    geocoder.geocode({ "address": first_result }, function( results, status ){
+		        if( status == google.maps.GeocoderStatus.OK ){
+		        	return callback( null, results[0] );
+		        } else {
+		        	return callback( "Error calling the geocode api" );
+		        }
+		    });   
+
+		}
 
 
 	});

@@ -5,55 +5,67 @@
 
 
             LJ.$body.on('click', '.event-accepted-tabview', function(){
+                
+                var $self                = $(this);
 
-                var $self               = $(this);
-                var event_id            = $self.attr('data-eventid');
-                var evt                 = _.find( LJ.cache.events, function(el){ return el._id === event_id });
-                var duration            = 900;
-                var $inview_wrap_target = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
+                var event_id             = $self.attr('data-eventid');
+                var current_event_id     = $('.event-accepted-tabview.active').attr('data-eventid');
+
+                var $inview_wrap_target  = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
+                var $inview_wrap_current = $('.row-events-accepted-inview[data-eventid="' + current_event_id + '"]');
+
+                var evt                  = _.find( LJ.cache.events, function(el){ return el._id === event_id });
+                var duration             = 900;
 
                 var opts = { transition_in : LJ.ui.slideUpInLight, transition_out: LJ.ui.slideDownOutLight };
 
                 if( $inview_wrap_target.find('.event-accepted-chatgroup.active').length == 0 ){
                     $inview_wrap_target.find('.event-accepted-chatgroup').first().click();
                 }
-				
+                
                 LJ.fn.adjustAllChatPanes();
                 
                 if( $self.hasClass('active') ){
-                    $inview_wrap_target.velocity('transition.fadeOut', { duration: 700 });
+                    $inview_wrap_target.velocity('transition.fadeOut', { duration: 700 }).removeClass('active');
                     $self.removeClass('active');
                     return;
                 }
                 
                 if( $('.event-accepted-tabview.active').length == 0 ){
                     $self.addClass('active');
-                    $inview_wrap_target.velocity('transition.slideUpIn', { duration: 600 });
+
+                    $inview_wrap_target
+                        .siblings('.active').removeClass('active').end()
+                        .velocity('transition.slideUpIn', { duration: 600 }).addClass('active');
+
                     LJ.fn.addEventPreview( evt, opts );
                     LJ.fn.addPartyPreview( evt.party, opts );
                     return;
                 }
 
-                var current_event_id = $('.event-accepted-tabview.active').attr('data-eventid');
-                var $inview_wrap_current = $('.row-events-accepted-inview[data-eventid="' + current_event_id + '"]');
-
+                /* Update tabview */
                 $('.event-accepted-tabview').removeClass('active');
                 $self.addClass('active');
                 
-
-                $('.row-events-accepted-inview[data-eventid="' + current_event_id + '"]')
-                .velocity('transition.slideUpOut', {
-                    duration: duration
-                });
+                /* Update inview */
+                $inview_wrap_current
+                    .removeClass('active')
+                    .velocity('transition.slideUpOut', {
+                        duration: duration
+                    });
 
                 LJ.fn.addEventPreview( evt, opts );
                 LJ.fn.addPartyPreview( evt.party, opts );
 
-                
 
                 setTimeout(function(){
                     
-                    $inview_wrap_target.velocity('transition.slideUpIn', { duration: duration });
+                    $inview_wrap_target
+                        .addClass('active')
+                        .velocity('transition.slideUpIn', {
+                            duration: duration 
+                        });
+                        
                     LJ.fn.adjustAllChatPanes();
                    
                 }, 220 );

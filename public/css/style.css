@@ -58,8 +58,8 @@ font-size: 14px;text-align: center;color: #ee;}
 	z-index: 1;
 	font-size: 12px;
 	padding: 3px 4px!important;
-	background: #D33E58!important;
-	box-shadow: 1px 1px 1px #87172A!important;
+	background: linear-gradient(45deg,  #01BF01,#10D010)!important;
+	box-shadow: 1px 1px 1px #045519!important;
 	border-radius: 6px 0 6px 0;
 }
 
@@ -120,15 +120,13 @@ font-size: 14px;text-align: center;color: #ee;}
 /*Hello git*/
    font-size: 14px;
    font-family: 'Lato';
-   font-weight: bolder;
-   margin-right: 15px;
+   font-weight: bolder;margin-right: 15px;
    display: inline-block;
    color: #555;
    border-right: 1px  
 	solid #ccc;
    transition: all 
-	ease-out .3s;
-}
+	ease-out .3s;}
 
 .label-lg {
    width: 113px;
@@ -224,13 +222,13 @@ body header .sm-brand {
 body header.lg-header, 
 body header.sm-header {
    width: 100%;
-   height: 36px;
+   height: 42px;
    background-image: url('/img/texture-png2.png');
    box-shadow: 0 0 5px rgb(37, 37, 37);
    position: fixed;
    top: 0;
    left: 0;
-   z-index: 1;
+   z-index: 2;
 }
 
 body > header > img {
@@ -242,7 +240,7 @@ body > header > img {
 
 #logo {
    position: absolute;
-   top: -5px;
+   top: -4px;
    left: 50px;
    display: inline-block;
 }
@@ -415,8 +413,9 @@ body > header > h5 {
 	white;
    letter-spacing: 0.5px;
    padding: 7px;
-   padding-top: 10px;
+   padding-top: 12px;
    padding-bottom: 9px;
+   height: 42px;
    left: 0;
    right: 0;
    top: -1px;
@@ -1029,10 +1028,10 @@ body > header > h5 {
 .toast-icon {
    position: absolute;
    left: -1px;
-   height: 35px;
+   height: 100%;
    width: 33px;
    padding-right: 2px;
-   padding-top: 10px;
+   padding-top: 12px;
    top: 0;
 }
 
@@ -1105,11 +1104,11 @@ body > header > h5 {
 .menu-item {
    display: none;
    color: rgb(143, 143, 143);
-   padding-top: 8px;
+   padding-top: 11px;
    padding-left: 12px;
    margin-bottom: 3px;
    width: 46px;
-   height: 35px;
+   height: 40px;
    border-radius: 2px;
    position: relative;
    transition: all 
@@ -1127,6 +1126,7 @@ body > header > h5 {
 	
 	
 	linear 0.2s;
+   font-size: 16px;
 }
 
 .menu-item span.underlay {
@@ -1134,9 +1134,9 @@ body > header > h5 {
    background: rgb(245, 89, 116);
    box-shadow: 0 1px 1px rgb(221, 63, 89);
    height: 4px;
-   border-radius: 1px;
+   /* border-radius: 1px; */
    position: relative;
-   top: 0px;
+   top: 3px;
    left: -11px;
    display: inline-block;
    opacity: 0;
@@ -1337,14 +1337,14 @@ input[type="radio"] + span {
 
 .progress_bar {
    position: fixed;
-   top: 36px;
-   height: 5px;
+   top: 41px;
+   height: 3px;
    width: 0%;
-   background: rgb(52, 52, 52);
+   background: rgb(13, 205, 13);
    -webkit-transition: width .9s;
    transition: width .9s;
    text-align: center;
-   box-shadow: 0 2px 2px rgb(175, 175, 175);
+   box-shadow: 0 2px 2px rgb(0, 185, 0);
    color: white;
    z-index: 1;
 }
@@ -1414,14 +1414,14 @@ input[type="radio"] + span {
     
     rgb(218, 218, 218);
    position: relative;
-   top: -4px;
+   top: 2px;
    left: 8px;
    cursor: pointer;
 }
 
 #thumbInfos {
    margin-left: 8px;
-   top: 3px;
+   top: 7px;
    display: inline-block;
    position: relative;
    width: 100%;
@@ -1725,9 +1725,10 @@ p {
 	padding: 5px 10px;
 	box-shadow: 1px 1px 1px #871111;
 	transform: rotate(-10deg);
+	border-radius: 5px 0 5px 0;
 }
 
-#languages {position: absolute;right: -10px;top: 0;width: 100px;height: 30px;padding-top: 7px;}
+#languages {position: absolute;right: -10px;top: 4px;width: 100px;height: 30px;padding-top: 7px;}
 
 .pick-lang {
 	display: inline-block;

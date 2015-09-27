@@ -54,7 +54,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
             				LJ.fn.setAppLanguage( lang_code );
             			},
-            			duration: 800,
+            			duration: 550,
             			delay: 100,
             			afterTheScene: function(){
 

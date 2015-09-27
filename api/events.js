@@ -20,6 +20,7 @@
 	    	/* set by client */
 			new_event.hosts     = data.hosts;
 			new_event.begins_at = moment( data.begins_at );
+			new_event.timezone  = data.timezone;
 			new_event.address   = data.address;
 			new_event.party     = data.party;
 			new_event.ambiance  = data.ambiance;
@@ -304,8 +305,9 @@
 
 		Event.findById( event_id, function( err, evt ){
 
-			if( err || !evt )
+			if( err || !evt ){
 				eventUtils.raiseError({ err: err, toClient: "api error" });
+			}
 
 			res.json( evt ).end();
 

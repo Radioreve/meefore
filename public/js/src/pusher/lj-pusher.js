@@ -134,7 +134,7 @@
 			}
 
 			/* Event received from "host only" channel */
-			LJ.fn.toastMsg("Un groupe s'est rajouté à votre évènement", "info");
+			LJ.fn.toastMsg( LJ.text_source["to_host_push_new_group"][ LJ.app_language ], "info");
 
 			// Render elements 
 			var $chat_wrap_html = $( LJ.fn.renderChatWrap_Host_Group( event_id, group ) );
@@ -183,7 +183,7 @@
 
 			/* Event received from *me* channel */
 			/* Happens exactly the same as if user had asked himself, fetch event and refresh view */
-			LJ.fn.toastMsg("Un ami vous a ajouté à un évènement!", "info" );
+			LJ.fn.toastMsg( LJ.text_source["to_push_new_request_by_friend"][ LJ.app_language ], "info" );
 			LJ.fn.fetchEventById( event_id, LJ.fn.handleFetchEventById );
 
 		},
@@ -201,7 +201,7 @@
 			// Message pour les autres organisateurs
 			if( LJ.fn.iHost( hosts_facebook_id ) ){
 
-				LJ.fn.toastMsg("Un de vos ami a modifié le status d'un de vos évènement", "info");
+				LJ.fn.toastMsg( LJ.text_source["to_push_new_status_by_friend"][ LJ.app_language ], "info");
 
 				$('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
 					.find('.event-inview-settings .settings-group-status .active').removeClass('active').end()
@@ -233,7 +233,7 @@
 				$('.row-events-accepted-inview[data-eventid="' + event_id + '"]').attr('data-status', status );
 
 				if( status == "accepted" ){
-					LJ.fn.toastMsg('Vous avez été accepté dans un before!', 'info', 3500 );
+					LJ.fn.toastMsg( LJ.text_source["to_push_request_accepted"][ LJ.app_language ], 'info', 3500 );
 
 					_.find( LJ.event_markers, function(el){ 
 						return el.id == event_id 
@@ -241,7 +241,7 @@
 
 					LJ.fn.addChatLine({
 						chat_id     : chat_id,
-						msg         : "Votre groupe vient d'être accepté dans la discussion!",
+						msg         : LJ.text_source["ch_bot_msg_group_accepted"][ LJ.app_language ],
 						name        : LJ.bot_profile.name,
 						img_id      : LJ.bot_profile.img_id,
 						facebook_id : LJ.bot_profile.facebook_id,
@@ -252,7 +252,7 @@
 					
 				}
 				if( status == "kicked" ){
-					LJ.fn.toastMsg('Votre groupe a été suspendu de la discussion', 'info', 3500 );
+					// LJ.fn.toastMsg( LJ.text_source["ch_bot_msg_group_pending"][ LJ.app_language ], 'info', 3500 );
 
 					_.find( LJ.event_markers, 
 						function(el){ return el.id == event_id 
@@ -260,7 +260,7 @@
 
 					LJ.fn.addChatLine({
 						chat_id     : chat_id,
-						msg         : "Votre groupe vient d'être suspendu de la discussion!",
+						msg         : LJ.text_source["ch_bot_msg_group_pending"][ LJ.app_language ],
 						name        : LJ.bot_profile.name,
 						img_id      : LJ.bot_profile.img_id,
 						facebook_id : LJ.bot_profile.facebook_id,
@@ -275,12 +275,12 @@
 
 				if( status == "accepted" ){
 
-					LJ.fn.toastMsg('Un de vos amis a validé un groupe', 'info', 3500 );
+					LJ.fn.toastMsg( LJ.text_source["to_push_group_validated_by_friend"][ LJ.app_language ], 'info', 3500 );
 					
 				}
 				if( status == "kicked" ){
 
-					LJ.fn.toastMsg('Un de vos amis a suspendu un groupe de la discussion', 'info', 3500 );
+					LJ.fn.toastMsg( LJ.text_source["to_push_group_suspended_by_friend"][ LJ.app_language ], 'info', 3500 );
 				}
 
 			}

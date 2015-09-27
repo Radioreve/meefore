@@ -289,8 +289,9 @@
 							updatedPictures.push( picture );
 					});
 
-				if( updatedPictures.length == 0 )
-					return LJ.fn.toastMsg("Aucune mise à jour nécessaire!","error");
+				if( updatedPictures.length == 0 ){
+					return LJ.fn.toastMsg( LJ.text_source["to_noupload_necessary"][ LJ.app_language ], "error" );
+				}
 
 				csl('Emitting update pictures (all)');
 				$self.addClass('btn-validating');
@@ -327,7 +328,7 @@
 
 					if( LJ.state.uploadingImage ){
 						e.preventDefault();
-						LJ.fn.toastMsg("N'uploadez qu'une seule image à la fois!","info");
+						LJ.fn.toastMsg( LJ.text_source["to_upload_singlepic"][ LJ.app_language ], "info" );
 						return;
 					}
 
@@ -372,7 +373,7 @@
 										} 
 									});
 
-									LJ.fn.toastMsg('Votre photo a été modifiée', 'info');
+									LJ.fn.toastMsg( LJ.text_source["to_upload_pic_success"][ LJ.app_language ], 'info');
 
 									var user = data.user;
 
@@ -561,8 +562,9 @@
 				var $element = $('.picture').eq( img_place ),
 					display_settings = LJ.cloudinary.profile.me.params;
 
-				if( display_settings == undefined )
-					return LJ.fn.toastMsg("Options d'affichage manquantes", "error");
+				if( display_settings == undefined ){
+					return console.error("Options d'affichage manquantes");
+				}
 
 				display_settings.version = img_version;
 

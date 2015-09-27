@@ -34,12 +34,27 @@
 
 	var mail_html = [];
 
+	// Return the offset between
+	function findTimezoneDiff( hour ){ 
+		var diff;
+		if( hour > 6 ){
+			diff = 24 - hour + 6;
+		} else {
+			diff = 6 - hour ;
+		}
+		return diff;
+	}
 
 	var terminateEvents = function(){
 
 	// Reset events to status "ended"
 		var today = moment().startOf('day').add( 1, 'hours' ); // tests .add( 2, 'days' );
 		var yesterday = moment().subtract( 1, 'days' );
+
+
+		var today = moment();
+		var right_offset = findTimezoneDiff( today.hour() ) * 60;
+
 
 		var date_range_query = { $gte: yesterday.toDate(), $lt: today.toDate() };
 		keeptrack('Ending events starting between ' + yesterday.format('HH:mm DD/MM') + ' and ' + today.format('HH:mm DD/MM') );

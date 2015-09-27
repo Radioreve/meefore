@@ -120,6 +120,11 @@
 
 								rd.hgetall( message_ns + i, function( err, message ){
 									
+									if( !message ){
+										callback( null );
+										return console.error('Couldnt find a redis message');
+									}
+
 									if( Array.isArray( message.whisper_to ) && message.whisper_to.indexOf( req.sent.facebook_id ) == -1 ){
 										console.log('Not adding message ' + i + '/' + count + ', whispered to someone else');
 										console.log('userId: ' + req.sent.facebook_id );

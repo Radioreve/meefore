@@ -79,6 +79,7 @@
 		var checkEvent = nv.isAnyObject()
 
 			.withRequired('begins_at'           , nv.isDate() )
+			.withRequired('timezone'			, nv.isNumber({ min: -840, max: 720 }))
 			.withRequired('socket_id'   		, nv.isString())
 			.withRequired('address'				, checkAddress )
 			.withRequired('party'		    	, checkParty )

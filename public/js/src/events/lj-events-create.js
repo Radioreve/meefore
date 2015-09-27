@@ -128,6 +128,14 @@
 
             });
 
+            // LJ.$body.on('click', '#createEvent', function(e){
+
+            //     if( $(e.target).closest('.hp-main').length == 0 && $('.hp-main').css('display') == 'block' ){
+                    
+            //     }
+
+            // });
+
 
             LJ.$body.on('click', '.btn-create-event', function(){
 
@@ -138,7 +146,6 @@
                     custom_classes: ['text-left'],
                     render_cb: function(){
                         return LJ.fn.renderCreateEvent({ 
-                            agerange: LJ.settings.app.agerange,
                             mixity: LJ.settings.app.mixity
                         });
                     },
@@ -202,11 +209,16 @@
 
 			$('#cr-before-place').val('');
             $('#cr-party-place').val('');
-            var options = {componentRestrictions: {country: 'fr'}};
+            var options = { 
+                componentRestrictions: {
+                    country: LJ.app_language 
+                }
+            };
 
             LJ.google_places_autocomplete_before = new google.maps.places.Autocomplete( 
             	document.getElementById('cr-before-place'), options 
             );
+            $('.pac-container').last().addClass('before');
             
             LJ.google_places_autocomplete_before.addListener('place_changed', function(){
                 var place = LJ.google_places_autocomplete_before.getPlace();
@@ -216,10 +228,41 @@
              LJ.google_places_autocomplete_party = new google.maps.places.Autocomplete( 
                 document.getElementById('cr-party-place'), options 
             );
+             $('.pac-container').last().addClass('party');
             
             LJ.google_places_autocomplete_party.addListener('place_changed', function(){
                 var place = LJ.google_places_autocomplete_party.getPlace();
                 LJ.fn.addPartyPlaceToInput( place );
+            });
+
+
+            $('#cr-party-place, #cr-before-place').keydown(function(e){
+
+                 var keyCode = e.keyCode || e.which;
+                 var $self = $(this);
+
+                 if( keyCode == 13 || keyCode == 9 ){
+                    e.preventDefault();
+
+                    var type = $self.attr('id').split('-')[1];
+                    var $pac = $('.pac-container.'+type);
+                    LJ.fn.selectFirstResult( $pac, function( err, place ){
+
+                        if( err ){
+                            return console.warn( err );
+                        } else {
+                            console.log('Fetched with place : ' + JSON.stringify( place, null, 4 ) );
+                            if( $self.is('#cr-party-place') ){
+                                LJ.fn.addPartyPlaceToInput( place );
+                            }
+                             if( $self.is('#cr-before-place') ){
+                                LJ.fn.addBeforePlaceToInput( place );
+                            }
+                        }
+
+                    });
+                 }
+
             });
 
 		},
@@ -229,7 +272,8 @@
                             field: document.getElementById('cr-date'),
                             format:'DD/MM/YY',
                             minDate: new Date(),
-                            bound: false
+                            bound: false,
+                            i18n: LJ.text_source[ "i18n" ][ LJ.app_language ]
                         });
 
             $('.pika-single').insertAfter('#cr-date');
@@ -336,13 +380,22 @@
                 }
             });
 
-            $('.row-create-hour').click(function(){
+            $('.row-create-hour').click(function(e){
+
+                if(  $('.hp-main').hasClass('block') ){
+                    return;
+                }
+
                 $inp.attr('placeholder','');
                 $('.hp-main').show();
+
             });
 
             LJ.$body.mousedown(function(e){
-                if( $(e.target).closest('.row-create-hour').length == 0 ){
+                if( $(e.target).closest('.row-create-hour').length == 0 && $('.hp-main').css('display') != 'none' ){
+                    var hour = $('.hp-hour').text();
+                    var min  = $('.hp-min').text();
+                    LJ.fn.addHourToInput( hour, min );
                     $('.hp-main').hide();
                 }
             });
@@ -353,10 +406,15 @@
                     return;
                 }
 
+                $('.hp-main').hide().addClass('block');
+                setTimeout(function(){
+                    $('.hp-main').removeClass('block');
+                }, 300);
+
                 var hour = $('.hp-hour').text();
                 var min  = $('.hp-min').text();
-
                 LJ.fn.addHourToInput( hour, min );
+
 
             });
 
@@ -395,6 +453,7 @@
                 YY: day.split('/')[2]
             }).toISOString();
 
+            //timezone = begins_at.utcOffset();
             
             // age_range
             agerange  = $('.irs-from').text() + '-' + $('.irs-to').text();
@@ -472,8 +531,8 @@
                 },
                 delay: 1000,
                 afterTheScene: function(){
-                    LJ.fn.toastMsg('Votre évènement a été créé avec succès!', 'info');
-                    LJ.fn.toastMsg('Que la fête commence...', 'info');
+                    LJ.fn.toastMsg( LJ.text_source["to_event_created_success_1"][ LJ.app_language ], 'info');
+                    LJ.fn.toastMsg( LJ.text_source["to_event_created_success_2"][ LJ.app_language ], 'info');
                     LJ.fn.addEventPreview( evt );
                     LJ.fn.addPartyPreview( evt.party, opts );
                     LJ.fn.joinEventChannel( evt );

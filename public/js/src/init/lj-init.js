@@ -11,14 +11,20 @@ window.csl = function(msg) {
     delog(msg);
 };
 
-window.LJ.fn = _.merge(window.LJ.fn || {},
+window.LJ.fn = _.merge( window.LJ.fn || {},
 
     {
 
         init: function(o) {
 
-            if (o.debug)
+            if( o.debug ){
                 LJ.state.debug = true;
+            }
+
+            // Set app language
+            var country = o.country;
+            moment.locale( country );
+            LJ.fn.setAppLanguage( country );
 
             // Landing page animation 
             this.initAppBoot();
@@ -31,9 +37,6 @@ window.LJ.fn = _.merge(window.LJ.fn || {},
 
             // Augment lodash & jQuery
             this.initAugmentations();
-
-            // Country detection
-            this.initCountry();
 
             // Detect when browser is closed
             // this.initHandleCloseBrowser();
@@ -61,11 +64,6 @@ window.LJ.fn = _.merge(window.LJ.fn || {},
             });
 
         },
-        initCountry: function() {
-
-            moment.locale('fr');
-
-        },
         initTypeahead: function() {
 
             LJ.fn.initTypeaheadUsers();
@@ -88,7 +86,7 @@ window.LJ.fn = _.merge(window.LJ.fn || {},
                 this
                     .addClass('whisper-active')
                     .find('input').addClass('whisper-text').end()
-                    .find('button').addClass('btn-whisper').text('Whisper');
+                    .find('button').addClass('btn-whisper').text( LJ.text_source["ch_button_whisper"][ LJ.app_language ] );
                 return this;
             };
 
@@ -96,7 +94,7 @@ window.LJ.fn = _.merge(window.LJ.fn || {},
                 this
                     .removeClass('whisper-active')
                     .find('input').removeClass('whisper-text').end()
-                    .find('button').removeClass('btn-whisper').text('Envoyer');
+                    .find('button').removeClass('btn-whisper').text( LJ.text_source["ch_button_send"][ LJ.app_language ] );
                 return this;
             };
 
@@ -208,9 +206,28 @@ window.LJ.fn = _.merge(window.LJ.fn || {},
         },
         initLayout: function(settings) {
 
-            /* Mise à jour dynamique des filters */
-            $('.mood-wrap').html(LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
-            $('.drink-wrap').html(LJ.fn.renderDrinkInProfile( LJ.settings.app.drink ));
+
+            /* Google Places to browse the map */
+            var options = {};
+            LJ.google_places_autocomplete_filters = new google.maps.places.SearchBox( 
+                document.getElementById('moveAround'), options 
+            );
+
+            LJ.google_places_autocomplete_filters.addListener('places_changed', function(){
+
+                var place = LJ.google_places_autocomplete_filters.getPlaces()[0];
+
+                if( !place.geometry ) return;
+
+                LJ.map.panTo( place.geometry.location );
+                LJ.map.setZoom(14);
+            });
+
+            /* Mise à jour du profile des filters */
+            $('.mood-wrap').html( LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
+            $('.drink-wrap').html( LJ.fn.renderDrinkInProfile( LJ.settings.app.drink ));
+
+
             // $('.filter-mixity').html(LJ.fn.renderMixityInFilters(LJ.settings.app.mixity));
             //	$('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));
             $('#no').html('').append( LJ.tpl.noResults );
@@ -218,9 +235,10 @@ window.LJ.fn = _.merge(window.LJ.fn || {},
 
             /* Profile View */
             //$('.row-subheader').find('span').text( LJ.user._id );
-            $('.row-name').find('input').val(LJ.user.name);
-            $('.row-age').find('input').val(LJ.user.age);
-            $('.row-job').find('input').val(LJ.user.job);
+            $('.row-name').find('input').val (LJ.user.name );
+            $('.row-age').find('input').val( LJ.user.age );
+            $('.row-job').find('input').val( LJ.user.job );
+            LJ.fn.addItemToInput({ inp: '#country', html: LJ.fn.renderItemInInput_Country( LJ.user.country_code ) });
             $('.drink[data-selectid="' + LJ.user.drink + '"]').addClass('selected');
             $('.mood[data-selectid="' + LJ.user.mood + '"]').addClass('selected');
 
@@ -331,11 +349,13 @@ window.LJ.fn = _.merge(window.LJ.fn || {},
                             $(el).append('<span class="bubble filtered"></span>')
                         });
 
-                        if (LJ.user.status == 'new')
+                        if (LJ.user.status == 'new'){
                             LJ.fn.initTour();
+                        }
 
-                        if (LJ.user.friends.length == 0)
-                            LJ.fn.toastMsg("Aucun de vos amis Facebook n'est sur meefore. Invitez-en !", "info");
+                        if (LJ.user.friends.length == 0){
+                            LJ.fn.toastMsg( LJ.text_source["to_init_no_friends"][ LJ.app_language ], "info");
+                        }
 
                          LJ.$body.trigger('display:layout:after');
 
@@ -428,22 +448,27 @@ window.LJ.fn = _.merge(window.LJ.fn || {},
 
 $('document').ready(function() {
 
+    var initFB = function( time ) {
 
-    /* Recursive initialisation of FB pluggin*/
-    var initFB = function(time) {
-        if (typeof(FB) === 'undefined') return sleep(time, initFB)
+        if( typeof FB === 'undefined' ){
+            return sleep( time, initFB )
+        }
+
         FB.init({
             appId: window.facebook_app_id,
             xfbml: true, // parse social plugins on this page
             version: 'v2.4' // use version 2.4
         });
+
         LJ.fn.init({
-            debug: true
+            debug   : true,
+            country : 'fr'
         });
+
         csl('Application ready!');
     }
 
-    initFB(300);
+    initFB( 300 );
 
 });
 

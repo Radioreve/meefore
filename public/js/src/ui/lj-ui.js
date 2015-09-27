@@ -24,19 +24,21 @@
 
 			['#contact', '#profile', '#events', '#management', '#settings'].forEach(function(menuItem){
 
-				$(menuItem).click(function(){
+				var $menuItem = $( menuItem );
 
-				$(menuItem).find('span.bubble').addClass('filtered').text('');
+				$menuItem.click(function(){
+
+				$menuItem.find('span.bubble').addClass('filtered').text('');
 		
-				  if( LJ.state.animatingContent || $(menuItem).hasClass('menu-item-active') || ($(menuItem).hasClass('disabled')) )
+				  if( LJ.state.animatingContent || $menuItem.hasClass('menu-item-active') || ($menuItem.hasClass('disabled')) )
 				  	return;
 
 				  		LJ.state.animatingContent = true;
 						
-						var linkedContent = $(menuItem).data('linkedcontent');
+						var linkedContent = $menuItem.data('linkedcontent');
 						
 						var indexActive = $('.menu-item-active').offset().left,
-							indexTarget = $(menuItem).offset().left;
+							indexTarget = $menuItem.offset().left;
 
 						if( indexActive > indexTarget ){
 							var myWayOut = LJ.ui.slideRightOutVeryLight || 'transition.slideRightOut' ; 
@@ -51,11 +53,20 @@
 											  .velocity({ opacity: [0, 1], translateY: [-2, 0]   },
 											   { duration: 250,
 											   complete: function(){
-											   	$(menuItem).addClass('menu-item-active')
+											   	$menuItem.addClass('menu-item-active')
 														   .find('span.underlay')
 													   	   .velocity({ opacity: [1, 0], translateY: [0, -2]   }, { duration: 300 });
 											   	} 
 											});
+
+						var duration_time = 500;
+						if( !$menuItem.is('#events') ){
+							$('.row-events-accepted-tabview').velocity('transition.slideDownOut', { duration: duration_time });
+							$('.row-events-accepted-inview.active').velocity('transition.slideUpOut', { duration: duration_time });
+						} else {
+							$('.row-events-accepted-tabview').velocity('transition.slideUpIn', { duration: duration_time });
+							$('.row-events-accepted-inview.active').velocity('transition.slideDownIn', { duration: duration_time });
+						}
 
 						LJ.fn.displayContent( linkedContent, {
 							myWayOut: myWayOut,
@@ -63,6 +74,8 @@
 							prev:'revealed',
 							duration: 320
 						});
+
+
 					
 				  
 				});

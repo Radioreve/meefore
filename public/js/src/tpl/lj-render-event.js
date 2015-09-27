@@ -70,28 +70,28 @@
     renderEventPreview_User: function( evt ){
 
       return LJ.fn.renderEventPreview( evt, {
-        request_html: '<button class="theme-btn btn-preview btn-requestin slow-down-3">Participer</div>'
+        request_html: '<button  data-lid="e_preview_participate" class="theme-btn btn-preview btn-requestin slow-down-3">Participer</div>'
       });
 
     },
     renderEventPreview_MemberAccepted: function( evt ){
 
       return LJ.fn.renderEventPreview( evt, {
-        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">Discuter</div>'
+        request_html: '<button data-lid="e_preview_chat" class="theme-btn btn-preview btn-jumpto slow-down-3">Discuter</div>'
       });
 
     },
     renderEventPreview_MemberPending: function( evt ){
 
       return LJ.fn.renderEventPreview( evt, {
-        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">En attente</div>'
+        request_html: '<button data-lid="e_preview_pending" class="theme-btn btn-preview btn-jumpto slow-down-3">En attente</div>'
       });
 
     },
     renderEventPreview_Host: function( evt ){
 
       return LJ.fn.renderEventPreview( evt, {
-        request_html: '<button class="theme-btn btn-preview btn-jumpto slow-down-3">Organiser</div>'
+        request_html: '<button data-lid="e_preview_manage" class="theme-btn btn-preview btn-jumpto slow-down-3">Organiser</div>'
       });
 
     },
@@ -143,7 +143,10 @@
                     + request_html
                 + '</div>';
 
-      return html;
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, $(html) )
+      
+      return html.prop('outerHTML');
 
     },
     renderPartyPreview: function( party, options ){
@@ -201,20 +204,20 @@
       var settings_options = [];
       ['open','suspended', 'canceled'].forEach(function( status ){
         var active = evt.status == status ? 'active' : '';
-        settings_options.push('<div data-status="'+status+'" class="event-settings-group-action '+active+'" >');
+        settings_options.push(' data-status="' + status + '" class="event-settings-group-action ' + active + '" >');
       });
 
       var settings_html = [
           '<div class="event-inview-settings etiquette">',
             '<div class="event-settings-group settings-group-status">',
-              '<div class="event-settings-group-name">Statut du meefore</div>',
-              settings_options[0] + 'Ouvert</div>',
-              settings_options[1] + 'Suspendu/Complet</div>',
-              settings_options[2] + 'Annulé</div>',
+              '<div data-lid="ch_settings_status_label" class="event-settings-group-name">Statut du meefore</div>',
+              '<div data-lid="ch_settings_status_open" '      + settings_options[0] + 'Ouvert</div>',
+              '<div data-lid="ch_settings_status_suspended" ' + settings_options[1] + 'Suspendu/Complet</div>',
+              '<div data-lid="ch_settings_status_canceled" '  + settings_options[2] + 'Annulé</div>',
             '</div>',
             '<div class="event-settings-group">',
-              '<button class="theme-btn btn-validate">Mettre à jour</button>',
-              '<button class="theme-btn btn-cancel">Annuler</button>',
+              '<button data-lid="ch_button_update" class="theme-btn btn-validate">Mettre à jour</button>',
+              '<button data-lid="ch_button_cancel" class="theme-btn btn-cancel">Annuler</button>',
             '</div>',
           '</div>'
       ].join('');
@@ -237,7 +240,7 @@
     renderHostsGroup: function( hosts ){
 
       var hosts_html = '<div class="event-accepted-users-group" data-status="hosts" data-groupid="hosts">'
-                            + '<div class="event-accepted-group-name">Organisateurs</div>';
+                            + '<div data-lid="ch_hosts" class="event-accepted-group-name">Organisateurs</div>';
 
       hosts.forEach(function( member ){
 
@@ -256,7 +259,7 @@
 
       var hosts_html = '<div class="event-accepted-users-group" data-status="hosts" data-groupid="hosts">'
                             + '<i class="icon icon-event-settings icon-cog"></i>'
-                            + '<div class="event-accepted-group-name">Organisateurs</div>';
+                            + '<div data-lid="ch_hosts" class="event-accepted-group-name">Organisateurs</div>';
 
       hosts.forEach(function( member ){
 
@@ -375,7 +378,7 @@
     renderChatGroup_Host: function(){
 
       var html =  '<div class="event-accepted-chatgroup" data-groupid="hosts" >'
-                      + '<span> Organisateurs </span>'
+                      + '<span data-lid="ch_hosts" > Organisateurs </span>'
                       + '<span class="bubble none"></span>'
                    + '</div>';
       return html;
@@ -390,7 +393,7 @@
                       + '<div class="event-accepted-chat-typing">'
                         + '<div class="readby" data-names=""></div>'
                         + '<input type="text"/>'
-                        + '<button class="theme-btn">Envoyer</button>'
+                        + '<button data-lid="ch_button_send" class="theme-btn">Envoyer</button>'
                       + '</div>'
                   + '</div>';
       return html;
@@ -407,7 +410,7 @@
                       + '<div class="event-accepted-chat-typing">'
                         + '<div class="readby" data-names=""></div>'
                         + '<input type="text"/>'
-                        + '<button class="theme-btn">Envoyer</button>'
+                        + '<button data-lid="ch_button_send" class="theme-btn">Envoyer</button>'
                       + '</div>'
                   + '</div>';
       return html;
@@ -424,14 +427,14 @@
                       + '<div class="event-accepted-chat-typing">'
                         + '<div class="readby" data-names=""></div>'
                         + '<input type="text"/>'
-                        + '<button class="theme-btn">Envoyer</button>'
+                        + '<button data-lid="ch_button_send" class="theme-btn">Envoyer</button>'
                       + '</div>'
                   + '</div>';
       return html;
     },
     renderChatWrapNotification_Host_Host: function( ){
 
-      var html = '<div class="super-centered event-accepted-notification-message">'
+      var html = '<div data-lid="ch_first_msg_host_channel" class="super-centered event-accepted-notification-message">'
                           + 'Votre évènement a été créé avec succès'
                           + '<br>'
                           + 'Vous pouvez discuter ici avec vos amis organisateurs en toute tranquilité. Ce chat '
@@ -442,18 +445,18 @@
     },
     renderChatWrapNotification_Host_Group: function( group ){
 
-      var html = '<div class="super-centered event-accepted-notification-message"><div>Le groupe '
+      var html = '<div data-lid="ch_first_msg_host" class="super-centered event-accepted-notification-message"><div>'
                           + group.name 
                           + ' a demandé à rejoindre votre meefore : </div>' 
                           + '<div class="event-accepted-group-message">' + group.message + '</div>'
-                          + '<button class="theme-btn btn-validate-group">Accepter ce groupe</button>'
+                          + '<button data-lid="ch_request_validate" class="theme-btn btn-validate-group">Accepter ce groupe</button>'
                         + '</div>'
       return html;
 
     },
     renderChatWrapNotification_Group_Host: function(){
 
-      var html =  '<div class="super-centered event-accepted-notification-message">'
+      var html =  '<div data-lid="ch_first_msg_group" class="super-centered event-accepted-notification-message">'
                         + 'Votre demande a bien a été envoyée' 
                         + '<br>'
                         + 'Dès que l\'un des organisateurs vous aura accepté, vous aurez accès à la discussion.'
@@ -519,26 +522,30 @@
                   '<div class="modal-title">Demande de participation </div>',
                 '</div>',
                 '<div class="row-input row-input-lg etiquette row-requestin-group-name">',
-                  '<label class="label label-lg" for="ri-groupname">Nom du groupe</label>',
-                  '<input id="ri-groupname" type="text" placeholder="Sera affiché dans le chat"/>',
+                  '<label data-lid="e_request_group_name" class="label label-lg" for="ri-groupname">Nom du groupe</label>',
+                  '<input data-lid="e_request_group_name_placeholder" id="ri-groupname" type="text" placeholder="Sera affiché dans le chat"/>',
                 '</div>',
                  '<div class="row-input row-input-lg etiquette row-requestin-group-members">',
-                  '<label class="label label-lg" for="ri-groupmembers">Groupe de soirée</label>',
-                  '<input id="ri-groupmembers type="text" placeholder="Choisissez les personnes avec qui vous comptez sortir"/>',
+                  '<label data-lid="e_request_group_members" class="label label-lg" for="ri-groupmembers">Groupe de soirée</label>',
+                  '<input data-lid="e_request_group_members_placeholder" id="ri-groupmembers type="text" placeholder="Choisissez les personnes avec qui vous comptez sortir"/>',
                 '</div>',
                  '<div class="row-input row-input-lg etiquette row-requestin-group-message">',
-                  '<label class="label label-lg" for="ri-groupmessage">Message</label>',
-                  '<input id="ri-groupmessage" type="text" placeholder="Pourquoi faire un meefore avec vous et pas un autre groupe ?"/>',
+                  '<label data-lid="e_request_group_message" class="label label-lg" for="ri-groupmessage">Message</label>',
+                  '<input data-lid="e_request_group_message_placeholder" id="ri-groupmessage" type="text" placeholder="Pourquoi faire un meefore avec vous et pas un autre groupe ?"/>',
                 '</div>',
                 '<div class="row-buttons visible">',
-                  '<button class="theme-btn btn-large btn-cancel right">Annuler</button>',
-                  '<button class="theme-btn btn-large btn-validate right">Rejoindre ce meefore</button>',
+                  '<button data-lid="e_request_button_cancel" class="theme-btn btn-large btn-cancel right">Annuler</button>',
+                  '<button data-lid="e_request_button_validate" class="theme-btn btn-large btn-validate right">Rejoindre ce meefore</button>',
                 '</div>', 
             '</div>'
 
           ];
 
-      return html.join('');
+          html = $( html.join('') );
+          LJ.fn.setAppLanguage( LJ.app_language, $( html ) )
+          
+          return html.prop('outerHTML');
+
 
     },
     renderItemInInput: function( str ){
@@ -548,6 +555,16 @@
                         +'</div>'
 
         return html;
+
+    },
+    renderItemInInput_Country: function( code ){
+
+      var html = '<div class="item item-country">'
+                  + '<i class="flag-icon flag-icon-' + code + '"></i>'
+                  + '<div data-lid="country_' + code +'" class="item-name">' + LJ.text_source[ "country_" + code ][ LJ.app_language ] + '</div>'
+                + '</div>';
+                
+      return html;
 
     },
     renderItemInInput_GroupName: function( str ){

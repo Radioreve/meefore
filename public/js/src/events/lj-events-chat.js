@@ -100,13 +100,13 @@
                 var chat_id  = $chat_wrap.attr('data-chatid');
 
                 if( ['accepted','hosted'].indexOf( $event_wrap.attr('data-status') ) == -1  )
-                    return LJ.fn.toastMsg("Vous n'avez pas été accepté!", 'info');
+                    return LJ.fn.toastMsg( LJ.text_source["to_chat_inp_not_in"][ LJ.app_language ], 'info');
 
                 if( msg.trim().length == 0 )
-                    return LJ.fn.toastMsg('Le message est vide!', 'info');
+                    return LJ.fn.toastMsg( LJ.text_source["to_chat_inp_empty"][ LJ.app_language ], 'info');
 
                 if( $self.hasClass('active') )
-                    return LJ.fn.toastMsg('Moins vite!', 'info');
+                    return LJ.fn.toastMsg( LJ.text_source["to_chat_inp_too_quick"][ LJ.app_language ], 'info');
 
                 var data = {
                     msg             : msg,

@@ -190,11 +190,13 @@
                  .attr('data-status', status )
 
             if( status == 'accepted' ){
-                LJ.fn.toastMsg('Le groupe ' + group.name + ' a été accepté');
+                var msg = LJ.text_source["to_event_group_accepted"][ LJ.app_language ].replace('%s', group.name );
+                LJ.fn.toastMsg( msg );
             }
 
             if( status == 'kicked' ){
-                LJ.fn.toastMsg('Le groupe ' + group.name + ' a été mis en attente');
+                var msg = LJ.text_source["to_event_group_pending"][ LJ.app_language ].replace('%s', group.name );
+                LJ.fn.toastMsg( msg );
             }     
         },
         updateGroupStatusUI: function( event_id, group ){

@@ -89,7 +89,10 @@
 
                       +'</div>'
 
-                      return html;
+                      html = $(html);
+                      LJ.fn.setAppLanguage( LJ.app_language, $(html) )
+
+                      return html.prop('outerHTML');
         },
         renderMeInInput: function(){
 
@@ -148,6 +151,10 @@
 
             var place = LJ.fn.findPlaceAttributes( place );
 
+            if( !place ){
+              return console.warn('No place object to render');
+            }
+
             var html = '<div class="rem-click before-place" data-placeid="' + place.place_id + '" data-place-lat="' + place.lat + '" data-place-lng="' + place.lng + '">'
                             + '<i class="icon icon-before-place icon-location"></i>'
                             + '<div class="before-place-name"><span>' + place.place_name +'</span>,<span class="locality"> ' + place.city + ' </span></div>'
@@ -159,6 +166,10 @@
         renderPartyPlaceInCreate: function( place ){
 
             var place = LJ.fn.findPlaceAttributes( place );
+
+             if( !place ){
+              return console.warn('No place object to render');
+            }
 
             var html = '<div class="rem-click party-place" data-placeid="' + place.place_id + '" data-place-lat="' + place.lat + '" data-place-lng="' + place.lng + '">'
                             + '<i class="icon icon-before-place icon-location"></i>'

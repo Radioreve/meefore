@@ -21,7 +21,7 @@
             LJ.map = new google.maps.Map(document.getElementsByClassName('row-events-map')[0], {
                 center: LJ.google.map_center,
                 zoom: 13,
-                scrollwheel: false,
+                // scrollwheel: false,
                 disableDefaultUI: true,
                 zoomControl: true,
                 zoomControlOptions: {
@@ -39,7 +39,7 @@
             LJ.map.mapTypes.set('sober', map_style_sober);
             LJ.map.mapTypes.set('lunar', map_style_lunar);
             LJ.map.mapTypes.set('pinkey', map_style_pinkey );
-            LJ.map.setMapTypeId('pinkey');
+            LJ.map.setMapTypeId('sober');
 
             LJ.map.addListener('center_changed', function(){
                 
