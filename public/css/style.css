@@ -1105,9 +1105,9 @@ body > header > h5 {
    display: none;
    color: rgb(143, 143, 143);
    padding-top: 11px;
-   padding-left: 12px;
+   padding-left: 14px;
    margin-bottom: 3px;
-   width: 46px;
+   width: 50px;
    height: 40px;
    border-radius: 2px;
    position: relative;
@@ -1130,14 +1130,14 @@ body > header > h5 {
 }
 
 .menu-item span.underlay {
-   width: 44px;
+   width: 50px;
    background: rgb(245, 89, 116);
    box-shadow: 0 1px 1px rgb(221, 63, 89);
    height: 4px;
    /* border-radius: 1px; */
    position: relative;
    top: 3px;
-   left: -11px;
+   left: -14px;
    display: inline-block;
    opacity: 0;
 }
