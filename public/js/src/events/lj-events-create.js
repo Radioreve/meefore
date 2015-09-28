@@ -245,7 +245,7 @@
                     e.preventDefault();
 
                     var type = $self.attr('id').split('-')[1];
-                    var $pac = $('.pac-container.'+type);
+                    var $pac = $('.pac-container.' + type);
                     LJ.fn.selectFirstResult( $pac, function( err, place ){
 
                         if( err ){

@@ -50,7 +50,7 @@
 			"en": "Prad Bitt"
 		},
 		p_age_label: {
-			"fr": " ge",
+			"fr": "Âge",
 			"en": "Age"
 		},
 		p_country_label: {
@@ -74,7 +74,7 @@
 			"en": "Relax"
 		},
 		p_lifestyle_drunk: {
-			"fr": "Soûl",
+			"fr": "Ivre",
 			"en": "Drunk"
 		},
 		p_lifestyle_chill: {
@@ -202,7 +202,7 @@
 			"en": "Where are you going next?"
 		},
 		e_create_agerange: {
-			"fr": " ge souhaité",
+			"fr": "Âge souhaité",
 			"en": "Age preference"
 		},
 		e_create_ambiance: {

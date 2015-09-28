@@ -445,9 +445,9 @@
     },
     renderChatWrapNotification_Host_Group: function( group ){
 
-      var html = '<div data-lid="ch_first_msg_host" class="super-centered event-accepted-notification-message"><div>'
+      var html = '<div class="super-centered event-accepted-notification-message"><div>'
                           + group.name 
-                          + ' a demandé à rejoindre votre meefore : </div>' 
+                          + ' <span data-lid="ch_first_msg_host">a demandé à rejoindre votre meefore : </span></div>' 
                           + '<div class="event-accepted-group-message">' + group.message + '</div>'
                           + '<button data-lid="ch_request_validate" class="theme-btn btn-validate-group">Accepter ce groupe</button>'
                         + '</div>'
@@ -466,11 +466,17 @@
     },
     renderEventTabview: function( evt ){
 
+
       var html = '<div class="event-accepted-tabview slow-down-3" data-eventid="' + evt._id + '">'
+                      + '<i class="icon icon-tabview icon-accepted icon-chat"></i>'
+                      + '<i class="icon icon-tabview icon-hosting icon-star-1"></i>'
+                      + '<i class="icon icon-tabview icon-kicked icon-star-1"></i>'
+                      + '<i class="icon icon-tabview icon-pending icon-ellipsis"></i>'
                       + '<span class="tabview-date-day">' + moment( evt.begins_at ).format('DD/MM') + '</span>'
                       + '<span class="tabview-place">' + evt.address.place_name + '</span>'
                       + '<span class="bubble none"></span>'
                   + '</div>';
+
       return html;
 
     },
@@ -522,15 +528,15 @@
                   '<div class="modal-title">Demande de participation </div>',
                 '</div>',
                 '<div class="row-input row-input-lg etiquette row-requestin-group-name">',
-                  '<label data-lid="e_request_group_name" class="label label-lg" for="ri-groupname">Nom du groupe</label>',
+                  '<label data-lid="e_request_group_name" class="label label-lg" for="ri-groupname"></label>',
                   '<input data-lid="e_request_group_name_placeholder" id="ri-groupname" type="text" placeholder="Sera affiché dans le chat"/>',
                 '</div>',
                  '<div class="row-input row-input-lg etiquette row-requestin-group-members">',
-                  '<label data-lid="e_request_group_members" class="label label-lg" for="ri-groupmembers">Groupe de soirée</label>',
+                  '<label data-lid="e_request_group_members" class="label label-lg" for="ri-groupmembers"></label>',
                   '<input data-lid="e_request_group_members_placeholder" id="ri-groupmembers type="text" placeholder="Choisissez les personnes avec qui vous comptez sortir"/>',
                 '</div>',
                  '<div class="row-input row-input-lg etiquette row-requestin-group-message">',
-                  '<label data-lid="e_request_group_message" class="label label-lg" for="ri-groupmessage">Message</label>',
+                  '<label data-lid="e_request_group_message" class="label label-lg" for="ri-groupmessage"></label>',
                   '<input data-lid="e_request_group_message_placeholder" id="ri-groupmessage" type="text" placeholder="Pourquoi faire un meefore avec vous et pas un autre groupe ?"/>',
                 '</div>',
                 '<div class="row-buttons visible">',

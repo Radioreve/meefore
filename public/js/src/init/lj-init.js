@@ -457,7 +457,7 @@ $('document').ready(function() {
         FB.init({
             appId: window.facebook_app_id,
             xfbml: true, // parse social plugins on this page
-            version: 'v2.4' // use version 2.4
+            version: 'v2.3' // use version 2.4
         });
 
         LJ.fn.init({

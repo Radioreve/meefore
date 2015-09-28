@@ -262,7 +262,7 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
    },
    country_gq: {
       "en": "Equatorial Guinea",
-      "fr": Guinée équatoriale""
+      "fr": "Guinée équatoriale"
    },
    country_er: {
       "en": "Eritrea",
@@ -394,7 +394,7 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
    },
    country_hu: {
       "en": "Hungary",
-      "fr": Hongrie""
+      "fr": "Hongrie"
    },
    country_is: {
       "en": "Iceland",

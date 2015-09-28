@@ -224,6 +224,7 @@
 			delog('Pushing new group status : ' + status + ' for event : ' + event_id );
 			LJ.fn.fetchEventById( event_id, function( err, evt ){
 				LJ.fn.updateEventCache( evt );
+				LJ.fn.updateTabviewIconStatus();
 			}); // Fetch event
 
 			// Message pour les membres du groupes
@@ -268,6 +269,7 @@
 						class_names : ["bot"]
 					});
 				}
+
 			}
 
 			// Message pour les autres organisateurs
@@ -287,7 +289,7 @@
 
 			// For everyone in the event channel
 			LJ.fn.updateGroupStatusUI( event_id, group );
-
+			
 		},	
 		pushNewChatMessage: function( data ){
 

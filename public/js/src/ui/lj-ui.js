@@ -368,6 +368,7 @@
 
 			if( options.source === 'facebook' )
 			{	
+				console.log('Calling Facebook graph api');
 				LJ.fn.GraphAPI( options.url, function(res){
 
 					if( !res && !res.data ) {
@@ -574,6 +575,33 @@
 					})( $chat );
 
 				});
+
+		},
+		updateTabviewIconStatus: function(){
+
+			var $tabviews = $('.event-accepted-tabview');
+
+			$tabviews.each(function( i, tab ){
+
+				var event_id = $( tab ).attr('data-eventid');
+				var status = LJ.fn.iStatus( event_id );
+		    	var icon_status = "star"; // default in case nothing found
+
+			    if( status == "accepted" ){
+			    	icon_status = "chat";
+			    }
+
+			    if( status == "kicked" || status == "pending" ){
+			    	icon_status = "ellipsis";
+			    }
+
+			    if( status == "hosting" ){
+			    	icon_status = "star-1";
+			    }
+
+			    $( tab ).attr('data-status', status );
+
+			});
 
 		}
 

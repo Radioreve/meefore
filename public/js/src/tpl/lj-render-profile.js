@@ -4,7 +4,7 @@
 		renderMoodInProfile: function( mood_array ){
 
           var html = '';
-            mood_array.forEach(function(mood){
+            mood_array.forEach(function( mood ){
               html += '<div class="row-select mood" data-selectid="' + mood.id + '">'
                         + '<i class="icon icon-mood icon-' + mood.id +'"></i>'
                         + '<span data-lid="p_lifestyle_' + mood.id + '">' + mood.display + '</span>'
@@ -16,7 +16,7 @@
         renderDrinkInProfile: function( drink_array ){
 
           var html = '';
-            drink_array.forEach(function(drink){
+            drink_array.forEach(function( drink ){
               html += '<div class="row-select drink" data-selectid="' + drink.id + '">' + drink.display + '</div>'
             });
           return html;

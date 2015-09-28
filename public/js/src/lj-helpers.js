@@ -147,11 +147,11 @@
 
 				console.log('Largest label is : ' + largest_label.width );
 				var $label = $(label);
-				var $inp   = $label.siblings('*:not( .etiquette, [type="number"], .item-country)');
+				var $inp   = $label.siblings('*:not( .etiquette, [type="number"], .item)');
 
 				var parent_width = $label.parent().width(); // width which children are positionned in
 
-				$label.css({ width: largest_label.width + 10 });
+				$label.css({ width: largest_label.width + 20 });
 				$inp.css({ width: parent_width - largest_label.outer_width - 40 }); /* Mega hack needed cause of display:inline-block added whitespace */
 				$inp.children('input').css({ width:'100%' });
 			});
@@ -499,18 +499,46 @@
 		},
 		iHost: function( hosts_facebook_id ){
 
-			if( !hosts_facebook_id )
+			if( !hosts_facebook_id ){
 				return console.error('Cant host an event that doesnt exist!');
+			}
 
 			return hosts_facebook_id.indexOf( LJ.user.facebook_id ) != -1 ;
 
 		},
 		iGroup: function( members_facebook_id ){
 
-			if( !members_facebook_id )
+			if( !members_facebook_id ){
 				return console.error('Cant belong to a group that doesnt exist!');
+			}
 
 			return members_facebook_id.indexOf( LJ.user.facebook_id ) != -1;
+		},
+		iStatus: function( event_id ){
+
+			var evt = _.find( LJ.cache.events, function( evt ){
+				return evt._id == event_id;
+			});
+
+			if( !evt ){
+				return console.warn('Couldnt find event in cache with id : ' + event_id );
+			}
+
+			var status = null;
+			evt.groups.forEach(function( group ){
+
+				if( LJ.fn.iGroup( group.members_facebook_id ) ){
+					status = group.status;
+				}
+
+			});
+
+			if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id') )){
+				status = 'hosting';
+			}
+
+			return status
+
 		},
 		api: function( method, url, options, callback ){
 
@@ -795,7 +823,7 @@
 			var elements_width = 0;
 			var $tabviews = $('.row-events-accepted-tabview');
 			var n_tabviews = $('.event-accepted-tabview').length;
-			var fix_width  = 20;
+			var fix_width  = 23;
 			var max_width = $tabviews.width() - n_tabviews * fix_width;
 			var new_width = parseInt( max_width / n_tabviews ) > 130 ? 130 : parseInt( max_width / n_tabviews );
 			
