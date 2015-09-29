@@ -151,7 +151,7 @@
 
 				var parent_width = $label.parent().width(); // width which children are positionned in
 
-				$label.css({ width: largest_label.width + 20 });
+				$label.css({ width: largest_label.width + 10 }); 
 				$inp.css({ width: parent_width - largest_label.outer_width - 40 }); /* Mega hack needed cause of display:inline-block added whitespace */
 				$inp.children('input').css({ width:'100%' });
 			});
@@ -395,7 +395,7 @@
 		hashtagify: function( str ){
 			
 			var hashtag_parts = [];
-				str.trim().split(/[\s_-]/).forEach(function( el, i ){
+				str.toLowerCase().trim().split(/[\s_-]/).forEach(function( el, i ){
 					if( i == 0 ){
 						hashtag_parts.push( el );
 					} else {

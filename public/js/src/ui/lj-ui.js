@@ -62,10 +62,14 @@
 						var duration_time = 500;
 						if( !$menuItem.is('#events') ){
 							$('.row-events-accepted-tabview').velocity('transition.slideDownOut', { duration: duration_time });
-							$('.row-events-accepted-inview.active').velocity('transition.slideUpOut', { duration: duration_time });
+							$('.row-events-accepted-inview.active').velocity('transition.slideDownOut', { duration: duration_time });
+							$('.row-events-filters, .row-preview').velocity('transition.slideUpOut', { duration: duration_time });
 						} else {
 							$('.row-events-accepted-tabview').velocity('transition.slideUpIn', { duration: duration_time });
 							$('.row-events-accepted-inview.active').velocity('transition.slideDownIn', { duration: duration_time });
+							setTimeout(function(){
+								$('.row-events-filters, .row-preview').velocity('transition.slideDownIn', { duration: duration_time });
+							}, 300 );
 						}
 
 						LJ.fn.displayContent( linkedContent, {
@@ -499,18 +503,23 @@
 			var $chat_wrap = $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]');
 			var $user_img  = $chat_wrap.find('.event-accepted-chat-message[data-authorid="' + facebook_id + '"] img');
 
-			if( facebook_id == LJ.user.facebook_id )
+			if( facebook_id == LJ.user.facebook_id ){
 				return console.error('Cant whisper to himself');
+			}
 
-			if( $chat_wrap.length != 1 )
+			if( $chat_wrap.length != 1 ){
 				return console.error('Couldnt find chatwrap for whisper stage');
+			}
 
-			if( $user_img.length == 0 )
+			if( $user_img.length == 0 ){
 				return console.error('Couldnt find img to clone for whisper stage');
+			}
 
 			// The img tag is already there as whisper
 			if( $user_img.hasClass('whispering') ){
+
 				console.log('Already whispering, removing...');
+
 				$user_img.removeClass('whispering');
 				$chat_wrap.find('.img-input-whisper[data-authorid="' + facebook_id + '"]')
 						  .velocity('transition.slideRightOut', { duration: 500, complete: function(){ 
@@ -518,12 +527,15 @@
 						  	LJ.fn.adjustAllWhisperOnInput( $chat_wrap );
 						  } });
 			} else {
+
 				console.log('First time whispering, adding...');
+
 				$user_img.addClass('whispering')
 				$user_img.first().clone().addClass('img-input-whisper').attr('data-authorid', facebook_id )
 						 .appendTo( $chat_wrap.find('.event-accepted-chat-typing') )
 						 .velocity('transition.slideLeftIn', { duration: 500 });
 						  LJ.fn.adjustAllWhisperOnInput( $chat_wrap );
+
 			}
 
 
@@ -602,6 +614,26 @@
 			    $( tab ).attr('data-status', status );
 
 			});
+
+		},
+		displayLink: function( width ){
+
+			var $link = $('.row-events-link');
+			if( $link.length ){
+				$link.remove();
+			}
+
+			$('<div class="row-events-link"></div>').insertAfter('.row-events-preview');
+			var $link = $('.row-events-link');
+
+			var $events_preview = $('.row-events-preview');
+			var $party_preview  = $('.row-party-preview');
+
+			var offset = $events_preview.outerWidth(true) - $events_preview.css('padding-right').split('px')[0];
+
+			$link.css({ display: 'none', width: '0' })
+				 .css({ left: offset, display: 'block' })
+				 .css({ width: width || 300 });
 
 		}
 

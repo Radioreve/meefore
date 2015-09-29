@@ -14,61 +14,100 @@
                 var $inview_wrap_target  = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
                 var $inview_wrap_current = $('.row-events-accepted-inview[data-eventid="' + current_event_id + '"]');
 
-                var evt                  = _.find( LJ.cache.events, function(el){ return el._id === event_id });
-                var duration             = 900;
+                var evt                  = _.find( LJ.cache.events, function( el ){ return el._id === event_id });
+                var duration             = 700;
 
-                var opts = { transition_in : LJ.ui.slideUpInLight, transition_out: LJ.ui.slideDownOutLight };
+
+                // Adjust dynamically the height so it perfectly fills the screen from filter div to footerdiv
+                var adjusted_height = $( window ).outerHeight( true )  
+                                      - $('.row-events-preview').innerHeight()
+                                      - parseInt( $('.row-events-preview').css('top').split('px')[0] );
+
+                $inview_wrap_target.css({ height: adjusted_height });
 
                 if( $inview_wrap_target.find('.event-accepted-chatgroup.active').length == 0 ){
                     $inview_wrap_target.find('.event-accepted-chatgroup').first().click();
                 }
                 
-                LJ.fn.adjustAllChatPanes();
-                
+
+                // Close chatviews
                 if( $self.hasClass('active') ){
-                    $inview_wrap_target.velocity('transition.fadeOut', { duration: 700 }).removeClass('active');
+                    $inview_wrap_target.velocity('transition.slideDownOut', { duration: 400 }).removeClass('active');
                     $self.removeClass('active');
                     return;
                 }
-                
+                    
+
+                // First opening 
                 if( $('.event-accepted-tabview.active').length == 0 ){
+                    LJ.fn.adjustAllChatPanes();
                     $self.addClass('active');
 
                     $inview_wrap_target
                         .siblings('.active').removeClass('active').end()
-                        .velocity('transition.slideUpIn', { duration: 600 }).addClass('active');
+                        .velocity('transition.slideUpIn', { duration: 600 }).addClass('active')
+                        .find('.event-accepted-inview').velocity('transition.slideUpIn');
 
-                    LJ.fn.addEventPreview( evt, opts );
-                    LJ.fn.addPartyPreview( evt.party, opts );
+                    LJ.fn.addEventPreview( evt );
+                    LJ.fn.addPartyPreview( evt.party );
                     return;
                 }
 
-                /* Update tabview */
+                // Switch tab
+
+                // Update tabview 
                 $('.event-accepted-tabview').removeClass('active');
                 $self.addClass('active');
-                
-                /* Update inview */
+                                
+                // Update preview
+                LJ.fn.addEventPreview( evt );
+                LJ.fn.addPartyPreview( evt.party );
+
+                // Update inview 
                 $inview_wrap_current
                     .removeClass('active')
+                    .find('.event-accepted-inview, .event-inview-settings')
                     .velocity('transition.slideUpOut', {
                         duration: duration
+                    }).end()
+                    .velocity('transition.fadeOut', {
+                        duration: duration
                     });
-
-                LJ.fn.addEventPreview( evt, opts );
-                LJ.fn.addPartyPreview( evt.party, opts );
 
 
                 setTimeout(function(){
                     
                     $inview_wrap_target
                         .addClass('active')
+                        .find('.event-accepted-inview')
                         .velocity('transition.slideUpIn', {
                             duration: duration 
+                        }).end()
+                        .velocity('transition.fadeIn', {
+                            duration: duration
                         });
                         
                     LJ.fn.adjustAllChatPanes();
                    
-                }, 220 );
+                }, 330 );
+
+                // $inview_wrap_current
+                //     .removeClass('active')
+                //     .velocity('transition.slideUpOut', {
+                //         duration: duration
+                //     })
+
+                // setTimeout(function(){
+
+                //     $inview_wrap_target
+                //         .addClass('active')
+                //         .velocity('transition.slideUpIn', {
+                //             duration: duration
+                //         });
+
+                //       LJ.fn.adjustAllChatPanes();
+
+                // }, 350 );
 
 
             });

@@ -8,13 +8,24 @@
 		nearest_event_opacity: '.5',
 		artificialDelay: 700,
 		minimum_loading_time: 500,
+
+        //Down
 		slideDownInLight:  { opacity: [1, 0], translateY: [0, 10]   },
+        slideDownInVeryLight:  { opacity: [1, 0], translateY: [0, 7]   },
+
+        //Up
 		slideUpOutLight: { opacity: [0, 1], translateY: [-10, 0]   },
 		slideUpOutVeryLight: { opacity: [0, 1], translateY: [-7, 0]   },
+        slideUpInLight: { opacity: [1, 0], translateY: [0, -10]   },
+        slideUpInVeryLight: { opacity: [1, 0], translateY: [0, -7]   },
+
+        //Left
 		slideLeftInLight:  { opacity: [1, 0], translateX: [0, -10]   },
 		slideLeftOutLight:  { opacity: [0, 1], translateX: [-10, 0]   },
         slideLeftInVeryLight:  { opacity: [1, 0], translateX: [0, -7]   },
         slideLeftOutVeryLight:  { opacity: [0, 1], translateX: [-7, 0]   },
+
+        //Right
         slideRightInLight: { opacity: [1, 0], translateX: [0, 10]   },
 		slideRightOutLight: { opacity: [0, 1], translateX: [10, 0]   },
         slideRightInVeryLight: { opacity: [1, 0], translateX: [0, 7]   },

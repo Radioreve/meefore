@@ -3,25 +3,84 @@
 
 		handleDomEventsSettings: function(){
 
-			LJ.$body.on('click', '.event-inview-settings .btn-validate', function(){
+			LJ.$body.on('click', '.settings-group-buttons .btn-validate', function(){
 
-                if( $(this).hasClass('btn-validating') ) return;
+                var $self = $(this);
 
-                var $wrap = $(this).parents('.row-events-accepted-inview');
+                if( $self.hasClass('btn-validating') ) return;
 
-                $(this).addClass('btn-validating');
-                LJ.fn.showLoaders();
+                var $wrap = $self.parents('.row-events-accepted-inview');
                 var event_id = $wrap.attr('data-eventid');
-                var status = $wrap.find('[data-status].active').attr('data-status');
+                var status   = $wrap.find('[data-status].active').attr('data-status');
+
+                // Special case for cancel : need ask user confirmation
+                if( status == "canceled" ){
+                    $wrap.find('.settings-group-status').children().velocity('transition.slideRightOut', {
+                        duration: 300,
+                        complete: function(){
+                            $wrap.find('.settings-group-status')
+                                 .append(['<div class="confirm-cancel none">',
+                                    '<span class="event-settings-group-name">Êtes-vous sûr ?</span>',
+                                    '<button class="theme-btn btn-validate" data-confirm="yes">Oui</button>',
+                                    '<button data-confirm="no" class="theme-btn btn-cancel">Non</button></div>'
+                                    ].join(''))
+                                 .find('.confirm-cancel').velocity('transition.slideLeftIn', {
+                                    duration : 300,
+                                    display  : 'inline-block'
+                                 });
+                            $wrap.find('.settings-group-buttons').find('button').addClass('btn-validating');
+                        }
+                    })
+                    return;
+                }
+
+                $self.addClass('btn-validating');
+                LJ.fn.showLoaders();
                 
                 LJ.fn.changeEventStatus({
-                    event_id: event_id,
-                    status: status
-                })
+                    event_id : event_id,
+                    status   : status
+                });
 
-            });
+            }); 
 
-             LJ.$body.on('click', '.icon-event-settings', function(){
+    
+            LJ.$body.on('click', '.confirm-cancel button', function(){
+
+                var $self   = $(this);
+                var confirm = $self.attr('data-confirm');
+
+                if( confirm == "yes" ){
+
+                    // $self.addClass('btn-validating');
+                    // LJ.fn.showLoaders();
+                    
+                    // LJ.fn.changeEventStatus({
+                    //     event_id : event_id,
+                    //     status   : status
+                    // });
+
+                } else {
+
+                    $('.confirm-cancel').velocity('transition.slideRightOut', {
+                        duration: 300,
+                        complete: function(){
+                            var $wrap = $self.closest('.row-events-accepted-inview');
+                            $wrap.find('.settings-group-status *').velocity('transition.slideLeftIn',{
+                                duration : 300,
+                                display  : 'inline-block'
+                            });
+                            $wrap.find('.settings-group-buttons').find('button').removeClass('btn-validating');
+                            $(this).remove();
+
+                        }
+                    })                   
+
+                }
+
+            }); 
+
+            LJ.$body.on('click', '.icon-event-settings', function(){
                
                 var $self = $(this);
 
@@ -39,8 +98,9 @@
                 
             });
             
-            LJ.$body.on('click', '.event-inview-settings .btn-cancel', function(){
+            LJ.$body.on('click', '.settings-group-buttons .btn-cancel', function(){
 
+                if( $(this).hasClass('btn-validating') ) return;
                 $(this).parents('.row-events-accepted-inview').find('.icon-event-settings').click();
 
             });
@@ -86,7 +146,7 @@
             };
 
             LJ.fn.showLoaders();
-            LJ.fn.api('patch','events/'+event_id+'/status', { data: data }, function( err, evt ){
+            LJ.fn.api('patch','events/' + event_id + '/status', { data: data }, function( err, evt ){
                 if( err ){
                     LJ.fn.handleApiError( err );
                 } else {

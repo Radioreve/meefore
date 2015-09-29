@@ -292,7 +292,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('.menu-item-active').removeClass('menu-item-active');
 
             var $landingView;
-            if (LJ.user.status == 'idle') {
+            if( LJ.user.status == 'idle' ){
                 $landingView = '#eventsWrap';
                 $('#management').addClass('filtered');
                 $('#events').addClass('menu-item-active')
@@ -302,7 +302,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                     });
             }
 
-            if (LJ.user.status == 'new') {
+            if( LJ.user.status == 'new' ){
                 $landingView = '#profileWrap';
                 $('#management').addClass('filtered');
                 $('#profile').addClass('menu-item-active')
@@ -382,16 +382,16 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.settings = data.settings;
 
             /* Register to Pusher based on users channels */
-            LJ.fn.subscribeToChannels(data.user);
+            LJ.fn.subscribeToChannels( data.user );
 
             /* Set all app ui elements specific to user session */
-            LJ.fn.initLayout(data.settings);
+            LJ.fn.initLayout( data.settings );
 
             /* Je sais plus trop cette fonction me soule! */
             LJ.fn.setLocalStoragePreferences();
 
             /* Init cloudinary fileupload with inputs */
-            LJ.fn.initCloudinary(data.cloudinary_tags);
+            LJ.fn.initCloudinary( data.cloudinary_tags );
 
             
             async.parallel([

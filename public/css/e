@@ -61,7 +61,6 @@ font-size: 14px;text-align: center;color: #ee;}
 	background: linear-gradient(45deg,  #01BF01,#10D010)!important;
 	box-shadow: 1px 1px 1px #045519!important;
 	border-radius: 6px 0 6px 0;
-	display: block!important;
 }
 
 .full-rotation {
@@ -1526,7 +1525,7 @@ input:focus:-ms-input-placeholder {
 
 input[type="submit"]:hover,
 button:hover {
-   /* background-color: #EEEEEE; */
+   background-color: #EBEBEB;
    /* border: none; */
 }
 .btn-preview-undo:hover {
@@ -1724,10 +1723,7 @@ p {
 	box-shadow: 1px 1px 1px #871111;
 	transform: rotate(0deg);
 	border-radius: 5px 0 5px 0;
-	font-size: 12px;
-	font-family: 'Karla';
-	font-weight: bolder;
-	display: none;
+	font-size: 11px;
 }
 
 #languages {position: absolute;right: -10px;top: 4px;width: 100px;height: 30px;padding-top: 7px;}

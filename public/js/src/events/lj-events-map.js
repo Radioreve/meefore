@@ -23,10 +23,10 @@
                 zoom: 13,
                 // scrollwheel: false,
                 disableDefaultUI: true,
-                zoomControl: true,
+                //zoomControl: true,
                 zoomControlOptions: {
-                	style: google.maps.ZoomControlStyle.SMALL,
-                	position: google.maps.ControlPosition.RIGHT_TOP
+                    style    : google.maps.ZoomControlStyle.SMALL,
+                    position : google.maps.ControlPosition.RIGHT_TOP
                 },
                 mapTypeControlOptions: {
                     mapTypeIds: ['sober']
@@ -50,12 +50,8 @@
             	LJ.fn.clearAllActiveMarkers();
                 LJ.fn.clearAllActivePaths();
                 LJ.fn.clearAllHalfActivePaths();
-                
-                LJ.fn.clearActivePartyPreview();
-                LJ.fn.clearActiveEventPreview();
-
-
-                $('.event-accepted-tabview.active').click();
+                LJ.fn.clearActivePreview();
+                LJ.fn.clearActiveInview();
 
                 LJ.fn.refreshMap();
 
@@ -69,6 +65,7 @@
             });
 
         },
+
         handleFetchEvents: function( err, events ){
 
             if( err ){
@@ -107,17 +104,20 @@
         },
         handleFetchMyEvents: function( err, events ){
 
-          if( err )
+          if( err ){
             return console.log('Error fetching and sync friends : ' + err );
+          }
 
             console.log('Personnal events successfully fetched, n = ' + events.length + ' )');
             
             LJ.$body.on('display:layout:after', function(){
+
+                $('.row-events-accepted-tabview').velocity('transition.slideUpIn');
+
                 events.forEach(function( evt, i ){
                     LJ.fn.handleFetchEventById( null, evt, { hide: true });
                 });
 
-                $('.row-events-accepted-tabview').velocity('transition.slideUpIn');                
             });
 
 
@@ -271,7 +271,7 @@
 
             });
 
-            LJ.fn.displayMarker(_.merge({
+            LJ.fn.displayMarker( _.merge({
                 lat       : effective_lat,
                 lng       : effective_lng,
                 url       : LJ.cloudinary.markers[ status ].url,
@@ -304,14 +304,17 @@
                             LJ.fn.displayActiveEventMarker( evt, { lat: effective_lat, lng: effective_lng });
                             LJ.fn.displayActivePartyMarker( evt.party );
                         }
-                    } , {
-                        event_type: 'mouseover',
-                        callback: function(e){
+                    }, {
+                        event_type : 'mouseover',
+                        callback   : function(e){
                             this.setZIndex(2);
+                            console.log('Hovering : ' + evt._id );
+                            $('.event-accepted-tabview[data-eventid="' + evt._id + '"]').addClass('highlight');
                         }
                     }, {
-                        event_type: 'mouseout',
-                        callback: function(e){
+                        event_type : 'mouseout',
+                        callback   : function(e){
+                            $('.event-accepted-tabview[data-eventid="' + evt._id + '"]').removeClass('highlight');
                         }
                     }
                 ]
@@ -481,6 +484,25 @@
             delete LJ.half_active_paths;
 
         },
+        clearActivePreview: function(){
+
+            $('.row-preview').velocity( LJ.ui.slideUpOutLight, {
+                duration: 270,
+                complete: function(){
+                    setTimeout(function(){
+                        $('.row-preview').children().remove();
+                    }, 200 );
+                }
+            });
+
+
+
+        },
+        clearActiveInview: function(){
+
+                $('.event-accepted-tabview.active').click();
+
+        },
         clearActiveEventPreview: function(){
 
             $('.event-preview').velocity( LJ.ui.slideUpOutLight,{
@@ -606,7 +628,7 @@
                 } 
 
                 if( status == "OVER_QUERY_LIMIT" ){
-                    console.log('Directions request failed due to ' + status + '. Retrying...');
+                    // console.log('Directions request failed due to ' + status + '. Retrying...');
                     setTimeout(function(){
                         LJ.fn.displayPathToParty( opts );
                     }, 400 );

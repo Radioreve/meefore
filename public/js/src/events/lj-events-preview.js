@@ -162,15 +162,18 @@
         },
         addEventPreview: function( evt, options ){
 
-            if( !evt || evt === {} )
+            if( !evt || evt === {} ){
                 return console.error('No event to be added : ' + evt );
+            }
 
             options = options || {};
 
-            if( evt._id == $('.event-preview').attr('data-eventid') )
+            // If already there, do nothing
+            if( evt._id == $('.event-preview').attr('data-eventid') ){
                 return;
+            }
 
-            //Default value
+            // Rendering Logic
             var renderFn = LJ.fn.renderEventPreview_User;
 
             var hids = _.pluck( evt.hosts, 'facebook_id');
@@ -178,6 +181,7 @@
                 renderFn = LJ.fn.renderEventPreview_Host;
 
             evt.groups.forEach(function(group){
+
                 var mids = _.pluck( group.members, 'facebook_id' )
                 if( mids.indexOf( LJ.user.facebook_id )!= -1 ){
                     if( group.status == "accepted" ){
@@ -193,28 +197,40 @@
 
             var event_preview = renderFn( evt );
 
+
+            // Displaying Logic
             var $evt = $('.event-preview');
             var duration = 270;
 
+            // No preview is there
             if( $evt.length == 0 ){
-                delog('Rendering event at first load');
-                $('.row-events-preview').html( event_preview );
-                $('.event-preview').velocity( LJ.ui.slideDownInLight,
-                { duration: duration });
+
+                delog('First render');
+
+                $( event_preview ).hide().appendTo('.row-events-preview');
+
+                $('.row-events-preview').velocity( LJ.ui.slideUpInLight, {
+                    duration: duration,
+                    complete: function(){
+                        $('.event-preview').css({ opacity: 0 }).show()
+                        $('.event-preview').velocity( LJ.ui.slideDownInVeryLight,{ 
+                            duration: duration 
+                        });
+                    }
+                })
+
                 return;
             } 
 
             $('.event-preview')
-                .removeClass('slow-down-3')
-                .velocity( options.transition_out || LJ.ui.slideUpOutVeryLight, { 
+                .velocity( LJ.ui.slideUpOutVeryLight, { 
                     duration: duration,
                     complete: function(){
                         $('.row-events-preview').html( event_preview )
-                        .children().removeClass('slow-down-3')
-                        .velocity( options.transition_in || LJ.ui.slideDownInLight, {
+                        .children()
+                        .velocity( LJ.ui.slideDownInLight, {
                             duration: duration +  300 ,
                             complete: function(){
-                                $(this).addClass('slow-down-3');
                             }
                         });
                     }
@@ -240,11 +256,23 @@
             var duration = 270;
 
             if( $party.length == 0 ){
-                delog('Rendering party at first load');
-                $('.row-party-preview').html( party_preview );
-                $('.party-preview').velocity( LJ.ui.slideDownInLight,
-                { duration: duration });
+
+                 delog('First render');
+
+                $( party_preview ).hide().appendTo('.row-party-preview');
+
+                $('.row-party-preview').velocity( LJ.ui.slideUpInLight, {
+                    duration: duration,
+                    complete: function(){
+                        $('.party-preview').css({ opacity: 0 }).show()
+                        $('.party-preview').velocity( LJ.ui.slideDownInVeryLight,{ 
+                            duration: duration 
+                        });
+                    }
+                })
+
                 return;
+
             } 
 
             $('.party-preview')
@@ -271,7 +299,7 @@
             if( !evt || evt === {} )
                 return console.log('No event to be displayed');
 
-            LJ.fn.addEventPreview( evt );
+            // LJ.fn.addEventPreview( evt );
 
         }
 

@@ -123,6 +123,13 @@
         }
       });
 
+      var ambiance_html = '<div class="event-preview-ambiance">';
+      evt.ambiance.forEach(function( hashtag ){
+        if( hashtag == '' ) return;
+        ambiance_html += '<span class="event-preview-ambiance-hashtag">#</span><span class="event-preview-ambiance-name">' + LJ.fn.hashtagify(hashtag) + '</span>';
+      });
+      ambiance_html += '</div>';
+
       var date_html = '<div class="preview-date">'
                         + '<div class="preview-date-month">' + moment.monthsShort( moment( evt.begins_at ).month() ) + '</div>'
                         + '<div class="preview-date-day">' + moment( evt.begins_at ).format('DD/MM') + '</div>'
@@ -132,11 +139,13 @@
       var request_html = options.request_html;
 
       details_html = '<div class="event-preview-details">'
-                      + '<div class="event-preview-address"><span class="preview-type">Meefore</span> ' + evt.address.place_name + ', ' + evt.address.city_name + '</div>'
-                      + '<div class="event-preview-hosts-names">' + hosts_names.join('')    + '</div>'
+                      + '<span class="preview-type">Meefore</span> '
+                      + '<div class="event-preview-address"><i class="icon icon-location"></i>' + evt.address.place_name + ', ' + evt.address.city_name + '</div>'
+                      + '<div class="event-preview-hosts-names"><i class="icon icon-users"></i>' + hosts_names.join('')    + '</div>'
+                      + ambiance_html
                     +'</div>';
 
-      var html = '<div class="event-preview etiquette slow-down-3" data-eventid="' + evt._id + '">'
+      var html = '<div class="event-preview" data-eventid="' + evt._id + '">'
                     + date_html
                     + hosts_pictures_html
                     + details_html
@@ -161,7 +170,7 @@
                       + '<div class="party-preview-place-type">' + hosts_names + '</div>'
                     +'</div>';
 
-      var html = '<div class="party-preview etiquette slow-down-3" data-placeid="' + party.address.place_id + '">'
+      var html = '<div class="party-preview " data-placeid="' + party.address.place_id + '">'
                   //  + hosts_pictures_html
                     + details_html
                     // + '<button class="theme-btn btn-preview btn-requestin slow-down-3">Proposer un meefore</div>'
@@ -215,7 +224,7 @@
               '<div data-lid="ch_settings_status_suspended" ' + settings_options[1] + 'Suspendu/Complet</div>',
               '<div data-lid="ch_settings_status_canceled" '  + settings_options[2] + 'Annulé</div>',
             '</div>',
-            '<div class="event-settings-group">',
+            '<div class="event-settings-group settings-group-buttons">',
               '<button data-lid="ch_button_update" class="theme-btn btn-validate">Mettre à jour</button>',
               '<button data-lid="ch_button_cancel" class="theme-btn btn-cancel">Annuler</button>',
             '</div>',
@@ -359,6 +368,7 @@
                     + '</div>'
                   + '</div>'
                 + '</div>'
+                + '<div class="backtomap"><i class="icon icon-forward-1"></i></div>'
                 + LJ.fn.renderEventSettings( evt );
 
             + '</div>';
@@ -515,6 +525,7 @@
                       + '</div>'
                   + '</div>'
                 + '</div>'
+                + '<div class="backtomap"><i class="icon icon-forward-1"></i></div>'
             + '</div>';
 
         return html;

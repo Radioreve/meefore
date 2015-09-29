@@ -1,7 +1,14 @@
 
 	window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
-		handleDomEventsChat: function(){
+		handleDomEventsChat: function(){  
+
+            LJ.$body.on('click', '.backtomap', function(){
+
+               LJ.fn.clearActivePreview();
+               LJ.fn.clearActiveInview();
+
+            });
 
             LJ.$body.on('click', '.event-accepted-chat-message img', function(){
 

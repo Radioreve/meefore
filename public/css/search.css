@@ -13,7 +13,6 @@
 .party-preview {
    background: white;
    border-bottom: 1px solid #E4E4E4;
-   box-shadow: 0 0 1px #e4e4e4;
    padding: 15px 15px;
    border-radius: 2px 2px 0 0;
    /* display: inline-block; */
@@ -200,13 +199,12 @@ height: 69px;/* width: 400px; */}
    padding: 10px;
    background: white;
    border: 1px solid #ccc;
-    /* border-top:none; */
-   min-width: 410px;
+   /* border-top:none; */
+   min-width: 510px;
    display: block;
    position: relative;
    left: -61px;
-    /* font-family: 'Karla'; */
-   ;
+   /* font-family: 'Karla'; */
 }
 
 .search-results-ambiances {
