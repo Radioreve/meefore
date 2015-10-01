@@ -98,6 +98,7 @@
 							  .hours( 14 );
 		
 		keeptrack('Ending events in timezone : ' + target.timezone/60 + ' (' + target.timezone + ')');
+		keeptrack('Localtime is : ' + moment().toString() );
 		keeptrack('Day of local time         : ' + today.format('DD/MM') );
 		keeptrack('Day of target time        : ' + target_day.format('DD/MM') );
 
