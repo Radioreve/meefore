@@ -104,8 +104,6 @@
 		var date_range_query     = { $lt: target_day.toDate(), $gt: target_day.add( -2, 'days' ).toDate() };
 		var timezone_range_query = { $gt: target.timezone - 60, $lt: target.timezone + 60 };
 
-		// Init connection database
-		mongoose.connect( mongo_uri );
 
 		mongoose.connection.on('error', function( err ){
 
@@ -116,7 +114,20 @@
 
 		});
 
+		// If already connected, fire handlers
+		if( mongoose.connection.readyState != 1 ){
+			mongoose.connect( mongo_uri );
+		} else {
+			handleMongooseOpen();
+		}
+
 		mongoose.connection.on('open', function(){
+			
+			handleMongooseOpen();
+
+		});
+
+		function handleMongooseOpen(){
 			
 			keeptrack('Connected to the database! Updating... ');
 
@@ -129,11 +140,10 @@
 						keeptrack('Scheduled job completed successfully');
 						mailer.sendSimpleAdminEmail( 'Event watcher', 'Events of the day has been successfully updated', mail_html.join('') );
 						mail_html = [];
+						mongoose.connection.close();
 
 				});
-
-
-		});
+		}
 
 		function keeptrack( msg ){
 			mail_html.push('<div>' + msg + '</div>');
