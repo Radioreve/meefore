@@ -97,9 +97,9 @@
 							  .utcOffset( target.timezone )
 							  .hours( 14 );
 		
-		console.log('Ending events in timezone : ' + target.timezone/60 + ' (' + target.timezone + ')');
-		console.log('Day of local time         : ' + today.format('DD/MM') );
-		console.log('Day of target time        : ' + target_day.format('DD/MM') );
+		keeptrack('Ending events in timezone : ' + target.timezone/60 + ' (' + target.timezone + ')');
+		keeptrack('Day of local time         : ' + today.format('DD/MM') );
+		keeptrack('Day of target time        : ' + target_day.format('DD/MM') );
 
 		var date_range_query     = { $lt: target_day.toDate(), $gt: target_day.add( -2, 'days' ).toDate() };
 		var timezone_range_query = { $gt: target.timezone - 60, $lt: target.timezone + 60 };
