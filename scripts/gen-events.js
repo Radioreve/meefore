@@ -14,7 +14,7 @@
 
 		mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
 
-		mongoose.connection.on('error', function(err){
+		mongoose.connection.on('error', function( err ){
 			console.log('Connection to the database failed : '+err);
 		});
 
@@ -71,14 +71,13 @@
                                     ambiance.push( generateWord(5) );  // 5 syllabes max
                                 }
 
-                                var begins_at = new moment({
-                                    hh: randomInt(0, 23),
-                                    mm: randomInt(0, 55)
-                                });
+                                var begins_at = new moment();
 
-                                begins_at.add({
-                                    DD: randomInt(0,10)
-                                });
+                                var timezone = -480
+                                begins_at.utcOffset( timezone )
+                                         .hours( randomInt(0,24) )
+                                         .minutes( randomInt(0,60) )
+                                         .add( randomInt(-2,2), 'days' );
 
 
                                 var google_place = google_places[ randomInt(0, google_places.length - 1 ) ];
@@ -103,6 +102,7 @@
                                 var body = {
                                     token             : token,
                                     socket_id         : '133',
+                                    timezone          : timezone,
                                     hosts_facebook_id : hosts_facebook_id,
                                     agerange          : agerange,
                                     mixity            : mixity,
@@ -156,8 +156,9 @@
 
             request({ method: 'post', url: 'http://localhost:1234/auth/token', json: { api_key: 'meeforever', data: { id: facebook_id }} }, function( err, body, res ){
                 
-                if( err )
+                if( err ){
                     return callback( err, null );
+                }
                 
                 return callback( null, res.token );
 

@@ -141,7 +141,7 @@
 
                 LJ.fn.displayInModal({ 
                     source:'local',
-                    fix_height: -70,
+                    fix_height: -120,
                     starting_width: 550,
                     custom_classes: ['text-left'],
                     render_cb: function(){
@@ -211,7 +211,7 @@
             $('#cr-party-place').val('');
             var options = { 
                 componentRestrictions: {
-                    country: LJ.app_language 
+                   // country: LJ.app_language 
                 }
             };
 
@@ -432,7 +432,7 @@
 
             // hosts
             $wrap.find('.friend').each(function(i, el){
-                    hosts_facebook_id.push( $(el).attr('data-id') );
+                hosts_facebook_id.push( $(el).attr('data-id') );
             });
 
             // ambiance
@@ -441,9 +441,9 @@
             });
 
             // begins_at
-            var day = $wrap.find('.date-name').text().trim();
+            var day  = $wrap.find('.date-name').text().trim();
             var hour = $wrap.find('.date-hour').text().trim();
-            var min = $wrap.find('.date-min').text().trim();
+            var min  = $wrap.find('.date-min').text().trim();
 
             begins_at = moment({
                 hh: hour,
@@ -453,7 +453,8 @@
                 YY: day.split('/')[2]
             }).toISOString();
 
-            //timezone = begins_at.utcOffset();
+            // timezone
+            timezone = begins_at.utcOffset(); // eg. -120 for UTC+2
             
             // age_range
             agerange  = $('.irs-from').text() + '-' + $('.irs-to').text();
@@ -489,10 +490,11 @@
                 hosts_facebook_id : hosts_facebook_id,
                 ambiance          : ambiance,
                 begins_at         : begins_at,
+                timezone          : timezone,
                 agerange          : agerange,
                 mixity            : mixity,
                 address           : address,
-                party         : party
+                party             : party
             };
             
             LJ.fn.api('post', 'events', { data: new_event }, function( err, res ){

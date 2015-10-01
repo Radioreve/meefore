@@ -6,11 +6,10 @@
 	var moment   = require('moment');
 	
 
-	// Job #1 - Put "ended" all events of yesterday, every day at 3:00 am	
+	// Job #1 - Put "ended" all events of yesterday, every day at 3:30 am	
 	var terminateEvents = require('./jobs/terminate-events').terminateEvents;
 
 	var terminate_events = new schedule.RecurrenceRule();
-		terminate_events.hour   = 13;
 		terminate_events.minute = 0;
 
 	schedule.scheduleJob( terminate_events, terminateEvents );

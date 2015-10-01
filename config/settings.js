@@ -62,8 +62,8 @@ var settings = {
 			 ],
 	placeholder: 
 			{
-				img_id:"placeholder_picture",
-				img_version:"1407342805"
+				img_id      :"placeholder_picture",
+				img_version :"1407342805"
 			},
 	ladder_max_level: 30,
 	ladder_base_point: 100,

@@ -507,18 +507,12 @@ font-family: 'Roboto';
 }
 
 .tabview-date-day {
-  
-font-size: 11px;
-  
-margin-right: 6px;
-  
-/* background: #FFE5E9; */
-  
-/* color: #900920; */
-  
-border-radius: 0 5px 0 5px;
-  
-transition: all ease-out .4s;
+  font-size: 11px;
+  margin-right: 6px;
+  background: #FFE5E9;
+  color: #900920;
+  border-radius: 0 5px 0 5px;
+  transition: all ease-out .4s;
 }
 .event-accepted-tabview:not(.active):hover .bubble {
 }

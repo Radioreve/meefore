@@ -34,52 +34,103 @@
 
 	var mail_html = [];
 
-	// Return the offset between
-	function findTimezoneDiff( hour ){ 
+	// Given an hour and a timezone, return the timezone in which it is 6 am
+	function findDiffDay( day ){
+
+		var hour     = day.hour();
+		var timezone = day.utcOffset();
+
+		// Get the absolute number of hours separating today and target day
 		var diff;
 		if( hour > 6 ){
 			diff = 24 - hour + 6;
 		} else {
-			diff = 6 - hour ;
+			diff = 6 - hour;
 		}
-		return diff;
+		// Get the timezone in which it is 6am
+		var new_timezone = timezone + diff * 60;
+    	if( new_timezone > 720 ){
+    		new_timezone =  -720 + ( new_timezone - 720 );
+        } 
+        // @Marie Anne Krebs formula
+    	var mak = hour + ( new_timezone/60 - timezone/60 );  	
+   		if( mak == -18 ){
+        	day_add = -1;
+        } else if( mak == 6 ){
+            day_add = 0;
+        } else if( mak == 30 ){
+            day_add = 1;
+        } else {
+            console.log("Error, mak parameter didnt match anything expected");
+        }
+    
+		return {
+			timezone: new_timezone,
+			day_add : day_add
+		}
 	}
 
 	var terminateEvents = function(){
 
-	// Reset events to status "ended"
-		var today = moment().startOf('day').add( 1, 'hours' ); // tests .add( 2, 'days' );
-		var yesterday = moment().subtract( 1, 'days' );
+		/*
+			Scheduler auto-update events
+			Each event start date is stored in UTC time
+			Each timezone in which event is created is also stored
+			The scheduler can be launched anywhere in the world, in anytime zone
+			Everyhour find
+				- In which timezone it is 6am
+				- Find if the day in this timezone is tomorrow, today or yesterday (which is event's timezone and scheduler-localzone dependend)
+				- Find all events in this timezone whose begins_at is < 14 hours, so when users connect after 6AM on a particular day,
+			      all of yesterday's events have been cleaned out from database, from cache, and finally from user interface
 
+			@Special thanks to Marie Anne Krebs who helped find a formula to know the adjusting day!
+			
+			All event's status parameter are set to "ended"
 
-		var today = moment();
-		var right_offset = findTimezoneDiff( today.hour() ) * 60;
+		*/
 
+		var today                = moment();
+		var target 				 = findDiffDay( today );
 
-		var date_range_query = { $gte: yesterday.toDate(), $lt: today.toDate() };
-		keeptrack('Ending events starting between ' + yesterday.format('HH:mm DD/MM') + ' and ' + today.format('HH:mm DD/MM') );
+		/* Build the right hour in the target timezone */
+		var target_day = today.add( target.day_add, 'days' )
+							  .utcOffset( target.timezone )
+							  .hours( 14 );
+		
+		console.log('Ending events in timezone : ' + target.timezone/60 + ' (' + target.timezone + ')');
+		console.log('Day of local time         : ' + today.format('DD/MM') );
+		console.log('Day of target time        : ' + target_day.format('DD/MM') );
+
+		var date_range_query     = { $lt: target_day.toDate() };
+		var timezone_range_query = { $gt: target.timezone - 60, $lt: target.timezone + 60 };
 
 		// Init connection database
 		mongoose.connect( mongo_uri );
 
 		mongoose.connection.on('error', function( err ){
-			keeptrack('Connection to the database failed, Couldnt execute the cron job @reset-events ');
-			keeptrack( err );
+
+			mail_html.push('Connection to the database failed, Couldnt execute the cron job @reset-events ');
+			mail_html.push( err );
+			mailer.sendSimpleAdminEmail( 'Event watcher', 'Events of the day has been successfully updated', mail_html.join('') );
+			mail_html = [];
+			
 		});
 
 		mongoose.connection.on('open', function(){
 			
 			keeptrack('Connected to the database! Updating... ');
-				
+
 				async.waterfall([
 					updateRedis,
 					updateUsers,
 					updateEvents
-					], function(){
+				], function(){
+
 						keeptrack('Scheduled job completed successfully');
 						mailer.sendSimpleAdminEmail( 'Event watcher', 'Events of the day has been successfully updated', mail_html.join('') );
 						mail_html = [];
-					});
+
+				});
 
 
 		});
@@ -130,7 +181,8 @@
 		function updateEvents(){
 			var g_callback = arguments[ arguments.length - 1 ];
 			Event.update({
-					'begins_at' : date_range_query
+					'begins_at' : date_range_query,
+					'timezone'  : timezone_range_query
 				}, {
 					$set: {
 						'status': 'ended'
@@ -262,7 +314,7 @@
 
 
 	// Test purposes
-	//terminateEvents();
+	terminateEvents();
 
 
 	module.exports = {

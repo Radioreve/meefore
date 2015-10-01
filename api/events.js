@@ -17,35 +17,36 @@
 	    
 	    var new_event = {};
 
-	    	/* set by client */
-			new_event.hosts     = data.hosts;
-			new_event.begins_at = moment( data.begins_at );
-			new_event.timezone  = data.timezone;
-			new_event.address   = data.address;
-			new_event.party     = data.party;
-			new_event.ambiance  = data.ambiance;
-			new_event.agerange  = data.agerange;
-			new_event.mixity    = data.mixity;
+    	/* set by client */
+		new_event.hosts     = data.hosts;
+		new_event.begins_at = moment( data.begins_at );
+		new_event.timezone  = data.timezone;
+		new_event.address   = data.address;
+		new_event.party     = data.party;
+		new_event.ambiance  = data.ambiance;
+		new_event.agerange  = data.agerange;
+		new_event.mixity    = data.mixity;
 
-	    	/* set by server */
-	    	new_event.created_at = moment();
-	    	new_event.groups 	 = [];
-	    	new_event.status 	 = 'open';
-	    	new_event.type       = 'before';
-	    	new_event.meta 		 = [];
+    	/* set by server */
+    	new_event.created_at = moment();
+    	new_event.groups 	 = [];
+    	new_event.status 	 = 'open';
+    	new_event.type       = 'before';
+    	new_event.meta 		 = [];
 
 
 	    var new_event = new Event( new_event );
 
 	    new_event.save(function( err, new_event ){
 
-	    	if( err )
+	    	if( err ){
 	    		return eventUtils.raiseError({ err: err, res: res, toClient: "Error saving event"});
+	    	}
 
 	    	var event_item = {
-	    		status: 'hosting',
-	    		event_id: new_event._id,
-	    		begins_at: new_event.begins_at
+				status    : 'hosting',
+				event_id  : new_event._id,
+				begins_at : new_event.begins_at
 	    	};
 
 	    	var hosts_ns = 'event/' + new_event._id + '/hosts';
@@ -58,8 +59,9 @@
 
 					function( err, users ){
 
-						if( err )
+						if( err ){
 							return eventUtils.raiseError({ err: err, res: res, toClient: "Error updating users"});
+						}
 
 				    	console.log('Event created!');
 				    	eventUtils.sendSuccess( res, new_event );
@@ -199,19 +201,19 @@
 		evt.status = status
 		evt.save(function( err, evt ){
 
-			if( err )
+			if( err ){
 				return eventUtils.raiseError({
-				 err: err,
-				 res: res,
-				 toClient: "api error"
-			});
+					 err: err,
+					 res: res,
+					 toClient: "api error"
+				});
+			}
 
-			var data = 
-			{
+			var data = {
 				event_id          : event_id,
 				hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
 				status            : evt.status
-			}
+			};
 
 			eventUtils.sendSuccess( res, data );
 

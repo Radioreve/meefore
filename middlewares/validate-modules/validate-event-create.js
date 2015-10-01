@@ -31,10 +31,11 @@
 				onError('Hosts with the same id have been provided', 'hosts_facebook_id', val.hosts_facebook_id, { err_id: "twin_hosts"} );
 		};
 
-		function isDateAtLeastToday( val, onError ){
-			if(  moment( val.begins_at ) < moment({'H':0,'m':0}) )
-				onError('Date must be tomorrow or later', 'begins_at', val.begins_at, { err_id: "time_travel"} );
-		};
+		
+		// function isDateAtLeastToday( val, onError ){
+		// 	if(  moment( val.begins_at ) < moment({'H':0,'m':0}) )
+		// 		onError('Date must be tomorrow or later', 'begins_at', val.begins_at, { err_id: "time_travel"} );
+		// };
 
 		function isGoodAgerange( val, onError ){
 
@@ -79,7 +80,7 @@
 		var checkEvent = nv.isAnyObject()
 
 			.withRequired('begins_at'           , nv.isDate() )
-			.withRequired('timezone'			, nv.isNumber({ min: -840, max: 720 }))
+			.withRequired('timezone'			, nv.isNumber({ min: -720, max: 840 }))
 			.withRequired('socket_id'   		, nv.isString())
 			.withRequired('address'				, checkAddress )
 			.withRequired('party'		    	, checkParty )
@@ -89,7 +90,7 @@
 			.withRequired('mixity'				, nv.isString({ expected: _.pluck( settings.app.mixity, 'id' )   }))
 			.withCustom( isGoodAgerange )
 			.withCustom( isHostDuplicated )
-			.withCustom( isDateAtLeastToday )
+			// .withCustom( isDateAtLeastToday )
 
 		nv.run( checkEvent, req.sent, function( n, errors ){
 			if( n != 0 ){
@@ -114,6 +115,7 @@
 		var event_data = {};
 
 		event_data.begins_at = data.begins_at;
+		event_data.timezone  = data.timezone;
 		event_data.address   = data.address;
 		event_data.ambiance  = data.ambiance;
 		event_data.agerange  = data.agerange;

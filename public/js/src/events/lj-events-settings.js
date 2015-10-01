@@ -52,13 +52,13 @@
 
                 if( confirm == "yes" ){
 
-                    // $self.addClass('btn-validating');
-                    // LJ.fn.showLoaders();
+                    $self.addClass('btn-validating');
+                    LJ.fn.showLoaders();
                     
-                    // LJ.fn.changeEventStatus({
-                    //     event_id : event_id,
-                    //     status   : status
-                    // });
+                    LJ.fn.changeEventStatus({
+                        event_id : event_id,
+                        status   : status
+                    });
 
                 } else {
 
@@ -128,7 +128,14 @@
             $('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
                 .find('.icon-event-settings').removeClass('active').end()
                 .find('.event-inview-settings').velocity( LJ.ui.slideRightOutLight, {display:'none'} )
-                .find('.btn-validating').removeClass('btn-validating')
+                .find('.btn-validating').removeClass('btn-validating');
+
+            if( status == "canceled" ){
+
+                // ...
+
+            }
+
 
         },
         changeEventStatus: function( options ){

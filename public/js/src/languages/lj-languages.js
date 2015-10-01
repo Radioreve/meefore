@@ -28,6 +28,8 @@
 				}
 
 				$el.html( translated_text );
+
+
 				return;
 
 			});

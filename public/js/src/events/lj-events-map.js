@@ -486,11 +486,15 @@
         },
         clearActivePreview: function(){
 
-            $('.row-preview').velocity( LJ.ui.slideUpOutLight, {
+            var $row_preview = $('.row-preview');
+
+            if( !$row_preview.children().length ) return;
+
+            $row_preview.velocity( LJ.ui.slideUpOutLight, {
                 duration: 270,
                 complete: function(){
                     setTimeout(function(){
-                        $('.row-preview').children().remove();
+                        $row_preview.children().remove();
                     }, 200 );
                 }
             });
