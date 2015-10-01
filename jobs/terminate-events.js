@@ -116,8 +116,10 @@
 
 		// If already connected, fire handlers
 		if( mongoose.connection.readyState != 1 ){
+			console.log('Connection not opened yet, opening...');
 			mongoose.connect( mongo_uri );
 		} else {
+			console.log('Connection already opened');
 			handleMongooseOpen();
 		}
 
@@ -140,7 +142,7 @@
 						keeptrack('Scheduled job completed successfully');
 						mailer.sendSimpleAdminEmail( 'Event watcher', 'Events of the day has been successfully updated', mail_html.join('') );
 						mail_html = [];
-						mongoose.connection.close();
+						// mongoose.connection.close();
 
 				});
 		}
@@ -330,7 +332,7 @@
 
 
 	// Test purposes
-	terminateEvents();
+	// terminateEvents();
 
 
 	module.exports = {

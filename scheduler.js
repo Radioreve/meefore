@@ -6,20 +6,20 @@
 	var moment   = require('moment');
 	
 
-	// Job #1 - Put "ended" all events of yesterday, every day at 3:30 am	
-	var terminateEvents = require('./jobs/terminate-events').terminateEvents;
+	// Job #0 - Print how long server has been on
 
-	var terminate_events = new schedule.RecurrenceRule();
-		terminate_events.minute = 0;
-
-	schedule.scheduleJob( terminate_events, terminateEvents );
-
-	// Friendly logs
-	// var min = 0;
+	var min = 0;
 	(function checkingTime(){
-
 		min += 1;
 		console.log( 'Scheduler up and running for ' + min + ' minutes now. ');
 		setTimeout( checkingTime, 60000);
-
 	})();
+
+
+	// Job #1 - Put "ended" all events of yesterday, every day at 3:30 am	
+
+	(function terminateEventsEveryHour(){
+		require('./jobs/terminate-events').terminateEvents();
+		setTimeout( terminateEventsEveryHour, 60*60*1000 );
+	})();
+
