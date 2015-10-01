@@ -101,7 +101,7 @@
 		console.log('Day of local time         : ' + today.format('DD/MM') );
 		console.log('Day of target time        : ' + target_day.format('DD/MM') );
 
-		var date_range_query     = { $lt: target_day.toDate() };
+		var date_range_query     = { $lt: target_day.toDate(), $gt: target_day.add( -2, 'days' ).toDate() };
 		var timezone_range_query = { $gt: target.timezone - 60, $lt: target.timezone + 60 };
 
 		// Init connection database
@@ -111,9 +111,9 @@
 
 			mail_html.push('Connection to the database failed, Couldnt execute the cron job @reset-events ');
 			mail_html.push( err );
-			mailer.sendSimpleAdminEmail( 'Event watcher', 'Events of the day has been successfully updated', mail_html.join('') );
+			mailer.sendSimpleAdminEmail( 'Event watcher', 'Error connecting to Database', mail_html.join('') );
 			mail_html = [];
-			
+
 		});
 
 		mongoose.connection.on('open', function(){
@@ -146,14 +146,20 @@
 			var rd = redis.createClient( redis_port, redis_host, { auth_pass: redis_pass } );
 
 			rd.on("error", function( err ){
-				keeptrack("Error connecting to redis");
+				
+				mail_html.push('Connection to redis failed, Couldnt execute the cron job @reset-events ');
+				mail_html.push( err );
+				mailer.sendSimpleAdminEmail( 'Event watcher', 'Error connecting to Redis', mail_html.join('') );
+				mail_html = [];
+
 			});
 
 			rd.on("ready", function(){
 				keeptrack('Connected to Redis! Updating...');
 
 				Event.find({
-					'begins_at': date_range_query
+					'begins_at' : date_range_query,
+					'timezone'  : timezone_range_query
 				}, function( err, events ){
 
 					keeptrack( events.length + ' event(s) have matched the date query.');

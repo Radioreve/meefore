@@ -73,7 +73,7 @@
 
                                 var begins_at = new moment();
 
-                                var timezone = -480
+                                var timezone = -540
                                 begins_at.utcOffset( timezone )
                                          .hours( randomInt(0,24) )
                                          .minutes( randomInt(0,60) )
