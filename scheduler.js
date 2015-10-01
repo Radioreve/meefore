@@ -15,7 +15,7 @@
 	schedule.scheduleJob( terminate_events, terminateEvents );
 
 	// Friendly logs
-	var min = 0;
+	// var min = 0;
 	(function checkingTime(){
 
 		min += 1;
