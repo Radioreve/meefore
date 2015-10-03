@@ -166,8 +166,8 @@
 			"en": "Hosts"
 		},
 		e_create_hosts_placeholder: {
-			"fr": "Sélectionne parmis tes amis",
-			"en": "Select among your friends"
+			"fr": "Sélectionne parmis tes amis (1 minimum)",
+			"en": "Select among your friends (1 minimum)"
 		},
 		e_create_begins_at: {
 			"fr": "Date du meefore",

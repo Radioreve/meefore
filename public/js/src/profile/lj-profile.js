@@ -557,6 +557,11 @@
 				img_place   = options.img_place,
 				scope       = options.scope;
 
+			console.log( options );
+			if( !img_id || !img_version || !img_place || !scope ){
+				// return console.warn('missing parameter, cant replace image...');
+			}
+
 			if( scope.indexOf('profile') != -1 )
 			{
 				var $element = $('.picture').eq( img_place ),

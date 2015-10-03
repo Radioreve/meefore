@@ -93,7 +93,7 @@
                                LJ.text_source["err_request_already_there_role_host"][ LJ.app_language ] :
                                LJ.text_source["err_request_already_there_role_asker"][ LJ.app_language ];
 
-                var message = role_msg + LJ.text_source["err_request_already_there"][ LJ.app_language ] + who_msg;
+                var message = who_msg + LJ.text_source["err_request_already_there"][ LJ.app_language ] + role_msg;
                 return LJ.fn.replaceModalTitle( message );
             }
 

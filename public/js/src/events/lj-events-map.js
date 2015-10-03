@@ -247,11 +247,19 @@
         displayEventMarker: function( evt, options ){
 
             var url;
+            var status;
+
             var my_group = _.find( evt.groups, function( group ){
                 return group.members_facebook_id.indexOf( LJ.user.facebook_id ) != -1; 
             });
 
-            var status = my_group && my_group.status || 'base';
+            if( my_group ){
+                status = my_group.status;
+            } else if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' )) ){
+                status = "hosting";
+            } else {
+                status = 'base';
+            }
 
             var effective_lat = evt.address.lat;
             var effective_lng = evt.address.lng;
@@ -414,10 +422,18 @@
                 }
             });
 
+            if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id')) ){
+                status = "hosting";
+            }
+
             var marker_type = "base";
 
             if( status == "accepted" ){
                 marker_type = "accepted";
+            }
+
+            if( status == "hosting" ){
+                marker_type = "hosting";
             }
 
             if( status == "pending" || status == "kicked" ){

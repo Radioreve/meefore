@@ -18,8 +18,11 @@
 
 	// Job #1 - Put "ended" all events of yesterday, every day at 3:30 am	
 
+	var every_hour    = 1000 * 60 * 60;
+	var every_min     = 1000 * 60;
+	var every_ten_sec = 1000 * 10;
 	(function terminateEventsEveryHour(){
 		require('./jobs/terminate-events').terminateEvents();
-		setTimeout( terminateEventsEveryHour, 60*60*1000 );
+		setTimeout( terminateEventsEveryHour, every );
 	})();
 

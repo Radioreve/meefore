@@ -204,8 +204,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             });
 
         },
-        initLayout: function(settings) {
-
+        initLayout: function( settings ){
 
             /* Google Places to browse the map */
             var options = {};
@@ -257,7 +256,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('.picture').prepend( $placeholder );
 
             /* Update de toutes les images */
-            for (var i = 0; i < LJ.user.pictures.length; i++) {
+            for( var i = 0; i < LJ.user.pictures.length; i++ ){
                 LJ.user.pictures[ i ].scope = ['profile'];
                 LJ.fn.replaceImage( LJ.user.pictures[ i ] );
             }
@@ -271,7 +270,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             var mainImg = LJ.fn.findMainImage();
             d.version = mainImg.img_version;
 
-            var imgTag = $.cloudinary.image(mainImg.img_id, d);
+            var imgTag = $.cloudinary.image( mainImg.img_id, d );
             imgTag.addClass('left');
 
             LJ.$thumbWrap.find('.imgWrap').html('').append( imgTag );
@@ -374,7 +373,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 
         },
-        handleFetchUserAndConfigurationSuccess: function(data) {
+        handleFetchUserAndConfigurationSuccess: function( data ){
 
             delog('Fetching user and config success');
 
@@ -428,8 +427,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                     }
 
                     /* Admin scripts. Every com is secured serverside */
-                    if (LJ.user.access.indexOf('admin') != -1)
+                    if( LJ.user.access.indexOf('admin') != -1 ){
                         LJ.fn.initAdminMode();
+                    }
 
                     LJ.fn.displayLayout();                    
 

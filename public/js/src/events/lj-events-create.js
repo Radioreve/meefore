@@ -451,11 +451,14 @@
                 DD: day.split('/')[0],
                 MM: day.split('/')[1],
                 YY: day.split('/')[2]
-            }).toISOString();
+            });
 
             // timezone
-            timezone = begins_at.utcOffset(); // eg. -120 for UTC+2
+            timezone = begins_at.utcOffset(); // eg. 120 for UTC+2
             
+            // proper format
+            begins_at = begins_at.toISOString();
+
             // age_range
             agerange  = $('.irs-from').text() + '-' + $('.irs-to').text();
 

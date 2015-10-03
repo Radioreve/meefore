@@ -220,7 +220,8 @@
 		function updateUsers(){
 			var g_callback = arguments[ arguments.length - 1 ];
 			User.update({
-					'events.begins_at' : date_range_query
+					'events.begins_at' : date_range_query,
+					'events.timezone'  : timezone_range_query
 				}, {
 					$pull: {
 						'events': {

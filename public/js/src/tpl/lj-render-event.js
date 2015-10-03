@@ -445,7 +445,7 @@
     renderChatWrapNotification_Host_Host: function( ){
 
       var html = '<div data-lid="ch_first_msg_host_channel" class="super-centered event-accepted-notification-message">'
-                          + 'Votre évènement a été créé avec succès'
+                          + 'Votre évènement a été créé avec succès.'
                           + '<br>'
                           + 'Vous pouvez discuter ici avec vos amis organisateurs en toute tranquilité. Ce chat '
                           + 'est reservé aux organisateurs.'

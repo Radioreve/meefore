@@ -113,6 +113,12 @@
             base_active: {
                 url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418425/pin_meefore_accepte_onclic_vqqlc6.png'
             },
+            hosting: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787505/marker_host_dark.png'
+            },
+            hosting_active: {
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787504/marker_host_pink.png'
+            },
             pending: {
                 url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/pin_pending_black.png'
             },

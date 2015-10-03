@@ -47,8 +47,10 @@
     
             LJ.$body.on('click', '.confirm-cancel button', function(){
 
-                var $self   = $(this);
-                var confirm = $self.attr('data-confirm');
+                var $self    = $(this);
+                var $wrap = $self.parents('.row-events-accepted-inview');
+                var event_id = $wrap.attr('data-eventid');
+                var confirm  = $self.attr('data-confirm');
 
                 if( confirm == "yes" ){
 
@@ -57,7 +59,7 @@
                     
                     LJ.fn.changeEventStatus({
                         event_id : event_id,
-                        status   : status
+                        status   : "canceled"
                     });
 
                 } else {
@@ -124,18 +126,44 @@
             LJ.fn.refreshEventStatusOnMap( event_id, status );
             LJ.fn.toastMsg( LJ.text_source["to_request_event_status_modified"][ LJ.app_language ] , 'info');
 
-            // close them all, whatever
+            // close the setting panel (of every event, in fact)
             $('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
                 .find('.icon-event-settings').removeClass('active').end()
-                .find('.event-inview-settings').velocity( LJ.ui.slideRightOutLight, {display:'none'} )
+                .find('.event-inview-settings').velocity( LJ.ui.slideRightOutLight, { display:'none' })
                 .find('.btn-validating').removeClass('btn-validating');
 
             if( status == "canceled" ){
 
-                // ...
+                var $els =  $('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
+                    .add('.event-accepted-tabview[data-eventid="' + event_id + '"]')
+                    .add('.row-preview')
 
+                $els.velocity('transition.slideDownOut', {
+                    duration: 500,
+                    complete: function(){
+                        LJ.fn.clearOneEvent( event_id );
+                        $els.remove();
+                    }
+                })
             }
 
+
+        },
+        clearOneEvent: function( event_id ){
+
+          // clean cache and map marker
+            LJ.cache.events.forEach(function( evt, i ){
+                if( evt._id == event_id ){
+                    LJ.cache.events.splice( i, 1 );
+                }
+            });
+
+            LJ.event_markers.forEach(function( mrk, i ){
+                if( mrk.id == event_id ){
+                    mrk.marker.setMap( null );
+                    LJ.event_markers.splice( i, 1 );
+                }
+            });
 
         },
         changeEventStatus: function( options ){
@@ -143,8 +171,7 @@
             var event_id = options.event_id,
                 status   = options.status;
 
-            if( !event_id || ! status ){
-                console.log(options);
+            if( !event_id || !status ){
                 return console.error('Cant update status without options');
             }
 

@@ -133,7 +133,7 @@
 		},
 		autoLogin: function(){
 
-    		var $el = $('<div class="auto-login-msg super-centered none">Get the party <b>started...</b></div>');
+    		var $el = $('<div class="auto-login-msg super-centered none">' + 'Chargement des prochaines soirées...' + '</b></div>');
 			$el.appendTo('.curtain').velocity('transition.fadeIn')
 			setTimeout( function(){
 

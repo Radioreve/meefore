@@ -216,7 +216,6 @@
 				return $html.remove();
 			}
 
-			console.log( $html.outerWidth(true) );
 			$input.css({ width: $input.outerWidth() - $html.outerWidth(true) });
 			$html.show();
 
