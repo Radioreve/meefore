@@ -425,7 +425,7 @@
 			"fr": "Le statut de l'évènement a été modifié",
 			"en": "The event status has been modified"
 		},
-		to_init_nofriends: {
+		to_init_no_friends: {
 			"fr": "Aucun de vos amis n'est sur Meefore? Invite-les à te rejoindre!",
 			"en": "None of your friends is on Meefore? Invite them all!"
 		},

@@ -526,7 +526,8 @@
                 behindTheScene: function(){
                     LJ.fn.hideModal();
                     LJ.fn.displayEventMarker( evt );
-                    LJ.fn.addEventInviewAndTabview( evt );
+                    LJ.fn.displayPartyMarker( evt.party );
+                    LJ.fn.addEventInviewAndTabview( evt, { hide: true });
                     LJ.fn.displayPathToParty({ evt: evt });
                     LJ.map.panTo({ lat: evt.address.lat, lng: evt.address.lng });
                     LJ.map.setZoom( 15 );
@@ -538,10 +539,11 @@
                 afterTheScene: function(){
                     LJ.fn.toastMsg( LJ.text_source["to_event_created_success_1"][ LJ.app_language ], 'info');
                     LJ.fn.toastMsg( LJ.text_source["to_event_created_success_2"][ LJ.app_language ], 'info');
-                    LJ.fn.addEventPreview( evt );
-                    LJ.fn.addPartyPreview( evt.party, opts );
                     LJ.fn.joinEventChannel( evt );
 
+                    setTimeout(function(){
+                        $('.event-accepted-tabview[data-eventid="' + evt._id + '"]').click()
+                    }, 250);
                 }   
             });
 

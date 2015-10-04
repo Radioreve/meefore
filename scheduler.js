@@ -23,6 +23,6 @@
 	var every_ten_sec = 1000 * 10;
 	(function terminateEventsEveryHour(){
 		require('./jobs/terminate-events').terminateEvents();
-		setTimeout( terminateEventsEveryHour, every );
+		setTimeout( terminateEventsEveryHour, every_hour );
 	})();
 

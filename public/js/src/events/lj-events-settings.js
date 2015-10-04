@@ -11,7 +11,7 @@
 
                 var $wrap = $self.parents('.row-events-accepted-inview');
                 var event_id = $wrap.attr('data-eventid');
-                var status   = $wrap.find('[data-status].active').attr('data-status');
+                var status   = $wrap.find('.settings-group-status .active').attr('data-status');
 
                 // Special case for cancel : need ask user confirmation
                 if( status == "canceled" ){
@@ -133,37 +133,103 @@
                 .find('.btn-validating').removeClass('btn-validating');
 
             if( status == "canceled" ){
-
-                var $els =  $('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
-                    .add('.event-accepted-tabview[data-eventid="' + event_id + '"]')
-                    .add('.row-preview')
-
-                $els.velocity('transition.slideDownOut', {
-                    duration: 500,
-                    complete: function(){
-                        LJ.fn.clearOneEvent( event_id );
-                        $els.remove();
-                    }
-                })
+                LJ.fn.handleCancelEvent( event_id );
             }
 
 
         },
-        clearOneEvent: function( event_id ){
+        removeMarker: function( opts ){
 
-          // clean cache and map marker
+            var cache_src = opts.cache_src;
+            var match_id  = opts.match_id;
+            var done      = opts.done;
+
+            LJ[ cache_src ].forEach(function( mrk, i ){
+                if( mrk.id == match_id ){
+                    if( mrk.marker && mrk.marker.setMap ){
+                        mrk.marker.setMap( null );
+                    } else {
+                        mrk.setMap( null );
+                    }
+                    LJ[ cache_src ].splice( i, 1 );
+                    if( done ){
+                        done();
+                    }
+                }
+            });
+
+        },
+        handleCancelEvent: function( event_id ){
+
+            var evt = LJ.fn.getEvent( event_id );
+
+            if( !evt ) return;
+
+            // Clear event marker
+            LJ.fn.removeMarker({
+                cache_src : 'event_markers',
+                match_id  : event_id
+            });
+
+            // Clear active event marker
+            LJ.fn.removeMarker({
+                cache_src : 'active_event_marker',
+                match_id  : event_id,
+                done      : LJ.fn.clearAllActivePaths
+            });
+            
+            // Clear cache paths so its not displayed when loaded from cache
+            // with no events in its extremities
+            LJ.fn.removeMarker({
+                cache_src : 'half_active_paths',
+                match_id  : event_id
+            })
+            delete LJ.cache.paths[ event_id ];
+
+            // Clear party marker if no other meefore was going there either
+            var place_id = _.find( LJ.cache.events, function( el ){
+                return el._id == event_id; 
+            }).party.address.place_id;
+
+            var k = 0;
+            LJ.cache.events.forEach(function( evt ){
+                if( evt.party.address.place_id === place_id ){
+                    k++;
+                }
+            });
+
+            if( k == 1 ){
+            // There was only 1 meefore going there, remove party marker too
+                LJ.fn.removeMarker({
+                    cache_src : 'party_markers',
+                    match_id  : place_id
+                });
+               LJ.fn.removeMarker({
+                    cache_src : 'active_party_marker',
+                    match_id  : place_id
+                });
+            }
+
+            // Clear event cache
             LJ.cache.events.forEach(function( evt, i ){
                 if( evt._id == event_id ){
                     LJ.cache.events.splice( i, 1 );
                 }
             });
 
-            LJ.event_markers.forEach(function( mrk, i ){
-                if( mrk.id == event_id ){
-                    mrk.marker.setMap( null );
-                    LJ.event_markers.splice( i, 1 );
+
+            var $els =  $('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
+                    .add('.event-accepted-tabview[data-eventid="' + event_id + '"]')
+                    .add('.row-preview');
+
+
+            $els.velocity('transition.slideDownOut', {
+                duration: 500,
+                complete: function(){
+                    $els.remove();
                 }
             });
+
 
         },
         changeEventStatus: function( options ){

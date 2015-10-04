@@ -709,6 +709,11 @@
 				marker.setOpacity(0.5);
 				// marker.setIcon( LJ.cloudinary.markers.black_on_white );
 			}
+
+			if( status == "canceled" ){
+				LJ.fn.handleCancelEvent( event_id );
+				return;
+			}
 			
         },
         filterUser: function( user ){
@@ -854,6 +859,19 @@
 		        }
 		    });   
 
+		},
+		getEvent: function( event_id ){
+
+			var evt = _.find( LJ.cache.events, function( el ){
+                 return el._id == event_id 
+             });
+
+            if( !evt ){
+                return console.warn('Couldnt find event...')
+            } else {
+                return evt;
+            }
+            
 		}
 
 

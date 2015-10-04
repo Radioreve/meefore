@@ -195,8 +195,9 @@
 			var event_id          = data.event_id;
 			var hosts_facebook_id = data.hosts_facebook_id;
 
-			if( !event_id )
+			if( !event_id ){
 				return console.error('Cant push new status without event!');
+			}
 			
 			// Message pour les autres organisateurs
 			if( LJ.fn.iHost( hosts_facebook_id ) ){

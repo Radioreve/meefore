@@ -218,6 +218,7 @@
                 zIndex    : options.zIndex
             });
 
+        
             // Store references of markers to destroy em and make them disappear from the map ( marker.setMap(null) )
             if( options.singleton ){
                 LJ[ options.cache ] && LJ[ options.cache ].setMap( null );
@@ -444,7 +445,7 @@
                 lat       : opts.lat,
                 lng       : opts.lng,
                 url       : LJ.cloudinary.markers[ marker_type + '_active'],
-                id        : evt.address.place_id,
+                id        : evt._id,
                 cache     : 'active_event_marker',
                 singleton : false,
                 zIndex    : 10,
@@ -459,14 +460,14 @@
                 mark.marker.setMap(null);
             });
 
-            delete LJ.active_party_marker;
+           LJ.active_party_marker = [];
 
             LJ.active_event_marker = LJ.active_event_marker || [];
             LJ.active_event_marker.forEach(function( mark ){
                 mark.marker.setMap(null);
             });
 
-            delete LJ.active_event_marker;
+            LJ.active_event_marker = [];
 
         },
         clearAllActivePaths: function(){
@@ -476,7 +477,7 @@
                 path.setMap(null);
             });
 
-            delete LJ.active_paths;
+            LJ.active_paths = [];
 
         },
         clearAllHalfActiveMarkers: function(){
@@ -486,7 +487,7 @@
                 mark.marker.setMap(null);
             });
 
-            delete LJ.half_active_markers;
+            LJ.half_active_markers = [];
 
         },
         clearAllHalfActivePaths: function(){
@@ -497,7 +498,7 @@
                 path.setMap(null);
             });
 
-            delete LJ.half_active_paths;
+            LJ.half_active_paths = [];
 
         },
         clearActivePreview: function(){
@@ -597,7 +598,9 @@
                 strokeWeight  : opts.stroke_weight || 5
             });
 
-            LJ[ opts.cache ].push( path );
+            path.id == opts.evt._id;
+
+            LJ[ opts.cache ].push( _.merge(path, { id: opts.evt._id }) );
 
             // Display the path we just stored
            LJ[ opts.cache ][ LJ[ opts.cache ].length - 1 ].setMap( LJ.map );
@@ -641,7 +644,8 @@
                     var path = response.routes[0].overview_path;
                     LJ.cache.paths[ evt._id ] = {
                         path      : path,
-                        cached_at : new Date()
+                        cached_at : new Date(),
+                        id        : evt._id
                     };
                     LJ.fn.displayPath( path, opts );
                     return;                    

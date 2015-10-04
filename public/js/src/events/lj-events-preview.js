@@ -180,7 +180,7 @@
             if( hids.indexOf( LJ.user.facebook_id ) != -1 )
                 renderFn = LJ.fn.renderEventPreview_Host;
 
-            evt.groups.forEach(function(group){
+            evt.groups.forEach(function( group ){
 
                 var mids = _.pluck( group.members, 'facebook_id' )
                 if( mids.indexOf( LJ.user.facebook_id )!= -1 ){

@@ -283,8 +283,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         displayLayout: function() {
 
             /* L'user était déjà connecté */
-            if (LJ.state.connected)
+            if (LJ.state.connected){
                 return LJ.fn.toastMsg('Vous avez été reconnecté', 'success');
+            }
 
             LJ.state.connected = true;
 
