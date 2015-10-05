@@ -248,14 +248,23 @@
 
                 compo.forEach(function( el ){
 
-                    if( el.types && el.types.indexOf('neighborhood') != -1 )
+                	if( !el.types ) return;
+
+                    if( el.types.indexOf('neighborhood') != -1 )
                         place_name = el.long_name;
 
-                    if( el.types && el.types.indexOf('route') != -1 )
+                    if( place.formatted_address )
+                    	place_name = place.formatted_address.split(',')[0];
+
+                    if( el.types.indexOf('route') != -1 )
                         place_name = el.long_name;
 
-                    if( el.types && el.types.indexOf('locality') != -1 )
+                    if( el.types.indexOf('locality') != -1 )
                         locality = el.long_name;
+
+                    if( place.name )
+                    	place_name = place.name
+                    
 
                 });
 

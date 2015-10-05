@@ -94,17 +94,31 @@
 
 		/* Build the right hour in the target timezone */
 		var target_day = today.add( target.day_add, 'days' )
+							  .add( 1, 'days')
 							  .utcOffset( target.timezone )
-							  .hours( 14 );
+							  .hours( 14 )
+							  .minutes( 0 );
 		
 		keeptrack('Ending events in timezone : ' + target.timezone/60 + ' (' + target.timezone + ')');
-		keeptrack('Localtime is : ' + moment().toString() );
+		keeptrack('Localtime is              : ' + moment().toString() );
 		keeptrack('Day of local time         : ' + today.format('DD/MM') );
 		keeptrack('Day of target time        : ' + target_day.format('DD/MM') );
 
-		var date_range_query     = { $lt: target_day.toDate(), $gt: target_day.add( -2, 'days' ).toDate() };
+		var date_range_query     = { $lt: target_day.toDate() };// $gt: target_day.add( -2, 'days' ).toDate() };
 		var timezone_range_query = { $gt: target.timezone - 60, $lt: target.timezone + 60 };
+		 timezone_range_query = { $gt: 120 - 60, $lt: 120 + 60 };
 
+		var full_event_query = {
+			'begins_at' : date_range_query,
+			'timezone'  : timezone_range_query,
+			'status'    : { $nin: ['ended','canceled'] }
+		};
+
+		var full_event_in_user_query = {
+			'begins_at' : date_range_query
+		};
+
+		console.log( JSON.stringify(full_event_query, null, 4) );
 
 		mongoose.connection.on('error', function( err ){
 
@@ -170,10 +184,7 @@
 			rd.on("ready", function(){
 				keeptrack('Connected to Redis! Updating...');
 
-				Event.find({
-					'begins_at' : date_range_query,
-					'timezone'  : timezone_range_query
-				}, function( err, events ){
+				Event.find( full_event_query, function( err, events ){
 
 					keeptrack( events.length + ' event(s) have matched the date query.');
 					var event_ids = [];
@@ -199,10 +210,7 @@
 
 		function updateEvents(){
 			var g_callback = arguments[ arguments.length - 1 ];
-			Event.update({
-					'begins_at' : date_range_query,
-					'timezone'  : timezone_range_query
-				}, {
+			Event.update( full_event_query, {
 					$set: {
 						'status': 'ended'
 					}
@@ -220,12 +228,14 @@
 		function updateUsers(){
 			var g_callback = arguments[ arguments.length - 1 ];
 			User.update({
-					'events.begins_at' : date_range_query,
-					'events.timezone'  : timezone_range_query
+					events: {
+						$elemMatch: full_event_in_user_query
+					}
 				}, {
 					$pull: {
-						'events': {
-							'begins_at' : date_range_query
+						events: {
+							$elemMatch: full_event_in_user_query
+							
 						}
 					}
 				}, { 
@@ -334,7 +344,7 @@
 
 
 	// Test purposes
-	// terminateEvents();
+	 // terminateEvents();
 
 
 	module.exports = {

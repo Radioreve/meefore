@@ -209,7 +209,9 @@
 
                 $( event_preview ).hide().appendTo('.row-events-preview');
 
-                $('.row-events-preview').velocity( LJ.ui.slideUpInLight, {
+                $('.row-events-preview')
+                    .css({ display: 'block', opacity: 0 })
+                    .velocity( LJ.ui.slideUpInLight, {
                     duration: duration,
                     complete: function(){
                         $('.event-preview').css({ opacity: 0 }).show()
@@ -261,7 +263,9 @@
 
                 $( party_preview ).hide().appendTo('.row-party-preview');
 
-                $('.row-party-preview').velocity( LJ.ui.slideUpInLight, {
+                $('.row-party-preview')
+                    .css({ display: 'block', opacity: 0 })
+                    .velocity( LJ.ui.slideUpInLight, {
                     duration: duration,
                     complete: function(){
                         $('.party-preview').css({ opacity: 0 }).show()

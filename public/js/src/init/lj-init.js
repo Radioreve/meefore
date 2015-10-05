@@ -215,11 +215,15 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.google_places_autocomplete_filters.addListener('places_changed', function(){
 
                 var place = LJ.google_places_autocomplete_filters.getPlaces()[0];
+                var bounds = LJ.google_places_autocomplete_filters.getBounds();
 
                 if( !place.geometry ) return;
 
-                LJ.map.panTo( place.geometry.location );
-                LJ.map.setZoom(14);
+                console.log(place);
+                console.log(bounds);
+                LJ.map.fitBounds( place.geometry.viewport );
+                // LJ.map.panTo( place.geometry.location );
+                // LJ.map.setZoom(14);
             });
 
             /* Mise à jour du profile des filters */

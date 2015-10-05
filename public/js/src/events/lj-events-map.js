@@ -511,6 +511,7 @@
                 duration: 270,
                 complete: function(){
                     setTimeout(function(){
+                        $row_preview.css({ display: 'none' });                            
                         $row_preview.children().remove();
                     }, 200 );
                 }

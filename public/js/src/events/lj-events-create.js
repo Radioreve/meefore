@@ -142,7 +142,7 @@
                 LJ.fn.displayInModal({ 
                     source:'local',
                     fix_height: -120,
-                    starting_width: 550,
+                    starting_width: 600,
                     custom_classes: ['text-left'],
                     render_cb: function(){
                         return LJ.fn.renderCreateEvent({ 

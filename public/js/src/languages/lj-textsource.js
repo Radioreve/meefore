@@ -210,8 +210,8 @@
 			"en": "Ambiance"
 		},
 		e_create_ambiance_placeholder: {
-			"fr": "#Hashtagtonmeefore",
-			"en": "#Hashtagyourmeefore"
+			"fr": "#hashtagTonMeefore",
+			"en": "#hashtagYourMeefore"
 		},
 		e_create_guests_type: {
 			"fr": "Type d'invités",
