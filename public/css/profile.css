@@ -25,29 +25,29 @@
 }
 
 .row-title .icon {
-   border-top: 1px solid #676767;
-   box-shadow: 1px -1px 0px #9C9C9C;
+   /* border-top: 1px solid #676767; */
+   /* box-shadow: 1px -1px 0px #9C9C9C; */
    border-bottom: none;
    padding: 7px 5px;
-   /* border-radius: 3px; */
+   border-radius: 3px;
    position: relative;
-   background-color: #FEFEFE;
-   color: #E94F6A;
-   top: 16px;
+   /* background-color: #FEFEFE; */
+   color: #484848;
+   top: 10px;
    cursor: pointer;
    transition: all ease-out .3s;
-   font-size: 15px;
+   font-size: 16px;
 }
 
 .row-title .icon.active,
 .row-pictures i.selected {
    background: #68D068;
    color: white;
-   border-top: 1px solid black;
 }
 
 .row-title .icon:not(.active):hover {
-   background: #F9F9F9;
+   background: #D7FFD7;
+   /* z-index: -1; */
 }
 
 .row-body {
