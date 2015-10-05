@@ -1049,11 +1049,10 @@ opacity: .85;}
 }
 
 .btn-validate-group {
-  display: block;
+  display: block; 
   margin: 0 auto;
-  margin-top: 12px
-;
-  background: #E94F6A;
+  margin-top: 12px;
+  background: #68D068;
   color: white;
 }
 

@@ -96,12 +96,14 @@
 		var target_day = today.add( target.day_add, 'days' )
 							  .utcOffset( target.timezone )
 							  .hours( 14 )
-							  .minutes( 0 );
+							  .minutes( 0 )
+							  .seconds( 0 );
 		
 		keeptrack('Ending events in timezone : ' + target.timezone/60 + ' (' + target.timezone + ')');
 		keeptrack('Local time is  : ' 			 + moment().toString() );
 		keeptrack('Target time is : '	 		 + target_day.toString() );
 
+		// Cast moment dates to Date objects
 		var date_range_query     = { $lt: target_day.toDate() };// $gt: target_day.add( -2, 'days' ).toDate() };
 		var timezone_range_query = { $gt: target.timezone - 60, $lt: target.timezone + 60 };
 

@@ -104,10 +104,13 @@
       hosts_pictures_html = '<div class="event-preview-hosts">';
       evt.hosts.forEach(function( host ){
 
-        var display_params = _.merge( LJ.cloudinary.events.map.hosts.params, { img_version: LJ.fn.findMainImage( host ).img_version } );
+        var display_params = LJ.cloudinary.events.map.hosts.params;
+            display_params.img_version = LJ.fn.findMainImage( host ).img_version;
+
         var img_tag = $.cloudinary.image( LJ.fn.findMainImage( host ).img_id, display_params ).prop('outerHTML');
+        
         var country = '<div class="user-flag"><span class="flag-icon flag-icon-' + host.country_code + '"></span></div>';
-        hosts_pictures_html += '<div class="event-preview-host-picture" data-userid="'+host.facebook_id+'">' + img_tag + country +'</div>'
+        hosts_pictures_html += '<div class="event-preview-host-picture" data-userid="' + host.facebook_id + '">' + img_tag + country +'</div>'
 
       });
       hosts_pictures_html += '</div>';

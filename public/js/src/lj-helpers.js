@@ -419,6 +419,12 @@
 		findMainImage: function( user ){
 
 			var user = user || LJ.user ;
+			
+			if( user.main_picture ){
+				return user.main_picture
+			};
+			
+			
 			var index = _.findIndex( user.pictures, function( el ){
 				return el.is_main == ( true || "true" );
 			});
