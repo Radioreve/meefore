@@ -126,7 +126,7 @@
         }
       });
 
-      var ambiance_html = '<div class="event-preview-ambiance">';
+      var ambiance_html = '<div class="event-preview-ambiance nonei">';
       evt.ambiance.forEach(function( hashtag ){
         if( hashtag == '' ) return;
         ambiance_html += '<span class="event-preview-ambiance-hashtag">#</span><span class="event-preview-ambiance-name">' + LJ.fn.hashtagify(hashtag) + '</span>';
@@ -156,7 +156,7 @@
                 + '</div>';
 
       html = $(html);
-      LJ.fn.setAppLanguage( LJ.app_language, $(html) )
+      LJ.fn.setAppLanguage( LJ.app_language, html )
       
       return html.prop('outerHTML');
 
@@ -376,7 +376,9 @@
 
             + '</div>';
 
-        return html;
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, html )
+      return html.prop('outerHTML');
 
     },
     renderChatGroup_Group: function( group ){
@@ -385,7 +387,10 @@
                       + '<span>' + group.name + '</span>'
                       + '<span class="bubble none"></span>'
                    + '</div>';
-      return html;
+
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, html )
+      return html.prop('outerHTML');
 
     },
     renderChatGroup_Host: function(){
@@ -394,7 +399,10 @@
                       + '<span data-lid="ch_hosts" > Organisateurs </span>'
                       + '<span class="bubble none"></span>'
                    + '</div>';
-      return html;
+
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, html )
+      return html.prop('outerHTML');
 
     },
      renderChatWrap_Host_Host: function( event_id ){
@@ -409,7 +417,10 @@
                         + '<button data-lid="ch_button_send" class="theme-btn">Envoyer</button>'
                       + '</div>'
                   + '</div>';
-      return html;
+
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, html )
+      return html.prop('outerHTML');
 
     },
     renderChatWrap_Host_Group: function( event_id, group ){
@@ -426,7 +437,10 @@
                         + '<button data-lid="ch_button_send" class="theme-btn">Envoyer</button>'
                       + '</div>'
                   + '</div>';
-      return html;
+
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, html )
+      return html.prop('outerHTML');
 
     },
     renderChatWrap_Group_Host: function( event_id, group ){
@@ -443,7 +457,11 @@
                         + '<button data-lid="ch_button_send" class="theme-btn">Envoyer</button>'
                       + '</div>'
                   + '</div>';
-      return html;
+
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, html )
+      return html.prop('outerHTML');
+
     },
     renderChatWrapNotification_Host_Host: function( ){
 
@@ -453,7 +471,10 @@
                           + 'Vous pouvez discuter ici avec vos amis organisateurs en toute tranquilité. Ce chat '
                           + 'est reservé aux organisateurs.'
                         + '</div>';
-      return html;
+
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, html )
+      return html.prop('outerHTML');
 
     },
     renderChatWrapNotification_Host_Group: function( group ){
@@ -464,7 +485,9 @@
                           + '<div class="event-accepted-group-message">' + group.message + '</div>'
                           + '<button data-lid="ch_request_validate" class="theme-btn btn-validate-group">Accepter ce groupe</button>'
                         + '</div>'
-      return html;
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, html )
+      return html.prop('outerHTML');
 
     },
     renderChatWrapNotification_Group_Host: function(){
@@ -474,8 +497,11 @@
                         + '<br>'
                         + 'Dès que l\'un des organisateurs vous aura accepté, vous aurez accès à la discussion.'
                       + '</div>'
-      return html;
 
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, html )
+      return html.prop('outerHTML');
+                      
     },
     renderEventTabview: function( evt ){
 
@@ -562,7 +588,7 @@
           ];
 
           html = $( html.join('') );
-          LJ.fn.setAppLanguage( LJ.app_language, $( html ) )
+          LJ.fn.setAppLanguage( LJ.app_language, html )
           
           return html.prop('outerHTML');
 

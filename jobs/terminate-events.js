@@ -114,7 +114,8 @@
 		};
 
 		var full_event_in_user_query = {
-			'begins_at' : date_range_query
+			'begins_at' : date_range_query,
+			'timezone'  : timezone_range_query
 		};
 
 		console.log( JSON.stringify(full_event_query, null, 4) );

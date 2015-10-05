@@ -82,7 +82,7 @@ i.icon-create {
     height: 100%;
 }
 .row-party-preview {
-    padding-right: 20px;
+    padding-right: 18px;
     width: 30%;
     right: 0;
     /* top: 210px; */
@@ -99,7 +99,7 @@ i.icon-create {
 }
 .row-events-preview {
      padding-left: 50px;
-     padding-right: 70px;
+     padding-right: 0px;
      width: 70%;
      left: 0;
 }
@@ -180,8 +180,7 @@ margin-right: 9px;
 
 .event-preview-details,
 .party-preview-details{
-text-align: left;
-display: inline-block;
+text-align: left;display: inline-block;
 vertical-align: middle;
 margin-right: 11px;max-width: 62%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
 .party-preview-details {
@@ -210,6 +209,9 @@ padding-left: 3px;display: inline-block;font-size: 13px;}
    line-height: 14px;
    display: inline-block;
    margin-right: 20px;
+}
+.event-preview-hosts-names{
+  display: block;
 }
 .party-preview-place-type{
   display: inline-block;
@@ -335,7 +337,6 @@ transform: rotate(30deg);
   font-size: 10px;
   color: #FFFFFF;
   display: inline-block;
-  position: absolute;
   right: 0;
   top: 17px;
   right: 14px;
@@ -867,30 +868,34 @@ padding: 8px 0px 0 20px;
 }
 
 .event-accepted-chat-typing input {
-
-position: relative;
-
-z-index: 2;
-
-background: #F5F5F5;
-
-padding: 6px 0 4px 10px;
-
-border-bottom: 1px solid #eee;
-
-width: 86%;
-
-color: #525252;
-
-font-family: 'Karla';
-
-font-size: 13px;
-
-transition: all ease-out .3s;
+position: relative;
+z-index: 2;
+background: #F5F5F5;
+padding: 6px 0 4px 10px;
+border-bottom: 1px solid #eee;
+width: 82%;
+color: #525252;
+font-family: 'Karla';
+font-size: 13px;
+transition: all ease-out .3s;
 }
 .event-accepted-chat-typing button {
 
-float: right;background: #E94F6A;border: 1px solid #E94F6A;border-bottom: 2px solid #BD4056;border-radius: 0px;color: white;}
+float: right;
+
+background: #E94F6A;
+
+border: 1px solid #E94F6A;
+
+border-bottom: 2px solid #BD4056;
+
+border-radius: 0px;
+
+color: white;
+
+font-size: 12px;
+
+}
 
 .event-accepted-chat-typing button.active {
   opacity: .7;

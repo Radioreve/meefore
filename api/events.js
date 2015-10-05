@@ -40,7 +40,11 @@
 	    new_event.save(function( err, new_event ){
 
 	    	if( err ){
-	    		return eventUtils.raiseError({ err: err, res: res, toClient: "Error saving event"});
+	    		return eventUtils.raiseError({
+	    			err: err,
+	    			res: res,
+	    			toClient: "Error saving event"
+	    		});
 	    	}
 
 	    	var event_item = {
@@ -130,6 +134,7 @@
 		var groups    = req.sent.groups;
 		var event_id  = req.sent.event_id;
 		var socket_id = req.sent.socket_id;
+		var evt       = req.sent.evt;
 
 		var new_group           = req.sent.new_group;
 		var group_id            = req.sent.new_group.group_id;
@@ -144,9 +149,12 @@
 				return eventUtils.raiseError({ err: err, res: res, toClient: "api error fetching event" });
 			}
 
+		console.log(evt);
+
 			var event_to_push = {
 				event_id    : event_id,
 				begins_at   : evt.begins_at,
+				timezone	: evt.timezone,
 				//group_id	: group_id,
 				status 		: 'pending'
 			};

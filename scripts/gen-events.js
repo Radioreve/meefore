@@ -67,7 +67,7 @@
                                 var mixity   = mixity_arr[ randomInt(0,2) ];
 
                                 var ambiance = [];
-                                for( var i = 0; i < 5; i++) {
+                                for( var i = 0; i < 4; i++) {
                                     ambiance.push( generateWord(5) );  // 5 syllabes max
                                 }
 

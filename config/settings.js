@@ -8,7 +8,7 @@ var settings = {
 		min_hosts: 1,
 		max_hosts: 5,
 		min_ambiance: 1,
-		max_ambiance: 5,
+		max_ambiance: 4,
 		mood: 
 		[
 			{ id: 'happy', display: 'Happy' },

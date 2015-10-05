@@ -102,6 +102,7 @@
 							}
 						});
 
+					req.sent.evt = evt;
 
 					if( !evt )
 						return callback({

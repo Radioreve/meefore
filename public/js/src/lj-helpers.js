@@ -831,7 +831,7 @@
                 LJ.fn.addItemToInput({ 
                     html: LJ.fn.renderItemInInput_GroupMessage( $input.val() ),
                     inp: '#ri-groupmessage',
-                    max: 1
+                    max: LJ.settings.app.max_ambiance
                 });
                 $input.val('');
             }
@@ -842,15 +842,15 @@
 			// Ambiance hashtags
 			var $input = $('.row-create-ambiance').find('input');
             var $item  = $('.row-create-ambiance').find('.item');
-            if( $input.val().trim().length != 0 ){
-                $item.remove();
+
+            if( $input.val().trim().length == 0 ) return;
+
                 LJ.fn.addItemToInput({ 
                     html: LJ.fn.renderAmbianceInCreate( $input.val() ),
                     inp: '#cr-ambiance',
-                    max: 1
+                    max: 5
                 });
                 $input.val('');
-            }
 
 		},
 		adjustAllTabviews: function(){

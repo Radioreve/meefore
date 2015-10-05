@@ -138,7 +138,7 @@
 			"en": "Cancel"
 		},
 		h_search_placeholder: {
-			"fr": "Rechecher quelqu'un",
+			"fr": "Rechercher quelqu'un",
 			"en": "Looking for someone?"
 		},
 		h_logout: {
