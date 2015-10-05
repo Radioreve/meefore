@@ -142,6 +142,18 @@
 						members_facebook_id : req.sent.members_facebook_id
 					};
 
+					// Only store the main_picture to optimize size and code clarity
+					req.sent.new_group.members.forEach(function( member ){
+
+						var main_picture = _.find( member.pictures, function( pic ){
+							return pic.is_main = true;
+						});
+
+						delete member.pictures;
+						member.main_picture = main_picture;
+
+					});
+
 					// Update les groups de l'event, rdy to save
 					req.sent.groups = evt.groups;
 					req.sent.groups.push( req.sent.new_group );
