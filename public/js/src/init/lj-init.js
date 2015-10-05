@@ -219,11 +219,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 if( !place.geometry ) return;
 
-                console.log(place);
-                console.log(bounds);
-                LJ.map.fitBounds( place.geometry.viewport );
-                // LJ.map.panTo( place.geometry.location );
-                // LJ.map.setZoom(14);
+                 if( place.geometry.viewport ){
+                    LJ.map.fitBounds( place.geometry.viewport );
+                 } else if( place.geometry.location ){
+                    LJ.map.panTo( place.geometry.location );
+                    LJ.map.setZoom(14);
+                 }
             });
 
             /* Mise à jour du profile des filters */

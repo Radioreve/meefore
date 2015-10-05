@@ -1235,10 +1235,10 @@ body > header > h5 {
 }
 
 .btn-cancel {
-   background-color: #eee;
+   background-color: #D1D1D1;
 }
 .btn-cancel:hover {
-	background: #DBDBDB;
+	background: #E5E5E5;
 }
 
 
@@ -1526,7 +1526,7 @@ input:focus:-ms-input-placeholder {
 
 input[type="submit"]:hover,
 button:hover {
-   background-color: #4DBF4D;
+   background-color: #85E585;
    /* border: none; */
 }
 .btn-preview-undo:hover {

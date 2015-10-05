@@ -45,6 +45,7 @@
 
 	    	var event_item = {
 				status    : 'hosting',
+				timezone  : data.timezone,
 				event_id  : new_event._id,
 				begins_at : new_event.begins_at
 	    	};
