@@ -17,6 +17,11 @@
                 LJ.fn.removeItemToInput(this);
             });
 
+             LJ.$body.on('mouseenter', '#createEvent .btn-validate', function(){
+
+                LJ.fn.formatCreateEventInputs();
+
+            });
 
 			LJ.$body.on('keydown', 'input', function(e){
 

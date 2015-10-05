@@ -831,6 +831,22 @@
             }
 
 		},
+		formatCreateEventInputs: function(){
+
+			// Ambiance hashtags
+			var $input = $('.row-create-ambiance').find('input');
+            var $item  = $('.row-create-ambiance').find('.item');
+            if( $input.val().trim().length != 0 ){
+                $item.remove();
+                LJ.fn.addItemToInput({ 
+                    html: LJ.fn.renderItemInInput( $input.val() ),
+                    inp: '#cr-ambiance',
+                    max: 1
+                });
+                $input.val('');
+            }
+
+		},
 		adjustAllTabviews: function(){
 
 			var elements_width = 0;

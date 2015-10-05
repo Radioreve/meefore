@@ -94,7 +94,6 @@
 
 		/* Build the right hour in the target timezone */
 		var target_day = today.add( target.day_add, 'days' )
-							  .add( 1, 'days')
 							  .utcOffset( target.timezone )
 							  .hours( 14 )
 							  .minutes( 0 );
