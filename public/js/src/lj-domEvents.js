@@ -41,7 +41,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
             		.toggleClass('slow-down-3')
             		.click();
 
-            	$self.find('input').first().focus();
+            	$self.find('input').focus();
 
             });
 
