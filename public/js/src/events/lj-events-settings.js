@@ -184,7 +184,9 @@
                 cache_src : 'half_active_paths',
                 match_id  : event_id
             })
-            delete LJ.cache.paths[ event_id ];
+            if( LJ.cache.paths ){
+                delete LJ.cache.paths[ event_id ];
+            }
 
             // Clear party marker if no other meefore was going there either
             var place_id = _.find( LJ.cache.events, function( el ){
@@ -230,6 +232,17 @@
                     .add('.event-accepted-tabview[data-eventid="' + event_id + '"]')
                 }
             });
+
+            // If user was trying to requestIn, alert that event has been canceled
+            if( $('#requestIn[data-eventid="' + event_id + '"]').length ){
+                $('#requestIn').children().velocity('transition.fadeOut', {
+                    duration: 600,
+                    complete: function(){
+                        var el = '<div class="modal-title super-centered">' + LJ.text_source["e_request_event_got_canceled"][ LJ.app_language ] + '</div>';
+                        $(el).hide().appendTo('#requestIn').velocity('transition.fadeIn', { duration: 600 });
+                    }
+                });
+            }
 
 
         },

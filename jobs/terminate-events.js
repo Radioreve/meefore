@@ -105,7 +105,6 @@
 
 		var date_range_query     = { $lt: target_day.toDate() };// $gt: target_day.add( -2, 'days' ).toDate() };
 		var timezone_range_query = { $gt: target.timezone - 60, $lt: target.timezone + 60 };
-		 timezone_range_query = { $gt: 120 - 60, $lt: 120 + 60 };
 
 		var full_event_query = {
 			'begins_at' : date_range_query,

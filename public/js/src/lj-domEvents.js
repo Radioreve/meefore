@@ -31,10 +31,18 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
             });
             
             LJ.$body.on('click', '.row-input', function(){
+
             	var $self = $(this);
+
             	if( $self.parents('.row').hasClass('editing') ) return;
-            	$self.parents('.row').find('.icon-edit').toggleClass('slow-down full-rotation');
-            	$self.find('input').focus();
+
+            	$self.parents('.row')
+            		.find('.icon-edit')
+            		.toggleClass('slow-down-3')
+            		.click();
+
+            	$self.find('input').first().focus();
+
             });
 
             LJ.$body.on('click', '.pick-lang', function(){
@@ -111,6 +119,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			};
 
 			csl('Emitting update settings [ui]');
+			LJ.fn.showLoaders();
 
 			var eventName = 'me/update-settings-ux',
 				data = data
@@ -150,6 +159,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			};
 
 			csl('Emitting update settings [mailinglists]');
+			LJ.fn.showLoaders();
 
 			var eventName = 'me/update-settings-mailinglists',
 				data = data

@@ -839,7 +839,7 @@
             if( $input.val().trim().length != 0 ){
                 $item.remove();
                 LJ.fn.addItemToInput({ 
-                    html: LJ.fn.renderItemInInput( $input.val() ),
+                    html: LJ.fn.renderAmbianceInCreate( $input.val() ),
                     inp: '#cr-ambiance',
                     max: 1
                 });

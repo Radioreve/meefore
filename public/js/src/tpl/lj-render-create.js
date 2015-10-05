@@ -64,7 +64,7 @@
 
                         +'<div class="row-input row-input-lg etiquette row-create-ambiance">'
                           +'<label data-lid="e_create_ambiance" class="label label-lg" for="cr-ambiance">Ambiance</label>'
-                          +'<input data-lid="e_create_ambiance_placeholder" class"" id="cr-ambiance" type="text" placeholder="Hashtag ton before ( 5 max )">'
+                          +'<input data-lid="e_create_ambiance_placeholder" class"" id="cr-ambiance" type="text" maxlength="40" placeholder="Hashtag ton before ( 5 max )">'
                         +'</div>'
 
                         +'<div class="row-input row-input-lg etiquette row-create-age">'

@@ -257,6 +257,10 @@
 			"fr": "Annuler",
 			"en": "Cancel"
 		},
+		e_request_event_got_canceled: {
+			"fr": "Le meefore vient d'être annulé :/",
+			"en": "The meefore just got canceled :/"
+		},
 		e_preview_participate: {
 			"fr": "Participer",
 			"en": "Participate"

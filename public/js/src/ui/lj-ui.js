@@ -22,7 +22,7 @@
 
 			});
 
-			['#contact', '#profile', '#events', '#management', '#settings'].forEach(function(menuItem){
+			['#contact', '#profile', '#events', '#management', '#settings'].forEach(function( menuItem ){
 
 				var $menuItem = $( menuItem );
 
@@ -68,7 +68,10 @@
 							$('.row-events-accepted-tabview').velocity('transition.slideUpIn', { duration: duration_time });
 							$('.row-events-accepted-inview.active').velocity('transition.slideDownIn', { duration: duration_time });
 							setTimeout(function(){
-								$('.row-events-filters, .row-preview').velocity('transition.slideDownIn', { duration: duration_time });
+								$('.row-events-filters').velocity('transition.slideDownIn', { duration: duration_time });
+								if( $('.row-preview').children().length > 0 ){
+									$('.row-preview').velocity('transition.slideDownIn', { duration: duration_time });
+								}
 							}, 300 );
 						}
 

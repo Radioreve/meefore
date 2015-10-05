@@ -103,10 +103,11 @@
 			.sort({ 'begins_at': -1 })
 			.exec( function( err, events ){
 
-				if( err )
+				if( err ){
 					return eventUtils.raiseError({ err: err, res: res,
 						toClient: "Erreur de l'API"
 					});
+				}
 
 				var filtered_events = [];
 				events.forEach(function( evt ){
@@ -138,8 +139,9 @@
 
 		Event.findByIdAndUpdate( event_id, { groups: groups }, { new: true }, function( err, evt ){
 
-			if( err )
+			if( err ){
 				return eventUtils.raiseError({ err: err, res: res, toClient: "api error fetching event" });
+			}
 
 			var event_to_push = {
 				event_id    : event_id,

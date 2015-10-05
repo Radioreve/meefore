@@ -1224,12 +1224,12 @@ body > header > h5 {
 
 .theme-btn {
    font-family: 'Karla';
-   padding: 5px 10px;
+   padding: 7px 20px;
    border: none;
-   font-size: 13px;
+   font-size: 14px;
    outline: none;
    margin: 0 2px;
-   border-radius: 2px;
+   /* border-radius: 2px; */
    transition: all ease-out .3s;
    cursor: pointer;
 }
@@ -1243,9 +1243,9 @@ body > header > h5 {
 
 
 .btn-validate {
-   background-color: #E94F6A;
+   background-color: #68D068;
    color: white;
-   border: 1px solid #E94F6A;
+   /* border: 1px solid #E94F6A; */
 }
 
 .btn-validating {
@@ -1526,7 +1526,7 @@ input:focus:-ms-input-placeholder {
 
 input[type="submit"]:hover,
 button:hover {
-   background-color: #FC738A;
+   background-color: #4DBF4D;
    /* border: none; */
 }
 .btn-preview-undo:hover {

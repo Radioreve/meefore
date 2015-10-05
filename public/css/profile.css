@@ -25,22 +25,25 @@
 }
 
 .row-title .icon {
-   border: 1px solid #484848;
+   border-top: 1px solid #676767;
+   box-shadow: 1px -1px 0px #9C9C9C;
+   border-bottom: none;
    padding: 7px 5px;
-   border-radius: 20px;
+   /* border-radius: 3px; */
    position: relative;
    background-color: #FEFEFE;
    color: #E94F6A;
-   top: 27px;
+   top: 16px;
    cursor: pointer;
    transition: all ease-out .3s;
+   font-size: 15px;
 }
 
 .row-title .icon.active,
 .row-pictures i.selected {
-   background: #656565;
+   background: #68D068;
    color: white;
-   border: 1px solid black;
+   border-top: 1px solid black;
 }
 
 .row-title .icon:not(.active):hover {
@@ -186,6 +189,7 @@
 .row-buttons {
    display: none;
    margin-top: 36px;
+   text-align: center;
 }
 
 .picture-edit > div {
@@ -280,12 +284,13 @@
 .row-select {
    display: inline-block;
    font-size: 12px;
-   padding: 9px 8px;
+   padding: 7px 9px;
    border-radius: 2px;
    transition: all ease-out .3s;
    border: 1px solid white;
    cursor: pointer;
-   vertical-align: top;
+   vertical-align: middle;
+   margin-top: 2px;
    font-family: 'Karla';
 }
 
@@ -332,6 +337,8 @@
 .row.editing .row-select.modified {
    background-color: #F1F1F1;
    color: #353535;
+   background: #68D068;
+   color: white;
 }
 
 .inspire {
