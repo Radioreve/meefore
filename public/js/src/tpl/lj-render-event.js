@@ -370,8 +370,8 @@
                       + chat_wrap_html
                     + '</div>'
                   + '</div>'
+                  + '<div class="backtomap"><i class="icon icon-down-bold"></i></div>'
                 + '</div>'
-                + '<div class="backtomap"><i class="icon icon-forward-1"></i></div>'
                 + LJ.fn.renderEventSettings( evt );
 
             + '</div>';
@@ -553,8 +553,8 @@
                         + chat_wrap_html
                       + '</div>'
                   + '</div>'
+                  + '<div class="backtomap"><i class="icon icon-down-bold"></i></div>'
                 + '</div>'
-                + '<div class="backtomap"><i class="icon icon-forward-1"></i></div>'
             + '</div>';
 
         return html;

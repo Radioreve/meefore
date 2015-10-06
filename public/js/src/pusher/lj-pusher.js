@@ -317,6 +317,8 @@
 				}*/
 			}
 
+			LJ.fn.bubbleUpMessage( chat_id );
+
 		},
 		pushNewChatWhisper: function( data ){
 
@@ -342,6 +344,8 @@
 					});
 				}*/
 			}
+
+			LJ.fn.bubbleUpMessage( chat_id );
 
 		},
 		pushNewChatReadBy: function( data ){

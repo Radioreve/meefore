@@ -88,13 +88,13 @@
     <div class="preview-type beta">bêta</div>
       <img id="logo" src="/img/logomeefore.png" width="48"></img>
       <ul id="menuWrap" class="">
-        <li id="profile" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
-        <li id="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
+        <li id="profile" data-hash="me" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
+        <li id="events" data-hash="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
         <li id="search" class="menu-item icon icon-search"><span class="underlay"></span>
           <div id="searchbar" class=""><input data-lid="h_search_placeholder" type="text" placeholder="Rechercher un membre" class="search-input"></div>
         </li>
         <li id="management" class="menu-item icon icon-users" data-linkedcontent="#manageEventsWrap"><span class="underlay"></span></li>
-        <li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
+        <li id="settings" data-hash="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
         <li id="contact" class="right menu-item icon icon-mail-alt nonei" data-linkedcontent="#contactWrap"><span class="underlay"></span></li>
       </ul>
     </div>
@@ -425,10 +425,12 @@
   <script src="js/lib/rangeslider.js"></script>
   <script src="js/lib/async.min.js"></script>
   <!-- <script src="js/lib/prefixfree.min.js"></script> -->
+  <script src="js/lib/md5.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry" type="text/javascript"></script>
 
   <!-- custom scripts -->
   <script src="js/src/lj-params.js"></script>
+  <script src="js/src/router/lj-router.js"></script>
   <script src="js/src/languages/lj-textsource.js"></script>
   <script src="js/src/lj-helpers.js"></script>
   <script src="js/src/tpl/lj-render-profile.js"></script>

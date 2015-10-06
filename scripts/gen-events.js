@@ -73,11 +73,12 @@
 
                                 var begins_at = new moment();
 
-                                var timezone = -540
+                                var timezone = 120
                                 begins_at.utcOffset( timezone )
-                                         .hours( randomInt(0,24) )
-                                         .minutes( randomInt(0,60) )
-                                         .add( randomInt(-2,2), 'days' );
+                                         .hours( randomInt(14,23) )
+                                         .minutes( 0 )
+                                         .seconds( 0 )
+                                         .add( randomInt( 0, 1), 'days' );
 
 
                                 var google_place = google_places[ randomInt(0, google_places.length - 1 ) ];

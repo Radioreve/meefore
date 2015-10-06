@@ -7,13 +7,14 @@ function sleep(ms, cb, p2) {
 function look(json) {
     return JSON.stringify(json, null, '\t');
 }
+
 window.csl = function(msg) {
     delog(msg);
 };
 
 window.LJ.fn = _.merge( window.LJ.fn || {},
 
-    {
+    {   
 
         init: function(o) {
 
@@ -37,6 +38,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
             // Augment lodash & jQuery
             this.initAugmentations();
+
+            // Init basic spa routing
+            this.initRouter();
 
             // Detect when browser is closed
             // this.initHandleCloseBrowser();
@@ -97,6 +101,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                     .find('button').removeClass('btn-whisper').text( LJ.text_source["ch_button_send"][ LJ.app_language ] );
                 return this;
             };
+
 
         },
         initAjaxSetup: function() {

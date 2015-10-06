@@ -38,7 +38,7 @@
 			"en": "My information"
 		},
 		p_info_subtitle: {
-			"fr": "Dis-nous tout, et surtout, concentre-toi sur l'essentiel",
+			"fr": "Dîtes-nous tout, et surtout, concentrez-vous sur l'essentiel",
 			"en": "Tell us everything, and above all, focus on the essential",
 		},
 		p_name_label: {
@@ -118,15 +118,15 @@
 			"en": "Wines"
 		},
 		p_friends_title: {
-			"fr": "Tous tes amis sont sur Meefore",
+			"fr": "Tous vos amis sont sur Meefore",
 			"en": "Everybody is on Meefore"
 		},
 		p_friends_subtitle: {
-			"fr": "Tes amis Facebook sont tous sur Meefore. Il en manque? Invite-les à te rejoindre!",
+			"fr": "Vos amis Facebook sont tous sur Meefore. Il en manque? Invite-les à vous rejoindre!",
 			"en": "All your Facebook friends are on Meefore. Are some of them missing? Invite them to join!"
 		},
 		p_friends_nofriends: {
-			"fr": "Tu n'as aucun ami Facebook inscrit sur Meefore. Invite-les pour commencer à participer à des meefore!",
+			"fr": "Vous n'avez aucun ami Facebook inscrit sur Meefore. Invitez-les pour commencer à participer à des meefore!",
 			"en": "You don't have any Facebook friends on Meefore. Invite them all to start taking part in meefore!"
 		},
 		p_button_validate: {
@@ -166,7 +166,7 @@
 			"en": "Hosts"
 		},
 		e_create_hosts_placeholder: {
-			"fr": "Sélectionne parmis tes amis (1 minimum)",
+			"fr": "Sélectionnez parmis vos amis (1 minimum)",
 			"en": "Select among your friends (1 minimum)"
 		},
 		e_create_begins_at: {
@@ -246,11 +246,11 @@
 			"en": "This name will be displayed in the chat"
 		},
 		e_request_group_members_placeholder: {
-			"fr": "Choisis les personnes avec qui tu souhaites sortir",
+			"fr": "Choisissez les personnes avec qui vous souhaitez sortir",
 			"en": "Choose the people you wanna go out with"
 		},
 		e_request_group_message_placeholder: {
-			"fr": "Dis-nous en plus à propos de ton groupe",
+			"fr": "Dites-nous en plus à propos de votre groupe",
 			"en": "Tell us more about your group"
 		},
 		e_request_button_cancel: {
@@ -294,7 +294,7 @@
 			"en": "AutoLogin"
 		},
 		s_app_autologin_desc: {
-			"fr": "Active cette option pour accéder directement à Meefore et sauter la page d'accueil",
+			"fr": "Activez cette option pour accéder directement à Meefore sans passer par la page d'accueil",
 			"en": "Activate this option to reach directly Meefore and skip the landing page"
 		},
 		s_alerts_title: {
@@ -302,7 +302,7 @@
 			"en": "Alerts and notifications"
 		},
 		s_alerts_subtitle: {
-			"fr": "Sois alerté en temps réel lorsqu'un évènement est créé près de chez toi",
+			"fr": "Restez alerté en temps réel lorsqu'un évènement est créé près de chez toi",
 			"en": "Be alerted in real-time when an event is hosted near your place"
 		},
 		s_alerts_newsletter_label: {
@@ -366,7 +366,7 @@
 			"en": "Your group just got accepted in the discussion"
 		},
 		ch_first_msg_host_channel: {
-			"fr": "Votre meefore a été créé avec succès. <br> Ce chat est privé entre toi et les autres organisateurs.",
+			"fr": "Votre meefore a été créé avec succès. <br> Ce chat est privé entre vous et les autres organisateurs.",
 			"en": "Your meefore has been successully created. <br> This chat is dedicated to you and the other hosts."
 		},
 		ch_first_msg_host: {
@@ -430,7 +430,7 @@
 			"en": "The event status has been modified"
 		},
 		to_init_no_friends: {
-			"fr": "Aucun de vos amis n'est sur Meefore? Invite-les à te rejoindre!",
+			"fr": "Aucun de vos amis n'est sur Meefore? Invitez-les à vous rejoindre!",
 			"en": "None of your friends is on Meefore? Invite them all!"
 		},
 		to_noupload_necessary: {
@@ -438,11 +438,11 @@
 			"en": "No update is necessary!"
 		},
 		to_upload_singlepic: {
-			"fr": "Ne télécharge qu'une seule image à la fois",
+			"fr": "Ne téléchargez qu'une seule image à la fois",
 			"en": "Please, don't upload more than one picture at once"
 		},
 		to_upload_pic_success: {
-			"fr": "Ta photo a été modifiée",
+			"fr": "Votre photo a été modifiée",
 			"en": "Your picture has been updated"
 		},
 		to_host_push_new_group: {
@@ -450,23 +450,23 @@
 			"en": "A group has requested to join your meefore"
 		},
 		to_push_new_request_by_friend: {
-			"fr": "Un ami t'a ajouté à un meefore",
+			"fr": "Un ami vous a ajouté à un meefore",
 			"en": "A friend added you to a meefore"
 		},
 		to_push_new_status_by_friend: {
-			"fr": "Un de tes amis a modifié le statut d'un de tes meefore",
+			"fr": "Un de vos amis a modifié le statut d'un de vos meefore",
 			"en": "One of your friends modified the status of one of your meefore"
 		},
 		to_push_request_accepted: {
-			"fr": "Tu as été accepté dans un meefore!",
+			"fr": "Vous avez été accepté dans un meefore!",
 			"en": "You have been accepted in a meefore!"
 		},
 		to_push_group_validated_by_friend: {
-			"fr": "Un de tes amis a validé un groupe",
+			"fr": "Un de vos amis a validé un groupe",
 			"en": "One of your friends has validated a group"
 		},
 		to_push_group_suspended_by_friend: {
-			"fr": "Un de tes amis a suspendu un groupe de la discussion",
+			"fr": "Un de vos amis a suspendu un groupe de la discussion",
 			"en": "One of your friends has suspended a group from the chat"
 		},
 		to_welcome: {
@@ -499,7 +499,7 @@
 			"en": "There is a field that seems to be missing :/"
 		},
 		err_create_already_hosting_me: {
-			"fr": "Tu organises déjà un meefore ce jour là",
+			"fr": "Vous organisez déjà un meefore ce jour là",
 			"en": "You have already planned a meefore this day"
 		},
 		err_create_already_hosting_other: {
@@ -595,7 +595,7 @@
 			"en": "You are not authorized to request this discussion's messages"
 		},
 		err_chat_fetch_unauth_admin: {
-			"fr": "Tu n'es pas autorisé à participer à cette discussion! (admin)",
+			"fr": "Vous n'êtes pas autorisé à participer à cette discussion! (admin)",
 			"en": "You are not authorized to take part in this discussion"
 		},
 		err_chat_mp: {

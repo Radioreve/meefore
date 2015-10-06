@@ -147,7 +147,7 @@
 					req.sent.new_group.members.forEach(function( member ){
 
 						var main_picture = _.find( member.pictures, function( pic ){
-							return pic.is_main = true;
+							return pic.is_main;
 						});
 
 						delete member.pictures;

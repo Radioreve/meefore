@@ -30,10 +30,10 @@
 
 				$menuItem.find('span.bubble').addClass('filtered').text('');
 		
-				  if( LJ.state.animatingContent || $menuItem.hasClass('menu-item-active') || ($menuItem.hasClass('disabled')) )
+				  if( LJ.state.freezing_ui || $menuItem.hasClass('menu-item-active') || ($menuItem.hasClass('disabled')) )
 				  	return;
 
-				  		LJ.state.animatingContent = true;
+				  		LJ.state.freezing_ui = true;
 						
 						var linkedContent = $menuItem.data('linkedcontent');
 						
@@ -108,7 +108,7 @@
 							   	duration: 0 || 450,
 							   	display:'block',
 							   	complete: function(){
-							   		LJ.state.animatingContent = false;
+							   		LJ.state.freezing_ui = false;
 							   		if(LJ.user.status === 'new'){
 							   			//LJ.fn.toggleOverlay('high', LJ.tpl.charte );
 							   		}
@@ -411,8 +411,9 @@
         	var $el = $(el);
 
         	if( !opts.stack ){
-				if( $el.hasClass('active') )
-				return;
+				if( $el.hasClass('active') ){
+					return;
+				}				
 			}
 
         	var $bubble = $el.find('.bubble'),
@@ -446,6 +447,8 @@
             LJ.fn.updateTabviewBubbles( event_id );
 
         },
+        // Crawl all messages of each tabview for one event, and update the event tabview bubble
+        // along with the page title if nmsg > 0;
         updateTabviewBubbles: function( event_id ){
 
         	var n_messages_unread = 0;
@@ -454,7 +457,8 @@
         		.find('.event-accepted-chatgroup')
         		.each(function( i, chatgroup ){
 
-        			n_messages_unread += parseInt( $( chatgroup ).find('.bubble').text() || 0 );
+        			var $chatgroup = $( chatgroup );
+        			n_messages_unread += parseInt( $chatgroup.find('.bubble').text() || 0 );
 
         		});
 
@@ -536,8 +540,13 @@
 				$user_img.addClass('whispering')
 				$user_img.first().clone().addClass('img-input-whisper').attr('data-authorid', facebook_id )
 						 .appendTo( $chat_wrap.find('.event-accepted-chat-typing') )
-						 .velocity('transition.slideLeftIn', { duration: 500 });
-						  LJ.fn.adjustAllWhisperOnInput( $chat_wrap );
+						 .velocity('transition.slideLeftIn', { duration: 500 })
+						 .click(function(){
+						 	LJ.fn.stageUserForWhisper( facebook_id, chat_id );
+						 });
+						 LJ.fn.adjustAllWhisperOnInput( $chat_wrap );
+
+
 
 			}
 

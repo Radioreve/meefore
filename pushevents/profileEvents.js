@@ -188,6 +188,8 @@
 		var updatedPictures = data.updatedPictures,
 			userId			= data.userId;
 
+		var old_main_picture;
+
 		User.findById( userId, function( err, myUser ){
 
 			if( err )
@@ -198,38 +200,49 @@
 					toServer : "Impossible de trouver l'user"
 				});
 
-			var mainified_picture = _.find( updatedPictures, function(el){ return el.action == "mainify"});
-			if( mainified_picture && myUser.pictures[ mainified_picture.img_place ].img_id == settings.placeholder.img_id )
+			var mainified_picture = _.find( updatedPictures, function( el ){
+			 return el.action == "mainify"
+			});
+
+			if( mainified_picture && myUser.pictures[ mainified_picture.img_place ].img_id == settings.placeholder.img_id ){
 				return eventUtils.raiseError({
 					res      : res,
 					err      : err,
 					toClient : "Ta photo de profile doit te représenter",
 					toServer : "Tentative de mettre une photo qui n'est pas lui même"
 				});
+			}
 
 			for( var i = 0; i < updatedPictures.length; i++ ){
 
-				var current_picture = _.find( myUser.pictures,
-					function(el){ 
+				var current_picture = _.find( myUser.pictures, function( el ){ 
 						return el.img_place == updatedPictures[i].img_place
 					});
 				
 				if( updatedPictures[i].action == "mainify" )
-				{
-					var currentMain = _.find( myUser.pictures, function(el){ return el.is_main == true });
-						currentMain.is_main = false;
+				{	
+
+					var currentMain = _.find( myUser.pictures, function( el ){ 
+						return el.is_main == true 
+					});
+					// Store reference for criteria in Mongo update
+					old_main_picture = currentMain;
+
+					currentMain.is_main = false;
 
 					myUser.pictures.set( parseInt( currentMain.img_place ), currentMain );
 					current_picture.is_main = true;
 					myUser.pictures.set( parseInt( current_picture.img_place ), current_picture );
 
 				}
+
 				if( updatedPictures[i].action == "delete" )
 				{
-					current_picture.img_id = settings.placeholder.img_id;
+					current_picture.img_id      = settings.placeholder.img_id;
 					current_picture.img_version = settings.placeholder.img_version;
 					myUser.pictures.set( parseInt( current_picture.img_place ), current_picture );
 				}
+
 				if( updatedPictures[i].action == "hashtag" )
 				{
 					current_picture.hashtag = updatedPictures[i].new_hashtag;
@@ -238,20 +251,65 @@
 
 			}
 
-			myUser.save(function( err, savedUser ){
+			// Saving picture modifications to user profile
+			myUser.save(function( err, saved_user ){
 
 				if( err )
 				return eventUtils.raiseError({
-					res: res,
-					err: err,
-					toClient: "Une erreur serveur s'est produite",
-					toServer: "Impossible de sauvegarder l'user"
+					res      : res,
+					err      : err,
+					toClient : "Une erreur serveur s'est produite",
+					toServer : "Impossible de sauvegarder l'user"
 				});
 
 				console.log('sending success');
-				eventUtils.sendSuccess( res, { msg: "Mise à jour effectuée!", pictures: savedUser.pictures });
+				eventUtils.sendSuccess( res, { msg: "Mise à jour effectuée!", pictures: saved_user.pictures });
+
+				//Propagating to all events he's been in
+				console.log('Propagating photo update in all events');
+
+				var event_ids = _.pluck( saved_user.events, 'event_id' );
+				var main_picture = _.find( saved_user.pictures, function( pic ){
+					return pic.is_main;
+				});
+
+				// Switch to true to match the criteria. Old pic is still tagged as main in events;
+				old_main_picture.is_main = true;
+
+				console.log( old_main_picture);
+				console.log( main_picture );
+
+				// Update events where he is host
+				Event.update({
+					'hosts.main_picture': old_main_picture
+				}, {
+					$set: {
+						'hosts.$.main_picture': main_picture
+					}
+				}, {
+					multi: true
+				}, function( err, raw ){
+					if( err ) return console.log( err );
+					console.log('Propagated as host in ' + raw.n + ' events' );
+				});
+
+				// Update events where he is asker
+				Event.update({
+					'groups.members.main_picture': old_main_picture
+				}, {
+					$set: {
+						'groups.members.$.main_picture': main_picture
+					}
+				}, {
+					multi: true
+				}, function( err, raw ){
+					if( err ) return console.log( err );
+					console.log('Propagated as member in ' + raw.n + ' events' );
+				});
 
 			});
+
+
 		});
 	};
 

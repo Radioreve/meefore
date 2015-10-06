@@ -208,7 +208,7 @@
 		connected: false,
 		fetchingEvents: false,
         fetchingAskers: false,
-		animatingContent: false,
+		freezing_ui: false,
 		animatingChat: false,
 		toastAdded: false,
 		typingMsg: {},

@@ -182,7 +182,7 @@ margin-right: 9px;
 .party-preview-details{
 text-align: left;display: inline-block;
 vertical-align: middle;
-margin-right: 11px;max-width: 62%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+margin-right: 11px;/* max-width: 62%; */overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
 .party-preview-details {
   padding: 10px;
 }
@@ -287,35 +287,20 @@ display: inline-block;}
 }
 
 .backtomap {
-
-position: absolute;
-
-top: 0;
-
-left: 50%;
-
-transform: translate(0,-50%);
-
-background: #E94F6A;
-
-color: white;-:10px;
-
-font-family: 'Karla';
-
-cursor: pointer;
-
-border-radius: 3px;
-
-width: 50px;
-
-height: 4px;
+position: absolute;
+top: 16px;
+right: -2px;
+transform: translate(0,-50%);
+/* background: #E94F6A; */
+color: white;-:10px;
+font-family: 'Karla';
+cursor: pointer;
+/* border-radius: 3px; */
+padding: 5px 3px;
+font-size: 21px;
 }
 .backtomap .icon {
-transition: all ease-out .3s;
-margin: 3px 0 0 0;
-float: right;
-transform: rotate(30deg);
-}
+transition: all ease-out .3s;/* border-bottom: 2px solid #FFFFFF; */position: relative;top: 1px;color: #E94F6A;font-size: 14;}
 .backtomap:hover {
   opacity: .85;
 }
@@ -868,16 +853,26 @@ padding: 8px 0px 0 20px;
 }
 
 .event-accepted-chat-typing input {
-position: relative;
-z-index: 2;
-background: #F5F5F5;
-padding: 6px 0 4px 10px;
-border-bottom: 1px solid #eee;
-width: 82%;
-color: #525252;
-font-family: 'Karla';
-font-size: 13px;
-transition: all ease-out .3s;
+
+position: relative;
+
+z-index: 2;
+
+background: #F5F5F5;
+
+padding: 6px 0 4px 10px;
+
+border-bottom: 1px solid #eee;
+
+width: 82%;
+
+color: #525252;
+
+font-family: 'Karla';
+
+font-size: 13px;
+
+transition: all ease-out .3s;
 }
 .event-accepted-chat-typing button {
 
@@ -1041,7 +1036,7 @@ opacity: .85;}
   position: relative;
   color: #7B7B7B;
 }
-
+ 
 .event-accepted-chatwraps {
   height: 89%;
 }
@@ -1071,6 +1066,7 @@ opacity: .85;}
   padding: 1px;
   top: -5px;
   left: 0px;
+  cursor: pointer;
 }
 
 .user-flag {

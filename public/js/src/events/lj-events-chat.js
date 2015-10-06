@@ -209,11 +209,6 @@
                 } else {
                     $last_msg_sd.velocity({ opacity: [ 1.0, 0 ] }, { duration: 200 });
                 }
-                
-
-                // Bubbling notifications, better ux
-                LJ.fn.bubbleUpMessage( chat_id );
-
 
             }, 50 );
 

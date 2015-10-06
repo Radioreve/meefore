@@ -165,6 +165,16 @@
 
 			/* Hosts are validated*/
 			event_data.hosts = _.pluckMany( hosts, settings.public_properties.users );
+			event_data.hosts.forEach(function( host, i ){
+
+				var main_picture = _.find( host.pictures, function( pic ){
+					return pic.is_main
+				});
+
+				host.main_picture = main_picture;
+				delete host.pictures;
+
+			});
 
 			return callback( null, event_data );
 

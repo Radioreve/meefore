@@ -25,14 +25,16 @@
 
                 $inview_wrap_target.css({ height: adjusted_height });
 
-                if( $inview_wrap_target.find('.event-accepted-chatgroup.active').length == 0 ){
-                    $inview_wrap_target.find('.event-accepted-chatgroup').first().click();
-                }
+                // if( $inview_wrap_target.find('.event-accepted-chatgroup.active').length == 0 ){
+                //     $inview_wrap_target.find('.event-accepted-chatgroup').first().click();
+                // }
                 
+                $inview_wrap_target.find('.event-accepted-chatgroup.last-active').click();
 
                 // Close chatviews
                 if( $self.hasClass('active') ){
                     $inview_wrap_target.velocity('transition.slideDownOut', { duration: 400 }).removeClass('active');
+                    $inview_wrap_target.find('.event-accepted-chatgroup.active').removeClass('active').addClass('last-active');
                     $self.removeClass('active');
                     return;
                 }
@@ -46,7 +48,8 @@
                     $inview_wrap_target
                         .siblings('.active').removeClass('active').end()
                         .velocity('transition.slideUpIn', { duration: 600 }).addClass('active')
-                        .find('.event-accepted-inview').velocity('transition.slideUpIn');
+                        .find('.event-accepted-inview').velocity('transition.slideUpIn')
+                        .find('.event-accepted-chatgroup.last-active').addClass('active');
 
                     LJ.fn.addEventPreview( evt );
                     LJ.fn.addPartyPreview( evt.party );
@@ -57,6 +60,10 @@
 
                 // Update tabview 
                 $('.event-accepted-tabview').removeClass('active');
+
+                // Update chatgroup view (to prevent host bubbleup not working on last opened chat)
+                $('.event-accepted-chatgroup.active').removeClass('active').addClass('last-active');
+                $inview_wrap_target.find('.event-accepted-chatgroup.last-active').addClass('active');
                 $self.addClass('active');
                                 
                 // Update preview
@@ -129,14 +136,14 @@
             $('.row-events-accepted-tabview').append( LJ.fn.renderEventTabview( evt ) );
             LJ.fn.updateTabviewIconStatus();
 
-            if( !options.hide  ){
+            if( !options.hide ){
                 $('.event-accepted-tabview').last().click();
             }
 
             /* jsp */
             var $inview =  $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
 
-            $inview.find('.event-accepted-chatgroup').first().addClass('active');
+            $inview.find('.event-accepted-chatgroup').first().addClass('last-active');
             $inview.find('.event-accepted-chat-wrap').first().removeClass('none');
             
             var chats_jsp = {};
