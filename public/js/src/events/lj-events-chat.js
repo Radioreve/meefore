@@ -7,6 +7,9 @@
 
                LJ.fn.clearActivePreview();
                LJ.fn.clearActiveInview();
+               LJ.fn.clearAllActiveMarkers();
+               LJ.fn.clearAllActivePaths();
+               LJ.fn.clearAllHalfActivePaths();
 
             });
 

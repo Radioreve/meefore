@@ -287,22 +287,33 @@ display: inline-block;}
 }
 
 .backtomap {
-position: absolute;
-top: 16px;
-right: -2px;
-transform: translate(0,-50%);
-/* background: #E94F6A; */
-color: white;-:10px;
-font-family: 'Karla';
-cursor: pointer;
-/* border-radius: 3px; */
-padding: 5px 3px;
-font-size: 21px;
+
+position: absolute;
+
+top: 16px;
+
+right: -2px;
+
+transform: translate(0,-50%);
+
+/* background: #E94F6A; */
+
+color: white;-:10px;
+
+font-family: 'Karla';
+
+cursor: pointer;
+
+/* border-radius: 3px; */
+
+padding: 5px 3px;
+
+font-size: 21px;
 }
 .backtomap .icon {
-transition: all ease-out .3s;/* border-bottom: 2px solid #FFFFFF; */position: relative;top: 1px;color: #E94F6A;font-size: 14;}
-.backtomap:hover {
-  opacity: .85;
+transition: all ease-out .3s;/* border-bottom: 2px solid #FFFFFF; */position: relative;top: 1px;color: #999999;font-size: 14;}
+.backtomap:hover .icon {
+  color: #E94F6A;
 }
 .backtomap:hover .icon{
 }
