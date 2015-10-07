@@ -38,7 +38,7 @@
 				rd.get('event/' + event_id + '/group/' + group_id + '/status', function( err, status ){
 
 					// User that has been validated to fetch message?
-					if( group_id != "hosts" && status != 'accepted' )
+					if( group_id != "hosts" && status == "suspended" )   // On autorise les "kick" 
 						return callback({
 							err_id: "unauthorized_fetch",
 							data: {

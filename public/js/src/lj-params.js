@@ -108,40 +108,80 @@
 		},
 		markers: {
 			base: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418376/pin_meefore_creation_zrm3hj.png'
+                open: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418376/marker_dark.png'
+                }, full: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418376/marker_dark_full.png'
+                }
             },
             base_active: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418425/pin_meefore_accepte_onclic_vqqlc6.png'
+                open: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418425/marker_pink.png'
+                }, full: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418425/marker_pink_full.png'
+                }
             },
             hosting: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787505/marker_host_dark.png'
+                open: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787505/marker_host_dark.png'
+                }, full: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787505/marker_host_dark_full.png'
+                }
             },
             hosting_active: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787504/marker_host_pink.png'
+                open: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787504/marker_host_pink.png'
+                }, full: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787504/marker_host_pink_full.png'
+                }
             },
             pending: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/pin_pending_black.png'
+                open: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/marker_pending_dark.png'
+                }, full: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/marker_pending_dark_full.png'
+                }
             },
             pending_active: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_points_pink.png'
+                open: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_pending_pink.png'
+                }, full: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_pending_pink_full.png'
+                }
             },
             kicked: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/pin_pending_black.png'
+                open: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/marker_pending_dark.png'
+                }, full: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/marker_pending_dark_full.png'
+                }
             },
             kicked_active: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_points_pink.png'
+                open: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_pending_pink.png'
+                }, full: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_pending_pink_full.png'
+                }
             },
             accepted: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418560/marker_chat_black.png'
+                open: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418560/marker_chat_dark.png'
+                }, full: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418560/marker_chat_dark_full.png'
+                }
             },
             accepted_active: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418507/marker_chat_pink.png'
+                open: {
+                  url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418507/marker_chat_pink.png'
+                }, full: {
+                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418507/marker_chat_pink_full.png'
+                }
             },
             party: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442436513/pin_party.png'
+                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442436513/marker_party_dark.png'
             },
             party_active: {
-                url:'http://res.cloudinary.com/radioreve/image/upload/v1442436750/pin_party_pinkfail.png'
+                url:'http://res.cloudinary.com/radioreve/image/upload/v1442436750/marker_party_pink.png'
             }
 		},
         curtain: {

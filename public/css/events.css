@@ -42,7 +42,7 @@ i.icon-create {
 }
 
 .btn-create-event {
-   width: 140px;
+   width: 160px;
    text-transform: uppercase;
    font-weight: bolder;
    padding: 11px 3px;
@@ -53,6 +53,9 @@ i.icon-create {
    background: #e94f6a;
    border-radius: 1px;
    box-shadow: 0 1px 2px  1px rgba(233, 79, 106, 0.24);
+}
+.btn-create-event i{
+  margin-right: 6px;
 }
 
 .row-main {
@@ -311,7 +314,7 @@ padding: 5px 3px;
 font-size: 21px;
 }
 .backtomap .icon {
-transition: all ease-out .3s;/* border-bottom: 2px solid #FFFFFF; */position: relative;top: 1px;color: #999999;font-size: 14;}
+transition: all ease-out .3s;position: relative;top: -2px;right: 4px;color: #999999;font-size: 16px;}
 .backtomap:hover .icon {
   color: #E94F6A;
 }
@@ -367,8 +370,7 @@ position: relative;
 z-index: 1;
 cursor: pointer;margin: 10px 0 0 22px;
 background: white;
-color: #530606;
-box-shadow: 2px 0px 3px -1px #ccc;
+color: #530606;box-shadow: 3px -1px 5px -1px #BABABA;
 transform: skewX(20deg);width: 120px;height: 37px;
 white-space: nowrap;
 border-radius: 5px 5px 0 0;top: 0px;}
@@ -577,7 +579,7 @@ overflow: hidden;
 }
 .event-accepted-user .user-flag {
   opacity: 0;
-  transition: all ease-out .3s;
+  transition: all ease-in-out .15s;
 }
 
 .event-accepted-user:hover .user-flag {
@@ -901,6 +903,7 @@ color: white;
 
 font-size: 12px;
 
+text-transform: none;
 }
 
 .event-accepted-chat-typing button.active {

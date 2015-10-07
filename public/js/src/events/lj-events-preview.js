@@ -149,7 +149,7 @@
                 LJ.fn.hideModal(function(){
 
                     LJ.fn.fetchEventById( event_id, LJ.fn.handleFetchEventById );
-                    LJ.fn.toastMsg('Votre demande a été envoyée!', 'info');
+                    LJ.fn.toastMsg( LJ.text_source["to_request_sent"][ LJ.app_language ], 'info');
 
                      LJ.active_event_marker[0].marker.setIcon( LJ.cloudinary.markers.pending_active );
 

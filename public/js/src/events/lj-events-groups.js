@@ -57,10 +57,10 @@
                         duration: duration * 1.65,
                         complete: function(){
 
-                                LJ.fn.adjustChatPaneById({
-                                    event_id : event_id,
-                                    chat_id  : chat_id
-                                });
+                            LJ.fn.adjustChatPaneById({
+                                event_id : event_id,
+                                chat_id  : chat_id
+                            });
 
                         }
                     });
@@ -143,9 +143,7 @@
                         }
                     });
 
-                          
-            });
-			
+            });			
 			 
 		},
 		updateGroupStatus: function( options ){
@@ -190,13 +188,31 @@
                  .attr('data-status', status )
 
             if( status == 'accepted' ){
-                var msg = LJ.text_source["to_event_group_accepted"][ LJ.app_language ].replace('%s', group.name );
-                LJ.fn.toastMsg( msg );
+
+                 LJ.fn.addChatLine({
+                        chat_id     : LJ.fn.makeChatId({ event_id: event_id, group_id: group.group_id }),
+                        msg         : LJ.text_source["to_event_group_accepted"][ LJ.app_language ].replace('%s', group.name ),
+                        name        : LJ.bot_profile.name,
+                        img_id      : LJ.bot_profile.img_id,
+                        facebook_id : LJ.bot_profile.facebook_id,
+                        sent_at     : new Date(),
+                        class_names : ["bot"]
+
+                });  
             }
 
             if( status == 'kicked' ){
-                var msg = LJ.text_source["to_event_group_pending"][ LJ.app_language ].replace('%s', group.name );
-                LJ.fn.toastMsg( msg );
+
+                LJ.fn.addChatLine({
+                        chat_id     : LJ.fn.makeChatId({ event_id: event_id, group_id: group.group_id }),
+                        msg         : LJ.text_source["to_event_group_pending"][ LJ.app_language ].replace('%s', group.name ),
+                        name        : LJ.bot_profile.name,
+                        img_id      : LJ.bot_profile.img_id,
+                        facebook_id : LJ.bot_profile.facebook_id,
+                        sent_at     : new Date(),
+                        class_names : ["bot"]
+
+                    });  
             }     
         },
         updateGroupStatusUI: function( event_id, group ){
@@ -213,26 +229,14 @@
                 $wrap.find('[data-groupid="' + group.group_id + '"] .icon-toggle')
                     .removeClass('icon-toggle-off').addClass('icon-toggle-on').removeClass('active');
 
-                var bot_msg = "Le groupe " + group.name + " a été accepté";
             }
 
             if( status == 'kicked' ){
                 $wrap.find('[data-groupid="' + group.group_id + '"] .icon-toggle')
                     .removeClass('icon-toggle-on').addClass('icon-toggle-off').removeClass('active');
 
-                var bot_msg = "Le groupe " + group.name + " a été suspendu de la discussion";
+                    var bot_msg = LJ.text_source["to_event_group_suspended"][ LJ.app_language ].replace('%s', group.name );
             }
-
-            LJ.fn.addChatLine({
-                chat_id     : LJ.fn.makeChatId({ event_id: event_id, group_id: group_id }),
-                msg         : bot_msg,
-                name        : LJ.bot_profile.name,
-                img_id      : LJ.bot_profile.img_id,
-                facebook_id : LJ.bot_profile.facebook_id,
-                sent_at     : new Date(),
-                class_names : ["bot"]
-
-            });  
 
         }
 

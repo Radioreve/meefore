@@ -160,22 +160,25 @@
 
 				user.save(function( err ){
 
-					if( err )
+					if( err ){
 						return eventUtils.raiseError({
-							res:      res,
-							err:      err,
-							toClient: "Impossible de sauvegarder votre photo Facebook"
+							res      : res,
+							err      : err,
+							toClient : "Impossible de sauvegarder votre photo Facebook"
 						});
+					}
 
 					res.json({ 
-						msg:         "Votre photo a été chargée à partir de Facebook",
-						img_id:      img_id,
-						img_version: response.version
+						msg         : "Votre photo a été chargée à partir de Facebook",
+						img_id      : img_id,
+						img_version : response.version
 					});
 
 				});
 							
 			});
+		}, {
+			public_id: img_id
 		});
 
 	};

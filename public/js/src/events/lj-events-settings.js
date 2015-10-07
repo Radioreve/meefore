@@ -123,6 +123,7 @@
             var status   = data.status;
 
             LJ.fn.hideLoaders();
+            LJ.fn.updateEventCache( data );
             LJ.fn.refreshEventStatusOnMap( event_id, status );
             LJ.fn.toastMsg( LJ.text_source["to_request_event_status_modified"][ LJ.app_language ] , 'info');
 

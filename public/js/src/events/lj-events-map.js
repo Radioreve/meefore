@@ -249,6 +249,7 @@
 
             var url;
             var status;
+            var open_status;
 
             var my_group = _.find( evt.groups, function( group ){
                 return group.members_facebook_id.indexOf( LJ.user.facebook_id ) != -1; 
@@ -260,6 +261,12 @@
                 status = "hosting";
             } else {
                 status = 'base';
+            }
+
+            if( evt.status == "open" ){
+                open_status = "open"
+            } else {
+                open_status = "full"
             }
 
             var effective_lat = evt.address.lat;
@@ -283,7 +290,7 @@
             LJ.fn.displayMarker( _.merge({
                 lat       : effective_lat,
                 lng       : effective_lng,
-                url       : LJ.cloudinary.markers[ status ].url,
+                url       : LJ.cloudinary.markers[ status ][ open_status ].url,
                 cache     : 'event_markers',
                 singleton : false,
                 id        : evt._id,
@@ -417,6 +424,8 @@
             }
 
             var status = null;
+            var open_status = null;
+
             evt.groups.forEach(function( group ){
                 if( LJ.fn.iGroup( group.members_facebook_id ) ){
                     status = group.status;
@@ -441,10 +450,16 @@
                 marker_type = "pending";
             }
 
+            if( evt.status == "open" ){
+                open_status = "open"
+            } else {
+                open_status = "full"
+            }
+
             LJ.fn.displayMarker({
                 lat       : opts.lat,
                 lng       : opts.lng,
-                url       : LJ.cloudinary.markers[ marker_type + '_active'],
+                url       : LJ.cloudinary.markers[ marker_type + '_active'][ open_status ],
                 id        : evt._id,
                 cache     : 'active_event_marker',
                 singleton : false,
@@ -661,6 +676,37 @@
 
             });
 
+        },
+        refreshEventStatusOnMap: function( event_id, status ){
+
+            var marker = _.find( LJ.event_markers, function( el ){
+                return el.id == event_id; 
+            }).marker;
+
+            var current_url = marker.getIcon().split('/').slice(-1)[0].split('.png')[0];
+
+            // Playing with url parts. Url need to respect some convention
+            if( status == "open" ){
+                var current_url   = marker.getIcon();
+                var last_part     = current_url.split('/').slice(-1)[0].split('.png')[0];
+                var first_part    = current_url.split('marker')[0];
+                var new_last_part = last_part.split('_full')[0];
+                marker.setIcon( first_part + new_last_part );
+            }
+            
+            if( status == "suspended" ){
+                var current_url   = marker.getIcon();
+                var last_part     = current_url.split('/').slice(-1)[0].split('.png')[0];
+                var first_part    = current_url.split('marker')[0];
+                var new_last_part = last_part + '_full';
+                marker.setIcon( first_part + new_last_part );
+            }
+
+            if( status == "canceled" ){
+                LJ.fn.handleCancelEvent( event_id );
+                return;
+            }
+            
         }
 
 	});

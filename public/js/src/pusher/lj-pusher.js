@@ -279,11 +279,33 @@
 				if( status == "accepted" ){
 
 					LJ.fn.toastMsg( LJ.text_source["to_push_group_validated_by_friend"][ LJ.app_language ], 'info', 3500 );
+
+					 LJ.fn.addChatLine({
+		                chat_id     : LJ.fn.makeChatId({ event_id: event_id, group_id: group_id }),
+		                msg         : LJ.text_source["to_event_group_accepted"][ LJ.app_language ].replace('%s', group.name ),
+		                name        : LJ.bot_profile.name,
+		                img_id      : LJ.bot_profile.img_id,
+		                facebook_id : LJ.bot_profile.facebook_id,
+		                sent_at     : new Date(),
+		                class_names : ["bot"]
+
+		            });  
 					
 				}
 				if( status == "kicked" ){
 
 					LJ.fn.toastMsg( LJ.text_source["to_push_group_suspended_by_friend"][ LJ.app_language ], 'info', 3500 );
+
+					LJ.fn.addChatLine({
+		                chat_id     : LJ.fn.makeChatId({ event_id: event_id, group_id: group_id }),
+		                msg         : LJ.text_source["to_event_group_suspended"][ LJ.app_language ].replace('%s', group.name ),
+		                name        : LJ.bot_profile.name,
+		                img_id      : LJ.bot_profile.img_id,
+		                facebook_id : LJ.bot_profile.facebook_id,
+		                sent_at     : new Date(),
+		                class_names : ["bot"]
+
+		            });  
 				}
 
 			}

@@ -711,26 +711,6 @@
         	return group_id;
 
         },
-        refreshEventStatusOnMap: function( event_id, status ){
-
-        	var marker = _.find( LJ.event_markers, function( el ){ return el.id == event_id; }).marker;
-
-			if( status == "open" ){
-				marker.setOpacity(1);
-				// marker.setIcon( LJ.cloudinary.markers.white_on_black );
-			}
-			
-			if( status == "suspended" ){
-				marker.setOpacity(0.5);
-				// marker.setIcon( LJ.cloudinary.markers.black_on_white );
-			}
-
-			if( status == "canceled" ){
-				LJ.fn.handleCancelEvent( event_id );
-				return;
-			}
-			
-        },
         filterUser: function( user ){
         	return _.pick( user, 
         		[
