@@ -32,7 +32,7 @@
 	var redis_port = config.redis[ process.env.NODE_ENV ].port;
 	var redis_pass = config.redis[ process.env.NODE_ENV ].pass;
 
-	var mail_html = [];
+	var tracked = {};
 
 	// Given an hour and a timezone, return the timezone in which it is 6 am
 	function findDiffDay( day ){
@@ -99,9 +99,11 @@
 							  .minutes( 0 )
 							  .seconds( 0 );
 		
-		keeptrack('Ending events in timezone : ' + target.timezone/60 + ' (' + target.timezone + ')');
-		keeptrack('Local time is  : ' 			 + moment().toString() );
-		keeptrack('Target time is : '	 		 + target_day.toString() );
+		keeptrack({
+			timezone   : target.timezone/60,
+			local_time : moment().toString(),
+			target_time: target_day.toString()
+		});
 
 		// Cast moment dates to Date objects
 		var date_range_query     = { $lt: target_day.toDate() };// $gt: target_day.add( -2, 'days' ).toDate() };
@@ -122,6 +124,7 @@
 
 		mongoose.connection.on('error', function( err ){
 
+			var mail_html = []
 			mail_html.push('Connection to the database failed, Couldnt execute the cron job @reset-events ');
 			mail_html.push( err );
 			mailer.sendSimpleAdminEmail( 'Event watcher', 'Error connecting to Database', mail_html.join('') );
@@ -146,7 +149,7 @@
 
 		function handleMongooseOpen(){
 			
-			keeptrack('Connected to the database! Updating... ');
+			console.log('Connected to the database! Updating... ');
 
 				async.waterfall([
 					updateRedis,
@@ -154,17 +157,29 @@
 					updateEvents
 				], function(){
 
-						keeptrack('Scheduled job completed successfully');
-						mailer.sendSimpleAdminEmail( 'Event watcher', 'Events of the day has been successfully updated', mail_html.join('') );
-						mail_html = [];
-						// mongoose.connection.close();
+					if( tracked.n_events_matched == 0 ) return;
+					var mail_html = [
+						'<div>Scheduler updated the database and cleared the cache successfully in zone : ' + tracked.timezone + '</div>',
+						'<div>Local time 	   	       : ' + tracked.local_time +'</div>',
+						'<div>Target time 	   	       : ' + tracked.target_time +'</div>',
+						'<div>Number of events match   : ' + tracked.n_events_matched +'</div>',
+						'<div>Number of events updated : ' + tracked.n_events_updated +'</div>',
+						'<div>Number of users updated  : ' + tracked.n_users_updated +'</div>',
+						'<div>Number of chats cleared  : ' + tracked.n_chats_cleared +'</div>'
+					];
+
+					console.log('Scheduled job completed successfully');
+					mailer.sendSimpleAdminEmail('Scheduler', tracked.n_events_updated + ' events have been successfully updated', mail_html.join('') );
+					// mongoose.connection.close();
 
 				});
 		}
 
-		function keeptrack( msg ){
-			mail_html.push('<div>' + msg + '</div>');
-			console.log( msg );
+		function keeptrack( obj ){
+			
+			_.keys( obj ).forEach(function( key ){
+				tracked[ key ] = obj[ key ];
+			});
 		};
 
 		function updateRedis(){
@@ -173,7 +188,8 @@
 			var rd = redis.createClient( redis_port, redis_host, { auth_pass: redis_pass } );
 
 			rd.on("error", function( err ){
-				
+
+				var mail_html = []
 				mail_html.push('Connection to redis failed, Couldnt execute the cron job @reset-events ');
 				mail_html.push( err );
 				mailer.sendSimpleAdminEmail( 'Event watcher', 'Error connecting to Redis', mail_html.join('') );
@@ -182,11 +198,14 @@
 			});
 
 			rd.on("ready", function(){
-				keeptrack('Connected to Redis! Updating...');
+				console.log('Connected to Redis! Updating...');
 
 				Event.find( full_event_query, function( err, events ){
 
-					keeptrack( events.length + ' event(s) have matched the date query.');
+					keeptrack({
+						n_events_matched: events.length
+					});
+
 					var event_ids = [];
 					events.forEach(function( evt ){
 						event_ids.push( evt._id.toString() );  // (!) Mongoose _id field is parsed as Object. Weird.
@@ -218,8 +237,9 @@
 					multi: true
 				}, function( err, raw ){
 					if( err ) return handleError( err );
-
-					keeptrack( "Events have been successfully updated. Total events updated : " + raw.n )
+					keeptrack({
+						n_events_updated: raw.n
+					});
 					g_callback( null );
 
 				});
@@ -243,7 +263,10 @@
 				}, function( err, raw ){
 					if( err ) return handleError( err );
 
-					keeptrack( "Users have been successfully updated. Total users updated : " + raw.n );
+					keeptrack({
+						n_users_updated: raw.n
+					});
+
 					g_callback( null );
 
 				});
@@ -252,7 +275,10 @@
 
 		function clearAndSaveChats( g_callback, rd, chats_to_remove ){
 
-			keeptrack( chats_to_remove.length + ' chat(s) need to be cleared');
+			keeptrack({
+				n_chats_cleared: chats_to_remove.length
+			});
+
 			var tasks = [];
 			chats_to_remove.forEach(function( chat_id ){
 				tasks.push(function( callback ){
@@ -305,7 +331,7 @@
 				});			
 			});
 			async.parallel( tasks, function(){
-				keeptrack( 'Redis has been cleared of todays events and chats' )
+				console.log('Everything has been updates successfully');
 				g_callback( null );
 			});
 
