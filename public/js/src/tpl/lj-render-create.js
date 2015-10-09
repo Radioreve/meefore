@@ -103,7 +103,7 @@
             img_version = LJ.fn.findMainImage( friend ).img_version;
 
             var display_options         = LJ.cloudinary.create.friends.params;
-            display_options.img_version = img_version;
+            display_options.version = img_version;
 
             var image_tag_friend = $.cloudinary.image( img_id, display_options ).removeClass('none').prop('outerHTML');
           
@@ -123,7 +123,7 @@
             img_version = LJ.fn.findMainImage( friend ).img_version;
 
             var display_options         = LJ.cloudinary.create.friends.params;
-            display_options.img_version = img_version;
+            display_options.version = img_version;
 
             var image_tag_friend = $.cloudinary.image( img_id, display_options ).removeClass('none').prop('outerHTML');
             var image_tag_loader = LJ.$bar_loader.clone().addClass('friend-loader').prop('outerHTML');

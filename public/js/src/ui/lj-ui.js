@@ -322,6 +322,7 @@
 
 					$content.waitForImages(function(){
 
+
 						$('.curtain-loader').velocity('transition.fadeOut', { duration: 300 });
 
 						var old_height = $('.modal-container').innerHeight(),

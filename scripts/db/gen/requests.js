@@ -1,9 +1,9 @@
-
+	var model_path = process.cwd();
 	var mongoose = require('mongoose'),
-		User = require('../models/UserModel'),
-		Event = require('../models/EventModel'),
-		EventTemplate = require('../models/EventTemplateModel'),
-		config = require('../config/config'),
+		User = require( model_path + '/UserModel'),
+		Event = require( model_path + '/EventModel'),
+		EventTemplate = require( model_path + '/EventTemplateModel'),
+		config = require( procss.cwd() + '/config/config'),
 		request = require('request'),
 		_ = require('lodash'),
 		flags = require('flags');

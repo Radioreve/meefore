@@ -1,9 +1,11 @@
+	
+	var model_path = process.cwd() + '/models';
 
 	var mongoose = require('mongoose'),
-		User = require('../models/UserModel'),
-		Event = require('../models/EventModel'),
-		EventTemplate = require('../models/EventTemplateModel'),
-		config = require('../config/config'),
+		User = require( model_path + '/UserModel'),
+		Event = require( model_path + '/EventModel'),
+		EventTemplate = require( model_path + '/EventTemplateModel'),
+		config = require( process.cwd() + '/config/config'),
 		_ = require('lodash');
 
 		mongoose.connect( config.db[ process.env.NODE_ENV ].uri );

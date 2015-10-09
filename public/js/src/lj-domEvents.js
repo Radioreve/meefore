@@ -30,11 +30,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
             	LJ.fn.displayUserProfile( facebook_id );
             });
             
-            LJ.$body.on('click', '.row-input', function(){
+            LJ.$body.on('click', '.row-input, .picture-hashtag', function(){
 
             	var $self = $(this);
 
             	if( $self.parents('.row').hasClass('editing') ) return;
+
+            	if( $self.hasClass('.picture-hashtag') ){
+            		$self.closest('.picture')
+            			.find('.picture-upload')
+            			.velocity('transition.fadeOut', { duration: 300 });
+            	}
 
             	$self.parents('.row')
             		.find('.icon-edit')

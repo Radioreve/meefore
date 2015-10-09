@@ -88,6 +88,7 @@
    transition: .4s;
    display: inline-block;
    vertical-align: top;
+   cursor: pointer;
 }
 
 .picture:hover {
@@ -111,7 +112,11 @@
    width: 90%;
    margin: 0 auto;
    position: relative;
-   top: -4px;
+   top: -4px; 
+   cursor: pointer;
+}
+.picture-hashtag:hover {
+    background: #F9F9F9;
 }
 
 .picture-hashtag span {
@@ -125,6 +130,7 @@
    transition: all .5s;
    font-family: 'Karla';
    border: none;
+   cursor: pointer;
 }
 
 .row-pictures.editing .picture-hashtag {
@@ -146,6 +152,10 @@
    top: 0px;
    left: -1px;
    padding-top: 71px;
+   z-index: 1000000;
+}
+.picture-edit {
+    z-index: 10000000;
 }
 
 .upload-facebook,
@@ -444,17 +454,24 @@
    text-align: center;
    background: white;
    padding: 7px;
-   border: 1px solid #F3F3F3;
    box-shadow: 0 0 1px #ccc;
    margin: 0 2px;
    cursor: pointer;
-   opacity: .6;
+   overflow: hidden;
+   position: relative;
+   opacity: .5;
 }
 
 .facebook-image-item.active {
    opacity: 1;
 }
 
+.facebook-image-wrap {
+    height: 100%;
+    position: relative;
+    background: white;
+    overflow: hidden;
+}
 .upload-buttons {
    margin-top: 15px;
 }

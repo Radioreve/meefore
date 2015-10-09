@@ -15,15 +15,15 @@
                 var hashtag_active = itm.is_main ? 'active'       : '' ;
 
                 var display_params_main             = LJ.cloudinary.curtain[ main_type ].params;
-                    display_params_main.img_version = itm.img_version;
+                    display_params_main.version = itm.img_version;
 
                 var display_params_thumb             = LJ.cloudinary.curtain[ thumb_type ].params;
-                    display_params_thumb.img_version = itm.img_version;
+                    display_params_thumb.version = itm.img_version;
                     display_params_thumb.width       = LJ.cloudinary.curtain.main.params.width / 5;
                     display_params_thumb.height      = display_params_thumb.width;
 
-                var user_picture_thumb   = $.cloudinary.image( itm.img_id, display_params_thumb ).attr('img-place', itm.img_place).prop('outerHTML'),
-                    user_picture_main    = $.cloudinary.image( itm.img_id, display_params_main ).prop('outerHTML'),
+                var user_picture_thumb   = $.cloudinary.image( itm.img_id, display_params_thumb ).attr('img-place', itm.img_place).attr('img-version', itm.img_version ).prop('outerHTML'),
+                    user_picture_main    = $.cloudinary.image( itm.img_id, display_params_main ).attr('img-version', itm.img_version ).prop('outerHTML'),
                     user_picture_hashtag = '<div class="modal-user-picture-hashtag '+ hashtag_active+'" img-place="' + itm.img_place + '">#' + itm.hashtag + '</div>';
 
                 user_thumb_pictures += user_picture_thumb;

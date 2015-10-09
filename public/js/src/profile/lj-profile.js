@@ -16,20 +16,22 @@
 
 				var $self = $(this);
 
-				if( $self.hasClass('active') )
+				if( $self.hasClass('active') ){
 					return;
+				}
 
-				if( $self.attr('src').split('/').slice(-1)[0] == 'placeholder_picture')
+				if( $self.attr('src').split('/').slice(-1)[0] == 'placeholder_picture'){
 					return 
+				}
 
 				var img_place = $self.attr('img-place');
 				$('.modal-thumb-picture, .modal-user-picture-hashtag').removeClass('active');
 				$self.add( $('.modal-user-picture-hashtag[img-place="'+ img_place +'"]') ).addClass('active');
 
-				var img_version = $self.attr('img_version');
+				var img_version = $self.attr('img-version');
 
 				$('.modal-main-picture').removeClass('active');
-				$('.modal-main-picture[img_version="'+img_version+'"]').addClass('active');
+				$('.modal-main-picture[img-version="' + img_version + '"]').addClass('active');
 
 			});
 
@@ -106,6 +108,20 @@
 					max_height: 500,
 					render_cb: LJ.fn.renderFacebookUploadedPictures,
 					error_cb: LJ.fn.renderFacebookUploadedPicturesNone,
+					predisplay_cb: function(){
+						$('.modal-container').find('img.fb').each(function( i, img ){
+
+							// Adjusting all image width or image height for better centering
+							var $img = $(img);
+
+							if( $img.height() > $img.width() ){
+			                  $img.attr( 'width', '100%' );
+			                } else {
+			                  $img.attr( 'height', '100%' );
+			                }
+
+						});
+					},
 					custom_data: [{ key: 'img-place', val: img_place }]
 				});
 

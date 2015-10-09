@@ -16,7 +16,7 @@
       var facebook_id = options.facebook_id;
       var me          = facebook_id == LJ.user.facebook_id ? 'me' : '';
 
-      var display_params = _.merge( LJ.cloudinary.events.chat.params, { img_version: img_vs } );
+      var display_params = _.merge( LJ.cloudinary.events.chat.params, { version: img_vs } );
       var img_tag      = $.cloudinary.image( img_id, display_params ).prop('outerHTML');
 
       var mmt = moment( new Date( sent_at ) );
@@ -50,7 +50,7 @@
       var sent_at     = new Date()
       var facebook_id = LJ.bot_profile.facebook_id;
 
-      var display_params = _.merge( LJ.cloudinary.events.chat.params, { img_version: img_vs } );
+      var display_params = _.merge( LJ.cloudinary.events.chat.params, { version: img_vs } );
       var img_tag      = $.cloudinary.image( img_id, display_params ).prop('outerHTML');
 
       var mmt = moment( new Date( sent_at ) );
@@ -105,7 +105,7 @@
       evt.hosts.forEach(function( host ){
 
         var display_params = LJ.cloudinary.events.map.hosts.params;
-            display_params.img_version = LJ.fn.findMainImage( host ).img_version;
+            display_params.version = LJ.fn.findMainImage( host ).img_version;
 
         var img_tag = $.cloudinary.image( LJ.fn.findMainImage( host ).img_id, display_params ).prop('outerHTML');
         
@@ -205,7 +205,7 @@
     renderUserImgTag: function( user, params ){
 
       var main_image     = LJ.fn.findMainImage( user );
-      var display_params = _.merge( params, { img_version: main_image.img_version } );
+      var display_params = _.merge( params, { version: main_image.img_version } );
       var img_tag        = $.cloudinary.image( main_image.img_id, display_params ).prop('outerHTML');
 
       return img_tag;

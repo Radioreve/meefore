@@ -27,8 +27,15 @@
             var urls = _.pluck( data, 'source' ),
                 html = '<div class="facebook-image-item-wrap">';
 
-            urls.forEach(function(url){
-                html += '<div class="facebook-image-item"><img src="' + url + '" width="100%" height="100%"></div>';
+            urls.forEach(function( url ){
+
+                var $img = $('<img class="super-centered fb" src="' + url + '">');                
+                var html_img = '<div class="facebook-image-item none">'
+                                + '<div class="facebook-image-wrap">' + $img.prop('outerHTML') + '</div>'
+                             + '</div>';
+
+
+                html += html_img;
             });
                 html += ['<div class="upload-buttons">',
                           '<button class="theme-btn btn-cancel right">Annuler</button>',
@@ -45,7 +52,7 @@
                 img_version = LJ.fn.findMainImage( friend ).img_version,
                 display_options = LJ.cloudinary.profile.friends.params;
 
-            display_options.img_version = img_version;
+            display_options.version = img_version;
 
             var image_tag = $.cloudinary.image( img_id, display_options ).prop('outerHTML');
 

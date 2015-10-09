@@ -75,7 +75,7 @@
 
 			var main_img = LJ.fn.findMainImage( user ),
 				display_settings = LJ.cloudinary.search.user.params;
-				display_settings.img_version = main_img.img_version;
+				display_settings.version = main_img.img_version;
 
 			user_main_img = $.cloudinary.image( main_img.img_id, display_settings ).prop('outerHTML');
 
