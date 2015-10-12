@@ -327,17 +327,19 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 /* Landing Page View */
                 $('#facebook_connect').remove();
-                $('#logo-hero').remove();
-                $('.hero-img').remove();
+                $('.hero-logo').remove();
                 $('#landingWrap').remove();
                 $('body > header').removeClass('none');
+                $('.auto-login-msg').velocity('transition.fadeOut');
+                
                 $('body').css({
                     'background': 'none'
                 });
+
                 $('#mainWrap').css({
-                    'background': 'url(/img/crossword.png)'
+                    'background': 'url(/img/crossword.png)',
+                    'display'   : 'block'
                 });
-                $('.auto-login-msg').velocity('transition.fadeOut');
 
                 LJ.$body.trigger('display:layout:during');
 
@@ -373,7 +375,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 });
             };
 
-            LJ.fn.displayContent($landingView, {
+            LJ.fn.displayContent( $landingView, {
                 during_cb: during_cb,
                 after_cb: after_cb,
                 mode: 'curtain',

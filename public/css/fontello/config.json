@@ -307,9 +307,21 @@
       "src": "fontawesome"
     },
     {
+      "uid": "4c1ef492f1d2c39a2250ae457cee2a6e",
+      "css": "instagram",
+      "code": 59482,
+      "src": "fontawesome"
+    },
+    {
       "uid": "e9107949dd6c9e8ab2b29ae07156e38c",
       "css": "linkedin",
       "code": 59442,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "627abcdb627cb1789e009c08e2678ef9",
+      "css": "twitter",
+      "code": 59481,
       "src": "fontawesome"
     },
     {
@@ -449,6 +461,12 @@
       "css": "college",
       "code": 59462,
       "src": "maki"
+    },
+    {
+      "uid": "57a4f84c40a0c44d47387105f162a427",
+      "css": "youtube",
+      "code": 59480,
+      "src": "zocial"
     },
     {
       "uid": "bcbb9470c9ba0699d5a0e4e97b3d5be9",

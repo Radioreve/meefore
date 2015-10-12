@@ -508,8 +508,8 @@
 
       var html = '<div class="event-accepted-tabview slow-down-3" data-eventid="' + evt._id + '">'
                       + '<i class="icon icon-tabview icon-accepted icon-chat"></i>'
-                      + '<i class="icon icon-tabview icon-hosting icon-star-1"></i>'
-                      + '<i class="icon icon-tabview icon-kicked icon-star-1"></i>'
+                      + '<i class="icon icon-tabview icon-hosting icon-mindset"></i>'
+                      + '<i class="icon icon-tabview icon-kicked icon-ellipsis"></i>'
                       + '<i class="icon icon-tabview icon-pending icon-ellipsis"></i>'
                       + '<span class="tabview-date-day">' + moment( evt.begins_at ).format('DD/MM') + '</span>'
                       + '<span class="tabview-place">' + evt.address.place_name + '</span>'

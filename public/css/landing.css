@@ -1,6 +1,4 @@
-#landingWrap {
-   padding-top: 10%;
-}
+
 
 .auto-login-msg {
    color: gainsboro;
@@ -31,10 +29,6 @@
    opacity: 0;
 }
 
-.landing-content {
-   text-align: center;
-   color: white;
-}
 
 .landing-subscribe {
    margin-top: 40px;
@@ -45,88 +39,26 @@
    -transition: all ease-in-out .5s;
 }
 
-.grow {
-   transition: all .1s ease-in-out;
-}
-
-.grow:hover {
-   transform: scale(1.03);
-}
-
-.hero-img {
-   bottom: 0px;
-   left: 0px;
-   position: absolute;
-   right: 0px;
-   top: 0px;
-   z-index: -1;
-   background-size: cover;
-}
-
-.hero-img.img-0 {
-   background-image: url('/img/bg0.jpg');
-}
-
-.hero-img.img-1 {
-   background-image: url('/img/bg1.jpg');
-}
-
-.hero-img.img-2 {
-   background-image: url('/img/bg2.jpg');
-}
-
-.hero-img.img-3 {
-   background-image: url('/img/bg3.jpg');
-}
-
-.hero-img.img-4 {
-   background-image: url('/img/bg4.jpg');
-}
-
-.hero-img.img-5 {
-   background-image: url('/img/bg5.jpg');
-}
-
-.hero-img.img-6 {
-   background-image: url('/img/bg6.jpg');
-}
-
-.hero-img.img-7 {
-   background-image: url('/img/bg7.jpg');
-}
-
-.hero-img:not(.active) {
-   display: none;
-}
-
-.animatable {
-   -webkit-transition: all 10000ms ease-out;
-   transition: all 10000ms ease-out;
-}
-
-.scaled {
-   -webkit-transform: scale(1.22);
-   transform: scale(1.22);
-}
 
 #facebook_connect {
-   width: 300px;
+   width: 350px;
    margin: 0 auto;
-   background-image: url('/img/fbbluepattern.png');
-   background-repeat: repeat-x;
-   background-color: #3a5795;
-   border: 1px solid #133783;
+   /* background-image: url('/img/fbbluepattern.png'); */
+   /* background-repeat: repeat-x; */
+   /* background-color: #3a5795; */
+   border: 2px solid #FFFFFF;
    box-shadow: 0 0 1Px #383838;
    color: white;
    text-shadow: 0 0 1px #8E8E8E;
-   padding: 12px 20px;
-   font-size: 23px;
-   letter-spacing: 0px;
+   padding: 20px 20px;
+   font-size: 22px;
    position: relative;
    cursor: pointer;
    -webkit-transition: all .5s;
    transition: all .5s;
-   font-family: 'Gochi hand';
+   text-align: center;
+   margin-top: 35px;
+   font-family: Alegreya Sans SC;
 }
 
 #facebook_connect:hover .fb-overlay {
@@ -140,31 +72,17 @@
    padding-right: 10px;
 }
 
-.landing-call {
-   margin-top: 40px;
-   font-size: 24px;
-   font-family: 'Gochi hand';
-   text-shadow: 0 0 1px #989898;
+.hero-logo {
+   position: absolute;
+   z-index: 1000;
+   margin: 20px 0 0 40px;
 }
 
+
+
+/* Typed Pluggin Styles */
 .typed-text {
    color: white;
-}
-
-.landing-hashtags {
-   text-align: center;
-   margin: 0 auto;
-   color: #C5C5C5;
-   font-family: 'Karla';
-   text-transform: uppercase;
-   font-weight: bolder;
-   min-width: 400px;
-   height: 1px;
-}
-
-.hashtag {
-   display: none;
-   margin: 0 3px;
 }
 
 .typed-cursor {
@@ -217,30 +135,266 @@
       opacity: 1;
    }
 }
+/* Typed Pluggin Styles [end]*/
 
-#facebook_small_red {
-   float: right;
-   margin-right: 4%;
-   margin-top: 5px;
-   padding: 6px 14px 6px 0;
-   border-radius: 2px;
-   background-color: #E25050;
-   color: white;
-   font-size: 13px;
-   font-weight: bolder;
-   cursor: pointer;
-   -webkit-transition: all .5s;
-   transition: all .5s;
+
+
+
+
+
+
+/*New Landing Rules */
+
+#landingWrap {
+    position: relative;
+}
+.landing-hero {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
 }
 
-#facebook_small_red i {
-   padding: 0 4px 0 7px;
-   border-right: 1px solid #CA3838;
-   margin-right: 7px;
-}
+.hero-header {font: bold 65px 'Alegreya Sans SC';text-align: center;color: white;margin-top: 200px;}
 
-#logo-hero {
+.hero-subheader {text-align: center;font: normal 25px 'Roboto';text-shadow: 0 1px 1px #575757;color: white;margin-top: 10px;text-transform: none;}
+
+.hero-languages {
    position: absolute;
-   z-index: 1000;
-   margin: 20px 0 0 40px;
+   right: 20px;top: 20px;
 }
+
+.hero-languages .flag-icon {cursor: pointer;margin: 0 2px;}
+
+/* Kenburn Styles */
+.landing-kenburns {100%:360px;
+    height: 100vh;
+    background-color:black;
+    overflow: hidden;
+    position: relative;
+    background: url('/img/kb/bg8.jpg') no-repeat center center;
+    background-size: cover;
+}
+.kb-slide{
+    position: absolute;
+    z-index: 1;
+    opacity: 0;
+}
+
+.kb-slide img{
+    position: relative;
+    -webkit-transform: translate3d(0,0,0)
+    -moz-transform: translate3d(0,0,0);
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+}
+.kenburns-overlay {
+   z-index: 4;
+   position: relative;
+   height: 100%;
+   background: rgba(0, 0, 0, 0.50);
+}
+/* End Kenbuns Styles */
+
+.landing-screenshots {}
+
+.landing-front {
+   position: relative;
+}
+
+.landing-divider {height: 4px;/* background: linear-gradient(#B8B8B8, #E9E9E9,white); */}
+
+
+/* Screenshot rules */
+.screenshot-wrap {height: 400px;}
+
+.screenshot-image,
+.screenshot-text {
+    display: inline-block;
+    width: 50%;
+}
+
+.screenshot-text:eq(2n){
+    text-align: right;
+}
+
+.screenshot-image {height: 100%;position: relative;}
+
+.screenshot-image.sc-1 {
+   background: url(/img/sc/sc1.jpg) center center;
+   background-position: -270px;
+}
+.screenshot-image.sc-2 {
+   float:right;
+   background: url(/img/sc/sc1.jpg) center center;
+}
+.screenshot-image.sc-3 {
+   float: left;
+   background: url(/img/sc/sc1.jpg) center center;
+}
+.screenshot-image img {position: absolute;top: 20px;left: 20px; z-index: 1;}
+
+.image-layer {
+   background: rgba(255,255,255,.5);
+   height: 110px;
+   border-bottom: 1px solid #E7E7E7;
+}
+.screenshot-text {
+    vertical-align: top;
+    background: url(/img/crossword.png);
+    height: 100%;
+}
+
+.screenshot-head {font: bold 35px 'Alegreya Sans SC';text-align: left;line-height: 35px;letter-spacing: 0px;color: #474747;padding: 50px 50px;background: url('/img/texture-png2.png');color: white;}
+
+.screenshot-body {font-size: 16px;line-height: 30px;font-family: 'Roboto';border-radius: 3px;padding: 30px 0;color: black;}
+
+/* End Screenshot rules */
+
+
+.landing-untitled {background: url('/img/crossword.png');height: 100px;}
+
+.landing-footer {
+   background: url(/img/texture-png2.png);
+   background-origin: border-box;
+   text-align: center;
+   color: #F4F4F4;
+   font-family: 'Karla';
+   overflow: hidden;
+   font-size: 14px;
+   border-top: 1px solid #000000;
+}
+
+.footer-followus {
+   margin-top: 20px;
+   font-size: 19px;
+   color: #F5F5F5;
+   font-weight: bolder;
+   font-family: 'Alegreya Sans Sc';
+}
+
+.footer-socials {margin-top: 20px;}
+
+.footer-socials i {transition: all ease-in-out .15s; border-radius: 20px;padding: 6px 5px;margin: 0 3px;cursor: pointer;background: #FCFCFC;color: black;border: 1px solid #ccc;font-size: 17px;background: #E94F6A;      color: white;      border: none;}
+.footer-socials i:hover {
+    background: #F67C91;
+}
+.footer-socials .icon-facebook {}
+
+.footer-socials .icon-twitter {
+
+}
+
+.footer-socials .icon-instagram {
+
+}
+
+.footer-socials .icon-youtube {
+
+}
+
+.footer-divider {height: 3px;margin: 0 auto;width: 313px;background: #878787;margin-top: 22px;border-bottom: 1px solid #232323;border-top: 1px solid #333;}
+
+.footer-list {margin-top: 20px;margin-bottom: 30px;}
+
+.footer-list-item {display: inline-block;margin: 0 10px;cursor: pointer;}
+.footer-list-item:hover a{color: #E94F6A;}
+
+.footer-list-item a{
+    text-decoration: none;
+    color: #EDEDED;
+    transition: all .15s ease-in-out;
+}
+
+.landing-keypoints {
+   text-align: center;
+   overflow: hidden;
+   background: url('/img/crossword.png');
+}
+
+.keypoint-wrap {
+   width: 230px;
+   display: inline-block;
+   margin: 30px 30px 110px;
+   vertical-align: top;
+}
+
+.keypoint-message {
+   font: bold 40px 'Alegreya Sans Sc';
+   margin-top: 50px;
+   font-family: 'Gochi Hand';
+   font-weight: bolder;
+   font-family: 'Alegreya Sans Sc';
+   text-shadow: 0 1px 1px #DADADA;
+}
+
+.keypoint-1 {
+
+}
+
+.keypoint-2 {
+   
+}
+
+.keypoint-3 {
+   
+}
+
+.keypoint-button {padding: 10px 30px;border: none;outline: none;font: bold 13px 'Alegreya sans Sc';background: #FFFFFF;border: 1px solid;color: #575757;margin-top: 20px;width: 150px;}
+.keypoint-button:hover {
+    background: #f5f5f5;
+}
+.keypoint-img {margin-top: 30px;}
+
+.icon-keypoint {
+   font-size: 40px;
+   border-radius: 40px;
+   padding: 17px 16px;
+   background: #E94F6A;
+   color: white;
+   background: white;
+   color: #e94f6a;
+}
+
+.keypoint-head {font: bold 18px 'Alegreya Sans SC';margin-top: 20px;padding: 15px;border-radius: 3px;}
+
+.keypoint-body {
+
+}
+
+
+.landing-map {background: url('/img/sc/sc1.jpg') center center;height: 300px;position: relative;}
+
+.landing-map-overlay {
+   height: 100%;
+   z-index: 1;
+   position: relative;
+   background: rgba(0, 0, 0, 0.50);
+}
+
+.landing-map-button {position: absolute;z-index: 10;background: none;border: 2px solid white;padding: 15px 45px;font: normal 20px 'Alegreya Sans Sc';color: white;outline: none;transition: all ease-in-out .15s;width: 370px;}
+.landing-map-button:hover {
+    background: rgba(255, 255, 255, 0.13);
+}
+.landing-map-button span {
+   text-decoration: line-through;
+   margin: 0 5px 0 2px;
+}
+
+.hero-lang {
+   color: #E6E6E6;
+   text-transform: uppercase;
+   margin: 0 3px;
+   font-family: 'Karla';
+   font-weight: bold;
+   cursor: pointer;
+   transition: all ease-in-out .15s;
+}
+
+.hero-lang:hover {
+    color: white;
+}
+
+.hero-lang.active {border-bottom: 3px solid #e94F6A;color: white;}

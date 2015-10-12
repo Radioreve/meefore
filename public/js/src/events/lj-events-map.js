@@ -389,7 +389,7 @@
                 if( other_evt.party.address.place_id == party.address.place_id ){
                     LJ.fn.displayPathToParty({
                         evt            : other_evt,
-                        stroke_opacity : 0.15,
+                        stroke_opacity : 0.25,
                         cache          : "half_active_paths"
                     });
                 }

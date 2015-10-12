@@ -621,7 +621,52 @@
 		country_gb: {
 			"fr": "Royaume-Unis",
 			"en": "United-Kingdom"
+		},
+		lp_subtitle: {
+			"fr": "Participez et organisez des before avant d'aller en soirée.",
+			"en": "Join and organize pregaming events before going to party."
+		},
+		lp_conn_button: {
+			"fr": "Connexion",
+			"en": "Connection"
+		},
+		lp_key_title: {
+			"fr": "Qu'est ce qu'un meefore ?",
+			"en": "What is a meefore ?"
+		},
+		lp_key_friends_title: {
+			"fr":"Les amis...",
+			"en": "Friends..."
+		},
+		lp_key_people_title: {
+			"fr": "...des rencontres...",
+			"en": "...people..."
+		},
+		lp_key_party_title: {
+			"fr": "...et une soirée!",
+			"en": "...and a party!"
+		},
+		lp_key_friends_text: {
+			"fr": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert",
+			"en": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert"
+		},
+		lp_key_people_text: {
+			"fr": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert",
+			"en": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert"
+		},
+		lp_key_party_text: {
+			"fr": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert",
+			"en": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert"
+		},
+		lp_map_button: {
+			"fr": "Voir les <span>before</span> meefore",
+			"en": "See all <span>before</span> meefore"
+		},
+		lp_footer_followus: {
+			"fr": "Nous suivre",
+			"en": "Follow us"
 		}
+
 
 
 	});

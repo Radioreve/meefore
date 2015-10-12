@@ -51,32 +51,33 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
             });
 
+
             LJ.$body.on('click', '.pick-lang', function(){
 
             	var $self = $(this);
             	var lang_code = $self.attr('data-code');
 
-            	if( $self.hasClass('active') ){
-            		return;
-            	} else {
-            		LJ.fn.displayCurtain({
-            			behindTheScene: function(){
+            	if( $self.hasClass('active') ) return;
 
-            				console.log('Changing language');
-            				$('.pick-lang').removeClass('active');
-            				$self.addClass('active');
+        		LJ.fn.displayCurtain({
+        			behindTheScene: function(){
 
-            				LJ.fn.setAppLanguage( lang_code );
-            			},
-            			duration: 550,
-            			delay: 100,
-            			afterTheScene: function(){
+        				console.log('Changing language');
+        				$('.pick-lang').removeClass('active');
+        				$self.addClass('active');
 
-            				LJ.fn.toastMsg( LJ.text_source[ "t_language_changed" ][ lang_code ] );
+        				LJ.fn.setAppLanguage( lang_code );
+        			},
+        			duration: 550,
+        			delay: 100,
+        			afterTheScene: function(){
 
-            			}
-            		});
-            	}
+        				if( $self.hasClass('no-cb') ) return;
+        				
+        				LJ.fn.toastMsg( LJ.text_source[ "t_language_changed" ][ lang_code ] );
+
+        			}
+        		});
 
             });
 
