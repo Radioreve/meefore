@@ -74,7 +74,7 @@
    display: inline-block;
    background: #FBFBFB;
    padding: 0px 6px 0 0px;
-   vertical-align: top;
+   /* vertical-align: top; */
    /* border: 1px solid; */
    color: #555;
    margin-right: 7px;

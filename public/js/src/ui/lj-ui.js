@@ -22,7 +22,7 @@
 
 			});
 
-			['#contact', '#profile', '#events', '#management', '#settings'].forEach(function( menuItem ){
+			['#profile', '#events', '#settings'].forEach(function( menuItem ){
 
 				var $menuItem = $( menuItem );
 
@@ -126,6 +126,12 @@
 				var prev = options.prev;			
 				var $prev = $('.'+options.prev);
 				
+				var parallelTheScene = function(){
+
+					options.parallel_cb();
+
+				};
+
 				var behindTheScene = function(){
 
 					options.during_cb();
@@ -141,9 +147,12 @@
 				}
 
 				LJ.fn.displayCurtain({
-					behindTheScene: behindTheScene,
-					afterTheScene : afterTheScene
-				})
+					parallelTheScene : parallelTheScene,
+					behindTheScene   : behindTheScene,
+					afterTheScene    : afterTheScene,
+					delay			 : options.delay,
+					static_delay     : false
+				});
 				
 			} 
 
@@ -153,8 +162,13 @@
 
 			var behindTheScene = opts.behindTheScene || function(){ delog('Behind the scene'); },
 				afterTheScene  = opts.afterTheScene   || function(){ delog('after the scene');  },
+				parallelTheScene = opts.parallelTheScene || function(){},
+
 				delay          = opts.delay    || 500,
+				static_delay   = opts.static_delay || false,
 				duration       = opts.duration || 800;
+
+
 
 			var $curtain = $('.curtain');
 
@@ -166,16 +180,32 @@
 				.velocity('transition.fadeIn',
 				{ 
 					duration: init_duration || duration, //simuler l'ouverture instantanée
-				  	complete: behindTheScene 
+				  	complete: function(){
+				  		behindTheScene();
+				  		if( static_delay ){
+				  			setTimeout(function(){
+				  				$curtain.trigger('curtain:behindthescene:done');
+				  			}, delay );
+				  		} else {
+				  			// The curtain will fall down when behindTheScene has finished working
+				  		}
+				  	}
 				})
-				.delay( delay )
-				.velocity('transition.fadeOut',
-				{	
-					display : 'none',
-					duration: duration,
-					complete: afterTheScene
-				});
+				
+				$curtain.one('curtain:behindthescene:done', function(){
+					
+					$(this)
+					.velocity('transition.fadeOut',
+					{	
+						display : 'none',
+						duration: duration,
+						complete: afterTheScene
+					});
 
+				});
+				
+
+				parallelTheScene();
 
 
 		},

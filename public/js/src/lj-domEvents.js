@@ -6,6 +6,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		
 		handleDomEvents_Globals: function(){
 
+			LJ.$body.on('click', '.moving-arrow', function(){
+				$('.landing-keypoints').velocity('scroll', { duration: window.tanim || 1800, easing: window.nanim || "ease-in-out" });
+			});
 
 			LJ.$body.on('mouseenter', '.eventItemWrap', function(){
 				$(this).addClass('mouseover');
@@ -64,12 +67,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
         				console.log('Changing language');
         				$('.pick-lang').removeClass('active');
-        				$self.addClass('active');
+        				$('.pick-lang[data-code="' + lang_code + '"]').addClass('active');
 
         				LJ.fn.setAppLanguage( lang_code );
         			},
         			duration: 550,
-        			delay: 100,
+        			delay: 350,
+        			static_delay: true,
         			afterTheScene: function(){
 
         				if( $self.hasClass('no-cb') ) return;

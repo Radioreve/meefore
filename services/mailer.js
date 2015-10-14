@@ -86,13 +86,33 @@
 					console.log(res);
 				}
 			});
-		};	
+		};
+
+		var sendContactEmail = function( name, email, message, callback ){
+
+			var contact_email = new sendgrid.Email({
+				from     : email,
+				fromname : name,
+				subject  : 'Message using contact form',
+				to       : ['contact@meefore.com'],
+				html     : '<div style="padding: 12px; background: #f6f6f6">' + message + '</div>'
+			});
+
+			sendgrid.send( contact_email, function( err, res ){
+				if( err )
+					return callback( err, null );
+
+				return callback( null, res );
+			});
+
+		};
 
 		var expose = {
-			sendWelcomeEmail: sendWelcomeEmail,
-			sendSimpleAdminEmail: sendSimpleAdminEmail,
-			subscribeMailchimpUser: subscribeMailchimpUser,
-			updateMailchimpUser: updateMailchimpUser
+			sendContactEmail       : sendContactEmail,
+			sendWelcomeEmail       : sendWelcomeEmail,
+			sendSimpleAdminEmail   : sendSimpleAdminEmail,
+			subscribeMailchimpUser : subscribeMailchimpUser,
+			updateMailchimpUser    : updateMailchimpUser
 		};
 		
 

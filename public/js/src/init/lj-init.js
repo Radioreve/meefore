@@ -42,6 +42,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             // Init basic spa routing
             this.initRouter();
 
+            // Init analytics
+            this.initAnalytics();
+
             // Detect when browser is closed
             // this.initHandleCloseBrowser();
 
@@ -323,6 +326,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
             }
 
+
             function during_cb() {
 
                 /* Landing Page View */
@@ -330,7 +334,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 $('.hero-logo').remove();
                 $('#landingWrap').remove();
                 $('body > header').removeClass('none');
-                $('.auto-login-msg').velocity('transition.fadeOut');
                 
                 $('body').css({
                     'background': 'none'
@@ -343,7 +346,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 LJ.$body.trigger('display:layout:during');
 
-            };
+                setTimeout(function(){
+                    $('.auto-login-msg').velocity('transition.fadeOut');
+                    $('.curtain').trigger('curtain:behindthescene:done');
+                }, 2200 );
+
+            }
 
             function after_cb() {
 
@@ -369,19 +377,33 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                             LJ.fn.toastMsg( LJ.text_source["to_init_no_friends"][ LJ.app_language ], "info");
                         }
 
-                         LJ.$body.trigger('display:layout:after');
+                        LJ.$body.trigger('display:layout:after');
 
                     }
                 });
-            };
+            }
+    
+            function parallel_cb(){
+                 /* Message during login */
+               $('<div class="auto-login-msg super-centered none">' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</div>')
+                    .appendTo('.curtain')
+                    .velocity('transition.fadeIn', {
+                        duration: 800,
+                        delay: 500
+                });
+            }
 
             LJ.fn.displayContent( $landingView, {
+
                 during_cb: during_cb,
                 after_cb: after_cb,
+                parallel_cb: parallel_cb,
                 mode: 'curtain',
                 myWayIn: 'transition.slideDownIn',
                 myWayOut: 'transition.slideUpOut',
-                prev: 'revealed'
+                prev: 'revealed',
+                delay: 1300
+
             });
 
 

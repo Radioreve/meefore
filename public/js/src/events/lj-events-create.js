@@ -528,7 +528,9 @@
             LJ.fn.updateEventCache( evt );
 
             LJ.fn.displayCurtain({ 
+
                 behindTheScene: function(){
+
                     LJ.fn.hideModal();
                     LJ.fn.displayEventMarker( evt );
                     LJ.fn.displayPartyMarker( evt.party );
@@ -540,8 +542,10 @@
                     /* the model is the single source of truth... */
                     LJ.fn.fetchMe();
                 },
+                static_delay: true,
                 delay: 1000,
                 afterTheScene: function(){
+                    
                     LJ.fn.toastMsg( LJ.text_source["to_event_created_success_1"][ LJ.app_language ], 'info');
                     LJ.fn.toastMsg( LJ.text_source["to_event_created_success_2"][ LJ.app_language ], 'info');
                     LJ.fn.joinEventChannel( evt );

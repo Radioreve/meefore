@@ -10,7 +10,7 @@
 				uri: "mongodb://Radioreve:" + process.env.PW + "@dogen.mongohq.com:10008/meefore-staged"
 			},
 			prod: {
-				uri: "mongodb://Radioreve:" + process.env.PW + "@dogen.mongohq.com:10021/Meefore-Sandbox"
+				uri: "mongodb://<user>" + process.env.PW + "@c152.lighthouse.5.mongolayer.com:10152,lighthouse.4.mongolayer.com:10152,lighthouse.5.mongolayer.com:10152/meefore-prod?replicaSet=set-561e78e680f8684254000143"
 			}
 		}
 		, redis: {

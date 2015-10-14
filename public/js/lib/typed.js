@@ -50,6 +50,12 @@
         // amount of time to wait before backspacing
         this.backDelay = this.options.backDelay;
 
+
+        // [augmeted] specify the duration, and infer the speed from it
+        this.write_duration = this.options.write_duration;
+        this.back_duration  = this.options.back_duration;
+        //
+
         // input strings of text
         this.strings = this.options.strings;
 
@@ -111,6 +117,9 @@
 
             // pass current string state to each function, types 1 char per call
             , typewrite: function(curString, curStrPos){
+
+                var word_length = curString.length;
+
                 // exit when stopped
                 if(this.stop === true)
                    return;
@@ -192,7 +201,7 @@
                     }, charPause);
 
                 // humanized value for typing
-                }, humanize);
+                }, self.write_duration / word_length );
 
             }
 
@@ -202,25 +211,15 @@
                    return;
                 }
 
+                var word_length = curString.length;
+
+
                 // varying values for setTimeout during typing
                 // can't be global since number changes each time loop is executed
                 var humanize = Math.round(Math.random() * (100 - 30)) + this.backSpeed;
                 var self = this;
 
                 self.timeout = setTimeout(function() {
-
-                    // ----- this part is optional ----- //
-                    // check string array position
-                    // on the first string, only delete one word
-                    // the stopNum actually represents the amount of chars to
-                    // keep in the current string. In my case it's 14.
-                    // if (self.arrayPos == 1){
-                    //  self.stopNum = 14;
-                    // }
-                    //every other time, delete the whole typed string
-                    // else{
-                    //  self.stopNum = 0;
-                    // }
 
                     // ----- continue important stuff ----- //
                     // replace text with base text + typed characters
@@ -252,7 +251,7 @@
                     }
 
                 // humanized value for typing
-                }, humanize);
+                }, self.back_duration / word_length );
 
             }
 

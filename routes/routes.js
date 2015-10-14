@@ -80,8 +80,12 @@
 	    		console.log( JSON.stringify( ip_info, null, 3 ) );
 	    		next();
 	    	},
-	    	signEvents.sendHomepage);
+	    	signEvents.sendHomepage );
 
+	    // Conditions générales
+	    app.get('/legals', function( req, res ){
+	    	res.sendfile( process.cwd() + '/views/legals.html' );
+	    });
 
 	    // Redirection à la page d'accueil
 	    app.get('/',
@@ -95,6 +99,11 @@
 	    // Provide valid token based on secret key, for api calls
 		app.post('/auth/token',
 			mdw.auth.makeToken )
+
+
+		// [@Landing Page ]
+		app.post('/landing/contact',
+			signEvents.sendContactEmail )
 
 	    // Initialisation | Check if user exists / create profile if not, subscribe to mailchimp
 	    app.post('/auth/facebook',

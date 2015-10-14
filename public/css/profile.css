@@ -263,9 +263,7 @@
    width: 49.5%;
 }
 
-.row-input-lg {
-   width: 100%;
-}
+.row-input-lg {width: 100%;}
 
 .row-input input[type="text"] {
    padding-left: 7px;

@@ -3,11 +3,11 @@
 
 		handleDomEvents_Landing: function(){
 
-			$('#facebook_connect').click(function(e){
+			$('#facebook_connect, .landing-map-button').click(function(e){
 
 				e.preventDefault();
 
-				FB.login( function(res){
+				FB.login(function( res ){
 
 					delog('Client facebook status is : ' + res.status ) ;
 
@@ -34,34 +34,150 @@
 				}, { scope: ['public_profile', 'email', 'user_friends', 'user_photos']} );
 			});
 
+			$('#contact').click(function(){
+
+				LJ.fn.displayInModal({
+					source   : 'local',
+					render_cb: LJ.fn.renderContactForm,
+					starting_width: 160
+				});
+
+			});
+
+			LJ.$body.on('click', '.landing-contact .btn-validate', function(){
+
+				var $self    = $(this);
+				var $contact = $('.landing-contact');
+
+				if( $self.hasClass('btn-validating') ) return;
+
+				$self.addClass('btn-validating');
+
+				$('.contact-error').velocity('transition.fadeOut', {
+					duration: 600
+				});
+
+				setTimeout(function(){
+
+					var name    = $('#contact-name').val().trim();
+					var email   = $('#contact-email').val().trim();
+					var message = $('#contact-message').val().trim();
+
+					if( name.length == 0 || email.length == 0 || message.length == 0 ){
+						$self.removeClass('btn-validating');
+						return $('.contact-error')
+									.text( LJ.text_source["lp_contact_error_fields"][ LJ.app_language ] )
+									.velocity('transition.fadeIn');
+					}
+
+					if( !/\S+@\S+/i.test( email ) ){
+						$self.removeClass('btn-validating');
+						return $('.contact-error')
+									.text( LJ.text_source["lp_contact_error_email"][ LJ.app_language ] )
+									.velocity('transition.fadeIn');
+					}
+
+					// Everything ok, send contact email
+					$.ajax({
+						method: 'post',
+						url: '/landing/contact',
+						data: {
+							name    : name,
+							email   : email,
+							message : message
+						},
+						success: function( data ){
+							$('.landing-contact *').velocity('transition.fadeOut', {
+								duration: 600,
+								complete: function(){
+									var txt = LJ.text_source["lp_contact_send_success"][ LJ.app_language ];
+									$('.landing-contact').html('<div class="none super-centered contact-send-success">' + txt + '</div>')
+												 .find('div')
+												 .velocity('transition.fadeIn', {
+												 	duration: 600,
+												 	complete: function(){
+												 		setTimeout(function(){
+												 			$('.modal-curtain').click();
+												 		}, 1200 );
+												 	}
+												 })
+								}
+							})
+						},
+						error: function( xhr ){
+							$self.removeClass('btn-validating');
+							return $('.contact-error')
+										.text( LJ.text_source["lp_contact_error_generic"][ LJ.app_language ] )
+										.velocity('transition.fadeIn');
+						}
+					})
+
+				}, 500 );
+
+			});
+
 		},
 		initLandingPage: function(){
 
-        $('.curtain').velocity('transition.fadeOut', {
-        	duration: 1500,
-        	delay: 500
-        });
+	        $('.curtain').velocity('transition.fadeOut', {
+	        	duration: 1500,
+	        	delay: 500
+	        });
 
-        $('.landing-kenburns').Kenburns({
-        	// images: ['img/kb/bg1-min.jpg','img/kb/bg2-min.jpg','img/kb/bg3-min.jpg','img/kb/bg4-min.jpg','img/kb/bg5-min.jpg','img/kb/bg6-min.jpg'],
-        	scale: 0.92,
-        	duration: 8000,
-        	fadeSpeed: 1500,
-        	ease3d: 'ease-out',
-        	onSlideComplete: function(){
-       			console.log('slide ' + this.getSlideIndex());
-		    },
-		    onLoadingComplete: function(){
-		        console.log('image loading complete');
-		    }
-        }).append('<div class="kenburns-overlay"></div>');
-        
+	        $('.landing-kenburns').Kenburns({
+	        	images: ['img/kb/bg1-min.jpg','img/kb/bg2-min.jpg','img/kb/bg3-min.jpg','img/kb/bg4-min.jpg','img/kb/bg5-min.jpg','img/kb/bg6-min.jpg'],
+	        	scale: 0.92,
+	        	duration: 8000,
+	        	fadeSpeed: 1500,
+	        	ease3d: 'ease-out',
+	        	onSlideComplete: function(){
+
+	        		var city_text = ["Julie Simsons","Célina Helloworld", "Morgane Labelle", "Sylvie Larson", "Christiana", "Marion"];
+	        		var slide_index = this.getSlideIndex();
+	       			var $img = $('.kb-slide').eq( slide_index );
+	       			var text = city_text[ slide_index ];
+	       			
+	       			$('.landing-places-wrap *:not(.icon)').velocity( LJ.ui.slideRightOutLight, {
+	       				duration: 800,
+	       				complete: function(){
+	       					$(this).remove();
+	       					$('<span class="landing-places"></span>')
+	       						.appendTo('.landing-places-wrap')
+	       						.velocity('transition.slideLeftIn', {
+	       							duration: 400
+	       						});
+
+	       					// Always make sure that kenburns duration = write_duration + backDelay + back_duration
+	       					$('.landing-places').typed({
+	       						strings: [text],
+	       						write_duration: 3300,
+	       						backDelay: 3300,
+	       						back_duration: 1000
+	       					});
+
+	       				}
+	       			})
+
+
+			    },
+			    onLoadingComplete: function(){
+			        console.log('image loading complete');
+
+			    }
+	        }).append('<div class="kenburns-overlay"></div>');
+	        
 
 		},
 		autoLogin: function(){
 
-    		var $el = $('<div class="auto-login-msg super-centered none">' + 'Chargement des prochaines soirées...' + '</b></div>');
-			$el.appendTo('.curtain').velocity('transition.fadeIn')
+			/* Message during login */
+           $('<div class="auto-login-msg super-centered none">' + 'Chargement des prochaines soirées...' + '</b></div>')
+                .appendTo('.curtain')
+                .velocity('transition.fadeIn', {
+                    duration: 1000
+            });
+
+
 			setTimeout( function(){
 
 			LJ.fn.GraphAPI('/me', function( facebookProfile ){

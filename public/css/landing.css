@@ -57,8 +57,8 @@
    -webkit-transition: all .5s;
    transition: all .5s;
    text-align: center;
-   margin-top: 35px;
    font-family: Alegreya Sans SC;
+   margin-top: 60px;
 }
 
 #facebook_connect:hover .fb-overlay {
@@ -75,7 +75,8 @@
 .hero-logo {
    position: absolute;
    z-index: 1000;
-   margin: 20px 0 0 40px;
+   top: 20px;
+   left: 40px;
 }
 
 
@@ -155,11 +156,15 @@
     left: 0;
     bottom: 0;
     right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-.hero-header {font: bold 65px 'Alegreya Sans SC';text-align: center;color: white;margin-top: 200px;}
+.hero-header {font: bold 65px 'Alegreya Sans SC';text-align: center;color: white;}
 
-.hero-subheader {text-align: center;font: normal 25px 'Roboto';text-shadow: 0 1px 1px #575757;color: white;margin-top: 10px;text-transform: none;}
+.hero-subheader {text-align: center;font: normal 25px 'Roboto';text-shadow: 0 1px 1px #575757;color: white;text-transform: none;margin-top: 15px;}
 
 .hero-languages {
    position: absolute;
@@ -174,7 +179,7 @@
     background-color:black;
     overflow: hidden;
     position: relative;
-    background: url('/img/kb/bg8.jpg') no-repeat center center;
+    /* background: url('/img/kb/bg8.jpg') no-repeat center center; */
     background-size: cover;
 }
 .kb-slide{
@@ -295,7 +300,7 @@
 
 }
 
-.footer-divider {height: 3px;margin: 0 auto;width: 313px;background: #878787;margin-top: 22px;border-bottom: 1px solid #232323;border-top: 1px solid #333;}
+.footer-divider {height: 3px;margin: 0 auto;width: 200px;background: #878787;margin-top: 22px;border-bottom: 1px solid #232323;border-top: 1px solid #333;}
 
 .footer-list {margin-top: 20px;margin-bottom: 30px;}
 
@@ -317,17 +322,25 @@
 .keypoint-wrap {
    width: 230px;
    display: inline-block;
-   margin: 30px 30px 110px;
+   margin: 20px 30px 110px;
    vertical-align: top;
 }
 
 .keypoint-message {
-   font: bold 40px 'Alegreya Sans Sc';
    margin-top: 50px;
-   font-family: 'Gochi Hand';
+   /* font-family: 'Gochi Hand'; */
    font-weight: bolder;
    font-family: 'Alegreya Sans Sc';
    text-shadow: 0 1px 1px #DADADA;
+   /* font-family: 'Merriweather'; */
+   font-size: 26px;
+}
+
+.keypoint-splitter {
+  margin: 0 auto;
+  display: block;
+  width: 300px;
+  margin-top: 20px;
 }
 
 .keypoint-1 {
@@ -352,20 +365,21 @@
    font-size: 40px;
    border-radius: 40px;
    padding: 17px 16px;
-   background: #E94F6A;
+   /* background: #E94F6A; */
    color: white;
    background: white;
    color: #e94f6a;
+   /* border: 1px solid #EAEAEA; */
 }
 
-.keypoint-head {font: bold 18px 'Alegreya Sans SC';margin-top: 20px;padding: 15px;border-radius: 3px;}
+.keypoint-head {font: bold 18px 'Alegreya sans sc';margin-top: 20px;padding: 15px;border-radius: 3px;}
 
 .keypoint-body {
 
 }
 
 
-.landing-map {background: url('/img/sc/sc1.jpg') center center;height: 300px;position: relative;}
+.landing-map {background: url('/img/sc/map.png') center center;height: 300px;position: relative;background-position: center -100px;}
 
 .landing-map-overlay {
    height: 100%;
@@ -376,11 +390,16 @@
 
 .landing-map-button {position: absolute;z-index: 10;background: none;border: 2px solid white;padding: 15px 45px;font: normal 20px 'Alegreya Sans Sc';color: white;outline: none;transition: all ease-in-out .15s;width: 370px;}
 .landing-map-button:hover {
-    background: rgba(255, 255, 255, 0.13);
+    background: rgba(255, 255, 255, 0.09);
 }
 .landing-map-button span {
    text-decoration: line-through;
    margin: 0 5px 0 2px;
+}
+
+.keypoint-wrap span {
+  text-decoration: line-through;
+  color: #B5B5B5;
 }
 
 .hero-lang {
@@ -398,3 +417,126 @@
 }
 
 .hero-lang.active {border-bottom: 3px solid #e94F6A;color: white;}
+
+.moving-arrow {
+   position: absolute;
+   right: 20px;
+   z-index: 100;
+   bottom: 20px;
+   color: white;
+   font-size: 45px;
+   -webkit-animation: movingarrow .1s 5s infinite alternate linear;/* Safari 4+ */
+   -moz-animation: movingarrow .8s 1s infinite alternate linear;/* Fx 5+ */
+   -o-animation: movingarrow .8s 1s infinite alternate linear;/* Opera 12+ */
+   animation: movingarrow .8s 1s infinite alternate linear;
+   cursor: pointer;
+}
+
+@-webkit-keyframes movingarrow {
+   0% { bottom: 30px; }
+   100% { bottom: 10px; }
+}
+
+@-moz-keyframes movingarrow {
+   0% { bottom: 30px; }
+   100% { bottom: 10px; }
+}
+
+@-o-keyframes movingarrow {
+   0% { bottom: 30px; }
+   100% { bottom: 10px; }
+}
+
+@keyframes movingarrow{
+   0% { bottom: 30px; }
+   100% { bottom: 10px; }
+}
+
+
+
+.landing-contact {
+font-family: 'Roboto';/* width: 500px; */}
+
+.contact-title {display: inline-block;padding: 7px 16px;font-family: 'Alegreya sans sc';font-size: 35px;font-weight: bolder;}
+
+.contact-row {
+margin: 10px 0;text-align: left;}
+
+.landing-contact input {
+background: white;
+border: 1px solid #eee;border-top: none;padding: 11px 10px;width: 100%;display: inline-block;font-family: 'Karla';}
+
+.landing-contact label {
+  
+font-weight: bolder;
+  
+display: inline-block;
+  
+color: #636363;
+  
+padding: 7px 10px;
+  
+width: 100%;
+  
+text-align: left;
+  
+font-family: 'Alegreya sans sc';
+}
+
+.landing-contact textarea {
+background: white;
+width: 100%;
+padding: 15px;
+font-family: 'Karla';
+line-height: 16px;
+font-size: 13px;
+border: 1px solid #eee;
+border-top: none;
+}
+
+.contact-error {
+  background: #e94f6a;
+  color: white;
+  width: 100%;
+  padding: 18px 20px;
+  font-family: 'Karla';
+  text-align: center;
+  font-size: 14px;
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  margin: 0;
+}
+
+.contact-send-success {
+  
+font-weight: bolder;
+  
+font-size: 18px;
+  
+line-height: 30px;
+  
+font-family: 'Alegreya sans sc';
+  
+color: #595959;
+}
+
+.landing-places-wrap {
+  color: #E4E4E4;
+  position: absolute;
+  bottom: 20px;
+  left:20px;
+  z-index: 10;
+  font-family: 'Alegreya sans sc';
+  font-size: 16px;
+}
+
+.landing-places-wrap .icon {
+color: #e94f6a;
+position: relative;
+font-size: 17px;
+top: 2px;
+left: -3px;
+font-family: 'Lato';
+}

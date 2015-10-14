@@ -108,7 +108,7 @@
           Meefore
         </h1>
         <h2 data-lid="lp_subtitle" class="hero-subheader">
-          Participez ou organisez des before avant d'aller en soirée.
+          Rejoignez ou organisez des before avant d'aller en soirée.
         </h2>
         <div id="facebook_connect">
           <i class="icon icon-facebook"></i>
@@ -118,6 +118,14 @@
       </div>
       <!-- end landing hero -->
 
+      <!-- moving arrow -->
+      <i class="icon moving-arrow icon-down-open-big"></i>
+      <!-- end Moving arrow -->
+
+       <!-- landing places -->
+      <div class="landing-places-wrap"><i class="icon icon-location"></i><span class="landing-places"></span></div>
+      <!-- end landing places  -->
+
     </div>
     <!-- end landing front page -->
   
@@ -125,7 +133,8 @@
 
     <!-- landing keypoints -->
     <div class="landing-keypoints">
-      <div data-lid="lp_key_title" class="keypoint-message">Qu'est ce qu'un meefore ?</div>
+      <div data-lid="lp_key_title" class="keypoint-message">L'indispensable mix d'un before réussi</div>
+      <img class="keypoint-splitter" src="/img/splitter.png" alt="A nice splitter">
       <div class="keypoint-wrap keypoint-1">
         <div class="keypoint-img"><i class="icon icon-keypoint icon-group"></i></div>
         <div data-lid="lp_key_friends_title" class="keypoint-head">Les amis...</div>
@@ -166,9 +175,7 @@
       <div class="footer-list">
         <ul>
           <li class="footer-list-item"><a href="/legals" target="_blank" >Mentions légales</a></li>
-          <li class="footer-list-item"><a href="/legals" target="_blank" >FAQ</a></li>
-          <li class="footer-list-item"><a href="/legals" target="_blank" >Contact</a></li>
-          <li class="footer-list-item"><a href="/legals" target="_blank" >A propos</a></li>
+          <li class="footer-list-item"><a id="contact" >Contact</a></li>
         </ul>
       </div>
     </footer>
@@ -179,7 +186,7 @@
 
 
   <!-- Header start -->
-  <header class="lg-header none">
+  <header id="#mainHeader" class="lg-header none">
     <div id="headerContent">
     <div class="preview-type beta">bêta</div>
       <img id="logo" src="/img/logomeefore.png" width="48"></img>
@@ -191,7 +198,6 @@
         </li>
         <li id="management" class="menu-item icon icon-users" data-linkedcontent="#manageEventsWrap"><span class="underlay"></span></li>
         <li id="settings" data-hash="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
-        <li id="contact" class="right menu-item icon icon-mail-alt nonei" data-linkedcontent="#contactWrap"><span class="underlay"></span></li>
       </ul>
     </div>
     <div id="languages">
@@ -515,6 +521,7 @@
   <script src="js/src/languages/lj-textsource.js"></script>
   <script src="js/src/lj-helpers.js"></script>
   <script src="js/src/tpl/lj-render-profile.js"></script>
+  <script src="js/src/tpl/lj-render-landing.js"></script>
   <script src="js/src/tpl/lj-render-user-profile.js"></script>
   <script src="js/src/tpl/lj-render-create.js"></script>
   <script src="js/src/tpl/lj-render-event.js"></script>
@@ -539,6 +546,7 @@
   <script src="js/src/errors/lj-errors.js"></script>
   <script src="js/src/languages/lj-country.js"></script>
   <script src="js/src/languages/lj-languages.js"></script>
+  <script src="js/src/analytics/lj-analytics.js"></script>
   <script src="js/src/init/lj-init.js"></script>
   <script src="js/src/lj-junk.js"></script>
 

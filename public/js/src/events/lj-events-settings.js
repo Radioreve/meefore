@@ -168,6 +168,9 @@
 
             if( !evt ) return;
 
+            // Refresh tabviews ui
+            LJ.fn.adjustAllTabviews();
+
             // Clear event marker
             LJ.fn.removeMarker({
                 cache_src : 'event_markers',

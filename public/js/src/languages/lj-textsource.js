@@ -623,35 +623,35 @@
 			"en": "United-Kingdom"
 		},
 		lp_subtitle: {
-			"fr": "Participez et organisez des before avant d'aller en soirée.",
-			"en": "Join and organize pregaming events before going to party."
+			"fr": "Participez ou organisez des before avant d'aller en soirée.",
+			"en": "Join or organize pregaming events before going out."
 		},
 		lp_conn_button: {
 			"fr": "Connexion",
 			"en": "Connection"
 		},
 		lp_key_title: {
-			"fr": "Qu'est ce qu'un meefore ?",
+			"fr": "L'indispensable mix d'un before réussi.",
 			"en": "What is a meefore ?"
 		},
 		lp_key_friends_title: {
-			"fr":"Les amis...",
-			"en": "Friends..."
+			"fr":"Les amis",
+			"en": "Friends"
 		},
 		lp_key_people_title: {
-			"fr": "...des rencontres...",
-			"en": "...people..."
+			"fr": "des rencontres",
+			"en": "people"
 		},
 		lp_key_party_title: {
-			"fr": "...et une soirée!",
-			"en": "...and a party!"
+			"fr": "et une soirée!",
+			"en": "and a party!"
 		},
 		lp_key_friends_text: {
-			"fr": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert",
+			"fr": "Pas de Meefore sans vos amis. Avec qui débrieferiez-vous s'ils n'étaient pas de la partie ?",
 			"en": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert"
 		},
 		lp_key_people_text: {
-			"fr": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert",
+			"fr": "Faîtes connaissances avec des groupes qui vont aux même soirées que vous. Avant que <span>l'alcool</span> la musique ne vous en empêche.",
 			"en": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert"
 		},
 		lp_key_party_text: {
@@ -665,9 +665,43 @@
 		lp_footer_followus: {
 			"fr": "Nous suivre",
 			"en": "Follow us"
+		},
+		lp_contact_title: {
+			"fr": "Contactez-nous",
+			"en": "Contact us"
+		},
+		lp_contact_name: {
+			"fr": "Nom*",
+			"en": "Name*"
+		},
+		lp_contact_email: {
+			"fr": "Email*",
+			"en": "Email*"
+		},
+		lp_contact_message: {
+			"fr": "Message*",
+			"en": "Message*"
+		},
+		lp_contact_send_success: {
+			"fr": "Votre message a bien été envoyé <br> Merci !",
+			"en": "Your message has been sent <br> Thank you !"
+		},
+		lp_contact_error_fields: {
+			"fr": "Il manque certains champs",
+			"en": "Some fields are missing"
+		},
+		lp_contact_error_email: {
+			"fr": "L'addresse email rentrée semble avoir une petite erreur",
+			"en": "Your email address doesn't look like one "
+		},
+		lp_contact_error_generic: {
+			"fr": "Une erreur s'est produite. Contactez-nous directement à contact@meefore.com",
+			"en": "Something wrong happened. Mail us directly at contact@meefore.com"
+		},
+		lp_loading_party: {
+			"fr": "Chargement des prochaines soirées...",
+			"en": "Loading next pregaming events..."
 		}
-
-
 
 	});
 
