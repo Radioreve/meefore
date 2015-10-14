@@ -8,18 +8,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-  <title>Dev Meefore | Home </title>
+  <title>Meefore | Home </title>
 
-  <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Londrina+Solid' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Karla:700,400' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Gochi+Hand' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Londrina+Solid' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Karla:700,400' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Gochi+Hand' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Alegreya+Sans+SC:400,500,600,700,800,900' rel='stylesheet' type='text/css'>
+
 
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/joyride.css">
   <link rel="stylesheet" href="/css/reset.css">
   <link rel="stylesheet" href="/css/jscrollpane.css">
   <link rel="stylesheet" href="/css/fontello/css/fontello.css">
+  <link rel="stylesheet" href="/css/flags/css/flag-icon.min.css">
   <link rel="stylesheet" href="/css/hint.css">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/landing.css">
@@ -33,6 +36,8 @@
   <link rel="stylesheet" href="/css/admin.css">
   <link rel="stylesheet" href="/css/modal.css">
   <link rel="stylesheet" href="/css/pikadate.css">
+  <link rel="stylesheet" href="/css/rangeslider/css/rangeslider.css">
+  <link rel="stylesheet" href="/css/rangeslider/css/rangeslider.flat.css">
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -64,67 +69,148 @@
   <div class="progress_bar"></div>
   <div class="loaderWrap"></div>
   <div class="m-loaderWrap"></div>
-  <div class="overlay"></div>
-  <div id="logo-hero"><img src="/img/logomeefore.png" width="50" alt="Logo meefore soirées"></div>
-  <div class="hero-img scaled animatable img-4 "></div>
-  <div class="hero-img scaled animatable img-1 "></div>
-  <div class="hero-img scaled animatable img-2 "></div>
-  <div class="hero-img scaled animatable img-3 "></div>
-  <div class="hero-img scaled animatable img-0 "></div>
-  <div class="hero-img scaled animatable img-5 "></div>
-  <div class="hero-img scaled animatable img-6 "></div>
-  <div class="hero-img scaled animatable img-7 "></div>
   <div class="curtain"></div>
   <div class="modal-curtain"></div>
   <div class="modal-container super-centered none"><div class="modal-container-body"></div></div>
 
+
+  <!-- Landing Page Begin -->
+  
+  <div id="landingWrap">
+    
+    <header class="landing-header">
+      
+    </header>
+    <!-- landing front page -->
+    <div class="landing-front">
+
+      <!-- landing kenburns -->
+      <div class="landing-kenburns">
+      </div>
+      <!-- end landing kenburns -->
+
+      <!-- landing hero -->
+      <div class="landing-hero">
+        <div class="hero-logo">
+          <img src="/img/logo_white_on_pink_skew_fav.png" width="40" alt="Logo meefore soirées">
+        </div>
+        <div class="hero-languages">
+          <span data-code="fr" class="no-cb pick-lang hero-lang active">FR</span>
+          <span data-code="en" class="no-cb pick-lang hero-lang">EN</span>
+        </div>
+        <h1 class="hero-header">
+          Meefore
+        </h1>
+        <h2 data-lid="lp_subtitle" class="hero-subheader">
+          Rejoignez ou organisez des before avant d'aller en soirée.
+        </h2>
+        <div id="facebook_connect">
+          <i class="icon icon-facebook"></i>
+          <span data-lid="lp_conn_button">Connexion</span>
+          <div class="fb-overlay"></div>
+        </div>
+      </div>
+      <!-- end landing hero -->
+
+      <!-- moving arrow -->
+      <i class="icon moving-arrow icon-down-open-big"></i>
+      <!-- end Moving arrow -->
+
+       <!-- landing places -->
+      <div class="landing-places-wrap"><i class="icon icon-location"></i><span class="landing-places"></span></div>
+      <!-- end landing places  -->
+
+    </div>
+    <!-- end landing front page -->
+  
+  <div class="landing-divider"></div>
+
+    <!-- landing keypoints -->
+    <div class="landing-keypoints">
+      <div data-lid="lp_key_title" class="keypoint-message">L'indispensable mix d'un before réussi</div>
+      <img class="keypoint-splitter" src="/img/splitter.png" alt="A nice splitter">
+      <div class="keypoint-wrap keypoint-1">
+        <div class="keypoint-img"><i class="icon icon-keypoint icon-group"></i></div>
+        <div data-lid="lp_key_friends_title" class="keypoint-head">Les amis...</div>
+        <p  data-lid="lp_key_friends_text" class="keypoint-body">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+      </div
+      ><div class="keypoint-wrap keypoint-2">
+        <div class="keypoint-img"><i class="icon icon-keypoint icon-relation"></i></div>
+        <div  data-lid="lp_key_people_title" class="keypoint-head">...des rencontres...</div>
+        <p  data-lid="lp_key_people_text" class="keypoint-body">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+      </div
+      ><div class="keypoint-wrap keypoint-3">
+        <div class="keypoint-img"><i class="icon icon-keypoint icon-glass"></i></div>
+        <div data-lid="lp_key_party_title" class="keypoint-head">...et la soirée !</div>
+        <p data-lid="lp_key_party_text" class="keypoint-body">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+      </div>
+    </div>
+
+    <div class="landing-divider"></div>
+
+    <!-- end landing keypoints -->
+    <div class="landing-map">
+      <div class="landing-map-overlay"></div>
+      <button data-lid="lp_map_button" class="landing-map-button super-centered">Voir les <span>before</span>meefore</button>
+    </div>
+  
+    <!-- landing footer -->
+    <footer class="landing-footer">
+      <div data-lid="lp_footer_followus" class="footer-followus">
+        Nous suivre
+      </div>
+      <div class="footer-socials">
+        <a href="https://www.facebook.com/meefore" target="_blank"><i class="icon icon-facebook"></i></a>
+        <a href="https://www.facebook.com/meefore" target="_blank"><i class="icon icon-twitter"></i></a>
+        <a href="https://www.facebook.com/meefore" target="_blank"><i class="icon icon-instagram"></i></a>
+        <a href="https://www.facebook.com/meefore" target="_blank"><i class="icon icon-youtube"></i></a>
+      </div>
+      <div class="footer-divider"></div>
+      <div class="footer-list">
+        <ul>
+          <li class="footer-list-item"><a href="/legals" target="_blank" >Mentions légales</a></li>
+          <li class="footer-list-item"><a id="contact" >Contact</a></li>
+        </ul>
+      </div>
+    </footer>
+    <!-- end landing footer -->
+  </div>
+  
+  <!-- Landing Page End -->
+
+
   <!-- Header start -->
-  <header class="lg-header none">
+  <header id="#mainHeader" class="lg-header none">
     <div id="headerContent">
+    <div class="preview-type beta">bêta</div>
       <img id="logo" src="/img/logomeefore.png" width="48"></img>
       <ul id="menuWrap" class="">
-        <li id="profile" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
-        <li id="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
+        <li id="profile" data-hash="me" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
+        <li id="events" data-hash="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
         <li id="search" class="menu-item icon icon-search"><span class="underlay"></span>
-          <div id="searchbar" class=""><input type="text" placeholder="Rechercher un membre" class="search-input"></div>
+          <div id="searchbar" class=""><input data-lid="h_search_placeholder" type="text" placeholder="Rechercher un membre" class="search-input"></div>
         </li>
         <li id="management" class="menu-item icon icon-users" data-linkedcontent="#manageEventsWrap"><span class="underlay"></span></li>
-        <li id="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
-        <li id="contact" class="right menu-item icon icon-mail-alt nonei" data-linkedcontent="#contactWrap"><span class="underlay"></span></li>
+        <li id="settings" data-hash="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
       </ul>
+    </div>
+    <div id="languages">
+      <div class="pick-lang active" data-code="fr"><span class="flag-icon flag-icon-fr"></span></div>
+      <div class="pick-lang" data-code="en"><span class="flag-icon flag-icon-gb"></span></div>
     </div>
   </header>
   <!-- Header end -->
 
   <div id="mainWrap" class="centered">
 
-    <!-- Landing page start -->
-    <section id="landingWrap" class="centered revealed m-revealed">
-      <div class="landing-content">
-        <h2 class="landing-places">
-          <span class="typed-text"></span>
-        </h2>
-        <div class="landing-hashtags">
-          <!-- Dynamically loaded -->
-        </div>
-        <div class="landing-call">
-          "Une vraie soirée commence toujours avant la soirée."
-        </div>
-        <div class="landing-subscribe">
-          <div id="facebook_connect"><i class="icon icon-facebook"></i>Connexion
-            <div class="fb-overlay"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Landing page end -->
+  
 
     <section id="thumbWrap" class="none ">
       <div class="imgWrap">
       </div>
       <div id="thumbInfos">
         <h2 id="thumbName"></h2>
-        <span id="logout" class="action">Log out</span>
+        <span data-lid="h_logout" id="logout" class="action">Log out</span>
       </div>
     </section>
 
@@ -132,7 +218,7 @@
 
       <!-- Titre et sous-titre  -->
       <div class="row row-profile">
-        <h2> Mon profile </h2>
+        <h2 data-lid="p_title"> Mon profile </h2>
         <div class="row-subheader none">
           <div class="row-subheader-xp"><span class="xp-amount">1000</span><span>pts</span></div>
           <div class="row-subheader-bar"></div>
@@ -157,70 +243,68 @@
       <!-- Edition des photos -->
       <div class="row row-profile row-pictures">
         <div class="row-title">
-          <div class="row-title-text">Tes 5 photos</div>
-          <i class="icon icon-edit icon-feather right"></i>
+          <div data-lid="p_pictures_title" class="row-title-text">Tes 5 photos</div>
+          <i class="icon icon-edit icon-pencil right"></i>
         </div>
         <div class="row-subtitle">
-          <div class="row-subtitle-text etiquette">Plusieurs photos valent mieux qu'un long discours! Montre toi sous ton plus beau jour.</div>
+          <div data-lid="p_pictures_subtitle" class="row-subtitle-text etiquette">Plusieurs photos valent mieux qu'un long discours! Montre toi sous ton plus beau jour.</div>
         </div>
         <div class="row-body row-center picture-wrap" >
           <!-- Dynamically loaded -->
         </div>
         <div class="row-buttons">
-          <button class="theme-btn btn-cancel right">Annuler</button>
-          <button class="theme-btn btn-validate right">Valider</button>
+          <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
+          <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
         </div>
       </div>
-
-
+ 
       <!-- Edition des informations  -->
-      <div class="row row-profile row-informations row-select-daddy ">
+      <div class="row row-profile row-informations row-select-daddy">
 
         <div class="row-title">
-          <div class="row-title-text">Informations</div>
-          <i class="icon icon-edit icon-feather right"></i>
+          <div data-lid="p_info_title" class="row-title-text">Informations</div>
+          <i class="icon icon-edit icon-pencil right"></i>
         </div>
 
         <div class="row-subtitle">
-          <div class="row-subtitle-text etiquette">Dis nous tout, et surtout concentre toi sur l'essentiel</div>
+          <div data-lid="p_info_subtitle" class="row-subtitle-text etiquette">Dis nous tout, et surtout concentre toi sur l'essentiel</div>
         </div>
 
         <div class="row-body">
           <div class="row-divider"></div>
           <div class="row-input row-input-md row-name etiquette">
-            <label for="name" class="label label-md">Nom</label>
-            <input readonly id="name" class="" placeholder="Prad Bitt" type="text" maxlength="25">
+            <label data-lid="p_name_label" for="name" class="label label-md">Nom</label>
+            <input data-lid="p_name_placeholder" readonly id="name" class="" placeholder="Prad Bitt" type="text" maxlength="25">
           </div>
           <div class="row-input row-input-md row-age etiquette">
-            <label for="age" class="label label-md" >Age</label>
+            <label  data-lid="p_age_label" for="age" class="label label-md" >Age</label>
             <input readonly id="age" class="" placeholder="25" type="number" max="50" min="18">
           </div>
-          <div class="row-input row-input-md row-mood etiquette">
-            <label for="mood" class="label label-md" >Humeur</label>
+          <div class="row-input row-input-md row-country etiquette">
+            <label data-lid="p_country_label" class="label label-md" for="description">Pays</label>
+            <input id="country" readonly maxlength="40" type="text" class="readonly">
+          </div>
+          <div class="row-input row-input-md row-job etiquette">
+            <label data-lid="p_job_label" class="label label-md" for="situation">Situation</label>
+            <input readonly id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
+          </div>
+          <div class="row-input row-input-lg row-mood etiquette">
+            <label data-lid="p_lifestyle_label" for="mood" class="label label-md" >Lifestyle</label>
             <div class="row-select-wrap mood-wrap">
               <!-- Dynamically loaded -->
             </div>
           </div>
-          <div class="row-input row-input-md row-drink etiquette">
-            <label for="drink" class="label label-md" >Verre</label>
+          <div class="row-input row-input-lg row-drink etiquette nonei">
+            <label data-lid="p_drink_label" for="drink" class="label label-md" >Verre</label>
             <div class="row-select-wrap drink-wrap">
               <!-- Dynamically loaded -->
             </div>
           </div>
-          <div class="row-input row-input-md row-motto etiquette">
-            <label class="label label-md" for="description">Motto</label>
-            <input id="motto" readonly maxlength="40" type="text" class="" placeholder="Si tu étais une phrase...">
-            <div class="inspire">En manque d'inspi?</div>
-          </div>
-          <div class="row-input row-input-md row-job etiquette">
-            <label class="label label-md" for="situation">Situation</label>
-            <input readonly id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
-          </div>
         </div>
 
         <div class="row-buttons">
-          <button class="theme-btn btn-cancel right">Annuler</button>
-          <button class="theme-btn btn-validate right">Valider</button>
+          <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
+          <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
         </div>
 
       </div>
@@ -228,15 +312,14 @@
       <!-- Amis sur meefore  -->
       <div class="row row-profile row-friends">
         <div class="row-title">
-          <div class="row-title-text">Tout le monde est sur meefore</div>
-          <i class="icon icon-edit icon-feather right"></i>
+          <div data-lid="p_friends_title" class="row-title-text">Tout le monde est sur meefore</div>
         </div>
         <div class="row-subtitle">
-          <div class="row-subtitle-text etiquette">Tes amis Facebook sont tous sur meefore. Il en manque ? Invites-les et gagne des points!</div>
+          <div data-lid="p_friends_subtitle" class="row-subtitle-text etiquette">Tes amis Facebook sont tous sur meefore. Il en manque ? Invites-les et gagne des points!</div>
         </div>
         <div class="row-divider"></div>
         <div class="row-body">
-          <h3>Vous n'avez aucun ami Facebook inscrit. Participer à des before risque d'être compliqué...</h3>
+          <h3 data-lid="p_friends_nofriends" >Vous n'avez aucun ami Facebook inscrit. Participer à des before risque d'être compliqué...</h3>
            <!-- Dynamically loaded -->
         </div>
       </div>
@@ -245,15 +328,15 @@
       <div class="row row-profile row-okc none">
         <div class="row-title">
           <div class="row-title-text">Tes questions perso</div>
-          <i class="icon icon-edit icon-feather right"></i>
+          <i class="icon icon-edit icon-pencil right"></i>
         </div>
         <div class="row-subtitle">
           <div class="row-subtitle-text etiquette">On vous évite de parler des heures. Répondez franchement aux 10 questions ci-dessous, c'est pour vous.</div>
         </div>
 
         <div class="row-buttons">
-          <button class="theme-btn btn-cancel right">Annuler</button>
-          <button class="theme-btn btn-validate right">Valider</button>
+          <button class="theme-btn btn-validate">Valider</button>
+          <button class="theme-btn btn-cancel">Annuler</button>
         </div>
       </div>
 
@@ -263,50 +346,40 @@
     
     <section id="eventsWrap" class="none centered">
       
-      <div class="row row-events text-center">
-        <h2> Tous les before </h2>
-        <h5 class="row-title-sub"> L'abus de soirées est excellent pour la santé.</h5>
-      </div>
-
-      <div class="row row-events row-events-filters etiquette">
+      <div class="row row-events row-events-filters">
         <div class="row-events-filters-group">
-          <div class="event-filter-label">Vous êtes : </div>
-          <div class="event-filter-options filter-mixity">
-            <!-- Dynamically loaded -->
-          </div>
+          <i class="icon icon-filters-group icon-location"></i>
+          <div class="event-filter-label">Changer d'endroit : </div>
+          <input id="moveAround" type="text" placeholder="Paris, Londres..." >
         </div>
         <div class="row-events-filters-divider"></div>
-        <div class="row-events-filters-group">
-          <div class="event-filter-label">Vous avez : </div>
-          <div class="event-filter-options filter-agerange">
-            <!-- Dynamically loaded -->
-          </div>
+        <div class="row-events-filters-group filters-create-meefore">
+          <button class="theme-btn btn-create-event right">
+            <i class="icon icon-bar"></i><span data-lid="e_create_button">Proposer un meefore</span>
+          </button>
         </div>
-        <div class="row-events-filters-divider"></div>
-        <div class="row-events-filters-group">
-          <div class="event-filter-label">C'est pour sortir : </div>
-          <div class="event-filter-options">
-            <div class="event-filter slow-down-3">Aujourd'hui</div>
-            <div class="event-filter slow-down-3">Plus tard</div>
-          </div>
-        </div>
-        <button class="theme-btn btn-create-event right">Créer un before</button>
       </div>
 
       <div class="row row-events row-main">
-        <div class="row-events-preview">
+        <div class="row-preview row-events-preview">
+              <!-- Dynamically loaded -->
+        </div>
+        <div class="row-preview row-party-preview">
               <!-- Dynamically loaded -->
         </div>
         <div class="row-events-map">
           <!-- Dynamically loaded -->
         </div>
-        <div class="row-events-accepted-tabview">
-          <!-- Dynamically loaded -->
-        </div>
-          <!-- Dynamicalled loaded [ row events accepted in view are apppended here ] -->
       </div>
+
     </section>
   
+    <div class="row row-events row-events-accepted">
+      <div class="row-events-accepted-tabview">
+        <!-- Dynamically loaded -->
+      </div>
+        <!-- Dynamicalled loaded [ row events accepted in view are apppended here ] -->
+    </div>
 
     <section id="searchUsersWrap" class="none centered">
       <h2>Team de soirée</h2>
@@ -328,7 +401,7 @@
     <section id="settingsWrap" class="none centered">
 
       <div class="row row-settings">
-        <h2> Préférences </h2>
+        <h2 data-lid="s_title" > Préférences </h2>
       </div>
 
       <div class="row-divider"></div>
@@ -336,29 +409,29 @@
       <div class="row row-settings row-ux row-select-daddy">
 
         <div class="row-title">
-          <div class="row-title-text">Expérience utilisateur</div>
-          <i class="icon icon-edit icon-feather right"></i>
+          <div data-lid="s_app_title" class="row-title-text">Application</div>
+          <i class="icon icon-edit icon-pencil right"></i>
         </div>
 
         <div class="row-subtitle">
-          <div class="row-subtitle-text etiquette">Modifier le comportement général de l'application</div>
+          <div data-lid="s_app_subtitle" class="row-subtitle-text etiquette">Modifier le comportement général de l'application</div>
         </div>
 
         <div class="row-body">
         <div class="row-divider"></div>
           <div class="row-input row-input-lg row-auto_login etiquette">
-            <label class="label label-lg"for="">Auto login</label>
+            <label data-lid="s_app_autologin_label" class="label label-lg"for="">Auto login</label>
             <div class="row-select-wrap">
-              <div class="row-select auto_login" data-selectid="yes">Oui</div>
-              <div class="row-select auto_login" data-selectid="no">Non</div>
+              <div data-lid="s_yes" class="row-select auto_login" data-selectid="yes">Oui</div>
+              <div data-lid="s_no" class="row-select auto_login" data-selectid="no">Non</div>
             </div>
-            <div class="row-select-description etiquette">Activez cette option pour skipper la page d'accueil</div>
+            <div data-lid="s_app_autologin_desc" class="row-select-description etiquette">Activez cette option pour skipper la page d'accueil</div>
           </div>
         </div>
 
         <div class="row-buttons">
-          <button class="theme-btn btn-cancel right">Annuler</button>
-          <button class="theme-btn btn-validate right">Valider</button>
+          <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
+          <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
         </div>
 
       </div>  
@@ -366,37 +439,37 @@
       <div class="row row-settings row-notifications row-select-daddy">
 
         <div class="row-title">
-          <div class="row-title-text">Alertes et notifications</div>
-          <i class="icon icon-edit icon-feather right"></i>
+          <div data-lid="s_alerts_title" class="row-title-text">Alertes et notifications</div>
+          <i class="icon icon-edit icon-pencil right"></i>
         </div>
 
         <div class="row-subtitle">
-          <div class="row-subtitle-text etiquette">Restez alerté en temps réel lorsqu'un évènement est créé près de chez vous</div>
+          <div data-lid="s_alerts_subtitle" class="row-subtitle-text etiquette">Restez alerté en temps réel lorsqu'un évènement est créé près de chez vous</div>
         </div>
 
         <div class="row-body">
         <div class="row-divider"></div>
           <div class="row-input row-input-lg row-newsletter etiquette">
-            <label class="label label-lg"for="">Newsletter</label>
+            <label data-lid="s_alerts_newsletter_label" class="label label-lg"for="">Newsletter</label>
             <div class="row-select-wrap">
-              <div class="row-select newsletter" data-selectid="yes">Oui</div>
-              <div class="row-select newsletter" data-selectid="no">Non</div>
+              <div data-lid="s_yes" class="row-select newsletter" data-selectid="yes">Oui</div>
+              <div data-lid="s_no" class="row-select newsletter" data-selectid="no">Non</div>
             </div>
-             <div class="row-select-description etiquette">Notre newsletter est envoyée tous les dimanches</div>
+             <div data-lid="s_alerts_newsletter_desc" class="row-select-description etiquette">Notre newsletter est envoyée tous les dimanches</div>
           </div>
 
           <div class="row-input row-input-lg row-invitations etiquette">
-            <label class="label label-lg"for="">Invitations</label>
+            <label data-lid="s_alerts_invits_label" class="label label-lg"for="">Invitations</label>
             <div class="row-select-wrap">
-              <div class="row-select invitations" data-selectid="yes">Oui</div>
-              <div class="row-select invitations" data-selectid="no">Non</div> 
+              <div data-lid="s_yes" class="row-select invitations" data-selectid="yes">Oui</div>
+              <div data-lid="s_no" class="row-select invitations" data-selectid="no">Non</div> 
             </div>
-             <div class="row-select-description etiquette">Bons plans pour être invités à des soirées en VIP</div>
+             <div data-lid="s_alerts_invits_desc" class="row-select-description etiquette">Bons plans pour être invités à des soirées en VIP</div>
           </div>
 
           <div class="row-buttons">
-            <button class="theme-btn btn-cancel right">Annuler</button>
-            <button class="theme-btn btn-validate right">Valider</button>
+            <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
+            <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
           </div>
 
         </div>
@@ -407,21 +480,42 @@
 
   </div>
   
-  <script id="app_ids">
+  <script id="app_ids"> 
     window.facebook_app_id = "1509405206012202";
     window.pusher_app_id   = "e0e801db688ab26d8581";
   </script>
-  <script src="//js.pusher.com/2.2/pusher.min.js"></script>  
-  <script src="dist/lib.js"></script>
+
+  <script src="//js.pusher.com/3.0/pusher.min.js"></script>  
+  <script src="js/lib/lodash.js"></script>
+  <script src="js/lib/mousetrap.js"></script>
+  <script src="js/lib/jquery.js"></script>
   <script src="js/lib/pikaday.js"></script>
+  <script src="js/lib/joyride.js"></script>
+  <script src="js/lib/jscrollpane.js"></script>
+  <script src="js/lib/jquery.cloudinary.js"></script>
+  <script src="js/lib/jquery.typeahead.js"></script>
+  <script src="js/lib/typed.js"></script>
+  <script src="js/lib/waitForImages.min.js"></script>
+  <script src="js/lib/velocity.min.js"></script>
+  <script src="js/lib/velocityui.min.js"></script>
+  <script src="js/lib/moment.min.js"></script>
   <script src="js/lib/jscrollpane.mousewheel.js"></script>
   <script src="js/lib/momentwithlocale.min.js"></script>
+  <script src="js/lib/rangeslider.js"></script>
+  <script src="js/lib/async.min.js"></script>
+  <!-- <script src="js/lib/prefixfree.min.js"></script> -->
+  <script src="js/lib/md5.min.js"></script>
+  <script src="js/lib/jquery.parallax.js"></script>
+  <script src="js/lib/kenburns.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry" type="text/javascript"></script>
 
   <!-- custom scripts -->
   <script src="js/src/lj-params.js"></script>
+  <script src="js/src/router/lj-router.js"></script>
+  <script src="js/src/languages/lj-textsource.js"></script>
   <script src="js/src/lj-helpers.js"></script>
   <script src="js/src/tpl/lj-render-profile.js"></script>
+  <script src="js/src/tpl/lj-render-landing.js"></script>
   <script src="js/src/tpl/lj-render-user-profile.js"></script>
   <script src="js/src/tpl/lj-render-create.js"></script>
   <script src="js/src/tpl/lj-render-event.js"></script>
@@ -444,7 +538,11 @@
   <script src="js/src/profile/lj-profile.js"></script>
   <script src="js/src/pusher/lj-pusher.js"></script>
   <script src="js/src/errors/lj-errors.js"></script>
+  <script src="js/src/languages/lj-country.js"></script>
+  <script src="js/src/languages/lj-languages.js"></script>
+  <script src="js/src/analytics/lj-analytics.js"></script>
   <script src="js/src/init/lj-init.js"></script>
+  <script src="js/src/lj-junk.js"></script>
 
 </body>
 

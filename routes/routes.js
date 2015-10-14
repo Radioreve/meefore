@@ -16,9 +16,9 @@
 	var api = {}
 	//	api.tests     = require( apiDir + '/tests');
 		api.users     = require( apiDir + '/users');
-		api.events    = require( apiDir + '/events');
 		api.places    = require( apiDir + '/places');
 		api.ambiances = require( apiDir + '/ambiances');
+		api.events    = require( apiDir + '/events');
 		api.chats     = require( apiDir + '/chats');
 
 	var mdw = {};
@@ -218,7 +218,7 @@
 	    // [ @chat ] Post un nouvau message
 	    app.post('/api/v1/chats/:chat_id',
 	    	mdw.validate('chat_message', ['chat_message']),
-	    	mdw.cache.watchCache,
+	    	// mdw.cache.watchCache,
 	    	api.chats.addChatMessage );
 
 	    // [ @chat ] Poste le fait qu'un user ai lu un message

@@ -6,11 +6,11 @@
 		  	dev: {
 				uri: "mongodb://Radioreve:" + process.env.PW + "@dogen.mongohq.com:10008/meefore-staged"
 			},
-			stage: {
+			staged: {
 				uri: "mongodb://Radioreve:" + process.env.PW + "@dogen.mongohq.com:10008/meefore-staged"
 			},
 			prod: {
-				uri: "mongodb://<user>" + process.env.PW + "@c152.lighthouse.5.mongolayer.com:10152,lighthouse.4.mongolayer.com:10152,lighthouse.5.mongolayer.com:10152/meefore-prod?replicaSet=set-561e78e680f8684254000143"
+				uri: "mongodb://@c152.lighthouse.5.mongolayer.com:10152,lighthouse.4.mongolayer.com:10152,lighthouse.5.mongolayer.com:10152/meefore-prod?replicaSet=set-561e78e680f8684254000143"
 			}
 		}
 		, redis: {
@@ -19,21 +19,21 @@
 				port : "10576",
 				pass : "R4dioreve"
 			},
-			stage: {
+			staged: {
 				host : "aws-eu-west-1-portal.1.dblayer.com",
 				port : "10576",
 				pass : "R4dioreve"
 			},
 			prod: {
-				host : "@aws-eu-west-1-portal.1.dblayer.com",
-				port : "10576",
+				host : "aws-eu-west-1-portal.1.dblayer.com",
+				port : "10820",
 				pass : "R4dioreve"
 			}
 			
 		}
 		, homepage: {
 			dev   : process.cwd()  + '/views/index-dev.html',
-			stage : process.cwd()  + '/views/index-stage.html',
+			staged : process.cwd()  + '/views/index-stage.html',
 			prod  : process.cwd()  + '/views/index-prod.html'
 		}
 		, jwtSecret: "Wenighters"	
@@ -47,7 +47,7 @@
 				client_id	  : "1638104993142222",
 				client_secret : "303aae46230e0859af0e4bbe235f3ab7"
 			},
-			stage: {
+			staged: {
 				client_id 	  : "1638108873141834",
 				client_secret : "be00dd6b64d9f8bb10a33e4f76041d7f"
 			},
@@ -62,7 +62,7 @@
 				key       : 'f9e4bf4e8f1e0342ca27',
 				secret    : '316f1677d800392fde21'
 			},
-			stage: {
+			staged: {
 				app_id    : '139958',
 				key       : 'f9e4bf4e8f1e0342ca27',
 				secret    : '316f1677d800392fde21'
