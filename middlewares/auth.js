@@ -6,7 +6,7 @@
 	var pusher = require('../services/pusher');
 
 
-		var authenticate = function( audience ){
+	var authenticate = function( audience ){
 
 		return function( req, res, next ){
 
@@ -18,6 +18,7 @@
 				});
 
 			console.log('Authenticating [api]');
+			console.log('Token : ' + token );
 
 			var payload;
 			try{

@@ -102,7 +102,7 @@
 				
 				var img_place = $(this).parents('.picture').data('img_place');
 				LJ.fn.displayInModal({
-					url:'/me/photos/uploaded',
+					url:'/me/photos/uploaded?fields=source',
 					source:'facebook',
 					starting_width: 500,
 					max_height: 500,

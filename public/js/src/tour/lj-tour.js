@@ -36,14 +36,16 @@
 
         		complete:function(){ 
         			$('.curtain').css({'display':'none'});
-
-        			var url = 'https://graph.facebook.com/' + LJ.user.facebook_id + '/picture?width=180&height=180';
-        			var img_place = 0;
+                                
+                                var img_place = 0;
+                                var img_id    = LJ.cloudinary.placeholder.id;
+                                var url       = 'https://graph.facebook.com/' + LJ.user.facebook_id + '/picture?width=180&height=180';
 
         			LJ.fn.updatePictureWithUrl({
         				userId: LJ.user._id,
         				url: url,
-        				img_place: img_place
+        				img_place: img_place,
+                                        img_id: img_id
         			}, function( err, data ){
 
         				if( err ){

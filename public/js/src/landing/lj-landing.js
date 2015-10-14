@@ -7,6 +7,12 @@
 
 				e.preventDefault();
 
+				// First ask Facebook server for a valid token in exchange for user credentials
+				// If user has permission ok in his Fb profile, then the app gets access granted automatically
+				// Then, ask for /me for facebook profile, append token to the query and the received profile, and request for
+				// a app token  on route /auth/facebook. Once the app token has been given, then call all meefore routes
+				// with this token;
+
 				FB.login(function( res ){
 
 					delog('Client facebook status is : ' + res.status ) ;
@@ -19,7 +25,7 @@
 
 					if( res.status == 'connected' ){
 
-					  	$('#facebook_connect').velocity({ opacity: [0,1] }, { duration: 1250 });
+					  	$('#facebook_connect, .landing-map-button').velocity({ opacity: [0,1] }, { duration: 1250 });
 
 						LJ.state.loggingIn = true;
 						var access_token = res.authResponse.accessToken;
@@ -180,16 +186,16 @@
 
 			setTimeout( function(){
 
-			LJ.fn.GraphAPI('/me', function( facebookProfile ){
-				delog( facebookProfile );
-		  		LJ.fn.loginWithFacebook( facebookProfile );
-  			});
+				LJ.fn.GraphAPI('/me', function( facebookProfile ){
+					delog( facebookProfile );
+			  		LJ.fn.loginWithFacebook( facebookProfile );
+	  			});
 
 			}, 400 );
 		},
 		loginWithFacebook: function( facebookProfile ){
 
-				delog('logging in with facebook...');
+				delog('Logging in meefore with facebook profile...');
 				$.ajax({
 
 					method:'POST',
@@ -247,6 +253,8 @@
 			delog('Handling success login with fb');
 			LJ.user._id = data.id; 
 			LJ.accessToken = data.accessToken; 
+
+			console.log('Token received: ' + data.accessToken );
 			//document.cookie = 'token='+data.accessToken;
 
 			// Make sure all ajax request are don with proper accessToken

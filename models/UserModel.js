@@ -36,8 +36,7 @@ var UserSchema = new mongoose.Schema({
     type: Date
   },
   access: {
-    type: Array,
-    default:['standard']
+    type: Array
   },
   age: {
     type: Number,

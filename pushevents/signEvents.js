@@ -73,6 +73,7 @@
 			new_user.facebook_url                      = fb.link;
 			new_user.country_code					   = fb.locale.substr(0,2) // country code extraction
 			new_user.signup_date                       = new moment();
+			new_user.access 						   = ['standard'];
 
 			/* Pusher informations for real time channels */
 			new_user.channels = {
@@ -82,14 +83,16 @@
 
 			new_user.save( function( err, user ){
 
-				if( err )
+				if( err ){
 					return eventUtils.raiseError({
-						err: err,
-						toClient: "Error trying to create account",
-						res: res
+						toClient : "Error trying to create account",
+						err      : err,
+						res      : res
 					});
+				}
 
-				var accessToken = eventUtils.generateAppToken( user ); 
+				console.log('Account created successfully');
+				var accessToken = eventUtils.generateAppToken( "user", user ); 
 				var expose = { id: user._id, accessToken: accessToken };
 				
 				eventUtils.sendSuccess( res, expose );

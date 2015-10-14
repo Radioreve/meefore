@@ -118,7 +118,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                         LJ.fn.hideLoaders();
                     }, LJ.ui.artificialDelay);
                 }
-            })
+            });
 
         },
         handleDomEvents: function() {
@@ -140,7 +140,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.fn.handleDomEventsSettings();
 
         },
-        initPusherConnection: function(token) {
+        initPusherConnection: function( token ) {
 
             LJ.pusher = new Pusher(window.pusher_app_id, {
                 encrypted: true,
@@ -214,6 +214,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         initLayout: function( settings ){
 
+            console.log('initializing layout...');
             /* Google Places to browse the map */
             var options = {};
             LJ.google_places_autocomplete_filters = new google.maps.places.SearchBox( 
@@ -292,6 +293,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('#newsletter').prop('checked', LJ.user.newsletter);
             $('#currentEmail').val( LJ.user.email );
 
+            console.log('...done');
         },
         displayLayout: function() {
 

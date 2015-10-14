@@ -138,8 +138,6 @@
 					});
 				}
 
-				console.log( user );
-
 				var picture = _.find( user.pictures, function( pic ){
 					return pic.img_place == img_place;
 				});
@@ -178,7 +176,7 @@
 							
 			});
 		}, {
-			public_id: img_id
+			public_id: img_id // Important, force the image id to have the defined pattern
 		});
 
 	};
