@@ -214,6 +214,12 @@
 				});
 			}
 
+			// Store reference for criteria in Mongo update
+			var current_main = _.find( myUser.pictures, function( el ){ 
+					return el.is_main == true 
+				});
+			old_main_picture = current_main;
+
 			for( var i = 0; i < updatedPictures.length; i++ ){
 
 				var current_picture = _.find( myUser.pictures, function( el ){ 
@@ -223,15 +229,9 @@
 				if( updatedPictures[i].action == "mainify" )
 				{	
 
-					var currentMain = _.find( myUser.pictures, function( el ){ 
-						return el.is_main == true 
-					});
-					// Store reference for criteria in Mongo update
-					old_main_picture = currentMain;
+					current_main.is_main = false;
 
-					currentMain.is_main = false;
-
-					myUser.pictures.set( parseInt( currentMain.img_place ), currentMain );
+					myUser.pictures.set( parseInt( current_main.img_place ), current_main );
 					current_picture.is_main = true;
 					myUser.pictures.set( parseInt( current_picture.img_place ), current_picture );
 

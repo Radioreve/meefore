@@ -76,10 +76,10 @@
         			}, function( err, data ){
 
 					if( err ){
-						return LJ.fn.handleServerError("L'upload avec Facebook a échoué.");
+						return LJ.fn.handleServerError( LJ.text_source["p_picture_upload_error"][ LJ.app_language ] );
 					}
 
-					LJ.fn.handleServerSuccess("Vos photos ont été mises à jour");
+					LJ.fn.handleServerSuccess( LJ.text_source["p_picture_upload_success"][ LJ.app_language ] ); 
 
 					LJ.fn.replaceImage({
 						img_id      : data.img_id,

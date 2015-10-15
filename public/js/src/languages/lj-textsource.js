@@ -137,6 +137,14 @@
 			"fr": "Annuler",
 			"en": "Cancel"
 		},
+		p_picture_upload_success: {
+			"fr": "Votre photo a été mises à jour",
+			"en": "Your photo have been uploaded"
+		},
+		p_picture_upload_error: {
+			"fr": "Une erreur s'est produite lors de l'envoie de la photo",
+			"en": "An error occured during the upload, please try again later"
+		},
 		h_search_placeholder: {
 			"fr": "Rechercher quelqu'un",
 			"en": "Looking for someone?"
