@@ -55,6 +55,7 @@
 			$('.modal-container').on('click', '.btn-validate', function(){
 
 				var $self = $(this);
+
 				if( $self.hasClass('btn-validating') )
 					return;
 
@@ -81,12 +82,18 @@
 
 					LJ.fn.handleServerSuccess( LJ.text_source["p_picture_upload_success"][ LJ.app_language ] ); 
 
+					var pic = _.find( LJ.user.pictures, function(el){
+							return el.img_place == img_place;
+						});
+					var scope = pic.is_main ? ['profile','thumb'] : ['profile'];
+
 					LJ.fn.replaceImage({
 						img_id      : data.img_id,
 						img_version : data.img_version,
 						img_place   : img_place,
-						scope       : ['profile']
+						scope       : scope
 					});
+
 
 				});
 				
