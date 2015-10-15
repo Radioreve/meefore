@@ -33,7 +33,7 @@
 		}
 		, homepage: {
 			dev   : process.cwd()  + '/views/index-dev.html',
-			staged : process.cwd()  + '/views/index-stage.html',
+			staged : process.cwd()  + '/views/index-staged.html',
 			prod  : process.cwd()  + '/views/index-prod.html'
 		}
 		, jwtSecret: "Wenighters"	
