@@ -18,7 +18,6 @@
 				});
 
 			console.log('Authenticating [api]');
-			console.log('Token : ' + token );
 
 			var payload;
 			try{

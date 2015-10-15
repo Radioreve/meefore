@@ -304,30 +304,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
             LJ.state.connected = true;
 
+            // Header preparation
             $('.menu-item-active').removeClass('menu-item-active');
-
-            var $landingView;
-            if( LJ.user.status == 'idle' ){
-                $landingView = '#eventsWrap';
-                $('#management').addClass('filtered');
-                $('#events').addClass('menu-item-active')
-                    .find('span').velocity({
-                        opacity: [1, 0],
-                        translateY: [0, -5]
-                    });
-            }
-
-            if( LJ.user.status == 'new' ){
-                $landingView = '#profileWrap';
-                $('#management').addClass('filtered');
-                $('#profile').addClass('menu-item-active')
-                    .find('span').velocity({
-                        opacity: [1, 0],
-                        translateY: [0, -5]
-                    });
-
-            }
-
+            $('#events').addClass('menu-item-active')
+                .find('span').velocity({
+                    opacity: [1, 0],
+                    translateY: [0, -5]
+                });
 
             function during_cb() {
 
@@ -395,7 +378,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 });
             }
 
-            LJ.fn.displayContent( $landingView, {
+            LJ.fn.displayContent( '#eventsWrap', {
 
                 during_cb: during_cb,
                 after_cb: after_cb,

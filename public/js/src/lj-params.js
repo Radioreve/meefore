@@ -208,7 +208,7 @@
         },
         placeholder: {
         	id: 'placeholder_picture',
-        	params: { cloud_name :"radioreve", html: { 'class': 'mainPicture' }, width: 150 }
+        	params: { version: "1415466479", cloud_name :"radioreve", html: { 'class': 'mainPicture' }, width: 150 }
         },
     	loaders: {
     		main: {
