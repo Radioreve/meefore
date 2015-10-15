@@ -43,7 +43,7 @@
 #facebook_connect {
    width: 350px;
    margin: 0 auto;
-   /* background-image: url('/img/fbbluepattern.png'); */
+   /* background-image: url('/img/app/fbbluepattern.png'); */
    /* background-repeat: repeat-x; */
    /* background-color: #3a5795; */
    border: 2px solid #FFFFFF;
@@ -248,7 +248,6 @@
 }
 .screenshot-text {
     vertical-align: top;
-    background: url(/img/crossword.png);
     height: 100%;
 }
 
@@ -259,10 +258,8 @@
 /* End Screenshot rules */
 
 
-.landing-untitled {background: url('/img/crossword.png');height: 100px;}
-
 .landing-footer {
-   background: url(/img/texture-png2.png);
+   background: url(/img/app/darkpattern.png);
    background-origin: border-box;
    text-align: center;
    color: #F4F4F4;
@@ -316,7 +313,7 @@
 .landing-keypoints {
    text-align: center;
    overflow: hidden;
-   background: url('/img/crossword.png');
+   background: url('/img/app/crossword.png');
 }
 
 .keypoint-wrap {

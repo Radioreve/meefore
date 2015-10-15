@@ -325,7 +325,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 });
 
                 $('#mainWrap').css({
-                    'background': 'url(/img/crossword.png)',
+                    'background': 'url(/img/app/crossword.png)',
                     'display'   : 'block'
                 });
 
