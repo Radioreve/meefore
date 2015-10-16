@@ -176,6 +176,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.$mobile_loader = $.cloudinary.image(LJ.cloudinary.loaders.mobile.id, LJ.cloudinary.loaders.mobile.params);
             LJ.$mobile_loader.appendTo($('.m-loaderWrap'));
 
+            LJ.$main_loader_curtain = $.cloudinary.image( LJ.cloudinary.loaders.main_curtain.id, LJ.cloudinary.loaders.main_curtain.params );
+            /* Dynamically cloned and appened */
+
             LJ.$bar_loader = $.cloudinary.image(LJ.cloudinary.loaders.bar.id, LJ.cloudinary.loaders.bar.params);
             /* Dynamically cloned and appended */
 
@@ -330,11 +333,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 });
 
                 LJ.$body.trigger('display:layout:during');
+                $('.progress_bar--landing').css({ width: '120%' });
 
                 setTimeout(function(){
                     $('.auto-login-msg').velocity('transition.fadeOut');
                     $('.curtain').trigger('curtain:behindthescene:done');
-                }, 2200 );
+                    $('.progress_bar--landing').velocity('transition.slideUpOut', { duration: 500 });
+                }, 1200 );
 
             }
 
@@ -367,22 +372,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                     }
                 });
             }
-    
-            function parallel_cb(){
-                 /* Message during login */
-               $('<div class="auto-login-msg super-centered none">' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</div>')
-                    .appendTo('.curtain')
-                    .velocity('transition.fadeIn', {
-                        duration: 800,
-                        delay: 500
-                });
-            }
 
             LJ.fn.displayContent( '#eventsWrap', {
 
                 during_cb: during_cb,
                 after_cb: after_cb,
-                parallel_cb: parallel_cb,
                 mode: 'curtain',
                 myWayIn: 'transition.slideDownIn',
                 myWayOut: 'transition.slideUpOut',

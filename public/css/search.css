@@ -6,6 +6,12 @@
    letter-spacing: 1px;
 }
 
+.auto-login-msg img {
+    display: block;
+    margin: 0 auto;
+    margin-top: 15px;
+}
+
 .event-preview,
 .party-preview {
    background: white;

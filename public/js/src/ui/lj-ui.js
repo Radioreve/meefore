@@ -127,8 +127,9 @@
 				var $prev = $('.'+options.prev);
 				
 				var parallelTheScene = function(){
-
-					options.parallel_cb();
+					if( options.parallel_cb ){
+						options.parallel_cb();	
+					}					
 
 				};
 

@@ -1,4 +1,13 @@
 
+.progress_bar--landing {
+  height: 4px;
+  position: absolute;
+  z-index: 1000000;
+  background: #e94f6a;
+  width: 0%;
+  transition: all ease-in-out 1.2s;
+  border-radius: 0 0 2px 0;
+}
 
 .auto-login-msg {
    color: gainsboro;

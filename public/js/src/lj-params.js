@@ -215,6 +215,10 @@
     			id: 'main_loader',
     			params: { cloud_name :"radioreve", 'class': 'ajax-loader' }
     		},
+            main_curtain: {
+                id: 'main_loader_curtain',
+                params: { cloud_name: "radioreve" }
+            },
     		mobile: {
     			id: 'mobile_loader',
     			params: { cloud_name :"radioreve", 'class': 'ajax-loader', width: 25 }

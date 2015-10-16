@@ -20,21 +20,43 @@
 					if( res.status == 'not_authorized' ){
 						LJ.state.loggingIn = false;
 						delog('User didnt let Facebook access informations');
-						return
+						return;
 					}
 
 					if( res.status == 'connected' ){
 
-					  	$('#facebook_connect, .landing-map-button').velocity({ opacity: [0,1] }, { duration: 1250 });
+						$('.curtain').velocity('transition.fadeIn', {
+							duration: 800
+						});
+
+					   var loader_tag = LJ.$main_loader_curtain.clone().prop('outerHTML');
+						/* Message during login */
+					   var tpl = ['<div class="auto-login-msg super-centered none">',
+					   				'<span>' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</span>',
+					   				loader_tag,
+					   				'</div>',
+					   			 ].join('');
+
+		               $( tpl )
+		                    .appendTo('.curtain')
+		                    .velocity('transition.fadeIn', {
+		                        duration: 1000,
+		                        delay: 1000
+		                });
+
+		                $('.progress_bar--landing').css({ width: '20%' });
 
 						LJ.state.loggingIn = true;
 						var access_token = res.authResponse.accessToken;
 						delog('short lived access token : ' + access_token );
 
 						FB.api('/me', function( facebookProfile ){
+
 							facebookProfile.access_token = access_token;
 					  		LJ.fn.loginWithFacebook( facebookProfile );
-				  		}); 
+					  		$('.progress_bar--landing').css({ width: '40%' });
+				  		});
+
 					}
 
 				}, { scope: ['public_profile', 'email', 'user_friends', 'user_photos']} );
@@ -177,12 +199,11 @@
 		autoLogin: function(){
 
 			/* Message during login */
-           $('<div class="auto-login-msg super-centered none">' + 'Chargement des prochaines soirées...' + '</b></div>')
+           $('<div class="auto-login-msg super-centered none">' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</b></div>')
                 .appendTo('.curtain')
                 .velocity('transition.fadeIn', {
                     duration: 1000
             });
-
 
 			setTimeout( function(){
 
@@ -204,6 +225,7 @@
 					url:'/auth/facebook',
 					success: function( data ){
 						LJ.fn.handleSuccessLogin( data );
+						$('.progress_bar--landing').css({ width: '60%' });
 					},
 					error: function( err ){
 						LJ.fn.handleServerError( err )
@@ -267,7 +289,11 @@
 			LJ.fn.initPusherConnection( LJ.accessToken );
 
 			LJ.fn.say('auth/app', {}, {
-				success: LJ.fn.handleFetchUserAndConfigurationSuccess 
+				success: function( data ){
+
+					LJ.fn.handleFetchUserAndConfigurationSuccess( data );
+					$('.progress_bar--landing').css({ width: '80%' });
+				}
 			});
 
 		}
