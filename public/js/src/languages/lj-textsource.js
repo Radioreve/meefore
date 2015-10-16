@@ -285,6 +285,10 @@
 			"fr": "En attente",
 			"en": "Pending"
 		},
+		e_filters_location: {
+			"fr": "Changer d'endroit",
+			"en": "Change location"
+		},
 		s_title: {
 			"fr": "Préférences",
 			"en": "Preferences"

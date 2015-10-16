@@ -44,7 +44,7 @@
 		                        delay: 750
 		                });
 
-		                $('.progress_bar--landing').css({ width: '20%' });
+		                $('.progress_bar--landing').css({ width: '0%' });
 
 						LJ.state.loggingIn = true;
 						var access_token = res.authResponse.accessToken;
