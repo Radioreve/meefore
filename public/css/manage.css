@@ -1,0 +1,242 @@
+#manageEventsWrap {
+   width: 700px;
+}
+
+#cancelEvent {
+}
+
+#askersMain {
+   position: relative;
+   text-align: center;
+}
+
+#askersListWrap {
+   position: relative;
+}
+
+.askersMainWrap {
+   position: relative;
+}
+
+i.icon-left-open-big,
+i.icon-right-open-big {
+   font-size: 2.4em;
+   color: #ccc;
+   position: absolute;
+   top: 73px;
+   z-index: 100;
+}
+
+#askersListWrap i.next-left:hover,
+#askersListWrap i.next-right:hover {
+   color: black;
+}
+
+#askersListWrap  i.icon-left-open-big {
+   left: 0px;
+}
+
+#askersListWrap i.icon-right-open-big {
+   right: 0px;
+}
+
+.a-item {
+   text-align: center;
+   margin: 0 auto;
+   display: none;
+   padding: 22px;
+   padding-top: 32px;
+    /* overflow: auto; */
+   ;
+}
+
+.a-item.active {
+   display: block;
+}
+
+.a-picture {
+    /* background: #EAEAEA; */
+   width: 124px;
+   box-shadow: 0 0 5px rgb(213, 213, 213);
+   padding: 5px;
+   display: inline-block;
+   margin-right: 25px;
+}
+
+.a-head {
+}
+
+.a-name {
+}
+
+.a-age {
+   height: auto!important;
+}
+
+.a-body {
+   display: inline-block;
+   vertical-align: top;
+   color: #A8A8A8;
+   text-align: left;
+}
+
+.a-birth {
+   color: #aaa;
+   font-size: .6em;
+   position: relative;
+   width: 123px;
+   margin: 5px 0 1px 0;
+}
+
+.a-body > div {
+   margin: 12px 0;
+   height: 21px;
+   font-size: .8em;
+   line-height: 15px;
+}
+
+.a-body .label {
+   font: bolder 1em 'Lato';
+   color: rgb(74, 74, 74);
+   width: 80px;
+   margin-right: 15px;
+   text-align: right;
+   display: inline-block;
+   clear: both;
+   float: left;
+}
+
+.a-desc {
+   height: auto!important;
+}
+
+.a-desc div {
+   display: inline-block;
+   font-size: .9em;
+   line-height: 1.35em;
+}
+
+.a-desc span {
+   vertical-align: top;
+}
+
+.a-btn {
+   margin-top: 30px!important;
+   margin-left: -12px;
+   position: relative;
+}
+
+.a-btn .themeBtn, .a-btn .themeBtnToggle {
+   margin: 0 2px;
+   width: 42px;
+   height: 32px;
+   border-radius: 3px;
+   margin-bottom: 40px;
+}
+
+.a-btn i {
+   font-size: 1.5em;
+   vertical-align: top;
+}
+
+.a-btn .btn-accept {
+}
+
+.btn-chat i {
+   position: relative;
+   left: -2px;
+   top: -1px;
+}
+
+.a-btn .btn-refuse {
+}
+
+.imgWrapThumb, .f-img {
+   position: relative;
+   display: inline-block;
+   box-shadow: 0 0 6px #ccc;
+   padding: 3px;
+   text-align: center;
+   padding-top: 4px;
+   margin: 6px 3px;
+   border-radius: 100px;
+   height: 46px;
+   opacity: .95;
+}
+
+.imgWrapThumb:hover {
+   cursor: pointer;
+}
+
+.imgWrapThumb.active img.grey,
+.imgWrapThumb.activated img.grey {
+   display: none;
+}
+
+.imgWrapThumb.active img.normal {
+   display: inline;
+   opacity: 1;
+}
+
+.imgWrapThumb.activated img.normal {
+   display: inline;
+   opacity: .7;
+}
+
+.imgWrapThumb img {
+   border-radius: 100px;
+   opacity: .20;
+}
+
+.imgWrapThumb i.icon-up-dir {
+   position: absolute;
+   font-size: 23px;
+   bottom: -17px;
+   right: 10px;
+   color: rgb(199,42,42);
+   -webkit-transition: all .8s;
+   transition: all .8s;
+   opacity: 0;
+}
+
+.imgWrapThumb i.icon-ok-1,
+.imgWrapThumb i.icon-cancel-1 {
+   position: absolute;
+   color: #5c5c5c;
+   bottom: 0;
+   border: 1px solid #C7C7C7;
+   box-shadow: 0 0 3px #ccc;
+   border-radius: 3px;
+   background: white;
+   padding: 3px;
+   padding-top: 4px;
+   padding-left: 4px;
+   font-size: 0.65em;
+   right: -2px;
+   z-index: 2;
+}
+
+.imgWrapThumb.placeholder {
+   box-shadow: none;
+   opacity: 1!important;
+}
+
+.imgWrapThumb.placeholder img.grey {
+   display: none;
+}
+
+.imgWrapThumb.placeholder img.normal {
+   display: inline;
+   opacity: 1;
+}
+
+#askersThumbs {
+   text-align: center;
+   margin-top: 20px;
+   position: relative;
+}
+
+#manageEventsWrap .chatWrap {
+   width: 80%;
+   left: 10%;
+} 

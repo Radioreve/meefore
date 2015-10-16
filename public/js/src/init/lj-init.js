@@ -245,7 +245,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 
             // $('.filter-mixity').html(LJ.fn.renderMixityInFilters(LJ.settings.app.mixity));
-            //	$('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));
+            //  $('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));
             $('#no').html('').append( LJ.tpl.noResults );
 
 

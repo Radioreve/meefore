@@ -128,9 +128,8 @@
 				
 				var parallelTheScene = function(){
 					if( options.parallel_cb ){
-						options.parallel_cb();	
-					}					
-
+						options.parallel_cb();
+					}
 				};
 
 				var behindTheScene = function(){

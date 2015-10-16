@@ -33,7 +33,7 @@
 						/* Message during login */
 					   var tpl = ['<div class="auto-login-msg super-centered none">',
 					   				'<span>' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</span>',
-					   				// loader_tag,
+					   				loader_tag,
 					   				'</div>',
 					   			 ].join('');
 
@@ -44,7 +44,7 @@
 		                        delay: 750
 		                });
 
-		                $('.progress_bar--landing').css({ width: '0%' });
+		                $('.progress_bar--landing').css({ width: '20%' });
 
 						LJ.state.loggingIn = true;
 						var access_token = res.authResponse.accessToken;

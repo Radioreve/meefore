@@ -80,13 +80,6 @@ font-size: 14px;text-align: center;color: #ee;}
    transition: all ease-out .3s!important;
 }
 
-.no-select {
-	-webkit-user-select: none;/* Chrome all / Safari all */
-    -moz-user-select: none;/* Firefox all */
-    -ms-user-select: none;/* IE 10+ */
-    user-select: none;
-}
-
 .visible {
    display: block!important;
 }
@@ -238,7 +231,7 @@ body header.lg-header,
 body header.sm-header {
    width: 100%;
    height: 42px;
-   background-image: url('/img/app/darkpattern.png');
+   background-image: url('/img/texture-png2.png');
    box-shadow: 0 0 5px rgb(37, 37, 37);
    position: fixed;
    top: 0;
@@ -292,7 +285,7 @@ body > header > h5 {
 
 #mainWrap {
    width: 100%;
-   background: url('/img/app/crossword.png');
+   /* background: url('/img/crossword.png'); */
    margin-top: 0;
    min-height: 100vh;
    box-sizing: border-box;
@@ -1366,6 +1359,16 @@ input[type="radio"] + span {
    box-shadow: 0 2px 2px rgb(0, 185, 0);
    color: white;
    z-index: 1;
+}
+
+.progress_bar--landing {
+	position: fixed;
+	top:0;
+	height: 3px;
+	background:#e94f6a;
+	width: 0;
+	transition: all ease-in-out 1s;
+	z-index: 1000000;
 }
 
 #contactWrap {
