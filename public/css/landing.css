@@ -248,21 +248,21 @@
 }
 .screenshot-text {
     vertical-align: top;
-    background: url(/img/crossword.png);
+    background: url(/img/app/crossword.png);
     height: 100%;
 }
 
-.screenshot-head {font: bold 35px 'Alegreya Sans SC';text-align: left;line-height: 35px;letter-spacing: 0px;color: #474747;padding: 50px 50px;background: url('/img/texture-png2.png');color: white;}
+.screenshot-head {font: bold 35px 'Alegreya Sans SC';text-align: left;line-height: 35px;letter-spacing: 0px;color: #474747;padding: 50px 50px;background: url('/img//app/darkpattern.png');color: white;}
 
 .screenshot-body {font-size: 16px;line-height: 30px;font-family: 'Roboto';border-radius: 3px;padding: 30px 0;color: black;}
 
 /* End Screenshot rules */
 
 
-.landing-untitled {background: url('/img/crossword.png');height: 100px;}
+.landing-untitled {background: url('/img/app/crossword.png');height: 100px;}
 
 .landing-footer {
-   background: url(/img/texture-png2.png);
+   background: url(/img/app/darkpattern.png);
    background-origin: border-box;
    text-align: center;
    color: #F4F4F4;
@@ -316,7 +316,7 @@
 .landing-keypoints {
    text-align: center;
    overflow: hidden;
-   background: url('/img/crossword.png');
+   background: url('/img/app/crossword.png');
 }
 
 .keypoint-wrap {

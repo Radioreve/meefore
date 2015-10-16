@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-  <title>Meefore | Home </title>
+  <title>Dev Meefore | Home </title>
 
   <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Londrina+Solid' rel='stylesheet' type='text/css'>
@@ -43,7 +43,7 @@
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-65278026-1', 'auto');
+  ga('create', 'UA-65278026-1', 'none');
   ga('send', 'pageview', '/home');
 </script>
 
@@ -67,6 +67,7 @@
   <div id="adminPanelWrap"></div>
   <div class="progress_bar"></div>
   <div class="loaderWrap"></div>
+  <div class="progress_bar--landing"></div>
   <div class="m-loaderWrap"></div>
   <div class="curtain"></div>
   <div class="modal-curtain"></div>
@@ -91,7 +92,7 @@
       <!-- landing hero -->
       <div class="landing-hero">
         <div class="hero-logo">
-          <img src="/img/logo_white_on_pink_skew_fav.png" width="40" alt="Logo meefore soirées">
+          <img src="/img/app/logo.png" width="50" alt="Logo meefore soirées">
         </div>
         <div class="hero-languages">
           <span data-code="fr" class="no-cb pick-lang hero-lang active">FR</span>
@@ -127,7 +128,7 @@
     <!-- landing keypoints -->
     <div class="landing-keypoints">
       <div data-lid="lp_key_title" class="keypoint-message">L'indispensable mix d'un before réussi</div>
-      <img class="keypoint-splitter" src="/img/splitter.png" alt="A nice splitter">
+      <img class="keypoint-splitter" src="/img/app/splitter.png" alt="A nice splitter">
       <div class="keypoint-wrap keypoint-1">
         <div class="keypoint-img"><i class="icon icon-keypoint icon-group"></i></div>
         <div data-lid="lp_key_friends_title" class="keypoint-head">Les amis...</div>
@@ -182,7 +183,7 @@
   <header id="#mainHeader" class="lg-header none">
     <div id="headerContent">
     <div class="preview-type beta">bêta</div>
-      <img id="logo" src="/img/logomeefore.png" width="48"></img>
+      <img id="logo" src="/img/app/logo-light.png" width="35"></img>
       <ul id="menuWrap" class="">
         <li id="profile" data-hash="me" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
         <li id="events" data-hash="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
@@ -347,7 +348,7 @@
       <div class="row row-events row-events-filters">
         <div class="row-events-filters-group">
           <i class="icon icon-filters-group icon-location"></i>
-          <div class="event-filter-label">Changer d'endroit : </div>
+          <div data-lid="e_filters_location" class="event-filter-label">Changer d'endroit : </div>
           <input id="moveAround" type="text" placeholder="Paris, Londres..." >
         </div>
         <div class="row-events-filters-divider"></div>
@@ -479,8 +480,8 @@
   </div>
   
   <script id="app_ids"> 
-    window.facebook_app_id = "1509405206012202";
-    window.pusher_app_id   = "e0e801db688ab26d8581";
+     window.facebook_app_id = "1509405206012202";
+     window.pusher_app_id   = "e0e801db688ab26d8581";
   </script>
 
   <script src="//js.pusher.com/3.0/pusher.min.js"></script>  
@@ -539,6 +540,7 @@
   <script src="js/src/languages/lj-country.js"></script>
   <script src="js/src/languages/lj-languages.js"></script>
   <script src="js/src/analytics/lj-analytics.js"></script>
+  <script src="js/src/intro/lj-intro.js"></script>
   <script src="js/src/init/lj-init.js"></script>
   <script src="js/src/lj-junk.js"></script>
 
