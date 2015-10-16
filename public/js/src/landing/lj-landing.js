@@ -33,7 +33,7 @@
 						/* Message during login */
 					   var tpl = ['<div class="auto-login-msg super-centered none">',
 					   				'<span>' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</span>',
-					   				loader_tag,
+					   				// loader_tag,
 					   				'</div>',
 					   			 ].join('');
 
@@ -41,7 +41,7 @@
 		                    .appendTo('.curtain')
 		                    .velocity('transition.fadeIn', {
 		                        duration: 1000,
-		                        delay: 1000
+		                        delay: 750
 		                });
 
 		                $('.progress_bar--landing').css({ width: '20%' });
