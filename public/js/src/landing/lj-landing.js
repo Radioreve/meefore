@@ -168,7 +168,13 @@
 	        	ease3d: 'ease-out',
 	        	onSlideComplete: function(){
 
-	        		var city_text = ["Bastille, 21h43","Célina Helloworld", "Morgane Labelle", "Sylvie Larson", "Christiana", "Marion"];
+	        		var city_text = [
+	        			"Bastille, 21h43",
+	        			"Célina Helloworld",
+	        			"Morgane Labelle", 
+	        			"Sylvie Larson"
+	        		];
+	        		
 	        		var slide_index = this.getSlideIndex();
 	       			var $img = $('.kb-slide').eq( slide_index );
 	       			var text = city_text[ slide_index ];
