@@ -393,7 +393,7 @@
 
 
 	// Test purposes
-	terminateEvents();
+	// terminateEvents();
 
 	module.exports = {
 		terminateEvents : terminateEvents
