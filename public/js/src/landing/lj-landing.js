@@ -25,39 +25,42 @@
 
 					if( res.status == 'connected' ){
 
+						var curtain_delay = 1000;
+
 						$('.curtain').velocity('transition.fadeIn', {
-							duration: 800
-						});
+							duration: 1000,
+							delay: curtain_delay,
+							complete: function(){
+								$('.progress_bar--landing').css({ width: '20%' });
 
-					   var loader_tag = LJ.$main_loader_curtain.clone().prop('outerHTML');
-						/* Message during login */
-					   var tpl = ['<div class="auto-login-msg super-centered none">',
-					   				'<span>' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</span>',
-					   				loader_tag,
-					   				'</div>',
-					   			 ].join('');
+								   var loader_tag = LJ.$main_loader_curtain.clone().prop('outerHTML');
+									/* Message during login */
+								   var tpl = ['<div class="auto-login-msg super-centered none">',
+								   				'<span>' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</span>',
+								   				loader_tag,
+								   				'</div>',
+								   			 ].join('');
 
-		               $( tpl )
-		                    .appendTo('.curtain')
-		                    .velocity('transition.fadeIn', {
-		                        duration: 1000,
-		                        delay: 750
-		                });
+					               $( tpl )
+					                    .appendTo('.curtain')
+					                    .velocity('transition.fadeIn', {
+					                        duration: 1000
+					                });
 
-		                $('.progress_bar--landing').css({ width: '20%' });
+									LJ.state.loggingIn = true;
+									var access_token = res.authResponse.accessToken;
+									delog('short lived access token : ' + access_token );
 
-						LJ.state.loggingIn = true;
-						var access_token = res.authResponse.accessToken;
-						delog('short lived access token : ' + access_token );
+									FB.api('/me', function( facebookProfile ){
 
-						FB.api('/me', function( facebookProfile ){
+										facebookProfile.access_token = access_token;
+								  		LJ.fn.loginWithFacebook( facebookProfile );
+								  		$('.progress_bar--landing').css({ width: '40%' });
+							  		});
 
-							facebookProfile.access_token = access_token;
-					  		LJ.fn.loginWithFacebook( facebookProfile );
-					  		$('.progress_bar--landing').css({ width: '40%' });
-				  		});
-
-					}
+								}
+							});
+						};
 
 				}, { scope: ['public_profile', 'email', 'user_friends', 'user_photos']} );
 			});
@@ -153,7 +156,13 @@
 	        });
 
 	        $('.landing-kenburns').Kenburns({
-	        	images: ['img/kb/bg1-min.jpg','img/kb/bg2-min.jpg','img/kb/bg3-min.jpg','img/kb/bg4-min.jpg','img/kb/bg5-min.jpg','img/kb/bg6-min.jpg'],
+	        	images: [
+	        		'img/kb/tst1.jpg',
+	        		'img/kb/tst7.jpg',
+	        		'img/kb/tst2.jpg',
+	        		'img/kb/tst3.jpg',
+	        		'img/kb/tst4.jpg',
+	        	],
 	        	scale: 0.92,
 	        	duration: 8000,
 	        	fadeSpeed: 1500,
