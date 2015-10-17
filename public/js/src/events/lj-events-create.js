@@ -171,7 +171,7 @@
                         LJ.fn.initHourPicker({
                             inp: '#cr-hour',
                             spliter: 'H',
-                            hour_range: [ 14, 23 ],
+                            hour_range: [ 4, 23 ],
                             min_range: [0, 55],
                             default_hour: [20,30],
                             min_step: 5

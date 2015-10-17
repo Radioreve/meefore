@@ -1366,7 +1366,7 @@ input[type="radio"] + span {
 	height: 3px;
 	background:#e94f6a;
 	width: 0;
-	transition: all ease-in-out 1s;
+	transition: all ease-in-out 1.3s;
 	z-index: 1000000;
 }
 

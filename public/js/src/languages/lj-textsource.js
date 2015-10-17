@@ -635,7 +635,7 @@
 			"en": "United-Kingdom"
 		},
 		lp_subtitle: {
-			"fr": "Participez ou organisez des before avant d'aller en soirée.",
+			"fr": "Rejoignez ou organisez des before avant d'aller en soirée.",
 			"en": "Join or organize pregaming events before going out."
 		},
 		lp_conn_button: {

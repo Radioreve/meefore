@@ -89,6 +89,7 @@
 
 		*/
 
+		var event_ids			 = []; // outside reference to event ids that need to be cleared
 		var today                = moment();
 		var target 				 = findDiffDay( today );
 
@@ -108,6 +109,10 @@
 		// Cast moment dates to Date objects
 		var date_range_query     = { $lt: target_day.toDate() };// $gt: target_day.add( -2, 'days' ).toDate() };
 		var timezone_range_query = { $gt: target.timezone - 60, $lt: target.timezone + 60 };
+
+		// Test purposes
+		// var timezone_range_query = { $gt: 120 - 60, $lt: 120 + 60 };
+		// End test purposes
 
 		var full_event_query = {
 			'begins_at' : date_range_query,
@@ -206,7 +211,6 @@
 						n_events_matched: events.length
 					});
 
-					var event_ids = [];
 					events.forEach(function( evt ){
 						event_ids.push( evt._id.toString() );  // (!) Mongoose _id field is parsed as Object. Weird.
 					});
@@ -270,7 +274,6 @@
 					g_callback( null );
 
 				});
-
 		};
 
 		function clearAndSaveChats( g_callback, rd, chats_to_remove ){
@@ -294,6 +297,7 @@
 									var chat_ns = 'chat/' + chat_id + '/messages/';
 									subtasks.push(function( sub_callback ){
 										rd.hgetall( chat_ns + i, function( err, message ){
+											console.log( message );
 											var old_msg = populateNewMessage( message, i, chat_id );
 											old_msg.save(function( err ){
 												sub_callback( null, chat_id );
@@ -304,24 +308,38 @@
 							}
 							// All messages have been saved, can erase them all
 							async.parallel( subtasks, function( err, results ){
+
 								var subbedtasks = [];
 								results.forEach(function( chat_id ){
+
 									subbedtasks.push(function( subbed_callback ){
 										rd.delw('chat/' + chat_id + '/*', function( err ){
 											subbed_callback();
 										});
 									});
+
 									subbedtasks.push(function( subbed_callback ){
-										rd.delw('event/' + chat_id.split('-')[0] + '/*', function( err ){
+										var cleareventstasks = [];
+										event_ids.forEach(function( event_id ){
+											cleareventstasks.push(function( clearevent_callback ){
+												rd.delw('event/' + event_id + '/*', function( err ){
+													clearevent_callback();
+												});
+											});
+										});
+										async.parallel( cleareventstasks, function( err ){
 											subbed_callback();
 										});
 									});
+
 									subbedtasks.push(function( subbed_callback ){
 										rd.srem('chats', chat_id, function( err ){
 											subbed_callback();
 										});
 									});
+
 								});
+
 								async.parallel( subbedtasks, function( err ){
 									callback();
 								});
@@ -331,7 +349,7 @@
 				});			
 			});
 			async.parallel( tasks, function(){
-				console.log('Everything has been updates successfully');
+				console.log('Everything has been updated successfully');
 				g_callback( null );
 			});
 
@@ -348,8 +366,13 @@
 
 			old_msg.chat_id = message.chat_id;
 			old_msg.sent_at = message.sent_at;
-			old_msg.type    = message.type || 'normal';
 			old_msg.message = message.msg;
+
+			if( message.whisper_to != 'null' ){
+				old_msg.type = 'whisper';
+			} else {
+				old_msg.type = 'standard';
+			}
 
 			old_msg.author  = {
 				facebook_id : message.facebook_id,
@@ -370,8 +393,7 @@
 
 
 	// Test purposes
-	 // terminateEvents();
-
+	terminateEvents();
 
 	module.exports = {
 		terminateEvents : terminateEvents
