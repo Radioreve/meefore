@@ -110,7 +110,12 @@
             if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' ) ) ){
             	message = 'Un ami vous a ajouté en tant qu\'organisateur de son before!';
 
-            	LJ.fn.addEventInviewAndTabview( evt );
+            	if( !$('#events').hasClass('menu-item-active') ){
+            		LJ.fn.addEventInviewAndTabview( evt, { hide: true } );
+            	} else {
+            		LJ.fn.addEventInviewAndTabview( evt );
+            	}
+            	
             	LJ.fn.joinEventChannel( evt );
             	LJ.fn.fetchMe();
             }
@@ -231,6 +236,11 @@
 			// Message pour les membres du groupes
 			if( LJ.fn.iGroup( group.members_facebook_id ) ){
 
+				var is_open = "open";
+				if( data.status == "suspended" ){
+					is_open = "full";
+				};
+
 				// Update global status of their event
 				$('.row-events-accepted-inview[data-eventid="' + event_id + '"]').attr('data-status', status );
 
@@ -239,7 +249,7 @@
 
 					_.find( LJ.event_markers, function(el){ 
 						return el.id == event_id 
-					}).marker.setIcon( LJ.cloudinary.markers.accepted );
+					}).marker.setIcon( LJ.cloudinary.markers.accepted[ is_open ].url );
 
 					LJ.fn.addChatLine({
 						chat_id     : chat_id,
@@ -249,7 +259,6 @@
 						facebook_id : LJ.bot_profile.facebook_id,
 						sent_at 	: new Date(),
 						class_names : ["bot"]
-
 					});
 					
 				}
@@ -258,7 +267,7 @@
 
 					_.find( LJ.event_markers, 
 						function(el){ return el.id == event_id 
-					}).marker.setIcon( LJ.cloudinary.markers.pending );
+					}).marker.setIcon( LJ.cloudinary.markers.pending[ is_open ].url );
 
 					LJ.fn.addChatLine({
 						chat_id     : chat_id,
@@ -298,7 +307,7 @@
 
 					LJ.fn.addChatLine({
 		                chat_id     : LJ.fn.makeChatId({ event_id: event_id, group_id: group_id }),
-		                msg         : LJ.text_source["to_event_group_suspended"][ LJ.app_language ].replace('%s', group.name ),
+		                msg         : LJ.text_source["to_event_group_pending"][ LJ.app_language ].replace('%s', group.name ),
 		                name        : LJ.bot_profile.name,
 		                img_id      : LJ.bot_profile.img_id,
 		                facebook_id : LJ.bot_profile.facebook_id,

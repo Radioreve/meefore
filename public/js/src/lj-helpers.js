@@ -840,7 +840,7 @@
 			var n_tabviews = $('.event-accepted-tabview').length;
 			var fix_width  = 23;
 			var max_width = $tabviews.width() - n_tabviews * fix_width;
-			var new_width = parseInt( max_width / n_tabviews ) > 130 ? 130 : parseInt( max_width / n_tabviews );
+			var new_width = parseInt( max_width / n_tabviews ) > 200 ? 200 : parseInt( max_width / n_tabviews );
 			
 			$('.event-accepted-tabview').css({
 				width: new_width

@@ -235,7 +235,7 @@
                 $wrap.find('[data-groupid="' + group.group_id + '"] .icon-toggle')
                     .removeClass('icon-toggle-on').addClass('icon-toggle-off').removeClass('active');
 
-                    var bot_msg = LJ.text_source["to_event_group_suspended"][ LJ.app_language ].replace('%s', group.name );
+                    var bot_msg = LJ.text_source["to_event_group_pending"][ LJ.app_language ].replace('%s', group.name );
             }
 
         }

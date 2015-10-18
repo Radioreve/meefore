@@ -41,6 +41,10 @@ i.icon-create {
 .row-events-accepted {
 }
 
+.row-events-accepted-inview.active .event-accepted-chat-wrap {
+  
+}
+
 .btn-create-event {
    width: 160px;
    text-transform: uppercase;
@@ -414,7 +418,7 @@ border-radius: 5px 5px 0 0;top: 0px;}
 .event-accepted-tabview .tabview-date-day, .event-accepted-tabview .tabview-place, .event-accepted-tabview .icon-tabview {
   transform: skewX(-20deg)!important;
   display: inline-block;
-  max-width: 40%;
+  max-width: 55%;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 3px;
@@ -544,10 +548,6 @@ transition: all ease-out .4s;
   width: 100%;
   margin: 0 auto;
 }
-.row-events-accepted-inview.active .event-accepted-chat-wrap {
-  display: block;
-}
-
 .event-accepted-users,
 .event-accepted-chat {
   background: white;
@@ -555,12 +555,14 @@ transition: all ease-out .4s;
   vertical-align: top;
   height: 83%;
 }
+.event-accepted-chat-wrap {height: 100%;}
+
 .event-accepted-chat-messages {
     background: #FFFFFF;
     /* overflow: overlay; */
     position: relative;
     outline: none;
-    height: 80%;
+    height: 75%;
 }
 .event-accepted-users {
 
@@ -700,7 +702,6 @@ font-size: 14px;
 cursor: default;
 
 border-bottom: 1px solid #eee;
-max-width: 150px;
 }
 .event-accepted-user-picture {
 
@@ -840,15 +841,15 @@ margin-right: 20px;margin-left: 0;}
 .row-events-accepted-inview.validating .event-accepted-chat-messages .jspTrack {
 }
 .event-accepted-chat-typing {
-position: absolute;
-bottom: 0;
-left: 0;
-/* background: #FCFCFC; */
-border-top: 1px solid #eee;
-height: 37px;
-width: 100%;
-padding: 8px 0px 0 20px;
-display: flex!important;
+position: absolute;
+bottom: 0;
+left: 0;
+/* background: #FCFCFC; */
+border-top: 1px solid #eee;
+height: 37px;
+padding: 8px 0px 0 20px;
+display: flex!important;
+width: 100%;
 }
 
 .event-accepted-chat-typing .btn-whisper {
@@ -863,28 +864,49 @@ display: flex!important;
 }
 
 .event-accepted-chat-typing input {
+
 position: relative;
+
 z-index: 2;
+
 background: #F5F5F5;
+
 padding: 6px 0 4px 10px;
+
 border-bottom: 1px solid #eee;
+
 width: 100%;
+
 color: #525252;
+
 font-family: 'Karla';
+
 font-size: 13px;
+
 transition: all ease-out .3s;
+
 order: 1;
+
 flex-grow: .2;
 }
 .event-accepted-chat-typing button {
+
 background: #E94F6A;
+
 border: 1px solid #E94F6A;
+
 border-bottom: 2px solid #BD4056;
+
 border-radius: 0px;
+
 color: white;
+
 font-size: 12px;
+
 text-transform: none;
+
 order: 2;
+
 padding-top: 6px;
 }
 
@@ -1034,13 +1056,8 @@ opacity: .85;}
 }
  
 .event-accepted-chatwraps {
-  height: 89%;
-  display: flex;
-  flex-direction: column;
+  height: 90%;
 }
-
-.event-accepted-chat-wrap {height: 100%;}
-
 .event-accepted-chat-wrap:not(:first-of-type) {
   
 }
