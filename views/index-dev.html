@@ -37,6 +37,7 @@
   <link rel="stylesheet" href="/css/pikadate.css">
   <link rel="stylesheet" href="/css/rangeslider/css/rangeslider.css">
   <link rel="stylesheet" href="/css/rangeslider/css/rangeslider.flat.css">
+  <link rel="stylesheet" href="/css/bxslider/jquery.bxslider.css">
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -86,6 +87,12 @@
 
       <!-- landing kenburns -->
       <div class="landing-kenburns">
+        <div class="kenburns-overlay"></div>
+        <ul class="bxslider">
+          <li><img src="/img/kb/bg1-min.jpg" width="100%"/></li>
+          <li><img src="/img/kb/bg2-min.jpg" width="100%"/></li>
+          <li><img src="/img/kb/bg6-min.jpg" width="100%"/></li>
+        </ul>
       </div>
       <!-- end landing kenburns -->
 
@@ -129,18 +136,20 @@
     <div class="landing-keypoints">
       <div data-lid="lp_key_title" class="keypoint-message">L'indispensable mix d'un before réussi</div>
       <img class="keypoint-splitter" src="/img/app/splitter.png" alt="A nice splitter">
+      <img src="/img/kb/lp-arrow.png" width="120" alt="Arrow" class="lp-arrow lp-arrow-1">
+      <img src="/img/kb/lp-arrow.png" width="120" alt="Arrow" class="lp-arrow lp-arrow-2">
       <div class="keypoint-wrap keypoint-1">
-        <div class="keypoint-img"><i class="icon icon-keypoint icon-group"></i></div>
+        <div class="keypoint-img"><i class="icon icon-keypoint icon-glass"></i></div>
         <div data-lid="lp_key_friends_title" class="keypoint-head">Les amis...</div>
         <p  data-lid="lp_key_friends_text" class="keypoint-body">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
       </div
       ><div class="keypoint-wrap keypoint-2">
-        <div class="keypoint-img"><i class="icon icon-keypoint icon-relation"></i></div>
+        <div class="keypoint-img"><i class="icon icon-keypoint icon-group"></i></div>
         <div  data-lid="lp_key_people_title" class="keypoint-head">...des rencontres...</div>
         <p  data-lid="lp_key_people_text" class="keypoint-body">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
       </div
       ><div class="keypoint-wrap keypoint-3">
-        <div class="keypoint-img"><i class="icon icon-keypoint icon-glass"></i></div>
+        <div class="keypoint-img"><i class="icon icon-keypoint icon-relation"></i></div>
         <div data-lid="lp_key_party_title" class="keypoint-head">...et la soirée !</div>
         <p data-lid="lp_key_party_text" class="keypoint-body">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
       </div>
@@ -209,7 +218,7 @@
       </div>
       <div id="thumbInfos">
         <h2 id="thumbName"></h2>
-        <span data-lid="h_logout" id="logout" class="action">Log out</span>
+        <span id="logout" class="action"><i class="icon icon-forward-1"></i></span>
       </div>
     </section>
 
@@ -355,6 +364,11 @@
         <div class="row-events-filters-group filters-create-meefore">
           <button class="theme-btn btn-create-event right">
             <i class="icon icon-bar"></i><span data-lid="e_create_button">Proposer un meefore</span>
+          </button>
+        </div>
+        <div class="row-events-filters-group filters-create-party">
+          <button class="theme-btn btn-create-party right">
+            <i class="icon icon-star"></i><span data-lid="e_create_party_button">Proposer une soirée</span>
           </button>
         </div>
       </div>
@@ -505,7 +519,7 @@
   <!-- <script src="js/lib/prefixfree.min.js"></script> -->
   <script src="js/lib/md5.min.js"></script>
   <script src="js/lib/jquery.parallax.js"></script>
-  <script src="js/lib/kenburns.js"></script>
+  <script src="js/lib/jquery.bxslider.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry" type="text/javascript"></script>
 
   <!-- custom scripts -->
@@ -528,6 +542,7 @@
   <script src="js/src/events/lj-events-tabview.js"></script>
   <script src="js/src/events/lj-events-create.js"></script>
   <script src="js/src/events/lj-events-map.js"></script>
+  <script src="js/src/party/lj-party.js"></script>
   <script src="js/src/admin/lj-admin.js"></script>
   <script src="js/src/typeaheads/lj-typeaheads.js"></script>
   <script src="js/src/tour/lj-tour.js"></script>

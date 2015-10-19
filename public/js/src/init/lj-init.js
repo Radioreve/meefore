@@ -444,6 +444,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                     if( LJ.user.access.indexOf('admin') != -1 ){
                         LJ.fn.initAdminMode();
                     }
+                    
+                    LJ.fn.initParty();
 
                     LJ.fn.displayLayout();                    
 

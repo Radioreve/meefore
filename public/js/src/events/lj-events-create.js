@@ -7,11 +7,11 @@
 
 			 	var $self   = $(this);
                 if( $self.parents('.row-create-before-place').length != 0 ){
-                    LJ.fn.removeBeforePlaceToInput();
+                    $self.siblings('input').show().end().remove();
                     return;
                 }
                 if( $self.parents('.row-create-party-place').length != 0 ){
-                    LJ.fn.removePartyPlaceToInput();
+                    $self.siblings('input').show().end().remove();
                     return;
                 }
                 LJ.fn.removeItemToInput(this);
@@ -165,7 +165,10 @@
                         LJ.fn.adjustAllInputsWidth('#createEvent');
 
                         /* Date picker */ 
-                        LJ.fn.initPickaday(); 
+                        LJ.fn.initPickaday({
+                            container_id: 'createEvent',
+                            input_id: 'cr-date'
+                        }); 
 
                         /* Custom hour picker */
                         LJ.fn.initHourPicker({
@@ -193,7 +196,7 @@
 
 
                         /* Google Places Autocomplete API */
-                        LJ.fn.initGooglePlaces();
+                        LJ.fn.initGooglePlaces_CreateEvent();
                         
                         /* Default views */
                         LJ.fn.addItemToInput({
@@ -210,7 +213,49 @@
 
 			
 		},
-		initGooglePlaces: function(){
+        initGooglePlaces_CreateParty: function(){
+
+            $('#pa-party-place').val('');
+
+            LJ.google_places_autocomplete_party = new google.maps.places.Autocomplete(
+                document.getElementById('pa-party-place')
+            );
+            $('.pac-container').last().addClass('create-party-place');
+
+            LJ.google_places_autocomplete_party.addListener('place_changed', function(){
+                var place = LJ.google_places_autocomplete_party.getPlace();
+                LJ.fn.addPlaceToInput( place, 'pa-party-place');
+            });
+
+             // Attempt to add *press enter* support
+            $('#pa-party-place').keydown(function(e){
+
+                 var keyCode = e.keyCode || e.which;
+                 var $self = $(this);
+
+                 if( keyCode == 13 || keyCode == 9 ){
+                    e.preventDefault();
+
+                    var type = $self.attr('id').split('-')[1];
+                    var $pac = $('.pac-container.' + type);
+                    LJ.fn.selectFirstResult( $pac, function( err, place ){
+
+                        if( err ){
+                            return console.warn( err );
+                        } else {
+                            console.log('Fetched with place : ' + JSON.stringify( place, null, 4 ) );
+                            if( $self.is('#pa-party-place') ){
+                                LJ.fn.addPlaceToInput( place, 'pa-party-place' );
+                            }
+                        }
+
+                    });
+                 }
+
+            });
+
+        },
+		initGooglePlaces_CreateEvent: function(){
 
 			$('#cr-before-place').val('');
             $('#cr-party-place').val('');
@@ -227,7 +272,7 @@
             
             LJ.google_places_autocomplete_before.addListener('place_changed', function(){
                 var place = LJ.google_places_autocomplete_before.getPlace();
-                LJ.fn.addBeforePlaceToInput( place );
+                LJ.fn.addPlaceToInput( place, 'cr-before-place' );
             });
 
              LJ.google_places_autocomplete_party = new google.maps.places.Autocomplete( 
@@ -237,10 +282,10 @@
             
             LJ.google_places_autocomplete_party.addListener('place_changed', function(){
                 var place = LJ.google_places_autocomplete_party.getPlace();
-                LJ.fn.addPartyPlaceToInput( place );
+                LJ.fn.addPlaceToInput( place, 'cr-party-place' );
             });
 
-
+            // Attempt to add *press enter* support
             $('#cr-party-place, #cr-before-place').keydown(function(e){
 
                  var keyCode = e.keyCode || e.which;
@@ -258,10 +303,10 @@
                         } else {
                             console.log('Fetched with place : ' + JSON.stringify( place, null, 4 ) );
                             if( $self.is('#cr-party-place') ){
-                                LJ.fn.addPartyPlaceToInput( place );
+                                LJ.fn.addPlaceToInput( place, 'cr-party-place' );
                             }
                              if( $self.is('#cr-before-place') ){
-                                LJ.fn.addBeforePlaceToInput( place );
+                                LJ.fn.addPlaceToInput( place, 'cr-before-place' );
                             }
                         }
 
@@ -271,17 +316,23 @@
             });
 
 		},
-		initPickaday: function(){
+		initPickaday: function( opts ){
+
+            var input_id = opts.input_id,
+                container_id = opts.container_id;
+
+            var $input = $('#'+input_id);
+            var $container = $('#'+container_id);
 
 			LJ.pikaday = new Pikaday({ 
-                            field: document.getElementById('cr-date'),
+                            field: document.getElementById( input_id ),
                             format:'DD/MM/YY',
                             minDate: new Date(),
                             bound: false,
                             i18n: LJ.text_source[ "i18n" ][ LJ.app_language ]
                         });
 
-            $('.pika-single').insertAfter('#cr-date');
+            $('.pika-single').insertAfter( container_id );
             
             /* Date picker custom handling for better ux */
             LJ.$body.on('mousedown', '.pika-day:not(.pika-prev,.pika-next)', function(e){
@@ -294,15 +345,15 @@
                 .format('DD/MM/YY');
 
                 var msg = 'Good choice to party';
-                LJ.fn.addDateToInput( date_str, msg );
+                LJ.fn.addDateToInput( date_str, input_id );
 
             });
 
-            $('#createEvent').on('mousedown', '.pika-next', function(e){             
+            $container.on('mousedown', '.pika-next', function(e){             
                 LJ.pikaday.nextMonth();
             });
 
-            $('#createEvent').on('mousedown', '.pika-prev', function(e){             
+            $container.on('mousedown', '.pika-prev', function(e){             
                 LJ.pikaday.prevMonth();
             });
 
@@ -471,24 +522,26 @@
             mixity    = $wrap.find('.mixity.selected').attr('data-selectid').trim();
 
             // before address
-            if( $wrap.find('.before-place-name').length != 0 ){
-                address.lat        = parseFloat( $wrap.find('.before-place').attr('data-place-lat') );
-                address.lng        = parseFloat( $wrap.find('.before-place').attr('data-place-lng') );
-                address.place_id   = $wrap.find('.before-place').attr('data-placeid');
-                address.place_name = $wrap.find('.before-place-name span').eq(0).text().trim();
-                address.city_name  = $wrap.find('.before-place-name span').eq(1).text().trim();
+            var $place = $wrap.find('.row-create-before-place').find('.rem-click');
+            if( $place.length != 0 ){
+                address.lat        = parseFloat( $place.attr('data-place-lat') );
+                address.lng        = parseFloat( $place.attr('data-place-lng') );
+                address.place_id   = $place.attr('data-placeid');
+                address.place_name = $place.find('span').eq(0).text().trim();
+                address.city_name  = $place.find('span').eq(1).text().trim();
             }
 
             // party address
             party.address = {};
             party.type    = "anytype";
 
-            if( $wrap.find('.party-place-name').length != 0 ){
-                party.address.lat        = parseFloat( $wrap.find('.party-place').attr('data-place-lat') );
-                party.address.lng        = parseFloat( $wrap.find('.party-place').attr('data-place-lng') );
-                party.address.place_id   = $wrap.find('.party-place').attr('data-placeid');
-                party.address.place_name = $wrap.find('.party-place-name span').eq(0).text().trim();
-                party.address.city_name  = $wrap.find('.party-place-name span').eq(1).text().trim();
+            var $place = $wrap.find('.row-create-party-place').find('.rem-click');
+            if( $place.length != 0 ){
+                party.address.lat        = parseFloat( $place.attr('data-place-lat') );
+                party.address.lng        = parseFloat( $place.attr('data-place-lng') );
+                party.address.place_id   = $place.attr('data-placeid');
+                party.address.place_name = $place.find('span').eq(0).text().trim();
+                party.address.city_name  = $place.find('span').eq(1).text().trim();
             }
 
             // party_party

@@ -7,6 +7,18 @@
    letter-spacing: 1px;
 }
 
+.lp-arrow {
+position: absolute;
+width: 120px;top: 210px;}
+
+.lp-arrow-1 {
+left: 33%;
+} 
+
+.lp-arrow-2 {
+  right: 33%;
+}
+
 .etiquette {
    background: rgba(255, 255, 255, 0.81);
    border-bottom: 1px solid #E4E4E4;
@@ -164,7 +176,16 @@
 
 .hero-header {font: bold 65px 'Alegreya Sans SC';text-align: center;color: white;}
 
-.hero-subheader {text-align: center;font: normal 25px 'Lato';text-shadow: 0 1px 1px #575757;color: white;text-transform: none;margin-top: 15px;}
+.hero-subheader {text-align: center;font: normal 28px 'Karla';text-shadow: 0 1px 1px #575757;color: white;text-transform: none;margin-top: 25px;letter-spacing: -.5px;line-height: 45px;}
+.hero-subheader span {
+  margin: 0 3px;
+  font-weight: bolder;
+  background: #eee;
+  padding: 2px 7px;
+  background: rgba(255,255,255,.2);
+  border-radius: 6px 0 6px 0;
+  text-shadow: none;
+}
 
 .hero-languages {
    position: absolute;
@@ -197,9 +218,10 @@
 }
 .kenburns-overlay {
    z-index: 4;
-   position: relative;
    height: 100%;
+   width: 100%;
    background: rgba(0, 0, 0, 0.50);
+   position: absolute;
 }
 /* End Kenbuns Styles */
 
@@ -209,7 +231,7 @@
    position: relative;
 }
 
-.landing-divider {height: 4px;/* background: linear-gradient(#B8B8B8, #E9E9E9,white); */}
+.landing-divider {height: 15px;/* background: linear-gradient(#B8B8B8, #E9E9E9,white); */}
 
 
 /* Screenshot rules */
@@ -317,10 +339,11 @@
    text-align: center;
    overflow: hidden;
    background: url('/img/app/crossword.png');
+   position: relative;
 }
 
 .keypoint-wrap {
-   width: 230px;
+   width: 270px;
    display: inline-block;
    margin: 20px 30px 110px;
    vertical-align: top;
@@ -372,11 +395,11 @@
    /* border: 1px solid #EAEAEA; */
 }
 
-.keypoint-head {font: bold 18px 'Alegreya sans sc';margin-top: 20px;padding: 15px;border-radius: 3px;}
+.keypoint-head {font: bold 20px 'Alegreya sans sc';margin-top: 35px;padding: 15px;border-radius: 3px;}
 
-.keypoint-body {
-
-}
+.keypoint-body {background: white;
+padding: 25px;
+font-size: 16px;/* background: #E94F6A; */color: black;}
 
 
 .landing-map {background: url('/img/sc/map.png') center center;height: 300px;position: relative;background-position: center -100px;}

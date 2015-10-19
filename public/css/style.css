@@ -196,6 +196,10 @@ img.left {
    display: none;
 }
 
+#logout {
+	color: #e94f61;
+	left: 2px;
+}
 .curtain, .modal-curtain{
    position: fixed;
    top: 0;
@@ -1458,6 +1462,7 @@ input[type="radio"] + span {
    top: -2px;
    color: white;
    font-family: 'Gochi Hand';
+   display: inline;
 }
 
 .actionsWrap {

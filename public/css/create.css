@@ -56,11 +56,12 @@
 	position:relative;
 	top: -7px;
 }
-.ambiance-name {
+.ambiance-name, .default-name {
    margin-left: 0!important;
 }
 
-.ambiance-hashtag {
+.ambiance-hashtag,
+.default-icon {
 	/* font-weight:bolder; */
 	display: inline-block;
 	vertical-align: top;
@@ -70,7 +71,7 @@
 	top: 1px;
 } 
 
-.item, .friend, .ambiance, .date, .before-place, .party-place, .event-ambiance, .hour {
+.item, .friend, .ambiance, .date, .before-place, .party-place, .event-ambiance, .hour, .default {
    display: inline-block;
    background: #FBFBFB;
    padding: 0px 6px 0 0px;
@@ -83,6 +84,10 @@
    border-bottom: 1px solid #eee;
 }
 
+.default {
+	position: relative;
+	top: -8px;
+}
 .friend-img {
    position: absolute;
    top: 3px;

@@ -155,23 +155,23 @@
 	        	delay: 500
 	        });
 
-	        $('.landing-kenburns').Kenburns({
-	        	images: [
-	        		'img/kb/tst1.jpg',
-	        		'img/kb/tst2.jpg',
-	        		'img/kb/tst4.jpg',
-	        		'img/kb/tst7.jpg',
-	        	],
-	        	scale: 0.92,
-	        	duration: 8000,
-	        	fadeSpeed: 1500,
-	        	ease3d: 'ease-out',
-	        	onSlideComplete: function(){
+			var city_text = ["Bastille, 21h43", "Christiana", "Marion"];
+	        $('.landing-places').typed({
+				strings: [city_text[0]],
+				write_duration: 2300,
+				backDelay: 2300,
+				back_duration: 2000
+	       	});
 
-	        		var city_text = ["Bastille, 21h43","Célina Helloworld", "Morgane Labelle", "Sylvie Larson", "Christiana", "Marion"];
-	        		var slide_index = this.getSlideIndex();
-	       			var $img = $('.kb-slide').eq( slide_index );
-	       			var text = city_text[ slide_index ];
+	        $('.bxslider').bxSlider({
+			  mode: 'fade',
+			  auto: true,
+			  pause: 7000,
+			  speed: 1000,
+			  autoControls: true,
+			  onSlideBefore: function(){
+
+	       			var text = city_text[ 0 ];
 	       			
 	       			$('.landing-places-wrap *:not(.icon)').velocity( LJ.ui.slideRightOutLight, {
 	       				duration: 800,
@@ -186,22 +186,15 @@
 	       					// Always make sure that kenburns duration = write_duration + backDelay + back_duration
 	       					$('.landing-places').typed({
 	       						strings: [text],
-	       						write_duration: 3300,
-	       						backDelay: 3300,
-	       						back_duration: 1000
+	       						write_duration: 2300,
+	       						backDelay: 2300,
+	       						back_duration: 2000
 	       					});
 
 	       				}
-	       			})
-
-
-			    },
-			    onLoadingComplete: function(){
-			        console.log('image loading complete');
-
-			    }
-	        }).append('<div class="kenburns-overlay"></div>');
-	        
+	       			});
+			  }
+			});
 
 		},
 		autoLogin: function(){

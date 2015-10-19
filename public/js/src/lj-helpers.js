@@ -285,41 +285,22 @@
           };
 
 		},
-		addBeforePlaceToInput: function( place ){
+		addPlaceToInput: function( place, input_id ){
 
 			if( !place.place_id ){
 				return console.warn('No place_id found, cant add item');
 			}
 
-			var $input = $('#cr-before-place'),
+			var $input = $('#'+input_id),
 				place = place;
 
 			$input.val('');
 			$input.hide();
 
-			if( $('.before-place').length != 0 ){
-				LJ.fn.removeBeforePlaceToInput();
-			}
-
-			var $html = $( LJ.fn.renderBeforePlaceInCreate( place ) );			
-				$html.hide().insertBefore( $input );
-				$html.show();
-
-		},
-		addPartyPlaceToInput: function( place ){
-
-			if( !place.place_id ){
-				return console.warn('No place_id found, cant add item');
-			}
-
-			var $input = $('#cr-party-place'),
-				place = place;
-
-			$input.val('');
-			$input.hide();
-
-			if( $('.party-place').length != 0 ){
-				LJ.fn.removePartyPlaceToInput();
+			var $place = $input.siblings('div');
+			if( $place.length != 0 ){
+				$place.remove();
+				$input.show();
 			}
 
 			var $html = $( LJ.fn.renderPartyPlaceInCreate( place ) );			
@@ -327,27 +308,9 @@
 				$html.show();
 
 		},
-		removeBeforePlaceToInput: function( str ){
+		addDateToInput: function( date_str, input_id ){
 
-			var $input = $('#cr-before-place'),
-				$place  = $('.before-place');
-
-			$('.before-place').remove();
-			$input.show();
-
-		},
-		removePartyPlaceToInput: function( str ){
-
-			var $input = $('#cr-party-place'),
-				$place  = $('.party-place');
-
-			$('.party-place').remove();
-			$input.show();
-			
-		},
-		addDateToInput: function( date_str ){
-
-			var $input = $('#cr-date'),
+			var $input = $('#' + input_id),
 				date = moment( date_str, 'DD/MM/YY' );
 			
 			$input.val('');
@@ -640,26 +603,6 @@
 				$('.pending').removeClass('pending');
 
 			}, ms );
-
-        },
-        populateCreateEvent: function(){
-
-        	var suggestion = LJ.user.friends[0];
-        	LJ.fn.addItemToInput({ max: LJ.settings.app.max_hosts, inp: '#cr-friends', html: LJ.fn.renderFriendInInput( suggestion ), suggestions: '.search-results-friends' });
-
-        	['helloWorld','likeYouCare','ThisIsIt'].forEach(function(hashtag){
-        		LJ.fn.addItemToInput({ html: LJ.fn.renderAmbianceInCreate( hashtag ), inp: '#cr-ambiance', max: LJ.settings.app.max_ambiance });
-        	});
-
-        	var suggestion = { _id: '55c613b3eb8ced441405a3a6', type: 'bar', name: 'Le violondingue', adress: 'Near panthéon bitch!' }
-        	LJ.fn.addItemToInput({ max: 1, inp: '#cr-party-place', html: LJ.fn.renderPartyPlaceInCreate( suggestion ) });
-
-        	var service = new google.maps.places.PlacesService(LJ.map);
-        		service.getDetails({ placeId: "ChIJyYqjdNxx5kcRQLAaFrnkRlM"}, function(res){
-        			LJ.fn.addBeforePlaceToInput( res );
-        		});
-
-        	LJ.fn.addDateToInput('29/08/15');
 
         },
         makeGroupId: function( group_ids ){

@@ -9,6 +9,8 @@ var settings = {
 		max_hosts: 5,
 		min_ambiance: 1,
 		max_ambiance: 4,
+		max_attendees: 500,
+		min_attendees: 20,
 		mood: 
 		[
 			{ id: 'happy', display: 'Happy' },
@@ -34,6 +36,13 @@ var settings = {
 			{ id: 'boys', display: 'Mars', icon_code: 'mars' },
 			{ id: 'girls', display: 'Vénus', icon_code: 'venus' },
 			{ id: 'mixed', display: 'Mixte', icon_code: 'mix' },
+		],
+		party_types: 
+		[
+			{ id: 'facebook', display: 'Event facebook', icon_code: 'facebook' },
+			{ id: 'nightclub', display: 'Nightclub', icon_code: 'moon' },
+			{ id: 'bar', display: 'Bar', icon_code: 'cafe' },
+			{ id: 'school', display: 'Ecole', icon_code: 'graduation-cap' }
 		]
 	},
 	public_properties: {

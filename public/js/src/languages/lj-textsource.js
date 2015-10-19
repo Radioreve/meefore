@@ -289,6 +289,10 @@
 			"fr": "Changer d'endroit",
 			"en": "Change location"
 		},
+		e_create_party_button: {
+			"fr": "Soirée partenaire",
+			"en": "Partner event"
+		},
 		s_title: {
 			"fr": "Préférences",
 			"en": "Preferences"
@@ -635,7 +639,8 @@
 			"en": "United-Kingdom"
 		},
 		lp_subtitle: {
-			"fr": "Rejoignez ou organisez des before avant d'aller en soirée.",
+			"fr": "Rencontrez les personnes qui vont aux mêmes soirées que vous. <br>  " 
+				   + "Rencontrez les <span>avant</span> d'aller en soirée.",
 			"en": "Join or organize pregaming events before going out."
 		},
 		lp_conn_button: {
@@ -643,31 +648,34 @@
 			"en": "Connection"
 		},
 		lp_key_title: {
-			"fr": "L'indispensable mix d'un before réussi.",
+			"fr": "Le process meefore pour passer de meilleurs soirées",
 			"en": "What is a meefore ?"
 		},
 		lp_key_friends_title: {
-			"fr":"Les amis",
-			"en": "Friends"
+			"fr":"Choisir sa soirée",
+			"en": "Pick a party"
 		},
 		lp_key_people_title: {
-			"fr": "des rencontres",
-			"en": "people"
+			"fr": "Rejoindre un before",
+			"en": "Join a pregame"
 		},
 		lp_key_party_title: {
-			"fr": "et une soirée!",
-			"en": "and a party!"
+			"fr": "Just have fun",
+			"en": "Have fun"
 		},
 		lp_key_friends_text: {
-			"fr": "Pas de Meefore sans vos amis. Avec qui débrieferiez-vous s'ils n'étaient pas de la partie ?",
+			"fr": "Meefore sélectionne et répertorie sur une map les soirées à venir. Plus besoin de chercher des heures"
+				  + " sur internet ou de se laisser embarquer dans des soirées bidon !",
 			"en": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert"
 		},
 		lp_key_people_text: {
-			"fr": "Faîtes connaissances avec des groupes qui vont aux même soirées que vous. Avant que <span>l'alcool</span> la musique ne vous en empêche.",
+			"fr": "Une soirée sans before, c'est comme... un before sans soirée. Demander à rejoindre un before en composant"
+				  + " votre team parmis vos amis Facebook, ou organisez le votre en une minute.",
 			"en": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert"
 		},
 		lp_key_party_text: {
-			"fr": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert",
+			"fr": "Parcequ'on est avant tout là pour ça et qu'un before oui, mais pas avec n'importe qui ! Discutez entre"
+				 + " groupes jusqu'à trouver le groupe qui vous ambiance le plus.",
 			"en": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert"
 		},
 		lp_map_button: {
