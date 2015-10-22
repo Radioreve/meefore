@@ -68,7 +68,7 @@
 							$('.row-events-accepted-tabview').velocity('transition.slideUpIn', { duration: duration_time });
 							$('.row-events-accepted-inview.active').velocity('transition.slideDownIn', { duration: duration_time });
 							setTimeout(function(){
-								$('.row-events-filters').velocity('transition.slideDownIn', { duration: duration_time });
+								$('.row-events-filters').velocity('transition.slideDownIn', { duration: duration_time, display: 'flex' });
 								if( $('.row-preview').children().length > 0 ){
 									$('.row-preview').velocity('transition.slideDownIn', { duration: duration_time });
 								}

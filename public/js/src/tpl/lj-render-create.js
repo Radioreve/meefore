@@ -203,7 +203,10 @@
 
             var html =  '<div class="rem-click hour hour-fix">'
                             + '<i class="icon icon-date icon-clock"></i>'
-                            + '<div class="hour-name">' + hour + 'H' + min + '</div>'
+                            + '<div class="hour-name">'
+                             + '<span class="date-hour">' + hour + '</span>'
+                             + 'H'
+                             + '<span class="date-min">' + min + '</span></div>'
                         +'</div>'
 
             return html;
@@ -294,7 +297,7 @@
                 +'</div>'
 
                 // Nom de l'organisation
-                +'<div class="row-input row-input-md etiquette row-create-hosted-by">'
+                +'<div class="row-input row-input-md etiquette row-create-party-hosted-by">'
                   +'<label class="label label-lg" for="pa-hosted-by">Organisé par..</label>'
                   +'<input class="" id="pa-hosted-by" type="text" placeholder="Le Violondingue...">'
                 +'</div>'
@@ -327,8 +330,8 @@
 
                 // Addresse de la soirée
                 +'<div class="row-input row-input-lg etiquette row-create-party-place">'
-                  +'<label class="label" for="pa-party-place">Lieu de la soirée</label>'
-                  +'<input id="pa-party-place" type="text" placeholder="Quel endroit?">'
+                  +'<label class="label" for="pa-address">Lieu de la soirée</label>'
+                  +'<input id="pa-address" type="text" placeholder="Quel endroit?">'
                 +'</div>'
 
                 // Lien de la photo (url)

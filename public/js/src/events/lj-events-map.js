@@ -69,20 +69,22 @@
         handleFetchEvents: function( err, events ){
 
             if( err ){
-                return console.log('Error fetching and sync friends : ' + JSON.stringify( err, null, 3 ) );
+                return console.log('Error fetching events : ' + JSON.stringify( err, null, 3 ) );
             }
 
-            console.log('Total events successfully fetched, n = ' + events.length + ' )');
-
-            /* Rendu sur la map */
-
-            /* Display Google Map upon which to render event markers */
-            LJ.$body.on('display:layout:during', function(){
-                LJ.fn.initMap();
-                LJ.fn.displayEventsMarkers( events );
-                LJ.fn.displayPartyMarkers( events );
-            });
+            console.log('Total events successfully fetched, n = ' + events.length);
+            LJ.cache.events = events;
                 
+
+        },
+        handleFetchParties: function( err, parties ){
+
+            if( err ){
+                return console.log('Error fetching parties : ' + JSON.stringify( err, null, 3 ) );
+            }
+
+            console.log('Total parties successfully fetched, n = ' + parties.length);
+            LJ.cache.parties = parties;
 
         },
         handleFetchEventById: function( err, evt, opt ){
@@ -108,7 +110,7 @@
             return console.log('Error fetching and sync friends : ' + err );
           }
 
-            console.log('Personnal events successfully fetched, n = ' + events.length + ' )');
+            console.log('Personnal events successfully fetched, n = ' + events.length);
             
             LJ.$body.on('display:layout:after', function(){
 
@@ -124,10 +126,15 @@
         },
         fetchEvents: function( callback ){
 
-            LJ.fn.api('get','events', callback );
+            LJ.fn.api('get', 'events', callback );
 
         },
-        /* For fetch when a friend puts us host or ask event with us */
+        fetchParties: function( callback ){
+
+            LJ.fn.api('get', 'parties', callback );
+
+        },
+        // For fetch when a friend puts us host or ask event with us 
         fetchEventById: function( event_id, callback ){
 
             if( !LJ.user.facebook_id )
@@ -136,7 +143,7 @@
             LJ.fn.api('get','events/' + event_id, callback );
 
         },
-        /* During initialisation */
+        // During initialisation 
         fetchMyEvents: function( callback ){
 
             if( !LJ.user.facebook_id )
@@ -180,21 +187,28 @@
         displayEventsMarkers: function( events ){
                 
             events.forEach(function( itm ){
-                LJ.cache.events.push( itm );
                 LJ.fn.displayEventMarker( itm );
             });
 
-         /* Rendu des évènements les plus proches par rapport à la position de départ*/
+          /* Rendu des évènements les plus proches par rapport à la position de départ*/
             setTimeout(function(){
                 LJ.fn.refreshEventPreview();
             }, 1000 );        
            
 
         },
-        displayPartyMarkers: function( events ){
+        displayPartyMarkers_Events: function( events ){
 
             events.forEach(function( evt ){
-                LJ.fn.displayPartyMarker( evt.party );
+                LJ.fn.displayPartyMarker_Event( evt.party );
+            });
+
+
+        },
+        displayPartyMarkers_Parties: function( parties ){
+
+            parties.forEach(function( party ){
+                LJ.fn.displayPartyMarker_Party( party );
             });
 
 
@@ -233,7 +247,7 @@
                 // Fix, if has active in namespace, force refresh to be on top
                 setTimeout(function(){
                     if( /active/.test( options.cache ) ){
-                        LJ[ options.cache ][ LJ[options.cache ].length -1 ].marker.setZIndex(10);
+                        LJ[ options.cache ][ LJ[options.cache ].length -1 ].marker.setZIndex(100);
                     }
                 }, 30 )
             }
@@ -312,13 +326,16 @@
 
                             // Display preview
                             LJ.fn.addEventPreview( evt );
-                            LJ.fn.addPartyPreview( evt.party );
+                            // Pass in the date of the event, to determine if the party
+                            // matches a partner party in case same place_id, or if party occurs
+                            // another day in order to display the right preview!
+                            LJ.fn.addPartyPreview( evt.party, { begins_at: evt.begins_at } );
 
                             // Display active pins, paths and half active paths
                             LJ.fn.displayPathToParty({ evt: evt });
                             LJ.fn.displayHalfActivePaths( evt.party );
                             LJ.fn.displayActiveEventMarker( evt, { lat: effective_lat, lng: effective_lng });
-                            LJ.fn.displayActivePartyMarker( evt.party );
+                            LJ.fn.displayActivePartyMarker_Event( evt.party );
                         }
                     }, {
                         event_type : 'mouseover',
@@ -338,7 +355,7 @@
 
 
         },
-        displayPartyMarker: function( party ){
+        displayPartyMarker_Event: function( party ){
 
             // Only display the marker if no other party at the same location exists
             if( _.find( LJ.party_markers, function( sche ){
@@ -361,20 +378,36 @@
                         event_type : 'click',
                         callback   : function( e ){
 
-                            // Clear everything
-                            LJ.fn.clearAllActiveMarkers();
-                            LJ.fn.clearAllActivePaths();
-                            LJ.fn.clearAllHalfActivePaths();
+                            // Select all events in cache that cause to this place
+                            // Range them by date according to filters
+                            // Select the closest in distance, and trigger click
+                           LJ.fn.clickOnClosestEvent( party );
+                           
+                        }
+                    }
+                ]
+            });
 
-                            // Display preview
-                            LJ.fn.addPartyPreview( party );
+        },
+        displayPartyMarker_Party: function( party ){
+            
+            // Display the marker with high z-index, so it overrides other people party's pin
+            // who want to do a before at this place_id
+            LJ.fn.displayMarker({
+                lat       : parseFloat(party.address.lat),
+                lng       : parseFloat(party.address.lng),
+                url       : LJ.cloudinary.markers.party.url,
+                cache     : 'party_' + party.type + '_markers',
+                singleton : false,
+                id        : party.address.place_id,
+                data      : party,
+                zIndex    : 20,
+                listeners : [
+                    {
+                        event_type : 'click',
+                        callback   : function( e ){
 
-                            // Display active pins, paths and half active paths
-                            LJ.fn.displayHalfActivePaths( party );
-                            LJ.fn.displayActivePartyMarker( party );
-
-                            // Clear event preview
-                            LJ.fn.clearActiveEventPreview();
+                            LJ.fn.clickOnClosestEvent( party );
                            
                         }
                     }
@@ -396,12 +429,28 @@
             });
 
         },
-        displayActivePartyMarker: function( party ){
+        displayActivePartyMarker_Event: function( party ){
 
             if( LJ.fn.isPartyMarkerActivated( party.address.place_id ) ){
                 LJ.active_markers[0].marker.setZIndex(1);
                 return console.log('Marker already activated');
             }
+
+            // If a party in cache with the same place_id and same date
+            // display that one instead.
+
+            // ONLY USEFULL IF DIFFERENT MARKERS FOR PARTY EVENTS
+
+            // var cached_party = false;
+            //     cached_party = _.find( LJ.cache.parties, function( cached_party ){
+            //         return party.address.place_id == cached_party.address.place_id;
+            //             && moment( cached_party.begins_at ).dayOfYear() == moment( ... ).dayOfYear() 
+            //     });
+
+            // if( cached_party ){
+            //     LJ.fn.displayActivePartyMarker_Party( cached_party );
+            //     return;
+            // }
 
             // Display active party
             LJ.fn.displayMarker({
@@ -412,6 +461,29 @@
                 cache     : 'active_party_marker',
                 singleton : false,
                 zIndex    : 10,
+                data      : {}
+            });
+
+
+        },
+        displayActivePartyMarker_Party: function( party ){
+
+            if( LJ.fn.isPartyMarkerActivated( party.address.place_id ) ){
+                LJ.active_markers[0].marker.setZIndex(1);
+                return console.log('Marker already activated');
+            }
+
+
+
+            // Display active party
+            LJ.fn.displayMarker({
+                lat       : parseFloat(party.address.lat),
+                lng       : parseFloat(party.address.lng),
+                url       : LJ.cloudinary.markers.party_active,
+                id        : party.address.place_id,
+                cache     : 'active_party_marker',
+                singleton : false,
+                zIndex    : 21,
                 data      : {}
             });
 
@@ -466,6 +538,104 @@
                 zIndex    : 10,
                 data      : {}
             });
+
+        },
+        clickOnClosestEvent: function( party ){
+
+            console.log('Triggering action on the closest event');
+
+            var filtered_events = []
+
+            // Filter by destination
+            filtered_events = _.filter( LJ.cache.events, function( evt ){
+                return evt.party.address.place_id == party.address.place_id;
+            });
+
+            if( filtered_events.length == 0 ){
+                // Clear everything
+                LJ.fn.clearAllActiveMarkers();
+                LJ.fn.clearAllActivePaths();
+                LJ.fn.clearAllHalfActivePaths();
+
+                // Display preview
+                LJ.fn.addPartyPreview( party );
+
+                // Display active pins, paths and half active paths
+                LJ.fn.displayHalfActivePaths( party );
+                LJ.fn.displayActivePartyMarker_Event( party );
+
+                // Clear event preview
+                LJ.fn.clearActiveEventPreview();
+
+                return;
+            }
+
+            // Order by date
+            filtered_events.sort(function( e1, e2 ){
+                return e1.begins_at > e2.begins_at;
+            });
+
+            // Try to find at least one event in filtered dates;
+            var acceptable_dates = window.test_filters || ["22-10-2015","23-10-2015","24-10-2015","25-10-2015"];
+
+            var found = false;
+            var filtered_events_with_filter = [];
+            acceptable_dates.forEach(function( date ){
+
+                    var day_of_year = moment( date, 'DD-MM-YYYY' ).dayOfYear();
+                    var temp = _.filter( filtered_events, function( evt ){
+                        return moment( evt.begins_at ).dayOfYear() == day_of_year;
+                    });
+
+                    if( temp && temp.length != 0 && !found ){
+                        found = true;
+                        filtered_events_with_filter = temp;
+                    }
+
+            }); 
+            
+            // Try to find at least one event without applying filters
+            var filtered_events_without_filters = [];
+            var day_to_come = moment( filtered_events[0].begins_at ).dayOfYear();
+            filtered_events_without_filters = _.filter( filtered_events, function( evt ){
+                return moment( evt.begins_at ).dayOfYear() == day_to_come;
+            });
+
+            // Check if filter gave successfully match. Otherwise, use 2n array
+            if( filtered_events_with_filter.length != 0 ){
+                console.log('Found elements according to filter');
+                filtered_events = filtered_events_with_filter;
+            } else {
+                console.log('Found elements according NOT to filter');
+                filtered_events = filtered_events_without_filters;
+            }
+
+            // Augmente each object with the distance to center
+            filtered_events.forEach(function( evt ){
+                evt.distance_to = LJ.fn.distanceBetweenParties( party, evt );
+            }); 
+
+            // Filter by distance to center
+            filtered_events.sort(function( e1, e2 ){
+                return e1.distance_to > e2.distance_to;
+            }); 
+
+            var closest_event = filtered_events[0];
+            console.log(closest_event);
+
+            var closest_event_marker = _.find( LJ.event_markers, function( mrk ){
+                return mrk.id == closest_event._id;
+            }).marker;
+
+            google.maps.event.trigger( closest_event_marker, 'click' );
+        
+
+        },
+        distanceBetweenParties: function( party_1, party_2 ){
+
+            var party_1_latlng = new google.maps.LatLng( party_1.address.lat, party_1.address.lng );
+            var party_2_latlng = new google.maps.LatLng( party_2.address.lat, party_2.address.lng );
+            return google.maps.geometry.spherical.computeDistanceBetween( party_1_latlng, party_2_latlng );
 
         },
         clearAllActiveMarkers: function(){

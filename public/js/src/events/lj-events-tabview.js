@@ -52,7 +52,9 @@
                         .find('.event-accepted-chatgroup.last-active').addClass('active');
 
                     LJ.fn.addEventPreview( evt );
-                    LJ.fn.addPartyPreview( evt.party );
+                    LJ.fn.addPartyPreview( evt.party, {
+                        begins_at: evt.begins_at
+                    } );
                     return;
                 }
 
@@ -68,7 +70,9 @@
                                 
                 // Update preview
                 LJ.fn.addEventPreview( evt );
-                LJ.fn.addPartyPreview( evt.party );
+                LJ.fn.addPartyPreview( evt.party,{
+                     begins_at: evt.begins_at
+                });
 
                 // Update inview 
                 $inview_wrap_current

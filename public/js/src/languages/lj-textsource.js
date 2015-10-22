@@ -289,6 +289,10 @@
 			"fr": "Changer d'endroit",
 			"en": "Change location"
 		},
+		e_filters_date: {
+			"fr": "Filtrer par date",
+			"en": "Filter by date"
+		},
 		e_create_party_button: {
 			"fr": "Soirée partenaire",
 			"en": "Partner event"
@@ -428,6 +432,10 @@
 		to_event_created_success_2: {
 			"fr": "Que la fête commence...",
 			"en": "May the party begin..."
+		},
+		to_party_created_success: {
+			"fr": "La soirée a été ajoutée",
+			"en": "The party has been added"
 		},
 		to_event_group_accepted: { 
 			"fr": "Le groupe %s a été accepté",
@@ -648,7 +656,7 @@
 			"en": "Connection"
 		},
 		lp_key_title: {
-			"fr": "Le process meefore pour passer de meilleurs soirées",
+			"fr": "Le process meefore pour passer de meilleures soirées",
 			"en": "What is a meefore ?"
 		},
 		lp_key_friends_title: {

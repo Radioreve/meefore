@@ -58,8 +58,6 @@ i.icon-create {
    border-radius: 1px;
    box-shadow: 0 1px 2px  1px rgba(233, 79, 106, 0.24);
    height: 33px;
-   position: relative;
-   top: -3px;
 }
  .btn-create-party {
    width: 150px;
@@ -84,7 +82,7 @@ i.icon-create {
     vertical-align: top;
     background: rgba(255, 255, 255, 0.55);
     position: absolute;
-    top: 111px;
+    top: 121px;
     z-index: 1;
     box-sizing: border-box;
     padding: 15px;
@@ -98,7 +96,7 @@ i.icon-create {
 }
 .row-party-preview {
     padding-right: 18px;
-    width: 30%;
+    width: 33%;
     right: 0;
     /* top: 210px; */
 }
@@ -115,7 +113,7 @@ i.icon-create {
 .row-events-preview {
      padding-left: 50px;
      padding-right: 0px;
-     width: 70%;
+     width: 67%;
      left: 0;
 }
 .row-events-accepted-tabview,
@@ -164,6 +162,29 @@ position: relative;}
     margin: 1px 2px;
     top: 1px;
 }
+.party-preview-details--sub {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.party-preview-details--sub div {
+  flex: 1 0 auto;
+}
+
+.party-preview-attendees {
+  font-size: 10px;
+}
+
+.party-preview-picture {
+display: inline-block;flex: 0 0 45px;
+background-image: url(http://res.cloudinary.com/radioreve/image/upload/v1445353038/meefore_logo_carre.png);
+background-size: cover;
+height: 45px;
+border-radius: 40px;
+background-position: center center;
+background-repeat: no-repeat;}
+
+.party-preview-picture img {border-radius: 30px;text-align: center;}
 
 .event-preview-ambiance {
 
@@ -197,16 +218,22 @@ margin-right: 9px;
 .party-preview-details{
 text-align: left;display: inline-block;
 vertical-align: middle;
-margin-right: 11px;/* max-width: 62%; */overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+margin-right: 11px;overflow: hidden;text-overflow: ellipsis;}
 .party-preview-details {
   padding: 10px;
-}
-.party-preview-place-name {
-  display: inline-block;*/
+  display: flex;
+  /* flex: 1 0 auto; */
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+} 
+.party-preview-place-name {*/
   font-size: 14px;
   font-weight: bolder;
   font-size: 12px;
-  margin-right: 5px;
+  line-height: 1.3;
+  text-align: center;
+  /* flex: 1 0 auto; */
 }
 .event-preview-address,
 .party-preview-address {
@@ -222,64 +249,119 @@ padding-left: 3px;display: inline-block;font-size: 13px;}
    padding: 5px;
    border-radius: 3px;
    line-height: 14px;
-   display: inline-block;
-   margin-right: 20px;
+   flex: 2 0 0;
+   text-align: center;
 }
 .event-preview-hosts-names{
   display: block;
 }
 .party-preview-place-type{
-  display: inline-block;
 }
 .row-events-filters {
   position: relative;
   text-align: left;
-  padding: 15px 50px 11px 50px;
+  padding: 15px 50px;
   background: rgba(255, 255, 255, 0.55);
   z-index: 1;
   overflow: visible!important;
   border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
 }
 .row-events-filters-group {
   text-align: left;
-  display: inline-block;
   font-family: 'Karla';
   position: relative;
   padding: 10px;
   background: white;
   border-bottom: 1px solid #eee;
   height: 50px;
+  display: inline-flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  box-sizing: border-box;
 }
+
+.filters-location {
+
+width: 450px;
+}
+
+.filters-date {
+}
+
+.filters-location * {
+  flex: 0 0 auto;
+}
+
+.filters-date * {
+  flex: 1 0 0;
+}
+
+.filter-date-item {
+
+padding: 7px 10px;
+
+font-size: 12px;
+
+margin: 0 3px;
+
+background: #FCFCFC;
+
+border-bottom: 1px solid #E6E6E6;
+
+color: #717171;
+
+cursor: pointer;
+
+transition: all ease-in-out .15s;
+}
+
+.filter-date-item:hover {
+  background: #f5f5f5;
+}
+.filter-date-item.active {
+  background: #E94F6A;
+  border-bottom: 1px solid #B02727;
+  color: white;
+}
+
+.filter-date-item-weekday {
+
+}
+.filter-date-item-numbday {
+  
+}
+
 .icon-filters-group {
     color: #E94F6A;
+    margin: 0 5px;
+    flex: 0 0 auto;
 }
 
 .filters-create-meefore,
-.filters-create-party{
-  
-position: absolute;
-  
-right: 48px;
-  
-top: 12px;
-}
+.filters-create-party{align-self: flex-end;}
 
-.filters-create-party {right: 240px;}
+.filters-create-party {
+    display: none;
+}
 
 .event-filter-label {
 
-display: inline-block;
-
 font-weight: bolder;
-
-/* font-family: 'Lato'; */
 
 font-size: 11px;
 
-margin-left: 3px;
+margin: 0 2px;
 
 text-transform: uppercase;
 
+flex: 2 0 0;
 }
 
 .event-filter-options {
@@ -296,13 +378,12 @@ display: inline-block;}
   cursor: pointer;
 }
 .row-events-filters-divider {
-  display:inline-block;
   border-right: 1px solid #FFFFFF;
   border-left: 1px solid #E5E5E5;
   height: 22px;
-  width:1px; 
-  vertical-align: middle;
+  width:1px;
   margin: 0 11px;
+  flex: 1 0 auto;
 }
 
 .backtomap {
@@ -1155,10 +1236,11 @@ padding-right: 20px;
 }
 
 #moveAround {
-  width: 260px;
   font-size: 12px;
   padding: 6px 0 5px 15px;
   background: rgb(252, 252, 252);
   color: #474747;
   border-bottom: 1px solid #E6E6E6;
+  flex: 2 0 auto;
+  margin-left: 5px;
 }

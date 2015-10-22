@@ -19,6 +19,7 @@
 		api.places    = require( apiDir + '/places');
 		api.ambiances = require( apiDir + '/ambiances');
 		api.events    = require( apiDir + '/events');
+		api.parties   = require( apiDir + '/parties');
 		api.chats     = require( apiDir + '/chats');
 
 	var mdw = {};
@@ -228,7 +229,17 @@
 
 
 
+	    // [ @parties ] Créer un évènement partenaire
+	    app.post('/api/v1/parties',
+	    	mdw.auth.authenticate(['admin']),
+	    	mdw.validate('create_party', ['create_party']),
+	    	api.parties.createParty );
 
+	    // [ @parties ] Fetch all parties
+	    app.get('/api/v1/parties',
+	    	api.parties.fetchParties );
+
+	    
 	    // Test & legacy
 
 

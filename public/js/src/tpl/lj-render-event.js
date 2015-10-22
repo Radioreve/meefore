@@ -161,16 +161,40 @@
       return html.prop('outerHTML');
 
     },
-    renderPartyPreview: function( party, options ){
+    renderPartyPreview_Event: function( party, options ){
 
       var options = options || {}; 
 
-      var hosts_names = "Club";
+      var party_type = "Soirée privée";
 
        details_html = '<div class="party-preview-details">'
                       + '<div class="party-preview-icon"><i class="icon party-icon icon-glass"></i></div>'
-                      + '<div class="party-preview-place-name"><span class="preview-type">Destination</span> ' + party.address.place_name + ', ' + party.address.city_name + '</div>'
-                      + '<div class="party-preview-place-type">' + hosts_names + '</div>'
+                      + '<div class="party-preview-place-name">' + party.address.place_name + ', ' + party.address.city_name + '</div>'
+                      + '<div class="party-preview-place-type">' + party_type + '</div>'
+                    +'</div>';
+
+      var html = '<div class="party-preview " data-placeid="' + party.address.place_id + '">'
+                  //  + hosts_pictures_html
+                    + details_html
+                    // + '<button class="theme-btn btn-preview btn-requestin slow-down-3">Proposer un meefore</div>'
+                + '</div>';
+
+      return html;
+
+    },
+    renderPartyPreview_Party: function( party, options ){
+
+      var options = options || {}; 
+
+      var party_type = party.type;
+
+       details_html = '<div class="party-preview-details">'
+                      + '<div class="party-preview-picture" style="background-image:url(' + party.picture_url + ')"></div>'
+                      + '<div class="party-preview-place-name">' + party.name + ', ' + party.address.place_name + '</div>'
+                      + '<div class="party-preview-details--sub">'
+                        + '<div class="party-preview-place-type">Organisé par  ' + party.hosted_by + '</div>'
+                        + '<div class="party-preview-attendees">' + party.attendees + ' personnes attendues</div>'
+                      + '</div>'
                     +'</div>';
 
       var html = '<div class="party-preview " data-placeid="' + party.address.place_id + '">'
@@ -615,22 +639,41 @@
     },
     renderItemInInput_GroupName: function( str ){
 
-        var html =  '<div class="rem-click item">'
-                            + '<i class="icon icon-group-name icon-mindset"></i>'
-                            + '<div class="item-name">' + str + '</div>'
-                        +'</div>'
+        var html = '<div class="rem-click item">'
+                        + '<i class="icon icon-group-name icon-mindset"></i>'
+                        + '<div class="item-name">' + str + '</div>'
+                    +'</div>'
 
         return html;
 
     },
     renderItemInInput_GroupMessage: function( str ){
 
-        var html =  '<div class="rem-click item">'
-                            + '<i class="icon icon-group-message icon-chat-1"></i>'
-                            + '<div class="item-name">' + str + '</div>'
-                        +'</div>'
+        var html = '<div class="rem-click item">'
+                        + '<i class="icon icon-group-message icon-chat-1"></i>'
+                        + '<div class="item-name">' + str + '</div>'
+                    +'</div>'
 
         return html;
+
+    },
+    renderDatesInFilter: function(){
+
+        var html = '';
+
+        for( var i = 0; i < 6; i++ ){
+          var date_l = moment.weekdaysShort( moment().add( i, 'day' ).day() );
+          var date_n = moment().add( i, 'day' ).format('DD/MM');
+          var date_id = moment().add( i, 'day' ).format('DD/MM/YYYY'); 
+                  
+          html += ['<div class="filter-date-item" data-id="' + date_id + '">',
+                        '<span class="filter-date-item-weekday">' + date_l + '</span>',
+                        '<span class="filter-date-item-numbday">' + date_n + '</span>',
+                      '</div>'].join('');
+
+          }
+
+          return html;
 
     }
        

@@ -15,7 +15,7 @@
   <link href='https://fonts.googleapis.com/css?family=Karla:700,400' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Gochi+Hand' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Alegreya+Sans+SC:400,500,600,700,800,900' rel='stylesheet' type='text/css'>
-
+  <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/joyride.css">
@@ -355,10 +355,16 @@
     <section id="eventsWrap" class="none centered">
       
       <div class="row row-events row-events-filters">
-        <div class="row-events-filters-group">
+        <div class="row-events-filters-group filters-location">
           <i class="icon icon-filters-group icon-location"></i>
           <div data-lid="e_filters_location" class="event-filter-label">Changer d'endroit : </div>
           <input id="moveAround" type="text" placeholder="Paris, Londres..." >
+        </div>
+        <div class="row-events-filters-divider"></div>
+        <div class="row-events-filters-group filters-date">
+          <i class="icon icon-filters-group icon-calendar"></i>
+          <div data-lid="e_filters_date" class="event-filter-label">Filter par jour : </div>
+          <!-- Dynamically loaded -->
         </div>
         <div class="row-events-filters-divider"></div>
         <div class="row-events-filters-group filters-create-meefore">
@@ -543,7 +549,6 @@
   <script src="js/src/events/lj-events-create.js"></script>
   <script src="js/src/events/lj-events-map.js"></script>
   <script src="js/src/party/lj-party.js"></script>
-  <script src="js/src/admin/lj-admin.js"></script>
   <script src="js/src/typeaheads/lj-typeaheads.js"></script>
   <script src="js/src/tour/lj-tour.js"></script>
   <script src="js/src/landing/lj-landing.js"></script>

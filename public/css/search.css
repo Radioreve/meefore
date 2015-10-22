@@ -16,7 +16,6 @@
    border-bottom: 1px solid #E4E4E4;
    padding: 15px 15px;
    border-radius: 2px 2px 0 0;
-   /* display: inline-block; */
 }
 .event-preview {
     
@@ -25,7 +24,7 @@ display: inline-block;
 float: left;
 }
 .party-preview {
-height: 69px;/* width: 400px; */}
+height: 69px;display: flex;align-content: center;}
 
 .fb-overlay {
    width: 100%;

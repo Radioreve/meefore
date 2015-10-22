@@ -27,14 +27,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             moment.locale( country );
             LJ.fn.setAppLanguage( country );
 
+            // Gif loader and placeholder 
+            this.initStaticImages();
+
             // Landing page animation 
             this.initAppBoot();
 
             // Bind UI action with the proper handler 
             this.handleDomEvents();
-
-            // Gif loader and placeholder 
-            this.initStaticImages();
 
             // Augment lodash & jQuery
             this.initAugmentations();
@@ -243,6 +243,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('.mood-wrap').html( LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
             $('.drink-wrap').html( LJ.fn.renderDrinkInProfile( LJ.settings.app.drink ));
 
+            /* Filter date for events */
+            $('.filters-date').append( LJ.fn.renderDatesInFilter );
 
             // $('.filter-mixity').html(LJ.fn.renderMixityInFilters(LJ.settings.app.mixity));
             //  $('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));
@@ -394,22 +396,22 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.user = data.user;
             LJ.settings = data.settings;
 
-            /* Register to Pusher based on users channels */
+            // Register to Pusher based on users channels 
             LJ.fn.subscribeToChannels( data.user );
 
-            /* Set all app ui elements specific to user session */
+            // Set all app ui elements specific to user session 
             LJ.fn.initLayout( data.settings );
 
-            /* Je sais plus trop cette fonction me soule! */
+            // Je sais plus trop cette fonction me soule! 
             LJ.fn.setLocalStoragePreferences();
 
-            /* Init cloudinary fileupload with inputs */
+            // Init cloudinary fileupload with inputs 
             LJ.fn.initCloudinary( data.cloudinary_tags );
 
             
             async.parallel([
                 function( callback ){
-                    /* Update friends based on facebook activity on each connection */
+                    // Update friends based on facebook activity on each connection 
                     LJ.fn.fetchAndSyncFriends(function( err, res ){
                         console.log(err);
                         LJ.fn.handleFetchAndSyncFriends( err, res );
@@ -418,16 +420,24 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 },
                 function( callback ){
-                    /* Fetch and display all events on map */
+                    // Fetch and display all events on map 
                     LJ.fn.fetchEvents(function( err, res ){
                         console.log(err);
                         LJ.fn.handleFetchEvents( err, res );
                         callback();
                     });
 
+                },
+                function( callback ){
+                    // Fetch all parties 
+                    LJ.fn.fetchParties(function( err, res ){
+                        console.log( err );
+                        LJ.fn.handleFetchParties( err, res );
+                        callback();
+                    });
                 }, 
                 function( callback ){
-                    /* Fetch and display my events on map */
+                    // Fetch and display my events on map */
                     LJ.fn.fetchMyEvents(function( err, res ){
                         console.log(err);
                         LJ.fn.handleFetchMyEvents( err, res );
@@ -440,19 +450,26 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                         return console.warn('Error initializing the app : ' + err );
                     }
 
-                    /* Admin scripts. Every com is secured serverside */
-                    if( LJ.user.access.indexOf('admin') != -1 ){
-                        LJ.fn.initAdminMode();
+                    // Rendu sur la map quand toutes les données en cache
+                    // Display Google Map upon which to render event markers 
+                    LJ.$body.on('display:layout:during', function(){
+                        LJ.fn.initMap();
+                        LJ.fn.displayEventsMarkers( LJ.cache.events );
+                        LJ.fn.displayPartyMarkers_Events( LJ.cache.events );
+                        LJ.fn.displayPartyMarkers_Parties( LJ.cache.parties );
+                    });
+
+                    // Admin scripts. Every com is secured serverside 
+                    if( LJ.user.access.indexOf('standard') != -1 ){
+                        LJ.fn.initParty();
                     }
                     
-                    LJ.fn.initParty();
-
                     LJ.fn.displayLayout();                    
 
                 });
 
 
-                /* Convenience, out of tests */
+                // Convenience, out of tests 
                 LJ.fn.api('get', 'users', function(err, users) {
                     LJ.cache.users = users;
                 });

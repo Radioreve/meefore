@@ -50,6 +50,18 @@
 
             });
 
+            LJ.$body.on('click', '#createParty .btn-validate', function(){
+
+                if( $(this).hasClass('btn-validating') ) return;
+
+                $(this).addClass('btn-validating');
+                $('#createEvent').find('label').addClass('lighter');
+                LJ.fn.showLoaders();
+                LJ.fn.createParty();
+
+            });
+
+
 		},
 		displayCreateParty: function(){
 
@@ -91,7 +103,32 @@
 
                     } 
                 });
-		}
+		},
+        handleCreatePartySuccess: function( party ){
+
+            delog('Party successfully created');
+            LJ.cache.parties.push( party );
+
+            LJ.fn.displayCurtain({ 
+
+                behindTheScene: function(){
+
+                    LJ.fn.hideModal();
+                    LJ.fn.displayPartyMarker_Party( party );
+                    LJ.map.panTo({ lat: party.address.lat, lng: party.address.lng });
+                    LJ.map.setZoom( 15 );
+
+                },
+                static_delay: true,
+                delay: 600,
+                afterTheScene: function(){
+                    
+                    LJ.fn.toastMsg( LJ.text_source["to_party_created_success"][ LJ.app_language ], 'info');
+
+                }   
+            });
+
+        }
 
 
 	});

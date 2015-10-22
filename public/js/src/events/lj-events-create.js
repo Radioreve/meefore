@@ -215,20 +215,20 @@
 		},
         initGooglePlaces_CreateParty: function(){
 
-            $('#pa-party-place').val('');
+            $('#pa-address').val('');
 
             LJ.google_places_autocomplete_party = new google.maps.places.Autocomplete(
-                document.getElementById('pa-party-place')
+                document.getElementById('pa-address')
             );
             $('.pac-container').last().addClass('create-party-place');
 
             LJ.google_places_autocomplete_party.addListener('place_changed', function(){
                 var place = LJ.google_places_autocomplete_party.getPlace();
-                LJ.fn.addPlaceToInput( place, 'pa-party-place');
+                LJ.fn.addPlaceToInput( place, 'pa-address');
             });
 
              // Attempt to add *press enter* support
-            $('#pa-party-place').keydown(function(e){
+            $('#pa-address').keydown(function(e){
 
                  var keyCode = e.keyCode || e.which;
                  var $self = $(this);
@@ -244,8 +244,8 @@
                             return console.warn( err );
                         } else {
                             console.log('Fetched with place : ' + JSON.stringify( place, null, 4 ) );
-                            if( $self.is('#pa-party-place') ){
-                                LJ.fn.addPlaceToInput( place, 'pa-party-place' );
+                            if( $self.is('#pa-address') ){
+                                LJ.fn.addPlaceToInput( place, 'pa-address' );
                             }
                         }
 
@@ -476,7 +476,7 @@
 
 
         },
-		createEvent: function( evt ){
+		createEvent: function(){
 
             delog('Creating event...');
 
@@ -501,12 +501,12 @@
             var hour = $wrap.find('.date-hour').text().trim();
             var min  = $wrap.find('.date-min').text().trim();
 
-            begins_at = moment({
-                hh: hour,
-                mm: min,
-                DD: day.split('/')[0],
-                MM: day.split('/')[1],
-                YY: day.split('/')[2]
+            begins_at = moment().set({
+                h: hour,
+                m: min,
+                D: day.split('/')[0],
+                M: day.split('/')[1],
+                Y: day.split('/')[2]
             });
 
             // timezone
@@ -586,7 +586,7 @@
 
                     LJ.fn.hideModal();
                     LJ.fn.displayEventMarker( evt );
-                    LJ.fn.displayPartyMarker( evt.party );
+                    LJ.fn.displayPartyMarker_Event( evt.party );
                     LJ.fn.addEventInviewAndTabview( evt, { hide: true });
                     LJ.fn.displayPathToParty({ evt: evt });
                     LJ.map.panTo({ lat: evt.address.lat, lng: evt.address.lng });
@@ -607,6 +607,105 @@
                         $('.event-accepted-tabview[data-eventid="' + evt._id + '"]').click()
                     }, 250);
                 }   
+            });
+
+        },
+        createParty: function(){
+
+            delog('Creating party...');
+
+            var $wrap = $('#createParty');
+
+            // Text fields
+            var name           = $wrap.find('.row-create-party-name').find('.item-name').text();
+            var hosted_by      = $wrap.find('.row-create-party-hosted-by').find('.item-name').text();
+            var link           = $wrap.find('.row-create-party-link').find('.item-name').text();
+            var picture_url    = $wrap.find('.row-create-party-picture').find('.item-name').text();
+            var begins_at_full = $wrap.find('.row-create-party-hour-begin').find('.item-name').text();
+            var ends_at_full   = $wrap.find('.row-create-party-hour-end').find('.item-name').text();
+            var day_full       = $wrap.find('.row-create-party-date').find('.item-name').text();
+
+            // attendees
+            var attendees   = $('.irs-from').text() + '-' + $('.irs-to').text();
+
+            // begins_at
+            var begins_at_h = begins_at_full.split(/h/i)[0];
+            var begins_at_m = begins_at_full.split(/h/i)[1];
+            var begins_at_D = day_full.split('/')[0];
+            var begins_at_M = day_full.split('/')[1];
+            var begins_at_Y = day_full.split('/')[2];
+
+            var begins_at = moment().set({
+                h: begins_at_h,
+                m: begins_at_m,
+                s: 0,
+                D: begins_at_D,
+                M: begins_at_M,
+                Y: begins_at_Y
+            });
+
+            var timezone = begins_at.utcOffset();
+
+            // ends at
+            var ends_at_h = ends_at_full.split(/h/i)[0];
+            var ends_at_m = ends_at_full.split(/h/i)[1];
+            var ends_at_D = day_full.split('/')[0];
+            var ends_at_M = day_full.split('/')[1];
+            var ends_at_Y = day_full.split('/')[2];
+
+            var ends_at = moment().set({
+                h: begins_at_h,
+                m: begins_at_m,
+                s: 0,
+                D: begins_at_D,
+                M: begins_at_M,
+                Y: begins_at_Y
+            }).add( 1, 'day' );
+
+            begins_at = begins_at.toISOString();
+            ends_at   = ends_at.toISOString();
+
+            // party type
+            type = $wrap.find('.party-type.selected').attr('data-selectid').trim();
+
+            // address
+            var $place = $wrap.find('.row-create-party-place').find('.rem-click');
+            var address = {};
+            if( $place.length != 0 ){
+                address.lat        = parseFloat( $place.attr('data-place-lat') );
+                address.lng        = parseFloat( $place.attr('data-place-lng') );
+                address.place_id   = $place.attr('data-placeid');
+                address.place_name = $place.find('span').eq(0).text().trim();
+                address.city_name  = $place.find('span').eq(1).text().trim();
+            }
+
+            var new_party = {
+                name        : name,
+                hosted_by   : hosted_by,
+                attendees   : attendees,
+                link        : link,
+                picture_url : picture_url,
+                type        : type,
+                begins_at   : begins_at,
+                ends_at     : ends_at,
+                timezone    : timezone,
+                address     : address
+            };
+            
+            LJ.fn.api('post', 'parties', { data: new_party }, function( err, res ){
+
+                LJ.fn.hideLoaders();
+                $('#createParty')
+                    .find('.lighter').removeClass('lighter')
+                    .end()
+                    .find('.btn-validating').removeClass('btn-validating');
+
+                if( err ){
+                    LJ.fn.handleApiError( err );
+                } else {
+                    LJ.fn.handleCreatePartySuccess( res );
+                }
+
             });
 
         },

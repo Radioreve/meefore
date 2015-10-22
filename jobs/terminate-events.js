@@ -96,9 +96,9 @@
 		/* Build the right hour in the target timezone */
 		var target_day = today.add( target.day_add, 'days' )
 							  .utcOffset( target.timezone )
-							  .hours( 14 )
-							  .minutes( 0 )
-							  .seconds( 0 );
+							  .set('hour', 14 )
+							  .set('minute', 0 )
+							  .set('second', 0 );
 		
 		keeptrack({
 			timezone   : target.timezone/60,

@@ -83,7 +83,7 @@
 
 			};
 
-			audience = ["standard"];
+			audience = ["standard", "admin"];
 			
 			registred_claim = {
 

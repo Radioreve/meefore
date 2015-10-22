@@ -200,7 +200,15 @@
 		autoLogin: function(){
 
 			/* Message during login */
-           $('<div class="auto-login-msg super-centered none">' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</b></div>')
+            var loader_tag = LJ.$main_loader_curtain.clone().prop('outerHTML');
+			/* Message during login */
+		   var tpl = ['<div class="auto-login-msg super-centered none">',
+		   				'<span>' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</span>',
+		   				loader_tag,
+		   				'</div>',
+		   			 ].join('');
+
+           $( tpl )
                 .appendTo('.curtain')
                 .velocity('transition.fadeIn', {
                     duration: 1000

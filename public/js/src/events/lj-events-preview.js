@@ -168,11 +168,6 @@
 
             options = options || {};
 
-            // If already there, do nothing
-            if( evt._id == $('.event-preview').attr('data-eventid') ){
-                return;
-            }
-
             // Rendering Logic
             var renderFn = LJ.fn.renderEventPreview_User;
 
@@ -224,6 +219,13 @@
                 return;
             } 
 
+            delog('Re-render');
+            if( $('.row-events-preview').css('opacity') != '1' ){
+                return setTimeout(function(){
+                    LJ.fn.addEventPreview( evt, options );
+                }, 100 );
+            }
+
             $('.event-preview')
                 .velocity( LJ.ui.slideUpOutVeryLight, { 
                     duration: duration,
@@ -241,25 +243,36 @@
         },
         addPartyPreview: function( party, options ){
 
-            if( !party || party === {} )
+            if( !party || party === {} ){
                 return console.error('No party to be added : ' + party );
+            }
 
             options = options || {};
 
-            if( party.address.place_id == $('.party-preview').attr('data-placeid') )
-                return;
+            // If user party has same place_id and date than a known partner party,
+            // display the partner party template with full info.
+            // Otherwise, display normal template. Just never refresh it.
+            var cached_party = false;
+            if( options.begins_at ){
+                cached_party = _.find( LJ.cache.parties, function( cached_party ){
+                    return ( party.address.place_id == cached_party.address.place_id )
+                        && ( moment( cached_party.begins_at ).dayOfYear() == moment( options.begins_at ).dayOfYear() )
+                });
+            }
 
-            //Default value
-            var renderFn = LJ.fn.renderPartyPreview;
-
-            var party_preview = renderFn( party );
+            var party_preview;
+            if( cached_party ){
+                party_preview = LJ.fn.renderPartyPreview_Party( cached_party );
+            } else {
+                party_preview = LJ.fn.renderPartyPreview_Event( party );
+            }
 
             var $party = $('.party-preview');
             var duration = 270;
 
             if( $party.length == 0 ){
 
-                 delog('First render');
+                 delog('First render party');
 
                 $( party_preview ).hide().appendTo('.row-party-preview');
 
@@ -277,9 +290,23 @@
 
                 return;
 
-            } 
+            }
 
-            $('.party-preview')
+            // If same place, same hour, and no cached party was found.
+            var compel = '.party-preview-place-name';
+            if( $party.length && $('.row-party-preview').find(compel).text() == $(party_preview).find(compel).text() ){
+                return;
+            }
+            
+            delog('Re-render party');
+            if( $('.row-party-preview').css('opacity') != '1' ){
+                return setTimeout(function(){
+                    LJ.fn.addPartyPreview( party, options );
+                }, 100 );
+            }
+
+
+            $party
                 .removeClass('slow-down-3')
                 .velocity( options.transition_out || LJ.ui.slideUpOutVeryLight, { 
                     duration: duration,

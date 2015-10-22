@@ -170,7 +170,7 @@ img.left {
    position: relative;
    margin: auto;
    width: 1000px;
-   padding-top: 38px;
+   padding-top: 42px;
 }
 
 .disabled {
@@ -197,9 +197,13 @@ img.left {
 }
 
 #logout {
-	color: #e94f61;
+	color: #878787;
 	left: 2px;
 }
+#logout:hover{
+	color: white;
+}
+
 .curtain, .modal-curtain{
    position: fixed;
    top: 0;

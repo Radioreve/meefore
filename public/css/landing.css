@@ -179,7 +179,7 @@ width: 120px;top: 210px;}
 .hero-subheader {text-align: center;font: normal 28px 'Karla';text-shadow: 0 1px 1px #575757;color: white;text-transform: none;margin-top: 25px;letter-spacing: -.5px;line-height: 45px;}
 .hero-subheader span {
   margin: 0 3px;
-  font-weight: bolder;
+  /* font-weight: bolder; */
   background: #eee;
   padding: 2px 7px;
   background: rgba(255,255,255,.2);

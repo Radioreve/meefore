@@ -10,6 +10,7 @@
         	});
 
 	        LJ.subscribed_channels.public_chan.bind('new event created', LJ.fn.pushNewEvent );
+	        LJ.subscribed_channels.public_chan.bind('new party created', LJ.fn.pushNewParty );
 	        LJ.subscribed_channels.public_chan.bind('new event status' , LJ.fn.pushNewEventStatus );
 
 	        LJ.subscribed_channels.me.bind('new request group', LJ.fn.pushNewGroup_Group );
@@ -104,7 +105,7 @@
 
 			/* External */
             LJ.fn.displayEventMarker( evt );
-            LJ.fn.displayPartyMarker( evt.party );
+            LJ.fn.displayPartyMarker_Event( evt.party );
 
             /* Did a friend tag me as host ? */
             if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' ) ) ){
@@ -123,6 +124,17 @@
 			/* Notifications bubble */
 			LJ.fn.bubbleUp('#events', { stack: true });
 			LJ.fn.toastMsg( message, 'info', 5000 );
+
+		},
+		pushNewParty: function( party ){
+
+			console.log('Pushing new party ('+party._id+')');
+
+			// Update cache
+			LJ.cache.parties.push( party );
+
+			// Display on map
+			LJ.fn.displayPartyMarker_Party( party );
 
 		},
 		pushNewGroup_Host: function( data ){

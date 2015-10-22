@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'fontello';
-  src: url('../font/fontello.eot?368055');
-  src: url('../font/fontello.eot?368055#iefix') format('embedded-opentype'),
-       url('../font/fontello.woff?368055') format('woff'),
-       url('../font/fontello.ttf?368055') format('truetype'),
-       url('../font/fontello.svg?368055#fontello') format('svg');
+  src: url('../font/fontello.eot?27755854');
+  src: url('../font/fontello.eot?27755854#iefix') format('embedded-opentype'),
+       url('../font/fontello.woff?27755854') format('woff'),
+       url('../font/fontello.ttf?27755854') format('truetype'),
+       url('../font/fontello.svg?27755854#fontello') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -14,7 +14,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?368055#fontello') format('svg');
+    src: url('../font/fontello.svg?27755854#fontello') format('svg');
   }
 }
 */
@@ -145,3 +145,4 @@
 .icon-youtube:before { content: '\e858'; } /* '' */
 .icon-twitter:before { content: '\e859'; } /* '' */
 .icon-instagram:before { content: '\e85a'; } /* '' */
+.icon-calendar:before { content: '\e85b'; } /* '' */
