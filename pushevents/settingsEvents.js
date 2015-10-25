@@ -41,6 +41,6 @@
 		};
 
 	    module.exports = {
-	    	updateSettingsUx: updateSettingsUx,
-	    	updateSettingsMailinglists: updateSettingsMailinglists
+			updateSettingsUx           : updateSettingsUx,
+			updateSettingsMailinglists : updateSettingsMailinglists
 	    };

@@ -200,7 +200,7 @@
         displayPartyMarkers_Events: function( events ){
 
             events.forEach(function( evt ){
-                LJ.fn.displayPartyMarker_Event( evt.party );
+                LJ.fn.displayPartyMarker_Event( evt );
             });
 
 
@@ -355,8 +355,9 @@
 
 
         },
-        displayPartyMarker_Event: function( party ){
+        displayPartyMarker_Event: function( evt ){
 
+            var party = evt.party;
             // Only display the marker if no other party at the same location exists
             if( _.find( LJ.party_markers, function( sche ){
                 return sche.id == party.address.place_id; 
@@ -371,7 +372,7 @@
                 cache     : 'party_markers',
                 singleton : false,
                 id        : party.address.place_id,
-                data      : party,
+                data      : evt,
                 zIndex    : 2,
                 listeners : [
                     {
@@ -397,7 +398,7 @@
                 lat       : parseFloat(party.address.lat),
                 lng       : parseFloat(party.address.lng),
                 url       : LJ.cloudinary.markers.party.url,
-                cache     : 'party_' + party.type + '_markers',
+                cache     : 'party_markers',
                 singleton : false,
                 id        : party.address.place_id,
                 data      : party,
@@ -576,13 +577,16 @@
             });
 
             // Try to find at least one event in filtered dates;
-            var acceptable_dates = window.test_filters || ["22-10-2015","23-10-2015","24-10-2015","25-10-2015"];
+            var acceptable_dates = [];
+            $('.filter-date-item.active').each(function( i, el ){
+                acceptable_dates.push(  $(el).attr('data-dateid') );
+            });
 
             var found = false;
             var filtered_events_with_filter = [];
             acceptable_dates.forEach(function( date ){
 
-                    var day_of_year = moment( date, 'DD-MM-YYYY' ).dayOfYear();
+                    var day_of_year = moment( date, 'DD/MM/YYYY' ).dayOfYear();
                     var temp = _.filter( filtered_events, function( evt ){
                         return moment( evt.begins_at ).dayOfYear() == day_of_year;
                     });

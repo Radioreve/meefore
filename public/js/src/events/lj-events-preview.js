@@ -247,25 +247,34 @@
                 return console.error('No party to be added : ' + party );
             }
 
-            options = options || {};
+            options = options || {};    
+
+            var cached_party
 
             // If user party has same place_id and date than a known partner party,
             // display the partner party template with full info.
             // Otherwise, display normal template. Just never refresh it.
-            var cached_party = false;
-            if( options.begins_at ){
-                cached_party = _.find( LJ.cache.parties, function( cached_party ){
-                    return ( party.address.place_id == cached_party.address.place_id )
-                        && ( moment( cached_party.begins_at ).dayOfYear() == moment( options.begins_at ).dayOfYear() )
-                });
+            cached_party = _.find( LJ.cache.parties, function( cached_party ){
+                return party.address.place_id == cached_party.address.place_id;
+            });
+
+            if( cached_party && options.begins_at && moment( cached_party.begins_at ).dayOfYear() == moment( options.begins_at ).dayOfYear() ){
+                var party_preview =  LJ.fn.renderPartyPreview_Party( cached_party );
             }
 
-            var party_preview;
-            if( cached_party ){
-                party_preview = LJ.fn.renderPartyPreview_Party( cached_party );
-            } else {
-                party_preview = LJ.fn.renderPartyPreview_Event( party );
+            if( cached_party && options.begins_at && moment( cached_party.begins_at ).dayOfYear() != moment( options.begins_at ).dayOfYear() ){
+                var party_preview =  LJ.fn.renderPartyPreview_Event( party );
             }
+
+            if( cached_party && !options.begins_at ){
+                var party_preview =  LJ.fn.renderPartyPreview_Party( cached_party );
+            }
+
+            if( !cached_party ){
+                var party_preview =  LJ.fn.renderPartyPreview_Event( party );   
+            }
+
+
 
             var $party = $('.party-preview');
             var duration = 270;

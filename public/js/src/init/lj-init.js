@@ -350,6 +350,14 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 $('#thumbWrap').velocity('transition.slideUpIn', {
                     duration: 1000
                 });
+
+                $('.row-events-filters').velocity( LJ.ui.slideUpInLight,{ 
+                    display: 'flex',
+                    duration: 800,
+                    delay: 800
+                });
+
+
                 $('.menu-item').velocity({
                     opacity: [1, 0]
                 }, {

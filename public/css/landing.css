@@ -8,15 +8,19 @@
 }
 
 .lp-arrow {
-position: absolute;
-width: 120px;top: 210px;}
+position: absolute;width: 100px;}
 
 .lp-arrow-1 {
-left: 33%;
-} 
+left: 33%;top: 180px;} 
 
 .lp-arrow-2 {
   right: 33%;
+  bottom: 140px;
+}
+
+.hero-logo-name {
+  font-family: 'Gochi Hand';
+  color: white;
 }
 
 .etiquette {
@@ -89,6 +93,7 @@ width: 120px;top: 210px;}
    z-index: 1000;
    top: 20px;
    left: 40px;
+   text-align: center;
 }
 
 
@@ -174,17 +179,10 @@ width: 120px;top: 210px;}
     justify-content: center;
 }
 
-.hero-header {font: bold 65px 'Alegreya Sans SC';text-align: center;color: white;}
+.hero-header {font: bold 37px 'Alegreya Sans SC';text-align: center;color: white;}
 
-.hero-subheader {text-align: center;font: normal 28px 'Karla';text-shadow: 0 1px 1px #575757;color: white;text-transform: none;margin-top: 25px;letter-spacing: -.5px;line-height: 45px;}
+.hero-subheader {text-align: center;font: normal 28px 'Alegreya Sans Sc';text-shadow: 0 1px 1px #575757;color: white;text-transform: none;margin-top: 25px;letter-spacing: -.5px;line-height: 45px;}
 .hero-subheader span {
-  margin: 0 3px;
-  /* font-weight: bolder; */
-  background: #eee;
-  padding: 2px 7px;
-  background: rgba(255,255,255,.2);
-  border-radius: 6px 0 6px 0;
-  text-shadow: none;
 }
 
 .hero-languages {
@@ -338,15 +336,17 @@ width: 120px;top: 210px;}
 .landing-keypoints {
    text-align: center;
    overflow: hidden;
-   background: url('/img/app/crossword.png');
    position: relative;
 }
 
 .keypoint-wrap {
-   width: 270px;
+   width: 300px;
+   height: 300px;
    display: inline-block;
    margin: 20px 30px 110px;
    vertical-align: top;
+   border-radius: 300px;
+   background: #eee;
 }
 
 .keypoint-message {
@@ -357,6 +357,7 @@ width: 120px;top: 210px;}
    text-shadow: 0 1px 1px #DADADA;
    /* font-family: 'Merriweather'; */
    font-size: 26px;
+   color: black;
 }
 
 .keypoint-splitter {
@@ -382,12 +383,14 @@ width: 120px;top: 210px;}
 .keypoint-button:hover {
     background: #f5f5f5;
 }
-.keypoint-img {margin-top: 30px;}
+.keypoint-img {
+    background: white;
+}
 
 .icon-keypoint {
    font-size: 40px;
    border-radius: 40px;
-   padding: 17px 16px;
+   padding: 17px 26px;
    /* background: #E94F6A; */
    color: white;
    background: white;
@@ -395,11 +398,9 @@ width: 120px;top: 210px;}
    /* border: 1px solid #EAEAEA; */
 }
 
-.keypoint-head {font: bold 20px 'Alegreya sans sc';margin-top: 35px;padding: 15px;border-radius: 3px;}
+.keypoint-head {font: bold 20px 'Alegreya sans sc';padding: 15px;border-radius: 3px;margin-top: 23px;font-family: 'Gochi Hand';font-weight: normal;}
 
-.keypoint-body {background: white;
-padding: 25px;
-font-size: 16px;/* background: #E94F6A; */color: black;}
+.keypoint-body {padding: 0px 40px 10px 40px;font-size: 15px;color: black;margin-top: 0;}
 
 
 .landing-map {background: url('/img/sc/map.png') center center;height: 300px;position: relative;background-position: center -100px;}
@@ -421,8 +422,7 @@ font-size: 16px;/* background: #E94F6A; */color: black;}
 }
 
 .keypoint-wrap span {
-  text-decoration: line-through;
-  color: #B5B5B5;
+  font-weight: bolder;
 }
 
 .hero-lang {
@@ -446,7 +446,7 @@ font-size: 16px;/* background: #E94F6A; */color: black;}
    right: 20px;
    z-index: 100;
    bottom: 20px;
-   color: white;
+   color: #FFFFFF;
    font-size: 45px;
    -webkit-animation: movingarrow .1s 5s infinite alternate linear;/* Safari 4+ */
    -moz-animation: movingarrow .8s 1s infinite alternate linear;/* Fx 5+ */

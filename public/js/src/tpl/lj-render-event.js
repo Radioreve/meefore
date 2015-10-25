@@ -165,12 +165,22 @@
 
       var options = options || {}; 
 
-      var party_type = "Soirée privée";
+      var n = 0;
+      LJ.cache.events.forEach(function( evt ){
+        if( evt.party.address.place_id === party.address.place_id ){
+          n++;
+        }
+      });
+
+      var party_type = "Quartier à haute ambiance";
 
        details_html = '<div class="party-preview-details">'
                       + '<div class="party-preview-icon"><i class="icon party-icon icon-glass"></i></div>'
                       + '<div class="party-preview-place-name">' + party.address.place_name + ', ' + party.address.city_name + '</div>'
-                      + '<div class="party-preview-place-type">' + party_type + '</div>'
+                      + '<div class="party-preview-details--sub">'
+                        + '<div class="party-preview-place-type">' + party_type + '</div>'
+                        + '<div class="party-preview-attendees">' + n + ' meefore prévus.</div>'
+                      + '</div>'
                     +'</div>';
 
       var html = '<div class="party-preview " data-placeid="' + party.address.place_id + '">'
@@ -666,7 +676,7 @@
           var date_n = moment().add( i, 'day' ).format('DD/MM');
           var date_id = moment().add( i, 'day' ).format('DD/MM/YYYY'); 
                   
-          html += ['<div class="filter-date-item" data-id="' + date_id + '">',
+          html += ['<div class="filter-date-item" data-dateid="' + date_id + '">',
                         '<span class="filter-date-item-weekday">' + date_l + '</span>',
                         '<span class="filter-date-item-numbday">' + date_n + '</span>',
                       '</div>'].join('');

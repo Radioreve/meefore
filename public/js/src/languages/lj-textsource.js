@@ -656,35 +656,35 @@
 			"en": "Connection"
 		},
 		lp_key_title: {
-			"fr": "Le process meefore pour passer de meilleures soirées",
-			"en": "What is a meefore ?"
+			"fr": "Trois étapes pour des soirées mémorables",
+			"en": "Three steps towards amazing nights"
 		},
 		lp_key_friends_title: {
-			"fr":"Choisir sa soirée",
+			"fr":"Choisssez votre soirée",
 			"en": "Pick a party"
 		},
 		lp_key_people_title: {
-			"fr": "Rejoindre un before",
+			"fr": "Trouvez votre before",
 			"en": "Join a pregame"
 		},
 		lp_key_party_title: {
-			"fr": "Just have fun",
-			"en": "Have fun"
+			"fr": "Just Fave Fun",
+			"en": "Just Have Fun"
 		},
 		lp_key_friends_text: {
-			"fr": "Meefore sélectionne et répertorie sur une map les soirées à venir. Plus besoin de chercher des heures"
-				  + " sur internet ou de se laisser embarquer dans des soirées bidon !",
-			"en": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert"
+			"fr": "Rendez-vous sur la map meefore pour voir toutes les soirées de prévue. Terminées les recherches interminables"
+				  + " et les plans bidons.",
+			"en": "Go on the meefore map to check all the scheduled parties. No more endless searches and weird gigs."
 		},
 		lp_key_people_text: {
-			"fr": "Une soirée sans before, c'est comme... un before sans soirée. Demander à rejoindre un before en composant"
-				  + " votre team parmis vos amis Facebook, ou organisez le votre en une minute.",
-			"en": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert"
+			"fr": "Repérez les befores qui vont à la même soirée que vous et demandez à les rejoindre. Aucun before de prévu pour"
+				  + " votre soirée ? Proposez le votre!",
+			"en": "Spot the other people who attend the same party and ask them to join for a pregame party. No pregame scheduled? "
+				  + "Be the first!"
 		},
 		lp_key_party_text: {
-			"fr": "Parcequ'on est avant tout là pour ça et qu'un before oui, mais pas avec n'importe qui ! Discutez entre"
-				 + " groupes jusqu'à trouver le groupe qui vous ambiance le plus.",
-			"en": "Llorem ipsum and etc quorum bella est jact nemo podem es us ebert"
+			"fr": "Rejoignez le groupe qui vous a le plus ambiancé avec vos amis pour vous retrouver, et... <span>passez une bonne soirée.</span>",
+			"en": "Join the group that matched the most your expectations and... <span>have a good night.</span>"
 		},
 		lp_map_button: {
 			"fr": "Voir les <span>before</span> meefore",

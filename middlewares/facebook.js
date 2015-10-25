@@ -10,7 +10,6 @@
 	var fetchFacebookLongLivedToken = function( auth_type ){
 
 		return function( req, res, next ){
-
 			//checking out of body ensures its been validated by auth.js before
 			if( auth_type == 'facebook_id' && req.sent.facebook_id )
 				var query = { 'facebook_id': req.sent.facebook_id };

@@ -316,7 +316,7 @@
 
                 // Jour de la soirée
                 +'<div class="row-input row-input-md etiquette row-create-party-date">'
-                  +'<label class="label " for="pa-day">Date du before</label>'
+                  +'<label class="label " for="pa-day">Date de la soirée</label>'
                   +'<input class="" id="pa-day"  maxlength="10" minlength="10" type="text" placeholder="24/12/2015">'
                 +'</div>'
 
