@@ -29,18 +29,22 @@
 
 			LJ.event_markers.forEach(function( marker ){
 				if( date_to_display.indexOf( moment( marker.data.begins_at ).dayOfYear() ) == -1 && !override ){
-					marker.marker.setOpacity(0.1);
+					marker.marker.setMap( null );
 				} else {
-					marker.marker.setOpacity(1);
+					if( !marker.marker.getMap() ){
+						marker.marker.setMap( LJ.map );
+					}
 				}
 			});
 
 			LJ.party_markers.forEach(function( marker ){
 				if( date_to_display.indexOf( moment( marker.data.begins_at ).dayOfYear() ) == -1 && !override ){
-					marker.marker.setOpacity(0.1);
+					marker.marker.setMap( null );
 				} else {
-					marker.marker.setOpacity(1);
-				}
+					if( !marker.marker.getMap() ){
+						marker.marker.setMap( LJ.map );
+					}
+				}	
 			});
 
 		}

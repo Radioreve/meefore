@@ -67,6 +67,19 @@
       return html;
 
     },
+    renderEventPreview_Default: function(){
+
+      var html = '<div class="event-preview">'
+                   + '<div class="event-preview-default">Aucun meefore n\'est prévu pour cette soirée. Soyez le premier à en proposer un. </div>'
+                   + '<button  data-lid="e_preview_first_to_create" class="theme-btn btn-preview btn-create-event slow-down-3">Proposer un meefore pour cette soirée</div>'
+                + '</div>';
+
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, html )
+      
+      return html.prop('outerHTML');
+
+    },
     renderEventPreview_User: function( evt ){
 
       return LJ.fn.renderEventPreview( evt, {

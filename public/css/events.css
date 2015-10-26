@@ -471,6 +471,12 @@ border-radius: 5px 5px 0 0;top: 0px;}
 
 .event-accepted-tabview.highlight, .event-accepted-tabview.highlight:before  {
 }
+
+.event-preview-default {
+  font-size: 12px;
+  padding: 8px;
+}
+
 .event-accepted-tabview:before {
   content: "";
   position: absolute;

@@ -95,7 +95,7 @@
 		},
 		requestIn: function( event_id ){
 
-             delog('Requesting in  for event with id : '+ event_id + '...');
+            delog('Requesting in  for event with id : '+ event_id + '...');
 
             var name, message, members_facebook_id = [];
             var $wrap = $('#requestIn');
@@ -162,36 +162,38 @@
         },
         addEventPreview: function( evt, options ){
 
+            var renderFn;
+
             if( !evt || evt === {} ){
-                return console.error('No event to be added : ' + evt );
+                console.log('No event to be added. Adding suggestion...');
+                renderFn = LJ.fn.renderEventPreview_Default;
+            } else {
+
+                renderFn = LJ.fn.renderEventPreview_User;
+                options = options || {};
+
+                var hids = _.pluck( evt.hosts, 'facebook_id');
+
+                if( hids.indexOf( LJ.user.facebook_id ) != -1 ){
+                    renderFn = LJ.fn.renderEventPreview_Host;
+                }
+
+                evt.groups.forEach(function( group ){
+
+                    var mids = _.pluck( group.members, 'facebook_id' );
+                    if( mids.indexOf( LJ.user.facebook_id )!= -1 ){
+                        if( group.status == "accepted" ){
+                            renderFn = LJ.fn.renderEventPreview_MemberAccepted;
+                        }
+                        if( group.status == "pending" || group.status == "kicked"  ){
+                            renderFn = LJ.fn.renderEventPreview_MemberPending;
+                        }
+
+                    }
+                });
             }
 
-            options = options || {};
-
-            // Rendering Logic
-            var renderFn = LJ.fn.renderEventPreview_User;
-
-            var hids = _.pluck( evt.hosts, 'facebook_id');
-            if( hids.indexOf( LJ.user.facebook_id ) != -1 )
-                renderFn = LJ.fn.renderEventPreview_Host;
-
-            evt.groups.forEach(function( group ){
-
-                var mids = _.pluck( group.members, 'facebook_id' )
-                if( mids.indexOf( LJ.user.facebook_id )!= -1 ){
-                    if( group.status == "accepted" ){
-                        renderFn = LJ.fn.renderEventPreview_MemberAccepted;
-                    }
-                    if( group.status == "pending" || group.status == "kicked"  ){
-                        renderFn = LJ.fn.renderEventPreview_MemberPending;
-                    }
-
-                }
-            });
-
-
             var event_preview = renderFn( evt );
-
 
             // Displaying Logic
             var $evt = $('.event-preview');
@@ -209,9 +211,9 @@
                     .velocity( LJ.ui.slideUpInLight, {
                     duration: duration,
                     complete: function(){
-                        $('.event-preview').css({ opacity: 0 }).show()
+                        $('.event-preview').css({ opacity: 0 }).show();
                         $('.event-preview').velocity( LJ.ui.slideDownInVeryLight,{ 
-                            duration: duration 
+                            duration: duration
                         });
                     }
                 })

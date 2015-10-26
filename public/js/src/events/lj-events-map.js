@@ -287,15 +287,19 @@
             var effective_lng = evt.address.lng;
 
             LJ.event_markers = LJ.event_markers || [];
-            LJ.event_markers.forEach(function( mark ){
+            LJ.party_markers = LJ.party_markers || [];
 
-                var other_evt    = mark.data; // event associated with marker is stored in data attribute
+            // Offsetting markers that pin to the exact same place_id for
+            var concat_markers =  LJ.event_markers.concat( LJ.party_markers );
+            concat_markers.forEach(function( mark ){
+
+                var address = mark.data.party ? mark.data.party.address : mark.data.address;
                 var evt_latlng   = new google.maps.LatLng( evt.address.lat, evt.address.lng);
-                var other_latlng = new google.maps.LatLng( other_evt.address.lat, other_evt.address.lng );
+                var other_latlng = new google.maps.LatLng( address.lat, address.lng );
                 var distance     = google.maps.geometry.spherical.computeDistanceBetween( other_latlng, evt_latlng );
 
                 if( distance < 100 ){
-                    effective_lng = google.maps.geometry.spherical.computeOffset( evt_latlng, 100, LJ.fn.randomInt(0, 180) ).lng()
+                    effective_lng = google.maps.geometry.spherical.computeOffset( evt_latlng, 100, LJ.fn.randomInt(0, 180) ).lng();
                     effective_lat = google.maps.geometry.spherical.computeOffset( evt_latlng, 100, LJ.fn.randomInt(0, 180) ).lat();
                 }
 
@@ -558,15 +562,16 @@
                 LJ.fn.clearAllActivePaths();
                 LJ.fn.clearAllHalfActivePaths();
 
+                // Display suggestion to be the first to host a meefore
+                console.log('Adding default suggestion preview');
+                LJ.fn.addEventPreview();
+
                 // Display preview
                 LJ.fn.addPartyPreview( party );
 
                 // Display active pins, paths and half active paths
                 LJ.fn.displayHalfActivePaths( party );
                 LJ.fn.displayActivePartyMarker_Event( party );
-
-                // Clear event preview
-                LJ.fn.clearActiveEventPreview();
 
                 return;
             }

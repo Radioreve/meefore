@@ -233,6 +233,10 @@
 			"fr": "Annuler",
 			"en": "Cancel"
 		},
+		e_create_loading_text: {
+			"fr": "Votre meefore a été créé avec succès ! ",
+			"en": "Your meefore has been successully created !"
+		},
 		e_request_button_validate: {
 			"fr": "Rejoindre ce meefore",
 			"en": "Join this meefore"
@@ -276,6 +280,10 @@
 		e_preview_manage: {
 			"fr": "Organiser",
 			"en": "Organize"
+		},
+		e_preview_first_to_create: {
+			"fr": "Proposer un meefore",
+			"en": "Create a meefore"
 		},
 		e_preview_chat: {
 			"fr": "Discuter",
@@ -660,7 +668,7 @@
 			"en": "Three steps towards amazing nights."
 		},
 		lp_key_friends_title: {
-			"fr":"Choissisez votre soirée",
+			"fr":"Choisissez votre soirée",
 			"en": "Pick a party"
 		},
 		lp_key_people_title: {

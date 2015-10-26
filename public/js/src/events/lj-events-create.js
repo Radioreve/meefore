@@ -117,6 +117,7 @@
 
             });
 
+
              LJ.$body.on('click', '.mixity', function(){
 
                 var $self = $(this);
@@ -580,6 +581,28 @@
             delog('Event successfully created');
             LJ.fn.updateEventCache( evt );
 
+            // UX Trick
+                /* Message during login */
+                var tpl = ['<div class="auto-login-msg super-centered none">',
+                            '<span>' + LJ.text_source["e_create_loading_text"][ LJ.app_language ] + '</span>',
+                            '</div>',
+                         ].join('');
+
+                $( tpl )
+                    .appendTo('.curtain')
+                    .velocity('transition.fadeIn', {
+                        duration: 800,
+                        delay: 500,
+                        complete: function(){
+                            $(this).velocity('transition.fadeOut', {
+                                delay: 700,
+                                complete: function(){
+                                    $(this).remove();
+                                }
+                            });
+                        }
+            });
+
             LJ.fn.displayCurtain({ 
 
                 behindTheScene: function(){
@@ -594,13 +617,14 @@
 
                     /* the model is the single source of truth... */
                     LJ.fn.fetchMe();
+
                 },
                 static_delay: true,
-                delay: 1000,
+                delay: 2000,
                 afterTheScene: function(){
                     
-                    LJ.fn.toastMsg( LJ.text_source["to_event_created_success_1"][ LJ.app_language ], 'info');
                     LJ.fn.toastMsg( LJ.text_source["to_event_created_success_2"][ LJ.app_language ], 'info');
+                    // LJ.fn.toastMsg( LJ.text_source["to_event_created_success_2"][ LJ.app_language ], 'info');
                     LJ.fn.joinEventChannel( evt );
 
                     setTimeout(function(){
