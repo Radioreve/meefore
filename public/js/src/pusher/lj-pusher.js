@@ -105,7 +105,7 @@
 
 			/* External */
             LJ.fn.displayEventMarker( evt );
-            LJ.fn.displayPartyMarker_Event( evt.party );
+            LJ.fn.displayPartyMarker_Event( evt );
 
             /* Did a friend tag me as host ? */
             if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' ) ) ){

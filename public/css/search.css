@@ -19,9 +19,14 @@
 }
 .event-preview {
     
-display: inline-block;
+display: flex;
     
 float: left;
+    
+align-items: center;
+}
+.event-preview div {
+    margin-right: 6px;
 }
 .party-preview {
 height: 69px;display: flex;align-content: center;}

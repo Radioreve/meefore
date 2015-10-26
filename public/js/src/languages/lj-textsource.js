@@ -647,20 +647,20 @@
 			"en": "United-Kingdom"
 		},
 		lp_subtitle: {
-			"fr": "Rencontrez les personnes qui vont aux mêmes soirées que vous. <br>  " 
-				   + "Rencontrez les <span>avant</span> d'aller en soirée.",
-			"en": "Join or organize pregaming events before going out."
+			"fr": "<div class='lp-subpart'>Faîtes des rencontres <div class='lp-avant'><span>avant</span><img src='/img/app/avant.png' width='110%' /></div> d'aller en soirée.   " ,
+				   // + "<div class='lp-subpart'>Rencontrez les <span>avant</span> d'aller en soirée.</div>",
+			"en": "<div class='lp-subpart'>Meet up with people <div class='lp-avant'><span>before</span><img src='/img/app/avant.png' width='110%' /></div> going out. </div>"
 		},
 		lp_conn_button: {
 			"fr": "Connexion",
 			"en": "Connection"
 		},
 		lp_key_title: {
-			"fr": "Trois étapes pour des soirées mémorables",
-			"en": "Three steps towards amazing nights"
+			"fr": "Trois étapes pour des soirées mémorables.",
+			"en": "Three steps towards amazing nights."
 		},
 		lp_key_friends_title: {
-			"fr":"Choisssez votre soirée",
+			"fr":"Choissisez votre soirée",
 			"en": "Pick a party"
 		},
 		lp_key_people_title: {
@@ -672,13 +672,13 @@
 			"en": "Just Have Fun"
 		},
 		lp_key_friends_text: {
-			"fr": "Rendez-vous sur la map meefore pour voir toutes les soirées de prévue. Terminées les recherches interminables"
+			"fr": "Rendez-vous sur la map meefore pour voir toutes les soirées prévues. Terminées les recherches interminables"
 				  + " et les plans bidons.",
 			"en": "Go on the meefore map to check all the scheduled parties. No more endless searches and weird gigs."
 		},
 		lp_key_people_text: {
-			"fr": "Repérez les befores qui vont à la même soirée que vous et demandez à les rejoindre. Aucun before de prévu pour"
-				  + " votre soirée ? Proposez le votre!",
+			"fr": "Repérez les befores qui vont à la même soirée que vous et demandez à les rejoindre. Aucun before n'est prévu pour"
+				  + " votre soirée ? Proposez le vôtre!",
 			"en": "Spot the other people who attend the same party and ask them to join for a pregame party. No pregame scheduled? "
 				  + "Be the first!"
 		},

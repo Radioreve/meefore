@@ -586,7 +586,7 @@
 
                     LJ.fn.hideModal();
                     LJ.fn.displayEventMarker( evt );
-                    LJ.fn.displayPartyMarker_Event( evt.party );
+                    LJ.fn.displayPartyMarker_Event( evt );
                     LJ.fn.addEventInviewAndTabview( evt, { hide: true });
                     LJ.fn.displayPathToParty({ evt: evt });
                     LJ.map.panTo({ lat: evt.address.lat, lng: evt.address.lng });

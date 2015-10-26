@@ -155,25 +155,39 @@
 	        	delay: 500
 	        });
 
-			var city_text = ["Bastille, 21h43", "Christiana", "Marion"];
+	        LJ.state.lp_i = 0;
+			LJ.city_text = [
+					"StayHigh, 00h35",
+					"NightLovers, 23h23",
+					"SoWhat?, 21h20",
+					"NiceToMeetYou, 22h49",
+					"OneLastRound, 4h01"
+				];
+				
+
 	        $('.landing-places').typed({
-				strings: [city_text[0]],
-				write_duration: 2300,
-				backDelay: 2300,
-				back_duration: 2000
+				strings        : [ LJ.city_text[0] ],
+				write_duration : 2700,
+				backDelay      : 4300,
+				back_duration  : 2000
 	       	});
 
 	        $('.bxslider').bxSlider({
 			  mode: 'fade',
 			  auto: true,
-			  pause: 7000,
-			  speed: 1000,
+			  pause: 9000,
+			  speed: 1100,
 			  autoControls: true,
 			  onSlideBefore: function(){
 
-	       			var text = city_text[ 0 ];
+			  		if( LJ.state.lp_i == LJ.city_text.length - 1 ){
+			  			LJ.state.lp_i = 0;
+			  		} else {
+			  			LJ.state.lp_i += 1;
+			  		}
+	       			var text = LJ.city_text[ LJ.state.lp_i ];
 	       			
-	       			$('.landing-places-wrap *:not(.icon)').velocity( LJ.ui.slideRightOutLight, {
+	       			$('.landing-places-wrap *:not(.lp-places-hash)').velocity( LJ.ui.slideRightOutLight, {
 	       				duration: 800,
 	       				complete: function(){
 	       					$(this).remove();
@@ -185,10 +199,10 @@
 
 	       					// Always make sure that kenburns duration = write_duration + backDelay + back_duration
 	       					$('.landing-places').typed({
-	       						strings: [text],
-	       						write_duration: 2300,
-	       						backDelay: 2300,
-	       						back_duration: 2000
+								strings        : [text],
+								write_duration : 2300,
+								backDelay      : 4300,
+								back_duration  : 2000
 	       					});
 
 	       				}
@@ -229,7 +243,10 @@
 				$.ajax({
 
 					method:'POST',
-					data: { facebook_id: facebookProfile.id, facebookProfile: facebookProfile },
+					data: { 
+						facebook_id     : facebookProfile.id,
+						facebookProfile : facebookProfile
+					},
 					dataType:'json',
 					url:'/auth/facebook',
 					success: function( data ){
@@ -239,6 +256,7 @@
 					error: function( err ){
 						LJ.fn.handleServerError( err )
 					}
+
 				});
 
 		},

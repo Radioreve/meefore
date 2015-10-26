@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "online",
   "css_prefix_text": "icon-",
   "css_use_suffix": false,
   "hinting": true,
@@ -166,6 +166,12 @@
       "uid": "657ab647f6248a6b57a5b893beaf35a9",
       "css": "lock-open",
       "code": 59449,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "3db5347bd219f3bce6025780f5d9ef45",
+      "css": "tag",
+      "code": 59485,
       "src": "fontawesome"
     },
     {
@@ -421,6 +427,12 @@
       "src": "entypo"
     },
     {
+      "uid": "b387bb08e237859ba573fb32e2117310",
+      "css": "power",
+      "code": 59484,
+      "src": "typicons"
+    },
+    {
       "uid": "dbd39eb5a1d67beb54cfcb535e840e0f",
       "css": "plus",
       "code": 59406,
@@ -442,6 +454,12 @@
       "uid": "a17986e457f3d85f26c9c240dfd6a4ba",
       "css": "mail-1",
       "code": 59407,
+      "src": "mfglabs"
+    },
+    {
+      "uid": "da72ab64b02d997ff0521339f2997233",
+      "css": "hash",
+      "code": 59486,
       "src": "mfglabs"
     },
     {

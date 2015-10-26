@@ -196,11 +196,16 @@
 
       var options = options || {}; 
 
+      var date_html = '<div class="preview-date">'
+                        + '<div class="preview-date-month">' + moment.monthsShort( moment( party.begins_at ).month() ) + '</div>'
+                        + '<div class="preview-date-day">' + moment( party.begins_at ).format('DD/MM') + '</div>'
+                    + '</div>';
+
       var party_type = party.type;
 
        details_html = '<div class="party-preview-details">'
                       + '<div class="party-preview-picture" style="background-image:url(' + party.picture_url + ')"></div>'
-                      + '<div class="party-preview-place-name">' + party.name + ', ' + party.address.place_name + '</div>'
+                      + '<div class="party-preview-place-name">' + party.name + ',<br> ' + party.address.place_name + '</div>'
                       + '<div class="party-preview-details--sub">'
                         + '<div class="party-preview-place-type">Organisé par  ' + party.hosted_by + '</div>'
                         + '<div class="party-preview-attendees">' + party.attendees + ' personnes attendues</div>'
@@ -209,6 +214,7 @@
 
       var html = '<div class="party-preview " data-placeid="' + party.address.place_id + '">'
                   //  + hosts_pictures_html
+                    + date_html
                     + details_html
                     // + '<button class="theme-btn btn-preview btn-requestin slow-down-3">Proposer un meefore</div>'
                 + '</div>';
