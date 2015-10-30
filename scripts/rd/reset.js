@@ -1,6 +1,6 @@
 
-	var redis = require('redis');
 	var config = require( process.cwd() + '/config/config');
+	var redis = require('redis');
 
 	var node_env = process.env.NODE_ENV;
 

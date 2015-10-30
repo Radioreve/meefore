@@ -53,9 +53,9 @@
 										eventUtils.sendSuccess( res, data );
 
 										if( req.sent.whisper_to ){
-											pusher.trigger( req.sent.facebook_id, 'new chat whisper', data );
+											pusher.trigger( 'private-' + req.sent.facebook_id, 'new chat whisper', data );
 											req.sent.whisper_to.forEach(function( whisper_to_id ){
-												pusher.trigger( whisper_to_id, 'new chat whisper', data );
+												pusher.trigger( 'private-' + whisper_to_id, 'new chat whisper', data );
 											});
 										} else {
 											pusher.trigger( 'presence-' + req.sent.chat_id, 'new chat message', data );

@@ -19,9 +19,12 @@
 
 	var watchCache = function( req, res, next ){
 
+		next();
+
+
 		if( new Date() - global.last_cache_check < check_interval ){
 			console.log('Cache has been checked less than ' + check_interval/1000 + ' seconds ago.')
-			return next();
+			return
 		};
 
 		// Reset the last cache check.
@@ -34,11 +37,11 @@
 
 			if( n_keys < max_keys ){
 				console.log('Cache doesnt need to be cleared : ' + n_keys + ' (n_keys) < ' + max_keys + ' (max_keys) ');
-				return next();
+				return
 			}
 			
 			// Use default options
-			clearCache( next );
+			clearCache();
 
 		});
 
@@ -118,7 +121,7 @@
 
 	};
 
-	function clearCache( options, next ){
+	function clearCache( options ){
 
 		// Options to override when called by api
 		var min_chat_size = options.min_chat_size || min_chat_size;
@@ -207,7 +210,7 @@
 				keeptrack('Cache has been updated');
 				mailer.sendSimpleAdminEmail('Cache has been successfully cleared', mail_html.join('') );
 				mail_html = [];
-				return next();
+				return
 			});	
 		});	
 

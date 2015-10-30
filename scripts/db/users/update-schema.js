@@ -24,14 +24,9 @@
 				tasks.push(function( done ){
 
 					// Update part
-					user.app_preferences.alerts = {};
-					user.app_preferences.alerts.message_unread = 'yes';
-					user.app_preferences.alerts.accepted_in = 'yes';
-					user.app_preferences.alerts.min_frequency = '3600';
-
-					user.app_preferences.ux.message_readby = 'yes';
+					user.channels.me = 'private-' + user.facebook_id;
 					
-					user.markModified('app_preferences');
+					user.markModified('channels');
 
 					user.save(function(){
 						console.log('user updated');
