@@ -1,6 +1,7 @@
 
 	var mongoose = require("mongoose"),
       settings = require('../config/settings'),
+      config   = require('../config/config'),
  	      bcrypt = require("bcrypt-nodejs"),
         _ = require('lodash');
 
@@ -91,17 +92,9 @@ var UserSchema = new mongoose.Schema({
     type: Object
   },
   app_preferences: {
-    type: Object,
-    default: {
-      email: {
-        'newsletter'  : 'yes',
-        'invitations' : 'no'
-      },
-      ux: {
-        'auto_login': 'no'
-      }
-    }
-  },
+    type    : Object,
+    default : settings.default_app_preferences
+  },      
   skills: {
     type: Object,
     default: {

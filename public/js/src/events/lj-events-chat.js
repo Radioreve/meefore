@@ -43,6 +43,8 @@
 
             LJ.$body.on('focus', '.event-accepted-chat-typing input', function(){
 
+                if( LJ.user.app_preferences.ux.message_readby == 'no' ) return 
+
                 var $self       = $(this);
                 var $event_wrap = $self.parents('.row-events-accepted-inview');
                 var $chat_wrap  = $self.parents('.event-accepted-chat-wrap');
@@ -107,6 +109,14 @@
                     group_id = LJ.fn.findMyGroupIdFromDom( this ); 
                 }
 
+                // Find offline users based on display
+                var offline_users = [];
+                $event_wrap.find('.offline').each(function( i, el ){
+                    if( $(el).closest('.event-accepted-users-group').css('display') == 'block' ){
+                        offline_users.push( $(el).closest('.event-accepted-user').attr('data-userid') );
+                    }
+                });
+
                 var chat_id  = $chat_wrap.attr('data-chatid');
 
                 if( ['accepted','hosted'].indexOf( $event_wrap.attr('data-status') ) == -1  )
@@ -127,6 +137,7 @@
                     img_vs          : LJ.fn.findMainImage( LJ.user ).img_version,
                     facebook_id     : LJ.user.facebook_id,
                     name            : LJ.user.name,
+                    offline_users   : offline_users,
                     sent_at         : new Date()
                 };
 

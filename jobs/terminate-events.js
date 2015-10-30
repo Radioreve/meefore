@@ -18,6 +18,7 @@
 	// Models
 	var User     = require('../models/UserModel');
 	var Event    = require('../models/EventModel');
+	var Parties  = require('../models/PartyModel');
 	var Message  = require('../models/MessageModel');
 
 	// Helpers
@@ -28,9 +29,9 @@
 
 	// Parameters
 	var mongo_uri  = config.db[ process.env.NODE_ENV ].uri;
-	var redis_host = config.redis[ process.env.NODE_ENV ].host;
-	var redis_port = config.redis[ process.env.NODE_ENV ].port;
-	var redis_pass = config.redis[ process.env.NODE_ENV ].pass;
+	var redis_host = config.redis[ process.env.node_env ].host;
+	var redis_port = config.redis[ process.env.node_env ].port;
+	var redis_pass = config.redis[ process.env.node_env ].pass;
 
 	var tracked = {};
 
@@ -70,7 +71,7 @@
 		}
 	}
 
-	var terminateEvents = function(){
+	var terminateEvents = function( options ){
 
 		/*
 			Scheduler auto-update events
@@ -106,15 +107,29 @@
 			target_time: target_day.toString()
 		});
 
+
+		// Custom overrides to have control via API
+		if( options.timezone ){
+			target.timezone = options.timezone;
+		}
+
+		if( options.target_day ){
+			target_day = moment( options.target_day, 'DD/MM/YYYY' );
+		}
+
 		// Cast moment dates to Date objects
 		var date_range_query     = { $lt: target_day.toDate() };// $gt: target_day.add( -2, 'days' ).toDate() };
 		var timezone_range_query = { $gt: target.timezone - 60, $lt: target.timezone + 60 };
 
-		// Test purposes
-		// var timezone_range_query = { $gt: 120 - 60, $lt: 120 + 60 };
-		// End test purposes
-
+		// Pass the "status" because the date_range is loose. Meaning, it will allows to also update
+		// All events of few days before that for somereason didnt get updated on the last call.
 		var full_event_query = {
+			'begins_at' : date_range_query,
+			'timezone'  : timezone_range_query,
+			'status'    : { $nin: ['ended','canceled'] }
+		};
+
+		var full_party_query = {
 			'begins_at' : date_range_query,
 			'timezone'  : timezone_range_query,
 			'status'    : { $nin: ['ended','canceled'] }
@@ -132,7 +147,7 @@
 			var mail_html = []
 			mail_html.push('Connection to the database failed, Couldnt execute the cron job @reset-events ');
 			mail_html.push( err );
-			mailer.sendSimpleAdminEmail( 'Event watcher', 'Error connecting to Database', mail_html.join('') );
+			mailer.sendSimpleAdminEmail('Error connecting to Database', mail_html.join('') );
 			mail_html = [];
 
 		});
@@ -159,22 +174,27 @@
 				async.waterfall([
 					updateRedis,
 					updateUsers,
-					updateEvents
+					updateEvents,
+					updateParties
 				], function(){
 
-					if( tracked.n_events_matched == 0 ) return;
+					if( tracked.n_events_matched == 0 ){
+						return console.log('No event matched the query');
+					}
+
 					var mail_html = [
 						'<div>Scheduler updated the database and cleared the cache successfully in zone : ' + tracked.timezone + '</div>',
-						'<div>Local time 	   	       : ' + tracked.local_time +'</div>',
-						'<div>Target time 	   	       : ' + tracked.target_time +'</div>',
-						'<div>Number of events match   : ' + tracked.n_events_matched +'</div>',
-						'<div>Number of events updated : ' + tracked.n_events_updated +'</div>',
-						'<div>Number of users updated  : ' + tracked.n_users_updated +'</div>',
-						'<div>Number of chats cleared  : ' + tracked.n_chats_cleared +'</div>'
+						'<div>Local time 	   	         : ' + tracked.local_time 		 +'</div>',
+						'<div>Target time 	   	         : ' + tracked.target_time 		 +'</div>',
+						'<div>Number of events match     : ' + tracked.n_events_matched  +'</div>',
+						'<div>Number of events updated   : ' + tracked.n_events_updated  +'</div>',
+						'<div>Number of users updated    : ' + tracked.n_users_updated   +'</div>',
+						'<div>Number of chats cleared    : ' + tracked.n_chats_cleared   +'</div>',
+						'<div>Number of parties cleared  : ' + tracked.n_parties_updated +'</div>'
 					];
 
 					console.log('Scheduled job completed successfully');
-					mailer.sendSimpleAdminEmail('Scheduler', tracked.n_events_updated + ' events have been successfully updated', mail_html.join('') );
+					mailer.sendSimpleAdminEmail('Scheduler [' + process.env.node_env + '], '+ tracked.n_events_updated + ' events have been successfully updated', mail_html.join('') );
 					// mongoose.connection.close();
 
 				});
@@ -197,7 +217,7 @@
 				var mail_html = []
 				mail_html.push('Connection to redis failed, Couldnt execute the cron job @reset-events ');
 				mail_html.push( err );
-				mailer.sendSimpleAdminEmail( 'Event watcher', 'Error connecting to Redis', mail_html.join('') );
+				mailer.sendSimpleAdminEmail('Error connecting to Redis', mail_html.join('') );
 				mail_html = [];
 
 			});
@@ -248,6 +268,23 @@
 
 				});
 		};
+
+		function updateParties(){
+			var g_callback = arguments[ arguments.length - 1 ];
+			Parties.update( full_party_query, {
+					$set: {
+						'status': 'ended'
+					}
+				}, {
+					multi: true
+				}, function( err, raw ){
+					if( err ) return handleError( err );
+					keeptrack({
+						n_parties_updated: raw.n
+					});
+					g_callback( null );
+			});
+		}
 
 		function updateUsers(){
 			var g_callback = arguments[ arguments.length - 1 ];
@@ -349,7 +386,11 @@
 				});			
 			});
 			async.parallel( tasks, function(){
-				console.log('Everything has been updated successfully');
+				if( chats_to_remove.length == 0 ){
+					console.log('No chats were to be cleared.');
+				} else {
+					console.log('Chats have been cleared from Redis and saved in MongoDB successfully');
+				}
 				g_callback( null );
 			});
 

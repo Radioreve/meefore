@@ -25,7 +25,6 @@
 	// Chargement des routes principales 
 		require('./routes/routes')( app );
 
-
 	// Http server
 		var port = process.env.PORT || 1234;
 		server.listen( port, function(){

@@ -1,4 +1,6 @@
 
+var config = require('./config');
+
 var settings = {
 
 	api_version: 1,
@@ -44,6 +46,21 @@ var settings = {
 			{ id: 'bar', display: 'Bar', icon_code: 'cafe' },
 			{ id: 'school', display: 'Ecole', icon_code: 'graduation-cap' }
 		]
+	},
+	default_app_preferences: {
+		email: {
+	        'newsletter'  : config.mailchimp.groups["newsletter"].init_value,
+	        'invitations' : config.mailchimp.groups["invitations"].init_value
+      	},
+      	alerts: {
+	        'message_unread': 'yes',
+	        'accepted_in' : 'yes',
+	        'min_frequency': '3600' // 1 hour
+      	},
+      	ux: {
+	        'auto_login': 'no',
+	        'message_readby': 'yes'
+      	}
 	},
 	public_properties: {
 		users: 

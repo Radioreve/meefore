@@ -12,35 +12,22 @@
 	    request      = require('request');
 
 
-	    var updateSettingsUx = function( req, res ){
+	    var updateSettings = function( req, res ){
 
-	    	var app_preferences = req.body.app_preferences,
-	    		userId	     	= req.body.userId;
+	    	var app_preferences = req.sent.app_preferences,
+	    		userId	     	= req.sent.userId;
 
 	    	User.findByIdAndUpdate( userId, { app_preferences: app_preferences }, { new: true }, function( err, user ){
-	    		if( err )
-	    			return eventUtils.raiseError({ err: err, res: res, toClient: "Une erreur est survenue!" });
+
+	    		if( err ) return eventUtils.raiseError({ err: err, res: res, toClient: "Une erreur est survenue!" });
+	    		
 	    		var expose = { user: user };
 	    		eventUtils.sendSuccess( res, expose );
 	    	});
 
 		};
 
-		var updateSettingsMailinglists = function( req, res ){
-
-			var app_preferences = req.body.app_preferences,
-	    		userId	     	= req.body.userId;
-
-	    	User.findOneAndUpdate( req.body.query, { app_preferences: app_preferences }, { new: true }, function( err, user ){
-	    		if( err )
-	    			return eventUtils.raiseError({ err: err, res: res, toClient: "Une erreur est survenue!" });
-	    		var expose = { user: user };
-	    		eventUtils.sendSuccess( res, expose );
-	    	});
-
-		};
 
 	    module.exports = {
-			updateSettingsUx           : updateSettingsUx,
-			updateSettingsMailinglists : updateSettingsMailinglists
+			updateSettings: updateSettings
 	    };

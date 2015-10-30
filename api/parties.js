@@ -84,7 +84,7 @@
 				}
 			)
 			.sort({ 'begins_at': -1 })
-			.exec( function( err, parties ){
+			.exec(function( err, parties ){
 
 				if( err ){
 					return eventUtils.raiseError({ err: err, res: res,

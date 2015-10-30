@@ -32,9 +32,9 @@
 			
 		}
 		, homepage: {
-			dev   : process.cwd()  + '/views/index-dev.html',
+			dev    : process.cwd()  + '/views/index-dev.html',
 			staged : process.cwd()  + '/views/index-staged.html',
-			prod  : process.cwd()  + '/views/index-prod.html'
+			prod   : process.cwd()  + '/views/index-prod.html'
 		}
 		, jwtSecret: "Wenighters"	
 		, cloudinary: {
@@ -90,12 +90,14 @@
 			username  : 'methodezela@gmail.com',
 			groups: {
 				invitations: {
-					name  : 'invitations',
-					id    : 'bdb7938e4e',
+					name       : 'invitations',
+					id         : 'bdb7938e4e',
+					init_value : 'no'
 				},
 				newsletter: {
-					name  : 'newsletter',
-					id    : '042add1e79'
+					name       : 'newsletter',
+					id         : '042add1e79',
+					init_value : 'yes'
 				}
 			}
 		}

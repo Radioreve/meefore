@@ -35,21 +35,29 @@
 			
 		};
 
-		var subscribeMailchimpUser = function( email_address, callback ){
+		function yn_to_bool( yn ){
+			if(yn =='yes') return true;
+			return false;;
+		};
+
+		var subscribeUserToMailchimp = function( email_address, callback ){
 
 			var user = {
 				email_address : email_address,
-				status        : 'subscribed'
+				status        : 'subscribed',
+				interests: {
+					"bdb7938e4e": yn_to_bool( _.find( config.mailchimp.groups, function(el){ return el.id == "bdb7938e4e"; }).init_value ),		//  
+        			"042add1e79": yn_to_bool( _.find( config.mailchimp.groups, function(el){ return el.id == "042add1e79"; }).init_value )		//
+				}
 			};
 
 			var url = mailchimp_urls.members;
 
 			request({ method: 'POST', url: url, json: user }, function( err, body, response ){
 
-				if( err )
-					return callback( err, null );
+				if( err ) return callback( err, null );
 
-				return callback( null, response );
+				callback( null, response );
 
 			});
 		};
@@ -60,20 +68,19 @@
 
 			request({ method: 'PATCH', json: update, url: url }, function( err, body, response ){
 
-				if( err )
-					return callback( err, null );
+				if( err ) return callback( err, null );
 
-				return callback( null, response );
+				callback( null, response );
 
 			});
 
 		};
 
-		var sendSimpleAdminEmail = function( from, subject, html ){
+		var sendSimpleAdminEmail = function( subject, html ){
 
 			var simple_email = new sendgrid.Email({
 				from     :'watcher@meefore.com',
-				fromname : from,
+				fromname : 'Watcher',
 				subject  : subject,
 				to       : 'leo@meefore.com',
 				html     : html
@@ -107,12 +114,36 @@
 
 		};
 
+		var sendAlertEmail_MessageReceived = function( sender_name, receiver_email, callback ){
+
+			var subject = sender_name + ' vous a envoyé un message!';
+
+			var alert_email = new sendgrid.Email({
+				from     : 'no-reply@meefore.com',
+				fromname : 'Meefore',
+				subject  : subject,
+				to       : receiver_email,
+				html     : [
+							'<div>Quelqu\'un a laissé un message pour toi...</div>'
+						   ].join('')
+			});
+
+			sendgrid.send( alert_email, function( err, res ){
+				if( err )
+					return callback( err, null );
+
+				return callback( null, res );
+			});
+
+		};
+
 		var expose = {
-			sendContactEmail       : sendContactEmail,
-			sendWelcomeEmail       : sendWelcomeEmail,
-			sendSimpleAdminEmail   : sendSimpleAdminEmail,
-			subscribeMailchimpUser : subscribeMailchimpUser,
-			updateMailchimpUser    : updateMailchimpUser
+			sendContactEmail               : sendContactEmail,
+			sendWelcomeEmail               : sendWelcomeEmail,
+			sendSimpleAdminEmail           : sendSimpleAdminEmail,
+			subscribeUserToMailchimp       : subscribeUserToMailchimp,
+			updateMailchimpUser            : updateMailchimpUser,
+			sendAlertEmail_MessageReceived : sendAlertEmail_MessageReceived
 		};
 		
 

@@ -13,7 +13,6 @@
 			mailer = require('../services/mailer');
 
 		var sendHomepage = function( req, res ){
-
 			res.sendfile( config.homepage[ process.env.NODE_ENV ] );
 		};
 
@@ -28,17 +27,17 @@
 	
 	var handleFacebookAuth = function( req, res ){
 
-		var fb = req.body.facebookProfile;
+		var fb = req.sent.facebookProfile;
 
 		if( !fb )
 			return eventUtils.raiseError({
 				toClient: "Missing informations from Facebook", res: res
 			});
 
-		/* L'utilisateur existe, on le connecte à l'application */
-		if( req.body.user)
+		// L'utilisateur existe, on le connecte à l'application 
+		if( req.sent.user)
 		{	
-			var user = req.body.user;
+			var user = req.sent.user;
 			console.log('User has been found, login in...');
 
 			/* Mise à jour de l'access token */
@@ -57,47 +56,54 @@
 			return;
 		}
 
-		/* L'utilisateur n'existe pas, on crée son compte */
+		// L'utilisateur n'existe pas, on crée son compte 
 		console.log('User not found, creating account...');
 
-			var new_user = new User();
+		var new_user = new User();
 
-			new_user.facebook_id                       = fb.id;
-			new_user.facebook_access_token.short_lived = fb.access_token;
-			new_user.facebook_email                    = fb.email;
-			new_user.mailchimp_email                   = fb.email;
-			new_user.mailchimp_id                      = req.body.mailchimp_id;
-			new_user.gender                            = fb.gender;
-			new_user.name                              = fb.name;
-			new_user.age                               = 18 // default value
-			new_user.facebook_url                      = fb.link;
-			new_user.country_code					   = fb.locale.substr(0,2) // country code extraction
-			new_user.signup_date                       = new moment();
-			new_user.access 						   = ['standard'];
+		new_user.facebook_id                       = fb.id;
+		new_user.facebook_access_token.short_lived = fb.access_token;
+		new_user.facebook_email                    = fb.email;
+		new_user.mailchimp_email                   = fb.email;
+		new_user.mailchimp_id                      = req.sent.mailchimp_id;
+		new_user.gender                            = fb.gender;
+		new_user.name                              = fb.name;
+		new_user.age                               = 24 // default value, fucking facebook  /me?fields=age_range is too broad!
+		new_user.facebook_url                      = fb.link;
+		new_user.country_code					   = fb.locale.substr(0,2) // country code extraction
+		new_user.signup_date                       = new moment();
+		new_user.access 						   = ['standard'];
 
-			/* Pusher informations for real time channels */
-			new_user.channels = {
-				public_chan : 'app',
-				me 			: fb.id
-			};
+		// Specific conditions //
+		// None for now
 
-			new_user.save( function( err, user ){
+		// Pusher informations for real time channels 
+		new_user.channels = {
+			public_chan : 'app',
+			me 			: 'private-' + fb.id
+		};
 
-				if( err ){
-					return eventUtils.raiseError({
-						toClient : "Error trying to create account",
-						err      : err,
-						res      : res
-					});
-				}
+		new_user.save(function( err, user ){
 
-				console.log('Account created successfully');
-				var accessToken = eventUtils.generateAppToken( "user", user ); 
-				var expose = { id: user._id, accessToken: accessToken };
-				
-				eventUtils.sendSuccess( res, expose );
+			if( err ){
+				return eventUtils.raiseError({
+					toClient : "Error trying to create account",
+					err      : err,
+					res      : res
+				});
+			}
 
-			});
+			console.log('Sending email notification to admins');
+			mailer.sendSimpleAdminEmail( user.name + ' (' + user.facebook_email + ') vient de s\'inscrire sur meefore',
+				  JSON.stringify( user, null, 4 ))
+
+			console.log('Account created successfully');
+			var accessToken = eventUtils.generateAppToken( "user", user ); 
+			var expose = { id: user._id, accessToken: accessToken };
+			
+			eventUtils.sendSuccess( res, expose );
+
+		});
 	};
 
 	var sendContactEmail = function( req, res ){

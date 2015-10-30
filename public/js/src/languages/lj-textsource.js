@@ -317,37 +317,109 @@
 			"fr": "Modifier le comportement général de l'application",
 			"en": "Modify the general behavior of the app"
 		},
-		s_app_autologin_label: {
+		s_autologin_label: {
 			"fr": "Connexion automatique",
 			"en": "AutoLogin"
 		},
-		s_app_autologin_desc: {
+		s_autologin_desc: {
 			"fr": "Activez cette option pour accéder directement à Meefore sans passer par la page d'accueil",
 			"en": "Activate this option to reach directly Meefore and skip the landing page"
+		},
+		s_message_readby_label: {
+			"fr": "Connexion automatique",
+			"en": "AutoLogin"
+		},
+		s_message_readby_desc: {
+			"fr": "Activez cette option pour accéder directement à Meefore sans passer par la page d'accueil",
+			"en": "Activate this option to reach directly Meefore and skip the landing page"
+		},
+		s_news_title: {
+			"fr": "Newsletter et Invitations",
+			"en": "Newsletter and Invitations"
+		},
+		s_news_subtitle: {
+			"fr": "Recevez nos emails concernant soirées, bons plans, et rencontres.",
+			"en": "Receive our emails that deal with parties, opportunities and meetups."
+		},
+		s_newsletter_label: {
+			"fr": "Newsletter",
+			"en": "Newsletter"
+		},
+		s_newsletter_desc: {
+			"fr": "Notre newsletter est envoyée tous les dimanches",
+			"en": "Our newsletter is sent every Sunday"
+		},
+		s_invits_label: {
+			"fr": "Invitations",
+			"en": "Invitations"
+		},
+		s_invits_desc: {
+			"fr": "Bons plans pour être invité à des soirées exclusives",
+			"en": "Get invited to exclusive parties"
 		},
 		s_alerts_title: {
 			"fr": "Alertes et notifications",
 			"en": "Alerts and notifications"
 		},
 		s_alerts_subtitle: {
-			"fr": "Restez alerté en temps réel lorsqu'un évènement est créé près de chez toi",
-			"en": "Be alerted in real-time when an event is hosted near your place"
+			"fr": "Soyez alerté dès que de l'activité vous concernant se présente",
+			"en": "Stay alerted when anything about you is updated"
 		},
-		s_alerts_newsletter_label: {
-			"fr": "Newsletter",
-			"en": "Newsletter"
+		s_accepted_in_label: {
+			"fr": "Accepté dans un meefore",
+			"en": "Accepted in a meefore"
 		},
-		s_alerts_newsletter_desc: {
-			"fr": "Notre newsletter est envoyée tous les dimanches",
-			"en": "Our newsletter is sent every Sunday"
+		s_accepted_in_desc: {
+			"fr": "Recevez un email dès que vous êtes accepté dans un meefore",
+			"en": "Receive an email everytime you are accepted in a meefore"
 		},
-		s_alerts_invits_label: {
-			"fr": "Invitations",
-			"en": "Invitations"
+		s_message_unread_label: {
+			"fr": "Message reçu hors-ligne",
+			"en": "Unread message"
 		},
-		s_alerts_invits_desc: {
-			"fr": "Bons plans pour être invité à des soirées exclusives",
-			"en": "Get invited to exclusive parties"
+		s_message_unread_desc: {
+			"fr": "Recevez un email dès que vous êtes hors-ligne et qu'on envoie envoie un message",
+			"en": "Receive an email everytime you're offline someone sends you a new message"
+		},
+		s_message_readby_label: {
+			"fr": "Signaler message lu",
+			"en": "Signal message read"
+		},
+		s_message_readby_desc: {
+			"fr": "Signalez automatiquement aux autres personnes lorsque vous avez vu leur message",
+			"en": "Signal to other people that you have read their message"
+		},
+		s_min_frequency_label: {
+			"fr": "Temps entre chaque mail",
+			"en": "Time between emails"
+		},
+		s_min_frequency_desc: {
+			"fr": "Pour éviter d'être spammé par l'application",
+			"en": "To avoid any spam by the app"
+		},
+		s_0min: {
+			"fr": "Aucune limite",
+			"en": "No limit"
+		},
+		s_15min: {
+			"fr": "15min",
+			"en": "15min"
+		},
+		s_60min: {
+			"fr": "1h",
+			"en": "1h"
+		},
+		s_360min: {
+			"fr": "6h",
+			"en": "6h"
+		},
+		s_720min: {
+			"fr": "12h",
+			"en": "12h"
+		},
+		s_1440min: {
+			"fr": "24h",
+			"en": "24h"
 		},
 		s_yes: {
 			"fr": "Oui",

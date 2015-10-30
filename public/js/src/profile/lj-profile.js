@@ -488,45 +488,6 @@
 
 
 		},
-		handleUpdateSettingsUxSuccess: function( data ){
-
-			csl('update settings ux success received' );
-
-			sleep( LJ.ui.artificialDelay, function(){
-
-				$('.row-ux').removeClass('editing')
-					.find('.row-buttons').velocity('transition.fadeOut', {duration: 600 })
-					.end().find('.icon-edit').removeClass('active')
-					.end().find('.btn-validating').removeClass('btn-validating');
-
-				LJ.user = data.user;
-
-				LJ.fn.setLocalStoragePreferences();
-				LJ.fn.handleServerSuccess('Vos informations ont été modifiées', '.row-ux');
-		
-			});
-
-
-		},
-		handleUpdateSettingsMailingListsSuccess: function( data ){
-
-			csl('update settings mailing lists success received' );
-
-			sleep( LJ.ui.artificialDelay, function(){
-
-				$('.row-notifications').removeClass('editing')
-					.find('.row-buttons').velocity('transition.fadeOut', {duration: 600 })
-					.end().find('.icon-edit').removeClass('active')
-					.end().find('.btn-validating').removeClass('btn-validating');
-
-				LJ.user = data.user;
-
-				LJ.fn.handleServerSuccess('Vos informations ont été modifiées', '.row-notifications');
-		
-			});
-
-
-		},
 		displayPictureHashtags: function(){
 
         	for( var i = 0; i < LJ.user.pictures.length; i ++ ){

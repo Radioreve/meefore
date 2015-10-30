@@ -298,7 +298,7 @@
             <label data-lid="p_job_label" class="label label-md" for="situation">Situation</label>
             <input readonly id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
           </div>
-          <div class="row-input row-input-lg row-mood etiquette">
+          <div class="row-input row-input-lg row-mood etiquette nonei">
             <label data-lid="p_lifestyle_label" for="mood" class="label label-md" >Lifestyle</label>
             <div class="row-select-wrap mood-wrap">
               <!-- Dynamically loaded -->
@@ -427,7 +427,118 @@
 
       <div class="row-divider"></div>
 
-      <div class="row row-settings row-ux row-select-daddy">
+
+      <!-- NEWS SECTION -->
+      <div class="row row-settings row-news row-select-daddy">
+
+        <div class="row-title">
+          <div data-lid="s_news_title" class="row-title-text">News & Invitations</div>
+          <i class="icon icon-edit icon-pencil right"></i>
+        </div>
+
+        <div class="row-subtitle">
+          <div data-lid="s_news_subtitle" class="row-subtitle-text etiquette">
+            Restez alerté en temps réel lorsqu'un évènement est créé près de chez vous
+          </div>
+        </div>
+
+        <div class="row-body">
+
+        <div class="row-divider"></div>
+
+          <div class="row-input row-input-lg row-newsletter etiquette">
+            <label data-lid="s_newsletter_label" class="label label-lg"for="">Newsletter</label>
+            <div class="row-select-wrap">
+              <div data-lid="s_yes" class="row-select newsletter" data-propid="newsletter" data-selectid="yes">Oui</div>
+              <div data-lid="s_no"  class="row-select newsletter" data-propid="newsletter" data-selectid="no">Non</div>
+            </div>
+             <div data-lid="s_newsletter_desc" class="row-select-description etiquette">
+              Notre newsletter est envoyée une fois par mois.
+             </div>
+          </div>
+
+          <div class="row-input row-input-lg row-invitations etiquette">
+            <label data-lid="s_invits_label" class="label label-lg"for="">Invitations</label>
+            <div class="row-select-wrap">
+              <div data-lid="s_yes" class="row-select invitations" data-propid="invitations" data-selectid="yes">Oui</div>
+              <div data-lid="s_no"  class="row-select invitations" data-propid="invitations" data-selectid="no">Non</div> 
+            </div>
+             <div data-lid="s_invits_desc" class="row-select-description etiquette">
+                Bons plans pour être invités à des soirées en VIP
+             </div>
+          </div>
+
+          <div class="row-buttons">
+            <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
+            <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ALERTS SECTIONS -->
+      <div class="row row-settings row-alerts row-select-daddy">
+
+        <div class="row-title">
+          <div data-lid="s_alerts_title" class="row-title-text">Alertes et notifications</div>
+          <i class="icon icon-edit icon-pencil right"></i>
+        </div>
+
+        <div class="row-subtitle">
+          <div data-lid="s_alerts_subtitle" class="row-subtitle-text etiquette">Restez alerté lorsqu'on vous contacte ou que vous êtes accepté dans un meefore.</div>
+        </div>
+
+        <div class="row-body">
+
+        <div class="row-divider"></div>
+
+          <div class="row-input row-input-lg row-accepted-in etiquette">
+            <label data-lid="s_accepted_in_label" class="label label-lg"for="">Accepté dans un meefore</label>
+            <div class="row-select-wrap">
+              <div data-lid="s_yes" class="row-select accepted-in" data-propid="accepted_in" data-selectid="yes">Oui</div>
+              <div data-lid="s_no"  class="row-select accepted-in" data-propid="accepted_in" data-selectid="no">Non</div>
+            </div>
+             <div data-lid="s_accepted_in_desc" class="row-select-description etiquette">
+                Recevez un mail lorsque vous êtes accepté dans un meefore et que vous êtes hors-ligne.
+             </div>
+          </div>
+
+          <div class="row-input row-input-lg row-message-unread etiquette">
+            <label data-lid="s_message_unread_label" class="label label-lg"for="">Message non lu</label>
+            <div class="row-select-wrap">
+              <div data-lid="s_yes" class="row-select message-unread" data-propid="message_unread" data-selectid="yes">Oui</div>
+              <div data-lid="s_no"  class="row-select message-unread" data-propid="message_unread" data-selectid="no">Non</div> 
+            </div>
+             <div data-lid="s_message_unread_desc" class="row-select-description etiquette">
+                Recevez un mail lorsque quelqu'un a laissé un message.
+             </div>
+          </div>
+
+          <div class="row-input row-input-lg row-min-frequency etiquette">
+            <label data-lid="s_min_frequency_label" class="label label-lg"for="">1 mail max toutes les...</label>
+            <div class="row-select-wrap">
+              <div data-lid="s_0min"    class="row-select min-frequency"  data-propid="min_frequency" data-selectid="0">    Aucune limite</div>
+              <div data-lid="s_15min"   class="row-select min-frequency"  data-propid="min_frequency" data-selectid="10">  Aucune limite</div>
+              <div data-lid="s_60min"   class="row-select min-frequency"  data-propid="min_frequency" data-selectid="3600"> Aucune limite</div>
+              <div data-lid="s_360min"  class="row-select min-frequency"  data-propid="min_frequency" data-selectid="21600">Aucune limite</div>
+              <div data-lid="s_720min"  class="row-select min-frequency"  data-propid="min_frequency" data-selectid="43200">Aucune limite</div>
+              <div data-lid="s_1440min" class="row-select min-frequency"  data-propid="min_frequency" data-selectid="86400">Aucune limite</div>
+            </div>
+             <div data-lid="s_min_frequency_desc" class="row-select-description etiquette">
+                Spécifiez l'intervalle de temps minimum entre deux mails reçus par meefore.
+             </div>
+          </div>
+
+          <div class="row-buttons">
+            <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
+            <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- UX SECTION -->
+       <div class="row row-settings row-ux row-select-daddy">
 
         <div class="row-title">
           <div data-lid="s_app_title" class="row-title-text">Application</div>
@@ -439,59 +550,36 @@
         </div>
 
         <div class="row-body">
+
         <div class="row-divider"></div>
-          <div class="row-input row-input-lg row-auto_login etiquette">
-            <label data-lid="s_app_autologin_label" class="label label-lg"for="">Auto login</label>
+
+          <div class="row-input row-input-lg row-autologin etiquette">
+            <label data-lid="s_autologin_label" class="label label-lg"for="">Auto login</label>
             <div class="row-select-wrap">
-              <div data-lid="s_yes" class="row-select auto_login" data-selectid="yes">Oui</div>
-              <div data-lid="s_no" class="row-select auto_login" data-selectid="no">Non</div>
+              <div data-lid="s_yes" class="row-select autologin" data-propid="auto_login" data-selectid="yes">Oui</div>
+              <div data-lid="s_no"  class="row-select autologin" data-propid="auto_login" data-selectid="no">Non</div>
             </div>
-            <div data-lid="s_app_autologin_desc" class="row-select-description etiquette">Activez cette option pour skipper la page d'accueil</div>
+            <div data-lid="s_autologin_desc" class="row-select-description etiquette">
+              Activez cette option pour skipper la page d'accueil
+            </div>
           </div>
         </div>
+
+         <div class="row-input row-input-lg row-message-readby etiquette">
+            <label data-lid="s_message_readby_label" class="label label-lg"for="">Signaler message lu</label>
+            <div class="row-select-wrap">
+              <div data-lid="s_yes" class="row-select message-readby" data-propid="message_readby" data-selectid="yes">Oui</div>
+              <div data-lid="s_no"  class="row-select message-readby" data-propid="message_readby" data-selectid="no">Non</div>
+            </div>
+            <div data-lid="s_message_readby_desc" class="row-select-description etiquette">
+              Activez cette option pour signaler aux autres lorsque vous avez lu les messages
+            </div>
+          </div>
 
         <div class="row-buttons">
           <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
           <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
         </div>
-
-      </div>  
-
-      <div class="row row-settings row-notifications row-select-daddy">
-
-        <div class="row-title">
-          <div data-lid="s_alerts_title" class="row-title-text">Alertes et notifications</div>
-          <i class="icon icon-edit icon-pencil right"></i>
-        </div>
-
-        <div class="row-subtitle">
-          <div data-lid="s_alerts_subtitle" class="row-subtitle-text etiquette">Restez alerté en temps réel lorsqu'un évènement est créé près de chez vous</div>
-        </div>
-
-        <div class="row-body">
-        <div class="row-divider"></div>
-          <div class="row-input row-input-lg row-newsletter etiquette">
-            <label data-lid="s_alerts_newsletter_label" class="label label-lg"for="">Newsletter</label>
-            <div class="row-select-wrap">
-              <div data-lid="s_yes" class="row-select newsletter" data-selectid="yes">Oui</div>
-              <div data-lid="s_no" class="row-select newsletter" data-selectid="no">Non</div>
-            </div>
-             <div data-lid="s_alerts_newsletter_desc" class="row-select-description etiquette">Notre newsletter est envoyée tous les dimanches</div>
-          </div>
-
-          <div class="row-input row-input-lg row-invitations etiquette">
-            <label data-lid="s_alerts_invits_label" class="label label-lg"for="">Invitations</label>
-            <div class="row-select-wrap">
-              <div data-lid="s_yes" class="row-select invitations" data-selectid="yes">Oui</div>
-              <div data-lid="s_no" class="row-select invitations" data-selectid="no">Non</div> 
-            </div>
-             <div data-lid="s_alerts_invits_desc" class="row-select-description etiquette">Bons plans pour être invités à des soirées en VIP</div>
-          </div>
-
-          <div class="row-buttons">
-            <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
-            <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
-          </div>
 
         </div>
       </div>
@@ -500,10 +588,6 @@
 
   </div>
   
-  <script id="app_ids"> 
-    window.facebook_app_id = "1638108873141834";
-    window.pusher_app_id   = "f9e4bf4e8f1e0342ca27";
-  </script>
 
   <script src="//js.pusher.com/3.0/pusher.min.js"></script>  
   <script src="js/lib/lodash.js"></script>
@@ -525,7 +609,6 @@
   <script src="js/lib/async.min.js"></script>
   <!-- <script src="js/lib/prefixfree.min.js"></script> -->
   <script src="js/lib/md5.min.js"></script>
-  <script src="js/lib/jquery.parallax.js"></script>
   <script src="js/lib/jquery.bxslider.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry" type="text/javascript"></script>
 
@@ -556,6 +639,7 @@
   <script src="js/src/ladder/lj-ladder.js"></script>
   <script src="js/src/ui/lj-ui.js"></script>
   <script src="js/src/profile/lj-profile.js"></script>
+  <script src="js/src/settings/lj-settings.js"></script>
   <script src="js/src/pusher/lj-pusher.js"></script>
   <script src="js/src/errors/lj-errors.js"></script>
   <script src="js/src/languages/lj-country.js"></script>
@@ -569,3 +653,7 @@
 
 </html>
   
+  <script id="app_ids"> 
+    window.facebook_app_id = "1638108873141834";
+    window.pusher_app_id   = "f9e4bf4e8f1e0342ca27";
+  </script>

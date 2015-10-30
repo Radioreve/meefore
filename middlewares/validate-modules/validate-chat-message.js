@@ -7,16 +7,17 @@
 	function check( req, res, next ){
 		
 		var checkMessage = nv.isAnyObject()
-		
-			.withRequired('event_id'   , nv.isString() )
-			.withRequired('chat_id'	   , nv.isString() )
-			.withRequired('msg'        , nv.isString() )
-			.withRequired('name'       , nv.isString() )
-			.withRequired('img_vs'     , nv.isString() )
-			.withRequired('img_id'     , nv.isString() )
-			.withRequired('group_id'   , nv.isString() )
-			.withRequired('facebook_id', nv.isString() )
-			.withOptional('whisper_to' , nv.isArray()  )
+			
+			.withRequired('event_id'       , nv.isString() )
+			.withRequired('chat_id'        , nv.isString() )
+			.withRequired('msg'            , nv.isString() )
+			.withRequired('name'           , nv.isString() )
+			.withRequired('img_vs'         , nv.isString() )
+			.withRequired('img_id'         , nv.isString() )
+			.withRequired('group_id'       , nv.isString() )
+			.withRequired('facebook_id'    , nv.isString() )
+			.withOptional('offline_users'  , nv.isArray()  )
+			.withOptional('whisper_to'     , nv.isArray()  )
 
 		nv.run( checkMessage, req.sent, function( n, errors ){
 			if( n != 0 ){

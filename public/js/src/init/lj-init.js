@@ -264,7 +264,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             _.keys( LJ.user.app_preferences ).forEach(function( key ) {
                 _.keys(LJ.user.app_preferences[key]).forEach(function( sub_key ) {
                     var value = LJ.user.app_preferences[ key ][ sub_key ];
-                    $('.row-select.' + sub_key + '[data-selectid="' + value + '"]').addClass('selected');
+                    $('.row-select[data-propid="' + sub_key + '"][data-selectid="' + value + '"]').addClass('selected');
                 });
             });
 
@@ -370,7 +370,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                         });
 
                         if (LJ.user.status == 'new'){
-                            LJ.fn.initTour();
+                            // LJ.fn.initTour();
                         }
 
                         if (LJ.user.friends.length == 0){

@@ -4,10 +4,7 @@
 
 	var node_env = process.env.NODE_ENV;
 
-	var client = redis.createClient( 
-		config.redis[ node_env ].port,
-		config.redis[ node_env ].host,
-		{
+	var client = redis.createClient( config.redis[ node_env ].port, config.redis[ node_env ].host, {
 			auth_pass: process.env.PW
 		}
 	);

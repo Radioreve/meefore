@@ -125,7 +125,6 @@
 				async.parallel( tasks, function(){
 					// Email the logs to the admin for proper monitoring
 					keeptrack('Cache has been updated');
-					//mailer.sendSimpleAdminEmail( 'Cache layer', 'Cache has been successfully cleared', mail_html.join('') );
 					return process.exit(0); //next();
 				});	
 			});			

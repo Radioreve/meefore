@@ -511,7 +511,10 @@
             });
 
             // timezone
-            timezone = begins_at.utcOffset(); // eg. 120 for UTC+2
+            // Attention! Si un user crée un event dans une timezone différente, cela pose problème
+            // Il faudrait pour ça aller chercher la timezone à partir de l'addresse avec une API Google,
+            // Mais ça fait beaucoup pour pas grand chose à mon avis...
+            timezone = moment().utcOffset(); // eg. 120 for UTC+2, 60 for France (UTC+1)
             
             // proper format
             begins_at = begins_at.toISOString();

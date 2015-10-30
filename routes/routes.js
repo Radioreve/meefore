@@ -23,13 +23,15 @@
 		api.chats     = require( apiDir + '/chats');
 
 	var mdw = {};
-		mdw.auth     = require( mdwDir + '/auth');
-		mdw.email    = require( mdwDir + '/email');
-		mdw.pop      = require( mdwDir + '/pop');
-		mdw.facebook = require( mdwDir + '/facebook');
-		mdw.validate = require( mdwDir + '/validate');
-		mdw.cache 	 = require( mdwDir + '/cache');
+		mdw.auth           = require( mdwDir + '/auth');
+		mdw.email          = require( mdwDir + '/email');
+		mdw.pop            = require( mdwDir + '/pop');
+		mdw.facebook       = require( mdwDir + '/facebook');
+		mdw.validate       = require( mdwDir + '/validate');
+		mdw.alerts_watcher = require( mdwDir + '/alerts_watcher');
+		mdw.chat_watcher   = require( mdwDir + '/chat_watcher');
 
+	var webhooks 	 = require('../services/webhooks');
 
 	module.exports = function( app ) {
 
@@ -46,7 +48,7 @@
 
 		// Merge all body, query and params property 
 		// Subsequent validation modules will look if each property they are looking for
-		// is anywhere to be found and properly formatted
+		// is anywhere to be found and properly formatted, in the req.sent object
 		app.all('*', function( req, res, next ){
 			req.sent = _.merge( 
 
@@ -78,7 +80,6 @@
 	    	function( req, res, next ){
 
 	    		var ip_info = get_ip( req );
-	    		console.log( JSON.stringify( ip_info, null, 3 ) );
 	    		next();
 	    	},
 	    	signEvents.sendHomepage );
@@ -93,9 +94,6 @@
 	    	signEvents.redirectToHome);
 
 
-	    // Serve early adopter pages
-	    app.get('/earlyadopters',
-	    	signEvents.sendEarlyAdoptersPage);
 
 	    // Provide valid token based on secret key, for api calls
 		app.post('/auth/token',
@@ -108,8 +106,9 @@
 
 	    // Initialisation | Check if user exists / create profile if not, subscribe to mailchimp
 	    app.post('/auth/facebook',
-	    	mdw.pop.populateUser({force_presence: false }),
+	    	mdw.pop.populateUser({ force_presence: false }),
 	    	mdw.email.subscribeMailchimpUser,
+	    	mdw.alerts_watcher.setCache,
 	    	signEvents.handleFacebookAuth);
 
 	    // [ @chat ] Make sure a user has authorisation to join a channel
@@ -148,13 +147,18 @@
 
 	    // [ @user ] Update ux settings
 	    app.post('/me/update-settings-ux',
-	    	settingsEvents.updateSettingsUx);
+	    	settingsEvents.updateSettings);
+
+	     // [ @user ] Update ux settings
+	    app.post('/me/update-settings-alerts',
+	    	mdw.alerts_watcher.updateCache,
+	    	settingsEvents.updateSettings);
 
 	    // [ @user ] Update notification settings 
 	    app.post('/me/update-settings-mailinglists',
 	    	mdw.pop.populateUser({ force_presence: true }),
 	    	mdw.email.updateMailchimpUser,
-	    	settingsEvents.updateSettingsMailinglists);
+	    	settingsEvents.updateSettings);
 
 	    // [ @user ] Utilisé pour afficher le profile d'un utilisateur
 	    app.get('/api/v1/users/:user_facebook_id',   //otherwise override with asker facebook_id
@@ -219,7 +223,8 @@
 	    // [ @chat ] Post un nouvau message
 	    app.post('/api/v1/chats/:chat_id',
 	    	mdw.validate('chat_message', ['chat_message']),
-	    	// mdw.cache.watchCache,
+	    	mdw.chat_watcher.watchCache,
+	    	mdw.chat_watcher.mailOfflineUsers,
 	    	api.chats.addChatMessage );
 
 	    // [ @chat ] Poste le fait qu'un user ai lu un message
@@ -240,6 +245,49 @@
 	    	api.parties.fetchParties );
 
 	    
+
+
+	   	// [ @WebHooks ] WebHook from Pusher to monitor in realtime online/offline users
+	   	app.post('/webhooks/pusher/connection-event',
+	   		webhooks.updateConnectedUsers );
+
+
+
+
+
+	   	// [@API Overrides]
+	   	app.post('/watcher/terminate-events',
+	   		function( req, res ){
+	   			if( req.sent.apikey != 'M33fore') return res.status(403).json({ "msg": "unauthorized" });
+	   			require( process.cwd() + '/jobs/terminate-events').terminateEvents({
+						timezone   : req.sent.timezone,
+						target_day : req.sent.target_day
+	   			});
+	   			res.json({ "msg":"success" });
+	   		});
+
+	   	app.post('/watcher/clear-cache',
+	   		function( req, res ){
+	   			if( req.sent.apikey != 'M33fore' ) return res.status(403).json({ "msg": "unauthorized" });
+		   		mdw.chat_watcher.clearCache({
+					min_chat_size    : req.sent.min_chat_size,
+					n_keys_to_remove : req.sent.n_keys_to_remove
+		   		});
+		   		res.json({ "msg": "success" });
+	   		});
+
+
+
+
+
+
+
+
+
+
+
+
+
 	    // Test & legacy
 
 

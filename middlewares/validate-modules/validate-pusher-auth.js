@@ -20,6 +20,10 @@
 				return next();
 			}
 
+			// If own private channel, skip the validation part
+			if( channel.split('-')[0] == 'private' ) return next();
+
+
 			var chat_id = channel;
 			var members_facebook_id = chat_id.split('-')[2].split('.');
 
