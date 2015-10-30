@@ -390,7 +390,7 @@
 			"en": "Signal to other people that you have read their message"
 		},
 		s_min_frequency_label: {
-			"fr": "Temps entre chaque mail",
+			"fr": "Temps entre chaque email",
 			"en": "Time between emails"
 		},
 		s_min_frequency_desc: {

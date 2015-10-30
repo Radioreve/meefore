@@ -96,9 +96,8 @@
 
 				if( err ) return console.log( err );
 
-				if( !alerts ) return;
-
-				if( alerts.message_unread == 'no' ) return;
+				// For somereason, if no info available or user doesnt want email, return
+				if( !alerts || alerts.message_unread == 'no' ) return;
 
 				// User wants to get notified by mail.
 				// Check when was the last alert.
@@ -108,9 +107,7 @@
 						return console.log('Too soon to be alerted again');
 					} else {
 						rd.set( time_last_alert_ns + '/' + facebook_id, moment().unix(), function( err ){
-							mailer.sendAlertEmail_MessageReceived( req.sent.name, alerts.email /* @519481 */, function( err, res ){
-								// Do nothing
-							});
+							mailer.sendAlertEmail_MessageReceived( req.sent.name, alerts.email /* @519481 */);
 						});
 					}
 

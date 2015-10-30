@@ -4,7 +4,8 @@
 		User       = require('../models/UserModel'),
 		Event      = require('../models/EventModel'),
 		moment     = require('moment'),
-		rd		   = require('../services/rd');
+		rd		   = require('../services/rd'),
+		mailer     = require('../services/mailer');
 
 	var pusher     = require('../services/pusher');
 
@@ -170,8 +171,7 @@
 						if( err )
 							return eventUtils.raiseError({ err: err, res: res, toClient: "api error fetching event" });
 
-						var data = 
-						{
+						var data = {
 							event_id          : event_id,
 							hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
 							group             : new_group 
@@ -181,8 +181,8 @@
 					
 						/* Envoyer une notification aux hosts, et aux users déja présent */
 						if( eventUtils.oSize( data ) > pusher_max_size ){
-								console.log('Max size reached : ' + eventUtils.oSize( data ) );
-					    		pusher.trigger( event_id, 'new oversize message', {} );
+							console.log('Max size reached : ' + eventUtils.oSize( data ) );
+				    		pusher.trigger( event_id, 'new oversize message', {} );
 					    } else {
 
 					    	/* Envoyer une notification aux hosts */
@@ -209,7 +209,7 @@
 
 		console.log('Changing event status, new status : ' + status + ' for event: ' + event_id );
 
-		evt.status = status
+		evt.status = status;
 		evt.save(function( err, evt ){
 
 			if( err ){
@@ -260,10 +260,22 @@
 
 				groups[i].status = status;
 
-				rd.set('event/' + event_id + '/' + 'group/' + group_id + '/status', status, function(err){
+				rd.set('event/' + event_id + '/' + 'group/' + group_id + '/status', status, function( err ){
 
 					if( status == 'accepted' ){
 						groups[i].accepted_at = new Date();
+						groups[i].members_facebook_id.forEach(function( facebook_id ){
+
+							var offline_users_ns   = 'user_alerts';
+							rd.hgetall( offline_users_ns + '/' + facebook_id, function( err, alerts ){
+
+								if( err || !alerts ) return;
+								if( alerts.accepted_in == 'no' ) return;
+								mailer.sendAlertEmail_RequestAccepted( alerts.email );
+
+							});
+
+						});
 					} else {
 						groups[i].kicked_at = new Date();
 					}

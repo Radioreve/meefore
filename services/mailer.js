@@ -114,7 +114,7 @@
 
 		};
 
-		var sendAlertEmail_MessageReceived = function( sender_name, receiver_email, callback ){
+		var sendAlertEmail_MessageReceived = function( sender_name, receiver_email ){
 
 			var subject = sender_name + ' vous a envoyé un message!';
 
@@ -130,9 +130,28 @@
 
 			sendgrid.send( alert_email, function( err, res ){
 				if( err )
-					return callback( err, null );
+					return console.log(err);
+			});
 
-				return callback( null, res );
+		};
+
+		var sendAlertEmail_RequestAccepted = function( receiver_email ){
+
+			var subject = 'Vous avez été accepté dans un meefore !';
+
+			var alert_email = new sendgrid.Email({
+				from     : 'no-reply@meefore.com',
+				fromname : 'Meefore',
+				subject  : subject,
+				to       : receiver_email,
+				html     : [
+							'<div>Body text</div>'
+						   ].join('')
+			});
+
+			sendgrid.send( alert_email, function( err, res ){
+				if( err )
+					return console.log(err);
 			});
 
 		};
@@ -143,7 +162,8 @@
 			sendSimpleAdminEmail           : sendSimpleAdminEmail,
 			subscribeUserToMailchimp       : subscribeUserToMailchimp,
 			updateMailchimpUser            : updateMailchimpUser,
-			sendAlertEmail_MessageReceived : sendAlertEmail_MessageReceived
+			sendAlertEmail_MessageReceived : sendAlertEmail_MessageReceived,
+			sendAlertEmail_RequestAccepted : sendAlertEmail_RequestAccepted
 		};
 		
 
