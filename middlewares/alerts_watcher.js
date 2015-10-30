@@ -2,7 +2,7 @@
 	var _          = require('lodash');
 	var rd         = require('../services/rd');
 	var settings   = require('../config/settings');
-	var eventUtils = require('../pushEvents/eventUtils');
+	var eventUtils = require('../pushevents/eventUtils');
 
 	var updateCache = function( req, res, next ){
 

@@ -90,6 +90,8 @@
 
 		*/
 
+		var options = options || {};
+
 		var event_ids			 = []; // outside reference to event ids that need to be cleared
 		var today                = moment();
 		var target 				 = findDiffDay( today );
