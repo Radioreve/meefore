@@ -1,7 +1,13 @@
 
 	var redis = require('redis');
+	var config = require( process.cwd() + '/config/config');
 
-	var client = redis.createClient("10576", "aws-eu-west-1-portal.1.dblayer.com", { auth_pass: "R4dioreve" });
+	var node_env = process.env.NODE_ENV;
+
+	var client = redis.createClient( config.redis[ node_env ].port, config.redis[ node_env ].host, {
+			auth_pass: process.env.PW
+		}
+	);
 
 	client.on('error', function(err){
 		console.log(err);

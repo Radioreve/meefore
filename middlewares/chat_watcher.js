@@ -96,6 +96,8 @@
 
 				if( err ) return console.log( err );
 
+				if( !alerts ) return;
+
 				if( alerts.message_unread == 'no' ) return;
 
 				// User wants to get notified by mail.

@@ -25,9 +25,9 @@
 
 					// Update part
 					user.app_preferences.alerts = {};
-					user.app_preferences.alerts.message_unread = 'no';
-					user.app_preferences.alerts.accepted_in = 'no';
-					user.app_preferences.alerts.min_frequency = '0';
+					user.app_preferences.alerts.message_unread = 'yes';
+					user.app_preferences.alerts.accepted_in = 'yes';
+					user.app_preferences.alerts.min_frequency = '3600';
 
 					user.app_preferences.ux.message_readby = 'yes';
 					
