@@ -658,6 +658,8 @@
     },
     renderItemInInput_Country: function( code ){
 
+      code = code.toLowerCase();
+
       var html = '<div class="item item-country">'
                   + '<i class="flag-icon flag-icon-' + code + '"></i>'
                   + '<div data-lid="country_' + code +'" class="item-name">' + LJ.text_source[ "country_" + code ][ LJ.app_language ] + '</div>'

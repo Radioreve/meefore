@@ -730,18 +730,6 @@
 			"fr": "",
 			"en": "Cannot join the channel (access denied, auth failed)"
 		},
-		country_fr: {
-			"fr": "France",
-			"en": "France"
-		},
-		country_us: {
-			"fr": "Etats-Unis",
-			"en": "United States"
-		},
-		country_gb: {
-			"fr": "Royaume-Unis",
-			"en": "United-Kingdom"
-		},
 		lp_subtitle: {
 			"fr": "<div class='lp-subpart'>Faîtes des rencontres <div class='lp-avant'><span>avant</span><img src='/img/app/avant.png' width='110%' /></div> d'aller en soirée.   " ,
 				   // + "<div class='lp-subpart'>Rencontrez les <span>avant</span> d'aller en soirée.</div>",
