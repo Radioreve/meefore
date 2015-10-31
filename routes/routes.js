@@ -145,6 +145,10 @@
 	    app.post('/me/fetch-and-sync-friends',
 	    	profileEvents.fetchAndSyncFriends);
 
+	    // [ @user ] Update contact settings
+	    app.post('/me/update-settings-contact',
+	    	settingsEvents.updateSettingsContact);
+
 	    // [ @user ] Update ux settings
 	    app.post('/me/update-settings-ux',
 	    	settingsEvents.updateSettings);

@@ -317,6 +317,22 @@
 			"fr": "Modifier le comportement général de l'application",
 			"en": "Modify the general behavior of the app"
 		},
+		s_contact_title: {
+			"fr": "Informations de contact",
+			"en": "Contact informations"
+		},
+		s_contact_subtitle: {
+			"fr": "Stay in touch'",
+			"en": "Stay in touch'"
+		},
+		s_contact_email_label: {
+			"fr": "Email de contact",
+			"en": "Contact email"
+		},
+		s_contact_email_desc: {
+			"fr": "Indiquez-nous l'email sur lequel vous souhaitez être contacté",
+			"en": "Let us know at what email address we can reach you"
+		},
 		s_autologin_label: {
 			"fr": "Connexion automatique",
 			"en": "AutoLogin"

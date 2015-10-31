@@ -64,6 +64,7 @@
 		new_user.facebook_id                       = fb.id;
 		new_user.facebook_access_token.short_lived = fb.access_token;
 		new_user.facebook_email                    = fb.email;
+		new_user.contact_email 					   = fb.email;
 		new_user.mailchimp_email                   = fb.email;
 		new_user.mailchimp_id                      = req.sent.mailchimp_id;
 		new_user.gender                            = fb.gender;
@@ -94,7 +95,7 @@
 			}
 
 			console.log('Sending email notification to admins');
-			mailer.sendSimpleAdminEmail( user.name + ' (' + user.facebook_email + ') vient de s\'inscrire sur meefore',
+			mailer.sendSimpleAdminEmail( user.name + ' (' + user.contact_email + ') vient de s\'inscrire sur meefore',
 				  JSON.stringify( user, null, 4 ))
 
 			console.log('Account created successfully');

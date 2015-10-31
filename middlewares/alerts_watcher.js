@@ -9,7 +9,7 @@
 		var alert_ns = 'user_alerts/' + req.sent.facebook_id;
 		var data = req.sent.app_preferences.alerts
 
-		data.email = req.sent.facebook_email; /* @519481 */
+		data.email = req.sent.contact_email; /* @519481 */
 
 		rd.hmset( alert_ns, data, function( err, res ){
 

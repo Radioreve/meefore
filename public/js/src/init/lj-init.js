@@ -268,6 +268,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 });
             });
 
+            $('#email_contact').val( LJ.user.contact_email );
+
 
             /* Mise à jour des images placeholders */
             $('.picture-wrap').html( LJ.fn.renderProfilePicturesWraps );

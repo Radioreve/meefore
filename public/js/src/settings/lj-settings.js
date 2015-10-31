@@ -3,6 +3,42 @@
 
 		handleDomEvents_Settings: function(){
 
+			LJ.$body.on('click', '.row-contact .btn-validate', function(){
+
+				var $self = $(this);
+				if( $self.hasClass('btn-validating') )
+					return;
+
+				$self.addClass('btn-validating');
+
+				var _id             = LJ.user._id;
+				var $container      = $('.row-contact');
+
+				var contact_email   = $('#email_contact').val();
+
+				var data = {
+					contact_email: contact_email
+				};
+
+				csl('Emitting update settings [contact]');
+				LJ.fn.showLoaders();
+
+				var eventName = 'me/update-settings-contact',
+				data = data
+				, cb = {
+					success: LJ.fn.handleUpdateSettingsContactSuccess,
+					error: function( xhr ){
+						sleep( LJ.ui.artificialDelay, function(){
+							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
+						});
+					}
+				};
+
+				LJ.fn.say( eventName, data, cb );
+				
+			});
+
+
 			LJ.$body.on('click', '.row-ux .btn-validate', function(){
 
 				var $self = $(this);
@@ -116,7 +152,7 @@
 				// Mail needed to be store in cache along with other settings regarding alerts
 				// to know where to send the alert
 				// @519481
-				data.facebook_email = LJ.user.facebook_email;
+				data.contact_email = LJ.user.contact_email;
 
 
 				csl('Emitting update settings [notifications]');
@@ -191,6 +227,27 @@
 				LJ.user = data.user;
 
 				LJ.fn.handleServerSuccess('Vos informations ont été modifiées', '.row-alerts');
+		
+			});
+
+
+		},
+		handleUpdateSettingsContactSuccess: function( data ){
+
+			csl('update settings contact success received' );
+
+			sleep( LJ.ui.artificialDelay, function(){
+
+				$('#email_contact').prop( 'readonly', true );
+
+				$('.row-contact').removeClass('editing')
+					.find('.row-buttons').velocity('transition.fadeOut', {duration: 600 })
+					.end().find('.icon-edit').removeClass('active')
+					.end().find('.btn-validating').removeClass('btn-validating');
+
+				LJ.user = data.user;
+
+				LJ.fn.handleServerSuccess('Vos informations ont été modifiées', '.row-contact');
 		
 			});
 

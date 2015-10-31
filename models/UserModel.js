@@ -1,14 +1,18 @@
 
-	var mongoose = require("mongoose"),
-      settings = require('../config/settings'),
-      config   = require('../config/config'),
- 	      bcrypt = require("bcrypt-nodejs"),
-        _ = require('lodash');
+ var mongoose = require("mongoose"),
+ settings     = require('../config/settings'),
+ config       = require('../config/config'),
+ bcrypt       = require("bcrypt-nodejs"),
+ _            = require('lodash');
 
 var UserSchema = new mongoose.Schema({
 
+  contact_email: {
+    type: String,
+    default: ''
+  },
   facebook_email:{
-    type:String,
+    type: String,
     default:''
   },
   mailchimp_email: {

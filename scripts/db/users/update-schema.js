@@ -24,10 +24,8 @@
 				tasks.push(function( done ){
 
 					// Update part
-					user.channels.me = 'private-' + user.facebook_id;
+					user.contact_email = user.facebook_email;
 					
-					user.markModified('channels');
-
 					user.save(function(){
 						console.log('user updated');
 						done();
