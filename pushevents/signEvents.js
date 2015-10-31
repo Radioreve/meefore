@@ -71,7 +71,7 @@
 		new_user.name                              = fb.name;
 		new_user.age                               = 24 // default value, fucking facebook  /me?fields=age_range is too broad!
 		new_user.facebook_url                      = fb.link;
-		new_user.country_code					   = fb.locale.substr(0,2) // country code extraction
+		new_user.country_code					   = fb.locale.split('-')[1].toLowerCase(); // country code extraction
 		new_user.signup_date                       = new moment();
 		new_user.access 						   = ['standard'];
 
