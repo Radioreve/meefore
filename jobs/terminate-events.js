@@ -29,9 +29,9 @@
 
 	// Parameters
 	var mongo_uri  = config.db[ process.env.NODE_ENV ].uri;
-	var redis_host = config.redis[ process.env.node_env ].host;
-	var redis_port = config.redis[ process.env.node_env ].port;
-	var redis_pass = config.redis[ process.env.node_env ].pass;
+	var redis_host = config.redis[ process.env.NODE_ENV ].host;
+	var redis_port = config.redis[ process.env.NODE_ENV ].port;
+	var redis_pass = config.redis[ process.env.NODE_ENV ].pass;
 
 	var tracked = {};
 
