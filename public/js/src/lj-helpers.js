@@ -763,17 +763,17 @@
 		formatCreateEventInputs: function(){
 
 			// Ambiance hashtags
-			var $input = $('.row-create-ambiance').find('input');
-            var $item  = $('.row-create-ambiance').find('.item');
+			// var $input = $('.row-create-ambiance').find('input');
+   //          var $item  = $('.row-create-ambiance').find('.item');
 
-            if( $input.val().trim().length == 0 ) return;
+   //          if( $input.val().trim().length == 0 ) return;
 
-                LJ.fn.addItemToInput({ 
-                    html: LJ.fn.renderAmbianceInCreate( $input.val() ),
-                    inp: '#cr-ambiance',
-                    max: 5
-                });
-                $input.val('');
+   //              LJ.fn.addItemToInput({ 
+   //                  html: LJ.fn.renderAmbianceInCreate( $input.val() ),
+   //                  inp: '#cr-ambiance',
+   //                  max: 5
+   //              });
+   //              $input.val('');
 
 		},
 		adjustAllTabviews: function(){

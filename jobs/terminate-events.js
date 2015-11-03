@@ -196,7 +196,7 @@
 					];
 
 					console.log('Scheduled job completed successfully');
-					mailer.sendSimpleAdminEmail('Scheduler [' + process.env.node_env + '], '+ tracked.n_events_updated + ' events have been successfully updated', mail_html.join('') );
+					mailer.sendSimpleAdminEmail('Scheduler [' + process.env.NODE_ENV + '], '+ tracked.n_events_updated + ' events have been successfully updated', mail_html.join('') );
 					// mongoose.connection.close();
 
 				});

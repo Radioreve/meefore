@@ -3,6 +3,8 @@
 
 		renderCreateEvent: function( options ){
 
+          var options = options || {};
+          
           var agerange = options.agerange,
               mixity   = options.mixity;
 
@@ -20,16 +22,16 @@
                                     +'</div>';
                 });
 */
-                mixity.forEach(function(mixity,i){
-                  var selected = '';
-                  if( i == 0 ){
-                    var selected = 'selected';
-                  }
-                  mixity_html += '<div class="row-select mixity ' + selected + '" data-selectid="' + mixity.id + ' ">'
-                                      +'<i class="icon icon-mixity icon-' + mixity.icon_code + '"></i>'
-                                      + mixity.display
-                                    +'</div>';
-                  });
+                // mixity.forEach(function(mixity,i){
+                //   var selected = '';
+                //   if( i == 0 ){
+                //     var selected = 'selected';
+                //   }
+                //   mixity_html += '<div class="row-select mixity ' + selected + '" data-selectid="' + mixity.id + ' ">'
+                //                       +'<i class="icon icon-mixity icon-' + mixity.icon_code + '"></i>'
+                //                       + mixity.display
+                //                     +'</div>';
+                //   });
 
               var html = '<div id="createEvent" class="">'
         
@@ -62,10 +64,10 @@
                           +'<input data-lid="e_create_party_placeholder" id="cr-party-place" type="text" placeholder="Après le before, on enchaîne où ?">'
                         +'</div>'
 
-                        +'<div class="row-input row-input-lg etiquette row-create-ambiance">'
-                          +'<label data-lid="e_create_ambiance" class="label label-lg" for="cr-ambiance">Ambiance</label>'
-                          +'<input data-lid="e_create_ambiance_placeholder" class"" id="cr-ambiance" type="text" maxlength="40" placeholder="Hashtag ton before ( 5 max )">'
-                        +'</div>'
+                        // +'<div class="row-input row-input-lg etiquette row-create-ambiance">'
+                        //   +'<label data-lid="e_create_ambiance" class="label label-lg" for="cr-ambiance">Ambiance</label>'
+                        //   +'<input data-lid="e_create_ambiance_placeholder" class"" id="cr-ambiance" type="text" maxlength="40" placeholder="Hashtag ton before ( 5 max )">'
+                        // +'</div>'
 
                         +'<div class="row-input row-input-lg etiquette row-create-age">'
                           +'<label data-lid="e_create_agerange" class="label label-lg" for="cr-age">Âge souhaité</label>'
@@ -74,12 +76,12 @@
                           +'</div>'
                         +'</div>'
 
-                        +'<div class="row-input row-input-lg etiquette row-create-mixity">'
-                          +'<label data-lid="e_create_guests_type" class="label label-lg" for="cr-mixity">Type d\'invités</label>'
-                          +'<div class="row-select-wrap mixity-wrap">'
-                                + mixity_html
-                          +'</div>'
-                        +'</div>'
+                        // +'<div class="row-input row-input-lg etiquette row-create-mixity">'
+                        //   +'<label data-lid="e_create_guests_type" class="label label-lg" for="cr-mixity">Type d\'invités</label>'
+                        //   +'<div class="row-select-wrap mixity-wrap">'
+                        //         + mixity_html
+                        //   +'</div>'
+                        // +'</div>'
 
 
                         +'<div class="row-buttons visible">'

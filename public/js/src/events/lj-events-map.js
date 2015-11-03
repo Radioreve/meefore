@@ -3,6 +3,27 @@
 
         handleDomEventsMap: function(){
 
+            LJ.$body.on('mousedown', function(e){ 
+
+                if( $(e.target).hasClass('row-preview') ){
+                    $('.event-accepted-tabview.active').click(); 
+                }
+
+                if( $(e.target).hasClass('row-events-accepted-inview') ){
+                    $('.row-events-accepted-inview.active').find('.icon-minus').click();
+                }
+
+            });
+
+            Mousetrap.bind('esc', function(e) {
+                $('.btn-cancel').each(function(i, el){
+                    if( $(el).css('display') != 'none' ){
+                        $(el).click();
+                    }
+                });
+            });
+
+
         },
         initMap: function() {
 
@@ -191,9 +212,9 @@
             });
 
           /* Rendu des évènements les plus proches par rapport à la position de départ*/
-            setTimeout(function(){
-                LJ.fn.refreshEventPreview();
-            }, 1000 );        
+            // setTimeout(function(){
+            //     LJ.fn.refreshEventPreview();
+            // }, 1000 );        
            
 
         },
@@ -232,6 +253,13 @@
                 zIndex    : options.zIndex
             });
 
+            // Make sure only display in intro mode
+            if( options.intro ) {
+                LJ.intro_marker = LJ.intro_marker || [];
+                LJ.intro_marker.push( new_marker );
+                return;                
+            }
+
         
             // Store references of markers to destroy em and make them disappear from the map ( marker.setMap(null) )
             if( options.singleton ){
@@ -260,6 +288,8 @@
 
         },
         displayEventMarker: function( evt, options ){
+
+            var options = options || {};
 
             var url;
             var status;
@@ -305,11 +335,12 @@
 
             });
 
+
             LJ.fn.displayMarker( _.merge({
                 lat       : effective_lat,
                 lng       : effective_lng,
-                url       : LJ.cloudinary.markers[ status ][ open_status ].url,
-                cache     : 'event_markers',
+                url       : options.url || LJ.cloudinary.markers[ status ][ open_status ].url,
+                cache     : options.cache || 'event_markers',
                 singleton : false,
                 id        : evt._id,
                 data      : evt,
@@ -359,7 +390,9 @@
 
 
         },
-        displayPartyMarker_Event: function( evt ){
+        displayPartyMarker_Event: function( evt, options ){
+
+            var options = options || {};
 
             var party = evt.party;
             // Only display the marker if no other party at the same location exists
@@ -373,7 +406,7 @@
                 lat       : party.address.lat,
                 lng       : party.address.lng,
                 url       : LJ.cloudinary.markers.party.url,
-                cache     : 'party_markers',
+                cache     : options.cache || 'party_markers',
                 singleton : false,
                 id        : party.address.place_id,
                 data      : evt,
@@ -394,15 +427,18 @@
             });
 
         },
-        displayPartyMarker_Party: function( party ){
+        displayPartyMarker_Party: function( party, options ){
             
+
+            var options = options || {};
+
             // Display the marker with high z-index, so it overrides other people party's pin
             // who want to do a before at this place_id
             LJ.fn.displayMarker({
                 lat       : parseFloat(party.address.lat),
                 lng       : parseFloat(party.address.lng),
                 url       : LJ.cloudinary.markers.party.url,
-                cache     : 'party_markers',
+                cache     : options.cache || 'party_markers',
                 singleton : false,
                 id        : party.address.place_id,
                 data      : party,

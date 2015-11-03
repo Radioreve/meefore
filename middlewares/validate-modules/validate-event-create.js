@@ -26,9 +26,22 @@
 
 		console.log('Validating event');
 
-		function isHostDuplicated( val, onError ){
-			if( val.hosts_facebook_id && _.uniq( val.hosts_facebook_id ).length != val.hosts_facebook_id.length )
-				onError('Hosts with the same id have been provided', 'hosts_facebook_id', val.hosts_facebook_id, { err_id: "twin_hosts"} );
+		function isHostOk( val, onError ){
+
+			// Make sure all hosts have the same value
+			if( val.hosts_facebook_id && _.uniq( val.hosts_facebook_id ).length != val.hosts_facebook_id.length ){
+				return onError('Hosts with the same id have been provided', 'hosts_facebook_id', val.hosts_facebook_id, {
+					err_id: "twin_hosts"
+				});
+			}
+
+			// Make sure the number of hosts is right
+			if( val.hosts_facebook_id.length < settings.app.min_hosts || val.hosts_facebook_id.length > settings.app.max_hosts ){
+				return onError('Hosts array too short/long', 'hosts_facebook_id', val.hosts_facebook_id, {
+					err_id: "n_hosts"
+				});
+			}
+
 		};
 
 		
@@ -37,7 +50,7 @@
 		// 		onError('Date must be tomorrow or later', 'begins_at', val.begins_at, { err_id: "time_travel"} );
 		// };
 
-		function isGoodAgerange( val, onError ){
+		function isAgerangeOk( val, onError ){
 
 			console.log(val.agerange);
 			if( !/^\d{2}-\d{2}$/.test( val.agerange ) ){
@@ -58,7 +71,7 @@
 
 
 		var checkHostId   = nv.isString({ regex: /^\d{10,}$/ });
-		var checkAmbiance = nv.isString();
+		// var checkAmbiance = nv.isString();
 
 	/*	var checkParty  = nv.isAnyObject()
 
@@ -84,12 +97,11 @@
 			.withRequired('socket_id'   		, nv.isString())
 			.withRequired('address'				, checkAddress )
 			.withRequired('party'		    	, checkParty )
-			.withRequired('hosts_facebook_id'	, nv.isArray(  checkHostId, { min: settings.app.min_hosts , max: settings.app.max_hosts }))
-			.withRequired('ambiance'			, nv.isArray(  checkAmbiance, { min: settings.app.min_ambiance, max: settings.app.max_ambiance }))
+			// .withRequired('ambiance'			, nv.isArray(  checkAmbiance, { min: settings.app.min_ambiance, max: settings.app.max_ambiance }))
+			// .withRequired('mixity'				, nv.isString({ expected: _.pluck( settings.app.mixity, 'id' )   }))
 			.withRequired('agerange'			, nv.isString() )
-			.withRequired('mixity'				, nv.isString({ expected: _.pluck( settings.app.mixity, 'id' )   }))
-			.withCustom( isGoodAgerange )
-			.withCustom( isHostDuplicated )
+			.withCustom( isAgerangeOk )
+			.withCustom( isHostOk )
 			// .withCustom( isDateAtLeastToday )
 
 		nv.run( checkEvent, req.sent, function( n, errors ){
@@ -117,10 +129,10 @@
 		event_data.begins_at = data.begins_at;
 		event_data.timezone  = data.timezone;
 		event_data.address   = data.address;
-		event_data.ambiance  = data.ambiance;
+		// event_data.ambiance  = data.ambiance;
 		event_data.agerange  = data.agerange;
 		event_data.party     = data.party;
-		event_data.mixity    = data.mixity;
+		// event_data.mixity    = data.mixity;
 
 		// Weird, code auto converts it to string
 		event_data.address.lat       = parseFloat( event_data.address.lat );

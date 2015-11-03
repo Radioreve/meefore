@@ -1,0 +1,74 @@
+
+.welcome {
+
+}
+ 
+.welcome-wrap {
+text-align: center;
+color: white;width: 100%;}
+
+.welcome-header {
+	font-family: 'Pacifico';
+	font-size: 40px;
+}
+
+.welcome-subheader {
+	font-size: 18px;
+	margin-top: 20px;
+	font-family: 'Karla';
+}
+
+.btn-welcome, .btn-fillprofile {
+	background: #e94f6a;
+	width: 300px;
+	padding: 20px;
+	font-size: 15px;
+	display: block;
+	margin: 0 auto;
+	margin-top: 30px;
+}
+
+.btn-welcome:hover, .btn-fillprofile:hover {
+	background: #C9364F;
+}
+
+.welcome-skip, .ending-skip, .lintro-next, .lintro-prev {
+	
+font-size: 13px;
+	
+font-family: 'Karla';
+	
+margin-top: 3px;
+	
+cursor: pointer;
+	
+display: inline-block;
+	
+padding: 15px 54px;
+	
+transition: all ease-in-out .3s;
+}
+
+.welcome-skip:hover, .lintro-next:hover, .lintro-prev:hover, .ending-skip:hover {
+	background: rgba(252, 252, 252, 0.11);
+}
+
+.lintro-next {
+	position: absolute;
+	bottom: 100px;
+	right: 0;
+	color: white;
+	z-index: 1000000000;
+}
+
+.lintro-text {
+	font: 22px 'Pacifico';
+	color: white;
+	width: 90%;
+}
+
+.lintro-subtext {
+	font-size: 13px;
+	color: #555;
+	font-family: 'karla';
+}

@@ -61,6 +61,7 @@
 
 						var duration_time = 500;
 						if( !$menuItem.is('#events') ){
+							// LJ.fn.refreshMap();
 							$('.row-events-accepted-tabview').velocity('transition.slideDownOut', { duration: duration_time });
 							$('.row-events-accepted-inview.active').velocity('transition.slideDownOut', { duration: duration_time });
 							$('.row-events-filters, .row-preview').velocity('transition.slideUpOut', { duration: duration_time });

@@ -35,12 +35,12 @@
                 }
 
                 /* Ajout des hashtag */
-                if( (keyCode == 9 || keyCode == 13) && $self.parents('.row-create-ambiance').length != 0 && $self.val().length != 0 ){
-                    e.preventDefault();
-                    var str = LJ.fn.hashtagify( $self.val() );
-                    LJ.fn.addItemToInput({ html: LJ.fn.renderAmbianceInCreate( str ), inp: this, max: LJ.settings.app.max_ambiance });
-                    $(this).val('');
-                }
+                // if( (keyCode == 9 || keyCode == 13) && $self.parents('.row-create-ambiance').length != 0 && $self.val().length != 0 ){
+                //     e.preventDefault();
+                //     var str = LJ.fn.hashtagify( $self.val() );
+                //     LJ.fn.addItemToInput({ html: LJ.fn.renderAmbianceInCreate( str ), inp: this, max: LJ.settings.app.max_ambiance });
+                //     $(this).val('');
+                // }
 
                 LJ.$body.on('click', '.before-place', function(){
                     LJ.fn.removeBeforePlaceToInput();
@@ -118,13 +118,13 @@
             });
 
 
-             LJ.$body.on('click', '.mixity', function(){
+            //  LJ.$body.on('click', '.mixity', function(){
 
-                var $self = $(this);
-                $('.mixity').removeClass('selected');
-                $self.addClass('selected');
+            //     var $self = $(this);
+            //     $('.mixity').removeClass('selected');
+            //     $self.addClass('selected');
 
-            });
+            // });
 
             LJ.$body.on('click', '.agerange', function(){
 
@@ -152,7 +152,7 @@
                     custom_classes: ['text-left'],
                     render_cb: function(){
                         return LJ.fn.renderCreateEvent({ 
-                            mixity: LJ.settings.app.mixity
+                            // mixity: LJ.settings.app.mixity
                         });
                     },
                     predisplay_cb: function(){
@@ -493,22 +493,26 @@
             });
 
             // ambiance
-            $wrap.find('.ambiance-name').each(function(i, el){
-                ambiance.push( $(el).text() );
-            });
+            // $wrap.find('.ambiance-name').each(function(i, el){
+            //     ambiance.push( $(el).text() );
+            // });
 
             // begins_at
             var day  = $wrap.find('.date-name').text().trim();
             var hour = $wrap.find('.date-hour').text().trim();
             var min  = $wrap.find('.date-min').text().trim();
 
-            begins_at = moment().set({
-                h: hour,
-                m: min,
-                D: day.split('/')[0],
-                M: day.split('/')[1],
-                Y: day.split('/')[2]
-            });
+            if( !day || !hour || !min ){
+                begins_at = undefined;
+            } else {
+                begins_at = moment().set({
+                    h: hour,
+                    m: min,
+                    D: day.split('/')[0],
+                    M: day.split('/')[1],
+                    Y: day.split('/')[2]
+                }).toISOString(); 
+            }
 
             // timezone
             // Attention! Si un user crée un event dans une timezone différente, cela pose problème
@@ -516,14 +520,11 @@
             // Mais ça fait beaucoup pour pas grand chose à mon avis...
             timezone = moment().utcOffset(); // eg. 120 for UTC+2, 60 for France (UTC+1)
             
-            // proper format
-            begins_at = begins_at.toISOString();
-
             // age_range
             agerange  = $('.irs-from').text() + '-' + $('.irs-to').text();
 
             // mixity
-            mixity    = $wrap.find('.mixity.selected').attr('data-selectid').trim();
+            // mixity    = $wrap.find('.mixity.selected').attr('data-selectid').trim();
 
             // before address
             var $place = $wrap.find('.row-create-before-place').find('.rem-click');
@@ -533,6 +534,8 @@
                 address.place_id   = $place.attr('data-placeid');
                 address.place_name = $place.find('span').eq(0).text().trim();
                 address.city_name  = $place.find('span').eq(1).text().trim();
+            } else {
+                address = undefined;
             }
 
             // party address
@@ -546,6 +549,8 @@
                 party.address.place_id   = $place.attr('data-placeid');
                 party.address.place_name = $place.find('span').eq(0).text().trim();
                 party.address.city_name  = $place.find('span').eq(1).text().trim();
+            } else {
+                party = undefined;
             }
 
             // party_party
@@ -553,11 +558,11 @@
 
             var new_event = {
                 hosts_facebook_id : hosts_facebook_id,
-                ambiance          : ambiance,
+                // mixity         : mixity,
+                // ambiance       : ambiance,
                 begins_at         : begins_at,
                 timezone          : timezone,
                 agerange          : agerange,
-                mixity            : mixity,
                 address           : address,
                 party             : party
             };

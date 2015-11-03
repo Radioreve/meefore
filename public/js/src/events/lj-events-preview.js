@@ -276,6 +276,10 @@
                 var party_preview =  LJ.fn.renderPartyPreview_Event( party );   
             }
 
+            // Override for intro only
+            if( options.intro ){
+                var party_preview = LJ.fn.renderPartyPreview_Party( party );
+            }
 
 
             var $party = $('.party-preview');

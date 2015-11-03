@@ -14,7 +14,7 @@
       var img_vs      = options.img_vs;
       var sent_at     = options.sent_at;
       var facebook_id = options.facebook_id;
-      var me          = facebook_id == LJ.user.facebook_id ? 'me' : '';
+      var me          = (facebook_id == LJ.user.facebook_id || options.force_me ) ? 'me' : '';
 
       var display_params = _.merge( LJ.cloudinary.events.chat.params, { version: img_vs } );
       var img_tag      = $.cloudinary.image( img_id, display_params ).prop('outerHTML');
@@ -139,12 +139,12 @@
         }
       });
 
-      var ambiance_html = '<div class="event-preview-ambiance nonei">';
-      evt.ambiance.forEach(function( hashtag ){
-        if( hashtag == '' ) return;
-        ambiance_html += '<span class="event-preview-ambiance-hashtag">#</span><span class="event-preview-ambiance-name">' + LJ.fn.hashtagify(hashtag) + '</span>';
-      });
-      ambiance_html += '</div>';
+      // var ambiance_html = '<div class="event-preview-ambiance nonei">';
+      // evt.ambiance.forEach(function( hashtag ){
+      //   if( hashtag == '' ) return;
+      //   ambiance_html += '<span class="event-preview-ambiance-hashtag">#</span><span class="event-preview-ambiance-name">' + LJ.fn.hashtagify(hashtag) + '</span>';
+      // });
+      // ambiance_html += '</div>';
 
       var date_html = '<div class="preview-date">'
                         + '<div class="preview-date-month">' + moment.monthsShort( moment( evt.begins_at ).month() ) + '</div>'
@@ -158,7 +158,7 @@
                       + '<span class="preview-type">Meefore</span> '
                       + '<div class="event-preview-address"><i class="icon icon-location"></i>' + evt.address.place_name + ', ' + evt.address.city_name + '</div>'
                       + '<div class="event-preview-hosts-names"><i class="icon icon-users"></i>' + hosts_names.join('')    + '</div>'
-                      + ambiance_html
+                      // + ambiance_html
                     +'</div>';
 
       var html = '<div class="event-preview" data-eventid="' + evt._id + '">'
@@ -185,14 +185,12 @@
         }
       });
 
-      var party_type = "Quartier à haute ambiance";
 
        details_html = '<div class="party-preview-details">'
                       + '<div class="party-preview-icon"><i class="icon party-icon icon-glass"></i></div>'
                       + '<div class="party-preview-place-name">' + party.address.place_name + ', ' + party.address.city_name + '</div>'
                       + '<div class="party-preview-details--sub">'
-                        + '<div class="party-preview-place-type">' + party_type + '</div>'
-                        + '<div class="party-preview-attendees">' + n + ' meefore prévus.</div>'
+                        + '<div class="party-preview-place-type">' + n + ' meefore de prévues ce jour là</div>'
                       + '</div>'
                     +'</div>';
 
@@ -237,12 +235,12 @@
     },
     renderMixityInFilters: function( mixity_arr ){
 
-      var html = '';
-          mixity_arr.forEach(function(mixity){
-            if( mixity.id != 'whatever' )
-              html += '<div class="event-filter event-mixity slow-down-3" data-selectid="' + mixity.id + '">' + mixity.display + '</div>'
-          });
-        return html;
+      // var html = '';
+      //     mixity_arr.forEach(function(mixity){
+      //       if( mixity.id != 'whatever' )
+      //         html += '<div class="event-filter event-mixity slow-down-3" data-selectid="' + mixity.id + '">' + mixity.display + '</div>'
+      //     });
+      //   return html;
 
     },
     renderAgerangeInFilters: function( agerange_arr ){
@@ -496,13 +494,13 @@
       return html.prop('outerHTML');
 
     },
-    renderChatWrap_Group_Host: function( event_id, group ){
+    renderChatWrap_Group_Group: function( event_id, group ){
 
       var html = '<div class="event-accepted-chat-wrap none"'
                   + 'data-groupid="' + LJ.fn.makeGroupId( group.members_facebook_id ) + '"' 
                   + 'data-chatid="' + LJ.fn.makeChatId({ event_id: event_id, group_id: LJ.fn.makeGroupId( group.members_facebook_id ) }) + '">'
                     +'<div class="event-accepted-chat-messages">'
-                        + LJ.fn.renderChatWrapNotification_Group_Host()
+                        + LJ.fn.renderChatWrapNotification_Group_Group()
                       + '</div>'
                       + '<div class="event-accepted-chat-typing">'
                         + '<div class="readby" data-names=""></div>'
@@ -543,7 +541,7 @@
       return html.prop('outerHTML');
 
     },
-    renderChatWrapNotification_Group_Host: function(){
+    renderChatWrapNotification_Group_Group: function(){
 
       var html =  '<div data-lid="ch_first_msg_group" class="super-centered event-accepted-notification-message">'
                         + 'Votre demande a bien a été envoyée' 
@@ -585,7 +583,7 @@
 
           groups_html += LJ.fn.renderUsersGroup( group );
           chatgroups_html += LJ.fn.renderChatGroup_Group( group );
-          chat_wrap_html += LJ.fn.renderChatWrap_Group_Host( evt._id, group );
+          chat_wrap_html += LJ.fn.renderChatWrap_Group_Group( evt._id, group );
           status  = group.status;
 
         }       
@@ -593,6 +591,56 @@
 
 
       html += '<div data-eventid="' + evt._id + '" data-status="' + status + '" class="row-events-accepted-inview" >'
+                + '<div class="event-accepted-inview">'
+                  + '<div class="event-accepted-users">'
+                    + hosts_html
+                    + groups_html
+                  + '</div>'
+                  + '<div class="event-accepted-chat">'
+                      + '<div class="event-accepted-chatgroups">'
+                        + chatgroups_html
+                      + '</div>'
+                      + '<div class="event-accepted-chatwraps">'       
+                        + chat_wrap_html
+                      + '</div>'
+                  + '</div>'
+                  + '<div class="backtomap"><i class="icon icon-minus"></i></div>'
+                + '</div>'
+            + '</div>';
+
+        return html;
+    },
+    renderEventInview_Intro: function( evt ){
+
+    var html = '', hosts_html = '', groups_html = '', chatgroups_html = '', chat_wrap_html = '', status = '';
+
+      var hosts_html = LJ.fn.renderHostsGroup( evt.hosts );
+      var group = evt.groups[0];
+      
+        // groups_html += LJ.fn.renderUsersGroup( group );
+        status = "accepted";
+
+     
+
+      var chat_wrap_html = '<div class="event-accepted-chat-wrap"'
+                            + 'data-groupid=""' 
+                            + 'data-chatid="chat-intro">'
+                              +'<div class="event-accepted-chat-messages">'
+                                  + LJ.fn.renderChatWrapNotification_Group_Group()
+                                + '</div>'
+                                + '<div class="event-accepted-chat-typing">'
+                                  + '<div class="readby" data-names=""></div>'
+                                  + '<input type="text"/>'
+                                  + '<button data-lid="ch_button_send" class="theme-btn">Envoyer</button>'
+                                + '</div>'
+                            + '</div>';
+
+      var chatgroups_html =  '<div class="event-accepted-chatgroup active" data-groupid="">'
+                              + '<span>Intro</span>'
+                              + '<span class="bubble none"></span>'
+                           + '</div>';
+
+      html += '<div data-eventid="' + evt._id + '" data-status="' + status + '" class="event-inview-intro row-events-accepted-inview" >'
                 + '<div class="event-accepted-inview">'
                   + '<div class="event-accepted-users">'
                     + hosts_html

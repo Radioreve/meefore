@@ -2,7 +2,9 @@
 	window.LJ = _.merge( window.LJ || {}, 
 
 {
-
+    settings: {
+        app: {}
+    },
 	accessToken:'',
 	ui:{
 		nearest_event_opacity: '.5',
@@ -32,6 +34,246 @@
         slideRightOutVeryLight: { opacity: [, 1], translateX: [7, 0]   }
 	},
     page_default_title: "Meefore | Home",
+    event_markers_intro: [],
+    party_markers_intro: [],
+    intro: {
+        event_data: {
+            "__v": 0,
+            "begins_at": "2025-11-02T19:30:07.000Z",
+            "timezone": 60,
+            "created_at": "2015-11-02T12:18:07.000Z",
+            "_id": "5637547fff83d96c44fe3aa8",
+            "meta": [],
+            "groups": [],
+            "agerange": "20-26",
+            "party": {
+                "type": "anytype",
+                "address": {
+                    "city_name": "Earth",
+                    "place_name": "Bastille",
+                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
+                    "lng": 2.369002000000023,
+                    "lat": 48.853082
+                }
+            },
+            "address": {
+                "city_name": "Paris",
+                "place_name": "Rue du Bac",
+                "place_id": "ChIJOQ6CxtVx5kcRd4vbzGeYf_w",
+                "lng": 2.3249530000000505,
+                "lat": 48.85537069999999
+            },
+            "type": "before",
+            "status": "open",
+            "hosts": [
+                {
+                    "main_picture": {
+                        "hashtag": "meerofka",
+                        "is_main": true,
+                        "img_place": 1,
+                        "img_version": "1445890265",
+                        "img_id": "55e85819bc81dcecc1601e4d--1"
+                    },
+                    "channels": {
+                        "me": "121428001540741",
+                        "public_chan": "app"
+                    },
+                    "country_code": "us",
+                    "mood": "happy",
+                    "drink": "shots",
+                    "name": "Jennifer Jenr",
+                    "job": "",
+                    "gender": "female",
+                    "age": 18,
+                    "signup_date": "2015-09-03T14:24:25.000Z",
+                    "facebook_url": "https://www.facebook.com/app_scoped_user_id/121428001540741/",
+                    "facebook_id": "121428001540741"
+                },
+                {
+                    "main_picture": {
+                        "hashtag": "classic",
+                        "is_main": true,
+                        "img_place": 0,
+                        "img_version": "1444491565",
+                        "img_id": "55e85897bc81dcecc1601e4e--0"
+                    },
+                    "channels": {
+                        "me": "142944122715258",
+                        "public_chan": "app"
+                    },
+                    "country_code": "fr",
+                    "mood": "happy",
+                    "drink": "water",
+                    "name": "Kaitlin Kal",
+                    "job": "",
+                    "gender": "female",
+                    "age": 18,
+                    "signup_date": "2015-09-03T14:26:31.000Z",
+                    "facebook_url": "https://www.facebook.com/app_scoped_user_id/142944122715258/",
+                    "facebook_id": "142944122715258"
+                },
+                {
+                    "main_picture": {
+                        "hashtag": "meerofka",
+                        "is_main": true,
+                        "img_place": 1,
+                        "img_version": "1445890096",
+                        "img_id": "561ec5f190a94cdc5229a0f5--1"
+                    },
+                    "channels": {
+                        "me": "122537181435106",
+                        "public_chan": "app"
+                    },
+                    "country_code": "fr",
+                    "mood": "happy",
+                    "drink": "water",
+                    "name": "Ben Beaumec",
+                    "job": "",
+                    "gender": "male",
+                    "age": 18,
+                    "signup_date": "2015-10-14T21:15:29.000Z",
+                    "facebook_url": "https://www.facebook.com/app_scoped_user_id/122537181435106/",
+                    "facebook_id": "122537181435106"
+                },
+                {
+                    "main_picture": {
+                        "img_id": "5622110750ccf4741d63be8f--0",
+                        "img_version": "1445890920",
+                        "img_place": 0,
+                        "is_main": true,
+                        "hashtag": "classic"
+                    },
+                    "channels": {
+                        "me": "139625316382924",
+                        "public_chan": "app"
+                    },
+                    "country_code": "us",
+                    "mood": "happy",
+                    "drink": "water",
+                    "name": "David Dav",
+                    "job": "",
+                    "gender": "male",
+                    "age": 18,
+                    "signup_date": "2015-10-17T09:12:39.000Z",
+                    "facebook_url": "https://www.facebook.com/app_scoped_user_id/139625316382924/",
+                    "facebook_id": "139625316382924"
+                }
+            ]
+        },
+        party_data: {
+            "_id": "5629550f2157aaf81eb43a2c",
+            "address" : {
+                "city_name" : "Paris",
+                "place_name": "Bastille",
+                "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
+                "lng": 2.369002000000023,
+                "lat": 48.853082
+            },
+            "attendees" : "280-450",
+            "begins_at" : "2014-10-22T20:00:00.923Z",
+            "created_at" : "2015-10-22T21:28:47.000Z",
+            "ends_at" : "2014-10-23T20:00:00.926Z",
+            "hosted_by" : "BDE Centrale Paris",
+            "link" : "http://www.bitoku.com",
+            "name" : "Quadrabang",
+            "picture_url" : "http://res.cloudinary.com/radioreve/image/upload/v1445867671/lp1.jpg",
+            "status" : "open",
+            "timezone" : 120,
+            "type" : "school"
+        },
+        message_data_user_1: {
+            name: "Will",
+            img_id: "5622110750ccf4741d63be8f--0",
+            img_vs: "1445890920",
+            facebook_id: "will"
+        },
+        message_data_user_2: {
+            name: "Sandy",
+            img_id: "55e85897bc81dcecc1601e4e--0",
+            img_vs: "1444491565",
+            facebook_id: "sandy"
+        },
+        events_data: [{
+            _id: 'intro_1',
+            party: {
+                "type": "anytype",
+                "address": {
+                    "city_name": "Earth",
+                    "place_name": "Bastille",
+                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
+                    "lng": 2.369002000000023,
+                    "lat": 48.853082
+                }
+            },
+            address: {
+                lat: 48.84726471793433,
+                lng: 2.3407745361328125
+            }
+        }, {
+            _id: 'intro_2',
+            party: {
+                "type": "anytype",
+                "address": {
+                    "city_name": "Earth",
+                    "place_name": "Bastille",
+                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
+                    "lng": 2.369002000000023,
+                    "lat": 48.853082
+                }
+            },
+            address: {
+                lat: 48.84189859515306,
+                lng: 2.3596572875976562
+            }
+        }, {
+            _id: 'intro_3',
+            party: {
+                "type": "anytype",
+                "address": {
+                    "city_name": "Earth",
+                    "place_name": "Bastille",
+                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
+                    "lng": 2.369002000000023,
+                    "lat": 48.853082
+                }
+            },
+            address: {
+                lat: 48.860931611800865,
+                lng: 2.3534774780273438
+            }
+        }, {
+            _id: 'intro_4',
+            party: {
+                "type": "anytype",
+                "address": {
+                    "city_name": "Earth",
+                    "place_name": "Bastille",
+                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
+                    "lng": 2.369002000000023,
+                    "lat": 48.853082
+                }
+            }, address: {
+                lat: 48.85968932107463,
+                lng: 2.3886680603027344
+            }
+        }, {
+            _id: 'intro_5',
+            party: {
+                "type": "anytype",
+                "address": {
+                    "city_name": "Earth",
+                    "place_name": "Bastille",
+                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
+                    "lng": 2.369002000000023,
+                    "lat": 48.853082
+                }
+            },
+            address: {
+                lat: 48.84613505565775,
+                lng: 2.377767562866211
+            }
+        }]
+    },
 	jsp_api: {},
 	cache: {
         events : [],

@@ -35,14 +35,15 @@
 		},
 		ambiance: {
 			type: Array,
-			default: ['classique']
+			default: null
 		},
 		agerange: {
 			type: String,
 			default:''
 		},
 		mixity: {
-			type: String
+			type: String,
+			default: null
 		},
 		groups: {
 			type: Array,

@@ -6,6 +6,18 @@
 
 @media screen and ( max-width: 1024px ) {
 	 
+	 .btn-requestin {
+	 	display: none;
+	 }
+	 .row-events-accepted-tabview {
+	 	display: none!important;
+	 }
+	 .loaderWrap {
+	 	display: none!important;
+	 }
+	 .row-events-filters{
+	 	top: 40px;
+	 }
 	 .centered {
 	 	width: 100%;
 	 	padding: 0 20px;
@@ -13,10 +25,6 @@
 	 .row-profile .picture {
 	 	display: inline-block;
 	 	margin: 23px;
-	 }
-	 .row-input {
-	 	width: 100%;
-	 	height: auto;
 	 }
 
 	 .hero-logo {
@@ -78,7 +86,7 @@
      #menuWrap {
      	margin-left: 65px;
      }
-	.row-events-filters-group {
+	.filters-date, .filters-create-meefore, .row-events-filters-divider {
 		display: none;
 	}
 	#settings {
@@ -103,14 +111,71 @@
 	.row-select-description {
 		display: none;
 	}
+
+	.row-preview {
+		width: 100%!important;
+		justify-content: center!important;
+	}
+
+	.row-party-preview {
+		top: 220px!important;
+	}
+
+	.row-input {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		height: 85px;
+	}
+
+	.row-input * {
+		flex: 1 0 auto;
+		width: 100%!important;
+		align-self: center;
+		text-align: center!important;
+		margin: 0;
+		border: none;
+	}
+
+	.row-select-wrap * {
+		width: auto!important;
+	}
+
+	label {
+		height: 30px;;
+	}
 }
 
-@media screen and ( max-width: 500px ) {
+@media screen and ( max-width: 750px ) {
+	
+	 .hero-header {
+		font-size: 20px;
+		width: 80%;
+		line-height: 30px;
+		}
+
+		.lp-avant {
+			width: auto;
+		}
+
+		.lp-avant img {
+			top: 30px
+		}
+
+	.row-subtitle-text {
+		font-size: 13px;
+	}
 	
 	 #thumbWrap {
      	display: none!important;
      }
-
+	
+	.row-country {
+		display: none;
+	}
 	#facebook_connect {
 		width: 150px;
 		padding: 7px 10px;
@@ -135,6 +200,29 @@
 	.landing-places-wrap .icon {
 		font-size: 12px;
 		top: 1px;
+	}
+
+	.keypoint-wrap {
+		width: auto;
+		height: auto;
+		margin-bottom: 20px;
+	}
+	.keypoint-2 {
+		height: 280px;
+	}
+
+	.keypoint-body {
+		font-size: 13px;
+	}
+
+	.modal-container {
+		width: 80%!important;
+		min-width: 80%;
+		max-width: 80%;
+	}
+
+	.event-filter-label {
+		display: none;
 	}
 
 }

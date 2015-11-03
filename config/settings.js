@@ -5,9 +5,9 @@ var settings = {
 
 	api_version: 1,
 	app: {
-		min_group: 1,
-		max_group: 4,
-		min_hosts: 1,
+		min_group: 2,
+		max_group: 5,
+		min_hosts: 2,
 		max_hosts: 5,
 		min_ambiance: 1,
 		max_ambiance: 4,
@@ -55,7 +55,7 @@ var settings = {
       	alerts: {
 	        'message_unread': 'yes',
 	        'accepted_in' : 'yes',
-	        'min_frequency': '3600' // 1 hour
+	        'min_frequency': '7200' // 1 hour
       	},
       	ux: {
 	        'auto_login': 'no',

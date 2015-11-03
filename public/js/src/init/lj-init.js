@@ -371,8 +371,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                             $(el).append('<span class="bubble filtered"></span>')
                         });
 
-                        if (LJ.user.status == 'new'){
-                            // LJ.fn.initTour();
+                        if ( 1 || LJ.user.status == 'new'){
+                            LJ.fn.initIntro();
                         }
 
                         if (LJ.user.friends.length == 0){

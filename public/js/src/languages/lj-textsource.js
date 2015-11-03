@@ -594,29 +594,29 @@
 			"en": "Welcome to Meefore"
 		},
 		//mp stands for missing parameter
-		err_create_mp_hosts_facebook_id: {
-			"fr": "Il faut être au moins 2 pour organiser un meefore",
-			"en": "You must be at least 2 to organize a meefore"
+		err_create_n_hosts: {
+			"fr": "Il faut être entre %min et %max pour organiser un meefore",
+			"en": "You must be between %min and %max to organize a meefore",
 		},
 		err_create_mp_ambiance: {
 			"fr": "Hashtag ton meefore pour le décrire",
 			"en": "Hashtag your meefore to describe it"
 		},
 		err_create_mp_party: {
-			"fr": "Et la soirée, ça se passe où?",
-			"en": "And where does the party take place?"
+			"fr": "Addresse de la soirée manquante",
+			"en": "Missing the address of the party"
 		},
 		err_create_mp_address: {
-			"fr": "Il va nous manquer l'adresse :/",
-			"en": "The address is gonna be missing :/"
+			"fr": "Addresse du meefore manquante",
+			"en": "Missing meefore's address"
 		},
 		err_create_mp_begins_at: {
-			"fr": "Il va nous manquer la date :/",
-			"en": "The date is gonna be missing :/"
+			"fr": "Date manquante/incomplète",
+			"en": "Missing the date"
 		},
 		err_create_mp_default: {
-			"fr": "Une des valeurs semble manquer :/",
-			"en": "There is a field that seems to be missing :/"
+			"fr": "Une des valeurs semble manquer",
+			"en": "There is a field that seems to be missing "
 		},
 		err_create_already_hosting_me: {
 			"fr": "Vous organisez déjà un meefore ce jour là",
@@ -678,14 +678,6 @@
 			"fr": "Une erreur inconnue s'est produite",
 			"en": "An unknown error has occured"
 		},
-		err_request_name_bad_pattern: {
-			"fr": "Le nom ne peut contenir que chiffres, lettres et ponctuation",
-			"en": "The name can only be composed of numbers, letters and punctuation"
-		},
-		err_request_message_bad_pattern: {
-			"fr": "Le message ne peut contenir que chiffres, lettres et ponctuation",
-			"en": "The message can only contain numbers, letters ans punctuation"
-		},
 		err_request_name_bad_length: {
 			"fr": "Le nom doit avoir entre %min et %max caractères",
 			"en": "The name must be composed of a minimum of %min and a maximum of %max characters"
@@ -693,6 +685,10 @@
 		err_request_message_bad_length: {
 			"fr": "Le message doit avoir entre %min et %max caractères",
 			"en": "The message must be composed of a minimum of %min and a maximun of %max characters"
+		},
+		err_request_n_group: {
+			"fr": "Votre groupe doit avoir entre %min et %max personnes",
+			"en": "Your group must have between %min and %max people"
 		},
 		err_request_ghost_members: {
 			"fr": "Des membres ne sont pas inscrits sur Meefore",

@@ -52,9 +52,14 @@
 
 
         	if( err_data.err_id == 'missing_parameter' ){
-        		var message = LJ.text_source["err_create_mp_" + err_data.err_parameter][ LJ.app_language ] && LJ.text_source["err_create_mp_" + err_data.err_parameter][ LJ.app_language ] || LJ.text_source["err_create_mp_default"][ LJ.app_language ]
+        		var message = LJ.text_source["err_create_mp_" + err_data.parameter][ LJ.app_language ];
         		return LJ.fn.replaceModalTitle( message );
         	}
+
+            if( err_data.err_id == 'n_hosts' || err_data.err_id == 'array_too_long' ){
+                var message = LJ.text_source["err_create_n_hosts"] && LJ.text_source["err_create_n_hosts"][ LJ.app_language ] || LJ.text_source["err_create_mp_default"][ LJ.app_language ];
+                return LJ.fn.replaceModalTitle( message.replace('%min', LJ.settings.app.min_hosts ).replace('%max', LJ.settings.app.max_hosts ));
+            }
 
             // static errors
         	if( err_data.err_id == 'already_hosting' ){
@@ -74,8 +79,13 @@
 
 
             if( err_data.err_id == 'missing_parameter' ){
-                var message = LJ.text_source["err_request_mp_" + err_data.err_parameter] && LJ.text_source["err_request_mp_" + err_data.err_parameter][ LJ.app_language ] || LJ.text_source["err_request_mp_default"][ LJ.app_language ]
+                var message = LJ.text_source["err_request_mp_" + err_data.parameter] && LJ.text_source["err_request_mp_" + err_data.parameter][ LJ.app_language ] || LJ.text_source["err_request_mp_default"][ LJ.app_language ]
                 return LJ.fn.replaceModalTitle( message );
+            }
+
+            if( err_data.err_id == 'n_group' ){
+                var message = LJ.text_source["err_request_n_group"][ LJ.app_language ];
+                return LJ.fn.replaceModalTitle( message.replace('%min', LJ.settings.app.min_group ).replace('%max', LJ.settings.app.max_group ) );
             }
 
             // dynamic errors (from database)
@@ -98,13 +108,13 @@
             }
 
             if( err_data.err_id == 'name_bad_length' ){
-                var message = LJ.text_source['err_request_name_bad_length'][ LJ.app_language ].replace('%min', err_data.min ).replace('%max', err_data.max );
-                return LJ.fn.replaceModalTitle( message );
+                var message = LJ.text_source['err_request_name_bad_length'][ LJ.app_language ];
+                return LJ.fn.replaceModalTitle( message.replace('%min', err_data.min ).replace('%max', err_data.max ) );
             }
 
             if( err_data.err_id == 'message_bad_length' ){
-                var message = LJ.text_source['err_request_message_bad_length'][ LJ.app_language ].replace('%min', err_data.min ).replace('%max', err_data.max );
-                return LJ.fn.replaceModalTitle( message );
+                var message = LJ.text_source['err_request_message_bad_length'][ LJ.app_language ];
+                return LJ.fn.replaceModalTitle( message.replace('%min', err_data.min ).replace('%max', err_data.max ) );
             }
 
             var message =  LJ.text_source["err_request_" + err_data.err_id][ LJ.app_language ] && LJ.text_source["err_request_" + err_data.err_id][ LJ.app_language ] || LJ.text_source["err_unknown"][ LJ.app_language ];

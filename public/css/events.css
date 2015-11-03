@@ -95,10 +95,11 @@ i.icon-create {
     height: 100%;
 }
 .row-party-preview {
-    padding-right: 18px;
-    width: 33%;
+    /* padding-right: 18px; */
+    width: 45%;
     right: 0;
     /* top: 210px; */
+    justify-content: flex-start!important;
 }
 .row-events-link {
   position: absolute;
@@ -111,9 +112,9 @@ i.icon-create {
   transition: all ease-out 1s;
 }
 .row-events-preview {
-     padding-left: 50px;
+     /* padding-left: 50px; */
      padding-right: 0px;
-     width: 67%;
+     width: 55%;
      left: 0;
 }
 .row-events-accepted-tabview,
@@ -181,7 +182,7 @@ background-size: cover;
 height: 45px;
 border-radius: 40px;
 background-position: center center;
-background-repeat: no-repeat;margin-left: 20px;}
+background-repeat: no-repeat;margin-left: 50px;}
 
 .party-preview-picture img {border-radius: 30px;text-align: center;}
 
@@ -214,9 +215,8 @@ margin-right: 9px;
 }
 
 .event-preview-details,
-.party-preview-details{
-text-align: left;display: inline-block;
-vertical-align: middle;/* margin-right: 11px; */overflow: hidden;text-overflow: ellipsis;flex: 1 0 auto;}
+.party-preview-details{text-align: left;display: inline-block;
+vertical-align: middle;overflow: hidden;text-overflow: ellipsis;flex: 1 0 auto;}
 .party-preview-details {
   padding: 10px;
   display: flex;
@@ -247,7 +247,7 @@ padding-left: 3px;display: inline-block;font-size: 13px;}
    border-radius: 3px;
    line-height: 14px;
    flex: 2 0 0;
-   text-align: center;
+   text-align: left;
 }
 .event-preview-hosts-names{
   display: block;
@@ -266,7 +266,7 @@ padding-left: 3px;display: inline-block;font-size: 13px;}
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   display: none;
 }
 .row-events-filters-group {
@@ -330,7 +330,7 @@ transition: all ease-in-out .15s;
 }
 
 .filter-date-item-weekday {
-
+display: none;
 }
 .filter-date-item-numbday {
   
@@ -350,16 +350,11 @@ transition: all ease-in-out .15s;
 }
 
 .event-filter-label {
-
-font-weight: bolder;
-
-font-size: 11px;
-
-margin: 0 2px;
-
-text-transform: uppercase;
-
-flex: 2 0 0;
+font-weight: bolder;
+font-size: 11px;
+margin: 0 2px;
+text-transform: uppercase;
+flex: 2 0 0;
 }
 
 .event-filter-options {
@@ -381,7 +376,7 @@ display: inline-block;}
   height: 22px;
   width:1px;
   margin: 0 11px;
-  flex: 1 0 auto;
+  /* flex: 1 0 auto; */
 }
 
 .backtomap {
@@ -630,7 +625,8 @@ transition: all ease-out .4s;
   Events inview 
 */
 .row-preview {
-  
+  display: flex!important;
+  justify-content: flex-end;
 }
 .row-events-accepted-inview {
   height: 425px;

@@ -14,19 +14,31 @@
 		console.log('Validating request in');
 
 		function checkNamePattern( val, onError ){
-			if( !/^[a-z0-9\&!-_'?\s\u00C0-\u017F]{1,}$/i.test( val.name ) )
-				return onError("Name bad pattern", "name", val.name, { err_id: "name_bad_pattern" });
 
-			if( !/^[a-z0-9\&!'?\s\u00C0-\u017F]{4,27}$/i.test( val.name ) )
-				return onError("Name bad length", "name", val.name, { err_id: "name_bad_length", min: 4, max: 20 });
+			if( val.name.length < 4 || val.name.length > 20 ){
+				return onError("Name bad length", "name", val.name, {
+					err_id: "name_bad_length", min: 4, max: 20 
+				});
+			}
 		};
 
 		function checkMessagePattern( val, onError ){
-			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{1,}$/i.test( val.message ) )
-				return onError("Message bad pattern", "message", val.message, { err_id: "message_bad_pattern"});
 
-			if( !/^[a-z0-9\&!?\s\u00C0-\u017F]{4,50}$/i.test( val.message ) )
-				return onError("Message bad length", "message", val.message, { err_id: "message_bad_length", min: 4, max: 50 });
+			if( val.name.length < 4 || val.name.length > 50  ){
+				return onError("Message bad length", "message", val.message, { 
+					err_id: "message_bad_length", min: 4, max: 50 
+				});
+			}
+		};
+
+		function isGroupOk( val, onError ){
+
+			if( !val.members_facebook_id || val.members_facebook_id.length < settings.app.min_group || val.members_facebook_id.length > settings.app.max_group ){
+				return onError("Group bad length", "members_facebook_id", val.members_facebook_id, {
+					err_id: "n_group"
+				});
+			}
+
 		};
 
 		req.sent.members_facebook_id = _.uniq( req.sent.members_facebook_id );
@@ -39,8 +51,8 @@
 		
 			.withRequired('name'               , nv.isString())
 			.withRequired('message'            , nv.isString())
-			.withRequired('members_facebook_id', nv.isArray( nv.isString(), { min: 2, max: 4 }))
 			.withRequired('socket_id'          , nv.isString() )
+			.withCustom( isGroupOk )
 			.withCustom( checkNamePattern )
 			.withCustom( checkMessagePattern )
 

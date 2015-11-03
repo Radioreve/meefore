@@ -4,29 +4,379 @@
 
         	initIntro: function(){
 
+        		LJ.intro_steps = [
+
+        			{ 
+        				id: "init",
+        			 	next_id: "intro_1",
+        			 	mode: "cover",
+        			 	callback: function(){
+
+        			 		LJ.fn.showWelcomeLintro();
+        			 		LJ.map.setZoom(14);
+
+        			 		LJ.event_markers.forEach(function(marker){
+        			 			marker.marker.setOpacity(0);
+        			 		});
+        			 		LJ.party_markers.forEach(function(marker){
+        			 			marker.marker.setOpacity(0);
+        			 		});
+
+        			 		$('.btn-welcome').click(function(){
+			    				$('.lintro-next').click();
+			    			});
+
+			    			$('.welcome-skip').click(function(){
+			    				LJ.fn.clearIntro();
+			    				LJ.fn.endIntro(function(){
+			    					//
+			    				});
+			    			});
+        			 	}
+        			},
+        			{ 
+        				id: "intro_1",
+        				next_id: "intro_2",
+        				duration: 5000,
+        				mode: "area",
+        				upper_el: ".row-events-filters",
+        				lower_el: ".row-events-accepted-tabview",
+        				text: "Meefore, c'est une map avec des soirées et avec des befores.",
+        				subtext: "Jusque là, tout va bien...", 
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        				}
+        			},
+        			{
+        				id: "intro_2",
+        				next_id: "intro_3",
+        				duration: 5000,
+        				mode: "idem",
+        				text: "Chaque utilisateur peut proposer un before...",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        					LJ.fn.displayEventMarker( LJ.intro.event_data, { cache: 'event_markers_intro' } );
+        				}
+        			},
+        			{
+        				id: "intro_3",
+        				next_id: "intro_4",
+        				duration: 5000,
+        				mode: "idem",
+        				text_align:"center",
+        				text: "...pour une soirée.",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        					LJ.fn.displayPartyMarker_Party( LJ.intro.party_data, { cache: 'party_markers_intro' } );
+        				}
+        			},
+        			{
+        				id: "intro_4",
+        				next_id: "intro_5",
+        				duration: 5000,
+        				mode: "idem",
+        				text: "Les soirées affichées proviennent des utilisateurs eux-même, ou sont proposées par meefore",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        				}
+        			},
+        			{
+        				id: "intro_5",
+        				next_id: "intro_6",
+        				duration: 8000,
+        				mode: "idem",
+        				text: "Ca, c'est ce qui se passe quand plusieurs groupes font des before pour aller à la même soirée",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+
+        					LJ.intro.events_data.forEach(function( evt, i ){
+
+        						var url = LJ.cloudinary.markers.base.open.url;
+
+        						if( i == 0 || i == 2 ) url = LJ.cloudinary.markers.pending.open.url;
+        						if( i == 1 || i == 3 ) url = LJ.cloudinary.markers.accepted.open.url;
+        						if( i == 4 ) url = LJ.cloudinary.markers.base.full.url;
+
+        						LJ.fn.displayEventMarker( evt,  { url: url, cache: 'event_markers_intro' } );
+
+        					});
+
+        					LJ.fn.displayPathToParty({ evt: LJ.intro.event_data });
+                            LJ.intro.events_data.forEach(function( evt ){
+                            	 LJ.fn.displayPathToParty({
+			                        evt            : evt,
+			                        stroke_opacity : 0.25,
+			                        cache          : "half_active_paths"
+			                    });
+                            });
+        				}
+        			},
+        			{
+        				id: "intro_6",
+        				next_id: "intro_7",
+        				duration: 6000,
+        				mode: "idem",
+        				text: "Lorsqu'on clique sur un meefore des informations sur les organisateurs sont disponibles",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        					LJ.event_markers_intro[0].marker.setIcon( LJ.cloudinary.markers.base_active.open.url );
+        					LJ.party_markers_intro[0].marker.setIcon( LJ.cloudinary.markers.party_active.url );
+        					LJ.fn.addEventPreview( LJ.intro.event_data );
+        					LJ.fn.addPartyPreview( LJ.intro.party_data, { intro: true });
+        				}
+        			},
+        			{
+        				id: "intro_7",
+        				next_id: "intro_8",
+        				duration: 5000,
+        				mode: "element",
+        				el: ".event-preview",
+        				text: "Ici, c'est les organisateurs du before.",
+        				text_align: "left",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        				}
+        			// 
+        			},
+        			{
+        				id: "intro_8",
+        				next_id: "intro_9",
+        				duration: 5000,
+        				mode: "element",
+        				el: ".party-preview",
+        				text: "Là, c'est la soirée où ils ont prévu d'aller",
+        				text_align: "right",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        				}
+        			// 
+        			},
+        			{
+        				id: "intro_9",
+        				next_id: "intro_10",
+        				duration: 5000,
+        				mode: "element",
+        				el: ".btn-requestin",
+        				text: "Ici, on demande à rejoindre leur before",
+        				text_align: "center",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        				}
+        			},
+        			{
+        				id: "intro_10",
+        				next_id: "intro_11",
+        				duration: 6000,
+        				mode: "element",
+        				el: ".modal-container",
+        				text: "Ca, c'est une demande de participation",
+        				text_align: "center",
+        				delay: 1000,
+        				callforward: function(){
+        					$('.btn-requestin').click();
+        				},
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        				}
+        			}, 
+        			{
+        				id: "intro_11",
+        				next_id: "intro_12",
+        				duration: 6000,
+        				mode: "element",
+        				el: ".row-requestin-group-members",
+        				text: "Meefore encourage la rencontre en groupes, c'est pourquoi il faut être au moins 2 pour rejoindre un meefore",
+        				text_align: "center",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        				}
+        			}, 
+        			{
+        				id: "intro_12",
+        				next_id: "intro_13",
+        				duration: 5000,
+        				mode: "area",
+        				upper_el: '.row-party-preview',
+        				lower_el: '.row-events-accepted-tabview',
+        				text: "Lorsqu'une demande est effectuée, le groupe organisateur doit valider la demande.",
+        				text_align: "center",
+        				delay: 400,
+        				callforward: function(){
+        					$('#requestIn').find('.btn-cancel').click();
+        				},
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        					LJ.event_markers_intro.forEach(function( evt, i ){
+        						if( i == 1 ) return;
+        						evt.marker.setMap(null);
+        					});
+        					LJ.party_markers_intro[0].marker.setMap(null);
+        					LJ.active_paths[0].setMap(null);
+        					LJ.half_active_paths.forEach(function( path ){
+        						path.setMap(null);
+        					});
+
+        				}
+        			},
+        			{
+        				id: "intro_13",
+        				next_id: "intro_13a",
+        				duration: 5000,
+        				mode: "idem",
+        				text: "Une fois accepté, l'icône change et passe en mode discussion",
+        				text_align: "center",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        					LJ.event_markers_intro.forEach(function( evt, i ){
+        						if( i == 1 ) return evt.marker.setIcon( LJ.cloudinary.markers.accepted.open.url );
+        						evt.marker.setMap(null);
+        					});
+        				}
+        			},
+        			{
+        				id: "intro_13a",
+        				next_id: "intro_14",
+        				duration: 5000,
+        				mode: "idem",
+        				text: "Chaque organisateur peut suspendre un meefore à tout moment pour signaler qu'ils sont au complet",
+        				text_align: "center",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        					LJ.event_markers_intro.forEach(function( evt, i ){
+        						if( i == 1 ) return evt.marker.setIcon( LJ.cloudinary.markers.base.full.url );
+        						evt.marker.setMap(null);
+        					});
+        				}
+        			},
+        			{
+        				id: "intro_14",
+        				next_id: "intro_15",
+        				duration: 5000,
+        				mode: "area",
+        				upper_el: '.row-events-accepted-tabview',
+        				text: "En bas de l'écran sont représentés tous les meefore qui nous concernent",
+        				text_align: "center",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        					$('.row-events-accepted-tabview')
+        						.append( LJ.fn.renderEventTabview( LJ.intro.event_data ) )
+        						.children().last()
+        						.addClass('event-tabview-intro');
+        				}
+        			},
+        			{
+        				id: "intro_15",
+        				next_id: "intro_16",
+        				duration: 5000,
+        				mode: "area",
+        				upper_el: '.row-party-preview',
+        				upper_cover: true,
+        				text: "C'est ici que se passe le chat!",
+        				text_align: "center",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        					LJ.fn.showIntroChatInview();
+        				}
+        			},
+        			{
+        				id: "intro_16",
+        				next_id: "intro_17",
+        				duration: 12000,
+        				mode: "idem",
+        				// lower_el: '.row-events-accepted-tabview',
+        				text: "Lorsque les organisateurs ont validé la demande, la discussion peut démarrer",
+        				text_align: "center",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        					LJ.fn.showIntroChatTalk();
+        				}
+        			},
+        			{
+        				id: "intro_17",
+        				next_id: "intro_18",
+        				duration: 9000,
+        				mode: "element",
+        				el: '.event-accepted-chat-typing',
+        				padding: 20,
+        				// lower_el: '.row-events-accepted-tabview',
+        				text: "Le chat laisse la possibiliter de 'chuchotter' des messages à une ou plusieurs personnes",
+        				text_align: "center",
+        				callback: function(){
+        					LJ.fn.showTextLintro(this);
+        					setTimeout(function(){
+        						LJ.fn.stageUserForWhisper( 'will', 'chat-intro' );
+        						setTimeout(function(){
+        							LJ.fn.stageUserForWhisper( 'sandy', 'chat-intro' );
+        						}, 2500 );
+        					}, 3500 );
+        				}
+        			},
+        			{
+        				id: "intro_18",
+        				mode: "cover",
+        				callback: function(){
+
+        					LJ.fn.showEndingLintro();
+        					LJ.fn.clearIntro();
+
+        					$('.btn-fillprofile').click(function(){
+        						LJ.fn.endIntro(function(){
+        							$('#profile').click();
+        							LJ.fn.fetchFacebookPictureIntro();
+        						});
+        					});
+
+        					$('.ending-skip').click(function(){
+        						LJ.fn.endIntro(function(){
+        							//
+        						});
+        					});
+        				}
+        			}
+
+
+        		];
+
+        		LJ.fn.lintroStep( 'init' );
+
 
         	},
-        	highlightElement: function( el, opts, callback ){
+        	lintroStep: function( step_id ){
 
-        		var $el = $(el);
-        		if( $el.length == 0 || !$el.length ) return console.warn('Couldnt find element : ' + $el );
+        		var step = _.find( LJ.intro_steps, function( step ){
+        			return step.id == step_id;
+        		});
 
-        		var default_opts = {
-        			opacity: 0.5,
-        			padding: 20
-        		};
+        		if( !step ) return console.warn('Couldnt find matching step based on step_id : ' + step_id );
 
-        		if( typeof opacity == "function" ){
-        			callback = opacity;
-        			opts  = default_opts;
-        		} else {
-        			opts = _.merge( default_opts, opts );
+        		if( step == "end_intro" ) return LJ.fn.endIntro( callback );
+
+        		LJ.fn.highlightElement( step );
+
+        	},
+        	highlightElement: function(opts){
+
+        		console.log('Applying step : ' + opts.id );
+
+        		if( typeof opts.callforward == 'function' ){
+        			opts.callforward();
+        			return setTimeout(function(){
+        				delete opts.callforward;
+        				LJ.fn.highlightElement( opts );
+        			}, opts.delay );
         		}
 
-				var top    = $el.offset().top;
-				var left   = $el.offset().left;
-				var width  = $el.outerWidth();
-				var height = $el.outerHeight();
+        		if( opts.mode == "element" && ( !opts.el || !$(opts.el).length || $(opts.el).length == 0 ) ) return console.warn('Couldnt find element : ' + $el );
+        		if( opts.mode == "area" && ( !opts.upper_el && !opts.lower_el ) ) return console.warn('Couldnt find all properties to highlight area');
+        		if( opts.mode == "cover" && !opts.callback ) return console.warn('Couldnt ');
+
+
+        		var default_opts = {
+        			opacity: 0.85,
+        			padding: 0
+        		};
+
+        		opts = _.merge( default_opts, opts );        		
 
 				var base_style = {
 					'position'   : 'absolute',
@@ -40,29 +390,106 @@
 				var $curt_right  = $('<div class="lintro intro-curtain intro-curtain-right"></div>');
 				var $curt_bottom = $('<div class="lintro intro-curtain intro-curtain-bottom"></div>');
 
-				$curt_top.css({
-					'width'  : '100%',
-					'height' : top - opts.padding,
-					'top'    : 0 
-				});
+				LJ.fn.refreshNextStep( opts.id, opts.next_id );
 
-				$curt_bottom.css({
-					'width': '100%',
-					'height': $(window).height() - ( top + height + opts.padding ),
-					'top': window.scrollY + ( top + height ) + opts.padding,
-				});
+				if( opts.duration ){
+				  	LJ.intro_duration = window.setTimeout(function(){
+				  		 $('.lintro-next').click();
+				  	}, opts.duration );
+				 }
 
-				$curt_left.css({
-					'width': left - opts.padding,
-					'height': height + 2*opts.padding,
-					'top':  top - opts.padding 
-				});
+				if( opts.mode == "idem" ){					
+					if( typeof opts.callback == 'function' ){
+						opts.callback();
+						return;	
+					}
+				}
 
-				$curt_right.css({
-					'left': left + width + opts.padding,
-					'width': $(window).width() - ( left + width + opts.padding),
-					'height': height + 2*opts.padding,
-					'top': top - opts.padding 
+        		if( opts.mode == "element" ){
+
+        			var $el = $( opts.el );
+
+					var top    = $el.offset().top;
+					var left   = $el.offset().left;
+					var width  = $el.outerWidth();
+					var height = $el.outerHeight();
+
+					$curt_top.css({
+						'width'  : '100%',
+						'height' : top - opts.padding,
+						'top'    : 0 
+					});
+
+					$curt_bottom.css({
+						'width': '100%',
+						'height': $(window).height() - ( top + height + opts.padding ),
+						'top': window.scrollY + ( top + height ) + opts.padding,
+					});
+
+					$curt_left.css({
+						'width': left - opts.padding,
+						'height': height + 2*opts.padding,
+						'top':  top - opts.padding 
+					});
+
+					$curt_right.css({
+						'left': left + width + opts.padding,
+						'width': $(window).width() - ( left + width + opts.padding),
+						'height': height + 2*opts.padding,
+						'top': top - opts.padding 
+					});
+				}
+
+				if( opts.mode == "area" ){
+
+					var upper_el_bottom_pose = $(opts.upper_el).offset().top + $(opts.upper_el).outerHeight();
+
+					if( opts.lower_el ){
+						var lower_el_top_pose = $(opts.lower_el).offset().top;
+					} else {
+						var lower_el_top_pose = $(window).height();
+						var upper_el_bottom_pose = $(opts.upper_el).offset().top;
+						if( opts.upper_cover ){
+							upper_el_bottom_pose += $(opts.upper_el).outerHeight();
+						}
+					}
+
+					$curt_right.css({ display: 'none'});
+					$curt_left.css({ display: 'none'});
+
+					$curt_top.css({
+						'width' : '100%',
+						'height': upper_el_bottom_pose - opts.padding,
+						'top': 0
+					});
+
+					$curt_bottom.css({
+						'width': '100%',
+						'height': $(window).height() - lower_el_top_pose + opts.padding,
+						'bottom': 0
+					});
+				}
+
+				if( opts.mode == "cover" ){
+
+					$curt_right.css({ display: 'none'});
+					$curt_left.css({ display: 'none'});
+					$curt_bottom.css({ display: 'none' });
+
+					$curt_top.css({
+						'width': '100%',
+						'height': '100%',
+						'top': 0
+					});
+
+				}
+
+				// Clear everything 
+				$('.lintro').velocity('transition.fadeOut', {
+					duration: 700,
+					complete: function(){
+						$(this).remove();
+					}
 				});
 
 
@@ -71,21 +498,263 @@
 				  .appendTo('body')
 				  .css( base_style )
 				  .velocity('transition.fadeIn', {
-				  	duration: 1000,
+				  	duration: 700,
 				  	display: 'block',
 				  	complete: function(){
-				  		$('.intro-curtain').one('click', function(){
-				  			$('.lintro').velocity('transition.fadeOut',{
-				  				duration: 800,
-				  				complete: function(){
-				  					$('.lintro').remove();
-				  				}
-				  			});
-				  		});
 
-				  		callback();
+				  		if( typeof opts.callback == 'function' ) opts.callback();
 				  	}
 				  });
+
+
+        	},
+        	renderWelcome: function(){
+
+        		var html = [
+        			'<div class="welcome welcome-wrap super-centered">',
+        				'<div class="welcome-header">',
+        					'<h1>Bienvenue sur le meilleur site de soirées au monde</h1>',
+        				'</div>',
+        				'<div class="welcome-subheader">',
+        					'Nous avons préparé un petit tour sympa très rapide pour comprendre comment ça marche.',
+        				'</div>',
+        				'<button class="theme-btn btn-welcome">Montrez-moi</button>',
+        				'<div class="welcome-skip">',
+        					'Je sais déjà comment ça marche!',
+        				'</div>',
+        			'</div>'
+        		].join('');
+
+        		return html;
+
+        	},
+        	showWelcomeLintro: function(){
+
+    			$('.intro-curtain-top')
+    				.append( LJ.fn.renderWelcome() ).children().velocity('transition.fadeIn', {
+    				duration: 400 
+    			});
+
+        	},
+        	renderEnding: function(){
+
+        		var html = [
+        			'<div class="welcome welcome-wrap super-centered">',
+        				'<div class="welcome-header">',
+        					'<h1>Et c\'est tout ! </h1>',
+        				'</div>',
+        				'<div class="welcome-subheader">',
+        					'Voilà le fonctionnement global du site. Il ne vous reste plus qu\'à remplir votre profile et à en parler à vos amis. <br> A bientôt en soirée!',
+        				'</div>',
+        				'<button class="theme-btn btn-fillprofile">Mon profile</button>',
+        				'<div class="ending-skip">',
+        					'Je remplirai mon profile plus tard...montrez-moi les soirées!',
+        				'</div>',
+        			'</div>'
+        		].join('');
+
+        		return html;
+
+        	},
+        	showEndingLintro: function(){
+
+        		$('.intro-curtain-top')
+    				.append( LJ.fn.renderEnding() ).children().velocity('transition.fadeIn', {
+    				duration: 400 
+    			});
+
+        	},
+        	showTextLintro: function( opts ){
+
+        		if( $('.lintro-text').length != 0 ){
+	        		$('.lintro-text').velocity('transition.fadeOut', {
+	        			duration: 500,
+	        			complete: function(){
+	        				$('.lintro-text').remove();
+	        				LJ.fn.showTextLintro( opts );
+	        			}
+	        		});
+	        		return;
+        		}
+
+		  		$('.intro-curtain-top')
+		  			.append('<div class="lintro-text super-centered none">' + opts.text + '</div>')
+		  			.children()
+		  			.css({ 'text-align': opts.text_align })
+		  			.velocity('transition.fadeIn', {
+		  				duration: 500
+		  			});
+
+		  		if( opts.subtext ){
+			  		setTimeout(function(){	
+			  			$('.lintro-text').append('<div class="lintro-subtext none">' + opts.subtext + '</div>')
+			  			.children().velocity('transition.fadeIn', {
+			  				duration: 500
+			  			});
+			  		}, 1000 );
+		  		}
+        	},
+        	refreshNextStep: function( step_id, next_id ){
+
+        		if( $('.lintro-next').length == 0 ){
+        			LJ.$body
+				  			.append('<div class="lintro-next nonei" data-stepid="' + step_id + '" data-nextid="' + next_id + '">Next</div>')
+				  			.find('.lintro-next').velocity('transition.fadeIn', {
+				  				complete: function(){
+				  					$(this).click(function(){
+				  						LJ.fn.lintroStep( next_id );
+				  					});
+				  				}
+				  	});
+        		} else {
+					$('.lintro-next').velocity('transition.fadeOut', {
+						duration: 500,
+						complete: function(){
+							$(this).remove();
+			        		LJ.fn.refreshNextStep( step_id, next_id );	
+			        	}		
+					});					
+        		}
+        	},
+        	showIntroChatInview: function(){	
+
+        		$('.event-tabview-intro').attr('data-status', 'accepted').addClass('active');
+				$('.row-events-accepted').append( LJ.fn.renderEventInview_Intro( LJ.intro.event_data ) );
+
+		        var adjusted_height = $( window ).outerHeight( true )  
+                                      - $('.row-events-preview').innerHeight()
+                                      - parseInt( $('.row-events-preview').css('top').split('px')[0] );
+
+                $('.event-inview-intro')
+                	.css({ height: adjusted_height })
+                	.velocity('transition.fadeIn', {
+                		duration: 500
+                	})
+                	.find('.offline').eq(0).removeClass('offline').addClass('online').end()
+                	.find('.offline').eq(1).removeClass('offline').addClass('online').end()
+                	.find('.offline').eq(2).removeClass('offline').addClass('online')
+
+
+        	},
+        	showIntroChatTalk: function(){
+
+        		var messages = [];
+        		messages.push({
+        			html: LJ.fn.renderChatLine_Bot( LJ.text_source["ch_bot_msg_group_accepted"][ LJ.app_language ] ),
+        			delay: 2000
+        		}, {
+        			html: LJ.fn.renderChatLine( _.merge( LJ.intro.message_data_user_1, {
+        				msg: "Hi guys ! Ready for tonight ?", 
+        				sent_at: new Date() }
+        			)),
+        			delay: 4000
+        		}, {
+        			html: LJ.fn.renderChatLine( _.merge( LJ.intro.message_data_user_1, {
+        				msg: "This is gonna be like really, really fun. We want to go to this new club, there is gon' be an international party.", 
+        				sent_at: new Date() }
+        			)),
+        			delay: 6000
+        		}, {
+        			html: LJ.fn.renderChatLine( _.merge( LJ.intro.message_data_user_2, {
+        				msg: "We gon take a table with a bottle of vodka, do you guys still wanna follow us..?", 
+        				sent_at: new Date() }
+        			)),
+        			delay: 8000
+        		});
+
+        		var $intro = $('.event-inview-intro');
+        		messages.forEach(function( msg ){
+
+        			setTimeout(function(){
+
+        				if( $intro.find('.event-accepted-notification-message').length != 0 ){
+        					$intro.find('.event-accepted-notification-message').remove();
+        				}
+
+        				$intro
+        					.find('.event-accepted-chat-messages')
+        					.append( msg.html )
+        					.children().last()
+        					.velocity('transition.fadeIn', { duration: 500 });
+
+        			}, msg.delay );
+
+        		});
+
+        	},
+        	endIntro: function(callback){
+
+        		$('.lintro').velocity('transition.fadeOut', {
+        			duration: 1000,
+        			complete: function(){
+        				$(this).remove();
+        				if( typeof callback == "function" ){
+        					callback();
+        				}
+        			}
+        		});
+
+        	},
+        	clearIntro: function(){
+
+        		// Clear what has been added
+        		$('.event-inview-intro, .event-tabview-intro').velocity('transition.fadeOut', {
+        			duration: 500,
+        			complete: function(){
+        				$(this).remove();
+        			}
+        		});
+
+        		// Clear preview
+        		google.maps.event.trigger( LJ.map, 'click' )
+
+        		LJ.event_markers_intro.forEach(function(marker){
+        			marker.marker.setMap(null);
+        		});
+        		LJ.party_markers_intro.forEach(function(marker){
+        			marker.marker.setMap(null);
+        		});
+
+        		// Display back what has been hidden
+        		LJ.event_markers.forEach(function(marker){
+		 			marker.marker.setOpacity(1);
+		 		});
+		 		LJ.party_markers.forEach(function(marker){
+		 			marker.marker.setOpacity(1);
+		 		});
+
+        	},
+        	fetchFacebookPictureIntro: function(){
+
+        		var img_place = 0;
+                var img_id    = LJ.user._id + '--0'; //important 
+                var userId    = LJ.user._id;
+                var url       = 'https://graph.facebook.com/' + LJ.user.facebook_id + '/picture?width=180&height=180';
+
+				LJ.fn.updatePictureWithUrl({
+			                        userId    : LJ.user._id,
+			                        url       : url,
+			                        img_place : img_place,
+			                        img_id    : img_id
+				}, function( err, data ){
+
+					if( err ){
+					    return LJ.fn.handleServerError("La synchronisation avec Facebook a échouée.");
+			                        }
+
+					LJ.fn.handleServerSuccess();
+					LJ.fn.toastMsg( LJ.text_source["to_welcome"][ LJ.app_language ],'info', 4000);
+
+				$('#intro').remove();
+
+				LJ.fn.replaceImage({
+					img_id: data.img_id,
+					img_version: data.img_version,
+					img_place: 0,
+					scope: ['profile','thumb']
+				});
+
+				});
 
         	}
 
