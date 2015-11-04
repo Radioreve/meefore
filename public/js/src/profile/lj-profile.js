@@ -108,7 +108,9 @@
 			LJ.$body.on('click', '.upload-facebook', function(){
 				
 				var img_place = $(this).parents('.picture').data('img_place');
+
 				LJ.fn.displayInModal({
+
 					url:'/me/photos/uploaded?fields=source',
 					source:'facebook',
 					starting_width: 500,
@@ -116,6 +118,7 @@
 					render_cb: LJ.fn.renderFacebookUploadedPictures,
 					error_cb: LJ.fn.renderFacebookUploadedPicturesNone,
 					predisplay_cb: function(){
+						
 						$('.modal-container').find('img.fb').each(function( i, img ){
 
 							// Adjusting all image width or image height for better centering
@@ -439,8 +442,9 @@
 				drink 		  = $container.find('.drink.modified').attr('data-selectid'),
 				mood          = $container.find('.mood.modified').attr('data-selectid');
 
-			if( LJ.user.status == 'new' )
+			if( LJ.user.status == 'new' ){
 				LJ.user.status = 'idle';
+			}
 
 			var profile = {
 				userId		  : _id,

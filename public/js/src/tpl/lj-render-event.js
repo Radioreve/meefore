@@ -315,7 +315,11 @@
 
       hosts_html += '</div>';
 
-      return hosts_html;
+      hosts_html = $(hosts_html);
+      LJ.fn.setAppLanguage( LJ.app_language, hosts_html );
+
+      return hosts_html.prop('outerHTML');
+
 
     },
     renderHostsGroupWithCog: function( hosts ){
@@ -334,7 +338,10 @@
 
       hosts_html += '</div>';
 
-      return hosts_html;
+      hosts_html = $(hosts_html);
+      LJ.fn.setAppLanguage( LJ.app_language, hosts_html );
+
+      return hosts_html.prop('outerHTML');
 
     },
     renderUsersGroup: function( group ){
@@ -658,7 +665,9 @@
                 + '</div>'
             + '</div>';
 
-        return html;
+        html = $(html);
+        LJ.fn.setAppLanguage( LJ.app_language, html );
+        return html.prop('outerHTML');
     },
     renderEventRequestIn: function( event_id ){
 
@@ -666,7 +675,7 @@
 
             '<div id="requestIn" data-eventid="'+event_id+'">',
                 '<div class="row-input row-input-lg">',
-                  '<div class="modal-title">Demande de participation </div>',
+                  '<div data-lid="e_request_title" class="modal-title">Demande de participation </div>',
                 '</div>',
                 '<div class="row-input row-input-lg etiquette row-requestin-group-name">',
                   '<label data-lid="e_request_group_name" class="label label-lg" for="ri-groupname"></label>',

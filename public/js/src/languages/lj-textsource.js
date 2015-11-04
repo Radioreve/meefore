@@ -237,6 +237,10 @@
 			"fr": "Votre meefore a été créé avec succès ! ",
 			"en": "Your meefore has been successully created !"
 		},
+		e_request_title: {
+			"fr": "Demande de participation",
+			"en": "Participation request"
+		},
 		e_request_button_validate: {
 			"fr": "Rejoindre ce meefore",
 			"en": "Join this meefore"
@@ -593,6 +597,122 @@
 			"fr": "Bienvenue sur Meefore",
 			"en": "Welcome to Meefore"
 		},
+		intro_chat_1: {
+			"fr": "Hey guys",
+			"en": "Hi guys"
+		},
+		intro_chat_2: {
+			"fr": "On sort dans cette nouvelle boite ce soir, y'a une soirée inernationale.",
+			"en": "This is gonna be like really, really fun. We want to go to this new club, there is gon' be an international party."
+		},
+		intro_chat_3: {
+			"fr": "On va prendre une bouteille à l'entrée. Vous voulez toujours vous joindre à nous... ? ;)",
+			"en": "We gon take a table with a bottle of vodka, do you guys still wanna follow us..?"
+		},
+		intro_welcome_header: {
+			"fr": "Bienvenue sur le meilleur site de soirées au monde",
+			"en": "Welcome in the best place to improve your nights"
+		},
+		intro_welcome_subheader: {
+			"fr": "Nous avons préparé un petit tour sympa très rapide pour comprendre comment ça marche.",
+			"en": "We have prepared a quick little tour to get you started right away"
+		},
+		intro_welcome_btn: {
+			"fr": "Montrez-moi",
+			"en": "Show me"
+		},
+		intro_welcome_skip: {
+			"fr": "Je sais déjà comment ça marche",
+			"en": "I already know how it works"
+		},
+		intro_ending_header: {
+			"fr": "Et c'est tout !",
+			"en": "That's it!"
+		},
+		intro_ending_subheader: {
+			"fr": "Il ne vous reste plus qu\'à remplir votre profile et à en parler à vos amis. <br> A bientôt en soirée!",
+			"en": "All you have to do know is bring your friends and fill in very basic info about you <br> See you next Friday eve"
+		},
+		intro_ending_btn: {
+			"fr": "Mon profil",
+			"en": "My profile"
+		},
+		intro_ending_skip: {
+			"fr": "Je remplirai mon profile plus tard...montrez-moi les soirées!",
+			"en": "I'll fill my profile later... show me the parties!"
+		},
+		intro_text_1: {
+			"fr": "Meefore, c'est une map avec des soirées et avec des befores",
+			"en": "Meefore, it's a map with parties and pregame parties"
+		},
+		intro_text_2: {
+			"fr": "Chaque utilisateur peut proposer un before...",
+			"en": "Each user can host a pregame..."
+		},
+		intro_text_3: {
+			"fr": "...pour une soirée",
+			"en": "... to a specific party"
+		},
+		intro_text_4: {
+			"fr": "Les soirées affichées proviennent des utilisateurs eux-même, ou sont proposées par meefore",
+			"en": "The party we display are the ones our users chose to go, or ones we suggest"
+		},
+		intro_text_5: {
+			"fr": "Ca, c'est ce qui se passe quand plusieurs groupes font des before pour aller à la même soirée",
+			"en": "This, is what happens when multiple groups host pregame parties before going to the same place"
+		},
+		intro_text_6: {
+			"fr":"Lorsqu\'on clique sur un meefore des informations sur les organisateurs sont disponibles",
+			"en": "When a user clicks a meefore, informations are available"
+		},
+		intro_text_7: {
+			"fr": "Ici, c'est les organisateurs du before.",
+			"en": "This, is people who are hosting the pregame"
+		},
+		intro_text_8: {
+			"fr": "Là, c'est la soirée où ils ont prévu d'aller",
+			"en": "This, is the party where they are headed"
+		},
+		intro_text_9: {
+			"fr": "Ici, on demande à rejoindre leur before",
+			"en": "This is where you ask to join their pregame"
+		},
+		intro_text_10: {
+			"fr": "Ca, c'est une demande de participation",
+			"en": "This is what a participation request looks like"
+		},
+		intro_text_11: {
+			"fr": "Meefore encourage la rencontre en groupes, c'est pourquoi il faut être au moins 2 pour rejoindre un meefore",
+			"en": "Meefore really promotes group dating, which is why you need to be at least a group of two to make a request"
+		},
+		intro_text_12: {
+			"fr": "Lorsqu'une demande est effectuée, le groupe organisateur doit valider la demande.",
+			"en": "When a request is done, the hosting group needs to validate the request"
+		},
+		intro_text_13: {
+			"fr": "Une fois accepté, l'icône change et passe en mode discussion",
+			"en": "Once accepted, the icon changes and groups can now chat"
+		},
+		intro_text_13a: {
+			"fr": "Chaque organisateur peut suspendre un meefore à tout moment pour signaler qu'ils sont au complet",
+			"en": "Each host can suspend a pregame at anytime to signal it is full"
+		},
+		intro_text_14: {
+			"fr": "En bas de l'écran sont représentés tous les meefore qui vous concernent",
+			"en": "Down the screen are represented every pregame parties you either host or want to join"
+		},
+		intro_text_15: {
+			"fr": "C'est ici que se passe le chat!",
+			"en": "This is where we chat!"
+		},
+		intro_text_16: {
+			"fr": "Lorsque les organisateurs ont validé la demande, la discussion peut démarrer",
+			"en": "Once hosts have accepted the request, the talk can start"
+		},
+		intro_text_17: {
+			"fr": "Le chat laisse la possibiliter de 'chuchotter' des messages à une ou plusieurs personnes",
+			"en": "The chat allows you to 'whisper' messages to one or many people. Only them will receive your message"
+		},
 		//mp stands for missing parameter
 		err_create_n_hosts: {
 			"fr": "Il faut être entre %min et %max pour organiser un meefore",
@@ -725,6 +845,10 @@
 		err_pusher_unauth: {
 			"fr": "",
 			"en": "Cannot join the channel (access denied, auth failed)"
+		},
+		err_settings_invalid_email: {
+			"fr": "Nous avons besoin d'un email de contact valide pour changer vos préférences",
+			"en": "We need a valid contact email to change your preferences"
 		},
 		lp_subtitle: {
 			"fr": "<div class='lp-subpart'>Faîtes des rencontres <div class='lp-avant'><span>avant</span><img src='/img/app/avant.png' width='110%' /></div> d'aller en soirée.   " ,

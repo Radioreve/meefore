@@ -32,8 +32,16 @@
 			var contact_email = req.sent.contact_email;
 			var facebook_id   = req.sent.facebook_id;
 
+			var update = {
+				contact_email: contact_email
+			};
+
+			if( req.sent.mailchimp_id ){
+				update.mailchimp_id = req.sent.mailchimp_id
+			}
+
 			console.log('Updating contact email (' + contact_email + ') for facebook_id: ' + facebook_id );
-			User.findOneAndUpdate({ facebook_id: facebook_id }, { contact_email: contact_email }, { new: true } , function( err, user ){
+			User.findOneAndUpdate({ facebook_id: facebook_id }, update, { new: true } , function( err, user ){
 
 				if( err ) return eventUtils.raiseError({ err: err, res: res, toClient: "Une erreur est survenue!" });
 	    		

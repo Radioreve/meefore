@@ -35,20 +35,14 @@
 			
 		};
 
-		function yn_to_bool( yn ){
-			if(yn =='yes') return true;
-			return false;;
-		};
 
-		var subscribeUserToMailchimp = function( email_address, callback ){
+		var subscribeUserToMailchimp = function( email_address, options, callback ){
+
 
 			var user = {
 				email_address : email_address,
 				status        : 'subscribed',
-				interests: {
-					"bdb7938e4e": yn_to_bool( _.find( config.mailchimp.groups, function(el){ return el.id == "bdb7938e4e"; }).init_value ),		//  
-        			"042add1e79": yn_to_bool( _.find( config.mailchimp.groups, function(el){ return el.id == "042add1e79"; }).init_value )		//
-				}
+				interests 	  : options.interests
 			};
 
 			var url = mailchimp_urls.members;
@@ -68,9 +62,27 @@
 
 			request({ method: 'PATCH', json: update, url: url }, function( err, body, response ){
 
-				if( err ) return callback( err, null );
+				if( err ){
+					callback( err, null );
+				} else {
+					callback( null, response );
+				}
 
-				callback( null, response );
+			});
+
+		};
+
+		var deleteMailchimpUser = function( mailchimp_user_id, callback ){
+
+			var url = mailchimp_urls.members + '/' + mailchimp_user_id;
+
+			request({ method: 'DELETE', url: url }, function( err, body, response ){
+
+				if( err ){
+					callback( err, null );
+				} else {
+					callback( null, response );
+				}
 
 			});
 
@@ -162,6 +174,7 @@
 			sendSimpleAdminEmail           : sendSimpleAdminEmail,
 			subscribeUserToMailchimp       : subscribeUserToMailchimp,
 			updateMailchimpUser            : updateMailchimpUser,
+			deleteMailchimpUser 		   : deleteMailchimpUser,
 			sendAlertEmail_MessageReceived : sendAlertEmail_MessageReceived,
 			sendAlertEmail_RequestAccepted : sendAlertEmail_RequestAccepted
 		};

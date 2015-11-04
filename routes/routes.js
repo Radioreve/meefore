@@ -147,7 +147,10 @@
 
 	    // [ @user ] Update contact settings
 	    app.post('/me/update-settings-contact',
-	    	settingsEvents.updateSettingsContact);
+	    	mdw.pop.populateUser({ force_presence: true }),
+	    	mdw.email.updateMailchimpUser,
+	    	mdw.alerts_watcher.updateCache,
+	    	settingsEvents.updateSettingsContact );
 
 	    // [ @user ] Update ux settings
 	    app.post('/me/update-settings-ux',

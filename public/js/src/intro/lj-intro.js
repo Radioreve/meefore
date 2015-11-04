@@ -41,8 +41,7 @@
         				mode: "area",
         				upper_el: ".row-events-filters",
         				lower_el: ".row-events-accepted-tabview",
-        				text: "Meefore, c'est une map avec des soirées et avec des befores.",
-        				subtext: "Jusque là, tout va bien...", 
+                        text: LJ.text_source["intro_text_1"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         				}
@@ -52,7 +51,7 @@
         				next_id: "intro_3",
         				duration: 5000,
         				mode: "idem",
-        				text: "Chaque utilisateur peut proposer un before...",
+                        text: LJ.text_source["intro_text_2"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.fn.displayEventMarker( LJ.intro.event_data, { cache: 'event_markers_intro' } );
@@ -64,7 +63,7 @@
         				duration: 5000,
         				mode: "idem",
         				text_align:"center",
-        				text: "...pour une soirée.",
+                        text: LJ.text_source["intro_text_3"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.fn.displayPartyMarker_Party( LJ.intro.party_data, { cache: 'party_markers_intro' } );
@@ -75,9 +74,10 @@
         				next_id: "intro_5",
         				duration: 5000,
         				mode: "idem",
-        				text: "Les soirées affichées proviennent des utilisateurs eux-même, ou sont proposées par meefore",
+                        text: LJ.text_source["intro_text_4"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
+                            LJ.fn.displayPathToParty({ evt: LJ.intro.event_data });
         				}
         			},
         			{
@@ -85,7 +85,7 @@
         				next_id: "intro_6",
         				duration: 8000,
         				mode: "idem",
-        				text: "Ca, c'est ce qui se passe quand plusieurs groupes font des before pour aller à la même soirée",
+                        text: LJ.text_source["intro_text_5"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
 
@@ -101,7 +101,7 @@
 
         					});
 
-        					LJ.fn.displayPathToParty({ evt: LJ.intro.event_data });
+        					
                             LJ.intro.events_data.forEach(function( evt ){
                             	 LJ.fn.displayPathToParty({
 			                        evt            : evt,
@@ -116,7 +116,7 @@
         				next_id: "intro_7",
         				duration: 6000,
         				mode: "idem",
-        				text: "Lorsqu'on clique sur un meefore des informations sur les organisateurs sont disponibles",
+                        text: LJ.text_source["intro_text_6"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.event_markers_intro[0].marker.setIcon( LJ.cloudinary.markers.base_active.open.url );
@@ -131,7 +131,7 @@
         				duration: 5000,
         				mode: "element",
         				el: ".event-preview",
-        				text: "Ici, c'est les organisateurs du before.",
+                        text: LJ.text_source["intro_text_7"][ LJ.app_language ],
         				text_align: "left",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
@@ -144,7 +144,7 @@
         				duration: 5000,
         				mode: "element",
         				el: ".party-preview",
-        				text: "Là, c'est la soirée où ils ont prévu d'aller",
+                        text: LJ.text_source["intro_text_8"][ LJ.app_language ],
         				text_align: "right",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
@@ -154,10 +154,10 @@
         			{
         				id: "intro_9",
         				next_id: "intro_10",
-        				duration: 5000,
+        				duration: 2500,
         				mode: "element",
         				el: ".btn-requestin",
-        				text: "Ici, on demande à rejoindre leur before",
+                        text: LJ.text_source["intro_text_9"][ LJ.app_language ],
         				text_align: "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
@@ -169,7 +169,7 @@
         				duration: 6000,
         				mode: "element",
         				el: ".modal-container",
-        				text: "Ca, c'est une demande de participation",
+                        text: LJ.text_source["intro_text_10"][ LJ.app_language ],
         				text_align: "center",
         				delay: 1000,
         				callforward: function(){
@@ -185,7 +185,7 @@
         				duration: 6000,
         				mode: "element",
         				el: ".row-requestin-group-members",
-        				text: "Meefore encourage la rencontre en groupes, c'est pourquoi il faut être au moins 2 pour rejoindre un meefore",
+                        text: LJ.text_source["intro_text_11"][ LJ.app_language ],
         				text_align: "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
@@ -194,11 +194,11 @@
         			{
         				id: "intro_12",
         				next_id: "intro_13",
-        				duration: 5000,
+        				duration: 4000,
         				mode: "area",
         				upper_el: '.row-party-preview',
         				lower_el: '.row-events-accepted-tabview',
-        				text: "Lorsqu'une demande est effectuée, le groupe organisateur doit valider la demande.",
+                        text: LJ.text_source["intro_text_12"][ LJ.app_language ],
         				text_align: "center",
         				delay: 400,
         				callforward: function(){
@@ -221,9 +221,9 @@
         			{
         				id: "intro_13",
         				next_id: "intro_13a",
-        				duration: 5000,
+        				duration: 4000,
         				mode: "idem",
-        				text: "Une fois accepté, l'icône change et passe en mode discussion",
+                        text: LJ.text_source["intro_text_13"][ LJ.app_language ],
         				text_align: "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
@@ -236,9 +236,9 @@
         			{
         				id: "intro_13a",
         				next_id: "intro_14",
-        				duration: 5000,
+        				duration: 4000,
         				mode: "idem",
-        				text: "Chaque organisateur peut suspendre un meefore à tout moment pour signaler qu'ils sont au complet",
+                        text: LJ.text_source["intro_text_13a"][ LJ.app_language ],
         				text_align: "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
@@ -254,7 +254,7 @@
         				duration: 5000,
         				mode: "area",
         				upper_el: '.row-events-accepted-tabview',
-        				text: "En bas de l'écran sont représentés tous les meefore qui nous concernent",
+                        text: LJ.text_source["intro_text_14"][ LJ.app_language ],
         				text_align: "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
@@ -271,7 +271,7 @@
         				mode: "area",
         				upper_el: '.row-party-preview',
         				upper_cover: true,
-        				text: "C'est ici que se passe le chat!",
+                        text: LJ.text_source["intro_text_15"][ LJ.app_language ],
         				text_align: "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
@@ -284,7 +284,7 @@
         				duration: 12000,
         				mode: "idem",
         				// lower_el: '.row-events-accepted-tabview',
-        				text: "Lorsque les organisateurs ont validé la demande, la discussion peut démarrer",
+                        text: LJ.text_source["intro_text_16"][ LJ.app_language ],
         				text_align: "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
@@ -299,7 +299,7 @@
         				el: '.event-accepted-chat-typing',
         				padding: 20,
         				// lower_el: '.row-events-accepted-tabview',
-        				text: "Le chat laisse la possibiliter de 'chuchotter' des messages à une ou plusieurs personnes",
+                        text: LJ.text_source["intro_text_17"][ LJ.app_language ],
         				text_align: "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
@@ -347,14 +347,18 @@
         			return step.id == step_id;
         		});
 
-        		if( !step ) return console.warn('Couldnt find matching step based on step_id : ' + step_id );
+        		if( !step ) {
+                    return console.warn('Couldnt find matching step based on step_id : ' + step_id );
+                }
 
-        		if( step == "end_intro" ) return LJ.fn.endIntro( callback );
+        		if( step == "end_intro" ){
+                    return LJ.fn.endIntro( callback );
+                }
 
         		LJ.fn.highlightElement( step );
 
         	},
-        	highlightElement: function(opts){
+        	highlightElement: function( opts ){
 
         		console.log('Applying step : ' + opts.id );
 
@@ -366,9 +370,24 @@
         			}, opts.delay );
         		}
 
-        		if( opts.mode == "element" && ( !opts.el || !$(opts.el).length || $(opts.el).length == 0 ) ) return console.warn('Couldnt find element : ' + $el );
-        		if( opts.mode == "area" && ( !opts.upper_el && !opts.lower_el ) ) return console.warn('Couldnt find all properties to highlight area');
-        		if( opts.mode == "cover" && !opts.callback ) return console.warn('Couldnt ');
+                var abort = false;
+        		if( opts.mode == "element" && ( !opts.el || !$(opts.el).length || $(opts.el).length == 0 ) ){
+                    console.warn('Couldnt find element : ' + $el );
+                    abort = true;
+                }
+        		if( opts.mode == "area" && ( !opts.upper_el && !opts.lower_el ) ){
+                    console.warn('Couldnt find all properties to highlight area');
+                    abort = true;
+                }
+
+        		if( opts.mode == "cover" && !opts.callback ){
+                    console.warn('Didnt get any callback');
+                    abort = true;
+                }
+
+                if( abort ){
+                    return LJ.fn.lintroStep('intro_18');
+                }
 
 
         		var default_opts = {
@@ -513,19 +532,22 @@
         		var html = [
         			'<div class="welcome welcome-wrap super-centered">',
         				'<div class="welcome-header">',
-        					'<h1>Bienvenue sur le meilleur site de soirées au monde</h1>',
+        					'<h1 data-lid="intro_welcome_header" >Bienvenue sur le meilleur site de soirées au monde</h1>',
         				'</div>',
-        				'<div class="welcome-subheader">',
+        				'<div data-lid="intro_welcome_subheader" class="welcome-subheader">',
         					'Nous avons préparé un petit tour sympa très rapide pour comprendre comment ça marche.',
         				'</div>',
-        				'<button class="theme-btn btn-welcome">Montrez-moi</button>',
-        				'<div class="welcome-skip">',
+        				'<button data-lid="intro_welcome_btn" class="theme-btn btn-welcome">Montrez-moi</button>',
+        				'<div data-lid="intro_welcome_skip" class="welcome-skip">',
         					'Je sais déjà comment ça marche!',
         				'</div>',
         			'</div>'
         		].join('');
 
-        		return html;
+                html = $(html);
+                LJ.fn.setAppLanguage( LJ.app_language, html )
+
+                return html.prop('outerHTML');
 
         	},
         	showWelcomeLintro: function(){
@@ -541,19 +563,22 @@
         		var html = [
         			'<div class="welcome welcome-wrap super-centered">',
         				'<div class="welcome-header">',
-        					'<h1>Et c\'est tout ! </h1>',
+        					'<h1 data-lid="intro_ending_header" >Et c\'est tout ! </h1>',
         				'</div>',
-        				'<div class="welcome-subheader">',
-        					'Voilà le fonctionnement global du site. Il ne vous reste plus qu\'à remplir votre profile et à en parler à vos amis. <br> A bientôt en soirée!',
+        				'<div data-lid="intro_ending_subheader" class="welcome-subheader">',
+        					'Il ne vous reste plus qu\'à remplir votre profile et à en parler à vos amis. <br> A bientôt en soirée!',
         				'</div>',
-        				'<button class="theme-btn btn-fillprofile">Mon profile</button>',
-        				'<div class="ending-skip">',
+        				'<button data-lid="intro_ending_btn" class="theme-btn btn-fillprofile">Mon profile</button>',
+        				'<div data-lid="intro_ending_skip" class="ending-skip">',
         					'Je remplirai mon profile plus tard...montrez-moi les soirées!',
         				'</div>',
         			'</div>'
         		].join('');
 
-        		return html;
+        		html = $(html);
+                LJ.fn.setAppLanguage( LJ.app_language, html )
+
+                return html.prop('outerHTML')
 
         	},
         	showEndingLintro: function(){
@@ -585,14 +610,7 @@
 		  				duration: 500
 		  			});
 
-		  		if( opts.subtext ){
-			  		setTimeout(function(){	
-			  			$('.lintro-text').append('<div class="lintro-subtext none">' + opts.subtext + '</div>')
-			  			.children().velocity('transition.fadeIn', {
-			  				duration: 500
-			  			});
-			  		}, 1000 );
-		  		}
+
         	},
         	refreshNextStep: function( step_id, next_id ){
 
@@ -641,25 +659,25 @@
         		var messages = [];
         		messages.push({
         			html: LJ.fn.renderChatLine_Bot( LJ.text_source["ch_bot_msg_group_accepted"][ LJ.app_language ] ),
-        			delay: 2000
+        			delay: 3500
         		}, {
         			html: LJ.fn.renderChatLine( _.merge( LJ.intro.message_data_user_1, {
-        				msg: "Hi guys ! Ready for tonight ?", 
+        				msg: LJ.text_source["intro_chat_1"][ LJ.app_language ], 
         				sent_at: new Date() }
         			)),
-        			delay: 4000
+        			delay: 5500
         		}, {
         			html: LJ.fn.renderChatLine( _.merge( LJ.intro.message_data_user_1, {
-        				msg: "This is gonna be like really, really fun. We want to go to this new club, there is gon' be an international party.", 
+        				msg: LJ.text_source["intro_chat_2"][ LJ.app_language ],
         				sent_at: new Date() }
         			)),
-        			delay: 6000
+        			delay: 7500
         		}, {
         			html: LJ.fn.renderChatLine( _.merge( LJ.intro.message_data_user_2, {
-        				msg: "We gon take a table with a bottle of vodka, do you guys still wanna follow us..?", 
+        				msg: LJ.text_source["intro_chat_3"][ LJ.app_language ], 
         				sent_at: new Date() }
         			)),
-        			delay: 8000
+        			delay: 9500
         		});
 
         		var $intro = $('.event-inview-intro');

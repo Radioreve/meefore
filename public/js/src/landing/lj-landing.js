@@ -51,7 +51,7 @@
 									var access_token = res.authResponse.accessToken;
 									delog('short lived access token : ' + access_token );
 
-									FB.api('/me', function( facebookProfile ){
+									FB.api('/me?fields=id,email,name,link,locale,gender', function( facebookProfile ){
 
 										facebookProfile.access_token = access_token;
 								  		LJ.fn.loginWithFacebook( facebookProfile );
@@ -240,6 +240,7 @@
 		loginWithFacebook: function( facebookProfile ){
 
 				delog('Logging in meefore with facebook profile...');
+
 				$.ajax({
 
 					method:'POST',

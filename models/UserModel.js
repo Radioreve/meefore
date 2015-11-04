@@ -85,8 +85,7 @@ var UserSchema = new mongoose.Schema({
       ]
   },
   status: {
-    type: String,
-    default: 'new'
+    type: String
   },
   events: {
     type: Array,

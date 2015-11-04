@@ -3,7 +3,16 @@
 
 		handleDomEvents_Settings: function(){
 
+
+
 			LJ.$body.on('click', '.row-contact .btn-validate', function(){
+
+				// If user changes email, need to update mail in mailchimp and in cache for alerts
+
+				var contact_email   = $('#email_contact').val();
+				if( !LJ.fn.isEmail( contact_email ) ){
+					return LJ.fn.toastMsg( LJ.text_source["err_settings_invalid_email"][ LJ.app_language ], 'error');
+				}
 
 				var $self = $(this);
 				if( $self.hasClass('btn-validating') )
@@ -12,12 +21,28 @@
 				$self.addClass('btn-validating');
 
 				var _id             = LJ.user._id;
-				var $container      = $('.row-contact');
+				var $container      = $('#settingsWrap');
 
-				var contact_email   = $('#email_contact').val();
+				var app_preferences = LJ.user.app_preferences;
+
+				// Invitation & newsletters
+				var invitations   = $container.find('[data-propid="invitations"].selected').attr('data-selectid');
+				var newsletter    = $container.find('[data-propid="newsletter"].selected').attr('data-selectid');
+				app_preferences.email.invitations = invitations;
+				app_preferences.email.newsletter  = newsletter;
+
+				// Alerts
+				var accepted_in     = $container.find('[data-propid="accepted_in"].selected').attr('data-selectid');
+				var message_unread  = $container.find('[data-propid="message_unread"].selected').attr('data-selectid');
+				var min_frequency   = $container.find('[data-propid="min_frequency"].selected').attr('data-selectid');
+				app_preferences.alerts.message_unread = message_unread;
+				app_preferences.alerts.accepted_in    = accepted_in;
+				app_preferences.alerts.min_frequency  = min_frequency;
+
 
 				var data = {
-					contact_email: contact_email
+					contact_email   : contact_email,
+					app_preferences : app_preferences
 				};
 
 				csl('Emitting update settings [contact]');
@@ -40,6 +65,11 @@
 
 
 			LJ.$body.on('click', '.row-ux .btn-validate', function(){
+
+				var contact_email   = $('#email_contact').val();
+				if( !LJ.fn.isEmail( contact_email ) ){
+					return LJ.fn.toastMsg( LJ.text_source["err_settings_invalid_email"][ LJ.app_language ], 'error');
+				}
 
 				var $self = $(this);
 				if( $self.hasClass('btn-validating') )
@@ -83,6 +113,11 @@
 
 			LJ.$body.on('click', '.row-news .btn-validate', function(){
 
+				var contact_email   = $('#email_contact').val();
+				if( !LJ.fn.isEmail( contact_email ) ){
+					return LJ.fn.toastMsg( LJ.text_source["err_settings_invalid_email"][ LJ.app_language ], 'error');
+				}
+
 				var $self = $(this);
 				if( $self.hasClass('btn-validating') )
 					return;
@@ -102,6 +137,7 @@
 
 				var data = {
 					userId		    : _id,
+					contact_email   : contact_email,
 					app_preferences : app_preferences
 				};
 
@@ -124,6 +160,11 @@
 			});
 
 			LJ.$body.on('click', '.row-alerts .btn-validate', function(){
+
+				var contact_email   = $('#email_contact').val();
+				if( !LJ.fn.isEmail( contact_email ) ){
+					return LJ.fn.toastMsg( LJ.text_source["err_settings_invalid_email"][ LJ.app_language ], 'error');
+				}
 
 				var $self = $(this);
 				if( $self.hasClass('btn-validating') )

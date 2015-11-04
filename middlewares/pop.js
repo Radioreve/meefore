@@ -36,8 +36,9 @@
 
 			User.findOne( query, function( err, user ){
 
-				if( err )
+				if( err ){
 					return eventUtils.raiseError({ err: err, res: res, toClient: "Bad request (E83)" });
+				}
 
 				if( user ){
 					req.body.user = user;

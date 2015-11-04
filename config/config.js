@@ -92,7 +92,7 @@
 				invitations: {
 					name       : 'invitations',
 					id         : 'bdb7938e4e',
-					init_value : 'no'
+					init_value : 'yes'
 				},
 				newsletter: {
 					name       : 'newsletter',

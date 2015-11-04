@@ -35,6 +35,10 @@
 			return next();
 		}
 
+		if( req.sent.no_email ){
+			return next();
+		}
+
 		var alert_ns = 'user_alerts/' + req.sent.facebook_id;
 		var data = _.clone( settings.default_app_preferences.alerts );
 

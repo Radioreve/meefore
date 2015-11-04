@@ -1,28 +1,28 @@
 
-	var express = require('express'),
-		jwt = require('jsonwebtoken'),
-		config = require('./../config/config'),
-		User = require('./../models/UserModel'),
-		randtoken = require('rand-token'),
-		validator = require('validator'),
-		eventUtils = require('./eventUtils'),
-		moment = require('moment'),
-		_ = require('lodash');
+	var express    = require('express');
+	var jwt        = require('jsonwebtoken');
+	var config     = require('./../config/config');
+	var User       = require('./../models/UserModel');
+	var randtoken  = require('rand-token');
+	var validator  = require('validator');
+	var eventUtils = require('./eventUtils');
+	var moment     = require('moment');
+	var _          = require('lodash');
 
-		var pusher  = require('../services/pusher'),
-			mailer = require('../services/mailer');
+	var pusher  = require('../services/pusher');
+	var mailer = require('../services/mailer');
 
-		var sendHomepage = function( req, res ){
-			res.sendfile( config.homepage[ process.env.NODE_ENV ] );
-		};
+	var sendHomepage = function( req, res ){
+		res.sendfile( config.homepage[ process.env.NODE_ENV ] );
+	};
 
-		var sendEarlyAdoptersPage = function( req, res ){
-			res.sendfile( process.cwd() + '/views/earlyadopters.html' );
-		}
+	var sendEarlyAdoptersPage = function( req, res ){
+		res.sendfile( process.cwd() + '/views/earlyadopters.html' );
+	}
 
-		var redirectToHome = function( req, res ){
-			res.redirect('/home');
-		};
+	var redirectToHome = function( req, res ){
+		res.redirect('/home');
+	};
 
 	
 	var handleFacebookAuth = function( req, res ){
@@ -61,21 +61,33 @@
 
 		var new_user = new User();
 
+		// Pre conditions (test weird values)
+		var country_code = 'fr'; // default value
+		if( fb.locale && fb.locale.split('_')[1] ){
+			country_code = fb.locale.split('_')[1].toLowerCase();
+		}
+
+		var email = fb.email;
+		if( req.sent.no_email ){
+			email = 'unknown';
+		}
+
 		new_user.facebook_id                       = fb.id;
 		new_user.facebook_access_token.short_lived = fb.access_token;
-		new_user.facebook_email                    = fb.email;
-		new_user.contact_email 					   = fb.email;
-		new_user.mailchimp_email                   = fb.email;
+		new_user.facebook_email                    = email;
+		new_user.contact_email 					   = email;
+		new_user.mailchimp_email                   = email;
 		new_user.mailchimp_id                      = req.sent.mailchimp_id;
 		new_user.gender                            = fb.gender;
 		new_user.name                              = fb.name;
+		new_user.status 						   = 'new';
 		new_user.age                               = 24 // default value, fucking facebook  /me?fields=age_range is too broad!
 		new_user.facebook_url                      = fb.link;
-		new_user.country_code					   = fb.locale.split('-')[1].toLowerCase(); // country code extraction
+		new_user.country_code					   = fb.locale.split('_')[1].toLowerCase(); // country code extraction
 		new_user.signup_date                       = new moment();
 		new_user.access 						   = ['standard'];
 
-		// Specific conditions //
+		// Post conditions //
 		// None for now
 
 		// Pusher informations for real time channels 

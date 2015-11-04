@@ -371,7 +371,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                             $(el).append('<span class="bubble filtered"></span>')
                         });
 
-                        if ( 1 || LJ.user.status == 'new'){
+                        if ( LJ.user.status == 'new'){
                             LJ.fn.initIntro();
                         }
 
@@ -500,7 +500,7 @@ $('document').ready(function() {
         FB.init({
             appId: window.facebook_app_id,
             xfbml: true, // parse social plugins on this page
-            version: 'v2.3' // use version 2.4
+            version: 'v2.5' // use version 2.5
         });
 
         LJ.fn.init({

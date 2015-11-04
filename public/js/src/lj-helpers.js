@@ -1,6 +1,11 @@
 
 	window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
+		isEmail: function( email ){
+
+			return /^.+@.+\..+$/.test( email ) 
+
+		},
 		adjustInputWidth: function( input, width ){
 
 			var $input = $(input);

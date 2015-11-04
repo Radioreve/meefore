@@ -87,7 +87,7 @@
                     "age": 18,
                     "signup_date": "2015-09-03T14:24:25.000Z",
                     "facebook_url": "https://www.facebook.com/app_scoped_user_id/121428001540741/",
-                    "facebook_id": "121428001540741"
+                    "facebook_id": "jenn"
                 },
                 {
                     "main_picture": {
@@ -110,7 +110,7 @@
                     "age": 18,
                     "signup_date": "2015-09-03T14:26:31.000Z",
                     "facebook_url": "https://www.facebook.com/app_scoped_user_id/142944122715258/",
-                    "facebook_id": "142944122715258"
+                    "facebook_id": "kait"
                 },
                 {
                     "main_picture": {
@@ -133,7 +133,7 @@
                     "age": 18,
                     "signup_date": "2015-10-14T21:15:29.000Z",
                     "facebook_url": "https://www.facebook.com/app_scoped_user_id/122537181435106/",
-                    "facebook_id": "122537181435106"
+                    "facebook_id": "benb"
                 },
                 {
                     "main_picture": {
@@ -156,7 +156,7 @@
                     "age": 18,
                     "signup_date": "2015-10-17T09:12:39.000Z",
                     "facebook_url": "https://www.facebook.com/app_scoped_user_id/139625316382924/",
-                    "facebook_id": "139625316382924"
+                    "facebook_id": "will"
                 }
             ]
         },
