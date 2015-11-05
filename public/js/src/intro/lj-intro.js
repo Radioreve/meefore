@@ -15,6 +15,10 @@
         			 		LJ.fn.showWelcomeLintro();
         			 		LJ.map.setZoom(14);
 
+                            // Make sure doest call on undefined values
+                            LJ.event_markers = LJ.event_markers || [];
+                            LJ.party_markers = LJ.party_markers || [];
+
         			 		LJ.event_markers.forEach(function(marker){
         			 			marker.marker.setOpacity(0);
         			 		});

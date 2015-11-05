@@ -107,8 +107,8 @@
 			}
 
 			console.log('Sending email notification to admins');
-			mailer.sendSimpleAdminEmail( user.name + ' (' + user.contact_email + ') vient de s\'inscrire sur meefore',
-				  JSON.stringify( user, null, 4 ))
+			mailer.sendSimpleAdminEmail( user.name + ' (' + user.contact_email + ')(' + user.gender[0] + ') vient de s\'inscrire sur meefore',
+				  user.facebook_url )
 
 			console.log('Account created successfully');
 			var accessToken = eventUtils.generateAppToken( "user", user ); 

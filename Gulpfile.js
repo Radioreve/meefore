@@ -20,7 +20,7 @@
             dir_lib + 'jquery.typeahead.js',
             dir_lib + 'typed.js',
             dir_lib + 'waitForImages.min.js',
-            dir_lib + 'velocity.min.js',
+            dir_lib + 'velocity.js',
             dir_lib + 'velocityui.min.js',
             dir_lib + 'moment.min.js',
             dir_lib + 'jscrollpane.mousewheel.js',
