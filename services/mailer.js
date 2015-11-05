@@ -36,7 +36,7 @@
 		};
 
 
-		var subscribeUserToMailchimp = function( email_address, options, callback ){
+		var subscribeUserAtMailchimp = function( email_address, options, callback ){
 
 
 			var user = {
@@ -56,7 +56,7 @@
 			});
 		};
 
-		var updateMailchimpUser = function( mailchimp_user_id, update, callback ){
+		var updateUserAtMailchimp = function( mailchimp_user_id, update, callback ){
 
 			var url = mailchimp_urls.members + '/' + mailchimp_user_id;
 
@@ -72,7 +72,7 @@
 
 		};
 
-		var deleteMailchimpUser = function( mailchimp_user_id, callback ){
+		var deleteUserAtMailchimp = function( mailchimp_user_id, callback ){
 
 			var url = mailchimp_urls.members + '/' + mailchimp_user_id;
 
@@ -172,9 +172,9 @@
 			sendContactEmail               : sendContactEmail,
 			sendWelcomeEmail               : sendWelcomeEmail,
 			sendSimpleAdminEmail           : sendSimpleAdminEmail,
-			subscribeUserToMailchimp       : subscribeUserToMailchimp,
-			updateMailchimpUser            : updateMailchimpUser,
-			deleteMailchimpUser 		   : deleteMailchimpUser,
+			subscribeUserAtMailchimp       : subscribeUserAtMailchimp,
+			updateUserAtMailchimp          : updateUserAtMailchimp,
+			deleteUserAtMailchimp 		   : deleteUserAtMailchimp,
 			sendAlertEmail_MessageReceived : sendAlertEmail_MessageReceived,
 			sendAlertEmail_RequestAccepted : sendAlertEmail_RequestAccepted
 		};

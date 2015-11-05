@@ -37,7 +37,7 @@
 									/* Message during login */
 								   var tpl = ['<div class="auto-login-msg super-centered none">',
 								   				'<span>' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</span>',
-								   				loader_tag,
+								   				// loader_tag,
 								   				'</div>',
 								   			 ].join('');
 
@@ -218,7 +218,7 @@
 			/* Message during login */
 		   var tpl = ['<div class="auto-login-msg super-centered none">',
 		   				'<span>' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</span>',
-		   				loader_tag,
+		   				// loader_tag,
 		   				'</div>',
 		   			 ].join('');
 
@@ -241,6 +241,8 @@
 
 				delog('Logging in meefore with facebook profile...');
 
+				// facebookProfile.email = null;
+				
 				$.ajax({
 
 					method:'POST',

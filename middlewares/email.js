@@ -44,7 +44,7 @@
 		}
 
 		console.log('Subscribing user to mailchimp with email adresse: ' + email_address );
-		mailer.subscribeUserToMailchimp( email_address, options, function( err, response ){
+		mailer.subscribeUserAtMailchimp( email_address, options, function( err, response ){
 
 			if( err ){
 				return eventUtils.raiseError({
@@ -55,6 +55,7 @@
 			}
 
 			// Saving the mailchimp id for later api calls to modify newsletter preferences (PATCH) 
+			console.log('User subscribed, new mailchimp_id: ' + response.id);
 			req.sent.mailchimp_id = response.id;
 			next();
 
@@ -118,8 +119,9 @@
 		if( need_to_update_hard ){
 			console.log('User is on mailchimp but changed email. Erasing out dated ref and saving new one... [case 2]');
 
-			mailer.deleteMailchimpUser( user.mailchimp_id, function( err, response ){
+			mailer.deleteUserAtMailchimp( user.mailchimp_id, function( err, response ){
 
+				req.sent.user.mailchimp_id = null;
 				if( err ){
 					return eventUtils.raiseError({
 						err: err, res: res, toClient: "Une erreur s'est produite, veuillez nous excuser"
@@ -131,14 +133,13 @@
 				}
 
 			});
-			next();
 			return;
 		}
 
 		if( need_to_update_soft ){
 			console.log('Update mailchimp needed (soft). Updating... [case 3]');
 
-			mailer.updateMailchimpUser( user.mailchimp_id, update, function( err, response ){
+			mailer.updateUserAtMailchimp( user.mailchimp_id, update, function( err, response ){
 
 				if( err ){
 					return eventUtils.raiseError({
@@ -154,7 +155,26 @@
 
 	};
 
+	var deleteMailchimpUser = function( req, res, next ){
+
+		console.log('Deleting mailchimp user with chimp id: ' + req.sent.user.mailchimp_id );
+		mailer.deleteUserAtMailchimp( req.sent.user.mailchimp_id, function( err, response ){
+
+			if( err ){
+				return eventUtils.raiseError({
+					err: err, toClient:"Couldnt delete user from mailchimp", res: res
+				});
+			}
+
+			console.log('User (' + req.sent.user.contact_email + ') successfully deleted from mailchimp');
+			next();
+
+		});
+
+	};
+
 	module.exports = {
-		subscribeMailchimpUser: subscribeMailchimpUser,
-		updateMailchimpUser: updateMailchimpUser
+		subscribeMailchimpUser : subscribeMailchimpUser,
+		updateMailchimpUser    : updateMailchimpUser,
+		deleteMailchimpUser    : deleteMailchimpUser
 	};

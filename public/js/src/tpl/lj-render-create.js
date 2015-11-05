@@ -86,7 +86,7 @@
 
                         +'<div class="row-buttons visible">'
                             +'<button data-lid="e_create_button_cancel" class="theme-btn btn-large btn-cancel right">Annuler</button>'
-                            +'<button data-lid="e_create_button_validate" class="theme-btn btn-large btn-validate right">Créer un before</button>'
+                            +'<button data-lid="e_create_button_validate" class="theme-btn btn-large btn-validate btn-validate-modal right">Créer un before</button>'
                         +'</div>' 
 
                       +'</div>'
@@ -359,7 +359,7 @@
 
                 +'<div class="row-buttons visible">'
                     +'<button class="theme-btn btn-large btn-cancel right">Annuler</button>'
-                    +'<button class="theme-btn btn-large btn-validate right">Créer une soirée</button>'
+                    +'<button class="theme-btn btn-large btn-validate btn-validate-modal right">Créer une soirée</button>'
                 +'</div>' 
 
               +'</div>'

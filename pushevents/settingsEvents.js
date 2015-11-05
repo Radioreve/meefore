@@ -37,6 +37,7 @@
 			};
 
 			if( req.sent.mailchimp_id ){
+				console.log('Updating also mailchimp_id, new is: ' + req.sent.mailchimp_id );
 				update.mailchimp_id = req.sent.mailchimp_id
 			}
 
@@ -52,8 +53,59 @@
 
 		};
 
+		var deleteProfile = function( req, res ){
+
+			var facebook_id = req.sent.facebook_id;
+			var userId      = req.sent.user._id;
+
+			console.log('Deleting profile ' + facebook_id + ' and everything associated with it..');
+			console.log('Good bye ' + req.sent.user.name + '..');
+
+
+			User.update(
+				{
+					'friends': {
+						$elemMatch: {
+							'facebook_id': facebook_id
+						}
+					}
+				}, 
+				{
+					$pull: {
+						'friends': {
+							'facebook_id': facebook_id
+						}
+					}
+				}, 
+				{
+					multi: true
+				}
+				,
+				function( err, users ){
+
+				if( err ){
+					return eventUtils.raiseError({
+						err: err, res: res, toClient: "Impossible de supprimer de la liste des amis"
+					});
+				}
+
+				console.log('Deletin user with _id: ' + userId );
+				User.findByIdAndRemove( userId, function( err, user ){
+					if( err ){
+						return eventUtils.raiseError({
+							err: err, res: res, toClient: "Err trying to remove user"
+						});
+					}
+
+					eventUtils.sendSuccess( res, {} );
+				});
+
+			});
+
+		};
 
 	    module.exports = {
 			updateSettings        : updateSettings,
-			updateSettingsContact : updateSettingsContact
+			updateSettingsContact : updateSettingsContact,
+			deleteProfile 		  : deleteProfile
 	    };

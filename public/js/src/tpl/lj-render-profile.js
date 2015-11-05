@@ -95,6 +95,36 @@
             }
 
             return html;
+        },
+        renderDeleteProfile: function(){
+
+          var html = [
+                '<div class="delete-profile-wrap">',
+                    '<div data-lidd="lol" class="modal-title">Supprimer mon profile</div>',
+                    '<div data-lidd="" class="delete-profile-text">Toutes les données vous concernant seront supprimées</div>',
+                    '<div class="delete-profile-buttons">',
+                      '<button class="theme-btn btn-validate btn-validate-modal">Supprimer</button>',
+                      '<button class="theme-btn btn-cancel">Annuler</button>', 
+                    '</div>',
+                '</div>',
+            ].join('');
+
+          html = $(html)
+          LJ.fn.setAppLanguage( LJ.app_language, html );
+          return html.prop('outerHTML');
+
+        },
+        renderGoodbye: function(){
+
+          var html = [
+            '<div data-lidd="s_goodbye" class="goodbye none super-centered">',
+                'Votre compte a bien été supprimé, vous allez être redirigé vers la page d\'accueil',
+            '</div>'
+          ].join('');
+
+          html = $(html)
+          LJ.fn.setAppLanguage( LJ.app_language, html );
+          return html.prop('outerHTML');
         }
         
 

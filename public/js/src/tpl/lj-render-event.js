@@ -691,7 +691,7 @@
                 '</div>',
                 '<div class="row-buttons visible">',
                   '<button data-lid="e_request_button_cancel" class="theme-btn btn-large btn-cancel right">Annuler</button>',
-                  '<button data-lid="e_request_button_validate" class="theme-btn btn-large btn-validate right">Rejoindre ce meefore</button>',
+                  '<button data-lid="e_request_button_validate" class="theme-btn btn-large btn-validate btn-validate-modal right">Rejoindre ce meefore</button>',
                 '</div>', 
             '</div>'
 

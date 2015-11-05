@@ -214,6 +214,34 @@
 					
 			});
 
+			LJ.$body.on('click', '#delete-profile', function(){
+
+				LJ.fn.displayInModal({
+					source: 'local',
+					render_cb: LJ.fn.renderDeleteProfile,
+					starting_width: 200
+				});
+
+			});
+
+			LJ.$body.on('click', '.delete-profile-wrap .btn-validate', function(){
+
+				var $self = $(this);
+
+				csl('Emitting delete profile...');
+				$self.addClass('btn-validating');
+
+				var eventName = 'me/delete',
+					data = { userId: LJ.user._id },
+					cb = {
+						success: LJ.fn.handleDeleteProfileSuccess						
+					};
+
+				LJ.fn.showLoaders();
+				LJ.fn.say( eventName, data, cb );
+
+			});
+
 		},
 		handleUpdateSettingsUxSuccess: function( data ){
 
@@ -292,6 +320,43 @@
 		
 			});
 
+
+		},
+		handleDeleteProfileSuccess: function( data ){
+
+			console.log('Profile successfully deleted... ');
+
+			// Kill local storage variables
+			window.localStorage.removeItem('preferences');
+
+			$('#mainWrap').velocity('transition.fadeOut', {
+				duration: 3000
+			});
+
+			setTimeout(function(){
+
+				$('.curtain').velocity('transition.fadeIn', {
+					duration: 3000,
+					complete: function(){
+						$('.curtain')
+							.children().remove().end()
+							.append( LJ.fn.renderGoodbye )
+							.children()
+							.velocity('transition.fadeIn', {
+								duration: 2000,
+								complete: function(){
+									$(this).velocity('transition.fadeOut', {
+										duration: 2000,
+										delay: 2000,
+										complete: function(){
+											document.location = '/home';
+										}
+									})
+								}
+							});
+					}
+				});
+			}, 1000);
 
 		}
 

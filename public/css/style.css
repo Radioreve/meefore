@@ -1276,6 +1276,20 @@ body > header > h5 {
    opacity: .5;
 }
 
+.btn-validate-modal {
+	background: #e94f6a;
+}
+.btn-validate-modal:hover {
+	background: #F86780;
+}
+
+.btn-delete {
+	background: red;
+}
+.btn-delete:hover{
+	background: red;
+}
+
 .btn-large {
 	padding: 11px 18px;
 	font-size: 11px;
@@ -1788,4 +1802,31 @@ p {
 
 	box-shadow: 0px 0px 8px 0px #8C8C8C;
 	opacity: 1;
+}
+
+#delete-profile {
+	float: right;
+	width: 200px;
+	height: 30px;
+	background: #F55974;
+	color: white;
+}
+#delete-profile:hover {
+	background: #D13D57;
+}
+
+.delete-profile-text {
+	margin-top: 20px;
+	font-family: 'Karla';
+	font-size: 14px;
+}
+.delete-profile-buttons {
+	text-align: center;
+	margin-top: 25px;
+}
+
+.goodbye {
+	font-size: 13px;
+	font-family: 'Karla';
+	color: white;
 }

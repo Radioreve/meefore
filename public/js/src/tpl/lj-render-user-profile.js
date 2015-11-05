@@ -59,8 +59,12 @@
             return html;
         },
         renderUserProfileInCurtainNone: function(){
-             var html = '<h2 class="super-centered">Mauvais identifiant :/</h2>';
-             return html;
+
+             var html = '<h2 class="super-centered">.../</h2>';
+             html = $(html);
+             LJ.fn.setAppLanguage( LJ.text_source["err_no_user_entry"][ LJ.app_language ] );
+
+             return html.prop('outerHTML');
 
         }
 		

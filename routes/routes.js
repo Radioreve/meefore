@@ -167,6 +167,12 @@
 	    	mdw.email.updateMailchimpUser,
 	    	settingsEvents.updateSettings);
 
+	    app.post('/me/delete',
+	    	mdw.pop.populateUser({ force_presence: true }),
+	    	mdw.email.deleteMailchimpUser,
+	    	settingsEvents.deleteProfile );
+
+
 	    // [ @user ] Utilisé pour afficher le profile d'un utilisateur
 	    app.get('/api/v1/users/:user_facebook_id',   //otherwise override with asker facebook_id
 	    	mdw.validate('user_fetch', ['user_fetch'] ),

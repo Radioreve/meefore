@@ -602,7 +602,7 @@
 			"en": "Hi guys"
 		},
 		intro_chat_2: {
-			"fr": "On sort dans cette nouvelle boite ce soir, y'a une soirée inernationale.",
+			"fr": "On sort dans cette nouvelle boite ce soir, y'a une soirée internationale.",
 			"en": "This is gonna be like really, really fun. We want to go to this new club, there is gon' be an international party."
 		},
 		intro_chat_3: {
@@ -630,7 +630,7 @@
 			"en": "That's it!"
 		},
 		intro_ending_subheader: {
-			"fr": "Il ne vous reste plus qu\'à remplir votre profile et à en parler à vos amis. <br> A bientôt en soirée!",
+			"fr": "Il ne vous reste plus qu\'à remplir votre profil et à en parler à vos amis. <br> A bientôt en soirée!",
 			"en": "All you have to do know is bring your friends and fill in very basic info about you <br> See you next Friday eve"
 		},
 		intro_ending_btn: {
@@ -638,7 +638,7 @@
 			"en": "My profile"
 		},
 		intro_ending_skip: {
-			"fr": "Je remplirai mon profile plus tard...montrez-moi les soirées!",
+			"fr": "Je remplirai mon profil plus tard...montrez-moi les soirées!",
 			"en": "I'll fill my profile later... show me the parties!"
 		},
 		intro_text_1: {
@@ -712,6 +712,10 @@
 		intro_text_17: {
 			"fr": "Le chat laisse la possibiliter de 'chuchotter' des messages à une ou plusieurs personnes",
 			"en": "The chat allows you to 'whisper' messages to one or many people. Only them will receive your message"
+		},
+		err_no_user_entry: {
+			"fr": "Utilisateur introuvable",
+			"en": "Couldn't find user"
 		},
 		//mp stands for missing parameter
 		err_create_n_hosts: {

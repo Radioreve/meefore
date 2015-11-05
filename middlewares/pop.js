@@ -41,7 +41,7 @@
 				}
 
 				if( user ){
-					req.body.user = user;
+					req.sent.user = user;
 				} else {
 
 					if( force_presence == true )
@@ -50,7 +50,7 @@
 							toClient: "No user has been found, when necessary"
 						});
 
-					req.body.user = null;
+					req.sent.user = null;
 				}
 			
 				return next();
