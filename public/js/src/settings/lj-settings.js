@@ -335,12 +335,14 @@
 
 			setTimeout(function(){
 
+				var text = LJ.fn.renderGoodbye();
+
 				$('.curtain').velocity('transition.fadeIn', {
 					duration: 3000,
 					complete: function(){
 						$('.curtain')
 							.children().remove().end()
-							.append( LJ.fn.renderGoodbye )
+							.append( text )
 							.children()
 							.velocity('transition.fadeIn', {
 								duration: 2000,

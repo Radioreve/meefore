@@ -69,7 +69,7 @@
 
 		var email = fb.email;
 		if( req.sent.no_email ){
-			email = 'unknown';
+			email = 'n/a';
 		}
 
 		new_user.facebook_id                       = fb.id;

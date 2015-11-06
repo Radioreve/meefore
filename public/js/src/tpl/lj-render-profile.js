@@ -100,11 +100,11 @@
 
           var html = [
                 '<div class="delete-profile-wrap">',
-                    '<div data-lidd="lol" class="modal-title">Supprimer mon profile</div>',
-                    '<div data-lidd="" class="delete-profile-text">Toutes les données vous concernant seront supprimées</div>',
+                    '<div data-lid="s_delete_title" class="modal-title">Supprimer mon profile</div>',
+                    '<div data-lid="s_delete_text" class="delete-profile-text">Toutes les données vous concernant seront supprimées</div>',
                     '<div class="delete-profile-buttons">',
-                      '<button class="theme-btn btn-validate btn-validate-modal">Supprimer</button>',
-                      '<button class="theme-btn btn-cancel">Annuler</button>', 
+                      '<button data-lid="s_delete_validate" class="theme-btn btn-validate btn-validate-modal">Supprimer</button>',
+                      '<button data-lid="s_delete_cancel" class="theme-btn btn-cancel">Annuler</button>', 
                     '</div>',
                 '</div>',
             ].join('');
@@ -117,14 +117,17 @@
         renderGoodbye: function(){
 
           var html = [
-            '<div data-lidd="s_goodbye" class="goodbye none super-centered">',
-                'Votre compte a bien été supprimé, vous allez être redirigé vers la page d\'accueil',
+            '<div>',
+              '<div data-lid="s_delete_goodbye" class="goodbye none super-centered">',
+                  'Votre compte a bien été supprimé',
+              '</div>',
             '</div>'
           ].join('');
 
-          html = $(html)
+          html = $(html);
           LJ.fn.setAppLanguage( LJ.app_language, html );
           return html.prop('outerHTML');
+
         }
         
 
