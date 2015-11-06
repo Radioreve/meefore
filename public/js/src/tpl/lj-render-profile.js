@@ -60,7 +60,7 @@
                             + '<div class="row-friend-img">'+ image_tag +'</div>'
                             + '<div class="row-friend-name">' + friend.name + '</div>'
                             + '<div class="row-friend-action"></div>' 
-                        +'</div>'
+                        + '</div>'
 
             return html;
         },
