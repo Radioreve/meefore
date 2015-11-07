@@ -620,7 +620,7 @@
                 "visibility": "on"
             },
             {
-                "color": "#ffffff"
+                "color": "#fdfdfd"
             }
         ]
     },
@@ -743,7 +743,7 @@
                 "lightness": 45
             },
             {
-                "visibility": "on"
+                "visibility": "simplified"
             }
         ]
     },
@@ -753,6 +753,15 @@
         "stylers": [
             {
                 "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "color": "#a39bb2"
             }
         ]
     },
@@ -941,7 +950,7 @@
         "elementType": "all",
         "stylers": [
             {
-                "color": "#bfd9ee"
+                "color": "#dae7f2"
             },
             {
                 "visibility": "on"

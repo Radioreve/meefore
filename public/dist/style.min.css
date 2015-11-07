@@ -3070,7 +3070,7 @@ i.icon-create {
 }
 .event-preview-hosts,
 .party-preview-hosts {
-   text-align: left;
+   text-align: center;
    flex: 1 0 auto;
 }
 .event-preview-host-picture {
@@ -3102,7 +3102,7 @@ background-size: cover;
 height: 45px;
 border-radius: 40px;
 background-position: center center;
-background-repeat: no-repeat;margin-left: 50px;}
+background-repeat: no-repeat;}
 
 .party-preview-picture img {border-radius: 30px;text-align: center;}
 
@@ -3142,7 +3142,7 @@ vertical-align: middle;overflow: hidden;text-overflow: ellipsis;flex: 1 0 auto;}
   display: flex;
   /* flex: 1 0 auto; */
   align-items: center;
-  justify-content: space-around;
+  justify-content: flex-start;
 } 
 .party-preview-place-name {*/
   font-size: 14px;
@@ -3158,7 +3158,7 @@ letter-spacing: -.5px;
 font-size: 14px;
 height: 14px;margin: 2px 10px 2px 0;font-family: 'Karla';
 font-weight: bolder;color: #434343;
-padding-left: 3px;display: inline-block;font-size: 13px;}
+padding-left: 3px;font-size: 13px;text-align: center;}
 .event-preview-hosts-names, .party-preview-place-type {
    font-size: 12px;
    color: #8D8D8D;
@@ -3167,7 +3167,7 @@ padding-left: 3px;display: inline-block;font-size: 13px;}
    border-radius: 3px;
    line-height: 14px;
    flex: 2 0 0;
-   text-align: left;
+   text-align: center;
 }
 .event-preview-hosts-names{
   display: block;
@@ -3203,7 +3203,7 @@ padding-left: 3px;display: inline-block;font-size: 13px;}
   justify-content: flex-start;
   overflow: hidden;
   box-sizing: border-box;
-  box-shadow: 0 0 12px #E7E7E7;
+  box-shadow: 0 0 9px 1px #CECECE;
 }
 
 .filters-location {
@@ -4411,7 +4411,7 @@ position: absolute;top: 0;}
 }
 
 .auto-login-msg {
-   color: gainsboro;
+   color: white;
    font-size: 14px;
    font-family: 'Karla';
    letter-spacing: 1px;
@@ -4427,7 +4427,8 @@ position: absolute;top: 0;}
    border-bottom: 1px solid #E4E4E4;
    padding: 15px 15px;
    border-radius: 2px 2px 0 0;
-   box-shadow: 0 0 12px #E7E7E7;
+   box-shadow: 0 0 9px 1px #CECECE;
+   min-width: 70%;
 }
 .event-preview {
     display: flex;
