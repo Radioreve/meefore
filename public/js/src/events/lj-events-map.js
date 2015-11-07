@@ -27,16 +27,8 @@
         },
         initMap: function() {
 
-            var map_style_sober = new google.maps.StyledMapType( LJ.google.map.style.sober, {
-                name: 'sober'
-            });
-
-            var map_style_lunar = new google.maps.StyledMapType( LJ.google.map.style.lunar, {
-                name: 'lunar'
-            });
-
-            var map_style_pinkey = new google.maps.StyledMapType( LJ.google.map.style.pinkey, {
-                name: 'pinkey'
+             var map_style_meefore = new google.maps.StyledMapType( LJ.google.map.style.meefore_map, {
+                name: 'meefore_map'
             });
 
             LJ.map = new google.maps.Map(document.getElementsByClassName('row-events-map')[0], {
@@ -50,17 +42,15 @@
                     position : google.maps.ControlPosition.RIGHT_TOP
                 },
                 mapTypeControlOptions: {
-                    mapTypeIds: ['sober']
+                    mapTypeIds: ['meefore_map']
                 }
             });
 
             LJ.map_service = new google.maps.places.PlacesService( LJ.map );
 
             /* Map styling */
-            LJ.map.mapTypes.set('sober', map_style_sober);
-            LJ.map.mapTypes.set('lunar', map_style_lunar);
-            LJ.map.mapTypes.set('pinkey', map_style_pinkey );
-            LJ.map.setMapTypeId('sober');
+            LJ.map.mapTypes.set('meefore_map', map_style_meefore );
+            LJ.map.setMapTypeId('meefore_map');
 
             LJ.map.addListener('center_changed', function(){
                 
