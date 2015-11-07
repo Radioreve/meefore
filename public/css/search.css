@@ -17,6 +17,7 @@
    padding: 15px 15px;
    border-radius: 2px 2px 0 0;
    box-shadow: 0 0 12px #E7E7E7;
+   min-width: 70%;
 }
 .event-preview {
     display: flex;

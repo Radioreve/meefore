@@ -620,7 +620,7 @@
                 "visibility": "on"
             },
             {
-                "color": "#fffcfd"
+                "color": "#ffffff"
             }
         ]
     },
