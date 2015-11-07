@@ -551,7 +551,7 @@
         },
 		map: {
             style: {
-                meefore_map: [
+                meemap: [
     {
         "featureType": "administrative",
         "elementType": "all",

@@ -27,8 +27,8 @@
         },
         initMap: function() {
 
-             var map_style_meefore = new google.maps.StyledMapType( LJ.google.map.style.meefore_map, {
-                name: 'meefore_map'
+             var map_style_meefore = new google.maps.StyledMapType( LJ.google.map.style.meemap, {
+                name: 'meemap'
             });
 
             LJ.map = new google.maps.Map(document.getElementsByClassName('row-events-map')[0], {
@@ -42,15 +42,15 @@
                     position : google.maps.ControlPosition.RIGHT_TOP
                 },
                 mapTypeControlOptions: {
-                    mapTypeIds: ['meefore_map']
+                    mapTypeIds: ['meemap']
                 }
             });
 
             LJ.map_service = new google.maps.places.PlacesService( LJ.map );
 
             /* Map styling */
-            LJ.map.mapTypes.set('meefore_map', map_style_meefore );
-            LJ.map.setMapTypeId('meefore_map');
+            LJ.map.mapTypes.set('meemap', map_style_meefore );
+            LJ.map.setMapTypeId('meemap');
 
             LJ.map.addListener('center_changed', function(){
                 
