@@ -1,6 +1,6 @@
 
 .auto-login-msg {
-   color: gainsboro;
+   color: white;
    font-size: 14px;
    font-family: 'Karla';
    letter-spacing: 1px;

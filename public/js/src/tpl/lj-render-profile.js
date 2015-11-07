@@ -24,19 +24,29 @@
         },
         renderFacebookUploadedPictures: function( data ){
 
-            var urls = _.pluck( data, 'picture' ),
+            var images = _.pluck( data, 'images' ),
                 html = '<div class="facebook-image-item-wrap">';
 
                 html += '<div data-lid="p_facebook_upload_title" class="modal-title modal-title-facebook">Vos photos de profil</div>'
-            urls.forEach(function( url ){
+            images.forEach(function( img ){
+
+              var url = '';
+              img.forEach(function( itm ){
+
+                console.log(itm);
+                if( itm.width > 250 && itm.width < 450 || itm.height > 250 && itm.height < 450){
+                  url = itm.source
+                }
+
+              });
 
                 var $img = $('<img class="super-centered fb" src="' + url + '">');                
                 var html_img = '<div class="facebook-image-item none">'
                                 + '<div class="facebook-image-wrap">' + $img.prop('outerHTML') + '</div>'
                              + '</div>';
 
-
                 html += html_img;
+
             });
                 html += ['<div class="upload-buttons">',
                           '<button class="theme-btn btn-validate btn-validating">Valider</button>',

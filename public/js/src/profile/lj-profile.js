@@ -117,7 +117,7 @@
 
 					LJ.fn.displayInModal({
 
-						url: album_id + '/photos?fields=picture',
+						url: album_id + '/photos?fields=images',
 						source:'facebook',
 						starting_width: 500,
 						max_height: 500,

@@ -283,7 +283,7 @@ padding-left: 3px;font-size: 13px;text-align: center;}
   justify-content: flex-start;
   overflow: hidden;
   box-sizing: border-box;
-  box-shadow: 0 0 12px #E7E7E7;
+  box-shadow: 0 0 9px 1px #CECECE;
 }
 
 .filters-location {
