@@ -79,8 +79,8 @@
 
 			user_main_img = $.cloudinary.image( main_img.img_id, display_settings ).prop('outerHTML');
 
-			user_hashtags += '<div class="ambiance-hashtag adjust">#</div><div class="ambiance-name ">' +  user.drink + '</div>';
-			user_hashtags += '<div class="ambiance-hashtag adjust">#</div><div class="ambiance-name">' +  user.mood + '</div>';
+			user_hashtags += '<div class="ambiance-hashtag adjust">#</div><div class="ambiance-name ">' +  user.job + '</div>';
+			user_hashtags += '<div class="ambiance-hashtag adjust">#</div><div class="ambiance-name">' +  user.age + '</div>';
 
 			var image_tag_loader = LJ.$spinner_loader.clone().addClass('search-loader').addClass('super-centered').prop('outerHTML');
 

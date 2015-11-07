@@ -14,6 +14,8 @@
 
         			 		LJ.fn.showWelcomeLintro();
         			 		LJ.map.setZoom(14);
+                            // Clear preview to prevent problems when replaying tour
+                            google.maps.event.trigger( LJ.map, 'click' );
 
                             // Make sure doest call on undefined values
                             LJ.event_markers = LJ.event_markers || [];
@@ -224,7 +226,7 @@
         			},
         			{
         				id: "intro_13",
-        				next_id: "intro_13a",
+        				next_id: "intro_14",
         				duration: 4000,
         				mode: "idem",
                         text: LJ.text_source["intro_text_13"][ LJ.app_language ],
@@ -239,17 +241,29 @@
         			},
         			{
         				id: "intro_13a",
-        				next_id: "intro_14",
-        				duration: 4000,
-        				mode: "idem",
+        				next_id: "intro_18",
+        				duration: 5000,
+        				mode: "area",
+                        upper_el: '.row-events-filters',
+                        lower_el: '.row-events-accepted-tabview',
                         text: LJ.text_source["intro_text_13a"][ LJ.app_language ],
         				text_align: "center",
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        					LJ.event_markers_intro.forEach(function( evt, i ){
-        						if( i == 1 ) return evt.marker.setIcon( LJ.cloudinary.markers.base.full.url );
-        						evt.marker.setMap(null);
+                        callforward: function(){
+
+                           // Clear preview
+                            google.maps.event.trigger( LJ.map, 'click' )
+        					LJ.event_markers_intro.forEach(function( mrk, i ){
+        						if( i == 1 ){
+                                    mrk.marker.setIcon( LJ.cloudinary.markers.base.full.url );
+                                    LJ.map.panTo( mrk.data.address );
+                                    return;
+                                }
+        						mrk.marker.setMap(null);
         					});
+
+                        },
+                        callback: function(){
+                            LJ.fn.showTextLintro(this);
         				}
         			},
         			{
@@ -265,7 +279,8 @@
         					$('.row-events-accepted-tabview')
         						.append( LJ.fn.renderEventTabview( LJ.intro.event_data ) )
         						.children().last()
-        						.addClass('event-tabview-intro');
+        						.addClass('event-tabview-intro')
+                                .off();
         				}
         			},
         			{
@@ -297,7 +312,7 @@
         			},
         			{
         				id: "intro_17",
-        				next_id: "intro_18",
+        				next_id: "intro_13a",
         				duration: 9000,
         				mode: "element",
         				el: '.event-accepted-chat-typing',
@@ -418,7 +433,7 @@
 				if( opts.duration ){
 				  	LJ.intro_duration = window.setTimeout(function(){
 				  		 $('.lintro-next').click();
-				  	}, opts.duration );
+				  	}, opts.duration*1.25 );
 				 }
 
 				if( opts.mode == "idem" ){					
@@ -525,7 +540,9 @@
 				  	display: 'block',
 				  	complete: function(){
 
-				  		if( typeof opts.callback == 'function' ) opts.callback();
+				  		if( typeof opts.callback == 'function' ){
+                            opts.callback();
+                        }
 				  	}
 				  });
 
@@ -656,6 +673,9 @@
                 	.find('.offline').eq(1).removeClass('offline').addClass('online').end()
                 	.find('.offline').eq(2).removeClass('offline').addClass('online')
 
+                // Remove all handlers for the demo chat
+                $('.row-events-accepted').find().off();
+
 
         	},
         	showIntroChatTalk: function(){
@@ -728,7 +748,7 @@
         		});
 
         		// Clear preview
-        		google.maps.event.trigger( LJ.map, 'click' )
+        		google.maps.event.trigger( LJ.map, 'click' );
 
         		LJ.event_markers_intro.forEach(function(marker){
         			marker.marker.setMap(null);

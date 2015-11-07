@@ -24,9 +24,10 @@
         },
         renderFacebookUploadedPictures: function( data ){
 
-            var urls = _.pluck( data, 'source' ),
+            var urls = _.pluck( data, 'picture' ),
                 html = '<div class="facebook-image-item-wrap">';
 
+                html += '<div data-lid="p_facebook_upload_title" class="modal-title modal-title-facebook">Vos photos de profil</div>'
             urls.forEach(function( url ){
 
                 var $img = $('<img class="super-centered fb" src="' + url + '">');                
@@ -38,13 +39,16 @@
                 html += html_img;
             });
                 html += ['<div class="upload-buttons">',
-                          '<button class="theme-btn btn-cancel right">Annuler</button>',
-                          '<button class="theme-btn btn-validate btn-validating right">Valider</button>',
+                          '<button class="theme-btn btn-validate btn-validating">Valider</button>',
+                          '<button class="theme-btn btn-cancel">Annuler</button>',
                         '</div>'].join('');
 
                 html += '</div>';
 
-            return html;
+            html = $(html);
+            LJ.fn.setAppLanguage( LJ.app_language, html );
+            return html.prop('outerHTML');
+            
         },
         renderFriendInProfile: function( friend ){
 
@@ -117,8 +121,8 @@
         renderGoodbye: function(){
 
           var html = [
-            '<div>',
-              '<div data-lid="s_delete_goodbye" class="goodbye none super-centered">',
+            '<div class="super-centered">',
+              '<div data-lid="s_delete_goodbye" class="goodbye none">',
                   'Votre compte a bien été supprimé',
               '</div>',
             '</div>'

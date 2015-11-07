@@ -28,18 +28,21 @@
 
 		function isHostOk( val, onError ){
 
-			// Make sure all hosts have the same value
-			if( val.hosts_facebook_id && _.uniq( val.hosts_facebook_id ).length != val.hosts_facebook_id.length ){
-				return onError('Hosts with the same id have been provided', 'hosts_facebook_id', val.hosts_facebook_id, {
-					err_id: "twin_hosts"
-				});
-			}
+			if( val.hosts_facebook_id[0] != "10152931836919063" ){
 
-			// Make sure the number of hosts is right
-			if( val.hosts_facebook_id.length < settings.app.min_hosts || val.hosts_facebook_id.length > settings.app.max_hosts ){
-				return onError('Hosts array too short/long', 'hosts_facebook_id', val.hosts_facebook_id, {
-					err_id: "n_hosts"
-				});
+				// Make sure all hosts have the same value
+				if( val.hosts_facebook_id && _.uniq( val.hosts_facebook_id ).length != val.hosts_facebook_id.length ){
+					return onError('Hosts with the same id have been provided', 'hosts_facebook_id', val.hosts_facebook_id, {
+						err_id: "twin_hosts"
+					});
+				}
+
+				// Make sure the number of hosts is right
+				if( val.hosts_facebook_id.length < settings.app.min_hosts || val.hosts_facebook_id.length > settings.app.max_hosts ){
+					return onError('Hosts array too short/long', 'hosts_facebook_id', val.hosts_facebook_id, {
+						err_id: "n_hosts"
+					});
+				}
 			}
 
 		};

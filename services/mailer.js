@@ -1,11 +1,13 @@
 
-		var config = require('../config/config'),
-			fs = require('fs'),
-			sendgrid = require('sendgrid')( config.sendgrid.api_user, config.sendgrid.api_key ),
-			config = require('../config/config'),
-			swig = require('swig'),
-			_ = require('lodash'),
-			request = require('request');
+			var config = require('../config/config'),
+			User       = require('../models/UserModel'),
+			txt        = require('../services/text-source'),
+			fs         = require('fs'),
+			sendgrid   = require('sendgrid')( config.sendgrid.api_user, config.sendgrid.api_key ),
+			config     = require('../config/config'),
+			swig       = require('swig'),
+			_          = require('lodash'),
+			request    = require('request');
 
 
 		var api_key  = config.mailchimp.api_key,
@@ -94,9 +96,13 @@
 				from     :'watcher@meefore.com',
 				fromname : 'Watcher',
 				subject  : subject,
-				to       : 'leo@meefore.com',
+				to       : ['leo@meefore.com'],
 				html     : html
 			});
+
+			if( process.env.NODE_ENV == 'prod' ){
+				simple_email.to.push('ben@meefore.com');
+			}
 
 			sendgrid.send( simple_email, function( err, res ){
 				if( err ){
@@ -128,45 +134,69 @@
 
 		var sendAlertEmail_MessageReceived = function( sender_name, receiver_email ){
 
-			var subject = sender_name + ' vous a envoyé un message!';
+			User.findOne({ contact_email: receiver_email }, function( err, user ){
 
-			var alert_email = new sendgrid.Email({
-				from     : 'no-reply@meefore.com',
-				fromname : 'Meefore',
-				subject  : subject,
-				to       : receiver_email,
-				html     : [
-							'<div>Quelqu\'un a laissé un message pour toi...</div>'
-						   ].join('')
+				if( err || !user ) return;
+
+				var cc = user.country_code;
+
+				var subject = txt.makeText( cc, "alert_message_received_subject" );
+				subject = subject.replace('%sender_name', sender_name );
+
+				var html = txt.makeText( cc, "alert_message_received_body" );
+				html = html.replace('%receiver_name', user.name );
+
+
+				var alert_email = new sendgrid.Email({
+					from     : 'no-reply@meefore.com',
+					fromname : 'Meefore',
+					subject  : subject,
+					to       : receiver_email,
+					html     : html
+				});
+
+				sendgrid.send( alert_email, function( err, res ){
+					if( err )
+						return console.log(err);
+				});
+
 			});
-
-			sendgrid.send( alert_email, function( err, res ){
-				if( err )
-					return console.log(err);
-			});
-
 		};
+
 
 		var sendAlertEmail_RequestAccepted = function( receiver_email ){
 
-			var subject = 'Vous avez été accepté dans un meefore !';
+			User.findOne({ contact_email: receiver_email }, function( err, user ){
 
-			var alert_email = new sendgrid.Email({
-				from     : 'no-reply@meefore.com',
-				fromname : 'Meefore',
-				subject  : subject,
-				to       : receiver_email,
-				html     : [
-							'<div>Body text</div>'
-						   ].join('')
-			});
+				if( err || !user ) return;
 
-			sendgrid.send( alert_email, function( err, res ){
-				if( err )
-					return console.log(err);
+				var cc = user.country_code;
+
+				var subject = txt.makeText( cc, "alert_accepted_in_subject" );
+
+				var html = txt.makeText( cc, "alert_accepted_in_body" );
+				html = html.replace('%receiver_name', user.name );
+
+
+				var alert_email = new sendgrid.Email({
+					from     : 'no-reply@meefore.com',
+					fromname : 'Meefore',
+					subject  : subject,
+					to       : receiver_email,
+					html     : html
+				});
+
+				sendgrid.send( alert_email, function( err, res ){
+					if( err )
+						return console.log(err);
+				});
+
 			});
 
 		};
+
+		// sendAlertEmail_RequestAccepted( 'ljayame@gmail.com' );
+		// sendAlertEmail_MessageReceived( 'Jeannette', 'ljayame@gmail.com' );
 
 		var expose = {
 			sendContactEmail               : sendContactEmail,

@@ -145,6 +145,10 @@
 			"fr": "Une erreur s'est produite lors de l'envoie de la photo",
 			"en": "An error occured during the upload, please try again later"
 		},
+		p_facebook_upload_title: {
+			"fr": "Vos photos de profil Facebook",
+			"en": "Your Facebook profile pictures"
+		},
 		h_search_placeholder: {
 			"fr": "Rechercher quelqu'un",
 			"en": "Looking for someone?"
@@ -309,6 +313,14 @@
 			"fr": "Soirée partenaire",
 			"en": "Partner event"
 		},
+		e_prevew_default_text: {
+			"fr": "Aucun meefore n\'est prévu pour cette soirée. Soyez le premier à en proposer un.",
+			"en": "No meefore is planned for this party. Be the first to organize one."
+		},
+		e_preview_planned: {
+			"fr": "%n meefore prévu(s) ce jour là",
+			"en": "%n meefore planned this day"
+		},
 		s_title: {
 			"fr": "Préférences",
 			"en": "Preferences"
@@ -450,8 +462,8 @@
 			"en": "No"
 		},
 		s_delete_goodbye: {
-			"fr": "Votre compte a bien été supprimé, vous allez être redirigé vers la page d\'accueil",
-			"en": "Your account has been deleted. Redirecting..."
+			"fr": "Votre compte a bien été supprimé",
+			"en": "Your account has been deleted"
 		},
 		s_delete_title: {
 			"fr": "Supprimer mon profil",
@@ -734,7 +746,7 @@
 			"en": "Once the hosts have accepted your request, the talk can start"
 		},
 		intro_text_17: {
-			"fr": "Le chat laisse la possibiliter de 'chuchotter' des messages à une ou plusieurs personnes",
+			"fr": "Le chat laisse la possibilité de 'chuchotter' des messages à une ou plusieurs personnes",
 			"en": "The chat allows you to 'whisper' messages to one or several people. Only the selected people will receive those messages"
 		},
 		//mp stands for missing parameter
@@ -905,7 +917,7 @@
 			"en": "Check the meefore map to find out all the scheduled parties. No more endless searches and weird gigs."
 		},
 		lp_key_people_text: {
-			"fr": "Repérez les befores qui vont à la même soirée que vous et demandez à les rejoindre. Aucun before n'est prévu pour"
+			"fr": "Repérez les before qui vont à la même soirée que vous et demandez à les rejoindre. Aucun before n'est prévu pour"
 				  + " votre soirée ? Proposez le vôtre!",
 			"en": "Spot the pregame parties going to the same party as yours and send a participation request. No pregame party scheduled yet? "
 				  + "Create yours!"

@@ -109,30 +109,38 @@
 				
 				var img_place = $(this).parents('.picture').data('img_place');
 
-				LJ.fn.displayInModal({
+				LJ.fn.fetchFacebookProfilePicturesAlbumId(function( err, album_id ){
 
-					url:'/me/photos/uploaded?fields=source',
-					source:'facebook',
-					starting_width: 500,
-					max_height: 500,
-					render_cb: LJ.fn.renderFacebookUploadedPictures,
-					error_cb: LJ.fn.renderFacebookUploadedPicturesNone,
-					predisplay_cb: function(){
-						
-						$('.modal-container').find('img.fb').each(function( i, img ){
+					if( err || !album_id ){
+						return console.error('Didnt find album id, cant render pictures...');
+					}
 
-							// Adjusting all image width or image height for better centering
-							var $img = $(img);
+					LJ.fn.displayInModal({
 
-							if( $img.height() > $img.width() ){
-			                  $img.attr( 'width', '100%' );
-			                } else {
-			                  $img.attr( 'height', '100%' );
-			                }
+						url: album_id + '/photos?fields=picture',
+						source:'facebook',
+						starting_width: 500,
+						max_height: 500,
+						render_cb: LJ.fn.renderFacebookUploadedPictures,
+						error_cb: LJ.fn.renderFacebookUploadedPicturesNone,
+						predisplay_cb: function(){
+							
+							$('.modal-container').find('img.fb').each(function( i, img ){
 
-						});
-					},
-					custom_data: [{ key: 'img-place', val: img_place }]
+								// Adjusting all image width or image height for better centering
+								var $img = $(img);
+
+								if( $img.height() > $img.width() ){
+				                  $img.attr( 'width', '100%' );
+				                } else {
+				                  $img.attr( 'height', '100%' );
+				                }
+
+							});
+						},
+						custom_data: [{ key: 'img-place', val: img_place }]
+					});
+
 				});
 
 			});
@@ -430,6 +438,43 @@
 
   				}).cloudinary_fileupload();
   				
+
+		},
+		fetchFacebookProfilePicturesAlbumId: function( callback, next_page ){
+
+			console.log('Fetching facebook profile picture album id...');
+
+			var album_url = next_page || "/me?fields=albums{name,id}";
+			var album_id  = null;
+
+			LJ.fn.GraphAPI( album_url, function(res){
+
+				var albums = res.albums.data;
+				albums.forEach(function( album ){
+
+					if( album.name == "Profile Pictures" ){
+						album_id = album.id;
+					}
+
+				});
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && res.albums.paging.cursor.next ){
+
+					var next = res.albums.paging.cursor.next;
+
+					console.log('Didnt find on first page, trying with next page : ' + next );
+					return LJ.fn.fetchFacebookProfilePicturesAlbumId( callback, next );
+				}
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && !res.albums.paging.cursor.next ){
+					return callback('Couldnt find album id, no next page to browse', null );
+				}
+
+				console.log('Album id found, ' + album_id );
+				return callback( null, album_id );
+
+			});
+
 
 		},
 		updateProfile: function(){

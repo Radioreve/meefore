@@ -70,7 +70,7 @@
     renderEventPreview_Default: function(){
 
       var html = '<div class="event-preview">'
-                   + '<div class="event-preview-default">Aucun meefore n\'est prévu pour cette soirée. Soyez le premier à en proposer un. </div>'
+                   + '<div data-lid="e_prevew_default_text" class="event-preview-default">Aucun meefore n\'est prévu pour cette soirée. Soyez le premier à en proposer un. </div>'
                    + '<button  data-lid="e_preview_first_to_create" class="theme-btn btn-preview btn-create-event slow-down-3">Proposer un meefore pour cette soirée</div>'
                 + '</div>';
 
@@ -190,7 +190,7 @@
                       + '<div class="party-preview-icon"><i class="icon party-icon icon-glass"></i></div>'
                       + '<div class="party-preview-place-name">' + party.address.place_name + ', ' + party.address.city_name + '</div>'
                       + '<div class="party-preview-details--sub">'
-                        + '<div class="party-preview-place-type">' + n + ' meefore de prévues ce jour là</div>'
+                        + '<div data-lid="e_preview_planned" class="party-preview-place-type"></div>'
                       + '</div>'
                     +'</div>';
 
@@ -200,7 +200,10 @@
                     // + '<button class="theme-btn btn-preview btn-requestin slow-down-3">Proposer un meefore</div>'
                 + '</div>';
 
-      return html;
+      html = $(html);
+      LJ.fn.setAppLanguage( LJ.app_language, html )
+      
+      return html.prop('outerHTML').replace('%n', n );
 
     },
     renderPartyPreview_Party: function( party, options ){

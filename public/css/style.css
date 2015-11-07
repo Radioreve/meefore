@@ -310,7 +310,7 @@ body > header > h5 {
 .toastError,
 .toastInfo {
    position: fixed;
-   font: .8em 'Lato';
+   font: 13.5px 'Lato';
    margin: auto;
    color: rgb(255, 255, 255);
    text-shadow: 0 0 1px 
@@ -430,16 +430,18 @@ body > header > h5 {
 	
 	white;
    letter-spacing: 0.5px;
-   padding: 7px;
-   padding-top: 12px;
-   padding-bottom: 9px;
+   padding: 13px 40px 9px;
    height: 42px;
-   left: 0;
-   right: 0;
+   /* left: 0; */
+   /* right: 0; */
    top: -1px;
-   width: 510px;
-   text-align: center;
+   min-width: 450px;
    z-index: 9999999;
+   transform: translateX(-50%)!important;
+   left: 50%;
+   display: inline-block;
+   vertical-align: middle;
+   text-align: center;
 }
 
 .toastError {
@@ -1829,4 +1831,5 @@ p {
 	font-size: 13px;
 	font-family: 'Karla';
 	color: white;
+	z-index: 100000000;
 }

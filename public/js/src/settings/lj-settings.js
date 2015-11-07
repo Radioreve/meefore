@@ -343,7 +343,7 @@
 						$('.curtain')
 							.children().remove().end()
 							.append( text )
-							.children()
+							.find('.goodbye')
 							.velocity('transition.fadeIn', {
 								duration: 2000,
 								complete: function(){

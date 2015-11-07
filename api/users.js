@@ -36,11 +36,13 @@
 
 		User.find({ facebook_id: user_facebook_id }, function( err, users ){
 
-			if( err )
+			if( err ){
 				return eventUtils.raiseError({ res: res, toServer: "API Error (database)", toClient: "API Error" });
+			}
 
-			if( users.length == 0 )
+			if( users.length == 0 ){
 				return eventUtils.raiseError({ res: res, toServer: "API Error (database)", toClient: "No user found" });
+			}
 
 			res.json( users[0] ).end();
 
@@ -59,7 +61,7 @@
 
 		User
 			.find({ name: { $regex: pattern, $options: 'i' }})
-			.select({ name: 1, pictures: 1, mood: 1, drink: 1, facebook_id: 1 })
+			.select({ name: 1, pictures: 1, age: 1, job: 1, facebook_id: 1 })
 			.limit(10)
 			.exec(function( err, users ){
 
