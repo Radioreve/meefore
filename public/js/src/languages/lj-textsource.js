@@ -182,23 +182,23 @@
 			"en": "Select among your friends (1 minimum)"
 		},
 		e_create_begins_at: {
-			"fr": "Date du meefore",
-			"en": "Meefore date"
+			"fr": "Date du before",
+			"en": "Before date"
 		},
 		e_create_begins_at_placeholder: {
 			"fr": "Quel jour? ",
 			"en": "Which day?"
 		},
 		e_create_hour: {
-			"fr": "Heure du meefore",
-			"en": "Meefore hour"
+			"fr": "Heure du Before",
+			"en": "Before hour"
 		},
 		e_create_hour_placeholder: {
 			"fr": "Quelle heure?",
 			"en": "What time?"
 		},
 		e_create_address: {
-			"fr": "Lieu du meefore",
+			"fr": "Lieu du before",
 			"en": "Location"
 		},
 		e_create_address_placeholder: {
@@ -306,16 +306,16 @@
 			"en": "Change location"
 		},
 		e_filters_date: {
-			"fr": "Filtrer par date",
-			"en": "Filter by date"
+			"fr": "Date",
+			"en": "Date"
 		},
 		e_create_party_button: {
 			"fr": "Soirée partenaire",
 			"en": "Partner event"
 		},
 		e_prevew_default_text: {
-			"fr": "Aucun meefore n\'est prévu pour cette soirée. Soyez le premier à en proposer un.",
-			"en": "No meefore is planned for this party. Be the first to organize one."
+			"fr": "Aucun before n\'est prévu pour cette soirée. Soyez le premier à en proposer un.",
+			"en": "No pregame party is planned for this party. Be the first to organize one."
 		},
 		e_preview_planned: {
 			"fr": "%n meefore prévu(s) ce jour là",
@@ -338,7 +338,7 @@
 			"en": "Contact information"
 		},
 		s_contact_subtitle: {
-			"fr": "Stay in touch'",
+			"fr": "Restez informé",
 			"en": "Stay in touch'"
 		},
 		s_contact_email_label: {
@@ -418,12 +418,12 @@
 			"en": "Signal message read"
 		},
 		s_message_readby_desc: {
-			"fr": "Signalez automatiquement aux autres utilisateurs lorsque vous avez vu leur message",
+			"fr": "Signalez automatiquement aux autres utilisateurs que vous avez vu leur message",
 			"en": "Signal to other users that you have read their message"
 		},
 		s_min_frequency_label: {
 			"fr": "Temps entre chaque email",
-			"en": "Time lapse between emails"
+			"en": "Time lapse between each emails"
 		},
 		s_min_frequency_desc: {
 			"fr": "Pour éviter d'être spammé par l'application",
@@ -471,7 +471,7 @@
 		},
 		s_delete_text: {
 			"fr": "Toutes les données vous concernant seront supprimées",
-			"en": "All your datas will be deleted"
+			"en": "All your data will be deleted"
 		},
 		s_delete_validate: {
 			"fr": "Supprimer",
@@ -499,7 +499,7 @@
 		},
 		ch_settings_status_label: {
 			"fr": "Statut du meefore",
-			"en": "meefore status"
+			"en": "Meefore status"
 		},
 		ch_settings_status_open: {
 			"fr": "Ouvert",
@@ -567,7 +567,7 @@
 		},
 		to_event_created_success_2: {
 			"fr": "Que la fête commence...",
-			"en": "May the party begin..."
+			"en": "May the party get started..."
 		},
 		to_party_created_success: {
 			"fr": "La soirée a été ajoutée",
@@ -667,19 +667,19 @@
 		},
 		intro_ending_subheader: {
 			"fr": "Il ne vous reste plus qu\'à remplir votre profil et à en parler à vos amis. <br> A bientôt en soirée!",
-			"en": "All you have to do know is bring your friends and complete your profile <br> See you at the next party!"
+			"en": "All you have to do know is bring your friends and complete your profile. <br> See you at the next party!"
 		},
 		intro_ending_btn: {
 			"fr": "Mon profil",
 			"en": "My profile"
 		},
 		intro_ending_skip: {
-			"fr": "Je remplirai mon profil plus tard...montrez-moi les soirées!",
-			"en": "I'll complete my profile later... show me the parties!"
+			"fr": "Je remplirai mon profil plus tard. Montrez-moi les soirées!",
+			"en": "I'll complete my profile later. Show me the parties!"
 		},
 		intro_text_1: {
-			"fr": "Meefore, c'est une carte avec des soirées et des before meefore",
-			"en": "Meefore, it's a map with parties and pregame parties meefore"
+			"fr": "Meefore, c'est une carte avec des soirées et des before",
+			"en": "Meefore, it's a map with parties and pregame parties"
 		},
 		intro_text_2: {
 			"fr": "Chaque utilisateur peut proposer un before...",
@@ -694,12 +694,12 @@
 			"en": "The parties displayed on the map are either proposed by our users or suggested by Meefore"
 		},
 		intro_text_5: {
-			"fr": "Ça, c'est ce qui se passe quand plusieurs groupes ont organisé des meefore avant d'aller à la même soirée ensuite",
-			"en": "This, is what happens when multiple groups host a pregame party before going to the same party afterwards"
+			"fr": "Ça, c'est ce qui se passe quand plusieurs groupes ont organisé des before avant d'aller à la même soirée",
+			"en": "This, is what happens when multiple groups host a pregame party before going to the same party"
 		},
 		intro_text_6: {
-			"fr":"Lorsque vous cliquez sur un meefore, des informations sur les organisateurs apparaissent",
-			"en": "When you click on a meefore, information on the hosts are displayed"
+			"fr":"Lorsque vous cliquez sur un before, des informations sur les organisateurs apparaissent",
+			"en": "When you click on a before, information on the hosts are displayed"
 		},
 		intro_text_7: {
 			"fr": "Ici, c'est les organisateurs du before",
@@ -714,7 +714,7 @@
 			"en": "This is where you ask to join their pregame party"
 		},
 		intro_text_10: {
-			"fr": "Ca, c'est une demande de participation",
+			"fr": "Ça, c'est une demande de participation",
 			"en": "This is what a participation request looks like"
 		},
 		intro_text_11: {
@@ -731,7 +731,7 @@
 		},
 		intro_text_13a: {
 			"fr": "Chaque organisateur peut suspendre un meefore à tout moment pour signaler qu'ils sont au complet",
-			"en": "Each host can suspend a pregame at anytime to signal it is full"
+			"en": "Each host can suspend a pregame party at anytime to signal it is full"
 		},
 		intro_text_14: {
 			"fr": "En bas de l'écran sont représentés tous les meefore qui vous concernent",
@@ -759,11 +759,11 @@
 			"en": "Hashtag your meefore to describe it"
 		},
 		err_create_mp_party: {
-			"fr": "Addresse de la soirée manquante",
+			"fr": "Adresse de la soirée manquante",
 			"en": "Missing the address of the party"
 		},
 		err_create_mp_address: {
-			"fr": "Addresse du meefore manquante",
+			"fr": "Adresse du meefore manquante",
 			"en": "Missing meefore's address"
 		},
 		err_create_mp_begins_at: {
@@ -795,8 +795,8 @@
 			"en": "One of the hosts can't be found"
 		},
 		err_request_mp_members_facebook_id: {
-			"fr": "Il faut être au moins 2 pour rejoindre un meefore",
-			"en": "You must be at least 2 to organize a meefore"
+			"fr": "Il faut être au moins deux pour rejoindre un meefore",
+			"en": "You must be at least two to organize a meefore"
 		},
 		err_request_mp_name: {
 			"fr": "En manque d'inspiration? Un petit effort!",
@@ -847,12 +847,12 @@
 			"en": "Your group must have between %min and %max people"
 		},
 		err_request_ghost_members: {
-			"fr": "Des membres ne sont pas inscrits sur Meefore",
-			"en": "Some members have not signed up to Meefore"
+			"fr": "Des membres ne sont pas encore inscrits sur Meefore",
+			"en": "Some members have not signed up to Meefore yet"
 		},
 		err_request_event_not_open: {
 			"fr": "Les organisateurs ont suspendu momentanément le meefore",
-			"en": "The hosts has suspended the meefore at the moment"
+			"en": "The hosts have suspended the meefore at the moment"
 		},
 		err_chat_send_message: {
 			"fr": "Une erreur inconnue s'est produite suite à l'envoie du message",
@@ -959,7 +959,7 @@
 			"en": "Some fields are missing"
 		},
 		lp_contact_error_email: {
-			"fr": "L'addresse email rentrée semble avoir une petite erreur",
+			"fr": "L'adresse email indiquée semble avoir une petite erreur",
 			"en": "Your email address doesn't look like one "
 		},
 		lp_contact_error_generic: {
