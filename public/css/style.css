@@ -1538,7 +1538,7 @@ input[type="radio"] + span {
 #search input:focus {
 }
 
-input:focus::-webkit-input-placeholder {
+#searchbar input:focus::-webkit-input-placeholder {
    color: white;
 }
 
@@ -1548,7 +1548,7 @@ input:focus::-webkit-input-placeholder {
    transition: all ease-out .3s;
 }
 
-input:focus:-moz-placeholder {
+#searchbar input:focus:-moz-placeholder {
    color: white;
 }
 
@@ -1565,7 +1565,7 @@ input:focus:-moz-placeholder {
    transition: all ease-out .3s;
 }
 
-input:focus:-ms-input-placeholder {
+#searchbar input:focus:-ms-input-placeholder {
    color: white;
 }
 
@@ -1580,6 +1580,15 @@ button:hover {
    background-color: #85E585;
    /* border: none; */
 }
+
+.event-accepted-chat-typing ::-webkit-input-placeholder,
+.event-accepted-chat-typing :-moz-placeholder,
+.event-accepted-chat-typing ::-moz-placeholder,
+.event-accepted-chat-typing :-ms-input-placeholder {
+	color: black;
+}
+
+
 .btn-preview-undo:hover {
 }
 

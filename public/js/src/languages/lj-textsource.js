@@ -306,8 +306,8 @@
 			"en": "Change location"
 		},
 		e_filters_date: {
-			"fr": "Date",
-			"en": "Date"
+			"fr": "Dates",
+			"en": "Dates"
 		},
 		e_create_party_button: {
 			"fr": "Soirée partenaire",
@@ -488,6 +488,10 @@
 		ch_hosts: {
 			"fr": "Organisateurs",
 			"en": "Hosts"
+		},
+		ch_placeholder: {
+			"fr": "Message...",
+			"en": "Message..."
 		},
 		ch_button_update: {
 			"fr": "Mettre à jour",

@@ -16,8 +16,10 @@
    border-bottom: 1px solid #E4E4E4;
    padding: 15px 15px;
    border-radius: 2px 2px 0 0;
-   box-shadow: 0 0 9px 1px #CECECE;
+   box-shadow: 2px 2px 3px 0px #CACACA;
    min-width: 70%;
+   box-shadow: none;
+   border: 1px solid #C4C4C4!important;
 }
 .event-preview {
     display: flex;
@@ -27,7 +29,7 @@
 .event-preview div {
     margin-right: 6px;
 }
-.party-preview {height: 69px;display: flex;align-content: center;justify-content: space-around;float: right;}
+.party-preview {height: 70px;display: flex;align-content: center;justify-content: space-around;float: right;}
 
 .fb-overlay {
    width: 100%;

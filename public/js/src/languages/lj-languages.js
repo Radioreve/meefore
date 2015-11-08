@@ -24,11 +24,14 @@
 
 				if( /placeholder/i.test( lid ) ){
 					$el.attr('placeholder', translated_text );
+					
+					if( $('#searchbar').find('input').length > 1 ){
+						$('#searchbar').find('input').first().attr('placeholder', null);
+					}
 					return;
 				}
 
 				$el.html( translated_text );
-
 
 				return;
 

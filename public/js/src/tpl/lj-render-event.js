@@ -474,7 +474,7 @@
                       + '</div>'
                       + '<div class="event-accepted-chat-typing">'
                         + '<div class="readby" data-names=""></div>'
-                        + '<input type="text"/>'
+                        + '<input data-lid="ch_placeholder" type="text" />'
                         + '<button data-lid="ch_button_send" class="theme-btn">Envoyer</button>'
                       + '</div>'
                   + '</div>';
