@@ -771,7 +771,7 @@
         		var img_place = 0;
                 var img_id    = LJ.user._id + '--0'; //important 
                 var userId    = LJ.user._id;
-                var url       = 'https://graph.facebook.com/' + LJ.user.facebook_id + '/picture?width=180&height=180';
+                var url       = 'https://graph.facebook.com/' + LJ.user.facebook_id + '/picture?width=320&height=320';
 
 				LJ.fn.updatePictureWithUrl({
 			                        userId    : LJ.user._id,

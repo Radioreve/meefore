@@ -686,13 +686,13 @@
         "elementType": "all",
         "stylers": [
             {
-                "visibility": "off"
+                "visibility": "simplified"
             },
             {
                 "hue": "#37ff00"
             },
             {
-                "lightness": "56"
+                "lightness": "70"
             }
         ]
     },
