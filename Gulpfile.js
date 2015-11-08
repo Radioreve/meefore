@@ -1,10 +1,13 @@
 
-	
-	var gulp       = require('gulp'),
-        gutil       = require('gulp-util'),
-        uglify      = require('gulp-uglify'),
-        concat      = require('gulp-concat'),
-        cssbeautify = require('gulp-cssbeautify');
+	var
+        gulp         = require('gulp'),
+        gutil        = require('gulp-util'),
+        uglify       = require('gulp-uglify'),
+        concat       = require('gulp-concat'),
+        cssbeautify  = require('gulp-cssbeautify'),
+        postcss      = require('gulp-postcss'),
+        autoprefixer = require('autoprefixer');
+
 
     
     var dir_lib = 'public/js/lib/';
@@ -102,22 +105,12 @@
             // dir_css + 'css/rangeslider/css/rangeslider.flat.css',
             // dir_css + 'css/bxslider/jquery.bxslider.css'
             ])
-        .pipe(concat('style.min.css'))
+        .pipe(concat('post.css'))
+        .pipe(postcss([ autoprefixer ]))
+        .pipe(cssbeautify())
         .pipe(gulp.dest('./public/dist'));
     });
         
-
-    gulp.task('css', function(){
-        return gulp.src([
-            'public/css/*.css'
-            ])
-        .pipe( cssbeautify({
-            indent: '   ',
-            openbrace: 'end-of-line',
-            autosemicolon: true
-        }))
-        .pipe( gulp.dest('./public/css') );
-    });
 
     gulp.task('default', ['minify-lib', 'minify-src', 'minify-css'], function() {
     	gutil.log('Gulp is running');
