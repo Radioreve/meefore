@@ -262,7 +262,6 @@
             var html = [
                 '<div class="row-events-filters-group filters-create-party">',
                     '<button class="theme-btn btn-create-party right">',
-                        '<i class="icon icon-users"></i>',
                         '<span data-lid="e_create_party_button">Soirée partenaire</span>',
                     '</button>',
                 '</div>'].join('');

@@ -1,7 +1,6 @@
 /* Générales */
 
-#profileWrap {
-}
+#profileWrap {margin-top: 20px;}
 
 ::-webkit-file-upload-button {
    cursor: pointer;

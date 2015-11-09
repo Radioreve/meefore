@@ -8,7 +8,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-  <title>Meefore | Home </title>
+  <title>Meefore | Des rencontres avant d'aller en soirée </title>
+  <meta name="description" content="Meefore permet à des groupes d'amis de se retrouver
+  avant d'aller en soirée, en affichant sur une même carte des soirées et des before organisés 
+  pour aller à ces soirées">
 
   <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Londrina+Solid' rel='stylesheet' type='text/css'>
@@ -93,13 +96,14 @@
       <div class="landing-hero">
         <div class="hero-logo">
           <img src="/img/app/logo.png" width="50" alt="Logo meefore soirées">
-          <div class="hero-logo-name">meefore</div>
+          <h1 class="hero-logo-name">meefore</h1>
         </div>
         <div class="hero-languages">
           <span data-code="fr" class="no-cb pick-lang hero-lang active">FR</span>
           <span data-code="en" class="no-cb pick-lang hero-lang">EN</span>
         </div>
         <h1 data-lid="lp_subtitle" class="hero-header">
+          Faîtes des rencontres avant d'aller en soirée
         </h1>
         <div id="facebook_connect">
           <i class="icon icon-facebook"></i>
@@ -133,18 +137,25 @@
       <img src="/img/kb/lp-arrow-reverse.png" width="120" alt="Arrow" class="lp-arrow lp-arrow-2">
       <div class="keypoint-wrap keypoint-1">
         <div class="keypoint-img"><i class="icon icon-keypoint icon-glass"></i></div>
-        <div data-lid="lp_key_friends_title" class="keypoint-head">Les amis...</div>
-        <p  data-lid="lp_key_friends_text" class="keypoint-body">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+        <h2 data-lid="lp_key_friends_title" class="keypoint-head">Les amis...</h2>
+        <p  data-lid="lp_key_friends_text" class="keypoint-body">
+          Rendez-vous sur la carte meefore pour voir toutes les soirées prévues.
+          Finis les recherches interminables et les plans bidons.</p>
       </div
       ><div class="keypoint-wrap keypoint-2">
         <div class="keypoint-img"><i class="icon icon-keypoint icon-group"></i></div>
-        <div  data-lid="lp_key_people_title" class="keypoint-head">...des rencontres...</div>
-        <p  data-lid="lp_key_people_text" class="keypoint-body">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+        <h2 data-lid="lp_key_people_title" class="keypoint-head">...des rencontres...</h2>
+        <p  data-lid="lp_key_people_text" class="keypoint-body">
+          Repérez les before qui vont à la même soirée que vous et demandez à les rejoindre.
+          Aucun before n'est prévu pour votre soirée ? Proposez le vôtre!
+        </p>
       </div
       ><div class="keypoint-wrap keypoint-3">
         <div class="keypoint-img"><i class="icon icon-keypoint icon-relation"></i></div>
-        <div data-lid="lp_key_party_title" class="keypoint-head">...et la soirée !</div>
-        <p data-lid="lp_key_party_text" class="keypoint-body">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+        <h2 data-lid="lp_key_party_title" class="keypoint-head">...et la soirée !</h2>
+        <p data-lid="lp_key_party_text" class="keypoint-body">
+          Rejoignez le groupe qui vous a le plus ambiancé avec vos amis et...passez une bonne soirée.
+        </p>
       </div>
     </div>
 
@@ -190,7 +201,7 @@
         <li id="profile" data-hash="me" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
         <li id="events" data-hash="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
         <li id="search" class="menu-item icon icon-search"><span class="underlay"></span>
-          <div id="searchbar" class=""><input data-lid="h_search_placeholder" type="text" placeholder="Rechercher un membre" class="search-input"></div>
+          <div id="searchbar" class=""><input data-lid="h_search_placeholder" type="text" class="search-input"></div>
         </li>
         <li id="settings" data-hash="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
       </ul>
@@ -204,8 +215,6 @@
 
   <div id="mainWrap" class="centered">
 
-  
-
     <section id="thumbWrap" class="none ">
       <div class="imgWrap">
       </div>
@@ -218,7 +227,7 @@
     <section id="profileWrap" class="none centered">
 
       <!-- Titre et sous-titre  -->
-      <div class="row row-profile">
+      <div class="row row-profile nonei">
         <h2 data-lid="p_title"> Mon profile </h2>
         <div class="row-subheader none">
           <div class="row-subheader-xp"><span class="xp-amount">1000</span><span>pts</span></div>
@@ -274,30 +283,30 @@
         <div class="row-body">
           <div class="row-divider"></div>
           <div class="row-input row-input-md row-name etiquette">
-            <label data-lid="p_name_label" for="name" class="label label-md">Nom</label>
-            <input data-lid="p_name_placeholder" readonly id="name" class="" placeholder="Prad Bitt" type="text" maxlength="25">
+            <label data-lid="p_name_label" for="name" class="label label-md">Nom</label
+            ><input data-lid="p_name_placeholder" readonly id="name" class="" placeholder="Prad Bitt" type="text" maxlength="25">
           </div>
           <div class="row-input row-input-md row-age etiquette">
-            <label  data-lid="p_age_label" for="age" class="label label-md" >Age</label>
-            <input readonly id="age" class="" placeholder="25" type="number" max="50" min="18">
+            <label  data-lid="p_age_label" for="age" class="label label-md" >Age</label
+            ><input readonly id="age" class="" placeholder="25" type="number" max="50" min="18">
           </div>
           <div class="row-input row-input-md row-country etiquette">
-            <label data-lid="p_country_label" class="label label-md" for="description">Pays</label>
-            <input id="country" readonly maxlength="40" type="text" class="readonly">
+            <label data-lid="p_country_label" class="label label-md" for="description">Pays</label
+            ><input id="country" readonly maxlength="40" type="text" class="readonly">
           </div>
           <div class="row-input row-input-md row-job etiquette">
-            <label data-lid="p_job_label" class="label label-md" for="situation">Situation</label>
-            <input readonly id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
+            <label data-lid="p_job_label" class="label label-md" for="situation">Situation</label
+            ><input readonly id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
           </div>
           <div class="row-input row-input-lg row-mood etiquette nonei">
-            <label data-lid="p_lifestyle_label" for="mood" class="label label-md" >Lifestyle</label>
-            <div class="row-select-wrap mood-wrap">
+            <label data-lid="p_lifestyle_label" for="mood" class="label label-md" >Lifestyle</label
+            ><div class="row-select-wrap mood-wrap">
               <!-- Dynamically loaded -->
             </div>
           </div>
           <div class="row-input row-input-lg row-drink etiquette nonei">
-            <label data-lid="p_drink_label" for="drink" class="label label-md" >Verre</label>
-            <div class="row-select-wrap drink-wrap">
+            <label data-lid="p_drink_label" for="drink" class="label label-md" >Verre</label
+            ><div class="row-select-wrap drink-wrap">
               <!-- Dynamically loaded -->
             </div>
           </div>
@@ -365,11 +374,6 @@
             <i class="icon icon-bar"></i><span data-lid="e_create_button">Proposer un meefore</span>
           </button>
         </div>
-        <div class="row-events-filters-group filters-create-party">
-          <button class="theme-btn btn-create-party right">
-            <i class="icon icon-star"></i><span data-lid="e_create_party_button">Proposer une soirée</span>
-          </button>
-        </div>
       </div>
 
       <div class="row row-events row-main">
@@ -412,7 +416,7 @@
 
     <section id="settingsWrap" class="none centered">
 
-      <div class="row row-settings">
+      <div class="row row-settings nonei">
         <h2 data-lid="s_title" > Préférences </h2>
       </div>
 
@@ -438,9 +442,9 @@
         <div class="row-divider"></div>
 
           <div class="row-input row-input-lg row-contact-email etiquette">
-            <label data-lid="s_contact_email_label" class="label label-lg"for="email_contact">Email</label>
-              <input type="text" id="email_contact"/ placeholder="Where are you?" >
-             <div data-lid="s_contact_email_desc" class="row-select-description etiquette">
+            <label data-lid="s_contact_email_label" class="label label-lg"for="email_contact">Email</label
+            ><input type="text" id="email_contact"/ placeholder="Where are you?"
+             ><div data-lid="s_contact_email_desc" class="row-select-description etiquette">
               Indiquez nous l'email sur lequel vous souhaitez être contactés
              </div>
           </div>
@@ -472,23 +476,23 @@
         <div class="row-divider"></div>
 
           <div class="row-input row-input-lg row-newsletter etiquette">
-            <label data-lid="s_newsletter_label" class="label label-lg"for="">Newsletter</label>
-            <div class="row-select-wrap">
+            <label data-lid="s_newsletter_label" class="label label-lg"for="">Newsletter</label
+            ><div class="row-select-wrap">
               <div data-lid="s_yes" class="row-select newsletter" data-propid="newsletter" data-selectid="yes">Oui</div>
               <div data-lid="s_no"  class="row-select newsletter" data-propid="newsletter" data-selectid="no">Non</div>
-            </div>
-             <div data-lid="s_newsletter_desc" class="row-select-description etiquette">
+            </div
+             ><div data-lid="s_newsletter_desc" class="row-select-description etiquette">
               Notre newsletter est envoyée une fois par mois.
              </div>
           </div>
 
           <div class="row-input row-input-lg row-invitations etiquette">
-            <label data-lid="s_invits_label" class="label label-lg"for="">Invitations</label>
-            <div class="row-select-wrap">
+            <label data-lid="s_invits_label" class="label label-lg"for="">Invitations</label
+            ><div class="row-select-wrap">
               <div data-lid="s_yes" class="row-select invitations" data-propid="invitations" data-selectid="yes">Oui</div>
               <div data-lid="s_no"  class="row-select invitations" data-propid="invitations" data-selectid="no">Non</div> 
-            </div>
-             <div data-lid="s_invits_desc" class="row-select-description etiquette">
+            </div
+             ><div data-lid="s_invits_desc" class="row-select-description etiquette">
                 Bons plans pour être invités à des soirées en VIP
              </div>
           </div>
@@ -518,38 +522,38 @@
         <div class="row-divider"></div>
 
           <div class="row-input row-input-lg row-accepted-in etiquette">
-            <label data-lid="s_accepted_in_label" class="label label-lg"for="">Accepté dans un meefore</label>
-            <div class="row-select-wrap">
+            <label data-lid="s_accepted_in_label" class="label label-lg"for="">Accepté dans un meefore</label
+            ><div class="row-select-wrap">
               <div data-lid="s_yes" class="row-select accepted-in" data-propid="accepted_in" data-selectid="yes">Oui</div>
               <div data-lid="s_no"  class="row-select accepted-in" data-propid="accepted_in" data-selectid="no">Non</div>
-            </div>
-             <div data-lid="s_accepted_in_desc" class="row-select-description etiquette">
+            </div
+             ><div data-lid="s_accepted_in_desc" class="row-select-description etiquette">
                 Recevez un mail lorsque vous êtes accepté dans un meefore et que vous êtes hors-ligne.
              </div>
           </div>
 
           <div class="row-input row-input-lg row-message-unread etiquette">
-            <label data-lid="s_message_unread_label" class="label label-lg"for="">Message non lu</label>
-            <div class="row-select-wrap">
+            <label data-lid="s_message_unread_label" class="label label-lg"for="">Message non lu</label
+            ><div class="row-select-wrap">
               <div data-lid="s_yes" class="row-select message-unread" data-propid="message_unread" data-selectid="yes">Oui</div>
               <div data-lid="s_no"  class="row-select message-unread" data-propid="message_unread" data-selectid="no">Non</div> 
-            </div>
-             <div data-lid="s_message_unread_desc" class="row-select-description etiquette">
+            </div
+             ><div data-lid="s_message_unread_desc" class="row-select-description etiquette">
                 Recevez un mail lorsque quelqu'un a laissé un message.
              </div>
           </div>
 
           <div class="row-input row-input-lg row-min-frequency nonei etiquette">
-            <label data-lid="s_min_frequency_label" class="label label-lg"for="">1 mail max toutes les...</label>
-            <div class="row-select-wrap">
+            <label data-lid="s_min_frequency_label" class="label label-lg"for="">1 mail max toutes les...</label
+            ><div class="row-select-wrap">
               <div data-lid="s_0min"    class="row-select min-frequency"  data-propid="min_frequency" data-selectid="0">    Aucune limite</div>
               <div data-lid="s_15min"   class="row-select min-frequency"  data-propid="min_frequency" data-selectid="900">  Aucune limite</div>
               <div data-lid="s_60min"   class="row-select min-frequency"  data-propid="min_frequency" data-selectid="3600"> Aucune limite</div>
               <div data-lid="s_360min"  class="row-select min-frequency"  data-propid="min_frequency" data-selectid="21600">Aucune limite</div>
               <div data-lid="s_720min"  class="row-select min-frequency"  data-propid="min_frequency" data-selectid="43200">Aucune limite</div>
               <div data-lid="s_1440min" class="row-select min-frequency"  data-propid="min_frequency" data-selectid="86400">Aucune limite</div>
-            </div>
-             <div data-lid="s_min_frequency_desc" class="row-select-description etiquette">
+            </div
+             ><div data-lid="s_min_frequency_desc" class="row-select-description etiquette">
                 Spécifiez l'intervalle de temps minimum entre deux mails reçus par meefore.
              </div>
           </div>
@@ -579,23 +583,23 @@
           <div class="row-divider"></div>
 
           <div class="row-input row-input-lg row-autologin etiquette">
-            <label data-lid="s_autologin_label" class="label label-lg"for="">Auto login</label>
-            <div class="row-select-wrap">
+            <label data-lid="s_autologin_label" class="label label-lg"for="">Auto login</label
+            ><div class="row-select-wrap">
               <div data-lid="s_yes" class="row-select autologin" data-propid="auto_login" data-selectid="yes">Oui</div>
               <div data-lid="s_no"  class="row-select autologin" data-propid="auto_login" data-selectid="no">Non</div>
-            </div>
-            <div data-lid="s_autologin_desc" class="row-select-description etiquette">
+            </div
+            ><div data-lid="s_autologin_desc" class="row-select-description etiquette">
               Activez cette option pour skipper la page d'accueil
             </div>
           </div>
 
          <div class="row-input row-input-lg row-message-readby etiquette">
-            <label data-lid="s_message_readby_label" class="label label-lg"for="">Signaler message lu</label>
-            <div class="row-select-wrap">
+            <label data-lid="s_message_readby_label" class="label label-lg"for="">Signaler message lu</label
+            ><div class="row-select-wrap">
               <div data-lid="s_yes" class="row-select message-readby" data-propid="message_readby" data-selectid="yes">Oui</div>
               <div data-lid="s_no"  class="row-select message-readby" data-propid="message_readby" data-selectid="no">Non</div>
-            </div>
-            <div data-lid="s_message_readby_desc" class="row-select-description etiquette">
+            </div
+            ><div data-lid="s_message_readby_desc" class="row-select-description etiquette">
               Activez cette option pour signaler aux autres lorsque vous avez lu les messages
             </div>
         </div>
@@ -609,7 +613,10 @@
       </div>
   
       <!-- DEL PROFILE SECTION -->
-      <button data-lidd="s_delete_profile_btn" id="delete-profile" class="theme-btn">Supprimer mon profil</button>
+      <div class="row-button-delete">
+        <button data-lid="s_delete_profile_btn" id="delete-profile" class="theme-btn">Supprimer mon profil</button>
+      </div>
+
       </div>
 
     </section>

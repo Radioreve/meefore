@@ -1,9 +1,8 @@
 
 .auto-login-msg {
    color: white;
-   font-size: 14px;
+   font-size: 13px;
    font-family: 'Karla';
-   letter-spacing: 1px;
 }
 .auto-login-msg img {
     display: block;

@@ -37,14 +37,7 @@ hl {
    text-shadow: 0 0 1px rgb(209, 209, 209);
 }
 
-h2 {
-   font: normal 35px  'Londrina Solid';
-   letter-spacing: 0px;
-   text-transform: uppercase;
-   color: #525252;
-   text-align: center;
-   text-shadow: 0 0 1px rgb(209, 209, 209);
-}
+h2 {}
 
 h3 {
 font-size: 14px;text-align: center;color: #ee;}
@@ -132,7 +125,7 @@ font-size: 14px;text-align: center;color: #ee;}
    border-right: 1px  
 	solid #ccc;
    transition: all 
-	ease-out .3s;}
+	ease-out .3s;width: 130px;}
 
 .label-lg {
 }

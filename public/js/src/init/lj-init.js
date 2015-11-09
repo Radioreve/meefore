@@ -470,7 +470,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                     });
 
                     // Admin scripts. Every com is secured serverside 
-                    if( LJ.user.access.indexOf('standard') != -1 ){
+                    if( LJ.user.access.indexOf('admin') != -1 ){
+                        console.log('Starting admin script');
                         LJ.fn.initParty();
                     }
                     

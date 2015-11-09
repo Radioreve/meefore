@@ -84,7 +84,7 @@ i.icon-create {
     vertical-align: top;
     background: rgba(235, 235, 235, 0.7);
     position: absolute;
-    top: 121px;
+    top: 123px;
     z-index: 1;
     box-sizing: border-box;
     padding: 15px;
@@ -347,7 +347,6 @@ display: none;
 .filters-create-party{align-self: flex-end;}
 
 .filters-create-party {
-    display: none;
 }
 
 .event-filter-label {
@@ -422,7 +421,7 @@ transition: all ease-out .3s;position: relative;top: -2px;right: 4px;color: #999
   padding: 11px 15px;
   border-radius: 0;
   background: #E94F6A;
-  border: none;
+  border: 1px solid #BB5151;
   font-size: 10px;
   color: #FFFFFF;
   display: inline-block;
@@ -635,12 +634,13 @@ justify-content: flex-end;
 }
 .row-events-accepted-inview {
   height: 425px;
-  bottom: 0;
+  bottom: -2px;
   padding: 40px 40px 0 40px;
   display: none;
   z-index: 5;
   width: 100%;
   margin: 0 auto;
+  border-top: none;
 }
 .event-accepted-users,
 .event-accepted-chat {
@@ -694,7 +694,6 @@ overflow: hidden;
   margin: 0 auto;
   border: 1px solid #D0D0D0;
   border-bottom: 1px solid white;
-  z-index: 10000000000000000000;
   position: relative;
   top: -2px;
 }

@@ -17,9 +17,7 @@
 		},
 		handleDomEvents_Party: function(){
 
-			$('.row-events-filters')
-				.find('.btn-create-party')
-				.click(function(){
+			LJ.$body.on('click', '.btn-create-party', function(){
 
 					LJ.fn.displayCreateParty();
 

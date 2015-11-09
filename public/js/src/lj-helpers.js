@@ -132,7 +132,8 @@
 		adjustAllInputsWidth: function( container ){
 
 			var $container = $(container);
-			
+			var ui_offset = 20;
+
 			// Find largest label
 			var labels = $container.find('label');
 			var labels_array = [];
@@ -154,10 +155,16 @@
 				var $label = $(label);
 				var $inp   = $label.siblings('*:not( .etiquette, [type="number"], .item)');
 
+				if( $label.hasClass('adjusted-once') ){
+					return;
+				}
+
+				$label.addClass('adjusted-once');
+
 				var parent_width = $label.parent().width(); // width which children are positionned in
 
-				$label.css({ width: largest_label.width + 10 }); 
-				$inp.css({ width: parent_width - largest_label.outer_width - 40 }); /* Mega hack needed cause of display:inline-block added whitespace */
+				$label.css({ width: largest_label.width + ui_offset }); 
+				$inp.css({ width: parent_width - largest_label.outer_width - ui_offset }); /* Mega hack needed cause of display:inline-block added whitespace */
 				$inp.children('input').css({ width:'100%' });
 			});
 			
