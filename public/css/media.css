@@ -153,7 +153,11 @@
 }
 
 @media screen and ( max-width: 750px ) {
+	
+	* {
+		cursor: pointer!important;
 		
+	}
 	#moveAround {
 		width: 10px!important;
 	}
@@ -162,6 +166,19 @@
 		flex-direction: column;
 		text-align: center;
 	}
+	.row-events-preview {
+		top: 121px!important;
+	}
+	.row-party-preview {
+		top: 264px!important;
+	}
+	.row-title div{
+		font-size: 15px;
+	}
+	.row-subtitle div {
+		font-size: 11px;
+	}
+
 	.preview-date {
 		position: absolute;
 		top: -8px;
