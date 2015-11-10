@@ -6,6 +6,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 		
 		handleDomEvents_Globals: function(){
 
+            $('#logo').click(function(){
+                $('#events').click();
+            });
+
 			LJ.$body.on('click', '.moving-arrow', function(){
 				$('.landing-keypoints').velocity('scroll', { duration: window.tanim || 1800, easing: window.nanim || "ease-in-out" });
 			});

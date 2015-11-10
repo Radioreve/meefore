@@ -86,7 +86,7 @@
      #menuWrap {
      	margin-left: 65px;
      }
-	.filters-date, .filters-create-meefore, .row-events-filters-divider {
+	.filters-date, .filters-create-meefore, .row-events-filters-divider, .filters-create-party {
 		display: none;
 	}
 	#settings {
@@ -150,7 +150,16 @@
 }
 
 @media screen and ( max-width: 750px ) {
+		
+	#moveAround {
+		width: 10px!important;
+	}
 	
+	 .toast {
+		width: 100%;
+		font-size: 11px;
+	 }
+
 	 .hero-header {
 		font-size: 20px;
 		width: 80%;

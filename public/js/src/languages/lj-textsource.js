@@ -118,7 +118,7 @@
 			"en": "Wines"
 		},
 		p_friends_title: {
-			"fr": "Tous vos amis sont sur Meefore",
+			"fr": "Mes amis Facebook",
 			"en": "Everybody is on Meefore"
 		},
 		p_friends_subtitle: {
