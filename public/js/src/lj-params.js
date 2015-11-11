@@ -34,8 +34,6 @@
         slideRightOutVeryLight: { opacity: [, 1], translateX: [7, 0]   }
 	},
     page_default_title: "Meefore | Home",
-    event_markers_intro: [],
-    party_markers_intro: [],
     intro: {
         event_data: {
             "__v": 0,

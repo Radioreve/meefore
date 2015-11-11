@@ -10,7 +10,7 @@
 			LJ.fn.handleDomEvents_Party();
 		},
 		renderDomElements_Party: function(){
-
+            
 			$('.row-events-filters').append( LJ.fn.renderCreatePartyBtn );
 
 
@@ -104,7 +104,7 @@
 		},
         handleCreatePartySuccess: function( party ){
 
-            delog('Party successfully created');
+            LJ.fn.log('Party successfully created');
             LJ.cache.parties.push( party );
 
             LJ.fn.displayCurtain({ 

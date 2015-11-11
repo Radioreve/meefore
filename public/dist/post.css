@@ -1907,13 +1907,6 @@ p {
     z-index: 100000000;
 }
 
-.auto-login-msg {
-    color: gainsboro;
-    font-size: 14px;
-    font-family: 'Karla';
-    letter-spacing: .5px;
-}
-
 .lp-arrow {
     position: absolute;
     width: 100px;
@@ -4904,10 +4897,13 @@ i.icon-create {
     bottom: 0;
 }
 
-.auto-login-msg {
+.auto-login-message,
+.reconnect-message {
     color: white;
     font-size: 13px;
     font-family: 'Karla';
+    text-align: center;
+    line-height: 24px;
 }
 
 .auto-login-msg img {
@@ -4923,7 +4919,7 @@ i.icon-create {
     padding: 15px 15px;
     border-radius: 2px 2px 0 0;
     box-shadow: 2px 2px 3px 0px #CACACA;
-    min-width: 70%;
+    min-width: 60%;
     box-shadow: none;
     border: 1px solid #C4C4C4!important;
 }
@@ -5544,6 +5540,10 @@ i.icon-create {
     .event-filter-label {
         display: none;
     }
+
+    .auto-login-msg {
+        display: none!important;
+    }
 }
 
 #adminPanelWrap {
@@ -5904,20 +5904,33 @@ label.lighter {
     cursor: pointer;
     display: inline-block;
     padding: 15px 54px;
-    -webkit-transition: all ease-in-out .3s;
-    transition: all ease-in-out .3s;
+    -webkit-transition: all ease-in-out .15s;
+    transition: all ease-in-out .15s;
 }
 
-.welcome-skip:hover, .lintro-next:hover, .lintro-prev:hover, .ending-skip:hover {
+.welcome-skip:hover,
+.ending-skip:hover {
     background: rgba(252, 252, 252, 0.11);
 }
 
 .lintro-next {
     position: absolute;
-    bottom: 100px;
+    top: 50%;
+    -webkit-transform: translate(0,-50%);
+    -ms-transform: translate(0,-50%);
+    transform: translate(0,-50%);
     right: 0;
     color: white;
     z-index: 1000000000;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.lintro-prev {
+}
+
+.lintro-next:hover,
+.lintro-prev:hover {
+    background: rgba(0, 0, 0, 0.81);
 }
 
 .lintro-text {

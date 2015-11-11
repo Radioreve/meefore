@@ -11,7 +11,7 @@
 			LJ.fn.fetchAppData();
 
 			LJ.channels['admin'].bind('refresh-users-conn-states-admin', function(data){
-				//console.log('Refreshing online users list, from admin init');
+				//LJ.fn.log('Refreshing online users list, from admin init');
 				//$('#onlineUsers > div').text( _.keys( data.onlineUsers ).length );
 			});
 
@@ -22,7 +22,7 @@
 				data = {},
 				cb = {
 					success: LJ.fn.handleFetchAppDataSuccess,
-					error: function(xhr){ console.log('Error fetching [admin] mode'); }
+					error: function(xhr){ LJ.fn.log('Error fetching [admin] mode'); }
 				}
 
 			LJ.fn.say( eventName, data, cb ); 
@@ -141,7 +141,7 @@
 
 			$('body').on('click', '#createEventTemplate button', function(){
 
-				console.log('clicked');
+				LJ.fn.log('clicked');
 				var $self = $(this);
 				//if( $self.hasClass('validating-btn') ) return;
 				var name = $('.tpl-add-event-name').val(),
@@ -243,7 +243,7 @@
 
 			$('body').on('click','.addBotToEvent', function(){
 
-				console.log('Adding bot to event...');
+				LJ.fn.log('Adding bot to event...');
 				var $self = $(this);
 				var $papa = $self.parents('.u-item'); 
 				var hostId = $papa.data('userid');

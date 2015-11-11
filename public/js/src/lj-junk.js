@@ -99,8 +99,8 @@
 	};
 
 	function l(){
-		console.log('Response:');
-		console.log( arguments[0] )
-		console.log( arguments[1] )
-		console.log( arguments[2] )
+		LJ.fn.log('Response:');
+		LJ.fn.log( arguments[0] )
+		LJ.fn.log( arguments[1] )
+		LJ.fn.log( arguments[2] )
 	};

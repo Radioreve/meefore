@@ -31,7 +31,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
             	var facebook_id = $(this).attr('data-id') || $(this).closest('[data-userid]').attr('data-userid');
 
             	if( !facebook_id ){
-            		return console.warn('Couldnt find any id to display profile');
+            		return LJ.fn.warn('Couldnt find any id to display profile');
             	}
 
             	LJ.fn.displayUserProfile( facebook_id );
@@ -69,7 +69,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
         		LJ.fn.displayCurtain({
         			behindTheScene: function(){
 
-        				console.log('Changing language');
+        				LJ.fn.log('Changing language');
         				$('.pick-lang').removeClass('active');
         				$('.pick-lang[data-code="' + lang_code + '"]').addClass('active');
 
@@ -94,7 +94,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
 			LJ.$body.bind('typeahead:select', function(ev, suggestion) {
 
-				console.log(suggestion);
+				LJ.fn.log(suggestion);
 
 				if( $('.row-create-party-location input').is( ev.target ) ){
 					/* Nothing special - default typeahead behavior, copy name on input */	
@@ -105,7 +105,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 			  	}
 
 			  	if( $('.row-create-friends input').is( ev.target ) ){
-			  		delog('Friends input selected!');
+			  		LJ.fn.log('Friends input selected!');
 			  	}
 
 			});

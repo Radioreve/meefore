@@ -242,9 +242,9 @@
                     LJ.fn.selectFirstResult( $pac, function( err, place ){
 
                         if( err ){
-                            return console.warn( err );
+                            return LJ.fn.warn( err );
                         } else {
-                            console.log('Fetched with place : ' + JSON.stringify( place, null, 4 ) );
+                            LJ.fn.log('Fetched with place : ' + JSON.stringify( place, null, 4 ) );
                             if( $self.is('#pa-address') ){
                                 LJ.fn.addPlaceToInput( place, 'pa-address' );
                             }
@@ -300,9 +300,9 @@
                     LJ.fn.selectFirstResult( $pac, function( err, place ){
 
                         if( err ){
-                            return console.warn( err );
+                            return LJ.fn.warn( err );
                         } else {
-                            console.log('Fetched with place : ' + JSON.stringify( place, null, 4 ) );
+                            LJ.fn.log('Fetched with place : ' + JSON.stringify( place, null, 4 ) );
                             if( $self.is('#cr-party-place') ){
                                 LJ.fn.addPlaceToInput( place, 'cr-party-place' );
                             }
@@ -387,7 +387,7 @@
             var $inp = $( opts.inp );
 
             if( !$inp )
-                return console.warn('Cant initialize hour picker without input');
+                return LJ.fn.warn('Cant initialize hour picker without input');
 
             var $hourPicker = $( LJ.fn.renderHourPicker( opts ) );
 
@@ -479,7 +479,7 @@
         },
 		createEvent: function(){
 
-            delog('Creating event...');
+            LJ.fn.log('Creating event...');
 
             var hosts_facebook_id  = [], ambiance = [],
                 begins_at = '', agerange = '', mixity = '',
@@ -586,16 +586,17 @@
         },
         handleCreateEventSuccess: function( evt ){
 
-            delog('Event successfully created');
+            LJ.fn.log('Event successfully created');
             LJ.fn.updateEventCache( evt );
 
             // UX Trick
                 /* Message during login */
-                var tpl = ['<div class="auto-login-msg super-centered none">',
+                var tpl = ['<div class="auto-login-message super-centered none">',
                             '<span>' + LJ.text_source["e_create_loading_text"][ LJ.app_language ] + '</span>',
                             '</div>',
                          ].join('');
 
+                $('.curtain').html('');
                 $( tpl )
                     .appendTo('.curtain')
                     .velocity('transition.fadeIn', {
@@ -609,7 +610,7 @@
                                 }
                             });
                         }
-            });
+                 });
 
             LJ.fn.displayCurtain({ 
 
@@ -644,7 +645,7 @@
         },
         createParty: function(){
 
-            delog('Creating party...');
+            LJ.fn.log('Creating party...');
 
             var $wrap = $('#createParty');
 

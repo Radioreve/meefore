@@ -10,7 +10,7 @@
 
 			// Google Analytics Tracking Landing Page
 			$('body').on('ga', function( e, data ){
-				console.log( data );
+				LJ.fn.log( data );
 				ga('send', data.hit_type, data.url );
 			});
 
@@ -47,12 +47,12 @@
 				var $el = $( element.el );
 
 				if( $el.length == 0 ){
-					return console.warn('Cant track element ' + element.el + ', doesnt exist');
+					return LJ.fn.warn('Cant track element ' + element.el + ', doesnt exist');
 				}
 
 				// Send to Google Analytics
 				$el.on('click', function(){
-					console.log('Tracked a click');
+					LJ.fn.log('Tracked a click');
 					ga('send', 'pageview', element.url );
 				});
 				

@@ -175,7 +175,7 @@
         },
         handleUpdateGroupStatusSuccess: function( res ){
 
-            console.log('Updating group status success');
+            LJ.fn.log('Updating group status success');
             var event_id = res.event_id;
             var group    = res.group;
 

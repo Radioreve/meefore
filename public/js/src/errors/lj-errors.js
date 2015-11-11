@@ -19,7 +19,7 @@
             console.error('api error');
 
             var res = LJ.fn.parseError(err);
-            console.log(res);
+            LJ.fn.log(res);
 
             for( var i = 0; i < res.errors.length; i++ ){
                 if( res.errors[i].data ){
@@ -150,7 +150,7 @@
         handleErrorPusherAuth: function( err_data ){
 
             var message =  LJ.text_source["err_pusher_" + err_data.err_id ] && LJ.text_source["err_pusher_" + err_data.err_id ][ LJ.app_language ] || LJ.text_source["err_unknown"][ LJ.app_language ];
-            return console.warn( message );
+            return LJ.fn.warn( message );
 
         }
 

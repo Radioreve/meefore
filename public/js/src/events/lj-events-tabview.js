@@ -136,7 +136,7 @@
                             LJ.fn.renderEventInview_User ;
 
 
-            $('.row-events-accepted').append( renderFn( evt ) );
+            $('.row-events-accepted-inview-wrapper').append( renderFn( evt ) );
             $('.row-events-accepted-tabview').append( LJ.fn.renderEventTabview( evt ) );
             LJ.fn.updateTabviewIconStatus();
 

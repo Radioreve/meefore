@@ -15,11 +15,10 @@
 
 				FB.login(function( res ){
 
-					delog('Client facebook status is : ' + res.status ) ;
+					LJ.fn.log('Client facebook status is : ' + res.status, 1 ) ;
 
 					if( res.status == 'not_authorized' ){
-						LJ.state.loggingIn = false;
-						delog('User didnt let Facebook access informations');
+						LJ.fn.log('User didnt let Facebook access informations, 1');
 						return;
 					}
 
@@ -35,7 +34,7 @@
 
 								   var loader_tag = LJ.$main_loader_curtain.clone().prop('outerHTML');
 									/* Message during login */
-								   var tpl = ['<div class="auto-login-msg super-centered none">',
+								   var tpl = ['<div class="auto-login-message super-centered none">',
 								   				'<span>' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</span>',
 								   				// loader_tag,
 								   				'</div>',
@@ -47,13 +46,17 @@
 					                        duration: 1000
 					                });
 
-									LJ.state.loggingIn = true;
 									var access_token = res.authResponse.accessToken;
-									delog('short lived access token : ' + access_token );
+									LJ.fn.log('short lived access token : ' + access_token );
 
 									FB.api('/me?fields=id,email,name,link,locale,gender', function( facebookProfile ){
 
+										// Surcharge profile with access_token for server processing;
 										facebookProfile.access_token = access_token;
+
+										// Store it for reconnexion purposes
+										LJ.facebook_profile = facebookProfile;
+
 								  		LJ.fn.loginWithFacebook( facebookProfile );
 								  		$('.progress_bar--landing').css({ width: '40%' });
 							  		});
@@ -216,7 +219,7 @@
 			/* Message during login */
             var loader_tag = LJ.$main_loader_curtain.clone().prop('outerHTML');
 			/* Message during login */
-		   var tpl = ['<div class="auto-login-msg super-centered none">',
+		   var tpl = ['<div class="auto-login-message super-centered none">',
 		   				'<span>' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</span>',
 		   				// loader_tag,
 		   				'</div>',
@@ -231,7 +234,8 @@
 			setTimeout( function(){
 
 				LJ.fn.GraphAPI('/me', function( facebookProfile ){
-					delog( facebookProfile );
+
+					LJ.facebook_profile = facebookProfile;
 			  		LJ.fn.loginWithFacebook( facebookProfile );
 	  			});
 
@@ -239,7 +243,7 @@
 		},
 		loginWithFacebook: function( facebookProfile ){
 
-				delog('Logging in meefore with facebook profile...');
+				LJ.fn.log('Logging in meefore with facebook profile...', 1);
 
 				// facebookProfile.email = null;
 				
@@ -267,23 +271,30 @@
 
 			var ls = window.localStorage;
 
-			if( !ls || !ls.getItem('preferences') ){
-				delog('No local data available, initializing lp...');
+			if( !ls ||  (!ls.getItem('preferences') && !ls.getItem('reconn_data') ) ){
+				LJ.fn.log('No local data available, initializing lp...', 1);
 				return LJ.fn.initLandingPage();
 			}
 
-			preferences = JSON.parse( ls.getItem('preferences') );
+			var preferences = JSON.parse( ls.getItem('preferences') );
+			var reconn_data = JSON.parse( ls.getItem('reconn_data') );
+
+			if( reconn_data ){
+				LJ.fn.log('Reconnecting user from previous loss of connexion...');
+				LJ.fn.autoLogin();
+				return;
+			}
 
 			tk_valid_until = preferences.tk_valid_until;
 			long_lived_tk  = preferences.long_lived_tk;
 
 			if( !tk_valid_until || !long_lived_tk ){
-				delog('Missing init preference param, initializing lp...');
+				LJ.fn.log('Missing init preference param, initializing lp...', 1);
 				return LJ.fn.initLandingPage();
 			}
 			
 			if( moment( new Date(tk_valid_until) ) < moment() ){
-				delog('long lived tk found but has expired');
+				LJ.fn.log('long lived tk found but has expired', 1);
 				return LJ.fn.initLandingPage();
 			} 
 
@@ -292,21 +303,21 @@
 			var diff = current_tk_valid_until.diff( now, 'd' );
 
 			if( diff < 30 ) {
-				delog('long lived tk found but will expire soon, refresh is needed');
+				LJ.fn.log('long lived tk found but will expire soon, refresh is needed', 1);
 				return LJ.fn.initLandingPage();
 			}
 
-			delog('Init data ok, auto logging in...');
+			LJ.fn.log('Init data ok, auto logging in...', 1);
 			return LJ.fn.autoLogin();
 				
 		},
 		handleSuccessLogin: function( data ){
 
-			delog('Handling success login with fb');
+			LJ.fn.log('Handling success login with fb', 1);
 			LJ.user._id = data.id; 
 			LJ.accessToken = data.accessToken; 
 
-			console.log('Token received: ' + data.accessToken );
+			LJ.fn.log('Token received: ' + data.accessToken );
 			//document.cookie = 'token='+data.accessToken;
 
 			// Make sure all ajax request are don with proper accessToken

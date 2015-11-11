@@ -209,12 +209,23 @@
     <div class="preview-type beta">bêta</div>
       <img id="logo" src="/img/app/logo-light.png" width="35"></img>
       <ul id="menuWrap" class="">
-        <li id="profile" data-hash="me" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
-        <li id="events" data-hash="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
-        <li id="search" class="menu-item icon icon-search"><span class="underlay"></span>
+        <li id="profile" data-hash="me" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap">
+          <span class="underlay"></span>
+          <span class="bubble filtered"></span>
+        </li>
+        <li id="events" data-hash="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap">
+          <span class="underlay"></span>
+          <span class="bubble filtered"></span>
+        </li>
+        <li id="search" class="menu-item icon icon-search">
+          <span class="underlay"></span>
+          <span class="bubble filtered"></span>
           <div id="searchbar" class=""><input data-lid="h_search_placeholder" type="text" class="search-input"></div>
         </li>
-        <li id="settings" data-hash="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
+        <li id="settings" data-hash="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap">
+          <span class="underlay"></span>
+          <span class="bubble filtered"></span>
+        </li>
       </ul>
     </div>
     <div id="languages">
@@ -311,13 +322,13 @@
           </div>
           <div class="row-input row-input-lg row-mood etiquette nonei">
             <label data-lid="p_lifestyle_label" for="mood" class="label label-md" >Lifestyle</label
-            ><div class="row-select-wrap mood-wrap">
+            ><div class="row-select-wrap mood-wrap"  >
               <!-- Dynamically loaded -->
             </div>
           </div>
           <div class="row-input row-input-lg row-drink etiquette nonei">
             <label data-lid="p_drink_label" for="drink" class="label label-md" >Verre</label
-            ><div class="row-select-wrap drink-wrap">
+            ><div class="row-select-wrap drink-wrap" >
               <!-- Dynamically loaded -->
             </div>
           </div>
@@ -376,7 +387,7 @@
         <div class="row-events-filters-divider"></div>
         <div class="row-events-filters-group filters-date">
           <i class="icon icon-filters-group icon-calendar"></i>
-          <div data-lid="e_filters_date" class="event-filter-label">Filter par jour : </div>
+          <div data-lid="e_filters_date" class="event-filter-label"  >Filter par jour : </div>
           <!-- Dynamically loaded -->
         </div>
         <div class="row-events-filters-divider"></div>
@@ -388,24 +399,25 @@
       </div>
 
       <div class="row row-events row-main">
-        <div class="row-preview row-events-preview">
+        <div class="row-preview row-events-preview" >
               <!-- Dynamically loaded -->
         </div>
-        <div class="row-preview row-party-preview">
+        <div class="row-preview row-party-preview" >
               <!-- Dynamically loaded -->
         </div>
-        <div class="row-events-map">
+        <div class="row-events-map" >
           <!-- Dynamically loaded -->
         </div>
       </div>
 
     </section>
   
-    <div class="row row-events row-events-accepted">
-      <div class="row-events-accepted-tabview">
-        <!-- Dynamically loaded -->
-      </div>
+    <div class="row-events-accepted-inview-wrapper" >
         <!-- Dynamicalled loaded [ row events accepted in view are apppended here ] -->
+    </div>
+
+    <div class="row-events-accepted-tabview" >
+      <!-- Dynamically loaded -->
     </div>
 
     <section id="searchUsersWrap" class="none centered">
@@ -419,7 +431,7 @@
           <input type="text" placeholder="Rechercher par nom, age, boisson favorite">
         </div>
       </div>
-      <div id="searchUsers">
+      <div id="searchUsers" >
          <!-- Dynamically loaded -->
       </div>
     </section>

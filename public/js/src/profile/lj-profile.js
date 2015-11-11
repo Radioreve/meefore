@@ -327,7 +327,7 @@
 					return LJ.fn.toastMsg( LJ.text_source["to_noupload_necessary"][ LJ.app_language ], "error" );
 				}
 
-				csl('Emitting update pictures (all)');
+				LJ.fn.log('Emitting update pictures (all)');
 				$self.addClass('btn-validating');
 
 				var eventName = 'me/update-pictures',
@@ -398,7 +398,7 @@
 								}
 						, cb = {
 							success: function( data ){
-								sleep( LJ.ui.artificialDelay, function(){
+								LJ.fn.timeout( LJ.ui.artificialDelay, function(){
 									$('.progress_bar').velocity('transition.slideUpOut', {
 									 	duration: 400,
 									 	complete: function(){
@@ -428,7 +428,7 @@
 	  							});
 							},
 							error: function( xhr ){
-								delog('Error saving image identifiers to the base');
+								LJ.fn.log('Error saving image identifiers to the base');
 							}
 						};
 
@@ -442,7 +442,7 @@
 		},
 		fetchFacebookProfilePicturesAlbumId: function( callback, next_page ){
 
-			console.log('Fetching facebook profile picture album id...');
+			LJ.fn.log('Fetching facebook profile picture album id...');
 
 			var album_url = next_page || "/me?fields=albums{name,id}";
 			var album_id  = null;
@@ -462,7 +462,7 @@
 
 					var next = res.albums.paging.cursor.next;
 
-					console.log('Didnt find on first page, trying with next page : ' + next );
+					LJ.fn.log('Didnt find on first page, trying with next page : ' + next );
 					return LJ.fn.fetchFacebookProfilePicturesAlbumId( callback, next );
 				}
 
@@ -470,7 +470,7 @@
 					return callback('Couldnt find album id, no next page to browse', null );
 				}
 
-				console.log('Album id found, ' + album_id );
+				LJ.fn.log('Album id found, ' + album_id );
 				return callback( null, album_id );
 
 			});
@@ -500,14 +500,14 @@
 				mood          : mood,
 				status        : LJ.user.status
 			};
-				csl('Emitting update profile');
+				LJ.fn.log('Emitting update profile');
 
 			var eventName = 'me/update-profile',
 				data = profile
 				, cb = {
 					success: LJ.fn.handleUpdateProfileSuccess,
 					error: function( xhr ){
-						sleep( LJ.ui.artificialDelay, function(){
+						LJ.fn.timeout( LJ.ui.artificialDelay, function(){
 							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
 						});
 					}
@@ -520,10 +520,10 @@
 		},
 		handleUpdateProfileSuccess: function( data ){
 
-			csl('update profile success received, user is : \n' + JSON.stringify( data.user, null, 4 ) );
+			LJ.fn.log('update profile success received, user is : \n' + JSON.stringify( data.user, null, 4 ) );
 			var user = data.user;
 
-			sleep( LJ.ui.artificialDelay, function(){
+			LJ.fn.timeout( LJ.ui.artificialDelay, function(){
 
 				$('.row-informations').removeClass('editing')
 					.find('.row-buttons').velocity('transition.fadeOut', {duration: 600 })
@@ -591,7 +591,7 @@
 				scope       = options.scope;
 
 			if( !img_id || !img_version || !img_place || !scope ){
-				// return console.warn('missing parameter, cant replace image...');
+				// return LJ.fn.warn('missing parameter, cant replace image...');
 			}
 
 			if( scope.indexOf('profile') != -1 )
@@ -661,6 +661,8 @@
 		},
 		setLocalStoragePreferences: function(){
 
+
+			var namespace  = 'preferences' ;
 			var auto_login = LJ.user.app_preferences.ux.auto_login;
 
 			if( auto_login == 'yes' ){
@@ -671,11 +673,11 @@
 					tk_valid_until: LJ.user.facebook_access_token.long_lived_valid_until
 				};
 
-				window.localStorage.setItem('preferences', JSON.stringify( preferences ));					
+				window.localStorage.setItem( namespace, JSON.stringify( preferences ));					
 			}
 
 			if( auto_login == 'no' ){
-				window.localStorage.removeItem('preferences');
+				window.localStorage.removeItem( namespace );
 			}
 
 		},

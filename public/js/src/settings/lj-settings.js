@@ -4,7 +4,6 @@
 		handleDomEvents_Settings: function(){
 
 
-
 			LJ.$body.on('click', '.row-contact .btn-validate', function(){
 
 				// If user changes email, need to update mail in mailchimp and in cache for alerts
@@ -45,7 +44,7 @@
 					app_preferences : app_preferences
 				};
 
-				csl('Emitting update settings [contact]');
+				LJ.fn.log('Emitting update settings [contact]');
 				LJ.fn.showLoaders();
 
 				var eventName = 'me/update-settings-contact',
@@ -53,7 +52,7 @@
 				, cb = {
 					success: LJ.fn.handleUpdateSettingsContactSuccess,
 					error: function( xhr ){
-						sleep( LJ.ui.artificialDelay, function(){
+						LJ.fn.timeout( LJ.ui.artificialDelay, function(){
 							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
 						});
 					}
@@ -93,7 +92,7 @@
 					app_preferences : app_preferences
 				};
 
-				csl('Emitting update settings [ui]');
+				LJ.fn.log('Emitting update settings [ui]');
 				LJ.fn.showLoaders();
 
 				var eventName = 'me/update-settings-ux',
@@ -101,7 +100,7 @@
 				, cb = {
 					success: LJ.fn.handleUpdateSettingsUxSuccess,
 					error: function( xhr ){
-						sleep( LJ.ui.artificialDelay, function(){
+						LJ.fn.timeout( LJ.ui.artificialDelay, function(){
 							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
 						});
 					}
@@ -141,7 +140,7 @@
 					app_preferences : app_preferences
 				};
 
-				csl('Emitting update settings [mailinglists]');
+				LJ.fn.log('Emitting update settings [mailinglists]');
 				LJ.fn.showLoaders();
 
 				var eventName = 'me/update-settings-mailinglists',
@@ -149,7 +148,7 @@
 				, cb = {
 					success: LJ.fn.handleUpdateSettingsMailingListsSuccess,
 					error: function( xhr ){
-						sleep( LJ.ui.artificialDelay, function(){
+						LJ.fn.timeout( LJ.ui.artificialDelay, function(){
 							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
 						});
 					}
@@ -196,7 +195,7 @@
 				data.contact_email = LJ.user.contact_email;
 
 
-				csl('Emitting update settings [notifications]');
+				LJ.fn.log('Emitting update settings [notifications]');
 				LJ.fn.showLoaders();
 
 				var eventName = 'me/update-settings-alerts',
@@ -204,7 +203,7 @@
 					, cb = {
 						success: LJ.fn.handleUpdateSettingsAlertsSuccess,
 						error: function( xhr ){
-							sleep( LJ.ui.artificialDelay, function(){
+							LJ.fn.timeout( LJ.ui.artificialDelay, function(){
 								LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
 							});
 						}
@@ -228,7 +227,7 @@
 
 				var $self = $(this);
 
-				csl('Emitting delete profile...');
+				LJ.fn.log('Emitting delete profile...');
 				$self.addClass('btn-validating');
 
 				var eventName = 'me/delete',
@@ -245,9 +244,9 @@
 		},
 		handleUpdateSettingsUxSuccess: function( data ){
 
-			csl('update settings ux success received' );
+			LJ.fn.log('update settings ux success received' );
 
-			sleep( LJ.ui.artificialDelay, function(){
+			LJ.fn.timeout( LJ.ui.artificialDelay, function(){
 
 				$('.row-ux').removeClass('editing')
 					.find('.row-buttons').velocity('transition.fadeOut', {duration: 600 })
@@ -265,9 +264,9 @@
 		},
 		handleUpdateSettingsMailingListsSuccess: function( data ){
 
-			csl('update settings mailing lists success received' );
+			LJ.fn.log('update settings mailing lists success received' );
 
-			sleep( LJ.ui.artificialDelay, function(){
+			LJ.fn.timeout( LJ.ui.artificialDelay, function(){
 
 				$('.row-news').removeClass('editing')
 					.find('.row-buttons').velocity('transition.fadeOut', {duration: 600 })
@@ -284,9 +283,9 @@
 		},
 		handleUpdateSettingsAlertsSuccess: function( data ){
 
-			csl('update settings alerts success received' );
+			LJ.fn.log('update settings alerts success received' );
 
-			sleep( LJ.ui.artificialDelay, function(){
+			LJ.fn.timeout( LJ.ui.artificialDelay, function(){
 
 				$('.row-alerts').removeClass('editing')
 					.find('.row-buttons').velocity('transition.fadeOut', {duration: 600 })
@@ -303,9 +302,9 @@
 		},
 		handleUpdateSettingsContactSuccess: function( data ){
 
-			csl('update settings contact success received' );
+			LJ.fn.log('update settings contact success received' );
 
-			sleep( LJ.ui.artificialDelay, function(){
+			LJ.fn.timeout( LJ.ui.artificialDelay, function(){
 
 				$('#email_contact').prop( 'readonly', true );
 
@@ -324,7 +323,7 @@
 		},
 		handleDeleteProfileSuccess: function( data ){
 
-			console.log('Profile successfully deleted... ');
+			LJ.fn.log('Profile successfully deleted... ');
 
 			// Kill local storage variables
 			window.localStorage.removeItem('preferences');

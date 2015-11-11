@@ -95,7 +95,7 @@
 		},
 		requestIn: function( event_id ){
 
-            delog('Requesting in  for event with id : '+ event_id + '...');
+            LJ.fn.log('Requesting in  for event with id : '+ event_id + '...');
 
             var name, message, members_facebook_id = [];
             var $wrap = $('#requestIn');
@@ -142,7 +142,7 @@
         },
         handleRequestInSuccess: function( data ){
 
-                delog('Request in success');
+                LJ.fn.log('Request in success');
                 
                 var event_id = data.event_id;
 
@@ -165,7 +165,7 @@
             var renderFn;
 
             if( !evt || evt === {} ){
-                console.log('No event to be added. Adding suggestion...');
+                LJ.fn.log('No event to be added. Adding suggestion...');
                 renderFn = LJ.fn.renderEventPreview_Default;
             } else {
 
@@ -202,7 +202,7 @@
             // No preview is there
             if( $evt.length == 0 ){
 
-                delog('First render');
+                LJ.fn.log('First render');
 
                 $( event_preview ).hide().appendTo('.row-events-preview');
 
@@ -221,7 +221,7 @@
                 return;
             } 
 
-            delog('Re-render');
+            LJ.fn.log('Re-render');
             if( $('.row-events-preview').css('opacity') != '1' ){
                 return setTimeout(function(){
                     LJ.fn.addEventPreview( evt, options );
@@ -287,7 +287,7 @@
 
             if( $party.length == 0 ){
 
-                 delog('First render party');
+                 LJ.fn.log('First render party');
 
                 $( party_preview ).hide().appendTo('.row-party-preview');
 
@@ -313,7 +313,7 @@
                 return;
             }
             
-            delog('Re-render party');
+            LJ.fn.log('Re-render party');
             if( $('.row-party-preview').css('opacity') != '1' ){
                 return setTimeout(function(){
                     LJ.fn.addPartyPreview( party, options );
@@ -343,7 +343,7 @@
             var evt  = LJ.fn.findEventNearest();
 
             if( !evt || evt === {} )
-                return console.log('No event to be displayed');
+                return LJ.fn.log('No event to be displayed');
 
             // LJ.fn.addEventPreview( evt );
 

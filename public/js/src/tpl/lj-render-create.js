@@ -165,7 +165,7 @@
             var place = LJ.fn.findPlaceAttributes( place );
 
             if( !place ){
-              return console.warn('No place object to render');
+              return LJ.fn.warn('No place object to render');
             }
 
             var html = '<div class="rem-click before-place" data-placeid="' + place.place_id + '" data-place-lat="' + place.lat + '" data-place-lng="' + place.lng + '">'
@@ -181,7 +181,7 @@
             var place = LJ.fn.findPlaceAttributes( place );
 
              if( !place ){
-              return console.warn('No place object to render');
+              return LJ.fn.warn('No place object to render');
             }
 
             var html = '<div class="rem-click party-place" data-placeid="' + place.place_id + '" data-place-lat="' + place.lat + '" data-place-lng="' + place.lng + '">'

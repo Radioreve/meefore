@@ -27,7 +27,7 @@
         },
         initMap: function() {
 
-             var map_style_meefore = new google.maps.StyledMapType( LJ.google.map.style.meemap, {
+            var map_style_meefore = new google.maps.StyledMapType( LJ.google.map.style.meemap, {
                 name: 'meemap'
             });
 
@@ -80,10 +80,10 @@
         handleFetchEvents: function( err, events ){
 
             if( err ){
-                return console.log('Error fetching events : ' + JSON.stringify( err, null, 3 ) );
+                return LJ.fn.log('Error fetching events : ' + JSON.stringify( err, null, 3 ) );
             }
 
-            console.log('Total events successfully fetched, n = ' + events.length);
+            LJ.fn.log('Total events successfully fetched, n = ' + events.length);
             LJ.cache.events = events;
                 
 
@@ -91,17 +91,17 @@
         handleFetchParties: function( err, parties ){
 
             if( err ){
-                return console.log('Error fetching parties : ' + JSON.stringify( err, null, 3 ) );
+                return LJ.fn.log('Error fetching parties : ' + JSON.stringify( err, null, 3 ) );
             }
 
-            console.log('Total parties successfully fetched, n = ' + parties.length);
+            LJ.fn.log('Total parties successfully fetched, n = ' + parties.length);
             LJ.cache.parties = parties;
 
         },
         handleFetchEventById: function( err, evt, opt ){
 
             if( err ){
-                return console.log('Error fetching event by id : ' + JSON.stringify( err, null, 3 ));
+                return LJ.fn.log('Error fetching event by id : ' + JSON.stringify( err, null, 3 ));
             }
             
             LJ.fn.updateEventCache( evt );
@@ -118,10 +118,10 @@
         handleFetchMyEvents: function( err, events ){
 
           if( err ){
-            return console.log('Error fetching and sync friends : ' + err );
+            return LJ.fn.log('Error fetching and sync friends : ' + err );
           }
 
-            console.log('Personnal events successfully fetched, n = ' + events.length);
+            LJ.fn.log('Personnal events successfully fetched, n = ' + events.length);
             
             LJ.$body.on('display:layout:after', function(){
 
@@ -341,7 +341,7 @@
                         callback   : function(e){
 
                             if( LJ.fn.isEventMarkerActivated( evt._id ) ){
-                                return console.log('Marker already activated');
+                                return LJ.fn.log('Marker already activated');
                             }
 
                             // Clear everything
@@ -366,7 +366,7 @@
                         event_type : 'mouseover',
                         callback   : function(e){
                             this.setZIndex(2);
-                            console.log('Hovering : ' + evt._id );
+                            LJ.fn.log('Hovering : ' + evt._id );
                             $('.event-accepted-tabview[data-eventid="' + evt._id + '"]').addClass('highlight');
                         }
                     }, {
@@ -389,7 +389,7 @@
             if( _.find( LJ.party_markers, function( sche ){
                 return sche.id == party.address.place_id; 
             })){
-                return console.log('No displaying marker, already there');
+                return LJ.fn.log('No displaying marker, already there');
             }           
 
             LJ.fn.displayMarker({
@@ -464,7 +464,7 @@
 
             if( LJ.fn.isPartyMarkerActivated( party.address.place_id ) ){
                 LJ.active_markers[0].marker.setZIndex(1);
-                return console.log('Marker already activated');
+                return LJ.fn.log('Marker already activated');
             }
 
             // If a party in cache with the same place_id and same date
@@ -501,7 +501,7 @@
 
             if( LJ.fn.isPartyMarkerActivated( party.address.place_id ) ){
                 LJ.active_markers[0].marker.setZIndex(1);
-                return console.log('Marker already activated');
+                return LJ.fn.log('Marker already activated');
             }
 
 
@@ -523,7 +523,7 @@
         displayActiveEventMarker: function( evt, opts ){
 
             if(! opts ){
-                return console.warn('Cant display active event marker without effective lat and lng');
+                return LJ.fn.warn('Cant display active event marker without effective lat and lng');
             }
 
             var status = null;
@@ -573,7 +573,7 @@
         },
         clickOnClosestEvent: function( party ){
 
-            console.log('Triggering action on the closest event');
+            LJ.fn.log('Triggering action on the closest event');
 
             var filtered_events = []
 
@@ -589,7 +589,7 @@
                 LJ.fn.clearAllHalfActivePaths();
 
                 // Display suggestion to be the first to host a meefore
-                console.log('Adding default suggestion preview');
+                LJ.fn.log('Adding default suggestion preview');
                 LJ.fn.addEventPreview();
 
                 // Display preview
@@ -638,10 +638,10 @@
 
             // Check if filter gave successfully match. Otherwise, use 2n array
             if( filtered_events_with_filter.length != 0 ){
-                console.log('Found elements according to filter');
+                LJ.fn.log('Found elements according to filter');
                 filtered_events = filtered_events_with_filter;
             } else {
-                console.log('Found elements according NOT to filter');
+                LJ.fn.log('Found elements according NOT to filter');
                 filtered_events = filtered_events_without_filters;
             }
 
@@ -656,7 +656,7 @@
             }); 
 
             var closest_event = filtered_events[0];
-            console.log(closest_event);
+            LJ.fn.log(closest_event);
 
             var closest_event_marker = _.find( LJ.event_markers, function( mrk ){
                 return mrk.id == closest_event._id;
@@ -712,7 +712,7 @@
         },
         clearAllHalfActivePaths: function(){
 
-            // console.log('Clearing all half active paths');
+            // LJ.fn.log('Clearing all half active paths');
             LJ.half_active_paths = LJ.half_active_paths || [];
             LJ.half_active_paths.forEach(function( path ){
                 path.setMap(null);
@@ -854,7 +854,7 @@
 
             var cached_path = LJ.cache.paths[ evt._id ]
             if( cached_path && cached_path.path && cached_path.cached_at && ( (new Date) - cached_path.cached_at < 60*1000) ){
-                // console.log('Displaying path from cached value');
+                // LJ.fn.log('Displaying path from cached value');
                 LJ.fn.displayPath( cached_path.path, opts );
                 return;
             }
@@ -873,7 +873,7 @@
                 } 
 
                 if( status == "OVER_QUERY_LIMIT" ){
-                    // console.log('Directions request failed due to ' + status + '. Retrying...');
+                    // LJ.fn.log('Directions request failed due to ' + status + '. Retrying...');
                     setTimeout(function(){
                         LJ.fn.displayPathToParty( opts );
                     }, 400 );

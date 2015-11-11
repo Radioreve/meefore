@@ -1,8 +1,11 @@
 
-.auto-login-msg {
+.auto-login-message,
+.reconnect-message {
    color: white;
    font-size: 13px;
    font-family: 'Karla';
+   text-align: center;
+   line-height: 24px;
 }
 .auto-login-msg img {
     display: block;
@@ -16,14 +19,17 @@
    padding: 15px 15px;
    border-radius: 2px 2px 0 0;
    box-shadow: 2px 2px 3px 0px #CACACA;
-   min-width: 70%;
+   min-width: 60%;
    box-shadow: none;
    border: 1px solid #C4C4C4!important;
 }
 .event-preview {
-    display: flex;
-    float: left;
-    align-items: center;
+    
+display: flex;
+    
+float: left;
+    
+align-items: center;
 }
 .event-preview div {
     margin-right: 6px;

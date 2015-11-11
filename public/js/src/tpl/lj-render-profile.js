@@ -33,7 +33,7 @@
               var url = '';
               img.forEach(function( itm ){
 
-                console.log(itm);
+                LJ.fn.log(itm);
                 if( itm.width > 250 && itm.width < 450 || itm.height > 250 && itm.height < 450){
                   url = itm.source
                 }

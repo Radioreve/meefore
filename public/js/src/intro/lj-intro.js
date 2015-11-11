@@ -7,10 +7,11 @@
         		LJ.intro_steps = [
 
         			{ 
-        				id: "init",
-        			 	next_id: "intro_1",
-        			 	mode: "cover",
+                        id      : "init",
+                        next_id : "intro_1",
+                        mode    : "cover",
         			 	callback: function(){
+                            var self = this;
 
         			 		LJ.fn.showWelcomeLintro();
         			 		LJ.map.setZoom(14);
@@ -29,7 +30,7 @@
         			 		});
 
         			 		$('.btn-welcome').click(function(){
-			    				$('.lintro-next').click();
+			    				LJ.fn.lintroStep( self.next_id );
 			    			});
 
 			    			$('.welcome-skip').click(function(){
@@ -41,57 +42,58 @@
         			 	}
         			},
         			{ 
-        				id: "intro_1",
-        				next_id: "intro_2",
-        				duration: 5000,
-        				mode: "area",
-        				upper_el: ".row-events-filters",
-        				lower_el: ".row-events-accepted-tabview",
-                        text: LJ.text_source["intro_text_1"][ LJ.app_language ],
+                        id        : "intro_1",
+                        next_id   : "intro_2",
+                        duration  : 5000,
+                        mode      : "area",
+                        init_step : true,
+                        upper_el  : ".row-events-filters",
+                        lower_el  : ".row-events-accepted-tabview",
+                        text      : LJ.text_source["intro_text_1"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         				}
         			},
         			{
-        				id: "intro_2",
-        				next_id: "intro_3",
-        				duration: 5000,
-        				mode: "idem",
-                        text: LJ.text_source["intro_text_2"][ LJ.app_language ],
+                        id       : "intro_2",
+                        next_id  : "intro_3",
+                        duration : 5000,
+                        mode     : "idem",
+                        text     : LJ.text_source["intro_text_2"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.fn.displayEventMarker( LJ.intro.event_data, { cache: 'event_markers_intro' } );
         				}
         			},
         			{
-        				id: "intro_3",
-        				next_id: "intro_4",
-        				duration: 5000,
-        				mode: "idem",
-        				text_align:"center",
-                        text: LJ.text_source["intro_text_3"][ LJ.app_language ],
+                        id         : "intro_3",
+                        next_id    : "intro_4",
+                        duration   : 5000,
+                        mode       : "idem",
+                        text_align :"center",
+                        text       : LJ.text_source["intro_text_3"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.fn.displayPartyMarker_Party( LJ.intro.party_data, { cache: 'party_markers_intro' } );
         				}
         			},
         			{
-        				id: "intro_4",
-        				next_id: "intro_5",
-        				duration: 5000,
-        				mode: "idem",
-                        text: LJ.text_source["intro_text_4"][ LJ.app_language ],
+                        id       : "intro_4",
+                        next_id  : "intro_5",
+                        duration : 5000,
+                        mode     : "idem",
+                        text     : LJ.text_source["intro_text_4"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
                             LJ.fn.displayPathToParty({ evt: LJ.intro.event_data });
         				}
         			},
         			{
-        				id: "intro_5",
-        				next_id: "intro_6",
-        				duration: 8000,
-        				mode: "idem",
-                        text: LJ.text_source["intro_text_5"][ LJ.app_language ],
+                        id       : "intro_5",
+                        next_id  : "intro_6",
+                        duration : 8000,
+                        mode     : "idem",
+                        text     : LJ.text_source["intro_text_5"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
 
@@ -118,11 +120,11 @@
         				}
         			},
         			{
-        				id: "intro_6",
-        				next_id: "intro_7",
-        				duration: 6000,
-        				mode: "idem",
-                        text: LJ.text_source["intro_text_6"][ LJ.app_language ],
+                        id       : "intro_6",
+                        next_id  : "intro_7",
+                        duration : 6000,
+                        mode     : "idem",
+                        text     : LJ.text_source["intro_text_6"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.event_markers_intro[0].marker.setIcon( LJ.cloudinary.markers.base_active.open.url );
@@ -132,52 +134,52 @@
         				}
         			},
         			{
-        				id: "intro_7",
-        				next_id: "intro_8",
-        				duration: 5000,
-        				mode: "element",
-        				el: ".event-preview",
-                        text: LJ.text_source["intro_text_7"][ LJ.app_language ],
-        				text_align: "left",
+                        id         : "intro_7",
+                        next_id    : "intro_8",
+                        duration   : 5000,
+                        mode       : "element",
+                        el         : ".event-preview",
+                        text       : LJ.text_source["intro_text_7"][ LJ.app_language ],
+                        text_align : "left",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         				}
         			// 
         			},
         			{
-        				id: "intro_8",
-        				next_id: "intro_9",
-        				duration: 5000,
-        				mode: "element",
-        				el: ".party-preview",
-                        text: LJ.text_source["intro_text_8"][ LJ.app_language ],
-        				text_align: "right",
+                        id         : "intro_8",
+                        next_id    : "intro_9",
+                        duration   : 5000,
+                        mode       : "element",
+                        el         : ".party-preview",
+                        text       : LJ.text_source["intro_text_8"][ LJ.app_language ],
+                        text_align : "right",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         				}
         			// 
         			},
         			{
-        				id: "intro_9",
-        				next_id: "intro_10",
-        				duration: 2500,
-        				mode: "element",
-        				el: ".btn-requestin",
-                        text: LJ.text_source["intro_text_9"][ LJ.app_language ],
-        				text_align: "center",
+                        id         : "intro_9",
+                        next_id    : "intro_10",
+                        duration   : 2500,
+                        mode       : "element",
+                        el         : ".btn-requestin",
+                        text       : LJ.text_source["intro_text_9"][ LJ.app_language ],
+                        text_align : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         				}
         			},
         			{
-        				id: "intro_10",
-        				next_id: "intro_11",
-        				duration: 6000,
-        				mode: "element",
-        				el: ".modal-container",
-                        text: LJ.text_source["intro_text_10"][ LJ.app_language ],
-        				text_align: "center",
-        				delay: 1000,
+                        id         : "intro_10",
+                        next_id    : "intro_11",
+                        duration   : 6000,
+                        mode       : "element",
+                        el         : ".modal-container",
+                        text       : LJ.text_source["intro_text_10"][ LJ.app_language ],
+                        text_align : "center",
+                        delay      : 1000,
         				callforward: function(){
         					$('.btn-requestin').click();
         				},
@@ -186,27 +188,27 @@
         				}
         			}, 
         			{
-        				id: "intro_11",
-        				next_id: "intro_12",
-        				duration: 6000,
-        				mode: "element",
-        				el: ".row-requestin-group-members",
-                        text: LJ.text_source["intro_text_11"][ LJ.app_language ],
-        				text_align: "center",
+                        id         : "intro_11",
+                        next_id    : "intro_12",
+                        duration   : 6000,
+                        mode       : "element",
+                        el         : ".row-requestin-group-members",
+                        text       : LJ.text_source["intro_text_11"][ LJ.app_language ],
+                        text_align : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         				}
         			}, 
         			{
-        				id: "intro_12",
-        				next_id: "intro_13",
-        				duration: 4000,
-        				mode: "area",
-        				upper_el: '.row-party-preview',
-        				lower_el: '.row-events-accepted-tabview',
-                        text: LJ.text_source["intro_text_12"][ LJ.app_language ],
-        				text_align: "center",
-        				delay: 400,
+                        id         : "intro_12",
+                        next_id    : "intro_13",
+                        duration   : 4000,
+                        mode       : "area",
+                        upper_el   : '.row-party-preview',
+                        lower_el   : '.row-events-accepted-tabview',
+                        text       : LJ.text_source["intro_text_12"][ LJ.app_language ],
+                        text_align : "center",
+                        delay      : 400,
         				callforward: function(){
         					$('#requestIn').find('.btn-cancel').click();
         				},
@@ -225,12 +227,12 @@
         				}
         			},
         			{
-        				id: "intro_13",
-        				next_id: "intro_14",
-        				duration: 4000,
-        				mode: "idem",
-                        text: LJ.text_source["intro_text_13"][ LJ.app_language ],
-        				text_align: "center",
+                        id         : "intro_13",
+                        next_id    : "intro_14",
+                        duration   : 4000,
+                        mode       : "idem",
+                        text       : LJ.text_source["intro_text_13"][ LJ.app_language ],
+                        text_align : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.event_markers_intro.forEach(function( evt, i ){
@@ -240,14 +242,14 @@
         				}
         			},
         			{
-        				id: "intro_13a",
-        				next_id: "intro_18",
-        				duration: 5000,
-        				mode: "area",
-                        upper_el: '.row-events-filters',
-                        lower_el: '.row-events-accepted-tabview',
-                        text: LJ.text_source["intro_text_13a"][ LJ.app_language ],
-        				text_align: "center",
+                        id         : "intro_13a",
+                        next_id    : "intro_18",
+                        duration   : 5000,
+                        mode       : "area",
+                        upper_el   : '.row-events-filters',
+                        lower_el   : '.row-events-accepted-tabview',
+                        text       : LJ.text_source["intro_text_13a"][ LJ.app_language ],
+                        text_align : "center",
                         callforward: function(){
 
                            // Clear preview
@@ -267,13 +269,13 @@
         				}
         			},
         			{
-        				id: "intro_14",
-        				next_id: "intro_15",
-        				duration: 5000,
-        				mode: "area",
-        				upper_el: '.row-events-accepted-tabview',
-                        text: LJ.text_source["intro_text_14"][ LJ.app_language ],
-        				text_align: "center",
+                        id         : "intro_14",
+                        next_id    : "intro_15",
+                        duration   : 5000,
+                        mode       : "area",
+                        upper_el   : '.row-events-accepted-tabview',
+                        text       : LJ.text_source["intro_text_14"][ LJ.app_language ],
+                        text_align : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					$('.row-events-accepted-tabview')
@@ -284,42 +286,42 @@
         				}
         			},
         			{
-        				id: "intro_15",
-        				next_id: "intro_16",
-        				duration: 5000,
-        				mode: "area",
-        				upper_el: '.row-party-preview',
-        				upper_cover: true,
-                        text: LJ.text_source["intro_text_15"][ LJ.app_language ],
-        				text_align: "center",
+                        id          : "intro_15",
+                        next_id     : "intro_16",
+                        duration    : 5000,
+                        mode        : "area",
+                        upper_el    : '.row-party-preview',
+                        upper_cover : true,
+                        text        : LJ.text_source["intro_text_15"][ LJ.app_language ],
+                        text_align  : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.fn.showIntroChatInview();
         				}
         			},
         			{
-        				id: "intro_16",
-        				next_id: "intro_17",
-        				duration: 12000,
-        				mode: "idem",
-        				// lower_el: '.row-events-accepted-tabview',
-                        text: LJ.text_source["intro_text_16"][ LJ.app_language ],
-        				text_align: "center",
+                        id          : "intro_16",
+                        next_id     : "intro_17",
+                        duration    : 12000,
+                        mode        : "idem",
+                        // lower_el : '.row-events-accepted-tabview',
+                        text        : LJ.text_source["intro_text_16"][ LJ.app_language ],
+                        text_align  : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.fn.showIntroChatTalk();
         				}
         			},
         			{
-        				id: "intro_17",
-        				next_id: "intro_13a",
-        				duration: 9000,
-        				mode: "element",
-        				el: '.event-accepted-chat-typing',
-        				padding: 20,
-        				// lower_el: '.row-events-accepted-tabview',
-                        text: LJ.text_source["intro_text_17"][ LJ.app_language ],
-        				text_align: "center",
+                        id          : "intro_17",
+                        next_id     : "intro_13a",
+                        duration    : 9000,
+                        mode        : "element",
+                        el          : '.event-accepted-chat-typing',
+                        padding     : 20,
+                        // lower_el : '.row-events-accepted-tabview',
+                        text        : LJ.text_source["intro_text_17"][ LJ.app_language ],
+                        text_align  : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					setTimeout(function(){
@@ -331,8 +333,9 @@
         				}
         			},
         			{
-        				id: "intro_18",
-        				mode: "cover",
+                        id         : "intro_18",
+                        mode       : "cover",
+                        close_step : true,
         				callback: function(){
 
         					LJ.fn.showEndingLintro();
@@ -367,7 +370,7 @@
         		});
 
         		if( !step ) {
-                    return console.warn('Couldnt find matching step based on step_id : ' + step_id );
+                    return LJ.fn.warn('Couldnt find matching step based on step_id : ' + step_id );
                 }
 
         		if( step == "end_intro" ){
@@ -379,7 +382,7 @@
         	},
         	highlightElement: function( opts ){
 
-        		console.log('Applying step : ' + opts.id );
+        		LJ.fn.log('Applying step : ' + opts.id );
 
         		if( typeof opts.callforward == 'function' ){
         			opts.callforward();
@@ -391,16 +394,16 @@
 
                 var abort = false;
         		if( opts.mode == "element" && ( !opts.el || !$(opts.el).length || $(opts.el).length == 0 ) ){
-                    console.warn('Couldnt find element : ' + $el );
+                    LJ.fn.warn('Couldnt find element : ' + $el );
                     abort = true;
                 }
         		if( opts.mode == "area" && ( !opts.upper_el && !opts.lower_el ) ){
-                    console.warn('Couldnt find all properties to highlight area');
+                    LJ.fn.warn('Couldnt find all properties to highlight area');
                     abort = true;
                 }
 
         		if( opts.mode == "cover" && !opts.callback ){
-                    console.warn('Didnt get any callback');
+                    LJ.fn.warn('Didnt get any callback');
                     abort = true;
                 }
 
@@ -428,13 +431,42 @@
 				var $curt_right  = $('<div class="lintro intro-curtain intro-curtain-right"></div>');
 				var $curt_bottom = $('<div class="lintro intro-curtain intro-curtain-bottom"></div>');
 
-				LJ.fn.refreshNextStep( opts.id, opts.next_id );
+                if( opts.init_step ){
 
-				if( opts.duration ){
-				  	LJ.intro_duration = window.setTimeout(function(){
-				  		 $('.lintro-next').click();
-				  	}, opts.duration*1.25 );
-				 }
+                    var step_html = [
+                            '<div class="lintro-next none" data-stepid="' + opts.id + '" data-nextid="' + opts.next_id + '">',
+                                LJ.text_source["intro_next"][ LJ.app_language ],
+                            '</div>'
+                        ].join('');
+
+                    LJ.$body.append( step_html )
+                        .find('.lintro-next')
+                        .velocity('transition.fadeIn', { duration: 500 });
+
+
+                } else {
+
+    				$('.lintro-next').attr('data-stepid', opts.id )
+                         .attr('data-nextid', opts.next_id );
+
+                }
+
+                $('.lintro-next').one('click', function(){
+                    var next_id = $(this).attr('data-nextid');
+                    LJ.fn.lintroStep( next_id );
+                });
+
+                if( opts.close_step ){
+                    $('.lintro-next').velocity('transition.fadeOut', { duration: 500, complete: function(){
+                        $(this).remove();
+                    } });
+                }
+
+				// if( opts.duration ){
+				//   	LJ.intro_duration = window.setTimeout(function(){
+				//   		 $('.lintro-next').click();
+				//   	}, opts.duration*1.25 );
+				//  }
 
 				if( opts.mode == "idem" ){					
 					if( typeof opts.callback == 'function' ){
@@ -632,28 +664,6 @@
 		  			});
 
 
-        	},
-        	refreshNextStep: function( step_id, next_id ){
-
-        		if( $('.lintro-next').length == 0 ){
-        			LJ.$body
-				  			.append('<div class="lintro-next nonei" data-stepid="' + step_id + '" data-nextid="' + next_id + '">Next</div>')
-				  			.find('.lintro-next').velocity('transition.fadeIn', {
-				  				complete: function(){
-				  					$(this).click(function(){
-				  						LJ.fn.lintroStep( next_id );
-				  					});
-				  				}
-				  	});
-        		} else {
-					$('.lintro-next').velocity('transition.fadeOut', {
-						duration: 500,
-						complete: function(){
-							$(this).remove();
-			        		LJ.fn.refreshNextStep( step_id, next_id );	
-			        	}		
-					});					
-        		}
         	},
         	showIntroChatInview: function(){	
 

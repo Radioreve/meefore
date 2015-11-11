@@ -46,21 +46,32 @@ display: inline-block;
 	
 padding: 15px 54px;
 	
-transition: all ease-in-out .3s;
+transition: all ease-in-out .15s;
 }
 
-.welcome-skip:hover, .lintro-next:hover, .lintro-prev:hover, .ending-skip:hover {
+.welcome-skip:hover,
+.ending-skip:hover {
 	background: rgba(252, 252, 252, 0.11);
 }
 
 .lintro-next {
 	position: absolute;
-	bottom: 100px;
+	top: 50%;
+	transform: translate(0,-50%);
 	right: 0;
 	color: white;
 	z-index: 1000000000;
+	background: rgba(0, 0, 0, 0.5);
 }
 
+.lintro-prev {
+	
+}
+
+.lintro-next:hover,
+.lintro-prev:hover{
+	background: rgba(0, 0, 0, 0.81);
+}
 .lintro-text {
 	font: 22px 'Pacifico';
 	color: white;

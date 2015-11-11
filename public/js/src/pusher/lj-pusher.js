@@ -16,7 +16,7 @@
 	        LJ.subscribed_channels.me.bind('new request group', LJ.fn.pushNewGroup_Group );
 	        LJ.subscribed_channels.me.bind('new chat whisper', LJ.fn.pushNewChatWhisper );
 
-	        LJ.subscribed_channels.public_chan.bind('new oversize message', function(data){ console.warn('Didnt receive pusher message (oversized)'); })
+	        LJ.subscribed_channels.public_chan.bind('new oversize message', function(data){ LJ.fn.warn('Didnt receive pusher message (oversized)'); })
 	        LJ.subscribed_channels.public_chan.bind('new test', LJ.fn.pushNewTest );
 
    		 },
@@ -84,13 +84,13 @@
             	
             }
 
-            LJ.subscribed_channels[ event_id ].bind('new test event', function(data){ console.log(data); });
-            LJ.subscribed_channels[ event_id ].bind('new oversize message', function(data){ console.warn('Didnt receive pusher message (oversized)'); })
+            LJ.subscribed_channels[ event_id ].bind('new test event', function(data){ LJ.fn.log(data); });
+            LJ.subscribed_channels[ event_id ].bind('new oversize message', function(data){ LJ.fn.warn('Didnt receive pusher message (oversized)'); })
 
         },
         pushNewTest: function( data ){
-        	console.log('Test succeed!');
-        	console.log(data);
+        	LJ.fn.log('Test succeed!');
+        	LJ.fn.log(data);
         },
 		pushNewEvent: function( evt ){
 
@@ -128,7 +128,7 @@
 		},
 		pushNewParty: function( party ){
 
-			console.log('Pushing new party ('+party._id+')');
+			LJ.fn.log('Pushing new party ('+party._id+')');
 
 			// Update cache
 			LJ.cache.parties.push( party );
@@ -139,14 +139,14 @@
 		},
 		pushNewGroup_Host: function( data ){
 			
-			console.log('Pushing new group [host] in event : ' + data.event_id );
+			LJ.fn.log('Pushing new group [host] in event : ' + data.event_id );
 
 			var group             = data.group;
 			var event_id      	  = data.event_id;
 			var hosts_facebook_id = data.hosts_facebook_id;
 
 			if( !event_id || !group ){
-				console.log( event_id ); console.log( group );
+				LJ.fn.log( event_id ); LJ.fn.log( group );
 				return console.error('Missing group and/or evt, cant add request');
 			}
 
@@ -187,14 +187,14 @@
 		},
 		pushNewGroup_Group: function( data ){
 
-			console.log('Pushing new group [group] in event : ' + data.event_id );
+			LJ.fn.log('Pushing new group [group] in event : ' + data.event_id );
 
 			var group             = data.group;
 			var event_id      	  = data.event_id;
 			var hosts_facebook_id = data.hosts_facebook_id;
 
 			if( !event_id || !group ){
-				console.log( event_id ); console.log( group );
+				LJ.fn.log( event_id ); LJ.fn.log( group );
 				return console.error('Missing group and/or evt, cant add request');
 			}
 
@@ -206,7 +206,7 @@
 		},
 		pushNewEventStatus: function( data ){
 
-			delog('Pushing new event status for event id : ' + data.event_id );
+			LJ.fn.log('Pushing new event status for event id : ' + data.event_id );
 
 			var status            = data.status;
 			var event_id          = data.event_id;
@@ -239,7 +239,7 @@
 			var chat_id  = data.chat_id;
 			var hosts_facebook_id = data.hosts_facebook_id
 
-			delog('Pushing new group status : ' + status + ' for event : ' + event_id );
+			LJ.fn.log('Pushing new group status : ' + status + ' for event : ' + event_id );
 			LJ.fn.fetchEventById( event_id, function( err, evt ){
 				LJ.fn.updateEventCache( evt );
 				LJ.fn.updateTabviewIconStatus();
@@ -337,7 +337,7 @@
 		},	
 		pushNewChatMessage: function( data ){
 
-			console.log('Pushing chat line...')
+			LJ.fn.log('Pushing chat line...')
 
 			chat_id = data.chat_id;
 			var $wrap = $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]');
@@ -365,7 +365,7 @@
 		},
 		pushNewChatWhisper: function( data ){
 
-			console.log('Pushing chat whisper...')
+			LJ.fn.log('Pushing chat whisper...')
 
 			chat_id = data.chat_id;
 			var $wrap = $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]');
@@ -409,7 +409,7 @@
 
 			var facebook_id = user.id;
 
-			console.log('User ' + facebook_id + ' has connected to the channel');
+			LJ.fn.log('User ' + facebook_id + ' has connected to the channel');
 
 			$('.event-accepted-user[data-userid="' + facebook_id + '"]')
 				.find('.event-accepted-user-state')
@@ -420,7 +420,7 @@
 
 			var facebook_id = user.id;
 
-			console.log('User ' + facebook_id + ' has disconnected to the channel');
+			LJ.fn.log('User ' + facebook_id + ' has disconnected to the channel');
 
 			$('.event-accepted-user[data-userid="' + facebook_id + '"]')
 				.find('.event-accepted-user-state')

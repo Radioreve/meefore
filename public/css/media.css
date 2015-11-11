@@ -142,7 +142,7 @@
 		margin: 0;
 		border: none;
 	}
-
+	
 	.row-select-wrap * {
 		width: auto!important;
 	}
@@ -267,6 +267,10 @@
 
 	.event-filter-label {
 		display: none;
+	}
+
+	.auto-login-msg {
+		display: none!important;
 	}
 
 }

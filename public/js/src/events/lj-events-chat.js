@@ -22,7 +22,7 @@
 
                 // Cant whisper to himself or any other id than user id
                 if( facebook_id == LJ.user.facebook_id || !/^\d{1,}$/i.test( facebook_id ) ){
-                    console.log('Cant whisper to himself');
+                    LJ.fn.log('Cant whisper to himself');
                     return;
                 }
 
@@ -51,11 +51,11 @@
                 var $readby     = $self.siblings('.readby');
 
                 if( ['accepted', 'hosted'].indexOf( $event_wrap.attr('data-status')) == -1 ){
-                    return console.log('Not accepted in event, nothing to send');
+                    return LJ.fn.log('Not accepted in event, nothing to send');
                 }
 
                 if( $chat_wrap.find('.event-accepted-chat-message').last().find('.whisper-text').length != 0 ){
-                    return console.log('Not sending readby for whispers');
+                    return LJ.fn.log('Not sending readby for whispers');
                 }
                 
                 var names =  _.pull( $readby.attr('data-names').split(','), '' );
@@ -79,7 +79,7 @@
                     return;
                 }
 
-                console.log('Message already seen, not sending anything');
+                LJ.fn.log('Message already seen, not sending anything');
 
             });
 			
@@ -172,7 +172,7 @@
 		},
         handleSendChatSuccess: function( res ){
 
-            // delog('Handling chat success for chat_id : ' + res.chat_id );
+            // LJ.fn.log('Handling chat success for chat_id : ' + res.chat_id );
 
             $('.event-accepted-chat-wrap[data-chatid="' + res.chat_id + '"]')
                 .find('.event-accepted-chat-typing button').removeClass('active').end()
@@ -183,7 +183,7 @@
         },
 		addChatLine: function( options ){
             
-            // delog('Adding chatline...');
+            // LJ.fn.log('Adding chatline...');
             
             var chat_id = options.chat_id;
 
@@ -286,7 +286,7 @@
         },
         fetchMyChat_Host: function( evt ){
 
-            // console.log('Fetching chat as host');
+            // LJ.fn.log('Fetching chat as host');
 
             var event_id = evt._id;
             var $wrap    = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
@@ -328,7 +328,7 @@
             var $wrap    = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
 
             if( $wrap.attr('data-status') != 'accepted' )
-                return console.warn('No chat to fetch, still waiting approval');
+                return LJ.fn.warn('No chat to fetch, still waiting approval');
 
             var group_id = $wrap.find('.event-accepted-users-group.mygroup').attr('data-groupid');
             var chat_id  = LJ.fn.makeChatId({ event_id: evt._id, group_id: group_id });
@@ -351,7 +351,7 @@
         },
         fetchChatHistoryById: function( options ){
 
-            // delog('Fetching messages for chat with id : ' + options.chat_id );
+            // LJ.fn.log('Fetching messages for chat with id : ' + options.chat_id );
 
             var data = {
                 chat_id          : options.chat_id,
@@ -511,7 +511,7 @@
                 if( err ){
                     return LJ.fn.handleApiError( err );
                 } else {
-                    console.log('Send readby success!');
+                    LJ.fn.log('Send readby success!');
                 }
             });
 
@@ -568,7 +568,7 @@
                 do_nothing_condition = !is_at_top || $self.hasClass('fetching-more');
 
                 if( do_nothing_condition ){
-                    // console.log('Do nothing first round...');
+                    // LJ.fn.log('Do nothing first round...');
                     return // Do nothing
                 }
 
@@ -581,15 +581,15 @@
                     return;
                 }
 
-                // console.log('Fetching once...');
+                // LJ.fn.log('Fetching once...');
                 // Condition seems okay. If still ok in 't' ms, then do it.
                 setTimeout(function(){
 
-                    // console.log('Triggering twice...');
+                    // LJ.fn.log('Triggering twice...');
                     $self.removeClass('fetching-confirm');
 
                     if( do_nothing_condition ){
-                        // console.log('NOT Triggering twice!');
+                        // LJ.fn.log('NOT Triggering twice!');
                         return;
                     }              
                     var chat_id  = $self.attr('data-chatid');
@@ -597,10 +597,10 @@
                     var jsp      = LJ.jsp_api[ event_id ].chats[ chat_id ];
 
                     if( !jsp ){
-                        return console.warn('Jsp undefined');
+                        return LJ.fn.warn('Jsp undefined');
                     }
                     
-                    console.log('Fetching more messages...');
+                    LJ.fn.log('Fetching more messages...');
                     $self.addClass('fetching-more');
 
                     var chat_id  = chat_id;

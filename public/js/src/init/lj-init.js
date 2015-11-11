@@ -1,16 +1,3 @@
-function sleep(ms, cb, p2) {
-    setTimeout(function() {
-        cb(p2);
-    }, ms)
-}
-
-function look(json) {
-    return JSON.stringify(json, null, '\t');
-}
-
-window.csl = function(msg) {
-    delog(msg);
-};
 
 window.LJ.fn = _.merge( window.LJ.fn || {},
 
@@ -18,9 +5,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         init: function(o) {
 
-            if( o.debug ){
-                LJ.state.debug = true;
-            }
+            // Set log levels
+            LJ.log_level = o.log_level || 0;
 
             // Set app language
             var country = o.country;
@@ -152,19 +138,33 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 }
             });
 
-            LJ.pusher.connection.bind('state_change', function(states) {
-                csl('Pusher state is noww : ' + states.current);
+            LJ.state.connected = false;
+            LJ.pusher.connection.bind('state_change', function( states ) {
 
-                if ((states.current == 'connecting') && LJ.state.connected );{
-                    LJ.fn.handleDisconnection();
+                LJ.fn.log('Pusher state is now: ' + states.current, 1);
+
+                if ( states.current == 'connecting' ){
+                    // This is a reconnection case
+                    if( LJ.state.connected == true ){
+                        LJ.fn.handleReconnection();
+                    }
                 }
 
                 if (states.current == 'disconnected'){
-                    LJ.fn.toastMsg("Vous avez été déconnecté.", 'error', true);
+                    
                 }
 
                 if (states.current == 'unavailable'){
-                    LJ.fn.toastMsg("Le service n'est pas disponible actuellement, essayez de relancer l'application ultérieurement", 'error', true);
+                    
+                }
+
+                if( states.current == 'connected' ){
+                    if( LJ.state.connected == true ){
+                        LJ.fn.reconnectUser();
+                    } else {
+                        LJ.fn.log('Setting stated as : connected', 1 );
+                        LJ.state.connected = true;
+                    }
                 }
 
             });
@@ -173,11 +173,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         initStaticImages: function() {
 
+            $('.loaderWrap').html('');
+
             LJ.$main_loader = $.cloudinary.image(LJ.cloudinary.loaders.main.id, LJ.cloudinary.loaders.main.params);
-            LJ.$main_loader.appendTo($('.loaderWrap'));
+            LJ.$main_loader.appendTo( $('.loaderWrap') );
 
             LJ.$mobile_loader = $.cloudinary.image(LJ.cloudinary.loaders.mobile.id, LJ.cloudinary.loaders.mobile.params);
-            LJ.$mobile_loader.appendTo($('.m-loaderWrap'));
+            LJ.$mobile_loader.appendTo( $('.m-loaderWrap') );
 
             LJ.$main_loader_curtain = $.cloudinary.image( LJ.cloudinary.loaders.main_curtain.id, LJ.cloudinary.loaders.main_curtain.params );
             /* Dynamically cloned and appened */
@@ -220,7 +222,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         initLayout: function( settings ){
 
-            console.log('initializing layout...');
+            LJ.fn.log('initializing layout...', 1);
             /* Google Places to browse the map */
             var options = {};
             LJ.google_places_autocomplete_filters = new google.maps.places.SearchBox( 
@@ -251,7 +253,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
             // $('.filter-mixity').html(LJ.fn.renderMixityInFilters(LJ.settings.app.mixity));
             //  $('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));
-            $('#no').html('').append( LJ.tpl.noResults );
+            $('#no').html('').html( LJ.tpl.noResults );
 
 
             /* Profile View */
@@ -297,22 +299,17 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             var imgTag = $.cloudinary.image( mainImg.img_id, d );
             imgTag.addClass('left');
 
-            LJ.$thumbWrap.find('.imgWrap').html('').append( imgTag );
+            LJ.$thumbWrap.find('.imgWrap').html('').html( imgTag );
 
             /* Settings View */
             $('#newsletter').prop('checked', LJ.user.newsletter);
             $('#currentEmail').val( LJ.user.email );
 
-            console.log('...done');
+            LJ.fn.log('...done', 1);
         },
         displayLayout: function() {
 
-            /* L'user était déjà connecté */
-            if (LJ.state.connected){
-                return LJ.fn.toastMsg('Vous avez été reconnecté', 'success');
-            }
-
-            LJ.state.connected = true;
+            LJ.fn.log('Displaying layout...', 1);
 
             // Header preparation
             $('.menu-item-active').removeClass('menu-item-active');
@@ -343,7 +340,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 $('.progress_bar--landing').css({ width: '120%' });
 
                 setTimeout(function(){
-                    $('.auto-login-msg').velocity('transition.fadeOut');
+                    $('auto-login-message').velocity('transition.fadeOut');
                     $('.curtain').trigger('curtain:behindthescene:done');
                     $('.progress_bar--landing').velocity('transition.slideUpOut', { duration: 500 });
                 }, 1200 );
@@ -351,6 +348,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             }
 
             function after_cb() {
+
+                if( window.localStorage ){
+                    window.localStorage.removeItem('reconn_data');
+                }
+
+                $('.auto-login-message').remove();
 
                 $('#thumbWrap').velocity('transition.slideUpIn', {
                     duration: 1000
@@ -370,9 +373,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                     duration: 800,
                     complete: function() {
 
-                        $('.menu-item').each(function(i, el) {
-                            $(el).append('<span class="bubble filtered"></span>')
-                        });
+                        // $('.menu-item').each(function(i, el) {
+                        //     $(el).append('<span class="bubble filtered"></span>')
+                        // });
 
                         if ( LJ.user.status == 'new'){
                             LJ.fn.initIntro();
@@ -404,7 +407,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         handleFetchUserAndConfigurationSuccess: function( data ){
 
-            delog('Fetching user and config success');
+            LJ.fn.log('Fetching user and config success', 1);
 
             LJ.user = data.user;
             LJ.settings = data.settings;
@@ -426,7 +429,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 function( callback ){
                     // Update friends based on facebook activity on each connection 
                     LJ.fn.fetchAndSyncFriends(function( err, res ){
-                        console.log(err);
+                        LJ.fn.warn( err, 1);
                         LJ.fn.handleFetchAndSyncFriends( err, res );
                         callback();
                     });
@@ -435,7 +438,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 function( callback ){
                     // Fetch and display all events on map 
                     LJ.fn.fetchEvents(function( err, res ){
-                        console.log(err);
+                        LJ.fn.warn( err, 1);
                         LJ.fn.handleFetchEvents( err, res );
                         callback();
                     });
@@ -444,7 +447,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 function( callback ){
                     // Fetch all parties 
                     LJ.fn.fetchParties(function( err, res ){
-                        console.log( err );
+                        LJ.fn.warn( err, 1 );
                         LJ.fn.handleFetchParties( err, res );
                         callback();
                     });
@@ -452,7 +455,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 function( callback ){
                     // Fetch and display my events on map */
                     LJ.fn.fetchMyEvents(function( err, res ){
-                        console.log(err);
+                        LJ.fn.warn( err, 1 );
                         LJ.fn.handleFetchMyEvents( err, res );
                         callback(); 
                     });
@@ -460,7 +463,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 }], function( err, results ){
 
                     if( err ){
-                        return console.warn('Error initializing the app : ' + err );
+                        return LJ.fn.warn('Error initializing the app : ' + err, 1);
                     }
 
                     // Rendu sur la map quand toutes les données en cache
@@ -474,7 +477,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                     // Admin scripts. Every com is secured serverside 
                     if( LJ.user.access.indexOf('admin') != -1 ){
-                        console.log('Starting admin script');
+                        LJ.fn.log('Starting admin script', 1);
                         LJ.fn.initParty();
                     }
                     
@@ -489,11 +492,100 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 });
 
         },
-        handleDisconnection: function(){
+        handleReconnection: function(){
 
-            
-            
-        }
+            LJ.fn.warn('Reconnecting user...', 1);
+            LJ.reconnected_started_at = new Date();
+
+            if( $('.curtain').css('opacity') != 0 ){
+                return;
+            }
+
+            $('.curtain')
+                .html('')
+                .html(
+                    '<div class="super-centered none reconnect-message">'
+                        + LJ.text_source["de_reconnect"][ LJ.app_language ]
+                    + '</div>'
+                )
+                .velocity('transition.fadeIn', {
+                duration: 500,
+                complete: function(){
+
+                    $(this)
+                        .find('.reconnect-message')
+                        .velocity('transition.fadeIn', {
+                            duration: 500
+                        });
+
+                    $(this)
+                        .velocity({ opacity: [0.82,1]}, {
+                            duration: 300
+                        });
+
+                        // Querying the state...
+                        
+                }
+            })
+
+        },
+        simReco: function( time_offline ){
+            LJ.fn.handleReconnection();
+            LJ.fn.timeout( time_offline, function(){
+                LJ.fn.reconnectUser();
+            });
+        },
+        reconnectUser: function(){
+
+            // UI considerations
+            var delay = 3500 - ( (new Date()) - LJ.reconnected_started_at );
+
+            LJ.fn.timeout( delay, function(){
+                LJ.fn.log('Launching reconnection process', 1);
+
+                 $('.curtain')
+                        .velocity({ opacity: [1,0.82]}, {
+                            duration: 500
+                        });
+
+                $('.reconnect-message').velocity('transition.fadeOut', {
+                    duration: 500,
+                    complete: function(){
+
+                        var preferences = {
+                            facebook_id : LJ.user.facebook_id,
+                            long_lived_tk: LJ.user.facebook_access_token.long_lived,
+                            tk_valid_until: LJ.user.facebook_access_token.long_lived_valid_until
+                        };
+
+                        window.localStorage.setItem("reconn_data", JSON.stringify( preferences )); 
+                        document.location = "/home";
+
+                        }
+                });
+
+
+            });
+
+        },
+        resetAppData: function(){
+
+        },
+        log: function( msg, level ){
+            level = level || 3;
+            if( level > LJ.log_level ) return;
+            console.log(msg);
+        },
+        warn: function( msg, level ){
+            level = level || 3;
+            if( level > LJ.log_level ) return;
+            if( msg ) console.log(msg);
+        },
+        timeout: function(ms, cb, p2) {
+            setTimeout(function() {
+                cb(p2);
+            }, ms)
+        }       
 
 
     }); //end LJ
@@ -503,7 +595,7 @@ $('document').ready(function() {
     var initFB = function( time ) {
 
         if( typeof FB === 'undefined' ){
-            return sleep( time, initFB )
+            return LJ.fn.timeout( time, initFB )
         }
 
         FB.init({
@@ -513,22 +605,16 @@ $('document').ready(function() {
         });
 
         LJ.fn.init({
-            debug   : true,
+            log_level: 1,
             country : 'fr'
         });
 
-        csl('Application ready!');
+        LJ.fn.log('Application ready!', 1);
     }
 
     initFB( 300 );
 
 });
-
-
-function delog(msg) {
-    if (LJ.state.debug)
-        console.log(msg);
-}
 
 
 

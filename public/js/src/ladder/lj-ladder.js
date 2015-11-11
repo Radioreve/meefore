@@ -4,14 +4,14 @@
 		initLadder: function( options ){
 
 			if( typeof( options ) != "object" )
-				return delog('Param error, object needed');
+				return LJ.fn.log('Param error, object needed');
 
 			var max_level  = options.max_level,
 				base_point = options.base_point,
 				coef_point = options.coef_point;
 
 			if( !max_level || !base_point || !coef_point )
-				return delog('Param error, missing key');
+				return LJ.fn.log('Param error, missing key');
 
 			var skill_ladder = [];
 			for( var i = 1; i <= max_level; i++ ){

@@ -161,8 +161,8 @@
 		},
 		displayCurtain: function( opts ){
 
-			var behindTheScene = opts.behindTheScene || function(){ delog('Behind the scene'); },
-				afterTheScene  = opts.afterTheScene   || function(){ delog('after the scene');  },
+			var behindTheScene = opts.behindTheScene || function(){ LJ.fn.log('Behind the scene'); },
+				afterTheScene  = opts.afterTheScene   || function(){ LJ.fn.log('after the scene');  },
 				parallelTheScene = opts.parallelTheScene || function(){},
 
 				delay          = opts.delay    || 500,
@@ -407,12 +407,12 @@
 
 			if( options.source === 'facebook' )
 			{	
-				console.log('Calling Facebook graph api');
+				LJ.fn.log('Calling Facebook graph api');
 				LJ.fn.GraphAPI( options.url, function(res){
 
 					if( !res && !res.data ) {
-						console.log('Error, cannot display photos from fb')
-						console.log(res);
+						LJ.fn.log('Error, cannot display photos from fb')
+						LJ.fn.log(res);
 						var html_data = options.error_cb();
 					} else {
 						var html_data = options.render_cb( res.data );
@@ -557,7 +557,7 @@
 			// The img tag is already there as whisper
 			if( $user_img.hasClass('whispering') ){
 
-				console.log('Already whispering, removing...');
+				LJ.fn.log('Already whispering, removing...');
 
 				$user_img.removeClass('whispering');
 				$chat_wrap.find('.img-input-whisper[data-authorid="' + facebook_id + '"]')
@@ -567,7 +567,7 @@
 						  } });
 			} else {
 
-				console.log('First time whispering, adding...');
+				LJ.fn.log('First time whispering, adding...');
 
 				$user_img.addClass('whispering')
 				$user_img.first().clone().addClass('img-input-whisper').attr('data-authorid', facebook_id )
@@ -613,7 +613,7 @@
 			var $chat_wrap = $('.event-accepted-chat-wrap[data-chatid="' + chat_id + '"]');
 
 			if( $chat_wrap.length != 1 ){
-				return console.warn('Couldnt find one chatwrap based on id : ' + chat_id );
+				return LJ.fn.warn('Couldnt find one chatwrap based on id : ' + chat_id );
 			}
 
 			$chat_wrap

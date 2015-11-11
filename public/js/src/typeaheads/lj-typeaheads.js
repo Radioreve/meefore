@@ -74,13 +74,13 @@
   				 	wildcard: '%query'
   				 },
   				 transform: function(res){
-  				 	delog(res);
+  				 	LJ.fn.log(res);
   				 }
 			});
 
 			users.initialize()
 				 .done(function(){ })
-				 .fail(function(){ delog('Bloodhound engine failed to initialized users'); })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
 
 			$('#search input').typeahead({
 				hint: true,
@@ -108,13 +108,13 @@
   				 identify: function(o){ return o.name; },
   				 local: friends,
   				 transform: function(res){
-  				 	delog(res);
+  				 	LJ.fn.log(res);
   				 }
 			});
 
 			friends.initialize()
 				 .done(function(){ })
-				 .fail(function(){ delog('Bloodhound engine failed to initialized friends'); })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
 
 			$('.row-create-friends input').typeahead({
 				hint: true,
@@ -142,13 +142,13 @@
   				 identify: function(o){ return o.name; },
   				 local: friends,
   				 transform: function(res){
-  				 	delog(res);
+  				 	LJ.fn.log(res);
   				 }
 			});
 
 			friends.initialize()
 				 .done(function(){ })
-				 .fail(function(){ delog('Bloodhound engine failed to initialized friends groups'); })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
 
 			$('.row-requestin-group-members input').typeahead({
 				hint: true,
@@ -179,13 +179,13 @@
   				 	wildcard: '%query'
   				 },
   				 transform: function(res){
-  				 	delog(res);
+  				 	LJ.fn.log(res);
   				 }
 			});
 
 			places.initialize()
 				 .done(function(){ })
-				 .fail(function(){ delog('Bloodhound engine failed to initialized places'); })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
 
 			$('.row-create-party-place input').typeahead({
 				hint: true,

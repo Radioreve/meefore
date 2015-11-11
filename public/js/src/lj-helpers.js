@@ -36,7 +36,7 @@
 			setTimeout(function(){
 					
 				if( !jsp_chat || !jsp_users ){
-					console.warn('Couldnt find jsp api');
+					LJ.fn.warn('Couldnt find jsp api');
 					return
 				}
 
@@ -45,7 +45,7 @@
 
 				if( options.stick_to_content ){
 
-					console.log('Sticking to content');
+					LJ.fn.log('Sticking to content');
 					jsp_chat.reinitialise();
 					var $elem = $('.jsp-glue').first();
 					jsp_chat.scrollToElement( $elem, true );
@@ -58,14 +58,14 @@
 				// If user is almost at the bottom of chat or is at the very top
 				if( jsp_chat.getPercentScrolledY() > 0.75 || jsp_chat.getPercentScrolledY() == 0 ){
 
-					console.log('Scrolling to bottom');
+					LJ.fn.log('Scrolling to bottom');
 					jsp_chat.reinitialise();
 					jsp_chat.scrollToBottom();
 					return;
 					
 				} 
 
-				console.log('Staying where we are');
+				LJ.fn.log('Staying where we are');
 				// Default, renitialise without scrollingToBottom
 				// For prevent users browsing history to be disturbed by auto scroll to bottom
 				jsp_chat.reinitialise();
@@ -97,7 +97,7 @@
 
 						if( options.stick_to_content ){
 
-							console.log('Sticking to content');
+							LJ.fn.log('Sticking to content');
 							jsp.reinitialise();
 							var $elem = $('.jsp-glue').first();
 							jsp.scrollToElement( $elem, true );
@@ -110,14 +110,14 @@
 						// If user is almost at the bottom of chat or is at the very top
 						if( jsp.getPercentScrolledY() > 0.75 || jsp.getPercentScrolledY() == 0	){
 
-							console.log('Scrolling to bottom');
+							LJ.fn.log('Scrolling to bottom');
 							jsp.reinitialise();
 							jsp.scrollToBottom();
 							return;
 							
 						} 
 
-						console.log('Staying where we are');
+						LJ.fn.log('Staying where we are');
 						// Default, renitialise without scrollingToBottom
 						// For prevent users browing history to be distrubed by auto scroll to bottom
 						jsp.reinitialise();
@@ -151,7 +151,7 @@
 
 			$container.find('label').each( function( i, label ){
 
-				console.log('Largest label is : ' + largest_label.width );
+				LJ.fn.log('Largest label is : ' + largest_label.width );
 				var $label = $(label);
 				var $inp   = $label.siblings('*:not( .etiquette, [type="number"], .item)');
 
@@ -174,7 +174,7 @@
 			var options = options || {};
 
 			if( !options.str && typeof( options.str ) != 'string' )
-				return console.log('Invalid input for shorten string fn');
+				return LJ.fn.log('Invalid input for shorten string fn');
 
 			var str      = options.str,
 				end_tpl  = options.end_tpl || '';
@@ -191,7 +191,7 @@
 
 			var $sug = $self.parents('.row-input').find('.search-results-autocomplete');
 			if( $sug.length != 0 ){
-				delog('Sug found');
+				LJ.fn.log('Sug found');
 				var current_offset = parseInt( $sug.css('left').split('px')[0] );
 				$sug.css({ left: current_offset + $self.outerWidth(true) });
 			}
@@ -205,7 +205,7 @@
 			var options = options || {};
 
 			if( !options.html || typeof( options.html ) != 'string' )
-				return console.log('Invalid html for prepend item fn');
+				return LJ.fn.log('Invalid html for prepend item fn');
 
 			var $input = $( options.inp );
 			var $html = $( options.html );
@@ -219,12 +219,12 @@
 
 			var item_id = $html.attr('data-id');
 			if( $('.rem-click[data-id="' + item_id + '"]').length > 1 ){
-				//console.log('Removing due to same id');
+				//LJ.fn.log('Removing due to same id');
 				return $html.remove();
 			}
 
 			if( $html.siblings('.rem-click').length > options.max - 1){
-				//console.log('Removing due to overflow');
+				//LJ.fn.log('Removing due to overflow');
 				return $html.remove();
 			}
 
@@ -248,10 +248,10 @@
 		},
 		findPlaceAttributes: function( place ){
 
-			console.log(place);
+			LJ.fn.log(place);
 
 			if( !place.address_components ){
-				return console.warn('Couldnt find address_components');	
+				return LJ.fn.warn('Couldnt find address_components');	
 			} 
 
 			var compo = place.address_components,
@@ -300,7 +300,7 @@
 		addPlaceToInput: function( place, input_id ){
 
 			if( !place.place_id ){
-				return console.warn('No place_id found, cant add item');
+				return LJ.fn.warn('No place_id found, cant add item');
 			}
 
 			var $input = $('#'+input_id),
@@ -472,17 +472,23 @@
 
         },
         handleSuccessDefault: function( data ){
-        	delog('Success!');
+        	LJ.fn.log('Success!');
         },
         handleErrorDefault: function( data ){
-        	delog('Error!');
+        	LJ.fn.log('Error!');
         },
         GraphAPI: function( url, callback, opts ){
 
 			var ls = window.localStorage;
 
 			var access_token = ( LJ.user.facebook_access_token && LJ.user.facebook_access_token.long_lived ) 
-							|| ( ls.preferences && JSON.parse( ls.preferences ).long_lived_tk );
+							 || ( ls.preferences && JSON.parse( ls.preferences ).long_lived_tk )
+							 || ( ls.reconn_data && JSON.parse( ls.preferences ).long_lived_tk )
+
+			if( !access_token ){
+				LJ.fn.warn('Calling graph api without being able to find a valid long lived token', 1 );
+			}
+
 			FB.api( url, { access_token: access_token }, callback );
 
 		},
@@ -510,7 +516,7 @@
 			});
 
 			if( !evt ){
-				return console.warn('Couldnt find event in cache with id : ' + event_id );
+				return LJ.fn.warn('Couldnt find event in cache with id : ' + event_id );
 			}
 
 			var status = null;
@@ -574,7 +580,7 @@
 		},
 		defaultApiCompleteCallback: function(){
 
-			// console.log('api call completed');
+			// LJ.fn.log('api call completed');
 		},
 		handleServerSuccess: function( msg, selector ){
 
@@ -631,7 +637,7 @@
         	var group_id = options.group_id;
 
         	if( !event_id || !group_id ){
-        		console.log(event_id); console.log(group_id);
+        		LJ.fn.log(event_id); LJ.fn.log(group_id);
         		return console.error('Cant make chat id, missing parameter ')
         	}
 
@@ -736,10 +742,10 @@
 			});
 
 			if( !cached_event ){
-				console.log('Adding event in cache since not found');
+				LJ.fn.log('Adding event in cache since not found');
 				return LJ.cache.events.push( new_event );
 			} else {
-				// console.log('Event found in cache, updating it');
+				// LJ.fn.log('Event found in cache, updating it');
 				cached_event = _.merge( cached_event, new_event );
 			}
 
@@ -833,7 +839,7 @@
              });
 
             if( !evt ){
-                return console.warn('Couldnt find event...')
+                return LJ.fn.warn('Couldnt find event...')
             } else {
                 return evt;
             }

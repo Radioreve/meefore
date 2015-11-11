@@ -565,10 +565,6 @@
 			"fr": "Le message est vide!",
 			"en": "The message is empty"
 		},
-		to_event_created_success_1: {
-			"fr": "Votre meefore a été créé avec succès!",
-			"en": "Your meefore has been successfully created!"
-		},
 		to_event_created_success_2: {
 			"fr": "Que la fête commence...",
 			"en": "May the party get started..."
@@ -636,6 +632,10 @@
 		to_welcome: {
 			"fr": "Bienvenue sur Meefore",
 			"en": "Welcome to Meefore"
+		},
+		intro_next: {
+			"fr": "Suivant",
+			"en": "Next"
 		},
 		intro_chat_1: {
 			"fr": "Hey guys",
@@ -971,8 +971,12 @@
 			"en": "Something wrong happened. Mail us directly at contact@meefore.com"
 		},
 		lp_loading_party: {
-			"fr": "Chargement des prochaines soirées...",
-			"en": "Loading next parties..."
+			"fr": "Chargement des prochaines soirées",
+			"en": "Loading next parties"
+		},
+		de_reconnect: {
+			"fr": "Vous avez déconnecté. <br> L'application redémarrera dès que vous aurez retrouvé la connexion.",
+			"en": "You have been disconnected. <br> App will reboot automatically once your connection is back."
 		}
 
 	});
