@@ -150,8 +150,8 @@
 			"en": "Your Facebook profile pictures"
 		},
 		p_button_invite: {
-			"fr": "Invitez vos amis à vous rejoindre",
-			"en": "Invite your friends to join you"
+			"fr": "Plus d'amis",
+			"en": "More friends"
 		},
 		h_search_placeholder: {
 			"fr": "Rechercher quelqu'un",

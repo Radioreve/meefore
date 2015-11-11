@@ -2702,16 +2702,41 @@ p {
     text-align: center;
 }
 
+.invite-friends {
+    float: right;
+    background: #3F6698;
+    -webkit-transition: all ease-in-out .3s;
+    transition: all ease-in-out .3s;
+}
+
+.invite-friends:hover {
+    background: #6C8FBC;
+}
+
+#profileWrap .icon-invite-friends {
+    color: white;
+    position: relative;
+    top: 9px;
+    left: 8px;
+    font-size: 13px;
+}
+
+#profileWrap .icon-invite-friends:hover {
+    background: none;
+}
+
 .btn-invite-friends {
-    background: red;
-    margin-top: 25px;
-    padding: 15px 40px;
+    padding: 10px 12px;
+    float: right;
     color: white;
     background: #e94f6a;
+    background: none;
+    border: none;
+    text-transform: none;
 }
 
 .btn-invite-friends:hover {
-    background: #F87B92;
+    background: none;
 }
 
 .row-subtitle {

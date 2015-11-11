@@ -12,7 +12,7 @@
 
 			});
 
-			LJ.$body.on('click', '.btn-invite-friends', function(){
+			LJ.$body.on('click', '.invite-friends', function(){
 
 				FB.ui({
 					method: 'send',
