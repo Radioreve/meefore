@@ -7,15 +7,14 @@
 }
 
 .row-title {
-   text-transform: uppercase;
-   font-weight: bolder;
+   /* text-transform: uppercase; */
    font-size: 13px;
    color: #484848;
    border-bottom: 2px solid #8E8686;
 }
 
 .row-title-text {
-   font: bold 22px 'Gochi Hand';
+   font: bold 18px 'Coming Soon';
    display: inline-block;
    padding: 8px;
    border-bottom: none;
@@ -49,6 +48,21 @@
 
 .row-body {
    font-family: 'Karla';
+}
+
+.row-body-sub {
+    text-align: center;
+}
+
+.btn-invite-friends {
+    background:red;
+    margin-top: 25px;
+    padding: 15px 40px;
+    color: white;
+    background: #e94f6a;
+}
+.btn-invite-friends:hover {
+    background: #F87B92;
 }
 
 .row-subtitle {

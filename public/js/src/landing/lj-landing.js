@@ -231,7 +231,7 @@
                     duration: 1000
             });
 
-			setTimeout( function(){
+			// setTimeout( function(){
 
 				LJ.fn.GraphAPI('/me', function( facebookProfile ){
 
@@ -239,7 +239,7 @@
 			  		LJ.fn.loginWithFacebook( facebookProfile );
 	  			});
 
-			}, 400 );
+			// }, 400 );
 		},
 		loginWithFacebook: function( facebookProfile ){
 

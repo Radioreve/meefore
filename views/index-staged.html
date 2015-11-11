@@ -4,14 +4,27 @@
 
 <head>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-
   <title>Meefore | Des rencontres avant d'aller en soirée </title>
-  <meta name="description" content="Meefore permet à des groupes d'amis de se retrouver
-  avant d'aller en soirée, en affichant sur une même carte des soirées et des before organisés 
-  pour aller à ces soirées">
+
+  <meta charset="utf-8">
+  <meta name="viewport"           content="width=device-width, initial-scale=1">
+  <meta name="viewport"           content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <meta property="og:title"       content="Meefore | Des rencontres avant d'aller en soirée" />
+  <meta property="og:site_name"   content="Meefore" />
+  <meta property="og:url"         content="http://www.meefore.com/home" />
+  <meta property="og:image"       content="http://res.cloudinary.com/radioreve/image/upload/v1445867671/lp1.jpg" />
+  <meta property="og:app_id"      content="1638108873141834" />
+  
+  <meta property="og:description" content="Meefore est le premier site qui permet à des groupes
+                                           d'amis de faire des before ensemble avant d'aller en soirée.
+                                           Connectez-vous entre amis, et 
+                                           faîtes des rencontres dès ce soir!"/>
+
+  <meta name="description"        content="Meefore est le premier site qui permet à des groupes
+                                           d'amis de faire des before ensemble avant d'aller en soirée.
+                                           Connectez-vous entre amis, et 
+                                           faîtes des rencontres dès ce soir!"/>
 
   <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Londrina+Solid' rel='stylesheet' type='text/css'>
@@ -208,12 +221,23 @@
     <div class="preview-type beta">bêta</div>
       <img id="logo" src="/img/app/logo-light.png" width="35"></img>
       <ul id="menuWrap" class="">
-        <li id="profile" data-hash="me" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap"><span class="underlay"></span></li>
-        <li id="events" data-hash="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap"><span class="underlay"></span></li>
-        <li id="search" class="menu-item icon icon-search"><span class="underlay"></span>
+        <li id="profile" data-hash="me" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap">
+          <span class="underlay"></span>
+          <span class="bubble filtered"></span>
+        </li>
+        <li id="events" data-hash="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap">
+          <span class="underlay"></span>
+          <span class="bubble filtered"></span>
+        </li>
+        <li id="search" class="menu-item icon icon-search">
+          <span class="underlay"></span>
+          <span class="bubble filtered"></span>
           <div id="searchbar" class=""><input data-lid="h_search_placeholder" type="text" class="search-input"></div>
         </li>
-        <li id="settings" data-hash="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap"><span class="underlay"></span></li>
+        <li id="settings" data-hash="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap">
+          <span class="underlay"></span>
+          <span class="bubble filtered"></span>
+        </li>
       </ul>
     </div>
     <div id="languages">
@@ -225,12 +249,15 @@
 
   <div id="mainWrap" class="centered">
 
+    <span id="logout" class="action">
+      <i class="icon icon-power"></i>
+    </span>
+
     <section id="thumbWrap" class="none ">
       <div class="imgWrap">
       </div>
       <div id="thumbInfos">
         <h2 id="thumbName"></h2>
-        <span id="logout" class="action"><i class="icon icon-power"></i></span>
       </div>
     </section>
 
@@ -310,13 +337,13 @@
           </div>
           <div class="row-input row-input-lg row-mood etiquette nonei">
             <label data-lid="p_lifestyle_label" for="mood" class="label label-md" >Lifestyle</label
-            ><div class="row-select-wrap mood-wrap">
+            ><div class="row-select-wrap mood-wrap"  >
               <!-- Dynamically loaded -->
             </div>
           </div>
           <div class="row-input row-input-lg row-drink etiquette nonei">
             <label data-lid="p_drink_label" for="drink" class="label label-md" >Verre</label
-            ><div class="row-select-wrap drink-wrap">
+            ><div class="row-select-wrap drink-wrap" >
               <!-- Dynamically loaded -->
             </div>
           </div>
@@ -341,6 +368,9 @@
         <div class="row-body">
           <h3 data-lid="p_friends_nofriends" >Vous n'avez aucun ami Facebook inscrit. Participer à des before risque d'être compliqué...</h3>
            <!-- Dynamically loaded -->
+        </div>
+        <div class="row-body-sub">
+          <button data-lid="p_button_invite" class="theme-btn btn-invite-friends">Invite tes amis</button>
         </div>
       </div>
 
@@ -375,7 +405,7 @@
         <div class="row-events-filters-divider"></div>
         <div class="row-events-filters-group filters-date">
           <i class="icon icon-filters-group icon-calendar"></i>
-          <div data-lid="e_filters_date" class="event-filter-label">Filter par jour : </div>
+          <div data-lid="e_filters_date" class="event-filter-label"  >Filter par jour : </div>
           <!-- Dynamically loaded -->
         </div>
         <div class="row-events-filters-divider"></div>
@@ -387,24 +417,25 @@
       </div>
 
       <div class="row row-events row-main">
-        <div class="row-preview row-events-preview">
+        <div class="row-preview row-events-preview" >
               <!-- Dynamically loaded -->
         </div>
-        <div class="row-preview row-party-preview">
+        <div class="row-preview row-party-preview" >
               <!-- Dynamically loaded -->
         </div>
-        <div class="row-events-map">
+        <div class="row-events-map" >
           <!-- Dynamically loaded -->
         </div>
       </div>
 
     </section>
   
-    <div class="row row-events row-events-accepted">
-      <div class="row-events-accepted-tabview">
-        <!-- Dynamically loaded -->
-      </div>
+    <div class="row-events-accepted-inview-wrapper" >
         <!-- Dynamicalled loaded [ row events accepted in view are apppended here ] -->
+    </div>
+
+    <div class="row-events-accepted-tabview" >
+      <!-- Dynamically loaded -->
     </div>
 
     <section id="searchUsersWrap" class="none centered">
@@ -418,7 +449,7 @@
           <input type="text" placeholder="Rechercher par nom, age, boisson favorite">
         </div>
       </div>
-      <div id="searchUsers">
+      <div id="searchUsers" >
          <!-- Dynamically loaded -->
       </div>
     </section>

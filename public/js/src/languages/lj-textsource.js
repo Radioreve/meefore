@@ -149,6 +149,10 @@
 			"fr": "Vos photos de profil Facebook",
 			"en": "Your Facebook profile pictures"
 		},
+		p_button_invite: {
+			"fr": "Invitez vos amis à vous rejoindre",
+			"en": "Invite your friends to join you"
+		},
 		h_search_placeholder: {
 			"fr": "Rechercher quelqu'un",
 			"en": "Looking for someone?"
@@ -975,7 +979,7 @@
 			"en": "Loading next parties"
 		},
 		de_reconnect: {
-			"fr": "Vous avez déconnecté. <br> L'application redémarrera dès que vous aurez retrouvé la connexion.",
+			"fr": "Vous avez été déconnecté. <br> L'application redémarrera dès que vous aurez retrouvé la connexion.",
 			"en": "You have been disconnected. <br> App will reboot automatically once your connection is back."
 		}
 

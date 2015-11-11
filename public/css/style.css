@@ -192,7 +192,12 @@ img.left {
 
 #logout {
 	color: #878787;
-	left: 2px;
+	position: absolute;
+	right: 11px;
+	top: 11px;
+	z-index: 10;
+	width: 25px;
+	font-size: 18px;
 }
 #logout:hover{
 	color: white;
@@ -279,7 +284,7 @@ body > header > h5 {
 }
 
 #headerContent {
-   width: 85%;
+   width: 82%;
    margin: 0 
     auto;
    position: relative;
@@ -1783,7 +1788,7 @@ p {
 	display: none;
 }
 
-#languages {position: absolute;right: -10px;top: 4px;width: 100px;height: 30px;padding-top: 7px;}
+#languages {position: absolute;right: 10px;top: 4px;width: 100px;height: 30px;padding-top: 7px;}
 
 .pick-lang {
 	display: inline-block;

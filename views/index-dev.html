@@ -4,20 +4,34 @@
 
 <head>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-
   <title>Meefore | Des rencontres avant d'aller en soirée </title>
-  <meta name="description" content="Meefore permet à des groupes d'amis de se retrouver
-  avant d'aller en soirée, en affichant sur une même carte des soirées et des before 
-  organisés par les gens qui vont à ces soirées.">
+
+  <meta charset="utf-8">
+  <meta name="viewport"           content="width=device-width, initial-scale=1">
+  <meta name="viewport"           content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <meta property="og:title"       content="Meefore | Des rencontres avant d'aller en soirée" />
+  <meta property="og:site_name"   content="Meefore" />
+  <meta property="og:url"         content="http://www.meefore.com/home" />
+  <meta property="og:image"       content="http://res.cloudinary.com/radioreve/image/upload/v1445867671/lp1.jpg" />
+  <meta property="og:app_id"      content="1638104993142222" />
+  
+  <meta property="og:description" content="Meefore est le premier site qui permet à des groupes
+                                           d'amis de faire des before ensemble avant d'aller en soirée.
+                                           Connectez-vous entre amis, et 
+                                           faîtes des rencontres dès ce soir!"/>
+
+  <meta name="description"        content="Meefore est le premier site qui permet à des groupes
+                                           d'amis de faire des before ensemble avant d'aller en soirée.
+                                           Connectez-vous entre amis, et 
+                                           faîtes des rencontres dès ce soir!"/>
 
 
   <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Londrina+Solid' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Karla:700,400' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Gochi+Hand' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Coming+Soon' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Alegreya+Sans+SC:400,500,600,700,800,900' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Pacifico:400,500,600,700' rel='stylesheet' type='text/css'>
   
@@ -237,12 +251,15 @@
 
   <div id="mainWrap" class="centered">
 
+    <span id="logout" class="action">
+      <i class="icon icon-power"></i>
+    </span>
+
     <section id="thumbWrap" class="none ">
       <div class="imgWrap">
       </div>
       <div id="thumbInfos">
         <h2 id="thumbName"></h2>
-        <span id="logout" class="action"><i class="icon icon-power"></i></span>
       </div>
     </section>
 
@@ -353,6 +370,9 @@
         <div class="row-body">
           <h3 data-lid="p_friends_nofriends" >Vous n'avez aucun ami Facebook inscrit. Participer à des before risque d'être compliqué...</h3>
            <!-- Dynamically loaded -->
+        </div>
+        <div class="row-body-sub">
+          <button data-lid="p_button_invite" class="theme-btn btn-invite-friends">Invite tes amis</button>
         </div>
       </div>
 

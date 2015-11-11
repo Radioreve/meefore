@@ -27,6 +27,7 @@
 				override = true;
 			}
 
+			LJ.event_markers = LJ.event_markers || [];
 			LJ.event_markers.forEach(function( marker ){
 				if( date_to_display.indexOf( moment( marker.data.begins_at ).dayOfYear() ) == -1 && !override ){
 					marker.marker.setMap( null );
@@ -37,6 +38,7 @@
 				}
 			});
 
+			LJ.party_markers = LJ.party_markers || [];
 			LJ.party_markers.forEach(function( marker ){
 				if( date_to_display.indexOf( moment( marker.data.begins_at ).dayOfYear() ) == -1 && !override ){
 					marker.marker.setMap( null );

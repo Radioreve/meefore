@@ -12,6 +12,15 @@
 
 			});
 
+			LJ.$body.on('click', '.btn-invite-friends', function(){
+
+				FB.ui({
+					method: 'send',
+					link: 'http://www.meefore.com'
+				});
+
+			});
+
 			$('.modal-container').on('click','.modal-thumb-picture', function(){
 
 				var $self = $(this);

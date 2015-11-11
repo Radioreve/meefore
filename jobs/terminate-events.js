@@ -128,13 +128,13 @@
 		var full_event_query = {
 			'begins_at' : date_range_query,
 			'timezone'  : timezone_range_query,
-			'status'    : { $nin: ['ended','canceled'] }
+			'status'    : { $nin: ['ended'] }
 		};
 
 		var full_party_query = {
 			'begins_at' : date_range_query,
 			'timezone'  : timezone_range_query,
-			'status'    : { $nin: ['ended','canceled'] }
+			'status'    : { $nin: ['ended'] }
 		};
 
 		var full_event_in_user_query = {

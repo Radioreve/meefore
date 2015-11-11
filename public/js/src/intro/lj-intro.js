@@ -435,7 +435,8 @@
 
                     var step_html = [
                             '<div class="lintro-next none" data-stepid="' + opts.id + '" data-nextid="' + opts.next_id + '">',
-                                LJ.text_source["intro_next"][ LJ.app_language ],
+                                // LJ.text_source["intro_next"][ LJ.app_language ],
+                                '>',
                             '</div>'
                         ].join('');
 
@@ -668,7 +669,7 @@
         	showIntroChatInview: function(){	
 
         		$('.event-tabview-intro').attr('data-status', 'accepted').addClass('active');
-				$('.row-events-accepted').append( LJ.fn.renderEventInview_Intro( LJ.intro.event_data ) );
+				$('.row-events-accepted-inview-wrapper').append( LJ.fn.renderEventInview_Intro( LJ.intro.event_data ) );
 
 		        var adjusted_height = $( window ).outerHeight( true )  
                                       - $('.row-events-preview').innerHeight()
@@ -760,20 +761,29 @@
         		// Clear preview
         		google.maps.event.trigger( LJ.map, 'click' );
 
-        		LJ.event_markers_intro.forEach(function(marker){
-        			marker.marker.setMap(null);
-        		});
-        		LJ.party_markers_intro.forEach(function(marker){
-        			marker.marker.setMap(null);
-        		});
+                if( LJ.event_markers_intro ){
+            		LJ.event_markers_intro.forEach(function(marker){
+            			marker.marker.setMap(null);
+            		});
+                }
 
-        		// Display back what has been hidden
-        		LJ.event_markers.forEach(function(marker){
-		 			marker.marker.setOpacity(1);
-		 		});
-		 		LJ.party_markers.forEach(function(marker){
-		 			marker.marker.setOpacity(1);
-		 		});
+                if( LJ.party_markers_intro ){
+            		LJ.party_markers_intro.forEach(function(marker){
+            			marker.marker.setMap(null);
+            		});
+                }
+
+                if( LJ.event_markers ){
+            		LJ.event_markers.forEach(function(marker){
+    		 			marker.marker.setOpacity(1);
+    		 		});
+                }
+
+                if( LJ.party_markers ){
+    		 		LJ.party_markers.forEach(function(marker){
+    		 			marker.marker.setOpacity(1);
+    		 		});
+                }
 
         	},
         	fetchFacebookPictureIntro: function(){
