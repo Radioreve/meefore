@@ -483,7 +483,7 @@
 
 			var access_token = ( LJ.user.facebook_access_token && LJ.user.facebook_access_token.long_lived ) 
 							 || ( ls.preferences && JSON.parse( ls.preferences ).long_lived_tk )
-							 || ( ls.reconn_data && JSON.parse( ls.preferences ).long_lived_tk )
+							 || ( ls.reconn_data && JSON.parse( ls.reconn_data ).long_lived_tk )
 
 			if( !access_token ){
 				LJ.fn.warn('Calling graph api without being able to find a valid long lived token', 1 );

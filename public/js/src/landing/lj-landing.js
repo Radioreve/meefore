@@ -217,7 +217,7 @@
 		autoLogin: function(){
 
 			/* Message during login */
-            var loader_tag = LJ.$main_loader_curtain.clone().prop('outerHTML');
+           var loader_tag = LJ.$main_loader_curtain.clone().prop('outerHTML');
 			/* Message during login */
 		   var tpl = ['<div class="auto-login-message super-centered none">',
 		   				'<span>' + LJ.text_source["lp_loading_party"][ LJ.app_language ] + '</span>',
@@ -280,7 +280,7 @@
 			var reconn_data = JSON.parse( ls.getItem('reconn_data') );
 
 			if( reconn_data ){
-				LJ.fn.log('Reconnecting user from previous loss of connexion...');
+				LJ.fn.log('Reconnecting user from previous loss of connexion...', 1);
 				LJ.fn.autoLogin();
 				return;
 			}
