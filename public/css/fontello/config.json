@@ -1,5 +1,5 @@
 {
-  "name": "online",
+  "name": "",
   "css_prefix_text": "icon-",
   "css_use_suffix": false,
   "hinting": true,
@@ -415,9 +415,33 @@
       "src": "entypo"
     },
     {
+      "uid": "6acd5cf005d48f96787350e72bd45688",
+      "css": "left",
+      "code": 59490,
+      "src": "entypo"
+    },
+    {
+      "uid": "9e67bfab0143d9511f8eef6897caeb88",
+      "css": "right",
+      "code": 59489,
+      "src": "entypo"
+    },
+    {
       "uid": "78944e4652d6f9b8b506eaef331308cd",
       "css": "down-bold",
       "code": 59473,
+      "src": "entypo"
+    },
+    {
+      "uid": "0222089fb4194cc714dcc1ffd2525c11",
+      "css": "left-bold",
+      "code": 59488,
+      "src": "entypo"
+    },
+    {
+      "uid": "1a90b06af8614b12d8c8a5b90cc19ab3",
+      "css": "right-bold",
+      "code": 59487,
       "src": "entypo"
     },
     {

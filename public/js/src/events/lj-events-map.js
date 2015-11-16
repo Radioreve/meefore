@@ -48,9 +48,16 @@
 
             LJ.map_service = new google.maps.places.PlacesService( LJ.map );
 
-            /* Map styling */
+            // Set map styling 
             LJ.map.mapTypes.set('meemap', map_style_meefore );
             LJ.map.setMapTypeId('meemap');
+
+            // Set map listeners
+            LJ.fn.setMapListeners();
+
+
+        },
+        setMapListeners: function(){
 
             LJ.map.addListener('center_changed', function(){
                 
@@ -67,16 +74,14 @@
                 LJ.fn.refreshMap();
 
             });
-
-
+            
             LJ.map.addListener('dragend', function(){
                 //if( LJ.active_marker )
                 //    return;
             	//LJ.fn.refreshEventPreview();
             });
 
-        },
-
+        },  
         handleFetchEvents: function( err, events ){
 
             if( err ){
@@ -243,14 +248,7 @@
                 zIndex    : options.zIndex
             });
 
-            // Make sure only display in intro mode
-            if( options.intro ) {
-                LJ.intro_marker = LJ.intro_marker || [];
-                LJ.intro_marker.push( new_marker );
-                return;                
-            }
 
-        
             // Store references of markers to destroy em and make them disappear from the map ( marker.setMap(null) )
             if( options.singleton ){
                 LJ[ options.cache ] && LJ[ options.cache ].setMap( null );
@@ -270,7 +268,16 @@
                 }, 30 )
             }
 
+            // Make sure only display in intro mode
+            if( options.intro ) {
+                LJ.intro_marker = LJ.intro_marker || [];
+                LJ.intro_marker.push( new_marker );
+                LJ.fn.log('Intro marker, not activating listeners...', 1);
+                return;                
+            }
+
             if( Array.isArray( options.listeners )){
+
                 options.listeners.forEach(function( listener ){
                     new_marker.addListener( listener.event_type, listener.callback );
                 });
@@ -424,7 +431,7 @@
 
             // Display the marker with high z-index, so it overrides other people party's pin
             // who want to do a before at this place_id
-            LJ.fn.displayMarker({
+            LJ.fn.displayMarker( _.merge({
                 lat       : parseFloat(party.address.lat),
                 lng       : parseFloat(party.address.lng),
                 url       : LJ.cloudinary.markers.party.url,
@@ -443,7 +450,7 @@
                         }
                     }
                 ]
-            });
+            }, options ));
 
         },
         displayHalfActivePaths: function( party ){

@@ -150,8 +150,8 @@
 			"en": "Your Facebook profile pictures"
 		},
 		p_button_invite: {
-			"fr": "Plus d'amis",
-			"en": "More friends"
+			"fr": "Invitez vos amis",
+			"en": "Invite your friends"
 		},
 		h_search_placeholder: {
 			"fr": "Rechercher quelqu'un",
@@ -640,6 +640,10 @@
 		intro_next: {
 			"fr": "Suivant",
 			"en": "Next"
+		},
+		intro_instructions: {
+			"fr": "18 étapes pour organiser votre premier before dès ce soir <br> <div class=\"lintro-subtext\">Cliquez sur la flêche pour passer à l'étape suivante</div>",
+			"en": "18 steps to get your started and party tonight <br> <div class=\"lintro-subtext\">Click on the arrow to go to the next step"
 		},
 		intro_chat_1: {
 			"fr": "Hey guys",

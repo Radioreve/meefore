@@ -60,10 +60,18 @@
 
              LJ.$body.on('click','.btn-requestin', function(){
 
-                var event_id = $(this).parents('.event-preview').attr('data-eventid');
+                LJ.fn.showRequestInModal();
 
-                if( !event_id )
+            });
+
+		},
+        showRequestInModal: function(){
+
+             var event_id = $('.event-preview').attr('data-eventid');
+
+                if( !event_id ){
                     return console.error('eventid wasnt attached to the dom, cant continue with the request');
+                }
                 
                 LJ.fn.displayInModal({
                     source: 'local',
@@ -88,11 +96,9 @@
                         LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput_GroupMessage( default_message ), inp: '#ri-groupmessage', max: 1 });
 
                     }
-                })
+                });
 
-            });
-
-		},
+        },
 		requestIn: function( event_id ){
 
             LJ.fn.log('Requesting in  for event with id : '+ event_id + '...');

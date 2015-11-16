@@ -29,6 +29,10 @@ input {
    color: #8A8A8A;
 }
 
+button {
+	cursor: pointer!important;
+}
+
 hl {
    font: 800 2em 'Raleway';
    letter-spacing: -1px;
@@ -254,10 +258,11 @@ body > header > img {
 }
 
 #logo {
-   position: absolute; 
+   position: absolute;
    top: 5px;
    left: 50px;
    display: inline-block;
+   cursor: pointer;
 }
 
 body > header > h5 {

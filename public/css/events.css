@@ -450,7 +450,7 @@ transition: all ease-out .3s;position: relative;top: -2px;right: 4px;color: #999
 
 .event-accepted-tabview:first-of-type {
   z-index: 10;
-}
+} 
 
 .event-accepted-tabview, .event-accepted-tabview:before {
 float: left;
@@ -562,10 +562,7 @@ border-radius: 5px 5px 0 0;top: 0px;box-shadow: none;border: 1px solid #B3B3B3;}
 
 .event-accepted-tabview:not(.active):hover,
 .event-accepted-tabview:not(.active):hover:before {
-  background: #FFE5E9;
-  border-color: #F6D1D7;
   color: #941A2F;
-  background: #;
 }
 .preview-date {
   flex: 0 0 54px;

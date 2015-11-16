@@ -518,8 +518,7 @@ transition: all ease-in-out .3s;
     display: none;
 }
 
-.item-country {
-}
+.item-country {cursor: not-allowed!important;}
 .item-country .item-name {
     margin-left: 14px;
 }

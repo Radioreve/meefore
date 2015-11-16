@@ -664,7 +664,6 @@
                         + chat_wrap_html
                       + '</div>'
                   + '</div>'
-                  + '<div class="backtomap"><i class="icon icon-minus"></i></div>'
                 + '</div>'
             + '</div>';
 

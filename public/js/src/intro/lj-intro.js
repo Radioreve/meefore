@@ -8,7 +8,7 @@
 
         			{ 
                         id      : "init",
-                        next_id : "intro_1",
+                        next_id : "intro_instructions",
                         mode    : "cover",
         			 	callback: function(){
                             var self = this;
@@ -36,20 +36,40 @@
 			    			$('.welcome-skip').click(function(){
 			    				LJ.fn.clearIntro();
 			    				LJ.fn.endIntro(function(){
-			    					//
+                                    LJ.fn.fetchFacebookPictureIntro();
 			    				});
 			    			});
+
+                            var step_html = [
+                                '<div class="lintro-next nonei" data-stepid="' + this.id + '" data-nextid="' + this.next_id + '">',
+                                    // LJ.text_source["intro_next"][ LJ.app_language ],
+                                    '>',
+                                '</div>'
+                            ].join('');
+
+                            LJ.$body.append( step_html );
+
         			 	}
         			},
+                    {
+                        id          : "intro_instructions",
+                        next_id     : "intro_1",
+                        mode        : "area",
+                        upper_el    : "#mainWrap",
+                        upper_cover : true,
+                        delay       : 1500,
+                        text        : LJ.text_source["intro_instructions"][ LJ.app_language ],
+                        callback  : function(){
+                            LJ.fn.showTextLintro(this);
+                        }
+                    },
         			{ 
-                        id        : "intro_1",
-                        next_id   : "intro_2",
-                        duration  : 5000,
-                        mode      : "area",
-                        init_step : true,
-                        upper_el  : ".row-events-filters",
-                        lower_el  : ".row-events-accepted-tabview",
-                        text      : LJ.text_source["intro_text_1"][ LJ.app_language ],
+                        id         : "intro_1",
+                        next_id    : "intro_2",
+                        mode       : "area",
+                        upper_el   : ".row-events-filters",
+                        lower_el   : ".row-events-accepted-tabview",
+                        text       : LJ.text_source["intro_text_1"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         				}
@@ -57,24 +77,21 @@
         			{
                         id       : "intro_2",
                         next_id  : "intro_3",
-                        duration : 5000,
                         mode     : "idem",
                         text     : LJ.text_source["intro_text_2"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
-        					LJ.fn.displayEventMarker( LJ.intro.event_data, { cache: 'event_markers_intro' } );
+        					LJ.fn.displayEventMarker( LJ.intro.event_data, { cache: 'event_markers_intro', intro: true } );
         				}
         			},
         			{
                         id         : "intro_3",
                         next_id    : "intro_4",
-                        duration   : 5000,
                         mode       : "idem",
-                        text_align :"center",
                         text       : LJ.text_source["intro_text_3"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
-        					LJ.fn.displayPartyMarker_Party( LJ.intro.party_data, { cache: 'party_markers_intro' } );
+        					LJ.fn.displayPartyMarker_Party( LJ.intro.party_data, { cache: 'party_markers_intro', intro: true } );
         				}
         			},
         			{
@@ -91,7 +108,6 @@
         			{
                         id       : "intro_5",
                         next_id  : "intro_6",
-                        duration : 8000,
                         mode     : "idem",
                         text     : LJ.text_source["intro_text_5"][ LJ.app_language ],
         				callback: function(){
@@ -122,7 +138,6 @@
         			{
                         id       : "intro_6",
                         next_id  : "intro_7",
-                        duration : 6000,
                         mode     : "idem",
                         text     : LJ.text_source["intro_text_6"][ LJ.app_language ],
         				callback: function(){
@@ -131,16 +146,15 @@
         					LJ.party_markers_intro[0].marker.setIcon( LJ.cloudinary.markers.party_active.url );
         					LJ.fn.addEventPreview( LJ.intro.event_data );
         					LJ.fn.addPartyPreview( LJ.intro.party_data, { intro: true });
+                            $('.btn-requestin').on('click', function(e){ e.stopPropagation(); });
         				}
         			},
         			{
                         id         : "intro_7",
                         next_id    : "intro_8",
-                        duration   : 5000,
                         mode       : "element",
                         el         : ".event-preview",
                         text       : LJ.text_source["intro_text_7"][ LJ.app_language ],
-                        text_align : "left",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         				}
@@ -149,11 +163,9 @@
         			{
                         id         : "intro_8",
                         next_id    : "intro_9",
-                        duration   : 5000,
                         mode       : "element",
                         el         : ".party-preview",
                         text       : LJ.text_source["intro_text_8"][ LJ.app_language ],
-                        text_align : "right",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         				}
@@ -162,11 +174,9 @@
         			{
                         id         : "intro_9",
                         next_id    : "intro_10",
-                        duration   : 2500,
                         mode       : "element",
                         el         : ".btn-requestin",
                         text       : LJ.text_source["intro_text_9"][ LJ.app_language ],
-                        text_align : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         				}
@@ -174,27 +184,26 @@
         			{
                         id         : "intro_10",
                         next_id    : "intro_11",
-                        duration   : 6000,
                         mode       : "element",
                         el         : ".modal-container",
                         text       : LJ.text_source["intro_text_10"][ LJ.app_language ],
-                        text_align : "center",
                         delay      : 1000,
         				callforward: function(){
-        					$('.btn-requestin').click();
+        					LJ.fn.showRequestInModal();
         				},
         				callback: function(){
         					LJ.fn.showTextLintro(this);
+                            $('.modal-container-body').find('*').each(function(i, el){
+                                $(el).on('click', function(e){ e.stopPropagation(); });
+                            });
         				}
         			}, 
         			{
                         id         : "intro_11",
                         next_id    : "intro_12",
-                        duration   : 6000,
                         mode       : "element",
                         el         : ".row-requestin-group-members",
                         text       : LJ.text_source["intro_text_11"][ LJ.app_language ],
-                        text_align : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         				}
@@ -202,7 +211,6 @@
         			{
                         id         : "intro_12",
                         next_id    : "intro_13",
-                        duration   : 4000,
                         mode       : "area",
                         upper_el   : '.row-party-preview',
                         lower_el   : '.row-events-accepted-tabview',
@@ -210,7 +218,7 @@
                         text_align : "center",
                         delay      : 400,
         				callforward: function(){
-        					$('#requestIn').find('.btn-cancel').click();
+        					$('.modal-curtain').click();
         				},
         				callback: function(){
         					LJ.fn.showTextLintro(this);
@@ -229,10 +237,8 @@
         			{
                         id         : "intro_13",
                         next_id    : "intro_14",
-                        duration   : 4000,
                         mode       : "idem",
                         text       : LJ.text_source["intro_text_13"][ LJ.app_language ],
-                        text_align : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.event_markers_intro.forEach(function( evt, i ){
@@ -244,23 +250,26 @@
         			{
                         id         : "intro_13a",
                         next_id    : "intro_18",
-                        duration   : 5000,
                         mode       : "area",
                         upper_el   : '.row-events-filters',
                         lower_el   : '.row-events-accepted-tabview',
                         text       : LJ.text_source["intro_text_13a"][ LJ.app_language ],
-                        text_align : "center",
                         callforward: function(){
 
                            // Clear preview
-                            google.maps.event.trigger( LJ.map, 'click' )
+                            $('.row-events-accepted-inview').velocity('transition.slideDownOut', { duration: 400 }).removeClass('active');
+                            $('.row-preview').velocity('transition.slideUpOut', { duration: 400, complete: function(){
+                                $(this).children().remove();
+                            }});
+                            $('.event-tabview-intro').remove();
+
         					LJ.event_markers_intro.forEach(function( mrk, i ){
         						if( i == 1 ){
                                     mrk.marker.setIcon( LJ.cloudinary.markers.base.full.url );
                                     LJ.map.panTo( mrk.data.address );
                                     return;
                                 }
-        						mrk.marker.setMap(null);
+        						mrk.marker.setMap(null); 
         					});
 
                         },
@@ -271,29 +280,26 @@
         			{
                         id         : "intro_14",
                         next_id    : "intro_15",
-                        duration   : 5000,
                         mode       : "area",
                         upper_el   : '.row-events-accepted-tabview',
                         text       : LJ.text_source["intro_text_14"][ LJ.app_language ],
-                        text_align : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					$('.row-events-accepted-tabview')
         						.append( LJ.fn.renderEventTabview( LJ.intro.event_data ) )
         						.children().last()
         						.addClass('event-tabview-intro')
-                                .off();
+                                .on('click', function(e){ e.stopPropagation(); });
+                                
         				}
         			},
         			{
                         id          : "intro_15",
                         next_id     : "intro_16",
-                        duration    : 5000,
                         mode        : "area",
                         upper_el    : '.row-party-preview',
                         upper_cover : true,
                         text        : LJ.text_source["intro_text_15"][ LJ.app_language ],
-                        text_align  : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.fn.showIntroChatInview();
@@ -302,11 +308,10 @@
         			{
                         id          : "intro_16",
                         next_id     : "intro_17",
-                        duration    : 12000,
+                        delay       : 8000,
                         mode        : "idem",
                         // lower_el : '.row-events-accepted-tabview',
                         text        : LJ.text_source["intro_text_16"][ LJ.app_language ],
-                        text_align  : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.fn.showIntroChatTalk();
@@ -315,13 +320,11 @@
         			{
                         id          : "intro_17",
                         next_id     : "intro_13a",
-                        duration    : 9000,
                         mode        : "element",
                         el          : '.event-accepted-chat-typing',
                         padding     : 20,
                         // lower_el : '.row-events-accepted-tabview',
                         text        : LJ.text_source["intro_text_17"][ LJ.app_language ],
-                        text_align  : "center",
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					setTimeout(function(){
@@ -350,7 +353,7 @@
 
         					$('.ending-skip').click(function(){
         						LJ.fn.endIntro(function(){
-        							//
+                                    LJ.fn.fetchFacebookPictureIntro();
         						});
         					});
         				}
@@ -365,97 +368,75 @@
         	},
         	lintroStep: function( step_id ){
 
-        		var step = _.find( LJ.intro_steps, function( step ){
-        			return step.id == step_id;
-        		});
+                var step = _.find( LJ.intro_steps, function( step ){
+                    return step.id == step_id;
+                });
 
-        		if( !step ) {
+                if( !step ) {
                     return LJ.fn.warn('Couldnt find matching step based on step_id : ' + step_id );
                 }
 
-        		if( step == "end_intro" ){
+                if( step == "end_intro" ){
                     return LJ.fn.endIntro( callback );
                 }
 
-        		LJ.fn.highlightElement( step );
+                LJ.fn.highlightElement( step );
 
-        	},
-        	highlightElement: function( opts ){
+            },
+            highlightElement: function( opts ){
 
-        		LJ.fn.log('Applying step : ' + opts.id );
+                LJ.fn.log('Applying step : ' + opts.id );
+                console.log( opts );
 
-        		if( typeof opts.callforward == 'function' ){
-        			opts.callforward();
-        			return setTimeout(function(){
-        				delete opts.callforward;
-        				LJ.fn.highlightElement( opts );
-        			}, opts.delay );
-        		}
+                if( typeof opts.callforward == 'function' ){
+                    opts.callforward();
+                    return setTimeout(function(){
+                        delete opts.callforward;
+                        LJ.fn.highlightElement( opts );
+                    }, opts.delay );
+                }
+
 
                 var abort = false;
-        		if( opts.mode == "element" && ( !opts.el || !$(opts.el).length || $(opts.el).length == 0 ) ){
-                    LJ.fn.warn('Couldnt find element : ' + $el );
+                if( opts.mode == "element" && ( !opts.el || !$(opts.el).length || $(opts.el).length == 0 ) ){
+                    LJ.fn.warn('Couldnt find element : ' + $(opts.el), 1 );
                     abort = true;
                 }
-        		if( opts.mode == "area" && ( !opts.upper_el && !opts.lower_el ) ){
-                    LJ.fn.warn('Couldnt find all properties to highlight area');
+                if( opts.mode == "area" && ( !opts.upper_el && !opts.lower_el ) ){
+                    LJ.fn.warn('Couldnt find all properties to highlight area', 1);
                     abort = true;
                 }
 
-        		if( opts.mode == "cover" && !opts.callback ){
-                    LJ.fn.warn('Didnt get any callback');
+                if( opts.mode == "cover" && !opts.callback ){
+                    LJ.fn.warn('Didnt get any callback', 1);
                     abort = true;
                 }
 
                 if( abort ){
+                    LJ.fn.warn('Aborting tour prematurely....', 1);
                     return LJ.fn.lintroStep('intro_18');
                 }
 
 
-        		var default_opts = {
-        			opacity: 0.85,
-        			padding: 0
-        		};
+                var default_opts = {
+                    opacity: 0.85,
+                    padding: 0
+                };
 
-        		opts = _.merge( default_opts, opts );        		
+                opts = _.merge( default_opts, opts );               
 
-				var base_style = {
-					'position'   : 'absolute',
-					'background' : 'rgba(0,0,0,' + opts.opacity + ')',
-					'z-index'    : '100000000',
-					'display'    : 'none'
-				};
+                var base_style = {
+                    'position'   : 'absolute',
+                    'background' : 'rgba(0,0,0,' + opts.opacity + ')',
+                    'z-index'    : '100000000',
+                    'display'    : 'none'
+                };
 
-				var $curt_top    = $('<div class="lintro intro-curtain intro-curtain-top"></div>');
-				var $curt_left   = $('<div class="lintro intro-curtain intro-curtain-left"></div>');
-				var $curt_right  = $('<div class="lintro intro-curtain intro-curtain-right"></div>');
-				var $curt_bottom = $('<div class="lintro intro-curtain intro-curtain-bottom"></div>');
+                var $curt_top    = $('<div class="lintro intro-curtain intro-curtain-top"></div>');
+                var $curt_left   = $('<div class="lintro intro-curtain intro-curtain-left"></div>');
+                var $curt_right  = $('<div class="lintro intro-curtain intro-curtain-right"></div>');
+                var $curt_bottom = $('<div class="lintro intro-curtain intro-curtain-bottom"></div>');
 
-                if( opts.init_step ){
-
-                    var step_html = [
-                            '<div class="lintro-next none" data-stepid="' + opts.id + '" data-nextid="' + opts.next_id + '">',
-                                // LJ.text_source["intro_next"][ LJ.app_language ],
-                                '>',
-                            '</div>'
-                        ].join('');
-
-                    LJ.$body.append( step_html )
-                        .find('.lintro-next')
-                        .velocity('transition.fadeIn', { duration: 500 });
-
-
-                } else {
-
-    				$('.lintro-next').attr('data-stepid', opts.id )
-                         .attr('data-nextid', opts.next_id );
-
-                }
-
-                $('.lintro-next').one('click', function(){
-                    var next_id = $(this).attr('data-nextid');
-                    LJ.fn.lintroStep( next_id );
-                });
 
                 if( opts.close_step ){
                     $('.lintro-next').velocity('transition.fadeOut', { duration: 500, complete: function(){
@@ -659,10 +640,30 @@
 		  		$('.intro-curtain-top')
 		  			.append('<div class="lintro-text super-centered none">' + opts.text + '</div>')
 		  			.children()
-		  			.css({ 'text-align': opts.text_align })
+		  			.css({ 'text-align': opts.text_align || 'center' })
 		  			.velocity('transition.fadeIn', {
-		  				duration: 500
-		  			});
+		  				duration: 500,
+                        complete: function(){
+                            $(this)
+                                .append('<div class="lintro-next none"><i class="icon icon-right"></i></div>')
+                                .find('.lintro-next')
+                                .velocity('transition.slideLeftIn', {
+                                    duration: 500,
+                                    delay: opts.delay || 500,
+                                    display: 'inline-block',
+                                    complete: function(){
+                                        $(this)
+                                            .attr('data-stepid', opts.id )
+                                            .attr('data-nextid', opts.next_id )
+                                            .one('click', function(){
+                                                var next_id = $(this).attr('data-nextid');
+                                                LJ.fn.lintroStep( next_id );
+                                            });
+                                    }
+                                });
+                            
+                        }
+                    })
 
 
         	},
@@ -680,12 +681,15 @@
                 	.velocity('transition.fadeIn', {
                 		duration: 500
                 	})
-                	.find('.offline').eq(0).removeClass('offline').addClass('online').end()
-                	.find('.offline').eq(1).removeClass('offline').addClass('online').end()
+                	.find('.offline').eq(0).removeClass('offline').addClass('online').end().end()
+                	.find('.offline').eq(1).removeClass('offline').addClass('online').end().end()
                 	.find('.offline').eq(2).removeClass('offline').addClass('online')
 
                 // Remove all handlers for the demo chat
-                $('.row-events-accepted').find().off();
+                $('.detailable').removeClass('detailable');
+                $('.readby').off().find('button').on('click', function(e){
+                    e.stopPropagation();
+                });
 
 
         	},
