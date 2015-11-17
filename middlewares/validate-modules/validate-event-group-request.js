@@ -15,7 +15,7 @@
 
 		function checkNamePattern( val, onError ){
 
-			if( val.name.length < 4 || val.name.length > 20 ){
+			if( val.name.length < 4 || val.name.length > 40 ){
 				return onError("Name bad length", "name", val.name, {
 					err_id: "name_bad_length", min: 4, max: 20 
 				});
