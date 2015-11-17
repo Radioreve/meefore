@@ -56,16 +56,32 @@
 
 
 .invite-friends {
-
-float: right;
-background: #3F6698;
+    background: #3F6698;
 transition: all ease-in-out .3s;
+}
+ .invite-friends {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    right: 10px;
+    color: white;
+    font-family: 'Karla';
+    font-size: 13px;
+    padding: 10px 15px;
+}
 
+#profileWrap .invite-friends {
+float: right;
+position: relative;
+padding: 0;
+top: 8px;
+right: 0;
 }
 
 .invite-friends:hover {
     background: #6C8FBC;
 }
+
 
 #profileWrap .icon-invite-friends {
     color: white;

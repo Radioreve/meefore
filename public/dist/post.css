@@ -2124,6 +2124,17 @@ p {
     font-size: 40px;
 }
 
+.hero-header-sub {
+    color: white;
+    margin-top: 25px;
+    font-size: 18px;
+    font-family: Karla;
+    text-shadow: 1px 1px 1px #6B6B6B;
+    font-family: 'Coming soon';
+    text-align: center;
+    line-height: 31px;
+}
+
 .hero-subheader {
     text-align: center;
     font: normal 28px 'Alegreya Sans Sc';
@@ -2708,10 +2719,28 @@ p {
 }
 
 .invite-friends {
-    float: right;
     background: #3F6698;
     -webkit-transition: all ease-in-out .3s;
     transition: all ease-in-out .3s;
+}
+
+.invite-friends {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    right: 10px;
+    color: white;
+    font-family: 'Karla';
+    font-size: 13px;
+    padding: 10px 15px;
+}
+
+#profileWrap .invite-friends {
+    float: right;
+    position: relative;
+    padding: 0;
+    top: 8px;
+    right: 0;
 }
 
 .invite-friends:hover {
@@ -4423,7 +4452,7 @@ i.icon-create {
 }
 
 .search-results-groups {
-    width: 530px!important;
+    width: 630px!important;
 }
 
 .event-filter:not(.selected):hover {
@@ -5129,11 +5158,11 @@ i.icon-create {
 
 .search-result-name {
     color: #636363;
-    font-size: 15px;
+    font-size: 14px;
     position: relative;
-    top: 3px;
     font-family: 'Karla';
     display: inline-block;
+    top: 2px;
 }
 
 .search-result-name strong {
@@ -5186,7 +5215,7 @@ i.icon-create {
     background: white;
     border: 1px solid #ccc;
    /* border-top:none; */
-    min-width: 550px;
+    min-width: 580px;
     display: block;
     position: relative;
     left: -61px;
@@ -5913,6 +5942,15 @@ label.lighter {
 }
 
 .welcome {
+    display: -webkit-box!important;
+    display: -webkit-flex!important;
+    display: -ms-flexbox!important;
+    display: flex!important;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
 }
 
 .welcome-wrap {
@@ -5934,7 +5972,7 @@ label.lighter {
     font-family: 'Coming Soon';
 }
 
-.btn-welcome, .btn-fillprofile {
+.btn-welcome, .btn-fillprofile, .welcome .invite-friends {
     background: #e94f6a;
     width: 300px;
     padding: 20px;
@@ -5945,7 +5983,7 @@ label.lighter {
 }
 
 .btn-welcome:hover, .btn-fillprofile:hover {
-    background: #C9364F;
+    background: #F4647E;
 }
 
 .welcome-skip, .ending-skip {
@@ -5957,6 +5995,11 @@ label.lighter {
     padding: 15px 54px;
     -webkit-transition: all ease-in-out .15s;
     transition: all ease-in-out .15s;
+    margin: 0 auto;
+}
+
+.ending-skip {
+    display: none;
 }
 
 .welcome-skip:hover,
@@ -6008,4 +6051,15 @@ label.lighter {
     color: #808080;
     font-family: 'karla';
     margin-top: 12px;
+}
+
+.welcome .invite-friends {
+    background: #3f6698;
+    margin-top: 5px;
+    padding: 15px;
+    font-size: 11px;
+}
+
+.welcome .invite-friends:hover {
+    background: #617BB4;
 }

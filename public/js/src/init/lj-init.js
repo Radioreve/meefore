@@ -505,7 +505,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 .html('')
                 .html(
                     '<div class="super-centered none reconnect-message">'
-                        + LJ.text_source["de_reconnect"][ LJ.app_language ]
+                        + LJ.text_source["app_reconnect"][ LJ.app_language ]
                     + '</div>'
                 )
                 .velocity('transition.fadeIn', {

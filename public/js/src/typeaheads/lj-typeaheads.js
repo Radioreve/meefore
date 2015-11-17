@@ -5,15 +5,15 @@
 		typeahead: {
 			users: {
 				class_names: {
-					input:'',
-					hint:'',
-					menu:'search-results-users',
-					dataset:'search-wrap',
-					suggestion:'search-result-default search-result-users',
-					empty:'empty',
-					open:'open',
-					cursor:'cursor',
-					highlight:'highlight'
+					input      :'',
+					hint       :'',
+					menu       :'search-results-users',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-users',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
 				}
 			},
 			// places: {
@@ -31,28 +31,28 @@
 			// },
 			friends: {
 				class_names: {
-					input:'',
-					hint:'hint-places',
-					menu:'search-results-autocomplete search-results-friends',
-					dataset:'search-wrap',
-					suggestion:'search-result-default search-result-friend',
-					empty:'empty',
-					open:'open',
-					cursor:'cursor',
-					highlight:'highlight'
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
 				}
 			},
 			groups: {
 				class_names: {
-					input:'',
-					hint:'hint-places',
-					menu:'search-results-autocomplete search-results-friends search-results-groups',
-					dataset:'search-wrap',
-					suggestion:'search-result-default search-result-friend',
-					empty:'empty',
-					open:'open',
-					cursor:'cursor',
-					highlight:'highlight'
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends search-results-groups',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
 				}
 			}
 		}
@@ -116,16 +116,27 @@
 				 .done(function(){ })
 				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
 
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
 			$('.row-create-friends input').typeahead({
 				hint: true,
 				highlight: true,
-				minLength: 1,
+				minLength: 0,
 				classNames: LJ.typeahead.friends.class_names
 			},
 			{
 				name:'friends',
 				display:'name',
-				source: friends.ttAdapter(),
+				source: friendsWithDefaults,
 				templates: {
 					notFound   : LJ.fn.renderTypeaheadNotFound,
 					pending    : LJ.fn.renderTypeaheadPending,
@@ -150,16 +161,27 @@
 				 .done(function(){ })
 				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
 
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
 			$('.row-requestin-group-members input').typeahead({
 				hint: true,
 				highlight: true,
-				minLength: 1,
+				minLength: 0,
 				classNames: LJ.typeahead.groups.class_names
 			},
 			{
 				name:'friends',
 				display:'name',
-				source: friends.ttAdapter(),
+				source: friendsWithDefaults,
 				templates: {
 					notFound   : LJ.fn.renderTypeaheadNotFound,
 					pending    : LJ.fn.renderTypeaheadPending,

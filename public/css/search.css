@@ -159,11 +159,11 @@ align-items: center;
 
 .search-result-name {
    color: #636363;
-   font-size: 15px;
+   font-size: 14px;
    position: relative;
-   top: 3px;
    font-family: 'Karla';
    display: inline-block;
+   top: 2px;
 }
 
 .search-result-name strong {
@@ -216,7 +216,7 @@ align-items: center;
    background: white;
    border: 1px solid #ccc;
    /* border-top:none; */
-   min-width: 550px;
+   min-width: 580px;
    display: block;
    position: relative;
    left: -61px;

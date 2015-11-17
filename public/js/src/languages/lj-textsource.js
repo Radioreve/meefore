@@ -149,10 +149,6 @@
 			"fr": "Vos photos de profil Facebook",
 			"en": "Your Facebook profile pictures"
 		},
-		p_button_invite: {
-			"fr": "Invitez vos amis",
-			"en": "Invite your friends"
-		},
 		h_search_placeholder: {
 			"fr": "Rechercher quelqu'un",
 			"en": "Looking for someone?"
@@ -903,6 +899,10 @@
 				   // + "<div class='lp-subpart'>Rencontrez les <span>avant</span> d'aller en soirée.</div>",
 			"en": "<div class='lp-subpart'>Meet up with people <div class='lp-avant'><span>before</span><img src='/img/app/avant.png' width='110%' /></div> going out. </div>"
 		},
+		lp_subtitle_sub: {
+			"fr": "Meefore est le 1er site qui vous permet de participer à des before <br> avec les personnes qui vont aux mêmes soirées que vous.",
+			"en": "Meefore is the 1st site that allows you to join a pregame party <br> with people who party at the same places as you"
+		},
 		lp_conn_button: {
 			"fr": "Connexion",
 			"en": "Connection"
@@ -982,9 +982,21 @@
 			"fr": "Chargement des prochaines soirées",
 			"en": "Loading next parties"
 		},
-		de_reconnect: {
+		app_reconnect: {
 			"fr": "Vous avez été déconnecté. <br> L'application redémarrera dès que vous aurez retrouvé la connexion.",
 			"en": "You have been disconnected. <br> App will reboot automatically once your connection is back."
+		},
+		app_button_invite: {
+			"fr": "Invitez vos amis",
+			"en": "Invite your friends"
+		},
+		app_searching_text: {
+			"fr": "Recherche...",
+			"en": "Searching..."
+		},
+		app_no_results_invite: {
+			"fr": "Aucun résultats à afficher",
+			"en": "The search returned no results"
 		}
 
 	});

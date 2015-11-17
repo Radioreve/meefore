@@ -23,7 +23,8 @@
 			var display_settings = LJ.cloudinary.search.user.params;
 				img_id  		 = LJ.cloudinary.logo.black_on_white.id;
 
-			var message 		 = "Aucun résultats";
+			var message 		 = '<div data-lid="app_no_results_invite" >Aucun résultats</div>';
+			var invite_btn       = '<div class="invite-friends" data-lid="app_button_invite"></div>'
 
 			user_main_img = $.cloudinary.image( img_id, display_settings ).prop('outerHTML');
 
@@ -32,16 +33,19 @@
 				       		+ user_main_img 
 				       + '</div>'
 				       + '<div class="search-result-name-wrap">'
-				       + '<div class="search-result-name">' + message + '</div>'
+				       		+ '<div class="search-result-name">' + message + '</div>'
 				       + '</div>'
+				       + invite_btn
 				      +'</div>';
 
-			return html;
+			html = $(html);
+			LJ.fn.setAppLanguage( LJ.app_language, html );
+			return html.prop('outerHTML');
 
 		},
 		renderTypeaheadPending: function(){
 
-			var message 		 = "Recherche..."
+			var message 		 = LJ.text_source["app_searching_text"][ LJ.app_language ];
 			var image_tag_loader = LJ.$spinner_loader.clone().addClass('search-loader').addClass('super-centered').prop('outerHTML');
 
 			var html = '<div class="search-result-default search-result-default-empty" >'
@@ -79,7 +83,10 @@
 
 			user_main_img = $.cloudinary.image( main_img.img_id, display_settings ).prop('outerHTML');
 
-			user_hashtags += '<div class="ambiance-hashtag adjust">#</div><div class="ambiance-name ">' +  user.job + '</div>';
+			if( user.job && user.job.length > 0 ){
+				user_hashtags += '<div class="ambiance-hashtag adjust">#</div><div class="ambiance-name ">' +  user.job + '</div>';
+			}
+
 			user_hashtags += '<div class="ambiance-hashtag adjust">#</div><div class="ambiance-name">' +  user.age + '</div>';
 
 			var image_tag_loader = LJ.$spinner_loader.clone().addClass('search-loader').addClass('super-centered').prop('outerHTML');

@@ -1,7 +1,5 @@
 
-.welcome {
-
-}
+.welcome {display: flex!important;flex-direction: column;}
  
 .welcome-wrap {
 text-align: center;
@@ -20,7 +18,7 @@ color: white;width: 100%;}
 	font-family: 'Coming Soon';
 }
 
-.btn-welcome, .btn-fillprofile {
+.btn-welcome, .btn-fillprofile, .welcome .invite-friends {
 	background: #e94f6a;
 	width: 300px;
 	padding: 20px;
@@ -31,7 +29,7 @@ color: white;width: 100%;}
 }
 
 .btn-welcome:hover, .btn-fillprofile:hover {
-	background: #C9364F;
+	background: #F4647E;
 }
 
 .welcome-skip, .ending-skip {
@@ -49,8 +47,13 @@ display: inline-block;
 padding: 15px 54px;
 	
 transition: all ease-in-out .15s;
+	
+margin: 0 auto;
 }
 
+.ending-skip {
+	display: none;
+}
 .welcome-skip:hover,
 .ending-skip:hover {
 	background: rgba(252, 252, 252, 0.11);
@@ -58,11 +61,16 @@ transition: all ease-in-out .15s;
 
 .lintro-next {position: absolute;top: -5px;right: -45px;cursor: pointer;border-radius: 300px;padding: 3px 5px;/* border: 1px solid #555; */}
 .lintro-next i {
-	font-size: 22px;
-	color: #e94f6a;
-	position: relative;
-	top: 1px;
-	left: 1px;
+	
+font-size: 22px;
+	
+color: #e94f6a;
+	
+position: relative;
+	
+top: 1px;
+	
+left: 1px;
 }
 
 .lintro-next-light {
@@ -91,4 +99,14 @@ transition: all ease-in-out .15s;
 	color: #808080;
 	font-family: 'karla';
 	margin-top: 12px;
+}
+
+.welcome .invite-friends {
+    background: #3f6698;
+    margin-top: 5px;
+    padding: 15px;
+    font-size: 11px;
+}
+.welcome .invite-friends:hover {
+    background: #617BB4;
 }

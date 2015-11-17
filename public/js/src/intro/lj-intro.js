@@ -604,6 +604,7 @@
         					'Il ne vous reste plus qu\'à remplir votre profile et à en parler à vos amis. <br> A bientôt en soirée!',
         				'</div>',
         				'<button data-lid="intro_ending_btn" class="theme-btn btn-fillprofile">Mon profile</button>',
+                        '<button data-lid="app_button_invite" class="invite-friends"></button>',
         				'<div data-lid="intro_ending_skip" class="ending-skip">',
         					'Je remplirai mon profile plus tard...montrez-moi les soirées!',
         				'</div>',
