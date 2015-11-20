@@ -208,6 +208,7 @@ margin: 10px 0;
 font-family: 'Coming soon';
 text-align: center;
 line-height: 31px;
+font-family: 'Karla';
 }
 
 .hero-subheader {text-align: center;font: normal 28px 'Alegreya Sans Sc';text-shadow: 0 1px 1px #575757;color: white;text-transform: none;margin-top: 25px;letter-spacing: -.5px;line-height: 45px;}
@@ -445,7 +446,7 @@ color: white;
    background: rgba(0, 0, 0, 0.50);
 }
 
-.landing-map-button {position: absolute;z-index: 10;background: none;border: 2px solid white;padding: 15px 45px;font: normal 20px 'Alegreya Sans Sc';color: white;outline: none;transition: all ease-in-out .15s;width: 370px;}
+.landing-map-button {position: absolute;z-index: 10;background: none;border: 2px solid white;padding: 15px 45px;font: normal 20px 'Pacifico';color: white;outline: none;transition: all ease-in-out .15s;width: 370px;}
 .landing-map-button:hover {
     background: rgba(255, 255, 255, 0.09);
 }

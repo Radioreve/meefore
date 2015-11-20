@@ -38,6 +38,9 @@
 		},
 		status: {
 			type: String
+		},
+		labels: {
+			type: Array
 		}
 
 	});

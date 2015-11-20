@@ -924,9 +924,9 @@
 			"en": "Just Have Fun"
 		},
 		lp_key_friends_text: {
-			"fr": "Rendez-vous sur la carte meefore pour voir toutes les soirées prévues. Finis les recherches interminables"
+			"fr": "Rendez-vous sur la carte Meefore pour voir toutes les soirées prévues. Finis les recherches interminables"
 				  + " et les plans bidons.",
-			"en": "Check the meefore map to find out all the scheduled parties. No more endless searches and weird gigs."
+			"en": "Check the Meefore map to find out all the scheduled parties. No more endless searches and weird gigs."
 		},
 		lp_key_people_text: {
 			"fr": "Repérez les before qui vont à la même soirée que vous et demandez à les rejoindre. Aucun before n'est prévu pour"
@@ -939,8 +939,8 @@
 			"en": "Join the group that matched the most your expectations and... <span>enjoy your night.</span>"
 		},
 		lp_map_button: {
-			"fr": "Voir les <span>before</span> meefore",
-			"en": "Find your meefore now"
+			"fr": "Voir les before",
+			"en": "Find your before now"
 		},
 		lp_footer_followus: {
 			"fr": "Nous suivre",

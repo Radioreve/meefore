@@ -2133,6 +2133,7 @@ p {
     font-family: 'Coming soon';
     text-align: center;
     line-height: 31px;
+    font-family: 'Karla';
 }
 
 .hero-subheader {
@@ -2492,7 +2493,7 @@ p {
     background: none;
     border: 2px solid white;
     padding: 15px 45px;
-    font: normal 20px 'Alegreya Sans Sc';
+    font: normal 20px 'Pacifico';
     color: white;
     outline: none;
     -webkit-transition: all ease-in-out .15s;
@@ -5548,6 +5549,14 @@ i.icon-create {
         line-height: 30px;
     }
 
+    .hero-header-sub {
+        font-size: 12px;
+        line-height: 20px;
+        margin-top: 3px;
+        margin-bottom: 3px;
+        padding: 0 35px;
+    }
+
     .lp-avant {
         width: auto;
     }
@@ -5603,6 +5612,7 @@ i.icon-create {
 
     .keypoint-2 {
         height: 280px;
+        border-radius: 0px;
     }
 
     .keypoint-body {
@@ -5621,6 +5631,13 @@ i.icon-create {
 
     .auto-login-msg {
         display: none!important;
+    }
+}
+
+@media screen and ( max-width: 300px ) {
+
+    .hero-header-sub {
+        display: none;
     }
 }
 

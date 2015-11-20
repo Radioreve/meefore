@@ -199,7 +199,15 @@
 		font-size: 20px;
 		width: 80%;
 		line-height: 30px;
-		}
+	 }
+
+	 .hero-header-sub {
+	 	font-size: 12px;
+	 	line-height: 20px;
+	 	margin-top: 3px;
+	 	margin-bottom: 3px;
+	 	padding: 0 35px;
+	 }
 
 		.lp-avant {
 			width: auto;
@@ -253,6 +261,7 @@
 	}
 	.keypoint-2 {
 		height: 280px;
+		border-radius: 0px;
 	}
 
 	.keypoint-body {
@@ -273,4 +282,12 @@
 		display: none!important;
 	}
 
+}
+
+
+@media screen and ( max-width: 300px ){
+
+	 .hero-header-sub {
+	 	display: none;
+	 }
 }
