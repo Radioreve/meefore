@@ -6075,6 +6075,7 @@ label.lighter {
     margin-top: 5px;
     padding: 15px;
     font-size: 11px;
+    position: static;
 }
 
 .welcome .invite-friends:hover {
