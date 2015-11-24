@@ -353,15 +353,26 @@
 
 
 		},
-		initCloudinary: function( cloudTags ){
+		setupCloudinary: function( cloudTags ){
+
+			if( !cloudTags ){
+				return LJ.fn.warn('No cloudinary tags (undefined), cant setup uploader', 1);
+			}
+
+			if( cloudTags.length == 0 ){
+				return LJ.fn.warn('No cloudinary tags (length = 0), cant setup uploader', 1);
+			}
+
+			var $wrappers = $('.upload_form');
+
+			if( $wrappers.length == 0 ){
+				return LJ.fn.warn('No tags wrappers, cant setup uploader', 1);
+			}
 
 			$.cloudinary.config( LJ.cloudinary.uploadParams );
 			//LJ.tpl.$placeholderImg = $.cloudinary.image( LJ.cloudinary.placeholder_id, LJ.cloudinary.displayParamsEventAsker );
 
-			if( cloudTags.length != $('.upload_form').length )
-				return LJ.fn.toastMsg('Inconsistence data', 'error');
-
-			$('.upload_form').each(function(i,el){
+			$wrappers.each(function(i,el){
 				$(el).html('').append( cloudTags[i] );
 			});
 
@@ -695,11 +706,12 @@
 			var friends = data.friends;
 			LJ.user.friends = friends;
 
-			if( friends.length == 0 )
-				return; 
+			if( friends.length == 0 ){
+				return;
+			}
 
 			var html = '';
-			friends.forEach( function( friend ){
+			_.shuffle( friends ).forEach( function( friend ){
 				html += LJ.fn.renderFriendInProfile( friend );
 			});
 

@@ -18,6 +18,10 @@
 				$(this).find('input').focus();
 			});
 
+			$('#notifications').click(function(){
+				LJ.fn.toggleNotificationsPanel();
+			});
+
 			$('#search').mouseover(function(){
 
 			});
@@ -679,6 +683,11 @@
 				 .css({ left: offset, display: 'block' })
 				 .css({ width: width || 300 });
 
+		},
+		toggleNotificationsPanel: function(){
+
+			
+				
 		}
 
 

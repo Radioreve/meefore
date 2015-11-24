@@ -256,6 +256,22 @@
             });
 
         },
+        initGooglePlaces_CreatePlace: function(){
+
+            $('#pl-address').val('');
+
+            LJ.google_places_autocomplete_party = new google.maps.places.Autocomplete(
+                document.getElementById('pl-address')
+            );
+            $('.pac-container').last().addClass('create-place-address');
+
+            LJ.google_places_autocomplete_party.addListener('place_changed', function(){
+                var place = LJ.google_places_autocomplete_party.getPlace();
+                LJ.fn.addPlaceToInput( place, 'pl-address');
+            });
+
+
+        },
 		initGooglePlaces_CreateEvent: function(){
 
 			$('#cr-before-place').val('');
@@ -521,7 +537,7 @@
             timezone = moment().utcOffset(); // eg. 120 for UTC+2, 60 for France (UTC+1)
             
             // age_range
-            agerange  = $('.irs-from').text() + '-' + $('.irs-to').text();
+            agerange  = $('.irs-from').text() + '-' + $('.irs-to').text().replace('+','');
 
             // mixity
             // mixity    = $wrap.find('.mixity.selected').attr('data-selectid').trim();
@@ -737,6 +753,58 @@
                     LJ.fn.handleApiError( err );
                 } else {
                     LJ.fn.handleCreatePartySuccess( res );
+                }
+
+            });
+
+        },
+        createPlace: function(){
+
+            LJ.fn.log('Creating place...');
+
+            var $wrap = $('.create-place');
+
+            // Text fields
+            var name           = $wrap.find('.create-place-name').find('.item-name').text();
+            var link           = $wrap.find('.create-place-link').find('.item-name').text();
+
+            // Capacity
+            var capacity   = $('.irs-from').text() + '-' + $('.irs-to').text().replace('+','');
+
+            // Party type
+            type = $wrap.find('.place-type.selected').attr('data-selectid').trim();
+
+            // Address
+            var $place = $wrap.find('.create-place-address').find('.rem-click');
+            var address = {};
+            if( $place.length != 0 ){
+                address.lat        = parseFloat( $place.attr('data-place-lat') );
+                address.lng        = parseFloat( $place.attr('data-place-lng') );
+                address.place_id   = $place.attr('data-placeid');
+                address.place_name = $place.find('span').eq(0).text().trim();
+                address.city_name  = $place.find('span').eq(1).text().trim();
+            }
+
+            var new_place = {
+                name        : name,
+                link        : link,
+                capacity    : capacity,
+                type        : type,
+                address     : address
+            };
+            
+            LJ.fn.api('post', 'places', { data: new_place }, function( err, res ){
+
+                LJ.fn.hideLoaders();
+                $('.create-place')
+                    .find('.lighter').removeClass('lighter')
+                    .end()
+                    .find('.btn-validating').removeClass('btn-validating');
+
+                if( err ){
+                    LJ.fn.handleApiError( err );
+                } else {
+                    LJ.fn.handleCreatePlaceSuccess( res );
                 }
 
             });

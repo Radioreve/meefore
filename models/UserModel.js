@@ -5,6 +5,9 @@
  bcrypt       = require("bcrypt-nodejs"),
  _            = require('lodash');
 
+ var default_img_id = settings.placeholder.img_id;
+ var default_img_vs = settings.placeholder.img_version;
+
 var UserSchema = new mongoose.Schema({
 
   contact_email: {
@@ -35,7 +38,11 @@ var UserSchema = new mongoose.Schema({
   },
   facebook_access_token: {
     type: Object,
-    default: { short_lived: null, long_lived: null, long_lived_valid_until: null }
+    default: { 
+      short_lived: null,
+      long_lived: null, 
+      long_lived_valid_until: null 
+    }
   },
   signup_date: {
     type: Date
@@ -77,11 +84,11 @@ var UserSchema = new mongoose.Schema({
   pictures: {
     type: Array,
     default: [
-      { img_id: settings.placeholder.img_id, img_version: settings.placeholder.img_version, img_place: 0, is_main: true , hashtag: 'classic' },
-      { img_id: settings.placeholder.img_id, img_version: settings.placeholder.img_version, img_place: 1, is_main: false, hashtag: 'meerofka' },
-      { img_id: settings.placeholder.img_id, img_version: settings.placeholder.img_version, img_place: 2, is_main: false, hashtag: 'swag' },
-      { img_id: settings.placeholder.img_id, img_version: settings.placeholder.img_version, img_place: 3, is_main: false, hashtag: 'chill' },
-      { img_id: settings.placeholder.img_id, img_version: settings.placeholder.img_version, img_place: 4, is_main: false, hashtag: 'hipster' }
+      { img_id: default_img_id, img_version: default_img_vs, img_place: 0, is_main: true , hashtag: 'classic' },
+      { img_id: default_img_id, img_version: default_img_vs, img_place: 1, is_main: false, hashtag: 'meerofka' },
+      { img_id: default_img_id, img_version: default_img_vs, img_place: 2, is_main: false, hashtag: 'swag' },
+      { img_id: default_img_id, img_version: default_img_vs, img_place: 3, is_main: false, hashtag: 'chill' },
+      { img_id: default_img_id, img_version: default_img_vs, img_place: 4, is_main: false, hashtag: 'hipster' }
       ]
   },
   status: {
@@ -97,7 +104,11 @@ var UserSchema = new mongoose.Schema({
   app_preferences: {
     type    : Object,
     default : settings.default_app_preferences
-  },      
+  },
+  notifications: {
+    type    : Array,
+    default : []
+  },
   skills: {
     type: Object,
     default: {

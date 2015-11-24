@@ -312,7 +312,7 @@
 			var $place = $input.siblings('div');
 			if( $place.length != 0 ){
 				$place.remove();
-				$input.show();
+				// $input.show();
 			}
 
 			var $html = $( LJ.fn.renderPartyPlaceInCreate( place ) );			

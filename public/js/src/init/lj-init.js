@@ -198,7 +198,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 
         },
-        fetchAndSyncFriends: function(callback) {
+        fetchAndSyncFriends: function( callback ) {
 
             LJ.fn.GraphAPI('/me/friends', function(res) {
 
@@ -217,6 +217,41 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 LJ.fn.say('me/fetch-and-sync-friends', data, cb);
 
+            });
+
+        },
+        fetchCloudinaryTags: function( callback ){
+
+            var data = {
+                userId: LJ.user._id
+            };
+
+            var cb = {
+                success : callback,
+                error   : LJ.fn.handleServerError
+            };
+
+            LJ.fn.say('me/cloudinary-tags', data, cb);
+
+        },
+        handleFetchCloudinaryTags: function( data ){
+
+            // Refresh every uplaod tag every 45min 
+            // They become outdated every 1 hour
+            var refresh_delay = 1000*60*45;
+            var tags = data.cloudinary_tags;
+
+            LJ.fn.setupCloudinary( tags );
+            LJ.fn.refreshCloudinary( refresh_delay );
+
+        },
+        refreshCloudinary: function( delay ){
+
+            LJ.fn.timeout( delay, function(){
+                LJ.fn.fetchCloudinaryTags(function( res ){
+                    LJ.fn.handleFetchCloudinaryTags( res );
+                    LJ.fn.refreshCloudinary( delay );
+                });
             });
 
         },
@@ -421,16 +456,19 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             // Je sais plus trop cette fonction me soule! 
             LJ.fn.setLocalStoragePreferences();
 
-            // Init cloudinary fileupload with inputs 
-            LJ.fn.initCloudinary( data.cloudinary_tags );
-
-            
             async.parallel([
                 function( callback ){
                     // Update friends based on facebook activity on each connection 
-                    LJ.fn.fetchAndSyncFriends(function( err, res ){
-                        LJ.fn.warn( err, 1);
-                        LJ.fn.handleFetchAndSyncFriends( err, res );
+                    LJ.fn.fetchAndSyncFriends(function( res ){
+                        LJ.fn.handleFetchAndSyncFriends( res );
+                        callback();
+                    });
+
+                },
+                function( callback ){
+                    // Fetch signed cloudinary upload tags
+                    LJ.fn.fetchCloudinaryTags(function( res ){
+                        LJ.fn.handleFetchCloudinaryTags( res );
                         callback();
                     });
 
@@ -478,7 +516,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                     // Admin scripts. Every com is secured serverside 
                     if( LJ.user.access.indexOf('admin') != -1 ){
                         LJ.fn.log('Starting admin script', 1);
-                        LJ.fn.initParty();
+                        LJ.fn.initAdminMode();
                     }
                     
                     LJ.fn.displayLayout();                    
@@ -579,7 +617,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         warn: function( msg, level ){
             level = level || 3;
             if( level > LJ.log_level ) return;
-            if( msg ) console.log(msg);
+            if( msg ) console.warn(msg);
         },
         timeout: function(ms, cb, p2) {
             setTimeout(function() {
@@ -605,7 +643,7 @@ $('document').ready(function() {
         });
 
         LJ.fn.init({
-            log_level: 1,
+            log_level: 5,
             country : 'fr'
         });
 

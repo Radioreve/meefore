@@ -98,3 +98,5 @@
 .icon-left-bold:before { content: '\e860'; } /* '' */
 .icon-right:before { content: '\e861'; } /* '' */
 .icon-left:before { content: '\e862'; } /* '' */
+.icon-clipboard:before { content: '\e863'; } /* '' */
+.icon-list:before { content: '\e864'; } /* '' */

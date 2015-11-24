@@ -145,6 +145,10 @@
 	    app.post('/me/fetch-and-sync-friends',
 	    	profileEvents.fetchAndSyncFriends);
 
+	    // [ @user ] va chercher des tags cloudinary signés par le serveur
+	    app.post('/me/cloudinary-tags',
+	    	profileEvents.fetchCloudinaryTags );
+
 	    // [ @user ] Update contact settings
 	    app.post('/me/update-settings-contact',
 	    	mdw.pop.populateUser({ force_presence: true }),
@@ -258,6 +262,15 @@
 	    	api.parties.fetchParties );
 
 	    
+	    // [ @places ] Fetch all places
+	    app.get('/api/v1/places', api.places.fetchPlaces );
+
+	    // [@places ] Create a new place
+	    app.post('/api/v1/places',
+	    	mdw.validate('create_place', ['create_place']),
+	    	api.places.createPlace
+	    );
+
 
 
 	   	// [ @WebHooks ] WebHook from Pusher to monitor in realtime online/offline users
@@ -316,15 +329,6 @@
 	    app.post('/api/v1/test/validate/:event_id/*');
 //	    app.post('/api/v1/test/validate/:event_id/request', mdw.validate('test','event_group_request'), api.tests.testValidate);
 
-
-
-	    //Rest api ambiances
-	    app.get('/api/v1/ambiances', api.ambiances.fetchAmbiances);
-	    app.post('/api/v1/ambiances', api.ambiances.createAmbiance);
-
-	    //Rest api places
-	    app.get('/api/v1/places', api.places.fetchPlaces);
-	    app.post('/api/v1/places', api.places.createPlace);
 
 
 

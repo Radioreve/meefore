@@ -445,6 +445,12 @@
       "src": "entypo"
     },
     {
+      "uid": "3626b3f3a0b284e7f4166b815719aece",
+      "css": "list",
+      "code": 59492,
+      "src": "entypo"
+    },
+    {
       "uid": "ef74ff62feda486fd414410e782b598a",
       "css": "graduation-cap",
       "code": 59459,
@@ -550,6 +556,12 @@
       "uid": "b622423405bcc984de6553e2f23c9fb6",
       "css": "barcode-1",
       "code": 59412,
+      "src": "elusive"
+    },
+    {
+      "uid": "c9bef3dc67fea47e94c4a5030ea64dad",
+      "css": "clipboard",
+      "code": 59491,
       "src": "elusive"
     },
     {

@@ -11,6 +11,7 @@
 			
 			create_event        : 'validate-event-create',
 			create_party        : 'validate-party-create',
+			create_place 		: 'validate-place-create',
 			event_fetch         : 'validate-event-fetch',
 			event_group_request : 'validate-event-group-request',
 			event_status        : 'validate-event-status',

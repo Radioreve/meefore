@@ -59,7 +59,7 @@
             dir_src + 'events/lj-events-tabview.js',
             dir_src + 'events/lj-events-create.js',
             dir_src + 'events/lj-events-map.js',
-            dir_src + 'party/lj-party.js',
+            dir_src + 'admin/lj-admin.js',
             dir_src + 'typeaheads/lj-typeaheads.js',
             dir_src + 'landing/lj-landing.js',
             dir_src + 'ladder/lj-ladder.js',

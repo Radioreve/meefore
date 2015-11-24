@@ -1,148 +1,52 @@
-#adminPanelWrap {
-   position: fixed;
-   z-index: 9999999;
-   background: rgba(255, 255, 255, 1);
-   color: rgb(96, 96, 96);
-   height: 100%;
-   width: 100%;
-   box-shadow: 0 0 200px #ccc;
-   display: none;
-   opacity: 0;
-   overflow: auto;
+
+
+.admin {
+	position: absolute;
+	top: 123px;
+	right: 0;
+	background: rgba(235, 235, 235, 0.7);
+	border-left: 1px solid #cacaca;
+	border-bottom: 1px solid #cacaca;
+	width: 300px;
+	height: 300px;
+	z-index: 999999999;
+	opacity: 0;
+	display: none;
+	flex-direction: column;
+	justify-content: flex-start;
+	padding: 20px;
+	align-items: flex-start;
+}
+.admin-parties, .admin-places {background: #FCFCFC;width: 100%;padding: 10px;border-radius: 4px;}
+.admin-parties__title, .admin-places__title {
+
+font-family: 'Pacifico';
+
+font-size: 20px;
+}
+.admin-parties__btn {
+
+}
+.admin-places {
+
+margin-top: 20px;
+}
+.admin-places__title {
+
+}
+.admin-places__btn, .admin-parties__btn {
+margin-top: 10px;background: #E94F6A;border: 1px solid #FBE3E7;color: white;
+font-size: 11px;
+text-transform: none;width: 100%;}
+.admin-places__btn:hover, .admin-parties__btn:hover {
+	background: #FC738A;
 }
 
-#adminPanel {
-   width: 91%;
-   margin: 0 auto;
-   margin-bottom: 50px;
+.admin-places__search-input {
+display: block;
+background: white;
+margin-top: 10px;
+border: 1px solid #ccc;
+width: 100%;
+padding: 5px 8px;
 }
-
-.adm-col {
-   width: 250px;
-   display: inline-block;
-   vertical-align: top;
-   border-right: 1px solid rgb(205, 205, 205);
-   text-align: center;
-   padding: 0 20px;
-}
-
-#lastRegisteredWrap {
-}
-
-#botsWrap {
-   width: 400px;
-   text-align: left;
-   padding: 0 20px;
-}
-
-.col-head {
-   padding: 20px 0px;
-   box-sizing: border-box;
-   text-align: center;
-   padding-right: 10px;
-   padding-bottom: 30px;
-   max-height: 180px;
-   margin-bottom: 20px;
-   border-bottom: 1px solid #ccc;
-}
-
-.col-head div {
-   font-size: 55px;
-   border-bottom: 1px solid lightgrey;
-   width: 92px;
-   padding: 20px;
-   margin: 0 auto;
-}
-
-.col-head span {
-   position: relative;
-   font-size: 18px;
-   text-transform: uppercase;
-   font-weight: bolder;
-   top: 9px;
-}
-
-#adminPanel .wrap {
-   box-sizing: border-box;
-}
-
-#botsWrap button {
-   margin-right: 5px;
-}
-
-#botsWrap button.active ~ button {
-   display: inline-block!important;
-   font-weight: bolder;
-}
-
-.t-event {
-   margin: 20px 0;
-   text-align: left;
-   font-size: 12px;
-   position: relative;
-}
-
-.t-name {
-   font-weight: bolder;
-   margin-bottom: 2px;
-}
-
-.t-number {
-   margin-right: 10px;
-   height: 40px;
-}
-
-.t-active.true {
-   color: red;
-}
-
-#createEventTemplate {
-   height: 132px;
-}
-
-#createEventTemplate input {
-   width: 100%;
-   border: 1px solid #eee;
-   font-size: 11px;
-   border-radius: 3px;
-   padding: 5px;
-   margin: -1px 0;
-}
-
-#createEventTemplate button {
-   margin-top: 10px;
-   float: right;
-}
-
-.t-event:hover i.icon {
-   opacity: 1;
-}
-
-.t-event i.icon {
-   float: right;
-   position: relative;
-   top: -20px;
-   font-size: 14px;
-   transition: all .3s;
-   opacity: 0;
-}
-
-.t-event i.icon:hover {
-   cursor: pointer;
-}
-
-#botbarre div {
-   display: inline-block;
-   border: 1px solid #ccc;
-   padding: 5px;
-   margin: 0 3px;
-   border-radius: 2px;
-}
-
-#botbarre div.active {
-   background-color: #F0F0F0;
-}
-
-#botBarre i {
-}
-

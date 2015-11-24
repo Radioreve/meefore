@@ -1,19 +1,19 @@
 
-	var User = require('../models/UserModel'),
-		mongoose = require('mongoose'),
-	    Event = require('../models/EventModel'),
-	    eventUtils = require('./eventUtils'),
-	    _ = require('lodash'),
-	    cloudinary = require('cloudinary'),
-	    config = require('../config/config'),
-	    settings = require('../config/settings'),
-	    validator = require("validator");
+	var User   = require('../models/UserModel');
+	var mongoose   = require('mongoose');
+	var Event      = require('../models/EventModel');
+	var eventUtils = require('./eventUtils');
+	var _          = require('lodash');
+	var cloudinary = require('cloudinary');
+	var config     = require('../config/config');
+	var settings   = require('../config/settings');
+	var validator  = require("validator");
 
 	    cloudinary.config({ 
 
-			cloud_name: config.cloudinary.cloud_name,
-		    api_key: config.cloudinary.api_key,
-		    api_secret: config.cloudinary.api_secret
+			cloud_name : config.cloudinary.cloud_name,
+			api_key    : config.cloudinary.api_key,
+			api_secret : config.cloudinary.api_secret
 
 		});
 
@@ -25,7 +25,7 @@
 
 			var userId = req.body.userId;
 
-			if( ! validator.isInt( data.age ) ){
+			if( !validator.isInt( data.age ) ){
 				return eventUtils.raiseError({
 						toServer: "Wrong input format for age (must be age)",
 						toClient: "Il y a un problème avec votre âge",
@@ -34,13 +34,13 @@
 			}
 
 			var update = {
-				name     	  : data.name,
-				age			  : data.age,
-				motto         : data.motto,
-				drink         : data.drink,
-				mood          : data.mood,
-				job			  : data.job,
-				status	 	  : data.status
+				name   : data.name,
+				age    : data.age,
+				motto  : data.motto,
+				drink  : data.drink,
+				mood   : data.mood,
+				job    : data.job,
+				status : data.status
 			};
 
 			var callback = function( err, user ) {
@@ -341,13 +341,32 @@
 
 	};
 
+	var fetchCloudinaryTags = function( req, res ){
+
+		var userId = req.sent.user_id;
+		// Make sure all HTML Tags internally have a specific img_id pattern
+		// So we can easily find them on cloudinary
+		var cloudinary_tags = [];
+		for( var i = 0; i < 5; i ++){
+			cloudinary_tags.push( 
+				cloudinary.uploader.image_upload_tag( 'hello_world' , {
+					public_id: userId + '--' + i 
+				})
+			);
+		}
+
+		eventUtils.sendSuccess( res, { cloudinary_tags: cloudinary_tags });
+
+	};
+
 
 	module.exports = {
 
-	    updateProfile   : updateProfile,
-	    updatePicture   : updatePicture,
-	    updatePictures  : updatePictures,
-	    updatePictureWithUrl: updatePictureWithUrl,
-	    fetchAndSyncFriends: fetchAndSyncFriends
+		updateProfile        : updateProfile,
+		updatePicture        : updatePicture,
+		updatePictures       : updatePictures,
+		updatePictureWithUrl : updatePictureWithUrl,
+		fetchAndSyncFriends  : fetchAndSyncFriends,
+		fetchCloudinaryTags  : fetchCloudinaryTags
 	    
 	};

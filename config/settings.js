@@ -45,6 +45,11 @@ var settings = {
 			{ id: 'nightclub', display: 'Nightclub', icon_code: 'moon' },
 			{ id: 'bar', display: 'Bar', icon_code: 'cafe' },
 			{ id: 'school', display: 'Ecole', icon_code: 'graduation-cap' }
+		],
+		place_types:
+		[
+			{ id: 'nightclub', display: 'Club', icon_code: 'moon' },
+			{ id: 'barclub', display: 'Bar dansant', icon_code: 'cafe' }
 		]
 	},
 	default_app_preferences: {

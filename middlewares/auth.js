@@ -49,6 +49,10 @@
 			return res.json({ err: "Unauthorized - wrong api_key" });
 		}
 
+		if( !data ){
+			return res.json({ err: "Unauthorized - didnt provide data upon which to sign to token" });
+		}
+
 		var access_token = eventUtils.generateAppToken( "app", data );
 
 		res.json({ token: access_token }).end();

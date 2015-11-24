@@ -71,11 +71,16 @@ transition: all ease-in-out .3s;
 }
 
 #profileWrap .invite-friends {
-float: right;
-position: relative;
-padding: 0;
-top: 8px;
-right: 0;
+
+float: right;
+
+position: relative;
+
+padding: 0;
+
+top: 8px;
+
+right: 0;
 }
 
 .invite-friends:hover {
@@ -255,6 +260,8 @@ transition: all ease-in-out .3s;
    margin-top: 36px;
    text-align: center;
 }
+
+.row-buttons--modal {margin-top: 15px;height: 40px;}
 
 .picture-edit > div {
    display: inline-block;

@@ -37,6 +37,7 @@
 
 			var handlers = {
 				"create_event"  : LJ.fn.handleErrorMessageCreateEvent,
+                "create_place"  : LJ.fn.handleErrorMessageCreatePlace,
                 "request_event" : LJ.fn.handleErrorMessageRequest,
                 "event_status"  : LJ.fn.handleErrorMessageEventStatus,
                 "chat_fetch"    : LJ.fn.handleErrorChatFetch,
@@ -73,6 +74,19 @@
 
             var message =  LJ.text_source["err_create_" + err_data.err_id] && LJ.text_source["err_create_" + err_data.err_id][ LJ.app_language ] || LJ.text_source["err_unknown"][ LJ.app_language ];
         	return LJ.fn.replaceModalTitle( message );
+
+        },
+        handleErrorMessageCreatePlace: function( err_data ){
+
+            if( err_data.err_id == 'missing_parameter' ){
+                var message = "Il manque un paramètre";
+                return LJ.fn.replaceModalTitle( message );
+            }
+
+            if( err_data.err_id == 'place_already_there' ){
+                var message = "Cette adresse correspond déjà à un établissement référencé";
+                return LJ.fn.replaceModalTitle( message );
+            }
 
         },
         handleErrorMessageRequest: function( err_data ){
