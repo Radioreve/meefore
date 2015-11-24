@@ -188,6 +188,10 @@ img.left {
     visibility: hidden;
 }
 
+.transparent {
+    opacity: 0;
+}
+
 .centered {
     position: relative;
     margin: auto;
@@ -5197,7 +5201,8 @@ i.icon-create {
 }
 
 .search-results-users {
-    top: 40px!important;
+    top: 41px!important;
+    left: -52px!important;
 }
 
 .search-results-friends {
@@ -5221,7 +5226,7 @@ i.icon-create {
     background: white;
     border: 1px solid #ccc;
    /* border-top:none; */
-    min-width: 580px;
+    min-width: 685px;
     display: block;
     position: relative;
     left: -61px;
@@ -5799,7 +5804,8 @@ i.icon-create {
 
 .modal-user-name {
     font-size: 40px;
-    font-family: 'Londrina Solid';
+    font-family: Gochi Hand;
+    font-weight: bolder;
     margin-bottom: 5px;
 }
 
@@ -5991,11 +5997,23 @@ label.lighter {
     color: white;
 }
 
-.lintro-subtext {
+.lintro-subtext, .lintro-exit {
     font-size: 13px;
     color: #808080;
     font-family: 'karla';
     margin-top: 12px;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+.lintro-exit {
+    width: 200px;
+    margin: 3px auto 0;
+}
+
+.lintro-exit:hover {
+    cursor: pointer;
+    color: #ccc;
 }
 
 .welcome .invite-friends {

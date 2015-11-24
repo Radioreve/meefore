@@ -291,7 +291,6 @@
 
                 if( element == "wrapper" ){
 
-                    LJ.fn.log('Rendering wrapper admin');
                     html = html.concat([
                         '<div class="admin">',
                             '<div class="admin-parties">',

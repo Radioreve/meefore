@@ -683,11 +683,6 @@
 				 .css({ left: offset, display: 'block' })
 				 .css({ width: width || 300 });
 
-		},
-		toggleNotificationsPanel: function(){
-
-			
-				
 		}
 
 

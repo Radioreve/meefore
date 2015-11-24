@@ -638,8 +638,8 @@
 			"en": "Next"
 		},
 		intro_instructions: {
-			"fr": "18 étapes pour organiser votre premier before dès ce soir <br> <div class=\"lintro-subtext\">Cliquez sur la flêche pour passer à l'étape suivante</div>",
-			"en": "18 steps to get your started and party tonight <br> <div class=\"lintro-subtext\">Click on the arrow to go to the next step"
+			"fr": "Quelques étapes pour organiser votre premier before dès ce soir <br> <div class=\"lintro-subtext\">Cliquez sur la flêche pour passer à l'explication suivante</div>",
+			"en": "A few steps to get you started and party tonight <br> <div class=\"lintro-subtext\">Click on the arrow to go to the next step"
 		},
 		intro_chat_1: {
 			"fr": "Hey guys",
@@ -702,7 +702,7 @@
 			"en": "The parties displayed on the map are either proposed by our users or suggested by Meefore"
 		},
 		intro_text_5: {
-			"fr": "Ça, c'est ce qui se passe quand plusieurs groupes ont organisé des before avant d'aller à la même soirée",
+			"fr": "Ça, c'est ce qu'il se passe quand plusieurs groupes ont organisé des before avant d'aller à la même soirée",
 			"en": "This, is what happens when multiple groups host a pregame party before going to the same party"
 		},
 		intro_text_6: {

@@ -165,6 +165,10 @@ img.left {
    visibility: hidden;
 }
 
+.transparent {
+	opacity: 0;
+}
+
 .centered {
    position: relative;
    margin: auto;

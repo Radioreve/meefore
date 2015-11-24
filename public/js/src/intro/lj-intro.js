@@ -474,34 +474,34 @@
 					});
 
 					$curt_bottom.css({
-						'width': '100%',
-						'height': $(window).height() - ( top + height + opts.padding ),
-						'top': window.scrollY + ( top + height ) + opts.padding,
+                        'width'  : '100%',
+                        'height' : $(window).height() - ( top + height + opts.padding ),
+                        'top'    : window.scrollY + ( top + height ) + opts.padding,
 					});
 
 					$curt_left.css({
-						'width': left - opts.padding,
-						'height': height + 2*opts.padding,
-						'top':  top - opts.padding 
+                        'width'  : left - opts.padding,
+                        'height' : height + 2*opts.padding,
+                        'top'    :  top - opts.padding 
 					});
 
 					$curt_right.css({
-						'left': left + width + opts.padding,
-						'width': $(window).width() - ( left + width + opts.padding),
-						'height': height + 2*opts.padding,
-						'top': top - opts.padding 
+                        'left'   : left + width + opts.padding,
+                        'width'  : $(window).width() - ( left + width + opts.padding),
+                        'height' : height + 2*opts.padding,
+                        'top'    : top - opts.padding 
 					});
 				}
 
 				if( opts.mode == "area" ){
 
-					var upper_el_bottom_pose = $(opts.upper_el).offset().top + $(opts.upper_el).outerHeight();
+                    var upper_el_bottom_pose = $(opts.upper_el).offset().top + $(opts.upper_el).outerHeight();
 
 					if( opts.lower_el ){
-						var lower_el_top_pose = $(opts.lower_el).offset().top;
+                        var lower_el_top_pose = $(opts.lower_el).offset().top;
 					} else {
-						var lower_el_top_pose = $(window).height();
-						var upper_el_bottom_pose = $(opts.upper_el).offset().top;
+                        var lower_el_top_pose    = $(window).height();
+                        var upper_el_bottom_pose = $(opts.upper_el).offset().top;
 						if( opts.upper_cover ){
 							upper_el_bottom_pose += $(opts.upper_el).outerHeight();
 						}
@@ -641,12 +641,16 @@
 
 		  		$('.intro-curtain-top')
 		  			.append('<div class="lintro-text super-centered none">' + opts.text + '</div>')
-		  			.children()
+		  			.find('.lintro-text')
 		  			.css({ 'text-align': opts.text_align || 'center' })
+                    .append('<div class="lintro-exit transparent">Quitter le tour</div>')
 		  			.velocity('transition.fadeIn', {
 		  				duration: 500,
                         complete: function(){
-                            $(this)
+
+                            var $wrap = $(this);
+
+                            $wrap
                                 .append('<div class="lintro-next none"><i class="icon icon-right"></i></div>')
                                 .find('.lintro-next')
                                 .velocity('transition.slideLeftIn', {
@@ -662,7 +666,22 @@
                                                 LJ.fn.lintroStep( next_id );
                                             });
                                     }
-                                });
+                                })
+
+                            $wrap
+                                .find('.lintro-exit')
+                                .velocity('transition.fadeIn', {
+                                    duration: 500,
+                                    delay: opts.delay || 500,
+                                    display: 'block',
+                                    complete: function(){
+                                        $(this)
+                                            .one('click', function(){
+                                                LJ.fn.lintroStep('intro_18');
+                                            });
+                                    }
+                                })
+
                             
                         }
                     })

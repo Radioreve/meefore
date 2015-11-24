@@ -192,7 +192,8 @@ align-items: center;
 }
 
 .search-results-users {
-   top: 40px!important;
+   top: 41px!important;
+   left: -52px!important;
 }
 
 .search-results-friends {
@@ -216,7 +217,7 @@ align-items: center;
    background: white;
    border: 1px solid #ccc;
    /* border-top:none; */
-   min-width: 580px;
+   min-width: 685px;
    display: block;
    position: relative;
    left: -61px;

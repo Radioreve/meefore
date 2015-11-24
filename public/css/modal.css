@@ -76,8 +76,9 @@
 }
 
 .modal-user-name {
-   font-size: 40px;
-   font-family: 'Londrina Solid';
+   font-size: 40px; 
+   font-family: Gochi Hand;
+   font-weight: bolder;
    margin-bottom: 5px;
 }
 
@@ -158,7 +159,10 @@ label.lighter {
 }
 
 .modal-title-facebook {
-    margin-bottom: 20px;
-    font-size: 22px;
-    color: #555;
+    
+margin-bottom: 20px;
+    
+font-size: 22px;
+    
+color: #555;
 }
