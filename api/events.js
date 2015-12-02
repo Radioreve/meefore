@@ -168,8 +168,9 @@
 					{ multi: true, new: true },
 					function( w ){
 
-						if( err )
+						if( err ){
 							return eventUtils.raiseError({ err: err, res: res, toClient: "api error fetching event" });
+						}
 
 						var data = {
 							event_id          : event_id,
@@ -251,12 +252,12 @@
 
 		console.log('Changing group status, new status : ' + status );
 
-		/* Find the current group in event, and modify it with req.group object */
-		var updated_group = evt.getGroupById( group_id );
+		// Notification variable, to be displayed and saved;
+		var notification = req.sent.notification;
 
 		groups.forEach(function( group, i ){
 
-			if( group.group_id === updated_group.group_id ){
+			if( group.group_id == group_id ){
 
 				groups[i].status = status;
 
@@ -305,7 +306,8 @@
 				event_id          : evt._id,
 				hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
 				group             : group,
-				chat_id			  : chat_id
+				chat_id			  : chat_id,
+				notification      : notification
 			};
 
 			eventUtils.sendSuccess( res, data );
@@ -319,6 +321,7 @@
 
 
 		});
+
 
 	};
 

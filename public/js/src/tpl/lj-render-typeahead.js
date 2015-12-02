@@ -24,7 +24,32 @@
 				img_id  		 = LJ.cloudinary.logo.black_on_white.id;
 
 			var message 		 = '<div data-lid="app_no_results_invite" >Aucun résultats</div>';
-			var invite_btn       = '<div class="invite-friends" data-lid="app_button_invite"></div>'
+			var invite_btn       = '<div class="invite-friends"><i class="icon icon-facebook"></i><span data-lid="app_button_invite"></span></div>'
+
+			user_main_img = $.cloudinary.image( img_id, display_settings ).prop('outerHTML');
+
+			var html = '<div class="search-result-default search-result-default-empty">'
+					   + '<div class="search-result-images">' 
+				       		+ user_main_img 
+				       + '</div>'
+				       + '<div class="search-result-name-wrap">'
+				       		+ '<div class="search-result-name">' + message + '</div>'
+				       + '</div>'
+				       + invite_btn
+				      +'</div>';
+
+			html = $(html);
+			LJ.fn.setAppLanguage( LJ.app_language, html );
+			return html.prop('outerHTML');
+
+		},
+		renderTypeaheadNotFound_Dark: function(){
+			
+			var display_settings = LJ.cloudinary.search.user.params;
+				img_id  		 = LJ.cloudinary.logo.white_on_black.id;
+
+			var message 		 = '<div data-lid="app_no_results_invite" >Aucun résultats</div>';
+			var invite_btn       = '<div class="invite-friends"><i class="icon icon-facebook"></i><span data-lid="app_button_invite"></span></div>'
 
 			user_main_img = $.cloudinary.image( img_id, display_settings ).prop('outerHTML');
 
@@ -97,8 +122,8 @@
 				       		+ image_tag_loader
 				       + '</div>'
 				       + '<div class="search-result-name-wrap">'
-				       		+ '<div class="search-result-name">' + user.name + '</div>'
-				       		+ '<div class="search-result-hashtags">' + user_hashtags + '</div>'
+				       		+ '<div class="search-result-name search-result-name--users">' + user.name + '</div>'
+				       		+ '<div class="search-result-hashtags search-result-hashtags--users">' + user_hashtags + '</div>'
 				       + '</div>'
 				      +'</div>';
 			return html;

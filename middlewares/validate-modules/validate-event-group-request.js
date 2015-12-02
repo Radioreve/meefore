@@ -170,6 +170,7 @@
 					// Update les groups de l'event, rdy to save
 					req.sent.groups = evt.groups;
 					req.sent.groups.push( req.sent.new_group );
+					req.sent.hosts_facebook_id = _.pluck( evt.hosts, 'facebook_id' );
 
 					callback( null );
 					

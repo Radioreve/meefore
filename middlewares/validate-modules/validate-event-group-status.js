@@ -83,6 +83,18 @@
 					}, null );
 				};
 
+
+				// Find the current group in event for desc functions
+				var updated_group = evt.getGroupById( group_id );
+
+				console.log( JSON.stringify( updated_group, null, 3 ) );
+
+				req.sent.members_facebook_id = updated_group.members_facebook_id;
+				req.sent.group_name          = updated_group.name;
+
+				// Do not set group_status on req, it's already passed.
+				// Otherwise, it overrides the new value 
+
 				callback( null, evt );
 					
 				});

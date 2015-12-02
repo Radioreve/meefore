@@ -70,6 +70,9 @@ transition: all ease-in-out .3s;
     padding: 10px 15px;
 }
 
+.invite-friends i {
+    margin-right: 10px;
+}
 #profileWrap .invite-friends {
 
 float: right;

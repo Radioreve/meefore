@@ -93,7 +93,7 @@
 				display:'name',
 				source: users.ttAdapter(),
 				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
+					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
 					pending    : LJ.fn.renderTypeaheadPending,
 					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
 				}

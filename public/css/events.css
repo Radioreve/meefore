@@ -536,11 +536,17 @@ border-radius: 5px 5px 0 0;top: 0px;box-shadow: none;border: 1px solid #B3B3B3;}
   /* background: linear-gradient(#F1667E,#E04964); */
   /* border: 1px solid #DE415C; */
   color: white;
-  padding: 4px 7px;
+  padding: 6px 10px;
   border-radius: 100px;
   transition: all ease-out .15s;
   transform: skewX(-20deg);
+  font-size: 15px;
 }
+
+.event-accepted-tabview.active .bubble {
+  background: #545454;
+}
+
 .event-accepted-tabview.active, .event-accepted-tabview.active:before {
   background: #E94F6A;
   color: white;

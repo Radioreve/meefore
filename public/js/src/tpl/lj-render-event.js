@@ -30,7 +30,7 @@
 
       html  +=    '<div class="event-accepted-chat-message ' + me +'" data-authorid="' + facebook_id + '" data-authorname="' + name + '" '+ whisperto + '>'
                   + img_tag
-                  + '<div class="event-accepted-chat-sent-at">' + sent_at_html + '</div>'
+                  + '<div data-sent-at = " ' + mmt.unix() + '" class="event-accepted-chat-sent-at">' + sent_at_html + '</div>'
                   + '<div class="event-accepted-chat-text">'    + msg          + '</div>'
                 + '</div>'
 
@@ -401,17 +401,18 @@
 
       var hosts_html = LJ.fn.renderHostsGroupWithCog( evt.hosts );
 
-      /* Render all group on the left panel, filtered by click on chatgroup after */
+      // Render all group on the left panel, filtered by click on chatgroup after
       evt.groups.forEach(function( group ){
         groups_html += LJ.fn.renderUsersGroupWithToggle( group );
       });
 
-      /* Render chatgroup on the top */
+      // Render chatgroup on the top 
       chatgroups_html += LJ.fn.renderChatGroup_Host();
       evt.groups.forEach(function( group, i ){
         chatgroups_html += LJ.fn.renderChatGroup_Group( group );
       });
-      /* Render a specific chat with chatid per group */
+      
+      // Render a specific chat with chatid per group 
       chat_wrap_html += LJ.fn.renderChatWrap_Host_Host( evt._id );
       evt.groups.forEach(function( group, i ){
         chat_wrap_html += LJ.fn.renderChatWrap_Host_Group( evt._id, group );

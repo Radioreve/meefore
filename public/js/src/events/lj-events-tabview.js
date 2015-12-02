@@ -6,126 +6,167 @@
 
             LJ.$body.on('click', '.event-accepted-tabview', function(){
                 
-                var $self                = $(this);
+                var $self           = $(this);
+                var target_event_id = $self.attr('data-eventid');
 
-                var event_id             = $self.attr('data-eventid');
-                var current_event_id     = $('.event-accepted-tabview.active').attr('data-eventid');
-
-                var $inview_wrap_target  = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
-                var $inview_wrap_current = $('.row-events-accepted-inview[data-eventid="' + current_event_id + '"]');
-
-                var evt                  = _.find( LJ.cache.events, function( el ){ return el._id === event_id });
-                var duration             = 700;
-
-
-                // Adjust dynamically the height so it perfectly fills the screen from filter div to footerdiv
-                var adjusted_height = $( window ).outerHeight( true )  
-                                      - $('.row-events-preview').innerHeight()
-                                      - parseInt( $('.row-events-preview').css('top').split('px')[0] );
-
-                $inview_wrap_target.css({ height: adjusted_height });
-
-                // if( $inview_wrap_target.find('.event-accepted-chatgroup.active').length == 0 ){
-                //     $inview_wrap_target.find('.event-accepted-chatgroup').first().click();
-                // }
-                
-                $inview_wrap_target.find('.event-accepted-chatgroup.last-active').click();
-
-                // Close chatviews
+                // Hide the chat panel
                 if( $self.hasClass('active') ){
-                    $inview_wrap_target.velocity('transition.slideDownOut', { duration: 400 }).removeClass('active');
-                    $inview_wrap_target.find('.event-accepted-chatgroup.active').removeClass('active').addClass('last-active');
+
                     $self.removeClass('active');
-                    return;
+                    LJ.fn.hideEventInview( target_event_id );
+
+                } else {
+
+                    // Show the chat panel
+                    if( $('.event-accepted-tabview.active').length == 0 ){
+
+                        LJ.fn.activateEventTabview( target_event_id );
+                        LJ.fn.showEventInview( target_event_id );
+
+                    // Hide the chat panel first, and then show it ~300ms after for smooth transition
+                    } else {
+
+                        var current_event_id = $('.event-accepted-tabview.active').attr('data-eventid');
+
+                        LJ.fn.activateEventTabview( target_event_id );
+                        LJ.fn.hideAndshowEventInview( current_event_id, target_event_id );
+
+                    }
                 }
-                    
 
-                // First opening 
-                if( $('.event-accepted-tabview.active').length == 0 ){
-                    LJ.fn.adjustAllChatPanes();
-                    $self.addClass('active');
 
-                    $inview_wrap_target
-                        .siblings('.active').removeClass('active').end()
-                        .velocity('transition.slideUpIn', { duration: 600 }).addClass('active')
-                        .find('.event-accepted-inview').velocity('transition.slideUpIn')
-                        .find('.event-accepted-chatgroup.last-active').addClass('active');
 
-                    LJ.fn.addEventPreview( evt );
-                    LJ.fn.addPartyPreview( evt.party, {
-                        begins_at: evt.begins_at
-                    } );
-                    return;
-                }
+            });
+             
+        },
+        activateEventTabview: function( target_event_id ){
 
-                // Switch tab
+            $('.event-accepted-tabview').removeClass('active');
+            $('.event-accepted-tabview[data-eventid="' + target_event_id + '"]').addClass('active');
 
-                // Update tabview 
-                $('.event-accepted-tabview').removeClass('active');
+        },
+        showEventInview: function( target_event_id ){
 
-                // Update chatgroup view (to prevent host bubbleup not working on last opened chat)
-                $('.event-accepted-chatgroup.active').removeClass('active').addClass('last-active');
-                $inview_wrap_target.find('.event-accepted-chatgroup.last-active').addClass('active');
-                $self.addClass('active');
-                                
-                // Update preview
-                LJ.fn.addEventPreview( evt );
-                LJ.fn.addPartyPreview( evt.party,{
-                     begins_at: evt.begins_at
-                });
+            LJ.fn.log('Calling show with target : ' + target_event_id, 5 );
 
-                // Update inview 
-                $inview_wrap_current
+            var $inview_wrap_target = $('.row-events-accepted-inview[data-eventid="'+ target_event_id +'"]');
+            var last_group_id       = $inview_wrap_target.find('.last-active').attr('data-groupid');
+
+            // Hide specifics dom that collide with view
+            LJ.fn.hideNotificationsPanel();
+            
+            // If already there and active, do nothing
+            if( $inview_wrap_target.hasClass('active') ) return;
+
+            // Refresh all chat panes for jsPane to refresh itself
+            LJ.fn.adjustAllChatPanes();
+
+            // Update the active event state
+            $inview_wrap_target.siblings('.active').removeClass('active');
+
+            // Display the proper container and the proper chat 
+            // Compute the perfect height 
+            var $limit = $('.row-events-preview');
+            var h = $( window ).outerHeight( true ) - $limit.innerHeight() - parseInt( $limit.css('top').split('px')[0] );
+
+            // Open the two wrappers
+            $inview_wrap_target
+                .css({ height: h })
+                .velocity('transition.slideUpIn', { 
+                    duration: 600 
+                })
+                .addClass('active')
+                .find('.event-accepted-inview')
+                    .velocity('transition.slideUpIn')
+            
+
+            LJ.fn.activateChatTabview( target_event_id, last_group_id );
+            LJ.fn.showChatInview( target_event_id, last_group_id );
+            
+
+            // Find the proper event from cache, and update the preview
+            var evt = _.find( LJ.cache.events, function( el ){
+                return el._id === target_event_id 
+            });
+
+            LJ.fn.addEventPreview( evt );
+            LJ.fn.addPartyPreview( evt.party, {
+                begins_at: evt.begins_at
+            });
+
+
+
+
+        },
+        hideEventInview: function( target_event_id ){
+
+            LJ.fn.log('Calling hide with target : ' + target_event_id, 5 );
+
+            var $inview_wrap_target = $('.row-events-accepted-inview[data-eventid="' + target_event_id + '"]');
+
+              // Close chatviews
+            $inview_wrap_target
+                .velocity('transition.slideDownOut', {
+                 duration: 400 
+                })
+                .removeClass('active')
+
+                .find('.event-accepted-chatgroup.active')
                     .removeClass('active')
-                    .find('.event-accepted-inview, .event-inview-settings')
-                    .velocity('transition.slideUpOut', {
-                        duration: duration
-                    }).end()
-                    .velocity('transition.fadeOut', {
-                        duration: duration
-                    });
+                    .addClass('last-active');
 
+
+        },
+        hideEventInview_Active: function(){
+
+            var target_event_id = $('.row-events-accepted-inview.active').attr('data-eventid');
+            LJ.fn.hideEventInview( target_event_id );
+
+        },
+        hideAndshowEventInview: function( current_event_id, target_event_id ){
+
+            LJ.fn.log('Calling hide and show with current : ' + current_event_id + ' and target : ' + target_event_id, 5 );
+
+            if( !current_event_id || !target_event_id )
+                return LJ.fn.warn('Cant hide and show, missing either current or target event_id', 1 );
+            
+            var $inview_wrap_current = $('.row-events-accepted-inview[data-eventid="' + current_event_id + '"]');
+            var $inview_wrap_target  = $('.row-events-accepted-inview[data-eventid="' + target_event_id + '"]');
+
+              // Close chatviews
+            $inview_wrap_current
+                .velocity('transition.slideDownOut', {
+                 duration: 400 
+                })
+                .removeClass('active')
+
+                .find('.event-accepted-chatgroup.active')
+                    .removeClass('active')
+                    .addClass('last-active');
 
                 setTimeout(function(){
                     
                     $inview_wrap_target
                         .addClass('active')
                         .find('.event-accepted-inview')
-                        .velocity('transition.slideUpIn', {
-                            duration: duration 
-                        }).end()
-                        .velocity('transition.fadeIn', {
-                            duration: duration
-                        });
+                            .velocity('transition.slideUpIn', {
+                                duration: 700
+                            }).end()
+                            // Usefull part??
+                            .velocity('transition.fadeIn', {
+                                duration: 700
+                            }); 
                         
                     LJ.fn.adjustAllChatPanes();
                    
                 }, 330 );
 
-                // $inview_wrap_current
-                //     .removeClass('active')
-                //     .velocity('transition.slideUpOut', {
-                //         duration: duration
-                //     })
 
-                // setTimeout(function(){
-
-                //     $inview_wrap_target
-                //         .addClass('active')
-                //         .velocity('transition.slideUpIn', {
-                //             duration: duration
-                //         });
-
-                //       LJ.fn.adjustAllChatPanes();
-
-                // }, 350 );
-
-
-            });
-
-			
-			 
-		},
+        },
+        // Add the HTML for new inview and tabview based on user or host
+        // Display it not specified otherwise
+        // Display the first chatwrap available (hosts view or waiting-for-approval view)
+        // Register the jsp_api
 		addEventInviewAndTabview: function( evt, options ){
 
             var options = options || {};
@@ -144,15 +185,14 @@
                 $('.event-accepted-tabview').last().click();
             }
 
-            /* jsp */
+            // Initialisation values : make sure the first chatgroup element is active, at first render
             var $inview =  $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
-
+            $inview.find('.event-accepted-chat-wrap').first().removeClass('none').addClass('active');
             $inview.find('.event-accepted-chatgroup').first().addClass('last-active');
-            $inview.find('.event-accepted-chat-wrap').first().removeClass('none');
             
             var chats_jsp = {};
 
-            /* Host special case */
+            // Host special case
             if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id') )){
                 var group_id = "hosts";
                 var chat_id  = LJ.fn.makeChatId({ event_id: event_id, group_id: group_id });
@@ -162,8 +202,7 @@
 
                 LJ.fn.bindFetchMoreHistory( chat_id );
                 
-            }
-            /* End hosts special case */
+            } // End hosts special case
 
             evt.groups.forEach(function( group ){
 
@@ -186,7 +225,7 @@
             /* Adjust all tabviews*/
             LJ.fn.adjustAllTabviews();
 	           
-
         }
+
 
 	});

@@ -17,6 +17,22 @@
                 weekdaysShort : ['Dim','Lun','Ma','Me','Jeu','Ven','Sam']
             }
 		},
+		h_min_ago: {
+			"fr": "il y a quelques minutes",
+			"en": "a few minuts ago"
+		},
+		h_hour_ago: {
+			"fr": "il y a moins d'une heure",
+			"en": "less than an hour ago"
+		},
+		h_today: {
+			"fr": "aujourd'hui, à %hh%m",
+			"en": "today, %hh%m"
+		},
+		h_past: {
+			"fr": "Le %moment, à %hh%m",
+			"en": "%moment, %hh%m"
+		},
 		t_language_changed: {
 			"fr": "La langue a été changée",
 			"en": "The language has been changed"
@@ -589,10 +605,10 @@
 			"fr": "Le statut de l'évènement a été modifié",
 			"en": "The event status has been modified"
 		},
-		to_init_no_friends: {
-			"fr": "Aucun de vos amis n'est sur Meefore? Invitez-les à vous rejoindre!",
-			"en": "None of your friends is on Meefore? Invite them all!"
-		},
+		// to_init_no_friends: {
+		// 	"fr": "Aucun de vos amis n'est sur Meefore? Invitez-les à vous rejoindre!",
+		// 	"en": "None of your friends is on Meefore? Invite them all!"
+		// },
 		to_noupload_necessary: {
 			"fr": "Aucune mise à jour n'est nécessaire!",
 			"en": "No update is necessary!"
@@ -997,6 +1013,70 @@
 		app_no_results_invite: {
 			"fr": "Aucun résultats à afficher",
 			"en": "The search returned no results"
+		},
+		n_new_meefore_text: {
+			"fr": "Nouveau meefore proposé pour %place",
+			"en": "New meefore created for %place"
+		},
+		n_new_meefore_subtext: {
+			"fr": "Il y a actuellement %n meefore pour cette soirée",
+			"en": "There are currently %n meefore for this party"
+		},
+		n_accepted_in_text: {
+			"fr": "Votre groupe %group_name a été accepté dans un meefore",
+			"en": "Your group %group_name has been accepted in a meefore"
+		},
+		n_accepted_in_subtext: {
+			"fr": "N'attendez-plus pour envoyer un message!",
+			"en": "Don't wait to send them a message"
+		},
+		n_group_request_text: {
+			"fr": "Le groupe %group_name a demandé à rejoindre un de vos meefore",
+			"en": "The group %group_name has requested to join a meefore of yours"
+		},
+		n_group_request_subtext: {
+			"fr": "Allez voir de quoi ils ont l'air",
+			"en": "Check them out"
+		},
+		n_marked_as_host_text: {
+			"fr": "Votre ami %friend_name vous a marqué organisateur sur son meefore",
+			"en": "Your friend %friend_name has tagged you as host on his meefore"
+		},
+		n_marked_as_host_subtext: {
+			"fr": "Que la fête commence",
+			"en": "Get the party started!"
+		},
+		n_unread_messages_text: {
+			"fr": "Vous avez des messages non lus",
+			"en": "You have unread messages"
+		},
+		n_unread_messages_subtext: {
+			"fr": "Répondez-y maintenant",
+			"en": "Check them out now"
+		},
+		n_inscription_success_text: {
+			"fr": "Bienvenue sur Meefore",
+			"en": "Welcome on Meefore"
+		},
+		n_inscription_success_subtext: {
+			"fr": "Complétez votre profile et créez ou participer à votre premier meefore dès aujourd'hui!",
+			"en": "Complete your profile and create or participate at your first meefore today!"
+		},
+		n_no_friends_text: {
+			"fr": "Aucun de vos amis Facebook n'est inscrit sur Meefore",
+			"en": "None of your Facebook friends is on Meefore",
+		},
+		n_no_friends_subtext: {
+			"fr": "Il faut être au moins 2 pour proposer un before ou demander à participer. Invitez-vos amis !",
+			"en": "You need to be at least a group of 2 to organize or participate. Invite your friends !"
+		},
+		n_header_text: {
+			"fr": "Notifications",
+			"en": "Notifications"
+		},
+		n_footer_text: {
+			"fr": "Ceci est le footer",
+			"en": "This is the footer"
 		}
 
 	});

@@ -47,6 +47,9 @@ var UserSchema = new mongoose.Schema({
   signup_date: {
     type: Date
   },
+  disconnected_at: {
+    type: Date
+  },
   access: {
     type: Array
   },

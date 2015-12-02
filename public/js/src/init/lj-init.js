@@ -238,7 +238,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
             // Refresh every uplaod tag every 45min 
             // They become outdated every 1 hour
-            var refresh_delay = 1000*60*45;
+            var refresh_delay = 1000 * 60 * 45;
             var tags = data.cloudinary_tags;
 
             LJ.fn.setupCloudinary( tags );
@@ -278,6 +278,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                     LJ.map.setZoom(14);
                  }
             });
+
+            /* Set notification panels */
+            LJ.$body.append( LJ.fn.renderNotificationsPanel() );
+            LJ.fn.handleDomEvents_Notifications();
 
             /* Mise à jour du profile des filters */
             $('.mood-wrap').html( LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
@@ -413,11 +417,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                         // });
 
                         if ( LJ.user.status == 'new'){
+                            // Tour d'introduction
                             LJ.fn.initIntro();
-                        }
-
-                        if (LJ.user.friends.length == 0){
-                            LJ.fn.toastMsg( LJ.text_source["to_init_no_friends"][ LJ.app_language ], "info");
                         }
 
                         LJ.$body.trigger('display:layout:after');
@@ -518,6 +519,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                         LJ.fn.log('Starting admin script', 1);
                         LJ.fn.initAdminMode();
                     }
+
+                    // Init notifications
+                    LJ.fn.initNotifications();
                     
                     LJ.fn.displayLayout();                    
 
@@ -560,13 +564,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                         .velocity({ opacity: [0.82,1]}, {
                             duration: 300
                         });
-
-                        // Querying the state...
                         
                 }
             })
 
         },
+        // Test function
         simReco: function( time_offline ){
             LJ.fn.handleReconnection();
             LJ.fn.timeout( time_offline, function(){

@@ -72,6 +72,7 @@
             dir_src + 'languages/lj-languages.js',
             dir_src + 'analytics/lj-analytics.js',
             dir_src + 'intro/lj-intro.js',
+            dir_src + 'notifications/lj-notifications.js',
             dir_src + 'init/lj-init.js',
             dir_src + 'lj-junk.js'
     		])
@@ -99,7 +100,8 @@
             dir_css + 'media.css',
             dir_css + 'admin.css',
             dir_css + 'modal.css',
-            dir_css + 'intro.css'
+            dir_css + 'intro.css',
+            dir_css + 'notifications.css'
             // dir_css + 'pikadate.css'
             // dir_css + 'rangeslider/css/rangeslider.css',
             // dir_css + 'css/rangeslider/css/rangeslider.flat.css',

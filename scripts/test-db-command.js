@@ -6,19 +6,38 @@
 		config = require('../config/config'),
 		_ = require('lodash');
 
-		mongoose.connect( config[ process.env.NODE_ENV ].dbUri );
+		mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
 
 		mongoose.connection.on( 'open', function(){
 			console.log('Connected to the database! Running operation... : ');
 
-			User.findOne( { _id:'55aa3239594bfe743a471c8b' }, function(err, user ){
+			var updated_group = {
+				members_facebook_id: ['139625316382924','10153224803803632']
+			}
+			var notification = {
+				type        : "accepted_in",
+				happened_at : new Date(),
+				group_name  : "Les beaux mecs"
+			};
 
-				if( err ) return console.log( err );
-				
-				console.log( user );
+			var query = {
+				facebook_id: { $in: updated_group.members_facebook_id }
+			};
 
+			var update = {
+				$push: { 'notifications': notification }
+			};
 
-			});
+			var options = { multi: true };
+
+			User.update( query, update, options, function( err, raw ){
+				if( err ) console.log('Error updating notification array');
+				console.log('Updated done, modified documents : ' + raw.n );
+			});	
+
+			User.find( query, function( err, users ){
+				console.log(users);
+			})		
 
 		});
 

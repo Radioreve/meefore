@@ -280,17 +280,6 @@ body > header > h5 {
    left: -157px;
 }
 
-#headerContent i {
-   position: absolute;
-   font-size: 18px;
-   left: -37px;
-   top: -8px;
-   color: rgb(253, 253, 253);
-   background: none;
-   padding: 5px;
-   border-radius: 44px;
-   text-shadow: none;
-}
 
 #headerContent {
    width: 82%;
@@ -1077,7 +1066,7 @@ body > header > h5 {
 
 #menuWrap {
    position: relative;
-   display: block;
+   display: flex;
    margin: 0 
 	
 	
@@ -1186,6 +1175,10 @@ body > header > h5 {
    z-index: 1;
 }
 
+#settings {
+	margin-left: auto;
+}
+
 .eventItemWrap span.bubble {
    padding: 3px;
    padding-top: 4px;
@@ -1209,11 +1202,6 @@ body > header > h5 {
    background: rgb(32, 32, 32);
 }
 
-.menu-item div:not(.search-result) {
-	/* display:inline; */
-	/* margin-left: 5px; */
-   ;
-}
 
 .notif {
    color: white;

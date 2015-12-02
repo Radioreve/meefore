@@ -24,7 +24,7 @@
 				tasks.push(function( done ){
 
 					// Update part
-					user.contact_email = user.facebook_email;
+					user.disconnected_at = new Date();
 					
 					user.save(function(){
 						console.log('user updated');

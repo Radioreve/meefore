@@ -459,6 +459,9 @@
                     // Prepended or appended, whispery anyway
                     LJ.fn.whisperifyChatMessages( chat_id );
 
+                    // Check if unread messages need to be notified
+                    LJ.fn.checkNotification_unreadMessages();
+
 
                 } else {
                     // Prevent loader from staying eternally

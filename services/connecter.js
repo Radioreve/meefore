@@ -1,7 +1,7 @@
 
 	var _      = require('lodash');
 	var rd     = require('./rd');
-	var Users  = require('../models/UserModel');
+	var User   = require('../models/UserModel');
 	var config = require('../config/config');
 
 	var updateConnectedUsers = function( req, res ){
@@ -23,24 +23,48 @@
 
 		// Check if is an event concerning connection/deconnecton by the presence of
 		// private-+facebookid field a
-		var user_id = evt.channel.split('private-')[1];
-		if( !user_id ){
+		var facebook_id = evt.channel.split('private-')[1];
+		if( !facebook_id ){
 			res.status(400).end();
 			return;
 		}
 
 		// Add into redis
 		if( evt.name == 'channel_occupied' ){
-			rd.sadd('connected_users', user_id );
+			rd.sadd('online_users', facebook_id );
 		} else { // "channel_vacated"
-			rd.srem('connected_users', user_id );
+			rd.srem('online_users', facebook_id );
+			User.findOneAndUpdate({
+				'facebook_id': facebook_id
+			}, {
+				'disconnected_at': new Date()
+			}, { new: true }, function( err ){
+				if( err ) console.log('Error saving disconnected_at property : ' + err );
+			});
 		}
 
 		res.status(200).end();
 
 	};
 
+	var isUserOnline = function( facebook_id, callback ){
+
+		rd.smembers('online_users', function( err, response ){
+
+			if( err )
+				return callback( err, null );
+
+			if( response.indexOf( facebook_id ) == -1 )
+				return callback( null, false )
+
+			return callback( null, true );
+
+		});
+
+	};
+
 	module.exports = {
-		updateConnectedUsers: updateConnectedUsers
+		updateConnectedUsers : updateConnectedUsers,
+		isUserOnline         : isUserOnline
 	};
 

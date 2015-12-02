@@ -1,7 +1,10 @@
+	
 	var _ = require('lodash');
 	var get_ip  	  = require('ipware')().get_ip;
 
-	var pusher = require('../services/pusher');
+	var rd        = require('../services/rd');
+	var pusher    = require('../services/pusher');
+	var connecter = require('../services/connecter');
 	
 	var pushEventsDir = '../pushevents';
 	var apiDir        = '../api';
@@ -30,8 +33,8 @@
 		mdw.validate       = require( mdwDir + '/validate');
 		mdw.alerts_watcher = require( mdwDir + '/alerts_watcher');
 		mdw.chat_watcher   = require( mdwDir + '/chat_watcher');
+		mdw.notifier       = require( mdwDir + '/notifier');
 
-	var webhooks 	 = require('../services/webhooks');
 
 	module.exports = function( app ) {
 
@@ -210,6 +213,7 @@
 	    // [ @events ] Génère une nouvelle requête pour participer à un évènement
 	    app.patch('/api/v1/events/:event_id/request',
 	    	mdw.validate('request_event', ['event_group_request'] ),
+	    	mdw.notifier.addNotification('group_request'),
 	    	api.events.request );
 
 	    // [ @events ] Renvoie la liste des groupes d'un évènement
@@ -219,6 +223,7 @@
 	    // [ @events ] Change le statut d'un group : [ 'accepted', 'kicked' ]
 	    app.patch('/api/v1/events/:event_id/groups/:group_id/status',
 	    	mdw.validate('group_status', ['event_group_status']),
+	    	mdw.notifier.addNotification('accepted_in'),
 	    	api.events.changeGroupStatus );
 
 	    // [ @events ] Renvoie la liste de tous les évènements ! 
@@ -272,11 +277,25 @@
 	    );
 
 
+	    app.post('/admin/users/online',
+	    	function( req, res ){
+	    		if( req.sent.apikey != 'M33fore' ) return res.status(403).json({ "msg": "unauthorized" });
+	    		rd.smembers('online_users', function( err, response ){
+	    			var data  = {};
+	    			if( err ){
+	    				data.err = err;
+	    			} else {
+	    				data.response = response;
+	    			}
+	    			res.json( data );
+	    		})
+	    	});
+
 
 	   	// [ @WebHooks ] WebHook from Pusher to monitor in realtime online/offline users
+	   	// and save disconnected_at property which is used by front end notifications module
 	   	app.post('/webhooks/pusher/connection-event',
-	   		webhooks.updateConnectedUsers );
-
+	   		connecter.updateConnectedUsers );
 
 
 

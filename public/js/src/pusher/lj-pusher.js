@@ -237,6 +237,7 @@
 			var status   = group.status;
 			var event_id = data.event_id;
 			var chat_id  = data.chat_id;
+			var notification = data.notification;
 			var hosts_facebook_id = data.hosts_facebook_id
 
 			LJ.fn.log('Pushing new group status : ' + status + ' for event : ' + event_id );
@@ -272,6 +273,9 @@
 						sent_at 	: new Date(),
 						class_names : ["bot"]
 					});
+
+					/* Notification */
+					LJ.fn.insertNotification( notification )
 					
 				}
 				if( status == "kicked" ){
@@ -332,7 +336,7 @@
 			}
 
 			// For everyone in the event channel
-			LJ.fn.updateGroupStatusUI( event_id, group );
+			LJ.fn.updateGroupStatus_UserPanel( event_id, group );
 			
 		},	
 		pushNewChatMessage: function( data ){
