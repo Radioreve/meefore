@@ -58,30 +58,7 @@
 
 <body>
 
-  <div id="fb-root"></div>
-  <script>
-    (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s);
-      js.id = id;
-      js.src = "//connect.facebook.net/en_EN/sdk.js";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-  </script>
-
-  <!-- Overlay, loader arrows & admin panel -->
-  <div id="adminPanelWrap"></div>
-  <div class="progress_bar"></div>
-  <div class="loaderWrap"></div>
-  <div class="progress_bar--landing"></div>
-  <div class="m-loaderWrap"></div>
-  <div class="curtain"></div>
-  <div class="modal-curtain"></div>
-  <div class="modal-container super-centered none"><div class="modal-container-body"></div></div>
-
-
-  <!-- Landing Page Begin -->
+ <!-- Landing Page Begin -->
   
   <div id="landingWrap">
     
@@ -117,7 +94,7 @@
         <h1 data-lid="lp_subtitle" class="hero-header">
           Faîtes des rencontres avant d'aller en soirée
         </h1>
-         <h2 data-lid="lp_subtitle_sub" class="hero-header-sub">
+        <h2 data-lid="lp_subtitle_sub" class="hero-header-sub">
           Meefore est le 1er site qui vous permet de participer à des before avec les personnes qui vont aux mêmes soirées que vous.
         </h2>
         <div id="facebook_connect">
@@ -221,8 +198,11 @@
           <span class="underlay"></span>
           <span class="bubble filtered"></span>
         </li>
-        <li id="search" class="menu-item icon icon-search">
+        <li id="notifications" class="menu-item icon icon-list">
           <span class="underlay"></span>
+          <span class="bubble filtered"></span>
+        </li>
+        <li id="search" class="menu-item icon icon-search">
           <span class="bubble filtered"></span>
           <div id="searchbar" class=""><input data-lid="h_search_placeholder" type="text" class="search-input"></div>
         </li>
@@ -252,6 +232,20 @@
         <h2 id="thumbName"></h2>
       </div>
     </section>
+
+    
+    <!-- Party Wrap -->
+    <section id="partiesWrap" class="none centered">
+    
+    <!-- Next party -->  
+    <div class="row row-parties row-next-party">
+        <div class="next-party-headlines"></div>
+        <div class="next-party-create-meefore"></div>
+    </div>
+    <!-- End next party-->
+
+    </section>
+    <!-- End Party Wrap -->
 
     <section id="profileWrap" class="none centered">
 
@@ -365,7 +359,6 @@
           <h3 data-lid="p_friends_nofriends" >Vous n'avez aucun ami Facebook inscrit. Participer à des before risque d'être compliqué...</h3>
            <!-- Dynamically loaded -->
         </div>
-
       </div>
 
       <!-- Questionnaire à là OKC  -->
