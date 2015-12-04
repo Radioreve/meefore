@@ -2852,6 +2852,7 @@ p {
     -webkit-transition: all .5s;
     transition: all .5s;
     font-family: 'Karla';
+    font-size: 11px;
     border: none;
     cursor: pointer;
 }
@@ -5143,11 +5144,11 @@ i.icon-create {
 }
 
 .search-result-default:hover {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: #f9f9f9;
 }
 
-.search-result-friend:hover {
-    background-color: #f9f9f9;
+.search-results-users .search-result-default:hover {
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .search-result-default:last-of-type {
@@ -5178,7 +5179,6 @@ i.icon-create {
 
 .search-result-name strong {
     font-weight: bolder;
-    color: #383838;
 }
 
 .search-result-hashtags {
@@ -5186,11 +5186,20 @@ i.icon-create {
     float: right;
 }
 
-.search-result-hashtags--users {
+.search-results-friends .search-result-name--users {
+    color: #555;
 }
 
-.search-result-name--users {
+.search-results-users .search-result-name--users {
     color: white;
+}
+
+.search-results-friends .search-result-name--users strong {
+    color: black;
+}
+
+.search-results-users .search-result-name--users strong {
+    color: #e94f6a;
 }
 
 .search-result-name--users strong {
@@ -5262,6 +5271,10 @@ i.icon-create {
 .search-result-default:last-of-type {
 }
 
+.search-results-friends .search-result-users {
+    color: #555;
+}
+
 .place-result {
 }
 
@@ -5310,6 +5323,7 @@ i.icon-create {
 }
 
 .search-result-users {
+  /* border: 1px solid #1E1E1E; */
 }
 
 .search-result-party-places {

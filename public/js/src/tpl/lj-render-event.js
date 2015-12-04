@@ -58,7 +58,7 @@
                          mmt.format('HH') + 'h' + mmt.format('mm') :
                          mmt.format('DD/MM');
 
-      html += '<div class="event-accepted-chat-message data-authorid="' + facebook_id + '" data-authorname="' + name +'" >'
+      html += '<div class="event-accepted-chat-message bot" data-authorid="' + facebook_id + '" data-authorname="' + name +'" >'
                   + img_tag
                   + '<div class="event-accepted-chat-sent-at">' + sent_at_html + '</div>'
                   + '<div class="event-accepted-chat-text">'    + msg          + '</div>'

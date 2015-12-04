@@ -365,7 +365,7 @@
                 if( err ){
                     return LJ.fn.handleApiError( err );
                 } else {
-                    LJ.fn.handleFetchChatHistoryById({
+                    LJ.fn.handleFetchChatHistoryById( _.merge({
 
                         event_id        : options.event_id,
                         messages        : res.messages,
@@ -373,7 +373,7 @@
                         chat_id         : options.chat_id,
                         prepend         : options.prepend
 
-                    });
+                    }, { group_id: options.group_id }) );
                 }
 
             });
@@ -381,11 +381,12 @@
         },
         handleFetchChatHistoryById: function( options ){
                 
-            var event_id  = options.event_id,
-                messages  = options.messages,
-                readby    = options.readby;
-                chat_id   = options.chat_id;
-                prepend   = options.prepend || false;
+            var event_id  = options.event_id;
+            var group_id  = options.group_id;
+            var chat_id   = options.chat_id;
+            var messages  = options.messages;
+            var readby    = options.readby;
+            var prepend   = options.prepend || false;
 
                 var chats_html = [];
                 var $wrap      = $('.event-accepted-chat-wrap[data-chatid="' + options.chat_id + '"]');
@@ -430,7 +431,7 @@
                                     LJ.fn.adjustChatPaneById({
                                         stick_to_content: true,
                                         event_id: event_id,
-                                        chat_id: chat_id
+                                        group_id: group_id
                                     });
 
                                      $messagesWrap
@@ -632,6 +633,25 @@
                 }, 300 );
 
             });
+
+        },
+        showChat: function( event_id, group_id ){
+
+            var evt = _.find( LJ.cache.events, function( evt ){
+                return evt._id == event_id;
+            });
+
+            if( !evt )
+                return LJ.fn.toastMsg( LJ.text_source["app_event_canceled"][ LJ.app_language ], "info" );
+            
+
+            // Show event panel 
+            LJ.fn.showEventInview( event_id );
+            LJ.fn.activateEventTabview( event_id );
+
+            // Show proper chatWrap
+            LJ.fn.showChatInview( event_id, group_id );
+            LJ.fn.activateChatTabview( event_id, group_id );
 
         }
 

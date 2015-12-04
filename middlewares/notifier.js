@@ -3,26 +3,22 @@
 	var _      = require('lodash');
 	var moment = require('moment');
 
-	var addNotification = function( type ){
+	var addNotification = function( notification_id ){
 
-		// Build the proper notification object based on type
+		// Build the proper notification object based on notification_id
 		// Save in in User Model 
 		// Append it to the req.sent object for decending functions
 
 		// User has been accepted in a meefore
-		if( type == "accepted_in" ){
+		if( notification_id == "accepted_in" ){
 			return addNotification_AcceptedIn
 		}
 
 		// Group has asked to join a user's meefore
-		if( type == "group_request" ){
+		if( notification_id == "group_request" ){
 			return addNotification_GroupRequest
 		}
 
-		// User has unread messages
-		if( type == "unread_messages" ){
-			return addNotification_UnreadMessages
-		}
 
 	};
 		
@@ -38,15 +34,20 @@
 		
 	function addNotification_AcceptedIn( req, res, next ){
 
-		var type         = "accepted_in";
-		var status       = req.sent.group_status;
-		var group_name   = req.sent.group_name;
-		var facebook_ids = req.sent.members_facebook_id;
+		var notification_id = "accepted_in";
+
+		var status          = req.sent.group_status;
+		var group_name      = req.sent.group_name;
+		var group_id        = req.sent.group_id;
+		var event_id        = req.sent.event_id;
+		var facebook_ids    = req.sent.members_facebook_id;
 
 		// Shortcut reference
 		var n = {
-			type       : type,
+			notification_id       : notification_id,
 			group_name : group_name,
+			group_id   : group_id,
+			event_id   : event_id,
 			happened_at: moment().toISOString()
 		};
 
@@ -77,13 +78,18 @@
 
 	function addNotification_GroupRequest( req, res, next ){
 
-		var type         = "group_request";
-		var group_name   = req.sent.new_group.group_name;
+		var notification_id = "group_request";
+
+		var event_id     = req.sent.event_id;
+		var group_name   = req.sent.new_group.name;
+		var group_id     = req.sent.new_group.group_id;
 		var facebook_ids = req.sent.hosts_facebook_id;
 
 		// Shortcut reference
 		var n = {
-			type       : type,
+			notification_id       : notification_id,
+			event_id   : event_id,
+			group_id   : group_id,
 			group_name : group_name,
 			happened_at: moment().toISOString()
 		};

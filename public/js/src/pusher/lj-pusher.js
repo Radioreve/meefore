@@ -275,7 +275,7 @@
 					});
 
 					/* Notification */
-					LJ.fn.insertNotification( notification )
+					LJ.fn.pushNewNotification( notification )
 					
 				}
 				if( status == "kicked" ){

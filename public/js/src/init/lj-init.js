@@ -215,7 +215,18 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                     error   : LJ.fn.handleServerError
                 };
 
+
+                var n_new_friends = fb_friends.length - LJ.user.friends.length;
+                if( n_new_friends > 0 ){
+                    LJ.fn.insertNotification({
+                        notification_id : "new_friends",
+                        type            : "flash",
+                        n_new_friends   : n_new_friends
+                    });
+                }
+
                 LJ.fn.say('me/fetch-and-sync-friends', data, cb);
+
 
             });
 

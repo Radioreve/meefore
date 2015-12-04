@@ -296,7 +296,7 @@
 			
 			$('.modal-curtain')
 				.css({'display':'block'})
-				.velocity({ 'opacity': [0.4,0] });
+				.velocity({ 'opacity': [0.66,0] });
 
 			$('.modal-container')
 				.find('.modal-container-body').html( LJ.$curtain_loader ).end()
@@ -310,7 +310,7 @@
 
 			$('.row-events-map').show();
 			$('.modal-curtain')
-				.velocity({ 'opacity': [0,0.4] }, { complete: function(){
+				.velocity({ 'opacity': [0,0.66] }, { complete: function(){
 					$('.modal-curtain').css({ display: 'none' }); }
 			}).delay(500).velocity({
 				complete: function(){

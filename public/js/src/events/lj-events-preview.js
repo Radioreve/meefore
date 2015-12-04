@@ -160,7 +160,7 @@
                      LJ.active_event_marker[0].marker.setIcon( LJ.cloudinary.markers.pending_active );
 
                     _.find( LJ.event_markers, function( marker ) { return marker.id == event_id; })
-                     .marker.setIcon( LJ.cloudinary.markers.pending );
+                     .marker.setIcon( LJ.cloudinary.markers.pending_active.open.url );
 
 
                 });

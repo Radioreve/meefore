@@ -429,7 +429,7 @@
                 var base_style = {
                     'position'   : 'absolute',
                     'background' : 'rgba(0,0,0,' + opts.opacity + ')',
-                    'z-index'    : '100000000',
+                    'z-index'    : '10000',
                     'display'    : 'none'
                 };
 

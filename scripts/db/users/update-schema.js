@@ -25,6 +25,7 @@
 
 					// Update part
 					user.disconnected_at = new Date();
+					user.notifications = [];
 					
 					user.save(function(){
 						console.log('user updated');

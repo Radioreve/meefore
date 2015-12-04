@@ -82,8 +82,8 @@
                     complete: function(){
 
                         LJ.fn.adjustChatPaneById({
-                            event_id : event_id,
-                            chat_id  : chat_id
+                            event_id  : event_id,
+                            group_id  : group_id
                         });
 
                     }
@@ -101,6 +101,8 @@
 
             var $current_chat =  $('.event-accepted-chat-wrap.active');
             var $target_chat  =  $('.event-accepted-chat-wrap[data-groupid="' + group_id + '"]');
+
+            if( $current_chat.is( $target_chat ) ) return;
 
             if( $current_chat.length == 0 || $target_chat.length == 0 ){
                 return LJ.fn.warn('Cannot show chat in view, missing one of the elements');
@@ -136,7 +138,7 @@
 
                         LJ.fn.adjustChatPaneById({
                             event_id : event_id,
-                            chat_id  : chat_id
+                            group_id : group_id
                         });
             
                         $current_chat.addClass('none').removeClass('active')
@@ -174,6 +176,8 @@
 
                     }
                 });
+
+                LJ.fn.adjustAllChatPanes();
 
         },
 		updateGroupStatus: function( options ){

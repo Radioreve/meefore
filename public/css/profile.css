@@ -191,6 +191,7 @@ right: 0;
    border-bottom: 1px solid transparent;
    transition: all .5s;
    font-family: 'Karla';
+   font-size: 11px;
    border: none;
    cursor: pointer;
 }

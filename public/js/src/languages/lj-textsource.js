@@ -998,6 +998,10 @@
 			"fr": "Chargement des prochaines soirées",
 			"en": "Loading next parties"
 		},
+		app_event_canceled: {
+			"fr": "Ce meefore a été annulé",
+			"en": "This meefore has been canceled"
+		},
 		app_reconnect: {
 			"fr": "Vous avez été déconnecté. <br> L'application redémarrera dès que vous aurez retrouvé la connexion.",
 			"en": "You have been disconnected. <br> App will reboot automatically once your connection is back."
@@ -1046,6 +1050,14 @@
 			"fr": "Que la fête commence",
 			"en": "Get the party started!"
 		},
+		n_fill_profile_text: {
+			"fr": "Votre profile n'est pas encore complet à 100%",
+			"en": "Your profile isnt completed at 100%"
+		},
+		n_fill_profile_subtext: {
+			"fr": "Complétez-le afin d'obtenir plus de chance d'être validé",
+			"en": "Complete it to increase ur chances to get validated"
+		},
 		n_unread_messages_text: {
 			"fr": "Vous avez des messages non lus",
 			"en": "You have unread messages"
@@ -1053,6 +1065,18 @@
 		n_unread_messages_subtext: {
 			"fr": "Répondez-y maintenant",
 			"en": "Check them out now"
+		},
+		n_new_friends_text_sin: {
+			"fr": "%n nouvel ami vient de rejoindre meefore",
+			"en": "%n new friend just joined meefore"
+		},
+		n_new_friends_text_plu: {
+			"fr": "%n nouveaux amis viennent de rejoindre meefore",
+			"en": "%n new friends just joined meefore"
+		},
+		n_new_friends_subtext: {
+			"fr": "Organisez votre prochain meefore avec eux!",
+			"en": "Organize your next meefore with them"
 		},
 		n_inscription_success_text: {
 			"fr": "Bienvenue sur Meefore",
@@ -1069,6 +1093,18 @@
 		n_no_friends_subtext: {
 			"fr": "Il faut être au moins 2 pour proposer un before ou demander à participer. Invitez-vos amis !",
 			"en": "You need to be at least a group of 2 to organize or participate. Invite your friends !"
+		},
+		n_check_email_text: {
+			"fr": "Votre addresse email est-elle à jour ?",
+			"en": "Is your email address up-to-date ?"
+		},
+		n_check_email_subtext: {
+			"fr": "L'addresse récupérée avec Facebook est parfois très ancienne !",
+			"en": "The email address we got from Facebook might be outdated !"
+		},
+		n_new_notification: {
+			"fr": "Vous avez une nouvelle notification",
+			"en": "You have a new notification"
 		},
 		n_header_text: {
 			"fr": "Notifications",

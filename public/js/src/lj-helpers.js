@@ -30,8 +30,14 @@
 		adjustChatPaneById: function( options ){
 
 			var options = options || {};
-			var jsp_chat = LJ.jsp_api[ options.event_id ].chats[ options.chat_id ];
-			var jsp_users = LJ.jsp_api[ options.event_id ].users;
+
+			var event_id = options.event_id;
+			var group_id = options.group_id;
+
+			var chat_id = LJ.fn.makeChatId({ event_id: event_id, group_id: group_id });
+
+			var jsp_chat = LJ.jsp_api[ event_id ].chats[ chat_id ];
+			var jsp_users = LJ.jsp_api[ event_id ].users;
 
 			setTimeout(function(){
 					
