@@ -137,7 +137,7 @@
 
 			var friend_html = LJ.fn.renderNotificationsElement('friend_name', { friend_name: friend_name });
 
-			options.icon_code         = "star";
+			options.icon_code         = "star-1";
 			options.text              = LJ.text_source["n_marked_as_host_text"][ LJ.app_language ].replace('%friend_name', friend_html );
 			options.subtext           = LJ.text_source["n_marked_as_host_subtext"][ LJ.app_language ];
 			options.happened_at = LJ.fn.stringifyDuration( notification.happened_at );

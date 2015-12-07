@@ -1063,8 +1063,8 @@
 			"en": "You have unread messages"
 		},
 		n_unread_messages_subtext: {
-			"fr": "Faîtes connaissance dès maintenant sur le chat",
-			"en": "Get to know each other now on the chat"
+			"fr": "Répondez-y maintenant",
+			"en": "Reply now"
 		},
 		n_new_friends_text_sin: {
 			"fr": "%n nouvel ami vient de rejoindre meefore",

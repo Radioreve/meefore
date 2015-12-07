@@ -6202,9 +6202,6 @@ label.lighter {
     color: #B6FFAF;
 }
 
-.notification--new .notification__date {
-    background: #C52742;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 2px;
+.notification--new .notification__icon {
+    color: #e94f6a;
 }
