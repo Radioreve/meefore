@@ -1,14 +1,14 @@
 
- var mongoose = require("mongoose"),
- settings     = require('../config/settings'),
- config       = require('../config/config'),
- bcrypt       = require("bcrypt-nodejs"),
- _            = require('lodash');
+  var mongoose = require("mongoose");
+  var settings = require('../config/settings');
+  var config   = require('../config/config');
+  var bcrypt   = require("bcrypt-nodejs");
+  var _        = require('lodash');
 
- var default_img_id = settings.placeholder.img_id;
- var default_img_vs = settings.placeholder.img_version;
+  var default_img_id = settings.placeholder.img_id;
+  var default_img_vs = settings.placeholder.img_version;
 
-var UserSchema = new mongoose.Schema({
+  var UserSchema = new mongoose.Schema({
 
   contact_email: {
     type: String,
@@ -111,6 +111,9 @@ var UserSchema = new mongoose.Schema({
   notifications: {
     type    : Array,
     default : []
+  },
+  experience: {
+    type: Number
   },
   skills: {
     type: Object,

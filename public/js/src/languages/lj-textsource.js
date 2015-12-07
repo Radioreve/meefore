@@ -1055,7 +1055,7 @@
 			"en": "Your profile isnt completed at 100%"
 		},
 		n_fill_profile_subtext: {
-			"fr": "Complétez-le afin d'obtenir plus de chance d'être validé",
+			"fr": "Complétez le afin d'obtenir plus de chance d'être validé",
 			"en": "Complete it to increase ur chances to get validated"
 		},
 		n_unread_messages_text: {
@@ -1063,8 +1063,8 @@
 			"en": "You have unread messages"
 		},
 		n_unread_messages_subtext: {
-			"fr": "Répondez-y maintenant",
-			"en": "Check them out now"
+			"fr": "Faîtes connaissance dès maintenant sur le chat",
+			"en": "Get to know each other now on the chat"
 		},
 		n_new_friends_text_sin: {
 			"fr": "%n nouvel ami vient de rejoindre meefore",

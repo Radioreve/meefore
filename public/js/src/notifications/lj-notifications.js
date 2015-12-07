@@ -95,7 +95,7 @@
 
 			var group_html = LJ.fn.renderNotificationsElement('group_name', { group_name: group_name });
 
-			options.icon_code         = "ok-1";
+			options.icon_code         = "chat";
 			options.text              = LJ.text_source["n_accepted_in_text"][ LJ.app_language ].replace('%group_name', group_html );
 			options.subtext           = LJ.text_source["n_accepted_in_subtext"][ LJ.app_language ];
 			options.happened_at 	  = LJ.fn.stringifyDuration( notification.happened_at );
@@ -107,7 +107,7 @@
 
 			var options  = {};
 
-			options.icon_code         = "user-plus";
+			options.icon_code         = "attention-alt";
 			options.text              = LJ.text_source["n_unread_messages_text"][ LJ.app_language ];
 			options.subtext           = LJ.text_source["n_unread_messages_subtext"][ LJ.app_language ];
 			options.happened_at 	  = LJ.fn.stringifyDuration( notification.happened_at );
@@ -122,7 +122,7 @@
 
 			var group_html = LJ.fn.renderNotificationsElement('group_name', { group_name: group_name });
 
-			options.icon_code         = "user-plus";
+			options.icon_code         = "users";
 			options.text              = LJ.text_source["n_group_request_text"][ LJ.app_language ].replace('%group_name', group_html );
 			options.subtext           = LJ.text_source["n_group_request_subtext"][ LJ.app_language ].replace('%group_name', group_html );
 			options.happened_at = LJ.fn.stringifyDuration( notification.happened_at );
@@ -137,7 +137,7 @@
 
 			var friend_html = LJ.fn.renderNotificationsElement('friend_name', { friend_name: friend_name });
 
-			options.icon_code         = "attention-alt";
+			options.icon_code         = "star";
 			options.text              = LJ.text_source["n_marked_as_host_text"][ LJ.app_language ].replace('%friend_name', friend_html );
 			options.subtext           = LJ.text_source["n_marked_as_host_subtext"][ LJ.app_language ];
 			options.happened_at = LJ.fn.stringifyDuration( notification.happened_at );
@@ -149,7 +149,7 @@
 
 			var options = {};
 
-			options.icon_code         = "attention-alt";
+			options.icon_code         = "ok";
 			options.text              = LJ.text_source["n_inscription_success_text"][ LJ.app_language ];
 			options.subtext           = LJ.text_source["n_inscription_success_subtext"][ LJ.app_language ];
 			options.happened_at 	  = LJ.fn.stringifyDuration( notification.happened_at );
@@ -162,7 +162,7 @@
 
 			var options = {};
 
-			options.icon_code         = "attention-alt";
+			options.icon_code         = "user-times";
 			options.text              = LJ.text_source["n_no_friends_text"][ LJ.app_language ];
 			options.subtext           = LJ.text_source["n_no_friends_subtext"][ LJ.app_language ];
 			options.happened_at 	  = LJ.fn.stringifyDuration( notification.happened_at );
@@ -190,7 +190,7 @@
 
 			var n_friends = notification.n_new_friends;
 
-			options.icon_code         = "attention-alt";
+			options.icon_code         = "user-plus";
 			options.subtext           = LJ.text_source["n_new_friends_subtext"][ LJ.app_language ];
 			options.happened_at 	  = LJ.fn.stringifyDuration( notification.happened_at );
 
@@ -206,7 +206,7 @@
 
 			var options = {};
 
-			options.icon_code         = "attention-alt";
+			options.icon_code         = "info";
 			options.text              = LJ.text_source["n_check_email_text"][ LJ.app_language ];
 			options.subtext           = LJ.text_source["n_check_email_subtext"][ LJ.app_language ];
 			options.happened_at 	  = LJ.fn.stringifyDuration( notification.happened_at );

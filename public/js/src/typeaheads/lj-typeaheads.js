@@ -85,7 +85,7 @@
 			$('#search input').typeahead({
 				hint: true,
 				highlight: true,
-				minLength: 1,
+				minLength: 2,
 				classNames: LJ.typeahead.users.class_names
 			},
 			{
@@ -97,6 +97,12 @@
 					pending    : LJ.fn.renderTypeaheadPending,
 					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
 				}
+			})
+			.on('typeahead:select', function( ev, suggestion ){
+
+				LJ.fn.displayUserProfile( suggestion.facebook_id );
+				$(this).typeahead('val', '');
+
 			});
 
 		},

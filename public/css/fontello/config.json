@@ -121,6 +121,12 @@
       "src": "fontawesome"
     },
     {
+      "uid": "fb1c59faa93eb6e2248c2456625b08a2",
+      "css": "user-times",
+      "code": 59493,
+      "src": "fontawesome"
+    },
+    {
       "uid": "ca2d64f8a3ea7cbf6af45898b2dcf35e",
       "css": "male",
       "code": 59428,
@@ -196,6 +202,12 @@
       "uid": "dcedf50ab1ede3283d7a6c70e2fe32f3",
       "css": "chat",
       "code": 59410,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "671f29fa10dda08074a4c6a341bb4f39",
+      "css": "bell-alt",
+      "code": 59494,
       "src": "fontawesome"
     },
     {

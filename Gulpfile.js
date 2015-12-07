@@ -57,6 +57,7 @@
             dir_src + 'events/lj-events-filters.js',
             dir_src + 'events/lj-events-preview.js',
             dir_src + 'events/lj-events-tabview.js',
+            dir_src + 'events/lj-events-mapview.js',          
             dir_src + 'events/lj-events-create.js',
             dir_src + 'events/lj-events-map.js',
             dir_src + 'admin/lj-admin.js',

@@ -89,28 +89,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
 
             });
 
-		},
-		handleDomEvents_Search: function(){
-
-			LJ.$body.bind('typeahead:select', function(ev, suggestion) {
-
-				LJ.fn.log(suggestion);
-
-				if( $('.row-create-party-location input').is( ev.target ) ){
-					/* Nothing special - default typeahead behavior, copy name on input */	
-				}
-
-			  	if( $('#search input').is( ev.target ) ){
-			  		LJ.fn.displayUserProfile( suggestion.facebook_id );
-			  	}
-
-			  	if( $('.row-create-friends input').is( ev.target ) ){
-			  		LJ.fn.log('Friends input selected!');
-			  	}
-
-			});
-
 		}
+		
 		
 
 

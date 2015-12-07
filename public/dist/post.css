@@ -3111,7 +3111,7 @@ p {
     min-width: 80px;
     display: inline-block;
     background-color: white;
-    margin: 0 3px;
+    margin: 3px;
     border: 1px solid #eee;
     width: 83px;
     text-align: center;

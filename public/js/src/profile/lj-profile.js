@@ -704,11 +704,25 @@
 		handleFetchAndSyncFriends: function( data ){
 
 			var friends = data.friends;
+
+			// Check if user has new friends compared to what it has stored in db at connection
+			var n_new_friends = friends.length - LJ.user.friends.length;	
+			if( LJ.user.friends.length != LJ.user.friends ){
+
+                LJ.fn.insertNotification({
+                    notification_id : "new_friends",
+                    type            : "flash",
+                    n_new_friends   : n_new_friends
+                });
+
+			}
+
 			LJ.user.friends = friends;
 
-			if( friends.length == 0 ){
+			// Return now to not erase default html
+			if( friends.length == 0 )
 				return;
-			}
+			
 
 			var html = '';
 			_.shuffle( friends ).forEach( function( friend ){

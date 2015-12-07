@@ -168,6 +168,8 @@
         },
         addEventPreview: function( evt, options ){
 
+            return;
+
             var renderFn;
 
             if( !evt || evt === {} ){
@@ -251,6 +253,8 @@
         },
         addPartyPreview: function( party, options ){
 
+            return;
+            
             if( !party || party === {} ){
                 return console.error('No party to be added : ' + party );
             }
