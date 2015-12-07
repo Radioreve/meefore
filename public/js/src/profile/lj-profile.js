@@ -707,7 +707,7 @@
 
 			// Check if user has new friends compared to what it has stored in db at connection
 			var n_new_friends = friends.length - LJ.user.friends.length;	
-			if( LJ.user.friends.length != LJ.user.friends ){
+			if( n_new_friends > 0 ){
 
                 LJ.fn.insertNotification({
                     notification_id : "new_friends",
