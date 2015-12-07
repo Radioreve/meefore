@@ -122,7 +122,7 @@
 
 			var group_html = LJ.fn.renderNotificationsElement('group_name', { group_name: group_name });
 
-			options.icon_code         = "users";
+			options.icon_code         = "group";
 			options.text              = LJ.text_source["n_group_request_text"][ LJ.app_language ].replace('%group_name', group_html );
 			options.subtext           = LJ.text_source["n_group_request_subtext"][ LJ.app_language ].replace('%group_name', group_html );
 			options.happened_at = LJ.fn.stringifyDuration( notification.happened_at );
