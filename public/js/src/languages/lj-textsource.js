@@ -998,6 +998,10 @@
 			"fr": "Chargement des prochaines soirées",
 			"en": "Loading next parties"
 		},
+		app_mobile_warning: {
+			"fr": "Meefore est en mode navigation limitée sur web mobile. L'application sera bientôt disponible sur iOS !",
+			"en": "Meefore in limited mode on web mobile. The iOS app should be soon available on the AppleStore"
+		},
 		app_event_canceled: {
 			"fr": "Ce meefore a été annulé",
 			"en": "This meefore has been canceled"

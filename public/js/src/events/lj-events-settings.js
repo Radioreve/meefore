@@ -234,8 +234,7 @@
             $els.velocity('transition.slideDownOut', {
                 duration: 500,
                 complete: function(){
-                    $('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
-                    .add('.event-accepted-tabview[data-eventid="' + event_id + '"]')
+                    $(this).remove();
                 }
             });
 

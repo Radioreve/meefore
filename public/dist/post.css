@@ -1910,6 +1910,19 @@ p {
     z-index: 100000000;
 }
 
+.m-warning {
+    background: rgba(0, 0, 0, 0.79);
+    padding: 20px;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 100;
+    line-height: 20px;
+}
+
 .lp-arrow {
     position: absolute;
     width: 100px;
@@ -5340,7 +5353,8 @@ i.icon-create {
 }
 
 @media screen and ( min-width: 1024px ) {
-    .m-loaderWrap {
+    .m-loaderWrap,
+   .m-warning {
         display: none!important;
     }
 }
@@ -6053,7 +6067,7 @@ label.lighter {
 /* Notifications styles */
 
 .notification-active {
-    color: #e94f6a;
+    color: #FFFFFF;
     background: #373737;
 }
 
@@ -6195,7 +6209,10 @@ label.lighter {
 }
 
 .notification-message__group-name {
-    color: rgb(185, 255, 179);
+    color: rgb(139, 255, 233);
+    padding: 2px 4px;
+    background: #3D3D3D;
+    border-radius: 3px;
 }
 
 .notification-message__friend-name {

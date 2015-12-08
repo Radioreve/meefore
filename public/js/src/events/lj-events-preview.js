@@ -157,10 +157,15 @@
                     LJ.fn.fetchEventById( event_id, LJ.fn.handleFetchEventById );
                     LJ.fn.toastMsg( LJ.text_source["to_request_sent"][ LJ.app_language ], 'info');
 
-                     LJ.active_event_marker[0].marker.setIcon( LJ.cloudinary.markers.pending_active );
+                    // If user is still on that marker, switch marker icon
+                    if( LJ.active_event_marker[0] ){
+                        LJ.active_event_marker[0].marker.setIcon( LJ.cloudinary.markers.pending_active.open.url );
+                    }   
 
-                    _.find( LJ.event_markers, function( marker ) { return marker.id == event_id; })
-                     .marker.setIcon( LJ.cloudinary.markers.pending_active.open.url );
+                    // In anycase, update the default marker.
+                    _.find( LJ.event_markers, function( marker ) {
+                        return marker.id == event_id; 
+                    }).marker.setIcon( LJ.cloudinary.markers.pending.open.url );
 
 
                 });

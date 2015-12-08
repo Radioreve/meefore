@@ -106,7 +106,7 @@
 
               // Close chatviews
             $inview_wrap_target
-                .velocity('transition.slideDownOut', {
+                .velocity('transition.slideUpOut', {
                  duration: 400 
                 })
                 .removeClass('active')
@@ -117,50 +117,27 @@
 
 
         },
+        // Allow to easily hide event without knowing the event_id
         hideEventInview_Active: function(){
 
             var target_event_id = $('.row-events-accepted-inview.active').attr('data-eventid');
             LJ.fn.hideEventInview( target_event_id );
 
         },
+        // Chain hide & show with a smooth transition
         hideAndshowEventInview: function( current_event_id, target_event_id ){
 
             LJ.fn.log('Calling hide and show with current : ' + current_event_id + ' and target : ' + target_event_id, 5 );
 
             if( !current_event_id || !target_event_id )
                 return LJ.fn.warn('Cant hide and show, missing either current or target event_id', 1 );
-            
-            var $inview_wrap_current = $('.row-events-accepted-inview[data-eventid="' + current_event_id + '"]');
-            var $inview_wrap_target  = $('.row-events-accepted-inview[data-eventid="' + target_event_id + '"]');
 
-              // Close chatviews
-            $inview_wrap_current
-                .velocity('transition.slideDownOut', {
-                 duration: 400 
-                })
-                .removeClass('active')
+            LJ.fn.hideEventInview( current_event_id );
 
-                .find('.event-accepted-chatgroup.active')
-                    .removeClass('active')
-                    .addClass('last-active');
-
-                setTimeout(function(){
-                    
-                    $inview_wrap_target
-                        .addClass('active')
-                        .find('.event-accepted-inview')
-                            .velocity('transition.slideUpIn', {
-                                duration: 700
-                            }).end()
-                            // Usefull part??
-                            .velocity('transition.fadeIn', {
-                                duration: 700
-                            }); 
-                        
-                    LJ.fn.adjustAllChatPanes();
-                   
-                }, 330 );
-
+            // Smooth it up!
+            setTimeout(function(){
+                LJ.fn.showEventInview( target_event_id );
+            }, 80 )
 
         },
         // Add the HTML for new inview and tabview based on user or host
@@ -181,9 +158,6 @@
             $('.row-events-accepted-tabview').append( LJ.fn.renderEventTabview( evt ) );
             LJ.fn.updateTabviewIconStatus();
 
-            if( !options.hide ){
-                $('.event-accepted-tabview').last().click();
-            }
 
             // Initialisation values : make sure the first chatgroup element is active, at first render
             var $inview =  $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
@@ -221,6 +195,10 @@
                 users: $inview.find('.event-accepted-users').jScrollPane().data('jsp'),
                 chats: chats_jsp
             };
+
+            if( !options.hide ){
+                $('.event-accepted-tabview').last().click();
+            }
 
             /* Adjust all tabviews*/
             LJ.fn.adjustAllTabviews();

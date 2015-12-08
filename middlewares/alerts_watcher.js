@@ -36,6 +36,7 @@
 		}
 
 		if( req.sent.no_email ){
+			console.log('User has no mail, skipping init cache for now...');
 			return next();
 		}
 

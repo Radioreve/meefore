@@ -279,6 +279,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                  }
             });
 
+            /* Show limited mode on mobile */
+            $('.m-warning').removeClass('none');
+
             /* Set notification panels */
             LJ.$body.append( LJ.fn.renderNotificationsPanel() );
             LJ.fn.handleDomEvents_Notifications();

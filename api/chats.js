@@ -23,8 +23,9 @@
 		/* Store all chat ids to iterate through messages when save to db */
 		rd.sadd( chats, req.sent.chat_id, function( err ){
 
-			/* Set starting messages to 1. This will be changed when updating cache,
-			   and is used to find to further message to fetch when browsing history */
+			/* Set starting messages to 1. This will be changed when updating (clearing) the cache,
+			   and is used to find to further message to fetch when browsing history. When clearing cache
+			   first messages are erased from redis and stored in mongodb, so start_ns value may increase only */
 			rd.setnx( start_ns, 1, function( err ){
 
 				/* Reset le readby */
@@ -81,14 +82,22 @@
 		var messages_fetched     = parseInt( req.sent.messages_fetched ) || 0;
 		var messages_fetched_add = 8;
 
+		// Total amount of messages in cache
 		var count_ns	= 'chat/' + req.sent.chat_id + '/count';
+
+		// Starting index from which to fetch chat messages
 		var start_ns    = 'chat/' + req.sent.chat_id + '/start';
+
+		// Message object store in cache
 		var message_ns  = 'chat/' + req.sent.chat_id + '/messages/';
+
+		// Has the message been read
 		var readby_ns   = 'chat/' + req.sent.chat_id + '/readby';
 
 		rd.smembers( readby_ns, function( err, readby ){
 
 			rd.get( start_ns, function( err, start ){
+
 				rd.get( count_ns, function( err, count ){
 
 					if( err || !count ){
@@ -96,11 +105,11 @@
 						return eventUtils.sendSuccess( res, [] );
 					}
 
-					console.log('Fetching ' + messages_fetched_add + ' messages, starting with last :  ' + count );
+					console.log('Fetching ' + messages_fetched_add + ' messages, starting with last : ' + count + ' until start : ' + start);
 
 					var all_messages = [];
 					var async_tasks  = [];
-					var end =  count - messages_fetched ;
+					var end =  count - messages_fetched;
 
 					for( var i = end; i >= start; i-- ){
 						(function( i ){ // closure required to capture i value
@@ -113,7 +122,7 @@
 									return callback( null );
 								}
 
-								if( i == start ){
+								if( i == start - 1 ){
 									console.log('Stop fetching, all messages stored in cache have been fetched.');
 									return callback( null );
 								}
@@ -127,7 +136,7 @@
 
 									if( Array.isArray( message.whisper_to ) && message.whisper_to.indexOf( req.sent.facebook_id ) == -1 ){
 										console.log('Not adding message ' + i + '/' + count + ', whispered to someone else');
-										console.log('userId: ' + req.sent.facebook_id );
+										console.log('facebook_id: ' + req.sent.facebook_id );
 										console.log('whisper_to: ' + message.whisper_to );
 										callback( null );
 										return;
@@ -151,6 +160,7 @@
 							return new Date( e1.sent_at ) > new Date( e2.sent_at );
 						});
 
+						console.log('Sending ' + all_messages.length + ' messages');
 						eventUtils.sendSuccess( res, { messages: all_messages, readby: readby } );
 
 					});

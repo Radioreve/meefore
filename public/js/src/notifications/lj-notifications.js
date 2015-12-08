@@ -17,15 +17,17 @@
 		},
 		initNotifications: function(){
 
-			// Notifications éphémères
-			LJ.fn.checkNotification_newUser();
-            LJ.fn.checkNotification_noFriends();
-            LJ.fn.checkNotification_fillProfile();
-
             // Notifications persistentes
             LJ.user.notifications.forEach(function( notification ){
                 LJ.fn.insertNotification( notification );
             });
+
+			// Notifications éphémères
+			// Display after so they are always pinned to top
+			LJ.fn.checkNotification_newUser();
+            LJ.fn.checkNotification_noFriends();
+            LJ.fn.checkNotification_fillProfile();
+
 
             // Daily notification
             

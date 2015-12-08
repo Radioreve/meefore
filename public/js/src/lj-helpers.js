@@ -132,7 +132,7 @@
 					});
 				});
 
-			}, 50 );
+			}, 150 );
 
 		},
 		adjustAllInputsWidth: function( container ){
