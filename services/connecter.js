@@ -10,46 +10,67 @@
 		console.log('Updating connected users...');
 		console.log( JSON.stringify( req.sent, null, 4 ) );
 
-		var evt = req.sent.events[0];
+		var evts = req.sent.events;
 
-		if( !evt ){
+		if( !evts ){
 			res.status(200).json({ err: "Request malformed, need to have an 'events' object of type collection"});
 			return
 		}
 
 		// Check if proper call from pusher
 		if( req.headers['x-pusher-key'] != config.pusher[ process.env.NODE_ENV ].key ){
-			res.status(200).json({ err: "Request failed, wrong api key"});
+			console.log('Wrong Pusher Key');
+			res.status(400).json({ err: "Request failed, wrong api key"});
 			return 
 		}
 
 		// Check if is an event concerning connection/deconnecton by the presence of
-		// private-+facebookid field a
-		var facebook_id = evt.channel.split('private-')[1];
+		// private-+facebook_id field a
+		var facebook_id = null;
+		evts.forEach(function( evt ){
+
+			var splitted = evt.channel.split('private-');
+			if( splitted.length && splitted.length == 2  ){
+				console.log('Private channel found, updating connexion status...');
+				facebook_id = evt.channel.split('private-')[1];
+			}
+
+		});
+
 		if( !facebook_id ){
-			res.status(200).json({ err: "Request malformed, couldnt figure out user's id based on channel"});
+			res.status(400).json({ err: "Request failed, wrong api key"});
 			return 
 		}
 
 		// Add into redis
 		if( evt.name == 'channel_occupied' ){
+
 			rd.sadd('online_users', facebook_id, function( err ){
+
 			console.log('Update success');
 			res.status(200).json({ msg: "Update success" });
+
 			});
+
 		} else { // "channel_vacated"
+
 			rd.srem('online_users', facebook_id );
+
 			User.findOneAndUpdate({
 				'facebook_id': facebook_id
 			}, {
 				'disconnected_at': new Date()
 			}, { new: true }, function( err ){
 				if( err ){
+
 					res.status(400).json({ msg: "Update failed", err: err });
 					console.log('Error saving disconnected_at property : ' + err );
+
 				} else {
+
 					console.log("Update success, user 'disconnected_at' property updated.");
 					res.status(200).json({ msg: "Update success, user 'disconnected_at' property updated." });
+					
 				}
 			});
 		}
