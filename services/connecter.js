@@ -6,7 +6,7 @@
 
 	var updateConnectedUsers = function( req, res ){
 
-		//expected key : f9e4bf4e8f1e0342ca27
+		//expected key : e0e801db688ab26d8581
 		console.log('Updating connected users...');
 
 		var evt = req.sent.events[0];
@@ -17,7 +17,7 @@
 		}
 
 		// Check if proper call from pusher
-		if( req.headers['x-pusher-key'] != config.pusher[ process.env.node_env ].key ){
+		if( req.headers['x-pusher-key'] != config.pusher[ process.env.NODE_ENV ].key ){
 			res.status(400).json({ err: "Request failed, wrong api key"});
 			return console.log('Error, cant access with that api_key');
 		}
