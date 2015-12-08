@@ -7,6 +7,7 @@
 	var updateConnectedUsers = function( req, res ){
 
 		//expected key : f9e4bf4e8f1e0342ca27
+		console.log('Updating connected users...');
 
 		var evt = req.sent.events[0];
 
@@ -26,12 +27,13 @@
 		var facebook_id = evt.channel.split('private-')[1];
 		if( !facebook_id ){
 			res.status(400).json({ err: "Request malformed, couldnt figure out user's id based on channel"});
-			return;
+			return console.log("Error request malformed, couldnt figure out user's id based on channel");
 		}
 
 		// Add into redis
 		if( evt.name == 'channel_occupied' ){
 			rd.sadd('online_users', facebook_id, function( err ){
+			console.log('Update success');
 			res.status(200).json({ msg: "Update success" });
 			});
 		} else { // "channel_vacated"
@@ -45,6 +47,7 @@
 					res.status(400).json({ msg: "Update failed", err: err });
 					console.log('Error saving disconnected_at property : ' + err );
 				} else {
+					console.log("Update success, user 'disconnected_at' property updated.");
 					res.status(200).json({ msg: "Update success, user 'disconnected_at' property updated." });
 				}
 			});
