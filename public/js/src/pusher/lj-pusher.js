@@ -122,7 +122,6 @@
             }
 
 			/* Notifications bubble */
-			LJ.fn.bubbleUp('#events', { stack: true });
 			LJ.fn.toastMsg( message, 'info', 5000 );
 
 		},
