@@ -15,7 +15,8 @@ background: #373737;}
 	display: none;
 }
 .notifications-panel__wrapper {
-height: 220px;
+	height: 220px;
+	background: rgb(48, 48, 48)
 }
 
 .notification {
@@ -114,7 +115,10 @@ background: #373737;}
 }
 
 .notifications-panel .jspTrack {
-	background: #1D1D1D;
-	right: -2px;
-	width: 9px;
+	
+background: #1D1D1D;
+	
+right: -2px;
+	
+width: 9px;
 }

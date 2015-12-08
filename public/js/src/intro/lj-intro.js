@@ -819,10 +819,12 @@
                 var url       = 'https://graph.facebook.com/' + LJ.user.facebook_id + '/picture?width=320&height=320';
 
 				LJ.fn.updatePictureWithUrl({
+
 			                        userId    : LJ.user._id,
 			                        url       : url,
 			                        img_place : img_place,
 			                        img_id    : img_id
+
 				}, function( err, data ){
 
 					if( err ){
@@ -835,11 +837,19 @@
 				$('#intro').remove();
 
 				LJ.fn.replaceImage({
-					img_id: data.img_id,
-					img_version: data.img_version,
-					img_place: 0,
-					scope: ['profile','thumb']
+                    img_id      : data.img_id,
+                    img_version : data.img_version,
+                    img_place   : 0,
+                    scope       : ['profile','thumb']
 				});
+
+                // Typically == LJ.user.pictures[0]
+                var pic = _.find( LJ.user.pictures, function(el){
+                        return el.is_main;
+                    });
+
+                pic.img_id      = data.img_id;
+                pic.img_version = data.img_version;
 
 				});
 

@@ -80,7 +80,7 @@
 
 				LJ.fn.updatePictureWithUrl({
 						userId    : LJ.user._id,
-						img_id    : LJ.user._id + '--' + img_place,  // id_pattern 
+						img_id    : LJ.user._id + '--' + img_place,  // id_pattern [very important!!]
 						url       : url,
 						img_place : img_place
         			}, function( err, data ){
@@ -94,6 +94,12 @@
 					var pic = _.find( LJ.user.pictures, function(el){
 							return el.img_place == img_place;
 						});
+
+					// Update the value to refresh thumb img ( in create meefore e.g )
+					pic.img_id      = data.img_id;
+                	pic.img_version = data.img_version;
+
+                	// Check the scope to know if updating the thumb is necessary
 					var scope = pic.is_main ? ['profile','thumb'] : ['profile'];
 
 					LJ.fn.replaceImage({
@@ -102,6 +108,7 @@
 						img_place   : img_place,
 						scope       : scope
 					});
+
 
 
 				});

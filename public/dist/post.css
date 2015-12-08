@@ -5337,7 +5337,7 @@ i.icon-create {
 }
 
 .search-result-users {
-  /* border: 1px solid #1E1E1E; */
+    border-bottom: 1px solid #272727;
 }
 
 .search-result-party-places {
@@ -6087,6 +6087,7 @@ label.lighter {
 
 .notifications-panel__wrapper {
     height: 220px;
+    background: rgb(48, 48, 48)
 }
 
 .notification {
