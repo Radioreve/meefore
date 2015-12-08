@@ -27,23 +27,28 @@
 		// Check if is an event concerning connection/deconnecton by the presence of
 		// private-+facebook_id field a
 		var facebook_id = null;
+		var name        = null;
+
 		evts.forEach(function( evt ){
 
 			var splitted = evt.channel.split('private-');
 			if( splitted.length && splitted.length == 2  ){
+
 				console.log('Private channel found, updating connexion status...');
+
 				facebook_id = evt.channel.split('private-')[1];
+				name        = evt.name;
 			}
 
 		});
 
-		if( !facebook_id ){
-			res.status(400).json({ err: "Request failed, wrong api key"});
+		if( !facebook_id || !name ){
+			res.status(400).json({ err: "Request failed, couldn't find facebook_id || name"});
 			return 
 		}
 
 		// Add into redis
-		if( evt.name == 'channel_occupied' ){
+		if( name == 'channel_occupied' ){
 
 			rd.sadd('online_users', facebook_id, function( err ){
 
@@ -70,7 +75,7 @@
 
 					console.log("Update success, user 'disconnected_at' property updated.");
 					res.status(200).json({ msg: "Update success, user 'disconnected_at' property updated." });
-					
+
 				}
 			});
 		}
