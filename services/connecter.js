@@ -8,6 +8,7 @@
 
 		//expected key : e0e801db688ab26d8581
 		console.log('Updating connected users...');
+		console.log( JSON.stringify( req.sent, null, 4 ) );
 
 		var evt = req.sent.events[0];
 
