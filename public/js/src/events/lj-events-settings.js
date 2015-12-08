@@ -234,7 +234,7 @@
             $els.velocity('transition.slideDownOut', {
                 duration: 500,
                 complete: function(){
-                    $(this).remove();
+                    $('.row-preview').children().remove();
                 }
             });
 

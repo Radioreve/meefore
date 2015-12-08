@@ -644,14 +644,30 @@
             if( !evt )
                 return LJ.fn.toastMsg( LJ.text_source["app_event_canceled"][ LJ.app_language ], "info" );
             
+            // If not on event view, make sure we are first!
+            if( !$('#events').hasClass('menu-item-active') ){
 
-            // Show event panel 
-            LJ.fn.showEventInview( event_id );
+                $('#events').click();
+
+                return LJ.fn.timeout( 750, function(){
+                    LJ.fn.showChat( event_id, group_id )
+                });
+            }
+
+            // Show event panel. If one event_id is already shown, call the hideAndShow method
+            // Otherwise, call the default show method;
+            var active_event_id =  $('.row-events-accepted-inview.active').attr('data-eventid');
+
+            if( active_event_id && active_event_id != event_id ){
+                LJ.fn.hideAndShowEventInview( event_id, { group_id: group_id, current_event_id: active_event_id });
+            // active_event_id == null because all views are hidden, show it normally
+            } else {
+                LJ.fn.showEventInview( event_id, { group_id: group_id });
+            }
+
+
             LJ.fn.activateEventTabview( event_id );
-
-            // Show proper chatWrap
-            LJ.fn.showChatInview( event_id, group_id );
-            LJ.fn.activateChatTabview( event_id, group_id );
+            LJ.fn.showEventPreview( event_id );
 
         }
 

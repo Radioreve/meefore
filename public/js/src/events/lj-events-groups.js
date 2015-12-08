@@ -48,12 +48,10 @@
                 if( !group_id )
                     return LJ.fn.warn('Missing group_id : ' + group_id );
 
-                // Remove bubbles, update tabview's
-                $self.find('.bubble').addClass('none').text('');
-                LJ.fn.updateTabviewBubbles( event_id );
                 
-                LJ.fn.activateChatTabview( event_id, group_id );
                 LJ.fn.showChatInview( event_id, group_id );
+
+                LJ.fn.activateChatTabview( event_id, group_id );
                 LJ.fn.showChatUsersview( event_id, group_id );
 
             });
@@ -69,6 +67,9 @@
                 .end()
                 .find('.event-accepted-chatgroup[data-groupid="' + group_id + '"]')
                     .addClass('active');
+
+            // Remove bubbles, update tabview's
+            LJ.fn.updateTabviewBubbles( event_id );
 
         },
         showChatUsersview: function( event_id, group_id ){
@@ -99,13 +100,21 @@
 
             var duration = 235;
 
-            var $current_chat =  $('.event-accepted-chat-wrap.active');
-            var $target_chat  =  $('.event-accepted-chat-wrap[data-groupid="' + group_id + '"]');
+            if( !group_id ){
+                return LJ.fn.warn('Cannot show chat inview, group_id: ' + group_id );
+            }
+
+            // Wrapper to target the right chat (otherwise, multiple chat match the criteria)
+            var $current_inview = $('.row-events-accepted-inview.active');
+            var $target_inview  = $('.row-events-accepted-inview[data-eventid="' + event_id + '"]');
+
+            var $current_chat   = $current_inview.find('.event-accepted-chat-wrap.active');
+            var $target_chat    = $target_inview.find('.event-accepted-chat-wrap[data-groupid="' + group_id + '"]');
 
             if( $current_chat.is( $target_chat ) ) return;
 
             if( $current_chat.length == 0 || $target_chat.length == 0 ){
-                return LJ.fn.warn('Cannot show chat in view, missing one of the elements');
+                return LJ.fn.warn('Cannot show chat in view, $current_chat.length: ' + $current_chat.length + ', $target_chat.length: ' + $target_chat.length );
             }
 
             $current_chat
@@ -117,18 +126,12 @@
 
                 .find('.event-accepted-chat-message:not(.me)')
                 .velocity( LJ.ui.slideRightOutLight, {
-                    duration: duration,
-                    complete: function(){
-                        $('.event-accepted-chat-wrap').addClass('none');
-                    }
+                    duration: duration
                 }).end()
 
                 .find('.event-accepted-chat-message.me')
                 .velocity( LJ.ui.slideLeftOutLight, {
-                    duration: duration,
-                    complete: function(){
-                        $('.event-accepted-chat-wrap').addClass('none');      
-                    }
+                    duration: duration
                 }).end()
 
                 .find('.event-accepted-chat-typing')
@@ -144,11 +147,14 @@
                         $current_chat.addClass('none').removeClass('active')
 
                         $target_chat
-                            .find('.event-accepted-notification-message').addClass('none').end()
-                            .find('.event-accepted-chat-message').addClass('none').end()
-                            .removeClass('none').addClass('active');
+                        
+                            .removeClass('none').addClass('active')
 
-                        $target_chat
+                            .find('.event-accepted-notification-message')
+                                .addClass('none').end()
+
+                            .find('.event-accepted-chat-message')
+                                .addClass('none').end()
 
                            .find('.event-accepted-chat-message:not(.me)')
                                 .css({ opacity: 0 })
@@ -176,6 +182,7 @@
 
                     }
                 });
+                
 
                 LJ.fn.adjustAllChatPanes();
 

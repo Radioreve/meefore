@@ -208,7 +208,7 @@
 
             // Displaying Logic
             var $evt = $('.event-preview');
-            var duration = 270;
+            var duration = 240;
 
             // No preview is there
             if( $evt.length == 0 ){
@@ -246,7 +246,7 @@
                         $('.row-events-preview').html( event_preview )
                         .children()
                         .velocity( LJ.ui.slideDownInLight, {
-                            duration: duration +  300 ,
+                            duration: duration +  220 ,
                             complete: function(){
                             }
                         });
@@ -294,7 +294,7 @@
 
 
             var $party = $('.party-preview');
-            var duration = 270;
+            var duration = 240;
 
             if( $party.length == 0 ){
 
@@ -340,7 +340,7 @@
                         $('.row-party-preview').html( party_preview )
                         .children().removeClass('slow-down-3')
                         .velocity( options.transition_in || LJ.ui.slideDownInLight, {
-                            duration: duration +  300 ,
+                            duration: duration +  220 ,
                             complete: function(){
                                 $(this).addClass('slow-down-3');
                             }
@@ -358,6 +358,26 @@
 
             // LJ.fn.addEventPreview( evt );
 
+        },
+        showEventPreview: function( evt ){
+
+            // case the caller only had event_id 
+            if( typeof evt == "string" ){
+                // Find the proper event from cache, and update the preview
+                evt = _.find( LJ.cache.events, function( el ){
+                    return el._id === evt ;
+                });
+            }
+
+            if( !evt ){
+                return LJ.fn.warn('Cant add previews with evt: ' + evt );
+            } 
+
+            LJ.fn.addEventPreview( evt );
+
+            LJ.fn.addPartyPreview( evt.party, {
+                begins_at: evt.begins_at
+            });
         }
 
 	});

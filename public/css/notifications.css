@@ -6,6 +6,7 @@ background: #373737;}
  
 .notifications-panel {
 	width: 668px;
+	height: 300px;
 	position: fixed;
 	top: 42px;
 	left: 50%;
@@ -13,6 +14,10 @@ background: #373737;}
 	z-index: 10;
 	display: none;
 }
+.notifications-panel__wrapper {
+height: 220px;
+}
+
 .notification {
 	display: flex;
 	justify-content: flex-start;
@@ -87,9 +92,29 @@ background: #373737;}
 	border-radius: 3px;
 }
 .notification-message__friend-name {
-	color: #B6FFAF;
+	color: rgb(139, 255, 233);
+    padding: 2px 4px;
+    background: #3D3D3D;
+    border-radius: 3px
 }
 
 .notification--new .notification__icon {
 	color: #e94f6a;
+}
+
+.notifications-panel .jspPane {
+	padding: 0!important;
+	width: 100%!important;
+}
+
+.notifications-panel .jspDrag {
+	background: #3D3D3D;
+	border: 1px solid black;
+	right: 2px;
+}
+
+.notifications-panel .jspTrack {
+	background: #1D1D1D;
+	right: -2px;
+	width: 9px;
 }

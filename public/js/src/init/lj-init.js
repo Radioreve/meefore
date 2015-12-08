@@ -285,6 +285,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             /* Set notification panels */
             LJ.$body.append( LJ.fn.renderNotificationsPanel() );
             LJ.fn.handleDomEvents_Notifications();
+            LJ.jsp_api_notifications = $('.notifications-panel__wrapper').jScrollPane().data('jsp');
 
             /* Mise à jour du profile des filters */
             $('.mood-wrap').html( LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));

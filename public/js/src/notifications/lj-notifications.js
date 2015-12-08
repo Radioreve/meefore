@@ -30,7 +30,7 @@
 
 
             // Daily notification
-            
+            // ...
 
 		},
 		toggleNotificationsPanel: function(){
@@ -55,6 +55,8 @@
 				$notif.addClass('active')
 					  .show();
 			}
+
+			LJ.jsp_api_notifications.reinitialise();
 
 		},
 		hideNotificationsPanel: function(){
@@ -234,10 +236,10 @@
                         '<div class="notification notification--header">',
                        		'<div data-lid="n_header_text" class="notification--header__text">Notifications</div>',
                         '</div>',
-
-                        '<div class="js-notification-appender notification--none"></div>',
-						// There goes the notification                        
-
+                        '<div class="notifications-panel__wrapper">',
+	                        '<div class="js-notification-appender notification--none"></div>',
+							// There goes the notifications                        
+						'</div>',
                         '<div class="notification notification--footer notification-click">',
                             '<div data-lid="n_footer_text" class="notification--footer_text">This is the footer</div>',
                         '</div>',
@@ -343,7 +345,7 @@
 		},
 		insertNotification: function( notification ){
 
-			var max_item  = 5;
+			// var max_item  = 5;
 
 			var html                 = '';
 			var notification_id      = notification.notification_id;
@@ -377,7 +379,6 @@
 			}
 
 
-
 			// Flash notifications : only occurs based on cache informations (not persisted in db as part of users state)
 			// First connexion occured, welcome on board
 			if( notification_id === "inscription_success" ){
@@ -404,7 +405,6 @@
 			}
 
 
-
 			// Random notifications! "Did you know?" style
 			// Make sure user knows its important we got its right email
 			if( notification_id === "check_email" ){
@@ -416,18 +416,20 @@
 			var $notif = $( html );
 
 			// Notifications éphémères
-			if( notification.happened_at > LJ.user.disconnected_at || type == "flash" ){
+			if( moment( notification.happened_at ) > moment( LJ.user.disconnected_at ) || type == "flash" ){
 
 				LJ.fn.bubbleUp('#notifications');
 
 				$notif.addClass('notification--new')
-					  .one('click', function(){ $(this).removeClass('notification--new'); });
+					  .one('click', function(){
+					  	  $(this).removeClass('notification--new'); 
+					  });
 
 			}
 
-			if( $('.js-notification-item').length && $('.js-notification-item').length == max_item ){
-				$('.js-notification-item').last().remove();
-			}
+			// if( $('.js-notification-item').length && $('.js-notification-item').length == max_item ){
+			// 	$('.js-notification-item').last().remove();
+			// }
 
 			// Fire callback if registered
 			if( typeof notificationCallback == "function" ){
@@ -438,7 +440,8 @@
 			}
 
 			// Append the new notification on top of all
-			$notif.insertAfter( $('.js-notification-appender') )
+			$notif.insertAfter( $('.js-notification-appender') );
+			LJ.jsp_api_notifications.reinitialise();
 				
 		},
 		// Insert notifications based on user profile stored in LJ.user.notifications
@@ -530,10 +533,14 @@
 			$('#settings').click();
 
 		},
-		testNotificationPanel: function(){
+		testNotificationPanel: function( stack ){
 
 			if( !$('.notifications-panel').length ){
 				LJ.$body.append( LJ.fn.renderNotificationsPanel() );
+			} else {
+				if( !stack ){
+					$('.js-notification-item').remove();
+				}
 			}
 
 			var html = [];
@@ -563,7 +570,11 @@
 
 			]
 
-			LJ.fn.insertNotifications( test_notifications, 3 );
+			LJ.fn.insertNotifications( test_notifications);
+
+			LJ.fn.checkNotification_newUser();
+            LJ.fn.checkNotification_noFriends();
+            LJ.fn.checkNotification_fillProfile();
 
 		},
 		checkNotification_newUser: function(){

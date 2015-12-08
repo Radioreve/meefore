@@ -21,7 +21,7 @@
                     if( $('.event-accepted-tabview.active').length == 0 ){
 
                         LJ.fn.activateEventTabview( target_event_id );
-                        LJ.fn.showEventInview( target_event_id );
+                        LJ.fn.showEventInview( target_event_id, { show_preview: true });
 
                     // Hide the chat panel first, and then show it ~300ms after for smooth transition
                     } else {
@@ -29,7 +29,7 @@
                         var current_event_id = $('.event-accepted-tabview.active').attr('data-eventid');
 
                         LJ.fn.activateEventTabview( target_event_id );
-                        LJ.fn.hideAndshowEventInview( current_event_id, target_event_id );
+                        LJ.fn.hideAndShowEventInview( target_event_id, { current_event_id: current_event_id } );
 
                     }
                 }
@@ -45,19 +45,35 @@
             $('.event-accepted-tabview[data-eventid="' + target_event_id + '"]').addClass('active');
 
         },
-        showEventInview: function( target_event_id ){
+        showEventInview: function( target_event_id, opts ){
+
+            var opts = opts || {};
 
             LJ.fn.log('Calling show with target : ' + target_event_id, 5 );
 
             var $inview_wrap_target = $('.row-events-accepted-inview[data-eventid="'+ target_event_id +'"]');
             var last_group_id       = $inview_wrap_target.find('.last-active').attr('data-groupid');
+            var group_id            = opts.group_id;
+
+            if( $inview_wrap_target.length == 0 ){
+                return LJ.fn.warn('Cant showEventInview, $inview_wrap_target.length: ' + $inview_wrap_target.length );
+            }
+
+            // If already there and active, do nothing
+            if( $inview_wrap_target.hasClass('active') ) return;
+
+            if( !last_group_id && !group_id ){
+                return LJ.fn.warn('Cant showEventInview, last_group_id: ' + last_group_id + ' and group_id: ' + group_id );
+            }
+
+            // Allow override of last group fetching. This way, the function can land on any of the available chats
+            // Usefull e.g. for notifications, when we want to open a particular chat that may not be the last one opened
+            var target_group_id = group_id || last_group_id;
+
 
             // Hide specifics dom that collide with view
             LJ.fn.hideNotificationsPanel();
             
-            // If already there and active, do nothing
-            if( $inview_wrap_target.hasClass('active') ) return;
-
             // Refresh all chat panes for jsPane to refresh itself
             LJ.fn.adjustAllChatPanes();
 
@@ -80,21 +96,12 @@
                     .velocity('transition.slideUpIn')
             
 
-            LJ.fn.activateChatTabview( target_event_id, last_group_id );
-            LJ.fn.showChatInview( target_event_id, last_group_id );
+            LJ.fn.activateChatTabview( target_event_id, target_group_id );
+            LJ.fn.showChatInview( target_event_id, target_group_id );
             
-
-            // Find the proper event from cache, and update the preview
-            var evt = _.find( LJ.cache.events, function( el ){
-                return el._id === target_event_id 
-            });
-
-            LJ.fn.addEventPreview( evt );
-            LJ.fn.addPartyPreview( evt.party, {
-                begins_at: evt.begins_at
-            });
-
-
+            if( opts.show_preview ){
+                LJ.fn.showEventPreview( target_event_id );
+            }
 
 
         },
@@ -125,18 +132,32 @@
 
         },
         // Chain hide & show with a smooth transition
-        hideAndshowEventInview: function( current_event_id, target_event_id ){
+        hideAndShowEventInview: function( target_event_id, opts ){
+
+            var opts             = opts || {};
+
+            var current_event_id = null
+            var group_id         = null;
+
+            if( opts.current_event_id ){
+                current_event_id = opts.current_event_id;
+            } else {
+                if( $('.row-events-accepted-inview.active').length ){
+                    current_event_id = $('.row-events-accepted-inview.active').attr('data-eventid');
+                }
+            }
 
             LJ.fn.log('Calling hide and show with current : ' + current_event_id + ' and target : ' + target_event_id, 5 );
 
             if( !current_event_id || !target_event_id )
                 return LJ.fn.warn('Cant hide and show, missing either current or target event_id', 1 );
 
+            LJ.fn.showEventPreview( target_event_id );
             LJ.fn.hideEventInview( current_event_id );
 
             // Smooth it up!
             setTimeout(function(){
-                LJ.fn.showEventInview( target_event_id );
+                LJ.fn.showEventInview( target_event_id, opts );
             }, 80 )
 
         },

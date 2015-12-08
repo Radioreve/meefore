@@ -488,6 +488,7 @@
         // along with the page title if nmsg > 0;
         updateTabviewBubbles: function( event_id ){
 
+
         	var n_messages_unread = 0;
 
         	$('.row-events-accepted-inview[data-eventid="' + event_id + '"]')
@@ -495,7 +496,12 @@
         		.each(function( i, chatgroup ){
 
         			var $chatgroup = $( chatgroup );
-        			n_messages_unread += parseInt( $chatgroup.find('.bubble').text() || 0 );
+
+        			if( $chatgroup.hasClass('active') ){
+        				$chatgroup.find('.bubble').addClass('none').text('');
+        			} else {
+        				n_messages_unread += parseInt( $chatgroup.find('.bubble').text() || 0 );
+        			}
 
         		});
 

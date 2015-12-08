@@ -1115,8 +1115,8 @@
 			"en": "Notifications"
 		},
 		n_footer_text: {
-			"fr": "Ceci est le footer",
-			"en": "This is the footer"
+			"fr": "Délivré avec <3 par meefore",
+			"en": "Delivered with <3 by meefore"
 		}
 
 	});

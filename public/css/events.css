@@ -530,21 +530,21 @@ border-radius: 5px 5px 0 0;top: 0px;box-shadow: none;border: 1px solid #B3B3B3;}
 
 .event-accepted-tabview .bubble {
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: 7px;
+  right: 7px;
   background: rgb(245, 89, 116);
   /* background: linear-gradient(#F1667E,#E04964); */
   /* border: 1px solid #DE415C; */
   color: white;
-  padding: 6px 10px;
+  padding: 4px 7px;
   border-radius: 100px;
   transition: all ease-out .15s;
   transform: skewX(-20deg);
-  font-size: 15px;
+  font-size: 12px;
 }
 
 .event-accepted-tabview.active .bubble {
-  background: #545454;
+  /* background: #545454; */
 }
 
 .event-accepted-tabview.active, .event-accepted-tabview.active:before {
@@ -1164,11 +1164,12 @@ opacity: .85;}
 }
 
 .btn-validate-group {
-  display: block; 
+  display: block;
   margin: 0 auto;
   margin-top: 12px;
   background: #68D068;
   color: white;
+  padding: 10px 60px;
 }
 
 .img-input-whisper {

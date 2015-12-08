@@ -3931,24 +3931,24 @@ i.icon-create {
 
 .event-accepted-tabview .bubble {
     position: absolute;
-    top: -5px;
-    right: -5px;
+    top: 7px;
+    right: 7px;
     background: rgb(245, 89, 116);
   /* background: linear-gradient(#F1667E,#E04964); */
   /* border: 1px solid #DE415C; */
     color: white;
-    padding: 6px 10px;
+    padding: 4px 7px;
     border-radius: 100px;
     -webkit-transition: all ease-out .15s;
     transition: all ease-out .15s;
     -webkit-transform: skewX(-20deg);
     -ms-transform: skewX(-20deg);
     transform: skewX(-20deg);
-    font-size: 15px;
+    font-size: 12px;
 }
 
 .event-accepted-tabview.active .bubble {
-    background: #545454;
+  /* background: #545454; */
 }
 
 .event-accepted-tabview.active, .event-accepted-tabview.active:before {
@@ -4640,6 +4640,7 @@ i.icon-create {
     margin-top: 12px;
     background: #68D068;
     color: white;
+    padding: 10px 60px;
 }
 
 .img-input-whisper {
@@ -6073,6 +6074,7 @@ label.lighter {
 
 .notifications-panel {
     width: 668px;
+    height: 300px;
     position: fixed;
     top: 42px;
     left: 50%;
@@ -6081,6 +6083,10 @@ label.lighter {
     transform: translate(-50%,0);
     z-index: 10;
     display: none;
+}
+
+.notifications-panel__wrapper {
+    height: 220px;
 }
 
 .notification {
@@ -6216,9 +6222,29 @@ label.lighter {
 }
 
 .notification-message__friend-name {
-    color: #B6FFAF;
+    color: rgb(139, 255, 233);
+    padding: 2px 4px;
+    background: #3D3D3D;
+    border-radius: 3px
 }
 
 .notification--new .notification__icon {
     color: #e94f6a;
+}
+
+.notifications-panel .jspPane {
+    padding: 0!important;
+    width: 100%!important;
+}
+
+.notifications-panel .jspDrag {
+    background: #3D3D3D;
+    border: 1px solid black;
+    right: 2px;
+}
+
+.notifications-panel .jspTrack {
+    background: #1D1D1D;
+    right: -2px;
+    width: 9px;
 }
