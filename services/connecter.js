@@ -13,22 +13,22 @@
 		var evt = req.sent.events[0];
 
 		if( !evt ){
-			res.status(400).json({ err: "Request malformed, need to have an 'events' object of type collection"});
-			return console.error('Cannot read event (empty) ');
+			res.status(200).json({ err: "Request malformed, need to have an 'events' object of type collection"});
+			return
 		}
 
 		// Check if proper call from pusher
 		if( req.headers['x-pusher-key'] != config.pusher[ process.env.NODE_ENV ].key ){
-			res.status(400).json({ err: "Request failed, wrong api key"});
-			return console.log('Error, cant access with that api_key');
+			res.status(200).json({ err: "Request failed, wrong api key"});
+			return 
 		}
 
 		// Check if is an event concerning connection/deconnecton by the presence of
 		// private-+facebookid field a
 		var facebook_id = evt.channel.split('private-')[1];
 		if( !facebook_id ){
-			res.status(400).json({ err: "Request malformed, couldnt figure out user's id based on channel"});
-			return console.log("Error request malformed, couldnt figure out user's id based on channel");
+			res.status(200).json({ err: "Request malformed, couldnt figure out user's id based on channel"});
+			return 
 		}
 
 		// Add into redis
