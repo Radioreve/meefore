@@ -1,6 +1,7 @@
 	
-	var _ = require('lodash');
-	var get_ip  	  = require('ipware')().get_ip;
+	var _      = require('lodash');
+	var async  = require('async');
+	var get_ip = require('ipware')().get_ip;
 
 	var rd        = require('../services/rd');
 	var pusher    = require('../services/pusher');
@@ -9,6 +10,8 @@
 	var pushEventsDir = '../pushevents';
 	var apiDir        = '../api';
 	var mdwDir        = '../middlewares';
+
+	var User = require('../models/UserModel');
 
 	var initEvents     = require( pushEventsDir + '/initEvents'),
 		profileEvents  = require( pushEventsDir + '/profileEvents'),
@@ -34,6 +37,7 @@
 		mdw.alerts_watcher = require( mdwDir + '/alerts_watcher');
 		mdw.chat_watcher   = require( mdwDir + '/chat_watcher');
 		mdw.notifier       = require( mdwDir + '/notifier');
+
 
 
 	module.exports = function( app ) {
@@ -277,9 +281,18 @@
 	    );
 
 
+	    app.post('/admin/*',
+	    	function( req, res, next ){
+	    		if( req.sent.apikey != 'M33fore' ){
+	    			return res.status(403).json({ msg: "unauthorized" });
+	    		} else {
+	    			next();
+	    		}
+	    	});
+
 	    app.post('/admin/users/online',
 	    	function( req, res ){
-	    		if( req.sent.apikey != 'M33fore' ) return res.status(403).json({ "msg": "unauthorized" });
+
 	    		rd.smembers('online_users', function( err, response ){
 	    			var data  = {};
 	    			if( err ){
@@ -289,6 +302,117 @@
 	    			}
 	    			res.json( data );
 	    		})
+	    	});
+
+	    app.post('/admin/users/alerts/reset',
+	    	function( req, res ){
+
+	    		User
+	    			.find()
+	    			.exec(function( err, users ){
+
+	    				if( err || users.length == 0 ){
+	    					return res.status(400).json({ msg: "Error occured", err: err, users: users });
+	    				}
+
+	    				if( typeof req.sent.min_frequency != 'number' ){
+	    					return res.status(400).json({ msg: "Please, provide min_frequency field of type number" });
+	    				}
+
+	    				var async_tasks = [];
+	    				users.forEach(function( user ){
+							
+
+								var facebook_id    = user.facebook_id;
+								var email          = user.contact_email;
+								var message_unread = user.app_preferences.alerts.message_unread;
+								var accepted_in    = user.app_preferences.alerts.accepted_in;
+
+								var hash       = {
+									min_frequency  : '7200',
+									email          : email,
+									message_unread : message_unread,
+									accepted_in    : accepted_in
+								}
+
+							// (function(hash){
+
+		    					async_tasks.push(function( callback ){
+
+		    						rd.hmset('user_alerts/' + facebook_id, hash, function( err ){
+		    							callback();
+		    						});
+
+		    					});
+
+							// })( hash );
+
+	    				});
+	    				
+    					async.parallel( async_tasks, function( err, response ){
+
+	    					if( err ){
+	    						return res.status( 400 ).json({ err: err, response: response });
+	    					} else {
+	    						return res.status( 200 ).json({ res: "success!" });
+	    					}
+    					});
+
+	    			});
+
+	    	});
+
+	    app.post('/admin/users/alerts/min_frequency',
+	    	function( req, res ){
+
+	    		User
+	    			.find()
+	    			.select('facebook_id')
+	    			.exec(function( err, data ){
+
+	    				if( err || data.length == 0 ){
+	    					return res.status(400).json({ msg: "Error occured", err: err, data: data });
+	    				}
+
+	    				if( typeof req.sent.min_frequency != 'number' ){
+	    					return res.status(400).json({ msg: "Please, provide min_frequency field of type number" });
+	    				}
+
+	    				var async_tasks = [];
+	    				data.forEach(function( o ){
+
+	    					var facebook_id = o.facebook_id;
+	    					async_tasks.push(function( callback ){
+
+	    						// (function( facebook_id ){
+
+			    					rd.hgetall('user_alerts/' + facebook_id, function( err, alerts ){
+
+			    						alerts.min_frequency = req.sent.min_frequency;
+			    						rd.hmset('user_alerts/' + facebook_id, alerts, function( err ){
+			    							console.log('Cache updated for user : ' + facebook_id );
+			    							callback();
+
+			    						});
+
+			    					});
+
+			    				// })( facebook_id );
+
+	    					});
+	    				});
+
+	    				async.parallel( async_tasks, function( err, response ){
+
+	    					if( err ){
+	    						return res.status( 400 ).json({ err: err, response: response });
+	    					} else {
+	    						return res.status( 200 ).json({ res: "success!" });
+	    					}
+	    				});
+
+	    			})
+
 	    	});
 
 

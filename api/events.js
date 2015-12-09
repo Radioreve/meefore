@@ -1,11 +1,12 @@
 	
-	var _          = require('lodash'),
-		eventUtils = require('../pushevents/eventUtils'),
-		User       = require('../models/UserModel'),
-		Event      = require('../models/EventModel'),
-		moment     = require('moment'),
-		rd		   = require('../services/rd'),
-		mailer     = require('../services/mailer');
+		var _          = require('lodash'),
+		eventUtils     = require('../pushevents/eventUtils'),
+		User           = require('../models/UserModel'),
+		Event          = require('../models/EventModel'),
+		moment         = require('moment'),
+		rd             = require('../services/rd'),
+		alerts_watcher = require('../middlewares/alerts_watcher'),
+		mailer         = require('../services/mailer');
 
 	var pusher     = require('../services/pusher');
 
@@ -267,12 +268,11 @@
 						groups[i].accepted_at = new Date();
 						groups[i].members_facebook_id.forEach(function( facebook_id ){
 
-							var offline_users_ns   = 'user_alerts';
-							rd.hgetall( offline_users_ns + '/' + facebook_id, function( err, alerts ){
+							alerts_watcher.allowSendAlert( facebook_id, "accepted_in", function( allowed, alerts ){
 
-								if( err || !alerts ) return;
-								if( alerts.accepted_in == 'no' ) return;
-								mailer.sendAlertEmail_RequestAccepted( alerts.email );
+								if( allowed && alerts.email ){
+									mailer.sendAlertEmail_RequestAccepted( alerts.email );
+								}
 
 							});
 
