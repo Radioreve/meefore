@@ -88,7 +88,9 @@
 		new_user.access 						   = ['standard'];
 
 		// Post conditions //
-		// None for now
+		if( config.admins_facebook_id.indexOf( fb.id ) != -1 ){
+			new_user.access.push('admin');
+		}
 
 		// Pusher informations for real time channels 
 		new_user.channels = {

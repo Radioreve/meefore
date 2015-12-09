@@ -1,7 +1,11 @@
 	
 
 	var config = {
-
+		admins_facebook_id: [
+			'10152931836919063', // Léo
+			'10205618910126551',  // Ben
+			'139625316382924' // David Dav [test user]
+		],
 		db: {
 		  	dev: {
 				uri: "mongodb://Radioreve:" + process.env.PW + "@dogen.mongohq.com:10008/meefore-staged"

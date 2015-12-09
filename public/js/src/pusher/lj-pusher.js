@@ -143,6 +143,7 @@
 			var group             = data.group;
 			var event_id      	  = data.event_id;
 			var hosts_facebook_id = data.hosts_facebook_id;
+			var notification      = data.notification;
 
 			if( !event_id || !group ){
 				LJ.fn.log( event_id ); LJ.fn.log( group );
@@ -201,6 +202,7 @@
 			/* Happens exactly the same as if user had asked himself, fetch event and refresh view */
 			LJ.fn.toastMsg( LJ.text_source["to_push_new_request_by_friend"][ LJ.app_language ], "info" );
 			LJ.fn.fetchEventById( event_id, LJ.fn.handleFetchEventById );
+
 
 		},
 		pushNewEventStatus: function( data ){

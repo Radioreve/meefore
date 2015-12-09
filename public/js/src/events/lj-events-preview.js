@@ -213,7 +213,7 @@
             // No preview is there
             if( $evt.length == 0 ){
 
-                LJ.fn.log('First render');
+                // LJ.fn.log('First render');
 
                 $( event_preview ).hide().appendTo('.row-events-preview');
 
@@ -232,7 +232,7 @@
                 return;
             } 
 
-            LJ.fn.log('Re-render');
+            // LJ.fn.log('Re-render');
             if( $('.row-events-preview').css('opacity') != '1' ){
                 return setTimeout(function(){
                     LJ.fn.addEventPreview( evt, options );
@@ -272,18 +272,22 @@
             });
 
             if( cached_party && options.begins_at && moment( cached_party.begins_at ).dayOfYear() == moment( options.begins_at ).dayOfYear() ){
+                LJ.fn.log('Cached party found for this address, and dates match, rendering the partner party');
                 var party_preview =  LJ.fn.renderPartyPreview_Party( cached_party );
             }
 
             if( cached_party && options.begins_at && moment( cached_party.begins_at ).dayOfYear() != moment( options.begins_at ).dayOfYear() ){
+                LJ.fn.log('Cached party found for this address, but dates do NOT match, rendering the regular party');
                 var party_preview =  LJ.fn.renderPartyPreview_Event( party );
             }
 
             if( cached_party && !options.begins_at ){
+                LJ.fn.log('Cached party found for this address, but check wasnt required (begins_at not provided)');
                 var party_preview =  LJ.fn.renderPartyPreview_Party( cached_party );
             }
 
             if( !cached_party ){
+                LJ.fn.log('Cached party was NOT found for this place_id');
                 var party_preview =  LJ.fn.renderPartyPreview_Event( party );   
             }
 
@@ -298,7 +302,7 @@
 
             if( $party.length == 0 ){
 
-                 LJ.fn.log('First render party');
+                 // LJ.fn.log('First render party');
 
                 $( party_preview ).hide().appendTo('.row-party-preview');
 
@@ -320,11 +324,11 @@
 
             // If same place, same hour, and no cached party was found.
             var compel = '.party-preview-place-name';
-            if( $party.length && $('.row-party-preview').find(compel).text() == $(party_preview).find(compel).text() ){
+            if( $party.length && $('.row-party-preview').find( compel ).text() == $( party_preview ).find( compel ).text() ){
                 return;
             }
             
-            LJ.fn.log('Re-render party');
+            // LJ.fn.log('Re-render party');
             if( $('.row-party-preview').css('opacity') != '1' ){
                 return setTimeout(function(){
                     LJ.fn.addPartyPreview( party, options );

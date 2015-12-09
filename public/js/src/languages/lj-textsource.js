@@ -322,16 +322,16 @@
 			"en": "Change location"
 		},
 		e_filters_date: {
-			"fr": "Dates",
-			"en": "Dates"
+			"fr": "Date(s)",
+			"en": "Date(s)"
 		},
 		e_create_party_button: {
 			"fr": "Soirée partenaire",
 			"en": "Partner event"
 		},
 		e_prevew_default_text: {
-			"fr": "Aucun before n\'est prévu pour cette soirée. Soyez le premier à en proposer un.",
-			"en": "No pregame party is planned for this party. Be the first to organize one."
+			"fr": "Aucun meefore n\'est prévu pour cette soirée ce jour-là. Soyez le premier à en proposer un.",
+			"en": "No pregame party is planned for this party on this day. Be the first to organize one."
 		},
 		e_preview_planned: {
 			"fr": "%n meefore prévu(s) ce jour là",

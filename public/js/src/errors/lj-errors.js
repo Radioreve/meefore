@@ -65,9 +65,9 @@
             // static errors
         	if( err_data.err_id == 'already_hosting' ){
         		if( err_data.host_names[0] === LJ.user.name ){
-                    var message = LJ.text_source["err_create_hosting_me"][ LJ.app_language ];
+                    var message = LJ.text_source["err_create_already_hosting_me"][ LJ.app_language ];
                 } else {
-                    var message = LJ.text_source["err_create_hosting_other"][ LJ.app_language ].replace('%s', err_data.host_names[0] );
+                    var message = LJ.text_source["err_create_already_hosting_other"][ LJ.app_language ].replace('%s', err_data.host_names[0] );
                 }
                 return LJ.fn.replaceModalTitle( message );   
         	}

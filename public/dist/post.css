@@ -223,7 +223,7 @@ img.left {
 
 #logout {
     color: #878787;
-    position: absolute;
+    position: fixed;
     right: 11px;
     top: 11px;
     z-index: 10;
@@ -3082,7 +3082,7 @@ p {
 }
 
 .row.editing .row-input:hover label {
-    color: #F55974;
+    color: #68D068;
 }
 
 .row.editing .row-input {

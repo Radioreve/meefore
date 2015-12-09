@@ -200,7 +200,7 @@ img.left {
 
 #logout {
 	color: #878787;
-	position: absolute;
+	position: fixed;
 	right: 11px;
 	top: 11px;
 	z-index: 10;

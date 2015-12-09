@@ -150,6 +150,8 @@
 
 			if( err ) return callback({ toClient: "api error", }, null );
 
+
+			// Make sure all provided hosts are users of meefore, and none left the app
 			if( hosts.length != host_number )
 				return callback({
 					message : "Couldn't find " + ( host_number - hosts.length ) + " members",
@@ -160,13 +162,19 @@
 						missing_ids : _.difference( data.hosts_facebook_id, _.pluck( hosts, 'facebook_id' ) )
 					}}, null );
 
-			var to_client = '';
-			var err_data = { host_names: [] };
+
+
+			// Make sure no host already has an event planned on this day
+			var to_client           = '';
+			var err_data            = { host_names: [] };
+			var new_event_dayofyear = moment( data.begins_at ).dayOfYear();
 
 			hosts.forEach(function( host ){
 				host.events.forEach(function( evt ){
-					// known bug : wont catch the equivalent day sometimes...
-					if( moment( new Date(evt.begins_at) ).dayOfYear() === moment( data.begins_at, 'DD/MM/YY').dayOfYear() ){
+
+					var host_event_dayofyear = moment( evt.begins_at ).dayOfYear();
+
+					if( new_event_dayofyear == host_event_dayofyear ){
 						err_data.host_names.push( host.name );
 					}
 				});
@@ -177,6 +185,8 @@
 					message : 'Host(s) already hosting an event this day',
 					data    : _.merge( err_data, { err_id: "already_hosting"} )
 				}, null );
+
+
 
 			/* Hosts are validated*/
 			event_data.hosts = _.pluckMany( hosts, settings.public_properties.users );
