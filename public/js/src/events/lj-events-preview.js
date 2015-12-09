@@ -302,7 +302,7 @@
 
             if( $party.length == 0 ){
 
-                 // LJ.fn.log('First render party');
+                 LJ.fn.log('First render party');
 
                 $( party_preview ).hide().appendTo('.row-party-preview');
 
@@ -322,18 +322,22 @@
 
             }
 
-            // If same place, same hour, and no cached party was found.
-            var compel = '.party-preview-place-name';
-            if( $party.length && $('.row-party-preview').find( compel ).text() == $( party_preview ).find( compel ).text() ){
-                return;
-            }
-            
-            // LJ.fn.log('Re-render party');
+            LJ.fn.log('Re-render party');
             if( $('.row-party-preview').css('opacity') != '1' ){
+                LJ.fn.log('Re-render 100s later...', 2);
                 return setTimeout(function(){
                     LJ.fn.addPartyPreview( party, options );
                 }, 100 );
             }
+            
+            // If same place, same hour, and no partner party was found.
+            // To know if its the same DOM element, we compare based on the text of the party preview place name which is unique
+            var comparison_class = '.party-preview-place-name';
+            if( $party.length && $('.row-party-preview').find( comparison_class ).text() == $( party_preview ).find( comparison_class ).text() ){
+                LJ.fn.log('Compel wtf?!', 2);
+                return;
+            }
+            
 
 
             $party
