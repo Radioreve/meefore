@@ -198,17 +198,19 @@ margin: 10px 0;
 .lp-subpart:nth-child(2){
 }
 
-.hero-header {font-family: Pacifico;text-align: center;color: white;line-height: 50px;/* text-transform: uppercase; *//* letter-spacing: .5px; */font-weight: bold;font-weight: normal;font-size: 40px;}
+.hero-header {font-family: Pacifico;text-align: center;color: white;line-height: 50px;/* text-transform: uppercase; *//* letter-spacing: .5px; */font-weight: bold;font-weight: normal;font-size: 44px;}
 .hero-header-sub {
 color: white;
 margin-top: 25px;
-font-size: 18px;
+font-size: 21px;
 font-family: Karla;
 text-shadow: 1px 1px 1px #6B6B6B;
 font-family: 'Coming soon';
 text-align: center;
-line-height: 31px;
+line-height: 37px;
 font-family: 'Karla';
+font-family: Quicksand;
+letter-spacing: -1px;
 }
 
 .hero-subheader {text-align: center;font: normal 28px 'Alegreya Sans Sc';text-shadow: 0 1px 1px #575757;color: white;text-transform: none;margin-top: 25px;letter-spacing: -.5px;line-height: 45px;}

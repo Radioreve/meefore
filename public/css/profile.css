@@ -455,18 +455,18 @@ right: 0;
 
 .row-friend-name {
    font-size: 13px;
-   text-align: center;
-   padding: 3px 5px;
-   overflow: hidden;
-   height: 26px;
-   line-height: 19px;
-   border-top: 1px dashed #eee;
-   margin: 2px auto;
-   display: inline-block;
-   width: 70px;
-   font-family: 'Karla';
-   border-radius: 2px;
-   vertical-align: middle;
+    text-align: center;
+    padding: 3px 5px;
+    overflow: hidden;
+    height: 26px;
+    line-height: 19px;
+    margin: 3px auto 7px;
+    display: inline-block;
+    width: 70px;
+    font-family: 'Karla';
+    border-radius: 2px;
+    vertical-align: middle;
+    background: #FBFBFB;
 }
 
 .row-friend-actions {

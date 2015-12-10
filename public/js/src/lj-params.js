@@ -314,7 +314,7 @@
 				params: { cloud_name: "radioreve", width: 150, height: 150, crop: 'fill', gravity: 'face' }
 			},
 			friends: {
-				params: { cloud_name: "radioreve", 'class': 'rounded', width: 50, height: 50, crop: 'fill', gravity: 'face' }
+				params: { cloud_name: "radioreve", 'class': '', width: 65, height: 65, crop: 'fill', gravity: 'face' }
 			}
 		},
 		events:

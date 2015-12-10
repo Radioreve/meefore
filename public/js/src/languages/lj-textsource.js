@@ -1010,9 +1010,9 @@
 			"fr": "Meefore est en mode navigation limitée sur web mobile. L'application sera bientôt disponible sur iOS !",
 			"en": "Meefore in limited mode on web mobile. The iOS app should be soon available on the AppleStore"
 		},
-		app_event_canceled: {
-			"fr": "Ce meefore a été annulé",
-			"en": "This meefore has been canceled"
+		app_event_unavailable: {
+			"fr": "Ce meefore n'est plus d'actualité",
+			"en": "This meefore is no longer available"
 		},
 		app_reconnect: {
 			"fr": "Vous avez été déconnecté. <br> L'application redémarrera dès que vous aurez retrouvé la connexion.",

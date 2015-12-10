@@ -642,7 +642,7 @@
             });
 
             if( !evt )
-                return LJ.fn.toastMsg( LJ.text_source["app_event_canceled"][ LJ.app_language ], "info" );
+                return LJ.fn.toastMsg( LJ.text_source["app_event_unavailable"][ LJ.app_language ], "info" );
             
             // If not on event view, make sure we are first!
             if( !$('#events').hasClass('menu-item-active') ){

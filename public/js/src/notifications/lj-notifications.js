@@ -524,10 +524,15 @@
 
 			var begins_at = n.event_begins_at;
 
-			var event_id = _.find( LJ.cache.events, function( evt ){
+			evt = _.find( LJ.cache.events, function( evt ){
 				return moment( evt.begins_at ).dayOfYear() == moment( begins_at ).dayOfYear();
-			})._id;
+			})
 
+			if( !evt ){
+				return LJ.fn.toastMsg( LJ.text_source["app_event_unavailable"][ LJ.app_language ], "info" );
+			}
+
+			var event_id = evt._id;
 			var group_id = "hosts";
 
 			if( !event_id || !group_id ){

@@ -2127,19 +2127,21 @@ p {
 /* text-transform: uppercase; *//* letter-spacing: .5px; */
     font-weight: bold;
     font-weight: normal;
-    font-size: 40px;
+    font-size: 44px;
 }
 
 .hero-header-sub {
     color: white;
     margin-top: 25px;
-    font-size: 18px;
+    font-size: 21px;
     font-family: Karla;
     text-shadow: 1px 1px 1px #6B6B6B;
     font-family: 'Coming soon';
     text-align: center;
-    line-height: 31px;
+    line-height: 37px;
     font-family: 'Karla';
+    font-family: Quicksand;
+    letter-spacing: -1px;
 }
 
 .hero-subheader {
@@ -3146,13 +3148,13 @@ p {
     overflow: hidden;
     height: 26px;
     line-height: 19px;
-    border-top: 1px dashed #eee;
-    margin: 2px auto;
+    margin: 3px auto 7px;
     display: inline-block;
     width: 70px;
     font-family: 'Karla';
     border-radius: 2px;
     vertical-align: middle;
+    background: #FBFBFB;
 }
 
 .row-friend-actions {
