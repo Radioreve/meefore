@@ -90,7 +90,7 @@
 
             LJ.fn.log('Total events successfully fetched, n = ' + events.length);
             LJ.cache.events = events;
-                
+
 
         },
         handleFetchParties: function( err, parties ){
@@ -203,9 +203,7 @@
         displayEventsMarkers: function( events ){
                 
             events.forEach(function( evt ){
-                LJ.fn.displayEventMarker( evt, { 
-                    data: evt 
-                });
+                LJ.fn.displayEventMarker( evt );
             });
 
           /* Rendu des évènements les plus proches par rapport à la position de départ */
@@ -315,7 +313,10 @@
 
             var effective_latlng = LJ.fn.findEffectiveLatLng_Event( evt );
 
-            var data = _.merge( options.data || {}, { type: "party" });
+            var data = _.merge( options.data || {}, { 
+                type    : "event",
+                address : evt.address
+            });
 
             LJ.fn.displayMarker( _.merge({
                 lat       : effective_latlng.lat,
@@ -403,7 +404,14 @@
 
             var effective_latlng = LJ.fn.findEffectiveLatLng_Party( party );
 
-            var data = _.merge( options.data || {}, { type: "party" });
+            // if( !latlng || !latlng.lat || !latlng.lng ){
+            //     return LJ.fn.warn('Cannot display marker, missing either lat or lng, latlng: ' + latlng + ', latlng.lat: ' + latlng.lat + ', latlng.lng: ' + latlng.lng, 2 );
+            // }
+
+            var data = _.merge( options.data || {}, {
+                type    : "party",
+                address : party.address
+            });
 
             LJ.fn.displayMarker({
                 lat       : effective_latlng.lat,
@@ -532,6 +540,10 @@
 
             var latlng = LJ.fn.getEffectiveLatLng( party );
 
+            // if( !latlng || !latlng.lat || !latlng.lng ){
+            //     return LJ.fn.warn('Cannot display marker, missing either lat or lng, latlng: ' + latlng + ', latlng.lat: ' + latlng.lat + ', latlng.lng: ' + latlng.lng, 2 );
+            // }
+
             // Display active party
             LJ.fn.displayMarker({
                 lat       : latlng.lat,
@@ -589,7 +601,7 @@
 
             all_markers.forEach(function( mark ){
 
-                var address      = mark.data.address
+                var address = mark.data.address
 
                 // Compute the distance between the marker that's about to be appened,
                 // and 'all' other markers. That means that offset is also done when 2 events are not on
@@ -678,7 +690,7 @@
             filtered_events = _.filter( LJ.cache.events, function( evt ){
                 return evt.party.address.place_id == party.address.place_id;
             });
-            
+
 
             if( filters ){
 

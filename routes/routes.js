@@ -237,6 +237,7 @@
 	    // [ @events ] Crée un nouvel évènement
 	    app.post('/api/v1/events',
 	    	mdw.validate('create_event', ['create_event']),
+	    	mdw.notifier.addNotification('marked_as_host'),
 	    	api.events.createEvent );
 
 

@@ -19,6 +19,11 @@
 			return addNotification_GroupRequest
 		}
 
+		// Group has asked to join a user's meefore
+		if( notification_id == "marked_as_host" ){
+			return addNotification_MarkedAsHost
+		}
+
 
 	};
 		
@@ -44,11 +49,11 @@
 
 		// Shortcut reference
 		var n = {
-			notification_id       : notification_id,
-			group_name : group_name,
-			group_id   : group_id,
-			event_id   : event_id,
-			happened_at: moment().toISOString()
+			notification_id : notification_id,
+			group_name      : group_name,
+			group_id        : group_id,
+			event_id        : event_id,
+			happened_at     : moment().toISOString()
 		};
 
 		// Only save notification if group got accepted
@@ -97,6 +102,46 @@
 		var query = { 
 			facebook_id: { $in: facebook_ids }
 		};
+		var update = { 
+			$push: { 'notifications': n } 
+		};
+		var options = {
+			multi: true 
+		};
+
+		User.update( query, update, options, displayError );
+
+		// Save notification reference and go to next, dont wait for db call to finish
+		req.sent.notification = n;
+		next();
+
+	};
+
+	function addNotification_MarkedAsHost( req, res, next ){
+
+		var notification_id = "marked_as_host";
+
+		// At this stage, we cannt access the event_id (not constructed yet) so we pass
+		// begins_at to uniquely find the event clientside based on dayOfYear() (since users
+		// cant host multiple events on the same day )
+		var begins_at    = req.sent.begins_at;
+		var facebook_id  = req.sent.facebook_id;
+
+		// Only push notification to 'other' hosts
+		var facebook_ids = _.difference( req.sent.hosts_facebook_id, [facebook_id] );
+
+		// Shortcut reference
+		var n = {
+			notification_id : notification_id,
+			event_begins_at : begins_at,
+			facebook_id     : facebook_id,
+			happened_at     : moment().toISOString()
+		};
+
+		var query = { 
+			facebook_id: { $in: facebook_ids }
+		};
+
 		var update = { 
 			$push: { 'notifications': n } 
 		};

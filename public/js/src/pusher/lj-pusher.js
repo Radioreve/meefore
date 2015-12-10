@@ -92,14 +92,16 @@
         	LJ.fn.log('Test succeed!');
         	LJ.fn.log(data);
         },
-		pushNewEvent: function( evt ){
+		pushNewEvent: function( data ){
+
+			var evt          = data.evt;
+			var notification = data.notification
 
 			if( !evt )
 				return console.error('No arguments were passed (pushNewEvent)')
 
 			/* Default message */
-			var message = evt.hosts[0].name + ' propose un meefore le ' + moment( evt.begins_at ).format('DD/MM');
-
+			var message = LJ.text_source["to_new_meefore"][ LJ.app_language ].replace('%name', evt.hosts[0].name ).replace('%date', moment( evt.begins_at ).format('DD/MM') );
 			/* Internal */
 			LJ.fn.updateEventCache( evt );
 
@@ -109,7 +111,7 @@
 
             /* Did a friend tag me as host ? */
             if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' ) ) ){
-            	message = 'Un ami vous a ajouté en tant qu\'organisateur de son before!';
+            	message = LJ.text_source["to_new_meefore_host"][ LJ.app_language ];
 
             	if( !$('#events').hasClass('menu-item-active') ){
             		LJ.fn.addEventInviewAndTabview( evt, { hide: true } );
@@ -119,6 +121,10 @@
             	
             	LJ.fn.joinEventChannel( evt );
             	LJ.fn.fetchMe();
+
+            	/* Notification */
+				LJ.fn.pushNewNotification( notification );
+
             }
 
 			/* Notifications bubble */
@@ -183,6 +189,9 @@
 
 			// Finally join channel to listen for further events
 			LJ.fn.joinChatChannel( event_id, chat_id );
+
+			/* Notification */
+			LJ.fn.pushNewNotification( notification );
 			
 		},
 		pushNewGroup_Group: function( data ){
@@ -234,11 +243,11 @@
 		},
 		pushNewGroupStatus: function( data ){
  			
-			var group    = data.group;
-			var status   = group.status;
-			var event_id = data.event_id;
-			var chat_id  = data.chat_id;
-			var notification = data.notification;
+			var group             = data.group;
+			var status            = group.status;
+			var event_id          = data.event_id;
+			var chat_id           = data.chat_id;
+			var notification      = data.notification;
 			var hosts_facebook_id = data.hosts_facebook_id
 
 			LJ.fn.log('Pushing new group status : ' + status + ' for event : ' + event_id );
@@ -276,7 +285,7 @@
 					});
 
 					/* Notification */
-					LJ.fn.pushNewNotification( notification )
+					LJ.fn.pushNewNotification( notification );
 					
 				}
 				if( status == "kicked" ){

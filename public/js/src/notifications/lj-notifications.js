@@ -18,6 +18,7 @@
 		initNotifications: function(){
 
             // Notifications persistentes
+            // Certaines doivent être affichées de manière async à un autre moment
             LJ.user.notifications.forEach(function( notification ){
                 LJ.fn.insertNotification( notification );
             });
@@ -129,7 +130,7 @@
 			options.icon_code         = "group";
 			options.text              = LJ.text_source["n_group_request_text"][ LJ.app_language ].replace('%group_name', group_html );
 			options.subtext           = LJ.text_source["n_group_request_subtext"][ LJ.app_language ].replace('%group_name', group_html );
-			options.happened_at = LJ.fn.stringifyDuration( notification.happened_at );
+			options.happened_at		  = LJ.fn.stringifyDuration( notification.happened_at );
 
 			return LJ.fn.renderNotificationItem( options );
 
@@ -137,14 +138,22 @@
 		renderNotification_MarkedAsHost: function( notification ){
 
 			var options = {};
-			var friend_name = notification.friend_name;
+			var friend_id = notification.facebook_id;
+
+			var friend = _.find( LJ.user.friends, function( friend ){
+				return friend.facebook_id == friend_id;
+			})
+
+			if( !friend) return LJ.fn.warn('Cannot render marked as host, couldnt find friend: ' + friend );
+
+			var friend_name = friend.name;
 
 			var friend_html = LJ.fn.renderNotificationsElement('friend_name', { friend_name: friend_name });
 
 			options.icon_code         = "star-1";
 			options.text              = LJ.text_source["n_marked_as_host_text"][ LJ.app_language ].replace('%friend_name', friend_html );
 			options.subtext           = LJ.text_source["n_marked_as_host_subtext"][ LJ.app_language ];
-			options.happened_at = LJ.fn.stringifyDuration( notification.happened_at );
+			options.happened_at 	  = LJ.fn.stringifyDuration( notification.happened_at );
 
 			return LJ.fn.renderNotificationItem( options );
 
@@ -513,8 +522,13 @@
 		},
 		notificationCallback_MarkedAsHost: function( n ){
 
-			var event_id = n.event_id;
-			var group_id = n.group_id;
+			var begins_at = n.event_begins_at;
+
+			var event_id = _.find( LJ.cache.events, function( evt ){
+				return moment( evt.begins_at ).dayOfYear() == moment( begins_at ).dayOfYear();
+			})._id;
+
+			var group_id = "hosts";
 
 			if( !event_id || !group_id ){
 				return LJ.fn.warn('Cant register "unread marked as host" callback without event_id and chat_id ', 2);

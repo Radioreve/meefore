@@ -565,6 +565,14 @@
 			"fr": "Chuchoter",
 			"en": "Whisper"
 		},
+		to_new_meefore: {
+			"fr": "%name propose un meefore le %date",
+			"en": "%name hosts a meefore the %date"
+		},
+		to_new_meefore_host: {
+			"fr": "Un ami vous a ajouté en tant qu'organisateur de son meefore",
+			"en": "A friend added you as host of his meefore"
+		},
 		to_default_error: {
 			"fr": "Une erreur est survenue",
 			"en": "Something went wrong"
@@ -1043,8 +1051,8 @@
 			"en": "The group %group_name has requested to join a meefore of yours"
 		},
 		n_group_request_subtext: {
-			"fr": "Allez voir de quoi ils ont l'air",
-			"en": "Check them out"
+			"fr": "Faites connaissance dès maintenant sur le chat!",
+			"en": "Get to know each other now on the chat"
 		},
 		n_marked_as_host_text: {
 			"fr": "Votre ami %friend_name vous a marqué organisateur sur son meefore",

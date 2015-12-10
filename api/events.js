@@ -8,6 +8,8 @@
 		alerts_watcher = require('../middlewares/alerts_watcher'),
 		mailer         = require('../services/mailer');
 
+	var mongoose = require('mongoose');
+
 	var pusher     = require('../services/pusher');
 
 	var pusher_max_size = 10000;
@@ -18,6 +20,8 @@
 		var socket_id = req.sent.socket_id;
 	    
 	    var new_event = {};
+
+	    var notification = req.sent.notification;
 
     	/* set by client */
 		new_event.hosts     = data.hosts;
@@ -73,7 +77,10 @@
 				    	console.log('Event created!');
 				    	eventUtils.sendSuccess( res, new_event );
 
-				    	var data = new_event.toObject();
+				    	var data = {
+							evt          : new_event.toObject(),
+							notification : notification
+				    	};
 
 				    	if( eventUtils.oSize( data ) > pusher_max_size ){
 				    		pusher.trigger('app', 'new oversize message' );
@@ -133,10 +140,11 @@
 
 	var request = function( req, res ){
 		
-		var groups    = req.sent.groups;
-		var event_id  = req.sent.event_id;
-		var socket_id = req.sent.socket_id;
-		var evt       = req.sent.evt;
+		var groups       = req.sent.groups;
+		var event_id     = req.sent.event_id;
+		var socket_id    = req.sent.socket_id;
+		var evt          = req.sent.evt;
+		var notification = req.sent.notification;
 
 		var new_group           = req.sent.new_group;
 		var group_id            = req.sent.new_group.group_id;
@@ -176,7 +184,8 @@
 						var data = {
 							event_id          : event_id,
 							hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
-							group             : new_group 
+							group             : new_group,
+							notification      : notification 
 						};
 
 						eventUtils.sendSuccess( res, data );
@@ -222,9 +231,11 @@
 				});
 			}
 
+			var hosts_facebook_id = _.pluck( evt.hosts, 'facebook_id' )
+
 			var data = {
 				event_id          : event_id,
-				hosts_facebook_id : _.pluck( evt.hosts, 'facebook_id' ),
+				hosts_facebook_id : hosts_facebook_id,
 				status            : evt.status
 			};
 
@@ -234,6 +245,33 @@
 	    		pusher.trigger('app', 'new oversize message' );
 			} else {
 				pusher.trigger('app', 'new event status', data, socket_id );
+			}
+
+			// If the status is canceled, all events need to be removed from users array
+			// To allow them to recreate event the same day
+			if( status == "canceled" ){
+				
+				var query = {
+					facebook_id: { $in: hosts_facebook_id }
+				};
+
+				var update = {
+					$pull: {
+						events: { 'event_id': mongoose.Types.ObjectId( event_id ) }
+					}
+				};
+
+				var options = {
+					multi: true
+				};
+
+				User.update( query, update, options, function( err, res ){
+					if( err ){
+						console.log('Cant remove canceled events from users collection : ' + err );
+					}
+				});
+
+
 			}
 
 		});
