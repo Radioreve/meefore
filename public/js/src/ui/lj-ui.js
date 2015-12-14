@@ -75,7 +75,7 @@
 							setTimeout(function(){
 								$('.row-events-filters').velocity('transition.slideDownIn', { duration: duration_time, display: 'flex' });
 								if( $('.row-preview').children().length > 0 ){
-									$('.row-preview').velocity('transition.slideDownIn', { duration: duration_time });
+									$('.row-preview').velocity('transition.slideDownIn', { duration: duration_time, display: 'flex' });
 								}
 							}, 300 );
 							

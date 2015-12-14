@@ -1,13 +1,14 @@
 
 	
-	var dir = process.cwd();
-
+	var dir      = process.cwd();
+	
 	var mongoose = require('mongoose');
-	var _ = require('lodash');
-	var async = require('async');
-
-	var User = require( dir +  '/models/UserModel');
-	var config = require( dir + '/config/config');
+	var _        = require('lodash');
+	var async    = require('async');
+	var moment   = require('moment');
+	
+	var User     = require( dir +  '/models/UserModel');
+	var config   = require( dir + '/config/config');
 
 	mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
 
@@ -24,9 +25,16 @@
 				tasks.push(function( done ){
 
 					// Update part
-					user.disconnected_at = new Date();
-					// user.notifications = [];
-					
+					var new_arr = [];
+					user.events.forEach(function( evt, i ){
+						if( evt != null ){
+							new_arr.push(evt); 
+						}
+					});
+
+					user.events = new_arr;
+					user.markModified('events');
+
 					user.save(function(){
 						console.log('user updated');
 						done();
