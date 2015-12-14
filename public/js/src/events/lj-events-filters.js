@@ -30,8 +30,8 @@
 		},
 		applyDateFilter: function(){
 
-			LJ.fn.applyDateFilter_Preview();
 			LJ.fn.applyDateFilter_Map();
+			LJ.fn.applyDateFilter_Preview();
 
 		},
 		applyDateFilter_Preview: function(){
@@ -40,10 +40,14 @@
 			// Based on the current active set of marker, try find an event/party for that day
 			// If found, replace it. If it's not, just drop the preview from the screen
 			if( LJ.active_party_marker.length != 0 ){
-				var party = _.find( LJ.cache.parties, function( p ){
-					return p.address.place_id = LJ.active_party_marker[0].marker_id;
+				var mrk = _.find( LJ.party_markers, function( mrk ){
+					return mrk.marker_id == LJ.active_party_marker[0].marker_id;
 				});
-				LJ.fn.clickOnClosestEvent( party );
+				if( mrk.marker ){
+					google.maps.event.trigger( mrk.marker, 'click' );
+				} else {
+					LJ.fn.warn('No party was found', 2);
+				}
 			}
 
 
