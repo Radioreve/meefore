@@ -201,7 +201,7 @@
 
         },
         displayEventsMarkers: function( events ){
-                
+            
             events.forEach(function( evt ){
                 LJ.fn.displayEventMarker( evt );
             });
@@ -256,9 +256,9 @@
             } else {
                 LJ[ options.cache ] = LJ[ options.cache ] || [];
                 LJ[ options.cache ].push({
-                        marker : new_marker,
-                        id     : options.id,
-                        data   : options.data
+                        marker    : new_marker,
+                        marker_id : options.marker_id,
+                        data      : options.data
                     });
                 // Fix, if has active in namespace, force refresh to be on top
                 setTimeout(function(){
@@ -292,39 +292,42 @@
             var status;
             var open_status;
 
+
+            // Find which marker to display
             var my_group = _.find( evt.groups, function( group ){
                 return group.members_facebook_id.indexOf( LJ.user.facebook_id ) != -1; 
             });
 
             if( my_group ){
                 status = my_group.status;
-            } else if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' )) ){
-                status = "hosting";
             } else {
-                status = 'base';
+                status = LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' ) ) ? "hosting" : "base"; 
             }
 
-            if( evt.status == "open" ){
-                open_status = "open"
-            } else {
-                open_status = "full"
-            }
+            open_status = evt.status === "open" ? "open" : "full";
 
+            url = options.url || LJ.cloudinary.markers[ status ][ open_status ].url
 
+            // Update the effective lat/lng, in case 2 markers are displayed at the same address
             var effective_latlng = LJ.fn.findEffectiveLatLng_Event( evt );
+            var lat = effective_latlng.lat;
+            var lng = effective_latlng.lng;
 
-            var data = _.merge( options.data || {}, { 
-                type    : "event",
-                address : evt.address
-            });
+            // Build the data that will be store with the marker in cache
+            var data = _.cloneDeep( options.data ) || {};
+
+            data.type      = "event";
+            data.address   = evt.address;
+            data.begins_at = evt.begins_at;
+
 
             LJ.fn.displayMarker( _.merge({
-                lat       : effective_latlng.lat,
-                lng       : effective_latlng.lng,
-                url       : options.url || LJ.cloudinary.markers[ status ][ open_status ].url,
+                lat       : lat,
+                lng       : lng,
+                url       : url,
                 cache     : options.cache || 'event_markers',
                 singleton : false,
-                id        : evt._id,
+                marker_id : evt._id,
                 data      : data,
                 zIndex    : 1,
                 listeners : [
@@ -335,6 +338,10 @@
                             if( LJ.fn.isEventMarkerActivated( evt._id ) ){
                                 return LJ.fn.log('Marker already activated');
                             }
+
+                            // if( this.getOpacity() != 1 ){
+                            //     LJ.fn.resetDateFilter();
+                            // }
 
                             // Clear everything
                             LJ.fn.clearAllActiveMarkers();
@@ -358,7 +365,7 @@
 
                             LJ.party_markers.forEach(function( mrk ){
 
-                                if( mrk.id == evt.party.address.place_id ){
+                                if( mrk.marker_id == evt.party.address.place_id ){
                                     c_evt.party.address.lat = mrk.marker.getPosition().lat();
                                     c_evt.party.address.lng = mrk.marker.getPosition().lng();
                                 }
@@ -381,6 +388,15 @@
                     }, {
                         event_type : 'mouseout',
                         callback   : function(e){
+
+                            var markers = LJ.event_markers.concat( LJ.party_markers );
+
+                            markers.forEach(function( mrk ){
+                                if( mrk.marker != this ){
+                                    mrk.marker.setZIndex(1);
+                                }
+                            });
+
                             $('.event-accepted-tabview[data-eventid="' + evt._id + '"]').removeClass('highlight');
                         }
                     }
@@ -393,34 +409,40 @@
 
             var options = options || {};
 
+            var url = LJ.cloudinary.markers.party.url;
+
             // Only display the marker if no other party at the same location exists
             var party_at_same_address = _.find( LJ.party_markers, function( item ){
-                return item.id == party.address.place_id; 
+                return item.marker_id == party.address.place_id; 
             });
 
             if( party_at_same_address ){
                 return LJ.fn.log('No displaying marker, already there');
             }
 
+             // Update the effective lat/lng, in case 2 markers are displayed at the same address
             var effective_latlng = LJ.fn.findEffectiveLatLng_Party( party );
 
-            // if( !latlng || !latlng.lat || !latlng.lng ){
-            //     return LJ.fn.warn('Cannot display marker, missing either lat or lng, latlng: ' + latlng + ', latlng.lat: ' + latlng.lat + ', latlng.lng: ' + latlng.lng, 2 );
-            // }
+            var lat = effective_latlng.lat;
+            var lng = effective_latlng.lng;
 
-            var data = _.merge( options.data || {}, {
-                type    : "party",
-                address : party.address
-            });
+            // LJ.fn.updateEventsPartyLatLng( party.address.place_id, effective_latlng );
+
+            // Data part that will be store in cache with the marker
+            var data = _.cloneDeep( options.data ) || {};
+
+                data.type      = "party";
+                data.address   = party.address;
+                data.begins_at = party.begins_at;
 
             LJ.fn.displayMarker({
-                lat       : effective_latlng.lat,
-                lng       : effective_latlng.lng,
-                url       : LJ.cloudinary.markers.party.url,
+                lat       : lat,
+                lng       : lng,
+                url       : url,
                 cache     : options.cache || 'party_markers',
                 singleton : false,
-                id        : party.address.place_id,
-                data      : options.data,
+                marker_id : party.address.place_id,
+                data      : data,
                 zIndex    : 2,
                 listeners : [
                     {
@@ -430,6 +452,11 @@
                             // Select all events in cache that cause to this place
                             // Range them by date according to filters
                             // Select the closest in distance, and trigger click
+
+                           // var u_party = _.find( LJ.cache.parties, function( par ){
+                           //      return par.address.place_id == party.address.place_id;
+                           // }); 
+
                            LJ.fn.clickOnClosestEvent( party );
                            
                         }
@@ -458,6 +485,35 @@
 
             LJ.fn.displayPartyMarker( party, options );
             return;
+
+        },
+        // Propagate the effective latlng in events party address
+        // That may have changed in case meefore was created at the same place
+        updateEventsPartyLatLng: function( place_id, latlng ){
+
+            var ar = LJ.cache.events || [];
+
+            ar.forEach(function( evt ){
+
+                if( evt.party.address.place_id === place_id ){
+                    LJ.fn.log('Propagating new latlng in event', 2 );
+                    evt.party.address.lat = latlng.lat;
+                    evt.party.address.lng = latlng.lng;
+                }
+
+            });
+
+             var ar = LJ.cache.parties || [];
+
+            ar.forEach(function( par ){
+
+                if( par.address.place_id === place_id ){
+                    LJ.fn.log('Propagating new latlng in event', 2 );
+                    par.address.lat = latlng.lat;
+                    par.address.lng = latlng.lng;
+                }
+
+            });  
 
         },
         // Check in the cache all events that have the address that matches
@@ -507,7 +563,7 @@
                 lat       : party.address.lat,
                 lng       : party.address.lng,
                 url       : LJ.cloudinary.markers.party_active,
-                id        : party.address.place_id,
+                marker_id : party.address.place_id,
                 cache     : 'active_party_marker',
                 singleton : false,
                 zIndex    : 10,
@@ -521,7 +577,7 @@
             var latlng = {};
             LJ.party_markers.forEach(function( mrk ){
 
-                if( mrk.id == party.address.place_id ){
+                if( mrk.marker_id == party.address.place_id ){
                     latlng.lat = mrk.marker.getPosition().lat();
                     latlng.lng = mrk.marker.getPosition().lng();
                 }
@@ -549,7 +605,7 @@
                 lat       : latlng.lat,
                 lng       : latlng.lng,
                 url       : LJ.cloudinary.markers.party_active,
-                id        : party.address.place_id,
+                marker_id : party.address.place_id,
                 cache     : 'active_party_marker',
                 singleton : false,
                 zIndex    : 21,
@@ -609,9 +665,11 @@
                 var subject_latlng = new google.maps.LatLng( opts.lat, opts.lng);
                 var other_latlng   = new google.maps.LatLng( address.lat, address.lng );
 
-                var distance     = google.maps.geometry.spherical.computeDistanceBetween( other_latlng, subject_latlng );
+                var distance = google.maps.geometry.spherical.computeDistanceBetween( other_latlng, subject_latlng );
 
                 if( distance < 100 ){
+                    LJ.fn.log('Offseting required for address: ' + address.place_name );
+
                     effective_lng = google.maps.geometry.spherical.computeOffset( subject_latlng, 100, LJ.fn.randomInt(0, 180) ).lng();
                     effective_lat = google.maps.geometry.spherical.computeOffset( subject_latlng, 100, LJ.fn.randomInt(0, 180) ).lat();
                 }
@@ -624,9 +682,9 @@
             };
 
         },
-        displayActiveEventMarker: function( evt, opts ){
+        displayActiveEventMarker: function( evt, opts){
 
-            if(! opts ){
+            if( !opts ){
                 return LJ.fn.warn('Cant display active event marker without effective lat and lng');
             }
 
@@ -667,7 +725,7 @@
                 lat       : opts.lat,
                 lng       : opts.lng,
                 url       : LJ.cloudinary.markers[ marker_type + '_active'][ open_status ],
-                id        : evt._id,
+                marker_id : evt._id,
                 cache     : 'active_event_marker',
                 singleton : false,
                 zIndex    : 10,
@@ -762,45 +820,57 @@
 
             LJ.fn.log('Triggering action on the closest event');
 
+            // First, try to find a closest event with filters [on]
             var closest_event = LJ.fn.findClosestEvent( party, {
                 filters: true
             });
 
             var is_party_filtered = false;
 
+            LJ.party_markers = LJ.party_markers || [];
+
             LJ.party_markers.forEach(function( mrk ){
-                if( mrk.id === party.address.place_id && mrk.marker.getOpacity() != 1 ){
+                if( mrk.marker_id === party.address.place_id && mrk.marker.getOpacity() != 1 ){
                     is_party_filtered = true;
                 }
             });
 
             // First case : no event to be clicked. This is the case when
             // No meefore has been created to join a specific party
-            if( closest_event == null && !is_party_filtered ){
+            if( closest_event == null  && !is_party_filtered ){
 
-                LJ.fn.clearAllActiveMarkers();
-                LJ.fn.clearAllActivePaths();
-                LJ.fn.clearAllHalfActivePaths();
-
-                // Display suggestion to be the first to host a meefore
-                LJ.fn.log('Adding default suggestion preview', 2);
-                LJ.fn.addEventPreview();
-                LJ.fn.addPartyPreview( party );
-                LJ.fn.displayActivePartyMarker_Party( party );
+               LJ.fn.addDefaultInview( party );
                 
             } else {
 
-                if( closest_event == null ){
-                    closest_event = LJ.fn.findClosestEvent( party );
+                if( !closest_event ){
+                    return LJ.fn.addDefaultInview( party );
                 }
 
                 var closest_event_marker = _.find( LJ.event_markers, function( mrk ){
-                    return mrk.id == closest_event._id;
-                }).marker;
+                    return mrk.marker_id == closest_event._id;
+                });
 
-                google.maps.event.trigger( closest_event_marker, 'click' );
+                if( !closest_event_marker ){
+                    return LJ.fn.warn('No marker found, cant trigger click', 2);
+                }
+
+                google.maps.event.trigger( closest_event_marker.marker, 'click' );
 
             }
+
+        },
+        addDefaultInview: function( party ){
+
+            LJ.fn.clearAllActiveMarkers();
+            LJ.fn.clearAllActivePaths();
+            LJ.fn.clearAllHalfActivePaths();
+
+            // Display suggestion to be the first to host a meefore
+            LJ.fn.log('Adding default suggestion preview', 2);
+            LJ.fn.addEventPreview();
+            LJ.fn.addPartyPreview( party );
+            LJ.fn.displayActivePartyMarker_Party( party );
 
         },
         distanceBetweenParties: function( party_1, party_2 ){
@@ -866,6 +936,7 @@
 
             $row_preview.velocity( LJ.ui.slideUpOutLight, {
                 duration: 270,
+                display: 'none',
                 complete: function(){
                     setTimeout(function(){
                         $row_preview.css({ display: 'none' });                            
@@ -885,7 +956,8 @@
         clearActiveEventPreview: function(){
 
             $('.event-preview').velocity( LJ.ui.slideUpOutLight,{
-                    duration: 270, 
+                    duration: 270,
+                    display: 'none',
                     complete: function(){
                         setTimeout(function(){
                             $('.event-preview').remove();
@@ -913,7 +985,7 @@
                 if( mark.data._id ){
                     return mark.data._id == given_id;
                 } else {
-                    return mark.id == given_id;
+                    return mark.marker_id == given_id;
                 }
 
             })){
@@ -930,7 +1002,7 @@
                 if( mark.data._id ){
                     return mark.data._id == given_id;
                 } else {
-                    return mark.id == given_id;
+                    return mark.marker_id == given_id;
                 }
 
             })){
@@ -943,9 +1015,10 @@
         displayPath: function( path, opts ){
 
             opts = opts || {};
-            opts.cache = opts.cache || 'active_paths';
-            LJ[ opts.cache ] = LJ[ opts.cache ] || [];
 
+            opts.cache = opts.cache || 'active_paths';
+
+            LJ[ opts.cache ] = LJ[ opts.cache ] || [];
 
             // Store reference to hide and delete later
             var path = new google.maps.Polyline({
@@ -956,15 +1029,36 @@
                 strokeWeight  : opts.stroke_weight || 5
             });
 
-            path.id == opts.evt._id;
+            path.path_id == opts.evt._id;
 
-            LJ[ opts.cache ].push( _.merge(path, { id: opts.evt._id }) );
+            LJ[ opts.cache ].push( _.merge(path, { path_id: opts.evt._id }) );
 
             // Display the path we just stored
            LJ[ opts.cache ][ LJ[ opts.cache ].length - 1 ].setMap( LJ.map );
 
         },
-        fetchPath: function( origin, destination, callback ){
+        fetchPathToParty: function( evt, callback ){
+
+            var origin      = evt.address;
+            var destination = evt.party.address;
+
+            var arr = LJ.event_markers.concat( LJ.party_markers );
+            arr.forEach(function( mrk ){
+
+                // origin always refer to address, hence, markers are identified by the event id
+                if( mrk.marker_id == evt._id ){
+                    origin.lat = mrk.marker.getPosition().lat();
+                    origin.lng = mrk.marker.getPosition().lng();
+                }
+
+                // destinations always refer to party, hence, markers are identified by place_id
+                // since all party with the same place_id share the same location on map, we dont
+                // have to know which event the marker originated from. Dont care at all.
+                if( mrk.marker_id == destination.place_id ){
+                    destination.lat = mrk.marker.getPosition().lat();
+                    destination.lng = mrk.marker.getPosition().lng();
+                }
+            });
 
             var directions_service = new google.maps.DirectionsService;
             var directions_display = new google.maps.DirectionsRenderer;
@@ -992,27 +1086,34 @@
             LJ.cache.paths = LJ.cache.paths || {};
 
             var cached_path = LJ.cache.paths[ evt._id ]
-            if( cached_path && cached_path.path && cached_path.cached_at && ( (new Date) - cached_path.cached_at < 60*1000) ){
-                // LJ.fn.log('Displaying path from cached value');
+
+            if(    cached_path 
+                && cached_path.path
+                // && cached_path.path.length < 5  
+                && cached_path.cached_at 
+                && ( (new Date()) - cached_path.cached_at < 60 * 1000) )
+            {
+                // LJ.fn.log('Displaying path from cached value', 5);
                 LJ.fn.displayPath( cached_path.path, opts );
                 return;
             }
 
-            LJ.fn.fetchPath( evt.address, evt.party.address, function( response, status ){
+
+            LJ.fn.fetchPathToParty( evt, function( response, status ){
 
                 if( status === google.maps.DirectionsStatus.OK ){
                     var path = response.routes[0].overview_path;
                     LJ.cache.paths[ evt._id ] = {
                         path      : path,
                         cached_at : new Date(),
-                        id        : evt._id
+                        path_id   : evt._id
                     };
                     LJ.fn.displayPath( path, opts );
                     return;                    
                 } 
 
                 if( status == "OVER_QUERY_LIMIT" ){
-                    // LJ.fn.log('Directions request failed due to ' + status + '. Retrying...');
+                    LJ.fn.log('Directions request failed due to ' + status + '. Retrying...');
                     setTimeout(function(){
                         LJ.fn.displayPathToParty( opts );
                     }, 400 );
@@ -1024,7 +1125,7 @@
         refreshEventStatusOnMap: function( event_id, status ){
 
             var marker = _.find( LJ.event_markers, function( el ){
-                return el.id == event_id; 
+                return el.marker_id == event_id; 
             }).marker;
 
             var current_url = marker.getIcon().split('/').slice(-1)[0].split('.png')[0];

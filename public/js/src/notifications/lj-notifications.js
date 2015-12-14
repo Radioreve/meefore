@@ -638,9 +638,9 @@
 			
 
 		},
-		checkNotification_unreadMessages: function(){
+		checkNotification_unreadMessages: function( chat_id ){
 
-			var $messages       = $('.event-accepted-chat-message');
+			var $messages       = $('.event-accepted-chat-wrap[data-chatid="' + chat_id +'"]').find('.event-accepted-chat-message');
 			var disconnected_at = LJ.user.disconnected_at;
 
 			$messages.each(function( i, msg ){
@@ -652,14 +652,13 @@
 				var event_id = $wrap.closest('[data-eventid]').attr('data-eventid');
 
 				var unix  = $msg.find('.event-accepted-chat-sent-at').attr('data-sent-at'); // Timestamp unix
-				var mdate = moment.unix( unix );
 
 				// The message is not a real message
 				if( $msg.hasClass('me') || $msg.hasClass('bot') )
 					return;
 
 				// The message was already seen by the user
-				if( mdate < disconnected_at )
+				if( unix < moment( disconnected_at ).unix() )
 					return;
 
 				if( $wrap.hasClass('hb-notified') )

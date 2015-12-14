@@ -96,28 +96,30 @@
 
 			var evt          = data.evt;
 			var notification = data.notification
+			var event_id     = evt._id;
 
-			if( !evt )
-				return console.error('No arguments were passed (pushNewEvent)')
+			if( !evt ){
+				return LJ.fn.warn('Cant push newEvent without evt: ' + evt, 1)
+			}
 
-			/* Default message */
+			// Default message 
 			var message = LJ.text_source["to_new_meefore"][ LJ.app_language ].replace('%name', evt.hosts[0].name ).replace('%date', moment( evt.begins_at ).format('DD/MM') );
-			/* Internal */
+
+			// Internal 
 			LJ.fn.updateEventCache( evt );
 
-			/* External */
+			// External 
             LJ.fn.displayEventMarker( evt );
             LJ.fn.displayPartyMarker_Event( evt );
 
-            /* Did a friend tag me as host ? */
+            // Did a friend tag me as host ? 
             if( LJ.fn.iHost( _.pluck( evt.hosts, 'facebook_id' ) ) ){
+            	
             	message = LJ.text_source["to_new_meefore_host"][ LJ.app_language ];
 
-            	if( !$('#events').hasClass('menu-item-active') ){
-            		LJ.fn.addEventInviewAndTabview( evt, { hide: true } );
-            	} else {
-            		LJ.fn.addEventInviewAndTabview( evt );
-            	}
+	        	LJ.fn.addEventInviewAndTabview( evt, {
+	        		hide: true 
+	        	});
             	
             	LJ.fn.joinEventChannel( evt );
             	LJ.fn.fetchMe();
@@ -271,7 +273,7 @@
 					LJ.fn.toastMsg( LJ.text_source["to_push_request_accepted"][ LJ.app_language ], 'info', 3500 );
 
 					_.find( LJ.event_markers, function(el){ 
-						return el.id == event_id 
+						return el.marker_id == event_id 
 					}).marker.setIcon( LJ.cloudinary.markers.accepted[ is_open ].url );
 
 					LJ.fn.addChatLine({
@@ -292,7 +294,7 @@
 					// LJ.fn.toastMsg( LJ.text_source["ch_bot_msg_group_pending"][ LJ.app_language ], 'info', 3500 );
 
 					_.find( LJ.event_markers, 
-						function(el){ return el.id == event_id 
+						function(el){ return el.marker_id == event_id 
 					}).marker.setIcon( LJ.cloudinary.markers.pending[ is_open ].url );
 
 					LJ.fn.addChatLine({

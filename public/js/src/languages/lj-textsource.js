@@ -334,8 +334,8 @@
 			"en": "No pregame party is planned for this party on this day. Be the first to organize one."
 		},
 		e_preview_planned: {
-			"fr": "%n meefore prévu(s) ce jour là",
-			"en": "%n meefore planned this day"
+			"fr": "%n meefore à venir",
+			"en": "%n meefore are planned"
 		},
 		s_title: {
 			"fr": "Préférences",
@@ -770,7 +770,7 @@
 			"en": "Down the screen are shown every meefore you either host or want to join"
 		},
 		intro_text_15: {
-			"fr": "C'est ici que se passe le chat!",
+			"fr": "C'est ici que se passe le chat !",
 			"en": "This is where you chat!"
 		},
 		intro_text_16: {
@@ -1063,7 +1063,7 @@
 			"en": "Get the party started!"
 		},
 		n_fill_profile_text: {
-			"fr": "Votre profile n'est pas encore complet à 100%",
+			"fr": "Votre profil n'est pas encore complet à 100%",
 			"en": "Your profile isnt completed at 100%"
 		},
 		n_fill_profile_subtext: {

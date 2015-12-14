@@ -630,10 +630,8 @@ transition: all ease-out .4s;
   Events inview 
 */
 .row-preview {
-  
-display: flex!important;
-  
-justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
 }
 .row-events-accepted-inview {
   height: 425px;

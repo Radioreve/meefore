@@ -431,7 +431,7 @@
 	   			if( req.sent.apikey != 'M33fore') return res.status(403).json({ "msg": "unauthorized" });
 	   			require( process.cwd() + '/jobs/terminate-events').terminateEvents({
 						timezone   : req.sent.timezone,
-						target_day : req.sent.target_day
+						target_day : req.sent.target_day  // format 'DD/MM/YYYY'
 	   			});
 	   			res.json({ "msg":"success" });
 	   		});

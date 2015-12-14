@@ -2025,6 +2025,7 @@ p {
     top: 20px;
     left: 40px;
     text-align: center;
+    cursor: pointer;
 }
 
 
@@ -2134,12 +2135,9 @@ p {
     color: white;
     margin-top: 25px;
     font-size: 21px;
-    font-family: Karla;
     text-shadow: 1px 1px 1px #6B6B6B;
-    font-family: 'Coming soon';
     text-align: center;
-    line-height: 31px;
-    font-family: 'Karla';
+    line-height: 28px;
     font-family: Quicksand;
     letter-spacing: -1px;
 }
@@ -4030,10 +4028,10 @@ i.icon-create {
   Events inview 
 */
 .row-preview {
-    display: -webkit-box!important;
-    display: -webkit-flex!important;
-    display: -ms-flexbox!important;
-    display: flex!important;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
     -webkit-box-pack: end;
     -webkit-justify-content: flex-end;
     -ms-flex-pack: end;

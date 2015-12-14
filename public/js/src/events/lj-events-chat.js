@@ -461,7 +461,7 @@
                     LJ.fn.whisperifyChatMessages( chat_id );
 
                     // Check if unread messages need to be notified
-                    LJ.fn.checkNotification_unreadMessages();
+                    LJ.fn.checkNotification_unreadMessages( chat_id );
 
 
                 } else {

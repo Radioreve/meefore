@@ -632,6 +632,12 @@
 
                 behindTheScene: function(){
 
+                    LJ.fn.updateEventCache( evt );
+                    
+                    LJ.fn.clearAllActiveMarkers();
+                    LJ.fn.clearAllActivePaths();
+                    LJ.fn.clearAllHalfActivePaths();
+
                     LJ.fn.hideModal();
                     LJ.fn.displayEventMarker( evt );
                     LJ.fn.displayPartyMarker_Event( evt );

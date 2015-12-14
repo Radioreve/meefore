@@ -749,11 +749,13 @@
 
 			if( !cached_event ){
 				LJ.fn.log('Adding event in cache since not found');
-				return LJ.cache.events.push( new_event );
+				LJ.cache.events.push( new_event );
 			} else {
 				// LJ.fn.log('Event found in cache, updating it');
 				cached_event = _.merge( cached_event, new_event );
 			}
+
+			return cached_event;
 
 
 		},

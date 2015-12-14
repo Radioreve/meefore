@@ -6,18 +6,52 @@
 			 LJ.$body.on('click', '.filter-date-item', function(){
 
                 var $self = $(this);
-              	$self.toggleClass('active');
 
+                if( $self.hasClass('active') ){
+                	$self.removeClass('active');
+                } else {
+                	$self.siblings().removeClass('active')
+                	$self.addClass('active');
+
+                }
+                // For future use, when lots of events
+              	// $self.toggleClass('active');              	
               	LJ.fn.applyDateFilter();
 
             });
 
 			
 		},
+		resetDateFilter: function(){
+
+			$('.filter-date-item').removeClass('active');
+			LJ.fn.applyDateFilter();
+
+		},
 		applyDateFilter: function(){
 
+			LJ.fn.applyDateFilter_Preview();
+			LJ.fn.applyDateFilter_Map();
+
+		},
+		applyDateFilter_Preview: function(){
+
+			// Filters have changed : make sure the preview still makes sense
+			// Based on the current active set of marker, try find an event/party for that day
+			// If found, replace it. If it's not, just drop the preview from the screen
+			if( LJ.active_party_marker.length != 0 ){
+				var party = _.find( LJ.cache.parties, function( p ){
+					return p.address.place_id = LJ.active_party_marker[0].marker_id;
+				});
+				LJ.fn.clickOnClosestEvent( party );
+			}
+
+
+		},
+		applyDateFilter_Map: function(){
+
 			var date_to_display = [];
-			var override;
+			var reset;
 
 			var filter_opacity = 0.2;
 
@@ -31,16 +65,15 @@
 				date_to_display.push( moment( $(el).attr('data-dateid'), 'DD/MM/YYYY' ).dayOfYear() );
 			});
 
-			// In case we want to reset the filters, override control to put all opaciy back to 1
+			// In case we want to reset the filters, reset control to put all opaciy back to 1
 			if( date_to_display.length == 0 ){
-				override = true;
+				reset = true;
 			}
-
 
 			// Filtering on events : all event that doesnt start on filtered date is filtered
 			LJ.event_markers.forEach(function( marker ){
 
-				if( date_to_display.indexOf( moment( marker.data.begins_at ).dayOfYear() ) == -1 && !override ){
+				if( date_to_display.indexOf( moment( marker.data.begins_at ).dayOfYear() ) == -1 && !reset ){
 					marker.marker.setOpacity( filter_opacity );
 					marker.marker.setZIndex(-1);
 				} else {
@@ -58,7 +91,7 @@
 				var no_partner_party = true;
 				var no_meefore_going = true;
 
-				var place_id = marker.id;
+				var place_id = marker.marker_id;
 
 				// Check if at least one partner party starts for one of the specified filtered dates
 				LJ.cache.parties.forEach(function( party ){
@@ -79,7 +112,7 @@
 				});
 
 
-				if( no_meefore_going && no_partner_party && !override ){
+				if( no_meefore_going && no_partner_party && !reset ){
 					marker.marker.setOpacity( filter_opacity );
 					marker.marker.setZIndex(-1);
 				} else {

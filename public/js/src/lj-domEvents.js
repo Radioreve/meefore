@@ -10,6 +10,10 @@ window.LJ.fn = _.merge( window.LJ.fn || {} ,
                 $('#events').click();
             });
 
+            $('.hero-logo').click(function(){
+                document.location = '/';
+            });
+
 			LJ.$body.on('click', '.moving-arrow', function(){
 				$('.landing-keypoints').velocity('scroll', { duration: window.tanim || 1800, easing: window.nanim || "ease-in-out" });
 			});

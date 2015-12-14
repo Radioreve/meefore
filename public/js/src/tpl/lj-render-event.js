@@ -30,7 +30,7 @@
 
       html  +=    '<div class="event-accepted-chat-message ' + me +'" data-authorid="' + facebook_id + '" data-authorname="' + name + '" '+ whisperto + '>'
                   + img_tag
-                  + '<div data-sent-at = " ' + mmt.unix() + '" class="event-accepted-chat-sent-at">' + sent_at_html + '</div>'
+                  + '<div data-sent-at = "' + mmt.unix() + '" class="event-accepted-chat-sent-at">' + sent_at_html + '</div>'
                   + '<div class="event-accepted-chat-text">'    + msg          + '</div>'
                 + '</div>'
 

@@ -1,31 +1,41 @@
 
 	
-	var mongoose = require('mongoose'),
-		User = require('../models/UserModel'),
+		var mongoose  = require('mongoose'),
+		moment        = require('moment'),
+		User          = require('../models/UserModel'),
 		EventTemplate = require('../models/EventTemplateModel'),
-		config = require('../config/config'),
-		_ = require('lodash');
+		config        = require('../config/config'),
+		_             = require('lodash');
 
 		mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
 
 		mongoose.connection.on( 'open', function(){
 			console.log('Connected to the database! Running operation... : ');
 
-			var updated_group = {
-				members_facebook_id: ['139625316382924','10153224803803632']
-			}
-			var notification = {
-				type        : "accepted_in",
-				happened_at : new Date(),
-				group_name  : "Les beaux mecs"
-			};
 
 			var query = {
-				facebook_id: { $in: updated_group.members_facebook_id }
+					'events': {
+						$elemMatch: {
+							'begins_at': {
+								$lte: moment('2015-16-12','YYYY-MM-DD').toDate()
+							},
+							'timezone': {
+								$lt: 120, $gt: 0
+							}
+						}
+					}
 			};
 
+
 			var update = {
-				$push: { 'notifications': notification }
+					$pull: {
+						'events': {
+							$and: [
+								{ 'begins_at': { $lte: moment('2015-16-12','YYYY-MM-DD').toDate() } },
+								{ 'timezone': { $lt: 120, $gt: 0 } }
+							]
+						}
+					}
 			};
 
 			var options = { multi: true };
@@ -35,11 +45,15 @@
 				console.log('Updated done, modified documents : ' + raw.n );
 			});	
 
-			User.find( query, function( err, users ){
+			User
+				.find( query )
+				.select({ events: 1 })
+				.exec(function( err, users ){
 				console.log(users);
-			})		
+			});		
 
 		});
+
 
 		mongoose.connection.on('error', function(err){
 			console.log('Connection to the database failed : '+err);

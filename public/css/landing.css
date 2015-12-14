@@ -104,6 +104,7 @@ color: white;
    top: 20px;
    left: 40px;
    text-align: center;
+   cursor: pointer;
 }
 
 
@@ -203,12 +204,9 @@ margin: 10px 0;
 color: white;
 margin-top: 25px;
 font-size: 21px;
-font-family: Karla;
 text-shadow: 1px 1px 1px #6B6B6B;
-font-family: 'Coming soon';
 text-align: center;
-line-height: 31px;
-font-family: 'Karla';
+line-height: 28px;
 font-family: Quicksand;
 letter-spacing: -1px;
 }

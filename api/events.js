@@ -55,7 +55,7 @@
 
 	    	var event_item = {
 				status    : 'hosting',
-				timezone  : data.timezone,
+				timezone  : parseFloat( data.timezone ),
 				event_id  : new_event._id,
 				begins_at : new_event.begins_at
 	    	};
@@ -158,8 +158,6 @@
 			if( err ){
 				return eventUtils.raiseError({ err: err, res: res, toClient: "api error fetching event" });
 			}
-
-		console.log(evt);
 
 			var event_to_push = {
 				event_id    : event_id,

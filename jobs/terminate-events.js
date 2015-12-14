@@ -116,7 +116,11 @@
 		}
 
 		if( options.target_day ){
-			target_day = moment( options.target_day, 'DD/MM/YYYY' );
+			target_day = moment( options.target_day, 'DD/MM/YYYY' )
+						  .utcOffset( target.timezone )
+						  .set('hour', 14 )
+						  .set('minute', 0 )
+						  .set('second', 0 );
 		}
 
 		// Cast moment dates to Date objects
@@ -127,13 +131,13 @@
 		// All events of few days before that for somereason didnt get updated on the last call.
 		var full_event_query = {
 			'begins_at' : date_range_query,
-			'timezone'  : timezone_range_query,
+			'timezone'  : timezone_range_query
 			'status'    : { $nin: ['ended'] }
 		};
 
 		var full_party_query = {
 			'begins_at' : date_range_query,
-			'timezone'  : timezone_range_query,
+			'timezone'  : timezone_range_query
 			'status'    : { $nin: ['ended'] }
 		};
 
@@ -141,6 +145,13 @@
 			'begins_at' : date_range_query,
 			'timezone'  : timezone_range_query
 		};
+
+		var user_update_query = { 
+			$and: [
+				{ 'begins_at': date_range_query },
+				{ 'timezone' : timezone_range_query }
+			]
+		}
 
 		console.log( JSON.stringify(full_event_query, null, 4) );
 
@@ -183,6 +194,8 @@
 					if( tracked.n_events_matched == 0 ){
 						return console.log('No event matched the query');
 					}
+
+					console.log( tracked.n_users_updated + ' users updated');
 
 					var mail_html = [
 						'<div>Scheduler updated the database and cleared the cache successfully in zone : ' + tracked.timezone + '</div>',
@@ -281,6 +294,7 @@
 					multi: true
 				}, function( err, raw ){
 					if( err ) return handleError( err );
+
 					keeptrack({
 						n_parties_updated: raw.n
 					});
@@ -296,15 +310,18 @@
 					}
 				}, {
 					$pull: {
-						events: {
-							$elemMatch: full_event_in_user_query
-							
-						}
+						events: user_update_query
 					}
 				}, { 
 					multi: true
 				}, function( err, raw ){
 					if( err ) return handleError( err );
+
+					if( err ){
+						console.log( err );
+					} else {
+						console.log( JSON.stringify( raw, null, 3 ) );
+					}
 
 					keeptrack({
 						n_users_updated: raw.n

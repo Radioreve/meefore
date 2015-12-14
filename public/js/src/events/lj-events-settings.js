@@ -148,7 +148,7 @@
             if( !LJ[ cache_src ] ) return;
 
             LJ[ cache_src ].forEach(function( mrk, i ){
-                if( mrk.id == match_id ){
+                if( mrk.marker_id == match_id ){
                     if( mrk.marker && mrk.marker.setMap ){
                         mrk.marker.setMap( null );
                     } else {

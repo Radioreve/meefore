@@ -258,7 +258,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         initLayout: function( settings ){
 
             LJ.fn.log('initializing layout...', 1);
-            /* Google Places to browse the map */
+            // Google Places to browse the map 
             var options = {};
             LJ.google_places_autocomplete_filters = new google.maps.places.SearchBox( 
                 document.getElementById('moveAround'), options 
@@ -279,19 +279,22 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                  }
             });
 
-            /* Show limited mode on mobile */
+            // Show limited mode on mobile 
             $('.m-warning').removeClass('none');
 
-            /* Set notification panels */
+            // Force hide the preview
+            $('.row-preview').css({ display: 'none' });
+
+            // Set notification panels 
             LJ.$body.append( LJ.fn.renderNotificationsPanel() );
             LJ.fn.handleDomEvents_Notifications();
             LJ.jsp_api_notifications = $('.notifications-panel__wrapper').jScrollPane().data('jsp');
 
-            /* Mise à jour du profile des filters */
+            // Mise à jour du profile des filters
             $('.mood-wrap').html( LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
             $('.drink-wrap').html( LJ.fn.renderDrinkInProfile( LJ.settings.app.drink ));
 
-            /* Filter date for events */
+            // Filter date for events 
             $('.filters-date').append( LJ.fn.renderDatesInFilter );
 
             // $('.filter-mixity').html(LJ.fn.renderMixityInFilters(LJ.settings.app.mixity));
@@ -299,7 +302,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('#no').html('').html( LJ.tpl.noResults );
 
 
-            /* Profile View */
+            // Profile View 
             //$('.row-subheader').find('span').text( LJ.user._id );
             $('.row-name').find('input').val (LJ.user.name );
             $('.row-age').find('input').val( LJ.user.age );
@@ -308,7 +311,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('.drink[data-selectid="' + LJ.user.drink + '"]').addClass('selected');
             $('.mood[data-selectid="' + LJ.user.mood + '"]').addClass('selected');
 
-            /* Settings View */
+            // Settings View 
             _.keys( LJ.user.app_preferences ).forEach(function( key ) {
                 _.keys(LJ.user.app_preferences[key]).forEach(function( sub_key ) {
                     var value = LJ.user.app_preferences[ key ][ sub_key ];
@@ -319,12 +322,12 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('#email_contact').val( LJ.user.contact_email );
 
 
-            /* Mise à jour des images placeholders */
+            // Mise à jour des images placeholders 
             $('.picture-wrap').html( LJ.fn.renderProfilePicturesWraps );
             var $placeholder = $.cloudinary.image( LJ.cloudinary.placeholder.id, LJ.cloudinary.placeholder.params );
             $('.picture').prepend( $placeholder );
 
-            /* Update de toutes les images */
+            // Update de toutes les images 
             for( var i = 0; i < LJ.user.pictures.length; i++ ){
                 LJ.user.pictures[ i ].scope = ['profile'];
                 LJ.fn.replaceImage( LJ.user.pictures[ i ] );
@@ -332,7 +335,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
             LJ.fn.displayPictureHashtags();
 
-            /* ThumbHeader View */
+            // ThumbHeader View 
             LJ.$thumbWrap.find('h2#thumbName').text( LJ.user.name );
             var d = LJ.cloudinary.displayParamsHeaderUser;
 
@@ -344,7 +347,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
             LJ.$thumbWrap.find('.imgWrap').html('').html( imgTag );
 
-            /* Settings View */
+            // Settings View 
             $('#newsletter').prop('checked', LJ.user.newsletter);
             $('#currentEmail').val( LJ.user.email );
 
@@ -617,14 +620,21 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
         },
         log: function( msg, level ){
+
             level = level || 3;
-            if( level > LJ.log_level ) return;
-            console.log(msg);
+
+            if( msg && level < LJ.log_level ){
+                console.log( msg )
+            }
         },
         warn: function( msg, level ){
+            
             level = level || 3;
-            if( level > LJ.log_level ) return;
-            if( msg ) console.warn(msg);
+
+            if( msg && level < LJ.log_level ){
+                console.warn( msg )
+            }
+
         },
         timeout: function(ms, cb, p2) {
             setTimeout(function() {
@@ -650,7 +660,7 @@ $('document').ready(function() {
         });
 
         LJ.fn.init({
-            log_level: 5,
+            log_level: 6,
             country : 'fr'
         });
 

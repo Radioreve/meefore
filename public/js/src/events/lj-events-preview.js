@@ -101,7 +101,7 @@
         },
 		requestIn: function( event_id ){
 
-            LJ.fn.log('Requesting in  for event with id : '+ event_id + '...');
+            LJ.fn.log('Requesting in  for event with id : '+ event_id + '...', 3);
 
             var name, message, members_facebook_id = [];
             var $wrap = $('#requestIn');
@@ -148,7 +148,7 @@
         },
         handleRequestInSuccess: function( data ){
 
-                LJ.fn.log('Request in success');
+                LJ.fn.log('Request in success', 2);
                 
                 var event_id = data.event_id;
 
@@ -164,7 +164,7 @@
 
                     // In anycase, update the default marker.
                     _.find( LJ.event_markers, function( marker ) {
-                        return marker.id == event_id; 
+                        return marker.marker_id == event_id; 
                     }).marker.setIcon( LJ.cloudinary.markers.pending.open.url );
 
 
@@ -176,7 +176,7 @@
             var renderFn;
 
             if( !evt || evt === {} ){
-                LJ.fn.log('No event to be added. Adding suggestion...');
+                LJ.fn.log('No event to be added. Adding suggestion...', 3);
                 renderFn = LJ.fn.renderEventPreview_Default;
             } else {
 
@@ -221,6 +221,7 @@
                     .css({ display: 'block', opacity: 0 })
                     .velocity( LJ.ui.slideUpInLight, {
                     duration: duration,
+                    display: 'flex',
                     complete: function(){
                         $('.event-preview').css({ opacity: 0 }).show();
                         $('.event-preview').velocity( LJ.ui.slideDownInVeryLight,{ 
@@ -242,6 +243,7 @@
             $('.event-preview')
                 .velocity( LJ.ui.slideUpOutVeryLight, { 
                     duration: duration,
+                    display: 'flex',
                     complete: function(){
                         $('.row-events-preview').html( event_preview )
                         .children()
@@ -262,38 +264,59 @@
 
             options = options || {};    
 
-            var cached_party
+            var cached_party;
+            var event_begins_at = options.begins_at;
+            var filter_date     = moment( $('.filter-date-item.active').attr('data-dateid') , 'DD/MM/YYYY' );
+            var party_preview   = null;
 
             // If user party has same place_id and date than a known partner party,
             // display the partner party template with full info.
             // Otherwise, display normal template. Just never refresh it.
-            cached_party = _.find( LJ.cache.parties, function( cached_party ){
-                return party.address.place_id == cached_party.address.place_id;
+            cached_party = _.filter( LJ.cache.parties, function( i_cached_party ){
+                return party.address.place_id == i_cached_party.address.place_id && moment( i_cached_party.begins_at ).dayOfYear() == filter_date.dayOfYear()
             });
 
-            if( cached_party && options.begins_at && moment( cached_party.begins_at ).dayOfYear() == moment( options.begins_at ).dayOfYear() ){
-                LJ.fn.log('Cached party found for this address, and dates match, rendering the partner party');
-                var party_preview =  LJ.fn.renderPartyPreview_Party( cached_party );
-            }
+            if( cached_party.length == 0 ){
 
-            if( cached_party && options.begins_at && moment( cached_party.begins_at ).dayOfYear() != moment( options.begins_at ).dayOfYear() ){
-                LJ.fn.log('Cached party found for this address, but dates do NOT match, rendering the regular party');
-                var party_preview =  LJ.fn.renderPartyPreview_Event( party );
-            }
+                LJ.fn.log('No cached party was found for this place_id', 5);
+                party_preview = LJ.fn.renderPartyPreview_Event( party );   
 
-            if( cached_party && !options.begins_at ){
-                LJ.fn.log('Cached party found for this address, but check wasnt required (begins_at not provided)');
-                var party_preview =  LJ.fn.renderPartyPreview_Party( cached_party );
-            }
+            } else {
 
-            if( !cached_party ){
-                LJ.fn.log('Cached party was NOT found for this place_id');
-                var party_preview =  LJ.fn.renderPartyPreview_Event( party );   
+                cached_party.forEach(function( i_cached_party ){
+
+                    var party_day  = moment( i_cached_party.begins_at ).dayOfYear();
+
+                    // User explicitly provided event date : if there is a party in cache that matches
+                    // The date, render it instead of rendering default view;
+                    if( event_begins_at ){
+
+                        var event_day  = moment( event_begins_at ).dayOfYear();
+
+                        if( party_day == event_day ){
+                            LJ.fn.log('Cached party found for this address, and dates match, rendering the partner party', 5);
+                            party_preview =  LJ.fn.renderPartyPreview_Party( i_cached_party );
+                        }
+
+                        if( party_day != event_day ){
+                            LJ.fn.log('Cached party found for this address, but dates do NOT match, rendering the regular party', 5);
+                            party_preview =  LJ.fn.renderPartyPreview_Event( party );
+                        }
+                    // User didnt provide the date, meaning he wants to render the partner party version explicitly
+                    } else {
+
+                        LJ.fn.log('Cached party found for this address, but check wasnt required (begins_at not provided)', 5);
+                        party_preview =  LJ.fn.renderPartyPreview_Party( i_cached_party );
+
+                    }
+
+                });
+
             }
 
             // Override for intro only
             if( options.intro ){
-                var party_preview = LJ.fn.renderPartyPreview_Party( party );
+                party_preview = LJ.fn.renderPartyPreview_Party( party );
             }
 
 
@@ -302,7 +325,7 @@
 
             if( $party.length == 0 ){
 
-                 LJ.fn.log('First render party');
+                 LJ.fn.log('First render party', 5);
 
                 $( party_preview ).hide().appendTo('.row-party-preview');
 
@@ -310,6 +333,7 @@
                     .css({ display: 'block', opacity: 0 })
                     .velocity( LJ.ui.slideUpInLight, {
                     duration: duration,
+                    display: 'flex',
                     complete: function(){
                         $('.party-preview').css({ opacity: 0 }).show()
                         $('.party-preview').velocity( LJ.ui.slideDownInVeryLight,{ 
@@ -322,9 +346,9 @@
 
             }
 
-            LJ.fn.log('Re-render party');
+            LJ.fn.log('Re-render party', 5);
             if( $('.row-party-preview').css('opacity') != '1' ){
-                LJ.fn.log('Re-render 100s later...', 2);
+                LJ.fn.log('Re-render 100ms later...', 2);
                 return setTimeout(function(){
                     LJ.fn.addPartyPreview( party, options );
                 }, 100 );
@@ -334,7 +358,6 @@
             // To know if its the same DOM element, we compare based on the text of the party preview place name which is unique
             var comparison_class = '.party-preview-place-name';
             if( $party.length && $('.row-party-preview').find( comparison_class ).text() == $( party_preview ).find( comparison_class ).text() ){
-                LJ.fn.log('Compel wtf?!', 2);
                 return;
             }
             
@@ -349,6 +372,7 @@
                         .children().removeClass('slow-down-3')
                         .velocity( options.transition_in || LJ.ui.slideDownInLight, {
                             duration: duration +  220 ,
+                            display: 'flex',
                             complete: function(){
                                 $(this).addClass('slow-down-3');
                             }
