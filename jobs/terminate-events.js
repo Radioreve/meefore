@@ -131,13 +131,13 @@
 		// All events of few days before that for somereason didnt get updated on the last call.
 		var full_event_query = {
 			'begins_at' : date_range_query,
-			'timezone'  : timezone_range_query
+			'timezone'  : timezone_range_query,
 			'status'    : { $nin: ['ended'] }
 		};
 
 		var full_party_query = {
 			'begins_at' : date_range_query,
-			'timezone'  : timezone_range_query
+			'timezone'  : timezone_range_query,
 			'status'    : { $nin: ['ended'] }
 		};
 
