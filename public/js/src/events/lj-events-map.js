@@ -65,12 +65,6 @@
 
             LJ.map.addListener('click', function(e){
                 
-            	LJ.fn.clearAllActiveMarkers();
-                LJ.fn.clearAllActivePaths();
-                LJ.fn.clearAllHalfActivePaths();
-                LJ.fn.clearActivePreview();
-                LJ.fn.clearActiveInview();
-
                 LJ.fn.refreshMap();
 
             });
@@ -240,12 +234,14 @@
 
             // Define and display the Marker on the Map
             var new_marker = new google.maps.Marker({
-                position  : { lat: options.lat, lng: options.lng },
-                map       : LJ.map,
-                opacity   : options.opacity || 1,
-                animation : options.animation || null,
-                icon      : options.url,
-                zIndex    : options.zIndex
+                position   : { lat: options.lat, lng: options.lng },
+                map        : LJ.map,
+                opacity    : options.opacity || 1,
+                animation  : options.animation || null,
+                icon       : options.url,
+                zIndex     : options.zIndex,
+                size       :new google.maps.Size(32, 37),
+                scaledSize :new google.maps.Size(32, 37)
             });
 
 
@@ -335,26 +331,25 @@
                         event_type : 'click',
                         callback   : function(e){
 
-                            if( LJ.fn.isEventMarkerActivated( evt._id ) ){
-                                return LJ.fn.log('Marker already activated');
-                            }
+                            if( LJ.fn.isEventMarkerActivated( evt._id ) )
+                                return LJ.fn.warn('Marker already activated', 2);
+                            
 
-                            // if( this.getOpacity() != 1 ){
-                            //     LJ.fn.resetDateFilter();
-                            // }
-
-                            // Clear everything
+                            // Refresh active marker
                             LJ.fn.clearAllActiveMarkers();
                             LJ.fn.clearAllActivePaths();
                             LJ.fn.clearAllHalfActivePaths();
 
-                            // Display preview
-                            LJ.fn.addEventPreview( evt );
+                            // Event mapview ;-)
+                            LJ.fn.addEventMapview( evt );
+
+                            // Partu mapview ;-)
+                            LJ.fn.addPartyMapview( evt.party, { begins_at: evt.begins_at } );
 
                             // Pass in the date of the event, to determine if the party
                             // matches a partner party in case same place_id, or if party occurs
                             // another day in order to display the right preview!
-                            LJ.fn.addPartyPreview( evt.party, { begins_at: evt.begins_at } );
+                            // LJ.fn.addPartyPreview( evt.party, { begins_at: evt.begins_at } );
 
                             // Display active event marker at the very same effective lat/lng locations
                             LJ.fn.displayActiveEventMarker( evt, { lat: effective_latlng.lat, lng: effective_latlng.lng });
@@ -372,7 +367,10 @@
 
                             });
 
+
                             LJ.fn.displayActivePartyMarker_Event( c_evt.party );
+
+                            // Display paths
                             LJ.fn.displayPathToParty({ evt: c_evt });
                             LJ.fn.displayHalfActivePaths( c_evt.party );
 
@@ -381,7 +379,9 @@
                     }, {
                         event_type : 'mouseover',
                         callback   : function(e){
-                            this.setZIndex(2);
+                            var current_zindex = this.getZIndex();
+                            this.setZIndex( current_zindex + 1 );
+
                             // LJ.fn.log('Hovering : ' + evt._id );
                             $('.event-accepted-tabview[data-eventid="' + evt._id + '"]').addClass('highlight');
                         }
@@ -389,13 +389,17 @@
                         event_type : 'mouseout',
                         callback   : function(e){
 
-                            var markers = LJ.event_markers.concat( LJ.party_markers );
+                            // LJ.event_markers.forEach(function( mrk ){
+                            //     if( mrk.marker != this ){
+                            //         mrk.marker.setZIndex(1);
+                            //     } else {
+                            //         mrk.marker.setZIndex(3);
+                            //     }
+                            // });
 
-                            markers.forEach(function( mrk ){
-                                if( mrk.marker != this ){
-                                    mrk.marker.setZIndex(1);
-                                }
-                            });
+                            // LJ.party_markers.forEach(function( mrk ){
+                            //     mrk.marker.setZIndex(1);
+                            // });
 
                             $('.event-accepted-tabview[data-eventid="' + evt._id + '"]').removeClass('highlight');
                         }
@@ -449,16 +453,16 @@
                         event_type : 'click',
                         callback   : function( e ){
 
-                            // Select all events in cache that cause to this place
-                            // Range them by date according to filters
-                            // Select the closest in distance, and trigger click
-
-                           // var u_party = _.find( LJ.cache.parties, function( par ){
-                           //      return par.address.place_id == party.address.place_id;
-                           // }); 
-
-                           LJ.fn.clickOnClosestEvent( party );
+                            LJ.fn.clickOnClosestEvent( party );
                            
+                        }
+                    }, {
+                        event_type: 'mouseover',
+                        callback: function( e ){
+
+                            var current_zindex = this.getZIndex();
+                            this.setZIndex( current_zindex + 1 );
+
                         }
                     }
                 ]
@@ -567,7 +571,14 @@
                 cache     : 'active_party_marker',
                 singleton : false,
                 zIndex    : 10,
-                data      : {}
+                data      : {},
+                listeners : [
+                    {
+                        event_type : 'click',
+                        callback   : function( e ){
+                            LJ.fn.clearMapviews();
+                        }
+                    }]
             });
 
 
@@ -609,7 +620,14 @@
                 cache     : 'active_party_marker',
                 singleton : false,
                 zIndex    : 21,
-                data      : {}
+                data      : {},
+                listeners : [
+                    {
+                        event_type : 'click',
+                        callback   : function( e ){
+                            LJ.fn.clearMapviews();
+                        }
+                    }]
             });
 
 
@@ -729,7 +747,14 @@
                 cache     : 'active_event_marker',
                 singleton : false,
                 zIndex    : 10,
-                data      : {}
+                data      : {},
+                listeners : [
+                    {
+                        event_type : 'click',
+                        callback   : function( e ){
+                            LJ.fn.clearMapviews();
+                        }
+                    }]
             });
 
         },
@@ -825,6 +850,7 @@
                 filters: true
             });
 
+            // Controls what happens if the selected party was filtered
             var is_party_filtered = false;
 
             LJ.party_markers = LJ.party_markers || [];
@@ -839,12 +865,17 @@
             // No meefore has been created to join a specific party
             if( closest_event == null  && !is_party_filtered ){
 
-               LJ.fn.addDefaultInview( party );
+               LJ.fn.clearMapviews();
+               LJ.fn.displayActivePartyMarker_Party( party );
+               LJ.fn.addPartyMapview_Empty( party );
                 
-            } else {
+            } else {  
 
                 if( !closest_event ){
-                    return LJ.fn.addDefaultInview( party );
+                    LJ.fn.clearMapviews();
+                    LJ.fn.displayActivePartyMarker_Party( party );
+                    LJ.fn.addPartyMapview_Empty( party );
+                    return;
                 }
 
                 var closest_event_marker = _.find( LJ.event_markers, function( mrk ){
@@ -1152,6 +1183,12 @@
                 return;
             }
             
+        },
+        emulateMarkerClicked: function(){
+
+            LJ.marker_clicked = true;
+            LJ.fn.timeout( 30, function(){ LJ.marker_clicked = false });
+
         }
 
 	});

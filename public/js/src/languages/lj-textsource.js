@@ -305,7 +305,7 @@
 			"fr": "Organiser",
 			"en": "Organize"
 		},
-		e_preview_first_to_create: {
+		e_mapview_first_to_create: {
 			"fr": "Proposer un meefore",
 			"en": "Create a meefore"
 		},
@@ -329,9 +329,9 @@
 			"fr": "Soirée partenaire",
 			"en": "Partner event"
 		},
-		e_prevew_default_text: {
-			"fr": "Aucun meefore n\'est prévu pour cette soirée ce jour-là. Soyez le premier à en proposer un.",
-			"en": "No pregame party is planned for this party on this day. Be the first to organize one."
+		e_mapview_default_text: {
+			"fr": "Aucun meefore de prévu",
+			"en": "No pregame party is scheduled"
 		},
 		e_preview_planned: {
 			"fr": "%n meefore à venir",

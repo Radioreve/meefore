@@ -22,7 +22,12 @@
 
                 // Cant whisper to himself or any other id than user id
                 if( facebook_id == LJ.user.facebook_id || !/^\d{1,}$/i.test( facebook_id ) ){
-                    LJ.fn.log('Cant whisper to himself');
+                    // return LJ.fn.warn('Cant whisper to himself');
+                    return;
+                }
+
+                if( $self.closest('.event-accepted-chat-message').hasClass('bot') ){
+                    // return LJ.fn.warn('Cant whisper to meefore');
                     return;
                 }
 
@@ -667,7 +672,7 @@
 
 
             LJ.fn.activateEventTabview( event_id );
-            LJ.fn.showEventPreview( event_id );
+            // LJ.fn.showEventPreview( event_id );
 
         }
 

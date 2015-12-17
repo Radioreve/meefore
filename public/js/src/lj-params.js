@@ -33,6 +33,8 @@
         slideRightInVeryLight: { opacity: [1, 0], translateX: [0, 7]   },
         slideRightOutVeryLight: { opacity: [, 1], translateX: [7, 0]   }
 	},
+    event_markers: [],
+    party_markers: [],
     page_default_title: "Meefore | Home",
     intro: {
         event_data: {

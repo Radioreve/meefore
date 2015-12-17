@@ -114,6 +114,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.fn.handleDomEvents_UI();
             LJ.fn.handleDomEvents_Profile();
             LJ.fn.handleDomEvents_Settings();
+            LJ.fn.handleDomEvents_Mapviews();
 
             LJ.fn.handleDomEventsChat();
             LJ.fn.handleDomEventsCreate();
@@ -278,6 +279,9 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                     LJ.map.setZoom(14);
                  }
             });
+
+            // Init Mapview element 
+            LJ.fn.initMapview();
 
             // Show limited mode on mobile 
             $('.m-warning').removeClass('none');

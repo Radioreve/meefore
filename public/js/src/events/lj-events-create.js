@@ -143,7 +143,7 @@
             // });
 
 
-            LJ.$body.on('click', '.btn-create-event', function(){
+            LJ.$body.on('click', '.js-create-event', function(){
 
                 LJ.fn.displayInModal({ 
                     source:'local',

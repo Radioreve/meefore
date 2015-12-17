@@ -70,8 +70,8 @@
     renderEventPreview_Default: function(){
 
       var html = '<div class="event-preview">'
-                   + '<div data-lid="e_prevew_default_text" class="event-preview-default">Aucun meefore n\'est prévu pour cette soirée. Soyez le premier à en proposer un. </div>'
-                   + '<button  data-lid="e_preview_first_to_create" class="theme-btn btn-preview btn-create-event slow-down-3">Proposer un meefore pour cette soirée</div>'
+                   + '<div data-lid="e_prevew_default_text" class="event-preview-default">Aucun meefore...</div>'
+                   + '<button  data-lid="e_preview_first_to_create" class="theme-btn btn-preview btn-create-event slow-down-3">Proposer...</div>'
                 + '</div>';
 
       html = $(html);
@@ -570,7 +570,7 @@
 
       var html = '<div class="event-accepted-tabview slow-down-3" data-eventid="' + evt._id + '">'
                       + '<i class="icon icon-tabview icon-accepted icon-chat"></i>'
-                      + '<i class="icon icon-tabview icon-hosting icon-mindset"></i>'
+                      + '<i class="icon icon-tabview icon-hosting icon-star-1"></i>'
                       + '<i class="icon icon-tabview icon-kicked icon-ellipsis"></i>'
                       + '<i class="icon icon-tabview icon-pending icon-ellipsis"></i>'
                       + '<span class="tabview-date-day">' + moment( evt.begins_at ).format('DD/MM') + '</span>'
@@ -731,7 +731,7 @@
     renderItemInInput_GroupName: function( str ){
 
         var html = '<div class="rem-click item">'
-                        + '<i class="icon icon-group-name icon-mindset"></i>'
+                        + '<i class="icon icon-group-name icon-star-1"></i>'
                         + '<div class="item-name">' + str + '</div>'
                     +'</div>'
 
@@ -765,6 +765,21 @@
           }
 
           return html;
+
+    },
+    testTemplate: function( tplName, param, wrapper ){
+
+      var html = LJ.fn[tplName]( param );
+
+      if( wrapper ){
+        html = '<div class="'+wrapper+'">'+html+'</div>';
+      }
+
+      $(html).addClass('super-centered test-tpl').css({
+        'z-index':'1000000000000', 'opacity': '1' })
+      .appendTo('body');
+
+      $('.test-tpl').click(function(){ $(this).remove(); })
 
     }
        

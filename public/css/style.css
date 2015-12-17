@@ -1240,7 +1240,7 @@ body > header > h5 {
 
 .theme-btn {
    font-family: 'Karla';
-   padding: 9px 20px;
+   padding: 10px 20px;
    border: none;
    font-size: 14px;
    outline: none;
@@ -1571,7 +1571,6 @@ input[type="radio"] + span {
 
 input[type="submit"]:hover,
 button:hover {
-   background-color: #85E585;
    /* border: none; */
 }
 
@@ -1811,13 +1810,16 @@ p {
 
 #delete-profile {
 	float: right;
-	width: 200px;
-	height: 30px;
-	background: #F55974;
+	width: 140px;
+	height: 29px;
+	background: #909090;
 	color: white;
+	font-size: 10px;
+	text-transform: none;
+	border-radius: 3px;
 }
 #delete-profile:hover {
-	background: #D13D57;
+	background: #B1B1B1;
 }
 
 .delete-profile-text {

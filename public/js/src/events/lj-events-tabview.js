@@ -82,7 +82,7 @@
 
             // Display the proper container and the proper chat 
             // Compute the perfect height 
-            var $limit = $('.row-events-preview');
+            var $limit = $('.row-events-filters');
             var h = $( window ).outerHeight( true ) - $limit.innerHeight() - parseInt( $limit.css('top').split('px')[0] );
 
             // Open the two wrappers
@@ -100,7 +100,7 @@
             LJ.fn.showChatInview( target_event_id, target_group_id );
             
             if( opts.show_preview ){
-                LJ.fn.showEventPreview( target_event_id );
+                // LJ.fn.showEventPreview( target_event_id );
             }
 
 
@@ -152,7 +152,7 @@
             if( !current_event_id || !target_event_id )
                 return LJ.fn.warn('Cant hide and show, missing either current or target event_id', 1 );
 
-            LJ.fn.showEventPreview( target_event_id );
+            // LJ.fn.showEventPreview( target_event_id );
             LJ.fn.hideEventInview( current_event_id );
 
             // Smooth it up!

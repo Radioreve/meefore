@@ -3,13 +3,6 @@
 
 		handleDomEventsPreview: function(){
 
-			LJ.$body.on('click', '.btn-jumpto', function(){
-				var event_id = $(this).parents('.event-preview').attr('data-eventid');
-				var $tab = $('.event-accepted-tabview[data-eventid="' + event_id + '"]');
-				
-				$tab.click();
-			});
-
             LJ.$body.on('keydown', 'input', function(e){
 
                 var $self = $(this);
@@ -58,45 +51,59 @@
 
             });
 
-             LJ.$body.on('click','.btn-requestin', function(){
 
-                LJ.fn.showRequestInModal();
+            LJ.$body.on('click', '.btn-jumpto', function(){
+
+                // Go up the dom to find a parent element that has the event_id data
+                var event_id = $(this).closest('[data-eventid]').attr('data-eventid');
+                var $tab     = $('.event-accepted-tabview[data-eventid="' + event_id + '"]');
+                
+                $tab.click();
 
             });
 
+            LJ.$body.on('click','.btn-requestin', function(){
+
+                // Go up the dom to find a parent element that has the event_id data
+                var event_id = $(this).closest('[data-eventid]').attr('data-eventid');
+                LJ.fn.showRequestInModal( event_id );
+
+            });
+
+
+
 		},
-        showRequestInModal: function(){
+        showRequestInModal: function( event_id ){
 
-             var event_id = $('.event-preview').attr('data-eventid');
 
-                if( !event_id ){
-                    return console.error('eventid wasnt attached to the dom, cant continue with the request');
+            if( !event_id ){
+                return console.error('eventid wasnt attached to the dom, cant continue with the request');
+            }
+            
+            LJ.fn.displayInModal({
+                source: 'local',
+                fix_height: 0,
+                starting_width: 550,
+                custom_classes: ['text-left'],
+                render_cb: function(){
+                    return LJ.fn.renderEventRequestIn( event_id );
+                },
+                predisplay_cb: function(){
+
+                    $('.row-events-map').hide();
+                    LJ.fn.initTypeaheadGroups( LJ.user.friends );
+
+                     /* Adjusting label & input width */
+                    LJ.fn.adjustAllInputsWidth('#requestIn');
+
+                    var default_groupname = LJ.user.name + ' & co';
+                    LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput_GroupName( default_groupname ), inp: '#ri-groupname', max: 1 });
+
+                     var default_message = 'Ahoy!';
+                    LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput_GroupMessage( default_message ), inp: '#ri-groupmessage', max: 1 });
+
                 }
-                
-                LJ.fn.displayInModal({
-                    source: 'local',
-                    fix_height: 0,
-                    starting_width: 550,
-                    custom_classes: ['text-left'],
-                    render_cb: function(){
-                        return LJ.fn.renderEventRequestIn( event_id );
-                    },
-                    predisplay_cb: function(){
-
-                        $('.row-events-map').hide();
-                        LJ.fn.initTypeaheadGroups( LJ.user.friends );
-
-                         /* Adjusting label & input width */
-                        LJ.fn.adjustAllInputsWidth('#requestIn');
-
-                        var default_groupname = LJ.user.name + ' & co';
-                        LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput_GroupName( default_groupname ), inp: '#ri-groupname', max: 1 });
-
-                         var default_message = 'Ahoy!';
-                        LJ.fn.addItemToInput({ html: LJ.fn.renderItemInInput_GroupMessage( default_message ), inp: '#ri-groupmessage', max: 1 });
-
-                    }
-                });
+            });
 
         },
 		requestIn: function( event_id ){
@@ -171,7 +178,40 @@
                 });
 
         },
-        addEventPreview: function( evt, options ){
+        // Find the event state for a given user
+        // Possibilities are : ["default", "pending", "accepted", "host" ];
+        extractEventState: function( evt ){
+
+            var state = "default";
+
+            var hids = _.pluck( evt.hosts, 'facebook_id');
+
+                if( hids.indexOf( LJ.user.facebook_id ) != -1 ){
+                    state = "host"
+                }
+
+                // Check for each group if user facebook_id match group members facebook_id
+                evt.groups.forEach(function( group ){
+
+                    var mids = _.pluck( group.members, 'facebook_id' );
+
+                    if( mids.indexOf( LJ.user.facebook_id )!= -1 ){
+
+                        if( group.status == "accepted" ){
+                            state = "accepted"
+                        }
+
+                        if( group.status == "pending" || group.status == "kicked"  ){
+                            state = "pending"
+                        }
+
+                    }
+                });
+
+            return state;
+
+        },
+        addEventPreview: function( evt ){
 
             var renderFn;
 
@@ -180,28 +220,20 @@
                 renderFn = LJ.fn.renderEventPreview_Default;
             } else {
 
-                renderFn = LJ.fn.renderEventPreview_User;
-                options = options || {};
+                var state = LJ.fn.extractEventState( evt );
 
-                var hids = _.pluck( evt.hosts, 'facebook_id');
+                if( state == "default" )
+                    renderFn = LJ.fn.renderEventPreview_User;
 
-                if( hids.indexOf( LJ.user.facebook_id ) != -1 ){
+                if( state == "pending" )
+                    renderFn = LJ.fn.renderEventPreview_MemberPending;
+
+                if( state == "accepted" )
+                    renderFn = LJ.fn.renderEventPreview_MemberAccepted;
+
+                if( state == "host" )
                     renderFn = LJ.fn.renderEventPreview_Host;
-                }
 
-                evt.groups.forEach(function( group ){
-
-                    var mids = _.pluck( group.members, 'facebook_id' );
-                    if( mids.indexOf( LJ.user.facebook_id )!= -1 ){
-                        if( group.status == "accepted" ){
-                            renderFn = LJ.fn.renderEventPreview_MemberAccepted;
-                        }
-                        if( group.status == "pending" || group.status == "kicked"  ){
-                            renderFn = LJ.fn.renderEventPreview_MemberPending;
-                        }
-
-                    }
-                });
             }
 
             var event_preview = renderFn( evt );
@@ -236,7 +268,7 @@
             // LJ.fn.log('Re-render');
             if( $('.row-events-preview').css('opacity') != '1' ){
                 return setTimeout(function(){
-                    LJ.fn.addEventPreview( evt, options );
+                    LJ.fn.addEventPreview( evt );
                 }, 100 );
             }
 

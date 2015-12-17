@@ -49,6 +49,7 @@
             dir_src + 'tpl/lj-render-user-profile.js',
             dir_src + 'tpl/lj-render-create.js',
             dir_src + 'tpl/lj-render-event.js',
+            dir_src + 'tpl/lj-render-mapviews.js',
             dir_src + 'tpl/lj-render-typeahead.js',
             dir_src + 'lj-domEvents.js',
             dir_src + 'events/lj-events-chat.js',
@@ -102,6 +103,7 @@
             dir_css + 'admin.css',
             dir_css + 'modal.css',
             dir_css + 'intro.css',
+            dir_css + 'mapview.css',
             dir_css + 'notifications.css'
             // dir_css + 'pikadate.css'
             // dir_css + 'rangeslider/css/rangeslider.css',

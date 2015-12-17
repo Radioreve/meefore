@@ -661,9 +661,11 @@
 				if( unix < moment( disconnected_at ).unix() )
 					return;
 
+				LJ.fn.bubbleUpMessage( chat_id );
+
+
 				if( $wrap.hasClass('hb-notified') )
 					return;
-
 
 				$wrap.addClass('hb-notified');
 
