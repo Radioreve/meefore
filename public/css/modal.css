@@ -154,8 +154,11 @@ label.lighter {
 }
 .modal-title {
     color: #E94F6A;
-    font-family: 'Londrina solid';
-    font-size: 25px;
+    font-family: 'Alegreya Sans Sc';
+    font-size: 22px;
+    color: #B01756;
+    font-weight: bolder;
+    text-shadow: 0 0 1px #D8D8D8;
 }
 
 .modal-title-facebook {

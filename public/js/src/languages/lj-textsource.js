@@ -770,11 +770,11 @@
 			"en": "Down the screen are shown every meefore you either host or want to join"
 		},
 		intro_text_15: {
-			"fr": "C'est ici que se passe le chat !",
-			"en": "This is where you chat!"
+			"fr": "Lorsque vous envoyez une demande de participaton, le groupe organisateur doit valider votre demande",
+			"en": "When you send a request, the hosting group must accept your request"
 		},
 		intro_text_16: {
-			"fr": "Lorsque les organisateurs ont validé votre demande, la discussion peut démarrer",
+			"fr": "Lorsque les organisateurs vous ont validé, la discussion peut démarrer",
 			"en": "Once the hosts have accepted your request, the talk can start"
 		},
 		intro_text_17: {

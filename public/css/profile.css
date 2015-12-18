@@ -39,10 +39,11 @@
 .row-pictures i.selected {
    background: #68D068;
    color: white;
+   background: #B01756;
 }
 
 .row-title .icon:not(.active):hover {
-   background: #D7FFD7;
+   background: #FED6FF;
    /* z-index: -1; */
 }
 
@@ -95,7 +96,7 @@ right: 0;
     color: white;
     position: relative;
     top: 9px;
-    left: 8px;
+    left: 11px;
     font-size: 13px;
 }
 #profileWrap .icon-invite-friends:hover {
@@ -398,6 +399,7 @@ right: 0;
 
 .row.editing .row-input:hover label {
    color: #68D068;
+   color: #B01756;
 }
 
 .row.editing .row-input {
@@ -411,7 +413,7 @@ right: 0;
 .row.editing .row-select.modified {
    background-color: #F1F1F1;
    color: #353535;
-   background: #68D068;
+   background: #B01756;
    color: white;
 }
 

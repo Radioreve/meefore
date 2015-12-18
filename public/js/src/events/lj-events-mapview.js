@@ -81,12 +81,14 @@
 			return marker;
 
 		},
-		addEventMapview: function( evt ){
+		addEventMapview: function( evt, opts ){
 
+			var opts = opts || {};
+			
 			if( !evt )
 				return LJ.fn.warn('Cannot add mapview without event, evt: ' + evt , 3 );
 
-			var marker = LJ.fn.findEventMarker( evt );
+			var marker = opts.marker || LJ.fn.findEventMarker( evt );
 			if( !marker )
 				return LJ.fn.warn('Cannot add mapview without marker, mrk: ' + marker, 3 );
 
@@ -123,6 +125,8 @@
 				content: renderFn( evt )
 			});
 
+			// Make sure Event Mapview always above Party Mapview
+			LJ.active_event_mapview.container.css({ 'z-index':'1' });
 
 			LJ.active_event_mapview.open( LJ.map, marker );
 
@@ -140,25 +144,15 @@
 		},
 		addPartyMapview: function( party, opts ){
 
+			var opts = opts || {};
 
 			if( !party )
 				return LJ.fn.warn('Cannot add mapview without party: ' + party , 3 );
 
-			var marker = LJ.fn.findPartyMarker( party );
+			var marker = opts.marker || LJ.fn.findPartyMarker( party );
 			if( !marker )
 				return LJ.fn.warn('Cannot add mapview without marker, mrk: ' + marker, 3 );
 
-
-			// Only one active mapview max is allowed in memory.
-			// Important to make it 'null' before calling it again
-			if( LJ.active_party_mapview ){
-
-				LJ.fn.removePartyMapview();
-				LJ.active_party_mapview = null;
-				
-				return LJ.fn.addPartyMapview( party, opts );
-
-			}
 
 			var renderFn = null;
 			var state = opts.state || "default";
@@ -172,9 +166,26 @@
             if( state == "empty" )
             	renderFn = LJ.fn.renderPartyMapview_Empty;
 
+            var render_id = party.address.place_id + '_' + state;
+            // Only one active mapview max is allowed in memory.
+			// Important to make it 'null' before calling it again
+			if( LJ.active_party_mapview ){
+
+				// If we're about to render the exact same template, do nothing for a smooth ui
+				if( LJ.active_party_mapview.render_id == render_id ) return;
+
+				LJ.fn.removePartyMapview();
+				LJ.active_party_mapview = null;
+				
+				return LJ.fn.addPartyMapview( party, opts );
+
+			}
+
 			LJ.active_party_mapview = new LJ.Mapview({
-				content: renderFn( party )
+				content   : renderFn( party ),
+				render_id : render_id
 			});
+
 
 			LJ.active_party_mapview.open( LJ.map, marker );
 
@@ -209,7 +220,10 @@
 			if( !LJ.active_event_mapview )
 				return LJ.fn.warn('Cannot fade mapview without active_event_mapview: ' + LJ.active_event_mapview, 3 );
 
+
 			var elem = LJ.active_event_mapview;
+
+			elem.render_id = null;
 
 			var current_opacity = elem.container.css('opacity');
 
@@ -222,7 +236,7 @@
 					complete: function(){
 						elem.setMap( null );
 					}
-			});
+			});	
 
 		},
 		removePartyMapview: function(){
@@ -232,12 +246,14 @@
 
 			var elem = LJ.active_party_mapview;
 
+			elem.render_id = null;
+
 			var current_opacity = elem.container.css('opacity');
 
 			elem.container
 				.velocity({
 					'opacity': [ 0, current_opacity ],
-					'margin-top': '-7px'
+					'margin-top': '10px'
 				}, { 
 					duration: 220,
 					complete: function(){
@@ -284,6 +300,11 @@
 			        } else {
 			        	this.custom_position = 'top';
 			        }
+
+			        if( opts.render_id ){
+			        	this.render_id = opts.render_id;
+			        }
+
 			    };
 			    /**
 			     * Inherit from OverlayView

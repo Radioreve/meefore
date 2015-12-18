@@ -252,7 +252,7 @@
                 var base_css = {
                     width      :'20px',
                     height     :'20px',
-                    top        :'25px',
+                    bottom     :'-3px',
                     border     :'1px solid white',
                     padding    :'1px',
                     background :'white', 'box-shadow': '1px 1px 2px #a2a2a2'
@@ -282,9 +282,9 @@
                     });
                 }
                 
-                if( options.whisper_to.length > 1 ){
-                    $wrap.find('.event-accepted-chat-sent-at').css({'top':'25%'});
-                }
+                // if( options.whisper_to.length > 1 ){
+                    $wrap.find('.event-accepted-chat-sent-at').css({'bottom':'17px'});
+                // }
             }
 
 

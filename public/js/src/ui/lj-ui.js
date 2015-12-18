@@ -166,13 +166,16 @@
 		},
 		displayCurtain: function( opts ){
 
-			var behindTheScene = opts.behindTheScene || function(){ LJ.fn.log('Behind the scene'); },
-				afterTheScene  = opts.afterTheScene   || function(){ LJ.fn.log('after the scene');  },
+			var opts = opts || {};
+
+			var behindTheScene   = opts.behindTheScene   || function(){ LJ.fn.log('Behind the scene'); },
+				afterTheScene    = opts.afterTheScene    || function(){ LJ.fn.log('after the scene');  },
 				parallelTheScene = opts.parallelTheScene || function(){},
 
 				delay          = opts.delay    || 500,
 				static_delay   = opts.static_delay || false,
-				duration       = opts.duration || 800;
+				show_duration  = opts.duration || 800;
+				hide_duration  = opts.hide_duration || show_duration;
 
 
 
@@ -185,7 +188,7 @@
 				$curtain
 				.velocity('transition.fadeIn',
 				{ 
-					duration: init_duration || duration, //simuler l'ouverture instantanée
+					duration: init_duration || show_duration, //simuler l'ouverture instantanée
 				  	complete: function(){
 				  		behindTheScene();
 				  		if( static_delay ){
@@ -204,7 +207,7 @@
 					.velocity('transition.fadeOut',
 					{	
 						display : 'none',
-						duration: duration,
+						duration: hide_duration,
 						complete: afterTheScene
 					});
 
@@ -306,7 +309,7 @@
 			$('.curtain-loader').velocity('transition.fadeIn', { delay: 200, duration: 300});
 
 		},
-		hideModal: function(callback){
+		hideModal: function( callback ){
 
 			$('.row-events-map').show();
 			$('.modal-curtain')

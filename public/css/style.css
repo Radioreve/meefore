@@ -21,7 +21,7 @@ p,
 textarea,
 input {
    font-size: 14px;
-   font-family: 'Lato','Calibri','sans serif';
+   font-family: 'Karla','Calibri','sans serif';
    resize: none;
    outline: none;
    border: none;
@@ -61,6 +61,8 @@ font-size: 14px;text-align: center;color: #ee;}
 	display: block!important;
 	text-transform: uppercase;
 	font-size: 9px!important;
+	background: #B01756!important;
+	border: 1px solid #4E0C27;
 }
 
 .full-rotation {
@@ -1266,6 +1268,7 @@ body > header > h5 {
    background-color: #68D068;
    color: white;
    /* border: 1px solid #E94F6A; */
+   background-color: #B01756;
 }
 
 .btn-validating {
@@ -1274,9 +1277,12 @@ body > header > h5 {
 
 .btn-validate-modal {
 	background: #e94f6a;
+	background: #B01756;
+	border-radius: 2px!important;
 }
 .btn-validate-modal:hover {
 	background: #F86780;
+	background: #D42B70;
 }
 
 .btn-delete {
@@ -1287,7 +1293,7 @@ body > header > h5 {
 }
 
 .btn-large {
-	padding: 11px 18px;
+	padding: 10px 18px;
 	font-size: 11px;
 	border-radius: 0px;
 	text-transform: uppercase;
@@ -1766,6 +1772,7 @@ p {
 
 .modal-container .row-input:hover label {
 	color: #E94F6A;
+	color: #B01756;
 }
 
 .preview-type {

@@ -75,7 +75,6 @@
 		},
         showRequestInModal: function( event_id ){
 
-
             if( !event_id ){
                 return console.error('eventid wasnt attached to the dom, cant continue with the request');
             }

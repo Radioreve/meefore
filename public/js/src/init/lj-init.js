@@ -411,7 +411,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
                 $('.row-events-filters').velocity( LJ.ui.slideUpInLight,{ 
                     display: 'flex',
-                    duration: 800,
+                    duration: 500,
                     delay: 800
                 });
 

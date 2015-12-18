@@ -135,9 +135,10 @@
           context_html += '</div>';
 
           var divider_html = '<div class="mapview__divider--md"></div>';
+          var close_html   = '<i class="mapview__close icon icon-minus"></i>';
 
           var html = '<div class="mapview mapview--party" data-placeid="'+ party.address.place_id +'">'
-                    // + main_icon_html
+                    + close_html
                     + context_html
                     + '</div>'
 

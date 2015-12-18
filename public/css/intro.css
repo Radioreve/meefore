@@ -20,16 +20,20 @@ color: white;width: 100%;}
 
 .btn-welcome, .btn-fillprofile, .welcome .invite-friends {
 	background: #e94f6a;
+	background: #B01756;
 	width: 300px;
-	padding: 20px;
-	font-size: 15px;
+	padding: 17px;
+	font-size: 20px;
 	display: block;
 	margin: 0 auto;
 	margin-top: 30px;
+	font-family: 'Pacifico';
+	text-transform: none;
 }
 
 .btn-welcome:hover, .btn-fillprofile:hover {
 	background: #F4647E;
+	background: #DB2771;
 }
 
 .welcome-skip, .ending-skip {
@@ -113,7 +117,7 @@ left: 1px;
     background: #3f6698;
     margin-top: 5px;
     padding: 15px;
-    font-size: 11px;
+    font-size: 18px;
     position: static;
 }
 .welcome .invite-friends:hover {

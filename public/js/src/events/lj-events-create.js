@@ -632,17 +632,16 @@
 
                 behindTheScene: function(){
 
-                    LJ.fn.updateEventCache( evt );
-                    
-                    LJ.fn.clearAllActiveMarkers();
-                    LJ.fn.clearAllActivePaths();
-                    LJ.fn.clearAllHalfActivePaths();
-
                     LJ.fn.hideModal();
+
+                    LJ.fn.updateEventCache( evt );
+
                     LJ.fn.displayEventMarker( evt );
                     LJ.fn.displayPartyMarker_Event( evt );
+                    LJ.fn.selectMapEvent( evt );
+
                     LJ.fn.addEventInviewAndTabview( evt, { hide: true });
-                    LJ.fn.displayPathToParty({ evt: evt });
+
                     LJ.map.panTo({ lat: evt.address.lat, lng: evt.address.lng });
                     LJ.map.setZoom( 15 );
 
@@ -650,6 +649,8 @@
                     LJ.fn.fetchMe();
 
                 },
+                duration: 650,
+                hide_duration: 420,
                 static_delay: true,
                 delay: 2000,
                 afterTheScene: function(){

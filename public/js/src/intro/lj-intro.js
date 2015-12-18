@@ -137,17 +137,17 @@
         			},
         			{
                         id       : "intro_6",
-                        next_id  : "intro_7",
+                        next_id  : "intro_10",
                         mode     : "idem",
                         text     : LJ.text_source["intro_text_6"][ LJ.app_language ],
         				callback: function(){
         					LJ.fn.showTextLintro(this);
         					LJ.event_markers_intro[0].marker.setIcon( LJ.cloudinary.markers.base_active.open.url );
         					LJ.party_markers_intro[0].marker.setIcon( LJ.cloudinary.markers.party_active.url );
-        					LJ.fn.addEventPreview( LJ.intro.event_data );
-        					LJ.fn.addPartyPreview( LJ.intro.party_data, { intro: true });
-                            $('.detailable').removeClass('detailable');
-                            $('.btn-requestin').on('click', function(e){ e.stopPropagation(); });
+        					LJ.fn.addEventMapview( LJ.intro.event_data, { marker: LJ.event_markers_intro[0].marker });
+        					LJ.fn.addPartyMapview( LJ.intro.party_data, { marker: LJ.party_markers_intro[0].marker });
+                            LJ.fn.timeout(1000, function(){ $('.btn-requestin').click(function(e){ e.stopPropagation(); }); })
+                           
         				}
         			},
         			{
@@ -190,18 +190,19 @@
                         text       : LJ.text_source["intro_text_10"][ LJ.app_language ],
                         delay      : 1000,
         				callforward: function(){
-        					LJ.fn.showRequestInModal();
+        					LJ.fn.showRequestInModal('fake_intro_id');
         				},
         				callback: function(){
         					LJ.fn.showTextLintro(this);
                             $('.modal-container-body').find('*').each(function(i, el){
                                 $(el).on('click', function(e){ e.stopPropagation(); });
                             });
+                            LJ.fn.clearMapviews();
         				}
         			}, 
         			{
                         id         : "intro_11",
-                        next_id    : "intro_12",
+                        next_id    : "intro_15",
                         mode       : "element",
                         el         : ".row-requestin-group-members",
                         text       : LJ.text_source["intro_text_11"][ LJ.app_language ],
@@ -297,18 +298,22 @@
         			{
                         id          : "intro_15",
                         next_id     : "intro_16",
-                        mode        : "area",
-                        upper_el    : '.row-party-preview',
+                        mode        : "element",
+                        el          : '.event-inview-intro',
+                        delay       : '300',
                         upper_cover : true,
                         text        : LJ.text_source["intro_text_15"][ LJ.app_language ],
+                        callforward: function(){
+                            $('.modal-curtain').click();
+                            LJ.fn.showIntroChatInview();
+                        },
         				callback: function(){
         					LJ.fn.showTextLintro(this);
-        					LJ.fn.showIntroChatInview();
         				}
         			},
         			{
                         id          : "intro_16",
-                        next_id     : "intro_17",
+                        next_id     : "intro_18",
                         delay       : 8000,
                         mode        : "idem",
                         // lower_el : '.row-events-accepted-tabview',
@@ -320,7 +325,7 @@
         			},
         			{
                         id          : "intro_17",
-                        next_id     : "intro_13a",
+                        next_id     : "intro_18",
                         mode        : "element",
                         el          : '.event-accepted-chat-typing',
                         padding     : 20,

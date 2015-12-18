@@ -331,48 +331,7 @@
                         event_type : 'click',
                         callback   : function(e){
 
-                            if( LJ.fn.isEventMarkerActivated( evt._id ) )
-                                return LJ.fn.warn('Marker already activated', 2);
-                            
-
-                            // Refresh active marker
-                            LJ.fn.clearAllActiveMarkers();
-                            LJ.fn.clearAllActivePaths();
-                            LJ.fn.clearAllHalfActivePaths();
-
-                            // Event mapview ;-)
-                            LJ.fn.addEventMapview( evt );
-
-                            // Partu mapview ;-)
-                            LJ.fn.addPartyMapview( evt.party, { begins_at: evt.begins_at } );
-
-                            // Pass in the date of the event, to determine if the party
-                            // matches a partner party in case same place_id, or if party occurs
-                            // another day in order to display the right preview!
-                            // LJ.fn.addPartyPreview( evt.party, { begins_at: evt.begins_at } );
-
-                            // Display active event marker at the very same effective lat/lng locations
-                            LJ.fn.displayActiveEventMarker( evt, { lat: effective_latlng.lat, lng: effective_latlng.lng });
-
-                            // Every other display about the party need to fetch in cache the proper effective lat/lng
-                            // Which may have been adjusted
-                            var c_evt   = _.clone( evt )
-
-                            LJ.party_markers.forEach(function( mrk ){
-
-                                if( mrk.marker_id == evt.party.address.place_id ){
-                                    c_evt.party.address.lat = mrk.marker.getPosition().lat();
-                                    c_evt.party.address.lng = mrk.marker.getPosition().lng();
-                                }
-
-                            });
-
-
-                            LJ.fn.displayActivePartyMarker_Event( c_evt.party );
-
-                            // Display paths
-                            LJ.fn.displayPathToParty({ evt: c_evt });
-                            LJ.fn.displayHalfActivePaths( c_evt.party );
+                            LJ.fn.selectMapEvent( evt );
 
                         }
 
@@ -407,6 +366,68 @@
                 ]
             }, options ));
 
+
+        },
+        selectMapEvent: function( evt ){
+
+            var opts = opts || {};
+
+            // var effective_latlng = LJ.fn.findEffectiveLatLng_Event( evt );
+            // var lat = effective_latlng.lat;
+            // var lng = effective_latlng.lng;
+
+            if( LJ.fn.isEventMarkerActivated( evt._id ) )
+                return LJ.fn.warn('Marker already activated', 2);
+            
+
+            // Refresh active marker
+            LJ.fn.clearAllActiveMarkers();
+            LJ.fn.clearAllActivePaths();
+            LJ.fn.clearAllHalfActivePaths();
+
+            LJ.fn.addEventMapview( evt );
+
+            // Pass in the date of the event to determine if the party is a normal ol' party or a
+            // partner one. In second case, render a special version of the template
+            LJ.fn.addPartyMapview( evt.party, { begins_at: evt.begins_at } );
+
+
+            // Display active event marker at the very same effective lat/lng locations
+            LJ.fn.displayActiveEventMarker( evt );
+
+            LJ.fn.displayActivePartyMarker_Event( evt.party );
+
+            // Display paths
+            LJ.fn.displayPathToParty({ evt: evt });
+            LJ.fn.displayHalfActivePaths( evt.party );
+
+
+
+            // Legacy ?
+
+
+            // Every other display about the party need to fetch in cache the proper effective lat/lng
+            // Which may have been adjusted
+            // var c_evt   = _.clone( evt )
+
+            // LJ.party_markers.forEach(function( mrk ){
+
+            //     if( mrk.marker_id == evt.party.address.place_id ){
+            //         c_evt.party.address.lat = mrk.marker.getPosition().lat();
+            //         c_evt.party.address.lng = mrk.marker.getPosition().lng();
+            //     }
+
+            // });
+
+
+            // LJ.fn.displayActivePartyMarker_Event( c_evt.party );
+
+            // // Display paths
+            // LJ.fn.displayPathToParty({ evt: c_evt });
+            // LJ.fn.displayHalfActivePaths( c_evt.party );
+
+
+            //
 
         },
         displayPartyMarker: function( party, options ){
@@ -640,7 +661,8 @@
             return LJ.fn.findEffectiveLatLng({
                 lat           : evt.address.lat,
                 lng           : evt.address.lng,
-                markers_array : LJ.event_markers.concat( LJ.party_markers )
+                markers_array : LJ.event_markers.concat( LJ.party_markers ),
+                evt           : evt
             });
 
         },
@@ -652,12 +674,19 @@
             return LJ.fn.findEffectiveLatLng({
                 lat           : party.address.lat,
                 lng           : party.address.lng,
-                markers_array : LJ.event_markers
+                markers_array : LJ.event_markers,
+                party         : party
             });
         },
         findEffectiveLatLng: function( opts ){
 
             var opts = opts || {};
+
+            var subject = opts.evt || opts.party;
+
+            if( !subject ){
+                return LJ.fn.warn('Cant compute effective latlng without knowing the subject', 2);
+            }
 
             if( !opts.lng || !opts.lat  ){
                 return LJ.fn.warn('Cant compute effective latlng, missing lat || lng from options', 2);
@@ -665,6 +694,15 @@
 
             if( !opts.markers_array  ){
                 return LJ.fn.warn('Cant compute effective latlng, missing markers array from options', 2);
+            }
+
+            // In case an effetive latlng was already computed previously and appended to event or party
+            // Object in memory, just retrieve it
+            if( subject.effective_lat && subject.effective_lng ){
+                return {
+                    lat: subject.effective_lat,
+                    lng: subject.effective_lng
+                }
             }
 
             var effective_lat = opts.lat;
@@ -694,17 +732,17 @@
 
             });
 
+            // Save the effective place in cache
+            subject.effective_lat = effective_lat;
+            subject.effective_lng = effective_lng;
+
             return {
                 lat: effective_lat,
                 lng: effective_lng
             };
 
         },
-        displayActiveEventMarker: function( evt, opts){
-
-            if( !opts ){
-                return LJ.fn.warn('Cant display active event marker without effective lat and lng');
-            }
+        displayActiveEventMarker: function( evt ){
 
             var status = null;
             var open_status = null;
@@ -740,8 +778,8 @@
             }
 
             LJ.fn.displayMarker({
-                lat       : opts.lat,
-                lng       : opts.lng,
+                lat       : evt.effective_lat, //opts.lat,
+                lng       : evt.effective_lng, //opts.lng,
                 url       : LJ.cloudinary.markers[ marker_type + '_active'][ open_status ],
                 marker_id : evt._id,
                 cache     : 'active_event_marker',
@@ -1055,7 +1093,7 @@
             var path = new google.maps.Polyline({
                 path          : path,
                 geodesic      : true,
-                strokeColor   : opts.stroke_color || '#E94F6A',
+                strokeColor   : window.tc || opts.stroke_color || '#111' || '#B01756',
                 strokeOpacity : opts.stroke_opacity || 0.75,
                 strokeWeight  : opts.stroke_weight || 5
             });

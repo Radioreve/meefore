@@ -14,6 +14,16 @@
 				$self.find('.bubble').addClass('filtered').text('');
 			});
 
+			LJ.$body.click(function( e ){
+
+				var $t = $( e.target );
+
+				if( !$t.is('#notifications') && $('.notifications-panel.active').length && !$t.closest('.notifications-panel').length ){
+					LJ.fn.hideNotificationsPanel();
+				}
+
+			});
+
 		},
 		initNotifications: function(){
 
