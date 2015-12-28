@@ -5,10 +5,10 @@
 background: #373737;}
  
 .notifications-panel {
-	width: 668px;
+	width: 770px;
 	height: 300px;
 	position: fixed;
-	top: 42px;
+	top: 41px;
 	left: 50%;
 	transform: translate(-50%,0);
 	z-index: 10;

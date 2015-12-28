@@ -128,9 +128,9 @@ align-items: center;
 .search-result-default {
    transition: all ease-out .3s;
    position: relative;
-    /* background-color: #F9F9F9; */
+   /* background-color: #F9F9F9; */
    border-bottom: 1px solid #DDD;
-   padding: 3px 0;
+   padding: 0px 0;
    cursor: pointer;
    transition: none;
 }
@@ -251,7 +251,9 @@ align-items: center;
 }
 
 .search-results-users {
-   left: -48px!important;
+   left: -350%!important;
+   width: 770px;
+   transform: translate(50%, 0);
    background: #303030;
    border: none;
    border-top: 1px solid #262626;

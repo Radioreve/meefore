@@ -237,7 +237,7 @@
 
             options.variations = LJ.fn.whisperify( options );
             LJ.fn.addChatLine( options );
-
+            
         },
         whisperify: function( options ){
 
@@ -452,7 +452,7 @@
                             });
 
                     } else {
-                        
+                        _
                         $messagesWrap
                             .html( messages_html ).end()
                             .find('.readby').attr('data-names', readby )

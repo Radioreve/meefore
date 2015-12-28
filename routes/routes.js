@@ -47,7 +47,7 @@
 		//		
 		//	    % app.verb( url ) 
 		//		% mdw.auth.authenticate 					% ---> Make sure user authenticated and populates req.facebook_id
-		//		% mdw.validate( namespace, [ properties ] ) % ---> Make sure data is properlly formatted and action is authorized 
+		//		% mdw.validate( namespace, [ properties ] ) % ---> Make sure data is properly formatted and action is authorized 
 		//		% controller.handler 						% ---> Make the call ( Redis & MongoDB )							
 		//
 
