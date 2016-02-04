@@ -55,8 +55,7 @@ font-size: 14px;text-align: center;color: #ee;}
 	z-index: 1;
 	font-size: 12px;
 	padding: 3px 4px!important;
-	background: linear-gradient(45deg,  #01BF01,#10D010)!important;
-	box-shadow: 1px 1px 1px #045519!important;
+	box-shadow: 1px 1px 1px #232323!important;
 	border-radius: 6px 0 6px 0;
 	display: block!important;
 	text-transform: uppercase;

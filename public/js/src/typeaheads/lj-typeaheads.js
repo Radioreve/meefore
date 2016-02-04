@@ -85,7 +85,7 @@
 			$('#search input').typeahead({
 				hint: true,
 				highlight: true,
-				minLength: 2,
+				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
 				classNames: LJ.typeahead.users.class_names
 			},
 			{

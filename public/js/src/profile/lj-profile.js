@@ -85,9 +85,7 @@
 						img_place : img_place
         			}, function( err, data ){
 
-					if( err ){
-						return LJ.fn.handleServerError( LJ.text_source["p_picture_upload_error"][ LJ.app_language ] );
-					}
+					if( err ) return LJ.fn.handleUnexpectedError();
 
 					LJ.fn.handleServerSuccess( LJ.text_source["p_picture_upload_success"][ LJ.app_language ] ); 
 
@@ -128,7 +126,8 @@
 				LJ.fn.fetchFacebookProfilePicturesAlbumId(function( err, album_id ){
 
 					if( err || !album_id ){
-						return console.error('Didnt find album id, cant render pictures...');
+						console.error('Didnt find album id, cant render pictures...');
+						return LJ.fn.handleUnexpectedError();
 					}
 
 					LJ.fn.displayInModal({
@@ -349,15 +348,19 @@
 				var eventName = 'me/update-pictures',
 					data = { userId: LJ.user._id, updatedPictures: updatedPictures },
 					cb = {
-						success: LJ.fn.handleUpdatePicturesSuccess						
+						success: LJ.fn.handleUpdatePicturesSuccess,
+						error: function( res ){
+							LJ.fn.timeout( LJ.ui.artificialDelay, function(){
+								LJ.fn.clearPendingState();
+								LJ.fn.handleApiError( res );
+							});
+						}						
 					};
 
 				LJ.fn.showLoaders();
 				LJ.fn.say( eventName, data, cb );
 
 			});
-
-
 
 		},
 		setupCloudinary: function( cloudTags ){
@@ -455,7 +458,7 @@
 	  							});
 							},
 							error: function( xhr ){
-								LJ.fn.log('Error saving image identifiers to the base');
+								LJ.fn.handleApiError( res );
 							}
 						};
 
@@ -533,9 +536,10 @@
 				data = profile
 				, cb = {
 					success: LJ.fn.handleUpdateProfileSuccess,
-					error: function( xhr ){
+					error: function( res ){
 						LJ.fn.timeout( LJ.ui.artificialDelay, function(){
-							LJ.fn.handleServerError( JSON.parse( xhr.responseText ).msg );
+							LJ.fn.clearPendingState();
+							LJ.fn.handleApiError( res );
 						});
 					}
 				};

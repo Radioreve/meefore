@@ -1,6 +1,7 @@
 
 .auto-login-message,
-.reconnect-message {
+.reconnect-message,
+.unexpected-error-message {
    color: white;
    font-size: 13px;
    font-family: 'Karla';

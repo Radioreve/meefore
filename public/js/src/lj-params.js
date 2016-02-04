@@ -321,11 +321,16 @@
 		},
 		events:
 		{
-			map: {
+			mapview: {
 				hosts: {
 					params: { cloud_name: "radioreve", 'class': 'rounded detailable', width: 42, height: 42, crop: 'fill', gravity: 'face'}
 				}
 			},
+            sideview: {
+                hosts: {
+                    params: { cloud_name: "radioreve", "class": "rounded detailable", width: 35, height: 35, crop: 'fill', gravity: 'face' }
+                }
+            },
 			preview: {
 				hosts: {
 					params: { cloud_name: "radioreve", 'class': 'rounded detailable', width: 62, height: 62, crop: 'fill', gravity: 'face'}

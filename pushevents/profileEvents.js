@@ -19,6 +19,10 @@
 
 	var pusher = require('../services/pusher');
 
+	var handleErr = function( res, errors ){
+		eventUtils.raiseApiError( res, 'update_profile', errors );
+	}
+
 	var updateProfile = function( req, res ){
 
 			var data = req.body;
@@ -26,11 +30,10 @@
 			var userId = req.body.userId;
 
 			if( !validator.isInt( data.age ) ){
-				return eventUtils.raiseError({
-						toServer: "Wrong input format for age (must be age)",
-						toClient: "Il y a un problème avec votre âge",
-						res: res
-					});	
+				return handleErr( res, [{
+					'err_id': 'age_no_int',
+					'age_sent': data.age
+				}]);
 			}
 
 			var update = {
@@ -45,19 +48,11 @@
 
 			var callback = function( err, user ) {
 
-		        if( err )
-		        	return eventUtils.raiseError({
-		        		toClient: 'Something went wrong, pleasy try again later',
-		        		toServer: 'Error updating profile 1',
-		        		res: res,
-		        		err: err
-		        	});
-		         
-		            console.log('Emtting event update profile success')
-
-		            var expose = { user: user };
-
-		            eventUtils.sendSuccess( res, expose );
+		        if( err ) return handleErr( res );
+	         
+	            console.log('Emtting event update profile success')
+	            var expose = { user: user };
+	            eventUtils.sendSuccess( res, expose );
 		    }
 		
 			User.findByIdAndUpdate( userId, update, { new: true }, callback );
@@ -76,13 +71,7 @@
 	    console.log('New img id : ' + newimg_id );
 	    User.findById( userId, function( err, myUser ){
 
-	    	if( err )
-	    		return eventUtils.raiseError({
-	    			err: err,
-	    			res: res,
-	    			toClient: "Une erreur s'est produite.",
-	    			toServer: "Error uploading picture, couldn't find user"
-	    		});
+	    	if( err ) return handleErr( res );
 
 	    	var i = _.findIndex( myUser.pictures, function( el ){
 	    		return el.img_place == img_place;
@@ -90,13 +79,7 @@
 
 	    	var newPicture = myUser.pictures[i];
 
-	    	if( newPicture == undefined )
-	    		return eventUtils.raiseError({
-	    			err: err,
-	    			res: res,
-	    			toClient: "Une erreur s'est produite",
-	    			toServer: "Error uploading picture, pictures[i] undefined"
-	    		});
+	    	if( newPicture == undefined ) return handleErr( res );
 
 			newPicture.img_id      = newimg_id;
 			newPicture.img_version = newimg_version;
@@ -104,13 +87,7 @@
 	    	myUser.pictures.set( i, newPicture );
 	    	myUser.save(function( err, savedUser ){
 
-	    		if( err )
-	    			return eventUtils.raiseError({
-			    			err: err,
-			    			res: res,
-			    			toClient: "Une erreur s'est produite.",
-			    			toServer: "Error uploading picture, couldn't save user"
-			    		});
+	    		if( err ) return handleErr( res );
 
 	    		eventUtils.sendSuccess( res, { user: savedUser, msg: "Votre photo a été uploadée" });
 
@@ -130,25 +107,13 @@
 
 			User.findById( userId, function( err, user ){
 
-				if( err ){
-					return eventUtils.raiseError({
-						res:res,
-						err:err,
-						toClient:"Impossible de charger votre photo Facebook"
-					});
-				}
+				if( err ) return handleErr( res );
 
 				var picture = _.find( user.pictures, function( pic ){
 					return pic.img_place == img_place;
 				});
 
-				if( typeof picture == 'undefined' ){
-					return eventUtils.raiseError({
-						res:res,
-						err:"Typeof picture == undefined",
-						toClient:"Impossible de charger votre photo Facebook"
-					});
-				}
+				if( typeof picture == 'undefined' ) return handleErr( res );
 
 				picture.img_id  	= img_id;
 				picture.img_version = response.version + '';
@@ -158,13 +123,7 @@
 
 				user.save(function( err ){
 
-					if( err ){
-						return eventUtils.raiseError({
-							res      : res,
-							err      : err,
-							toClient : "Impossible de sauvegarder votre photo Facebook"
-						});
-					}
+					if( err ) return handleErr( res );
 
 					res.json({ 
 						msg         : "Votre photo a été chargée à partir de Facebook",
@@ -193,25 +152,14 @@
 
 		User.findById( userId, function( err, myUser ){
 
-			if( err )
-				return eventUtils.raiseError({
-					res      : res,
-					err      : err,
-					toClient : "Une erreur serveur s'est produite",
-					toServer : "Impossible de trouver l'user"
-				});
+			if( err ) return handleErr( res );
 
 			var mainified_picture = _.find( updatedPictures, function( el ){
 			 return el.action == "mainify"
 			});
 
 			if( mainified_picture && myUser.pictures[ mainified_picture.img_place ].img_id == settings.placeholder.img_id ){
-				return eventUtils.raiseError({
-					res      : res,
-					err      : err,
-					toClient : "Ta photo de profile doit te représenter",
-					toServer : "Tentative de mettre une photo qui n'est pas lui même"
-				});
+				return handleErr( res, [{ 'err_id': 'mainify_placeholder' }] );
 			}
 
 			// Store reference for criteria in Mongo update
@@ -255,13 +203,7 @@
 			// Saving picture modifications to user profile
 			myUser.save(function( err, saved_user ){
 
-				if( err )
-				return eventUtils.raiseError({
-					res      : res,
-					err      : err,
-					toClient : "Une erreur serveur s'est produite",
-					toServer : "Impossible de sauvegarder l'user"
-				});
+				if( err ) return handleErr( res );
 
 				console.log('sending success');
 				eventUtils.sendSuccess( res, { msg: "Mise à jour effectuée!", pictures: saved_user.pictures });
@@ -332,8 +274,9 @@
 
 				mySelf.friends = filtered_friends;
 				mySelf.save( function( err, mySelf ){
-					if( err )
-						return eventUtils.raiseError({ res: res, toClient: "Something happened, please try again later", toServer: "Error saving to database", err: err });
+
+					if( err ) return handleErr( res );
+
 					eventUtils.sendSuccess( res, { friends: mySelf.friends });
 				});
 

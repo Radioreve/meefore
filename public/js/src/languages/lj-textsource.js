@@ -194,7 +194,7 @@
 			"en": "Hosts"
 		},
 		e_create_hosts_placeholder: {
-			"fr": "Sélectionnez parmis vos amis (1 minimum)",
+			"fr": "Sélectionnez parmi vos amis (1 minimum)",
 			"en": "Select among your friends (1 minimum)"
 		},
 		e_create_begins_at: {
@@ -329,9 +329,25 @@
 			"fr": "Soirée partenaire",
 			"en": "Partner event"
 		},
-		e_mapview_default_text: {
+		e_mapview_empty_text: {
 			"fr": "Aucun meefore de prévu",
-			"en": "No pregame party is scheduled"
+			"en": "No meefore is scheduled"
+		},
+		e_sideview_empty_text: {
+			"fr": "Aucun meefore de prévu ce jour-ci. Essayez un autre jour ou soyez le premier à en proposer un.",
+			"en": "No meefore is scheduled for this day. Try another day or be the first to create one."
+		},
+		p_sideview_default_text: {
+			"fr": "Sélectionner une soirée sur la carte pour voir plus de détails",
+			"en": "Select a party on the map to display more details"
+		},
+		p_sideview_header: {
+			"fr": "La où est l'ambiance",
+			"en": "Where the fun is"
+		},
+		e_sideview_header: {
+			"fr": "Ils vont y aller",
+			"en": "They are going"
 		},
 		e_preview_planned: {
 			"fr": "%n meefore à venir",
@@ -530,8 +546,8 @@
 			"en": "Suspended/Full"
 		},
 		ch_settings_status_canceled: {
-			"fr": "Annulé",
-			"en": "Canceled"
+			"fr": "Supprimé",
+			"en": "Removed"
 		},
 		ch_bot_msg_group_pending: {
 			"fr": "Votre groupe a été suspendu de la discussion",
@@ -918,8 +934,26 @@
 			"fr": "Nous avons besoin d'un email de contact valide pour changer vos préférences",
 			"en": "We need a valid contact email to change your preferences"
 		},
+		err_update_profile_age: {
+			"fr": "Votre âge ne semble pas avoir le bon format",
+			"en": "Your age doesnt seem to be properly formatted"
+		},
+		err_update_profile_mainify_placeholder: {
+			"fr": "Votre photo de profil doit vous représenter",
+			"en": "Your profile picture must represent yourself"
+		},
+		err_update_profile_default: {
+			"fr": "Une erreur inattendue s'est produite",
+			"en": "Something unexpected happened"
+		},
+		err_unexpected_message: {
+			"fr": "Une erreur inattendue s'est produite. <br> Cette erreur peut-être due à des circonstances exceptionnelles ou à un bug !" 
+			       + "<br> Nous vous invitons à retenter votre action plus tard et à nous contacter si l'erreur persiste :/",
+			"en": "Something unexpected happened. <br> This error might be caused by exceptionnal circumstances or simply bug a bug."
+				   + "<br> Please try again later and we thank you in advance to contact us if the problem persists :/"
+		},
 		lp_subtitle: {
-			"fr": "<div class='lp-subpart'>Faîtes des rencontres <div class='lp-avant'><span>avant</span><img src='/img/app/avant.png' width='110%' /></div> d'aller en soirée.   " ,
+			"fr": "<div class='lp-subpart'>Faites des rencontres <div class='lp-avant'><span>avant</span><img src='/img/app/avant.png' width='110%' /></div> d'aller en soirée.   " ,
 				   // + "<div class='lp-subpart'>Rencontrez les <span>avant</span> d'aller en soirée.</div>",
 			"en": "<div class='lp-subpart'>Meet up with people <div class='lp-avant'><span>before</span><img src='/img/app/avant.png' width='110%' /></div> going out. </div>"
 		},
@@ -1037,7 +1071,7 @@
 		n_new_meefore_subtext: {
 			"fr": "Il y a actuellement %n meefore pour cette soirée",
 			"en": "There are currently %n meefore for this party"
-		},
+		},ƒ
 		n_accepted_in_text: {
 			"fr": "Votre groupe %group_name a été accepté dans un meefore",
 			"en": "Your group %group_name has been accepted in a meefore"

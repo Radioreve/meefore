@@ -37,7 +37,7 @@
           hosts_pictures_html = '<div class="mapview-hosts">';
           evt.hosts.forEach(function( host ){
 
-            var display_params = LJ.cloudinary.events.map.hosts.params;
+            var display_params = LJ.cloudinary.events.mapview.hosts.params;
                 display_params.version = LJ.fn.findMainImage( host ).img_version;
 
             var img_tag = $.cloudinary.image( LJ.fn.findMainImage( host ).img_id, display_params ).prop('outerHTML');
@@ -104,10 +104,7 @@
                      '</div>';
 
 
-          html = $(html);
-          LJ.fn.setAppLanguage( LJ.app_language, html );
-          
-          return html.prop('outerHTML');
+          return LJ.fn.translateView( html );
 
 
         },
@@ -142,10 +139,7 @@
                     + context_html
                     + '</div>'
 
-          html = $(html);
-          LJ.fn.setAppLanguage( LJ.app_language, html );
-          
-          return html.prop('outerHTML');
+          return LJ.fn.translateView( html );
 
 
         },
@@ -163,7 +157,7 @@
                                 '</div>',
                                 '<div class="mapview-emptytext mapview-context__element">',
                                   '<i class="mapview-emptytext__icon icon icon-star-empty mapview-context__icon"></i>',
-                                  '<div class="mapview-emptytext__name" data-lid="e_mapview_default_text">...</div>',
+                                  '<div class="mapview-emptytext__name" data-lid="e_mapview_empty_text">...</div>',
                                 '</div>',
                               '</div>'
                               ].join('');
@@ -173,20 +167,17 @@
                               '</div>'
                             ].join('');
 
-        var divider_html = '<div class="mapview__divider--md"></div>';
-        var close_html   = '<i class="mapview__close icon icon-minus"></i>';
+          var divider_html = '<div class="mapview__divider--md"></div>';
+          var close_html   = '<i class="mapview__close icon icon-minus"></i>';
 
-        var html = ['<div class="mapview mapview-empty mapview--party">',
-                        close_html,
-                        context_html,
-                        divider_html,
-                        action_html,
-                      '</div>'].join('');
+          var html = ['<div class="mapview mapview-empty mapview--party">',
+                          close_html,
+                          context_html,
+                          divider_html,
+                          action_html,
+                        '</div>'].join('');
 
-        html = $(html);
-        LJ.fn.setAppLanguage( LJ.app_language, html )
-          
-        return html.prop('outerHTML');
+          return LJ.fn.translateView( html );
 
-    }
+      }
     });

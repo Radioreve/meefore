@@ -5,6 +5,9 @@
 
 		var types = Array.isArray( types ) ? types : [ types ];
 
+		// Builds in array of middlewares that will be sequentially called 
+		// First of all, set up the namespace of the route that will be 
+		// Used clientside to match the proper error message
 		var middlewares = [ setNamespace( namespace ), errHandler.stage ];
 
 		var matches_files = {

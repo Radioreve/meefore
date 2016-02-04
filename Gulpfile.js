@@ -58,6 +58,7 @@
             dir_src + 'events/lj-events-groups.js',
             dir_src + 'events/lj-events-filters.js',
             dir_src + 'events/lj-events-preview.js',
+            dir_src + 'events/lj-events-requests.js',
             dir_src + 'events/lj-events-tabview.js',
             dir_src + 'events/lj-events-mapview.js',
             dir_src + 'events/lj-events-sideview.js',          
@@ -106,6 +107,7 @@
             dir_css + 'modal.css',
             dir_css + 'intro.css',
             dir_css + 'mapview.css',
+            dir_css + 'sideview.css',
             dir_css + 'notifications.css'
             // dir_css + 'pikadate.css'
             // dir_css + 'rangeslider/css/rangeslider.css',

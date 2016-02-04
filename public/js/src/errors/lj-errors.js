@@ -1,22 +1,33 @@
 
 	window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
+        clearPendingState: function(){
+
+            LJ.fn.hideLoaders();
+            $('.btn-validating').removeClass('btn-validating');
+
+        },  
 		parseError: function( xhr ){
 			
 			var res = xhr && xhr.responseText && JSON.parse( xhr.responseText );
 
-			var errors    = res.errors;
-			var namespace =  res.namespace;
+            if( !res ){
+                return LJ.fn.warn('Cannot parse error',2);
+            }
 
-			if( !errors || !namespace )
-				return console.error('Couldnt parse the response from ajax call');
+			var errors    = res.errors;
+			var namespace = res.namespace;
+
+			if( !errors || !namespace ){
+				return LJ.fn.warn('Cannot construct error, errors or namespace object missing',2);
+            }
 
 			return res;
 
 		},
 		handleApiError: function( err ){
 
-            console.error('api error');
+            console.error('api error, see raw res for explicit details');
 
             var res = LJ.fn.parseError(err);
             LJ.fn.log(res);
@@ -36,6 +47,7 @@
         		return console.error('Cant handle error without a namespace');
 
 			var handlers = {
+                "update_profile": LJ.fn.handleErrorUpdateProfile,
 				"create_event"  : LJ.fn.handleErrorMessageCreateEvent,
                 "create_place"  : LJ.fn.handleErrorMessageCreatePlace,
                 "request_event" : LJ.fn.handleErrorMessageRequest,
@@ -89,6 +101,24 @@
             }
 
         },
+        handleErrorUpdateProfile: function( err_data ){
+
+            if( !err_data || !err_data.err_id ){
+                return LJ.fn.handleUnexpectedError();
+            }
+
+            if( err_data.err_id == 'age_no_int' ){
+                var message = LJ.text_source["err_update_profile_age"][ LJ.app_language ];
+                return LJ.fn.toastMsg( message, "error" );
+            }
+
+            if( err_data.err_id == 'mainify_placeholder' ){
+                var message = LJ.text_source["err_update_profile_mainify_placeholder"][ LJ.app_language ];
+                return LJ.fn.toastMsg( message, "error" );
+            }
+
+
+        },
         handleErrorMessageRequest: function( err_data ){
 
 
@@ -138,9 +168,8 @@
         },
         handleErrorMessageEventStatus: function( err_data ){
 
-            LJ.fn.hideLoaders();
+            LJ.fn.clearPendingState();
             LJ.fn.toastMsg( LJ.text_source["to_default_error"][ LJ.app_language ], 'error');
-            $('.btn-validating').removeClass('btn-validating');
 
         },
         handleErrorChatMessage: function( err_data ){
@@ -165,6 +194,48 @@
 
             var message =  LJ.text_source["err_pusher_" + err_data.err_id ] && LJ.text_source["err_pusher_" + err_data.err_id ][ LJ.app_language ] || LJ.text_source["err_unknown"][ LJ.app_language ];
             return LJ.fn.warn( message );
+
+        },
+        handleUnexpectedError: function(){
+
+            LJ.fn.clearPendingState();
+
+            LJ.fn.warn('Handling unexpected error...', 1);
+
+            $('.curtain')
+                .html('')
+                .html(
+                    '<div class="super-centered none unexpected-error-message">'
+                        + LJ.text_source["err_unexpected_message"][ LJ.app_language ]
+                    + '</div>'
+                )
+                .velocity('transition.fadeIn', {
+                duration: 500,
+                complete: function(){
+
+                    $(this)
+                        .find('.unexpected-error-message')
+                        .velocity('transition.fadeIn', {
+                            duration: 500
+                        });
+
+                    $(this)
+                        .velocity({ opacity: [0.82,1]}, {
+                            duration: 300
+                        });
+
+                    $(this).click(function(){
+                        $(this).velocity('transition.fadeOut',{
+                            duration: 500,
+                            complete: function(){
+                                $(this).html('');
+                            }
+                        })
+                    })
+                        
+                }
+            });
+
 
         }
 

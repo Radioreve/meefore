@@ -115,6 +115,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.fn.handleDomEvents_Profile();
             LJ.fn.handleDomEvents_Settings();
             LJ.fn.handleDomEvents_Mapviews();
+            LJ.fn.handleDomEvents_Requests();
 
             LJ.fn.handleDomEventsChat();
             LJ.fn.handleDomEventsCreate();
@@ -577,7 +578,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                         });
                         
                 }
-            })
+            });
 
         },
         // Test function

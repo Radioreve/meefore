@@ -17,6 +17,16 @@
 		
 	};
 
+	var raiseApiError = function( res, namespace, errors ){
+
+		var errors = errors || [];
+
+		res.status(400).json({
+			namespace: namespace,
+			errors: errors
+		});
+	}
+
 	var raiseError = function( p ){
 
 		console.log('Raising error');
@@ -74,7 +84,6 @@
 		if( source == "app" ){
 
 			var app = data; 
-
 			var public_claim = {
 
 				expiresInMinutes : 600,
@@ -135,6 +144,7 @@
 	module.exports = {
 		
 		raiseError       : raiseError,
+		raiseApiError    : raiseApiError,
 		sendSuccess      : sendSuccess,
 		randomInt        : randomInt,
 		generateAppToken : generateAppToken,

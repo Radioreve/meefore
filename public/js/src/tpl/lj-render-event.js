@@ -377,7 +377,7 @@
 
      var toggle_mode = group.status == 'accepted' ? 'on' : 'off';
 
-     var user_group_html = '<div class="event-accepted-users-group none" data-status="' + group.status + '" data-groupid="' + group_id + '">'
+     var user_group_html = '<div class="event-accepted-users-group" data-status="' + group.status + '" data-groupid="' + group_id + '">'
                             + '<i class="icon icon-toggle icon-toggle-' + toggle_mode + '"></i>'
                             + '<div class="event-accepted-group-name">' + group.name + '</div>';
 
