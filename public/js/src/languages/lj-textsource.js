@@ -1071,7 +1071,7 @@
 		n_new_meefore_subtext: {
 			"fr": "Il y a actuellement %n meefore pour cette soirée",
 			"en": "There are currently %n meefore for this party"
-		},ƒ
+		},
 		n_accepted_in_text: {
 			"fr": "Votre groupe %group_name a été accepté dans un meefore",
 			"en": "Your group %group_name has been accepted in a meefore"
