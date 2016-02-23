@@ -1,4 +1,4 @@
-	
+
 	var _      = require('lodash');
 	var async  = require('async');
 	var get_ip = require('ipware')().get_ip;
@@ -37,55 +37,41 @@
 		mdw.alerts_watcher = require( mdwDir + '/alerts_watcher');
 		mdw.chat_watcher   = require( mdwDir + '/chat_watcher');
 		mdw.notifier       = require( mdwDir + '/notifier');
-
+		mdw.meepass   	   = require( mdwDir + '/meepass');
 
 
 	module.exports = function( app ) {
 
 
-		//      All api calls are handled this way : 
-		//		
-		//	    % app.verb( url ) 
-		//		% mdw.auth.authenticate 					% ---> Make sure user authenticated and populates req.facebook_id
-		//		% mdw.validate( namespace, [ properties ] ) % ---> Make sure data is properly formatted and action is authorized 
-		//		% controller.handler 						% ---> Make the call ( Redis & MongoDB )							
-		//
+		// Charge the test_mode on true, for validation to stop and send "success" in case of success"
+		// See errorHandlers.js
 
-
-
-		// Merge all body, query and params property 
-		// Subsequent validation modules will look if each property they are looking for
-		// is anywhere to be found and properly formatted, in the req.sent object
-		app.all('*', function( req, res, next ){
-			req.sent = _.merge( 
-
-			    req.body   || {},  
-				req.query  || {},
-				req.sent   || {}
-
-			);
-
+		app.all('/test/*', function( req, res, next ){
+			req.test_mode = true;
+			console.warn('Testing route ' + req.url);
 			next();
+		});
 
+		function handleTestEnd( req, res ){
+			res.json({ "msg": "Test ended, validation passed. Make sure the datas look as expected" });
+		}
+
+
+		app.post('/test/send_meepass',
+			mdw.validate('meepass', ['send_meepass']),
+			mdw.meepass.updateMeepass('meepass_sent'),
+			handleTestEnd
+		);
+
+		app.all('/test/*', function( req, res ){
+			res.json({ "msg": "Warning! This url matches no test route" });
 		});
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		
-
-
 	};
+
+
+
+
+

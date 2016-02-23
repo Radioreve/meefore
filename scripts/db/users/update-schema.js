@@ -25,17 +25,14 @@
 				tasks.push(function( done ){
 
 					// Update part
-					var new_arr = [];
-					user.events.forEach(function( evt, i ){
-						if( evt != null ){
-							new_arr.push(evt); 
-						}
-					});
 
-					user.events = new_arr;
-					user.markModified('events');
+					user.n_meepass = 5;
+					user.meepass   = [];
+					
+					user.markModified('n_meepass');
 
-					user.save(function(){
+					user.save(function( err ){
+						if( err ) console.log('Error : ' + err );
 						console.log('user updated');
 						done();
 					});

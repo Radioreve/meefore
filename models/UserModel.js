@@ -105,6 +105,14 @@
   notifications: {
     type    : Array,
     default : []
+  },
+  n_meepass: {
+    type    : Number,
+    default : 0
+  },
+  meepass: {
+    type    : Array,
+    default : {}
   }
 
 

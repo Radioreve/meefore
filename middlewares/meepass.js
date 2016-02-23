@@ -22,10 +22,11 @@
 
 	var updateMeepass = function( reason ){	
 
-		req.sent.reason = reason;
 
 		return function( req, res, next ){
 
+			req.sent.reason = reason;
+			
 			// Credit meepasses on all hosts
 			if( reason == "event_created" ){
 				return addMeepass_EventCreated

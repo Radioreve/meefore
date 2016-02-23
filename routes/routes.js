@@ -37,6 +37,7 @@
 		mdw.alerts_watcher = require( mdwDir + '/alerts_watcher');
 		mdw.chat_watcher   = require( mdwDir + '/chat_watcher');
 		mdw.notifier       = require( mdwDir + '/notifier');
+		mdw.meepass 	   = require( mdwDir + '/meepass');
 
 
 
@@ -489,11 +490,6 @@
 	        console.log('Message : ' + req.body.msg);
 	    });
 
-
-	    //Events relatif aux tests
-	    app.post('/test/:test_val', mdw.validate('test',['create_event']), function( req, res ){
-	    	res.json({ msg: "validaton passed", data: res.event_data });;
-	    });
 
 	    app.get('/pusher/test', function(req,res){
 	    	pusher.trigger('app', 'new test', { hello: "app" } );

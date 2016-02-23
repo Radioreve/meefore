@@ -24,6 +24,7 @@
 
 	// Chargement des routes principales 
 		require('./routes/routes')( app );
+		require('./routes/routes_test')( app );
 
 	// Http server
 		var port = process.env.PORT || 1234;
