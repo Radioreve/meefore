@@ -19,7 +19,7 @@
 					return next();
 			}
 
-			checkSenderStatus( req, function( errors, author ){
+			checkSenderStatus( req, function( errors ){
 				if( errors ){
 					req.app_errors = req.app_errors.concat( errors );
 				}
