@@ -26,10 +26,11 @@
 
 					// Update part
 
-					user.n_meepass = 5;
-					user.meepass   = [];
-					
-					user.markModified('n_meepass');
+					user.skills = undefined,
+					user.mood = undefined;
+					user.drink = undefined;
+
+					user.markModified('skills');
 
 					user.save(function( err ){
 						if( err ) console.log('Error : ' + err );

@@ -54,7 +54,7 @@
   access: {
     type: Array
   },
-  // use to make a difference between new users ("new") or regualr users ("idle")
+  // use to make a difference between new users ("new") or regular users ("idle")
   status: {
     type: String
   },
