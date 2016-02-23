@@ -47,6 +47,10 @@
 
 			var users_facebook_id = _.pluck( users, 'facebook_id' );
 
+			var sender = _.find( users, function( usr ){ 
+				return usr.facebook_id == sender_id;
+			});
+
 			// Database internal error
 			if( err ){
 				return callback('db_error');
@@ -73,13 +77,12 @@
 					'receiver_id': receiver_id 
 				});
 			}
-
+			console.log( sender );
 			// Sender doesn't have enough meepass to do the action
-			var user      = _.find( users, function( usr ){ return usr.facebook_id == sender_id; });
-			var n_meepass = user.meepass;
-			if( !user.meepass >= 1 ){
-				return callback({ 'err_id': 'not_enough_meepass' }, {
-					'current_meepass': n_meepass
+			if( sender.n_meepass < 1 ){
+				return callback({ 
+					'err_id'		  : 'not_enough_meepass',
+					'current_meepass' : sender.n_meepass
 				});
 			}
 

@@ -10,12 +10,18 @@
 
 		return function( req, res, next ){
 
-			var token = req.headers && req.headers['x-access-token'] || req.sent.token
-						
-			if( !token )
+			var token = req.headers && req.headers['x-access-token'] || req.sent.token;
+			
+			// Allow root users to bypass the app token required for  calls from terminals
+			if( audience.indexOf('root') != -1 && req.sent.rootkey == "M33forever" ){
+				return next();
+			}
+
+			if( !token ){
 				return eventUtils.raiseError({ res: res,
 					toClient : "Un token est nécessaire pour appeler cette route"
 				});
+			}
 
 			console.log('Authenticating [api]');
 

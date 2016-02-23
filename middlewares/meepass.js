@@ -34,6 +34,10 @@
 				return removeMeepass_MeepassSent
 			}
 
+			if( reason == "admin_credit" ){
+				return addMeepass_AdminCredit
+			}
+
 	};
 
 
@@ -80,14 +84,38 @@
 			multi: false
 		};
 
-		console.log('Calling db')
 		User.update( query, update, options, displayError );
 
-		console.log('Calling next');
 		next();
 
+	}
+
+
+
+	function addMeepass_AdminCredit( req, res, next ){
+
+		req.sent.reason = "admin_credit";
+
+		var facebook_id     = req.sent.facebook_id;
+		var meepass_to_add  = req.sent.credit;
+
+		var query = {
+			facebook_id: facebook_id,
+		};
+		var update = {
+			"$inc": { "n_meepass": meepass_to_add }
+		};
+		var options = {
+			multi: false
+		};
+
+		User.update( query, update, options, displayError );
+
+		next();
 
 	}
+
+
 
 	module.exports = {
 		updateMeepass: updateMeepass

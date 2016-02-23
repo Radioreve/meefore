@@ -64,6 +64,12 @@
 			handleTestEnd
 		);
 
+		app.post('/test/admin/credit_meepass',
+			mdw.auth.authenticate(['root','admin']),
+			mdw.meepass.updateMeepass('admin_credit'),
+			handleTestEnd
+		);
+
 		app.all('/test/*', function( req, res ){
 			res.json({ "msg": "Warning! This url matches no test route" });
 		});
