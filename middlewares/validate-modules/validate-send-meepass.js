@@ -51,6 +51,10 @@
 				return usr.facebook_id == sender_id;
 			});
 
+			var receiver = _.find( users, function( usr ){
+				return usr.facebook_id == receiver_id;
+			});
+
 			// Database internal error
 			if( err ){
 				return callback('db_error');
@@ -86,7 +90,9 @@
 				});
 			}
 
-
+			req.sent.receiver = receiver;
+			req.sent.sender   = sender;
+			
 			callback( null );			
 
 

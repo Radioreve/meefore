@@ -61,7 +61,8 @@
 		app.post('/test/send_meepass',
 			mdw.validate('meepass', ['send_meepass']),
 			mdw.meepass.updateMeepass('meepass_sent'),
-			handleTestEnd
+			profileEvents.updateMeepass
+			// handleTestEnd
 		);
 
 		app.post('/test/admin/credit_meepass',

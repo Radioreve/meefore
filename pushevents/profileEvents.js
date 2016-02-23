@@ -8,14 +8,15 @@
 	var config     = require('../config/config');
 	var settings   = require('../config/settings');
 	var validator  = require("validator");
+	var moment 	   = require('moment');
 
-	    cloudinary.config({ 
+    cloudinary.config({ 
 
-			cloud_name : config.cloudinary.cloud_name,
-			api_key    : config.cloudinary.api_key,
-			api_secret : config.cloudinary.api_secret
+		cloud_name : config.cloudinary.cloud_name,
+		api_key    : config.cloudinary.api_key,
+		api_secret : config.cloudinary.api_secret
 
-		});
+	});
 
 	var pusher = require('../services/pusher');
 
@@ -25,37 +26,34 @@
 
 	var updateProfile = function( req, res ){
 
-			var data = req.body;
+		var data = req.body;
 
-			var userId = req.body.userId;
+		var userId = req.body.userId;
 
-			if( !validator.isInt( data.age ) ){
-				return handleErr( res, [{
-					'err_id': 'age_no_int',
-					'age_sent': data.age
-				}]);
-			}
+		if( !validator.isInt( data.age ) ){
+			return handleErr( res, [{
+				'err_id': 'age_no_int',
+				'age_sent': data.age
+			}]);
+		}
 
-			var update = {
-				name   : data.name,
-				age    : data.age,
-				motto  : data.motto,
-				drink  : data.drink,
-				mood   : data.mood,
-				job    : data.job,
-				status : data.status
-			};
+		var update = {
+			name   : data.name,
+			age    : data.age,
+			job    : data.job,
+			status : data.status
+		};
 
-			var callback = function( err, user ) {
+		var callback = function( err, user ) {
 
-		        if( err ) return handleErr( res );
-	         
-	            console.log('Emtting event update profile success')
-	            var expose = { user: user };
-	            eventUtils.sendSuccess( res, expose );
-		    }
-		
-			User.findByIdAndUpdate( userId, update, { new: true }, callback );
+	        if( err ) return handleErr( res );
+         
+            console.log('Emtting event update profile success')
+            var expose = { user: user };
+            eventUtils.sendSuccess( res, expose );
+	    }
+	
+		User.findByIdAndUpdate( userId, update, { new: true }, callback );
 
 	};
 
@@ -258,8 +256,8 @@
 
 	var fetchAndSyncFriends = function( req, res ){
 
-			var userId         = req.body.userId;
-			var fb_friends_ids = req.body.fb_friends_ids || [];
+		var userId         = req.body.userId;
+		var fb_friends_ids = req.body.fb_friends_ids || [];
 
 		User.find({ $or: [{ _id: userId },{ facebook_id: { $in: fb_friends_ids } }]}, function( err, users ){
 
@@ -302,6 +300,44 @@
 
 	};
 
+	var updateMeepass = function( req, res ){
+
+		var sender   = req.sent.sender;
+		var receiver = req.sent.receiver;
+
+		var meepass_sent = {
+			'type'    : 'sent',
+			'sent_at' : moment().toISOString(),
+			'sent_to' : receiver.facebook_id
+		};
+
+		var meepass_received = {
+			'type'	  : 'received',
+			'sent_at' : moment().toISOString(),
+			'sent_by' : sender.facebook_id
+		};
+
+		sender.meepass.push( meepass_sent );
+		receiver.meepass.push( meepass_received );
+
+		sender.save(function( err ){
+
+			if( err ) return handleErr( res );
+
+			receiver.save(function( err ){
+
+				if( err ) return handleErr( res );
+
+				var expose = { 'meepass_sent': meepass_sent };
+				eventUtils.sendSuccess( res, expose );
+
+			})
+		});
+
+		
+
+	};
+
 
 	module.exports = {
 
@@ -310,6 +346,7 @@
 		updatePictures       : updatePictures,
 		updatePictureWithUrl : updatePictureWithUrl,
 		fetchAndSyncFriends  : fetchAndSyncFriends,
-		fetchCloudinaryTags  : fetchCloudinaryTags
+		fetchCloudinaryTags  : fetchCloudinaryTags,
+		updateMeepass 		 : updateMeepass
 	    
 	};
