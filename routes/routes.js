@@ -1,4 +1,4 @@
-	
+
 	var _      = require('lodash');
 	var async  = require('async');
 	var get_ip = require('ipware')().get_ip;
@@ -237,7 +237,7 @@
 	    // [ @events ] Crée un nouvel évènement
 	    app.post('/api/v1/events',
 	    	mdw.validate('create_event', ['create_event']),
-	    	mdw.meepass.updateMeepass('create_event'),
+	    	mdw.meepass.updateMeepass('event_created'),
 	    	mdw.notifier.addNotification('marked_as_host'),
 	    	api.events.createEvent );
 

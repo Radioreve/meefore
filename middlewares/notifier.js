@@ -92,11 +92,11 @@
 
 		// Shortcut reference
 		var n = {
-			notification_id       : notification_id,
-			event_id   : event_id,
-			group_id   : group_id,
-			group_name : group_name,
-			happened_at: moment().toISOString()
+			notification_id : notification_id,
+			event_id   		: event_id,
+			group_id   		: group_id,
+			group_name 		: group_name,
+			happened_at		: moment().toISOString()
 		};
 
 		var query = { 
