@@ -9,7 +9,8 @@
 		- Remove "drink"
 
 		// Repérés & partagés
-		+ Add "n_meepasses" @Number, default to 0, +5 per each before created. Middleware meepass manager ?
+		+ Add "n_meepass" @Number, default to 0, +5 per each before created. Middleware meepass manager ?
+		+ Add "meepass"
 		+ Add "spotted" @Array of facebook_id
 		+ Add "shared" @Array of facebook_id
 		+ Add "ideal_night"
