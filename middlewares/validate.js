@@ -24,13 +24,8 @@
 			chat_readby         : 'validate-chat-readby',
 			pusher_auth			: 'validate-pusher-auth',
 			user_fetch 			: 'validate-user-fetch',
-<<<<<<< HEAD
 			send_meepass		: 'validate-send-meepass',
 			spotted				: 'validate-spotted'
-=======
-			send_meepass		: 'validate-send-meepass',
-			spotted				: 'validate-spotted'
->>>>>>> spotted
 			
 			//test                : 'validate-test'
 			
