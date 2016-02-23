@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 	
 	function update__profile( meepass ){
 
@@ -112,3 +113,5 @@
 
 	}
 
+=======
+>>>>>>> spotted
