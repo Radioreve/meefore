@@ -53,6 +53,7 @@
 		});
 
 		function handleTestEnd( req, res ){
+			console.log('Handling end test');
 			res.json({ "msg": "Test ended, validation passed. Make sure the datas look as expected" });
 		}
 

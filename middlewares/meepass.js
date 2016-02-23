@@ -22,11 +22,8 @@
 
 	var updateMeepass = function( reason ){	
 
+			console.log('Updating meepass for reason : ' + reason );
 
-		return function( req, res, next ){
-
-			req.sent.reason = reason;
-			
 			// Credit meepasses on all hosts
 			if( reason == "event_created" ){
 				return addMeepass_EventCreated
@@ -37,12 +34,12 @@
 				return removeMeepass_MeepassSent
 			}
 
-		}
-
 	};
 
 
 	function addMeepass_EventCreated( req, res, next ){
+
+		req.sent.reason = "event_created";
 
 		var facebook_ids   = req.sent.hosts_facebook_id;
 		var meepass_to_add = bounty[ req.sent.reason ];
@@ -57,7 +54,7 @@
 			multi: true
 		};
 		
-		User.exec( query, update, options, displayError );
+		User.update( query, update, options, displayError );
 
 		next();
 
@@ -66,12 +63,31 @@
 
 
 
-	// function removeMeepass_MeepassSent( req, res, next ){
+	function removeMeepass_MeepassSent( req, res, next ){
+
+		req.sent.reason = "meepass_sent";
+
+		var facebook_id    = req.sent.facebook_id;
+		var meepass_to_add = -1;
+
+		var query = {
+			facebook_id: facebook_id,
+		};
+		var update = {
+			"$inc": { "n_meepass": meepass_to_add }
+		};
+		var options = {
+			multi: false
+		};
+
+		console.log('Calling db')
+		User.update( query, update, options, displayError );
+
+		console.log('Calling next');
+		next();
 
 
-
-
-	// }
+	}
 
 	module.exports = {
 		updateMeepass: updateMeepass
