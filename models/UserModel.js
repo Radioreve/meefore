@@ -50,8 +50,13 @@
   disconnected_at: {
     type: Date
   },
+  // Use to make a difference between admin, early adopters, etc...
   access: {
     type: Array
+  },
+  // use to make a difference between new users ("new") or regualr users ("idle")
+  status: {
+    type: String
   },
   age: {
     type: Number,
@@ -72,14 +77,6 @@
     required:true,
     default:'Inconnu'
   },
-  drink: {
-    type: String,
-    default:'water'
-  },
-  mood: {
-    type: String,
-    default:'happy'
-  },
   friends: {
     type:Array,
     default:[]
@@ -93,9 +90,6 @@
       { img_id: default_img_id, img_version: default_img_vs, img_place: 3, is_main: false, hashtag: 'chill' },
       { img_id: default_img_id, img_version: default_img_vs, img_place: 4, is_main: false, hashtag: 'hipster' }
       ]
-  },
-  status: {
-    type: String
   },
   events: {
     type: Array,
@@ -111,23 +105,6 @@
   notifications: {
     type    : Array,
     default : []
-  },
-  experience: {
-    type: Number
-  },
-  skills: {
-    type: Object,
-    default: {
-      xp: 1000,
-      medals: [{
-        id:'first_sip',
-        name: 'Première gorgée',
-        img_id:'lala',
-        img_version:'lali', 
-        is_main: true,
-        earned_date: ''
-      }]
-    }
   }
 
 
