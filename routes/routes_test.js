@@ -38,6 +38,7 @@
 		mdw.chat_watcher   = require( mdwDir + '/chat_watcher');
 		mdw.notifier       = require( mdwDir + '/notifier');
 		mdw.meepass   	   = require( mdwDir + '/meepass');
+		mdw.spotted 	   = require( mdwDir + '/spotted');
 
 
 	module.exports = function( app ) {
@@ -58,6 +59,8 @@
 		}
 
 
+
+		// Begin meepass
 		app.post('/test/send_meepass',
 			mdw.validate('meepass', ['send_meepass']),
 			mdw.meepass.updateMeepass('meepass_sent'),
@@ -70,6 +73,18 @@
 			mdw.meepass.updateMeepass('admin_credit'),
 			handleTestEnd
 		);
+		// End meepass
+
+
+		// Start spotted & shared
+		app.post('/test/spot',
+			mdw.validate('spotted', ['spotted']),
+			profileEvents.updateSpotted
+		);
+		// End spotted & shared
+
+
+
 
 		app.all('/test/*', function( req, res ){
 			res.json({ "msg": "Warning! This url matches no test route" });

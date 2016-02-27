@@ -26,8 +26,8 @@
 
 					// Update part
 
-					user.meepass = [];
-					user.markModified('meepass');
+					user.spotted = [];
+					user.markModified('spotted');
 
 					user.save(function( err ){
 						if( err ) console.log('Error : ' + err );

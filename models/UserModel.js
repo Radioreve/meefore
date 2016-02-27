@@ -112,7 +112,11 @@
   },
   meepass: {
     type    : Array,
-    default : {}
+    default : []
+  },
+  spotted: {
+    type    : Array,
+    default :[]
   }
 
 

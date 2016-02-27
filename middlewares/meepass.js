@@ -22,8 +22,6 @@
 
 	var updateMeepass = function( reason ){	
 
-			console.log('Updating meepass for reason : ' + reason );
-
 			// Credit meepasses on all hosts
 			if( reason == "event_created" ){
 				return addMeepass_EventCreated
@@ -37,6 +35,7 @@
 			if( reason == "admin_credit" ){
 				return addMeepass_AdminCredit
 			}
+
 
 	};
 

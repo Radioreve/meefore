@@ -333,8 +333,35 @@
 
 			})
 		});
-
 		
+	};
+
+	var updateSpotted = function( req, res ){
+
+		var facebook_id = req.sent.facebook_id;
+
+		var spotted_object = {
+			"target_id"   : req.sent.target_id,
+			"target_type" : req.sent.target_type,
+			"spotted_at"  : moment().toISOString()
+		};
+
+		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
+
+			if( err ) return handleErr( res );
+
+			user.spotted.push( spotted_object );
+			user.save(function( err, user ){
+
+				if( err ) return handleErr( res );
+
+				var expose = { 'spotted_object': spotted_object };
+				eventUtils.sendSuccess( res, expose );
+
+			});
+
+		});
+
 
 	};
 
@@ -347,6 +374,7 @@
 		updatePictureWithUrl : updatePictureWithUrl,
 		fetchAndSyncFriends  : fetchAndSyncFriends,
 		fetchCloudinaryTags  : fetchCloudinaryTags,
-		updateMeepass 		 : updateMeepass
+		updateMeepass 		 : updateMeepass,
+		updateSpotted        : updateSpotted
 	    
 	};
