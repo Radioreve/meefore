@@ -85,9 +85,20 @@
 			mdw.validate('shared', ['shared']),
 			profileEvents.updateShared
 		);
-
 		// End spotted & shared
 
+
+		// Coupons, code & sponsorship
+		app.post('/test/invite_code',
+			mdw.validate('invite_code', ['invite_code']),
+			profileEvents.updateInviteCode
+		);
+
+		app.post('/test/activate-sponsor',
+			mdw.validate('sponsor', ['sponsor']),
+			profileEvents.activateSponsor
+		);
+		// Coupons
 
 
 

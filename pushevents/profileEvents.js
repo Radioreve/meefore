@@ -393,6 +393,73 @@
 
 		});
 
+	};
+
+	var updateInviteCode = function( req, res ){
+
+		var facebook_id = req.sent.facebook_id;
+		var invite_code = req.sent.invite_code;
+
+		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
+
+			if( err ) return handleErr( res, err, 'invite_code_1' );
+
+			if( !user ){
+				return handleErr( res, [{
+					'err_id'	  : 'ghost_user',
+					'facebook_id' : facebook_id
+				}]);
+			}
+
+			user.invite_code = invite_code;
+			user.save(function( err, user ){
+
+				if( err ) return handleErr( res, err, 'invite_code_2' );
+
+				var expose = { 'user': user };
+				eventUtils.sendSuccess( res, expose );
+
+			});
+
+		});	
+
+	};
+
+	var activateSponsor = function( req, res ){
+
+		var sponsor = req.sent.sponsor;
+		var sponsee = req.sent.sponsee;
+
+		sponsor.sponsees.push({
+			'facebook_id'  : sponsee.facebook_id,
+			'sponsored_at' : moment().toISOString()
+		});
+
+		sponsee.sponsor = {
+			'facebook_id'  : sponsor.facebook_id,
+			'sponsored_at' : moment().toISOString()
+		};
+
+		sponsor.save(function( err, sponsor ){
+
+			if( err ) return handleErr( res, err, 'sponsor' );
+
+			// sponsee.markModified('sponsor');
+			sponsee.save(function( err, sponsee ){
+
+				if( err ) return handleErr( res, err, 'sponsor' );
+
+				var expose = { 'user': sponsee };
+				eventUtils.sendSuccess( res, expose );
+
+			});
+
+			sponsee.push
+
+		})
+
+
+
 	}
 
 
@@ -406,6 +473,8 @@
 		fetchCloudinaryTags  : fetchCloudinaryTags,
 		updateMeepass 		 : updateMeepass,
 		updateSpotted        : updateSpotted,
-		updateShared 		 : updateShared
+		updateShared 		 : updateShared,
+		updateInviteCode     : updateInviteCode,
+		activateSponsor 	 : activateSponsor
 	    
 	};

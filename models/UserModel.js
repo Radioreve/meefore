@@ -121,6 +121,16 @@
   shared: {
     type    : Array,
     default: []
+  },
+  invite_code: {
+    type    : String
+  },
+  sponsor: {
+    type    : Object
+  },
+  sponsees: {
+    type    : Array,
+    default : []
   }
 
 

@@ -1,5 +1,4 @@
 
-	
 	var dir      = process.cwd();
 	
 	var mongoose = require('mongoose');
@@ -28,6 +27,11 @@
 					user.spotted = [];
 					user.shared  = [];
 					user.meepass = [];
+					user.invite_code = '';
+					user.sponsor = {};
+					user.sponsees = [];
+
+					user.markModified('sponsor');
 
 					user.save(function( err ){
 						if( err ) console.log('Error : ' + err );

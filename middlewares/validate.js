@@ -26,7 +26,9 @@
 			user_fetch 			: 'validate-user-fetch',
 			send_meepass		: 'validate-send-meepass',
 			spotted				: 'validate-spotted',
-			shared              : 'validate-shared'
+			shared              : 'validate-shared',
+			invite_code			: 'validate-invite-code',
+			sponsor				: 'validate-sponsor'
 			
 			//test                : 'validate-test'
 			
