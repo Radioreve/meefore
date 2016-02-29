@@ -101,6 +101,15 @@
 		// Coupons
 
 
+		//Test request
+		app.post('/test/request',
+			mdw.validate('request_event', ['event_group_request']),
+			api.events.request 
+		);
+
+		//End test request
+
+
 
 		app.all('/test/*', function( req, res ){
 			res.json({ "msg": "Warning! This url matches no test route" });

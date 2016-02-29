@@ -2,6 +2,7 @@
 	var express    = require('express');
 	var jwt        = require('jsonwebtoken');
 	var config     = require('./../config/config');
+	var settings   = require('./../config/settings');
 	var User       = require('./../models/UserModel');
 	var randtoken  = require('rand-token');
 	var validator  = require('validator');
@@ -72,20 +73,31 @@
 			email = 'n/a';
 		}
 
-		new_user.facebook_id                       = fb.id;
+		// User-id on which most api calls are based
+		new_user.facebook_id = fb.id;
+
 		new_user.facebook_access_token.short_lived = fb.access_token;
 		new_user.facebook_email                    = email;
+		new_user.facebook_url                      = fb.link;
 		new_user.contact_email 					   = email;
 		new_user.mailchimp_email                   = email;
 		new_user.mailchimp_id                      = req.sent.mailchimp_id;
-		new_user.gender                            = fb.gender;
-		new_user.name                              = fb.name;
-		new_user.status 						   = 'new';
-		new_user.age                               = 24 // default value, fucking facebook  /me?fields=age_range is too broad!
-		new_user.facebook_url                      = fb.link;
-		new_user.country_code					   = country_code // country code extraction
-		new_user.signup_date                       = new moment();
-		new_user.access 						   = ['standard'];
+
+		// Control attributes
+		new_user.status 	 = 'new';
+		new_user.access 	 = ['standard'];
+		new_user.signup_date = new moment();
+		
+		// Public profile attributes
+		new_user.name          = fb.name;
+		new_user.age           = 24 // default value, fucking facebook  /me?fields=age_range is too broad!
+		new_user.gender        = fb.gender;
+		new_user.country_code  = country_code // country code extraction
+		new_user.ideal_night   = '';
+
+		//Private profile attributes
+		new_user.invite_code 	 = fb.id;
+		new_user.app_preferences = settings.default_app_preferences;f
 
 		// Post conditions //
 		if( config.admins_facebook_id.indexOf( fb.id ) != -1 ){

@@ -9,27 +9,30 @@
 	var nv 			= require('node-validator');
 
 
+	var fb_id_regex = /^\d{10,15}$/;
+	var db_id_regex = /^[a-f\d]{24}$/i;
+
 	function check( req, res, next ){
 
 		console.log('Validating request in');
 
-		function checkNamePattern( val, onError ){
+		// function checkNamePattern( val, onError ){
 
-			if( val.name.length < 4 || val.name.length > 40 ){
-				return onError("Name bad length", "name", val.name, {
-					err_id: "name_bad_length", min: 4, max: 20 
-				});
-			}
-		};
+		// 	if( val.name.length < 4 || val.name.length > 40 ){
+		// 		return onError("Name bad length", "name", val.name, {
+		// 			err_id: "name_bad_length", min: 4, max: 20 
+		// 		});
+		// 	}
+		// };
 
-		function checkMessagePattern( val, onError ){
+		// function checkMessagePattern( val, onError ){
 
-			if( val.name.length < 4 || val.name.length > 50  ){
-				return onError("Message bad length", "message", val.message, { 
-					err_id: "message_bad_length", min: 4, max: 50 
-				});
-			}
-		};
+		// 	if( val.name.length < 4 || val.name.length > 50  ){
+		// 		return onError("Message bad length", "message", val.message, { 
+		// 			err_id: "message_bad_length", min: 4, max: 50 
+		// 		});
+		// 	}
+		// };
 
 		function isGroupOk( val, onError ){
 
@@ -49,12 +52,14 @@
 
 		var checkGroup = nv.isAnyObject()
 		
-			.withRequired('name'               , nv.isString())
-			.withRequired('message'            , nv.isString())
-			.withRequired('socket_id'          , nv.isString() )
+			// .withRequired('name'               , nv.isString())
+			// .withRequired('message'            , nv.isString())
+			.withRequired('socket_id'           , nv.isString() )
+			.withRequired('facebook_id'			, nv.isString({ regex: fb_id_regex }) )
+			.withRequired('event_id' 			, nv.isString({ regex: db_id_regex }) )
 			.withCustom( isGroupOk )
-			.withCustom( checkNamePattern )
-			.withCustom( checkMessagePattern )
+			// .withCustom( checkNamePattern )
+			// .withCustom( checkMessagePattern )
 
  
 		nv.run( checkGroup, req.sent, function( n, errors ){
@@ -100,8 +105,9 @@
 						missing_ids : _.difference( facebook_ids, _.pluck( members, 'facebook_id' ) )
 					}}, null );
 
-				Event.findById( event_id, function( err, evt ){
+				req.sent.members = members;
 
+				Event.findById( event_id, function( err, evt ){
 
 					if( err ) return callback({ message: "api error" }, null );
 
@@ -116,10 +122,11 @@
 
 					req.sent.evt = evt;
 
-					if( !evt )
+					if( !evt ){
 						return callback({
 							message : "Event doesnt seem to exist",
 							}, null );
+					}
 						
 					var err_data = { already_there: [] };
 					group.members_facebook_id.forEach(function( fb_id ){
@@ -137,43 +144,49 @@
 							});
 						});
 
-					if( err_data.already_there.length != 0 )
+					if( err_data.already_there.length != 0 ){
 						return callback({
 							message : "Friends are already in this event",
 							data    : _.merge( err_data, { err_id: "already_there" })
 						}, null );
+					}
 
 
 					console.log('Validation success!');
 
-					req.sent.new_group = {
-						status              : "pending",
-						name                : req.sent.name,
-						message             : req.sent.message,
-						group_id 			: evt.makeGroupId( req.sent.members_facebook_id ),
-						members             :  _.pluckMany( members, settings.public_properties.users ),
-						members_facebook_id : req.sent.members_facebook_id
-					};
+					User.findOne({ 'facebook_id': req.sent.facebook_id }, function( err, user ){
 
-					// Only store the main_picture to optimize size and code clarity
-					req.sent.new_group.members.forEach(function( member ){
+						if( err ) return callback({ 'err_id': 'db_error' });
 
-						var main_picture = _.find( member.pictures, function( pic ){
-							return pic.is_main;
-						});
+						req.sent.new_group = {
+							status              : "pending",
+							name                : user.name + " & co",
+							// message             : req.sent.message,
+							group_id 			: evt.makeGroupId( req.sent.members_facebook_id ),
+							// members             :  _.pluckMany( members, settings.public_properties.users ),
+							members_facebook_id : req.sent.members_facebook_id
+						};
 
-						delete member.pictures;
-						member.main_picture = main_picture;
+						// Only store the main_picture to optimize size and code clarity
+						// req.sent.new_group.members.forEach(function( member ){
 
-					});
+						// 	var main_picture = _.find( member.pictures, function( pic ){
+						// 		return pic.is_main;
+						// 	});
 
-					// Update les groups de l'event, rdy to save
-					req.sent.groups = evt.groups;
-					req.sent.groups.push( req.sent.new_group );
-					req.sent.hosts_facebook_id = _.pluck( evt.hosts, 'facebook_id' );
+						// 	delete member.pictures;
+						// 	member.main_picture = main_picture;
 
-					callback( null );
+						// });
+
+						// Update les groups de l'event, rdy to save
+						req.sent.groups = evt.groups;
+						req.sent.groups.push( req.sent.new_group );
+						req.sent.hosts_facebook_id = _.pluck( evt.hosts, 'facebook_id' );
+
+						callback( null );
 					
+					});
 
 				});
 			});

@@ -11,27 +11,22 @@
   var UserSchema = new mongoose.Schema({
 
   contact_email: {
-    type: String,
-    default: ''
+    type: String
   },
   facebook_email:{
-    type: String,
-    default:''
+    type: String
   },
   mailchimp_email: {
-    type: String,
-    default:''
+    type: String
   },
   mailchimp_id: {
-    type: String,
-    default:''
+    type: String
   },
   facebook_id: {
-    type:String,
-    default:''
+    type: String
   },
   facebook_url:{
-    type:String
+    type: String
   },
   facebook_scope: {
     type: Array
@@ -66,20 +61,17 @@
     type: String
   },
   gender: {
-    type:String
+    type: String
   },
   job: {
-    type: String,
-    default:''
+    type: String
   },
   name: {
     type: String,
-    required:true,
-    default:'Inconnu'
   },
   friends: {
-    type:Array,
-    default:[]
+    type    : Array,
+    default : []
   },
   pictures: {
     type: Array,
@@ -92,15 +84,14 @@
       ]
   },
   events: {
-    type: Array,
-    default: []
+    type    : Array,
+    default : []
   },
   channels: {
     type: Object
   },
   app_preferences: {
-    type    : Object,
-    default : settings.default_app_preferences
+    type    : Object
   },
   notifications: {
     type    : Array,
@@ -116,11 +107,11 @@
   },
   spotted: {
     type    : Array,
-    default :[]
+    default : []
   },
   shared: {
     type    : Array,
-    default: []
+    default : []
   },
   invite_code: {
     type    : String
@@ -131,6 +122,9 @@
   sponsees: {
     type    : Array,
     default : []
+  },
+  ideal_night: {
+    type: String
   }
 
 

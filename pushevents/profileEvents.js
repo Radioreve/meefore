@@ -444,7 +444,6 @@
 
 			if( err ) return handleErr( res, err, 'sponsor' );
 
-			// sponsee.markModified('sponsor');
 			sponsee.save(function( err, sponsee ){
 
 				if( err ) return handleErr( res, err, 'sponsor' );

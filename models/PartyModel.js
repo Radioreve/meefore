@@ -3,46 +3,43 @@
 
 	var PartySchema = mongoose.Schema({
 
-		name: {
+		'party_name': {
 			type: String
 		},
-		hosted_by: {
+		'posted_by': {
 			type: String
 		},
-		begins_at: {
-			type: Date
-		},
-		ends_at: {
-			type: Date
-		},
-		created_at: {
-			type: Date
-		},
-		attendees: {
-			type: String
-		},
-		address: {
+		'picture': {
 			type: Object
 		},
-		timezone: {
+		'posted_at': {
+			type: Date
+		},
+		'place': {
+			type: Object
+		},
+		'description': {
+			type: String
+		},
+		'begins_at': {
+			type: Date
+		},
+		'ends_at': {
+			type: Date
+		},
+		'timezone': {
 			type: Number
 		},
-		picture_url: {
+		'link': {
 			type: String
 		},
-		link: {
+		'price': {
 			type: String
 		},
-		type: {
+		'status': {
 			type: String
-		},
-		status: {
-			type: String
-		},
-		labels: {
-			type: Array
 		}
 
 	});
 
-	module.exports = mongoose.model('Party', PartySchema);
+	module.exports = mongoose.model( 'Party', PartySchema );

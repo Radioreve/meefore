@@ -28,17 +28,17 @@
 		new_event.begins_at = moment( data.begins_at );
 		new_event.timezone  = data.timezone;
 		new_event.address   = data.address;
-		new_event.party     = data.party;
-		new_event.ambiance  = data.ambiance;
-		new_event.agerange  = data.agerange;
-		new_event.mixity    = data.mixity;
+		// new_event.party     = data.party;
+		// new_event.ambiance  = data.ambiance;
+		// new_event.agerange  = data.agerange;
+		// new_event.mixity    = data.mixity;
 
     	/* set by server */
     	new_event.created_at = moment();
     	new_event.groups 	 = [];
     	new_event.status 	 = 'open';
-    	new_event.type       = 'before';
-    	new_event.meta 		 = [];
+    	// new_event.type       = 'before';
+    	// new_event.meta 		 = [];
 
 
 	    var new_event = new Event( new_event );
@@ -148,7 +148,7 @@
 
 		var new_group           = req.sent.new_group;
 		var group_id            = req.sent.new_group.group_id;
-		var members 			= req.sent.new_group.members;
+		// var members 			= req.sent.new_group.members;
 		var members_facebook_id = req.sent.new_group.members_facebook_id;
 
 		console.log('Requesting in with event_id = ' + event_id );
@@ -200,7 +200,7 @@
 							pusher.trigger( 'presence-' + evt.getHostsChannel() , 'new request host', data, socket_id );
 
 							/* Envoyer une notification aux amis au courant de rien à priori */
-							members.forEach(function( user ){
+							req.sent.members.forEach(function( user ){
 								pusher.trigger( user.channels.me, 'new request group', data, socket_id );
 							});	
 						}
