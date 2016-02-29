@@ -25,7 +25,8 @@
 			pusher_auth			: 'validate-pusher-auth',
 			user_fetch 			: 'validate-user-fetch',
 			send_meepass		: 'validate-send-meepass',
-			spotted				: 'validate-spotted'
+			spotted				: 'validate-spotted',
+			shared              : 'validate-shared'
 			
 			//test                : 'validate-test'
 			

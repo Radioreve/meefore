@@ -38,7 +38,6 @@
 		mdw.chat_watcher   = require( mdwDir + '/chat_watcher');
 		mdw.notifier       = require( mdwDir + '/notifier');
 		mdw.meepass   	   = require( mdwDir + '/meepass');
-		mdw.spotted 	   = require( mdwDir + '/spotted');
 
 
 	module.exports = function( app ) {
@@ -81,6 +80,12 @@
 			mdw.validate('spotted', ['spotted']),
 			profileEvents.updateSpotted
 		);
+
+		app.post('/test/share',
+			mdw.validate('shared', ['shared']),
+			profileEvents.updateShared
+		);
+
 		// End spotted & shared
 
 

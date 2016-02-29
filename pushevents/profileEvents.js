@@ -20,7 +20,8 @@
 
 	var pusher = require('../services/pusher');
 
-	var handleErr = function( res, errors ){
+	var handleErr = function( res, errors, context ){
+		var context = context || 'update_profile';
 		eventUtils.raiseApiError( res, 'update_profile', errors );
 	}
 
@@ -338,6 +339,7 @@
 
 	var updateSpotted = function( req, res ){
 
+		var user 		= req.sent.user;
 		var facebook_id = req.sent.facebook_id;
 
 		var spotted_object = {
@@ -346,24 +348,52 @@
 			"spotted_at"  : moment().toISOString()
 		};
 
-		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
+		user.spotted.push( spotted_object );
+		user.save(function( err, user ){
 
-			if( err ) return handleErr( res );
+			if( err ) return handleErr( res, err, 'spotted' );
 
-			user.spotted.push( spotted_object );
+			var expose = { 'spotted_object': spotted_object };
+			eventUtils.sendSuccess( res, expose );
+
+		});
+
+	};
+
+	var updateShared = function( req, res ){
+
+		var user 	    = req.sent.user;
+		var facebook_id = req.sent.facebook_id;
+
+		var shared_by_object = {
+			"share_type"  : "shared_by",
+			"shared_by"   : facebook_id,
+			"target_type" : req.sent.target_type,
+			"target_id"   : req.sent.target_id,
+			"shared_at"   : moment().toISOString()
+		};
+
+		var query   = { 'facebook_id': { '$in': req.sent.shared_with_new } };
+		var update  = { '$push': { 'shared': shared_by_object }};
+		var options = { 'multi': true } ;
+
+		User.update( query, update, options, function( err, users ){
+
+			if( err ) return handleErr( err, res, 'shared_1' );
+
+			user.markModified('shared');
 			user.save(function( err, user ){
 
-				if( err ) return handleErr( res );
+				if( err ) return handleErr( err, res, 'shared_2' );
 
-				var expose = { 'spotted_object': spotted_object };
+				var expose = { 'user': user };
 				eventUtils.sendSuccess( res, expose );
 
 			});
 
 		});
 
-
-	};
+	}
 
 
 	module.exports = {
@@ -375,6 +405,7 @@
 		fetchAndSyncFriends  : fetchAndSyncFriends,
 		fetchCloudinaryTags  : fetchCloudinaryTags,
 		updateMeepass 		 : updateMeepass,
-		updateSpotted        : updateSpotted
+		updateSpotted        : updateSpotted,
+		updateShared 		 : updateShared
 	    
 	};

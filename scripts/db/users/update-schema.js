@@ -25,9 +25,9 @@
 				tasks.push(function( done ){
 
 					// Update part
-
 					user.spotted = [];
-					user.markModified('spotted');
+					user.shared  = [];
+					user.meepass = [];
 
 					user.save(function( err ){
 						if( err ) console.log('Error : ' + err );

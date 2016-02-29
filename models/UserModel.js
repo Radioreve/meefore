@@ -117,6 +117,10 @@
   spotted: {
     type    : Array,
     default :[]
+  },
+  shared: {
+    type    : Array,
+    default: []
   }
 
 
