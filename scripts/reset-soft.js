@@ -2,6 +2,7 @@
 	var mongoose = require('mongoose'),
 		User = require('../models/UserModel'),
 		Event = require('../models/EventModel'),
+		Party = require('../models/PartyModel'),
 		EventTemplate = require('../models/EventTemplateModel'),
 		config = require('../config/config'),
 		_ = require('lodash');
@@ -56,6 +57,16 @@
 						console.log('Events groups all cleared');				
 
 				});
+
+				Party.find({}, function( err, parties ){
+
+					parties.forEach(function( p ){
+						p = {};
+						p.save();
+
+					});
+
+				})
 
 			});
 
