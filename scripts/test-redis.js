@@ -15,73 +15,92 @@
 		console.log(err);
 	}				
 
+	rd.hmset('user_profile/139625316382924', {
+		"facebook_id": "139625316382924",
+		"name": "David Dav",
+		"age": 24,
+		"job": "Etudiant en droit",
+		"img_vs": "23232930293293",
+		"img_id": "566f197377eb2e403206e036--0"
+	}, function( err, res ){
 
-	rd.smembers('chats', function( err, chat_ids ){
-
-		chat_ids.forEach(function( chat_id ){
-
-			rd.get('chat/' + chat_id + '/count', function( err, n ){
-
-				var async_tasks = [];
-				console.log('Populating tasks...');
-				for( var i = 1; i <= n; i++ ){
-
-					console.log('Task..');
-					(function(i){
-						async_tasks.push(function( callback ){
-							console.log(i);
-							rd.hgetall('chat/' + chat_id + '/messages/' + i, function( err, msg ){
-
-								console.log(msg);
-								var message = new Message();
-
-								message.chat_id = chat_id;
-								message.sent_at = msg.sent_at;
-								message.message = msg.message;
-
-								message.author  = {
-									name        : msg.name,
-									facebook_id : msg.facebook_id,
-									img_id		: msg.img_id,
-									img_vs		: msg.img_vs
-								};
-
-								// message.type = ...
-
-								message.save(function( err, msg ){
-									if( err ) return handleError( err );
-
-									// Async task is done
-									console.log('Message has been saved');
-									callback();
-
-								});
-
-
-							});
-
-						});
-
-					})(i);
-					
-				}
-
-				async.parallel( async_tasks, function(){
-
-					// All messages have been hard saved. Clear the cache. Tomorrow is another day...
-					rd.flushall(function( err, res ){
-						console.log('Redis cache has been cleared');
-					});
-
-				});
-
-
-			});
-
-
-		});
-
+		if( err ) console.log( err );
+		process.exit(0);
 	});
+
+	// rd.hgetall('user_profile/12345', function( err, usr ){
+	// 	console.log( err );
+	// 	console.log( usr );
+
+	// 	process.exit(0);
+	// });
+
+	// rd.smembers('chats', function( err, chat_ids ){
+
+	// 	chat_ids.forEach(function( chat_id ){
+
+	// 		rd.get('chat/' + chat_id + '/count', function( err, n ){
+
+	// 			var async_tasks = [];
+	// 			console.log('Populating tasks...');
+	// 			for( var i = 1; i <= n; i++ ){
+
+	// 				console.log('Task..');
+	// 				(function(i){
+	// 					async_tasks.push(function( callback ){
+	// 						console.log(i);
+	// 						rd.hgetall('chat/' + chat_id + '/messages/' + i, function( err, msg ){
+
+	// 							console.log(msg);
+	// 							var message = new Message();
+
+	// 							message.chat_id = chat_id;
+	// 							message.sent_at = msg.sent_at;
+	// 							message.message = msg.message;
+
+	// 							message.author  = {
+	// 								name        : msg.name,
+	// 								facebook_id : msg.facebook_id,
+	// 								img_id		: msg.img_id,
+	// 								img_vs		: msg.img_vs
+	// 							};
+
+	// 							// message.type = ...
+
+	// 							message.save(function( err, msg ){
+	// 								if( err ) return handleError( err );
+
+	// 								// Async task is done
+	// 								console.log('Message has been saved');
+	// 								callback();
+
+	// 							});
+
+
+	// 						});
+
+	// 					});
+
+	// 				})(i);
+					
+	// 			}
+
+	// 			async.parallel( async_tasks, function(){
+
+	// 				// All messages have been hard saved. Clear the cache. Tomorrow is another day...
+	// 				rd.flushall(function( err, res ){
+	// 					console.log('Redis cache has been cleared');
+	// 				});
+
+	// 			});
+
+
+	// 		});
+
+
+	// 	});
+
+	// });
 	
 
 

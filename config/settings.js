@@ -1,6 +1,9 @@
 
 var config = require('./config');
 
+var placeholder_img_id = "placeholder_picture";
+var placeholder_img_vs = "1444912756";
+
 var settings = {
 
 	api_version: 1,
@@ -9,48 +12,13 @@ var settings = {
 		max_group: 5,
 		min_hosts: 2,
 		max_hosts: 5,
-		min_ambiance: 1,
-		max_ambiance: 4,
-		max_attendees: 500,
-		min_attendees: 20,
-		mood: 
-		[
-			{ id: 'happy', display: 'Happy' },
-			{ id: 'cheers', display: 'Relax' },
-			{ id: 'drunk', display: 'Drunk' },
-			{ id: 'chill', display: 'Chill' },
-			{ id: 'horney', display: 'Horney' },
-			{ id: 'innocent', display: 'Innocent' },
-			{ id: 'evil', display: 'Evil' },
-		],
-		drink:
-		[
-			{ id: 'water', display: 'H2O' },
-			{ id: 'hard', display: 'Hard' },
-			{ id: 'shots', display: 'Shots' },
-			{ id: 'beer', display: 'Beer' },
-			{ id: 'wine', display: 'Wine' }
-		],
-		agerange_min: 18,
-		agerange_max: 35,
-		mixity: 
-		[
-			{ id: 'boys', display: 'Mars', icon_code: 'mars' },
-			{ id: 'girls', display: 'Vénus', icon_code: 'venus' },
-			{ id: 'mixed', display: 'Mixte', icon_code: 'mix' },
-		],
-		party_types: 
-		[
-			{ id: 'facebook', display: 'Event facebook', icon_code: 'facebook' },
-			{ id: 'nightclub', display: 'Nightclub', icon_code: 'moon' },
-			{ id: 'bar', display: 'Bar', icon_code: 'cafe' },
-			{ id: 'school', display: 'Ecole', icon_code: 'graduation-cap' }
-		],
-		place_types:
-		[
-			{ id: 'nightclub', display: 'Club', icon_code: 'moon' },
-			{ id: 'barclub', display: 'Bar dansant', icon_code: 'cafe' }
-		]
+	},
+	default_profile_values: {
+		name: 'Meename',
+		age: 18, 
+		img_id: placeholder_img_id,
+		img_version: placeholder_img_vs,
+		job: 'Meelover'
 	},
 	default_app_preferences: {
 		email: {
@@ -77,8 +45,6 @@ var settings = {
 				'gender', 
 				'job', 
 				'name', 
-				'drink', 
-				'mood',
 				'country_code', 
 				'pictures',
 				'channels'
@@ -93,8 +59,8 @@ var settings = {
 			 ],
 	placeholder: 
 			{
-				img_id      :"placeholder_picture",
-				img_version :"1444912756"
+				img_id      : placeholder_img_id,
+				img_version : placeholder_img_vs
 			},
 
 	// Builds a ladder system as an array of ladder items

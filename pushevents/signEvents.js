@@ -89,10 +89,11 @@
 		new_user.signup_date = new moment();
 		
 		// Public profile attributes
-		new_user.name          = fb.name;
-		new_user.age           = 24 // default value, fucking facebook  /me?fields=age_range is too broad!
+		new_user.name          = fb.name || settings.default_profile_values.name;
+		new_user.age           = settings.default_profile_values.age; // default value, fucking facebook  /me?fields=age_range is too broad!
 		new_user.gender        = fb.gender;
-		new_user.country_code  = country_code // country code extraction
+		new_user.job 		   = settings.default_profile_values.job;
+		new_user.country_code  = country_code; // country code extraction
 		new_user.ideal_night   = '';
 
 		//Private profile attributes

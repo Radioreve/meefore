@@ -47,7 +47,6 @@
 		// See errorHandlers.js
 
 		app.all('/test/*', function( req, res, next ){
-			req.test_mode = true;
 			console.warn('Testing route ' + req.url);
 			next();
 		});
@@ -109,7 +108,32 @@
 
 		//End test request
 
+		// Test party
+		app.post('/test/party', 
+			mdw.validate('create_party', ['create_party']),
+			handleTestEnd
+		);
+		// end test party
 
+
+		// Test users
+		app.post('/test/users/me',
+			api.users.fetchMe
+		);
+
+		app.post('/test/users/full',
+			api.users.fetchUserById_Full
+		);
+
+		app.post('/test/users/core',
+			api.users.fetchUserById_Core
+		);
+
+		app.post('/test/users?name',
+			api.users.fetchUsers
+		);
+
+		// End test users
 
 		app.all('/test/*', function( req, res ){
 			res.json({ "msg": "Warning! This url matches no test route" });

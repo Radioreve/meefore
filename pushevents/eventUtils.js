@@ -21,9 +21,11 @@
 
 		var errors = errors || [];
 
+		var errors = Array.isArray( errors ) ? errors : [ errors ];
+
 		res.status(400).json({
-			namespace: namespace,
-			errors: errors
+			'namespace' : namespace,
+			'errors'	: errors
 		});
 	}
 

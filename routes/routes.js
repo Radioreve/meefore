@@ -29,15 +29,16 @@
 		api.chats     = require( apiDir + '/chats');
 
 	var mdw = {};
-		mdw.auth           = require( mdwDir + '/auth');
-		mdw.email          = require( mdwDir + '/email');
-		mdw.pop            = require( mdwDir + '/pop');
-		mdw.facebook       = require( mdwDir + '/facebook');
-		mdw.validate       = require( mdwDir + '/validate');
-		mdw.alerts_watcher = require( mdwDir + '/alerts_watcher');
-		mdw.chat_watcher   = require( mdwDir + '/chat_watcher');
-		mdw.notifier       = require( mdwDir + '/notifier');
-		mdw.meepass 	   = require( mdwDir + '/meepass');
+		mdw.auth            = require( mdwDir + '/auth');
+		mdw.email           = require( mdwDir + '/email');
+		mdw.pop             = require( mdwDir + '/pop');
+		mdw.facebook        = require( mdwDir + '/facebook');
+		mdw.validate        = require( mdwDir + '/validate');
+		mdw.alerts_watcher  = require( mdwDir + '/alerts_watcher');
+		mdw.chat_watcher    = require( mdwDir + '/chat_watcher');
+		mdw.profile_watcher = require( mdwDir + '/profile_watcher');
+		mdw.notifier        = require( mdwDir + '/notifier');
+		mdw.meepass         = require( mdwDir + '/meepass');
 
 
 
@@ -105,25 +106,26 @@
 
 	    // Provide valid token based on secret key, for api calls
 		app.post('/auth/token',
-			mdw.auth.makeToken )
+			mdw.auth.makeToken);
 
 
 		// [@Landing Page ]
 		app.post('/landing/contact',
-			signEvents.sendContactEmail )
+			signEvents.sendContactEmail);
 
 	    // Initialisation | Check if user exists / create profile if not, subscribe to mailchimp
 	    app.post('/auth/facebook',
 	    	mdw.pop.populateUser({ force_presence: false }),
 	    	mdw.email.subscribeMailchimpUser,
 	    	mdw.alerts_watcher.setCache,
+	    	mdw.profile_watcher.setCache,
 	    	signEvents.handleFacebookAuth);
 
 	    // [ @chat ] Make sure a user has authorisation to join a channel
 	    app.post('/auth/pusher',
 	    	mdw.auth.authenticate(['standard']), // token required for magic to happen
 	    	mdw.validate('pusher_auth', ['pusher_auth']),
-	    	mdw.auth.authPusherChannel );
+	    	mdw.auth.authPusherChannel);
 
 
 	    // Fetch app configuration and user id full profile. Token required
@@ -188,7 +190,7 @@
 	    // [ @user ] Utilisé pour afficher le profile d'un utilisateur
 	    app.get('/api/v1/users/:user_facebook_id',   //otherwise override with asker facebook_id
 	    	mdw.validate('user_fetch', ['user_fetch'] ),
-	    	api.users.fetchUserById);
+	    	api.users.fetchUserById_Full);
 
 	    // [ @user ] Utilisé dans le Typeahead searchbox client
 	    app.get('/api/v1/users',
@@ -287,7 +289,7 @@
 	    app.post('/admin/*',
 	    	function( req, res, next ){
 	    		if( req.sent.apikey != 'M33fore' ){
-	    			return res.status(403).json({ msg: "unauthorized" });
+	    			return res.status( 403 ).json({ msg: "unauthorized" });
 	    		} else {
 	    			next();
 	    		}
