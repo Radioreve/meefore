@@ -14,7 +14,7 @@
 
 	var createParty = function( req, res ) {
 
-		var new_party = {}
+		var new_party = {};
 		var socket_id = req.sent.socket_id;
 
 		// Set by server 
@@ -22,37 +22,36 @@
 		req.sent.status    = 'open';
 
 		[
-			'name',
-			'hosted_by',
-			'created_at',
+			'party_name',
+			'posted_by',
+			'picture',
+			'place',
+			'description',
 			'begins_at',
 			'ends_at',
-			'attendees',
+			'timezone',
 			'link',
-			'picture_url',
-			'type',
-			'status',
-			'address',
-			'timezone'
+			'price',
 
 		].forEach(function( val ){
 			new_party[ val ] = req.sent[ val ];
 		});
 
 		// Make sure it's not a string
-		new_party.address.lat = parseFloat( new_party.address.lat );
-		new_party.address.lng = parseFloat( new_party.address.lng );
+		new_party.place.address.lat = parseFloat( new_party.place.address.lat );
+		new_party.place.address.lng = parseFloat( new_party.place.address.lng );
+
+		// Party is not visible until a moderator has validated its relevance
+		new_party.status = "pending";
 
 		new_party = new Party( new_party );
 		new_party.save(function( err, new_party ){
 
 			if( err ){
-	    		return eventUtils.raiseError({
-	    			err: err,
-	    			res: res,
-	    			toClient: "Error saving event"
-	    		});
-	    	}
+				return eventUtils.raiseError({ err: err, res: res,
+					toClient: "Erreur de l'API"
+				});
+			}
 
 	    	// Send the new party that has been created
 	    	eventUtils.sendSuccess( res, new_party );
@@ -71,6 +70,10 @@
 	    	}
 
 		});
+
+	};
+
+	var updatePartie = function( req, res ){
 
 	};
 

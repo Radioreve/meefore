@@ -1,5 +1,4 @@
 
-	
 	var dir      = process.cwd();
 	
 	var mongoose = require('mongoose');
@@ -25,10 +24,11 @@
 				tasks.push(function( done ){
 
 					// Update part
-
-					user.meepass = [];
-					user.markModified('meepass');
-
+					user.ideal_night = "These hollywood nights...";
+					user.job 		 = "L'étudiant";
+					user.age 		 = 18;
+					user.notifications = [];
+					
 					user.save(function( err ){
 						if( err ) console.log('Error : ' + err );
 						console.log('user updated');

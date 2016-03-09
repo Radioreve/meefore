@@ -1,27 +1,6 @@
 
 	window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
-		renderMoodInProfile: function( mood_array ){
-
-          var html = '';
-            mood_array.forEach(function( mood ){
-              html += '<div class="row-select mood" data-selectid="' + mood.id + '">'
-                        + '<i class="icon icon-mood icon-' + mood.id +'"></i>'
-                        + '<span data-lid="p_lifestyle_' + mood.id + '">' + mood.display + '</span>'
-                      +'</div>'
-            });
-          return html;
-
-        },
-        renderDrinkInProfile: function( drink_array ){
-
-          var html = '';
-            drink_array.forEach(function( drink ){
-              html += '<div class="row-select drink" data-selectid="' + drink.id + '">' + drink.display + '</div>'
-            });
-          return html;
-
-        },
         renderFacebookUploadedPictures: function( data ){
 
             var images = _.pluck( data, 'images' ),

@@ -8,7 +8,12 @@
 
 	var sendSuccess = function( res, expose, print ){
 
-		if( !res ) return console.log('Missing res Object from arguments');
+		if( !res )
+			return console.log('Missing res/next from arguments');
+
+		if( typeof res == "function" ) // res is next;
+			return res();
+
 		expose = expose || {};
 		
 		if( print ) console.log('Exposing : '+ JSON.stringify(expose, null, 4) );
@@ -21,9 +26,11 @@
 
 		var errors = errors || [];
 
+		var errors = Array.isArray( errors ) ? errors : [ errors ];
+
 		res.status(400).json({
-			namespace: namespace,
-			errors: errors
+			'namespace' : namespace,
+			'errors'	: errors
 		});
 	}
 

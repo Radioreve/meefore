@@ -154,7 +154,7 @@
 				return friend.facebook_id == friend_id;
 			})
 
-			if( !friend) return LJ.fn.warn('Cannot render marked as host, couldnt find friend: ' + friend );
+			if( !friend ) return LJ.fn.warn('Cannot render marked as host, couldnt find friend: ' + friend );
 
 			var friend_name = friend.name;
 

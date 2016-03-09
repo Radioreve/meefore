@@ -53,24 +53,24 @@
 		// 		onError('Date must be tomorrow or later', 'begins_at', val.begins_at, { err_id: "time_travel"} );
 		// };
 
-		function isAgerangeOk( val, onError ){
+		// function isAgerangeOk( val, onError ){
 
-			console.log(val.agerange);
-			if( !/^\d{2}-\d{2}$/.test( val.agerange ) ){
-				return onError('Agerange must match the required pattern', val.agerange );
-			}
+		// 	console.log(val.agerange);
+		// 	if( !/^\d{2}-\d{2}$/.test( val.agerange ) ){
+		// 		return onError('Agerange must match the required pattern', val.agerange );
+		// 	}
 
-			var min_age = parseInt( val.agerange.split('-')[0] );
-			var max_age = parseInt( val.agerange.split('-')[1] );
+		// 	var min_age = parseInt( val.agerange.split('-')[0] );
+		// 	var max_age = parseInt( val.agerange.split('-')[1] );
 
-			if( min_age > max_age ){
-				return onError('Agerange must be properly ordered', val.agerange );
-			}
+		// 	if( min_age > max_age ){
+		// 		return onError('Agerange must be properly ordered', val.agerange );
+		// 	}
 
-			if( min_age < settings.app.agerange_min || max_age > settings.app.agerange_max ){
-				return onError('Agerange must be between ' + settings.app.agerange_min + ' and ' + settings.app.agerange_max, val.agerange );
-			}
-		};
+		// 	if( min_age < settings.app.agerange_min || max_age > settings.app.agerange_max ){
+		// 		return onError('Agerange must be between ' + settings.app.agerange_min + ' and ' + settings.app.agerange_max, val.agerange );
+		// 	}
+		// };
 
 
 		var checkHostId   = nv.isString({ regex: /^\d{10,}$/ });
@@ -88,10 +88,10 @@
 			.withRequired('place_name'	, nv.isString() )
 			.withRequired('city_name'	, nv.isString() )
 
-		var checkParty = nv.isAnyObject()
+		// var checkParty = nv.isAnyObject()
 
-			.withRequired('type'		, nv.isString() )
-			.withRequired('address'		, checkAddress  )
+		// 	.withRequired('type'		, nv.isString() )
+		// 	.withRequired('address'		, checkAddress  )
 
 		var checkEvent = nv.isAnyObject()
 
@@ -99,11 +99,11 @@
 			.withRequired('timezone'			, nv.isNumber({ min: -720, max: 840 }))
 			.withRequired('socket_id'   		, nv.isString())
 			.withRequired('address'				, checkAddress )
-			.withRequired('party'		    	, checkParty )
+			// .withRequired('party'		    	, checkParty )
 			// .withRequired('ambiance'			, nv.isArray(  checkAmbiance, { min: settings.app.min_ambiance, max: settings.app.max_ambiance }))
 			// .withRequired('mixity'				, nv.isString({ expected: _.pluck( settings.app.mixity, 'id' )   }))
-			.withRequired('agerange'			, nv.isString() )
-			.withCustom( isAgerangeOk )
+			// .withRequired('agerange'			, nv.isString() )
+			// .withCustom( isAgerangeOk )
 			.withCustom( isHostOk )
 			// .withCustom( isDateAtLeastToday )
 
@@ -133,15 +133,15 @@
 		event_data.timezone  = data.timezone;
 		event_data.address   = data.address;
 		// event_data.ambiance  = data.ambiance;
-		event_data.agerange  = data.agerange;
-		event_data.party     = data.party;
+		// event_data.agerange  = data.agerange;
+		// event_data.party     = data.party;
 		// event_data.mixity    = data.mixity;
 
 		// Weird, code auto converts it to string
 		event_data.address.lat       = parseFloat( event_data.address.lat );
 		event_data.address.lng       = parseFloat( event_data.address.lng );
-		event_data.party.address.lat = parseFloat( event_data.party.address.lat );
-		event_data.party.address.lng = parseFloat( event_data.party.address.lng );
+		// event_data.party.address.lat = parseFloat( event_data.party.address.lat );
+		// event_data.party.address.lng = parseFloat( event_data.party.address.lng );
 
 		// No errors in parameters, checking for valid friend and places ids 
 		var host_number = data.hosts_facebook_id.length;

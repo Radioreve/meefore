@@ -21,42 +21,42 @@
 		created_at: {
 			type: Date
 		},
-		type: {
-			type: String,
-			default: 'before'
-		},
+		// type: {
+		// 	type: String,
+		// 	default: 'before'
+		// },
 		address: {
 			type: Object,
 			default: {}
 		},
-		party: {
-			type: Object,
-			default: {}
-		},
-		ambiance: {
-			type: Array,
-			default: null
-		},
-		agerange: {
-			type: String,
-			default:''
-		},
-		mixity: {
-			type: String,
-			default: null
-		},
+		// party: {
+		// 	type: Object,
+		// 	default: {}
+		// },
+		// ambiance: {
+		// 	type: Array,
+		// 	default: null
+		// },
+		// agerange: {
+		// 	type: String,
+		// 	default:''
+		// },
+		// mixity: {
+		// 	type: String,
+		// 	default: null
+		// },
 		groups: {
 			type: Array,
 			default: []
-		},
-		scheduled_party: {
-			type: Object,
-			default: {}
-		},
-		meta: {
-			type: Array,
-			default: []
 		}
+		// scheduled_party: {
+		// 	type: Object,
+		// 	default: {}
+		// },
+		// meta: {
+		// 	type: Array,
+		// 	default: []
+		// }
 
 
 	});

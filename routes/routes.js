@@ -29,15 +29,17 @@
 		api.chats     = require( apiDir + '/chats');
 
 	var mdw = {};
-		mdw.auth           = require( mdwDir + '/auth');
-		mdw.email          = require( mdwDir + '/email');
-		mdw.pop            = require( mdwDir + '/pop');
-		mdw.facebook       = require( mdwDir + '/facebook');
-		mdw.validate       = require( mdwDir + '/validate');
-		mdw.alerts_watcher = require( mdwDir + '/alerts_watcher');
-		mdw.chat_watcher   = require( mdwDir + '/chat_watcher');
-		mdw.notifier       = require( mdwDir + '/notifier');
-		mdw.meepass 	   = require( mdwDir + '/meepass');
+		mdw.expose 			= require( mdwDir + '/expose');
+		mdw.auth            = require( mdwDir + '/auth');
+		mdw.email           = require( mdwDir + '/email');
+		mdw.pop             = require( mdwDir + '/pop');
+		mdw.facebook        = require( mdwDir + '/facebook');
+		mdw.validate        = require( mdwDir + '/validate');
+		mdw.alerts_watcher  = require( mdwDir + '/alerts_watcher');
+		mdw.chat_watcher    = require( mdwDir + '/chat_watcher');
+		mdw.profile_watcher = require( mdwDir + '/profile_watcher');
+		mdw.notifier        = require( mdwDir + '/notifier');
+		mdw.meepass         = require( mdwDir + '/meepass');
 
 
 
@@ -90,7 +92,7 @@
 	    		var ip_info = get_ip( req );
 	    		next();
 	    	},
-	    	signEvents.sendHomepage );
+	    	signEvents.sendHomepage);
 
 	    // Conditions générales
 	    app.get('/legals', function( req, res ){
@@ -105,25 +107,26 @@
 
 	    // Provide valid token based on secret key, for api calls
 		app.post('/auth/token',
-			mdw.auth.makeToken )
+			mdw.auth.makeToken);
 
 
 		// [@Landing Page ]
 		app.post('/landing/contact',
-			signEvents.sendContactEmail )
+			signEvents.sendContactEmail);
 
 	    // Initialisation | Check if user exists / create profile if not, subscribe to mailchimp
 	    app.post('/auth/facebook',
 	    	mdw.pop.populateUser({ force_presence: false }),
 	    	mdw.email.subscribeMailchimpUser,
 	    	mdw.alerts_watcher.setCache,
+	    	mdw.profile_watcher.setCache,
 	    	signEvents.handleFacebookAuth);
 
 	    // [ @chat ] Make sure a user has authorisation to join a channel
 	    app.post('/auth/pusher',
 	    	mdw.auth.authenticate(['standard']), // token required for magic to happen
-	    	mdw.validate('pusher_auth', ['pusher_auth']),
-	    	mdw.auth.authPusherChannel );
+	    	mdw.validate('pusher_auth'),
+	    	mdw.auth.authPusherChannel);
 
 
 	    // Fetch app configuration and user id full profile. Token required
@@ -147,7 +150,7 @@
 
 	    // [ @user ] Ajoute une photo via Facebook api
 	    app.post('/me/update-picture-fb',
-	    	profileEvents.updatePictureWithUrl);
+	    	profileEvents.uploadPictureWithUrl);
 
 	    // [ @user ] Va chercher en base de données les users à partir de /me/friends de l'api Facebook
 	    app.post('/me/fetch-and-sync-friends',
@@ -159,7 +162,7 @@
 
 	    // [ @user ] Update contact settings
 	    app.post('/me/update-settings-contact',
-	    	mdw.pop.populateUser({ force_presence: true }),
+	    	mdw.pop.populateUser(),
 	    	mdw.email.updateMailchimpUser,
 	    	mdw.alerts_watcher.updateCache,
 	    	settingsEvents.updateSettingsContact );
@@ -175,20 +178,20 @@
 
 	    // [ @user ] Update notification settings 
 	    app.post('/me/update-settings-mailinglists',
-	    	mdw.pop.populateUser({ force_presence: true }),
+	    	mdw.pop.populateUser(),
 	    	mdw.email.updateMailchimpUser,
 	    	settingsEvents.updateSettings);
 
 	    app.post('/me/delete',
-	    	mdw.pop.populateUser({ force_presence: true }),
+	    	mdw.pop.populateUser(),
 	    	mdw.email.deleteMailchimpUser,
 	    	settingsEvents.deleteProfile );
 
 
 	    // [ @user ] Utilisé pour afficher le profile d'un utilisateur
 	    app.get('/api/v1/users/:user_facebook_id',   //otherwise override with asker facebook_id
-	    	mdw.validate('user_fetch', ['user_fetch'] ),
-	    	api.users.fetchUserById);
+	    	mdw.validate('user_fetch'),
+	    	api.users.fetchUserById_Full);
 
 	    // [ @user ] Utilisé dans le Typeahead searchbox client
 	    app.get('/api/v1/users',
@@ -196,7 +199,7 @@
 
 	    // [ @user ] Renvoie tous les events auxquels participe un user
 	    app.get('/api/v1/me/events',
-	    	mdw.validate('user_fetch', ['user_fetch'] ),
+	    	mdw.validate('user_fetch'),
 	    	api.users.fetchUserEvents);
 
 	    // [ @user ] Fetch user informations
@@ -207,17 +210,17 @@
 
 	    // [ @events ] Fetch un event par son identifiant. 
 	    app.get('/api/v1/events/:event_id', 
-	    	mdw.validate('fetch_event_by_id', ['event_fetch']),
+	    	mdw.validate('event_fetch'),
 	    	api.events.fetchEventById );
 
 	    // [ @events ] Update le statut d'un évènement [ 'open', 'suspended' ]
 	    app.patch('/api/v1/events/:event_id/status',
-	    	mdw.validate('event_status', ['event_status']),
+	    	mdw.validate('event_status'),
 	    	api.events.changeEventStatus );
 
 	    // [ @events ] Génère une nouvelle requête pour participer à un évènement
 	    app.patch('/api/v1/events/:event_id/request',
-	    	mdw.validate('request_event', ['event_group_request'] ),
+	    	mdw.validate('event_group_request' ),
 	    	mdw.notifier.addNotification('group_request'),
 	    	api.events.request );
 
@@ -227,7 +230,7 @@
 
 	    // [ @events ] Change le statut d'un group : [ 'accepted', 'kicked' ]
 	    app.patch('/api/v1/events/:event_id/groups/:group_id/status',
-	    	mdw.validate('group_status', ['event_group_status']),
+	    	mdw.validate('event_group_status'),
 	    	mdw.notifier.addNotification('accepted_in'),
 	    	api.events.changeGroupStatus );
 
@@ -237,7 +240,7 @@
 
 	    // [ @events ] Crée un nouvel évènement
 	    app.post('/api/v1/events',
-	    	mdw.validate('create_event', ['create_event']),
+	    	mdw.validate('create_event'),
 	    	mdw.meepass.updateMeepass('event_created'),
 	    	mdw.notifier.addNotification('marked_as_host'),
 	    	api.events.createEvent );
@@ -246,19 +249,19 @@
 
 	    // [ @chat ] Renvoie l'historique des messages par chat id
 	    app.get('/api/v1/chats/:chat_id',
-	    	mdw.validate('chat_fetch', ['chat_fetch']),
+	    	mdw.validate('chat_fetch'),
 	    	api.chats.fetchChatMessages );
 
 	    // [ @chat ] Post un nouvau message
 	    app.post('/api/v1/chats/:chat_id',
-	    	mdw.validate('chat_message', ['chat_message']),
+	    	mdw.validate('chat_message'),
 	    	mdw.chat_watcher.watchCache,
 	    	mdw.chat_watcher.mailOfflineUsers,
 	    	api.chats.addChatMessage );
 
 	    // [ @chat ] Poste le fait qu'un user ai lu un message
 	    app.post('/api/v1/chats/:chat_id/readby',
-	    	mdw.validate('chat_readby', ['chat_readby']),
+	    	mdw.validate('chat_readby'),
 	    	api.chats.setReadBy );
 
 
@@ -266,7 +269,7 @@
 	    // [ @parties ] Créer un évènement partenaire
 	    app.post('/api/v1/parties',
 	    	mdw.auth.authenticate(['admin']),
-	    	mdw.validate('create_party', ['create_party']),
+	    	mdw.validate('create_party'),
 	    	api.parties.createParty );
 
 	    // [ @parties ] Fetch all parties
@@ -279,7 +282,7 @@
 
 	    // [@places ] Create a new place
 	    app.post('/api/v1/places',
-	    	mdw.validate('create_place', ['create_place']),
+	    	mdw.validate('create_place'),
 	    	api.places.createPlace
 	    );
 
@@ -287,7 +290,7 @@
 	    app.post('/admin/*',
 	    	function( req, res, next ){
 	    		if( req.sent.apikey != 'M33fore' ){
-	    			return res.status(403).json({ msg: "unauthorized" });
+	    			return res.status( 403 ).json({ msg: "unauthorized" });
 	    		} else {
 	    			next();
 	    		}
@@ -452,7 +455,7 @@
 
 
 
-
+	   	app.all('*', mdw.expose.sendResponse );
 
 
 

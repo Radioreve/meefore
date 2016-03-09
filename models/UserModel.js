@@ -5,33 +5,25 @@
   var bcrypt   = require("bcrypt-nodejs");
   var _        = require('lodash');
 
-  var default_img_id = settings.placeholder.img_id;
-  var default_img_vs = settings.placeholder.img_version;
-
   var UserSchema = new mongoose.Schema({
 
   contact_email: {
-    type: String,
-    default: ''
+    type: String
   },
   facebook_email:{
-    type: String,
-    default:''
+    type: String
   },
   mailchimp_email: {
-    type: String,
-    default:''
+    type: String
   },
   mailchimp_id: {
-    type: String,
-    default:''
+    type: String
   },
   facebook_id: {
-    type:String,
-    default:''
+    type: String
   },
   facebook_url:{
-    type:String
+    type: String
   },
   facebook_scope: {
     type: Array
@@ -66,41 +58,30 @@
     type: String
   },
   gender: {
-    type:String
+    type: String
   },
   job: {
-    type: String,
-    default:''
+    type: String
   },
   name: {
     type: String,
-    required:true,
-    default:'Inconnu'
   },
   friends: {
-    type:Array,
-    default:[]
+    type    : Array,
+    default : []
   },
   pictures: {
-    type: Array,
-    default: [
-      { img_id: default_img_id, img_version: default_img_vs, img_place: 0, is_main: true , hashtag: 'classic' },
-      { img_id: default_img_id, img_version: default_img_vs, img_place: 1, is_main: false, hashtag: 'meerofka' },
-      { img_id: default_img_id, img_version: default_img_vs, img_place: 2, is_main: false, hashtag: 'swag' },
-      { img_id: default_img_id, img_version: default_img_vs, img_place: 3, is_main: false, hashtag: 'chill' },
-      { img_id: default_img_id, img_version: default_img_vs, img_place: 4, is_main: false, hashtag: 'hipster' }
-      ]
+    type: Array
   },
   events: {
-    type: Array,
-    default: []
+    type    : Array,
+    default : []
   },
   channels: {
     type: Object
   },
   app_preferences: {
-    type    : Object,
-    default : settings.default_app_preferences
+    type    : Object
   },
   notifications: {
     type    : Array,
@@ -112,7 +93,28 @@
   },
   meepass: {
     type    : Array,
-    default : {}
+    default : []
+  },
+  spotted: {
+    type    : Array,
+    default : []
+  },
+  shared: {
+    type    : Array,
+    default : []
+  },
+  invite_code: {
+    type    : String
+  },
+  sponsor: {
+    type    : Object
+  },
+  sponsees: {
+    type    : Array,
+    default : []
+  },
+  ideal_night: {
+    type: String
   }
 
 

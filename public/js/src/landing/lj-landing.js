@@ -235,6 +235,26 @@
 
 				LJ.fn.GraphAPI('/me', function( facebookProfile ){
 
+					if( facebookProfile.error ){
+						$('.auto-login-message')
+						.find('span').velocity('transition.fadeOut', {
+							complete: function(){
+								$(this).text('Votre token est expiré, redirection...')
+									   .velocity('transition.fadeIn', {
+									   		complete: function(){
+									   			$(this).velocity('transition.fadeOut', {
+									   				delay: 2000,
+									   				complete: function(){
+									   					LJ.fn.initLandingPage();
+									   				}
+									   			});
+									   		}
+									   });
+							}
+						});
+						return;
+					}
+
 					LJ.facebook_profile = facebookProfile;
 			  		LJ.fn.loginWithFacebook( facebookProfile );
 	  			});
