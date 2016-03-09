@@ -4,59 +4,39 @@
 
 	var User        = require('../models/UserModel');
 
-		var populateUser = function( options ){
+	function handleErr( res, err_ns, err ){
+		return eventUtils.raiseApiError( res, err_ns, err );
+	};
 
-		var options = options || { auth_type: null, force_presence: true };
+	var populateUser = function( options ){
 
-		var auth_type = options.auth_type;
-		var force_presence = options.force_presence;
+		var err_ns  = "populate_user",
+			options = options || {};
+
+		var force_presence = options.force_presence || true;
 
 		return function( req, res, next ){
 
-			/* Détection automatique du mode d'authentification */
-			if( auth_type == 'facebook_id' )
-				var query = { 'facebook_id': req.body.facebook_id };
+			console.log('Populating user, force_presence : ' + force_presence );
 
-			if( !auth_type && req.body.facebook_id )
-				var query = { 'facebook_id': req.body.facebook_id };
-
-			if( auth_type == 'app_id')
-				var query = { '_id' : req.body.userId };
-
-			if( !auth_type && req.body.userId )
-				var query = { '_id' : req.body.userId };
-
-			if( !query )
-				return eventUtils.raiseError({
-					toClient: "The auth type didnt match any parameters",
-					res: res
-				});
-
-			req.body.query = query;
-
+			var query = { facebook_id: req.sent.facebook_id };
 			User.findOne( query, function( err, user ){
 
 				if( err ){
-					return eventUtils.raiseError({ err: err, res: res, toClient: "Bad request (E83)" });
+					return handleErr( res, err_ns, err );
 				}
 
-				if( user ){
-					req.sent.user = user;
-				} else {
-
-					if( force_presence == true )
-						return eventUtils.raiseError({
-							res: res,
-							toClient: "No user has been found, when necessary"
+				if( !user && force_presence ){
+					return handleErr( res, err_ns, {
+							'err_id': 'ghost_user',
+							'msg'   : 'The presence of a user in database was necessary for this route. None was found.'
 						});
-
-					req.sent.user = null;
 				}
-			
-				return next();
+
+				req.sent.user = user;
+				next();
 
 			});
-
 		};
 	};
 

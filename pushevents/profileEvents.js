@@ -20,270 +20,287 @@
 
 	var pusher = require('../services/pusher');
 
-	var handleErr = function( res, errors, context ){
-		var context = context || 'update_profile';
-		eventUtils.raiseApiError( res, 'update_profile', errors );
-	}
+	var handleErr = function( res, namespace, err ){
+		eventUtils.raiseApiError( res, namespace, err );
+	};
 
-	var updateProfile = function( req, res ){
+	var updateProfile = function( req, res, next ){
 
-		var data = req.body;
+		var err_ns = 'update_profile';
 
-		var userId = req.body.userId;
+		var userId = req.sent.userId;
 
-		if( !validator.isInt( data.age ) ){
-			return handleErr( res, [{
-				'err_id': 'age_no_int',
-				'age_sent': data.age
-			}]);
-		}
-
-		var update = {
-			name   : data.name,
-			age    : data.age,
-			job    : data.job,
-			status : data.status
-		};
+		var update = {};
+		['name','age','job','ideal_night'].forEach(function( attr ){
+			if( req.sent[ attr ] ){
+				update[ attr ] = req.sent[ attr ];
+			}
+		});
 
 		var callback = function( err, user ) {
 
-	        if( err ) return handleErr( res );
+	        if( err ) return handleErr( res, err_ns, err );
          
             console.log('Emtting event update profile success')
-            var expose = { user: user };
-            eventUtils.sendSuccess( res, expose );
+
+            req.sent.expose = { 'user': user };
+            next();
 	    }
 	
 		User.findByIdAndUpdate( userId, update, { new: true }, callback );
 
 	};
 
-	var updatePicture = function( req, res ){
+	var updatePicture = function( req, res, next ){
 
-		var data = req.body;
+		var err_ns = 'update_picture_client';
+		var user   = req.sent.user;
 
-	   	var userId 		    = data._id,
-	        newimg_id   	= data.img_id,
-	    	newimg_version  = data.img_version,
-	    	img_place       = data.img_place;
+	   	var newimg_id   	= req.sent.img_id,
+	    	newimg_version  = req.sent.img_version,
+	    	img_place       = req.sent.img_place;
 
-	    console.log('New img id : ' + newimg_id );
-	    User.findById( userId, function( err, myUser ){
+    	var i = _.findIndex( user.pictures, function( el ){
+    		return el.img_place == img_place;
+    	});
 
-	    	if( err ) return handleErr( res );
+    	var newPicture = user.pictures[i];
 
-	    	var i = _.findIndex( myUser.pictures, function( el ){
-	    		return el.img_place == img_place;
-	    	});
+		newPicture.img_id      = newimg_id;
+		newPicture.img_version = newimg_version;
 
-	    	var newPicture = myUser.pictures[i];
+    	user.pictures.set( i, newPicture );
+    	user.save(function( err, user ){
 
-	    	if( newPicture == undefined ) return handleErr( res );
+    		if( err ) return handleErr( res, err_ns, err );
 
-			newPicture.img_id      = newimg_id;
-			newPicture.img_version = newimg_version;
+    		req.sent.expose = {
+    			'user': user
+    		};
 
-	    	myUser.pictures.set( i, newPicture );
-	    	myUser.save(function( err, savedUser ){
+    		req.sent.img_id = newimg_id;
+    		req.sent.img_vs = newimg_version;
 
-	    		if( err ) return handleErr( res );
+    		next();
 
-	    		eventUtils.sendSuccess( res, { user: savedUser, msg: "Votre photo a été uploadée" });
-
-	    	});
 	    });
 	};
 
 
-	var updatePictureWithUrl = function( req, res ){
+	var uploadPictureWithUrl = function( req, res, next ){
 
-		var userId    = req.body.userId,
-			url       = req.body.url,
-			img_id	  = req.body.img_id,
-			img_place = req.body.img_place;
+		var err_ns 	  = 'update_picture_url';
+		var user  	  = req.sent.user;
+
+		var url       = req.sent.url,
+			img_id	  = req.sent.img_id,
+			img_place = req.sent.img_place;
 
 		cloudinary.uploader.upload( url, function( response ){
 
-			User.findById( userId, function( err, user ){
+			var img_version = response.version + '';
 
-				if( err ) return handleErr( res );
+			var picture = _.find( user.pictures, function( pic ){
+				return pic.img_place == img_place;
+			});
 
-				var picture = _.find( user.pictures, function( pic ){
-					return pic.img_place == img_place;
-				});
+			picture.img_id  	= img_id;
+			picture.img_version = img_version;
 
-				if( typeof picture == 'undefined' ) return handleErr( res );
+			user.pictures.set( img_place, picture );
+			user.status = "idle";
 
-				picture.img_id  	= img_id;
-				picture.img_version = response.version + '';
+			user.save(function( err, user){
 
-				user.pictures.set( img_place, picture );
-				user.status = "idle";
+				if( err ) return handleErr( res, err_ns, err );
 
-				user.save(function( err ){
+				req.sent.expose = {
+					'user': user
+				};
+				
+				req.sent.img_id = img_id;
+				req.sent.img_vs = img_version;
+				next();
 
-					if( err ) return handleErr( res );
-
-					res.json({ 
-						msg         : "Votre photo a été chargée à partir de Facebook",
-						img_id      : img_id,
-						img_version : response.version
-					});
-
-				});
-							
 			});
 		}, {
 			public_id: img_id // Important, force the image id to have the defined pattern
 		});
-
 	};
 
-	var updatePictures = function( req, res ){
+	var updatePictures = function( req, res, next ){
 
-		console.log('updating all pictures');
-		var data = req.body;
+		var err_ns = "update_pictures";
 
-		var updatedPictures = data.updatedPictures,
-			userId			= data.userId;
+		var user   			= req.sent.user;
+		var updatedPictures = req.sent.updatedPictures;
 
 		var old_main_picture;
+		var mainified_picture = _.find( updatedPictures, function( el ){
+			return el.action == "mainify"
+		});
 
-		User.findById( userId, function( err, myUser ){
+		if( mainified_picture && user.pictures[ mainified_picture.img_place ].img_id == settings.placeholder.img_id ){
+			return handleErr( res, err_ns, { 'err_id': 'mainify_placeholder' } );
+		}
 
-			if( err ) return handleErr( res );
+		// Store reference for criteria in Mongo update
+		var current_main = _.find( user.pictures, function( el ){ 
+			return el.is_main == true 
+		});
 
-			var mainified_picture = _.find( updatedPictures, function( el ){
-			 return el.action == "mainify"
-			});
+		old_main_picture = current_main;
 
-			if( mainified_picture && myUser.pictures[ mainified_picture.img_place ].img_id == settings.placeholder.img_id ){
-				return handleErr( res, [{ 'err_id': 'mainify_placeholder' }] );
+		for( var i = 0; i < updatedPictures.length; i++ ){
+
+			var current_picture = _.find( user.pictures, function( el ){ 
+					return el.img_place == updatedPictures[i].img_place
+				});
+			
+			if( updatedPictures[i].action == "mainify" ){	
+				current_main.is_main = false;
+				user.pictures.set( parseInt( current_main.img_place ), current_main );
+				current_picture.is_main = true;
+				user.pictures.set( parseInt( current_picture.img_place ), current_picture );
 			}
 
-			// Store reference for criteria in Mongo update
-			var current_main = _.find( myUser.pictures, function( el ){ 
-					return el.is_main == true 
-				});
-			old_main_picture = current_main;
 
-			for( var i = 0; i < updatedPictures.length; i++ ){
-
-				var current_picture = _.find( myUser.pictures, function( el ){ 
-						return el.img_place == updatedPictures[i].img_place
-					});
-				
-				if( updatedPictures[i].action == "mainify" )
-				{	
-
-					current_main.is_main = false;
-
-					myUser.pictures.set( parseInt( current_main.img_place ), current_main );
-					current_picture.is_main = true;
-					myUser.pictures.set( parseInt( current_picture.img_place ), current_picture );
-
-				}
-
-				if( updatedPictures[i].action == "delete" )
-				{
-					current_picture.img_id      = settings.placeholder.img_id;
-					current_picture.img_version = settings.placeholder.img_version;
-					myUser.pictures.set( parseInt( current_picture.img_place ), current_picture );
-				}
-
-				if( updatedPictures[i].action == "hashtag" )
-				{
-					current_picture.hashtag = updatedPictures[i].new_hashtag;
-					myUser.pictures.set( parseInt( current_picture.img_place ), current_picture );
-				}
-
+			if( updatedPictures[i].action == "delete" ){
+				current_picture.img_id      = settings.placeholder.img_id;
+				current_picture.img_version = settings.placeholder.img_version;
+				user.pictures.set( parseInt( current_picture.img_place ), current_picture );
 			}
 
-			// Saving picture modifications to user profile
-			myUser.save(function( err, saved_user ){
 
-				if( err ) return handleErr( res );
+			if( updatedPictures[i].action == "hashtag" ){
+				current_picture.hashtag = updatedPictures[i].new_hashtag;
+				user.pictures.set( parseInt( current_picture.img_place ), current_picture );
+			}
 
-				console.log('sending success');
-				eventUtils.sendSuccess( res, { msg: "Mise à jour effectuée!", pictures: saved_user.pictures });
+		}
 
-				//Propagating to all events he's been in
-				console.log('Propagating photo update in all events');
+		// Saving picture modifications to user profile
+		user.save(function( err, saved_user ){
 
-				var event_ids = _.pluck( saved_user.events, 'event_id' );
-				var main_picture = _.find( saved_user.pictures, function( pic ){
-					return pic.is_main;
-				});
+			if( err ) return handleErr( res, err_ns, err );
 
-				// Switch to true to match the criteria. Old pic is still tagged as main in events;
-				old_main_picture.is_main = true;
+			console.log('sending success');
 
-				console.log( old_main_picture);
-				console.log( main_picture );
+			req.sent.expose = { 
+				'pictures': saved_user.pictures
+			};
 
-				// Update events where he is host
-				Event.update({
-					'hosts.main_picture': old_main_picture
-				}, {
-					$set: {
-						'hosts.$.main_picture': main_picture
-					}
-				}, {
-					multi: true
-				}, function( err, raw ){
-					if( err ) return console.log( err );
-					console.log('Propagated as host in ' + raw.n + ' events' );
-				});
-
-				// Update events where he is asker
-				Event.update({
-					'groups.members.main_picture': old_main_picture
-				}, {
-					$set: {
-						'groups.members.$.main_picture': main_picture
-					}
-				}, {
-					multi: true
-				}, function( err, raw ){
-					if( err ) return console.log( err );
-					console.log('Propagated as member in ' + raw.n + ' events' );
-				});
-
-			});
+			next();
 
 
+			// LEGACY -> NOW EACH TIME AN EVENT IS RENDERER, THUMB PICTURES ARE FETCHED
+			// FROM CACHE WHICH IS ALWAYS UP TO DATE. NO NEED TO PROPAGATE THE CHANGES ANYMORE
+
+			//Propagating to all events he's been in
+			// console.log('Propagating photo update in all events');
+
+			// var event_ids    = _.pluck( saved_user.events, 'event_id' );
+			// var main_picture = _.find( saved_user.pictures, function( pic ){
+			// 	return pic.is_main;
+			// });
+
+			// // Switch to true to match the criteria. Old pic is still tagged as main in events;
+			// old_main_picture.is_main = true;
+
+			// console.log( old_main_picture);
+			// console.log( main_picture );
+
+			// // Update events where he is host
+			// Event.update({
+			// 	'hosts.main_picture': old_main_picture
+			// }, {
+			// 	$set: {
+			// 		'hosts.$.main_picture': main_picture
+			// 	}
+			// }, {
+			// 	multi: true
+			// }, function( err, raw ){
+
+			// 	if( err ) return handleErr( res, err_ns, err );
+
+			// 	console.log('Propagated as host in ' + raw.n + ' events' );
+
+			// });
+
+			// // Update events where he is asker
+			// Event.update({
+			// 	'groups.members.main_picture': old_main_picture
+			// }, {
+			// 	$set: {
+			// 		'groups.members.$.main_picture': main_picture
+			// 	}
+			// }, {
+			// 	multi: true
+			// }, function( err, raw ){
+
+			// 	if( err ) return handleErr( res, err_ns, err );
+
+			// 	console.log('Propagated as member in ' + raw.n + ' events' );
+
+			// });
 		});
 	};
 
-	var fetchAndSyncFriends = function( req, res ){
+	var fetchAndSyncFriends = function( req, res, next ){
+
+		var err_ns = 'syncing_friends';
 
 		var userId         = req.body.userId;
 		var fb_friends_ids = req.body.fb_friends_ids || [];
 
-		User.find({ $or: [{ _id: userId },{ facebook_id: { $in: fb_friends_ids } }]}, function( err, users ){
+		User.findByIdAndUpdate( userId, { friends: fb_friends_ids }, { new: true }, function( err, user ){
 
-			var mySelf           = _.find( users, function( el ){ return el._id == userId });
-			var friends          = _.pull( users, mySelf );
-			var filtered_friends = [];
+			if( err ) return handleErr( res, err_ns, err );
 
-				friends.forEach(function(friend){
-					var filtered_friend = {};
-					filtered_friends.push( _.pick( friend, settings.public_properties.users ) );
-				});
+			var expose = {
+				'friends': user.friends
+			};
 
-				mySelf.friends = filtered_friends;
-				mySelf.save( function( err, mySelf ){
-
-					if( err ) return handleErr( res );
-
-					eventUtils.sendSuccess( res, { friends: mySelf.friends });
-				});
+			next();
 
 		});
 
+		// LEGACY -> NOW WE ONLY STORE FB_ID of friends ALONG WITH CACHE OPTIMISATION
+		// MORE MAINTANABLE AND DECOUPLED		
+
+		// User.find({ 
+
+		// 	$or: [
+		// 		{ _id: userId },
+		// 		{ facebook_id: { $in: fb_friends_ids } }
+		// 	]
+
+		// }, function( err, users ){
+
+		// 	var me      = _.find( users, function( el ){ return el._id == userId });
+		// 	var friends = _.pull( users, me );
+
+		// 	var filtered_friends = [];
+
+		// 		friends.forEach(function( friend ){
+		// 			var filtered_friend = [];
+		// 			// filtered_friends.push( _.pick( friend, settings.public_properties.users ) );
+		// 			filtered_friends.push( )
+		// 		});
+
+		// 		me.friends = filtered_friends;
+		// 		me.save( function( err, me ){
+
+		// 			if( err ) return handleErr( res );
+
+		// 			eventUtils.sendSuccess( res, { friends: me.friends });
+		// 		});
+
+		// });
+
 	};
 
-	var fetchCloudinaryTags = function( req, res ){
+	var fetchCloudinaryTags = function( req, res, next ){
 
 		var userId = req.sent.user_id;
 		// Make sure all HTML Tags internally have a specific img_id pattern
@@ -297,11 +314,17 @@
 			);
 		}
 
-		eventUtils.sendSuccess( res, { cloudinary_tags: cloudinary_tags });
+		req.sent.expose = {
+			'cloudinary_tags': cloudinary_tags
+		};
+
+		next();
 
 	};
 
-	var updateMeepass = function( req, res ){
+	var updateMeepass = function( req, res, next ){
+
+		var err_ns = 'meepass';
 
 		var sender   = req.sent.sender;
 		var receiver = req.sent.receiver;
@@ -323,21 +346,25 @@
 
 		sender.save(function( err ){
 
-			if( err ) return handleErr( res );
+			if( err ) return handleErr( res, err_ns, err );
 
 			receiver.save(function( err ){
 
-				if( err ) return handleErr( res );
+				if( err ) return handleErr( res, err_ns, err );
 
-				var expose = { 'meepass_sent': meepass_sent };
-				eventUtils.sendSuccess( res, expose );
+				var expose = { 
+					'meepass_sent': meepass_sent 
+				};
+				
+				next();
 
-			})
+			});
 		});
-		
 	};
 
-	var updateSpotted = function( req, res ){
+	var updateSpotted = function( req, res, next ){
+
+		var err_ns = 'spotted';
 
 		var user 		= req.sent.user;
 		var facebook_id = req.sent.facebook_id;
@@ -351,16 +378,20 @@
 		user.spotted.push( spotted_object );
 		user.save(function( err, user ){
 
-			if( err ) return handleErr( res, err, 'spotted' );
+			if( err ) return handleErr( res, err_ns, err );
 
-			var expose = { 'spotted_object': spotted_object };
-			eventUtils.sendSuccess( res, expose );
+			var expose = {
+				'spotted_object': spotted_object
+			};
+
+			next();
 
 		});
-
 	};
 
-	var updateShared = function( req, res ){
+	var updateShared = function( req, res, next ){
+
+		var err_ns = 'shared';
 
 		var user 	    = req.sent.user;
 		var facebook_id = req.sent.facebook_id;
@@ -379,53 +410,59 @@
 
 		User.update( query, update, options, function( err, users ){
 
-			if( err ) return handleErr( err, res, 'shared_1' );
+			if( err ) return handleErr( err, res, err_ns );
 
 			user.markModified('shared');
 			user.save(function( err, user ){
 
-				if( err ) return handleErr( err, res, 'shared_2' );
+				if( err ) return handleErr( err, res, err_ns );
 
-				var expose = { 'user': user };
-				eventUtils.sendSuccess( res, expose );
+				var expose = {
+					'user': user
+				};
+
+				next();
 
 			});
-
 		});
-
 	};
 
-	var updateInviteCode = function( req, res ){
+	var updateInviteCode = function( req, res, next ){
+
+		var err_ns = 'invite_code';
 
 		var facebook_id = req.sent.facebook_id;
 		var invite_code = req.sent.invite_code;
 
 		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
 
-			if( err ) return handleErr( res, err, 'invite_code_1' );
+			if( err ) return handleErr( res, err_ns, err );
 
 			if( !user ){
-				return handleErr( res, [{
+				return handleErr( res, err_ns, {
 					'err_id'	  : 'ghost_user',
 					'facebook_id' : facebook_id
-				}]);
+				});
 			}
 
 			user.invite_code = invite_code;
 			user.save(function( err, user ){
 
-				if( err ) return handleErr( res, err, 'invite_code_2' );
+				if( err ) return handleErr( res, err_ns, err );
 
-				var expose = { 'user': user };
-				eventUtils.sendSuccess( res, expose );
+				var expose = {
+					'user': user
+				};
+
+				next();
 
 			});
-
 		});	
-
 	};
 
-	var activateSponsor = function( req, res ){
+	var activateSponsor = function( req, res, next ){
+
+		var err_ns = 'sponsor';
 
 		var sponsor = req.sent.sponsor;
 		var sponsee = req.sent.sponsee;
@@ -442,24 +479,21 @@
 
 		sponsor.save(function( err, sponsor ){
 
-			if( err ) return handleErr( res, err, 'sponsor' );
+			if( err ) return handleErr( res, err_ns, err );
 
 			sponsee.save(function( err, sponsee ){
 
-				if( err ) return handleErr( res, err, 'sponsor' );
+				if( err ) return handleErr( res, err_ns, err );
 
-				var expose = { 'user': sponsee };
-				eventUtils.sendSuccess( res, expose );
+				var expose = {
+					'user': sponsee
+				};
+				
+				next();
 
 			});
-
-			sponsee.push
-
-		})
-
-
-
-	}
+		});
+	};
 
 
 	module.exports = {
@@ -467,7 +501,7 @@
 		updateProfile        : updateProfile,
 		updatePicture        : updatePicture,
 		updatePictures       : updatePictures,
-		updatePictureWithUrl : updatePictureWithUrl,
+		uploadPictureWithUrl : uploadPictureWithUrl,
 		fetchAndSyncFriends  : fetchAndSyncFriends,
 		fetchCloudinaryTags  : fetchCloudinaryTags,
 		updateMeepass 		 : updateMeepass,

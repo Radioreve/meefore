@@ -8,7 +8,12 @@
 
 	var sendSuccess = function( res, expose, print ){
 
-		if( !res ) return console.log('Missing res Object from arguments');
+		if( !res )
+			return console.log('Missing res/next from arguments');
+
+		if( typeof res == "function" ) // res is next;
+			return res();
+
 		expose = expose || {};
 		
 		if( print ) console.log('Exposing : '+ JSON.stringify(expose, null, 4) );

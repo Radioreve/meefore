@@ -24,14 +24,9 @@
 				tasks.push(function( done ){
 
 					// Update part
-					user.spotted = [];
-					user.shared  = [];
-					user.meepass = [];
-					user.invite_code = '';
-					user.sponsor = {};
-					user.sponsees = [];
-
-					user.markModified('sponsor');
+					user.ideal_night = "These hollywood nights...";
+					user.job 		 = "L'étudiant";
+					user.age 		 = 18;
 
 					user.save(function( err ){
 						if( err ) console.log('Error : ' + err );

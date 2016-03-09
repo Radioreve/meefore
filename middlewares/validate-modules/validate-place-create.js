@@ -2,14 +2,13 @@
 	var Place       = require('../../models/PlaceModel');
 	var settings    = require('../../config/settings');
 	var nv          = require('node-validator');
+	var rg 			= require('../../config/regex');
 
 
 	function check( req, res, next ){
 
 		console.log('Validating place');
 
-		var ISO_Regex = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/;
-		var URL_Regex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 		var checkAddress = nv.isAnyObject()
 
 			.withRequired('lat'			, nv.isNumber({ min: -85, max: 85 }))
@@ -22,7 +21,7 @@
 			.withRequired('name'          		, nv.isString() )
 			.withRequired('address'				, checkAddress  )
 			.withRequired('capacity'			, nv.isString({ regex: /^\d{2,3}-\d{2,3}$/ }) )
-			.withRequired('link'				, nv.isString({ regex: URL_Regex   }) )
+			.withRequired('link'				, nv.isString({ regex: rg.url   }) )
 			.withRequired('type' 				, nv.isString({ expected: _.pluck( settings.app.place_types, 'id' )  }));
 
 

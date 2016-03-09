@@ -95,6 +95,8 @@
 		new_user.job 		   = settings.default_profile_values.job;
 		new_user.country_code  = country_code; // country code extraction
 		new_user.ideal_night   = '';
+		new_user.pictures 	   = settings.default_pictures;
+
 
 		//Private profile attributes
 		new_user.invite_code 	 = fb.id;
