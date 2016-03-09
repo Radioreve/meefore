@@ -257,7 +257,7 @@
 
 			if( err ) return handleErr( res, err_ns, err );
 
-			var expose = {
+			req.sent.expose = {
 				'friends': user.friends
 			};
 
@@ -352,7 +352,7 @@
 
 				if( err ) return handleErr( res, err_ns, err );
 
-				var expose = { 
+				req.sent.expose = { 
 					'meepass_sent': meepass_sent 
 				};
 				
@@ -380,7 +380,7 @@
 
 			if( err ) return handleErr( res, err_ns, err );
 
-			var expose = {
+			req.sent.expose = {
 				'spotted_object': spotted_object
 			};
 
@@ -417,7 +417,7 @@
 
 				if( err ) return handleErr( err, res, err_ns );
 
-				var expose = {
+				req.sent.expose = {
 					'user': user
 				};
 
@@ -450,7 +450,7 @@
 
 				if( err ) return handleErr( res, err_ns, err );
 
-				var expose = {
+				req.sent.expose = {
 					'user': user
 				};
 
@@ -485,7 +485,7 @@
 
 				if( err ) return handleErr( res, err_ns, err );
 
-				var expose = {
+				req.sent.expose = {
 					'user': sponsee
 				};
 				

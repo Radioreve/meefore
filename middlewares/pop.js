@@ -13,9 +13,9 @@
 		var err_ns  = "populate_user",
 			options = options || {};
 
-		var force_presence = options.force_presence || true;
-
 		return function( req, res, next ){
+
+			var force_presence = options.force_presence || true;
 
 			console.log('Populating user, force_presence : ' + force_presence );
 
@@ -33,6 +33,7 @@
 						});
 				}
 
+				console.log('User populated successfully');
 				req.sent.user = user;
 				next();
 

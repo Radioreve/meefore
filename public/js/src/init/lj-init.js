@@ -295,9 +295,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.fn.handleDomEvents_Notifications();
             LJ.jsp_api_notifications = $('.notifications-panel__wrapper').jScrollPane().data('jsp');
 
-            // Mise à jour du profile des filters
-            $('.mood-wrap').html( LJ.fn.renderMoodInProfile( LJ.settings.app.mood ));
-            $('.drink-wrap').html( LJ.fn.renderDrinkInProfile( LJ.settings.app.drink ));
 
             // Filter date for events 
             $('.filters-date').append( LJ.fn.renderDatesInFilter );
@@ -313,8 +310,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             $('.row-age').find('input').val( LJ.user.age );
             $('.row-job').find('input').val( LJ.user.job );
             LJ.fn.addItemToInput({ inp: '#country', html: LJ.fn.renderItemInInput_Country( LJ.user.country_code ) });
-            $('.drink[data-selectid="' + LJ.user.drink + '"]').addClass('selected');
-            $('.mood[data-selectid="' + LJ.user.mood + '"]').addClass('selected');
 
             // Settings View 
             _.keys( LJ.user.app_preferences ).forEach(function( key ) {
@@ -473,7 +468,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 function( callback ){
                     // Update friends based on facebook activity on each connection 
                     LJ.fn.fetchAndSyncFriends(function( res ){
-                        LJ.fn.handleFetchAndSyncFriends( res );
+                        console.log(res);
+                        // LJ.fn.handleFetchAndSyncFriends( res );
                         callback();
                     });
 

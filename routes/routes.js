@@ -29,6 +29,7 @@
 		api.chats     = require( apiDir + '/chats');
 
 	var mdw = {};
+		mdw.expose 			= require( mdwDir + '/expose');
 		mdw.auth            = require( mdwDir + '/auth');
 		mdw.email           = require( mdwDir + '/email');
 		mdw.pop             = require( mdwDir + '/pop');
@@ -454,7 +455,7 @@
 
 
 
-
+	   	app.all('*', mdw.expose.sendResponse );
 
 
 
