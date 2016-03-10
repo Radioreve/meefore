@@ -9,8 +9,7 @@
 		mailer         = require('../services/mailer');
 
 	var mongoose = require('mongoose');
-
-	var pusher     = require('../services/pusher');
+	var pusher   = require('../services/pusher');
 
 	var pusher_max_size = 10000;
 

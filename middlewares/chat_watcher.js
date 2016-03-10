@@ -1,5 +1,4 @@
 
-
 	var rd             = require('../services/rd');
 	var alerts_watcher = require('../middlewares/alerts_watcher');
 	var Message        = require('../models/MessageModel');

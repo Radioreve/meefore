@@ -1,0 +1,52 @@
+	
+.admin {
+	position: absolute;
+	top: 123px;
+	right: 0;
+	background: rgba(235, 235, 235, 0.7);
+	border-left: 1px solid #cacaca;
+	border-bottom: 1px solid #cacaca;
+	width: 300px;
+	height: 300px;
+	z-index: 999999999;
+	opacity: 0;
+	display: none;
+	flex-direction: column;
+	justify-content: flex-start;
+	padding: 20px;
+	align-items: flex-start;
+}
+.admin-parties, .admin-places {background: #FCFCFC;width: 100%;padding: 10px;border-radius: 4px;}
+.admin-parties__title, .admin-places__title {
+
+font-family: 'Pacifico';
+
+font-size: 20px;
+}
+.admin-parties__btn {
+
+}
+.admin-places {
+
+margin-top: 20px;
+}
+.admin-places__title {
+
+}
+.admin-places__btn, .admin-parties__btn {
+margin-top: 10px;background: #E94F6A;border: 1px solid #FBE3E7;color: white;
+font-size: 11px;
+text-transform: none;width: 100%;}
+.admin-places__btn:hover, .admin-parties__btn:hover {
+	
+background: #FC738A;
+}
+
+.admin-places__search-input {
+display: block;
+background: white;
+margin-top: 10px;
+border: 1px solid #ccc;
+width: 100%;
+padding: 5px 8px;
+}

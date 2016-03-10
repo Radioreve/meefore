@@ -1,0 +1,20 @@
+
+.modal-container {
+   background: white;
+   min-width: 400px;
+   position: fixed;
+   z-index: 10000;
+   padding: 12px;
+   box-shadow: 0 0 5px #D2D2D2;
+}
+
+.modal-container .loader {
+}
+
+.modal-container-body {
+   background: url('/img/app/crossword.png');
+   height: 100%;
+   padding: 25px;
+   text-align: center;
+   /* overflow: auto; */
+}
