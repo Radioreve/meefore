@@ -1,7 +1,7 @@
 
 			var config = require('../config/config'),
 			User       = require('../models/UserModel'),
-			txt        = require('../services/text-source'),
+			txt        = require('./mailer--textsource'),
 			fs         = require('fs'),
 			sendgrid   = require('sendgrid')( config.sendgrid.api_user, config.sendgrid.api_key ),
 			config     = require('../config/config'),

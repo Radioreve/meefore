@@ -2,7 +2,6 @@
 	var User 	   = require('../models/UserModel'),
 		Event 	   = require('../models/EventModel'),
 		Place 	   = require('../models/PlaceModel'),
-		Ambiance   = require('../models/AmbianceModel'),
 		_   	   = require('lodash'),
 		rd 		   = require('../services/rd'),
 		settings   = require('../config/settings'),

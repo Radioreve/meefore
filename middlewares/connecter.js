@@ -1,6 +1,6 @@
 
 	var _      = require('lodash');
-	var rd     = require('./rd');
+	var rd     = require('../services//rd');
 	var User   = require('../models/UserModel');
 	var config = require('../config/config');
 

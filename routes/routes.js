@@ -5,7 +5,6 @@
 
 	var rd        = require('../services/rd');
 	var pusher    = require('../services/pusher');
-	var connecter = require('../services/connecter');
 	
 	var pushEventsDir = '../pushevents';
 	var apiDir        = '../api';
@@ -16,32 +15,30 @@
 	var initEvents     = require( pushEventsDir + '/initEvents'),
 		profileEvents  = require( pushEventsDir + '/profileEvents'),
 		settingsEvents = require( pushEventsDir + '/settingsEvents'),
-		adminEvents    = require( pushEventsDir + '/adminEvents'),
 		signEvents     = require( pushEventsDir + '/signEvents');
 
 	var api = {}
 	//	api.tests     = require( apiDir + '/tests');
 		api.users     = require( apiDir + '/users');
 		api.places    = require( apiDir + '/places');
-		api.ambiances = require( apiDir + '/ambiances');
 		api.events    = require( apiDir + '/events');
 		api.parties   = require( apiDir + '/parties');
 		api.chats     = require( apiDir + '/chats');
 
 	var mdw = {};
-		mdw.expose 			= require( mdwDir + '/expose');
-		mdw.auth            = require( mdwDir + '/auth');
-		mdw.email           = require( mdwDir + '/email');
-		mdw.pop             = require( mdwDir + '/pop');
-		mdw.facebook        = require( mdwDir + '/facebook');
-		mdw.validate        = require( mdwDir + '/validate');
-		mdw.alerts_watcher  = require( mdwDir + '/alerts_watcher');
-		mdw.chat_watcher    = require( mdwDir + '/chat_watcher');
-		mdw.profile_watcher = require( mdwDir + '/profile_watcher');
-		mdw.notifier        = require( mdwDir + '/notifier');
-		mdw.meepass         = require( mdwDir + '/meepass');
+		mdw.expose 			  = require( mdwDir + '/expose');
+		mdw.auth              = require( mdwDir + '/auth');
+		mdw.mailchimp_watcher = require( mdwDir + '/mailchimp_watcher');
+		mdw.pop               = require( mdwDir + '/pop');
+		mdw.facebook          = require( mdwDir + '/facebook');
+		mdw.alerts_watcher    = require( mdwDir + '/alerts_watcher');
+		mdw.chat_watcher      = require( mdwDir + '/chat_watcher');
+		mdw.profile_watcher   = require( mdwDir + '/profile_watcher');
+		mdw.notifier          = require( mdwDir + '/notifier');
+		mdw.meepass           = require( mdwDir + '/meepass');
+		mdw.connecter 		  = require( mdwDir + '/connecter');
 
-
+		mdw.validate          = require('../validate/validate');
 
 	module.exports = function( app ) {
 
@@ -117,7 +114,7 @@
 	    // Initialisation | Check if user exists / create profile if not, subscribe to mailchimp
 	    app.post('/auth/facebook',
 	    	mdw.pop.populateUser({ force_presence: false }),
-	    	mdw.email.subscribeMailchimpUser,
+	    	mdw.mailchimp_watcher.subscribeMailchimpUser,
 	    	mdw.alerts_watcher.setCache,
 	    	mdw.profile_watcher.setCache,
 	    	signEvents.handleFacebookAuth);
@@ -163,7 +160,7 @@
 	    // [ @user ] Update contact settings
 	    app.post('/me/update-settings-contact',
 	    	mdw.pop.populateUser(),
-	    	mdw.email.updateMailchimpUser,
+	    	mdw.mailchimp_watcher.updateMailchimpUser,
 	    	mdw.alerts_watcher.updateCache,
 	    	settingsEvents.updateSettingsContact );
 
@@ -179,12 +176,12 @@
 	    // [ @user ] Update notification settings 
 	    app.post('/me/update-settings-mailinglists',
 	    	mdw.pop.populateUser(),
-	    	mdw.email.updateMailchimpUser,
+	    	mdw.mailchimp_watcher.updateMailchimpUser,
 	    	settingsEvents.updateSettings);
 
 	    app.post('/me/delete',
 	    	mdw.pop.populateUser(),
-	    	mdw.email.deleteMailchimpUser,
+	    	mdw.mailchimp_watcher.deleteMailchimpUser,
 	    	settingsEvents.deleteProfile );
 
 
@@ -425,8 +422,7 @@
 	   	// [ @WebHooks ] WebHook from Pusher to monitor in realtime online/offline users
 	   	// and save disconnected_at property which is used by front end notifications module
 	   	app.post('/webhooks/pusher/connection-event',
-	   		connecter.updateConnectedUsers );
-
+	   		mdw.connecter.updateConnectedUsers );
 
 
 
@@ -452,16 +448,7 @@
 	   		});
 
 
-
-
-
 	   	app.all('*', mdw.expose.sendResponse );
-
-
-
-
-
-
 
 	    // Test & legacy
 
@@ -472,47 +459,6 @@
 	        next();
 	    });
 
-
-	    //Rest api tests
-	    //app.post('/api/v1/test/:user_id', api.tests.test );
-	    app.post('/api/v1/test/validate/:event_id/*');
-//	    app.post('/api/v1/test/validate/:event_id/request', mdw.validate('test','event_group_request'), api.tests.testValidate);
-
-
-
-
-	    //Events relatifs aux admins
-	    app.post('/fetch-app-data', mdw.auth.authenticate(['admin']), adminEvents.fetchAppData);
-	    app.post('/create-event-bot', mdw.auth.authenticate(['admin-bot']), adminEvents.createBotEvent);
-	    app.post('/request-participation-in-bot', mdw.auth.authenticate(['admin-bot']), adminEvents.requestParticipationInBot);
-	    app.post('/add-event-template', mdw.auth.authenticate(['admin']), adminEvents.addEventTemplate);
-	    app.post('/delete-event-template', mdw.auth.authenticate(['admin']), adminEvents.deleteEventTemplate);
-
-	    app.post('/hello', function(req, res) {
-	        console.log('Hello test command received!');
-	        console.log('Message : ' + req.body.msg);
-	    });
-
-
-	    app.get('/pusher/test', function(req,res){
-	    	pusher.trigger('app', 'new test', { hello: "app" } );
-	    	res.status(200).end();
-	    });
-
-	    app.get('/pusher/test/event/:event_id', function(req,res){
-	    	pusher.trigger( req.params.event_id, 'new test event', { hello: "event" } );
-	    	res.status(200).end();
-	    });
-
-	    app.get('/testme', function(req,res){
-	    	var Event = require('../models/EventModel');
-	    	Event.find({},function(err, events){
-
-	    		res.json({ 
-	    			group_ids: events[0].getGroupIds()
-	    		}).end();
-	    	});
-	    });	 
 
 
 	};
