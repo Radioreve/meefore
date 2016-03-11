@@ -254,46 +254,6 @@
 		},
 		initAppBoot: function(){
 
-			var ls = window.localStorage;
-
-			if( !ls ||  (!ls.getItem('preferences') && !ls.getItem('reconn_data') ) ){
-				LJ.fn.log('No local data available, initializing lp...', 1);
-				return LJ.fn.initLandingPage();
-			}
-
-			var preferences = JSON.parse( ls.getItem('preferences') );
-			var reconn_data = JSON.parse( ls.getItem('reconn_data') );
-
-			if( reconn_data ){
-				LJ.fn.log('Reconnecting user from previous loss of connexion...', 1);
-				LJ.fn.autoLogin();
-				return;
-			}
-
-			tk_valid_until = preferences.tk_valid_until;
-			long_lived_tk  = preferences.long_lived_tk;
-
-			if( !tk_valid_until || !long_lived_tk ){
-				LJ.fn.log('Missing init preference param, initializing lp...', 1);
-				return LJ.fn.initLandingPage();
-			}
-			
-			if( moment( new Date(tk_valid_until) ) < moment() ){
-				LJ.fn.log('long lived tk found but has expired', 1);
-				return LJ.fn.initLandingPage();
-			} 
-
-			var current_tk_valid_until = moment( new Date(tk_valid_until) );
-			var now  = moment();
-			var diff = current_tk_valid_until.diff( now, 'd' );
-
-			if( diff < 30 ) {
-				LJ.fn.log('long lived tk found but will expire soon, refresh is needed', 1);
-				return LJ.fn.initLandingPage();
-			}
-
-			LJ.fn.log('Init data ok, auto logging in...', 1);
-			return LJ.fn.autoLogin();
 				
 		},
 		handleSuccessLogin: function( data ){

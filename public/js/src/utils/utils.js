@@ -1,6 +1,9 @@
 
 window.LJ = _.merge( window.LJ || {}, {
 
+    promise: function( callback ){
+        return new Promise( callback );
+    },
     log: function( message ){
 
         console.log( message );

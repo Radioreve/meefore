@@ -953,52 +953,40 @@
 				   + "<br> Please try again later and we thank you in advance to contact us if the problem persists :/"
 		},
 		lp_subtitle: {
-			"fr": "<div class='lp-subpart'>Faites des rencontres <div class='lp-avant'><span>avant</span><img src='/img/app/avant.png' width='110%' /></div> d'aller en soirée.   " ,
-				   // + "<div class='lp-subpart'>Rencontrez les <span>avant</span> d'aller en soirée.</div>",
-			"en": "<div class='lp-subpart'>Meet up with people <div class='lp-avant'><span>before</span><img src='/img/app/avant.png' width='110%' /></div> going out. </div>"
+			"fr": "<div class='lp-subpart'>Des rencontres <div class='lp-avant'><span>avant</span><img src='/img/app/avant.png' width='90%' /></div> d'aller en soirée.   " ,
+			"en": "<div class='lp-subpart'>Meeting new people <div class='lp-avant'><span>before</span><img src='/img/app/avant.png' width='90%' /></div> partying.</div>"
 		},
 		lp_subtitle_sub: {
-			"fr": "Meefore est le 1er site qui vous permet de participer à des before <br> avec les personnes qui vont aux mêmes soirées que vous.",
-			"en": "Meefore is the 1st site that allows you to join a pregame party <br> with people who party at the same places as you"
+			"fr": "Participez à des before près de chez vous.",
+			"en": "Join pregame parties around you."
 		},
 		lp_conn_button: {
-			"fr": "Connexion",
-			"en": "Connection"
+			"fr": "Page Facebook",
+			"en": "Facebook Page"
 		},
-		lp_key_title: {
-			"fr": "Trois étapes pour des soirées mémorables.",
-			"en": "Three steps towards unforgettable nights."
-		},
-		lp_key_friends_title: {
-			"fr":"Choisissez votre soirée",
-			"en": "Pick a party"
-		},
-		lp_key_people_title: {
+		lp_reason_1_h1: {
 			"fr": "Trouvez votre before",
-			"en": "Join a pregame party"
+			"en": "Find a pregame party"
 		},
-		lp_key_party_title: {
-			"fr": "Just Have Fun",
-			"en": "Just Have Fun"
+		lp_reason_2_h1: {
+			"fr": "Demandez à participer",
+			"en": "Request to join"
 		},
-		lp_key_friends_text: {
-			"fr": "Rendez-vous sur la carte Meefore pour voir toutes les soirées prévues. Finis les recherches interminables"
-				  + " et les plans bidons.",
-			"en": "Check the Meefore map to find out all the scheduled parties. No more endless searches and weird gigs."
+		lp_reason_3_h1: {
+			"fr": "Faites connaissance",
+			"en": "Get to know each other"
 		},
-		lp_key_people_text: {
-			"fr": "Repérez les before qui vont à la même soirée que vous et demandez à les rejoindre. Aucun before n'est prévu pour"
-				  + " votre soirée ? Proposez le vôtre!",
-			"en": "Spot the pregame parties going to the same party as yours and send a participation request. No pregame party scheduled yet? "
-				  + "Create yours!"
+		lp_reason_1_h2: {
+			"fr": "Parcourez et repérez sur la map les before qui s'organisent près de chez vous.",
+			"en": "Go on the map and find all the pregame parties happening around you."
 		},
-		lp_key_party_text: {
-			"fr": "Rejoignez le groupe qui vous a le plus ambiancé avec vos amis et... <span>passez une bonne soirée.</span>",
-			"en": "Join the group that matched the most your expectations and... <span>enjoy your night.</span>"
+		lp_reason_2_h2: {
+			"fr": "Envoyez une demande de participation pour rejoindre le before qui vous ambiance le plus avec au moins un de vos amis.",
+			"en": "Request to join the pregame party that seems to fit you the most with at least one of your friends."
 		},
-		lp_map_button: {
-			"fr": "Voir les before",
-			"en": "Find your before now"
+		lp_reason_3_h2: {
+			"fr": "Une fois accepté, discutez avec les organisateurs pour préparer votre soirée avant de vous retrouver.",
+			"en": "Once accepted, chat with the hosts to plan your evening before you meet with them."
 		},
 		lp_footer_followus: {
 			"fr": "Nous suivre",

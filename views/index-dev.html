@@ -52,6 +52,9 @@
   <link rel="stylesheet" href="/css/src/friends/friends.css">
   <link rel="stylesheet" href="/css/src/invite/invite.css">
   <link rel="stylesheet" href="/css/src/landing/landing.css">
+  <link rel="stylesheet" href="/css/src/landing/landing_rtb.css">
+  <link rel="stylesheet" href="/css/src/landing/landing_contact.css">
+  <link rel="stylesheet" href="/css/src/landing/landing_footer.css">
   <link rel="stylesheet" href="/css/src/map/map.css">
   <link rel="stylesheet" href="/css/src/map/map_mapview.css">
   <link rel="stylesheet" href="/css/src/map/map_sideview.css">
@@ -91,7 +94,8 @@
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
   </script>
-
+  
+  <div class="landing-curtain"></div>
   <!-- Overlay, loader arrows & admin panel -->
   <div class="progress_bar"></div>
   <div class="loaderWrap"></div>
@@ -103,6 +107,8 @@
 
   
   <!-- Landing Page Begin -->
+  
+   <!-- Landing Page Begin -->
   
   <div id="landingWrap">
     
@@ -116,11 +122,11 @@
       <div class="landing-kenburns">
         <div class="kenburns-overlay"></div>
         <ul class="bxslider">
-          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1445867671/lp1.jpg" width="100%"/></li>
-          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1445867671/lp3.jpg" width="100%"/></li>
-          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1445867671/lp5.jpg" width="100%"/></li>
-          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1445867671/lp2.jpg" width="100%"/></li>
-          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1445867671/lp4.jpg" width="100%"/></li>
+          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1456943482/landing_1.jpg" width="100%"/></li>
+          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1456943480/landing_2.jpg" width="100%"/></li>
+          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1456943479/landing_3.jpg" width="100%"/></li>
+          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1456943485/landing_4.jpg" width="100%"/></li>
+          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1456943479/landing_5.jpg" width="100%"/></li>
         </ul>
       </div>
       <!-- end landing kenburns -->
@@ -128,8 +134,8 @@
       <!-- landing hero -->
       <div class="landing-hero">
         <div class="hero-logo">
-          <img src="/img/app/logo.png" width="50" alt="Logo meefore soirées">
-          <h1 class="hero-logo-name">meefore</h1>
+          <img src="/img/app/logo_nobg.png" width="80" alt="Logo meefore soirées">
+          <!-- <h1 class="hero-logo-name">meefore</h1> -->
         </div>
         <div class="hero-languages">
           <span data-code="fr" class="no-cb pick-lang hero-lang active">FR</span>
@@ -141,10 +147,12 @@
         <h2 data-lid="lp_subtitle_sub" class="hero-header-sub">
           Meefore est le 1er site qui vous permet de participer à des before avec les personnes qui vont aux mêmes soirées que vous.
         </h2>
-        <div id="facebook_connect" class-"js-signup">
-          <i class="icon icon-facebook"></i>
-          <span data-lid="lp_conn_button">Connexion</span>
-          <div class="fb-overlay"></div>
+        <div id="facebook_connect">
+          <a href="https://www.facebook.com/meefore" target="_blank">
+            <i class="icon icon-facebook"></i>
+            <span data-lid="lp_conn_button">Groupe Facebook</span>
+            <div class="fb-overlay"></div>
+          </a>
         </div>
       </div>
       <!-- end landing hero -->
@@ -152,6 +160,7 @@
       <!-- moving arrow -->
       <i class="icon moving-arrow icon-down-open-big"></i>
       <!-- end Moving arrow -->
+
 
        <!-- landing places -->
       <div class="landing-places-wrap">
@@ -162,47 +171,57 @@
 
     </div>
     <!-- end landing front page -->
-  
-  <div class="landing-divider"></div>
 
-    <!-- landing keypoints -->
-    <div class="landing-keypoints">
-      <div data-lid="lp_key_title" class="keypoint-message">L'indispensable mix d'un before réussi</div>
-      <img class="keypoint-splitter" src="/img/app/splitter.png" alt="A nice splitter">
-      <img src="/img/app/lp-arrow.png" width="120" alt="Arrow" class="lp-arrow lp-arrow-1">
-      <img src="/img/app/lp-arrow-reverse.png" width="120" alt="Arrow" class="lp-arrow lp-arrow-2">
-      <div class="keypoint-wrap keypoint-1">
-        <div class="keypoint-img"><i class="icon icon-keypoint icon-glass"></i></div>
-        <h2 data-lid="lp_key_friends_title" class="keypoint-head">Les amis...</h2>
-        <p  data-lid="lp_key_friends_text" class="keypoint-body">
-          Rendez-vous sur la carte meefore pour voir toutes les soirées prévues.
-          Finis les recherches interminables et les plans bidons.</p>
-      </div
-      ><div class="keypoint-wrap keypoint-2">
-        <div class="keypoint-img"><i class="icon icon-keypoint icon-group"></i></div>
-        <h2 data-lid="lp_key_people_title" class="keypoint-head">...des rencontres...</h2>
-        <p  data-lid="lp_key_people_text" class="keypoint-body">
-          Repérez les before qui vont à la même soirée que vous et demandez à les rejoindre.
-          Aucun before n'est prévu pour votre soirée ? Proposez le vôtre!
-        </p>
-      </div
-      ><div class="keypoint-wrap keypoint-3">
-        <div class="keypoint-img"><i class="icon icon-keypoint icon-relation"></i></div>
-        <h2 data-lid="lp_key_party_title" class="keypoint-head">...et la soirée !</h2>
-        <p data-lid="lp_key_party_text" class="keypoint-body">
-          Rejoignez le groupe qui vous a le plus ambiancé avec vos amis et...passez une bonne soirée.
-        </p>
+    <!--  landing rtb  -->
+      <div class="landing-rtb landing-rtb--1">
+        <div class="landing-rtb-screen">
+          <img class="landing-rtb-screen__img" src="/img/sc/sc1.png" width="300"></img>
+        </div>
+        <div class="landing-rtb-reason">
+          <div class="landing-rtb-reason__step">1</div>
+          <div data-lid="lp_reason_1_h1" class="landing-rtb-reason__h1">
+            Trouvez votre before
+          </div>
+          <div data-lid="lp_reason_1_h2" class="landing-rtb-reason__h2">
+            Parcourez et repérez sur la map les before qui s'organisent près de chez vous.
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="landing-divider"></div>
+      <div class="landing-rtb landing-rtb--2">
+        <div class="landing-rtb-screen">
+          <img class="landing-rtb-screen__img" src="/img/sc/sc2.png" width="300"></img>
+        </div>
+        <div class="landing-rtb-reason">
+        <div class="landing-rtb-reason__step">2</div>
+          <div data-lid="lp_reason_2_h1" class="landing-rtb-reason__h1">
+            Demandez à participer
+          </div>
+          <div data-lid="lp_reason_2_h2" class="landing-rtb-reason__h2">
+            Envoyez une demande de participation pour rejoindre le before qui vous ambiance le plus avec au moins un
+            de vos amis.
+          </div>
+        </div>
+      </div>
 
-    <!-- end landing keypoints -->
-    <div class="landing-map">
-      <div class="landing-map-overlay"></div>
-      <button data-lid="lp_map_button" class="landing-map-button super-centered">Voir les <span>before</span>meefore</button>
-    </div>
-  
+      <div class="landing-rtb landing-rtb--3">
+        <div class="landing-rtb-screen">
+          <img class="landing-rtb-screen__img" src="/img/sc/sc3.png" width="300"></img>
+        </div>
+        <div class="landing-rtb-reason">
+        <div class="landing-rtb-reason__step">3</div>
+          <div data-lid="lp_reason_3_h1" class="landing-rtb-reason__h1">
+            Faites connaissance
+          </div>
+          <div data-lid="lp_reason_3_h2" class="landing-rtb-reason__h2">
+            Une fois accepté, discutez avec les organisateurs pour préparer votre soirée avant de vous retrouver.
+          </div>
+        </div>
+      </div>
+        
+      </div>
+    <!-- end landing rtb  -->
+
     <!-- landing footer -->
     <footer class="landing-footer">
       <div data-lid="lp_footer_followus" class="footer-followus">

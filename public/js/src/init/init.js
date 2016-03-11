@@ -1,12 +1,10 @@
-    
+
     /*
 
         Initialisation script
         Recursively try to initialize the Facebook pluggin
         When it's loaded, app starts.
-
         Follow the code...
-
         Léo Jacquemin,10/03/16, 17h56
 
     */
@@ -15,28 +13,48 @@
 
 		init: function( time ){
 
+            // The application only starts when the Facebook pluggin has loaded
             if( typeof FB === 'undefined' )
                 return setTimeout(function(){ LJ.init( time ); }, time );
             
-
-            //Initializing all static modules
-            [ 'lang', 'static', 'landing', 'analytics', 'facebook' ]
-            .forEach(function( module ){
-
-                if( typeof LJ[ module ].init != "function" ){
-                    LJ.wlog("Warning, the module " + module + " did not define its init function");
-
-                } else {
-                    LJ[ module ].init();
-
-                }
-            });
-
-
-            //Connexion logic
+            // Translate the whole page based on sourcetext & data-lid attributes
+            LJ.lang.init();
+            // Cache static assets images used accross modules
+            LJ.static.init();
+            // Analytics for tracking what's going on
+            LJ.analytics.init();
+            // Handle the login button handlers
+            LJ.facebook.init();
+            // Basic routing functionalities to prevent user from accidentally leaving the page
+            LJ.router.init();
+            // Onboarding basic
+            LJ.onboarding.init();
 
 
-		}
+            // Autologin procedure, enhanced ux
+            LJ.autologin.init()
+                .then(  LJ.autologin.startLogin )
+                .catch( LJ.autologin.startLanding )
+
+            LJ.login.init()
+                .then( LJ.login.fetchFacebookToken )
+                .then( LJ.login.setLocalStorage )
+                .then( LJ.login.fetchAppToken )
+
+                .then( LJ.user.init )
+                .then( LJ.settings.init )
+                .then( LJ.cloudinary.init )
+                .then( LJ.friends.init )
+                .then( LJ.search.init )
+                .then( LJ.map.init )
+                .then( LJ.before.init )
+                .then( LJ.party.init )
+                .then( LJ.notifications.init )
+                .then( LJ.meepass.init )
+                .then( LJ.spotted.init )
+                .then( LJ.invite.init )
+                .then( LJ.chat.init )
+		} 
 
 
 	});
@@ -255,13 +273,13 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 var fb_friends_ids = _.pluck(res.data, 'id');
 
                 var data = {
-                    userId         : LJ.user._id,
-                    fb_friends_ids : fb_friends_ids
+                    'userId'         : LJ.user._id,
+                    'fb_friends_ids' : fb_friends_ids
                 };
 
                 var cb = {
-                    success : callback,
-                    error   : LJ.fn.handleServerError
+                    'success' : callback,
+                    'error'   : LJ.fn.handleServerError
                 };
 
                 LJ.fn.say('me/fetch-and-sync-friends', data, cb);

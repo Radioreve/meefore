@@ -1,9 +1,13 @@
 
-	window.LJ.analytics = _.merge( window.LJ.fn || {}, {
+	window.LJ.analytics = _.merge( window.LJ.analytics || {}, {
 
 		init: function(){
+			return LJ.promise(function( resolve, reject ){
 
-			LJ.fn.initGoogleAnalytics();
+				LJ.analytics.initGoogleAnalytics();
+				resolve();
+
+			});
 
 		},
 		initGoogleAnalytics: function(){

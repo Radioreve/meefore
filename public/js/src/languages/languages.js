@@ -1,15 +1,14 @@
 
 
-	window.LJ.lang = _.merge( window.LJ.fn || {}, {
+	window.LJ.lang = _.merge( window.LJ.lang || {}, {
 
 		'supported_languages': ['fr','en'],
 
 		init: function(){
 
 			var app_language = 'fr';
-
-			LJ.ilog('Setting app language to : ' + app_language );
-			LJ.app_language = 'fr';
+			
+			LJ.lang.setAppLanguage( app_language );
 
 		},
 		setAppLanguage: function( country_code, container ){
