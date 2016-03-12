@@ -1,10 +1,4 @@
 	
-	/*
-		This module is responsible for rendering the first view.
-		It detects
-
-	*/
-
 
 	window.LJ.landing = _.merge( window.LJ.landing || {}, {
 

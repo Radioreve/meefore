@@ -1,12 +1,9 @@
-
     /*
-
         Initialisation script
         Recursively try to initialize the Facebook pluggin
         When it's loaded, app starts.
         Follow the code...
         Léo Jacquemin,10/03/16, 17h56
-
     */
 
 	window.LJ = _.merge( window.LJ || {}, { 
@@ -23,37 +20,41 @@
             LJ.static.init();
             // Analytics for tracking what's going on
             LJ.analytics.init();
-            // Handle the login button handlers
+            // Starts the Facebook SDK
             LJ.facebook.init();
             // Basic routing functionalities to prevent user from accidentally leaving the page
             LJ.router.init();
-            // Onboarding basic
+            // Onboarding users everytime we want to introduce them to something new
             LJ.onboarding.init();
-
-
-            // Autologin procedure, enhanced ux
+            // Autologin for users who asked the "remember me" feature in their settings
             LJ.autologin.init()
                 .then(  LJ.autologin.startLogin )
                 .catch( LJ.autologin.startLanding )
-
+            // Login flow
             LJ.login.init()
-                .then( LJ.login.fetchFacebookToken )
-                .then( LJ.login.setLocalStorage )
-                .then( LJ.login.fetchAppToken )
+                .then( LJ.facebook.fetchFacebookToken )
 
-                .then( LJ.user.init )
-                .then( LJ.settings.init )
-                .then( LJ.cloudinary.init )
-                .then( LJ.friends.init )
-                .then( LJ.search.init )
-                .then( LJ.map.init )
-                .then( LJ.before.init )
-                .then( LJ.party.init )
-                .then( LJ.notifications.init )
-                .then( LJ.meepass.init )
-                .then( LJ.spotted.init )
-                .then( LJ.invite.init )
-                .then( LJ.chat.init )
+                    .then( LJ.setLocalStorage("login") )
+                    .then( LJ.api.fetchAppToken )
+                    .then( LJ.Promise.all([
+                        LJ.profile.init,
+                        LJ.user.init,
+                        LJ.settings.init, 
+                        LJ.uploader.init,
+                        LJ.friends.init, 
+                        LJ.search.init, 
+                        LJ.map.init, 
+                        LJ.before.init, 
+                        LJ.party.init, 
+                        LJ.notifications.init,
+                        LJ.meepass.init, 
+                        LJ.spotted.init,
+                        LJ.invite.init,
+                        LJ.chat.init, 
+                        ])
+                        .then( LJ.ui.revealHomepage )
+                    )
+
 		} 
 
 

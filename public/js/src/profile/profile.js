@@ -1,6 +1,9 @@
 
-	window.LJ.fn = _.merge( window.LJ.fn || {}, {
+	window.LJ.profile = _.merge( window.LJ.profile || {}, {
 
+		init: function(){
+
+		},
 		handleDomEvents_Profile: function(){
 
 			LJ.$body.on('click', '.row-informations .row-input', function(){

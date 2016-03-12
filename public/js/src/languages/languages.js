@@ -6,21 +6,49 @@
 
 		init: function(){
 
-			var app_language = 'fr';
-			
-			LJ.lang.setAppLanguage( app_language );
+			Promise.resolve()
+				   .then( LJ.lang.findAppLang )
+				   .then( LJ.lang.translateTheApp )
 
 		},
-		setAppLanguage: function( country_code, container ){
+		getAppLang: function(){
+			return LJ.lang.app_language;
+		},
+		setAppLang: function( app_language ){
 
-
-			if( LJ.lang.supported_languages.indexOf( country_code ) == -1 ){
-				return console.error('This language (' + country_code + ') is not currently supported');
-			}
-
-			LJ.app_language = country_code;
+			if( ! LJ.fn.isLangSupported )
+				return console.error('This language (' + app_language + ') is not currently supported');
 			
-			var $container = container || $('body');
+			LJ.lang.app_language = app_language;
+
+
+		},
+		findAppLang: function(){
+
+			return LJ.promise(function( resolve, reject ){
+				resolve('fr');		
+			});
+
+		},
+		isLangSupported: function( app_language ){
+
+			return LJ.lang.supported_languages.indexOf( app_language ) == -1 ? false : true;
+
+		},
+		translateApp: function(){
+
+			LJ.lang.translate('body');
+
+		},	
+		translate: function( container, options ){
+
+			app_language = options.app_language || LJ.lang.getAppLang();
+
+			if( ! LJ.lang.isLangSupported( app_language ) ){
+				return console.error('This language (' + app_language + ') is not currently supported');
+			}
+			
+			var $container = $(container) || $('body');
 
 			$container.find('[data-lid]').each(function( i, el ){
 
@@ -28,7 +56,7 @@
 				var type = $el.prop('nodeName').toLowerCase();
 				var lid = $el.attr('data-lid');
 
-				var translated_text = LJ.text_source[ lid ][ country_code ];
+				var translated_text = LJ.text_source[ lid ][ app_language ];
 
 				if( /placeholder/i.test( lid ) ){
 					$el.attr('placeholder', translated_text );

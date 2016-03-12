@@ -1,5 +1,5 @@
 	
-	window.LJ.chats = _.merge( window.LJ.chats || {}, {
+	window.LJ.chat = _.merge( window.LJ.chat || {}, {
 
 		init: function(){
 			

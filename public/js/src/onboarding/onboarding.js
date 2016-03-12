@@ -2,7 +2,12 @@
 	
 	window.LJ.onboarding = _.merge( window.LJ.onboarding || {}, {
 
-        	init: function(){
+        init: function(){
+
+        },
+
+
+        init2: function(){
 
         		LJ.intro_steps = [
 

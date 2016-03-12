@@ -1,7 +1,15 @@
 	
 
-	window.LJ.fn = _.merge( window.LJ.fn || {}, {
+	window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
+		init: function(){
+
+		},
+		revealHomepage: function(){
+
+		
+
+		},
 		handleDomEvents_UI: function(){
 
 			LJ.$logout.click(function(){

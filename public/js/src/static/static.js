@@ -13,6 +13,12 @@
 		// to use accross all others modules
 		init: function(){
 
+			LJ.Promise.resolve()
+					  .then( LJ.cacheStaticImages )
+
+		},
+		cacheStaticImages: function(){
+
 			LJ.static.images.forEach(function( img ){
 
 				img.param['cloud_name'] = 'radioreve';
@@ -24,8 +30,6 @@
 
 
 			});
-
-
 
 		}
 

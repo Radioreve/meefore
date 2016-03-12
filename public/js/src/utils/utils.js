@@ -4,6 +4,20 @@ window.LJ = _.merge( window.LJ || {}, {
     promise: function( callback ){
         return new Promise( callback );
     },
+    Promise: Promise,
+
+    setLocalStorage: function( storage_type ){
+
+        if( storage_type == "facebook" ){
+            return LJ.utils.setLocalStorage_Facebook
+        }
+
+    },
+    setLocalStorage_Facebook: function(){
+
+
+        
+    },
     log: function( message ){
 
         console.log( message );

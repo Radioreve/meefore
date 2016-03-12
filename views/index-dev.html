@@ -147,7 +147,7 @@
         <h2 data-lid="lp_subtitle_sub" class="hero-header-sub">
           Meefore est le 1er site qui vous permet de participer à des before avec les personnes qui vont aux mêmes soirées que vous.
         </h2>
-        <div id="facebook_connect">
+        <div id="facebook_connect" class="js-login">
           <a href="https://www.facebook.com/meefore" target="_blank">
             <i class="icon icon-facebook"></i>
             <span data-lid="lp_conn_button">Groupe Facebook</span>
@@ -728,6 +728,8 @@
   <script src="js/src/globals/globals.js"></script>
   <script src="js/src/router/router.js"></script>
   <script src="js/src/utils/utils.js"></script>
+  <script src="js/src/api/api.js"></script>
+  <script src="js/src/uploader/uploader.js"></script>
   <script src="js/src/autologin/autologin.js"></script>
   <script src="js/src/admin/admin.js"></script>
   <script src="js/src/analytics/analytics_google.js"></script>
@@ -758,10 +760,14 @@
   <script src="js/src/settings/settings.js"></script>
   <script src="js/src/spotted/spotted.js"></script>
   <script src="js/src/static/static.js"></script>
+  <script src="js/src/login/login.js"></script>
   <script src="js/src/ui/ui.js"></script>
+  <script src="js/src/ui/ui_toast.js"></script>
+  <script src="js/src/ui/ui_modal.js"></script>
   <script src="js/src/init/init.js"></script>
 
   <script>
+    window.LJ.app_mode = "dev";
     $('document').ready(function(){ LJ.init( 300 ) }); 
   </script>
 
