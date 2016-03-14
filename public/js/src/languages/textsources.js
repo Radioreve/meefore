@@ -961,8 +961,8 @@
 			"en": "Join pregame parties around you."
 		},
 		lp_conn_button: {
-			"fr": "Page Facebook",
-			"en": "Facebook Page"
+			"fr": "Connexion",
+			"en": "Connection"
 		},
 		lp_reason_1_h1: {
 			"fr": "Trouvez votre before",
@@ -1024,7 +1024,7 @@
 			"fr": "Une erreur s'est produite. Contactez-nous directement à contact@meefore.com",
 			"en": "Something wrong happened. Mail us directly at contact@meefore.com"
 		},
-		lp_loading_party: {
+		login_loading_msg: {
 			"fr": "Chargement des prochaines soirées",
 			"en": "Loading next parties"
 		},

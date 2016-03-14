@@ -14,7 +14,7 @@
 		init: function(){
 
 			LJ.Promise.resolve()
-					  .then( LJ.cacheStaticImages )
+					  .then( LJ.static.cacheStaticImages )
 
 		},
 		cacheStaticImages: function(){
@@ -30,6 +30,11 @@
 
 
 			});
+
+		},
+		renderStaticImage: function( access_name ){
+
+			return LJ.static[ '$' + access_name ].clone().prop('outerHTML');
 
 		}
 

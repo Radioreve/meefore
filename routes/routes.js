@@ -31,9 +31,9 @@
 		mdw.mailchimp_watcher = require( mdwDir + '/mailchimp_watcher');
 		mdw.pop               = require( mdwDir + '/pop');
 		mdw.facebook          = require( mdwDir + '/facebook');
+		mdw.profile_watcher   = require( mdwDir + '/profile_watcher');
 		mdw.alerts_watcher    = require( mdwDir + '/alerts_watcher');
 		mdw.chat_watcher      = require( mdwDir + '/chat_watcher');
-		mdw.profile_watcher   = require( mdwDir + '/profile_watcher');
 		mdw.notifier          = require( mdwDir + '/notifier');
 		mdw.meepass           = require( mdwDir + '/meepass');
 		mdw.connecter 		  = require( mdwDir + '/connecter');
@@ -99,7 +99,6 @@
 	    // Redirection à la page d'accueil
 	    app.get('/',
 	    	signEvents.redirectToHome);
-
 
 
 	    // Provide valid token based on secret key, for api calls

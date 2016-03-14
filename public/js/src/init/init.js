@@ -24,8 +24,7 @@
             LJ.facebook.init();
             // Basic routing functionalities to prevent user from accidentally leaving the page
             LJ.router.init();
-            // Onboarding users everytime we want to introduce them to something new
-            LJ.onboarding.init();
+
             // Autologin for users who asked the "remember me" feature in their settings
             LJ.autologin.init()
                 .then(  LJ.autologin.startLogin )
@@ -33,27 +32,31 @@
             // Login flow
             LJ.login.init()
                 .then( LJ.facebook.fetchFacebookToken )
-
-                    .then( LJ.setLocalStorage("login") )
-                    .then( LJ.api.fetchAppToken )
-                    .then( LJ.Promise.all([
-                        LJ.profile.init,
-                        LJ.user.init,
-                        LJ.settings.init, 
-                        LJ.uploader.init,
-                        LJ.friends.init, 
-                        LJ.search.init, 
-                        LJ.map.init, 
-                        LJ.before.init, 
-                        LJ.party.init, 
-                        LJ.notifications.init,
-                        LJ.meepass.init, 
-                        LJ.spotted.init,
-                        LJ.invite.init,
-                        LJ.chat.init, 
-                        ])
-                        .then( LJ.ui.revealHomepage )
-                    )
+                .then( LJ.login.firstStepCompleted )
+                .then( LJ.facebook.fetchFacebookProfile )
+                .then( LJ.login.stepCompleted )
+                .then( LJ.setLocalStorage("login") )
+                .then( LJ.api.fetchAppToken )
+                .then( LJ.login.stepCompleted )
+                .then( LJ.Promise.all([
+                    LJ.profile.init,
+                    LJ.user.init,
+                    LJ.settings.init, 
+                    LJ.uploader.init,
+                    LJ.friends.init, 
+                    LJ.search.init, 
+                    LJ.map.init, 
+                    LJ.before.init, 
+                    LJ.party.init, 
+                    LJ.notifications.init,
+                    LJ.meepass.init, 
+                    LJ.spotted.init,
+                    LJ.invite.init,
+                    LJ.chat.init, 
+                ])
+                .then( LJ.login.lastStepCompleted())
+                .then( LJ.onboarding.init )
+                )
 
 		} 
 

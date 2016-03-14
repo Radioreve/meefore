@@ -28,7 +28,7 @@
 				console.log('User already exists, skipping mailchimp subscription...');
 				return next();
 			}
-			var email_address = req.sent.facebookProfile.email;
+			var email_address = req.sent.facebook_profile.email;
 
 			options.interests = {
 				"bdb7938e4e": yn_to_bool( config.mailchimp.groups["invitations"].init_value ),		//  
@@ -43,7 +43,7 @@
 			return next();
 		}
 
-		console.log('Subscribing user to mailchimp with email adresse: ' + email_address );
+		console.log('Subscribing user to mailchimp with email address: ' + email_address );
 		mailer.subscribeUserAtMailchimp( email_address, options, function( err, response ){
 
 			if( err ){

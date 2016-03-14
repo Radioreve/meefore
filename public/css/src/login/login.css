@@ -1,0 +1,21 @@
+
+.login {color: white;}
+
+.login__message {text-align: center;}
+
+.login__progress-bar {
+	width: 200px;
+	margin: 0 auto;
+	height: 2px;
+	border: 1px solid #454545;
+	border-radius: 30px;
+	margin-top: 20px;
+	overflow: hidden;
+}
+
+.login__progress-bar-bg {
+	height: 100%;
+	width: 0%;
+	transition: all ease-in-out .3s;
+	background: #33AFFF;
+}

@@ -5,8 +5,6 @@
         init: function(){
 
         },
-
-
         init2: function(){
 
         		LJ.intro_steps = [

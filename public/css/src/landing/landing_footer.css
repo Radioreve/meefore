@@ -22,11 +22,8 @@
 
 .footer-socials {margin-top: 20px;}
 
-<<<<<<< Updated upstream
 .footer-socials i {transition: all ease-in-out .15s;border-radius: 200px;width: 90px;height: 90px;display: inline-block;padding-top: 20px;cursor: pointer;margin: 0 6px;font-size: 46px;color: white;border: 2px solid white;box-sizing: border-box;}
-=======
 .footer-socials i {transition: all ease-in-out .15s;border-radius: 200px;width: 90px;height: 90px;display: inline-block;padding-top: 20px;cursor: pointer;margin: 0 6px;font-size: 46px;color: white;border: 2px solid white;}
->>>>>>> Stashed changes
 .footer-socials i:hover {
     background: #333;
 }

@@ -11,7 +11,7 @@
 	var handleErr = eventUtils.raiseApiError;
 
 	/* get /users/me */
-	var fetchMe = function( req, res ){
+	var fetchMe = function( req, res, next ){
 
 		var err_ns = 'fetching_me';
 		var userId = req.sent.user_id;
@@ -29,7 +29,12 @@
 				return handleErr( res, 'fetching_me', err );
 			}
 
-			res.json( user ).end();
+			req.sent.expose = {
+				me 		 : user,
+				settings : settings
+			};
+
+			next();
 
 		});
 

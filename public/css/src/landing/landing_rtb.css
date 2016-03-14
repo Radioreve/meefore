@@ -1,14 +1,4 @@
 
-<<<<<<< Updated upstream
-.landing-curtain {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	background: black;
-	z-index: 12345;
-} 
-=======
->>>>>>> Stashed changes
 
 .landing-rtb {
 	display: flex;
@@ -47,16 +37,15 @@
 	font-family: 'Open Sans';
 	font-size: 60px;
 	width: 80px;
-	height: 80px;
+	height: 70px;
 	border: 1px solid white;
 	border-radius: 100px;
 	text-align: center;
 	padding-top: 6px;
-	margin-bottom: 22px;
-<<<<<<< Updated upstream
-	box-sizing: border-box;
-=======
->>>>>>> Stashed changes
+	margin-bottom: 22px;<<<<<<<
+	Updated upstream
+	box-sizing: border-box;=======>>>>>>>
+	Stashed changes
 }
 
 .landing-rtb--2 .landing-rtb-reason__step {

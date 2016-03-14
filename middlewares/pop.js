@@ -15,7 +15,12 @@
 
 		return function( req, res, next ){
 
-			var force_presence = options.force_presence || true;
+			var force_presence;
+			if( options.force_presence != null ){
+				force_presence = options.force_presence;
+			} else {
+				force_presence = true;
+			}
 
 			console.log('Populating user, force_presence : ' + force_presence );
 
@@ -33,7 +38,6 @@
 						});
 				}
 
-				console.log('User populated successfully');
 				req.sent.user = user;
 				next();
 

@@ -26,9 +26,9 @@
 	};
 
 	
-	var handleFacebookAuth = function( req, res ){
+	var handleFacebookAuth = function( req, res, next ){
 
-		var fb = req.sent.facebookProfile;
+		var fb = req.sent.facebook_profile;
 
 		if( !fb )
 			return eventUtils.raiseError({
@@ -36,7 +36,7 @@
 			});
 
 		// L'utilisateur existe, on le connecte à l'application 
-		if( req.sent.user)
+		if( req.sent.user )
 		{	
 			var user = req.sent.user;
 			console.log('User has been found, login in...');
@@ -45,12 +45,13 @@
 			facebook_access_token = user.facebook_access_token;
 			facebook_access_token.short_lived = fb.access_token; 
 
-			User.findByIdAndUpdate( user._id, { facebook_access_token: facebook_access_token }, { new: true }, function( err, user ){
+			User.findByIdAndUpdate( user._id, { 
+				facebook_access_token: facebook_access_token 
+			}, { new: true }, function( err, user ){
 
 				var accessToken = eventUtils.generateAppToken( "user", user ); 
-				var expose  = { id: user._id, accessToken: accessToken };
-				
-				eventUtils.sendSuccess( res, expose );
+				req.sent.expose = { id: user._id, accessToken: accessToken };
+				next();
 
 			});
 
@@ -100,7 +101,7 @@
 
 		//Private profile attributes
 		new_user.invite_code 	 = fb.id;
-		new_user.app_preferences = settings.default_app_preferences;f
+		new_user.app_preferences = settings.default_app_preferences;
 
 		// Post conditions //
 		if( config.admins_facebook_id.indexOf( fb.id ) != -1 ){
@@ -129,9 +130,9 @@
 
 			console.log('Account created successfully');
 			var accessToken = eventUtils.generateAppToken( "user", user ); 
-			var expose = { id: user._id, accessToken: accessToken };
-			
-			eventUtils.sendSuccess( res, expose );
+
+			req.sent.expose = { id: user._id, accessToken: accessToken };
+			next();
 
 		});
 	};

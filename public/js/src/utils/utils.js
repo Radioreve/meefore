@@ -13,10 +13,16 @@ window.LJ = _.merge( window.LJ || {}, {
         }
 
     },
-    setLocalStorage_Facebook: function(){
-
+    setLocalStorage_Facebook: function( facebook_profile ){
 
         
+    },
+    delay: function( delay ){
+        return LJ.promise(function( resolve, reject ){
+            setTimeout(function(){
+                resolve();
+            }, delay );
+        })
     },
     log: function( message ){
 
@@ -30,7 +36,7 @@ window.LJ = _.merge( window.LJ || {}, {
     },
     elog: function( message ){
 
-        console.log( message )
+        console.error( message )
 
     },
     ilog: function( message ){

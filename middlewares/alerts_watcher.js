@@ -43,7 +43,7 @@
 		var alert_ns = 'user_alerts/' + req.sent.facebook_id;
 		var data = _.clone( settings.default_app_preferences.alerts );
 
-		data.email = req.sent.facebookProfile.email;
+		data.email = req.sent.facebook_profile.email;
 
 		console.log('Setting cache alert data for user : ' + data.email );
 		console.log( JSON.stringify( data, null, 4 ));

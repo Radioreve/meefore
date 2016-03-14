@@ -56,13 +56,10 @@
 		startLanding: function(){
 			return LJ.promise(function( resolve, reject ){
 				console.log('Starting landing...');
-
-				$('.landing-curtain').velocity('transition.fadeOut',{
-					'duration': 3500
-				});
-
-				resolve();
+				LJ.ui.hideCurtain({ duration: 500 })
 			});
-
 		}
+
 	});
+
+

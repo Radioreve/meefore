@@ -66,7 +66,7 @@
   <link rel="stylesheet" href="/css/src/search/search.css">
   <link rel="stylesheet" href="/css/src/settings/settings.css">
   <link rel="stylesheet" href="/css/src/spotted/spotted.css">
-
+  <link rel="stylesheet" href="/css/src/login/login.css">
   <link rel="stylesheet" href="/css/src/media/media.css">
 
 
@@ -95,29 +95,13 @@
     }(document, 'script', 'facebook-jssdk'));
   </script>
   
-  <div class="landing-curtain"></div>
-  <!-- Overlay, loader arrows & admin panel -->
-  <div class="progress_bar"></div>
-  <div class="loaderWrap"></div>
-  <div class="progress_bar--landing"></div>
-  <div class="m-loaderWrap"></div>
-  <div class="modal-curtain"></div>
-  <div class="modal-container super-centered none"><div class="modal-container-body"></div></div>
-  <div class="m-warning none" data-lid="app_mobile_warning"></div>
-
   
-  <!-- Landing Page Begin -->
-  
-   <!-- Landing Page Begin -->
-  
-  <div id="landingWrap">
+  <div class="ui__curtain"></div>
     
-    <header class="landing-header">
-      
-    </header>
+   <!-- Landing Page Begin -->
+  <div class="landing">
     <!-- landing front page -->
     <div class="landing-front">
-
       <!-- landing kenburns -->
       <div class="landing-kenburns">
         <div class="kenburns-overlay"></div>
@@ -130,7 +114,6 @@
         </ul>
       </div>
       <!-- end landing kenburns -->
-
       <!-- landing hero -->
       <div class="landing-hero">
         <div class="hero-logo">
@@ -148,27 +131,21 @@
           Meefore est le 1er site qui vous permet de participer à des before avec les personnes qui vont aux mêmes soirées que vous.
         </h2>
         <div id="facebook_connect" class="js-login">
-          <a href="https://www.facebook.com/meefore" target="_blank">
             <i class="icon icon-facebook"></i>
-            <span data-lid="lp_conn_button">Groupe Facebook</span>
+            <span data-lid="lp_conn_button">Connexion</span>
             <div class="fb-overlay"></div>
-          </a>
         </div>
       </div>
       <!-- end landing hero -->
-
       <!-- moving arrow -->
       <i class="icon moving-arrow icon-down-open-big"></i>
       <!-- end Moving arrow -->
-
-
        <!-- landing places -->
       <div class="landing-places-wrap">
         <div class="lp-places-hash">#</div>
         <span class="landing-places"></span>
       </div>
       <!-- end landing places  -->
-
     </div>
     <!-- end landing front page -->
 
@@ -187,7 +164,6 @@
           </div>
         </div>
       </div>
-
       <div class="landing-rtb landing-rtb--2">
         <div class="landing-rtb-screen">
           <img class="landing-rtb-screen__img" src="/img/sc/sc2.png" width="300"></img>
@@ -203,7 +179,6 @@
           </div>
         </div>
       </div>
-
       <div class="landing-rtb landing-rtb--3">
         <div class="landing-rtb-screen">
           <img class="landing-rtb-screen__img" src="/img/sc/sc3.png" width="300"></img>
@@ -217,8 +192,6 @@
             Une fois accepté, discutez avec les organisateurs pour préparer votre soirée avant de vous retrouver.
           </div>
         </div>
-      </div>
-        
       </div>
     <!-- end landing rtb  -->
 
@@ -245,463 +218,52 @@
   </div>
   
   <!-- Landing Page End -->
+  
 
-
-  <!-- Header start -->
-  <header id="#mainHeader" class="lg-header none">
-    <div id="headerContent">
-    <div class="preview-type beta">bêta</div>
-      <img id="logo" src="/img/app/logo-light.png" width="35"></img>
-      <ul id="menuWrap" class="">
-        <li id="profile" data-hash="me" class="menu-item menu-item-active icon icon-user" data-linkedcontent="#profileWrap">
-          <span class="underlay"></span>
-          <span class="bubble filtered"></span>
-        </li>
-        <li id="events" data-hash="events" class="menu-item icon icon-glass" data-linkedcontent="#eventsWrap">
-          <span class="underlay"></span>
-          <span class="bubble filtered"></span>
-        </li>
-        <li id="notifications" class="menu-item icon icon-bell-alt">
-          <span class="underlay"></span>
-          <span class="bubble filtered"></span>
-        </li>
-        <li id="search" class="menu-item icon icon-search">
-          <span class="bubble filtered"></span>
-          <div id="searchbar" class=""><input data-lid="h_search_placeholder" type="text" class="search-input"></div>
-        </li>
-        <li id="settings" data-hash="settings" class="right menu-item icon icon-cog" data-linkedcontent="#settingsWrap">
-          <span class="underlay"></span>
-          <span class="bubble filtered"></span>
-        </li>
-      </ul>
-    </div>
-    <div id="languages">
-      <div class="pick-lang active" data-code="fr"><span class="flag-icon flag-icon-fr"></span></div>
-      <div class="pick-lang" data-code="en"><span class="flag-icon flag-icon-gb"></span></div>
-    </div>
-  </header>
-  <!-- Header end -->
-
-  <div id="mainWrap" class="centered">
-
-    <span id="logout" class="action">
-      <i class="icon icon-power"></i>
-    </span>
-
-    <section id="thumbWrap" class="none ">
-      <div class="imgWrap">
-      </div>
-      <div id="thumbInfos">
-        <h2 id="thumbName"></h2>
-      </div>
-    </section>
-
+  <!-- header -->
+  <section class="app">
     
-    <!-- Party Wrap -->
-    <section id="partiesWrap" class="none centered">
+    <header class="app-section app-header">
+      <div class="app-header__logo">
+        <img src="/img/app/logo_nobg.png" width="50"/>
+      </div>
+      <nav class="app-nav">
+        <ul>
+          <li class="app__menu-item">
+            <a href="#profile">
+              <i class-"app__menu-icon icon icon-user"></i>
+            </a>
+          </li>
+          <li class="app__menu-item">
+            <a href="#map">
+              <i class="app__menu-icon icon icon-user"></i>
+            </a>
+          </li>
+          <li class="app__menu-item">
+            <a href="#notifications">
+              <i class="app__menu-icon icon icon-user"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <!-- header end -->
     
-    <!-- Next party -->  
-    <div class="row row-parties row-next-party">
-        <div class="next-party-headlines"></div>
-        <div class="next-party-create-meefore"></div>
-    </div>
-    <!-- End next party-->
-
-    </section>
-    <!-- End Party Wrap -->
-
-    <section id="profileWrap" class="none centered">
-
-      <!-- Titre et sous-titre  -->
-      <div class="row row-profile nonei">
-        <h2 data-lid="p_title"> Mon profile </h2>
-        <div class="row-subheader none">
-          <div class="row-subheader-xp"><span class="xp-amount">1000</span><span>pts</span></div>
-          <div class="row-subheader-bar"></div>
-          <div class="row-subheader-xp-bar">
-            <div class="xp-fill"></div>
-          </div>
-          <div class="row-subheader-bar"></div>
-
-        </div>
-      </div>
-
-
-      <div class="none row row-profile row-skills">
-        <div class="row-title">
-          <div class="row-title-text">Status</div>
-        </div>
-        <div class="row-subtitle etiquette">
-          <div class="row-subtitle-text"></div>
-        </div>
-      </div>
-
-      <!-- Edition des photos -->
-      <div class="row row-profile row-pictures">
-        <div class="row-title">
-          <div data-lid="p_pictures_title" class="row-title-text">Tes 5 photos</div>
-          <i class="icon icon-edit icon-pencil right"></i>
-        </div>
-        <div class="row-subtitle">
-          <div data-lid="p_pictures_subtitle" class="row-subtitle-text etiquette">Plusieurs photos valent mieux qu'un long discours! Montre toi sous ton plus beau jour.</div>
-        </div>
-        <div class="row-body row-center picture-wrap" >
-          <!-- Dynamically loaded -->
-        </div>
-        <div class="row-buttons">
-          <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
-          <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
-        </div>
-      </div>
- 
-      <!-- Edition des informations  -->
-      <div class="row row-profile row-informations row-select-daddy">
-
-        <div class="row-title">
-          <div data-lid="p_info_title" class="row-title-text">Informations</div>
-          <i class="icon icon-edit icon-pencil right"></i>
-        </div>
-
-        <div class="row-subtitle">
-          <div data-lid="p_info_subtitle" class="row-subtitle-text etiquette">Dis nous tout, et surtout concentre toi sur l'essentiel</div>
-        </div>
-
-        <div class="row-body">
-          <div class="row-divider"></div>
-          <div class="row-input row-input-md row-name etiquette">
-            <label data-lid="p_name_label" for="name" class="label label-md">Nom</label
-            ><input data-lid="p_name_placeholder" readonly id="name" class="" placeholder="Prad Bitt" type="text" maxlength="25">
-          </div>
-          <div class="row-input row-input-md row-age etiquette">
-            <label  data-lid="p_age_label" for="age" class="label label-md" >Age</label
-            ><input readonly id="age" class="" placeholder="25" type="number" max="50" min="18">
-          </div>
-          <div class="row-input row-input-md row-country etiquette">
-            <label data-lid="p_country_label" class="label label-md" for="description">Pays</label
-            ><input id="country" readonly maxlength="40" type="text" class="readonly">
-          </div>
-          <div class="row-input row-input-md row-job etiquette">
-            <label data-lid="p_job_label" class="label label-md" for="situation">Situation</label
-            ><input readonly id="situation" class="" placeholder="Chirurgien, contrôleur RATP, bûcheron" type="text">
-          </div>
-        </div>
-
-        <div class="row-buttons">
-          <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
-          <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
-        </div>
-
-      </div>
-
-      <!-- Amis sur meefore  -->
-      <div class="row row-profile row-friends">
-        <div class="row-title">
-          <div data-lid="p_friends_title" class="row-title-text">Tout le monde est sur meefore</div>
-          <div class="invite-friends">
-            <button data-lid="app_button_invite" class="theme-btn btn-invite-friends"></button>
-            <i class="icon icon-invite-friends icon-plus"></i>
-          </div>
-        </div>
-        <div class="row-subtitle">
-          <div data-lid="p_friends_subtitle" class="row-subtitle-text etiquette">Tes amis Facebook sont tous sur meefore. Il en manque ? Invites-les et gagne des points!</div>
-        </div>
-        <div class="row-divider"></div>
-        <div class="row-body">
-          <h3 data-lid="p_friends_nofriends" >Vous n'avez aucun ami Facebook inscrit. Participer à des before risque d'être compliqué...</h3>
-           <!-- Dynamically loaded -->
-        </div>
-      </div>
-
-      <!-- Questionnaire à là OKC  -->
-      <div class="row row-profile row-okc none">
-        <div class="row-title">
-          <div class="row-title-text">Tes questions perso</div>
-          <i class="icon icon-edit icon-pencil right"></i>
-        </div>
-        <div class="row-subtitle">
-          <div class="row-subtitle-text etiquette">On vous évite de parler des heures. Répondez franchement aux 10 questions ci-dessous, c'est pour vous.</div>
-        </div>
-
-        <div class="row-buttons">
-          <button class="theme-btn btn-validate">Valider</button>
-          <button class="theme-btn btn-cancel">Annuler</button>
-        </div>
-      </div>
-
-
-    </section>
-
-    
-    <section id="eventsWrap" class="none centered">
+    <section class="app-section profile">
       
-      <div class="row row-events row-events-filters">
-        <div class="row-events-filters-group filters-location">
-          <i class="icon icon-filters-group icon-location"></i>
-          <div data-lid="e_filters_location" class="event-filter-label">Changer d'endroit : </div>
-          <input id="moveAround" type="text" placeholder="Paris, Londres..." >
-        </div>
-        <div class="row-events-filters-divider"></div>
-        <div class="row-events-filters-group filters-date">
-          <i class="icon icon-filters-group icon-calendar"></i>
-          <div data-lid="e_filters_date" class="event-filter-label"  >Filter par jour : </div>
-          <!-- Dynamically loaded -->
-        </div>
-        <div class="row-events-filters-divider"></div>
-        <div class="row-events-filters-group filters-create-meefore">
-          <button class="theme-btn filters__btn-create-event js-create-event right">
-            <span data-lid="e_create_button">Proposer un meefore</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="row row-events row-main">
-        <div class="row-preview row-events-preview" >
-              <!-- Dynamically loaded -->
-        </div>
-        <div class="row-preview row-party-preview" >
-              <!-- Dynamically loaded -->
-        </div>
-        <div class="row-events-map" >
-          <!-- Dynamically loaded -->
-        </div>
-      </div>
-
-    </section>
-  
-    <div class="row-events-accepted-inview-wrapper" >
-        <!-- Dynamicalled loaded [ row events accepted in view are apppended here ] -->
-    </div>
-
-    <div class="row-events-accepted-tabview" >
-      <!-- Dynamically loaded -->
-    </div>
-
-    <section id="searchUsersWrap" class="none centered">
-      <h2>Team de soirée</h2>
-      <div class="actionsWrap actionsStyle">
-        <span id="friendsOnly" class="action">Amis uniquement</span>
-      </div>
-      <div id="searchBarWrap">
-        <div id="searchBar">
-          <i class="icon icon-search"></i>
-          <input type="text" placeholder="Rechercher par nom, age, boisson favorite">
-        </div>
-      </div>
-      <div id="searchUsers" >
-         <!-- Dynamically loaded -->
-      </div>
-    </section>
-
-
-    <section id="settingsWrap" class="none centered">
-
-      <div class="row row-settings nonei">
-        <h2 data-lid="s_title" > Préférences </h2>
-      </div>
-
-      <div class="row-divider"></div>
-
-  
-      <!-- CONTACT SECTION -->
-      <div class="row row-settings row-contact row-select-daddy">
-
-        <div class="row-title">
-          <div data-lid="s_contact_title" class="row-title-text">Informations de contact</div>
-          <i class="icon icon-edit icon-pencil right"></i>
-        </div>
-
-        <div class="row-subtitle">
-          <div data-lid="s_contact_subtitle" class="row-subtitle-text etiquette">
-            Addresse de messagerie
-          </div>
-        </div>
-
-        <div class="row-body">
-
-        <div class="row-divider"></div>
-
-          <div class="row-input row-input-lg row-contact-email etiquette">
-            <label data-lid="s_contact_email_label" class="label label-lg"for="email_contact">Email</label
-            ><input type="text" id="email_contact"/ placeholder="Where are you?"
-             ><div data-lid="s_contact_email_desc" class="row-select-description etiquette">
-              Indiquez nous l'email sur lequel vous souhaitez être contactés
-             </div>
-          </div>
-
-          <div class="row-buttons">
-            <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
-            <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- NEWS SECTION -->
-      <div class="row row-settings row-news row-select-daddy">
-
-        <div class="row-title">
-          <div data-lid="s_news_title" class="row-title-text">News & Invitations</div>
-          <i class="icon icon-edit icon-pencil right"></i>
-        </div>
-
-        <div class="row-subtitle">
-          <div data-lid="s_news_subtitle" class="row-subtitle-text etiquette">
-            Restez alerté en temps réel lorsqu'un évènement est créé près de chez vous
-          </div>
-        </div>
-
-        <div class="row-body">
-
-        <div class="row-divider"></div>
-
-          <div class="row-input row-input-lg row-newsletter etiquette">
-            <label data-lid="s_newsletter_label" class="label label-lg"for="">Newsletter</label
-            ><div class="row-select-wrap">
-              <div data-lid="s_yes" class="row-select newsletter" data-propid="newsletter" data-selectid="yes">Oui</div>
-              <div data-lid="s_no"  class="row-select newsletter" data-propid="newsletter" data-selectid="no">Non</div>
-            </div
-             ><div data-lid="s_newsletter_desc" class="row-select-description etiquette">
-              Notre newsletter est envoyée une fois par mois.
-             </div>
-          </div>
-
-          <div class="row-input row-input-lg row-invitations etiquette">
-            <label data-lid="s_invits_label" class="label label-lg"for="">Invitations</label
-            ><div class="row-select-wrap">
-              <div data-lid="s_yes" class="row-select invitations" data-propid="invitations" data-selectid="yes">Oui</div>
-              <div data-lid="s_no"  class="row-select invitations" data-propid="invitations" data-selectid="no">Non</div> 
-            </div
-             ><div data-lid="s_invits_desc" class="row-select-description etiquette">
-                Bons plans pour être invités à des soirées en VIP
-             </div>
-          </div>
-
-          <div class="row-buttons">
-            <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
-            <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- ALERTS SECTIONS -->
-      <div class="row row-settings row-alerts row-select-daddy">
-
-        <div class="row-title">
-          <div data-lid="s_alerts_title" class="row-title-text">Alertes et notifications</div>
-          <i class="icon icon-edit icon-pencil right"></i>
-        </div>
-
-        <div class="row-subtitle">
-          <div data-lid="s_alerts_subtitle" class="row-subtitle-text etiquette">Restez alerté lorsqu'on vous contacte ou que vous êtes accepté dans un meefore.</div>
-        </div>
-
-        <div class="row-body">
-
-        <div class="row-divider"></div>
-
-          <div class="row-input row-input-lg row-accepted-in etiquette">
-            <label data-lid="s_accepted_in_label" class="label label-lg"for="">Accepté dans un meefore</label
-            ><div class="row-select-wrap">
-              <div data-lid="s_yes" class="row-select accepted-in" data-propid="accepted_in" data-selectid="yes">Oui</div>
-              <div data-lid="s_no"  class="row-select accepted-in" data-propid="accepted_in" data-selectid="no">Non</div>
-            </div
-             ><div data-lid="s_accepted_in_desc" class="row-select-description etiquette">
-                Recevez un mail lorsque vous êtes accepté dans un meefore et que vous êtes hors-ligne.
-             </div>
-          </div>
-
-          <div class="row-input row-input-lg row-message-unread etiquette">
-            <label data-lid="s_message_unread_label" class="label label-lg"for="">Message non lu</label
-            ><div class="row-select-wrap">
-              <div data-lid="s_yes" class="row-select message-unread" data-propid="message_unread" data-selectid="yes">Oui</div>
-              <div data-lid="s_no"  class="row-select message-unread" data-propid="message_unread" data-selectid="no">Non</div> 
-            </div
-             ><div data-lid="s_message_unread_desc" class="row-select-description etiquette">
-                Recevez un mail lorsque quelqu'un a laissé un message.
-             </div>
-          </div>
-
-          <div class="row-input row-input-lg row-min-frequency nonei etiquette">
-            <label data-lid="s_min_frequency_label" class="label label-lg"for="">1 mail max toutes les...</label
-            ><div class="row-select-wrap">
-              <div data-lid="s_0min"    class="row-select min-frequency"  data-propid="min_frequency" data-selectid="0">    Aucune limite</div>
-              <div data-lid="s_15min"   class="row-select min-frequency"  data-propid="min_frequency" data-selectid="900">  Aucune limite</div>
-              <div data-lid="s_60min"   class="row-select min-frequency"  data-propid="min_frequency" data-selectid="3600"> Aucune limite</div>
-              <div data-lid="s_360min"  class="row-select min-frequency"  data-propid="min_frequency" data-selectid="21600">Aucune limite</div>
-              <div data-lid="s_720min"  class="row-select min-frequency"  data-propid="min_frequency" data-selectid="43200">Aucune limite</div>
-              <div data-lid="s_1440min" class="row-select min-frequency"  data-propid="min_frequency" data-selectid="86400">Aucune limite</div>
-            </div
-             ><div data-lid="s_min_frequency_desc" class="row-select-description etiquette">
-                Spécifiez l'intervalle de temps minimum entre deux mails reçus par meefore.
-             </div>
-          </div>
-
-          <div class="row-buttons">
-            <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
-            <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- UX SECTION -->
-       <div class="row row-settings row-ux row-select-daddy">
-
-        <div class="row-title">
-          <div data-lid="s_app_title" class="row-title-text">Application</div>
-          <i class="icon icon-edit icon-pencil right"></i>
-        </div>
-
-        <div class="row-subtitle">
-          <div data-lid="s_app_subtitle" class="row-subtitle-text etiquette">Modifier le comportement général de l'application</div>
-        </div>
-
-        <div class="row-body">
-
-          <div class="row-divider"></div>
-
-          <div class="row-input row-input-lg row-autologin etiquette">
-            <label data-lid="s_autologin_label" class="label label-lg"for="">Auto login</label
-            ><div class="row-select-wrap">
-              <div data-lid="s_yes" class="row-select autologin" data-propid="auto_login" data-selectid="yes">Oui</div>
-              <div data-lid="s_no"  class="row-select autologin" data-propid="auto_login" data-selectid="no">Non</div>
-            </div
-            ><div data-lid="s_autologin_desc" class="row-select-description etiquette">
-              Activez cette option pour skipper la page d'accueil
-            </div>
-          </div>
-
-         <div class="row-input row-input-lg row-message-readby etiquette">
-            <label data-lid="s_message_readby_label" class="label label-lg"for="">Signaler message lu</label
-            ><div class="row-select-wrap">
-              <div data-lid="s_yes" class="row-select message-readby" data-propid="message_readby" data-selectid="yes">Oui</div>
-              <div data-lid="s_no"  class="row-select message-readby" data-propid="message_readby" data-selectid="no">Non</div>
-            </div
-            ><div data-lid="s_message_readby_desc" class="row-select-description etiquette">
-              Activez cette option pour signaler aux autres lorsque vous avez lu les messages
-            </div>
-        </div>
-
-        <div class="row-buttons">
-          <button data-lid="p_button_validate" class="theme-btn btn-validate">Valider</button>
-          <button data-lid="p_button_cancel" class="theme-btn btn-cancel">Annuler</button>
-        </div>
-
-        </div>
-      </div>
-  
-      <!-- DEL PROFILE SECTION -->
-      <div class="row-button-delete">
-        <button data-lid="s_delete_profile_btn" id="delete-profile" class="theme-btn">Supprimer mon profil</button>
-      </div>
-
-      </div>
 
     </section>
 
-  </div>
-  
+    <section class="app-section map">
+      
+
+    </section>
+
+  </section>
+
+
+
+
 
   <script src="//js.pusher.com/3.0/pusher.min.js"></script>
 

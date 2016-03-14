@@ -53,12 +53,6 @@
 				expose.settings = settings;
 				expose.onlineUsers = [];
 
-				expose.settings.skill_ladder = settings.initLadder({
-					max_level: settings.ladder_max_level,
-					base_point: settings.ladder_base_point,
-					base_coef: settings.ladder_base_coef
-				});
-
 				expose.user = user;
 
 			eventUtils.sendSuccess( res, expose );

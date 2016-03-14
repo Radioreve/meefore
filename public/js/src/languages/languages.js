@@ -8,6 +8,7 @@
 
 			Promise.resolve()
 				   .then( LJ.lang.findAppLang )
+				   .then( LJ.lang.setAppLang )
 				   .then( LJ.lang.translateTheApp )
 
 		},
@@ -16,7 +17,7 @@
 		},
 		setAppLang: function( app_language ){
 
-			if( ! LJ.fn.isLangSupported )
+			if( ! LJ.lang.isLangSupported(app_language) )
 				return console.error('This language (' + app_language + ') is not currently supported');
 			
 			LJ.lang.app_language = app_language;
@@ -42,19 +43,21 @@
 		},	
 		translate: function( container, options ){
 
+			options = options || {};
+			
 			app_language = options.app_language || LJ.lang.getAppLang();
 
 			if( ! LJ.lang.isLangSupported( app_language ) ){
 				return console.error('This language (' + app_language + ') is not currently supported');
 			}
 			
-			var $container = $(container) || $('body');
+			var $container = container instanceof jQuery ? container : $(container);
 
 			$container.find('[data-lid]').each(function( i, el ){
-
-				var $el = $(el);
+				
+				var $el  = $(el);
 				var type = $el.prop('nodeName').toLowerCase();
-				var lid = $el.attr('data-lid');
+				var lid  = $el.attr('data-lid');
 
 				var translated_text = LJ.text_source[ lid ][ app_language ];
 
@@ -68,8 +71,6 @@
 				}
 
 				$el.html( translated_text );
-
-				return;
 
 			});
 
