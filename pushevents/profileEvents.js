@@ -27,11 +27,10 @@
 	var updateProfile = function( req, res, next ){
 
 		var err_ns = 'update_profile';
-
-		var userId = req.sent.userId;
+		var facebook_id = req.sent.facebook_id;
 
 		var update = {};
-		['name','age','job','ideal_night'].forEach(function( attr ){
+		['name','age','job', 'location', 'ideal_night'].forEach(function( attr ){
 			if( req.sent[ attr ] ){
 				update[ attr ] = req.sent[ attr ];
 			}
@@ -43,11 +42,15 @@
          
             console.log('Emtting event update profile success')
 
-            req.sent.expose = { 'user': user };
+            req.sent.expose = {
+            	'user'      : user,
+            	'call_id'   : req.sent.call_id
+            };
+
             next();
 	    }
 	
-		User.findByIdAndUpdate( userId, update, { new: true }, callback );
+		User.findOneAndUpdate({ facebook_id: facebook_id }, update, { new: true }, callback );
 
 	};
 

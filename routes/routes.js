@@ -115,7 +115,6 @@
 	    	mdw.pop.populateUser({ force_presence: false }),
 	    	mdw.mailchimp_watcher.subscribeMailchimpUser,
 	    	mdw.alerts_watcher.setCache,
-	    	mdw.profile_watcher.setCache,
 	    	signEvents.handleFacebookAuth);
 
 	    // [ @chat ] Make sure a user has authorisation to join a channel
@@ -134,6 +133,8 @@
 
 	    // [ @user ] Update le profile
 	    app.post('/me/update-profile',
+	    	mdw.validate('update_profile_base'),
+			mdw.profile_watcher.updateCache('base'),
 	    	profileEvents.updateProfile);
 
 	    // [ @user ] Ajoute une photo au profile

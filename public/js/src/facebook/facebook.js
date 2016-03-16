@@ -31,7 +31,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 				if( res.status == 'connected' ){
 					var access_token = res.authResponse.accessToken;
-					console.log('Short lived access tokne : ' + access_token );
+					console.log('Short lived access token : ' + access_token.substring(0,20) + '.....');
 					return resolve( res.authResponse.accessToken );
 				}
 
@@ -48,7 +48,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 				facebookProfile.access_token = facebook_token;
 				// Store it for reconnexion purposes
 				LJ.facebook_profile = facebookProfile;
-				resolve( facebookProfile );
+				return resolve( facebookProfile );
 
 			});
 

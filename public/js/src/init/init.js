@@ -38,28 +38,29 @@
                 .then( LJ.setLocalStorage("login") )
                 .then( LJ.api.fetchAppToken )
                 .then( LJ.login.stepCompleted )
-                .then( LJ.Promise.all([
-                    LJ.profile.init,
-                    LJ.user.init,
-                    LJ.settings.init, 
-                    LJ.uploader.init,
-                    LJ.friends.init, 
-                    LJ.search.init, 
-                    LJ.map.init, 
-                    LJ.before.init, 
-                    LJ.party.init, 
-                    LJ.notifications.init,
-                    LJ.meepass.init, 
-                    LJ.spotted.init,
-                    LJ.invite.init,
-                    LJ.chat.init, 
-                ])
-                .then( LJ.login.lastStepCompleted())
+                .then(function(){
+                    return LJ.Promise.all([
+                            LJ.profile.init(),
+                            LJ.uploader.init()
+                    ]);
+                })
+                .then( LJ.login.lastStepCompleted )
                 .then( LJ.onboarding.init )
-                )
 
-		} 
+        } 
 
+                        // LJ.user.init,
+                        // LJ.settings.init, 
+                        // LJ.friends.init, 
+                        // LJ.search.init, 
+                        // LJ.map.init, 
+                        // LJ.before.init, 
+                        // LJ.party.init, 
+                        // LJ.notifications.init,
+                        // LJ.meepass.init, 
+                        // LJ.spotted.init,
+                        // LJ.invite.init,
+                        // LJ.chat.init
 
 	});
 
@@ -367,7 +368,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
 
 
             // Filter date for events 
-            $('.filters-date').append( LJ.fn.renderDatesInFilter );
+            // $('.filters-date').append( LJ.fn.renderDatesInFilter );
 
             // $('.filter-mixity').html(LJ.fn.renderMixityInFilters(LJ.settings.app.mixity));
             //  $('.filter-agerange').html( LJ.fn.renderAgerangeInFilters( LJ.settings.app.agerange ));

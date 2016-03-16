@@ -113,6 +113,9 @@
     type    : Array,
     default : []
   },
+  location: {
+    type: Object
+  },
   ideal_night: {
     type: String
   }

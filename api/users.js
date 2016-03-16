@@ -6,7 +6,7 @@
 		rd 		   = require('../services/rd'),
 		settings   = require('../config/settings'),
 		eventUtils = require('../pushevents/eventUtils');
-
+ 
 
 	var handleErr = eventUtils.raiseApiError;
 
@@ -67,7 +67,10 @@
 				});
 			}
 
-			var expose = user;
+			var expose = {
+				'user': user 
+			};
+
 			res.json( expose );
 
 		});
@@ -117,7 +120,7 @@
 
 					// Important to construct the object the same way as it is in the cache 
 					// to keep the result consistant
-					var expose = {
+					var user = {
 						'facebook_id' : user.facebook_id,
 						'name' 		  : user.name,
 						'age' 		  : user.age,
@@ -126,14 +129,21 @@
 						'img_vs'	  : user_main_img.img_version
 					};
 
-					eventUtils.sendSuccess( res, expose );
+					req.sent.expose = {
+						'user': user
+					};
+					
+					next();
 
 				});
 
 			} else {
 
-				var expose = user;
-				eventUtils.sendSuccess( res, user );
+				req.sent.expose = {
+					'user': user
+				};
+					
+				next();
 
 			}
 
@@ -154,7 +164,7 @@
 			pattern   = '^' + user_name;
 
 		var select = {};
-		['name', 'pictures', 'age', 'job', 'facebook_id'].forEach(function( prop ){
+		['name', 'pictures', 'age', 'job', 'location', 'facebook_id'].forEach(function( prop ){
 			select[ prop ] = 1;
 		});
 
@@ -170,8 +180,11 @@
 					return handleErr( res, err_ns, err );
 				}
 
-				var expose = users;
-				eventUtils.sendSuccess( res, expose );
+				req.sent.expose = {
+					'users': users
+				};
+
+				next();
 
 			});
 	};
@@ -194,8 +207,11 @@
 					return handleErr( res, err_ns, err );
 				}
 
-				var expose = users;
-				eventUtils.sendSuccess( res, expose );
+				req.sent.expose = {
+					'users': users
+				}
+				
+				next();
 
 			});
 
@@ -225,8 +241,11 @@
 						return handleErr( err, err_ns, err );
 					}
 
-					var expose = events;
-					eventUtils.sendSuccess( res, expose );
+					req.sent.expose = {
+						'events': events
+					};
+					
+					next();
 
 				});
 

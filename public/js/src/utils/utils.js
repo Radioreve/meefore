@@ -17,6 +17,9 @@ window.LJ = _.merge( window.LJ || {}, {
 
         
     },
+    setUser: function( user ){
+        LJ.user = user;
+    },
     delay: function( delay ){
         return LJ.promise(function( resolve, reject ){
             setTimeout(function(){
@@ -43,6 +46,9 @@ window.LJ = _.merge( window.LJ || {}, {
 
         console.info( message );
         
+    },
+    generateId: function(){
+        return moment().unix();
     },
     testTemplate: function( tplName, param, wrapper ){
 
@@ -673,21 +679,21 @@ window.LJ = _.merge( window.LJ || {}, {
         },
         handleServerSuccess: function( msg, selector ){
 
-            setTimeout( function(){ 
+            // setTimeout( function(){ 
 
-                if( msg ){
-                    LJ.fn.toastMsg( msg, 'info');
-                }
+            //     if( msg ){
+            //         LJ.fn.toastMsg( msg, 'info');
+            //     }
 
-                var $container = $(selector);
-                $container.find('.selected').removeClass('selected')
-                $container.find('.modified').removeClass('modified').addClass('selected')
-                $container.find('.validating').removeClass('validating')
-                $container.find('.validating-btn').removeClass('validating-btn')
-                $container.find('.asking').removeClass('asking')
-                $container.find('.pending').removeClass('pending');
+            //     var $container = $(selector);
+            //     $container.find('.selected').removeClass('selected')
+            //     $container.find('.modified').removeClass('modified').addClass('selected')
+            //     $container.find('.validating').removeClass('validating')
+            //     $container.find('.validating-btn').removeClass('validating-btn')
+            //     $container.find('.asking').removeClass('asking')
+            //     $container.find('.pending').removeClass('pending');
 
-            }, LJ.ui.artificialDelay );
+            // }, LJ.ui.artificialDelay );
 
         },
         handleServerError: function( msg, ms ){

@@ -3,375 +3,382 @@
 	window.LJ.onboarding = _.merge( window.LJ.onboarding || {}, {
 
         init: function(){
+            return LJ.promise(function( resolve, reject ){
+                
+                if( LJ.user.status == "new" ){
+                    //LJ.onboarding.startTour();
+                }
+
+            });
 
         },
-        init2: function(){
+        startTour: function(){
 
-        		LJ.intro_steps = [
+    		LJ.intro_steps = [
 
-        			{ 
-                        id      : "init",
-                        next_id : "intro_instructions",
-                        mode    : "cover",
-        			 	callback: function(){
-                            var self = this;
+    			{ 
+                    id      : "init",
+                    next_id : "intro_instructions",
+                    mode    : "cover",
+    			 	callback: function(){
+                        var self = this;
 
-        			 		LJ.fn.showWelcomeLintro();
-        			 		LJ.map.setZoom(14);
-                            // Clear preview to prevent problems when replaying tour
-                            google.maps.event.trigger( LJ.map, 'click' );
+    			 		LJ.fn.showWelcomeLintro();
+    			 		LJ.map.setZoom(14);
+                        // Clear preview to prevent problems when replaying tour
+                        google.maps.event.trigger( LJ.map, 'click' );
 
-                            // Make sure doest call on undefined values
-                            LJ.event_markers = LJ.event_markers || [];
-                            LJ.party_markers = LJ.party_markers || [];
+                        // Make sure doest call on undefined values
+                        LJ.event_markers = LJ.event_markers || [];
+                        LJ.party_markers = LJ.party_markers || [];
 
-        			 		LJ.event_markers.forEach(function(marker){
-        			 			marker.marker.setOpacity(0);
-        			 		});
-        			 		LJ.party_markers.forEach(function(marker){
-        			 			marker.marker.setOpacity(0);
-        			 		});
+    			 		LJ.event_markers.forEach(function(marker){
+    			 			marker.marker.setOpacity(0);
+    			 		});
+    			 		LJ.party_markers.forEach(function(marker){
+    			 			marker.marker.setOpacity(0);
+    			 		});
 
-        			 		$('.btn-welcome').click(function(){
-			    				LJ.fn.lintroStep( self.next_id );
-			    			});
+    			 		$('.btn-welcome').click(function(){
+		    				LJ.fn.lintroStep( self.next_id );
+		    			});
 
-			    			$('.welcome-skip').click(function(){
-			    				LJ.fn.clearIntro();
-			    				LJ.fn.endIntro(function(){
-                                    LJ.fn.fetchFacebookPictureIntro();
-			    				});
-			    			});
+		    			$('.welcome-skip').click(function(){
+		    				LJ.fn.clearIntro();
+		    				LJ.fn.endIntro(function(){
+                                LJ.fn.fetchFacebookPictureIntro();
+		    				});
+		    			});
 
-                            var step_html = [
-                                '<div class="lintro-next nonei" data-stepid="' + this.id + '" data-nextid="' + this.next_id + '">',
-                                    // LJ.text_source["intro_next"][ LJ.app_language ],
-                                    '>',
-                                '</div>'
-                            ].join('');
+                        var step_html = [
+                            '<div class="lintro-next nonei" data-stepid="' + this.id + '" data-nextid="' + this.next_id + '">',
+                                // LJ.text_source["intro_next"][ LJ.app_language ],
+                                '>',
+                            '</div>'
+                        ].join('');
 
-                            LJ.$body.append( step_html );
+                        LJ.$body.append( step_html );
 
-        			 	}
-        			},
-                    {
-                        id          : "intro_instructions",
-                        next_id     : "intro_1",
-                        mode        : "area",
-                        upper_el    : "#mainWrap",
-                        upper_cover : true,
-                        delay       : 1500,
-                        text        : LJ.text_source["intro_instructions"][ LJ.app_language ],
-                        callback  : function(){
-                            LJ.fn.showTextLintro(this);
-                        }
+    			 	}
+    			},
+                {
+                    id          : "intro_instructions",
+                    next_id     : "intro_1",
+                    mode        : "area",
+                    upper_el    : "#mainWrap",
+                    upper_cover : true,
+                    delay       : 1500,
+                    text        : LJ.text_source["intro_instructions"][ LJ.app_language ],
+                    callback  : function(){
+                        LJ.fn.showTextLintro(this);
+                    }
+                },
+    			{ 
+                    id         : "intro_1",
+                    next_id    : "intro_2",
+                    mode       : "area",
+                    upper_el   : ".row-events-filters",
+                    lower_el   : ".row-events-accepted-tabview",
+                    text       : LJ.text_source["intro_text_1"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    				}
+    			},
+    			{
+                    id       : "intro_2",
+                    next_id  : "intro_3",
+                    mode     : "idem",
+                    text     : LJ.text_source["intro_text_2"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    					LJ.fn.displayEventMarker( LJ.intro.event_data, { cache: 'event_markers_intro', intro: true } );
+    				}
+    			},
+    			{
+                    id         : "intro_3",
+                    next_id    : "intro_4",
+                    mode       : "idem",
+                    text       : LJ.text_source["intro_text_3"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    					LJ.fn.displayPartyMarker_Party( LJ.intro.party_data, { cache: 'party_markers_intro', intro: true } );
+    				}
+    			},
+    			{
+                    id       : "intro_4",
+                    next_id  : "intro_5",
+                    duration : 5000,
+                    mode     : "idem",
+                    text     : LJ.text_source["intro_text_4"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+                        LJ.fn.displayPathToParty({ evt: LJ.intro.event_data });
+    				}
+    			},
+    			{
+                    id       : "intro_5",
+                    next_id  : "intro_6",
+                    mode     : "idem",
+                    text     : LJ.text_source["intro_text_5"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+
+    					LJ.intro.events_data.forEach(function( evt, i ){
+
+    						var url = LJ.cloudinary.markers.base.open.url;
+
+    						if( i == 0 || i == 2 ) url = LJ.cloudinary.markers.pending.open.url;
+    						if( i == 1 || i == 3 ) url = LJ.cloudinary.markers.accepted.open.url;
+    						if( i == 4 ) url = LJ.cloudinary.markers.base.full.url;
+
+    						LJ.fn.displayEventMarker( evt,  { url: url, cache: 'event_markers_intro' } );
+
+    					});
+
+    					
+                        LJ.intro.events_data.forEach(function( evt ){
+                        	 LJ.fn.displayPathToParty({
+		                        evt            : evt,
+		                        stroke_opacity : 0.25,
+		                        cache          : "half_active_paths"
+		                    });
+                        });
+    				}
+    			},
+    			{
+                    id       : "intro_6",
+                    next_id  : "intro_10",
+                    mode     : "idem",
+                    text     : LJ.text_source["intro_text_6"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    					LJ.event_markers_intro[0].marker.setIcon( LJ.cloudinary.markers.base_active.open.url );
+    					LJ.party_markers_intro[0].marker.setIcon( LJ.cloudinary.markers.party_active.url );
+    					LJ.fn.addEventMapview( LJ.intro.event_data, { marker: LJ.event_markers_intro[0].marker });
+    					LJ.fn.addPartyMapview( LJ.intro.party_data, { marker: LJ.party_markers_intro[0].marker });
+                        LJ.fn.timeout(1000, function(){ $('.btn-requestin').click(function(e){ e.stopPropagation(); }); })
+                       
+    				}
+    			},
+    			{
+                    id         : "intro_7",
+                    next_id    : "intro_8",
+                    mode       : "element",
+                    el         : ".event-preview",
+                    text       : LJ.text_source["intro_text_7"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    				}
+    			// 
+    			},
+    			{
+                    id         : "intro_8",
+                    next_id    : "intro_9",
+                    mode       : "element",
+                    el         : ".party-preview",
+                    text       : LJ.text_source["intro_text_8"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    				}
+    			// 
+    			},
+    			{
+                    id         : "intro_9",
+                    next_id    : "intro_10",
+                    mode       : "element",
+                    el         : ".btn-requestin",
+                    text       : LJ.text_source["intro_text_9"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    				}
+    			},
+    			{
+                    id         : "intro_10",
+                    next_id    : "intro_11",
+                    mode       : "element",
+                    el         : ".modal-container",
+                    text       : LJ.text_source["intro_text_10"][ LJ.app_language ],
+                    delay      : 1000,
+    				callforward: function(){
+    					LJ.fn.showRequestInModal('fake_intro_id');
+    				},
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+                        $('.modal-container-body').find('*').each(function(i, el){
+                            $(el).on('click', function(e){ e.stopPropagation(); });
+                        });
+                        LJ.fn.clearMapviews();
+    				}
+    			}, 
+    			{
+                    id         : "intro_11",
+                    next_id    : "intro_15",
+                    mode       : "element",
+                    el         : ".row-requestin-group-members",
+                    text       : LJ.text_source["intro_text_11"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    				}
+    			}, 
+    			{
+                    id         : "intro_12",
+                    next_id    : "intro_13",
+                    mode       : "area",
+                    upper_el   : '.row-party-preview',
+                    lower_el   : '.row-events-accepted-tabview',
+                    text       : LJ.text_source["intro_text_12"][ LJ.app_language ],
+                    text_align : "center",
+                    delay      : 400,
+    				callforward: function(){
+    					$('.modal-curtain').click();
+    				},
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    					LJ.event_markers_intro.forEach(function( evt, i ){
+    						if( i == 1 ) return;
+    						evt.marker.setMap(null);
+    					});
+    					LJ.party_markers_intro[0].marker.setMap(null);
+    					LJ.active_paths[0].setMap(null);
+    					LJ.half_active_paths.forEach(function( path ){
+    						path.setMap(null);
+    					});
+
+    				}
+    			},
+    			{
+                    id         : "intro_13",
+                    next_id    : "intro_14",
+                    mode       : "idem",
+                    text       : LJ.text_source["intro_text_13"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    					LJ.event_markers_intro.forEach(function( evt, i ){
+    						if( i == 1 ) return evt.marker.setIcon( LJ.cloudinary.markers.accepted.open.url );
+    						evt.marker.setMap(null);
+    					});
+    				}
+    			},
+    			{
+                    id         : "intro_13a",
+                    next_id    : "intro_18",
+                    mode       : "area",
+                    upper_el   : '.row-events-filters',
+                    lower_el   : '.row-events-accepted-tabview',
+                    text       : LJ.text_source["intro_text_13a"][ LJ.app_language ],
+                    callforward: function(){
+
+                       // Clear preview
+                        $('.row-events-accepted-inview').velocity('transition.slideDownOut', { duration: 400 }).removeClass('active');
+                        $('.row-preview').velocity('transition.slideUpOut', { duration: 400, complete: function(){
+                            $(this).children().remove();
+                        }});
+                        $('.event-tabview-intro').remove();
+
+    					LJ.event_markers_intro.forEach(function( mrk, i ){
+    						if( i == 1 ){
+                                mrk.marker.setIcon( LJ.cloudinary.markers.base.full.url );
+                                LJ.map.panTo( mrk.data.address );
+                                return;
+                            }
+    						mrk.marker.setMap(null); 
+    					});
+
                     },
-        			{ 
-                        id         : "intro_1",
-                        next_id    : "intro_2",
-                        mode       : "area",
-                        upper_el   : ".row-events-filters",
-                        lower_el   : ".row-events-accepted-tabview",
-                        text       : LJ.text_source["intro_text_1"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        				}
-        			},
-        			{
-                        id       : "intro_2",
-                        next_id  : "intro_3",
-                        mode     : "idem",
-                        text     : LJ.text_source["intro_text_2"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        					LJ.fn.displayEventMarker( LJ.intro.event_data, { cache: 'event_markers_intro', intro: true } );
-        				}
-        			},
-        			{
-                        id         : "intro_3",
-                        next_id    : "intro_4",
-                        mode       : "idem",
-                        text       : LJ.text_source["intro_text_3"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        					LJ.fn.displayPartyMarker_Party( LJ.intro.party_data, { cache: 'party_markers_intro', intro: true } );
-        				}
-        			},
-        			{
-                        id       : "intro_4",
-                        next_id  : "intro_5",
-                        duration : 5000,
-                        mode     : "idem",
-                        text     : LJ.text_source["intro_text_4"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-                            LJ.fn.displayPathToParty({ evt: LJ.intro.event_data });
-        				}
-        			},
-        			{
-                        id       : "intro_5",
-                        next_id  : "intro_6",
-                        mode     : "idem",
-                        text     : LJ.text_source["intro_text_5"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
+                    callback: function(){
+                        LJ.fn.showTextLintro(this);
+    				}
+    			},
+    			{
+                    id         : "intro_14",
+                    next_id    : "intro_15",
+                    mode       : "area",
+                    upper_el   : '.row-events-accepted-tabview',
+                    text       : LJ.text_source["intro_text_14"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    					$('.row-events-accepted-tabview')
+    						.append( LJ.fn.renderEventTabview( LJ.intro.event_data ) )
+    						.children().last()
+    						.addClass('event-tabview-intro')
+                            .on('click', function(e){ e.stopPropagation(); });
+                            
+    				}
+    			},
+    			{
+                    id          : "intro_15",
+                    next_id     : "intro_16",
+                    mode        : "element",
+                    el          : '.event-inview-intro',
+                    delay       : '300',
+                    upper_cover : true,
+                    text        : LJ.text_source["intro_text_15"][ LJ.app_language ],
+                    callforward: function(){
+                        $('.modal-curtain').click();
+                        LJ.fn.showIntroChatInview();
+                    },
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    				}
+    			},
+    			{
+                    id          : "intro_16",
+                    next_id     : "intro_18",
+                    delay       : 8000,
+                    mode        : "idem",
+                    // lower_el : '.row-events-accepted-tabview',
+                    text        : LJ.text_source["intro_text_16"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    					LJ.fn.showIntroChatTalk();
+    				}
+    			},
+    			{
+                    id          : "intro_17",
+                    next_id     : "intro_18",
+                    mode        : "element",
+                    el          : '.event-accepted-chat-typing',
+                    padding     : 20,
+                    // lower_el : '.row-events-accepted-tabview',
+                    text        : LJ.text_source["intro_text_17"][ LJ.app_language ],
+    				callback: function(){
+    					LJ.fn.showTextLintro(this);
+    					setTimeout(function(){
+    						LJ.fn.stageUserForWhisper( 'will', 'chat-intro' );
+    						setTimeout(function(){
+    							LJ.fn.stageUserForWhisper( 'sandy', 'chat-intro' );
+    						}, 2500 );
+    					}, 3500 );
+    				}
+    			},
+    			{
+                    id         : "intro_18",
+                    mode       : "cover",
+                    close_step : true,
+    				callback: function(){
 
-        					LJ.intro.events_data.forEach(function( evt, i ){
+    					LJ.fn.showEndingLintro();
+    					LJ.fn.clearIntro();
 
-        						var url = LJ.cloudinary.markers.base.open.url;
+    					$('.btn-fillprofile').click(function(){
+    						LJ.fn.endIntro(function(){
+    							$('#profile').click();
+    							LJ.fn.fetchFacebookPictureIntro();
+    						});
+    					});
 
-        						if( i == 0 || i == 2 ) url = LJ.cloudinary.markers.pending.open.url;
-        						if( i == 1 || i == 3 ) url = LJ.cloudinary.markers.accepted.open.url;
-        						if( i == 4 ) url = LJ.cloudinary.markers.base.full.url;
-
-        						LJ.fn.displayEventMarker( evt,  { url: url, cache: 'event_markers_intro' } );
-
-        					});
-
-        					
-                            LJ.intro.events_data.forEach(function( evt ){
-                            	 LJ.fn.displayPathToParty({
-			                        evt            : evt,
-			                        stroke_opacity : 0.25,
-			                        cache          : "half_active_paths"
-			                    });
-                            });
-        				}
-        			},
-        			{
-                        id       : "intro_6",
-                        next_id  : "intro_10",
-                        mode     : "idem",
-                        text     : LJ.text_source["intro_text_6"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        					LJ.event_markers_intro[0].marker.setIcon( LJ.cloudinary.markers.base_active.open.url );
-        					LJ.party_markers_intro[0].marker.setIcon( LJ.cloudinary.markers.party_active.url );
-        					LJ.fn.addEventMapview( LJ.intro.event_data, { marker: LJ.event_markers_intro[0].marker });
-        					LJ.fn.addPartyMapview( LJ.intro.party_data, { marker: LJ.party_markers_intro[0].marker });
-                            LJ.fn.timeout(1000, function(){ $('.btn-requestin').click(function(e){ e.stopPropagation(); }); })
-                           
-        				}
-        			},
-        			{
-                        id         : "intro_7",
-                        next_id    : "intro_8",
-                        mode       : "element",
-                        el         : ".event-preview",
-                        text       : LJ.text_source["intro_text_7"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        				}
-        			// 
-        			},
-        			{
-                        id         : "intro_8",
-                        next_id    : "intro_9",
-                        mode       : "element",
-                        el         : ".party-preview",
-                        text       : LJ.text_source["intro_text_8"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        				}
-        			// 
-        			},
-        			{
-                        id         : "intro_9",
-                        next_id    : "intro_10",
-                        mode       : "element",
-                        el         : ".btn-requestin",
-                        text       : LJ.text_source["intro_text_9"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        				}
-        			},
-        			{
-                        id         : "intro_10",
-                        next_id    : "intro_11",
-                        mode       : "element",
-                        el         : ".modal-container",
-                        text       : LJ.text_source["intro_text_10"][ LJ.app_language ],
-                        delay      : 1000,
-        				callforward: function(){
-        					LJ.fn.showRequestInModal('fake_intro_id');
-        				},
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-                            $('.modal-container-body').find('*').each(function(i, el){
-                                $(el).on('click', function(e){ e.stopPropagation(); });
-                            });
-                            LJ.fn.clearMapviews();
-        				}
-        			}, 
-        			{
-                        id         : "intro_11",
-                        next_id    : "intro_15",
-                        mode       : "element",
-                        el         : ".row-requestin-group-members",
-                        text       : LJ.text_source["intro_text_11"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        				}
-        			}, 
-        			{
-                        id         : "intro_12",
-                        next_id    : "intro_13",
-                        mode       : "area",
-                        upper_el   : '.row-party-preview',
-                        lower_el   : '.row-events-accepted-tabview',
-                        text       : LJ.text_source["intro_text_12"][ LJ.app_language ],
-                        text_align : "center",
-                        delay      : 400,
-        				callforward: function(){
-        					$('.modal-curtain').click();
-        				},
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        					LJ.event_markers_intro.forEach(function( evt, i ){
-        						if( i == 1 ) return;
-        						evt.marker.setMap(null);
-        					});
-        					LJ.party_markers_intro[0].marker.setMap(null);
-        					LJ.active_paths[0].setMap(null);
-        					LJ.half_active_paths.forEach(function( path ){
-        						path.setMap(null);
-        					});
-
-        				}
-        			},
-        			{
-                        id         : "intro_13",
-                        next_id    : "intro_14",
-                        mode       : "idem",
-                        text       : LJ.text_source["intro_text_13"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        					LJ.event_markers_intro.forEach(function( evt, i ){
-        						if( i == 1 ) return evt.marker.setIcon( LJ.cloudinary.markers.accepted.open.url );
-        						evt.marker.setMap(null);
-        					});
-        				}
-        			},
-        			{
-                        id         : "intro_13a",
-                        next_id    : "intro_18",
-                        mode       : "area",
-                        upper_el   : '.row-events-filters',
-                        lower_el   : '.row-events-accepted-tabview',
-                        text       : LJ.text_source["intro_text_13a"][ LJ.app_language ],
-                        callforward: function(){
-
-                           // Clear preview
-                            $('.row-events-accepted-inview').velocity('transition.slideDownOut', { duration: 400 }).removeClass('active');
-                            $('.row-preview').velocity('transition.slideUpOut', { duration: 400, complete: function(){
-                                $(this).children().remove();
-                            }});
-                            $('.event-tabview-intro').remove();
-
-        					LJ.event_markers_intro.forEach(function( mrk, i ){
-        						if( i == 1 ){
-                                    mrk.marker.setIcon( LJ.cloudinary.markers.base.full.url );
-                                    LJ.map.panTo( mrk.data.address );
-                                    return;
-                                }
-        						mrk.marker.setMap(null); 
-        					});
-
-                        },
-                        callback: function(){
-                            LJ.fn.showTextLintro(this);
-        				}
-        			},
-        			{
-                        id         : "intro_14",
-                        next_id    : "intro_15",
-                        mode       : "area",
-                        upper_el   : '.row-events-accepted-tabview',
-                        text       : LJ.text_source["intro_text_14"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        					$('.row-events-accepted-tabview')
-        						.append( LJ.fn.renderEventTabview( LJ.intro.event_data ) )
-        						.children().last()
-        						.addClass('event-tabview-intro')
-                                .on('click', function(e){ e.stopPropagation(); });
-                                
-        				}
-        			},
-        			{
-                        id          : "intro_15",
-                        next_id     : "intro_16",
-                        mode        : "element",
-                        el          : '.event-inview-intro',
-                        delay       : '300',
-                        upper_cover : true,
-                        text        : LJ.text_source["intro_text_15"][ LJ.app_language ],
-                        callforward: function(){
-                            $('.modal-curtain').click();
-                            LJ.fn.showIntroChatInview();
-                        },
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        				}
-        			},
-        			{
-                        id          : "intro_16",
-                        next_id     : "intro_18",
-                        delay       : 8000,
-                        mode        : "idem",
-                        // lower_el : '.row-events-accepted-tabview',
-                        text        : LJ.text_source["intro_text_16"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        					LJ.fn.showIntroChatTalk();
-        				}
-        			},
-        			{
-                        id          : "intro_17",
-                        next_id     : "intro_18",
-                        mode        : "element",
-                        el          : '.event-accepted-chat-typing',
-                        padding     : 20,
-                        // lower_el : '.row-events-accepted-tabview',
-                        text        : LJ.text_source["intro_text_17"][ LJ.app_language ],
-        				callback: function(){
-        					LJ.fn.showTextLintro(this);
-        					setTimeout(function(){
-        						LJ.fn.stageUserForWhisper( 'will', 'chat-intro' );
-        						setTimeout(function(){
-        							LJ.fn.stageUserForWhisper( 'sandy', 'chat-intro' );
-        						}, 2500 );
-        					}, 3500 );
-        				}
-        			},
-        			{
-                        id         : "intro_18",
-                        mode       : "cover",
-                        close_step : true,
-        				callback: function(){
-
-        					LJ.fn.showEndingLintro();
-        					LJ.fn.clearIntro();
-
-        					$('.btn-fillprofile').click(function(){
-        						LJ.fn.endIntro(function(){
-        							$('#profile').click();
-        							LJ.fn.fetchFacebookPictureIntro();
-        						});
-        					});
-
-        					$('.ending-skip').click(function(){
-        						LJ.fn.endIntro(function(){
-                                    LJ.fn.fetchFacebookPictureIntro();
-        						});
-        					});
-        				}
-        			}
+    					$('.ending-skip').click(function(){
+    						LJ.fn.endIntro(function(){
+                                LJ.fn.fetchFacebookPictureIntro();
+    						});
+    					});
+    				}
+    			}
 
 
-        		];
+    		];
 
-        		LJ.fn.lintroStep( 'init' );
+    		LJ.fn.lintroStep( 'init' );
 
 
         	},

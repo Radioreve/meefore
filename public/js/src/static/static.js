@@ -5,8 +5,8 @@
 		'images': [
 			{
 				'access_name': 'main_loader',
-				'image_id' 	 : 'main_loader',
-				'param'		 : { 'class': 'this is it', 'width': 25 }
+				'image_id' 	 : 'app_loader',
+				'param'		 : { 'class': 'app__loader', 'width': 80 }
 			}
 		],
 		// Constructs a list of static pictures hosted on Cloudinary that are available
@@ -31,6 +31,9 @@
 
 			});
 
+		},
+		getLoader: function( loader_id ){
+			return $('.app__loader[data-loaderid="' + loader_id + '"]');
 		},
 		renderStaticImage: function( access_name ){
 

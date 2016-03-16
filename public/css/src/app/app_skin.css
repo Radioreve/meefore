@@ -1,12 +1,18 @@
 
-html: {
+html {
    overflow: auto;
    overflow-y: scroll;
 }
 
-body: {
+body {
 
-} 
+}
+
+.left { float: left; }
+.right { float: right; } 
+.none { display: none; }
+.nonei { display: none!important; }
+
 
 .ui__curtain {
    position: absolute;

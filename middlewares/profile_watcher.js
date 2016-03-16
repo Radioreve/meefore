@@ -54,7 +54,8 @@
 		var err_ns = "update_cache_base";
 
 		var facebook_id = req.sent.facebook_id;
-
+		console.log('Facebook at entry in cache : ' + facebook_id );
+		
 		var profile_ns = 'user_profile/' + facebook_id;
 		rd.hgetall( profile_ns, function( err, user ){
 
@@ -77,7 +78,7 @@
 					'img_vs' : user.img_vs
 				};
 
-				console.log('User found in cache, new_profile');
+				console.log('User found in cache, setting new_profile for user with facebook_id : ' + req.sent.facebook_id );
 
 			}
 

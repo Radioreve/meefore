@@ -16,6 +16,6 @@
 .login__progress-bar-bg {
 	height: 100%;
 	width: 0%;
-	transition: all ease-in-out .3s;
+	transition: all ease-in-out .8s;
 	background: #33AFFF;
 }

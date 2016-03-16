@@ -49,8 +49,8 @@
 				facebook_access_token: facebook_access_token 
 			}, { new: true }, function( err, user ){
 
-				var accessToken = eventUtils.generateAppToken( "user", user ); 
-				req.sent.expose = { id: user._id, accessToken: accessToken };
+				var app_token = eventUtils.generateAppToken( "user", user ); 
+				req.sent.expose = { user_id: user._id, app_token: app_token };
 				next();
 
 			});
@@ -90,13 +90,14 @@
 		new_user.signup_date = new moment();
 		
 		// Public profile attributes
-		new_user.name          = fb.name || settings.default_profile_values.name;
-		new_user.age           = settings.default_profile_values.age; // default value, fucking facebook  /me?fields=age_range is too broad!
-		new_user.gender        = fb.gender;
-		new_user.job 		   = settings.default_profile_values.job;
-		new_user.country_code  = country_code; // country code extraction
-		new_user.ideal_night   = '';
-		new_user.pictures 	   = settings.default_pictures;
+		new_user.name         = fb.name || settings.default_profile_values.name;
+		new_user.age          = settings.default_profile_values.age; // default value, fucking facebook  /me?fields=age_range is too broad!
+		new_user.gender       = fb.gender;
+		new_user.job          = settings.default_profile_values.job;
+		new_user.country_code = country_code; // country code extraction
+		new_user.ideal_night  = null;
+		new_user.pictures     = settings.default_pictures;
+		new_user.location 	  = { place_name: null, place_id: null };
 
 
 		//Private profile attributes
@@ -129,9 +130,9 @@
 				  user.facebook_url )
 
 			console.log('Account created successfully');
-			var accessToken = eventUtils.generateAppToken( "user", user ); 
+			var app_token = eventUtils.generateAppToken( "user", user ); 
 
-			req.sent.expose = { id: user._id, accessToken: accessToken };
+			req.sent.expose = { id: user._id, app_token: app_token };
 			next();
 
 		});

@@ -19,14 +19,19 @@
 
 	function check( req, res, next ){
 
+		var isLocation = nv.isAnyObject()
+							.withRequired('place_name', nv.isString())
+							.withRequired('place_id'  , nv.isString());
+
 		var checkUpdateRequest = nv.isAnyObject()
 
-			.withRequired('facebook_id' , nv.isString() )
-			.withRequired('userId' 		, nv.isString({ regex: rg.db_id }))
-			.withOptional('name' 		, nv.isString({ min: 2, max: 15 }))
-			.withOptional('age' 		, nv.isNumber({ min: st.app.min_age, max: st.app.max_age }))
-			.withOptional('job' 		, nv.isString({ min: 2, max: 25 }))
-			.withOptional('ideal_night' , nv.isString({ max: 500 }))
+			.withRequired('facebook_id' 	 		 , nv.isString() )
+			.withOptional('name' 			 		 , nv.isString({ min: 2, max: 15 }))
+			.withOptional('age' 					 , nv.isNumber({ min: st.app.min_age, max: st.app.max_age }))
+			.withOptional('job' 			 		 , nv.isString({ min: 2, max: 25 }))
+			.withOptional('ideal_night' 	 		 , nv.isString({ max: 500 }))
+			.withOptional('location' 				 , nv.isLocation )
+			.withOptional('current_location_place_id', nv.isString() )
 			.withCustom( isIdOk )
 
 		nv.run( checkUpdateRequest, req.sent, function( n, errors ){

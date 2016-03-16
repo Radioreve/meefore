@@ -64,6 +64,7 @@
   <link rel="stylesheet" href="/css/src/profile/profile.css">
   <link rel="stylesheet" href="/css/src/profile/profile_user.css">
   <link rel="stylesheet" href="/css/src/search/search.css">
+  <link rel="stylesheet" href="/css/src/seek/seek.css">
   <link rel="stylesheet" href="/css/src/settings/settings.css">
   <link rel="stylesheet" href="/css/src/spotted/spotted.css">
   <link rel="stylesheet" href="/css/src/login/login.css">
@@ -117,7 +118,7 @@
       <!-- landing hero -->
       <div class="landing-hero">
         <div class="hero-logo">
-          <img src="/img/app/logo_nobg.png" width="80" alt="Logo meefore soirées">
+          <img src="/img/app/logo-light.png" width="44" alt="Logo meefore soirées">
           <!-- <h1 class="hero-logo-name">meefore</h1> -->
         </div>
         <div class="hero-languages">
@@ -216,32 +217,37 @@
     </footer>
     <!-- end landing footer -->
   </div>
-  
   <!-- Landing Page End -->
   
 
-  <!-- header -->
-  <section class="app">
+  <section class="app nonei">
     
-    <header class="app-section app-header">
+    <!-- header -->
+    <header class="app-header">
+      <div class="app-header__splitter"></div>
       <div class="app-header__logo">
-        <img src="/img/app/logo_nobg.png" width="50"/>
+        <img src="/img/app/logo_nobg.png" width="40"/>
       </div>
       <nav class="app-nav">
         <ul>
-          <li class="app__menu-item">
+          <li class="app__menu-item active">
             <a href="#profile">
-              <i class-"app__menu-icon icon icon-user"></i>
+              <i class="app__menu-icon icon icon-user"></i>
             </a>
           </li>
           <li class="app__menu-item">
             <a href="#map">
-              <i class="app__menu-icon icon icon-user"></i>
+              <i class="app__menu-icon icon icon-glass"></i>
             </a>
           </li>
           <li class="app__menu-item">
             <a href="#notifications">
-              <i class="app__menu-icon icon icon-user"></i>
+              <i class="app__menu-icon icon icon-bell-alt"></i>
+            </a>
+          </li>
+          <li class="app__menu-item">
+            <a href="#search">
+              <i class="app__menu-icon icon icon-search"></i>
             </a>
           </li>
         </ul>
@@ -249,15 +255,93 @@
     </header>
     <!-- header end -->
     
+
+    <!-- Thumbnail start -->
+    <section class="app-thumbnail">
+    </section>
+     <!-- Thumbnail end -->
+  
+
+   <!-- Profile start -->
     <section class="app-section profile">
-      
 
+      <div class="profile-me profile-section">
+        <div class="profile-me__title">
+          <h1 data-lid="p_info_title"></h1>
+        </div>
+        <div class="profile-me__subtitle">
+          <h3 data-lid="p_info_subtitle"></h1>
+        </div>
+        <div class="profile-me__splitter"></div>
+        <div class="profile-input">
+          <div class="profile__input profile__input-name" data-param="name">
+            <i class="icon icon-user"></i>
+            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
+            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
+            <label for="profile-me__name" data-lid="p_name_label"></label>
+            <input readonly class="profile__input-field" data-lid="p_name_placeholder" id="profile-me__name" type="text">
+            <div class="profile__input-explanation" data-lid="p_name_explanation"></div>
+          </div>
+          <div class="profile__input profile__input-age" data-param="age">
+            <i class="icon icon-user"></i>
+            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
+            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
+            <label for="profile-me__age" data-lid="p_age_label"></label>
+            <input readonly class="profile__input-field" data-lid="p_age_placeholder" id="profile-me__age"type="number">
+            <div class="profile__input-explanation" data-lid="p_age_explanation"></div>
+          </div>
+          <div class="profile__input profile__input-country profile__input--no-edit">
+            <i class="icon icon-user"></i>
+            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
+            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
+            <label for="profile-me__country" data-lid="p_country_label"></label>
+            <input readonly class="profile__input-field" type="text" id="profile-me__country">
+            <div class="profile__input-explanation" data-lid="p_country_explanation"></div>
+          </div>
+          <div class="profile__input profile__input-job" data-param="job">
+            <i class="icon icon-user"></i>
+            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
+            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
+            <label for="profile-me__job" data-lid="p_job_label"></label>
+            <input readonly class="profile__input-field" data-lid="p_job_placeholder" id="profile-me__job" type="text">
+            <div class="profile__input-explanation" data-lid="p_job_explanation"></div>
+          </div>
+          <div class="profile__input profile__input-location" data-param="location">
+            <i class="icon icon-user"></i>
+            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
+            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
+            <label for="profile-me__location" data-lid="p_location_label"></label>
+            <input readonly class="profile__input-field" type="text" id="profile-me__location">
+            <div class="profile__input-explanation" data-lid="p_location_explanation"></div>
+          </div>
+          <div class="profile__input profile__input-ideal-night" data-param="ideal_night">
+            <i class="icon icon-user"></i>
+            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
+            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
+            <label for="profile-me__ideal-night" data-lid="p_ideal_night_label"></label>
+            <textarea readonly class="profile__input-field" data-lid="p_ideal_night_placeholder" id="profile-me__ideal-night"></textarea>
+            <div class="profile__input-explanation" data-lid="p_ideal_night_explanation"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-pictures profile-section">
+        <div class="profile-pictures__title">
+          <h1 data-lid="p_pictures_title"></h1>
+        </div>
+        <div class="profile-pictures-subtitle">
+          <h3 data-lid="p_pictures_subtitle"></h3>
+        </div>
+      </div>
+  
     </section>
+     <!-- Profile end end -->
+  
 
+     <!-- Map start -->
     <section class="app-section map">
-      
-
     </section>
+     <!-- Map end -->
 
   </section>
 
@@ -314,6 +398,7 @@
   <script src="js/src/notifications/notifications.js"></script>
   <script src="js/src/onboarding/onboarding.js"></script>
   <script src="js/src/party/party.js"></script>
+  <script src="js/src/seek/seek.js"></script>
   <script src="js/src/party/party_create.js"></script>
   <script src="js/src/profile/profile.js"></script>
   <script src="js/src/profile/profile_user.js"></script>

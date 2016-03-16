@@ -1,3 +1,14 @@
+	
+	LJ.text = function( text_id ){
+		var app_lang = LJ.lang.getAppLang();
+		var text_src = LJ.text_source[ text_id ];
+
+		if( !text_src ){
+			return LJ.wlog('Error, couldnt find text source for text_id : ' + text_id );
+		} else {
+			return text_src[ app_lang ];
+		}
+	};
 
 	LJ.text_source = _.merge( LJ.text_source || {}, {
 
@@ -54,7 +65,7 @@
 			"en": "My information"
 		},
 		p_info_subtitle: {
-			"fr": "Dîtes-nous tout et surtout, concentrez-vous sur l'essentiel",
+			"fr": "Pour modifier un paramètre, cliquer simplement dessus",
 			"en": "Tell us everything, and above all, focus on the essential",
 		},
 		p_name_label: {
@@ -64,6 +75,18 @@
 		p_name_placeholder: {
 			"fr": "Prad Bitt",
 			"en": "Prad Bitt"
+		},
+		p_age_placeholder: {
+			"fr": "18",
+			"en": "18"
+		},
+		p_job_placeholder: {
+			"fr": "Etudiant",
+			"en": "Student"
+		},
+		p_ideal_night_placeholder: {
+			"fr": "Les amis, les soirées, les rencontres...",
+			"en": "Friends, parties, new people..."
 		},
 		p_age_label: {
 			"fr": "Âge",
@@ -77,61 +100,37 @@
 			"fr": "Situation",
 			"en": "Occupation"
 		},
-		p_lifestyle_label: {
-			"fr": "Humeur",
-			"en": "Mood"
+		p_location_label: {
+			"fr": "Ville actuelle",
+			"en": "Current city"
 		},
-		p_lifestyle_happy: {
-			"fr": "Heureux",
-			"en": "Happy"
+		p_ideal_night_label: {
+			"fr": "Ta soirée idéale",
+			"en": "Your ideal night"
 		},
-		p_lifestyle_cheers: {
-			"fr": "Relax",
-			"en": "Relax"
+		p_name_explanation: {
+			"fr": "Pseudonyme par lequel les autres membres vous appelerons. Choose wisely.",
+			"en": "Pseudo everyone will call you as. Choose wisely."
 		},
-		p_lifestyle_drunk: {
-			"fr": "Ivre",
-			"en": "Drunk"
+		p_age_explanation: {
+			"fr": "On évite de mentir ;-)",
+			"en": "Please don't lie ;-)"
 		},
-		p_lifestyle_chill: {
-			"fr": "Relax",
-			"en": "Chill"
+		p_country_explanation: {
+			"fr": "Votre nationalité est celle indiquée sur Facebook. En cas d'erreur, envoyez-nous un mail.",
+			"en": "Your nationality is the one indicated on Facebook. If there is a mistake, please email us."
 		},
-		p_lifestyle_horney: {
-			"fr": "Coquin",
-			"en": "Horney"
+		p_job_explanation: {
+			"fr": "Concrètement, vous faites quoi dans la vie ?",
+			"en": "So, how do you keep busy everyday ?"
 		},
-		p_lifestyle_innocent: {
-			"fr": "Innocent",
-			"en": "Innocent"
+		p_location_explanation: {
+			"fr": "Où sortez-vous en ce moment ? Meefore works everywhere",
+			"en": "Where do you get out these days ? Meefore works everywhere"
 		},
-		p_lifestyle_evil: {
-			"fr": "Vilain",
-			"en": "Nasty"
-		},
-		p_drink_label: {
-			"fr": "Ton verre",
-			"en": "Your drink"
-		},
-		p_drink_water: {
-			"fr": "Eau",
-			"en": "Water"
-		},
-		p_drink_hard: {
-			"fr": "Hard",
-			"en": "Hard"
-		},
-		p_drink_shots: {
-			"fr": "Shots",
-			"en": "Shots"
-		},
-		p_drink_beer: {
-			"fr": "Bières",
-			"en": "Beers"
-		},
-		p_drink_wine: {
-			"fr": "Vins",
-			"en": "Wines"
+		p_ideal_night_explanation: {
+			"fr": "Lâchez-vous, pas de retenue ici.",
+			"en": "Knock yourself out"
 		},
 		p_friends_title: {
 			"fr": "Mes amis Facebook",
@@ -640,6 +639,10 @@
 		to_upload_singlepic: {
 			"fr": "Ne téléchargez qu'une seule image à la fois",
 			"en": "Please, don't upload more than one picture at once"
+		},
+		to_profile_update_success: {
+			"fr": "Vos informations ont été modifiées",
+			"en": "Your informations has been updated"
 		},
 		to_upload_pic_success: {
 			"fr": "Votre photo a été modifiée",

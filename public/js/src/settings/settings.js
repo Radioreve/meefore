@@ -2,7 +2,17 @@
 	window.LJ.settings = _.merge( window.LJ.settings || {}, {
 
 		init: function(){
-			
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.settings.setMyPreferences();
+
+			});
+		},
+		setMyPreferences: function(){
+
+			var settings = LJ.settings;
+
+
 		}
 
 	});

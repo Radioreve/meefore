@@ -1,0 +1,50 @@
+
+.pac-container {
+   z-index: 99999999;
+   display: block;
+   box-shadow: none;
+   border: 1px solid #ccc;
+   background: rgb(255, 255, 255);
+   border-bottom: 1px solid #E4E4E4;
+   box-shadow: 0 0 1px #e4e4e4;
+   padding: 15px;
+   border-radius: 2px 2px 0 0;
+   margin-top: 5px;
+}
+
+.item-name {}
+
+.pac-item {
+   cursor: pointer;
+   padding: 4px 10px;
+}
+
+.pac-container:after {
+   background-image: none!important;
+   color: #ccc;
+   font-size: 10px;
+}
+
+.pac-item:first-of-type {
+   border-top: none;
+   background: #fcfcfc;
+}
+ 
+.pac-item-query {
+	font-size: 18px;
+	margin-right: 4px;
+	font-family: 'Alegreya sans';
+	color: #191919;
+}
+
+
+/* Override */
+.seek-profile-places.pac-container {
+
+}
+.seek-profile-places .pac-item {
+
+}
+.seek-profile-places .pac-item-query {
+
+}

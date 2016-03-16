@@ -2,10 +2,13 @@
 
 window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
-	$body: $('body'),
-	$curtain: $('.ui__curtain'),
-	show_curtain_duration: 2000,
-	hide_curtain_duration: 2000,
+	$body 		: $('body'),
+	$curtain 	: $('.ui__curtain'),
+
+	show_curtain_duration	: 2000,
+	hide_curtain_duration	: 2000,
+	minimum_api_delay		: 1000,
+	
 	init: function(){
 
 	},
@@ -28,13 +31,38 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 			});
 		});
 	},
+	showLoader: function( loader_id ){
+
+		$( LJ.static.renderStaticImage('main_loader') )
+				 .attr('data-loaderid', loader_id)
+				 .appendTo('body')
+				 .velocity('transition.fadeIn', { duration: 400 });
+
+	},
+	hideLoader: function( loader_id ){
+
+		LJ.static.getLoader( loader_id )
+				 .velocity('transition.fadeOut', {
+				 	duration: 250,
+				 	complete: function(){
+				 		$(this).remove();
+				 	}
+				 })
+
+	},
 	render: function( html ){
 
 		var $html = $( html );
 		LJ.lang.translate( $html );
 		return $html.prop('outerHTML');
 
-	},
+	}
+
+});
+	
+
+window.LJ.fn = _.merge( window.LJ.fn || {}, {
+
 	handleDomEvents_UI: function(){
 
 		LJ.$logout.click(function(){

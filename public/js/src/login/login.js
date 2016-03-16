@@ -2,7 +2,8 @@
 	window.LJ.login = _.merge( window.LJ.login || {}, {
 
 			'$trigger_login': '.js-login',
-			'opening_duration': 500,
+			'opening_duration': 1000,
+			'completed_steps': 0,
 
 			init: function(){
 				return LJ.promise(function( resolve, reject ){
@@ -18,26 +19,43 @@
 					duration: LJ.login.opening_duration
 				});
 
-				return LJ.delay( LJ.ui.opening_duration / 2 )
+				return LJ.delay( 1000 )
 						 .then(function(){
 						 	$( LJ.login.renderLoginProgression() )
 								.appendTo( LJ.ui.$curtain )
-								.velocity('transition.fadeIn');
+								.hide()
+								.velocity('transition.fadeIn', {
+									duration: 2000,
+									delay: LJ.ui.opening_duration
+								});
 							return LJ.Promise.resolve( facebook_token );
 						 });
 
 			},
 			lastStepCompleted: function(){
-				LJ.login.fillProgressBar(50);
+
+				LJ.log('Last step completed !');
+				LJ.login.stepCompleted(100);
+
+				$('.app').removeClass('nonei');
+				$('.landing').remove();
+
+				return LJ.delay(1000).then(function(){
+					LJ.ui.hideCurtain({ duration: 900 });
+				});
+
 			},
-			stepCompleted: function( step_id ){
-				LJ.login.fillProgressBar(25);
+			stepCompleted: function( fill_ratio ){
+
+				fill_ratio = fill_ratio || 25;
+				LJ.login.completed_steps += 1;
+				LJ.login.fillProgressBar( fill_ratio );
 			},
 			fillProgressBar: function( fill_ratio ){
 
 				var max_width = $('.login__progress-bar').width();
-				var cur_width = $('.login__progress-bar-bg').width();
 				var add_width = max_width * fill_ratio/100;
+				var cur_width = (LJ.login.completed_steps) * add_width;
 				var new_width = cur_width + add_width;
 
 				$('.login__progress-bar-bg')

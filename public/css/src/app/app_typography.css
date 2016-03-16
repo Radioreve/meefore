@@ -2,9 +2,15 @@
 
 body{
 	font-family: 'Alegreya Sans';
+	color: #191919;
 }
 
 .login {
 	font-family: 'Creamy Script';
 	font-size: 40px;
+}
+
+.profile-me__title h1 {
+	font-family: 'Creamy Script';
+	font-size: 60px;
 }

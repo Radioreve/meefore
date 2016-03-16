@@ -1,9 +1,166 @@
 
 	window.LJ.profile = _.merge( window.LJ.profile || {}, {
 
-		init: function(){
+		$profile: $('.profile'),
+
+		init: function( resolve, reject ){
+			return LJ.promise(function( resolve, reject ){
+				
+				LJ.api.fetchMe()
+					.then( LJ.log("User profile fetched"))
+					.then( LJ.profile.setMyInformations )
+					.then( LJ.profile.setMyThumbnail )
+					.then( LJ.profile.setMyPictures )
+					.then( LJ.profile.handleDomEvents )
+					.then( resolve )
+
+			});
 
 		},
+		setMyInformations: function(){
+
+			$('#profile-me__name').val( LJ.user.name );
+			$('#profile-me__job').val( LJ.user.job );
+			$('#profile-me__ideal-night').val( LJ.user.ideal_night );
+			$('#profile-me__location').val( LJ.user.location.place_name );
+			$('#profile-me__country').val( LJ.text_source["country_" + LJ.user.country_code ][ LJ.lang.getAppLang() ]);
+
+			$('#profile-me__age').val( LJ.user.age )
+								 .attr('max', LJ.settings.app.max_age )
+								 .attr('min', LJ.settings.app.min_age );
+
+			// Google maps Autocomplete library
+			LJ.seek.activatePlacesInProfile();
+				
+		},
+		setMyThumbnail: function(){
+		},
+		setMyPictures: function(){
+		},
+		handleDomEvents: function(){
+
+			LJ.profile.$profile.on('click', '.profile__input .profile__input-field', LJ.profile.activateInput );
+			LJ.profile.$profile.on('click', '.profile__input .profile__action-cancel', LJ.profile.deactivateInput );
+			LJ.profile.$profile.on('click', '.profile__input .profile__action-validate', LJ.profile.updateProfile );
+
+		},
+		handleApiError: function( err ){
+
+			var err_ns  = err.namespace;
+			var err_id  = err.errors[0];
+			var call_id = err.call_id
+
+			if( err.namespace == 'update_profile_base' ){
+				$('[data-callid="' + call_id + '"]').removeClass('--validating'); 
+				LJ.ui.showToast('La mise à jour na pas été effectuée', 'error');
+				return;
+			}
+
+		},
+		activateInput: function( input ){
+
+			var $self  = typeof input == 'string' ? $(input) : $(this);
+			var $block = $self.closest('.profile__input');
+			var $input = $block.find('.profile__input-field');
+
+			if( $block.hasClass('active') || $block.hasClass('profile__input--no-edit') ){
+				return;
+			} else {
+				$block.addClass('active'); 
+			}
+
+			$input.attr( 'readonly', false );
+
+			$block.find('.profile__input-action')
+				  .velocity('transition.slideUpIn', {
+				  	duration: 500
+				  });
+
+			$block.attr('data-restore', $input.val() );
+
+		},
+		deactivateInput: function( input ){
+
+			var $self  = typeof input == 'string' ? $(input) : $(this);
+			var $block = $self.closest('.profile__input');
+			var $input = $block.find('.profile__input-field');
+
+			if( $block.hasClass('active') ){ $block.removeClass('active'); } else { return; }
+
+			$input.attr( 'readonly', true );
+
+			$block.find('.profile__input-action')
+				  .velocity('transition.slideUpOut', {
+				  	duration: 500
+				  });
+
+			var former_value = $block.attr('data-restore');
+			if( former_value != null ){
+				$input.val( former_value );
+				$block.attr( 'data-restore', null );
+			}
+
+		},
+		updateProfile: function( child ){
+
+			var update = {};
+
+			var $self  = typeof child == 'string' ? $(child) : $(this);
+			var $block = $self.closest('.profile__input');
+
+			if( $block.length == 0 || !$block.hasClass('active') || $block.hasClass('--validating') )
+				return LJ.wlog('Not calling the api');
+
+			var new_value = $block.find('.profile__input-field').val();
+			var attribute = $block.attr('data-param');
+			var call_id = LJ.generateId();
+
+			update[ attribute ] = new_value;
+			update[ 'call_id' ] = LJ.generateId();
+
+			// Location is a specific case.
+			if( attribute == "location" ){
+				$block.attr('data-store', LJ.seek.profile_places.getPlace().formatted_address );
+				update.location = {
+					place_name : LJ.seek.profile_places.getPlace().formatted_address,
+					place_id   : LJ.seek.profile_places.getPlace().place_id
+				};
+			}
+
+			$block.attr( 'data-callid', call_id ).addClass('--validating');
+			
+			LJ.fn.log('Updating profile...');
+			LJ.api.updateProfile( update )
+				  .then( LJ.profile.handleUpdateProfileSuccess, LJ.profile.handleApiError );
+
+		},
+		handleUpdateProfileSuccess: function( exposed ){
+
+			LJ.ui.showToast( LJ.text('to_profile_update_success') );
+
+			LJ.setUser( exposed.user );
+
+			var $block  = $('.profile__input[data-callid="' + exposed.call_id + '"]');
+			var $input  = $block.find('.profile__input-field');
+			var $action = $block.find('.profile__input-action');
+
+			if( $block.attr('data-store') ){
+				$input.val( $block.attr('data-store') );
+			}
+
+			$block.attr('data-restore', null );
+			$input.attr('readonly', true );
+			$action.velocity('transition.slideUpOut', {
+				duration: 500,
+				complete: function(){ $block.removeClass('--validating').removeClass('active'); }
+			});
+
+		}
+
+	});
+
+	window.LJ.fn = _.merge( window.LJ.fn || {}, {
+
 		handleDomEvents_Profile: function(){
 
 			LJ.$body.on('click', '.row-informations .row-input', function(){
@@ -510,7 +667,7 @@
 
 
 		},
-		updateProfile: function(){
+		updateProfile2: function(){
 
 			var _id 		  = LJ.user._id,
 				$container    = $('.row-informations')
@@ -552,7 +709,7 @@
 
 
 		},
-		handleUpdateProfileSuccess: function( data ){
+		handleUpdateProfileSuccess2: function( data ){
 
 			LJ.fn.log('update profile success received, user is : \n' + JSON.stringify( data.user, null, 4 ) );
 			var user = data.user;
