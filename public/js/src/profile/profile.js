@@ -19,13 +19,13 @@
 		},
 		setMyInformations: function(){
 
-			$('#profile-me__name').val( LJ.user.name );
-			$('#profile-me__job').val( LJ.user.job );
-			$('#profile-me__ideal-night').val( LJ.user.ideal_night );
-			$('#profile-me__location').val( LJ.user.location.place_name );
-			$('#profile-me__country').val( LJ.text_source["country_" + LJ.user.country_code ][ LJ.lang.getAppLang() ]);
+			$('#me__name').val( LJ.user.name );
+			$('#me__job').val( LJ.user.job );
+			$('#me__ideal-night').val( LJ.user.ideal_night );
+			$('#me__location').val( LJ.user.location.place_name );
+			$('#me__country').val( LJ.text_source["country_" + LJ.user.country_code ][ LJ.lang.getAppLang() ]);
 
-			$('#profile-me__age').val( LJ.user.age )
+			$('#me__age').val( LJ.user.age )
 								 .attr('max', LJ.settings.app.max_age )
 								 .attr('min', LJ.settings.app.min_age );
 
@@ -34,14 +34,17 @@
 				
 		},
 		setMyThumbnail: function(){
+
+
+
 		},
 		setMyPictures: function(){
 		},
 		handleDomEvents: function(){
 
-			LJ.profile.$profile.on('click', '.profile__input .profile__input-field', LJ.profile.activateInput );
-			LJ.profile.$profile.on('click', '.profile__input .profile__action-cancel', LJ.profile.deactivateInput );
-			LJ.profile.$profile.on('click', '.profile__input .profile__action-validate', LJ.profile.updateProfile );
+			LJ.profile.$profile.on('click', '.me__input .me__input-field', LJ.profile.activateInput );
+			LJ.profile.$profile.on('click', '.me__input .me__action-cancel', LJ.profile.deactivateInput );
+			LJ.profile.$profile.on('click', '.me__input .me__action-validate', LJ.profile.updateProfile );
 
 		},
 		handleApiError: function( err ){
@@ -60,10 +63,10 @@
 		activateInput: function( input ){
 
 			var $self  = typeof input == 'string' ? $(input) : $(this);
-			var $block = $self.closest('.profile__input');
-			var $input = $block.find('.profile__input-field');
+			var $block = $self.closest('.me__input');
+			var $input = $block.find('.me__input-field');
 
-			if( $block.hasClass('active') || $block.hasClass('profile__input--no-edit') ){
+			if( $block.hasClass('active') || $block.hasClass('me__input--no-edit') ){
 				return;
 			} else {
 				$block.addClass('active'); 
@@ -71,8 +74,8 @@
 
 			$input.attr( 'readonly', false );
 
-			$block.find('.profile__input-action')
-				  .velocity('transition.slideUpIn', {
+			$block.find('.me__input-action')
+				  .velocity('transition.fadeIn', {
 				  	duration: 500
 				  });
 
@@ -82,16 +85,16 @@
 		deactivateInput: function( input ){
 
 			var $self  = typeof input == 'string' ? $(input) : $(this);
-			var $block = $self.closest('.profile__input');
-			var $input = $block.find('.profile__input-field');
+			var $block = $self.closest('.me__input');
+			var $input = $block.find('.me__input-field');
 
 			if( $block.hasClass('active') ){ $block.removeClass('active'); } else { return; }
 
 			$input.attr( 'readonly', true );
 
-			$block.find('.profile__input-action')
-				  .velocity('transition.slideUpOut', {
-				  	duration: 500
+			$block.find('.me__input-action')
+				  .velocity('transition.fadeOut', {
+				  	duration: 300
 				  });
 
 			var former_value = $block.attr('data-restore');
@@ -106,12 +109,12 @@
 			var update = {};
 
 			var $self  = typeof child == 'string' ? $(child) : $(this);
-			var $block = $self.closest('.profile__input');
+			var $block = $self.closest('.me__input');
 
 			if( $block.length == 0 || !$block.hasClass('active') || $block.hasClass('--validating') )
 				return LJ.wlog('Not calling the api');
 
-			var new_value = $block.find('.profile__input-field').val();
+			var new_value = $block.find('.me__input-field').val();
 			var attribute = $block.attr('data-param');
 			var call_id = LJ.generateId();
 
@@ -140,9 +143,9 @@
 
 			LJ.setUser( exposed.user );
 
-			var $block  = $('.profile__input[data-callid="' + exposed.call_id + '"]');
-			var $input  = $block.find('.profile__input-field');
-			var $action = $block.find('.profile__input-action');
+			var $block  = $('.me__input[data-callid="' + exposed.call_id + '"]');
+			var $input  = $block.find('.me__input-field');
+			var $action = $block.find('.me__input-action');
 
 			if( $block.attr('data-store') ){
 				$input.val( $block.attr('data-store') );

@@ -8,6 +8,27 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	show_curtain_duration	: 2000,
 	hide_curtain_duration	: 2000,
 	minimum_api_delay		: 1000,
+
+	//Down
+	slideDownInLight:  { opacity: [1, 0], translateY: [0, 10]   },
+    slideDownOutLight:  { opacity: [0, 1], translateY: [10, 0]   },
+    slideDownInVeryLight:  { opacity: [1, 0], translateY: [0, 7]   },
+    slideDownOutVeryLight:  { opacity: [0, 1], translateY: [7, 0]   },
+    //Up
+    slideUpInLight: { opacity: [1, 0], translateY: [0, -10]   },
+	slideUpOutLight: { opacity: [0, 1], translateY: [-10, 0]   },
+    slideUpInVeryLight: { opacity: [1, 0], translateY: [0, -7]   },
+	slideUpOutVeryLight: { opacity: [0, 1], translateY: [-7, 0]   },
+    //Left
+	slideLeftInLight:  { opacity: [1, 0], translateX: [0, -10]   },
+	slideLeftOutLight:  { opacity: [0, 1], translateX: [-10, 0]   },
+    slideLeftInVeryLight:  { opacity: [1, 0], translateX: [0, -7]   },
+    slideLeftOutVeryLight:  { opacity: [0, 1], translateX: [-7, 0]   },
+    //Right
+    slideRightInLight: { opacity: [1, 0], translateX: [0, 10]   },
+	slideRightOutLight: { opacity: [0, 1], translateX: [10, 0]   },
+    slideRightInVeryLight: { opacity: [1, 0], translateX: [0, 7]   },
+    slideRightOutVeryLight: { opacity: [0, 1], translateX: [7, 0]   },
 	
 	init: function(){
 

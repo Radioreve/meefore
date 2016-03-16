@@ -1,0 +1,214 @@
+
+.pictures {
+	display: flex;
+	flex-flow: row;
+	justify-content: center;
+}
+.picture {
+   position: relative;
+   background: white;
+   border: 1px solid rgb(228, 228, 228);
+   width: 170px;
+   transition: .2s;
+   padding: 10px;
+   cursor: pointer;
+   margin: 6px;
+}
+
+.picture:hover {
+   border: 1px double #DCDCDC;
+   box-shadow: 0 0 10px #CCCCDC;
+}
+
+.picture:hover .picture-icon {
+    opacity: 1;
+}
+
+.picture.--main {
+   transform: scale(1.2);
+   margin: 0 30px;
+}
+
+.picture-icon {
+    transition: all ease-in .10s;
+    display: flex;
+    flex-flow: row wrap;
+    height: 170px;
+    width: 170px;
+    background: rgba(51, 175, 255, 0.35);
+    top: 10px;
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+ 
+.picture__icon {
+   width: 50%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   font-size: 24px;
+   border: 1px solid #BDBDBD;
+   box-sizing: border-box;
+   color: white; 
+   border: 1px solid;
+}
+.picture__icon:hover {
+    background: rgba(255,255,255,.2);
+}
+.picture__icon.--mainify {}
+.picture__icon.--upload-facebook {}
+.picture__icon.--upload-desktop {}
+.picture__icon.--delete {}
+.picture__icon:nth-of-type(1){
+    border-right: none;
+    border-bottom: none;
+}
+.picture__icon:nth-of-type(2){
+    border-bottom: none;
+}
+.picture__icon:nth-of-type(3){
+    border-right: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.main-picture i.icon-main,
+.main-picture i.icon-delete {
+   display: none;
+}
+
+.picture-hashtag {
+   text-align: center;
+   width: 90%;
+   margin: 0 auto;
+   position: relative;
+   top: -4px; 
+   cursor: pointer;
+}
+.picture-hashtag:hover {
+    background: #F9F9F9;
+}
+
+.picture-hashtag span {
+    color: #E94F6A;
+}
+.picture-hashtag input {
+   width: 114px;
+   padding: 3px 3px 3px 6px;
+   color: #B7B7B7;
+   border-bottom: 1px solid transparent;
+   transition: all .5s;
+   font-family: 'Karla';
+   font-size: 11px;
+   border: none;
+   cursor: pointer;
+}
+
+.row-pictures.editing .picture-hashtag {
+   border-bottom: 1px solid #C1C1C1;
+   background-color: whitesmoke;
+   color: #312525;
+}
+
+.picture-edit {
+   display: none;
+}
+
+.picture-edit,
+.picture-upload {
+   width: 160px;
+   height: 152px;
+   position: absolute;
+   background-color: rgba(254, 254, 254, 0.58);
+   top: 0px;
+   left: -1px;
+   padding-top: 71px;
+   z-index: 1000000;
+}
+.picture-edit {
+    z-index: 10000000;
+}
+
+.upload-facebook,
+.upload-desktop {
+   display: inline-block;
+   position: relative;
+   cursor: pointer;
+}
+
+.upload_form + i {
+   cursor: pointer;
+}
+
+.upload_form:hover + i {
+   background-color: #F3F3F3;
+}
+
+.picture-upload i:hover {
+   background-color: #F3F3F3;
+}
+
+.picture-edit i,
+.picture-upload i {
+   font-size: 20px;
+   background-color: white;
+   border: 1px solid #696969;
+   padding: 3Px;
+   color: #828282;
+   margin: 3px;
+   transition: all ease-out .2s;
+   cursor: pointer;
+}
+
+.picture-edit i:not(.selected):hover {
+   background: #eee;
+}
+
+.picture-edit i:first-child {
+}
+
+.row-buttons {
+   display: none;
+   margin-top: 36px;
+   text-align: center;
+}
+
+.row-buttons--modal {margin-top: 15px;height: 40px;}
+
+.picture-edit > div {
+   display: inline-block;
+}
+
+.mainPicture {
+   padding: 9px;
+   background: white;
+}
+/*various hacks*/
+
+.upload_form {
+   position: absolute;
+   top: 0;
+   left: 0;
+}
+
+.pictures .cloudinary-fileupload {
+   width: 35px;
+   height: 30px;
+   position: absolute;
+   top: -5px;
+   left: 3px;
+   opacity: 0.01;
+}

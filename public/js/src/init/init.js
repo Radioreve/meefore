@@ -40,8 +40,7 @@
                 .then( LJ.login.stepCompleted )
                 .then(function(){
                     return LJ.Promise.all([
-                            LJ.profile.init(),
-                            LJ.uploader.init()
+                            LJ.profile.init()
                     ]);
                 })
                 .then( LJ.login.lastStepCompleted )

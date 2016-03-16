@@ -8,7 +8,7 @@
 		},
 		activatePlacesInProfile: function(){
 
-			var input = document.getElementById('profile-me__location');
+			var input = document.getElementById('me__location');
 			var options = { types: ['(cities)'] };
 
 			LJ.seek.profile_places = new google.maps.places.Autocomplete( input, options );

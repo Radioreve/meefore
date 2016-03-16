@@ -63,6 +63,7 @@
   <link rel="stylesheet" href="/css/src/onboarding/onboarding.css">
   <link rel="stylesheet" href="/css/src/profile/profile.css">
   <link rel="stylesheet" href="/css/src/profile/profile_user.css">
+  <link rel="stylesheet" href="/css/src/pictures/pictures.css">
   <link rel="stylesheet" href="/css/src/search/search.css">
   <link rel="stylesheet" href="/css/src/seek/seek.css">
   <link rel="stylesheet" href="/css/src/settings/settings.css">
@@ -264,75 +265,128 @@
 
    <!-- Profile start -->
     <section class="app-section profile">
-
-      <div class="profile-me profile-section">
-        <div class="profile-me__title">
+      <!-- Profile me start  -->
+      <div class="profile-section profile-section-me">
+        <div class="profile-section__title">
           <h1 data-lid="p_info_title"></h1>
         </div>
-        <div class="profile-me__subtitle">
+        <div class="profile-section__subtitle">
           <h3 data-lid="p_info_subtitle"></h1>
         </div>
-        <div class="profile-me__splitter"></div>
-        <div class="profile-input">
-          <div class="profile__input profile__input-name" data-param="name">
+        <div class="profile-section__splitter"></div>
+        <div class="profile-section__body --me">
+          <div class="me__input me__input-name" data-param="name">
             <i class="icon icon-user"></i>
-            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
-            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
-            <label for="profile-me__name" data-lid="p_name_label"></label>
-            <input readonly class="profile__input-field" data-lid="p_name_placeholder" id="profile-me__name" type="text">
-            <div class="profile__input-explanation" data-lid="p_name_explanation"></div>
+            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
+            <label for="me__name" data-lid="p_name_label"></label>
+            <input readonly class="me__input-field" data-lid="p_name_placeholder" id="me__name" type="text">
+            <div class="me__input-explanation" data-lid="p_name_explanation"></div>
           </div>
-          <div class="profile__input profile__input-age" data-param="age">
+          <div class="me__input me__input-age" data-param="age">
             <i class="icon icon-user"></i>
-            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
-            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
-            <label for="profile-me__age" data-lid="p_age_label"></label>
-            <input readonly class="profile__input-field" data-lid="p_age_placeholder" id="profile-me__age"type="number">
-            <div class="profile__input-explanation" data-lid="p_age_explanation"></div>
+            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
+            <label for="me__age" data-lid="p_age_label"></label>
+            <input readonly class="me__input-field" data-lid="p_age_placeholder" id="me__age"type="number">
+            <div class="me__input-explanation" data-lid="p_age_explanation"></div>
           </div>
-          <div class="profile__input profile__input-country profile__input--no-edit">
+          <div class="me__input me__input-country me__input--no-edit">
             <i class="icon icon-user"></i>
-            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
-            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
-            <label for="profile-me__country" data-lid="p_country_label"></label>
-            <input readonly class="profile__input-field" type="text" id="profile-me__country">
-            <div class="profile__input-explanation" data-lid="p_country_explanation"></div>
+            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
+            <label for="me__country" data-lid="p_country_label"></label>
+            <input readonly class="me__input-field" type="text" id="me__country">
+            <div class="me__input-explanation" data-lid="p_country_explanation"></div>
           </div>
-          <div class="profile__input profile__input-job" data-param="job">
+          <div class="me__input me__input-job" data-param="job">
             <i class="icon icon-user"></i>
-            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
-            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
-            <label for="profile-me__job" data-lid="p_job_label"></label>
-            <input readonly class="profile__input-field" data-lid="p_job_placeholder" id="profile-me__job" type="text">
-            <div class="profile__input-explanation" data-lid="p_job_explanation"></div>
+            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
+            <label for="me__job" data-lid="p_job_label"></label>
+            <input readonly class="me__input-field" data-lid="p_job_placeholder" id="me__job" type="text">
+            <div class="me__input-explanation" data-lid="p_job_explanation"></div>
           </div>
-          <div class="profile__input profile__input-location" data-param="location">
+          <div class="me__input me__input-location" data-param="location">
             <i class="icon icon-user"></i>
-            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
-            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
-            <label for="profile-me__location" data-lid="p_location_label"></label>
-            <input readonly class="profile__input-field" type="text" id="profile-me__location">
-            <div class="profile__input-explanation" data-lid="p_location_explanation"></div>
+            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
+            <label for="me__location" data-lid="p_location_label"></label>
+            <input readonly class="me__input-field" type="text" id="me__location">
+            <div class="me__input-explanation" data-lid="p_location_explanation"></div>
           </div>
-          <div class="profile__input profile__input-ideal-night" data-param="ideal_night">
+          <div class="me__input me__input-ideal-night" data-param="ideal_night">
             <i class="icon icon-user"></i>
-            <i class="profile__action-validate profile__input-action icon icon-ok-1"></i>
-            <i class="profile__action-cancel profile__input-action icon icon-cancel"></i>
-            <label for="profile-me__ideal-night" data-lid="p_ideal_night_label"></label>
-            <textarea readonly class="profile__input-field" data-lid="p_ideal_night_placeholder" id="profile-me__ideal-night"></textarea>
-            <div class="profile__input-explanation" data-lid="p_ideal_night_explanation"></div>
+            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
+            <label for="me__ideal-night" data-lid="p_ideal_night_label"></label>
+            <textarea readonly class="me__input-field" data-lid="p_ideal_night_placeholder" id="me__ideal-night">
+            </textarea>
+            <div class="me__input-explanation" data-lid="p_ideal_night_explanation"></div>
           </div>
         </div>
       </div>
-
-      <div class="profile-pictures profile-section">
-        <div class="profile-pictures__title">
+      <!-- Profile me end -->
+      
+      <!-- Profile pictures start -->
+      <div class="profile-section profile-section-pictures">
+        <div class="profile-section__title">
           <h1 data-lid="p_pictures_title"></h1>
         </div>
-        <div class="profile-pictures-subtitle">
+        <div class="profile-section__subtitle">
           <h3 data-lid="p_pictures_subtitle"></h3>
         </div>
+        <div class="profile-section__splitter"></div>
+        <div class="profile-section__body pictures">
+          <div class="picture --main">
+            <img src="/img/bots/bot25f.jpg" alt="A nice placeholder picture" width="100%">
+            <div class="picture-icon">
+              <i class="picture__icon icon icon-desktop --upload-desktop"></i>
+              <i class="picture__icon icon icon-facebook --upload-facebook"></i>
+              <i class="picture__icon icon icon-user --mainify"></i>
+              <i class="picture__icon icon icon-trash-empty --trash"></i>
+            </div>
+          </div>
+          <div class="picture">
+            <img src="/img/bots/bot5f.jpg" alt="A nice placeholder picture" width="100%" >
+            <div class="picture-icon">
+              <i class="picture__icon icon icon-desktop --upload-desktop"></i>
+              <i class="picture__icon icon icon-facebook --upload-facebook"></i>
+              <i class="picture__icon icon icon-user --mainify"></i>
+              <i class="picture__icon icon icon-trash-empty --trash"></i>
+            </div>
+          </div>
+          <div class="picture">
+            <img src="/img/bots/bot33f.jpg" alt="A nice placeholder picture" width="100%" >
+            <div class="picture-icon">
+              <i class="picture__icon icon icon-desktop --upload-desktop"></i>
+              <i class="picture__icon icon icon-facebook --upload-facebook"></i>
+              <i class="picture__icon icon icon-user --mainify"></i>
+              <i class="picture__icon icon icon-trash-empty --trash"></i>
+            </div>
+          </div>
+          <div class="picture">
+            <img src="/img/bots/bot17f.jpg" alt="A nice placeholder picture" width="100%" >
+            <div class="picture-icon">
+              <i class="picture__icon icon icon-desktop --upload-desktop"></i>
+              <i class="picture__icon icon icon-facebook --upload-facebook"></i>
+              <i class="picture__icon icon icon-user --mainify"></i>
+              <i class="picture__icon icon icon-trash-empty --trash"></i>
+            </div>
+          </div>
+          <div class="picture">
+            <img src="/img/placeholder.png" alt="A nice placeholder picture" width="100%" >
+            <div class="picture-icon">
+              <i class="picture__icon icon icon-desktop --upload-desktop"></i>
+              <i class="picture__icon icon icon-facebook --upload-facebook"></i>
+              <i class="picture__icon icon icon-user --mainify"></i>
+              <i class="picture__icon icon icon-trash-empty --trash"></i>
+            </div>
+          </div>
+        </div>
       </div>
+      <!-- Profile pictures end -->
+    
   
     </section>
      <!-- Profile end end -->
