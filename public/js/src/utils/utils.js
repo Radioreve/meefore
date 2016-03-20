@@ -20,12 +20,30 @@ window.LJ = _.merge( window.LJ || {}, {
     setUser: function( user ){
         LJ.user = user;
     },
+    findMainPic: function( user ){
+        var user = user || LJ.user;
+        return _.find( user.pictures, function(p){ return p.is_main; });
+    },
     delay: function( delay ){
         return LJ.promise(function( resolve, reject ){
             setTimeout(function(){
                 resolve();
             }, delay );
         })
+    },
+    hashtagify: function( str ){
+        var hashtag_parts = [];
+        str.toLowerCase().trim().split(/[\s_-]/).forEach(function( el, i ){
+            if( i == 0 ){
+                hashtag_parts.push( el );
+            } else {
+                if( el != '') {
+                    var elm = el[0].toUpperCase() + el.substring(1);
+                    hashtag_parts.push( elm );
+                }
+            }
+        });
+        return hashtag_parts.join('');
     },
     log: function( message ){
 
@@ -48,7 +66,11 @@ window.LJ = _.merge( window.LJ || {}, {
         
     },
     generateId: function(){
-        return moment().unix();
+        return LJ.randomInt( 100, 100000000000 );
+
+    },
+    randomInt: function(low, high) {
+        return Math.floor(Math.random() * (high - low + 1) + low);
     },
     testTemplate: function( tplName, param, wrapper ){
 

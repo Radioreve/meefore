@@ -14,6 +14,7 @@
             if( typeof FB === 'undefined' )
                 return setTimeout(function(){ LJ.init( time ); }, time );
             
+
             // Translate the whole page based on sourcetext & data-lid attributes
             LJ.lang.init();
             // Cache static assets images used accross modules
@@ -46,20 +47,8 @@
                 .then( LJ.login.lastStepCompleted )
                 .then( LJ.onboarding.init )
 
-        } 
+        }
 
-                        // LJ.user.init,
-                        // LJ.settings.init, 
-                        // LJ.friends.init, 
-                        // LJ.search.init, 
-                        // LJ.map.init, 
-                        // LJ.before.init, 
-                        // LJ.party.init, 
-                        // LJ.notifications.init,
-                        // LJ.meepass.init, 
-                        // LJ.spotted.init,
-                        // LJ.invite.init,
-                        // LJ.chat.init
 
 	});
 

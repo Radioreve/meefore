@@ -1,6 +1,4 @@
 
-
-
 .profile {
   display: flex;
   flex-direction: column;
@@ -15,10 +13,13 @@
   font-size: 44px;
 }
 
-.profile-section__subtitle {border: 1px solid #33AFFF;display: inline-block;padding: 8px 20px;border-radius: 13px;/* color: white; */}
+.profile-section__subtitle {border: 1px solid #FF5200;display: inline-block;padding: 8px 20px;border-radius: 13px;/* color: white; */}
 
-.profile-section-me {flex-direction: column;width: 60%;}
+.profile-section-me {flex-direction: column;width: 60%;order: 2;}
 
+.profile-section__body {
+
+}
 
 .profile-section__splitter {width: 100px;height: 6px;background: #33AFFF;margin: 14px auto 30px;border-radius: 20px;}
 
@@ -35,11 +36,15 @@
     font-size: 24px;
     font-weight: 200;
     cursor: pointer;
-    transition: all linear .15s;
+    transition: all ease-in-out .2s;
 }
 
+.me__input-field.--active {
+  border-bottom: 1px solid #B0E0FF;
+  background: rgba(51, 175, 255, 0.08);
+  padding-left: 20px;
+}
 .me__input:not(.me__input--no-edit) .me__input-field:hover {
-    border-color: #53C26D;
 }
 .me__input input[type="text"]{}
 .me__input input[type="number"]{}
@@ -51,9 +56,9 @@
   position: absolute;
   left: -70px;
   font-size: 20px;
-  top: 6px;
+  top: 12px;
   padding-top: 13px;
-  color: #191919;
+  color: #919191;
   background: #eee;
   box-sizing: border-box;
   border-radius: 100px;
@@ -70,9 +75,9 @@
 
 
 .me__input.active .me__input-field {
-    /* font-weight: 400; */
-    color: #53c26d;
-    border-color: #53C26D;
+    background: #EFF9FF;
+    padding-left: 20px;
+    border-radius: 30px;
 }
 
 .me__input--no-edit .me__input-field {
@@ -81,8 +86,8 @@
 }
 
 .me__input .me__input-action {
-  top: 14px;
-  right: -80px;
+  top: 17px;
+  right: -20px;
   left: auto;
   display: none;
   cursor: pointer;
@@ -90,18 +95,16 @@
   height: 40px;
   width: 40px;
   padding-top: 12px;
+  background: white;
+  color: #191919;
+  border: 1px solid;
 }
 
 
 .me__input .me__action-validate {
-  background: #53c26d;
-  /* border: 1px solid #33AFFF; */
-  color: white;
-  right: -34px;
+  right: 26px;
 }
 .me__input .me__action-cancel {
-  background: white;
-  border: 1px solid;
 }
 
 .me__input .me__action-cancel:hover {

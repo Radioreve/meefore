@@ -13,15 +13,12 @@ body {
 .none { display: none; }
 .nonei { display: none!important; }
 
+button {
+    cursor: pointer;
+    outline: none;
+}
+button:hover {
+    opacity: .8;
+}
 
-.ui__curtain {
-   position: absolute;
-   width: 100%;
-   height: 100%;
-   background: #191919;
-   z-index: 12345;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-} 
 

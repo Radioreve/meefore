@@ -1,0 +1,117 @@
+
+
+/*
+   - Curtain
+   - Loaders
+   _ Toast
+   - Modals
+   
+*/
+
+.tr.tr-15 { transition: all ease-in-out .15s ; }
+.tr.tr-30 { transition: all ease-in-out .3s ; }
+.tr.tr-50 { transition: all ease-in-out .5s ; }
+
+/* App toasts */
+.toast {
+   position: fixed;
+   left: 50%;
+   transform: translateX(-50%)!important;
+   top: 10px;
+   min-width: 240px;
+   height: 34px;
+   z-index:10000;
+   color: white;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   font-size: 16px;
+   border-radius: 40px;
+   padding: 0 30px;
+}
+
+.toast--info {color: #B5FFA4;font-weight: 400;}
+
+.toast--error {background: #BD0B2A;}
+
+.toast--success {background: black;}
+/* End app toasts */
+
+
+
+/* App Loaders */
+.app__loader {
+   position: fixed;
+   left: 50%;
+   transform: translateX(-50%);
+   top: 22px;
+}
+/* End app loaders */
+
+
+
+/* App curtain  */
+.curtain {
+   position: fixed;
+   top: 0;
+   width: 100%;
+   height: 100%;
+   background: #191919;
+   z-index: 12345;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+} 
+/* End app curtain */
+
+
+/* App modals and popup */
+
+.modal {background: white;border-radius: 10px;padding: 10px 10px 20px 10px;color: #191919;width: 400px;display: flex;flex-flow: column nowrap;}
+
+.modal-content {
+
+}
+ 
+.modal-header {min-height: 60px;text-align: center;display: flex;justify-content: center;align-items: center;}
+
+.modal-subheader {color: #919191;padding: 0 30px;text-align: center;font-weight: 300;line-height: 18px;font-size: 16px;}
+
+.modal-body {min-height: 160px;margin: 20px 0;padding: 0 16px;display: flex;flex-flow: row wrap;overflow: hidden;align-items: flex-start;}
+
+.modal-footer {min-height: 60px;display: flex;justify-content: center;align-items: center;}
+.modal__title {font-family: 'Creamy Script';     font-size: 40px;}
+.modal__title h1 {
+
+}
+.modal__close {position: absolute;top: 5px;right: 2px;cursor: pointer;}
+
+.modal__close i {
+
+}
+
+.modal-footer button.--rounded {width: 80px;height: 80px;border-radius: 100px;border: none;background: #33AFFF;}
+
+.modal-footer button.--squared {
+   
+}
+
+.modal__loader {
+   margin: auto;
+}
+.modal-footer i {font-size: 32px;color: white;}
+
+
+.modal__facebook-picture {
+   display: none;
+   /* margin: 4px; */
+   /* border: 1px solid #eee; */
+   /* padding: 6px; */
+   cursor: pointer;
+   width: 33.333333%;
+}
+
+.modal__facebook-picture img {width: 100%;}
+
+/* End app modals and popup */

@@ -1,7 +1,9 @@
 
 	window.LJ.profile = _.merge( window.LJ.profile || {}, {
 
-		$profile: $('.profile'),
+		$profile:   $('.profile'),
+		$pictures:  $('.pictures'),
+		$thumbnail: $('.app-thumbnail'),
 
 		init: function( resolve, reject ){
 			return LJ.promise(function( resolve, reject ){
@@ -11,6 +13,8 @@
 					.then( LJ.profile.setMyInformations )
 					.then( LJ.profile.setMyThumbnail )
 					.then( LJ.profile.setMyPictures )
+					.then( LJ.profile.setMyHashtags )
+					.then( LJ.pictures.init )
 					.then( LJ.profile.handleDomEvents )
 					.then( resolve )
 
@@ -35,10 +39,31 @@
 		},
 		setMyThumbnail: function(){
 
+			$('.thumbnail__name').text( LJ.user.name );
 
 
 		},
+		setMyHashtags: function(){
+
+			LJ.user.pictures.forEach(function( picture, i ){
+				var hashtag = picture.hashtag;
+				$('.picture').eq( i ).find('.picture__hashtag input').val( hashtag );
+			});
+
+		},
 		setMyPictures: function(){
+
+			// Thumbnail picture
+			var main_pic = LJ.findMainPic();
+			LJ.profile.$thumbnail.find('img').replaceWith( LJ.pictures.makeImgHtml( main_pic.img_id, main_pic.img_version, 'me-thumbnail') );
+
+			// Profile pictures
+			var html = [];
+			LJ.user.pictures.forEach(function( pic ){
+				html.push( LJ.profile.renderPicture( pic ) );
+			});
+			LJ.profile.$pictures.append( html.join('') );
+
 		},
 		handleDomEvents: function(){
 
@@ -75,8 +100,9 @@
 			$input.attr( 'readonly', false );
 
 			$block.find('.me__input-action')
-				  .velocity('transition.fadeIn', {
-				  	duration: 500
+				  .velocity('bounceInQuick', {
+				  	duration: 400,
+				  	display: 'block'
 				  });
 
 			$block.attr('data-restore', $input.val() );
@@ -93,8 +119,9 @@
 			$input.attr( 'readonly', true );
 
 			$block.find('.me__input-action')
-				  .velocity('transition.fadeOut', {
-				  	duration: 300
+				  .velocity('bounceOut', {
+				  	duration: 400,
+				  	display: 'none'
 				  });
 
 			var former_value = $block.attr('data-restore');
@@ -119,11 +146,14 @@
 			var call_id = LJ.generateId();
 
 			update[ attribute ] = new_value;
-			update[ 'call_id' ] = LJ.generateId();
+			update[ 'call_id' ] = call_id;
 
 			// Location is a specific case.
 			if( attribute == "location" ){
-				$block.attr('data-store', LJ.seek.profile_places.getPlace().formatted_address );
+
+				if( !LJ.seek.profile_places.getPlace() ) return;				
+				
+				$block.attr('data-store', LJ.seek.profile_places.getPlace().formatted_address );		
 				update.location = {
 					place_name : LJ.seek.profile_places.getPlace().formatted_address,
 					place_id   : LJ.seek.profile_places.getPlace().place_id
@@ -143,6 +173,8 @@
 
 			LJ.setUser( exposed.user );
 
+			$('.thumbnail__name').text( exposed.user.name );
+
 			var $block  = $('.me__input[data-callid="' + exposed.call_id + '"]');
 			var $input  = $block.find('.me__input-field');
 			var $action = $block.find('.me__input-action');
@@ -153,14 +185,91 @@
 
 			$block.attr('data-restore', null );
 			$input.attr('readonly', true );
-			$action.velocity('transition.slideUpOut', {
-				duration: 500,
+			$action.velocity('bounceOut', {
+				duration: 400,
+				display: 'none',
 				complete: function(){ $block.removeClass('--validating').removeClass('active'); }
 			});
 
-		}
+		},
+		renderPicture: function( pic ){
 
+			var img_html = LJ.pictures.makeImgHtml( pic.img_id, pic.img_version, "me" );
+			var main     = pic.is_main ? '--main' : '';
+			return LJ.ui.render([
+
+				'<div class="picture ' + main + '" data-img-place="' + pic.img_place + '" data-img-id="' + pic.img_id + '" data-img-vs="' + pic.img_version + '">',
+		            img_html,
+		            '<div class="picture__progress-bar">',
+		            	'<div class="picture__progress-bar-bg"></div>',
+		            '</div>',
+		            '<div class="picture-icon">',
+		              '<i class="picture__icon icon icon-desktop 	 --upload-desktop"></i>',
+		              '<i class="picture__icon icon icon-facebook 	 --upload-facebook"></i>',
+		              '<i class="picture__icon icon icon-user 		 --mainify"></i>',
+		              '<i class="picture__icon icon icon-trash-empty --trash"></i>',
+		            '</div>',
+		            '<div class="picture__hashtag hashtag">',
+		            	'<span class="hashtag__hash">#</span>',
+		            	'<input readonly type="text" placeholder="hashtag">',
+		            	'<div class="hashtag-action">',
+			            	'<div class="hashtag__action-validate">',
+			            		'<i class="icon icon-ok"></i>',
+			            	'</div>',
+			            	'<div class="hashtag__action-cancel">',
+			            		'<i class="icon icon-cancel"></i>',
+			            	'</div>',
+		            	'</div>',
+		            '</div>',
+	          '</div>'
+
+			].join(''));
+
+		}
 	});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
@@ -735,7 +844,7 @@
 
         	for( var i = 0; i < LJ.user.pictures.length; i ++ ){
 				var hashtag = LJ.user.pictures[i].hashtag;
-				$('.picture-hashtag').eq(i).find('input').val(hashtag);        		
+				$('.picture').eq(i).find('picture__hashtag input').val(hashtag);        		
         	}
 
 

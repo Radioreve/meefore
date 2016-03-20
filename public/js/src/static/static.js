@@ -7,6 +7,11 @@
 				'access_name': 'main_loader',
 				'image_id' 	 : 'app_loader',
 				'param'		 : { 'class': 'app__loader', 'width': 80 }
+			},
+			{
+				'access_name': 'modal_loader',
+				'image_id'   : 'app_loader_blue',
+				'param'      : { 'class': 'modal__loader', 'width': 100  }
 			}
 		],
 		// Constructs a list of static pictures hosted on Cloudinary that are available
@@ -33,7 +38,13 @@
 
 		},
 		getLoader: function( loader_id ){
-			return $('.app__loader[data-loaderid="' + loader_id + '"]');
+			var $l = $('.app__loader[data-loaderid="' + loader_id + '"]');
+
+			if( $l.length != 1 ){
+				return LJ.wlog('Unable to uniquely identify the loader with id : ' + loader_id +', length is : ' + $l.length );
+			} else {
+				return $l;
+			}
 		},
 		renderStaticImage: function( access_name ){
 

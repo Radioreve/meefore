@@ -138,15 +138,23 @@
 	    	profileEvents.updateProfile);
 
 	    // [ @user ] Ajoute une photo au profile
-	    app.post('/me/update-picture',
-	    	profileEvents.updatePicture);
+	    app.post('/me/update-picture-client',
+	    	mdw.validate('update_picture_client'),
+	    	mdw.pop.populateUser(),
+	    	profileEvents.updatePicture,
+	    	mdw.profile_watcher.updateCache('picture_upload')
+	    );
 
 	    // [ @user ] Change les hashtag/photo de profile
 	    app.post('/me/update-pictures',
-	    	profileEvents.updatePictures);
+	    	mdw.validate('update_pictures'),
+			mdw.pop.populateUser(),
+			mdw.profile_watcher.updateCache('picture_mainify'),
+	    	profileEvents.updatePictures
+	    );
 
 	    // [ @user ] Ajoute une photo via Facebook api
-	    app.post('/me/update-picture-fb',
+	    app.post('/me/update-picture-url',
 	    	profileEvents.uploadPictureWithUrl);
 
 	    // [ @user ] Va chercher en base de données les users à partir de /me/friends de l'api Facebook
@@ -154,7 +162,7 @@
 	    	profileEvents.fetchAndSyncFriends);
 
 	    // [ @user ] va chercher des tags cloudinary signés par le serveur
-	    app.post('/me/cloudinary-tags',
+	    app.get('/me/cloudinary-tags',
 	    	profileEvents.fetchCloudinaryTags );
 
 	    // [ @user ] Update contact settings
@@ -185,6 +193,9 @@
 	    	settingsEvents.deleteProfile );
 
 
+	    app.get('/api/v1/all',
+	    	api.users.fetchUsersAll);
+
 	    // [ @user ] Utilisé pour afficher le profile d'un utilisateur
 	    app.get('/api/v1/users/:user_facebook_id',   //otherwise override with asker facebook_id
 	    	mdw.validate('user_fetch'),
@@ -193,6 +204,7 @@
 	    // [ @user ] Utilisé dans le Typeahead searchbox client
 	    app.get('/api/v1/users',
 	    	api.users.fetchUsers);
+
 
 	    // [ @user ] Renvoie tous les events auxquels participe un user
 	    app.get('/api/v1/me/events',

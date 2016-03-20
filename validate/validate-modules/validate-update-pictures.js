@@ -21,9 +21,8 @@
 
 		var checkUpdateRequest = nv.isAnyObject()
 
-			.withRequired('facebook_id' 	, nv.isString())
-			.withRequired('userId' 			, nv.isString({ regex: rg.db_id }))
-			.withRequired('updatedPictures' , nv.isArray())
+			.withRequired('facebook_id' 	 , nv.isString())
+			.withRequired('updated_pictures' , nv.isArray())
 			.withCustom( isIdOk )
 
 		nv.run( checkUpdateRequest, req.sent, function( n, errors ){

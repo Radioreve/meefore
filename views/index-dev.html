@@ -38,7 +38,7 @@
   <!-- App, first order -->
   <link rel="stylesheet" href="/css/src/app/app_header.css">
   <link rel="stylesheet" href="/css/src/app/app_layout.css">
-  <link rel="stylesheet" href="/css/src/app/app_popup.css">
+  <link rel="stylesheet" href="/css/src/app/app_ux.css">
   <link rel="stylesheet" href="/css/src/app/app_skin.css">
   <link rel="stylesheet" href="/css/src/app/app_typography.css">
   
@@ -64,6 +64,7 @@
   <link rel="stylesheet" href="/css/src/profile/profile.css">
   <link rel="stylesheet" href="/css/src/profile/profile_user.css">
   <link rel="stylesheet" href="/css/src/pictures/pictures.css">
+  <link rel="stylesheet" href="/css/src/thumbnail/thumbnail.css">
   <link rel="stylesheet" href="/css/src/search/search.css">
   <link rel="stylesheet" href="/css/src/seek/seek.css">
   <link rel="stylesheet" href="/css/src/settings/settings.css">
@@ -98,7 +99,7 @@
   </script>
   
   
-  <div class="ui__curtain"></div>
+  <div class="curtain"></div>
     
    <!-- Landing Page Begin -->
   <div class="landing">
@@ -259,6 +260,10 @@
 
     <!-- Thumbnail start -->
     <section class="app-thumbnail">
+      <div class="thumbnail__picture">
+        <img src="/img/bots/bot26f.jpg" width="45" alt="Just another bot">
+      </div>
+      <div class="thumbnail__name">Héléna</div>
     </section>
      <!-- Thumbnail end -->
   
@@ -277,7 +282,7 @@
         <div class="profile-section__body --me">
           <div class="me__input me__input-name" data-param="name">
             <i class="icon icon-user"></i>
-            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-validate me__input-action icon icon-ok"></i>
             <i class="me__action-cancel me__input-action icon icon-cancel"></i>
             <label for="me__name" data-lid="p_name_label"></label>
             <input readonly class="me__input-field" data-lid="p_name_placeholder" id="me__name" type="text">
@@ -285,7 +290,7 @@
           </div>
           <div class="me__input me__input-age" data-param="age">
             <i class="icon icon-user"></i>
-            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-validate me__input-action icon icon-ok"></i>
             <i class="me__action-cancel me__input-action icon icon-cancel"></i>
             <label for="me__age" data-lid="p_age_label"></label>
             <input readonly class="me__input-field" data-lid="p_age_placeholder" id="me__age"type="number">
@@ -293,7 +298,7 @@
           </div>
           <div class="me__input me__input-country me__input--no-edit">
             <i class="icon icon-user"></i>
-            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-validate me__input-action icon icon-ok"></i>
             <i class="me__action-cancel me__input-action icon icon-cancel"></i>
             <label for="me__country" data-lid="p_country_label"></label>
             <input readonly class="me__input-field" type="text" id="me__country">
@@ -301,7 +306,7 @@
           </div>
           <div class="me__input me__input-job" data-param="job">
             <i class="icon icon-user"></i>
-            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-validate me__input-action icon icon-ok"></i>
             <i class="me__action-cancel me__input-action icon icon-cancel"></i>
             <label for="me__job" data-lid="p_job_label"></label>
             <input readonly class="me__input-field" data-lid="p_job_placeholder" id="me__job" type="text">
@@ -309,7 +314,7 @@
           </div>
           <div class="me__input me__input-location" data-param="location">
             <i class="icon icon-user"></i>
-            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-validate me__input-action icon icon-ok"></i>
             <i class="me__action-cancel me__input-action icon icon-cancel"></i>
             <label for="me__location" data-lid="p_location_label"></label>
             <input readonly class="me__input-field" type="text" id="me__location">
@@ -317,7 +322,7 @@
           </div>
           <div class="me__input me__input-ideal-night" data-param="ideal_night">
             <i class="icon icon-user"></i>
-            <i class="me__action-validate me__input-action icon icon-ok-1"></i>
+            <i class="me__action-validate me__input-action icon icon-ok"></i>
             <i class="me__action-cancel me__input-action icon icon-cancel"></i>
             <label for="me__ideal-night" data-lid="p_ideal_night_label"></label>
             <textarea readonly class="me__input-field" data-lid="p_ideal_night_placeholder" id="me__ideal-night">
@@ -338,51 +343,7 @@
         </div>
         <div class="profile-section__splitter"></div>
         <div class="profile-section__body pictures">
-          <div class="picture --main">
-            <img src="/img/bots/bot25f.jpg" alt="A nice placeholder picture" width="100%">
-            <div class="picture-icon">
-              <i class="picture__icon icon icon-desktop --upload-desktop"></i>
-              <i class="picture__icon icon icon-facebook --upload-facebook"></i>
-              <i class="picture__icon icon icon-user --mainify"></i>
-              <i class="picture__icon icon icon-trash-empty --trash"></i>
-            </div>
-          </div>
-          <div class="picture">
-            <img src="/img/bots/bot5f.jpg" alt="A nice placeholder picture" width="100%" >
-            <div class="picture-icon">
-              <i class="picture__icon icon icon-desktop --upload-desktop"></i>
-              <i class="picture__icon icon icon-facebook --upload-facebook"></i>
-              <i class="picture__icon icon icon-user --mainify"></i>
-              <i class="picture__icon icon icon-trash-empty --trash"></i>
-            </div>
-          </div>
-          <div class="picture">
-            <img src="/img/bots/bot33f.jpg" alt="A nice placeholder picture" width="100%" >
-            <div class="picture-icon">
-              <i class="picture__icon icon icon-desktop --upload-desktop"></i>
-              <i class="picture__icon icon icon-facebook --upload-facebook"></i>
-              <i class="picture__icon icon icon-user --mainify"></i>
-              <i class="picture__icon icon icon-trash-empty --trash"></i>
-            </div>
-          </div>
-          <div class="picture">
-            <img src="/img/bots/bot17f.jpg" alt="A nice placeholder picture" width="100%" >
-            <div class="picture-icon">
-              <i class="picture__icon icon icon-desktop --upload-desktop"></i>
-              <i class="picture__icon icon icon-facebook --upload-facebook"></i>
-              <i class="picture__icon icon icon-user --mainify"></i>
-              <i class="picture__icon icon icon-trash-empty --trash"></i>
-            </div>
-          </div>
-          <div class="picture">
-            <img src="/img/placeholder.png" alt="A nice placeholder picture" width="100%" >
-            <div class="picture-icon">
-              <i class="picture__icon icon icon-desktop --upload-desktop"></i>
-              <i class="picture__icon icon icon-facebook --upload-facebook"></i>
-              <i class="picture__icon icon icon-user --mainify"></i>
-              <i class="picture__icon icon icon-trash-empty --trash"></i>
-            </div>
-          </div>
+          <!-- %% Dynamically injected %%-->
         </div>
       </div>
       <!-- Profile pictures end -->
@@ -416,7 +377,7 @@
   <script src="js/lib/typed/typed.js"></script>
   <script src="js/lib/waitforimages/waitForImages.min.js"></script>
   <script src="js/lib/velocity/velocity.js"></script>
-  <script src="js/lib/velocity/velocityui.min.js"></script>
+  <script src="js/lib/velocity/velocity-ui.js"></script>
   <script src="js/lib/moment/moment.min.js"></script>
   <script src="js/lib/moment/momentwithlocale.min.js"></script>
   <script src="js/lib/async/async.min.js"></script>
@@ -429,7 +390,7 @@
   <script src="js/src/router/router.js"></script>
   <script src="js/src/utils/utils.js"></script>
   <script src="js/src/api/api.js"></script>
-  <script src="js/src/uploader/uploader.js"></script>
+  <script src="js/src/pictures/pictures.js"></script>
   <script src="js/src/autologin/autologin.js"></script>
   <script src="js/src/admin/admin.js"></script>
   <script src="js/src/analytics/analytics_google.js"></script>

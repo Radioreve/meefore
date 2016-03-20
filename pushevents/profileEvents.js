@@ -20,8 +20,15 @@
 
 	var pusher = require('../services/pusher');
 
-	var handleErr = function( res, namespace, err ){
-		eventUtils.raiseApiError( res, namespace, err );
+	var handleErr = function( req, res, namespace, err ){
+
+		var params = {
+			error   : err,
+			call_id : req.sent.call_id
+		};
+
+		eventUtils.raiseApiError( req, res, namespace, params );
+
 	};
 
 	var updateProfile = function( req, res, next ){
@@ -38,14 +45,10 @@
 
 		var callback = function( err, user ) {
 
-	        if( err ) return handleErr( res, err_ns, err );
+	        if( err ) return handleErr( req, res, err_ns, err );
          
             console.log('Emtting event update profile success')
-
-            req.sent.expose = {
-            	'user'      : user,
-            	'call_id'   : req.sent.call_id
-            };
+            req.sent.expose.user = user;
 
             next();
 	    }
@@ -67,20 +70,20 @@
     		return el.img_place == img_place;
     	});
 
-    	var newPicture = user.pictures[i];
+    	var new_picture = user.pictures[ i ];
 
-		newPicture.img_id      = newimg_id;
-		newPicture.img_version = newimg_version;
+		new_picture.img_id      = newimg_id;
+		new_picture.img_version = newimg_version;
 
-    	user.pictures.set( i, newPicture );
+    	user.pictures.set( i, new_picture );
     	user.save(function( err, user ){
 
-    		if( err ) return handleErr( res, err_ns, err );
+    		if( err ) return handleErr( req, res, err_ns, err );
 
-    		req.sent.expose = {
-    			'user': user
-    		};
+    		req.sent.expose.user = user;
+    		req.sent.expose.new_picture = new_picture;
 
+    		// Used by cache mdw
     		req.sent.img_id = newimg_id;
     		req.sent.img_vs = newimg_version;
 
@@ -95,9 +98,9 @@
 		var err_ns 	  = 'update_picture_url';
 		var user  	  = req.sent.user;
 
-		var url       = req.sent.url,
-			img_id	  = req.sent.img_id,
-			img_place = req.sent.img_place;
+		var url       = req.sent.url;
+		var img_id	  = req.sent.img_id;
+		var img_place = req.sent.img_place;
 
 		cloudinary.uploader.upload( url, function( response ){
 
@@ -115,11 +118,9 @@
 
 			user.save(function( err, user){
 
-				if( err ) return handleErr( res, err_ns, err );
+				if( err ) return handleErr( req, res, err_ns, err );
 
-				req.sent.expose = {
-					'user': user
-				};
+				req.sent.expose.user = user;
 				
 				req.sent.img_id = img_id;
 				req.sent.img_vs = img_version;
@@ -135,16 +136,16 @@
 
 		var err_ns = "update_pictures";
 
-		var user   			= req.sent.user;
-		var updatedPictures = req.sent.updatedPictures;
+		var user   			 = req.sent.user;
+		var updated_pictures = req.sent.updated_pictures;
 
 		var old_main_picture;
-		var mainified_picture = _.find( updatedPictures, function( el ){
+		var mainified_picture = _.find( updated_pictures, function( el ){
 			return el.action == "mainify"
 		});
 
 		if( mainified_picture && user.pictures[ mainified_picture.img_place ].img_id == settings.placeholder.img_id ){
-			return handleErr( res, err_ns, { 'err_id': 'mainify_placeholder' } );
+			return handleErr( req, res, err_ns, { 'err_id': 'mainify_placeholder' });
 		}
 
 		// Store reference for criteria in Mongo update
@@ -152,15 +153,22 @@
 			return el.is_main == true 
 		});
 
+
 		old_main_picture = current_main;
 
-		for( var i = 0; i < updatedPictures.length; i++ ){
+		for( var i = 0; i < updated_pictures.length; i++ ){
+
+			var up_pic = updated_pictures[i];
+
+			if( up_pic.action == "delete" && (up_pic.img_place == current_main.img_place )){
+				return handleErr( req, res, err_ns, { 'err_id': 'delete_main_picture' });
+			}
 
 			var current_picture = _.find( user.pictures, function( el ){ 
-					return el.img_place == updatedPictures[i].img_place
+					return el.img_place == updated_pictures[i].img_place
 				});
 			
-			if( updatedPictures[i].action == "mainify" ){	
+			if( up_pic.action == "mainify" ){	
 				current_main.is_main = false;
 				user.pictures.set( parseInt( current_main.img_place ), current_main );
 				current_picture.is_main = true;
@@ -168,15 +176,15 @@
 			}
 
 
-			if( updatedPictures[i].action == "delete" ){
+			if( up_pic.action == "delete" ){
 				current_picture.img_id      = settings.placeholder.img_id;
 				current_picture.img_version = settings.placeholder.img_version;
 				user.pictures.set( parseInt( current_picture.img_place ), current_picture );
 			}
 
 
-			if( updatedPictures[i].action == "hashtag" ){
-				current_picture.hashtag = updatedPictures[i].new_hashtag;
+			if( up_pic.action == "hashtag" ){
+				current_picture.hashtag = up_pic.new_hashtag;
 				user.pictures.set( parseInt( current_picture.img_place ), current_picture );
 			}
 
@@ -185,13 +193,11 @@
 		// Saving picture modifications to user profile
 		user.save(function( err, saved_user ){
 
-			if( err ) return handleErr( res, err_ns, err );
+			if( err ) return handleErr( req, res, err_ns, err );
 
 			console.log('sending success');
 
-			req.sent.expose = { 
-				'pictures': saved_user.pictures
-			};
+			req.sent.expose.pictures = saved_user.pictures;
 
 			next();
 
@@ -224,7 +230,7 @@
 			// 	multi: true
 			// }, function( err, raw ){
 
-			// 	if( err ) return handleErr( res, err_ns, err );
+			// 	if( err ) return handleErr( req, res, err_ns, err );
 
 			// 	console.log('Propagated as host in ' + raw.n + ' events' );
 
@@ -241,7 +247,7 @@
 			// 	multi: true
 			// }, function( err, raw ){
 
-			// 	if( err ) return handleErr( res, err_ns, err );
+			// 	if( err ) return handleErr( req, res, err_ns, err );
 
 			// 	console.log('Propagated as member in ' + raw.n + ' events' );
 
@@ -258,11 +264,9 @@
 
 		User.findByIdAndUpdate( userId, { friends: fb_friends_ids }, { new: true }, function( err, user ){
 
-			if( err ) return handleErr( res, err_ns, err );
+			if( err ) return handleErr( req, res, err_ns, err );
 
-			req.sent.expose = {
-				'friends': user.friends
-			};
+			req.sent.expose.friends = user.friends
 
 			next();
 
@@ -294,7 +298,7 @@
 		// 		me.friends = filtered_friends;
 		// 		me.save( function( err, me ){
 
-		// 			if( err ) return handleErr( res );
+		// 			if( err ) return handleErr( req, res );
 
 		// 			eventUtils.sendSuccess( res, { friends: me.friends });
 		// 		});
@@ -305,21 +309,19 @@
 
 	var fetchCloudinaryTags = function( req, res, next ){
 
-		var userId = req.sent.user_id;
+		var facebook_id = req.sent.facebook_id;
 		// Make sure all HTML Tags internally have a specific img_id pattern
 		// So we can easily find them on cloudinary
 		var cloudinary_tags = [];
 		for( var i = 0; i < 5; i ++){
 			cloudinary_tags.push( 
 				cloudinary.uploader.image_upload_tag( 'hello_world' , {
-					public_id: userId + '--' + i 
+					public_id: facebook_id + '--' + i 
 				})
 			);
 		}
 
-		req.sent.expose = {
-			'cloudinary_tags': cloudinary_tags
-		};
+		req.sent.expose.cloudinary_tags = cloudinary_tags
 
 		next();
 
@@ -349,15 +351,13 @@
 
 		sender.save(function( err ){
 
-			if( err ) return handleErr( res, err_ns, err );
+			if( err ) return handleErr( req, res, err_ns, err );
 
 			receiver.save(function( err ){
 
-				if( err ) return handleErr( res, err_ns, err );
+				if( err ) return handleErr( req, res, err_ns, err );
 
-				req.sent.expose = { 
-					'meepass_sent': meepass_sent 
-				};
+				req.sent.expose.meepass_sent = meepass_sent 
 				
 				next();
 
@@ -381,11 +381,9 @@
 		user.spotted.push( spotted_object );
 		user.save(function( err, user ){
 
-			if( err ) return handleErr( res, err_ns, err );
+			if( err ) return handleErr( req, res, err_ns, err );
 
-			req.sent.expose = {
-				'spotted_object': spotted_object
-			};
+			req.sent.expose.spotted_object = spotted_object
 
 			next();
 
@@ -413,16 +411,14 @@
 
 		User.update( query, update, options, function( err, users ){
 
-			if( err ) return handleErr( err, res, err_ns );
+			if( err ) return handleErr( req, err, res, err_ns );
 
 			user.markModified('shared');
 			user.save(function( err, user ){
 
-				if( err ) return handleErr( err, res, err_ns );
+				if( err ) return handleErr( req, err, res, err_ns );
 
-				req.sent.expose = {
-					'user': user
-				};
+				req.sent.expose.user = user
 
 				next();
 
@@ -439,10 +435,10 @@
 
 		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
 
-			if( err ) return handleErr( res, err_ns, err );
+			if( err ) return handleErr( req, res, err_ns, err );
 
 			if( !user ){
-				return handleErr( res, err_ns, {
+				return handleErr( req, res, err_ns, {
 					'err_id'	  : 'ghost_user',
 					'facebook_id' : facebook_id
 				});
@@ -451,11 +447,9 @@
 			user.invite_code = invite_code;
 			user.save(function( err, user ){
 
-				if( err ) return handleErr( res, err_ns, err );
+				if( err ) return handleErr( req, res, err_ns, err );
 
-				req.sent.expose = {
-					'user': user
-				};
+				req.sent.expose.user = user
 
 				next();
 
@@ -482,15 +476,13 @@
 
 		sponsor.save(function( err, sponsor ){
 
-			if( err ) return handleErr( res, err_ns, err );
+			if( err ) return handleErr( req, res, err_ns, err );
 
 			sponsee.save(function( err, sponsee ){
 
-				if( err ) return handleErr( res, err_ns, err );
+				if( err ) return handleErr( req, res, err_ns, err );
 
-				req.sent.expose = {
-					'user': sponsee
-				};
+				req.sent.expose.user = sponsee
 				
 				next();
 

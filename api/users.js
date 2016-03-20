@@ -8,7 +8,16 @@
 		eventUtils = require('../pushevents/eventUtils');
  
 
-	var handleErr = eventUtils.raiseApiError;
+	var handleErr = function( req, res, namespace, err ){
+
+		var params = {
+			error   : err,
+			call_id : req.sent.call_id
+		};
+
+		eventUtils.raiseApiError( req, res, namespace, params );
+
+	};
 
 	/* get /users/me */
 	var fetchMe = function( req, res, next ){
@@ -17,7 +26,7 @@
 		var userId = req.sent.user_id;
 
 		if( !userId ){
-			return handleErr( res, err_ns, {
+			return handleErr( req, res, err_ns, {
 				'err_id' : 'missing_id',
 				'msg'    : 'Missing the user_id field from the request'
 			});
@@ -26,7 +35,7 @@
 		User.findById( userId, function( err, user ){
 
 			if( err ){
-				return handleErr( res, 'fetching_me', err );
+				return handleErr( req, res, 'fetching_me', err );
 			}
 
 			req.sent.expose = {
@@ -41,13 +50,13 @@
 	};
 
 	/*  get /users/:facebook_id */
-	var fetchUserById_Full = function( req, res ){
+	var fetchUserById_Full = function( req, res, next ){
 
 		var err_ns = 'fetching_user_full';
 		var facebook_id = req.sent.facebook_id;
 
 		if( !facebook_id )
-			return handleErr( res, err_ns, {
+			return handleErr( req, res, err_ns, {
 				'err_id' : 'missing_facebook_id',
 				'msg'    : 'Missing the facebook_id field from the request',
 				'facebook_id': facebook_id
@@ -56,11 +65,11 @@
 		User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
 			if( err ){
-				return handleErr( res, err_ns, err );
+				return handleErr( req, res, err_ns, err );
 			}
 
 			if( !user ){
-				return handleErr( res, err, {
+				return handleErr( req, res, err, {
 					'err_id' 	  : 'ghost_user',
 					'msg'         : 'No user was found with this id in the database in the database',
 					'facebook_id' : facebook_id
@@ -78,13 +87,13 @@
 	};
 
 	// Used to check for redis 
-	var fetchUserById_Core = function( req, res ){
+	var fetchUserById_Core = function( req, res, next ){
 
 		var facebook_id = req.sent.facebook_id;
 		var error_ns    = 'fetching_user_core';
 
 		if( !facebook_id ){
-			return handleErr( res, error_ns, {
+			return handleErr( req, res, error_ns, {
 				'err_id': 'no_facebook_id',
 				'msg'   : 'Unable to retrieve facebook_id value in the body of the request'
 			});
@@ -94,7 +103,7 @@
 		rd.hgetall( profile_ns, function( err, user ){
 
 			if( err ){
-				return handleErr( res, 'api_error', err );
+				return handleErr( req, res, 'api_error', err );
 			}
 
 			if( !user ){
@@ -103,11 +112,11 @@
 				User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
 
 					if( err ){
-						return handleErr( res, 'api_error', [err] );
+						return handleErr( req, res, 'api_error', [err] );
 					}
 
 					if( !user ){
-						return handleErr( res, error_ns, {
+						return handleErr( req, res, error_ns, {
 							'err_id': 'no_user_found',
 							'msg'   : 'Unable to find user either in cache or database'
 						});
@@ -152,7 +161,7 @@
 	}
 
 	/* get /users?name=... */
-	var fetchUsers = function( req, res ){
+	var fetchUsers = function( req, res, next ){
 
 		var err_ns = 'fetching_users_by_name';
 
@@ -177,19 +186,20 @@
 			.exec(function( err, users ){
 
 				if( err ){
-					return handleErr( res, err_ns, err );
+					return handleErr( req, res, err_ns, err );
 				}
 
 				req.sent.expose = {
 					'users': users
 				};
 
+
 				next();
 
 			});
 	};
 
-	var fetchUsersAll = function( req, res ){
+	var fetchUsersAll = function( req, res, next ){
 
 		var err_ns = 'fetching_users_all';
 
@@ -204,7 +214,7 @@
 			.exec(function( err, users ){
 
 				if( err ){
-					return handleErr( res, err_ns, err );
+					return handleErr( req, res, err_ns, err );
 				}
 
 				req.sent.expose = {
@@ -217,7 +227,7 @@
 
 	};
 
-	var fetchUserEvents = function( req, res ){
+	var fetchUserEvents = function( req, res, next ){
 
 		var err_ns = 'fetching_user_events';
 		var facebook_id = req.sent.facebook_id;
@@ -238,7 +248,7 @@
 				function( err, events ){
 
 					if( err ){
-						return handleErr( err, err_ns, err );
+						return handleErr( req, err, err_ns, err );
 					}
 
 					req.sent.expose = {
@@ -256,5 +266,6 @@
 		fetchUserById_Full	    : fetchUserById_Full,
 		fetchUserById_Core		: fetchUserById_Core,
 		fetchUsers 				: fetchUsers,
+		fetchUsersAll 			: fetchUsersAll,
 		fetchUserEvents 		: fetchUserEvents
 	};

@@ -1,8 +1,10 @@
 
 window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
-	required_permissions: ['public_profile', 'email', 'user_friends', 'user_photos'],
-	profile_url: '/me?fields=id,email,name,link,locale,gender',
+	required_permissions : ['public_profile', 'email', 'user_friends', 'user_photos'],
+	profile_url			 : '/me?fields=id,email,name,link,locale,gender',
+	album_url  			 : '/me?fields=albums{name,id}',
+	album_pictures_url   : '{{album_id}}/photos?fields=images',
 
 	init: function(){
 
@@ -55,7 +57,128 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		});
 
 	},
-	fetchMe: function(){
+	GraphAPI: function( url, callback, opts ){
+
+        var ls = window.localStorage;
+
+        var access_token = ( LJ.user.facebook_access_token && LJ.user.facebook_access_token.long_lived ) 
+                         || ( ls.preferences && JSON.parse( ls.preferences ).long_lived_tk )
+                         || ( ls.reconn_data && JSON.parse( ls.reconn_data ).long_lived_tk )
+                         || ( LJ.user.facebook_access_token && LJ.user.facebook_access_token.short_lived )
+
+        if( !access_token ){
+            LJ.wlog('Calling graph api without being able to find a valid long lived token');
+        }
+
+        FB.api( url, { access_token: access_token }, callback );
+
+    },
+    renderPicture: function( url ){
+
+    	return [
+    				'<div class="modal__facebook-picture">',
+    					'<img src="' + url + '" width="75"/>',
+    				'</div>'
+    	].join('');
+
+    },
+    fetchPictures: function( album_id ){
+    	return LJ.promise(function( resolve, reject ){
+
+ 			LJ.facebook.GraphAPI( LJ.facebook.album_pictures_url.replace( '{{album_id}}', album_id ), function( res ){
+		
+ 				if( !res || res.error ){
+ 					return reject( res.error );
+ 				} else {
+ 					return resolve( res );
+ 				}
+
+ 			});
+
+    	});
+    },
+    fetchProfilePictures: function(){
+		return LJ.facebook.fetchProfilePicturesAlbumId().then( LJ.facebook.fetchPictures );
+    },
+	fetchProfilePicturesAlbumId: function( next_page ){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook profile picture album id...');
+
+			var album_url = next_page || LJ.facebook.album_url;
+			var album_id  = null;
+
+			LJ.facebook.GraphAPI( album_url, function(res){
+
+				var albums = res.albums.data;
+				albums.forEach(function( album ){
+
+					if( album.name == "Profile Pictures" ){
+						album_id = album.id;
+					}
+
+				});
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && res.albums.paging.cursor.next ){
+
+					var next = res.albums.paging.cursor.next;
+
+					LJ.log('Didnt find on first page, trying with next page : ' + next );
+					return LJ.facebook.fetchProfilePicturesAlbumId( next );
+				}
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && !res.albums.paging.cursor.next ){
+					return reject('Couldnt find album id, no next page to browse' );
+				}
+
+				LJ.log('Album id found, ' + album_id );
+				return resolve( album_id );
+
+			});
+
+		});
+
+	},
+	showFacebookPicturesInModal: function( img_place ){
+
+		LJ.ui.showModalAndFetch({
+
+			"title"			: LJ.text("mod_facebook_pictures_title"),
+			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
+			"footer"		: "<button class='--rounded'><i class='icon icon-plus'></i></button>",
+
+			"fetchPromise"	: LJ.facebook.fetchProfilePictures
+
+		}).then(function( results ){
+			
+			var html = [];
+			results.data.forEach(function( picture_object ){
+				picture_object.images.forEach(function( image_object ){
+					if( image_object.width > LJ.ui.facebook_img_min_width && image_object.width < LJ.ui.facebook_img_max_width ){
+						html.push( LJ.facebook.renderPicture( image_object.source ) );
+					}
+				});
+			});
+
+			$('.modal-body').attr('data-img-place', img_place )
+							.append( html.join('') )
+							.waitForImages(function(){
+
+								$(this).find('.modal__loader')
+									.velocity('bounceOut', {
+										duration: 500,
+										delay: 500,
+										complete: function(){
+											$(this).siblings()
+												   .velocity('bounceInQuick', {
+												   		display: 'block'
+												   });
+										}
+									});
+
+							});
+
+		});
 
 	}
 

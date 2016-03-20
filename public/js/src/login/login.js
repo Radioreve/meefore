@@ -22,9 +22,9 @@
 				return LJ.delay( 1000 )
 						 .then(function(){
 						 	$( LJ.login.renderLoginProgression() )
-								.appendTo( LJ.ui.$curtain )
+								.appendTo( $('.curtain') )
 								.hide()
-								.velocity('transition.fadeIn', {
+								.velocity('fadeIn', {
 									duration: 2000,
 									delay: LJ.ui.opening_duration
 								});

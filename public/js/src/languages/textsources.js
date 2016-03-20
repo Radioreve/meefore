@@ -648,6 +648,10 @@
 			"fr": "Votre photo a été modifiée",
 			"en": "Your picture has been updated"
 		},
+		to_update_pic_success: {
+			"fr": "Vos photos ont été mise à jour",
+			"en": "Your pictures have been updated"
+		},
 		to_host_push_new_group: {
 			"fr": "Un groupe souhaite rejoindre votre meefore",
 			"en": "A group has requested to join your meefore"
@@ -945,6 +949,10 @@
 			"fr": "Votre photo de profil doit vous représenter",
 			"en": "Your profile picture must represent yourself"
 		},
+		err_update_profile_delete_main_picture: {
+			"fr": "Vous ne pouvez pas supprimer votre photo de profil",
+			"en": "You can't delete your profile picture"
+		},
 		err_update_profile_default: {
 			"fr": "Une erreur inattendue s'est produite",
 			"en": "Something unexpected happened"
@@ -1150,6 +1158,14 @@
 		n_footer_text: {
 			"fr": "Délivré avec <3 par meefore",
 			"en": "Delivered with <3 by meefore"
+		},
+		mod_facebook_pictures_title: {
+			"fr": "Photos Facebook",
+			"en ": "Facebook photos"
+		},
+		mod_facebook_pictures_subtitle: {
+			"fr": "Sélectionner la photo que vous souhaitez importer à partir de Facebook",
+			"en ": "Select the photo you wish to import from Facebook"
 		}
 
 	});

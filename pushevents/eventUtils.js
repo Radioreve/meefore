@@ -5,7 +5,6 @@
 		config = require('../config/config');
 
 
-
 	var sendSuccess = function( res, expose, print ){
 
 		if( !res )
@@ -22,15 +21,12 @@
 		
 	};
 
-	var raiseApiError = function( res, namespace, errors ){
-
-		var errors = errors || [];
-
-		var errors = Array.isArray( errors ) ? errors : [ errors ];
+	var raiseApiError = function( req, res, namespace, params ){
 
 		res.status(400).json({
 			'namespace' : namespace,
-			'errors'	: errors
+			'error'		: params.error,
+			'call_id'   : params.call_id
 		});
 	}
 

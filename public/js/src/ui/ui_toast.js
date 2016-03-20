@@ -25,12 +25,12 @@
 						.css({ 'transform': 'translateX(-50%)!important'})
 						.find('.toast__msg').text( msg );
 
-				$toast.velocity('transition.slideDownIn', {
+				$toast.velocity('slideDownIn', {
 					duration: 600,
 					display: 'flex',
 					complete: function(){
 						if( fixed ) return;
-						$toast.velocity('transition.slideUpOut', {
+						$toast.velocity('slideUpOut', {
 							duration:300,
 							delay: fixed || 2000,
 							complete: function(){

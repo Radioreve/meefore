@@ -3,7 +3,6 @@
 window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 	$body 		: $('body'),
-	$curtain 	: $('.ui__curtain'),
 
 	show_curtain_duration	: 2000,
 	hide_curtain_duration	: 2000,
@@ -34,22 +33,35 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 	},
 	showCurtain: function( o ){
+
 		o = o || {};
+
+		var alpha = o.opacity || 1;
+		$('<div class="curtain"></div>')
+			.hide().css({ 'background': 'rgba(19,19,19,' + alpha + ')' }).appendTo( LJ.ui.$body );
+
 		return LJ.promise(function( resolve, reject ){
-			LJ.ui.$curtain.velocity('transition.fadeIn', {
+			$('.curtain').velocity('fadeIn', {
 				display: 'flex',
 				duration: o.duration || LJ.ui.show_curtain_duration,
 				complete: resolve
 			});
+
 		});
 	},
 	hideCurtain: function( o ){
+
 		o = o || {};
+
 		return LJ.promise(function( resolve, reject ){
-			LJ.ui.$curtain.velocity('transition.fadeOut', {
+			$('.curtain').velocity('fadeOut', {
 				duration: o.duration || LJ.ui.hide_curtain_duration,
-				complete: resolve
+				complete: function(){
+					$('.curtain').remove();
+					resolve();
+				}
 			});
+
 		});
 	},
 	showLoader: function( loader_id ){
@@ -57,13 +69,13 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		$( LJ.static.renderStaticImage('main_loader') )
 				 .attr('data-loaderid', loader_id)
 				 .appendTo('body')
-				 .velocity('transition.fadeIn', { duration: 400 });
+				 .velocity('fadeIn', { duration: 400 });
 
 	},
 	hideLoader: function( loader_id ){
 
 		LJ.static.getLoader( loader_id )
-				 .velocity('transition.fadeOut', {
+				 .velocity('fadeOut', {
 				 	duration: 250,
 				 	complete: function(){
 				 		$(this).remove();
