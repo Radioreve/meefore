@@ -59,12 +59,30 @@
 		handleDomEvents: function(){
 
 			$('.pictures').on('click', LJ.pictures.handleClickOnPicture );
+			LJ.ui.$body.on('click', LJ.pictures.handleClickInModal );
 
+		},
+		handleClickInModal: function( e ){
+
+			var $tar      = $(e.target);
+			var $block    = $tar.closest('.modal');
+			var img_place = $block.attr('data-img-place');		
+
+			if( $tar.is('.modal__facebook-picture img') ){
+				return LJ.pictures.toggleFacebookPictureState( $tar );
+			}
+
+			if( $tar.is('.modal-footer button') || $tar.closest('.modal-footer button').length == 1 ){
+				if( $block.hasClass('--active') ){
+					$block.removeClass('--active');
+					LJ.ui.hideModal();
+					var src = $('.modal__facebook-picture.--active').attr('data-img-src');
+					LJ.pictures.uploadFacebookPicture( src, img_place );
+				}
+			}
 
 		},
 		handleClickOnPicture: function( e ){
-
-			LJ.log($(e.target) );
 
 			var $tar      = $(e.target);
 			var $block    = $tar.closest('.picture');
@@ -96,6 +114,43 @@
 				if( $tar.closest('.hashtag-action').hasClass('--pending') ) return;
 				return LJ.pictures.deactivateHashtagEdit( img_place );
 			}
+
+
+		},
+		toggleFacebookPictureState: function( $pic ){
+
+			var $block = $pic.closest('.modal');
+			var $pic   = $pic.closest('.modal__facebook-picture');
+			
+			if( $pic.hasClass('--active') ){
+				return $block.add( $('.modal__facebook-picture') ).removeClass('--active');
+			}
+			
+			$('.modal__facebook-picture').removeClass('--active');
+			$block.add( $pic ).addClass('--active');
+
+
+		},
+		uploadFacebookPicture: function( src, img_place ){
+
+			LJ.log('Uploading facebook picture...');
+
+			var $picture = $('.picture[data-img-place="' + img_place + '"]');
+			var img_id	 = $picture.attr('data-img-id');
+
+			var call_id = LJ.generateId();
+			LJ.ui.showLoader( call_id );
+
+
+			var update = {
+				url 		: src,
+				call_id 	: call_id,
+				img_place 	: img_place,
+				img_id		: img_id
+			};
+
+			LJ.api.uploadNewPictureUrl( update )
+		 	  .then( LJ.pictures.handleUpdatePicturesSuccess );
 
 		},
 		updateHashtag: function( img_place ){
@@ -222,10 +277,16 @@
 				var $pic = $('.picture[data-img-place="' + pic.img_place + '"]');
 
 				if( $pic.attr('data-img-vs') != pic.img_version ){
-					LJ.pictures.replaceImage( $pic.find('img'), {
+
+					var options = {
 						img_id		: pic.img_id,
 						img_version : pic.img_version
-					});
+					};
+
+					if( $pic.hasClass('--main') ){
+						LJ.pictures.replaceImage( $('.app-thumbnail').find('img'), options );
+					}
+					LJ.pictures.replaceImage( $pic.find('img'), options );
 				}
 
 				var $hashtag_input = $pic.find('.picture__hashtag input');

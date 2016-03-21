@@ -155,7 +155,11 @@
 
 	    // [ @user ] Ajoute une photo via Facebook api
 	    app.post('/me/update-picture-url',
-	    	profileEvents.uploadPictureWithUrl);
+	    	mdw.validate('upload_picture_url'),
+	    	mdw.pop.populateUser(),
+	    	profileEvents.uploadPictureWithUrl,
+	    	mdw.profile_watcher.updateCache('picture_upload')
+	    );
 
 	    // [ @user ] Va chercher en base de données les users à partir de /me/friends de l'api Facebook
 	    app.post('/me/fetch-and-sync-friends',

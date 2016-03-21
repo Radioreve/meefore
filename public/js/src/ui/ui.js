@@ -89,9 +89,65 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		LJ.lang.translate( $html );
 		return $html.prop('outerHTML');
 
+	},
+	turnToJsp: function( element, options ){
+
+		if( !options.jsp_id ){
+			LJ.wlog('Setting jsp without jsp_id');
+		}
+
+		LJ.delay(100).then(function(){ 
+
+			LJ.ui[ options.jsp_id ] = $(element).jScrollPane();
+
+		});
+
 	}
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 
 window.LJ.fn = _.merge( window.LJ.fn || {}, {

@@ -116,11 +116,11 @@
 			user.pictures.set( img_place, picture );
 			user.status = "idle";
 
-			user.save(function( err, user){
+			user.save(function( err, user ){
 
 				if( err ) return handleErr( req, res, err_ns, err );
 
-				req.sent.expose.user = user;
+				req.sent.expose.pictures = user.pictures;
 				
 				req.sent.img_id = img_id;
 				req.sent.img_vs = img_version;

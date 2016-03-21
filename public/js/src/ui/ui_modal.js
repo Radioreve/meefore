@@ -4,7 +4,7 @@
 			"title": "Félicitations !",
 			"subtitle": "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
 			"body": "Then there goes the body...",
-			"footer": "<button class='--rounded'><i class='icon icon-plus'></i></button>"
+			"footer": "<button class='--rounded'><i class='icon icon-ok'></i></button>"
 		});
 	};
 
@@ -12,6 +12,7 @@
 
 		LJ.ui.showModalAndFetch({
 
+			"type"			: "facebook",
 			"title"			: "Félicitations fetch!",
 			"subtitle"		: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
 			"footer"		: "<button class='--rounded'><i class='icon icon-plus'></i></button>",
@@ -110,10 +111,19 @@
 		renderModal: function( options ){
 
 			var body_html = options.body || LJ.static.renderStaticImage('modal_loader');
+			var modifier  = '--' + options.type;
+
+			var attributes = [];
+			if( options.attributes ){
+				options.attributes.forEach(function( attr_object ){
+					attributes.push('data-' + attr_object.name  + '="' + attr_object.val + '"');
+				});
+			}
+			attributes = attributes.join(' ');
 
 			return [
 
-				'<div class="modal">',
+				'<div class="modal ' + modifier + '" ' + attributes + '>',
 					'<header class="modal-header">',
 						'<div class="modal__close">',
 							'<i class="icon icon-cancel"></i>',

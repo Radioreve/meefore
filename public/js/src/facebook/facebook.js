@@ -73,11 +73,14 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
         FB.api( url, { access_token: access_token }, callback );
 
     },
-    renderPicture: function( url ){
+    renderPicture: function( src ){
 
     	return [
-    				'<div class="modal__facebook-picture">',
-    					'<img src="' + url + '" width="75"/>',
+    				'<div class="modal__facebook-picture" data-img-src="' + src + '">',
+    					'<img src="' + src + '" width="75"/>',
+    					'<div class="modal__picture-icon">',
+    						'<i class="icon icon-ok"></i>',
+    					'</div>', 
     				'</div>'
     	].join('');
 
@@ -139,46 +142,70 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		});
 
 	},
+	hasPictureRightDimensions: function( image_object ){
+
+		if( image_object.width > LJ.ui.facebook_img_min_width && image_object.width < LJ.ui.facebook_img_max_width ){
+			return true;
+		} else {
+			return false;
+		}
+
+	},
 	showFacebookPicturesInModal: function( img_place ){
 
 		LJ.ui.showModalAndFetch({
 
+			"type"			: "facebook",
 			"title"			: LJ.text("mod_facebook_pictures_title"),
 			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
-			"footer"		: "<button class='--rounded'><i class='icon icon-plus'></i></button>",
+			"footer"		: "<button class='--rounded'><i class='icon icon-ok'></i></button>",
+			"attributes"	: [{ name: "img-place", val: img_place }],
 
 			"fetchPromise"	: LJ.facebook.fetchProfilePictures
 
-		}).then(function( results ){
+		}).then( LJ.facebook.displayFacebookPicturesInModal );
 			
-			var html = [];
-			results.data.forEach(function( picture_object ){
-				picture_object.images.forEach(function( image_object ){
-					if( image_object.width > LJ.ui.facebook_img_min_width && image_object.width < LJ.ui.facebook_img_max_width ){
-						html.push( LJ.facebook.renderPicture( image_object.source ) );
-					}
+
+	},
+	displayFacebookPicturesInModal: function( results ){
+
+		var img_place = $('.modal').attr('data-img-place');
+
+		var html = LJ.facebook.$profile_pictures || [];
+
+			if( html.length == 0 ){
+				results.data.forEach(function( picture_object ){
+					picture_object.images.forEach(function( image_object ){
+						if( LJ.facebook.hasPictureRightDimensions( image_object )){
+							html.push( LJ.facebook.renderPicture( image_object.source ) );
+						}
+					});
 				});
-			});
+			}
 
-			$('.modal-body').attr('data-img-place', img_place )
-							.append( html.join('') )
-							.waitForImages(function(){
+			LJ.facebook.$profile_pictures = html;
 
-								$(this).find('.modal__loader')
-									.velocity('bounceOut', {
-										duration: 500,
-										delay: 500,
-										complete: function(){
-											$(this).siblings()
-												   .velocity('bounceInQuick', {
-												   		display: 'block'
-												   });
-										}
-									});
+			$('.modal-body')
+				.append( html.join('') )
+				.waitForImages(function(){
+					$(this)
+						.find('.modal__loader')
+						.velocity('bounceOut', { duration: 500, delay: 500,
+							complete: function(){
 
-							});
+								$('.modal__facebook-picture')
+									   .velocity('bounceInQuick', {
+									   		display: 'block'
+									   });
 
-		});
+								LJ.ui.turnToJsp('.modal-body', {
+									jsp_id: 'modal_facebook_pictures'
+								});
+
+							}
+						});
+
+				});
 
 	}
 

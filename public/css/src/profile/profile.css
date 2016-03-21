@@ -15,17 +15,15 @@
 
 .profile-section__subtitle {border: 1px solid #FF5200;display: inline-block;padding: 8px 20px;border-radius: 13px;/* color: white; */}
 
-.profile-section-me {flex-direction: column;width: 60%;order: 2;}
+.profile-section-me {flex-direction: column;width: 64%;order: 2;}
 
-.profile-section__body {
-
-}
+.profile-section__body {display: flex;flex-flow: column nowrap;}
 
 .profile-section__splitter {width: 100px;height: 6px;background: #33AFFF;margin: 14px auto 30px;border-radius: 20px;}
 
-.me__input {display: flex;position: relative;flex-direction: column;align-items: flex-start;margin: 0 0 30px 0;}
+.me__input {display: flex;position: relative;flex-direction: column;align-items: flex-start;margin: 0 0 30px 0;width: 100%;}
 
-.me__input label {font-size: 14px;font-weight: 700;text-transform: uppercase;}
+.me__input label {font-size: 14px;font-weight: 700;text-transform: uppercase;/* margin-left: 30px; */}
 
 .me__input .me__input-field {
     padding: 8px 10px 10px 0;
@@ -33,6 +31,7 @@
     border: none;
     border-bottom: 1px solid #eee;
     width: 100%;
+    box-sizing: border-box;
     font-size: 24px;
     font-weight: 200;
     cursor: pointer;
@@ -54,16 +53,17 @@
 }
 .me__input i {
   position: absolute;
-  left: -70px;
-  font-size: 20px;
-  top: 12px;
+  left: -80px;
+  font-size: 30px;
+  top: 6px;
   padding-top: 13px;
-  color: #919191;
-  background: #eee;
+  color: #33AFFF;
+  border: 2px solid;
+  background: white;
   box-sizing: border-box;
   border-radius: 100px;
-  height: 50px;
-  width: 50px;
+  height: 60px;
+  width: 60px;
 }
 
 
@@ -87,14 +87,14 @@
 
 .me__input .me__input-action {
   top: 17px;
-  right: -20px;
+  right: 10px;
   left: auto;
   display: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 18px;
   height: 40px;
   width: 40px;
-  padding-top: 12px;
+  padding-top: 10px;
   background: white;
   color: #191919;
   border: 1px solid;
@@ -102,7 +102,7 @@
 
 
 .me__input .me__action-validate {
-  right: 26px;
+  right: 56px;
 }
 .me__input .me__action-cancel {
 }
@@ -119,7 +119,8 @@
 }
 
 
-.profile-section-pictures {}
+.profile-section-pictures {
+}
 
 
 

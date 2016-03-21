@@ -8,18 +8,21 @@
 .jspContainer {
    overflow: hidden;
    position: relative;
+   display: flex;
 }
 
 .jspPane {
    position: absolute;
    padding: 10px 0px 10px 0!important;
    z-index: 1;
+   display: flex;
+   flex-flow: row wrap;
 }
 
 .jspVerticalBar {
    position: absolute;
    top: 0;
-   right: 10px;
+   right: 20px;
    width: 5px;
    z-index: 1000;
 }
@@ -48,8 +51,8 @@
 }
  
 .jspDrag {
-   background: #F77188;
-   border: 1px solid #F795A6;
+   background: rgba(51, 175, 255, 0.41);
+   /* border: 1px solid #33AFFF; */
    position: relative;
    top: 0;
    left: 0;

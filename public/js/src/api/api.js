@@ -188,6 +188,22 @@
 					  });
 
 			});
-		}	
+		},
+		uploadNewPictureUrl: function( update ){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.upload_picture_fb, update )
+					  .then(function( exposed ){
+					  	if( exposed.pictures ){
+					  		return resolve({ pictures: exposed.pictures, call_id: exposed.call_id });
+					  	} else {
+					  		LJ.wlog('The server didnt respond with expected pictures object');
+					  	}
+					  }, function( err ){
+					  	return reject( err );
+					  });
+
+			});	
+		}
 
 	});
