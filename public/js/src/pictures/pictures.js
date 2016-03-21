@@ -136,7 +136,7 @@
 			LJ.log('Uploading facebook picture...');
 
 			var $picture = $('.picture[data-img-place="' + img_place + '"]');
-			var img_id	 = $picture.attr('data-img-id');
+			var img_id	 = JSON.parse( $picture.find('.cloudinary-fileupload').attr('data-form-data') ).public_id;
 
 			var call_id = LJ.generateId();
 			LJ.ui.showLoader( call_id );
@@ -389,7 +389,7 @@
 			var img_place   = LJ.pictures.uploading_img_place;
 
 			// Known by cloudinary
-			var img_id      = data.result.public_id;
+			var img_id      = data.result.public_id// important
 			var img_version = data.result.version;
 
 			var update = {
@@ -405,9 +405,9 @@
 		handleNewPictureSuccess: function( new_picture ){
 
 			// Update cache
-			LJ.user.pictures.forEach(function( pic ){
+			LJ.user.pictures.forEach(function( pic, i ){
 				if( pic.img_place == new_picture.img_place ){
-					pic = new_picture;
+					LJ.user.pictures[i] = new_picture;
 				}
 			})
 

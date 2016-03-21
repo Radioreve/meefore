@@ -204,20 +204,20 @@
 		            	'<div class="picture__progress-bar-bg"></div>',
 		            '</div>',
 		            '<div class="picture-icon">',
-		              '<i class="picture__icon icon icon-desktop 	 --upload-desktop"></i>',
-		              '<i class="picture__icon icon icon-facebook 	 --upload-facebook"></i>',
-		              '<i class="picture__icon icon icon-user 		 --mainify"></i>',
-		              '<i class="picture__icon icon icon-trash-empty --trash"></i>',
+		            	LJ.ui.renderIcon('upload', 	 	 ['picture__icon', '--upload-desktop']),
+		            	LJ.ui.renderIcon('facebook', 	 ['picture__icon', '--upload-facebook']),
+		            	LJ.ui.renderIcon('main-picture', ['picture__icon', '--mainify']),
+		            	LJ.ui.renderIcon('trash', 		 ['picture__icon', '--trash']),
 		            '</div>',
 		            '<div class="picture__hashtag hashtag">',
 		            	'<span class="hashtag__hash">#</span>',
 		            	'<input readonly type="text" placeholder="hashtag">',
 		            	'<div class="hashtag-action">',
 			            	'<div class="hashtag__action-validate">',
-			            		'<i class="icon icon-ok"></i>',
+			            		LJ.ui.renderIcon('check'),
 			            	'</div>',
 			            	'<div class="hashtag__action-cancel">',
-			            		'<i class="icon icon-cancel"></i>',
+			            		LJ.ui.renderIcon('cancel'),
 			            	'</div>',
 		            	'</div>',
 		            '</div>',
@@ -352,7 +352,7 @@
 
 				LJ.fn.updatePictureWithUrl({
 						userId    : LJ.user._id,
-						img_id    : LJ.user._id + '--' + img_place,  // id_pattern [very important!!]
+						img_id    : LJ.user.facebook_id + '--' + img_place,  // id_pattern [very important!!]
 						url       : url,
 						img_place : img_place
         			}, function( err, data ){
@@ -693,10 +693,10 @@
 
                     var eventName = 'me/update-picture',
                     	data = {
-                    				_id              : LJ.user._id,
-									img_id           : img_id,
-									img_version      : img_version,
-									img_place        : img_place
+	        				_id              : LJ.user._id,
+							img_id           : img_id,
+							img_version      : img_version,
+							img_place        : img_place
 								}
 						, cb = {
 							success: function( data ){

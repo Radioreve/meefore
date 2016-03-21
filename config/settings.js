@@ -2,7 +2,7 @@
 var config = require('./config');
 
 var placeholder_img_id = "placeholder_picture";
-var placeholder_img_vs = "1444912756";
+var placeholder_img_vs = "1458583061";
 var min_age = 18;
 
 var settings = {
@@ -25,11 +25,11 @@ var settings = {
 		job: 'Meelover'
 	},
 	default_pictures: [
-		{ img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 0, is_main: true , hashtag: 'classic' },
-      	{ img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 1, is_main: false, hashtag: 'meerofka' },
-	    { img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 2, is_main: false, hashtag: 'swag' },
-	    { img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 3, is_main: false, hashtag: 'chill' },
-	    { img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 4, is_main: false, hashtag: 'hipster' }
+		{ img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 0, is_main: true , hashtag: 'me' },
+      	{ img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 1, is_main: false, hashtag: 'hot' },
+	    { img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 2, is_main: false, hashtag: 'friends' },
+	    { img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 3, is_main: false, hashtag: 'natural' },
+	    { img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 4, is_main: false, hashtag: 'whatever' }
 	],
 	default_app_preferences: {
 		email: {

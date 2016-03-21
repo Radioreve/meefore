@@ -101,7 +101,15 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 			LJ.ui[ options.jsp_id ] = $(element).jScrollPane();
 
 		});
+	},
+	renderIcon: function( icon_id, icon_classes ){
 
+		var icon_class = icon_id;
+		if( icon_classes && Array.isArray(icon_classes) ){
+			icon_class += ' ' + icon_classes.join(' ');
+		}
+
+		return '<i class="icon icon-' + icon_class + '"></i>';
 	}
 
 });

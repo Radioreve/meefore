@@ -4,7 +4,7 @@
 			"title": "Félicitations !",
 			"subtitle": "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
 			"body": "Then there goes the body...",
-			"footer": "<button class='--rounded'><i class='icon icon-ok'></i></button>"
+			"footer": "<button class='--rounded'><i class='icon icon-check'></i></button>"
 		});
 	};
 
@@ -126,7 +126,7 @@
 				'<div class="modal ' + modifier + '" ' + attributes + '>',
 					'<header class="modal-header">',
 						'<div class="modal__close">',
-							'<i class="icon icon-cancel"></i>',
+							LJ.ui.renderIcon('cancel'),
 						'</div>',
 						'<div class="modal__title">',
 							'<h1>' + options.title + '</h1>',

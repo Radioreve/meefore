@@ -25,8 +25,7 @@
 	background: black;
 	color: white;
 }
-.app__menu-item a {
+.app__menu-item a {display: flex;align-items: center;justify-content: center;}
 
-}
+.app__menu-icon {margin: 14px auto;font-size: 26px;}
 
-.app__menu-icon {margin-top: 19px;display: inline-block;}

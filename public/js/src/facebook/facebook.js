@@ -79,7 +79,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
     				'<div class="modal__facebook-picture" data-img-src="' + src + '">',
     					'<img src="' + src + '" width="75"/>',
     					'<div class="modal__picture-icon">',
-    						'<i class="icon icon-ok"></i>',
+    						LJ.ui.renderIcon('check'), 
     					'</div>', 
     				'</div>'
     	].join('');
@@ -158,7 +158,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 			"type"			: "facebook",
 			"title"			: LJ.text("mod_facebook_pictures_title"),
 			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
-			"footer"		: "<button class='--rounded'><i class='icon icon-ok'></i></button>",
+			"footer"		: "<button class='--rounded'>" + LJ.ui.renderIcon('check') + "</button>",
 			"attributes"	: [{ name: "img-place", val: img_place }],
 
 			"fetchPromise"	: LJ.facebook.fetchProfilePictures

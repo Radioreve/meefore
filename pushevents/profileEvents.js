@@ -105,6 +105,7 @@
 		cloudinary.uploader.upload( url, function( response ){
 
 			var img_version = response.version + '';
+			var img_id	    = response.public_id
 
 			var picture = _.find( user.pictures, function( pic ){
 				return pic.img_place == img_place;
