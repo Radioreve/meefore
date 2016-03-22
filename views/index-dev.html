@@ -59,6 +59,7 @@
   <link rel="stylesheet" href="/css/src/map/map_mapview.css">
   <link rel="stylesheet" href="/css/src/map/map_sideview.css">
   <link rel="stylesheet" href="/css/src/meepass/meepass.css">
+  <link rel="stylesheet" href="/css/src/menu/menu.css">
   <link rel="stylesheet" href="/css/src/notifications/notifications.css">
   <link rel="stylesheet" href="/css/src/onboarding/onboarding.css">
   <link rel="stylesheet" href="/css/src/profile/profile.css">
@@ -268,18 +269,70 @@
      <!-- Thumbnail end -->
   
 
-   <!-- Profile start -->
-    <section class="app-section profile">
-      <!-- Profile me start  -->
-      <div class="profile-section profile-section-me">
-        <div class="profile-section__title">
-          <h1 data-lid="p_info_title"></h1>
+   <!-- Menu section start -->
+    <section class="app-section --menu">
+
+      <nav class="menu">
+        <div class="menu__line"></div>
+        <li class="menu-item --profile" data-link="profile">
+          <div class="menu-item__body">
+            <div class="menu-item__icon">
+              <i class="icon icon-pricetag"></i>
+            </div>
+            <h3 data-lid="menu_profile"></h2>
+          </div>
+          <div class="menu-item__bar"></div>
+        </li>
+        <li class="menu-item --shared" data-link="shared">
+          <div class="menu-item__body">
+            <div class="menu-item__icon">
+              <i class="icon icon-forward"></i>
+            </div>
+            <h3 data-lid="menu_shared"></h2>
+          </div>
+          <div class="menu-item__bar"></div>
+        </li>
+        <li class="menu-item --meepass" data-link="meepass">
+          <div class="menu-item__body">
+           <div class="menu-item__icon">
+              <i class="icon icon-meepass"></i>
+            </div>
+            <h3 data-lid="menu_meepass"></h2>
+          </div>
+          <div class="menu-item__bar"></div>
+        </li>
+        <li class="menu-item --friends" data-link="friends">
+          <div class="menu-item__body">
+            <div class="menu-item__icon">
+              <i class="icon icon-users"></i>
+            </div>
+            <h3 data-lid="menu_friends"></h2>
+          </div>
+          <div class="menu-item__bar"></div>
+        </li>
+        <li class="menu-item --settings" data-link="settingss">
+          <div class="menu-item__body">
+            <div class="menu-item__icon">
+              <i class="icon icon-cog"></i>
+            </div>
+            <h3 data-lid="menu_settings"></h2>
+          </div>
+          <div class="menu-item__bar"></div>
+        </li>
+      </nav>
+
+
+      <div class="menu-section --profile" data-link="profile">
+         <div class="menu-section__subtitle">
+           <h3 data-lid="menu_subsection_pictures"></h3>
+         </div>
+         <div class="pictures">
+          <!-- %% Dynamically injected %%-->
         </div>
-        <div class="profile-section__subtitle">
-          <h3 data-lid="p_info_subtitle"></h1>
-        </div>
-        <div class="profile-section__splitter"></div>
-        <div class="profile-section__body --me">
+        <div class="menu-section__subtitle">
+           <h3 data-lid="menu_subsection_informations"></h3>
+         </div>
+        <div class="me">
           <div class="me__input me__input-name" data-param="name">
             <i class="icon icon-pricetag"></i>
             <i class="me__action-validate me__input-action icon icon-check"></i>
@@ -330,31 +383,29 @@
             <div class="me__input-explanation" data-lid="p_ideal_night_explanation"></div>
           </div>
         </div>
-      </div>
-      <!-- Profile me end -->
       
-      <!-- Profile pictures start -->
-      <div class="profile-section profile-section-pictures">
-        <div class="profile-section__title">
-          <h1 data-lid="p_pictures_title"></h1>
-        </div>
-        <div class="profile-section__subtitle">
-          <h3 data-lid="p_pictures_subtitle"></h3>
-        </div>
-        <div class="profile-section__splitter"></div>
-        <div class="profile-section__body pictures">
-          <!-- %% Dynamically injected %%-->
-        </div>
       </div>
-      <!-- Profile pictures end -->
-    
-  
+
+     <div class="menu-section --meepass" data-link="meepass">
+        This is the meepass section !!
+     </div>
+
+
+     <div class="menu-section --friends" data-link="friends">
+        This is the friends section !!
+     </div>
+
+
+
+
     </section>
-     <!-- Profile end end -->
+     <!-- Menu section end -->
+
+
   
 
      <!-- Map start -->
-    <section class="app-section map">
+    <section class="app-section --map">
     </section>
      <!-- Map end -->
 
@@ -417,6 +468,7 @@
   <script src="js/src/party/party_create.js"></script>
   <script src="js/src/profile/profile.js"></script>
   <script src="js/src/profile/profile_user.js"></script>
+  <script src="js/src/menu/menu.js"></script>
   <script src="js/src/search/search.js"></script>
   <script src="js/src/search/search_filters.js"></script>
   <script src="js/src/settings/settings.js"></script>

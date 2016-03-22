@@ -48,25 +48,37 @@
 			"fr": "La langue a été changée",
 			"en": "The language has been changed"
 		},
-		p_title: {
-			"fr": "Mon profil",
-			"en": "My profile"
+		menu_profile: {
+			"fr": "Profil",
+			"en": "Profile"
 		},
-		p_pictures_title: {
+		menu_subsection_pictures: {
 			"fr": "Mes 5 photos",
 			"en": "My 5 photos"
 		},
-		p_pictures_subtitle: {
-			"fr": "Plusieurs photos valent mieux qu'un long discours",
-			"en": "Multiple pictures speak louder than a boring speech"
+		menu_subsection_informations: {
+			"fr": "A propos de moi",
+			"en": "About me"
 		},
-		p_info_title: {
-			"fr": "Mes informations",
-			"en": "My information"
+		menu_shared: {
+			"fr": "Partagés",
+			"en": "Shared"
 		},
-		p_info_subtitle: {
-			"fr": "Pour modifier un paramètre, cliquer simplement dessus",
-			"en": "Tell us everything, and above all, focus on the essential",
+		menu_meepass: {
+			"fr": "Meepass",
+			"en": "Meepass"
+		},
+		menu_friends: {
+			"fr": "Mes amis",
+			"en": "Friends"
+		},
+		menu_invite: {
+			"fr": "Inviter des amis",
+			"en": "Invite"
+		},
+		menu_settings: {
+			"fr": "Préférences",
+			"en": "Settings"
 		},
 		p_name_label: {
 			"fr": "Nom",
@@ -579,6 +591,10 @@
 		ch_button_whisper: {
 			"fr": "Chuchoter",
 			"en": "Whisper"
+		},
+		to_easy_on_api: {
+			"fr": "Une photo est déjà en cours de téléchargement",
+			"en ": "A photo is already downloading"
 		},
 		to_new_meefore: {
 			"fr": "%name propose un meefore le %date",

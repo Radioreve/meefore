@@ -328,9 +328,11 @@
 			 return LJ.pictures.uploading_image ? "uploading" : "idle";
 
 		},
-		stageFileUpload__Profile: function(){
+		stageFileUpload__Profile: function(e){
 
 			if( LJ.pictures.getUploadingState() == "uploading" ){
+				e.preventDefault();
+				LJ.ui.showToast( LJ.text("to_easy_on_api") );
 				return LJ.wlog('Cant upload multiple files at the same time');
 			}
 

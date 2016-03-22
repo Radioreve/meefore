@@ -4,6 +4,7 @@
 	flex-flow: row;
 	justify-content: center;
 	align-items: flex-start;
+	margin-bottom: 60px;
 }
 .picture {
    position: relative;
@@ -13,7 +14,7 @@
    transition: .2s;
    padding: 10px;
    cursor: pointer;
-   margin: 6px;
+   margin: 6px 10px;
 }
 
 .picture:hover {
@@ -135,6 +136,7 @@
   margin: 0 2px;
   position: relative;
   top: -2px;
+  text-align: center;
 }
 
 .hashtag__action-validate {

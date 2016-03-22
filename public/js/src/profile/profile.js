@@ -1,7 +1,7 @@
 
 	window.LJ.profile = _.merge( window.LJ.profile || {}, {
 
-		$profile:   $('.profile'),
+		$profile:   $('.menu-section.--profile'),
 		$pictures:  $('.pictures'),
 		$thumbnail: $('.app-thumbnail'),
 
