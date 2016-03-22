@@ -1,14 +1,13 @@
 
-
 	
-.menu-section.--friends {
+.menu-section.--shared {
 
 }
 
 
-.friends {width: 100%;}
+.shared {width: 100%;}
 
-.friend__item {
+.shared__item {
 	border-bottom: 1px solid #eee;
 	position: relative;
 	padding: 16px 20px;
@@ -18,11 +17,14 @@
 	align-items: center;
 	cursor: pointer;
 }
-.friend__item:hover {
+.shared__item:hover {
 	background: #f9f9f9;
 }
-.friend__item:last-of-type {
+.shared__item:last-of-type {
 	border-bottom: none;
 }
 
+.shared .row-pic__icon {
+	background: #33afff
+}
 

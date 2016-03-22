@@ -69,7 +69,7 @@
   <link rel="stylesheet" href="/css/src/search/search.css">
   <link rel="stylesheet" href="/css/src/seek/seek.css">
   <link rel="stylesheet" href="/css/src/settings/settings.css">
-  <link rel="stylesheet" href="/css/src/spotted/spotted.css">
+  <link rel="stylesheet" href="/css/src/shared/shared.css">
   <link rel="stylesheet" href="/css/src/login/login.css">
   <link rel="stylesheet" href="/css/src/media/media.css">
 
@@ -233,22 +233,22 @@
       </div>
       <nav class="app-nav">
         <ul>
-          <li class="app__menu-item active">
+          <li class="app__menu-item --menu --active">
             <a href="#profile">
               <i class="app__menu-icon icon icon-menu"></i>
             </a>
           </li>
-          <li class="app__menu-item">
+          <li class="app__menu-item --map">
             <a href="#map">
-              <i class="app__menu-icon icon icon-drinks"></i>
+              <i class="app__menu-icon icon icon-location"></i>
             </a>
           </li>
-          <li class="app__menu-item">
+          <li class="app__menu-item --notifications">
             <a href="#notifications">
               <i class="app__menu-icon icon icon-bell"></i>
             </a>
           </li>
-          <li class="app__menu-item">
+          <li class="app__menu-item --search">
             <a href="#search">
               <i class="app__menu-icon icon icon-search-zoom"></i>
             </a>
@@ -271,12 +271,13 @@
 
    <!-- Menu section start -->
     <section class="app-section --menu">
-
-      <nav class="menu">
+    
+      <!-- Menu begin -->
+      <nav class="menu ">
         <div class="menu__line"></div>
         <li class="menu-item --profile" data-link="profile">
           <div class="menu-item__body">
-            <div class="menu-item__icon">
+            <div class="menu-item__icon --round-icon">
               <i class="icon icon-pricetag"></i>
             </div>
             <h3 data-lid="menu_profile"></h2>
@@ -285,7 +286,7 @@
         </li>
         <li class="menu-item --shared" data-link="shared">
           <div class="menu-item__body">
-            <div class="menu-item__icon">
+            <div class="menu-item__icon --round-icon">
               <i class="icon icon-forward"></i>
             </div>
             <h3 data-lid="menu_shared"></h2>
@@ -294,7 +295,7 @@
         </li>
         <li class="menu-item --meepass" data-link="meepass">
           <div class="menu-item__body">
-           <div class="menu-item__icon">
+           <div class="menu-item__icon --round-icon">
               <i class="icon icon-meepass"></i>
             </div>
             <h3 data-lid="menu_meepass"></h2>
@@ -303,7 +304,7 @@
         </li>
         <li class="menu-item --friends" data-link="friends">
           <div class="menu-item__body">
-            <div class="menu-item__icon">
+            <div class="menu-item__icon --round-icon">
               <i class="icon icon-users"></i>
             </div>
             <h3 data-lid="menu_friends"></h2>
@@ -313,25 +314,27 @@
         <li class="menu-item --settings" data-link="settingss">
           <div class="menu-item__body">
             <div class="menu-item__icon">
-              <i class="icon icon-cog"></i>
+              <i class="icon icon-cog --round-icon"></i>
             </div>
             <h3 data-lid="menu_settings"></h2>
           </div>
           <div class="menu-item__bar"></div>
         </li>
       </nav>
+      <!-- Meepass begin -->
 
 
-      <div class="menu-section --profile" data-link="profile">
-         <div class="menu-section__subtitle">
-           <h3 data-lid="menu_subsection_pictures"></h3>
-         </div>
-         <div class="pictures">
+      <!-- Profile begin -->
+      <section class="menu-section --profile" data-link="profile">
+        <div class="menu-section__subtitle">
+          <h3 data-lid="menu_subsection_pictures"></h3>
+        </div>
+        <div class="pictures">
           <!-- %% Dynamically injected %%-->
         </div>
         <div class="menu-section__subtitle">
            <h3 data-lid="menu_subsection_informations"></h3>
-         </div>
+        </div>
         <div class="me">
           <div class="me__input me__input-name" data-param="name">
             <i class="icon icon-pricetag"></i>
@@ -383,18 +386,261 @@
             <div class="me__input-explanation" data-lid="p_ideal_night_explanation"></div>
           </div>
         </div>
+      </section>
+      <!-- Profile end -->
+
       
-      </div>
+      <!-- Shared begin -->
+      <section class="menu-section --shared" data-link="shared">
+        <div class="shared">
+          <div class="shared__item">
+            <div class="row-date date">
+              Il y a 2 heures
+            </div>
+            <div class="row-pic">
+              <div class="row-pic__image">
+                <img src="/img/test/8.jpg" width="100%">
+              </div>
+              <div class="row-pic__icon --round-icon">
+                <i class="icon icon-forward"></i>
+              </div>
+            </div>
+            <div class="row-body">
+              <div class="row-body__title">
+                <h2>Before partagé par Cindy</h2>
+              </div>
+              <div class="row-body__subtitle">
+                <div class="row-body__icon --round-icon">
+                  <i class="icon icon-location"></i>
+                </div>
+                <h4>25 Rue des martyrs, 75006 Paris</h4>
+              </div>
+            </div>
+          </div>
+          <div class="shared__item">
+            <div class="row-date date">
+              Il y a 2 heures
+            </div>
+            <div class="row-pic">
+              <div class="row-pic__image">
+                <img src="/img/test/9.jpg" width="100%">
+              </div>
+              <div class="row-pic__icon --round-icon">
+                <i class="icon icon-forward"></i>
+              </div>
+            </div>
+            <div class="row-body">
+              <div class="row-body__title">
+                <h2>Before partagé par Camille</h2>
+              </div>
+              <div class="row-body__subtitle">
+                <div class="row-body__icon --round-icon">
+                  <i class="icon icon-location"></i>
+                </div>
+                <h4> 99 Avenue de la République, 75009 Paris</h4>
+              </div>
+            </div>
+          </div>
+          <div class="shared__item">
+            <div class="row-date date">
+              16:25
+            </div>
+            <div class="row-pic">
+              <div class="row-pic__image">
+                <img src="/img/test/10.jpg" width="100%">
+              </div>
+              <div class="row-pic__icon --round-icon">
+                <i class="icon icon-forward"></i>
+              </div>
+            </div>
+            <div class="row-body">
+              <div class="row-body__title">
+                <h2>Before partagé par Arielle</h2>
+              </div>
+              <div class="row-body__subtitle">
+                <div class="row-body__icon --round-icon">
+                  <i class="icon icon-location"></i>
+                </div>
+                <h4>37 rue du Four, 75006 Paris</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Shared end -->
 
-     <div class="menu-section --meepass" data-link="meepass">
-        This is the meepass section !!
-     </div>
+
+      <!-- Meepass begin -->
+      <section class="menu-section --meepass" data-link="meepass">
+        <div class="menu-section-segment">
+          <div class="segment">
+            <div class="segment__part --active" data-link="received">
+              <h3 data-lid="segment_meepass_received"></h3>
+            </div>
+            <div class="segment__part" data-link="sent">
+              <h3 data-lid="segment_meepass_sent"></h3>
+            </div>
+          </div>
+        </div>
+        <div class="meepass">
+          <div class="meepass__item" data-link="received">
+            <div class="row-date date">
+              Il y a 2 heures
+            </div>
+            <div class="row-pic">
+              <div class="row-pic__image">
+                <img src="/img/test/1.jpg" width="100%">
+              </div>
+              <div class="row-pic__icon --round-icon">
+                <i class="icon icon-meepass"></i>
+              </div>
+            </div>
+            <div class="row-body">
+              <div class="row-body__title">
+                <h2>Reçu de Mathilda</h2>
+              </div>
+              <div class="row-body__subtitle">
+                <div class="row-body__icon --round-icon">
+                  <i class="icon icon-location"></i>
+                </div>
+                <h4>Pour un before le <span class="date">22/04/16</span></h4>
+              </div>
+            </div>
+          </div>
+          <div class="meepass__item" data-link="received">
+            <div class="row-date date">
+              Il y a 2 heures
+            </div>
+            <div class="row-pic">
+              <div class="row-pic__image">
+                <img src="/img/test/2.jpg" width="100%">
+              </div>
+              <div class="row-pic__icon --round-icon">
+                <i class="icon icon-meepass"></i>
+              </div>
+            </div>
+            <div class="row-body">
+              <div class="row-body__title">
+                <h2>Reçu de Juliette</h2>
+              </div>
+              <div class="row-body__subtitle">
+                <div class="row-body__icon --round-icon">
+                  <i class="icon icon-location"></i>
+                </div>
+                <h4>Pour un before le <span class="date">19/04/16</span></h4>
+              </div>
+            </div>
+          </div>
+          <div class="meepass__item" data-link="sent">
+            <div class="row-date date">
+              16:25
+            </div>
+            <div class="row-pic">
+              <div class="row-pic__image">
+                <img src="/img/test/3.jpg" width="100%">
+              </div>
+              <div class="row-pic__icon --round-icon">
+                <i class="icon icon-meepass"></i>
+              </div>
+            </div>
+            <div class="row-body">
+              <div class="row-body__title">
+                <h2>Envoyé à Charline</h2>
+              </div>
+              <div class="row-body__subtitle">
+                <div class="row-body__icon --round-icon">
+                  <i class="icon icon-location"></i>
+                </div>
+                <h4>Pour un before le <span class="date">30/04/16</span></h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Meepass end -->
+
+    
+      <!-- Friends begin -->
+      <section class="menu-section --friends" data-link="friends">
+        <div class="friends">
+          <div class="friend__item">
+            <div class="row-pic">
+              <div class="row-pic__image">
+                <img src="/img/test/4.jpg" width="100%">
+              </div>
+            </div>
+            <div class="row-body">
+              <div class="row-body__title">
+                <h2>Cindy L.</h2>
+              </div>
+              <div class="row-body__subtitle">
+                <div class="row-body__icon --round-icon">
+                  <i class="icon icon-education"></i>
+                </div>
+                <h4>Vendeuse chez Zara</h4>
+              </div>
+            </div>
+          </div>
+          <div class="friend__item">
+            <div class="row-pic">
+              <div class="row-pic__image">
+                <img src="/img/test/5.jpg" width="100%">
+              </div>
+            </div>
+            <div class="row-body">
+              <div class="row-body__title">
+                <h2>Mam'zelle Jolie</h2>
+              </div>
+              <div class="row-body__subtitle">
+                <div class="row-body__icon --round-icon">
+                  <i class="icon icon-education"></i>
+                </div>
+                <h4>Farniente</h4>
+              </div>
+            </div>
+          </div>
+          <div class="friend__item">
+            <div class="row-pic">
+              <div class="row-pic__image">
+                <img src="/img/test/6.jpg" width="100%">
+              </div>
+            </div>
+            <div class="row-body">
+              <div class="row-body__title">
+                <h2>Kath'</h2>
+              </div>
+              <div class="row-body__subtitle">
+                <div class="row-body__icon --round-icon">
+                  <i class="icon icon-education"></i>
+                </div>
+                <h4>Etudiante</h4>
+              </div>
+            </div>
+          </div>
+          <div class="friend__item">
+            <div class="row-pic">
+              <div class="row-pic__image --round-icon">
+                <i class="icon icon-user-add"></i>
+              </div>
+            </div>
+            <div class="row-body">
+              <div class="row-body__title">
+                <h1>Invitez plus d'amis</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Friends end -->
 
 
-     <div class="menu-section --friends" data-link="friends">
-        This is the friends section !!
-     </div>
-
+      <!-- Settings begin -->
+      <section class="menu-section --settings" data-link="settings">
+        <div class="menu-section__subtitle">
+          <h3 data-lid="menu_subsection_account"></h3>
+        </div>
+      </section>
+      <!-- Settings end -->
 
 
 
@@ -472,7 +718,7 @@
   <script src="js/src/search/search.js"></script>
   <script src="js/src/search/search_filters.js"></script>
   <script src="js/src/settings/settings.js"></script>
-  <script src="js/src/spotted/spotted.js"></script>
+  <script src="js/src/shared/shared.js"></script>
   <script src="js/src/static/static.js"></script>
   <script src="js/src/login/login.js"></script>
   <script src="js/src/ui/ui.js"></script>

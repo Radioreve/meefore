@@ -251,43 +251,56 @@
 	    app.get('/api/v1/events',
 	    	api.events.fetchEvents );
 
+
 	    // [ @events ] Crée un nouvel évènement
 	    app.post('/api/v1/events',
 	    	mdw.validate('create_event'),
 	    	mdw.meepass.updateMeepass('event_created'),
 	    	mdw.notifier.addNotification('marked_as_host'),
-	    	api.events.createEvent );
+	    	api.events.createEvent
+	    );
 
 
 
 	    // [ @chat ] Renvoie l'historique des messages par chat id
 	    app.get('/api/v1/chats/:chat_id',
 	    	mdw.validate('chat_fetch'),
-	    	api.chats.fetchChatMessages );
+	    	api.chats.fetchChatMessages
+	    );
 
 	    // [ @chat ] Post un nouvau message
 	    app.post('/api/v1/chats/:chat_id',
 	    	mdw.validate('chat_message'),
 	    	mdw.chat_watcher.watchCache,
 	    	mdw.chat_watcher.mailOfflineUsers,
-	    	api.chats.addChatMessage );
+	    	api.chats.addChatMessage
+	    );
 
 	    // [ @chat ] Poste le fait qu'un user ai lu un message
 	    app.post('/api/v1/chats/:chat_id/readby',
 	    	mdw.validate('chat_readby'),
-	    	api.chats.setReadBy );
+	    	api.chats.setReadBy
+	    );
 
+
+	    // [ @spotted and shared ] Repérés et partagés un profil
+	    app.post('/api/v1/share',
+			mdw.validate('shared'),
+			profileEvents.updateShared
+		);
 
 
 	    // [ @parties ] Créer un évènement partenaire
 	    app.post('/api/v1/parties',
 	    	mdw.auth.authenticate(['admin']),
 	    	mdw.validate('create_party'),
-	    	api.parties.createParty );
+	    	api.parties.createParty
+	    );
 
 	    // [ @parties ] Fetch all parties
 	    app.get('/api/v1/parties',
-	    	api.parties.fetchParties );
+	    	api.parties.fetchParties
+	    );
 
 	    
 	    // [ @places ] Fetch all places

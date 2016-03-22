@@ -21,7 +21,7 @@
 .app-nav ul {display: inline-block;position: relative;height: 100%;}
 
 .app__menu-item {display: inline-block;font-size: 20px;width: 60px;height: 54px;text-align: center;}
-.app__menu-item.active {
+.app__menu-item.--active {
 	background: black;
 	color: white;
 }

@@ -1,6 +1,9 @@
 
 	window.LJ.menu = _.merge( window.LJ.menu || {}, {
 
+		$menu: $('.menu'),
+		shrink_menu_height_limit: 50,
+
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
 
@@ -13,6 +16,7 @@
 		handleDomEvents: function(){
 
 			LJ.ui.$body.on('click', '.menu-item', LJ.menu.showMenuItem );
+			LJ.ui.$window.scroll( LJ.menu.handleMenuApparition );
 
 		},
 		showMenuItem: function(){
@@ -54,9 +58,94 @@
 				.velocity('bounceInQuick', { duration: 450, display: 'block' });
 
 			$menu_block_activated.hide();
-			$menu_block_to_activate.css({ display: 'flex' })
+			$menu_block_to_activate.css({ display: 'flex' });
 
 
+
+		},
+		handleMenuApparition: function( e ){
+
+			if( ! $('.app__menu-item.--menu').hasClass('--active') ){
+				return LJ.log('Returning...');
+			}
+
+			var current_scrolltop = LJ.ui.$window.scrollTop();
+
+			if( LJ.ui.getScrollDirection() == "down" && LJ.ui.scrolltop > LJ.menu.shrink_menu_height_limit && $('--resizing').length == 0 ){
+				LJ.menu.shrinkMenu();
+			}
+
+			if( LJ.ui.getScrollDirection() == "up" && LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit  && $('--resizing').length == 0 ){
+				LJ.menu.expandMenu();
+			}
+
+				
+		},
+		toggleMenuState: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( $m.hasClass('--downsized') ){
+				LJ.menu.expandMenu();
+			} else {
+				LJ.menu.shrinkMenu();
+			}
+
+		},
+		shrinkMenu: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( $m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
+
+			$m.addClass('--resizing');
+			$m.velocity('slideUpOut', {
+				duration: 300,
+				complete: function(){
+
+					if( LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit ){
+						return $m.velocity('slideDownIn', {
+							duration: 300,
+							display: 'flex',
+							complete: function(){
+								$m.removeClass('--resizing');
+							}
+						})
+					}
+
+					$m.addClass('--downsized');
+					$m.closest('.app-section').addClass('--downsized');
+					$m.removeClass('--resizing');
+					$m.velocity('slideDownIn', {
+						duration: 300,
+						display: 'flex'
+					});
+
+				}
+			});
+
+		},
+		expandMenu: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( !$m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
+
+			$m.addClass('--resizing');
+			$m.velocity('slideUpOut', {
+				duration: 300,
+				complete: function(){
+
+					$m.removeClass('--resizing');
+					$m.removeClass('--downsized')
+					$m.closest('.app-section').removeClass('--downsized');
+					$m.velocity('slideDownIn', {
+						duration: 300,
+						display: 'flex'
+					});
+
+				}
+			});
 
 		}
 

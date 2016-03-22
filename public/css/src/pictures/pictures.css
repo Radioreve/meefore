@@ -9,24 +9,20 @@
 .picture {
    position: relative;
    background: white;
-   border: 1px solid rgb(228, 228, 228);
+   /* border: 1px solid rgb(228, 228, 228); */
    width: 170px;
    transition: .2s;
    padding: 10px;
    cursor: pointer;
-   margin: 6px 10px;
 }
 
 .picture:hover {
-   border: 1px double #DCDCDC;
-   box-shadow: 0 0 10px #CCCCDC;
+   /* border: 1px double #DCDCDC; */
+   /* box-shadow: 0 0 10px #CCCCDC; */
 }
 
 
 .picture.--main {
-   transform: scale(1.1);
-   margin-left: 10px;
-   margin-right: 10px;
 }
 
 .picture-icon {

@@ -24,7 +24,7 @@
     font-size: 24px;
     font-weight: 200;
     cursor: pointer;
-    transition: all ease-in-out .2s;
+    transition: all cubic-bezier(0, 0, 0.2, 1) .20s;
 }
 
 .me__input-field.--active {
@@ -123,61 +123,6 @@
 
 
 
-
-#profileWrap {margin-top: 20px;}
-
-::-webkit-file-upload-button {
-   cursor: pointer;
-}
-
-.row-title {
-   /* text-transform: uppercase; */
-   font-size: 13px;
-   color: #484848;
-   border-bottom: 2px solid #8E8686;
-}
-
-.row-title-text {
-   font: bold 18px 'Coming Soon';
-   display: inline-block;
-   padding: 8px;
-   border-bottom: none;
-}
-
-.row-title .icon {
-   /* border-top: 1px solid #676767; */
-   /* box-shadow: 1px -1px 0px #9C9C9C; */
-   border-bottom: none;
-   padding: 7px 5px;
-   border-radius: 3px;
-   position: relative;
-   /* background-color: #FEFEFE; */
-   color: #484848;
-   top: 10px;
-   cursor: pointer;
-   transition: all ease-out .3s;
-   font-size: 16px;
-}
-
-.row-title .icon.active,
-.row-pictures i.selected {
-   background: #68D068;
-   color: white;
-   background: #B01756;
-}
-
-.row-title .icon:not(.active):hover {
-   background: #FED6FF;
-   /* z-index: -1; */
-}
-
-.row-body {
-   font-family: 'Karla';
-}
-
-.row-body-sub {
-    text-align: center;
-}
 
 
 .invite-friends {

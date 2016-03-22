@@ -30,11 +30,7 @@
 }
 
 
-.item,
-.friend,
-.before-place,
-.party-place,
-.date {
+.item, .friend, .before-place, .party-place {
 	position:relative;
 	top: -7px;
 }
@@ -53,7 +49,7 @@
 	top: 1px;
 } 
 
-.item, .friend, .date, .before-place, .party-place, .hour, .default {
+.item, .friend, .before-place, .party-place, .hour, .default {
    display: inline-block;
    background: #FBFBFB;
    padding: 0px 6px 0 0px;

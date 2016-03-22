@@ -10,10 +10,16 @@
 
 		return function( req, res, next ){
 
+			req.sent.expose = {};
+			
 			var token = req.headers && req.headers['x-access-token'] || req.sent.token;
 			
 			// Allow root users to bypass the app token required for  calls from terminals
 			if( audience.indexOf('root') != -1 && req.sent.rootkey == "M33forever" ){
+				return next();
+			}
+
+			if( process.env.NODE_ENV == 'dev' && req.sent.env == "dev" ){
 				return next();
 			}
 
@@ -42,7 +48,6 @@
 
 			// Get the expose object already setup with update_id. That will ping/pong and stay unchanged 
 			// For the client to be able to uniquely identify each of its calls
-			req.sent.expose = {};
 			req.sent.expose.call_id = req.sent.call_id;
 
 			return next();		

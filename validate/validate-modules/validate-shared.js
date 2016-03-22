@@ -36,9 +36,7 @@
 			.withRequired('facebook_id' , nv.isString() )
 			.withRequired('target_id'   , nv.isString() )
 			.withRequired('target_type' , nv.isString() )
-			.withRequired('share_type'  , nv.isString() )
 			.withRequired('shared_with' , nv.isArray( nv.isString(), { min: 1 } ))
-			.withRequired('socket_id'   , nv.isString() )
 			.withCustom( isIdOk )
 
 		nv.run( checkShareRequest, req.sent, function( n, errors ){
@@ -60,7 +58,6 @@
 	function checkSenderStatus( req, callback ){
 
 		var facebook_id = req.sent.facebook_id;
-		var share_type  = req.sent.share_type;
 		var target_id   = req.sent.target_id;
 		var target_type = req.sent.target_type;
 		var shared_with = req.sent.shared_with;
@@ -86,12 +83,6 @@
 			});
 		}
 
-		if( ['shared_by', 'shared_with'].indexOf( share_type ) == -1 ){
-			return callback({
-				'err_id' : 'unknown_share_type',
-				'msg'    : 'The share_type parameter must be either shared_by or shared_with'
-			});
-		}
 		
 		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
 

@@ -2,11 +2,14 @@
 
 window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
+	$window	    : $(window),
 	$body 		: $('body'),
 
 	show_curtain_duration	: 2000,
 	hide_curtain_duration	: 2000,
 	minimum_api_delay		: 1000,
+
+	scrolltop: 0,
 
 	//Down
 	slideDownInLight:  { opacity: [1, 0], translateY: [0, 10]   },
@@ -30,6 +33,25 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
     slideRightOutVeryLight: { opacity: [0, 1], translateX: [7, 0]   },
 	
 	init: function(){
+
+		LJ.ui.$window.scroll( LJ.ui.setScrollDirection );
+
+	},
+	getScrollDirection: function(){
+		return LJ.ui.scroll_direction;
+	},
+	setScrollDirection: function(){
+
+		var current_scrolltop = LJ.ui.$window.scrollTop();
+
+		if( LJ.ui.scrolltop > current_scrolltop ){
+			LJ.ui.scroll_direction = "up";
+		} else {
+			LJ.ui.scroll_direction = "down";
+		}
+
+		LJ.ui.scrolltop = LJ.ui.$window.scrollTop();
+
 
 	},
 	showCurtain: function( o ){

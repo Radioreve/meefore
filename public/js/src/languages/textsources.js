@@ -60,6 +60,10 @@
 			"fr": "A propos de moi",
 			"en": "About me"
 		},
+		menu_subsection_account: {
+			"fr": "Paramètres du compte",
+			"en": "Account settings"
+		},
 		menu_shared: {
 			"fr": "Partagés",
 			"en": "Shared"
@@ -1182,6 +1186,14 @@
 		mod_facebook_pictures_subtitle: {
 			"fr": "Sélectionner la photo que vous souhaitez importer à partir de Facebook",
 			"en ": "Select the photo you wish to import from Facebook"
+		},
+		segment_meepass_received: {
+			"fr": "Reçus",
+			"en": "Received"
+		},
+		segment_meepass_sent: {
+			"fr": "Envoyés",
+			"en": "Sent"
 		}
 
 	});

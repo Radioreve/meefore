@@ -1,4 +1,12 @@
 
+.date {
+	font-family: 'Open sans';
+}
+.--round-icon {
+	display: flex;
+	border-radius: 100px;
+}
+
 .app {display: flex;align-items: center;flex-direction: column;height: 100%;width: 100%;background: white;z-index: 0;position: absolute;padding-top: 60px;}
 
 .app-section {
@@ -16,3 +24,56 @@
     top: 50%;
     transform: translate(-50%,-50%)
 }
+ 
+.row-date {position: absolute;top: 20px;right: 20px;font-weight: 300;font-size: 16px;color: #ccc;}
+
+.row-pic {display: flex;position: relative;width: 90px;height: 90px;}
+
+.row-pic__image {
+	overflow: hidden;
+	width:100%;
+	height:100%;
+	border-radius: 100px;
+}
+.row-pic.--invite-friends {font-size: 50px;background: #7b4cbb;border-radius: 100px;color: white;}
+.row-pic__image img {
+
+}
+
+.row-pic__icon {
+	position: absolute;
+	bottom: -5px;
+	right: -5px;
+	border: 3px solid white;
+	color: white;
+	background: #454545;
+	font-size: 20px;
+	height: 30px;
+	width: 30px;
+}
+
+.row-pic__icon i {margin: auto;position: relative;left: 1px;}
+
+.row-body {
+	display: flex;
+	flex-flow: column;
+	align-items: flex-start;
+	padding-left: 40px;
+}
+.row-body__title {margin-bottom: 8px;position: relative;}
+.row-body__subtitle {
+	display: flex;
+	align-items: center;
+}
+.row-body h1 {
+	font-family: 'Creamy Script';
+	font-size: 30px;
+}
+.row-body h2 {font-weight: bolder;font-size: 22px;color: #454545;margin-right: 30px;}
+
+.row-body__icon {color: #919191;width: 24px;height: 20px;}
+.row-body__icon i {
+}
+
+.row-body h4 {color: #919191;font-size: 14px;font-weight: 300;font-family: 'Open sans';}
+.row-body h4 span { font-size: 14px; margin-left: 2px;}

@@ -1,0 +1,32 @@
+
+.menu-section.--meepass {
+
+}
+
+.menu-section.--meepass .menu-section-segment {
+
+}
+
+.meepass {width: 100%;}
+
+.meepass__item {
+	border-bottom: 1px solid #eee;
+	position: relative;
+	padding: 16px 20px;
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: flex-start;
+	align-items: center;
+	cursor: pointer;
+}
+.meepass__item:hover {
+	background: #f9f9f9;
+}
+.meepass__item.--last {
+	border-bottom: none;
+}
+
+.meepass .row-pic__icon {
+	background: #de3653
+}
+

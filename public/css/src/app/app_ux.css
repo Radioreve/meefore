@@ -8,9 +8,18 @@
    
 */
 
-.tr.tr-15 { transition: all ease-in-out .15s ; }
-.tr.tr-30 { transition: all ease-in-out .3s ; }
-.tr.tr-50 { transition: all ease-in-out .5s ; }
+.user__status {
+    width: 18px;
+    height: 18px;
+    border-radius: 100px;
+    position: absolute;
+    top: 0;
+    right: 0;
+} 
+
+.user__status.--online {
+    background: #6ae74f;
+}
 
 /* App toasts */
 .toast {
@@ -87,7 +96,7 @@
 .modal__title h1 {
 
 }
-.modal__close {position: absolute;top: 5px;right: 2px;cursor: pointer;}
+.modal__close {position: absolute;top: 10px;right: 6px;cursor: pointer;color: #ccc;font-size: 22px;}
 
 .modal__close i {
 

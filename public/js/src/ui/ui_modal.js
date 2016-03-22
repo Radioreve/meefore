@@ -76,12 +76,12 @@
 
 				var $modal = $( LJ.ui.renderModal( options ) );
 
-				LJ.ui.showCurtain({ duration: 400, opacity: .75 })
+				LJ.ui.showCurtain({ duration: 500, opacity: .75 })
 
 				$modal.hide()
 					  .appendTo( $('.curtain') )
 					  .velocity('bounceInQuick', {
-					  	delay: 200,
+					  	delay: 600,
 					  	display: 'flex',
 					  	duration: LJ.ui.show_modal_duration,
 					  	complete: function(){
@@ -101,7 +101,7 @@
 
 			$('.curtain').velocity('fadeOut', {
 				duration: LJ.ui.hide_modal_duration,
-				delay: 300,
+				delay: 650,
 				complete: function(){
 					$(this).remove();
 				}

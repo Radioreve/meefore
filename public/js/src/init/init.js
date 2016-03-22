@@ -25,9 +25,12 @@
             LJ.facebook.init();
             // Basic routing functionalities to prevent user from accidentally leaving the page
             LJ.router.init();
-
             // Menu dom interactions
             LJ.menu.init();
+            // Scrolling globals etc
+            LJ.ui.init();
+            // Profile meepass & send meepass to other people
+            LJ.meepass.init();
 
             // Autologin for users who asked the "remember me" feature in their settings
             LJ.autologin.init()
