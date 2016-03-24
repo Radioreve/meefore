@@ -12,6 +12,11 @@
 				'access_name': 'modal_loader',
 				'image_id'   : 'app_loader_blue',
 				'param'      : { 'class': 'modal__loader', 'width': 100  }
+			},
+			{
+				'access_name': 'menu_loader',
+				'image_id'   : 'app_loader_royal_blue',
+				'param'      : { 'class': 'modal__loader', 'width': 130  }
 			}
 		],
 		// Constructs a list of static pictures hosted on Cloudinary that are available

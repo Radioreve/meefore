@@ -1,6 +1,24 @@
 
 window.LJ = _.merge( window.LJ || {}, {
 
+    initAugmentations: function(){
+
+        String.prototype.capitalize = function() {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        }
+
+        /* La base! */
+        _.mixin({
+            pluckMany: function() {
+                var array = arguments[0],
+                    propertiesToPluck = _.rest(arguments, 1);
+                return _.map(array, function(item) {
+                    return _.partial(_.pick, item).apply(null, propertiesToPluck);
+                });
+            }
+        });
+                
+    },
     promise: function( callback ){
         return new Promise( callback );
     },
@@ -71,6 +89,9 @@ window.LJ = _.merge( window.LJ || {}, {
     },
     randomInt: function(low, high) {
         return Math.floor(Math.random() * (high - low + 1) + low);
+    },
+    renderDate: function( date ){
+        return moment( date ).format('hh:mm')
     },
     testTemplate: function( tplName, param, wrapper ){
 

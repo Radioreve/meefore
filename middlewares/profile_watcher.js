@@ -105,21 +105,21 @@
 		var facebook_id = req.sent.facebook_id;
 
 		var profile_ns = 'user_profile/' + facebook_id;
-		rd.hgetall( profile_ns, function( err, user ){
+		rd.hgetall( profile_ns, function( err, cached_user ){
 
 			if( err ){
 				return handleErr( res, err_ns, err );
 			}
 
-			if( !user ){
+			if( !cached_user ){
 
 				console.log('User not found in cache, setting default values...');
 				return setCache( req, res, next );
 
 			} else {
 
-				var updatedPictures = req.sent.updatedPictures;
-				var mainified_picture = _.find( updatedPictures, function( el ){
+				var updated_pictures   = req.sent.updated_pictures;
+				var mainified_picture = _.find( updated_pictures, function( el ){
 						return el.action == "mainify"
 					});
 
@@ -127,6 +127,9 @@
 					console.log('The main picture hasnt changed, cache remains the same');
 					return next();
 				}
+
+				console.log('User found in cache, setting new profile... ');
+				console.log('mainified_picture = ' + JSON.stringify( mainified_picture, null, 3 ));
 
 				var new_main_place = mainified_picture.img_place;
 
@@ -138,8 +141,6 @@
 					'img_id' : user_new_main_pic.img_id,
 					'img_vs' : user_new_main_pic.img_version
 				};
-
-				console.log('User found in cache, new_profile');
 
 				rd.hmset( profile_ns, new_profile, function( err, res ){
 

@@ -51,15 +51,15 @@ var settings = {
 			[
 				'facebook_id',
 				'facebook_url', 
-				'signup_date', 
-				'age', 
-				'gender', 
-				'job', 
 				'name', 
-				'country_code', 
+				'age',
+				'job', 
+				'location',
 				'pictures',
+				'gender', 
+				'country_code', 
+				'signup_date', 
 				'channels'
-				//'skills'
 			],
 		events: []
 	},

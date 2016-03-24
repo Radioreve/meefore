@@ -7,7 +7,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 	show_curtain_duration	: 2000,
 	hide_curtain_duration	: 2000,
-	minimum_api_delay		: 1000,
+	minimum_api_delay		: 750,
 
 	scrolltop: 0,
 

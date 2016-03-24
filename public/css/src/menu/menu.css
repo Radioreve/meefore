@@ -42,7 +42,7 @@
 	top: 119px;
 }
 
-.menu-section {display: none;flex-flow: column nowrap;justify-content: center;align-items: center;height: 100%;width: 80%;margin-bottom: 50px;}
+.menu-section {display: none;flex-flow: column nowrap;justify-content: flex-start;align-items: center;height: 100%;width: 80%;margin-bottom: 50px;}
 
 .menu-item {
 	display: flex;
@@ -135,6 +135,7 @@
   font-family: 'Creamy Script';
   font-size: 50px;
   margin: 0 30px;
+  color: #454545;
 }
 
 

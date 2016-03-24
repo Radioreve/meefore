@@ -3,6 +3,12 @@
 
 		app_token_url 			  : '/auth/facebook',
 		me_url		  			  : '/api/v1/me',
+		me_friends				  : '/me/friends',
+		fetch_shared_url		  : '/api/v1/users/:facebook_id/shared',
+		fetch_meepass_url 		  : '/api/v1/users/:facebook_id/meepass',
+		fetch_friends_url  		  : '/api/v1/users/:facebook_id/friends',
+		fetch_user_url 	   	  	  : '/api/v1/users/:facebook_id/core',
+		fetch_user_profile_url    : '/api/v1/users/:facebook_id/full',
 		update_profile_url  	  : '/me/update-profile',
 		upload_picture_dt		  : '/me/update-picture-client',
 		upload_picture_fb		  : '/me/update-picture-url',
@@ -122,6 +128,84 @@
 					  });
 			});
 		},
+		fetchMeShared: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.get( LJ.api.fetch_shared_url.replace(':facebook_id', LJ.user.facebook_id ) )
+					  .then(function( exposed ){
+					  		return resolve( exposed );
+					  }, function( err ){
+					  		return reject( err );
+					  });
+			});
+
+		},
+		fetchMeMeepass: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.get( LJ.api.fetch_meepass_url.replace(':facebook_id', LJ.user.facebook_id) )
+					  .then(function( exposed ){
+					  		return resolve( exposed );
+					  }, function( err ){
+					  		return reject( err );
+					  });
+			});
+		},
+		fetchMeFriends: function( data ){
+
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.me_friends, data )
+					  .then(function( exposed ){
+					  	return resolve( exposed );
+					  }, function( err ){
+					  	return reject( err );
+					  });
+
+			});
+
+		},
+		fetchUser: function( facebook_id ){
+
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.get( LJ.api.fetch_user_url.replace(':facebook_id', facebook_id ) )
+					  .then(function( exposed ){
+					  	return resolve( exposed );
+					  }, function( err ){
+					  	return reject( err );
+					  });
+
+			});
+
+		},
+		fetchUsers: function( facebook_ids ){
+
+			var promises = [];
+			facebook_ids.forEach(function( fb_id ){
+				promises.push( LJ.api.fetchUser( fb_id ) )
+			});
+
+			return LJ.Promise.all( promises );
+							 
+
+		},
+		fetchUserProfile: function( facebook_id ){
+
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.get( LJ.api.fetch_user_profile_url.replace(':facebook_id', facebook_id ) )
+					  .then(function( exposed ){
+					  	return resolve( exposed );
+					  }, function( err ){
+					  	return reject( err );
+					  });
+
+			});
+
+		},	
 		updateProfile: function( data ){
 
 			// Needed to keep track of parallel api calls and matching loaders

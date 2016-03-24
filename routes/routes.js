@@ -69,6 +69,18 @@
 
 		});
 
+		function setParam( params ){
+
+			var params = Array.isArray(params) ? params : [params];
+			return function( req, res, next ){
+				params.forEach(function( para ){
+					req.sent[ para ] = req.params[ para ];
+				});
+				next();
+			}
+
+		}
+
 
 		// Api authentication validation
 		// All api calls must provid a valid token, which is then decoded.
@@ -162,7 +174,7 @@
 	    );
 
 	    // [ @user ] Va chercher en base de données les users à partir de /me/friends de l'api Facebook
-	    app.post('/me/fetch-and-sync-friends',
+	    app.post('/me/friends',
 	    	profileEvents.fetchAndSyncFriends);
 
 	    // [ @user ] va chercher des tags cloudinary signés par le serveur
@@ -200,13 +212,22 @@
 	    app.get('/api/v1/all',
 	    	api.users.fetchUsersAll);
 
+	    app.get('/api/v1/users/:facebook_id/*', 
+	    	setParam('facebook_id')
+	    );
+
 	    // [ @user ] Utilisé pour afficher le profile d'un utilisateur
-	    app.get('/api/v1/users/:user_facebook_id',   //otherwise override with asker facebook_id
+	    app.get('/api/v1/users/:facebook_id/full',   //otherwise override with asker facebook_id
 	    	mdw.validate('user_fetch'),
 	    	api.users.fetchUserById_Full);
 
+	     // [ @user ] Utilisé pour afficher le profile d'un utilisateur
+	    app.get('/api/v1/users/:facebook_id/core',   //otherwise override with asker facebook_id
+	    	mdw.validate('user_fetch'),
+	    	api.users.fetchUserById_Core);
+
 	    // [ @user ] Utilisé dans le Typeahead searchbox client
-	    app.get('/api/v1/users',
+	    app.get('/api/v1/users?name',
 	    	api.users.fetchUsers);
 
 
@@ -217,7 +238,17 @@
 
 	    // [ @user ] Fetch user informations
 	    app.get('/api/v1/me',
-	    	api.users.fetchMe);
+	    	api.users.fetchMe
+	    );
+
+
+	    app.get('/api/v1/users/:facebook_id/shared',
+	    	api.users.fetchUserShared
+	    );
+
+	    app.get('/api/v1/users/:facebook_id/meepass',
+	    	api.users.fetchUserMeepass
+	    );
 
 
 
@@ -288,6 +319,22 @@
 			mdw.validate('shared'),
 			profileEvents.updateShared
 		);
+	    ///[ @spottd and shared]
+
+
+	    // Begin meepass
+
+		app.post('/api/v1/send_meepass',
+			mdw.validate('send_meepass'),
+			mdw.meepass.updateMeepass('meepass_sent'),
+			profileEvents.updateMeepass
+		);
+
+		app.post('/api/v1/admin/credit_meepass',
+			mdw.auth.authenticate(['root','admin']),
+			mdw.meepass.updateMeepass('admin_credit')
+		);
+		// End meepass
 
 
 	    // [ @parties ] Créer un évènement partenaire

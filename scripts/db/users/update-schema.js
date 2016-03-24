@@ -24,10 +24,7 @@
 				tasks.push(function( done ){
 
 					// Update part
-					user.ideal_night = "These hollywood nights...";
-					user.job 		 = "L'étudiant";
-					user.age 		 = 18;
-					user.notifications = [];
+					user.n_meepass = 100;
 					
 					user.save(function( err ){
 						if( err ) console.log('Error : ' + err );

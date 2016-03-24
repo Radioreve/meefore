@@ -9,7 +9,7 @@
 		// Convention : all middleware placed before is to setup an expose variable 
 		// To notifiy that the route indeed existed
 		var expose = req.sent.expose;
-		console.log(expose);
+
 		if( !expose ){
 			res.status( 404 ).json({
 				'err_id': 'ghost_ressource',

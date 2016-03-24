@@ -19,33 +19,98 @@
 
 	};
 
+	var select = {};
+		settings.public_properties.users.forEach(function( prop ){
+			select[ prop ] = 1;
+		});
+
 	/* get /users/me */
 	var fetchMe = function( req, res, next ){
 
-		var err_ns = 'fetching_me';
-		var userId = req.sent.user_id;
+		var err_ns 		= 'fetching_me';
+		var facebook_id = req.sent.facebook_id;
 
-		if( !userId ){
+		if( !facebook_id ){
 			return handleErr( req, res, err_ns, {
 				'err_id' : 'missing_id',
 				'msg'    : 'Missing the user_id field from the request'
 			});
 		}
 
-		User.findById( userId, function( err, user ){
+		User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
 			if( err ){
 				return handleErr( req, res, 'fetching_me', err );
 			}
 
-			req.sent.expose = {
-				me 		 : user,
-				settings : settings
-			};
+			req.sent.expose.me = user;
+			req.sent.expose.settings = settings; 
 
 			next();
 
 		});
+
+	};
+
+	var fetchUserShared = function( req, res, next ){
+
+		var err_ns 		= 'fetching_me_shared';
+		var facebook_id = req.sent.facebook_id;
+
+		console.log('Fetching shared prop for user with id : ' + facebook_id );
+
+		User
+			.findOne({ facebook_id: facebook_id })
+			.select({ 'shared': 1 })
+			.exec(function( err, user ){
+
+			if( err ){
+				return handleErr( req, res, err_ns, err );
+			}
+
+			if( !user ){
+				return handleErr( req, res, err, {
+					'err_id' 	  : 'ghost_user',
+					'msg'         : 'No user was found with this id in the database in the database',
+					'facebook_id' : facebook_id
+				});
+			}
+
+			console.log( user );
+
+			req.sent.expose.shared = user.shared;
+			next();
+
+			});
+
+	};
+
+	var fetchUserMeepass = function( req, res, next ){
+
+		var err_ns 		= 'fetching_me_meepass';
+		var facebook_id = req.sent.facebook_id;
+
+		User
+			.findOne({ facebook_id: facebook_id })
+			.select({ 'meepass': 1 })
+			.exec(function( err, user ){
+
+			if( err ){
+				return handleErr( req, res, err_ns, err );
+			}
+
+			if( !user ){
+				return handleErr( req, res, err, {
+					'err_id' 	  : 'ghost_user',
+					'msg'         : 'No user was found with this id in the database in the database',
+					'facebook_id' : facebook_id
+				});
+			}
+
+			req.sent.expose.meepass = user.meepass;
+			next();
+
+			});
 
 	};
 
@@ -62,7 +127,10 @@
 				'facebook_id': facebook_id
 			});
 
-		User.findOne({ facebook_id: facebook_id }, function( err, user ){
+		User
+			.findOne({ facebook_id: facebook_id })
+			.select( select )
+			.exec(function( err, user ){
 
 			if( err ){
 				return handleErr( req, res, err_ns, err );
@@ -76,11 +144,9 @@
 				});
 			}
 
-			var expose = {
-				'user': user 
-			};
+			req.sent.expose.user = user;
 
-			res.json( expose );
+			next();
 
 		});
 
@@ -116,10 +182,8 @@
 					}
 
 					if( !user ){
-						return handleErr( req, res, error_ns, {
-							'err_id': 'no_user_found',
-							'msg'   : 'Unable to find user either in cache or database'
-						});
+						console.log('User wasnt found either in cache or in db');
+						return next();
 					}
 
 					console.log('...user found! Name is : ' + user.name );
@@ -130,7 +194,7 @@
 					// Important to construct the object the same way as it is in the cache 
 					// to keep the result consistant
 					var user = {
-						'facebook_id' : user.facebook_id,
+						'facebook_id' : facebook_id,
 						'name' 		  : user.name,
 						'age' 		  : user.age,
 						'job' 		  : user.job,
@@ -138,9 +202,7 @@
 						'img_vs'	  : user_main_img.img_version
 					};
 
-					req.sent.expose = {
-						'user': user
-					};
+					req.sent.expose.user = user;
 					
 					next();
 
@@ -148,9 +210,8 @@
 
 			} else {
 
-				req.sent.expose = {
-					'user': user
-				};
+				req.sent.expose.user = user;
+				req.sent.expose.user.facebook_id = facebook_id;
 					
 				next();
 
@@ -172,11 +233,6 @@
 		var user_name = req.sent.name,
 			pattern   = '^' + user_name;
 
-		var select = {};
-		['name', 'pictures', 'age', 'job', 'location', 'facebook_id'].forEach(function( prop ){
-			select[ prop ] = 1;
-		});
-
 		User
 			.find({ 
 				'name': { $regex: pattern, $options: 'i' }
@@ -189,9 +245,7 @@
 					return handleErr( req, res, err_ns, err );
 				}
 
-				req.sent.expose = {
-					'users': users
-				};
+				req.sent.expose.users = users;
 
 
 				next();
@@ -203,11 +257,6 @@
 
 		var err_ns = 'fetching_users_all';
 
-		var select = {};
-		settings.public_properties.users.forEach(function( prop ){
-			select[ prop ] = 1;
-		});
-
 		User
 			.find()
 			.select( select )
@@ -217,9 +266,7 @@
 					return handleErr( req, res, err_ns, err );
 				}
 
-				req.sent.expose = {
-					'users': users
-				}
+				req.sent.expose.users = users;
 				
 				next();
 
@@ -251,9 +298,7 @@
 						return handleErr( req, err, err_ns, err );
 					}
 
-					req.sent.expose = {
-						'events': events
-					};
+					req.sent.expose.events = events;
 					
 					next();
 
@@ -263,6 +308,8 @@
 
 	module.exports = {
 		fetchMe 				: fetchMe,
+		fetchUserShared			: fetchUserShared,
+		fetchUserMeepass 		: fetchUserMeepass,
 		fetchUserById_Full	    : fetchUserById_Full,
 		fetchUserById_Core		: fetchUserById_Core,
 		fetchUsers 				: fetchUsers,

@@ -8,19 +8,18 @@
 	var Party = require('../../models/PartyModel');
 
 
-	var fb_id_regex = /^\d{10,15}$/;
-	var db_id_regex = /^[a-f\d]{24}$/i;
+	var rg = require('../../config/regex');
 
 	function isIdOk( val, onError ){
 
-		if( val.target_type == "user" && !fb_id_regex.test( val.target_id ) ){
+		if( val.target_type == "user" && !rg.fb_id.test( val.target_id ) ){
 			return onError('The id provided doesnt match the required pattern.', 'wrong_pattern', val.target_id, {
 					err_id			 : "wrong_pattern",
 					expected_pattern : 'Facebook id'
 				});
 		}
 
-		if( ( val.target_type == "before" || val.target_type == "party" ) && !db_id_regex.test( val.target_id ) ){
+		if( ( val.target_type == "before" || val.target_type == "party" ) && !rg.db_id.test( val.target_id ) ){
 			return onError('The id provided doesnt match the required pattern.', 'wrong_pattern', val.target_id, {
 					err_id			 : "wrong_pattern",
 					expected_pattern : 'MongoDB BSON id'

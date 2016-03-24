@@ -5,7 +5,7 @@
 }
 
 
-.shared {width: 100%;}
+.shared {width: 100%;min-height: 280px;display: flex;flex-flow: column nowrap;}
 
 .shared__item {
 	border-bottom: 1px solid #eee;

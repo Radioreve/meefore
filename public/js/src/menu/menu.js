@@ -2,7 +2,7 @@
 	window.LJ.menu = _.merge( window.LJ.menu || {}, {
 
 		$menu: $('.menu'),
-		shrink_menu_height_limit: 50,
+		shrink_menu_height_limit: 100,
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -44,6 +44,17 @@
 			}
 
 			if( section_id == current_section_id ){
+					if( current_section_id == "shared" ){
+						return LJ.shared.handleShareClicked();
+					}
+					if( current_section_id == "meepass" ){
+						return LJ.meepass.handleMeepassClicked();
+					}
+					if( current_section_id == "friends" ){
+						return LJ.friends.handleFriendsClicked();
+					}
+
+
 				return LJ.wlog('Section is already activated');
 			}
 

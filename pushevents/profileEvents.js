@@ -260,10 +260,10 @@
 
 		var err_ns = 'syncing_friends';
 
-		var userId         = req.body.userId;
-		var fb_friends_ids = req.body.fb_friends_ids || [];
+		var facebook_id = req.sent.facebook_id;
+		var friend_ids  = req.sent.friend_ids || [];
 
-		User.findByIdAndUpdate( userId, { friends: fb_friends_ids }, { new: true }, function( err, user ){
+		User.findOneAndUpdate({ facebook_id: facebook_id }, { friends: friend_ids }, { new: true }, function( err, user ){
 
 			if( err ) return handleErr( req, res, err_ns, err );
 

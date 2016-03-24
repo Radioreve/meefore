@@ -14,7 +14,8 @@
             if( typeof FB === 'undefined' )
                 return setTimeout(function(){ LJ.init( time ); }, time );
             
-
+            // Language, Lodash & jQuery augmentations
+            LJ.initAugmentations();
             // Translate the whole page based on sourcetext & data-lid attributes
             LJ.lang.init();
             // Cache static assets images used accross modules
@@ -31,6 +32,11 @@
             LJ.ui.init();
             // Profile meepass & send meepass to other people
             LJ.meepass.init();
+            // Shared module
+            LJ.shared.init();
+            // Friends module
+            LJ.friends.init();
+
 
             // Autologin for users who asked the "remember me" feature in their settings
             LJ.autologin.init()

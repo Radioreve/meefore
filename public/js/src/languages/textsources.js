@@ -64,6 +64,18 @@
 			"fr": "Paramètres du compte",
 			"en": "Account settings"
 		},
+		menu_subsection_code: {
+			"fr": "Code d'invitation",
+			"en": "Invite code"
+		},
+		menu_subsection_notifications: {
+			"fr": "Emails et notifications",
+			"en": "Emails and notifications"
+		},
+		menu_subsection_ux: {
+			"fr": "Expérience d'utilisation",
+			"en": "User experience"
+		},
 		menu_shared: {
 			"fr": "Partagés",
 			"en": "Shared"
@@ -1194,6 +1206,30 @@
 		segment_meepass_sent: {
 			"fr": "Envoyés",
 			"en": "Sent"
+		},
+		shared_item_subtitle: {
+			"fr": "%type partagé par %name",
+			"en": "%type shared by %name"
+		},
+		friends_title_invite: {
+			"fr": "Invitez plus d'amis",
+			"en": "Invite more friends"
+		},
+		meepass_item_title_sent: {
+			"fr": "Envoyé à %name",
+			"en": "Sent to %name"
+		},
+		meepass_item_title_received: {
+			"fr": "Reçu de %name",
+			"en": "Received from %name"
+		},
+		meepass_item_subtitle: {
+			"fr": "Pour un before le %date",
+			"en": "The pregame starts the %date"
+		},
+		w_profile: {
+			"fr": "profil",
+			"en": "profile"
 		}
 
 	});

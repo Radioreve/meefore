@@ -2,6 +2,8 @@
 window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 	required_permissions : ['public_profile', 'email', 'user_friends', 'user_photos'],
+
+	friends_url			 : '/me/friends',
 	profile_url			 : '/me?fields=id,email,name,link,locale,gender',
 	album_url  			 : '/me?fields=albums{name,id}',
 	album_pictures_url   : '{{album_id}}/photos?fields=images',
@@ -40,6 +42,31 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 			}, { scope: LJ.facebook.required_permissions } );
 		});
 
+	},
+	fetchMe: function(){
+
+	},
+	fetchFriends: function(){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.facebook.GraphAPI( LJ.facebook.friends_url, function( res ){
+
+				if( res.err ){
+					return reject( err );
+				}
+
+				var fb_friends  = res.data;
+                var friend_ids  = _.pluck( fb_friends, 'id' );
+
+                var data = {
+                    'friend_ids' : friend_ids
+                };
+
+                resolve( data );
+
+			});
+
+		});
 	},
 	fetchFacebookProfile: function( facebook_token ){
 		return LJ.promise(function( resolve, reject ){

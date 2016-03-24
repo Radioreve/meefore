@@ -6,7 +6,7 @@
 }
 
 
-.friends {width: 100%;}
+.friends {width: 100%;display: flex;flex-flow: column nowrap;min-height: 280px;}
 
 .friend__item {
 	border-bottom: 1px solid #eee;
@@ -26,3 +26,17 @@
 }
 
 
+.friend__item.--invite-friends .row-pic {
+	font-size: 50px;
+    background: #7b4cbb;
+    border-radius: 100px;
+    color: white;
+}
+.friend__item.--invite-friends h2 {
+	font-family: 'Creamy Script';
+	font-size: 32px;
+}
+
+.friend__item.--invite-friends i {
+	margin: auto;
+}
