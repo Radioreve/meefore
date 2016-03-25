@@ -43,7 +43,9 @@ var settings = {
       	},
       	ux: {
 	        'auto_login': 'no',
-	        'message_readby': 'yes'
+	        'message_readby': 'yes',
+	        'show_gender': 'no',
+	        'show_country': 'yes'
       	}
 	},
 	public_properties: {

@@ -24,7 +24,8 @@
 				tasks.push(function( done ){
 
 					// Update part
-					user.n_meepass = 100;
+					user.app_preferences.ux.show_gender = 'yes';
+					user.app_preferences.ux.show_country = 'no';
 					
 					user.save(function( err ){
 						if( err ) console.log('Error : ' + err );

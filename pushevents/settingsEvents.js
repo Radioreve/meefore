@@ -12,22 +12,43 @@
 	var Event 	     = require('../models/EventModel');
 	var eventUtils   = require('./eventUtils');
 
-    var updateSettings = function( req, res ){
+
+	var handleErr = function( req, res, namespace, err ){
+
+		var params = {
+			error   : err,
+			call_id : req.sent.call_id
+		};
+
+		eventUtils.raiseApiError( req, res, namespace, params );
+
+	};
+
+    var updateSettings = function( req, res, next ){
 
     	var app_preferences = req.sent.app_preferences,
-    		userId	     	= req.sent.userId;
+    		facebook_id	    = req.sent.facebook_id;
 
-    	User.findByIdAndUpdate( userId, { app_preferences: app_preferences }, { new: true }, function( err, user ){
+    	User.findOneAndUpdate(
+    		{ facebook_id: facebook_id },
+    		{ app_preferences: app_preferences },
+    		{ new: true },
+    		function( err, user ){
 
-    		if( err ) return eventUtils.raiseError({ err: err, res: res, toClient: "Une erreur est survenue!" });
+    		if( err ){
+    			return handleErr( req, res, 'server_error', {
+    				err_id: 'saving_to_db'
+    			});
+    		}
     		
-    		var expose = { user: user };
-    		eventUtils.sendSuccess( res, expose );
+    		expose.user = user;
+    		next();
+
     	});
 
 	};
 
-	var updateSettingsContact = function( req, res ){
+	var updateSettingsContact = function( req, res, next ){
 
 		var contact_email = req.sent.contact_email;
 		var facebook_id   = req.sent.facebook_id;
@@ -42,18 +63,27 @@
 		}
 
 		console.log('Updating contact email (' + contact_email + ') for facebook_id: ' + facebook_id );
-		User.findOneAndUpdate({ facebook_id: facebook_id }, update, { new: true } , function( err, user ){
 
-			if( err ) return eventUtils.raiseError({ err: err, res: res, toClient: "Une erreur est survenue!" });
+		User.findOneAndUpdate(
+			{ facebook_id: facebook_id },
+			update,
+			{ new: true },
+			function( err, user ){
+
+			if( err ){
+    			return handleErr( req, res, 'server_error', {
+    				err_id: 'saving_to_db'
+    			});
+    		}
     		
-    		var expose = { user: user };
-    		eventUtils.sendSuccess( res, expose );
+    		expose.user = user;
+    		next();
 
 		});
 
 	};
 
-	var deleteProfile = function( req, res ){
+	var deleteProfile = function( req, res, next ){
 
 		var facebook_id = req.sent.facebook_id;
 		var userId      = req.sent.user._id;
@@ -83,20 +113,24 @@
 			function( err, users ){
 
 			if( err ){
-				return eventUtils.raiseError({
-					err: err, res: res, toClient: "Impossible de supprimer de la liste des amis"
-				});
-			}
+    			return handleErr( req, res, 'server_error', {
+    				err_id: 'saving_to_db'
+    			});
+    		}
 
 			console.log('Deletin user with _id: ' + userId );
-			User.findByIdAndRemove( userId, function( err, user ){
-				if( err ){
-					return eventUtils.raiseError({
-						err: err, res: res, toClient: "Err trying to remove user"
-					});
-				}
 
-				eventUtils.sendSuccess( res, {} );
+			User.findByIdAndRemove( userId, function( err, user ){
+				
+				if( err ){
+	    			return handleErr( req, res, 'server_error', {
+	    				err_id: 'saving_to_db'
+	    			});
+	    		}
+
+				next();
+
+
 			});
 
 		});

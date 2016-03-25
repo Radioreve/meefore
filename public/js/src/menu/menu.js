@@ -3,6 +3,7 @@
 
 		$menu: $('.menu'),
 		shrink_menu_height_limit: 100,
+		menu_slide_duration: 240,
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -111,12 +112,12 @@
 
 			$m.addClass('--resizing');
 			$m.velocity('slideUpOut', {
-				duration: 300,
+				duration: LJ.menu.menu_slide_duration,
 				complete: function(){
 
 					if( LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit ){
 						return $m.velocity('slideDownIn', {
-							duration: 300,
+							duration: LJ.menu.menu_slide_duration,
 							display: 'flex',
 							complete: function(){
 								$m.removeClass('--resizing');
@@ -128,7 +129,7 @@
 					$m.closest('.app-section').addClass('--downsized');
 					$m.removeClass('--resizing');
 					$m.velocity('slideDownIn', {
-						duration: 300,
+						duration: LJ.menu.menu_slide_duration,
 						display: 'flex'
 					});
 
@@ -144,14 +145,14 @@
 
 			$m.addClass('--resizing');
 			$m.velocity('slideUpOut', {
-				duration: 300,
+				duration: LJ.menu.menu_slide_duration,
 				complete: function(){
 
 					$m.removeClass('--resizing');
 					$m.removeClass('--downsized')
 					$m.closest('.app-section').removeClass('--downsized');
 					$m.velocity('slideDownIn', {
-						duration: 300,
+						duration: LJ.menu.menu_slide_duration,
 						display: 'flex'
 					});
 

@@ -23,7 +23,7 @@
 		rd.hmset( profile_ns, new_profile, function( err, res ){
 
 			if( err ){
-				return handleErr( res, err_ns, err );
+				return handleErr( req, res, err_ns, err );
 			}
 
 			next();
@@ -60,7 +60,7 @@
 		rd.hgetall( profile_ns, function( err, user ){
 
 			if( err ){
-				return handleErr( res, err_ns, err );
+				return handleErr( req, res, err_ns, err );
 			}
 
 			if( !user ){
@@ -85,7 +85,7 @@
 			rd.hmset( profile_ns, new_profile, function( err, res ){
 
 				if( err ){
-					return handleErr( res, err_ns, err );
+					return handleErr( req, res, err_ns, err );
 				}
 
 				next();
@@ -108,7 +108,7 @@
 		rd.hgetall( profile_ns, function( err, cached_user ){
 
 			if( err ){
-				return handleErr( res, err_ns, err );
+				return handleErr( req, res, err_ns, err );
 			}
 
 			if( !cached_user ){
@@ -145,7 +145,7 @@
 				rd.hmset( profile_ns, new_profile, function( err, res ){
 
 					if( err ){
-						return handleErr( res, err_ns, err );
+						return handleErr( req, res, err_ns, err );
 					}
 
 					next();
@@ -180,7 +180,7 @@
 		rd.hgetall( profile_ns, function( err, user ){
 
 			if( err ){
-				return handleErr( req, err_ns, err );
+				return handleErr( req, res, err_ns, err );
 			}
 
 			if( !user ){
@@ -200,7 +200,7 @@
 				rd.hmset( profile_ns, new_profile, function( err, res ){
 
 					if( err ){
-						return handleErr( res, err_ns, err );
+						return handleErr( req, res, err_ns, err );
 					}
 
 					next();

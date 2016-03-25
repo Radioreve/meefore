@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'fontello';
-  src: url('../font/fontello.eot?33703417');
-  src: url('../font/fontello.eot?33703417#iefix') format('embedded-opentype'),
-       url('../font/fontello.woff2?33703417') format('woff2'),
-       url('../font/fontello.woff?33703417') format('woff'),
-       url('../font/fontello.ttf?33703417') format('truetype'),
-       url('../font/fontello.svg?33703417#fontello') format('svg');
+  src: url('../font/fontello.eot?96639935');
+  src: url('../font/fontello.eot?96639935#iefix') format('embedded-opentype'),
+       url('../font/fontello.woff2?96639935') format('woff2'),
+       url('../font/fontello.woff?96639935') format('woff'),
+       url('../font/fontello.ttf?96639935') format('truetype'),
+       url('../font/fontello.svg?96639935#fontello') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?33703417#fontello') format('svg');
+    src: url('../font/fontello.svg?96639935#fontello') format('svg');
   }
 }
 */
@@ -120,15 +120,16 @@
 .icon-male:before { content: '\e83e'; } /* '' */
 .icon-mask:before { content: '\e83f'; } /* '' */
 .icon-meepass:before { content: '\e840'; } /* '' */
-.icon-menu:before { content: '\e841'; } /* '' */
-.icon-moon:before { content: '\e842'; } /* '' */
-.icon-play:before { content: '\e843'; } /* '' */
-.icon-plus:before { content: '\e844'; } /* '' */
-.icon-pricetag:before { content: '\e845'; } /* '' */
-.icon-pricetag-empty:before { content: '\e846'; } /* '' */
-.icon-question-mark:before { content: '\e847'; } /* '' */
-.icon-refresh:before { content: '\e848'; } /* '' */
-.icon-filters:before { content: '\e849'; } /* '' */
-.icon-telescope:before { content: '\e84a'; } /* '' */
-.icon-search-planet:before { content: '\e84b'; } /* '' */
-.icon-trash:before { content: '\e84c'; } /* '' */
+.icon-moon:before { content: '\e841'; } /* '' */
+.icon-play:before { content: '\e842'; } /* '' */
+.icon-plus:before { content: '\e843'; } /* '' */
+.icon-pricetag:before { content: '\e844'; } /* '' */
+.icon-pricetag-empty:before { content: '\e845'; } /* '' */
+.icon-question-mark:before { content: '\e846'; } /* '' */
+.icon-refresh:before { content: '\e847'; } /* '' */
+.icon-filters:before { content: '\e848'; } /* '' */
+.icon-telescope:before { content: '\e849'; } /* '' */
+.icon-search-planet:before { content: '\e84a'; } /* '' */
+.icon-trash:before { content: '\e84b'; } /* '' */
+.icon-menu:before { content: '\e84c'; } /* '' */
+.icon-code:before { content: '\e84d'; } /* '' */

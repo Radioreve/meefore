@@ -10,6 +10,8 @@
 
 		init: function( time ){
 
+            $(window).scrollTop(0)
+            
             // The application only starts when the Facebook pluggin has loaded
             if( typeof FB === 'undefined' )
                 return setTimeout(function(){ LJ.init( time ); }, time );
@@ -36,7 +38,8 @@
             LJ.shared.init();
             // Friends module
             LJ.friends.init();
-
+            // Settings
+            LJ.settings.init();
 
             // Autologin for users who asked the "remember me" feature in their settings
             LJ.autologin.init()
@@ -524,7 +527,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
             LJ.fn.log('Fetching user and config success', 1);
 
             LJ.user = data.user;
-            LJ.settings = data.settings;
+            //LJ.settings = data.settings;
 
             // Register to Pusher based on users channels 
             LJ.fn.subscribeToChannels( data.user );

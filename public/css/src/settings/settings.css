@@ -1,17 +1,63 @@
+.menu-section.--settings {}
 
-.menu-section.--settings {
-
+.settings {
+    width: 80%;
+    display: flex;
+    flex-flow: column;
 }
 
-.settings-part {
+.settings.--account {}
 
+.settings.--code {}
+
+.settings.--notifications {}
+
+.settings.--ux {}
+
+.settings__title {
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 700;
 }
-
-.settings-part.--account {}
-.settings-part.--code {}
-.settings-part.--notifications {}
-.settings-part.--ux {}
 
 .settings-item {
-	
+    padding: 20px 0;
+    margin-bottom: 0px;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.settings__input-field {
+    width: 100%;
+    font-size: 22px;
+    font-weight: 300;
+    padding: 10px 15px;
+    margin-bottom: 4px;
+    border-radius: 100px;
+    border: 1px solid #eee;
+}
+
+.settings.--code button {
+    background: #7b4cbb;
+    padding: 20px 100px;
+    color: white;
+    font-size: 18px;
+    border: 1px solid white;
+    font-weight: 600;
+    font-family: 'Alegreya sans';
+    border-radius: 8px;
+}
+
+.settings-item.--active input {}
+
+
+
+.modal.--sponsorship button {
+    background: #7b4cbb;
+    color: white;
+    width: 180px;
+    height: 54px;
+    border-radius: 8px;
+    font-size: 22px;
+    font-weight: bolder;
 }

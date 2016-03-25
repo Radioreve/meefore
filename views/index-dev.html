@@ -336,54 +336,114 @@
            <h3 data-lid="menu_subsection_informations"></h3>
         </div>
         <div class="me">
-          <div class="me__input me__input-name" data-param="name">
-            <i class="icon icon-pricetag"></i>
-            <i class="me__action-validate me__input-action icon icon-check"></i>
-            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
-            <label for="me__name" data-lid="p_name_label"></label>
-            <input readonly class="me__input-field" data-lid="p_name_placeholder" id="me__name" type="text">
-            <div class="me__input-explanation" data-lid="p_name_explanation"></div>
+          <div class="me-item" data-param="name">
+            <div class="icon-item">
+              <i class="icon icon-pricetag"></i>
+            </div>
+            <div class="action">
+              <div class="action__validate --round-icon">
+                <i class="icon icon-check"></i>
+              </div>
+              <div class="action__cancel --round-icon">
+                <i class="icon icon-cancel"></i>
+              </div>
+            </div>
+            <div class="me-item-body">
+              <label for="me__name" data-lid="p_name_label"></label>
+              <input readonly data-lid="p_name_placeholder" id="me__name" type="text">
+              <div class="me-item__explanation" data-lid="p_name_explanation"></div>
+            </div>
           </div>
-          <div class="me__input me__input-age" data-param="age">
-            <i class="icon icon-gift"></i>
-            <i class="me__action-validate me__input-action icon icon-check"></i>
-            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
-            <label for="me__age" data-lid="p_age_label"></label>
-            <input readonly class="me__input-field" data-lid="p_age_placeholder" id="me__age"type="number">
-            <div class="me__input-explanation" data-lid="p_age_explanation"></div>
+          <div class="me-item" data-param="age">
+            <div class="icon-item --round-icon">
+              <i class="icon icon-gift"></i>
+            </div>
+            <div class="action">
+              <div class="action__validate --round-icon">
+                <i class="icon icon-check"></i>
+              </div>
+              <div class="action__cancel --round-icon">
+                <i class="icon icon-cancel"></i>
+              </div>
+            </div>
+            <div class="me-item-body">
+              <label for="me__age" data-lid="p_age_label"></label>
+              <input readonly data-lid="p_age_placeholder" id="me__age"type="number">
+              <div class="me-item__explanation" data-lid="p_age_explanation"></div>
+            </div>
           </div>
-          <div class="me__input me__input-country me__input--no-edit">
-            <i class="icon icon-flag"></i>
-            <i class="me__action-validate me__input-action icon icon-check"></i>
-            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
-            <label for="me__country" data-lid="p_country_label"></label>
-            <input readonly class="me__input-field" type="text" id="me__country">
-            <div class="me__input-explanation" data-lid="p_country_explanation"></div>
+          <div class="me-item --no-edit">
+            <div class="icon-item">
+              <i class="icon icon-flag"></i>
+            </div>
+            <div class="action">
+              <div class="action__validate --round-icon">
+                <i class="icon icon-check"></i>
+              </div>
+              <div class="action__cancel --round-icon">
+                <i class="icon icon-cancel"></i>
+              </div>
+            </div>
+            <div class="me-item-body">
+              <label for="me__country" data-lid="p_country_label"></label>
+              <input readonly type="text" id="me__country">
+              <div class="me-item__explanation" data-lid="p_country_explanation"></div>
+            </div>
           </div>
-          <div class="me__input me__input-job" data-param="job">
-            <i class="icon icon-education"></i>
-            <i class="me__action-validate me__input-action icon icon-check"></i>
-            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
-            <label for="me__job" data-lid="p_job_label"></label>
-            <input readonly class="me__input-field" data-lid="p_job_placeholder" id="me__job" type="text">
-            <div class="me__input-explanation" data-lid="p_job_explanation"></div>
+          <div class="me-item" data-param="job">
+            <div class="icon-item --round-icon">
+              <i class="icon icon-education"></i>
+            </div>
+            <div class="action">
+              <div class="action__validate --round-icon">
+                <i class="icon icon-check"></i>
+              </div>
+              <div class="action__cancel --round-icon">
+                <i class="icon icon-cancel"></i>
+              </div>
+            </div>
+            <div class="me-item-body">
+              <label for="me__job" data-lid="p_job_label"></label>
+              <input readonly data-lid="p_job_placeholder" id="me__job" type="text">
+              <div class="me-item__explanation" data-lid="p_job_explanation"></div>
+            </div>
           </div>
-          <div class="me__input me__input-location" data-param="location">
-            <i class="icon icon-location"></i>
-            <i class="me__action-validate me__input-action icon icon-check"></i>
-            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
-            <label for="me__location" data-lid="p_location_label"></label>
-            <input readonly class="me__input-field" type="text" id="me__location">
-            <div class="me__input-explanation" data-lid="p_location_explanation"></div>
+          <div class="me-item" data-param="location">
+            <div class="icon-item">
+              <i class="icon icon-location"></i>
+            </div>
+            <div class="action">
+              <div class="action__validate --round-icon">
+                <i class="icon icon-check"></i>
+              </div>
+              <div class="action__cancel --round-icon">
+                <i class="icon icon-cancel"></i>
+              </div>
+            </div>
+            <div class="me-item-body">
+              <label for="me__location" data-lid="p_location_label"></label>
+              <input readonly type="text" id="me__location">
+              <div class="me-item__explanation" data-lid="p_location_explanation"></div>
+            </div>
           </div>
-          <div class="me__input me__input-ideal-night" data-param="ideal_night">
-            <i class="icon icon-dj"></i>
-            <i class="me__action-validate me__input-action icon icon-check"></i>
-            <i class="me__action-cancel me__input-action icon icon-cancel"></i>
-            <label for="me__ideal-night" data-lid="p_ideal_night_label"></label>
-            <textarea readonly class="me__input-field" data-lid="p_ideal_night_placeholder" id="me__ideal-night">
-            </textarea>
-            <div class="me__input-explanation" data-lid="p_ideal_night_explanation"></div>
+          <div class="me-item" data-param="ideal_night">
+            <div class="icon-item">
+              <i class="icon icon-dj"></i>
+            </div>
+            <div class="action">
+              <div class="action__validate --round-icon">
+                <i class="icon icon-check"></i>
+              </div>
+              <div class="action__cancel --round-icon">
+                <i class="icon icon-cancel"></i>
+              </div>
+            </div>
+            <div class="me-item-body">
+              <label for="me__ideal-night" data-lid="p_ideal_night_label"></label>
+              <textarea readonly data-lid="p_ideal_night_placeholder" id="me__ideal-night">
+              </textarea>
+              <div class="me-item__explanation" data-lid="p_ideal_night_explanation"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -429,51 +489,145 @@
 
       <!-- Settings begin -->
       <section class="menu-section --settings" data-link="settings">
+      <!-- acountsection -->
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_account"></h3>
         </div>
-        <div class="settings-part --account">
-          <div class="settings-item">
-            <div class="toggle">
-              <div class="toggle__label">Afficher les nationalités étrangères</div>
-              <div class="toggle-btn">
-                <div class="toggle-btn__button"></div>
-              </div>
-              <div class="toggle__explanation">Ceci est une explication</div>
-            </div>
-          </div>
-          <div class="settings-item">
-            <div class="toggle">
-              <div class="toggle__label">Afficher les sexes </div>
-              <div class="toggle-btn --active">
-                <div class="toggle-btn__button"></div>
-              </div>
-              <div class="toggle__explanation">Ceci est une autre belle explication</div>
-            </div>
-          </div>
+        <div class="settings --account">
+          
         </div>
+        <!-- code section -->
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_code"></h3>
         </div>
-        <div class="settings-part --code">
-          
+        <div class="settings --code">
+          <div class="settings__title">
+            <h3 data-lid="settings_part_title_code"></h3>
+          </div>
+           <div class="settings-item">
+            <div class="settings-input">
+            <div class="settings-input__icon --round-icon"><i class="icon icon-code"></i></div>
+              <div class="settings-input-label">
+                <input readonly class="settings__input-field" placeholder="BL1347" type="text">
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_code_sponsor_explanation"></div>
+          </div>
+          <div class="settings-item">
+            <button class="settings__button --sponsor" data-lid="settings_code_sponsor_button"></button>
+          </div>
         </div>
+        <!-- emails and notifications section -->
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_notifications"></h3>
         </div>
-        <div class="settings-part --notifications">
-          
+        <div class="settings --notifications">
+          <div class="settings__title">
+            <h3 data-lid="settings_part_title_email"></h3>
+          </div>
+          <div class="settings-item">
+            <div class="settings-input">
+              <div class="settings-input__icon --round-icon"><i class="icon icon-drinks"></i></div>
+              <div class="settings-input-label">
+                <div class="settings-input__label" data-lid="settings_emails_new_request_label"></div>
+              </div>
+              <div class="toggle">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_emails_new_request_explanation"></div>
+          </div>
+          <div class="settings-item">
+            <div class="settings-input">
+              <div class="settings-input__icon --round-icon"><i class="icon icon-chat-bubble-duo"></i></div>
+              <div class="settings-input-label">
+                <div class="settings-input__label" data-lid="settings_emails_message_received_label"></div>
+              </div>
+              <div class="toggle">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_emails_message_received_explanation"></div>
+          </div>
+          <div class="settings__title">
+            <h3 data-lid="settings_part_title_notifications"></h3>
+          </div>
+          <div class="settings-item">
+            <div class="settings-input">
+              <div class="settings-input__icon --round-icon"><i class="icon icon-mail"></i></div>
+              <div class="settings-input-label">
+                <div class="settings-input__label" data-lid="settings_notifs_newsletter_label"></div>
+              </div>
+              <div class="toggle">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_notifs_newsletter_explanation"></div>
+          </div>
+          <div class="settings-item">
+            <div class="settings-input">
+              <div class="settings-input__icon --round-icon"><i class="icon icon-newsletter"></i></div>
+              <div class="settings-input-label">
+                <div class="settings-input__label" data-lid="settings_notifs_invitations_label"></div>
+              </div>
+              <div class="toggle">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_notifs_invitations_explanation"></div>
+          </div>
         </div>
+        <!-- ux section -->
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_ux"></h3>
         </div>
-        <div class="settings-part --ux">
-          
+        <div class="settings --ux">
+          <div class="settings-item">
+            <div class="settings-input">
+              <div class="settings-input__icon --round-icon"><i class="icon icon-chat-read"></i></div>
+              <div class="settings-input-label">
+                <div class="settings-input__label" data-lid="settings_ux_unread_messages_label"></div>
+              </div>
+              <div class="toggle">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_ux_unread_messages_explanation"></div>
+          </div>
+          <div class="settings-item">
+            <div class="settings-input">
+            <div class="settings-input__icon --round-icon"><i class="icon icon-gender"></i></div>
+              <div class="settings-input-label">
+                <div class="settings-input__label" data-lid="settings_ux_gender_label" ></div>
+              </div>
+              <div class="toggle --active">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_ux_gender_explanation"></div>
+          </div>
+          <div class="settings-item">
+            <div class="settings-input">
+              <div class="settings-input__icon --round-icon"><i class="icon icon-planet"></i></div>
+              <div class="settings-input-label">
+                <div class="settings-input__label" data-lid="settings_ux_country_label"></div>
+              </div>
+              <div class="toggle">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_ux_country_explanation"></div>
+          </div>
         </div>
       </section>
       <!-- Settings end -->
-
-
 
     </section>
      <!-- Menu section end -->

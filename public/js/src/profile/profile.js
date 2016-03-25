@@ -67,9 +67,9 @@
 		},
 		handleDomEvents: function(){
 
-			LJ.profile.$profile.on('click', '.me__input .me__input-field', LJ.profile.activateInput );
-			LJ.profile.$profile.on('click', '.me__input .me__action-cancel', LJ.profile.deactivateInput );
-			LJ.profile.$profile.on('click', '.me__input .me__action-validate', LJ.profile.updateProfile );
+			LJ.profile.$profile.on('click', 'input, textarea',  LJ.profile.activateInput );
+			LJ.profile.$profile.on('click', '.action__cancel',   LJ.profile.deactivateInput );
+			LJ.profile.$profile.on('click', '.action__validate', LJ.profile.updateProfile );
 
 		},
 		handleApiError: function( err ){
@@ -88,21 +88,21 @@
 		activateInput: function( input ){
 
 			var $self  = typeof input == 'string' ? $(input) : $(this);
-			var $block = $self.closest('.me__input');
-			var $input = $block.find('.me__input-field');
+			var $block = $self.closest('.me-item');
+			var $input = $block.find('input, textarea');
 
-			if( $block.hasClass('active') || $block.hasClass('me__input--no-edit') ){
+			if( $block.hasClass('--active') || $block.hasClass('--no-edit') ){
 				return;
 			} else {
-				$block.addClass('active'); 
+				$block.addClass('--active'); 
 			}
 
 			$input.attr( 'readonly', false );
 
-			$block.find('.me__input-action')
+			$block.find('.action')
 				  .velocity('bounceInQuick', {
 				  	duration: 400,
-				  	display: 'block'
+				  	display: 'flex'
 				  });
 
 			$block.attr('data-restore', $input.val() );
@@ -111,14 +111,14 @@
 		deactivateInput: function( input ){
 
 			var $self  = typeof input == 'string' ? $(input) : $(this);
-			var $block = $self.closest('.me__input');
-			var $input = $block.find('.me__input-field');
+			var $block = $self.closest('.me-item');
+			var $input = $block.find('input, textarea');
 
-			if( $block.hasClass('active') ){ $block.removeClass('active'); } else { return; }
+			if( $block.hasClass('--active') ){ $block.removeClass('--active'); } else { return; }
 
 			$input.attr( 'readonly', true );
 
-			$block.find('.me__input-action')
+			$block.find('.action')
 				  .velocity('bounceOut', {
 				  	duration: 400,
 				  	display: 'none'
@@ -136,12 +136,13 @@
 			var update = {};
 
 			var $self  = typeof child == 'string' ? $(child) : $(this);
-			var $block = $self.closest('.me__input');
+			var $block = $self.closest('.me-item');
 
-			if( $block.length == 0 || !$block.hasClass('active') || $block.hasClass('--validating') )
+			if( $block.length == 0 || !$block.hasClass('--active') || $block.hasClass('--validating') ){
 				return LJ.wlog('Not calling the api');
+			}
 
-			var new_value = $block.find('.me__input-field').val();
+			var new_value = $block.find('input,textarea').val();
 			var attribute = $block.attr('data-param');
 			var call_id = LJ.generateId();
 
@@ -175,9 +176,9 @@
 
 			$('.thumbnail__name').text( exposed.user.name );
 
-			var $block  = $('.me__input[data-callid="' + exposed.call_id + '"]');
-			var $input  = $block.find('.me__input-field');
-			var $action = $block.find('.me__input-action');
+			var $block  = $('.me-item[data-callid="' + exposed.call_id + '"]');
+			var $input  = $block.find('input, textarea');
+			var $action = $block.find('.action');
 
 			if( $block.attr('data-store') ){
 				$input.val( $block.attr('data-store') );
@@ -188,7 +189,7 @@
 			$action.velocity('bounceOut', {
 				duration: 400,
 				display: 'none',
-				complete: function(){ $block.removeClass('--validating').removeClass('active'); }
+				complete: function(){ $block.removeClass('--validating').removeClass('--active'); }
 			});
 
 		},

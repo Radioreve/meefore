@@ -1230,6 +1230,94 @@
 		w_profile: {
 			"fr": "profil",
 			"en": "profile"
+		},
+		settings_ux_unread_messages_label: {
+			"fr": "Signaler messages lus",
+			"en": "Signal read messages"
+		},
+		settings_ux_unread_messages_explanation: {
+			"fr": "Les autres utilisateurs sauront que vous avez lu leurs messages",
+			"en": "Other users will know that you have read their messages"
+		},
+		settings_ux_country_label: {
+			"fr": "Afficher les nationalités",
+			"en": "Display the nationalities"
+		},
+		settings_ux_country_explanation: {
+			"fr": "Afficher les nationalités autre que la mienne sur les miniatures",
+			"en": "Display nationalities other than mine on the thumbnail"
+		},
+		settings_ux_gender_label: {
+			"fr": "Afficher le sexe (H/F)",
+			"en": "Display the gender (H/F)"
+		},
+		settings_ux_gender_explanation: {
+			"fr": "Afficher le sexe des utilisateurs sur leur miniature pour les distinguer plus facilement",
+			"en": "Display the user's gender on his thumbnail"
+		},
+		settings_part_title_email: {
+			"fr": "Emails",
+			"en": "Emails"
+		},
+		settings_part_title_notifications: {
+			"fr": "Notifications",
+			"en": "Notifications"
+		},
+		settings_emails_new_request_label: {
+			"fr": "Demande de participation",
+			"en": "Participation request"
+		},
+		settings_emails_new_request_explanation: {
+			"fr": "Envoyée lorsqu'une demande est acceptée",
+			"en": "Sent when a request is accepted"
+		},
+		settings_emails_message_received_label: {
+			"fr": "Nouveau message reçu",
+			"en": "New message received"
+		},
+		settings_emails_message_received_explanation: {
+			"fr": "Envoyée à chaque nouveau message",
+			"en": "Sent every time you receive a new message"
+		},
+		settings_notifs_newsletter_label: {
+			"fr": "Newsletter",
+			"en": "Newsletter"
+		},
+		settings_notifs_newsletter_explanation: {
+			"fr": "Notre newsletter hebdomadaire",
+			"en": "Our weekly newsletter"
+		},
+		settings_notifs_invitations_label: {
+			"fr": "Invitations",
+			"en": "Invitations"
+		},
+		settings_notifs_invitations_explanation: {
+			"fr": "Bon plans et invitations à des soirées spéciales",
+			"en": "Invitations to special events"
+		},
+		settings_code_sponsor_button: {
+			"fr": "Activer un code d'invitation",
+			"en": "Activate an invitation code"
+		},
+		settings_code_sponsor_explanation: {
+			"fr": "Partagez ce code avec vos amis pour les parrainer",
+			"en": "Share this code with your friends to sponsor them"
+		},
+		settings_part_title_code: {
+			"fr": "Code d'invitation",
+			"en": "Invite code"
+		},
+		settings_modal_sponsor_title: {
+			"fr": "Code parrainage",
+			"en": "Sponsor code"
+		},
+		settings_modal_sponsor_subtitle: {
+			"fr": "Entrez le code de votre parrain et bénéficiez chacun de 5 meepass",
+			"en": "Enter your sponsor's code and receive both 5 meepass"
+		},
+		settings_modal_sponsor_button: {
+			"fr": "Activer",
+			"en": "Activate"
 		}
 
 	});

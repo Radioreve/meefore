@@ -1,20 +1,54 @@
 
-.profile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+.me {
+    flex-direction: column;
+    width: 80%;
+    order: 2;
+    margin-bottom: 40px;
+    justify-content: center;
 }
- 
 
-.me {flex-direction: column;width: 80%;order: 2;margin-bottom: 40px;justify-content: center;}
+.me-item {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0 0 30px 0;
+    width: 100%;
+}
 
-.me__input {display: flex;position: relative;flex-direction: column;align-items: flex-start;margin: 0 0 30px 0;width: 100%;}
+.me-item.--no-edit input {
+  opacity: .5;
+}
+.me-item-body {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-flow: column  wrap;
+  justify-content: flex-start;
+}
 
 
-.me__input label {font-size: 14px;font-weight: 700;text-transform: uppercase;/* margin-left: 30px; */}
-
-.me__input .me__input-field {
+.me-item label {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    /* margin-left: 30px; */
+}
+.me-item input,
+.me-item textarea {
+    font-weight: 200;
+    border-radius: 100px;
+    font-size: 24px;
+    width: 100%;
+    padding: 16px 0px;
+    border: 1px solid white;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0;
+    outline: none;
+    transition: all ease-out .15s;
+    box-sizing: border-box;
+}
+.menu-section__input {
     padding: 8px 10px 10px 0;
     outline: none;
     border: 1px solid white;
@@ -27,452 +61,52 @@
     transition: all cubic-bezier(0, 0, 0.2, 1) .20s;
 }
 
-.me__input-field.--active {
-  border-bottom: 1px solid #B0E0FF;
-  background: rgba(51, 175, 255, 0.08);
-  padding-left: 20px;
-}
-.me__input:not(.me__input--no-edit) .me__input-field:hover {
-}
-.me__input input[type="text"]{}
-.me__input input[type="number"]{}
 
-.me__input textarea {
-  resize: none;
-}
-.me__input i {
-  position: absolute;
-  left: -60px;
-  font-size: 20px;
-  top: 10px;
-  padding-top: 11px;
-  color: #454545;
-  background: white;
-  border: 2px solid #33afff;
-  box-sizing: border-box;
-  border-radius: 100px;
-  height: 40px;
-  width: 40px;
-  text-align: center;
-  background: #eee;
-  border: none;
-}
-
-
-.me__input-explanation {
-  color: #454545;
-  font-weight: 400;
-  margin-top: 6px;
-  align-self: flex-end;
-}
-
-
-.me__input.active .me__input-field {
-    background: #EFF9FF;
-    border: 1px solid #1B69EC;
-    border-radius: 40px;
-    padding-left: 20px;
-}
-
-.me__input--no-edit .me__input-field {
-  cursor: default;
-  color: #ccc;
-}
-
-.me__input .me__input-action {
-  top: 17px;
-  right: 5px;
-  left: auto;
-  display: none;
-  cursor: pointer;
-  font-size: 18px;
-  height: 40px;
-  width: 40px;
-  padding-top: 10px;
-  background: white;
-  color: #191919;
-  border: 1px solid;
-}
-
-
-.me__input .me__action-validate {
-  right: 49px;
-}
-.me__input .me__action-cancel {
-}
-
-.me__input .me__action-cancel:hover {
-  background: #f9f9f9;
-}
-.me__input .me__action-validate:hover {
-  opacity: 0.75!important;
-}
-
-.me__input.--validating .me__input-action{
-  opacity: .5!important;
-}
-
-
-.profile-section-pictures {
+.me-item textarea {
+    resize: none;
 }
 
 
 
-
-
-
-
-
-
-
-
-.invite-friends {
-    background: #3F6698;
-transition: all ease-in-out .3s;
+.me-item__explanation {
+    color: #454545;
+    font-weight: 400;
+    margin-top: 6px;
+    align-self: flex-end;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 100px;
 }
- .invite-friends {
-    position: absolute;
-    right: 0;
-    top: 10px;
+
+.me-item.--active input,
+.me-item.--active textarea {
+    /* background: #EFF9FF; */
+    border-bottom: 1px solid #1B69EC;
+    padding-left: 16px;
+}
+
+
+.me-item .action {
+    top: 23px;
     right: 10px;
-    color: white;
-    font-family: 'Karla';
-    font-size: 13px;
-    padding: 10px 15px;
-}
-
-.invite-friends i {
-    margin-right: 10px;
-}
-#profileWrap .invite-friends {
-
-float: right;
-
-position: relative;
-
-padding: 0;
-
-top: 8px;
-
-right: 0;
-}
-
-.invite-friends:hover {
-    background: #6C8FBC;
+    font-size: 20px;
+    color: #191919;
+    z-index: 1;
 }
 
 
-#profileWrap .icon-invite-friends {
-    color: white;
-    position: relative;
-    top: 9px;
-    left: 11px;
-    font-size: 13px;
-}
-#profileWrap .icon-invite-friends:hover {
-    background: none;
+.me-item.--validating .menu-input-action {
+    opacity: .5!important;
 }
 
 
-.btn-invite-friends {
-    padding: 10px 12px;
-    float: right;
-    color: white;
-    background: #e94f6a;
-    background: none;
-    border: none;
-    text-transform: none;
-}
-.btn-invite-friends:hover {
-    background: none;
-}
-
-.row-subtitle {
-   text-align: center;
-}
-
-.row-subtitle-text {
-   font-family: 'Karla';
-   font-size: 14px;
-}
-
-.picture-wrap {
-   margin-top: 50px;
-}
-
-.row-center {
-   text-align: center;
-}
-
-.row {
-   margin-bottom: 20px;
-   padding-bottom: 25px;
-}
-/* Pictures */
 
 
-/* Informations */
 
-.row-divider {
-   margin: 20px 0;
-}
 
-.row-input {
-   display: inline-block;
-   /* background-color: white; */
-   padding: 15px 0 10px 13px;
-   margin: 5px 0;
-   position: relative;
-   color: #D6D6D6;
-   height: 47px;
-   cursor: pointer;
-}
 
-.row-input input, .row-input label {
-    cursor: pointer;
-}
 
-.row-input input:focus {
-    cursor: default;
-}
 
-.row-input-14 {
-   width: 24.5%;
-}
 
-.row-input-34 {
-   width: 74.5%;
-}
 
-.row-input-md {
-   width: 49.5%;
-}
 
-.row-input-lg {width: 100%;}
-
-.row-input input[type="text"] {
-   padding-left: 7px;
-}
-
-.row-input label {
-   text-align: left;
-}
-
-.row-select-wrap {
-   display: inline-block;
-   vertical-align: top;
-   position: relative;
-   top: -8px;
-}
-
-.mood.selected .icon-mood{
-    color: #e94f6a;
-}
-.icon-mood {
-    margin-right: 8px;
-}
-.icon-mood.icon-cheers {
-    margin-right: 14px;
-}
-.row-select {
-   display: inline-block;
-   font-size: 12px;
-   padding: 7px 9px;
-   border-radius: 2px;
-   transition: all ease-out .3s;
-   border: 1px solid white;
-   cursor: pointer;
-   vertical-align: middle;
-   margin-top: 2px;
-   font-family: 'Karla';
-}
-
-.row-select.selected {
-   background: #FBFBFB;
-   color: #313131;
-   /* border: 1px solid #D0D0D0; */
-   font-family: 'Karla';
-   font-weight: bolder;
-   border-bottom: 1px solid #eee;
-}
-
-.row-select-description {
-    /* font-style: italic; */
-    display: inline-block;
-    font-size: 13px;
-    color: #838383;
-    margin-right: 10px;
-    background: #FBFBFB!important;
-    padding: 6px!important;
-    position: absolute;
-    top: 11px;
-    right: 0;
-    font-family: 'Karla';
-}
-
-.row.editing label {
-   color: #ccc;
-   -webkit-transition: all ease-out .15s;
-   transition: all ease-out .15s;
-}
-
-.row.editing .row-input:hover label {
-   color: #68D068;
-   color: #B01756;
-}
-
-.row.editing .row-input {
-   color: #555;
-}
-
-.row.editing .row-select.selected {
-   background-color: #E4E4E4;
-}
-
-.row.editing .row-select.modified {
-   background-color: #F1F1F1;
-   color: #353535;
-   background: #B01756;
-   color: white;
-}
-
-.inspire {
-   float: right;
-   position: relative;
-   opacity: 0;
-   visibility: hidden;
-   font-size: 12px;
-   right: 5px;
-   cursor: pointer;
-   top: 17px;
-   color: #696969;
-   transition: all ease-out .3s;
-}
-
-.row.editing .row-motto:hover .inspire {
-   opacity: 1;
-   visibility: visible;
-}
-/* Friends */
-
-.row-friend-item {
-   min-width: 80px;
-   display: inline-block;
-   background-color: white;
-   margin: 3px;
-   border: 1px solid #eee;
-   width: 83px;
-   text-align: center;
-}
-
-.row-friend-img {
-   text-align: center;
-   cursor: pointer;
-}
-
-.row-friend-img img {
-   margin-top: 10px;
-}
-
-.row-friend-name {
-   font-size: 13px;
-    text-align: center;
-    padding: 3px 5px;
-    overflow: hidden;
-    height: 26px;
-    line-height: 19px;
-    margin: 3px auto 7px;
-    display: inline-block;
-    width: 70px;
-    font-family: 'Karla';
-    border-radius: 2px;
-    vertical-align: middle;
-    background: #FBFBFB;
-}
-
-.row-friend-actions {
-}
-/* Sous titre */
-
-.row-subheader {
-   text-align: center;
-}
-
-.row-subheader-bar {
-   border-bottom: 1px solid #D0D0D0;
-   border-top: 1px solid #F3F3F3;
-   margin: 3px 10px;
-   width: 30px;
-   display: inline-block;
-}
-
-.row-subheader-xp {
-   font-size: 11px;
-}
-
-.xp-amount {
-   padding-right: 3px;
-}
-
-.xp-fill {
-   width: 20%;
-   height: 100%;
-   transition: all ease-in-out .7s;
-   background: #eee;
-}
-
-.row-subheader-xp-bar {
-   display: inline-block;
-   width: 400px;
-   height: 8px;
-   border: 1px solid #ccc;
-   border-radius: 35px;
-}
-
-.facebook-image-item-wrap {
-}
-
-.facebook-image-item {
-   width: 100px;
-   height: 100px;
-   display: inline-block;
-   text-align: center;
-   background: white;
-   padding: 7px;
-   box-shadow: 0 0 1px #ccc;
-   margin: 0 2px;
-   cursor: pointer;
-   overflow: hidden;
-   position: relative;
-   opacity: .5;
-}
-
-.facebook-image-item.active {
-   opacity: 1;
-}
-
-.facebook-image-wrap {
-    height: 100%;
-    position: relative;
-    background: white;
-    overflow: hidden;
-}
-.upload-buttons {
-   margin-top: 15px;
-   text-align: center;
-}
-
-#country {
-    display: none;
-}
-
-.item-country {cursor: not-allowed!important;}
-.item-country .item-name {
-    margin-left: 14px;
-}
-.item-country .flag-icon{
-    position: relative;
-    top: 7px;
-    left: 5px;
-    border-radius: 6px 0 6px 0;
-}

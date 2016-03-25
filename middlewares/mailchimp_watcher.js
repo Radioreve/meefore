@@ -5,6 +5,17 @@
 	_     	    = require('lodash'),
 	mailer      = require('../services/mailer');
 
+	var handleErr = function( req, res, namespace, err ){
+
+		var params = {
+			error   : err,
+			call_id : req.sent.call_id
+		};
+
+		eventUtils.raiseApiError( req, res, namespace, params );
+
+	};
+
 	function yn_to_bool( yn ){
 			if(yn =='yes') return true;
 			return false;;
@@ -47,11 +58,9 @@
 		mailer.subscribeUserAtMailchimp( email_address, options, function( err, response ){
 
 			if( err ){
-				return eventUtils.raiseError({
-					res: res,
-					err: err,
-					toClient: "Error calling mailchimp api"
-				});
+				return handleErr( req, res, 'server_error', {
+					err_id: 'subscribing_to_mailchimp'
+				})
 			}
 
 			// Saving the mailchimp id for later api calls to modify newsletter preferences (PATCH) 
@@ -103,7 +112,7 @@
 			return next();
 		}
 
-		// There are 3 cases, in priority order
+		// There are 3 cases, by priority order :
 		// User has no mailchimp_id --> subscribe him immediately
 		// User has mailchimp_id but changd email: delete old mailchimp ref and create new one
 		// User has mailchimp_id and didt change email but change preferences

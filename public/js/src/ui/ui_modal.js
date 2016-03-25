@@ -50,8 +50,10 @@
 
 	window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
-		show_modal_duration: 700,
-		hide_modal_duration: 700,
+		show_modal_duration: 550,
+		hide_modal_duration: 550,
+		show_modal_delay   : 500,
+		hide_modal_delay   : 550,
 
 		facebook_img_min_width: 200,
 		facebook_img_max_width: 300,
@@ -81,7 +83,7 @@
 				$modal.hide()
 					  .appendTo( $('.curtain') )
 					  .velocity('bounceInQuick', {
-					  	delay: 600,
+					  	delay: LJ.ui.show_modal_delay,
 					  	display: 'flex',
 					  	duration: LJ.ui.show_modal_duration,
 					  	complete: function(){
@@ -101,7 +103,7 @@
 
 			$('.curtain').velocity('fadeOut', {
 				duration: LJ.ui.hide_modal_duration,
-				delay: 650,
+				delay: LJ.ui.hide_modal_delay,
 				complete: function(){
 					$(this).remove();
 				}

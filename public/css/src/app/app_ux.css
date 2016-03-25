@@ -89,7 +89,7 @@
 
 .modal-subheader {color: #919191;padding: 0 30px;text-align: center;font-weight: 300;line-height: 18px;font-size: 16px;}
 
-.modal-body {min-height: 160px;max-height: 300px;margin: 20px 0;padding: 0 16px;display: flex;flex-flow: row wrap;overflow: hidden;align-items: flex-start;outline: none;}
+.modal-body {min-height: 100px;max-height: 300px;margin: 20px 0 0px;padding: 0 16px;display: flex;flex-flow: row wrap;overflow: hidden;align-items: flex-start;outline: none;}
 
 .modal-footer {min-height: 100px;display: flex;justify-content: center;align-items: center;}
 .modal__title {font-family: 'Creamy Script';     font-size: 40px;}
@@ -152,6 +152,15 @@
 .modal__facebook-picture.--active .modal__picture-icon {
    display: flex;
 }
+
+.modal__input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.modal__input input {margin: auto;padding: 16px 40px;width: 50%;font-size: 30px;font-weight: 200;border: none;border-bottom: 2px solid #ccc;text-align: center;}
 
 
 .modal__facebook-picture img {width: 100%;}

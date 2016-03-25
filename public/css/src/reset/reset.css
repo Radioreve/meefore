@@ -62,3 +62,8 @@ a, a:link, a:visited, a:hover, a:active {
   text-decoration: inherit;
   font-weight: inherit;
 } 
+
+
+input, textarea {
+  outline: none;
+}

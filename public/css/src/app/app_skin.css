@@ -16,6 +16,9 @@ body {
 button {
     cursor: pointer;
     outline: none;
+    margin: auto;
+    font-family: 'Alegreya Sans';
+    border: none;
 }
 button:hover {
     opacity: .8;

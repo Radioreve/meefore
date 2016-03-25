@@ -1,19 +1,23 @@
 
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
-		app_token_url 			  : '/auth/facebook',
-		me_url		  			  : '/api/v1/me',
-		me_friends				  : '/me/friends',
-		fetch_shared_url		  : '/api/v1/users/:facebook_id/shared',
-		fetch_meepass_url 		  : '/api/v1/users/:facebook_id/meepass',
-		fetch_friends_url  		  : '/api/v1/users/:facebook_id/friends',
-		fetch_user_url 	   	  	  : '/api/v1/users/:facebook_id/core',
-		fetch_user_profile_url    : '/api/v1/users/:facebook_id/full',
-		update_profile_url  	  : '/me/update-profile',
-		upload_picture_dt		  : '/me/update-picture-client',
-		upload_picture_fb		  : '/me/update-picture-url',
-		update_pictures_url		  : '/me/update-pictures',
-		fetch_cloudinary_tags_url : '/me/cloudinary-tags',
+		app_token_url 			  	 : '/auth/facebook',
+		me_url		  			  	 : '/api/v1/me',
+		me_friends				  	 : '/me/friends',
+		fetch_shared_url		  	 : '/api/v1/users/:facebook_id/shared',
+		fetch_meepass_url 		  	 : '/api/v1/users/:facebook_id/meepass',
+		fetch_friends_url  		  	 : '/api/v1/users/:facebook_id/friends',
+		fetch_user_url 	   	  	  	 : '/api/v1/users/:facebook_id/core',
+		fetch_user_profile_url    	 : '/api/v1/users/:facebook_id/full',
+		update_profile_url  	  	 : '/me/update-profile',
+		upload_picture_dt		  	 : '/me/update-picture-client',
+		upload_picture_fb		  	 : '/me/update-picture-url',
+		update_pictures_url		  	 : '/me/update-pictures',
+		fetch_cloudinary_tags_url 	 : '/me/cloudinary-tags',
+		update_settings_ux_url       : '/me/update-settings-ux',
+		update_settings_contact_url  : '/me/update-settings-contact',
+		update_settings_alerts_url 	 : '/me/update-settings-alerts',
+		update_settings_mailings_url : '/me/update-settings-mailinglists',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -120,8 +124,8 @@
 
 				LJ.api.get( LJ.api.me_url )
 					  .then(function( exposed ){
-							LJ.user     = exposed.me;
-							LJ.settings = exposed.settings
+							LJ.user         = exposed.me;
+							LJ.app_settings = exposed.settings
 					  		return resolve();
 					  }, function( err ){
 					  		return reject( err );
@@ -288,6 +292,22 @@
 					  });
 
 			});	
+		},
+		updateSettingsUx: function( update ){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.update_settings_ux_url, update )
+					.then(function( exposed ){
+						if( exposed.user && exposed.user.app_preferences ){
+							return resolve({ app_preferences: exposed.user.app_preferences, call_id: exposed.call_id });
+						} else {
+							LJ.wlog('The server didnt respond with the expected settings object')
+						}
+					}, function( err ){
+						return reject( err );
+					});
+
+			});
 		}
 
 	});

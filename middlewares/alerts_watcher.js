@@ -4,6 +4,17 @@
 	var settings   = require('../config/settings');
 	var eventUtils = require('../pushevents/eventUtils');
 
+	var handleErr = function( req, res, namespace, err ){
+
+		var params = {
+			error   : err,
+			call_id : req.sent.call_id
+		};
+
+		eventUtils.raiseApiError( req, res, namespace, params );
+
+	};
+
 	var updateCache = function( req, res, next ){
 
 		var alert_ns = 'user_alerts/' + req.sent.facebook_id;
@@ -13,14 +24,9 @@
 
 		rd.hmset( alert_ns, data, function( err, res ){
 
-			if( err ){
-				return eventUtils.raiseError({
-					err      : err,
-					res      : res,
-					toClient : "Error updating cache",
-					toServer : "Error updating cache"
-				});
-			}
+			if( err ) return handleErr( req, res, 'server_error', {
+				err_id: 'updating_cache_alerts'
+			});
 
 			next();
 
@@ -50,14 +56,9 @@
 
 		rd.hmset( alert_ns, data, function( err, res ){
 
-			if( err ){
-				return eventUtils.raiseError({
-					err      : err,
-					res      : res,
-					toClient : "Error updating cache",
-					toServer : "Error updating cache"
-				});
-			}
+			if( err ) return handleErr( req, res, 'server_error', {
+				err_id: 'updating_cache_alerts'
+			});
 
 			next();
 

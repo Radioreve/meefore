@@ -4,18 +4,119 @@
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
 
+				LJ.settings.handleDomEvents();
 				LJ.settings.setMyPreferences();
 
 			});
 		},
 		setMyPreferences: function(){
 
-			var settings = LJ.settings;
+
+		},
+		handleDomEvents: function(){
 
 
+		},
+		handleClickOnCodeBtn: function( e ){
+
+			LJ.settings.showSponsorshipModal();
+
+		},
+		handleClickOnCodeModalBtn: function( e ){
+
+
+
+		},
+		showSponsorshipModal: function(){
+
+			LJ.ui.showModal({
+				"type"     : "sponsorship",
+				"title"    : LJ.text("settings_modal_sponsor_title"),
+				"subtitle" : LJ.text("settings_modal_sponsor_subtitle"),
+				"body"     : LJ.settings.renderSponshipModalBody(),
+				"footer"   : "<button>" + LJ.text("settings_modal_sponsor_button") + "</button>",
+			});
+
+		},
+		renderSponshipModalBody: function(){
+			return [
+				'<div class="modal__input">',
+					'<input type="text" placeholder="BL1347">',
+				'</div>'
+			].join('');
 		}
 
 	});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
