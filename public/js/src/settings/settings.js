@@ -6,20 +6,37 @@
 
 				LJ.settings.handleDomEvents();
 				LJ.settings.setMyPreferences();
-
+				resolve();
 			});
 		},
 		setMyPreferences: function(){
 
+			var app_preferences = LJ.user.app_preferences;
+
+			_.keys( app_preferences ).forEach(function( key ){
+
+                _.keys( app_preferences[ key ]).forEach(function( sub_key ){
+
+                    var value	= app_preferences[ key ][ sub_key ];
+                    var $toggle = $('[data-settings-type-id="' + sub_key + '"]').find('.toggle');
+
+                    if( $toggle.length > 0 && value == 'yes' ){
+                    	$toggle.addClass('--active');
+                    }
+                });
+            });
+
+			$('#settings__email').val( LJ.user.contact_email );
+			$('#settings__invite-code').val( LJ.user.invite_code );
 
 		},
 		handleDomEvents: function(){
 
+			$('.settings-item .toggle').click( LJ.settings.handleClickToggleBtn );
 
 		},
 		handleClickOnCodeBtn: function( e ){
 
-			LJ.settings.showSponsorshipModal();
 
 		},
 		handleClickOnCodeModalBtn: function( e ){
@@ -27,6 +44,70 @@
 
 
 		},
+		handleClickToggleBtn: function(){
+
+			var $toggle = $(this);
+
+			var setting_id = $toggle.closest('.settings-item').attr('data-settings-type-id');
+
+			// Update the ui
+			var call_id = LJ.generateId();
+			LJ.ui.showLoader( call_id );
+			$toggle.toggleClass('--active');
+
+			// Change internal state
+			LJ.settings.updateSettings( settings_id );
+
+			// Decide for the appropriate url handler based on the state
+			if( ['newsletter', 'invitations'].indexOf( call_id ) != -1 ){
+				var apiFn = LJ.api.updateSettingsMailing( LJ.user.app_preferences );
+			}
+
+			// Decide for the appropriate url handler based on the state
+			if( ['auto_login', 'show_gender', 'show_country', 'message_readby'].indexOf( call_id ) != -1 ){
+				var apiFn = LJ.api.updateSettingsUx( LJ.user.app_preferences );
+			}
+
+			// Decide for the appropriate url handler based on the state
+			if( ['new_message_received', 'accepted_in'].indexOf( call_id ) != -1 ){
+				var apiFn = LJ.api.updateSettingsAlerts( LJ.user.app_preferences );
+			}
+
+			apiFn()
+				.then( LJ.settings.handleUpdateSettingsSuccess, LJ.settings.handleUpdateSettingsError );
+				
+
+		},
+		updateSettings: function( settings_id ){
+
+			var allowed_ids = [ 'newsletter', 'invitations', 'auto_login', 'show_gender',
+				'show_country', 'new_message_received', 'accepted_in', 'message_readby' ];
+
+			if( allowed_ids.indexOf( settings_id ) == -1 ){
+				return LJ.wlog('This settings id : ' + settings_id + ' is not into the allowed list : ' + allowed_ids );
+			}
+
+			var preferences = LJ.user.app_preferences;
+			_.keys( preferences ).forEach(function( key ){
+				_.keys( preferences[ key ] ).forEach(function( setting_type ){
+					if( setting_type == settings_id ){
+						if( preferences[ key ][ setting_type ] == 'yes' ){
+							preferences[ key ][ setting_type ] = 'no';
+						} else {
+							preferences[ key ][ setting_type ] = 'yes';
+						}
+					}
+				});	
+			});
+
+
+		},
+		handleUpdateSettingsSuccess: function( expose ){
+
+		},
+		handleUpdateSettingsError: function( expose ){
+
+		},	
 		showSponsorshipModal: function(){
 
 			LJ.ui.showModal({
@@ -151,9 +232,9 @@
 
 				// Alerts
 				var accepted_in     = $container.find('[data-propid="accepted_in"].selected').attr('data-selectid');
-				var message_unread  = $container.find('[data-propid="message_unread"].selected').attr('data-selectid');
+				var new_message_received  = $container.find('[data-propid="new_message_received"].selected').attr('data-selectid');
 				var min_frequency   = $container.find('[data-propid="min_frequency"].selected').attr('data-selectid');
-				app_preferences.alerts.message_unread = message_unread;
+				app_preferences.alerts.new_message_received = new_message_received;
 				app_preferences.alerts.accepted_in    = accepted_in;
 				app_preferences.alerts.min_frequency  = min_frequency;
 
@@ -294,12 +375,12 @@
 				var $container      = $('.row-alerts');
 
 				var accepted_in     = $container.find('[data-propid="accepted_in"].modified').attr('data-selectid');
-				var message_unread  = $container.find('[data-propid="message_unread"].modified').attr('data-selectid');
+				var new_message_received  = $container.find('[data-propid="new_message_received"].modified').attr('data-selectid');
 				var min_frequency   = $container.find('[data-propid="min_frequency"].modified').attr('data-selectid');
 				
 				var app_preferences = LJ.user.app_preferences;
 
-				app_preferences.alerts.message_unread = message_unread;
+				app_preferences.alerts.new_message_received = new_message_received;
 				app_preferences.alerts.accepted_in    = accepted_in;
 				app_preferences.alerts.min_frequency  = min_frequency;
 

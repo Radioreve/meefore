@@ -37,7 +37,7 @@ var settings = {
 	        'invitations' : config.mailchimp.groups["invitations"].init_value
       	},
       	alerts: {
-	        'message_unread': 'yes',
+	        'new_message_received': 'yes',
 	        'accepted_in' : 'yes',
 	        'min_frequency': '7200' // 1 hour
       	},

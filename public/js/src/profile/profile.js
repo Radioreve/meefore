@@ -15,6 +15,7 @@
 					.then( LJ.profile.setMyPictures )
 					.then( LJ.profile.setMyHashtags )
 					.then( LJ.pictures.init )
+					.then( LJ.settings.init )
 					.then( LJ.profile.handleDomEvents )
 					.then( resolve )
 

@@ -494,7 +494,15 @@
           <h3 data-lid="menu_subsection_account"></h3>
         </div>
         <div class="settings --account">
-          
+          <div class="settings-item">
+            <div class="settings-input">
+            <div class="settings-input__icon --round-icon"><i class="icon icon-arobat"></i></div>
+              <div class="settings-input-label">
+                <input readonly placeholder="ben@mymail.com" type="text">
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_code_sponsor_explanation"></div>
+          </div>
         </div>
         <!-- code section -->
         <div class="menu-section__subtitle">
@@ -508,7 +516,7 @@
             <div class="settings-input">
             <div class="settings-input__icon --round-icon"><i class="icon icon-code"></i></div>
               <div class="settings-input-label">
-                <input readonly class="settings__input-field" placeholder="BL1347" type="text">
+                <input readonly placeholder="BL1347" type="text">
               </div>
             </div>
             <div class="settings-input__explanation" data-lid="settings_code_sponsor_explanation"></div>
@@ -525,36 +533,36 @@
           <div class="settings__title">
             <h3 data-lid="settings_part_title_email"></h3>
           </div>
-          <div class="settings-item">
+          <div class="settings-item" data-settings-type-id="accepted_in">
             <div class="settings-input">
               <div class="settings-input__icon --round-icon"><i class="icon icon-drinks"></i></div>
               <div class="settings-input-label">
-                <div class="settings-input__label" data-lid="settings_emails_new_request_label"></div>
+                <div class="settings-input__label" data-lid="settings_emails_accepted_in_label"></div>
               </div>
               <div class="toggle">
                 <div class="toggle__background"></div>
                 <div class="toggle__button"></div>
               </div>
             </div>
-            <div class="settings-input__explanation" data-lid="settings_emails_new_request_explanation"></div>
+            <div class="settings-input__explanation" data-lid="settings_emails_accepted_in_explanation"></div>
           </div>
-          <div class="settings-item">
+          <div class="settings-item" data-settings-type-id="new_message_received">
             <div class="settings-input">
               <div class="settings-input__icon --round-icon"><i class="icon icon-chat-bubble-duo"></i></div>
               <div class="settings-input-label">
-                <div class="settings-input__label" data-lid="settings_emails_message_received_label"></div>
+                <div class="settings-input__label" data-lid="settings_emails_new_message_received_label"></div>
               </div>
               <div class="toggle">
                 <div class="toggle__background"></div>
                 <div class="toggle__button"></div>
               </div>
             </div>
-            <div class="settings-input__explanation" data-lid="settings_emails_message_received_explanation"></div>
+            <div class="settings-input__explanation" data-lid="settings_emails_new_message_received_explanation"></div>
           </div>
           <div class="settings__title">
             <h3 data-lid="settings_part_title_notifications"></h3>
           </div>
-          <div class="settings-item">
+          <div class="settings-item" data-settings-type-id="newsletter">
             <div class="settings-input">
               <div class="settings-input__icon --round-icon"><i class="icon icon-mail"></i></div>
               <div class="settings-input-label">
@@ -567,7 +575,7 @@
             </div>
             <div class="settings-input__explanation" data-lid="settings_notifs_newsletter_explanation"></div>
           </div>
-          <div class="settings-item">
+          <div class="settings-item" data-settings-type-id="invitations">
             <div class="settings-input">
               <div class="settings-input__icon --round-icon"><i class="icon icon-newsletter"></i></div>
               <div class="settings-input-label">
@@ -586,7 +594,7 @@
           <h3 data-lid="menu_subsection_ux"></h3>
         </div>
         <div class="settings --ux">
-          <div class="settings-item">
+          <div class="settings-item" data-settings-type-id="message_readby">
             <div class="settings-input">
               <div class="settings-input__icon --round-icon"><i class="icon icon-chat-read"></i></div>
               <div class="settings-input-label">
@@ -599,20 +607,20 @@
             </div>
             <div class="settings-input__explanation" data-lid="settings_ux_unread_messages_explanation"></div>
           </div>
-          <div class="settings-item">
+          <div class="settings-item" data-settings-type-id="show_gender">
             <div class="settings-input">
             <div class="settings-input__icon --round-icon"><i class="icon icon-gender"></i></div>
               <div class="settings-input-label">
                 <div class="settings-input__label" data-lid="settings_ux_gender_label" ></div>
               </div>
-              <div class="toggle --active">
+              <div class="toggle">
                 <div class="toggle__background"></div>
                 <div class="toggle__button"></div>
               </div>
             </div>
             <div class="settings-input__explanation" data-lid="settings_ux_gender_explanation"></div>
           </div>
-          <div class="settings-item">
+          <div class="settings-item" data-settings-type-id="show_country">
             <div class="settings-input">
               <div class="settings-input__icon --round-icon"><i class="icon icon-planet"></i></div>
               <div class="settings-input-label">
@@ -624,6 +632,19 @@
               </div>
             </div>
             <div class="settings-input__explanation" data-lid="settings_ux_country_explanation"></div>
+          </div>
+          <div class="settings-item" data-settings-type-id="auto_login">
+            <div class="settings-input">
+              <div class="settings-input__icon --round-icon"><i class="icon icon-planet"></i></div>
+              <div class="settings-input-label">
+                <div class="settings-input__label" data-lid="settings_ux_auto_login_label"></div>
+              </div>
+              <div class="toggle">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_ux_auto_login_explanation"></div>
           </div>
         </div>
       </section>

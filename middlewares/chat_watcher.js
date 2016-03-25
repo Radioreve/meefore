@@ -91,7 +91,7 @@
 
 		offline_users.forEach(function( facebook_id ){
 
-			alerts_watcher.allowSendAlert( facebook_id, "message_unread", function( allowed, alerts ){
+			alerts_watcher.allowSendAlert( facebook_id, "new_message_received", function( allowed, alerts ){
 
 				if( allowed && alerts.email ){
 					mailer.sendAlertEmail_MessageReceived( req.sent.name, alerts.email /* @519481 */);
@@ -105,7 +105,7 @@
 			// 	if( err ) return console.log( err );
 
 			// 	// For somereason, if no info available or user doesnt want email, return
-			// 	if( !alerts || alerts.message_unread == 'no' ){
+			// 	if( !alerts || alerts.new_message_received == 'no' ){
 			// 		return console.log('Not notifying about chat because no alerts param or unread == no');
 			// 	}
 

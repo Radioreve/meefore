@@ -27,16 +27,6 @@
     flex-flow: row wrap;
 }
 
-.settings__input-field {
-    width: 100%;
-    font-size: 22px;
-    font-weight: 300;
-    padding: 10px 15px;
-    margin-bottom: 4px;
-    border-radius: 100px;
-    border: 1px solid #eee;
-}
-
 .settings.--code button {
     background: #7b4cbb;
     padding: 20px 100px;
@@ -46,6 +36,16 @@
     font-weight: 600;
     font-family: 'Alegreya sans';
     border-radius: 8px;
+}
+
+.settings-item input {
+    width: 100%;
+    font-size: 22px;
+    font-weight: 300;
+    padding: 10px 15px;
+    margin-bottom: 4px;
+    border-radius: 100px;
+    border: 1px solid #eee;
 }
 
 .settings-item.--active input {}

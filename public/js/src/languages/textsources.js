@@ -464,11 +464,11 @@
 			"fr": "Recevez un email dès que vous êtes accepté dans un meefore",
 			"en": "Receive an email when you are accepted in a meefore"
 		},
-		s_message_unread_label: {
+		s_new_message_received_label: {
 			"fr": "Message reçu hors-ligne",
 			"en": "Unread message"
 		},
-		s_message_unread_desc: {
+		s_new_message_received_desc: {
 			"fr": "Recevez un email dès que vous êtes hors-ligne et que vous recevez un nouveau message",
 			"en": "Receive an email when you're offline and someone sends you a new message"
 		},
@@ -1255,6 +1255,14 @@
 			"fr": "Afficher le sexe des utilisateurs sur leur miniature pour les distinguer plus facilement",
 			"en": "Display the user's gender on his thumbnail"
 		},
+		settings_ux_auto_login_label: {
+			"fr": "Login automatique",
+			"en": "Auto login"
+		},
+		settings_ux_auto_login_explanation: {
+			"fr": "Se connecter directement sans passer par la page d'accueil",
+			"en": "Connect directly skipping the homepage"
+		},
 		settings_part_title_email: {
 			"fr": "Emails",
 			"en": "Emails"
@@ -1263,19 +1271,19 @@
 			"fr": "Notifications",
 			"en": "Notifications"
 		},
-		settings_emails_new_request_label: {
-			"fr": "Demande de participation",
-			"en": "Participation request"
+		settings_emails_accepted_in_label: {
+			"fr": "Demande de participation acceptée",
+			"en": "Participation request accepted"
 		},
-		settings_emails_new_request_explanation: {
-			"fr": "Envoyée lorsqu'une demande est acceptée",
-			"en": "Sent when a request is accepted"
+		settings_emails_accepted_in_explanation: {
+			"fr": "Envoyée lorsqu'une de vos demandes est acceptée",
+			"en": "Sent when one of your requests is accepted"
 		},
-		settings_emails_message_received_label: {
+		settings_emails_new_message_received_label: {
 			"fr": "Nouveau message reçu",
 			"en": "New message received"
 		},
-		settings_emails_message_received_explanation: {
+		settings_emails_new_message_received_explanation: {
 			"fr": "Envoyée à chaque nouveau message",
 			"en": "Sent every time you receive a new message"
 		},

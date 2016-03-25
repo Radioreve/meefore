@@ -222,8 +222,8 @@
 }
 
 .toggle__button {
-    height: 92%;
-    width: 50%;
+    height: 34px;
+    width: 55%;
     background: white;
     border-radius: 100px;
     margin: auto 3px;
@@ -239,7 +239,7 @@
 }
 
 .toggle.--active .toggle__button {
-    margin-left: 46%;
+    margin-left: 42%;
     box-shadow: 1px 1px 3px #616161;
 }
 

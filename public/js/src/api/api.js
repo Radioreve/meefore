@@ -17,7 +17,7 @@
 		update_settings_ux_url       : '/me/update-settings-ux',
 		update_settings_contact_url  : '/me/update-settings-contact',
 		update_settings_alerts_url 	 : '/me/update-settings-alerts',
-		update_settings_mailings_url : '/me/update-settings-mailinglists',
+		update_settings_mailing_url  : '/me/update-settings-mailinglists',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -297,6 +297,38 @@
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.api.post( LJ.api.update_settings_ux_url, update )
+					.then(function( exposed ){
+						if( exposed.user && exposed.user.app_preferences ){
+							return resolve({ app_preferences: exposed.user.app_preferences, call_id: exposed.call_id });
+						} else {
+							LJ.wlog('The server didnt respond with the expected settings object')
+						}
+					}, function( err ){
+						return reject( err );
+					});
+
+			});
+		},
+		updateSettingsMailing: function( update ){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.update_settings_mailing_url, update )
+					.then(function( exposed ){
+						if( exposed.user && exposed.user.app_preferences ){
+							return resolve({ app_preferences: exposed.user.app_preferences, call_id: exposed.call_id });
+						} else {
+							LJ.wlog('The server didnt respond with the expected settings object')
+						}
+					}, function( err ){
+						return reject( err );
+					});
+
+			});
+		},
+		updateSettingsAlerts: function( update ){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.update_settings_alerts_url, update )
 					.then(function( exposed ){
 						if( exposed.user && exposed.user.app_preferences ){
 							return resolve({ app_preferences: exposed.user.app_preferences, call_id: exposed.call_id });
