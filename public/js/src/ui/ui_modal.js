@@ -1,59 +1,10 @@
 		
-	testModal = function(){
-		LJ.ui.showModal({
-			"title": "Félicitations !",
-			"subtitle": "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
-			"body": "Then there goes the body...",
-			"footer": "<button class='--rounded'><i class='icon icon-check'></i></button>"
-		});
-	};
-
-	testModalFetch = function(){
-
-		LJ.ui.showModalAndFetch({
-
-			"type"			: "facebook",
-			"title"			: "Félicitations fetch!",
-			"subtitle"		: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
-			"footer"		: "<button class='--rounded'><i class='icon icon-plus'></i></button>",
-
-			"fetchPromise"	: LJ.facebook.fetchProfilePictures
-
-		}).then(function( results ){
-			console.log('Call went thru!');
-			
-			var html = [];
-			results.data.forEach(function( picture_object ){
-				picture_object.images.forEach(function( image_object ){
-					if( image_object.width > LJ.ui.facebook_img_min_width && image_object.width < LJ.ui.facebook_img_max_width ){
-						html.push( LJ.facebook.renderPicture( image_object.source ) );
-					}
-				});
-			});
-
-			$('.modal-body').append( html.join('') )
-							.find('.modal__loader')
-							.velocity('bounceOut', {
-								duration: 500,
-								delay: 1000,
-								complete: function(){
-									$(this).siblings()
-										   .velocity('bounceInQuick', {
-										   		display: 'block'
-										   });
-								}
-							})
-
-		});
-
-	}
-
 	window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		show_modal_duration: 550,
 		hide_modal_duration: 550,
-		show_modal_delay   : 500,
-		hide_modal_delay   : 550,
+		show_modal_delay   : 400,
+		hide_modal_delay   : 500,
 
 		facebook_img_min_width: 200,
 		facebook_img_max_width: 300,
@@ -150,3 +101,57 @@
 		}
 
 	});
+
+
+
+
+
+
+	testModal = function(){
+		LJ.ui.showModal({
+			"title": "Félicitations !",
+			"subtitle": "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
+			"body": "Then there goes the body...",
+			"footer": "<button class='--rounded'><i class='icon icon-check'></i></button>"
+		});
+	};
+
+	testModalFetch = function(){
+
+		LJ.ui.showModalAndFetch({
+
+			"type"			: "facebook",
+			"title"			: "Félicitations fetch!",
+			"subtitle"		: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
+			"footer"		: "<button class='--rounded'><i class='icon icon-plus'></i></button>",
+
+			"fetchPromise"	: LJ.facebook.fetchProfilePictures
+
+		}).then(function( results ){
+			console.log('Call went thru!');
+			
+			var html = [];
+			results.data.forEach(function( picture_object ){
+				picture_object.images.forEach(function( image_object ){
+					if( image_object.width > LJ.ui.facebook_img_min_width && image_object.width < LJ.ui.facebook_img_max_width ){
+						html.push( LJ.facebook.renderPicture( image_object.source ) );
+					}
+				});
+			});
+
+			$('.modal-body').append( html.join('') )
+							.find('.modal__loader')
+							.velocity('bounceOut', {
+								duration: 500,
+								delay: 1000,
+								complete: function(){
+									$(this).siblings()
+										   .velocity('bounceInQuick', {
+										   		display: 'block'
+										   });
+								}
+							})
+
+		});
+
+	}

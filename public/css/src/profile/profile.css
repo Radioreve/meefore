@@ -80,7 +80,6 @@
 
 .me-item.--active input,
 .me-item.--active textarea {
-    /* background: #EFF9FF; */
     border-bottom: 1px solid #1B69EC;
     padding-left: 16px;
 }

@@ -9,6 +9,9 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	hide_curtain_duration	: 2000,
 	minimum_api_delay		: 750,
 
+	action_show_duration: 400,
+	action_hide_duration: 400,
+
 	scrolltop: 0,
 
 	//Down
@@ -58,11 +61,24 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		o = o || {};
 
-		var alpha = o.opacity || 1;
-		$('<div class="curtain"></div>')
-			.hide().css({ 'background': 'rgba(19,19,19,' + alpha + ')' }).appendTo( LJ.ui.$body );
+		var already_there = false;
+
+		var $curtain;
+		if( $('.curtain').length > 0 ) {
+			$curtain = $('.curtain');
+			already_there = true;
+		} else {
+			var alpha = o.opacity || 1;
+			$curtain = $('<div class="curtain"></div>')
+						.hide().css({ 'background': 'rgba(19,19,19,' + alpha + ')' }).appendTo( LJ.ui.$body );
+		}
 
 		return LJ.promise(function( resolve, reject ){
+
+			if( already_there ){
+				return resolve();
+			}
+
 			$('.curtain').velocity('fadeIn', {
 				display: 'flex',
 				duration: o.duration || LJ.ui.show_curtain_duration,

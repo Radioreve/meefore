@@ -128,7 +128,7 @@
   align-items: center;
   width: 100%;
   margin-bottom: 30px;
-  margin-top: 70px;
+  margin-top: 40px;
 }
 
 
@@ -140,7 +140,7 @@
 }
 
 
-.menu-section-segment {width: 40%;margin-bottom: 30px;}
+.menu-section-segment {width: 40%;margin-top: 30px;}
 
 .segment {display: flex;justify-content: center;width: 100%;font-size: 16px;border-radius: 20px;border: 1px solid;box-sizing: border-box;}
 

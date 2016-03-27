@@ -13,6 +13,7 @@
 		handleDomEvents: function(){
 
 			$('.menu-item.--friends').one('click', LJ.friends.handleFriendsClicked );
+			LJ.ui.$body.on('click', '.js-invite-friends', LJ.facebook.showModalSendMessageToFriends );
 
 		},
 		handleFriendsClicked: function(){
@@ -49,25 +50,64 @@
 		},
 		setFriends: function( friend_ids ){
 
-			var html = '';
+			var html = [];
 
 			LJ.api.fetchUsers( friend_ids )
 				.then(function( res ){
 
-					res.forEach(function( r ){
+					if( res.length == 0 ){
 
-						var friend = r.user;
-						html += LJ.friends.renderFriendItem( friend );
+						html.push( LJ.friends.renderFriendItem__Empty() );
 
-					});
-					html += LJ.friends.renderFriendItem__Last();
-					$('.friends').html( html );
+					} else {
+
+						res.forEach(function( r ){
+
+							var friend = r.user;
+							html.push( LJ.friends.renderFriendItem( friend ) );
+
+						});
+
+						html.push( LJ.friends.renderFriendItem__Last() );
+
+					}
+
+					$('.friends')
+						.html( html.join('') )
+						.children()
+						.velocity('fadeIn', {
+							duration: 250,
+							display: 'flex'
+						});
+
 				});
 
 		},		
 		handleFetchMeFriendError: function(){
 
 			LJ.elog('Error fetching friends :/');
+
+		},
+		renderFriendItem__Empty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-telescope"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_friends_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_friends_subtitle"></p>',
+					'</div>',
+					'<div class="empty__subicon --round-icon js-invite-friends">',
+						'<i class="icon icon-user-add"></i>',
+					'</div>',
+				'</div>'
+
+				].join(''));
 
 		},
 		renderFriendItem: function( friend ){
@@ -99,7 +139,7 @@
 
 			return LJ.ui.render([
 
-				'<div class="friend__item --invite-friends">',
+				'<div class="friend__item --invite-friends js-invite-friends" >',
 					'<div class="row-pic">',
 						'<i class="icon icon-user-add"></i>',
 					'</div>',

@@ -12,8 +12,7 @@
 
 	var User = require('../models/UserModel');
 
-	var initEvents     = require( pushEventsDir + '/initEvents'),
-		profileEvents  = require( pushEventsDir + '/profileEvents'),
+	var profileEvents  = require( pushEventsDir + '/profileEvents'),
 		settingsEvents = require( pushEventsDir + '/settingsEvents'),
 		signEvents     = require( pushEventsDir + '/signEvents');
 
@@ -62,12 +61,13 @@
 			    req.body   || {},  
 				req.query  || {},
 				req.sent   || {}
-
 			);
+			req.sent.expose = {};
 
 			next();
 
 		});
+
 
 		function setParam( params ){
 
@@ -115,39 +115,39 @@
 
 	    // Provide valid token based on secret key, for api calls
 		app.post('/auth/token',
-			mdw.auth.makeToken);
+			mdw.auth.makeToken
+		);
 
 
 		// [@Landing Page ]
 		app.post('/landing/contact',
-			signEvents.sendContactEmail);
+			signEvents.sendContactEmail
+		);
 
 	    // Initialisation | Check if user exists / create profile if not, subscribe to mailchimp
 	    app.post('/auth/facebook',
+	    	mdw.validate('auth_facebook'),
 	    	mdw.pop.populateUser({ force_presence: false }),
+	    	mdw.facebook.fetchFacebookLongLivedToken,
 	    	mdw.mailchimp_watcher.subscribeMailchimpUser,
 	    	mdw.alerts_watcher.setCache,
-	    	signEvents.handleFacebookAuth);
+	    	signEvents.handleFacebookAuth
+	    );
 
 	    // [ @chat ] Make sure a user has authorisation to join a channel
 	    app.post('/auth/pusher',
 	    	mdw.auth.authenticate(['standard']), // token required for magic to happen
 	    	mdw.validate('pusher_auth'),
-	    	mdw.auth.authPusherChannel);
-
-
-	    // Fetch app configuration and user id full profile. Token required
-	    app.post('/auth/app',
-	    	mdw.auth.authenticate(['standard']),
-	    	mdw.facebook.fetchFacebookLongLivedToken('app_id'),
-	    	initEvents.fetchUserAndConfiguration);
+	    	mdw.auth.authPusherChannel
+	    );
 
 
 	    // [ @user ] Update le profile
 	    app.post('/me/update-profile',
 	    	mdw.validate('update_profile_base'),
 			mdw.profile_watcher.updateCache('base'),
-	    	profileEvents.updateProfile);
+	    	profileEvents.updateProfile
+	    );
 
 	    // [ @user ] Ajoute une photo au profile
 	    app.post('/me/update-picture-client',
@@ -175,38 +175,54 @@
 
 	    // [ @user ] Va chercher en base de données les users à partir de /me/friends de l'api Facebook
 	    app.post('/me/friends',
-	    	profileEvents.fetchAndSyncFriends);
+	    	profileEvents.fetchAndSyncFriends
+	    );
 
 	    // [ @user ] va chercher des tags cloudinary signés par le serveur
 	    app.get('/me/cloudinary-tags',
-	    	profileEvents.fetchCloudinaryTags );
+	    	profileEvents.fetchCloudinaryTags
+	    );
 
 	    // [ @user ] Update contact settings
 	    app.post('/me/update-settings-contact',
 	    	mdw.pop.populateUser(),
 	    	mdw.mailchimp_watcher.updateMailchimpUser,
 	    	mdw.alerts_watcher.updateCache,
-	    	settingsEvents.updateSettingsContact );
+	    	settingsEvents.updateSettingsContact
+	    );
 
 	    // [ @user ] Update ux settings
 	    app.post('/me/update-settings-ux',
-	    	settingsEvents.updateSettings);
+	    	settingsEvents.updateSettings
+	    );
 
 	     // [ @user ] Update ux settings
 	    app.post('/me/update-settings-alerts',
 	    	mdw.alerts_watcher.updateCache,
-	    	settingsEvents.updateSettings);
+	    	settingsEvents.updateSettings
+	    );
 
 	    // [ @user ] Update notification settings 
 	    app.post('/me/update-settings-mailinglists',
 	    	mdw.pop.populateUser(),
 	    	mdw.mailchimp_watcher.updateMailchimpUser,
-	    	settingsEvents.updateSettings);
+	    	settingsEvents.updateSettings
+	    );
 
 	    app.post('/me/delete',
 	    	mdw.pop.populateUser(),
 	    	mdw.mailchimp_watcher.deleteMailchimpUser,
-	    	settingsEvents.deleteProfile );
+	    	settingsEvents.deleteProfile
+	    );
+
+	    // Coupons, code & sponsorship
+		app.post('/me/invite-code',
+			mdw.validate('invite_code'),
+			profileEvents.updateInviteCode
+		);
+
+
+
 
 
 	    app.get('/api/v1/all',
@@ -250,6 +266,11 @@
 	    	api.users.fetchUserMeepass
 	    );
 
+
+	    app.get('/api/v1/users/:facebook_id/mailchimp-status',
+	    	mdw.pop.populateUser(),
+	    	api.users.getMailchimpStatus
+	    );
 
 
 	    // [ @events ] Fetch un event par son identifiant. 

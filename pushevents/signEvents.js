@@ -13,6 +13,18 @@
 	var pusher  = require('../services/pusher');
 	var mailer = require('../services/mailer');
 
+
+	var handleErr = function( req, res, namespace, err ){
+
+		var params = {
+			error   : err,
+			call_id : req.sent.call_id
+		};
+
+		eventUtils.raiseApiError( req, res, namespace, params );
+
+	};
+
 	var sendHomepage = function( req, res ){
 		res.sendfile( config.homepage[ process.env.NODE_ENV ] );
 	};
@@ -30,27 +42,30 @@
 
 		var fb = req.sent.facebook_profile;
 
-		if( !fb )
-			return eventUtils.raiseError({
-				toClient: "Missing informations from Facebook", res: res
-			});
-
 		// L'utilisateur existe, on le connecte à l'application 
-		if( req.sent.user )
-		{	
-			var user = req.sent.user;
+		if( req.sent.user ){
+
 			console.log('User has been found, login in...');
+			// console.log('Token pre-update : ' + JSON.stringify(req.sent.facebook_profile,null,2) );
 
-			/* Mise à jour de l'access token */
-			facebook_access_token = user.facebook_access_token;
-			facebook_access_token.short_lived = fb.access_token; 
+			User.findOneAndUpdate(
 
-			User.findByIdAndUpdate( user._id, { 
-				facebook_access_token: facebook_access_token 
-			}, { new: true }, function( err, user ){
+				{ facebook_id: fb.id },
+				{ 'facebook_access_token.short_lived': fb.access_token },
+				{ new: true },
+				function( err, user ){
 
-				var app_token = eventUtils.generateAppToken( "user", user ); 
-				req.sent.expose = { user_id: user._id, app_token: app_token };
+				if( err ){
+					return handleErr( req, res, 'server_error' );
+				}
+			
+				var app_token = eventUtils.generateAppToken( "user", user );
+
+				// console.log('Token post-update : ' + JSON.stringify(user.facebook_access_token,null,2) );
+
+				req.sent.expose.user_id = user._id;
+				req.sent.expose.app_token = app_token;
+
 				next();
 
 			});
@@ -81,7 +96,6 @@
 		new_user.facebook_email                    = email;
 		new_user.facebook_url                      = fb.link;
 		new_user.contact_email 					   = email;
-		new_user.mailchimp_email                   = email;
 		new_user.mailchimp_id                      = req.sent.mailchimp_id;
 
 		// Control attributes
@@ -118,11 +132,7 @@
 		new_user.save(function( err, user ){
 
 			if( err ){
-				return eventUtils.raiseError({
-					toClient : "Error trying to create account",
-					err      : err,
-					res      : res
-				});
+				return handleErr( req, res, 'server_error' );
 			}
 
 			console.log('Sending email notification to admins');
@@ -132,11 +142,14 @@
 			console.log('Account created successfully');
 			var app_token = eventUtils.generateAppToken( "user", user ); 
 
-			req.sent.expose = { id: user._id, app_token: app_token };
+			req.sent.expose.id = user._id;
+			req.sent.expose.app_token = app_token;
+
 			next();
 
 		});
 	};
+
 
 	var sendContactEmail = function( req, res ){
 
@@ -162,13 +175,12 @@
 			}
 		});
 
-
 	};
 
 	module.exports = {
-		sendContactEmail      : sendContactEmail,
-		sendHomepage          : sendHomepage,
-		sendEarlyAdoptersPage : sendEarlyAdoptersPage,
-		redirectToHome        : redirectToHome,
-		handleFacebookAuth    : handleFacebookAuth
+		sendContactEmail      	  : sendContactEmail,
+		sendHomepage          	  : sendHomepage,
+		sendEarlyAdoptersPage 	  : sendEarlyAdoptersPage,
+		redirectToHome        	  : redirectToHome,
+		handleFacebookAuth    	  : handleFacebookAuth
 	};

@@ -32,10 +32,6 @@ var settings = {
 	    { img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 4, is_main: false, hashtag: 'whatever' }
 	],
 	default_app_preferences: {
-		email: {
-	        'newsletter'  : config.mailchimp.groups["newsletter"].init_value,
-	        'invitations' : config.mailchimp.groups["invitations"].init_value
-      	},
       	alerts: {
 	        'new_message_received': 'yes',
 	        'accepted_in' : 'yes',
@@ -122,6 +118,14 @@ var settings = {
 
 	}
 };
+	
+	// Setting the mailchimp defaults 
+	settings.default_app_preferences.email = settings.default_app_preferences.email || {};
+	
+	config.mailchimp.groups.forEach(function( group_object ){
+		settings.default_app_preferences.email[ group_object.name ] = group_object.init_value;
+	});
+
 
 
 module.exports = settings;

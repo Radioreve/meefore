@@ -4,7 +4,7 @@
 
 .--round-icon {
     display: flex;
-    border-radius: 100px;
+    border-radius: 1000px;
 }
 
 .app {
@@ -230,7 +230,7 @@
     margin-left: 4%;
     box-shadow: 1px 1px 3px #ABABAB;
     position: relative;
-    transition: all ease-in-out .3s;
+    transition: all ease-in-out .2s;
 }
 
 .toggle.--active {
@@ -274,4 +274,85 @@
 .icon-item {position: absolute;left: -60px;top: 29px;font-size: 30px;}
 .icon-item i {
 	margin: auto;
+}
+
+.edit {
+    color: rgb(51, 175, 255);
+    position: absolute;
+    right: 14px;
+    top: 24px;
+    z-index: 1;
+    font-size: 22px;
+    cursor: pointer;
+    border-radius: 100px;
+    background: rgba(51, 175, 255, 0.12);
+    height: 40px;
+    width: 40px;
+    display: flex;
+}
+.edit:hover{
+    opacity: .7;
+}
+
+.edit i {
+    margin: auto;
+}
+
+
+.empty {
+    display: none;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    width: 400px;
+    margin: auto;
+    text-align: center;
+}
+
+.empty__icon {
+    display: flex;
+    color: #33afff;
+    color: #ccc;
+    border: 4px solid;
+    height: 150px;
+    width: 150px;
+    font-size: 100px;
+}
+.empty__icon i {
+    margin: auto;
+}
+
+.empty__title {
+    font-size: 36px;
+    margin-top: 30px;
+    color: #454545;
+}
+.empty__title h2 {
+
+}
+
+.empty__subtitle {
+    color: #919191;
+    margin-top: 20px;
+    line-height: 23px;
+}
+.empty__subtitle p {
+
+}
+
+.empty__subicon {
+    min-height: 70px;
+    min-width: 70px;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    /* border: 2px solid #7b4cbb; */
+    color: #7B4CBB;
+    font-size: 50px;
+    margin-top: 16px;
+    cursor: pointer;
+}
+.empty__subicon i {
+
 }

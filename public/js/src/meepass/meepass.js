@@ -26,8 +26,8 @@
 			$seg.siblings().removeClass('--active');
 			$seg.addClass('--active');
 
-			$('.meepass__item').css({ display: 'none' });
-			$('.meepass__item[data-link="' + link + '"]').css({ display: 'flex' });
+			$('.meepass').children().css({ display: 'none' });
+			$('.meepass [data-link="' + link + '"]').css({ display: 'flex' });
 
 		},
 		handleMeepassClicked: function(){
@@ -63,7 +63,7 @@
 		},
 		setMeepassItems: function( meepass ){
 
-			var html = '';
+			var html = [];
 			meepass.sort();
 
 			var facebook_ids = _.pluck( meepass, 'sent_by' ).concat( _.pluck( meepass, 'sent_to' ) ).filter( Boolean );
@@ -71,6 +71,8 @@
 			LJ.api.fetchUsers( facebook_ids )
 				.then(function( res ){
 
+					var no_meepass_received = true;
+					var no_meepass_sent     = true;
 					meepass.forEach(function( mp ){
 
 						for( var i=0; i<res.length; i++ ){
@@ -78,18 +80,31 @@
 							var user = res[ i ].user;
 
 							if( mp.sent_by == user.facebook_id ){
-								 return html += LJ.meepass.renderMeepassItem__Received( mp, user );
+								no_meepass_received = false;
+								return html.push( LJ.meepass.renderMeepassItem__Received( mp, user ) );
 							}
 
 							if( mp.sent_to == user.facebook_id ){
-								return html += LJ.meepass.renderMeepassItem__Sent( mp, user );
+								no_meepass_sent = false;
+								return html.push( LJ.meepass.renderMeepassItem__Sent( mp, user ) );
 							}
 						}
 					});
 
-					$('.meepass').html( html )
+					if( no_meepass_sent ){
+						html.push( LJ.meepass.renderMeepassItem__SentEmpty() );
+					}
+
+					if( no_meepass_received ){
+						html.push( LJ.meepass.renderMeepassItem__ReceivedEmpty() );
+					}
+
+					$('.meepass').html( html.join('') )
 								 .find('[data-link="received"]')
-								 .css({ display: 'flex' });
+								 .velocity('fadeIn', {
+									duration: 250,
+									display: 'flex'
+								});
 
 					$('.menu-section.--meepass')
 								.find('.segment__part')
@@ -103,6 +118,44 @@
 		handleFetchMeMeepassError: function(){
 
 			LJ.elog('Error fetching meepass :/');
+
+		},
+		renderMeepassItem__ReceivedEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="received">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meepass"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_meepass_received_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_meepass_received_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__SentEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="sent">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meepass"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_meepass_sent_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_meepass_sent_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
 
 		},
 		renderMeepassItem__Received: function( meepass_object, target ){

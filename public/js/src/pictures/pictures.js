@@ -182,12 +182,11 @@
 					$picture.css({ transition: css_transition })
 							.find('.hashtag-action')
 							.velocity('bounceInQuick', {
-								duration: 400,
+								duration: LJ.ui.action_show_duration,
 								display: 'flex'
 							});
 				}
 			});
-
 
 		},
 		deactivateHashtagEdit: function( img_place ){
@@ -203,7 +202,7 @@
 				  .removeClass('--active');
 
 			var css_transition = $picture.css('transition');
-			$picture.find('.hashtag-action').velocity('bounceOut', { duration: 400 });
+			$picture.find('.hashtag-action').velocity('bounceOut', { duration: LJ.ui.action_hide_duration });
 			$picture.css({ transition: 'none' }).velocity({ height: parseInt( $picture.css('height') ) - 40 }, {
 				duration: 100,
 				delay: 300,

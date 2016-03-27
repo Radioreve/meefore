@@ -16,7 +16,7 @@
 			list_id  = config.mailchimp.list_id;
 
 		var mailchimp_urls = {
-			members: 'https://'+username+':'+api_key+'@' + dc + '.api.mailchimp.com/3.0/lists/' + list_id + '/members'
+			members: 'https://' + username + ':' + api_key + '@' + dc + '.api.mailchimp.com/3.0/lists/' + list_id + '/members'
 		};
 
 
@@ -38,6 +38,38 @@
 		};
 
 
+		var getMailchimpUser = function( mailchimp_user_id, callback ){
+
+			var url = mailchimp_urls.members + '/' + mailchimp_user_id;
+
+			request({ method: 'GET', url: url }, function( err, body, response ){
+
+				if( err ){
+					callback( err, null );
+				} else {
+					callback( null, JSON.parse(response) );
+				}
+
+			});
+
+		};
+
+		var getMailchimpUsers = function( callback ){
+
+			var url = mailchimp_urls.members;
+
+			request({ method: 'GET', url: url }, function( err, body, response ){
+
+				if( err ){
+					callback( err, null );
+				} else {
+					callback( null, JSON.parse(response) );
+				}
+
+			});
+
+		}
+
 		var subscribeUserAtMailchimp = function( email_address, options, callback ){
 
 
@@ -51,9 +83,11 @@
 
 			request({ method: 'POST', url: url, json: user }, function( err, body, response ){
 
-				if( err ) return callback( err, null );
-
-				callback( null, response );
+				if( err ){
+					callback( err, null );
+				} else {
+					callback( null, response );
+				}
 
 			});
 		};
@@ -206,7 +240,9 @@
 			updateUserAtMailchimp          : updateUserAtMailchimp,
 			deleteUserAtMailchimp 		   : deleteUserAtMailchimp,
 			sendAlertEmail_MessageReceived : sendAlertEmail_MessageReceived,
-			sendAlertEmail_RequestAccepted : sendAlertEmail_RequestAccepted
+			sendAlertEmail_RequestAccepted : sendAlertEmail_RequestAccepted,
+			getMailchimpUser 			   : getMailchimpUser,
+			getMailchimpUsers			   : getMailchimpUsers
 		};
 		
 

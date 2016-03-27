@@ -4,6 +4,7 @@
 		app_token_url 			  	 : '/auth/facebook',
 		me_url		  			  	 : '/api/v1/me',
 		me_friends				  	 : '/me/friends',
+		invite_code_url 			 : '/me/invite-code',
 		fetch_shared_url		  	 : '/api/v1/users/:facebook_id/shared',
 		fetch_meepass_url 		  	 : '/api/v1/users/:facebook_id/meepass',
 		fetch_friends_url  		  	 : '/api/v1/users/:facebook_id/friends',
@@ -18,6 +19,7 @@
 		update_settings_contact_url  : '/me/update-settings-contact',
 		update_settings_alerts_url 	 : '/me/update-settings-alerts',
 		update_settings_mailing_url  : '/me/update-settings-mailinglists',
+		mailchimp_status_url    	 : '/api/v1/users/:facebook_id/mailchimp-status',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -47,6 +49,9 @@
                 	},
 					success: function( data ){
 						setTimeout(function(){
+							if( data.user ){
+								LJ.user = data.user;
+							}
 							return resolve( data );
 	                    }, LJ.ui.minimum_api_delay - ( new Date() - call_started ) );
 					},
@@ -86,6 +91,9 @@
 	                },
 					success: function( data ){
 						setTimeout(function(){
+							if( data.user ){
+								LJ.user = data.user;
+							}
 							return resolve( data );
 	                    }, LJ.ui.minimum_api_delay - ( new Date() - call_started ) );
 					},
@@ -105,14 +113,17 @@
 
 			});
 		},
+		handleErr: function( err_id ){
+
+		},
 		fetchAppToken: function( facebook_profile ){
 
 			LJ.log('Fetching app token...');
 			facebook_profile = facebook_profile || LJ.facebook_profile;
 			
 			return LJ.api.post( LJ.api.app_token_url, {
-					facebook_profile: facebook_profile,
-					facebook_id: facebook_profile.id // server compliance
+					facebook_profile : facebook_profile,
+					facebook_id      : facebook_profile.id // server compliance
 				}).then(function( data ){
 					LJ.app_token = data.app_token;
 			});
@@ -338,6 +349,42 @@
 					}, function( err ){
 						return reject( err );
 					});
+
+			});
+		},
+		getMailchimpStatus: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.get( LJ.api.mailchimp_status_url.replace(':facebook_id', LJ.user.facebook_id ))
+					.then(function( exposed ){
+						return resolve( exposed );
+					}, function( err ){
+						return reject( err );
+					})
+
+			});
+		},
+		updateInviteCode: function( update ){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.invite_code_url, update )
+					.then(function( exposed ){
+						return resolve( exposed );
+					}, function( err ){
+						return reject( err );
+					})
+
+			});
+		},
+		updateSettingsContact: function( update ){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.update_settings_contact_url, update )
+					.then(function( exposed ){
+						return resolve( exposed );
+					}, function( err ){
+						return reject( err );
+					})
 
 			});
 		}

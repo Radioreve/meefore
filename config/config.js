@@ -89,10 +89,24 @@
 		}
 		, mailchimp: {
 			api_key   : '1975e0d603d5cb51d2cabd25dfab1d94-us10',
-			list_id   : '0e8fd0d396',
+			list_id   : '7d19672539',
 			dc	      : 'us10',
 			username  : 'methodezela@gmail.com',
-			groups: {
+			groups: [
+				{
+					name       : 'invitations',
+					id         : '7e8b852d87',
+					init_value : 'yes'
+				},
+				{
+					name       : 'newsletter',
+					id         : '2ba5ea2900',
+					init_value : 'yes'
+				}
+
+			],
+			list_id2  : '0e8fd0d396', // legacy
+			groups2: { // legacy
 				invitations: {
 					name       : 'invitations',
 					id         : 'bdb7938e4e',

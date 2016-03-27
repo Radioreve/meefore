@@ -9,8 +9,8 @@
 	var authenticate = function( audience ){
 
 		return function( req, res, next ){
-
-			req.sent.expose = {};
+			
+			req.sent.expose = req.sent.expose || {};
 			
 			var token = req.headers && req.headers['x-access-token'] || req.sent.token;
 			
@@ -19,9 +19,9 @@
 				return next();
 			}
 
-			if( process.env.NODE_ENV == 'dev' && req.sent.env == "dev" ){
-				return next();
-			}
+			// if( process.env.NODE_ENV == 'dev' && req.sent.env == "dev" ){
+			// 	return next();
+			// }
 
 			if( !token ){
 				return eventUtils.raiseError({ res: res,

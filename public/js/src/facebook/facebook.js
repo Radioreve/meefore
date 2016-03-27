@@ -35,8 +35,10 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 				if( res.status == 'connected' ){
 					var access_token = res.authResponse.accessToken;
+					LJ.login.data.access_token = access_token;
+
 					console.log('Short lived access token : ' + access_token.substring(0,20) + '.....');
-					return resolve( res.authResponse.accessToken );
+					return resolve( access_token );
 				}
 
 			}, { scope: LJ.facebook.required_permissions } );
@@ -72,13 +74,27 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		return LJ.promise(function( resolve, reject ){
 
 			LJ.log('Fetching facebook profile...');
-			FB.api( LJ.facebook.profile_url, function( facebookProfile ){
+
+			var options = {};
+			if( LJ.login.data.access_token ){
+				options.access_token = LJ.login.data.access_token;
+			}
+			
+			FB.api( LJ.facebook.profile_url, options, function( facebookProfile ){
+
 				// Surcharge profile with access_token for server processing;
-				facebookProfile.access_token = facebook_token;
+				var access_token = LJ.login.data.access_token || facebook_token;
+				LJ.log('Surcharing profile object with token : ' + access_token );
+				facebookProfile.access_token = access_token;
+
 				// Store it for reconnexion purposes
 				LJ.facebook_profile = facebookProfile;
-				return resolve( facebookProfile );
 
+				if( facebookProfile.error ){
+					return reject( facebookProfile.error );
+				} else {
+					return resolve( facebookProfile );
+				}
 			});
 
 		});
@@ -233,6 +249,14 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 						});
 
 				});
+
+	},
+	showModalSendMessageToFriends: function(){
+
+		FB.ui({
+			method: 'send',
+			link: 'http://www.meefore.com'
+		});
 
 	}
 

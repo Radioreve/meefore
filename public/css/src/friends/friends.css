@@ -26,7 +26,7 @@
 }
 
 
-.friend__item.--invite-friends .row-pic {
+.friends .--invite-friends .row-pic {
 	font-size: 50px;
     background: #7b4cbb;
     border-radius: 100px;

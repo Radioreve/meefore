@@ -69,18 +69,32 @@
 			LJ.api.fetchUsers( facebook_ids )
 				.then(function( res ){
 
-					res.forEach(function( r ){
+					var html = [];
+					if( res.length == 0 ){
 
-						var user = r.user;
-						var sh   = _.find( shared_profiles, function( sh ){
-							return sh.target_id == user.facebook_id;
+						html.push( LJ.shared.renderShareItem__Empty() );
+
+					} else {
+						res.forEach(function( r ){
+
+							var user = r.user;
+							var sh   = _.find( shared_profiles, function( sh ){
+								return sh.target_id == user.facebook_id;
+							});
+
+							html.push (LJ.shared.renderShareItem__User( sh, user ) );
+
 						});
+						
+					}
 
-						html += LJ.shared.renderShareItem__User( sh, user );
-
-					});
-
-					$('.shared').html( html );
+					$('.shared')
+						.html( html.join('') )
+						.children()
+						.velocity('fadeIn', {
+							duration: 250,
+							display: 'flex'
+						});
 
 				});
 
@@ -88,6 +102,25 @@
 		handleFetchMeSharedError: function(){
 
 			LJ.elog('Error fetching shared :/');
+
+		},
+		renderShareItem__Empty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-telescope"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_shared_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_shared_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
 
 		},
 		renderShareItem__User: function( shared_object, target, shared_by ){

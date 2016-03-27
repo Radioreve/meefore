@@ -68,15 +68,15 @@
 		},
 		handleDomEvents: function(){
 
-			LJ.profile.$profile.on('click', 'input, textarea',  LJ.profile.activateInput );
-			LJ.profile.$profile.on('click', '.action__cancel',   LJ.profile.deactivateInput );
-			LJ.profile.$profile.on('click', '.action__validate', LJ.profile.updateProfile );
+			LJ.profile.$profile.on('click', 'input, textarea, .edit',   LJ.profile.activateInput );
+			LJ.profile.$profile.on('click', '.action__cancel',   		LJ.profile.deactivateInput );
+			LJ.profile.$profile.on('click', '.action__validate', 		LJ.profile.updateProfile );
 
 		},
 		handleApiError: function( err ){
 
 			var err_ns  = err.namespace;
-			var err_id  = err.errors[0];
+			var err_id  = err.errors[0].err_id;
 			var call_id = err.call_id
 
 			if( err.namespace == 'update_profile_base' ){
@@ -86,9 +86,17 @@
 			}
 
 		},
-		activateInput: function( input ){
+		activateInput: function( element ){
 
-			var $self  = typeof input == 'string' ? $(input) : $(this);
+			var $self;
+			if( element instanceof jQuery ){
+				$self = element;
+			} else if( typeof element == 'string' ){
+				$self = $( element );
+			} else {
+				$self = $( this );
+			}
+
 			var $block = $self.closest('.me-item');
 			var $input = $block.find('input, textarea');
 
@@ -102,16 +110,30 @@
 
 			$block.find('.action')
 				  .velocity('bounceInQuick', {
-				  	duration: 400,
+				  	duration: LJ.ui.action_show_duration,
 				  	display: 'flex'
+				  });
+
+			$block.find('.edit')
+				  .velocity('bounceOut', {
+				  	duration: LJ.ui.action_hide_duration,
+				  	display: 'none'
 				  });
 
 			$block.attr('data-restore', $input.val() );
 
 		},
-		deactivateInput: function( input ){
+		deactivateInput: function( element ){
 
-			var $self  = typeof input == 'string' ? $(input) : $(this);
+			var $self;
+			if( element instanceof jQuery ){
+				$self = element;
+			} else if( typeof element == 'string' ){
+				$self = $( element );
+			} else {
+				$self = $( this );
+			}
+
 			var $block = $self.closest('.me-item');
 			var $input = $block.find('input, textarea');
 
@@ -121,8 +143,15 @@
 
 			$block.find('.action')
 				  .velocity('bounceOut', {
-				  	duration: 400,
+				  	duration: LJ.ui.action_hide_duration,
 				  	display: 'none'
+				  });
+
+			$block.find('.edit')
+				  .velocity('bounceInQuick', {
+				  	duration: LJ.ui.action_show_duration,
+				  	delay: 400,
+				  	display: 'flex'
 				  });
 
 			var former_value = $block.attr('data-restore');
@@ -132,15 +161,29 @@
 			}
 
 		},
-		updateProfile: function( child ){
+		updateProfile: function( element ){
 
 			var update = {};
 
-			var $self  = typeof child == 'string' ? $(child) : $(this);
+			var $self;
+			if( element instanceof jQuery ){
+				$self = element;
+			} else if( typeof element == 'string' ){
+				$self = $( element );
+			} else {
+				$self = $( this );
+			}
+
 			var $block = $self.closest('.me-item');
+			var $input = $block.find('input, textarea');
 
 			if( $block.length == 0 || !$block.hasClass('--active') || $block.hasClass('--validating') ){
 				return LJ.wlog('Not calling the api');
+			}
+
+			if( $input.val() == $block.attr('data-restore') ){
+				LJ.profile.deactivateInput.call( this, element );
+				return LJ.wlog('Not calling the api (same value)');
 			}
 
 			var new_value = $block.find('input,textarea').val();
@@ -173,25 +216,20 @@
 
 			LJ.ui.showToast( LJ.text('to_profile_update_success') );
 
-			LJ.setUser( exposed.user );
-
 			$('.thumbnail__name').text( exposed.user.name );
 
 			var $block  = $('.me-item[data-callid="' + exposed.call_id + '"]');
 			var $input  = $block.find('input, textarea');
 			var $action = $block.find('.action');
 
+			// For location attribute specificity
 			if( $block.attr('data-store') ){
 				$input.val( $block.attr('data-store') );
 			}
 
 			$block.attr('data-restore', null );
-			$input.attr('readonly', true );
-			$action.velocity('bounceOut', {
-				duration: 400,
-				display: 'none',
-				complete: function(){ $block.removeClass('--validating').removeClass('--active'); }
-			});
+			LJ.profile.deactivateInput( $input );
+			
 
 		},
 		renderPicture: function( pic ){
@@ -202,6 +240,7 @@
 
 				'<div class="picture ' + main + '" data-img-place="' + pic.img_place + '" data-img-id="' + pic.img_id + '" data-img-vs="' + pic.img_version + '">',
 		            img_html,
+		            '<div class="picture__ribbon-main">' + LJ.text('picture_main_label') + '</div>',
 		            '<div class="picture__progress-bar">',
 		            	'<div class="picture__progress-bar-bg"></div>',
 		            '</div>',

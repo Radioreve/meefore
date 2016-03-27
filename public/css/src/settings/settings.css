@@ -25,6 +25,15 @@
     margin-bottom: 0px;
     display: flex;
     flex-flow: row wrap;
+    position: relative;
+}
+
+.settings-item .action {
+    top: 23px;
+    right: 10px;
+    font-size: 20px;
+    color: #191919;
+    z-index: 1;
 }
 
 .settings.--code button {
@@ -41,14 +50,23 @@
 .settings-item input {
     width: 100%;
     font-size: 22px;
-    font-weight: 300;
-    padding: 10px 15px;
+    font-weight: 200;
+    padding: 10px 0px;
     margin-bottom: 4px;
-    border-radius: 100px;
-    border: 1px solid #eee;
+    border: none;
+    border-bottom: 1px solid #eee;
+    transition: all ease-out .15s;
 }
 
-.settings-item.--active input {}
+.settings-item.--active {
+   
+   
+}
+
+.settings-item.--active input {
+    border-bottom: 1px solid #1B69EC;
+    padding-left: 15px;
+}
 
 
 
@@ -61,3 +79,5 @@
     font-size: 22px;
     font-weight: bolder;
 }
+
+

@@ -5,6 +5,8 @@
 			'opening_duration': 1000,
 			'completed_steps': 0,
 
+			'data': {},
+
 			init: function(){
 				return LJ.promise(function( resolve, reject ){
 					LJ.login.bindDomEvents( resolve, reject );
@@ -13,7 +15,7 @@
 			bindDomEvents: function( resolve, reject ){
 				$( LJ.login.$trigger_login ).on('click', resolve );
 			},
-			firstStepCompleted: function( facebook_token ){
+			enterLoginProcess: function(){
 
 				LJ.ui.showCurtain({
 					duration: LJ.login.opening_duration
@@ -28,11 +30,11 @@
 									duration: 2000,
 									delay: LJ.ui.opening_duration
 								});
-							return LJ.Promise.resolve( facebook_token );
+							return LJ.Promise.resolve();
 						 });
 
 			},
-			lastStepCompleted: function(){
+			finishLoginProcess: function(){
 
 				LJ.log('Last step completed !');
 				LJ.login.stepCompleted(100);

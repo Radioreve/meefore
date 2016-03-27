@@ -608,6 +608,10 @@
 			"fr": "Chuchoter",
 			"en": "Whisper"
 		},
+		to_invite_code_already_taken: {
+			"fr": "Ce code est déjà utilisé par un autre utilisateur",
+			"en": "This code is already used by another user"
+		},
 		to_easy_on_api: {
 			"fr": "Une photo est déjà en cours de téléchargement",
 			"en ": "A photo is already downloading"
@@ -675,6 +679,10 @@
 		to_profile_update_success: {
 			"fr": "Vos informations ont été modifiées",
 			"en": "Your informations has been updated"
+		},
+		to_settings_update_success: {
+			"fr": "Vos préférences ont été modifiées",
+			"en": "Your settings have been updated"
 		},
 		to_upload_pic_success: {
 			"fr": "Votre photo a été modifiée",
@@ -1326,7 +1334,44 @@
 		settings_modal_sponsor_button: {
 			"fr": "Activer",
 			"en": "Activate"
+		},
+		picture_main_label: {
+			"fr": "Photo principale",
+			"en": "Main picture"
+		},
+		empty_shared_title: {
+			"fr": "Rien à l'horizon...",
+			"en": "Nothing on the horizon..."
+		},
+		empty_shared_subtitle: {
+			"fr": "Partagez des profils, des before ou des soirées avec vos amis pour pouvoir vous organiser plus rapidement.",
+			"en": "Share profiles, pregame or parties with your friends to help you organize your nights."
+		},
+		empty_meepass_sent_title: {
+			"fr": "Aucun meepass",
+			"en": "No meepass"
+		},
+		empty_meepass_sent_subtitle: {
+			"fr": "Envoyez des Meepass aux personnes que vous souhaitez inviter à vos prochains before.",
+			"en": "Sent Meepass to the people you wish to see at your next pregame."
+		},
+		empty_meepass_received_title: {
+			"fr": "Aucun meepass",
+			"en": "No meepass"
+		},
+		empty_meepass_received_subtitle: {
+			"fr": "Les Meepass sont envoyés par les organisateur pour vous inviter à leur prochain before.",
+			"en": "Meepass are sent by hosts to invite you to their next pregame."
+		},
+		empty_friends_title: {
+			"fr": "Pas encore d'amis",
+			"en": "No friends yet"
+		},
+		empty_friends_subtitle: {
+			"fr": "Il faut être au moins 2 pour créer ou participer à un before. Invitez vos amis à vous rejoindre pour sortir et faire de nouvelles rencontres.",
+			"en": "You need to be at least 2 in order to pregrame. Invite your friends to join you to get out and meet new people."
 		}
+
 
 	});
 

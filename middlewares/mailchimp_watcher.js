@@ -5,6 +5,8 @@
 	_     	    = require('lodash'),
 	mailer      = require('../services/mailer');
 
+	var err_ns = "mailchimp";
+
 	var handleErr = function( req, res, namespace, err ){
 
 		var params = {
@@ -23,15 +25,14 @@
 
 	var subscribeMailchimpUser = function( req, res, next ){
 
-		var options = {};
+		var options = { interests: {} };
 
 		if( req.sent.force_subscribe ){
 			var email_address = req.sent.contact_email;
 
-			options.interests = {
-				"bdb7938e4e": yn_to_bool( req.sent.app_preferences.email["invitations"] ),		//  
-        		"042add1e79": yn_to_bool( req.sent.app_preferences.email["newsletter"] )
-			};
+			config.mailchimp.groups.forEach(function( interest_object ){
+				options.interests[ interest_object.id ] = yn_to_bool( interest_object.init_value );
+			});
 			
 		} else {
 			// If exists, user has been populated by previous mdw 
@@ -41,10 +42,9 @@
 			}
 			var email_address = req.sent.facebook_profile.email;
 
-			options.interests = {
-				"bdb7938e4e": yn_to_bool( config.mailchimp.groups["invitations"].init_value ),		//  
-        		"042add1e79": yn_to_bool( config.mailchimp.groups["newsletter"].init_value )
-			}
+			config.mailchimp.groups.forEach(function( interest_object ){
+				options.interests[ interest_object.id ] = yn_to_bool( interest_object.init_value );
+			});
 		}
 
 		// Make sure a proper email address is provided
@@ -54,13 +54,15 @@
 			return next();
 		}
 
+		// If user email is being updated, create new one with the same options to not mess 
+		// With previous user preferences.
+		options = req.sent.subscribe_options || options;
+
 		console.log('Subscribing user to mailchimp with email address: ' + email_address );
 		mailer.subscribeUserAtMailchimp( email_address, options, function( err, response ){
 
 			if( err ){
-				return handleErr( req, res, 'server_error', {
-					err_id: 'subscribing_to_mailchimp'
-				})
+				return handleErr( req, res, err_ns, { err_id: 'subscribing_user_mc' });
 			}
 
 			// Saving the mailchimp id for later api calls to modify newsletter preferences (PATCH) 
@@ -88,20 +90,22 @@
 		var update = { interests: {} };
 
 		if( user.contact_email != contact_email ){
-			console.log('user.contact_email: ' + user.contact_email);
-			console.log('contact_email:' + contact_email);
+			console.log('contact_email found in database: ' + user.contact_email + ' and sent from client: ' + contact_email );
 			need_to_update_hard = true;
 		}
 
-		_.keys( new_preferences.email ).forEach( function( key ){
+		_.keys( new_preferences.email ).forEach( function( group_name ){
 
 			// Control bool to know if an updated to the mailchimp API will be needed
-			if( new_preferences.email[ key ] != old_preferences.email[ key ] ){
+			if( new_preferences.email[ group_name ] != old_preferences.email[ group_name ] ){
 				need_to_update_soft = true;
 			}
 
-			var bool = new_preferences.email[ key ] == 'yes' ? true : false;
-			update.interests[ config.mailchimp.groups[ key ].id ] = bool;
+			var group_id = _.find( config.mailchimp.groups, function( group ){
+				return group.name == group_name; 
+			}).id;
+
+			update.interests[ group_id ] = yn_to_bool( new_preferences.email[ group_name ]);
 			
 		});
 
@@ -128,20 +132,32 @@
 		if( need_to_update_hard ){
 			console.log('User is on mailchimp but changed email. Erasing out dated ref and saving new one... [case 2]');
 
-			mailer.deleteUserAtMailchimp( user.mailchimp_id, function( err, response ){
+			mailer.getMailchimpUser( user.mailchimp_id, function( err, response ){
 
-				req.sent.user.mailchimp_id = null;
 				if( err ){
-					return eventUtils.raiseError({
-						err: err, res: res, toClient: "Une erreur s'est produite, veuillez nous excuser"
-					});
+					return handleErr( req, res, err_ns, { err_id: 'getting_user_mc' });
 				} else {
-					console.log('Mailchimp user has been deleted, creating new one...');
-					req.sent.force_subscribe = true;
-					subscribeMailchimpUser( req, res, next );
+					console.log('Mailchimp user has been fetched before destroy.');
+					req.sent.subscribe_options = {
+						interests    : response.interests,
+						merge_fields : response.merge_fields
+					};
 				}
 
+				mailer.deleteUserAtMailchimp( user.mailchimp_id, function( err, response ){
+
+					req.sent.user.mailchimp_id = null;
+					if( err ){
+						return handleErr( req, res, err_ns, { err_id: 'deleting_user_mc' });
+					} else {
+						console.log('Mailchimp user has been deleted, creating new one...');
+						req.sent.force_subscribe = true;
+						subscribeMailchimpUser( req, res, next );
+					}
+
+				});
 			});
+
 			return;
 		}
 
@@ -151,12 +167,12 @@
 			mailer.updateUserAtMailchimp( user.mailchimp_id, update, function( err, response ){
 
 				if( err ){
-					return eventUtils.raiseError({
-						err: err, res: res, toClient: "Une erreur s'est produite, veuillez nous excuser"
-					});
+					handleErr( req, res, err_ns, { err_id: 'updating_user_mc' });
+				} else {
+					console.log('Everything went fine with the soft update');
+					next();
 				}
 
-				next();
 
 			});
 			
@@ -170,9 +186,7 @@
 		mailer.deleteUserAtMailchimp( req.sent.user.mailchimp_id, function( err, response ){
 
 			if( err ){
-				return eventUtils.raiseError({
-					err: err, toClient:"Couldnt delete user from mailchimp", res: res
-				});
+				return handleErr( req, res, err_ns, { err_id: 'deleting_user_mc' });
 			}
 
 			console.log('User (' + req.sent.user.contact_email + ') successfully deleted from mailchimp');

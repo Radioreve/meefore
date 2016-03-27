@@ -8,15 +8,14 @@
 	var Event = require('../../models/EventModel');
 	var Party = require('../../models/PartyModel');
 
-
-	var invite_code_regex = /^[a-z0-9]{5,20}$/i;
+	var rg = require('../../config/regex');
 
 	function check( req, res, next ){
 
 		var checkInviteCode = nv.isAnyObject()
 
 			.withRequired('facebook_id' , nv.isString() )
-			.withRequired('invite_code',  nv.isString({ 'regex': invite_code_regex }));
+			.withRequired('invite_code',  nv.isString({ 'regex': rg.invite_code }));
 
 		nv.run( checkInviteCode, req.sent, function( n, errors ){
 			if( n != 0 ){

@@ -1,12 +1,14 @@
 
-	var User 	   = require('../models/UserModel'),
-		Event 	   = require('../models/EventModel'),
-		Place 	   = require('../models/PlaceModel'),
-		_   	   = require('lodash'),
-		rd 		   = require('../services/rd'),
-		settings   = require('../config/settings'),
-		eventUtils = require('../pushevents/eventUtils');
- 
+	var User 	   = require('../models/UserModel');
+	var Event 	   = require('../models/EventModel');
+	var Place 	   = require('../models/PlaceModel');
+	var _   	   = require('lodash');
+	var rd 		   = require('../services/rd');
+	var settings   = require('../config/settings');
+	var eventUtils = require('../pushevents/eventUtils');
+	var mailer     = require('../services/mailer');
+
+
 
 	var handleErr = function( req, res, namespace, err ){
 
@@ -295,7 +297,7 @@
 				function( err, events ){
 
 					if( err ){
-						return handleErr( req, err, err_ns, err );
+						return handleErr( req, res, err_ns, err );
 					}
 
 					req.sent.expose.events = events;
@@ -303,6 +305,31 @@
 					next();
 
 				});
+
+	};
+
+	var getMailchimpStatus = function( req, res, next ){
+
+		var err_ns       = 'mailchimp_status';
+		var mailchimp_id = req.sent.user.mailchimp_id;
+
+		if( !mailchimp_id ){
+			return handleErr( req, res, err_ns, {
+				err_id: 'ghost_mailchimp_id',
+				mailchimp_id: mailchimp_id
+			});
+		}
+
+		mailer.getMailchimpUser( mailchimp_id, function( err, res ){
+
+			if( err ){
+				return handleErr( req, res, err_ns, err );
+			}
+
+			req.sent.expose.mailchimp_data = res;
+			next();
+
+		});
 
 	};
 
@@ -314,5 +341,6 @@
 		fetchUserById_Core		: fetchUserById_Core,
 		fetchUsers 				: fetchUsers,
 		fetchUsersAll 			: fetchUsersAll,
-		fetchUserEvents 		: fetchUserEvents
+		fetchUserEvents 		: fetchUserEvents,
+		getMailchimpStatus 		: getMailchimpStatus
 	};

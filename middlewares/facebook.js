@@ -7,74 +7,86 @@
 
 	var User        = require('../models/UserModel');
 
-	var fetchFacebookLongLivedToken = function( auth_type ){
+	var handleErr = function( req, res, namespace, err ){
 
-		return function( req, res, next ){
-			
-			//checking out of body ensures its been validated by auth.js before
-			if( auth_type == 'facebook_id' && req.sent.facebook_id )
-				var query = { 'facebook_id': req.sent.facebook_id };
+		var params = {
+			error   : err,
+			call_id : req.sent.call_id
+		};
 
-			if( auth_type == 'app_id' && req.sent.user_id )
-				var query = { '_id' : req.sent.user_id };
+		eventUtils.raiseApiError( req, res, namespace, params );
 
-			if( !query )
-				return eventUtils.raiseError({ res: res, toClient: "Bad identifier" });
+	};
 
-			User.findOne( query, function( err, user ){
+	var fetchFacebookLongLivedToken = function( req, res, next ){
+		
+		console.log('Fetching long_lived token for id : ' + req.sent.facebook_id );
+		User.findOne({ facebook_id: req.sent.facebook_id }, function( err, user ){
 
-				if( err || !user )
-					return eventUtils.raiseError({ err: err, res: res, toClient: "Bad request (E82)" });
+			if( err ){
+				return handleErr( req, res, 'fetching_facebook_long_token', {
+					'err_id': 'server_error',
+					'err': err
+				});
+			}
 
-				/* 
-					Testing if the current long lived token needs to be refreshed
-					The user must provide a recent short_lived_token at is point
-				*/
+			if( !user ){
+				return handleErr( req, res, 'fetching_facebook_long_token', {
+					'err_id': 'ghost_user',
+					'err': err
+				});
+			}
 
-				/* User comes with auto_login:true, short_lived will be ask clientside */
-				if( !user.facebook_access_token.short_lived )
+			/* Check is long_lived needs to be refreshed with the short lived token from login */
+			if( user.facebook_access_token.long_lived ){
+				var current_tk_valid_until = new moment( user.facebook_access_token.long_lived_valid_until );
+				var now = new moment();
+				var diff = current_tk_valid_until.diff( now, 'd' );
+
+				if( diff > 30 ) {
+					console.log('Facebook long lived token doesnt need to be refreshed, diff is : ' + diff );
 					return next();
-
-				/* Check is long_lived needs to be refreshed with the short lived token from login */
-				if( user.facebook_access_token.long_lived )
-				{
-					var current_tk_valid_until = new moment( user.facebook_access_token.long_lived_valid_until );
-					var now = new moment();
-					var diff = current_tk_valid_until.diff( now, 'd' );
-
-					if( diff > 30 )
-					{
-						console.log('Facebook long lived token doesnt need to be refreshed, diff is : ' + diff );
-						return next();
-					}
 				}
+			}
 
-				/* Fetch a long lived token for user to use app with valid api requests for 60 days! */
-				console.log('Setting Facebook long lived token...');
-				fetchLongLivedToken( user.facebook_access_token.short_lived, function( err, body ){
+			/* User comes with auto_login:true, short_lived will be ask clientside */
+			if( !user.facebook_access_token.short_lived ){
+				console.log('Unable to find a short lived access token, skipping the refresh process...');
+				return next();
+			}
 
-					var new_access_token     = querystring.parse( body ).access_token,
-							expires          = querystring.parse( body ).expires,
-							valid_until 	 = new Date( new moment().add( expires, 's' ) );
+			/* Fetch a long lived token for user to use app with valid api requests for 60 days! */
+			console.log('Setting facebook long lived token...');
+			fetchLongLivedToken( user.facebook_access_token.short_lived, function( err, body ){
+				
+				var new_access_token = querystring.parse( body ).access_token;
+				var expires          = querystring.parse( body ).expires;
+				var valid_until      = new Date( new moment().add( expires, 's' ) );
 
-					var facebook_access_token = user.facebook_access_token;
-						facebook_access_token.short_lived = null; //enforces that laters calls are done with refreshed short_lived token
-						facebook_access_token.long_lived  = new_access_token;
-						facebook_access_token.long_lived_valid_until = valid_until + '';
+				var facebook_access_token = user.facebook_access_token;
 
-					User.findOneAndUpdate( query,
-					{ facebook_access_token: facebook_access_token },
-					{ new: true },
-					function( err, user ){
+				facebook_access_token.short_lived            = null; //enforces that laters calls are done with refreshed short_lived token
+				facebook_access_token.long_lived             = new_access_token;
+				facebook_access_token.long_lived_valid_until = valid_until + '';
 
-						if( err )
-							return eventUtils.raiseError({ err: err, res: res, toClient: "Bad Request (E83)" });
+				User.findOneAndUpdate(
+				{ facebook_id: req.sent.facebook_id },
+				{ facebook_access_token: facebook_access_token },
+				{ new: true },
+				function( err, user ){
 
-						next();
-					});
+					if( err ){
+						return handleErr( req, res, 'fetching_facebook_long_token', {
+							'err_id': 'server_error',
+							'err': err
+						});
+					}
+
+					next();
+
 				});
 			});
-		};
+		});
 	};
 
 	function fetchLongLivedToken( access_token, callback ){

@@ -71,6 +71,7 @@
    flex-direction: column;
    align-items: center;
    justify-content: center;
+   display: flex;
 } 
 /* End app curtain */
 

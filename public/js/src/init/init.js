@@ -38,28 +38,33 @@
             LJ.shared.init();
             // Friends module
             LJ.friends.init();
-            // Settings
-            LJ.settings.init();
+
 
             // Autologin for users who asked the "remember me" feature in their settings
             LJ.autologin.init()
                 .then(  LJ.autologin.startLogin )
                 .catch( LJ.autologin.startLanding )
+
             // Login flow
             LJ.login.init()
                 .then( LJ.facebook.fetchFacebookToken )
-                .then( LJ.login.firstStepCompleted )
-                .then( LJ.facebook.fetchFacebookProfile )
+                .then( LJ.start );
+
+        },
+        start: function( facebook_token ){
+            return LJ.Promise.resolve( facebook_token )
+                .then( LJ.login.enterLoginProcess )  
+                .then( LJ.facebook.fetchFacebookProfile ) // <- Enter this step with valid facebook_token
                 .then( LJ.login.stepCompleted )
                 .then( LJ.setLocalStorage("login") )
-                .then( LJ.api.fetchAppToken )
+                .then( LJ.api.fetchAppToken )   // <- Enter this step with valid facebook_id
                 .then( LJ.login.stepCompleted )
                 .then(function(){
                     return LJ.Promise.all([
-                            LJ.profile.init()
+                            LJ.profile.init()  // <- Enter this step with valid app_token
                     ]);
                 })
-                .then( LJ.login.lastStepCompleted )
+                .then( LJ.login.finishLoginProcess )
                 .then( LJ.onboarding.init )
 
         }

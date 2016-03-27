@@ -12,8 +12,7 @@
 
 	var User = require('../models/UserModel');
 
-	var initEvents     = require( pushEventsDir + '/initEvents'),
-		profileEvents  = require( pushEventsDir + '/profileEvents'),
+	var profileEvents  = require( pushEventsDir + '/profileEvents'),
 		settingsEvents = require( pushEventsDir + '/settingsEvents'),
 		signEvents     = require( pushEventsDir + '/signEvents');
 

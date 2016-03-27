@@ -340,6 +340,9 @@
             <div class="icon-item">
               <i class="icon icon-pricetag"></i>
             </div>
+            <div class="edit">
+              <i class="icon icon-pen"></i>
+            </div>
             <div class="action">
               <div class="action__validate --round-icon">
                 <i class="icon icon-check"></i>
@@ -357,6 +360,9 @@
           <div class="me-item" data-param="age">
             <div class="icon-item --round-icon">
               <i class="icon icon-gift"></i>
+            </div>
+            <div class="edit">
+              <i class="icon icon-pen"></i>
             </div>
             <div class="action">
               <div class="action__validate --round-icon">
@@ -376,6 +382,9 @@
             <div class="icon-item">
               <i class="icon icon-flag"></i>
             </div>
+            <div class="edit">
+              <i class="icon icon-pen"></i>
+            </div>
             <div class="action">
               <div class="action__validate --round-icon">
                 <i class="icon icon-check"></i>
@@ -393,6 +402,9 @@
           <div class="me-item" data-param="job">
             <div class="icon-item --round-icon">
               <i class="icon icon-education"></i>
+            </div>
+            <div class="edit">
+              <i class="icon icon-pen"></i>
             </div>
             <div class="action">
               <div class="action__validate --round-icon">
@@ -412,6 +424,9 @@
             <div class="icon-item">
               <i class="icon icon-location"></i>
             </div>
+            <div class="edit">
+              <i class="icon icon-pen"></i>
+            </div>
             <div class="action">
               <div class="action__validate --round-icon">
                 <i class="icon icon-check"></i>
@@ -429,6 +444,9 @@
           <div class="me-item" data-param="ideal_night">
             <div class="icon-item">
               <i class="icon icon-dj"></i>
+            </div>
+            <div class="edit">
+              <i class="icon icon-pen"></i>
             </div>
             <div class="action">
               <div class="action__validate --round-icon">
@@ -494,14 +512,27 @@
           <h3 data-lid="menu_subsection_account"></h3>
         </div>
         <div class="settings --account">
-          <div class="settings-item">
+          <div class="settings-item" data-settings-type-id="contact_email">
             <div class="settings-input">
-            <div class="settings-input__icon --round-icon"><i class="icon icon-arobat"></i></div>
+              <div class="settings-input__icon --round-icon">
+                <i class="icon icon-arobat"></i>
+              </div>
               <div class="settings-input-label">
-                <input readonly placeholder="ben@mymail.com" type="text">
+                <input readonly placeholder="ben@mymail.com" id="settings__contact-email" type="text">
               </div>
             </div>
             <div class="settings-input__explanation" data-lid="settings_code_sponsor_explanation"></div>
+            <div class="edit">
+              <i class="icon icon-pen"></i>
+            </div>
+            <div class="action">
+              <div class="action__validate --round-icon">
+                <i class="icon icon-check"></i>
+              </div>
+              <div class="action__cancel --round-icon">
+                <i class="icon icon-cancel"></i>
+              </div>
+            </div>
           </div>
         </div>
         <!-- code section -->
@@ -512,14 +543,27 @@
           <div class="settings__title">
             <h3 data-lid="settings_part_title_code"></h3>
           </div>
-           <div class="settings-item">
+           <div class="settings-item" data-settings-type-id="invite_code">
             <div class="settings-input">
-            <div class="settings-input__icon --round-icon"><i class="icon icon-code"></i></div>
+              <div class="settings-input__icon --round-icon">
+                <i class="icon icon-code"></i>
+              </div>
               <div class="settings-input-label">
-                <input readonly placeholder="BL1347" type="text">
+                <input readonly placeholder="BL1347"  id="settings__invite-code" type="text">
               </div>
             </div>
             <div class="settings-input__explanation" data-lid="settings_code_sponsor_explanation"></div>
+            <div class="edit">
+              <i class="icon icon-pen"></i>
+            </div>
+            <div class="action">
+              <div class="action__validate --round-icon">
+                <i class="icon icon-check"></i>
+              </div>
+              <div class="action__cancel --round-icon">
+                <i class="icon icon-cancel"></i>
+              </div>
+            </div>
           </div>
           <div class="settings-item">
             <button class="settings__button --sponsor" data-lid="settings_code_sponsor_button"></button>
@@ -531,7 +575,7 @@
         </div>
         <div class="settings --notifications">
           <div class="settings__title">
-            <h3 data-lid="settings_part_title_email"></h3>
+            <h3 data-lid="settings_part_title_notifications"></h3>
           </div>
           <div class="settings-item" data-settings-type-id="accepted_in">
             <div class="settings-input">
@@ -560,7 +604,7 @@
             <div class="settings-input__explanation" data-lid="settings_emails_new_message_received_explanation"></div>
           </div>
           <div class="settings__title">
-            <h3 data-lid="settings_part_title_notifications"></h3>
+            <h3 data-lid="settings_part_title_email"></h3>
           </div>
           <div class="settings-item" data-settings-type-id="newsletter">
             <div class="settings-input">
@@ -683,7 +727,6 @@
   <script src="js/lib/velocity/velocity-ui.js"></script>
   <script src="js/lib/moment/moment.min.js"></script>
   <script src="js/lib/moment/momentwithlocale.min.js"></script>
-  <script src="js/lib/async/async.min.js"></script>
   <script src="js/lib/bxslider/jquery.bxslider.js"></script>
 
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6QesJukMVpHVS6l8yvSt_pmCDCeYiYMI&libraries=places,geometry" type="text/javascript"></script>

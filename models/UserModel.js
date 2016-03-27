@@ -13,9 +13,6 @@
   facebook_email:{
     type: String
   },
-  mailchimp_email: {
-    type: String
-  },
   mailchimp_id: {
     type: String
   },

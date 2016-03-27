@@ -4,23 +4,20 @@
 
 		init: function(){
 
-			return LJ.promise(function( resolve ){
-
-				return reject('Long lived tk found but will expire soon, refresh is needed.');
+			return LJ.promise(function( resolve, reject ){
 
 				var ls = window.localStorage;
 				if( !ls ||  (!ls.getItem('preferences') && !ls.getItem('reconn_data') ) ){
 					return reject('No local data available, initializing lp...');
 				}
 
-
 				var preferences = JSON.parse( ls.getItem('preferences') );
 				var reconn_data = JSON.parse( ls.getItem('reconn_data') );
 
 				if( reconn_data ){
-					return resolve('Reconnecting user from previous loss of connexion...');
+					LJ.log('Reconnecting user from previous loss of connexion...')
+					return resolve();
 				}
-
 
 				tk_valid_until = preferences.tk_valid_until;
 				long_lived_tk  = preferences.long_lived_tk;
@@ -42,20 +39,23 @@
 					return reject('Long lived tk found but will expire soon, refresh is needed.');
 				}
 
-				return resolve('Init data ok, auto logging in...');
+				LJ.log('Init data ok, auto logging in...');
+				LJ.login.data.access_token = long_lived_tk;
+				resolve( long_lived_tk );
 							
 			});
 		},
-		startLogin: function(){
+		startLogin: function( facebook_token ){
 			return LJ.promise(function( resolve, reject ){
-				console.log('Starting login...');
-				resolve();
+				LJ.log('Starting login...');
+				LJ.start( facebook_token );
 			});
 
 		},
-		startLanding: function(){
+		startLanding: function( message ){
 			return LJ.promise(function( resolve, reject ){
-				console.log('Starting landing...');
+				LJ.log( message );
+				LJ.log('Starting landing...');
 				LJ.ui.hideCurtain({ duration: 500 })
 			});
 		}

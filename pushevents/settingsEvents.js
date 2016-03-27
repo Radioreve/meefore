@@ -13,6 +13,8 @@
 	var eventUtils   = require('./eventUtils');
 
 
+	var settings_ns = 'update_settings';
+	
 	var handleErr = function( req, res, namespace, err ){
 
 		var params = {
@@ -36,12 +38,12 @@
     		function( err, user ){
 
     		if( err ){
-    			return handleErr( req, res, 'server_error', {
+    			return handleErr( req, res, settings_ns, {
     				err_id: 'saving_to_db'
     			});
     		}
     		
-    		expose.user = user;
+    		req.sent.expose.user = user;
     		next();
 
     	});
@@ -71,12 +73,12 @@
 			function( err, user ){
 
 			if( err ){
-    			return handleErr( req, res, 'server_error', {
+    			return handleErr( req, res, settings_ns, {
     				err_id: 'saving_to_db'
     			});
     		}
     		
-    		expose.user = user;
+    		req.sent.expose.user = user;
     		next();
 
 		});
@@ -113,7 +115,7 @@
 			function( err, users ){
 
 			if( err ){
-    			return handleErr( req, res, 'server_error', {
+    			return handleErr( req, res, settings_ns, {
     				err_id: 'saving_to_db'
     			});
     		}
@@ -123,7 +125,7 @@
 			User.findByIdAndRemove( userId, function( err, user ){
 				
 				if( err ){
-	    			return handleErr( req, res, 'server_error', {
+	    			return handleErr( req, res, settings_ns, {
 	    				err_id: 'saving_to_db'
 	    			});
 	    		}

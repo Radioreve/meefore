@@ -12,7 +12,7 @@
 
 			res.status(403).json({ 
 
-				call_id   : req.sent.expose.call_id,
+				call_id   : req.sent.expose && req.sent.expose.call_id,
 				namespace : req.app_namespace,
 				errors    : req.app_errors
 
