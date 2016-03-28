@@ -15,7 +15,8 @@
 				var reconn_data = JSON.parse( ls.getItem('reconn_data') );
 
 				if( reconn_data ){
-					LJ.log('Reconnecting user from previous loss of connexion...')
+					LJ.log('Reconnecting user from previous loss of connexion...');
+					LJ.login.data.access_token = reconn_data.long_lived_tk;
 					return resolve();
 				}
 

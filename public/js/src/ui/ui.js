@@ -1,5 +1,4 @@
 
-
 window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 	$window	    : $(window),
@@ -11,6 +10,9 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 	action_show_duration: 400,
 	action_hide_duration: 400,
+
+	minimum_reconnection_delay: 3500,
+	reconnection_curtain_alpha: 0.88,
 
 	scrolltop: 0,
 
@@ -148,6 +150,87 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		}
 
 		return '<i class="icon icon-' + icon_class + '"></i>';
+	},
+	renderSessionDisconnected: function(){
+
+		return LJ.ui.render([
+				'<div class="disconnected">',
+					'<div class="disconnected__icon --round-icon">',
+						'<i class="icon icon-pending"></i>',
+					'</div>',
+					'<div class="disconnected__title">',
+						'<h2 data-lid="disconnected_title"></h2>',
+					'</div>',
+					'<div class="disconnected__subtitle">',
+						'<p data-lid="disconnected_subtitle"></p>',
+					'</div>',
+				'</div>'
+			].join(''));
+
+	},
+	handleReconnection: function(){
+
+		if( $('.curtain').length != 0 ){
+			$('.curtain').velocity('fadeOut', {
+				duration: 400,
+				complete: function(){
+					$( this ).remove();
+					LJ.ui.handleReconnection();
+				}
+			})
+		}
+
+		LJ.wlog('Handling loss of internet connection');
+		LJ.ui.reconnected_started_at = new Date();
+		
+		LJ.ui.showCurtain({ opacity: 1, duration: 400 })
+			.then(function(){
+
+				$('.curtain').velocity({
+					opacity: [ LJ.ui.reconnection_curtain_alpha, 1 ]}, {
+                    duration: 200
+                });
+
+				$( LJ.ui.renderSessionDisconnected() )
+					.hide()
+					.appendTo('.curtain')
+					.velocity('fadeIn', {
+						duration: 400,
+						display: 'flex'
+					});
+
+			});
+	},
+	reconnectUser: function(){
+
+        var delay = 3500 - ( (new Date()) - LJ.ui.reconnected_started_at );
+
+        LJ.delay( delay )
+        	.then(function(){
+
+	            LJ.fn.log('Launching reconnection process', 1);
+
+	             $('.curtain').velocity(
+	             	{ opacity: [ 1, LJ.ui.reconnection_curtain_alpha ]},
+	             	{ duration: 500 });
+
+	            $('.curtain').children().velocity('fadeOut', {
+	                duration: 500,
+	                complete: function(){
+
+	                    var preferences = {
+	                        facebook_id    : LJ.user.facebook_id,
+	                        long_lived_tk  : LJ.user.facebook_access_token.long_lived,
+	                        tk_valid_until : LJ.user.facebook_access_token.long_lived_valid_until
+	                    };
+
+	                    window.localStorage.setItem("reconn_data", JSON.stringify( preferences )); 
+	                    document.location = "/home";
+
+	                    }
+	            });
+        	});
+
 	}
 
 });
@@ -156,6 +239,12 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 
 
+
+	LJ.ui.testReco = function( time_offline ){
+		LJ.ui.handleReconnection();
+		LJ.delay( time_offline )
+			.then( LJ.ui.reconnectUser );
+	}
 
 
 

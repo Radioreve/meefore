@@ -1370,6 +1370,14 @@
 		empty_friends_subtitle: {
 			"fr": "Il faut être au moins 2 pour créer ou participer à un before. Invitez vos amis à vous rejoindre pour sortir et faire de nouvelles rencontres.",
 			"en": "You need to be at least 2 in order to pregrame. Invite your friends to join you to get out and meet new people."
+		},
+		disconnected_title: {
+			"fr": "Vous êtes déconnecté",
+			"en": "You are offline"
+		},
+		disconnected_subtitle: {
+			"fr": "Vous serez reconnecté automatiquement dès que vous aurez retrouvé internet.",
+			"en": "You will be automatically reconnected when you're back online. "
 		}
 
 

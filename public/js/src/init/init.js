@@ -623,7 +623,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
         },
         handleReconnection: function(){
 
-            LJ.fn.warn('Reconnecting user...', 1);
+            LJ.wlog('Reconnecting user...');
             LJ.reconnected_started_at = new Date();
 
             if( $('.curtain').css('opacity') != 0 ){

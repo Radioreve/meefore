@@ -314,7 +314,6 @@
     display: flex;
     color: #33afff;
     color: #ccc;
-    border: 4px solid;
     height: 150px;
     width: 150px;
     font-size: 100px;
@@ -354,5 +353,61 @@
     cursor: pointer;
 }
 .empty__subicon i {
+
+}
+
+
+
+.disconnected {
+    display: none;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    width: 400px;
+    margin: auto;
+    text-align: center;
+}
+
+.disconnected__icon {
+    display: flex;
+    color: #33afff;
+    font-size: 60px;
+}
+.disconnected__icon i {
+    margin: auto;
+}
+
+.disconnected__title {
+    font-size: 50px;
+    font-family: 'Creamy Script';
+    color: white;
+}
+.disconnected__title h2 {
+
+}
+
+.disconnected__subtitle {
+    color: #ccc;
+    margin-top: 20px;
+    line-height: 23px;
+}
+.disconnected__subtitle p {
+
+}
+
+.disconnected__subicon {
+    min-height: 70px;
+    min-width: 70px;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    /* border: 2px solid #7b4cbb; */
+    color: #7B4CBB;
+    font-size: 50px;
+    margin-top: 16px;
+    cursor: pointer;
+}
+.disconnected__subicon i {
 
 }
