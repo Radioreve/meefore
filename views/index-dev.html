@@ -39,8 +39,6 @@
   <link rel="stylesheet" href="/css/src/app/app_header.css">
   <link rel="stylesheet" href="/css/src/app/app_layout.css">
   <link rel="stylesheet" href="/css/src/app/app_ux.css">
-  <link rel="stylesheet" href="/css/src/app/app_skin.css">
-  <link rel="stylesheet" href="/css/src/app/app_typography.css">
   
   <!-- App, in any order -->
   <link rel="stylesheet" href="/css/src/before/before.css"> 
@@ -100,7 +98,7 @@
   </script>
   
   
-  <div class="curtain"></div>
+  <div class="curtain sticky"></div>
     
    <!-- Landing Page Begin -->
   <div class="landing">
@@ -126,7 +124,7 @@
         </div>
         <div class="hero-languages">
           <span data-code="fr" class="no-cb pick-lang hero-lang active">FR</span>
-          <span data-code="en" class="no-cb pick-lang hero-lang">EN</span>
+          <span data-code="us" class="no-cb pick-lang hero-lang">EN</span>
         </div>
         <h1 data-lid="lp_subtitle" class="hero-header">
           Faîtes des rencontres avant d'aller en soirée
@@ -255,6 +253,15 @@
           </li>
         </ul>
       </nav>
+      <div class="app-lang">
+        <div class="app-lang__icon">
+          <i class="icon icon-planet"></i>
+        </div>
+        <div class="app-lang__flag-icons">
+          <i class="flag-icon flag-icon-fr" data-cc="fr"></i>
+          <i class="flag-icon flag-icon-us" data-cc="us"></i>
+        </div>
+      </div>
     </header>
     <!-- header end -->
     
@@ -381,17 +388,6 @@
           <div class="me-item --no-edit">
             <div class="icon-item">
               <i class="icon icon-flag"></i>
-            </div>
-            <div class="edit">
-              <i class="icon icon-pen"></i>
-            </div>
-            <div class="action">
-              <div class="action__validate --round-icon">
-                <i class="icon icon-check"></i>
-              </div>
-              <div class="action__cancel --round-icon">
-                <i class="icon icon-cancel"></i>
-              </div>
             </div>
             <div class="me-item-body">
               <label for="me__country" data-lid="p_country_label"></label>
@@ -679,7 +675,7 @@
           </div>
           <div class="settings-item" data-settings-type-id="auto_login">
             <div class="settings-input">
-              <div class="settings-input__icon --round-icon"><i class="icon icon-planet"></i></div>
+              <div class="settings-input__icon --round-icon"><i class="icon icon-refresh"></i></div>
               <div class="settings-input-label">
                 <div class="settings-input__label" data-lid="settings_ux_auto_login_label"></div>
               </div>

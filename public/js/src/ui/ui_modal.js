@@ -1,10 +1,10 @@
 		
 	window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
-		show_modal_duration: 550,
-		hide_modal_duration: 550,
-		show_modal_delay   : 400,
-		hide_modal_delay   : 500,
+		show_modal_duration: 450,
+		hide_modal_duration: 450,
+		show_modal_delay   : 250,
+		hide_modal_delay   : 250,
 
 		facebook_img_min_width: 200,
 		facebook_img_max_width: 300,

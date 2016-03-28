@@ -52,6 +52,7 @@
 
         },
         start: function( facebook_token ){
+
             return LJ.Promise.resolve( facebook_token )
                 .then( LJ.login.enterLoginProcess )  
                 .then( LJ.facebook.fetchFacebookProfile ) // <- Enter this step with valid facebook_token
@@ -64,7 +65,11 @@
                             LJ.profile.init()  // <- Enter this step with valid app_token
                     ]);
                 })
-                .then( LJ.login.finishLoginProcess )
+                .then( LJ.login.stepCompleted )
+                .then( LJ.delay )
+                .then( LJ.login.hideLoginSteps )
+                .then( LJ.login.promptUserLocation )
+                .then( LJ.login.terminateLoginProcess )
                 .then( LJ.onboarding.init )
 
         }

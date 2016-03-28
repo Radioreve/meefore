@@ -39,10 +39,17 @@ window.LJ = _.merge( window.LJ || {}, {
         LJ.user = user;
     },
     findMainPic: function( user ){
+
         var user = user || LJ.user;
+
         return _.find( user.pictures, function(p){ return p.is_main; });
     },
     delay: function( delay ){
+
+        if( typeof delay != "number" ){
+            delay = 1000;
+        }
+
         return LJ.promise(function( resolve, reject ){
             setTimeout(function(){
                 resolve();
@@ -50,8 +57,11 @@ window.LJ = _.merge( window.LJ || {}, {
         })
     },
     hashtagify: function( str ){
+
         var hashtag_parts = [];
+
         str.toLowerCase().trim().split(/[\s_-]/).forEach(function( el, i ){
+
             if( i == 0 ){
                 hashtag_parts.push( el );
             } else {
@@ -61,7 +71,9 @@ window.LJ = _.merge( window.LJ || {}, {
                 }
             }
         });
+
         return hashtag_parts.join('');
+
     },
     log: function( message ){
 
@@ -126,6 +138,68 @@ window.LJ = _.merge( window.LJ || {}, {
 
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

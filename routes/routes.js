@@ -134,6 +134,12 @@
 	    	signEvents.handleFacebookAuth
 	    );
 
+	    // Création d'un bot
+	    app.post('/auth/facebot',
+	    	mdw.alerts_watcher.setCache,
+	    	signEvents.handleFacebookAuth
+	    );
+
 	    // [ @chat ] Make sure a user has authorisation to join a channel
 	    app.post('/auth/pusher',
 	    	mdw.auth.authenticate(['standard']), // token required for magic to happen

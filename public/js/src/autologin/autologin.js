@@ -17,6 +17,7 @@
 				if( reconn_data ){
 					LJ.log('Reconnecting user from previous loss of connexion...');
 					LJ.login.data.access_token = reconn_data.long_lived_tk;
+					ls.removeItem('reconn_data');
 					return resolve();
 				}
 

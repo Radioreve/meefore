@@ -12,10 +12,14 @@
 								+'</span><span class="toast__msg"></span>'
 							+ '</div>',
 
-		showToast: function( msg, type, fixed ){
+		showToast: function( msg, type, show_duration ){
 
 			if([ 'success', 'info', 'error' ].indexOf( type ) == -1 ){
 				type = 'success';
+			}
+
+			if( type == 'error' ){
+				show_duration = 5000;
 			}
 
 			if( $( '.toast' ).length === 0 ){	
@@ -29,10 +33,10 @@
 					duration: 600,
 					display: 'flex',
 					complete: function(){
-						if( fixed ) return;
+						
 						$toast.velocity('slideUpOut', {
-							duration:300,
-							delay: fixed || 2000,
+							duration: 300,
+							delay: show_duration || 2000,
 							complete: function(){
 								$(this).remove();
 								if( LJ.ui.msg_queue.length != 0 )

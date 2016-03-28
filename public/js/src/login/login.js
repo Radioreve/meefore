@@ -3,6 +3,7 @@
 
 			'$trigger_login': '.js-login',
 			'opening_duration': 1000,
+			'prompt_duration': 600,
 			'completed_steps': 0,
 
 			'data': {},
@@ -35,21 +36,41 @@
 
 			},
 			finishLoginProcess: function(){
+				return LJ.promise(function( resolve, reject ){
 
-				LJ.log('Last step completed !');
-				LJ.login.stepCompleted(100);
+					LJ.log('Last step completed !');
+					LJ.login.stepCompleted(100);
 
-				$('.app').removeClass('nonei');
-				$('.landing').remove();
+					
 
-				return LJ.delay(1000).then(function(){
-					LJ.ui.hideCurtain({ duration: 900 });
+					// Give some time for the loader to fill the bar
+					// return LJ.delay(1000).then(function(){
+					// 	LJ.ui.hideCurtain({ duration: 900 });
+					// });
+
 				});
 
 			},
+			hideLoginSteps: function(){
+				return LJ.promise(function( resolve, reject ){
+
+					$('.app').removeClass('nonei');
+					$('.landing').remove();
+
+					$('.login').velocity('fadeOut', {
+						duration: 400,
+						complete: resolve
+						
+					});
+
+				});
+			},
 			stepCompleted: function( fill_ratio ){
 
-				fill_ratio = fill_ratio || 25;
+				if( typeof fill_ratio != "number" ){
+					fill_ratio = 25;
+				}
+
 				LJ.login.completed_steps += 1;
 				LJ.login.fillProgressBar( fill_ratio );
 			},
@@ -80,6 +101,86 @@
 						// 	'<div class="login-steps__step">Etape 2</div>',
 						// 	'<div class="login-steps__step">Etape 3</div>'
 						// '</div>',
+					'</div>'
+
+				].join(''));
+
+			},
+			promptUserLocation: function(){
+
+				return LJ.promise(function( resolve, reject ){
+
+					// the app requires a user's location to boot properly
+					// otherwise, use would be invisible in the search section
+					LJ.user.location = null;
+					if( LJ.user.location ){
+						return resolve();
+					}
+
+					LJ.log('Requesting the user to provide a location...');
+
+					$( LJ.login.renderLocationPrompt() )
+						.hide()
+						.appendTo('.curtain')
+						.velocity('bounceInQuick', {
+							duration: LJ.login.prompt_duration,
+							display: 'flex'
+						});
+
+
+					// Resolve the promise when the user picked a location
+					$('.init-location .action__validate').click( resolve );
+
+
+				});	
+			},
+			terminateLoginProcess: function(){
+				return LJ.promise(function( resolve, reject ){
+
+					$('.curtain')
+							.children()
+							.velocity('bounceOut', {
+								duration: LJ.login.prompt_duration
+							});
+
+					LJ.ui.hideCurtain({
+						delay: LJ.login.prompt_duration * 1.3,
+						duration: 1000,
+						complete: function(){
+							LJ.ui.showToast('Bienvenue sur Meefore');
+							resolve();
+						}
+					});
+
+
+				});
+			},
+			renderLocationPrompt: function(){
+
+				return LJ.ui.render([
+
+					'<div class="init-location">',
+						'<div class="init-location__title">',
+							'<h2 data-lid="init_location_title"></h2>',
+						'</div>',
+						'<div class="init-location__subtitle">',
+							'<input type="text" data-lid="init_location_subtitle_placeholder">',
+						'</div>',
+						'<div class="init-location__splitter"></div>',
+						'<div class="init-location__explanation">',
+							'<p data-lid="init_location_explanation"></p>',
+						'</div>',
+						'<div class="init-location__geoloc">',
+							'<button data-lid="init_location_geoloc"></button>',
+						'</div>',
+						'<div class="init-location-action">',
+							'<div class="action__validate --round-icon">',
+								'<i class="icon icon-play"></i>',
+							'</div>',
+							'<div class="action__cancel --round-icon">',
+								'<i class="icon icon-pause"></i>',
+							'</div>',
+						'</div>',
 					'</div>'
 
 				].join(''));

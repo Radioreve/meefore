@@ -1,8 +1,7 @@
 
-
 	window.LJ.lang = _.merge( window.LJ.lang || {}, {
 
-		'supported_languages': ['fr','en'],
+		'supported_languages': ['fr','us'],
 
 		init: function(){
 
@@ -10,6 +9,12 @@
 				   .then( LJ.lang.findAppLang )
 				   .then( LJ.lang.setAppLang )
 				   .then( LJ.lang.translateApp )
+				   .then( LJ.lang.handleDomEvents )
+
+		},
+		handleDomEvents: function(){
+
+			$('.app-lang').click( LJ.lang.changeAppLang );
 
 		},
 		getAppLang: function(){
@@ -19,10 +24,22 @@
 		setAppLang: function( app_language ){
 			return LJ.promise(function( resolve, reject ){
 
-				if( !LJ.lang.isLangSupported(app_language) )
+				if( !LJ.lang.isLangSupported( app_language ) )
 					return console.error('This language (' + app_language + ') is not currently supported');
-				
+					
+
+				// Internal state variable
 				LJ.lang.app_language = app_language;
+
+				// Dom update
+				$('.app-lang').find('i').removeClass('--active');
+				$('.app-lang').find('[data-cc="' + app_language + '"]').addClass('--active');
+
+				// Local storage update
+				if( window.localStorage ){
+					window.localStorage.setItem('app_language', app_language )
+				}
+
 				return resolve();
 			});
 
@@ -30,7 +47,15 @@
 		findAppLang: function(){
 			return LJ.promise(function( resolve, reject ){
 
-				return resolve('fr');		
+				var app_language;
+
+				if( window.localStorage && window.localStorage.getItem('app_language') ){
+					app_language = window.localStorage.getItem('app_language');
+				} else {
+					app_language = "us";
+				}
+
+				return resolve( app_language );		
 
 			});
 
@@ -82,6 +107,97 @@
 				$el.html( translated_text );
 
 			});
+
+		},
+		changeAppLang: function(){
+
+			var duration = 350;
+			LJ.ui.showCurtain({ duration: duration, opacity: LJ.ui.changelang_curtain_alpha })
+
+				.then(function( $curtain ){
+					return LJ.promise(function( resolve, reject ){
+
+						$curtain
+							.html( LJ.lang.renderChangeAppLang() )
+							.find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('--active');
+
+						$curtain
+							.children()
+							.velocity('fadeIn', {
+								duration: duration,
+								display: 'flex',
+								complete: resolve
+							});
+					});
+				})
+				.then(function(){
+					return LJ.promise(function( resolve, reject ){
+
+						$('.change-lang__choice:not(.--unavailable)').click(function(){
+
+							var new_language = $(this).attr('data-cc');
+							if( ! LJ.lang.isLangSupported( new_language ) ){
+								return reject('This language (' + new_language + ') is not currently supported');
+							}
+							resolve( new_language );
+
+						});	
+					});
+				})
+				.then(function( app_language ){
+
+					$('.change-lang').velocity('fadeOut', {
+						duration: duration
+					});
+
+					LJ.delay( duration/1.5 ).then(function(){
+
+						LJ.lang.setAppLang( app_language );
+						LJ.lang.translateApp()
+
+					});
+					
+					LJ.ui.hideCurtain({
+						duration: duration, delay: duration/2
+					}).then(function(){
+						LJ.ui.showToast( LJ.text('t_language_changed') );
+					});
+
+
+				}, function( err ){
+
+					LJ.wlog( err );
+					LJ.ui.hideCurtain({ duration: duration });
+
+				});
+
+		},
+		renderChangeAppLang: function(){
+
+			return LJ.ui.render([
+
+				'<div class="change-lang">',
+					'<div class="change-lang__title">',
+						'<h2 data-lid="lang_change_title"></h2>',
+					'</div>',
+					'<div class="change-lang__subtitle">',
+						'<p data-lid="lang_change_subtitle"></p>',
+					'</div>',
+					'<div class="change-lang-available">',
+						'<div class="change-lang__choice" data-cc="fr">',
+							'<i class="flag-icon flag-icon-fr"></i>',
+						'</div>',
+						'<div class="change-lang__choice" data-cc="us">',
+							'<i class="flag-icon flag-icon-us"></i>',
+						'</div>',
+						'<div class="change-lang__choice --unavailable" data-cc="es">',
+							'<i class="flag-icon flag-icon-es"></i>',
+							'<div class="soon" data-lid="lang_soon">Prochaînement</div>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
 
 		}
 

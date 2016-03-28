@@ -13,6 +13,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 	minimum_reconnection_delay: 3500,
 	reconnection_curtain_alpha: 0.88,
+	changelang_curtain_alpha: 0.92,
 
 	scrolltop: 0,
 
@@ -82,9 +83,21 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 			}
 
 			$('.curtain').velocity('fadeIn', {
-				display: 'flex',
-				duration: o.duration || LJ.ui.show_curtain_duration,
-				complete: resolve
+				display  : 'flex',
+				duration : o.duration || LJ.ui.show_curtain_duration,
+				complete : function(){
+
+					var $curtain = $(this);
+
+					$curtain.click(function(){
+						if( $curtain.hasClass('sticky') ) return;
+						LJ.ui.hideCurtain({
+							duration: o.duration || LJ.ui.hide_curtain_duration
+						});
+					});
+
+					resolve( $curtain );
+				}
 			});
 
 		});
@@ -95,8 +108,9 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		return LJ.promise(function( resolve, reject ){
 			$('.curtain').velocity('fadeOut', {
-				duration: o.duration || LJ.ui.hide_curtain_duration,
-				complete: function(){
+				duration : o.duration || LJ.ui.hide_curtain_duration,
+				delay    : o.delay || 0,
+				complete : function(){
 					$('.curtain').remove();
 					resolve();
 				}
@@ -116,8 +130,8 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		LJ.static.getLoader( loader_id )
 				 .velocity('fadeOut', {
-				 	duration: 250,
-				 	complete: function(){
+				 	duration : 250,
+				 	complete : function(){
 				 		$(this).remove();
 				 	}
 				 })
@@ -182,7 +196,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		LJ.wlog('Handling loss of internet connection');
 		LJ.ui.reconnected_started_at = new Date();
-		
+
 		LJ.ui.showCurtain({ opacity: 1, duration: 400 })
 			.then(function(){
 

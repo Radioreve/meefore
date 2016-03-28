@@ -63,7 +63,7 @@
 
 				// console.log('Token post-update : ' + JSON.stringify(user.facebook_access_token,null,2) );
 
-				req.sent.expose.user_id = user._id;
+				req.sent.expose.user_id   = user._id;
 				req.sent.expose.app_token = app_token;
 
 				next();
@@ -121,6 +121,10 @@
 		// Post conditions //
 		if( config.admins_facebook_id.indexOf( fb.id ) != -1 ){
 			new_user.access.push('admin');
+		}
+
+		if( req.sent.botify ){
+			new_user.access.push('bot');
 		}
 
 		// Pusher informations for real time channels 

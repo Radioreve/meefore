@@ -1,21 +1,127 @@
+.login {
+    color: white;
+}
 
-.login {color: white;}
-
-.login__message {text-align: center;}
+.login__message {
+    text-align: center;
+}
 
 .login__progress-bar {
-	width: 200px;
-	margin: 0 auto;
-	height: 2px;
-	border: 1px solid #454545;
-	border-radius: 30px;
-	margin-top: 20px;
-	overflow: hidden;
+    width: 200px;
+    margin: 0 auto;
+    height: 2px;
+    border: 1px solid #454545;
+    border-radius: 30px;
+    margin-top: 20px;
+    overflow: hidden;
 }
 
 .login__progress-bar-bg {
-	height: 100%;
-	width: 0%;
-	transition: all ease-in-out .8s;
-	background: #33AFFF;
+    height: 100%;
+    width: 0%;
+    transition: all ease-in-out .8s;
+    background: #33AFFF;
+}
+
+.init-location {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 550px;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.init-location__title {font-family: 'Creamy Script';font-size: 60px;margin-bottom: 30px;}
+
+.init-location__title h2 {}
+
+.init-location__subtitle {
+    width: 80%;
+}
+
+.init-location__subtitle input {
+    padding: 20px 40px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 20px;
+    border: none;
+    background: rgb(25, 25, 25);
+    color: #FFF;
+    font-weight: 200;
+    border-bottom: 1px solid #454545;
+}
+
+.init-location__splitter {
+    height: 2px;
+    width: 100%;
+    margin: 20px;
+    background: #454545;
+    display: none;
+}
+
+.init-location__explanation {color: #919191;margin-top: 10px;}
+
+.init-location__explanation p {}
+
+.init-location__geoloc {
+    margin-top: 50px;
+}
+
+.init-location__geoloc button {
+    width: 250px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.32);
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.init-location-action {
+    margin-top: 30px;
+}
+.init-location-action > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    font-size: 100px;
+    border-radius: 200px;
+    overflow: hidden;
+    cursor: pointer;
+    color: #454545;
+}
+.init-location-action > div:hover {
+    opacity: .75;
+}
+
+.init-location .action__validate {
+    display: none;
+    color: #33afff;
+}
+
+.init-location .action__cancel {}
+
+.init-location .action__validate i {}
+
+.init-location .action__cancel i {}
+
+.init-location__action i {}
+
+.init-location__subtitle ::-webkit-input-placeholder {
+   color: white;
+}
+
+.init-location__subtitle :-moz-placeholder { /* Firefox 18- */
+   color: white;  
+}
+
+.init-location__subtitle ::-moz-placeholder {  /* Firefox 19+ */
+   color: white;  
+}
+
+.init-location__subtitle :-ms-input-placeholder {  
+   color: white;  
 }
