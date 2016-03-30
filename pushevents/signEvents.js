@@ -123,8 +123,10 @@
 			new_user.access.push('admin');
 		}
 
-		if( req.sent.botify ){
+		if( req.sent.bot ){
 			new_user.access.push('bot');
+			new_user = _.merge( new_user, req.sent.bot );
+			console.log('New #bot about to join the force...')
 		}
 
 		// Pusher informations for real time channels 

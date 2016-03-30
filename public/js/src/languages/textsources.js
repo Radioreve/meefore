@@ -1356,8 +1356,8 @@
 			"us": "Nothing on the horizon..."
 		},
 		empty_shared_subtitle: {
-			"fr": "Partagez des profils, des before ou des soirées avec vos amis pour pouvoir vous organiser plus rapidement.",
-			"us": "Share profiles, pregame or parties with your friends to help you organize your nights."
+			"fr": "Partagez des profils ou des before avec vos amis pour pouvoir vous organiser plus rapidement.",
+			"us": "Share profiles or pregame with your friends to help you organize your nights."
 		},
 		empty_meepass_sent_title: {
 			"fr": "Aucun meepass",

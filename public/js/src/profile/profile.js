@@ -240,7 +240,7 @@
 
 				'<div class="picture ' + main + '" data-img-place="' + pic.img_place + '" data-img-id="' + pic.img_id + '" data-img-vs="' + pic.img_version + '">',
 		            img_html,
-		            '<div class="picture__ribbon-main">' + LJ.text('picture_main_label') + '</div>',
+		            '<div class="picture__ribbon-main" data-lid="picture_main_label"></div>',
 		            '<div class="picture__progress-bar">',
 		            	'<div class="picture__progress-bar-bg"></div>',
 		            '</div>',

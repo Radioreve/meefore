@@ -304,7 +304,7 @@ button:hover {
 .action > div {
     width: 40px;
     height: 40px;
-    border: 1px solid #454545;
+    border: 2px solid #454545;
     margin: 0 2px;
     cursor: pointer;
 }
@@ -315,11 +315,14 @@ button:hover {
 
 .action .action__validate {
     background: white;
+    border: 2px solid #1B69EC;
+    color: #1B69EC;
 }
 
 .action .action__cancel {
     background: white;
     color: #FF6767;
+    border-color: #ff6767;
 }
 
 .icon-item {

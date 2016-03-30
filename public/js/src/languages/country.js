@@ -1,975 +1,975 @@
 LJ.text_source = _.merge( LJ.text_source || {}, {
 
    country_af: {
-      "en": "Afghanistan",
+      "us": "Afghanistan",
       "fr": "Afghanistan"
    },
    country_ax: {
-      "en": "Åland Islands",
+      "us": "Åland Islands",
       "fr": "Åland"
    },
    country_al: {
-      "en": "Albania",
+      "us": "Albania",
       "fr": "Albanie"
    },
    country_dz: {
-      "en": "Algeria",
+      "us": "Algeria",
       "fr": "Algérie"
    },
    country_as: {
-      "en": "American Samoa",
+      "us": "American Samoa",
       "fr": "Samoa Américaines"
    },
    country_ad: {
-      "en": "Andorra",
+      "us": "Andorra",
       "fr": "Andorre"
    },
    country_ao: {
-      "en": "Angola",
+      "us": "Angola",
       "fr": "Angola"
    },
    country_ai: {
-      "en": "Anguilla",
+      "us": "Anguilla",
       "fr": "Anguilla"
    },
    country_aq: {
-      "en": "Antarctica",
+      "us": "Antarctica",
       "fr": "Antarctique"
    },
    country_ag: {
-      "en": "Antigua and Barbuda",
+      "us": "Antigua and Barbuda",
       "fr": "Antigua-et-Barbuda"
    },
    country_ar: {
-      "en": "Argentina",
+      "us": "Argentina",
       "fr": "Argentine"
    },
    country_am: {
-      "en": "Armenia",
+      "us": "Armenia",
       "fr": "Arménie"
    },
    country_aw: {
-      "en": "Aruba",
+      "us": "Aruba",
       "fr": "Aruba"
    },
    country_au: {
-      "en": "Australia",
+      "us": "Australia",
       "fr": "Australie"
    },
    country_at: {
-      "en": "Austria",
+      "us": "Austria",
       "fr": "Autriche"
    },
    country_az: {
-      "en": "Azerbaijan",
+      "us": "Azerbaijan",
       "fr": "Azerbaïdjan"
    },
    country_bs: {
-      "en": "Bahamas",
+      "us": "Bahamas",
       "fr": "Bahamas"
    },
    country_bh: {
-      "en": "Bahrain",
+      "us": "Bahrain",
       "fr": "Bahreïn"
    },
    country_bd: {
-      "en": "Bangladesh",
+      "us": "Bangladesh",
       "fr": "Bangladesh"
    },
    country_bb: {
-      "en": "Barbados",
+      "us": "Barbados",
       "fr": "Barbade"
    },
    country_by: {
-      "en": "Belarus",
+      "us": "Belarus",
       "fr": "Biélorussie"
    },
    country_be: {
-      "en": "Belgium",
+      "us": "Belgium",
       "fr": "Belgique"
    },
    country_bz: {
-      "en": "Belize",
+      "us": "Belize",
       "fr": "Bélize"
    },
    country_bj: {
-      "en": "Benin",
+      "us": "Benin",
       "fr": "Bénin"
    },
    country_bm: {
-      "en": "Bermuda",
+      "us": "Bermuda",
       "fr": "Bermudes"
    },
    country_bt: {
-      "en": "Bhutan",
+      "us": "Bhutan",
       "fr": "Bhoutan"
    },
    country_bo: {
-      "en": "Bolivia",
+      "us": "Bolivia",
       "fr": "Bolivie"
    },
    country_ba: {
-      "en": "Bosnia and Herzegovina",
+      "us": "Bosnia and Herzegovina",
       "fr": "Bosnie-Herzégovine"
    },
    country_bw: {
-      "en": "Botswana",
+      "us": "Botswana",
       "fr": "Botswana"
    },
    country_bv: {
-      "en": "Bouvet Island",
+      "us": "Bouvet Island",
       "fr": "Île Bouvet"
    },
    country_br: {
-      "en": "Brazil",
+      "us": "Brazil",
       "fr": "Brésil"
    },
    country_io: {
-      "en": "British Indian Ocean Territory",
+      "us": "British Indian Ocean Territory",
       "fr": "Territoire britannique de l'océan Indien"
    },
    country_bn: {
-      "en": "Brunei Darussalam",
+      "us": "Brunei Darussalam",
       "fr": "Brunei"
    },
    country_bg: {
-      "en": "Bulgaria",
+      "us": "Bulgaria",
       "fr": "Bulgarie"
    },
    country_bf: {
-      "en": "Burkina Faso",
+      "us": "Burkina Faso",
       "fr": "Burkina Faso"
    },
    country_bi: {
-      "en": "Burundi",
+      "us": "Burundi",
       "fr": "Burundi"
    },
    country_kh: {
-      "en": "Cambodia",
+      "us": "Cambodia",
       "fr": "Cambodge"
    },
    country_cm: {
-      "en": "Cameroon",
+      "us": "Cameroon",
       "fr": "Cameroun"
    },
    country_ca: {
-      "en": "Canada",
+      "us": "Canada",
       "fr": "Canada"
    },
    country_cv: {
-      "en": "Cape Verde",
+      "us": "Cape Verde",
       "fr": "Cap-Vert"
    },
    country_ky: {
-      "en": "Cayman Islands",
+      "us": "Cayman Islands",
       "fr": "Îles Caïmans"
    },
    country_cf: {
-      "en": "Central African Republic",
+      "us": "Central African Republic",
       "fr": ""
    },
    country_td: {
-      "en": "Chad",
+      "us": "Chad",
       "fr": "Tchad"
    },
    country_cl: {
-      "en": "Chile",
+      "us": "Chile",
       "fr": "Chili"
    },
    country_cn: {
-      "en": "China",
+      "us": "China",
       "fr": "Chine"
    },
    country_cx: {
-      "en": "Christmas Island",
+      "us": "Christmas Island",
       "fr": "Île Christmas"
    },
    country_cc: {
-      "en": "Cocos (Keeling) Islands",
+      "us": "Cocos (Keeling) Islands",
       "fr": "Îles Cocos"
    },
    country_co: {
-      "en": "Colombia",
+      "us": "Colombia",
       "fr": "Colombie"
    },
    country_km: {
-      "en": "Comoros",
+      "us": "Comoros",
       "fr": "Comores"
    },
    country_cg: {
-      "en": "Congo",
+      "us": "Congo",
       "fr": "Congo"
    },
    country_cd: {
-      "en": "Congo, The Democratic Republic of the",
+      "us": "Congo, The Democratic Republic of the",
       "fr": "Congo, République Démocratique du"
    },
    country_ck: {
-      "en": "Cook Islands",
+      "us": "Cook Islands",
       "fr": "Îles Cook"
    },
    country_cr: {
-      "en": "Costa Rica",
+      "us": "Costa Rica",
       "fr": "Costa Rica"
    },
    country_ci: {
-      "en": "Ivory Coast",
+      "us": "Ivory Coast",
       "fr": "Côte d’Ivoire"
    },
    country_hr: {
-      "en": "Croatia",
+      "us": "Croatia",
       "fr": "Croatie"
    },
    country_cu: {
-      "en": "Cuba",
+      "us": "Cuba",
       "fr": "Cuba"
    },
    country_cy: {
-      "en": "Cyprus",
+      "us": "Cyprus",
       "fr": "Chypre"
    },
    country_cz: {
-      "en": "Czech Republic",
+      "us": "Czech Republic",
       "fr": "République tchèque"
    },
    country_dk: {
-      "en": "Denmark",
+      "us": "Denmark",
       "fr": "Danemark"
    },
    country_dj: {
-      "en": "Djibouti",
+      "us": "Djibouti",
       "fr": "Djibouti"
    },
    country_dm: {
-      "en": "Dominica",
+      "us": "Dominica",
       "fr": "Dominique"
    },
    country_do: {
-      "en": "Dominican Republic",
+      "us": "Dominican Republic",
       "fr": "République dominicaine"
    },
    country_ec: {
-      "en": "Ecuador",
+      "us": "Ecuador",
       "fr": "Équateur"
    },
    country_eg: {
-      "en": "Egypt",
+      "us": "Egypt",
       "fr": "Égypte"
    },
    country_sv: {
-      "en": "El Salvador",
+      "us": "El Salvador",
       "fr": "Salvador"
    },
    country_gq: {
-      "en": "Equatorial Guinea",
+      "us": "Equatorial Guinea",
       "fr": "Guinée équatoriale"
    },
    country_er: {
-      "en": "Eritrea",
+      "us": "Eritrea",
       "fr": "Érythrée"
    },
    country_ee: {
-      "en": "Estonia",
+      "us": "Estonia",
       "fr": "Estonie"
    },
    country_et: {
-      "en": "Ethiopia",
+      "us": "Ethiopia",
       "fr": "Ethiopie"
    },
    country_fk: {
-      "en": "Falkland Islands (Malvinas)",
+      "us": "Falkland Islands (Malvinas)",
       "fr": "Îles Malouines"
    },
    country_fo: {
-      "en": "Faroe Islands",
+      "us": "Faroe Islands",
       "fr": "Îles Féroé"
    },
    country_fj: {
-      "en": "Fiji",
+      "us": "Fiji",
       "fr": "Fidji"
    },
    country_fi: {
-      "en": "Finland",
+      "us": "Finland",
       "fr": "Finlande"
    },
    country_fr: {
-      "en": "France",
+      "us": "France",
       "fr": "France"
    },
    country_gf: {
-      "en": "French Guiana",
+      "us": "French Guiana",
       "fr": "Guinée française"
    },
    country_pf: {
-      "en": "French Polynesia",
+      "us": "French Polynesia",
       "fr": "Polynésie française"
    },
    country_tf: {
-      "en": "French Southern Territories",
+      "us": "French Southern Territories",
       "fr": ""
    },
    country_ga: {
-      "en": "Gabon",
+      "us": "Gabon",
       "fr": "Gabon"
    },
    country_gm: {
-      "en": "Gambia",
+      "us": "Gambia",
       "fr": "Gambie"
    },
    country_ge: {
-      "en": "Georgia",
+      "us": "Georgia",
       "fr": "Géorgie"
    },
    country_de: {
-      "en": "Germany",
+      "us": "Germany",
       "fr": "Allemagne"
    },
    country_gh: {
-      "en": "Ghana",
+      "us": "Ghana",
       "fr": "Ghana"
    },
    country_gi: {
-      "en": "Gibraltar",
+      "us": "Gibraltar",
       "fr": "Gibraltar"
    },
    country_gr: {
-      "en": "Greece",
+      "us": "Greece",
       "fr": "Grèce"
    },
    country_gl: {
-      "en": "Greenland",
+      "us": "Greenland",
       "fr": "Greenland"
    },
    country_gd: {
-      "en": "Grenada",
+      "us": "Grenada",
       "fr": "Grenade"
    },
    country_gp: {
-      "en": "Guadeloupe",
+      "us": "Guadeloupe",
       "fr": "Guadeloupe"
    },
    country_gu: {
-      "en": "Guam",
+      "us": "Guam",
       "fr": "Guam"
    },
    country_gt: {
-      "en": "Guatemala",
+      "us": "Guatemala",
       "fr": "Guatemala"
    },
    country_gg: {
-      "en": "Guernsey",
+      "us": "Guernsey",
       "fr": "Guernesey"
    },
    country_gn: {
-      "en": "Guinea",
+      "us": "Guinea",
       "fr": "Guinée"
    },
    country_gw: {
-      "en": "Guinea-Bissau",
+      "us": "Guinea-Bissau",
       "fr": "Guinée-Bissau"
    },
    country_gy: {
-      "en": "Guyana",
+      "us": "Guyana",
       "fr": "Guyane"
    },
    country_ht: {
-      "en": "Haiti",
+      "us": "Haiti",
       "fr": "Haïti"
    },
    country_hm: {
-      "en": "Heard Island and Mcdonald Islands",
+      "us": "Heard Island and Mcdonald Islands",
       "fr": "Îles Heard-et-MacDonald"
    },
    country_va: {
-      "en": "Holy See (Vatican City State)",
+      "us": "Holy See (Vatican City State)",
       "fr": "Vatican"
    },
    country_hn: {
-      "en": "Honduras",
+      "us": "Honduras",
       "fr": "Honduras"
    },
    country_hk: {
-      "en": "Hong Kong",
+      "us": "Hong Kong",
       "fr": "Hong Kong"
    },
    country_hu: {
-      "en": "Hungary",
+      "us": "Hungary",
       "fr": "Hongrie"
    },
    country_is: {
-      "en": "Iceland",
+      "us": "Iceland",
       "fr": "Islande"
    },
    country_in: {
-      "en": "India",
+      "us": "India",
       "fr": "Inde"
    },
    country_id: {
-      "en": "Indonesia",
+      "us": "Indonesia",
       "fr": "Indonésie"
    },
    country_ir: {
-      "en": "Iran",
+      "us": "Iran",
       "fr": "Iran’"
    },
    country_iq: {
-      "en": "Iraq",
+      "us": "Iraq",
       "fr": "Irak"
    },
    country_ie: {
-      "en": "Ireland",
+      "us": "Ireland",
       "fr": "Irlande"
    },
    country_im: {
-      "en": "Isle of Man",
+      "us": "Isle of Man",
       "fr": "Île de Man"
    },
    country_il: {
-      "en": "Israel",
+      "us": "Israel",
       "fr": "Israël"
    },
    country_it: {
-      "en": "Italy",
+      "us": "Italy",
       "fr": "Italie"
    },
    country_jm: {
-      "en": "Jamaica",
+      "us": "Jamaica",
       "fr": "Jamaïque"
    },
    country_jp: {
-      "en": "Japan",
+      "us": "Japan",
       "fr": "Japon"
    },
    country_je: {
-      "en": "Jersey",
+      "us": "Jersey",
       "fr": "Jersey"
    },
    country_jo: {
-      "en": "Jordan",
+      "us": "Jordan",
       "fr": "Jordanie"
    },
    country_kz: {
-      "en": "Kazakhstan",
+      "us": "Kazakhstan",
       "fr": "Kazakhstan"
    },
    country_ke: {
-      "en": "Kenya",
+      "us": "Kenya",
       "fr": "Kenya"
    },
    country_ki: {
-      "en": "Kiribati",
+      "us": "Kiribati",
       "fr": "Kiribati"
    },
    country_kp: {
-      "en": "Korea, Democratic People's Republic of",
+      "us": "Korea, Democratic People's Republic of",
       "fr": "Corée du Nord"
    },
    country_kr: {
-      "en": "Korea, Republic of",
+      "us": "Korea, Republic of",
       "fr": "Corée du Sud"
    },
    country_kw: {
-      "en": "Kuwait",
+      "us": "Kuwait",
       "fr": "Koweït"
    },
    country_kg: {
-      "en": "Kyrgyzstan",
+      "us": "Kyrgyzstan",
       "fr": "Kirghizistan"
    },
    country_la: {
-      "en": "Laos",
+      "us": "Laos",
       "fr": "Laos"
    },
    country_lv: {
-      "en": "Latvia",
+      "us": "Latvia",
       "fr": "Lettonie"
    },
    country_lb: {
-      "en": "Lebanon",
+      "us": "Lebanon",
       "fr": "Liban"
    },
    country_ls: {
-      "en": "Lesotho",
+      "us": "Lesotho",
       "fr": "Lesotho"
    },
    country_lr: {
-      "en": "Liberia",
+      "us": "Liberia",
       "fr": "Liberia"
    },
    country_ly: {
-      "en": "Libya",
+      "us": "Libya",
       "fr": "Libye"
    },
    country_li: {
-      "en": "Liechtenstein",
+      "us": "Liechtenstein",
       "fr": "Liechtenstein"
    },
    country_lt: {
-      "en": "Lithuania",
+      "us": "Lithuania",
       "fr": ""
    },
    country_lu: {
-      "en": "Luxembourg",
+      "us": "Luxembourg",
       "fr": "Lituanie"
    },
    country_mo: {
-      "en": "Macao",
+      "us": "Macao",
       "fr": "Macao"
    },
    country_mk: {
-      "en": "Macedonia",
+      "us": "Macedonia",
       "fr": "Macédoine"
    },
    country_mg: {
-      "en": "Madagascar",
+      "us": "Madagascar",
       "fr": "Madagascar"
    },
    country_mw: {
-      "en": "Malawi",
+      "us": "Malawi",
       "fr": "Malawi"
    },
    country_my: {
-      "en": "Malaysia",
+      "us": "Malaysia",
       "fr": "Malaisie"
    },
    country_mv: {
-      "en": "Maldives",
+      "us": "Maldives",
       "fr": "Maldives"
    },
    country_ml: {
-      "en": "Mali",
+      "us": "Mali",
       "fr": "Mali"
    },
    country_mt: {
-      "en": "Malta",
+      "us": "Malta",
       "fr": "Malte"
    },
    country_mh: {
-      "en": "Marshall Islands",
+      "us": "Marshall Islands",
       "fr": "Îles Marshall"
    },
    country_mq: {
-      "en": "Martinique",
+      "us": "Martinique",
       "fr": "Martinique"
    },
    country_mr: {
-      "en": "Mauritania",
+      "us": "Mauritania",
       "fr": "Mauritanie"
    },
    country_mu: {
-      "en": "Mauritius",
+      "us": "Mauritius",
       "fr": "Maurice"
    },
    country_yt: {
-      "en": "Mayotte",
+      "us": "Mayotte",
       "fr": "Mayotte"
    },
    country_mx: {
-      "en": "Mexico",
+      "us": "Mexico",
       "fr": "Mexique"
    },
    country_fm: {
-      "en": "Micronesia",
+      "us": "Micronesia",
       "fr": "Micronésie"
    },
    country_md: {
-      "en": "Moldova",
+      "us": "Moldova",
       "fr": "Moldavie"
    },
    country_mc: {
-      "en": "Monaco",
+      "us": "Monaco",
       "fr": "Monaco"
    },
    country_mn: {
-      "en": "Mongolia",
+      "us": "Mongolia",
       "fr": "Mongolie"
    },
    country_ms: {
-      "en": "Montserrat",
+      "us": "Montserrat",
       "fr": "Montserrat"
    },
    country_ma: {
-      "en": "Morocco",
+      "us": "Morocco",
       "fr": "Maroc"
    },
    country_mz: {
-      "en": "Mozambique",
+      "us": "Mozambique",
       "fr": "Mozambique"
    },
    country_mm: {
-      "en": "Myanmar",
+      "us": "Myanmar",
       "fr": "Myanmar"
    },
    country_na: {
-      "en": "Namibia",
+      "us": "Namibia",
       "fr": "Namibie"
    },
    country_nr: {
-      "en": "Nauru",
+      "us": "Nauru",
       "fr": "Nauru"
    },
    country_np: {
-      "en": "Nepal",
+      "us": "Nepal",
       "fr": "Népal"
    },
    country_nl: {
-      "en": "Netherlands",
+      "us": "Netherlands",
       "fr": "Pays-Bas"
    },
    country_an: {
-      "en": "Netherlands Antilles",
+      "us": "Netherlands Antilles",
       "fr": "Antilles néerlandaises"
    },
    country_nc: {
-      "en": "New Caledonia",
+      "us": "New Caledonia",
       "fr": "Nouvelle-Calédonie"
    },
    country_nz: {
-      "en": "New Zealand",
+      "us": "New Zealand",
       "fr": "Nouvelle-Zélande"
    },
    country_ni: {
-      "en": "Nicaragua",
+      "us": "Nicaragua",
       "fr": "Nicaragua"
    },
    country_ne: {
-      "en": "Niger",
+      "us": "Niger",
       "fr": "Niger"
    },
    country_ng: {
-      "en": "Nigeria",
+      "us": "Nigeria",
       "fr": "Nigéria"
    },
    country_nu: {
-      "en": "Niue",
+      "us": "Niue",
       "fr": "Niue"
    },
    country_nf: {
-      "en": "Norfolk Island",
+      "us": "Norfolk Island",
       "fr": "Île Norfolk"
    },
    country_mp: {
-      "en": "Northern Mariana Islands",
+      "us": "Northern Mariana Islands",
       "fr": "Îles Mariannes du Nord"
    },
    country_no: {
-      "en": "Norway",
+      "us": "Norway",
       "fr": "Norvège"
    },
    country_om: {
-      "en": "Oman",
+      "us": "Oman",
       "fr": "Oman"
    },
    country_pk: {
-      "en": "Pakistan",
+      "us": "Pakistan",
       "fr": "Pakistan"
    },
    country_pw: {
-      "en": "Palau",
+      "us": "Palau",
       "fr": "Palau"
    },
    country_ps: {
-      "en": "Palestine",
+      "us": "Palestine",
       "fr": "Palestine"
    },
    country_pa: {
-      "en": "Panama",
+      "us": "Panama",
       "fr": "Panama"
    },
    country_pg: {
-      "en": "Papua New Guinea",
+      "us": "Papua New Guinea",
       "fr": "Papouasie-Nouvelle-Guinée"
    },
    country_py: {
-      "en": "Paraguay",
+      "us": "Paraguay",
       "fr": "Paraguay"
    },
    country_pe: {
-      "en": "Peru",
+      "us": "Peru",
       "fr": "Pérou"
    },
    country_ph: {
-      "en": "Philippines",
+      "us": "Philippines",
       "fr": "Philippines"
    },
    country_pn: {
-      "en": "Pitcairn",
+      "us": "Pitcairn",
       "fr": "Île Pitcairn"
    },
    country_pl: {
-      "en": "Poland",
+      "us": "Poland",
       "fr": "Pologne"
    },
    country_pt: {
-      "en": "Portugal",
+      "us": "Portugal",
       "fr": "Portugal"
    },
    country_pr: {
-      "en": "Puerto Rico",
+      "us": "Puerto Rico",
       "fr": "Puerto Rico"
    },
    country_qa: {
-      "en": "Qatar",
+      "us": "Qatar",
       "fr": "Qatar"
    },
    country_re: {
-      "en": "Reunion",
+      "us": "Reunion",
       "fr": "La Réunion"
    },
    country_ro: {
-      "en": "Romania",
+      "us": "Romania",
       "fr": "Roumanie"
    },
    country_ru: {
-      "en": "Russia",
+      "us": "Russia",
       "fr": "Russie"
    },
    country_rw: {
-      "en": "Rwanda",
+      "us": "Rwanda",
       "fr": "Rwanda"
    },
    country_sh: {
-      "en": "Saint Helena",
+      "us": "Saint Helena",
       "fr": "Sainte-Hélène"
    },
    country_kn: {
-      "en": "Saint Kitts and Nevis",
+      "us": "Saint Kitts and Nevis",
       "fr": "Saint-Christophe-et-Niévès"
    },
    country_lc: {
-      "en": "Saint Lucia",
+      "us": "Saint Lucia",
       "fr": "Sainte-Lucie"
    },
    country_pm: {
-      "en": "Saint Pierre and Miquelon",
+      "us": "Saint Pierre and Miquelon",
       "fr": "Saint-Pierre-et-Miquelon"
    },
    country_vc: {
-      "en": "Saint Vincent and the Grenadines",
+      "us": "Saint Vincent and the Grenadines",
       "fr": "Saint-Vincent-et-les-Grenadines"
    },
    country_ws: {
-      "en": "Samoa",
+      "us": "Samoa",
       "fr": "Samoa"
    },
    country_sm: {
-      "en": "San Marino",
+      "us": "San Marino",
       "fr": "Saint-Marin"
    },
    country_st: {
-      "en": "Sao Tome and Principe",
+      "us": "Sao Tome and Principe",
       "fr": "Sao Tomé-et-Principe"
    },
    country_sa: {
-      "en": "Saudi Arabia",
+      "us": "Saudi Arabia",
       "fr": "Arabie saoudite"
    },
    country_sn: {
-      "en": "Senegal",
+      "us": "Senegal",
       "fr": "Sénégal"
    },
    country_cs: {
-      "en": "Serbia and Montenegro",
+      "us": "Serbia and Montenegro",
       "fr": "Serbie-et-Monténégro"
    },
    country_sc: {
-      "en": "Seychelles",
+      "us": "Seychelles",
       "fr": "Seychelles"
    },
    country_sl: {
-      "en": "Sierra Leone",
+      "us": "Sierra Leone",
       "fr": "Sierra Leone"
    },
    country_sg: {
-      "en": "Singapore",
+      "us": "Singapore",
       "fr": "Singapour"
    },
    country_sk: {
-      "en": "Slovakia",
+      "us": "Slovakia",
       "fr": "Slovaquie"
    },
    country_si: {
-      "en": "Slovenia",
+      "us": "Slovenia",
       "fr": "Slovénie"
    },
    country_sb: {
-      "en": "Solomon Islands",
+      "us": "Solomon Islands",
       "fr": "Îles Salomon"
    },
    country_so: {
-      "en": "Somalia",
+      "us": "Somalia",
       "fr": "Somalie"
    },
    country_za: {
-      "en": "South Africa",
+      "us": "South Africa",
       "fr": "Afrique du Sud"
    },
    country_gs: {
-      "en": "South Georgia and the South Sandwich Islands",
+      "us": "South Georgia and the South Sandwich Islands",
       "fr": "Géorgie du Sud-et-les Îles Sandwich du Sud"
    },
    country_es: {
-      "en": "Spain",
+      "us": "Spain",
       "fr": "Espagne"
    },
    country_lk: {
-      "en": "Sri Lanka",
+      "us": "Sri Lanka",
       "fr": "Sri Lanka"
    },
    country_sd: {
-      "en": "Sudan",
+      "us": "Sudan",
       "fr": "Soudan"
    },
    country_sr: {
-      "en": "Suriname",
+      "us": "Suriname",
       "fr": "Suriname"
    },
    country_sj: {
-      "en": "Svalbard and Jan Mayen",
+      "us": "Svalbard and Jan Mayen",
       "fr": "Île Jan Mayen"
    },
    country_sz: {
-      "en": "Swaziland",
+      "us": "Swaziland",
       "fr": "Swaziland"
    },
    country_se: {
-      "en": "Sweden",
+      "us": "Sweden",
       "fr": "Suède"
    },
    country_ch: {
-      "en": "Switzerland",
+      "us": "Switzerland",
       "fr": "Suisse"
    },
    country_sy: {
-      "en": "Syria",
+      "us": "Syria",
       "fr": "Syrie"
    },
    country_tw: {
-      "en": "Taiwan",
+      "us": "Taiwan",
       "fr": "Taïwan"
    },
    country_tj: {
-      "en": "Tajikistan",
+      "us": "Tajikistan",
       "fr": "Tajikistan"
    },
    country_tz: {
-      "en": "Tanzania",
+      "us": "Tanzania",
       "fr": "Tanzanie"
    },
    country_th: {
-      "en": "Thailand",
+      "us": "Thailand",
       "fr": "Thaïlande"
    },
    country_tl: {
-      "en": "Timor-Leste",
+      "us": "Timor-Leste",
       "fr": "Timor oriental"
    },
    country_tg: {
-      "en": "Togo",
+      "us": "Togo",
       "fr": "Togo"
    },
    country_tk: {
-      "en": "Tokelau",
+      "us": "Tokelau",
       "fr": "Tokelau"
    },
    country_to: {
-      "en": "Tonga",
+      "us": "Tonga",
       "fr": "Tonga"
    },
    country_tt: {
-      "en": "Trinidad and Tobago",
+      "us": "Trinidad and Tobago",
       "fr": "Trinité-et-Tobago"
    },
    country_tn: {
-      "en": "Tunisia",
+      "us": "Tunisia",
       "fr": "Tunisie"
    },
    country_tr: {
-      "en": "Turkey",
+      "us": "Turkey",
       "fr": "Turquie"
    },
    country_tm: {
-      "en": "Turkmenistan",
+      "us": "Turkmenistan",
       "fr": "Turkménistan"
    },
    country_tc: {
-      "en": "Turks and Caicos Islands",
+      "us": "Turks and Caicos Islands",
       "fr": "îles Turques-et-Caïques"
    },
    country_tv: {
-      "en": "Tuvalu",
+      "us": "Tuvalu",
       "fr": "Tuvalu"
    },
    country_ug: {
-      "en": "Uganda",
+      "us": "Uganda",
       "fr": "Ouganda"
    },
    country_ua: {
-      "en": "Ukraine",
+      "us": "Ukraine",
       "fr": "Ukraine"
    },
    country_ae: {
-      "en": "United Arab Emirates",
+      "us": "United Arab Emirates",
       "fr": "Émirats arabes unis"
    },
    country_gb: {
-      "en": "United Kingdom",
+      "us": "United Kingdom",
       "fr": "Royaume-Uni"
    },
    country_us: {
-      "en": "United States",
+      "us": "United States",
       "fr": "États-Unis"
    },
    country_um: {
-      "en": "United States Minor Outlying Islands",
+      "us": "United States Minor Outlying Islands",
       "fr": "Îles mineures éloignées des États-Unis"
    },
    country_uy: {
-      "en": "Uruguay",
+      "us": "Uruguay",
       "fr": "Uruguay"
    },
    country_uz: {
-      "en": "Uzbekistan",
+      "us": "Uzbekistan",
       "fr": "Ouzbékistan"
    },
    country_vu: {
-      "en": "Vanuatu",
+      "us": "Vanuatu",
       "fr": "Vanuatu"
    },
    country_ve: {
-      "en": "Venezuela",
+      "us": "Venezuela",
       "fr": "Venezuela"
    },
    country_vn: {
-      "en": "Viet Nam",
+      "us": "Viet Nam",
       "fr": "Viêt Nam"
    },
    country_vg: {
-      "en": "Virgin Islands, British",
+      "us": "Virgin Islands, British",
       "fr": "Îles Vierges britanniques"
    },
    country_vi: {
-      "en": "Virgin Islands, U.S.",
+      "us": "Virgin Islands, U.S.",
       "fr": "Îles Vierges américaines"
    },
    country_wf: {
-      "en": "Wallis and Futuna",
+      "us": "Wallis and Futuna",
       "fr": "Wallis et Futuna"
    },
    country_eh: {
-      "en": "Western Sahara",
+      "us": "Western Sahara",
       "fr": "Sahara occidental"
    },
    country_ye: {
-      "en": "Yemen",
+      "us": "Yemen",
       "fr": "Yémen"
    },
    country_zm: {
-      "en": "Zambia",
+      "us": "Zambia",
       "fr": "Zambie"
    },
    country_zw: {
-      "en": "Zimbabwe",
+      "us": "Zimbabwe",
       "fr": " Zimbabwé"
    }
 });

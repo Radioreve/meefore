@@ -63,7 +63,7 @@
 				req.sent   || {}
 			);
 			req.sent.expose = {};
-
+			console.log(req.sent);
 			next();
 
 		});

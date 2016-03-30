@@ -9,7 +9,7 @@
 
 		var checkAuthRequest = nv.isAnyObject()
 
-			.withRequired('facebook_id' 	, nv.isString({ regex: rg.fb_id }))
+			.withRequired('facebook_id' 	, nv.isString())
 
 		nv.run( checkAuthRequest, req.sent, function( n, errors ){
 			if( n != 0 ){

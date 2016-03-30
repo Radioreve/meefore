@@ -19,7 +19,12 @@
 	};
 
 	var fetchFacebookLongLivedToken = function( req, res, next ){
-		
+			
+		if( req.sent.bot ){
+			console.log('Creating a bot, skipping the long-lived-token fetching procedure...');
+			return next();
+		}
+
 		console.log('Fetching long_lived token for id : ' + req.sent.facebook_id );
 		User.findOne({ facebook_id: req.sent.facebook_id }, function( err, user ){
 
