@@ -32,7 +32,7 @@
 			LJ.log('Calling the api [get]');
 			return LJ.promise(function( resolve, reject ){
 
-				if( LJ.user.facebook_id && data ){
+				if( LJ.user && LJ.user.facebook_id && data ){
 					data.facebook_id = LJ.user.facebook_id;
 				}
 
@@ -50,7 +50,7 @@
 					success: function( data ){
 						setTimeout(function(){
 							if( data.user ){
-								LJ.user = data.user;
+								LJ.cacheUser( data.user );
 							}
 							return resolve( data );
 	                    }, LJ.ui.minimum_api_delay - ( new Date() - call_started ) );
@@ -74,7 +74,7 @@
 			LJ.log('Calling the api [post]');
 			return LJ.promise(function( resolve, reject ){
 
-				if( LJ.user.facebook_id ){
+				if( LJ.user && LJ.user.facebook_id ){
 					data.facebook_id = LJ.user.facebook_id;
 				}
 
@@ -92,7 +92,7 @@
 					success: function( data ){
 						setTimeout(function(){
 							if( data.user ){
-								LJ.user = data.user;
+								LJ.cacheUser( data.user );
 							}
 							return resolve( data );
 	                    }, LJ.ui.minimum_api_delay - ( new Date() - call_started ) );
@@ -135,7 +135,7 @@
 
 				LJ.api.get( LJ.api.me_url )
 					  .then(function( exposed ){
-							LJ.user         = exposed.me;
+							LJ.cacheUser( exposed.me );
 							LJ.app_settings = exposed.settings
 					  		return resolve();
 					  }, function( err ){

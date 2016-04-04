@@ -19,6 +19,7 @@
 		init: function(){
 			LJ.promise(function( resolve, reject ){
 
+				LJ.settings.activateSubmenuSection('account');
 				LJ.settings.handleDomEvents();
 				LJ.settings.setMyPreferences();
 
@@ -54,6 +55,51 @@
 			LJ.settings.$settings.on('click', '.action__cancel',   		  	 LJ.settings.deactivateInput );
 			LJ.settings.$settings.on('click', '.action__validate', 		     LJ.settings.updateSettingsInput );
 			LJ.settings.$settings.on('click', '.settings__button.--sponsor', LJ.settings.showSponsorshipModal );
+			LJ.settings.$settings.on('click', '.menu-section-submenu__item', LJ.settings.showSubmenuItem );
+
+		},
+		showSubmenuItem: function(){
+
+			var $self = $(this);
+
+			var link_id = $self.attr('data-link');
+			LJ.settings.activateSubmenuSection( link_id );
+
+		},
+		activateSubmenuSection: function( section_id ){	
+
+			var current_section_id = $('.menu-section-submenu__item.--active').attr('data-link');
+
+			var $submenu_item_activated    = $('.menu-section-submenu__item[data-link="' + current_section_id + '"]');
+			var $submenu_item_to_activate  = $('.menu-section-submenu__item[data-link="' + section_id + '"]');
+
+			var $submenu_block_activated   = $('.settings[data-link="' + current_section_id + '"]');
+			var $submenu_block_to_activate = $('.settings[data-link="' + section_id + '"]');
+
+
+			if( !current_section_id ){
+				$submenu_item_to_activate.addClass('--active');
+				return $('.menu-section.--settings').find('[data-link="' + section_id + '"]').css({ 'display': 'flex' });
+			}
+
+
+			if( section_id == current_section_id ){
+				return LJ.wlog('Section is already activated');
+			}
+
+
+			$submenu_item_activated
+				.removeClass('--active')
+				.find('.menu-section-submenu__bar')
+				.velocity('bounceOut', { duration: 450, display: 'none' });
+
+			$submenu_item_to_activate
+				.addClass('--active')
+				.find('.menu-section-submenu__bar')
+				.velocity('bounceInQuick', { duration: 450, display: 'block' });
+
+			$submenu_block_activated.hide();
+			$submenu_block_to_activate.css({ display: 'flex' });
 
 		},
 		updateSettingsInput: function( element ){

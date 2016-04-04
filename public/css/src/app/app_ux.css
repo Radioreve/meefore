@@ -1,5 +1,3 @@
-
-
 /*
    - Curtain
    - Loaders
@@ -15,105 +13,176 @@
     position: absolute;
     top: 0;
     right: 0;
-} 
+}
 
 .user__status.--online {
     background: #6ae74f;
 }
 
+
 /* App toasts */
+
 .toast {
-   position: fixed;
-   left: 50%;
-   transform: translateX(-50%)!important;
-   top: 10px;
-   min-width: 240px;
-   height: 34px;
-   z-index:10000;
-   color: white;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   align-items: center;
-   font-size: 16px;
-   border-radius: 40px;
-   padding: 0 30px;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%)!important;
+    top: 10px;
+    min-width: 240px;
+    height: 34px;
+    z-index: 10000;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    border-radius: 40px;
+    padding: 0 30px;
 }
 
-.toast--info {color: #B5FFA4;font-weight: 400;}
+.toast--info {
+    color: #B5FFA4;
+    font-weight: 400;
+}
 
-.toast--error {background: #BD0B2A;}
+.toast--error {
+    background: #BD0B2A;
+}
 
-.toast--success {background: black;}
+.toast--success {
+    background: black;
+}
+
+
 /* End app toasts */
 
 
-
 /* App Loaders */
+
 .app__loader {
-   position: fixed;
-   left: 50%;
-   transform: translateX(-50%);
-   top: 22px;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 22px;
+    z-index: 1000;
 }
+
+
 /* End app loaders */
 
 
-
 /* App curtain  */
+
 .curtain {
-   position: fixed;
-   top: 0;
-   width: 100%;
-   height: 100%;
-   background: #191919;
-   z-index: 12345;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   display: flex;
-} 
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #191919;
+    z-index: 12345;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+
 /* End app curtain */
 
 
 /* App modals and popup */
 
-.modal {background: white;border-radius: 10px;padding: 10px 10px 20px 10px;color: #191919;width: 400px;display: flex;flex-flow: column nowrap;}
+.modal {
+    background: white;
+    border-radius: 10px;
+    padding: 10px 10px 20px 10px;
+    color: #191919;
+    width: 400px;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
 .modal.--facebook {
     padding: 10px 30px;
 }
-.modal-content {
 
-}
- 
-.modal-header {min-height: 60px;text-align: center;display: flex;justify-content: center;align-items: center;}
+.modal-content {}
 
-.modal-subheader {color: #919191;padding: 0 30px;text-align: center;font-weight: 300;line-height: 18px;font-size: 16px;}
-
-.modal-body {min-height: 100px;max-height: 300px;margin: 20px 0 0px;padding: 0 16px;display: flex;flex-flow: row wrap;overflow: hidden;align-items: flex-start;outline: none;}
-
-.modal-footer {min-height: 100px;display: flex;justify-content: center;align-items: center;}
-.modal__title {font-family: 'Creamy Script';     font-size: 40px;}
-.modal__title h1 {
-
-}
-.modal__close {position: absolute;top: 10px;right: 6px;cursor: pointer;color: #ccc;font-size: 22px;}
-
-.modal__close i {
-
+.modal-header {
+    min-height: 60px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.modal-footer button.--rounded {width: 80px;height: 80px;border-radius: 100px;color: #33AFFF;background: white;border: 4px solid;}
-
-.modal-footer button.--squared {
-   
+.modal-subheader {
+    color: #919191;
+    padding: 0 30px;
+    text-align: center;
+    font-weight: 300;
+    line-height: 18px;
+    font-size: 16px;
 }
+
+.modal-body {
+    min-height: 100px;
+    max-height: 300px;
+    margin: 20px 0 0px;
+    padding: 0 16px;
+    display: flex;
+    flex-flow: row wrap;
+    overflow: hidden;
+    align-items: flex-start;
+    outline: none;
+}
+
+.modal-footer {
+    min-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal__title {
+    font-family: 'Creamy Script';
+    font-size: 40px;
+}
+
+.modal__title h1 {}
+
+.modal__close {
+    position: absolute;
+    top: 10px;
+    right: 6px;
+    cursor: pointer;
+    color: #ccc;
+    font-size: 22px;
+}
+
+.modal__close i {}
+
+.modal-footer button.--rounded {
+    width: 80px;
+    height: 80px;
+    border-radius: 100px;
+    color: #33AFFF;
+    background: white;
+    border: 4px solid;
+}
+
+.modal-footer button.--squared {}
 
 .modal__loader {
-   margin: auto;
+    margin: auto;
 }
-.modal-footer i {font-size: 28px;}
+.menu__loader {
+    margin: auto;
+}
 
+.modal-footer i {
+    font-size: 28px;
+}
 
 .modal.--facebook:not(.--active) .modal-footer {
     opacity: .2;
@@ -121,49 +190,198 @@
 
 .modal.--facebook:not(.--active) button {
     color: #919191;
-    cursor: default; 
+    cursor: default;
 }
 
 .modal__facebook-picture {
-   display: none;
-   /* margin: 4px; */
-   /* border: 1px solid #eee; */
-   padding: 2px 4px;
-   cursor: pointer;
-   width: 33.333333%;
-   box-sizing: border-box;
+    display: none;
+    /* margin: 4px; */
+    /* border: 1px solid #eee; */
+    padding: 2px 4px;
+    cursor: pointer;
+    width: 33.333333%;
+    box-sizing: border-box;
 }
 
 .modal__facebook-picture .modal__picture-icon {
-   display: none;
-   transition: all ease-in-out .2s;
-   position: absolute;
-   bottom: 12px;
-   right: 10px;
-   height: 30px;
-   width: 30px;
-   border-radius: 30px;
-   background: #33AFFF;
-   color: white;
-   box-sizing: border-box;
+    display: none;
+    transition: all ease-in-out .2s;
+    position: absolute;
+    bottom: 12px;
+    right: 10px;
+    height: 30px;
+    width: 30px;
+    border-radius: 30px;
+    background: #33AFFF;
+    color: white;
+    box-sizing: border-box;
 }
+
 .modal__picture-icon i {
     margin: auto;
 }
+
 .modal__facebook-picture.--active .modal__picture-icon {
-   display: flex;
+    display: flex;
 }
 
 .modal__input {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
-.modal__input input {margin: auto;padding: 16px 40px;width: 50%;font-size: 30px;font-weight: 200;border: none;border-bottom: 2px solid #ccc;text-align: center;}
+.modal__input input {
+    margin: auto;
+    padding: 16px 40px;
+    width: 50%;
+    font-size: 30px;
+    font-weight: 200;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    text-align: center;
+}
 
-
-.modal__facebook-picture img {width: 100%;}
+.modal__facebook-picture img {
+    width: 100%;
+}
 
 /* End app modals and popup */
+
+
+
+/* Slide */
+.slide {
+    background: rgba(255, 255, 255, 0.95);
+    color: #191919;
+    width: 370px;
+    display: flex;
+    flex-flow: column nowrap;
+    position: fixed;
+    right: 0;
+    top: 59px;
+    z-index: 100;
+    border-left: 2px solid #454545;
+    height: 500px;
+}
+
+.slide.--facebook {
+}
+
+.slide-content {}
+
+.slide-header {
+    min-height: 60px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slide-subheader {
+    color: #919191;
+    padding: 0 30px;
+    text-align: center;
+    font-weight: 300;
+    line-height: 18px;
+    font-size: 16px;
+}
+
+.slide-body {
+    min-height: 100%;
+    max-height: 300px;
+    margin: 20px 0 0px;
+    padding: 10px 16px 0;
+    display: flex;
+    flex-flow: row wrap;
+    overflow: hidden;
+    align-items: flex-start;
+    outline: none;
+}
+
+.slide .menu__loader {
+    width: 80px;
+}
+.slide-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slide__title {
+    font-family: 'Creamy Script';
+    font-size: 30px;
+}
+
+.slide__title h1 {}
+
+.slide__close {position: absolute;top: 50%;transform: translate(0,-50%);left: -18px;background: #1B69EC;color: white;border: 2px solid #454545;height: 30px;width: 30px;cursor: pointer;z-index: 1;}
+
+.slide__close i {
+    margin: auto;
+}
+
+.slide-footer button.--rounded {
+
+}
+
+.slide-footer button.--squared {}
+
+.slide__loader {
+}
+
+.slide-footer i {
+}
+
+
+.slide__facebook-picture {
+
+}
+
+.slide__facebook-picture .slide__picture-icon {
+
+}
+
+.slide__picture-icon i {
+}
+
+
+
+.slide__input {
+
+}
+
+.slide__input input {
+  
+}
+
+/* End slide */
+
+
+
+
+/* Bubble */
+    
+.bubble {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Open Sans';
+    top: 4px;
+    right: 4px;
+    height: 20px;
+    font-size: 10px;
+    width: 20px;
+    font-weight: bolder;
+    color: white;
+    background: #1B69EC;
+    border: 4px solid #191919;
+}
+
+.bubble__number {
+    margin: auto;
+}
+
+/* End bubble */

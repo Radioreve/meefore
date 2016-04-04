@@ -8,7 +8,7 @@
 	top: 0;
 	left: 0;
 	background: #191919;
-	z-index: 100;
+	z-index: 101;
 } 
 
 .app-header__splitter {position: absolute;width: 100%;top: 54px;background: #33AFFF;height: 4px;/* display: none; */}
@@ -20,7 +20,7 @@
 
 .app-nav ul {display: inline-block;position: relative;height: 100%;}
 
-.app__menu-item {display: inline-block;font-size: 20px;width: 60px;height: 54px;text-align: center;}
+.app__menu-item {display: inline-block;font-size: 20px;width: 60px;height: 54px;text-align: center;position: relative;}
 .app__menu-item.--active {
 	background: black;
 	color: white;

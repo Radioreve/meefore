@@ -57,7 +57,6 @@ button:hover {
     height: 100%;
     width: 100%;
     background: white;
-    z-index: 0;
     position: absolute;
     padding-top: 60px;
 }
@@ -220,6 +219,10 @@ button:hover {
     min-height: 60px;
     box-sizing: border-box;
     font-size: 32px;
+    position: absolute;
+    left: -50px;
+    top: -8px;
+    border: none;
 }
 
 .settings-input__icon i {

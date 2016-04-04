@@ -17,6 +17,8 @@
 					.then( LJ.pictures.init )
 					.then( LJ.settings.init )
 					.then( LJ.profile.handleDomEvents )
+					.then( LJ.seek.activatePlacesInProfile )
+					.then( LJ.notifications.init )
 					.then( resolve )
 
 			});
@@ -30,12 +32,11 @@
 			$('#me__location').val( LJ.user.location.place_name );
 			$('#me__country').val( LJ.text_source["country_" + LJ.user.country_code ][ LJ.lang.getAppLang() ]);
 
+			// Set age restrictions
 			$('#me__age').val( LJ.user.age )
-								 .attr('max', LJ.settings.app.max_age )
-								 .attr('min', LJ.settings.app.min_age );
+				 .attr('max', LJ.app_settings.app.max_age )
+				 .attr('min', LJ.app_settings.app.min_age );
 
-			// Google maps Autocomplete library
-			LJ.seek.activatePlacesInProfile();
 				
 		},
 		setMyThumbnail: function(){

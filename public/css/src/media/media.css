@@ -148,16 +148,12 @@
 		width: auto!important;
 	}
 
-	label {
-		height: 30px;;
-	}
+
 }
 
 @media screen and ( max-width: 750px ) {
 	
 	* {
-		cursor: pointer!important;
-		
 	}
 	#moveAround {
 		width: 10px!important;

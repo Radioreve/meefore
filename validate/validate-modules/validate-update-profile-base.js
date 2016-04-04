@@ -31,7 +31,6 @@
 			.withOptional('job' 			 		 , nv.isString({ min: 2, max: 25 }))
 			.withOptional('ideal_night' 	 		 , nv.isString({ max: 500 }))
 			.withOptional('location' 				 , nv.isLocation )
-			.withOptional('current_location_place_id', nv.isString() )
 			.withCustom( isIdOk )
 
 		nv.run( checkUpdateRequest, req.sent, function( n, errors ){

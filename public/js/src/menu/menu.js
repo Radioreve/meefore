@@ -76,11 +76,11 @@
 
 		},
 		handleMenuApparition: function( e ){
-
+			
 			if( ! $('.app__menu-item.--menu').hasClass('--active') ){
 				return LJ.log('Returning...');
 			}
-
+	
 			var current_scrolltop = LJ.ui.$window.scrollTop();
 
 			if( LJ.ui.getScrollDirection() == "down" && LJ.ui.scrolltop > LJ.menu.shrink_menu_height_limit && $('--resizing').length == 0 ){

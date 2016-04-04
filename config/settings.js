@@ -57,7 +57,8 @@ var settings = {
 				'gender', 
 				'country_code', 
 				'signup_date', 
-				'channels'
+				'channels',
+				'ideal_night'
 			],
 		events: []
 	},

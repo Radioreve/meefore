@@ -31,6 +31,12 @@
     	var app_preferences = req.sent.app_preferences,
     		facebook_id	    = req.sent.facebook_id;
 
+    	if( _.keys( app_preferences ).length == 0 ){
+    		return handleErr( req, res, 'update_settings (empty put)', {
+    			err_id: 'empty_app_preferences'
+    		});
+    	}
+
     	User.findOneAndUpdate(
     		{ facebook_id: facebook_id },
     		{ app_preferences: app_preferences },
@@ -47,7 +53,6 @@
     		next();
 
     	});
-
 	};
 
 	var updateSettingsContact = function( req, res, next ){
@@ -82,7 +87,6 @@
     		next();
 
 		});
-
 	};
 
 	var deleteProfile = function( req, res, next ){

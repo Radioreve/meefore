@@ -4,6 +4,7 @@
     width: 80%;
     display: flex;
     flex-flow: column;
+    display: none;
 }
 
 .settings.--account {}
@@ -15,9 +16,10 @@
 .settings.--ux {}
 
 .settings__title {
-    text-transform: uppercase;
-    font-size: 14px;
+    /* text-transform: uppercase; */
+    font-size: 26px;
     font-weight: 700;
+    font-family: 'Creamy Script';
 }
 
 .settings-item {
@@ -29,7 +31,7 @@
 }
 
 .settings-item .action {
-    top: 23px;
+    top: 18px;
     right: 10px;
     font-size: 20px;
     color: #191919;
@@ -78,6 +80,48 @@
     border-radius: 8px;
     font-size: 22px;
     font-weight: bolder;
+}
+
+
+.menu-section-submenu {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 60px;
+}
+
+.menu-section-submenu__item {
+    cursor: pointer;
+    margin: 0 20px;
+    position: relative;
+    color: #919191;
+}
+
+.menu-section-submenu__item h4 {
+
+}
+
+.menu-section-submenu__bar {
+    display: none;
+    height: 4px;
+    width: 102%;
+    margin: auto;
+    bottom: -10px;
+    border-radius: 20px;
+    left: 0px;
+    background: #1b69ec;
+    position: absolute;
+}
+
+.menu-section-submenu__item.--active {
+    color: #1B69EC;
+    font-weight: bolder;
+}
+
+.menu-section-submenu__item.--active .menu-section-submenu__bar {
+    display: block;
 }
 
 

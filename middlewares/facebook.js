@@ -25,6 +25,7 @@
 			return next();
 		}
 
+
 		console.log('Fetching long_lived token for id : ' + req.sent.facebook_id );
 		User.findOne({ facebook_id: req.sent.facebook_id }, function( err, user ){
 
@@ -36,10 +37,8 @@
 			}
 
 			if( !user ){
-				return handleErr( req, res, 'fetching_facebook_long_token', {
-					'err_id': 'ghost_user',
-					'err': err
-				});
+				console.log('Unable to find user in database, skipping the fetch...');
+				return next();
 			}
 
 			/* Check is long_lived needs to be refreshed with the short lived token from login */

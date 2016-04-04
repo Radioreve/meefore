@@ -38,6 +38,8 @@
             LJ.shared.init();
             // Friends module
             LJ.friends.init();
+            // Profile user
+            LJ.profile_user.init();
 
 
             // Autologin for users who asked the "remember me" feature in their settings

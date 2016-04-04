@@ -157,6 +157,8 @@
 	// Used to check for redis 
 	var fetchUserById_Core = function( req, res, next ){
 
+		console.log('Fetching user by id (core)...');
+		
 		var facebook_id = req.sent.facebook_id;
 		var error_ns    = 'fetching_user_core';
 

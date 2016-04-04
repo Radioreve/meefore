@@ -35,14 +35,33 @@ window.LJ = _.merge( window.LJ || {}, {
 
         
     },
-    setUser: function( user ){
-        LJ.user = user;
+    cacheUser: function( user ){
+
+        if( !LJ.user ){
+            LJ.log('Caching user for the first time');
+            return LJ.user = user;
+        } else {
+            if( user.facebook_id == LJ.user.facebook_id ){
+                LJ.log('Facebook_id matched, updating user cache');
+                _.keys( user ).forEach(function( key ){
+                    if( LJ.user.hasOwnProperty( key ) ){
+                        LJ.user[ key ] = user[ key ];
+                    }
+                });
+            } else {
+                LJ.wlog('The user is someone else, dont store in cache');
+            }
+        }
+
     },
     findMainPic: function( user ){
 
         var user = user || LJ.user;
 
-        return _.find( user.pictures, function(p){ return p.is_main; });
+        return _.find( user.pictures, function( p ){
+            return p.is_main;
+        });
+
     },
     delay: function( delay ){
 

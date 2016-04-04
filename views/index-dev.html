@@ -418,7 +418,7 @@
           </div>
           <div class="me-item" data-param="location">
             <div class="icon-item">
-              <i class="icon icon-location"></i>
+              <i class="icon icon-location-barred"></i>
             </div>
             <div class="edit">
               <i class="icon icon-pen"></i>
@@ -504,10 +504,28 @@
       <!-- Settings begin -->
       <section class="menu-section --settings" data-link="settings">
       <!-- acountsection -->
+          <ul class="menu-section-submenu">
+            <li class="menu-section-submenu__item" data-link="account">
+              <h4 data-lid="menu_subsection_account"></h4>
+              <div class="menu-section-submenu__bar"></div>
+            </li>
+            <li class="menu-section-submenu__item" data-link="code">
+              <h4 data-lid="menu_subsection_code"></h4>
+              <div class="menu-section-submenu__bar"></div>
+            </li>
+            <li class="menu-section-submenu__item" data-link="notifications">
+              <h4 data-lid="menu_subsection_notifications"></h4>
+              <div class="menu-section-submenu__bar"></div>
+            </li>
+            <li class="menu-section-submenu__item" data-link="ux">
+              <h4 data-lid="menu_subsection_ux"></h4>
+              <div class="menu-section-submenu__bar"></div>
+            </li>
+          </ul>
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_account"></h3>
         </div>
-        <div class="settings --account">
+        <div class="settings --account" data-link="account">
           <div class="settings-item" data-settings-type-id="contact_email">
             <div class="settings-input">
               <div class="settings-input__icon --round-icon">
@@ -535,7 +553,7 @@
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_code"></h3>
         </div>
-        <div class="settings --code">
+        <div class="settings --code" data-link="code">
           <div class="settings__title">
             <h3 data-lid="settings_part_title_code"></h3>
           </div>
@@ -569,7 +587,7 @@
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_notifications"></h3>
         </div>
-        <div class="settings --notifications">
+        <div class="settings --notifications" data-link="notifications">
           <div class="settings__title">
             <h3 data-lid="settings_part_title_notifications"></h3>
           </div>
@@ -633,7 +651,7 @@
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_ux"></h3>
         </div>
-        <div class="settings --ux">
+        <div class="settings --ux" data-link="ux">
           <div class="settings-item" data-settings-type-id="message_readby">
             <div class="settings-input">
               <div class="settings-input__icon --round-icon"><i class="icon icon-chat-read"></i></div>
@@ -769,6 +787,8 @@
   <script src="js/src/ui/ui.js"></script>
   <script src="js/src/ui/ui_toast.js"></script>
   <script src="js/src/ui/ui_modal.js"></script>
+  <script src="js/src/ui/ui_slide.js"></script>
+  <script src="js/src/ui/ui_bubbles.js"></script>
   <script src="js/src/init/init.js"></script>
 
   <script>

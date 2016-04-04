@@ -11,7 +11,8 @@
 		img_params: {
 			'me': 			{ width: 170, height: 170, crop: 'fill', gravity: 'face' },
 			'me-thumbnail': { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
-			'menu-row': 	{ width: 90, height: 90, crop: 'fill', gravity: 'face' }
+			'menu-row': 	{ width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
+			'user-profile': { width: 220, height: 220, crop: 'fill', gravity: 'face'}
 		},
 
 		init: function(){

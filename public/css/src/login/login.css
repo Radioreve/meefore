@@ -26,7 +26,7 @@
 .init-location {
     display: flex;
     flex-flow: column nowrap;
-    width: 550px;
+    width: 1000px;
     justify-content: center;
     align-items: center;
     color: white;
@@ -37,7 +37,7 @@
 .init-location__title h2 {}
 
 .init-location__subtitle {
-    width: 80%;
+    width: 60%;
 }
 
 .init-location__subtitle input {
@@ -47,18 +47,16 @@
     text-align: center;
     font-size: 20px;
     border: none;
-    background: rgb(25, 25, 25);
+    background: rgb(19, 19, 19);
     color: #FFF;
     font-weight: 200;
-    border-bottom: 1px solid #454545;
 }
 
 .init-location__splitter {
-    height: 2px;
-    width: 100%;
-    margin: 20px;
-    background: #454545;
-    display: none;
+    height: 1px;
+    width: 40%;
+    margin: 0 0 20px 0;
+    background: #464646;
 }
 
 .init-location__explanation {color: #919191;margin-top: 10px;}
@@ -94,12 +92,16 @@
     color: #454545;
 }
 .init-location-action > div:hover {
-    opacity: .75;
+    opacity: .75!important;
 }
 
 .init-location .action__validate {
     display: none;
     color: #33afff;
+}
+
+.init-location.--validating .action__validate {
+    opacity: .25!important;
 }
 
 .init-location .action__cancel {}

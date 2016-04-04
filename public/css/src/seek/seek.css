@@ -48,3 +48,30 @@
 .seek-profile-places .pac-item-query {
 
 }
+
+
+
+/* Override for login */
+.seek-login-places.pac-container {background: rgba(25, 25, 25, 1);color: white;border: none;box-shadow: none;}
+.seek-login-places .pac-item {
+	border-color: transparent;
+	margin: 4px 0px;
+}
+.seek-login-places .pac-item:first-of-type {
+	background: inherit;
+}
+.seek-login-places .pac-item:hover {
+	background: #232323;
+}
+.seek-login-places .pac-item-query {
+	color: white;
+	font-weight: 200;
+	font-size: 20px;
+}
+
+.seek-login-places .pac-icon {
+	opacity: .3;
+}
+.seek-login-places .pac-matched {
+	font-weight: inherit;
+}

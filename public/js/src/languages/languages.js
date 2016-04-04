@@ -111,7 +111,7 @@
 		},
 		changeAppLang: function(){
 
-			var duration = 350;
+			var duration = 550;
 			LJ.ui.showCurtain({ duration: duration, opacity: LJ.ui.changelang_curtain_alpha })
 
 				.then(function( $curtain ){
@@ -146,7 +146,7 @@
 				})
 				.then(function( app_language ){
 
-					$('.change-lang').velocity('fadeOut', {
+					$('.change-lang').velocity('bounceOut', {
 						duration: duration
 					});
 
@@ -158,7 +158,7 @@
 					});
 					
 					LJ.ui.hideCurtain({
-						duration: duration, delay: duration/2
+						duration: duration, delay: duration/2,
 					}).then(function(){
 						LJ.ui.showToast( LJ.text('t_language_changed') );
 					});

@@ -38,7 +38,6 @@
 					  	display: 'flex',
 					  	duration: LJ.ui.show_modal_duration,
 					  	complete: function(){
-					  		LJ.log('Modal show finished');
 					  		return resolve();
 					  	}
 					  })

@@ -4,6 +4,8 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	$window	    : $(window),
 	$body 		: $('body'),
 
+	jsp: {},
+
 	show_curtain_duration	: 2000,
 	hide_curtain_duration	: 2000,
 	minimum_api_delay		: 750,
@@ -89,11 +91,23 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 					var $curtain = $(this);
 
-					$curtain.click(function(){
-						if( $curtain.hasClass('sticky') ) return;
+					$curtain.click(function(e){
+
+						if( !$(e.target).hasClass('curtain') ) return;
+
+						if( $curtain.hasClass('sticky') ){
+							return LJ.wlog('Curtain is in sticky mode');
+						}
+
+						var $modalclose = $curtain.find('.modal__close');
+						if( $modalclose.length > 0 ){
+							return $modalclose.click();
+						}
+
 						LJ.ui.hideCurtain({
 							duration: o.duration || LJ.ui.hide_curtain_duration
 						});
+
 					});
 
 					resolve( $curtain );
@@ -106,10 +120,39 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		o = o || {};
 
+		var duration = LJ.ui.hide_curtain_duration;
+		if( o.duration ){
+			duration = o.duration;
+		}
+
+		var delay = 0;
+		if( o.delay ){
+			delay = o.delay;
+		}
+
+		if( o.mode == "bounce" ){
+
+			return LJ.promise(function( resolve, reject ){
+				$('.curtain')
+					.children()
+					.velocity( "bounceOut", { duration: duration });
+
+				$('.curtain').velocity('fadeOut', {
+					duration: duration,
+					delay: duration/2,
+					complete: function(){
+						$('.curtain').remove();
+						resolve();
+					}
+				});
+
+				});
+		}
+
 		return LJ.promise(function( resolve, reject ){
-			$('.curtain').velocity('fadeOut', {
-				duration : o.duration || LJ.ui.hide_curtain_duration,
-				delay    : o.delay || 0,
+			$('.curtain').velocity( 'fadeOut', {
+				duration : duration,
+				delay    : delay,
 				complete : function(){
 					$('.curtain').remove();
 					resolve();
@@ -145,15 +188,19 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 	},
 	turnToJsp: function( element, options ){
+		return LJ.promise(function(resolve, reject){
 
-		if( !options.jsp_id ){
-			LJ.wlog('Setting jsp without jsp_id');
-		}
+			if( !options.jsp_id ){
+				LJ.wlog('Setting jsp without jsp_id');
+			}
 
-		LJ.delay(100).then(function(){ 
+			LJ.delay(100).then(function(){ 
 
-			LJ.ui[ options.jsp_id ] = $(element).jScrollPane();
+				$(element).jScrollPane();
+				LJ.ui.jsp[ options.jsp_id ] = $(element).data('jsp');
+				resolve();
 
+			});
 		});
 	},
 	renderIcon: function( icon_id, icon_classes ){
@@ -214,6 +261,12 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 					});
 
 			});
+	},
+	activateHtmlScroll: function(){
+		$('html').css({ 'overflow': 'auto' });
+	},
+	deactivateHtmlScroll: function(){
+		$('html').css({ 'overflow': 'hidden' });
 	},
 	reconnectUser: function(){
 

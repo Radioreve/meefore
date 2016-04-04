@@ -4,6 +4,7 @@
 			'$trigger_login': '.js-login',
 			'opening_duration': 1000,
 			'prompt_duration': 600,
+			'prompt_buttons_duration': 600,
 			'completed_steps': 0,
 
 			'data': {},
@@ -22,6 +23,8 @@
 					duration: LJ.login.opening_duration
 				});
 
+				LJ.ui.deactivateHtmlScroll();
+
 				return LJ.delay( 1000 )
 						 .then(function(){
 						 	$( LJ.login.renderLoginProgression() )
@@ -33,22 +36,6 @@
 								});
 							return LJ.Promise.resolve();
 						 });
-
-			},
-			finishLoginProcess: function(){
-				return LJ.promise(function( resolve, reject ){
-
-					LJ.log('Last step completed !');
-					LJ.login.stepCompleted(100);
-
-					
-
-					// Give some time for the loader to fill the bar
-					// return LJ.delay(1000).then(function(){
-					// 	LJ.ui.hideCurtain({ duration: 900 });
-					// });
-
-				});
 
 			},
 			hideLoginSteps: function(){
@@ -107,13 +94,10 @@
 
 			},
 			promptUserLocation: function(){
-
 				return LJ.promise(function( resolve, reject ){
-
 					// the app requires a user's location to boot properly
 					// otherwise, use would be invisible in the search section
-					LJ.user.location = null;
-					if( LJ.user.location ){
+					if( LJ.user.location && LJ.user.location.place_name && LJ.user.location.place_id ){
 						return resolve();
 					}
 
@@ -127,16 +111,84 @@
 							display: 'flex'
 						});
 
+					LJ.seek.activatePlacesInFirstLogin();
+					LJ.seek.login_places.addListener('place_changed', function(){
+
+						var place = LJ.seek.login_places.getPlace();
+						$('.init-location').attr('data-place-id'   , place.place_id )
+							  			   .attr('data-place-name' , place.formatted_address );
+
+						LJ.login.showPlayButton();
+
+					});
 
 					// Resolve the promise when the user picked a location
-					$('.init-location .action__validate').click( resolve );
+					$('.init-location .action__validate').click(function(){
+						var $block = $(this).closest('.init-location');
 
+						if( $block.hasClass('--validating') ) return
+						$block.addClass('--validating');
 
+						LJ.login.updateProfileFirstLogin()
+							.then(function(){
+								$block.removeClass('--validating');
+								resolve();
+							}, function( err ){
+								LJ.wlog('An error occured');
+								LJ.log(err);
+							});
+					});
 				});	
+			},
+			updateProfileFirstLogin: function(){
+				return LJ.promise(function( resolve, reject ){
+
+					LJ.log('Updating user location for the first time...');
+
+					var place_id   = $('.init-location').attr('data-place-id');
+					var place_name = $('.init-location').attr('data-place-name');
+
+					if( !place_id || !place_name ){
+						return LJ.wlog('Unable to find place attributes: place_id=' + place_id +', formatted_address=' + place_name );
+					}
+
+					var update = {};
+					update.location = {
+						place_name : place_name,
+						place_id   : place_id
+					};
+
+					LJ.api.updateProfile( update )
+					  .then(function( exposed ){
+					  	LJ.user.location = exposed.user.location;
+					  	LJ.profile.setMyInformations();
+					  	resolve();
+					  }, reject );
+
+				});
+
+			},
+			showPlayButton: function(){
+
+				$('.init-location').find('.action__cancel')
+							.velocity('bounceOut', {
+								duration: LJ.login.prompt_buttons_duration,
+								display: 'none'
+							});
+
+				$('.init-location').find('.action__validate')
+					.velocity('bounceInQuick', {
+						duration: LJ.login.prompt_buttons_duration,
+						delay: LJ.login.prompt_buttons_duration,
+						display: 'flex'
+					});
+
 			},
 			terminateLoginProcess: function(){
 				return LJ.promise(function( resolve, reject ){
 
+					LJ.ui.activateHtmlScroll();
+					
 					$('.curtain')
 							.children()
 							.velocity('bounceOut', {
@@ -164,7 +216,7 @@
 							'<h2 data-lid="init_location_title"></h2>',
 						'</div>',
 						'<div class="init-location__subtitle">',
-							'<input type="text" data-lid="init_location_subtitle_placeholder">',
+							'<input id="init-location__input" type="text" data-lid="init_location_subtitle_placeholder">',
 						'</div>',
 						'<div class="init-location__splitter"></div>',
 						'<div class="init-location__explanation">',

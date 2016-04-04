@@ -1393,7 +1393,7 @@
 		},
 		"init_location_title": {
 			"fr": "Bienvenidos !",
-			"us": "Bienvenid!s !"
+			"us": "Bienvenidos !"
 		},
 		"init_location_subtitle_placeholder": {
 			"fr": "Où souhaitez-vous sortir ?",
@@ -1406,6 +1406,14 @@
 		"init_location_geoloc": {
 			"fr": "Utiliser ma position",
 			"us": "Use my location"
+		},
+		"user_profile_about": {
+			"fr": "Détails",
+			"us": "Details"
+		},
+		"user_profile_ideal_night": {
+			"fr": "Ta soirée parfaite",
+			"us": "Your perfect night"
 		}
 
 
