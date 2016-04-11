@@ -239,7 +239,7 @@
                 opacity    : options.opacity || 1,
                 animation  : options.animation || null,
                 icon       : options.url,
-                zIndex     : options.zIndex,
+                zIndex     : options.zIndex
                 size       :new google.maps.Size(32, 37),
                 scaledSize :new google.maps.Size(32, 37)
             });

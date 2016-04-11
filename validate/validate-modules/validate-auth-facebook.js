@@ -8,7 +8,6 @@
 	function check( req, res, next ){
 
 		var checkAuthRequest = nv.isAnyObject()
-
 			.withRequired('facebook_id' 	, nv.isString())
 
 		nv.run( checkAuthRequest, req.sent, function( n, errors ){

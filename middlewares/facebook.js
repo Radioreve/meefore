@@ -21,7 +21,7 @@
 	var fetchFacebookLongLivedToken = function( req, res, next ){
 			
 		if( req.sent.bot ){
-			console.log('Creating a bot, skipping the long-lived-token fetching procedure...');
+			console.log('User is bot, skipping the long-lived-token fetching procedure...');
 			return next();
 		}
 

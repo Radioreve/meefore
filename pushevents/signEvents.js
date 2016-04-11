@@ -138,7 +138,7 @@
 		new_user.save(function( err, user ){
 
 			if( err ){
-				return handleErr( req, res, 'server_error' );
+				return handleErr( req, res, 'server_error', err );
 			}
 
 			console.log('Sending email notification to admins');

@@ -40,6 +40,12 @@
 				console.log('User already exists, skipping mailchimp subscription...');
 				return next();
 			}
+
+			if( req.sent.bot ){
+				console.log('User is bot, skipping mailchimp subscription...');
+				return next();
+			}
+
 			var email_address = req.sent.facebook_profile.email;
 
 			config.mailchimp.groups.forEach(function( interest_object ){
