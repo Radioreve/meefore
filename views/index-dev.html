@@ -25,6 +25,7 @@
   <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans:400,100,300,700,800" rel="stylesheet" type="text/css">
   
   <!-- Librairies -->
+  <!-- build:css -->
   <link rel="stylesheet" href="/css/lib/jscrollpane/jscrollpane.css">
   <link rel="stylesheet" href="/css/lib/fontello/css/fontello.css">
   <link rel="stylesheet" href="/css/lib/flags/css/flag-icon.min.css">
@@ -70,7 +71,7 @@
   <link rel="stylesheet" href="/css/src/shared/shared.css">
   <link rel="stylesheet" href="/css/src/login/login.css">
   <link rel="stylesheet" href="/css/src/media/media.css">
-
+  <!-- endbuild -->
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -719,17 +720,18 @@
 
      <!-- Map start -->
     <section class="app-section --map">
+      Paris!
     </section>
      <!-- Map end -->
 
   </section>
-
-
-
+  
 
 
   <script src="//js.pusher.com/3.0/pusher.min.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6QesJukMVpHVS6l8yvSt_pmCDCeYiYMI&libraries=places,geometry" type="text/javascript"></script>
 
+  <!-- build:js -->
   <script src="js/lib/lodash/lodash.js"></script>
   <script src="js/lib/mousetrap/mousetrap.js"></script>
   <script src="js/lib/jquery/jquery.js"></script>
@@ -745,9 +747,6 @@
   <script src="js/lib/moment/moment.min.js"></script>
   <script src="js/lib/moment/momentwithlocale.min.js"></script>
   <script src="js/lib/bxslider/jquery.bxslider.js"></script>
-
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6QesJukMVpHVS6l8yvSt_pmCDCeYiYMI&libraries=places,geometry" type="text/javascript"></script>
-
   <!-- custom scripts -->
   <script src="js/src/globals/globals.js"></script>
   <script src="js/src/router/router.js"></script>
@@ -793,17 +792,20 @@
   <script src="js/src/ui/ui_slide.js"></script>
   <script src="js/src/ui/ui_bubbles.js"></script>
   <script src="js/src/init/init.js"></script>
+  <!-- endbuild -->
 
+  <script id="app_ids"> 
+      window.facebook_app_id = "<!-- build:fb-app-id -->1638104993142222<!-- endbuild -->";
+      window.pusher_app_id   = "<!-- build:pusher-app-id -->f9e4bf4e8f1e0342ca27<!-- endbuild -->";
+      window.LJ.app_mode     = "<!-- build:app-env -->dev<!-- endbuild -->";
+  </script>
+  
   <script>
-    window.LJ.app_mode = "dev";
-    $('document').ready(function(){ LJ.init( 300 ) }); 
+    $('document').ready(function(){
+      LJ.init( 300 );
+    }); 
   </script>
 
 </body>
 
 </html>
-
-  <script id="app_ids"> 
-    window.facebook_app_id = "1638104993142222";
-    window.pusher_app_id   = "f9e4bf4e8f1e0342ca27";
-  </script>
