@@ -94,9 +94,6 @@
 			mdw.auth.authenticate(['standard']));
 
 
-		app.get('/min', 
-			res.sendfile( process.cwd() + '/views/index-test.html') 
-		);
 	    // Main page
 	    app.get('/home',
 	    	function( req, res, next ){
