@@ -26,6 +26,7 @@
 	// Including the img_id, img_version, img_place and an hashtag;
 	function generateBotPicturesInformations( path, facebook_id ){
 		
+		console.log('Uploading pictures...');
 		return fs.readdirAsync( path )
 			.then(function( files_name ){
 				var promises = [];

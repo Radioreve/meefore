@@ -9,6 +9,7 @@
 
 	var generateAppUser = function( path ){
 
+		console.log('Generating app user...');
 		return u.readJson( path )
 			.then(function( user_string ){
 
@@ -32,7 +33,7 @@
 				data.bot.pictures     = user.pictures;
 				data.bot.ideal_night  = user.ideal_night;
 				data.bot.country_code = user.country_code;
-				data.bot.location    = user.location;
+				data.bot.location     = user.location;
 
 				return new Promise(function( resolve, reject ){
 					request({

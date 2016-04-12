@@ -60,6 +60,7 @@
     border-radius: 100px;
     background: rgba(27, 105, 236, 0.85);
     padding: 8px 30px;
+    white-space: nowrap;
 }
 
 .user-infos__item.--age {

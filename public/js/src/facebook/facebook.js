@@ -84,6 +84,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 				// Surcharge profile with access_token for server processing;
 				var access_token = LJ.login.data.access_token || facebook_token;
+				
 				LJ.log('Surcharing profile object with token : ' + access_token );
 				facebookProfile.access_token = access_token;
 
@@ -156,6 +157,10 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 			LJ.facebook.GraphAPI( album_url, function(res){
 
+				if( !res.albums ){
+					return reject('No album id to display');
+				}
+
 				var albums = res.albums.data;
 				albums.forEach(function( album ){
 
@@ -206,7 +211,9 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 			"fetchPromise"	: LJ.facebook.fetchProfilePictures
 
-		}).then( LJ.facebook.displayFacebookPicturesInModal );
+		})
+		.then( LJ.facebook.displayFacebookPicturesInModal )
+		.catch( LJ.facebook.displayFacebookPicturesInModal_Error );
 			
 
 	},
@@ -249,6 +256,28 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 						});
 
 				});
+
+	},
+	displayFacebookPicturesInModal_Error: function(){
+
+		LJ.delay(1000).then(function(){
+
+			$('.modal-body')
+					.append('<div class="modal__loading-error none">' + LJ.text('modal_err_empty_fetch') + '</div>')
+
+			$('.modal__loader')
+			.velocity('bounceOut', { duration: 500, delay: 500,
+				complete: function(){
+
+					$('.modal-body').find('.modal__loading-error').velocity('bounceInQuick', {
+						display: 'block'
+					});
+
+				}
+			});
+
+		});
+
 
 	},
 	showModalSendMessageToFriends: function(){

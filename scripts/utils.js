@@ -7,6 +7,7 @@
 	var path = process.cwd() + '/bots/girls';
 
 	function readJson( path ){
+		// console.log( 'About to read...' + path);
 		return fs.readFileAsync( path + '.json', 'utf-8' );
 	};
 
@@ -15,7 +16,13 @@
 		return fs.writeFileAsync( path + '.json', content, 'utf-8' );
 	}
 
+	function readDir( path ){
+		return fs.readdirAsync( path );
+	}
 
+	function removeFileJson( path ){
+		return fs.unlinkAsync( path + '.json');
+	}
 
 	function updateKeyInCollectionFile( path, collection_name, item_id, item_key, item_val ){
 		return readJson( path )
@@ -124,6 +131,8 @@
 		handleDone: handleDone,
 		readJson: readJson,
 		writeJson: writeJson,
+		readDir: readDir,
+		removeFileJson: removeFileJson,
 		updateKeyInJson: updateKeyInJson,
 		updateKeyInJsonFile: updateKeyInJsonFile,
 		updateKeysInJsonFile: updateKeysInJsonFile,

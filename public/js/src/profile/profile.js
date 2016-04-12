@@ -431,48 +431,7 @@
 				$('.search-results-places').addClass('open');
 			});
 
-			LJ.$body.on('change-user-xp', LJ.fn.updateUserXp );
 
-			LJ.$body.on('click', '.upload-facebook', function(){
-				
-				var img_place = $(this).parents('.picture').data('img_place');
-
-				LJ.fn.fetchFacebookProfilePicturesAlbumId(function( err, album_id ){
-
-					if( err || !album_id ){
-						console.error('Didnt find album id, cant render pictures...');
-						return LJ.fn.handleUnexpectedError();
-					}
-
-					LJ.fn.displayInModal({
-
-						url: album_id + '/photos?fields=images',
-						source:'facebook',
-						starting_width: 500,
-						max_height: 500,
-						render_cb: LJ.fn.renderFacebookUploadedPictures,
-						error_cb: LJ.fn.renderFacebookUploadedPicturesNone,
-						predisplay_cb: function(){
-							
-							$('.modal-container').find('img.fb').each(function( i, img ){
-
-								// Adjusting all image width or image height for better centering
-								var $img = $(img);
-
-								if( $img.height() > $img.width() ){
-				                  $img.attr( 'width', '100%' );
-				                } else {
-				                  $img.attr( 'height', '100%' );
-				                }
-
-							});
-						},
-						custom_data: [{ key: 'img-place', val: img_place }]
-					});
-
-				});
-
-			});
 
 			LJ.$body.on('click', '.row-informations .btn-validate', function(){
 				if( $(this).hasClass('btn-validating') )
@@ -792,6 +751,10 @@
 			var album_id  = null;
 
 			LJ.fn.GraphAPI( album_url, function(res){
+
+				if( !res.albums ){
+					return callback( null, null );
+				}
 
 				var albums = res.albums.data;
 				albums.forEach(function( album ){

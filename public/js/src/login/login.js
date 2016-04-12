@@ -2,6 +2,8 @@
 	window.LJ.login = _.merge( window.LJ.login || {}, {
 
 			'$trigger_login': '.js-login',
+			'$trigger_logout': '.js-logout',
+			'$modal_logout'  : '.modal.--logout',
 			'opening_duration': 1000,
 			'prompt_duration': 600,
 			'prompt_buttons_duration': 600,
@@ -11,11 +13,15 @@
 
 			init: function(){
 				return LJ.promise(function( resolve, reject ){
-					LJ.login.bindDomEvents( resolve, reject );
+					LJ.login.handleDomEvents( resolve, reject );
 				});
 			},
-			bindDomEvents: function( resolve, reject ){
+			handleDomEvents: function( resolve, reject ){
+
 				$( LJ.login.$trigger_login ).on('click', resolve );
+				$( LJ.login.$trigger_logout ).on('click', LJ.login.handleLogout );
+				LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
+
 			},
 			enterLoginProcess: function(){
 
@@ -236,6 +242,29 @@
 					'</div>'
 
 				].join(''));
+
+			},
+			handleLogout: function(){
+
+				LJ.ui.showModal({
+					"title"	   : LJ.text("logout_title"),
+					"subtitle" : LJ.text("logout_subtitle"),
+					"type"     : "logout",
+					"footer"   : "<button class='--rounded'><i class='icon icon-power'></i></button>"
+				});
+
+			},
+			logUserOut: function(){
+
+				var p1 = LJ.api.updateSettingsUx({
+							"app_preferences":  _.extend( LJ.user.app_preferences, { ux: {auto_login: "no"} })
+						});
+				var p2 = LJ.ui.shadeModal();
+
+				LJ.Promise.all([ p1, p2 ]).then(function(){
+					localStorage.removeItem('preferences');
+					location.reload();
+				});
 
 			}
 

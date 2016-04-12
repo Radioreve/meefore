@@ -9,7 +9,7 @@ body {
 }
 
 .login {
-    font-family: 'Creamy Script';
+    font-family: 'creamy';
     font-size: 40px;
 }
 
@@ -156,7 +156,7 @@ button:hover {
 }
 
 .row-body h1 {
-    font-family: 'Creamy Script';
+    font-family: 'creamy';
     font-size: 30px;
 }
 
@@ -438,7 +438,7 @@ button:hover {
 
 .disconnected__title {
     font-size: 50px;
-    font-family: 'Creamy Script';
+    font-family: 'creamy';
     color: white;
 }
 
@@ -470,7 +470,7 @@ button:hover {
 .app-lang {
     display: flex;
     margin-left: auto;
-    margin-right: 30px;
+    margin-right: 6px;
     position: relative;
     cursor: pointer;
 }
@@ -509,6 +509,11 @@ button:hover {
     display: block;
 }
 
+.app-logout {color: #454545;font-size: 26px;display: flex;justify-content: center;align-items: center;margin-right: 16px;cursor: pointer;}
+.app-logout:hover { color: white; transition: all ease-in-out .2s;}
+.app-logout i {
+}
+
 
 .change-lang {
     width: 50%;
@@ -522,7 +527,7 @@ button:hover {
 .change-lang__title {
     color: white;
     font-size: 60px;
-    font-family: 'Creamy Script';
+    font-family: 'creamy';
     margin-bottom: 15px;
 }
 

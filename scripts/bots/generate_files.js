@@ -5,6 +5,7 @@
 
 
 	function generateBotDataFile( path ){
+		// console.log('Generating file for path : ' + path );
 		return u.readJson( path )
 				.catch(function( err ){
 					return u.writeJson( path, {} );

@@ -35,6 +35,20 @@ window.LJ = _.merge( window.LJ || {}, {
 
         
     },
+    storeItem: function( key, value ){
+
+        if( !key || !value ){
+            var object = key;
+            key = _.keys( object )[0];
+            value = object[key];
+        }
+
+        value = typeof value == 'object' ? JSON.stringify(value) : value;
+        return localStorage.setItem( key, value );
+
+        localStorage.setItem( key, value );
+
+    },
     cacheUser: function( user ){
 
         if( !LJ.user ){

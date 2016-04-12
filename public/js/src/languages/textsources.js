@@ -1414,6 +1414,18 @@
 		"user_profile_ideal_night": {
 			"fr": "Ta soirée parfaite",
 			"us": "Your perfect night"
+		},
+		"logout_title": {
+			"fr": "A bientôt",
+			"us": "See you soon"
+		},
+		"logout_subtitle": {
+			"fr": "Êtes vous-sûr de vouloir vous déconnecter ?",
+			"us": "Are you sure you want to log out ?"
+		},
+		"modal_err_empty_fetch": {
+			"fr": "Nous n'avons pas trouvé vos photos de profil",
+			"us": "We were unable to find your profile pictures album"
 		}
 
 

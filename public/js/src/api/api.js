@@ -72,6 +72,7 @@
 		},
 		post: function( url, data ){
 			LJ.log('Calling the api [post]');
+			var data = data || {};
 			return LJ.promise(function( resolve, reject ){
 
 				if( LJ.user && LJ.user.facebook_id ){

@@ -203,7 +203,7 @@
 			LJ.ui.showLoader( call_id );
 			$toggle.toggleClass('--active');
 
-			// Change internal state
+			// Change internal state by toggling one property
 			LJ.settings.updateSettings( settings_id );
 
 			var update = {
@@ -398,9 +398,9 @@
 			if( auto_login == 'yes' ){
 
 				var preferences = {
-					facebook_id : LJ.user.facebook_id,
-					long_lived_tk: LJ.user.facebook_access_token.long_lived,
-					tk_valid_until: LJ.user.facebook_access_token.long_lived_valid_until
+					facebook_id    : LJ.user.facebook_id,
+					long_lived_tk  : LJ.user.facebook_access_token.long_lived,
+					tk_valid_until : LJ.user.facebook_access_token.long_lived_valid_until
 				};
 
 				window.localStorage.setItem( namespace, JSON.stringify( preferences ));					

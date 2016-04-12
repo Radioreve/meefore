@@ -13,12 +13,11 @@
 			return LJ.promise(function( resolve, reject ){
 				LJ.Promise.all([
 					options.fetchPromise(),
-					LJ.ui.showModal( options )
+					LJ.ui.showModal( _.extend(options, {show_loader: true}) )
 				]).then(function( results ){
 					resolve( results[0] );
-				}, function( err ){
-					console.log(err);
-				});
+				}).catch(reject);
+
 			})
 
 		},	
@@ -60,10 +59,44 @@
 			})
 
 		},
+		shadeModal: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				$('.modal').velocity('bounceOut', {
+					duration: 600,
+					display : 'none'
+				});
+
+				LJ.delay(300)
+					.then(function(){
+						$('.curtain')
+							.css({ 'transition': 'all ease-in-out .6s' })
+							.css({ 'background': 'rgba(19,19,19,1) '});
+					})
+					.then(function(){
+						return LJ.delay(600)
+					})
+					.then(function(){
+						$('.curtain')
+							.css({ 'transition': 'none' });
+						resolve();
+					})
+
+			});
+		},
 		renderModal: function( options ){
 
-			var body_html = options.body || LJ.static.renderStaticImage('modal_loader');
 			var modifier  = '--' + options.type;
+
+			if( !options.body ){
+				body_html = '';
+			} else {
+				body_html = '<section class="modal-body">' + options.body + '</section>';
+			}
+
+			if( options.show_loader ){
+				body_html = '<section class="modal-body">' + LJ.static.renderStaticImage('modal_loader') + '</section>';
+			}
 
 			var attributes = [];
 			if( options.attributes ){
@@ -87,9 +120,7 @@
 					'<div class="modal-subheader">',
 						options.subtitle,
 					'</div>',
-					'<section class="modal-body">',
-						body_html,
-					'</section>',
+					body_html,
 					'<footer class="modal-footer">',
 						options.footer,
 					'</footer>',

@@ -142,10 +142,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 10px;
 }
 
 .modal__title {
-    font-family: 'Creamy Script';
+    font-family: 'creamy';
     font-size: 40px;
 }
 
@@ -171,6 +172,13 @@
     border: 4px solid;
 }
 
+.modal.--logout button {
+    color: #fd7124;
+}
+.modal.--logout button i {
+    font-size: 42px;;
+}
+
 .modal-footer button.--squared {}
 
 .modal__loader {
@@ -178,6 +186,19 @@
 }
 .menu__loader {
     margin: auto;
+}
+
+.modal__loading-error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%)!important;
+    background: #FFF5F5;
+    color: #A92020;
+    width: 70%;
+    text-align: center;
+    padding: 10px;
+    border-radius: 100px;
 }
 
 .modal-footer i {
@@ -310,7 +331,7 @@
 }
 
 .slide__title {
-    font-family: 'Creamy Script';
+    font-family: 'creamy';
     font-size: 30px;
 }
 

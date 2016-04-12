@@ -1097,6 +1097,12 @@
       "search": [
         "code"
       ]
+    },
+    {
+      "uid": "b387bb08e237859ba573fb32e2117310",
+      "css": "power",
+      "code": 59470,
+      "src": "typicons"
     }
   ]
 }

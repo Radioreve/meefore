@@ -9,9 +9,8 @@
 	function generateBotBaseInformations( path ){
 		
 		var folder_name = path.split('/').slice(-1)[0];
-		var promises = [];
 
-		var promise = u.readJson( path + '/bot_data_default' )
+		return u.readJson( path + '/bot_data_default' )
 		  .then(function( json ){
 
 		  	// Setting default values
@@ -52,12 +51,28 @@
 
 		  });
 
-		promises.push( promise );
-
-
-		return Promise.all( promises );
 
 	}
+
+	var generateBotBaseInformations_Default = function( path ){
+
+		return u.readJson( path + '/bot_data_default' )
+		  .then(function( json ){
+
+		  	// Setting default values
+		  	var update = JSON.parse( json );
+
+		  	update.name 	     = "";
+		  	update.country_code  = "";
+		  	update.job 		     = "";
+		  	update.ideal_night   = "";
+
+		  	return u.updateKeysInJsonFile( path + '/bot_data_default', update );
+
+		  });
+
+
+	};
 
 	function findGender( path ){
 		if( /boys/.test(path) ){ return "male"; }
@@ -72,6 +87,9 @@
 	}
 
 
+
+
 	module.exports = {
-		generateBotBaseInformations: generateBotBaseInformations
+		generateBotBaseInformations         : generateBotBaseInformations,
+		generateBotBaseInformations_Default : generateBotBaseInformations_Default
 	};
