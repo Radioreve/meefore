@@ -267,6 +267,25 @@
 .modal__facebook-picture img {
     width: 100%;
 }
+.modal.--delete .modal-footer {flex-flow: column;margin: 16px 0;} 
+.modal.--delete button {
+    background: #eee;
+    width: 260px;
+    padding: 14px 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    margin: 4px 0;
+}
+.modal.--delete button.--pending {
+    opacity: .5;
+}
+.modal.--delete button[data-action="confirm"] {
+    background: #db4760;
+    color: white;
+    font-weight: bolder;
+}
+.modal.--delete button[data-action="cancel"] {}
 
 /* End app modals and popup */
 

@@ -92,30 +92,11 @@
 	var deleteProfile = function( req, res, next ){
 
 		var facebook_id = req.sent.facebook_id;
-		var userId      = req.sent.user._id;
 
 		console.log('Deleting profile ' + facebook_id + ' and everything associated with it..');
 		console.log('Good bye ' + req.sent.user.name + '..');
 
-		User.update(
-			{
-				'friends': {
-					$elemMatch: {
-						'facebook_id': facebook_id
-					}
-				}
-			}, 
-			{
-				$pull: {
-					'friends': {
-						'facebook_id': facebook_id
-					}
-				}
-			}, 
-			{
-				multi: true
-			}
-			,
+		User.update({ 'friends': facebook_id }, { $pull: { 'friends': facebook_id } }, { multi: true },
 			function( err, users ){
 
 			if( err ){
@@ -124,9 +105,7 @@
     			});
     		}
 
-			console.log('Deletin user with _id: ' + userId );
-
-			User.findByIdAndRemove( userId, function( err, user ){
+			User.findOneAndRemove({ facebook_id: facebook_id }, function( err, user ){
 				
 				if( err ){
 	    			return handleErr( req, res, settings_ns, {

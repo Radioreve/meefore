@@ -10,12 +10,12 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 	init: function(){
 
-		LJ.Promise.resolve()
-				  .then( LJ.facebook.startFacebookSdk );
+		LJ.facebook.startFacebookSdk();
 		
 	},
 	startFacebookSdk: function(){
 
+		console.log('Init FB');
 		FB.init({
 			appId: window.facebook_app_id,
 			xfbml: true, // parse social plugins on this page

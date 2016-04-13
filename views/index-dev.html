@@ -6,7 +6,7 @@
 
   <title>Des rencontres avant d'aller en soirée </title>
 
-  <meta charset="utf-8">
+  <meta charset="utf-8"> 
   <!-- <meta name="viewport"           content="width=device-width, initial-scale=1"> -->
   <!-- <meta name="viewport"           content="width=device-width, initial-scale=1, maximum-scale=1" /> -->
 
@@ -14,7 +14,7 @@
   <meta property="og:site_name" content="Meefore">
   <meta property="og:url" content="http://www.meefore.com/home">
   <meta property="og:image" content="http://res.cloudinary.com/radioreve/image/upload/v1456943482/landing_1.jpg">
-  <meta property="fb:app_id" content="<!-- build:fb-app-id -->1509405206012202<!-- endbuild -->">
+  <meta property="fb:app_id" content="<!-- build:header-fb-id -->1509405206012202<!-- endbuild -->">
 
   <meta property="og:description" content="L'application Meefore permet de faire des rencontres en participant à des before proches de chez soi.">
 
@@ -552,6 +552,9 @@
               </div>
             </div>
           </div>
+          <div class="settings-item">
+            <button class="settings__button --delete" data-lid="settings_account_delete_button"></button>
+          </div>
         </div>
         <!-- code section -->
         <div class="menu-section__subtitle">
@@ -720,7 +723,7 @@
 
      <!-- Map start -->
     <section class="app-section --map">
-      Paris!
+      
     </section>
      <!-- Map end -->
 
@@ -793,12 +796,19 @@
   <script src="js/src/ui/ui_bubbles.js"></script>
   <script src="js/src/init/init.js"></script>
   <!-- endbuild -->
-
-  <script id="app_ids"> 
-      window.facebook_app_id = "<!-- build:fb-app-id -->1638104993142222<!-- endbuild -->";
-      window.pusher_app_id   = "<!-- build:pusher-app-id -->f9e4bf4e8f1e0342ca27<!-- endbuild -->";
-      window.LJ.app_mode     = "<!-- build:app-env -->dev<!-- endbuild -->";
-  </script>
+   
+  
+  <script id="app_ids">  
+      //<!-- build:fb-app-id -->
+      window.facebook_app_id = "1638104993142222";
+      //<!-- endbuild -->
+      // <!-- build:pusher-app-id -->
+      window.pusher_app_id   = "f9e4bf4e8f1e0342ca27";
+      // <!-- endbuild -->
+      // <!-- build:app-env -->
+      window.LJ.app_mode     = "dev";
+      // <!-- endbuild -->
+  </script> 
   
   <script>
     $('document').ready(function(){

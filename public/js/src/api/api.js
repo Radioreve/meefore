@@ -20,6 +20,7 @@
 		update_settings_alerts_url 	 : '/me/update-settings-alerts',
 		update_settings_mailing_url  : '/me/update-settings-mailinglists',
 		mailchimp_status_url    	 : '/api/v1/users/:facebook_id/mailchimp-status',
+		delete_my_account_url        : '/me/delete',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -386,6 +387,18 @@
 					}, function( err ){
 						return reject( err );
 					})
+
+			});
+		},
+		deleteMyAccount: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.delete_my_account_url )
+					.then(function( exposed ){
+						return resolve( exposed );
+					}, function( err ){
+						return reject( err );
+					});
 
 			});
 		}

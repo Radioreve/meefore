@@ -1,6 +1,7 @@
 {
-    "name": "",
-    "country_code": "",
-    "job": "",
-    "ideal_night": ""
+    "name": "Alice",
+    "country_code": "fr",
+    "job": "Vendeuse textile",
+    "ideal_night": "Des potes, et des gens qui savent faire la fête. En général ça se passe bien.",
+    "age": "22"
 }

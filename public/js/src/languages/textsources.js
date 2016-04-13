@@ -1426,6 +1426,28 @@
 		"modal_err_empty_fetch": {
 			"fr": "Nous n'avons pas trouvé vos photos de profil",
 			"us": "We were unable to find your profile pictures album"
+		},
+		"settings_account_delete_button": {
+			"fr": "Supprimer mon compte",
+			"us": "Delete my account"
+		},
+		"settings_modal_delete_title": {
+			"fr": "A bientôt !",
+			"us": "See you around !"
+		},
+		"settings_modal_delete_subtitle": {
+			"fr": "En supprimant votre compte, toutes les données vous concernant seront supprimées de nos serveurs."
+				  + "<br><br><b>Attention, cette opération est irréversible.</b>",
+			"us": "By deleting your account, every data about you will be deleted from our servers."
+				  + "<br><br><b>Careful, this cannot be undone.</b>"
+		},
+		"settings_modal_delete_button_confirm": {
+			"fr": "Supprimer mon compte",
+			"us": "Delete my account"
+		},
+		"settings_modal_delete_button_cancel": {
+			"fr": "Annuler",
+			"us": "Cancel"
 		}
 
 

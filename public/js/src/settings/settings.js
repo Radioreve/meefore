@@ -56,6 +56,8 @@
 			LJ.settings.$settings.on('click', '.action__validate', 		     LJ.settings.updateSettingsInput );
 			LJ.settings.$settings.on('click', '.settings__button.--sponsor', LJ.settings.showSponsorshipModal );
 			LJ.settings.$settings.on('click', '.menu-section-submenu__item', LJ.settings.showSubmenuItem );
+			LJ.settings.$settings.on('click', '.settings__button.--delete',  LJ.settings.showDeleteAccountModal );
+			LJ.ui.$body.on('click', '.modal.--delete button',				 LJ.settings.handleDeleteAccountAction );
 
 		},
 		showSubmenuItem: function(){
@@ -308,6 +310,21 @@
 			});
 
 		},
+		showDeleteAccountModal: function(){
+
+			var footer = [
+				'<button data-action="confirm">' + LJ.text("settings_modal_delete_button_confirm") + '</button>',
+				'<button data-action="cancel">' + LJ.text("settings_modal_delete_button_cancel") + '</button>'
+			].join('');
+
+			LJ.ui.showModal({
+				"type"  : "delete",
+				"title"    : LJ.text("settings_modal_delete_title"),
+				"subtitle" : LJ.text("settings_modal_delete_subtitle"),
+				"footer"   : footer
+			});
+
+		},
 		renderSponshipModalBody: function(){
 			return [
 				'<div class="modal__input">',
@@ -410,6 +427,36 @@
 				window.localStorage.removeItem( namespace );
 			}
 
+		},
+		handleDeleteAccountAction: function(){
+
+			var $btn = $(this);
+			var action = $btn.attr('data-action');
+
+			if( action == "cancel" ){
+				return LJ.ui.hideModal();
+			}
+
+			if( $btn.hasClass('--pending') ){
+				return LJ.log('Already hiding...');
+			}
+			
+			LJ.log('Deleting user account...');
+			$btn.addClass('--pending');
+			LJ.api.deleteMyAccount()
+				.then( LJ.ui.shadeModal )
+				.then(function(){
+					localStorage.removeItem('preferences');
+					location.reload();
+				})
+				.catch(function(){
+					$btn.removeClass('--pending');
+					LJ.ui.hideModal()
+						.then(function(){
+							LJ.ui.showToast("Une erreur s'est produite, nous avons été notifié", "error" );
+							window.localStorage.removeItem('preferences');
+						});
+				});
 		}
 
 	});

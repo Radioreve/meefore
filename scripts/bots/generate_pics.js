@@ -52,8 +52,11 @@
 
 				var update = { pictures: default_pictures };
 				picture_objects.forEach(function( pic, i ){
-					update.pictures[ i ].img_id      = pic.public_id;
-					update.pictures[ i ].img_version = pic.version;
+					var upic = update.pictures[ i ];
+					if( upic ){
+						upic[ i ].img_id      = pic.public_id;
+						upic[ i ].img_version = pic.version;
+					}
 				});
 
 				return u.updateKeysInJsonFile( path + '/bot_data', update );
