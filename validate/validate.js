@@ -30,7 +30,8 @@
 			update_profile_base 	: 'validate-update-profile-base',
 			update_pictures		    : 'validate-update-pictures',
 			update_picture_client	: 'validate-update-picture-client',
-			upload_picture_url		: 'validate-upload-picture-url'
+			upload_picture_url		: 'validate-upload-picture-url',
+			users_fetch_more		: 'validate-users-fetch-more'
 			
 			//test                : 'validate-test'
 			

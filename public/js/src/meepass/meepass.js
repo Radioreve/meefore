@@ -14,6 +14,7 @@
 
 			$('.menu-section.--meepass').on('click', '.segment__part', LJ.meepass.refreshSegmentView );
 			$('.menu-item.--meepass').one('click', LJ.meepass.handleMeepassClicked );
+			LJ.ui.$body.on('click', '.js-send-meepass', LJ.meepass.handleSendMeepass );
 
 		},
 		refreshSegmentView: function(){
@@ -28,6 +29,39 @@
 
 			$('.meepass').children().css({ display: 'none' });
 			$('.meepass [data-link="' + link + '"]').css({ display: 'flex' });
+
+		},
+		handleSendMeepass: function(){
+
+			// User is hosting more than one event...
+			if( 0 ){
+				LJ.ui.showModal({
+					"title"		: "Félicitations !",
+					"subtitle"	: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
+					"body"  	: LJ.meepass.renderEventsInModal(),
+					"footer"	: "<button class='--rounded'><i class='icon icon-check'></i></button>"
+				});
+
+			} else {
+				
+				var event_id = '';
+			//	LJ.meepass.sendMeepass()
+			//		.then( LJ.meepass.handleSendMeepassSuccess )
+			//		.catch( LJ.meepass.handleApiError );
+
+			}
+
+		},
+		sendMeepass: function(){
+			
+		},
+		handleSendMeepassSuccess: function(){
+
+		},
+		handleApiError: function(){
+
+		},
+		renderEventsInModal: function(){
 
 		},
 		handleMeepassClicked: function(){

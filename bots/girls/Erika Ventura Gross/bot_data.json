@@ -1,6 +1,54 @@
 {
-    "name": null,
-    "country_code": null,
-    "job": null,
-    "ideal_night": null
+    "name": "Julie",
+    "country_code": "fr",
+    "job": "Voyageuse",
+    "ideal_night": "Une bonne soirée bien entourée sans se prendre la tête. Tranquille quoi ",
+    "age": "25",
+    "location": {
+        "place_id": "ChIJD7fiBh9u5kcRYJSMaMOCCwQ",
+        "place_name": "Paris, France"
+    },
+    "real_name": "Erika Ventura Gross",
+    "gender": "female",
+    "generated_at": "2016-04-18T17:04:52.018Z",
+    "id": "134158833652991",
+    "access_token": "CAAXR2Qo4lc4BAEJZC4RJBwZCghoHbn43qDsklErswrHev0r88ytMDdOg7yDefOhqT8k3pTY4aPWpATUeqgJDE6pUNwDyQ8p8IZCeQajrXU6gjH4RKYGZAaLtcF7Re3vuChrey6ZBGfjQzVaAEINHaIm3lKC5DrZA3uUOcqh53yFLiY1LhMkyit7w3GPfEWd2kZD",
+    "login_url": "https://developers.facebook.com/checkpoint/test-user-login/134158833652991/",
+    "email": "hfwpsbz_putnamstein_1460999819@tfbnw.net",
+    "password": "773553426",
+    "pictures": [
+        {
+            "img_place": 0,
+            "is_main": true,
+            "hashtag": "me"
+        },
+        {
+            "img_id": "134158833652991--1",
+            "img_version": 1460999828,
+            "img_place": 1,
+            "is_main": false,
+            "hashtag": "hot"
+        },
+        {
+            "img_id": "placeholder_picture",
+            "img_version": "1458583061",
+            "img_place": 2,
+            "is_main": false,
+            "hashtag": "friends"
+        },
+        {
+            "img_id": "placeholder_picture",
+            "img_version": "1458583061",
+            "img_place": 3,
+            "is_main": false,
+            "hashtag": "natural"
+        },
+        {
+            "img_id": "placeholder_picture",
+            "img_version": "1458583061",
+            "img_place": 4,
+            "is_main": false,
+            "hashtag": "whatever"
+        }
+    ]
 }

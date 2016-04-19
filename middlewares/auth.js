@@ -46,8 +46,8 @@
 			req.sent.user_id 	 = payload._id;
 			req.sent.facebook_id = payload.facebook_id || payload.id;
 
-			// Get the expose object already setup with update_id. That will ping/pong and stay unchanged 
-			// For the client to be able to uniquely identify each of its calls
+			// Get the expose object, which is what is always returned to the client, already setup with update_id. 
+			// That will ping/pong and stay unchanged for the client to be able to uniquely identify each of its calls
 			req.sent.expose.call_id = req.sent.call_id;
 
 			return next();		

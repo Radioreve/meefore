@@ -5,6 +5,7 @@
 
 	// Get a token for the app here : https://developers.facebook.com/tools/explorer
 	var Promise = require('bluebird');
+	var _ 		= require('lodash');
 
 	var u    = require('../utils');
 
@@ -44,7 +45,10 @@
 
 		var data_path = user_path + '/bot_data';
 
-		return 	genfiles.generateBotDataFile( data_path )
+		return 	genfiles.deleteBotDataFile( data_path )
+				.then(function(){
+					return genfiles.generateBotDataFile( data_path )
+				})
 				.then(function(){
 					return genfiles.generateBotDataFile( data_path + '_default' )
 				})
@@ -71,18 +75,6 @@
 	};
 
 
-	// var generateMultipleBots = function( bots_folder_path ){
-
-	// 	return u.readDir( bots_folder_path )
-	// 		.then(function( dir ){
-	// 			return Promise.mapSeries( dir, function( dir_name, i ){
-	// 				if( ! /^\..*/.test( dir_name ) ){
-	// 					return generateOneBot( bots_folder_path + '/' + dir_name );
-	// 				}
-	// 			});
-	// 		})	
-
-	// };
 
 	var deleteOneBot = function( user_path ){
 
@@ -90,16 +82,36 @@
 
 		return u.readJson( user_path + '/bot_data' )		
 				.then(function( json ){
+					var id = JSON.parse(json).id;
+					if( !id ){
+						return console.log('[Warning] - Unable to read the id for the path : ' + user_path );
+					} else {
 					console.log( 'Deleting user with facebook_id : ' + JSON.parse(json).id );
 					return genfacebookuser.deleteFacebookTestUser( genconfig.fb.test_user_url + JSON.parse( json ).id,  genconfig.fb.token );
+					}
 				});
 	}
+
+	var deleteAllFacebookTestUsers = function(){
+
+		return genfacebookuser.fetchFacebookTestUsers()
+				.then(function( fb_ids ){
+					console.log(fb_ids)
+					var tasks = [];
+					fb_ids.forEach(function( facebook_id ){
+						tasks.push( genfacebookuser.deleteFacebookTestUser( genconfig.fb.test_user_url + facebook_id,  genconfig.fb.token) );
+					});
+					return Promise.all( tasks );
+				});
+		
+	};
 
 
 	module.exports = {
 		generateOneBot        		  : generateOneBot,
 		generateOneDefaultConfig 	  : generateOneDefaultConfig,
 		deleteOneDefaultConfig 		  : deleteOneDefaultConfig,
-		deleteOneBot    		 	  : deleteOneBot
+		deleteOneBot    		 	  : deleteOneBot,
+		deleteAllFacebookTestUsers	  : deleteAllFacebookTestUsers
 	};
 	

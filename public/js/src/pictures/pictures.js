@@ -12,7 +12,9 @@
 			'me': 			{ width: 170, height: 170, crop: 'fill', gravity: 'face' },
 			'me-thumbnail': { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
 			'menu-row': 	{ width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
-			'user-profile': { width: 220, height: 220, crop: 'fill', gravity: 'face'}
+			'user-profile': { width: 220, height: 220, crop: 'fill', gravity: 'face'}, 
+			'user-search' : { width: 240, height: 240, crop: 'fill', gravity: 'face'},
+			'user-modal'  : { width: 50,  height: 50,  crop: 'fill', gravity: 'face'}
 		},
 
 		init: function(){
@@ -78,7 +80,8 @@
 					$block.removeClass('--active');
 					LJ.ui.hideModal();
 					var src = $('.modal__facebook-picture.--active').attr('data-img-src');
-					LJ.pictures.uploadFacebookPicture( src, img_place );
+					LJ.pictures.uploadFacebookPicture( src, img_place )
+						.then( LJ.pictures.handleUpdatePicturesSuccess );
 				}
 			}
 
@@ -142,7 +145,6 @@
 			var call_id = LJ.generateId();
 			LJ.ui.showLoader( call_id );
 
-
 			var update = {
 				url 		: src,
 				call_id 	: call_id,
@@ -150,8 +152,27 @@
 				img_id		: img_id
 			};
 
+			return LJ.api.uploadNewPictureUrl( update );
+		 	  
+		},
+		uploadFacebookPicture_Intro: function(){
+
+			var src       = 'https://graph.facebook.com/' + LJ.user.facebook_id + '/picture?width=320&height=320';
+			var img_place = 0;
+
+			var $picture = $('.picture[data-img-place="' + img_place + '"]');
+			var img_id	 = JSON.parse( $picture.find('.cloudinary-fileupload').attr('data-form-data') ).public_id;
+
+			LJ.log('Uploading facebook picture [intro]...');
+
+			var update = {
+				url 		: src,
+				img_place 	: img_place,
+				img_id		: img_id
+			};
+
 			LJ.api.uploadNewPictureUrl( update )
-		 	  .then( LJ.pictures.handleUpdatePicturesSuccess );
+				.then( LJ.pictures.handleUpdatePicturesSuccess );
 
 		},
 		updateHashtag: function( img_place ){
@@ -249,11 +270,12 @@
 			var call_id  = res.call_id;
 			var pictures = res.pictures;
 
-			LJ.ui.hideLoader( call_id );
+			if( call_id ){
+				LJ.ui.hideLoader( call_id );
+			}
+
 			LJ.pictures.upload_id_profile = null;
-
 			LJ.ui.showToast( LJ.text('to_update_pic_success') );
-
 			LJ.user.pictures = pictures;
 
 			// Check if the main picture has changed
@@ -474,7 +496,7 @@
 				complete: function(){
 					
 					$(this).remove();
-					$new_img.waitForImages(function(){
+					$new_img.imagesLoaded(function(){
 
 						// Special case, when the replace occurs after desktop upload
 						if( LJ.pictures.upload_id_profile ){

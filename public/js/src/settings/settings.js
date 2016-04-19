@@ -257,14 +257,13 @@
 		handleApiError: function( err ){
 
 			var err_ns  = err.namespace;
-			var err_id  = err.errors[0].err_id;
+			var err_id  = err.errors[0].err_id || (err.errors[0].data && err.errors[0].data.err_id );
 			var call_id = err.call_id;
 
 			if( err.namespace == 'update_settings' ){
 
 				LJ.ui.showToast('La mise à jour na pas été effectuée', 'error');
 				LJ.ui.hideLoader( call_id );
-
 				$('.toggle[data-callid="' + call_id + '"]').toggleClass('--active');
 				return;
 
@@ -272,6 +271,13 @@
 
 			if( err_id == 'already_taken' ){
 				LJ.ui.showToast( LJ.text('to_invite_code_already_taken'), 'error' );
+				LJ.ui.hideLoader( call_id );
+				$('.settings-item[data-callid="' + call_id + '"]').removeClass('--validating');
+				return;
+			}
+
+			 if( err_id == 'bad_pattern' ){
+				LJ.ui.showToast( LJ.text('to_invite_code_bad_pattern'), 'error' );
 				LJ.ui.hideLoader( call_id );
 				$('.settings-item[data-callid="' + call_id + '"]').removeClass('--validating');
 				return;
@@ -383,7 +389,12 @@
 			var $block = $self.closest('.settings-item');
 			var $input = $block.find('input, textarea');
 
-			if( $block.hasClass('--active') ){ $block.removeClass('--active'); } else { return; }
+			if( $block.hasClass('--active') ){
+				$block.removeClass('--active')
+					  .removeClass('--validating');
+			} else {
+				return;
+			}
 
 			$input.attr( 'readonly', true );
 

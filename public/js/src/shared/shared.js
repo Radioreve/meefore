@@ -13,8 +13,17 @@
 		handleDomEvents: function(){
 
 			$('.menu-item.--shared').one('click', LJ.shared.handleShareClicked );
+			LJ.ui.$body.on('click', '.js-share-profile', LJ.shared.handleShareProfile );
+			LJ.ui.$body.on('keydown', '.modal-search__input input', LJ.ui.filterModalResults );
+			LJ.ui.$body.on('click', '.shared__item', LJ.shared.handleSharedItemClicked )
 
 		},
+		handleSharedItemClicked: function(){
+
+			var facebook_id = $(this).attr('data-target-id');
+			LJ.profile_user.showUserProfile( facebook_id );
+
+		},	
 		handleShareClicked: function(){
 
 
@@ -37,8 +46,6 @@
 
 			LJ.api.fetchMeShared()
 				  .then( LJ.shared.handleFetchMeSharedSuccess, LJ.shared.handleFetchMeSharedError );
-
-
 
 		},
 		handleFetchMeSharedSuccess: function( expose ){
@@ -66,6 +73,7 @@
 			});
 
 			var facebook_ids = _.pluck( shared_profiles, 'target_id' );
+
 			LJ.api.fetchUsers( facebook_ids )
 				.then(function( res ){
 
@@ -123,15 +131,18 @@
 				].join(''));
 
 		},
-		renderShareItem__User: function( shared_object, target, shared_by ){
+		renderShareItem__User: function( shared_object, target ){
 
 			var sh 	   = shared_object;
 			var target = target;
-			var friend = _.find( LJ.user.friends, function(f){ return f.facebook_id == shared_by; });
 
+			var friend = _.find( LJ.friends.friends_profiles, function( f ){
+				return f.facebook_id == sh.shared_by;
+			});
 
 			var formatted_date = LJ.renderDate( sh.shared_at );
 			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
+
 
 			return LJ.ui.render([
 
@@ -147,12 +158,58 @@
 						'</div>',
 						'<div class="row-body__subtitle">',
 							'<div class="row-body__icon --round-icon"><i class="icon icon-pricetag"></i></div>',
-							'<h4>' + LJ.text('shared_item_subtitle').replace('%name', 'Anonymous monkey' ).replace('%type', LJ.text('w_profile') ).capitalize() + '</h4>',
+							'<h4>' + LJ.text('shared_item_subtitle').replace('%name', friend.name ).replace('%type', LJ.text('w_profile') ).capitalize() + '</h4>',
 						'</div>',
 					'</div>',
 				'</div>'
 
 				].join(''));
+
+		},
+		handleShareProfile: function(){	
+
+			var target_id = $( this ).closest('.search-user').attr('data-facebook-id');
+
+			LJ.ui.showModal({
+				"title"			: LJ.text('modal_share_title'),
+				"type"      	: "share",
+				"search_input"	: true,
+				"jsp_body" 	    : true,
+				"attributes"	: [{ name: "item-id", val: target_id }],
+				"subtitle"		: LJ.text('modal_share_subtitle'),
+				"body"  		: LJ.friends.renderFriendsInModal(),
+				"footer"		: "<button class='--rounded'><i class='icon icon-check'></i></button>"
+			})
+			.then(function(){
+				return LJ.ui.getModalItemIds();
+
+			})
+			.then(function( item_ids ){
+
+				var d = LJ.static.renderStaticImage('search_loader')
+				$(d).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
+					duration: 400
+				});
+
+				return LJ.api.shareWithFriends({
+					target_id   : target_id,
+					target_type : 'user',
+					shared_with : item_ids
+				});
+
+			})
+			.then(function( exposed ){
+				return LJ.ui.hideModal()
+
+			})
+			.then(function(){
+				LJ.ui.showToast( LJ.text('to_profile_shared_success') );
+			})
+			.catch(function(e){
+				LJ.wlog(e);
+				LJ.ui.hideModal()
+
+			});
 
 		}
 

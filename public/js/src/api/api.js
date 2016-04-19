@@ -21,6 +21,8 @@
 		update_settings_mailing_url  : '/me/update-settings-mailinglists',
 		mailchimp_status_url    	 : '/api/v1/users/:facebook_id/mailchimp-status',
 		delete_my_account_url        : '/me/delete',
+		fetch_more_users_url 		 : '/api/v1/users/more',
+		share_url 					 : '/api/v1/share',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -209,8 +211,24 @@
 							 
 
 		},
-		fetchUserProfile: function( facebook_id ){
+		// Fetch a random amount of users that is not already fetched (not in facebook_ids array)
+		fetchMoreUsers: function( facebook_ids ){
+			return  LJ.promise(function( resolve, reject ){
 
+				LJ.api.post( LJ.api.fetch_more_users_url, { facebook_ids: facebook_ids || [] })
+					.then(function( exposed ){
+						if( exposed.users ){
+							return resolve({ users: exposed.users, call_id: exposed.call_id }); 
+						} else {
+							LJ.wlog('The server didnt respond with the expected users object');
+						}
+					}, function( err ){
+						return reject( err );
+					});
+
+			});
+		},
+		fetchUserProfile: function( facebook_id ){
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.api.get( LJ.api.fetch_user_profile_url.replace(':facebook_id', facebook_id ) )
@@ -221,7 +239,6 @@
 					  });
 
 			});
-
 		},	
 		updateProfile: function( data ){
 
@@ -394,6 +411,23 @@
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.api.post( LJ.api.delete_my_account_url )
+					.then(function( exposed ){
+						return resolve( exposed );
+					}, function( err ){
+						return reject( err );
+					});
+
+			});
+		},
+		shareWithFriends: function( opt ){
+			return LJ.promise(function( resolve, reject ){
+
+				if( ! (opt.target_type && opt.shared_with && opt.target_id ) ){
+					LJ.wlog('Missing parameters, not calling the api');
+					return reject();
+				}
+
+				LJ.api.post( LJ.api.share_url, opt )
 					.then(function( exposed ){
 						return resolve( exposed );
 					}, function( err ){

@@ -19,6 +19,7 @@
 					.then( LJ.profile.handleDomEvents )
 					.then( LJ.seek.activatePlacesInProfile )
 					.then( LJ.notifications.init )
+					.then( LJ.search.initFilters )
 					.then( resolve )
 
 			});
@@ -138,7 +139,11 @@
 			var $block = $self.closest('.me-item');
 			var $input = $block.find('input, textarea');
 
-			if( $block.hasClass('--active') ){ $block.removeClass('--active'); } else { return; }
+			if( $block.hasClass('--active') ){
+				$block.removeClass('--active').removeClass('--validating');
+			} else {
+				return;
+			}
 
 			$input.attr( 'readonly', true );
 

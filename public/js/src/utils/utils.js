@@ -17,6 +17,9 @@ window.LJ = _.merge( window.LJ || {}, {
                 });
             }
         });
+
+        // upgrading version
+        _.pluck = _.map;
                 
     },
     promise: function( callback ){
@@ -63,7 +66,7 @@ window.LJ = _.merge( window.LJ || {}, {
                     }
                 });
             } else {
-                LJ.wlog('The user is someone else, dont store in cache');
+                
             }
         }
 
@@ -478,7 +481,7 @@ window.LJ = _.merge( window.LJ || {}, {
 
             /* If there are images to render, little smooth ux */
             if( $html.find('img').length != 0 ){
-                $html.waitForImages(function(){
+                $html.imagesLoaded(function(){
                     $html.find('.friend-img').show()
                     .end().find('.friend-loader').remove();
                 });

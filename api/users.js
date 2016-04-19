@@ -242,7 +242,7 @@
 				'name': { $regex: pattern, $options: 'i' }
 			})
 			.select( select )
-			.limit( 10 )
+			.limit( 9 )
 			.exec(function( err, users ){
 
 				if( err ){
@@ -335,6 +335,29 @@
 
 	};
 
+
+	var fetchMoreUsers = function( req, res, next ){
+
+		var err_ns       = "fetching_more_users";
+		var facebook_ids = req.sent.facebook_ids;
+
+		User
+			.find({
+				facebook_id: { $nin: facebook_ids }
+			})
+			.limit( 100 )
+			.exec(function( err, users ){
+
+				if( err ) return handleErr( req, res, ns, err );
+
+				var random_users = _.chunk( _.shuffle( users ), 12 )[0];
+				req.sent.expose.users = random_users;
+				next();
+
+			});
+
+	};
+
 	module.exports = {
 		fetchMe 				: fetchMe,
 		fetchUserShared			: fetchUserShared,
@@ -344,5 +367,6 @@
 		fetchUsers 				: fetchUsers,
 		fetchUsersAll 			: fetchUsersAll,
 		fetchUserEvents 		: fetchUserEvents,
-		getMailchimpStatus 		: getMailchimpStatus
+		getMailchimpStatus 		: getMailchimpStatus,
+		fetchMoreUsers 			: fetchMoreUsers
 	};

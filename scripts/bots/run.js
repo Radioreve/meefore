@@ -1,6 +1,7 @@
 	
 	var Promise      = require('bluebird');
 	var _ 			 = require('lodash');
+	var flags 		 = require('node-flags');
 
 	var bots         = require('./generate_bots');
 	var u 			 = require('../utils');
@@ -15,8 +16,7 @@
 	var multiply = function( promiseFn, indexes ){
 
 		return function(){
-			// console.log( Array.isArray( indexes) );
-			// console.log( indexes );
+
 			indexes = Array.isArray( indexes ) ? indexes :  _.range(0,51);
 			console.log('Indexing from : ' + indexes );
 			return u.readDir( folder_path )
@@ -33,18 +33,57 @@
 		}
 	};
 
+	var multiplyParallel = function( promiseFn, indexes ){
+
+		return function(){
+
+			indexes = Array.isArray( indexes ) ? indexes :  _.range(0,51);
+			console.log('Indexing from : ' + indexes );
+			return u.readDir( folder_path )
+				.then(function( dir ){
+					var promises = [];
+					dir.forEach(function( dir_name, i ){
+						if( !/icon/i.test( dir_name ) && ! /^\..*/.test( dir_name ) && indexes.indexOf(i) != -1 ){
+							console.log('Path was okay : ' + dir_name );
+							 promises.push( promiseFn( folder_path + '/' + dir_name ) );
+						} else {
+							console.log('Skipping this path : ' + dir_name );
+						}
+					});	
+					return Promise.all( promises );
+
+				});
+		}
+	};
+
 
 	var p = Promise.resolve
 
-	if( 1 ){
-		console.log('Generating bots from folder ' + folder_path );
-		p = multiply( bots.generateOneBot, _.range(0,19) );
+	if( flags.get('a') == 'delete' ){
+		console.log('Deleting all facebook test users...');
+		p = bots.deleteAllFacebookTestUsers;
+	}
+
+	if( flags.get('a') == 'gen'){
+		if( flags.get('name') ){
+			var f_name = flags.get('name').split('_').join(' ')
+			console.log( f_name );
+			p = function(){ return bots.generateOneBot( folder_path + '/' + f_name ) };
+		} else {
+			console.log('Generating bots from folder ' + folder_path );
+			p = multiply( bots.generateOneBot, _.range( parseInt(flags.get('m')), parseInt(flags.get('M'))) );
+		}
+	}
+
+	if( flags.get('parallel') ){
+		console.log('Generating in parallel');
+		p = multiplyParallel( bots.generateOneBot, _.range( parseInt(flags.get('m')), parseInt(flags.get('M'))) );
 	}
 
 	// Deleting all bots from facebook_interface along with associated files 
 	if( 0 ){
 		console.log('Deleting test users');
-		p = multiply( bots.deleteOneBot, [] );
+		p = multiplyParallel( bots.deleteOneBot, _.range(0,2) );
 	}
 
 	// Generating bot_data.json & bot_data_default.json in each folders 
@@ -62,6 +101,3 @@
 	.catch( u.handleErr )
 	.finally( u.handleDone )
 
-	// bots.deleteOneDefaultConfig( process.cwd() + '/bots/boys/Bastian Rose' )
-	// 	.catch( u.handleErr )
-	// 	.finally( u.handleDone )

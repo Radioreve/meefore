@@ -8,10 +8,12 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 	show_curtain_duration	: 2000,
 	hide_curtain_duration	: 2000,
-	minimum_api_delay		: 750,
+	minimum_api_delay		: 1000,
 
 	action_show_duration: 400,
 	action_hide_duration: 400,
+
+	shrade_duration: 300,
 
 	minimum_reconnection_delay: 3500,
 	reconnection_curtain_alpha: 0.88,
@@ -60,6 +62,15 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		LJ.ui.scrolltop = LJ.ui.$window.scrollTop();
 
+
+	},
+	getScrollRatio: function(){
+
+		var s = $(window).scrollTop(),
+		    d = $(document).height(),
+		    c = $(window).height();
+
+		return scrollPercent = (s / (d-c)) * 100;
 
 	},
 	showCurtain: function( o ){
@@ -273,32 +284,52 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
         var delay = 3500 - ( (new Date()) - LJ.ui.reconnected_started_at );
 
         LJ.delay( delay )
+        	.then( LJ.ui.shadeModal )
         	.then(function(){
 
-	            LJ.fn.log('Launching reconnection process', 1);
+	        	LJ.fn.log('Launching reconnection process', 1);
+            	var preferences = {
+                    facebook_id    : LJ.user.facebook_id,
+                    long_lived_tk  : LJ.user.facebook_access_token.long_lived,
+                    tk_valid_until : LJ.user.facebook_access_token.long_lived_valid_until
+                };
 
-	             $('.curtain').velocity(
-	             	{ opacity: [ 1, LJ.ui.reconnection_curtain_alpha ]},
-	             	{ duration: 500 });
+                localStorage.setItem("reconn_data", JSON.stringify( preferences )); 
+                document.location = "/home";
 
-	            $('.curtain').children().velocity('fadeOut', {
-	                duration: 500,
-	                complete: function(){
+                });
+	},
+	shradeIn: function( $element, duration ){
 
-	                    var preferences = {
-	                        facebook_id    : LJ.user.facebook_id,
-	                        long_lived_tk  : LJ.user.facebook_access_token.long_lived,
-	                        tk_valid_until : LJ.user.facebook_access_token.long_lived_valid_until
-	                    };
+		var duration = duration || LJ.ui.shrade_duration;
 
-	                    window.localStorage.setItem("reconn_data", JSON.stringify( preferences )); 
-	                    document.location = "/home";
+		return LJ.promise(function( resolve, reject ){
 
-	                    }
-	            });
-        	});
+			$element.velocity('shradeIn', {
+				duration : duration,
+				display  : 'flex',
+				complete : resolve
+			});
+
+		});
+
+	},
+	shradeOut: function( $element, duration ){
+
+		var duration = duration || LJ.ui.shrade_duration;
+
+		return LJ.promise(function( resolve, reject ){
+
+			$element.velocity('shradeOut', {
+				duration : duration,
+				display  : 'none',
+				complete : resolve
+			});
+
+		});
 
 	}
+
 
 });
 
@@ -712,7 +743,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
 				$content.hide().appendTo('.modal-container-body');
 
-				$content.waitForImages(function(){
+				$content.imagesLoaded(function(){
 
 
 					$('.curtain-loader').velocity('transition.fadeOut', { duration: 300 });

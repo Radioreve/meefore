@@ -110,11 +110,11 @@
 		new_user.job          = settings.default_profile_values.job;
 		new_user.country_code = country_code; // country code extraction
 		new_user.ideal_night  = null;
-		new_user.pictures     = settings.default_pictures;
+		new_user.pictures     = _.cloneDeep ( settings.default_pictures );
 		new_user.location 	  = { place_name: null, place_id: null };
 
 
-		//Private profile attributes
+		// Private profile attributes
 		new_user.invite_code 	 = fb.id;
 		new_user.app_preferences = settings.default_app_preferences;
 
@@ -141,9 +141,11 @@
 				return handleErr( req, res, 'server_error', err );
 			}
 
-			console.log('Sending email notification to admins');
-			mailer.sendSimpleAdminEmail( user.name + ' (' + user.contact_email + ')(' + user.gender[0] + ') vient de s\'inscrire sur meefore',
-				  user.facebook_url )
+			if( !req.sent.bot ){
+				console.log('Sending email notification to admins');
+				mailer.sendSimpleAdminEmail( user.name + ' (' + user.contact_email + ')(' + user.gender[0] + ') vient de s\'inscrire sur meefore',
+					  user.facebook_url )
+			}
 
 			console.log('Account created successfully');
 			var app_token = eventUtils.generateAppToken( "user", user ); 

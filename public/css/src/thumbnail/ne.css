@@ -1,9 +1,0 @@
-
-
-.app-thumbnail {position: fixed;z-index: 1000;top: 10px;right: 22%;display: none;}
-
-.thumbnail__picture {width: 60px;height: 60px;border: 3px solid white;background: white;border-radius: 100px;overflow: hidden;text-align: center;cursor: pointer;}
-
-.thumbnail__picture img {width: 100%;}
-
-.thumbnail__name {font: 30px 'creamy';color: white;position: absolute;top: 10px;left: 76px;min-width: 200px;}

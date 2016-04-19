@@ -3,7 +3,10 @@
 
 		show_slide_duration: 450,
 		hide_slide_duration: 450,
-		show_slide_delay   : 250,
+
+		replace_slide_duration: 300,
+
+		show_slide_delay   : 0,
 		hide_slide_delay   : 250,
 
 		facebook_img_min_width: 200,
@@ -12,10 +15,18 @@
 		slide_top: 58,
 
 		showSlideAndFetch: function( options ){
+
+			var uiPromise;
+			if( $('.slide').length ){
+				uiPromise = LJ.ui.replaceSlide
+			} else {
+				uiPromise = LJ.ui.showSlide
+			}
+
 			return LJ.promise(function( resolve, reject ){
 				LJ.Promise.all([
 					options.fetchPromise( options.promise_arg ),
-					LJ.ui.showSlide( options )
+					uiPromise( options )
 				]).then(function( results ){
 					resolve( results[0] );
 				}, function( err ){
@@ -23,7 +34,28 @@
 				});
 			})
 
-		},	
+		},
+		replaceSlide: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				var $l = $('.slide').find('.slide__loader')
+				
+				$l.siblings().velocity('shradeOut', {
+					duration : LJ.ui.replace_slide_duration,
+					display  : 'none',
+					complete: function(){
+						$(this).remove();
+						resolve();
+					}
+				});
+
+				$l.velocity('shradeIn', {
+					duration : LJ.ui.replace_slide_duration / 1.5,
+					delay    : LJ.ui.replace_slide_duration
+				})
+
+			});
+		},
 		showSlide: function( options ){
 			return LJ.promise(function( resolve, reject ){
 
@@ -33,10 +65,11 @@
 
 				var height = $(window).height() - LJ.ui.slide_top;
 
-				$slide.hide()
+				$slide
+					  .hide()
 					  .appendTo('body')
 					  .css({ 'top': LJ.ui.slide_top, 'height': height })
-					  .velocity('bounceInQuick', {
+					  .velocity('slideRightIn', {
 					  	delay: LJ.ui.show_slide_delay,
 					  	display: 'flex',
 					  	duration: LJ.ui.show_slide_duration,
@@ -50,7 +83,7 @@
 		},
 		hideSlide: function(){
 			
-			$('.slide').velocity('bounceOut', {
+			$('.slide').velocity('slideRightOut', {
 				duration: LJ.ui.hide_slide_duration,
 				complete: function(){
 					$(this).remove();
@@ -61,7 +94,7 @@
 		},
 		renderSlide: function( options ){
 
-			var body_html = options.body || LJ.static.renderStaticImage('menu_loader');
+			var body_html = options.body || LJ.static.renderStaticImage('slide_loader');
 			var modifier  = '--' + options.type;
 
 			var attributes = [];
@@ -102,7 +135,7 @@
 
 				'<div class="slide ' + modifier + '" ' + attributes + '>',
 					'<div class="slide__close --round-icon">',
-						LJ.ui.renderIcon('arrow-right'),
+						LJ.ui.renderIcon('cancel'),
 					'</div>',
 					header,
 					subheader,

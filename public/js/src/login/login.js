@@ -37,7 +37,7 @@
 								.appendTo( $('.curtain') )
 								.hide()
 								.velocity('fadeIn', {
-									duration: 2000,
+									duration: 1600,
 									delay: LJ.ui.opening_duration
 								});
 							return LJ.Promise.resolve();
@@ -50,11 +50,26 @@
 					$('.app').removeClass('nonei');
 					$('.landing').remove();
 
-					$('.login').velocity('fadeOut', {
+					$('.login').velocity('shradeOut', {
 						duration: 400,
 						complete: resolve
 						
 					});
+
+				});
+			},
+			firstSetup: function(){
+				return LJ.promise(function( resolve, reject ){
+
+					// the app requires a user's location to boot properly
+					// otherwise, use would be invisible in the search section
+					if( LJ.user.location && LJ.user.location.place_name && LJ.user.location.place_id ){
+						return resolve();
+					}
+
+					LJ.pictures.uploadFacebookPicture_Intro();
+	                LJ.login.promptUserLocation();
+	                resolve();
 
 				});
 			},
@@ -101,11 +116,6 @@
 			},
 			promptUserLocation: function(){
 				return LJ.promise(function( resolve, reject ){
-					// the app requires a user's location to boot properly
-					// otherwise, use would be invisible in the search section
-					if( LJ.user.location && LJ.user.location.place_name && LJ.user.location.place_id ){
-						return resolve();
-					}
 
 					LJ.log('Requesting the user to provide a location...');
 

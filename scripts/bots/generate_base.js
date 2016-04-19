@@ -14,6 +14,7 @@
 		  .then(function( json ){
 
 		  	// Setting default values
+		  	console.log('json is : ' + json)
 		  	var update = JSON.parse( json );
 
 		  	// Make sure mandatory fields are set
@@ -44,7 +45,7 @@
 
 		  	// Automatically set all the time
 			update.real_name    = folder_name;
-			update.gender       = findGender( path );
+			update.gender       = findGender( path ) || "female";
 			update.generated_at = (new Date()).toISOString();
 
 		  	return u.updateKeysInJsonFile( path + '/bot_data', update );

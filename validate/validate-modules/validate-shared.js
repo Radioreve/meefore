@@ -56,6 +56,8 @@
 
 	function checkSenderStatus( req, callback ){
 
+		console.log('Checking sender status...');
+
 		var facebook_id = req.sent.facebook_id;
 		var target_id   = req.sent.target_id;
 		var target_type = req.sent.target_type;
@@ -85,6 +87,7 @@
 		
 		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
 
+			console.log('Sender found. Verifying...');
 			// Database internal error
 			if( err ){
 				return callback({ 'err_id': 'db_error', 'err': err });
@@ -99,11 +102,21 @@
 				});
 			}
 
+			// Make sure user doesnt share something with random users
+			if( _.difference( shared_with, user.friends ).length > 0 ){
+				return callback({
+					'err_id' 	  : 'shared_with_strangers',
+					'msg'         : 'Can only share with friends',
+					'facebook_id' : facebook_id
+				})
+			}
+
+
 			var user_shared_object = _.find( user.shared, function( s ){ 
 				return s.target_id == req.sent.target_id && s.shared_with 
 			});
 
-			var shared_with_new = shared_with.slice(0);
+			var shared_with_new = shared_with.slice(0); // <- Wtf ? 
 
 			if( !user_shared_object ){
 

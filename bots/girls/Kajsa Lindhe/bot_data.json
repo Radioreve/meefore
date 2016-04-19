@@ -1,6 +1,56 @@
 {
-    "name": null,
-    "country_code": null,
-    "job": null,
-    "ideal_night": null
+    "name": "Cécile",
+    "country_code": "fr",
+    "job": "Au pair",
+    "ideal_night": "A night away from the kids...",
+    "age": 26,
+    "location": {
+        "place_id": "ChIJD7fiBh9u5kcRYJSMaMOCCwQ",
+        "place_name": "Paris, France"
+    },
+    "real_name": "Kajsa Lindhe",
+    "gender": "female",
+    "generated_at": "2016-04-18T17:19:23.280Z",
+    "id": "101264916947887",
+    "access_token": "CAAXR2Qo4lc4BADMJSDXQQbN44DJo9Pwi0E6tmBGhLj0udrzZBiFZCDcgtxrj0YVC7Ieir4JjGMaZBb7KVcE5apKbIAq2mWnTbDUSFIiKv5pmLTJBef0U4BVph8ZAZCW2MeGJRECjukHanSzZA4QfkZCFzgZAiqCigXe1cdXI5BDhPaF8kZABiQOCDH80SlSFckSMZD",
+    "login_url": "https://developers.facebook.com/checkpoint/test-user-login/101264916947887/",
+    "email": "zrxgbyz_seligsteinsen_1460999963@tfbnw.net",
+    "password": "1940432156",
+    "pictures": [
+        {
+            "img_id": "101264916947887--0",
+            "img_version": 1460999972,
+            "img_place": 0,
+            "is_main": true,
+            "hashtag": "me"
+        },
+        {
+            "img_id": "101264916947887--1",
+            "img_version": 1460999972,
+            "img_place": 1,
+            "is_main": false,
+            "hashtag": "hot"
+        },
+        {
+            "img_id": "101264916947887--2",
+            "img_version": 1460999972,
+            "img_place": 2,
+            "is_main": false,
+            "hashtag": "friends"
+        },
+        {
+            "img_id": "101264916947887--3",
+            "img_version": 1460999973,
+            "img_place": 3,
+            "is_main": false,
+            "hashtag": "natural"
+        },
+        {
+            "img_id": "placeholder_picture",
+            "img_version": "1458583061",
+            "img_place": 4,
+            "is_main": false,
+            "hashtag": "whatever"
+        }
+    ]
 }

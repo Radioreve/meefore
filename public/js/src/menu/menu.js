@@ -17,7 +17,7 @@
 		handleDomEvents: function(){
 
 			LJ.ui.$body.on('click', '.menu-item', LJ.menu.showMenuItem );
-			LJ.ui.$window.scroll( LJ.menu.handleMenuApparition );
+			LJ.ui.$window.on('scroll', _.debounce( LJ.menu.handleMenuApparition, 100 ) );
 
 		},
 		showMenuItem: function(){
@@ -76,10 +76,6 @@
 
 		},
 		handleMenuApparition: function( e ){
-			
-			if( ! $('.app__menu-item.--menu').hasClass('--active') ){
-				return LJ.log('Returning...');
-			}
 	
 			var current_scrolltop = LJ.ui.$window.scrollTop();
 

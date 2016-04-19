@@ -71,7 +71,8 @@
                     'header-fb-id'  : fb_app_id,
                     'fb-app-id'     : '\nwindow.facebook_app_id = "%";'.replace('%', fb_app_id ),
                     'pusher-app-id' : '\nwindow.pusher_app_id = "%";\n'.replace('%', pusher_app_id ),
-                    'app-env'       : '\nwindow.LJ.app_mode = "%";\n'.replace('%', env_type )
+                    'app-env'       : '\nwindow.LJ.app_mode = "%";\n'.replace('%', env_type ),
+                    'remove'        : ''
                 }))
                 .pipe(rename('./index-' + env_type + '.html'))
                 .pipe(gulp.dest('./views'));
@@ -84,7 +85,7 @@
     gulp.task('replace-html', replace_tasks );
     // End adjusting html staged & prod versions
 
-    gulp.task('syncbots', function(){  
+    gulp.task('syncbots-drive-to-local', function(){  
         var source_dir = '/users/MacLJ/Google\ Drive/Meefore/Bots';
         var dest_dir   = './bots';
         return gulp.src( '' )
@@ -92,8 +93,17 @@
                     .on('error', gutil.log );
     });
 
-    gulp.task('watch-sync', function(){
-        gulp.watch('/users/MacLJ/Google\ Drive/Meefore/Bots/**/**/bot_data_default.json', ['syncbots']);
+    gulp.task('syncbots-local-to-drive', function(){  
+        var dest_dir     = '/users/MacLJ/Google\ Drive/Meefore/Bots';
+        var source_dir   = './bots';
+        return gulp.src( '' )
+                    .pipe( syncdirs( source_dir, dest_dir, { printSummary: true }))
+                    .on('error', gutil.log );
+    });
+
+    gulp.task('watch-syncbots', function(){
+        gulp.watch('/users/MacLJ/Google\ Drive/Meefore/Bots/**/**/*.*', ['syncbots-drive-to-local']);
+        gulp.watch('./bots/**/**/*.*', ['syncbots-local-to-drive']);
     });
 
 

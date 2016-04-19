@@ -7,8 +7,8 @@
   <title>Des rencontres avant d'aller en soirée </title>
 
   <meta charset="utf-8"> 
-  <!-- <meta name="viewport"           content="width=device-width, initial-scale=1"> -->
-  <!-- <meta name="viewport"           content="width=device-width, initial-scale=1, maximum-scale=1" /> -->
+  <meta name="viewport"           content="width=device-width, initial-scale=1">
+  <meta name="viewport"           content="width=device-width, initial-scale=1, maximum-scale=1" />
 
   <meta property="og:title" content="Des rencontres avant d'aller en soirée">
   <meta property="og:site_name" content="Meefore">
@@ -181,17 +181,22 @@
     <!-- header -->
     <header class="app-header">
       <div class="app-header__splitter"></div>
+      <div class="app-header-titles">
+        <div class="app-header__title" data-link="menu" data-lid="nav_menu_title"></div>
+        <div class="app-header__title" data-link="map" data-lid="nav_map_title"></div>
+        <div class="app-header__title" data-link="search" data-lid="nav_search_title"></div>
+      </div>
       <div class="app-header__logo">
         <img src="/img/app/logo_nobg.png" width="40"/>
       </div>
       <nav class="app-nav">
         <ul>
-          <li class="app__menu-item --menu --active">
-            <a href="#profile">
+          <li class="app__menu-item --menu" data-link="menu">
+            <a href="#menu">
               <i class="app__menu-icon icon icon-menu"></i>
             </a>
           </li>
-          <li class="app__menu-item --map">
+          <li class="app__menu-item --map" data-link="map">
             <a href="#map">
               <i class="app__menu-icon icon icon-location"></i>
             </a>
@@ -201,7 +206,7 @@
               <i class="app__menu-icon icon icon-bell"></i>
             </a>
           </li>
-          <li class="app__menu-item --search">
+          <li class="app__menu-item --search" data-link="search">
             <a href="#search">
               <i class="app__menu-icon icon icon-search-zoom"></i>
             </a>
@@ -235,10 +240,10 @@
   
 
    <!-- Menu section start -->
-    <section class="app-section --menu">
+    <section class="app-section --menu" data-link="menu">
     
       <!-- Menu begin -->
-      <nav class="menu ">
+      <nav class="menu">
         <div class="menu__line"></div>
         <li class="menu-item --profile" data-link="profile">
           <div class="menu-item__body">
@@ -676,10 +681,118 @@
   
 
      <!-- Map start -->
-    <section class="app-section --map">
-      
+    <section class="app-section --map" data-link="map">
+        
     </section>
      <!-- Map end -->
+
+     <!-- Search start -->
+    <section class="app-section --search" data-link="search">
+      
+      <div class="search-filters__icon --round-icon">
+        <i class="icon icon-filters"></i>
+      </div>
+
+      <div class="search-filters">
+        <div class="search-filters-section --gender">
+          <div class="search-filters-section__title">
+            <h2 data-lid="search_filters_gender_title">Titre de la section 1</h2>
+          </div>
+          <div class="search-filters-row">
+            <div class="search-filters-gender">
+              <div class="search-filters-gender__icon --round-icon">
+                <i class="icon icon-male"></i>
+              </div>
+              <div class="search-filters-gender__label">
+                <label data-lid="search_filters_gender_label_male">Des hommes</label>
+              </div>
+            </div>
+            <div class="toggle">
+              <div class="toggle__background"></div>
+              <div class="toggle__button"></div>
+            </div>
+          </div>
+          <div class="search-filters-row">
+            <div class="search-filters-gender">
+              <div class="search-filters-gender__icon --round-icon">
+                <i class="icon icon-female"></i>
+              </div>
+              <div class="search-filters-gender__label">
+                <label data-lid="search_filters_gender_label_female">Des femmes</label>
+              </div>
+            </div>
+            <div class="toggle">
+              <div class="toggle__background"></div>
+              <div class="toggle__button"></div>
+            </div>
+          </div>
+          <div class="search-filters-section__explanations">
+            <h5 data-lid="search_filters_gender_explanations">Explications supplémentaires...</h5>
+          </div>
+        </div>
+        <div class="search-filters-section --age">
+          <div class="search-filters-section__title">
+            <h2 data-lid="search_filters_age_title">Titre de la section 2</h2>
+          </div>
+          <div class="search-filters-row">
+            <div class="search-filters-agerange">
+              <div id="search-filters__input"></div>
+            </div>
+          </div>
+          <div class="search-filters-section__explanations">
+            <h5 data-lid="search_filters_age_explanations">Explications supplémentaires...</h5>
+          </div>
+        </div>
+        <div class="search-filters-section --countries">
+          <div class="search-filters-section__title">
+            <h2 data-lid="search_filters_countries_title">Titre de la section 3</h2>
+          </div>
+          <div class="search-filters-countries">
+            <div class="search-filters-row">
+              <div class="search-filters-country__flag --round-icon">
+                <i class="flag-icon flag-icon-fr"></i>
+              </div>
+              <div class="search-filters-country__label">
+                <label>France</label>
+              </div>
+              <div class="search-filters-country__users-count">
+                <div>(<span>88</span> match)</div>
+              </div>
+              <div class="toggle">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+          </div>
+          <div class="search-filters-countries">
+            <div class="search-filters-row">
+              <div class="search-filters-country__flag --round-icon">
+                <i class="flag-icon flag-icon-us"></i>
+              </div>
+              <div class="search-filters-country__label">
+                <label>Etats-Unis</label>
+              </div>
+              <div class="search-filters-country__users-count">
+                <div>(<span>75</span> match)</div>
+              </div>
+              <div class="toggle">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+          </div>
+          <div class="search-filters-section__explanations">
+            <h5 data-lid="search_filters_countries_explanations">Explications supplémentaires...</h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-users">
+        <!-- Dynamically injected -->
+      </div>
+
+    </section>
+     <!-- Search end -->
 
   </section>
   

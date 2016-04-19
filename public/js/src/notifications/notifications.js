@@ -18,8 +18,7 @@
 						// Notifications éphémères
 						// Display after so they are always pinned to top
 						LJ.notifications.checkNotification_newUser();
-			            LJ.notifications.checkNotification_noFriends();
-			            LJ.notifications.checkNotification_fillProfile();
+			          // LJ.notifications.checkNotification_fillProfile();
 
 			            // Daily notification
 			            // ...

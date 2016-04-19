@@ -1,7 +1,6 @@
 
 
 .app-section.--menu {
-	display: flex;
 	flex-flow: row wrap;
 	justify-content: center;
 	position: relative;
@@ -183,4 +182,11 @@
 
 .menu.--downsized h3 {
 	display: block;
+}
+
+@media (max-width: 1000px) {
+	.menu.--downsized .menu-item__bar { 
+		width: 100%;
+		margin-left: 0;
+	}
 }

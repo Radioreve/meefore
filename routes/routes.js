@@ -232,7 +232,8 @@
 
 
 	    app.get('/api/v1/all',
-	    	api.users.fetchUsersAll);
+	    	api.users.fetchUsersAll
+	    );
 
 	    app.get('/api/v1/users/:facebook_id/*', 
 	    	setParam('facebook_id')
@@ -241,22 +242,30 @@
 	    // [ @user ] Utilisé pour afficher le profile d'un utilisateur
 	    app.get('/api/v1/users/:facebook_id/full',   //otherwise override with asker facebook_id
 	    	mdw.validate('user_fetch'),
-	    	api.users.fetchUserById_Full);
+	    	api.users.fetchUserById_Full
+	    );
 
 	     // [ @user ] Utilisé pour afficher le profile d'un utilisateur
 	    app.get('/api/v1/users/:facebook_id/core',   //otherwise override with asker facebook_id
 	    	mdw.validate('user_fetch'),
-	    	api.users.fetchUserById_Core);
+	    	api.users.fetchUserById_Core
+	    );
 
 	    // [ @user ] Utilisé dans le Typeahead searchbox client
 	    app.get('/api/v1/users?name',
-	    	api.users.fetchUsers);
+	    	api.users.fetchUsers
+	    );
 
+	    app.post('/api/v1/users/more',
+	    	mdw.validate('users_fetch_more'),
+	    	api.users.fetchMoreUsers
+	    );
 
 	    // [ @user ] Renvoie tous les events auxquels participe un user
 	    app.get('/api/v1/me/events',
 	    	mdw.validate('user_fetch'),
-	    	api.users.fetchUserEvents);
+	    	api.users.fetchUserEvents
+	    );
 
 	    // [ @user ] Fetch user informations
 	    app.get('/api/v1/me',

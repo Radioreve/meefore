@@ -468,6 +468,25 @@ return function (global, window, document, undefined) {
                 ],
                 reset: { scaleX: 1, scaleY: 1 }
             },
+            "shradeIn": {
+                defaultDuration: 800,
+                calls: [
+                    [ { opacity: [ 1, 0 ], scaleX: [ 1, 0.94 ], scaleY: [ 1, 0.94 ] }  ]
+                ]
+            },
+            "shradeOut": {
+                defaultDuration: 800,
+                calls: [
+                    [ { opacity: [ 0, 1 ], scaleX: [ 0.94, 1 ], scaleY: [ 0.94, 1 ] }  ]
+                ],
+                reset: { scaleX: 1, scaleY: 1 }
+            },
+            "slideInRight": {
+              defaultDuration: 1000,
+                calls: [
+                    [ { opacity: [ 1, 1 ], translateX: [ 0, 100 ], translateZ: 0 } ]
+                ] 
+            },
             /* Animate.css */
             "bounceUpIn": {
                 defaultDuration: 800,

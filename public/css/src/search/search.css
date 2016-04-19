@@ -1,339 +1,209 @@
-
-.auto-login-message,
-.reconnect-message,
-.unexpected-error-message {
-   color: white;
-   font-size: 13px;
-   font-family: 'Karla';
-   text-align: center;
-   line-height: 24px;
-}
-.auto-login-msg img {
-    display: block;
-    margin: 0 auto;
-    margin-top: 20px;
-}
-.event-preview,
-.party-preview {
-   background: white;
-   border-bottom: 1px solid #E4E4E4;
-   padding: 15px 15px;
-   border-radius: 2px 2px 0 0;
-   box-shadow: 2px 2px 3px 0px #CACACA;
-   min-width: 60%;
-   box-shadow: none;
-   border: 1px solid #C4C4C4!important;
-}
-.event-preview {
+.search-header {padding: 26px 0px;margin-bottom: 20px;display: flex;justify-content: center;align-items: center;color: #191919;position: fixed;top: -12px;z-index: 10000000000000;color: white;right: 43%;}
+.search-header__title {font-size: 27px;font-family: 'Creamy';}
+.search-header__title h2 {
     
-display: flex;
-    
-float: left;
-    
-align-items: center;
 }
-.event-preview div {
-    margin-right: 6px;
+.search-filters__icon {
+    position: fixed;
+    right: 20px;
+    top: 106px;
+    transform: translate(0,-50%);
+    font-size: 20px;
+    cursor: pointer;
+    background: #1B69EC;
+    color: #FFFFFF;
+    height: 50px;
+    width: 50px;
+    z-index: 10;
+    cursor: pointer;
+    transition: all ease-in-out .15s;
 }
-.party-preview {height: 70px;display: flex;align-content: center;justify-content: space-around;float: right;width: 80%;}
-
-.fb-overlay {
-   width: 100%;
-   height: 100%;
-   position: absolute;
+.search-filters__icon:hover {
+    opacity: .7;
 }
-
-#search:hover,
-#searchbar:hover {
-   background-color: #202020;
+.search-filters__icon i {
+    margin: auto;
 }
-
-.ambiance-hashtag.adjust {
-   top: -1px;
-   color: #E94F6A;
-}
-
-.search-wrap-users {
-}
-
-#searchbar {
-   opacity: 1;
-   background-color: #313131;
-   position: absolute;
-   margin-left: 34px;
-   top: -1px;
-   width: 358px;
-   transition: all ease-out .3s;
-   height: 42px;
-   z-index: 0;
-}
-
-.search-results {
-    /* width: 400px; */
-   ;
-}
-
-.search-result-name-wrap {
-   top: 10px;
-   margin-left: 55px!important;
-   padding: 12px 10px;
-   height: 48px;
-}
-
-.search-input {
-   color: #EBEBEB;
-   border-bottom: none;
-   font-size: 13px;
-   border-radius: 1px;
-   width: 100%;
-   padding: 0px;
-   padding-left: 10px;
-   margin: 4px 0 0 5px;
-   position: relative;
-   font-family: 'Karla';
-   height: 36px;
-   transition: all ease-out .3s;
-}
-
-.search-input.active {
-   border-bottom: 2px solid #F9F9F9;
-   color: white;
-}
-
-#search:hover #searchbar {
-   opacity: 1;
-}
-
-.search-result-images {
-   width: 40px;
-   top: 50%;
-   position: absolute;
-   margin-left: 8px;
-}
-
-#searchresults div {
-   display: inline-block;
-   vertical-align: top;
-    /* position: relative; */
-   ;
-}
-
-.encadred{
-    border: 1px solid #ccc;
-    background: #FCFCFC;
-    padding: 1px
-
-;
-}
-
-.search-result-default {
-   transition: all ease-out .3s;
-   position: relative;
-   /* background-color: #F9F9F9; */
-   border-bottom: 1px solid #DDD;
-   padding: 0px 0;
-   cursor: pointer;
-   transition: none;
-}
-
-.search-result-default:hover {
-    background-color: #f9f9f9;
-}
-
-.search-results-users .search-result-default:hover {
-   background-color: rgba(0, 0, 0, 0.2);
-}
- 
-.search-result-default:last-of-type {
-   border-bottom: none;
-}
-
-.search-result img {
-   z-index: 2;
-   position: absolute;
-}
-
-.search-loader {
-   width: 15px;
-   z-index: 0;
-}
-
-.search-result img.search-loader {
-   z-index: 1!important;
-}
-
-.search-result-name {
-   font-size: 14px;
-   position: relative;
-   font-family: 'Karla';
-   display: inline-block;
-   top: 2px;
-}
-
-
-.search-result-name strong {
-   font-weight: bolder;
-}
-
-.search-result-hashtags {
-   font-size: 12px;
-   float: right;
-}
-
-.search-results-friends .search-result-name--users {
-    color: #555;
-}
-
-.search-results-users .search-result-name--users {
-    color: white;
-}
-
-.search-results-friends .search-result-name--users strong {
+.search__input {margin: auto;width: 40%;position: relative;display: none;} 
+.search__input input {
+    border: none;
+    padding: 10px 30px;
+    font-size: 18px;
+    font-family: 'Alegreya sans';
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 2px solid #191919;
+    font-weight: 300;
+    /* background: #191919; */
     color: black;
+    font-weight: 600;
+}
+.search-users {
+    text-align: center;
+    flex-flow: column nowrap;
+    box-sizing: border-box;
+    max-width: 835px;
+    margin: 0 auto;
+    margin-top: 0;
+}
+.search-users-row {
+  display: flex;
+}
+.search-users-row:last-of-type {
+}
+.search-user {
+    display: block;
+    width: 100%;
+    height: 0;
+    padding-bottom: 33%;
+    margin: 2px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 6px;
+    border-bottom: 1px solid #ccc;
+    transition: all ease-in-out .15s;
+    cursor: pointer;
+}
+.search-user:not(.--blank):hover {box-shadow: none;transform: scale(.98,.98);}
+.search-user.--blank { 
+    opacity: 0;
+    cursor: default;
+   
 }
 
-.search-results-users .search-result-name--users strong {
-    color: #e94f6a;
+.search-user__pic {overflow: hidden;width: 100%;position: relative;}
+.search-user__pic:hover {
 }
 
+.search-user__pic img {width: 100%;}
+.search-user__country {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-size: 20px;
+    display: none;
+}
+.search-user__country i {
+    border-radius: 6px 0 6px 0;
+}
+.search-user__location {position: absolute;top: 10px;right: 10px;color: white;text-shadow: 0 0 2px #8A8A8A;background: rgba(0, 0, 0, 0.02);padding: 0px 0px;border-radius: 100px;font-size: 12px;font-weight: 300;display: none;font-family: 'open sans';}
+.search-user__location span {
 
-.search-result-name--users strong {
-    color: #e94f6a;
 }
 
-.search-result-hashtags div {
+.search-user__name {
+    position: absolute;
+    bottom: 3px;
+    left: 0;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.29);
+    width: 100%;
+    height: 54px; 
+    color: white;
+    font-size: 20px;
+}
+.search-user__name .name {font-weight: 600;overflow: hidden;max-width: 60%;white-space: nowrap;}
+.search-user__name .comma {
+}
+.search-user__name .age {font-family: 'Open sans';font-size: .8em;margin-left: 6px;font-weight: 100;}
+.search-user__actions {
+    background: #FFFFFF;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    border-radius: 0 0 6px 6px;
+    height: 60px;
     position: relative;
     top: -4px;
+    color: white;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-top: none;
+    box-sizing: border-box;
+}
+.search-user__action {
+    height: 40px;
+    width: 50%;
+    cursor: pointer;
+}
+.search-user__action.--meepass {
+    color: #ccc;
+}
+.search-user__action.--share {
+    color: #33afff;
+}
+.search-user__action i {
+    margin: auto;
 }
 
-.search-result-default-empty {
-   padding-left: 5px;
-}
-
-
-.search-results-friends {
-   top: 30px!important;
-}
-
-.search-results-party-places {
-   top: 30px!important;
-}
-
-.search-results-users.empty,
-.search-results-friends.empty,
-.search-results-party-places.empty {
-   display: none!important;
-}
-
-.search-results-users,
-.search-results-friends,
-.search-results-party-places {
-   padding: 10px;
-   background: white;
-   border: 1px solid #ccc;
-   /* border-top:none; */
-   min-width: 585px;
-   display: block;
-   position: relative;
-   left: -61px;
-   /* font-family: 'Karla'; */
+.search__input ::-webkit-input-placeholder {
    color: #ccc;
+   font-weight: 400;
 }
 
-.search-results-ambiances {
-   margin-top: 10px;
-   min-width: 750px;
+.search__input :-moz-placeholder { /* Firefox 18- */
+   color: #ccc;
+   font-weight: 400; 
 }
 
-.search-results-friends {
-   margin-top: 10px;
-   width: 700px;
-   display: none;
+.search__input ::-moz-placeholder {  /* Firefox 19+ */
+   color: #ccc;
+   font-weight: 400; 
 }
 
-.search-results-users {
-   left: -350%!important;
-   width: 770px;
-   transform: translate(50%, 0);
-   background: #303030;
-   border: none;
-   border-top: 1px solid #262626;
-   color: white;
+.search__input :-ms-input-placeholder {  
+   color: #ccc;
+   font-weight: 400; 
 }
 
-#createEvent .search-result-name {
-   color: dimgrey;
-   padding: 5px;
+.search-user__splitter {
+    background: #ccc;
+    height: 40%;
+    width: 1px;
 }
 
-.search-result-default:last-of-type {
+ .search-user__name,
+    .search-user__actions {
+        display: none;
+    }
+
+
+.search-users > img {
+    width: 60px;
+    margin: 40px 0 80px;
 }
 
-.search-results-friends .search-result-users {
-    color: #555;
-}
 
-.place-result {
-}
 
-.ambiance-data {
-}
 
-.place-data {
-   display: inline-block;
-   font-size: 13px;
-   color: #555;
-   padding: 9px 12px;
-   margin: 0 3px;
-   font-family: 'Karla';
-}
+@media (min-width: 736px) {
+    
+    .search-user__name,
+    .search-user__actions,
+    .search-user__location {
+        display: flex;
+        
+    }
 
-.place-name {
-   font-weight: bolder;
-}
+    .search-user {
+        margin-right: 40px;
+        padding-bottom: 35%;
+    }
+    .search-users-row {
+        margin-bottom: 40px;
+    }
+    .search-user__country {
+        display: flex;
+        display: none;
+    }
 
-.place-address {
-   color: #ABABAB;
-   font-style: italic;
-}
+     .search-users {
+        margin-top: 100px;
+    }
 
-.hint-places {
-   color: #bcbcbc!important;
 }
-
-.ambiance-description {
-   float: right;
-   background: #FBFBFB;
-   padding: 5px 17px;
-   margin-top: 4px;
-   margin-right: 6px;
-   border-radius: 2px;
-   font-weight: bolder;
-}
-
-.search-result-ambiances {
-   width: 32%;
-   display: inline-block;
-   text-align: left;
-   border: none;
-   box-shadow: 0 1px 1px #565656;
-   margin: 2px;
-}
-
-.search-result-users {
-  border-bottom: 1px solid #272727;
-}
-
-.search-result-party-places {
-}
-
-.search-result-friends {
-}
-
-.search-result-name-friend {
-   font-size: 13px;
-   position: relative;
-   left: -25px;
-   top: 1px;
-}
-

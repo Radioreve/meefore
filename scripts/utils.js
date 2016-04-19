@@ -24,6 +24,7 @@
 		return fs.unlinkAsync( path + '.json');
 	}
 
+
 	function updateKeyInCollectionFile( path, collection_name, item_id, item_key, item_val ){
 		return readJson( path )
 		.then(function( collection_string ){

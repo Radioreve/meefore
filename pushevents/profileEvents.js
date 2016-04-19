@@ -419,7 +419,7 @@
 
 				if( err ) return handleErr( req, err, res, err_ns );
 
-				req.sent.expose.user = user
+				req.sent.expose.user = user;
 
 				next();
 

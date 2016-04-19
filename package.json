@@ -45,7 +45,8 @@
     "gulp-postcss": "^6.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.5.3",
-    "gulp-util": "^3.0.7"
+    "gulp-util": "^3.0.7",
+    "node-flags": "^0.1.9"
   },
   "engines": {
     "node": "5.3.0",

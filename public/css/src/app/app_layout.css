@@ -64,11 +64,19 @@ button:hover {
 .app-section {
     width: 100%;
     background: white;
+    display: none;
     z-index: 10;
+    position: relative;
 }
 
 .app-section.active {
     display: flex;
+}
+.app-section.--search {
+    top: -2px;
+    position: relative;
+    flex-flow: column nowrap;
+    padding-top: 0px;
 }
 
 .super-centered {
@@ -147,12 +155,14 @@ button:hover {
 .row-body__subtitle {
     display: flex;
     align-items: center;
+    color: #919191;
 }
 
 .row-body__age {
     font-family: 'Open Sans';
-    font-size: 20px;
+    font-size: 18px;
     margin-left: 6px;
+    font-weight: 100;
 }
 
 .row-body h1 {

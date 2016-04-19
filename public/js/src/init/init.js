@@ -30,14 +30,14 @@
             LJ.router.init();
             // Menu dom interactions
             LJ.menu.init();
+            // Navigation for macro views 
+            LJ.nav.init();
             // Scrolling globals etc
             LJ.ui.init();
             // Profile meepass & send meepass to other people
             LJ.meepass.init();
             // Shared module
             LJ.shared.init();
-            // Friends module
-            LJ.friends.init();
             // Profile user
             LJ.profile_user.init();
 
@@ -62,15 +62,22 @@
                 .then( LJ.setLocalStorage("login") )
                 .then( LJ.api.fetchAppToken )   // <- Enter this step with valid facebook_id
                 .then( LJ.login.stepCompleted )
+                // Enter the following step with a valid app token
+                // Two kinds of data are fetch :
+                // - datas that are self-related  : profile infos, pictures, friends, notifications, chats...
+                // - datas that are users-related : search users module, map events...
                 .then(function(){
                     return LJ.Promise.all([
-                            LJ.profile.init()  // <- Enter this step with valid app_token
+                            LJ.profile.init(),
+                            LJ.search.init()
+                            
                     ]);
                 })
+                .then( LJ.friends.init )
                 .then( LJ.login.stepCompleted )
                 .then( LJ.delay )
                 .then( LJ.login.hideLoginSteps )
-                .then( LJ.login.promptUserLocation )
+                .then( LJ.login.firstSetup )
                 .then( LJ.login.terminateLoginProcess )
                 .then( LJ.onboarding.init )
 
@@ -662,13 +669,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {},
                 }
             });
 
-        },
-        // Test function
-        simReco: function( time_offline ){
-            LJ.fn.handleReconnection();
-            LJ.fn.timeout( time_offline, function(){
-                LJ.fn.reconnectUser();
-            });
         },
         reconnectUser: function(){
 

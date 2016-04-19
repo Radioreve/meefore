@@ -15,7 +15,6 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 	},
 	startFacebookSdk: function(){
 
-		console.log('Init FB');
 		FB.init({
 			appId: window.facebook_app_id,
 			xfbml: true, // parse social plugins on this page
@@ -218,7 +217,8 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 	},
 	displayFacebookPicturesInModal: function( results ){
-
+		
+		console.log('Displaying images...');
 		var img_place = $('.modal').attr('data-img-place');
 
 		var html = LJ.facebook.$profile_pictures || [];
@@ -234,28 +234,26 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 			}
 
 			LJ.facebook.$profile_pictures = html;
-
+			
 			$('.modal-body')
-				.append( html.join('') )
-				.waitForImages(function(){
-					$(this)
-						.find('.modal__loader')
-						.velocity('bounceOut', { duration: 500, delay: 500,
-							complete: function(){
+				.append( html.join('') )	
+				.find('.modal__loader')
+				.velocity('bounceOut', { duration: 500, delay: 500,
+					complete: function(){
 
-								$('.modal__facebook-picture')
-									   .velocity('bounceInQuick', {
-									   		display: 'block'
-									   });
+						$('.modal__facebook-picture')
+							   .velocity('bounceInQuick', {
+							   		display: 'block'
+							   });
 
-								LJ.ui.turnToJsp('.modal-body', {
-									jsp_id: 'modal_facebook_pictures'
-								});
-
-							}
+						LJ.ui.turnToJsp('.modal-body', {
+							jsp_id: 'modal_facebook_pictures'
 						});
 
+					}
 				});
+
+				
 
 	},
 	displayFacebookPicturesInModal_Error: function(){

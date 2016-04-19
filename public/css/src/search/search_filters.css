@@ -1,0 +1,125 @@
+.search-filters {
+    display: none;
+    position: fixed;
+    right: 0px;
+    top: 58px;
+    z-index: 100;
+    background: #fff;
+    width: 360px;
+    padding: 30px 0px;
+    box-sizing: border-box;
+    box-shadow: 0 0 14px #949494;
+    flex-flow: column nowrap;
+}
+.search-filters-section {
+    display: flex;
+    flex-flow: column nowrap;
+    margin: 0 0 20px 0;
+}
+.search-filters-section.--gender {}
+.search-filters-section.--age {}
+.search-filters-section.--countries {}
+.search-filters-section__title {
+    font-size: 16px;
+    font-weight: 700;
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+.search-filters-section__title h2 {}
+.search-filters-section__title span {font-family: 'Open sans';font-size: 14px;font-weight: 900;}
+.search-filters-row {
+    width: 100%;
+    background: white;
+    border: none;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+.search-filters-row+.search-filters-row {
+    border-top: none;
+}
+.search-filters-row .toggle {
+    height: 25px;
+    width: 50px;
+}
+.search-filters-row .toggle__background {}
+.search-filters-row .toggle__button {}
+.search-filters-gender {
+    display: flex; 
+}
+.search-filters-gender__icon {
+    margin-right: 8px;
+}
+.search-filters-gender__icon i {}
+.search-filters-gender__label {
+    color: #454545;
+    display: flex;
+    align-items: center;
+}
+.search-filters-gender__label label {}
+.search-filters-section__explanations {
+    color: #919191;
+    font-size: 12px;
+    padding: 10px 10px;
+    line-height: 14px;
+}
+.search-filters-section__explanations h5 {}
+.search-filters-agerange {
+    position: relative;
+    width: 90%;
+    margin: 0 auto;
+}
+.search-filters-agerange input {
+    width: 100%;
+}
+.search-filters-countries {}
+.search-filters-countries.--active .search-filters-country__users-count {
+    font-weight: bolder;
+    color: purple;
+}
+.search-filters-countries.--active .search-filters-country__label {
+    font-weight: bold;
+    color: #454545;
+}
+.search-filters-country__flag {
+    margin-right: 8px;
+    margin-left: 6px;
+}
+.search-filters-country__flag i {
+    border-radius: 6px 0 6px 0;
+}
+.search-filters-country__label {
+    margin-right: 6px;
+    color: #919191;
+}
+.search-filters-country__label label {
+}
+.search-filters-country__users-count {
+    margin-right: 4px;
+    font-family: 'Open sans';
+    font-size: 12px;
+    display: none!important;
+}
+.search-filters-country__users-count div {}
+.search-filters-country__users-count div span{}
+
+.search-filters-agerange .rangeslider {}
+.search-filters-agerange .rangeslider--horizontal {
+    height: 6px;
+}
+.search-filters-agerange .rangeslider__fill {
+    background: #33afff;
+}
+.search-filters-agerange .rangeslider__handle {
+    width: 20px;
+    height: 20px;
+    background-image: none;
+    box-shadow: none;
+}
+.search-filters-agerange .rangeslider__handle::after {
+    background-image: none;
+}

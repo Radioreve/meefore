@@ -85,16 +85,16 @@
 
 				$('.slide-body')
 					.append( html )
-					.find('.menu__loader')
-					.velocity('bounceOut', {
-						duration: 500,
-						delay: 300,
+					.find('.slide__loader')
+					.velocity('shradeOut', {
+						duration: 300,
+						delay: 100,
 						complete: function(){
 
 							LJ.profile_user.activatePicture(0);
 
 							$(this).siblings()
-								   .velocity('fadeIn', {
+								   .velocity('shradeIn', {
 								   		display: 'flex',
 								   		duration: 350
 								   });

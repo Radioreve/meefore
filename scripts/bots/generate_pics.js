@@ -1,5 +1,5 @@
 
-	
+	var _    	   = require('lodash');
 	var Promise    = require('bluebird');
 	var u          = require('../utils');
 	var fs         = Promise.promisifyAll( require('fs') );
@@ -14,6 +14,7 @@
 
 	var placeholder_img_id = "placeholder_picture";
 	var placeholder_img_vs = "1458583061";
+
 	var default_pictures = [
 		{ img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 0, is_main: true , hashtag: 'me' },
       	{ img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 1, is_main: false, hashtag: 'hot' },
@@ -50,12 +51,12 @@
 			})
 			.then(function( picture_objects ){
 
-				var update = { pictures: default_pictures };
+				var update = { pictures: _.cloneDeep(default_pictures) };  // Fucking clone deep!! 
 				picture_objects.forEach(function( pic, i ){
 					var upic = update.pictures[ i ];
 					if( upic ){
-						upic[ i ].img_id      = pic.public_id;
-						upic[ i ].img_version = pic.version;
+						upic.img_id      = pic.public_id;
+						upic.img_version = pic.version;
 					}
 				});
 

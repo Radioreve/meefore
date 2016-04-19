@@ -1,10 +1,10 @@
-		
+
 	window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
-		show_modal_duration: 450,
-		hide_modal_duration: 450,
-		show_modal_delay   : 250,
-		hide_modal_delay   : 250,
+		show_modal_duration: 350,
+		hide_modal_duration: 350, 
+		show_modal_delay   : 200,
+		hide_modal_delay   : 100,
 
 		facebook_img_min_width: 200,
 		facebook_img_max_width: 300,
@@ -32,11 +32,21 @@
 
 				$modal.hide()
 					  .appendTo( $('.curtain') )
-					  .velocity('bounceInQuick', {
+					  .velocity('shradeIn', {
 					  	delay: LJ.ui.show_modal_delay,
 					  	display: 'flex',
 					  	duration: LJ.ui.show_modal_duration,
 					  	complete: function(){
+
+					  		if( options.jsp_body ){
+					  			$('.modal-body').jScrollPane();
+					  		}
+
+					  		if( options.search_input ){
+					  			var item_id = $('.modal').attr('data-item-id');
+					  			$('.modal-item[data-item-id="' + item_id + '"]').remove();
+					  		}
+
 					  		return resolve();
 					  	}
 					  })
@@ -45,17 +55,20 @@
 			});
 		},
 		hideModal: function(){
-			
-			$('.modal').velocity('bounceOut', {
-				duration: LJ.ui.hide_modal_duration
-			});
+			return LJ.promise(function( resolve, reject ){
 
-			$('.curtain').velocity('fadeOut', {
-				duration: LJ.ui.hide_modal_duration,
-				delay: LJ.ui.hide_modal_delay,
-				complete: function(){
-					$(this).remove();
-				}
+				$('.modal').velocity('shradeOut', {
+					duration: LJ.ui.hide_modal_duration
+				});
+
+				$('.curtain').velocity('fadeOut', {
+					duration: LJ.ui.hide_modal_duration,
+					delay: LJ.ui.hide_modal_delay,
+					complete: function(){
+						$(this).remove();
+						resolve();
+					}
+				});
 			})
 
 		},
@@ -106,9 +119,16 @@
 			}
 			attributes = attributes.join(' ');
 
+			var search_input_html = '';
+			var disabled = '';
+			if( options.search_input ){
+				disabled = '--disabled';
+				search_input_html = LJ.ui.renderModalSearchInput();
+			}
+
 			return [
 
-				'<div class="modal ' + modifier + '" ' + attributes + '>',
+				'<div class="modal ' + modifier + '" ' + disabled + ' ' + attributes + '>',
 					'<header class="modal-header">',
 						'<div class="modal__close">',
 							LJ.ui.renderIcon('cancel'),
@@ -120,6 +140,7 @@
 					'<div class="modal-subheader">',
 						options.subtitle,
 					'</div>',
+					search_input_html,
 					body_html,
 					'<footer class="modal-footer">',
 						options.footer,
@@ -127,6 +148,84 @@
 				'</div>'
 
 			].join('');
+
+		},
+		renderModalSearchInput: function(){
+
+			return LJ.ui.render([
+					'<div class="modal-search__input">',
+						'<input data-lid="modal_search_input_placeholder" />',
+					'</div>'
+				].join(''));
+
+		},
+		filterModalResults: function(){
+			
+			
+			LJ.delay(100).then(function(){
+				
+				
+				var $modal = $('.modal');
+				var $input = $modal.find('.modal-search__input input');
+				var text   = $input.val().toLowerCase();
+
+				if( text == '' ){
+					return $('.modal-item').removeClass('nonei');
+				}
+
+				$('.modal-item:not(.--selected):not([data-name^="' + text + '"])')
+					.addClass('nonei');
+
+				$('.modal-item:not(.--selected)[data-name^="' + text + '"]')
+					.removeClass('nonei');
+					
+				});	
+							
+		},
+		handleModalItemClicked: function(){
+
+			var $s = $(this);
+
+			var $modal = $('.modal');
+			var $el = $('.friend-modal:not(.--selected)').first();
+
+			$s.insertBefore( $el )
+			  .toggleClass('--selected');
+
+			if( $('.modal-item.--selected').length == 0 ){
+				$modal.addClass('--disabled');
+			} else {
+				$modal.removeClass('--disabled');
+			}
+			$('.modal-search__input input').val('');
+			LJ.ui.filterModalResults();
+
+		},
+		getModalItemIds: function( max ){
+			return LJ.promise(function( resolve, reject ){
+
+				$('.modal-item').click( LJ.ui.handleModalItemClicked );
+				$('.modal__close').click( reject );
+				$('.modal-footer button').click(function(){
+
+					var $modal = $('.modal');
+					if( $modal.hasClass('--disabled') ){
+						return;
+					} else {
+						$modal.addClass('--pending');
+					}
+
+					var item_ids = [];
+					$('.modal-item.--selected').each(function( i, itm ){
+						item_ids.push( $(itm).attr('data-item-id') );
+					});
+					
+					resolve( item_ids );
+
+				});
+
+
+			});
 
 		}
 
@@ -171,12 +270,12 @@
 
 			$('.modal-body').append( html.join('') )
 							.find('.modal__loader')
-							.velocity('bounceOut', {
+							.velocity('shradeOut', {
 								duration: 500,
 								delay: 1000,
 								complete: function(){
 									$(this).siblings()
-										   .velocity('bounceInQuick', {
+										   .velocity('shradeIn', {
 										   		display: 'block'
 										   });
 								}

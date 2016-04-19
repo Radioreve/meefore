@@ -307,3 +307,12 @@
   background: rgba(27,105,236,0.75);
   height: 26px;
 }
+
+@media (max-width: 1000px ){
+  .pictures {
+    flex-flow: row wrap;
+  }
+  .menu.--downsized h3 {
+    display: none;
+  }
+}

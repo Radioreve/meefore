@@ -624,6 +624,10 @@
 			"fr": "Ce code est déjà utilisé par un autre utilisateur",
 			"us": "This code is already used by another user"
 		},
+		to_invite_code_bad_pattern: {
+			"fr": "Votre code ne doit contenir que des chiffres & des lettres",
+			"us": "Your code must contain only letters & numbers"
+		},
 		to_easy_on_api: {
 			"fr": "Une photo est déjà en cours de téléchargement",
 			"en ": "A photo is already downloading"
@@ -1448,6 +1452,66 @@
 		"settings_modal_delete_button_cancel": {
 			"fr": "Annuler",
 			"us": "Cancel"
+		},
+		"search_filters_gender_title": {
+			"fr": "Montrez-moi :",
+			"us": "Show me : "
+		},
+		"search_filters_gender_explanations": {
+			"fr": "Sélectionner le sexe des personnes que vous recherchez.",
+			"us": "Select the gender of the people you wish to see."
+		},
+		"search_filters_age_title": {
+			"fr": "Afficher les personnes de <span class='search-filters-min-age'></span> à <span class='search-filters-max-age'></span> ans",
+			"us": "Display people from <span class='search-filters-min-age'></span> to <span class='search-filters-max-age'></span> years old"
+		},
+		"search_filters_age_explanations": {
+			"fr": "Seuls les utilisateurs dans la tranche d'âge sélectionnée apparaîtront dans la recherche.",
+			"us": "Only the users within the selected agerange will be displayed."
+		},
+		"search_filters_countries_title": {
+			"fr": "Filter par pays :",
+			"us": "Filter by country :"
+		},
+		"search_filters_countries_explanations": {
+			"fr": "Les pays proposés sont ceux comptant au moins un utilisateur.",
+			"us": "The countries displayed are those for which there is at least one user."
+		},
+		"search_filters_gender_label_male": {
+			"fr": "Des hommes",
+			"us": "Men"
+		},
+		"search_filters_gender_label_female": {
+			"fr": "Des femmes",
+			"us": "Women"
+		},
+		nav_search_title: {
+			"fr": "Tous les membres",
+			"us": "All members"
+		},
+		nav_menu_title: {
+			"fr": "Menu",
+			"us": "Menu"
+		},
+		nav_map_title: {
+			"fr": "Carte des soirées",
+			"us": "The Meemap"
+		},
+		modal_search_input_placeholder: {
+			"fr": "Rechercher",
+			"us": "Search"
+		},
+		modal_share_title: {
+			"fr": "Partager un profil",
+			"us": "Share a profile"
+		},
+		modal_share_subtitle: {
+			"fr": "Sélectionnez dans la liste les personnes avec qui vous souhaitez partager ce profil.",
+			"us": "Select in your friendlist who you wish to share this profile with."
+		},
+		to_profile_shared_success: {
+			"fr": "Le profil a bien été partagé",
+			"us": "The profile has been shared"
 		}
 
 
