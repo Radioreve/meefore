@@ -235,6 +235,10 @@
 	    	api.users.fetchUsersAll
 	    );
 
+	    app.get('/api/v1/users/countries',
+	    	api.users.fetchDistinctCountries
+	    );
+
 	    app.get('/api/v1/users/:facebook_id/*', 
 	    	setParam('facebook_id')
 	    );
@@ -256,7 +260,12 @@
 	    	api.users.fetchUsers
 	    );
 
-	    app.post('/api/v1/users/more',
+	     app.post('/api/v1/users/more',
+	    	mdw.validate('users_fetch_more'),
+	    	api.users.fetchMoreUsers
+	    );
+
+	    app.post('/tapi/v1/users/more',
 	    	mdw.validate('users_fetch_more'),
 	    	api.users.fetchMoreUsers
 	    );

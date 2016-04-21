@@ -137,6 +137,9 @@
   color: #454545;
 }
 
+.menu__loader {
+	width: 90px;
+}
 
 .menu-section-segment {width: 40%;margin: 30px 0 50px 0;}
 

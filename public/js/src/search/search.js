@@ -1,15 +1,17 @@
 	
 	window.LJ.search = _.merge( window.LJ.search || {}, {
 
-		fetched_users: [],
-		all_fetched: false,
-		fetch_more_scroll_ratio: 0.82,
+		fetched_users 			: [],
+		fetching_users			: false,
+		all_fetched 		  	: false,
+		fetch_more_scroll_ratio : 0.9,
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.search.handleDomEvents();
 				LJ.search.fetchAndShowMoreUsers();
+				LJ.search.setCountriesInFilters();
 				LJ.search.addLoader();
 				resolve();
 
@@ -18,8 +20,11 @@
 		handleDomEvents: function(){
 
 			LJ.ui.$body.on('click', '.search-user__pic', LJ.search.handleClickUser );
-			LJ.ui.$window.scroll( _.debounce( LJ.search.handleFetchMoreUsers, 1000 ) );
-
+			LJ.ui.$body.on('click', '.search-filters__icon', LJ.search.showFilters );
+			LJ.ui.$body.on('click', '.search-filters__close', LJ.search.hideFilters );
+			LJ.ui.$body.on('click', '.search-filters .toggle', LJ.search.handleToggleFilter );
+			LJ.ui.$window.scroll( LJ.search.handleFetchMoreUsers );
+			
 		},
 		addLoader: function(){
 
@@ -33,28 +38,42 @@
 			LJ.profile_user.showUserProfile( facebook_id );
 
 		},
-		displaySearchUsers: function(){
+		handleToggleFilter: function(){
 
-			LJ.log('Displaying search users');
-
+			var $to = $(this);
+			$to.toggleClass('--active');
+			LJ.search.setFiltersState();
 
 		},
 		handleFetchMoreUsers: function(){
 
-			if( !LJ.search.all_fetched && LJ.ui.getScrollRatio() > LJ.search.fetch_more_scroll_ratio && $('.app__menu-item.--search').hasClass('--active') ){
+			var data_to_fetch        = !LJ.search.all_fetched;
+			var scroll_almost_bottom = LJ.ui.getScrollRatio() > LJ.search.fetch_more_scroll_ratio;
+			var search_panel_active  = $('.app__menu-item.--search').hasClass('--active');
+			var user_not_fetching    = !LJ.search.fetching_users;
+
+			if( data_to_fetch && scroll_almost_bottom && search_panel_active && user_not_fetching ){
+
+				LJ.log('Fetching more users...');
+				LJ.search.fetching_users = true;
 				LJ.search.fetchAndShowMoreUsers();
-			}
+
+			} 
 
 		},
 		fetchMoreUsers: function(){
 			return LJ.promise(function( resolve, reject ){
 
-				var facebook_ids = _.pluck( LJ.search.fetched_users, 'facebook_id' );
+				LJ.search.setFiltersState();
 
-				LJ.api.fetchMoreUsers( facebook_ids )
+				var facebook_ids = _.pluck( LJ.search.fetched_users, 'facebook_id' );
+				var filters      = LJ.search.filter_state;
+
+				LJ.api.fetchMoreUsers( facebook_ids, filters )
 					.then(function( exposed ){
 
 						var new_users = exposed.users;
+
 						LJ.search.fetched_users = LJ.search.fetched_users.concat( new_users );
 						resolve( new_users );
 
@@ -67,8 +86,10 @@
 
 			LJ.search.fetchMoreUsers()
 				.then(function( new_users ){
+					LJ.search.fetching_users = false;
 					return LJ.search.showMoreUsers( new_users );
-				});
+				})
+
 
 
 		},
@@ -138,9 +159,10 @@
 
 			return LJ.ui.render([
 
-				'<div class="search-user" data-facebook-id="'+ i +'">',
+				'<div class="search-user" data-facebook-id="'+ i +'" data-age="' + a + '" data-gender="' + g + '" data-cc="' + c + '">',
 		            '<div class="search-user__pic">',
 		            img_html,
+		               '<div class="search-user__pic-overlay"></div>',
 		               '<div class="search-user__name">',
 		                  '<span class="name">'+ n +'</span><span class="comma">,</span><span class="age">'+ a +'</span>',
 		               '</div>',

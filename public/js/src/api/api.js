@@ -23,6 +23,8 @@
 		delete_my_account_url        : '/me/delete',
 		fetch_more_users_url 		 : '/api/v1/users/more',
 		share_url 					 : '/api/v1/share',
+		distinct_countries_url 		 : '/api/v1/users/countries',
+		event_hosts_ids_url          : '/api/v1/events/event_id/hosts',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -212,10 +214,10 @@
 
 		},
 		// Fetch a random amount of users that is not already fetched (not in facebook_ids array)
-		fetchMoreUsers: function( facebook_ids ){
+		fetchMoreUsers: function( facebook_ids, filters ){
 			return  LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.fetch_more_users_url, { facebook_ids: facebook_ids || [] })
+				LJ.api.post( LJ.api.fetch_more_users_url, { facebook_ids: facebook_ids || [], filters: filters })
 					.then(function( exposed ){
 						if( exposed.users ){
 							return resolve({ users: exposed.users, call_id: exposed.call_id }); 
@@ -435,6 +437,29 @@
 					});
 
 			});
+		},
+		fetchBefores: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				resolve();
+
+			});
+		},
+		fetchDistinctCountries: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.get( LJ.api.distinct_countries_url )
+					.then(function( exposed ){
+						if( exposed.countries ){
+							return resolve( exposed.countries );
+						} else {
+							LJ.wlog('The server didnt respond with the expected countries object');
+						}
+					}, function( err ){
+						return reject( err );
+					});
+
+			})
 		}
 
 	});

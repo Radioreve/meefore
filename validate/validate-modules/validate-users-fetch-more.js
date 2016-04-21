@@ -1,11 +1,19 @@
 
 	var nv = require('node-validator');
+	var st = require( process.cwd() + '/config/settings');
 
+	var checkFilters = nv.isAnyObject()
+
+		.withOptional('min'		  , nv.isNumber({ min: st.app.min_age, max: st.app.max_age }) )
+		.withOptional('min' 	  , nv.isNumber({ min: st.app.min_age, max: st.app.max_age }) )
+		.withOptional('countries' , nv.isArray() )
+		.withOptional('gender'	  , nv.isArray() )
 
 	var checkRequest = nv.isAnyObject()
 
 		.withRequired('facebook_id' , nv.isString())
-		.withOptional('facebook_ids', nv.isArray());
+		.withOptional('facebook_ids', nv.isArray())
+		.withRequired('filters', checkFilters )
 
 	function check( req, res, next ){
 

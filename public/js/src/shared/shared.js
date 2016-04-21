@@ -1,6 +1,8 @@
 
 	window.LJ.shared = _.merge( window.LJ.shared || {}, {
 
+		shared_item_duration: 600,
+
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
 
@@ -26,7 +28,6 @@
 		},	
 		handleShareClicked: function(){
 
-
 			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
 
 			$('.shared').html('');
@@ -34,85 +35,169 @@
 			$loader.addClass('none')
 				   .appendTo('.shared')
 				   .velocity('bounceInQuick', {
-				   	delay: 125,
-				   	duration: 500,
-				   	display: 'block'
-				   });
+				   	delay    : 125,
+				   	duration : 500,
+				   	display  : 'block'
+				  });
 
 			LJ.shared.fetchSharedItems();
 
 		},	
 		fetchSharedItems: function(){
 
+			/*
+				- Fetch user's share_objects, and format it
+				- Fetch the befores and users data to render. Hopefully, from cache.
+				- Determine which template to render (many cases)
+				- Display to the screen
+			*/
+			var shared, facebook_ids, users, befores;
+
+			// Fetch user's share_objects, and format it
 			LJ.api.fetchMeShared()
-				  .then( LJ.shared.handleFetchMeSharedSuccess, LJ.shared.handleFetchMeSharedError );
+				.then(function( expose ){
+					shared = expose.shared.sort(function( s1, s2 ){
+						return moment( s2.shared_at ) - moment( s1.shared_at );
+					});
 
-		},
-		handleFetchMeSharedSuccess: function( expose ){
+				})
+				// Fetch the befores and users data to render
+				.then(function(){
+					var event_ids = _.map( _.filter( shared, function( sh ){
+						return sh.target_type == "before";
+					}), 'target_id' );
+					return LJ.api.fetchBefores( event_ids )
 
-			var shared = expose.shared;
-
-			LJ.shared.setSharedItems( shared );
-
-		},
-		setSharedItems: function( shared ){
-
-			var html = '';
-			shared.sort();
-
-			var shared_by = _.filter( shared, function( sh ){
-				return sh.share_type == "shared_by"; 
-			});
-
-			var shared_profiles = _.filter( shared_by, function( sh ){
-				return sh.target_type == "user";
-			});
-
-			var shared_before = _.filter( shared_by, function( sh ){
-				return sh.target_type == "before";
-			});
-
-			var facebook_ids = _.pluck( shared_profiles, 'target_id' );
-
-			LJ.api.fetchUsers( facebook_ids )
+				})
 				.then(function( res ){
+					befores = _.map( res, 'before' );
 
-					var html = [];
-					if( res.length == 0 ){
+				})
+				.then(function(){
 
-						html.push( LJ.shared.renderShareItem__Empty() );
+					var hosts_facebook_ids = _.map( befores, 'hosts' );
+					var users_facebook_ids = _.map( _.filter( shared, function( sh ){
+						return sh.target_type == "user";
+					}), 'target_id' );
 
-					} else {
-						res.forEach(function( r ){
+					facebook_ids = _.uniq( _.merge( hosts_facebook_ids, users_facebook_ids ) );
+					return;
 
-							var user = r.user;
-							var sh   = _.find( shared_profiles, function( sh ){
-								return sh.target_id == user.facebook_id;
-							});
+				})
+				.then(function(){
+					return LJ.api.fetchUsers( facebook_ids );
 
-							html.push (LJ.shared.renderShareItem__User( sh, user ) );
+				})	
+				.then(function( res ){
+					users = _.map( res, 'user' );
+					return;
 
-						});
-						
-					}
+				})
+				// Determine which template to render (many cases)
+				.then(function(){
+					return LJ.shared.renderSharedItems( shared, users, befores );
 
-					$('.shared')
-						.html( html.join('') )
-						.children()
-						.velocity('fadeIn', {
-							duration: 250,
-							display: 'flex'
-						});
+				})
+				// Display to the screen
+				.then(function( html ){
+					return LJ.shared.displaySharedItems( html );
+
+				})
+				.catch(function( e ){
+					LJ.wlog(e);
 
 				});
 
-		},		
-		handleFetchMeSharedError: function(){
+		},
+		renderSharedItems: function( shared, users, befores ){
 
-			LJ.elog('Error fetching shared :/');
+			var html = [];
+			shared.forEach(function( sho ){
+
+				html.push( LJ.shared.renderSharedItem( sho, {
+						users   : users,
+						befores : befores
+					})
+				);
+
+			});
+
+			if( html.length == 0 ){
+				return [ LJ.shared.renderSharedItem__Empty() ];
+
+			} else {
+				return html;
+
+			}
 
 		},
-		renderShareItem__Empty: function(){
+		renderSharedItem: function( sho, opts ){
+
+			var users   = opts.users;
+			var befores = opts.befores;
+
+			if( sho.target_type == "user" ){
+
+				var target_profile = _.find( users, function( usr ){
+					return usr.facebook_id == sho.target_id;
+				});
+
+				if( sho.share_type == "shared_by" ){
+					return LJ.shared.renderSharedByItem__User( sho, target_profile );
+				}
+
+				if( sho.share_type == "shared_with" ){
+					return LJ.shared.renderSharedWithItem__User( sho, target_profile );
+				}		
+
+			}
+
+			if( sho.target_type == "before" ){
+
+				var before = _.find( befores, function( bfr ){
+					return bfr._id == sho.target_id;
+				});
+
+				var targets_profiles = [];
+				users.forEach(function( user ){
+					if(  before.hosts.indexOf( user.facebook_id ) ){
+						targets_profiles.push( user );
+					}
+				});
+
+				if( sho.share_type == "shared_by" ){
+					return LJ.shared.renderSharedByItem__User( sho, targets_profiles );
+				}	
+
+				if( sho.share_type == "shared_with" ){
+					LJ.shared.renderSharedByItem__User( sho, targets_profiles );
+				}							
+			}
+
+		},
+		displaySharedItems: function( html ){
+
+			$('.shared')
+				.children()
+				.velocity('shradeOut', {
+					duration : LJ.shared.shared_item_duration,
+					display  : 'none',
+					complete : function(){
+						$( html.join('') )
+							.hide()
+							.appendTo('.shared')
+							.velocity('shradeIn', {
+								duration : LJ.shared.shared_item_duration,
+								display  : 'flex',
+								stagger  : (LJ.shared.shared_item_duration / 4)
+							});
+
+					}
+				});
+
+
+		},	
+		renderSharedItem__Empty: function(){
 
 			return LJ.ui.render([
 
@@ -131,18 +216,11 @@
 				].join(''));
 
 		},
-		renderShareItem__User: function( shared_object, target ){
+		renderSharedItem__User: function( sh, target, subtitle ){
 
-			var sh 	   = shared_object;
-			var target = target;
-
-			var friend = _.find( LJ.friends.friends_profiles, function( f ){
-				return f.facebook_id == sh.shared_by;
-			});
-
+			var target 		   = target;
 			var formatted_date = LJ.renderDate( sh.shared_at );
 			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
-
 
 			return LJ.ui.render([
 
@@ -157,8 +235,7 @@
 							'<h2>' + target.name + ', <span class="row-body__age">' + target.age + '</span></h2>',
 						'</div>',
 						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-pricetag"></i></div>',
-							'<h4>' + LJ.text('shared_item_subtitle').replace('%name', friend.name ).replace('%type', LJ.text('w_profile') ).capitalize() + '</h4>',
+							subtitle,
 						'</div>',
 					'</div>',
 				'</div>'
@@ -166,9 +243,67 @@
 				].join(''));
 
 		},
+		renderSharedByItem__User: function( sho, target ){
+
+			var friend = _.find( LJ.friends.friends_profiles, function( f ){
+				return f.facebook_id == sho.shared_by;
+			});
+
+			var subtitle = [
+				'<div class="row-body__icon --round-icon">',
+					'<i class="icon icon-pricetag"></i>',
+				'</div>',
+				'<h4>',
+					LJ.text('shared_by_item_subtitle')
+						.replace('%name', friend.name )
+						.replace('%type', LJ.text('w_profile') )
+						.capitalize(),
+				'</h4>'
+			].join('');
+
+			return LJ.shared.renderSharedItem__User( sho, target, subtitle );
+
+		},
+		renderSharedWithItem__User: function( sho, target ){
+
+			var friends = [];
+			sho.shared_with.forEach(function( friend_id ){
+				friends.push( _.find( LJ.friends.friends_profiles, function( f ){
+					return f.facebook_id == friend_id;
+				}))
+			});
+
+			var names = LJ.renderMultipleNames( _.map( friends, 'name') );
+
+			var subtitle = [
+				'<div class="row-body__icon --round-icon">',
+					'<i class="icon icon-telescope"></i>',
+				'</div>',
+				'<h4>',
+					LJ.text('shared_with_item_subtitle')
+						.replace('%names', names )
+						.replace('%type', LJ.text('w_profile') )
+						.capitalize(),
+				'</h4>'
+			].join('');
+
+			return LJ.shared.renderSharedItem__User( sho, target, subtitle );
+
+
+		},
+		renderSharedByItem__Before: function( sho, targets ){
+
+			
+
+		},
+		renderSharedWithItem__Before: function( sho, targets ){
+
+
+
+		},
 		handleShareProfile: function(){	
 
-			var target_id = $( this ).closest('.search-user').attr('data-facebook-id');
+			var target_id = $( this ).closest('[data-facebook-id]').attr('data-facebook-id');
 
 			LJ.ui.showModal({
 				"title"			: LJ.text('modal_share_title'),

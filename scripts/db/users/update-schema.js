@@ -24,16 +24,17 @@
 				tasks.push(function( done ){
 
 					// Update part
-					user.app_preferences.ux.show_gender = 'yes';
-					user.app_preferences.ux.show_country = 'no';
-					delete user.app_preferences.alerts.message_unread;
-					user.markModified('app_preferences');
-					
-					user.save(function( err ){
-						if( err ) console.log('Error : ' + err );
-						console.log('user updated');
-						done();
-					});
+					if( user.country_code == "en" ){
+
+						user.country_code = "gb";
+						user.markModified('country_code');
+						
+						user.save(function( err ){
+							if( err ) console.log('Error : ' + err );
+							console.log('user updated');
+							done();
+						});
+					}
 
 				});
 			});

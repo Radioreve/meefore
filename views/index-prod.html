@@ -694,11 +694,14 @@
       </div>
 
       <div class="search-filters">
+        <div class="search-filters__close --round-icon">
+          <i class="icon icon-cancel"></i>
+        </div>
         <div class="search-filters-section --gender">
           <div class="search-filters-section__title">
             <h2 data-lid="search_filters_gender_title">Titre de la section 1</h2>
           </div>
-          <div class="search-filters-row">
+          <div class="search-filters-row js-filters-male">
             <div class="search-filters-gender">
               <div class="search-filters-gender__icon --round-icon">
                 <i class="icon icon-male"></i>
@@ -707,12 +710,12 @@
                 <label data-lid="search_filters_gender_label_male">Des hommes</label>
               </div>
             </div>
-            <div class="toggle">
+            <div class="toggle --active">
               <div class="toggle__background"></div>
               <div class="toggle__button"></div>
             </div>
           </div>
-          <div class="search-filters-row">
+          <div class="search-filters-row js-filters-female">
             <div class="search-filters-gender">
               <div class="search-filters-gender__icon --round-icon">
                 <i class="icon icon-female"></i>
@@ -721,7 +724,7 @@
                 <label data-lid="search_filters_gender_label_female">Des femmes</label>
               </div>
             </div>
-            <div class="toggle">
+            <div class="toggle --active">
               <div class="toggle__background"></div>
               <div class="toggle__button"></div>
             </div>
@@ -747,39 +750,8 @@
           <div class="search-filters-section__title">
             <h2 data-lid="search_filters_countries_title">Titre de la section 3</h2>
           </div>
-          <div class="search-filters-countries">
-            <div class="search-filters-row">
-              <div class="search-filters-country__flag --round-icon">
-                <i class="flag-icon flag-icon-fr"></i>
-              </div>
-              <div class="search-filters-country__label">
-                <label>France</label>
-              </div>
-              <div class="search-filters-country__users-count">
-                <div>(<span>88</span> match)</div>
-              </div>
-              <div class="toggle">
-                <div class="toggle__background"></div>
-                <div class="toggle__button"></div>
-              </div>
-            </div>
-          </div>
-          <div class="search-filters-countries">
-            <div class="search-filters-row">
-              <div class="search-filters-country__flag --round-icon">
-                <i class="flag-icon flag-icon-us"></i>
-              </div>
-              <div class="search-filters-country__label">
-                <label>Etats-Unis</label>
-              </div>
-              <div class="search-filters-country__users-count">
-                <div>(<span>75</span> match)</div>
-              </div>
-              <div class="toggle">
-                <div class="toggle__background"></div>
-                <div class="toggle__button"></div>
-              </div>
-            </div>
+          <div class="search-filters-body">
+            <div class="js-filters-countries"></div>
           </div>
           <div class="search-filters-section__explanations">
             <h5 data-lid="search_filters_countries_explanations">Explications supplémentaires...</h5>

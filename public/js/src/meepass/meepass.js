@@ -52,6 +52,19 @@
 			}
 
 		},
+		renderMeepassRibbon: function(){
+
+			var n_meepass = LJ.user.meepass.length;
+
+			return LJ.ui.render([
+
+				'<div class="meepass-ribbon">',
+					'<h2 data-lid="meepass_ribbon"></h2>',
+				'</div>'
+
+				].join('')).replace('%n', n_meepass );
+
+		},
 		sendMeepass: function(){
 			
 		},

@@ -38,15 +38,15 @@
     font-size: 16px;
     border-radius: 40px;
     padding: 0 30px;
+    font-weight: 600;
 }
 
 .toast--info {
-    color: #B5FFA4;
-    font-weight: 400;
+    color: #FFFFFF;
 }
 
 .toast--error {
-    background: #BD0B2A;
+    background: #B10926;
 }
 
 .toast--success {
@@ -346,6 +346,7 @@
     z-index: 100;
     border-left: 2px solid #454545;
     height: 500px;
+    padding: 0 10px;
 }
 
 .slide.--facebook {
@@ -383,7 +384,7 @@
 }
 
 .slide__loader {
-    width: 80px;
+    width: 40px;
     margin: auto;
 }
 .slide-footer {

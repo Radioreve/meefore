@@ -10,6 +10,7 @@
 
 			LJ.ui.$body.on('click', '.user-profile .user-pics__navigate', LJ.profile_user.handlePictureNavigation );
 			LJ.ui.$body.on('click', '.thumbnail__picture', LJ.profile_user.showMyUserProfile );
+			LJ.ui.$body.on('click', '.user-actions__share', LJ.shared.handleShareProfile );
 
 		},
 		handlePictureNavigation: function(){
@@ -134,7 +135,7 @@
 			pictures_html = pictures_html.join('');
 
 			return LJ.ui.render([
-				'<div class="user-profile" data-fbid="' + user.facebook_id + '">',
+				'<div class="user-profile" data-facebook-id="' + user.facebook_id + '">',
 					'<div class="user-pics">',
 						'<div class="user-pics__navigate --left --round-icon">',
 							'<i class="icon icon-arrow-left"></i>',

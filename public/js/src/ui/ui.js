@@ -70,7 +70,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		    d = $(document).height(),
 		    c = $(window).height();
 
-		return scrollPercent = (s / (d-c)) * 100;
+		return scrollPercent = (s / (d-c));
 
 	},
 	showCurtain: function( o ){

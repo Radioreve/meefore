@@ -7,7 +7,7 @@
 	var settings   = require('../config/settings');
 	var eventUtils = require('../pushevents/eventUtils');
 	var mailer     = require('../services/mailer');
-
+	var moment	   = require('moment');
 
 
 	var handleErr = function( req, res, namespace, err ){
@@ -338,23 +338,84 @@
 
 	var fetchMoreUsers = function( req, res, next ){
 
-		var err_ns       = "fetching_more_users";
-		var facebook_ids = req.sent.facebook_ids;
+		var err_ns        = "fetching_more_users";
+
+		var facebook_ids  = req.sent.facebook_ids;
+		var min 		  = req.sent.filters.age[0];
+		var max 		  = req.sent.filters.age[1];
+		var gender 		  = req.sent.filters.gender;
+		var country_codes = req.sent.filters.countries;
+
+		var query = {};
+
+		if( facebook_ids && facebook_ids.length > 0 ){
+			query.facebook_id = { '$nin': facebook_ids };
+		}
+
+		if( min > settings.app.min_age ){
+			query.age = _.extend( query.age || {}, { '$gte': min });
+		}
+		if( max < settings.app.max_age ){
+			query.age = _.extend( query.age || {}, { '$lte': max });
+		}
+
+		// Either solely male or female. If no preference or both, dont extend the query!
+		if( gender && gender.length == 1 ){
+			query.gender = { '$in': gender }; 
+		}
+
+		if( country_codes && country_codes.length > 0 ){
+			query.country_code = { '$in': country_codes };
+		}
+
+		console.log('Final query is : ' + JSON.stringify( query, null, 4 ));
 
 		User
-			.find({
-				facebook_id: { $nin: facebook_ids }
-			})
+			.find( query )
 			.limit( 100 )
+			.select( select )
 			.exec(function( err, users ){
 
 				if( err ) return handleErr( req, res, ns, err );
 
 				var random_users = _.chunk( _.shuffle( users ), 12 )[0];
-				req.sent.expose.users = random_users;
+				req.sent.expose.users = random_users || [];
 				next();
 
 			});
+
+	};
+
+
+	var distinct_countries = [];
+	var last_fetch = new moment();
+
+	var fetchDistinctCountries = function( req, res, next ){
+
+		var err_ns = "fetching_distinct_countries";
+
+		if( (new moment()) - last_fetch > 5000 ) {
+
+			last_fetch = new moment();
+
+			User
+				.find()
+				.distinct('country_code')
+				.exec(function( err, res ){
+
+					if( err ) return handleErr( req, res, ns, err );
+
+					req.sent.expose.countries = res;
+					distinct_countries = res;
+					next();
+
+				});
+
+		} else {
+			req.sent.expose.countries = distinct_countries;
+			req.sent.expose.cached    = true;
+			next();
+		}
 
 	};
 
@@ -368,5 +429,6 @@
 		fetchUsersAll 			: fetchUsersAll,
 		fetchUserEvents 		: fetchUserEvents,
 		getMailchimpStatus 		: getMailchimpStatus,
-		fetchMoreUsers 			: fetchMoreUsers
+		fetchMoreUsers 			: fetchMoreUsers,
+		fetchDistinctCountries  : fetchDistinctCountries
 	};

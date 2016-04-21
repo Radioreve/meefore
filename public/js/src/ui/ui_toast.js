@@ -30,13 +30,13 @@
 						.find('.toast__msg').text( msg );
 
 				$toast.velocity('slideDownIn', {
-					duration: 600,
-					display: 'flex',
-					complete: function(){
+					duration : 600,
+					display  : 'flex',
+					complete : function(){
 						
 						$toast.velocity('slideUpOut', {
 							duration: 300,
-							delay: show_duration || 2000,
+							delay: show_duration || 3000,
 							complete: function(){
 								$(this).remove();
 								if( LJ.ui.msg_queue.length != 0 )

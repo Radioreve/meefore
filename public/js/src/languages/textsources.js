@@ -1231,9 +1231,13 @@
 			"fr": "Envoyés",
 			"us": "Sent"
 		},
-		shared_item_subtitle: {
+		shared_by_item_subtitle: {
 			"fr": "%type partagé par %name",
 			"us": "%type shared by %name"
+		},
+		shared_with_item_subtitle: {
+			"fr": "%type partagé avec %names",
+			"us": "%type shared with %names"
 		},
 		friends_title_invite: {
 			"fr": "Invitez plus d'amis",
@@ -1254,6 +1258,10 @@
 		w_profile: {
 			"fr": "profil",
 			"us": "profile"
+		},
+		w_and: {
+			"fr": "et",
+			"us": "and"
 		},
 		settings_ux_unread_messages_label: {
 			"fr": "Signaler messages lus",
@@ -1454,8 +1462,8 @@
 			"us": "Cancel"
 		},
 		"search_filters_gender_title": {
-			"fr": "Montrez-moi :",
-			"us": "Show me : "
+			"fr": "Montrez-moi seulement :",
+			"us": "Show me only : "
 		},
 		"search_filters_gender_explanations": {
 			"fr": "Sélectionner le sexe des personnes que vous recherchez.",
@@ -1512,6 +1520,20 @@
 		to_profile_shared_success: {
 			"fr": "Le profil a bien été partagé",
 			"us": "The profile has been shared"
+		},
+		meepass_ribbon2: {
+			"fr": "Il vous reste <span class='n_meepass'>%n</span> meepass",
+			"us": "You have <span class='n_meepass'>%n</span> meepass left"
+		},
+		meepass_ribbon: {
+			fr: function(){
+				var n_meepass = LJ.user.meepass.length;
+				return "Il vous reste <span class='n_meepass'>" + n_meepass + "</span> meepass";
+			},
+			us: function(){
+				var n_meepass = LJ.user.meepass.length;
+				return "You have <span class='n_meepass'>" + n_meepass + "</span> meepass left";
+			}
 		}
 
 

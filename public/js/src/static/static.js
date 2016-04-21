@@ -20,8 +20,8 @@
 			},
 			{
 				'access_name': 'slide_loader',
-				'image_id'   : 'app_loader_royal_blue',
-				'param'      : { 'class': 'slide__loader', 'width': 130  }	
+				'image_id'   : 'circular_loader_royal_blue',
+				'param'      : { 'class': 'slide__loader', 'width': 100  }	
 			},
 			{
 				'access_name': 'search_loader',

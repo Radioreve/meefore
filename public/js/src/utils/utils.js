@@ -141,6 +141,20 @@ window.LJ = _.merge( window.LJ || {}, {
     renderDate: function( date ){
         return moment( date ).format('hh:mm')
     },
+    renderMultipleNames: function( names ){
+        names = Array.isArray( names ) ? names : [names];
+
+        if( names.length == 1 ){
+            return names[0];
+        } 
+
+        if( names.length == 2 ){
+            return [ names[0], names[1] ].join(' ' + LJ.text('w_and') + ' ');
+        }
+
+        return [ names[0], LJ.renderMultipleNames( names.slice(1) ) ].join(', ');
+
+    },
     testTemplate: function( tplName, param, wrapper ){
 
         var html = LJ.fn[tplName]( param );

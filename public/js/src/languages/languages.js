@@ -95,6 +95,10 @@
 
 				var translated_text = LJ.text_source[ lid ][ app_language ];
 
+				if( typeof translated_text == "function" ){
+					translated_text = translated_text();
+				}
+
 				if( /placeholder/i.test( lid ) ){
 					$el.attr('placeholder', translated_text );
 					

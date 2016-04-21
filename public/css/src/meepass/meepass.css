@@ -28,3 +28,28 @@
 	background: #de3653
 }
 
+
+.meepass-ribbon {
+	position: fixed;
+	left: 50%;
+	transform: translate(-50%,0)!important;
+	width: 300px;
+	height: 34px;
+	top: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/* background: rgb(26, 82, 177); */
+	color: white;
+	z-index: 1000;
+	font-size: 16px;
+	font-weight: bold;
+	border-radius: 100px;
+	margin: 0 auto;
+}
+
+.meepass-ribbon span {font-family: 'Open sans';}
+
+.meepass-ribbon h2 {
+
+}
