@@ -1,6 +1,6 @@
 
 
-.be-browser {position: absolute;top: 0px;width: 100%;background: rgb(255, 255, 255);z-index: 1;height: 94px;display: none;flex-flow: column nowrap;justify-content: center;align-items: center;}
+.be-browser {position: fixed;top: 0px;width: 100%;background: rgb(255, 255, 255);z-index: 1;height: 94px;display: none;flex-flow: column nowrap;justify-content: center;align-items: center;}
 .be-browser .jspPane {
     flex-wrap: nowrap;
 }

@@ -33,8 +33,7 @@ button {
     cursor: pointer;
     outline: none;
     margin: auto;
-    font-family: 'Alegreya Sans';
-    border: none;
+    font-family: 'Open sans';
 }
 
 button:hover {

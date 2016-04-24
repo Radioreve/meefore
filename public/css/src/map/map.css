@@ -30,6 +30,7 @@
 	right: 20px;
 }
 .map__icon.--create-before {
+	position: fixed;
 	background: #1B69EC;
 	color: white;
 	height: 50px;

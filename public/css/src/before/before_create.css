@@ -13,7 +13,11 @@
     flex-flow: column nowrap;
 }
 .be-create__close {
-    position: absolute;top: 12px;right: 10px;cursor: pointer;color: #ccc;
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    cursor: pointer;
+    color: #ccc;
 }   
 .be-create-row  {
     margin: 10px 0px;

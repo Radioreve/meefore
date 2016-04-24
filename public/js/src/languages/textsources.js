@@ -12,6 +12,22 @@
 
 	LJ.text_source = _.merge( LJ.text_source || {}, {
 
+		pikaday: {
+			"us": {
+                previousMonth : 'Previous Month',
+                nextMonth     : 'Next Month',
+                months        : ['January','February','March','April','May','June','July','August','September','October','November','December'],
+                weekdays      : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+                weekdaysShort : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+            },
+            "fr": {
+            	previousMonth : 'Mois Précédant',
+                nextMonth     : 'Mois Suivant',
+                months        : ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+                weekdays      : ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'],
+                weekdaysShort : ['Dim','Lun','Ma','Me','Jeu','Ven','Sam']
+            }
+		},
 		day: {
 			"fr": [ "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi" ],
 			"us": [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ]

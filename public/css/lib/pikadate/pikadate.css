@@ -8,7 +8,7 @@
 
 .pika-single {
    left: 50%;
-   transform: translate(-50%, 0);
+   /* transform: translate(-50%, 0); */
    top: 100px;
    z-index: 9999999;
    display: block;
@@ -17,8 +17,8 @@
    background: #fff;
    border: 1px solid #ccc;
    border-bottom-color: #bbb;
-   font-family: 'Karla';
-   padding: 12px;
+   font-family: 'Alegreya sans';
+   padding: 16px;
 }
 
 /*
@@ -35,9 +35,13 @@ http://nicolasgallagher.com/micro-clearfix-hack/
    clear: both;
 }
 
-.pika-single {*zoom:1;
-   top: 10px!important;
-   left: 285px!important;
+.pika-single {*
+   zoom:1;
+   top: 378px!important;
+   right: 18px!important;
+   width: 328px;
+   left: auto!important;
+   position: fixed!important;
 }
 
 .pika-single.is-hidden {
@@ -51,13 +55,14 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 
 .pika-lendar {
    float: left;
-   width: 240px;
+   width: 310px;
    margin: 8px;
 }
 
 .pika-title {
    position: relative;
    text-align: center;
+   font-family: 'Open sans';
 }
 
 .pika-label {
@@ -149,15 +154,15 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 .pika-table th,
 .pika-table td {
     width: 14.285714285714286%;
-    padding: 0;
 }
 
 .pika-table th {
-    color: #999;
+    color: rgba(27, 105, 236, 0.54);
     font-size: 12px;
     line-height: 25px;
     font-weight: bold;
     text-align: center;
+    font-family: 'Open sans';
 }
 
 .pika-button {
@@ -176,6 +181,7 @@ http://nicolasgallagher.com/micro-clearfix-hack/
     text-align: right;
     text-align: center;
     background: #FBFBFB;
+    /* background: white; */
 }
 
 .pika-week {
@@ -186,7 +192,7 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 .is-today .pika-button {
     color: #fcfcfc;
     font-weight: bold;
-    background: #e94f6a!important;
+    background: rgb(172, 203, 255)!important;
     border-radius: 3px;
 }
 
@@ -225,7 +231,7 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 
 .pika-button:hover {
     color: #fff;
-    background: #CCCCCC;
+    background: #1B69EC!important;
     box-shadow: none;
     border-radius: 3px;
 }

@@ -18,7 +18,8 @@
 		},
 		handleDomEvents: function(){
 
-
+			LJ.ui.$body.on('click', '.map__icon.--create-before', LJ.before.showCreateBefore );
+			LJ.ui.$body.on('click', '.be-create__close', LJ.before.hideCreateBefore );
 
 		},
 		sortIsoDates: function( iso_dates ){
