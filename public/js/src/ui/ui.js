@@ -328,7 +328,30 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		});
 
-	}
+	},
+	shradeAndStagger: function( $wrap, options ){
+
+			var d = options.duration;
+
+			var fit = options.fit || true;
+			if( fit ){
+				var height = $(window).height() - LJ.ui.slide_top;
+				$wrap.css({ height: height });
+			}
+
+			[ $wrap, $wrap.children() ].forEach(function( $el, i ){
+				$el.hide().velocity('shradeIn', {
+					duration: ( d*i*1.1 ),
+					display : 'flex',
+					delay   : ( d*0.6*i )
+				})
+			});
+
+			return LJ.promise(function( resolve, reject ){
+				return LJ.delay( d*0.6 + d*1.1 );
+			});
+
+		}
 
 
 });

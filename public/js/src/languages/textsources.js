@@ -1530,6 +1530,46 @@
 		be_close_to: {
 			"fr": "A proximité de",
 			"us": "Close to"
+		},
+		"be_create_title": {
+			"fr": "Créer un before",
+			"us": "Create a pregame"
+		},
+		be_create_subtitle_hosts: {
+			"fr": "Membres du groupe",
+			"us": "Hosts"
+		},
+		be_create_hosts_explanations: {
+			"fr": "Sélectionnez parmis vos amis (%min minimum, %max maximum)",
+			"us": "Select among your friends (%min minimum, %max maximum)"
+		},
+		be_create_subtitle_before: {
+			"fr": "Le before",
+			"us": "The pregame"
+		},
+		be_create_hosts_placeholder: {
+			"fr": "Coorganisateurs",
+			"us": "Other hosts"
+		},
+		be_create_date_placeholder: {
+			"fr": "Date",
+			"us": "Date"
+		},
+		be_create_hour_placeholder: {
+			"fr": "Heure",
+			"us": "Hour"
+		},
+		be_create_location_placeholder: {
+			"fr": "Lieu",
+			"us": "Address"
+		},
+		be_create_before_explanations: {
+			"fr": "Où et quand vous rejoignez-vous ?",
+			"us": "Where and when will you guys meet ?"
+		},
+		be_create_button: {
+			"fr": "Ajouter à la map !",
+			"us": "Add to the map !"
 		}
 
 
