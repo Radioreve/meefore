@@ -14,7 +14,7 @@ var settings = {
 		min_hosts: 2,
 		max_hosts: 5,
 		min_age  : min_age,
-		max_age  : 99,
+		max_age  : 50,
 		max_pic  : 5
 	},
 	default_profile_values: {

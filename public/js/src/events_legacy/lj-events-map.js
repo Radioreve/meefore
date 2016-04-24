@@ -724,8 +724,6 @@
                 var distance = google.maps.geometry.spherical.computeDistanceBetween( other_latlng, subject_latlng );
 
                 if( distance < 100 ){
-                    LJ.fn.log('Offseting required for address: ' + address.place_name );
-
                     effective_lng = google.maps.geometry.spherical.computeOffset( subject_latlng, 100, LJ.fn.randomInt(0, 180) ).lng();
                     effective_lat = google.maps.geometry.spherical.computeOffset( subject_latlng, 100, LJ.fn.randomInt(0, 180) ).lat();
                 }

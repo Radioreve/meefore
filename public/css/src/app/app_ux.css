@@ -335,7 +335,7 @@
 
 /* Slide */
 .slide {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgb(255, 255, 255);
     color: #191919;
     width: 380px;
     display: flex;
@@ -344,9 +344,10 @@
     right: 0;
     top: 59px;
     z-index: 100;
-    border-left: 2px solid #454545;
+    /* border-left: 2px solid #454545; */
     height: 500px;
     padding: 0 10px;
+    box-shadow: 0 0 14px #949494;
 }
 
 .slide.--facebook {
@@ -376,7 +377,7 @@
     max-height: 300px;
     margin: 20px 0 0px;
     padding: 10px 16px 0;
-    display: flex;
+    display: flex!important;
     flex-flow: row wrap;
     overflow: hidden;
     align-items: flex-start;

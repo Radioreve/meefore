@@ -21,7 +21,7 @@
   <meta name="description" content="L'application Meefore permet de faire des rencontres en participant à des before proches de chez soi">
 
   <link rel="stylesheet" href="/fonts/creamy/creamy.css">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800,300' rel='stylesheet' type='text/css'>
   <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans:400,100,300,700,800" rel="stylesheet" type="text/css">
   
   <!-- Librairies -->
@@ -186,7 +186,7 @@
         <div class="app-header__title" data-link="map" data-lid="nav_map_title"></div>
         <div class="app-header__title" data-link="search" data-lid="nav_search_title"></div>
       </div>
-      <div class="app-header__logo">
+      <div class="app-header__logo nonei">
         <img src="/img/app/logo_nobg.png" width="40"/>
       </div>
       <nav class="app-nav">
@@ -213,7 +213,7 @@
           </li>
         </ul>
       </nav>
-      <div class="app-lang">
+      <div class="app-lang nonei">
         <div class="app-lang__icon">
           <i class="icon icon-planet"></i>
         </div>
@@ -670,6 +670,9 @@
             </div>
             <div class="settings-input__explanation" data-lid="settings_ux_auto_login_explanation"></div>
           </div>
+          <div class="settings-item">
+            <button class="settings__button --changelang js-changelang" data-lid="settings_ux_changelang_button"></button>
+          </div>
         </div>
       </section>
       <!-- Settings end -->
@@ -682,6 +685,82 @@
 
      <!-- Map start -->
     <section class="app-section --map" data-link="map">
+      <div class="js-map-wrap">
+        <!-- Holds the Google map -->
+      </div>
+      <div class="be-rows">
+        <div class="be-header">
+          <div class="be-dates">
+            <div class="be-dates__date" data-date=''>Lundi 25/04</div>
+            <div class="be-dates__date --active" data-date=''>Mardi 26/04</div>
+            <div class="be-dates__date" data-date=''>Mercredi 27/04</div>
+          </div>
+          <div class="be-dates__address">
+            <i class="icon icon-location"></i>
+            <span>A proximité du 37 rue du Four, 75006 Paris </span>
+          </div>
+        </div>
+        <div class="be-row">
+          <div class="be-hour">20h30</div>
+          <div class="be-users">
+            <div class="be__user">
+              <img src="/img/bots/bot5f.jpg" alt="">
+              <div class="be__user-country">
+                <i class="flag-icon flag-icon-fr"></i>
+              </div>
+              <div class="be__user-gender user-gender --female"></div>
+            </div>
+            <div class="be__user">
+              <img src="/img/bots/bot3f.jpg" alt="">
+              <div class="be__user-country">
+                <i class="flag-icon flag-icon-de"></i>
+              </div>
+              <div class="be__user-gender user-gender --male"></div>
+            </div>
+          </div>
+        </div>
+        <div class="be-row">
+          <div class="be-hour">21h30</div>
+          <div class="be-users">
+            <div class="be__user">
+              <img src="/img/bots/bot17f.jpg" alt="">
+              <div class="be__user-country">
+                <i class="flag-icon flag-icon-fr"></i>
+              </div>
+              <div class="be__user-gender user-gender --female"></div>
+            </div>
+            <div class="be__user">
+              <img src="/img/bots/bot19f.jpg" alt="">
+              <div class="be__user-country">
+                <i class="flag-icon flag-icon-de"></i>
+              </div>
+              <div class="be__user-gender user-gender --female"></div>
+            </div>
+          </div>
+        </div>
+        <div class="be-row">
+          <div class="be-hour">22h30</div>
+          <div class="be-users">
+            <div class="be__user">
+              <img src="/img/bots/bot22f.jpg" alt="">
+              <div class="be__user-country">
+                <i class="flag-icon flag-icon-bz"></i>
+              </div>
+              <div class="be__user-gender user-gender --female"></div>
+            </div>
+            <div class="be__user">
+              <img src="/img/bots/bot25f.jpg" alt="">
+              <div class="be__user-country">
+                <i class="flag-icon flag-icon-de"></i>
+              </div>
+              <div class="be__user-gender user-gender --female"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="be-chats">
+        
+      </div>
         
     </section>
      <!-- Map end -->
@@ -710,7 +789,7 @@
                 <label data-lid="search_filters_gender_label_male">Des hommes</label>
               </div>
             </div>
-            <div class="toggle --active">
+            <div class="toggle">
               <div class="toggle__background"></div>
               <div class="toggle__button"></div>
             </div>
@@ -724,7 +803,7 @@
                 <label data-lid="search_filters_gender_label_female">Des femmes</label>
               </div>
             </div>
-            <div class="toggle --active">
+            <div class="toggle">
               <div class="toggle__background"></div>
               <div class="toggle__button"></div>
             </div>
@@ -760,6 +839,7 @@
       </div>
 
       <div class="search-users">
+
         <!-- Dynamically injected -->
       </div>
 
@@ -771,10 +851,14 @@
 
 
   <script src="//js.pusher.com/3.0/pusher.min.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6QesJukMVpHVS6l8yvSt_pmCDCeYiYMI&libraries=places,geometry" type="text/javascript"></script>
 
   <script src="/dist/mee.js"></script>
+
+  
+  
+
    
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6QesJukMVpHVS6l8yvSt_pmCDCeYiYMI&libraries=places,geometry&callback=LJ.map.sayHello" type="text/javascript"></script>
   
   <script id="app_ids">  
       //

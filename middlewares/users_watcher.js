@@ -1,10 +1,24 @@
 
-	var _      = require('lodash');
-	var rd     = require('../services//rd');
-	var User   = require('../models/UserModel');
-	var config = require('../config/config');
+	var _     	   = require('lodash');
+	var rd     	   = require('../services//rd');
+	var User   	   = require('../models/UserModel');
+	var config 	   = require('../config/config');
+	var eventUtils = require('../pushevents/eventUtils');
 
-	var updateConnectedUsers = function( req, res ){
+
+	var handleErr = function( req, res, namespace, err ){
+
+		var params = {
+			error   : err,
+			call_id : req.sent.call_id
+		};
+
+		eventUtils.raiseApiError( req, res, namespace, params );
+
+	};
+
+
+	var updateConnectedUsers = function( req, res, next ){
 
 		//expected key : e0e801db688ab26d8581
 		console.log('Updating connected users...');
@@ -99,8 +113,39 @@
 
 	};
 
+
+	var cached_user_count;
+	var last_request_time = 0;
+	var minute = 1000 * 60;
+
+	var fetchUserCount = function( req, res, next ){
+
+		var ns = 'fetching_users_count';
+
+		var request_time = (new Date());
+		if( (new Date() - last_request_time ) > 15 * minute ){
+
+			User.count( {}, function( err, n ){
+
+				if( err ) return handleErr( req, res, ns, err );
+
+				last_request_time = request_time;
+				cached_user_count = n;
+				req.sent.expose.users_count = n;
+				next();
+
+			});
+		} else {
+			req.sent.expose.cache = true;
+			req.sent.expose.users_count = cached_user_count;
+			next();
+		}
+
+	};
+
 	module.exports = {
 		updateConnectedUsers : updateConnectedUsers,
-		isUserOnline         : isUserOnline
+		isUserOnline         : isUserOnline,
+		fetchUserCount       : fetchUserCount
 	};
 

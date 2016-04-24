@@ -35,7 +35,7 @@
 		mdw.chat_watcher      = require( mdwDir + '/chat_watcher');
 		mdw.notifier          = require( mdwDir + '/notifier');
 		mdw.meepass           = require( mdwDir + '/meepass');
-		mdw.connecter 		  = require( mdwDir + '/connecter');
+		mdw.users_watcher 	  = require( mdwDir + '/users_watcher');
 
 		mdw.validate          = require('../validate/validate');
 
@@ -262,11 +262,13 @@
 
 	     app.post('/api/v1/users/more',
 	    	mdw.validate('users_fetch_more'),
+	     	mdw.users_watcher.fetchUserCount,
 	    	api.users.fetchMoreUsers
 	    );
 
 	    app.post('/tapi/v1/users/more',
 	    	mdw.validate('users_fetch_more'),
+	    	mdw.users_watcher.fetchUserCount,
 	    	api.users.fetchMoreUsers
 	    );
 
@@ -543,7 +545,7 @@
 	   	// [ @WebHooks ] WebHook from Pusher to monitor in realtime online/offline users
 	   	// and save disconnected_at property which is used by front end notifications module
 	   	app.post('/webhooks/pusher/connection-event',
-	   		mdw.connecter.updateConnectedUsers );
+	   		mdw.users_watcher.updateConnectedUsers );
 
 
 

@@ -1,0 +1,111 @@
+
+
+.be-browser {position: absolute;top: 0px;width: 100%;background: rgb(255, 255, 255);z-index: 1;height: 94px;display: none;flex-flow: column nowrap;justify-content: center;align-items: center;}
+.be-browser .jspPane {
+    flex-wrap: nowrap;
+}
+.be-dates {display: flex;height: 50px;color: #919191;width: 666px;overflow: hidden;overflow-x: visible;outline: none;}
+
+.be-address {
+    width: 100%;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #eee;
+    height: 26px;
+    padding-top: 4px;
+    /* color: #919191; */
+    font-family: 'Open sans';
+}
+.be-address i {}
+.be-address span {
+    margin: 0 2px;
+} 
+.be-dates__date  {
+    margin: 0 20px;
+    /* color: #ccc; */
+    cursor: pointer;
+    font-size: 14px;
+    align-items: center;
+    display: inline-flex;
+}
+.be-dates__date span {
+    font-family: 'Open sans';
+    margin-left: 4px;
+    font-size: 12px;
+}
+.be-dates__date.--active {
+    font-weight: 800;
+    position: relative;
+    color: black;
+    font-size: 22px;
+}
+.be-dates__date.--active span {
+    font-weight: bolder;
+    font-size: 16px;
+}
+
+.be-rows {
+    position: fixed;
+    left: 0;
+    top: 58px;
+    width: 440px;
+    background: white;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    padding: 0 0px;
+    border-top: 1px solid #eee;
+    box-shadow: 0 0 14px #949494;
+    display: none;
+}
+.be-header {box-shadow: 0px 21px 12px -25px black;width: 100%;padding: 0 20px;}
+
+.be-row {
+    display: flex;
+    padding: 10px 30px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.be-hour {
+    width: 70px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Open sans';
+    font-size: 16px;
+}
+.be-users {
+    display: flex;
+}
+.be__user {
+    position: relative;
+    margin: 0 6px;
+}
+.be__user-country {
+    position: absolute;
+    z-index: 1;
+    bottom: 2px;
+    right: -4px;
+    border-radius: 10px 0 10px 0;
+    border: 4px solid white;
+    font-size: 12px;
+}
+.be__user-country i {}
+.be__user-gender {
+    position: absolute;
+    bottom: 4px;
+    width: 10px;
+    height: 10px;
+    border: 2px solid white;
+}
+.be__user img {
+    width: 60px;
+    height: 60px;
+    border-radius: 100px;
+}

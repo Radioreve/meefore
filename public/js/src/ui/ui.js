@@ -287,7 +287,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
         	.then( LJ.ui.shadeModal )
         	.then(function(){
 
-	        	LJ.fn.log('Launching reconnection process', 1);
+	        	LJ.log('Launching reconnection process', 1);
             	var preferences = {
                     facebook_id    : LJ.user.facebook_id,
                     long_lived_tk  : LJ.user.facebook_access_token.long_lived,

@@ -23,11 +23,15 @@
     flex: 1 0 auto;
 }
 .search-filters-section.--countries {}
+
 .search-filters-section__title {
     font-size: 16px;
     font-weight: 700;
     padding-left: 20px;
-    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+.search-filters-section.--countries .search-filters-section__title {
+    border-bottom: 1px solid #eee;
 }
 .search-filters-section__title h2 {}
 .search-filters-section__title span {font-family: 'Open sans';font-size: 14px;font-weight: 900;}

@@ -3,13 +3,13 @@
 	window.LJ.onboarding = _.merge( window.LJ.onboarding || {}, {
 
         init: function(){
-            return LJ.promise(function( resolve, reject ){
                 
                 if( LJ.user.status == "new" ){
                     //LJ.onboarding.startTour();
                 }
 
-            });
+                return
+
 
         },
         startTour: function(){

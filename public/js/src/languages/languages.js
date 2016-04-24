@@ -14,7 +14,7 @@
 		},
 		handleDomEvents: function(){
 
-			$('.app-lang').click( LJ.lang.changeAppLang );
+			$('.js-changelang').click( LJ.lang.changeAppLang );
 
 		},
 		getAppLang: function(){

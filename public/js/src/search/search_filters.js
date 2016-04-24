@@ -37,7 +37,7 @@
 			});
 
 			LJ.search.filters_agerange.on('update', LJ.search.refreshFiltersSliderValues );
-
+			LJ.search.filters_agerange.on('end', LJ.search.refetchAndShowMoreUsers );
 
 		},
 		resetFiltersState: function(){
@@ -124,28 +124,48 @@
 			$('.js-filters-countries').replaceWith( countries_html );
 
 		},
+		shradeAndStagger: function( $wrap, options ){
+
+			var d = options.duration;
+
+			var fit = options.fit || true;
+			if( fit ){
+				var height = $(window).height() - LJ.ui.slide_top;
+				$wrap.css({ height: height });
+			}
+
+			[ $wrap, $wrap.children() ].forEach(function( $el, i ){
+				$el.hide().velocity('shradeIn', {
+					duration: ( d*i*1.1 ),
+					display : 'flex',
+					delay   : ( d*0.6*i )
+				})
+			});
+
+			return LJ.promise(function( resolve, reject ){
+				return LJ.delay( d*0.6 + d*1.1 );
+			});
+
+		},
 		showFilters: function(){
 			
 			var $fi    = $('.search-filters__icon');
 			var $f     = $('.search-filters');
-			var $fc    = $f.children();
 			var d      = LJ.search.filters_duration;
-			var height = $(window).height() - LJ.ui.slide_top;
 
 			$fi.velocity('shradeOut', {
 				duration : d,
 				display  : 'none'
 			});
 
-			$f.css({ height: height });
-
-			[ $f, $fc ].forEach(function( $el, i ){
-				$el.hide().velocity('shradeIn', {
-					duration: ( d + d*i*0.2 ),
-					display : 'flex',
-					delay   : ( d + d*0.5*i)
+			LJ.delay( d )
+				.then(function(){
+					LJ.search.shradeAndStagger( $f, {
+						duration: d
+					});
 				})
-			});
+
+			
 
 		},
 		hideFilters: function(){

@@ -22,6 +22,7 @@
 				LJ.settings.activateSubmenuSection('account');
 				LJ.settings.handleDomEvents();
 				LJ.settings.setMyPreferences();
+				LJ.settings.applyUxPreferences();
 
 				resolve();
 
@@ -46,6 +47,21 @@
 
 			$('#settings__contact-email').val( LJ.user.contact_email );
 			$('#settings__invite-code').val( LJ.user.invite_code );
+
+		},
+		applyUxPreferences: function(){
+
+			if( LJ.user.app_preferences.ux.show_country == "yes" ){
+				$('.js-user-country').show();
+			} else {
+				$('.js-user-country').hide();
+			}
+
+			if( LJ.user.app_preferences.ux.show_gender == "yes" ){
+				$('.js-user-gender').show();
+			} else {
+				$('.js-user-gender').hide();
+			}
 
 		},
 		handleDomEvents: function(){
@@ -303,6 +319,7 @@
 			}
 
 			LJ.settings.storeAutologinPreferences();
+			LJ.settings.applyUxPreferences();
 
 		},		
 		showSponsorshipModal: function(){

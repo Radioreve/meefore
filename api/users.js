@@ -388,13 +388,13 @@
 
 
 	var distinct_countries = [];
-	var last_fetch = new moment();
+	var last_fetch = 0
 
 	var fetchDistinctCountries = function( req, res, next ){
 
 		var err_ns = "fetching_distinct_countries";
 
-		if( (new moment()) - last_fetch > 5000 ) {
+		if( (new Date()) - last_fetch > 5000 ) {
 
 			last_fetch = new moment();
 

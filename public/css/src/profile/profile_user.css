@@ -76,7 +76,6 @@
 .user-infos__item label {
     margin-left: 20px;
     padding-bottom: 0px;
-    font-weight: bolder;
     font-size: 16px;
 }
 
@@ -127,12 +126,13 @@
 }
 
 .user-actions > div {
-    border: 2px solid;
+    border: 1px solid;
     height: 60px;
     width: 60px;
     font-size: 34px;
     margin: 10px 0;
     cursor: pointer;
+    box-shadow: 0 0 1px #383838;
 }
 
 .user-actions i {

@@ -32,6 +32,20 @@
 				$('.pac-container:not(.js-alreadyhere)').addClass('seek-login-places').addClass('js-alreadyhere');
 			});
 
+		},
+		activatePlacesInMap: function(){
+
+			var input = document.getElementById('map-browser-input');
+			var options = { types: ['(cities)'] };
+
+			LJ.seek.map_browser_places = new google.maps.places.Autocomplete( input, options );
+
+			// To be able to isolate him from other place containers laters
+			LJ.delay( LJ.randomInt(1,3)*100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-map-browser-places').addClass('js-alreadyhere');
+			});
+
+
 		}
 
 

@@ -50,7 +50,8 @@
     border-radius: 4px;
 } 
 
-.settings button.--delete {
+.settings button.--delete,
+.settings button.--changelang {
     background: #FFFFFF;
     padding: 10px 50px;
     color: #FF6767;
@@ -61,6 +62,11 @@
     border-radius: 4px;
     margin-left: auto;
     margin-right: 0;
+}
+
+.settings button.--changelang {
+    color: #7B4CBB;
+    border: 1px solid;
 }
 
 .settings-item input {

@@ -12,21 +12,9 @@
 
 	LJ.text_source = _.merge( LJ.text_source || {}, {
 
-		i18n: {
-			"us": {
-                previousMonth : 'Previous Month',
-                nextMonth     : 'Next Month',
-                months        : ['January','February','March','April','May','June','July','August','September','October','November','December'],
-                weekdays      : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
-                weekdaysShort : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-            },
-            "fr": {
-            	previousMonth : 'Mois Précédant',
-                nextMonth     : 'Mois Suivant',
-                months        : ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
-                weekdays      : ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'],
-                weekdaysShort : ['Dim','Lun','Ma','Me','Jeu','Ven','Sam']
-            }
+		day: {
+			"fr": [ "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi" ],
+			"us": [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ]
 		},
 		h_min_ago: {
 			"fr": "il y a quelques minutes",
@@ -1534,6 +1522,14 @@
 				var n_meepass = LJ.user.meepass.length;
 				return "You have <span class='n_meepass'>" + n_meepass + "</span> meepass left";
 			}
+		},
+		settings_ux_changelang_button: {
+			"fr": "Changer de langue",
+			"us": "Change the language"
+		},
+		be_close_to: {
+			"fr": "A proximité de",
+			"us": "Close to"
 		}
 
 

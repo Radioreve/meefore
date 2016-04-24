@@ -220,7 +220,7 @@
 				LJ.api.post( LJ.api.fetch_more_users_url, { facebook_ids: facebook_ids || [], filters: filters })
 					.then(function( exposed ){
 						if( exposed.users ){
-							return resolve({ users: exposed.users, call_id: exposed.call_id }); 
+							return resolve({ users_count: exposed.users_count, users: exposed.users, call_id: exposed.call_id }); 
 						} else {
 							LJ.wlog('The server didnt respond with the expected users object');
 						}

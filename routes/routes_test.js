@@ -35,7 +35,7 @@
 		mdw.profile_watcher   = require( mdwDir + '/profile_watcher');
 		mdw.notifier          = require( mdwDir + '/notifier');
 		mdw.meepass           = require( mdwDir + '/meepass');
-		mdw.connecter 		  = require( mdwDir + '/connecter');
+		mdw.users_watcher 	  = require( mdwDir + '/users_watcher');
 
 		mdw.validate          = require('../validate/validate');
 

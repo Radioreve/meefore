@@ -1,12 +1,15 @@
+
 		
 	window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		show_slide_duration: 450,
+		show_slide_duration_children: 650,
 		hide_slide_duration: 450,
 
 		replace_slide_duration: 300,
 
 		show_slide_delay   : 0,
+		show_slide_delay_children: 500,
 		hide_slide_delay   : 250,
 
 		facebook_img_min_width: 200,
@@ -66,16 +69,22 @@
 				var height = $(window).height() - LJ.ui.slide_top;
 
 				$slide
+					.children()
+					.hide()
+					.velocity('shradeIn', {
+						duration : LJ.ui.show_slide_duration_children,
+						delay    : LJ.ui.show_slide_delay_children,
+						complete : resolve
+					})
+
+				$slide
 					  .hide()
 					  .appendTo('body')
 					  .css({ 'top': LJ.ui.slide_top, 'height': height })
-					  .velocity('slideRightIn', {
+					  .velocity('shradeIn', {
 					  	delay: LJ.ui.show_slide_delay,
 					  	display: 'flex',
-					  	duration: LJ.ui.show_slide_duration,
-					  	complete: function(){
-					  		return resolve();
-					  	}
+					  	duration: LJ.ui.show_slide_duration
 					  })
 					  .on('click', '.slide__close', LJ.ui.hideSlide )
 
@@ -83,7 +92,7 @@
 		},
 		hideSlide: function(){
 			
-			$('.slide').velocity('slideRightOut', {
+			$('.slide').velocity('shradeOut', {
 				duration: LJ.ui.hide_slide_duration,
 				complete: function(){
 					$(this).remove();

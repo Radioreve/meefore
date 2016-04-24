@@ -59,19 +59,16 @@
 				});
 			},
 			firstSetup: function(){
-				return LJ.promise(function( resolve, reject ){
-
 					// the app requires a user's location to boot properly
 					// otherwise, use would be invisible in the search section
 					if( LJ.user.location && LJ.user.location.place_name && LJ.user.location.place_id ){
-						return resolve();
+						return
 					}
 
 					LJ.pictures.uploadFacebookPicture_Intro();
 	                LJ.login.promptUserLocation();
-	                resolve();
+	               	return;
 
-				});
 			},
 			stepCompleted: function( fill_ratio ){
 
@@ -176,9 +173,9 @@
 
 					LJ.api.updateProfile( update )
 					  .then(function( exposed ){
-					  	LJ.user.location = exposed.user.location;
-					  	LJ.profile.setMyInformations();
-					  	resolve();
+					  		LJ.user.location = exposed.user.location;
+						  	LJ.profile.setMyInformations();
+						  	resolve();
 					  }, reject );
 
 				});
@@ -201,27 +198,22 @@
 
 			},
 			terminateLoginProcess: function(){
-				return LJ.promise(function( resolve, reject ){
 
-					LJ.ui.activateHtmlScroll();
-					
-					$('.curtain')
-							.children()
-							.velocity('bounceOut', {
-								duration: LJ.login.prompt_duration
-							});
+				LJ.ui.activateHtmlScroll();
+				
+				$('.curtain')
+						.children()
+						.velocity('bounceOut', {
+							duration: LJ.login.prompt_duration
+						});
 
-					LJ.ui.hideCurtain({
-						delay: LJ.login.prompt_duration * 1.3,
-						duration: 1000,
-						complete: function(){
-							LJ.ui.showToast('Bienvenue sur Meefore');
-							resolve();
-						}
-					});
+				return LJ.ui.hideCurtain({
+					delay: LJ.login.prompt_duration * 1.3,
+					duration: 1000
+				}).then(function(){
+					return;
+				});	
 
-
-				});
 			},
 			renderLocationPrompt: function(){
 

@@ -49,6 +49,9 @@ button:hover {
     display: flex;
     border-radius: 1000px;
 }
+.--round-icon i {
+    margin: auto;
+}
 
 .app {
     display: flex;
@@ -67,6 +70,7 @@ button:hover {
     display: none;
     z-index: 10;
     position: relative;
+    flex-flow: row wrap;
 }
 
 .app-section.active {
@@ -77,6 +81,7 @@ button:hover {
     position: relative;
     flex-flow: column nowrap;
     padding-top: 0px;
+    align-items: center;
 }
 
 .super-centered {
@@ -519,7 +524,7 @@ button:hover {
     display: block;
 }
 
-.app-logout {color: #454545;font-size: 26px;display: flex;justify-content: center;align-items: center;margin-right: 16px;cursor: pointer;}
+.app-logout {color: #454545;font-size: 26px;display: flex;justify-content: center;align-items: center;margin-right: 16px;margin-left: auto;cursor: pointer;}
 .app-logout:hover { color: white; transition: all ease-in-out .2s;}
 .app-logout i {
 }
@@ -589,3 +594,22 @@ button:hover {
     color: white;
     display: none;
 }
+
+
+.user-gender {
+    border-radius: 100px;
+    position: absolute;
+}
+.user-gender.--male {
+    background: #3fb3c6;
+}
+.user-gender.--female {
+    background: rgb(213, 93, 140);
+}
+
+.user-online {
+    height: 10px;
+    width: 10px;
+    border-radius: 100px;
+}
+

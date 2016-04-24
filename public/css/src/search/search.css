@@ -68,12 +68,14 @@
     flex-flow: column nowrap;
     box-sizing: border-box;
     max-width: 835px;
-    margin: 0 auto;
     margin-top: 0;
+    align-items: center;
+    justify-content: center;
 }
 
 .search-users-row {
     display: flex;
+    width: 100%;
 }
 
 .search-users-row:last-of-type {}
@@ -137,14 +139,15 @@
 
 
 .search-user__pic img {
-    width: 100%;
     transition: all ease-in-out .2s;
+    width: 100%;
+    height: auto;
 }
 
 .search-user__country {
     position: absolute;
-    top: 16px;
-    left: 16px;
+    top: 10px;
+    left: 10px;
     font-size: 20px;
     display: none;
 }
@@ -152,6 +155,9 @@
 .search-user__country i {
     border-radius: 6px 0 6px 0;
 }
+
+.search-user__gender {display: inline;position: relative;width: 10px;height: 10px;margin-right: 10px;order: -1;}
+
 
 .search-user__location {
     position: absolute;
@@ -275,12 +281,14 @@
     margin: 40px 0 80px;
 }
 
-.search-filters__close {position: absolute;top: 12px;right: 10px;cursor: pointer;}
+.search-filters__close {position: absolute;top: 12px;right: 10px;cursor: pointer;color: #ccc;}
 .search-filters__close i { margin: auto; }
 
 .search-filters-body {
     overflow-y: scroll;
 }
+
+
 
 @media (min-width: 736px) {
     .search-user__name,
@@ -297,9 +305,9 @@
     }
     .search-user__country {
         display: flex;
-        display: none;
     }
     .search-users {
         margin-top: 100px;
+        min-width: 840px;
     }
 }

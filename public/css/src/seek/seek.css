@@ -75,3 +75,44 @@
 .seek-login-places .pac-matched {
 	font-weight: inherit;
 }
+
+
+/* Override for map browser */
+.seek-map-browser-places.pac-container {
+	background: none;
+	color: black;
+	border: none;
+	box-shadow: none;
+	top: auto;
+	position: fixed!important;
+	top: 70px!important;
+	right: 0px!important;
+	left: auto!important;
+}
+
+.seek-map-browser-places .pac-item {
+	border-color: transparent;
+	margin: 0px 0px;
+	border-radius: 4px;
+	color: #000000;
+	font-weight: bolder;
+}
+.seek-map-browser-places .pac-item:first-of-type {
+	background: inherit;
+}
+.seek-map-browser-places .pac-item:hover {
+	background: rgba(255, 255, 255, 0.55);
+}
+.seek-map-browser-places .pac-item-query {
+	color: black;
+	font-weight: 600;
+	font-size: 16px;
+}
+
+.seek-map-browser-places .pac-icon {
+	opacity: 1;
+	color: black;
+}
+.seek-map-browser-places .pac-matched {
+	font-weight: inherit;
+}

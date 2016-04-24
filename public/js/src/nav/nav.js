@@ -8,7 +8,7 @@
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.nav.handleDomEvents();
-				LJ.nav.navigate('menu');
+				LJ.nav.navigate('map');
 				resolve();
 
 			});
