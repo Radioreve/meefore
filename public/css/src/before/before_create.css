@@ -1,46 +1,60 @@
-
-.be-create  {
+.be-create {
     display: none;
     position: fixed;
     right: 0px;
     top: 58px;
     z-index: 100;
-    background: #fff;
+    background: rgb(255, 255, 255);
     width: 400px;
     padding: 40px 24px;
     box-sizing: border-box;
     box-shadow: 0 0 14px #949494;
     flex-flow: column nowrap;
 }
+
 .be-create__close {
     position: absolute;
     top: 12px;
     right: 10px;
     cursor: pointer;
     color: #ccc;
-}   
-.be-create-row  {
+}
+
+.be-create-row {
     margin: 10px 0px;
     display: flex;
     flex-flow: column;
 }
+
 .be-create-row__subtitle {
     font-weight: bold;
     margin-top: 40px;
 }
+
 .be-create-row__subtitle h2 {}
+
 .be-create__icon {
     position: absolute;
     top: 19px;
     left: 6px;
-    transform: translate(0,-50%);
+    transform: translate(0, -50%);
 }
+
 .be-create__icon i {}
-.be-create__title {font-family: 'creamy';font-size: 30px;justify-content: center;align-items: center;}
+
+.be-create__title {
+    font-family: 'creamy';
+    font-size: 40px;
+    justify-content: center;
+    align-items: center;
+}
+
 .be-create__title h1 {}
+
 .be-create-row__input {
     width: 100%;
 }
+
 .be-create-row__input input {
     width: 100%;
     padding: 10px 10px 10px 32px;
@@ -49,37 +63,80 @@
     border: 1px solid #ccc;
     font-size: 13px;
 }
+
 .be-create-row.--hosts {}
+
 .be-create-row.--hosts input {
     cursor: pointer;
 }
-.be-create-row.--date {}
-.be-create-row.--hour {}
+
+.be-create-row.--date {
+    z-index: 1;
+    cursor: pointer;
+}
+
+.be-create-row.--hour {
+    z-index: 1;
+    cursor: pointer;
+}
+
 .be-create-row.--location {}
+
 .be-create-row__explanations {
     font-size: 12px;
     margin-top: 8px;
     color: #919191;
 }
+
 .be-create-row__explanations div {}
+
 .be-create__button {}
+
+.be-create.--ready .be-create__button button {
+    opacity: 1;
+}
+
 .be-create__button button {
     width: 270px;
     height: 48px;
     border-radius: 4px;
     font-size: 16px;
     color: white;
-    font-weight: bolder;
+    font-weight: 500;
     margin-top: 40px;
     background: #1B69EC;
     opacity: .3;
+    border: none;
 }
+
 .be-create.--pending .be-create__button button {
     opacity: .3;
 }
-.be-create.--ready .be-create__button button {
-    opacity: 1;
-}
+
+
 .be-create.--pending * {
-    opacity: .5;
+} 
+
+.hourpicker {
+    background: white;
+    border-radius: 4px;
+    position: fixed;
+    display: flex;
+    z-index: 100;
+    width: 100%;
+    top: 46px;
+    right: -6px;
+    /* box-shadow: 2px 2px 7px #C3C3C3; */
+    padding: 10px 4px;
+    border: 1px solid #ccc;
+    justify-content: center;
+}
+.hourpicker__hour {font-family: 'Open sans';padding: 8px;border-radius: 4px;margin: 12px 0;cursor: pointer;color: #454545;font-size: 12px;}
+.hourpicker__hour:hover {
+    color: white;
+    font-weight: bold;
+    background: #33afff;
+}
+.hourpicker-col {
+    margin: 0px 10px;
 }

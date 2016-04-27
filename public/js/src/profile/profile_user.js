@@ -1,6 +1,9 @@
 	
 	window.LJ.profile_user = _.merge( window.LJ.profile_user || {}, {
 
+		slide_show_duration: 300,
+		slide_hide_duration: 300,
+
 		init: function(){
 			
 			LJ.profile_user.handleDomEvents();
@@ -33,7 +36,7 @@
 		refreshNavigationArrow: function(){
 
 			var n_pic    = $('.user-pics__img').length;
-			var duration = 200;
+			var duration = 50;
 			
 			$('.user-pics__navigate.out').removeClass('out').velocity('fadeIn', { duration: duration });
 
@@ -88,8 +91,8 @@
 					.append( html )
 					.find('.slide__loader')
 					.velocity('shradeOut', {
-						duration: 300,
-						delay: 100,
+						duration: LJ.profile_user.slide_hide_duration,
+						// delay: 100,
 						complete: function(){
 
 							LJ.profile_user.activatePicture(0);
@@ -97,7 +100,7 @@
 							$(this).siblings()
 								   .velocity('shradeIn', {
 								   		display: 'flex',
-								   		duration: 350
+								   		duration: LJ.profile_user.slide_show_duration
 								   });
 						}
 					});

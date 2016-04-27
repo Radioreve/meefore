@@ -11,46 +11,47 @@
 	var mongoose = require('mongoose');
 	var pusher   = require('../services/pusher');
 
-	var pusher_max_size = 10000;
 
-	var createEvent = function( req, res ) {
-	       
-		var data      = req.sent.event_data;
-		var socket_id = req.sent.socket_id;
+	var handleErr = function( req, res, namespace, err ){
+
+		var params = {
+			error   : err,
+			call_id : req.sent.call_id
+		};
+
+		eventUtils.raiseApiError( req, res, namespace, params );
+
+	};
+
+
+	var createEvent = function( req, res, next ) {
 	    
+	    var err_ns    = "creating_event";
+
+		var data         = req.sent.event_data;	    
 	    var new_event = {};
 
-	    var notification = req.sent.notification;
-
-    	/* set by client */
+    	// Sent by the client
 		new_event.hosts     = data.hosts;
 		new_event.begins_at = moment( data.begins_at );
 		new_event.timezone  = data.timezone;
 		new_event.address   = data.address;
-		// new_event.party     = data.party;
-		// new_event.ambiance  = data.ambiance;
-		// new_event.agerange  = data.agerange;
-		// new_event.mixity    = data.mixity;
 
-    	/* set by server */
     	new_event.created_at = moment();
     	new_event.groups 	 = [];
     	new_event.status 	 = 'open';
-    	// new_event.type       = 'before';
-    	// new_event.meta 		 = [];
 
+    	// GeoJSON to create an MongoDB 2dpshere Index, for $geoNear queries
+    	new_event.geojson = {
+    		"type"        : "Point",
+    		"coordinates" : [ data.address.lng, data.address.lat ] 
+    	};
 
 	    var new_event = new Event( new_event );
 
 	    new_event.save(function( err, new_event ){
 
-	    	if( err ){
-	    		return eventUtils.raiseError({
-	    			err: err,
-	    			res: res,
-	    			toClient: "Error saving event"
-	    		});
-	    	}
+	    	if( err ) return handleErr( req, res, err_ns, err );
 
 	    	var event_item = {
 				status    : 'hosting',
@@ -63,7 +64,7 @@
 	    	/* Cache hosts ids for chat performance */
 	    	rd.sadd( hosts_ns, _.pluck( new_event.hosts, 'facebook_id' ), function( err ){
 
-		    	User.update({ 'facebook_id': { $in: _.pluck( data.hosts, 'facebook_id') } },
+		    	User.update({'facebook_id': { $in: _.pluck( data.hosts, 'facebook_id') } },
 		    				{ $push: { 'events': event_item }},
 		    				{ multi: true },
 
@@ -74,22 +75,9 @@
 						}
 
 				    	console.log('Event created!');
-				    	eventUtils.sendSuccess( res, new_event );
+				    	req.sent.expose.before = new_event;
 
-				    	var data = {
-							evt          : new_event.toObject(),
-							notification : notification
-				    	};
-
-				    	if( eventUtils.oSize( data ) > pusher_max_size ){
-				    		pusher.trigger('app', 'new oversize message' );
-				    	} else {
-				    		console.log('Pushing new event created');
-				    		pusher.trigger('app', 'new event created', data, socket_id, function( err, res, res ){
-				    			if( err )
-				    				console.log(err);
-				    		});
-				    	}
+				    	return next();
 
 					});
 
@@ -101,7 +89,7 @@
 
 	};
 
-	var fetchEvents = function( req, res ){
+	var fetchEvents = function( req, res, next ){
 
 		var start_date = req.sent.start_date;
 
@@ -137,7 +125,7 @@
 
 	};
 
-	var request = function( req, res ){
+	var request = function( req, res, next ){
 		
 		var groups       = req.sent.groups;
 		var event_id     = req.sent.event_id;
@@ -208,7 +196,7 @@
 				});
 	};
 
-	var changeEventStatus = function( req, res ){
+	var changeEventStatus = function( req, res, next ){
 
 		var evt       = req.sent.evt;
 		var status    = req.sent.status;
@@ -276,7 +264,7 @@
 
 	};
 
-	var changeGroupStatus = function( req, res ){
+	var changeGroupStatus = function( req, res, next ){
 		
 		var evt       = req.sent.evt;
 		var groups    = evt.groups;
@@ -360,7 +348,7 @@
 
 	};
 
-	var fetchEventById = function( req, res ){
+	var fetchEventById = function( req, res, next ){
 
 		var event_id = req.sent.event_id;
 
@@ -378,21 +366,63 @@
 
 	};
 
-	var updateEvent = function( req, res ){
+	var updateEvent = function( req, res, next ){
 
 	};
 
-	var fetchGroups = function( req, res ){
+	var fetchGroups = function( req, res, next ){
+
+	};
+	
+	var fetchNearestEvents = function( req, res, next ){
+
+		console.log('Fetching nearest events...');
+
+		var err_ns = "fetching_nearest_events";
+		var earth_radius_in_meters = 6371000;
+
+		// Default, only fetch the events in a 5km radius 
+		// more here : https://docs.mongodb.org/manual/reference/operator/aggregation/geoNear/
+		var maxDistance = req.sent.max_distance || 5000 
+
+		// GeoJSON specification
+		// coordinates array must start with longitude
+		var near = {
+			"type"        : "Point",
+			"coordinates" : [ req.sent.latlng.lng, req.sent.latlng.lat ]
+		};
+
+		console.log('Maximum distance is : ' + maxDistance );
+		Event.aggregate([
+			{ 
+				$geoNear: {
+					spherical          : true,
+					near               : near,
+					distanceField      : 'distance',
+					distanceMultiplier : earth_radius_in_meters,
+					maxDistance 	   : maxDistance
+				}
+			}
+		])
+		.exec(function( err, response ){
+
+			if( err ) return handleErr( req, res, err_ns, err );
+
+			req.sent.expose.befores = response;
+			next();
+
+		});
 
 	};
 
 	module.exports = {
-		createEvent       : createEvent,
-		request           : request,
-		changeEventStatus : changeEventStatus,
-		changeGroupStatus : changeGroupStatus,
-		fetchEvents       : fetchEvents,
-		fetchEventById    : fetchEventById,
-		updateEvent       : updateEvent,
-		fetchGroups       : fetchGroups
+		createEvent        : createEvent,
+		request            : request,
+		changeEventStatus  : changeEventStatus,
+		changeGroupStatus  : changeGroupStatus,
+		fetchEvents        : fetchEvents,
+		fetchEventById     : fetchEventById,
+		updateEvent        : updateEvent,
+		fetchGroups        : fetchGroups,
+		fetchNearestEvents : fetchNearestEvents
 	};

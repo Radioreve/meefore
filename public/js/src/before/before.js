@@ -1,25 +1,72 @@
 
 	window.LJ.before = _.merge( window.LJ.before || {}, {
 
-		befores: [],
+		fetched_befores: [],
 
 
 		init: function(){
 			
+			LJ.before.fetchNearestBefores__UserLocation();
+			return;
+
+		},
+		addElementsToMap: function(){
+
 			LJ.before.handleDomEvents();
+			LJ.before.initBrowser();
+			LJ.before.initCreateBefore();
+			LJ.before.displayBeforeMarkers( LJ.before.fetched_befores );
+
+		},
+		handleDomEvents: function(){
+
+			LJ.ui.$body.on('click', '.map__icon.--create-before', LJ.before.handleShowCreateBefore );
+			LJ.ui.$body.on('click', '.be-create__close', LJ.before.handleHideCreateBefore );
+			LJ.ui.$body.on('click', '.be-dates__date', LJ.before.activateBrowserDate );
+			LJ.ui.$body.on('click', '.be-create.--ready .be-create__button', LJ.before.handleCreateBefore );
+
+			LJ.meemap.addListener('place_changed', LJ.before.refreshNearestBefores );
+
+		},
+		initBrowser: function(){
 
 			LJ.before.addBrowser();
 			LJ.before.showBrowser();
 			LJ.before.refreshBrowserLocation();
 			LJ.before.refreshBrowserDates( LJ.before.test.iso_dates );
 
-			return;
 
 		},
-		handleDomEvents: function(){
+		initCreateBefore: function(){
 
-			LJ.ui.$body.on('click', '.map__icon.--create-before', LJ.before.showCreateBefore );
-			LJ.ui.$body.on('click', '.be-create__close', LJ.before.hideCreateBefore );
+		 	LJ.before.initHostsPicker();
+			LJ.before.initDatePicker();
+		 	LJ.before.initHourPicker( 17, 2, 30 );
+		 	LJ.before.initPlacePicker();
+
+		},
+		handleShowCreateBefore: function(){
+
+			LJ.before.hideBrowser();
+			LJ.before.showCreateBefore();
+
+		},
+		handleHideCreateBefore: function(){
+
+			LJ.before.showBrowser();
+			LJ.before.hideCreateBefore();
+
+		},
+		activateBrowserDate: function(){
+
+			var $s = $(this);
+
+			if( $s.hasClass('--active') ) return;
+
+			$('.be-dates__date').removeClass('--active');
+			$s.addClass('--active');
+
+			LJ.map.updateMarkers__byDate();
 
 		},
 		sortIsoDates: function( iso_dates ){
@@ -60,7 +107,6 @@
 		addBrowser: function(){
 
 			$('.be-browser').remove();
-
 			$('.js-map-wrap')
 				.append( LJ.before.renderBrowser() );			
 
@@ -171,6 +217,58 @@
 				display : 'flex'
 			});
 
+		},
+		fetchBefores: function(){
+
+			LJ.log('Fetching befores...');
+			return LJ.api.fetchBefores();
+
+		},
+		fetchNearestBefores__UserLocation: function( max_distance ){
+
+			var latlng = LJ.user.location;
+			return LJ.before.fetchNearestBefores( latlng, max_distance );
+
+
+		},
+		fetchNearestBefores__MapCenter: function( max_distance ){
+
+			var latlng = {
+				lat: LJ.meemap.center.lat(),
+				lng: LJ.meemap.center.lng()
+			};
+
+			return LJ.before.fetchNearestBefores( latlng, max_distance );
+
+
+		},
+		refreshNearestBefores: function( max_distance ){
+
+			LJ.before.fetchNearestBefores__MapCenter( max_distance )
+				.then(function( befores ){
+					return LJ.before.displayBeforeMarkers( befores );
+
+
+				});
+
+		},
+		fetchNearestBefores: function( latlng, max_distance ){
+
+			max_distance = max_distance || null;
+
+			return LJ.api.fetchNearestBefores( latlng, max_distance )
+					.then(function( befores ){
+						LJ.before.fetched_befores = befores;
+						return befores;
+
+					});
+
+		},
+		displayBeforeMarkers: function( befores ){
+
+			befores.forEach(function( before ){
+				LJ.map.addBeforeMarker( before );
+			});
 		}
 
 	});

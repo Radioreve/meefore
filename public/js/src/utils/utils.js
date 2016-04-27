@@ -71,6 +71,10 @@ window.LJ = _.merge( window.LJ || {}, {
         }
 
     },
+    isSameDay: function( d1, d2 ){
+        return m1.dayOfYear() == m2.dayOfYear();
+
+    },
     findMainPic: function( user ){
 
         var user = user || LJ.user;
@@ -111,12 +115,12 @@ window.LJ = _.merge( window.LJ || {}, {
         return hashtag_parts.join('');
 
     },
-    log: function( message ){
+    log: function log( message ){
 
         console.log( message );
 
     },
-    wlog: function( message ){
+    wlog: function wlog( message ){
 
         console.warn( message );
 

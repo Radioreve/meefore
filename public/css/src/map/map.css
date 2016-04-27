@@ -37,7 +37,7 @@
 	width: 50px;
 	font-size: 20px;
 	right: 20px;
-	top: 22px;
+	top: 110px;
 	cursor: pointer;
 	z-index: 10;
 }
@@ -65,7 +65,7 @@
 }
 
 .map-browse {
-	position: absolute;
+	position: fixed;
 	bottom: 68px;
 	right: 76px;
 	width: 300px;

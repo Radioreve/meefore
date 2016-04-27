@@ -77,9 +77,9 @@
 		},
 		handleApiError: function( err ){
 
-			var err_ns  = err.namespace;
-			var err_id  = err.errors[0].err_id;
-			var call_id = err.call_id
+			var err_ns    = err.namespace;
+			var err_data  = err.err_id;
+			var call_id   = err.call_id
 
 			if( err.namespace == 'update_profile_base' ){
 				$('[data-callid="' + call_id + '"]').removeClass('--validating'); 
@@ -213,7 +213,7 @@
 
 			$block.attr( 'data-callid', call_id ).addClass('--validating');
 			
-			LJ.fn.log('Updating profile...');
+			LJ.log('Updating profile...');
 			LJ.api.updateProfile( update )
 				  .then( LJ.profile.handleUpdateProfileSuccess, LJ.profile.handleApiError );
 

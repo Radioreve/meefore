@@ -317,8 +317,8 @@
 
 		if( !mailchimp_id ){
 			return handleErr( req, res, err_ns, {
-				err_id: 'ghost_mailchimp_id',
-				mailchimp_id: mailchimp_id
+				err_id       : 'ghost_mailchimp_id',
+				mailchimp_id : mailchimp_id
 			});
 		}
 

@@ -1,118 +1,154 @@
-
 .pac-container {
-   z-index: 99999999;
-   display: block;
-   box-shadow: none;
-   border: 1px solid #ccc;
-   background: rgb(255, 255, 255);
-   border-bottom: 1px solid #E4E4E4;
-   box-shadow: 0 0 1px #e4e4e4;
-   padding: 15px;
-   border-radius: 2px 2px 0 0;
-   margin-top: 5px;
+    z-index: 99999999;
+    display: block;
+    box-shadow: none;
+    border: 1px solid #ccc;
+    background: rgb(255, 255, 255);
+    border-bottom: 1px solid #E4E4E4;
+    box-shadow: 0 0 1px #e4e4e4;
+    padding: 15px;
+    border-radius: 2px 2px 0 0;
+    margin-top: 5px;
 }
 
 .item-name {}
 
 .pac-item {
-   cursor: pointer;
-   padding: 4px 10px;
+    cursor: pointer;
+    padding: 4px 10px;
 }
 
 .pac-container:after {
-   background-image: none!important;
-   color: #ccc;
-   font-size: 10px;
+    background-image: none!important;
+    color: #ccc;
+    font-size: 10px;
 }
 
 .pac-item:first-of-type {
-   border-top: none;
-   background: #fcfcfc;
+    border-top: none;
+    background: #fcfcfc;
 }
- 
+
 .pac-item-query {
-	font-size: 18px;
-	margin-right: 4px;
-	font-family: 'Alegreya sans';
-	color: #191919;
+    font-size: 18px;
+    margin-right: 4px;
+    font-family: 'Alegreya sans';
+    color: #191919;
 }
 
 
 /* Override */
-.seek-profile-places.pac-container {
 
-}
-.seek-profile-places .pac-item {
+.seek-profile-places.pac-container {}
 
-}
-.seek-profile-places .pac-item-query {
+.seek-profile-places .pac-item {}
 
-}
-
+.seek-profile-places .pac-item-query {}
 
 
 /* Override for login */
-.seek-login-places.pac-container {background: rgba(25, 25, 25, 1);color: white;border: none;box-shadow: none;}
+
+.seek-login-places.pac-container {
+    background: rgba(25, 25, 25, 1);
+    color: white;
+    border: none;
+    box-shadow: none;
+}
+
 .seek-login-places .pac-item {
-	border-color: transparent;
-	margin: 4px 0px;
+    border-color: transparent;
+    margin: 4px 0px;
 }
+
 .seek-login-places .pac-item:first-of-type {
-	background: inherit;
+    background: inherit;
 }
+
 .seek-login-places .pac-item:hover {
-	background: #232323;
+    background: #232323;
 }
+
 .seek-login-places .pac-item-query {
-	color: white;
-	font-weight: 200;
-	font-size: 20px;
+    color: white;
+    font-weight: 200;
+    font-size: 20px;
 }
 
 .seek-login-places .pac-icon {
-	opacity: .3;
+    opacity: .3;
 }
+
 .seek-login-places .pac-matched {
-	font-weight: inherit;
+    font-weight: inherit;
 }
 
 
 /* Override for map browser */
+
 .seek-map-browser-places.pac-container {
-	background: none;
-	color: black;
-	border: none;
-	box-shadow: none;
-	top: auto;
-	position: fixed!important;
-	top: 70px!important;
-	right: 0px!important;
-	left: auto!important;
+    background: none;
+    color: black;
+    border: none;
+    box-shadow: none;
+    top: auto;
+    position: fixed!important;
+    top: 70px!important;
+    right: 0px!important;
+    left: auto!important;
 }
 
 .seek-map-browser-places .pac-item {
-	border-color: transparent;
-	margin: 0px 0px;
-	border-radius: 4px;
-	color: #000000;
-	font-weight: bolder;
+    border-color: transparent;
+    margin: 0px 0px;
+    border-radius: 4px;
+    color: #000000;
+    font-weight: bolder;
 }
+
 .seek-map-browser-places .pac-item:first-of-type {
-	background: inherit;
+    background: inherit;
 }
+
 .seek-map-browser-places .pac-item:hover {
-	background: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.55);
 }
+
 .seek-map-browser-places .pac-item-query {
-	color: black;
-	font-weight: 600;
-	font-size: 16px;
+    color: black;
+    font-weight: 600;
+    font-size: 16px;
 }
 
 .seek-map-browser-places .pac-icon {
-	opacity: 1;
-	color: black;
+    opacity: 1;
+    color: black;
 }
+
 .seek-map-browser-places .pac-matched {
-	font-weight: inherit;
+    font-weight: inherit;
 }
+
+
+/* Override for before create */
+
+.seek-be-create.pac-container {}
+
+.seek-be-create .pac-item:nth-of-type(4),
+.seek-be-create .pac-item:nth-of-type(5) {
+    display: none;
+}
+
+.seek-be-create .pac-item:first-of-type {}
+
+.seek-be-create .pac-item:hover {}
+
+.seek-be-create .pac-item-query {
+    font-size: 12px;
+    font-family: 'Open sans';
+}
+
+.seek-be-create .pac-icon {
+    display: none;
+}
+
+.seek-be-create .pac-matched {}

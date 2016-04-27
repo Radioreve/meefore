@@ -536,7 +536,7 @@
             // Mais ça fait beaucoup pour pas grand chose à mon avis...
             timezone = moment().utcOffset(); // eg. 120 for UTC+2, 60 for France (UTC+1)
             
-            // age_range
+            // age_ranged
             agerange  = $('.irs-from').text() + '-' + $('.irs-to').text().replace('+','');
 
             // mixity

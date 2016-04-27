@@ -4,12 +4,10 @@
 	var EventSchema = mongoose.Schema({
 
 		hosts: {
-			type: Array,
-			default: []
+			type: Array
 		},
 		status: {
-			type: String,
-			default: 'open'
+			type: String
 		},
 		begins_at: {
 			type: Date
@@ -20,42 +18,15 @@
 		created_at: {
 			type: Date
 		},
-		// type: {
-		// 	type: String,
-		// 	default: 'before'
-		// },
 		address: {
-			type: Object,
-			default: {}
+			type: Object
 		},
-		// party: {
-		// 	type: Object,
-		// 	default: {}
-		// },
-		// ambiance: {
-		// 	type: Array,
-		// 	default: null
-		// },
-		// agerange: {
-		// 	type: String,
-		// 	default:''
-		// },
-		// mixity: {
-		// 	type: String,
-		// 	default: null
-		// },
 		groups: {
-			type: Array,
-			default: []
+			type: Array
+		},
+		geojson: {
+			type: Object
 		}
-		// scheduled_party: {
-		// 	type: Object,
-		// 	default: {}
-		// },
-		// meta: {
-		// 	type: Array,
-		// 	default: []
-		// }
 
 
 	});

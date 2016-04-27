@@ -66,21 +66,24 @@
                 // Two kinds of data are fetch :
                 // - datas that are self-related  : profile infos, pictures, friends, notifications, chats...
                 // - datas that are users-related : search users module, map events...
+                .then( LJ.profile.init )
+                .then( LJ.map.initGeocoder )
+                .then( LJ.map.setUserLocationLatLng )
                 .then(function(){
                     return LJ.Promise.all([
-                            LJ.profile.init(),
+                            LJ.friends.init(),
+                            LJ.before.init(),
                             LJ.search.init()
-                            
                     ]);
                 })
-                .then( LJ.friends.init )
+
                 .then( LJ.login.stepCompleted )
                 .then( LJ.delay )
                 .then( LJ.login.hideLoginSteps )
                 .then( LJ.login.firstSetup )
                 .then( LJ.map.init ) // Must be as close as possible to terminateLogin. Map doesnt render sometimes..
+                .then( LJ.before.addElementsToMap )
                 .then( LJ.login.terminateLoginProcess )
-                .then( LJ.before.init )
                 .then( LJ.onboarding.init )
                 .then( LJ.dev.init )
 

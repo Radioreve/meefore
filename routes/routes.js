@@ -36,6 +36,7 @@
 		mdw.notifier          = require( mdwDir + '/notifier');
 		mdw.meepass           = require( mdwDir + '/meepass');
 		mdw.users_watcher 	  = require( mdwDir + '/users_watcher');
+		mdw.realtime 		  = require( mdwDir + '/realtime');
 
 		mdw.validate          = require('../validate/validate');
 
@@ -180,8 +181,12 @@
 	    );
 
 	    // [ @user ] Va chercher en base de données les users à partir de /me/friends de l'api Facebook
+	    app.get('/me/friends',
+	    	profileEvents.fetchFriends 
+	    );
+	    
 	    app.post('/me/friends',
-	    	profileEvents.fetchAndSyncFriends
+	    	profileEvents.syncFriends
 	    );
 
 	    // [ @user ] va chercher des tags cloudinary signés par le serveur
@@ -235,7 +240,7 @@
 	    	api.users.fetchUsersAll
 	    );
 
-	    app.get('/api/v1/users/countries',
+	    app.get('/api/v1/users.countries',
 	    	api.users.fetchDistinctCountries
 	    );
 
@@ -260,13 +265,13 @@
 	    	api.users.fetchUsers
 	    );
 
-	     app.post('/api/v1/users/more',
+	     app.post('/api/v1/users.more',
 	    	mdw.validate('users_fetch_more'),
 	     	mdw.users_watcher.fetchUserCount,
 	    	api.users.fetchMoreUsers
 	    );
 
-	    app.post('/tapi/v1/users/more',
+	    app.post('/tapi/v1/users.more',
 	    	mdw.validate('users_fetch_more'),
 	    	mdw.users_watcher.fetchUserCount,
 	    	api.users.fetchMoreUsers
@@ -299,11 +304,6 @@
 	    );
 
 
-	    // [ @events ] Fetch un event par son identifiant. 
-	    app.get('/api/v1/events/:event_id', 
-	    	mdw.validate('event_fetch'),
-	    	api.events.fetchEventById );
-
 	    // [ @events ] Update le statut d'un évènement [ 'open', 'suspended' ]
 	    app.patch('/api/v1/events/:event_id/status',
 	    	mdw.validate('event_status'),
@@ -325,18 +325,30 @@
 	    	mdw.notifier.addNotification('accepted_in'),
 	    	api.events.changeGroupStatus );
 
+	    // [ @events ] Renvoie la liste des befores les plus proches
+	    app.get('/api/v1/events.nearest',
+	    	mdw.validate('event_nearest'),
+	    	api.events.fetchNearestEvents
+	    );
+
 	    // [ @events ] Renvoie la liste de tous les évènements ! 
 	    app.get('/api/v1/events',
 	    	api.events.fetchEvents );
-
 
 	    // [ @events ] Crée un nouvel évènement
 	    app.post('/api/v1/events',
 	    	mdw.validate('create_event'),
 	    	mdw.meepass.updateMeepass('event_created'),
+	    	api.events.createEvent,
 	    	mdw.notifier.addNotification('marked_as_host'),
-	    	api.events.createEvent
+	    	mdw.realtime.pushNewEvent
 	    );
+
+	     // [ @events ] Fetch un event par son identifiant. 
+	    app.get('/api/v1/events/:event_id', 
+	    	mdw.validate('event_fetch'),
+	    	api.events.fetchEventById );
+
 
 
 

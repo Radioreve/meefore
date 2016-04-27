@@ -65,8 +65,6 @@
 			if( users_facebook_id.indexOf( sender_id ) == -1 ){
 				return callback({ 
 					'err_id'	 : 'no_sender_found',
-					// 'users_facebook_id': users_facebook_id,
-					// 'users'  : users, 
 					'sender_id'  : sender_id, 
 					'receiver_id': receiver_id 
 				});
@@ -76,13 +74,11 @@
 			if( users_facebook_id.indexOf( receiver_id ) == -1 ){
 				return callback({ 
 					'err_id'	 : 'no_receiver_found',
-					// 'users'      : users,
-					// 'users_facebook_id': users_facebook_id,
 					'sender_id'  : sender_id, 
 					'receiver_id': receiver_id 
 				});
 			}
-			console.log( sender );
+			
 			// Sender doesn't have enough meepass to do the action
 			if( sender.n_meepass < 1 ){
 				return callback({ 

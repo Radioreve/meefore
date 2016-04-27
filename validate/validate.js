@@ -17,6 +17,7 @@
 			event_group_request 	: 'validate-event-group-request',
 			event_status        	: 'validate-event-status',
 			event_group_status  	: 'validate-event-group-status',
+			event_nearest 		    : 'validate-event-nearest',
 			chat_message        	: 'validate-chat-message',
 			chat_fetch          	: 'validate-chat-fetch',
 			chat_readby         	: 'validate-chat-readby',

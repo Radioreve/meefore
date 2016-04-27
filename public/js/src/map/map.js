@@ -7,6 +7,7 @@
 		init: function(){
 
 			LJ.map.setupMap();
+            LJ.map.initPlacesServices();
 			LJ.map.setMapStyle('creamy');
 			LJ.map.setMapIcons();
 			LJ.map.setMapOverlay();
@@ -17,10 +18,31 @@
 			return;
 			
 		},
+        initGeocoder: function(){
+            LJ.meegeo = new google.maps.Geocoder();
+            return;
+
+        },
+        initPlacesServices: function(){
+            LJ.meeservices = new google.maps.places.PlacesService( LJ.meemap );
+            return;
+
+        },
 		sayHello: function(){
 			LJ.wlog('Map has been successfully loaded');
 
 		},
+        setUserLocationLatLng: function(){
+
+            var place_id = LJ.user.location.place_id;
+            return LJ.map.findLatLngWithPlaceId( place_id )
+                    .then(function( latlng ){
+                        LJ.user.location.lat =  latlng.lat();
+                        LJ.user.location.lng = latlng.lng();
+                        return;
+                    });
+
+        },
 		handleDomEvents: function(){
 
 			LJ.ui.$body.on('click', '.map__icon.--geoloc', LJ.map.centerMapAtUserLocation );
@@ -30,11 +52,14 @@
 		setupMap: function(){
 
 			LJ.log('Setting up google map...');
+
+            var latlng = {
+                lat: LJ.user.location.lat,
+                lng: LJ.user.location.lng
+            };
+
 			var options = {
-				center: {
-	        		lat: 48.8566140,
-	    			lng: 2.3522219
-	        	},
+				center: latlng,
 	            zoom: 13,
 	            disableDefaultUI: true,
 	            zoomControlOptions: {
@@ -49,8 +74,7 @@
 			var $wrap = document.getElementsByClassName('js-map-wrap')[0];
 
 			LJ.meemap	   = new google.maps.Map( $wrap, options );
-			LJ.meeservices = new google.maps.places.PlacesService( LJ.meemap );
-			LJ.meegeo 	   = new google.maps.Geocoder();
+			
 
             setTimeout(function(){
                 LJ.map.refreshMap();
@@ -128,7 +152,7 @@
         refreshMap: function(){
         	return google.maps.event.trigger( LJ.meemap, 'resize' );
         },
-        findAddressWithLatLng: function( latlng ){
+        findLocationWithLatLng: function( latlng ){
             return LJ.promise(function( resolve, reject ){
 
                 if( !latlng ){
@@ -138,13 +162,21 @@
                 LJ.meegeo.geocode({ location: latlng }, function( res, status ){
 
                     if( status === google.maps.GeocoderStatus.OK && res[0] ){
-                        resolve( res[0].formatted_address );
+                        resolve( res[0] );
                     } else {
                         reject( status );
                     }
                 });
 
             });
+
+
+        },
+        findAddressWithLatLng: function( latlng ){
+            return LJ.map.findLocationWithLatLng( latlng )
+                    .then(function( location ){
+                        return location.formatted_address;
+                    });
 
         },
         findLatLngWithAddress: function( address ){
@@ -165,6 +197,15 @@
 
         	});
         	
+        },
+        getDevicePixelRatio: function(){
+
+            if( window.devicePixelRatio ){
+                return window.devicePixelRatio;
+            } else {
+                return 1;
+            }
+
         },
         findLatLngWithPlaceId: function( place_id ){
         	return LJ.promise(function( resolve, reject ){
@@ -293,8 +334,7 @@
 
             var icon   = {
                 url        : opts.url,
-                size       : new google.maps.Size( 30, 30 ),
-                scaledSize : new google.maps.Size( 30, 30 )
+                scaledSize : new google.maps.Size( 28, 28 )
             };
 
         	var marker = new google.maps.Marker({
@@ -325,7 +365,7 @@
             }
 
         },
-        addEventMarker: function( evt, opts ){
+        addBeforeMarker: function( evt ){
 
         	var event_id = evt._id;
 
@@ -339,6 +379,7 @@
                 latlng    : latlng,
                 url       : LJ.map.markers_url.base.open,
                 type      : 'before',
+                data      : evt,
                 listeners : [
                     {
                         'event_type': 'click',
@@ -401,6 +442,22 @@
         			'<input id="map-browser-input"/>',
         		'</div>'
         		].join(''));
+        },
+        updateMarkers__byDate: function(){
+
+            var active_day = moment( $('.be-dates__date.--active').attr('data-day'), 'DD/MM' ).dayOfYear();
+            LJ.map.markers.forEach(function( mrk ){
+                if( mrk.type == "before" ){
+                    if( mrk.data && mrk.data.begins_at ){
+                        if( moment( mrk.data.begins_at ).dayOfYear() == active_day ){
+                            mrk.marker.setOpacity(1);
+                        } else {
+                            mrk.marker.setOpacity(0.15);
+                        }
+                    }
+                }
+
+            });
         }
 
 

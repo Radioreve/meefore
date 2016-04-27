@@ -267,8 +267,14 @@
 		renderSharedWithItem__User: function( sho, target ){
 
 			var friends = [];
+			var friends_profiles = LJ.friends.friends_profiles;
+
+			if( !Array.isArray( friends_profiles ) ){
+				return LJ.wlog('Unable to render, friends_profiles is not an array');
+			}
+
 			sho.shared_with.forEach(function( friend_id ){
-				friends.push( _.find( LJ.friends.friends_profiles, function( f ){
+				friends.push( _.find( friends_profiles, function( f ){
 					return f.facebook_id == friend_id;
 				}))
 			});

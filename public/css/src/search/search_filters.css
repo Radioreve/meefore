@@ -34,7 +34,7 @@
     border-bottom: 1px solid #eee;
 }
 .search-filters-section__title h2 {}
-.search-filters-section__title span {font-family: 'Open sans';font-size: 14px;font-weight: 900;}
+.search-filters-section__title span {font-family: 'Open sans';font-size: 14px;font-weight: 700;}
 .search-filters-row {
     width: 100%;
     background: white;

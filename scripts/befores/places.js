@@ -1,58 +1,4 @@
-
-window.LJ.map = _.merge( window.LJ.map || {}, {
-
-	test: {
-
-		addOneMarker_Url: function( url ){
-
-			var i = LJ.randomInt( 0, LJ.map.test.places.length -1 );
-			var latlng = LJ.map.test.places[ i ];	
-			
-			LJ.map.addMarker({
-				latlng    : latlng,
-				url       : url,
-				type      : 'test',
-				marker_id : 'test-' + LJ.generateId()
-			})		
-
-		},
-		addOneMarker: function( i ){
-
-			i = i || LJ.randomInt( 0, LJ.map.test.places.length -1 );
-			var latlng = LJ.map.test.places[ i ];
-
-			LJ.map.addBeforeMarker({
-				_id    : i + '--' + LJ.generateId(),
-				address: {
-					place_id : 'lol',
-					'lat'    : latlng.lat,
-					'lng' 	 : latlng.lng
-				},
-				begins_at: _.shuffle(LJ.before.test.iso_dates)[0]
-			});
-
-		},
-		showMarkers: function(){
-			LJ.map.test.places.forEach(function( latlng, i ){
-				LJ.map.test.addOneMarker( i );
-			});
-		},
-		buildPlaces: function(){
-
-			LJ.meemap.addListener('click', function( e ){
-				LJ.map.findLocationWithLatLng( e.latLng )
-					.then(function( location ){
-						LJ.map.test.places.push({
-							place_name: location.formatted_address,
-							place_id  : location.place_id,
-							lat       : e.latLng.lat(),
-							lng 	  : e.latLng.lng()
-						});
-					});
-			});
-
-		},
-		places: [
+module.exports = [
 			{
 		        "place_name": "50 Boulevard Voltaire, 75011 Paris, France",
 		        "place_id": "ChIJBUAfVPxt5kcRS88-nrqe0Mw",
@@ -263,9 +209,4 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		        "lat": 48.85206549830757,
 		        "lng": 2.380602964872196
 		    }
-		]
-	}
-
-});
-
-
+		];

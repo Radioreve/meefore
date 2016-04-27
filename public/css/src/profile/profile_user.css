@@ -151,7 +151,7 @@
     color: #919191;
 }
 
-.user-pics__navigate {position: absolute;font-size: 40px;height: 30px;width: 30px;top: 50%;transform: translate(0,-50%);cursor: pointer;color: #454545;color: #3C7FEE;display: no;}
+.user-pics__navigate {position: absolute;font-size: 40px;height: 30px;width: 30px;top: 50%;transform: translate(0,-50%);cursor: pointer;color: #454545;color: #3C7FEE;}
 .user-pics__navigate.--left {right: 150px;}
 .user-pics__navigate.--right {left: 124px;}
 .user-pics__navigate i {

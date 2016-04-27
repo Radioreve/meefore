@@ -120,7 +120,7 @@
 	function addNotification_MarkedAsHost( req, res, next ){
 
 		var notification_id = "marked_as_host";
-
+		var before			= req.sent.before;
 		// At this stage, we cannt access the event_id (not constructed yet) so we pass
 		// begins_at to uniquely find the event clientside based on dayOfYear() (since users
 		// cant host multiple events on the same day )
@@ -132,9 +132,10 @@
 
 		// Shortcut reference
 		var n = {
+			before_id	    : before._id,
 			notification_id : notification_id,
 			event_begins_at : begins_at,
-			facebook_id     : facebook_id,
+			created_by      : facebook_id,
 			happened_at     : moment().toISOString()
 		};
 

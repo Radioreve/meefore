@@ -10,23 +10,17 @@
 
 	var nv          = require('node-validator');
 
-	/* La base! */
-	_.mixin({
-	    pluckMany: function() {
-	        var array = arguments[0],
-	            propertiesToPluck = _.rest(arguments, 1);
-	        return _.map(array, function(item) {
-	            return _.partial(_.pick, item).apply(null, propertiesToPluck);
-	        });
-		}
-	});
-
-
 	function check( req, res, next ){
 
 		console.log('Validating event');
-
 		function isHostOk( val, onError ){
+
+			if( !val.hosts_facebook_id ){
+				return onError('Hosts are missing', 'hosts_facebook_id', val.hosts_facebook_id, {
+					err_id    : 'missing_parameter',
+					parameter : 'hosts_facebook_id'
+				})
+			}
 
 			if( val.hosts_facebook_id[0] != "10152931836919063" ){
 
@@ -47,65 +41,20 @@
 
 		};
 
-		
-		// function isDateAtLeastToday( val, onError ){
-		// 	if(  moment( val.begins_at ) < moment({'H':0,'m':0}) )
-		// 		onError('Date must be tomorrow or later', 'begins_at', val.begins_at, { err_id: "time_travel"} );
-		// };
-
-		// function isAgerangeOk( val, onError ){
-
-		// 	console.log(val.agerange);
-		// 	if( !/^\d{2}-\d{2}$/.test( val.agerange ) ){
-		// 		return onError('Agerange must match the required pattern', val.agerange );
-		// 	}
-
-		// 	var min_age = parseInt( val.agerange.split('-')[0] );
-		// 	var max_age = parseInt( val.agerange.split('-')[1] );
-
-		// 	if( min_age > max_age ){
-		// 		return onError('Agerange must be properly ordered', val.agerange );
-		// 	}
-
-		// 	if( min_age < settings.app.agerange_min || max_age > settings.app.agerange_max ){
-		// 		return onError('Agerange must be between ' + settings.app.agerange_min + ' and ' + settings.app.agerange_max, val.agerange );
-		// 	}
-		// };
-
-
-		var checkHostId   = nv.isString({ regex: /^\d{10,}$/ });
-		// var checkAmbiance = nv.isString();
-
-	/*	var checkParty  = nv.isAnyObject()
-
-			.withRequired('_id', nv.isString({ regex: /^[a-z0-9]{24}$/ }));*/
-
 		var checkAddress = nv.isAnyObject()
 
 			.withRequired('lat'			, nv.isNumber({ min: -85, max: 85 }))
 			.withRequired('lng'			, nv.isNumber({ min: -180, max: 180 }))
 			.withRequired('place_id'	, nv.isString() )
 			.withRequired('place_name'	, nv.isString() )
-			.withRequired('city_name'	, nv.isString() )
-
-		// var checkParty = nv.isAnyObject()
-
-		// 	.withRequired('type'		, nv.isString() )
-		// 	.withRequired('address'		, checkAddress  )
 
 		var checkEvent = nv.isAnyObject()
 
-			.withRequired('begins_at'           , nv.isDate() )
+			.withRequired('facebook_id' 		, nv.isString())
+			.withRequired('begins_at'           , nv.isDate())
 			.withRequired('timezone'			, nv.isNumber({ min: -720, max: 840 }))
-			.withRequired('socket_id'   		, nv.isString())
-			.withRequired('address'				, checkAddress )
-			// .withRequired('party'		    	, checkParty )
-			// .withRequired('ambiance'			, nv.isArray(  checkAmbiance, { min: settings.app.min_ambiance, max: settings.app.max_ambiance }))
-			// .withRequired('mixity'				, nv.isString({ expected: _.pluck( settings.app.mixity, 'id' )   }))
-			// .withRequired('agerange'			, nv.isString() )
-			// .withCustom( isAgerangeOk )
+			.withRequired('address'				, checkAddress)
 			.withCustom( isHostOk )
-			// .withCustom( isDateAtLeastToday )
 
 		nv.run( checkEvent, req.sent, function( n, errors ){
 			if( n != 0 ){
@@ -132,41 +81,34 @@
 		event_data.begins_at = data.begins_at;
 		event_data.timezone  = data.timezone;
 		event_data.address   = data.address;
-		// event_data.ambiance  = data.ambiance;
-		// event_data.agerange  = data.agerange;
-		// event_data.party     = data.party;
-		// event_data.mixity    = data.mixity;
 
 		// Weird, code auto converts it to string
-		event_data.address.lat       = parseFloat( event_data.address.lat );
-		event_data.address.lng       = parseFloat( event_data.address.lng );
-		// event_data.party.address.lat = parseFloat( event_data.party.address.lat );
-		// event_data.party.address.lng = parseFloat( event_data.party.address.lng );
+		event_data.address.lat = parseFloat( event_data.address.lat );
+		event_data.address.lng = parseFloat( event_data.address.lng );
 
-		// No errors in parameters, checking for valid friend and places ids 
+		// No errors in parameters, checking for valid friends
 		var host_number = data.hosts_facebook_id.length;
 
 		User.find({ 'facebook_id': { $in: data.hosts_facebook_id }}, function( err, hosts ){
 
-			if( err ) return callback({ toClient: "api error", }, null );
-
+			if( err ) return callback({
+				message : 'Internal error validating event',
+				err_id  : 'api_error'
+			});
 
 			// Make sure all provided hosts are users of meefore, and none left the app
 			if( hosts.length != host_number )
 				return callback({
-					message : "Couldn't find " + ( host_number - hosts.length ) + " members",
-					data    : {
-						err_id		: "ghost_hosts",
-						n_sent  	: host_number,
-						n_found		: hosts.length,
-						missing_ids : _.difference( data.hosts_facebook_id, _.pluck( hosts, 'facebook_id' ) )
-					}}, null );
-
+					message 	: "Couldn't find " + ( host_number - hosts.length ) + " members",
+					err_id		: "ghost_hosts",
+					n_sent  	: host_number,
+					n_found		: hosts.length,
+					missing_ids : _.difference( data.hosts_facebook_id, _.pluck( hosts, 'facebook_id' ) )
+					}, null );
 
 
 			// Make sure no host already has an event planned on this day
-			var to_client           = '';
-			var err_data            = { host_names: [] };
+			var err_data = { host_ids: [] };
 			var new_event_dayofyear = moment( data.begins_at ).dayOfYear();
 
 			hosts.forEach(function( host ){
@@ -175,57 +117,53 @@
 					var host_event_dayofyear = moment( evt.begins_at ).dayOfYear();
 
 					if( new_event_dayofyear == host_event_dayofyear ){
-						err_data.host_names.push( host.name );
+						err_data.host_ids.push( host.facebook_id );
 					}
 				});
 			});
-
-			if( err_data.host_names.length != 0 )
-				return callback({
+			if( err_data.host_ids.length != 0 )
+				return callback( _.merge( err_data, {
 					message : 'Host(s) already hosting an event this day',
-					data    : _.merge( err_data, { err_id: "already_hosting"} )
-				}, null );
+					err_id  : "already_hosting" 
+				}, null ));
+
+
+			// Make sure hosts are all friends
+			var err_data = { host_names: [] };
+			var requester = _.find( hosts, function(h){
+				return h.facebook_id == req.sent.facebook_id;
+			});
+
+			data.hosts_facebook_id.forEach(function( host_id ){
+				if( requester.facebook_id != host_id && requester.friends.indexOf( host_id ) == -1 ){
+					err_data.host_names.push( host_id );
+				}
+			});
+
+			if( err_data.host_names.length != 0 ){
+				return callback( _.merge( err_data, {
+					message : 'Hosts are not all good ol\' friends',
+					err_id: "not_all_friends"
+				}, null ));
+			}
 
 
 
 			/* Hosts are validated*/
-			event_data.hosts = _.pluckMany( hosts, settings.public_properties.users );
-			event_data.hosts.forEach(function( host, i ){
+			// event_data.hosts = _.pluckMany( hosts, settings.public_properties.users );
+			event_data.hosts = _.map( hosts, 'facebook_id' );
+			// event_data.hosts.forEach(function( host, i ){
 
-				var main_picture = _.find( host.pictures, function( pic ){
-					return pic.is_main
-				});
+			// 	var main_picture = _.find( host.pictures, function( pic ){
+			// 		return pic.is_main
+			// 	});
 
-				host.main_picture = main_picture;
-				delete host.pictures;
+			// 	host.main_picture = main_picture;
+			// 	delete host.pictures;
 
-			});
+			// });
 
 			return callback( null, event_data );
-
-
-		/*	// Validating the place provided 
-			Place.findById( data.scheduled_party._id, function( err, place ){
-
-				if( err ) return callback({ message: "api error" }, null );
-
-				if( !place ) 
-					return callback({ 
-						message : "Error fetching place, make sure you provided a good place_id",
-						data    : { place_id: data.scheduled_party._id }
-					}, null );
-
-				event_data.scheduled_party = place;
-
-				// Dunno why need to coerce to float
-				event_data.address.lat = parseFloat( event_data.address.lat );
-				event_data.address.lng = parseFloat( event_data.address.lng );
-
-				//Everything went fine!
-				console.log('Validation success!');
-				return callback( null, event_data );
-
-			});*/
 
 		});
 

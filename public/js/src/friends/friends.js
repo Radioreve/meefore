@@ -1,13 +1,13 @@
 
 	window.LJ.friends = _.merge( window.LJ.friends || {}, {
 
-		friends_profiles: [],
+		friends_profiles: null,
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.friends.handleDomEvents();
-				LJ.friends.fetchFriends();
+				LJ.friends.syncAndAddFacebookFriends();
 				resolve();
 
 			});
@@ -15,7 +15,6 @@
 		},
 		handleDomEvents: function(){
 
-			$('.menu-item.--friends').one('click', LJ.friends.handleFriendsClicked );
 			LJ.ui.$body.on('click', '.js-invite-friends', LJ.facebook.showModalSendMessageToFriends );
 			LJ.ui.$body.on('click', '.friend__item', LJ.friends.handleFriendProfileClicked );
 
@@ -34,7 +33,7 @@
 				   	display: 'block'
 				   });
 
-			LJ.friends.fetchFriends();
+			LJ.friends.syncAndAddFacebookFriends();
 
 		},	
 		handleFriendProfileClicked: function(){
@@ -45,64 +44,126 @@
 			LJ.profile_user.showUserProfile( facebook_id );
 
 		},
-		fetchFriends: function(){
+		syncAndAddFacebookFriends: function(){
 
 			LJ.facebook.fetchFriends()
-				.then( LJ.api.fetchMeFriends )
-				.then( LJ.friends.handleFetchMeFriendSuccess, LJ.friends.handleFetchMeFriendError );
+				.then(function( res ){
+					return LJ.api.syncMeFriends( res.friend_ids );
+
+				})
+				.then(function( res ){
+					var friend_ids = res.friends;
+					return LJ.api.fetchUsers( friend_ids );
+
+				})
+				.then(function( friends_profiles ){
+					friends_profiles = _.map( friends_profiles, 'user' );
+					return LJ.friends.setFriendsProfiles( friends_profiles );
+
+				})
+				.then(function( friends_profiles ){
+					return LJ.friends.renderFriends( friends_profiles );
+
+				})
+				.then(function( friends_html ){
+					return LJ.friends.displayFriends( friends_html );
+
+				})
+				.then(function(){
+					LJ.notifications.checkNotification_noFriends();
+					
+				})
+				.catch(function( e ){
+					LJ.wlog(e);
+				});
 
 
 		},
-		handleFetchMeFriendSuccess: function( expose ){
+		getFriendsProfiles: function( facebook_ids ){
 
-			var friend_ids = expose.friends;
+			if( facebook_ids ){
+				return _.filter( LJ.friends.friends_profiles, function( f ){
+					return ( facebook_ids.indexOf( f.facebook_id ) != -1 );
+				});
 
-			LJ.friends.setFriends( friend_ids );
+			} else {
+				return LJ.friends.friends_profiles;
+
+			}
 
 		},
-		setFriends: function( friend_ids ){
+		fetchFriendsProfiles: function(){
+
+			LJ.api.fetchMeFriends()
+				.then(function( friend_ids ){
+					return LJ.api.fetchUsers( friend_ids )
+				})
+				.then(function( friends_profiles ){
+					friends_profiles = _.map( friends_profiles, 'user' );
+					return LJ.friends.setFriendsProfiles( friends_profiles );
+				});
+
+
+		},
+		setFriendsProfiles: function( friends_profiles ){
+
+			LJ.friends.friends_profiles = friends_profiles;
+			return LJ.Promise.resolve( friends_profiles );
+
+		},
+		renderFriends: function( friends_profiles ){
 
 			var html = [];
-			LJ.friends.friends_profiles = [];
 
-			LJ.api.fetchUsers( friend_ids )
-				.then(function( res ){
+			if( friends_profiles.length == 0 ){
+				html.push( LJ.friends.renderFriendItem__Empty() );
 
-					if( res.length == 0 ){
-
-						html.push( LJ.friends.renderFriendItem__Empty() );
-
-					} else {
-
-						res.forEach(function( r ){
-
-							var friend = r.user;
-
-							LJ.friends.friends_profiles.push( friend );
-							html.push( LJ.friends.renderFriendItem( friend ) );
-
-						});
-
-						html.push( LJ.friends.renderFriendItem__Last() );
-
-					}
-
-					$('.friends')
-						.html( html.join('') )
-						.children()
-						.velocity('fadeIn', {
-							duration: 250,
-							display: 'flex'
-						});
-
-					LJ.notifications.checkNotification_noFriends();
+			} else {
+				friends_profiles.forEach(function( friend ){
+					html.push( LJ.friends.renderFriendItem( friend ) );
 
 				});
 
-		},		
-		handleFetchMeFriendError: function(){
+				html.push( LJ.friends.renderFriendItem__Last() );
 
-			LJ.elog('Error fetching friends :/');
+			}
+
+			return html.join('');
+
+		},
+		displayFriends: function( html ){
+
+			var $base;
+			if( $('.friends').children().length == 0 ){
+				$( html )
+					.hide()
+					.appendTo('.friends')
+					.velocity('shradeIn', {
+						duration : LJ.shared.shared_item_duration,
+						display  : 'flex',
+						stagger  : (LJ.shared.shared_item_duration / 4)
+					});
+
+			} else {
+				$('.friends')
+					.children()
+					.velocity('shradeOut', {
+						duration : LJ.shared.shared_item_duration,
+						display  : 'none',
+						complete : function(){
+							$( html )
+								.hide()
+								.appendTo('.friends')
+								.velocity('shradeIn', {
+									duration : LJ.shared.shared_item_duration,
+									display  : 'flex',
+									stagger  : (LJ.shared.shared_item_duration / 4)
+								});
+
+						}
+					});
+
+			}
 
 		},
 		renderFriendItem__Empty: function(){

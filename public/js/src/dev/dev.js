@@ -14,6 +14,7 @@
 			Mousetrap.bind('command+v', function(){
 				LJ.dev.toggleAppView();
 			});
+			Mousetrap.bind('command+b', LJ.map.test.handleCreateBefore )
 
 		},
 		toggleColorPalette: function(){

@@ -6,7 +6,11 @@
 		if( !text_src ){
 			return LJ.wlog('Error, couldnt find text source for text_id : ' + text_id );
 		} else {
-			return text_src[ app_lang ];
+			if( typeof text_src[ app_lang ] == "function" ){
+				return text_src[ app_lang ]();
+			} else {
+				return text_src[ app_lang ];
+			}
 		}
 	};
 
@@ -1556,8 +1560,8 @@
 			"us": "Hosts"
 		},
 		be_create_hosts_explanations: {
-			"fr": "Sélectionnez parmis vos amis (%min minimum, %max maximum)",
-			"us": "Select among your friends (%min minimum, %max maximum)"
+			"fr": "Sélectionnez les autres coorganisateurs parmis vos amis",
+			"us": "Select the other hosts among your friends"
 		},
 		be_create_subtitle_before: {
 			"fr": "Le before",
@@ -1584,8 +1588,44 @@
 			"us": "Where and when will you guys meet ?"
 		},
 		be_create_button: {
-			"fr": "Ajouter à la map !",
-			"us": "Add to the map !"
+			"fr": "Créer",
+			"us": "Create"
+		},
+		modal_be_create_title: {
+			"fr": "Membres du groupe",
+			"us": "Group members"
+		},
+		modal_be_create_subtitle: {
+			"fr": function(){
+				var min = LJ.app_settings.app.min_hosts - 1;
+				var max = LJ.app_settings.app.max_hosts - 1;
+				return "Sélectionnez les autres organisateurs parmis vos amis <br> (%min minimum, %max maximum)".replace('%min', min).replace('%max', max);
+			},
+			"us": function(){
+				var min = LJ.app_settings.app.min_hosts - 1;
+				var max = LJ.app_settings.app.max_hosts - 1;
+				return "Select the other hosts among your friends <br> (%min minimum, %max maximum)".replace('%min', min).replace('%max', max);
+			}
+		},
+		err_be_create_missing_hosts: {
+			"fr": "Les coorganisateurs sont manquants",
+			"us": "Cohosts are missing"
+		},
+		err_be_create_missing_date: {
+			"fr": "La date de début est manquante",
+			"us": "The date is missing"
+		},
+		err_be_create_missing_location: {
+			"fr": "L'addresse est manquante",
+			"us": "The address is missing"
+		},
+		err_be_create_already_hosting_me: {
+			"fr": "Vous organisez déjà un before ce jour-là",
+			"us": "You already host an event on this day"
+		},
+		err_be_create_already_hosting: {
+			"fr": "%names organise(nt) déjà un before ce jour-là",
+			"us": "%names are already hosting a before on this day"
 		}
 
 

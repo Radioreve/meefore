@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'fontello';
-  src: url('../font/fontello.eot?44600858');
-  src: url('../font/fontello.eot?44600858#iefix') format('embedded-opentype'),
-       url('../font/fontello.woff2?44600858') format('woff2'),
-       url('../font/fontello.woff?44600858') format('woff'),
-       url('../font/fontello.ttf?44600858') format('truetype'),
-       url('../font/fontello.svg?44600858#fontello') format('svg');
+  src: url('../font/fontello.eot?86653640');
+  src: url('../font/fontello.eot?86653640#iefix') format('embedded-opentype'),
+       url('../font/fontello.woff2?86653640') format('woff2'),
+       url('../font/fontello.woff?86653640') format('woff'),
+       url('../font/fontello.ttf?86653640') format('truetype'),
+       url('../font/fontello.svg?86653640#fontello') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?44600858#fontello') format('svg');
+    src: url('../font/fontello.svg?86653640#fontello') format('svg');
   }
 }
 */
@@ -103,34 +103,38 @@
 .icon-gift:before { content: '\e82d'; } /* '' */
 .icon-network:before { content: '\e82e'; } /* '' */
 .icon-search-light:before { content: '\e82f'; } /* '' */
-.icon-search-zoom:before { content: '\e830'; } /* '' */
-.icon-star:before { content: '\e831'; } /* '' */
-.icon-party-hat-empty:before { content: '\e832'; } /* '' */
-.icon-newsletter:before { content: '\e833'; } /* '' */
-.icon-gift-empty:before { content: '\e834'; } /* '' */
-.icon-headphones:before { content: '\e835'; } /* '' */
-.icon-cog:before { content: '\e836'; } /* '' */
-.icon-crown:before { content: '\e837'; } /* '' */
-.icon-direction:before { content: '\e838'; } /* '' */
-.icon-clock-empty:before { content: '\e839'; } /* '' */
-.icon-line:before { content: '\e83a'; } /* '' */
-.icon-location:before { content: '\e83b'; } /* '' */
-.icon-location-barred:before { content: '\e83c'; } /* '' */
-.icon-main-picture:before { content: '\e83d'; } /* '' */
-.icon-male:before { content: '\e83e'; } /* '' */
-.icon-mask:before { content: '\e83f'; } /* '' */
-.icon-meepass:before { content: '\e840'; } /* '' */
-.icon-moon:before { content: '\e841'; } /* '' */
-.icon-play:before { content: '\e842'; } /* '' */
-.icon-plus:before { content: '\e843'; } /* '' */
-.icon-pricetag:before { content: '\e844'; } /* '' */
-.icon-pricetag-empty:before { content: '\e845'; } /* '' */
-.icon-question-mark:before { content: '\e846'; } /* '' */
-.icon-refresh:before { content: '\e847'; } /* '' */
-.icon-filters:before { content: '\e848'; } /* '' */
-.icon-telescope:before { content: '\e849'; } /* '' */
-.icon-search-planet:before { content: '\e84a'; } /* '' */
-.icon-trash:before { content: '\e84b'; } /* '' */
-.icon-menu:before { content: '\e84c'; } /* '' */
-.icon-code:before { content: '\e84d'; } /* '' */
-.icon-power:before { content: '\e84e'; } /* '' */
+.icon-star:before { content: '\e830'; } /* '' */
+.icon-party-hat-empty:before { content: '\e831'; } /* '' */
+.icon-newsletter:before { content: '\e832'; } /* '' */
+.icon-gift-empty:before { content: '\e833'; } /* '' */
+.icon-headphones:before { content: '\e834'; } /* '' */
+.icon-cog:before { content: '\e835'; } /* '' */
+.icon-crown:before { content: '\e836'; } /* '' */
+.icon-direction:before { content: '\e837'; } /* '' */
+.icon-clock-empty:before { content: '\e838'; } /* '' */
+.icon-line:before { content: '\e839'; } /* '' */
+.icon-location:before { content: '\e83a'; } /* '' */
+.icon-location-barred:before { content: '\e83b'; } /* '' */
+.icon-main-picture:before { content: '\e83c'; } /* '' */
+.icon-male:before { content: '\e83d'; } /* '' */
+.icon-mask:before { content: '\e83e'; } /* '' */
+.icon-meepass:before { content: '\e83f'; } /* '' */
+.icon-moon:before { content: '\e840'; } /* '' */
+.icon-play:before { content: '\e841'; } /* '' */
+.icon-plus:before { content: '\e842'; } /* '' */
+.icon-pricetag:before { content: '\e843'; } /* '' */
+.icon-pricetag-empty:before { content: '\e844'; } /* '' */
+.icon-question-mark:before { content: '\e845'; } /* '' */
+.icon-refresh:before { content: '\e846'; } /* '' */
+.icon-filters:before { content: '\e847'; } /* '' */
+.icon-telescope:before { content: '\e848'; } /* '' */
+.icon-search-planet:before { content: '\e849'; } /* '' */
+.icon-trash:before { content: '\e84a'; } /* '' */
+.icon-menu:before { content: '\e84b'; } /* '' */
+.icon-code:before { content: '\e84c'; } /* '' */
+.icon-power:before { content: '\e84d'; } /* '' */
+.icon-search-zoom:before { content: '\e84e'; } /* '' */
+.icon-angle-up:before { content: '\e84f'; } /* '' */
+.icon-angle-down:before { content: '\e850'; } /* '' */
+.icon-down-dir:before { content: '\e851'; } /* '' */
+.icon-up-dir:before { content: '\e852'; } /* '' */

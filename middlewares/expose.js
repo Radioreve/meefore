@@ -12,8 +12,9 @@
 
 		if( !expose ){
 			res.status( 404 ).json({
-				'err_id': 'ghost_ressource',
-				'msg'   : 'The request url didnt match any route'
+				'namespace': 'route',
+				'msg'      : 'The request url didnt match any route',
+				'errors'   : { 'err_id': 'ghost_ressource' }
 			});
 		} else{
 			res.status( 200 ).json( expose );

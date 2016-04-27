@@ -46,6 +46,19 @@
 			});
 
 
+		},
+		activatePlacesInCreateBefore: function(){
+
+			var input = $('.be-create-row.--location input')[0];
+			var options = {};
+
+			LJ.seek.be_create = new google.maps.places.Autocomplete( input, options );
+
+			// To be able to isolate him from other place containers laters
+			LJ.delay( LJ.randomInt(1,3)*100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-be-create').addClass('js-alreadyhere');
+			});
+
 		}
 
 

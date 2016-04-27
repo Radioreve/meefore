@@ -117,6 +117,9 @@
 					attributes.push('data-' + attr_object.name  + '="' + attr_object.val + '"');
 				});
 			}
+			if( options.max_items ){
+				attributes.push('data-max-items="'+ options.max_items +'"' );
+			}
 			attributes = attributes.join(' ');
 
 			var search_input_html = '';
@@ -128,7 +131,7 @@
 
 			return [
 
-				'<div class="modal ' + modifier + '" ' + disabled + ' ' + attributes + '>',
+				'<div class="modal ' + modifier + ' ' + disabled + '" ' + attributes + '>',
 					'<header class="modal-header">',
 						'<div class="modal__close">',
 							LJ.ui.renderIcon('cancel'),
@@ -185,6 +188,11 @@
 		handleModalItemClicked: function(){
 
 			var $s = $(this);
+
+			var max = $('.modal').attr('data-max-items');
+			if( max && $('.modal-item.--selected').length == parseInt( max ) && !$s.hasClass('--selected') ){
+				return LJ.wlog('Already max items');
+			}
 
 			var $modal = $('.modal');
 			var $el = $('.friend-modal:not(.--selected)').first();

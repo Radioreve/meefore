@@ -10,9 +10,9 @@ var settings = {
 	api_version: 1,
 	app: {
 		min_group: 2,
-		max_group: 5,
+		max_group: 4,
 		min_hosts: 2,
-		max_hosts: 5,
+		max_hosts: 4,
 		min_age  : min_age,
 		max_age  : 50,
 		max_pic  : 5

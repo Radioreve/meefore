@@ -256,7 +256,23 @@
 		});
 	};
 
-	var fetchAndSyncFriends = function( req, res, next ){
+	var fetchFriends = function( req, res, next ){
+
+		var err_ns = 'fetching_friends';
+
+		var facebook_id = req.sent.facebook_id;
+		User.findOne({ facebook_id: facebook_id }, function( err , user ){
+
+			if( err ) return handleErr( req, res, err_ns, err );
+
+			req.sent.expose.friends = user.friends;
+
+			next();
+			
+		});
+	};
+
+	var syncFriends = function( req, res, next ){
 
 		var err_ns = 'syncing_friends';
 
@@ -498,7 +514,8 @@
 		updatePicture        : updatePicture,
 		updatePictures       : updatePictures,
 		uploadPictureWithUrl : uploadPictureWithUrl,
-		fetchAndSyncFriends  : fetchAndSyncFriends,
+		fetchFriends		 : fetchFriends,
+		syncFriends          : syncFriends,
 		fetchCloudinaryTags  : fetchCloudinaryTags,
 		updateMeepass 		 : updateMeepass,
 		updateSpotted        : updateSpotted,

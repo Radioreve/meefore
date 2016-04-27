@@ -84,7 +84,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 				// Surcharge profile with access_token for server processing;
 				var access_token = LJ.login.data.access_token || facebook_token;
 				
-				LJ.log('Surcharing profile object with token : ' + access_token );
+				// LJ.log('Surcharing profile object with token : ' + access_token );
 				facebookProfile.access_token = access_token;
 
 				// Store it for reconnexion purposes

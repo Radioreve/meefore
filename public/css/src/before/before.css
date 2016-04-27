@@ -1,10 +1,24 @@
 
 
-.be-browser {position: fixed;top: 0px;width: 100%;background: rgb(255, 255, 255);z-index: 1;height: 94px;display: none;flex-flow: column nowrap;justify-content: center;align-items: center;}
+.be-browser {position: fixed;top: 0px;width: 100%;background: rgb(255, 255, 255);box-shadow: 0 0 14px #B9B9B9;z-index: 1;height: 86px;display: none;flex-flow: column nowrap;justify-content: center;align-items: center;}
 .be-browser .jspPane {
     flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    padding: 0!important;
+    height: 50px;
+    overflow-y: hidden;
 }
-.be-dates {display: flex;height: 50px;color: #919191;width: 666px;overflow: hidden;overflow-x: visible;outline: none;}
+.be-browser .jspVerticalBar {
+    display: none;
+}
+.be-browser .jspDrag {
+    background: #1B69EC;
+}
+.be-browser .jspHorizontalBar {
+    height: 2px;
+}
+.be-dates {width: 100%;display: flex;color: #919191;outline: none;align-items: center;justify-content: center;height: 50px;}
 
 .be-address {
     width: 100%;
@@ -13,8 +27,8 @@
     align-items: center;
     justify-content: center;
     border-top: 1px solid #eee;
-    height: 26px;
-    padding-top: 4px;
+    height: 30px;
+    padding-bottom: 2px;
     /* color: #919191; */
     font-family: 'Open sans';
 }
@@ -24,11 +38,16 @@
 } 
 .be-dates__date  {
     margin: 0 20px;
-    /* color: #ccc; */
+    color: #ccc;
     cursor: pointer;
     font-size: 14px;
     align-items: center;
     display: inline-flex;
+    transition: all ease-in-out .15s;
+}
+
+.be-dates__date:hover{
+    transform: scale(1.13);
 }
 .be-dates__date span {
     font-family: 'Open sans';
@@ -39,11 +58,10 @@
     font-weight: 800;
     position: relative;
     color: black;
-    font-size: 22px;
+    /* transform: scale(1.3); */
 }
 .be-dates__date.--active span {
-    font-weight: bolder;
-    font-size: 16px;
+    font-weight: 700;
 }
 
 .be-rows {
@@ -108,4 +126,12 @@
     width: 60px;
     height: 60px;
     border-radius: 100px;
+}
+
+.be-create__loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%)!important;
+    width: 40px;
 }

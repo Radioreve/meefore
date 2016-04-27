@@ -67,15 +67,15 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 
 .pika-label {
    display: inline-block;
-   *display: inline;
+   *
+   display: inline;
    position: relative;
    z-index: 9999;
    overflow: hidden;
    margin: 0;
    padding: 5px 3px;
-   font-size: 14px;
+   font-size: 12px;
    line-height: 20px;
-   font-weight: bold;
    background-color: #fff;
 }
 
@@ -157,12 +157,12 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 }
 
 .pika-table th {
-    color: rgba(27, 105, 236, 0.54);
     font-size: 12px;
     line-height: 25px;
     font-weight: bold;
     text-align: center;
     font-family: 'Open sans';
+    color: #454545;
 }
 
 .pika-button {
@@ -190,9 +190,8 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 }
 
 .is-today .pika-button {
-    color: #fcfcfc;
-    font-weight: bold;
-    background: rgb(172, 203, 255)!important;
+    color: black;
+    background: rgb(236, 236, 236)!important;
     border-radius: 3px;
 }
 
@@ -231,7 +230,7 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 
 .pika-button:hover {
     color: #fff;
-    background: #1B69EC!important;
+    background: #33afff!important;
     box-shadow: none;
     border-radius: 3px;
 }

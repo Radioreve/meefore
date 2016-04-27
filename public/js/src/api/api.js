@@ -3,7 +3,7 @@
 
 		app_token_url 			  	 : '/auth/facebook',
 		me_url		  			  	 : '/api/v1/me',
-		me_friends				  	 : '/me/friends',
+		me_friends				 	 : '/me/friends',
 		invite_code_url 			 : '/me/invite-code',
 		fetch_shared_url		  	 : '/api/v1/users/:facebook_id/shared',
 		fetch_meepass_url 		  	 : '/api/v1/users/:facebook_id/meepass',
@@ -21,10 +21,12 @@
 		update_settings_mailing_url  : '/me/update-settings-mailinglists',
 		mailchimp_status_url    	 : '/api/v1/users/:facebook_id/mailchimp-status',
 		delete_my_account_url        : '/me/delete',
-		fetch_more_users_url 		 : '/api/v1/users/more',
+		fetch_more_users_url 		 : '/api/v1/users.more',
 		share_url 					 : '/api/v1/share',
-		distinct_countries_url 		 : '/api/v1/users/countries',
+		distinct_countries_url 		 : '/api/v1/users.countries',
 		event_hosts_ids_url          : '/api/v1/events/event_id/hosts',
+		create_before_url 			 : '/api/v1/events',
+		fetch_nearest_before_url     : '/api/v1/events.nearest',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -34,7 +36,7 @@
 			});
 		},
 		get: function( url, data ){	
-			LJ.log('Calling the api [get]');
+			// LJ.log('Calling the api [get]');
 			return LJ.promise(function( resolve, reject ){
 
 				if( LJ.user && LJ.user.facebook_id && data ){
@@ -61,13 +63,13 @@
 	                    }, LJ.ui.minimum_api_delay - ( new Date() - call_started ) );
 					},
 					error: function( err ){
+
 						setTimeout(function( err ){
 							var err = err.responseJSON;
-							if( Array.isArray( err ) ){
-								return reject({ err: err.errors[0], call_id: err.call_id });
-							} else {
-								return reject( err );
-							}
+							var formatted_err = LJ.api.makeFormattedError( err );
+							
+							return reject( formatted_err );
+
 	                    }, LJ.ui.minimum_api_delay - ( new Date() - call_started ), err );
 					}
 
@@ -76,7 +78,7 @@
 			});
 		},
 		post: function( url, data ){
-			LJ.log('Calling the api [post]');
+			// LJ.log('Calling the api [post]');
 			var data = data || {};
 			return LJ.promise(function( resolve, reject ){
 
@@ -105,19 +107,39 @@
 					},
 					error: function( err ){
 						setTimeout(function( err ){
-							console.log(err);
-							var err = err.responseJSON;
-							if( Array.isArray( err ) ){
-								return reject({ err: err.errors[0], call_id: err.call_id });
-							} else {
-								return reject( err );
-							}
+
+							var err = err.responseJSON; 
+							var formatted_err = LJ.api.makeFormattedError( err );
+
+							return reject( formatted_err );
+
 	                    }, LJ.ui.minimum_api_delay - ( new Date() - call_started ), err );
 					}
 
 				});
 
 			});
+		},
+		makeFormattedError: function( err ){
+
+			var formatted_err = {};
+
+			if( err.namespace ){
+				formatted_err.namespace = err.namespace;
+			}
+
+			if( err.call_id ){
+				formatted_err.call_id = err.call_id;
+			}
+
+			if( Array.isArray( err.errors ) ){
+				formatted_err = _.merge( formatted_err, err.errors[0].data || err.errors[0] );
+			} else {
+				formatted_err = _.merge( formatted_err, err.errors.data || err.errors );
+			}
+
+			return formatted_err;
+
 		},
 		handleErr: function( err_id ){
 
@@ -174,11 +196,25 @@
 					  });
 			});
 		},
-		fetchMeFriends: function( data ){
+		fetchMeFriends: function(){
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.me_friends, data )
+				LJ.api.get( LJ.api.me_friends )
+					  .then(function( exposed ){
+					  	return resolve( exposed.friends );
+					  }, function( err ){
+					  	return reject( err );
+					  });
+
+			});
+
+		},
+		syncMeFriends: function( friend_ids ){
+
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.me_friends, { friend_ids: friend_ids })
 					  .then(function( exposed ){
 					  	return resolve( exposed );
 					  }, function( err ){
@@ -430,10 +466,13 @@
 				}
 
 				LJ.api.post( LJ.api.share_url, opt )
+
 					.then(function( exposed ){
 						return resolve( exposed );
+
 					}, function( err ){
 						return reject( err );
+
 					});
 
 			});
@@ -450,16 +489,63 @@
 
 				LJ.api.get( LJ.api.distinct_countries_url )
 					.then(function( exposed ){
+
 						if( exposed.countries ){
 							return resolve( exposed.countries );
+
 						} else {
 							LJ.wlog('The server didnt respond with the expected countries object');
+
 						}
 					}, function( err ){
 						return reject( err );
+
 					});
 
-			})
+			});
+		},
+		createBefore: function( before ){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.create_before_url, before )
+					.then(function( exposed ){
+						
+						if( exposed.before ){
+							return resolve( exposed.before );
+
+						} else {
+							LJ.wlog('The server didnt respond with the expected before object');
+
+						}
+					}, function( err ){
+						return reject( err );
+
+					});
+
+			});
+		},
+		fetchNearestBefores: function( latlng, options ){
+			return LJ.promise(function( resolve, reject ){
+
+				var request = _.extend({}, { latlng: latlng }, options );
+
+				LJ.api.get( LJ.api.fetch_nearest_before_url, request )
+					.then(function( exposed ){
+
+						if( exposed.befores ){
+							return resolve( exposed.befores );
+
+						} else {
+							LJ.wlog('The server didnt respond with the expected before collection');
+
+						}
+
+					}, function( err ){
+						return reject( err );
+
+					});
+
+			});
 		}
 
 	});
