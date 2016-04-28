@@ -120,7 +120,7 @@
 	function addNotification_MarkedAsHost( req, res, next ){
 
 		var notification_id = "marked_as_host";
-		var before			= req.sent.before;
+		var before			= req.sent.expose.before;
 		// At this stage, we cannt access the event_id (not constructed yet) so we pass
 		// begins_at to uniquely find the event clientside based on dayOfYear() (since users
 		// cant host multiple events on the same day )

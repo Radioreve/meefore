@@ -1,6 +1,6 @@
 
 
-.be-browser {position: fixed;top: 0px;width: 100%;background: rgb(255, 255, 255);box-shadow: 0 0 14px #B9B9B9;z-index: 1;height: 86px;display: none;flex-flow: column nowrap;justify-content: center;align-items: center;}
+.be-browser {position: fixed;top: 58px;width: 100%;background: rgb(255, 255, 255);box-shadow: 0 0 14px #B9B9B9;z-index: 1;height: 86px;display: none;flex-flow: column nowrap;justify-content: center;align-items: center;}
 .be-browser .jspPane {
     flex-wrap: nowrap;
     justify-content: center;
@@ -18,7 +18,7 @@
 .be-browser .jspHorizontalBar {
     height: 2px;
 }
-.be-dates {width: 100%;display: flex;color: #919191;outline: none;align-items: center;justify-content: center;height: 50px;}
+.be-dates {width: 100%!important;display: flex;color: #919191;outline: none;align-items: center;justify-content: center;height: 50px;}
 
 .be-address {
     width: 100%;

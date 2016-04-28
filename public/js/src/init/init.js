@@ -70,22 +70,21 @@
                 .then( LJ.map.initGeocoder )
                 .then( LJ.map.setUserLocationLatLng )
                 .then(function(){
-                    return LJ.Promise.all([
-                            LJ.friends.init(),
-                            LJ.before.init(),
-                            LJ.search.init()
-                    ]);
+                    var a = LJ.friends.init();
+                    var b = LJ.search.init();
+                    var c = LJ.realtime.init();
+                    return LJ.Promise.all([ a, b, c ]);
                 })
-
+                .then( LJ.before.init )
                 .then( LJ.login.stepCompleted )
                 .then( LJ.delay )
                 .then( LJ.login.hideLoginSteps )
                 .then( LJ.login.firstSetup )
                 .then( LJ.map.init ) // Must be as close as possible to terminateLogin. Map doesnt render sometimes..
-                .then( LJ.before.addElementsToMap )
                 .then( LJ.login.terminateLoginProcess )
                 .then( LJ.onboarding.init )
                 .then( LJ.dev.init )
+
 
 
 

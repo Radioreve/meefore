@@ -6,16 +6,13 @@
 
 		init: function(){
 			
-			LJ.before.fetchNearestBefores__UserLocation();
-			return;
-
-		},
-		addElementsToMap: function(){
-
 			LJ.before.handleDomEvents();
 			LJ.before.initBrowser();
-			LJ.before.initCreateBefore();
-			LJ.before.displayBeforeMarkers( LJ.before.fetched_befores );
+
+			return LJ.before.fetchNearestBefores__UserLocation()
+					.then(function(){
+						return LJ.before.initCreateBefore();
+					});
 
 		},
 		handleDomEvents: function(){
@@ -25,16 +22,11 @@
 			LJ.ui.$body.on('click', '.be-dates__date', LJ.before.activateBrowserDate );
 			LJ.ui.$body.on('click', '.be-create.--ready .be-create__button', LJ.before.handleCreateBefore );
 
-			LJ.meemap.addListener('place_changed', LJ.before.refreshNearestBefores );
 
 		},
 		initBrowser: function(){
 
 			LJ.before.addBrowser();
-			LJ.before.showBrowser();
-			LJ.before.refreshBrowserLocation();
-			LJ.before.refreshBrowserDates( LJ.before.test.iso_dates );
-
 
 		},
 		initCreateBefore: function(){
@@ -42,7 +34,13 @@
 		 	LJ.before.initHostsPicker();
 			LJ.before.initDatePicker();
 		 	LJ.before.initHourPicker( 17, 2, 30 );
-		 	LJ.before.initPlacePicker();
+
+		 	return LJ.seek.activatePlacesInCreateBefore()
+		 			.then(function(){
+					 	LJ.before.initPlacePicker();
+					 	return;
+		 			});
+
 
 		},
 		handleShowCreateBefore: function(){
@@ -107,7 +105,7 @@
 		addBrowser: function(){
 
 			$('.be-browser').remove();
-			$('.js-map-wrap')
+			$('.app-section.--map')
 				.append( LJ.before.renderBrowser() );			
 
 		},

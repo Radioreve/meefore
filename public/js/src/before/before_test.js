@@ -56,7 +56,8 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 				})
 				.catch(function( e ){
-					LJ.before.handleCreateBeforeError(e);
+					LJ.wlog(e.err);
+					LJ.before.handleCreateBeforeError(e.err);
 
 				});
 

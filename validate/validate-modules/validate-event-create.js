@@ -134,6 +134,11 @@
 				return h.facebook_id == req.sent.facebook_id;
 			});
 
+			// Useful to have access to the user
+			// e.g. pusher will later need requester's location to trigger
+			// the event creation in the right channel
+			req.sent.requester = requester;
+
 			data.hosts_facebook_id.forEach(function( host_id ){
 				if( requester.facebook_id != host_id && requester.friends.indexOf( host_id ) == -1 ){
 					err_data.host_names.push( host_id );

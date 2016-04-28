@@ -200,6 +200,7 @@
 			terminateLoginProcess: function(){
 
 				LJ.ui.activateHtmlScroll();
+
 				
 				$('.curtain')
 						.children()
@@ -210,8 +211,11 @@
 				return LJ.ui.hideCurtain({
 					delay: LJ.login.prompt_duration * 1.3,
 					duration: 1000
+
 				}).then(function(){
-					return;
+					LJ.before.showBrowser();
+					LJ.before.refreshBrowserDates( LJ.before.test.iso_dates );
+					return
 				});	
 
 			},

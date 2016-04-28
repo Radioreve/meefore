@@ -793,14 +793,10 @@
       <div class="be-rows">
         <div class="be-header">
           <div class="be-dates">
-            <div class="be-dates__date" data-date=''>Lundi 25/04</div>
-            <div class="be-dates__date --active" data-date=''>Mardi 26/04</div>
-            <div class="be-dates__date" data-date=''>Mercredi 27/04</div>
+            <!-- Dynamically injected -->
           </div>
           <div class="be-dates__address">
-            <i class="icon icon-location"></i>
-            <span>A proximité du 37 rue du Four, 75006 Paris </span>
-          </div>
+            <!-- Dynamically injected -->
         </div>
         <div class="be-row">
           <div class="be-hour">20h30</div>
@@ -960,6 +956,8 @@
 
 
   <script src="//js.pusher.com/3.0/pusher.min.js"></script>
+  <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/md5.js"></script>
+
 
   <!-- build:js -->
   <script src="js/lib/lodash/lodash.js"></script>
@@ -989,6 +987,7 @@
   <script src="js/src/analytics/analytics_google.js"></script>
   <script src="js/src/before/before.js"></script>
   <script src="js/src/before/before_create.js"></script>
+  <script src="js/src/before/before_realtime.js"></script>
   <script src="js/src/chat/chat.js"></script>
   <script src="js/src/chat/chat_inview.js"></script>
   <script src="js/src/friends/friends.js"></script>
@@ -1002,6 +1001,7 @@
   <script src="js/src/map/map.js"></script>
   <script src="js/src/map/map_styles.js"></script>
   <script src="js/src/map/map_markers_url.js"></script>
+  <script src="js/src/map/map_realtime.js"></script>
   <script src="js/src/meepass/meepass.js"></script>
   <script src="js/src/notifications/notifications.js"></script>
   <script src="js/src/onboarding/onboarding.js"></script>
@@ -1024,6 +1024,7 @@
   <script src="js/src/ui/ui_slide.js"></script>
   <script src="js/src/ui/ui_bubbles.js"></script>
   <script src="js/src/dev/dev.js"></script>
+  <script src="js/src/realtime/realtime.js"></script>
   <script src="js/src/init/init.js"></script>
   <!-- endbuild -->
 

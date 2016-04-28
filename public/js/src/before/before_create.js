@@ -38,7 +38,6 @@
 		},
 		initPlacePicker: function(){
 
-			LJ.seek.activatePlacesInCreateBefore();
 			LJ.before.handleDomEvents__PlacePicker();
 
 		},
@@ -376,6 +375,8 @@
 			LJ.log(before);
 			LJ.ui.showToast('Le before a été créé avec succès');
 			LJ.before.hideCreateBefore();
+			LJ.before.showBrowser();
+			LJ.map.addBeforeMarker( before );
 
 		},	
 		handleCreateBefore: function(){
@@ -385,7 +386,8 @@
 			var ux_done    = LJ.before.startCreateBefore();
 			var be_created = LJ.before.readAndCreateBefore();
 
-			LJ.Promise.all([ be_created, ux_done ]).then(function( before ){
+			LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
+				var before = res[0];
 				return LJ.before.endCreateBefore( before );
 
 			})

@@ -1,6 +1,7 @@
 
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
+
 		app_token_url 			  	 : '/auth/facebook',
 		me_url		  			  	 : '/api/v1/me',
 		me_friends				 	 : '/me/friends',
@@ -39,8 +40,13 @@
 			// LJ.log('Calling the api [get]');
 			return LJ.promise(function( resolve, reject ){
 
-				if( LJ.user && LJ.user.facebook_id && data ){
+				data = data || {};
+				if( LJ.user && LJ.user.facebook_id ){
 					data.facebook_id = LJ.user.facebook_id;
+				}
+
+				if( LJ.realtime.getSocketId() && data ){
+					data.socket_id = LJ.realtime.getSocketId();
 				}
 
 				var call_started = new Date();
@@ -79,11 +85,15 @@
 		},
 		post: function( url, data ){
 			// LJ.log('Calling the api [post]');
-			var data = data || {};
+			data = data || {};
 			return LJ.promise(function( resolve, reject ){
 
 				if( LJ.user && LJ.user.facebook_id ){
 					data.facebook_id = LJ.user.facebook_id;
+				}
+
+				if( data && LJ.realtime.getSocketId() ){
+					data.socket_id = LJ.realtime.getSocketId();
 				}
 
 				var call_started = new Date();
@@ -152,8 +162,10 @@
 			return LJ.api.post( LJ.api.app_token_url, {
 					facebook_profile : facebook_profile,
 					facebook_id      : facebook_profile.id // server compliance
+
 				}).then(function( data ){
 					LJ.app_token = data.app_token;
+
 			});
 
 		},

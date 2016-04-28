@@ -8,14 +8,15 @@
 
 			LJ.map.setupMap();
             LJ.map.initPlacesServices();
-			LJ.map.setMapStyle('creamy');
-			LJ.map.setMapIcons();
-			LJ.map.setMapOverlay();
-			LJ.map.setMapBrowser();
-			LJ.map.handleDomEvents();
-            LJ.map.setMapListeners();
 
-			return;
+			LJ.map.handleDomEvents();
+            LJ.map.handleMapEvents();
+            LJ.map.handleRealtimeEvents();
+			LJ.map.initPlacesServices()
+
+            LJ.before.displayBeforeMarkers( LJ.before.fetched_befores )
+            
+            return LJ.before.refreshBrowserLocation();
 			
 		},
         initGeocoder: function(){
@@ -73,8 +74,12 @@
 
 			var $wrap = document.getElementsByClassName('js-map-wrap')[0];
 
-			LJ.meemap	   = new google.maps.Map( $wrap, options );
+			LJ.meemap = new google.maps.Map( $wrap, options );
 			
+            LJ.map.setMapStyle('creamy');
+            LJ.map.setMapIcons();
+            LJ.map.setMapOverlay();
+            LJ.map.setMapBrowser();
 
             setTimeout(function(){
                 LJ.map.refreshMap();
@@ -100,7 +105,7 @@
         },
         setMapIcons: function(){
 
-        	$('.js-map-wrap')
+        	$('.app-section.--map')
         		.append( LJ.map.renderChangeLocation() )
         		.append( LJ.map.renderGeoLocation() )
                 .append( LJ.map.renderCreateBefore() )
@@ -110,27 +115,31 @@
         },
         setMapOverlay: function(){
 
-        	$('.js-map-wrap')
+        	$('.app-section.--map')
         		.append( LJ.map.renderMapOverlay() );
 
         },
         setMapBrowser: function(){
 
-        	$('.js-map-wrap')
+        	$('.app-section.--map')
         		.append( LJ.map.renderMapBrowser() );
 
-        	LJ.seek.activatePlacesInMap();
-        	LJ.seek.map_browser_places.addListener('place_changed', function( place ){
+            return LJ.seek.activatePlacesInMap()
+                    .then(function(){
 
-        		var place  = LJ.seek.map_browser_places.getPlace();
-        		var latlng = place.geometry.location;
+                    	LJ.seek.map_browser_places.addListener('place_changed', function( place ){
 
-        		LJ.meemap.setCenter( latlng );
+                    		var place  = LJ.seek.map_browser_places.getPlace();
+                    		var latlng = place.geometry.location;
 
-        	});
+                    		LJ.meemap.setCenter( latlng );
+
+                    	});
+                        
+                    });
 
         },
-        setMapListeners: function(){
+        handleMapEvents: function(){
 
             LJ.meemap.addListener('dragstart', function(){
                 LJ.before.preRefreshBrowserLocation();
@@ -145,12 +154,14 @@
             });
             
             LJ.meemap.addListener('center_changed', function(){
-                
+                // LJ.before.refreshNearestBefores();
             });
+
 
         },
         refreshMap: function(){
         	return google.maps.event.trigger( LJ.meemap, 'resize' );
+
         },
         findLocationWithLatLng: function( latlng ){
             return LJ.promise(function( resolve, reject ){
@@ -174,6 +185,7 @@
         },
         findAddressWithLatLng: function( latlng ){
             return LJ.map.findLocationWithLatLng( latlng )
+
                     .then(function( location ){
                         return location.formatted_address;
                     });
@@ -227,13 +239,19 @@
         	
         },
         toggleMapBrowser: function(){
+
         	var $mb = $('.map-browse');
+
         	if( $mb.hasClass('--active') ){
+
         		$mb.removeClass('--active');
         		$mb.velocity('shradeOut', { duration: 200, display: 'none' });
+
         	} else {
+
         		$mb.addClass('--active');
         		$mb.velocity('shradeIn', { duration: 200, display: 'flex' });
+
         	}
         },
         centerMapAtUserLocation: function( pan ){
@@ -389,10 +407,10 @@
             });
 
         },
-        handleClickOnEventMarker: function( marker, data ){
+        handleClickOnEventMarker: function( marker, before ){
 
-            LJ.log('Marker is : ' + marker );
-            LJ.log('Data associated is : ' + data );
+            LJ.log(marker);
+            LJ.log(before);
 
         },
         renderCreateBefore: function(){

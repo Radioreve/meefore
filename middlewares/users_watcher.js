@@ -114,6 +114,8 @@
 	};
 
 
+	// This is used primarily by the search module to know if a user
+	// has fetched every user in database or not.
 	var cached_user_count;
 	var last_request_time = 0;
 	var minute = 1000 * 60;
@@ -135,6 +137,7 @@
 				next();
 
 			});
+
 		} else {
 			req.sent.expose.cache = true;
 			req.sent.expose.users_count = cached_user_count;
