@@ -132,6 +132,7 @@
 	    	mdw.facebook.fetchFacebookLongLivedToken,
 	    	mdw.mailchimp_watcher.subscribeMailchimpUser,
 	    	mdw.alerts_watcher.setCache,
+	    	mdw.realtime.setChannels,
 	    	signEvents.handleFacebookAuth
 	    );
 

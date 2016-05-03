@@ -64,8 +64,8 @@
 	    	};
 
 	    	var channel_item = {
-	    		type: 'before',
-	    		name: realtime.makeHostsChannel( before_id )
+	    		type      : 'before',
+	    		name      : realtime.makeHostsChannel( before_id ),
 	    	};
 
 	    	var hosts_ns = 'before/' + new_before._id + '/hosts';
@@ -135,16 +135,26 @@
 
 	var request = function( req, res, next ){
 		
-		var groups    = req.sent.groups;
-		var before_id = req.sent.before_id;
-		var bfr       = req.sent.before;
-		var new_group = req.sent.new_group;
-		var group_id  = req.sent.new_group.group_id;
-		var members   = req.sent.new_group.members;
+		var err_ns = "requesting_before";
+
+		var facebook_id = req.sent.facebook_id;
+		var members     = req.sent.members;
+		var before 	    = req.sent.before;
+		var before_id   = req.sent.before_id;
+
+		var group_item = {
+			status 		: 'pending',
+			members     : members,
+			main_member : facebook_id
+		};
 
 		console.log('Requesting in with before_id = ' + before_id );
 
-		Before.findByIdAndUpdate( before_id, { groups: groups }, { new: true }, function( err, bfr ){
+		Before.findByIdAndUpdate( before_id, {
+			$push: {
+				groups: group_item
+			}
+		},{ new: true }, function( err, bfr ){
 
 			if( err ){
 				return handleErr( req, res, err_ns, err );
@@ -157,7 +167,6 @@
 				status 		: 'pending'
 			};
 
-			/* Mise à jour de l'event array dans chaque user impliqué */
 			User
 				.update(
 					{ 'facebook_id': { $in: members } },

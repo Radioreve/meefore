@@ -29,6 +29,7 @@
 		fetch_nearest_before_url     : '/api/v1/befores.nearest',
 		fetch_before_url 		 	 : '/api/v1/befores/:before_id',
 		change_before_status_url 	 : '/api/v1/befores/:before_id/status',
+		before_request_url 			 : '/api/v1/befores/:before_id/request',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -629,6 +630,33 @@
 					});
 
 			});
+
+		},
+		requestParticipation: function( before_id, members ){
+
+			var request = {
+				before_id : before_id,
+				members   : members
+			};
+
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.before_request_url.replace(':before_id', before_id), request )
+					.then(function( exposed ){
+
+						if( exposed.new_group ){
+							return resolve( exposed.new_group );
+
+						} else {
+							LJ.wlog('The server didnt respond with the expected new_group object');
+						}
+
+					}, function( err ){
+						return reject( err );
+					}) ;
+
+			});
+
 
 
 		}

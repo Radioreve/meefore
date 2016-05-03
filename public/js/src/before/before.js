@@ -429,54 +429,6 @@
 
             
         },
-        handleRequest: function(){
-
-        	LJ.log('Handling request, waiting for friend ids...');
-
-        	var target_id = $( this ).closest('[data-before-id]').attr('data-before-id');
-
-			LJ.ui.showModal({
-				"title"			: LJ.lang.sayCheers(),
-				"type"      	: "request",
-				"search_input"	: true,
-				"jsp_body" 	    : true,
-				"attributes"	: [{ name: "item-id", val: target_id }],
-				"subtitle"		: LJ.text('modal_request_subtitle'),
-				"body"  		: LJ.friends.renderFriendsInModal(),
-				"footer"		: "<button class='--rounded'><i class='icon icon-check'></i></button>"
-			})
-			.then(function(){
-				return LJ.ui.getModalItemIds();
-
-			})
-			.then(function( item_ids ){
-
-				var d = LJ.static.renderStaticImage('search_loader')
-				$(d).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
-					duration: 400
-				});
-
-				return LJ.api.requestParticipation({
-					before_id : before_id,
-					members   : item_ids
-				});
-
-			})
-			.then(function( exposed ){
-				return LJ.ui.hideModal();
-
-			})
-			.then(function(){
-				LJ.ui.showToast( LJ.text('to_before_request_success') );
-			})
-			.catch(function(e){
-				LJ.wlog(e);
-				LJ.ui.hideModal();
-
-			});
-
-
-        },
         processBeforePreDisplay: function( $content ){
 
         	// Dynamically render the size of the pictures to fit, with a shade

@@ -142,11 +142,11 @@
                 .format('DD/MM/YY');
 
             	$('.be-create-row.--date')
+               		.attr('data-dd', date_str.split('/')[0] )
+               		.attr('data-mm', date_str.split('/')[1] )
+               		.attr('data-yy', date_str.split('/')[2] )
                		.find('input')
-               		.val( date_str )
-               		.attr('data-DD', date_str.split('/')[0] )
-               		.attr('data-MM', date_str.split('/')[1] )
-               		.attr('data-YY', date_str.split('/')[2] );
+               		.val( date_str );
 
             	LJ.before.date_picker.hide();
 
@@ -319,9 +319,9 @@
 
 				h: $('.be-create-row.--hour').attr('data-hh'),
 				m: $('.be-create-row.--hour').attr('data-mm'),
-				D: $('.be-create-row.--date').attr('data-DD'),
-				M: $('.be-create-row.--date').attr('data-MM'),
-				Y: $('.be-create-row.--date').attr('data-YY')
+				D: $('.be-create-row.--date').attr('data-dd'),
+				M: $('.be-create-row.--date').attr('data-mm'), //different from --hour, (attr is case insensitive)
+				Y: $('.be-create-row.--date').attr('data-yy')
 
 			}).toISOString();
 
@@ -394,8 +394,8 @@
 
 			})
 			.catch(function( e ){
-				LJ.wlog(e.err);
-				LJ.before.handleCreateBeforeError(e.err);
+				LJ.wlog(e);
+				LJ.before.handleCreateBeforeError(e);
 
 			});
 

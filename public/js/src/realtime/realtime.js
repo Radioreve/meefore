@@ -185,15 +185,15 @@
 		},
 		// Subscribe to specific chat channels for hosts & requesters.
 		// There are 2 chat channels per event.
-		subscribeToChatChannels: function(){
+		subscribeToChatChannels: function( channels ){
 
-
+			
 
 		},
 		subscribeToChatChannel: function( channel_name ){
 
 
-
+			
 		}
 
 	});

@@ -1,8 +1,10 @@
-
-	var pusher = require('../services/pusher');
-	var _	   = require('lodash');
+	
+	var pusher     = require('../services/pusher');
+	var _          = require('lodash');
 	var eventUtils = require('../pushevents/eventUtils');
-	var md5 	   = require('blueimp-md5');
+	var md5        = require('blueimp-md5');
+	var Before     = require('../models/BeforeModel');
+	var mongoose   = require('mongoose');
 
 	function handlePusherErr( err, req, res ){
 		console.log( err );
@@ -37,16 +39,151 @@
 		return "presence-" + before_id;
 	}
 
-	function makeChatChannel( before_id, hosts, members ){
+	function makeChatChannel( before_id, hosts, members, type ){
+
+		if( ['all','hosts','users'].indexOf( type ) == -1 ){
+			console.log('Cannt make chat channel without proper type, type: ' + type );
+			return null;
+		}
 
 		var sorted_hosts   = sortIds( hosts ).join('-');
 		var sorted_members = sortIds( members ).join('-');
 
 		var payload 	   = [ before_id, sorted_hosts, sorted_members ].join('__');
 
-		return "presence-" + md5.hash( payload );
+		return "presence-" + type + '-' + md5.hash( payload );
 
 	}
+
+	function makeChatChannel_All( before_id, hosts, members ){
+		return makeChatChannel( before_id, hosts, members, 'all' );
+
+	}	
+
+	function makeChatChannel__Users( before_id, hosts, members ){
+		return makeChatChannel( before_id, hosts, members, 'users' );
+
+	}
+
+	function makeChatChannel__Hosts( before_id, hosts, members ){
+		return makeChatChannel( before_id, hosts, members, 'hosts' );
+
+	}
+
+	// At each connexion, dynamically reset the channels that the users is gonna need
+	// One private channel to receive personnal events
+	// One location channel for pushing befores in his area 
+	// For each before,
+	// 	- if he is "hosting", join the hosts channel, and join 2 chats channel per groups
+	// 	- if he is not hosting, find his group and join 2 chats channels, team & all
+	var setChannels = function( req, res, next ){
+
+		var err_ns = "reseting_channels";
+		var user   = req.sent.user;
+
+		if( !user ){
+			console.log('First connection, dont set channels');
+			return next();
+
+		} else {
+			console.log('Reseting channels');
+
+			user.channels = [];
+
+			user.channels.push({
+				type: 'Baby',
+				name: 'Elyna'
+			});
+
+			// Personnal channel
+			user.channels.push({
+				type: 'personnal',
+				name: makePersonnalChannel( user.facebook_id )
+			});
+
+			// Location channel
+			user.channels.push({
+				type: 'location',
+				name: makeLocationChannel( user.location.place_id )
+			});
+
+			// Prepare the before_ids ( cast is needed )
+			var before_ids = _.map( user.befores, function( bfr ){
+				return mongoose.Types.ObjectId( bfr.before_id );
+			});
+
+			Before.find({ '_id': { $in: before_ids } }, function( err, befores ){
+
+				if( err ) return handleErr( req, res, err_ns, err );
+
+				console.log(befores);
+
+				befores.forEach(function( before ){
+
+					var hosts  = before.hosts;
+					var groups = before.groups;
+
+					// Check if the user is hosting
+					if( before.hosts.indexOf( user.facebook_id ) != -1 ){
+
+						console.log('User is hosting this event, rendering hosts related channels');
+						user.channels.push({
+							type: 'before',
+							name: makeHostsChannel( before._id )
+						});
+
+						groups.forEach(function( group ){
+
+							var members = group.members;
+
+							user.channels.push({
+								type: 'chat-all',
+								name: makeChatChannel_All( before._id, hosts, members )
+							});
+
+							user.channels.push({
+								type: 'chat-hosts',
+								name: makeChatChannel__Hosts( before._id, hosts, members )
+							});
+						});
+
+					} else {
+
+						// User is not hosting, find his group to access members ids
+						var mygroup = _.find( groups, function( grp ){
+							return grp.members.indexOf( user.facebook_id ) != -1;
+						});
+
+						var members = mygroup.members;
+
+						user.channels.push({
+							type: 'chat-all',
+							name: makeChatChannel__All( bfr.before_id, hosts, members )
+						});
+
+						user.channels.push({
+							type: 'chat-users',
+							name: makeChatChannel__Users( bfr.before_id, hosts, members )
+						});
+
+					}
+
+				});
+
+				user.markModified('channels');
+				user.save(function( err, user ){
+
+					if( err ) return handleErr( req, res, err_ns, err );
+
+					req.sent.user = user;
+					next();
+
+				});
+
+			});
+
+		}
+	};
 
 
 	var updateLocationChannel = function( req, res, next ){
@@ -127,18 +264,17 @@
 	};
 
 	var pushNewRequest = function( req, res, next ){
-
-		var socket_id    = req.sent.socket_id;
-		var before_id	 = req.sent.before._id;
-		var hosts 		 = req.sent.before.hosts;
-		var new_group    = req.sent.new_group;
-		var notification = req.sent.notification;
+		
+		var socket_id        = req.sent.socket_id;
+		var before_id        = req.sent.before._id;
+		var notification     = req.sent.notification;
+		var members_profiles = req.sent.members_profiles;
 
 		var data = {
-			before_id    : before_id,
-			hosts        : hosts,
-			group        : new_group,
-			notification : notification 
+			members_profiles : members_profiles,
+			member 			 : members,
+			notification 	 : notification, 
+			before_id        : before_id
 		};
 
     	// Envoyer une notification aux hosts
@@ -149,13 +285,16 @@
 
 		// Envoyer une notification aux amis au courant de rien à priori
 		req.sent.members_profiles.forEach(function( user ){
-			pusher.trigger( makePersonnalChannel( user.facebook_id ), 'new request group', data, socket_id );
+			pusher.trigger( makePersonnalChannel( user.facebook_id ), 'new request group', data, socket_id, handlePusherErr );
 		});	
+
+		next();
 
 	};
 
 
 	module.exports = {
+		setChannels 		  : setChannels,
 		makePersonnalChannel  : makePersonnalChannel,
 		makeLocationChannel   : makeLocationChannel,
 		makeHostsChannel 	  : makeHostsChannel,

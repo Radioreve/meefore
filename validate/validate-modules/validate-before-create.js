@@ -98,7 +98,7 @@
 			});
 
 			// Make sure all provided hosts are users of meefore, and none left the app
-			if( hosts.length != host_number )
+			if( hosts.length != host_number ){
 				return callback({
 					message 	: "Couldn't find " + ( host_number - hosts.length ) + " members",
 					err_id		: "ghost_hosts",
@@ -106,7 +106,7 @@
 					n_found		: hosts.length,
 					missing_ids : _.difference( data.hosts_facebook_id, _.pluck( hosts, 'facebook_id' ) )
 				}, null );
-
+			}
 
 			// Make sure no host already has an before planned on this day
 			var err_data = { host_ids: [] };
@@ -122,12 +122,12 @@
 					}
 				});
 			});
-			if( err_data.host_ids.length != 0 )
+			if( err_data.host_ids.length != 0 ){
 				return callback( _.merge( err_data, {
 					message : 'Host(s) already hosting a before this day',
 					err_id  : "already_hosting" 
 				}, null ));
-
+			}
 
 			// Make sure hosts are all friends
 			var err_data = { host_names: [] };
