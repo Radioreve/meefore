@@ -174,6 +174,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	},
 	showLoader: function( loader_id ){
 
+		loader_id = loader_id || 'no_id';
 		$( LJ.static.renderStaticImage('main_loader') )
 				 .attr('data-loaderid', loader_id)
 				 .appendTo('body')
@@ -182,13 +183,14 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	},
 	hideLoader: function( loader_id ){
 
+		loader_id = loader_id || 'no_id';
 		LJ.static.getLoader( loader_id )
 				 .velocity('fadeOut', {
 				 	duration : 250,
 				 	complete : function(){
 				 		$(this).remove();
 				 	}
-				 })
+				 });
 
 	},
 	render: function( html ){

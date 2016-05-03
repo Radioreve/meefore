@@ -4,7 +4,7 @@
 
 	var mongoose = require('mongoose'),
 		User = require( model_path + '/UserModel'),
-		Event = require( model_path + '/EventModel'),
+		Before = require( model_path + '/BeforeModel'),
 		config = require( process.cwd() + '/../../config/config'),
 		_ = require('lodash');
 
@@ -41,8 +41,8 @@
 
 			});
 
-			Event.find({}).remove(function(){
-				console.log('Events removed');
+			Before.find({}).remove(function(){
+				console.log('Befores removed');
 			});
 
 

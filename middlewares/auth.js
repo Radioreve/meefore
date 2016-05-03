@@ -61,11 +61,15 @@
 		var data    = req.body.data;
 
 		if( api_key != 'meeforever' ){
-			return res.json({ err: "Unauthorized - wrong api_key" });
+			return res.json({
+				err: "Unauthorized - wrong api_key"
+			});
 		}
 
 		if( !data ){
-			return res.json({ err: "Unauthorized - didnt provide data upon which to sign to token" });
+			return res.json({
+				err: "Unauthorized - didnt provide data upon which to sign to token"
+			});
 		}
 
 		var access_token = eventUtils.generateAppToken( "app", data );
@@ -80,20 +84,28 @@
 		var channel     = req.sent.channel_name;
 
 		var data = {
-			user_id: facebook_id,
+			user_id  : facebook_id,
 			user_info: {
-				group_id: channel.split('-')[2]
+				"name": "Charlington"
 			}
 		};
 
 		var auth;	
 		try {
+			// Create an authentication string, like a token, that will be send back 
+			// To the pusher servers, and used later to query informations about user
+			// More infos @https://pusher.com/docs/authenticating_users#/lang=node
 			auth = pusher.authenticate( socket_id, channel, data );
+
 		} catch( e ){
-			res.status( 403 ).json({ msg: "Cant sign pusher auth token ", err: e });
+			res.status( 403 ).json({
+				msg: "The pusher.auhtenticate method failed",
+				err: e
+			});
 		}
 
 		res.status( 200 ).send( auth );
+
 	};
 
 

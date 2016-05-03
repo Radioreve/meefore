@@ -17,6 +17,25 @@
 			$('.js-changelang').click( LJ.lang.changeAppLang );
 
 		},
+		sayCheers: function(){
+
+			return _.shuffle([
+
+				'Santé',
+				'Saluti',
+				'Cheers',
+				'Skål',
+				'Na zdrowie',
+				'Noroc',
+				'Salud',
+				'Chok dee',
+				'Kanpai',
+				'Prost',
+				'Kippis'
+
+			])[0] + ' !';
+
+		},
 		getAppLang: function(){
 
 			return LJ.lang.app_language;
@@ -87,6 +106,8 @@
 				var $el  = $(el);
 				var type = $el.prop('nodeName').toLowerCase();
 				var lid  = $el.attr('data-lid');
+				var lpm  = $el.attr('data-lpm') && $el.attr('data-lpm');
+				var lpmt = $el.attr('data-lpmt') && $el.attr('data-lpmt');
 
 				var text_object = LJ.text_source[ lid ];
 				if( !text_object ){
@@ -96,7 +117,11 @@
 				var translated_text = LJ.text_source[ lid ][ app_language ];
 
 				if( typeof translated_text == "function" ){
-					translated_text = translated_text();
+					if( lpmt == "array" ){
+						lpm = lpm.split(',');
+					}
+					translated_text = translated_text( lpm );
+
 				}
 
 				if( /placeholder/i.test( lid ) ){

@@ -6,6 +6,10 @@
 
 	var handleErr = eventUtils.raiseApiError;
 
+	// It's normally impossible for a user to expose its default values
+	// Because as soon as he registers, he uploads his main picture with his 
+	// Facebook profile picture, setting gender && cc.
+
 	var setCache = function( req, res, next ){
 		
 		var err_ns = "set_cache";
@@ -75,7 +79,9 @@
 					'age'  	 : req.sent.age  || user.age,
 					'job'  	 : req.sent.job  || user.job,
 					'img_id' : user.img_id,
-					'img_vs' : user.img_vs
+					'img_vs' : user.img_vs,
+					'g' 	 : user.gender,
+					'cc'     : user.country_code
 				};
 
 				console.log('User found in cache, setting new_profile for user with facebook_id : ' + req.sent.facebook_id );
@@ -192,7 +198,9 @@
 
 				var new_profile = {
 					'img_id' : img_id,
-					'img_vs' : img_vs
+					'img_vs' : img_vs,
+					'g'	     : user.gender,
+					'cc' 	 : user.country_code
 				};
 
 				console.log('User found in cache, new_profile');

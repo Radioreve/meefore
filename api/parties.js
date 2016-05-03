@@ -2,7 +2,6 @@
 	var _          = require('lodash'),
 		eventUtils = require('../pushevents/eventUtils'),
 		User       = require('../models/UserModel'),
-		Event      = require('../models/EventModel'),
 		Party 	   = require('../models/PartyModel'),
 		moment     = require('moment'),
 		rd		   = require('../services/rd');

@@ -2,7 +2,6 @@
 	var _          = require('lodash'),
 		eventUtils = require('../pushevents/eventUtils'),
 		User       = require('../models/UserModel'),
-		Event      = require('../models/EventModel'),
 		Message    = require('../models/MessageModel'),
 		rd		   = require('../services/rd'),
 		moment     = require('moment'),
@@ -175,7 +174,7 @@
 	var setReadBy = function( req, res ){
 
 		var chat_id  = req.sent.chat_id;
-		var event_id = req.sent.event_id;
+		var before_id = req.sent.before_id;
 
 		var readby_ns = 'chat/' + req.sent.chat_id + '/readby';
 
@@ -186,7 +185,7 @@
 
 				var data = {
 					chat_id  : chat_id,
-					event_id : event_id,
+					before_id : before_id,
 					readby   : readby
 				};
 

@@ -214,7 +214,7 @@
 
 				}).then(function(){
 					LJ.before.showBrowser();
-					LJ.before.refreshBrowserDates( LJ.before.test.iso_dates );
+					LJ.before.refreshBrowserDates();
 					return
 				});	
 

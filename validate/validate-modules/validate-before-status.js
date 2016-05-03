@@ -3,7 +3,7 @@
 		_     	    = require('lodash'),
 		settings    = require('../../config/settings');
 
-	var Event 	    = require('../../models/EventModel'),
+	var Before 	    = require('../../models/BeforeModel'),
 		User        = require('../../models/UserModel');
 
 	var nv 			= require('node-validator');
@@ -11,25 +11,27 @@
 
 	function check( req, res, next ){
 
-		console.log('Validating change event status');
+		console.log('Validating change before status');
 
 		var checkReq = nv.isAnyObject()
-			.withRequired('status'   , nv.isString({ expected: ['open','suspended','canceled'] }) )
-			.withRequired('socket_id', nv.isString() );
+			.withRequired('status'   , nv.isString({ expected: ['open','suspended','canceled'] }))
+			.withRequired('before_id', nv.isString());
  
 		nv.run( checkReq, req.sent, function( n, errors ){
+
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );
 				return next();
 			}
 
-			checkWithDatabase( req, function( errors, evt ){
+			checkWithDatabase( req, function( errors, before ){
 				if( errors ){
 					req.app_errors = req.app_errors.concat( errors );
 					return next();
 				}
-			req.sent.evt          = evt;
-			next();
+
+				req.sent.before = before;
+				next();
 
 			});
 		});
@@ -38,35 +40,36 @@
 		function checkWithDatabase( req, callback ){
 
 			var facebook_id = req.sent.facebook_id;
-			var event_id	= req.sent.event_id;
+			var before_id	= req.sent.before_id;
 
-			Event.findById( event_id, function( err, evt ){
+			Before.findById( before_id, function( err, before ){
 
 				if( err ) return callback({ message: "api error" }, null );
 
-				if( !evt )
+				if( !before ){
 					return callback({
-						message		: "Couldnt find the event",
+						message		: "Couldnt find the before",
 						data: {
-							err_id		: "ghost_event",
-							event_id	: event_id
+							err_id		: "ghost_before",
+							before_id	: before_id
 						}
 					}, null );
+				}
 
-				if( _.pluck( evt.hosts, 'facebook_id' ).indexOf( facebook_id ) == -1 ){
+				if( before.hosts.indexOf( facebook_id ) == -1 ){
 					return callback({
 						message		: "Unauthorized action!",
 						parameter	: "facebook_id",
 						data: {
 							err_id 		: "unauthorized",
 							facebook_id : facebook_id,
-							authorized  : _.pluck( evt.hosts, "facebook_id"),
-							event_id 	: req.event_id
+							authorized  : before.hosts,
+							before_id 	: req.before_id
 						}
 					}, null );
 				}
 
-				callback( null, evt );
+				callback( null, before );
 					
 				});
 			

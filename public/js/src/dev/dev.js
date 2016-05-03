@@ -1,6 +1,9 @@
 
 	window.LJ.dev = _.merge( window.LJ.dev || {}, {
 
+		n_cloudinary_api_calls: 0,
+		t_login_process: 0,
+
 		view_ids: {
 			"before": "/img/ios/before.jpg",
 			"chat"  : "/img/ios/chat.png",

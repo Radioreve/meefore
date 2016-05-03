@@ -5,7 +5,7 @@
 	var moment = require('moment');
 
 	var User  = require('../../models/UserModel');
-	var Event = require('../../models/EventModel');
+	var Before = require('../../models/BeforeModel');
 	var Party = require('../../models/PartyModel');
 
 

@@ -11,10 +11,19 @@
 
 			LJ.realtime.subscribeToPrivateChannel();
 			LJ.realtime.subscribeToLocationChannel();
-			LJ.realtime.subscribeToMultipleBeforeHostChannel();
-			LJ.realtime.subscribeToMultipleChatChannel();
+			LJ.realtime.subscribeToBeforeChannels();
+			LJ.realtime.subscribeToChatChannels();
 
 			return;
+
+		},
+		getUserChannels: function( channel_type ){
+
+			var channels = _.filter( LJ.user.channels, function( chan ){
+				return chan.type == channel_type;
+			});
+
+			return _.map( channels, 'name' );
 
 		},
 		setupRealtimeService: function(){
@@ -38,7 +47,7 @@
             LJ.realtime.pusher.connection.bind('state_change', function( states ) {
 
             	var current_state = states.current;
-                LJ.wlog('Pusher state is now: ' + current_state );
+                LJ.ilog('Pusher state is now: ' + current_state );
 
                 // Reconnexion cases 
                 if( LJ.realtime.state == 'connected' ){
@@ -69,18 +78,18 @@
 		// main usage is to keep track of user's online status via a webhook
 		subscribeToPrivateChannel: function(){
 
-			LJ.realtime.channels.me = LJ.realtime.pusher.subscribe( LJ.user.channels["me"] );
+			LJ.realtime.channels.personnal = LJ.realtime.pusher.subscribe( LJ.realtime.getUserChannels("personnal")[0] );
 			
-			// Test channels
-			LJ.realtime.channels.me.bind('new hello'		  , LJ.log );
-			LJ.realtime.channels.me.bind('new request group'  , LJ.realtime.handleNewRequestGroup );
-			LJ.realtime.channels.me.bind('new chat whisper'   , LJ.realtime.handleNewChatWhisper );
+			LJ.realtime.channels.personnal.bind('new hello'		 	 , LJ.log ); // Test channel
+			LJ.realtime.channels.personnal.bind('new request group'  , LJ.realtime.handleNewRequestGroup );
+			LJ.realtime.channels.personnal.bind('new chat whisper'   , LJ.realtime.handleNewChatWhisper );
 
 
 		},
 		handleNewRequestGroup: function( data ){
 
-
+			LJ.log('Your friend added you in an event');
+			LJ.log(data);
 
 		},
 		handleNewChatWhisper: function( data ){
@@ -92,11 +101,11 @@
 		//to get pushed realtime notifications about newly created events
 		subscribeToLocationChannel: function(){
 
-			var channel_name = 'place_id=' + LJ.user.location.place_id;
-			LJ.realtime.channels.me_location = LJ.realtime.pusher.subscribe( channel_name );
+			LJ.realtime.channels.location = LJ.realtime.pusher.subscribe( LJ.realtime.getUserChannels("location")[0] );
 
-			LJ.realtime.channels.me_location.bind('new before' 	      , LJ.realtime.handleNewBefore );
-			LJ.realtime.channels.me_location.bind('new before status' , LJ.realtime.handleNewBeforeStatus );
+			LJ.realtime.channels.location.bind('new hello'		   , LJ.log ); // Test channel
+			LJ.realtime.channels.location.bind('new before' 	   , LJ.realtime.handleNewBefore );
+			LJ.realtime.channels.location.bind('new before status' , LJ.realtime.handleNewBeforeStatus );
 
 		},
 		handleNewBefore: function( data ){
@@ -108,26 +117,80 @@
 		},
 		handleNewBeforeStatus: function( data ){
 
+			var before_id = data.before_id;
+			var status 	  = data.status;
+			var hosts 	  = hosts;
+
+			if( status == "canceled" ){
+
+				LJ.map.removeBeforeMarker( before_id );LJ.before.removeOneBefore( before_id );
+				LJ.map.removeBeforeMarker( before_id );
+				LJ.before.refreshBrowserDates();
+
+				// If the user is viewing the before, take control of his ui and notify before is gone
+				var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
+				if( $be.length > 0 ){
+
+					LJ.ui.hideModal();
+					LJ.ui.showSlideOverlay( LJ.ui.render([
+						'<div class="be-inview__deleted-warning">',
+							'<span data-lid="before_just_canceled"></span>',
+						'</div>'
+					].join('')) );
+
+					LJ.delay(6000).then(function(){
+						LJ.ui.hideSlide({ type: 'before' });
+					});
+
+				}
+
+				// If user is host, let him know a friend changed the status!
+				if( ( hosts.indexOf( LJ.user.facebook_id ) != -1 ) && status == "canceled" ){
+
+					LJ.ui.showToast( LJ.text('to_friend_canceled_event') );
+
+				}
+
+			}
+
 
 		},
 		// Subscribe to channels for *hosts only*
 		// to get pushed anytime a group request a participation
-		subscribeToMultipleBeforeHostChannel: function(){
+		subscribeToBeforeChannels: function(){
 
+			var before_channels = _.filter( LJ.user.channels, function( chan ){
+				return chan.type == "before";
+			});
 
+			before_channels.forEach(function( chan ){
+				LJ.realtime.subscribeToBeforeChannel( chan.name );
+			});
 
 		},
-		subscribeToBeforeHostChannel: function(){
+		subscribeToBeforeChannel: function( channel_name ){
+
+			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
+
+			LJ.realtime.channels[ channel_name ].bind('new hello'		  , LJ.log ); // Test channel
+			LJ.realtime.channels[ channel_name ].bind('new request host'  , LJ.realtime.handleNewRequestHost );
+
+		},
+		handleNewRequestHost: function( data ){
+
+			LJ.log('Someone asked to join your before');
+			LJ.log(data);
+
 
 		},
 		// Subscribe to specific chat channels for hosts & requesters.
 		// There are 2 chat channels per event.
-		subscribeToMultipleChatChannel: function(){
+		subscribeToChatChannels: function(){
 
 
 
 		},
-		subscribeToChatChannel: function(){
+		subscribeToChatChannel: function( channel_name ){
 
 
 

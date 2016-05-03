@@ -9,7 +9,7 @@
 	var User 	     = require('../models/UserModel');
 	var config       = require('../config/config');
 	var settings     = require('../config/settings');
-	var Event 	     = require('../models/EventModel');
+	var Before 	     = require('../models/BeforeModel');
 	var eventUtils   = require('./eventUtils');
 
 

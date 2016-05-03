@@ -15,7 +15,7 @@
 		
 		console.log('Connected to the database! Running operation... : ');
 
-		User.find({}, function( err, users ){
+		User.find({ "facebook_id": "108070099597465" }, function( err, users ){
 
 			if( err ) return console.log( err );
 
@@ -24,17 +24,21 @@
 				tasks.push(function( done ){
 
 					// Update part
-					if( user.country_code == "en" ){
+					user.channels.forEach(function( chan, i){
+						if( chan && chan.type == "location" ){
+							user.channels[i] = undefined;
+						}
+					});
 
-						user.country_code = "gb";
-						user.markModified('country_code');
-						
-						user.save(function( err ){
-							if( err ) console.log('Error : ' + err );
-							console.log('user updated');
-							done();
-						});
-					}
+					user.channels = user.channels.filter(Boolean);
+					user.markModified('channels');
+					
+					user.save(function( err ){
+						if( err ) console.log('Error : ' + err );
+						console.log('user updated');
+						done();
+					});
+					
 
 				});
 			});

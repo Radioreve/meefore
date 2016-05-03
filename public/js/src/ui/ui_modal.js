@@ -197,8 +197,7 @@
 			var $modal = $('.modal');
 			var $el = $('.friend-modal:not(.--selected)').first();
 
-			$s.insertBefore( $el )
-			  .toggleClass('--selected');
+			$s.toggleClass('--selected').insertBefore( $el );
 
 			if( $('.modal-item.--selected').length == 0 ){
 				$modal.addClass('--disabled');
@@ -206,6 +205,7 @@
 				$modal.removeClass('--disabled');
 			}
 			$('.modal-search__input input').val('');
+			
 			LJ.ui.filterModalResults();
 
 		},

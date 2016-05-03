@@ -12,7 +12,7 @@
 			.withRequired('facebook_id' , nv.isString() )
 			.withRequired('receiver_id' , nv.isString() )
 			.withRequired('socket_id'   , nv.isString() )
-			.withRequired('event_id'    , nv.isString() )
+			.withRequired('before_id'    , nv.isString() )
 
 		nv.run( checkSendMeepassRequest, req.sent, function( n, errors ){
 			if( n != 0 ){

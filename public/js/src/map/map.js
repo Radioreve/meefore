@@ -30,7 +30,7 @@
 
         },
 		sayHello: function(){
-			LJ.wlog('Map has been successfully loaded');
+			LJ.ilog('Map has been successfully loaded');
 
 		},
         setUserLocationLatLng: function(){
@@ -383,21 +383,21 @@
             }
 
         },
-        addBeforeMarker: function( evt ){
+        addBeforeMarker: function( before ){
 
-        	var event_id = evt._id;
+        	var before_id = before._id;
 
             var latlng  = {
-                lat: evt.address.lat,
-                lng: evt.address.lng
+                lat: before.address.lat,
+                lng: before.address.lng
             };
 
             LJ.map.addMarker({
-                marker_id : event_id,
+                marker_id : before_id,
                 latlng    : latlng,
                 url       : LJ.map.markers_url.base.open,
                 type      : 'before',
-                data      : evt,
+                data      : before,
                 listeners : [
                     {
                         'event_type': 'click',
@@ -407,10 +407,24 @@
             });
 
         },
+        removeBeforeMarker: function( before_id ){
+
+            LJ.map.markers.forEach(function( mrk, i){
+
+                if( mrk.marker_id == before_id ){
+                    mrk.marker.setMap( null );
+                    delete LJ.map.markers[ i ];
+                }
+
+            });
+
+        },
         handleClickOnEventMarker: function( marker, before ){
 
             LJ.log(marker);
-            LJ.log(before);
+
+            LJ.before.showBeforeInview( before );
+
 
         },
         renderCreateBefore: function(){

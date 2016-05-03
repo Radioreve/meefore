@@ -11,7 +11,8 @@
 	var _          = require('lodash');
 
 	var pusher  = require('../services/pusher');
-	var mailer = require('../services/mailer');
+	var mailer  = require('../services/mailer');
+	var realtime = require('../middlewares/realtime');
 
 
 	var handleErr = function( req, res, namespace, err ){
@@ -129,11 +130,11 @@
 			console.log('New #bot about to join the force...')
 		}
 
-		// Pusher informations for real time channels 
-		new_user.channels = {
-			public_chan : 'app',
-			me 			: 'private-' + fb.id
-		};
+		// Setup personnal channel (Pusher)
+		new_user.channels.push({
+			type: 'personnal',
+			name: realime.makePersonnalChannel( fb.id )
+		});
 
 		new_user.save(function( err, user ){
 

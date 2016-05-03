@@ -3,10 +3,10 @@
 
 	var mongoose = require('mongoose'),
 		User = require( model_path + '/UserModel'),
-		Event = require( model_path + '/EventModel'),
-		EventTemplate = require( model_path + '/EventTemplateModel'),
+		Before = require( model_path + '/BeforeModel'),
 		config = require( process.cwd() + '/config/config'),
-		_ = require('lodash');
+		_ = require('lodash')
+		realtime = require( process.cwd() + '/middlewares/realtime');
 
 		mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
 
@@ -27,22 +27,25 @@
 
 			users.forEach(function( user ){
 
-				user.channels = {
-					"me" : user.facebook_id,
-        			"public_chan" : "app"
-				};
+				user.channels = [{
+					type: 'personnal',
+					name: realtime.makePersonnalChannel( user.facebook_id )
+				}, {
+					type: 'location',
+					name: realtime.makeLocationChannel( user.location.place_id )
+				}];
 
 				user.markModified('channels');
 
-				user.events = [];
+				user.befores = [];
 				user.save(function( err, user ){
 					console.log('User modified');
 				});
 
 			});
 
-			Event.find({}).remove(function(){
-				console.log('Events removed');
+			Before.find({}).remove(function(){
+				console.log('Befores removed');
 			});
 
 

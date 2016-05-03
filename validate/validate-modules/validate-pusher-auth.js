@@ -1,13 +1,10 @@
 
-	var nv = require('node-validator');
-	var rd = require('../../services/rd');
-	var _  = require('lodash');
+	var nv   = require('node-validator');
+	var rd   = require('../../services/rd');
+	var _    = require('lodash');
+	var User = require('../../models/UserModel');
 
 	var check = function( req, res, next ){
-
-		var facebook_id = req.sent.facebook_id; // Passed in token, surcharged Pusher init clientside method [@48723]
-		var socket_id   = req.sent.socket_id;   
-		var channel     = req.sent.channel_name;
 
 		var checkJoinRequest = nv.isAnyObject()
 			.withRequired('socket_id'	, nv.isString({ match: /^\d+.\d+$/ }) )
@@ -20,44 +17,72 @@
 				return next();
 			}
 
-			// If own private channel, skip the validation part
-			if( channel.split('-')[0] == 'private' ) return next();
+			checkWithDatabase( req, function( errors, user ){
 
-
-			var chat_id = channel;
-			var members_facebook_id = chat_id.split('-')[2].split('.');
-
-			var event_id = chat_id.split('-')[1];
-			var hosts_ns = 'event/' + event_id + '/hosts';
-			rd.smembers( hosts_ns, function( err, hosts_facebook_id ){
-
-				// N'est ni un host de l'event, ni un membre du group en question 
-				if( hosts_facebook_id.indexOf( facebook_id == - 1 ) && members_facebook_id.indexOf( facebook_id ) == -1 ){
-
-					req.app_errors.push({
-						message   : "You cant join this channel, you are not part of the group",
-						err_id    : "unauthorized",
-						http_code : 403,
-						data      : {
-							members_facebook_id : members_facebook_id,
-							facebook_id         : facebook_id,
-							socket_id           : socket_id
-						}
-					});
+				if( errors ){
+					req.app_errors = req.app_errors.concat( errors );
 					return next();
 				}
 
+				req.sent.user = user;
+				next();
+
 			});
 
-			next();
+		});
+	};
+
+	// Make sure the channel the user is trying to access is part of its channel
+	// property array. All the channel logic is controlled and persisted server-side
+	function checkWithDatabase( req, callback ){
+
+		console.log('Checking user has permission to subscribe to this channel');
+
+		// Passed in token, surcharged Pusher init clientside method [@48723]
+		var facebook_id  = req.sent.facebook_id;
+		var channel_name = req.sent.channel_name;
+
+		User.findOne({ facebook_id: facebook_id }, function( err, user ){
+
+			if( err ){
+				return callback({
+					message : 'Internal error validating pusher subscription',
+					err_id  : 'api_error'
+				});
+			}
+
+			if( !user ){
+				return callback({
+					err_id    : 'ghost_user',
+					message   : 'Unable to find user',
+					http_code : 403
+				});
+			}
+
+			var err = {
+				err_id	  : 'ghost_channel',
+				message	  : 'This channel is not part of users channels',
+				http_code : 403
+			};
+
+			var channel = _.find( user.channels, function( chan ){
+				return chan.name == channel_name;
+			});
+
+			if( !channel ){
+				return callback({
+					err_id    : 'ghost_channel',
+					message   : 'This channel is not a part of users channels',
+					allowed   : user.channels,
+					http_code : 403
+				});
+			}
+
+			return callback( null, user );
 
 
 		});
-
-	};
-
-
-
+	}
 
 
 	module.exports = {

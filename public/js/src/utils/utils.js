@@ -146,7 +146,9 @@ window.LJ = _.merge( window.LJ || {}, {
         return moment( date ).format('hh:mm')
     },
     renderMultipleNames: function( names ){
+        
         names = Array.isArray( names ) ? names : [names];
+        names.filter(Boolean);
 
         if( names.length == 1 ){
             return names[0];

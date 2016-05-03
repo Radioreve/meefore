@@ -20,7 +20,7 @@
 	//	api.tests     = require( apiDir + '/tests');
 		api.users     = require( apiDir + '/users');
 		api.places    = require( apiDir + '/places');
-		api.events    = require( apiDir + '/events');
+		api.befores    = require( apiDir + '/befores');
 		api.parties   = require( apiDir + '/parties');
 		api.chats     = require( apiDir + '/chats');
 
@@ -153,7 +153,8 @@
 	    app.post('/me/update-profile',
 	    	mdw.validate('update_profile_base'),
 			mdw.profile_watcher.updateCache('base'),
-	    	profileEvents.updateProfile
+	    	profileEvents.updateProfile,
+	    	mdw.realtime.updateLocationChannel
 	    );
 
 	    // [ @user ] Ajoute une photo au profile
@@ -277,8 +278,8 @@
 	    	api.users.fetchMoreUsers
 	    );
 
-	    // [ @user ] Renvoie tous les events auxquels participe un user
-	    app.get('/api/v1/me/events',
+	    // [ @user ] Renvoie tous les befores auxquels participe un user
+	    app.get('/api/v1/me/befores',
 	    	mdw.validate('user_fetch'),
 	    	api.users.fetchUserEvents
 	    );
@@ -304,50 +305,57 @@
 	    );
 
 
-	    // [ @events ] Update le statut d'un évènement [ 'open', 'suspended' ]
-	    app.patch('/api/v1/events/:event_id/status',
-	    	mdw.validate('event_status'),
-	    	api.events.changeEventStatus );
+	    // [ @befores ] Update le statut d'un évènement [ 'open', 'suspended' ]
+	    app.post('/api/v1/befores/:before_id/status',
+	    	mdw.validate('before_status'),
+	    	api.befores.changeBeforeStatus,
+	    	mdw.realtime.pushNewBeforeStatus
+	    );
 
-	    // [ @events ] Génère une nouvelle requête pour participer à un évènement
-	    app.patch('/api/v1/events/:event_id/request',
-	    	mdw.validate('event_group_request' ),
+	    // [ @befores ] Génère une nouvelle requête pour participer à un évènement
+	    app.post('/api/v1/befores/:before_id/request',
+	    	mdw.validate('before_group_request' ),
 	    	mdw.notifier.addNotification('group_request'),
-	    	api.events.request );
+	    	api.befores.request
+	    );
 
-	    // [ @events ] Renvoie la liste des groupes d'un évènement
-	    app.get('/api/v1/events/:event_id/groups',
-	    	api.events.fetchGroups );
+	    // [ @befores ] Renvoie la liste des groupes d'un évènement
+	    app.get('/api/v1/befores/:before_id/groups',
+	    	api.befores.fetchGroups
+	    );
 
-	    // [ @events ] Change le statut d'un group : [ 'accepted', 'kicked' ]
-	    app.patch('/api/v1/events/:event_id/groups/:group_id/status',
-	    	mdw.validate('event_group_status'),
+	    // [ @befores ] Change le statut d'un group : [ 'accepted', 'kicked' ]
+	    app.post('/api/v1/befores/:before_id/groups/:group_id/status',
+	    	mdw.validate('before_group_status'),
 	    	mdw.notifier.addNotification('accepted_in'),
-	    	api.events.changeGroupStatus );
-
-	    // [ @events ] Renvoie la liste des befores les plus proches
-	    app.get('/api/v1/events.nearest',
-	    	mdw.validate('event_nearest'),
-	    	api.events.fetchNearestEvents
+	    	api.befores.changeGroupStatus
 	    );
 
-	    // [ @events ] Renvoie la liste de tous les évènements ! 
-	    app.get('/api/v1/events',
-	    	api.events.fetchEvents );
+	    // [ @befores ] Renvoie la liste des befores les plus proches
+	    app.get('/api/v1/befores.nearest',
+	    	mdw.validate('before_nearest'),
+	    	api.befores.fetchNearestBefores
+	    );
 
-	    // [ @events ] Crée un nouvel évènement
-	    app.post('/api/v1/events',
-	    	mdw.validate('create_event'),
-	    	mdw.meepass.updateMeepass('event_created'),
-	    	api.events.createEvent,
+	    // [ @befores ] Renvoie la liste de tous les évènements ! 
+	    app.get('/api/v1/befores',
+	    	api.befores.fetchBefores
+	    );
+
+	    // [ @befores ] Crée un nouvel évènement
+	    app.post('/api/v1/befores',
+	    	mdw.validate('create_before'),
+	    	mdw.meepass.updateMeepass('before_created'),
+	    	api.befores.createBefore,
 	    	mdw.notifier.addNotification('marked_as_host'),
-	    	mdw.realtime.pushNewEvent
+	    	mdw.realtime.pushNewBefore
 	    );
 
-	     // [ @events ] Fetch un event par son identifiant. 
-	    app.get('/api/v1/events/:event_id', 
-	    	mdw.validate('event_fetch'),
-	    	api.events.fetchEventById );
+	     // [ @befores ] Fetch un before par son identifiant. 
+	    app.get('/api/v1/befores/:before_id', 
+	    	mdw.validate('before_fetch'),
+	    	api.befores.fetchBeforeById
+	    );
 
 
 
@@ -562,17 +570,17 @@
 
 
 	   	// [@API Overrides]
-	   	app.post('/watcher/terminate-events',
+	   	app.post('/jobs/terminate-befores',
 	   		function( req, res ){
 	   			if( req.sent.apikey != 'M33fore') return res.status(403).json({ "msg": "unauthorized" });
-	   			require( process.cwd() + '/jobs/terminate-events').terminateEvents({
+	   			require( process.cwd() + '/jobs/terminate-befores').terminateBefores({
 						timezone   : req.sent.timezone,
 						target_day : req.sent.target_day  // format 'DD/MM/YYYY'
 	   			});
 	   			res.json({ "msg":"success" });
 	   		});
 
-	   	app.post('/watcher/clear-cache',
+	   	app.post('/jobs/clear-cache',
 	   		function( req, res ){
 	   			if( req.sent.apikey != 'M33fore' ) return res.status(403).json({ "msg": "unauthorized" });
 		   		mdw.chat_watcher.clearCache({

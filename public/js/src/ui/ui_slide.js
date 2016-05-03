@@ -20,7 +20,7 @@
 		showSlideAndFetch: function( options ){
 
 			var uiPromise;
-			if( $('.slide').length ){
+			if( $('.slide.--'+ options.type ).length ){
 				uiPromise = LJ.ui.replaceSlide
 			} else {
 				uiPromise = LJ.ui.showSlide
@@ -38,12 +38,12 @@
 			})
 
 		},
-		replaceSlide: function(){
+		replaceSlide: function( options ){
 			return LJ.promise(function( resolve, reject ){
 
-				var $l = $('.slide').find('.slide__loader')
+				var $l = $('.slide.--'+ options.type ).find('.slide__loader');
 				
-				$l.siblings().velocity('shradeOut', {
+				$l.siblings(':not(.slide__close)').velocity('shradeOut', {
 					duration : LJ.ui.replace_slide_duration,
 					display  : 'none',
 					complete: function(){
@@ -69,13 +69,13 @@
 				var height = $(window).height() - LJ.ui.slide_top;
 
 				$slide
-					.children()
+					.children(':not(.js-noshrade)')
 					.hide()
 					.velocity('shradeIn', {
 						duration : LJ.ui.show_slide_duration_children,
 						delay    : LJ.ui.show_slide_delay_children,
 						complete : resolve
-					})
+					});
 
 				$slide
 					  .hide()
@@ -86,13 +86,54 @@
 					  	display: 'flex',
 					  	duration: LJ.ui.show_slide_duration
 					  })
-					  .on('click', '.slide__close', LJ.ui.hideSlide )
+					  .on('click', '.slide__close', function(){
+					  	LJ.ui.hideSlide( options );
+					  	if( typeof options.complete == 'function' ) {
+					  		options.complete();
+					  	}
+					  });
 
 			});
 		},
-		hideSlide: function(){
+		showSlideOverlay: function( html ){
+
+			var duration = LJ.ui.show_slide_duration;
+
+			$('.slide-overlay').velocity('fadeIn', {
+				display : 'flex',
+				duration: duration
+			});
+
+			$( html )
+				.hide()
+				.appendTo( $('.slide-overlay') )
+				.velocity('shradeIn', {
+					duration: duration,
+					display: 'flex',
+					delay: duration/2,
+					complete: function(){
+						$(this).find('.js-close-overlay')
+							   .on('click', LJ.ui.hideSlideOverlay );
+					}
+				});
+
+
+		},
+		hideSlideOverlay: function(){
+
+			var duration = LJ.ui.hide_slide_duration;
+
+			$('.slide-overlay').velocity('fadeOut', {
+				duration: duration,
+				complete : function(){
+					$(this).children().remove();
+				}
+			});
+
+		},
+		hideSlide: function( opts ){
 			
-			$('.slide').velocity('shradeOut', {
+			$('.slide.--' + opts.type ).velocity('shradeOut', {
 				duration: LJ.ui.hide_slide_duration,
 				complete: function(){
 					$(this).remove();
@@ -143,12 +184,13 @@
 			return [
 
 				'<div class="slide ' + modifier + '" ' + attributes + '>',
-					'<div class="slide__close --round-icon">',
-						LJ.ui.renderIcon('cancel'),
-					'</div>',
 					header,
 					subheader,
+					'<div class="slide-overlay js-noshrade"></div>',
 					'<section class="slide-body">',
+						'<div class="slide__close --round-icon">',
+							LJ.ui.renderIcon('cancel'),
+						'</div>',
 						body_html,
 					'</section>',
 					footer,
@@ -168,7 +210,8 @@
 			"title": "Félicitations !",
 			"subtitle": "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
 			"body": "Then there goes the body...",
-			"footer": "<button class='--rounded'><i class='icon icon-check'></i></button>"
+			"footer": "<button class='--rounded'><i class='icon icon-check'></i></button>",
+			"type": "test"
 		});
 	};
 

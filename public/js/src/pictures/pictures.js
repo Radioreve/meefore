@@ -9,13 +9,16 @@
 		upload_id_profile: null,
 		upload_ux_duration: 600,
 		img_params: {
-			'me': 			{ width: 170, height: 170, crop: 'fill', gravity: 'face' },
-			'me-thumbnail': { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
-			'menu-row': 	{ width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
-			'user-profile': { width: 220, height: 220, crop: 'fill', gravity: 'face'}, 
-			'user-search' : { width: 240, height: 240, crop: 'fill', gravity: 'face'},
-			'user-modal'  : { width: 50,  height: 50,  crop: 'fill', gravity: 'face'}
+			'me'		     : { width: 170, height: 170, crop: 'fill', gravity: 'face' },
+			'me-thumbnail'   : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
+			'menu-row'       : { width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
+			'user-profile'   : { width: 320, height: 320, crop: 'fill', gravity: 'face' }, 
+			'user-search'    : { width: 240, height: 240, crop: 'fill', gravity: 'face' },
+			'user-modal'     : { width: 50,  height: 50,  crop: 'fill', gravity: 'face' },
+			'user-before-md' : { width: 185, height: 185, crop: 'fill', gravity: 'face' },
+			'user-before-sm' : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' }
 		},
+		cached: [],
 
 		init: function(){
 
@@ -337,13 +340,56 @@
 			}
 
 		},
+		findImgInCache: function( img_id, img_version, scope ){
+
+			return null;
+
+		},
+		storeImgInCache: function( img, img_id, img_version, scope ){
+
+
+
+		},
 		makeImgHtml: function( img_id, img_version, scope ){
 
-			img_params            = LJ.pictures.img_params[ scope ];
-			img_params.cloud_name = LJ.pictures.cloudinary_cloud_name;
-			img_params.version    = img_version;
+			var cached_img = LJ.pictures.findImgInCache( img_id, img_version, scope );
+			if( cached_img ){
+				return cached_img;
 
-			return $.cloudinary.image( img_id, img_params ).attr('data-scopeid', scope ).prop('outerHTML');
+			} else {
+				img_params            = LJ.pictures.img_params[ scope ];
+				img_params.cloud_name = LJ.pictures.cloudinary_cloud_name;
+				img_params.version    = img_version;
+
+				LJ.dev.n_cloudinary_api_calls++;
+				var img = $.cloudinary.image( img_id, img_params ).attr('data-scopeid', scope ).prop('outerHTML');
+				LJ.pictures.storeImgInCache( img, img_id, img_version, scope );
+				return img;
+			}
+
+		},
+		makeRosaceHtml: function( pictures, scope ){
+
+			var imgs_html = [];
+			pictures.forEach(function( pic ){
+				imgs_html.push( LJ.pictures.makeImgHtml( pic.img_id, pic.img_vs, scope ) );
+			});
+
+			var rosace_imgs_html = ['<div class="rosace">'];
+			imgs_html.forEach(function( img_html, i ){
+				
+				var parts = [ "--left", "--right", "--down" ];
+				rosace_imgs_html.push([
+
+					'<div class="rosace__part ' + parts[i] + '">',
+						img_html,
+					'</div>'
+
+				].join(''));
+			});
+			rosace_imgs_html.push('</div>');
+
+			return rosace_imgs_html.join('');
 
 		},
 		getUploadingState: function(){
@@ -509,9 +555,7 @@
 
 					});
 				}
-			})
-
-
+			});
 
 		}
 

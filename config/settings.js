@@ -18,11 +18,13 @@ var settings = {
 		max_pic  : 5
 	},
 	default_profile_values: {
-		name: 'Meename',
-		age: min_age, 
-		img_id: placeholder_img_id,
-		img_vs: placeholder_img_vs,
-		job: 'Meelover'
+		name 	: 'Meename',
+		age  	: min_age, 
+		img_id  : placeholder_img_id,
+		img_vs  : placeholder_img_vs,
+		job		: 'Meelover',
+		'g'		: 'male',
+		'cc'	: 'fr'
 	},
 	default_pictures: [
 		{ img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 0, is_main: true , hashtag: 'me' },
@@ -60,13 +62,8 @@ var settings = {
 				'channels',
 				'ideal_night'
 			],
-		events: []
+		befores: []
 	},
-	activeEventStates:
-			 [
-			 	"open",
-			 	"suspended"
-			 ],
 	placeholder: 
 			{
 				img_id      : placeholder_img_id,

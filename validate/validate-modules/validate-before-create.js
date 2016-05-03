@@ -4,7 +4,7 @@
 		_     	    = require('lodash'),
 		settings    = require('../../config/settings');
 
-	var Event 	    = require('../../models/EventModel'),
+	var Before 	    = require('../../models/BeforeModel'),
 		User        = require('../../models/UserModel'),
 		Place   	= require('../../models/PlaceModel');
 
@@ -12,7 +12,7 @@
 
 	function check( req, res, next ){
 
-		console.log('Validating event');
+		console.log('Validating before');
 		function isHostOk( val, onError ){
 
 			if( !val.hosts_facebook_id ){
@@ -48,7 +48,7 @@
 			.withRequired('place_id'	, nv.isString() )
 			.withRequired('place_name'	, nv.isString() )
 
-		var checkEvent = nv.isAnyObject()
+		var checkBefore = nv.isAnyObject()
 
 			.withRequired('facebook_id' 		, nv.isString())
 			.withRequired('begins_at'           , nv.isDate())
@@ -56,17 +56,17 @@
 			.withRequired('address'				, checkAddress)
 			.withCustom( isHostOk )
 
-		nv.run( checkEvent, req.sent, function( n, errors ){
+		nv.run( checkBefore, req.sent, function( n, errors ){
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );
 				return next();
 			}
-			checkWithDatabase( req, function( errors, event_data ){
+			checkWithDatabase( req, function( errors, before_data ){
 				if( errors ){
 					req.app_errors = req.app_errors.concat( errors );
 					return next();
 				}
-				req.sent.event_data = event_data;
+				req.sent.before_data = before_data;
 				next();
 			});
 		});
@@ -76,15 +76,16 @@
 	function checkWithDatabase( req, callback ){
 
 		var data = req.sent;
-		var event_data = {};
+		var before_data = {};
 
-		event_data.begins_at = data.begins_at;
-		event_data.timezone  = data.timezone;
-		event_data.address   = data.address;
+		before_data.main_host = data.facebook_id;
+		before_data.begins_at = data.begins_at;
+		before_data.timezone  = data.timezone;
+		before_data.address   = data.address;
 
 		// Weird, code auto converts it to string
-		event_data.address.lat = parseFloat( event_data.address.lat );
-		event_data.address.lng = parseFloat( event_data.address.lng );
+		before_data.address.lat = parseFloat( before_data.address.lat );
+		before_data.address.lng = parseFloat( before_data.address.lng );
 
 		// No errors in parameters, checking for valid friends
 		var host_number = data.hosts_facebook_id.length;
@@ -92,7 +93,7 @@
 		User.find({ 'facebook_id': { $in: data.hosts_facebook_id }}, function( err, hosts ){
 
 			if( err ) return callback({
-				message : 'Internal error validating event',
+				message : 'Internal error validating before',
 				err_id  : 'api_error'
 			});
 
@@ -104,26 +105,26 @@
 					n_sent  	: host_number,
 					n_found		: hosts.length,
 					missing_ids : _.difference( data.hosts_facebook_id, _.pluck( hosts, 'facebook_id' ) )
-					}, null );
+				}, null );
 
 
-			// Make sure no host already has an event planned on this day
+			// Make sure no host already has an before planned on this day
 			var err_data = { host_ids: [] };
-			var new_event_dayofyear = moment( data.begins_at ).dayOfYear();
+			var new_before_dayofyear = moment( data.begins_at ).dayOfYear();
 
 			hosts.forEach(function( host ){
-				host.events.forEach(function( evt ){
+				host.befores.forEach(function( bfr ){
 
-					var host_event_dayofyear = moment( evt.begins_at ).dayOfYear();
+					var host_before_dayofyear = moment( bfr.begins_at ).dayOfYear();
 
-					if( new_event_dayofyear == host_event_dayofyear ){
+					if( new_before_dayofyear == host_before_dayofyear ){
 						err_data.host_ids.push( host.facebook_id );
 					}
 				});
 			});
 			if( err_data.host_ids.length != 0 )
 				return callback( _.merge( err_data, {
-					message : 'Host(s) already hosting an event this day',
+					message : 'Host(s) already hosting a before this day',
 					err_id  : "already_hosting" 
 				}, null ));
 
@@ -136,7 +137,7 @@
 
 			// Useful to have access to the user
 			// e.g. pusher will later need requester's location to trigger
-			// the event creation in the right channel
+			// the before creation in the right channel
 			req.sent.requester = requester;
 
 			data.hosts_facebook_id.forEach(function( host_id ){
@@ -155,9 +156,9 @@
 
 
 			/* Hosts are validated*/
-			// event_data.hosts = _.pluckMany( hosts, settings.public_properties.users );
-			event_data.hosts = _.map( hosts, 'facebook_id' );
-			// event_data.hosts.forEach(function( host, i ){
+			// before_data.hosts = _.pluckMany( hosts, settings.public_properties.users );
+			before_data.hosts = _.map( hosts, 'facebook_id' );
+			// before_data.hosts.forEach(function( host, i ){
 
 			// 	var main_picture = _.find( host.pictures, function( pic ){
 			// 		return pic.is_main
@@ -168,7 +169,7 @@
 
 			// });
 
-			return callback( null, event_data );
+			return callback( null, before_data );
 
 		});
 

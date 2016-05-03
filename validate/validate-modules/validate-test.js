@@ -20,7 +20,7 @@ var nv = require('node-validator');
 				return next();
 			}
 
-			req.event_id = req.params.event_id
+			req.before_id = req.params.before_id
 			next();
 
 		});

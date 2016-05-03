@@ -1,7 +1,7 @@
 
 	var User   = require('../models/UserModel');
 	var mongoose   = require('mongoose');
-	var Event      = require('../models/EventModel');
+	var Before      = require('../models/BeforeModel');
 	var eventUtils = require('./eventUtils');
 	var _          = require('lodash');
 	var cloudinary = require('cloudinary');
@@ -38,10 +38,15 @@
 
 		var update = {};
 		['name','age','job', 'location', 'ideal_night'].forEach(function( attr ){
+
 			if( req.sent[ attr ] ){
 				update[ attr ] = req.sent[ attr ];
+
 			}
+
+
 		});
+
 
 		var callback = function( err, user ) {
 

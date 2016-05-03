@@ -4,7 +4,7 @@
 	var rg = require('../../config/regex');
 
 	var User  = require('../../models/UserModel');
-	var Event = require('../../models/EventModel');
+	var Before = require('../../models/BeforeModel');
 	var Party = require('../../models/PartyModel');
 
 
@@ -119,7 +119,7 @@
 
 			// Testing for presence of a before
 			if( target_type == "before" ){
-				Event.findById( target_id, function( err, evt ){
+				Before.findById( target_id, function( err, evt ){
 
 					if( err )
 						return callback({ 'err_id': 'db_error', 'err': err });

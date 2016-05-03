@@ -242,6 +242,7 @@
 		            '<div class="search-user__pic">',
 		            img_html,
 		               '<div class="search-user__pic-overlay"></div>',
+		               '<div class="search-user__pic-filterlay --filterlay"></div>',
 		               '<div class="search-user__name">',
 		            	  '<span class="search-user__gender user-gender js-user-gender --'+ g +'"></span>',
 		                  '<span class="name">'+ n +'</span>',

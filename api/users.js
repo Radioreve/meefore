@@ -1,6 +1,6 @@
 
 	var User 	   = require('../models/UserModel');
-	var Event 	   = require('../models/EventModel');
+	var Before 	   = require('../models/BeforeModel');
 	var Place 	   = require('../models/PlaceModel');
 	var _   	   = require('lodash');
 	var rd 		   = require('../services/rd');
@@ -280,7 +280,7 @@
 
 	var fetchUserEvents = function( req, res, next ){
 
-		var err_ns = 'fetching_user_events';
+		var err_ns = 'fetching_user_befores';
 		var facebook_id = req.sent.facebook_id;
 
 		console.log('Fetching personnal event for facebook_id: ' + facebook_id );
@@ -296,13 +296,13 @@
 						]
 
 				},
-				function( err, events ){
+				function( err, befores ){
 
 					if( err ){
 						return handleErr( req, res, err_ns, err );
 					}
 
-					req.sent.expose.events = events;
+					req.sent.expose.befores = befores;
 					
 					next();
 

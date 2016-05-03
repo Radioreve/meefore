@@ -55,14 +55,14 @@
 				return next();
 			}
 
-			checkWithDatabase( req, function( errors, event_data ){
+			checkWithDatabase( req, function( errors, before_data ){
 
 				if( errors ){
 					req.app_errors = req.app_errors.concat( errors );
 					return next();
 				}
 
-				req.sent.event_data = event_data;
+				req.sent.before_data = before_data;
 				next();
 
 			});

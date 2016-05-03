@@ -38,7 +38,7 @@
 			var n_pic    = $('.user-pics__img').length;
 			var duration = 50;
 			
-			$('.user-pics__navigate.out').removeClass('out').velocity('fadeIn', { duration: duration });
+			$('.user-pics__navigate.out').removeClass('out').velocity('fadeIn', { duration: duration, display: 'flex' });
 
 			if( $('.user-pics__img').eq(n_pic - 1).hasClass('--active') ){
 				$('.user-pics__navigate.--right').addClass('out').velocity('fadeOut', { duration: duration });
@@ -74,8 +74,13 @@
 		},
 		showMyUserProfile: function(){
 			LJ.profile_user.showUserProfile( LJ.user.facebook_id );
+
 		},
 		showUserProfile: function( facebook_id ){
+
+			var user;
+			var $container;
+			var $content;
 
 			LJ.ui.showSlideAndFetch({
 
@@ -84,28 +89,38 @@
 				"fetchPromise"	: LJ.api.fetchUserProfile,
 				"promise_arg"   : facebook_id
 
-			}).then(function( expose ){				
-				var html = LJ.profile_user.renderUserProfile( expose.user );
+			})
+			.then(function( expose ){				
+				user = expose.user;
+				return LJ.profile_user.renderUserProfile( user );
 
-				$('.slide-body')
-					.append( html )
-					.find('.slide__loader')
-					.velocity('shradeOut', {
-						duration: LJ.profile_user.slide_hide_duration,
-						// delay: 100,
-						complete: function(){
+			})
+			.then(function( user_html ){
+				$container = $('.slide.--profile').find('.slide-body');
+				LJ.profile_user.addUserProfile( user_html, $container );
+				$content = $container.children(':not(.slide__loader)');
 
-							LJ.profile_user.activatePicture(0);
+			})
+			.then(function(){
+				return LJ.ui.shradeOut( $container.find('.slide__loader'), LJ.ui.slide_hide_duration );
 
-							$(this).siblings()
-								   .velocity('shradeIn', {
-								   		display: 'flex',
-								   		duration: LJ.profile_user.slide_show_duration
-								   });
-						}
-					});
+			})
+			.then(function(){
+				return LJ.profile_user.processProfileBeforeDisplay( $content );
+
+			})
+			.then(function(){
+				LJ.ui.shradeIn( $content, LJ.profile_user.slide_show_duration );				
 
 			});
+
+		},
+		addUserProfile: function( user_html, $container ){
+			return $container.append( user_html );
+
+		},
+		processProfileBeforeDisplay: function(){
+			LJ.profile_user.activatePicture(0);
 
 		},
 		renderUserProfileImage: function( pic ){
@@ -146,6 +161,7 @@
 						'<div class="user-pics__navigate --right --round-icon">',
 							'<i class="icon icon-arrow-right"></i>',
 						'</div>',
+						'<div class="user-pics__overlay --filterlay"></div>',
 						pictures_html,
 					'</div>',
 					'<div class="user-infos">',
@@ -157,7 +173,7 @@
 								'<i class="icon icon-meepass"></i>',
 							'</div>',
 						'</div>',
-						'<div class="user-infos__item --name">',
+						'<div class="user-infos__item --name --'+ user.gender +'">',
 							'<h2>' + user.name + '</h2>',
 						'</div>',
 						'<div class="user-infos__title">',

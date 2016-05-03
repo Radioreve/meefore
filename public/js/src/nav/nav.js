@@ -71,6 +71,11 @@
 			if( target_link != 'search' && hasMeepassRibbon ){
 				LJ.ui.shradeOut( $('.meepass-ribbon'), duration )
 			}
+			if( target_link == 'map' ){
+				$('.app').removeClass('padded');
+			} else {
+				$('.app').addClass('padded');
+			}
 
 		}
 

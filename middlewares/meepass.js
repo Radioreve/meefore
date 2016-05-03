@@ -5,8 +5,8 @@
 
 
 	var bounty = {
-		"event_created": 5
-	}
+		"before_created": 5
+	};
 
 
 	function displayError( err, raw ){
@@ -23,7 +23,7 @@
 	var updateMeepass = function( reason ){	
 
 			// Credit meepasses on all hosts
-			if( reason == "event_created" ){
+			if( reason == "before_created" ){
 				return addMeepass_EventCreated
 			}
 
@@ -42,7 +42,7 @@
 
 	function addMeepass_EventCreated( req, res, next ){
 
-		req.sent.reason = "event_created";
+		req.sent.reason = "before_created";
 
 		var facebook_ids   = req.sent.hosts_facebook_id;
 		var meepass_to_add = bounty[ req.sent.reason ];

@@ -3,7 +3,7 @@
 		_     	    = require('lodash'),
 		settings    = require('../../config/settings');
 
-	var Event 	    = require('../../models/EventModel'),
+	var Before 	    = require('../../models/BeforeModel'),
 		User        = require('../../models/UserModel');
 
 	var nv 			= require('node-validator');
@@ -25,14 +25,14 @@
 				return next();
 			}
 
-			checkWithDatabase( req, function( errors, evt ){
+			checkWithDatabase( req, function( errors, bfr ){
 
 				if( errors ){
 					req.app_errors = req.app_errors.concat( errors );
 					return next();
 				}
 
-			req.sent.evt = evt;
+			req.sent.bfr = bfr;
 			next();
 
 			});
@@ -41,19 +41,19 @@
 
 		function checkWithDatabase( req, callback ){
 
-			var event_id = req.sent.event_id,
+			var before_id = req.sent.before_id,
 				group_id = req.sent.group_id;
 
-			Event.findById( event_id, function( err, evt ){
+			Before.findById( before_id, function( err, bfr ){
 
 				if( err ) return callback({ message: "api error" }, null );
 
-				if( !evt )
+				if( !bfr )
 					return callback({
-						message		: "Couldnt find the event",
+						message		: "Couldnt find the before",
 						data: {
-							err_id		: "ghost_event",
-							event_id	: event_id
+							err_id		: "ghost_before",
+							before_id	: before_id
 						}
 					}, null );
 
@@ -71,21 +71,21 @@
 				}f
 				*/
 
-				if( evt.getGroupIds().indexOf( group_id ) == -1 ){
+				if( bfr.getGroupIds().indexOf( group_id ) == -1 ){
 					return callback({
 						message		: "No matching group id was found",
 						parameter	: "group_id",
 						data: {
 							err_id 		: "invalid_group_id",
 							group_id    : req.group_id,
-							group_ids   : evt.getGroupIds()
+							group_ids   : bfr.getGroupIds()
 						}
 					}, null );
 				};
 
 
 				// Find the current group in event for desc functions
-				var updated_group = evt.getGroupById( group_id );
+				var updated_group = bfr.getGroupById( group_id );
 
 				console.log( JSON.stringify( updated_group, null, 3 ) );
 
@@ -95,7 +95,7 @@
 				// Do not set group_status on req, it's already passed.
 				// Otherwise, it overrides the new value 
 
-				callback( null, evt );
+				callback( null, bfr );
 					
 				});
 			

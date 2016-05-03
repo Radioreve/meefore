@@ -25,9 +25,10 @@
 		fetch_more_users_url 		 : '/api/v1/users.more',
 		share_url 					 : '/api/v1/share',
 		distinct_countries_url 		 : '/api/v1/users.countries',
-		event_hosts_ids_url          : '/api/v1/events/event_id/hosts',
-		create_before_url 			 : '/api/v1/events',
-		fetch_nearest_before_url     : '/api/v1/events.nearest',
+		create_before_url 			 : '/api/v1/befores',
+		fetch_nearest_before_url     : '/api/v1/befores.nearest',
+		fetch_before_url 		 	 : '/api/v1/befores/:before_id',
+		change_before_status_url 	 : '/api/v1/befores/:before_id/status',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -142,11 +143,19 @@
 				formatted_err.call_id = err.call_id;
 			}
 
-			if( Array.isArray( err.errors ) ){
-				formatted_err = _.merge( formatted_err, err.errors[0].data || err.errors[0] );
+			if( err.error ){
+				formatted_err = _.merge( formatted_err, err.error );
+
 			} else {
-				formatted_err = _.merge( formatted_err, err.errors.data || err.errors );
+				if( Array.isArray( err.errors ) ){
+					formatted_err = _.merge( formatted_err, err.errors[0].data || err.errors[0] );
+
+				} else {
+					formatted_err = _.merge( formatted_err, err.errors.data || err.errors );
+					
+				}
 			}
+
 
 			return formatted_err;
 
@@ -242,7 +251,14 @@
 
 				LJ.api.get( LJ.api.fetch_user_url.replace(':facebook_id', facebook_id ) )
 					  .then(function( exposed ){
-					  	return resolve( exposed );
+					  	if( exposed.user ){
+					  		// Append the Facebook id, cause not present in cache 
+					  		// for space (cost!) optimisation
+					  		exposed.user.facebook_id = facebook_id;
+					  		return resolve( exposed );
+					  	} else {
+					  		LJ.wlog('The server didnt respond with the expected user object');
+					  	}
 					  }, function( err ){
 					  	return reject( err );
 					  });
@@ -489,12 +505,38 @@
 
 			});
 		},
-		fetchBefores: function(){
+		fetchBefore: function( before_id ){
+
 			return LJ.promise(function( resolve, reject ){
 
-				resolve();
+				LJ.api.get( LJ.api.fetch_before_url.replace(':before_id', before_id ) )
+					  .then(function( exposed ){
+					  	if( exposed.before ){
+					  		// Append the Facebook id, cause not present in cache 
+					  		// for space (cost!) optimisation
+					  		// exposed.user.facebook_id = facebook_id;
+					  		return resolve( exposed );
+					  	} else {
+					  		LJ.wlog('The server didnt respond with the expected before object');
+					  	}
+					  }, function( err ){
+					  	return reject( err );
+
+					  });
 
 			});
+
+		},
+		fetchBefores: function( before_ids ){
+
+			var promises = [];
+			before_ids.forEach(function( be_id ){
+				promises.push( LJ.api.fetchBefore( be_id ) );
+			});
+
+			return LJ.Promise.all( promises );
+							 
+
 		},
 		fetchDistinctCountries: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -558,6 +600,37 @@
 					});
 
 			});
+		},
+		changeBeforeStatus: function( before_id, status ){
+
+			if( ['open', 'suspended', 'canceled'].indexOf( status ) == -1 ){
+				return LJ.wlog('Unsupported before status type');
+			}
+
+			var request = {
+				status: status				
+			};
+
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.change_before_status_url.replace(':before_id', before_id ), request )
+					.then(function( exposed ){
+
+						if( exposed.before ){
+							return resolve( exposed.before );
+
+						} else {
+							LJ.wlog('The server didnt respond with the expected before object');
+						}
+
+
+					}, function( err ){
+						return reject( err );
+					});
+
+			});
+
+
 		}
 
 	});

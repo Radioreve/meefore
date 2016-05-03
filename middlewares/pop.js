@@ -4,8 +4,8 @@
 
 	var User        = require('../models/UserModel');
 
-	function handleErr( res, err_ns, err ){
-		return eventUtils.raiseApiError( res, err_ns, err );
+	function handleErr( req, res, err_ns, err ){
+		return eventUtils.raiseApiError( req, res, err_ns, err );
 	};
 
 	var populateUser = function( options ){
@@ -28,11 +28,11 @@
 			User.findOne( query, function( err, user ){
 
 				if( err ){
-					return handleErr( res, err_ns, err );
+					return handleErr( req, res, err_ns, err );
 				}
 
 				if( !user && force_presence ){
-					return handleErr( res, err_ns, {
+					return handleErr( req, res, err_ns, {
 							'err_id': 'ghost_user',
 							'msg'   : 'The presence of a user in database was necessary for this route. None was found.'
 						});

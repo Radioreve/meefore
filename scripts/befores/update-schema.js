@@ -5,7 +5,7 @@
 	var _        = require('lodash');
 	var async    = require('async');
 	var moment   = require('moment');
-	var Event    = require( dir +  '/models/EventModel');
+	var Before    = require( dir +  '/models/BeforeModel');
 	var config   = require( dir + '/config/config');
 
 	mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
@@ -14,7 +14,7 @@
 		
 		console.log('Connected to the database! Running operation... : ');
 
-		Event.find({}, function( err, befores ){
+		Before.find({}, function( err, befores ){
 
 			if( err ) return console.log( err );
 

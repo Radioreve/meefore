@@ -1,5 +1,5 @@
 	
-	var Event    = require('./models/EventModel');
+	var Before   = require('./models/BeforeModel');
 	var User     = require('./models/UserModel');
 	var pusher   = require('./services/pusher');
 	var schedule = require('node-schedule');
@@ -19,9 +19,9 @@
 	})();
 
 
-	// Job #1 - Put "ended" all events of yesterday, every day at 3:30 am	
-	(function terminateEventsEveryHour(){
-		require('./jobs/terminate-events').terminateEvents();
+	// Job #1 - Put "ended" all befores of yesterday, every day at 3:30 am	
+	(function terminateBeforesEveryHour(){
+		require('./jobs/terminate-befores').terminateBefores();
 		setTimeout( terminateEventsEveryHour, every_hour );
 	})();
 

@@ -44,7 +44,7 @@
 		var status          = req.sent.group_status;
 		var group_name      = req.sent.group_name;
 		var group_id        = req.sent.group_id;
-		var event_id        = req.sent.event_id;
+		var before_id        = req.sent.before_id;
 		var facebook_ids    = req.sent.members_facebook_id;
 
 		// Shortcut reference
@@ -52,7 +52,7 @@
 			notification_id : notification_id,
 			group_name      : group_name,
 			group_id        : group_id,
-			event_id        : event_id,
+			before_id        : before_id,
 			happened_at     : moment().toISOString()
 		};
 
@@ -85,7 +85,7 @@
 
 		var notification_id = "group_request";
 
-		var event_id     = req.sent.event_id;
+		var before_id     = req.sent.before_id;
 		var group_name   = req.sent.new_group.name;
 		var group_id     = req.sent.new_group.group_id;
 		var facebook_ids = req.sent.hosts_facebook_id;
@@ -93,7 +93,7 @@
 		// Shortcut reference
 		var n = {
 			notification_id : notification_id,
-			event_id   		: event_id,
+			before_id   		: before_id,
 			group_id   		: group_id,
 			group_name 		: group_name,
 			happened_at		: moment().toISOString()
@@ -121,9 +121,9 @@
 
 		var notification_id = "marked_as_host";
 		var before			= req.sent.expose.before;
-		// At this stage, we cannt access the event_id (not constructed yet) so we pass
-		// begins_at to uniquely find the event clientside based on dayOfYear() (since users
-		// cant host multiple events on the same day )
+		// At this stage, we cannt access the before_id (not constructed yet) so we pass
+		// begins_at to uniquely find the before clientside based on dayOfYear() (since users
+		// cant host multiple befores on the same day )
 		var begins_at    = req.sent.begins_at;
 		var facebook_id  = req.sent.facebook_id;
 
@@ -134,7 +134,7 @@
 		var n = {
 			before_id	    : before._id,
 			notification_id : notification_id,
-			event_begins_at : begins_at,
+			before_begins_at : begins_at,
 			created_by      : facebook_id,
 			happened_at     : moment().toISOString()
 		};

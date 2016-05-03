@@ -4,7 +4,7 @@
 	var moment = require('moment');
 
 	var User  = require('../../models/UserModel');
-	var Event = require('../../models/EventModel');
+	var Before = require('../../models/BeforeModel');
 	var Party = require('../../models/PartyModel');
 
 
@@ -116,7 +116,7 @@
 				return s.target_id == req.sent.target_id && s.shared_with 
 			});
 
-			var shared_with_new = shared_with.slice(0); // <- Wtf ? 
+			var shared_with_new = shared_with.slice(0); // <- cloning ?
 
 			if( !user_shared_object ){
 
@@ -164,11 +164,11 @@
 
 			// Testing for presence of a before
 			if( target_type == "before" ){
-				Event.findById( target_id, function( err, evt ){
+				Before.findById( target_id, function( err, bfr ){
 
 					if( err )
 						return callback({ 'err_id': 'db_error', 'err': err });
-					if( !evt )
+					if( !bfr )
 						return callback( err_base );
 
 					return callback( null );

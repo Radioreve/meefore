@@ -105,8 +105,8 @@
 
 				var hour = $(this).attr('data-hour');
 
-				$('.be-create-row.--hour input')
-					.val( hour )
+				$('.be-create-row.--hour input').val( hour );
+				$('.be-create-row.--hour')
 					.attr('data-hh', hour.split(':')[0])
 					.attr('data-mm', hour.split(':')[1]);
 
@@ -373,10 +373,12 @@
 		endCreateBefore: function( before ){
 
 			LJ.log(before);
-			LJ.ui.showToast('Le before a été créé avec succès');
+			LJ.ui.showToast( LJ.text('to_before_create_success') );
 			LJ.before.hideCreateBefore();
 			LJ.before.showBrowser();
 			LJ.map.addBeforeMarker( before );
+			LJ.before.fetched_befores.push( before );
+			LJ.before.refreshBrowserDates();
 
 		},	
 		handleCreateBefore: function(){

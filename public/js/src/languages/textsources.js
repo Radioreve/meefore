@@ -1,5 +1,5 @@
 	
-	LJ.text = function( text_id ){
+	LJ.text = function( text_id, param ){
 		var app_lang = LJ.lang.getAppLang();
 		var text_src = LJ.text_source[ text_id ];
 
@@ -7,7 +7,7 @@
 			return LJ.wlog('Error, couldnt find text source for text_id : ' + text_id );
 		} else {
 			if( typeof text_src[ app_lang ] == "function" ){
-				return text_src[ app_lang ]();
+				return text_src[ app_lang ]( param );
 			} else {
 				return text_src[ app_lang ];
 			}
@@ -36,6 +36,10 @@
 			"fr": [ "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi" ],
 			"us": [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ]
 		},
+		month: {
+			"fr": ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+			"us": ['January','February','March','April','May','June','July','August','September','October','November','December']
+		},
 		h_min_ago: {
 			"fr": "il y a quelques minutes",
 			"us": "a few minuts ago"
@@ -43,6 +47,76 @@
 		h_hour_ago: {
 			"fr": "il y a moins d'une heure",
 			"us": "less than an hour ago"
+		},
+		today: {
+			"fr": "Aujourd'hui",
+			"us": "Today"
+		},
+		"tomorrow": {
+			"fr": "Demain",
+			"us": "Tomorrow"
+		},
+		"before_day_hour": {
+			"fr": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			},
+			"us": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			}
+		},
+		"before_date_day": {
+			"fr": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return LJ.text_source['today']["fr"];
+				}
+
+				if(  m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
+					return LJ.text_source['tomorrow']["fr"];
+				}
+
+				var d = LJ.text_source['day']['fr'][ m.day() ];
+				var n = m.format('DD').replace(/^0/,'');
+				var m = LJ.text_source['month']['fr'][ m.month() ].toLowerCase();
+
+				return [ d, n, m ].join(' ');
+			},
+			"us": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return LJ.text_source['today']["us"];
+				}
+
+				if(  m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
+					return LJ.text_source['tomorrow']["us"];
+				}
+
+				var d = LJ.text_source['day']['us'][ m.day() ];
+				var n = m.format('DD').replace(/^0/,'');
+				var m = LJ.text_source['month']['us'][ m.month() ];
+
+				m = m[0].toUpperCase() + m.slice(1); // english style
+
+				return [ d, n, m ].join(' ');
+			}
+		},
+		"before_date": {
+			"fr": function( m ){
+
+				var day  = LJ.text_source["before_date_day"]["fr"]( m );
+				var hour = LJ.text_source["before_day_hour"]["fr"]( m );
+
+				return [ day, hour ].join(', ');
+
+			},
+			"us": function( m ){
+
+				var day  = LJ.text_source["before_date_day"]["us"]( m );
+				var hour = LJ.text_source["before_day_hour"]["us"]( m );
+
+				return [ day, hour ].join(', ');
+
+			}
 		},
 		h_today: {
 			"fr": "aujourd'hui, à %hh%m",
@@ -1517,17 +1591,33 @@
 			"fr": "Rechercher",
 			"us": "Search"
 		},
-		modal_share_title: {
+		modal_share_title_profile: {
 			"fr": "Partager un profil",
 			"us": "Share a profile"
 		},
-		modal_share_subtitle: {
+		modal_share_subtitle_profile: {
 			"fr": "Sélectionnez dans la liste les personnes avec qui vous souhaitez partager ce profil.",
 			"us": "Select in your friendlist who you wish to share this profile with."
 		},
 		to_profile_shared_success: {
 			"fr": "Le profil a bien été partagé",
 			"us": "The profile has been shared"
+		},
+		modal_share_title_before: {
+			"fr": "Partager un before",
+			"us": "Share a pregame"
+		},
+		modal_share_subtitle_before: {
+			"fr": "Sélectionnez dans la liste les personnes avec qui vous souhaitez partager ce before.",
+			"us": "Select in your friendlist who you wish to share this pregame with."
+		},
+		to_before_shared_success: {
+			"fr": "Le before a bien été partagé",
+			"us": "The pregame has been shared"
+		},
+		to_before_request_success: {
+			"fr": "Votre demande de participation a bien été envoyée",
+			"us": "Your participation request has been sent"
 		},
 		meepass_ribbon2: {
 			"fr": "Il vous reste <span class='n_meepass'>%n</span> meepass",
@@ -1626,7 +1716,52 @@
 		err_be_create_already_hosting: {
 			"fr": "%names organise(nt) déjà un before ce jour-là",
 			"us": "%names are already hosting a before on this day"
+		},
+		shared_before_title: {
+			"fr": function( names ){
+				return 'Before avec ' + LJ.renderMultipleNames( names );
+			},
+			"us": function( names ){
+				return 'Pregame with ' + LJ.renderMultipleNames( names );
+			}
+		},
+		slide_overlay_before_message: {
+			"fr": "Que souhaitez-vous faire ?",
+			"us": "What would you like to do ?"
+		},
+		slide_overlay_before_cancel: {
+			"fr": "Annuler mon before",
+			"us": "Cancel my pregame"
+		},
+		slide_overlay_back: {
+			"fr": "Retour",
+			"us": "Back"
+		},
+		to_cancel_before_success: {
+			"fr": "Le before a bien été annulé",
+			"us": "The pregame have been canceled"
+		},
+		before_just_canceled: {
+			"fr": "Nous sommes désolés, ce before vient d'être annulé par un des organisateurs.",
+			"us": "We are sorry, this pregame just got canceled by one of the hosts."
+		},
+		be_ended: {
+			"fr": "Le before est terminé",
+			"us": "The pregame is over"
+		},
+		to_friend_canceled_event: {
+			"fr": "Un de vos coorganisateurs vient d'annulé un before",
+			"us": "One cohost of yours just canceled a pregame"
+		},
+		modal_request_subtitle: {
+			"fr": "Sélectionnez au plus 3 amis avec lesquels vous souhaiteriez participer.",
+			"us": "Select at most 3 friends you would like to go with."
+		},
+		to_before_create_success: {
+			"fr": "Votre before vient d'être créé",
+			"us": "Your pregame was created successfully"
 		}
+
 
 
 	});

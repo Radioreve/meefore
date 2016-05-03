@@ -20,7 +20,7 @@
 	//	api.tests     = require( apiDir + '/tests');
 		api.users     = require( apiDir + '/users');
 		api.places    = require( apiDir + '/places');
-		api.events    = require( apiDir + '/events');
+		api.befores   = require( apiDir + '/befores');
 		api.parties   = require( apiDir + '/parties');
 		api.chats     = require( apiDir + '/chats');
 
@@ -101,8 +101,8 @@
 
 		//Test request
 		app.post('/test/request',
-			mdw.validate('event_group_request'),
-			api.events.request 
+			mdw.validate('before_group_request'),
+			api.befores.request 
 		);
 
 		//End test request

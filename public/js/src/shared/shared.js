@@ -22,8 +22,16 @@
 		},
 		handleSharedItemClicked: function(){
 
-			var facebook_id = $(this).attr('data-target-id');
-			LJ.profile_user.showUserProfile( facebook_id );
+			var target_id   = $(this).attr('data-target-id');
+			var target_type = $(this).attr('data-target-type');
+
+			if( target_type == "user" ){
+				return LJ.profile_user.showUserProfile( target_id );
+			}
+
+			if( target_type == "before" ){
+				return LJ.before.fetchAndShowBeforeInview( target_id );
+			}
 
 		},	
 		handleShareClicked: function(){
@@ -75,12 +83,12 @@
 				})
 				.then(function(){
 
-					var hosts_facebook_ids = _.map( befores, 'hosts' );
+					var hosts_facebook_ids = _.flatten( _.map( befores, 'hosts' ) );
 					var users_facebook_ids = _.map( _.filter( shared, function( sh ){
 						return sh.target_type == "user";
 					}), 'target_id' );
 
-					facebook_ids = _.uniq( _.merge( hosts_facebook_ids, users_facebook_ids ) );
+					facebook_ids = _.uniq( hosts_facebook_ids.concat(users_facebook_ids) );
 					return;
 
 				})
@@ -160,17 +168,17 @@
 
 				var targets_profiles = [];
 				users.forEach(function( user ){
-					if(  before.hosts.indexOf( user.facebook_id ) ){
+					if(  before.hosts.indexOf( user.facebook_id ) != -1 ){
 						targets_profiles.push( user );
 					}
 				});
 
 				if( sho.share_type == "shared_by" ){
-					return LJ.shared.renderSharedByItem__User( sho, targets_profiles );
+					return LJ.shared.renderSharedByItem__Before( sho, targets_profiles );
 				}	
 
 				if( sho.share_type == "shared_with" ){
-					LJ.shared.renderSharedByItem__User( sho, targets_profiles );
+					return LJ.shared.renderSharedWithItem__Before( sho, targets_profiles );
 				}							
 			}
 
@@ -243,6 +251,38 @@
 				].join(''));
 
 		},
+		renderSharedItem__Before: function( sh, targets_profiles, subtitle ){
+
+			var target 		   = target;
+			var formatted_date = LJ.renderDate( sh.shared_at );
+
+			var pictures = [];
+			targets_profiles.forEach(function( tar ){
+				pictures.push({ img_id: tar.img_id, img_vs: tar.img_vs });
+			});
+			var rosace_html    = LJ.pictures.makeRosaceHtml( pictures, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="shared__item" data-target-id="' + sh.target_id + '" data-target-type="' + sh.target_type + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + rosace_html + '</div>',
+						'<div class="row-pic__icon --round-icon"><i class="icon icon-forward"></i></div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2 data-lid="shared_before_title" data-lpmt="array" data-lpm="'+ _.map( targets_profiles, 'name' ) +'"></h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							subtitle,
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
 		renderSharedByItem__User: function( sho, target ){
 
 			var friend = _.find( LJ.friends.friends_profiles, function( f ){
@@ -283,7 +323,7 @@
 
 			var subtitle = [
 				'<div class="row-body__icon --round-icon">',
-					'<i class="icon icon-telescope"></i>',
+					'<i class="icon icon-forward"></i>',
 				'</div>',
 				'<h4>',
 					LJ.text('shared_with_item_subtitle')
@@ -297,13 +337,57 @@
 
 
 		},
-		renderSharedByItem__Before: function( sho, targets ){
+		renderSharedByItem__Before: function( sho, target ){
 
-			
+			var friend = _.find( LJ.friends.friends_profiles, function( f ){
+				return f.facebook_id == sho.shared_by;
+			});
+
+			var subtitle = [
+				'<div class="row-body__icon --round-icon">',
+					'<i class="icon icon-pricetag"></i>',
+				'</div>',
+				'<h4>',
+					LJ.text('shared_by_item_subtitle')
+						.replace('%name', friend.name )
+						.replace('%type', LJ.text('w_profile') )
+						.capitalize(),
+				'</h4>'
+			].join('');
+
+			return LJ.shared.renderSharedItem__Before( sho, target, subtitle );
 
 		},
-		renderSharedWithItem__Before: function( sho, targets ){
+		renderSharedWithItem__Before: function( sho, target ){
 
+			var friends = [];
+			var friends_profiles = LJ.friends.friends_profiles;
+
+			if( !Array.isArray( friends_profiles ) ){
+				return LJ.wlog('Unable to render, friends_profiles is not an array');
+			}
+
+			sho.shared_with.forEach(function( friend_id ){
+				friends.push( _.find( friends_profiles, function( f ){
+					return f.facebook_id == friend_id;
+				}))
+			});
+
+			var names = LJ.renderMultipleNames( _.map( friends, 'name') );
+
+			var subtitle = [
+				'<div class="row-body__icon --round-icon">',
+					'<i class="icon icon-forward"></i>',
+				'</div>',
+				'<h4>',
+					LJ.text('shared_with_item_subtitle')
+						.replace('%names', names )
+						.replace('%type', LJ.text('w_profile') )
+						.capitalize(),
+				'</h4>'
+			].join('');
+
+			return LJ.shared.renderSharedItem__Before( sho, target, subtitle );
 
 
 		},
@@ -312,14 +396,14 @@
 			var target_id = $( this ).closest('[data-facebook-id]').attr('data-facebook-id');
 
 			LJ.ui.showModal({
-				"title"			: LJ.text('modal_share_title'),
+				"title"			: LJ.text('modal_share_title_profile'),
 				"type"      	: "share",
 				"search_input"	: true,
 				"jsp_body" 	    : true,
 				"attributes"	: [{ name: "item-id", val: target_id }],
-				"subtitle"		: LJ.text('modal_share_subtitle'),
+				"subtitle"		: LJ.text('modal_share_subtitle_profile'),
 				"body"  		: LJ.friends.renderFriendsInModal(),
-				"footer"		: "<button class='--rounded'><i class='icon icon-check'></i></button>"
+				"footer"		: "<button class='--rounded'><i class='icon icon-forward'></i></button>"
 			})
 			.then(function(){
 				return LJ.ui.getModalItemIds();

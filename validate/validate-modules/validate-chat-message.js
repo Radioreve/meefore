@@ -8,7 +8,7 @@
 		
 		var checkMessage = nv.isAnyObject()
 			
-			.withRequired('event_id'       , nv.isString() )
+			.withRequired('before_id'       , nv.isString() )
 			.withRequired('chat_id'        , nv.isString() )
 			.withRequired('msg'            , nv.isString() )
 			.withRequired('name'           , nv.isString() )
@@ -37,13 +37,13 @@
 
 	function checkSenderStatus( req, callback ){
 
-		var event_id    = req.sent.event_id;
+		var before_id    = req.sent.before_id;
 		var group_id    = req.sent.group_id;
 		var facebook_id = req.sent.facebook_id;
 
-		rd.smembers('event/' + event_id + '/hosts', function( err, hosts_id ){
+		rd.smembers('before/' + before_id + '/hosts', function( err, hosts_id ){
 			
-			rd.get('event/' + event_id + '/group/' + group_id + '/status', function( err, status ){
+			rd.get('before/' + before_id + '/group/' + group_id + '/status', function( err, status ){
 
 				// User that has been validated to send message?
 				if( group_id != "hosts" && status != 'accepted' )

@@ -61,7 +61,6 @@ button:hover {
     width: 100%;
     background: white;
     position: absolute;
-    padding-top: 60px;
 }
 
 .app-section {
@@ -105,6 +104,7 @@ button:hover {
     position: relative;
     width: 90px;
     height: 90px;
+    flex-shrink: 0;
 }
 
 .row-pic__image {
@@ -176,8 +176,8 @@ button:hover {
 }
 
 .row-body h2 {
-    font-weight: bolder;
-    font-size: 22px;
+    font-weight: 600;
+    font-size: 20px;
     color: #454545;
     margin-right: 30px;
 }

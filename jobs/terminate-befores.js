@@ -17,8 +17,7 @@
 
 	// Models
 	var User     = require('../models/UserModel');
-	var Event    = require('../models/EventModel');
-	var Parties  = require('../models/PartyModel');
+	var Before   = require('../models/BeforeModel');
 	var Message  = require('../models/MessageModel');
 
 	// Helpers
@@ -71,28 +70,28 @@
 		}
 	}
 
-	var terminateEvents = function( options ){
+	var terminateBefores = function( options ){
 
 		/*
-			Scheduler auto-update events
-			Each event start date is stored in UTC time
-			Each timezone in which event is created is also stored
+			Scheduler auto-update befores
+			Each before start date is stored in UTC time
+			Each timezone in which before is created is also stored
 			The scheduler can be launched anywhere in the world, in anytime zone
 			Everyhour find
 				- In which timezone it is 6am
-				- Find if the day in this timezone is tomorrow, today or yesterday (which is event's timezone and scheduler-localzone dependend)
-				- Find all events in this timezone whose begins_at is < 14 hours, so when users connect after 6AM on a particular day,
-			      all of yesterday's events have been cleaned out from database, from cache, and finally from user interface
+				- Find if the day in this timezone is tomorrow, today or yesterday (which is before's timezone and scheduler-localzone dependend)
+				- Find all befores in this timezone whose begins_at is < 14 hours, so when users connect after 6AM on a particular day,
+			      all of yesterday's befores have been cleaned out from database, from cache, and finally from user interface
 
 			@Special thanks to Marie Anne Krebs who helped find a formula to know the adjusting day!
 			
-			All event's status parameter are set to "ended"
+			All before's status parameter are set to "ended"
 
 		*/
 
 		var options = options || {};
 
-		var event_ids			 = []; // outside reference to event ids that need to be cleared
+		var before_ids			 = []; // outside reference to before ids that need to be cleared
 		var today                = moment();
 		var target 				 = findDiffDay( today );
 
@@ -128,20 +127,14 @@
 		var timezone_range_query = { $gt: target.timezone - 60, $lt: target.timezone + 60 };
 
 		// Pass the "status" because the date_range is loose. Meaning, it will allows to also update
-		// All events of few days before that for somereason didnt get updated on the last call.
-		var full_event_query = {
+		// All befores of few days before that for somereason didnt get updated on the last call.
+		var full_before_query = {
 			'begins_at' : date_range_query,
 			'timezone'  : timezone_range_query,
 			'status'    : { $nin: ['ended'] }
 		};
 
-		var full_party_query = {
-			'begins_at' : date_range_query,
-			'timezone'  : timezone_range_query,
-			'status'    : { $nin: ['ended'] }
-		};
-
-		var full_event_in_user_query = {
+		var full_before_in_user_query = {
 			'begins_at' : date_range_query,
 			'timezone'  : timezone_range_query
 		};
@@ -153,12 +146,12 @@
 			]
 		}
 
-		console.log( JSON.stringify(full_event_query, null, 4) );
+		console.log( JSON.stringify(full_before_query, null, 4) );
 
 		mongoose.connection.on('error', function( err ){
 
 			var mail_html = []
-			mail_html.push('Connection to the database failed, Couldnt execute the cron job @reset-events ');
+			mail_html.push('Connection to the database failed, Couldnt execute the cron job @reset-befores ');
 			mail_html.push( err );
 			mailer.sendSimpleAdminEmail('Error connecting to Database', mail_html.join('') );
 			mail_html = [];
@@ -187,12 +180,11 @@
 				async.waterfall([
 					updateRedis,
 					updateUsers,
-					updateEvents,
-					updateParties
+					updateBefores
 				], function(){
 
-					if( tracked.n_events_matched == 0 ){
-						return console.log('No event matched the query');
+					if( tracked.n_befores_matched == 0 ){
+						return console.log('No before matched the query');
 					}
 
 					console.log( tracked.n_users_updated + ' users updated');
@@ -201,15 +193,14 @@
 						'<div>Scheduler updated the database and cleared the cache successfully in zone : ' + tracked.timezone + '</div>',
 						'<div>Local time 	   	         : ' + tracked.local_time 		 +'</div>',
 						'<div>Target time 	   	         : ' + tracked.target_time 		 +'</div>',
-						'<div>Number of events match     : ' + tracked.n_events_matched  +'</div>',
-						'<div>Number of events updated   : ' + tracked.n_events_updated  +'</div>',
+						'<div>Number of befores match     : ' + tracked.n_befores_matched  +'</div>',
+						'<div>Number of befores updated   : ' + tracked.n_befores_updated  +'</div>',
 						'<div>Number of users updated    : ' + tracked.n_users_updated   +'</div>',
 						'<div>Number of chats cleared    : ' + tracked.n_chats_cleared   +'</div>',
-						'<div>Number of parties cleared  : ' + tracked.n_parties_updated +'</div>'
 					];
 
 					console.log('Scheduled job completed successfully');
-					mailer.sendSimpleAdminEmail('Scheduler [' + process.env.NODE_ENV + '], '+ tracked.n_events_updated + ' events have been successfully updated', mail_html.join('') );
+					mailer.sendSimpleAdminEmail('Scheduler [' + process.env.NODE_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated', mail_html.join('') );
 					// mongoose.connection.close();
 
 				});
@@ -230,7 +221,7 @@
 			rd.on("error", function( err ){
 
 				var mail_html = []
-				mail_html.push('Connection to redis failed, Couldnt execute the cron job @reset-events ');
+				mail_html.push('Connection to redis failed, Couldnt execute the cron job @reset-befores ');
 				mail_html.push( err );
 				mailer.sendSimpleAdminEmail('Error connecting to Redis', mail_html.join('') );
 				mail_html = [];
@@ -240,21 +231,21 @@
 			rd.on("ready", function(){
 				console.log('Connected to Redis! Updating...');
 
-				Event.find( full_event_query, function( err, events ){
+				Before.find( full_before_query, function( err, befores ){
 
 					keeptrack({
-						n_events_matched: events.length
+						n_befores_matched: befores.length
 					});
 
-					events.forEach(function( evt ){
-						event_ids.push( evt._id.toString() );  // (!) Mongoose _id field is parsed as Object. Weird.
+					befores.forEach(function( bfr ){
+						before_ids.push( bfr._id.toString() );  // (!) Mongoose _id field is parsed as Object. Weird.
 					});
 
 					var chats_to_remove = [];
 					rd.smembers('chats', function( err, chat_ids ){
 						chat_ids.forEach(function( chat_id ){
 							// Chat is outdated, need to clear it
-							if( event_ids.indexOf( chat_id.split('-')[0] ) != -1 ){
+							if( before_ids.indexOf( chat_id.split('-')[0] ) != -1 ){
 								chats_to_remove.push( chat_id );
 							}
 						});
@@ -266,9 +257,9 @@
 
 		};		
 
-		function updateEvents(){
+		function updateBefores(){
 			var g_callback = arguments[ arguments.length - 1 ];
-			Event.update( full_event_query, {
+			Before.update( full_before_query, {
 					$set: {
 						'status': 'ended'
 					}
@@ -277,40 +268,22 @@
 				}, function( err, raw ){
 					if( err ) return handleError( err );
 					keeptrack({
-						n_events_updated: raw.n
+						n_befores_updated: raw.n
 					});
 					g_callback( null );
 
 				});
 		};
 
-		function updateParties(){
-			var g_callback = arguments[ arguments.length - 1 ];
-			Parties.update( full_party_query, {
-					$set: {
-						'status': 'ended'
-					}
-				}, {
-					multi: true
-				}, function( err, raw ){
-					if( err ) return handleError( err );
-
-					keeptrack({
-						n_parties_updated: raw.n
-					});
-					g_callback( null );
-			});
-		}
-
 		function updateUsers(){
 			var g_callback = arguments[ arguments.length - 1 ];
 			User.update({
-					events: {
-						$elemMatch: full_event_in_user_query
+					befores: {
+						$elemMatch: full_before_in_user_query
 					}
 				}, {
 					$pull: {
-						events: user_update_query
+						befores: user_update_query
 					}
 				}, { 
 					multi: true
@@ -375,15 +348,15 @@
 									});
 
 									subbedtasks.push(function( subbed_callback ){
-										var cleareventstasks = [];
-										event_ids.forEach(function( event_id ){
-											cleareventstasks.push(function( clearevent_callback ){
-												rd.delw('event/' + event_id + '/*', function( err ){
-													clearevent_callback();
+										var clearbeforestasks = [];
+										before_ids.forEach(function( before_id ){
+											clearbeforestasks.push(function( clearbefore_callback ){
+												rd.delw('before/' + before_id + '/*', function( err ){
+													clearbefore_callback();
 												});
 											});
 										});
-										async.parallel( cleareventstasks, function( err ){
+										async.parallel( clearbeforestasks, function( err ){
 											subbed_callback();
 										});
 									});
@@ -453,9 +426,9 @@
 
 
 	// Test purposes
-	// terminateEvents();
+	// terminateBefores();
 
 	module.exports = {
-		terminateEvents : terminateEvents
+		terminateBefores : terminateBefores
 	};
 

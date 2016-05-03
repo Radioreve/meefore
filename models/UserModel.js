@@ -70,12 +70,12 @@
   pictures: {
     type: Array
   },
-  events: {
+  befores: {
     type    : Array,
     default : []
   },
   channels: {
-    type: Object
+    type: Array
   },
   app_preferences: {
     type    : Object
@@ -121,8 +121,12 @@
 });
 
 
-UserSchema.methods.getChannel = function(){
-  return _.result( _.find( this.channels, function(el){ return el.access_name == 'mychan'; }), 'channel_label') ;
+UserSchema.methods.getPrivateChannel = function(){
+
+  return _.find( this.channels, function( chan ){
+          return chan.type == 'personnal'
+  }).name;
+
 };
 
 
