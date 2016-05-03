@@ -33,17 +33,6 @@
 			LJ.ilog('Map has been successfully loaded');
 
 		},
-        setUserLocationLatLng: function(){
-
-            var place_id = LJ.user.location.place_id;
-            return LJ.map.findLatLngWithPlaceId( place_id )
-                    .then(function( latlng ){
-                        LJ.user.location.lat =  latlng.lat();
-                        LJ.user.location.lng = latlng.lng();
-                        return;
-                    });
-
-        },
 		handleDomEvents: function(){
 
 			LJ.ui.$body.on('click', '.map__icon.--geoloc', LJ.map.centerMapAtUserLocation );
@@ -55,8 +44,8 @@
 			LJ.log('Setting up google map...');
 
             var latlng = {
-                lat: LJ.user.location.lat,
-                lng: LJ.user.location.lng
+                lat: parseFloat( LJ.user.location.lat ),
+                lng: parseFloat( LJ.user.location.lng )
             };
 
 			var options = {
@@ -383,6 +372,11 @@
             }
 
         },
+        getBeforeMarkerUrl: function( before ){
+
+            return LJ.map.markers_url.base[ LJ.map.getDevicePixelRatio() + 'x' ]
+
+        },
         addBeforeMarker: function( before ){
 
         	var before_id = before._id;
@@ -392,10 +386,12 @@
                 lng: before.address.lng
             };
 
+           var url = LJ.map.getBeforeMarkerUrl( before );
+
             LJ.map.addMarker({
                 marker_id : before_id,
                 latlng    : latlng,
-                url       : LJ.map.markers_url.base.open,
+                url       : url,
                 type      : 'before',
                 data      : before,
                 listeners : [

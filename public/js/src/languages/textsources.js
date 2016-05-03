@@ -1760,6 +1760,14 @@
 		to_before_create_success: {
 			"fr": "Votre before vient d'être créé",
 			"us": "Your pregame was created successfully"
+		},
+		modal_no_friends_btn: {
+			"fr": "Invitez des amis",
+			"us": "Invite your friends"
+		},
+		modal_no_friends_text: {
+			"fr": "Il faut être au moins 2 pour effectuer cette action",
+			"us": "You need to be at least two to perform this action"
 		}
 
 

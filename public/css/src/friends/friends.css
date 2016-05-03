@@ -109,3 +109,22 @@
     background: #33AFFF;
 }
 .friend-modal.--selected .friend-modal__name {font-weight: 800;}
+
+.no-friends {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+} 
+.no-friends span {font-weight: bolder;color: #D55D8C;}
+.no-friends button {
+    width: 100%;
+    height: 50px;
+    background: #3b5998!important;
+    border: none!important;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bolder;
+    margin-top: 12px;
+}

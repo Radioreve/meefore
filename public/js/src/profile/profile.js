@@ -207,7 +207,9 @@
 				$block.attr('data-store', LJ.seek.profile_places.getPlace().formatted_address );		
 				update.location = {
 					place_name : LJ.seek.profile_places.getPlace().formatted_address,
-					place_id   : LJ.seek.profile_places.getPlace().place_id
+					place_id   : LJ.seek.profile_places.getPlace().place_id,
+					lat 	   : LJ.seek.profile_places.getPlace().geometry.location.lat(),
+					lng 	   : LJ.seek.profile_places.getPlace().geometry.location.lng()
 				};
 			}
 

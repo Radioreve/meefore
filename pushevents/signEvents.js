@@ -133,7 +133,7 @@
 		// Setup personnal channel (Pusher)
 		new_user.channels.push({
 			type: 'personnal',
-			name: realime.makePersonnalChannel( fb.id )
+			name: realtime.makePersonnalChannel( fb.id )
 		});
 
 		new_user.save(function( err, user ){

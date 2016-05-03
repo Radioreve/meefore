@@ -258,6 +258,18 @@
 			}
 
 		},
+		renderFriendsInModal__Empty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="no-friends">',
+					'<span data-lid="modal_no_friends_text"></span>',
+					'<button class="js-invite-friends" data-lid="modal_no_friends_btn"></button>',
+				'</div>'
+
+			].join(''));
+
+		},
 		renderFriendInModal: function( f ){
 
 			var img_html = LJ.pictures.makeImgHtml( f.img_id, f.img_vs, 'user-modal' );

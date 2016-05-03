@@ -22,17 +22,19 @@
 
 		init: function(){
 
-			// Global configuration of the uploader. Need to be callec once !
+			// Global configuration of the uploader. Need to be called once !
 			$.cloudinary.config( LJ.pictures.cloudinary_upload_params );
 
-			return LJ.promise(function( resolve, reject ){
+			return LJ.api.fetchCloudinaryTags()
+					.then(function( cloudinary_tags ){
+					  	return LJ.pictures.setupCloudinary( cloudinary_tags ); 
 
-				LJ.api.fetchCloudinaryTags()
-					  .then( LJ.pictures.setupCloudinary )
-					  .then( LJ.pictures.handleDomEvents );
+					})
+					.then(function(){
+					  	return LJ.pictures.handleDomEvents();
 
-				resolve();				
-			});
+					}); 
+
 			
 		},
 		setupCloudinary: function( cloudinary_tags ){

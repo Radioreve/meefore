@@ -83,10 +83,16 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		if( $('.curtain').length > 0 ) {
 			$curtain = $('.curtain');
 			already_there = true;
+
 		} else {
 			var alpha = o.opacity || 1;
 			$curtain = $('<div class="curtain"></div>')
 						.hide().css({ 'background': 'rgba(19,19,19,' + alpha + ')' }).appendTo( LJ.ui.$body );
+
+		}
+
+		if( o.sticky ){
+			$curtain.addClass('--sticky');
 		}
 
 		return LJ.promise(function( resolve, reject ){
@@ -106,7 +112,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 						if( !$(e.target).hasClass('curtain') ) return;
 
-						if( $curtain.hasClass('sticky') ){
+						if( $curtain.hasClass('--sticky') ){
 							return LJ.wlog('Curtain is in sticky mode');
 						}
 

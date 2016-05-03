@@ -6,8 +6,9 @@
 			'$modal_logout'  : '.modal.--logout',
 			'opening_duration': 1000,
 			'prompt_duration': 600,
-			'prompt_buttons_duration': 600,
+			'prompt_buttons_duration': 500,
 			'completed_steps': 0,
+			'break_duration': 400,
 
 			'data': {},
 
@@ -26,7 +27,8 @@
 			enterLoginProcess: function(){
 
 				LJ.ui.showCurtain({
-					duration: LJ.login.opening_duration
+					duration : LJ.login.opening_duration,
+					sticky   : true
 				});
 
 				LJ.ui.deactivateHtmlScroll();
@@ -59,15 +61,33 @@
 				});
 			},
 			firstSetup: function(){
-					// the app requires a user's location to boot properly
-					// otherwise, use would be invisible in the search section
-					if( LJ.user.location && LJ.user.location.place_name && LJ.user.location.place_id ){
-						return
-					}
+				// the app requires a user's location to boot properly
+				// - to be visible in the search section
+				// - to allow for geo requests to fetch the right befores
+				// - to allow the map to load in the right city
+				var L = LJ.user.location;
+				if( L && L.place_id && L.place_name && L.lat && L.lng ){
+					return;
+				}
 
-					LJ.pictures.uploadFacebookPicture_Intro();
-	                LJ.login.promptUserLocation();
-	               	return;
+				LJ.pictures.uploadFacebookPicture_Intro();
+	            return LJ.login.break()
+	            		.then(function(){
+	            			return LJ.login.promptUserLocation();
+
+	            		})
+	            		.then(function(){
+	            			return LJ.login.debreak();
+
+	            		});
+
+			},
+			break: function(){
+				return LJ.ui.shradeOut( $('.login'), LJ.login.break_duration );
+
+			},
+			debreak: function(){
+				return LJ.ui.shradeIn( $('.login'), LJ.login.break_duration );
 
 			},
 			stepCompleted: function( fill_ratio ){
@@ -119,7 +139,7 @@
 					$( LJ.login.renderLocationPrompt() )
 						.hide()
 						.appendTo('.curtain')
-						.velocity('bounceInQuick', {
+						.velocity('shradeIn', {
 							duration: LJ.login.prompt_duration,
 							display: 'flex'
 						});
@@ -129,7 +149,9 @@
 
 						var place = LJ.seek.login_places.getPlace();
 						$('.init-location').attr('data-place-id'   , place.place_id )
-							  			   .attr('data-place-name' , place.formatted_address );
+							  			   .attr('data-place-name' , place.formatted_address )
+							  			   .attr('data-place-lat'  , place.geometry.location.lat() )
+							  			   .attr('data-place-lng'  , place.geometry.location.lng() );
 
 						LJ.login.showPlayButton();
 
@@ -144,56 +166,66 @@
 
 						LJ.login.updateProfileFirstLogin()
 							.then(function(){
-								$block.removeClass('--validating');
-								resolve();
+
+								$block
+									.removeClass('--validating')
+									.velocity('shradeOut', {
+										duration: LJ.login.prompt_duration,
+										complete: resolve
+									});
+								
+
 							}, function( err ){
 								LJ.wlog('An error occured');
 								LJ.log(err);
+
 							});
 					});
 				});	
 			},
 			updateProfileFirstLogin: function(){
-				return LJ.promise(function( resolve, reject ){
 
-					LJ.log('Updating user location for the first time...');
+				LJ.log('Updating user location for the first time...');
 
-					var place_id   = $('.init-location').attr('data-place-id');
-					var place_name = $('.init-location').attr('data-place-name');
+				var place_id   = $('.init-location').attr('data-place-id');
+				var place_name = $('.init-location').attr('data-place-name');
+				var lat        = $('.init-location').attr('data-place-lat');
+				var lng        = $('.init-location').attr('data-place-lng');
 
-					if( !place_id || !place_name ){
-						return LJ.wlog('Unable to find place attributes: place_id=' + place_id +', formatted_address=' + place_name );
-					}
+				if( !( place_id && place_name && lat && lng) ){
+					return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
+				}
 
-					var update = {};
-					update.location = {
-						place_name : place_name,
-						place_id   : place_id
-					};
+				var update = {};
+				update.location = {
+					place_name : place_name,
+					place_id   : place_id,
+					lat 	   : lat,
+					lng 	   : lng
+				};
 
-					LJ.api.updateProfile( update )
-					  .then(function( exposed ){
-					  		LJ.user.location = exposed.user.location;
-						  	LJ.profile.setMyInformations();
-						  	resolve();
-					  }, reject );
+				return LJ.api.updateProfile( update )
+						  .then(function( exposed ){
+						  		LJ.user.location = exposed.user.location;
+							  	LJ.profile.setMyInformations();
+							  	return;
+						});
 
-				});
 
 			},
 			showPlayButton: function(){
 
 				$('.init-location').find('.action__cancel')
-							.velocity('bounceOut', {
-								duration: LJ.login.prompt_buttons_duration,
-								display: 'none'
-							});
+					.velocity('shradeOut', {
+						duration: LJ.login.prompt_buttons_duration,
+						display: 'none'
+					});
 
 				$('.init-location').find('.action__validate')
-					.velocity('bounceInQuick', {
-						duration: LJ.login.prompt_buttons_duration,
-						delay: LJ.login.prompt_buttons_duration,
-						display: 'flex'
+					.velocity('shradeIn', {
+						duration : LJ.login.prompt_buttons_duration,
+						delay    : LJ.login.prompt_buttons_duration,
+						display  : 'flex'
 					});
 
 			},

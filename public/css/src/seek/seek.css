@@ -49,15 +49,18 @@
 /* Override for login */
 
 .seek-login-places.pac-container {
-    background: rgba(25, 25, 25, 1);
+    background: rgb(19, 19, 19);
     color: white;
     border: none;
     box-shadow: none;
+    border-radius: 30px;
+    padding: 30px;
 }
 
 .seek-login-places .pac-item {
     border-color: transparent;
     margin: 4px 0px;
+    border-radius: 10px;
 }
 
 .seek-login-places .pac-item:first-of-type {
@@ -65,7 +68,7 @@
 }
 
 .seek-login-places .pac-item:hover {
-    background: #232323;
+    background: #080808;
 }
 
 .seek-login-places .pac-item-query {
@@ -88,21 +91,23 @@
 .seek-map-browser-places.pac-container {
     background: none;
     color: black;
+    background: white;
     border: none;
     box-shadow: none;
     top: auto;
     position: fixed!important;
-    top: 70px!important;
-    right: 0px!important;
+    bottom: 70px!important;
+    top: auto!important;
+    right: 76px!important;
     left: auto!important;
+    border-radius: 10px 10px 0 0;
 }
 
 .seek-map-browser-places .pac-item {
     border-color: transparent;
     margin: 0px 0px;
     border-radius: 4px;
-    color: #000000;
-    font-weight: bolder;
+    color: #919191;
 }
 
 .seek-map-browser-places .pac-item:first-of-type {
@@ -110,7 +115,7 @@
 }
 
 .seek-map-browser-places .pac-item:hover {
-    background: rgba(255, 255, 255, 0.55);
+    background: rgba(238, 238, 238, 0.34);
 }
 
 .seek-map-browser-places .pac-item-query {
