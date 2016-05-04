@@ -708,6 +708,7 @@
 			})
 			.then(function(){
 				LJ.ui.showToast( LJ.text('to_before_shared_success') );
+				
 			})
 			.catch(function(e){
 				LJ.wlog(e);

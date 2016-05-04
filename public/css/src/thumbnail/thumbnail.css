@@ -8,7 +8,7 @@
 
 .thumbnail__name {font: 20px 'alegreya sans';font-weight: 600;color: white;position: absolute;top: 14px;left: 76px;white-space: nowrap;}
 
-@media (max-width: 1000px ){
+@media (max-width: 500px ){
     .app-thumbnail {
         display: none;
     }
