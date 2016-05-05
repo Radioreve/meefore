@@ -4,34 +4,29 @@
 		jsp_id: 'notifications',
 
 		init: function(){
-			return LJ.promise(function( resolve, reject ){
 
-				LJ.notifications.addNotificationsPanel()
-					.then(function(){
+			LJ.notifications.addNotificationsPanel()
+			// Notifications persistentes
+            // Certaines doivent être affichées de manière async à un autre moment
+            LJ.user.notifications.forEach(function( notification ){
+                LJ.notifications.insertNotification( notification );
+            });
+			// Notifications éphémères
+			// Display after so they are always pinned to top
+			LJ.notifications.checkNotification_newUser();
+          // LJ.notifications.checkNotification_fillProfile();
+            // Daily notification
+            // ...
+			LJ.notifications.handleDomEvents();
+			return;
 
-						// Notifications persistentes
-			            // Certaines doivent être affichées de manière async à un autre moment
-			            LJ.user.notifications.forEach(function( notification ){
-			                LJ.notifications.insertNotification( notification );
-			            });
-
-						// Notifications éphémères
-						// Display after so they are always pinned to top
-						LJ.notifications.checkNotification_newUser();
-			          // LJ.notifications.checkNotification_fillProfile();
-
-			            // Daily notification
-			            // ...
-						LJ.notifications.handleDomEvents();
-
-						resolve();
-					});
-			});
 		},
 		handleDomEvents: function(){
 
-			$('.app__menu-item.--notifications').click(function(){
+			$('.app__menu-item.--notifications').click(function(e){
 
+				e.preventDefault();
+				
 				var $self = $(this);
 				// Toggle notifications pannel
 				LJ.notifications.toggleNotificationsPanel();

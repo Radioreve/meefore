@@ -27,13 +27,17 @@
 			}
 
 			return LJ.promise(function( resolve, reject ){
+				
 				LJ.Promise.all([
 					options.fetchPromise( options.promise_arg ),
 					uiPromise( options )
+
 				]).then(function( results ){
 					resolve( results[0] );
+
 				}, function( err ){
 					console.log(err);
+
 				});
 			})
 
@@ -209,7 +213,7 @@
 		LJ.ui.showSlide({
 			"title": "Félicitations !",
 			"subtitle": "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
-			"body": "Then there goes the body...",
+			"body": "<div> This is my super body </div>",
 			"footer": "<button class='--rounded'><i class='icon icon-check'></i></button>",
 			"type": "test"
 		});

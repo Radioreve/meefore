@@ -1780,6 +1780,26 @@
 		to_request_pending: {
 			"fr": "Les organisateurs ne vous ont pas encore validé",
 			"us": "Hosts havent validated you yet"
+		},
+		chat_segment_explanation: {
+			"fr": "Filtrez les discussions par jour en sélectionnant une date",
+			"us": "Filter discussions by day by selecting a date"
+		},
+		chat_header_title: {
+			"fr": "Discussions",
+			"us": "Conversations"
+		},
+		chat_segment_all: {
+			"fr": "Toutes",
+			"us": "All"
+		},
+		chat_segment_hosted: {
+			"fr": "J'organise",
+			"us": "I host"
+		},
+		chat_segment_requested: {
+			"fr": "Je participate",
+			"us": "I participate"
 		}
 
 

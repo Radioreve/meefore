@@ -1,7 +1,5 @@
 
 	window.LJ.ui = _.merge( window.LJ.ui || {}, {
-
-		bubble_max_display: 10,
 		
 		formatElem: function( elem ){
 
@@ -53,10 +51,14 @@
 				return LJ.ui.setBubble( elem, 1, true);
 			}
 
-			if( n == 0 ){
+			if( n <= 0 ){
 				$bubble.hide();
+				$bubble_text.text(0);
+				return;
+				
 			} else {
 				$bubble.show();
+
 			}
 
 			$bubble_text.text( n );

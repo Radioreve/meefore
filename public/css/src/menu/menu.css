@@ -143,9 +143,9 @@
 
 .menu-section-segment {width: 40%;margin: 30px 0 50px 0;}
 
-.segment {display: flex;justify-content: center;width: 100%;font-size: 16px;border-radius: 20px;border: 1px solid;box-sizing: border-box;}
+.segment {display: flex;justify-content: center;width: 100%;height: 34px;font-size: 16px;border-radius: 20px;border: 1px solid;box-sizing: border-box;}
 
-.segment__part {display: flex;/* border: 1px solid #454545; */height: 34px;width: 100%;cursor: pointer;transition: all ease-in-out .15s;}
+.segment__part {display: flex;/* border: 1px solid #454545; */height: 100%;width: 100%;cursor: pointer;transition: all ease-in-out .15s;}
 
 .segment__part.--active {
 	background: #454545;

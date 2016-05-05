@@ -140,8 +140,7 @@
 					LJ.ui.shradeAndStagger( $f, {
 						duration: d
 					});
-				})
-
+				});
 			
 
 		},
@@ -162,7 +161,7 @@
 				$el.velocity('shradeOut', {
 					duration: d,
 					display : 'none'
-				})
+				});
 			});
 
 		},
