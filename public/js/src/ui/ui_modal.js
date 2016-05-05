@@ -188,7 +188,11 @@
 		handleModalItemClicked: function(){
 
 			var $s = $(this);
-
+			
+			if( $s.hasClass('--noselect') ){
+				return;
+			}
+			
 			var max = $('.modal').attr('data-max-items');
 			if( max && $('.modal-item.--selected').length == parseInt( max ) && !$s.hasClass('--selected') ){
 				return LJ.wlog('Already max items');
@@ -212,7 +216,11 @@
 		getModalItemIds: function( max ){
 			return LJ.promise(function( resolve, reject ){
 
-				$('.modal-item').click( LJ.ui.handleModalItemClicked );
+				if( !$('.modal').hasClass('js-listeners-attached') ){
+					$('.modal').addClass('js-listeners-attached');
+					$('.modal-item').click( LJ.ui.handleModalItemClicked );
+				}
+
 				$('.modal__close').click( reject );
 				$('.modal-footer button').click(function(){
 
@@ -234,6 +242,17 @@
 
 
 			});
+
+		},
+		noSelectModalRow: function( item_id, message ){
+			
+			var $item = $('.modal-item[data-item-id="'+ item_id +'"]');
+
+			$item.find('.item-modal__noselect').remove(); // clear
+			$item.removeClass('--selected')
+				 .addClass('--noselect')
+				 .append('<span class="item-modal__noselect">'+ message +'</span>');
+
 
 		}
 

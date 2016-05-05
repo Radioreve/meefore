@@ -35,7 +35,7 @@
 		return "placeid=" + place_id;
 	}
 
-	function makeHostsChannel( before_id ){
+	function makeBeforeChannel( before_id ){
 		return "presence-" + before_id;
 	}
 
@@ -51,11 +51,11 @@
 
 		var payload 	   = [ before_id, sorted_hosts, sorted_members ].join('__');
 
-		return "presence-" + type + '-' + md5.hash( payload );
+		return "presence-" + type + '-' + md5( payload );
 
 	}
 
-	function makeChatChannel_All( before_id, hosts, members ){
+	function makeChatChannel__All( before_id, hosts, members ){
 		return makeChatChannel( before_id, hosts, members, 'all' );
 
 	}	
@@ -89,12 +89,6 @@
 			console.log('Reseting channels');
 
 			user.channels = [];
-
-			user.channels.push({
-				type: 'Baby',
-				name: 'Elyna'
-			});
-
 			// Personnal channel
 			user.channels.push({
 				type: 'personnal',
@@ -129,7 +123,7 @@
 						console.log('User is hosting this event, rendering hosts related channels');
 						user.channels.push({
 							type: 'before',
-							name: makeHostsChannel( before._id )
+							name: makeBeforeChannel( before._id )
 						});
 
 						groups.forEach(function( group ){
@@ -138,7 +132,7 @@
 
 							user.channels.push({
 								type: 'chat-all',
-								name: makeChatChannel_All( before._id, hosts, members )
+								name: makeChatChannel__All( before._id, hosts, members )
 							});
 
 							user.channels.push({
@@ -158,12 +152,12 @@
 
 						user.channels.push({
 							type: 'chat-all',
-							name: makeChatChannel__All( bfr.before_id, hosts, members )
+							name: makeChatChannel__All( before._id, hosts, members )
 						});
 
 						user.channels.push({
 							type: 'chat-users',
-							name: makeChatChannel__Users( bfr.before_id, hosts, members )
+							name: makeChatChannel__Users( before._id, hosts, members )
 						});
 
 					}
@@ -226,66 +220,126 @@
 
 	};
 
-
 	var pushNewBefore = function( req, res, next ){
 
 		var socket_id    = req.sent.socket_id;
 		var before       = req.sent.expose.before;
+		var before_item  = req.sent.expose.before_item;
 		var place_id 	 = req.sent.requester.location.place_id;
 
 		// Convert toObject() to only transport the object and not
 		// and the prototype inherited form Mongoose model.
-		var data = { before: before.toObject() };
+		var data = {
+			before      : before.toObject(),
+			before_item : before_item
+		};
 
 		var channel = makeLocationChannel( place_id );
 		pusher.trigger( channel, 'new before', data, socket_id, handlePusherErr );
 
-		next();
+		// Send a special message to all other hosts to let them know a before was created
+		// by one of their friends and they are marked as host
+
+		var channel_name = makeBeforeChannel( before._id );
+
+		var channel_item = {
+			type: 'before',
+			name: channel_name
+		};
+
+		// Expose the new channel for every hosts to subscribe
+		data.channel_name = channel_name
+		// Expose the channel for the requester, so he knows where to subscribe too!
+		req.sent.expose.channel_name = channel_name;
+
+		// Push the channel to the model before, so they wont get rejected when joining
+		User.update({ 'facebook_id': { $in: before.hosts } }, { $push: { 'channels': channel_item } }, { multi: true },
+			function( err, raw ){
+
+				if( err ) return handleErr( req, res, err_ns, err );
+
+				// Hosts are not yet in a global 'before' channel. Push the update to each one if them separately
+				before.hosts.forEach(function( h ){
+
+					if( h != req.sent.facebook_id ){ // Exclude the creator from the list
+						var channel = makePersonnalChannel( h );
+						pusher.trigger( channel, 'new before hosts', data, socket_id, handlePusherErr );
+					}
+
+				});
+
+				next();
+
+			});
+
 
 	};	
 
 	var pushNewBeforeStatus = function( req, res, next ){
 
 		var socket_id = req.sent.socket_id;
-		var bfr 	  = req.sent.expose.before;
-		var place_id  = bfr.address.place_id;
+		var before 	  = req.sent.expose.before;
+		// Carefull, must ne the requester location's place_id and not the before one
+		var place_id  = req.sent.requester.location.place_id;
 
-		var data = {
-			before_id : bfr._id,
-			hosts     : bfr.hosts,
-			status    : bfr.status
+		var data_users = {
+			before_id : before._id,
+			hosts     : before.hosts,
+			status    : before.status
 		};
 
+		var data_hosts = {
+			before_id : before._id,
+			hosts     : before.hosts,
+			status    : before.status,
+			requester : req.sent.facebook_id // Used by ui to display the name of the requester
+		};
+
+		// Global message : everyone will received it and react. Hosts too, but they are not
+		// supposed to react to it (see below)
 		var channel = makeLocationChannel( place_id );
-		pusher.trigger( channel, 'new before status', data, socket_id, handlePusherErr );
+		pusher.trigger( channel, 'new before status', data_users, socket_id, handlePusherErr );
+
+		// Send a special message to all other hosts to let them know a before status was updated
+		// by one of their friends, on which they were also hosts
+		var channel = makeBeforeChannel( before._id );
+		pusher.trigger( channel, 'new before status hosts', data_hosts, socket_id, handlePusherErr );
 
 		next();
+
 
 	};
 
 	var pushNewRequest = function( req, res, next ){
 		
 		var socket_id        = req.sent.socket_id;
-		var before_id        = req.sent.before._id;
+		var before_id        = req.sent.before_id;
 		var notification     = req.sent.notification;
 		var members_profiles = req.sent.members_profiles;
 
-		var data = {
-			members_profiles : members_profiles,
-			member 			 : members,
-			notification 	 : notification, 
-			before_id        : before_id
+		var data_hosts = {
+			before 			 : _.merge( _.cloneDeep(before), { status: "hosting" }),
+			before_item 	 : before_item,
+			notification 	 : notification,
+			members_profiles : members_profiles
+		};
+
+		var data_members = {
+			before 			 : _.merge( _.cloneDeep(before), { status: "pending" }),
+			before_item 	 : before_item,
+			notification 	 : notification,
+			members_profiles : members_profiles
 		};
 
     	// Envoyer une notification aux hosts
     	console.log('Notifying new request has been issued');
-    	console.log('Host channel: ' + makeHostsChannel( before_id ) );
+    	console.log('Host channel: ' + makeBeforeChannel( before_id ) );
 
-		pusher.trigger( makeHostsChannel( before_id ), 'new request host', data, socket_id );
+		pusher.trigger( makeBeforeChannel( before_id ), 'new request host', data_hosts, socket_id );
 
 		// Envoyer une notification aux amis au courant de rien à priori
 		req.sent.members_profiles.forEach(function( user ){
-			pusher.trigger( makePersonnalChannel( user.facebook_id ), 'new request group', data, socket_id, handlePusherErr );
+			pusher.trigger( makePersonnalChannel( user.facebook_id ), 'new request group', data_members, socket_id, handlePusherErr );
 		});	
 
 		next();
@@ -297,7 +351,7 @@
 		setChannels 		  : setChannels,
 		makePersonnalChannel  : makePersonnalChannel,
 		makeLocationChannel   : makeLocationChannel,
-		makeHostsChannel 	  : makeHostsChannel,
+		makeBeforeChannel 	  : makeBeforeChannel,
 		makeChatChannel 	  : makeChatChannel,
 		updateLocationChannel : updateLocationChannel,
 		pushNewBefore         : pushNewBefore,

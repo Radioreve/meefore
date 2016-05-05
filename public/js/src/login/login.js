@@ -70,7 +70,10 @@
 					return;
 				}
 
-				LJ.pictures.uploadFacebookPicture_Intro();
+				if( LJ.user.access.indexOf('bot') == -1 ){
+					LJ.pictures.uploadFacebookPicture_Intro();
+				}
+				
 	            return LJ.login.break()
 	            		.then(function(){
 	            			return LJ.login.promptUserLocation();

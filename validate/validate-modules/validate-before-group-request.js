@@ -144,12 +144,6 @@
 
 				console.log('Validation success!');
 
-				req.sent.new_group = {
-					status              : "pending",
-					members 		    : req.sent.members,
-					main_member 		: user.facebook_id
-				};
-
 				// Used to push realtime events
 				req.sent.members_profiles = members_profiles;
 				req.sent.before = bfr;

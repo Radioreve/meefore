@@ -148,20 +148,13 @@
 				formatted_err = _.merge( formatted_err, err.error );
 
 			} else {
-				if( Array.isArray( err.errors ) ){
-					formatted_err = _.merge( formatted_err, err.errors[0].data || err.errors[0] );
+				err = Array.isArray( err.errors ) ? err.errors[0] : err.errors;
+				err = err.data ? err.data : err;
+				formatted_err = _.merge( formatted_err, err );
 
-				} else {
-					formatted_err = _.merge( formatted_err, err.errors.data || err.errors );
-					
-				}
 			}
 
-
 			return formatted_err;
-
-		},
-		handleErr: function( err_id ){
 
 		},
 		fetchAppToken: function( facebook_profile ){
@@ -565,8 +558,8 @@
 				LJ.api.post( LJ.api.create_before_url, before )
 					.then(function( exposed ){
 						
-						if( exposed.before ){
-							return resolve( exposed.before );
+						if( exposed.before && exposed.before_item ){
+							return resolve( exposed );
 
 						} else {
 							LJ.wlog('The server didnt respond with the expected before object');
@@ -627,6 +620,7 @@
 
 					}, function( err ){
 						return reject( err );
+						
 					});
 
 			});
@@ -644,15 +638,16 @@
 				LJ.api.post( LJ.api.before_request_url.replace(':before_id', before_id), request )
 					.then(function( exposed ){
 
-						if( exposed.new_group ){
-							return resolve( exposed.new_group );
+						if( exposed.before_item && exposed.members_profiles ){
+							return resolve( exposed );
 
 						} else {
-							LJ.wlog('The server didnt respond with the expected new_group object');
+							LJ.wlog('The server didnt respond with the expected before object and/or members_profiles object');
 						}
 
 					}, function( err ){
 						return reject( err );
+
 					}) ;
 
 			});

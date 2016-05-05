@@ -333,16 +333,30 @@
         	return ok
 
         },
-        addMarker: function( opts ){
+        markerAlreadyExists: function( marker_id ){
 
-        	if( !LJ.map.validateMarkerOptions( opts ) ) return;        	
-
-            var latlng = LJ.map.offsetLatLng( opts.latlng );
-
-            var icon   = {
-                url        : opts.url,
+            return _.find( LJ.map.markers, function( mrk ){
+                return mrk && (mrk.marker_id == marker_id );
+            });
+            
+        },
+        makeIcon: function( url ){
+            return {
+                url        : url,
                 scaledSize : new google.maps.Size( 28, 28 )
             };
+
+        },
+        addMarker: function( opts ){
+
+        	if( !LJ.map.validateMarkerOptions( opts ) ) return;
+
+            if( LJ.map.markerAlreadyExists( opts.marker_id ) ){
+                return LJ.wlog('A marker with id : ' + opts.marker_id + ' is already set on the map');
+            }
+
+            var latlng = LJ.map.offsetLatLng( opts.latlng );
+            var icon   = LJ.map.makeIcon( opts.url );
 
         	var marker = new google.maps.Marker({
                 map        : LJ.meemap,
@@ -372,11 +386,66 @@
             }
 
         },
+        getBeforeMarkerUrlByType: function( type ){
+
+            var px  = LJ.map.getDevicePixelRatio() + 'x';
+
+            if( type == 'drink' ){
+                url = LJ.map.markers_url['drink'];
+            }
+
+            if( type == 'drinknew' ){
+                url = LJ.map.markers_url['drinknew'];
+            }
+
+            if( type == 'hosting' ){
+                url = LJ.map.markers_url['star'];
+            }
+
+            if( type == 'pending' ){
+                url = LJ.map.markers_url['pending'];
+            }
+
+            if( type == 'accepted' ){
+                url = LJ.map.markers_url['chat'];
+            }
+
+            return url[ px ];
+
+
+        },  
         getBeforeMarkerUrl: function( before ){
 
-            return LJ.map.markers_url.base[ LJ.map.getDevicePixelRatio() + 'x' ]
+            var url  = null;
+
+            var my_before = _.find( LJ.user.befores, function( bfr ){
+                return bfr.before_id == before._id;
+            });
+
+            if( !my_before ){
+                // Moment.js expresses the difference between 2 dates in ms
+                var diff_in_hour = (moment() - moment( before.created_at ))/(3600*1000);
+                if( diff_in_hour > 24 ){
+                    url = LJ.map.getBeforeMarkerUrlByType("drink");
+
+                } else {
+                    url = LJ.map.getBeforeMarkerUrlByType("drinknew");
+
+                }
+
+            } else {
+                url = LJ.map.getBeforeMarkerUrlByType( my_before.status );
+            }
+
+            if( !url ){
+                return LJ.wlog('Cant render marker, unable to find marker type');
+
+            } else {
+                return url;
+            }
 
         },
+        // Before must be the whole before object and not an itemized version;
         addBeforeMarker: function( before ){
 
         	var before_id = before._id;

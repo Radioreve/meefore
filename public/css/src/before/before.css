@@ -214,11 +214,16 @@
     align-items: center;
     height: 74px;
     border-bottom: 1px solid #eee;
+    padding: 0px 40px;
 }
 .be-inview-address__address {
     font-size: 12px;
     font-family: 'Open sans';
     margin-top: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 .be-inview-address__address span {}
 .be-inview-address__date {font-family: 'Open sans';font-weight: 700;}
@@ -322,6 +327,9 @@
     background: #1B69EC;
     color: white;
 }
+.be-request button.--pending {background: white;color: #FD7124;border: 2px solid;}
+.be-request button.--accepted {background: white;border: 2px solid;color: #1B69EC;}
+
 .be-request i {
     font-size: 40px;
 }

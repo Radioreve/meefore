@@ -9,7 +9,8 @@
         htmlreplace  = require('gulp-html-replace'),
         rename       = require('gulp-rename'),
         autoprefixer = require('autoprefixer'),
-        syncdirs     = require('gulp-directory-sync');
+        syncdirs     = require('gulp-directory-sync')
+        resetDb      = require( process.cwd() + '/scripts/reset/reset');
 
     var config    = require( process.cwd() + '/config/config');
     var NAMESPACE = 'mee'
@@ -50,8 +51,12 @@
         .pipe(cssbeautify())
         .pipe(gulp.dest('./public/dist'));
     });
-    // End minifications cess
+    // End minifications css
     
+
+    // Reset database state
+    gulp.task('reset-all', resetDb.resetAll );
+    gulp.task('reset-requests', resetDb.resetRequests );
 
     // Adjusting html staged & prod versions
     // Thank god I dont have to do it manually !

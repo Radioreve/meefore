@@ -13,7 +13,8 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 					"2016-05-28T16:20:25.1234Z",
 					"2016-05-29T21:32:41.1234Z",
 					"2016-05-30T22:25:11.1234Z",
-					"2016-05-30T20:10:12.1234Z"
+					"2016-05-30T20:10:12.1234Z",
+
 			],
 			before_data: {
 
@@ -32,9 +33,9 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 				var req = {};
 
-				req.hosts_facebook_id = _.shuffle( LJ.user.friends ).slice(0,2).concat( LJ.user.facebook_id );
+				req.hosts_facebook_id = _.shuffle( LJ.user.friends ).slice(0,1).concat( LJ.user.facebook_id );
 				req.address   		  = _.shuffle( LJ.map.test.places )[0];
-				req.begins_at		  = _.shuffle( LJ.before.test.iso_dates )[0];
+				req.begins_at		  = '2016-0'+LJ.randomInt(6,9)+'-' + LJ.randomInt(10,30)+'T18:18:18Z'
 				req.timezone 		  = 120;
 
 				if( param && req[ param ] ){
@@ -56,10 +57,38 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 				})
 				.catch(function( e ){
-					LJ.wlog(e.err);
-					LJ.before.handleCreateBeforeError(e.err);
+					LJ.before.handleCreateBeforeError(e);
 
 				});
+
+			},
+			handleCreateBeforeWithSpecificFriend: function( facebook_id ){
+
+				LJ.log('Handling create before with friend...');
+
+				var ux_done    = LJ.before.startCreateBefore();
+				var be_created = LJ.before.test.readAndCreateBeforeWithFriend( facebook_id );
+
+				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
+					return LJ.before.endCreateBefore( res[0] );
+
+				})
+				.catch(function( e ){
+					LJ.before.handleCreateBeforeError(e);
+
+				});
+
+			},
+			readAndCreateBeforeWithFriend: function( friend_id ){
+
+				var req = {};
+
+				req.hosts_facebook_id = [ LJ.user.facebook_id, friend_id ];
+				req.address   		  = _.shuffle( LJ.map.test.places )[0];
+				req.begins_at		  = '2016-0'+LJ.randomInt(6,9)+'-' + LJ.randomInt(10,30)+'T18:18:18Z'
+				req.timezone 		  = 120;
+
+				return LJ.api.createBefore( req );
 
 			},
 			handleCreateBefore__MissingHosts: function(){
@@ -113,3 +142,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		}
 
 	});
+
+	 window.bc  = LJ.before.test.handleCreateBefore;
+	 window.bcf = LJ.before.test.handleCreateBeforeWithSpecificFriend
+	 window.fid = function(){ return LJ.user.facebook_id;}

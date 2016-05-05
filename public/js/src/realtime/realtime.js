@@ -78,29 +78,51 @@
 		// main usage is to keep track of user's online status via a webhook
 		subscribeToPrivateChannel: function(){
 
+			LJ.log('Subscribing to personnal channel');
 			LJ.realtime.channels.personnal = LJ.realtime.pusher.subscribe( LJ.realtime.getUserChannels("personnal")[0] );
 			
-			LJ.realtime.channels.personnal.bind('new hello'		 	 , LJ.log ); // Test channel
-			LJ.realtime.channels.personnal.bind('new request group'  , LJ.realtime.handleNewRequestGroup );
-			LJ.realtime.channels.personnal.bind('new chat whisper'   , LJ.realtime.handleNewChatWhisper );
+			LJ.realtime.channels.personnal.bind('new hello'		 	 	 , LJ.log ); // Test channel
+			LJ.realtime.channels.personnal.bind('new before hosts'   	 , LJ.realtime.handleNewMarkedAsHost );
+			LJ.realtime.channels.personnal.bind('new request group'  	 , LJ.realtime.handleNewRequestGroup );
 
+
+		},
+		handleNewMarkedAsHost: function( data ){
+
+			LJ.log('Push event received, data : ');
+			LJ.log( data );
+
+			var before_item  = data.before_item;
+			var channel_name = data.channel_name;
+			var before       = data.before;
+
+			// Ui update
+			var friend_name = LJ.friends.getFriendsProfiles( before.main_host )[0].name;
+			LJ.ui.showToast( LJ.text('to_before_create_success_friends').replace('%name', friend_name ));
+
+			// Update user state and add marker accordingly
+			LJ.user.befores.push( before_item );
+			LJ.map.addBeforeMarker( before );
+
+			// Update before state and refresh browserdates accordingly
+			LJ.before.fetched_befores.push( before );
+			LJ.before.refreshBrowserDates();
+
+			// Join the hosts channel 
+			LJ.realtime.subscribeToBeforeChannel( channel_name );
 
 		},
 		handleNewRequestGroup: function( data ){
 
-			LJ.log('Your friend added you in an event');
-			LJ.log(data);
-
-		},
-		handleNewChatWhisper: function( data ){
-
-			LJ.wlog('This feature is not implemented yet');
+			LJ.log('Push event received, data : ');
+			LJ.log( data );
 
 		},
 		// Subcribe to events about a specific geo area 
 		//to get pushed realtime notifications about newly created events
 		subscribeToLocationChannel: function(){
 
+			LJ.log('Subscribing to location channel');
 			LJ.realtime.channels.location = LJ.realtime.pusher.subscribe( LJ.realtime.getUserChannels("location")[0] );
 
 			LJ.realtime.channels.location.bind('new hello'		   , LJ.log ); // Test channel
@@ -111,20 +133,31 @@
 		handleNewBefore: function( data ){
 
 			var before = data.before;
+
+			// Host are notified via their personnal channel, they need to access different data 
+			if( before.hosts.indexOf( LJ.user.facebook_id ) != -1 ){
+				return;
+			}
+
 			LJ.ui.showToast("Un nouveau before vient d'être créé", 10000 );
+
 			LJ.map.addBeforeMarker( before );
+			LJ.before.fetched_befores.push( before );
 
 		},
 		handleNewBeforeStatus: function( data ){
 
+			LJ.log('Push event received, data : ');
+			LJ.log( data );
+
 			var before_id = data.before_id;
 			var status 	  = data.status;
-			var hosts 	  = hosts;
+			var hosts 	  = data.hosts;
 
 			if( status == "canceled" ){
 
-				LJ.map.removeBeforeMarker( before_id );LJ.before.removeOneBefore( before_id );
 				LJ.map.removeBeforeMarker( before_id );
+				LJ.before.removeOneBefore( before_id );
 				LJ.before.refreshBrowserDates();
 
 				// If the user is viewing the before, take control of his ui and notify before is gone
@@ -143,14 +176,6 @@
 					});
 
 				}
-
-				// If user is host, let him know a friend changed the status!
-				if( ( hosts.indexOf( LJ.user.facebook_id ) != -1 ) && status == "canceled" ){
-
-					LJ.ui.showToast( LJ.text('to_friend_canceled_event') );
-
-				}
-
 			}
 
 
@@ -170,17 +195,37 @@
 		},
 		subscribeToBeforeChannel: function( channel_name ){
 
+			LJ.log('Subscribing to before channel : ' + channel_name );
 			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
 
 			LJ.realtime.channels[ channel_name ].bind('new hello'		  , LJ.log ); // Test channel
 			LJ.realtime.channels[ channel_name ].bind('new request host'  , LJ.realtime.handleNewRequestHost );
+			LJ.realtime.channels[ channel_name ].bind('new before status' , LJ.realtime.handleNewBeforeStatusHosts );
 
 		},
 		handleNewRequestHost: function( data ){
 
-			LJ.log('Someone asked to join your before');
-			LJ.log(data);
+			LJ.log('Push event received, data : ');
+			LJ.log( data );
 
+
+		},
+		handleNewBeforeStatusHosts: function( data ){
+
+			LJ.log('Push event received, data : ');
+			LJ.log( data );
+
+			var before_id   = data.before_id;
+			var hosts 	    = data.hosts;
+			var status 	    = data.status;
+			var requester   = data.requester;
+
+			var friend_name = LJ.friends.getFriendsProfiles( requester )[0].name;
+
+			if( status == "canceled" ){
+				LJ.ui.showToast( LJ.text('to_friend_canceled_event').replace( '%name', friend_name ) );
+
+			}
 
 		},
 		// Subscribe to specific chat channels for hosts & requesters.

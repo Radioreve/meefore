@@ -370,15 +370,30 @@
 			return;
 
 		},
-		endCreateBefore: function( before ){
+		endCreateBefore: function( expose ){
+			
+			var before       = expose.before;
+			var before_item  = expose.before_item;
+			var channel_name = expose.channel_name
 
-			LJ.log(before);
+			// Friendly loggin
+			LJ.log(expose);
+
+			// Ui update
 			LJ.ui.showToast( LJ.text('to_before_create_success') );
 			LJ.before.hideCreateBefore();
 			LJ.before.showBrowser();
+
+			// Update user state and add marker accordingly
+			LJ.user.befores.push( before_item );
 			LJ.map.addBeforeMarker( before );
+
+			// Update before state and refresh browserdates accordingly
 			LJ.before.fetched_befores.push( before );
 			LJ.before.refreshBrowserDates();
+
+			// Join the hosts channel 
+			LJ.realtime.subscribeToBeforeChannel( channel_name );
 
 		},	
 		handleCreateBefore: function(){
@@ -389,18 +404,22 @@
 			var be_created = LJ.before.readAndCreateBefore();
 
 			LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
-				var before = res[0];
-				return LJ.before.endCreateBefore( before );
+				var expose = res[0];
+
+				return LJ.before.endCreateBefore( expose );
 
 			})
 			.catch(function( e ){
-				LJ.wlog(e);
 				LJ.before.handleCreateBeforeError(e);
 
 			});
 
 		},
 		handleCreateBeforeError: function( err ){
+			
+			if( !err ){
+				return LJ.wlog('Something went wrong, but no err object was provided');
+			}
 
 			var err_id = err.err_id;
 			var err_msg = '';

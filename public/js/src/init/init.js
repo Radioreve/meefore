@@ -3,8 +3,9 @@
         Recursively try to initialize the Facebook pluggin
         When it's loaded, app starts.
         Follow the code...
-        Léo Jacquemin,10/03/16, 17h56
+        Léo Jacquemin, 10/03/16, 17h56
     */
+    
 
 	window.LJ = _.merge( window.LJ || {}, { 
 

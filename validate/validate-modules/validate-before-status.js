@@ -42,37 +42,54 @@
 			var facebook_id = req.sent.facebook_id;
 			var before_id	= req.sent.before_id;
 
-			Before.findById( before_id, function( err, before ){
+			User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
 				if( err ) return callback({ message: "api error" }, null );
 
-				if( !before ){
-					return callback({
-						message		: "Couldnt find the before",
-						data: {
-							err_id		: "ghost_before",
-							before_id	: before_id
-						}
-					}, null );
-				}
+				if( !user ){
+						return callback({
+							message		: "Couldnt find the user",
+							data: {
+								err_id		: "ghost_user",
+								facebook_id	: facebook_id
+							}
+						}, null );
+					}
 
-				if( before.hosts.indexOf( facebook_id ) == -1 ){
-					return callback({
-						message		: "Unauthorized action!",
-						parameter	: "facebook_id",
-						data: {
-							err_id 		: "unauthorized",
-							facebook_id : facebook_id,
-							authorized  : before.hosts,
-							before_id 	: req.before_id
-						}
-					}, null );
-				}
+				req.sent.requester = user;
 
-				callback( null, before );
-					
+				Before.findById( before_id, function( err, before ){
+
+					if( err ) return callback({ message: "api error" }, null );
+
+					if( !before ){
+						return callback({
+							message		: "Couldnt find the before",
+							data: {
+								err_id		: "ghost_before",
+								before_id	: before_id
+							}
+						}, null );
+					}
+
+					if( before.hosts.indexOf( facebook_id ) == -1 ){
+						return callback({
+							message		: "Unauthorized action!",
+							parameter	: "facebook_id",
+							data: {
+								err_id 		: "unauthorized",
+								facebook_id : facebook_id,
+								authorized  : before.hosts,
+								before_id 	: req.before_id
+							}
+						}, null );
+					}
+
+					callback( null, before );
+						
 				});
 			
+			});
 		};
 
 

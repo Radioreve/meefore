@@ -130,7 +130,7 @@
 			}
 
 			// Make sure hosts are all friends
-			var err_data = { host_names: [] };
+			var err_data = { hosts: [] };
 			var requester = _.find( hosts, function(h){
 				return h.facebook_id == req.sent.facebook_id;
 			});
@@ -142,11 +142,11 @@
 
 			data.hosts_facebook_id.forEach(function( host_id ){
 				if( requester.facebook_id != host_id && requester.friends.indexOf( host_id ) == -1 ){
-					err_data.host_names.push( host_id );
+					err_data.hosts.push( host_id );
 				}
 			});
 
-			if( err_data.host_names.length != 0 ){
+			if( err_data.hosts.length != 0 ){
 				return callback( _.merge( err_data, {
 					message : 'Hosts are not all good ol\' friends',
 					err_id: "not_all_friends"

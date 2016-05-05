@@ -26,6 +26,9 @@
 			LJ.ui.$body.on('click', '.js-cancel-before', LJ.before.handleCancelBefore );
 			LJ.ui.$body.on('click', '.slide.--before .js-show-options', LJ.before.showBeforeOptions );
 			LJ.ui.$body.on('click', '.js-request', LJ.before.handleRequest );
+			LJ.ui.$body.on('click', '.js-request-pending', LJ.before.handleClickOnRequestPending );
+			LJ.ui.$body.on('click', '.js-request-accepted', LJ.before.handleClickOnRequestAccepted );
+
 
 		},
 		initBrowser: function(){
@@ -258,7 +261,6 @@
 				.then(function( befores ){
 					return LJ.before.displayBeforeMarkers( befores );
 
-
 				});
 
 		},
@@ -278,6 +280,7 @@
 
 			befores.forEach(function( before ){
 				LJ.map.addBeforeMarker( before );
+
 			});
 
 		},
@@ -494,8 +497,25 @@
 			var html;
 			if( before.hosts.indexOf( LJ.user.facebook_id ) != -1 ){
         		html = LJ.before.renderBeforeInview__Host( before, host_profiles );
+
         	} else {
-        		html = LJ.before.renderBeforeInview__User( before, host_profiles );
+        		var my_before = _.find( LJ.user.befores, function( bfr ){
+        			return bfr.before_id == before._id;
+        		});
+
+        		if( !my_before ){
+        			html = LJ.before.renderBeforeInview__UserDefault( before, host_profiles );
+        			
+        		} else {
+        			if( my_before.status == "pending" ){
+        				html = LJ.before.renderBeforeInview__UserPending( before, host_profiles );
+
+        			} else {
+        				html = LJ.before.renderBeforeInview__UserAccepted( before, host_profiles );
+
+        			}
+        		}
+
         	}
         	return html;
 
@@ -510,14 +530,49 @@
 			});
 
 		},
-		renderBeforeInview__User: function( before, hosts ){
+		renderBeforeInview__UserDefault: function( before, hosts ){
 
 			return LJ.before.renderBeforeInview__Base( before, hosts, {
 
 				be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
-				be_button:  '<button class="--round-icon js-request"><i class="icon icon-drinks"></i></button>'
+				be_button:  LJ.before.renderBeforeInviewBtn__UserDefault()
 
 			});
+
+		},
+		renderBeforeInview__UserPending: function( before, hosts ){
+
+			return LJ.before.renderBeforeInview__Base( before, hosts, {
+
+				be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
+				be_button:  LJ.before.renderBeforeInviewBtn__UserPending()
+
+			});
+
+		},
+		renderBeforeInview__UserAccepted: function( before, hosts ){
+
+			return LJ.before.renderBeforeInview__Base( before, hosts, {
+
+				be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
+				be_button:  LJ.before.renderBeforeInviewBtn__UserAccepted()
+
+			});
+
+		},
+		renderBeforeInviewBtn__UserAccepted: function(){
+			return '<button class="--round-icon --accepted js-request-accepted"><i class="icon icon-chat-bubble-duo"></i></button>'
+
+
+		},
+		renderBeforeInviewBtn__UserPending: function(){
+			return '<button class="--round-icon --pending js-request-pending"><i class="icon icon-pending"></i></button>'
+
+
+		},
+		renderBeforeInviewBtn__UserDefault: function(){
+			return '<button class="--round-icon js-request"><i class="icon icon-drinks"></i></button>'
+
 
 		},
 		renderBeforeInview__Base: function( before, hosts, options ){
@@ -581,7 +636,7 @@
 				.then(function( before ){
 
 					LJ.ui.hideLoader("canceling_before");
-					LJ.ui.showToast( LJ.text('to_cancel_before_success' ));
+					LJ.ui.showToast( LJ.text('to_cancel_before_success') );
 
 					LJ.before.removeOneBefore( before_id );
 					LJ.before.refreshBrowserDates();

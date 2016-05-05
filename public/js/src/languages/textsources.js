@@ -1750,8 +1750,8 @@
 			"us": "The pregame is over"
 		},
 		to_friend_canceled_event: {
-			"fr": "Un de vos coorganisateurs vient d'annulé un before",
-			"us": "One cohost of yours just canceled a pregame"
+			"fr": "%name vient d'annulé un before que vous organisiez ensemble",
+			"us": "%name just canceled a pregame that you organized together"
 		},
 		modal_request_subtitle: {
 			"fr": "Sélectionnez au plus 3 amis avec lesquels vous souhaiteriez participer.",
@@ -1761,6 +1761,10 @@
 			"fr": "Votre before vient d'être créé",
 			"us": "Your pregame was created successfully"
 		},
+		to_before_create_success_friends: {
+			"fr": "%name vous a marqué coorganisateur de son before",
+			"us": "%name marked you as host of his pregame"
+		},
 		modal_no_friends_btn: {
 			"fr": "Invitez des amis",
 			"us": "Invite your friends"
@@ -1768,6 +1772,14 @@
 		modal_no_friends_text: {
 			"fr": "Il faut être au moins 2 pour effectuer cette action",
 			"us": "You need to be at least two to perform this action"
+		},
+		be_request_already_there: {
+			"fr": "participe déjà avec quelqu'un d'autre",
+			"us": "already participates with someone else"
+		},
+		to_request_pending: {
+			"fr": "Les organisateurs ne vous ont pas encore validé",
+			"us": "Hosts havent validated you yet"
 		}
 
 

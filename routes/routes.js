@@ -338,11 +338,6 @@
 	    	api.befores.fetchNearestBefores
 	    );
 
-	    // [ @befores ] Renvoie la liste de tous les évènements ! 
-	    app.get('/api/v1/befores',
-	    	api.befores.fetchBefores
-	    );
-
 	    // [ @befores ] Crée un nouvel évènement
 	    app.post('/api/v1/befores',
 	    	mdw.validate('create_before'),

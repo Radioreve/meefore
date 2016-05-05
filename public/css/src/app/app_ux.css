@@ -174,8 +174,10 @@
     border: 4px solid;
 }
 
+
 .modal.--share button,
-.modal.--be-create button {
+.modal.--be-create button,
+.modal.--request button {
     background: #33afff;
     border: 4px solid #33afff;
 }
@@ -328,6 +330,7 @@
 }
 .modal.--pending button {
     color: #eee;
+    opacity: .6;
 }
 
 .modal__search-loader {

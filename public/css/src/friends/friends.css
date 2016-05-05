@@ -73,6 +73,8 @@
 .friend-modal__name span {
 }
 
+.item-modal__noselect {color: #DB4760;font-weight: 600;font-size: 12px;margin-left: 10px;}
+
 .friend-modal__icon {
     position: absolute;
     bottom: -8px;

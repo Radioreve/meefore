@@ -6,6 +6,27 @@
 
 			return LJ.promise(function( resolve, reject ){
 
+				if( document.location.hash == "#1" ){
+					LJ.log('Logging in with test user Victoriale...');
+					var tk = 'CAAXR2Qo4lc4BAPiMRUTQITCZAAJj651bZBnHAQEjBUqYdlqxDTmoBlhfiYjODd5M2mCmDNkCa34l1ZAewhIuVQzRnbSTCIIu4XHjW8Y3yAtj9hckaY9zHuhqp6YKtSNe8DDPFPUN77ZA17ZAWtghTs5pF0j6bJE48kAlY8kUgbGWZBfiXhwLdyhLatE9wMK9sZD';
+					LJ.login.data.access_token = tk;
+					return resolve( tk );
+				}
+
+				if( document.location.hash == "#2" ){
+					LJ.log('Logging in with test user Angelah...');
+					var tk = 'EAAXR2Qo4lc4BADaXgJQ42ojvzlKcgU4f6rfyaSpVK14ZABheWIkQnZAfHaRDrq40QpafTf7bWa9W3jReclU3D904pTEwz5wJ7ZB93xOIYBBYUIrSUuiewZBWVBQCZBHnKBcDCTkPt5J3IdgKohC2At9PQbPRwNq0ZD';
+					LJ.login.data.access_token = tk;
+					return resolve( tk );
+				}
+
+				if( document.location.hash == "#3" ){
+					LJ.log('Logging in with test user Elena...');
+					var tk = 'EAAXR2Qo4lc4BAONL7s3ZC5EZCbGv3ZCrzvWZBeIkeTpjYvv3XKQnhYNIhN12bD7C69iEahebNMCqKE7LKmWNAsUu4AZAnCBBy8cF5MsJvx6vOfQb3YZCfjayWZCqjKedL9vXRXYklUEdGaNxHLXujZCsWlUFeM22kp9LIoUg6P4WCAZDZD';
+					LJ.login.data.access_token = tk;
+					return resolve( tk );
+				}
+
 				var ls = window.localStorage;
 				if( !ls ||  (!ls.getItem('preferences') && !ls.getItem('reconn_data') ) ){
 					return reject('No local data available, initializing lp...');

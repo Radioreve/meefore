@@ -7,7 +7,6 @@
 	var rd             = require('../services/rd');
 	var alerts_watcher = require('../middlewares/alerts_watcher');
 	var mailer         = require('../services/mailer');
-	var realtime 	   = require('../middlewares/realtime');
 
 	var mongoose = require('mongoose');
 	var pusher   = require('../services/pusher');
@@ -56,24 +55,21 @@
 	    	if( err ) return handleErr( req, res, err_ns, err );
 
 	    	var before_id = new_before._id;
-	    	var before_item = {
+
+	    	var before_item_host = {
 				status    : 'hosting',
 				timezone  : parseFloat( data.timezone ),
 				before_id : before_id,
 				begins_at : new_before.begins_at
 	    	};
 
-	    	var channel_item = {
-	    		type      : 'before',
-	    		name      : realtime.makeHostsChannel( before_id ),
-	    	};
 
+	    	// Cache hosts ids for chat performance 
 	    	var hosts_ns = 'before/' + new_before._id + '/hosts';
-	    	/* Cache hosts ids for chat performance */
 	    	rd.sadd( hosts_ns, _.pluck( new_before.hosts, 'facebook_id' ), function( err ){
 
 		    	User.update({'facebook_id': { $in: data.hosts } },
-		    				{ $push: { 'befores': before_item, 'channels': channel_item }},
+		    				{ $push: { 'befores': before_item_host }},
 		    				{ multi: true },
 
 					function( err, users ){
@@ -83,7 +79,8 @@
 						}
 
 				    	console.log('Before created!');
-				    	req.sent.expose.before = new_before;
+				    	req.sent.expose.before      = new_before;
+				    	req.sent.expose.before_item = before_item_host;
 
 				    	return next();
 
@@ -94,42 +91,6 @@
 	    	});
 
 
-
-	};
-
-	var fetchBefores = function( req, res, next ){
-
-		var start_date = req.sent.start_date;
-
-		Before
-			.find(
-				{ 
-					//'begins_at': { $gte: moment( start_date, 'DD/MM/YY' ).toISOString() },
-					'status' : { $in : ['open','suspended'] } 
-				}
-			)
-			//.limit( 10 ) no limit needed
-			.sort({ 'begins_at': -1 })
-			.exec( function( err, befores ){
-
-				if( err ){
-					return eventUtils.raiseError({ err: err, res: res,
-						toClient: "Erreur de l'API"
-					});
-				}
-
-				var filtered_befores = [];
-				befores.forEach(function( bfr ){
-
-					bfr.n_groups = bfr.groups.length;
-					delete bfr.groups;
-					filtered_befores.push( bfr );
-
-				});
-
-				 eventUtils.sendSuccess( res, filtered_befores );
-
-			});
 
 	};
 
@@ -160,7 +121,7 @@
 				return handleErr( req, res, err_ns, err );
 			}
 
-			var before_to_push = {
+			var before_item = {
 				before_id   : before_id,
 				begins_at   : bfr.begins_at,
 				timezone	: parseFloat( bfr.timezone ),
@@ -170,7 +131,7 @@
 			User
 				.update(
 					{ 'facebook_id': { $in: members } },
-					{ $push: { 'befores' : before_to_push } },
+					{ $push: { 'befores' : before_item } },
 					{ multi: true, new: true },
 					function( w ){
 
@@ -178,9 +139,9 @@
 							return handleErr( req, res, err_ns, err );
 						}
 
-						req.sent.expose.new_group = new_group;
+						req.sent.expose.before_item      = before_item;
+						req.sent.expose.members_profiles = req.sent.members_profiles;
 						next();
-
 
 					});
 				});
@@ -403,7 +364,6 @@
 		request             : request,
 		changeBeforeStatus  : changeBeforeStatus,
 		changeGroupStatus   : changeGroupStatus,
-		fetchBefores        : fetchBefores,
 		fetchBeforeById     : fetchBeforeById,
 		updateBefore        : updateBefore,
 		fetchGroups         : fetchGroups,

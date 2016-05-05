@@ -9,6 +9,10 @@
 		// Save in in User Model 
 		// Append it to the req.sent object for decending functions
 
+		return function( req, res, next ){
+			next();
+		}
+
 		// User has been accepted in a meefore
 		if( notification_id == "accepted_in" ){
 			return addNotification_AcceptedIn
@@ -41,18 +45,14 @@
 
 		var notification_id = "accepted_in";
 
-		var status          = req.sent.group_status;
-		var group_name      = req.sent.group_name;
-		var group_id        = req.sent.group_id;
-		var before_id        = req.sent.before_id;
-		var facebook_ids    = req.sent.members_facebook_id;
+		var status    = req.sent.group_status;
+		var before_id = req.sent.before_id;
+		var members   = req.sent.members;
 
 		// Shortcut reference
 		var n = {
 			notification_id : notification_id,
-			group_name      : group_name,
-			group_id        : group_id,
-			before_id        : before_id,
+			before_id       : before_id,
 			happened_at     : moment().toISOString()
 		};
 
@@ -60,7 +60,7 @@
 		if( status == "accepted" ){
 
 			var query = { 
-				facebook_id: { $in: facebook_ids }
+				facebook_id: { $in: members }
 			};
 			var update = { 
 				$push: { 'notifications': n } 
@@ -85,22 +85,19 @@
 
 		var notification_id = "group_request";
 
-		var before_id     = req.sent.before_id;
-		var group_name   = req.sent.new_group.name;
-		var group_id     = req.sent.new_group.group_id;
-		var facebook_ids = req.sent.hosts_facebook_id;
+		var before_id    = req.sent.before_id;
+		var members      = req.sent.members;
 
 		// Shortcut reference
 		var n = {
 			notification_id : notification_id,
-			before_id   		: before_id,
-			group_id   		: group_id,
-			group_name 		: group_name,
+			members 	    : members,
+			before_id   	: before_id,
 			happened_at		: moment().toISOString()
 		};
 
 		var query = { 
-			facebook_id: { $in: facebook_ids }
+			facebook_id: { $in: members }
 		};
 		var update = { 
 			$push: { 'notifications': n } 
