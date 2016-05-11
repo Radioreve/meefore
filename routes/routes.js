@@ -132,8 +132,9 @@
 	    	mdw.facebook.fetchFacebookLongLivedToken,
 	    	mdw.mailchimp_watcher.subscribeMailchimpUser,
 	    	mdw.alerts_watcher.setCache,
+	    	signEvents.handleFacebookAuth,
 	    	mdw.realtime.setChannels,
-	    	signEvents.handleFacebookAuth
+	    	mdw.facebook.fetchAndSyncFriends
 	    );
 
 	    // Création d'un bot
@@ -273,11 +274,6 @@
 	    	api.users.fetchMoreUsers
 	    );
 
-	    app.post('/tapi/v1/users.more',
-	    	mdw.validate('users_fetch_more'),
-	    	mdw.users_watcher.fetchUserCount,
-	    	api.users.fetchMoreUsers
-	    );
 
 	    // [ @user ] Renvoie tous les befores auxquels participe un user
 	    app.get('/api/v1/me/befores',

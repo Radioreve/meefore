@@ -1,0 +1,52 @@
+.ioptions {
+    position: absolute;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.74);
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    flex-flow: column;
+    display: none;
+}
+
+.ioptions__actions {
+    display: flex;
+    margin-top: auto;
+    flex-flow: column;
+    background: #eee;
+    position: relative;
+    z-index: 110;
+}
+
+.ioptions__action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 54px;
+    font-size: 18px;
+    background: white;
+    cursor: pointer;
+    margin: 1px 0px;
+}
+
+.ioptions__action:hover {
+    background: #F7F7F7;
+}
+
+.ioptions__action.--back {
+    color: #DB4760;
+    font-weight: 700;
+    margin-top: 8px;
+}
+
+.ioptions__action-message {
+    display: flex;
+    justify-content: center;
+    color: #eee;
+    margin-bottom: 16px;
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}

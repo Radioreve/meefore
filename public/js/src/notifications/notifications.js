@@ -8,12 +8,12 @@
 			LJ.notifications.addNotificationsPanel()
 			// Notifications persistentes
             // Certaines doivent être affichées de manière async à un autre moment
-            LJ.user.notifications.forEach(function( notification ){
-                LJ.notifications.insertNotification( notification );
-            });
+            //LJ.user.notifications.forEach(function( notification ){
+              //  LJ.notifications.insertNotification( notification );
+            //});
 			// Notifications éphémères
 			// Display after so they are always pinned to top
-			LJ.notifications.checkNotification_newUser();
+			//LJ.notifications.checkNotification_newUser();
           // LJ.notifications.checkNotification_fillProfile();
             // Daily notification
             // ...

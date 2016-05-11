@@ -56,7 +56,19 @@
 			"fr": "Demain",
 			"us": "Tomorrow"
 		},
-		"before_day_hour": {
+		"yesterday": {
+			"fr": "Hier",
+			"us": "Yesterday"
+		},
+		"before_date_hour": {
+			"fr": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			},
+			"us": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			}
+		},
+		"chatrow_date_hour": {
 			"fr": function( m ){
 				return [ m.format('HH'), m.format('mm') ].join(':');
 			},
@@ -100,11 +112,45 @@
 				return [ d, n, m ].join(' ');
 			}
 		},
+		"chatrow_date_day": {
+			"fr": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return '';
+				}
+
+				if(  m.dayOfYear() == moment().dayOfYear() - 1 || ( moment().dayOfYear() - 1 == 365 ) ){
+					return LJ.text_source['yesterday']["fr"].toLowerCase() + ', ';
+				}
+
+				var n = m.format('DD').replace(/^0/,'');
+				var m = LJ.text_source['month']['fr'][ m.month() ].toLowerCase();
+
+				return [ n, m ].join(' ') + ', ';
+			},
+			"us": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return '';
+				}
+
+				if(  m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
+					return LJ.text_source['yesterday']["us"].toLowerCase() + ', ';
+				}
+
+				var n = m.format('DD').replace(/^0/,'');
+				var m = LJ.text_source['month']['us'][ m.month() ];
+
+				m = m[0].toUpperCase() + m.slice(1); // english style
+
+				return [ n, m ].join(' ') + ', ';
+			}
+		},
 		"before_date": {
 			"fr": function( m ){
 
 				var day  = LJ.text_source["before_date_day"]["fr"]( m );
-				var hour = LJ.text_source["before_day_hour"]["fr"]( m );
+				var hour = LJ.text_source["before_date_hour"]["fr"]( m );
 
 				return [ day, hour ].join(', ');
 
@@ -112,9 +158,27 @@
 			"us": function( m ){
 
 				var day  = LJ.text_source["before_date_day"]["us"]( m );
-				var hour = LJ.text_source["before_day_hour"]["us"]( m );
+				var hour = LJ.text_source["before_date_hour"]["us"]( m );
 
 				return [ day, hour ].join(', ');
+
+			}
+		},
+		chatrow_date: {
+			"fr": function( m ){
+
+				var day  = LJ.text_source["chatrow_date_day"]["fr"]( m );
+				var hour = LJ.text_source["chatrow_date_hour"]["fr"]( m );
+
+				return [ day, hour ].join('');
+
+			},
+			"us": function( m ){
+
+				var day  = LJ.text_source["chatrow_date_day"]["us"]( m );
+				var hour = LJ.text_source["chatrow_date_hour"]["us"]( m );
+
+				return [ day, hour ].join('');
 
 			}
 		},
@@ -1798,10 +1862,89 @@
 			"us": "I host"
 		},
 		chat_segment_requested: {
-			"fr": "Je participate",
+			"fr": "Je participe",
 			"us": "I participate"
+		},
+		chat_empty_title: {
+			"fr": "Rien à l'horizon...",
+			"us": "Nothing on the horizon..."
+		},
+		chat_empty_subtitle_all: {
+			"fr": "Créez ou demander à rejoindre un before pour commencer à faire connaissance avec les autres organisateurs.",
+			"us": "Create or request to join a pregame to start meeting new people."
+		},
+		chat_empty_subtitle_hosted: {
+			"fr": "Retrouvez ici toutes les discussions concernant les before que vous organisez.",
+			"us": "Find here all the conversations regarding the pregame you're throwing."
+		},
+		chat_empty_subtitle_requested: {
+			"fr": "Retrouvez ici toutes les discussions concernant les before auxquels vous participez.",
+			"us": "Find here all the conversations regarding the pregame at which your participating."
+		},
+		chat_empty_title_inview_hosts: {
+			"fr": "Ambiance !",
+			"us": "Heat on !"
+		},
+		chat_empty_subtitle_inview_hosts: {
+			"fr": function( group_name ){
+				return "Vous avez accepté la demande du groupe "+ group_name +". N'attendez pas la soirée pour faire connaissance, le before commence dès maintenant."
+			},
+			"us": function( group_name ){
+				return "You have accepted the request from the group "+ group_name +". Dont wait to meet up to get to know each other, the pregame starts now."
+			} 
+		},
+		chat_empty_title_inview_accepted: {
+			"fr": "Faites le premier pas !",
+			"us": "Send the first message !"
+		},
+		chat_empty_subtitle_inview_accepted: {
+			"fr": "Les organisateurs de ce before semblent partant pour faire la fête avec vous. Envoyez le premier message et faites connaissance.",
+			"us": "The hosts of this before seem willing to pregame with you. Send the first message and get to know each other."
+		},
+		chat_empty_title_inview_team: {
+			"fr": function( group_name ){ return group_name; },
+			"us": function( group_name ){ return group_name; }
+		},
+		chat_empty_subtitle_inview_team: {
+			"fr": "Seuls vous et les autres membres de votre groupe recevront les messages qui seront envoyés sur cette discussion.",
+			"us": "Only you and the other members of your group will receive messages that are sent on this chat."
+		},
+		chat_empty_title_inview_pending: {
+			"fr": "Un peu de patience...",
+			"us": "Be patient..."
+		},
+		chat_empty_subtitle_inview_pending: {
+			"fr": "Vous pourrez commencer à discuter dès que votre demande de participation aura été acceptée.",
+			"us": "You'll be able to start chatting as soon as your participation request has been approved."
+		},
+		chat_inview_options_message: {
+			"fr": "Que souhaitez-vous faire ?",
+			"us": "What would you like to do ?"
+		},
+		chat_inview_options_message_show_users: {
+			"fr": "Voir les participants",
+			"us": "See users"
+		},
+		chat_inview_options_message_show_before: {
+			"fr": "Voir le before",
+			"us": "See the pregame"
+		},
+		chat_inview_users_group_users: {
+			"fr": "Votre groupe",
+			"us": "Your group"
+		},
+		chat_inview_users_group_hosts: {
+			"fr": "Organisateurs",
+			"us": "Hosts"
+		},
+		chat_groupname_all: {
+			"fr": "Tout le monde",
+			"us": "All"
+		},
+		chat_groupname_team: {
+			"fr": "Mon groupe",
+			"us": "My group"
 		}
-
 
 
 	});

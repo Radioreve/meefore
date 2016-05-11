@@ -32,6 +32,11 @@
 				'access_name' : 'be_create_loader',
 				'image_id'    : 'circular_loader_royal_blue',
 				'param'       : { 'class': 'be-create__loader', 'width': 130  }
+			},
+			{
+				'access_name' : 'chat_row_loader',
+				'image_id'    : 'circular_loader_royal_blue',
+				'param'   	  : { 'class': 'chat-row__loader', 'width': 28  }
 			}
 		],
 		// Constructs a list of static pictures hosted on Cloudinary that are available

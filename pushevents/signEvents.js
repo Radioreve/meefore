@@ -12,7 +12,6 @@
 
 	var pusher  = require('../services/pusher');
 	var mailer  = require('../services/mailer');
-	var realtime = require('../middlewares/realtime');
 
 
 	var handleErr = function( req, res, namespace, err ){
@@ -63,6 +62,8 @@
 				var app_token = eventUtils.generateAppToken( "user", user );
 
 				// console.log('Token post-update : ' + JSON.stringify(user.facebook_access_token,null,2) );
+
+				req.sent.user = user;
 
 				req.sent.expose.user_id   = user._id;
 				req.sent.expose.app_token = app_token;
@@ -130,12 +131,6 @@
 			console.log('New #bot about to join the force...')
 		}
 
-		// Setup personnal channel (Pusher)
-		new_user.channels.push({
-			type: 'personnal',
-			name: realtime.makePersonnalChannel( fb.id )
-		});
-
 		new_user.save(function( err, user ){
 
 			if( err ){
@@ -151,6 +146,8 @@
 			console.log('Account created successfully');
 			var app_token = eventUtils.generateAppToken( "user", user ); 
 
+			req.sent.user = user;
+			
 			req.sent.expose.id = user._id;
 			req.sent.expose.app_token = app_token;
 

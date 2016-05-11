@@ -101,25 +101,9 @@
 		},
 		showSlideOverlay: function( html ){
 
-			var duration = LJ.ui.show_slide_duration;
+			var $wrap = $('.slide');
 
-			$('.slide-overlay').velocity('fadeIn', {
-				display : 'flex',
-				duration: duration
-			});
-
-			$( html )
-				.hide()
-				.appendTo( $('.slide-overlay') )
-				.velocity('shradeIn', {
-					duration: duration,
-					display: 'flex',
-					delay: duration/2,
-					complete: function(){
-						$(this).find('.js-close-overlay')
-							   .on('click', LJ.ui.hideSlideOverlay );
-					}
-				});
+			LJ.ui.showIoptions( $wrap, html );
 
 
 		},
@@ -190,7 +174,6 @@
 				'<div class="slide ' + modifier + '" ' + attributes + '>',
 					header,
 					subheader,
-					'<div class="slide-overlay js-noshrade"></div>',
 					'<section class="slide-body">',
 						'<div class="slide__close --round-icon">',
 							LJ.ui.renderIcon('cancel'),

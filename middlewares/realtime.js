@@ -39,6 +39,17 @@
 		return "presence-" + before_id;
 	}
 
+	function makeChatGroupId( before_id, hosts, members ){
+		
+		var sorted_hosts   = sortIds( hosts ).join('-');
+		var sorted_members = sortIds( members ).join('-');
+
+		var payload 	   = [ before_id, sorted_hosts, sorted_members ].join('__');
+
+		return md5( payload );
+
+	}
+
 	function makeChatChannel( before_id, hosts, members, type ){
 
 		if( ['all','hosts','users'].indexOf( type ) == -1 ){
@@ -110,35 +121,42 @@
 
 				if( err ) return handleErr( req, res, err_ns, err );
 
-				console.log(befores);
+				console.log(befores.length +' befores were found');
 
 				befores.forEach(function( before ){
 
-					var hosts  = before.hosts;
-					var groups = before.groups;
+					var hosts     = before.hosts;
+					var main_host = before.main_host;
+					var groups    = before.groups;
 
 					// Check if the user is hosting
 					if( before.hosts.indexOf( user.facebook_id ) != -1 ){
 
 						console.log('User is hosting this event, rendering hosts related channels');
 						user.channels.push({
-							type: 'before',
-							name: makeBeforeChannel( before._id )
+							type      : 'before',
+							name      : makeBeforeChannel( before._id ),
+							before_id : before._id,
+							hosts     : hosts
 						});
 
 						groups.forEach(function( group ){
 
-							var members = group.members;
+							var members     = group.members;
+							var main_member = group.main_member;
 
 							user.channels.push({
-								type: 'chat-all',
-								name: makeChatChannel__All( before._id, hosts, members )
+								group_id     : makeChatGroupId( before._id, hosts, members ),
+								channel_all  : makeChatChannel__All( before._id, hosts, members ),
+								channel_team : makeChatChannel__Hosts( before._id, hosts, members ),
+								before_id    : before._id,
+								members      : members,
+								main_member  : main_member,
+								main_host    : main_host,
+								hosts        : hosts,
+								status       : "hosting"
 							});
 
-							user.channels.push({
-								type: 'chat-hosts',
-								name: makeChatChannel__Hosts( before._id, hosts, members )
-							});
 						});
 
 					} else {
@@ -148,16 +166,19 @@
 							return grp.members.indexOf( user.facebook_id ) != -1;
 						});
 
-						var members = mygroup.members;
+						var members     = mygroup.members;
+						var main_member = mygroup.main_member;
 
 						user.channels.push({
-							type: 'chat-all',
-							name: makeChatChannel__All( before._id, hosts, members )
-						});
-
-						user.channels.push({
-							type: 'chat-users',
-							name: makeChatChannel__Users( before._id, hosts, members )
+							group_id  	 : makeChatGroupId( before._id, hosts, members ),
+							channel_all  : makeChatChannel__All( before._id, hosts, members ),
+							channel_team : makeChatChannel__Users( before._id, hosts, members ),
+							before_id 	 : before._id,
+							hosts     	 : hosts,
+							main_host    : main_host,
+							members      : members,
+							main_member  : main_member,
+							status    	 : mygroup.status
 						});
 
 					}
@@ -221,6 +242,8 @@
 	};
 
 	var pushNewBefore = function( req, res, next ){
+
+		var err_ns = "pushing_new_before";
 
 		var socket_id    = req.sent.socket_id;
 		var before       = req.sent.expose.before;
@@ -343,6 +366,36 @@
 		});	
 
 		next();
+
+	};
+
+	var pushNewChatMessage = function( req, res, next ){
+
+		var socket_id   = req.sent.socket_id;
+		var message     = req.sent.message;
+		var sent_at     = req.sent.sent_at;
+		var facebook_id = req.sent.facebook_id;
+
+		var data_message = {
+			facebook_id : facebook_id,
+			message     : message,
+			sent_at  	: sent_at,
+			chat_id 	: chat_id			
+		};
+
+		// Do not filter by socket_id here for ressource efficiency, let the client react differently
+		// when he realizes its his own message that bounced back successfully
+		pusher.trigger( chat_id, 'new chat message', data_message, handlePusherErr );
+		next();
+
+		// if( req.sent.whisper_to ){
+		// 	pusher.trigger( 'private-' + req.sent.facebook_id, 'new chat whisper', data );
+		// 	req.sent.whisper_to.forEach(function( whisper_to_id ){
+		// 		pusher.trigger( 'private-' + whisper_to_id, 'new chat whisper', data );
+		// 	});
+		// } else {
+		// 	pusher.trigger( 'presence-' + req.sent.chat_id, 'new chat message', data );
+		// }
 
 	};
 

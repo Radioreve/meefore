@@ -10,73 +10,50 @@
 	var pusher     = require('../services/pusher');
 
 
-	var addChatMessage = function( req, res ){
+	var addChatMessage = function( req, res, next ){
 
-		/* Caching everything for performance */
+		// Caching everything for performance 
 		var chats 		= 'chats';
 		var start_ns    = 'chat/' + req.sent.chat_id + '/start';
 		var count_ns	= 'chat/' + req.sent.chat_id + '/count';
 		var message_ns  = 'chat/' + req.sent.chat_id + '/messages/';
 		var readby_ns   = 'chat/' + req.sent.chat_id + '/readby';
 
-		/* Store all chat ids to iterate through messages when save to db */
+		// Store all chat ids to iterate through messages when save to db
 		rd.sadd( chats, req.sent.chat_id, function( err ){
 
-			/* Set starting messages to 1. This will be changed when updating (clearing) the cache,
-			   and is used to find to further message to fetch when browsing history. When clearing cache
-			   first messages are erased from redis and stored in mongodb, so start_ns value may increase only */
+			// Set starting messages to 1. This will be changed when updating (clearing) the cache,
+			// and is used to find to further message to fetch when browsing history. When clearing cache
+			// first messages are erased from redis and stored in mongodb, so start_ns value may increase only 
 			rd.setnx( start_ns, 1, function( err ){
-
-				/* Reset le readby */
+				// Reset le readby 
 				rd.del( readby_ns, function( err ){
-
-					/* Add le sender au readby */
-					rd.sadd( readby_ns, req.sent.name, function( err ){
+					// Add le sender au readby 
+					rd.sadd( readby_ns, req.sent.facebook_id, function( err ){
 
 							var data = {
 								chat_id      : req.sent.chat_id,
-								msg          : req.sent.msg,
-								name         : req.sent.name,
+								message      : req.sent.msg,
 								facebook_id  : req.sent.facebook_id,
-								img_id       : req.sent.img_id,
-								img_vs       : req.sent.img_vs,
-								whisper_to   : req.sent.whisper_to || null,
 								sent_at      : new Date()
 							};
 
 							rd.incr( count_ns, function( err, response ){
-
 								rd.get( count_ns, function( err, count ){
-
 									rd.hmset( message_ns + count, data, function( err, response ){
-
-										eventUtils.sendSuccess( res, data );
-
-										if( req.sent.whisper_to ){
-											pusher.trigger( 'private-' + req.sent.facebook_id, 'new chat whisper', data );
-											req.sent.whisper_to.forEach(function( whisper_to_id ){
-												pusher.trigger( 'private-' + whisper_to_id, 'new chat whisper', data );
-											});
-										} else {
-											pusher.trigger( 'presence-' + req.sent.chat_id, 'new chat message', data );
-										}
-
+										req.sent.expose.data = data;
+										next();
 									});
 								});
 
 							});
-
 					});
-
 				});
-
 			});
-
 		});
-		
 	};
 
-	var fetchChatMessages = function( req, res ){
+	var fetchChatMessages = function( req, res, next ){
 
 		var messages_fetched     = parseInt( req.sent.messages_fetched ) || 0;
 		var messages_fetched_add = 8;
@@ -143,6 +120,7 @@
 
 									var whisper_s = Array.isArray( message.whisper_to ) ? ' (whisper)' : '';
 									console.log('Normally adding message ' + i + '/' + count + whisper_s );
+
 									all_messages.push( message );
 									callback( null );
 						
@@ -154,7 +132,7 @@
 
 					async.waterfall( async_tasks, function( err, results ){
 
-						/* Tri par ordre croissant de date */
+						// Tri par ordre croissant de date 
 						all_messages.sort(function( e1, e2 ){
 							return new Date( e1.sent_at ) > new Date( e2.sent_at );
 						});
@@ -171,7 +149,7 @@
 
 	};
 
-	var setReadBy = function( req, res ){
+	var setReadBy = function( req, res, next ){
 
 		var chat_id  = req.sent.chat_id;
 		var before_id = req.sent.before_id;
@@ -184,9 +162,9 @@
 			rd.smembers( readby_ns, function( err, readby ){
 
 				var data = {
-					chat_id  : chat_id,
+					chat_id   : chat_id,
 					before_id : before_id,
-					readby   : readby
+					readby    : readby
 				};
 
 				eventUtils.sendSuccess( res, data );

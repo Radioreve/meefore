@@ -141,9 +141,11 @@ window.LJ = _.merge( window.LJ || {}, {
     },
     randomInt: function(low, high) {
         return Math.floor(Math.random() * (high - low + 1) + low);
+
     },
     renderDate: function( date ){
         return moment( date ).format('hh:mm')
+        
     },
     renderMultipleNames: function( names ){
         
@@ -159,6 +161,18 @@ window.LJ = _.merge( window.LJ || {}, {
         }
 
         return [ names[0], LJ.renderMultipleNames( names.slice(1) ) ].join(', ');
+
+    },
+    renderGroupName: function( name ){
+        return name + ' & co';
+
+    },
+    swapNodes: function( a, b ){
+
+        var aparent = a.parentNode;
+        var asibling = a.nextSibling === b ? a : a.nextSibling;
+        b.parentNode.insertBefore(a, b);
+        aparent.insertBefore(b, asibling);
 
     },
     testTemplate: function( tplName, param, wrapper ){

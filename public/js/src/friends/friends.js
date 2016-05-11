@@ -8,6 +8,7 @@
 
 				LJ.friends.handleDomEvents();
 				LJ.friends.syncAndAddFacebookFriends();
+				LJ.friends.fetchAndAddFacebookFriends();
 				resolve();
 
 			});
@@ -56,6 +57,34 @@
 					return LJ.api.fetchUsers( friend_ids );
 
 				})
+				.then(function( friends_profiles ){
+					friends_profiles = _.map( friends_profiles, 'user' );
+					return LJ.friends.setFriendsProfiles( friends_profiles );
+
+				})
+				.then(function( friends_profiles ){
+					return LJ.friends.renderFriends( friends_profiles );
+
+				})
+				.then(function( friends_html ){
+					return LJ.friends.displayFriends( friends_html );
+
+				})
+				.then(function(){
+					LJ.notifications.checkNotification_noFriends();
+					
+				})
+				.catch(function( e ){
+					LJ.wlog(e);
+				});
+
+
+		},
+		fetchAndAddFacebookFriends: function(){
+
+			var friend_ids = LJ.user.friends;
+			return LJ.api.fetchUsers( friend_ids )
+
 				.then(function( friends_profiles ){
 					friends_profiles = _.map( friends_profiles, 'user' );
 					return LJ.friends.setFriendsProfiles( friends_profiles );

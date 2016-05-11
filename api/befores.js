@@ -295,6 +295,11 @@
 				'err_id'    : 'ghost_before',
 				'before_id' : before_id
 			});
+
+			// Do not expose the group lists to other people than hosts
+			if( bfr.hosts.indexOf( req.sent.facebook_id ) == -1 ){
+				bfr.members = null;
+			}
 			
 			req.sent.expose.before = bfr;
 			next();

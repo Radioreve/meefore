@@ -16,7 +16,8 @@
 			'user-search'    : { width: 240, height: 240, crop: 'fill', gravity: 'face' },
 			'user-modal'     : { width: 50,  height: 50,  crop: 'fill', gravity: 'face' },
 			'user-before-md' : { width: 185, height: 185, crop: 'fill', gravity: 'face' },
-			'user-before-sm' : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' }
+			'user-before-sm' : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
+			'chat-row'		 : { width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
 		},
 		cached: [],
 
@@ -379,11 +380,13 @@
 
 			var rosace_imgs_html = ['<div class="rosace">'];
 			imgs_html.forEach(function( img_html, i ){
-				
-				var parts = [ "--left", "--right", "--down" ];
+
+				var part = [ "--left", "--right", "--down" ][ i ];
+				if( !part ) return; // Support only 3 images max
+
 				rosace_imgs_html.push([
 
-					'<div class="rosace__part ' + parts[i] + '">',
+					'<div class="rosace__part ' + part + '">',
 						img_html,
 					'</div>'
 

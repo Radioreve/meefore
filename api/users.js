@@ -376,7 +376,7 @@
 			.select( select )
 			.exec(function( err, users ){
 
-				if( err ) return handleErr( req, res, ns, err );
+				if( err ) return handleErr( req, res, err_ns, err );
 
 				var random_users = _.chunk( _.shuffle( users ), 12 )[0];
 				req.sent.expose.users = random_users || [];

@@ -78,6 +78,7 @@
                     return LJ.Promise.all([ a, b, c ]);
                 })
                 .then( LJ.before.init )
+                .then( LJ.chat.init )
                 .then( LJ.login.hideLoginSteps )
                 .then( LJ.map.init ) // Must be as close as possible to terminateLogin. Map doesnt render sometimes..
                 .then( LJ.login.terminateLoginProcess )

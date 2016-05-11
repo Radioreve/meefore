@@ -62,6 +62,15 @@
 			LJ.before.hideCreateBefore();
 
 		},
+		findById: function( before_id ){
+
+			var bfr = _.find( LJ.before.fetched_befores, function( b ){
+				return b._id == before_id;
+			});
+
+			return bfr;
+
+		},	
 		activateBrowserDate: function(){
 
 			var $s = $(this);
@@ -438,7 +447,8 @@
         	LJ.before.setPicturesSizes( $content );
 
         	// Make sure the host is always on top of the list
-        	$('.user-row.--host').insertBefore( $('.user-row').first() );
+        	$('.be-inview').find('.user-row.--host')
+        	               .insertBefore( $('.be-inview').find('.user-row').first() );
 
         	// Prepend and hide the content, so that jsp compute the right height
 			$content.css({ 'opacity': 0 }).show();
@@ -699,14 +709,14 @@
 
 			return LJ.ui.render([
 
-				'<div class="slide-overlay__actions">',
-					'<div class="slide-overlay__action-message">',
+				'<div class="ioptions__actions">',
+					'<div class="ioptions__action-message">',
 						'<span data-lid="slide_overlay_before_message"></span>',
 					'</div>',
-					'<div class="slide-overlay__action js-cancel-before">',
+					'<div class="ioptions__action js-cancel-before">',
 						'<span data-lid="slide_overlay_before_cancel"></span>',
 					'</div>',
-					'<div class="slide-overlay__action --back js-close-overlay">',
+					'<div class="ioptions__action --back js-ioptions-close">',
 						'<span data-lid="slide_overlay_back"></span>',
 					'</div>',
 				'</div>'
@@ -723,6 +733,29 @@
 			}
 
 			LJ.ui.showSlideOverlay( LJ.before.renderBeforeOptions() );
+
+		},
+		showChatOptions: function(){
+
+			var duration = LJ.ui.show_slide_duration;
+
+			$('.chat-inview-options').velocity('fadeIn', {
+				display : 'flex',
+				duration: duration
+			});
+
+			$( LJ.chat.renderChatOptions() )
+				.hide()
+				.appendTo( $('.chat-inview-options') )
+				.velocity('shradeIn', {
+					duration: duration,
+					display: 'flex',
+					delay: duration/2,
+					complete: function(){
+						$(this).find('.js-close-overlay')
+							   .on('click', LJ.ui.hideSlideOverlay );
+					}
+				});
 
 		},
 		handleShareBefore: function(){	

@@ -37,7 +37,7 @@ var settings = {
       	alerts: {
 	        'new_message_received': 'yes',
 	        'accepted_in' : 'yes',
-	        'min_frequency': '7200' // 1 hour
+	        'min_frequency': '7200' // 2 hour
       	},
       	ux: {
 	        'auto_login': 'no',

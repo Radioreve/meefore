@@ -212,7 +212,7 @@
 }
 
 .modal-footer i {
-    font-size: 28px;
+    font-size: 36px;
 }
 
 .modal.--facebook:not(.--active) .modal-footer {
@@ -324,9 +324,9 @@
 }
 
 .modal.--disabled button {
-    color: #eee;
-    border: 4px solid;
-    background: white;
+    color: white;
+    border: 4px solid #eee;
+    background: #eee;
 }
 .modal.--pending button {
     color: #eee;
@@ -361,28 +361,6 @@
     height: 500px;
     box-shadow: 0 0 14px #949494;
 }
-
-.slide-overlay {
-    position: absolute;
-    z-index: 100;
-    background: rgba(0, 0, 0, 0.74);
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    flex-flow: column;
-    display: none;
-}
-
-.slide-overlay__actions {display: flex;margin-top: auto;flex-flow: column;background: #eee;position: relative;}
-
-.slide-overlay__action {display: flex;justify-content: center;align-items: center;height: 54px;font-size: 18px;background: white;cursor: pointer;margin: 1px 0px;}
-.slide-overlay__action:hover {
-    background: #F7F7F7;
-}
-.slide-overlay__action.--back {color: #DB4760;font-weight: 700;margin-top: 8px;}
-
-.slide-overlay__action-message {display: flex;justify-content: center;color: #eee;margin-bottom: 16px;position: absolute;top: -30px;left: 50%;transform: translate(-50%,0);}
 
 .slide.--facebook {
 }

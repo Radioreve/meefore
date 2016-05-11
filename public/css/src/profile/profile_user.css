@@ -193,7 +193,7 @@
     color: rgba(255, 255, 255, 0.7);
 }
 
-.user-pics__navigate {position: absolute;font-size: 16px;height: 30px;width: 30px;top: 44%;transform: translate(0,-56%);cursor: pointer;color: #FFFFFF;/* color: #3C7FEE; */background: rgba(72, 72, 72, 0.33);z-index: 10;}
+.user-pics__navigate {position: absolute;font-size: 16px;height: 30px;width: 30px;top: 39%;transform: translate(0,-56%);cursor: pointer;color: #FFFFFF;/* color: #3C7FEE; */background: rgba(72, 72, 72, 0.33);z-index: 10;}
 .user-pics__navigate.--left {
     left: 10px;
 }

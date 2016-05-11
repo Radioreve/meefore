@@ -63,8 +63,15 @@
 			console.log('Setting facebook long lived token...');
 			fetchLongLivedToken( user.facebook_access_token.short_lived, function( err, body ){
 				
-				var new_access_token = querystring.parse( body ).access_token;
-				var expires          = querystring.parse( body ).expires;
+				if( err ){
+					return handleErr( req, res, 'fetching_facebook_long_token', err );
+				}	
+
+				// Parse with querystring because response is a querystring, and not JSON
+				var facebook_res = querystring.parse( body );
+
+				var new_access_token = facebook_res.access_token;
+				var expires          = facebook_res.expires;
 				var valid_until      = new Date( new moment().add( expires, 's' ) );
 
 				var facebook_access_token = user.facebook_access_token;
@@ -80,10 +87,7 @@
 				function( err, user ){
 
 					if( err ){
-						return handleErr( req, res, 'fetching_facebook_long_token', {
-							'err_id': 'server_error',
-							'err': err
-						});
+						return handleErr( req, res, 'fetching_facebook_long_token', err );
 					}
 
 					next();
@@ -111,13 +115,116 @@
 
 				request.get( url, function( err, response, body ){
 
-					if( err )
+					if( err ){
 						return callback( err, null );
 
-					return callback( null, body );
+					} else {
+						return callback( null, body );
+					}
+
 				});
 	    };
 
+	var fetchAndSyncFriends = function( req, res, next ){
+
+		var user = req.sent.user;
+
+		if( !user ){
+			console.log('Cant fetch facebook friends, no user object was found');
+			return next();
+		}
+
+		var facebook_id  = user.facebook_id;
+		var access_token = user.facebook_access_token.long_lived || user.facebook_access_token.short_lived;
+
+		fetchFacebookFriends( facebook_id, access_token, function( err, body ){
+
+			if( err ){
+				return handleErr( req, res, 'fetching_facebook_friends', err );
+			}
+
+			var facebook_res = JSON.parse( body );
+
+			var friends       = facebook_res.data;
+			var friends_ids   = _.map( friends, 'id' );
+
+			var n_friends_new = facebook_res.summary.total_count;
+			var n_friends_old = user.friends.length;
+
+			if( n_friends_new - n_friends_old <= 0 ){
+				return next();
+			}
+
+
+			console.log('Adding and syncing new friends...');
+
+			user.friends = friends_ids;
+			user.markModified('friends');
+			
+
+			// This notification makes only sense for users that arent new
+			if( user.status != "new" ){
+
+				var new_friends = [];
+				friends.forEach(function( f ){
+
+					if( user.friends.indexOf( f.id ) == -1 ){
+						new_friends.push({
+							facebook_name : f.name,
+							facebook_id   : f.id
+						});
+					}
+
+				});
+
+				var n = {
+					notification_id : "new_friends",
+					new_friends     : new_friends,
+					happened_at     : moment().toISOString()
+				};
+
+				user.notifications.push( n );
+				user.markModified('notifications');
+			}
+
+			user.save(function( err, user ){
+
+				if( err ){
+					return handleErr( req, res, 'fetching_facebook_friends', err );
+				}
+
+				next();
+
+			});
+
+		});
+
+	};
+
+	function fetchFacebookFriends( facebook_id, access_token, callback ){
+
+		var url = 'https://graph.facebook.com/v2.6/' + facebook_id + '/friends?'
+				  + querystring.stringify({
+				  	access_token: access_token
+				  });
+
+		console.log('Requesting friends at url : ' + url );
+
+		request.get( url, function(err, response, body ){
+
+			if( err ){
+				return callback( err, null );
+
+			} else {
+				return callback( null, body );
+			}
+
+		});
+
+	}
+
+
 	module.exports = {
-		fetchFacebookLongLivedToken: fetchFacebookLongLivedToken
+		fetchFacebookLongLivedToken : fetchFacebookLongLivedToken,
+		fetchAndSyncFriends 	    : fetchAndSyncFriends
 	};

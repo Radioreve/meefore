@@ -108,7 +108,7 @@
 			LJ.search.hideSearchUsers()
 				.then(function(){
 					return LJ.search.fetchAndShowMoreUsers();
-				})
+				});
 
 		},
 		fetchAndShowMoreUsers: function(){

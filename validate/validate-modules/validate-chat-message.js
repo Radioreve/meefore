@@ -8,9 +8,9 @@
 		
 		var checkMessage = nv.isAnyObject()
 			
-			.withRequired('before_id'       , nv.isString() )
+			.withRequired('before_id'      , nv.isString() )
 			.withRequired('chat_id'        , nv.isString() )
-			.withRequired('msg'            , nv.isString() )
+			.withRequired('message'        , nv.isString() )
 			.withRequired('name'           , nv.isString() )
 			.withRequired('img_vs'         , nv.isString() )
 			.withRequired('img_id'         , nv.isString() )

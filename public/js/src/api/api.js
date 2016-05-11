@@ -1,6 +1,8 @@
 
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
+		fetched_users : [],
+		fetched_users_full: [],
 
 		app_token_url 			  	 : '/auth/facebook',
 		me_url		  			  	 : '/api/v1/me',
@@ -8,7 +10,6 @@
 		invite_code_url 			 : '/me/invite-code',
 		fetch_shared_url		  	 : '/api/v1/users/:facebook_id/shared',
 		fetch_meepass_url 		  	 : '/api/v1/users/:facebook_id/meepass',
-		fetch_friends_url  		  	 : '/api/v1/users/:facebook_id/friends',
 		fetch_user_url 	   	  	  	 : '/api/v1/users/:facebook_id/core',
 		fetch_user_profile_url    	 : '/api/v1/users/:facebook_id/full',
 		update_profile_url  	  	 : '/me/update-profile',
@@ -652,7 +653,10 @@
 
 			});
 
+		},
+		fetchChatHistory: function( chat_id, delay ){
 
+			return [];
 
 		}
 

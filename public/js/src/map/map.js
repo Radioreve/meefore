@@ -11,7 +11,6 @@
 
 			LJ.map.handleDomEvents();
             LJ.map.handleMapEvents();
-            LJ.map.handleRealtimeEvents();
 			LJ.map.initPlacesServices()
 
             LJ.before.displayBeforeMarkers( LJ.before.fetched_befores )
