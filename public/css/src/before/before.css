@@ -250,6 +250,9 @@
 .user-row:last-of-type {border-bottom: none;}
 .user-row__pic {
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .user-row__pic img {
     width: 60px;
@@ -299,7 +302,7 @@
 }
 .user-row__education-label {
     font-size: 14px;
-    font-weight: 300;
+    font-weight: 400;
 }
 .user-age {font-family: 'Open sans';font-size: 14px;}
 .user-host-icon {

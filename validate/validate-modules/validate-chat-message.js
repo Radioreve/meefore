@@ -40,7 +40,7 @@
 
 		rd.smembers('before/' + before_id + '/hosts', function( err, hosts_id ){
 			
-			rd.get('before/' + before_id + '/group/' + group_id + '/status', function( err, status ){
+			rd.get('group/' + group_id + '/status', function( err, status ){
 
 				// User that has been validated to send message?
 				if( group_id != "hosts" && status != 'accepted' )

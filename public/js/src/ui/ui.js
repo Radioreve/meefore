@@ -203,7 +203,13 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		var $html = $( html );
 		LJ.lang.translate( $html );
-		return $html.prop('outerHTML');
+		
+		var template = '';
+		$html.each(function( i, el ){
+			template += $(el).prop('outerHTML');
+		});
+
+		return template;
 
 	},
 	turnToJsp: function( element, options ){

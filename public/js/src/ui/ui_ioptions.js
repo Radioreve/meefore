@@ -10,25 +10,48 @@
 				.hide()
 				.appendTo( $wrap )
 				.velocity('fadeIn', {
-					duration: LJ.ui.ioptions_show_duration,
-					display : 'flex'
+					duration : LJ.ui.ioptions_show_duration,
+					display  : 'flex'
 				});
 
 			$( html )
 				.hide()
 				.appendTo('.ioptions')
 				.velocity('shradeIn', {
-					duration: LJ.ui.ioptions_show_duration,
-					display : 'flex',
-					delay   : LJ.ui.ioptions_show_duration/2
+					duration : LJ.ui.ioptions_show_duration,
+					delay    : LJ.ui.ioptions_show_duration/2,
+					display  : 'flex'
 				});
 
 			$wrap.find('.js-ioptions-close').click( LJ.ui.hideIoptions );
 
 		},
+		updateIoptions: function( html ){
+
+			var $iop = $('.ioptions');
+
+			$iop
+				.children()
+				.velocity('shradeOut', {
+					duration : LJ.ui.ioptions_hide_duration
+				});
+
+			$( html )
+				.hide()
+				.appendTo( $iop )
+				.velocity('shradeIn', {
+					duration : LJ.ui.ioptions_show_duration,
+					delay    : LJ.ui.ioptions_hide_duration,
+					display  : 'flex'
+				});
+
+			$iop.find('.js-ioptions-close').click( LJ.ui.hideIoptions );
+
+		},
 		hideIoptions: function(e){
 
-			e.stopPropagation();
+			if(e) e.stopPropagation();
+			
 			var $w = $(this).closest('.ioptions');
 
 			$w.velocity('fadeOut', {

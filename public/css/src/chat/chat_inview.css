@@ -44,9 +44,9 @@
     height: 80px;
     border-bottom: 1px solid #eee;
     position: relative;
-    box-shadow: 2px 2px 13px #E0E0E0;
+    /* box-shadow: 2px 2px 13px #E0E0E0; */
     padding-top: 10px;
-    z-index: 1;
+    position: relative;
 }
 
 .chat-inview__icon {
@@ -67,16 +67,16 @@
 
 .chat-inview__icon.--previous {
     font-size: 20px;
-    left: 10px;
+    left: 6px;
 }
 
 .chat-inview__icon.--switch {
-    right: 60px;
+    right: 50px;
     font-size: 26px;
 }
 
 .chat-inview__icon.--options {
-    right: 10px;
+    right: 6px;
 }
 
 .chat-inview__icon.--switch .bubble {
@@ -121,7 +121,7 @@
     text-align: center;
     font-family: 'Open sans';
     font-size: 12px;
-    max-width: 220px;
+    max-width: 200px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -138,10 +138,10 @@
 
 .chat-inview-messages {
     padding: 0px 20px 60px;
-    margin-top: 10px;
-    height: 488px;
+    margin-top: 0px;
     width: 100%!important;
     outline: none;
+    height: 300px;
 }
 
 .chat-inview-message {
@@ -152,9 +152,11 @@
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
+    z-index: 0;
+    position: relative;
 }
 
-.chat-inview-message.--pending {
+.chat-inview-message__bubble.--pending {
     opacity: .5;
 }
 
@@ -189,15 +191,15 @@
 }
 
 .chat-inview-message.--me .chat-inview-message__bubble {
-    background: #33afff;
     color: white;
-    background: #33AFFF;
+    background: #0084ff;
     margin-right: -10px;
 }
 
 .chat-inview-message.--friend .chat-inview-message__bubble {
     background: #d4eefe;
     color: #333;
+    background: rgba(0, 132, 255, 0.07);
 }
 
 .chat-inview-message.--friend {}
@@ -210,9 +212,13 @@
     text-align: center;
 }
 
-.chat-inview-message__date .--day {}
+.chat-inview-message__date .--day {
+    margin-right: 4px;
+}
 
-.chat-inview-message__date .--month {}
+.chat-inview-message__date .--month {
+    margin-right: 4px;
+}
 
 .chat-inview-message__date .--hour {}
 
@@ -220,6 +226,10 @@
 
 .chat-inview-message__picture {
     position: relative;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .chat-inview-message__picture img {
@@ -229,7 +239,7 @@
 
 .chat-inview-message__picture .user-online {
     position: absolute;
-    bottom: 2px;
+    bottom: 0px;
     left: -1px;
     border: 2px solid white;
     width: 8px;
@@ -241,7 +251,7 @@
     font-size: 13px;
     text-align: center;
     color: #454545;
-    max-width: 46px;
+    max-width: 38px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -274,6 +284,46 @@
     margin: 1px 0;
     line-height: 20px;
     margin-right: auto;
+    /* cursor: pointer; */
+} 
+
+.chat-inview-message__bubble.--merged.--first {
+    border-bottom-left-radius: 2px;
+    border-top-left-radius: 20px;
+}
+.chat-inview-message__bubble.--merged.--last {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 20px;
+}
+.chat-inview-message__bubble.--merged {
+    border-bottom-left-radius: 2px;
+    border-top-left-radius: 2px;
+}
+
+.chat-inview-message.--me .chat-inview-message__bubble.--merged.--first,
+.chat-inview-item.--all .chat-inview-message.--friend .chat-inview-message__bubble.--merged.--first {
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 20px;
+}
+.chat-inview-message.--me .chat-inview-message__bubble.--merged.--last,
+.chat-inview-item.--all .chat-inview-message.--friend .chat-inview-message__bubble.--merged.--last{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 20px;
+}
+.chat-inview-message.--me .chat-inview-message__bubble.--merged,
+.chat-inview-item.--all .chat-inview-message.--friend .chat-inview-message__bubble.--merged {
+    border-radius: 30px;
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+    margin-right: 0;
+    margin-left: auto;
+} 
+
+
+
+
+.chat-inview-message__bubble:hover {
+    /* opacity: .8; */
 }
 
 /* Positionning the messages in the right order - left/right - in chat inviews */
@@ -339,27 +389,26 @@
 }
 
 .chat-inview-options {
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    width: 100%;
-    position: absolute;
-    z-index: 200;
-    top: 0;
-    left: 0;
+    /* height: 100%; */
+    /* background: rgba(0, 0, 0, 0.7); */
+    /* width: 100%; */
+    /* position: absolute; */
+    /* z-index: 200; */
+    /* top: 0; */
+    /* left: 0; */
 }
 .chat-inview-options__close {
     position: absolute;
-    top: 30px;
-    left: 42px;
+    top: 20px;
+    left: 12px;
     z-index: 1000000;
     color: white;
     cursor: pointer;
-    border: 1px solid;
     height: 40px;
     width: 40px;
 }
 
-.chat-inview-users {width: 75%;height: 100%;margin-left: auto;background: white;}
+.chat-inview-users {width: 75%;height: 100%;margin-left: auto;background: white;flex-flow: column;}
 .chat-inview-users__group {
     height: 60px;
     display: flex;
@@ -371,4 +420,11 @@
 .chat-inview-users__group i {}
 .chat-inview-users__group span {
     margin-left: 6px;
+}
+
+.chat-inview-users .user-row {
+}
+
+.chat-inview-users .user-row__informations {
+    padding-left: 0;
 }

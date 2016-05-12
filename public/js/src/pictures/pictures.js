@@ -15,8 +15,8 @@
 			'user-profile'   : { width: 320, height: 320, crop: 'fill', gravity: 'face' }, 
 			'user-search'    : { width: 240, height: 240, crop: 'fill', gravity: 'face' },
 			'user-modal'     : { width: 50,  height: 50,  crop: 'fill', gravity: 'face' },
-			'user-before-md' : { width: 185, height: 185, crop: 'fill', gravity: 'face' },
-			'user-before-sm' : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
+			'user-before'    : { width: 185, height: 185, crop: 'fill', gravity: 'face' },
+			'user-row'       : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
 			'chat-row'		 : { width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
 			'chat-line'		 : { width: 35,  height: 35,  crop: 'fill', gravity: 'face' }
 		},

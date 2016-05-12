@@ -31,6 +31,7 @@
 		fetch_before_url 		 	 : '/api/v1/befores/:before_id',
 		change_before_status_url 	 : '/api/v1/befores/:before_id/status',
 		before_request_url 			 : '/api/v1/befores/:before_id/request',
+		send_chat_message_url 	     : '/api/v1/chats/:chat_id',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -650,6 +651,26 @@
 						return reject( err );
 
 					}) ;
+
+			});
+
+		},
+		sendChatMessage: function( data ){
+
+			if( !( data.message && data.chat_id && data.group_id && data.before_id ) ){
+				return LJ.wlog('Cannot request the api without all required parameters');
+			}
+
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.send_chat_message_url.replace(':chat_id', data.chat_id ), data )
+					.then(function( exposed ){
+						resolve();
+
+					}, function( err ){
+						return reject( err );
+
+					});
 
 			});
 

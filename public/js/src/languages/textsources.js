@@ -1921,9 +1921,13 @@
 			"fr": "Que souhaitez-vous faire ?",
 			"us": "What would you like to do ?"
 		},
-		chat_inview_options_message_show_users: {
-			"fr": "Voir les participants",
-			"us": "See users"
+		chat_inview_options_message_show_users_all: {
+			"fr": "Voir tous les participants",
+			"us": "See everyone"
+		},
+		chat_inview_options_message_show_users_team: {
+			"fr": "Voir les membres de mon groupe",
+			"us": "See members of my group"
 		},
 		chat_inview_options_message_show_before: {
 			"fr": "Voir le before",
@@ -1944,7 +1948,32 @@
 		chat_groupname_team: {
 			"fr": "Mon groupe",
 			"us": "My group"
+		},
+		chat_row_request_pending_title: {
+			"fr": "En attente",
+			"us": "Waiting"
+		},
+		chat_row_request_pending_subtitle: {
+			"fr": "Demande de participation envoyée",
+			"us": "Partcipation request sent"
+		},
+		chat_row_request_accepted_title: {
+			"fr": "Vous avez été accepté",
+			"us": "You have been approved"
+		},
+		chat_row_request_accepted_subtitle: {
+			"fr": "Le before commence maintenant",
+			"us": "The pregame starts now"
+		},
+		chat_row_request_participation_title: {
+			"fr": "Nouvelle demande",
+			"us": "New request"
+		},
+		chat_row_request_participation_subtitle: {
+			"fr": function( group_name ){ return "Le groupe "+ group_name +" souhaite participer" },
+			"us": function( group_name ){ return "The group "+ group_name +" wishes to join you" } 
 		}
+
 
 
 	});

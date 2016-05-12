@@ -293,23 +293,6 @@
 			});
 
 		},
-		renderBeforeUserRows: function( hosts, main_host ){
-
-			var be_user_rows = [];
-			hosts.forEach(function( h ){
-
-				if( h.facebook_id == main_host ){
-					be_user_rows.push( LJ.before.renderUserRow( h, ['main-host'] ) );
-
-				} else {
-					be_user_rows.push( LJ.before.renderUserRow( h ) );
-
-				}
-			});
-
-			return be_user_rows.join('');
-
-		},
 		setPicturesSizes: function( $content ){
 			
 			var $pictures = $content.find('.be-pictures__pic');
@@ -479,7 +462,7 @@
 			var be_pictures = [];
 			hosts.forEach(function( h ){
 
-				var img_medium = LJ.pictures.makeImgHtml( h.img_id, h.img_vs, "user-before-md" );
+				var img_medium = LJ.pictures.makeImgHtml( h.img_id, h.img_vs, "user-before" );
 				be_pictures.push([
 					'<div class="be-pictures__pic">',
 						'<div class="be-pictures__shadolay"></div>',
@@ -594,7 +577,7 @@
 			}
 
 			var be_pictures = LJ.before.renderBeforePictures( hosts );
-			var user_rows   = LJ.before.renderBeforeUserRows( hosts, before.main_host );
+			var user_rows   = LJ.renderUserRows( hosts );
 
 			var be_action  = options.be_action;
 			var be_request = '<div class="be-request">' + options.be_button + '</div>';
@@ -666,43 +649,6 @@
 			_.remove( LJ.before.fetched_befores, function( bfr ){
 				return bfr._id == before_id;
 			});
-
-		},
-		renderUserRow: function( user, options ){
-
-			options = options || [];
-
-			var host      = options.indexOf('main-host') != -1 ? '--host' : '';
-			var img_small = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-before-sm" );
-
-			return LJ.ui.render([
-
-				'<div class="user-row '+ host +'" data-facebook-id="'+ user.facebook_id +'">',
-		            '<div class="user-row__pic">',
-		              img_small,
-		              '<div class="user-gender --'+ user.g +' js-user-gender"></div>',
-		              '<div class="user-country js-user-country">',
-		                '<i class="flag-icon flag-icon-'+ user.cc +'"></i>',
-		              '</div>',
-		            '</div>',
-		            '<div class="user-row__informations">',
-		              '<div class="user-row__about">',
-		                '<span class="user-name">'+ user.name +'</span>',
-		                '<span class="user-comma">,</span>',
-		                '<span class="user-age">'+ user.age +'</span>',
-		                '<span class="user-online user__status js-user-online"></span>',
-		                '<i class="icon icon-star user-host-icon"></i>',
-		              '</div>',
-		              '<div class="user-row__education">',
-		                '<span class="user-row__education-icon --round-icon">',
-		                  '<i class="icon icon-education"></i>',
-		                '</span>',
-		                '<span class="user-row__education-label">'+ user.job +'</span>',
-		              '</div>',
-		            '</div>',
-	          '</div>'
-
-			].join(''));
 
 		},
 		renderBeforeOptions: function(){

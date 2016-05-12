@@ -7,9 +7,16 @@
 		init: function(){
 				
 			LJ.chat.handleDomEvents();
+			LJ.chat.setChatDimensions();
 			LJ.chat.addAndFetchChats();
 
 			return;
+
+		},
+		setChatDimensions: function(){
+
+			var height = $(window).height() - LJ.ui.slide_top;
+			$('.chat').css({ height: height });
 
 		},
 		handleDomEvents: function(){
@@ -54,6 +61,9 @@
 					.then(function(){
 						return LJ.chat.setupChatInview( channel_item );
 						
+					})
+					.then(function(){
+						return LJ.chat.loaderifyChatInview( channel_item.group_id );
 					})
 					// Find the profiles of everyone 
 					.then(function(){
@@ -110,17 +120,45 @@
 						LJ.chat.setupChatJsp( channel_item.channel_all );
 						LJ.chat.setupChatJsp( channel_item.channel_team );
 
-						return;
-						
-					})
-					.then(function(){
+						LJ.chat.deloaderifyChatInview( channel_item.group_id );
+						LJ.chat.updateChatRowFirstTime( channel_item.group_id, {
+							messages : _.concat( res[0], res[1] ),
+							status   : channel_item.status
+						});
 						return;
 
 					})
+
 					.catch(function( e ){
 						LJ.wlog(e);
 
 					});
+
+
+		},
+		updateChatRowFirstTime: function( group_id, opts ){
+
+			var messages   = opts.messages;
+			var status     = opts.status;
+
+			// window.sorted_messages = messages.sort(function( m1, m2 ){
+			// 	return moment( m1.sent_at ) - moment( m2.sent_at );
+
+			// });
+
+			// Update the bubble of the amount of unread messages
+			// Update the author of the last message
+			if( status == "pending" ){
+				LJ.chat.updateChatRow__Pending( group_id );
+			}
+
+			if( status == "accepted" ){
+				LJ.chat.updateChatRow__Accepted( group_id );
+			}
+
+			if( status == "hosting" ){
+				LJ.chat.updateChatRow__Request( group_id );
+			}
 
 
 		},
@@ -203,17 +241,33 @@
 
 			var opts = {
 				group_id     : group_id,
+				before_id 	 : before_id,
 				chat_id_all  : chat_id_all, 
 				chat_id_team : chat_id_team,
 				place_name   : place_name,
 				begins_at    : begins_at
 
 			};
-						
+
 			var html = LJ.chat.renderChatInview( opts );
 
 			LJ.chat.addChatInview( html );
-			LJ.chat.loaderifyChatInview( group_id );
+			LJ.chat.adjustChatInviewDimensions( group_id );
+
+
+		},
+		adjustChatInviewDimensions: function( group_id ){
+
+			var $chat               = $('.chat');
+			var $chat_inview        = $('.chat-inview[data-group-id="'+ group_id +'"]');
+			
+			var $chat_inview_header = $chat_inview.find('.chat-inview-header');
+			var $chat_inview_footer = $chat_inview.find('.chat-inview-footer');
+
+			$chat_inview.find('.chat-inview-messages').css({
+				height: $chat.height() - ( $chat_inview_header.height() + $chat_inview_footer.height() )
+			});
+
 
 		},
 		loaderifyChatInview: function( group_id ){
@@ -235,6 +289,15 @@
 
 			$chatrow.children().hide();
 			$chatrow.append( $loader );
+
+		},
+		deloaderifyChatInview: function( group_id ){
+
+			var $chatrow = $('.chat-row[data-group-id="'+ group_id +'"]');
+			var $loader  = $chatrow.find('.chat-row__loader');
+
+			$chatrow.children().show();
+			$loader.hide();
 
 		},
 		addChatInview: function( html ){
@@ -512,16 +575,24 @@
 			].join(''));
 
 		},
-		updateChatRowPreview: function( opts ){
+		updateChatRowPreview__Author: function( opts ){
 
 			var message     = opts.message;
-			var author_name = opts.author_name;
+			var sender      = opts.sender;
 			var group_id    = opts.group_id;
+
+			LJ.chat.updateChatRowPreview( group_id, {
+				h1: sender.name,
+				h2: message
+			});
+
+		},
+		updateChatRowPreview: function( group_id, opts ){
 
 			var $chatrow = $('.chat-row[data-group-id="'+ group_id +'"]');
 
-			$chatrow.find('.chat-row-infos__name --name').text( author_name );
-			$chatrow.find('.chat-row-infos__preview').text( message );
+			$chatrow.find('.chat-row-infos__name .--name').text( opts.h1 );
+			$chatrow.find('.chat-row-infos__preview').text( opts.h2 );
 
 		},
 		updateChatRowBubble: function( group_id ){
@@ -564,13 +635,41 @@
 			}
 
 		},
-		updateChatRow: function( opts ){
+		updateChatRow__Pending: function( group_id ){
+
+			LJ.chat.updateChatRowPreview( group_id, {
+				h1: LJ.text("chat_row_request_pending_title"),
+				h2: LJ.text("chat_row_request_pending_subtitle")
+			});
+
+		},
+		updateChatRow__Accepted: function( group_id ){
+
+			LJ.chat.updateChatRowPreview( group_id, {
+				h1: LJ.text("chat_row_request_accepted_title"),
+				h2: LJ.text("chat_row_request_accepted_subtitle")
+			});
+
+		},
+		updateChatRow__Request: function( group_id ){
+
+			var name         = LJ.chat.fetched_chats[ group_id ].main_member_profile.name;
+			var group_name   = LJ.renderGroupName( name );
+
+			LJ.chat.updateChatRowPreview( group_id, {
+				h1: LJ.text("chat_row_request_participation_title"),
+				h2: LJ.text("chat_row_request_participation_subtitle", group_name )
+			});
+
+		},
+		updateChatRow__Author: function( opts ){
 
 			var message  = opts.message;
 			var group_id = opts.group_id;
 			var sent_at  = opts.sent_at;
-
-			LJ.chat.updateChatRowPreview({ message: message, group_id: group_id });
+			var sender   = opts.sender;
+			
+			LJ.chat.updateChatRowPreview__Author({ message: message, group_id: group_id, sender: sender });
 			LJ.chat.updateChatRowStatus( group_id );
 			LJ.chat.updateChatRowBubble( group_id );
 			LJ.chat.updateChatRowTime({ group_id: group_id, sent_at: sent_at });
@@ -637,7 +736,7 @@
 
 				'<div class="chat-row-infos">',
 					'<div class="chat-row-infos__name">',
-						'<span class="--name"><span>',
+						'<span class="--name"></span>',
 						'<span class="js-user-online user-online"></span>',
 					'</div>',
 					'<div class="chat-row-infos__preview">',

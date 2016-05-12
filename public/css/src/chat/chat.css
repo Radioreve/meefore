@@ -5,7 +5,7 @@
     top: 58px;
     z-index: 100;
     background: #fff;
-    width: 400px;
+    width: 500px;
     box-sizing: border-box;
     box-shadow: 0 0 14px #949494;
     flex-flow: column nowrap;
@@ -20,7 +20,7 @@
     padding: 20px 0px 30px 0px;
     height: 100%;
 }
-
+ 
 .chat-row__loader {
     position: absolute;
     top: 50%;
@@ -140,8 +140,8 @@
 .chat-row-date__day span {}
 .chat-row-date__day .--day {}
 .chat-row-date__day .--month {
-    font-size: 12px;
-    text-transform: uppercase; 
+    font-size: 10px;
+    text-transform: uppercase;
 }
 .chat-row-date__splitter {
     width: 60%;
@@ -168,10 +168,11 @@
     border-radius: 100px;
 }
 .chat-row-infos {
-    display: flex; 
+    display: flex;
     flex-flow: column;
     justify-content: center;
     margin-left: 14px;
+    max-width: 220px;
 }
 .chat-row-infos__name {
     margin-bottom: 2px;
@@ -235,6 +236,9 @@
     align-items: center;
     padding: 0px 50px;
     height: 100%;
+}
+
+.chat-inview .chat-empty {
     margin-top: 20%;
 }
 .chat-empty__icon {

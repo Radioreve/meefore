@@ -8,6 +8,7 @@
     width: 100%;
     flex-flow: column;
     display: none;
+    z-index: 1000;
 }
 
 .ioptions__actions {

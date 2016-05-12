@@ -135,6 +135,52 @@ window.LJ = _.merge( window.LJ || {}, {
         console.info( message );
         
     },
+    renderUserRow: function( user ){
+
+        var img_small = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-row" );
+
+        return LJ.ui.render([
+
+            '<div class="user-row" data-facebook-id="'+ user.facebook_id +'">',
+                '<div class="user-row__pic">',
+                  img_small,
+                  '<div class="user-gender --'+ user.g +' js-user-gender"></div>',
+                  '<div class="user-country js-user-country">',
+                    '<i class="flag-icon flag-icon-'+ user.cc +'"></i>',
+                  '</div>',
+                '</div>',
+                '<div class="user-row__informations">',
+                  '<div class="user-row__about">',
+                    '<span class="user-name">'+ user.name +'</span>',
+                    '<span class="user-comma">,</span>',
+                    '<span class="user-age">'+ user.age +'</span>',
+                    '<span class="user-online user__status js-user-online"></span>',
+                    '<i class="icon icon-star user-host-icon"></i>',
+                  '</div>',
+                  '<div class="user-row__education">',
+                    '<span class="user-row__education-icon --round-icon">',
+                      '<i class="icon icon-education"></i>',
+                    '</span>',
+                    '<span class="user-row__education-label">'+ user.job +'</span>',
+                  '</div>',
+                '</div>',
+          '</div>'
+
+        ].join(''));
+
+    },
+    renderUserRows: function( users ){
+
+        var user_rows = [];
+        users.forEach(function( u ){
+            user_rows.push( LJ.renderUserRow( u ) );
+
+        });
+
+        return user_rows.join('');
+
+
+    },
     generateId: function(){
         return LJ.randomInt( 100, 100000000000 );
 
