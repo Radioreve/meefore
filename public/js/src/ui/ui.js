@@ -216,6 +216,13 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 			LJ.delay(100).then(function(){ 
 
 				$(element).jScrollPane();
+
+				if( options.handlers ){
+					options.handlers.forEach(function( h ){
+						$(element).bind( h.event_name, h.callback );
+					});
+				}
+
 				LJ.ui.jsp[ options.jsp_id ] = $(element).data('jsp');
 				resolve();
 

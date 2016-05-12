@@ -18,6 +18,7 @@
 			'user-before-md' : { width: 185, height: 185, crop: 'fill', gravity: 'face' },
 			'user-before-sm' : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
 			'chat-row'		 : { width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
+			'chat-line'		 : { width: 35,  height: 35,  crop: 'fill', gravity: 'face' }
 		},
 		cached: [],
 

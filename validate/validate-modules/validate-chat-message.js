@@ -11,13 +11,10 @@
 			.withRequired('before_id'      , nv.isString() )
 			.withRequired('chat_id'        , nv.isString() )
 			.withRequired('message'        , nv.isString() )
-			.withRequired('name'           , nv.isString() )
-			.withRequired('img_vs'         , nv.isString() )
-			.withRequired('img_id'         , nv.isString() )
 			.withRequired('group_id'       , nv.isString() )
 			.withRequired('facebook_id'    , nv.isString() )
 			.withOptional('offline_users'  , nv.isArray()  )
-			.withOptional('whisper_to'     , nv.isArray()  )
+			// .withOptional('whisper_to'     , nv.isArray()  )
 
 		nv.run( checkMessage, req.sent, function( n, errors ){
 			if( n != 0 ){
@@ -37,7 +34,7 @@
 
 	function checkSenderStatus( req, callback ){
 
-		var before_id    = req.sent.before_id;
+		var before_id   = req.sent.before_id;
 		var group_id    = req.sent.group_id;
 		var facebook_id = req.sent.facebook_id;
 
@@ -48,25 +45,18 @@
 				// User that has been validated to send message?
 				if( group_id != "hosts" && status != 'accepted' )
 					return callback({
-						err_id: "unauthorized_group",
-						data: {
-							group_id : group_id,
-							status   : status,
-							sent     : req.sent,
-							location : "validate chat message"
-						}
+						err_id   : "unauthorized_group",
+						group_id : group_id,
+						status   : status
 					});
 
 				// One of the hosts?
 				if( group_id == "hosts" && hosts_id.indexOf( facebook_id ) == -1 )
 					return callback({
-						message: "You are not an admin",
-						err_id: "unauthorized_admin",
-						data: {
-							hosts_id: hosts_id,
-							sent 	: req.sent,
-							location: "validate chat message"
-						}
+						message  : "You are not an host",
+						err_id   : "unauthorized_admin",
+						hosts_id : hosts_id,
+						sent 	 : req.sent,
 					});
 
 				callback( null );

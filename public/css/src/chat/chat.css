@@ -5,7 +5,7 @@
     top: 58px;
     z-index: 100;
     background: #fff;
-    width: 480px;
+    width: 400px;
     box-sizing: border-box;
     box-shadow: 0 0 14px #949494;
     flex-flow: column nowrap;
@@ -235,6 +235,7 @@
     align-items: center;
     padding: 0px 50px;
     height: 100%;
+    margin-top: 20%;
 }
 .chat-empty__icon {
     font-size: 80px;
@@ -252,10 +253,12 @@
 .chat-empty__subtitle {
     color: #919191;
     margin-top: 20px;
-    line-height: 20px;
+    line-height: 22px;
     text-align: center;
+    font-weight: 300;
 }
-.chat-empty__subtitle span {}
+.chat-empty__subtitle span {
+}
   
 
 .chat-empty.--hosts .chat-empty__icon,

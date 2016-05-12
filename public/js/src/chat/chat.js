@@ -8,7 +8,6 @@
 				
 			LJ.chat.handleDomEvents();
 			LJ.chat.addAndFetchChats();
-			LJ.chat.navigate('all');
 
 			return;
 
@@ -28,9 +27,16 @@
 			// Keep only the channels that are chat-related
 			var channels = _.filter( LJ.user.channels, 'channel_all' );
 
+			var all_chat_fetched = [];
 			channels.forEach(function( channel_item ){
-				LJ.chat.addAndFetchOneChat( channel_item );
+				var chat_fetched = LJ.chat.addAndFetchOneChat( channel_item );
+				all_chat_fetched.push( chat_fetched );
 			});
+
+			LJ.Promise.all( all_chat_fetched )
+				.then(function(){
+					LJ.chat.navigate('all');
+				});
 
 
 		},		
@@ -101,17 +107,46 @@
 							chat_type	  	 : "team"
 						});
 
+						LJ.chat.setupChatJsp( channel_item.channel_all );
+						LJ.chat.setupChatJsp( channel_item.channel_team );
+
 						return;
 						
 					})
 					.then(function(){
-						return LJ.ui.showToast('Le chat a été chargé avec succès');
-						
+						return;
+
 					})
 					.catch(function( e ){
 						LJ.wlog(e);
 
 					});
+
+
+		},
+		setupChatJsp: function( chat_id ){
+
+			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+
+			LJ.ui.turnToJsp('.chat-inview-item[data-chat-id="'+ chat_id +'"] .chat-inview-messages', {
+					jsp_id   : chat_id,
+					handlers : [{
+						'event_name' : 'jsp-scroll-y',
+						'callback'   : function( e, scroll_pose_y, is_at_top, is_at_bottom ){
+
+							if( is_at_top ){
+								// Fetch history...
+							}
+
+							// if( is_at_bottom ){
+							// 	$w.addClass('js-scroll-to-bottom');
+							// } else {
+							// 	$w.removeClass('js-scroll-to-bottom');
+							// }
+
+						}
+					}]
+				});
 
 
 		},
@@ -178,7 +213,7 @@
 			var html = LJ.chat.renderChatInview( opts );
 
 			LJ.chat.addChatInview( html );
-			LJ.chat.loaderifyChatInview( group_id );					
+			LJ.chat.loaderifyChatInview( group_id );
 
 		},
 		loaderifyChatInview: function( group_id ){
@@ -323,7 +358,7 @@
 		},
 		handleShowChatInview: function(){
 
-			var $s = $(this);
+			var $s       = $(this);
 			var group_id = $s.attr('data-group-id');
 
 			LJ.chat.showChatInview( group_id );
@@ -336,7 +371,6 @@
 
 			$s.toggleClass('--active');
 			LJ.chat.toggleChatWrap();
-
 
 		},
 		toggleChatWrap: function(){
@@ -354,8 +388,8 @@
 			
 			LJ.chat.state = 'visible';
 
-			var $c     = $('.chat');
-			var d      = LJ.search.filters_duration;
+			var $c = $('.chat');
+			var d  = LJ.search.filters_duration;
 
 			LJ.ui.shradeAndStagger( $c, {
 				duration: d
@@ -381,12 +415,11 @@
 
 		},
 		handleChatNavigate: function(){
-
-			var $s = $(this);
+			
+			var $s     = $(this);
 			var target = $s.attr('data-link');
 
 			LJ.chat.navigate( target );
-
 
 		},
 		navigate: function( target ){
@@ -433,24 +466,24 @@
 		renderChatRow__AllEmpty: function(){
 
 			return LJ.chat.renderChatEmpty({
-				type 	: 'all',
-				subtitle: '<span data-lid="chat_empty_subtitle_all"></span>'
+				type 	 : 'all',
+				subtitle : '<span data-lid="chat_empty_subtitle_all"></span>'
 			});
 
 		},
 		renderChatRow__HostedEmpty: function(){
 
 			return LJ.chat.renderChatEmpty({
-				type 	: 'hosted',
-				subtitle: '<span data-lid="chat_empty_subtitle_hosted"></span>'
+				type 	 : 'hosted',
+				subtitle : '<span data-lid="chat_empty_subtitle_hosted"></span>'
 			});
 			
 		},
 		renderChatRow__RequestedEmpty: function(){
 
 			return LJ.chat.renderChatEmpty({
-				type    : 'requested',
-				subtitle: '<span data-lid="chat_empty_subtitle_requested"></span>'
+				type     : 'requested',
+				subtitle : '<span data-lid="chat_empty_subtitle_requested"></span>'
 			});
 			
 		},
@@ -476,7 +509,6 @@
 					'</div>',
 				'</div>'
 
-
 			].join(''));
 
 		},
@@ -484,7 +516,7 @@
 
 			var message     = opts.message;
 			var author_name = opts.author_name;
-			var group_id     = opts.group_id;
+			var group_id    = opts.group_id;
 
 			var $chatrow = $('.chat-row[data-group-id="'+ group_id +'"]');
 
@@ -508,7 +540,7 @@
 		},
 		updateChatRowTime: function( opts ){
 
-			var sent_at = opts.sent_at;
+			var sent_at  = opts.sent_at;
 			var group_id = opts.group_id;
 
 			var $chatrow = $('.chat-row[data-group-id="'+ group_id +'"]');
@@ -564,7 +596,7 @@
 		},
 		renderChatRowDate: function( date, opts ){
 
-			var m = moment( date );
+			var m  = moment( date );
 			var DD = m.format('DD');
 			var MM = LJ.text("month")[ m.month() ].slice(0,3);
 			var HH = m.format('HH:mm');
