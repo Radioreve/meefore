@@ -121,7 +121,7 @@
     text-align: center;
     font-family: 'Open sans';
     font-size: 12px;
-    max-width: 200px;
+    max-width: 250px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -184,7 +184,10 @@
     order: 1;
 }
 
-.chat-inview-message.--me {}
+.chat-inview-message.--me {
+    position: relative;
+    right: -15px;
+}
 
 .chat-inview-message.--me .chat-inview-message-head {
     display: none;
@@ -299,6 +302,10 @@
     border-bottom-left-radius: 2px;
     border-top-left-radius: 2px;
 }
+.chat-inview-message__bubble.--tall {
+    border-bottom-right-radius: 10px;
+    border-radius: 20px;
+}
 
 .chat-inview-message.--me .chat-inview-message__bubble.--merged.--first,
 .chat-inview-item.--all .chat-inview-message.--friend .chat-inview-message__bubble.--merged.--first {
@@ -318,6 +325,11 @@
     margin-right: 0;
     margin-left: auto;
 } 
+
+.chat-inview-message.--me .chat-inview-message__bubble.--tall,
+.chat-inview-item.--all .chat-inview-message.--friend .chat-inview-message__bubble.--tall {
+    border-radius: 20px;
+}
 
 
 
@@ -354,6 +366,13 @@
 }
 
 
+.chat-inview-item.--pending .chat-inview-footer {
+    background: #eee;
+}
+
+.chat-inview-item.--pending .chat-inview-footer input {
+    display: none;
+}
 
 .chat-inview-footer {
     height: 64px;
@@ -372,6 +391,7 @@
 
 .chat-inview__input input {
     padding: 10px 20px;
+    box-sizing: border-box;
     width: 100%;
     border: none;
     font-size: 13px;

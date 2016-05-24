@@ -1,6 +1,8 @@
 
 	window.LJ.ui = _.merge( window.LJ.ui || {}, {
-		
+			
+		max_bubble: 9,
+
 		formatElem: function( elem ){
 
 			var $elem = null;
@@ -22,15 +24,25 @@
 		handleDomEvents: function(){
 
 		},
+		showBubble: function( elem ){
+
+			LJ.ui.setBubble( elem, "show" );
+
+		},
+		hideBubble: function( elem ){
+
+			LJ.ui.setBubble( elem, "hide" );
+
+		},
 		bubbleUp: function( elem ){
 
-			var n = parseInt( $(elem).find('.bubble__number').text() );
+			var n = parseInt( $(elem).find('.bubble__number').text().replace('+','') );
 			LJ.ui.setBubble( elem, n + 1 );
 
 		},
 		bubbleDown: function( elem ){
 
-			var n = parseInt( $(elem).find('.bubble__number').text() );
+			var n = parseInt( $(elem).find('.bubble__number').text().replace('+','') );
 			LJ.ui.setBubble( elem, n - 1 );
 
 		},
@@ -38,17 +50,28 @@
 
 			// Validation happens here because it centralizes all other calls
 			var $elem = LJ.ui.formatElem( elem );
-			if( !$elem ) return
+			if( !$elem ) return;
 
 			var $bubble = $elem.find('.bubble');
 			var $bubble_text = $bubble.find('.bubble__number');
-			// Bubble element doesnt exist, create it and add one bubble
+			// Bubble element doesnt exist, create it and add n bubbles
 			if( $bubble_text.length != 1 ){
 				if( already_added ){
 					return LJ.wlog('Warning: infinite boucle !!');
 				}
-				LJ.ui.addBubble( elem )
-				return LJ.ui.setBubble( elem, 1, true);
+				LJ.ui.addBubble( elem );
+				if( n != 0 && !n ){
+					n = 1;
+				}
+				return LJ.ui.setBubble( elem, n, true );
+			}
+
+			if( n == "show" ){
+				return $bubble.show();
+			}
+
+			if( n == "hide" ){
+				return $bubble.hide();
 			}
 
 			if( n <= 0 ){
@@ -56,19 +79,22 @@
 				$bubble_text.text(0);
 				return;
 				
-			} else {
-				$bubble.show();
-
 			}
 
-			$bubble_text.text( n );
+			if( n >= LJ.ui.max_bubble ){
+				$bubble_text.text( LJ.ui.max_bubble + '+');
+			} else {
+				$bubble_text.text( n );
+			}
+
+			$bubble.show();
 
 		},
 		addBubble: function( elem ){
 
 			LJ.log('Adding bubble for the first time');
 			$( LJ.ui.renderBubble() )
-				.appendTo( elem )
+				.appendTo( elem );
 
 		},
 		renderBubble: function(){

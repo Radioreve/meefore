@@ -1,11 +1,42 @@
 	
 	var model_path = process.cwd() + '/models';
 
-	var mongoose = require('mongoose'),
-		User = require( model_path + '/UserModel'),
-		Before = require( model_path + '/BeforeModel'),
-		config = require( process.cwd() + '/config/config'),
-		_ = require('lodash');
+	var mongoose = require('mongoose');
+	var User     = require( model_path + '/UserModel');
+	var Before   = require( model_path + '/BeforeModel');
+	var config   = require( process.cwd() + '/config/config');
+	var _        = require('lodash');
+	var redis    = require('redis');
+
+
+	var node_env = process.env.NODE_ENV;
+
+
+	function resetRedisAll(){
+
+		var rd = redis.createClient( config.redis[ node_env ].port, config.redis[ node_env ].host, {
+				auth_pass        : process.env.PW,
+				socket_keepalive : true // Prevent redis from disconnecting with ETIMEOUT
+			}
+		);
+
+		rd.on("error", function( err ){
+			console.log('Error connecting to redis : ' + err );
+
+		});
+
+		rd.on("ready", function(){
+			console.log('Connected to Redis');
+			console.log('Clearing all chats entries...');
+			rd.flushall(function(){
+				console.log('All cleared');
+				process.exit(0);
+			});
+
+		});
+
+
+	}
 
 	function resetRequests(){
 
@@ -53,7 +84,7 @@
 
 	}
 
-	function resetAll(){
+	function resetDbAll(){
 
 		mongoose.connect( config.db['dev'].uri );
 
@@ -100,7 +131,13 @@
 	}
 
 	module.exports = {
-		resetAll      : resetAll,
-		resetRequests : resetRequests,
-		resetAllChats : resetAllChats
+		db: {
+			resetAll      : resetDbAll,
+			resetRequests : resetRequests,
+			resetAllChats : resetAllChats
+		},
+		rd: {
+			resetAll: resetRedisAll
+		}
+
 	};

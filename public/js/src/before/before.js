@@ -70,7 +70,16 @@
 
 			return bfr;
 
-		},	
+		},
+		findMyGroup: function( before ){
+
+			var g = _.find( before.groups, function( g ){
+				return g.members.indexOf( LJ.user.facebook_id ) != -1;
+			});
+
+			return g;
+
+		},
 		activateBrowserDate: function(){
 
 			var $s = $(this);
@@ -383,7 +392,8 @@
 
         	LJ.before.hideBrowser();
 
-        	var host_ids = before.hosts;
+			var host_ids  = before.hosts;
+
 			var host_profiles;
 			var $container;
 			var $content;
@@ -414,7 +424,7 @@
 
 			})
 			.then(function(){
-				return LJ.before.processBeforePreDisplay( $content );
+				return LJ.before.processBeforePreDisplay( before );
 
 			})
 			.then(function(){
@@ -424,19 +434,21 @@
 
             
         },
-        processBeforePreDisplay: function( $content ){
+        processBeforePreDisplay: function( before ){
+
+			var $w        = $('.be-inview[data-before-id="'+ before._id +'"]');
+			var main_host = before.main_host;
 
         	// Dynamically render the size of the pictures to fit, with a shade
-        	LJ.before.setPicturesSizes( $content );
+        	LJ.before.setPicturesSizes( $w );
 
         	// Make sure the host is always on top of the list
-        	$('.be-inview').find('.user-row.--host')
-        	               .insertBefore( $('.be-inview').find('.user-row').first() );
+        	LJ.mainifyUserRow( $w, main_host );
 
         	// Prepend and hide the content, so that jsp compute the right height
-			$content.css({ 'opacity': 0 }).show();
+			$w.css({ 'opacity': 0 }).show();
 
-			LJ.ui.turnToJsp( $('.be-users'), {
+			LJ.ui.turnToJsp( $w.find('.be-users'), {
 				jsp_id: 'before_inview'
 			});
 

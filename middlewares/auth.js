@@ -14,7 +14,7 @@
 			
 			var token = req.headers && req.headers['x-access-token'] || req.sent.token;
 			
-			// Allow root users to bypass the app token required for  calls from terminals
+			// Allow root users to bypass the app token required for calls from terminals
 			if( audience.indexOf('root') != -1 && req.sent.rootkey == "M33forever" ){
 				return next();
 			}

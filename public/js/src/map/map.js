@@ -398,7 +398,7 @@
             }
 
             if( type == 'hosting' ){
-                url = LJ.map.markers_url['star'];
+                url = LJ.map.markers_url['chat'];
             }
 
             if( type == 'pending' ){

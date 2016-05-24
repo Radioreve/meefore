@@ -43,8 +43,9 @@
 		setAppLang: function( app_language ){
 			return LJ.promise(function( resolve, reject ){
 
-				if( !LJ.lang.isLangSupported( app_language ) )
+				if( !LJ.lang.isLangSupported( app_language ) ){
 					return console.error('This language (' + app_language + ') is not currently supported');
+				}
 					
 
 				// Internal state variable

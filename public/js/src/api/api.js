@@ -31,7 +31,9 @@
 		fetch_before_url 		 	 : '/api/v1/befores/:before_id',
 		change_before_status_url 	 : '/api/v1/befores/:before_id/status',
 		before_request_url 			 : '/api/v1/befores/:before_id/request',
+		change_group_status_url 	 : '/api/v1/befores/:before_id/groups/:group_id/status',
 		send_chat_message_url 	     : '/api/v1/chats/:chat_id',
+		fetch_chat_history_url 		 : '/api/v1/chats/:chat_id',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -640,11 +642,11 @@
 				LJ.api.post( LJ.api.before_request_url.replace(':before_id', before_id), request )
 					.then(function( exposed ){
 
-						if( exposed.before_item && exposed.members_profiles ){
+						if( exposed.before_item && exposed.members_profiles && exposed.channel_item ){
 							return resolve( exposed );
 
 						} else {
-							LJ.wlog('The server didnt respond with the expected before object and/or members_profiles object');
+							LJ.wlog('The server didnt respond with the expected before, members and channel_item object(s)');
 						}
 
 					}, function( err ){
@@ -675,10 +677,58 @@
 			});
 
 		},
-		fetchChatHistory: function( chat_id, delay ){
+		fetchChatHistory: function( chat_id, sent_at ){
 
-			return [];
+			var data = {
+				sent_at: sent_at
+			};
 
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.get( LJ.api.fetch_chat_history_url.replace(':chat_id', chat_id ), data )
+					.then(function( exposed ){
+
+						if( !exposed.messages ){
+							return LJ.wlog('The server didnt respond with the expected messages object');
+
+						} else {
+							return resolve({
+								messages : exposed.messages,
+								readby   : exposed.readby
+							});
+						}
+
+					}, function( err ){
+						return reject( err );
+
+					});
+
+			});
+
+		},
+		changeGroupStatus: function( data ){
+			return LJ.promise(function( resolve, reject ){
+
+				var before_id   = data.before_id;
+				var group_id    = data.group_id;
+				var chat_id     = data.chat_id;
+				var main_member = data.main_member;
+				var status 	    = data.status;
+
+				if( !( before_id && group_id && chat_id && main_member && status ) ){
+					return LJ.wlog('Cannot call the api without required parameters');
+				}
+
+				var url = LJ.api.change_group_status_url.replace(':before_id', before_id ).replace(':group_id', group_id );
+				LJ.api.post( url, data )
+					.then(function( exposed ){
+						return resolve();
+
+					}, function( err ){
+						return reject( err );
+					});
+
+				});
 		}
 
 	});

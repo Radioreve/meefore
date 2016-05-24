@@ -45,7 +45,7 @@
 
 		var notification_id = "accepted_in";
 
-		var status    = req.sent.group_status;
+		var status    = req.sent.status;
 		var before_id = req.sent.before_id;
 		var members   = req.sent.members;
 
@@ -86,7 +86,7 @@
 		var notification_id = "group_request";
 
 		var before_id    = req.sent.before_id;
-		var members      = req.sent.members;
+		var members      = req.sent.target_group.members;
 
 		// Shortcut reference
 		var n = {

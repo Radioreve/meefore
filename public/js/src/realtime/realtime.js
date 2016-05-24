@@ -114,8 +114,21 @@
 		},
 		handleNewRequestGroup: function( data ){
 
-			LJ.log('Push event received, data : ');
-			LJ.log( data );
+			LJ.log('A friend requested to participate in a before with you!');
+			
+			var before_item  = data.before_item;
+			var before       = data.before;
+			var channel_item = data.channel_item;
+			var notification = data.notification;
+
+			LJ.ui.showToast( LJ.text('to_before_request_success_friend') );
+			LJ.user.befores.push( before_item );
+			LJ.before.pendifyBeforeInview( before._id );
+			LJ.before.pendifyBeforeMarker( before._id );
+			LJ.user.channels.push( channel_item );
+			LJ.realtime.subscribeToChatChannel( channel_item.channel_all );
+			LJ.realtime.subscribeToChatChannel( channel_item.channel_team );
+			LJ.chat.addAndFetchOneChat( channel_item );
 
 		},
 		// Subcribe to events about a specific geo area 
@@ -205,8 +218,18 @@
 		},
 		handleNewRequestHost: function( data ){
 
-			LJ.log('Push event received, data : ');
 			LJ.log( data );
+			LJ.log('Someone requested to participate in your before');
+			
+			var before       = data.before;
+			var channel_item = data.channel_item;
+			var notification = data.notification;
+
+			LJ.ui.showToast( LJ.text('to_before_request_success_host') );
+			LJ.user.channels.push( channel_item );
+			LJ.realtime.subscribeToChatChannel( channel_item.channel_all );
+			LJ.realtime.subscribeToChatChannel( channel_item.channel_team );
+			LJ.chat.addAndFetchOneChat( channel_item );
 
 
 		},
@@ -232,13 +255,88 @@
 		// There are 2 chat channels per event.
 		subscribeToChatChannels: function( channels ){
 
-			
+			var chat_channels = _.filter( LJ.user.channels, function( chan ){
+				return chan.type == "chat";
+			});
+
+			chat_channels.forEach(function( chan ){
+				LJ.realtime.subscribeToChatChannel( chan.channel_all );
+				LJ.realtime.subscribeToChatChannel( chan.channel_team );
+			});
 
 		},
 		subscribeToChatChannel: function( channel_name ){
 
+			LJ.log('Subscribing to chat channel : ' + channel_name );
+			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
 
+			LJ.realtime.channels[ channel_name ].bind('new hello'		  , LJ.log ); // Test channel
+			LJ.realtime.channels[ channel_name ].bind('new group status'  , LJ.realtime.handleNewGroupStatus );
+			LJ.realtime.channels[ channel_name ].bind('new chat message'  , LJ.realtime.handleNewChatMessage );
 			
+		},
+		handleNewGroupStatus: function( data ){
+
+			var before_id = data.before_id;
+			var chat_id   = data.chat_id;
+			var group_id  = data.group_id;
+			var status    = data.status; 
+
+			var channel_item = _.find( LJ.user.channels, function( chan ){
+				return chan.before_id = before_id;
+			});
+
+			if( status == "accepted" ){
+
+				var role = channel_item.role;
+
+				if( role == "hosted" ){
+					LJ.chat.devalidateifyChatInview( chat_id );
+
+				} else {
+					LJ.chat.acceptifyChatInview( group_id, chat_id );
+				}
+
+				LJ.chat.acceptifyChatRow( group_id );
+				LJ.chat.addBubbleToChatIcon();
+				LJ.chat.addBubbleToChatRow( group_id );
+
+			}
+
+		},
+		handleNewChatMessage: function( data ){
+
+			LJ.log('Adding chatline ');
+
+			var call_id   = data.call_id;
+			var group_id  = data.group_id;
+			var sent_at   = data.sent_at;
+			var chat_id   = data.chat_id;
+			var message   = data.message;
+			var sender_id = data.sender_id;
+
+			// Update the state
+			var state = LJ.chat.getActiveChatId() == chat_id ? "seen" : "unseen";
+			LJ.chat.cacheChatMessage( chat_id, _.extend( data, {
+				state: state
+			}));
+
+			// Local variation regarding the inview ui of the chatline
+			if( sender_id == LJ.user.facebook_id ){
+				LJ.chat.dependifyChatLine( call_id );
+			} else {
+				LJ.chat.addChatLine( data, call_id );
+			}
+
+			// In anycase take actions that are all based on the chat state
+			LJ.chat.updateChatRowPreview__AuthorLast( group_id );
+			LJ.chat.updateChatRowTime( group_id );
+			LJ.chat.newifyChatRow( group_id );
+			LJ.chat.topifyChatRow( group_id );
+			LJ.chat.refreshChatInviewBubbles( group_id );
+			LJ.chat.refreshChatIconBubble();
+
+
 		}
 
 	});

@@ -20,7 +20,7 @@
 	//	api.tests     = require( apiDir + '/tests');
 		api.users     = require( apiDir + '/users');
 		api.places    = require( apiDir + '/places');
-		api.befores    = require( apiDir + '/befores');
+		api.befores   = require( apiDir + '/befores');
 		api.parties   = require( apiDir + '/parties');
 		api.chats     = require( apiDir + '/chats');
 
@@ -37,6 +37,7 @@
 		mdw.meepass           = require( mdwDir + '/meepass');
 		mdw.users_watcher 	  = require( mdwDir + '/users_watcher');
 		mdw.realtime 		  = require( mdwDir + '/realtime');
+		mdw.cached			  = require( mdwDir + '/cached');
 
 		mdw.validate          = require('../validate/validate');
 
@@ -64,7 +65,7 @@
 				req.sent   || {}
 			);
 			req.sent.expose = {};
-			console.log(req.sent);
+			
 			next();
 
 		});
@@ -81,6 +82,14 @@
 			}
 
 		}
+
+		// Setup the values in the req.sent object, to allow a more RESTish way of calling the services for the client
+		// Each middleware can consume the params, and client can just add it to the url and not to the raw body!
+		app.get('/api/v1/users/:target_id*',  setParam('target_id') );
+	    app.get('/api/v1/chats/:chat_id*', setParam('chat_id') );
+		app.get('/test/api/v1/chats/:chat_id*', setParam('chat_id') );
+		app.get('/api/v1/befores/:before_id*', setParam('before_id') );
+		app.get('/api/v1/befores/:before_id/groups/:group_id*', setParam(['before_id', 'group_id']) );
 
 
 		// Api authentication validation
@@ -131,10 +140,11 @@
 	    	mdw.pop.populateUser({ force_presence: false }),
 	    	mdw.facebook.fetchFacebookLongLivedToken,
 	    	mdw.mailchimp_watcher.subscribeMailchimpUser,
-	    	mdw.alerts_watcher.setCache,
 	    	signEvents.handleFacebookAuth,
 	    	mdw.realtime.setChannels,
-	    	mdw.facebook.fetchAndSyncFriends
+	    	mdw.facebook.fetchAndSyncFriends,
+	    	mdw.alerts_watcher.setCache,
+	    	mdw.profile_watcher.setCache
 	    );
 
 	    // Création d'un bot
@@ -247,18 +257,14 @@
 	    	api.users.fetchDistinctCountries
 	    );
 
-	    app.get('/api/v1/users/:facebook_id/*', 
-	    	setParam('facebook_id')
-	    );
 
 	    // [ @user ] Utilisé pour afficher le profile d'un utilisateur
-	    app.get('/api/v1/users/:facebook_id/full',   //otherwise override with asker facebook_id
-	    	mdw.validate('user_fetch'),
+	    app.get('/api/v1/users/:target_id/full',   //otherwise override with asker facebook_id
 	    	api.users.fetchUserById_Full
 	    );
 
 	     // [ @user ] Utilisé pour afficher le profile d'un utilisateur
-	    app.get('/api/v1/users/:facebook_id/core',   //otherwise override with asker facebook_id
+	    app.get('/api/v1/users/:target_id/core',   //otherwise override with asker facebook_id
 	    	mdw.validate('user_fetch'),
 	    	api.users.fetchUserById_Core
 	    );
@@ -287,16 +293,16 @@
 	    );
 
 
-	    app.get('/api/v1/users/:facebook_id/shared',
+	    app.get('/api/v1/users/:target_id/shared',
 	    	api.users.fetchUserShared
 	    );
 
-	    app.get('/api/v1/users/:facebook_id/meepass',
+	    app.get('/api/v1/users/:target_id/meepass',
 	    	api.users.fetchUserMeepass
 	    );
 
 
-	    app.get('/api/v1/users/:facebook_id/mailchimp-status',
+	    app.get('/api/v1/users/:target_id/mailchimp-status',
 	    	mdw.pop.populateUser(),
 	    	api.users.getMailchimpStatus
 	    );
@@ -313,7 +319,9 @@
 	    app.post('/api/v1/befores/:before_id/request',
 	    	mdw.validate('before_group_request' ),
 	    	mdw.notifier.addNotification('group_request'),
-	    	api.befores.request
+	    	api.befores.request,
+	    	mdw.realtime.updateChannelsRequest,
+	    	mdw.realtime.pushNewRequest
 	    );
 
 	    // [ @befores ] Renvoie la liste des groupes d'un évènement
@@ -325,7 +333,9 @@
 	    app.post('/api/v1/befores/:before_id/groups/:group_id/status',
 	    	mdw.validate('before_group_status'),
 	    	mdw.notifier.addNotification('accepted_in'),
-	    	api.befores.changeGroupStatus
+	    	api.befores.changeGroupStatus,
+	    	mdw.cached.cacheGroupStatus,
+	    	mdw.realtime.pushNewGroupStatus
 	    );
 
 	    // [ @befores ] Renvoie la liste des befores les plus proches
@@ -339,6 +349,7 @@
 	    	mdw.validate('create_before'),
 	    	mdw.meepass.updateMeepass('before_created'),
 	    	api.befores.createBefore,
+	    	mdw.cached.cacheBeforeHosts,
 	    	mdw.notifier.addNotification('marked_as_host'),
 	    	mdw.realtime.pushNewBefore
 	    );
@@ -351,8 +362,12 @@
 
 
 
+	    // [ @chat ] Renvoie l'historique des messages par chat id (Leggcy)
+	    app.get('/test/api/v1/chats/:chat_id/',
+	    	api.chats.fetchChatMessages2
+	    );
 
-	    // [ @chat ] Renvoie l'historique des messages par chat id
+	    // [ @chat ] Renvoie l'historique des messages par chat id (MongoDB)
 	    app.get('/api/v1/chats/:chat_id',
 	    	mdw.validate('chat_fetch'),
 	    	api.chats.fetchChatMessages
@@ -361,9 +376,10 @@
 	    // [ @chat ] Post un nouvau message
 	    app.post('/api/v1/chats/:chat_id',
 	    	mdw.validate('chat_message'),
-	    	mdw.chat_watcher.watchCache,
-	    	mdw.chat_watcher.mailOfflineUsers,
-	    	api.chats.addChatMessage
+	    	// mdw.chat_watcher.watchCache,
+	    	// mdw.chat_watcher.mailOfflineUsers,
+	    	api.chats.addChatMessage,
+	    	mdw.realtime.pushNewChatMessage
 	    );
 
 	    // [ @chat ] Poste le fait qu'un user ai lu un message

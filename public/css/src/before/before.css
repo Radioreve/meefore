@@ -247,6 +247,9 @@
     flex-grow: 0;
     position: relative;
 }
+.user-row:hover {
+    background: #fbfbfb;
+}
 .user-row:last-of-type {border-bottom: none;}
 .user-row__pic {
     position: relative;
@@ -309,7 +312,7 @@
     color: #FD7124;
     display: none;
 }
-.user-row.--host .user-host-icon {
+.user-row.--main .user-host-icon {
     display: block;
 }
 .user-row__education {
@@ -322,7 +325,7 @@
 .user-row__education-icon i {}
 .be-request, .be-ended {
     margin-top: auto;
-    padding: 40px 0 40px 0;
+    padding: 40px 0 50px 0;
     order: 1;
 }
 .be-request button {

@@ -361,11 +361,12 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 			}
 
 			[ $wrap, $wrap.children() ].forEach(function( $el, i ){
-				$el.hide().velocity('shradeIn', {
+				$el.css({ display: 'flex', 'opacity': 0 })
+					.velocity('shradeIn', {
 					duration: ( d*i*1.1 ),
 					display : 'flex',
 					delay   : ( d*0.6*i )
-				})
+				});
 			});
 
 			return LJ.promise(function( resolve, reject ){

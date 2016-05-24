@@ -88,7 +88,10 @@
 			}
 
 
-			Before.findById( before_id, function( err, bfr ){
+			Before
+				.findById( before_id )
+				.lean()
+				.exec(function( err, bfr ){
 
 				if( err ){
 					return callback({
@@ -109,7 +112,7 @@
 						message : "Before is not open",
 						err_id  : "before_not_open",
 						status  : bfr.status
-					});
+					}, null );
 				}
 					
 				var err_data = { already_there: [] };

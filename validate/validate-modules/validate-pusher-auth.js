@@ -65,11 +65,13 @@
 				http_code : 403
 			};
 
-			var channel = _.find( user.channels, function( chan ){
-				return chan.name == channel_name;
-			});
+			var a1 = _.map( user.channels, 'name' );
+			var a2 = _.map( user.channels, 'channel_all' );
+			var a3 = _.map( user.channels, 'channel_team' );
 
-			if( !channel ){
+			var authorized_channels = a1.concat( a2 ).concat( a3 );
+
+			if( authorized_channels.indexOf( channel_name ) == -1 ){
 				return callback({
 					err_id    : 'ghost_channel',
 					message   : 'This channel is not a part of users channels',

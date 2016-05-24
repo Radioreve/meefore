@@ -16,17 +16,19 @@
 	};
 
 	var updateCache = function( req, res, next ){
-
+		
 		var alert_ns = 'user_alerts/' + req.sent.facebook_id;
-		var data = req.sent.app_preferences.alerts
+		var data     = req.sent.app_preferences.alerts
 
 		data.email = req.sent.contact_email; /* @519481 */
 
 		rd.hmset( alert_ns, data, function( err, res ){
 
-			if( err ) return handleErr( req, res, 'server_error', {
-				err_id: 'updating_cache_alerts'
-			});
+			if( err ){
+				return handleErr( req, res, 'server_error', {
+					err_id: 'updating_cache_alerts'
+				});
+			}
 
 			next();
 
@@ -37,8 +39,16 @@
 	var setCache = function( req, res, next ){
 
 		if( req.sent.user ){
-			console.log('User already exists, skipping init cache settings subscription...');
-			return next();
+			console.log('User already exists, updating settings cache instead of setting defaults...');
+
+			req.sent.facebook_id 	 = req.sent.user.facebook_id;
+			req.sent.contact_email   = req.sent.user.contact_email;
+			
+			req.sent.app_preferences = {
+				alerts: req.sent.user.app_preferences.alerts
+			}
+
+			return updateCache( req, res, next );
 		}
 
 		if( req.sent.bot ){
@@ -52,7 +62,7 @@
 		}
 
 		var alert_ns = 'user_alerts/' + req.sent.facebook_id;
-		var data = _.clone( settings.default_app_preferences.alerts );
+		var data = _.cloneDeep( settings.default_app_preferences.alerts );
 
 		data.email = req.sent.facebook_profile.email;
 

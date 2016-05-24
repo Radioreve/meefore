@@ -882,130 +882,7 @@
 			"fr": "Bienvenue sur Meefore",
 			"us": "Welcome to Meefore"
 		},
-		intro_next: {
-			"fr": "Suivant",
-			"us": "Next"
-		},
-		intro_instructions: {
-			"fr": "Quelques étapes pour organiser votre premier before dès ce soir <br> <div class=\"lintro-subtext\">Cliquez sur la flêche pour passer à l'explication suivante</div>",
-			"us": "A few steps to get you started and party tonight <br> <div class=\"lintro-subtext\">Click on the arrow to go to the next step"
-		},
-		intro_chat_1: {
-			"fr": "Hey guys",
-			"us": "Hi guys"
-		},
-		intro_chat_2: {
-			"fr": "On sort dans cette nouvelle boite ce soir, y'a une soirée internationale.",
-			"us": "This is gonna be like really, really fun. We want to go to this new club, there is gon' be an international party."
-		},
-		intro_chat_3: {
-			"fr": "On va prendre une bouteille à l'entrée. Vous voulez toujours vous joindre à nous... ? ;)",
-			"us": "We gon take a table with a bottle of vodka, do you guys still wanna follow us..?"
-		},
-		intro_welcome_header: {
-			"fr": "Bienvenue sur Meefore!",
-			"us": "Welcome to Meefore!"
-		},
-		intro_welcome_subheader: {
-			"fr": "Vous aimez sortir et rencontrer de nouvelles personnes? Meefore va changer vos soirées. Suivez le tour pour découvrir comment.",
-			"us": "You love partying and meeting new people? Meefore will change your nights. Take the tour to discover how."
-		},
-		intro_welcome_btn: {
-			"fr": "Montrez-moi",
-			"us": "Show me"
-		},
-		intro_welcome_skip: {
-			"fr": "Je sais déjà comment ça marche",
-			"us": "I already know how it works"
-		},
-		intro_ending_header: {
-			"fr": "Vous êtes prêt à démarrer!",
-			"us": "You are now ready to start!"
-		},
-		intro_ending_subheader: {
-			"fr": "Il ne vous reste plus qu\'à remplir votre profil et à en parler à vos amis. <br> A bientôt en soirée!",
-			"us": "All you have to do know is bring your friends and complete your profile. <br> See you at the next party!"
-		},
-		intro_ending_btn: {
-			"fr": "Mon profil",
-			"us": "My profile"
-		},
-		intro_ending_skip: {
-			"fr": "Je remplirai mon profil plus tard. Montrez-moi les soirées!",
-			"us": "I'll complete my profile later. Show me the parties!"
-		},
-		intro_text_1: {
-			"fr": "Meefore, c'est une carte avec des soirées et des before",
-			"us": "Meefore, it's a map with parties and pregame parties"
-		},
-		intro_text_2: {
-			"fr": "Chaque utilisateur peut proposer un before...",
-			"us": "Each user can host a pregame party..."
-		},
-		intro_text_3: {
-			"fr": "...avant d'aller à une soirée",
-			"us": "...before going to a specific party"
-		},
-		intro_text_4: {
-			"fr": "Les soirées affichées sur la carte sont proposées par les utilisateurs, ou suggérées par Meefore",
-			"us": "The parties displayed on the map are either proposed by our users or suggested by Meefore"
-		},
-		intro_text_5: {
-			"fr": "Ça, c'est ce qu'il se passe quand plusieurs groupes ont organisé des before avant d'aller à la même soirée",
-			"us": "This, is what happens when multiple groups host a pregame party before going to the same party"
-		},
-		intro_text_6: {
-			"fr":"Lorsque vous cliquez sur un before, des informations sur les organisateurs apparaissent",
-			"us": "When you click on a before, information on the hosts are displayed"
-		},
-		intro_text_7: {
-			"fr": "Ici, c'est les organisateurs du before",
-			"us": "Here, are the people that host the pregame party"
-		},
-		intro_text_8: {
-			"fr": "Là, c'est la soirée où ils ont prévu d'aller après leur before",
-			"us": "This, is the party where they are headed after their pregame party"
-		},
-		intro_text_9: {
-			"fr": "Ici, vous pouvez demander à rejoindre leur before",
-			"us": "This is where you ask to join their pregame party"
-		},
-		intro_text_10: {
-			"fr": "Ça, c'est une demande de participation",
-			"us": "This is what a participation request looks like"
-		},
-		intro_text_11: {
-			"fr": "Meefore encourage la rencontre en groupes, c'est pourquoi vous devez être au moins deux pour rejoindre un before",
-			"us": "Meefore really promotes group dating, which is why you need to be at least a group of two to make a request"
-		},
-		intro_text_12: {
-			"fr": "Lorsque vous envoyez une demande de participation, le groupe organisateur doit valider votre demande",
-			"us": "When you send a request, the hosting group must accept your request"
-		},
-		intro_text_13: {
-			"fr": "Une fois accepté, l'icône change et vous indique que vous pouvez commencer à discuter",
-			"us": "Once accepted, the icon changes and you can now start chatting"
-		},
-		intro_text_13a: {
-			"fr": "Chaque organisateur peut suspendre un meefore à tout moment pour signaler qu'ils sont au complet",
-			"us": "Each host can suspend a pregame party at anytime to signal it is full"
-		},
-		intro_text_14: {
-			"fr": "En bas de l'écran sont représentés tous les meefore qui vous concernent",
-			"us": "Down the screen are shown every meefore you either host or want to join"
-		},
-		intro_text_15: {
-			"fr": "Lorsque vous envoyez une demande de participaton, le groupe organisateur doit valider votre demande",
-			"us": "When you send a request, the hosting group must accept your request"
-		},
-		intro_text_16: {
-			"fr": "Lorsque les organisateurs vous ont validé, la discussion peut démarrer",
-			"us": "Once the hosts have accepted your request, the talk can start"
-		},
-		intro_text_17: {
-			"fr": "Le chat laisse la possibilité de 'chuchotter' des messages à une ou plusieurs personnes",
-			"us": "The chat allows you to 'whisper' messages to one or several people. Only the selected people will receive those messages"
-		},
+
 		//mp stands for missing parameter
 		err_create_n_hosts: {
 			"fr": "Il faut être entre %min et %max pour organiser un before",
@@ -1450,12 +1327,12 @@
 			"us": "Notifications"
 		},
 		settings_emails_accepted_in_label: {
-			"fr": "Demande de participation acceptée",
-			"us": "Participation request accepted"
+			"fr": "Nouveau match",
+			"us": "New match"
 		},
 		settings_emails_accepted_in_explanation: {
-			"fr": "Envoyée lorsqu'une de vos demandes est acceptée",
-			"us": "Sent when one of your requests is accepted"
+			"fr": "Envoyée lorsque vous avez un nouveau matché",
+			"us": "Sent when you have a new match"
 		},
 		settings_emails_new_message_received_label: {
 			"fr": "Nouveau message reçu",
@@ -1680,8 +1557,16 @@
 			"us": "The pregame has been shared"
 		},
 		to_before_request_success: {
-			"fr": "Votre demande de participation a bien été envoyée",
-			"us": "Your participation request has been sent"
+			"fr": "Votre Cheers a bien été envoyée",
+			"us": "Your Cheers has been sent"
+		},
+		to_before_request_success_host: {
+			"fr": "Vous avez reçu un Cheers",
+			"us": "You have received a Cheers"
+		},
+		to_before_request_success_friend: {
+			"fr": "Un ami souhaite participer à un before avec vous",
+			"us": "A friend wishes to join a before with you"
 		},
 		meepass_ribbon2: {
 			"fr": "Il vous reste <span class='n_meepass'>%n</span> meepass",
@@ -1842,12 +1727,8 @@
 			"us": "already participates with someone else"
 		},
 		to_request_pending: {
-			"fr": "Les organisateurs ne vous ont pas encore validé",
-			"us": "Hosts havent validated you yet"
-		},
-		chat_segment_explanation: {
-			"fr": "Filtrez les discussions par jour en sélectionnant une date",
-			"us": "Filter discussions by day by selecting a date"
+			"fr": "Les organisateurs ne vous ont pas encore matché",
+			"us": "Hosts havent matched you yet"
 		},
 		chat_header_title: {
 			"fr": "Discussions",
@@ -1863,43 +1744,47 @@
 		},
 		chat_segment_requested: {
 			"fr": "Je participe",
-			"us": "I participate"
+			"us": "I join"
 		},
 		chat_empty_title: {
 			"fr": "Rien à l'horizon...",
 			"us": "Nothing on the horizon..."
 		},
 		chat_empty_subtitle_all: {
-			"fr": "Créez ou demander à rejoindre un before pour commencer à faire connaissance avec les autres organisateurs.",
-			"us": "Create or request to join a pregame to start meeting new people."
+			"fr": "Créez un before ou envoyer un Cheers pour commencer à faire connaissance avec d'autres membres.",
+			"us": "Create a pregame or send a Cheers to start meeting new people."
 		},
 		chat_empty_subtitle_hosted: {
 			"fr": "Retrouvez ici toutes les discussions concernant les before que vous organisez.",
 			"us": "Find here all the conversations regarding the pregame you're throwing."
 		},
 		chat_empty_subtitle_requested: {
-			"fr": "Retrouvez ici toutes les discussions concernant les before auxquels vous participez.",
-			"us": "Find here all the conversations regarding the pregame at which your participating."
+			"fr": "Retrouvez ici toutes les discussions concernant les groupes avec lesquels vous avez eu un Match.",
+			"us": "Find here all the conversations regarding the groups whom you matched with."
 		},
 		chat_empty_title_inview_hosts: {
-			"fr": "Ambiance !",
-			"us": "Heat on !"
+			"fr": "Vous avez un Match !",
+			"us": "It's a Match !"
 		},
 		chat_empty_subtitle_inview_hosts: {
 			"fr": function( group_name ){
-				return "Vous avez accepté la demande du groupe "+ group_name +". N'attendez pas la soirée pour faire connaissance, le before commence dès maintenant."
+				return  "Faîtes connaissance avec " + group_name + " dès maintenant."
 			},
 			"us": function( group_name ){
-				return "You have accepted the request from the group "+ group_name +". Dont wait to meet up to get to know each other, the pregame starts now."
+				return "Get to know " + group_name + " now."
 			} 
 		},
 		chat_empty_title_inview_accepted: {
-			"fr": "Faites le premier pas !",
-			"us": "Send the first message !"
+			"fr": "Vous avez un Match !",
+			"us": "It's a Match !"
 		},
 		chat_empty_subtitle_inview_accepted: {
-			"fr": "Les organisateurs de ce before semblent partant pour faire la fête avec vous. Envoyez le premier message et faites connaissance.",
-			"us": "The hosts of this before seem willing to pregame with you. Send the first message and get to know each other."
+			"fr": function( group_name ){
+				return  "Faîtes connaissance avec " + group_name + " dès maintenant."
+			},
+			"us": function( group_name ){
+				return "Get to know " + group_name + " now."
+			} 
 		},
 		chat_empty_title_inview_team: {
 			"fr": function( group_name ){ return group_name; },
@@ -1914,8 +1799,8 @@
 			"us": "Be patient..."
 		},
 		chat_empty_subtitle_inview_pending: {
-			"fr": "Vous pourrez commencer à discuter dès que votre demande de participation aura été acceptée.",
-			"us": "You'll be able to start chatting as soon as your participation request has been approved."
+			"fr": "Vous pourrez faire connaissance dès que vous aurez un Match avec les organisateurs.",
+			"us": "You'll be able to start chatting as soon as there is a Match with the hosts."
 		},
 		chat_inview_options_message: {
 			"fr": "Que souhaitez-vous faire ?",
@@ -1950,28 +1835,36 @@
 			"us": "My group"
 		},
 		chat_row_request_pending_title: {
-			"fr": "En attente",
+			"fr": "Cheers envoyé",
 			"us": "Waiting"
 		},
 		chat_row_request_pending_subtitle: {
-			"fr": "Demande de participation envoyée",
-			"us": "Partcipation request sent"
+			"fr": "En attente de Match...",
+			"us": "Waiting for a Match..."
 		},
 		chat_row_request_accepted_title: {
-			"fr": "Vous avez été accepté",
-			"us": "You have been approved"
+			"fr": "Vous avez un Match !",
+			"us": "It's a Match !"
 		},
 		chat_row_request_accepted_subtitle: {
-			"fr": "Le before commence maintenant",
-			"us": "The pregame starts now"
+			"fr": "Faites connaissance dès maintenant",
+			"us": "Get to know each other right now"
 		},
 		chat_row_request_participation_title: {
-			"fr": "Nouvelle demande",
-			"us": "New request"
+			"fr": "Cheers reçu",
+			"us": "Cheers received"
 		},
 		chat_row_request_participation_subtitle: {
-			"fr": function( group_name ){ return "Le groupe "+ group_name +" souhaite participer" },
-			"us": function( group_name ){ return "The group "+ group_name +" wishes to join you" } 
+			"fr": function( group_name ){ return "De "+ group_name  },
+			"us": function( group_name ){ return "From "+ group_name } 
+		},
+		chat_inview_validate_later: {
+			"fr": "Plus tard",
+			"us": "Later"
+		},
+		chat_inview_validate_now: {
+			"fr": "Cheers !",
+			"us": "Cheers !"
 		}
 
 

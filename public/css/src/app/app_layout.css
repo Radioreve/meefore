@@ -191,10 +191,10 @@ button:hover {
 
 .row-body__icon i {}
 
-.row-body h4 {
+.row-body h4 { 
     color: #919191;
     font-size: 14px;
-    font-weight: 300;
+    font-weight: 400;
     font-family: 'Open sans';
 }
 
@@ -606,6 +606,20 @@ button:hover {
 }
 .user-gender.--female {
     background: rgb(213, 93, 140);
+}
+
+.user-country {
+    position: absolute;
+    bottom: 2px;
+    right: 0px;
+    overflow: hidden;
+    display: none;
+}
+
+.user-country i {
+    border-radius: 6px 0 6px 0;
+    border: 2px solid white;
+    font-size: 12px;
 }
 
 .user-online {

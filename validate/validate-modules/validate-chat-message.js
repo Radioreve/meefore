@@ -13,7 +13,7 @@
 			.withRequired('message'        , nv.isString() )
 			.withRequired('group_id'       , nv.isString() )
 			.withRequired('facebook_id'    , nv.isString() )
-			.withOptional('offline_users'  , nv.isArray()  )
+			// .withOptional('offline_users'  , nv.isArray()  )
 			// .withOptional('whisper_to'     , nv.isArray()  )
 
 		nv.run( checkMessage, req.sent, function( n, errors ){
@@ -32,36 +32,30 @@
 		});
 	};
 
+
 	function checkSenderStatus( req, callback ){
 
-		var before_id   = req.sent.before_id;
-		var group_id    = req.sent.group_id;
-		var facebook_id = req.sent.facebook_id;
+		var group_id = req.sent.group_id;
+		var chat_id  = req.sent.chat_id;
 
-		rd.smembers('before/' + before_id + '/hosts', function( err, hosts_id ){
+		// The only thing that should not be possible is for users to send a chat message in the all channel
+		// When the group status is still pending
+		if( !/all/i.test( chat_id ) ){
+			return callback( null );
+		}
 			
-			rd.get('group/' + group_id + '/status', function( err, status ){
+		rd.get('group/' + group_id + '/status', function( err, status ){
 
-				// User that has been validated to send message?
-				if( group_id != "hosts" && status != 'accepted' )
-					return callback({
-						err_id   : "unauthorized_group",
-						group_id : group_id,
-						status   : status
-					});
+			// User that has been validated to send message ?
+			if( status != "accepted" ){
+				return callback({
+					"err_id": "status_not_accepted",
+					"status": status
+				}, null );
+			}
 
-				// One of the hosts?
-				if( group_id == "hosts" && hosts_id.indexOf( facebook_id ) == -1 )
-					return callback({
-						message  : "You are not an host",
-						err_id   : "unauthorized_admin",
-						hosts_id : hosts_id,
-						sent 	 : req.sent,
-					});
+			callback( null );
 
-				callback( null );
-
-			});
 		});
 
 

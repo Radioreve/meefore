@@ -3,7 +3,8 @@
 	var jwt = require('jsonwebtoken');
 	var config = require('../config/config');
 
-	 function getAccessToken( facebook_id, callback ){
+
+	function getAccessToken( facebook_id, callback ){
 
             request({ method: 'post', url: 'http://localhost:1234/auth/token', json: { api_key: 'meeforever', data: { id: facebook_id }} }, function( err, body, res ){
                 

@@ -15,16 +15,8 @@ var settings = {
 		max_hosts: 4,
 		min_age  : min_age,
 		max_age  : 50,
-		max_pic  : 5
-	},
-	default_profile_values: {
-		name 	: 'Meename',
-		age  	: min_age, 
-		img_id  : placeholder_img_id,
-		img_vs  : placeholder_img_vs,
-		job		: 'Meelover',
-		'g'		: 'male',
-		'cc'	: 'fr'
+		max_pic  : 5,
+		chat_fetch_count: 20
 	},
 	default_pictures: [
 		{ img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 0, is_main: true , hashtag: 'me' },

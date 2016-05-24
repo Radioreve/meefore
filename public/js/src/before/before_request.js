@@ -5,6 +5,7 @@
 
 			var members_profiles = null;
 			var before_item      = null;
+			var channel_item     = null;
 
 			return LJ.ui.getModalItemIds()
 				.then(function( item_ids ){
@@ -18,8 +19,8 @@
 
 				})
 				.then(function( exposed ){
-					before_item 	 = exposed.before_item;
-					members_profiles = exposed.members_profiles;
+					before_item  = exposed.before_item;
+					channel_item = exposed.channel_item;
 					return LJ.ui.hideModal();
 
 				})
@@ -28,6 +29,10 @@
 					LJ.user.befores.push( before_item );
 					LJ.before.pendifyBeforeInview( before_id );
 					LJ.before.pendifyBeforeMarker( before_id );
+					LJ.user.channels.push( channel_item );
+					LJ.realtime.subscribeToChatChannel( channel_item.channel_all );
+					LJ.realtime.subscribeToChatChannel( channel_item.channel_team );
+					LJ.chat.addAndFetchOneChat( channel_item );
 					
 				})
 				.catch(function(e){

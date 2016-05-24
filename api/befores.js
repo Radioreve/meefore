@@ -4,9 +4,6 @@
 	var User           = require('../models/UserModel');
 	var Before         = require('../models/BeforeModel');
 	var moment         = require('moment');
-	var rd             = require('../services/rd');
-	var alerts_watcher = require('../middlewares/alerts_watcher');
-	var mailer         = require('../services/mailer');
 
 	var mongoose = require('mongoose');
 	var pusher   = require('../services/pusher');
@@ -63,30 +60,25 @@
 				begins_at : new_before.begins_at
 	    	};
 
+	    	User.update({'facebook_id': { $in: data.hosts } },
+	    				{ $push: { 'befores': before_item_host }},
+	    				{ multi: true },
 
-	    	// Cache hosts ids for chat performance 
-	    	var hosts_ns = 'before/' + new_before._id + '/hosts';
-	    	rd.sadd( hosts_ns, _.pluck( new_before.hosts, 'facebook_id' ), function( err ){
+				function( err, users ){
 
-		    	User.update({'facebook_id': { $in: data.hosts } },
-		    				{ $push: { 'befores': before_item_host }},
-		    				{ multi: true },
+					if( err ){
+						return eventUtils.raiseError({ err: err, res: res, toClient: "Error updating users"});
+					}
 
-					function( err, users ){
+			    	console.log('Before created!');
+			    	req.sent.before 		    = new_before;
+			    	req.sent.expose.before      = new_before;
+			    	req.sent.expose.before_item = before_item_host;
 
-						if( err ){
-							return eventUtils.raiseError({ err: err, res: res, toClient: "Error updating users"});
-						}
+			    	return next();
 
-				    	console.log('Before created!');
-				    	req.sent.expose.before      = new_before;
-				    	req.sent.expose.before_item = before_item_host;
+				});
 
-				    	return next();
-
-					});
-
-		    	});
 
 	    	});
 
@@ -103,11 +95,17 @@
 		var before 	    = req.sent.before;
 		var before_id   = req.sent.before_id;
 
+		var requested_at = new Date();
+
 		var group_item = {
-			status 		: 'pending',
-			members     : members,
-			main_member : facebook_id
+			status 		 : 'pending',
+			members      : members,
+			main_member  : facebook_id,
+			requested_at : requested_at
 		};
+
+		// Used right after to make channel_item
+		req.sent.group = group_item;
 
 		console.log('Requesting in with before_id = ' + before_id );
 
@@ -139,6 +137,8 @@
 							return handleErr( req, res, err_ns, err );
 						}
 
+						req.sent.before 				 = bfr;
+						req.sent.before_item             = before_item;
 						req.sent.expose.before_item      = before_item;
 						req.sent.expose.members_profiles = req.sent.members_profiles;
 						next();
@@ -198,82 +198,22 @@
 
 	var changeGroupStatus = function( req, res, next ){
 		
-		var bfr       = req.sent.bfr;
-		var groups    = bfr.groups;
-		var before_id = req.sent.before_id;
-		var group_id  = req.sent.group_id;
-		var chat_id   = req.sent.chat_id;
-		var status    = req.sent.group_status;
-		var socket_id = req.sent.socket_id;
+		var err_ns    = "updating_group_status";
+
+		var before       = req.sent.before;
+		var status       = req.sent.status;
+		var target_group = req.sent.target_group;
 
 		console.log('Changing group status, new status : ' + status );
 
-		// Notification variable, to be displayed and saved;
-		var notification = req.sent.notification;
+		target_group.status = status;
 
-		groups.forEach(function( group, i ){
+		before.markModified('groups');
+		before.save(function( err, bfr ){
 
-			if( group.group_id == group_id ){
+			if( err ) return handleErr( req, res, err_ns, err );
 
-				groups[i].status = status;
-
-				rd.set('before/' + before_id + '/' + 'group/' + group_id + '/status', status, function( err ){
-
-					if( status == 'accepted' ){
-						groups[i].accepted_at = new Date();
-						groups[i].members_facebook_id.forEach(function( facebook_id ){
-
-							alerts_watcher.allowSendAlert( facebook_id, "accepted_in", function( allowed, alerts ){
-
-								if( allowed && alerts.email ){
-									mailer.sendAlertEmail_RequestAccepted( alerts.email );
-								}
-
-							});
-
-						});
-					} else {
-						groups[i].kicked_at = new Date();
-					}
-					
-				});
-			}
-		});
-
-		bfr.groups = groups;
-		bfr.markModified('groups');
-
-		bfr.save(function( err, bfr ){
-
-			if( err || !bfr ) 
-				return eventUtils.raiseError({
-					err: err,
-					res: res,
-					toClient: "api error"
-				});
-
-			var group = bfr.getGroupById( group_id );
-
-
-			console.log( eventUtils.oSize( group ) );
-
-			var data = {
-				before_id          : bfr._id,
-				hosts             : bfr.hosts,
-				group             : group,
-				chat_id			  : chat_id,
-				notification      : notification
-			};
-
-			eventUtils.sendSuccess( res, data );
-
-			if( eventUtils.oSize( data ) > pusher_max_size ){
-	    		pusher.trigger( before_id, 'new oversize message' );
-	    	} else {
-				console.log('Pushing new group status to clients in beforeid: ' + before_id );
-				pusher.trigger( 'presence-' + chat_id, 'new group status', data, socket_id );
-			}
-
+			next();
 
 		});
 

@@ -2,21 +2,41 @@
 	window.LJ.chat = _.merge( window.LJ.chat || {}, {
 
 		state: 'hidden',
+		fetched_groups: {},
 		fetched_chats: {},
 
 		init: function(){
 				
 			LJ.chat.handleDomEvents();
-			LJ.chat.setChatDimensions();
-			LJ.chat.addAndFetchChats();
+				
+			// Non blocking promise
+			LJ.chat.setupChat()
+				.then(function(){
+					return LJ.chat.addAndFetchChats();
+				})
 
 			return;
 
 		},
-		setChatDimensions: function(){
+		setupChat: function(){
 
+			// Set chat dimensions for jsp compliance
 			var height = $(window).height() - LJ.ui.slide_top;
+
 			$('.chat').css({ height: height });
+			$('.chat-rows').css({
+				height : height - ( $('.chat-header').height() + $('.chat-subheader').height() )
+			});
+
+			// Jspify the chat rows container
+			return LJ.ui.turnToJsp('.chat-rows', {
+				jsp_id: 'chat_rows'
+			});
+
+		},
+		refreshChatRowsJsp: function(){
+
+			LJ.ui.jsp[ "chat_rows" ].reinitialise();
 
 		},
 		handleDomEvents: function(){
@@ -28,7 +48,217 @@
 
 			LJ.chat.handleDomEvents__Inview();
 
-		},	
+		},
+		// Sort all chat messages by crescent order : messages[0] is the oldest
+		sortChatMessages: function( chat_id ){
+
+			LJ.chat.getChatById( chat_id ).messages.sort(function( ch1, ch2 ){
+				return moment( ch1.sent_at ) - moment( ch2.sent_at );
+			})
+
+		},
+		cacheChatMessage: function( chat_id, message_object ){
+
+			if( !message_object.state ){
+				LJ.wlog('Cannot cache message object without a local state ("seen","unseen")');
+
+			} else {
+				LJ.chat.getChatById( chat_id ).messages.push( message_object );
+				LJ.chat.sortChatMessages( chat_id );
+			}
+
+		},
+		cacheChatMessages: function( chat_id, messages, readby ){
+
+			if( !Array.isArray(messages) ){
+				return LJ.wlog('Cannot setup cache for chat without a messages array');
+			}
+
+			if( readby ){
+				LJ.chat.getChatById( chat_id ).readby = readby
+			}
+			
+			// During the setup, check if
+			messages.forEach(function( message_object ){
+
+				var sent_at     = moment( message_object.sent_at );
+				var last_online = moment().subtract('20000','minutes');
+
+				message_object.state = sent_at > last_online ? "unseen" : "seen";
+				LJ.chat.cacheChatMessage( chat_id, message_object );
+
+			});
+
+		},
+		getActiveChatId: function(){
+
+			var active_chat_id = null;
+				LJ.chat.getChatIds().forEach(function( chat_id ){
+				if( LJ.chat.getChatById( chat_id ).ui_status == "active" ){
+					active_chat_id = chat_id;
+				}
+			});
+			return active_chat_id;
+
+		},
+		viewifyChatInview: function( chat_id ){
+
+			var chat = LJ.chat.getChatById( chat_id );
+
+			if( chat.ui_status == "active" ){
+				chat.messages.forEach(function( m ){
+					m.state = "seen";
+				});
+			}
+
+		},
+		refreshChatIconBubble: function(){
+
+			LJ.chat.resetBubbleToChatIcon();
+			
+			_.keys( LJ.chat.fetched_groups ).forEach(function( group_id ){
+				if( LJ.chat.getUnseenMessagesCount( group_id ) > 0 ){
+					LJ.chat.addBubbleToChatIcon();
+				}
+			});
+
+
+		},
+		refreshChatInviewBubbles: function( group_id ){
+			
+			var chat_all  = LJ.chat.getChatByGroupId__All( group_id );
+			var chat_team = LJ.chat.getChatByGroupId__Team( group_id );
+			
+			LJ.chat.resetBubbleToChatRow( group_id );
+			LJ.chat.resetBubbleToChatSwitchIcon( group_id );
+			
+			[ chat_all, chat_team ].forEach(function( chat ){
+				chat.messages.forEach(function( m ){
+
+					 if( m.state == "unseen" ){
+
+						LJ.chat.addBubbleToChatRow( group_id );
+						LJ.chat.addBubbleToChatSwitchIcon( group_id );
+
+					} 
+				});
+			});
+
+
+		},
+		getUnseenMessagesCount: function( group_id ){
+
+			var i 		   = 0;
+			var chat_all   = LJ.chat.getChatByGroupId__All( group_id );
+			var chat_team  = LJ.chat.getChatByGroupId__Team( group_id );
+
+			[ chat_all, chat_team ].forEach(function( chat ){
+				chat.messages.forEach(function( m ){
+
+					 if( m.state == "unseen" ){
+						i++;
+					} 
+				});
+			});
+
+			return i;
+
+
+		},
+		addBubbleToChatIcon: function(){
+
+			LJ.ui.showBubble( $('.app__menu-item.--chats') );
+
+		},
+		resetBubbleToChatIcon: function(){
+
+			LJ.ui.hideBubble( $('.app__menu-item.--chats') );
+
+		},
+		addBubbleToChatRow: function( group_id ){
+
+			var $chatrow = $('.chat-row[data-group-id="'+ group_id +'"]');
+			LJ.ui.bubbleUp( $chatrow );
+
+		},
+		resetBubbleToChatRow: function( group_id ){
+
+			var $chatrow = $('.chat-row[data-group-id="'+ group_id +'"]');
+			LJ.ui.setBubble( $chatrow, 0 );
+
+		},
+		resetBubbleToChatSwitchIcon: function( group_id ){
+
+			var $icon = $('.chat-inview[data-group-id="'+ group_id +'"]')
+						.find('.chat-inview__icon.--switch');
+
+			LJ.ui.setBubble( $icon, 0 );
+
+		},
+		addBubbleToChatSwitchIcon: function( group_id ){
+
+			var $icon = $('.chat-inview[data-group-id="'+ group_id +'"]')
+						.find('.chat-inview__icon.--switch');
+
+			LJ.ui.bubbleUp( $icon );
+
+		},
+		getChatIds: function(){
+
+			return _.keys( LJ.chat.fetched_chats );
+
+		},
+		getChatById: function( chat_id ){
+
+			var c = LJ.chat.fetched_chats[ chat_id ];
+
+			if( !c ){
+				LJ.log('Initializing chat cache object, didnt exist before');
+				LJ.chat.fetched_chats[ chat_id ] = { readby: null, messages: [] };
+				c = LJ.chat.fetched_chats[ chat_id ];
+			} 
+
+			return c;
+
+		},
+		getGroupIdByChatId: function( chat_id ){
+			
+			var group_id = null;
+			LJ.user.channels.forEach(function( chan ){
+					
+				if( chan.channel_all == chat_id || chan.channel_team == chat_id ){
+					group_id = chan.group_id;
+				}
+
+			});
+			return group_id;
+				
+		},
+		getChatByGroupId__All: function( group_id ){
+
+			var chat_id = _.find( LJ.user.channels, function( chan ){
+				return chan.group_id == group_id;
+			}).channel_all;
+
+			return LJ.chat.getChatById( chat_id );
+
+		},
+		getChatByGroupId__Team: function( group_id ){
+
+			var chat_id = _.find( LJ.user.channels, function( chan ){
+				return chan.group_id == group_id;
+			}).channel_team;
+
+			return LJ.chat.getChatById( chat_id );
+
+		},
+		updateChatMessagesState: function( chat_id, state ){
+
+			LJ.chat.getChatById( chat_id ).messages.forEach(function( message ){
+				message.state = state;
+			});
+
+		},
 		addAndFetchChats: function(){
 
 			// Keep only the channels that are chat-related
@@ -46,8 +276,18 @@
 				});
 
 
-		},		
+		},
 		addAndFetchOneChat: function( channel_item ){
+
+			var group_id     = channel_item.group_id;
+			var chat_id_all  = channel_item.channel_all;
+			var chat_id_team = channel_item.channel_team;
+			var hosts 		 = channel_item.hosts;
+			var members 	 = channel_item.members;
+			var main_host    = channel_item.main_host;
+			var main_member  = channel_item.main_member;
+			var status 		 = channel_item.status;
+			var role 		 = channel_item.role;
 
 			LJ.log('Initializing one chat...');
 
@@ -63,12 +303,14 @@
 						
 					})
 					.then(function(){
-						return LJ.chat.loaderifyChatInview( channel_item.group_id );
+						LJ.chat.loaderifyChatInview( chat_id_all );
+						LJ.chat.loaderifyChatInview( chat_id_team );
+						return;
 					})
 					// Find the profiles of everyone 
 					.then(function(){
-						var hosts_profiles   = LJ.api.fetchUsers( channel_item.hosts );
-						var members_profiles = LJ.api.fetchUsers( channel_item.members );
+						var hosts_profiles   = LJ.api.fetchUsers( hosts );
+						var members_profiles = LJ.api.fetchUsers( members );
 
 						return LJ.Promise.all([ hosts_profiles, members_profiles ]);
 
@@ -79,10 +321,10 @@
 						var hosts_profiles   = _.map( res[0], 'user' );
 						var members_profiles = _.map( res[1], 'user' );
 
-						var main_member_profile = _.find( members_profiles, function(m){ return m.facebook_id == channel_item.main_member; });
-						var main_host_profile   = _.find( hosts_profiles, function(h){ return h.facebook_id == channel_item.main_host });
+						var main_member_profile = _.find( members_profiles, function(m){ return m.facebook_id == main_member });
+						var main_host_profile   = _.find( hosts_profiles, function(h){ return h.facebook_id == main_host });
 
-						LJ.chat.fetched_chats[ channel_item.group_id ] = {
+						LJ.chat.fetched_groups[ group_id ] = {
 							hosts_profiles      : hosts_profiles,
 							members_profiles    : members_profiles,
 							main_host_profile   : main_host_profile,
@@ -94,8 +336,9 @@
 					})
 					// Fetch the last chat messages (async)
 					.then(function(){
-						var chat_messages_all  = LJ.api.fetchChatHistory( channel_item.channel_all );
-						var chat_messages_team = LJ.api.fetchChatHistory( channel_item.channel_team );
+
+						var chat_messages_all  = LJ.api.fetchChatHistory( chat_id_all );
+						var chat_messages_team = LJ.api.fetchChatHistory( chat_id_team );
 
 						return LJ.Promise.all([ chat_messages_all, chat_messages_team ])
 
@@ -104,27 +347,40 @@
 					.then(function( res ){
 
 						// Add messages to the all chat
+						LJ.chat.cacheChatMessages( chat_id_all,  res[0].messages, res[0].readby );
+						LJ.chat.cacheChatMessages( chat_id_team, res[1].messages, res[1].readby );
+
+						// Set all chats internal ui_status to "inactive";
+						LJ.chat.deactivateChats();
+
 						LJ.chat.addChatMessages({
 							channel_item     : channel_item,
-							chat_messages 	 : res[0],
+							chat_messages    : res[0].messages,
+							chat_readby 	 : res[0].readby,
 							chat_type	  	 : "all"
 						});
 
 						// Add messages to the team chat
 						LJ.chat.addChatMessages({
 							channel_item     : channel_item,
-							chat_messages 	 : res[1],
+							chat_messages    : res[1].messages,
+							chat_readby 	 : res[1].readby,
 							chat_type	  	 : "team"
 						});
 
-						LJ.chat.setupChatJsp( channel_item.channel_all );
-						LJ.chat.setupChatJsp( channel_item.channel_team );
+						if( channel_item.role == "hosted" && channel_item.status == "pending" ){
+							LJ.chat.validateifyChatInview( group_id, chat_id_all );
+						}
 
-						LJ.chat.deloaderifyChatInview( channel_item.group_id );
-						LJ.chat.updateChatRowFirstTime( channel_item.group_id, {
-							messages : _.concat( res[0], res[1] ),
-							status   : channel_item.status
-						});
+						LJ.chat.setupChatJsp( chat_id_all);
+						LJ.chat.setupChatJsp( chat_id_team );
+
+						LJ.chat.deloaderifyChatRow( group_id );
+						LJ.chat.deloaderifyChatInview( chat_id_all );
+						LJ.chat.deloaderifyChatInview( chat_id_team );
+
+						LJ.chat.updateChatRowFirstTime( group_id, role, status );
+
 						return;
 
 					})
@@ -136,18 +392,8 @@
 
 
 		},
-		updateChatRowFirstTime: function( group_id, opts ){
+		updateChatRowFirstTime: function( group_id, role, status ){
 
-			var messages   = opts.messages;
-			var status     = opts.status;
-
-			// window.sorted_messages = messages.sort(function( m1, m2 ){
-			// 	return moment( m1.sent_at ) - moment( m2.sent_at );
-
-			// });
-
-			// Update the bubble of the amount of unread messages
-			// Update the author of the last message
 			if( status == "pending" ){
 				LJ.chat.updateChatRow__Pending( group_id );
 			}
@@ -156,31 +402,41 @@
 				LJ.chat.updateChatRow__Accepted( group_id );
 			}
 
-			if( status == "hosting" ){
+			if( role == "hosted" ){
 				LJ.chat.updateChatRow__Request( group_id );
 			}
 
+			LJ.chat.updateChatRowPreview__AuthorLast( group_id );
+			LJ.chat.updateChatRowTime( group_id );
+			LJ.chat.newifyChatRow( group_id );
+			LJ.chat.topifyChatRow( group_id );
+			LJ.chat.refreshChatInviewBubbles( group_id );
+			LJ.chat.refreshChatIconBubble();
 
 		},
 		setupChatJsp: function( chat_id ){
 
 			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
 
-			LJ.ui.turnToJsp('.chat-inview-item[data-chat-id="'+ chat_id +'"] .chat-inview-messages', {
+			return LJ.ui.turnToJsp('.chat-inview-item[data-chat-id="'+ chat_id +'"] .chat-inview-messages', {
 					jsp_id   : chat_id,
 					handlers : [{
 						'event_name' : 'jsp-scroll-y',
 						'callback'   : function( e, scroll_pose_y, is_at_top, is_at_bottom ){
 
-							if( is_at_top ){
-								// Fetch history...
+							// To make sure the first time usr loads the chat, no automatic refetch takes place
+							if( !$w.hasClass('--fetch-ready') ){
+								return LJ.log('Cant fetch history, the chat is not set as ready');
 							}
 
-							// if( is_at_bottom ){
-							// 	$w.addClass('js-scroll-to-bottom');
-							// } else {
-							// 	$w.removeClass('js-scroll-to-bottom');
-							// }
+							if( is_at_top
+								&& !$w.hasClass('--fetching-history')
+								&& !$w.hasClass('--fetching-done') 
+								&& $w.find('.chat-inview-message__bubble:not(.--pending)').length >= LJ.app_settings.app.chat_fetch_count
+							){
+								LJ.log('Fetching history...');
+								LJ.chat.refetchChatHistory( chat_id );
+							} 
 
 						}
 					}]
@@ -190,31 +446,36 @@
 		},
 		setupChatRow: function( channel_item ){
 			
-			var group_id  = channel_item.group_id;
-			var status    = channel_item.status;
-			var before_id = channel_item.before_id;
-			
-			var before = LJ.before.findById( before_id );
+			var group_id     = channel_item.group_id;
+			var status       = channel_item.status;
+			var role 		 = channel_item.role;
+			var before_id    = channel_item.before_id;
+			var requested_at = channel_item.requested_at;
+			var before       = LJ.before.findById( before_id );
 
 			if( !before ){
 				return LJ.wlog('Unable to find user before details (not fetched), before_id="' + before_id );
 			}
 			
 			var html;
-			if( status == "hosting" ){
-				html = LJ.chat.renderChatRow__Hosting( group_id, before );
-			}
-
 			if( status == "pending" ){
-				html = LJ.chat.renderChatRow__Pending( group_id, before );
+
+				if( role == "hosted" ){
+					html = LJ.chat.renderChatRow__Hosting( group_id, requested_at );
+				} else {
+					html = LJ.chat.renderChatRow__Pending( group_id, requested_at );
+				}
+
+			} else {
+				html = LJ.chat.renderChatRow__Accepted( group_id, requested_at );
+
 			}
 
-			if( status == "accepted" ){
-				html = LJ.chat.renderChatRow__Accepted( group_id, before );
-			}
-
-			LJ.chat.addChatRow( html );					
-			// LJ.chat.sortChatRows();
+			LJ.chat.addChatRow( html );
+			// All chat empty are dynamically rendered and added each time there is a nav
+			// between toggles so we can safely remove them when they need to.
+			LJ.chat.clearChatRowEmpty();		
+			LJ.chat.refreshChatRowsJsp();
 			LJ.chat.loaderifyChatRow( group_id );
 			LJ.chat.showChatRow( group_id );
 
@@ -270,46 +531,44 @@
 
 
 		},
-		loaderifyChatInview: function( group_id ){
-			
-			var $chatinviews = $('.chat-inview-item[data-group-id="'+ group_id +'"]');
-
-			$chatinviews.each(function( i, el ){
-
-				var $loader = LJ.static.renderStaticImage( "chat_row_loader" );
-				$(el).find('.chat-inview-messages').append( $loader );
-				
-			});
-
-		},
 		loaderifyChatRow: function( group_id ){
 
 			var $chatrow = $('.chat-row[data-group-id="'+ group_id +'"]');
-			var $loader  = LJ.static.renderStaticImage( "chat_row_loader" );
+			var $loader  = LJ.static.renderStaticImage("chat_loader");
 
 			$chatrow.children().hide();
 			$chatrow.append( $loader );
 
 		},
-		deloaderifyChatInview: function( group_id ){
+		deloaderifyChatRow: function( group_id ){
 
 			var $chatrow = $('.chat-row[data-group-id="'+ group_id +'"]');
-			var $loader  = $chatrow.find('.chat-row__loader');
+			var $loader  = $chatrow.find('.chat__loader');
 
 			$chatrow.children().show();
-			$loader.hide();
+			$loader.remove();
 
 		},
 		addChatInview: function( html ){
 
-			$( html ).hide().appendTo('.chat-inview-wrap');
+			$( html )
+				.hide()
+				.appendTo('.chat-inview-wrap');
 
 		},
 		addChatRow: function( html ){
+			
+			$( html )
+				.css({ opacity: 0 }) // jsp compliance
+				.prependTo('.chat-rows .jspPane');
 
-			$( html ).hide().appendTo('.chat-rows');
 
 		},
+		clearChatRowEmpty: function(){
+
+			$('.chat-rows').find('.chat-empty').remove();
+
+		},	
 		sortChatRows: function(){
 
 			var L = $('.chat-row').length;
@@ -332,17 +591,17 @@
 		showChatRow: function( group_id ){
 
 			var $chatrow = $('.chat-row[data-group-id="'+ group_id +'"]');
-			$chatrow.show();
+			$chatrow.css({ display: 'flex', opacity: 1 });
 
 		},
 		updateChatRowPicture: function( channel_item ){
 
 			LJ.log('Updating chat row pictures..');
 
-			var group_id    = channel_item.group_id;
-			var chat_object = LJ.chat.fetched_chats[ group_id ];
+			var group_id     = channel_item.group_id;
+			var group_object = LJ.chat.fetched_groups[ group_id ];
 
-			var users       = channel_item.status == "hosting" ? chat_object.members_profiles : chat_object.hosts_profiles;
+			var users        = channel_item.status == "hosting" ? group_object.members_profiles : group_object.hosts_profiles;
 			
 			// Render rosace
 			var pictures = [];
@@ -366,15 +625,17 @@
 
 			LJ.log('Adding chat messages...');
 
-			var chat_type        = opts.chat_type;
-			var chat_messages    = opts.chat_messages;
-			var group_id 		 = opts.channel_item.group_id;
-			var status           = opts.channel_item.status;
+			var chat_type     = opts.chat_type;
+			var chat_messages = opts.chat_messages;
+			var chat_readby   = opts.chat_readby;
+			var group_id 	  = opts.channel_item.group_id;
+			var status        = opts.channel_item.status;
+			var role 		  = opts.channel_item.role;
 
 			var chat_id = (chat_type == "all") ? opts.channel_item.channel_all : opts.channel_item.channel_team;
 
-			var main_member_profile = LJ.chat.fetched_chats[ group_id ].main_member_profile;
-			var main_host_profile   = LJ.chat.fetched_chats[ group_id ].main_host_profile;
+			var main_member_profile = LJ.chat.fetched_groups[ group_id ].main_member_profile;
+			var main_host_profile   = LJ.chat.fetched_groups[ group_id ].main_host_profile;
 
 			var $wrap = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]').find('.chat-inview-messages');
 			var html;
@@ -389,34 +650,42 @@
 
 				} else {
 
-					if( status == "hosting" ){
+					if( role == "hosted" ){
 
 						var group_name = LJ.renderGroupName( main_member_profile.name );
-						html = LJ.chat.renderChatInview__HostsEmpty( group_name );
-
-					}
-					if( status == "pending" ){
-
-						html = LJ.chat.renderChatInview__PendingEmpty();
-
-					}
-					if( status == "accepted" ){
-
-						var group_name = LJ.renderGroupName( main_host_profile.name );
 						html = LJ.chat.renderChatInview__AcceptedEmpty( group_name );
 
-					}
+					} else {
 
+						if( status == "pending" ){
+
+							$wrap.closest('.chat-inview-item').addClass('--pending');
+							html = LJ.chat.renderChatInview__PendingEmpty();
+
+						}
+						if( status == "accepted" ){
+
+							var group_name = LJ.renderGroupName( main_host_profile.name );
+							html = LJ.chat.renderChatInview__AcceptedEmpty( group_name );
+
+						}
+					}
 				}
+
+				return $wrap.html( html );
 
 			} else {
 
+				chat_messages.forEach(function( message_object ){
+					// Message_object contains chat_id, message, sender_id, sent_at and group_id
+					// Generate a local call_id to allow merge, horodate fn etc to properly work
+					LJ.chat.addChatLine( message_object, LJ.generateId(), { insert_mode: "prepend" });
 
+				});
 
 
 			}
 
-			$wrap.html( html );
 
 		},
 		handleShowChatInview: function(){
@@ -425,6 +694,8 @@
 			var group_id = $s.attr('data-group-id');
 
 			LJ.chat.showChatInview( group_id );
+			LJ.chat.deNewifyChatRow( group_id );
+			LJ.chat.detopifyChatRow( group_id );
 
 		},
 		handleToggleChatWrap: function( e ){
@@ -457,6 +728,8 @@
 			LJ.ui.shradeAndStagger( $c, {
 				duration: d
 			});
+
+			LJ.chat.refreshChatRowsJsp();
 			
 
 		},
@@ -515,17 +788,36 @@
 			$('.chat-rows').find('.chat-empty').remove();
 
 			if( $targets_to_show.length == 0 ){
-				
-				if( target == "all" ) return $('.chat-rows').append( LJ.chat.renderChatRow__AllEmpty() );
-				if( target == "hosted" ) return $('.chat-rows').append( LJ.chat.renderChatRow__HostedEmpty() );
-				if( target == "requested" ) return $('.chat-rows').append( LJ.chat.renderChatRow__RequestedEmpty() );
+				LJ.chat.addChatRowEmptyViews();
 
 			} else {
 				$targets_to_show.css({ display: 'flex' });
 
 			}
 
+			LJ.chat.refreshChatRowsJsp();
+
 		},
+		addChatRowEmptyViews: function(){
+
+			var target = $('.chat').find('.segment__part.--active').attr('data-link');
+
+			if( target == "all" ){
+				$('.chat-rows').find('.jspPane').append( LJ.chat.renderChatRow__AllEmpty() );
+			}
+
+			if( target == "hosted" ){
+				$('.chat-rows').find('.jspPane').append( LJ.chat.renderChatRow__HostedEmpty() );
+			}
+
+			if( target == "requested" ){
+				$('.chat-rows').find('.jspPane').append( LJ.chat.renderChatRow__RequestedEmpty() );
+			}
+
+			return LJ.chat.refreshChatRowsJsp();
+
+
+		},	
 		renderChatRow__AllEmpty: function(){
 
 			return LJ.chat.renderChatEmpty({
@@ -575,6 +867,37 @@
 			].join(''));
 
 		},
+		updateChatRowPreview__AuthorLast: function( group_id ){
+
+			var $w = $('.chat-inview[data-group-id="'+ group_id +'"]');
+
+			var last_message_all  = _.last( LJ.chat.getChatByGroupId__All( group_id ).messages );
+			var last_message_team = _.last( LJ.chat.getChatByGroupId__Team( group_id ).messages );
+
+			if( !last_message_all && !last_message_team ){
+				return LJ.log('No chat messages fetched, not updating the chat row');
+			}
+
+			var sent_at_all  = last_message_all && moment( last_message_all.sent_at );
+			var sent_at_team = last_message_team && moment( last_message_team.sent_at );
+
+			if( !sent_at_team || sent_at_all > sent_at_team ){
+				var sender_id = last_message_all.sender_id;
+				var message   = last_message_all.message;
+
+			} else {
+				var sender_id = last_message_team.sender_id;
+				var message   = last_message_team.message;
+			}
+
+			var sender  = LJ.chat.findChatSender( group_id, sender_id );
+
+			LJ.chat.updateChatRowPreview( group_id, {
+				h1: sender.name,
+				h2: message
+			});
+
+		},
 		updateChatRowPreview__Author: function( opts ){
 
 			var message     = opts.message;
@@ -595,44 +918,52 @@
 			$chatrow.find('.chat-row-infos__preview').text( opts.h2 );
 
 		},
-		updateChatRowBubble: function( group_id ){
+		updateChatRowTime: function( group_id ){
 
-			var $chatrow    = $('.chat-row[data-group-id="'+ group_id +'"]');
-			var $chatinview = $('.chat-inview[data-group-id="'+ group_id +'"]');
+			var $w = $('.chat-row[data-group-id="'+ group_id +'"]');
 
-			if( $chatinview.hasClass('--active') ){
-				return LJ.wlog('Not bubbling up because inview is active');
+			var last_message_all  = _.last( LJ.chat.getChatByGroupId__All( group_id ).messages );
+			var last_message_team = _.last( LJ.chat.getChatByGroupId__Team( group_id ).messages );
 
-			} else {
-				return LJ.ui.bubbleUp( $chatrow );
-
+			if( !last_message_all && !last_message_team  ){
+				return LJ.log('No chat messages fetched, not updating the chat row');
 			}
 
-		},
-		updateChatRowTime: function( opts ){
+			var sent_at_all  = last_message_all && moment( last_message_all.sent_at );
+			var sent_at_team = last_message_team && moment( last_message_team.sent_at );
 
-			var sent_at  = opts.sent_at;
-			var group_id = opts.group_id;
-
-			var $chatrow = $('.chat-row[data-group-id="'+ group_id +'"]');
-
-			var s_date = LJ.text("chatrow_date", moment(sent_at) );
-			$chatrow.find('.chat-row-time span').text( s_date );
-
-		},
-		updateChatRowStatus: function( group_id ){
-
-			var $chatrow = $('.chat-row[data-group-id="'+ group_id +'"]');
-			var $chatinview = $('.chat-inview[data-group-id="'+ group_id +'"]');
-
-			if( $chatinview.hasClass('--active') ){
-				return LJ.wlog('Not updating status because inview is active');
-
+			if( !sent_at_team || sent_at_all > sent_at_team ){
+				var sent_at = last_message_all.sent_at;
 			} else {
-				$chatrow.addClass('--new');
-				$chatrow.insertBefore( $('.chat-row').first() );
-
+				var sent_at = last_message_team.sent_at;
 			}
+
+			var s_date = LJ.text("chatrow_date", moment( sent_at ) );
+			$w.find('.chat-row-time span').text( s_date );
+
+		},
+		newifyChatRow: function( group_id){
+
+			var $r = $('.chat-row[data-group-id="'+ group_id +'"]');
+			$r.addClass('--new');				
+
+		},
+		deNewifyChatRow: function( group_id ){
+
+			var $r = $('.chat-row[data-group-id="'+ group_id +'"]');
+			$r.removeClass('--new');
+
+		},
+		topifyChatRow: function( group_id ){
+
+			var $r = $('.chat-row[data-group-id="'+ group_id +'"]');
+			$r.insertBefore( $('.chat-row').first() );
+
+		},
+		detopifyChatRow: function( group_id ){
+
+			var $r = $('.chat-row[data-group-id="'+ group_id +'"]');
+			$r.insertAfter( $('.chat-row.--new').last() );
 
 		},
 		updateChatRow__Pending: function( group_id ){
@@ -653,7 +984,7 @@
 		},
 		updateChatRow__Request: function( group_id ){
 
-			var name         = LJ.chat.fetched_chats[ group_id ].main_member_profile.name;
+			var name         = LJ.chat.fetched_groups[ group_id ].main_member_profile.name;
 			var group_name   = LJ.renderGroupName( name );
 
 			LJ.chat.updateChatRowPreview( group_id, {
@@ -662,37 +993,36 @@
 			});
 
 		},
-		updateChatRow__Author: function( opts ){
+		renderChatRowStatus__Hosting: function(){
 
-			var message  = opts.message;
-			var group_id = opts.group_id;
-			var sent_at  = opts.sent_at;
-			var sender   = opts.sender;
-			
-			LJ.chat.updateChatRowPreview__Author({ message: message, group_id: group_id, sender: sender });
-			LJ.chat.updateChatRowStatus( group_id );
-			LJ.chat.updateChatRowBubble( group_id );
-			LJ.chat.updateChatRowTime({ group_id: group_id, sent_at: sent_at });
-
-		},
-		renderChatRowDate__Hosting: function( date ){
-
-			return LJ.chat.renderChatRowDate( date, {
-				icon_html: '<i class="icon icon-star"></i>'
+			return LJ.chat.renderChatRowStatus({
+				icon_html: '<i class="icon icon-drinks"></i>'
 			});
 		},
-		renderChatRowDate__Pending: function( date ){
+		renderChatRowStatus__Pending: function(){
 
-			return LJ.chat.renderChatRowDate( date, {
+			return LJ.chat.renderChatRowStatus({
 				icon_html: '<i class="icon icon-pending"></i>'
 			});
 		},
-		renderChatRowDate__Accepted: function( date ){
+		renderChatRowStatus__Accepted: function(){
 
-			return LJ.chat.renderChatRowDate( date, {
-				icon_html: '<i class="icon icon-chat"></i>'
+			return LJ.chat.renderChatRowStatus({
+				icon_html: '<i class="icon icon-chat-bubble-duo"></i>'
 			});
 		},
+		renderChatRowStatus: function( opts ){
+
+			return LJ.ui.render([
+
+				'<div class="chat-row__status --round-icon">',
+					opts.icon_html,
+				'</div>'
+
+			].join(''));
+
+		},
+		// Legacy function! (18/05/16)
 		renderChatRowDate: function( date, opts ){
 
 			var m  = moment( date );
@@ -747,38 +1077,44 @@
 			].join(''));
 
 		},
-		renderChatRowTime__Placeholder: function(){
+		renderChatRowTime__Placeholder: function( requested_at ){
+
+			var m = LJ.text("chatrow_date", moment( requested_at ) );
 
 			return LJ.ui.render([
 
 				'<div class="chat-row-time">',
-					'<span></span>',
+					'<span>'+ m +'</span>',
 				'</div>'
 
 			].join(''));
 
 		},
-		renderChatRow__Hosting: function( group_id, before, group_profiles ){
+		renderChatRow__Hosting: function( group_id, requested_at ){
 
 			return LJ.chat.renderChatRow( group_id, {
-				date_html: LJ.chat.renderChatRowDate__Hosting( before.begins_at ),
-				link_html: 'data-link="hosted"'
+				status_html  : LJ.chat.renderChatRowStatus__Hosting(),
+				link_html    : 'data-link="hosted"',
+				requested_at : requested_at
 			});
 
 		},
-		renderChatRow__Pending: function( group_id, before, hosts_profiles ){
+		renderChatRow__Pending: function( group_id, requested_at ){
 
 			return LJ.chat.renderChatRow( group_id, {
-				date_html: LJ.chat.renderChatRowDate__Pending( before.begins_at ),
-				link_html: 'data-link="requested"'
+				status       : "pending",
+				status_html  : LJ.chat.renderChatRowStatus__Pending(),
+				link_html    : 'data-link="requested"',
+				requested_at : requested_at
 			});
 
 		},
-		renderChatRow__Accepted: function( group_id, before, hosts_profiles ){
+		renderChatRow__Accepted: function( group_id, requested_at ){
 
 			return LJ.chat.renderChatRow( group_id, {
-				date_html: LJ.chat.renderChatRowDate__Accepted( before.begins_at ),
-				link_html: 'data-link="requested"'
+				status_html  : LJ.chat.renderChatRowStatus__Accepted(),
+				link_html    : 'data-link="requested"',
+				requested_at : requested_at
 			});
 
 		},
@@ -786,17 +1122,22 @@
 
 			opts = opts || {};
 
-			var data_link = opts.link_html;
-			var date_html = opts.date_html;
+			var data_link    = opts.link_html;
+			var status_html  = opts.status_html;
+			var requested_at = opts.requested_at; 
+			var status 		 = opts.status ? '--' + opts.status : '';
+			var newified     = moment( requested_at ) > moment().subtract(1,'hour') ? '--new' : '';
 
 			var infos_html = LJ.chat.renderChatRowInfos__Placeholder();
-			var time_html  = LJ.chat.renderChatRowTime__Placeholder();
-			var pics_html = LJ.chat.renderChatRowPictures__Placeholder();
+			var time_html  = LJ.chat.renderChatRowTime__Placeholder( requested_at );
+			var pics_html  = LJ.chat.renderChatRowPictures__Placeholder();
+
+
 
 			return LJ.ui.render([
 
-				'<div class="chat-row" '+ data_link +' data-group-id="'+ group_id +'">',
-					date_html,
+				'<div class="chat-row'+' '+ status +' '+ newified +'"'+ data_link +' data-group-id="'+ group_id +'">',
+					status_html,
 					pics_html,
 					infos_html,
 					time_html,
@@ -804,6 +1145,15 @@
 
 			].join(''));
 
+
+		},
+		acceptifyChatRow: function( group_id ){
+
+			var $g = $('.chat-row[data-group-id="'+ group_id +'"]');
+			var new_icon_html = LJ.chat.renderChatRowStatus__Accepted();
+
+			$g.find('.chat-row__status').replaceWith( new_icon_html );
+			LJ.chat.updateChatRow__Accepted( group_id );
 
 		}
 

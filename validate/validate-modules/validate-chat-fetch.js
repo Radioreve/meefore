@@ -1,16 +1,15 @@
 
-	var nv = require('node-validator');
-	var rd = require('../../services/rd');
+	var nv   = require('node-validator');
+	var rg 	 = require('../../config/regex');
+	var User = require('../../models/UserModel');
 
 	function check( req, res, next ){
 
 		var checkFetch = nv.isAnyObject()
 		
-			.withRequired('group_id'    , nv.isString() )
-			.withRequired('chat_id'		, nv.isString() )
-			.withRequired('before_id'	, nv.isString() )
-			.withRequired('facebook_id' , nv.isString() )
-			.withRequired('socket_id'   , nv.isString() )
+			.withRequired('chat_id'		, nv.isString() ) // Know which chat to query
+			.withRequired('facebook_id' , nv.isString() ) // Know if the user is authorized
+			.withOptional('sent_at' 	, nv.isString({ regex: rg.iso_date }) ) // Know where to start fetching messages
 
 		nv.run( checkFetch, req.sent, function( n, errors ){
 			if( n != 0 ){
@@ -29,42 +28,38 @@
 
 	function checkSenderStatus( req, callback ){
 
-			var before_id    = req.sent.before_id;
-			var group_id    = req.sent.group_id;
-			var facebook_id = req.sent.facebook_id;
+		var chat_id     = req.sent.chat_id;
+		var facebook_id = req.sent.facebook_id;
 
-			rd.smembers('event/' + before_id + '/hosts', function( err, hosts_id ){
-				
-				rd.get('event/' + before_id + '/group/' + group_id + '/status', function( err, status ){
+		User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
-					// User that has been validated to fetch message?
-					if( group_id != "hosts" && status == "suspended" )   // On autorise les "kick" 
-						return callback({
-							err_id: "unauthorized_fetch",
-							data: {
-								group_id : group_id,
-								status   : status,
-								sent     : req.sent,
-								location : "validate chat fetch [hosts]"
-							}
-						});
+			if( err ){
+				return callback({ err_id: "api_error", err: err });
+			}
 
-					// One of the hosts?
-					if( group_id == "hosts" && hosts_id.indexOf( facebook_id ) == -1 )
-						return callback({
-							message: "You are not an admin",
-							err_id: "unauthorized_fetch",
-							data: {
-								hosts_id : hosts_id,
-								sent     : req.sent,
-								location : "validate chat fetch"
-							}
-						});
+			if( !user ){
+				return callback({ err_id: "ghost_user", facebook_id: facebook_id });
+			}
 
-					callback( null );
+			var a1 = _.map( user.channels, 'name' );
+			var a2 = _.map( user.channels, 'channel_all' );
+			var a3 = _.map( user.channels, 'channel_team' );
 
+			var authorized_channels = a1.concat( a2 ).concat( a3 );
+
+			if( authorized_channels.indexOf( chat_id ) == -1 ){
+				return callback({
+					err_id    : 'ghost_channel',
+					message   : 'This channel is not a part of users channels',
+					allowed   : user.channels,
+					http_code : 403
 				});
-			});
+			}
+
+			// Everything went fine
+			return callback( null );
+
+		});
 
 
 	};	

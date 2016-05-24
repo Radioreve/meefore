@@ -3,6 +3,7 @@
 	var rd         = require('../services/rd');
 	var settings   = require('../config/settings');
 	var eventUtils = require('../pushevents/eventUtils');
+	var User 	   = require('../models/UserModel');
 
 	var handleErr = eventUtils.raiseApiError;
 
@@ -14,25 +15,63 @@
 		
 		var err_ns = "set_cache";
 
-		var facebook_id = req.sent.facebook_id;
-		var profile_ns  = 'user_profile/' + facebook_id;
-		var new_profile = settings.default_profile_values;
+		var user_profile = req.sent.user;
+		var profile_ns  = 'user_profile/' + user_profile.facebook_id;
 
-		_.keys( new_profile, function( key ){
-			if( req.sent[ key ] && typeof req.sent[ key ] == typeof new_profile[ key ] ){
-				new_profile[ key ] = req.sent[ key ];
-			}
-		});
+		if( !user_profile ){
+			console.log('No user profile was provided, looking in Db...');
 
-		rd.hmset( profile_ns, new_profile, function( err, res ){
+			User.findOne({ facebook_id: user_profile.facebook_id }, function( err, user ){
 
-			if( err ){
-				return handleErr( req, res, err_ns, err );
-			}
+				if( err ){
+					return handleErr( req, res, err_ns, err );
+				}
 
-			next();
+				if( !user ){
+					console.log('Definitly unable to find the user, skipping cache set...');
+					return next();
+				}
 
-		});
+				// Augment the req object with user and call fn again
+				console.log('...done!');
+				req.sent.user = user;
+				return setCache( req, res, next );
+
+
+			});
+
+		} else {
+			
+			// Reseting the profile cache
+			console.log('Reseting the profile cache...');
+			var user = req.sent.user;
+
+			var main_pic = _.find( user.pictures, function(p){
+				return p.is_main
+			});
+
+			var new_profile = {
+				'name' 	 : user.name,
+				'age'  	 : user.age,
+				'job'  	 : user.job,
+				'img_id' : main_pic.img_id,
+				'img_vs' : main_pic.img_version,
+				'g' 	 : user.gender,
+				'cc'     : user.country_code
+
+			};
+
+			rd.hmset( profile_ns, new_profile, function( err, res ){
+
+				if( err ) return handleErr( req, res, err_ns, err );
+				
+				console.log('...done!');
+				next();
+
+			});
+
+		}
+
 
 	};
 
@@ -68,12 +107,10 @@
 			}
 
 			if( !user ){
-
 				console.log('User not found in cache, setting default values...');
 				return setCache( req, res, next );
 
 			} else {
-
 				var new_profile = {
 					'name' 	 : req.sent.name || user.name,
 					'age'  	 : req.sent.age  || user.age,

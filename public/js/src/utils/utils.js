@@ -141,7 +141,7 @@ window.LJ = _.merge( window.LJ || {}, {
 
         return LJ.ui.render([
 
-            '<div class="user-row" data-facebook-id="'+ user.facebook_id +'">',
+            '<div class="user-row js-user-profile" data-facebook-id="'+ user.facebook_id +'">',
                 '<div class="user-row__pic">',
                   img_small,
                   '<div class="user-gender --'+ user.g +' js-user-gender"></div>',
@@ -179,6 +179,21 @@ window.LJ = _.merge( window.LJ || {}, {
 
         return user_rows.join('');
 
+
+    },
+    mainifyUserRow: function( $w, main_user ){
+
+        var $rows = $w.find('.user-row');
+        $rows.each(function( i, row ){
+
+            var $r = $( row );
+            if( $r.attr('data-facebook-id') == main_user ){
+                $r.addClass('--main')
+                      .addClass('js-main') // do not change the class, used by the validateRequest function
+                      .insertBefore( $rows.first() );
+            }
+
+        }); 
 
     },
     generateId: function(){

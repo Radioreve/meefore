@@ -52,7 +52,7 @@
 }
  
 .jspDrag {
-   background: rgba(51, 175, 255, 0.41);
+   background: rgba(160, 160, 160, 0.41);
    /* border: 1px solid #33AFFF; */
    position: relative;
    top: 0;
