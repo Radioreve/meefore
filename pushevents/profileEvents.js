@@ -34,7 +34,7 @@
 	var updateProfile = function( req, res, next ){
 
 		var err_ns = 'update_profile';
-		var facebook_id = req.sent.facebook_id;
+		var facebook_id = req.sent.user_id;
 
 		var update = {};
 		['name','age','job', 'location', 'ideal_night'].forEach(function( attr ){
@@ -265,7 +265,7 @@
 
 		var err_ns = 'fetching_friends';
 
-		var facebook_id = req.sent.facebook_id;
+		var facebook_id = req.sent.user_id;
 		User.findOne({ facebook_id: facebook_id }, function( err , user ){
 
 			if( err ) return handleErr( req, res, err_ns, err );
@@ -281,7 +281,7 @@
 
 		var err_ns = 'syncing_friends';
 
-		var facebook_id = req.sent.facebook_id;
+		var facebook_id = req.sent.user_id;
 		var friend_ids  = req.sent.friend_ids || [];
 
 		User.findOneAndUpdate({ facebook_id: facebook_id }, { friends: friend_ids }, { new: true }, function( err, user ){
@@ -331,7 +331,7 @@
 
 	var fetchCloudinaryTags = function( req, res, next ){
 
-		var facebook_id = req.sent.facebook_id;
+		var facebook_id = req.sent.user_id;
 		// Make sure all HTML Tags internally have a specific img_id pattern
 		// So we can easily find them on cloudinary
 		var cloudinary_tags = [];
@@ -392,7 +392,7 @@
 		var err_ns = 'spotted';
 
 		var user 		= req.sent.user;
-		var facebook_id = req.sent.facebook_id;
+		var facebook_id = req.sent.user_id;
 
 		var spotted_object = {
 			"target_id"   : req.sent.target_id,
@@ -417,7 +417,7 @@
 		var err_ns = 'shared';
 
 		var user 	    = req.sent.user;
-		var facebook_id = req.sent.facebook_id;
+		var facebook_id = req.sent.user_id;
 
 		var shared_by_object = {
 			"share_type"  : "shared_by",
@@ -452,7 +452,7 @@
 
 		var err_ns = 'invite_code';
 
-		var facebook_id = req.sent.facebook_id;
+		var facebook_id = req.sent.user_id;
 		var invite_code = req.sent.invite_code;
 
 		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){

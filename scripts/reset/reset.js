@@ -4,6 +4,7 @@
 	var mongoose = require('mongoose');
 	var User     = require( model_path + '/UserModel');
 	var Before   = require( model_path + '/BeforeModel');
+	var Message  = require( model_path + '/MessageModel');
 	var config   = require( process.cwd() + '/config/config');
 	var _        = require('lodash');
 	var redis    = require('redis');
@@ -117,6 +118,10 @@
 
 				Before.find({}).remove(function(){
 					console.log('Befores removed');
+				});
+
+				Message.find({}).remove(function(){
+					console.log('Messages removed');
 				});
 
 

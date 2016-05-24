@@ -5,24 +5,24 @@
 		fetched_users_full: [],
 
 		app_token_url 			  	 : '/auth/facebook',
-		me_url		  			  	 : '/api/v1/me',
-		me_friends				 	 : '/me/friends',
-		invite_code_url 			 : '/me/invite-code',
-		fetch_shared_url		  	 : '/api/v1/users/:facebook_id/shared',
-		fetch_meepass_url 		  	 : '/api/v1/users/:facebook_id/meepass',
-		fetch_user_url 	   	  	  	 : '/api/v1/users/:facebook_id/core',
-		fetch_user_profile_url    	 : '/api/v1/users/:facebook_id/full',
-		update_profile_url  	  	 : '/me/update-profile',
-		upload_picture_dt		  	 : '/me/update-picture-client',
-		upload_picture_fb		  	 : '/me/update-picture-url',
-		update_pictures_url		  	 : '/me/update-pictures',
-		fetch_cloudinary_tags_url 	 : '/me/cloudinary-tags',
-		update_settings_ux_url       : '/me/update-settings-ux',
-		update_settings_contact_url  : '/me/update-settings-contact',
-		update_settings_alerts_url 	 : '/me/update-settings-alerts',
-		update_settings_mailing_url  : '/me/update-settings-mailinglists',
-		mailchimp_status_url    	 : '/api/v1/users/:facebook_id/mailchimp-status',
-		delete_my_account_url        : '/me/delete',
+		me_url		  			  	 : '/api/v1/users/:user_id/self',
+		me_friends				 	 : '/api/v1/users/:user_id/friends',
+		invite_code_url 			 : '/api/v1/users/:user_id/invite-code',
+		fetch_shared_url		  	 : '/api/v1/users/:user_id/shared',
+		fetch_meepass_url 		  	 : '/api/v1/users/:user_id/meepass',
+		fetch_user_url 	   	  	  	 : '/api/v1/users/:user_id/core',
+		fetch_user_profile_url    	 : '/api/v1/users/:user_id/full',
+		update_profile_url  	  	 : '/api/v1/users/:user_id/update-profile',
+		upload_picture_dt		  	 : '/api/v1/users/:user_id/update-picture-client',
+		upload_picture_fb		  	 : '/api/v1/users/:user_id/update-picture-url',
+		update_pictures_url		  	 : '/api/v1/users/:user_id/update-pictures',
+		fetch_cloudinary_tags_url 	 : '/api/v1/users/:user_id/cloudinary-tags',
+		update_settings_ux_url       : '/api/v1/users/:user_id/update-settings-ux',
+		update_settings_contact_url  : '/api/v1/users/:user_id/update-settings-contact',
+		update_settings_alerts_url 	 : '/api/v1/users/:user_id/update-settings-alerts',
+		update_settings_mailing_url  : '/api/v1/users/:user_id/update-settings-mailinglists',
+		mailchimp_status_url    	 : '/api/v1/users/:user_id/mailchimp-status',
+		delete_my_account_url        : '/api/v1/users/:user_id/delete',
 		fetch_more_users_url 		 : '/api/v1/users.more',
 		share_url 					 : '/api/v1/share',
 		distinct_countries_url 		 : '/api/v1/users.countries',
@@ -31,9 +31,7 @@
 		fetch_before_url 		 	 : '/api/v1/befores/:before_id',
 		change_before_status_url 	 : '/api/v1/befores/:before_id/status',
 		before_request_url 			 : '/api/v1/befores/:before_id/request',
-		change_group_status_url 	 : '/api/v1/befores/:before_id/groups/:group_id/status',
 		send_chat_message_url 	     : '/api/v1/chats/:chat_id',
-		fetch_chat_history_url 		 : '/api/v1/chats/:chat_id',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -180,7 +178,7 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.me_url )
+				LJ.api.get( LJ.api.me_url.replace(':user_id', LJ.facebook_profile.id ) )
 					  .then(function( exposed ){
 							LJ.cacheUser( exposed.me );
 							LJ.app_settings = exposed.settings
@@ -194,7 +192,7 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.fetch_shared_url.replace(':facebook_id', LJ.user.facebook_id ) )
+				LJ.api.get( LJ.api.fetch_shared_url.replace(':user_id', LJ.user.facebook_id ) )
 					  .then(function( exposed ){
 					  		return resolve( exposed );
 					  }, function( err ){
@@ -207,7 +205,7 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.fetch_meepass_url.replace(':facebook_id', LJ.user.facebook_id) )
+				LJ.api.get( LJ.api.fetch_meepass_url.replace(':user_id', LJ.user.facebook_id) )
 					  .then(function( exposed ){
 					  		return resolve( exposed );
 					  }, function( err ){
@@ -219,7 +217,7 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.me_friends )
+				LJ.api.get( LJ.api.me_friends.replace(':user_id', LJ.user.facebook_id ))
 					  .then(function( exposed ){
 					  	return resolve( exposed.friends );
 					  }, function( err ){
@@ -233,7 +231,7 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.me_friends, { friend_ids: friend_ids })
+				LJ.api.post( LJ.api.me_friends.replace(':user_id', LJ.user.facebook_id), { friend_ids: friend_ids })
 					  .then(function( exposed ){
 					  	return resolve( exposed );
 					  }, function( err ){
@@ -247,7 +245,7 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.fetch_user_url.replace(':facebook_id', facebook_id ) )
+				LJ.api.get( LJ.api.fetch_user_url.replace(':user_id', facebook_id ) )
 					  .then(function( exposed ){
 					  	if( exposed.user ){
 					  		// Append the Facebook id, cause not present in cache 
@@ -295,7 +293,7 @@
 		fetchUserProfile: function( facebook_id ){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.fetch_user_profile_url.replace(':facebook_id', facebook_id ) )
+				LJ.api.get( LJ.api.fetch_user_profile_url.replace(':user_id', facebook_id ) )
 					  .then(function( exposed ){
 					  	return resolve( exposed );
 					  }, function( err ){
@@ -312,7 +310,7 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.update_profile_url, data )
+				LJ.api.post( LJ.api.update_profile_url.replace(':user_id', LJ.user.facebook_id ), data )
 					  .then(function( exposed ){
 					  		return resolve( exposed );
 					  }, function( err ){
@@ -325,7 +323,7 @@
 		fetchCloudinaryTags: function(){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.fetch_cloudinary_tags_url )
+				LJ.api.get( LJ.api.fetch_cloudinary_tags_url.replace(':user_id', LJ.user.facebook_id ) )
 					  .then(function( exposed ){
 					  	if( exposed.cloudinary_tags ){
 							return resolve( exposed.cloudinary_tags );
@@ -342,7 +340,7 @@
 		uploadNewPicture: function( update ){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.upload_picture_dt, update )
+				LJ.api.post( LJ.api.upload_picture_dt.replace(':user_id', LJ.user.facebook_id ), update )
 					  .then(function( exposed ){
 					  	if( exposed.new_picture ){
 					  		return resolve( exposed.new_picture )
@@ -358,7 +356,7 @@
 		updatePicture: function( update ){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.update_pictures_url, update )
+				LJ.api.post( LJ.api.update_pictures_url.replace(':user_id', LJ.user.facebook_id ), update )
 					  .then(function( exposed ){
 					  	if( exposed.pictures ){
 					  		return resolve({ pictures: exposed.pictures, call_id: exposed.call_id });
@@ -374,7 +372,7 @@
 		uploadNewPictureUrl: function( update ){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.upload_picture_fb, update )
+				LJ.api.post( LJ.api.upload_picture_fb.replace(':user_id', LJ.user.facebook_id ), update )
 					  .then(function( exposed ){
 					  	if( exposed.pictures ){
 					  		return resolve({ pictures: exposed.pictures, call_id: exposed.call_id });
@@ -390,7 +388,7 @@
 		updateSettingsUx: function( update ){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.update_settings_ux_url, update )
+				LJ.api.post( LJ.api.update_settings_ux_url.replace(':user_id', LJ.user.facebook_id ), update )
 					.then(function( exposed ){
 						if( exposed.user && exposed.user.app_preferences ){
 							return resolve({ app_preferences: exposed.user.app_preferences, call_id: exposed.call_id });
@@ -406,7 +404,7 @@
 		updateSettingsMailing: function( update ){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.update_settings_mailing_url, update )
+				LJ.api.post( LJ.api.update_settings_mailing_url.replace(':user_id', LJ.user.facebook_id ), update )
 					.then(function( exposed ){
 						if( exposed.user && exposed.user.app_preferences ){
 							return resolve({ app_preferences: exposed.user.app_preferences, call_id: exposed.call_id });
@@ -422,7 +420,7 @@
 		updateSettingsAlerts: function( update ){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.update_settings_alerts_url, update )
+				LJ.api.post( LJ.api.update_settings_alerts_url.replace(':user_id', LJ.user.facebook_id ), update )
 					.then(function( exposed ){
 						if( exposed.user && exposed.user.app_preferences ){
 							return resolve({ app_preferences: exposed.user.app_preferences, call_id: exposed.call_id });
@@ -438,7 +436,7 @@
 		getMailchimpStatus: function(){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.mailchimp_status_url.replace(':facebook_id', LJ.user.facebook_id ))
+				LJ.api.get( LJ.api.mailchimp_status_url.replace(':user_id', LJ.user.facebook_id ))
 					.then(function( exposed ){
 						return resolve( exposed );
 					}, function( err ){
@@ -450,7 +448,7 @@
 		updateInviteCode: function( update ){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.invite_code_url, update )
+				LJ.api.post( LJ.api.invite_code_url.replace(':user_id', LJ.user.facebook_id ), update )
 					.then(function( exposed ){
 						return resolve( exposed );
 					}, function( err ){
@@ -462,7 +460,7 @@
 		updateSettingsContact: function( update ){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.update_settings_contact_url, update )
+				LJ.api.post( LJ.api.update_settings_contact_url.replace(':user_id', LJ.user.facebook_id ), update )
 					.then(function( exposed ){
 						return resolve( exposed );
 					}, function( err ){
@@ -474,7 +472,7 @@
 		deleteMyAccount: function(){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.delete_my_account_url )
+				LJ.api.post( LJ.api.delete_my_account_url.replace(':user_id', LJ.user.facebook_id ) )
 					.then(function( exposed ){
 						return resolve( exposed );
 					}, function( err ){
@@ -486,7 +484,7 @@
 		shareWithFriends: function( opt ){
 			return LJ.promise(function( resolve, reject ){
 
-				if( ! (opt.target_type && opt.shared_with && opt.target_id ) ){
+				if( ! (opt.target_type && opt.shared_with && opt.user_id ) ){
 					LJ.wlog('Missing parameters, not calling the api');
 					return reject();
 				}
@@ -642,11 +640,11 @@
 				LJ.api.post( LJ.api.before_request_url.replace(':before_id', before_id), request )
 					.then(function( exposed ){
 
-						if( exposed.before_item && exposed.members_profiles && exposed.channel_item ){
+						if( exposed.before_item && exposed.members_profiles ){
 							return resolve( exposed );
 
 						} else {
-							LJ.wlog('The server didnt respond with the expected before, members and channel_item object(s)');
+							LJ.wlog('The server didnt respond with the expected before object and/or members_profiles object');
 						}
 
 					}, function( err ){
@@ -677,58 +675,10 @@
 			});
 
 		},
-		fetchChatHistory: function( chat_id, sent_at ){
+		fetchChatHistory: function( chat_id, delay ){
 
-			var data = {
-				sent_at: sent_at
-			};
+			return [];
 
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.api.get( LJ.api.fetch_chat_history_url.replace(':chat_id', chat_id ), data )
-					.then(function( exposed ){
-
-						if( !exposed.messages ){
-							return LJ.wlog('The server didnt respond with the expected messages object');
-
-						} else {
-							return resolve({
-								messages : exposed.messages,
-								readby   : exposed.readby
-							});
-						}
-
-					}, function( err ){
-						return reject( err );
-
-					});
-
-			});
-
-		},
-		changeGroupStatus: function( data ){
-			return LJ.promise(function( resolve, reject ){
-
-				var before_id   = data.before_id;
-				var group_id    = data.group_id;
-				var chat_id     = data.chat_id;
-				var main_member = data.main_member;
-				var status 	    = data.status;
-
-				if( !( before_id && group_id && chat_id && main_member && status ) ){
-					return LJ.wlog('Cannot call the api without required parameters');
-				}
-
-				var url = LJ.api.change_group_status_url.replace(':before_id', before_id ).replace(':group_id', group_id );
-				LJ.api.post( url, data )
-					.then(function( exposed ){
-						return resolve();
-
-					}, function( err ){
-						return reject( err );
-					});
-
-				});
 		}
 
 	});

@@ -26,11 +26,10 @@
 			select[ prop ] = 1;
 		});
 
-	/* get /users/me */
 	var fetchMe = function( req, res, next ){
 
 		var err_ns 		= 'fetching_me';
-		var facebook_id = req.sent.facebook_id;
+		var facebook_id = req.sent.user_id;
 
 		if( !facebook_id ){
 			return handleErr( req, res, err_ns, {
@@ -57,7 +56,7 @@
 	var fetchUserShared = function( req, res, next ){
 
 		var err_ns 		= 'fetching_me_shared';
-		var facebook_id = req.sent.target_id;
+		var facebook_id = req.sent.user_id;
 
 		console.log('Fetching shared prop for user with id : ' + facebook_id );
 
@@ -90,7 +89,7 @@
 	var fetchUserMeepass = function( req, res, next ){
 
 		var err_ns 		= 'fetching_me_meepass';
-		var facebook_id = req.sent.target_id;
+		var facebook_id = req.sent.user_id;
 
 		User
 			.findOne({ facebook_id: facebook_id })
@@ -120,7 +119,7 @@
 	var fetchUserById_Full = function( req, res, next ){
 
 		var err_ns = 'fetching_user_full';
-		var facebook_id = req.sent.target_id;
+		var facebook_id = req.sent.user_id;
 
 		if( !facebook_id )
 			return handleErr( req, res, err_ns, {
@@ -159,7 +158,7 @@
 
 		console.log('Fetching user by id (core)...');
 		
-		var facebook_id = req.sent.target_id;
+		var facebook_id = req.sent.user_id;
 		var error_ns    = 'fetching_user_core';
 
 		if( !facebook_id ){
@@ -281,7 +280,7 @@
 	var fetchUserEvents = function( req, res, next ){
 
 		var err_ns = 'fetching_user_befores';
-		var facebook_id = req.sent.target_id;
+		var facebook_id = req.sent.user_id;
 
 		console.log('Fetching personnal event for facebook_id: ' + facebook_id );
 		

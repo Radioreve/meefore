@@ -9,6 +9,7 @@
 
 		var matches_files = {
 			
+			myself					: 'validate-myself',
 			auth_facebook			: 'validate-auth-facebook',
 			create_before        	: 'validate-before-create',
 			create_party        	: 'validate-party-create',

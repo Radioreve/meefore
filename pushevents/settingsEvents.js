@@ -29,7 +29,7 @@
     var updateSettings = function( req, res, next ){
 
     	var app_preferences = req.sent.app_preferences,
-    		facebook_id	    = req.sent.facebook_id;
+    		facebook_id	    = req.sent.user_id;
 
     	if( _.keys( app_preferences ).length == 0 ){
     		return handleErr( req, res, 'update_settings (empty put)', {
@@ -58,7 +58,7 @@
 	var updateSettingsContact = function( req, res, next ){
 
 		var contact_email = req.sent.contact_email;
-		var facebook_id   = req.sent.facebook_id;
+		var facebook_id   = req.sent.user_id;
 
 		var update = {
 			contact_email: contact_email
@@ -91,7 +91,7 @@
 
 	var deleteProfile = function( req, res, next ){
 
-		var facebook_id = req.sent.facebook_id;
+		var facebook_id = req.sent.user_id;
 
 		console.log('Deleting profile ' + facebook_id + ' and everything associated with it..');
 		console.log('Good bye ' + req.sent.user.name + '..');

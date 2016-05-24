@@ -85,7 +85,7 @@
 
 		// Setup the values in the req.sent object, to allow a more RESTish way of calling the services for the client
 		// Each middleware can consume the params, and client can just add it to the url and not to the raw body!
-		app.get('/api/v1/users/:target_id*',  setParam('target_id') );
+		app.get('/api/v1/users/:user_id*',  setParam('user_id') );
 	    app.get('/api/v1/chats/:chat_id*', setParam('chat_id') );
 		app.get('/test/api/v1/chats/:chat_id*', setParam('chat_id') );
 		app.get('/api/v1/befores/:before_id*', setParam('before_id') );
@@ -96,12 +96,8 @@
 		// All api calls must provid a valid token, which is then decoded.
 		// The token is given the client during the authentication process and contains client's ids
 		app.all('/api/*',
-			mdw.auth.authenticate(['standard']));
-
-
-		// All non-rest calls to /me endpoints about user profile also need to be authenticated with token
-		app.all('/me/*',
-			mdw.auth.authenticate(['standard']));
+			mdw.auth.authenticate(['standard'])
+		);
 
 
 	    // Main page
@@ -120,7 +116,8 @@
 
 	    // Redirection à la page d'accueil
 	    app.get('/',
-	    	signEvents.redirectToHome);
+	    	signEvents.redirectToHome
+	    );
 
 
 	    // Provide valid token based on secret key, for api calls
@@ -162,7 +159,8 @@
 
 
 	    // [ @user ] Update le profile
-	    app.post('/me/update-profile',
+	    app.post('/api/v1/users/:user_id/update-profile',
+	    	mdw.validate('myself'),
 	    	mdw.validate('update_profile_base'),
 			mdw.profile_watcher.updateCache('base'),
 	    	profileEvents.updateProfile,
@@ -170,7 +168,8 @@
 	    );
 
 	    // [ @user ] Ajoute une photo au profile
-	    app.post('/me/update-picture-client',
+	    app.post('/api/v1/users/:user_id/update-picture-client',
+	    	mdw.validate('myself'),
 	    	mdw.validate('update_picture_client'),
 	    	mdw.pop.populateUser(),
 	    	profileEvents.updatePicture,
@@ -178,7 +177,8 @@
 	    );
 
 	    // [ @user ] Change les hashtag/photo de profile
-	    app.post('/me/update-pictures',
+	    app.post('/api/v1/users/:user_id/update-pictures',
+	    	mdw.validate('myself'),
 	    	mdw.validate('update_pictures'),
 			mdw.pop.populateUser(),
 			mdw.profile_watcher.updateCache('picture_mainify'),
@@ -186,29 +186,34 @@
 	    );
 
 	    // [ @user ] Ajoute une photo via Facebook api
-	    app.post('/me/update-picture-url',
+	    app.post('/api/v1/users/:user_id/update-picture-url',
+	    	mdw.validate('myself'),
 	    	mdw.validate('upload_picture_url'),
 	    	mdw.pop.populateUser(),
 	    	profileEvents.uploadPictureWithUrl,
 	    	mdw.profile_watcher.updateCache('picture_upload')
 	    );
 
-	    // [ @user ] Va chercher en base de données les users à partir de /me/friends de l'api Facebook
-	    app.get('/me/friends',
+	    // [ @user ] Va chercher en base de données les users à partir de /api/v1/users/:user_id/friends de l'api Facebook
+	    app.get('/api/v1/users/:user_id/friends',
+	    	mdw.validate('myself'),
 	    	profileEvents.fetchFriends 
 	    );
 	    
-	    app.post('/me/friends',
+	    app.post('/api/v1/users/:user_id/friends',
+	    	mdw.validate('myself'),
 	    	profileEvents.syncFriends
 	    );
 
 	    // [ @user ] va chercher des tags cloudinary signés par le serveur
-	    app.get('/me/cloudinary-tags',
+	    app.get('/api/v1/users/:user_id/cloudinary-tags',
+	    	mdw.validate('myself'),
 	    	profileEvents.fetchCloudinaryTags
 	    );
 
 	    // [ @user ] Update contact settings
-	    app.post('/me/update-settings-contact',
+	    app.post('/api/v1/users/:user_id/update-settings-contact',
+	    	mdw.validate('myself'),
 	    	mdw.pop.populateUser(),
 	    	mdw.mailchimp_watcher.updateMailchimpUser,
 	    	mdw.alerts_watcher.updateCache,
@@ -216,31 +221,36 @@
 	    );
 
 	    // [ @user ] Update ux settings
-	    app.post('/me/update-settings-ux',
+	    app.post('/api/v1/users/:user_id/update-settings-ux',
+	    	mdw.validate('myself'),
 	    	settingsEvents.updateSettings
 	    );
 
 	     // [ @user ] Update ux settings
-	    app.post('/me/update-settings-alerts',
+	    app.post('/api/v1/users/:user_id/update-settings-alerts',
+	    	mdw.validate('myself'),
 	    	mdw.alerts_watcher.updateCache,
 	    	settingsEvents.updateSettings
 	    );
 
 	    // [ @user ] Update notification settings 
-	    app.post('/me/update-settings-mailinglists',
+	    app.post('/api/v1/users/:user_id/update-settings-mailinglists',
+	    	mdw.validate('myself'),
 	    	mdw.pop.populateUser(),
 	    	mdw.mailchimp_watcher.updateMailchimpUser,
 	    	settingsEvents.updateSettings
 	    );
 
-	    app.post('/me/delete',
+	    app.post('/api/v1/users/:user_id/delete',
+	    	mdw.validate('myself'),
 	    	mdw.pop.populateUser(),
 	    	mdw.mailchimp_watcher.deleteMailchimpUser,
 	    	settingsEvents.deleteProfile
 	    );
 
 	    // Coupons, code & sponsorship
-		app.post('/me/invite-code',
+		app.post('/api/v1/users/:user_id/invite-code',
+			mdw.validate('myself'),
 			mdw.validate('invite_code'),
 			profileEvents.updateInviteCode
 		);
@@ -257,14 +267,18 @@
 	    	api.users.fetchDistinctCountries
 	    );
 
+	    app.get('/api/v1/users/:user_id/self',
+	    	mdw.validate('myself'),
+	    	api.users.fetchMe
+	    );
 
 	    // [ @user ] Utilisé pour afficher le profile d'un utilisateur
-	    app.get('/api/v1/users/:target_id/full',   //otherwise override with asker facebook_id
+	    app.get('/api/v1/users/:user_id/full', 
 	    	api.users.fetchUserById_Full
 	    );
 
 	     // [ @user ] Utilisé pour afficher le profile d'un utilisateur
-	    app.get('/api/v1/users/:target_id/core',   //otherwise override with asker facebook_id
+	    app.get('/api/v1/users/:user_id/core', 
 	    	mdw.validate('user_fetch'),
 	    	api.users.fetchUserById_Core
 	    );
@@ -282,7 +296,8 @@
 
 
 	    // [ @user ] Renvoie tous les befores auxquels participe un user
-	    app.get('/api/v1/me/befores',
+	    app.get('/api/v1/api/v1/users/:user_id/befores',
+	    	mdw.validate('myself'),
 	    	mdw.validate('user_fetch'),
 	    	api.users.fetchUserEvents
 	    );
@@ -293,16 +308,19 @@
 	    );
 
 
-	    app.get('/api/v1/users/:target_id/shared',
+	    app.get('/api/v1/users/:user_id/shared',
+	    	mdw.validate('myself'),
 	    	api.users.fetchUserShared
 	    );
 
-	    app.get('/api/v1/users/:target_id/meepass',
+	    app.get('/api/v1/users/:user_id/meepass',
+	    	mdw.validate('myself'),
 	    	api.users.fetchUserMeepass
 	    );
 
 
-	    app.get('/api/v1/users/:target_id/mailchimp-status',
+	    app.get('/api/v1/users/:user_id/mailchimp-status',
+	    	mdw.validate('myself'),
 	    	mdw.pop.populateUser(),
 	    	api.users.getMailchimpStatus
 	    );
