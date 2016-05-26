@@ -175,8 +175,7 @@
 						'<div>Local time 	   	         : ' + tracked.local_time 		 +'</div>',
 						'<div>Target time 	   	         : ' + tracked.target_time 		 +'</div>',
 						'<div>Number of befores match    : ' + tracked.n_befores_matched  +'</div>',
-						'<div>Number of befores updated  : ' + tracked.n_befores_updated  +'</div>',
-						// '<div>Number of users updated    : ' + tracked.n_users_updated   +'</div>',
+						'<div>Number of befores updated  : ' + tracked.n_befores_updated  +'</div>'
 					];
 
 					console.log('Scheduled job completed successfully');
@@ -224,37 +223,6 @@
 
 				});
 		};
-
-		function updateUsers( before_ids ){
-
-		// 	console.log('The following before_ids were passed in : ' + before_ids );
-		// 	var g_callback = arguments[ arguments.length - 1 ];
-
-		// 	User.update(
-		// 		{
-		// 			befores: { $in: before_ids }
-		// 		},
-		// 		{
-		// 			$pull: { befores: before_ids }
-		// 		},
-		// 		{ 
-		// 			multi: true
-		// 		},
-		// 		function( err, raw ){
-		// 			if( err ) return handleError( err );
-
-		// 			if( err ){
-		// 				console.log( err );
-		// 			} else {
-		// 				console.log( JSON.stringify( raw, null, 3 ) );
-		// 			}
-
-		// 			keeptrack({ n_users_updated: raw.n });
-		// 			g_callback( null );
-
-		// 		});
-		// };
-
 
 		function handleError( err ){
 			keeptrack( err );
