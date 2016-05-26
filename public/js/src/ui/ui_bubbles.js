@@ -92,7 +92,7 @@
 		},
 		addBubble: function( elem ){
 
-			LJ.log('Adding bubble for the first time');
+			// LJ.log('Adding bubble for the first time');
 			$( LJ.ui.renderBubble() )
 				.appendTo( elem );
 

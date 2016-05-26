@@ -334,52 +334,59 @@
 		},
 		refetchChatHistory: function( chat_id ){
 
-			var $w               = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
-			var messages_fetched = $w.find('.chat-inview-message__bubble:not(.--pending)').length;
+			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $g = $w.find('.chat-inview-message').first();
+
+			var sent_at = $w.find('.chat-inview-message__bubble:not(.--pending)').first().attr('data-sent-at');
+			var call_id = $w.find('.chat-inview-message__bubble').first().attr('data-call-id');
 
 			if( $w.hasClass('--fetching-history') ){
 				LJ.log('Cant fetch chat history, already fetching...');
 				return;
 			}
 
-			var call_id = $w.find('.chat-inview-message__bubble').first().attr('data-call-id');
-			LJ.chat.horodateChatLine( call_id, { force: true });
-
 			$w.addClass('--fetching-history');
+			$g.addClass('--glue');
+
+			LJ.chat.horodateChatLine( call_id, { force: true });
 			LJ.chat.loaderifyChatInview( chat_id );
 			LJ.chat.saveActiveChatInviewScrollPose();
 
-			var $g = $w.find('.chat-inview-message').first();
-			$g.addClass('--glue');
+			LJ.api.fetchChatHistory( chat_id, { 
+				sent_at: sent_at 
+			})
+			.then(function( res ){
 
-			LJ.api.fetchChatHistory( chat_id, messages_fetched )
-				.then(function( res ){
+				var chat_messages = res.messages;
 
-					var chat_messages = res.messages;
+				if( chat_messages.length == 0 ){
+					return LJ.chat.allMessagesFetched( chat_id );
+				}
 
-					if( chat_messages.length == 0 ){
-						return LJ.chat.allMessagesFetched( chat_id );
-					}
+				LJ.chat.deloaderifyChatInview( chat_id, function(){
 
-
-					LJ.chat.deloaderifyChatInview( chat_id, function(){
-
-						chat_messages.forEach(function( message_object ){
-							LJ.chat.addChatLine( message_object, LJ.generateId(), { insert_mode: "prepend" });
-						});
-						
-						LJ.chat.cacheChatMessages( chat_id, chat_messages );
-						$w.removeClass('--fetching-history');
-						$g.removeClass('--glue');
-						
+					chat_messages.sort(function( ch1, ch2 ){
+						return moment( ch2.sent_at ) - moment( ch1.sent_at );
 					});
 
-
+					chat_messages.forEach(function( message_object ){
+						LJ.chat.addChatLine( message_object, LJ.generateId(), { insert_mode: "prepend" });
+					});
+					
+					LJ.chat.cacheChatMessages( chat_id, chat_messages );
+					$w.removeClass('--fetching-history');
+					$g.removeClass('--glue');
+					
 				});
+			});
 		},
 		allMessagesFetched: function( chat_id ){
 
+			var $w      = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var call_id = $w.find('.chat-inview-message__bubble').first().attr('data-call-id');
+
 			LJ.chat.deloaderifyChatInview( chat_id );
+			LJ.chat.horodateChatLine( call_id );
 			$('.chat-inview-item[data-chat-id="'+ chat_id +'"]').removeClass('--fetching-history').addClass('--fetching-done');
 			LJ.wlog('All messages have been fetched');
 
@@ -464,9 +471,9 @@
 			var $prev_message_bubble = $prev_message.find('.chat-inview-message__bubble').last();
 			var $next_message_bubble = $next_message.find('.chat-inview-message__bubble').last();
 
-			var curr_message_sent_at = parseInt( $curr_message_bubble.attr('data-sent-at') );
-			var prev_message_sent_at = parseInt( $prev_message_bubble.attr('data-sent-at') );
-			var next_message_sent_at = parseInt( $next_message_bubble.attr('data-sent-at') );
+			var curr_message_sent_at = $curr_message_bubble.attr('data-sent-at');
+			var prev_message_sent_at = $prev_message_bubble.attr('data-sent-at');
+			var next_message_sent_at = $next_message_bubble.attr('data-sent-at');
 
 			var date_html = LJ.chat.renderChatLine__Date( curr_message_sent_at );
 			var $date     = $( date_html );
@@ -520,11 +527,12 @@
 
 			if( $next.length == 0 ){
 				var $bubbles_wrap = $prev.find('.chat-inview-message__bubble-wrap');
+				$bubble.appendTo( $bubbles_wrap );
 			} else {
 				var $bubbles_wrap = $next.find('.chat-inview-message__bubble-wrap');
+				$bubble.prependTo( $bubbles_wrap );
 			}
 
-			$bubble.appendTo( $bubbles_wrap );
 			$w.remove();
 
 			var $children = $bubbles_wrap.children();			
@@ -630,7 +638,7 @@
 	              '</div>',
 	              '<div class="chat-inview-message-body">',
 	                '<div class="chat-inview-message__bubble-wrap">',
-	                  '<span class="chat-inview-message__bubble" data-call-id="'+ call_id +'" data-sent-at="'+ m.unix() +'">',
+	                  '<span class="chat-inview-message__bubble" data-call-id="'+ call_id +'" data-sent-at="'+ m.toISOString() +'">',
 	                  	message,
 	                  '</span>',
 	                '</div>',
@@ -643,7 +651,7 @@
 		},
 		renderChatLine__Date: function( sent_at ){
 
-			var m = moment.unix( parseInt( sent_at ) );
+			var m = moment( sent_at );
 
 			var day_week  = LJ.text("day")[ m.day() ];
 			var day_digit = m.format('DD/MM');

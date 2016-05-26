@@ -208,7 +208,7 @@
 		},
 		subscribeToBeforeChannel: function( channel_name ){
 
-			LJ.log('Subscribing to before channel : ' + channel_name );
+			// LJ.log('Subscribing to before channel : ' + channel_name );
 			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
 
 			LJ.realtime.channels[ channel_name ].bind('new hello'		  , LJ.log ); // Test channel
@@ -219,7 +219,7 @@
 		handleNewRequestHost: function( data ){
 
 			LJ.log( data );
-			LJ.log('Someone requested to participate in your before');
+			// LJ.log('Someone requested to participate in your before');
 			
 			var before       = data.before;
 			var channel_item = data.channel_item;
@@ -235,7 +235,7 @@
 		},
 		handleNewBeforeStatusHosts: function( data ){
 
-			LJ.log('Push event received, data : ');
+			// LJ.log('Push event received, data : ');
 			LJ.log( data );
 
 			var before_id   = data.before_id;
@@ -267,7 +267,7 @@
 		},
 		subscribeToChatChannel: function( channel_name ){
 
-			LJ.log('Subscribing to chat channel : ' + channel_name );
+			// LJ.log('Subscribing to chat channel : ' + channel_name );
 			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
 
 			LJ.realtime.channels[ channel_name ].bind('new hello'		  , LJ.log ); // Test channel
@@ -306,7 +306,7 @@
 		},
 		handleNewChatMessage: function( data ){
 
-			LJ.log('Adding chatline ');
+			// LJ.log('Adding chatline ');
 
 			var call_id   = data.call_id;
 			var group_id  = data.group_id;
@@ -314,6 +314,22 @@
 			var chat_id   = data.chat_id;
 			var message   = data.message;
 			var sender_id = data.sender_id;
+
+			var chat = LJ.chat.getChatById( chat_id );
+
+			if( !chat ){
+
+				LJ.wlog('New message received for a chat that wasnt fetched. Fetching first...');
+				LJ.wlog('Not implemented yet! Construct the channel item, then fetch chat');
+				return LJ.chat.addAndFetchOneChat( channel_item, {
+					row_insert_mode: "top"
+				})
+				.then(function(){
+					// Recall itself after the chat has been fetched
+					LJ.chat.handleNewChatMessage( data );
+
+				});
+			}
 
 			// Update the state
 			var state = LJ.chat.getActiveChatId() == chat_id ? "seen" : "unseen";
@@ -332,7 +348,7 @@
 			LJ.chat.updateChatRowPreview__AuthorLast( group_id );
 			LJ.chat.updateChatRowTime( group_id );
 			LJ.chat.newifyChatRow( group_id );
-			LJ.chat.topifyChatRow( group_id );
+			LJ.chat.sortChatRowsBySentAt();
 			LJ.chat.refreshChatInviewBubbles( group_id );
 			LJ.chat.refreshChatIconBubble();
 

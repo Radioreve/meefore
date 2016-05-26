@@ -34,20 +34,21 @@
 		User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
 			if( err ){
-				return callback({ err_id: "api_error", err: err });
+				return callback({
+					err_id: "api_error",
+					err: err
+				});
 			}
 
 			if( !user ){
-				return callback({ err_id: "ghost_user", facebook_id: facebook_id });
+				return callback({
+					err_id: "ghost_user",
+					facebook_id: facebook_id
+				});
 			}
 
-			var a1 = _.map( user.channels, 'name' );
-			var a2 = _.map( user.channels, 'channel_all' );
-			var a3 = _.map( user.channels, 'channel_team' );
-
-			var authorized_channels = a1.concat( a2 ).concat( a3 );
-
-			if( authorized_channels.indexOf( chat_id ) == -1 ){
+			var channel = user.getChannel( chat_id );
+			if( !channel ){
 				return callback({
 					err_id    : 'ghost_channel',
 					message   : 'This channel is not a part of users channels',

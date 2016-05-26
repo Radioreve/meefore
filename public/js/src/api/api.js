@@ -12,6 +12,7 @@
 		fetch_meepass_url 		  	 : '/api/v1/users/:user_id/meepass',
 		fetch_user_url 	   	  	  	 : '/api/v1/users/:user_id/core',
 		fetch_user_profile_url    	 : '/api/v1/users/:user_id/full',
+		fetch_more_channels_url 	 : '/api/v1/users/:user_id/channels',
 		update_profile_url  	  	 : '/api/v1/users/:user_id/update-profile',
 		upload_picture_dt		  	 : '/api/v1/users/:user_id/update-picture-client',
 		upload_picture_fb		  	 : '/api/v1/users/:user_id/update-picture-url',
@@ -32,6 +33,8 @@
 		change_before_status_url 	 : '/api/v1/befores/:before_id/status',
 		before_request_url 			 : '/api/v1/befores/:before_id/request',
 		send_chat_message_url 	     : '/api/v1/chats/:chat_id',
+		fetch_chat_history_url 	 	 : '/api/v1/chats/:chat_id',
+		change_group_status_url		 : '/api/v1/befores/:before_id/groups/:group_id/status',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -675,9 +678,72 @@
 			});
 
 		},
-		fetchChatHistory: function( chat_id, delay ){
+		fetchChatHistory: function( chat_id, opts ){
 
-			return [];
+			// opts == sent_at (iso_string) & limit (number);
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.get( LJ.api.fetch_chat_history_url.replace(':chat_id', chat_id ), opts )
+					.then(function( exposed ){
+
+						if( !exposed.messages ){
+							return LJ.wlog('The server didnt respond with the expected messages object');
+
+						} else {
+							return resolve({
+								messages : exposed.messages,
+								readby   : exposed.readby
+							});
+						}
+
+					}, function( err ){
+						return reject( err );
+
+					});
+
+			});
+
+		},
+		changeGroupStatus: function( data ){
+			return LJ.promise(function( resolve, reject ){
+
+				var before_id   = data.before_id;
+				var group_id    = data.group_id;
+				var chat_id     = data.chat_id;
+				var main_member = data.main_member;
+				var status 	    = data.status;
+
+				if( !( before_id && group_id && chat_id && main_member && status ) ){
+					return LJ.wlog('Cannot call the api without required parameters');
+				}
+
+				var url = LJ.api.change_group_status_url.replace(':before_id', before_id ).replace(':group_id', group_id );
+				LJ.api.post( url, data )
+					.then(function( exposed ){
+						return resolve();
+
+					}, function( err ){
+						return reject( err );
+					});
+
+				});
+		},
+		fetchMoreChannels: function( group_ids ){
+			return LJ.promise(function( resolve, reject ){
+
+				var url = LJ.api.fetch_more_channels_url.replace( ':user_id', LJ.user.facebook_id );
+				LJ.api.post( url, { group_ids: group_ids })
+					.then(function( exposed ){
+						if( !exposed.channels ){
+							return LJ.wlog('The server didnt respond with the expected channels parameter');
+						} else {
+							return resolve( exposed.channels );
+						}
+					}, function( err ){
+						return reject( err );
+					});
+
+			});
 
 		}
 

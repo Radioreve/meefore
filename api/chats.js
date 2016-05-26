@@ -57,6 +57,8 @@
 
 		resetReadby( chat_id, facebook_id, function( err ){
 
+			req.sent.sent_at = new Date();
+
 			var data = {
 				chat_id      : req.sent.chat_id,
 				group_id 	 : req.sent.group_id,
@@ -148,7 +150,7 @@
 			.find(
 			{
 				chat_id: chat_id,
-				sent_at: { $lte: sent_at }
+				sent_at: { $lt: sent_at }
 			})
 			.sort({ sent_at: -1 })
 			.limit( limit )
@@ -170,6 +172,8 @@
 		var err_ns  = "fetching_messages";
 		var chat_id = req.sent.chat_id;
 
+		console.log('Fetching history for chat with id : ' + chat_id );
+
 		getReadby( chat_id, function( err, readby ){
 
 			if( err ){
@@ -179,7 +183,7 @@
 			fetchChatMessagesByDate( chat_id, req.sent, function( err, messages ){
 
 				if( err ){
-					return handleErr( req, res, "test_fn", err );
+					return handleErr( req, res, err_ns, err );
 				};
 
 				req.sent.expose.messages = messages;

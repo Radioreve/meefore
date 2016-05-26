@@ -4,6 +4,7 @@
 	var eventUtils = require('../pushevents/eventUtils');
 	var md5        = require('blueimp-md5');
 	var Before     = require('../models/BeforeModel');
+	var Message    = require('../models/MessageModel');
 	var mongoose   = require('mongoose');
 	var async 	   = require('async');
 
@@ -104,43 +105,44 @@
 		};
 	}	
 
-	function makeChannelItem__ChatHosts( before, group ){
+	function makeChannelItem__ChatBase( before, group, opts ){
 
 		return {
-			type 		 : "chat",
-			group_id     : makeChatGroupId( before._id, before.hosts, group.members ),
-			channel_all  : makeChatChannel__All( before._id, before.hosts, group.members ),
-			channel_team : makeChatChannel__Hosts( before._id, before.hosts, group.members ),
-			before_id    : before._id,
-			members      : group.members,
-			main_member  : group.main_member,
-			main_host    : before.main_host,
-			hosts        : before.hosts,
-			status       : group.status,
-			role 		 : "hosted",
-			requested_at : group.requested_at
+
+			type 		  : "chat",
+			group_id      : makeChatGroupId( before._id, before.hosts, group.members ),
+			channel_all   : makeChatChannel__All( before._id, before.hosts, group.members ),
+			channel_team  : makeChatChannel__Hosts( before._id, before.hosts, group.members ),
+			channel_team  : opts.channel_team,
+			before_id     : before._id,
+			before_status : before.status,
+			members       : group.members,
+			main_member   : group.main_member,
+			main_host     : before.main_host,
+			hosts         : before.hosts,
+			status        : group.status,
+			role 		  : opts.role,
+			requested_at  : group.requested_at,
+			last_sent_at  : group.requested_at
 
 		};
+	}
+
+	function makeChannelItem__ChatHosts( before, group ){
+
+		return makeChannelItem__ChatBase( before, group, {
+			channel_team : makeChatChannel__Hosts( before._id, before.hosts, group.members ),
+			role         : "hosted"
+		});
 
 	}
 
 	function makeChannelItem__ChatUsers( before, group ){
 
-		return {
-			type 	 	 : "chat",
-			group_id     : makeChatGroupId( before._id, before.hosts, group.members ),
-			channel_all  : makeChatChannel__All( before._id, before.hosts, group.members ),
+		return makeChannelItem__ChatBase( before, group, {
 			channel_team : makeChatChannel__Users( before._id, before.hosts, group.members ),
-			before_id    : before._id,
-			members      : group.members,
-			main_member  : group.main_member,
-			main_host    : before.main_host,
-			hosts        : before.hosts,
-			status       : group.status,
-			role 		 : "requested",
-			requested_at : group.requested_at
-
-		};
+			role         : "requested"
+		});
 
 	}
 
@@ -164,18 +166,13 @@
 
 			user.channels = [];
 			user.channels.push( makeChannelItem__Personnal( user ) );
-			user.channels.push( makeChannelItem__Location( user ) )
+			user.channels.push( makeChannelItem__Location( user ) );
 
-			// Prepare the before_ids ( cast is needed )
-			var before_ids = _.map( user.befores, function( bfr ){
-				return mongoose.Types.ObjectId( bfr.before_id );
-			});
-
-			Before.find({ '_id': { $in: before_ids } }, function( err, befores ){
+			user.findBeforesByPresence(function( err, befores ){
 
 				if( err ) return handleErr( req, res, err_ns, err );
 
-				console.log(befores.length +' befores were found');
+				console.log( befores.length +' befores were found' );
 
 				befores.forEach(function( before ){
 
@@ -317,6 +314,51 @@
 			next();
 
 		}
+
+	};
+
+	// Update the last_sent_at in each channel, to allow the user
+	// to query them by order of activity
+	var setLastSentAtInChannels = function( req, res, next ){
+
+		var err_ns = "setting_last_sent_at";
+
+		var user   = req.sent.user;
+		var groups = _.map( req.sent.user.channels, 'group_id' ).filter( Boolean );
+
+		Message.aggregate([
+
+			{ '$match': { 'group_id': { '$in': groups } } },
+			{ '$group': { '_id': '$group_id', 'last_sent_at': { '$last': '$sent_at' } } }
+
+		]).exec(function( err, res ){
+
+			if( err ) return handleErr( req, res, err_ns, err );
+			
+			res.forEach(function( res_object ){
+
+				// Augment each channel with the date at which the last message was sent
+				// to allow clients to paginate the way they fetch chats
+				var channel = _.find( user.channels, function( chan ){
+					return chan.group_id == res_object._id;
+				});
+
+				channel.last_sent_at = res_object.last_sent_at;
+
+			});
+
+			user.markModified('channels');
+			user.save(function( err, user ){
+
+				if( err ) return handleErr( req, res, err_ns, err );
+
+				req.sent.user = user;
+				next();
+
+			});
+
+
+		});
 
 	};
 
@@ -474,20 +516,15 @@
 
 	var pushNewChatMessage = function( req, res, next ){
 
-		var message     = req.sent.message;
-		var sent_at     = req.sent.sent_at;
-		var chat_id 	= req.sent.chat_id;
-		var group_id    = req.sent.group_id;
-		var facebook_id = req.sent.facebook_id;
-		var call_id     = req.sent.call_id;
+		var chat_id = req.sent.chat_id;
 
 		var data_message = {
-			sender_id   : facebook_id,
-			call_id 	: call_id,
-			group_id    : group_id,
-			message     : message,
-			sent_at  	: sent_at,
-			chat_id 	: chat_id			
+			sender_id   : req.sent.facebook_id,
+			call_id 	: req.sent.call_id,
+			group_id    : req.sent.group_id,
+			message     : req.sent.message,
+			sent_at  	: req.sent.sent_at,
+			chat_id 	: chat_id	
 		};
 
 		// Do not filter by socket_id here for ressource efficiency, let the client react differently
@@ -495,20 +532,13 @@
 		pusher.trigger( chat_id, 'new chat message', data_message, handlePusherErr );
 		next();
 
-		// if( req.sent.whisper_to ){
-		// 	pusher.trigger( 'private-' + req.sent.facebook_id, 'new chat whisper', data );
-		// 	req.sent.whisper_to.forEach(function( whisper_to_id ){
-		// 		pusher.trigger( 'private-' + whisper_to_id, 'new chat whisper', data );
-		// 	});
-		// } else {
-		// 	pusher.trigger( 'presence-' + req.sent.chat_id, 'new chat message', data );
-		// }
 
 	};
 
 
 	module.exports = {
 		setChannels 		  	   : setChannels,
+		setLastSentAtInChannels    : setLastSentAtInChannels,
 		updateChannelsRequest  	   : updateChannelsRequest,
 		makeChatGroupId 		   : makeChatGroupId,
 		updateLocationChannel 	   : updateLocationChannel,

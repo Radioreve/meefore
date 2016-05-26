@@ -1,6 +1,8 @@
 
 	window.LJ.chat = _.merge( window.LJ.chat || {}, {
 
+		parallel_fetches_count: 30,
+
 		state: 'hidden',
 		fetched_groups: {},
 		fetched_chats: {},
@@ -9,10 +11,15 @@
 				
 			LJ.chat.handleDomEvents();
 				
+			LJ.chat.setupChat();
+			
 			// Non blocking promise
-			LJ.chat.setupChat()
+			LJ.chat.setupChatRowsJsp()
 				.then(function(){
 					return LJ.chat.addAndFetchChats();
+				})
+				.then(function(){
+					return LJ.chat.navigate('all');
 				})
 
 			return;
@@ -26,11 +33,6 @@
 			$('.chat').css({ height: height });
 			$('.chat-rows').css({
 				height : height - ( $('.chat-header').height() + $('.chat-subheader').height() )
-			});
-
-			// Jspify the chat rows container
-			return LJ.ui.turnToJsp('.chat-rows', {
-				jsp_id: 'chat_rows'
 			});
 
 		},
@@ -53,8 +55,19 @@
 		sortChatMessages: function( chat_id ){
 
 			LJ.chat.getChatById( chat_id ).messages.sort(function( ch1, ch2 ){
-				return moment( ch1.sent_at ) - moment( ch2.sent_at );
+				return moment( ch2.sent_at ) - moment( ch1.sent_at );
 			})
+
+		},
+		cacheGroupProfiles: function( group_id, data ){
+
+			LJ.chat.fetched_groups[ group_id ] = {
+				group_id 			: group_id,
+				hosts_profiles      : data.hosts_profiles,
+				members_profiles    : data.members_profiles,
+				main_host_profile   : data.main_host_profile,
+				main_member_profile : data.main_member_profile
+			};
 
 		},
 		cacheChatMessage: function( chat_id, message_object ){
@@ -68,15 +81,15 @@
 			}
 
 		},
-		cacheChatMessages: function( chat_id, messages, readby ){
+		cacheChatMessages: function( chat_id, messages, readby, channel_item ){
 
-			if( !Array.isArray(messages) ){
+			if( !Array.isArray( messages ) ){
 				return LJ.wlog('Cannot setup cache for chat without a messages array');
 			}
 
-			if( readby ){
-				LJ.chat.getChatById( chat_id ).readby = readby
-			}
+			var chat = LJ.chat.getChatById( chat_id ) 
+					 ? LJ.chat.getChatById( chat_id ) 
+					 : LJ.chat.setChat( chat_id, readby, channel_item );
 			
 			// During the setup, check if
 			messages.forEach(function( message_object ){
@@ -116,7 +129,7 @@
 
 			LJ.chat.resetBubbleToChatIcon();
 			
-			_.keys( LJ.chat.fetched_groups ).forEach(function( group_id ){
+			_.uniq( _.map( LJ.chat.fetched_chats, 'group_id' ) ).forEach(function( group_id ){
 				if( LJ.chat.getUnseenMessagesCount( group_id ) > 0 ){
 					LJ.chat.addBubbleToChatIcon();
 				}
@@ -208,17 +221,35 @@
 			return _.keys( LJ.chat.fetched_chats );
 
 		},
+		setChat: function( chat_id, readby, channel_item ){
+
+			LJ.chat.fetched_chats[ chat_id ] = {};
+			
+			var chat = LJ.chat.fetched_chats[ chat_id ];
+
+			chat.readby   = readby ? readby : null;
+			chat.messages = [];
+			// Copy extra properties on chat objects that are chat-related and useful. Functions regarding 
+			// the ui will base their behavior on the state that is stored here
+			if( channel_item ){
+				[ 'before_id', 'group_id', 'requested_at', 'last_sent_at' ].forEach(function( prop ){
+					chat[ prop ] = channel_item[ prop ];
+				});
+			} else {
+				LJ.wlog('Setting chat somewhere without channel_item');
+			}
+
+			return chat;
+
+		},
 		getChatById: function( chat_id ){
 
 			var c = LJ.chat.fetched_chats[ chat_id ];
-
 			if( !c ){
-				LJ.log('Initializing chat cache object, didnt exist before');
-				LJ.chat.fetched_chats[ chat_id ] = { readby: null, messages: [] };
-				c = LJ.chat.fetched_chats[ chat_id ];
-			} 
-
-			return c;
+				return null;
+			} else {
+				return c;
+			}
 
 		},
 		getGroupIdByChatId: function( chat_id ){
@@ -264,20 +295,54 @@
 			// Keep only the channels that are chat-related
 			var channels = _.filter( LJ.user.channels, 'channel_all' );
 
+			var sorted_channels = channels.sort(function( ch1, ch2 ){
+				return moment( ch2.last_sent_at ) - moment( ch1.last_sent_at );
+			});
+
+			var last_channels = sorted_channels.slice( 0, LJ.chat.parallel_fetches_count );
+
 			var all_chat_fetched = [];
-			channels.forEach(function( channel_item ){
-				var chat_fetched = LJ.chat.addAndFetchOneChat( channel_item );
+			last_channels.forEach(function( channel_item ){
+				var chat_fetched = LJ.chat.addAndFetchOneChat( channel_item, {
+					row_insert_mode: "top"
+				});
 				all_chat_fetched.push( chat_fetched );
 			});
 
-			LJ.Promise.all( all_chat_fetched )
-				.then(function(){
-					LJ.chat.navigate('all');
-				});
-
+			// Promise is needed because for the init, the navigate must be called after its all done
+			// otherwise, not needed, cause each chat reupdates the whole state when its done, so no
+			// concurrency issues can ever happen
+			return LJ.Promise.all( all_chat_fetched );
 
 		},
-		addAndFetchOneChat: function( channel_item ){
+		readdAndFetchChats: function(){
+
+			LJ.log('Refetching more group ids');
+
+			LJ.chat.fetchMoreChannels()
+				.then(function( channels ){
+
+					if( channels.length == 0 ){
+						return LJ.chat.allChannelsFetched();
+					}
+
+					channels.forEach(function( channel_item ){
+						LJ.chat.addAndFetchOneChat( channel_item, {
+							row_insert_mode: "bottom"
+						});
+					});
+
+
+				});
+			
+				
+		},
+		allChannelsFetched: function(){
+
+			LJ.wlog('All channels have been fetched');
+
+		},
+		addAndFetchOneChat: function( channel_item, opts ){
 
 			var group_id     = channel_item.group_id;
 			var chat_id_all  = channel_item.channel_all;
@@ -288,13 +353,15 @@
 			var main_member  = channel_item.main_member;
 			var status 		 = channel_item.status;
 			var role 		 = channel_item.role;
+			var requested_at = channel_item.requested_at;
+			var last_sent_at = channel_item.last_sent_at;
 
 			LJ.log('Initializing one chat...');
 
 			return LJ.Promise.resolve()
 					// Render static HTML that will be dynamically filled (sync)
 					.then(function(){
-						return LJ.chat.setupChatRow( channel_item );
+						return LJ.chat.setupChatRow( channel_item, opts );
 
 					})
 					// Render static HTML that will be dynamically filled (sync)
@@ -324,12 +391,12 @@
 						var main_member_profile = _.find( members_profiles, function(m){ return m.facebook_id == main_member });
 						var main_host_profile   = _.find( hosts_profiles, function(h){ return h.facebook_id == main_host });
 
-						LJ.chat.fetched_groups[ group_id ] = {
+						LJ.chat.cacheGroupProfiles( group_id, {
 							hosts_profiles      : hosts_profiles,
 							members_profiles    : members_profiles,
 							main_host_profile   : main_host_profile,
 							main_member_profile : main_member_profile
-						};
+						});
 
 						return LJ.chat.updateChatRowPicture( channel_item );
 						
@@ -347,8 +414,11 @@
 					.then(function( res ){
 
 						// Add messages to the all chat
-						LJ.chat.cacheChatMessages( chat_id_all,  res[0].messages, res[0].readby );
-						LJ.chat.cacheChatMessages( chat_id_team, res[1].messages, res[1].readby );
+						LJ.chat.cacheChatMessages( chat_id_all,  res[0].messages, res[0].readby, _.cloneDeep(channel_item) );
+						LJ.chat.cacheChatMessages( chat_id_team, res[1].messages, res[1].readby, _.cloneDeep(channel_item) );
+						// Order rows in the right position before moving the ui
+						// Requires access to cached messages to work properly
+						LJ.chat.sortChatRowsBySentAt();
 
 						// Set all chats internal ui_status to "inactive";
 						LJ.chat.deactivateChats();
@@ -372,8 +442,8 @@
 							LJ.chat.validateifyChatInview( group_id, chat_id_all );
 						}
 
-						LJ.chat.setupChatJsp( chat_id_all);
-						LJ.chat.setupChatJsp( chat_id_team );
+						LJ.chat.setupChatInviewJsp( chat_id_all );
+						LJ.chat.setupChatInviewJsp( chat_id_team );
 
 						LJ.chat.deloaderifyChatRow( group_id );
 						LJ.chat.deloaderifyChatInview( chat_id_all );
@@ -395,26 +465,61 @@
 		updateChatRowFirstTime: function( group_id, role, status ){
 
 			if( status == "pending" ){
-				LJ.chat.updateChatRow__Pending( group_id );
-			}
 
-			if( status == "accepted" ){
+				if( role == "hosted" ){
+					LJ.chat.updateChatRow__Request( group_id );
+				} else {
+					LJ.chat.updateChatRow__Pending( group_id );
+				}
+
+			} else {
 				LJ.chat.updateChatRow__Accepted( group_id );
-			}
 
-			if( role == "hosted" ){
-				LJ.chat.updateChatRow__Request( group_id );
 			}
 
 			LJ.chat.updateChatRowPreview__AuthorLast( group_id );
 			LJ.chat.updateChatRowTime( group_id );
 			LJ.chat.newifyChatRow( group_id );
-			LJ.chat.topifyChatRow( group_id );
 			LJ.chat.refreshChatInviewBubbles( group_id );
 			LJ.chat.refreshChatIconBubble();
 
 		},
-		setupChatJsp: function( chat_id ){
+		fetchMoreChannels: function(){
+
+			var fetched_group_ids = _.uniq( _.map( LJ.chat.fetched_chats, 'group_id' ) );
+			return LJ.api.fetchMoreChannels( fetched_group_ids );
+
+		},
+		setupChatRowsJsp: function(){
+
+			var $w = $('.chat-rows');
+
+			// Jspify the chat rows container
+			return LJ.ui.turnToJsp('.chat-rows', {
+					jsp_id: 'chat_rows',
+					handlers: [{
+						'event_name' : 'jsp-scroll-y',
+						'callback'   : function( e, scroll_pose_y, is_at_top, is_at_bottom ){
+
+							if( is_at_bottom
+								&& !$w.hasClass('--fetching-history')
+								&& !$w.hasClass('--fetching-done')
+								&& !$w.find('.chat-row').length >= LJ.chat.parallel_fetches_count
+							){	
+
+								// Find all the group ids that have been fetched so far
+								// Server will respond n more ids orderered by most recent activity
+								// excluding the ones passed in
+								LJ.log('Fetching history... (rows)');
+								LJ.chat.readdAndFetchChats();
+							}
+
+						}
+					}]
+				});
+
+		},
+		setupChatInviewJsp: function( chat_id ){
 
 			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
 
@@ -434,7 +539,7 @@
 								&& !$w.hasClass('--fetching-done') 
 								&& $w.find('.chat-inview-message__bubble:not(.--pending)').length >= LJ.app_settings.app.chat_fetch_count
 							){
-								LJ.log('Fetching history...');
+								LJ.log('Fetching history...(inview)');
 								LJ.chat.refetchChatHistory( chat_id );
 							} 
 
@@ -444,13 +549,14 @@
 
 
 		},
-		setupChatRow: function( channel_item ){
+		setupChatRow: function( channel_item , opts ){
 			
 			var group_id     = channel_item.group_id;
 			var status       = channel_item.status;
 			var role 		 = channel_item.role;
 			var before_id    = channel_item.before_id;
-			var requested_at = channel_item.requested_at;
+			var requested_at = channel_item.requested_at
+			var last_sent_at = channel_item.last_sent_at;
 			var before       = LJ.before.findById( before_id );
 
 			if( !before ){
@@ -471,7 +577,7 @@
 
 			}
 
-			LJ.chat.addChatRow( html );
+			LJ.chat.addChatRow( html, opts );
 			// All chat empty are dynamically rendered and added each time there is a nav
 			// between toggles so we can safely remove them when they need to.
 			LJ.chat.clearChatRowEmpty();		
@@ -556,12 +662,80 @@
 				.appendTo('.chat-inview-wrap');
 
 		},
-		addChatRow: function( html ){
-			
-			$( html )
-				.css({ opacity: 0 }) // jsp compliance
-				.prependTo('.chat-rows .jspPane');
+		sortChatRowsBySentAt: function(){
 
+			var ordered_groups = [];
+
+			var group_ids = _.uniq( _.map( LJ.chat.fetched_chats, 'group_id' ) );
+
+			group_ids.forEach(function( group_id ){
+				ordered_groups.push( LJ.chat.getLastUnseenMessageByGroupId( group_id ) );
+			});
+
+			// Clear the array
+			ordered_groups.filter( Boolean );
+
+			// Lowest order are displayed the highest, so sort by desc
+			ordered_groups.sort(function( m1, m2 ){
+				return moment( m2.sent_at ) - moment( m1.sent_at );
+			});
+
+			ordered_groups.forEach(function( m, i ){
+				$('.chat-row[data-group-id="'+ m.group_id +'"]').css({ 'order': i });
+			});
+
+		},
+		getLastUnseenMessageByGroupId: function( group_id ){
+
+			var last_message_all  = LJ.chat.getChatByGroupId__All( group_id ).messages[0];
+			var last_message_team = LJ.chat.getChatByGroupId__Team( group_id ).messages[0];
+
+			if( !last_message_all && !last_message_team ){
+				return {
+					group_id : group_id,
+					sent_at  : LJ.chat.getChatByGroupId__All( group_id ).last_sent_at
+				};
+			}
+
+			if( last_message_all && !last_message_team ){
+				return last_message_all;
+			}
+
+			if( last_message_team && !last_message_all ){
+				return last_message_team;
+			}
+
+			// UI choice : messages that are not seen can go down messages that are seen
+			// to allow users to have some kind of 'filter' behavior, if they dont want to
+			// click on a message for some reason ^^
+
+			if( last_message_all.state == "unseen" && last_message_team.state == "seen" ){
+				// return last_message_all;
+			}
+
+			if( last_message_all.state == "seen" && last_message_team.state == "unseen" ){
+				// return last_message_team;
+			}
+
+			// Both message have the same state, either "seen" or "unseen"
+			if( moment( last_message_all.sent_at ) > moment( last_message_team.sent_at ) ){
+				return last_message_all;
+			} else {
+				return last_message_team;
+			}
+
+
+		},
+		addChatRow: function( html, opts ){
+			
+			var $h = $( html );
+			$h.css({ opacity: 0 }); // jsp compliance
+
+			if( opts.row_insert_mode == "bottom" ){
+				$h.css({ 'order': $('.chat-rows').length + 1 }).appendTo('.chat-rows .jspPane');
+			} else {
+				$h.css({ 'order': '-1' }).prependTo('.chat-rows .jspPane');
+			}
 
 		},
 		clearChatRowEmpty: function(){
@@ -695,7 +869,7 @@
 
 			LJ.chat.showChatInview( group_id );
 			LJ.chat.deNewifyChatRow( group_id );
-			LJ.chat.detopifyChatRow( group_id );
+			LJ.chat.sortChatRowsBySentAt();
 
 		},
 		handleToggleChatWrap: function( e ){
@@ -871,8 +1045,8 @@
 
 			var $w = $('.chat-inview[data-group-id="'+ group_id +'"]');
 
-			var last_message_all  = _.last( LJ.chat.getChatByGroupId__All( group_id ).messages );
-			var last_message_team = _.last( LJ.chat.getChatByGroupId__Team( group_id ).messages );
+			var last_message_all  = LJ.chat.getChatByGroupId__All( group_id ).messages[0];
+			var last_message_team = LJ.chat.getChatByGroupId__Team( group_id ).messages[0];
 
 			if( !last_message_all && !last_message_team ){
 				return LJ.log('No chat messages fetched, not updating the chat row');
@@ -922,8 +1096,8 @@
 
 			var $w = $('.chat-row[data-group-id="'+ group_id +'"]');
 
-			var last_message_all  = _.last( LJ.chat.getChatByGroupId__All( group_id ).messages );
-			var last_message_team = _.last( LJ.chat.getChatByGroupId__Team( group_id ).messages );
+			var last_message_all  = LJ.chat.getChatByGroupId__All( group_id ).messages[0];
+			var last_message_team = LJ.chat.getChatByGroupId__Team( group_id ).messages[0];
 
 			if( !last_message_all && !last_message_team  ){
 				return LJ.log('No chat messages fetched, not updating the chat row');
@@ -952,18 +1126,6 @@
 
 			var $r = $('.chat-row[data-group-id="'+ group_id +'"]');
 			$r.removeClass('--new');
-
-		},
-		topifyChatRow: function( group_id ){
-
-			var $r = $('.chat-row[data-group-id="'+ group_id +'"]');
-			$r.insertBefore( $('.chat-row').first() );
-
-		},
-		detopifyChatRow: function( group_id ){
-
-			var $r = $('.chat-row[data-group-id="'+ group_id +'"]');
-			$r.insertAfter( $('.chat-row.--new').last() );
 
 		},
 		updateChatRow__Pending: function( group_id ){
@@ -1152,6 +1314,7 @@
 			var $g = $('.chat-row[data-group-id="'+ group_id +'"]');
 			var new_icon_html = LJ.chat.renderChatRowStatus__Accepted();
 
+			$g.removeClass('--pending');
 			$g.find('.chat-row__status').replaceWith( new_icon_html );
 			LJ.chat.updateChatRow__Accepted( group_id );
 

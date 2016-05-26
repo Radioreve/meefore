@@ -264,7 +264,7 @@
 
 		// Default, only fetch the befores in a 5km radius 
 		// more here : https://docs.mongodb.org/manual/reference/operator/aggregation/geoNear/
-		var maxDistance = req.sent.max_distance || 15000
+		var maxDistance = req.sent.max_distance || 15000;
 
 		// GeoJSON specification
 		// coordinates array must start with longitude
@@ -280,10 +280,10 @@
 		Before.aggregate([
 			{ 
 				$geoNear: {
-					spherical          : true,
-					near               : near,
-					distanceField      : 'distance',
-					maxDistance 	   : maxDistance
+					spherical     : true,
+					near          : near,
+					distanceField : 'distance',
+					maxDistance   : maxDistance
 				}
 			},
 			{

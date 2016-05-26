@@ -1,5 +1,6 @@
 
   var mongoose = require("mongoose");
+  var Before   = require("./BeforeModel");
   var settings = require('../config/settings');
   var config   = require('../config/config');
   var bcrypt   = require("bcrypt-nodejs");
@@ -120,6 +121,62 @@
 
 });
 
+UserSchema.methods.findBeforesByIds = function( callback ){
+
+  var before_ids = _.map( this.befores, function( bfr ){
+        return mongoose.Types.ObjectId( bfr.before_id );
+      });  
+
+  Before.find({ '_id': { $in: before_ids } }, function( err, befores ){
+
+        if( err ){
+          callback( err, null );
+        } else {
+          callback( null, befores );
+        }
+
+  });
+}
+
+UserSchema.methods.findBeforesByPresence = function( callback ){
+
+  Before.find({ 
+    $or: [
+      {
+        'hosts': this.facebook_id
+      },
+      {
+        'groups.members': this.facebook_id
+      }
+    ]}, function( err, befores ){
+
+        if( err ){
+          callback( err, null );
+        } else {
+          callback( null, befores );
+        }
+
+  });
+}
+
+UserSchema.methods.getChannel = function( channel_name ){
+
+  var target_channel = null;
+  this.channels.forEach(function( channel_item ){
+
+    [ "name", "channel_all", "channel_team" ].forEach(function( chan_key ){
+
+      if( channel_item[ chan_key ] == channel_name ){
+        target_channel = channel_item;
+      }
+
+    });
+
+  });
+
+  return target_channel;
+
+};
 
 UserSchema.methods.getPrivateChannel = function(){
 
@@ -130,4 +187,4 @@ UserSchema.methods.getPrivateChannel = function(){
 };
 
 
-module.exports = mongoose.model('Users', UserSchema);
+module.exports = mongoose.model( 'Users', UserSchema );

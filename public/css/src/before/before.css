@@ -17,7 +17,7 @@
     justify-content: center;
     align-items: center;
     padding: 0!important;
-    height: 50px;
+    height: 44px;
     overflow-y: hidden;
 }
 
@@ -26,7 +26,7 @@
 }
 
 .be-browser .jspDrag {
-    background: #1B69EC;
+    background: #EAEAEA;
 }
 
 .be-browser .jspHorizontalBar {
@@ -34,7 +34,7 @@
 }
 
 .be-dates {
-    width: 100%!important;
+    width: 80%!important;
     display: flex;
     color: #919191;
     outline: none;

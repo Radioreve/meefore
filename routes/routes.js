@@ -139,6 +139,7 @@
 	    	mdw.mailchimp_watcher.subscribeMailchimpUser,
 	    	signEvents.handleFacebookAuth,
 	    	mdw.realtime.setChannels,
+	    	mdw.realtime.setLastSentAtInChannels,
 	    	mdw.facebook.fetchAndSyncFriends,
 	    	mdw.alerts_watcher.setCache,
 	    	mdw.profile_watcher.setCache
@@ -288,10 +289,15 @@
 	    	api.users.fetchUsers
 	    );
 
-	     app.post('/api/v1/users.more',
+	    app.post('/api/v1/users.more',
 	    	mdw.validate('users_fetch_more'),
 	     	mdw.users_watcher.fetchUserCount,
 	    	api.users.fetchMoreUsers
+	    );
+
+	    app.post('/api/v1/users/:user_id/channels',
+	    	mdw.validate('myself'),
+	    	api.users.fetchMoreChannels
 	    );
 
 
@@ -586,6 +592,64 @@
 	    			})
 
 	    	});
+
+	    // Test functions
+	    app.get('/users/:user_id/channels',
+	    	setParam('user_id'),
+	    	function( req, res, next ){
+
+	    		var facebook_id  = req.params["user_id"];
+	    		var channel_name = req.sent.name; 
+
+	    		User.findOne({ facebook_id: facebook_id }, function( err, user ){
+
+	    			req.sent.expose.err = err;
+	    			req.sent.expose.channel_item = user.getChannel( channel_name );
+	    			next();
+
+	    		});
+	    	}
+	    );
+
+	    // Get all the befores for a particular user, by using each user's own befores
+	    // property (which contails all the before's _ids the user has going on)
+	    app.get('/users/:user_id/befores.id',
+	    	setParam('user_id'),
+	    	function( req, res, next ){
+
+	    		var facebook_id  = req.params["user_id"];
+
+	    		User.findOne({ facebook_id: facebook_id }, function( err, user ){
+	    			user.findBeforesByIds(function( err, befores ){
+						req.sent.expose.err        = err;
+						req.sent.expose.n_befores  = befores.length;
+						req.sent.expose.before_ids = _.map( befores, '_id' );
+						req.sent.expose.befores    = befores;
+		    			next();
+	    			});
+	    		});
+	    	}
+	    );
+
+	    // Get all the befores for a particular user, but checking the presence of its id
+	    // in either the hosts or the group.members fields
+	    app.get('/users/:user_id/befores.presence',
+	    	setParam('user_id'),
+	    	function( req, res, next ){
+
+	    		var facebook_id  = req.params["user_id"];
+
+	    		User.findOne({ facebook_id: facebook_id }, function( err, user ){
+	    			user.findBeforesByPresence(function( err, befores ){
+						req.sent.expose.err        = err;
+						req.sent.expose.n_befores  = befores.length;
+						req.sent.expose.before_ids = _.map( befores, '_id' );
+						req.sent.expose.befores    = befores;
+		    			next();
+	    			});
+	    		});
+	    	}
+	    );
 
 
 	   	// [ @WebHooks ] WebHook from Pusher to monitor in realtime online/offline users

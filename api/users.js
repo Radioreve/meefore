@@ -386,6 +386,7 @@
 	};
 
 
+	// Consider that we have the same countries for periods of 5s ! 
 	var distinct_countries = [];
 	var last_fetch = 0
 
@@ -418,6 +419,42 @@
 
 	};
 
+
+	// User have access locally to all the channels for the events to come
+	// However, if he wants to access its history, he needs to be able to fetch
+	// oldest chat messages, and so request the associated group_ids;
+	var parallel_fetch_count = 2;
+	var fetchMoreChannels = function( req, res, next ){
+
+		var err_ns = "fetching_more_channels";
+
+		var facebook_id = req.sent.user_id;
+		var group_ids 	= req.sent.group_ids || [];
+
+		User.findOne({ facebook_id: facebook_id }, function( err, user ){
+
+			if( err ) return handleErr( req, res, err_ns, err );
+
+			var channels = user.channels;
+
+			channels = _.filter( channels, function( chan ){
+				return chan.type == "chat" && group_ids.indexOf( chan.group_id ) == -1;
+			});
+
+			channels.sort(function( ch1, ch2 ){
+				return moment( ch2.last_sent_at ) - moment( ch1.last_sent_at );
+			});
+
+			var nu_channels = channels.slice( 0, parallel_fetch_count );
+
+			req.sent.expose.channels = nu_channels || [];
+			next();
+
+
+		});
+
+	};
+
 	module.exports = {
 		fetchMe 				: fetchMe,
 		fetchUserShared			: fetchUserShared,
@@ -429,5 +466,6 @@
 		fetchUserEvents 		: fetchUserEvents,
 		getMailchimpStatus 		: getMailchimpStatus,
 		fetchMoreUsers 			: fetchMoreUsers,
-		fetchDistinctCountries  : fetchDistinctCountries
+		fetchDistinctCountries  : fetchDistinctCountries,
+		fetchMoreChannels 	 	: fetchMoreChannels
 	};

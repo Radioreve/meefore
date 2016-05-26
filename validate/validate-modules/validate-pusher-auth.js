@@ -59,19 +59,8 @@
 				});
 			}
 
-			var err = {
-				err_id	  : 'ghost_channel',
-				message	  : 'This channel is not part of users channels',
-				http_code : 403
-			};
-
-			var a1 = _.map( user.channels, 'name' );
-			var a2 = _.map( user.channels, 'channel_all' );
-			var a3 = _.map( user.channels, 'channel_team' );
-
-			var authorized_channels = a1.concat( a2 ).concat( a3 );
-
-			if( authorized_channels.indexOf( channel_name ) == -1 ){
+			var channel = user.getChannel( channel_name );
+			if( !channel ){
 				return callback({
 					err_id    : 'ghost_channel',
 					message   : 'This channel is not a part of users channels',
@@ -79,6 +68,8 @@
 					http_code : 403
 				});
 			}
+
+			// if( channel.type == "chat" && channel.status )
 
 			return callback( null, user );
 

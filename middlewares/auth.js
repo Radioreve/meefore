@@ -83,9 +83,9 @@
 		var channel     = req.sent.channel_name;
 
 		var data = {
-			user_id  : facebook_id,
-			user_info: {
-				"name": "Charlington"
+			user_id   : facebook_id,
+			user_info : {
+				"name" : "Charlington"
 			}
 		};
 

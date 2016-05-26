@@ -299,12 +299,13 @@
     border-bottom-left-radius: 20px;
 }
 .chat-inview-message__bubble.--merged {
-    border-bottom-left-radius: 2px;
-    border-top-left-radius: 2px;
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
 }
 .chat-inview-message__bubble.--tall {
-    border-bottom-right-radius: 10px;
     border-radius: 20px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
 }
 
 .chat-inview-message.--me .chat-inview-message__bubble.--merged.--first,
@@ -324,11 +325,13 @@
     border-top-right-radius: 2px;
     margin-right: 0;
     margin-left: auto;
-} 
+}  
 
 .chat-inview-message.--me .chat-inview-message__bubble.--tall,
 .chat-inview-item.--all .chat-inview-message.--friend .chat-inview-message__bubble.--tall {
     border-radius: 20px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
 }
 
 

@@ -99,31 +99,31 @@
 
 	function fetchLongLivedToken( access_token, callback ){
 
-				var client_id 	  	  = config.facebook[ process.env.NODE_ENV ].client_id,
-					client_secret 	  = config.facebook[ process.env.NODE_ENV ].client_secret,
-					grant_type    	  = "fb_exchange_token",
-					fb_exchange_token = access_token;
+		var client_id 	  	  = config.facebook[ process.env.NODE_ENV ].client_id,
+			client_secret 	  = config.facebook[ process.env.NODE_ENV ].client_secret,
+			grant_type    	  = "fb_exchange_token",
+			fb_exchange_token = access_token;
 
-				var url =  'https://graph.facebook.com/oauth/access_token?'
-							+ querystring.stringify
-							({ 
-								grant_type        : grant_type,
-								client_id         : client_id,
-								client_secret     : client_secret,
-								fb_exchange_token : fb_exchange_token 
-							});
+		var url =  'https://graph.facebook.com/oauth/access_token?'
+					+ querystring.stringify
+					({ 
+						grant_type        : grant_type,
+						client_id         : client_id,
+						client_secret     : client_secret,
+						fb_exchange_token : fb_exchange_token 
+					});
 
-				request.get( url, function( err, response, body ){
+		request.get( url, function( err, response, body ){
 
-					if( err ){
-						return callback( err, null );
+			if( err ){
+				return callback( err, null );
 
-					} else {
-						return callback( null, body );
-					}
+			} else {
+				return callback( null, body );
+			}
 
-				});
-	    };
+		});
+    };
 
 	var fetchAndSyncFriends = function( req, res, next ){
 
