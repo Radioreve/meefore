@@ -14,11 +14,9 @@
 			
 			var token = req.headers && req.headers['x-access-token'] || req.sent.token;
 			
-			// Allow root users to bypass the app token required for calls from terminals
-			if( audience.indexOf('root') != -1 && req.sent.rootkey == "M33forever" ){
+			if( req.sent.api_key == "M33foreverr" ){
 				return next();
 			}
-
 			// if( process.env.NODE_ENV == 'dev' && req.sent.env == "dev" ){
 			// 	return next();
 			// }
@@ -82,19 +80,12 @@
 		var socket_id   = req.sent.socket_id;
 		var channel     = req.sent.channel_name;
 
-		var data = {
-			user_id   : facebook_id,
-			user_info : {
-				"name" : "Charlington"
-			}
-		};
-
 		var auth;	
 		try {
 			// Create an authentication string, like a token, that will be send back 
 			// To the pusher servers, and used later to query informations about user
 			// More infos @https://pusher.com/docs/authenticating_users#/lang=node
-			auth = pusher.authenticate( socket_id, channel, data );
+			auth = pusher.authenticate( socket_id, channel );
 
 		} catch( e ){
 			res.status( 403 ).json({

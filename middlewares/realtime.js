@@ -30,7 +30,7 @@
 	}
 
 	function makePersonnalChannel( facebook_id ){
-		return "private-" + facebook_id;
+		return "private-facebook-id=" + facebook_id;
 	}
 
 	function makeLocationChannel( place_id ){
@@ -38,7 +38,7 @@
 	}
 
 	function makeBeforeChannel( before_id ){
-		return "presence-" + before_id;
+		return "private-before-id=" + before_id;
 	}
 
 	function makeChatGroupId( before_id, hosts, members ){
@@ -59,7 +59,7 @@
 			return null;
 		}
 
-		return "presence-" + type + '-' + makeChatGroupId( before_id, hosts, members );
+		return "private-" + type + '-' + makeChatGroupId( before_id, hosts, members );
 
 	}
 
@@ -536,6 +536,23 @@
 	};
 
 
+	var pushNewChatSeenBy = function( req, res, next ){
+		
+		var chat_id     = req.sent.chat_id;
+		var facebook_id = req.sent.facebook_id;
+
+		var data_seen_by = {
+			chat_id: chat_id,
+			seen_by: facebook_id
+		};
+
+		pusher.trigger( chat_id, 'new chat seen by', data_seen_by, handlePusherErr );
+		next();
+
+
+	};
+
+
 	module.exports = {
 		setChannels 		  	   : setChannels,
 		setLastSentAtInChannels    : setLastSentAtInChannels,
@@ -546,5 +563,6 @@
 		pushNewBeforeStatus   	   : pushNewBeforeStatus,
 		pushNewRequest 		       : pushNewRequest,
 		pushNewGroupStatus 	  	   : pushNewGroupStatus,
-		pushNewChatMessage  	   : pushNewChatMessage
+		pushNewChatMessage  	   : pushNewChatMessage,
+		pushNewChatSeenBy 	       : pushNewChatSeenBy
 	};

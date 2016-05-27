@@ -273,6 +273,7 @@
 			LJ.realtime.channels[ channel_name ].bind('new hello'		  , LJ.log ); // Test channel
 			LJ.realtime.channels[ channel_name ].bind('new group status'  , LJ.realtime.handleNewGroupStatus );
 			LJ.realtime.channels[ channel_name ].bind('new chat message'  , LJ.realtime.handleNewChatMessage );
+			LJ.realtime.channels[ channel_name ].bind('new chat seen by'  , LJ.realtime.handleNewChatSeenBy );
 			
 		},
 		handleNewGroupStatus: function( data ){
@@ -331,7 +332,8 @@
 				});
 			}
 
-			// Update the state
+			// Update the state. If the chat is active, then message is obviously seen by default
+			// otherwise, it's considered unseen. 
 			var state = LJ.chat.getActiveChatId() == chat_id ? "seen" : "unseen";
 			LJ.chat.cacheChatMessage( chat_id, _.extend( data, {
 				state: state
@@ -345,13 +347,21 @@
 			}
 
 			// In anycase take actions that are all based on the chat state
-			LJ.chat.updateChatRowPreview__AuthorLast( group_id );
-			LJ.chat.updateChatRowTime( group_id );
-			LJ.chat.newifyChatRow( group_id );
-			LJ.chat.sortChatRowsBySentAt();
+			LJ.chat.refreshChatRowPreview( group_id );
+			LJ.chat.refreshChatRowTime( group_id );
+			LJ.chat.newifyChatRows();
+			LJ.chat.refreshChatRowsOrder();
 			LJ.chat.refreshChatInviewBubbles( group_id );
 			LJ.chat.refreshChatIconBubble();
 
+
+		},
+		handleNewChatSeenBy: function( data ){
+
+			var chat_id = data.chat_id;
+			var seen_by = data.seen_by;
+
+			LJ.log('New message seen by : ' + seen_by );
 
 		}
 

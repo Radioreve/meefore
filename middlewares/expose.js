@@ -17,6 +17,7 @@
 				'errors'   : { 'err_id': 'ghost_ressource' }
 			});
 		} else{
+			expose.status = "success";
 			res.status( 200 ).json( expose );
 		} 
 

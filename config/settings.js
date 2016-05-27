@@ -33,7 +33,7 @@ var settings = {
       	},
       	ux: {
 	        'auto_login': 'no',
-	        'message_readby': 'yes',
+	        'message_seen': 'yes',
 	        'show_gender': 'no',
 	        'show_country': 'yes'
       	}

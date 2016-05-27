@@ -4,6 +4,7 @@
 	var Place 	   = require('../models/PlaceModel');
 	var _   	   = require('lodash');
 	var rd 		   = require('../services/rd');
+	var connecter  = require('../middlewares/connecter');
 	var settings   = require('../config/settings');
 	var eventUtils = require('../pushevents/eventUtils');
 	var mailer     = require('../services/mailer');
@@ -455,6 +456,47 @@
 
 	};
 
+	// This is used primarily by the search module to know if a user
+	// has fetched every user in database or not.
+	var cached_user_count;
+	var last_request_time = 0;
+	var minute = 1000 * 60;
+
+	var fetchUserCount = function( req, res, next ){
+
+		var ns = 'fetching_users_count';
+
+		var request_time = (new Date());
+		if( (new Date() - last_request_time ) > 15 * minute ){
+
+			User.count( {}, function( err, n ){
+
+				if( err ) return handleErr( req, res, ns, err );
+
+				last_request_time = request_time;
+				cached_user_count = n;
+				req.sent.expose.users_count = n;
+				next();
+
+			});
+
+		} else {
+			req.sent.expose.cache = true;
+			req.sent.expose.users_count = cached_user_count;
+			next();
+		}
+
+	};
+
+	// Already fetched by the connecter middleware
+	var fetchOnlineUsers = function( req, res, next ){
+
+		req.sent.expose.online_users       = req.sent.online_users;
+		req.sent.expose.online_users_count = req.sent.online_users.length;
+		next();
+
+	};
+
 	module.exports = {
 		fetchMe 				: fetchMe,
 		fetchUserShared			: fetchUserShared,
@@ -464,6 +506,8 @@
 		fetchUsers 				: fetchUsers,
 		fetchUsersAll 			: fetchUsersAll,
 		fetchUserEvents 		: fetchUserEvents,
+		fetchUserCount 			: fetchUserCount,
+		fetchOnlineUsers        : fetchOnlineUsers,
 		getMailchimpStatus 		: getMailchimpStatus,
 		fetchMoreUsers 			: fetchMoreUsers,
 		fetchDistinctCountries  : fetchDistinctCountries,

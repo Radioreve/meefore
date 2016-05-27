@@ -28,14 +28,16 @@
 			User.findOne( query, function( err, user ){
 
 				if( err ){
-					return handleErr( req, res, err_ns, err );
+					return handleErr( req, res, err_ns, {
+						error: err
+					});
 				}
 
 				if( !user && force_presence ){
-					return handleErr( req, res, err_ns, {
+					return handleErr( req, res, err_ns, { error: {
 							'err_id': 'ghost_user',
 							'msg'   : 'The presence of a user in database was necessary for this route. None was found.'
-						});
+						}});
 				}
 
 				if( user ){

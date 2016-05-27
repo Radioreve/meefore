@@ -33,6 +33,7 @@
     "sendgrid": "^2.0.0",
     "serve-favicon": "^2.2.0",
     "swig": "^1.4.2",
+    "terminal-kit": "^0.24.5",
     "validator": "5.2.0"
   },
   "devDependencies": {

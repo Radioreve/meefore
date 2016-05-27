@@ -26,11 +26,11 @@
 	};
 
 	var sendHomepage = function( req, res ){
-		res.sendfile( config.homepage[ process.env.NODE_ENV ] );
+		res.sendFile( config.homepage[ process.env.NODE_ENV ] );
 	};
 
 	var sendEarlyAdoptersPage = function( req, res ){
-		res.sendfile( process.cwd() + '/views/earlyadopters.html' );
+		res.sendFile( process.cwd() + '/views/earlyadopters.html' );
 	}
 
 	var redirectToHome = function( req, res ){

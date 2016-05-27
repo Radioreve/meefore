@@ -1,9 +1,10 @@
 	
-	var eventUtils  = require('../pushevents/eventUtils'),
-		moment      = require('moment'),
-		querystring = require('querystring'),
-		request     = require('request'),
-		_     	    = require('lodash');
+	var eventUtils  = require('../pushevents/eventUtils');
+	var moment      = require('moment');
+	var querystring = require('querystring');
+	var request     = require('request');
+	var _     	    = require('lodash');
+	var term 		= require('terminal-kit').terminal;
 
 	var User        = require('../models/UserModel');
 
@@ -41,10 +42,13 @@
 				return next();
 			}
 
-			/* Check is long_lived needs to be refreshed with the short lived token from login */
+			// Check is long_lived needs to be refreshed with the short lived token from login
 			if( user.facebook_access_token.long_lived ){
-				var current_tk_valid_until = new moment( user.facebook_access_token.long_lived_valid_until );
-				var now = new moment();
+				// Facebook date format is of type 'Fri Jul 01 2016 21:28:32 GMT+0200 (CEST)' 
+				// Moment.js is unable to parse non-iso string dates, but Date recognizes the format Facebook uses
+				// so make a moment() date out of a regular Date() object
+				var current_tk_valid_until = moment( new Date(user.facebook_access_token.long_lived_valid_until) );
+				var now = moment();
 				var diff = current_tk_valid_until.diff( now, 'd' );
 
 				if( diff > 30 ) {
@@ -53,13 +57,13 @@
 				}
 			}
 
-			/* User comes with auto_login:true, short_lived will be ask clientside */
+			// User comes with auto_login:true, short_lived will be ask clientside
 			if( !user.facebook_access_token.short_lived ){
 				console.log('Unable to find a short lived access token, skipping the refresh process...');
 				return next();
 			}
 
-			/* Fetch a long lived token for user to use app with valid api requests for 60 days! */
+			// Fetch a long lived token for user to use app with valid api requests for 60 days!
 			console.log('Setting facebook long lived token...');
 			fetchLongLivedToken( user.facebook_access_token.short_lived, function( err, body ){
 				
@@ -72,7 +76,7 @@
 
 				var new_access_token = facebook_res.access_token;
 				var expires          = facebook_res.expires;
-				var valid_until      = new Date( new moment().add( expires, 's' ) );
+				var valid_until      = new Date( moment().add( expires, 's' ) );
 
 				var facebook_access_token = user.facebook_access_token;
 

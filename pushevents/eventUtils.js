@@ -23,7 +23,7 @@
 
 	var raiseApiError = function( req, res, namespace, params ){
 
-		res.status(400).json({
+		res.status( 400 ).json({
 			'namespace' : namespace,
 			'error'		: params.error,
 			'call_id'   : params.call_id
@@ -66,20 +66,12 @@
 
 			var user = data;
 			
-			public_claim = { _id: user._id };
-
-			settings.public_properties.users.forEach(function( prop ){
-				public_claim[ prop ] = user[ prop ];
-			});
-
-			audience = user.access;
+			public_claim = { facebook_id: user.facebook_id };
+			audience     = user.access;
 
 			registred_claim = {
-
-				expiresInMinutes  : 600,
-				issuer            : 'leo@meefore.com',
-				audience          : audience
-
+				issuer   : 'leo@meefore.com',
+				audience : audience
 			};
 			
 		}
@@ -89,7 +81,6 @@
 			var app = data; 
 			var public_claim = {
 
-				expiresInMinutes : 600,
 				id               : app.id,
 				source           : "generic"
 

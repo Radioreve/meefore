@@ -24,6 +24,7 @@
 		update_settings_mailing_url  : '/api/v1/users/:user_id/update-settings-mailinglists',
 		mailchimp_status_url    	 : '/api/v1/users/:user_id/mailchimp-status',
 		delete_my_account_url        : '/api/v1/users/:user_id/delete',
+		get_online_users_url 		 : '/api/v1/users/online',
 		fetch_more_users_url 		 : '/api/v1/users.more',
 		share_url 					 : '/api/v1/share',
 		distinct_countries_url 		 : '/api/v1/users.countries',
@@ -43,8 +44,7 @@
 
 			});
 		},
-		get: function( url, data ){	
-			// LJ.log('Calling the api [get]');
+		ajax: function( url, method, data ){	
 			return LJ.promise(function( resolve, reject ){
 
 				data = data || {};
@@ -60,7 +60,7 @@
 
 				$.ajax({
 
-					method: 'get',
+					method: method,
 					dataType: 'json',
 					data: data,
 					url: url,
@@ -90,8 +90,15 @@
 
 			});
 		},
+		get: function( url, data ){
+			return LJ.api.ajax( url, 'get', data );
+		},
 		post: function( url, data ){
-			// LJ.log('Calling the api [post]');
+			return LJ.api.ajax( url, 'post', data );
+			
+		},	
+		post2: function( url, data ){
+			
 			data = data || {};
 			return LJ.promise(function( resolve, reject ){
 
@@ -692,7 +699,7 @@
 						} else {
 							return resolve({
 								messages : exposed.messages,
-								readby   : exposed.readby
+								seen_by  : exposed.seen_by
 							});
 						}
 
@@ -745,6 +752,24 @@
 
 			});
 
+		},
+		fetchOnlineUsers: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.get( LJ.api.get_online_users_url )
+					.then(function( exposed ){
+
+						if( !exposed.online_users ){
+							return LJ.wlog('The server didnt respond with the expected online_users parameter');
+						} else {
+							return resolve( exposed.online_users );
+						}
+
+					}, function( err ){
+						return reject( err );
+					});
+
+			});
 		}
 
 	});

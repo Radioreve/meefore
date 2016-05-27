@@ -1,5 +1,6 @@
 
 	// Basic modules
+		var term 		 = require('terminal-kit').terminal
 		var express      = require('express');
 		var bodyParser   = require('body-parser');
 		var app          = express();
@@ -29,7 +30,7 @@
 	// Http server
 		var port = process.env.PORT || 1234;
 		server.listen( port, function(){
-			console.log('Server listening on '+ port);
+			term.bold.yellow('Server listening on '+ port + '\n');
 		});
 
 

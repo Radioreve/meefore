@@ -10,3 +10,4 @@
 	à préparer tous les chans en background, dès qu'un user se connecte, et les storer quelque part (redis?);
 	En ce qui concerne la validation pour join une room, elle sera impactée. A l'heure actuelle, elle considère que les channels font partie intégrante d'un profile user. Tout va se jouer dans la façon, côté backend, de gérer dynamiquement
 	les channels à un instant t pour un user donné. Aussi, so far le fetch des channels se fait via group_id, serait-ce encore le cas ? Attention également, pour être notifié des Cheers accepté, tous les usres doivent avoir subscribe aux events associé (chat_id à l'heure actuelle...) envoyer les notifs via leur chan privé ? 
+	La fonction User.getChannel() est impactée aussi.

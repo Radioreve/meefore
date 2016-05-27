@@ -19,7 +19,7 @@
 		},
 		handleSwitchChatInview: function(){
 
-			var $s = $(this);
+			var $s = $( this );
 			var chat_id = $s.closest('.chat-inview')
 							.find('.chat-inview-item:not(.--active)')
 							.attr('data-chat-id');
@@ -632,7 +632,7 @@
 	                '<div class="chat-inview-message__picture js-user-profile" data-facebook-id="'+ sender_id +'">',
 	               	  '<span class="hint hint--top hint--rounded hint--no-animate" data-hint="'+ m.format('HH:mm') +'"></span>',
 	                  img_html, // size 35
-	                  '<span class="js-user-online user-online --online"></span>',
+	                  '<span class="js-user-online user-online --online" data-facebook-id="'+ sender_id +'"></span>',
 	                '</div>',
 	                '<div class="chat-inview-message__name">'+ sender.name +'</div>',
 	              '</div>',

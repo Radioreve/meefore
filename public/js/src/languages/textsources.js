@@ -574,11 +574,11 @@
 			"fr": "Activez cette option pour accéder directement à Meefore sans passer par la page d'accueil",
 			"us": "Activate this option to reach directly Meefore and skip the landing page"
 		},
-		s_message_readby_label: {
+		s_message_seen_by_label: {
 			"fr": "Connexion automatique",
 			"us": "AutoLogin"
 		},
-		s_message_readby_desc: {
+		s_message_seen_by_desc: {
 			"fr": "Activez cette option pour accéder directement à Meefore sans passer par la page d'accueil",
 			"us": "Activate this option to reach directly Meefore and skip the landing page"
 		},
@@ -630,11 +630,11 @@
 			"fr": "Recevez un email dès que vous êtes hors-ligne et que vous recevez un nouveau message",
 			"us": "Receive an email when you're offline and someone sends you a new message"
 		},
-		s_message_readby_label: {
+		s_message_seen_by_label: {
 			"fr": "Signaler message lu",
 			"us": "Signal message read"
 		},
-		s_message_readby_desc: {
+		s_message_seen_by_desc: {
 			"fr": "Signalez automatiquement aux autres utilisateurs que vous avez vu leur message",
 			"us": "Signal to other users that you have read their message"
 		},
@@ -1008,7 +1008,7 @@
 			"fr": "Il manque un paramètre pour envoyer le message",
 			"us": "A parameter is missing to send the message"
 		},
-		err_chat_readby: {
+		err_chat_seen_by: {
 			"fr": "Une erreur inconnue s'est produite à la lecture du message",
 			"us": "An unknown error has occured when reading the message"
 		},

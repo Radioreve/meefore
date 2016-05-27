@@ -81,7 +81,7 @@
 			}
 
 		},
-		cacheChatMessages: function( chat_id, messages, readby, channel_item ){
+		cacheChatMessages: function( chat_id, messages, seen_by, channel_item ){
 
 			if( !Array.isArray( messages ) ){
 				return LJ.wlog('Cannot setup cache for chat without a messages array');
@@ -89,15 +89,23 @@
 
 			var chat = LJ.chat.getChatById( chat_id ) 
 					 ? LJ.chat.getChatById( chat_id ) 
-					 : LJ.chat.setChat( chat_id, readby, channel_item );
+					 : LJ.chat.setChat( chat_id, seen_by, channel_item );
 			
 			// During the setup, check if
 			messages.forEach(function( message_object ){
 
 				var sent_at     = moment( message_object.sent_at );
-				var last_online = moment().subtract('20000','minutes');
+				var last_online = LJ.user.disconnected_at || "2016-05-26T10:11:39.043Z";
 
-				message_object.state = sent_at > last_online ? "unseen" : "seen";
+				// Use the "seen_by" property wisely to determine if a user has not seen a chat message
+				// even though his last_online date was > to the last message sent.
+				var message_sent_while_offline = sent_at > last_online;
+
+				if(1){
+					message_object.state = "unseen";
+				} else {
+					message_object.state = "seen";
+				}
 				LJ.chat.cacheChatMessage( chat_id, message_object );
 
 			});
@@ -221,13 +229,13 @@
 			return _.keys( LJ.chat.fetched_chats );
 
 		},
-		setChat: function( chat_id, readby, channel_item ){
+		setChat: function( chat_id, seen_by, channel_item ){
 
 			LJ.chat.fetched_chats[ chat_id ] = {};
 			
 			var chat = LJ.chat.fetched_chats[ chat_id ];
 
-			chat.readby   = readby ? readby : null;
+			chat.seen_by   = seen_by ? seen_by : null;
 			chat.messages = [];
 			// Copy extra properties on chat objects that are chat-related and useful. Functions regarding 
 			// the ui will base their behavior on the state that is stored here
@@ -414,11 +422,11 @@
 					.then(function( res ){
 
 						// Add messages to the all chat
-						LJ.chat.cacheChatMessages( chat_id_all,  res[0].messages, res[0].readby, _.cloneDeep(channel_item) );
-						LJ.chat.cacheChatMessages( chat_id_team, res[1].messages, res[1].readby, _.cloneDeep(channel_item) );
+						LJ.chat.cacheChatMessages( chat_id_all,  res[0].messages, res[0].seen_by, _.cloneDeep(channel_item) );
+						LJ.chat.cacheChatMessages( chat_id_team, res[1].messages, res[1].seen_by, _.cloneDeep(channel_item) );
 						// Order rows in the right position before moving the ui
 						// Requires access to cached messages to work properly
-						LJ.chat.sortChatRowsBySentAt();
+						LJ.chat.refreshChatRowsOrder();
 
 						// Set all chats internal ui_status to "inactive";
 						LJ.chat.deactivateChats();
@@ -426,7 +434,7 @@
 						LJ.chat.addChatMessages({
 							channel_item     : channel_item,
 							chat_messages    : res[0].messages,
-							chat_readby 	 : res[0].readby,
+							chat_seen_by 	 : res[0].seen_by,
 							chat_type	  	 : "all"
 						});
 
@@ -434,7 +442,7 @@
 						LJ.chat.addChatMessages({
 							channel_item     : channel_item,
 							chat_messages    : res[1].messages,
-							chat_readby 	 : res[1].readby,
+							chat_seen_by 	 : res[1].seen_by,
 							chat_type	  	 : "team"
 						});
 
@@ -477,9 +485,9 @@
 
 			}
 
-			LJ.chat.updateChatRowPreview__AuthorLast( group_id );
-			LJ.chat.updateChatRowTime( group_id );
-			LJ.chat.newifyChatRow( group_id );
+			LJ.chat.refreshChatRowPreview( group_id );
+			LJ.chat.refreshChatRowTime( group_id );
+			LJ.chat.newifyChatRows( group_id );
 			LJ.chat.refreshChatInviewBubbles( group_id );
 			LJ.chat.refreshChatIconBubble();
 
@@ -662,7 +670,7 @@
 				.appendTo('.chat-inview-wrap');
 
 		},
-		sortChatRowsBySentAt: function(){
+		refreshChatRowsOrder: function(){
 
 			var ordered_groups = [];
 
@@ -801,7 +809,7 @@
 
 			var chat_type     = opts.chat_type;
 			var chat_messages = opts.chat_messages;
-			var chat_readby   = opts.chat_readby;
+			var chat_seen_by   = opts.chat_seen_by;
 			var group_id 	  = opts.channel_item.group_id;
 			var status        = opts.channel_item.status;
 			var role 		  = opts.channel_item.role;
@@ -868,8 +876,8 @@
 			var group_id = $s.attr('data-group-id');
 
 			LJ.chat.showChatInview( group_id );
-			LJ.chat.deNewifyChatRow( group_id );
-			LJ.chat.sortChatRowsBySentAt();
+			LJ.chat.newifyChatRows( group_id );
+			LJ.chat.refreshChatRowsOrder();
 
 		},
 		handleToggleChatWrap: function( e ){
@@ -1041,7 +1049,7 @@
 			].join(''));
 
 		},
-		updateChatRowPreview__AuthorLast: function( group_id ){
+		refreshChatRowPreview: function( group_id ){
 
 			var $w = $('.chat-inview[data-group-id="'+ group_id +'"]');
 
@@ -1064,21 +1072,10 @@
 				var message   = last_message_team.message;
 			}
 
-			var sender  = LJ.chat.findChatSender( group_id, sender_id );
+			var sender = LJ.chat.findChatSender( group_id, sender_id );
 
 			LJ.chat.updateChatRowPreview( group_id, {
-				h1: sender.name,
-				h2: message
-			});
-
-		},
-		updateChatRowPreview__Author: function( opts ){
-
-			var message     = opts.message;
-			var sender      = opts.sender;
-			var group_id    = opts.group_id;
-
-			LJ.chat.updateChatRowPreview( group_id, {
+				sender_id: sender_id,
 				h1: sender.name,
 				h2: message
 			});
@@ -1091,8 +1088,17 @@
 			$chatrow.find('.chat-row-infos__name .--name').text( opts.h1 );
 			$chatrow.find('.chat-row-infos__preview').text( opts.h2 );
 
+			if( opts.sender_id ){
+				$chatrow.find('.js-user-online').attr('data-facebook-id', opts.sender_id );
+
+				if( LJ.connecter.getUserStatus( opts.sender_id ) == "online" ){
+					$chatrow.find('.js-user-online').addClass('--online');
+				}
+				
+			}
+
 		},
-		updateChatRowTime: function( group_id ){
+		refreshChatRowTime: function( group_id ){
 
 			var $w = $('.chat-row[data-group-id="'+ group_id +'"]');
 
@@ -1116,16 +1122,25 @@
 			$w.find('.chat-row-time span').text( s_date );
 
 		},
-		newifyChatRow: function( group_id){
+		newifyChatRows: function(){
 
-			var $r = $('.chat-row[data-group-id="'+ group_id +'"]');
-			$r.addClass('--new');				
+			var last_online = LJ.user.disconnected_at || "2016-05-26T10:11:39.043Z";
+			var group_ids   = _.uniq( _.map( LJ.chat.fetched_chats, 'group_id' ) );
 
-		},
-		deNewifyChatRow: function( group_id ){
+			group_ids.forEach(function( group_id ){
 
-			var $r = $('.chat-row[data-group-id="'+ group_id +'"]');
-			$r.removeClass('--new');
+				var $chatrow     = $('.chat-row[data-group-id="'+ group_id +'"]');
+				var last_message = LJ.chat.getLastUnseenMessageByGroupId( group_id )
+				var last_sent_at = last_message.sent_at;
+
+				if( moment( last_sent_at ) > moment( last_online ) && last_message.sender_id != LJ.user.facebook_id ){
+					$chatrow.addClass('--new');
+					
+				} else {
+					$chatrow.removeClass('--new');
+				}
+
+			});			
 
 		},
 		updateChatRow__Pending: function( group_id ){

@@ -1,5 +1,6 @@
 
 	var _          = require('lodash');
+	var term 	   = require('terminal-kit').terminal;
 	var eventUtils = require('../pushevents/eventUtils');
 	var User       = require('../models/UserModel');
 	var Message    = require('../models/MessageModel');
@@ -11,16 +12,16 @@
 	var pusher     = require('../services/pusher');
 
 
-	function resetReadby( chat_id, facebook_id, callback ){
+	function resetSeenBy( chat_id, facebook_id, callback ){
 
-		var readby_ns = "readby/" + chat_id;
-		rd.del( readby_ns, function( err ){
+		var seen_by_ns = "seen_by/" + chat_id;
+		rd.del( seen_by_ns, function( err ){
 				
 			if( err ){
 				return callback( err );
 			}
 
-			rd.sadd( readby_ns, facebook_id, function( err ){
+			rd.sadd( seen_by_ns, facebook_id, function( err ){
 
 				if( err){
 					return callback( err );
@@ -33,15 +34,15 @@
 
 	}
 
-	function getReadby( chat_id, callback ){
+	function getSeenBy( chat_id, callback ){
 
-		var readby_ns = "readby/" + chat_id;
-		rd.smembers( readby_ns, function( err, readby ){
+		var seen_by_ns = "seen_by/" + chat_id;
+		rd.smembers( seen_by_ns, function( err, seen_by ){
 
 			if( err ){
 				return callback( err );
 			} else {
-				return callback( null, readby );
+				return callback( null, seen_by );
 			}
 
 		});
@@ -55,9 +56,10 @@
 		var chat_id     = req.sent.chat_id;
 		var facebook_id = req.sent.facebook_id;
 
-		resetReadby( chat_id, facebook_id, function( err ){
+		resetSeenBy( chat_id, facebook_id, function( err ){
 
 			req.sent.sent_at = new Date();
+			req.sent.seen_by = [ facebook_id ];
 
 			var data = {
 				chat_id      : req.sent.chat_id,
@@ -66,6 +68,7 @@
 				message      : req.sent.message,
 				sender_id    : req.sent.facebook_id,
 				sent_at      : req.sent.sent_at,
+				seen_by 	 : [ facebook_id ],
 				type 		 : "normal"
 			};
 
@@ -90,7 +93,7 @@
 		var start_ns    = 'chat/' + req.sent.chat_id + '/start';
 		var count_ns	= 'chat/' + req.sent.chat_id + '/count';
 		var message_ns  = 'chat/' + req.sent.chat_id + '/messages/';
-		var readby_ns   = 'chat/' + req.sent.chat_id + '/readby';
+		var seen_by_ns   = 'chat/' + req.sent.chat_id + '/seen_by';
 
 		req.sent.sent_at = moment().toISOString();
 		// Store all chat ids to iterate through messages when save to db
@@ -100,10 +103,10 @@
 			// and is used to find to further message to fetch when browsing history. When clearing cache
 			// first messages are erased from redis and stored in mongodb, so start_ns value may increase only 
 			rd.setnx( start_ns, 1, function( err ){
-				// Reset le readby 
-				rd.del( readby_ns, function( err ){
-					// Add le sender au readby 
-					rd.sadd( readby_ns, req.sent.facebook_id, function( err ){
+				// Reset le seen_by 
+				rd.del( seen_by_ns, function( err ){
+					// Add le sender au seen_by 
+					rd.sadd( seen_by_ns, req.sent.facebook_id, function( err ){
 
 						var data = {
 							chat_id      : req.sent.chat_id,
@@ -174,7 +177,7 @@
 
 		console.log('Fetching history for chat with id : ' + chat_id );
 
-		getReadby( chat_id, function( err, readby ){
+		getSeenBy( chat_id, function( err, seen_by ){
 
 			if( err ){
 				return handleErr( req, res, err_ns, err );
@@ -187,7 +190,7 @@
 				};
 
 				req.sent.expose.messages = messages;
-				req.sent.expose.readby   = readby;
+				req.sent.expose.seen_by   = seen_by;
 				next();
 
 			});
@@ -197,120 +200,28 @@
 	}
 
 
-	var fetchChatMessages2 = function( req, res, next ){
-
-		var chat_id 			 = req.sent.chat_id;
-		var messages_fetched     = parseInt( req.sent.messages_fetched ) || 0;
-		var messages_fetched_add = settings.app.chat_fetch_count;
-
-		var count_ns	= 'chat/' + chat_id + '/count';
-		var start_ns    = 'chat/' + chat_id + '/start';
-		var message_ns  = 'chat/' + chat_id + '/messages/';
-		var readby_ns   = 'chat/' + chat_id + '/readby';
-
-		rd.smembers( readby_ns, function( err, readby ){
-			rd.get( start_ns, function( err, start ){
-				rd.get( count_ns, function( err, count ){
-
-					if( err ){
-						console.log( err );
-						req.sent.expose.messages = null;
-						return next();
-					}
-
-					if( !count ){
-						req.sent.expose.messages = [];
-						return next();
-					}
-
-					console.log('Fetching ' + messages_fetched_add + ' messages, starting with last : ' + count + ' until start : ' + start);
-
-					var all_messages = [];
-					var async_tasks  = [];
-					var end = count - messages_fetched;
-
-					if( end < start ){
-						console.log('All messages from cache have been fetched');
-					}
-
-					for( var i = end; i >= start; i-- ){
-						(function( i ){ // closure required to capture i value
-
-							async_tasks.push(function(){
-								var callback = arguments[ arguments.length - 1 ];
-
-								if( all_messages.length == messages_fetched_add ){
-									console.log('Stop fetching, ' + messages_fetched_add + ' messages fetched');
-									return callback();
-								}
-
-								if( i == start - 1 ){
-									console.log('Stop fetching, all messages stored in cache have been fetched.');
-									return callback();
-								}
-
-								rd.hgetall( message_ns + i, function( err, message ){
-									
-									if( !message ){
-										callback();
-										return console.error('Couldnt find a redis message');
-									}
-
-									all_messages.push( message );
-									callback();
-						
-								});
-							});
-
-						})( i );
-					}
-
-					async.waterfall( async_tasks, function( err, results ){
-
-						// Tri par ordre croissant de date 
-						all_messages.sort(function( e1, e2 ){
-							return moment( e2.sent_at ) - moment( e1.sent_at );
-						});
-
-
-						console.log('Sending ' + all_messages.length + ' messages');
-
-						req.sent.expose.messages = all_messages;
-						req.sent.expose.readby   = readby;
-
-						next();
-
-					});
-
-				});
-
-			});
-		});
-
-	};
-
-	var setReadBy = function( req, res, next ){
+	var setSeenBy = function( req, res, next ){
 
 		var chat_id   = req.sent.chat_id;
 		var before_id = req.sent.before_id;
 
-		var readby_ns = "readby/" + chat_id;
+		var seen_by_ns = "seen_by/" + chat_id;
 
 		// Set & Get the updated set
-		rd.sadd( readby_ns, req.sent.name, function( err ){
-			rd.smembers( readby_ns, function( err, readby ){
+		rd.sadd( seen_by_ns, req.sent.name, function( err ){
+			rd.smembers( seen_by_ns, function( err, seen_by ){
 
 				var data = {
 					chat_id   : chat_id,
 					before_id : before_id,
-					readby    : readby
+					seen_by    : seen_by
 				};
 				
 				req.sent.expose.chat_id = chat_id;
 				req.sent.expose.before_id = before_id;
-				req.sent.expose.readby = readby;
+				req.sent.expose.seen_by = seen_by;
 
-				pusher.trigger( 'presence-' + chat_id, 'new chat readby', data );
+				pusher.trigger( 'presence-' + chat_id, 'new chat seen_by', data );
 
 				next();
 
@@ -320,10 +231,36 @@
 
 	};
 
+	var setMessageSeenBy = function( req, res, next ){
+
+		var err_ns      = "set_message_seen_by";
+		var chat_id     = req.sent.chat_id;
+		var facebook_id = req.sent.facebook_id;
+
+		Message.update(
+		{
+			chat_id: chat_id
+		},
+		{
+			$addToSet: { seen_by: facebook_id }  // Only push if exists. Oherwise, use $push
+		}, 
+		{
+			multi: true
+		}, function( err, raw ){
+
+			if( err ){
+				term.red.bold("Error saving seen_by for user : " + facebook_id + '\n');
+			}
+		});
+
+		next();
+
+
+	};
 
 	module.exports = {
 		addChatMessage    : addChatMessage,
 		fetchChatMessages : fetchChatMessages,
-		fetchChatMessages2: fetchChatMessages2,
-		setReadBy         : setReadBy
+		setSeenBy         : setSeenBy,
+		setMessageSeenBy  : setMessageSeenBy
 	};

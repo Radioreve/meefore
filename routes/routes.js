@@ -35,7 +35,7 @@
 		mdw.chat_watcher      = require( mdwDir + '/chat_watcher');
 		mdw.notifier          = require( mdwDir + '/notifier');
 		mdw.meepass           = require( mdwDir + '/meepass');
-		mdw.users_watcher 	  = require( mdwDir + '/users_watcher');
+		mdw.connecter 		  = require( mdwDir + '/connecter');
 		mdw.realtime 		  = require( mdwDir + '/realtime');
 		mdw.cached			  = require( mdwDir + '/cached');
 
@@ -256,6 +256,10 @@
 			profileEvents.updateInviteCode
 		);
 
+		app.get('/api/v1/users/online',
+			mdw.connecter.getOnlineUsers,
+			api.users.fetchOnlineUsers
+		);
 
 
 
@@ -291,7 +295,7 @@
 
 	    app.post('/api/v1/users.more',
 	    	mdw.validate('users_fetch_more'),
-	     	mdw.users_watcher.fetchUserCount,
+	     	api.users.fetchUserCount,
 	    	api.users.fetchMoreUsers
 	    );
 
@@ -385,12 +389,6 @@
 	    );
 
 
-
-	    // [ @chat ] Renvoie l'historique des messages par chat id (Leggcy)
-	    app.get('/test/api/v1/chats/:chat_id/',
-	    	api.chats.fetchChatMessages2
-	    );
-
 	    // [ @chat ] Renvoie l'historique des messages par chat id (MongoDB)
 	    app.get('/api/v1/chats/:chat_id',
 	    	mdw.validate('chat_fetch'),
@@ -400,16 +398,16 @@
 	    // [ @chat ] Post un nouvau message
 	    app.post('/api/v1/chats/:chat_id',
 	    	mdw.validate('chat_message'),
-	    	// mdw.chat_watcher.watchCache,
 	    	// mdw.chat_watcher.mailOfflineUsers,
 	    	api.chats.addChatMessage,
 	    	mdw.realtime.pushNewChatMessage
 	    );
 
-	    // [ @chat ] Poste le fait qu'un user ai lu un message
-	    app.post('/api/v1/chats/:chat_id/readby',
-	    	mdw.validate('chat_readby'),
-	    	api.chats.setReadBy
+	    app.post('/api/v1/chats/:chat_id/seen_by',
+	    	mdw.pop.populateUser(),
+	    	mdw.validate('chat_seen_by'),
+	    	api.chats.setMessageSeenBy,
+	    	mdw.realtime.pushNewChatSeenBy
 	    );
 
 
@@ -429,10 +427,6 @@
 			profileEvents.updateMeepass
 		);
 
-		app.post('/api/v1/admin/credit_meepass',
-			mdw.auth.authenticate(['root','admin']),
-			mdw.meepass.updateMeepass('admin_credit')
-		);
 		// End meepass
 
 
@@ -459,28 +453,19 @@
 	    );
 
 
-	    app.post('/admin/*',
+	    app.all('/admin/*',
 	    	function( req, res, next ){
-	    		if( req.sent.apikey != 'M33fore' ){
+	    		if( req.sent.api_key != 'M33fore' ){
 	    			return res.status( 403 ).json({ msg: "unauthorized" });
 	    		} else {
 	    			next();
 	    		}
 	    	});
 
-	    app.post('/admin/users/online',
-	    	function( req, res ){
-
-	    		rd.smembers('online_users', function( err, response ){
-	    			var data  = {};
-	    			if( err ){
-	    				data.err = err;
-	    			} else {
-	    				data.response = response;
-	    			}
-	    			res.json( data );
-	    		})
-	    	});
+	    app.post('/admin/credit_meepass',
+			mdw.auth.authenticate(['admin']),
+			mdw.meepass.updateMeepass('admin_credit')
+		);
 
 	    app.post('/admin/users/alerts/reset',
 	    	function( req, res ){
@@ -489,50 +474,42 @@
 	    			.find()
 	    			.exec(function( err, users ){
 
-	    				if( err || users.length == 0 ){
-	    					return res.status(400).json({ msg: "Error occured", err: err, users: users });
+	    				if( err ){
+	    					return res.status( 400 ).json({
+	    						msg: "Error occured", err: err, users: users
+	    					});
 	    				}
 
 	    				if( typeof req.sent.min_frequency != 'number' ){
-	    					return res.status(400).json({ msg: "Please, provide min_frequency field of type number" });
+	    					return res.status( 400 ).json({
+	    						msg: "Please, provide min_frequency field of type number"
+	    					});
 	    				}
 
 	    				var async_tasks = [];
 	    				users.forEach(function( user ){
-							
 
-								var facebook_id    = user.facebook_id;
-								var email          = user.contact_email;
-								var message_unread = user.app_preferences.alerts.message_unread;
-								var accepted_in    = user.app_preferences.alerts.accepted_in;
+	    					async_tasks.push(function( callback ){
 
-								var hash       = {
-									min_frequency  : '7200',
-									email          : email,
-									message_unread : message_unread,
-									accepted_in    : accepted_in
-								}
+	    						rd.hmset('user_alerts/' + facebook_id, { min_frequency: req.sent.min_frequency }, function( err ){
+	    							callback();
+	    						});
 
-							// (function(hash){
+	    					});
 
-		    					async_tasks.push(function( callback ){
-
-		    						rd.hmset('user_alerts/' + facebook_id, hash, function( err ){
-		    							callback();
-		    						});
-
-		    					});
-
-							// })( hash );
 
 	    				});
 	    				
     					async.parallel( async_tasks, function( err, response ){
 
 	    					if( err ){
-	    						return res.status( 400 ).json({ err: err, response: response });
+	    						return res.status( 400 ).json({
+	    							err: err, response: response
+	    						});
 	    					} else {
-	    						return res.status( 200 ).json({ res: "success!" });
+	    						return res.status( 200 ).json({
+	    							res: "success!"
+	    						});
 	    					}
     					});
 
@@ -654,30 +631,30 @@
 
 	   	// [ @WebHooks ] WebHook from Pusher to monitor in realtime online/offline users
 	   	// and save disconnected_at property which is used by front end notifications module
-	   	app.post('/webhooks/pusher/connection-event',
-	   		mdw.users_watcher.updateConnectedUsers );
-
+	    app.post('/webhooks/pusher/connection-event',
+	    	mdw.connecter.updateConnectedUsers
+	    );
 
 
 	   	// [@API Overrides]
 	   	app.post('/jobs/terminate-befores',
 	   		function( req, res ){
-	   			if( req.sent.apikey != 'M33fore') return res.status(403).json({ "msg": "unauthorized" });
+
+	   			if( req.sent.api_key != 'M33fore'){
+	   				return res.status( 403 ).json({
+	   					"msg": "unauthorized"
+	   				});
+	   			}
+
 	   			require( process.cwd() + '/jobs/terminate-befores').terminateBefores({
 						timezone   : req.sent.timezone,
 						target_day : req.sent.target_day  // format 'DD/MM/YYYY'
 	   			});
-	   			res.json({ "msg":"success" });
-	   		});
 
-	   	app.post('/jobs/clear-cache',
-	   		function( req, res ){
-	   			if( req.sent.apikey != 'M33fore' ) return res.status(403).json({ "msg": "unauthorized" });
-		   		mdw.chat_watcher.clearCache({
-					min_chat_size    : req.sent.min_chat_size,
-					n_keys_to_remove : req.sent.n_keys_to_remove
-		   		});
-		   		res.json({ "msg": "success" });
+	   			res.json({
+	   				"msg":"success" 
+	   			});
+
 	   		});
 
 

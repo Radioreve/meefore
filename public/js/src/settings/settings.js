@@ -12,7 +12,7 @@
 			'show_country',
 			'new_message_received',
 			'accepted_in',
-			'message_readby'
+			'message_seen'
 
 		],
 
@@ -235,7 +235,7 @@
 				update.contact_email = LJ.user.contact_email;
 			}
 
-			if( ['auto_login', 'show_gender', 'show_country', 'message_readby'].indexOf( settings_id ) != -1 ){
+			if( ['auto_login', 'show_gender', 'show_country', 'message_seen'].indexOf( settings_id ) != -1 ){
 				var apiFn = LJ.api.updateSettingsUx;
 				update.contact_email = LJ.user.contact_email;
 			}
@@ -640,12 +640,12 @@
 				var $container      = $('.row-ux');
 
 				var auto_login      = $container.find('.modified[data-propid="auto_login"]').attr('data-selectid');
-				var message_readby  = $container.find('.modified[data-propid="message_readby"]').attr('data-selectid');
+				var message_seen  = $container.find('.modified[data-propid="message_seen"]').attr('data-selectid');
 
 				var app_preferences = LJ.user.app_preferences;
 
 				app_preferences.ux.auto_login     = auto_login;
-				app_preferences.ux.message_readby = message_readby
+				app_preferences.ux.message_seen = message_seen
 
 				var data = {
 					userId		    : _id,

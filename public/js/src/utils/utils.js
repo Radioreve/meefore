@@ -121,7 +121,8 @@ window.LJ = _.merge( window.LJ || {}, {
 
     },
     wlog: function wlog( message ){
-
+        
+        console.trace( message );
         console.warn( message );
 
     },
@@ -154,7 +155,7 @@ window.LJ = _.merge( window.LJ || {}, {
                     '<span class="user-name">'+ user.name +'</span>',
                     '<span class="user-comma">,</span>',
                     '<span class="user-age">'+ user.age +'</span>',
-                    '<span class="user-online user__status js-user-online"></span>',
+                    '<span class="user-online user__status js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
                     '<i class="icon icon-star user-host-icon"></i>',
                   '</div>',
                   '<div class="user-row__education">',

@@ -248,7 +248,7 @@
 		                  '<span class="name">'+ n +'</span>',
 		                  '<span class="comma">,</span>',
 		                  '<span class="age">'+ a +'</span>',
-		                  '<span class="user-online js-user-online"></span>',
+		                  '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
 		               '</div>',
 		            '</div>',
 		            '<div class="search-user__location" data-place-id="'+ p +'"><span>'+ l +'</span></div>',

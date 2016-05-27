@@ -10,12 +10,16 @@
 	var checkRequest = nv.isAnyObject()
 
 		.withRequired('facebook_id' 	, nv.isString())
-		.withRequired('latlng'			, checkLatLng)
+		.withRequired('latlng'			, checkLatLng )
 		.withOptional('max_distance'	, nv.isNumber())
 
 	function check( req, res, next ){
 
 		console.log('Checking the request');
+
+		req.sent.latlng.lat = parseFloat( req.sent.latlng.lat );
+		req.sent.latlng.lng = parseFloat( req.sent.latlng.lng );
+
 		nv.run( checkRequest, req.sent, function( n, errors ){
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );

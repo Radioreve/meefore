@@ -23,8 +23,11 @@ var messageSchema = new mongoose.Schema({
 	},
 	type: {
 		type: String
+	},
+	seen_by: {
+		type: Array
 	}
 
 });
 
-module.exports = mongoose.model('Messages', messageSchema );
+module.exports = mongoose.model( 'Messages', messageSchema );
