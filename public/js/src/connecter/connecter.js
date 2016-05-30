@@ -20,6 +20,7 @@
 		},
 		refreshOnlineUsers: function(){
 
+			LJ.log('Refreshing online users...');
 			var thirty_seconds = 30000;
 
 			LJ.api.fetchOnlineUsers()

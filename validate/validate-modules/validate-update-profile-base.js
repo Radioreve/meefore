@@ -33,6 +33,8 @@
 			.withOptional('location' 				 , nv.isLocation )
 			.withCustom( isIdOk )
 
+		req.sent.age = parseInt( req.sent.age );
+
 		nv.run( checkUpdateRequest, req.sent, function( n, errors ){
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );

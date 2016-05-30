@@ -116,20 +116,6 @@
 			'status'    : { $in: ['open'] }
 		};
 
-		var full_before_in_user_query = {
-			'begins_at' : date_range_query,
-			'timezone'  : timezone_range_query
-		};
-
-		var user_update_query = { 
-			$and: [
-				{ 'begins_at': date_range_query },
-				{ 'timezone' : timezone_range_query }
-			]
-		}
-
-		console.log( JSON.stringify(full_before_query, null, 4) );
-
 		mongoose.connection.on('error', function( err ){
 
 			var mail_html = []
@@ -149,19 +135,14 @@
 			handleMongooseOpen();
 		}
 
-		mongoose.connection.on('open', function(){
+		mongoose.connection.on('open', handleMongooseOpen );
 			
-			handleMongooseOpen();
-
-		});
-
 		function handleMongooseOpen(){
 			
 			console.log('Connected to the database! Updating... ');
 
 				async.waterfall([
 					updateBefores
-					// updateUsers
 				], function(){
 
 					if( tracked.n_befores_matched == 0 ){

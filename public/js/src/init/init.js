@@ -83,6 +83,7 @@
                 .then( LJ.map.init ) // Must be as close as possible to terminateLogin. Map doesnt render sometimes..
                 .then( LJ.login.terminateLoginProcess )
                 .then( LJ.onboarding.init )
+                .then( LJ.connecter.init )
                 .then( LJ.dev.init )
 
         }
