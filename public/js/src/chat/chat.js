@@ -143,7 +143,6 @@
 				}
 			});
 
-
 		},
 		refreshChatInviewBubbles: function( group_id ){
 			
@@ -156,7 +155,7 @@
 			[ chat_all, chat_team ].forEach(function( chat ){
 				chat.messages.forEach(function( m ){
 
-					 if( m.state == "unseen" ){
+					 if( m.state == "unseen" && m.seen_by && m.seen_by.indexOf( LJ.user.facebook_id ) == -1){
 
 						LJ.chat.addBubbleToChatRow( group_id );
 						LJ.chat.addBubbleToChatSwitchIcon( group_id );
@@ -164,7 +163,6 @@
 					} 
 				});
 			});
-
 
 		},
 		getUnseenMessagesCount: function( group_id ){
@@ -183,7 +181,6 @@
 			});
 
 			return i;
-
 
 		},
 		addBubbleToChatIcon: function(){
@@ -235,7 +232,7 @@
 			
 			var chat = LJ.chat.fetched_chats[ chat_id ];
 
-			chat.seen_by   = seen_by ? seen_by : null;
+			chat.seen_by   = seen_by ? seen_by : [];
 			chat.messages = [];
 			// Copy extra properties on chat objects that are chat-related and useful. Functions regarding 
 			// the ui will base their behavior on the state that is stored here
@@ -422,8 +419,8 @@
 					.then(function( res ){
 
 						// Add messages to the all chat
-						LJ.chat.cacheChatMessages( chat_id_all,  res[0].messages, res[0].seen_by, _.cloneDeep(channel_item) );
-						LJ.chat.cacheChatMessages( chat_id_team, res[1].messages, res[1].seen_by, _.cloneDeep(channel_item) );
+						LJ.chat.cacheChatMessages( chat_id_all,  res[0].messages, res[0].seen_by, _.cloneDeep( channel_item ) );
+						LJ.chat.cacheChatMessages( chat_id_team, res[1].messages, res[1].seen_by, _.cloneDeep( channel_item ) );
 						// Order rows in the right position before moving the ui
 						// Requires access to cached messages to work properly
 						LJ.chat.refreshChatRowsOrder();
@@ -809,7 +806,7 @@
 
 			var chat_type     = opts.chat_type;
 			var chat_messages = opts.chat_messages;
-			var chat_seen_by   = opts.chat_seen_by;
+			var chat_seen_by  = opts.chat_seen_by;
 			var group_id 	  = opts.channel_item.group_id;
 			var status        = opts.channel_item.status;
 			var role 		  = opts.channel_item.role;
@@ -865,10 +862,9 @@
 
 				});
 
+				LJ.chat.refreshChatSeenBy( chat_id );
 
 			}
-
-
 		},
 		handleShowChatInview: function(){
 
@@ -1131,9 +1127,9 @@
 
 				var $chatrow     = $('.chat-row[data-group-id="'+ group_id +'"]');
 				var last_message = LJ.chat.getLastUnseenMessageByGroupId( group_id )
-				var last_sent_at = last_message.sent_at;
+				var last_seen_by = last_message.seen_by;
 
-				if( moment( last_sent_at ) > moment( last_online ) && last_message.sender_id != LJ.user.facebook_id ){
+				if( last_seen_by && last_seen_by.indexOf( LJ.user.facebook_id ) == -1 ){
 					$chatrow.addClass('--new');
 					
 				} else {

@@ -353,6 +353,7 @@
 			LJ.chat.refreshChatRowsOrder();
 			LJ.chat.refreshChatInviewBubbles( group_id );
 			LJ.chat.refreshChatIconBubble();
+			LJ.chat.refreshChatSeenBy( chat_id );
 
 
 		},
@@ -362,6 +363,8 @@
 			var seen_by = data.seen_by;
 
 			LJ.log('New message seen by : ' + seen_by );
+			LJ.chat.getLastChatMessage( chat_id ).seen_by.push( seen_by );
+			LJ.chat.refreshChatSeenBy( chat_id );
 
 		}
 

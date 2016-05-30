@@ -1865,6 +1865,18 @@
 		chat_inview_validate_now: {
 			"fr": "Cheers !",
 			"us": "Cheers !"
+		},
+		seen_by_everyone: {
+			"fr": "Vu par tout le monde",
+			"us": "Seen by everyone"
+		},
+		seen_by_some: {
+			"fr": function( names ){
+				return "Vu par " + LJ.renderMultipleNames( names );
+			},
+			"us": function( names ){
+				return "Seen by " + LJ.renderMultipleNames( names );
+			}
 		}
 
 

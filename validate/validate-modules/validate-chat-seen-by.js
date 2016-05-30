@@ -20,9 +20,6 @@
 			var chat_id = req.sent.chat_id;
 			var channel = user.getChannel( chat_id );
 
-			console.log( user );
-			console.log( channel );
-
 			if( !channel ){
 				req.app_errors = req.app_errors.concat([{
 					"err_id"      : "ghost_channel",

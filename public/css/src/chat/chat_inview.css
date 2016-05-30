@@ -12,6 +12,7 @@
 .chat-inview-messages .jspPane{
     display: block;
     width: 100%!important;
+    padding-bottom: 20px!important;
 }
 .chat-inview-messages .jspVerticalBar {right: 0px;width: 4px;}
 
@@ -449,5 +450,21 @@
 }
 
 .chat-inview-users .user-row__informations {
-    padding-left: 0;
+    padding-left: 10px;
+}
+
+.chat-inview-seen-by {
+    color: #ABABAB;
+    font-size: 10px;
+    font-family: 'open sans';
+    margin-left: 11px;
+    text-align: center;
+}
+
+.chat-inview-seen-by__label {
+
+}
+
+.chat-inview-seen-by i {
+    margin-left: 2px;
 }

@@ -20,6 +20,8 @@
 		},
 		refreshOnlineUsers: function(){
 
+			var thirty_seconds = 30000;
+
 			LJ.api.fetchOnlineUsers()
 				.then(function( online_users ){
 
@@ -31,7 +33,15 @@
 
 					});
 
-				});
+				})
+				.then(function(){
+					return LJ.delay( thirty_seconds )
+
+				})
+				.then(function(){
+					return LJ.connecter.refreshOnlineUsers();
+
+				})
 
 		}
 

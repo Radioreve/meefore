@@ -142,6 +142,10 @@
 }
 
 
+.search-user .user-online {
+    margin-left: 4px;
+}
+
 .search-user__pic img {
     transition: all ease-in-out .2s;
     width: 100%;

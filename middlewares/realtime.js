@@ -520,6 +520,7 @@
 
 		var data_message = {
 			sender_id   : req.sent.facebook_id,
+			seen_by 	: [ req.sent.facebook_id ],
 			call_id 	: req.sent.call_id,
 			group_id    : req.sent.group_id,
 			message     : req.sent.message,

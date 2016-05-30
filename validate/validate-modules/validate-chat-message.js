@@ -39,7 +39,7 @@
 		var chat_id  = req.sent.chat_id;
 
 		// The only thing that should not be possible is for users to send a chat message in the all channel
-		// When the group status is still pending
+		// when the group status is still pending
 		if( !/all/i.test( chat_id ) ){
 			return callback( null );
 		}

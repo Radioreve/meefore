@@ -15,6 +15,7 @@
 			$('.chat').on('click', '.js-validate-later', LJ.chat.handleValidateLater );
 			$('.chat').on('click', '.js-chat-switch', LJ.chat.handleSwitchChatInview );
 			$('.chat').on('keydown', '.js-send-message', LJ.chat.handleSendMessage );
+			$('.chat').on('focus', '.chat-inview-item input', LJ.chat.handleSendSeenBy );
 
 		},
 		handleSwitchChatInview: function(){
@@ -291,7 +292,16 @@
 			LJ.chat.refreshChatJsp( chat_id );
 			LJ.chat.classifyChatLine( call_id );
 			LJ.chat.showChatLine( call_id );
+			LJ.chat.pushBackSeenBy( chat_id );
 
+
+		},
+		pushBackSeenBy: function( chat_id ){
+
+			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+
+			$w.find('.chat-inview-seen-by')
+			  .insertAfter( $w.find('.chat-inview-message').last() );
 
 		},
 		dependifyChatLine: function( call_id ){
@@ -303,6 +313,7 @@
 
 		},
 		classifyChatLine: function( call_id ){
+
 			var $msg = LJ.chat.getMessageElById( call_id ).closest('.chat-inview-message');
 			var sender_id = $msg.attr('data-sender-id');
 
@@ -421,21 +432,21 @@
 			// fetching history state, started when the loading happens and ends after all 
 			// chat messages have been added. During this, always stick to the saved position
 			if( is_fetching_history ){
-				LJ.log('User is fetching history, scrolling to the glued element...');
+				// LJ.log('User is fetching history, scrolling to the glued element...');
 	           	j.scrollToElement( $g, true );
                 j.scrollToY( j.getContentPositionY() );
 	           	return;
 			}
 
 			if( !last_position_y ){
-				LJ.log('User has unknown last position, first time he opens the chat. Put him to bottom...');
+				// LJ.log('User has unknown last position, first time he opens the chat. Put him to bottom...');
 				j.scrollToBottom();
 				return;
 			}
 
 			// User is almost at the end of the chat, scroll to the bottom to display the last message
 			if( is_almost_at_bottom ){
-				LJ.log('User is almost at bottom, scrolling bottom...');
+				// LJ.log('User is almost at bottom, scrolling bottom...');
 				j.scrollToBottom();
 				return;
 			}
@@ -443,19 +454,19 @@
 			// In order to allow for one single fixed ratio (see just above), split the algorithm into a fix part
 			// where the use is forced to go down when too few chat lines.
 			if( has_few_chat_lines ){
-				LJ.log('User has too few chat lines, forcing to scroll down ');
+				// LJ.log('User has too few chat lines, forcing to scroll down ');
 				j.scrollToBottom();
 				return;
 			}
 			// User happens to be at top without fetching history state, which means that either the history
 			// is complete, or that its a jsp anomaly. Put him back right where he was before coming
 			if( is_at_top ){
-				LJ.log('User is at top for some weird reason, scrolling to the last position...');
+				// LJ.log('User is at top for some weird reason, scrolling to the last position...');
 				j.scrollToY( last_position_y );
 				return;
 			}
 
-			LJ.log('Nothing special happened, let the user exactly where he is...');
+			// LJ.log('Nothing special happened, let the user exactly where he is...');
 
 
 		},
@@ -821,6 +832,9 @@
 			        '<div class="chat-inview-item --all --active" data-group-id="'+ group_id + '" data-chat-id="'+ chat_id_all +'">',
 			        	'<div class="chat-inview-options"></div>',
 	          			'<div class="chat-inview-messages">',
+		          			'<div class="chat-inview-seen-by">',
+				          		'<span class="chat-inview-seen-by__label"></span>',
+				          	'</div>',
 	          				// Dynamically injected
 	          			'</div>',
 			          	'<div class="chat-inview-footer">',
@@ -1058,6 +1072,102 @@
         				.removeClass('--validating');
 
         		});
+
+        },
+        getLastChatMessage: function( chat_id ){
+
+        	var chat = LJ.chat.getChatById( chat_id );
+        	var last_message = chat && chat.messages && chat.messages[0];
+
+        	return last_message;
+
+        },
+        handleSendSeenBy: function(){
+
+			var $s = $( this );
+			var $w = $s.closest('.chat-inview-item');
+
+			var chat_id      = $w.attr('data-chat-id');
+			var last_message = LJ.chat.getLastChatMessage( chat_id );
+
+			if( !last_message ){
+				return LJ.wlog("Unable to find the last message");
+			}
+
+			var last_seen_by = last_message.seen_by;
+
+			if( !Array.isArray( last_seen_by ) ){
+				return LJ.wlog('Last_seen_by aint no Array');
+			}
+
+			if( last_seen_by.indexOf( LJ.user.facebook_id ) != -1 ){
+				return LJ.log('Already sent seen by, not calling the api');
+			}
+
+        	LJ.chat.sendSeenBy( chat_id );
+
+        },
+        sendSeenBy: function( chat_id ){
+
+        	LJ.log('Sending seen by...');
+        	LJ.api.updateChatSeenBy( chat_id )
+        		.then(function(){
+        			LJ.chat.newifyChatRows();
+        			LJ.log("...success!");
+
+        		})
+        		.catch(function( err ){
+        			LJ.wlog( err );
+        		});
+
+        },
+        getChatParticipantsCount: function( group_id ){
+
+        	var n_hosts = LJ.chat.fetched_groups[ group_id ].hosts_profiles.length;
+        	var n_users = LJ.chat.fetched_groups[ group_id ].members_profiles.length;
+
+        	return n_users + n_hosts;
+
+        },
+        refreshChatSeenBy: function( chat_id ){
+
+			var $w           = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var last_message = LJ.chat.getLastChatMessage( chat_id );
+
+			if( !last_message ){
+				return LJ.wlog("Unable to find the last message");
+			}
+			var seen_by     = last_message.seen_by;
+			var group_id    = last_message.group_id;
+			var sender_id 	= last_message.sender_id;
+
+			var names = [];
+			seen_by.forEach(function( facebook_id ){
+
+				// if( facebook_id != sender_id ){
+					names.push( LJ.chat.findChatSender( group_id, facebook_id ).name );
+				// }
+
+			});
+
+			// Substract 1 because the user owns id has already been removed
+			var c = LJ.chat.getChatParticipantsCount( group_id ) - 1; 
+        	var s = LJ.chat.makeSeenByText( names, c );
+
+        	$w.find('.chat-inview-seen-by__label').html( s );
+
+        },
+        makeSeenByText: function( names, count ){
+
+        	if( names.length == 0 ){
+        		return '';
+        	}
+
+        	if( names.length == count ){
+        		return LJ.text('seen_by_everyone') + '<i class="icon icon-check"></i>';
+        	}
+
+        	return LJ.text('seen_by_some', names );
 
         }
 

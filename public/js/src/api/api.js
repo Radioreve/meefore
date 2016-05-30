@@ -36,6 +36,7 @@
 		send_chat_message_url 	     : '/api/v1/chats/:chat_id',
 		fetch_chat_history_url 	 	 : '/api/v1/chats/:chat_id',
 		change_group_status_url		 : '/api/v1/befores/:before_id/groups/:group_id/status',
+		update_chat_seen_by_url 	 : '/api/v1/chats/:chat_id/seen_by',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -770,6 +771,20 @@
 					});
 
 			});
+		},
+		updateChatSeenBy: function( chat_id ){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.update_chat_seen_by_url.replace( ':chat_id', chat_id ))
+					.then(function( exposed ){
+						return resolve( exposed );
+						
+					}, function( err ){
+						return reject( err );
+					})
+			});
+
+
 		}
 
 	});
