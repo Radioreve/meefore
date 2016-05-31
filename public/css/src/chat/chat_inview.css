@@ -459,6 +459,7 @@
     font-family: 'open sans';
     margin-left: 11px;
     text-align: center;
+    margin-top: auto;
 }
 
 .chat-inview-seen-by__label {

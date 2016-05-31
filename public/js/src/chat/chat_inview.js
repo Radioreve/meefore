@@ -284,25 +284,36 @@
 
 			var chat_id        = data.chat_id;
 			var chat_line_html = LJ.chat.renderChatLine( data, call_id );
-
+			
+			var $seen_by = LJ.chat.popSeenBy( chat_id );
 			LJ.chat.insertChatLine( chat_id, chat_line_html, opts.insert_mode );
 			LJ.chat.tallifyChatLine( call_id );
 			LJ.chat.horodateChatLine( call_id );
-			LJ.chat.mergeChatLine( call_id );
+			LJ.chat.mergeChatLine( call_id ); 
 			LJ.chat.refreshChatJsp( chat_id );
 			LJ.chat.classifyChatLine( call_id );
 			LJ.chat.showChatLine( call_id );
-			LJ.chat.pushBackSeenBy( chat_id );
-
+			LJ.chat.pushBackSeenBy( chat_id, $seen_by );
+ 
 
 		},
-		pushBackSeenBy: function( chat_id ){
+		popSeenBy: function( chat_id ){
+
+			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $e = $w.find('.chat-inview-seen-by');
+			var $b = _.clone( $e );
+			
+			$e.remove();
+			
+			return $b;
+				
+		},	
+		pushBackSeenBy: function( chat_id, $seen_by ){
 
 			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
 
-			$w.find('.chat-inview-seen-by')
-			  .insertAfter( $w.find('.chat-inview-message').last() );
-
+			$seen_by.insertAfter( $w.find('.chat-inview-message').last() )
+			  
 		},
 		dependifyChatLine: function( call_id ){
 			LJ.chat.getMessageElById( call_id ).removeClass('--pending');
@@ -1091,7 +1102,7 @@
 			var last_message = LJ.chat.getLastChatMessage( chat_id );
 
 			if( !last_message ){
-				return LJ.wlog("Unable to find the last message");
+				return;
 			}
 
 			var last_seen_by = last_message.seen_by;
@@ -1135,7 +1146,7 @@
 			var last_message = LJ.chat.getLastChatMessage( chat_id );
 
 			if( !last_message ){
-				return LJ.wlog("Unable to find the last message");
+				return;
 			}
 			var seen_by     = last_message.seen_by;
 			var group_id    = last_message.group_id;
@@ -1144,26 +1155,28 @@
 			var names = [];
 			seen_by.forEach(function( facebook_id ){
 
-				// if( facebook_id != sender_id ){
+				// It would be dumb to let others know that the sender has read its own message
+				// and weird for the user to see his own name on the "seen_by" list
+				if( facebook_id != sender_id && facebook_id != LJ.user.facebook_id ){
 					names.push( LJ.chat.findChatSender( group_id, facebook_id ).name );
-				// }
+				}
 
 			});
 
 			// Substract 1 because the user owns id has already been removed
-			var c = LJ.chat.getChatParticipantsCount( group_id ) - 1; 
-        	var s = LJ.chat.makeSeenByText( names, c );
+			var c = LJ.chat.getChatParticipantsCount( group_id );
+        	var s = LJ.chat.makeSeenByText( names, seen_by.length, 2 || c );
 
         	$w.find('.chat-inview-seen-by__label').html( s );
 
         },
-        makeSeenByText: function( names, count ){
+        makeSeenByText: function( names, seen_by_length, count ){
 
         	if( names.length == 0 ){
         		return '';
         	}
 
-        	if( names.length == count ){
+        	if( seen_by_length == count ){
         		return LJ.text('seen_by_everyone') + '<i class="icon icon-check"></i>';
         	}
 

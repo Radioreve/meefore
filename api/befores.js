@@ -240,7 +240,7 @@
 			}
 
 			// Do not expose the group lists to other people than hosts
-			if( bfr.hosts.indexOf( req.sent.facebook_id ) == -1 ){
+			if( bfr && bfr.hosts.indexOf( req.sent.facebook_id ) == -1 ){
 				bfr.members = null;
 			}
 			

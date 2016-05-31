@@ -26,7 +26,7 @@
 			{
 				'access_name' : 'search_loader',
 				'image_id'    : 'circular_loader_royal_blue',
-				'param'       : { 'class': 'search__loader', 'width': 130  }	
+				'param'       : { 'class': 'search__loader', 'width': 80  }	
 			},
 			{
 				'access_name' : 'be_create_loader',

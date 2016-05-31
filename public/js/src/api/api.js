@@ -263,10 +263,9 @@
 					  		// Append the Facebook id, cause not present in cache 
 					  		// for space (cost!) optimisation
 					  		exposed.user.facebook_id = facebook_id;
-					  		return resolve( exposed );
-					  	} else {
-					  		LJ.wlog('The server didnt respond with the expected user object');
 					  	}
+					  	return resolve( exposed );
+
 					  }, function( err ){
 					  	return reject( err );
 					  });
@@ -519,14 +518,8 @@
 
 				LJ.api.get( LJ.api.fetch_before_url.replace(':before_id', before_id ) )
 					  .then(function( exposed ){
-					  	if( exposed.before ){
-					  		// Append the Facebook id, cause not present in cache 
-					  		// for space (cost!) optimisation
-					  		// exposed.user.facebook_id = facebook_id;
-					  		return resolve( exposed );
-					  	} else {
-					  		LJ.wlog('The server didnt respond with the expected before object');
-					  	}
+					  	return resolve( exposed.before );
+
 					  }, function( err ){
 					  	return reject( err );
 

@@ -147,8 +147,13 @@
 			if( sho.target_type == "user" ){
 
 				var target_profile = _.find( users, function( usr ){
-					return usr.facebook_id == sho.target_id;
+					return usr && usr.facebook_id == sho.target_id;
 				});
+
+				if( !target_profile ){
+					LJ.wlog('Couldnt find the user profile');
+					return ''
+				}
 
 				if( sho.share_type == "shared_by" ){
 					return LJ.shared.renderSharedByItem__User( sho, target_profile );
@@ -162,9 +167,15 @@
 
 			if( sho.target_type == "before" ){
 
+
 				var before = _.find( befores, function( bfr ){
-					return bfr._id == sho.target_id;
+					return bfr && bfr._id == sho.target_id;
 				});
+
+				if( !before ){
+					LJ.wlog('Couldnt find the before');
+					return '';
+				}
 
 				var targets_profiles = [];
 				users.forEach(function( user ){
