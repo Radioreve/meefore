@@ -206,6 +206,14 @@
 			"fr": "Prochainement",
 			"us": "Soon"
 		},
+		lang_before: {
+			"fr": "before",
+			"us": "pregame"
+		},
+		lang_profile: {
+			"fr": "profil",
+			"us": "profile"
+		},
 		menu_profile: {
 			"fr": "Profil",
 			"us": "Profile"
@@ -1151,44 +1159,36 @@
 			"us": "There are currently %n meefore for this party"
 		},
 		n_accepted_in_text: {
-			"fr": "Votre groupe %group_name a été accepté dans un meefore",
-			"us": "Your group %group_name has been accepted in a meefore"
+			"fr": "Vous avez un Match !",
+			"us": "It's a Match !"
 		},
 		n_accepted_in_subtext: {
-			"fr": "N'attendez-plus pour envoyer un message!",
-			"us": "Don't wait to send them a message"
+			"fr": "Faites connaissance dès maintenant",
+			"us": "Get to know each other now"
 		},
 		n_group_request_text: {
-			"fr": "Le groupe %group_name a demandé à rejoindre un de vos meefore",
-			"us": "The group %group_name has requested to join a meefore of yours"
+			"fr": "Cheers reçu",
+			"us": "Cheers received"
 		},
 		n_group_request_subtext: {
-			"fr": "Faites connaissance dès maintenant sur le chat!",
-			"us": "Get to know each other now on the chat"
+			"fr": "Un group a montré un intérêt pour votre before",
+			"us": "A group seem to be interested by your pregame"
 		},
 		n_marked_as_host_text: {
-			"fr": "Votre ami %friend_name vous a marqué organisateur sur son meefore",
-			"us": "Your friend %friend_name has tagged you as host on his meefore"
+			"fr": "Before %address",
+			"us": "Pregame %address"
 		},
 		n_marked_as_host_subtext: {
-			"fr": "Que la fête commence",
-			"us": "Get the party started!"
+			"fr": "%name vous a marqué coorganisateur de son before",
+			"us": "%name has marked you cohost of his pregame"
 		},
 		n_fill_profile_text: {
-			"fr": "Votre profil n'est pas encore complet à 100%",
-			"us": "Your profile isnt completed at 100%"
+			"fr": "Complétez votre profil",
+			"us": "Complete your profile"
 		},
 		n_fill_profile_subtext: {
-			"fr": "Complétez le afin d'obtenir plus de chance d'être validé",
-			"us": "Complete it to increase ur chances to get validated"
-		},
-		n_unread_messages_text: {
-			"fr": "Vous avez des messages non lus",
-			"us": "You have unread messages"
-		},
-		n_unread_messages_subtext: {
-			"fr": "Répondez-y maintenant",
-			"us": "Reply now"
+			"fr": "Vous augmenterez vos chances d'avoir des Cheers",
+			"us": "That will increase your chances to get a Cheers"
 		},
 		n_new_friends_text_sin: {
 			"fr": "%n nouvel ami vient de rejoindre meefore",
@@ -1206,17 +1206,25 @@
 			"fr": "Bienvenue sur Meefore",
 			"us": "Welcome on Meefore"
 		},
+		n_before_canceled_text: {
+			"fr": "Before annulé",
+			"us": "Pregame canceled"
+		},
+		n_before_canceled_subtext: {
+			"fr": "%address",
+			"us": "%address"
+		},
+		n_item_shared_text: {
+			"fr": "Partagé par %name",
+			"us": "Shared by %name"
+		},
+		n_item_shared_subtext: {
+			"fr": "%name vient de vous partager un %type",
+			"us": "%name just shared a %type with you"
+		},
 		n_inscription_success_subtext: {
 			"fr": "Complétez votre profile et créez ou participer à votre premier meefore dès aujourd'hui!",
 			"us": "Complete your profile and create or participate at your first meefore today!"
-		},
-		n_no_friends_text: {
-			"fr": "Aucun de vos amis Facebook n'est inscrit sur Meefore",
-			"us": "None of your Facebook friends is on Meefore",
-		},
-		n_no_friends_subtext: {
-			"fr": "Il faut être au moins 2 pour proposer un before ou demander à participer. Invitez-vos amis !",
-			"us": "You need to be at least a group of 2 to organize or participate. Invite your friends !"
 		},
 		n_check_email_text: {
 			"fr": "Votre addresse email est-elle à jour ?",

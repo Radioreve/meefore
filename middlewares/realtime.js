@@ -366,10 +366,11 @@
 
 		var err_ns = "pushing_new_before";
 
-		var socket_id   = req.sent.socket_id;
-		var before      = req.sent.expose.before;
-		var before_item = req.sent.expose.before_item;
-		var place_id 	= req.sent.requester.location.place_id;
+		var socket_id    = req.sent.socket_id;
+		var before       = req.sent.expose.before;
+		var before_item  = req.sent.expose.before_item;
+		var place_id     = req.sent.requester.location.place_id;
+		var notification = req.sent.notification;
 
 		// Convert toObject() to only transport the object and not
 		// and the prototype inherited form Mongoose model.
@@ -383,12 +384,12 @@
 
 		// Send a special message to all other hosts to let them know a before was created
 		// by one of their friends and they are marked as host
-
 		var channel_name = makeBeforeChannel( before._id );
 		var channel_item = makeChannelItem__Before( before );
 
 		// Expose the new channel for every hosts to subscribe
 		data.channel_name = channel_name
+
 		// Expose the channel for the requester, so he knows where to subscribe too!
 		req.sent.expose.channel_name = channel_name;
 
@@ -399,6 +400,8 @@
 				if( err ) return handleErr( req, res, err_ns, err );
 
 				// Hosts are not yet in a global 'before' channel. Push the update to each one if them separately
+				// with a proper notification object, nicely formatted by notifier.js !
+				data.notification = notification;
 				before.hosts.forEach(function( h ){
 
 					if( h != req.sent.facebook_id ){ // Exclude the creator from the list
@@ -417,22 +420,26 @@
 
 	var pushNewBeforeStatus = function( req, res, next ){
 
-		var socket_id = req.sent.socket_id;
-		var before 	  = req.sent.expose.before;
+		var socket_id    = req.sent.socket_id;
+		var before       = req.sent.expose.before;
+		var notification = req.sent.notification;
+
 		// Carefull, must ne the requester location's place_id and not the before one
 		var place_id  = req.sent.requester.location.place_id;
 
 		var data_users = {
-			before_id : before._id,
-			hosts     : before.hosts,
-			status    : before.status
+			before_id 	 : before._id,
+			hosts     	 : before.hosts,
+			status       : before.status,
+			notification : before.notification
 		};
 
 		var data_hosts = {
-			before_id : before._id,
-			hosts     : before.hosts,
-			status    : before.status,
-			requester : req.sent.facebook_id // Used by ui to display the name of the requester
+			before_id    : before._id,
+			hosts        : before.hosts,
+			status       : before.status,
+			requester    : req.sent.facebook_id, // Used by ui to display the name of the requester,
+			notification : before.notification
 		};
 
 		// Global message : everyone will received it and react. Hosts too, but they are not
@@ -502,11 +509,12 @@
 		var chat_id   = req.sent.chat_id;
 
 		var data = {
-			sender_id : sender_id,
-			before_id : before_id,
-			group_id  : group_id,
-			chat_id   : chat_id,
-			status 	  : status
+			sender_id    : sender_id,
+			before_id    : before_id,
+			group_id     : group_id,
+			chat_id      : chat_id,
+			status 	     : status,
+			notification : notification
 		};
 
 		pusher.trigger( chat_id, 'new group status', data, handlePusherErr );

@@ -5,16 +5,16 @@
 
 		init: function(){
 
-			LJ.notifications.addNotificationsPanel()
+			LJ.notifications.addNotificationsPanel();
 			// Notifications persistentes
             // Certaines doivent être affichées de manière async à un autre moment
-            //LJ.user.notifications.forEach(function( notification ){
-              //  LJ.notifications.insertNotification( notification );
-            //});
+            LJ.user.notifications.forEach(function( notification ){
+               LJ.notifications.insertNotification( notification );
+            });
 			// Notifications éphémères
 			// Display after so they are always pinned to top
-			//LJ.notifications.checkNotification_newUser();
-          // LJ.notifications.checkNotification_fillProfile();
+			LJ.notifications.checkNotification_newUser();
+          	LJ.notifications.checkNotification_fillProfile();
             // Daily notification
             // ...
 			LJ.notifications.handleDomEvents();
@@ -23,31 +23,32 @@
 		},
 		handleDomEvents: function(){
 
-			$('.app__menu-item.--notifications').click(function(e){
+			$('.app__menu-item.--notifications').click( LJ.notifications.handleToggleNotifications );
+			LJ.ui.$body.on('click', LJ.notifications.handleHideNotifications );
 
-				e.preventDefault();
+		},
+		handleToggleNotifications: function(e){
+
+			e.preventDefault();
 				
-				var $self = $(this);
-				// Toggle notifications pannel
-				LJ.notifications.toggleNotificationsPanel();
-				// Kill bubbls
-				LJ.ui.setBubble('.app__menu-item.--notifications', 0);
+			var $self = $( this );
+			// Toggle notifications pannel
+			LJ.notifications.toggleNotificationsPanel();
+			// Kill bubbls
+			LJ.ui.setBubble('.app__menu-item.--notifications', 0);
 
-			});
+		},
+		handleHideNotifications: function(e){
 
-			LJ.ui.$body.click(function( e ){
+			var $t = $( e.target );
 
-				var $t = $( e.target );
-
-				var is_not_nav_item    = !$t.closest('.app__menu-item.--notifications').length;
-				var panel_visible      = $('.notifications-panel.--active').length;
-				var is_not_panel_child = !$t.closest('.notifications-panel').length;
-				
-				if( is_not_nav_item && is_not_panel_child && panel_visible ){
-					LJ.notifications.hideNotificationsPanel();
-				}
-
-			});
+			var is_not_nav_item    = !$t.closest('.app__menu-item.--notifications').length;
+			var panel_visible      = $('.notifications-panel.--active').length;
+			var is_not_panel_child = !$t.closest('.notifications-panel').length;
+			
+			if( is_not_nav_item && is_not_panel_child && panel_visible ){
+				LJ.notifications.hideNotificationsPanel();
+			}
 
 		},
 		addNotificationsPanel: function(){
@@ -107,158 +108,186 @@
 			}
 
 		},
+		checkNotification_newUser: function(){
+
+			if( LJ.user.status != 'new' ) return;
+
+		   // Notification d'introduction
+            LJ.notifications.insertNotification({
+				notification_id : "inscription_success",
+				type            : "flash"
+            });
+
+		},
+		checkNotification_fillProfile: function(){
+
+			var profile_filled = true;
+
+			LJ.user.pictures.forEach(function( pic ){
+
+				if( pic.img_id == LJ.app_settings.placeholder.img_id ){
+					profile_filled = false;
+				}
+
+			});
+
+			if( profile_filled ) return;
+
+			LJ.notifications.insertNotification({
+				notification_id : "fill_profile",
+				type            : "flash"
+            });
+			
+		},
 		renderNotificationsPanel: function(){
 
 			return LJ.notifications.renderNotificationsElement('wrapper');
 
 		},
-		renderNotification_EventCreated: function( notification ){
+		renderNotification__RequestAccepted: function( notification ){
 
-			// NOT REALLY A NOTIFICATION BUT "ACTUALITY WIRE" ;=p
+			var options    = {};
+			var group_html = LJ.notifications.renderNotificationsElement('group_name');
+			
+			options.icon_code   = "chat-bubble-duo";
+			options.text        = LJ.text("n_accepted_in_text");
+			options.subtext     = LJ.text("n_accepted_in_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			// var options = {};
-			// var n = 1337;
-
-			// options.icon_code         = "glass";
-			// options.text              = LJ.text("n_new_meefore_text").replace('%place', notification.place_name );
-			// options.subtext           = LJ.text("n_new_meefore_subtext").replace('%n', n );
-			// options.happened_at		  = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			// return LJ.notifications.renderNotificationItem( options );
+			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
 
 		},
-		renderNotification_RequestAccepted: function( notification ){
+		renderNotification__FillProfile: function( notification ){
 
 			var options = {};
-			var group_name = notification.group_name;
+			
+			options.icon_code   = "question-mark";
+			options.text        = LJ.text("n_fill_profile_text");
+			options.subtext     = LJ.text("n_fill_profile_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			var group_html = LJ.notifications.renderNotificationsElement('group_name', { group_name: group_name });
+			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
 
-			options.icon_code         = "chat-bubble-duo";
-			options.text              = LJ.text("n_accepted_in_text").replace('%group_name', group_html );
-			options.subtext           = LJ.text("n_accepted_in_subtext");
-			options.happened_at 	  = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( options );
 
 		},
-		renderNotification_UnreadMessages: function( notification ){
-
-			var options  = {};
-
-			options.icon_code         = "chat-bubble";
-			options.text              = LJ.text("n_unread_messages_text");
-			options.subtext           = LJ.text("n_unread_messages_subtext");
-			options.happened_at 	  = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( options );
-
-		},
-		renderNotification_GroupRequest: function( notification ){
+		renderNotification__GroupRequest: function( notification ){
 
 			var options = {};
-			var group_name = notification.group_name;
 
-			var group_html = LJ.notifications.renderNotificationsElement('group_name', { group_name: group_name });
+			options.icon_code   = "drinks";
+			options.text        = LJ.text("n_group_request_text");
+			options.subtext     = LJ.text("n_group_request_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			options.icon_code         = "users";
-			options.text              = LJ.text("n_group_request_text").replace('%group_name', group_html );
-			options.subtext           = LJ.text("n_group_request_subtext").replace('%group_name', group_html );
-			options.happened_at		  = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( options );
+			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
 
 		},
-		renderNotification_MarkedAsHost: function( notification ){
+		renderNotification__MarkedAsHost: function( notification ){
 
 			var options = {};
-			var friend_id = notification.facebook_id;
+			var main_host = notification.main_host;
+			var address   = notification.address;
 
-			var friend = _.find( LJ.user.friends, function( friend ){
-				return friend.facebook_id == friend_id;
-			})
+			var friend = _.find( LJ.friends.friends_profiles, function( f ){
+				return f.facebook_id == main_host;
+			});
 
 			if( !friend ) return LJ.wlog('Cannot render marked as host, couldnt find friend: ' + friend );
 
 			var friend_name = friend.name;
+			
+			options.icon_code   = "star";
+			options.text        = LJ.text("n_marked_as_host_text").replace('%address', address );
+			options.subtext     = LJ.text("n_marked_as_host_subtext").replace('%name', friend_name );
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			var friend_html = LJ.notifications.renderNotificationsElement('friend_name', { friend_name: friend_name });
-
-			options.icon_code         = "star";
-			options.text              = LJ.text("n_marked_as_host_text").replace('%friend_name', friend_html );
-			options.subtext           = LJ.text("n_marked_as_host_subtext");
-			options.happened_at 	  = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( options );
+			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
 
 		},
-		renderNotification_InscriptionSuccess: function( notification ){
-
-			var options = {};
-
-			options.icon_code         = "check";
-			options.text              = LJ.text("n_inscription_success_text");
-			options.subtext           = LJ.text("n_inscription_success_subtext");
-			options.happened_at 	  = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( options );
-
-
-		},
-		renderNotification_NoFriends: function( notification ){
-
-			var options = {};
-
-			options.icon_code         = "add-friend";
-			options.text              = LJ.text("n_no_friends_text");
-			options.subtext           = LJ.text("n_no_friends_subtext");
-			options.happened_at 	  = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( options );
-
-
-		},
-		renderNotification_FillProfile: function( notification ){
-
-			var options = {};
-
-			options.icon_code         = "bednight-empty";
-			options.text              = LJ.text("n_fill_profile_text");
-			options.subtext           = LJ.text("n_fill_profile_subtext");
-			options.happened_at 	  = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( options );
-
-
-		},
-		renderNotification_NewFriends: function( notification ){
+		renderNotification__NewFriends: function( notification ){
 
 			var options = {};
 
 			var n_friends = notification.n_new_friends;
-
-			options.icon_code         = "user-add";
-			options.subtext           = LJ.text("n_new_friends_subtext");
-			options.happened_at 	  = LJ.notifications.stringifyDuration( notification.happened_at );
+			
+			options.icon_code   = "user-add";
+			options.subtext     = LJ.text("n_new_friends_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
 			if( n_friends == 1 ){
 				options.text = LJ.text("n_new_friends_text_sin").replace('%n', n_friends);
 			} else {
 				options.text = LJ.text("n_new_friends_text_plu").replace('%n', n_friends);
 			}
-			return LJ.notifications.renderNotificationItem( options );
+			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
 
 		},
-		renderNotification_CheckEmail: function( notification ){
+		renderNotification__BeforeCanceled: function( notification ){
 
 			var options = {};
+			var address = notification.address;
+			
+			options.icon_code   = "line";
+			options.text        = LJ.text("n_before_canceled_text");
+			options.subtext     = LJ.text("n_before_canceled_subtext").replace('%address', address);
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			options.icon_code         = "arobat";
-			options.text              = LJ.text("n_check_email_text");
-			options.subtext           = LJ.text("n_check_email_subtext");
-			options.happened_at 	  = LJ.notifications.stringifyDuration( notification.happened_at );
+			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			
+		},
+		renderNotification__ItemShared: function( notification ){
 
-			return LJ.notifications.renderNotificationItem( options );
+			var options   = {};
+			var shared_by = notification.address;
+
+			var name = 
+			var type = before_type == "user" ? LJ.text('lang_profile') : LJ.text('lang_before');
+
+			
+			options.icon_code   = "line";
+			options.text        = LJ.text("n_item_shared_text").replace('%name', name);
+			options.subtext     = LJ.text("n_item_shared_subtext").replace('%name', name).replace('%type', type);
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			
+		},
+		renderNotification__InscriptionSuccess: function( notification ){
+
+			var options = {};
+			
+			options.icon_code   = "check";
+			options.text        = LJ.text("n_inscription_success_text");
+			options.subtext     = LJ.text("n_inscription_success_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+
+
+		},
+		renderNotification__NoFriends: function( notification ){
+
+			var options = {};
+			
+			options.icon_code   = "add-friend";
+			options.text        = LJ.text("n_no_friends_text");
+			options.subtext     = LJ.text("n_no_friends_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+
+
+		},
+		renderNotification__CheckEmail: function( notification ){
+
+			var options = {};
+			
+			options.icon_code   = "arobat";
+			options.text        = LJ.text("n_check_email_text");
+			options.subtext     = LJ.text("n_check_email_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
 
 
 		},
@@ -274,7 +303,7 @@
 
             if( element == "wrapper" ){
 
-                html = html.concat([
+                return LJ.ui.render([
                     '<div class="notifications-panel">',
                         '<div class="notification notification--header">',
                        		'<div data-lid="n_header_text" class="notification--header__text">Notifications</div>',
@@ -287,12 +316,13 @@
                             '<div data-lid="n_footer_text" class="notification--footer_text">This is the footer</div>',
                         '</div>',
                     '</div>'
-                ]);
+                ].join(''));
 
             }
 
             if( element == "item" ){
 
+            	var notification_id   = options.notification_id;
 				var icon_code         = options.icon_code;
 				var text              = options.text;
 				var subtext           = options.subtext;
@@ -300,7 +330,7 @@
 
 				var happened_at_html = happened_at ? '<div class="notification__date">' + happened_at + '</div>' : '';
 
-            	html = html.concat([
+            	return LJ.ui.render([
             		'<div class="notification notification-click js-notification-item">',
                     	'<div class="notification__icon --round-icon"><i class="icon icon-' + icon_code + '"></i></div>',
                     	'<div class="notification-message">',
@@ -309,31 +339,9 @@
                     	'</div>',
                     	happened_at_html,
                     '</div>',
-            	]);
-            }
-
-            if( element == "group_name" ){
-
-            	var group_name = options.group_name;
-
-            	html = html.concat([
-            		'<span class="notification-message__group-name">' + group_name + '</span>'
-            	]);
-
-            }
-
-            if( element == "friend_name" ){
-
-            	var friend_name = options.friend_name;
-
-            	html = html.concat([
-            		'<span class="notification-message__friend-name">' + friend_name + '</span>'
-            	]);
-
+            	].join(''));
             }
 			
-			return LJ.ui.render( html.join('') );
-
 
 		},
 		stringifyDuration: function( m ){
@@ -378,13 +386,11 @@
 		pushNewNotification: function( notification ){
 
 			LJ.ui.showToast( LJ.text("n_new_notification") );
-
 			LJ.notifications.insertNotification( notification );
+			LJ.notifications.refreshNotificationsJsp();
 
 		},
 		insertNotification: function( notification ){
-
-			// var max_item  = 5;
 
 			var html                 = '';
 			var notification_id      = notification.notification_id;
@@ -392,64 +398,76 @@
 
 			var notificationCallback;
 
-			// Permanent notifications
 			// Accepted in a meefore
 			if( notification_id === "accepted_in" ){
-				html += LJ.notifications.renderNotification_RequestAccepted( notification );
-				notificationCallback = LJ.notifications.notificationCallback_AcceptedIn;
+				html = LJ.notifications.renderNotification__RequestAccepted( notification );
+				notificationCallback = LJ.notifications.notificationCallback__AcceptedIn;
 			}
 
-			// A group requested to join in a meefore
-			if( notification_id === "group_request" ){
-				html += LJ.notifications.renderNotification_GroupRequest( notification );
-				notificationCallback = LJ.notifications.notificationCallback_GroupRequest;
-			}
-
-			// Some messages are unread !
-			if( notification_id === "unread_messages" ){
-				html += LJ.notifications.renderNotification_UnreadMessages( notification );
-				notificationCallback = LJ.notifications.notificationCallback_UnreadMessages;
-			}
-
-			// A friend taggued us as host on one of its meefore
-			if( notification_id === "marked_as_host" ){
-				html += LJ.notifications.renderNotification_MarkedAsHost( notification );
-				notificationCallback = LJ.notifications.notificationCallback_MarkedAsHost;
-			}
-
-
-			// Flash notifications : only occurs based on cache informations (not persisted in db as part of users state)
-			// First connexion occured, welcome on board
-			if( notification_id === "inscription_success" ){
-				html += LJ.notifications.renderNotification_InscriptionSuccess( notification );
-				notificationCallback = LJ.notifications.notificationCallback_InscriptionSuccess;
-			}
-
-			// User still have no friends, needs a reminder to invite some!
-			if( notification_id === "no_friends" ){
-				html += LJ.notifications.renderNotification_NoFriends( notification );
-				notificationCallback = LJ.notifications.notificationCallback_NoFriends;
-			}
 
 			// Profile isnt 100% complete! Especially photos...
 			if( notification_id === "fill_profile" ){
-				html += LJ.notifications.renderNotification_FillProfile( notification );
-				notificationCallback = LJ.notifications.notificationCallback_FillProfile;
+				html = LJ.notifications.renderNotification__FillProfile( notification );
+				notificationCallback = LJ.notifications.notificationCallback__FillProfile;
 			}
+
+
+			// A group requested to join in a meefore
+			if( notification_id === "group_request" ){
+				html = LJ.notifications.renderNotification__GroupRequest( notification );
+				notificationCallback = LJ.notifications.notificationCallback__GroupRequest;
+			}
+
+
+			// A friend taggued us as host on one of its meefore
+			if( notification_id === "marked_as_host" ){
+				html = LJ.notifications.renderNotification__MarkedAsHost( notification );
+				notificationCallback = LJ.notifications.notificationCallback__MarkedAsHost;
+			}
+
 
 			// New friends joined meefore
 			if( notification_id === "new_friends" ){
-				html += LJ.notifications.renderNotification_NewFriends( notification );
-				notificationCallback = LJ.notifications.notificationCallback_NewFriends;
+				html = LJ.notifications.renderNotification__NewFriends( notification );
+				notificationCallback = LJ.notifications.notificationCallback__NewFriends;
 			}
 
 
-			// Random notifications! "Did you know?" style
+			// A before has been canceled 
+			if( notification_id === "before_canceled" ){
+				html = LJ.notifications.renderNotification__BeforeCanceled( notification );
+				notificationCallback = LJ.notifications.notificationCallback__BeforeCanceled;
+			}
+
+			
+			// Someone has shared something
+			if( notification_id === "item_shared" ){
+				html = LJ.notifications.renderNotification__ItemShared( notification );
+				notificationCallback = LJ.notifications.notificationCallback__ItemShared;
+			}
+
+
+			// Someone has shared something
+			if( notification_id === "meepass_received" ){
+				html = LJ.notifications.renderNotification__MeepassReceived( notification );
+				notificationCallback = LJ.notifications.notificationCallback__MeepassReceived;
+			}
+
+
+			// Welcome in meefore !
+			if( notification_id === "inscription_success" ){
+				html = LJ.notifications.renderNotification__InscriptionSuccess( notification );
+				notificationCallback = LJ.notifications.notificationCallback__InscriptionSuccess;
+			}
+
+
 			// Make sure user knows its important we got its right email
 			if( notification_id === "check_email" ){
-				html += LJ.notifications.renderNotification_CheckEmail( notification );
-				notificationCallback = LJ.notifications.notificationCallback_CheckEmail;
+				html = LJ.notifications.renderNotification__CheckEmail( notification );
+				notificationCallback = LJ.notifications.notificationCallback__CheckEmail;
 			}
+
+
 
 
 			var $notif = $( html ).attr('data-notification-id', notification_id );
@@ -466,10 +484,6 @@
 
 			}
 
-			// if( $('.js-notification-item').length && $('.js-notification-item').length == max_item ){
-			// 	$('.js-notification-item').last().remove();
-			// }
-
 			// Fire callback if registered
 			if( typeof notificationCallback == "function" ){
 				$notif.on('click', function(){
@@ -480,7 +494,6 @@
 
 			// Append the new notification on top of all
 			$notif.insertAfter( $('.js-notification-appender') );
-			LJ.ui.jsp[ LJ.notifications.jsp_id ].reinitialise();
 				
 		},
 		// Insert notifications based on user profile stored in LJ.user.notifications
@@ -496,7 +509,7 @@
 			});
 
 		},
-		notificationCallback_NoFriends: function( n ){
+		notificationCallback__NoFriends: function( n ){
 
 			FB.ui({
 				method: 'send',
@@ -505,28 +518,16 @@
 
 			
 		},
-		notificationCallback_NewFriends: function( n ){
+		notificationCallback__NewFriends: function( n ){
 
 			$('#profile').click();
 
 		},
-		notificationCallback_InscriptionSuccess: function( n ){
+		notificationCallback__InscriptionSuccess: function( n ){
 
 
 		},
-		notificationCallback_UnreadMessages: function( n ){
-
-			var event_id = n.event_id;
-			var group_id = n.group_id;
-
-			if( !event_id || !group_id ){
-				return LJ.wlog('Cant register "unread messages" callback without event_id and chat_id ' );
-			}
-
-			LJ.notifications.showChat( event_id, group_id );
-
-		},
-		notificationCallback_GroupRequest: function( n ){
+		notificationCallback__GroupRequest: function( n ){
 
 			var event_id = n.event_id;
 			var group_id = n.group_id;
@@ -538,19 +539,20 @@
 			// LJ.notifications.showChat( event_id, group_id );
 
 		},
-		notificationCallback_AcceptedIn: function( n ){
+		notificationCallback__AcceptedIn: function( n ){
 
-			var event_id = n.event_id;
-			var group_id = n.group_id;
+			var before_id = n.before_id;
+			var group_id  = n.chat_id;
 
-			if( !event_id || !group_id ){
-				return LJ.wlog('Cant register "accepted_in" callback without event_id and chat_id ' );
+			if( !before_id || !chat_id ){
+				return LJ.wlog('Cant register "accepted_in" callback without before_id and chat_id ' );
 			}
 
-			// LJ.notifications.showChat( event_id, group_id );
+			LJ.chat.showChat();
+			LJ.chat.activateChatInview( chat_id );
 
 		},
-		notificationCallback_MarkedAsHost: function( n ){
+		notificationCallback__MarkedAsHost: function( n ){
 
 			var begins_at = n.event_begins_at;
 
@@ -572,14 +574,17 @@
 			//LJ.notifications.showChat( event_id, group_id );
 
 		},
-		notificationCallback_FillProfile: function( n ){
+		notificationCallback__FillProfile: function( n ){
 
-			$('#profile').click();
+			LJ.nav.navigate("profile");
+			LJ.menu.activateMenuSection("profile");
 
 		},
-		notificationCallback_CheckEmail: function( n ){
+		notificationCallback__CheckEmail: function( n ){
 
-			$('#settings').click();
+			LJ.nav.navigate("profile");
+			LJ.menu.activateMenuSection("settings");
+			LJ.settings.activateSubmenuSection("account")
 
 		},
 		testNotificationPanel: function( stack ){
@@ -617,94 +622,10 @@
 			LJ.notifications.insertNotifications( test_notifications );
 
 			LJ.notifications.checkNotification_newUser();
-            LJ.notifications.checkNotification_noFriends();
             LJ.notifications.checkNotification_fillProfile();
 
-		},
-		checkNotification_newUser: function(){
-
-			if( LJ.user.status != 'new' ) return;
-
-		   // Notification d'introduction
-            LJ.notifications.insertNotification({
-				notification_id : "inscription_success",
-				type            : "flash"
-            });
-
-		},
-		checkNotification_noFriends: function(){
-
-			if( LJ.user.friends.length != 0 ) return;
-
-			LJ.notifications.insertNotification({
-				notification_id : "no_friends",
-				type            : "flash"
-            });
-
-		},
-		checkNotification_fillProfile: function(){
-
-			var profile_filled = true;
-
-			LJ.user.pictures.forEach(function( pic ){
-
-				if( pic.img_id == LJ.app_settings.placeholder.img_id ){
-					profile_filled = false;
-				}
-
-			});
-
-			if( profile_filled ) return;
-
-			LJ.notifications.insertNotification({
-				notification_id : "fill_profile",
-				type            : "flash"
-            });
-			
-
-		},
-		checkNotification_unreadMessages: function( chat_id ){
-
-			var $messages       = $('.event-accepted-chat-wrap[data-chatid="' + chat_id +'"]').find('.event-accepted-chat-message');
-			var disconnected_at = LJ.user.disconnected_at;
-
-			$messages.each(function( i, msg ){
-
-				$msg = $(msg);
-
-				var $wrap    = $msg.closest('.event-accepted-chat-wrap');
-				var group_id = $wrap.attr('data-groupid');
-				var event_id = $wrap.closest('[data-eventid]').attr('data-eventid');
-
-				var unix  = $msg.find('.event-accepted-chat-sent-at').attr('data-sent-at'); // Timestamp unix
-
-				// The message is not a real message
-				if( $msg.hasClass('me') || $msg.hasClass('bot') )
-					return;
-
-				// The message was already seen by the user
-				if( unix < moment( disconnected_at ).unix() )
-					return;
-
-				//LJ.ui.bubbleUpMessage( chat_id );
-
-
-				if( $wrap.hasClass('hb-notified') )
-					return;
-
-				$wrap.addClass('hb-notified');
-
-				LJ.notifications.insertNotification({
-					notification_id : "unread_messages",
-					group_id      	: group_id,
-					event_id     	: event_id,
-					type         	: "flash"
-				});
-				
-
-			});
-
 		}
+		
 
 
 	});

@@ -340,14 +340,15 @@
 	    app.post('/api/v1/befores/:before_id/status',
 	    	mdw.validate('before_status'),
 	    	api.befores.changeBeforeStatus,
+	    	mdw.notifier.addNotification('before_status'),
 	    	mdw.realtime.pushNewBeforeStatus
 	    );
 
 	    // [ @befores ] Génère une nouvelle requête pour participer à un évènement
 	    app.post('/api/v1/befores/:before_id/request',
 	    	mdw.validate('before_group_request' ),
-	    	mdw.notifier.addNotification('group_request'),
 	    	api.befores.request,
+	    	mdw.notifier.addNotification('group_request'),
 	    	mdw.realtime.updateChannelsRequest,
 	    	mdw.realtime.pushNewRequest
 	    );
@@ -360,10 +361,10 @@
 	    // [ @befores ] Change le statut d'un group : [ 'accepted', 'kicked' ]
 	    app.post('/api/v1/befores/:before_id/groups/:group_id/status',
 	    	mdw.validate('before_group_status'),
-	    	mdw.notifier.addNotification('accepted_in'),
 	    	api.befores.changeGroupStatus,
 	    	api.befores.resetBeforeSeenAt,
 	    	mdw.cached.cacheGroupStatus,
+	    	mdw.notifier.addNotification('accepted_in'),
 	    	mdw.realtime.pushNewGroupStatus
 	    );
 

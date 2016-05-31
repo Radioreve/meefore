@@ -8,6 +8,7 @@
 	var config   = require( process.cwd() + '/config/config');
 	var _        = require('lodash');
 	var redis    = require('redis');
+	var async    = require('async');
 
 
 	var node_env = process.env.NODE_ENV;
@@ -97,37 +98,63 @@
 			console.log('Connected to the database! Running operation... : ');
 
 
-			User.find({}, function( err, users ){
+			var tasks = [];
 
-				if( err || !users ){
-					console.log('Error fetching user, aborting...')
-					return console.log(err);
-				}
+			tasks.push(function( cb ){
+				User.find({}, function( err, users ){
 
-				users.forEach(function( user ){
+					if( err || !users ){
+						console.log('Error fetching user, aborting...')
+						return console.log(err);
+					}
 
-					user.channels = [];
-					user.markModified('channels');
+					var subtasks = [];
+					users.forEach(function( user ){
+						subtasks.push(function( cb ){
 
-					user.befores = [];
-					user.save(function( err, user ){
-						console.log('User modified');
+							user.notifications = [];
+							user.markModified('notifications');
+
+							user.channels = [];
+							user.markModified('channels');
+
+							user.befores = [];
+							user.save(function( err, user ){
+								console.log('User modified');
+								cb();
+							});
+
+						});
 					});
 
-				});
+					async.parallel( subtasks, function(){
+						console.log('Users updated (cleaned)')
+						cb();
+					})
 
+				});
+			});
+
+			tasks.push(function( cb ){
 				Before.find({}).remove(function(){
-					console.log('Befores removed');
+					console.log('Befores updated (removed)');
+					cb();
 				});
+			});
 
+			tasks.push(function( cb ){
 				Message.find({}).remove(function(){
-					console.log('Messages removed');
+					console.log('Messages updated (removed)');
+					cb();
 				});
+			});
 
+			async.parallel( tasks, function(){
+				process.exit(0);
+			})
 
 			});
 
-		});
 	
 	}
 

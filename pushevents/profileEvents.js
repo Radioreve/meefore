@@ -397,7 +397,7 @@
 		var spotted_object = {
 			"target_id"   : req.sent.target_id,
 			"target_type" : req.sent.target_type,
-			"spotted_at"  : moment().toISOString()
+			"spotted_at"  : new Date()
 		};
 
 		user.spotted.push( spotted_object );
@@ -419,12 +419,42 @@
 		var user 	    = req.sent.user;
 		var facebook_id = req.sent.user_id;
 
+		// Update user shared collection with the new names if needed, or just create a new one
+		var shared_with_object = _.find( user.shared, function( s ){ 
+			return s.target_id == req.sent.target_id && s.shared_with 
+		});
+
+		var shared_with_new = shared_with.slice(0); // <- cloning ?
+
+		if( !shared_with_object ){
+
+			shared_with_object = {
+				"share_type"  : "shared_with",
+				"shared_with" : shared_with,
+				"target_type" : req.sent.target_type,
+				"target_id"   : req.sent.target_id,
+				"shared_at"   : new Date()
+			};
+
+			user.shared.push( shared_with_object );
+			
+		} else {
+
+			// Avoid duplication in each target object
+			shared_with_new = _.difference( shared_with_new, shared_with_object.shared_with );
+
+			// Avoid duplications in sender object
+			shared_with_object.shared_with = _.union( shared_with, shared_with_object.shared_with );
+
+		}
+
+		// Update the shared object in everyone elses shared property
 		var shared_by_object = {
 			"share_type"  : "shared_by",
 			"shared_by"   : facebook_id,
 			"target_type" : req.sent.target_type,
 			"target_id"   : req.sent.target_id,
-			"shared_at"   : moment().toISOString()
+			"shared_at"   : new Date()
 		};
 
 		var query   = { 'facebook_id': { '$in': req.sent.shared_with_new } };
@@ -440,8 +470,11 @@
 
 				if( err ) return handleErr( req, err, res, err_ns );
 
-				req.sent.expose.user = user;
-
+				req.sent.shared_with_new    = shared_with_new;
+				req.sent.shared_with_object = shared_with_object;
+				req.sent.shared_by_object   = shared_by_object;
+				req.sent.expose.user        = user;
+				
 				next();
 
 			});
@@ -488,12 +521,12 @@
 
 		sponsor.sponsees.push({
 			'facebook_id'  : sponsee.facebook_id,
-			'sponsored_at' : moment().toISOString()
+			'sponsored_at' : new Date()
 		});
 
 		sponsee.sponsor = {
 			'facebook_id'  : sponsor.facebook_id,
-			'sponsored_at' : moment().toISOString()
+			'sponsored_at' : new Date()
 		};
 
 		sponsor.save(function( err, sponsor ){

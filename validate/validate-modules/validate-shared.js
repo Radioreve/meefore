@@ -112,34 +112,7 @@
 			}
 
 
-			var user_shared_object = _.find( user.shared, function( s ){ 
-				return s.target_id == req.sent.target_id && s.shared_with 
-			});
-
-			var shared_with_new = shared_with.slice(0); // <- cloning ?
-
-			if( !user_shared_object ){
-
-				user.shared.push({
-					"share_type"  : "shared_with",
-					"shared_with" : shared_with,
-					"target_type" : req.sent.target_type,
-					"target_id"   : req.sent.target_id,
-					"shared_at"   : moment().toISOString() 
-				});
-				
-			} else {
-
-				// Avoid duplication in each target object
-				shared_with_new = _.difference( shared_with_new, user_shared_object.shared_with );
-
-				// Avoid duplications in sender object
-				user_shared_object.shared_with = _.union( shared_with, user_shared_object.shared_with );
-
-			}
-
 			req.sent.user = user;
-			req.sent.shared_with_new = shared_with_new;
 
 			var err_base = {
 				'err_id'	  : 'ghost_target',
@@ -169,20 +142,6 @@
 					if( err )
 						return callback({ 'err_id': 'db_error', 'err': err });
 					if( !bfr )
-						return callback( err_base );
-
-					return callback( null );
-
-				});
-			}
-
-			// Testing for presence of a party
-			if( target_type == "party" ){
-				Party.findById( target_id, function( err, party ){
-
-					if( err )
-						return callback({ 'err_id': 'db_error', 'err': err });
-					if( !party )
 						return callback( err_base );
 
 					return callback( null );
