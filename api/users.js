@@ -497,6 +497,7 @@
 
 	};
 
+
 	module.exports = {
 		fetchMe 				: fetchMe,
 		fetchUserShared			: fetchUserShared,

@@ -57,7 +57,8 @@
 				status    : 'hosting',
 				timezone  : parseFloat( data.timezone ),
 				before_id : before_id,
-				begins_at : new_before.begins_at
+				begins_at : new_before.begins_at,
+				seen_at   : null
 	    	};
 
 	    	User.update({'facebook_id': { $in: data.hosts } },
@@ -101,7 +102,8 @@
 			status 		 : 'pending',
 			members      : members,
 			main_member  : facebook_id,
-			requested_at : requested_at
+			requested_at : requested_at,
+			accepted_at  : null
 		};
 
 		// Used right after to make channel_item
@@ -120,10 +122,11 @@
 			}
 
 			var before_item = {
-				before_id   : before_id,
+				before_id   : bfr._id, // Important, to keep the ObjectId type 
 				begins_at   : bfr.begins_at,
 				timezone	: parseFloat( bfr.timezone ),
-				status 		: 'pending'
+				status 		: 'pending',
+				seen_at		: null
 			};
 
 			User
@@ -206,7 +209,8 @@
 
 		console.log('Changing group status, new status : ' + status );
 
-		target_group.status = status;
+		target_group.status      = status;
+		target_group.accepted_at = new Date();
 
 		before.markModified('groups');
 		before.save(function( err, bfr ){
@@ -303,6 +307,84 @@
 
 	};
 
+	var updateBeforeSeenAt = function( req, res, next ){
+
+		var err_ns = "updating_before_seen_at";
+
+		var facebook_id = req.sent.facebook_id;
+		var before_id 	= req.sent.before_id;
+
+		console.log(before_id);
+		User.findOneAndUpdate(
+		{
+			'facebook_id'       : facebook_id, 
+			'befores.before_id' : mongoose.Types.ObjectId( before_id )
+		},
+		{
+			'befores.$.seen_at' : new Date()
+		},
+		{
+			new: true
+		},
+		function( err, user ){
+
+			if( err ) return handleErr( req, res, err_ns, err );
+
+			if( !user ){
+				return handleErr( req, res, err_ns, {
+					err_id      : "ghost_user",
+					facebook_id : facebook_id,
+					before_id   : before_id
+				});
+			}
+
+			req.sent.expose.user = user;
+			next();
+
+		});
+
+	};
+
+	var resetBeforeSeenAt = function( req, res, next ){
+
+		var err_ns = "reseting_before_seen_at";
+
+		var facebook_ids = req.sent.target_group.members
+		var before_id    = req.sent.before_id;
+
+		User.update(
+		{
+			'facebook_id': { $in: facebook_ids },
+			'befores.before_id': mongoose.Types.ObjectId( before_id )
+		},
+		{
+			'befores.$.seen_at' : null
+		},
+		{
+			multi: true
+		},
+		function( err, raw ){
+
+			if( err ) return handleErr( req, res, err_ns, err );
+
+			if( raw.n != facebook_ids.length ){
+				return handleErr( req, res, err_ns, {
+					err_id        : "ghost_users",
+					message       : 'The number of users updated didnt match what it was supposed to',
+					before_id     : before_id,
+					fb_ids_length : facebook_ids.length,
+					raw_n 		  : raw.n
+				});
+			}
+
+			req.sent.expose.raw = raw;
+			next();
+
+		});
+
+	};
+
+
 	module.exports = {
 		createBefore        : createBefore,
 		request             : request,
@@ -311,5 +393,7 @@
 		fetchBeforeById     : fetchBeforeById,
 		updateBefore        : updateBefore,
 		fetchGroups         : fetchGroups,
-		fetchNearestBefores : fetchNearestBefores
+		fetchNearestBefores : fetchNearestBefores,
+		updateBeforeSeenAt  : updateBeforeSeenAt,
+		resetBeforeSeenAt   : resetBeforeSeenAt
 	};

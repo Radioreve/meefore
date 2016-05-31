@@ -351,20 +351,20 @@
 
 	var updateMeepass = function( req, res, next ){
 
-		var err_ns = 'meepass';
+		var err_ns   = 'meepass';
 
 		var sender   = req.sent.sender;
 		var receiver = req.sent.receiver;
 
 		var meepass_sent = {
 			'type'    : 'sent',
-			'sent_at' : moment().toISOString(),
+			'sent_at' : new Date(),
 			'sent_to' : receiver.facebook_id
 		};
 
 		var meepass_received = {
 			'type'	  : 'received',
-			'sent_at' : moment().toISOString(),
+			'sent_at' : new Date(),
 			'sent_by' : sender.facebook_id
 		};
 

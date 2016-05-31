@@ -190,7 +190,7 @@
 				};
 
 				req.sent.expose.messages = messages;
-				req.sent.expose.seen_by   = seen_by;
+				req.sent.expose.seen_by  = seen_by;
 				next();
 
 			});

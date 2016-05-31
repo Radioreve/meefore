@@ -32,7 +32,9 @@
 					LJ.user.channels.push( channel_item );
 					LJ.realtime.subscribeToChatChannel( channel_item.channel_all );
 					LJ.realtime.subscribeToChatChannel( channel_item.channel_team );
-					LJ.chat.addAndFetchOneChat( channel_item );
+					LJ.chat.addAndFetchOneChat( channel_item, {
+						"row_insert_mode": "top"
+					});
 					
 				})
 				.catch(function(e){

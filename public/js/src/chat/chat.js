@@ -25,6 +25,16 @@
 			return;
 
 		},
+		handleDomEvents: function(){
+
+			$('.app__menu-item.--chats').on('click', LJ.chat.handleToggleChatWrap );
+			$('.chat__close').on('click', LJ.chat.hideChatWrap );
+			$('.chat').on('click', '.segment__part', LJ.chat.handleChatNavigate );
+			$('.chat').on('click', '.chat-row', LJ.chat.handleShowChatInview );
+
+			LJ.chat.handleDomEvents__Inview();
+
+		},
 		setupChat: function(){
 
 			// Set chat dimensions for jsp compliance
@@ -39,16 +49,6 @@
 		refreshChatRowsJsp: function(){
 
 			LJ.ui.jsp[ "chat_rows" ].reinitialise();
-
-		},
-		handleDomEvents: function(){
-
-			$('.app__menu-item.--chats').on('click', LJ.chat.handleToggleChatWrap );
-			$('.chat__close').on('click', LJ.chat.hideChatWrap );
-			$('.chat').on('click', '.segment__part', LJ.chat.handleChatNavigate );
-			$('.chat').on('click', '.chat-row', LJ.chat.handleShowChatInview );
-
-			LJ.chat.handleDomEvents__Inview();
 
 		},
 		// Sort all chat messages by crescent order : messages[0] is the oldest
@@ -95,7 +95,7 @@
 			messages.forEach(function( message_object ){
 
 				var sent_at     = moment( message_object.sent_at );
-				var last_online = LJ.user.disconnected_at || "2016-05-26T10:11:39.043Z";
+				var last_online = LJ.getDisconnectedAt()
 
 				// Use the "seen_by" property wisely to determine if a user has not seen a chat message
 				// even though his last_online date was > to the last message sent.
@@ -484,9 +484,11 @@
 
 			LJ.chat.refreshChatRowPreview( group_id );
 			LJ.chat.refreshChatRowTime( group_id );
-			LJ.chat.newifyChatRows( group_id );
 			LJ.chat.refreshChatInviewBubbles( group_id );
 			LJ.chat.refreshChatIconBubble();
+			// Must be placed after chat icon bubble, because newify can call refreshChatIconBubble
+			// if some chats are "new"
+			LJ.chat.newifyChatRows( group_id );
 
 		},
 		fetchMoreChannels: function(){
@@ -868,12 +870,49 @@
 		},
 		handleShowChatInview: function(){
 
-			var $s       = $(this);
-			var group_id = $s.attr('data-group-id');
+			var $s        = $( this );
+			var group_id  = $s.attr('data-group-id');
+			var before_id = LJ.chat.getBeforeIdByGroupId( group_id );
 
+			LJ.chat.updateBeforeSeenAt( before_id );
+			// Important, newify chat rows bases its decisions on the seen_at property
+			// when no messages are to be retrieved (before is in pending state and no message was sent whatsoever)
 			LJ.chat.showChatInview( group_id );
 			LJ.chat.newifyChatRows( group_id );
 			LJ.chat.refreshChatRowsOrder();
+
+		},
+		getBeforeIdByGroupId: function( group_id ){
+
+			var before_id = _.find( LJ.user.channels, function( chan ){
+				return chan.group_id == group_id;
+			}).before_id;
+
+			return before_id;
+
+		},
+		updateBeforeSeenAt: function( before_id ){
+
+			var before_item = _.find( LJ.user.befores, function( bfr ){
+				return bfr.before_id == before_id;
+			});
+
+			// Already updated server side
+			if( before_item.seen_at ) return;
+
+			// Local update for immediate available up-to-date cache
+			before_item.seen_at = new Date();
+			
+			// Remote update for later connections
+			LJ.api.updateBeforeSeenAt( before_id )
+				.then(function(){
+					LJ.log('Before seen at updated');
+
+				})
+				.catch(function( e ){
+					LJ.log(e);
+
+				});
 
 		},
 		handleToggleChatWrap: function( e ){
@@ -1120,20 +1159,39 @@
 		},
 		newifyChatRows: function(){
 
-			var last_online = LJ.user.disconnected_at || "2016-05-26T10:11:39.043Z";
+			var last_online = LJ.getDisconnectedAt();
 			var group_ids   = _.uniq( _.map( LJ.chat.fetched_chats, 'group_id' ) );
 
 			group_ids.forEach(function( group_id ){
 
 				var $chatrow     = $('.chat-row[data-group-id="'+ group_id +'"]');
-				var last_message = LJ.chat.getLastUnseenMessageByGroupId( group_id )
+				var last_message = LJ.chat.getLastUnseenMessageByGroupId( group_id );
 				var last_seen_by = last_message.seen_by;
+				var before_id 	 = LJ.chat.getBeforeIdByGroupId( group_id );
 
-				if( last_seen_by && last_seen_by.indexOf( LJ.user.facebook_id ) == -1 ){
-					$chatrow.addClass('--new');
-					
+				// No messages so far, meaning that the chat status is still pending, and virgin. No messages have
+				// been sent in the private channel either. Use the seen_by property of the 'befores' property
+				if( !last_seen_by ){
+
+					var before_item = _.find( LJ.user.befores, function( bfr ){
+						return bfr.before_id == before_id;
+					});
+
+					if( before_item.seen_at ){
+						$chatrow.removeClass('--new');
+					} else {
+						$chatrow.addClass('--new');
+						LJ.chat.addBubbleToChatIcon();
+					}
+
 				} else {
-					$chatrow.removeClass('--new');
+
+					if( last_seen_by.indexOf( LJ.user.facebook_id ) == -1 ){
+						$chatrow.addClass('--new');
+					} else {
+						$chatrow.removeClass('--new');
+					}
+
 				}
 
 			});			

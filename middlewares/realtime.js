@@ -459,13 +459,13 @@
 		var group 			 = req.sent.group;
 
 		var data_hosts = {
-			before 			 : _.merge( _.cloneDeep(before), { status: "hosting" }),
+			before 			 : _.merge( _.cloneDeep( before ), { status: "hosting" }),
 			channel_item 	 : makeChannelItem__ChatHosts( before, group ),
 			notification 	 : notification
 		};
 
 		var data_members = {
-			before 			 : _.merge( _.cloneDeep(before), { status: "pending" }),
+			before 			 : _.merge( _.cloneDeep( before ), { status: "pending" }),
 			before_item 	 : before_item,
 			channel_item     : makeChannelItem__ChatUsers( before, group ),
 			notification 	 : notification

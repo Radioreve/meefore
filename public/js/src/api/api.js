@@ -37,6 +37,7 @@
 		fetch_chat_history_url 	 	 : '/api/v1/chats/:chat_id',
 		change_group_status_url		 : '/api/v1/befores/:before_id/groups/:group_id/status',
 		update_chat_seen_by_url 	 : '/api/v1/chats/:chat_id/seen_by',
+		update_before_seen_at_url 	 : '/api/v1/befores/:before_id/seen_at',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -785,6 +786,20 @@
 			});
 
 
+		},
+		updateBeforeSeenAt: function( before_id ){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.update_before_seen_at_url.replace( ':before_id', before_id ) )
+					.then(function( exposed ){
+						return resolve( exposed );
+
+					}, function( err ){
+						return reject( err );
+
+					});
+
+			});
 		}
 
 	});

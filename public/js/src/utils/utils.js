@@ -266,6 +266,11 @@ window.LJ = _.merge( window.LJ || {}, {
             
         });
 
+    },
+    getDisconnectedAt: function(){
+
+        return LJ.user.disconnected_at;
+
     }
 
 

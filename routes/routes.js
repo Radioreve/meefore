@@ -85,11 +85,11 @@
 
 		// Setup the values in the req.sent object, to allow a more RESTish way of calling the services for the client
 		// Each middleware can consume the params, and client can just add it to the url and not to the raw body!
-		app.get('/api/v1/users/:user_id*',  setParam('user_id') );
-	    app.get('/api/v1/chats/:chat_id*', setParam('chat_id') );
-		app.get('/test/api/v1/chats/:chat_id*', setParam('chat_id') );
-		app.get('/api/v1/befores/:before_id*', setParam('before_id') );
-		app.get('/api/v1/befores/:before_id/groups/:group_id*', setParam(['before_id', 'group_id']) );
+		app.all('/api/v1/users/:user_id*',  setParam('user_id') );
+	    app.all('/api/v1/chats/:chat_id*', setParam('chat_id') );
+		app.all('/test/api/v1/chats/:chat_id*', setParam('chat_id') );
+		app.all('/api/v1/befores/:before_id*', setParam('before_id') );
+		app.all('/api/v1/befores/:before_id/groups/:group_id*', setParam(['before_id', 'group_id']) );
 
 
 		// Api authentication validation
@@ -362,6 +362,7 @@
 	    	mdw.validate('before_group_status'),
 	    	mdw.notifier.addNotification('accepted_in'),
 	    	api.befores.changeGroupStatus,
+	    	api.befores.resetBeforeSeenAt,
 	    	mdw.cached.cacheGroupStatus,
 	    	mdw.realtime.pushNewGroupStatus
 	    );
@@ -388,6 +389,9 @@
 	    	api.befores.fetchBeforeById
 	    );
 
+	    app.post('/api/v1/befores/:before_id/seen_at',
+	    	api.befores.updateBeforeSeenAt
+	    );
 
 	    // [ @chat ] Renvoie l'historique des messages par chat id (MongoDB)
 	    app.get('/api/v1/chats/:chat_id',
@@ -626,6 +630,16 @@
 	    			});
 	    		});
 	    	}
+	    );
+
+	    app.post('/befores/:before_id/seen_at',
+	    	setParam('before_id'),
+	    	api.befores.updateBeforeSeenAt
+	    );
+
+	    app.post('/befores/:before_id/reset_seen_at/:facebook_id',
+	    	setParam(['before_id', 'facebook_id']),
+	    	api.befores.resetBeforeSeenAt
 	    );
 
 

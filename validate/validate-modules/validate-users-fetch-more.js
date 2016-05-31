@@ -15,10 +15,11 @@
 		.withOptional('facebook_ids', nv.isArray())
 		.withRequired('filters', checkFilters )
 
-	req.sent.min = parseInt( req.sent.min );
-	req.sent.max = parseInt( req.sent.max );
 
 	function check( req, res, next ){
+		
+		req.sent.min = parseInt( req.sent.min );
+		req.sent.max = parseInt( req.sent.max );
 
 		nv.run( checkRequest, req.sent, function( n, errors ){
 			if( n != 0 ){

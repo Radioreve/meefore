@@ -128,7 +128,9 @@
 			LJ.user.channels.push( channel_item );
 			LJ.realtime.subscribeToChatChannel( channel_item.channel_all );
 			LJ.realtime.subscribeToChatChannel( channel_item.channel_team );
-			LJ.chat.addAndFetchOneChat( channel_item );
+			LJ.chat.addAndFetchOneChat( channel_item, {
+				"row_insert_mode": "top"
+			});
 
 		},
 		// Subcribe to events about a specific geo area 
@@ -156,6 +158,7 @@
 
 			LJ.map.addBeforeMarker( before );
 			LJ.before.fetched_befores.push( before );
+			LJ.before.refreshBrowserDates();
 
 		},
 		handleNewBeforeStatus: function( data ){
@@ -229,7 +232,9 @@
 			LJ.user.channels.push( channel_item );
 			LJ.realtime.subscribeToChatChannel( channel_item.channel_all );
 			LJ.realtime.subscribeToChatChannel( channel_item.channel_team );
-			LJ.chat.addAndFetchOneChat( channel_item );
+			LJ.chat.addAndFetchOneChat( channel_item, {
+				"row_insert_mode": "top"
+			});
 
 
 		},
@@ -287,6 +292,17 @@
 				return chan.before_id = before_id;
 			});
 
+			var before_item = _.find( LJ.user.befores, function( bfr ){
+				return bfr.before_id == before_id;
+			});
+			// Reset the seen_at property, so that all the 'refresh functions' detect something happen
+			// and can newify the chatrow immediately, except for those who have not the view set as active
+			if( LJ.chat.getActiveChatId() != chat_id ){
+				before_item.seen_at = null;
+			} else {
+				LJ.chat.updateBeforeSeenAt( before_id );
+			}
+
 			if( status == "accepted" ){
 
 				var role = channel_item.role;
@@ -301,6 +317,7 @@
 				LJ.chat.acceptifyChatRow( group_id );
 				LJ.chat.addBubbleToChatIcon();
 				LJ.chat.addBubbleToChatRow( group_id );
+				LJ.chat.newifyChatRows();
 
 			}
 
@@ -349,11 +366,11 @@
 			// In anycase take actions that are all based on the chat state
 			LJ.chat.refreshChatRowPreview( group_id );
 			LJ.chat.refreshChatRowTime( group_id );
-			LJ.chat.newifyChatRows();
 			LJ.chat.refreshChatRowsOrder();
 			LJ.chat.refreshChatInviewBubbles( group_id );
 			LJ.chat.refreshChatIconBubble();
 			LJ.chat.refreshChatSeenBy( chat_id );
+			LJ.chat.newifyChatRows();
 
 
 		},
