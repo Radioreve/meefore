@@ -239,8 +239,6 @@
 		req.sent.notification = n; // not dispatched realtime atm
 		next();
 
-
-
 	}
 
 
