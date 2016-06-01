@@ -2,16 +2,13 @@
 	var User   = require('../models/UserModel');
 	var _      = require('lodash');
 	var moment = require('moment');
+	var term   = require('terminal-kit').terminal;
 
 	var addNotification = function( notification_id ){
 
 		// Build the proper notification object based on notification_id
 		// Save in in User Model 
 		// Append it to the req.sent object for decending functions
-
-		return function( req, res, next ){
-			next();
-		}
 
 		// User has been accepted in a meefore
 		if( notification_id == "accepted_in" ){
@@ -44,7 +41,9 @@
 		if( err ){
 			console.log('Error saving notifications : ' + err );
 		} else {
-			console.log( raw.n + ' users notified');
+			if( raw.n == 0 ){
+				term.bold.red("Zero users have been notified, could indicate an error..\n");
+			}
 		}
 
 	}
@@ -141,7 +140,7 @@
 		};
 
 		// Only push notification to 'other' hosts
-		var facebook_ids = _.difference( req.sent.hosts, [ facebook_id ] );
+		var facebook_ids = _.difference( before.hosts, [ facebook_id ] );
 
 		var query = { 
 			facebook_id: { $in: facebook_ids }

@@ -57,7 +57,7 @@
 				status    : 'hosting',
 				timezone  : parseFloat( data.timezone ),
 				before_id : before_id,
-				begins_at : new_before.begins_at,
+				begins_at : new Date( new_before.begins_at ),
 				seen_at   : null
 	    	};
 

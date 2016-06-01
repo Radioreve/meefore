@@ -1,3 +1,4 @@
+
 	
 	window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
 
@@ -6,17 +7,11 @@
 		init: function(){
 
 			LJ.notifications.addNotificationsPanel();
-			// Notifications persistentes
-            // Certaines doivent être affichées de manière async à un autre moment
-            LJ.user.notifications.forEach(function( notification ){
-               LJ.notifications.insertNotification( notification );
-            });
-			// Notifications éphémères
-			// Display after so they are always pinned to top
-			LJ.notifications.checkNotification_newUser();
-          	LJ.notifications.checkNotification_fillProfile();
-            // Daily notification
-            // ...
+			LJ.notifications.addAndShowNotifications();
+			LJ.notifications.refreshNotificationsOrder();
+			LJ.notifications.refreshNotificationsJsp();
+			LJ.notifications.newifyNotifications();           
+
 			LJ.notifications.handleDomEvents();
 			return;
 
@@ -25,6 +20,22 @@
 
 			$('.app__menu-item.--notifications').click( LJ.notifications.handleToggleNotifications );
 			LJ.ui.$body.on('click', LJ.notifications.handleHideNotifications );
+
+		},
+		newifyNotifications: function(){
+
+		},
+		refreshNotificationsOrder: function(){
+			
+		},
+		refreshNotificationsJsp: function(){
+
+		},
+		addAndShowNotifications: function(){
+
+			LJ.user.notifications.forEach(function( notification ){
+            	LJ.notifications.insertNotification( notification );
+            });
 
 		},
 		handleToggleNotifications: function(e){
@@ -107,37 +118,6 @@
 				LJ.log('Notification panel already hidden');
 			}
 
-		},
-		checkNotification_newUser: function(){
-
-			if( LJ.user.status != 'new' ) return;
-
-		   // Notification d'introduction
-            LJ.notifications.insertNotification({
-				notification_id : "inscription_success",
-				type            : "flash"
-            });
-
-		},
-		checkNotification_fillProfile: function(){
-
-			var profile_filled = true;
-
-			LJ.user.pictures.forEach(function( pic ){
-
-				if( pic.img_id == LJ.app_settings.placeholder.img_id ){
-					profile_filled = false;
-				}
-
-			});
-
-			if( profile_filled ) return;
-
-			LJ.notifications.insertNotification({
-				notification_id : "fill_profile",
-				type            : "flash"
-            });
-			
 		},
 		renderNotificationsPanel: function(){
 
@@ -240,8 +220,8 @@
 			var options   = {};
 			var shared_by = notification.address;
 
-			var name = 
-			var type = before_type == "user" ? LJ.text('lang_profile') : LJ.text('lang_before');
+			// var name = 
+			// var type = before_type == "user" ? LJ.text('lang_profile') : LJ.text('lang_before');
 
 			
 			options.icon_code   = "line";
@@ -331,7 +311,7 @@
 				var happened_at_html = happened_at ? '<div class="notification__date">' + happened_at + '</div>' : '';
 
             	return LJ.ui.render([
-            		'<div class="notification notification-click js-notification-item">',
+            		'<div class="notification notification-click js-notification-item" data-notification-id="'+ notification_id +'">',
                     	'<div class="notification__icon --round-icon"><i class="icon icon-' + icon_code + '"></i></div>',
                     	'<div class="notification-message">',
 	                    	'<div class="notification-message__text">' + text + '</div>',
@@ -344,13 +324,9 @@
 			
 
 		},
-		stringifyDuration: function( m ){
+		stringifyDuration: function( happened_at ){
 
-			if( m == null )
-				return null;
-
-			if( !m._isAMomentObject )
-				m = new moment( m );
+			var m = moment( happened_at );
 
 			var hour = m.hour();
 			var minute = m.minute();
@@ -467,22 +443,7 @@
 				notificationCallback = LJ.notifications.notificationCallback__CheckEmail;
 			}
 
-
-
-
-			var $notif = $( html ).attr('data-notification-id', notification_id );
-
-			// Notifications éphémères
-			if( moment( notification.happened_at ) > moment( LJ.user.disconnected_at ) || type == "flash" ){
-
-				LJ.ui.bubbleUp('.app__menu-item.--notifications');
-
-				$notif.addClass('--new')
-					  .one('click', function(){
-					  	  $(this).removeClass('--new'); 
-					  });
-
-			}
+			var $notif = $( html );
 
 			// Fire callback if registered
 			if( typeof notificationCallback == "function" ){
@@ -511,16 +472,13 @@
 		},
 		notificationCallback__NoFriends: function( n ){
 
-			FB.ui({
-				method: 'send',
-				link: 'http://www.meefore.com'
-			});
-
+			LJ.facebook.showModalSendMessageToFriends();
 			
 		},
 		notificationCallback__NewFriends: function( n ){
 
-			$('#profile').click();
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("friends");
 
 		},
 		notificationCallback__InscriptionSuccess: function( n ){
@@ -576,13 +534,13 @@
 		},
 		notificationCallback__FillProfile: function( n ){
 
-			LJ.nav.navigate("profile");
+			LJ.nav.navigate("menu");
 			LJ.menu.activateMenuSection("profile");
 
 		},
 		notificationCallback__CheckEmail: function( n ){
 
-			LJ.nav.navigate("profile");
+			LJ.nav.navigate("menu");
 			LJ.menu.activateMenuSection("settings");
 			LJ.settings.activateSubmenuSection("account")
 
@@ -620,9 +578,6 @@
 			]
 
 			LJ.notifications.insertNotifications( test_notifications );
-
-			LJ.notifications.checkNotification_newUser();
-            LJ.notifications.checkNotification_fillProfile();
 
 		}
 		

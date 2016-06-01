@@ -1,5 +1,6 @@
 	
 	var eventUtils  = require('../pushevents/eventUtils');
+	var settings    = require('../config/settings');
 	var moment      = require('moment');
 	var querystring = require('querystring');
 	var request     = require('request');
@@ -19,94 +20,135 @@
 
 	};
 
-	var fetchFacebookLongLivedToken = function( req, res, next ){
-			
+	var updateFacebookToken = function( req, res, next ){
+		
+		// It is the client's responsibility to send as 'token' the right version (long/short)
+		// meaning that if a client is used to auth with long version and detects that the long
+		// version is soon out-dated, it has to force the client to give its credentials back
+
+		var user        = req.sent.user;
+		var token       = req.sent.token;
+		var expires_at  = req.sent.expires_at;
+
 		if( req.sent.bot ){
-			console.log('User is bot, skipping the long-lived-token fetching procedure...');
+			term.bold.green('Skipping the token update... (no user or bot)');
 			return next();
 		}
 
+		// Check is long_lived needs to be refreshed with the short lived token from login
+		// It is never the case when the user doesnt exist (signup), because the token is always a short one
+		var remaining_days = moment( expires_at ).diff( moment(), 'd' );
+		term.bold.green("Token still valid for : " + remaining_days + " days\n");
+		if( user && remaining_days > settings.facebook.token_lifespan_limit ){
+			term.bold.green('Facebook long lived token doesnt need to be refreshed, remaining_days : ' + remaining_days  + '\n');
+			return next();
+		}
 
-		console.log('Fetching long_lived token for id : ' + req.sent.facebook_id );
-		User.findOne({ facebook_id: req.sent.facebook_id }, function( err, user ){
-
+		// Token is 
+		console.log('Updating Facebook token (long_lived)...');
+		fetchLongLivedToken( token, function( err, body ){
+			
 			if( err ){
-				return handleErr( req, res, 'fetching_facebook_long_token', {
-					'err_id': 'server_error',
-					'err': err
-				});
+				return handleErr( req, res, 'fetching_facebook_long_token', err );
+			}	
+
+			// Parse with querystring because response is a querystring, and not JSON
+			var r = querystring.parse( body );
+			user.facebook_access_token = {
+				token      : r.access_token, // Brand new long_lived token
+				expires_at : new Date( moment().add( r.expires, 's' ) ) // Keep the ISODate format for MongoDB
 			}
 
-			if( !user ){
-				console.log('Unable to find user in database, skipping the fetch...');
-				return next();
-			}
+			user.save(function( err, user ){
 
-			// Check is long_lived needs to be refreshed with the short lived token from login
-			if( user.facebook_access_token.long_lived ){
-				// Facebook date format is of type 'Fri Jul 01 2016 21:28:32 GMT+0200 (CEST)' 
-				// Moment.js is unable to parse non-iso string dates, but Date recognizes the format Facebook uses
-				// so make a moment() date out of a regular Date() object
-				var current_tk_valid_until = moment( new Date(user.facebook_access_token.long_lived_valid_until) );
-				var now = moment();
-				var diff = current_tk_valid_until.diff( now, 'd' );
-
-				if( diff > 30 ) {
-					console.log('Facebook long lived token doesnt need to be refreshed, diff is : ' + diff );
-					return next();
-				}
-			}
-
-			// User comes with auto_login:true, short_lived will be ask clientside
-			if( !user.facebook_access_token.short_lived ){
-				console.log('Unable to find a short lived access token, skipping the refresh process...');
-				return next();
-			}
-
-			// Fetch a long lived token for user to use app with valid api requests for 60 days!
-			console.log('Setting facebook long lived token...');
-			fetchLongLivedToken( user.facebook_access_token.short_lived, function( err, body ){
-				
 				if( err ){
 					return handleErr( req, res, 'fetching_facebook_long_token', err );
-				}	
+				}
 
-				// Parse with querystring because response is a querystring, and not JSON
-				var facebook_res = querystring.parse( body );
+				next();
 
-				var new_access_token = facebook_res.access_token;
-				var expires          = facebook_res.expires;
-				var valid_until      = new Date( moment().add( expires, 's' ) );
-
-				var facebook_access_token = user.facebook_access_token;
-
-				facebook_access_token.short_lived            = null; //enforces that laters calls are done with refreshed short_lived token
-				facebook_access_token.long_lived             = new_access_token;
-				facebook_access_token.long_lived_valid_until = valid_until + '';
-
-				User.findOneAndUpdate(
-				{ facebook_id: req.sent.facebook_id },
-				{ facebook_access_token: facebook_access_token },
-				{ new: true },
-				function( err, user ){
-
-					if( err ){
-						return handleErr( req, res, 'fetching_facebook_long_token', err );
-					}
-
-					next();
-
-				});
 			});
 		});
 	};
 
-	function fetchLongLivedToken( access_token, callback ){
 
-		var client_id 	  	  = config.facebook[ process.env.NODE_ENV ].client_id,
-			client_secret 	  = config.facebook[ process.env.NODE_ENV ].client_secret,
-			grant_type    	  = "fb_exchange_token",
-			fb_exchange_token = access_token;
+	function generateAppToken( callback, mode ){
+
+		var client_id     = getAppId();
+		var client_secret = getAppSecret();
+
+		// Return the shortcut that is allowed by Facebook
+		if( mode != "fetch" ){
+			
+			var app_token = client_id + '|' + client_secret;
+			return callback( null, app_token );
+
+		} else {
+
+			var url =  'https://graph.facebook.com/oauth/access_token?'
+						+ querystring.stringify
+						({ 
+							grant_type        : "client_credentials",
+							client_id         : client_id,
+							client_secret     : client_secret
+						});
+
+			request.get( url, function( err, response, body ){
+
+				//body is string expected 
+
+				if( err ){
+					return callback( err, null );
+
+				} else {
+					return callback( null, body );
+				}
+
+			})
+			
+		}
+	}
+
+	function getAppId(){
+		return config.facebook[ process.env.NODE_ENV ].client_id;
+	}
+
+	function getAppSecret(){
+		return config.facebook[ process.env.NODE_ENV ].client_secret;
+	}
+
+	function verifyFacebookToken( access_token, callback ){
+
+		generateAppToken(function( err, app_token ){
+
+			var url =  'https://graph.facebook.com/debug_token?'
+						+ querystring.stringify
+						({ 
+							input_token  : access_token,
+							access_token : app_token // Shortcut to bypass the request of app_token
+						});
+
+			request.get( url, function( err, response, body ){
+
+				body = typeof body == "string" ? JSON.parse( body ) : body;
+
+				if( err ){
+					return callback( err, null );
+
+				} else {
+					return callback( null, body );
+				}
+
+			});
+
+		}, "local" );
+	}
+
+	function fetchLongLivedToken( access_token, callback ){
+		
+		var client_id     = getAppId();
+		var client_secret = getAppSecret();
+		var grant_type    = "fb_exchange_token";
 
 		var url =  'https://graph.facebook.com/oauth/access_token?'
 					+ querystring.stringify
@@ -114,10 +156,12 @@
 						grant_type        : grant_type,
 						client_id         : client_id,
 						client_secret     : client_secret,
-						fb_exchange_token : fb_exchange_token 
+						fb_exchange_token : access_token 
 					});
 
 		request.get( url, function( err, response, body ){
+
+			// body expected format : "access_token=EAAXR2Qo4lLoZD....&expires=2610505"
 
 			if( err ){
 				return callback( err, null );
@@ -147,7 +191,7 @@
 				return handleErr( req, res, 'fetching_facebook_friends', err );
 			}
 
-			var facebook_res = JSON.parse( body );
+			var facebook_res = body;
 
 			var friends       = facebook_res.data;
 			var friends_ids   = _.map( friends, 'id' );
@@ -165,7 +209,6 @@
 			user.friends = friends_ids;
 			user.markModified('friends');
 			
-
 			// This notification makes only sense for users that arent new
 			if( user.status != "new" ){
 
@@ -184,7 +227,7 @@
 				var n = {
 					notification_id : "new_friends",
 					new_friends     : new_friends,
-					happened_at     : moment().toISOString()
+					happened_at     : new Date()
 				};
 
 				user.notifications.push( n );
@@ -214,7 +257,9 @@
 
 		console.log('Requesting friends at url : ' + url );
 
-		request.get( url, function(err, response, body ){
+		request.get( url, function( err, response, body ){
+
+			body = JSON.parse( body );
 
 			if( err ){
 				return callback( err, null );
@@ -229,6 +274,10 @@
 
 
 	module.exports = {
-		fetchFacebookLongLivedToken : fetchFacebookLongLivedToken,
-		fetchAndSyncFriends 	    : fetchAndSyncFriends
+		getAppId 			: getAppId,
+		generateAppToken    : generateAppToken,
+		updateFacebookToken : updateFacebookToken,
+		verifyFacebookToken : verifyFacebookToken,
+		fetchAndSyncFriends : fetchAndSyncFriends,
+		fetchLongLivedToken : fetchLongLivedToken
 	};

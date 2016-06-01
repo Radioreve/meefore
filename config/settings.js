@@ -18,6 +18,9 @@ var settings = {
 		max_pic  : 5,
 		chat_fetch_count: 20
 	},
+	facebook: {
+		token_lifespan_limit: 20
+	},
 	default_pictures: [
 		{ img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 0, is_main: true , hashtag: 'me' },
       	{ img_id: placeholder_img_id, img_version: placeholder_img_vs, img_place: 1, is_main: false, hashtag: 'hot' },

@@ -4,14 +4,9 @@
 		friends_profiles: null,
 
 		init: function(){
-			return LJ.promise(function( resolve, reject ){
 
-				LJ.friends.handleDomEvents();
-				LJ.friends.syncAndAddFacebookFriends();
-				LJ.friends.fetchAndAddFacebookFriends();
-				resolve();
-
-			});
+			LJ.friends.handleDomEvents();
+			return LJ.friends.fetchAndAddFacebookFriends();
 
 		},
 		handleDomEvents: function(){
@@ -45,6 +40,9 @@
 			LJ.profile_user.showUserProfile( facebook_id );
 
 		},
+		// Legacy code 
+		// Back when the client did the request on each connexion to sync friends
+		// now it's done server-side on each connexion to reduce the load especially on iOS device
 		syncAndAddFacebookFriends: function(){
 
 			LJ.facebook.fetchFriends()
@@ -70,10 +68,6 @@
 					return LJ.friends.displayFriends( friends_html );
 
 				})
-				.then(function(){
-					LJ.notifications.checkNotification_noFriends();
-					
-				})
 				.catch(function( e ){
 					LJ.wlog(e);
 				});
@@ -97,10 +91,6 @@
 				.then(function( friends_html ){
 					return LJ.friends.displayFriends( friends_html );
 
-				})
-				.then(function(){
-					LJ.notifications.checkNotification_noFriends();
-					
 				})
 				.catch(function( e ){
 					LJ.wlog(e);

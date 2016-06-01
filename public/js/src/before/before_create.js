@@ -320,8 +320,8 @@
 				h: $('.be-create-row.--hour').attr('data-hh'),
 				m: $('.be-create-row.--hour').attr('data-mm'),
 				D: $('.be-create-row.--date').attr('data-dd'),
-				M: $('.be-create-row.--date').attr('data-mm'), //different from --hour, (attr is case insensitive)
-				Y: $('.be-create-row.--date').attr('data-yy')
+				M: parseInt( $('.be-create-row.--date').attr('data-mm') ) - 1, // month starts at 0...
+				Y: $('.be-create-row.--date').attr('data-yyyy')
 
 			}).toISOString();
 

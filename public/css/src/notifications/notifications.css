@@ -144,9 +144,10 @@ Whispereen 	: #58c170
 
 .notification__date {
     color: #1B69EC;
-    font-size: 12px;
+    font-size: 11px;
     margin-left: auto;
     font-weight: bolder;
+    font-family: 'Open sans';
 }
 
 .notification-message {

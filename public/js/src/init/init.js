@@ -77,6 +77,7 @@
                     var c = LJ.realtime.init();
                     return LJ.Promise.all([ a, b, c ]);
                 })
+                .then( LJ.notifications.init )
                 .then( LJ.before.init )
                 .then( LJ.chat.init )
                 .then( LJ.login.hideLoginSteps )

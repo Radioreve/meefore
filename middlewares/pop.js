@@ -42,6 +42,8 @@
 
 				if( user ){
 					console.log('Populated success, user name is : ' + user.name );
+				} else {
+					console.log('No user was found for id : ' + req.sent.facebook_id );
 				}
 				
 				req.sent.user = user;

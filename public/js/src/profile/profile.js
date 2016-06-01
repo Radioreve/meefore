@@ -17,7 +17,6 @@
 					.then( LJ.pictures.init )
 					.then( LJ.settings.init )
 					.then( LJ.profile.handleDomEvents )
-					.then( LJ.notifications.init )
 					.then( LJ.search.initFilters )
 					.then( LJ.seek.activatePlacesInProfile )
 					.then( resolve )

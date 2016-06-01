@@ -135,7 +135,7 @@
 	    app.post('/auth/facebook',
 	    	mdw.validate('auth_facebook'),
 	    	mdw.pop.populateUser({ force_presence: false }),
-	    	mdw.facebook.fetchFacebookLongLivedToken,
+	    	mdw.facebook.updateFacebookToken,
 	    	mdw.mailchimp_watcher.subscribeMailchimpUser,
 	    	signEvents.handleFacebookAuth,
 	    	mdw.realtime.setChannels,
@@ -643,6 +643,59 @@
 	    	api.befores.resetBeforeSeenAt
 	    );
 
+	    app.post('/auth/facebook/generate-app-token-local', // use the app_token shortcut
+	    	function( req, res, next ){
+
+	    		mdw.facebook.generateAppToken(function( err, res ){
+	    			req.sent.expose.err = err;
+	    			req.sent.expose.res = res;
+	    			next();
+	    		});
+	    	}
+	    );
+
+	    app.post('/auth/facebook/generate-app-token-fetch', // ask facebook graph api for a true app_token
+	    	function( req, res, next ){
+
+	    		mdw.facebook.generateAppToken(function( err, res ){
+	    			req.sent.expose.err = err;
+	    			req.sent.expose.res = res;
+	    			next();
+	    		}, "fetch" );
+	    	}
+	    );
+
+	    app.post('/auth/facebook/verify-token',
+	    	function( req, res, next ){
+
+	    		var token = req.sent.token;
+
+	    		mdw.facebook.verifyFacebookToken( token, function( err, res ){
+	    			req.sent.expose.err = err;
+	    			req.sent.expose.res = res;
+	    			next();
+	    		});
+	    	}
+	    );
+
+	    app.post('/auth/facebook/update-token',
+	    	function( req, res, next ){
+
+	    		var token = req.sent.token;
+
+	    		mdw.facebook.fetchLongLivedToken( token, function( err, res ){
+	    			req.sent.expose.err = err;
+	    			req.sent.expose.res = res;
+	    			next();
+	    		});
+	    	}
+	    );
+
+	    app.post('/auth/facebook/validate',
+	    	mdw.validate('auth_facebook'),
+	    	mdw.pop.populateUser({ force_presence: false }),
+	    	mdw.facebook.updateFacebookToken
+	    );
 
 	   	// [ @WebHooks ] WebHook from Pusher to monitor in realtime online/offline users
 	   	// and save disconnected_at property which is used by front end notifications module
