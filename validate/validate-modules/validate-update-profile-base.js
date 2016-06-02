@@ -33,7 +33,7 @@
 			.withOptional('location' 				 , nv.isLocation )
 			.withCustom( isIdOk )
 
-		req.sent.age = parseInt( req.sent.age );
+		req.sent.age = req.sent.age ? parseInt( req.sent.age ) : undefined;
 
 		nv.run( checkUpdateRequest, req.sent, function( n, errors ){
 			if( n != 0 ){

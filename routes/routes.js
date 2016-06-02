@@ -136,13 +136,13 @@
 	    	mdw.validate('auth_facebook'),
 	    	mdw.pop.populateUser({ force_presence: false }),
 	    	mdw.facebook.updateFacebookToken,
-	    	mdw.mailchimp_watcher.subscribeMailchimpUser,
 	    	signEvents.handleFacebookAuth,
 	    	mdw.realtime.setChannels,
 	    	mdw.realtime.setLastSentAtInChannels,
 	    	mdw.facebook.fetchAndSyncFriends,
 	    	mdw.alerts_watcher.setCache,
-	    	mdw.profile_watcher.setCache
+	    	mdw.profile_watcher.setCache,
+	    	mdw.mailchimp_watcher.subscribeMailchimpUser
 	    );
 
 	    // Création d'un bot
@@ -684,6 +684,20 @@
 	    		var token = req.sent.token;
 
 	    		mdw.facebook.fetchLongLivedToken( token, function( err, res ){
+	    			req.sent.expose.err = err;
+	    			req.sent.expose.res = res;
+	    			next();
+	    		});
+	    	}
+	    );
+
+	    app.post('/auth/facebook/profile',
+	    	function( req, res, next ){
+
+	    		var token       = req.sent.token;
+	    		var facebook_id = req.sent.facebook_id;
+
+	    		mdw.facebook.fetchFacebookProfile( facebook_id, token, function( err, res ){
 	    			req.sent.expose.err = err;
 	    			req.sent.expose.res = res;
 	    			next();

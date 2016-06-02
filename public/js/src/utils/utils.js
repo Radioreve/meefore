@@ -27,17 +27,6 @@ window.LJ = _.merge( window.LJ || {}, {
     },
     Promise: Promise,
 
-    setLocalStorage: function( storage_type ){
-
-        if( storage_type == "facebook" ){
-            return LJ.utils.setLocalStorage_Facebook
-        }
-
-    },
-    setLocalStorage_Facebook: function( facebook_profile ){
-
-        
-    },
     storeItem: function( key, value ){
 
         if( !key || !value ){

@@ -23,6 +23,8 @@
             LJ.lang.init();
             // Cache static assets images used accross modules
             LJ.static.init();
+            // Store mechanism (local storage / cookie)
+            LJ.store.init();
             // Analytics for tracking what's going on
             LJ.analytics.init();
             // Starts the Facebook SDK
@@ -50,6 +52,7 @@
 
             // Login flow
             LJ.login.init()
+                .then()
                 .then( LJ.facebook.fetchFacebookToken )
                 .then( LJ.start );
 
@@ -58,10 +61,9 @@
 
             return LJ.Promise.resolve( facebook_token )
                 .then( LJ.login.enterLoginProcess )  
-                .then( LJ.facebook.fetchFacebookProfile ) // <- Enter this step with valid facebook_token
-                .then( LJ.login.stepCompleted )
-                .then( LJ.setLocalStorage("login") )
-                .then( LJ.api.fetchAppToken )   // <- Enter this step with valid facebook_id
+                .then(function(){
+                    return LJ.api.fetchAppToken( facebook_token );
+                })
                 .then( LJ.login.stepCompleted )
                 // Enter the following step with a valid app token
                 // Two kinds of data are fetch :

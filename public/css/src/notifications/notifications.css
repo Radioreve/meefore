@@ -19,6 +19,10 @@
     display: none;
 }
 
+.notifications-panel .jspVerticalBar {
+    right: 5px;
+}
+
 .notifications-panel__wrapper {
     height: 276px;
 }

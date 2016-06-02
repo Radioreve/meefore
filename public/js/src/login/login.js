@@ -96,7 +96,7 @@
 			stepCompleted: function( fill_ratio ){
 
 				if( typeof fill_ratio != "number" ){
-					fill_ratio = 25;
+					fill_ratio = 33.33;
 				}
 
 				LJ.login.completed_steps += 1;
@@ -297,13 +297,15 @@
 			},
 			logUserOut: function(){
 
-				var p1 = LJ.api.updateSettingsUx({
-							"app_preferences":  _.extend( LJ.user.app_preferences, { ux: {auto_login: "no"} })
-						});
-				var p2 = LJ.ui.shadeModal();
+				var p1 = LJ.ui.shadeModal();
+				var p2 = LJ.api.updateSettingsUx({
+					"app_preferences":  _.extend( LJ.user.app_preferences, {
+						ux: { auto_login: "no" }
+					})
+				});
 
 				LJ.Promise.all([ p1, p2 ]).then(function(){
-					localStorage.removeItem('preferences');
+					LJ.store.remove('facebook_access_token');
 					location.reload();
 				});
 

@@ -265,7 +265,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		if( $('.curtain').length != 0 ){
 			$('.curtain').velocity('fadeOut', {
-				duration: 400,
+				duration: 500,
 				complete: function(){
 					$( this ).remove();
 					LJ.ui.handleReconnection();
@@ -276,19 +276,19 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		LJ.wlog('Handling loss of internet connection');
 		LJ.ui.reconnected_started_at = new Date();
 
-		LJ.ui.showCurtain({ opacity: 1, duration: 400 })
+		LJ.ui.showCurtain({ opacity: 0.95, duration: 500 })
 			.then(function(){
 
 				$('.curtain').velocity({
 					opacity: [ LJ.ui.reconnection_curtain_alpha, 1 ]}, {
-                    duration: 200
+                    duration: 300
                 });
 
 				$( LJ.ui.renderSessionDisconnected() )
 					.hide()
 					.appendTo('.curtain')
-					.velocity('fadeIn', {
-						duration: 400,
+					.velocity('shradeIn', {
+						duration: 500,
 						display: 'flex'
 					});
 
@@ -309,13 +309,8 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
         	.then(function(){
 
 	        	LJ.log('Launching reconnection process', 1);
-            	var preferences = {
-                    facebook_id    : LJ.user.facebook_id,
-                    long_lived_tk  : LJ.user.facebook_access_token.long_lived,
-                    tk_valid_until : LJ.user.facebook_access_token.long_lived_valid_until
-                };
 
-                localStorage.setItem("reconn_data", JSON.stringify( preferences )); 
+                LJ.store.set("reconnecting", true); 
                 document.location = "/home";
 
                 });
@@ -383,7 +378,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 
 
-	LJ.ui.testReco = function( time_offline ){
+	LJ.ui.simReco = function( time_offline ){
 		LJ.ui.handleReconnection();
 		LJ.delay( time_offline )
 			.then( LJ.ui.reconnectUser );

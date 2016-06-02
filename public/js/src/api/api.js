@@ -171,17 +171,16 @@
 			return formatted_err;
 
 		},
-		fetchAppToken: function( facebook_profile ){
+		fetchAppToken: function( access_token ){
 
 			LJ.log('Fetching app token...');
-			facebook_profile = facebook_profile || LJ.facebook_profile;
-			
+
 			return LJ.api.post( LJ.api.app_token_url, {
-					facebook_profile : facebook_profile,
-					facebook_id      : facebook_profile.id // server compliance
+					token: access_token
 
 				}).then(function( data ){
-					LJ.app_token = data.app_token;
+					LJ.facebook_id = data.facebook_id
+					LJ.app_token   = data.app_token;
 
 			});
 
@@ -190,11 +189,14 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.me_url.replace(':user_id', LJ.facebook_profile.id ) )
+				LJ.api.get( LJ.api.me_url.replace(':user_id', LJ.facebook_id ) )
+
 					  .then(function( exposed ){
 							LJ.cacheUser( exposed.me );
 							LJ.app_settings = exposed.settings
+							LJ.store.set("facebook_access_token", exposed.me.facebook_access_token );
 					  		return resolve();
+
 					  }, function( err ){
 					  		return reject( err );
 					  });

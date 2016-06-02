@@ -331,11 +331,11 @@
 			{ '$match': { 'group_id': { '$in': groups } } },
 			{ '$group': { '_id': '$group_id', 'last_sent_at': { '$last': '$sent_at' } } }
 
-		]).exec(function( err, res ){
+		]).exec(function( err, res_objects ){
 
 			if( err ) return handleErr( req, res, err_ns, err );
 			
-			res.forEach(function( res_object ){
+			res_objects.forEach(function( res_object ){
 
 				// Augment each channel with the date at which the last message was sent
 				// to allow clients to paginate the way they fetch chats

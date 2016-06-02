@@ -293,11 +293,11 @@ button:hover {
     box-shadow: 1px 1px 3px #ABABAB;
     position: relative;
     transition: all ease-in-out .2s;
-}
+} 
 
 .toggle.--active {
-    background: #33afff;
-    border-color: #33afff;
+    background: #1B69EC;
+    border-color: #1B69EC;
 }
 
 .toggle.--active .toggle__button {

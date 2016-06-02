@@ -1,9 +1,10 @@
 
-	eventUtils  = require('../pushevents/eventUtils'),
-	User 		= require('../models/UserModel'),
-	config      = require('../config/config'),
-	_     	    = require('lodash'),
-	mailer      = require('../services/mailer');
+	var eventUtils = require('../pushevents/eventUtils');
+	var User       = require('../models/UserModel');
+	var config     = require('../config/config');
+	var _          = require('lodash');
+	var mailer     = require('../services/mailer');
+	var term       = require('terminal-kit').term;
 
 	var err_ns = "mailchimp";
 
@@ -25,6 +26,7 @@
 
 	var subscribeMailchimpUser = function( req, res, next ){
 
+		var user    = req.sent.user;
 		var options = { interests: {} };
 
 		if( req.sent.force_subscribe ){
@@ -35,9 +37,9 @@
 			});
 			
 		} else {
-			// If exists, user has been populated by previous mdw 
-			if( req.sent.user ){
-				console.log('User already exists, skipping mailchimp subscription...');
+			// If has already mailchimp_id, skip
+			if( user.mailchimp_id ){
+				console.log('User already have mailchimp_id, skipping mailchimp subscription...');
 				return next();
 			}
 
@@ -46,7 +48,7 @@
 				return next();
 			}
 
-			var email_address = req.sent.facebook_profile.email;
+			var email_address = req.sent.user.contact_email;
 
 			config.mailchimp.groups.forEach(function( interest_object ){
 				options.interests[ interest_object.id ] = yn_to_bool( interest_object.init_value );
@@ -55,13 +57,12 @@
 
 		// Make sure a proper email address is provided
 		if( !email_address || !/^.+@.+\..+$/.test( email_address ) ){
-			req.sent.no_email = true;
-			console.log('User email isnt provided, skipping mailchimp subscription...');
+			term.bold.red('User email isnt provided, skipping mailchimp subscription...\n');
 			return next();
 		}
 
 		// If user email is being updated, create new one with the same options to not mess 
-		// With previous user preferences.
+		// with previous user preferences.
 		options = req.sent.subscribe_options || options;
 
 		console.log('Subscribing user to mailchimp with email address: ' + email_address );
@@ -73,10 +74,18 @@
 
 			// Saving the mailchimp id for later api calls to modify newsletter preferences (PATCH) 
 			console.log('User subscribed, new mailchimp_id: ' + response.id);
-			req.sent.mailchimp_id = response.id;
-			next();
+			User.update({ facebook_id: user.facebook_id }, { $set: { 'mailchimp_id' : response.id } },{ multi: false },
+			function( err, raw ){
+
+				if( err || raw.n == 0 ){
+					term.bold.red('Error updating mailchimp_id' + '\n');
+				}
+
+			});
 
 		});
+
+		next();
 
 	};
 

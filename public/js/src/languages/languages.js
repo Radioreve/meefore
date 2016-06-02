@@ -56,9 +56,8 @@
 				$('.app-lang').find('[data-cc="' + app_language + '"]').addClass('--active');
 
 				// Local storage update
-				if( window.localStorage ){
-					window.localStorage.setItem('app_language', app_language )
-				}
+				LJ.store.set('app_language', app_language )
+				
 
 				return resolve();
 			});
@@ -69,8 +68,8 @@
 
 				var app_language;
 
-				if( window.localStorage && window.localStorage.getItem('app_language') ){
-					app_language = window.localStorage.getItem('app_language');
+				if( LJ.store.get("app_language") ){
+					app_language = LJ.store.get('app_language');
 				} else {
 					app_language = "us";
 				}

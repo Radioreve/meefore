@@ -18,7 +18,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		FB.init({
 			appId: window.facebook_app_id,
 			xfbml: true, // parse social plugins on this page
-			version: 'v2.5' // use version 2.5
+			version: 'v2.6' 
 		});
 
 	},
@@ -73,20 +73,9 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		return LJ.promise(function( resolve, reject ){
 
 			LJ.log('Fetching facebook profile...');
-
-			var options = {};
-			if( LJ.login.data.access_token ){
-				options.access_token = LJ.login.data.access_token;
-			}
 			
-			FB.api( LJ.facebook.profile_url, options, function( facebookProfile ){
-
-				// Surcharge profile with access_token for server processing;
-				var access_token = LJ.login.data.access_token || facebook_token;
+			FB.api( LJ.facebook.profile_url, { access_token: facebook_token }, function( facebookProfile ){
 				
-				// LJ.log('Surcharing profile object with token : ' + access_token );
-				facebookProfile.access_token = access_token;
-
 				// Store it for reconnexion purposes
 				LJ.facebook_profile = facebookProfile;
 
@@ -102,15 +91,12 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 	},
 	GraphAPI: function( url, callback, opts ){
 
-        var ls = window.localStorage;
+        var s = LJ.store;
 
-        var access_token = ( LJ.user.facebook_access_token && LJ.user.facebook_access_token.long_lived ) 
-                         || ( ls.preferences && JSON.parse( ls.preferences ).long_lived_tk )
-                         || ( ls.reconn_data && JSON.parse( ls.reconn_data ).long_lived_tk )
-                         || ( LJ.user.facebook_access_token && LJ.user.facebook_access_token.short_lived )
+        var access_token = LJ.user.facebook_access_token || s.get("facebook_access_token") || s.get("reconn_data");
 
-        if( !access_token ){
-            LJ.wlog('Calling graph api without being able to find a valid long lived token');
+        if( !access_token || !access_token.token ){
+            return LJ.wlog('Cannot call the graph api without being able to find a valid facebook token');
         }
 
         FB.api( url, { access_token: access_token }, callback );
@@ -144,7 +130,9 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
     	});
     },
     fetchProfilePictures: function(){
+
 		return LJ.facebook.fetchProfilePicturesAlbumId().then( LJ.facebook.fetchPictures );
+
     },
 	fetchProfilePicturesAlbumId: function( next_page ){
 		return LJ.promise(function( resolve, reject ){

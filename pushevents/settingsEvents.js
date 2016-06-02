@@ -12,6 +12,68 @@
 	var Before 	     = require('../models/BeforeModel');
 	var eventUtils   = require('./eventUtils');
 
+	// shyMerge function by Léo Jacquemin :)
+	// @params  a{ object }
+	// @params  b{ object }
+	// @returns o{ object }
+	// This function copies b prooerties in the a object, only if they
+	// already exist in the a object and have the same type. Its like a safe "replace";
+	// Works recursively throughout all the keys of course
+	// The behavior can be easily altered to allow the b object to copy "new keys", even if
+	// they are not present in the a object. 
+	function shyMerge( a, b ){
+
+		var o = {};
+	  	var distinct_keys = [];
+	  
+		for( key in a ){
+	  		distinct_keys.push( key );
+	  	}
+	  
+	  	for( key in b ){
+		  	if( distinct_keys.indexOf( key ) == -1 ){
+		    	distinct_keys.push( key );
+		  	}
+	  	}
+	  
+	 	 distinct_keys.forEach(function( key ){
+		  	
+		    if( !a[ key ] ){
+		    	return;
+		    }
+		    
+		    if( a[ key ] && !b[ key ] ){
+		    	return o[ key ] = a[ key ];
+		    }
+		    
+		    if( a[ key ] && b[ key ] && (typeof a[ key ] == typeof b[ key ]) ){
+		    	
+		      if( typeof a[ key ] == "object" ){
+		      	return o[ key ] = shyMerge( a[ key ], b[ key ] );
+		      } else {
+		      	return o[ key ] = b[ key ];
+		      }
+		    	
+		    } else {
+
+		    	o[ key ] = a[ key ];
+
+		    	// Useful for the other version
+		    	// throw {
+		     //   		error: 'These two objects have different type for the same key ('+ key +') skipping...',
+		     //    	typeof_a: typeof a[ key ],
+		     //    	typeof_b: typeof b[ key ]
+		     //  	};
+		    }
+	    
+	 	});
+	  
+	  	return o;
+
+	}
+
+
+
 
 	var settings_ns = 'update_settings';
 	
@@ -28,31 +90,32 @@
 
     var updateSettings = function( req, res, next ){
 
-    	var app_preferences = req.sent.app_preferences,
-    		facebook_id	    = req.sent.user_id;
+    	var app_preferences = req.sent.app_preferences;
+    	var facebook_id	    = req.sent.user_id;
 
-    	if( _.keys( app_preferences ).length == 0 ){
-    		return handleErr( req, res, 'update_settings (empty put)', {
-    			err_id: 'empty_app_preferences'
-    		});
-    	}
 
-    	User.findOneAndUpdate(
-    		{ facebook_id: facebook_id },
-    		{ app_preferences: app_preferences },
-    		{ new: true },
-    		function( err, user ){
+    	User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
-    		if( err ){
-    			return handleErr( req, res, settings_ns, {
-    				err_id: 'saving_to_db'
-    			});
+    		if( err ) return handleErr( req, res, err_ns, err );
+
+    		if( !user ){
+    			return handleErr( req, res, err_ns, {
+    				err_id: 'ghost_user'
+    			})
     		}
-    		
-    		req.sent.expose.user = user;
-    		next();
+
+    		user.app_preferences = shyMerge( user.app_preferences, app_preferences );
+    		user.save(function( err, user ){
+
+    			if( err ) return handleErr( req, res, err_ns, err );
+
+	    		req.sent.expose.user = user;
+	    		next();
+
+    		});
 
     	});
+
 	};
 
 	var updateSettingsContact = function( req, res, next ){
