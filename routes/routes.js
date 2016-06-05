@@ -41,6 +41,10 @@
 
 		mdw.validate          = require('../validate/validate');
 
+		mdw.stop = function( req, res, next ){
+			require('terminal-kit').terminal.bold.red('Paused\n');
+		}
+
 	module.exports = function( app ) {
 
 

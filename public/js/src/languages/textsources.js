@@ -1190,17 +1190,20 @@
 			"fr": "Vous augmenterez vos chances d'avoir des Cheers",
 			"us": "That will increase your chances to get a Cheers"
 		},
-		n_new_friends_text_sin: {
-			"fr": "%n nouvel ami vient de rejoindre meefore",
-			"us": "%n new friend just joined meefore"
-		},
-		n_new_friends_text_plu: {
-			"fr": "%n nouveaux amis viennent de rejoindre meefore",
-			"us": "%n new friends just joined meefore"
+		n_new_friends_text: {
+			"fr": "Nouveaux amis",
+			"us": "New friends"
 		},
 		n_new_friends_subtext: {
-			"fr": "Organisez votre prochain meefore avec eux!",
-			"us": "Organize your next meefore with them"
+			"fr": function( names ){
+				return "Bienvenue à " + LJ.renderManyMultipleNames( names, 3 );
+				var came = names.length == 1 ? "vient" : "viennent";
+				return LJ.renderManyMultipleNames( names, 3 ) + ' ami(e)s '+ came +' de rejoindre Meefore';
+			},
+			"us": function( names ){
+				return "Welcome to " + LJ.renderManyMultipleNames( names, 3 );
+				return LJ.renderManyMultipleNames( names, 3 ) + ' friends just joined Meefore';
+			},
 		},
 		n_inscription_success_text: {
 			"fr": "Bienvenue sur Meefore",
@@ -1293,6 +1296,10 @@
 		w_and: {
 			"fr": "et",
 			"us": "and"
+		},
+		w_more: {
+			"fr": "autre(s)",
+			"us": "more"
 		},
 		settings_ux_unread_messages_label: {
 			"fr": "Signaler messages lus",

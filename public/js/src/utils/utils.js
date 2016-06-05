@@ -201,7 +201,7 @@ window.LJ = _.merge( window.LJ || {}, {
     renderMultipleNames: function( names ){
         
         names = Array.isArray( names ) ? names : [names];
-        names.filter(Boolean);
+        names.filter( Boolean );
 
         if( names.length == 1 ){
             return names[0];
@@ -212,6 +212,42 @@ window.LJ = _.merge( window.LJ || {}, {
         }
 
         return [ names[0], LJ.renderMultipleNames( names.slice(1) ) ].join(', ');
+
+    },
+    renderManyMultipleNames: function( names ){
+        
+        names = Array.isArray( names ) ? names : [ names ];
+        names.reverse();
+        var T = names.length;
+        var displayed = [].slice.call( arguments, -1 );
+
+
+        if( typeof displayed != "number" ){
+            displayed = 2;
+        }
+
+        if( displayed >= T - 1 ){
+            displayed = T - 1;
+        }
+
+         if( names.length == 1 ){
+            return names[0];
+        }
+        if( names.length == 2 ){
+            return names[0] + ' '+ LJ.text('w_and') +' ' + names[1];
+        }
+
+        var cur = 1;
+        var str = names.pop();
+
+        while ( cur < displayed ){
+            str += ', ' + names.pop();
+            cur++;
+        }
+
+        str += ' '+ LJ.text('w_and') +' ' + names.length + ' ' + LJ.text('w_more');
+        return str;
+
 
     },
     renderGroupName: function( name ){

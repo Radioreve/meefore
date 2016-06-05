@@ -7,6 +7,7 @@
 		init: function(){
 
 			LJ.notifications.addNotificationsPanel();
+			LJ.notifications.identifyNotifications();
 			LJ.notifications.addAndShowNotifications();
 			LJ.notifications.refreshNotificationsOrder();
 			LJ.notifications.refreshNotificationsJsp();
@@ -22,11 +23,28 @@
 			LJ.ui.$body.on('click', LJ.notifications.handleHideNotifications );
 
 		},
+		identifyNotifications: function(){
+
+			LJ.user.notifications.forEach(function( n ){
+				n.client_id = LJ.generateId();
+			});
+
+		},
 		newifyNotifications: function(){
+
 
 		},
 		refreshNotificationsOrder: function(){
 			
+			// Lowest order are displayed the highest, so sort by desc
+			LJ.user.notifications.sort(function( n1, n2 ){
+				return moment( n2.sent_at ) - moment( n1.sent_at );
+			});
+
+			LJ.user.notifications.forEach(function( n, i ){
+				$('.notification[data-client-id="'+ n.client_id +'"]').css({ 'order': i });
+			});
+
 		},
 		refreshNotificationsJsp: function(){
 
@@ -134,7 +152,7 @@
 			options.subtext     = LJ.text("n_accepted_in_subtext");
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
 		},
 		renderNotification__FillProfile: function( notification ){
@@ -146,7 +164,7 @@
 			options.subtext     = LJ.text("n_fill_profile_subtext");
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
 
 		},
@@ -159,7 +177,7 @@
 			options.subtext     = LJ.text("n_group_request_subtext");
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
 		},
 		renderNotification__MarkedAsHost: function( notification ){
@@ -181,25 +199,21 @@
 			options.subtext     = LJ.text("n_marked_as_host_subtext").replace('%name', friend_name );
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
 		},
 		renderNotification__NewFriends: function( notification ){
 
 			var options = {};
 
-			var n_friends = notification.n_new_friends;
+			var new_friends = _.map( notification.new_friends, 'facebook_name' );
 			
 			options.icon_code   = "user-add";
-			options.subtext     = LJ.text("n_new_friends_subtext");
+			options.text 		= LJ.text("n_new_friends_text", new_friends );
+			options.subtext     = LJ.text("n_new_friends_subtext", new_friends );
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			if( n_friends == 1 ){
-				options.text = LJ.text("n_new_friends_text_sin").replace('%n', n_friends);
-			} else {
-				options.text = LJ.text("n_new_friends_text_plu").replace('%n', n_friends);
-			}
-			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
 		},
 		renderNotification__BeforeCanceled: function( notification ){
@@ -212,7 +226,7 @@
 			options.subtext     = LJ.text("n_before_canceled_subtext").replace('%address', address);
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 			
 		},
 		renderNotification__ItemShared: function( notification ){
@@ -229,7 +243,7 @@
 			options.subtext     = LJ.text("n_item_shared_subtext").replace('%name', name).replace('%type', type);
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 			
 		},
 		renderNotification__InscriptionSuccess: function( notification ){
@@ -241,7 +255,7 @@
 			options.subtext     = LJ.text("n_inscription_success_subtext");
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
 
 		},
@@ -254,7 +268,7 @@
 			options.subtext     = LJ.text("n_no_friends_subtext");
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
 
 		},
@@ -267,7 +281,7 @@
 			options.subtext     = LJ.text("n_check_email_subtext");
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
-			return LJ.notifications.renderNotificationItem( _.extend( notification, options ) );
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
 
 		},
@@ -307,11 +321,12 @@
 				var text              = options.text;
 				var subtext           = options.subtext;
 				var happened_at 	  = options.happened_at;
+				var client_id 		  = options.client_id;
 
 				var happened_at_html = happened_at ? '<div class="notification__date">' + happened_at + '</div>' : '';
 
             	return LJ.ui.render([
-            		'<div class="notification notification-click js-notification-item" data-notification-id="'+ notification_id +'">',
+            		'<div class="notification notification-click js-notification-item" data-notification-id="'+ notification_id +'" data-client-id="'+ client_id +'">',
                     	'<div class="notification__icon --round-icon"><i class="icon icon-' + icon_code + '"></i></div>',
                     	'<div class="notification-message">',
 	                    	'<div class="notification-message__text">' + text + '</div>',

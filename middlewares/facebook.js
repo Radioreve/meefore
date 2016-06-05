@@ -192,7 +192,7 @@
 
 		var facebook_id  = user.facebook_id;
 		var access_token = user.facebook_access_token.token;
-
+		
 		fetchFacebookFriends( facebook_id, access_token, function( err, body ){
 
 			if( err ){
@@ -201,37 +201,27 @@
 
 			var facebook_res = body;
 
-			var friends       = facebook_res.data;
-			var friends_ids   = _.map( friends, 'id' );
+			var friends     = facebook_res.data;
+			var friends_ids = _.map( friends, 'id' );
 
 			var n_friends_new = facebook_res.summary.total_count;
 			var n_friends_old = user.friends.length;
 
-			if( n_friends_new - n_friends_old <= 0 ){
-				return next();
-			}
-
-
-			console.log('Adding and syncing new friends...');
-
-			user.friends = friends_ids;
-			user.markModified('friends');
+			console.log('Syncing new friends! Updating...');
 			
-			// This notification makes only sense for users that arent new
-			if( user.status != "new" ){
+			var new_friends = [];
+			friends.forEach(function( f ){
 
-				var new_friends = [];
-				friends.forEach(function( f ){
+				if( user.friends.indexOf( f.id ) == -1 ){
+					new_friends.push({
+						facebook_name : f.name,
+						facebook_id   : f.id
+					});
+				} 
 
-					if( user.friends.indexOf( f.id ) == -1 ){
-						new_friends.push({
-							facebook_name : f.name,
-							facebook_id   : f.id
-						});
-					}
+			});
 
-				});
-
+			if( new_friends.length > 0 ){
 				var n = {
 					notification_id : "new_friends",
 					new_friends     : new_friends,
@@ -241,6 +231,10 @@
 				user.notifications.push( n );
 				user.markModified('notifications');
 			}
+
+
+			user.friends = friends_ids;
+			user.markModified('friends');
 
 			user.save(function( err, user ){
 

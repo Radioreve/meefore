@@ -3,6 +3,7 @@
 	var _          = require('lodash');
 	var eventUtils = require('../pushevents/eventUtils');
 	var md5        = require('blueimp-md5');
+	var User 	   = require('../models/UserModel');
 	var Before     = require('../models/BeforeModel');
 	var Message    = require('../models/MessageModel');
 	var mongoose   = require('mongoose');
@@ -112,7 +113,6 @@
 			type 		  : "chat",
 			group_id      : makeChatGroupId( before._id, before.hosts, group.members ),
 			channel_all   : makeChatChannel__All( before._id, before.hosts, group.members ),
-			channel_team  : makeChatChannel__Hosts( before._id, before.hosts, group.members ),
 			channel_team  : opts.channel_team,
 			before_id     : before._id,
 			before_status : before.status,

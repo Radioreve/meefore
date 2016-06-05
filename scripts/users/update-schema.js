@@ -15,7 +15,7 @@
 		
 		console.log('Connected to the database! Running operation... : ');
 
-		User.find({ "facebook_id": "108070099597465" }, function( err, users ){
+		User.find({}, function( err, users ){
 
 			if( err ) return console.log( err );
 
@@ -24,14 +24,10 @@
 				tasks.push(function( done ){
 
 					// Update part
-					user.channels.forEach(function( chan, i){
-						if( chan && chan.type == "location" ){
-							user.channels[i] = undefined;
-						}
-					});
+					user.notifications = [];
+					user.markModified('notifications');
+					// user.markModified('channels');
 
-					user.channels = user.channels.filter(Boolean);
-					user.markModified('channels');
 					
 					user.save(function( err ){
 						if( err ) console.log('Error : ' + err );

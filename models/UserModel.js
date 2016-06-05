@@ -76,7 +76,10 @@
     type: Array
   },
   app_preferences: {
-    type    : Object
+    type: Object
+  },
+  notifications_seen_at: {
+    type: Date
   },
   notifications: {
     type    : Array,
