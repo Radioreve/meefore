@@ -4,7 +4,7 @@
 		$filters_agerange : null,
 		filters_agerange  : null,
 
-		filters_duration: 300,
+		filters_duration: 200,
 
 		filter_state: {
 			age       : [],

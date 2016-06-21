@@ -4,6 +4,7 @@
 	var Place 	   = require('../models/PlaceModel');
 	var _   	   = require('lodash');
 	var rd 		   = require('../services/rd');
+	var md5 	   = require('blueimp-md5');
 	var connecter  = require('../middlewares/connecter');
 	var settings   = require('../config/settings');
 	var eventUtils = require('../pushevents/eventUtils');
@@ -45,12 +46,35 @@
 				return handleErr( req, res, 'fetching_me', err );
 			}
 
-			req.sent.expose.me = user;
+			req.sent.expose.me       = user;
 			req.sent.expose.settings = settings; 
 
 			next();
 
 		});
+
+	};
+
+	var fetchFriends = function( req, res, next ){
+
+		var err_ns      = "fetching_user_friends";
+		var facebook_id = req.sent.user_id;
+
+		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
+
+			if( err ) return handleErr( req, res, err_ns, err );
+
+			if( !user ){
+				return handleErr( req, res, err_ns, {
+					'err_id'      : 'ghost_user',
+					'facebook_id' : facebook_id
+				});
+			}
+
+			req.sent.expose.friends = user.friends;
+			next();
+
+		});			
 
 	};
 
@@ -497,20 +521,144 @@
 
 	};
 
+	var updateNotificationsSeenAt = function( req, res, next ){
+
+		var err_ns = "updating_notifications_seen_at";
+
+		var user = req.sent.user;
+		var date = new Date();
+
+		user.notifications.forEach(function( n ){
+
+			if( !n.seen_at ){
+				n.seen_at = date;
+			}
+
+		});
+
+		user.markModified('notifications');
+		user.save(function( err, user ){
+
+			if( err && !err.name == "VersionError" ) return handleErr( req, res, err_ns, err );
+
+			req.sent.expose.user = user;
+			next();
+
+		});
+
+	};
+
+	var updateNotificationsClickedAt = function( req, res, next ){
+
+		var err_ns = "updating_notifications_clicked_at";
+
+		var user = req.sent.user;
+		var date = new Date();
+		var n_id = req.sent.notification_id;
+
+		user.notifications.forEach(function( n ){
+
+			if( n.notification_id == n_id ){
+				n.clicked_at = date;
+			}
+
+		});
+
+		user.markModified('notifications');
+		user.save(function( err, user ){
+
+			if( err && !err.name == "VersionError" ) return handleErr( req, res, err_ns, err );
+
+			req.sent.expose.user = user;
+			next();
+
+		});
+
+	};
+
+	// Construct 'virtual' "cheers" property, based on other objects from the models
+	// This is abstracted away for the client
+	var fetchUserCheers = function( req, res, next ){
+
+		var err_ns = "fetching_user_cheers";
+
+		var user        = req.sent.user;
+		var facebook_id = req.sent.user_id;
+
+		var cheers = [];
+
+		user.findBeforesByPresence(function( err, befores ){
+
+			if( err ) return handleErr( req, res, err_ns, err );
+
+			befores.forEach(function( bfr ){
+
+				// User has sent a cheers in that before
+				if( bfr.hosts.indexOf( facebook_id ) == -1 ){
+
+					var user_group = _.find( bfr.groups, function( group ){
+						return group.members.indexOf( facebook_id ) != -1;
+					});
+
+					var o = {
+						"cheers_type"    : "sent",
+						"status"         : user_group.status,
+						"main_member"    : user_group.main_member,
+						"main_host"      : bfr.main_host,
+						"address" 		 : bfr.address.place_name,
+						"requested_with" : _.difference( user_group.members, [ facebook_id ] ),
+						"requested_at"   : user_group.requested_at
+					};
+					o.cheers_id = md5( o );
+					cheers.push( o );
+
+				// User is host, add a cheers object for every group 
+				} else {
+
+					bfr.groups.forEach(function( group ){
+
+						var o = {
+							"cheers_type"  : "received",
+							"status" 	   : group.status,
+							"main_member"  : group.main_member,
+							"address"      : bfr.address.place_name,
+							"requested_at" : group.requested_at
+						};
+						o.cheers_id = md5( o );
+						cheers.push( o );
+
+					});
+				}
+
+
+			});
+
+			req.sent.expose.cheers = cheers;
+			next();
+
+		});
+
+
+
+	};
 
 	module.exports = {
-		fetchMe 				: fetchMe,
-		fetchUserShared			: fetchUserShared,
-		fetchUserMeepass 		: fetchUserMeepass,
-		fetchUserById_Full	    : fetchUserById_Full,
-		fetchUserById_Core		: fetchUserById_Core,
-		fetchUsers 				: fetchUsers,
-		fetchUsersAll 			: fetchUsersAll,
-		fetchUserEvents 		: fetchUserEvents,
-		fetchUserCount 			: fetchUserCount,
-		fetchOnlineUsers        : fetchOnlineUsers,
-		getMailchimpStatus 		: getMailchimpStatus,
-		fetchMoreUsers 			: fetchMoreUsers,
-		fetchDistinctCountries  : fetchDistinctCountries,
-		fetchMoreChannels 	 	: fetchMoreChannels
+		fetchMe 				  	 : fetchMe,
+		fetchFriends 				 : fetchFriends,
+		fetchUserShared			  	 : fetchUserShared,
+		fetchUserMeepass 		  	 : fetchUserMeepass,
+		fetchUserById_Full	      	 : fetchUserById_Full,
+		fetchUserById_Core		  	 : fetchUserById_Core,
+		fetchUsers 				  	 : fetchUsers,
+		fetchUsersAll 			  	 : fetchUsersAll,
+		fetchUserEvents 		  	 : fetchUserEvents,
+		fetchUserCount 			  	 : fetchUserCount,
+		fetchOnlineUsers          	 : fetchOnlineUsers,
+		getMailchimpStatus 		  	 : getMailchimpStatus,
+		fetchMoreUsers 			  	 : fetchMoreUsers,
+		fetchDistinctCountries    	 : fetchDistinctCountries,
+		fetchMoreChannels 	 	  	 : fetchMoreChannels,
+		updateNotificationsSeenAt 	 : updateNotificationsSeenAt,
+		updateNotificationsClickedAt : updateNotificationsClickedAt,
+		fetchUserCheers 			 : fetchUserCheers
 	};

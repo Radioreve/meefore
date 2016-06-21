@@ -35,14 +35,16 @@
 
 				return LJ.delay( 1000 )
 						 .then(function(){
-						 	$( LJ.login.renderLoginProgression() )
-								.appendTo( $('.curtain') )
-								.hide()
-								.velocity('fadeIn', {
-									duration: 1600,
-									delay: LJ.ui.opening_duration
-								});
-							return LJ.Promise.resolve();
+
+						 	$( LJ.login.renderLoginProgression() ).appendTo( $('.curtain') ).children().hide();
+						 	$('.login__message').velocity('shradeIn', {
+						 		duration: 1600, delay: LJ.login.opening_duration
+						 	});
+						 	$('.login__progress-bar').velocity('shradeIn', {
+						 		duration: 1600, delay: LJ.login.opening_duration
+						 	});
+							return;
+
 						 });
 
 			},
@@ -52,7 +54,7 @@
 					$('.app').removeClass('nonei');
 					$('.landing').remove();
 
-					$('.login').velocity('shradeOut', {
+					$('.login__message, .login__progress-bar').velocity('shradeOut', {
 						duration: 400,
 						complete: resolve
 						
@@ -213,7 +215,6 @@
 							  	LJ.profile.setMyInformations();
 							  	return;
 						});
-
 
 			},
 			showPlayButton: function(){

@@ -29,7 +29,7 @@
 				   	display: 'block'
 				   });
 
-			LJ.friends.syncAndAddFacebookFriends();
+			LJ.friends.fetchAndAddFacebookFriends();
 
 		},	
 		handleFriendProfileClicked: function(){
@@ -38,40 +38,6 @@
 			var facebook_id = $s.attr('data-facebook-id');
 
 			LJ.profile_user.showUserProfile( facebook_id );
-
-		},
-		// Legacy code 
-		// Back when the client did the request on each connexion to sync friends
-		// now it's done server-side on each connexion to reduce the load especially on iOS device
-		syncAndAddFacebookFriends: function(){
-
-			LJ.facebook.fetchFriends()
-				.then(function( res ){
-					return LJ.api.syncMeFriends( res.friend_ids );
-
-				})
-				.then(function( res ){
-					var friend_ids = res.friends;
-					return LJ.api.fetchUsers( friend_ids );
-
-				})
-				.then(function( friends_profiles ){
-					friends_profiles = _.map( friends_profiles, 'user' );
-					return LJ.friends.setFriendsProfiles( friends_profiles );
-
-				})
-				.then(function( friends_profiles ){
-					return LJ.friends.renderFriends( friends_profiles );
-
-				})
-				.then(function( friends_html ){
-					return LJ.friends.displayFriends( friends_html );
-
-				})
-				.catch(function( e ){
-					LJ.wlog(e);
-				});
-
 
 		},
 		fetchAndAddFacebookFriends: function(){
@@ -200,7 +166,7 @@
 						'<p data-lid="empty_friends_subtitle"></p>',
 					'</div>',
 					'<div class="empty__subicon --round-icon js-invite-friends">',
-						'<i class="icon icon-user-add"></i>',
+						'<i class="icon icon-gift"></i>',
 					'</div>',
 				'</div>'
 
@@ -221,6 +187,7 @@
 				'<div class="friend__item" data-facebook-id="' + friend.facebook_id + '">',
 					'<div class="row-pic">',
 						'<div class="row-pic__image">' + img_html + '</div>',
+						'<div class="row-pic__filterlay --filterlay"></div>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',

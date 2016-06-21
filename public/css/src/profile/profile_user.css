@@ -115,12 +115,13 @@
     font-size: 12px;
     position: relative;
     top: -2px;
+    display: none;
 }
 
 .user-infos__icon {
-    background: #EAEAEA;
+    /* background: #EAEAEA; */
     color: #454545;
-    /* border: 1px solid #3C7FEE; */
+    border: 1px solid #464646;
     height: 34px;
     width: 34px;
     flex-shrink: 0;
@@ -128,7 +129,7 @@
 
 .user-infos__icon i {
     margin: auto;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .user-infos__title {
@@ -201,8 +202,9 @@
     height: 100%;
     position: absolute;
     z-index: 1;
+    top: 0;
     left: 0;
-    opacity: .2
+    opacity: .2;
 }
 
 .user-pics__navigate.--right {right: 6px;}

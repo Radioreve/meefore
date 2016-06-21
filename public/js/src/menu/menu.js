@@ -2,17 +2,17 @@
 	window.LJ.menu = _.merge( window.LJ.menu || {}, {
 
 		$menu: $('.menu'),
-		shrink_menu_height_limit: 100,
+		shrink_menu_height_limit: 0,
 		menu_slide_duration: 240,
 
 		init: function(){
-			return LJ.promise(function( resolve, reject ){
 
-				LJ.menu.handleDomEvents();
-				LJ.menu.activateMenuSection('profile');
-				resolve();
+			LJ.menu.handleDomEvents();
+			LJ.menu.activateMenuSection('profile');
+			LJ.menu.shrinkMenu();
 
-			});
+			return;
+
 		},
 		handleDomEvents: function(){
 
@@ -45,18 +45,18 @@
 			}
 
 			if( section_id == current_section_id ){
-					if( current_section_id == "shared" ){
-						return LJ.shared.handleShareClicked();
-					}
-					if( current_section_id == "meepass" ){
-						return LJ.meepass.handleMeepassClicked();
-					}
-					if( current_section_id == "friends" ){
-						return LJ.friends.handleFriendsClicked();
-					}
+				
+				if( current_section_id == "shared" ){
+					return LJ.shared.handleShareClicked();
+				}
+				if( current_section_id == "cheers" ){
+					return LJ.meepass.handleCheersClicked();
+				}
+				if( current_section_id == "friends" ){
+					return LJ.friends.handleFriendsClicked();
+				}
 
-
-				return LJ.wlog('Section is already activated');
+				return LJ.log('Section is already activated');
 			}
 
 			$menu_item_activated
@@ -76,7 +76,9 @@
 
 		},
 		handleMenuApparition: function( e ){
-	
+			
+			return;
+
 			var current_scrolltop = LJ.ui.$window.scrollTop();
 
 			if( LJ.ui.getScrollDirection() == "down" && LJ.ui.scrolltop > LJ.menu.shrink_menu_height_limit && $('--resizing').length == 0 ){

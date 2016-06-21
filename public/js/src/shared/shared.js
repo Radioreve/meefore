@@ -4,12 +4,9 @@
 		shared_item_duration: 600,
 
 		init: function(){
-			return LJ.promise(function( resolve, reject ){
 
-				LJ.shared.handleDomEvents();
-				resolve();
-
-			});
+			LJ.shared.handleDomEvents();
+			return;
 
 		},
 		handleDomEvents: function(){
@@ -248,6 +245,7 @@
 					'<div class="row-pic">',
 						'<div class="row-pic__image">' + img_html + '</div>',
 						'<div class="row-pic__icon --round-icon"><i class="icon icon-forward"></i></div>',
+						'<div class="row-pic__filterlay --filterlay"></div>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',

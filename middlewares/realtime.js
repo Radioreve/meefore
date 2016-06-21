@@ -326,14 +326,22 @@
 		var user   = req.sent.user;
 		var groups = _.map( req.sent.user.channels, 'group_id' ).filter( Boolean );
 
+		if( !groups || groups.length == 0 ){
+			return next();
+		}
+
 		Message.aggregate([
 
 			{ '$match': { 'group_id': { '$in': groups } } },
 			{ '$group': { '_id': '$group_id', 'last_sent_at': { '$last': '$sent_at' } } }
 
-		]).exec(function( err, res_objects ){
+		], function( err, res_objects ){
 
 			if( err ) return handleErr( req, res, err_ns, err );
+
+			if( !res_objects ){
+				return next();
+			}
 			
 			res_objects.forEach(function( res_object ){
 

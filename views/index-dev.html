@@ -50,12 +50,12 @@
   <link rel="stylesheet" href="/css/src/chat/chat.css">
   <link rel="stylesheet" href="/css/src/chat/chat_inview.css">
   <link rel="stylesheet" href="/css/src/friends/friends.css">
-  <link rel="stylesheet" href="/css/src/invite/invite.css">
+  <!-- <link rel="stylesheet" href="/css/src/invite/invite.css"> -->
+  <link rel="stylesheet" href="/css/src/cheers/cheers.css">
   <link rel="stylesheet" href="/css/src/landing/landing.css">
   <link rel="stylesheet" href="/css/src/landing/landing_rtb.css">
   <link rel="stylesheet" href="/css/src/landing/landing_contact.css">
   <link rel="stylesheet" href="/css/src/landing/landing_footer.css">
-  <link rel="stylesheet" href="/css/src/meepass/meepass.css">
   <link rel="stylesheet" href="/css/src/menu/menu.css">
   <link rel="stylesheet" href="/css/src/notifications/notifications.css">
   <link rel="stylesheet" href="/css/src/onboarding/onboarding.css">
@@ -318,12 +318,12 @@
           </div>
           <div class="menu-item__bar"></div>
         </li>
-        <li class="menu-item --meepass" data-link="meepass">
+        <li class="menu-item --cheers" data-link="cheers">
           <div class="menu-item__body">
-           <div class="menu-item__icon --round-icon">
-              <i class="icon icon-meepass"></i>
+            <div class="menu-item__icon --round-icon">
+              <i class="icon icon-drinks"></i>
             </div>
-            <h3 data-lid="menu_meepass"></h2>
+            <h3 data-lid="menu_cheers"></h2>
           </div>
           <div class="menu-item__bar"></div>
         </li>
@@ -346,7 +346,7 @@
           <div class="menu-item__bar"></div>
         </li>
       </nav>
-      <!-- Meepass begin -->
+      <!-- Menu end -->
 
 
       <!-- Profile begin -->
@@ -490,24 +490,21 @@
       </section>
       <!-- Shared end -->
 
-
-      <!-- Meepass begin -->
-      <section class="menu-section --meepass" data-link="meepass">
-        <div class="menu-section-segment">
-          <div class="segment">
-            <div class="segment__part --active" data-link="received">
-              <h3 data-lid="segment_meepass_received"></h3>
-            </div>
-            <div class="segment__part" data-link="sent">
-              <h3 data-lid="segment_meepass_sent"></h3>
-            </div>
+       <!-- Cheers begin -->
+      <section class="menu-section --cheers" data-link="cheers">
+        <div class="segment">
+          <div class="segment__part" data-link="sent">
+            <h3 data-lid="segment_cheers_sent"></h3>
+          </div>
+          <div class="segment__part" data-link="received">
+            <h3 data-lid="segment_cheers_received"></h3>
           </div>
         </div>
-        <div class="meepass">
+        <div class="cheers">
           <!-- %% Dynamically injected %%-->
         </div>
       </section>
-      <!-- Meepass end -->
+      <!-- Cheers end -->
 
     
       <!-- Friends begin -->
@@ -527,8 +524,12 @@
               <h4 data-lid="menu_subsection_account"></h4>
               <div class="menu-section-submenu__bar"></div>
             </li>
-            <li class="menu-section-submenu__item" data-link="code">
+            <!-- <li class="menu-section-submenu__item" data-link="code">
               <h4 data-lid="menu_subsection_code"></h4>
+              <div class="menu-section-submenu__bar"></div>
+            </li> -->
+            <li class="menu-section-submenu__item" data-link="emails">
+              <h4 data-lid="menu_subsection_emails"></h4>
               <div class="menu-section-submenu__bar"></div>
             </li>
             <li class="menu-section-submenu__item" data-link="notifications">
@@ -544,7 +545,7 @@
           <h3 data-lid="menu_subsection_account"></h3>
         </div>
         <div class="settings --account" data-link="account">
-          <div class="settings-item" data-settings-type-id="contact_email">
+          <div class="settings-item --no-border" data-settings-type-id="contact_email">
             <div class="settings-input">
               <div class="settings-input__icon --round-icon">
                 <i class="icon icon-arobat"></i>
@@ -566,12 +567,12 @@
               </div>
             </div>
           </div>
-          <div class="settings-item">
+          <div class="settings-item --no-border">
             <button class="settings__button --delete" data-lid="settings_account_delete_button"></button>
           </div>
         </div>
         <!-- code section -->
-        <div class="menu-section__subtitle">
+        <!-- <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_code"></h3>
         </div>
         <div class="settings --code" data-link="code">
@@ -603,14 +604,49 @@
           <div class="settings-item">
             <button class="settings__button --sponsor" data-lid="settings_code_sponsor_button"></button>
           </div>
+        </div> -->
+        <!-- emails section -->
+        <div class="menu-section__subtitle">
+          <h3 data-lid="menu_subsection_emails"></h3>
         </div>
-        <!-- emails and notifications section -->
+        <div class="settings --emails" data-link="emails">
+          <!-- <div class="settings__title">
+            <h3 data-lid="settings_part_title_email"></h3>
+          </div> -->
+          <div class="settings-item" data-settings-type-id="newsletter">
+            <div class="settings-input">
+              <div class="settings-input__icon --round-icon"><i class="icon icon-mail"></i></div>
+              <div class="settings-input-label">
+                <div class="settings-input__label" data-lid="settings_notifs_newsletter_label"></div>
+              </div>
+              <div class="toggle">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_notifs_newsletter_explanation"></div>
+          </div>
+          <div class="settings-item" data-settings-type-id="invitations">
+            <div class="settings-input">
+              <div class="settings-input__icon --round-icon"><i class="icon icon-newsletter"></i></div>
+              <div class="settings-input-label">
+                <div class="settings-input__label" data-lid="settings_notifs_invitations_label"></div>
+              </div>
+              <div class="toggle">
+                <div class="toggle__background"></div>
+                <div class="toggle__button"></div>
+              </div>
+            </div>
+            <div class="settings-input__explanation" data-lid="settings_notifs_invitations_explanation"></div>
+          </div>
+        </div>
+        <!-- notifications section -->
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_notifications"></h3>
         </div>
         <div class="settings --notifications" data-link="notifications">
           <div class="settings__title">
-            <h3 data-lid="settings_part_title_notifications"></h3>
+            <h3 data-lid="settings_part_title_notifications_email"></h3>
           </div>
           <div class="settings-item" data-settings-type-id="accepted_in">
             <div class="settings-input">
@@ -637,35 +673,6 @@
               </div>
             </div>
             <div class="settings-input__explanation" data-lid="settings_emails_new_message_received_explanation"></div>
-          </div>
-          <div class="settings__title">
-            <h3 data-lid="settings_part_title_email"></h3>
-          </div>
-          <div class="settings-item" data-settings-type-id="newsletter">
-            <div class="settings-input">
-              <div class="settings-input__icon --round-icon"><i class="icon icon-mail"></i></div>
-              <div class="settings-input-label">
-                <div class="settings-input__label" data-lid="settings_notifs_newsletter_label"></div>
-              </div>
-              <div class="toggle">
-                <div class="toggle__background"></div>
-                <div class="toggle__button"></div>
-              </div>
-            </div>
-            <div class="settings-input__explanation" data-lid="settings_notifs_newsletter_explanation"></div>
-          </div>
-          <div class="settings-item" data-settings-type-id="invitations">
-            <div class="settings-input">
-              <div class="settings-input__icon --round-icon"><i class="icon icon-newsletter"></i></div>
-              <div class="settings-input-label">
-                <div class="settings-input__label" data-lid="settings_notifs_invitations_label"></div>
-              </div>
-              <div class="toggle">
-                <div class="toggle__background"></div>
-                <div class="toggle__button"></div>
-              </div>
-            </div>
-            <div class="settings-input__explanation" data-lid="settings_notifs_invitations_explanation"></div>
           </div>
         </div>
         <!-- ux section -->
@@ -963,6 +970,7 @@
   <script src="js/src/autologin/autologin.js"></script>
   <script src="js/src/admin/admin.js"></script>
   <script src="js/src/analytics/analytics_google.js"></script>
+  <script src="js/src/cheers/cheers.js"></script>
   <script src="js/src/before/before.js"></script>
   <script src="js/src/before/before_create.js"></script>
   <script src="js/src/before/before_request.js"></script>
@@ -970,7 +978,7 @@
   <script src="js/src/chat/chat_inview.js"></script>
   <script src="js/src/chat/chat_test.js"></script>
   <script src="js/src/friends/friends.js"></script>
-  <script src="js/src/invite/invite.js"></script>
+  <!-- <script src="js/src/invite/invite.js"></script> -->
   <script src="js/src/ladder/ladder.js"></script>
   <script src="js/src/landing/landing.js"></script>
   <script src="js/src/languages/languages.js"></script>
@@ -980,7 +988,6 @@
   <script src="js/src/map/map.js"></script>
   <script src="js/src/map/map_styles.js"></script>
   <script src="js/src/map/map_markers_url.js"></script>
-  <script src="js/src/meepass/meepass.js"></script>
   <script src="js/src/connecter/connecter.js"></script>
   <script src="js/src/notifications/notifications.js"></script>
   <script src="js/src/onboarding/onboarding.js"></script>

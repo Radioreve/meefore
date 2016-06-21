@@ -4,7 +4,7 @@
 	var config     = require('../config/config');
 	var _          = require('lodash');
 	var mailer     = require('../services/mailer');
-	var term       = require('terminal-kit').term;
+	var term       = require('terminal-kit').terminal;
 
 	var err_ns = "mailchimp";
 

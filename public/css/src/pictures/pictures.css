@@ -90,7 +90,7 @@
 
 }
 
-.picture__hashtag {display: flex;align-items: center;width: 100%;overflow: hidden;justify-content: center;flex-flow: row wrap;}
+.picture__hashtag {display: none;align-items: center;width: 100%;overflow: hidden;justify-content: center;flex-flow: row wrap;}
 
 .hashtag__hash {
   font-weight: bolder;
@@ -314,5 +314,9 @@
   }
   .menu.--downsized h3 {
     display: none;
+  }
+
+  .menu-item__icon i {
+    font-size: 20px;
   }
 }

@@ -93,19 +93,6 @@
 			
 			// During the setup, check if
 			messages.forEach(function( message_object ){
-
-				var sent_at     = moment( message_object.sent_at );
-				var last_online = LJ.getDisconnectedAt()
-
-				// Use the "seen_by" property wisely to determine if a user has not seen a chat message
-				// even though his last_online date was > to the last message sent.
-				var message_sent_while_offline = sent_at > last_online;
-
-				if(1){
-					message_object.state = "unseen";
-				} else {
-					message_object.state = "seen";
-				}
 				LJ.chat.cacheChatMessage( chat_id, message_object );
 
 			});
@@ -114,7 +101,7 @@
 		getActiveChatId: function(){
 
 			var active_chat_id = null;
-				LJ.chat.getChatIds().forEach(function( chat_id ){
+			LJ.chat.getChatIds().forEach(function( chat_id ){
 				if( LJ.chat.getChatById( chat_id ).ui_status == "active" ){
 					active_chat_id = chat_id;
 				}
@@ -940,7 +927,7 @@
 			LJ.chat.state = 'visible';
 
 			var $c = $('.chat');
-			var d  = LJ.search.filters_duration;
+			var d  = 150;
 
 			LJ.ui.shradeAndStagger( $c, {
 				duration: d
@@ -957,7 +944,7 @@
 
 			var $c  = $('.chat');
 			var $cc = $c.children();
-			var d   = LJ.search.filters_duration;
+			var d   = 200;
 
 			[ $cc, $c ].forEach(function( $el, i ){
 				$el.velocity('shradeOut', {
@@ -1176,6 +1163,10 @@
 					var before_item = _.find( LJ.user.befores, function( bfr ){
 						return bfr.before_id == before_id;
 					});
+
+					if( !before_item ){
+						return LJ.wlog('Unable to find before_item with id : ' + before_id );
+					}
 
 					if( before_item.seen_at ){
 						$chatrow.removeClass('--new');

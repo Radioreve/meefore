@@ -22,9 +22,7 @@
 				force_presence = true;
 			}
 
-			console.log('Populating user, force_presence : ' + force_presence + ' for facebook_id : ' + req.sent.facebook_id );
-
-			var query = { facebook_id: req.sent.facebook_id };
+			var query = { facebook_id: req.sent.facebook_id || req.sent.user_id };
 			User.findOne( query, function( err, user ){
 
 				if( err ){

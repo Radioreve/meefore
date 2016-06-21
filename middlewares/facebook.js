@@ -62,16 +62,18 @@
 				expires_at : new Date( moment().add( r.expires, 's' ) ) // Keep the ISODate format for MongoDB
 			}
 
-			// Do not necessarily wait for the token to be inside user profile. User can benefit from it
-			// during his next connexion. This is just a checkup routine
-			next();
-
 			if( user ){
 
 				user.facebook_access_token = req.sent.facebook_access_token;
 				user.save(function( err, user ){
+
 					if( err ) term.bold.red("Error saving the long_lived token for the user \n");
+					next();
+
 				});
+
+			} else {
+				next();
 
 			}
 
@@ -183,6 +185,8 @@
 
 	var fetchAndSyncFriends = function( req, res, next ){
 
+		var err_ns = "fetching_facebook_friends";
+
 		var user = req.sent.user;
 
 		if( !user ){
@@ -196,7 +200,7 @@
 		fetchFacebookFriends( facebook_id, access_token, function( err, body ){
 
 			if( err ){
-				return handleErr( req, res, 'fetching_facebook_friends', err );
+				return handleErr( req, res, err_ns, err );
 			}
 
 			var facebook_res = body;
@@ -221,17 +225,7 @@
 
 			});
 
-			if( new_friends.length > 0 ){
-				var n = {
-					notification_id : "new_friends",
-					new_friends     : new_friends,
-					happened_at     : new Date()
-				};
-
-				user.notifications.push( n );
-				user.markModified('notifications');
-			}
-
+			req.sent.new_friends = new_friends;
 
 			user.friends = friends_ids;
 			user.markModified('friends');
@@ -239,7 +233,7 @@
 			user.save(function( err, user ){
 
 				if( err ){
-					return handleErr( req, res, 'fetching_facebook_friends', err );
+					return handleErr( req, res, err_ns, err );
 				}
 
 				next();

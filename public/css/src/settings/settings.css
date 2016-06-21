@@ -17,10 +17,12 @@
  
 .settings__title {
     /* text-transform: uppercase; */
-    font-size: 26px;
+    font-size: 16px;
     font-weight: 700;
-    font-family: 'creamy';
     text-align: center;
+    background: #f7f7f7;
+    padding: 8px 0;
+    border-radius: 10px;
 }
 
 .settings-item {
@@ -29,6 +31,11 @@
     display: flex;
     flex-flow: row wrap;
     position: relative;
+    border-bottom: 1px solid #eee;
+}
+
+.settings-item.--no-border {
+    border-bottom: none;
 }
 
 .settings-item .action {
@@ -114,31 +121,31 @@
 
 .menu-section-submenu__item {
     cursor: pointer;
-    margin: 0 20px;
+    margin: 0 10px;
     position: relative;
-    color: #919191;
+    color: #454545;
     text-align: center;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 13px;
 }
 
-.menu-section-submenu__item h4 {
-
-}
+.menu-section-submenu__item h4 {overflow: hidden;white-space: nowrap;min-width: 100px;text-overflow: ellipsis;}
 
 .menu-section-submenu__bar {
     display: none;
-    height: 4px;
-    width: 102%;
+    height: 2px;
+    width: 90%;
     margin: auto;
-    bottom: -10px;
+    bottom: 0px;
     border-radius: 20px;
-    left: 0px;
+    left: 8px;
     background: #1b69ec;
     position: absolute;
 }
 
 .menu-section-submenu__item.--active {
     color: #1B69EC;
-    font-weight: bolder;
 }
 
 .menu-section-submenu__item.--active .menu-section-submenu__bar {

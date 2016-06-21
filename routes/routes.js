@@ -146,6 +146,8 @@
 	    	mdw.facebook.fetchAndSyncFriends,
 	    	mdw.alerts_watcher.setCache,
 	    	mdw.profile_watcher.setCache,
+	    	mdw.notifier.addNotification('inscription_success'),
+	    	mdw.notifier.addNotification('new_friends'),
 	    	mdw.mailchimp_watcher.subscribeMailchimpUser
 	    );
 
@@ -202,13 +204,9 @@
 	    // [ @user ] Va chercher en base de données les users à partir de /api/v1/users/:user_id/friends de l'api Facebook
 	    app.get('/api/v1/users/:user_id/friends',
 	    	mdw.validate('myself'),
-	    	profileEvents.fetchFriends 
+	    	api.users.fetchFriends 
 	    );
 	    
-	    app.post('/api/v1/users/:user_id/friends',
-	    	mdw.validate('myself'),
-	    	profileEvents.syncFriends
-	    );
 
 	    // [ @user ] va chercher des tags cloudinary signés par le serveur
 	    app.get('/api/v1/users/:user_id/cloudinary-tags',
@@ -263,6 +261,24 @@
 		app.get('/api/v1/users/online',
 			mdw.connecter.getOnlineUsers,
 			api.users.fetchOnlineUsers
+		);
+
+		app.post('/api/v1/users/:user_id/notifications/seen_at',
+			mdw.validate('myself'),
+			mdw.pop.populateUser({ force_presence: true }),
+			api.users.updateNotificationsSeenAt
+		);
+
+		app.post('/api/v1/users/:user_id/notifications/clicked_at',
+			mdw.validate('myself'),
+			mdw.pop.populateUser({ force_presence: true }),
+			api.users.updateNotificationsClickedAt
+		);
+
+		app.get('/api/v1/users/:user_id/cheers',
+			mdw.validate('myself'),
+			mdw.pop.populateUser({ force_presence: true }),
+			api.users.fetchUserCheers
 		);
 
 
@@ -368,7 +384,7 @@
 	    	api.befores.changeGroupStatus,
 	    	api.befores.resetBeforeSeenAt,
 	    	mdw.cached.cacheGroupStatus,
-	    	mdw.notifier.addNotification('accepted_in'),
+	    	mdw.notifier.addNotification('group_status'),
 	    	mdw.realtime.pushNewGroupStatus
 	    );
 
@@ -636,6 +652,17 @@
 	    		});
 	    	}
 	    );
+
+	    app.get('/users/:user_id/friends',
+	    	setParam('user_id'),
+	    	api.users.fetchFriends
+	   );
+
+	    app.get('/users/:user_id/cheers',
+	    	setParam('user_id'),
+			mdw.pop.populateUser({ force_presence: true }),
+			api.users.fetchUserCheers
+		);
 
 	    app.post('/befores/:before_id/seen_at',
 	    	setParam('before_id'),

@@ -19,15 +19,15 @@
 				}
 
 				if( document.location.hash == "#3" ){
-					LJ.log('Logging in with test user Elena...');
-					var tk = 'EAAXR2Qo4lc4BAONL7s3ZC5EZCbGv3ZCrzvWZBeIkeTpjYvv3XKQnhYNIhN12bD7C69iEahebNMCqKE7LKmWNAsUu4AZAnCBBy8cF5MsJvx6vOfQb3YZCfjayWZCqjKedL9vXRXYklUEdGaNxHLXujZCsWlUFeM22kp9LIoUg6P4WCAZDZD';
+					LJ.log('Logging in with test user Davida...');
+					var tk = 'EAAXR2Qo4lc4BAMRzoOWoksFT356nRgJlU1pZBgNrX86FcWBpTRLXTJjznQjEBngLuca4IuqVB1T6Yg5u5FdqvoSZBfvNJZBxJRIRx2mkKF4cl3pBVVwJrskxfjU3j7wM9OvB5PvSBOU2wEYZCOqBC6coVCLS1eAZD';
 					return resolve( tk );
 				}
 
 				// Quick reference to the local store
 				var s = LJ.store;
 
-				if( !s.get('facebook_access_token') && !s.get('reconnecting') ){
+				if( !s.get('facebook_access_token') ){
 					return reject('No local data available, initializing lp...');
 				}
 

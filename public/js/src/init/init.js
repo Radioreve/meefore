@@ -37,8 +37,8 @@
             LJ.nav.init();
             // Scrolling globals etc
             LJ.ui.init();
-            // Profile meepass & send meepass to other people
-            LJ.meepass.init();
+            // Cheers
+            LJ.cheers.init();
             // Shared module
             LJ.shared.init();
             // Profile user

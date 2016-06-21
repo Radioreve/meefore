@@ -74,6 +74,7 @@
     z-index: 0;
     top: 0px;
     flex-shrink: 0;
+    display: none!important;
 }
 .chat-segment {
     width: 80%;
@@ -346,7 +347,7 @@
     font-size: 42px;
 }
 
-.chat-inview-group .be-request button.--now {background: #58c170;/* background: #191919; */}
+.chat-inview-group .be-request button.--now {background: #1b69ec;/* background: #191919; */}
 
 .chat-inview-group .be-request button span {position: relative;top: -13px;font-size: 12px;}
 

@@ -5,6 +5,7 @@
 	var _        = require('lodash');
 	var async    = require('async');
 	var moment   = require('moment');
+	var md5      = require('blueimp-md5');
 	
 	var User     = require( dir +  '/models/UserModel');
 	var config   = require( dir + '/config/config');
@@ -24,10 +25,11 @@
 				tasks.push(function( done ){
 
 					// Update part
-					user.notifications = [];
-					user.markModified('notifications');
-					// user.markModified('channels');
+					user.notifications.forEach(function( n ){
+						n.notification_id = md5( JSON.stringify( n ) );
+					});
 
+					user.markModified('notifications');
 					
 					user.save(function( err ){
 						if( err ) console.log('Error : ' + err );

@@ -347,11 +347,11 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	},
 	shradeAndStagger: function( $wrap, options ){
 
-			var d = options.duration;
-
+			var d   = options.duration;
 			var fit = options.fit || true;
+
 			if( fit ){
-				var height = $(window).height() - LJ.ui.slide_top;
+				var height = $( window ).height() - LJ.ui.slide_top;
 				$wrap.css({ height: height });
 			}
 

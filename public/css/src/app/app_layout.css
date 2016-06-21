@@ -221,7 +221,7 @@ button:hover {
 
 .settings-input__label {
     font-weight: 300;
-    font-size: 24px;
+    font-size: 20px;
     color: #454545;
     padding-left: 8px;
     margin-bottom: 4px;
@@ -247,18 +247,18 @@ button:hover {
 
 .settings-input__explanation {
     display: inline-block;
-    background: #F9F9F9;
-    padding: 10px 10px;
     border-radius: 100px;
-    align-self: flex-end;
-    margin-left: auto;
+    font-size: 13px;
+    position: relative;
+    top: -12px;
+    left: 28px;
 }
 
 .toggle {
-    height: 40px;
+    height: 30px;
     display: flex;
     flex-flow: column;
-    width: 80px;
+    width: 70px;
     background: #ccc;
     border-radius: 100px;
     margin-left: auto;
@@ -317,14 +317,13 @@ button:hover {
 }
 
 .action i {
-    margin: auto;
 }
 
 .action > div {
-    width: 40px;
-    height: 40px;
-    border: 2px solid #454545;
-    margin: 0 2px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #454545;
+    margin: 0 3px;
     cursor: pointer;
 }
 
@@ -334,14 +333,14 @@ button:hover {
 
 .action .action__validate {
     background: white;
-    border: 2px solid #1B69EC;
+    border: 1px solid #1B69EC;
     color: #1B69EC;
 }
 
 .action .action__cancel {
     background: white;
-    color: #FF6767;
-    border-color: #ff6767;
+    color: #ccc;
+    border-color: #ccc;
 }
 
 .icon-item {
@@ -356,7 +355,7 @@ button:hover {
 }
 
 .edit {
-    color: rgb(51, 175, 255);
+    color: rgb(27, 105, 236);
     position: absolute;
     right: 14px;
     top: 24px;
@@ -364,7 +363,6 @@ button:hover {
     font-size: 22px;
     cursor: pointer;
     border-radius: 100px;
-    background: rgba(51, 175, 255, 0.12);
     height: 40px;
     width: 40px;
     display: flex;
@@ -381,7 +379,7 @@ button:hover {
 .empty {
     display: none;
     flex-flow: column nowrap;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     min-height: 400px;
     width: 400px;
@@ -391,8 +389,7 @@ button:hover {
 
 .empty__icon {
     display: flex;
-    color: #33afff;
-    color: #ccc;
+    color: #eee;
     font-size: 100px;
 }
 

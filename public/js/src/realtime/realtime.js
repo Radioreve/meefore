@@ -187,11 +187,14 @@
 						'</div>'
 					].join('')) );
 
-					LJ.delay(6000).then(function(){
+					LJ.delay( 6000).then(function(){
 						LJ.ui.hideSlide({ type: 'before' });
 					});
 
 				}
+
+				// Do the same pattern for the chatinview
+				//var $ch = $('.chat-inview[data-chat-id="'+ chat_id +'"]') 
 			}
 
 

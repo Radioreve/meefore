@@ -291,7 +291,7 @@
     padding: 14px 0;
     border-radius: 4px;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 12px;
     margin: 4px 0;
 }
 .modal.--delete button.--pending {

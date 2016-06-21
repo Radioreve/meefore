@@ -72,6 +72,7 @@
 					}
 
 			    	console.log('Before created!');
+			    	
 			    	req.sent.before 		    = new_before;
 			    	req.sent.expose.before      = new_before;
 			    	req.sent.expose.before_item = before_item_host;
@@ -173,7 +174,7 @@
 			if( status == "canceled" ){
 				
 				var query = {
-					facebook_id: { $in: before.hosts }
+					facebook_id: { $in: before.hosts.concat( _.flatten( _.map( before.groups, 'members' ) )  ) }
 				};
 
 				var update = {
@@ -295,8 +296,8 @@
 					status: { $in: ['open'] }
 				}
 			}
-		])
-		.exec(function( err, response ){
+		],
+		function( err, response ){
 
 			if( err ) return handleErr( req, res, err_ns, err );
 

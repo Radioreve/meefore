@@ -1,37 +1,66 @@
 
-	var User   = require('../models/UserModel');
-	var _      = require('lodash');
-	var moment = require('moment');
-	var term   = require('terminal-kit').terminal;
+	var User       = require('../models/UserModel');
+	var eventUtils = require('../pushevents/eventUtils');
+	var _          = require('lodash');
+	var moment     = require('moment');
+	var term       = require('terminal-kit').terminal;
+	var md5        = require('blueimp-md5');
 
-	var addNotification = function( notification_id ){
+	var handleErr = function( req, res, namespace, err ){
 
-		// Build the proper notification object based on notification_id
+		var params = {
+			error   : err,
+			call_id : req.sent.call_id
+		};
+
+		eventUtils.raiseApiError( req, res, namespace, params );
+
+	};
+
+	var hash = function( notification ){
+		
+		return md5( JSON.stringify( notification ) );
+
+	}
+
+	var addNotification = function( type ){
+
+		// Build the proper notification object based on type
 		// Save in in User Model 
 		// Append it to the req.sent object for decending functions
 
+		// User just subscribed successfully
+		if( type == "inscription_success" ){
+			return addNotification__InscriptionSuccess;
+		}
+
 		// User has been accepted in a meefore
-		if( notification_id == "accepted_in" ){
-			return addNotification__AcceptedIn
+		if( type == "group_status" ){
+			return addNotification__GroupStatus;
+		}
+
+		// New friends have joined meefore
+		if( type == "new_friends" ){
+			return addNotification__NewFriends;
 		}
 
 		// Group has asked to join a user's meefore
-		if( notification_id == "group_request" ){
-			return addNotification__GroupRequest
+		if( type == "group_request" ){
+			return addNotification__GroupRequest;
 		}
 
 		// Group has asked to join a user's meefore
-		if( notification_id == "marked_as_host" ){
-			return addNotification__MarkedAsHost
+		if( type == "marked_as_host" ){
+			return addNotification__MarkedAsHost;
 		}
 
 		// Hosts have changed before statuts
-		if( notification_id == "before_status" ){
-			return addNotification__BeforeStatus
+		if( type == "before_status" ){
+			return addNotification__BeforeStatus;
 		}
 
-		if( notification_id == "item_shared" ){
-			return addNotification__ItemShared
+		if( type == "item_shared" ){
+			return addNotification__ItemShared;
 		}
 
 	};
@@ -43,43 +72,124 @@
 		} else {
 			if( raw.n == 0 ){
 				term.bold.red("Zero users have been notified, could indicate an error..\n");
+			} else {
+				term.bold.green( raw.n + " users have been notified\n");
 			}
 		}
 
 	}
+
+
+	function addNotification__InscriptionSuccess( req, res, next ){
+
+		var err_ns = "notifiying_inscription_success";
+		var type   = "inscription_success";
+		var user   = req.sent.user;
+
+		if( user.status != "new" ){
+			return next();
+		}
 		
-	function addNotification__AcceptedIn( req, res, next ){
-
-		var notification_id = "accepted_in";
-
-		var status    = req.sent.status;
-		var before_id = req.sent.before._id;
-		var members   = req.sent.members;
+		user.status = "idle";
 
 		var n = {
-			notification_id : notification_id,
-			before_id       : before_id,
-			happened_at     : new Date()
+			type 		: type,
+			happened_at : new Date(),
+			seen_at   	: null,
+			clicked_at  : null
 		};
 
-		// Only save notification if group got accepted
-		if( status == "accepted" ){
+		n.notification_id = hash( n );
 
-			var query = { 
-				facebook_id: { $in: members }
-			};
-			var update = { 
-				$push: { 'notifications': n } 
-			};
-			var options = {
-				multi: true 
-			};
+		user.notifications.push( n );
+		user.markModified('notifications');
+		user.save(function( err, user ){
 
-			User.update( query, update, options, displayError );
+			if( err ) return handleErr( req, res, err_ns, err );
 
-			// Save notification reference and go to next, dont wait for db call to finish
-			req.sent.notification = n;
 			next();
+
+		});
+
+	}
+
+
+	function addNotification__GroupStatus( req, res, next ){
+
+		var type = "accepted_in";
+
+		var status    = req.sent.status;
+		var requester = req.sent.facebook_id;
+		var before_id = req.sent.before._id;
+		var members   = req.sent.target_group.members;
+		var hosts 	  = req.sent.before.hosts;
+
+		var n = {
+			before_id   : before_id,
+			happened_at : new Date(),
+			seen_at 	: null,
+			clicked_at 	: null
+		};
+
+		n.notification_id = hash( n );
+
+		// Only notify for now when the group is being accepted
+		if( status != "accepted" ){
+			return next();
+		}
+
+		// Remove the requester, he already knows he is validating the group
+		var query_hosts = { 
+			facebook_id: { $in: _.difference( hosts, [ requester ]) }
+		};
+		var update_hosts = { 
+			$push: { 'notifications': _.extend({ type: type + '_hosts', }, n )} 
+		};
+		var query_members = { 
+			facebook_id: { $in: members }
+		};
+		var update_members = { 
+			$push: { 'notifications': _.extend({ type: type + '_members' }, n )} 
+		};
+		var options = {
+			multi: true 
+		};
+
+		User.update( query_hosts, update_hosts, options, displayError );
+		User.update( query_members, update_members, options, displayError );
+
+		// Save notification reference and go to next, dont wait for db call to finish
+		req.sent.notification = n;
+		next();
+
+	}
+
+	function addNotification__NewFriends( req, res, next ){
+
+		var new_friends = req.sent.new_friends;
+		var user 		= req.sent.user;
+
+		if( new_friends.length > 0 ){
+			
+			var n = {
+				type : "new_friends",
+				new_friends     : new_friends,
+				happened_at     : new Date(),
+				seen_at 		: null,
+				clicked_at 		: null
+			};
+
+			n.notification_id = hash( n );
+			
+			user.notifications.push( n );
+			user.markModified('notifications');
+			user.save(function( err, user ){
+
+				if( err ) return handleErr( req, res, err_ns, err );
+
+				next();
+
+			});
 
 		} else {
 			next();
@@ -90,29 +200,44 @@
 
 	function addNotification__GroupRequest( req, res, next ){
 
-		var notification_id = "group_request";
+		var type = "group_request";
 
-		var before_id = req.sent.before._id;
-		var members   = req.sent.members;
+		var before_id   = req.sent.before._id;
+		var hosts       = req.sent.before.hosts;
+		var members     = req.sent.members;
+		var main_member = req.sent.facebook_id;
 
 		var n = {
-			notification_id : notification_id,
 			members 	    : members,
+			main_member 	: main_member,
+			hosts 			: hosts,
 			before_id   	: before_id,
-			happened_at		: new Date()
+			happened_at		: new Date(),
+			seen_at 		: null,
+			clicked_at 		: null
 		};
 
-		var query = { 
-			facebook_id: { $in: members }
+		n.notification_id = hash( n );
+
+		var query_hosts = { 
+			facebook_id: { $in: hosts }
 		};
-		var update = { 
-			$push: { 'notifications': n } 
+		var update_hosts = { 
+			$push: { 'notifications': _.extend({ type: type + '_hosts', }, n )} 
+		};
+		// Remove the main_member, he already knows he is requesting something
+		var query_members = { 
+			facebook_id: { $in: _.difference( members, [ main_member ]) }
+		};
+		var update_members = { 
+			$push: { 'notifications': _.extend({ type: type + '_members' }, n )} 
 		};
 		var options = {
 			multi: true 
 		};
 
-		User.update( query, update, options, displayError );
+		User.update( query_hosts, update_hosts, options, displayError );
+		User.update( query_members, update_members, options, displayError );
 
 		// Save notification reference and go to next, dont wait for db call to finish
 		req.sent.notification = n;
@@ -122,7 +247,7 @@
 
 	function addNotification__MarkedAsHost( req, res, next ){
 
-		var notification_id = "marked_as_host";
+		var type = "marked_as_host";
 
 		var facebook_id = req.sent.facebook_id;
 		var before      = req.sent.before;
@@ -130,14 +255,20 @@
 		var before_id = before._id;
 		var main_host = before.main_host;
 		var address   = before.address.place_name;
+		var begins_at = before.begins_at;
 
 		var n = {
-			notification_id : notification_id,
+			type : type,
 			before_id	    : before_id,
 			main_host       : main_host,
 			address 		: address,
-			happened_at     : new Date()
+			begins_at  	    : begins_at,
+			happened_at     : new Date(),
+			seen_at 		: null,
+			clicked_at 		: null
 		};
+
+		n.notification_id = hash( n );
 
 		// Only push notification to 'other' hosts
 		var facebook_ids = _.difference( before.hosts, [ facebook_id ] );
@@ -163,7 +294,7 @@
 
 	function addNotification__BeforeStatus( req, res, next ){
 
-		var notification_id = "before_status";
+		var type = "before_status";
 		
 		var facebook_id = req.sent.facebook_id;
 		var before      = req.sent.before;
@@ -175,13 +306,18 @@
 			return next();
 		}
 
+
 		var n = {
-			notification_id : notification_id,
+			type : "before_canceled",
 			before_id	    : before_id,
 			canceled_by     : facebook_id,
 			address 		: before.address.place_name,
+			seen_at 		: null,
+			clicked_at 		: null,
 			happened_at     : new Date()
 		};
+
+		n.notification_id = hash( n );
 
 		// Notify every hosts and every members of every group, except the sender
 		var hosts        = before.hosts;
@@ -191,7 +327,6 @@
 		var query = { 
 			facebook_id: { $in: facebook_ids }
 		};
-
 		var update = { 
 			$push: { 'notifications': n } 
 		};
@@ -209,18 +344,22 @@
 
 	function addNotification__ItemShared( req, res, next  ){
 
-		var notification_id = "item_shared";
+		var type = "item_shared";
 
 		var sh           = req.sent.shared_by_object;
 		var facebook_ids = req.sent.shared_with_new;
 
 		var n = {
-			notification_id  : notification_id,
+			type  : type,
 			target_type      : sh.target_type,
 			target_id 		 : sh.target_id,
 			shared_by 		 : sh.shared_by,
-			happened_at  	 : new Date()
+			happened_at  	 : new Date(),
+			seen_at 		: null,
+			clicked_at 		: null
 		};
+
+		n.notification_id = hash( n );
 
 		var query = { 
 			facebook_id: { $in: facebook_ids }

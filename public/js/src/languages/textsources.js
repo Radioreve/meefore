@@ -52,15 +52,15 @@
 			"fr": "Aujourd'hui",
 			"us": "Today"
 		},
-		"tomorrow": {
+		tomorrow: {
 			"fr": "Demain",
 			"us": "Tomorrow"
 		},
-		"yesterday": {
+		yesterday: {
 			"fr": "Hier",
 			"us": "Yesterday"
 		},
-		"before_date_hour": {
+		before_date_hour: {
 			"fr": function( m ){
 				return [ m.format('HH'), m.format('mm') ].join(':');
 			},
@@ -68,7 +68,7 @@
 				return [ m.format('HH'), m.format('mm') ].join(':');
 			}
 		},
-		"chatrow_date_hour": {
+		chatrow_date_hour: {
 			"fr": function( m ){
 				return [ m.format('HH'), m.format('mm') ].join(':');
 			},
@@ -76,14 +76,14 @@
 				return [ m.format('HH'), m.format('mm') ].join(':');
 			}
 		},
-		"before_date_day": {
+		before_date_day: {
 			"fr": function( m ){
 
 				if( m.dayOfYear() == moment().dayOfYear() ){
 					return LJ.text_source['today']["fr"];
 				}
 
-				if(  m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
+				if( m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
 					return LJ.text_source['tomorrow']["fr"];
 				}
 
@@ -112,7 +112,7 @@
 				return [ d, n, m ].join(' ');
 			}
 		},
-		"chatrow_date_day": {
+		chatrow_date_day: {
 			"fr": function( m ){
 
 				if( m.dayOfYear() == moment().dayOfYear() ){
@@ -146,7 +146,7 @@
 				return [ n, m ].join(' ') + ', ';
 			}
 		},
-		"before_date": {
+		before_date: {
 			"fr": function( m ){
 
 				var day  = LJ.text_source["before_date_day"]["fr"]( m );
@@ -181,6 +181,10 @@
 				return [ day, hour ].join('');
 
 			}
+		},
+		menurow_date: {
+			"fr": function( m ){ return LJ.text_source.before_date["fr"]; },
+			"us": function( m ){ return LJ.text_source.before_date["us"]; }
 		},
 		h_today: {
 			"fr": "aujourd'hui, à %hh%m",
@@ -235,8 +239,12 @@
 			"us": "Invite code"
 		},
 		menu_subsection_notifications: {
-			"fr": "Emails et notifications",
-			"us": "Emails and notifications"
+			"fr": "Notifications",
+			"us": "Notifications"
+		},
+		menu_subsection_emails: {
+			"fr": "Emails",
+			"us": "Emails"
 		},
 		menu_subsection_ux: {
 			"fr": "Expérience d'utilisation",
@@ -246,9 +254,9 @@
 			"fr": "Partagés",
 			"us": "Shared"
 		},
-		menu_meepass: {
-			"fr": "Meepass",
-			"us": "Meepass"
+		menu_cheers: {
+			"fr": "Cheers",
+			"us": "Cheers"
 		},
 		menu_friends: {
 			"fr": "Mes amis",
@@ -323,7 +331,7 @@
 			"us": "Where do you get out these days ? Meefore works everywhere"
 		},
 		p_ideal_night_explanation: {
-			"fr": "Lâchez-vous, pas de retenue ici.",
+			"fr": "Sans alcool, la fête est plus...",
 			"us": "Knock yourself out"
 		},
 		p_friends_title: {
@@ -1166,21 +1174,29 @@
 			"fr": "Faites connaissance dès maintenant",
 			"us": "Get to know each other now"
 		},
-		n_group_request_text: {
+		n_group_request_hosts_text: {
 			"fr": "Cheers reçu",
 			"us": "Cheers received"
 		},
-		n_group_request_subtext: {
+		n_group_request_hosts_subtext: {
 			"fr": "Un group a montré un intérêt pour votre before",
-			"us": "A group seem to be interested by your pregame"
+			"us": "A group seems to be interested by your pregame"
+		},
+		n_group_request_members_text: {
+			"fr": "Cheers envoyé",
+			"us": "Cheers sent"
+		},
+		n_group_request_members_subtext: {
+			"fr": "%name a envoyé un Cheers avec vous",
+			"us": "%name has sent a Cheers with you"
 		},
 		n_marked_as_host_text: {
-			"fr": "Before %address",
-			"us": "Pregame %address"
+			"fr": "Marqué coorganisateur par %name",
+			"us": "Marked as co-host by %name"
 		},
 		n_marked_as_host_subtext: {
-			"fr": "%name vous a marqué coorganisateur de son before",
-			"us": "%name has marked you cohost of his pregame"
+			"fr": "%address - %date",
+			"us": "%address - %date"
 		},
 		n_fill_profile_text: {
 			"fr": "Complétez votre profil",
@@ -1209,6 +1225,10 @@
 			"fr": "Bienvenue sur Meefore",
 			"us": "Welcome on Meefore"
 		},
+		n_inscription_success_subtext: {
+			"fr": "Faites des rencontres avant d'aller en soirée",
+			"us": "Meet new people before going out"
+		},
 		n_before_canceled_text: {
 			"fr": "Before annulé",
 			"us": "Pregame canceled"
@@ -1224,10 +1244,6 @@
 		n_item_shared_subtext: {
 			"fr": "%name vient de vous partager un %type",
 			"us": "%name just shared a %type with you"
-		},
-		n_inscription_success_subtext: {
-			"fr": "Complétez votre profile et créez ou participer à votre premier meefore dès aujourd'hui!",
-			"us": "Complete your profile and create or participate at your first meefore today!"
 		},
 		n_check_email_text: {
 			"fr": "Votre addresse email est-elle à jour ?",
@@ -1257,13 +1273,17 @@
 			"fr": "Sélectionner la photo que vous souhaitez importer à partir de Facebook",
 			"en ": "Select the photo you wish to import from Facebook"
 		},
-		segment_meepass_received: {
+		segment_cheers_received: {
 			"fr": "Reçus",
 			"us": "Received"
 		},
-		segment_meepass_sent: {
+		segment_cheers_sent: {
 			"fr": "Envoyés",
 			"us": "Sent"
+		},
+		cheers_requested_with: {
+			"fr": "Avec %names",
+			"us": "With %names"
 		},
 		shared_by_item_subtitle: {
 			"fr": "%type partagé par %name",
@@ -1277,15 +1297,15 @@
 			"fr": "Invitez plus d'amis",
 			"us": "Invite more friends"
 		},
-		meepass_item_title_sent: {
-			"fr": "Envoyé à %name",
-			"us": "Sent to %name"
+		cheers_item_title_sent: {
+			"fr": "%groupname",
+			"us": "%groupname"
 		},
-		meepass_item_title_received: {
-			"fr": "Reçu de %name",
-			"us": "Received from %name"
+		cheers_item_title_received: {
+			"fr": "%groupname",
+			"us": "%groupname"
 		},
-		meepass_item_subtitle: {
+		cheers_item_subtitle: {
 			"fr": "Pour un before le %date",
 			"us": "The pregame starts the %date"
 		},
@@ -1337,9 +1357,9 @@
 			"fr": "Emails",
 			"us": "Emails"
 		},
-		settings_part_title_notifications: {
-			"fr": "Notifications",
-			"us": "Notifications"
+		settings_part_title_notifications_email: {
+			"fr": "Notifications par email",
+			"us": "Email notifications"
 		},
 		settings_emails_accepted_in_label: {
 			"fr": "Nouveau match",
@@ -1409,21 +1429,21 @@
 			"fr": "Partagez des profils ou des before avec vos amis pour pouvoir vous organiser plus rapidement.",
 			"us": "Share profiles or pregame with your friends to help you organize your nights."
 		},
-		empty_meepass_sent_title: {
-			"fr": "Aucun meepass",
-			"us": "No meepass"
+		empty_cheers_sent_title: {
+			"fr": "Aucun Cheers",
+			"us": "No Cheers"
 		},
-		empty_meepass_sent_subtitle: {
-			"fr": "Envoyez des Meepass aux personnes que vous souhaitez inviter à vos prochains before.",
-			"us": "Sent Meepass to the people you wish to see at your next pregame."
+		empty_cheers_sent_subtitle: {
+			"fr": "Envoyez des Cheers aux personnes que vous souhaitez inviter à vos prochains before.",
+			"us": "Sent Cheers to the people you wish to see at your next pregame."
 		},
-		empty_meepass_received_title: {
-			"fr": "Aucun meepass",
-			"us": "No meepass"
+		empty_cheers_received_title: {
+			"fr": "Aucun Cheers",
+			"us": "No Cheers"
 		},
-		empty_meepass_received_subtitle: {
-			"fr": "Les Meepass sont envoyés par les organisateur pour vous inviter à leur prochain before.",
-			"us": "Meepass are sent by hosts to invite you to their next pregame."
+		empty_cheers_received_subtitle: {
+			"fr": "Les Cheers sont envoyés par les organisateur pour vous inviter à leur prochain before.",
+			"us": "Cheers are sent by hosts to invite you to their next pregame."
 		},
 		empty_friends_title: {
 			"fr": "Pas encore d'amis",

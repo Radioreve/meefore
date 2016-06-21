@@ -4,40 +4,43 @@
 		fetched_users : [],
 		fetched_users_full: [],
 
-		app_token_url 			  	 : '/auth/facebook',
-		me_url		  			  	 : '/api/v1/users/:user_id/self',
-		me_friends				 	 : '/api/v1/users/:user_id/friends',
-		invite_code_url 			 : '/api/v1/users/:user_id/invite-code',
-		fetch_shared_url		  	 : '/api/v1/users/:user_id/shared',
-		fetch_meepass_url 		  	 : '/api/v1/users/:user_id/meepass',
-		fetch_user_url 	   	  	  	 : '/api/v1/users/:user_id/core',
-		fetch_user_profile_url    	 : '/api/v1/users/:user_id/full',
-		fetch_more_channels_url 	 : '/api/v1/users/:user_id/channels',
-		update_profile_url  	  	 : '/api/v1/users/:user_id/update-profile',
-		upload_picture_dt		  	 : '/api/v1/users/:user_id/update-picture-client',
-		upload_picture_fb		  	 : '/api/v1/users/:user_id/update-picture-url',
-		update_pictures_url		  	 : '/api/v1/users/:user_id/update-pictures',
-		fetch_cloudinary_tags_url 	 : '/api/v1/users/:user_id/cloudinary-tags',
-		update_settings_ux_url       : '/api/v1/users/:user_id/update-settings-ux',
-		update_settings_contact_url  : '/api/v1/users/:user_id/update-settings-contact',
-		update_settings_alerts_url 	 : '/api/v1/users/:user_id/update-settings-alerts',
-		update_settings_mailing_url  : '/api/v1/users/:user_id/update-settings-mailinglists',
-		mailchimp_status_url    	 : '/api/v1/users/:user_id/mailchimp-status',
-		delete_my_account_url        : '/api/v1/users/:user_id/delete',
-		get_online_users_url 		 : '/api/v1/users/online',
-		fetch_more_users_url 		 : '/api/v1/users.more',
-		share_url 					 : '/api/v1/share',
-		distinct_countries_url 		 : '/api/v1/users.countries',
-		create_before_url 			 : '/api/v1/befores',
-		fetch_nearest_before_url     : '/api/v1/befores.nearest',
-		fetch_before_url 		 	 : '/api/v1/befores/:before_id',
-		change_before_status_url 	 : '/api/v1/befores/:before_id/status',
-		before_request_url 			 : '/api/v1/befores/:before_id/request',
-		send_chat_message_url 	     : '/api/v1/chats/:chat_id',
-		fetch_chat_history_url 	 	 : '/api/v1/chats/:chat_id',
-		change_group_status_url		 : '/api/v1/befores/:before_id/groups/:group_id/status',
-		update_chat_seen_by_url 	 : '/api/v1/chats/:chat_id/seen_by',
-		update_before_seen_at_url 	 : '/api/v1/befores/:before_id/seen_at',
+		app_token_url 			  	 	 	: '/auth/facebook',
+		me_url		  			  	 	 	: '/api/v1/users/:user_id/self',
+		me_friends				 	 	 	: '/api/v1/users/:user_id/friends',
+		invite_code_url 			 	 	: '/api/v1/users/:user_id/invite-code',
+		fetch_shared_url		  	 	 	: '/api/v1/users/:user_id/shared',
+		fetch_meepass_url 		  	 	 	: '/api/v1/users/:user_id/meepass',
+		fetch_cheers_url 		  	 	 	: '/api/v1/users/:user_id/cheers',
+		fetch_user_url 	   	  	  	 	 	: '/api/v1/users/:user_id/core',
+		fetch_user_profile_url    	 	 	: '/api/v1/users/:user_id/full',
+		fetch_more_channels_url 	 	 	: '/api/v1/users/:user_id/channels',
+		update_profile_url  	  	 	 	: '/api/v1/users/:user_id/update-profile',
+		upload_picture_dt		  	 	 	: '/api/v1/users/:user_id/update-picture-client',
+		upload_picture_fb		  	 	 	: '/api/v1/users/:user_id/update-picture-url',
+		update_pictures_url		  	 	 	: '/api/v1/users/:user_id/update-pictures',
+		fetch_cloudinary_tags_url 	 	 	: '/api/v1/users/:user_id/cloudinary-tags',
+		update_settings_ux_url       	 	: '/api/v1/users/:user_id/update-settings-ux',
+		update_settings_contact_url  	 	: '/api/v1/users/:user_id/update-settings-contact',
+		update_settings_alerts_url 	 	 	: '/api/v1/users/:user_id/update-settings-alerts',
+		update_settings_mailing_url  	 	: '/api/v1/users/:user_id/update-settings-mailinglists',
+		mailchimp_status_url    	 	 	: '/api/v1/users/:user_id/mailchimp-status',
+		delete_my_account_url        	 	: '/api/v1/users/:user_id/delete',
+		get_online_users_url 		 	 	: '/api/v1/users/online',
+		fetch_more_users_url 		 	 	: '/api/v1/users.more',
+		share_url 					 	 	: '/api/v1/share',
+		distinct_countries_url 		 	 	: '/api/v1/users.countries',
+		create_before_url 			 	 	: '/api/v1/befores',
+		fetch_nearest_before_url     	 	: '/api/v1/befores.nearest',
+		fetch_before_url 		 	 	 	: '/api/v1/befores/:before_id',
+		change_before_status_url 	 	 	: '/api/v1/befores/:before_id/status',
+		before_request_url 			 	 	: '/api/v1/befores/:before_id/request',
+		send_chat_message_url 	     	 	: '/api/v1/chats/:chat_id',
+		fetch_chat_history_url 	 	 	 	: '/api/v1/chats/:chat_id',
+		change_group_status_url		 	 	: '/api/v1/befores/:before_id/groups/:group_id/status',
+		update_chat_seen_by_url 	 	 	: '/api/v1/chats/:chat_id/seen_by',
+		update_before_seen_at_url 	 	 	: '/api/v1/befores/:before_id/seen_at',
+		update_notifications_seen_at_url 	: '/api/v1/users/:user_id/notifications/seen_at',
+		update_notifications_clicked_at_url : '/api/v1/users/:user_id/notifications/clicked_at',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -49,6 +52,7 @@
 		ajax: function( url, method, data ){	
 			return LJ.promise(function( resolve, reject ){
 
+				LJ.log('['+method+'] ' + url);
 				data = data || {};
 				if( LJ.user && LJ.user.facebook_id ){
 					data.facebook_id = LJ.user.facebook_id;
@@ -227,15 +231,29 @@
 					  });
 			});
 		},
+		fetchMeCheers: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.get( LJ.api.fetch_cheers_url.replace(':user_id', LJ.user.facebook_id) )
+					  .then(function( exposed ){
+					  		return resolve( exposed );
+					  }, function( err ){
+					  		return reject( err );
+					  });
+			});
+		},
 		fetchMeFriends: function(){
 
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.api.get( LJ.api.me_friends.replace(':user_id', LJ.user.facebook_id ))
 					  .then(function( exposed ){
-					  	return resolve( exposed.friends );
+					  	return resolve( exposed );
+
 					  }, function( err ){
 					  	return reject( err );
+
 					  });
 
 			});
@@ -786,6 +804,36 @@
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.api.post( LJ.api.update_before_seen_at_url.replace( ':before_id', before_id ) )
+					.then(function( exposed ){
+						return resolve( exposed );
+
+					}, function( err ){
+						return reject( err );
+
+					});
+
+			});
+		},
+		updateNotificationsSeenAt: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.post( LJ.api.update_notifications_seen_at_url.replace( ':user_id', LJ.user.facebook_id ) )
+					.then(function( exposed ){
+						return resolve( exposed );
+
+					}, function( err ){
+						return reject( err );
+
+					});
+
+			});
+		},
+		updateNotificationClickedAt: function( notification_id ){
+			return LJ.promise(function( resolve, reject ){
+
+				var data = { notification_id: notification_id };
+				
+				LJ.api.post( LJ.api.update_notifications_clicked_at_url.replace( ':user_id', LJ.user.facebook_id ), data )
 					.then(function( exposed ){
 						return resolve( exposed );
 

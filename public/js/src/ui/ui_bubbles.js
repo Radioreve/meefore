@@ -1,6 +1,6 @@
 
 	window.LJ.ui = _.merge( window.LJ.ui || {}, {
-			
+		
 		max_bubble: 9,
 
 		formatElem: function( elem ){
@@ -9,8 +9,8 @@
 			if( elem instanceof jQuery ){
 				$elem = elem;
 			}
-			if( typeof elem == 'string' && $(elem).length == 1 ){
-				$elem = $(elem);
+			if( typeof elem == 'string' && $( elem ).length == 1 ){
+				$elem = $( elem );
 			}
 
 			if( !$elem ){
@@ -52,12 +52,13 @@
 			var $elem = LJ.ui.formatElem( elem );
 			if( !$elem ) return;
 
-			var $bubble = $elem.find('.bubble');
+			var $bubble      = $elem.find('.bubble');
 			var $bubble_text = $bubble.find('.bubble__number');
+
 			// Bubble element doesnt exist, create it and add n bubbles
 			if( $bubble_text.length != 1 ){
 				if( already_added ){
-					return LJ.wlog('Warning: infinite boucle !!');
+					return LJ.wlog('Unable to setup bubble, element probably didnt exist');
 				}
 				LJ.ui.addBubble( elem );
 				if( n != 0 && !n ){
@@ -78,7 +79,6 @@
 				$bubble.hide();
 				$bubble_text.text(0);
 				return;
-				
 			}
 
 			if( n >= LJ.ui.max_bubble ){

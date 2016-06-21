@@ -51,6 +51,7 @@
     height: 54px;
     text-align: center;
     position: relative;
+    outline: none;
 }
 
 .app__menu-item.--active {
