@@ -18,7 +18,7 @@
 
 			var user    = req.sent.user;
 			var chat_id = req.sent.chat_id;
-			var channel = user.getChannel( chat_id );
+			var channel = user.getChatChannel( chat_id );
 
 			if( !channel ){
 				req.app_errors = req.app_errors.concat([{

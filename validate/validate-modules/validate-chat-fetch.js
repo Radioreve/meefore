@@ -47,7 +47,7 @@
 				});
 			}
 
-			var channel = user.getChannel( chat_id );
+			var channel = user.getChatChannel( chat_id );
 			if( !channel ){
 				return callback({
 					err_id    : 'ghost_channel',

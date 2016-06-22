@@ -37,8 +37,7 @@
 
 	function checkWithDatabase( req, callback ){
 
-		var before_id = req.sent.before_id,
-			group_id  = req.sent.group_id;
+		var before_id = req.sent.before_id;
 
 		Before.findById( before_id, function( err, bfr ){
 

@@ -6,15 +6,14 @@
 }
 
 .notifications-panel {
-    width: 800px;
-    height: 340px;
+    width: 540px;
+    height: 280px;
     position: fixed;
     background: white;
     color: #191919;
     top: 59px;
     box-shadow: 0px 2px 10px #B3B3B3;
-    left: 50%;
-    transform: translate(-50%, 0);
+    left: 150px;
     z-index: 300;
     display: none;
 }
@@ -49,12 +48,12 @@
 }
 
 .notification--header {
-    height: 60px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'creamy';
-    box-shadow: 0px 12px 10px -10px rgb(232, 232, 232);
+    /* box-shadow: 0px 12px 10px -10px rgb(232, 232, 232); */
     border-bottom: 1px solid #eee;
     color: #454545!important;
     width: 100%;
@@ -149,21 +148,21 @@ Whispereen  : #58c170
     margin-left: 20px;
 }
 
-.notification .notification-message__text {
-}
+.notification .notification-message__text {font-weight: 600;}
 
 .notification .notification-message__subtext {
     font-size: 10px;
     margin-top: 4px;
     font-family: 'Open sans';
-    color: #919191;
+    color: #454545;
 }
 
 .notification .notification__date {
     font-size: 11px;
     margin-left: auto;
     font-family: 'Open sans';
-    color: #919191;
+    color: #454545;
+    font-weight: 600;
 }
 
 .notification .notification__icon {
@@ -171,7 +170,7 @@ Whispereen  : #58c170
     background: none;
     height: 40px;
     width: 40px;
-    font-size: 22px;
+    font-size: 30px;
 }
 
 .notification.--seen .notification-message__text {color: #454545;}
@@ -185,12 +184,15 @@ Whispereen  : #58c170
     color: #919191;
 }
 
-.notification.--clicked .notification-message__text {color: #919191;}
+.notification.--clicked .notification-message__text {
+    color: #919191;
+    font-weight: 500;
+}
 
 .notification.--clicked .notification-message__subtext {
-    color: #ccc;
+    color: #919191;
 }
-.notification.--clicked .notification__date {color: #ccc;}
+.notification.--clicked .notification__date {color: #919191;}
 .notification.--clicked .notification__icon {
     color: #ccc;
 }
@@ -230,5 +232,6 @@ Whispereen  : #58c170
 @media (max-width: 1000px ){
     .notifications-panel {
         width: 100%;
+        left: 0;
     }
 }

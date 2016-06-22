@@ -308,83 +308,6 @@
 
 	};
 
-	var updateBeforeSeenAt = function( req, res, next ){
-
-		var err_ns = "updating_before_seen_at";
-
-		var facebook_id = req.sent.facebook_id;
-		var before_id 	= req.sent.before_id;
-
-		console.log(before_id);
-		User.findOneAndUpdate(
-		{
-			'facebook_id'       : facebook_id, 
-			'befores.before_id' : mongoose.Types.ObjectId( before_id )
-		},
-		{
-			'befores.$.seen_at' : new Date()
-		},
-		{
-			new: true
-		},
-		function( err, user ){
-
-			if( err ) return handleErr( req, res, err_ns, err );
-
-			if( !user ){
-				return handleErr( req, res, err_ns, {
-					err_id      : "ghost_user",
-					facebook_id : facebook_id,
-					before_id   : before_id
-				});
-			}
-
-			req.sent.expose.user = user;
-			next();
-
-		});
-
-	};
-
-	var resetBeforeSeenAt = function( req, res, next ){
-
-		var err_ns = "reseting_before_seen_at";
-
-		var facebook_ids = req.sent.target_group.members
-		var before_id    = req.sent.before_id;
-
-		User.update(
-		{
-			'facebook_id': { $in: facebook_ids },
-			'befores.before_id': mongoose.Types.ObjectId( before_id )
-		},
-		{
-			'befores.$.seen_at' : null
-		},
-		{
-			multi: true
-		},
-		function( err, raw ){
-
-			if( err ) return handleErr( req, res, err_ns, err );
-
-			if( raw.n != facebook_ids.length ){
-				return handleErr( req, res, err_ns, {
-					err_id        : "ghost_users",
-					message       : 'The number of users updated didnt match what it was supposed to',
-					before_id     : before_id,
-					fb_ids_length : facebook_ids.length,
-					raw_n 		  : raw.n
-				});
-			}
-
-			req.sent.expose.raw = raw;
-			next();
-
-		});
-
-	};
-
 
 	module.exports = {
 		createBefore        : createBefore,
@@ -394,7 +317,5 @@
 		fetchBeforeById     : fetchBeforeById,
 		updateBefore        : updateBefore,
 		fetchGroups         : fetchGroups,
-		fetchNearestBefores : fetchNearestBefores,
-		updateBeforeSeenAt  : updateBeforeSeenAt,
-		resetBeforeSeenAt   : resetBeforeSeenAt
+		fetchNearestBefores : fetchNearestBefores
 	};

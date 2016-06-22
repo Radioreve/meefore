@@ -69,13 +69,13 @@
 
 				var $n = $w.find('.notification[data-notification-id="'+ n.notification_id +'"]');
 
-				if( n.seen_at ){
-					$n.addClass('--seen');
-				}
-
-				// if( n.clicked_at ){
-				// 	$n.addClass('--clicked');
+				// if( n.seen_at ){
+				// 	$n.addClass('--seen');
 				// }
+
+				if( n.clicked_at ){
+					$n.addClass('--clicked');
+				}
 
 			});
 

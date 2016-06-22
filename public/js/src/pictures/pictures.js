@@ -384,6 +384,7 @@
 
 				var part = [ "--left", "--right", "--down" ][ i ];
 				if( !part ) return; // Support only 3 images max
+				if( pictures.length == 1 ) part = "--center"; // Fallback to plain normal img 
 
 				rosace_imgs_html.push([
 

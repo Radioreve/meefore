@@ -163,22 +163,26 @@ UserSchema.methods.findBeforesByPresence = function( callback ){
 
 UserSchema.methods.getChannel = function( channel_name ){
 
-  var target_channel = null;
-  this.channels.forEach(function( channel_item ){
+  return _.find( this.channels, function( chan ){
+    return chan.name == channel_name;
+  });
+}
 
-    [ "name", "channel_all", "channel_team" ].forEach(function( chan_key ){
+UserSchema.methods.getChatChannel = function( chat_id ){
 
-      if( channel_item[ chan_key ] == channel_name ){
-        target_channel = channel_item;
-      }
-
-    });
-
+  return _.find( this.channels, function( chan ){
+    return chan.chat_id == chat_id;
   });
 
-  return target_channel;
-
 };
+
+UserSchema.methods.getChatChannels = function(){
+
+  return  _.map( _.filter( this.channels, function( chan ){
+    return chan.chat_id;
+  }), 'chat_id' );
+
+}
 
 UserSchema.methods.getPrivateChannel = function(){
 

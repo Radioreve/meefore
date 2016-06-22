@@ -40,7 +40,7 @@
 		},
 		loaderifyChatInview: function( chat_id ){
 			
-			var $chatinview = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $chatinview = LJ.chat.getChatInview( chat_id );
 			var $mwrap      = $chatinview.find('.chat-inview-messages');
 			var $messages   = $chatinview.find('.chat-inview-message');
 			var $loader     = $( LJ.static.renderStaticImage("chat_loader") );
@@ -57,7 +57,7 @@
 		},
 		deloaderifyChatInview: function( chat_id, callback ){
 
-			var $chatinview = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $chatinview = LJ.chat.getChatInview( chat_id );
 			var $messages   = $chatinview.find('.chat-inview-message');
 			var $loader     = $chatinview.find('.chat__loader');
 
@@ -79,19 +79,23 @@
 		},
 		activateChat: function( chat_id ){
 			
-			var group_id = LJ.chat.getGroupIdByChatId( chat_id );
-			
-			LJ.chat.deactivateChats(); // Never have more than one chat with the active status
+			// Never have more than one chat with the active status
+			LJ.chat.deactivateChats(); 
 			LJ.chat.getChatById( chat_id ).ui_status = "active";
-			LJ.chat.viewifyChatInview( chat_id ); // Always "seen" all messages of a chat that gets active
-			LJ.chat.refreshChatInviewBubbles( group_id );
+
+			 // Add user's facebook_id to m.seen_by for all messages of a chat that gets active
+			LJ.chat.viewifyChatInview( chat_id );
+
 			LJ.chat.refreshChatIconBubble();
+			LJ.chat.refreshChatRowBubbles( chat_id );
+			LJ.chat.refreshChatInviewBubbles( chat_id );
+
 			LJ.chat.focusOnInput( chat_id );
 			
 		},
 		focusOnInput: function( chat_id ){
 
-			$('.chat-inview-item[data-chat-id="'+ chat_id +'"]').find('input').focus();
+			LJ.chat.getChatInview( chat_id ).find('input').focus();
 
 		},
 		deactivateChats: function(){
@@ -103,7 +107,9 @@
 		},
 		switchChatInview: function( chat_id ){
 
-			var $inview_target  = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			return LJ.ilog('Not switching chat (waiting for refactor)');
+
+			var $inview_target  = LJ.chat.getChatInview( chat_id );
 			var $inview_current = $inview_target.siblings('.chat-inview-item');
 					
 			var $groupname_target  = $('.js-chat-groupname[data-chat-id="'+ chat_id +'"]');
@@ -116,24 +122,15 @@
 			$inview_target.addClass('--active').show();
 
 			$groupname_current.removeClass('--active').hide();
-
-			 				  // .velocity('shradeOut', {
-			 				  // 	duration: LJ.chat.groupname_hide_duration
-			 				  // });
-
 			$groupname_target.addClass('--active').show();
 			
-			 				 // .velocity('shradeIn', {
-			 				 // 	duration : LJ.chat.groupname_show_duration,
-			 				 // 	delay    : LJ.chat.groupname_hide_duration
-			 				 // });
 			
 			LJ.chat.activateChat( chat_id );
 			LJ.chat.refreshChatJsp( chat_id );
 			LJ.chat.tallifyAllChatLines( chat_id );
 
 		},
-		showChatInview: function( group_id ){
+		showChatInview: function( chat_id ){
 
 			var $chat_rows        = $('.chat-row-wrap');
 			var $chat_inview_wrap = $('.chat-inview-wrap');
@@ -143,8 +140,7 @@
 
 			$chat_inview_wrap.find('.chat-inview').removeClass('--active');
 			
-			var $t = $chat_inview_wrap.find('.chat-inview[data-group-id="'+ group_id +'"]');
-			var chat_id = $t.find('.chat-inview-item.--active').attr('data-chat-id');
+			var $t = $chat_inview_wrap.find('.chat-inview[data-chat-id="'+ chat_id +'"]');
 
 			$t.addClass('--active').show();
 		
@@ -181,27 +177,7 @@
 			LJ.profile_user.showUserProfile( facebook_id );
 
 		},
-		renderChatInview__HostsEmpty: function( group_name ){
-
-			return LJ.chat.renderChatEmpty({
-				type 	 : 'hosts',
-				icon 	 : '<i class="icon icon-chat-bubble-duo"></i>',
-				title 	 : '<span data-lid="chat_empty_title_inview_hosts"></span>',
-				subtitle : '<span data-lid="chat_empty_subtitle_inview_hosts" data-lpm="'+ group_name +'"></span>'
-			});
-
-		},
-		renderChatInview__PendingEmpty: function(){
-
-			return LJ.chat.renderChatEmpty({
-				type 	 : 'pending',
-				icon 	 : '<i class="icon icon-pending"></i>',
-				title 	 : '<span data-lid="chat_empty_title_inview_pending"></span>',
-				subtitle : '<span data-lid="chat_empty_subtitle_inview_pending"</span>'
-			});
-
-		},
-		renderChatInview__AcceptedEmpty: function( group_name ){
+		renderChatInview__AllEmpty: function( group_name ){
 
 			return LJ.chat.renderChatEmpty({
 				type 	 : 'accepted',
@@ -223,17 +199,14 @@
 		},
 		handleSendMessage: function( e ){
 
-			var $s = $(this);
-
+			var $s      = $( this );
 			var keyCode = e.keyCode || e.which;
+
             if( keyCode === 13 ){
 
                 var $w = $s.closest('.chat-inview-item');
-                var $p = $s.closest('.chat-inview');
 
-				var group_id  = $w.attr('data-group-id');
 				var chat_id   = $w.attr('data-chat-id');
-				var before_id = $p.attr('data-before-id');
 				var message   = $s.val();
 
 				if( message.length == 0 ) return;
@@ -241,10 +214,8 @@
             	$s.val('');
 
                 LJ.chat.sendMessage({
-                	group_id  : group_id,
-                	before_id : before_id,
-                	chat_id   : chat_id,
-                	message   : message
+                	chat_id  : chat_id,
+                	message  : message
                 });
 
             }
@@ -299,7 +270,7 @@
 		},
 		popSeenBy: function( chat_id ){
 
-			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w = LJ.chat.getChatInview( chat_id );
 			var $e = $w.find('.chat-inview-seen-by');
 			var $b = _.clone( $e );
 			
@@ -310,7 +281,7 @@
 		},	
 		pushBackSeenBy: function( chat_id, $seen_by ){
 
-			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w = LJ.chat.getChatInview( chat_id );
 
 			$seen_by.insertAfter( $w.find('.chat-inview-message').last() )
 			  
@@ -339,9 +310,9 @@
 		},
 		tallifyAllChatLines: function( chat_id ){
 
-			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w = LJ.chat.getChatInview( chat_id );
 			$w.find('.chat-inview-message__bubble').each(function( i, el ){
-				LJ.chat.tallifyChatLine( $(el).attr('data-call-id') );
+				LJ.chat.tallifyChatLine( $( el ).attr('data-call-id') );
 			});
 
 		},
@@ -356,7 +327,7 @@
 		},
 		refetchChatHistory: function( chat_id ){
 
-			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w = LJ.chat.getChatInview( chat_id );
 			var $g = $w.find('.chat-inview-message').first();
 
 			var sent_at = $w.find('.chat-inview-message__bubble:not(.--pending)').first().attr('data-sent-at');
@@ -404,12 +375,12 @@
 		},
 		allMessagesFetched: function( chat_id ){
 
-			var $w      = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w      = LJ.chat.getChatInview( chat_id );
 			var call_id = $w.find('.chat-inview-message__bubble').first().attr('data-call-id');
 
 			LJ.chat.deloaderifyChatInview( chat_id );
 			LJ.chat.horodateChatLine( call_id );
-			$('.chat-inview-item[data-chat-id="'+ chat_id +'"]').removeClass('--fetching-history').addClass('--fetching-done');
+			LJ.chat.getChatInview( chat_id ).removeClass('--fetching-history').addClass('--fetching-done');
 			LJ.wlog('All messages have been fetched');
 
 		},
@@ -423,7 +394,7 @@
 				return LJ.log('Chat hasnt been jsp-initialized yet, nothing to reinitialize');
 			}
 
-			var $w   = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w   = LJ.chat.getChatInview( chat_id );
 			var $g   = $w.find('.--glue');
 			var chat = LJ.chat.getChatById( chat_id );
 
@@ -438,7 +409,7 @@
 			$w.removeClass('--fetch-ready');
 			j.reinitialise();
 			
-			LJ.delay(300).then(function() { $w.addClass('--fetch-ready'); });
+			LJ.delay( 300 ).then(function() { $w.addClass('--fetch-ready'); });
 
 			// fetching history state, started when the loading happens and ends after all 
 			// chat messages have been added. During this, always stick to the saved position
@@ -580,9 +551,7 @@
 		},
 		insertChatLine: function( chat_id, chat_line_html, insert_mode ){
 
-			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]')
-						.find('.chat-inview-messages')
-						
+			var $w = LJ.chat.getChatInview( chat_id ).find('.chat-inview-messages')						
 
 			if( $w.find('.jspPane').length != 0 ){
 				$w = $w.find('.jspPane');
@@ -623,27 +592,14 @@
 				});		
 
 		},
-		findChatSender: function( group_id, facebook_id ){
-
-			var group_object  = LJ.chat.fetched_groups[ group_id ];
-			
-			var sender = _.find( _.concat( group_object.members_profiles, group_object.hosts_profiles ), function( u ){
-				return u.facebook_id == facebook_id;
-			});
-
-			return sender;
-
-		},
 		renderChatLine: function( data, call_id ){
 
 			var sender_id   = data.sender_id;
 			var message     = data.message;
 			var sent_at     = data.sent_at;
-			var chat_id 	= data.chat_id;
-			var group_id 	= data.group_id;
-
-			var sender = LJ.chat.findChatSender( group_id, sender_id );
-			var m = moment( sent_at );
+			
+			var sender = LJ.chat.getUser( sender_id );
+			var m      = moment( sent_at );
 
 			var img_html = LJ.pictures.makeImgHtml( sender.img_id, sender.img_vs, "chat-line" );
 
@@ -808,39 +764,60 @@
 			].join(''));
 
 		},
-		renderChatInview: function( data ){
+		renderChatInview__All: function( data ){
 
-			var group_id     = data.group_id;
-			var before_id 	 = data.before_id;
-			var chat_id_all  = data.chat_id_all;
-			var chat_id_team = data.chat_id_team;
-			var place_name   = data.place_name;
-			var begins_at    = data.begins_at;
+			return LJ.chat.renderChatInview( data, {
+				type    : "all",
+				switch  : true,
+				address : true
 
-			var header_address_html = LJ.chat.renderChatInviewHeaderAddress( place_name, begins_at );
+			});
+
+		},
+		renderChatInview__Team: function( data ){
+
+			return LJ.chat.renderChatInview( data, {
+				type: "team"
+
+			});
+
+		},
+		renderChatInview: function( data, opts ){
+
+			var team_id = data.team_id;
+			var chat_id = data.chat_id;
+
+			var groupname_html = opts.type == "chat_all" ?
+				 '<span data-lid="chat_groupname_all" class="js-chat-groupname --all" data-chat-id="'+ chat_id +'"></span>' :
+				 '<span data-lid="chat_groupname_team" class="js-chat-groupname --team" data-chat-id="'+ chat_id +'"></span>';
+
+			var switch_icon_html = opts.switch ?
+				[ '<div class="chat-inview__icon --switch js-chat-switch --round-icon">',
+		            '<i class="icon icon-switch"></i>',
+		        '</div>' ].join('') : '';
+
+			var header_address_html = opts.address ? 
+				LJ.chat.renderChatInviewHeaderAddress( data.place_name, data.begins_at ) : '';
 
 			return LJ.ui.render([
 
-				'<div class="chat-inview" data-group-id="'+ group_id +'" data-before-id="'+ before_id +'">',
+				'<div class="chat-inview" data-team-id="'+ team_id +'" data-chat-id="'+ chat_id +'">',
 			        '<div class="chat-inview-header">',
 						'<div class="chat-inview__icon --previous js-chat-back --round-icon">',
 		            		'<i class="icon icon-arrow-left"></i>',
 				        '</div>',
-				        '<div class="chat-inview__icon --switch js-chat-switch --round-icon">',
-				            '<i class="icon icon-switch"></i>',
-				        '</div>',
+				        switch_icon_html,
 				        '<div class="chat-inview__icon --options --round-icon">',
 				            '<i class="icon icon-pending-vertical"></i>',
 				        '</div>',		          
 			          '<div class="chat-inview-title">',
 			            '<div class="chat-inview-title__groupname">',
-			              '<span data-lid="chat_groupname_all" class="js-chat-groupname --all --active" data-chat-id="'+ chat_id_all +'">Tout le monde</span>',
-			              '<span data-lid="chat_groupname_team" class="js-chat-groupname --team" data-chat-id="'+ chat_id_team +'">Mon groupe</span>',
+							groupname_html,			              
 			            '</div>',
-			            header_address_html,
+			            	header_address_html,
 			          '</div>',
 			        '</div>',
-			        '<div class="chat-inview-item --all --active" data-group-id="'+ group_id + '" data-chat-id="'+ chat_id_all +'">',
+			        '<div class="chat-inview-item --'+ opts.type +'" data-chat-id="'+ chat_id +'">',
 			        	'<div class="chat-inview-options"></div>',
 	          			'<div class="chat-inview-messages">',
 		          			'<div class="chat-inview-seen-by">',
@@ -848,23 +825,12 @@
 				          	'</div>',
 	          				// Dynamically injected
 	          			'</div>',
-			          	'<div class="chat-inview-footer">',
-				            '<div class="chat-inview__input">',
-				              '<input class="js-send-message" type="text" placeholder="Envoyer votre message">',
-				            '</div>',
-			          	'</div>', 
 	          		'</div>',
-	          		'<div class="chat-inview-item --team" data-group-id="'+ group_id + '" data-chat-id="'+ chat_id_team +'">',
-	          			'<div class="chat-inview-options"></div>',
-	          			'<div class="chat-inview-messages">',
-	          				// Dynamically injected
-	          			'</div>',
-	          			'<div class="chat-inview-footer">',
-				            '<div class="chat-inview__input">',
-				              '<input class="js-send-message" type="text" placeholder="Envoyer votre message">',
-				            '</div>',
-			          	'</div>', 
-	          		'</div>',
+		          	'<div class="chat-inview-footer">',
+			            '<div class="chat-inview__input">',
+			              '<input class="js-send-message" type="text" placeholder="Envoyer votre message">',
+			            '</div>',
+		          	'</div>', 
 			    '</div>'
 
 			].join(''));
@@ -888,7 +854,7 @@
 
 			var $s 	  = $(this);
 
-			var $wrap = $s.closest('.chat-inview').find('.chat-inview-item.--active');
+			var $wrap = $s.closest('.chat-inview').find('.chat-inview-item');
 			var $opts = $wrap.find('.chat-inview-options');
 
 			var html;
@@ -917,7 +883,6 @@
 
 			}
 
-
 		},
 		handleShowBefore: function(){
 
@@ -933,7 +898,7 @@
 			var members_profiles = LJ.chat.fetched_groups[ group_id ].members_profiles;
 
 			var html = LJ.chat.renderChatInview__ValidateGroup( members_profiles );
-			var $w   = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w   = LJ.chat.getChatInview( chat_id );
 
 			$w.children().hide();
 			$( html ).appendTo( $w );
@@ -943,7 +908,7 @@
 		},
 		devalidateifyChatInview: function( chat_id ){
 
-			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w = LJ.chat.getChatInview( chat_id );
 
 			var duration = 350;
 			$w.find('.chat-inview-group').velocity('shradeOut', {
@@ -962,7 +927,7 @@
 		},
 		acceptifyChatInview: function( group_id, chat_id ){
 
-			var $w         = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w         = LJ.chat.getChatInview( chat_id );
 
 			var name       = LJ.chat.fetched_groups[ group_id ].main_member_profile.name;
 			var group_name = LJ.renderGroupName( name );
@@ -1018,7 +983,7 @@
 		},
 		processChatInviewValidationPreDisplay: function( group_id, chat_id ){
 
-			var $w 			= $('.chat-inview-item[data-chat-id="'+ chat_id +'"]').find('.chat-inview-group');
+			var $w 			= LJ.chat.getChatInview( chat_id ).find('.chat-inview-group');
 			var main_member = LJ.chat.fetched_groups[ group_id ].main_member_profile.facebook_id;
 
         	// Dynamically render the size of the pictures to fit, with a shade
@@ -1078,7 +1043,7 @@
 
         			LJ.ui.showToast('Une erreur est survenue');
         			LJ.chat.deloaderifyChatInview( chat_id );
-        			$('.chat-inview-item[data-chat-id="'+ chat_id +'"]')
+        			LJ.chat.getChatInview( chat_id )
         				.find('.button.--now')
         				.removeClass('--validating');
 
@@ -1132,25 +1097,36 @@
         		});
 
         },
-        getChatParticipantsCount: function( group_id ){
+        getUsersCountById: function( chat_id ){
 
-        	var n_hosts = LJ.chat.fetched_groups[ group_id ].hosts_profiles.length;
-        	var n_users = LJ.chat.fetched_groups[ group_id ].members_profiles.length;
+        	var channel   = LJ.chat.getChannelItem( chat_id );
 
-        	return n_users + n_hosts;
+        	var n_hosts   = channel.hosts && channel.hosts.length;
+        	var n_members = channel.members && channel.members.length;
+
+        	if( !n_hosts && n_members ){
+        		return n_members;
+        	}
+
+        	if( !n_members && n_hosts ){
+        		return n_hosts;
+        	}
+
+        	return n_members + n_hosts;
 
         },
+        // Update the "seen by..." element
         refreshChatSeenBy: function( chat_id ){
 
-			var $w           = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w           = LJ.chat.getChatInview( chat_id );
 			var last_message = LJ.chat.getLastChatMessage( chat_id );
 
 			if( !last_message ){
 				return;
 			}
-			var seen_by     = last_message.seen_by;
-			var group_id    = last_message.group_id;
-			var sender_id 	= last_message.sender_id;
+
+			var seen_by   = last_message.seen_by;
+			var sender_id = last_message.sender_id;
 
 			var names = [];
 			seen_by.forEach(function( facebook_id ){
@@ -1158,13 +1134,13 @@
 				// It would be dumb to let others know that the sender has read its own message
 				// and weird for the user to see his own name on the "seen_by" list
 				if( facebook_id != sender_id && facebook_id != LJ.user.facebook_id ){
-					names.push( LJ.chat.findChatSender( group_id, facebook_id ).name );
+					names.push( LJ.chat.getUser( facebook_id ).name );
 				}
 
 			});
 
 			// Substract 1 because the user owns id has already been removed
-			var c = LJ.chat.getChatParticipantsCount( group_id );
+			var c = LJ.chat.getUsersCountById( chat_id );
         	var s = LJ.chat.makeSeenByText( names, seen_by.length, 2 || c );
 
         	$w.find('.chat-inview-seen-by__label').html( s );
@@ -1181,6 +1157,15 @@
         	}
 
         	return LJ.text('seen_by_some', names );
+
+        },
+        getChatInview: function( chat_id ){
+
+        	if( !chat_id ){
+				return LJ.wlog('Cannot target chat row without chat_id');
+			}
+
+			return $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
 
         }
 

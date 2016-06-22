@@ -111,16 +111,20 @@ window.LJ = _.merge( window.LJ || {}, {
     },
     wlog: function wlog( message ){
         
-        console.trace( message );
         console.warn( message );
 
     },
-    elog: function( message ){
+    tlog: function tlog( message ){
+        
+        console.trace( message );
+
+    },
+    elog: function elog( message ){
 
         console.error( message )
 
     },
-    ilog: function( message ){
+    ilog: function ilog( message ){
 
         console.info( message );
         
@@ -198,8 +202,10 @@ window.LJ = _.merge( window.LJ || {}, {
         return moment( date ).format('hh:mm')
         
     },
-    renderMultipleNames: function( names ){
+    renderMultipleNames: function( names, opts ){
         
+        opts = opts || {};
+
         if( typeof names == "string" ){
             names = [ names ];
         }
@@ -208,10 +214,28 @@ window.LJ = _.merge( window.LJ || {}, {
             return LJ.wlog('Cannot render multiple names, wrong argument');
         }
 
-        names.filter( Boolean );
+        names = names.filter( Boolean );
 
         if( names.length == 0 ){
             return LJ.wlog('Cannot render multiple names, empty array');
+        }
+
+        var name_to_replace = opts.lastify_user;
+        if( name_to_replace ){
+
+            if( names.indexOf( name_to_replace ) == -1 ){
+                return LJ.wlog('Cannot lastify name, doesnt exist in the array');
+            }
+
+            names.forEach(function( name, i ){
+                if( name == name_to_replace ){
+                    delete names[ i ];
+                }
+            });
+
+            names.push( LJ.text("w_you") );
+            return LJ.renderMultipleNames( names );
+
         }
 
         if( names.length == 1 ){

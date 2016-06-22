@@ -59,6 +59,8 @@
     color: white;
 }
 
+.app__menu-item .bubble {}
+
 .app__menu-item a {
     display: flex;
     align-items: center;

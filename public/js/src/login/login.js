@@ -38,10 +38,10 @@
 
 						 	$( LJ.login.renderLoginProgression() ).appendTo( $('.curtain') ).children().hide();
 						 	$('.login__message').velocity('shradeIn', {
-						 		duration: 1600, delay: LJ.login.opening_duration
+						 		duration: 1600, delay: LJ.login.opening_duration/2
 						 	});
 						 	$('.login__progress-bar').velocity('shradeIn', {
-						 		duration: 1600, delay: LJ.login.opening_duration
+						 		duration: 1600, delay: LJ.login.opening_duration/2
 						 	});
 							return;
 

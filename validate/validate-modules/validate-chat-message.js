@@ -8,10 +8,8 @@
 		
 		var checkMessage = nv.isAnyObject()
 			
-			.withRequired('before_id'      , nv.isString() )
 			.withRequired('chat_id'        , nv.isString() )
 			.withRequired('message'        , nv.isString() )
-			.withRequired('group_id'       , nv.isString() )
 			.withRequired('facebook_id'    , nv.isString() )
 			// .withOptional('offline_users'  , nv.isArray()  )
 			// .withOptional('whisper_to'     , nv.isArray()  )
@@ -22,7 +20,7 @@
 					return next();
 			}
 
-			checkSenderStatus( req, function( errors, author ){
+			checkSenderStatus( req, function( errors ){
 				if( errors ){
 					req.app_errors = req.app_errors.concat( errors );
 				}
@@ -35,34 +33,34 @@
 
 	function checkSenderStatus( req, callback ){
 
-		var group_id = req.sent.group_id;
-		var chat_id  = req.sent.chat_id;
+		var chat_id     = req.sent.chat_id;
+		var facebook_id = req.sent.facebook_id;
+		var user 		= req.sent.user;
 
-		// The only thing that should not be possible is for users to send a chat message in the all channel
-		// when the group status is still pending
-		if( !/all/i.test( chat_id ) ){
-			return callback( null );
+		// User should only be allowed to send messages in chat channels that are part of their chat channels
+		if( !user.getChatChannel( chat_id ) ){
+			return callback({
+				err_id  : 'ghost_channel',
+				message : 'This chat is not part of users chat channels',
+				chat_id : chat_id,
+				allowed : user.getChatChannels()
+			});
 		}
+
+		if( user.getChatChannel( chat_id ).status && !user.getChatChannel( chat_id ).status == "accepted" ){
+			return callback({
+				err_id  : 'unauthorized_action',
+				message : 'This channel is closed until the hosts have validated the group',
+				chat_id : chat_id
+			});
+		}
+
+		callback( null );
 			
-		rd.get('group/' + group_id + '/status', function( err, status ){
-
-			// User that has been validated to send message ?
-			if( status != "accepted" ){
-				return callback({
-					"err_id": "status_not_accepted",
-					"status": status
-				}, null );
-			}
-
-			callback( null );
-
-		});
-
-
+	
 	};	
 
 	module.exports = {
 		check: check
 	};
 
-	

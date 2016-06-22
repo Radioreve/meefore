@@ -183,8 +183,8 @@
 			}
 		},
 		menurow_date: {
-			"fr": function( m ){ return LJ.text_source.before_date["fr"]; },
-			"us": function( m ){ return LJ.text_source.before_date["us"]; }
+			"fr": function( m ){ return LJ.text_source.before_date["fr"]( m ); },
+			"us": function( m ){ return LJ.text_source.before_date["us"]( m ); }
 		},
 		h_today: {
 			"fr": "aujourd'hui, à %hh%m",
@@ -1179,7 +1179,7 @@
 			"us": "Cheers received"
 		},
 		n_group_request_hosts_subtext: {
-			"fr": "Un group a montré un intérêt pour votre before",
+			"fr": "Un groupe a montré un intérêt pour votre before",
 			"us": "A group seems to be interested by your pregame"
 		},
 		n_group_request_members_text: {
@@ -1320,6 +1320,10 @@
 		w_more: {
 			"fr": "autre(s)",
 			"us": "more"
+		},
+		w_you: {
+			"fr": "vous",
+			"us": "you"
 		},
 		settings_ux_unread_messages_label: {
 			"fr": "Signaler messages lus",
@@ -1785,17 +1789,9 @@
 			"fr": "Rien à l'horizon...",
 			"us": "Nothing on the horizon..."
 		},
-		chat_empty_subtitle_all: {
-			"fr": "Créez un before ou envoyer un Cheers pour commencer à faire connaissance avec d'autres membres.",
-			"us": "Create a pregame or send a Cheers to start meeting new people."
-		},
-		chat_empty_subtitle_hosted: {
-			"fr": "Retrouvez ici toutes les discussions concernant les before que vous organisez.",
-			"us": "Find here all the conversations regarding the pregame you're throwing."
-		},
-		chat_empty_subtitle_requested: {
-			"fr": "Retrouvez ici toutes les discussions concernant les groupes avec lesquels vous avez eu un Match.",
-			"us": "Find here all the conversations regarding the groups whom you matched with."
+		chat_empty_subtitle_row: {
+			"fr": "Vous pourrez discuter avec vos amis et faire connaissance avec les autres membres lorsque vous aurez créé un before ou obtenu un Match",
+			"us": "You will be able to chat with your friends and the other members once you have created a pregame or obtained a Match"
 		},
 		chat_empty_title_inview_hosts: {
 			"fr": "Vous avez un Match !",
@@ -1837,6 +1833,14 @@
 			"fr": "Vous pourrez faire connaissance dès que vous aurez un Match avec les organisateurs.",
 			"us": "You'll be able to start chatting as soon as there is a Match with the hosts."
 		},
+		chat_rows_team_title: {
+			"fr": "Mes groupes",
+			"us": "Your groups"
+		},
+		chat_rows_all_title: {
+			"fr": "Mes befores",
+			"us": "Your pregames"
+		},
 		chat_inview_options_message: {
 			"fr": "Que souhaitez-vous faire ?",
 			"us": "What would you like to do ?"
@@ -1869,29 +1873,21 @@
 			"fr": "Mon groupe",
 			"us": "My group"
 		},
-		chat_row_request_pending_title: {
-			"fr": "Cheers envoyé",
-			"us": "Waiting"
-		},
-		chat_row_request_pending_subtitle: {
-			"fr": "En attente de Match...",
-			"us": "Waiting for a Match..."
-		},
-		chat_row_request_accepted_title: {
+		chat_row_request_all_title: {
 			"fr": "Vous avez un Match !",
 			"us": "It's a Match !"
 		},
-		chat_row_request_accepted_subtitle: {
-			"fr": "Faites connaissance dès maintenant",
-			"us": "Get to know each other right now"
+		chat_row_request_all_subtitle: {
+			"fr": function( names ){ return "avec " + names; },
+			"us": function( names ){ return  "with " + names; } 
 		},
-		chat_row_request_participation_title: {
-			"fr": "Cheers reçu",
-			"us": "Cheers received"
+		chat_row_request_team_title: {
+			"fr": "Nouvelle conversation de groupe",
+			"us": "New group conversation"
 		},
-		chat_row_request_participation_subtitle: {
-			"fr": function( group_name ){ return "De "+ group_name  },
-			"us": function( group_name ){ return "From "+ group_name } 
+		chat_row_request_team_subtitle: {
+			"fr": function( names ){ return "entre " + names; },
+			"us": function( names ){ return  "between " + names; } 
 		},
 		chat_inview_validate_later: {
 			"fr": "Plus tard",

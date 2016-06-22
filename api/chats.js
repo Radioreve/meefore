@@ -55,6 +55,7 @@
 
 		var chat_id     = req.sent.chat_id;
 		var facebook_id = req.sent.facebook_id;
+		var type        = req.sent.user.getChatChannel( chat_id ).type;
 
 		resetSeenBy( chat_id, facebook_id, function( err ){
 
@@ -62,14 +63,12 @@
 			req.sent.seen_by = [ facebook_id ];
 
 			var data = {
-				chat_id      : req.sent.chat_id,
-				group_id 	 : req.sent.group_id,
-				before_id 	 : req.sent.before_id,
-				message      : req.sent.message,
-				sender_id    : req.sent.facebook_id,
-				sent_at      : req.sent.sent_at,
-				seen_by 	 : [ facebook_id ],
-				type 		 : "normal"
+				type 	  : type,
+				chat_id   : req.sent.chat_id,
+				message   : req.sent.message,
+				sender_id : req.sent.facebook_id,
+				sent_at   : req.sent.sent_at,
+				seen_by   : [ facebook_id ]
 			};
 
 			var message = new Message( data );

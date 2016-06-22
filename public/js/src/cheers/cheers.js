@@ -240,7 +240,7 @@
 
 			var ch = cheers_object;
 
-			var formatted_date = LJ.text( "menurow_date", ch.requested_at );
+			var formatted_date = LJ.text( "menurow_date", moment(ch.requested_at) );
 			var img_html       = LJ.pictures.makeImgHtml( main_requester.img_id, main_requester.img_vs, 'menu-row' );
 
 			var groupname 	   = LJ.renderGroupName( main_requester.name );
@@ -285,7 +285,7 @@
 
 			var ch = cheers_object;
 
-			var formatted_date       = LJ.text( "menurow_date", ch.requested_at );
+			var formatted_date       = LJ.text( "menurow_date", moment(ch.requested_at) );
 			var img_html             = LJ.pictures.makeImgHtml( main_host_profile.img_id, main_host_profile.img_vs, 'menu-row' );
 
 			var groupname            = LJ.renderGroupName( main_host_profile.name );

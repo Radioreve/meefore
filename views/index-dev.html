@@ -493,11 +493,11 @@
        <!-- Cheers begin -->
       <section class="menu-section --cheers" data-link="cheers">
         <div class="segment">
-          <div class="segment__part" data-link="sent">
-            <h3 data-lid="segment_cheers_sent"></h3>
-          </div>
           <div class="segment__part" data-link="received">
             <h3 data-lid="segment_cheers_received"></h3>
+          </div>
+          <div class="segment__part" data-link="sent">
+            <h3 data-lid="segment_cheers_sent"></h3>
           </div>
         </div>
         <div class="cheers">
@@ -818,23 +818,19 @@
           <span data-lid="chat_header_title"></span>
         </div>
       </div>
-      <div class="chat-subheader">
-        <div class="chat-segment">
-          <div class="segment">
-            <div class="segment__part" data-link="all">
-              <h3 data-lid="chat_segment_all"></h3>
-            </div>
-            <div class="segment__part" data-link="hosted">
-              <h3 data-lid="chat_segment_hosted"></h3>
-            </div>
-            <div class="segment__part" data-link="requested">
-              <h3 data-lid="chat_segment_requested"></h3>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="chat-rows">
-        <!-- Dynamically injected -->
+        <div class="chat-rows-title --team">
+          <span data-lid="chat_rows_team_title"></span>
+        </div>
+        <div class="chat-rows-body --team">
+          <!-- Dynamically injected -->
+        </div>
+        <div class="chat-rows-title --all">
+          <span data-lid="chat_rows_all_title"></span>
+        </div>
+        <div class="chat-rows-body --all">
+          <!-- Dynamically injected -->
+        </div>
       </div>
     </div>    
     <div class="chat-wrap chat-inview-wrap">

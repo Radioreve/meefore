@@ -38,7 +38,6 @@
 		fetch_chat_history_url 	 	 	 	: '/api/v1/chats/:chat_id',
 		change_group_status_url		 	 	: '/api/v1/befores/:before_id/groups/:group_id/status',
 		update_chat_seen_by_url 	 	 	: '/api/v1/chats/:chat_id/seen_by',
-		update_before_seen_at_url 	 	 	: '/api/v1/befores/:before_id/seen_at',
 		update_notifications_seen_at_url 	: '/api/v1/users/:user_id/notifications/seen_at',
 		update_notifications_clicked_at_url : '/api/v1/users/:user_id/notifications/clicked_at',
 
@@ -296,6 +295,7 @@
 		fetchUsers: function( facebook_ids ){
 
 			var promises = [];
+			facebook_ids = facebook_ids || [];
 			facebook_ids.forEach(function( fb_id ){
 				promises.push( LJ.api.fetchUser( fb_id ) )
 			});
@@ -799,20 +799,6 @@
 			});
 
 
-		},
-		updateBeforeSeenAt: function( before_id ){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.api.post( LJ.api.update_before_seen_at_url.replace( ':before_id', before_id ) )
-					.then(function( exposed ){
-						return resolve( exposed );
-
-					}, function( err ){
-						return reject( err );
-
-					});
-
-			});
 		},
 		updateNotificationsSeenAt: function(){
 			return LJ.promise(function( resolve, reject ){

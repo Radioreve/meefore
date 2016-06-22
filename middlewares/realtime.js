@@ -53,31 +53,14 @@
 
 	}
 
-	function makeChatChannel( before_id, hosts, members, type ){
+	function makeChatTeamId( members ){
 
-		if( ['all','hosts','users'].indexOf( type ) == -1 ){
-			console.log('Cannt make chat channel without proper type, type: ' + type );
-			return null;
-		}
+		var sorted_members = sortIds( members ).join('-');
+		var payload 	   = sorted_members;
 
-		return "private-" + type + '-' + makeChatGroupId( before_id, hosts, members );
-
+		return md5( payload );
 	}
 
-	function makeChatChannel__All( before_id, hosts, members ){
-		return makeChatChannel( before_id, hosts, members, 'all' );
-
-	}	
-
-	function makeChatChannel__Users( before_id, hosts, members ){
-		return makeChatChannel( before_id, hosts, members, 'users' );
-
-	}
-
-	function makeChatChannel__Hosts( before_id, hosts, members ){
-		return makeChatChannel( before_id, hosts, members, 'hosts' );
-
-	}
 
 	function makeChannelItem__Personnal( user ){
 
@@ -106,14 +89,29 @@
 		};
 	}	
 
+
+	function makeChannelItem__ChatTeam( group ){
+
+		return {
+			type    	 : 'chat_team',
+			chat_id 	 : makeChatTeamId( group ),
+			team_id 	 : makeChatTeamId( group ),
+			name    	 : 'private-team-' + makeChatTeamId( group ),
+			last_sent_at : group.requested_at,
+			members 	 : group
+		}
+	}
+
 	function makeChannelItem__ChatBase( before, group, opts ){
+
+		var chat_id = makeChatGroupId( before._id, before.hosts, group.members );
 
 		return {
 
-			type 		  : "chat",
-			group_id      : makeChatGroupId( before._id, before.hosts, group.members ),
-			channel_all   : makeChatChannel__All( before._id, before.hosts, group.members ),
-			channel_team  : opts.channel_team,
+			type 		  : "chat_all",
+			name          : "private-all-" + chat_id,
+			chat_id 	  : chat_id,
+			team_id       : opts.team_id,
 			before_id     : before._id,
 			before_status : before.status,
 			members       : group.members,
@@ -131,8 +129,8 @@
 	function makeChannelItem__ChatHosts( before, group ){
 
 		return makeChannelItem__ChatBase( before, group, {
-			channel_team : makeChatChannel__Hosts( before._id, before.hosts, group.members ),
-			role         : "hosted"
+			role    : "hosted",
+			team_id : makeChatTeamId( before.hosts )
 		});
 
 	}
@@ -140,9 +138,21 @@
 	function makeChannelItem__ChatUsers( before, group ){
 
 		return makeChannelItem__ChatBase( before, group, {
-			channel_team : makeChatChannel__Users( before._id, before.hosts, group.members ),
-			role         : "requested"
+			role    : "requested",
+			team_id : makeChatTeamId( group.members )
 		});
+
+	}
+
+	function addTeamChannel( user, group ){
+
+		var team_channel = _.find( user.channels, function( chan ){
+			return chan.team_id == makeChatTeamId( group );
+		});
+
+		if( !team_channel ){
+			user.channels.push( makeChannelItem__ChatTeam( group ) );
+		}
 
 	}
 
@@ -172,8 +182,6 @@
 
 				if( err ) return handleErr( req, res, err_ns, err );
 
-				console.log( befores.length +' befores were found' );
-
 				befores.forEach(function( before ){
 
 					// Check if the user is hosting
@@ -181,6 +189,9 @@
 
 						console.log('User is hosting this event, rendering hosts related channels');
 						user.channels.push( makeChannelItem__Before( before ) );
+
+						// Create a team chat with other hosts only if it doesnt already exists
+						addTeamChannel( user, before.hosts );
 
 						before.groups.forEach(function( group ){
 							user.channels.push( makeChannelItem__ChatHosts( before, group ));
@@ -193,6 +204,9 @@
 						var mygroup = _.find( before.groups, function( grp ){
 							return grp.members.indexOf( user.facebook_id ) != -1;
 						});
+
+						// Create a team chat with other hosts only if it doesnt already exists
+						addTeamChannel( user, mygroup.members );
 
 						user.channels.push( makeChannelItem__ChatUsers( before, mygroup ) );
 
@@ -323,17 +337,17 @@
 
 		var err_ns = "setting_last_sent_at";
 
-		var user   = req.sent.user;
-		var groups = _.map( req.sent.user.channels, 'group_id' ).filter( Boolean );
+		var user  = req.sent.user;
+		var chats = _.map( req.sent.user.channels, 'chat_id' ).filter( Boolean );
 
-		if( !groups || groups.length == 0 ){
+		if( !chats || chats.length == 0 ){
 			return next();
 		}
 
 		Message.aggregate([
 
-			{ '$match': { 'group_id': { '$in': groups } } },
-			{ '$group': { '_id': '$group_id', 'last_sent_at': { '$last': '$sent_at' } } }
+			{ '$match': { 'chat_id': { '$in': chats } } },
+			{ '$group': { '_id': '$chat_id', 'last_sent_at': { '$last': '$sent_at' } } }
 
 		], function( err, res_objects ){
 
@@ -348,7 +362,7 @@
 				// Augment each channel with the date at which the last message was sent
 				// to allow clients to paginate the way they fetch chats
 				var channel = _.find( user.channels, function( chan ){
-					return chan.group_id == res_object._id;
+					return chan.chat_id == res_object._id;
 				});
 
 				channel.last_sent_at = res_object.last_sent_at;
@@ -513,13 +527,11 @@
 		var status 		 = req.sent.status;
 
 		var before_id = req.sent.before_id;
-		var group_id  = req.sent.group_id;
 		var chat_id   = req.sent.chat_id;
 
 		var data = {
 			sender_id    : sender_id,
 			before_id    : before_id,
-			group_id     : group_id,
 			chat_id      : chat_id,
 			status 	     : status,
 			notification : notification
@@ -538,7 +550,6 @@
 			sender_id   : req.sent.facebook_id,
 			seen_by 	: [ req.sent.facebook_id ],
 			call_id 	: req.sent.call_id,
-			group_id    : req.sent.group_id,
 			message     : req.sent.message,
 			sent_at  	: req.sent.sent_at,
 			chat_id 	: chat_id	

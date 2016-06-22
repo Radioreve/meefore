@@ -37,7 +37,6 @@
 		mdw.meepass           = require( mdwDir + '/meepass');
 		mdw.connecter 		  = require( mdwDir + '/connecter');
 		mdw.realtime 		  = require( mdwDir + '/realtime');
-		mdw.cached			  = require( mdwDir + '/cached');
 
 		mdw.validate          = require('../validate/validate');
 
@@ -382,8 +381,6 @@
 	    app.post('/api/v1/befores/:before_id/groups/:group_id/status',
 	    	mdw.validate('before_group_status'),
 	    	api.befores.changeGroupStatus,
-	    	api.befores.resetBeforeSeenAt,
-	    	mdw.cached.cacheGroupStatus,
 	    	mdw.notifier.addNotification('group_status'),
 	    	mdw.realtime.pushNewGroupStatus
 	    );
@@ -399,7 +396,6 @@
 	    	mdw.validate('create_before'),
 	    	mdw.meepass.updateMeepass('before_created'),
 	    	api.befores.createBefore,
-	    	mdw.cached.cacheBeforeHosts,
 	    	mdw.notifier.addNotification('marked_as_host'),
 	    	mdw.realtime.pushNewBefore
 	    );
@@ -410,10 +406,6 @@
 	    	api.befores.fetchBeforeById
 	    );
 
-	    app.post('/api/v1/befores/:before_id/seen_at',
-	    	api.befores.updateBeforeSeenAt
-	    );
-
 	    // [ @chat ] Renvoie l'historique des messages par chat id (MongoDB)
 	    app.get('/api/v1/chats/:chat_id',
 	    	mdw.validate('chat_fetch'),
@@ -422,6 +414,7 @@
 
 	    // [ @chat ] Post un nouvau message
 	    app.post('/api/v1/chats/:chat_id',
+	    	mdw.pop.populateUser({ force_presence: true }),
 	    	mdw.validate('chat_message'),
 	    	// mdw.chat_watcher.mailOfflineUsers,
 	    	api.chats.addChatMessage,
@@ -601,12 +594,12 @@
 	    	function( req, res, next ){
 
 	    		var facebook_id  = req.params["user_id"];
-	    		var channel_name = req.sent.name; 
+	    		var chat_id      = req.sent.name; 
 
 	    		User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
 	    			req.sent.expose.err = err;
-	    			req.sent.expose.channel_item = user.getChannel( channel_name );
+	    			req.sent.expose.channel_item = user.getChatChannel( chat_id );
 	    			next();
 
 	    		});
@@ -664,15 +657,6 @@
 			api.users.fetchUserCheers
 		);
 
-	    app.post('/befores/:before_id/seen_at',
-	    	setParam('before_id'),
-	    	api.befores.updateBeforeSeenAt
-	    );
-
-	    app.post('/befores/:before_id/reset_seen_at/:facebook_id',
-	    	setParam(['before_id', 'facebook_id']),
-	    	api.befores.resetBeforeSeenAt
-	    );
 
 	    app.post('/auth/facebook/generate-app-token-local', // use the app_token shortcut
 	    	function( req, res, next ){
