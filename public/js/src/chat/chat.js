@@ -55,9 +55,23 @@
 		// Sort all chat messages by descendant order : messages[0] is the oldest
 		sortChatMessages: function( chat_id ){
 
-			LJ.chat.getChatById( chat_id ).messages.sort(function( ch1, ch2 ){
+			LJ.chat.getChat( chat_id ).messages.sort(function( ch1, ch2 ){
 				return moment( ch2.sent_at ) - moment( ch1.sent_at );
 			})
+
+		},
+		cacheChatMessage: function( chat_id, message ){
+
+			var chat = LJ.chat.getChat( chat_id );
+			var chan = LJ.chat.getChannelItem( chat_id );
+
+			if( !chat ){
+				return LJ.wlog('Cannot cache chat message, chat has not been set');
+			}
+
+			chan.last_sent_at = message.sent_at;
+			chat.messages.push( message );
+			LJ.chat.sortChatMessages( chat_id ); 
 
 		},
 		cacheChatMessages: function( chat_id, messages, channel_item ){
@@ -66,13 +80,12 @@
 				return LJ.wlog('Cannot setup cache for chat without a messages array');
 			}
 
-			var chat = LJ.chat.getChatById( chat_id ) 
-					 ? LJ.chat.getChatById( chat_id ) 
+			var chat = LJ.chat.getChat( chat_id ) 
+					 ? LJ.chat.getChat( chat_id ) 
 					 : LJ.chat.setChat( chat_id, channel_item );
 			
 			messages.forEach(function( message_object ){
 				chat.messages.push( message_object );
-
 			});
 
 			LJ.chat.sortChatMessages( chat_id );
@@ -83,7 +96,7 @@
 
 			var active_chat_id = null;
 			LJ.chat.getChatIds().forEach(function( chat_id ){
-				if( LJ.chat.getChatById( chat_id ).ui_status == "active" ){
+				if( LJ.chat.getChat( chat_id ).ui_status == "active" ){
 					active_chat_id = chat_id;
 				}
 			});
@@ -92,7 +105,7 @@
 		},
 		viewifyChatInview: function( chat_id ){
 
-			var chat = LJ.chat.getChatById( chat_id );
+			var chat = LJ.chat.getChat( chat_id );
 
 			if( chat.ui_status == "active" ){
 				chat.messages.forEach(function( m ){
@@ -114,7 +127,7 @@
 		},
 		refreshChatRowBubbles: function( chat_id ){
 
-			var chat = LJ.chat.getChatById( chat_id );
+			var chat = LJ.chat.getChat( chat_id );
 			
 			LJ.chat.resetBubbleToChatRow( chat_id );
 			
@@ -127,34 +140,27 @@
 			});
 
 		},
-		refreshChatInviewBubbles: function( chat_id ){
-			
-			var chat = LJ.chat.getChatById( chat_id );
-			
-			if( LJ.chat.getChannelItem( chat_id ).type == "chat_all" ){
-				LJ.chat.resetBubbleToChatSwitchIcon( chat_id );
-			}
-			
-			chat.messages.forEach(function( m ){
+		getRelatedChats: function( team_chat_id ){
 
-				 if( m.seen_by.indexOf( LJ.user.facebook_id ) == -1 ){
+			var team_id       = LJ.chat.getChannelItem( team_chat_id ).team_id;
+			var related_chats = [];
 
-					if( LJ.chat.getChannelItem( chat_id ).type == "chat_team" ){
-						var chat_all_ids = LJ.chat.findChatAllIds( chat_id );
-						chat_all_ids.forEach(function( chat_id ){
+			LJ.chat.getChatIds().forEach(function( chat_id ){
 
-							LJ.chat.addBubbleToChatSwitchIcon( chat_id );
-						});
-					}
+				var chan = LJ.chat.getChannelItem( chat_id );
+				if( chan.type == "chat_all" && chan.team_id == team_chat_id ){
+					related_chats.push( chat_id );
+				}
 
-				} 
 			});
+
+			return related_chats;
 
 		},
 		getUnseenMessagesCount: function( chat_id ){
 
 			var i    = 0;
-			var chat = LJ.chat.getChatById( chat_id );
+			var chat = LJ.chat.getChat( chat_id );
 
 			chat.messages.forEach(function( m ){
 
@@ -188,22 +194,6 @@
 			LJ.ui.hideBubble( $chatrowpic );
 
 		},
-		resetBubbleToChatSwitchIcon: function( chat_id ){
-
-			var $icon = $('.chat-inview[data-chat-id="'+ chat_id +'"]')
-						.find('.chat-inview__icon.--switch');
-
-			LJ.ui.setBubble( $icon, 0 );
-
-		},
-		addBubbleToChatSwitchIcon: function( chat_id ){
-
-			var $icon = $('.chat-inview[data-chat-id="'+ chat_id +'"]')
-						.find('.chat-inview__icon.--switch');
-
-			LJ.ui.bubbleUp( $icon );
-
-		},
 		getChatIds: function(){
 
 			return _.keys( LJ.chat.fetched_chats );
@@ -231,7 +221,7 @@
 			return chat;
 
 		},
-		getChatById: function( chat_id ){
+		getChat: function( chat_id ){
 
 			var c = LJ.chat.fetched_chats[ chat_id ];
 
@@ -293,16 +283,10 @@
 		},
 		addAndFetchOneChat: function( channel_item, opts ){
 
-			var team_id      = channel_item.team_id;
+			var type 		 = channel_item.type;
 			var chat_id      = channel_item.chat_id;
 			var hosts        = channel_item.hosts;
 			var members      = channel_item.members;
-			var main_host    = channel_item.main_host;
-			var main_member  = channel_item.main_member;
-			var status       = channel_item.status;
-			var role         = channel_item.role;
-			var requested_at = channel_item.requested_at;
-			var last_sent_at = channel_item.last_sent_at;
 
 			LJ.log('Initializing one chat...');
 
@@ -341,42 +325,38 @@
 
 						// Add messages to the all chat
 						LJ.chat.cacheChatMessages( chat_id,  res.messages, _.cloneDeep( channel_item ) );
-						// Order rows in the right position before moving the ui, requires access to cached messages to work properly
-						LJ.chat.refreshChatRowsOrder();
+
+						
 						// Set all chats internal ui_status to "inactive";
 						LJ.chat.deactivateChats();
+						
 						// Add chat messages to the chat inview
 						LJ.chat.addChatMessages({
 							channel_item     : channel_item,
 							chat_messages    : res.messages
 						});
+
 						// Turn the chat inview to a jscrollpane element and bind the handle to fetch chat history
 						LJ.chat.setupChatInviewJsp( chat_id );
+
 						// Remove loaders
 						LJ.chat.deloaderifyChatRow( chat_id );
 						LJ.chat.deloaderifyChatInview( chat_id );
-						// Set the picture and the default 
+
+						// Update the inview header with dynamic parameters
+						LJ.chat.setChatInviewHeader( channel_item );
+
+						// Set the picture and the default
 						LJ.chat.setChatRowPicture( channel_item );
 						LJ.chat.setChatRowPreview( channel_item );
 						LJ.chat.setChatRowTime( channel_item );
-						// Refresh the chatrow preview : either with last messages, or with the state. And update the time
-
-						LJ.chat.refreshChatRowPicture( chat_id );
-						LJ.chat.refreshChatRowPreview( chat_id );
-						LJ.chat.refreshChatRowTime( chat_id );
-
-						// Refresh the bubbles on the row, and inside the chat inview
-						LJ.chat.refreshChatIconBubble();
-						LJ.chat.refreshChatRowBubbles( chat_id );
-						// LJ.chat.refreshChatInviewBubbles( chat_id );
-						
-						// Must be placed after chat icon bubble, because newify can call refreshChatIconBubble
-						// if some chats are "new"
-						LJ.chat.newifyChatRows( chat_id );
 						return;
 
 					})
+					.then(function(){
+						return LJ.chat.refreshChatState( chat_id );
 
+					})
 					.catch(function( e ){
 						LJ.wlog(e);
 
@@ -468,34 +448,8 @@
 		setupChatInview: function( channel_item ){
 
 			var chat_id = channel_item.chat_id;
-			var team_id = channel_item.team_id;
-			var type    = channel_item.type;
-			
-			var data = {
-				chat_id    : chat_id,
-				team_id    : team_id
-			};
 
-			var chat_inview_html = '';
-
-			// Extract the data we need
-			if( type == "chat_all" ){
-
-				var before = LJ.before.findById( channel_item.before_id );
-				if( !before ){
-					return LJ.wlog('Unable to find user before details (not fetched), before_id="' + channel_item.before_id );
-				}
-
-				data.place_name  = before.address.place_name;
-				data.begins_at   = before.begins_at;
-
-				chat_inview_html = LJ.chat.renderChatInview__All( data );
-				
-			} else {
-
-				chat_inview_html = LJ.chat.renderChatInview__Team( data );
-
-			}
+			chat_inview_html = LJ.chat.renderChatInview( channel_item );
 
 			LJ.chat.addChatInview( chat_inview_html );
 			LJ.chat.adjustChatInviewDimensions( chat_id );
@@ -548,7 +502,7 @@
 			var chat_ids = LJ.chat.getChatIds();
 
 			chat_ids.forEach(function( chat_id ){
-				ordered_chats.push( LJ.chat.getLastMessage( chat_id ) );
+				ordered_chats.push( LJ.chat.getChannelItem( chat_id ) );				
 			});
 
 			// Clear the array
@@ -556,26 +510,23 @@
 
 			// Lowest order are displayed the highest, so sort by desc
 			ordered_chats.sort(function( m1, m2 ){
-				return moment( m2.sent_at ) - moment( m1.sent_at );
+				return moment( m2.last_sent_at ) - moment( m1.last_sent_at );
 			});
 
-			ordered_chats.forEach(function( msg, i ){
-				LJ.chat.getChatRow( msg.chat_id ).css({ 'order': i });
+			ordered_chats.forEach(function( channel_item, i ){
+				LJ.chat.getChatRow( channel_item.chat_id ).css({ 'order': i });
 			});
 
 		},
 		getLastMessage: function( chat_id ){
 
-			var last_message  = LJ.chat.getChatById( chat_id ).messages[0];
+			var last_message  = LJ.chat.getChat( chat_id ).messages[0];
 
 			// If no messages was sent, let's use the fact that each chat has at least a last_sent_at attribute
 			// that is equals to requested_at. It is set server-side to help clientside deal with issues when no
 			// messages have been sent. 
 			if( !last_message ){
-				return {
-					chat_id : chat_id,
-					sent_at : LJ.chat.getChatById( chat_id ).last_sent_at
-				};
+				return null;
 			} else {
 				return last_message;
 			}
@@ -637,9 +588,11 @@
 			// No chat messages to append, render the proper empty view based on status
 			if( chat_messages.length == 0 ){
 
-				if( type == "team" ){
+				if( type == "chat_team" ){
 					
-					var group_name = LJ.renderGroupName( LJ.user.name );
+					var members    = LJ.chat.getMembers( chat_id );
+					var names      = _.map( members, 'name' );
+					var group_name = LJ.renderMultipleNames( names, { lastify_user: LJ.user.name });
 
 					html = LJ.chat.renderChatInview__TeamEmpty( group_name );
 
@@ -660,13 +613,12 @@
 					// Generate a local call_id to allow merge, horodate fn etc to properly work
 					// We cant use the messages real _id cause at this stage, it is unknown. So 
 					// for consistency, let's always use a client-side generated one everywhere
-					LJ.chat.addChatLine( message_object, LJ.generateId(), {
+					message_object.call_id = LJ.generateId();
+					LJ.chat.addChatLine( message_object, {
 						insert_mode: "prepend"
 					});
 
 				});
-
-				LJ.chat.refreshChatSeenBy( chat_id );
 
 			}
 		},
@@ -813,7 +765,7 @@
 			});
 
 			// Insert rosace into the markup
-			var pictures_html = LJ.pictures.makeRosaceHtml( pictures.slice(0,1), 'chat-row' );
+			var pictures_html = LJ.pictures.makeRosaceHtml( pictures, 'chat-row' );
 
 			LJ.chat.updateChatRowElements( chat_id, {
 				picture: pictures_html
@@ -862,18 +814,84 @@
 			LJ.log('Setting chat row time...');
 			
 			var chat_id      = channel_item.chat_id;
-			var requested_at = channel_item.requested_at;
+			var last_sent_at = channel_item.last_sent_at;
 
-			var s_date = LJ.text( "chatrow_date", moment( requested_at ) );
+			var s_date = LJ.text( "chatrow_date", moment( last_sent_at ) );
 			
 			LJ.chat.updateChatRowElements( chat_id, {
 				date: s_date
 			});
 
 		},
+		setChatInviewHeader: function( channel_item ){
+
+			var chat_id = channel_item.chat_id;
+
+			if( channel_item.type == "chat_all" ){
+
+				var before = LJ.before.findById( channel_item.before_id );
+				if( !before ){
+					return LJ.wlog('Unable to find user before details (not fetched), before_id="' + channel_item.before_id );
+				}
+
+				var m = moment( before.begins_at );
+				var formatted_date = m.format('HH:mm') + ' ' + m.format('DD/MM');
+
+				var place_name = before.address.place_name;
+
+				LJ.chat.updateChatInviewElements( chat_id, {
+
+					header_h1  : '<span data-lid="chat_groupname_all"></span>',
+					header_h2  : '<span class="--date">'+ formatted_date +'</span>,<span class="--place-name">'+ place_name +'</span>',
+
+				});
+			    
+			} else {
+
+				var names = _.map( LJ.chat.getMembers( chat_id ), 'name' );
+				names     = LJ.renderMultipleNames( names, { lastify_user: LJ.user.name });
+
+				LJ.chat.updateChatInviewElements( chat_id, {
+					header_h1: '<span data-lid="chat_groupname_team"></span>',
+					header_h2: '<span>' + names + '</span>'
+				});
+
+			}
+
+		},
+		refreshChatStates: function(){
+
+			LJ.chat.getChatIds().forEach(function( chat_id ){
+				LJ.chat.refreshChatState( chat_id );
+			});
+			
+		},
+		refreshChatState: function( chat_id ){
+
+			// Refresh the chatrow preview : either with last messages, or with the state. And update the time
+			LJ.chat.refreshChatRowPicture( chat_id );
+			LJ.chat.refreshChatRowPreview( chat_id );
+			LJ.chat.refreshChatRowTime( chat_id );
+
+			// Refresh the bubbles on the row, and inside the chat inview
+			if( LJ.chat.getActiveChatId() != chat_id ){
+				LJ.chat.refreshChatRowBubbles( chat_id );
+				LJ.chat.refreshChatIconBubble();
+			}
+
+			// Order rows in the right position before moving the ui, requires access to cached messages to work properly
+			LJ.chat.refreshChatRowsOrder();
+
+			// Refresh chat seenby, needs to be first
+			LJ.chat.refreshChatSeenBy( chat_id );
+			
+			// Obsolete (?)
+			LJ.chat.newifyChatRows( chat_id );
+
+		},
 		refreshChatRowPicture: function( chat_id ){
 
-			var last_message = LJ.chat.getChatById( chat_id ).messages[0];
+			var last_message = LJ.chat.getLastMessage( chat_id );
 			if( !last_message ){
 				return LJ.log('Zero chat messages, not refreshing...');
 			}
@@ -890,7 +908,7 @@
 		},
 		refreshChatRowPreview: function( chat_id ){
 
-			var last_message = LJ.chat.getChatById( chat_id ).messages[0];
+			var last_message = LJ.chat.getLastMessage( chat_id );
 			if( !last_message ){
 				return LJ.log('Zero chat messages, not refreshing...');
 			}
@@ -943,20 +961,34 @@
 				if( LJ.connecter.getUserStatus( opts.sender_id ) == "online" ){
 					$chatrow.find('.js-user-online').addClass('--online');
 				}
-				
 			}
+
+			LJ.lang.translate( $chatrow );
+
+		},
+		updateChatInviewElements: function( chat_id, opts ){
+
+			var $chatinview = LJ.chat.getChatInview( chat_id ).closest('.chat-inview');
+
+			if( opts.header_h1 ){	
+				$chatinview.find('.chat-inview-title__h1').html( opts.header_h1 );
+			}
+			if( opts.header_h2 ){
+				$chatinview.find('.chat-inview-title__h2').html( opts.header_h2 );
+			}
+
+			LJ.lang.translate( $chatinview );
 
 		},
 		newifyChatRows: function(){
 
-			var chat_ids = _.uniq( _.map( LJ.chat.fetched_chats, 'chat_id' ) );
+			var chat_ids = LJ.chat.getChatIds();
 
 			chat_ids.forEach(function( chat_id ){
 
-				var $chatrow = LJ.chat.getChatRow( chat_id );
-
+				var $chatrow     = LJ.chat.getChatRow( chat_id );
 				var last_message = LJ.chat.getLastMessage( chat_id );
-				var last_seen_by = last_message.seen_by;
+				var last_seen_by = last_message && last_message.seen_by;
 				
 				if( !last_seen_by ){
 
@@ -964,7 +996,7 @@
 					// This isnt store on the serverside, because it only happens when the chat is 
 					// empty of any messages. So no need to track each click on that section.
 
-					var seen_chats = LJ.local.get('seen_chats');
+					var seen_chats = LJ.store.get('seen_chats') || [];
 					if( seen_chats.indexOf( chat_id ) == -1 ){
 						$chatrow.addClass('--new');
 					} else {
@@ -978,6 +1010,7 @@
 					} else {
 						$chatrow.removeClass('--new');
 					}
+
 				}
 			});			
 		},
@@ -1051,9 +1084,9 @@
 		},
 		setChatRowSeenLocal: function( chat_id ){
 
-			var seen_chats = LJ.store.get('seen_chats');
+			var seen_chats = LJ.store.get('seen_chats') || [];
 			seen_chats.push( chat_id );
-			LJ.store.set( 'seen_chats', seen_chats );
+			LJ.store.set( 'seen_chats', _.uniq(seen_chats) );
 
 		},
 		getUser: function( facebook_id ){

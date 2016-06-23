@@ -165,6 +165,10 @@ window.LJ = _.merge( window.LJ || {}, {
     },
     renderUserRows: function( users ){
 
+        if( !Array.isArray( users ) ){
+            return LJ.wlog('Cant render users row with empty array, users='+ users );
+        }
+
         var user_rows = [];
         users.forEach(function( u ){
             user_rows.push( LJ.renderUserRow( u ) );

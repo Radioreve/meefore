@@ -29,6 +29,7 @@
 .be-create-row__subtitle {
     font-weight: bold;
     margin-top: 40px;
+    font-size: 13px;
 }
 
 .be-create-row__subtitle h2 {}
@@ -83,7 +84,7 @@
 .be-create-row.--location {}
 
 .be-create-row__explanations {
-    font-size: 12px;
+    font-size: 11px;
     margin-top: 8px;
     color: #919191;
 }

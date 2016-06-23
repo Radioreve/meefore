@@ -335,21 +335,23 @@
         },
         fetchBeforeAndHosts: function( before_id ){
 
-        	var before;
+        	var before_ref;
         	return LJ.api.fetchBefore( before_id )
-        			.then(function( exposed ){
-        				before = exposed.before;
-        				var host_ids = exposed.before.hosts;
+        			.then(function( before ){
+        				before_ref = before;
+        				var host_ids = before.hosts;
         				return LJ.api.fetchUsers( host_ids );
 
         			})
         			.then(function( expose ){
-        				expose.before = before;
+        				expose.before = before_ref;
         				return expose;
         			});
 
         },
         fetchAndShowBeforeInview: function( before_id ){
+			
+			var before;
 
         	LJ.before.hideBrowser();
         	LJ.ui.showSlideAndFetch({
@@ -364,7 +366,9 @@
 			})
 			.then(function( expose ){	
 				host_profiles = _.map( expose, 'user' );
-				return LJ.before.renderBeforeInview( expose.before, host_profiles );
+				before        = expose.before;
+				
+				return LJ.before.renderBeforeInview( before, host_profiles );
 
 			})
 			.then(function( before_html ){
@@ -378,7 +382,7 @@
 
 			})
 			.then(function(){
-				return LJ.before.processBeforePreDisplay( $content );
+				return LJ.before.processBeforePreDisplay( before );
 
 			})
 			.then(function(){

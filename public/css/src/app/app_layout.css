@@ -4,7 +4,7 @@ html {
 }
 
 body {
-    font-family: 'Alegreya Sans';
+    font-family: 'Open sans', 'Alegreya Sans';
     color: #191919;
 }
 
@@ -161,7 +161,7 @@ button:hover {
 .row-body__subtitle {
     display: flex;
     align-items: center;
-    color: #ababab;
+    color: #454545;
     font-size: 13px;
     font-family: 'Open sans';
 }
@@ -169,8 +169,8 @@ button:hover {
 .row-body__age {
     font-family: 'Open Sans';
     font-size: 18px;
-    margin-left: 6px;
-    font-weight: 100;
+    margin-left: 2px;
+    font-weight: 400;
 }
 
 .row-body h1 {
@@ -180,7 +180,7 @@ button:hover {
 
 .row-body h2 {
     font-weight: 600;
-    font-size: 20px;
+    font-size: 18px;
     color: #454545;
     margin-right: 30px;
 }
@@ -246,7 +246,7 @@ button:hover {
 .settings-input__explanation {
     display: inline-block;
     border-radius: 100px;
-    font-size: 13px;
+    font-size: 11px;
     position: relative;
     top: -12px;
     left: 28px;

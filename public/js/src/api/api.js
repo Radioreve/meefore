@@ -538,7 +538,12 @@
 
 				LJ.api.get( LJ.api.fetch_before_url.replace(':before_id', before_id ) )
 					  .then(function( exposed ){
-					  	return resolve( exposed.before );
+
+					  	if( !exposed.before ){
+					  		return LJ.wlog('Didnt respond with the expected before object');
+					  	} else {
+					  		return resolve( exposed.before );
+					  	}
 
 					  }, function( err ){
 					  	return reject( err );
@@ -682,7 +687,7 @@
 		},
 		sendChatMessage: function( data ){
 
-			if( !( data.message && data.chat_id && data.group_id && data.before_id ) ){
+			if( !( data.message && data.chat_id ) ){
 				return LJ.wlog('Cannot request the api without all required parameters');
 			}
 

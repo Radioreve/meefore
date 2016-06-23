@@ -55,6 +55,9 @@
 			});
 		}
 
+		// used to determine which channel to send the message to
+		req.sent.type = user.getChatChannel( chat_id ).type;
+
 		callback( null );
 			
 	

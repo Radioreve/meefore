@@ -90,15 +90,15 @@
 	}	
 
 
-	function makeChannelItem__ChatTeam( group ){
+	function makeChannelItem__ChatTeam( group, group_formed_at ){
 
 		return {
-			type    	 : 'chat_team',
-			chat_id 	 : makeChatTeamId( group ),
-			team_id 	 : makeChatTeamId( group ),
-			name    	 : 'private-team-' + makeChatTeamId( group ),
-			last_sent_at : group.requested_at,
-			members 	 : group
+			type      : 'chat_team',
+			chat_id   : makeChatTeamId( group ),
+			team_id   : makeChatTeamId( group ),
+			name      : 'private-team-' + makeChatTeamId( group ),
+			formed_at : group_formed_at,
+			members   : group
 		}
 	}
 
@@ -120,8 +120,7 @@
 			hosts         : before.hosts,
 			status        : group.status,
 			role 		  : opts.role,
-			requested_at  : group.requested_at,
-			last_sent_at  : group.requested_at
+			requested_at  : group.requested_at
 
 		};
 	}
@@ -144,14 +143,14 @@
 
 	}
 
-	function addTeamChannel( user, group ){
+	function addTeamChannel( user, group, group_formed_at ){
 
 		var team_channel = _.find( user.channels, function( chan ){
 			return chan.team_id == makeChatTeamId( group );
 		});
 
 		if( !team_channel ){
-			user.channels.push( makeChannelItem__ChatTeam( group ) );
+			user.channels.push( makeChannelItem__ChatTeam( group, group_formed_at ) );
 		}
 
 	}
@@ -191,7 +190,7 @@
 						user.channels.push( makeChannelItem__Before( before ) );
 
 						// Create a team chat with other hosts only if it doesnt already exists
-						addTeamChannel( user, before.hosts );
+						addTeamChannel( user, before.hosts, before.created_at );
 
 						before.groups.forEach(function( group ){
 							user.channels.push( makeChannelItem__ChatHosts( before, group ));
@@ -206,7 +205,7 @@
 						});
 
 						// Create a team chat with other hosts only if it doesnt already exists
-						addTeamChannel( user, mygroup.members );
+						addTeamChannel( user, mygroup.members, mygroup.requested_at );
 
 						user.channels.push( makeChannelItem__ChatUsers( before, mygroup ) );
 
@@ -353,19 +352,19 @@
 
 			if( err ) return handleErr( req, res, err_ns, err );
 
-			if( !res_objects ){
-				return next();
-			}
-			
-			res_objects.forEach(function( res_object ){
+			// All chats that have 0 entries in the Messages collection still need to have a 
+			//'last_sent_at' key updated.
+			user.channels.forEach(function( chan ){
 
-				// Augment each channel with the date at which the last message was sent
-				// to allow clients to paginate the way they fetch chats
-				var channel = _.find( user.channels, function( chan ){
-					return chan.chat_id == res_object._id;
+				var matching_object = _.find( res_objects, function( o ){
+					return o._id == chan.chat_id;
 				});
 
-				channel.last_sent_at = res_object.last_sent_at;
+				if( matching_object ){
+					chan.last_sent_at = matching_object.last_sent_at;
+				} else {
+					chan.last_sent_at = chan.formed_at ? chan.formed_at : chan.requested_at;
+				}
 
 			});
 
@@ -545,6 +544,7 @@
 	var pushNewChatMessage = function( req, res, next ){
 
 		var chat_id = req.sent.chat_id;
+		var type    = req.sent.type;
 
 		var data_message = {
 			sender_id   : req.sent.facebook_id,
@@ -555,9 +555,11 @@
 			chat_id 	: chat_id	
 		};
 
+		var channel_name = ( type == "chat_all" ) ? "private-all-%chatid" : "private-team-%chatid";
 		// Do not filter by socket_id here for ressource efficiency, let the client react differently
 		// when he realizes its his own message that bounced back successfully
-		pusher.trigger( chat_id, 'new chat message', data_message, handlePusherErr );
+		var channel = channel_name.replace('%chatid', chat_id);
+		pusher.trigger( channel, 'new chat message', data_message, handlePusherErr );
 		next();
 
 

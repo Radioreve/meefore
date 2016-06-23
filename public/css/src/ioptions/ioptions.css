@@ -25,7 +25,7 @@
     justify-content: center;
     align-items: center;
     height: 54px;
-    font-size: 18px;
+    font-size: 14px;
     background: white;
     cursor: pointer;
     margin: 1px 0px;
@@ -37,6 +37,7 @@
 
 .ioptions__action.--back {
     color: #DB4760;
+    color: #1b69ec;
     font-weight: 700;
     margin-top: 8px;
 }
@@ -50,4 +51,5 @@
     top: -30px;
     left: 50%;
     transform: translate(-50%, 0);
+    font-size: 12px;
 }

@@ -65,12 +65,12 @@
 
 .user-infos__item.--name {
     position: absolute;
-    top: -59px;
+    top: -58px;
     color: white;
     left: 20px;
     /* transform: translate(-50%, 0); */
-    font-size: 26px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 600;
     z-index: 10;
 }
 .user-infos__item.--name.--female h2 {
@@ -103,7 +103,7 @@
 .user-infos__item label {
     margin-left: 20px;
     padding-bottom: 0px;
-    font-size: 16px;
+    font-size: 13px;
     line-height: 20px;
     max-height: 64px;
     text-overflow: ellipsis;

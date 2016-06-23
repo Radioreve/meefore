@@ -6,8 +6,8 @@
 }
 
 .notifications-panel {
-    width: 540px;
-    height: 280px;
+    width: 430px;
+    height: 80%;
     position: fixed;
     background: white;
     color: #191919;
@@ -148,7 +148,7 @@ Whispereen  : #58c170
     margin-left: 20px;
 }
 
-.notification .notification-message__text {font-weight: 600;}
+.notification .notification-message__text {font-weight: 600;font-size: 12px;}
 
 .notification .notification-message__subtext {
     font-size: 10px;
@@ -158,11 +158,13 @@ Whispereen  : #58c170
 }
 
 .notification .notification__date {
-    font-size: 11px;
+    font-size: 10px;
     margin-left: auto;
     font-family: 'Open sans';
     color: #454545;
-    font-weight: 600;
+    font-weight: 500;
+    position: relative;
+    top: -10px;
 }
 
 .notification .notification__icon {
@@ -185,7 +187,6 @@ Whispereen  : #58c170
 }
 
 .notification.--clicked .notification-message__text {
-    color: #919191;
     font-weight: 500;
 }
 

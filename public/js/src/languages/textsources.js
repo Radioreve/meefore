@@ -1822,7 +1822,7 @@
 			"us": function( group_name ){ return group_name; }
 		},
 		chat_empty_subtitle_inview_team: {
-			"fr": "Seuls vous et les autres membres de votre groupe recevront les messages qui seront envoyés sur cette discussion.",
+			"fr": "Seuls vous et les autres membres de ce groupe recevront les messages qui seront envoyés sur cette discussion.",
 			"us": "Only you and the other members of your group will receive messages that are sent on this chat."
 		},
 		chat_empty_title_inview_pending: {
@@ -1834,12 +1834,12 @@
 			"us": "You'll be able to start chatting as soon as there is a Match with the hosts."
 		},
 		chat_rows_team_title: {
-			"fr": "Mes groupes",
-			"us": "Your groups"
+			"fr": "Amis",
+			"us": "Friends"
 		},
 		chat_rows_all_title: {
-			"fr": "Mes befores",
-			"us": "Your pregames"
+			"fr": "Match",
+			"us": "Match"
 		},
 		chat_inview_options_message: {
 			"fr": "Que souhaitez-vous faire ?",

@@ -264,12 +264,11 @@
 		subscribeToChatChannels: function( channels ){
 
 			var chat_channels = _.filter( LJ.user.channels, function( chan ){
-				return chan.type == "chat";
+				return /chat/i.test( chan.type );
 			});
 
 			chat_channels.forEach(function( chan ){
-				LJ.realtime.subscribeToChatChannel( chan.channel_all );
-				LJ.realtime.subscribeToChatChannel( chan.channel_team );
+				LJ.realtime.subscribeToChatChannel( chan.name );
 			});
 
 		},
@@ -329,14 +328,14 @@
 
 			// LJ.log('Adding chatline ');
 
-			var call_id   = data.call_id;
-			var group_id  = data.group_id;
-			var sent_at   = data.sent_at;
 			var chat_id   = data.chat_id;
 			var message   = data.message;
 			var sender_id = data.sender_id;
+			var call_id   = data.call_id;
+			var sent_at   = data.sent_at;
+			var seen_by   = data.seen_by;
 
-			var chat = LJ.chat.getChatById( chat_id );
+			var chat = LJ.chat.getChat( chat_id );
 
 			if( !chat ){
 
@@ -352,29 +351,12 @@
 				});
 			}
 
-			// Update the state. If the chat is active, then message is obviously seen by default
-			// otherwise, it's considered unseen. 
-			var state = LJ.chat.getActiveChatId() == chat_id ? "seen" : "unseen";
-			LJ.chat.cacheChatMessage( chat_id, _.extend( data, {
-				state: state
-			}));
+			LJ.chat.cacheChatMessage( chat_id, data );
 
 			// Local variation regarding the inview ui of the chatline
-			if( sender_id == LJ.user.facebook_id ){
-				LJ.chat.dependifyChatLine( call_id );
-			} else {
-				LJ.chat.addChatLine( data, call_id );
-			}
+			sender_id == LJ.user.facebook_id ? LJ.chat.dependifyChatLine( call_id ) : LJ.chat.addChatLine( data );
 
-			// In anycase take actions that are all based on the chat state
-			LJ.chat.refreshChatRowPreview( group_id );
-			LJ.chat.refreshChatRowTime( group_id );
-			LJ.chat.refreshChatRowsOrder();
-			LJ.chat.refreshChatInviewBubbles( group_id );
-			LJ.chat.refreshChatIconBubble();
-			LJ.chat.refreshChatSeenBy( chat_id );
-			LJ.chat.newifyChatRows();
-
+			LJ.chat.refreshChatState( chat_id );
 
 		},
 		handleNewChatSeenBy: function( data ){
