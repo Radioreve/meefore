@@ -40,6 +40,10 @@
 			"fr": ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
 			"us": ['January','February','March','April','May','June','July','August','September','October','November','December']
 		},
+		h_sec_ago: {
+			"fr": "à l'instant !",
+			"us": "just now !"
+		},
 		h_min_ago: {
 			"fr": "il y a quelques minutes",
 			"us": "a few minuts ago"
@@ -1200,8 +1204,8 @@
 			"us": "Meefore in limited mode on web mobile. The iOS app should be soon available on the AppleStore"
 		},
 		app_event_unavailable: {
-			"fr": "Ce meefore n'est plus d'actualité",
-			"us": "This meefore is no longer available"
+			"fr": "Ce before n'est plus d'actualité",
+			"us": "This before is no longer available"
 		},
 		app_reconnect: {
 			"fr": "Vous avez été déconnecté. <br> L'application redémarrera dès que vous aurez retrouvé la connexion.",

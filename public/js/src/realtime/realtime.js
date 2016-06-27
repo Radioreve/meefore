@@ -26,6 +26,16 @@
 			return LJ.realtime.channels[ channel_name ];
 
 		},
+		addNotification: function( data ){
+
+			if( !data.notification || (data.requester && data.requester == LJ.user.facebook_id) ){
+				return;
+			}
+
+			LJ.notifications.cacheNotification( data.notification );
+			LJ.notifications.refreshNotifications();
+
+		},
 		setupRealtimeService: function(){
 
 			if( !LJ.app_token ){
@@ -127,8 +137,10 @@
 
 			// Refresh all channels subscriptions
 			LJ.realtime.subscribeToAllChannels();
-
 			LJ.chat.addAndFetchOneChat( channel_item_team );
+
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
 
 		},
 		handleNewRequestGroup: function( data ){
@@ -160,6 +172,8 @@
 				"row_insert_mode": "top"
 			});
 
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
 
 		},
 		// Subcribe to events about a specific geo area 
@@ -213,7 +227,7 @@
 						'</div>'
 					].join('')) );
 
-					LJ.delay( 6000).then(function(){
+					LJ.delay( 6000 ).then(function(){
 						LJ.ui.hideSlide({ type: 'before' });
 					});
 
@@ -222,6 +236,9 @@
 				// Do the same pattern for the chatinview
 				//var $ch = $('.chat-inview[data-chat-id="'+ chat_id +'"]') 
 			}
+
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
 
 
 		},
@@ -259,6 +276,9 @@
 			LJ.cheers.fetched_cheers.push( data.cheers_item );
 			LJ.cheers.refreshCheersItems();
 
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
+
 
 		},
 		handleNewBeforeStatusHosts: function( data ){
@@ -277,6 +297,9 @@
 				LJ.ui.showToast( LJ.text('to_friend_canceled_event').replace( '%name', friend_name ) );
 
 			}
+
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
 
 		},
 		// Subscribe to specific chat channels for hosts & requesters.
@@ -340,8 +363,10 @@
 					LJ.cheers.updateCheersItem( cheers_id, { status: status });
 					LJ.cheers.acceptifyCheersRow( cheers_id );
 
-				});
+					// Add notification in real time
+					LJ.realtime.addNotification( data );
 
+				});
 
 		},
 		handleNewGroupStatusUsers: function( data ){
@@ -374,8 +399,12 @@
 					LJ.cheers.updateCheersItem( cheers_id, { status: status });
 					LJ.cheers.acceptifyCheersRow( cheers_id );
 
-					// Update the before_item
+					// Update the before_item and the before marker
 					LJ.before.updateBeforeItem( before_id, { status: status });
+					LJ.before.acceptifyBeforeMarker( before_id );
+
+					// Add notification in real time
+					LJ.realtime.addNotification( data );
 
 				});
 

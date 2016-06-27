@@ -23,6 +23,11 @@
 			LJ.ui.$body.on('click', LJ.notifications.handleHideNotifications );
 
 		},
+		cacheNotification: function( notification ){
+
+			LJ.user.notifications.push( notification );
+
+		},
 		refreshNotifications: function(){
 
 			LJ.notifications.addAndShowNotifications();
@@ -493,11 +498,15 @@
 
 			var now = moment();
 
-			if( now - m < 15 * 60 ){
+			if( (now - m)/1000 < 5 * 60 ){
+				return LJ.text("h_sec_ago");
+			}
+
+			if( (now - m)/1000 < 15 * 60 ){
 				return LJ.text("h_min_ago");
 			}
 
-			if( now - m < 3600 ){
+			if( (now - m)/1000 < 3600 ){
 				return LJ.text("h_hour_ago");
 			}
 

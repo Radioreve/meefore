@@ -5,6 +5,7 @@
 
 			return LJ.ui.getModalItemIds()
 				.then(function( item_ids ){
+
 					var d = LJ.static.renderStaticImage('search_loader')
 					$( d ).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
 						duration: 400
@@ -65,8 +66,10 @@
 				_.map( err.already_there, 'member_id').forEach(function( member_id ){
 					LJ.ui.noSelectModalRow( member_id, LJ.text('be_request_already_there'));
 				});
+
 				$('.modal')
 					.removeClass('--pending')
+                    .addClass('--disabled')
 					.find('.modal__search-loader').hide();
 					
 				return LJ.before.processRequest( before_id );

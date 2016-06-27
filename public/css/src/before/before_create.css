@@ -45,7 +45,8 @@
 
 .be-create__title {
     font-family: 'creamy';
-    font-size: 40px;
+    font-weight: 700;
+    font-size: 30px;
     justify-content: center;
     align-items: center;
 }

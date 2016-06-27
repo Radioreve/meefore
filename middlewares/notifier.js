@@ -308,15 +308,14 @@
 			return next();
 		}
 
-
 		var n = {
-			type : "before_canceled",
-			before_id	    : before_id,
-			canceled_by     : facebook_id,
-			address 		: before.address.place_name,
-			seen_at 		: null,
-			clicked_at 		: null,
-			happened_at     : new Date()
+			type 		 : "before_canceled",
+			before_id	 : before_id,
+			requester    : facebook_id,
+			address 	 : before.address.place_name,
+			seen_at 	 : null,
+			clicked_at 	 : null,
+			happened_at  : new Date()
 		};
 
 		n.notification_id = hash( n );

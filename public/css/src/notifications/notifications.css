@@ -178,6 +178,7 @@ Whispereen  : #58c170
     height: 40px;
     width: 40px;
     font-size: 26px;
+    color: #1b69ec;
 }
 
 .notification.--seen .notification-message__text {color: #454545;}
@@ -198,7 +199,7 @@ Whispereen  : #58c170
 .notification.--clicked .notification-message__subtext {
     /* color: #919191; */
 }
-.notification.--clicked .notification__date {color: #919191;}
+.notification.--clicked .notification__date {}
 .notification.--clicked .notification__icon {
     color: #ccc;
 }

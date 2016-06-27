@@ -119,7 +119,7 @@
 		},
 		showCheersBackOverlay: function(){
 
-			$('<div class="cheers-back__overlay"></div>')
+			$('<div class="loader__overlay"></div>')
 				.hide()
 				.appendTo( $('.cheers-back') )
 				.velocity('fadeIn', {

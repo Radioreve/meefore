@@ -445,15 +445,20 @@
 		data.before_item         = req.sent.expose.before_item;;
 		data.channel_item_before = makeChannelItem__Before( before );
 		data.channel_item_team   = makeChannelItem__ChatTeam( before.hosts, before.created_at );
-		data.notification        = req.sent.notification;
 
 		data.channel_item_team.last_sent_at = data.channel_item_team.formed_at;
 
-		// Push the channel to the model before, so they wont get rejected when joining
+		// Pushed the channel to the model before, so they wont get rejected when joining
 		User.update(
-			{ 'facebook_id': { $in: before.hosts } },
-			{ $addToSet: { 'channels': { '$each' : [ data.channel_item_before, data.channel_item_team ] } }},
-			{ multi: true },
+			{
+				'facebook_id': { $in: before.hosts }
+			},
+			{
+				$addToSet: { 'channels': { '$each' : [ data.channel_item_before, data.channel_item_team ] } }
+			},
+			{
+				multi: true
+			},
 			function( err, raw ){
 
 				if( err ) return handleErr( req, res, err_ns, err );
@@ -462,6 +467,10 @@
 				before.hosts.forEach(function( h ){
 
 					var channel = makePersonnalChannel( h );
+
+					data.requester    = req.sent.facebook_id;
+					data.notification = req.sent.notification;
+
 					pusher.trigger( channel, 'new before hosts', data, handlePusherErr );
 
 				});
@@ -485,7 +494,7 @@
 			before_id 	 : before._id,
 			hosts     	 : before.hosts,
 			status       : before.status,
-			notification : before.notification
+			notification : notification
 		};
 
 		var data_hosts = {
@@ -493,7 +502,7 @@
 			hosts        : before.hosts,
 			status       : before.status,
 			requester    : req.sent.facebook_id, // Used by ui to display the name of the requester,
-			notification : before.notification
+			notification : notification
 		};
 
 		// Global message : everyone will received it and react. Hosts too, but they are not
@@ -514,7 +523,6 @@
 	var pushNewRequest = function( req, res, next ){
 		
 		var socket_id        = req.sent.socket_id;
-		var notification     = req.sent.notification;
 		var before_item 	 = req.sent.before_item;
 		var before 	 	     = req.sent.before;
 		var group 			 = req.sent.group;
@@ -523,16 +531,17 @@
 		var data_hosts = {
 			before_id    : before._id,
 			cheers_item  : User.makeCheersItem__Received( before, group ),
-			notification : notification
+			notification : req.sent.notification_hosts
 		};
 
 		var data_members = {
 			before_id	 	  : before._id,
 			group 			  : group,
+			requester 		  : req.sent.facebook_id,
 			before_item       : _.merge( _.cloneDeep( before_item ), { status: "pending" }),
 			cheers_item 	  : User.makeCheersItem__Sent( before, group ),
 			channel_item_team : makeChannelItem__ChatTeam( group.members, group.requested_at ),
-			notification      : notification
+			notification      : req.sent.notification_users
 		};
 
     	// Notify hosts
@@ -625,7 +634,6 @@
 
 		pusher.trigger( chat_id, 'new chat seen by', data_seen_by, handlePusherErr );
 		next();
-
 
 	};
 

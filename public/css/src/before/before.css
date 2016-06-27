@@ -97,11 +97,12 @@
 }
 
 .be-create__loader {
-    position: absolute;
+    position: absolute; 
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%)!important;
-    width: 40px;
+    width: 32px;
+    z-index: 100;
 }
 
 
@@ -361,8 +362,6 @@
     font-weight: 500;
     font-size: 12px;
 }
-.be-ended span {
-
-}
+.be-ended span {padding: 14px 20px;color: #1b69ec;border: 1px solid;display: block;border-radius: 100px;white-space: nowrap;}
 /* Before inview end */
 

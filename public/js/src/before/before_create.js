@@ -1,10 +1,6 @@
 
 	window.LJ.before = _.merge( window.LJ.before || {}, {
 
-		addCreateBeforeLoader: function(){
-			$( LJ.static.renderStaticImage('be_create_loader') ).hide().appendTo('.be-create');
-
-		},
 		initHostsPicker: function(){
 
 			LJ.before.handleDomEvents__HostsPicker();
@@ -353,20 +349,53 @@
 
 
 		},
-		startCreateBefore: function(){
+		showCreateBeforeOverlay: function(){
+
+			$('<div class="loader__overlay"></div>')
+				.hide()
+				.appendTo( $('.be-create') )
+				.velocity('fadeIn', {
+					duration: 500
+				});
+
+		},
+		hideCreateBeforeOverlay: function(){
+
+			$('.be-create')
+				.find('.loader__overlay')
+				.remove();
+
+		},
+		showCreateBeforeLoader: function(){
+
+			$( LJ.static.renderStaticImage('be_create_loader') )
+				.hide()
+				.appendTo('.be-create')
+				.show();
+
+		},
+		hideCreateBeforeLoader: function(){
+
+			$('.be-create')
+				.find('.be-create__loader')
+				.remove();
+
+		},
+		pendifyCreateBefore: function(){
 
 			$('.be-create').addClass('--pending');
-			$('.be-create').children().velocity('shradeOut', { duration: 300, display: 'none' });
-			LJ.before.addCreateBeforeLoader();
-			$('.be-create').find('.be-create__loader').velocity({ 'opacity': 1 }, { delay: 300, duration: 300, display: 'block' });
+			LJ.before.showCreateBeforeOverlay();
+			LJ.before.showCreateBeforeLoader();
+			
 			return;
 
 		},
-		cancelCreateBefore: function(){
+		dependifyCreateBefore: function(){
 
 			$('.be-create').removeClass('--pending');
-			$('.be-create').find('.be-create__loader').velocity({ 'opacity': 0 }, { duration: 300, complete: function(){ $(this).remove(); } });
-			$('.be-create').children().velocity('shradeIn', { duration: 300, delay: 300, display: 'flex' });
+			LJ.before.hideCreateBeforeLoader();
+			LJ.before.hideCreateBeforeOverlay();
+
 			return;
 
 		},
@@ -384,7 +413,7 @@
 
 			LJ.log('Handling create before...');
 
-			var ux_done    = LJ.before.startCreateBefore();
+			var ux_done    = LJ.before.pendifyCreateBefore();
 			var be_created = LJ.before.readAndCreateBefore();
 
 			LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
@@ -440,7 +469,7 @@
 			}
 
 			LJ.ui.showToast( err_msg ,'error' );
-			LJ.before.cancelCreateBefore();
+			LJ.before.dependifyCreateBefore();
 
 		}
 
