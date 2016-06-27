@@ -4,7 +4,7 @@ html {
 }
 
 body {
-    font-family: 'Open sans', 'Alegreya Sans';
+    font-family: 'Open sans';
     color: #191919;
 }
 
@@ -95,9 +95,7 @@ button:hover {
     position: absolute;
     top: 20px;
     right: 20px;
-    font-weight: 600;
     font-size: 12px;
-    color: #191919;
 }
 
 .row-pic {
@@ -142,8 +140,6 @@ button:hover {
 
 .row-pic__icon i {
     margin: auto;
-    position: relative;
-    left: 1px;
 }
 
 .row-body {
@@ -162,13 +158,11 @@ button:hover {
     display: flex;
     align-items: center;
     color: #454545;
-    font-size: 13px;
-    font-family: 'Open sans';
+    font-size: 12px;
 }
 
 .row-body__age {
-    font-family: 'Open Sans';
-    font-size: 18px;
+    font-size: 14px;
     margin-left: 2px;
     font-weight: 400;
 }
@@ -179,14 +173,14 @@ button:hover {
 }
 
 .row-body h2 {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: 700;
+    font-size: 15px;
     color: #454545;
     margin-right: 30px;
+    letter-spacing: -.5px;
 }
 
 .row-body__icon {
-    color: #919191;
     width: 24px;
     height: 20px;
 }
@@ -323,6 +317,7 @@ button:hover {
     border: 1px solid #454545;
     margin: 0 3px;
     cursor: pointer;
+    font-size: 15px;
 }
 
 .action > div:hover {
@@ -330,15 +325,15 @@ button:hover {
 }
 
 .action .action__validate {
-    background: white;
+    background: #1b69ec;
     border: 1px solid #1B69EC;
-    color: #1B69EC;
+    color: white;
 }
 
 .action .action__cancel {
     background: white;
-    color: #ccc;
-    border-color: #ccc;
+    color: #1b69ec;
+    border-color: inherit;
 }
 
 .icon-item {
@@ -355,8 +350,8 @@ button:hover {
 .edit {
     color: rgb(27, 105, 236);
     position: absolute;
-    right: 14px;
-    top: 24px;
+    right: 0px;
+    bottom: -20px;
     z-index: 1;
     font-size: 22px;
     cursor: pointer;
@@ -388,7 +383,7 @@ button:hover {
 .empty__icon {
     display: flex;
     color: #eee;
-    font-size: 100px;
+    font-size: 80px;
 }
 
 .empty__icon i {
@@ -396,17 +391,19 @@ button:hover {
 }
 
 .empty__title {
-    font-size: 36px;
+    font-size: 30px;
     margin-top: 30px;
     color: #454545;
+    font-family: 'creamy';
+    color: #1b69ec;
 }
 
 .empty__title h2 {}
 
 .empty__subtitle {
-    color: #919191;
     margin-top: 20px;
     line-height: 23px;
+    font-size: 13px;
 }
 
 .empty__subtitle p {}
@@ -625,3 +622,197 @@ button:hover {
     display: inline-block;
 }
 
+
+/* Fun experiment */
+
+.cssload-box-loading {
+    width: 32px;
+    height: 32px;
+    margin: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+.cssload-box-loading:before {
+    content: '';
+    width: 32px;
+    height: 3px;
+    background: rgb(0,0,0);
+    opacity: 0.1;
+    position: absolute;
+    top: 38px;
+    left: 0;
+    border-radius: 50%;
+    animation: shadow 0.475s linear infinite;
+        -o-animation: shadow 0.475s linear infinite;
+        -ms-animation: shadow 0.475s linear infinite;
+        -webkit-animation: shadow 0.475s linear infinite;
+        -moz-animation: shadow 0.475s linear infinite;
+}
+.cssload-box-loading:after {
+    content: '';
+    width: 32px;
+    height: 32px;
+    background: rgba(30,105,188,0.98);
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 2px;
+    animation: cssload-animate 0.475s linear infinite;
+        -o-animation: cssload-animate 0.475s linear infinite;
+        -ms-animation: cssload-animate 0.475s linear infinite;
+        -webkit-animation: cssload-animate 0.475s linear infinite;
+        -moz-animation: cssload-animate 0.475s linear infinite;
+}
+
+
+
+@keyframes cssload-animate {
+    17% {
+        border-bottom-right-radius: 2px;
+    }
+    25% {
+        transform: translateY(6px) rotate(22.5deg);
+    }
+    50% {
+        transform: translateY(12px) scale(1, 0.9) rotate(45deg);
+        border-bottom-right-radius: 26px;
+    }
+    75% {
+        transform: translateY(6px) rotate(67.5deg);
+    }
+    100% {
+        transform: translateY(0) rotate(90deg);
+    }
+}
+
+@-o-keyframes cssload-animate {
+    17% {
+        border-bottom-right-radius: 2px;
+    }
+    25% {
+        -o-transform: translateY(6px) rotate(22.5deg);
+    }
+    50% {
+        -o-transform: translateY(12px) scale(1, 0.9) rotate(45deg);
+        border-bottom-right-radius: 26px;
+    }
+    75% {
+        -o-transform: translateY(6px) rotate(67.5deg);
+    }
+    100% {
+        -o-transform: translateY(0) rotate(90deg);
+    }
+}
+
+@-ms-keyframes cssload-animate {
+    17% {
+        border-bottom-right-radius: 2px;
+    }
+    25% {
+        -ms-transform: translateY(6px) rotate(22.5deg);
+    }
+    50% {
+        -ms-transform: translateY(12px) scale(1, 0.9) rotate(45deg);
+        border-bottom-right-radius: 26px;
+    }
+    75% {
+        -ms-transform: translateY(6px) rotate(67.5deg);
+    }
+    100% {
+        -ms-transform: translateY(0) rotate(90deg);
+    }
+}
+
+@-webkit-keyframes cssload-animate {
+    17% {
+        border-bottom-right-radius: 2px;
+    }
+    25% {
+        -webkit-transform: translateY(6px) rotate(22.5deg);
+    }
+    50% {
+        -webkit-transform: translateY(12px) scale(1, 0.9) rotate(45deg);
+        border-bottom-right-radius: 26px;
+    }
+    75% {
+        -webkit-transform: translateY(6px) rotate(67.5deg);
+    }
+    100% {
+        -webkit-transform: translateY(0) rotate(90deg);
+    }
+}
+
+@-moz-keyframes cssload-animate {
+    17% {
+        border-bottom-right-radius: 2px;
+    }
+    25% {
+        -moz-transform: translateY(6px) rotate(22.5deg);
+    }
+    50% {
+        -moz-transform: translateY(12px) scale(1, 0.9) rotate(45deg);
+        border-bottom-right-radius: 26px;
+    }
+    75% {
+        -moz-transform: translateY(6px) rotate(67.5deg);
+    }
+    100% {
+        -moz-transform: translateY(0) rotate(90deg);
+    }
+}
+
+@keyframes shadow {
+    0%,
+    100% {
+        transform: scale(1, 1);
+    }
+    50% {
+        transform: scale(1.2, 1);
+    }
+}
+
+@-o-keyframes shadow {
+    0%,
+    100% {
+        -o-transform: scale(1, 1);
+    }
+    50% {
+        -o-transform: scale(1.2, 1);
+    }
+}
+
+@-ms-keyframes shadow {
+    0%,
+    100% {
+        -ms-transform: scale(1, 1);
+    }
+    50% {
+        -ms-transform: scale(1.2, 1);
+    }
+}
+
+@-webkit-keyframes shadow {
+    0%,
+    100% {
+        -webkit-transform: scale(1, 1);
+    }
+    50% {
+        -webkit-transform: scale(1.2, 1);
+    }
+}
+
+@-moz-keyframes shadow {
+    0%,
+    100% {
+        -moz-transform: scale(1, 1);
+    }
+    50% {
+        -moz-transform: scale(1.2, 1);
+    }
+}
+
+
+/* Fun experiment end */

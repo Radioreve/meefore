@@ -76,6 +76,7 @@
 .search-users-row {
     display: flex;
     width: 100%;
+    position: relative;
 }
 
 .search-users-row:last-of-type {}
@@ -204,10 +205,11 @@
 }
 
 .search-user__h1 .name {
-    font-weight: 600;
+    font-weight: 700;
     overflow: hidden;
     max-width: 60%;
     white-space: nowrap;
+    font-size: 13px;
 }
 
 .search-user__h2 {

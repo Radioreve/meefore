@@ -240,10 +240,9 @@
 
 				'<div class="search-user" data-facebook-id="'+ i +'" data-age="' + a + '" data-gender="' + g + '" data-cc="' + c + '">',
 		            '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
-		            '<div class="search-user__pic">',
-		            img_html,
+		            '<div class="search-user__pic --filterlayable">',
+		            	img_html,
 		               '<div class="search-user__pic-overlay"></div>',
-		               '<div class="search-user__pic-filterlay --filterlay"></div>',
 		            '</div>',
 		           '<div class="search-user-body">',
 		               '<div class="search-user__h1">',

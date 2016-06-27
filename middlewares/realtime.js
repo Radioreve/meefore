@@ -2,12 +2,12 @@
 	var pusher     = require('../services/pusher');
 	var _          = require('lodash');
 	var eventUtils = require('../pushevents/eventUtils');
-	var md5        = require('blueimp-md5');
 	var User 	   = require('../models/UserModel');
 	var Before     = require('../models/BeforeModel');
 	var Message    = require('../models/MessageModel');
 	var mongoose   = require('mongoose');
 	var async 	   = require('async');
+
 
 	function handlePusherErr( err, req, res ){
 		console.log( err );
@@ -24,11 +24,12 @@
 
 	};
 
-	function sortIds( ids ){
-		return ids.sort(function( i1, i2 ){
-			return parseInt( i1 ) - parseInt( i2 );
-		});
-	}
+	function handleErrAsync( namespace, err ){
+
+		console.log( err );
+
+	};
+
 
 	function makePersonnalChannel( facebook_id ){
 		return "private-facebook-id=" + facebook_id;
@@ -40,25 +41,6 @@
 
 	function makeBeforeChannel( before_id ){
 		return "private-before-id=" + before_id;
-	}
-
-	function makeChatGroupId( before_id, hosts, members ){
-		
-		var sorted_hosts   = sortIds( hosts ).join('-');
-		var sorted_members = sortIds( members ).join('-');
-
-		var payload 	   = [ before_id, sorted_hosts, sorted_members ].join('__');
-
-		return md5( payload );
-
-	}
-
-	function makeChatTeamId( members ){
-
-		var sorted_members = sortIds( members ).join('-');
-		var payload 	   = sorted_members;
-
-		return md5( payload );
 	}
 
 
@@ -90,28 +72,28 @@
 	}	
 
 
-	function makeChannelItem__ChatTeam( group, group_formed_at ){
+	function makeChannelItem__ChatTeam( members, group_formed_at ){
 
 		return {
 			type      : 'chat_team',
-			chat_id   : makeChatTeamId( group ),
-			team_id   : makeChatTeamId( group ),
-			name      : 'private-team-' + makeChatTeamId( group ),
+			chat_id   : Message.makeTeamId( members ),
+			team_id   : Message.makeTeamId( members ),
+			name      : 'private-team-' + Message.makeTeamId( members ),
 			formed_at : group_formed_at,
-			members   : group
+			members   : members
 		}
 	}
 
 	function makeChannelItem__ChatBase( before, group, opts ){
 
-		var chat_id = makeChatGroupId( before._id, before.hosts, group.members );
+		var chat_id = Message.makeChatId( before._id, before.hosts, group.members );
 
 		return {
 
+			// Common part of the channel object
 			type 		  : "chat_all",
 			name          : "private-all-" + chat_id,
 			chat_id 	  : chat_id,
-			team_id       : opts.team_id,
 			before_id     : before._id,
 			before_status : before.status,
 			members       : group.members,
@@ -119,8 +101,11 @@
 			main_host     : before.main_host,
 			hosts         : before.hosts,
 			status        : group.status,
+			requested_at  : group.requested_at,
+
+			// Variable part of the channel object
 			role 		  : opts.role,
-			requested_at  : group.requested_at
+			team_id       : opts.team_id
 
 		};
 	}
@@ -129,7 +114,7 @@
 
 		return makeChannelItem__ChatBase( before, group, {
 			role    : "hosted",
-			team_id : makeChatTeamId( before.hosts )
+			team_id : Message.makeTeamId( before.hosts )
 		});
 
 	}
@@ -138,19 +123,36 @@
 
 		return makeChannelItem__ChatBase( before, group, {
 			role    : "requested",
-			team_id : makeChatTeamId( group.members )
+			team_id : Message.makeTeamId( group.members )
 		});
 
 	}
 
-	function addTeamChannel( user, group, group_formed_at ){
+	function addChatChannelHosts( user, before, group ){
+
+		if( group.status != "accepted" ) return;
+
+		var channel_item = makeChannelItem__ChatHosts( before, group );
+		user.channels.push( channel_item );
+
+	}
+
+	function addChatChannelUsers( user, before, group ){
+
+		if( group.status != "accepted" ) return;
+
+		var channel_item = makeChannelItem__ChatUsers( before, group );
+		user.channels.push( channel_item );
+	}
+
+	function addTeamChannel( user, members, group_formed_at ){
 
 		var team_channel = _.find( user.channels, function( chan ){
-			return chan.team_id == makeChatTeamId( group );
+			return chan.team_id == Message.makeTeamId( members );
 		});
 
 		if( !team_channel ){
-			user.channels.push( makeChannelItem__ChatTeam( group, group_formed_at ) );
+			user.channels.push( makeChannelItem__ChatTeam( members, group_formed_at ) );
 		}
 
 	}
@@ -193,8 +195,7 @@
 						addTeamChannel( user, before.hosts, before.created_at );
 
 						before.groups.forEach(function( group ){
-							user.channels.push( makeChannelItem__ChatHosts( before, group ));
-
+							addChatChannelHosts( user, before, group );
 						});
 
 					} else {
@@ -206,8 +207,7 @@
 
 						// Create a team chat with other hosts only if it doesnt already exists
 						addTeamChannel( user, mygroup.members, mygroup.requested_at );
-
-						user.channels.push( makeChannelItem__ChatUsers( before, mygroup ) );
+						addChatChannelUsers( user, before, mygroup );
 
 					}
 
@@ -229,67 +229,108 @@
 	};
 
 	// Update the users channel after a request, so they can ask to join without being
-	// rejected by the server
+	// rejected by the server. Only update members since for them, it can lead to a new 
+	// team channel immediately (hosts had their team channel created at before creation)
 	var updateChannelsRequest = function( req, res, next ){
 
 		var err_ns = "updating_channels_request";
 
 		var facebook_id = req.sent.facebook_id;
-		var before      = req.sent.before;
+		var group 		= req.sent.group;
 
-		var mygroup = _.find( before.groups, function( grp ){
-			return grp.members.indexOf( facebook_id ) != -1;
-		});
+		var channel_item = makeChannelItem__ChatTeam( group.members, group.requested_at );
 
-		var channel_item_hosts   = makeChannelItem__ChatHosts( before, mygroup );
-		var channel_item_members = makeChannelItem__ChatUsers( before, mygroup );
+		User.update(
+			{ 'facebook_id': { $in: group.members } },
+			{ $push: { 'channels': channel_item }},
+			{ multi: true },
+			function( err, raw ){
+
+				if( err ){
+					handleErr( req, res, err_ns, err );
+				} else {
+					next();
+				}
+
+			});
+
+	};
+
+	// Update the hosts and the users channel after a validation (cheers back), so they can
+	// ask join without being rejected by the server. Both of groups need to have a new 
+	// channel_item, which looks almost the same
+	var updateChannelsGroup = function( req, res, next ){
+
+		var err_ns = "updating_channels_group";
+
+		var facebook_id = req.sent.facebook_id;
+		var before 		= req.sent.before;
+		var group 		= req.sent.group;
+
+		var channel_item_hosts = makeChannelItem__ChatHosts( before, group );
+		var channel_item_users = makeChannelItem__ChatUsers( before, group );
 
 		var tasks = [];
 
-		var hosts   = before.hosts;
-		var members = mygroup.members;
 
+		// Updating channels for the hosts
 		tasks.push(function( callback ){
 			User.update(
-				{ 'facebook_id': { $in: members } },
-				{ $push: { 'channels': channel_item_members }},
-				{ multi: true },
-				function( err, raw ){
+			{
+				'facebook_id' : { '$in': before.hosts }
+			},
+			{
+				'$push': { 'channels': channel_item_hosts }
+			},
+			{
+				multi: true
+			},
+			function( err, users ){
 
-					if( err ){
-						handleErr( req, res, err_ns, err );
-					} else {
-						callback();
-					}
+				if( err ){
+					handleErrAsync( err_ns, err );
+				}
+				callback();
 
-				});
+			});
 		});
 
+		// Updating channels for the members 
 		tasks.push(function( callback ){
 			User.update(
-				{ 'facebook_id': { $in: hosts } },
-				{ $push: { 'channels': channel_item_hosts }},
-				{ multi: true },
-				function( err, raw ){
+			{
+				'facebook_id' : { '$in': group.members }
+			},
+			{
+				'$push': { 'channels': channel_item_users }
+			},
+			{
+				multi: true
+			},
+			function( err, users ){
 
-					if( err ){
-						handleErr( req, res, err_ns, err );
-					} else {
-						callback();
-					}
+				if( err ){
+					handleErrAsync( err_ns, err );
+				}
+				callback();
 
-				});
+			});
 		});
 
-		async.parallel( tasks, function(){
+		async.parallel( tasks, function( err ){
+
+			if( err ){
+				return handleErr( req, res, err_ns, err );
+			}
 
 			next();
 
 		});
+	}
 
-
-	};
-
+	// When the user changes its location, his location channels needs to be updated as well.
+	// Otherwise, he wouldnt be notified in realtime that new befores occurs (he would though 
+	// at his next connection since all channels are dynamically created at each login )
 	var updateLocationChannel = function( req, res, next ){
 
 		var err_ns =  "updating_channel_location";
@@ -389,53 +430,45 @@
 
 		var socket_id    = req.sent.socket_id;
 		var before       = req.sent.expose.before;
-		var before_item  = req.sent.expose.before_item;
 		var place_id     = req.sent.requester.location.place_id;
-		var notification = req.sent.notification;
 
 		// Convert toObject() to only transport the object and not
-		// and the prototype inherited form Mongoose model.
+		// the prototype inherited form Mongoose model.
 		var data = {
-			before      : before.toObject(),
-			before_item : before_item
+			before: before.toObject()
 		};
 
 		var channel = makeLocationChannel( place_id );
-		pusher.trigger( channel, 'new before', data, socket_id, handlePusherErr );
+		pusher.trigger( channel, 'new before', data, handlePusherErr );
 
-		// Send a special message to all other hosts to let them know a before was created
-		// by one of their friends and they are marked as host
-		var channel_name = makeBeforeChannel( before._id );
-		var channel_item = makeChannelItem__Before( before );
+		// Hosts only
+		data.before_item         = req.sent.expose.before_item;;
+		data.channel_item_before = makeChannelItem__Before( before );
+		data.channel_item_team   = makeChannelItem__ChatTeam( before.hosts, before.created_at );
+		data.notification        = req.sent.notification;
 
-		// Expose the new channel for every hosts to subscribe
-		data.channel_name = channel_name
-
-		// Expose the channel for the requester, so he knows where to subscribe too!
-		req.sent.expose.channel_name = channel_name;
+		data.channel_item_team.last_sent_at = data.channel_item_team.formed_at;
 
 		// Push the channel to the model before, so they wont get rejected when joining
-		User.update({ 'facebook_id': { $in: before.hosts } }, { $push: { 'channels': channel_item } }, { multi: true },
+		User.update(
+			{ 'facebook_id': { $in: before.hosts } },
+			{ $addToSet: { 'channels': { '$each' : [ data.channel_item_before, data.channel_item_team ] } }},
+			{ multi: true },
 			function( err, raw ){
 
 				if( err ) return handleErr( req, res, err_ns, err );
 
 				// Hosts are not yet in a global 'before' channel. Push the update to each one if them separately
-				// with a proper notification object, nicely formatted by notifier.js !
-				data.notification = notification;
 				before.hosts.forEach(function( h ){
 
-					if( h != req.sent.facebook_id ){ // Exclude the creator from the list
-						var channel = makePersonnalChannel( h );
-						pusher.trigger( channel, 'new before hosts', data, socket_id, handlePusherErr );
-					}
+					var channel = makePersonnalChannel( h );
+					pusher.trigger( channel, 'new before hosts', data, handlePusherErr );
 
 				});
 
 				next();
 
 			});
-
 
 	};	
 
@@ -485,32 +518,28 @@
 		var before_item 	 = req.sent.before_item;
 		var before 	 	     = req.sent.before;
 		var group 			 = req.sent.group;
+		var facebook_id      = req.sent.facebook_id;
 
 		var data_hosts = {
-			before 			 : _.merge( _.cloneDeep( before ), { status: "hosting" }),
-			channel_item 	 : makeChannelItem__ChatHosts( before, group ),
-			notification 	 : notification
+			before_id    : before._id,
+			cheers_item  : User.makeCheersItem__Received( before, group ),
+			notification : notification
 		};
 
 		var data_members = {
-			before 			 : _.merge( _.cloneDeep( before ), { status: "pending" }),
-			before_item 	 : before_item,
-			channel_item     : makeChannelItem__ChatUsers( before, group ),
-			notification 	 : notification
+			before_id	 	  : before._id,
+			group 			  : group,
+			before_item       : _.merge( _.cloneDeep( before_item ), { status: "pending" }),
+			cheers_item 	  : User.makeCheersItem__Sent( before, group ),
+			channel_item_team : makeChannelItem__ChatTeam( group.members, group.requested_at ),
+			notification      : notification
 		};
 
-		// Add the users channel to the requester
-		req.sent.expose.channel_item = makeChannelItem__ChatUsers( before, group );
-
-    	// Envoyer une notification aux hosts
-    	console.log('Notifying new request has been issued');
-    	console.log('Host channel: ' + makeBeforeChannel( before._id ) );
-
+    	// Notify hosts
 		pusher.trigger( makeBeforeChannel( before._id ), 'new request host', data_hosts, socket_id );
-
-		// Envoyer une notification aux amis au courant de rien à priori
+		// Notify group members
 		req.sent.members_profiles.forEach(function( user ){
-			pusher.trigger( makePersonnalChannel( user.facebook_id ), 'new request group', data_members, socket_id, handlePusherErr );
+			pusher.trigger( makePersonnalChannel( user.facebook_id ), 'new request group', data_members, handlePusherErr );
 		});	
 
 		next();
@@ -519,24 +548,42 @@
 
 	var pushNewGroupStatus = function( req, res, next ){
 
-		var socket_id    = req.sent.socket_id;
 		var before       = req.sent.before;
-		var notification = req.sent.notification;
+		var group        = req.sent.group;
+		var cheers_id 	 = req.sent.cheers_id;
 		var sender_id    = req.sent.facebook_id;
 		var status 		 = req.sent.status;
 
 		var before_id = req.sent.before_id;
-		var chat_id   = req.sent.chat_id;
 
-		var data = {
+		var channel_item_hosts = makeChannelItem__ChatHosts( before, group );
+		var channel_item_users = makeChannelItem__ChatUsers( before, group );
+
+		var data_hosts = {
 			sender_id    : sender_id,
 			before_id    : before_id,
-			chat_id      : chat_id,
+			cheers_id    : cheers_id,
+			channel_item : channel_item_hosts,
 			status 	     : status,
-			notification : notification
+			notification : req.sent.notification_hosts
 		};
 
-		pusher.trigger( chat_id, 'new group status', data, handlePusherErr );
+		var data_members = {
+			sender_id    : sender_id,
+			before_id    : before_id,
+			cheers_id    : cheers_id,
+			channel_item : channel_item_users,
+			status 	     : status,
+			notification : req.sent.notification_users
+		};
+
+		// Each team has a team-chat channel already. Dispatch the message in it ( better efficiency )
+		var hosts_channel_name = 'private-team-' + Message.makeTeamId( before.hosts );
+		var users_channel_name = 'private-team-' + Message.makeTeamId( group.members )
+
+		pusher.trigger( hosts_channel_name, 'new group status hosts', data_hosts, handlePusherErr );
+		pusher.trigger( users_channel_name, 'new group status users', data_members, handlePusherErr );
+
 		next();
 
 	}
@@ -587,7 +634,7 @@
 		setChannels 		  	   : setChannels,
 		setLastSentAtInChannels    : setLastSentAtInChannels,
 		updateChannelsRequest  	   : updateChannelsRequest,
-		makeChatGroupId 		   : makeChatGroupId,
+		updateChannelsGroup 	   : updateChannelsGroup,
 		updateLocationChannel 	   : updateLocationChannel,
 		pushNewBefore         	   : pushNewBefore,
 		pushNewBeforeStatus   	   : pushNewBeforeStatus,

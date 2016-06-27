@@ -45,7 +45,9 @@ window.LJ = _.merge( window.LJ || {}, {
 
         if( !LJ.user ){
             LJ.log('Caching user for the first time');
-            return LJ.user = user;
+            LJ.user = user;
+            LJ.user.cheers = [];
+            return LJ.user;
         } else {
             if( user.facebook_id == LJ.user.facebook_id ){
                 LJ.log('Facebook_id matched, updating user cache');

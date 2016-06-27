@@ -57,6 +57,7 @@
     // Reset database state
     gulp.task('reset-all-db', reset.db.resetAll );
     gulp.task('reset-requests', reset.db.resetRequests );
+    gulp.task('reset-status', reset.db.resetStatus );
     gulp.task('reset-all-cache', reset.rd.resetAll );
 
     // Adjusting html staged & prod versions

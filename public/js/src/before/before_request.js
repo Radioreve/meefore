@@ -3,14 +3,10 @@
 
 		processRequest: function( before_id ){
 
-			var members_profiles = null;
-			var before_item      = null;
-			var channel_item     = null;
-
 			return LJ.ui.getModalItemIds()
 				.then(function( item_ids ){
 					var d = LJ.static.renderStaticImage('search_loader')
-					$(d).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
+					$( d ).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
 						duration: 400
 					});
 					
@@ -19,23 +15,8 @@
 
 				})
 				.then(function( exposed ){
-					before_item  = exposed.before_item;
-					channel_item = exposed.channel_item;
 					return LJ.ui.hideModal();
 
-				})
-				.then(function(){
-					LJ.ui.showToast( LJ.text('to_before_request_success') );
-					LJ.user.befores.push( before_item );
-					LJ.before.pendifyBeforeInview( before_id );
-					LJ.before.pendifyBeforeMarker( before_id );
-					LJ.user.channels.push( channel_item );
-					LJ.realtime.subscribeToChatChannel( channel_item.channel_all );
-					LJ.realtime.subscribeToChatChannel( channel_item.channel_team );
-					LJ.chat.addAndFetchOneChat( channel_item, {
-						"row_insert_mode": "top"
-					});
-					
 				})
 				.catch(function(e){
 					LJ.wlog(e);
@@ -107,6 +88,18 @@
         handleClickOnRequestAccepted: function(){
 
         	LJ.log('Redirecting to chat...');
+            var $self = $( this );
+
+            var before_id = $self.closest('.be-inview').attr('data-before-id');
+            var chat_id   = LJ.before.getChannelItem( before_id ).chat_id;
+
+            if( LJ.chat.getChatState() == "hidden" ){
+                LJ.chat.showChatWrap();
+            }
+
+            LJ.chat.hideChatInview();
+            LJ.chat.activateChat( chat_id );
+            LJ.chat.showChatInview( chat_id );
 
         },
         defaultifyBeforeInview: function( before_id ){

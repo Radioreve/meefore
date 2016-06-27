@@ -40,7 +40,7 @@
             // Cheers
             LJ.cheers.init();
             // Shared module
-            LJ.shared.init();
+            // LJ.shared.init();  // Keep it for ulterior version
             // Profile user
             LJ.profile_user.init();
 

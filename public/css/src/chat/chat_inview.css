@@ -48,13 +48,15 @@
     /* box-shadow: 2px 2px 13px #E0E0E0; */
     padding-top: 10px;
     position: relative;
+    flex-shrink: 0;
 }
 
 .chat-inview__icon {
     font-size: 24px;
     position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
     cursor: pointer;
     width: 42px;
     height: 42px;
@@ -71,6 +73,10 @@
 .chat-inview__icon.--previous {
     font-size: 20px;
     left: 6px;
+}
+.chat-inview__icon.--close {
+    right: 8px;
+    font-size: 20px;
 }
 
 
@@ -99,9 +105,9 @@
 .chat-inview-title__h1 {
     font-weight: 700;
     text-align: center;
-    font-size: 24px;
-    margin-bottom: 4px;
-    font-family: 'creamy';
+    font-size: 13px;
+    margin-bottom: 5px;
+    letter-spacing: -.3px;
 }
 
 .chat-inview-title__h2 {
@@ -114,7 +120,11 @@
     text-overflow: ellipsis;
 }
 
-.chat-inview-title__h2 .--date {
+.chat-inview-title__h1 .--hour {
+
+}
+
+.chat-inview-title__h1 .--date {
 
 }
 .chat-inview-title__h2 .--place-name {
@@ -193,9 +203,8 @@
 .chat-inview-message.--friend {}
 
 .chat-inview-message__date {
-    font-family: 'Open sans';
     font-weight: 600;
-    font-size: 11px;
+    font-size: 10px;
     color: #ccc;
     text-align: center;
 }
@@ -240,6 +249,7 @@
     text-align: center;
     color: #454545;
     max-width: 42px;
+    height: 11px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -407,9 +417,9 @@
 .chat-inview-options__close {
     position: absolute;
     top: 0px;
-    left: 0px;
+    left: 100px;
     z-index: 1000000;
-    color: white;
+    color: #191919;
     cursor: pointer;
     height: 40px;
     width: 40px;

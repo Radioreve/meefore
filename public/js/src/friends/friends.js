@@ -2,7 +2,7 @@
 	window.LJ.friends = _.merge( window.LJ.friends || {}, {
 
 		friends_profiles: null,
-
+		show_friends_duration: 600,
 		init: function(){
 
 			LJ.friends.handleDomEvents();
@@ -12,7 +12,7 @@
 		handleDomEvents: function(){
 
 			LJ.ui.$body.on('click', '.js-invite-friends', LJ.facebook.showModalSendMessageToFriends );
-			LJ.ui.$body.on('click', '.friend__item', LJ.friends.handleFriendProfileClicked );
+			LJ.ui.$body.on('click', '.js-show-friend', LJ.friends.handleFriendProfileClicked );
 
 		},
 		handleFriendsClicked: function(){
@@ -124,25 +124,25 @@
 					.hide()
 					.appendTo('.friends')
 					.velocity('shradeIn', {
-						duration : LJ.shared.shared_item_duration,
+						duration : LJ.friends.show_friends_duration,
 						display  : 'flex',
-						stagger  : (LJ.shared.shared_item_duration / 4)
+						stagger  : (LJ.friends.show_friends_duration / 4)
 					});
 
 			} else {
 				$('.friends')
 					.children()
 					.velocity('shradeOut', {
-						duration : LJ.shared.shared_item_duration,
+						duration : LJ.friends.show_friends_duration,
 						display  : 'none',
 						complete : function(){
 							$( html )
 								.hide()
 								.appendTo('.friends')
 								.velocity('shradeIn', {
-									duration : LJ.shared.shared_item_duration,
+									duration : LJ.friends.show_friends_duration,
 									display  : 'flex',
-									stagger  : (LJ.shared.shared_item_duration / 4)
+									stagger  : (LJ.friends.show_friends_duration / 4)
 								});
 
 						}
@@ -184,10 +184,9 @@
 
 			return LJ.ui.render([
 
-				'<div class="friend__item" data-facebook-id="' + friend.facebook_id + '">',
-					'<div class="row-pic">',
+				'<div class="friend__item js-show-friend" data-facebook-id="' + friend.facebook_id + '">',
+					'<div class="row-pic --filterlayable">',
 						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__filterlay --filterlay"></div>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',
@@ -211,7 +210,7 @@
 
 				'<div class="friend__item --invite-friends js-invite-friends" >',
 					'<div class="row-pic">',
-						'<i class="icon icon-user-add"></i>',
+						'<i class="icon icon-gift"></i>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',

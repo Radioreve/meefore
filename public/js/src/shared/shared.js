@@ -245,7 +245,6 @@
 					'<div class="row-pic">',
 						'<div class="row-pic__image">' + img_html + '</div>',
 						'<div class="row-pic__icon --round-icon"><i class="icon icon-forward"></i></div>',
-						'<div class="row-pic__filterlay --filterlay"></div>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',

@@ -110,7 +110,7 @@
 .menu-item__body h3 {
     font-weight: 400;
     margin: 0px;
-    font-size: 14px;
+    font-size: 12px;
     display: none;
 }
 
@@ -145,7 +145,7 @@
 }
 
 .menu__loader {
-    width: 70px;
+    width: 32px;
 }
 
 .menu-section-segment {
@@ -214,7 +214,7 @@
 .menu.--downsized .menu-item__icon {
     width: 24px;
     height: 24px;
-    font-size: 14px;
+    font-size: 16px;
     margin: 0 6px;
 }
 

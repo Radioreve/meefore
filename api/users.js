@@ -600,32 +600,14 @@
 						return group.members.indexOf( facebook_id ) != -1;
 					});
 
-					var o = {
-						"cheers_type"    : "sent",
-						"status"         : user_group.status,
-						"main_member"    : user_group.main_member,
-						"main_host"      : bfr.main_host,
-						"address" 		 : bfr.address.place_name,
-						"requested_with" : _.difference( user_group.members, [ facebook_id ] ),
-						"requested_at"   : user_group.requested_at
-					};
-					o.cheers_id = md5( o );
-					cheers.push( o );
+					cheers.push( User.makeCheersItem__Sent( bfr, user_group, facebook_id ) );
 
 				// User is host, add a cheers object for every group 
 				} else {
 
 					bfr.groups.forEach(function( group ){
 
-						var o = {
-							"cheers_type"  : "received",
-							"status" 	   : group.status,
-							"main_member"  : group.main_member,
-							"address"      : bfr.address.place_name,
-							"requested_at" : group.requested_at
-						};
-						o.cheers_id = md5( o );
-						cheers.push( o );
+						cheers.push( User.makeCheersItem__Received( bfr, group ) );
 
 					});
 				}
@@ -661,4 +643,5 @@
 		updateNotificationsSeenAt 	 : updateNotificationsSeenAt,
 		updateNotificationsClickedAt : updateNotificationsClickedAt,
 		fetchUserCheers 			 : fetchUserCheers
+
 	};

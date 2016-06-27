@@ -60,7 +60,9 @@
     color: white;
 }
 
-.app__menu-item .bubble {}
+.app__menu-item .bubble {
+    background: #e61515;
+}
 
 .app__menu-item a {
     display: flex;

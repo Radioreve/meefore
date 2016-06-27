@@ -92,7 +92,6 @@
 	    app.all('/api/v1/chats/:chat_id*', setParam('chat_id') );
 		app.all('/test/api/v1/chats/:chat_id*', setParam('chat_id') );
 		app.all('/api/v1/befores/:before_id*', setParam('before_id') );
-		app.all('/api/v1/befores/:before_id/groups/:group_id*', setParam(['before_id', 'group_id']) );
 
 
 		// Api authentication validation
@@ -367,8 +366,8 @@
 	    app.post('/api/v1/befores/:before_id/request',
 	    	mdw.validate('before_group_request' ),
 	    	api.befores.request,
-	    	mdw.notifier.addNotification('group_request'),
 	    	mdw.realtime.updateChannelsRequest,
+	    	mdw.notifier.addNotification('group_request'),
 	    	mdw.realtime.pushNewRequest
 	    );
 
@@ -378,10 +377,11 @@
 	    );
 
 	    // [ @befores ] Change le statut d'un group : [ 'accepted', 'kicked' ]
-	    app.post('/api/v1/befores/:before_id/groups/:group_id/status',
+	    app.post('/api/v1/befores/:before_id/groups',
 	    	mdw.validate('before_group_status'),
 	    	api.befores.changeGroupStatus,
 	    	mdw.notifier.addNotification('group_status'),
+	    	mdw.realtime.updateChannelsGroup,
 	    	mdw.realtime.pushNewGroupStatus
 	    );
 

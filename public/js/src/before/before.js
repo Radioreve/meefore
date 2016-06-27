@@ -22,7 +22,7 @@
 			LJ.ui.$body.on('click', '.be-dates__date', LJ.before.activateBrowserDate );
 			LJ.ui.$body.on('click', '.be-create.--ready .be-create__button', LJ.before.handleCreateBefore );
 			LJ.ui.$body.on('click', '.be-inview .user-row', LJ.before.handleClickOnUserRow );
-			LJ.ui.$body.on('click', '.be-actions__action.--share', LJ.before.handleShareBefore );
+			// LJ.ui.$body.on('click', '.be-actions__action.--share', LJ.before.handleShareBefore );
 			LJ.ui.$body.on('click', '.js-cancel-before', LJ.before.handleCancelBefore );
 			LJ.ui.$body.on('click', '.slide.--before .js-show-options', LJ.before.showBeforeOptions );
 			LJ.ui.$body.on('click', '.js-request', LJ.before.handleRequest );
@@ -248,6 +248,14 @@
 				display : 'flex'
 			});
 
+		},
+		showCreateBeforeBtn: function(){
+
+			$('.js-create-before').velocity('bounceInQuick', { duration: 800, display: 'flex' });
+
+		},
+		hideCreateBeforeBtn: function(){
+			$('.js-create-before').velocity('bounceOut', { duration: 800, display: 'none' });
 		},
 		fetchBefores: function(){
 
@@ -534,7 +542,7 @@
 			return LJ.before.renderBeforeInview__Base( before, hosts, {
 
 				be_action: '<div class="be-actions__action --settings --round-icon js-show-options"><i class="icon icon-cog"></i></div>',
-				be_button: '<button class="--round-icon"><i class="icon icon-chat-bubble-duo"></i></button>'
+				be_button: LJ.before.renderBeforeInviewBtn__Host()
 
 			});
 
@@ -543,7 +551,7 @@
 
 			return LJ.before.renderBeforeInview__Base( before, hosts, {
 
-				be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
+				// be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
 				be_button:  LJ.before.renderBeforeInviewBtn__UserDefault()
 
 			});
@@ -553,7 +561,7 @@
 
 			return LJ.before.renderBeforeInview__Base( before, hosts, {
 
-				be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
+				// be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
 				be_button:  LJ.before.renderBeforeInviewBtn__UserPending()
 
 			});
@@ -563,25 +571,25 @@
 
 			return LJ.before.renderBeforeInview__Base( before, hosts, {
 
-				be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
+				// be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
 				be_button:  LJ.before.renderBeforeInviewBtn__UserAccepted()
 
 			});
 
 		},
+		renderBeforeInviewBtn__Host: function(){
+			return '<div class="be-ended"><span data-lid="be_hosted"></span></div>';
+		},
 		renderBeforeInviewBtn__UserAccepted: function(){
 			return '<button class="--round-icon --accepted js-request-accepted"><i class="icon icon-chat-bubble-duo"></i></button>'
-
 
 		},
 		renderBeforeInviewBtn__UserPending: function(){
 			return '<button class="--round-icon --pending js-request-pending"><i class="icon icon-pending"></i></button>'
 
-
 		},
 		renderBeforeInviewBtn__UserDefault: function(){
 			return '<button class="--round-icon js-request"><i class="icon icon-drinks"></i></button>'
-
 
 		},
 		renderBeforeInview__Base: function( before, hosts, options ){
@@ -609,7 +617,6 @@
 
 				'<div class="be-inview" data-before-id="'+ before._id +'">',
 			      	'<div class="be-pictures">',
-			          '<div class="be-pictures__overlay --filterlay"></div>',
 			          '<div class="be-actions">',
 			          	be_action,
 			          '</div>',
@@ -740,8 +747,8 @@
 			})
 			.then(function( item_ids ){
 
-				var d = LJ.static.renderStaticImage('search_loader')
-				$(d).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
+				var d = LJ.static.renderStaticImage('search_loader');
+				$( d ).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
 					duration: 400
 				});
 
@@ -766,6 +773,45 @@
 
 			});
 
+		},
+		getBefore: function( before_id ){
+			return LJ.promise(function( resolve, reject ){
+
+				var before = _.find( LJ.before.fetched_befores, function( bfr ){
+					return bfr._id == before_id;
+				});
+
+				if( before ){
+					resolve( before );
+				} else {
+					return LJ.api.fetchBefore( before_id );
+				}
+
+			});
+		},
+		getBeforeItem: function( before_id ){
+
+			return _.find( LJ.user.befores, function( bfr ){
+				return bfr.before_id == before_id;
+			});
+
+		},
+		updateBeforeItem: function( before_id, opts ){
+
+			var before_item = LJ.before.getBeforeItem( before_id );
+
+			_.keys( before_item ).forEach(function( key ){
+				if( opts[ key ] && typeof opts[ key ] == typeof before_item[ key ] ){
+					before_item[ key ] = opts[ key ];
+				}
+			});
+
+		},
+		getChannelItem( before_id ){
+
+			return _.find( LJ.user.channels, function( chan ){
+				return chan.before_id == before_id;
+			});
 		}
 
 	});

@@ -13,7 +13,6 @@
 
 			LJ.ui.$body.on('click', '.user-profile .user-pics__navigate', LJ.profile_user.handlePictureNavigation );
 			LJ.ui.$body.on('click', '.thumbnail__picture', LJ.profile_user.showMyUserProfile );
-			LJ.ui.$body.on('click', '.user-actions__share', LJ.shared.handleShareProfile );
 
 		},
 		handlePictureNavigation: function(){
@@ -161,14 +160,13 @@
 						'<div class="user-pics__navigate --right --round-icon">',
 							'<i class="icon icon-arrow-right"></i>',
 						'</div>',
-						'<div class="user-pics__overlay --filterlay"></div>',
 						pictures_html,
 					'</div>',
 					'<div class="user-infos">',
 						'<div class="user-actions">',
-							'<div class="user-actions__share --round-icon">',
-								'<i class="icon icon-forward"></i>',
-							'</div>',
+							// '<div class="user-actions__share --round-icon">',
+							// 	'<i class="icon icon-forward"></i>',
+							// '</div>',
 							// '<div class="user-actions__meepass --round-icon">',
 							// 	'<i class="icon icon-meepass"></i>',
 							// '</div>',

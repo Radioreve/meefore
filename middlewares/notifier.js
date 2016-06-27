@@ -121,7 +121,7 @@
 		var status    = req.sent.status;
 		var requester = req.sent.facebook_id;
 		var before_id = req.sent.before._id;
-		var members   = req.sent.target_group.members;
+		var members   = req.sent.group.members;
 		var hosts 	  = req.sent.before.hosts;
 
 		var n = {
@@ -138,18 +138,21 @@
 			return next();
 		}
 
+		req.sent.notification_hosts = _.extend({ type: type + '_hosts', }, n );
+		req.sent.notification_users = _.extend({ type: type + '_members', }, n );
+
 		// Remove the requester, he already knows he is validating the group
 		var query_hosts = { 
 			facebook_id: { $in: _.difference( hosts, [ requester ]) }
 		};
 		var update_hosts = { 
-			$push: { 'notifications': _.extend({ type: type + '_hosts', }, n )} 
+			$push: { 'notifications': req.sent.notification_hosts } 
 		};
 		var query_members = { 
 			facebook_id: { $in: members }
 		};
 		var update_members = { 
-			$push: { 'notifications': _.extend({ type: type + '_members' }, n )} 
+			$push: { 'notifications': req.sent.notification_users } 
 		};
 		var options = {
 			multi: true 
@@ -158,8 +161,6 @@
 		User.update( query_hosts, update_hosts, options, displayError );
 		User.update( query_members, update_members, options, displayError );
 
-		// Save notification reference and go to next, dont wait for db call to finish
-		req.sent.notification = n;
 		next();
 
 	}
@@ -219,18 +220,21 @@
 
 		n.notification_id = hash( n );
 
+		req.sent.notification_hosts = _.extend({ type: type + '_hosts', }, n );
+		req.sent.notification_users = _.extend({ type: type + '_members', }, n );
+
 		var query_hosts = { 
 			facebook_id: { $in: hosts }
 		};
 		var update_hosts = { 
-			$push: { 'notifications': _.extend({ type: type + '_hosts', }, n )} 
+			$push: { 'notifications': req.sent.notification_hosts } 
 		};
 		// Remove the main_member, he already knows he is requesting something
 		var query_members = { 
 			facebook_id: { $in: _.difference( members, [ main_member ]) }
 		};
 		var update_members = { 
-			$push: { 'notifications': _.extend({ type: type + '_members' }, n )} 
+			$push: { 'notifications': req.sent.notification_users } 
 		};
 		var options = {
 			multi: true 
@@ -239,8 +243,6 @@
 		User.update( query_hosts, update_hosts, options, displayError );
 		User.update( query_members, update_members, options, displayError );
 
-		// Save notification reference and go to next, dont wait for db call to finish
-		req.sent.notification = n;
 		next();
 
 	};

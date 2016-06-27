@@ -121,7 +121,7 @@
 .user-infos__icon {
     /* background: #EAEAEA; */
     color: #454545;
-    border: 1px solid #464646;
+    border: 1px solid;
     height: 34px;
     width: 34px;
     flex-shrink: 0;
@@ -136,7 +136,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 16px 0 4px 0;
+    margin: 16px 0 8px 0;
 }
 
 .user-infos__title label {

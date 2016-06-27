@@ -1,16 +1,11 @@
 
-	var eventUtils  = require('../../pushevents/eventUtils'),
-		_     	    = require('lodash'),
-		settings    = require('../../config/settings');
-
-	var Before 	    = require('../../models/BeforeModel'),
-		User        = require('../../models/UserModel');
-
+	var eventUtils  = require('../../pushevents/eventUtils');
+	var _     	    = require('lodash');
+	var settings    = require('../../config/settings');
+	var Before 	    = require('../../models/BeforeModel');
+	var User        = require('../../models/UserModel');
 	var nv 			= require('node-validator');
-
-
-	var fb_id_regex = /^\d{10,15}$/;
-	var db_id_regex = /^[a-f\d]{24}$/i;
+	var rg 			= require('../../config/regex');
 
 	function check( req, res, next ){
 
@@ -34,8 +29,9 @@
 
 		var checkGroup = nv.isAnyObject()
 		
-			.withRequired('facebook_id'			, nv.isString({ regex: fb_id_regex }) )
-			.withRequired('before_id' 			, nv.isString({ regex: db_id_regex }) )
+			.withRequired('facebook_id'	, nv.isString({ regex: rg.fb_id }) )
+			.withRequired('before_id' 	, nv.isString({ regex: rg.db_id }) )
+			.withRequired('members'  	, nv.isArray() )
 			.withCustom( isGroupOk )
 
  

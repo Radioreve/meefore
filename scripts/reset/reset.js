@@ -85,6 +85,117 @@
 		});
 
 	}
+	function resetStatus(){
+
+		mongoose.connect( config.db['dev'].uri );
+
+		mongoose.connection.on('error', function(err){
+			console.log('Connection to the database failed : '+err);
+		});
+
+		mongoose.connection.on( 'open', function(){
+			console.log('Connected to the database! Running operation... : ');
+
+
+			var tasks = [];
+			tasks.push(function( callback ){
+
+				User.find({}, function( err, users ){
+
+					if( err ){
+							console.log('Error updating users');
+							return console.log( err );
+						}
+
+					var subtasks = [];
+
+					users.forEach(function( usr ){
+						subtasks.push(function( subcallback ){
+
+							usr.befores.forEach(function( bfr ){
+								if( bfr.status == "accepted" ){
+									console.log('Modified (usr)');
+									bfr.status == "pending";
+								}
+							});
+							usr.markModified('befores');
+							usr.save(function( err ){
+								subcallback();
+							});
+
+						});
+					});
+
+					async.parallel( subtasks, function( err ){
+
+						if( err ){
+							console.log('Error paralleling users');
+							console.log( err );
+						} else {
+							callback();
+						}
+
+					});
+
+				});
+
+			});
+
+			tasks.push(function( callback ){
+
+				Before.find({}, function( err, befores ){
+
+					if( err ){
+						console.log('Error updating before');
+						return console.log( err );
+					}
+
+					var subtasks = [];
+
+					befores.forEach(function( bfr ){
+						subtasks.push(function( subcallback ){
+
+							bfr.groups.forEach(function( grp ){
+								if( grp.status == "accepted" ){
+									console.log('Modified (bfr)');
+									grp.status = "pending";
+								}
+							});
+							bfr.markModified('groups');
+							bfr.save(function( err ){
+								subcallback();
+							});
+
+						});
+					});
+
+					async.parallel( subtasks, function( err ){
+
+						if( err ){
+							console.log('Error paralleling befores');
+							console.log( err );
+						} else {
+							callback();
+						}
+
+					});
+
+				});
+
+			});
+
+			async.parallel( tasks, function( err ){
+				if( err ){
+					console.log( err );
+				} else {
+					console.log('Update done');
+					process.exit(0);
+				}
+			})
+
+		});
+
+	}
 
 	function resetDbAll(){
 
@@ -153,7 +264,7 @@
 				process.exit(0);
 			})
 
-			});
+		});
 
 	
 	}
@@ -166,6 +277,7 @@
 		db: {
 			resetAll      : resetDbAll,
 			resetRequests : resetRequests,
+			resetStatus   : resetStatus,
 			resetAllChats : resetAllChats
 		},
 		rd: {

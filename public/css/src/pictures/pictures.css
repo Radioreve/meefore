@@ -313,10 +313,17 @@
     flex-flow: row wrap;
   }
   .menu.--downsized h3 {
-    display: none;
+    font-size: 10px;
   }
 
   .menu-item__icon i {
     font-size: 20px;
+  }
+}
+
+@media (max-width: 500px){
+  
+  .menu.--downsized h3 {
+    display: none;
   }
 }

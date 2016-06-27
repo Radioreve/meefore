@@ -5,6 +5,7 @@
 	var nv 			= require('node-validator');
 	var Before 	    = require('../../models/BeforeModel');
 	var User        = require('../../models/UserModel');
+	var Message     = require('../../models/MessageModel');
 
 	function check( req, res, next ){
 
@@ -12,7 +13,8 @@
 
 		var checkReq = nv.isAnyObject()
 			.withRequired('before_id'   , nv.isString() )
-			.withRequired('main_member' , nv.isString())
+			.withRequired('cheers_id'	, nv.isString() )
+			.withRequired('members'     , nv.isArray() )
 			.withRequired('status'      , nv.isString({ expected: ['accepted','kicked'] }) )
 
 		nv.run( checkReq, req.sent, function( n, errors ){
@@ -38,6 +40,7 @@
 	function checkWithDatabase( req, callback ){
 
 		var before_id = req.sent.before_id;
+		var members   = req.sent.members;
 
 		Before.findById( before_id, function( err, bfr ){
 
@@ -63,13 +66,14 @@
 				});
 			}
 
-			// Design choice : each group is uniquely identified by giving one before and one main_member, because
-			// no one is allowed to request two times for the same before, to avoid spam behaviors.
-			// So we can bypass the need to identify the group by its group_id
-			// Possibility : to cancel a request and submit another one with a different person on the future ?
-			var target_group = _.find( bfr.groups, function(g){
-				return g.members.indexOf( req.sent.main_member ) != -1;
+			var requesters_team_id = Message.makeTeamId( members );
+
+			var target_group = _.find( bfr.groups, function( g ){
+				return requesters_team_id == Message.makeTeamId( g.members );
 			});
+
+			console.log('Group members : ' + members.join(',') );
+			console.log('Target group found : ' + target_group.members.join(', ') );
 
 			if( !target_group ){
 				return callback({
@@ -79,15 +83,14 @@
 				});
 			}
 
-			req.sent.before       = bfr;
-			req.sent.target_group = target_group;
+			req.sent.before = bfr;
+			req.sent.group  = target_group;
 
 			callback( null, bfr );
 				
 		});
 		
 	};
-
 
 
 	module.exports = {

@@ -10,32 +10,32 @@
 			},
 			{
 				'access_name' : 'modal_loader',
-				'image_id'    : 'app_loader_blue',
-				'param'       : { 'class': 'modal__loader', 'width': 100  }
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'modal__loader', 'width': 32  }
 			},
 			{
 				'access_name' : 'menu_loader',
-				'image_id'    : 'app_loader_royal_blue',
-				'param'       : { 'class': 'menu__loader', 'width': 130  }
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'menu__loader', 'width': 32  }
 			},
 			{
 				'access_name' : 'slide_loader',
-				'image_id'    : 'circular_loader_royal_blue',
-				'param'       : { 'class': 'slide__loader', 'width': 100  }	
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'slide__loader', 'width': 32  }	
 			},
 			{
 				'access_name' : 'search_loader',
-				'image_id'    : 'circular_loader_royal_blue',
-				'param'       : { 'class': 'search__loader', 'width': 80  }	
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'search__loader', 'width': 32  }	
 			},
 			{
 				'access_name' : 'be_create_loader',
-				'image_id'    : 'circular_loader_royal_blue',
-				'param'       : { 'class': 'be-create__loader', 'width': 130  }
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'be-create__loader', 'width': 32  }
 			},
 			{
 				'access_name' : 'chat_loader',
-				'image_id'    : 'circular_loader_royal_blue',
+				'image_id'    : 'loader_circular_blue_thin',
 				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
 			}
 		],

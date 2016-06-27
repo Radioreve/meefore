@@ -135,6 +135,10 @@
     font-size: 13px;
 }
 
+.modal-subheader b{
+    color: #191919;
+}
+
 .modal-body {
     min-height: 100px;
     max-height: 300px;
@@ -190,7 +194,7 @@
 }
 
 .modal.--logout button {
-    color: #fd7124;
+    color: #1b69ec;
 }
 .modal.--logout button i {
     font-size: 36px;
@@ -210,12 +214,14 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%)!important;
-    background: #FFF5F5;
-    color: #A92020;
+    background: rgba(27, 105, 236, 0.07);
+    color: #1b69ec;
     width: 70%;
     text-align: center;
     padding: 10px;
     border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .modal-footer i {
@@ -298,9 +304,10 @@
     opacity: .5;
 }
 .modal.--delete button[data-action="confirm"] {
-    background: #db4760;
-    color: white;
+    color: #1b69ec;
     font-weight: bolder;
+    background: white;
+    border: 1px dashed;
 }
 .modal.--delete button[data-action="cancel"] {}
 
@@ -459,6 +466,17 @@
 /* End slide */
 
 
+.pictures-overlay {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    opacity: 0.2;
+    /* display: none; */
+    overflow: hidden;
+}
 .--filterlay {
     background: #af8276!important;
 }
@@ -494,5 +512,6 @@
     top: 10px;
     right: 8px;
     border-width: 3px;
+    background: #1b69ec;
 }
 /* End bubble */

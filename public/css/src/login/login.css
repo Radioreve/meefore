@@ -9,8 +9,8 @@
 .login__progress-bar {
     width: 200px;
     margin: 0 auto;
-    height: 2px;
-    border: 1px solid #454545;
+    height: 3px;
+    background: rgba(27, 105, 236, 0.29);
     border-radius: 30px;
     margin-top: 20px;
     overflow: hidden;
@@ -20,7 +20,7 @@
     height: 100%;
     width: 0%;
     transition: all ease-in-out .8s;
-    background: #33AFFF;
+    background: #1b69ec;
 }
 
 .init-location {

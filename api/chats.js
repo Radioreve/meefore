@@ -241,7 +241,7 @@
 			chat_id: chat_id
 		},
 		{
-			$addToSet: { seen_by: facebook_id }  // Only push if exists. Oherwise, use $push
+			$addToSet: { seen_by: facebook_id }  // Only push if not exists. Oherwise, use $push
 		}, 
 		{
 			multi: true

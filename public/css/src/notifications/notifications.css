@@ -6,7 +6,7 @@
 }
 
 .notifications-panel {
-    width: 430px;
+    width: 450px;
     height: 80%;
     position: fixed;
     background: white;
@@ -23,7 +23,7 @@
 }
 
 .notifications-panel__wrapper {
-    height: 276px;
+    height: 90%;
     outline: none;
 }
 
@@ -46,7 +46,7 @@
     opacity: 1;
     background: #fbfbfb;
 }
-
+ 
 .notification--header {
     height: 50px;
     display: flex;
@@ -57,6 +57,7 @@
     border-bottom: 1px solid #eee;
     color: #454545!important;
     width: 100%;
+    background: #fbfbfb;
 }
 
 .notification--header__text {
@@ -148,13 +149,17 @@ Whispereen  : #58c170
     margin-left: 20px;
 }
 
-.notification .notification-message__text {font-weight: 600;font-size: 12px;}
+.notification .notification-message__text {font-weight: 700;font-size: 11px;}
 
 .notification .notification-message__subtext {
     font-size: 10px;
     margin-top: 4px;
-    font-family: 'Open sans';
     color: #454545;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 230px;
+    height: 12px;
 }
 
 .notification .notification__date {
@@ -172,7 +177,7 @@ Whispereen  : #58c170
     background: none;
     height: 40px;
     width: 40px;
-    font-size: 30px;
+    font-size: 26px;
 }
 
 .notification.--seen .notification-message__text {color: #454545;}
@@ -187,11 +192,11 @@ Whispereen  : #58c170
 }
 
 .notification.--clicked .notification-message__text {
-    font-weight: 500;
+    /* font-weight: 500; */
 }
 
 .notification.--clicked .notification-message__subtext {
-    color: #919191;
+    /* color: #919191; */
 }
 .notification.--clicked .notification__date {color: #919191;}
 .notification.--clicked .notification__icon {

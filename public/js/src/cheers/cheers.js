@@ -1,10 +1,17 @@
 
 	window.LJ.cheers = _.merge( window.LJ.cheers || {}, {
 
+		cheers_back_duration: 450,
+
+		fetched_cheers     : [],
+		fetched_profiles   : [],
+		active_cheers_back : null,
+		cheers_back_state  : "idle",
+
 		init: function(){
 
 			LJ.cheers.handleDomEvents();
-			LJ.cheers.activateSegment("sent");
+			LJ.cheers.activateCheers("received");
 			return;
 
 		},
@@ -12,6 +19,9 @@
 
 			$('.menu-section.--cheers').on('click', '.segment__part', LJ.cheers.handleSegmentClicked );
 			$('.menu-item.--cheers').one('click', LJ.cheers.handleCheersClicked );
+			$('.cheers').on('click', '.cheers__item', LJ.cheers.handleCheersItemClicked );
+			$('.chat').on('click', '.js-validate', LJ.cheers.handleValidate );
+			$('body').on('click', '.js-close-cheers-back', LJ.cheers.handleCloseCheersBack );
 
 		},
 		handleSegmentClicked: function(){
@@ -19,10 +29,31 @@
 			var $seg = $( this );
 			var link = $seg.attr('data-link');
 
-			LJ.cheers.activateSegment( link );
+			LJ.cheers.activateCheers( link );
 
 		},
-		activateSegment: function( link ){
+		handleCloseCheersBack: function(){
+
+			var close_type = LJ.cheers.getCloseType();
+
+			LJ.chat.refreshChatRowsJsp().then(function(){
+
+				LJ.cheers.resetCheersBackState()
+
+				if( close_type == "hide_all" ){
+					LJ.chat.hideChatWrap().then(function(){
+						$('.cheers-back').remove();
+					});
+				}
+
+				if( close_type == "hide_cheers_back" ){
+					$('.cheers-back').remove();
+				}
+
+
+			});
+		},
+		activateCheers: function( link ){
 
 			var $seg = $('.menu-section.--cheers').find('.segment__part[data-link="'+ link +'"]');
 
@@ -72,39 +103,66 @@
 
 			});
 		},
+		showCheersBackLoader: function(){
+
+			$( LJ.static.renderStaticImage('slide_loader') )
+				.addClass('cheers-back__loader')
+				.hide()
+				.appendTo($('.cheers-back'))
+				.show();
+
+		},
+		hideCheersBackLoader: function(){
+
+			$('.cheers-back').find('.cheers-back__loader').remove();
+
+		},
+		showCheersBackOverlay: function(){
+
+			$('<div class="cheers-back__overlay"></div>')
+				.hide()
+				.appendTo( $('.cheers-back') )
+				.velocity('fadeIn', {
+					duration: 500
+				});
+
+		},
+		hideCheersBackOverlay: function(){
+
+			$('.cheers-back').find('.cheers-back__overlay').remove();
+
+		},
 		handleCheersClicked: function(){
 
 			LJ.cheers.showCheersLoader();
 			LJ.cheers.clearAllCheers();
-			LJ.cheers.refreshCheersItems();
+			LJ.cheers.fetchAndAddCheers();
 
 		},	
-		refreshCheersItems: function(){
+		fetchAndAddCheers: function(){
 
 			LJ.log('Fetching and setting cheers items...');
 
-			var cheers;
-			var user_profiles;
-
+			LJ.cheers.removeAllCheers();
 			LJ.cheers.showCheersLoader();
 
 			LJ.api.fetchMeCheers()
 				.then(function( res ){
-					cheers = res.cheers;
+					LJ.cheers.fetched_cheers = res.cheers;
 
 				})
 				.then(function(){
-					var main_hosts     = _.map( cheers, 'main_host' );
-					var main_members   = _.map( cheers, 'main_member');
-					var requested_with = _.map( cheers, 'requested_with' );
 
-					var facebook_ids = _.uniq( _.concat( main_hosts, main_members, requested_with ) );
+					var main_hosts     = _.map( LJ.cheers.fetched_cheers, 'main_host' );
+					var members        = _.flatten( _.map( LJ.cheers.fetched_cheers, 'members' ) );
+
+					var facebook_ids = _.uniq( _.concat( main_hosts, members ) );
 					return LJ.api.fetchUsers( facebook_ids )
 
 				})
 				.then(function( res ){
-					user_profiles = _.map( res, 'user' );
-					return LJ.cheers.renderCheersItems( cheers, user_profiles );
+					LJ.cheers.fetched_profiles = _.filter( _.map( res, 'user' ), Boolean );
+					return LJ.cheers.renderCheersItems( LJ.cheers.fetched_cheers, LJ.cheers.fetched_profiles );
 
 				})
 				.then(function( cheers_html ){
@@ -116,7 +174,8 @@
 
 				})
 				.then(function(){
-					return LJ.cheers.showCheersItems();
+					var type = LJ.cheers.getActiveCheersType();
+					return LJ.cheers.showCheersItems( type );
 
 				})
 				.catch(function( e ){
@@ -124,6 +183,69 @@
 					LJ.wlog(e);
 
 				});
+
+		},
+		getCheersItem: function( cheers_id ){
+
+			return _.find( LJ.cheers.fetched_cheers, function( ch ){
+				return ch.cheers_id == cheers_id;
+			});
+
+		},
+		handleCheersItemClicked: function(){
+
+			var $s        = $( this );
+			var cheers_id = $s.attr('data-cheers-id');
+
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+
+			if( cheers_item.status == "accepted" ){
+
+				if( LJ.chat.getChatState() == "hidden" ){
+					LJ.chat.showChatWrap();
+				}
+
+				LJ.chat.hideChatInview();
+				LJ.cheers.removeCheersBack();
+				LJ.chat.activateChat( cheers_item.chat_id );
+				LJ.chat.showChatInview( cheers_item.chat_id );
+
+			} else {
+
+			// Cheers is in the pending state
+			cheers_item.cheers_type == "sent" ?
+				LJ.before.fetchAndShowBeforeInview( cheers_item.before_id ) :
+				LJ.cheers.validatifyCheersItem( cheers_id );
+
+			}
+
+		},
+		refreshCheersItems: function(){
+
+			var cheers   = LJ.cheers.fetched_cheers;
+			var profiles = LJ.cheers.fetched_profiles;
+
+			if( profiles.length == 0 ){
+				return LJ.cheers.fetchAndAddCheers();
+			}
+
+			var type 		= LJ.cheers.getActiveCheersType();
+			var cheers_html = LJ.cheers.renderCheersItems( cheers, profiles );
+
+			LJ.cheers.removeAllCheers();
+			LJ.cheers.addCheersItems( cheers_html );
+			LJ.cheers.showCheersItems( type, 1 );
+
+
+		},
+		removeAllCheers: function(){
+
+			$('.cheers').children().remove();
+
+		},
+		getActiveCheersType: function(){
+
+			return $('.menu-section.--cheers').find('.segment__part.--active').attr('data-link');
 
 		},
 		renderCheersItems: function( cheers, user_profiles ){
@@ -141,7 +263,7 @@
 					var main_member_profile = _.find( user_profiles, function( u ){
 						return u.facebook_id == ch.main_member;
 					});
-					html.push( LJ.cheers.renderCheersItem__Received( ch, main_member_profile, ch.address ) );
+					html.push( LJ.cheers.renderCheersItem__Received( ch, main_member_profile, ch.place_name ) );
 
 				}
 
@@ -152,9 +274,9 @@
 						return u.facebook_id == ch.main_host;
 					})
 					var requested_with_profiles = _.filter( user_profiles, function( u ){
-						return ch.requested_with.indexOf( u.facebook_id ) != -1;
+						return ch.members.indexOf( u.facebook_id ) != -1 && u.facebook_id != LJ.user.facebook_id;
 					});
-					html.push( LJ.cheers.renderCheersItem__Sent( ch, main_host_profile, requested_with_profiles, ch.address ));
+					html.push( LJ.cheers.renderCheersItem__Sent( ch, main_host_profile, requested_with_profiles, ch.place_name ));
 				}
 
 			});
@@ -177,12 +299,14 @@
 			$( cheers_html ).hide().appendTo( $w );
 
 		},
-		showCheersItems: function(){
+		showCheersItems: function( type, duration ){
+
+			type = type || "sent";
 
 			var $w = $('.cheers');
 
-			$w.find('[data-link="' + "sent" + '"]').velocity('shradeIn', {
-				duration : 250,
+			$w.find('[data-link="' + type + '"]').velocity('shradeIn', {
+				duration : duration || 250,
 				display  : 'flex'
 			});
 
@@ -228,11 +352,15 @@
 		renderCheersItemIcon__Received: function( status ){
 
 			if( status == "pending" ){
-				return '<div class="row-pic__icon --round-icon"><i class="icon icon-drinks"></i></div>';
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
+					'<i class="icon icon-drinks"></i>',
+				'</div>'].join('');
 			}
 
 			if( status == "accepted" ){
-				return '<div class="row-pic__icon --round-icon"><i class="icon icon-chat-bubble-duo"></i></div>';
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
+					'<i class="icon icon-chat-bubble-duo"></i>',
+				'</div>'].join('');
 			}
 
 		},
@@ -246,11 +374,11 @@
 			var groupname 	   = LJ.renderGroupName( main_requester.name );
 			var groupname_html = LJ.text('cheers_item_title_received').replace('%groupname', groupname);
 
-			var address  	   = ch.address;
+			var address  	   = ch.place_name;
 
 			return LJ.ui.render([
 
-				'<div class="cheers__item" data-link="received" data-cheers-id="' + ch.cheers_id + '">',
+				'<div class="cheers__item" data-link="received" data-before-id="'+ ch.before_id +'" data-cheers-id="' + ch.cheers_id + '">',
 					'<div class="row-date date">' + formatted_date + '</div>',
 					'<div class="row-pic">',
 						'<div class="row-pic__image">' + img_html + '</div>',
@@ -273,11 +401,15 @@
 		renderCheersItemIcon__Sent: function( status ){
 
 			if( status == "pending" ){
-				return '<div class="row-pic__icon --round-icon"><i class="icon icon-pending"></i></div>';
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
+					'<i class="icon icon-pending"></i>',
+				'</div>'].join('');
 			}
 
 			if( status == "accepted" ){
-				return '<div class="row-pic__icon --round-icon"><i class="icon icon-chat-bubble-duo"></i></div>';
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
+					'<i class="icon icon-chat-bubble-duo"></i>',
+				'</div>'].join('');
 			}
 
 		},
@@ -294,15 +426,14 @@
 			var requested_with_names = LJ.renderMultipleNames( _.map( requested_with_profiles, 'name' ) );
 			var requested_with_html  = LJ.text("cheers_requested_with").replace( '%names', requested_with_names );
 
-			var address              = ch.address;
+			var address              = ch.place_name;
 
 			return LJ.ui.render([
 
-				'<div class="cheers__item" data-link="sent" data-cheers-id="' + ch.cheers_id + '">',
+				'<div class="cheers__item" data-link="sent" data-before-id="'+ ch.before_id +'" data-cheers-id="' + ch.cheers_id + '">',
 					'<div class="row-date date">' + formatted_date + '</div>',
 					'<div class="row-pic">',
 						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__filterlay --filterlay"></div>',
 						LJ.cheers.renderCheersItemIcon__Sent( ch.status ),
 					'</div>',
 					'<div class="row-body">',
@@ -322,7 +453,331 @@
 
 				].join(''));
 
-		}
+		},
+		setCloseType: function( close_type ){
+
+			LJ.cheers.close_type = close_type;
+
+		},
+		getCloseType: function(){
+
+			return LJ.cheers.close_type;
+
+		},
+		validatifyCheersItem: function( cheers_id ){
+
+			if( LJ.cheers.getActiveCheersBack() == cheers_id ){
+				return;
+			}
+
+			LJ.cheers.setActiveCheersBack( cheers_id );
+
+			LJ.cheers.makeCheersBack( cheers_id );
+			LJ.cheers.refreshChatBackUsersJsp();
+
+			if( LJ.chat.getChatState() == "hidden" ){
+				LJ.cheers.setCloseType("hide_all");
+				LJ.chat.showChatWrap({ wrap_only: true });
+			} else {
+				// Chat was already opened. Only set a cheers_mode if none was set before
+				if( !LJ.cheers.getCloseType() ){
+					LJ.cheers.setCloseType("hide_cheers_back");
+				}
+			}
+			LJ.cheers.showCheersBack();
+
+		},
+		setCheersBackState: function( state ){
+
+			LJ.cheers.cheers_back_state = state;
+
+		},
+		getCheersBackState: function(){
+
+			return LJ.cheers.cheers_back_state;
+
+		},
+		pendifyCheersItem: function(){
+
+			if( LJ.cheers.getCheersBackState() != "idle" ){
+				return LJ.wlog('Cheers back object isnt in an idle state');
+			}
+
+			LJ.cheers.setCheersBackState("pending");
+			LJ.cheers.showCheersBackLoader();
+			LJ.cheers.showCheersBackOverlay();
+
+		},
+		dependifyCheersItem: function(){
+
+			if( LJ.cheers.getCheersBackState() != "pending" ){
+				return LJ.wlog('Cheers back object isnt in an pending state');
+			}
+
+			LJ.cheers.setCheersBackState("idle");
+			LJ.cheers.hideCheersBackLoader();
+			LJ.cheers.hideCheersBackOverlay();
+
+		},
+		makeCheersBack: function( cheers_id ){
+
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+
+			var members_profiles = _.filter( LJ.cheers.fetched_profiles, function(m){
+				return cheers_item.members.indexOf( m.facebook_id ) != -1;
+			});
+
+			var html = LJ.cheers.renderCheersBack( members_profiles );
+
+			LJ.cheers.addCheersBack( html );
+			LJ.mainifyUserRow( $('.cheers-back'), cheers_item.main_member );
+			LJ.cheers.setCheersBackHeader( cheers_item )
+			return;
+
+		},
+		acceptifyCheersItem: function( chat_id ){
+
+			LJ.log('Acceptifying cheers item... !');
+
+			// Prepare the chat in the background
+			LJ.chat.hideChatInview();
+			LJ.chat.activateChat( chat_id );
+			LJ.chat.showChatInview( chat_id );
+
+			LJ.chat.bounceChatHeaderIcons( chat_id, 400 );
+
+			// Fade out the chatback wrapper
+			LJ.cheers.hideCheersBack();
+
+		},
+		resetCheersBackState: function(){
+
+			LJ.cheers.setCloseType( null );
+			LJ.cheers.setActiveCheersBack( null );
+			LJ.cheers.setCheersBackState("idle");
+
+		},
+		removeCheersBack: function(){
+
+			LJ.cheers.resetCheersBackState();
+			$('.cheers-back').remove();
+
+		},	
+		hideCheersBack: function(){
+
+			$('.cheers-back').velocity('shradeOut', {
+				duration: 500,
+				complete: function(){
+
+					$( this ).remove();
+					LJ.cheers.resetCheersBackState();
+				}
+			});
+
+		},
+		updateCheersItem: function( cheers_id, opts ){
+
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+
+			_.keys( cheers_item ).forEach(function( key ){
+				if( opts[ key ] && typeof opts[ key ] == typeof cheers_item[ key ] ){
+					cheers_item[ key ] = opts[ key ];
+				}
+			});
+
+		},
+		getCheersRow: function( cheers_id ){
+
+			return $('.cheers__item[data-cheers-id="'+ cheers_id +'"]');
+
+		},
+		acceptifyCheersRow: function( cheers_id ){
+
+			var $row        = LJ.cheers.getCheersRow( cheers_id );
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+
+			var $icon;
+			if( cheers_item.cheers_type == "sent" ){
+				$icon = LJ.cheers.renderCheersItemIcon__Sent( "accepted" );
+			} else {
+				$icon = LJ.cheers.renderCheersItemIcon__Received( "accepted" );
+			}
+
+			$row.find('.row-pic__icon').replaceWith( $icon );
+
+		},	
+		setActiveCheersBack: function( cheers_id ){
+
+			LJ.cheers.active_cheers_back = cheers_id;
+
+		},
+		getActiveCheersBack: function(){
+
+			return LJ.cheers.active_cheers_back;
+
+		},
+		addCheersBack: function( html ){
+
+			$('.chat').find('.cheers-back').remove();
+			$( html ).hide().appendTo( $('.chat') );
+
+		},
+		showCheersBack: function(){
+
+			$('.chat').css({ 'display': 'flex' }).find('.cheers-back').show();
+
+		},
+		renderChatHeaderCloseIcon: function(){
+
+			return [
+				'<div class="chat-inview__icon --close js-close-cheers-back --round-icon">',
+					'<i class="icon icon-cancel"></div>',
+				'</div>'
+			].join('');
+
+		},
+		setCheersBackHeader: function( cheers_item ){
+			
+			var $chat_header = $('.cheers-back').find('.chat-inview-header');
+			// Replace icons
+			$chat_header.find('.chat-inview__icon').remove();
+			$chat_header.append( LJ.cheers.renderChatHeaderCloseIcon() );
+
+			var formatted_date = LJ.text('chatinview_date', moment(cheers_item.begins_at) );
+			$chat_header.find('.chat-inview-title__h1').html( '<span class="--date">'+ formatted_date +'</span>' );
+			$chat_header.find('.chat-inview-title__h2').html( '<span class="--place">'+ cheers_item.place_name +'</span>' );
+
+		},
+		acceptifyChat: function(){
+
+			
+			
+		},
+		refreshChatBackUsersJsp: function(){
+			
+			var $w = $('.cheers-back');
+			
+			return LJ.ui.turnToJsp( $w.find('.cheers-back-users'), {
+				jsp_id: 'cheers_back'
+			});
+
+		},
+		renderCheersBack: function( members_profiles ){
+
+			var pictures = [];
+			members_profiles.forEach(function( u ){
+				pictures.push({ img_id: u.img_id, img_vs: u.img_vs });
+			});
+			var pictures  = LJ.pictures.makeRosaceHtml( pictures, 'cheers-back' );
+			var user_rows = LJ.renderUserRows( members_profiles );
+
+			var groupname_html   = LJ.renderMultipleNames( _.map( members_profiles, 'name' ) );
+			var cheers_back_html = LJ.chat.renderChatInviewHeader(); // Borrow it to the chat module
+
+			return LJ.ui.render([
+
+				'<div class="cheers-back">',
+					cheers_back_html,
+					'<div class="cheers-back-groupname">',
+						'<div class="cheers-back-groupname__h1">',
+							groupname_html,
+						'</div>',
+						'<div class="cheers-back-groupname__h2">',
+							'<span data-lid="cheers_back_h2"></span>',
+						'</div>',
+					'</div>',
+					'<div class="cheers-back-pictures">',
+			        	pictures, 
+			        '</div>',
+			        '<div class="cheers-back-users">',
+			        	user_rows,
+			        '</div>',
+			        '<div class="cheers-back-actions">',
+			        	'<button class="--round-icon js-validate">',
+			        		'<i class="icon icon-drinks"></i>',
+			        		'<span data-lid="chat_inview_validate"></span>',
+			        	'</button>',
+			        '</div>',
+				'</div>'
+
+			].join(''));
+
+		},
+        handleValidate: function(){
+
+			var $s = $( this );
+
+			if( LJ.cheers.getCheersBackState() == "pending" ){
+				return;
+			}
+
+			var cheers_id = LJ.cheers.getActiveCheersBack();
+
+        	LJ.log('Cheering back...');
+        	LJ.cheers.cheersBack( cheers_id );
+
+        },
+        cheersBack: function( cheers_id ){
+
+			var before_id = LJ.cheers.getCheersItem( cheers_id ).before_id;
+			var members   = LJ.cheers.getCheersItem( cheers_id ).members;
+			
+			LJ.cheers.pendifyCheersItem();
+        	LJ.api.changeGroupStatus({
+        		cheers_id : cheers_id,
+        		before_id : before_id,
+        		members   : members,
+        		status    : "accepted" 
+        	})
+    		.then(function( res ){
+    			LJ.log("Cheers back successfully");
+
+    		})
+    		.catch(function( e ){
+				
+				LJ.log(e);
+    			LJ.ui.showToast( LJ.text("to_default_error"), "error" );
+    			LJ.cheers.dependifyCheersItem();
+
+    		});
+
+        },
+        loaderifyCheersBack: function(){
+        	return LJ.promise(function( resolve, reject ){	
+
+        		var d = LJ.cheers.cheers_back_duration;
+
+        		$('.cheers-back')
+        			.children()
+        			.velocity('shradeOut', { duration: d, display: 'none' });
+
+	        	var d = LJ.static.renderStaticImage('slide_loader');
+				$( d ).addClass('js-cheers-back-loader')
+					  .hide().appendTo('.cheers-back')
+					  .velocity('shradeIn', { duration: d, delay: d } );
+
+				LJ.delay( 2*d ).then( resolve );
+
+        	});
+
+        },
+        deloaderifyCheersBack: function(){
+        	return LJ.promise(function( resolve, reject ){
+
+	        	var d = LJ.cheers.cheers_back_duration;
+
+				$('.js-cheers-back-loader')
+					  .velocity('shradeOut', { duration: d, complete: function(){ $(this).remove(); }} );
+
+        		$('.cheers-back')
+        			.children()
+        			.velocity('shradeIn', { duration: d, delay: d, display: 'flex' });
+
+
+				LJ.delay( 2*d ).then( resolve );
+
+        	});
+        }
 
 	});
 		

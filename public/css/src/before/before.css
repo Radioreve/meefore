@@ -76,7 +76,7 @@
 
 .be-dates__date.--active {}
 
-.be-dates__date:hover {
+.be-dates__date:not(.--active):hover {
     transform: scale(1.13);
 }
 
@@ -156,17 +156,7 @@
 .be-pictures:hover{
     
 }
-.be-pictures__overlay {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 100;
-    opacity: 0.2;
-    /* display: none; */
-    overflow: hidden;
-}
+
 .be-actions { 
     position: absolute;
     bottom: 15px;
@@ -217,7 +207,7 @@
 }
 .be-inview-address__address {
     font-size: 11px;
-    font-family: 'Open sans';
+    height: 13px;
     margin-top: 6px;
     white-space: nowrap;
     overflow: hidden;
@@ -334,8 +324,8 @@
     background: #1B69EC;
     color: white;
 }
-.be-request button.--pending {color: white;border: 2px solid;background: #FD7124;}
-.be-request button.--accepted {background: white;border: 2px solid;color: #1B69EC;}
+.be-request button.--pending {color: white;border: 2px solid;background: #FD7124;background: white;color: #1b69ec;}
+.be-request button.--accepted {/* background: white; *//* border: 2px solid; *//* color: #1B69EC; */}
 
 .be-request i {
     font-size: 36px;

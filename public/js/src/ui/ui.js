@@ -365,7 +365,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 			});
 
 			return LJ.promise(function( resolve, reject ){
-				return LJ.delay( d*0.6 + d*1.1 );
+				return LJ.delay( d*0.6 + d*1.1 ).then( resolve );
 			});
 
 		}

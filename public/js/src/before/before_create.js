@@ -372,28 +372,12 @@
 		},
 		endCreateBefore: function( expose ){
 			
-			var before       = expose.before;
-			var before_item  = expose.before_item;
-			var channel_name = expose.channel_name
-
 			// Friendly loggin
 			LJ.log(expose);
 
 			// Ui update
-			LJ.ui.showToast( LJ.text('to_before_create_success') );
 			LJ.before.hideCreateBefore();
 			LJ.before.showBrowser();
-
-			// Update user state and add marker accordingly
-			LJ.user.befores.push( before_item );
-			LJ.map.addBeforeMarker( before );
-
-			// Update before state and refresh browserdates accordingly
-			LJ.before.fetched_befores.push( before );
-			LJ.before.refreshBrowserDates();
-
-			// Join the hosts channel 
-			LJ.realtime.subscribeToBeforeChannel( channel_name );
 
 		},	
 		handleCreateBefore: function(){

@@ -5,7 +5,7 @@
     settings: {
         app: {}
     },
-	accessToken:'',
+	app_token: '',
 	ui:{
 		nearest_event_opacity: '.5',
 		artificialDelay: 700,

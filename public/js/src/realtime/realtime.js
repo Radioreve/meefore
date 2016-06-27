@@ -8,12 +8,7 @@
 		init: function(){
 
 			LJ.realtime.setupRealtimeService();
-
-			LJ.realtime.subscribeToPrivateChannel();
-			LJ.realtime.subscribeToLocationChannel();
-			LJ.realtime.subscribeToBeforeChannels();
-			LJ.realtime.subscribeToChatChannels();
-
+			LJ.realtime.subscribeToAllChannels();
 			return;
 
 		},
@@ -24,6 +19,11 @@
 			});
 
 			return _.map( channels, 'name' );
+
+		},
+		hasSubscribed: function( channel_name ){
+
+			return LJ.realtime.channels[ channel_name ];
 
 		},
 		setupRealtimeService: function(){
@@ -70,6 +70,14 @@
             });
 
 		},
+		subscribeToAllChannels: function(){
+
+			LJ.realtime.subscribeToPrivateChannel();
+			LJ.realtime.subscribeToLocationChannel();
+			LJ.realtime.subscribeToBeforeChannels();
+			LJ.realtime.subscribeToChatChannels();
+
+		},
 		getSocketId: function(){
 			return LJ.realtime.pusher.connection ? LJ.realtime.pusher.connection.socket_id : null;
 
@@ -78,8 +86,12 @@
 		// main usage is to keep track of user's online status via a webhook
 		subscribeToPrivateChannel: function(){
 
+			var channel_name = LJ.realtime.getUserChannels("personnal")[0];
+
+			if( LJ.realtime.hasSubscribed( "personnal" ) ) return;
+
 			LJ.log('Subscribing to personnal channel');
-			LJ.realtime.channels.personnal = LJ.realtime.pusher.subscribe( LJ.realtime.getUserChannels("personnal")[0] );
+			LJ.realtime.channels.personnal = LJ.realtime.pusher.subscribe( channel_name );
 			
 			LJ.realtime.channels.personnal.bind('new hello'		 	 	 , LJ.log ); // Test channel
 			LJ.realtime.channels.personnal.bind('new before hosts'   	 , LJ.realtime.handleNewMarkedAsHost );
@@ -92,53 +104,74 @@
 			LJ.log('Push event received, data : ');
 			LJ.log( data );
 
-			var before_item  = data.before_item;
-			var channel_name = data.channel_name;
-			var before       = data.before;
+			var before      = data.before;
+			var before_item = data.before_item;
 
-			// Ui update
-			var friend_name = LJ.friends.getFriendsProfiles( before.main_host )[0].name;
-			LJ.ui.showToast( LJ.text('to_before_create_success_friends').replace('%name', friend_name ));
+			var channel_item_before = data.channel_item_before;
+			var channel_item_team   = data.channel_item_team;
+
+			// Little toast to show for everyone but the main_host
+			if( before.main_host != LJ.user.facebook_id ){
+				var friend_name = LJ.friends.getFriendsProfiles( before.main_host )[0].name;
+				LJ.ui.showToast( LJ.text('to_before_create_success_friends').replace('%name', friend_name ));
+			} else {
+				LJ.ui.showToast( LJ.text('to_before_create_success') );
+			}
 
 			// Update user state and add marker accordingly
 			LJ.user.befores.push( before_item );
-			LJ.map.addBeforeMarker( before );
 
-			// Update before state and refresh browserdates accordingly
-			LJ.before.fetched_befores.push( before );
-			LJ.before.refreshBrowserDates();
+			// Cache new channels
+			LJ.user.channels.push( channel_item_before );
+			LJ.user.channels.push( channel_item_team );
 
-			// Join the hosts channel 
-			LJ.realtime.subscribeToBeforeChannel( channel_name );
+			// Refresh all channels subscriptions
+			LJ.realtime.subscribeToAllChannels();
+
+			LJ.chat.addAndFetchOneChat( channel_item_team );
 
 		},
 		handleNewRequestGroup: function( data ){
 
-			LJ.log('A friend requested to participate in a before with you!');
+			LJ.log(data);
 			
-			var before_item  = data.before_item;
-			var before       = data.before;
-			var channel_item = data.channel_item;
-			var notification = data.notification;
+			if( data.group.main_member != LJ.user.facebook_id ){
 
-			LJ.ui.showToast( LJ.text('to_before_request_success_friend') );
-			LJ.user.befores.push( before_item );
-			LJ.before.pendifyBeforeInview( before._id );
-			LJ.before.pendifyBeforeMarker( before._id );
-			LJ.user.channels.push( channel_item );
-			LJ.realtime.subscribeToChatChannel( channel_item.channel_all );
-			LJ.realtime.subscribeToChatChannel( channel_item.channel_team );
-			LJ.chat.addAndFetchOneChat( channel_item, {
+				LJ.log('A friend requested to participate in a before with you!');
+				LJ.ui.showToast( LJ.text('to_cheers_sent_success_friend') );
+
+			} else {
+
+				LJ.ui.showToast( LJ.text('to_cheers_sent_success') );
+
+			}
+
+			LJ.user.befores.push( data.before_item );
+			LJ.cheers.fetched_cheers.push( data.cheers_item );
+			LJ.cheers.refreshCheersItems();
+			LJ.user.channels.push( data.channel_item_team );
+
+			LJ.before.pendifyBeforeInview( data.before_id );
+			LJ.before.pendifyBeforeMarker( data.before_id );
+
+			LJ.realtime.subscribeToAllChannels();
+
+			LJ.chat.addAndFetchOneChat( data.channel_item_team, {
 				"row_insert_mode": "top"
 			});
+
 
 		},
 		// Subcribe to events about a specific geo area 
 		//to get pushed realtime notifications about newly created events
 		subscribeToLocationChannel: function(){
 
+			var channel_name =  LJ.realtime.getUserChannels("location")[0];
+
+			if( LJ.realtime.hasSubscribed( "location" ) ) return;
+
 			LJ.log('Subscribing to location channel');
-			LJ.realtime.channels.location = LJ.realtime.pusher.subscribe( LJ.realtime.getUserChannels("location")[0] );
+			LJ.realtime.channels.location = LJ.realtime.pusher.subscribe( channel_name );
 
 			LJ.realtime.channels.location.bind('new hello'		   , LJ.log ); // Test channel
 			LJ.realtime.channels.location.bind('new before' 	   , LJ.realtime.handleNewBefore );
@@ -149,17 +182,10 @@
 
 			var before = data.before;
 
-			// Host are notified via their personnal channel, they need to access different data 
-			if( before.hosts.indexOf( LJ.user.facebook_id ) != -1 ){
-				return;
-			}
-
-			LJ.ui.showToast("Un nouveau before vient d'être créé", 10000 );
-
 			LJ.map.addBeforeMarker( before );
 			LJ.before.fetched_befores.push( before );
 			LJ.before.refreshBrowserDates();
-
+		
 		},
 		handleNewBeforeStatus: function( data ){
 
@@ -215,6 +241,8 @@
 		subscribeToBeforeChannel: function( channel_name ){
 
 			// LJ.log('Subscribing to before channel : ' + channel_name );
+			if( LJ.realtime.hasSubscribed( channel_name ) ) return;
+
 			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
 
 			LJ.realtime.channels[ channel_name ].bind('new hello'		  , LJ.log ); // Test channel
@@ -226,18 +254,10 @@
 
 			LJ.log( data );
 			// LJ.log('Someone requested to participate in your before');
-			
-			var before       = data.before;
-			var channel_item = data.channel_item;
-			var notification = data.notification;
 
-			LJ.ui.showToast( LJ.text('to_before_request_success_host') );
-			LJ.user.channels.push( channel_item );
-			LJ.realtime.subscribeToChatChannel( channel_item.channel_all );
-			LJ.realtime.subscribeToChatChannel( channel_item.channel_team );
-			LJ.chat.addAndFetchOneChat( channel_item, {
-				"row_insert_mode": "top"
-			});
+			LJ.ui.showToast( LJ.text('to_cheers_received_success') );
+			LJ.cheers.fetched_cheers.push( data.cheers_item );
+			LJ.cheers.refreshCheersItems();
 
 
 		},
@@ -275,55 +295,94 @@
 		subscribeToChatChannel: function( channel_name ){
 
 			// LJ.log('Subscribing to chat channel : ' + channel_name );
+			if( LJ.realtime.hasSubscribed( channel_name ) ) return;
+
 			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
 
-			LJ.realtime.channels[ channel_name ].bind('new hello'		  , LJ.log ); // Test channel
-			LJ.realtime.channels[ channel_name ].bind('new group status'  , LJ.realtime.handleNewGroupStatus );
-			LJ.realtime.channels[ channel_name ].bind('new chat message'  , LJ.realtime.handleNewChatMessage );
-			LJ.realtime.channels[ channel_name ].bind('new chat seen by'  , LJ.realtime.handleNewChatSeenBy );
+			LJ.realtime.channels[ channel_name ].bind('new hello'		        , LJ.log ); // Test channel
+			LJ.realtime.channels[ channel_name ].bind('new group status hosts'  , LJ.realtime.handleNewGroupStatusHosts );
+			LJ.realtime.channels[ channel_name ].bind('new group status users'  , LJ.realtime.handleNewGroupStatusUsers );
+			LJ.realtime.channels[ channel_name ].bind('new chat message'        , LJ.realtime.handleNewChatMessage );
+			LJ.realtime.channels[ channel_name ].bind('new chat seen by'        , LJ.realtime.handleNewChatSeenBy );
 			
 		},
-		handleNewGroupStatus: function( data ){
+		handleNewGroupStatusHosts: function( data ){
 
-			var before_id = data.before_id;
-			var chat_id   = data.chat_id;
-			var group_id  = data.group_id;
-			var status    = data.status; 
+			LJ.log( data );
 
-			var channel_item = _.find( LJ.user.channels, function( chan ){
-				return chan.before_id = before_id;
-			});
+			var sender_id    = data.sender_id;
+			var before_id    = data.before_id;
+			var cheers_id    = data.cheers_id;
+			var channel_item = data.channel_item;
+			var status 	     = data.status;
+			var n_hosts 	 = data.n_hosts;
 
-			var before_item = _.find( LJ.user.befores, function( bfr ){
-				return bfr.before_id == before_id;
-			});
-			// Reset the seen_at property, so that all the 'refresh functions' detect something happen
-			// and can newify the chatrow immediately, except for those who have not the view set as active
-			if( LJ.chat.getActiveChatId() != chat_id ){
-				before_item.seen_at = null;
-			} else {
-				LJ.chat.updateBeforeSeenAt( before_id );
+			if( status != "accepted" ){
+				return LJ.wlog('Status != "accepted", not implemented yet');
 			}
 
-			if( status == "accepted" ){
+			// Refresh all channels subscriptions
+			LJ.user.channels.push( channel_item );
+			LJ.realtime.subscribeToAllChannels();
 
-				var role = channel_item.role;
+			// Add the new chat for people to get to know each otha :)
+			LJ.chat.addAndFetchOneChat( channel_item )
+				.then(function(){
 
-				if( role == "hosted" ){
-					LJ.chat.devalidateifyChatInview( chat_id );
+					LJ.ui.showToast( LJ.text("to_group_accepted_hosts") );
 
-				} else {
-					LJ.chat.acceptifyChatInview( group_id, chat_id );
-				}
+					// Smooth ui transition to terminate the cheers back process
+					if( sender_id == LJ.user.facebook_id ){
+						LJ.cheers.acceptifyCheersItem( channel_item.chat_id );
+					}
 
-				LJ.chat.acceptifyChatRow( group_id );
-				LJ.chat.addBubbleToChatIcon();
-				LJ.chat.addBubbleToChatRow( group_id );
-				LJ.chat.newifyChatRows();
+					// Update the cheers
+					LJ.cheers.updateCheersItem( cheers_id, { status: status });
+					LJ.cheers.acceptifyCheersRow( cheers_id );
 
-			}
+				});
+
 
 		},
+		handleNewGroupStatusUsers: function( data ){
+
+			LJ.log( data );
+
+			var sender_id    = data.sender_id;
+			var before_id    = data.before_id;
+			var cheers_id    = data.cheers_id;
+			var channel_item = data.channel_item;
+			var status 	     = data.status;
+			var n_users 	 = data.n_users;
+
+			if( status != "accepted" ){
+				return LJ.wlog('Status != "accepted", not implemented yet');
+			}
+
+			// Refresh all channels subscriptions
+			LJ.user.channels.push( channel_item );
+			LJ.realtime.subscribeToAllChannels();
+
+
+			// Add the new chat for people to get to know each otha :)
+			LJ.chat.addAndFetchOneChat( channel_item )
+				.then(function(){
+
+					LJ.ui.showToast( LJ.text("to_group_accepted_users") );
+
+					// Update the cheer_item
+					LJ.cheers.updateCheersItem( cheers_id, { status: status });
+					LJ.cheers.acceptifyCheersRow( cheers_id );
+
+					// Update the before_item
+					LJ.before.updateBeforeItem( before_id, { status: status });
+
+				});
+
+			// Specific to the users
+			LJ.chat.acceptifyChatInview( before_id );
+
+		},	
 		handleNewChatMessage: function( data ){
 
 			// LJ.log('Adding chatline ');
@@ -352,6 +411,13 @@
 			}
 
 			LJ.chat.cacheChatMessage( chat_id, data );
+
+			if( LJ.chat.getActiveChatId() == chat_id ){
+				LJ.chat.sendSeenByProxy( chat_id );
+				LJ.chat.viewifyChatInview( chat_id );
+
+			}
+
 
 			// Local variation regarding the inview ui of the chatline
 			sender_id == LJ.user.facebook_id ? LJ.chat.dependifyChatLine( call_id ) : LJ.chat.addChatLine( data );

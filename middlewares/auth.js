@@ -23,7 +23,7 @@
 
 			if( !token ){
 				return eventUtils.raiseError({ res: res,
-					toClient : "Un token est nécessaire pour appeler cette route"
+					toClient : "You need a valid app token to access this ressource"
 				});
 			}
 
@@ -35,7 +35,7 @@
 			} catch( err ){
 				console.log( err.message );
 				return eventUtils.raiseError({ res: res, err: err,
-					toClient : "Cette action n'est pas autorisée"
+					toClient : "Action unauthorized"
 				});
 			}
 			

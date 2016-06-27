@@ -1,10 +1,12 @@
 
   var mongoose = require("mongoose");
   var Before   = require("./BeforeModel");
+  var Message  = require("./MessageModel");
   var settings = require('../config/settings');
   var config   = require('../config/config');
   var bcrypt   = require("bcrypt-nodejs");
   var _        = require('lodash');
+  var md5      = require('blueimp-md5');
 
   var UserSchema = new mongoose.Schema({
 
@@ -191,6 +193,43 @@ UserSchema.methods.getPrivateChannel = function(){
   }).name;
 
 };
+
+
+UserSchema.statics.makeCheersItem__Sent = function( before, group ){
+
+    var o = this.makeCheersItem( before, group );
+
+    o.cheers_type = "sent";
+    o.cheers_id    = md5( JSON.stringify(o) );
+
+    return o;
+}
+
+UserSchema.statics.makeCheersItem__Received = function( before, group ){
+
+    var o = this.makeCheersItem( before, group );
+
+    o.cheers_type = "received";
+    o.cheers_id   = md5( JSON.stringify(o) );
+
+    return o;
+}
+
+UserSchema.statics.makeCheersItem = function( before, group, opts ){
+
+    return {
+      "status"       : group.status,
+      "before_id"    : before._id,
+      "main_member"  : group.main_member,
+      "members"      : group.members,
+      "main_host"    : before.main_host,
+      "place_name"   : before.address.place_name,
+      "requested_at" : group.requested_at,
+      "chat_id"      : Message.makeChatId( before._id, before.hosts, group.members ),
+      "begins_at"    : before.begins_at
+    }
+}
+
 
 
 module.exports = mongoose.model( 'Users', UserSchema );

@@ -237,7 +237,6 @@
 
 				LJ.ui.activateHtmlScroll();
 
-				
 				$('.curtain')
 						.children()
 						.velocity('bounceOut', {
@@ -250,6 +249,7 @@
 
 				}).then(function(){
 					LJ.before.showBrowser();
+					LJ.delay(250).then( LJ.before.showCreateBeforeBtn );
 					LJ.before.refreshBrowserDates();
 					return
 				});	

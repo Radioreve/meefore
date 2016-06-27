@@ -36,7 +36,7 @@
 		before_request_url 			 	 	: '/api/v1/befores/:before_id/request',
 		send_chat_message_url 	     	 	: '/api/v1/chats/:chat_id',
 		fetch_chat_history_url 	 	 	 	: '/api/v1/chats/:chat_id',
-		change_group_status_url		 	 	: '/api/v1/befores/:before_id/groups/:group_id/status',
+		change_group_status_url		 	 	: '/api/v1/befores/:before_id/groups',
 		update_chat_seen_by_url 	 	 	: '/api/v1/chats/:chat_id/seen_by',
 		update_notifications_seen_at_url 	: '/api/v1/users/:user_id/notifications/seen_at',
 		update_notifications_clicked_at_url : '/api/v1/users/:user_id/notifications/clicked_at',
@@ -51,7 +51,7 @@
 		ajax: function( url, method, data ){	
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.log('['+method+'] ' + url);
+				// LJ.log('['+method+'] ' + url);
 				data = data || {};
 				if( LJ.user && LJ.user.facebook_id ){
 					data.facebook_id = LJ.user.facebook_id;
@@ -670,12 +670,7 @@
 				LJ.api.post( LJ.api.before_request_url.replace(':before_id', before_id), request )
 					.then(function( exposed ){
 
-						if( exposed.before_item && exposed.members_profiles ){
-							return resolve( exposed );
-
-						} else {
-							LJ.wlog('The server didnt respond with the expected before object and/or members_profiles object');
-						}
+						return resolve( exposed );
 
 					}, function( err ){
 						return reject( err );
@@ -733,21 +728,20 @@
 		},
 		changeGroupStatus: function( data ){
 			return LJ.promise(function( resolve, reject ){
+				
+				var cheers_id = data.cheers_id;
+				var before_id = data.before_id;
+				var members   = data.members;
+				var status    = data.status;
 
-				var before_id   = data.before_id;
-				var group_id    = data.group_id;
-				var chat_id     = data.chat_id;
-				var main_member = data.main_member;
-				var status 	    = data.status;
-
-				if( !( before_id && group_id && chat_id && main_member && status ) ){
+				if( !( cheers_id && before_id && status && members ) ){
 					return LJ.wlog('Cannot call the api without required parameters');
 				}
 
-				var url = LJ.api.change_group_status_url.replace(':before_id', before_id ).replace(':group_id', group_id );
+				var url = LJ.api.change_group_status_url.replace(':before_id', before_id );
 				LJ.api.post( url, data )
 					.then(function( exposed ){
-						return resolve();
+						return resolve( exposed );
 
 					}, function( err ){
 						return reject( err );

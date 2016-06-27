@@ -3,9 +3,7 @@
 .menu-section.--cheers .menu-section-segment {}
 
 .menu-section.--cheers .segment {width: 500px;}
-.menu-section.--cheers .segment__part {
-
-}
+.menu-section.--cheers .segment__part {font-size: 13px;}
 
 .cheers {
     width: 100%;
@@ -24,10 +22,20 @@
     justify-content: flex-start;
     align-items: center;
     cursor: pointer;
+    border-radius: 8px;
 }
 
 .cheers__item:hover {
-    background: #f9f9f9;
+    background: #fbfbfb;
+}
+
+.cheers__item:hover .row-body__icon,
+.cheers__item:hover .row-date,
+.shared__item:hover .row-body__icon,
+.shared__item:hover .row-date,
+.friends__item:hover .row-body__icon,
+.friends__item:hover .row-date {
+    color: #1b69ec;
 }
 
 .cheers__item.--last {
@@ -36,6 +44,13 @@
 
 .cheers .row-pic__icon {
     background: #1b69ec;
+}
+
+.cheers .row-pic__icon.--pending {
+    background: #fd7124;
+    background: white;
+    color: #1b69ec;
+    border: 1px solid;
 }
 
 .cheers-ribbon {
@@ -62,3 +77,125 @@
 }
 
 .cheers-ribbon h2 {}
+
+
+.cheers-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 100000;
+    background: white;
+    display: flex;
+    flex-flow: column;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+.cheers-back-pictures {
+    width: 150px;
+    height: 150px;
+    margin: 20px auto;
+    flex-shrink: 0;
+    font-size: 12px;
+    text-align: center;
+}
+.cheers-back-pictures .rosace {}
+.cheers-back-users {
+    width: 399px;
+    flex-basis: 250px;
+    height: 250px;
+    outline: none;
+}
+.cheers-back-actions {
+    margin-top: auto;
+    padding: 40px 0 50px 0;
+    order: 1;
+    flex-shrink: 0;
+    border-top: 1px solid #eee;
+}
+.cheers-back-actions button {
+    width: 70px;
+    height: 70px;
+    background: #1B69EC;
+    color: white;
+}
+.cheers-back-actions button i {
+    font-size: 38px;
+}
+.cheers-back-actions button span {
+    display: none;
+}
+.chat-header__icon.--close {
+    position: absolute;
+    right: 10px;
+    top: 16px;
+    cursor: pointer;
+}
+
+.cheers-back-groupname {
+    display: flex;
+    flex-shrink: 0;
+    /* justify-content: center; */
+    align-items: center;
+    max-width: 300px;
+    margin: 20px auto 0;
+    /* background: rgb(27, 105, 236); */
+    /* padding: 10px 0; */
+    /* color: white; */
+    /* width: 100%; */
+    /* margin: auto; */
+}
+.cheers-back-groupname__h1 {
+    font-weight: 700;
+    font-size: 12px;
+    margin-right: 4px;
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.cheers-back-groupname__h1 span {}
+.cheers-back-groupname__h2 {font-size: 11px;position: relative;top: -2px;}
+.cheers-back-groupname__h2 span {}
+
+.cheers-back-users .jspPane {
+    padding: 0!important;
+    width: 100%!important;
+} 
+
+.cheers-back-users .jspDrag {
+    background: #FFFFFF;
+    border: 1px solid #eee;
+    right: 2px;
+    border-radius: 0;
+}
+
+.cheers-back-users .jspVerticalBar {
+    right: 0;
+}
+.cheers-back-users .jspTrack {
+    background: #ECECEC;
+    right: 0;
+    width: 6px;
+}
+
+.cheers-back__loader {
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index: 100;
+    margin: auto;
+}
+
+.cheers-back__overlay {
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.66);
+    position: absolute;
+    z-index: 99;
+    top: 0;
+    left: 0;
+}
+

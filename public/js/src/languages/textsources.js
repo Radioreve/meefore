@@ -76,6 +76,14 @@
 				return [ m.format('HH'), m.format('mm') ].join(':');
 			}
 		},
+		chatinview_date_hour: {
+			"fr": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			},
+			"us": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			}
+		},
 		before_date_day: {
 			"fr": function( m ){
 
@@ -146,6 +154,41 @@
 				return [ n, m ].join(' ') + ', ';
 			}
 		},
+		chatinview_date_day: {
+			"fr": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return LJ.text_source['today']["fr"];
+				}
+
+				if( m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
+					return LJ.text_source['tomorrow']["fr"];
+				}
+
+				var d = LJ.text_source['day']['fr'][ m.day() ];
+				var n = m.format('DD').replace(/^0/,'');
+				var m = m.format('MM');
+
+				return [ d, [ n, m ].join('/') ].join(' ');
+			},
+			"us": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return LJ.text_source['today']["us"];
+				}
+
+				if(  m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
+					return LJ.text_source['tomorrow']["us"];
+				}
+
+				var d = LJ.text_source['day']['fr'][ m.day() ];
+				var n = m.format('DD').replace(/^0/,'');
+				var m = m.format('MM');
+
+				return [ d, [ n, m ].join('/') ].join(' ');
+
+			}
+		},
 		before_date: {
 			"fr": function( m ){
 
@@ -177,6 +220,24 @@
 
 				var day  = LJ.text_source["chatrow_date_day"]["us"]( m );
 				var hour = LJ.text_source["chatrow_date_hour"]["us"]( m );
+
+				return [ day, hour ].join('');
+
+			}
+		},
+		chatinview_date: {
+			"fr": function( m ){
+
+				var day  = LJ.text_source["chatinview_date_day"]["fr"]( m );
+				var hour = LJ.text_source["chatinview_date_hour"]["fr"]( m );
+
+				return [ day, hour ].join(', ');
+
+			},
+			"us": function( m ){
+
+				var day  = LJ.text_source["chatinview_date_day"]["us"]( m );
+				var hour = LJ.text_source["chatinview_date_hour"]["us"]( m );
 
 				return [ day, hour ].join('');
 
@@ -1434,20 +1495,20 @@
 			"us": "Share profiles or pregame with your friends to help you organize your nights."
 		},
 		empty_cheers_sent_title: {
-			"fr": "Aucun Cheers",
-			"us": "No Cheers"
+			"fr": "Aucun Cheers envoyés",
+			"us": "No Cheers sent"
 		},
 		empty_cheers_sent_subtitle: {
-			"fr": "Envoyez des Cheers aux personnes que vous souhaitez inviter à vos prochains before.",
-			"us": "Sent Cheers to the people you wish to see at your next pregame."
+			"fr": "Les Cheers permettent à chaque membre de montrer à des organisateurs qu'ils sont intéressé par leur before.",
+			"us": "Cheers allow each member to let hosts of pregames know that they are interested in their pregame."
 		},
 		empty_cheers_received_title: {
-			"fr": "Aucun Cheers",
-			"us": "No Cheers"
+			"fr": "Aucun Cheers reçus",
+			"us": "No Cheers received"
 		},
 		empty_cheers_received_subtitle: {
-			"fr": "Les Cheers sont envoyés par les organisateur pour vous inviter à leur prochain before.",
-			"us": "Cheers are sent by hosts to invite you to their next pregame."
+			"fr": "Les Cheers permettent à chaque membre de montrer à des organisateurs qu'ils sont intéressé par leur before.",
+			"us": "Cheers allow each member to let hosts of pregames know that they are interested in their pregame."
 		},
 		empty_friends_title: {
 			"fr": "Pas encore d'amis",
@@ -1457,6 +1518,22 @@
 			"fr": "Il faut être au moins 2 pour créer ou participer à un before. Invitez vos amis à vous rejoindre pour sortir et faire de nouvelles rencontres.",
 			"us": "You need to be at least 2 in order to pregrame. Invite your friends to join you to get out and meet new people."
 		},
+		hint_cheers_pending: {
+			"fr": "En attente de Match",
+			"us": "Waitinf for a Match"
+		},
+		hint_cheers_accepted: {
+			"fr": "Match !",
+			"us": "It's a Match !"
+		},
+		to_group_accepted_hosts: {
+			"fr": "Vous avez un Match !",
+			"us": "You have a new Match !"
+		},
+		to_group_accepted_users: {
+			"fr": "Vous avez un Match !",
+			"us": "You have a new Match !"
+		},
 		disconnected_title: {
 			"fr": "Vous êtes déconnecté",
 			"us": "You are offline"
@@ -1465,93 +1542,97 @@
 			"fr": "Vous serez reconnecté automatiquement dès que vous aurez retrouvé internet.",
 			"us": "You will be automatically reconnected when you're back online. "
 		},
-		"init_location_title": {
+		init_location_title: {
 			"fr": "Bienvenidos !",
 			"us": "Bienvenidos !"
 		},
-		"init_location_subtitle_placeholder": {
+		init_location_subtitle_placeholder: {
 			"fr": "Où souhaitez-vous sortir ?",
 			"us": "Where would you like to go out ?"
 		},
-		"init_location_explanation": {
+		init_location_explanation: {
 			"fr": "Vous pourrez toujours changer de ville ultérieurement",
 			"us": "You'll still be able to change that later"
 		},
-		"init_location_geoloc": {
+		init_location_geoloc: {
 			"fr": "Utiliser ma position",
 			"us": "Use my location"
 		},
-		"user_profile_about": {
+		user_profile_about: {
 			"fr": "Détails",
 			"us": "Details"
 		},
-		"user_profile_ideal_night": {
+		user_profile_ideal_night: {
 			"fr": "Ta soirée parfaite",
 			"us": "Your perfect night"
 		},
-		"logout_title": {
+		logout_title: {
 			"fr": "A bientôt",
 			"us": "See you soon"
 		},
-		"logout_subtitle": {
+		logout_subtitle: {
 			"fr": "Êtes vous-sûr de vouloir vous déconnecter ?",
 			"us": "Are you sure you want to log out ?"
 		},
-		"modal_err_empty_fetch": {
+		modal_err_empty_fetch: {
 			"fr": "Nous n'avons pas trouvé vos photos de profil",
 			"us": "We were unable to find your profile pictures album"
 		},
-		"settings_account_delete_button": {
+		settings_account_email: {
+			"fr": "Tous nos emails seront envoyés à cette addresse",
+			"us": "All our emails will be sent to this address"
+		},
+		settings_account_delete_button: {
 			"fr": "Supprimer mon compte",
 			"us": "Delete my account"
 		},
-		"settings_modal_delete_title": {
+		settings_modal_delete_title: {
 			"fr": "A bientôt !",
 			"us": "See you around !"
 		},
-		"settings_modal_delete_subtitle": {
+		settings_modal_delete_subtitle: {
 			"fr": "En supprimant votre compte, toutes les données vous concernant seront supprimées de nos serveurs."
 				  + "<br><br><b>Attention, cette opération est irréversible.</b>",
 			"us": "By deleting your account, every data about you will be deleted from our servers."
 				  + "<br><br><b>Careful, this cannot be undone.</b>"
 		},
-		"settings_modal_delete_button_confirm": {
+		settings_modal_delete_button_confirm: {
 			"fr": "Supprimer mon compte",
 			"us": "Delete my account"
 		},
-		"settings_modal_delete_button_cancel": {
+		settings_modal_delete_button_cancel: {
 			"fr": "Annuler",
 			"us": "Cancel"
 		},
-		"search_filters_gender_title": {
+		search_filters_gender_title: {
 			"fr": "Montrez-moi seulement :",
 			"us": "Show me only : "
 		},
-		"search_filters_gender_explanations": {
+		search_filters_gender_explanations: {
 			"fr": "Sélectionner le sexe des personnes que vous recherchez.",
 			"us": "Select the gender of the people you wish to see."
 		},
-		"search_filters_age_title": {
+		search_filters_age_title: {
 			"fr": "Afficher les personnes de <span class='search-filters-min-age'></span> à <span class='search-filters-max-age'></span> ans",
 			"us": "Display people from <span class='search-filters-min-age'></span> to <span class='search-filters-max-age'></span> years old"
 		},
-		"search_filters_age_explanations": {
+		search_filters_age_explanations: {
 			"fr": "Seuls les utilisateurs dans la tranche d'âge sélectionnée apparaîtront dans la recherche.",
 			"us": "Only the users within the selected agerange will be displayed."
 		},
-		"search_filters_countries_title": {
+		search_filters_countries_title: {
 			"fr": "Filter par pays :",
 			"us": "Filter by country :"
 		},
-		"search_filters_countries_explanations": {
+		search_filters_countries_explanations: {
 			"fr": "Les pays proposés sont ceux comptant au moins un utilisateur.",
 			"us": "The countries displayed are those for which there is at least one user."
 		},
-		"search_filters_gender_label_male": {
+		search_filters_gender_label_male: {
 			"fr": "Des hommes",
 			"us": "Men"
 		},
-		"search_filters_gender_label_female": {
+		search_filters_gender_label_female: {
 			"fr": "Des femmes",
 			"us": "Women"
 		},
@@ -1595,15 +1676,15 @@
 			"fr": "Le before a bien été partagé",
 			"us": "The pregame has been shared"
 		},
-		to_before_request_success: {
+		to_cheers_sent_success: {
 			"fr": "Votre Cheers a bien été envoyée",
 			"us": "Your Cheers has been sent"
 		},
-		to_before_request_success_host: {
+		to_cheers_received_success: {
 			"fr": "Vous avez reçu un Cheers",
 			"us": "You have received a Cheers"
 		},
-		to_before_request_success_friend: {
+		to_cheers_sent_success_friend: {
 			"fr": "Un ami souhaite participer à un before avec vous",
 			"us": "A friend wishes to join a before with you"
 		},
@@ -1737,6 +1818,10 @@
 			"fr": "Le before est terminé",
 			"us": "The pregame is over"
 		},
+		be_hosted: {
+			"fr": "Vous faites parti des organisateurs",
+			"us": "You are one of the hosts"
+		},
 		to_friend_canceled_event: {
 			"fr": "%name vient d'annulé un before que vous organisiez ensemble",
 			"us": "%name just canceled a pregame that you organized together"
@@ -1762,12 +1847,12 @@
 			"us": "You need to be at least two to perform this action"
 		},
 		be_request_already_there: {
-			"fr": "participe déjà avec quelqu'un d'autre",
-			"us": "already participates with someone else"
+			"fr": "a déjà envoyé un Cheers pour ce before",
+			"us": "has already sent a Cheers for this before"
 		},
 		to_request_pending: {
-			"fr": "Les organisateurs ne vous ont pas encore matché",
-			"us": "Hosts havent matched you yet"
+			"fr": "Vous pourrez discuter dès que vous aurez un Match",
+			"us": "You can start chatting when you have a Match"
 		},
 		chat_header_title: {
 			"fr": "Discussions",
@@ -1893,7 +1978,7 @@
 			"fr": "Plus tard",
 			"us": "Later"
 		},
-		chat_inview_validate_now: {
+		chat_inview_validate: {
 			"fr": "Cheers !",
 			"us": "Cheers !"
 		},
@@ -1908,6 +1993,10 @@
 			"us": function( names ){
 				return "Seen by " + LJ.renderMultipleNames( names );
 			}
+		},
+		cheers_back_h2: {
+			"fr": "vous ont envoyé un Cheers",
+			"us": "have sent you a Cheers"
 		}
 
 

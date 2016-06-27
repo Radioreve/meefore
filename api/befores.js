@@ -20,6 +20,12 @@
 
 	};
 
+	var handleErrAsync = function( namespace, err ){
+
+		console.log( err );
+
+	};
+
 
 	var createBefore = function( req, res, next ) {
 	    
@@ -57,8 +63,7 @@
 				status    : 'hosting',
 				timezone  : parseFloat( data.timezone ),
 				before_id : before_id,
-				begins_at : new Date( new_before.begins_at ),
-				seen_at   : null
+				begins_at : new Date( new_before.begins_at )
 	    	};
 
 	    	User.update({'facebook_id': { $in: data.hosts } },
@@ -126,8 +131,7 @@
 				before_id   : bfr._id, // Important, to keep the ObjectId type 
 				begins_at   : bfr.begins_at,
 				timezone	: parseFloat( bfr.timezone ),
-				status 		: 'pending',
-				seen_at		: null
+				status 		: 'pending'
 			};
 
 			User
@@ -140,11 +144,9 @@
 						if( err ){
 							return handleErr( req, res, err_ns, err );
 						}
-
-						req.sent.before 				 = bfr;
-						req.sent.before_item             = before_item;
-						req.sent.expose.before_item      = before_item;
-						req.sent.expose.members_profiles = req.sent.members_profiles;
+						
+						req.sent.before      = bfr;
+						req.sent.before_item = before_item;
 						next();
 
 					});
@@ -202,23 +204,40 @@
 
 	var changeGroupStatus = function( req, res, next ){
 		
+		next();
+
 		var err_ns    = "updating_group_status";
 
-		var before       = req.sent.before;
-		var status       = req.sent.status;
-		var target_group = req.sent.target_group;
+		var before = req.sent.before;
+		var status = req.sent.status;
+		var group  = req.sent.group;
 
 		console.log('Changing group status, new status : ' + status );
+		req.sent.accepted_at = new Date();
 
-		target_group.status      = status;
-		target_group.accepted_at = new Date();
+		group.status      = status;
+		group.accepted_at = req.sent.accepted_at;
 
 		before.markModified('groups');
 		before.save(function( err, bfr ){
 
-			if( err ) return handleErr( req, res, err_ns, err );
+			if( err ) return handleErrAsync( err_ns, err );
 
-			next();
+		});
+
+		User.update(
+		{
+			'befores.before_id' : mongoose.Types.ObjectId( before._id )
+		},
+		{
+			'$set': { 'before.$.status' : 'status', 'before.$.accepted_at' : req.sent.accepted_at }
+		},
+		{
+			'multi': true
+		},
+		function( err, raw ){
+
+			if( err ) return handleErrAsync( err_ns, err );
 
 		});
 
@@ -246,6 +265,7 @@
 			}
 			
 			req.sent.expose.before = bfr;
+			delete req.sent.expose.before.groups;
 			next();
 			
 		});
@@ -301,6 +321,10 @@
 
 			if( err ) return handleErr( req, res, err_ns, err );
 
+			response.forEach(function( bfr ){
+				delete bfr.groups;
+			});
+			
 			req.sent.expose.befores = response;
 			next();
 

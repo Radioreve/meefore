@@ -18,7 +18,8 @@
 			'user-before'    : { width: 185, height: 185, crop: 'fill', gravity: 'face' },
 			'user-row'       : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
 			'chat-row'		 : { width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
-			'chat-line'		 : { width: 35,  height: 35,  crop: 'fill', gravity: 'face' }
+			'chat-line'		 : { width: 35,  height: 35,  crop: 'fill', gravity: 'face' },
+			'cheers-back'    : { width: 200, height: 200, crop: 'fill', gravity: 'face' }
 		},
 		cached: [],
 
@@ -562,6 +563,24 @@
 
 					});
 				}
+			});
+
+		},
+		filterifyImageWrapper( $img_wrapper ){
+
+			if( $img_wrapper.find('.--filterlay').length != 0 ) return;
+
+			if( $img_wrapper.css('position') != "absolute" ){
+				$img_wrapper.css({ 'position': 'relative' });
+			}
+
+			$img_wrapper.append( $('<div class="pictures-overlay --filterlay"></div>') );
+
+		},
+		filterifyImageTagAll(){
+
+			$( '--filterlayable' ).each(function( i, img_wrapper ){
+				LJ.pictures.filterifyImageWrapper( $( img_wrapper ) );
 			});
 
 		}

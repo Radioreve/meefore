@@ -50,7 +50,7 @@
 					return LJ.shared.handleShareClicked();
 				}
 				if( current_section_id == "cheers" ){
-					return LJ.meepass.handleCheersClicked();
+					return LJ.cheers.handleCheersClicked();
 				}
 				if( current_section_id == "friends" ){
 					return LJ.friends.handleFriendsClicked();
