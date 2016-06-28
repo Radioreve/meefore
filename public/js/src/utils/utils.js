@@ -20,6 +20,15 @@ window.LJ = _.merge( window.LJ || {}, {
 
         // upgrading version
         _.pluck = _.map;
+
+        $('body').on('mouseenter', '.jspContainer', function(){
+            LJ.ui.deactivateHtmlScroll();
+        });
+
+        $('body').on('mouseleave', '.jspContainer', function(){
+            LJ.ui.activateHtmlScroll();
+        });
+
                 
     },
     promise: function( callback ){

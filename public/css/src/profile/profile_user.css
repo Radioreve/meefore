@@ -51,7 +51,7 @@
     position: absolute;
     background: white;
     top: 280px;
-    z-index: 2;
+    z-index: 101;
 }
 
 .user-infos__item {

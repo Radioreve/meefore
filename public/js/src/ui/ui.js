@@ -64,6 +64,11 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 
 	},
+	updatePageTitle: function( title ){
+
+		document.title = title;
+		
+	},
 	getScrollRatio: function(){
 
 		var s = $(window).scrollTop(),

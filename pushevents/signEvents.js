@@ -167,34 +167,8 @@
 	};
 
 
-	var sendContactEmail = function( req, res ){
-
-		var name    = req.sent.name;
-		var email   = req.sent.email;
-		var message = req.sent.message;
-
-		if( !name || !email || !message ){
-			return eventUtils.raiseError({
-				res: res,
-				toServer: "Missing parameter from contact form submission"
-			});
-		}
-
-		mailer.sendContactEmail( name, email, message, function( err ){
-			if( err ){
-				return eventUtils.raiseError({
-					res: res,
-					toServer: "Couldnt send email : " + err
-				});
-			} else {
-				eventUtils.sendSuccess( res, {} );
-			}
-		});
-
-	};
 
 	module.exports = {
-		sendContactEmail      	  : sendContactEmail,
 		sendHomepage          	  : sendHomepage,
 		sendEarlyAdoptersPage 	  : sendEarlyAdoptersPage,
 		redirectToHome        	  : redirectToHome,

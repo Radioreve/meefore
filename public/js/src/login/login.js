@@ -32,7 +32,7 @@
 				});
 
 				LJ.ui.deactivateHtmlScroll();
-				LJ.login.addLoginBackground();
+				// LJ.login.addLoginBackground();
 
 				return LJ.delay( 1000 )
 						 .then(function(){

@@ -611,10 +611,10 @@
 			chat_id 	: chat_id	
 		};
 
-		var channel_name = ( type == "chat_all" ) ? "private-all-%chatid" : "private-team-%chatid";
 		// Do not filter by socket_id here for ressource efficiency, let the client react differently
 		// when he realizes its his own message that bounced back successfully
-		var channel = channel_name.replace('%chatid', chat_id);
+		var channel_name = ( type == "chat_all" ) ? "private-all-%chatid" : "private-team-%chatid";
+		var channel = channel_name.replace( '%chatid', chat_id );
 		pusher.trigger( channel, 'new chat message', data_message, handlePusherErr );
 		next();
 
@@ -624,15 +624,16 @@
 
 	var pushNewChatSeenBy = function( req, res, next ){
 		
-		var chat_id     = req.sent.chat_id;
-		var facebook_id = req.sent.facebook_id;
+		var chat_id      = req.sent.chat_id;
+		var facebook_id  = req.sent.facebook_id;
+		var channel_item = req.sent.channel;
 
 		var data_seen_by = {
 			chat_id: chat_id,
 			seen_by: facebook_id
 		};
 
-		pusher.trigger( chat_id, 'new chat seen by', data_seen_by, handlePusherErr );
+		pusher.trigger( channel_item.name, 'new chat seen by', data_seen_by, handlePusherErr );
 		next();
 
 	};

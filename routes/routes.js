@@ -128,11 +128,6 @@
 		);
 
 
-		// [@Landing Page ]
-		app.post('/landing/contact',
-			signEvents.sendContactEmail
-		);
-
 	    // Initialisation | Check if user exists / create profile if not, subscribe to mailchimp
 	    app.post('/auth/facebook',
 	    	mdw.validate('auth_facebook'),

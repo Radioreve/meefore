@@ -107,12 +107,15 @@
 			return active_chat_id;
 
 		},
-		viewifyChatInview: function( chat_id ){
+		seenifyChatInview: function( chat_id, facebook_id ){
 
 			var chat = LJ.chat.getChat( chat_id );
 
 			chat.messages.forEach(function( m ){
-				m.seen_by.push( LJ.user.facebook_id );
+					
+				m.seen_by.push( facebook_id );
+				m.seen_by = _.uniq( m.seen_by );
+
 			});
 			
 
@@ -461,6 +464,13 @@
 								return //LJ.log('Cant fetch history, the chat is not set as ready');
 							}
 
+							// After a fetch history, the 'seen_by' element might be bugged (half hidden)
+							// This will that when scroll down, the chat will be like "magneted" down 
+							// and properly display the 'seen_by' element
+							if( is_at_bottom ){
+								return LJ.chat.refreshChatJsp( chat_id );
+							}
+
 							if( is_at_top
 								&& !$w.hasClass('--fetching-history')
 								&& !$w.hasClass('--fetching-done') 
@@ -545,22 +555,9 @@
 		},
 		refreshChatRowsOrder: function(){
 
-			var ordered_chats = [];
-			var chat_ids = LJ.chat.getChatIds();
+			var ordered_channel_items = LJ.chat.getOrderedChats();
 
-			chat_ids.forEach(function( chat_id ){
-				ordered_chats.push( LJ.chat.getChannelItem( chat_id ) );				
-			});
-
-			// Clear the array
-			ordered_chats = ordered_chats.filter( Boolean );
-
-			// Lowest order are displayed the highest, so sort by desc
-			ordered_chats.sort(function( m1, m2 ){
-				return moment( m2.last_sent_at ) - moment( m1.last_sent_at );
-			});
-
-			ordered_chats.forEach(function( channel_item, i ){
+			ordered_channel_items.forEach(function( channel_item, i ){
 				LJ.chat.getChatRow( channel_item.chat_id ).css({ 'order': i });
 			});
 
@@ -576,6 +573,39 @@
 				return null;
 			} else {
 				return last_message;
+			}
+
+		},
+		getOrderedChats: function(){
+
+			var ordered_channel_items = [];
+			var chat_ids = LJ.chat.getChatIds();
+
+			if( chat_ids.length == 0 ){
+				return LJ.log('No chat to order (empty array)');
+			}
+
+			chat_ids.forEach(function( chat_id ){
+				ordered_channel_items.push( LJ.chat.getChannelItem( chat_id ) );				
+			});
+
+			// Clear the array
+			ordered_channel_items = ordered_channel_items.filter( Boolean );
+
+			// Lowest order are displayed the highest, so sort by desc
+			ordered_channel_items.sort(function( m1, m2 ){
+				return moment( m2.last_sent_at ) - moment( m1.last_sent_at );
+			});
+
+			return ordered_channel_items;
+
+		},
+		getLastMessageOfAll: function(){
+
+			var ordered_channel_items = LJ.chat.getOrderedChats();
+
+			if( ordered_channel_items[ 0 ] ){
+				return LJ.chat.getLastMessage( ordered_channel_items[ 0 ].chat_id );
 			}
 
 		},
@@ -672,7 +702,7 @@
 			LJ.chat.sendSeenBy( chat_id ); 
 
 			// Update the local state of the "seen_by" property for all messages of this chat
-			LJ.chat.viewifyChatInview( chat_id );
+			LJ.chat.seenifyChatInview( chat_id, LJ.user.facebook_id );
 
 			// Focus on the input for better ease of use
 			LJ.chat.focusOnInput( chat_id );
@@ -1272,6 +1302,54 @@
 
 			return $('.chat-row[data-chat-id="'+ chat_id +'"]');
 
+		},
+		updatePageTitle: function( title ){
+
+			document.title = title;
+
+		},
+		refreshAppTitle: function( bubble_page_title ){
+	     	
+	     	LJ.log('Refreshing page title');
+
+		    var n_unseen_messages = 0;
+		    LJ.chat.getChatIds().forEach(function( chat_id ){
+		        n_unseen_messages += LJ.chat.getUnseenMessagesCount( chat_id );
+		    });
+		     
+		    if( n_unseen_messages == 0 ){
+
+		    	clearTimeout( LJ.chat.page_title_timer );
+
+		        LJ.ui.updatePageTitle("Des rencontres avant d'aller en soirée");
+
+		       return  LJ.chat.page_title_timer = setTimeout(function(){
+		              LJ.chat.refreshAppTitle();
+		        }, 3000 );
+		    }
+		 	
+		 	if( bubble_page_title ){
+
+		 		clearTimeout( LJ.chat.page_title_timer );
+
+		        LJ.ui.updatePageTitle("(%n) Des rencontres avant d'aller en soirée".replace('%n',n_unseen_messages));
+
+		        return LJ.chat.page_title_timer = setTimeout(function(){
+		              LJ.chat.refreshAppTitle( false );
+		        }, 3000 );
+		 	}		 	
+
+	    	var sender_id   = LJ.chat.getLastMessageOfAll().sender_id;
+	    	var sender_name = LJ.chat.getUser( sender_id ).name;
+
+		    LJ.ui.updatePageTitle("%name vous a envoyé un message".replace('%name', sender_name ));
+
+		    LJ.chat.page_title_timer = setTimeout(function(){
+		          LJ.chat.refreshAppTitle( true );
+		    }, 3000 );
+		    	
+		    
+     
 		}
 
 

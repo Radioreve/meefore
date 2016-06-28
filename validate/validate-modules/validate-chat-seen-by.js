@@ -31,6 +31,7 @@
 			}
 
 			// User is calling a route for himself, proceed :) 
+			req.sent.channel = channel;
 			next();
 
 		});

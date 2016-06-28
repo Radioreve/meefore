@@ -83,9 +83,8 @@
 				secret    : '41d03023ab512e98adc1'
 			}
 		}
-		, sendgrid: {
-			api_user  : 'Radioreve',
-			api_key   : 'R4dioreve'
+		, mandrill: {
+			api_key: "iAyP05rC1H15WjCbcaNsSA"
 		}
 		, mailchimp: {
 			api_key   : '1975e0d603d5cb51d2cabd25dfab1d94-us10',

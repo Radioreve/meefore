@@ -7,7 +7,7 @@
 		fetching_users			: false,
 		all_fetched 		  	: false,
 
-		fetch_more_scroll_ratio : 0.95,
+		fetch_more_scroll_ratio : 0.97,
 		refetch_callstack: [],
 
 		init: function(){

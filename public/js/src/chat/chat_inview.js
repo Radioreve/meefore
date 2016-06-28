@@ -175,6 +175,7 @@
 			data.sender_id = LJ.user.facebook_id;
 			data.call_id   = LJ.generateId();
 
+			LJ.chat.emptifyChatSeenBy( chat_id );
 			LJ.chat.addChatLine( data );
 			LJ.chat.pendifyChatLine( data.call_id );
 
@@ -352,7 +353,10 @@
 			$w.removeClass('--fetch-ready');
 			j.reinitialise();
 			
-			LJ.delay( 300 ).then(function() { $w.addClass('--fetch-ready'); });
+			LJ.delay( 300 )
+				.then(function(){
+					$w.addClass('--fetch-ready');
+				});
 
 			// fetching history state, started when the loading happens and ends after all 
 			// chat messages have been added. During this, always stick to the saved position
@@ -550,7 +554,7 @@
 				'<div class="chat-inview-message" data-sender-id="'+ sender_id +'">',
 	              '<div class="chat-inview-message-head">',
 	                '<div class="chat-inview-message__picture js-user-profile" data-facebook-id="'+ sender_id +'">',
-	               	  '<span class="hint hint--top hint--rounded hint--no-animate" data-hint="'+ m.format('HH:mm') +'"></span>',
+	               	  '<span class="hint hint--left hint--rounded hint--no-animate" data-hint="'+ m.format('HH:mm') +'"></span>',
 	                  img_html, // size 35
 	                  '<span class="js-user-online user-online --online" data-facebook-id="'+ sender_id +'"></span>',
 	                '</div>',
@@ -908,7 +912,7 @@
 
 				// It would be dumb to let others know that the sender has read its own message
 				// and weird for the user to see his own name on the "seen_by" list
-				if( facebook_id != sender_id && facebook_id != LJ.user.facebook_id ){
+				if( facebook_id != sender_id ){
 					names.push( LJ.chat.getUser( facebook_id ).name );
 				}
 
@@ -916,9 +920,10 @@
 
 			// Substract 1 because the user owns id has already been removed
 			var c = LJ.chat.getUsersCountById( chat_id );
-        	var s = LJ.chat.makeSeenByText( names, seen_by.length, 2 || c );
+        	var s = LJ.chat.makeSeenByText( names, seen_by.length, c );
 
         	$w.find('.chat-inview-seen-by__label').html( s );
+        	LJ.chat.refreshChatJsp( chat_id );
 
         },
         makeSeenByText: function( names, seen_by_length, count ){
@@ -927,9 +932,10 @@
         		return '';
         	}
 
-        	if( seen_by_length == count ){
-        		return LJ.text('seen_by_everyone') + '<i class="icon icon-check"></i>';
-        	}
+        	// This rule is in conflict with the fact that users can choose not to activate the readby feature
+        	// if( seen_by_length == count ){
+        	// 	return LJ.text('seen_by_everyone') + '<i class="icon icon-check"></i>';
+        	// }
 
         	return LJ.text('seen_by_some', names );
 
@@ -1000,6 +1006,12 @@
         			delay    : delay,
         			display  : 'flex'
         		});
+
+        },
+        emptifyChatSeenBy: function( chat_id ){
+
+        	LJ.chat.getChatInview( chat_id )
+        		.find('.chat-inview-seen-by__label').text('');
 
         }
 

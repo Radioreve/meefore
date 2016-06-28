@@ -443,7 +443,7 @@
 
 			if( LJ.chat.getActiveChatId() == chat_id ){
 				LJ.chat.sendSeenByProxy( chat_id );
-				LJ.chat.viewifyChatInview( chat_id );
+				LJ.chat.seenifyChatInview( chat_id, LJ.user.facebook_id );
 
 			}
 
@@ -460,7 +460,7 @@
 			var seen_by = data.seen_by;
 
 			LJ.log('New message seen by : ' + seen_by );
-			LJ.chat.getLastChatMessage( chat_id ).seen_by.push( seen_by );
+			LJ.chat.seenifyChatInview( chat_id, seen_by );
 			LJ.chat.refreshChatSeenBy( chat_id );
 
 		}
