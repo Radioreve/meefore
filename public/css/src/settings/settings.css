@@ -1,5 +1,9 @@
 .menu-section.--settings {}
 
+.menu-section.--settings .segment {margin-bottom: 40px;width: 90%;}
+.menu-section.--settings .segment__part {
+    font-size: 12px;
+}
 .settings {
     width: 80%;
     display: flex;
@@ -27,7 +31,7 @@
 
 .settings-item {
     padding: 20px 0;
-    margin-bottom: 0px;
+    margin-bottom: 16px;
     display: flex;
     flex-flow: row wrap;
     position: relative;
@@ -80,7 +84,7 @@
 
 .settings-item input {
     width: 100%;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 200;
     padding: 10px 0px;
     margin-bottom: 4px;

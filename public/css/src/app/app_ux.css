@@ -94,6 +94,7 @@
     align-items: center;
     justify-content: center;
     display: flex;
+    background-image: ur;
 }
 
 
@@ -478,7 +479,7 @@
     overflow: hidden;
 }
 .--filterlay {
-    background: #af8276!important;
+    background: rgb(228, 189, 178)!important;
 }
 
 .loader__overlay {
@@ -525,3 +526,19 @@
     background: #1b69ec;
 }
 /* End bubble */
+
+
+.halo {
+    background: none;
+    border: 2px solid rgba(27, 105, 236, 0.3);
+    width: 95%;
+    height: 95%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: auto;
+    border-radius: 100px;
+    transform: translate(-50%,-50%);
+    z-index: -1;
+    transition: all ease-in .15s;
+}

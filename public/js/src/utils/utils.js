@@ -138,7 +138,7 @@ window.LJ = _.merge( window.LJ || {}, {
         return LJ.ui.render([
 
             '<div class="user-row js-user-profile" data-facebook-id="'+ user.facebook_id +'">',
-                '<div class="user-row__pic">',
+                '<div class="user-row__pic js-filterlay">',
                   img_small,
                   '<div class="user-gender --'+ user.g +' js-user-gender"></div>',
                   '<div class="user-country js-user-country">',

@@ -70,7 +70,7 @@
 			LJ.settings.$settings.on('click', '.action__cancel',   		  	 LJ.settings.deactivateInput );
 			LJ.settings.$settings.on('click', '.action__validate', 		     LJ.settings.updateSettingsInput );
 			LJ.settings.$settings.on('click', '.settings__button.--sponsor', LJ.settings.showSponsorshipModal );
-			LJ.settings.$settings.on('click', '.menu-section-submenu__item', LJ.settings.showSubmenuItem );
+			LJ.settings.$settings.on('click', '.segment__part', 			 LJ.settings.showSubmenuItem );
 			LJ.settings.$settings.on('click', '.settings__button.--delete',  LJ.settings.showDeleteAccountModal );
 			LJ.ui.$body.on('click', '.modal.--delete button',				 LJ.settings.handleDeleteAccountAction );
 
@@ -85,10 +85,10 @@
 		},
 		activateSubmenuSection: function( section_id ){	
 
-			var current_section_id = $('.menu-section-submenu__item.--active').attr('data-link');
+			var current_section_id = $('.menu-section.--settings').find('.segment__part.--active').attr('data-link');
 
-			var $submenu_item_activated    = $('.menu-section-submenu__item[data-link="' + current_section_id + '"]');
-			var $submenu_item_to_activate  = $('.menu-section-submenu__item[data-link="' + section_id + '"]');
+			var $submenu_item_activated    = $('.menu-section.--settings').find('.segment__part[data-link="' + current_section_id + '"]');
+			var $submenu_item_to_activate  = $('.menu-section.--settings').find('.segment__part[data-link="' + section_id + '"]');
 
 			var $submenu_block_activated   = $('.settings[data-link="' + current_section_id + '"]');
 			var $submenu_block_to_activate = $('.settings[data-link="' + section_id + '"]');

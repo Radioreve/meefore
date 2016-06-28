@@ -88,6 +88,10 @@
     text-overflow: ellipsis;
     max-width: 128px;
     overflow: hidden;
+    font-family: 'creamy';
+    font-size: 30px;
+    font-weight: 500;
+    padding: 5px 38px;
 }
 
 .user-infos__item.--age {
@@ -141,13 +145,16 @@
 
 .user-infos__title label {
     color: #ccc;
-    margin: 0 20px;
+    color: #1b69ec;
+    font-weight: 700;
+    margin: 0 20px 0px;
     font-size: 12px;
 }
 
 .user-infos__title-splitter {
     height: 1px;
     background: #ccc;
+    background: #1b69ec;
     margin: auto;
     flex: 1;
 }

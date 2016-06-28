@@ -203,6 +203,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		var $html = $( html );
 		LJ.lang.translate( $html );
+		LJ.pictures.applyFilterlay( $html );
 		
 		var template = '';
 		$html.each(function( i, el ){

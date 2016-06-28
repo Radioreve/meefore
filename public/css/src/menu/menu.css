@@ -51,6 +51,9 @@
     padding-top: 30px;
 }
 
+.menu-section .empty {
+    
+}
 .menu-item {
     display: flex;
     position: relative;
@@ -167,9 +170,11 @@
 .segment__part {
     display: flex;
     height: 100%;
-    width: 100%;
+    width: 98%;
     cursor: pointer;
     transition: all ease-in-out .15s;
+    justify-content: center;
+    align-items: center;
 }
 
 .segment__part.--active {

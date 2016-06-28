@@ -12,9 +12,15 @@
     right: 43%;
 }
 
+.search__title {
+    font-family: 'creamy';
+    font-size: 34px;
+    margin-top: 40px;
+}
+
 .search-header__title {
     font-size: 27px;
-    font-family: 'Creamy';
+    font-family: 'creamy';
 }
 
 .search-header__title h2 {}
@@ -306,7 +312,7 @@
 }
 
 .search-users > img {
-    width: 40px;
+    width: 32px;
     margin: 40px 0 80px;
 }
 
@@ -342,7 +348,7 @@
     .search-user__country {
     }
     .search-users {
-        margin-top: 100px;
+        margin-top: 40px;
         min-width: 840px;
     }
 }

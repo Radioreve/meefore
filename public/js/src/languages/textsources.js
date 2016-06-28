@@ -435,6 +435,10 @@
 			"fr": "Rechercher quelqu'un",
 			"us": "Looking for someone?"
 		},
+		search_title: {
+			"fr": "Tous les membres",
+			"us": "All our members"
+		},
 		h_logout: {
 			"fr": "Se déconnecter",
 			"us": "Log out"

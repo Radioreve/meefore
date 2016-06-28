@@ -287,7 +287,7 @@
 
     <!-- Thumbnail start -->
     <section class="app-thumbnail">
-      <div class="thumbnail__picture">
+      <div class="thumbnail__picture --filterlayable">
         <img src="/img/bots/bot26f.jpg" width="45" alt="Just another bot">
       </div>
       <div class="thumbnail__name">Héléna</div>
@@ -520,28 +520,22 @@
       <!-- Settings begin -->
       <section class="menu-section --settings" data-link="settings">
       <!-- acountsection -->
-          <ul class="menu-section-submenu">
-            <li class="menu-section-submenu__item" data-link="account">
+
+          <div class="segment">
+            <div class="segment__part" data-link="account">
               <h4 data-lid="menu_subsection_account"></h4>
-              <div class="menu-section-submenu__bar"></div>
-            </li>
-            <!-- <li class="menu-section-submenu__item" data-link="code">
-              <h4 data-lid="menu_subsection_code"></h4>
-              <div class="menu-section-submenu__bar"></div>
-            </li> -->
-            <li class="menu-section-submenu__item" data-link="emails">
+            </div>
+            <div class="segment__part" data-link="emails">
               <h4 data-lid="menu_subsection_emails"></h4>
-              <div class="menu-section-submenu__bar"></div>
-            </li>
-            <li class="menu-section-submenu__item" data-link="notifications">
+            </div>
+            <div class="segment__part" data-link="notifications">
               <h4 data-lid="menu_subsection_notifications"></h4>
-              <div class="menu-section-submenu__bar"></div>
-            </li>
-            <li class="menu-section-submenu__item" data-link="ux">
+            </div>
+            <div class="segment__part" data-link="ux">
               <h4 data-lid="menu_subsection_ux"></h4>
-              <div class="menu-section-submenu__bar"></div>
-            </li>
-          </ul>
+            </div>
+          </div>
+
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_account"></h3>
         </div>
@@ -841,8 +835,6 @@
   </div>
   <!-- Chat end -->
 
-
-
      <!-- Search start -->
     <section class="app-section --search" data-link="search">
       <!-- build:remove -->
@@ -855,6 +847,9 @@
         </div>
       </div>
       <!-- endbuild -->
+      <div class="search__title">
+        <h2 data-lid="search_title"></h2>
+      </div>
       <div class="search-filters__icon --round-icon">
         <i class="icon icon-filters"></i>
       </div>

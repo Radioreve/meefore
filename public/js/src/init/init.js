@@ -73,6 +73,7 @@
                 .then( LJ.login.firstSetup )
                 .then( LJ.login.stepCompleted )
                 .then( LJ.map.initGeocoder )
+                // .then(function(){ return LJ.delayd[ lol ]})
                 .then(function(){
                     var a = LJ.friends.init();
                     var b = LJ.search.init();

@@ -29,6 +29,12 @@
     background: #fbfbfb;
 }
 
+.cheers__item:hover .halo {
+    width: 130%;
+    height: 130%;
+    border-color: #1b69ec;
+}
+
 .cheers__item:hover .row-body__icon,
 .cheers__item:hover .row-date,
 .shared__item:hover .row-body__icon,

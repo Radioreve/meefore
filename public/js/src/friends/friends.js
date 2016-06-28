@@ -133,7 +133,7 @@
 				$('.friends')
 					.children()
 					.velocity('shradeOut', {
-						duration : LJ.friends.show_friends_duration,
+						duration : LJ.friends.show_friends_duration / 2,
 						display  : 'none',
 						complete : function(){
 							$( html )
@@ -185,7 +185,7 @@
 			return LJ.ui.render([
 
 				'<div class="friend__item js-show-friend" data-facebook-id="' + friend.facebook_id + '">',
-					'<div class="row-pic --filterlayable">',
+					'<div class="row-pic js-filterlay">',
 						'<div class="row-pic__image">' + img_html + '</div>',
 					'</div>',
 					'<div class="row-body">',

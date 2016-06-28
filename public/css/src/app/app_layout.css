@@ -108,6 +108,7 @@ button:hover {
 
 .row-pic__image {
     overflow: hidden;
+    position: relative;
     width: 100%;
     height: 100%;
     border-radius: 100px;
@@ -213,11 +214,12 @@ button:hover {
 
 .settings-input__label {
     font-weight: 300;
-    font-size: 20px;
+    font-size: 17px;
     color: #454545;
     padding-left: 8px;
     margin-bottom: 4px;
     width: 100%;
+    font-family: 'Open sans';
 }
 
 .settings-input__icon {
@@ -409,16 +411,22 @@ button:hover {
 .empty__subtitle p {}
 
 .empty__subicon {
-    min-height: 70px;
-    min-width: 70px;
+    height: 70px;
+    width: 70px;
     margin: auto;
     justify-content: center;
     align-items: center;
-    background: #7b4cbb;
     color: white;
-    font-size: 50px;
+    font-size: 40px;
     margin-top: 30px;
     cursor: pointer;
+    color: #1b69ec;
+    border: 1px solid;
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    right: 0;
+    margin: auto;
 }
 
 .empty__subicon i {}

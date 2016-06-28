@@ -94,7 +94,7 @@
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.cheers.$loader.velocity('shradeOut', {
-					duration: 500,
+					duration: 250,
 					complete: function(){
 						$( this ).remove();
 						resolve();

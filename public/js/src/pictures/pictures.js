@@ -566,22 +566,22 @@
 			});
 
 		},
-		filterifyImageWrapper( $img_wrapper ){
+		applyFilterlay( $wrapper ){
 
-			if( $img_wrapper.find('.--filterlay').length != 0 ) return;
+			var $img_wrapper = $wrapper.find('.js-filterlay')
+			if( $img_wrapper.length == 0 ){
+				return;
+			}
+
+			if( $img_wrapper.find('.--filterlay').length != 0 ){
+				return;
+			}
 
 			if( $img_wrapper.css('position') != "absolute" ){
 				$img_wrapper.css({ 'position': 'relative' });
 			}
 
 			$img_wrapper.append( $('<div class="pictures-overlay --filterlay"></div>') );
-
-		},
-		filterifyImageTagAll(){
-
-			$( '--filterlayable' ).each(function( i, img_wrapper ){
-				LJ.pictures.filterifyImageWrapper( $( img_wrapper ) );
-			});
 
 		}
 

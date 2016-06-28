@@ -150,17 +150,20 @@
 		},
 		showMoreUsers: function( users ){
 
-
-			_.chunk( users, 3 ).forEach(function( user_group ){
+			_.chunk( users, 3 ).forEach(function( user_group, i ){
 
 				var $users = $( LJ.search.renderUserRow( user_group ) );
 
-				$users.hide().insertBefore('.search__loader');
+				$users
+					.css({ 'opacity': 0 })
+					.insertBefore('.search__loader');
+
 				LJ.settings.applyUxPreferences();
 
-				$users.velocity('shradeIn', {
+				$users.velocity('slideUpIn', {
 					display  : 'flex',
-					delay    : 100
+					duration : 700,
+					delay    : 100 + 250 * i
 				});
 
 			});
@@ -240,7 +243,7 @@
 
 				'<div class="search-user" data-facebook-id="'+ i +'" data-age="' + a + '" data-gender="' + g + '" data-cc="' + c + '">',
 		            '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
-		            '<div class="search-user__pic --filterlayable">',
+		            '<div class="search-user__pic js-filterlay">',
 		            	img_html,
 		               '<div class="search-user__pic-overlay"></div>',
 		            '</div>',

@@ -153,7 +153,7 @@
 
 			return LJ.ui.render([
 				'<div class="user-profile" data-facebook-id="' + user.facebook_id + '">',
-					'<div class="user-pics">',
+					'<div class="user-pics js-filterlay">',
 						'<div class="user-pics__navigate --left --round-icon">',
 							'<i class="icon icon-arrow-left"></i>',
 						'</div>',

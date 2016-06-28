@@ -32,6 +32,7 @@
 				});
 
 				LJ.ui.deactivateHtmlScroll();
+				LJ.login.addLoginBackground();
 
 				return LJ.delay( 1000 )
 						 .then(function(){
@@ -46,6 +47,16 @@
 							return;
 
 						 });
+
+			},
+			addLoginBackground: function(){
+
+				$('<div class="login__bg"></div>')
+					.css({ opacity: 0 })
+					.appendTo('.curtain')
+					.velocity({ opacity: [ 0.09, 0 ]}, {
+						duration: 2500
+					});
 
 			},
 			hideLoginSteps: function(){
@@ -238,10 +249,19 @@
 				LJ.ui.activateHtmlScroll();
 
 				$('.curtain')
-						.children()
+						.children('.login')
 						.velocity('bounceOut', {
 							duration: LJ.login.prompt_duration
 						});
+
+				$('.curtain')
+					.children('.login__bg')
+					.velocity({ 'opacity': [ 0, 0.09 ]}, {
+						duration: LJ.login.prompt_duration/2,
+						complete: function(){
+							$(this).remove();
+						}
+					});
 
 				return LJ.ui.hideCurtain({
 					delay: LJ.login.prompt_duration * 1.3,
