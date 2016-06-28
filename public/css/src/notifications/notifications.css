@@ -149,7 +149,7 @@ Whispereen  : #58c170
     margin-left: 20px;
 }
 
-.notification .notification-message__text {font-weight: 700;font-size: 11px;}
+.notification .notification-message__text {font-weight: 700;font-size: 12px;}
 
 .notification .notification-message__subtext {
     font-size: 10px;

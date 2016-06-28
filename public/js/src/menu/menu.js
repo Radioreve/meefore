@@ -72,6 +72,10 @@
 			$menu_block_activated.hide();
 			$menu_block_to_activate.css({ display: 'flex' });
 
+			// Specifics
+			section_id == "friends" ?
+				LJ.friends.displayInviteFriendsPopup():
+				LJ.friends.hideInviteFriendsPopup();
 
 
 		},

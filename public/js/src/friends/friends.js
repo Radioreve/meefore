@@ -193,7 +193,7 @@
 							'<h2>' + friend.name + ', <span class="row-body__age">' + friend.age + '</span></h2>',
 						'</div>',
 						'<div class="row-body__subtitle">',
-							'<div class="row-body__subtitle-icon --round-icon">',
+							'<div class="row-body__icon --round-icon">',
 								'<i class="icon icon-education"></i>',
 							'</div>',
 							'<span>' + friend.job + '</span>',
@@ -205,6 +205,8 @@
 
 		},
 		renderFriendItem__Last: function(){
+
+			return '';
 
 			return LJ.ui.render([
 
@@ -274,6 +276,51 @@
 				'</div>'
 
 				].join(''));
+
+		},
+		displayInviteFriendsPopup: function(){
+
+			LJ.friends.invite_popup_timer = setTimeout(function(){
+
+				$( LJ.friends.renderInviteFriendsPopup() )
+					.hide()
+					.appendTo('body')
+					.velocity('shradeIn', {
+						duration: 400,
+						display : 'flex'
+					});
+
+			}, 4000 );
+
+		},
+		hideInviteFriendsPopup: function(){
+
+			clearTimeout( LJ.friends.invite_popup_timer );
+			$('.invite-friends-popup').remove();
+
+		},
+		renderInviteFriendsPopup: function(){
+
+			return LJ.ui.render([
+
+				'<div class="invite-friends-popup">',
+					'<div class="invite-friends-popup__icon --round-icon">',
+						'<i class="icon icon-gift"></i>',
+					'</div>',
+					'<div class="invite-friends-popup-message">',
+						'<div class="invite-friends-popup__h1">',
+							'<span data-lid="invite_friends_popup_h1"></span>',
+						'</div>',
+						'<div class="invite-friends-popup__h2">',
+							'<span data-lid="invite_friends_popup_h2"></span>',
+						'</div>',
+					'</div>',
+					'<div class="invite-friends-popup__btn js-invite-friends">',
+						'<button data-lid="invite_friends_popup_btn"></button>',
+					'</div>',
+				'</div>'
+
+			].join(''));
 
 		}
 

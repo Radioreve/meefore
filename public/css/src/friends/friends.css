@@ -24,6 +24,7 @@
 
 .friend__item:last-of-type {
     border-bottom: none;
+    display: none;
 }
 
 .friends .--invite-friends .row-pic {
@@ -133,4 +134,32 @@
     font-size: 14px;
     font-weight: bolder;
     margin-top: 12px;
+}
+
+
+.invite-friends-popup {position: fixed;bottom: 30px;right: 30px;z-index: 100;font-size: 12px;height: 100px;background: white;border: 1px solid #f7f7f7;box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);justify-content: center;align-items: center;padding: 0 20px;}
+.invite-friends-popup__icon {
+    font-size: 27px;
+    background: white;
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    color: #1b69ec;
+    margin-right: 20px;
+}
+.invite-friends-popup-message {display: flex;flex-flow: column;width: 100%;margin-right: 20px;}
+.invite-friends-popup__icon i {}
+.invite-friends-popup__h1 {font-family: 'creamy';font-size: 22px;}
+.invite-friends-popup__h1 span {}
+.invite-friends-popup__h2 {
+    font-size: 12px;
+}
+.invite-friends-popup__h2 span {}
+.invite-friends-popup__btn { flex-shrink: 0; }
+.invite-friends-popup__btn button {
+    height: 40px;
+    width: 150px;
+    border-radius: 6px;
+    color: white;
+    background: #1b69ec;
 }

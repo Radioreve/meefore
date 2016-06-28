@@ -2033,6 +2033,18 @@
 		be_ghost_btn: {
 			"fr": "Fermer",
 			"us": "Close"
+		},
+		invite_friends_popup_h1: {
+			"fr": "Parlez-en à vos amis",
+			"us": "Bring your friends"
+		},
+		invite_friends_popup_h2: {
+			"fr": "En leur partageant par message Facebook ",
+			"us": "Share with them by message on Facebook"
+		},
+		invite_friends_popup_btn: {
+			"fr": "Message Facebook",
+			"us": "Facebook message"
 		}
 
 
