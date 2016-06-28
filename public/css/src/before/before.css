@@ -365,3 +365,42 @@
 .be-ended span {padding: 14px 20px;color: #1b69ec;border: 1px solid;display: block;border-radius: 100px;white-space: nowrap;}
 /* Before inview end */
 
+.be-ghost {
+    display: flex;
+    flex-flow: column nowrap;
+    text-align: center;
+    justify-content: center;
+    margin: auto;
+}
+.be-ghost__icon {
+    font-size: 70px;
+    color: #eee;
+    margin-bottom: 30px;
+}
+.be-ghost__icon i {}
+.be-ghost__title {font-family: 'creamy';font-weight: 700;font-size: 34px;color: #1b69ec;margin-bottom: 20px;}
+.be-ghost__title span {}
+.be-ghost__subtitle {
+    font-size: 12px;
+    padding: 0 40px;
+    line-height: 20px;
+    margin-bottom: 60px;
+    color: #454545;
+}
+.be-ghost__subtitle span {}
+.be-ghost__action {
+    width: 100%;
+    height: 20px;
+}
+.be-ghost__action button {
+    background: red;
+    position: static;
+    display: block;
+    width: 200px;
+    height: 36px;
+    background: white;
+    border: 1px dashed;
+    color: #1b69ec!important;
+    text-shadow: none;
+    font-size: 12px;
+}

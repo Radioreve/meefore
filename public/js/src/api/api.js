@@ -540,13 +540,13 @@
 					  .then(function( exposed ){
 
 					  	if( !exposed.before ){
-					  		return LJ.wlog('Didnt respond with the expected before object');
+					  		return reject({ err_id: "ghost_before" });
 					  	} else {
 					  		return resolve( exposed.before );
 					  	}
 
 					  }, function( err ){
-					  	return reject( err );
+					  	return reject({ err_id: "ghost_before" });
 
 					  });
 

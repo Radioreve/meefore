@@ -2005,6 +2005,18 @@
 		cheers_back_h2: {
 			"fr": "vous ont envoyé un Cheers",
 			"us": "have sent you a Cheers"
+		},
+		be_ghost_title: {
+			"fr": "Oups",
+			"us": "Bummer"
+		},
+		be_ghost_subtitle: {
+			"fr": "Ce before n'a pas été trouvé dans notre base de données, Cela peut vouloir dire qu'il a été annulé.",
+			"us": "This before is nowhere to be found in our database. This may mean that it has been canceled."
+		},
+		be_ghost_btn: {
+			"fr": "Fermer",
+			"us": "Close"
 		}
 
 

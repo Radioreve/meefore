@@ -362,7 +362,7 @@
 			var before;
 
         	LJ.before.hideBrowser();
-        	LJ.ui.showSlideAndFetch({
+        	return LJ.ui.showSlideAndFetch({
 
 				"type"			: "before",
 
@@ -398,6 +398,59 @@
 
 			});
 
+
+        },
+        handleShowBeforeInviewError: function( err ){
+
+        	if( err.err_id == "ghost_before" ){
+        		LJ.before.ghostifyBeforeInview();
+        	}
+
+        },
+        ghostifyBeforeInview: function(){
+
+        	var duration      = 400;
+        	var $before_ghost = $( LJ.before.renderBeforeGhost() );
+
+        	$('.slide.--before')
+        		.find('.slide__loader')
+        		.velocity('shradeOut', {
+        			duration: duration,
+        			complete: function(){
+        				$( this ).remove();
+        			}
+        		});
+
+        	$before_ghost
+        		.hide()
+        		.appendTo( $('.slide-body') )
+        		.velocity('shradeIn', {
+        			duration: duration,
+        			delay   : duration,
+        			display : 'flex'
+        		});
+
+        },
+        renderBeforeGhost: function(){
+
+        	return LJ.ui.render([
+
+        		'<div class="be-ghost">',
+        			'<div class="be-ghost__icon --round-icon">',
+        				'<i class="icon icon-search-light"></i>',
+        			'</div>',
+        			'<div class="be-ghost__title">',
+        				'<span data-lid="be_ghost_title"></span>',
+        			'</div>',
+        			'<div class="be-ghost__subtitle">',
+        				'<span data-lid="be_ghost_subtitle"></span>',
+        			'</div>',
+        			'<div class="be-ghost__action">',
+        				'<button data-lid="be_ghost_btn" class="slide__close"></button>',
+        			'</div>',
+        		'</div>'
+
+        	].join(''));
 
         },
         showBeforeInview: function( before ){

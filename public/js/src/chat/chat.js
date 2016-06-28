@@ -1014,6 +1014,7 @@
 			// Refresh the bubbles on the row, and inside the chat inview
 			LJ.chat.refreshChatRowBubbles( chat_id );
 			LJ.chat.refreshChatIconBubble();
+			LJ.chat.refreshAppTitle( true );
 
 			// Order rows in the right position before moving the ui, requires access to cached messages to work properly
 			LJ.chat.refreshChatRowsOrder();

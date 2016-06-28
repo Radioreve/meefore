@@ -36,7 +36,10 @@
 					resolve( results[0] );
 
 				}, function( err ){
-					console.log(err);
+					
+					if( err.err_id == "ghost_before"){
+						LJ.before.handleShowBeforeInviewError( err );
+					}
 
 				});
 			})
