@@ -78,8 +78,10 @@
 }
 
 .settings button.--changelang {
-    color: #7B4CBB;
+    color: white;
     border: 1px solid;
+    background: #1b69ec;
+    flex-shrink: 0;
 }
 
 .settings-item input {

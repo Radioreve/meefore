@@ -19,6 +19,9 @@
 		},
 		sayCheers: function(){
 
+			return "Cheers";
+
+			// Legacy
 			return _.shuffle([
 
 				'Santé',
@@ -39,6 +42,7 @@
 		getAppLang: function(){
 
 			return LJ.lang.app_language;
+
 		},
 		setAppLang: function( app_language ){
 			return LJ.promise(function( resolve, reject ){
@@ -140,89 +144,154 @@
 		},
 		changeAppLang: function(){
 
-			var duration = 550;
-			LJ.ui.showCurtain({ duration: duration, opacity: LJ.ui.changelang_curtain_alpha })
+			LJ.ui.showModalAndFetch({
 
-				.then(function( $curtain ){
-					return LJ.promise(function( resolve, reject ){
+			"type"			: "changelang",
+			"title"			: LJ.text("mod_change_lang_title"),
+			"subtitle"		: LJ.text("mod_change_lang_subtitle"),
+			"no_footer"     : true,
 
-						$curtain
-							.html( LJ.lang.renderChangeAppLang() )
-							.find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('--active');
+			"fetchPromise"	: LJ.lang.fetchSupportedLanguages
 
-						$curtain
-							.children()
-							.velocity('fadeIn', {
-								duration: duration,
-								display: 'flex',
-								complete: resolve
-							});
-					});
-				})
-				.then(function(){
-					return LJ.promise(function( resolve, reject ){
+		})
+		.then( LJ.lang.displayChangeLangInModal )
+
+		},
+		fetchSupportedLanguages: function(){
+
+			return LJ.delay( 300 ).then(function(){
+				return ["fr","us"];
+			});
+
+		},
+		displayChangeLangInModal: function( result ){
+
+			var html = LJ.lang.renderChangeAppLang( result );
+
+			$( html ).hide().appendTo( $('.modal-body') );
+
+			$('.modal-body')
+				.find('.modal__loader')
+				.velocity('bounceOut', { duration: 500, delay: 500,
+					complete: function(){
+
+						$('.change-lang')
+						   .velocity('shradeIn', {
+						   		display: 'flex',
+						   		duration: 500
+						   })
+						   .find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('--active');
 
 						$('.change-lang__choice:not(.--unavailable)').click(function(){
 
-							var new_language = $(this).attr('data-cc');
-							if( ! LJ.lang.isLangSupported( new_language ) ){
-								return reject('This language (' + new_language + ') is not currently supported');
-							}
-							resolve( new_language );
+							var new_language = $( this ).attr('data-cc');
+
+							LJ.lang.setAppLang( new_language );
+							LJ.lang.translateApp();
+
+							$('.modal__close').click();
+
+							LJ.delay( 500 ).then(function(){
+								LJ.ui.showToast( LJ.text('t_language_changed') );
+							});
 
 						});	
-					});
-				})
-				.then(function( app_language ){
-
-					$('.change-lang').velocity('bounceOut', {
-						duration: duration
-					});
-
-					LJ.delay( duration/1.5 ).then(function(){
-
-						LJ.lang.setAppLang( app_language );
-						LJ.lang.translateApp()
-
-					});
-					
-					LJ.ui.hideCurtain({
-						duration: duration, delay: duration/2,
-					}).then(function(){
-						LJ.ui.showToast( LJ.text('t_language_changed') );
-					});
 
 
-				}, function( err ){
-
-					LJ.wlog( err );
-					LJ.ui.hideCurtain({ duration: duration });
-
+					}
 				});
 
+
 		},
-		renderChangeAppLang: function(){
+		changeAppLang2: function(){
+
+			var duration = 550;
+			LJ.ui.showModal({
+				duration: duration,
+
+
+			})
+			.then(function( $curtain ){
+				return LJ.promise(function( resolve, reject ){
+
+					$curtain
+						.html( LJ.lang.renderChangeAppLang() )
+						.find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('--active');
+
+					$curtain
+						.children()
+						.velocity('fadeIn', {
+							duration: duration,
+							display: 'flex',
+							complete: resolve
+						});
+				});
+			})
+			.then(function(){
+				return LJ.promise(function( resolve, reject ){
+
+					$('.change-lang__choice:not(.--unavailable)').click(function(){
+
+						var new_language = $(this).attr('data-cc');
+						if( ! LJ.lang.isLangSupported( new_language ) ){
+							return reject('This language (' + new_language + ') is not currently supported');
+						}
+						resolve( new_language );
+
+					});	
+				});
+			})
+			.then(function( app_language ){
+
+				$('.change-lang').velocity('bounceOut', {
+					duration: duration
+				});
+
+				LJ.delay( duration/1.5 ).then(function(){
+
+					LJ.lang.setAppLang( app_language );
+					LJ.lang.translateApp();
+					LJ.ui.showToast( LJ.text('t_language_changed') );
+
+				});
+				
+				LJ.ui.hideCurtain({
+					duration: duration, delay: duration/2,
+				}).then(function(){
+				});
+
+
+			}, function( err ){
+
+				LJ.wlog( err );
+				LJ.ui.hideCurtain({ duration: duration });
+
+			});
+
+		},
+		renderChangeAppLang: function( languages ){
+
+			var choices = [];
+			languages.forEach(function( cc ){
+				choices.push([
+
+						'<div class="change-lang__choice" data-cc="'+ cc +'">',
+							'<i class="flag-icon flag-icon-'+ cc +'"></i>',
+						'</div>'
+
+					].join(''));
+			});
 
 			return LJ.ui.render([
 
 				'<div class="change-lang">',
-					'<div class="change-lang__title">',
-						'<h2 data-lid="lang_change_title"></h2>',
-					'</div>',
-					'<div class="change-lang__subtitle">',
-						'<p data-lid="lang_change_subtitle"></p>',
-					'</div>',
 					'<div class="change-lang-available">',
-						'<div class="change-lang__choice" data-cc="fr">',
-							'<i class="flag-icon flag-icon-fr"></i>',
-						'</div>',
-						'<div class="change-lang__choice" data-cc="us">',
-							'<i class="flag-icon flag-icon-us"></i>',
-						'</div>',
+						choices.join(''),
 						'<div class="change-lang__choice --unavailable" data-cc="es">',
 							'<i class="flag-icon flag-icon-es"></i>',
 							'<div class="soon" data-lid="lang_soon">Prochaînement</div>',
 						'</div>',
+						'<div class="modal__close nonei"></div>',
 					'</div>',
 				'</div>'
 

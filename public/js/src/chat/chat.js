@@ -1311,8 +1311,6 @@
 		},
 		refreshAppTitle: function( bubble_page_title ){
 	     	
-	     	LJ.log('Refreshing page title');
-
 		    var n_unseen_messages = 0;
 		    LJ.chat.getChatIds().forEach(function( chat_id ){
 		        n_unseen_messages += LJ.chat.getUnseenMessagesCount( chat_id );

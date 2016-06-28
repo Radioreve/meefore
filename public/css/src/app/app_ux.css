@@ -132,7 +132,7 @@
     padding: 0 30px;
     text-align: center;
     font-weight: 400;
-    line-height: 18px;
+    line-height: 20px;
     font-size: 13px;
 }
 
@@ -141,13 +141,13 @@
 }
 
 .modal-body {
-    min-height: 100px;
-    max-height: 300px;
-    margin: 20px 0 0px;
+    min-height: 120px;
+    margin-top: auto;
     display: flex;
     flex-flow: row wrap;
-    overflow: hidden;
-    align-items: flex-start;
+    /* overflow: hidden; */
+    align-items: center;
+    justify-content: center;
     outline: none;
 }
 

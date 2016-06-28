@@ -1342,6 +1342,14 @@
 			"fr": "Sélectionner la photo que vous souhaitez importer à partir de Facebook",
 			"en ": "Select the photo you wish to import from Facebook"
 		},
+		mod_change_lang_title: {
+			"fr": "Changer de langue",
+			"us": "Change language"
+		},
+		mod_change_lang_subtitle: {
+			"fr": "La langue ne devrait pas être une barrière pour faire la fête. L'application se traduit instantanément dans le langage de votre choix.",
+			"us": "The language should never be an obstacle to partying. The application translates itself instantaneously in the language of your choosing"
+		},
 		segment_cheers_received: {
 			"fr": "Reçus",
 			"us": "Received"
@@ -1421,6 +1429,14 @@
 		settings_ux_auto_login_label: {
 			"fr": "Login automatique",
 			"us": "Auto login"
+		},
+		settings_ux_changelang_label: {
+			"fr": "Langue par défaut",
+			"us": "Default language"
+		},
+		settings_ux_changelang_explanation: {
+			"fr": "L'application est disponible dans plusieurs langues",
+			"us": "The application is available in several languages"
 		},
 		settings_ux_auto_login_explanation: {
 			"fr": "Se connecter directement sans passer par la page d'accueil",

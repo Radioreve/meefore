@@ -16,6 +16,7 @@
     font-family: 'creamy';
     font-size: 34px;
     margin-top: 40px;
+    display: none;
 }
 
 .search-header__title {
@@ -350,5 +351,9 @@
     .search-users {
         margin-top: 40px;
         min-width: 840px;
+    }
+
+    .search__title {
+        display: block;
     }
 }

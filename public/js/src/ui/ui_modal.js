@@ -129,6 +129,16 @@
 				search_input_html = LJ.ui.renderModalSearchInput();
 			}
 
+			var footer_html = [
+				'<footer class="modal-footer">',
+					options.footer,
+				'</footer>'
+			].join('');
+
+			if( options.no_footer ){
+				footer_html = '';
+			}
+
 			return [
 
 				'<div class="modal ' + modifier + ' ' + disabled + '" ' + attributes + '>',
@@ -145,9 +155,7 @@
 					'</div>',
 					search_input_html,
 					body_html,
-					'<footer class="modal-footer">',
-						options.footer,
-					'</footer>',
+					footer_html,
 				'</div>'
 
 			].join('');
