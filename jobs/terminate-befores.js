@@ -1,7 +1,7 @@
 	
 	// Databases
 	var mongoose = require('mongoose');
-	var mailer   = require( process.cwd() + '/services/mailer');
+	var alerter  = require( process.cwd() + '/services/alerter');
 	// Models
 	var User     = require('../models/UserModel');
 	var Before   = require('../models/BeforeModel');
@@ -121,7 +121,7 @@
 			var mail_html = []
 			mail_html.push('Connection to the database failed, Couldnt execute the cron job @reset-befores ');
 			mail_html.push( err );
-			mailer.sendSimpleAdminEmail('Error connecting to Database', mail_html.join('') );
+			alerter.sendAdminEmail({ subjet: 'Error connecting to Database', html: mail_html.join('') });
 			mail_html = [];
 
 		});
@@ -160,7 +160,10 @@
 					];
 
 					console.log('Scheduled job completed successfully');
-					mailer.sendSimpleAdminEmail('Scheduler [' + process.env.NODE_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated', mail_html.join('') );
+					alerter.sendAdminEmail({
+						subject : 'Scheduler [' + process.env.NODE_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
+						html    : mail_html.join('') 
+					});
 					// mongoose.connection.close();
 
 				});

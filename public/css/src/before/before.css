@@ -246,6 +246,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 100px;
+    width: 60px;
+    height: 60px;
 }
 .user-row__pic img {
     width: 60px;
@@ -302,6 +305,8 @@
 .user-host-icon {
     color: #FD7124;
     display: none;
+    font-size: 12px;
+    margin-left: 2px;
 }
 .user-row.--main .user-host-icon {
     display: block;
@@ -356,7 +361,7 @@
 .be-ended {
     color: #919191;
     width: 250px;
-    margin: auto auto 60px;
+    margin: auto auto 0px;
     text-align: center;
     padding: 16px 0px;
     font-weight: 500;

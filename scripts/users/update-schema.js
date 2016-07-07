@@ -9,6 +9,7 @@
 	
 	var User     = require( dir +  '/models/UserModel');
 	var config   = require( dir + '/config/config');
+	var settings = require( dir + '/config/settings');
 
 	mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
 
@@ -25,11 +26,8 @@
 				tasks.push(function( done ){
 
 					// Update part
-					user.notifications.forEach(function( n ){
-						n.notification_id = md5( JSON.stringify( n ) );
-					});
-
-					user.markModified('notifications');
+					user.app_preferences = settings.default_app_preferences;
+					user.markModified('app_preferences');
 					
 					user.save(function( err ){
 						if( err ) console.log('Error : ' + err );

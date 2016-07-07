@@ -6,6 +6,7 @@
 
 		app_token_url 			  	 	 	: '/auth/facebook',
 		me_url		  			  	 	 	: '/api/v1/users/:user_id/self',
+		user_url 							: '/api/v1/users/:user_id',
 		me_friends				 	 	 	: '/api/v1/users/:user_id/friends',
 		invite_code_url 			 	 	: '/api/v1/users/:user_id/invite-code',
 		fetch_shared_url		  	 	 	: '/api/v1/users/:user_id/shared',
@@ -71,6 +72,9 @@
 					url: url,
 					beforeSend: function( req ){
                     	req.setRequestHeader('x-access-token', LJ.app_token );
+
+                   
+
                 	},
 					success: function( data ){
 						setTimeout(function(){
@@ -97,57 +101,15 @@
 		},
 		get: function( url, data ){
 			return LJ.api.ajax( url, 'get', data );
+
 		},
 		post: function( url, data ){
 			return LJ.api.ajax( url, 'post', data );
 			
-		},	
-		post2: function( url, data ){
-			
-			data = data || {};
-			return LJ.promise(function( resolve, reject ){
+		},
+		patch: function( url, data ){
+			return LJ.api.ajax( url, 'patch', data );
 
-				if( LJ.user && LJ.user.facebook_id ){
-					data.facebook_id = LJ.user.facebook_id;
-				}
-
-				if( data && LJ.realtime.getSocketId() ){
-					data.socket_id = LJ.realtime.getSocketId();
-				}
-
-				var call_started = new Date();
-
-				$.ajax({
-
-					method: 'post',
-					data: data,
-					dataType: 'json',
-					url: url,
-					beforeSend: function( req ){
-	                    req.setRequestHeader('x-access-token', LJ.app_token );
-	                },
-					success: function( data ){
-						setTimeout(function(){
-							if( data.user ){
-								LJ.cacheUser( data.user );
-							}
-							return resolve( data );
-	                    }, LJ.ui.minimum_api_delay - ( new Date() - call_started ) );
-					},
-					error: function( err ){
-						setTimeout(function( err ){
-
-							var err = err.responseJSON; 
-							var formatted_err = LJ.api.makeFormattedError( err );
-
-							return reject( formatted_err );
-
-	                    }, LJ.ui.minimum_api_delay - ( new Date() - call_started ), err );
-					}
-
-				});
-
-			});
 		},
 		makeFormattedError: function( err ){
 
@@ -821,6 +783,26 @@
 				LJ.api.post( LJ.api.update_notifications_clicked_at_url.replace( ':user_id', LJ.user.facebook_id ), data )
 					.then(function( exposed ){
 						return resolve( exposed );
+
+					}, function( err ){
+						return reject( err );
+
+					});
+
+			});
+		},
+		updateUser: function( update ){
+			return LJ.promise(function( resolve, reject ){
+
+				var url = LJ.api.user_url.replace(':user_id', LJ.user.facebook_id );
+				LJ.api.patch( url, update )
+					.then(function( exposed ){
+
+						if( !exposed.user ){
+							return LJ.wlog('The server didnt respond with the expected user object');
+						} else {
+							return resolve( exposed );
+						}
 
 					}, function( err ){
 						return reject( err );

@@ -67,7 +67,7 @@
 		},
 		focusOnInput: function( chat_id ){
 
-			LJ.chat.getChatInview( chat_id ).find('input').focus();
+			LJ.chat.getChatInview( chat_id ).find('chat-inview-input__text').last().focus();
 
 		},
 		deactivateChats: function(){
@@ -79,18 +79,18 @@
 		},
 		showChatInview: function( chat_id ){
 
-			var $chat_rows        = $('.chat-row-wrap');
-			var $chat_inview_wrap = $('.chat-inview-wrap');
+			var $chat_inview  = LJ.chat.getChatInview( chat_id ).closest('.chat-inview');
+			var $chat_inviews = LJ.chat.getChatInviews();
 
-			$chat_rows.hide().removeClass('--active');
-			$chat_inview_wrap.show().addClass('--active');
+			if( $chat_inview.length == 0 ){
+				return LJ.wlog('Unable to target chatinview for id : ' + chat_id );
+			}
 
-			$chat_inview_wrap.find('.chat-inview').removeClass('--active');
+			$chat_inviews.hide();
+			$chat_inview.show();
 			
-			var $t = $chat_inview_wrap.find('.chat-inview[data-chat-id="'+ chat_id +'"]');
+			LJ.chat.showChatInviewWrap();
 
-			$t.addClass('--active').show();
-		
 		},
 		hideChatInview: function(){
 			
@@ -100,14 +100,19 @@
 			var $chat_inview_wrap = $('.chat-inview-wrap');
 			
 			LJ.chat.saveActiveChatInviewScrollPose();
-			
-			$chat_inview_wrap.hide().removeClass('--active');
-			$chat_rows.show().addClass('--active');
-
-			$chat_inview_wrap.find('.chat-inview').hide();
-			
+						
+			LJ.chat.hideChatInviewWrap();
 			LJ.chat.deactivateChats();
-			LJ.chat.refreshChatRowsJsp();
+
+		},
+		showChatInviewWrap: function(){
+
+			$('.chat-inview-wrap').show();
+
+		},
+		hideChatInviewWrap: function(){
+
+			$('.chat-inview-wrap').hide();
 
 		},
 		saveActiveChatInviewScrollPose: function(){
@@ -145,25 +150,54 @@
 		handleSendMessage: function( e ){
 
 			var $s      = $( this );
-			var keyCode = e.keyCode || e.which;
+			var chat_id = $s.closest('[data-chat-id]').attr('data-chat-id');
+			var keyname = LJ.chat.getKeyname( e.keyCode || e.which );
+			var $input  = LJ.chat.getChatInview( chat_id ).find('input');
+			var message = $input.val();
 
-            if( keyCode === 13 ){
-
-                var $w = $s.closest('.chat-inview');
-
-				var chat_id   = $w.attr('data-chat-id');
-				var message   = $s.val();
+            if( keyname == "enter" ){
 
 				if( message.length == 0 ) return;
 
-            	$s.val('');
+            	$input.val('');
 
                 LJ.chat.sendAndAddMessage({
                 	chat_id  : chat_id,
                 	message  : message
                 });
+                return;
 
             }
+
+            if( keyname == "arrow-left" ){
+
+            }
+
+            if( keyname == "arrow-right" ){
+
+            }
+
+            LJ.chat.updateInputState( chat_id, e );
+
+
+		},
+		getKeyname: function( key_code ){
+
+			if( key_code == 13 ){
+				return "enter";
+			}
+
+			if( key_code == 37 ){
+				return "arrow-left";
+			}
+
+			if( key_code == 39 ){
+				return "arrow-right";
+			}
+
+			if( key_code == 8 ){
+				return "return";
+			}
 
 		},
 		sendAndAddMessage: function( data ){
@@ -554,7 +588,7 @@
 				'<div class="chat-inview-message" data-sender-id="'+ sender_id +'">',
 	              '<div class="chat-inview-message-head">',
 	                '<div class="chat-inview-message__picture js-user-profile" data-facebook-id="'+ sender_id +'">',
-	               	  '<span class="hint hint--left hint--rounded hint--no-animate" data-hint="'+ m.format('HH:mm') +'"></span>',
+	               	  '<span class="hint hint--top hint--rounded hint--no-animate" data-hint="'+ m.format('HH:mm') +'"></span>',
 	                  img_html, // size 35
 	                  '<span class="js-user-online user-online --online" data-facebook-id="'+ sender_id +'"></span>',
 	                '</div>',
@@ -637,7 +671,7 @@
 			return LJ.ui.render([
 
 				'<div class="chat-inview-users__group">',
-	              	'<i class="icon icon-star"></i>',
+	              	// '<i class="icon icon-star"></i>',
 	              	'<span data-lid="chat_inview_users_group_hosts"></span>',
 		        '</div>',
 		        hosts_html
@@ -650,7 +684,7 @@
 			return LJ.ui.render([
 
 				'<div class="chat-inview-users__group">',
-		              '<i class="icon icon-bookmark"></i>',
+		              // '<i class="icon icon-bookmark"></i>',
 		              '<span data-lid="chat_inview_users_group_users"></span>',
 			    '</div>',
 			    members_html
@@ -716,8 +750,8 @@
 	          			'</div>',
 	          		'</div>',
 		          	'<div class="chat-inview-footer">',
-			            '<div class="chat-inview__input">',
-			              '<input class="js-send-message" type="text" placeholder="Envoyer votre message">',
+			            '<div class="chat-inview-input js-send-message">',
+			             	'<input data-lid="chat_input_placeholder" placeholder="lol">',
 			            '</div>',
 		          	'</div>', 
 			    '</div>'
@@ -965,6 +999,7 @@
 			}
 
         	LJ.chat.getChatInview( chat_id )
+        		.find('.chat-inview-item')
         		.append( html )
         		.find('.chat-inview-messages')
         		.hide();
@@ -992,7 +1027,12 @@
 				return LJ.wlog('Cannot target chat row without chat_id');
 			}
 
-			return $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			return $('.chat-inview[data-chat-id="'+ chat_id +'"]');
+
+        },
+        getChatInviews: function(){
+
+        	return $('.chat-inview');
 
         },
         bounceChatHeaderIcons: function( chat_id, delay ){
@@ -1013,7 +1053,46 @@
         	LJ.chat.getChatInview( chat_id )
         		.find('.chat-inview-seen-by__label').text('');
 
-        }
+        },
+        updateInputState: function( chat_id, e ){
+
+        	var chat = LJ.chat.getChat( chat_id );
+
+        	if( LJ.chat.getKeyname == "return" ){
+        		chat.input = chat.input.substring( 0, chat.input.length - 1 );
+        	} else {
+        		chat.input = chat.input + e.key;
+        	}
+
+        },
+        renderTextInputElement: function( reset ){
+
+			return LJ.ui.render( '<div class="chat-inview-input__text" contenteditable="true"></div>' );
+
+		},
+		placeholderifyChatInput: function( chat_id ){
+
+			var placeholder_text = LJ.text("chat_input_placeholder");
+			var placeholder_html = LJ.ui.render( '<div class="chat-inview-input__placeholder">'+ placeholder_text +'</div>' );
+
+			LJ.chat.getChatInview( chat_id )
+				.find('.chat-inview-input')
+				.prepend( placeholder_html );
+
+		},
+		deplaceholderifyChatInput: function( chat_id ){
+
+			LJ.chat.getChatInview( chat_id )
+				.find('.chat-inview-input__placeholder')
+				.remove();
+
+		},
+		parseChatInput: function( chat_id ){
+
+		},
+		refreshChatInput: function( chat_id ){
+
+		}
 
 
 	});

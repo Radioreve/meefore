@@ -23,7 +23,14 @@
 
 	};
 
+	var setExpose = function( req, res, next ){
+
+		req.sent.expose = {};
+		next();
+
+	}
 
 	module.exports = {
-		'sendResponse': sendResponse
+		sendResponse  : sendResponse,
+		setExpose 	  : setExpose
 	}

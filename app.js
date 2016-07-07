@@ -19,18 +19,17 @@
 
 	// Database
 		var config = require('./config/config');
-		var uri    = config.db[ process.env.NODE_ENV ].uri ;
+		var uri    = config.db[ process.env.NODE_ENV ].uri;
 
 		require('./services/db')( uri );
 
 	// Chargement des routes principales 
 		require('./routes/routes')( app );
-		require('./routes/routes_test')( app );
 
 	// Http server
 		var port = process.env.PORT || 1234;
 		server.listen( port, function(){
-			term.bold.yellow('Server listening on '+ port + '\n');
+			term.bold.green('Server listening on '+ port + '\n');
 		});
 
 

@@ -1,8 +1,8 @@
 	
-	var eventUtils  = require('../pushevents/eventUtils'),
-		_     	    = require('lodash');
-
+	var eventUtils  = require('../pushevents/eventUtils');
 	var User        = require('../models/UserModel');
+	var _     	    = require('lodash');
+
 
 	function handleErr( req, res, err_ns, err ){
 		return eventUtils.raiseApiError( req, res, err_ns, err );
@@ -22,7 +22,10 @@
 				force_presence = true;
 			}
 
-			var query = { facebook_id: req.sent.facebook_id || req.sent.user_id };
+			var query = {
+				facebook_id: req.sent.facebook_id || req.sent.user_id
+			};
+
 			User.findOne( query, function( err, user ){
 
 				if( err ){
@@ -33,9 +36,9 @@
 
 				if( !user && force_presence ){
 					return handleErr( req, res, err_ns, { error: {
-							'err_id': 'ghost_user',
-							'msg'   : 'The presence of a user in database was necessary for this route. None was found.'
-						}});
+						'err_id': 'ghost_user',
+						'msg'   : 'The presence of a user in database was necessary for this route. None was found.'
+					}});
 				}
 
 				if( user ){

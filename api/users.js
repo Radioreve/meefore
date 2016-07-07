@@ -8,7 +8,6 @@
 	var connecter  = require('../middlewares/connecter');
 	var settings   = require('../config/settings');
 	var eventUtils = require('../pushevents/eventUtils');
-	var mailer     = require('../services/mailer');
 	var moment	   = require('moment');
 
 
@@ -334,32 +333,6 @@
 
 	};
 
-	var getMailchimpStatus = function( req, res, next ){
-
-		var err_ns       = 'mailchimp_status';
-		var mailchimp_id = req.sent.user.mailchimp_id;
-
-		if( !mailchimp_id ){
-			return handleErr( req, res, err_ns, {
-				err_id       : 'ghost_mailchimp_id',
-				mailchimp_id : mailchimp_id
-			});
-		}
-
-		mailer.getMailchimpUser( mailchimp_id, function( err, res ){
-
-			if( err ){
-				return handleErr( req, res, err_ns, err );
-			}
-
-			req.sent.expose.mailchimp_data = res;
-			next();
-
-		});
-
-	};
-
-
 	var fetchMoreUsers = function( req, res, next ){
 
 		var err_ns        = "fetching_more_users";
@@ -620,9 +593,73 @@
 
 		});
 
+	};
 
+	// Update user in a 'rest' way with a patch
+	// Make use of the custom patch method (see UserModel for code)
+	var updateUser = function( req, res, next ){
+
+		var err_ns = "updating_settings";
+
+		var facebook_id = req.sent.facebook_id;
+		var user        = req.sent.user;
+
+		User.findOne({ facebook_id: facebook_id }, function( err, user ){
+
+			if( err ) return handleErr( req, res, err_ns, err );
+
+			user.patch( req.sent, function( err, user ){
+
+				if( err ) return handleErr( req, res, err_ns, err );
+
+				req.sent.user = user;
+				req.sent.expose.user = user;
+				req.sent.expose.app_preferences = user.app_preferences;
+				next();
+
+			});
+
+		});
 
 	};
+
+	// Goodbye user
+	// Cache gets automatically cleared ( expires set ) so dont bother clearing it
+	var deleteUser = function( req, res, next ){
+
+		var err_ns = "deleting_user_profile";
+
+		var facebook_id = req.sent.user_id;
+
+		console.log('Deleting profile ' + facebook_id + ' and everything associated with it..');
+		console.log('Good bye ' + req.sent.user.name + '..');
+
+		User.update(
+			{
+				'friends': facebook_id
+			},
+			{
+				$pull: { 'friends': facebook_id }
+			},
+			{
+				multi: true
+			},
+			function( err, users ){
+
+				if( err ) return handleErr( req, res, err_ns, err );
+
+				User.findOneAndRemove({ facebook_id: facebook_id }, function( err, user ){
+					
+					if( err ) return handleErr( req, res, err_ns, err );
+
+					next();
+
+
+				});
+
+		});
+
+	}
 
 	module.exports = {
 		fetchMe 				  	 : fetchMe,
@@ -636,12 +673,13 @@
 		fetchUserEvents 		  	 : fetchUserEvents,
 		fetchUserCount 			  	 : fetchUserCount,
 		fetchOnlineUsers          	 : fetchOnlineUsers,
-		getMailchimpStatus 		  	 : getMailchimpStatus,
 		fetchMoreUsers 			  	 : fetchMoreUsers,
 		fetchDistinctCountries    	 : fetchDistinctCountries,
 		fetchMoreChannels 	 	  	 : fetchMoreChannels,
+		updateUser	 				 : updateUser,
 		updateNotificationsSeenAt 	 : updateNotificationsSeenAt,
 		updateNotificationsClickedAt : updateNotificationsClickedAt,
-		fetchUserCheers 			 : fetchUserCheers
+		fetchUserCheers 			 : fetchUserCheers,
+		deleteUser 					 : deleteUser
 
 	};

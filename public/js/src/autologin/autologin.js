@@ -61,7 +61,7 @@
 					return resolve( token );
 				}
 
-				if( s.get("autologin") == "no" ){
+				if( s.get("autologin") == false ){
 					return reject("Autologin isnt activated, initializing lp...");
 				}
 

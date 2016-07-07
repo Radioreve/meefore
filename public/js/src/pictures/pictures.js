@@ -336,11 +336,11 @@
 			LJ.ui.hideLoader( call_id );
 			LJ.pictures.upload_id_profile = null;
 
-			if( res.error.err_id == 'mainify_placeholder' ){
+			if( res.err_id == 'mainify_placeholder' ){
 				return LJ.ui.showToast( LJ.text('err_update_profile_mainify_placeholder'), 'error' );
 			}
 
-			if( res.error.err_id == 'delete_main_picture' ){
+			if( res.err_id == 'delete_main_picture' ){
 				return LJ.ui.showToast( LJ.text('err_update_profile_delete_main_picture'), 'error' );
 			}
 

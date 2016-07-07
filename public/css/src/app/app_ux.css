@@ -57,6 +57,7 @@
 
 .toast--error {
     background: #B10926;
+    background: #1B69EC;
 }
 
 .toast--success {
@@ -196,6 +197,7 @@
 
 .modal.--logout button {
     color: #1b69ec;
+    transform: scale(0.75);
 }
 .modal.--logout button i {
     font-size: 36px;

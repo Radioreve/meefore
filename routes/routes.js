@@ -13,7 +13,6 @@
 	var User = require('../models/UserModel');
 
 	var profileEvents  = require( pushEventsDir + '/profileEvents'),
-		settingsEvents = require( pushEventsDir + '/settingsEvents'),
 		signEvents     = require( pushEventsDir + '/signEvents');
 
 	var api = {}
@@ -25,15 +24,16 @@
 		api.chats     = require( apiDir + '/chats');
 
 	var mdw = {};
+		mdw.mergify 		  = require( mdwDir + '/mergify');
+		mdw.boolify 	      = require( mdwDir + '/boolify');
 		mdw.expose 			  = require( mdwDir + '/expose');
 		mdw.auth              = require( mdwDir + '/auth');
-		mdw.mailchimp_watcher = require( mdwDir + '/mailchimp_watcher');
+		mdw.mailchimp         = require( mdwDir + '/mailchimp');
 		mdw.pop               = require( mdwDir + '/pop');
 		mdw.facebook          = require( mdwDir + '/facebook');
 		mdw.profile_watcher   = require( mdwDir + '/profile_watcher');
-		mdw.alerts_watcher    = require( mdwDir + '/alerts_watcher');
-		mdw.chat_watcher      = require( mdwDir + '/chat_watcher');
 		mdw.notifier          = require( mdwDir + '/notifier');
+		mdw.alerter    		  = require( mdwDir + '/alerter');
 		mdw.meepass           = require( mdwDir + '/meepass');
 		mdw.connecter 		  = require( mdwDir + '/connecter');
 		mdw.realtime 		  = require( mdwDir + '/realtime');
@@ -46,52 +46,7 @@
 
 	module.exports = function( app ) {
 
-
-		//      All api calls are handled this way : 
-		//		
-		//	    % app.verb( url ) 
-		//		% mdw.auth.authenticate 					% ---> Make sure user authenticated and populates req.facebook_id
-		//		% mdw.validate( namespace, [ properties ] ) % ---> Make sure data is properly formatted and action is authorized 
-		//		% controller.handler 						% ---> Make the call ( Redis & MongoDB )							
-		//
-
-
-
-		// Merge all body, query and params property 
-		// Subsequent validation modules will look if each property they are looking for
-		// is anywhere to be found and properly formatted, in the req.sent object
-		app.all('*', function( req, res, next ){
-			req.sent = _.merge( 
-
-			    req.body   || {},  
-				req.query  || {},
-				req.sent   || {}
-			);
-			req.sent.expose = {};
-			
-			next();
-
-		});
-
-
-		function setParam( params ){
-
-			var params = Array.isArray(params) ? params : [params];
-			return function( req, res, next ){
-				params.forEach(function( para ){
-					req.sent[ para ] = req.params[ para ];
-				});
-				next();
-			}
-
-		}
-
-		// Setup the values in the req.sent object, to allow a more RESTish way of calling the services for the client
-		// Each middleware can consume the params, and client can just add it to the url and not to the raw body!
-		app.all('/api/v1/users/:user_id*',  setParam('user_id') );
-	    app.all('/api/v1/chats/:chat_id*', setParam('chat_id') );
-		app.all('/test/api/v1/chats/:chat_id*', setParam('chat_id') );
-		app.all('/api/v1/befores/:before_id*', setParam('before_id') );
+		require('./setup')( app );
 
 
 		// Api authentication validation
@@ -101,7 +56,6 @@
 			mdw.auth.authenticate(['standard'])
 		);
 
-
 	    // Main page
 	    app.get('/home',
 	    	function( req, res, next ){
@@ -109,7 +63,8 @@
 	    		var ip_info = get_ip( req );
 	    		next();
 	    	},
-	    	signEvents.sendHomepage);
+	    	signEvents.sendHomepage
+	    );
 
 	    // Conditions générales
 	    app.get('/legals', function( req, res ){
@@ -128,25 +83,39 @@
 		);
 
 
-	    // Initialisation | Check if user exists / create profile if not, subscribe to mailchimp
+	    // Main entry point
+	    // Performs both the signup and the login 
+	    // Some middlewares are blocking and some are not
 	    app.post('/auth/facebook',
+
+	    	// Validate the form of the request (dont hit db for nothing)
 	    	mdw.validate('auth_facebook'),
+	    	// Fetch the user, but dont generate error if isnt found (could be signup)
 	    	mdw.pop.populateUser({ force_presence: false }),
+	    	// Update the Facebook token that has been sent if needed, from short to long
 	    	mdw.facebook.updateFacebookToken,
+	    	// Signup/Login logic 
 	    	signEvents.handleFacebookAuth,
+	    	// Update dynamically the profile with channel informations for realtime actions
 	    	mdw.realtime.setChannels,
+	    	// Update dynamically a parameter that allow to retrieve chats by activity for one user
 	    	mdw.realtime.setLastSentAtInChannels,
+	    	// Synchronise all his friends with Facebook at each connexion
 	    	mdw.facebook.fetchAndSyncFriends,
-	    	mdw.alerts_watcher.setCache,
-	    	mdw.profile_watcher.setCache,
+	    	// Set cache basic info in Redis for max perf during fetch profile (short version)
+	    	mdw.profile_watcher.updateCachedProfile,
+	    	// Check if some notifications are needed
 	    	mdw.notifier.addNotification('inscription_success'),
 	    	mdw.notifier.addNotification('new_friends'),
-	    	mdw.mailchimp_watcher.subscribeMailchimpUser
+	    	// Always ensure the user is subscribed at mailchimp
+	    	mdw.mailchimp.api("ensure_subscription")
 	    );
+
+
+
 
 	    // Création d'un bot
 	    app.post('/auth/facebot',
-	    	mdw.alerts_watcher.setCache,
 	    	signEvents.handleFacebookAuth
 	    );
 
@@ -158,31 +127,33 @@
 	    );
 
 
-	    // [ @user ] Update le profile
+	    // [ @user ] Update le profil
 	    app.post('/api/v1/users/:user_id/update-profile',
 	    	mdw.validate('myself'),
 	    	mdw.validate('update_profile_base'),
-			mdw.profile_watcher.updateCache('base'),
+			mdw.pop.populateUser(),
 	    	profileEvents.updateProfile,
+			// mdw.profile_watcher.updateCachedProfile,
 	    	mdw.realtime.updateLocationChannel
+	    	// mdw.mailchimp.api("update_member")
 	    );
 
-	    // [ @user ] Ajoute une photo au profile
+	    // [ @user ] Ajoute une photo au profil
 	    app.post('/api/v1/users/:user_id/update-picture-client',
 	    	mdw.validate('myself'),
 	    	mdw.validate('update_picture_client'),
 	    	mdw.pop.populateUser(),
 	    	profileEvents.updatePicture,
-	    	mdw.profile_watcher.updateCache('picture_upload')
+	    	mdw.profile_watcher.updateCachedProfile
 	    );
 
-	    // [ @user ] Change les hashtag/photo de profile
+	    // [ @user ] Change les hashtag/photo de profil
 	    app.post('/api/v1/users/:user_id/update-pictures',
 	    	mdw.validate('myself'),
 	    	mdw.validate('update_pictures'),
 			mdw.pop.populateUser(),
-			mdw.profile_watcher.updateCache('picture_mainify'),
-	    	profileEvents.updatePictures
+	    	profileEvents.updatePictures,
+			mdw.profile_watcher.updateCachedProfile
 	    );
 
 	    // [ @user ] Ajoute une photo via Facebook api
@@ -191,7 +162,7 @@
 	    	mdw.validate('upload_picture_url'),
 	    	mdw.pop.populateUser(),
 	    	profileEvents.uploadPictureWithUrl,
-	    	mdw.profile_watcher.updateCache('picture_upload')
+	    	mdw.profile_watcher.updateCachedProfile
 	    );
 
 	    // [ @user ] Va chercher en base de données les users à partir de /api/v1/users/:user_id/friends de l'api Facebook
@@ -200,6 +171,12 @@
 	    	api.users.fetchFriends 
 	    );
 	    
+	    app.patch('/api/v1/users/:user_id',
+	    	mdw.validate('myself'),
+	    	mdw.pop.populateUser(),
+	    	mdw.mailchimp.api("update_member"),
+	    	api.users.updateUser
+	    );
 
 	    // [ @user ] va chercher des tags cloudinary signés par le serveur
 	    app.get('/api/v1/users/:user_id/cloudinary-tags',
@@ -207,49 +184,20 @@
 	    	profileEvents.fetchCloudinaryTags
 	    );
 
-	    // [ @user ] Update contact settings
-	    app.post('/api/v1/users/:user_id/update-settings-contact',
-	    	mdw.validate('myself'),
-	    	mdw.pop.populateUser(),
-	    	mdw.mailchimp_watcher.updateMailchimpUser,
-	    	mdw.alerts_watcher.updateCache,
-	    	settingsEvents.updateSettingsContact
-	    );
-
-	    // [ @user ] Update ux settings
-	    app.post('/api/v1/users/:user_id/update-settings-ux',
-	    	mdw.validate('myself'),
-	    	settingsEvents.updateSettings
-	    );
-
-	     // [ @user ] Update ux settings
-	    app.post('/api/v1/users/:user_id/update-settings-alerts',
-	    	mdw.validate('myself'),
-	    	mdw.alerts_watcher.updateCache,
-	    	settingsEvents.updateSettings
-	    );
-
-	    // [ @user ] Update notification settings 
-	    app.post('/api/v1/users/:user_id/update-settings-mailinglists',
-	    	mdw.validate('myself'),
-	    	mdw.pop.populateUser(),
-	    	mdw.mailchimp_watcher.updateMailchimpUser,
-	    	settingsEvents.updateSettings
-	    );
-
+	    // [ @user ] Goodbye my friend...
 	    app.post('/api/v1/users/:user_id/delete',
 	    	mdw.validate('myself'),
 	    	mdw.pop.populateUser(),
-	    	mdw.mailchimp_watcher.deleteMailchimpUser,
-	    	settingsEvents.deleteProfile
+	    	mdw.mailchimp.api("delete_member"),
+	    	api.users.deleteUser
 	    );
 
-	    // Coupons, code & sponsorship
-		app.post('/api/v1/users/:user_id/invite-code',
-			mdw.validate('myself'),
-			mdw.validate('invite_code'),
-			profileEvents.updateInviteCode
-		);
+	 //    // Coupons, code & sponsorship
+		// app.post('/api/v1/users/:user_id/invite-code',
+		// 	mdw.validate('myself'),
+		// 	mdw.validate('invite_code'),
+		// 	profileEvents.updateInviteCode
+		// );
 
 		app.get('/api/v1/users/online',
 			mdw.connecter.getOnlineUsers,
@@ -342,13 +290,6 @@
 	    );
 
 
-	    app.get('/api/v1/users/:user_id/mailchimp-status',
-	    	mdw.validate('myself'),
-	    	mdw.pop.populateUser(),
-	    	api.users.getMailchimpStatus
-	    );
-
-
 	    // [ @befores ] Update le statut d'un évènement [ 'open', 'suspended' ]
 	    app.post('/api/v1/befores/:before_id/status',
 	    	mdw.validate('before_status'),
@@ -411,7 +352,6 @@
 	    app.post('/api/v1/chats/:chat_id',
 	    	mdw.pop.populateUser({ force_presence: true }),
 	    	mdw.validate('chat_message'),
-	    	// mdw.chat_watcher.mailOfflineUsers,
 	    	api.chats.addChatMessage,
 	    	mdw.realtime.pushNewChatMessage
 	    );
@@ -585,7 +525,7 @@
 
 	    // Test functions
 	    app.get('/users/:user_id/channels',
-	    	setParam('user_id'),
+	    	mdw.mergify.setParam('user_id'),
 	    	function( req, res, next ){
 
 	    		var facebook_id  = req.params["user_id"];
@@ -604,7 +544,7 @@
 	    // Get all the befores for a particular user, by using each user's own befores
 	    // property (which contails all the before's _ids the user has going on)
 	    app.get('/users/:user_id/befores.id',
-	    	setParam('user_id'),
+	    	mdw.mergify.setParam('user_id'),
 	    	function( req, res, next ){
 
 	    		var facebook_id  = req.params["user_id"];
@@ -624,7 +564,7 @@
 	    // Get all the befores for a particular user, but checking the presence of its id
 	    // in either the hosts or the group.members fields
 	    app.get('/users/:user_id/befores.presence',
-	    	setParam('user_id'),
+	    	mdw.mergify.setParam('user_id'),
 	    	function( req, res, next ){
 
 	    		var facebook_id  = req.params["user_id"];
@@ -642,12 +582,12 @@
 	    );
 
 	    app.get('/users/:user_id/friends',
-	    	setParam('user_id'),
+	    	mdw.mergify.setParam('user_id'),
 	    	api.users.fetchFriends
 	   );
 
 	    app.get('/users/:user_id/cheers',
-	    	setParam('user_id'),
+	    	mdw.mergify.setParam('user_id'),
 			mdw.pop.populateUser({ force_presence: true }),
 			api.users.fetchUserCheers
 		);

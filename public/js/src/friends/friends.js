@@ -13,6 +13,7 @@
 
 			LJ.ui.$body.on('click', '.js-invite-friends', LJ.facebook.showModalSendMessageToFriends );
 			LJ.ui.$body.on('click', '.js-show-friend', LJ.friends.handleFriendProfileClicked );
+			LJ.ui.$body.on('click', '.js-close-friends-popup', LJ.friends.hideInviteFriendsPopup );
 
 		},
 		handleFriendsClicked: function(){
@@ -185,8 +186,8 @@
 			return LJ.ui.render([
 
 				'<div class="friend__item js-show-friend" data-facebook-id="' + friend.facebook_id + '">',
-					'<div class="row-pic js-filterlay">',
-						'<div class="row-pic__image">' + img_html + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image js-filterlay">' + img_html + '</div>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',
@@ -290,7 +291,7 @@
 						display : 'flex'
 					});
 
-			}, 4000 );
+			}, 2500 );
 
 		},
 		hideInviteFriendsPopup: function(){
@@ -304,8 +305,11 @@
 			return LJ.ui.render([
 
 				'<div class="invite-friends-popup">',
+					'<div class="invite-friends-popup__close js-close-friends-popup --round-icon">',
+						'<i class="icon icon-cancel"></i>',
+					'</div>',
 					'<div class="invite-friends-popup__icon --round-icon">',
-						'<i class="icon icon-gift"></i>',
+						'<i class="icon icon-heart"></i>',
 					'</div>',
 					'<div class="invite-friends-popup-message">',
 						'<div class="invite-friends-popup__h1">',

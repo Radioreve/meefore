@@ -34,31 +34,21 @@
 	var updateProfile = function( req, res, next ){
 
 		var err_ns = 'update_profile';
+
 		var facebook_id = req.sent.user_id;
+		var user 		= req.sent.user;
 
-		var update = {};
-		['name','age','job', 'location', 'ideal_night'].forEach(function( attr ){
-
-			if( req.sent[ attr ] ){
-				update[ attr ] = req.sent[ attr ];
-
-			}
-
-
-		});
-
-
-		var callback = function( err, user ) {
+		user.patch( req.sent, function( err, user ){
 
 	        if( err ) return handleErr( req, res, err_ns, err );
-         
-            console.log('Emtting event update profile success')
+         	
+         	req.sent.user = user;
             req.sent.expose.user = user;
 
             next();
-	    }
-	
-		User.findOneAndUpdate({ facebook_id: facebook_id }, update, { new: true }, callback );
+
+		});
+
 
 	};
 
@@ -85,12 +75,9 @@
 
     		if( err ) return handleErr( req, res, err_ns, err );
 
+    		req.sent.user = user;
     		req.sent.expose.user = user;
     		req.sent.expose.new_picture = new_picture;
-
-    		// Used by cache mdw
-    		req.sent.img_id = newimg_id;
-    		req.sent.img_vs = newimg_version;
 
     		next();
 
@@ -126,10 +113,8 @@
 
 				if( err ) return handleErr( req, res, err_ns, err );
 
+				req.sent.user = user;
 				req.sent.expose.pictures = user.pictures;
-				
-				req.sent.img_id = img_id;
-				req.sent.img_vs = img_version;
 				next();
 
 			});
@@ -197,67 +182,15 @@
 		}
 
 		// Saving picture modifications to user profile
-		user.save(function( err, saved_user ){
+		user.save(function( err, user ){
 
 			if( err ) return handleErr( req, res, err_ns, err );
 
-			console.log('sending success');
-
-			req.sent.expose.pictures = saved_user.pictures;
+			req.sent.user = user;
+			req.sent.expose.pictures = user.pictures;
 
 			next();
 
-
-			// LEGACY -> NOW EACH TIME AN EVENT IS RENDERER, THUMB PICTURES ARE FETCHED
-			// FROM CACHE WHICH IS ALWAYS UP TO DATE. NO NEED TO PROPAGATE THE CHANGES ANYMORE
-
-			//Propagating to all events he's been in
-			// console.log('Propagating photo update in all events');
-
-			// var event_ids    = _.pluck( saved_user.events, 'event_id' );
-			// var main_picture = _.find( saved_user.pictures, function( pic ){
-			// 	return pic.is_main;
-			// });
-
-			// // Switch to true to match the criteria. Old pic is still tagged as main in events;
-			// old_main_picture.is_main = true;
-
-			// console.log( old_main_picture);
-			// console.log( main_picture );
-
-			// // Update events where he is host
-			// Event.update({
-			// 	'hosts.main_picture': old_main_picture
-			// }, {
-			// 	$set: {
-			// 		'hosts.$.main_picture': main_picture
-			// 	}
-			// }, {
-			// 	multi: true
-			// }, function( err, raw ){
-
-			// 	if( err ) return handleErr( req, res, err_ns, err );
-
-			// 	console.log('Propagated as host in ' + raw.n + ' events' );
-
-			// });
-
-			// // Update events where he is asker
-			// Event.update({
-			// 	'groups.members.main_picture': old_main_picture
-			// }, {
-			// 	$set: {
-			// 		'groups.members.$.main_picture': main_picture
-			// 	}
-			// }, {
-			// 	multi: true
-			// }, function( err, raw ){
-
-			// 	if( err ) return handleErr( req, res, err_ns, err );
-
-			// 	console.log('Propagated as member in ' + raw.n + ' events' );
-
-			// });
 		});
 	};
 
@@ -278,38 +211,6 @@
 
 		});
 
-		// LEGACY -> NOW WE ONLY STORE FB_ID of friends ALONG WITH CACHE OPTIMISATION
-		// MORE MAINTANABLE AND DECOUPLED		
-
-		// User.find({ 
-
-		// 	$or: [
-		// 		{ _id: userId },
-		// 		{ facebook_id: { $in: fb_friends_ids } }
-		// 	]
-
-		// }, function( err, users ){
-
-		// 	var me      = _.find( users, function( el ){ return el._id == userId });
-		// 	var friends = _.pull( users, me );
-
-		// 	var filtered_friends = [];
-
-		// 		friends.forEach(function( friend ){
-		// 			var filtered_friend = [];
-		// 			// filtered_friends.push( _.pick( friend, settings.public_properties.users ) );
-		// 			filtered_friends.push( )
-		// 		});
-
-		// 		me.friends = filtered_friends;
-		// 		me.save( function( err, me ){
-
-		// 			if( err ) return handleErr( req, res );
-
-		// 			eventUtils.sendSuccess( res, { friends: me.friends });
-		// 		});
-
-		// });
 
 	};
 

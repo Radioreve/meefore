@@ -37,20 +37,33 @@
 				'access_name' : 'chat_loader',
 				'image_id'    : 'loader_circular_blue_thin',
 				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
-			}
+			},
+			{ "access_name" : ":D", "image_id": "emoticon_smile" },
+			{ "access_name" : "xD", "image_id": "emoticon_smilexd" },
+			{ "access_name" : ";)", "image_id": "emoticon_blink" },
+			{ "access_name" : ":p", "image_id": "emoticon_tongue" },
+			{ "access_name" : "<3", "image_id": "emoticon_love" },
+			{ "access_name" : ":%", "image_id": "emoticon_sun" },
+			{ "access_name" : "-)", "image_id": "emoticon_bg" },
+			{ "access_name" : ":o", "image_id": "emoticon_oh" },
+			{ "access_name" : ":(", "image_id": "emoticon_sad" },
+			{ "access_name" : ":â", "image_id": "emoticon_angel" },
+			{ "access_name" : ":z", "image_id": "emoticon_zzz" },
+			{ "access_name" : ":/", "image_id": "emoticon_noop" }
 		],
 		// Constructs a list of static pictures hosted on Cloudinary that are available
 		// to use accross all others modules
 		init: function(){
 
-			LJ.Promise.resolve()
-					  .then( LJ.static.cacheStaticImages )
+			LJ.static.cacheStaticImages();
+			return;
 
 		},
 		cacheStaticImages: function(){
 
 			LJ.static.images.forEach(function( img ){
 
+				img.param = img.param || {};
 				img.param['cloud_name'] = 'radioreve';
 
 				LJ.static[ '$' + img.access_name ] = $.cloudinary.image(

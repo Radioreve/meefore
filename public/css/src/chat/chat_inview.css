@@ -4,6 +4,7 @@
     flex-flow: column nowrap;
     position: relative;
     padding: 0;
+    z-index: 10;
 }
 
 .chat-inview-messages .jspContainer {
@@ -386,18 +387,41 @@
     z-index: 1;
 }
 
-.chat-inview__input {
+.chat-inview-input {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.chat-inview-input input {
+    padding-left: 20px;
+    box-sizing: border-box;
+    border: none;
+    font-size: 12.5px;
+    font-family: 'Open sans';
+    outline: none;
     width: 100%;
 }
 
-.chat-inview__input input {
-    padding: 10px 20px;
-    box-sizing: border-box;
-    width: 100%;
-    border: none;
-    font-size: 12px;
-    font-family: 'Open sans';
+/*.chat-inview-input__img {
+    width: 17px;
+    margin: 0 4px;
 }
+
+.chat-inview-input__placeholder {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    bottom: 0;
+    margin: auto 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 13px;
+    color: #ccc;
+    font-weight: 300;
+}*/
 
 .chat-inview__button {
     width: 100px;

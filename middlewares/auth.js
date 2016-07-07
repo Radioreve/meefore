@@ -40,7 +40,7 @@
 			}
 			
 			// Important : make sure that the facebook_id used in all api calls via the req.sent object is always
-			// the one of the user, to prevent anybody from hijacking api calls with any id (masquerade attempt)
+			// the one of the user, to prevent anybody from hijacking api calls with any id;
 			req.sent.facebook_id = payload.facebook_id || payload.id;
 
 			// Get the expose object, which is what is always returned to the client, already setup with update_id. 

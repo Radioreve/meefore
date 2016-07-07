@@ -18,7 +18,7 @@
 			if( req.sent.user_id != req.sent.facebook_id ){
 				req.app_errors = req.app_errors.concat([{
 					"err_id"      : "not_myself",
-					"message"     : "A user can only all this route for himself",
+					"message"     : "A user can only call this route for himself",
 					"user_id"     : req.sent.user_id,
 					"facebook_id" : req.sent.facebook_id
 				}]);

@@ -13,7 +13,7 @@
 	var term 	   = require('terminal-kit').terminal;
 
 	var pusher  = require('../services/pusher');
-	var mailer  = require('../services/mailer');
+	var alerter  = require('../middlewares/alerter');
 
 
 	var handleErr = function( req, res, namespace, err ){
@@ -93,7 +93,7 @@
 				new_user.signup_date = new Date();
 				
 				// User name @facebookProfile
-				new_user.name = fb.name;
+				new_user.name = fb.name.split(' ')[0];
 
 				// Default user age, fucking fb doesnt let us access it except <18, between 18-21 or >21 ... "lol"
 				new_user.age = 18;
@@ -117,7 +117,14 @@
 				new_user.pictures = _.cloneDeep( settings.default_pictures );
 
 				// This will be set clientside as a standalone signup step
-				new_user.location = { place_name: null, place_id: null };
+				// Important: all params must be set to null otherwise the user.patch method fail for security reasons
+				// (fields that are not initially present will not be patched)
+				new_user.location = {
+					place_name: null,
+					place_id: null,
+					lat: null,
+					lng: null
+				};
 
 				// Default invite code, can be changed by client. Use facebook_id to ensure uniqueness
 				new_user.invite_code = fb.id; 
@@ -146,8 +153,10 @@
 
 					if( !req.sent.bot ){
 						console.log('Sending email notification to admins');
-						mailer.sendSimpleAdminEmail( user.name + ' (' + user.contact_email + ')(' + user.gender[0] + ') vient de s\'inscrire sur meefore',
-							  user.facebook_url )
+						alerter.sendAdminEmail({
+							subjet : user.name + ' (' + user.contact_email + ')(' + user.gender[0] + ') vient de s\'inscrire sur meefore',
+							html   : user.facebook_url
+						})
 					}
 
 					console.log('Account created successfully');

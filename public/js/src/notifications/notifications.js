@@ -23,6 +23,13 @@
 			LJ.ui.$body.on('click', LJ.notifications.handleHideNotifications );
 
 		},
+		getNotification: function( n_id ){
+
+			return _.find( LJ.user.notifications, function( n ){
+				return n.notification_id == n_id;
+			});
+
+		},
 		cacheNotification: function( notification ){
 
 			LJ.user.notifications.push( notification );
@@ -228,6 +235,8 @@
 		},
 		hideNotificationsPanel: function(){
 
+			LJ.ui.activateHtmlScroll();
+			
 			var $notif = $('.notifications-panel');
 			var $icon  = $('.app__menu-item.--notifications');
 
@@ -643,10 +652,10 @@
 			});
 
 		},
-		notificationCallback__NoFriends: function( n ){
+		notificationCallback__InscriptionSuccess: function( n ){
 
-			LJ.facebook.showModalSendMessageToFriends();
-			
+			LJ.log('Welcome onboard !');
+
 		},
 		notificationCallback__NewFriends: function( n ){
 
@@ -654,63 +663,67 @@
 			LJ.menu.activateMenuSection("friends");
 
 		},
-		notificationCallback__InscriptionSuccess: function( n ){
-
-
-		},
 		notificationCallback__GroupRequestHosts: function( n ){
 
-			var event_id = n.event_id;
-			var group_id = n.group_id;
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("cheers");
+			LJ.cheers.activateCheers("received");
 
-			if( !event_id || !group_id ){
-				return LJ.wlog('Cant register "group request" callback without event_id and chat_id ' );
-			}
 
 		},
 		notificationCallback__GroupRequestMembers: function( n ){
 
-			var event_id = n.event_id;
-			var group_id = n.group_id;
-
-			if( !event_id || !group_id ){
-				return LJ.wlog('Cant register "group request" callback without event_id and chat_id ' );
-			}
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("cheers");
+			LJ.cheers.activateCheers("sent");
 
 		},
-		notificationCallback__AcceptedIn: function( n ){
+		notificationCallback__AcceptedInMembers: function( n ){
 
-			var before_id = n.before_id;
-			var group_id  = n.chat_id;
+			var before_id  = n.before_id;
+			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
 
-			if( !before_id || !chat_id ){
-				return LJ.wlog('Cant register "accepted_in" callback without before_id and chat_id ' );
+			if( LJ.chat.getChatState() == "hidden" ){
+				LJ.chat.showChatWrap();
 			}
 
-			LJ.chat.showChat();
-			LJ.chat.activateChatInview( chat_id );
+			LJ.chat.showChatInview( chat_id );
+			LJ.chat.activateChat( chat_id );
+			LJ.chat.refreshChatJsp( chat_id );
+			LJ.chat.refreshChatState( chat_id );
+
+		},
+		notificationCallback__AcceptedInHosts: function( n ){
+
+			var before_id  = n.before_id;
+			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
+
+			if( LJ.chat.getChatState() == "hidden" ){
+				LJ.chat.showChatWrap();
+			}
+			LJ.delay(300).then(function(){
+
+			});
+			LJ.chat.showChatInview( chat_id );
+			LJ.chat.activateChat( chat_id );
+			LJ.chat.refreshChatJsp( chat_id );
+			LJ.chat.refreshChatState( chat_id );
 
 		},
 		notificationCallback__MarkedAsHost: function( n ){
 
-			var begins_at = n.event_begins_at;
+			var before_id  = n.before_id;
+			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
 
-			evt = _.find( LJ.cache.events, function( evt ){
-				return moment( evt.begins_at ).dayOfYear() == moment( begins_at ).dayOfYear();
-			})
-
-			if( !evt ){
-				return LJ.ui.showToast( LJ.text("app_event_unavailable") );
+			if( LJ.chat.getChatState() == "hidden" ){
+				LJ.chat.showChatWrap();
 			}
+			LJ.chat.showChatInview( chat_id );
+			LJ.chat.activateChat( chat_id );
+			LJ.chat.refreshChatJsp( chat_id );
+			LJ.chat.refreshChatState( chat_id );
 
-			var event_id = evt._id;
-			var group_id = "hosts";
-
-			if( !event_id || !group_id ){
-				return LJ.wlog('Cant register "unread marked as host" callback without event_id and chat_id ' );
-			}
-
-			//LJ.notifications.showChat( event_id, group_id );
+			LJ.before.fetchAndShowBeforeInview( before_id );
 
 		},
 		notificationCallback__FillProfile: function( n ){

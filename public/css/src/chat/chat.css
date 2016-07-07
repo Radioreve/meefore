@@ -12,17 +12,13 @@
     flex-flow: column nowrap;
 }
 
-.chat-wrap:not(.--active) {
-    display: none!important;
-}
+.chat-wrap {height: 100%;position: absolute;width: 100%;top: 0;left: 0;right: 0;bottom: 0;margin: auto;background: white;}
 
 .chat-row-wrap {
     display: flex;
     flex-flow: column nowrap;
-    padding: 10px 0px 10px 0px;
-    height: 100%;
-    position: relative;
-    width: 100%;
+    box-sizing: border-box;
+    padding-top: 20px;
 }
 
 .chat__loader {
@@ -390,7 +386,6 @@
     width: 120px;
     margin-bottom: 20px;
     color: #1b69ec;
-    color: #eee;
 }
 
 .chat-empty.--pending .chat-empty__icon {

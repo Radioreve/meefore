@@ -277,6 +277,23 @@
 			}
 
 		},
+		getChatIdByBeforeId: function( before_id ){
+
+			var channel_item = _.find( LJ.user.channels, function( chan ){
+
+				if( chan.chat_id && chan.before_id && chan.before_id == before_id ){
+					return chan.chat_id;
+				}
+
+			});
+
+			if( channel_item && channel_item.chat_id ){
+				return channel_item.chat_id;
+			} else {
+				return null;
+			}
+
+		},
 		addAndFetchChats: function(){
 
 			// Keep only the channels that are chat-related (= have a team_id parameter)
@@ -497,7 +514,7 @@
 				LJ.chat.addChatRow( html, _.extend( {}, opts, { $wrap: $('.chat-rows-body.--all') }) ):
 				LJ.chat.addChatRow( html, _.extend( {}, opts, { $wrap: $('.chat-rows-body.--team') }) );
 
-			LJ.chat.refreshChatRowsJsp();
+			LJ.chat.refreshChatRowsJsp()
 			LJ.chat.loaderifyChatRow( chat_id );
 			LJ.chat.showChatRow( chat_id );
 
@@ -739,20 +756,16 @@
 			opts = opts || {};
 
 			LJ.chat.state = 'visible';
-
-			var $c = $('.chat');
-			var d  = 200;
-
 			$('.app__menu-item.--chats').addClass('--active');
 
-			if( opts.wrap_only ){
-				return LJ.ui.shradeIn( $c );
-			}
+			var duration  = 300;
+			$('.chat').velocity('shradeIn', {
+				duration: duration
+			});
 
 			LJ.chat.refreshChatRowsJsp();
-			return LJ.ui.shradeAndStagger( $c, {
-				duration: d
-			});
+
+			return LJ.delay( duration );
 
 		},
 		hideChatWrap: function(){
@@ -765,18 +778,12 @@
 			LJ.chat.state = 'hidden';
 			$('.app__menu-item.--chats').removeClass('--active');
 
-			var $c  = $('.chat');
-			var $cc = $c.children();
-			var d   = 200;
-
-			[ $cc, $c ].forEach(function( $el, i ){
-				$el.velocity('shradeOut', {
-					duration: d,
-					display : 'none'
-				});
+			var duration = 200;
+			$('.chat').velocity('shradeOut', {
+				duration: duration
 			});
 
-			return LJ.delay( d );
+			return LJ.delay( duration );
 
 		},
 		loaderifyChatWrap: function( duration ){
@@ -1110,7 +1117,7 @@
 		},
 		updateChatInviewElements: function( chat_id, opts ){
 
-			var $chatinview = LJ.chat.getChatInview( chat_id ).closest('.chat-inview');
+			var $chatinview = LJ.chat.getChatInview( chat_id );
 
 			if( opts.header_h1 ){	
 				$chatinview.find('.chat-inview-title__h1').html( opts.header_h1 );

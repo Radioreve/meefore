@@ -114,7 +114,7 @@
 }
 .cheers-back-actions {
     margin-top: auto;
-    padding: 40px 0 50px 0;
+    padding: 30px 0 40px 0;
     order: 1;
     flex-shrink: 0;
     border-top: 1px solid #eee;
@@ -144,18 +144,16 @@
     /* justify-content: center; */
     align-items: center;
     max-width: 300px;
-    margin: 20px auto 0;
-    /* background: rgb(27, 105, 236); */
-    /* padding: 10px 0; */
-    /* color: white; */
-    /* width: 100%; */
-    /* margin: auto; */
+    margin: 10px auto 30px;
+    background: #1b69ec;
+    background: #4ebb4f;
+    padding: 8px 20px;
+    border-radius: 100px;
+    color: white;
 }
 .cheers-back-groupname__h1 {
-    font-weight: 700;
     font-size: 12px;
     margin-right: 4px;
-    max-width: 150px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

@@ -84,24 +84,23 @@
 			}
 		}
 		, mandrill: {
-			api_key: "iAyP05rC1H15WjCbcaNsSA"
+			host     : "smtp.mandrillapp.com",
+			port     : "587",
+			username : "Meefore",
+			api_key  : "iAyP05rC1H15WjCbcaNsSA"
 		}
 		, mailchimp: {
 			api_key   : '1975e0d603d5cb51d2cabd25dfab1d94-us10',
 			list_id   : '7d19672539',
 			dc	      : 'us10',
 			username  : 'methodezela@gmail.com',
-			groups: [
+			interests: [
 				{
-					name       : 'invitations',
-					id         : '7e8b852d87',
-					init_value : 'yes'
-				},
-				{
-					name       : 'newsletter',
-					id         : '2ba5ea2900',
-					init_value : 'yes'
-				}
+		            "id" 	     	: "ec4795dc5b",
+		            "name"       	: "newsletter",
+					"category_id"	: "f02635c296",
+		            "default_value" : true
+	       	 	}
 
 			],
 			list_id2  : '0e8fd0d396', // legacy

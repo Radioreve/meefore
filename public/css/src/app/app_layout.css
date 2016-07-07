@@ -353,7 +353,7 @@ button:hover {
     color: rgb(27, 105, 236);
     position: absolute;
     right: 0px;
-    bottom: -20px;
+    top: -10px;
     z-index: 1;
     font-size: 22px;
     cursor: pointer;

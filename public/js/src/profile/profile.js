@@ -117,7 +117,7 @@
 
 			$block.find('.edit')
 				  .velocity('bounceOut', {
-				  	duration: LJ.ui.action_hide_duration,
+				  	duration: 10,
 				  	display: 'none'
 				  });
 

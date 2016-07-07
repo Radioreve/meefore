@@ -477,7 +477,7 @@
 
 			if( LJ.chat.getChatState() == "hidden" ){
 				LJ.cheers.setCloseType("hide_all");
-				LJ.chat.showChatWrap({ wrap_only: true });
+				LJ.chat.showChatWrap();
 			} else {
 				// Chat was already opened. Only set a cheers_mode if none was set before
 				if( !LJ.cheers.getCloseType() ){
@@ -671,24 +671,20 @@
 			var pictures  = LJ.pictures.makeRosaceHtml( pictures, 'cheers-back' );
 			var user_rows = LJ.renderUserRows( members_profiles );
 
-			var groupname_html   = LJ.renderMultipleNames( _.map( members_profiles, 'name' ) );
 			var cheers_back_html = LJ.chat.renderChatInviewHeader(); // Borrow it to the chat module
 
 			return LJ.ui.render([
 
 				'<div class="cheers-back">',
 					cheers_back_html,
-					'<div class="cheers-back-groupname">',
-						'<div class="cheers-back-groupname__h1">',
-							groupname_html,
-						'</div>',
-						'<div class="cheers-back-groupname__h2">',
-							'<span data-lid="cheers_back_h2"></span>',
-						'</div>',
-					'</div>',
 					'<div class="cheers-back-pictures">',
 			        	pictures, 
 			        '</div>',
+					'<div class="cheers-back-groupname">',
+						'<div class="cheers-back-groupname__h1">',
+							'<span data-lid="cheers_back_groupname"></span>',
+						'</div>',
+					'</div>',
 			        '<div class="cheers-back-users">',
 			        	user_rows,
 			        '</div>',

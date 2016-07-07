@@ -1,16 +1,18 @@
 	
-	var config 	   = require('../config/config');
-	var User       = require('../models/UserModel');
-	var bluebird   = require('bluebird');
-	var config     = require('../config/config');
-	var _          = require('lodash');
-	var term	   = require('terminal-kit').term;
+	var config          = require('../config/config');
+	var User            = require('../models/UserModel');
+	var bluebird        = require('bluebird');
+	var config          = require('../config/config');
+	var _               = require('lodash');
+	var term            = require('terminal-kit').term;
+	var mandrill        = require('mandrill-api/mandrill');
+	var mandrill_client = new mandrill.Mandrill( config.mandrill.api_key );
 	
 	function handleErr( err, err_ns ){
 
-		err_ns = err_ns || "sendergrid_api";
+		err_ns = err_ns || "alerter";
 
-		term.bold.red("Error sending email, err_ns="'+ err_ns +'"\n");
+		term.bold.red('Error sending email, err_ns='+ err_ns );
 		term.bold.red( err + '\n' );
 	}
 
@@ -26,8 +28,8 @@
 			"fr": [
 						"<div><b>Bonjour %receiver_name,</b></div>",
 						"<br>",
-						"<div>Des messages vous ont été envoyé lorsque vous n'étiez pas connecté.</div>",
-						"<div>Pour y répondre, c'est par <a href=\"http://www.meefore.com\">ici</a>.</div>",
+						"<div>Il y a de l'activité sur une des discussion où vous participez.</div>",
+						"<div>Connectez-vous pour accéder à toutes vos <a href=\"http://www.meefore.com\">discussions.</a>.</div>",
 						"<br>",
 						"<div>A bientôt en soirée,</div>",
 						"<div>L'équipe de Meefore</div>"
@@ -36,8 +38,8 @@
 			"en": [
 						"<div><b>Hi %receiver_name,</b></div>",
 						"<br>",
-						"<div>You have unread messages in your inbox.</div>",
-						"<div>To reply, it happens <a href=\"http://www.meefore.com\">here</a>.</div>",
+						"<div>There has been activity on one of your discussions since your your connection.</div>",
+						"<div>Connect to access all your <a href=\"http://www.meefore.com\">chats</a>.</div>",
 						"<br>",
 						"<div>See you soon around a drink,</div>",
 						"<div>The Meefore team</div>"
@@ -77,7 +79,7 @@
 						"<div><b>Bonjour %receiver_name,</b></div>",
 						"<br>",
 						"<div>%friend_name vous a marqué coorganisateur de son <a href=\"http://www.meefore.com\">before</a></div>",
-						"<div>%address, %date</div>',"
+						"<div>%address, %date</div>",
 						"<br>",
 						"<div>A bientôt en soirée,</div>",
 						"<div>L'équipe de Meefore</div>"
@@ -87,7 +89,7 @@
 						"<div><b>Hi %receiver_name,</b></div>",
 						"<br>",
 						"<div>%friend_name has marked you as host of his <a href=\"http://www.meefore.com\">pregame</a></div>",
-						"<div>%address, %date</div>',"
+						"<div>%address, %date</div>",
 						"<br>",
 						"<div>See you soon around a drink,</div>",
 						"<div>The Meefore team</div>"
@@ -117,38 +119,46 @@
 						"<div>See you soon around a drink,</div>",
 						"<div>The Meefore team</div>"
 			].join('')
-		},
-		"alert_before_status_subject": {
-			"fr": "Vous avez été marqué coorganisateur",
-			"en": "You have been marked as host"
 		}
 
 
 	};
 
 
-	var sendSimpleAdminEmail = function( subject, html ){
+	var sendAdminEmail = function( opts ){
 
-			var simple_email = new sendgrid.Email({
-				from     :'watcher@meefore.com',
-				fromname : 'Watcher',
-				subject  : subject,
-				to       : ['leo@meefore.com'],
-				html     : html
-			});
+		var subject = opts.subject;
+		var html 	= opts.html;
 
-			if( process.env.NODE_ENV == 'prod' ){
-				simple_email.to.push('ben@meefore.com');
-			}
+		var recipients = [{ email: 'leo@meefore.com', name: 'Léo' }];
 
-			sendgrid.send( simple_email, function( err, res ){
-				if( err ){
-					console.log(err);
-				} else {
-					console.log(res);
-				}
-			});
-		};
+		if( process.env.NODE_ENV == 'prod' ){
+			recipients.push({ email: 'ben@meefore.com', name: 'Ben' });
+		}
+
+		mandrill_client.messages.send({
+
+			"key": config.mandrill.api_key,
+
+		    "message": {
+
+		        "from_email" : "watcher@meefore.com",
+		        "from_name"  : "MeeforeWatcher",
+
+		        "subject"	 : subject,
+		        "html"       : html,
+		        "to"		 : recipients
+
+		    }
+		},
+		function( res ){
+			console.log( res );
+		},
+		function( err ){
+			term.bold.red( err );
+		});
+
+	};
 
 	var sendAlertEmail = function( type ){
 		return function( req, res, next ){
@@ -157,7 +167,10 @@
 			next();
 
 			if( type == "new_message" ){
-				sendAlertEmail__NewMessage();
+				filterUsersToAlert()
+					.then(function( users ){
+						sendAlertEmail__NewMessage();
+					});
 			}
 
 			if( type == "marked_as_host" ){
@@ -176,23 +189,40 @@
 	};
 
 
+	var sendAlertEmail__Base = function( subject, html, targets ){
 
-	var sendAlertEmail__Base = function( opts, callback ){
+		targets = Array.isArray( targets ) ? targets : [ targets ];
 
-		var email = new sendgrid.Email({
-			from : 'team@meefore.com',
-			to   : 
+		var recipients = [];
+		targets.forEach(function( target ){
+			recipients.push({
+				email: target.email,
+				name : target.mail,
+				type : "to"
+			});
+		});
 
-		})
+		mandrill_client.messages.send({
 
-		return sendgrid.sendAsync( email )
-				.then(function( res ){
-					term.bold.green( res );
-				})
-				.catch(function( err ){
-					handleErr( err );
-				});
+			"key": config.mandrill.api_key,
 
+		    "message": {
+
+		        "from_email" : "hello@meefore.com",
+		        "from_name"  : "Meefore",
+
+		        "subject"	 : subject,
+		        "html"       : html,
+		        "to"		 : recipients
+
+		    }
+		},
+		function( res ){
+			console.log( res );
+		},
+		function( err ){
+			term.bold.red( err );
+		});
 
 	};
 
@@ -211,10 +241,10 @@
 
 			var cc = user.country_code;
 
-			var subject = txt.makeText( cc, "alert_message_received_subject" );
+			var subject = makeText( cc, "alert_message_received_subject" );
 			subject = subject.replace('%sender_name', sender_name );
 
-			var html = txt.makeText( cc, "alert_message_received_body" );
+			var html = makeText( cc, "alert_message_received_body" );
 			html = html.replace('%receiver_name', user.name );
 
 
@@ -226,10 +256,7 @@
 				html     : html
 			});
 
-			sendgrid.send( alert_email, function( err, res ){
-				if( err )
-					return console.log(err);
-			});
+			sendAlertEmail__Base( opts );
 
 		});
 	};
@@ -247,9 +274,9 @@
 
 			var cc = user.country_code;
 
-			var subject = txt.makeText( cc, "alert_accepted_in_subject" );
+			var subject = makeText( cc, "alert_accepted_in_subject" );
 
-			var html = txt.makeText( cc, "alert_accepted_in_body" );
+			var html = makeText( cc, "alert_accepted_in_body" );
 			html = html.replace('%receiver_name', user.name );
 
 
@@ -303,10 +330,53 @@
 
 	};
 
+	(function testAllEmails( test ){
+
+		if( !test ) return;
+
+		var send_to = [{ email: "ljayame@gmail.com" }, { email: "leo@blstudio.fr" }];
+
+		sendAlertEmail__Base(
+			makeText("fr", "alert_message_received_subject").replace('%sender_name','Frank'),
+			makeText("fr", "alert_message_received_body").replace('%receiver_name','Léo'),
+			send_to
+		);
+
+		sendAlertEmail__Base(
+			makeText("fr", "alert_accepted_in_subject"),
+			makeText("fr", "alert_accepted_in_body").replace('%receiver_name','Léo'),
+			send_to
+		);
+
+		sendAlertEmail__Base(
+			makeText("fr", "alert_marked_as_host_subject"),
+			makeText("fr", "alert_marked_as_host_body")
+				.replace('%receiver_name','Léo')
+				.replace('%friend_name','Céline')
+				.replace('%address', '37 rue du four, 75006 Paris')
+				.replace('%date', '26/06/16, 19:00'),
+			send_to
+		);
+
+		sendAlertEmail__Base(
+			makeText("fr", "alert_cheers_received_subject"),
+			makeText("fr", "alert_cheers_received_body").replace('%receiver_name','Léo'),
+			send_to
+		);
+
+	// Set to true to activate tests
+	})( false );
+
+	filterUsersToAlert = function(){
+		return new Promise(function( resolve, reject ){
+			resolve();
+		});
+	}
+
 
 	module.exports = {
 
-		sendSimpleAdminEmail : sendSimpleAdminEmail,
-		sendAlertEmail 		 : sendAlertEmail
+		sendAdminEmail : sendAdminEmail,
+		sendAlertEmail : sendAlertEmail
 
-	}
+	};

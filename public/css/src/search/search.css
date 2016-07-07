@@ -181,7 +181,7 @@
     display: none;
     margin: 0 0 0px 8px;
     position: relative;
-    top: -2px;
+    /* top: -2px; */
 }
 
 .search-user__country i {
@@ -189,7 +189,7 @@
 }
 
 .search-user__gender {
-    display: inline-block!important;
+    display: inline-block;
     position: relative;
     width: 8px;
     height: 8px;

@@ -1,0 +1,41 @@
+[
+    {
+        "id": "a38b89c4a398be61e13691648d14299e",
+        "email_address": "ljayame@gmail.com",
+        "merge_fields": {
+            "NAME": "",
+            "AGE": "",
+            "JOB": "",
+            "GENDER": ""
+        },
+        "interests": {
+            "ec4795dc5b": false
+        }
+    },
+    {
+        "id": "6bbc50dff4a3c03b925934b06337127c",
+        "email_address": "tinder@mailchimp.com",
+        "merge_fields": {
+            "NAME": "Adr",
+            "AGE": 25,
+            "JOB": "surfer",
+            "GENDER": "female"
+        },
+        "interests": {
+            "ec4795dc5b": false
+        }
+    },
+    {
+        "id": "d729369cc81210f8f41b2abc6ad558cd",
+        "email_address": "ranjith@mailchimp.com",
+        "merge_fields": {
+            "NAME": "Léah",
+            "AGE": 22,
+            "JOB": "surfer",
+            "GENDER": "female"
+        },
+        "interests": {
+            "ec4795dc5b": true
+        }
+    }
+]

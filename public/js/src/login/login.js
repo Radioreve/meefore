@@ -222,7 +222,6 @@
 
 				return LJ.api.updateProfile( update )
 						  .then(function( exposed ){
-						  		LJ.user.location = exposed.user.location;
 							  	LJ.profile.setMyInformations();
 							  	return;
 						});

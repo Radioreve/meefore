@@ -65,16 +65,23 @@
 			// Specificities
 			var duration = 220;
 			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
+
 			if( target_link == 'search' && hasMeepassRibbon ) {
 				LJ.ui.shradeIn( $('.meepass-ribbon'), duration )
 			} 
+
 			if( target_link != 'search' && hasMeepassRibbon ){
 				LJ.ui.shradeOut( $('.meepass-ribbon'), duration )
 			}
+
 			if( target_link == 'map' ){
 				$('.app').removeClass('padded');
 			} else {
 				$('.app').addClass('padded');
+			}
+
+			if( target_link != "menu" ){
+				LJ.friends.hideInviteFriendsPopup();
 			}
 
 		}

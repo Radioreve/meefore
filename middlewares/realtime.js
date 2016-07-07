@@ -335,7 +335,7 @@
 
 		var err_ns =  "updating_channel_location";
 
-		var user = req.sent.expose.user;
+		var user = req.sent.user;
 
 		if( req.sent.location ){
 
@@ -355,9 +355,10 @@
 			user.channels = user.channels.filter( Boolean );
 
 			user.markModified('channels');
+
 			user.save(function( err, user ){
 
-				if( err ) handleErr( req, res, err_ns, err );
+				if( err ) return handleErr( req, res, err_ns, err );
 
 				req.sent.expose.user = user;
 				next();

@@ -5,14 +5,20 @@
 
 		allowed_ids: [ 
 
+			// 'subscribed'
 			'newsletter',
-			'invitations',
+
+			// 'ux'
 			'auto_login',
 			'show_gender',
 			'show_country',
-			'new_message_received',
-			'accepted_in',
-			'message_seen'
+			'message_seen',
+
+			// 'alerts_email'
+			"new_message",
+			"marked_as_host",
+			"new_cheers",
+			"new_match"
 
 		],
 
@@ -27,37 +33,64 @@
 			return;
 
 		},
+		findObjectLeaves: function( o ){
+			
+			var self   = this;
+			var leaves = [];
+			var keys   = Object.keys( o );
+		    
+		    for( var i=0; i<keys.length; i++ ){
+		    	
+		        var key = keys[ i ];
+		    	if( o.hasOwnProperty( key ) ){
+		        	if( typeof o[ key ] != "object" ){
+		            	var item = { "key": key, "value": o[ key ] };
+		            	leaves.push( item );
+		            } else {
+		            	leaves = leaves.concat( self.findObjectLeaves.call( self, o[ key ] ) );
+		            }
+		        } 
+		    }
+		    
+		    return leaves;
+		    
+		},
 		setMyPreferences: function(){
 
-			var app_preferences = LJ.user.app_preferences;
+			// Reset
+			$('[data-settings-type-id]').find('.toggle').removeClass('--active');
+			
+			// Setting the toggles to active/inactive
+			LJ.settings.findObjectLeaves( LJ.user.app_preferences ).forEach(function( leaf ){
 
-			_.keys( app_preferences ).forEach(function( key ){
+				var $toggle = $('[data-settings-type-id="' + leaf.key + '"]').find('.toggle');
+				var $input  = $('[data-settings-type-id="' + leaf.key + '"]').find('input');
 
-                _.keys( app_preferences[ key ]).forEach(function( sub_key ){
-
-                    var value	= app_preferences[ key ][ sub_key ];
-                    var $toggle = $('[data-settings-type-id="' + sub_key + '"]').find('.toggle');
-
-                    if( $toggle.length > 0 && value == 'yes' ){
+				if( $toggle.length > 0 && leaf.value === true ){
                     	$toggle.addClass('--active');
-                    }
-                });
-            });
+                }
 
-			$('#settings__contact-email').val( LJ.user.contact_email );
-			$('#settings__invite-code').val( LJ.user.invite_code );
+                // if someday some preferences are of type string...
+                if( $input.length > 0 ){
+                	$input.val( leaf.value );
+                }
 
-		},
+			});
+
+			$('[data-settings-type-id="contact_email"]').find('input').val( LJ.user.contact_email );
+			$('[data-settings-type-id="invite_code"]').find('input').val( LJ.user.invite_code );
+
+		},	
 		applyUxPreferences: function(){
 
-			if( LJ.user.app_preferences.ux.show_country == "yes" ){
+			if( LJ.user.app_preferences.ux.show_country === true ){
 				$('.js-user-country').show();
 			} else {
 				$('.js-user-country').hide();
 			}
 
-			if( LJ.user.app_preferences.ux.show_gender == "yes" ){
-				$('.js-user-gender').show();
+			if( LJ.user.app_preferences.ux.show_gender === true ){
+				$('.js-user-gender').css({ display: 'inline-block' });
 			} else {
 				$('.js-user-gender').hide();
 			}
@@ -195,19 +228,36 @@
 			$block.attr('data-callid', call_id ).addClass('--validating');
 
 			var update = {
-				call_id         : call_id,
-				contact_email   : new_contact_email,
-				app_preferences : LJ.user.app_preferences
+				call_id       : call_id,
+				contact_email : new_contact_email
 			};
 
-			LJ.api.updateSettingsContact( update )
+			LJ.api.updateUser( update )
 				.then( LJ.settings.handleUpdateSettingsSuccess, LJ.settings.handleApiError );
 
 		},
+		updateKey: function( o, target_key, value ){
+			
+		    var self = this;
+		    var keys = Object.keys( o );
+		    
+		    for( var i=0; i<keys.length; i++ ){
+		  
+		        var key = keys[ i ];
+		    	if( key === target_key && typeof o[ key ] == typeof value ){
+		        	return o[ key ] = value;
+		        }
+		        
+		        if( typeof o[ key ] == "object" ){
+		        	self.updateKey.apply( self, [ o[ key ], target_key, value ]);
+		        }
+
+		    }
+		    		    
+		},
 		updateSettingsToggle: function(){
-
-			var $toggle = $(this);
-
+			
+			var $toggle     = $( this );
 			var settings_id = $toggle.closest('.settings-item').attr('data-settings-type-id');
 
 			var allowed_ids = LJ.settings.allowed_ids; 
@@ -215,58 +265,27 @@
 				return LJ.wlog('This settings id : ' + settings_id + ' is not into the allowed list : ' + allowed_ids );
 			}
 
+			var settings_value = $toggle.hasClass('--active') ? false : true;
+			LJ.settings.updateKey( LJ.user.app_preferences, settings_id, settings_value );
+						
 			// Update the ui
 			var call_id = LJ.generateId();
 			LJ.ui.showLoader( call_id );
 			$toggle.toggleClass('--active');
-
-			// Change internal state by toggling one property
-			LJ.settings.updateSettings( settings_id );
-
+	
+			
 			var update = {
-				app_preferences: LJ.user.app_preferences,
-				call_id: call_id
+				call_id         : call_id,
+				app_preferences : LJ.user.app_preferences
 			};
-
-			// Decide for the appropriate url handler based on the state
-			if( ['newsletter', 'invitations'].indexOf( settings_id ) != -1 ){
-				var apiFn = LJ.api.updateSettingsMailing;
-				update.contact_email = LJ.user.contact_email;
-			}
-
-			if( ['auto_login', 'show_gender', 'show_country', 'message_seen'].indexOf( settings_id ) != -1 ){
-				var apiFn = LJ.api.updateSettingsUx;
-				update.contact_email = LJ.user.contact_email;
-			}
-
-			if( ['new_message_received', 'accepted_in'].indexOf( settings_id ) != -1 ){
-				var apiFn = LJ.api.updateSettingsAlerts;
-			}
-
-			if( ! typeof apiFn == 'function' ){
-				return LJ.wlog('Unable to find which apiFn to use');
-			}
-
-			apiFn( update )
-				.then( LJ.settings.handleUpdateSettingsSuccess, LJ.settings.handleApiError );
-
-
-		},
-		updateSettings: function( settings_id ){
-
-			var preferences = LJ.user.app_preferences;
-			_.keys( preferences ).forEach(function( key ){
-				_.keys( preferences[ key ] ).forEach(function( setting_type ){
-					if( setting_type == settings_id ){
-						if( preferences[ key ][ setting_type ] == 'yes' ){
-							preferences[ key ][ setting_type ] = 'no';
-						} else {
-							preferences[ key ][ setting_type ] = 'yes';
-						}
-					}
-				});	
-			});
-
+						
+			LJ.api.updateUser( update )
+				.then(function( res ){
+					LJ.settings.handleUpdateSettingsSuccess( res );
+				})
+				.catch(function( err ){
+					LJ.settings.handleApiError( err );
+				});
 
 		},
 		handleApiError: function( err ){
@@ -305,20 +324,19 @@
 
 			LJ.log('Update settings success');
 			
-			var call_id         = expose.call_id;
+			var call_id = expose.call_id;
 
 			LJ.ui.hideLoader( call_id );
 			LJ.ui.showToast( LJ.text('to_settings_update_success') );
+			LJ.settings.storeAutologinPreferences();
+			LJ.settings.applyUxPreferences();
 
-			// Check if this was 
+			// Check if this was a textfield input;
 			var $markedItem = $('.settings-item[data-callid="' + call_id + '"]');
 			if( $markedItem.length == 1 ){
 				$markedItem.attr('data-callid', null ).attr('data-restore', null );
 				LJ.settings.deactivateInput( $markedItem );
 			}
-
-			LJ.settings.storeAutologinPreferences();
-			LJ.settings.applyUxPreferences();
 
 		},		
 		showSponsorshipModal: function(){
@@ -384,7 +402,7 @@
 
 			$block.find('.edit')
 				  .velocity('bounceOut', {
-				  	duration: LJ.ui.action_hide_duration,
+				  	duration: 10, // LJ.ui.action_hide_duration,
 				  	display: 'none'
 				  });
 
@@ -441,7 +459,7 @@
 		},
 		handleDeleteAccountAction: function(){
 
-			var $btn = $(this);
+			var $btn = $( this );
 			var action = $btn.attr('data-action');
 
 			if( action == "cancel" ){
@@ -457,8 +475,14 @@
 			LJ.api.deleteMyAccount()
 				.then( LJ.ui.shadeModal )
 				.then(function(){
-					localStorage.removeItem('preferences');
+						
+					// Clear the local storage
+					LJ.store.remove("autologin");
+					LJ.store.remove("facebook_access_token");
+					LJ.store.remove("seen_chats");
+
 					location.reload();
+
 				})
 				.catch(function(){
 					$btn.removeClass('--pending');

@@ -372,8 +372,8 @@
 			"us": "Current city"
 		},
 		p_ideal_night_label: {
-			"fr": "Ta soirée idéale",
-			"us": "Your ideal night"
+			"fr": "Ma soirée idéale",
+			"us": "My dream night"
 		},
 		p_name_explanation: {
 			"fr": "Pseudonyme par lequel les autres membres vous appelerons. Choose wisely.",
@@ -1402,11 +1402,11 @@
 			"fr": "vous",
 			"us": "you"
 		},
-		settings_ux_unread_messages_label: {
+		settings_ux_message_seen_label: {
 			"fr": "Signaler messages lus",
 			"us": "Signal read messages"
 		},
-		settings_ux_unread_messages_explanation: {
+		settings_ux_message_seen_explanation: {
 			"fr": "Les autres utilisateurs sauront que vous avez lu leurs messages",
 			"us": "Other users will know that you have read their messages"
 		},
@@ -1450,21 +1450,37 @@
 			"fr": "Notifications par email",
 			"us": "Email notifications"
 		},
-		settings_emails_accepted_in_label: {
-			"fr": "Nouveau match",
-			"us": "New match"
-		},
-		settings_emails_accepted_in_explanation: {
-			"fr": "Envoyée lorsque vous avez un nouveau matché",
-			"us": "Sent when you have a new match"
-		},
-		settings_emails_new_message_received_label: {
+		settings_emails_new_message_label: {
 			"fr": "Nouveau message reçu",
 			"us": "New message received"
 		},
-		settings_emails_new_message_received_explanation: {
-			"fr": "Envoyée à chaque nouveau message",
+		settings_emails_new_message_explanation: {
+			"fr": "Envoyé à chaque nouveau message",
 			"us": "Sent every time you receive a new message"
+		},
+		settings_emails_marked_as_host_label: {
+			"fr": "Marqué(e) coorganisateur",
+			"us": "Marked as host"
+		},
+		settings_emails_marked_as_host_explanation: {
+			"fr": "Envoyé lorsqu'un ami vous désigne comme étant coorganisateur de son before",
+			"us": "Sent when your friends tags you as co-host of his pregame"
+		},
+		settings_emails_new_match_label: {
+			"fr": "Nouveau Match",
+			"us": "New Match"
+		},
+		settings_emails_new_match_explanation: {
+			"fr": "Envoyé lorsque vous avez un nouveau Match",
+			"us": "Sent when you have a new Match"
+		},
+		settings_emails_new_cheers_label: {
+			"fr": "Nouveau Cheers",
+			"us": "New Cheers"
+		},
+		settings_emails_new_cheers_explanation: {
+			"fr": "Envoyée lorsque vous reçu avez un nouveau Cheers",
+			"us": "Sent when you have received a new Cheers"
 		},
 		settings_notifs_newsletter_label: {
 			"fr": "Newsletter",
@@ -1587,8 +1603,8 @@
 			"us": "Details"
 		},
 		user_profile_ideal_night: {
-			"fr": "Ta soirée parfaite",
-			"us": "Your perfect night"
+			"fr": "Sa soirée idéale",
+			"us": "The dream night"
 		},
 		logout_title: {
 			"fr": "A bientôt",
@@ -2018,9 +2034,9 @@
 				return "Seen by " + LJ.renderMultipleNames( names );
 			}
 		},
-		cheers_back_h2: {
-			"fr": "vous ont envoyé un Cheers",
-			"us": "have sent you a Cheers"
+		cheers_back_groupname: {
+			"fr": "Vous avez reçu un Cheers de...",
+			"us": "You have been sent a Cheers by..."
 		},
 		be_ghost_title: {
 			"fr": "Oups",
@@ -2045,6 +2061,10 @@
 		invite_friends_popup_btn: {
 			"fr": "Message Facebook",
 			"us": "Facebook message"
+		},
+		chat_input_placeholder: {
+			"fr": "Ecrivez un message...",
+			"us": "Write a message..."
 		}
 
 

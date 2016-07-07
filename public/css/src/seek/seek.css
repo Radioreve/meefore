@@ -30,9 +30,8 @@
 }
 
 .pac-item-query {
-    font-size: 18px;
+    font-size: 14px;
     margin-right: 4px;
-    font-family: 'Alegreya sans';
     color: #191919;
 }
 
@@ -74,7 +73,7 @@
 .seek-login-places .pac-item-query {
     color: white;
     font-weight: 200;
-    font-size: 20px;
+    font-size: 13px;
 }
 
 .seek-login-places .pac-icon {
@@ -82,7 +81,6 @@
 }
 
 .seek-login-places .pac-matched {
-    font-weight: inherit;
 }
 
 
@@ -109,7 +107,6 @@
     border-radius: 4px;
     color: #919191;
     padding: 2px 10px;
-    font-family: 'Open sans';
 }
 
 .seek-map-browser-places .pac-item:first-of-type {
@@ -122,9 +119,7 @@
 
 .seek-map-browser-places .pac-item-query {
     color: black;
-    font-weight: 700;
     font-size: 12px;
-    font-family: 'Open sans';
 }
 
 .seek-map-browser-places .pac-icon {
@@ -133,7 +128,7 @@
 }
 
 .seek-map-browser-places .pac-matched {
-    font-weight: inherit;
+    font-weight: 700;
 }
 
 
@@ -159,4 +154,6 @@
     display: none;
 }
 
-.seek-be-create .pac-matched {}
+.seek-be-create .pac-matched {
+    font-weight: 700;
+}
