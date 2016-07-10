@@ -4,23 +4,25 @@
 
 		init: function(){
 
+			LJ.login.hideLandingElements();
+
 			return LJ.promise(function( resolve, reject ){
 
 				if( document.location.hash == "#1" ){
 					LJ.log('Logging in with test user Victoriale...');
-					var tk = 'CAAXR2Qo4lc4BAPiMRUTQITCZAAJj651bZBnHAQEjBUqYdlqxDTmoBlhfiYjODd5M2mCmDNkCa34l1ZAewhIuVQzRnbSTCIIu4XHjW8Y3yAtj9hckaY9zHuhqp6YKtSNe8DDPFPUN77ZA17ZAWtghTs5pF0j6bJE48kAlY8kUgbGWZBfiXhwLdyhLatE9wMK9sZD';
+					var tk = "EAAXR2Qo4lc4BAChEDRcMA17PowABdrp711d8Fl03VzjB1ptsqMFaKn2jhB4xOF70HpTfELjUVTtcSkJN1Ju9s0WZA5o1Rrez9uW0mgXsbJsxCMe650gLb3o92MLugROZAuQTKsAC2ZAMNwCSJwxIk1sLTEpv5kZD";
 					return resolve( tk );
 				}
 
 				if( document.location.hash == "#2" ){
 					LJ.log('Logging in with test user Angelah...');
-					var tk = 'EAAXR2Qo4lc4BADaXgJQ42ojvzlKcgU4f6rfyaSpVK14ZABheWIkQnZAfHaRDrq40QpafTf7bWa9W3jReclU3D904pTEwz5wJ7ZB93xOIYBBYUIrSUuiewZBWVBQCZBHnKBcDCTkPt5J3IdgKohC2At9PQbPRwNq0ZD';
+					var tk = "EAAXR2Qo4lc4BAMUbS4HfY6Uvk5sM1HkOpan12pCAd3tCZAZCGrXGPJXJBj8dazV5OMDqx6aCuX09VfZAb8CVqeEOfmGyCUUoSUzSHmng6GX9FWtpuzCdAPpVzWFxHXWE2VPjb4ybUCQ6ZClAggtLlNn232EZASEIZD";
 					return resolve( tk );
 				}
 
 				if( document.location.hash == "#3" ){
 					LJ.log('Logging in with test user Davida...');
-					var tk = 'EAAXR2Qo4lc4BAMRzoOWoksFT356nRgJlU1pZBgNrX86FcWBpTRLXTJjznQjEBngLuca4IuqVB1T6Yg5u5FdqvoSZBfvNJZBxJRIRx2mkKF4cl3pBVVwJrskxfjU3j7wM9OvB5PvSBOU2wEYZCOqBC6coVCLS1eAZD';
+					var tk = "EAAXR2Qo4lc4BAOEKyewke6ibcU0zB0BvxJSyKdNsOdJFzTGD52MB1QFA1Ay3HHG1XD9WF747zF88rrBmZCODWXHx46Jp8hEWxi5PTZC3G9zjH4pyaZCcj586ZAZAvBExU0Jt8aKfVC9LR2XAzvjGBq8chED7EGlUZD";
 					return resolve( tk );
 				}
 
@@ -81,7 +83,20 @@
 			return LJ.promise(function( resolve, reject ){
 				LJ.log( message );
 				LJ.log('Starting landing...');
-				LJ.ui.hideCurtain({ duration: 500 })
+
+				$( LJ.static.renderStaticImage('slide_loader') )
+					.hide()
+					.appendTo('.curtain')
+					.velocity('shradeIn', { duration: 800 });
+
+				$('.curtain').find('.slide__loader').velocity('shradeOut', {
+					duration: 600,
+					complete: function(){
+						LJ.ui.hideCurtain({ duration: 800 });
+						LJ.login.showLandingElements();
+						
+					}
+				})
 			});
 		}
 

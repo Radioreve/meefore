@@ -258,6 +258,7 @@
 			var d  = LJ.search.filters_duration || 300;
 
 			LJ.before.clearCreateBefore();
+			LJ.ui.adjustWrapperHeight( $('.be-create') );
 
 			$i.velocity('shradeOut', {
 				duration : d,
@@ -266,9 +267,7 @@
 
 			LJ.delay( d )
 				.then(function(){
-					LJ.ui.shradeAndStagger( $w, {
-						duration: d
-					});
+					return LJ.ui.shradeIn( $w, d );
 				});
 
 
@@ -277,21 +276,17 @@
 
 			var $i  = $('.map__icon.--create-before');
 			var $w  = $('.be-create');
-			var $ch = $w.children();
 			var d   = LJ.search.filters_duration;
 
-			$i.hide().velocity('shradeIn', {
+			$w.velocity('shradeOut', {
 				duration : d,
-				display  : 'flex',
-				delay    : d
+				display  : 'none'
 			});
 
-			[ $ch, $w ].forEach(function( $el, i ){
-				$el.velocity('shradeOut', {
-					duration: d,
-					display : 'none'
-				})
-			});
+			LJ.delay( d )
+				.then(function(){
+					return LJ.ui.shradeIn( $i, d );
+				});
 
 		},
 		clearCreateBefore: function(){
@@ -402,11 +397,18 @@
 		endCreateBefore: function( expose ){
 			
 			// Friendly loggin
-			LJ.log(expose);
+			var before      = expose.before;
+			var before_item = expose.before_item;
 
 			// Ui update
 			LJ.before.hideCreateBefore();
 			LJ.before.showBrowser();
+			LJ.delay( 1000 ).then(function(){
+
+				LJ.before.dependifyCreateBefore();
+				LJ.map.activateDate( moment( before.begins_at ) );
+
+			});
 
 		},	
 		handleCreateBefore: function(){

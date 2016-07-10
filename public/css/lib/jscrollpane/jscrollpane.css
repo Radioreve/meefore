@@ -24,7 +24,7 @@
 .jspVerticalBar {
    position: absolute;
    top: 0;
-   right: 20px;
+   right: 0px;
    width: 5px;
    z-index: 1000;
 }
@@ -53,7 +53,7 @@
  
 .jspDrag {
    background: rgba(160, 160, 160, 0.41);
-   /* border: 1px solid #33AFFF; */
+   /* border: 1px solid #1b69ec; */
    position: relative;
    top: 0;
    left: 0;

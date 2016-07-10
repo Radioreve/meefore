@@ -20,10 +20,6 @@
 		upload_picture_fb		  	 	 	: '/api/v1/users/:user_id/update-picture-url',
 		update_pictures_url		  	 	 	: '/api/v1/users/:user_id/update-pictures',
 		fetch_cloudinary_tags_url 	 	 	: '/api/v1/users/:user_id/cloudinary-tags',
-		update_settings_ux_url       	 	: '/api/v1/users/:user_id/update-settings-ux',
-		update_settings_contact_url  	 	: '/api/v1/users/:user_id/update-settings-contact',
-		update_settings_alerts_url 	 	 	: '/api/v1/users/:user_id/update-settings-alerts',
-		update_settings_mailing_url  	 	: '/api/v1/users/:user_id/update-settings-mailinglists',
 		mailchimp_status_url    	 	 	: '/api/v1/users/:user_id/mailchimp-status',
 		delete_my_account_url        	 	: '/api/v1/users/:user_id/delete',
 		get_online_users_url 		 	 	: '/api/v1/users/online',
@@ -378,54 +374,6 @@
 
 			});	
 		},
-		updateSettingsUx: function( update ){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.api.post( LJ.api.update_settings_ux_url.replace(':user_id', LJ.user.facebook_id ), update )
-					.then(function( exposed ){
-						if( exposed.user && exposed.user.app_preferences ){
-							return resolve({ app_preferences: exposed.user.app_preferences, call_id: exposed.call_id });
-						} else {
-							LJ.wlog('The server didnt respond with the expected settings object')
-						}
-					}, function( err ){
-						return reject( err );
-					});
-
-			});
-		},
-		updateSettingsMailing: function( update ){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.api.post( LJ.api.update_settings_mailing_url.replace(':user_id', LJ.user.facebook_id ), update )
-					.then(function( exposed ){
-						if( exposed.user && exposed.user.app_preferences ){
-							return resolve({ app_preferences: exposed.user.app_preferences, call_id: exposed.call_id });
-						} else {
-							LJ.wlog('The server didnt respond with the expected settings object')
-						}
-					}, function( err ){
-						return reject( err );
-					});
-
-			});
-		},
-		updateSettingsAlerts: function( update ){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.api.post( LJ.api.update_settings_alerts_url.replace(':user_id', LJ.user.facebook_id ), update )
-					.then(function( exposed ){
-						if( exposed.user && exposed.user.app_preferences ){
-							return resolve({ app_preferences: exposed.user.app_preferences, call_id: exposed.call_id });
-						} else {
-							LJ.wlog('The server didnt respond with the expected settings object')
-						}
-					}, function( err ){
-						return reject( err );
-					});
-
-			});
-		},
 		getMailchimpStatus: function(){
 			return LJ.promise(function( resolve, reject ){
 
@@ -442,18 +390,6 @@
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.api.post( LJ.api.invite_code_url.replace(':user_id', LJ.user.facebook_id ), update )
-					.then(function( exposed ){
-						return resolve( exposed );
-					}, function( err ){
-						return reject( err );
-					})
-
-			});
-		},
-		updateSettingsContact: function( update ){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.api.post( LJ.api.update_settings_contact_url.replace(':user_id', LJ.user.facebook_id ), update )
 					.then(function( exposed ){
 						return resolve( exposed );
 					}, function( err ){
@@ -711,11 +647,11 @@
 
 				});
 		},
-		fetchMoreChannels: function( group_ids ){
+		fetchMoreChannels: function( fetched_chat_ids ){
 			return LJ.promise(function( resolve, reject ){
 
 				var url = LJ.api.fetch_more_channels_url.replace( ':user_id', LJ.user.facebook_id );
-				LJ.api.post( url, { group_ids: group_ids })
+				LJ.api.post( url, { fetched_chat_ids: fetched_chat_ids })
 					.then(function( exposed ){
 						if( !exposed.channels ){
 							return LJ.wlog('The server didnt respond with the expected channels parameter');

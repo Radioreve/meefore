@@ -173,7 +173,7 @@
 		filterModalResults: function(){
 			
 			
-			LJ.delay(100).then(function(){
+			LJ.delay( 100 ).then(function(){
 				
 				
 				var $modal = $('.modal');
@@ -260,6 +260,88 @@
 			$item.removeClass('--selected')
 				 .addClass('--noselect')
 				 .append('<span class="item-modal__noselect">'+ message +'</span>');
+
+
+		},
+		cancelify: function( opts ){
+
+			if( opts.$wrap.length == 0 ) return;
+
+			LJ.ui.shadeify( opts.$wrap, 400 );
+
+			var html = [ '<div class="ui-overlay__message">',
+				opts.message_html,
+			'</div>' ].join('');
+
+			$( html ).hide()
+					 .appendTo( opts.$wrap )
+					 .velocity('shradeIn', {
+					 	duration : 400,
+					 	delay    : 350,
+					 	display  : 'flex'
+					 });
+
+			LJ.delay( opts.duration || 5000 ).then(function(){
+				if( typeof opts.callback == "function" ){
+					opts.callback();
+				}
+			});
+
+		},
+		shadeify: function( $wrap, duration, theme ){
+
+			var theme = theme || "dark";
+			var final_opacity = theme == "dark" ? 0.7 : 1;
+
+			$('<div class="ui-overlay ui-overlay--'+ theme +'"></div>')
+				.css({ 'opacity': 0 })
+				.appendTo( $wrap )
+				.velocity({ opacity: [ final_opacity, 0 ] }, {
+					duration : duration,
+					display  : 'flex'
+				});
+
+		},
+		synchronify: function( opts ){
+
+			return LJ.promise(function( resolve, reject ){
+
+				if( opts.$wrap.length == 0 ){
+					return reject("No $wrapper element was found");
+				};
+
+				LJ.ui.shadeify( opts.$wrap, 400, 'light' );
+
+				var content = '<div class="ui-overlay__message">' + opts.message_html + '</div>';
+				var loader  = LJ.static.renderStaticImage('slide_loader');
+
+				$('<div class="ui-synchronify">'+ content + loader + '</div>')
+						 .hide()
+						 .appendTo( opts.$wrap )
+						 .velocity('shradeIn', {
+						 	duration : 400,
+						 	delay    : 350,
+						 	display  : 'flex'
+						 });
+
+				LJ.delay( 400 ).then( resolve );
+				
+			});
+
+		},
+		desynchronify: function( opts ){
+
+			if( opts.$wrap.length == 0 ){
+				return LJ.warn("No $wrapper element was found");
+			};
+
+			$( opts.$wrap.find('.ui-overlay, .ui-synchronify') )
+				.velocity('fadeOut', {
+					duration : 350,
+					complete : function(){
+						$( this ).remove();
+					}
+				})
 
 
 		}

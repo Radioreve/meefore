@@ -9,9 +9,10 @@ body {
 }
 
 .login {
-    font-family: 'creamy';
-    font-size: 40px;
-    flex-flow: column;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-rendering: optimizeLegibility;
 }
 
 .left {
@@ -444,7 +445,7 @@ button:hover {
 
 .disconnected__icon {
     display: flex;
-    color: #33afff;
+    color: #1b69ec;
     font-size: 60px;
 }
 
@@ -464,6 +465,7 @@ button:hover {
     color: #ccc;
     margin-top: 20px;
     line-height: 23px;
+    font-size: 13px;
 }
 
 .disconnected__subtitle p {}
@@ -555,9 +557,9 @@ button:hover {
     align-items: center;
     flex-flow: column;
     width: 50px;
-    height: 60px;
-    font-size: 40px;
-    margin: 0 20px;
+    height: 50px;
+    font-size: 31px;
+    margin: 0 10px;
 }
 
 .change-lang__choice:hover i{
@@ -565,7 +567,7 @@ button:hover {
 }
 .change-lang__choice.--active {border-bottom: 3px solid #1b69ec;}
 .change-lang__choice.--active i { opacity: 1 }
-.change-lang__choice i {cursor: pointer;opacity: .7;border-radius: 10px 0 10px 0;}
+.change-lang__choice i {cursor: pointer;opacity: .7;/* border-radius: 10px 0 10px 0; */}
 
 .change-lang__choice.--unavailable {cursor: not-allowed;opacity: .8;}
 .change-lang__choice.--unavailable i {cursor: not-allowed;}

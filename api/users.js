@@ -421,31 +421,38 @@
 	// User have access locally to all the channels for the events to come
 	// However, if he wants to access its history, he needs to be able to fetch
 	// oldest chat messages, and so request the associated group_ids;
-	var parallel_fetch_count = 2;
+	var parallel_fetch_count = 1;
 	var fetchMoreChannels = function( req, res, next ){
 
 		var err_ns = "fetching_more_channels";
 
-		var facebook_id = req.sent.user_id;
-		var group_ids 	= req.sent.group_ids || [];
+		var facebook_id 	 = req.sent.user_id;
+		var fetched_chat_ids = req.sent.fetched_chat_ids || [];
+		var nu_channels 	 = [];
 
 		User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
 			if( err ) return handleErr( req, res, err_ns, err );
 
-			var channels = user.channels;
-
-			channels = _.filter( channels, function( chan ){
-				return chan.type == "chat" && group_ids.indexOf( chan.group_id ) == -1;
+			chat_channels = _.filter( user.channels, function( chan ){
+				return chan.chat_id;
 			});
-
-			channels.sort(function( ch1, ch2 ){
+			
+			chat_channels.sort(function( ch1, ch2 ){
 				return moment( ch2.last_sent_at ) - moment( ch1.last_sent_at );
 			});
 
-			var nu_channels = channels.slice( 0, parallel_fetch_count );
+			chat_channels.forEach(function( chan ){
 
-			req.sent.expose.channels = nu_channels || [];
+				if( fetched_chat_ids.indexOf( chan.chat_id ) == -1 ){
+					nu_channels.push( chan );
+				}
+
+			});
+
+			nu_channels = nu_channels.slice( 0, parallel_fetch_count );
+
+			req.sent.expose.channels = nu_channels;
 			next();
 
 

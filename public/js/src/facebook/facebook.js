@@ -99,7 +99,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
             return LJ.wlog('Cannot call the graph api without being able to find a valid facebook token');
         }
 
-        FB.api( url, { access_token: access_token }, callback );
+        FB.api( url, { access_token: access_token.token }, callback );
 
     },
     renderPicture: function( src ){
@@ -142,7 +142,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 			var album_url = next_page || LJ.facebook.album_url;
 			var album_id  = null;
 
-			LJ.facebook.GraphAPI( album_url, function(res){
+			LJ.facebook.GraphAPI( album_url, function( res ){
 
 				if( !res.albums ){
 					return reject('No album id to display');
@@ -244,9 +244,11 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 				
 
 	},
-	displayFacebookPicturesInModal_Error: function(){
+	displayFacebookPicturesInModal_Error: function( err ){
 
-		LJ.delay(1000).then(function(){
+		console.log( err );
+
+		LJ.delay( 1000 ).then(function(){
 
 			$('.modal-body')
 					.append('<div class="modal__loading-error none">' + LJ.text('modal_err_empty_fetch') + '</div>')

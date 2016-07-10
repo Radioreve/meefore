@@ -37,5 +37,18 @@
         "interests": {
             "ec4795dc5b": true
         }
+    },
+    {
+        "id": "a983c6aea24095b8591881a787102e3b",
+        "email_address": "leo@jeanfree.com",
+        "merge_fields": {
+            "NAME": "Léo",
+            "AGE": 20,
+            "JOB": "Etudiant",
+            "GENDER": "male"
+        },
+        "interests": {
+            "ec4795dc5b": false
+        }
     }
 ]

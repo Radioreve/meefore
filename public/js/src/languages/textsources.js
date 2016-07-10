@@ -16,6 +16,10 @@
 
 	LJ.text_source = _.merge( LJ.text_source || {}, {
 
+		page_title: {
+			"fr": "Des rencontres avant d'aller en soirée",
+			"us": "Meet new people before going out"
+		},
 		pikaday: {
 			"us": {
                 previousMonth : 'Previous Month',
@@ -1200,8 +1204,8 @@
 			"us": "Something wrong happened. Mail us directly at contact@meefore.com"
 		},
 		login_loading_msg: {
-			"fr": "Chargement des prochaines soirées",
-			"us": "Loading next parties"
+			"fr": "Chargement de l'application",
+			"us": "Loading the app"
 		},
 		app_mobile_warning: {
 			"fr": "Meefore est en mode navigation limitée sur web mobile. L'application sera bientôt disponible sur iOS !",
@@ -1401,6 +1405,18 @@
 		w_you: {
 			"fr": "vous",
 			"us": "you"
+		},
+		w_na: {
+			"fr": "Non renseigné(e)",
+			"us": "Unfilled"
+		},
+		ghost_user_name: {
+			"fr": "Inconnu(e)",
+			"us": "Unknown"
+		},
+		ghost_user_job: {
+			"fr": "Cet utilisateur a suspendu son compte",
+			"us": "This user has suspended his account"
 		},
 		settings_ux_message_seen_label: {
 			"fr": "Signaler messages lus",
@@ -1661,7 +1677,7 @@
 			"us": "Only the users within the selected agerange will be displayed."
 		},
 		search_filters_countries_title: {
-			"fr": "Filter par pays :",
+			"fr": "Filtrer par pays :",
 			"us": "Filter by country :"
 		},
 		search_filters_countries_explanations: {
@@ -1854,6 +1870,10 @@
 			"fr": "Nous sommes désolés, ce before vient d'être annulé par un des organisateurs.",
 			"us": "We are sorry, this pregame just got canceled by one of the hosts."
 		},
+		chat_just_canceled: {
+			"fr": "Un de vos Match vient d'annulé son before. <span>Synchronization en cours...</span>",
+			"us": "One of your Match just canceled his pregame.<span>Resync..."
+		},
 		be_ended: {
 			"fr": "Le before est terminé",
 			"us": "The pregame is over"
@@ -2039,14 +2059,26 @@
 			"us": "You have been sent a Cheers by..."
 		},
 		be_ghost_title: {
-			"fr": "Oups",
-			"us": "Bummer"
+			"fr": "404 !",
+			"us": "404 !"
 		},
 		be_ghost_subtitle: {
 			"fr": "Ce before n'a pas été trouvé dans notre base de données, Cela peut vouloir dire qu'il a été annulé.",
 			"us": "This before is nowhere to be found in our database. This may mean that it has been canceled."
 		},
 		be_ghost_btn: {
+			"fr": "Fermer",
+			"us": "Close"
+		},
+		profile_ghost_title: {
+			"fr": "404 !",
+			"us": "404 !"
+		},
+		profile_ghost_subtitle: {
+			"fr": "Ce membre n'a pas été trouvé dans notre base de données. C'est le cas lorsqu'un utilisateur désactive son compte.",
+			"us": "This member is nowhere to be found in our database. This may mean that he has suspended his account."
+		},
+		profile_ghost_btn: {
 			"fr": "Fermer",
 			"us": "Close"
 		},
@@ -2065,6 +2097,22 @@
 		chat_input_placeholder: {
 			"fr": "Ecrivez un message...",
 			"us": "Write a message..."
+		},
+		be_browser_empty: {
+			"fr": "Aucun before n'est prévu dans cette ville dans les jours à venir",
+			"us": "No pregame is scheduled in this town for the days to come"
+		},
+		chat_sync_done: {
+			"fr": "Synchronization terminée",
+			"us": "Sync completed"
+		},
+		n_before_canceled: {
+			"fr": "Ce before a été annulé",
+			"us": "This pregame has been canceled"
+		},
+		n_outdated_notification: {
+			"fr": "Cette notification n'est plus d'actualité",
+			"us": "This notification is out of date"
 		}
 
 

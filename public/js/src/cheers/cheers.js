@@ -595,7 +595,11 @@
 
 			var $row        = LJ.cheers.getCheersRow( cheers_id );
 			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
-
+			
+			if( $row.length == 0 ){
+				return;
+			}
+			
 			var $icon;
 			if( cheers_item.cheers_type == "sent" ){
 				$icon = LJ.cheers.renderCheersItemIcon__Sent( "accepted" );

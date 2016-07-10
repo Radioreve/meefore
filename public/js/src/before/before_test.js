@@ -61,7 +61,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 				LJ.log('Handling create before...');
 
-				var ux_done    = LJ.before.startCreateBefore();
+				var ux_done    = LJ.before.pendifyCreateBefore();
 				var be_created = LJ.before.test.readAndCreateBefore();
 
 				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
@@ -78,7 +78,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 				LJ.log('Handling create before with friend...');
 
-				var ux_done    = LJ.before.startCreateBefore();
+				var ux_done    = LJ.before.pendifyCreateBefore();
 				var be_created = LJ.before.test.readAndCreateBeforeWithFriend( facebook_id );
 
 				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
@@ -107,7 +107,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 				LJ.log('Handling create before...');
 
-				var ux_done    = LJ.before.startCreateBefore();
+				var ux_done    = LJ.before.pendifyCreateBefore();
 				var be_created = LJ.before.test.readAndCreateBefore('hosts_facebook_id');
 
 				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
@@ -123,7 +123,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 				LJ.log('Handling create before...');
 
-				var ux_done    = LJ.before.startCreateBefore();
+				var ux_done    = LJ.before.pendifyCreateBefore();
 				var be_created = LJ.before.test.readAndCreateBefore('address');
 
 				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
@@ -139,7 +139,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 				LJ.log('Handling create before...');
 
-				var ux_done    = LJ.before.startCreateBefore();
+				var ux_done    = LJ.before.pendifyCreateBefore();
 				var be_created = LJ.before.test.readAndCreateBefore('begins_at');
 
 				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){

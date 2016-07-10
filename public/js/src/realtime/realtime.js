@@ -103,9 +103,10 @@
 			LJ.log('Subscribing to personnal channel');
 			LJ.realtime.channels.personnal = LJ.realtime.pusher.subscribe( channel_name );
 			
-			LJ.realtime.channels.personnal.bind('new hello'		 	 	 , LJ.log ); // Test channel
-			LJ.realtime.channels.personnal.bind('new before hosts'   	 , LJ.realtime.handleNewMarkedAsHost );
-			LJ.realtime.channels.personnal.bind('new request group'  	 , LJ.realtime.handleNewRequestGroup );
+			LJ.realtime.channels.personnal.bind('new hello'		 	 	    , LJ.log ); // Test channel
+			LJ.realtime.channels.personnal.bind('new before hosts'   	    , LJ.realtime.handleNewMarkedAsHost );
+			LJ.realtime.channels.personnal.bind('new request group'  	    , LJ.realtime.handleNewRequestGroup );
+			LJ.realtime.channels.personnal.bind('new before status members' , LJ.realtime.handleNewBeforeStatusMembers );
 
 
 		},
@@ -137,7 +138,7 @@
 
 			// Refresh all channels subscriptions
 			LJ.realtime.subscribeToAllChannels();
-			LJ.chat.addAndFetchOneChat( channel_item_team );
+			LJ.chat.fetchAndAddOneChat( channel_item_team );
 
 			// Add notification in real time
 			LJ.realtime.addNotification( data );
@@ -168,12 +169,22 @@
 
 			LJ.realtime.subscribeToAllChannels();
 
-			LJ.chat.addAndFetchOneChat( data.channel_item_team, {
+			LJ.chat.fetchAndAddOneChat( data.channel_item_team, {
 				"row_insert_mode": "top"
 			});
 
 			// Add notification in real time
 			LJ.realtime.addNotification( data );
+
+		},
+		handleNewBeforeStatusMembers: function( data ){
+
+			var hosts     = data.hosts;
+			var status    = data.status;
+			var before_id = data._id;
+
+			// Force a resync of all the chats with updated server values
+			LJ.chat.resyncAllChats();
 
 		},
 		// Subcribe to events about a specific geo area 
@@ -221,24 +232,11 @@
 				if( $be.length > 0 ){
 
 					LJ.ui.hideModal();
-					LJ.ui.showSlideOverlay( LJ.ui.render([
-						'<div class="be-inview__deleted-warning">',
-							'<span data-lid="before_just_canceled"></span>',
-						'</div>'
-					].join('')) );
-
-					LJ.delay( 6000 ).then(function(){
-						LJ.ui.hideSlide({ type: 'before' });
-					});
+					LJ.before.cancelifyBeforeInview();
 
 				}
 
-				// Do the same pattern for the chatinview
-				//var $ch = $('.chat-inview[data-chat-id="'+ chat_id +'"]') 
 			}
-
-			// Add notification in real time
-			LJ.realtime.addNotification( data );
 
 
 		},
@@ -262,9 +260,9 @@
 
 			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
 
-			LJ.realtime.channels[ channel_name ].bind('new hello'		  , LJ.log ); // Test channel
-			LJ.realtime.channels[ channel_name ].bind('new request host'  , LJ.realtime.handleNewRequestHost );
-			LJ.realtime.channels[ channel_name ].bind('new before status' , LJ.realtime.handleNewBeforeStatusHosts );
+			LJ.realtime.channels[ channel_name ].bind('new hello'		  	   , LJ.log ); // Test channel
+			LJ.realtime.channels[ channel_name ].bind('new request host'  	   , LJ.realtime.handleNewRequestHost );
+			LJ.realtime.channels[ channel_name ].bind('new before status host' , LJ.realtime.handleNewBeforeStatusHosts );
 
 		},
 		handleNewRequestHost: function( data ){
@@ -349,7 +347,7 @@
 			LJ.realtime.subscribeToAllChannels();
 
 			// Add the new chat for people to get to know each otha :)
-			LJ.chat.addAndFetchOneChat( channel_item )
+			LJ.chat.fetchAndAddOneChat( channel_item )
 				.then(function(){
 
 					LJ.ui.showToast( LJ.text("to_group_accepted_hosts") );
@@ -390,7 +388,7 @@
 
 
 			// Add the new chat for people to get to know each otha :)
-			LJ.chat.addAndFetchOneChat( channel_item )
+			LJ.chat.fetchAndAddOneChat( channel_item )
 				.then(function(){
 
 					LJ.ui.showToast( LJ.text("to_group_accepted_users") );
@@ -429,7 +427,7 @@
 
 				LJ.wlog('New message received for a chat that wasnt fetched. Fetching first...');
 				LJ.wlog('Not implemented yet! Construct the channel item, then fetch chat');
-				return LJ.chat.addAndFetchOneChat( channel_item, {
+				return LJ.chat.fetchAndAddOneChat( channel_item, {
 					row_insert_mode: "top"
 				})
 				.then(function(){

@@ -45,6 +45,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	init: function(){
 
 		LJ.ui.$window.scroll( LJ.ui.setScrollDirection );
+		LJ.ui.$body.on('keydown', '.modal-search__input input', LJ.ui.filterModalResults );
 
 	},
 	getScrollDirection: function(){
@@ -91,8 +92,11 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		} else {
 			var alpha = o.opacity || 1;
+			var color = o.theme == "light" ? 'rgba(255,255,255,' : 'rgba(19,19,19,';
+
+
 			$curtain = $('<div class="curtain"></div>')
-						.hide().css({ 'background': 'rgba(19,19,19,' + alpha + ')' }).appendTo( LJ.ui.$body );
+						.hide().css({ 'background': color + alpha + ')' }).appendTo( LJ.ui.$body );
 
 		}
 
@@ -111,7 +115,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 				duration : o.duration || LJ.ui.show_curtain_duration,
 				complete : function(){
 
-					var $curtain = $(this);
+					var $curtain = $( this );
 
 					$curtain.click(function(e){
 
@@ -282,7 +286,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		LJ.wlog('Handling loss of internet connection');
 		LJ.ui.reconnected_started_at = new Date();
 
-		LJ.ui.showCurtain({ opacity: 0.95, duration: 500 })
+		LJ.ui.showCurtain({ opacity: 0.95, duration: 500, sticky: true })
 			.then(function(){
 
 				$('.curtain').velocity({
@@ -321,6 +325,12 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
                 });
 	},
+	adjustWrapperHeight: function( $w ){
+
+			var height = $( window ).height() - LJ.ui.slide_top;
+			$w.css({ height: height });
+
+	},
 	shradeIn: function( $element, duration ){
 
 		var duration = duration || LJ.ui.shrade_duration;
@@ -357,8 +367,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 			var fit = options.fit || true;
 
 			if( fit ){
-				var height = $( window ).height() - LJ.ui.slide_top;
-				$wrap.css({ height: height });
+				LJ.ui.adjustWrapperHeight( $wrap );
 			}
 
 			[ $wrap, $wrap.children() ].forEach(function( $el, i ){

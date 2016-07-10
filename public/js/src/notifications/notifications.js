@@ -529,13 +529,6 @@
 			
 
 		},
-		pushNewNotification: function( notification ){
-
-			LJ.ui.showToast( LJ.text("n_new_notification") );
-			LJ.notifications.insertNotification( notification );
-			LJ.notifications.refreshNotificationsJsp();
-
-		},
 		insertNotification: function( notification ){
 			
 			var html = '';
@@ -605,13 +598,6 @@
 			}
 
 
-			// Someone has shared something
-			if( type === "meepass_received" ){
-				html = LJ.notifications.renderNotification__MeepassReceived( notification );
-				notificationCallback = LJ.notifications.notificationCallback__MeepassReceived;
-			}
-
-
 			// Welcome in meefore !
 			if( type === "inscription_success" ){
 				html = LJ.notifications.renderNotification__InscriptionSuccess( notification );
@@ -630,7 +616,11 @@
 			// Fire callback if registered
 			if( typeof notificationCallback == "function" ){
 				$notif.on('click', function(){
-					notificationCallback( notification );
+					try {
+						notificationCallback( notification );
+					} catch( e ){
+						LJ.ui.showToast( LJ.text("n_outdated_notification") );
+					}
 					LJ.notifications.hideNotificationsPanel();
 				});
 			}
@@ -638,19 +628,6 @@
 			// Append the new notification on top of all
 			$notif.insertAfter( $('.js-notification-appender') );
 				
-		},
-		// Insert notifications based on user profile stored in LJ.user.notifications
-		insertNotifications: function( notifications ){
-
-			notifications.sort(function( n1, n2 ){
-				return n1.happened_at > n2.happened_at;
-			});
-
-			notifications.forEach(function( n, ind ){
-				LJ.notifications.insertNotification( n );
-				
-			});
-
 		},
 		notificationCallback__InscriptionSuccess: function( n ){
 
@@ -701,9 +678,7 @@
 			if( LJ.chat.getChatState() == "hidden" ){
 				LJ.chat.showChatWrap();
 			}
-			LJ.delay(300).then(function(){
 
-			});
 			LJ.chat.showChatInview( chat_id );
 			LJ.chat.activateChat( chat_id );
 			LJ.chat.refreshChatJsp( chat_id );
@@ -718,6 +693,7 @@
 			if( LJ.chat.getChatState() == "hidden" ){
 				LJ.chat.showChatWrap();
 			}
+
 			LJ.chat.showChatInview( chat_id );
 			LJ.chat.activateChat( chat_id );
 			LJ.chat.refreshChatJsp( chat_id );
@@ -739,57 +715,9 @@
 			LJ.settings.activateSubmenuSection("account")
 
 		},
-		testNotificationPanel: function( stack ){
+		notificationCallback__BeforeCanceled: function( n ){
 
-			if( !$('.notifications-panel').length ){
-				LJ.ui.$body.append( LJ.notifications.renderNotificationsPanel() );
-			} else {
-				if( !stack ){
-					$('.js-notification-item').remove();
-				}
-			}
-
-			var html = [];
-
-			var test_notifications = [
-
-				{
-					"type": "group_request", 
-					"group_name": "Les beaux mecs",
-					"happened_at": moment()
-				},
-				{
-					"type": "accepted_in",
-					"group_name": "Les belles meufs",
-					"happened_at": moment().subtract( 40, 'minutes' )
-				},
-				{
-					"type": "unread_messages",
-					"foo": "bar",
-					"happened_at": moment().subtract( 1, 'days' )
-				}
-
-			]
-
-			LJ.notifications.insertNotifications( test_notifications );
-
-		},
-		testNotificationStates: function(){
-
-			LJ.user.notifications.forEach(function( n, i ){
-
-				if( i == 0 ){
-					n.seen_at = null;
-					n.clicked_at = null;
-				}
-
-				if( i == 1 ){
-					n.clicked_at = null;
-				}
-
-			});
-
-			LJ.notifications.refreshNotifications();
+			LJ.ui.showToast( LJ.text("n_before_canceled") );
 
 		}
 

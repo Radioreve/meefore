@@ -84,6 +84,7 @@
 				LJ.friends.hideInviteFriendsPopup();
 			}
 
+
 		}
 
 	});

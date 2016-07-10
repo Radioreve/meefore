@@ -36,11 +36,11 @@
 					resolve( results[0] );
 
 				}, function( err ){
-					
-					if( err.err_id == "ghost_before"){
-						LJ.before.handleShowBeforeInviewError( err );
-					}
 
+					if( typeof options.errHandler == "function" ){
+						options.errHandler( err );
+					}
+					
 				});
 			})
 
@@ -72,26 +72,17 @@
 				options = options || {};
 
 				var $slide = $( LJ.ui.renderSlide( options ) );
-
-				var height = $(window).height() - LJ.ui.slide_top;
-
-				$slide
-					.children(':not(.js-noshrade)')
-					.hide()
-					.velocity('shradeIn', {
-						duration : LJ.ui.show_slide_duration_children,
-						delay    : LJ.ui.show_slide_delay_children,
-						complete : resolve
-					});
+				var height = $( window ).height() - LJ.ui.slide_top;
 
 				$slide
 					  .hide()
 					  .appendTo('body')
 					  .css({ 'top': LJ.ui.slide_top, 'height': height })
 					  .velocity('shradeIn', {
-					  	delay: LJ.ui.show_slide_delay,
-					  	display: 'flex',
-					  	duration: LJ.ui.show_slide_duration
+					  	delay    : LJ.ui.show_slide_delay,
+					  	display  : 'flex',
+					  	duration : LJ.ui.show_slide_duration,
+					  	complete : resolve
 					  })
 					  .on('click', '.slide__close', function(){
 					  	LJ.ui.hideSlide( options );

@@ -15,7 +15,7 @@
 			LJ.chat.setupChatRowsJsp()
 				.then(function(){
 					LJ.chat.emptifyChatRows();
-					return LJ.chat.addAndFetchChats();
+					return LJ.chat.fetchAndAddChats();
 				})
 				.then(function(){
 					LJ.chat.refreshLocalChats();
@@ -30,15 +30,59 @@
 			$('.chat__close').on('click', LJ.chat.hideChatWrap );
 			$('.chat').on('click', '.chat-row', LJ.chat.handleChatRowClicked );
 
+			LJ.chat.handleDocumentVisibilityChangeEvents();
+
 			LJ.chat.handleDomEvents__Inview();
+
+		},
+		handleDocumentVisibilityChangeEvents: function(){
+
+			var hidden, state, visibilityChange; 
+			if (typeof document.hidden !== "undefined") {
+
+				hidden = "hidden";
+				visibilityChange = "visibilitychange";
+				state = "visibilityState";
+
+			} else if (typeof document.mozHidden !== "undefined") {
+
+				hidden = "mozHidden";
+				visibilityChange = "mozvisibilitychange";
+				state = "mozVisibilityState";
+
+			} else if (typeof document.msHidden !== "undefined") {
+
+				hidden = "msHidden";
+				visibilityChange = "msvisibilitychange";
+				state = "msVisibilityState";
+
+			} else if (typeof document.webkitHidden !== "undefined") {
+
+				hidden = "webkitHidden";
+				visibilityChange = "webkitvisibilitychange";
+				state = "webkitVisibilityState";
+
+			}
+
+			// Add a listener that constantly changes the title
+			document.addEventListener( visibilityChange, function() {
+
+				var is_tab_active = !/hidden/i.test( state );
+				if( is_tab_active ){
+
+					LJ.store.set("chats_tabbed_at", moment().toISOString() );
+					LJ.chat.refreshChatStates();
+		        	
+				} 
+
+			}, false);
 
 		},
 		setupChat: function(){
 
 			// Set chat dimensions for jsp compliance
+			LJ.ui.adjustWrapperHeight( $('.chat') );
 			var height = $( window ).height() - LJ.ui.slide_top;
-
-			$('.chat').css({ height: height });
 			$('.chat-rows').css({
 				height : height - ( $('.chat-header').height() + $('.chat-subheader').height() )
 			});
@@ -120,35 +164,29 @@
 			
 
 		},
-		refreshChatIconBubble: function(){
+		// Legacy functions, old behavior
+		// refreshChatIconBubble_NoNumbers: function(){
 
-			LJ.chat.resetBubbleToChatIcon();
-			var display_bubble = false;
+		// 	LJ.chat.resetBubbleToChatIcon();
+		// 	var display_bubble = false;
 			
-			LJ.chat.getChatIds().forEach(function( chat_id ){
+		// 	LJ.chat.getChatIds().forEach(function( chat_id ){
 
-				if( LJ.chat.getLastMessage( chat_id ) && LJ.chat.getUnseenMessagesCount( chat_id ) > 0 ){
-					display_bubble = true;
-				} else {
-					if( !LJ.chat.getLastMessage( chat_id ) && LJ.chat.wasNeverSeen( chat_id ) ){
-						display_bubble = true;
-					}
-				}
+		// 		if( LJ.chat.getLastMessage( chat_id ) && LJ.chat.getUnseenMessagesCount( chat_id ) > 0 ){
+		// 			display_bubble = true;
+		// 		} else {
+		// 			if( !LJ.chat.getLastMessage( chat_id ) && LJ.chat.wasNeverSeen( chat_id ) ){
+		// 				display_bubble = true;
+		// 			}
+		// 		}
 
-			});
+		// 	});
 
-			if( display_bubble ){
-				LJ.chat.addBubbleToChatIcon();
-			}
+		// 	if( display_bubble ){
+		// 		LJ.chat.addBubbleToChatIcon();
+		// 	}
 
-		},
-		wasNeverSeen: function( chat_id ){
-
-			var seen_chats = LJ.store.get('seen_chats') || [];
-
-			return seen_chats.indexOf( chat_id ) == -1 ? true : false;
-
-		},	
+		// },
 		refreshChatRowBubbles: function( chat_id ){
 
 			var chat = LJ.chat.getChat( chat_id );
@@ -191,6 +229,7 @@
 			return related_chats;
 
 		},
+		// Remove from the cache the out-dated chat_ids that would stay here permanently otherwise
 		refreshLocalChats: function(){
 
 			var seen_chats = LJ.store.get('seen_chats');
@@ -200,6 +239,25 @@
 			});
 
 			LJ.store.set( "seen_chats", seen_chats );
+
+		},
+		refreshChatIconBubble: function(){
+
+			var nu_messages = 0;
+			LJ.chat.resetBubbleToChatIcon();	
+			LJ.chat.getChatIds().forEach(function( chat_id ){
+
+				if( LJ.chat.getLastMessage( chat_id ) && LJ.chat.getUncheckedMessagesCount( chat_id ) > 0 ){
+					nu_messages += LJ.chat.getUncheckedMessagesCount( chat_id );
+				} else {
+					if( !LJ.chat.getLastMessage( chat_id ) && LJ.chat.wasNeverChecked( chat_id ) ){
+						nu_messages += 1;
+					}
+				}
+
+			});
+
+			LJ.chat.addBubbleToChatIcon( nu_messages );
 
 		},
 		getUnseenMessagesCount: function( chat_id ){
@@ -217,14 +275,79 @@
 			return i;
 
 		},
-		addBubbleToChatIcon: function(){
+		wasNeverSeen: function( chat_id ){
 
-			LJ.ui.showBubble( $('.app__menu-item.--chats') );
+			var seen_chats = LJ.store.get('seen_chats') || [];
+
+			return seen_chats.indexOf( chat_id ) == -1 ? true : false;
+
+		},
+		// In this version, a message is considered to be "checked" if its sent_at is later
+		// than the time the user clicked the chat_icon
+		getUncheckedMessagesCount: function( chat_id ){
+
+			var i    = 0;
+			var chat = LJ.chat.getChat( chat_id );
+
+			chat.messages.forEach(function( m ){
+
+				var chats_checked_at = moment( LJ.store.get('chats_checked_at') );
+				var is_unchecked     = !chats_checked_at || chats_checked_at < moment( m.sent_at );
+
+				if( m.seen_by.indexOf( LJ.user.facebook_id ) == -1 && is_unchecked ){
+					i++;
+				} 
+
+			});
+
+			return i;
+
+		},
+		wasNeverChecked: function( chat_id ){
+
+			var channel 	  = LJ.chat.getChannelItem( chat_id );
+			var never_checked = false;
+
+			if( LJ.chat.getChat( chat_id ).messages.length > 0 ){
+				LJ.wlog('Warning, calling was never checked on a chat that has messages. Use getUncheckedMessagesCount instead');
+			}
+
+			// The last_sent_at param is mostly used for fetching chats. Best use the formed_at or
+			// requested_at depending of the type of chat to know the date at which a chat was created at
+			var last_activated_at = channel.formed_at ? channel.formed_at : channel.requested_at;
+			if( moment( LJ.store.get('chats_checked_at') ) < moment( last_activated_at ) ){
+				never_checked = true;
+			}
+
+			return never_checked;
+
+		},
+		// In this version, a message is considered to be "tabbed" if its sent_at is later
+		// than the time the user activatd the tab window
+		getUntabbedMessagesCount: function( chat_id ){
+
+			var i    = 0;
+			var chat = LJ.chat.getChat( chat_id );
+
+			chat.messages.forEach(function( m ){
+
+				var is_untabbed = moment( LJ.store.get('chats_tabbed_at') ) < moment( m.sent_at );
+				if( m.seen_by.indexOf( LJ.user.facebook_id ) == -1 && is_untabbed ){
+					i++;
+				} 
+			});
+
+			return i;
+
+		},
+		addBubbleToChatIcon: function( n ){
+
+			LJ.ui.setBubble( $('.app__menu-item.--chats'), n );
 
 		},
 		resetBubbleToChatIcon: function(){
 
-			LJ.ui.hideBubble( $('.app__menu-item.--chats') );
+			LJ.ui.setBubble( $('.app__menu-item.--chats'), 0 );
 
 		},
 		addBubbleToChatRow: function( chat_id ){
@@ -294,7 +417,7 @@
 			}
 
 		},
-		addAndFetchChats: function(){
+		fetchAndAddChats: function(){
 
 			// Keep only the channels that are chat-related (= have a team_id parameter)
 			var channels = _.filter( LJ.user.channels, 'team_id' );
@@ -303,47 +426,55 @@
 				return moment( ch2.last_sent_at ) - moment( ch1.last_sent_at );
 			});
 
-			var last_channels = sorted_channels.slice( 0, LJ.chat.parallel_fetches_count );
-
+			var last_channels    = sorted_channels.slice( 0, LJ.chat.parallel_fetches_count );
 			var all_chat_fetched = [];
+
 			last_channels.forEach(function( channel_item ){
-				var chat_fetched = LJ.chat.addAndFetchOneChat( channel_item, {
+
+				var chat_fetched = LJ.chat.fetchAndAddOneChat( channel_item, {
 					row_insert_mode: "top"
 				});
+
 				all_chat_fetched.push( chat_fetched );
+
 			});
 
 			return LJ.Promise.all( all_chat_fetched );
 
 		},
-		readdAndFetchChats: function(){
+		refetchAndAddChats: function(){
 
 			LJ.log('Refetching more group ids');
 
-			LJ.chat.fetchMoreChannels()
+			return LJ.chat.fetchMoreChannels()
 				.then(function( channels ){
 
 					if( channels.length == 0 ){
 						return LJ.chat.allChannelsFetched();
 					}
 
+					var all_chat_fetched = [];
+
 					channels.forEach(function( channel_item ){
-						LJ.chat.addAndFetchOneChat( channel_item, {
+						var chat_fetched = LJ.chat.fetchAndAddOneChat( channel_item, {
 							row_insert_mode: "bottom"
 						});
+
+						all_chat_fetched.push( chat_fetched );
 					});
 
+					return LJ.Promise.all( all_chat_fetched );
 
 				});
 			
-				
 		},
 		allChannelsFetched: function(){
 
 			LJ.wlog('All channels have been fetched');
+			LJ.ui.showToast('All channels have been fetched');
 
 		},
-		addAndFetchOneChat: function( channel_item, opts ){
+		fetchAndAddOneChat: function( channel_item, opts ){
 
 			var type 		 = channel_item.type;
 			var chat_id      = channel_item.chat_id;
@@ -411,6 +542,7 @@
 						LJ.chat.deloaderifyChatInview( chat_id );
 
 						// Update the inview header with dynamic parameters
+						// This may be an async operation. If the before isnt part of the user location
 						LJ.chat.setChatInviewHeader( channel_item );
 
 						// Set the picture and the default
@@ -433,8 +565,7 @@
 		},
 		fetchMoreChannels: function(){
 
-			var fetched_chat_ids = _.uniq( _.map( LJ.chat.fetched_chats, 'chat_id' ) );
-			return LJ.api.fetchMoreChannels( fetched_chat_ids );
+			return LJ.api.fetchMoreChannels( LJ.chat.getChatIds() );
 
 		},
 		setupChatRowsJsp: function(){
@@ -458,7 +589,7 @@
 								// Server will respond n more ids orderered by most recent activity
 								// excluding the ones passed in
 								LJ.log('Fetching history... (rows)');
-								LJ.chat.readdAndFetchChats();
+								LJ.chat.refetchAndAddChats();
 							}
 
 						}
@@ -611,7 +742,11 @@
 
 			// Lowest order are displayed the highest, so sort by desc
 			ordered_channel_items.sort(function( m1, m2 ){
-				return moment( m2.last_sent_at ) - moment( m1.last_sent_at );
+ 
+				var last_m1 = LJ.chat.getLastMessage( m1.chat_id ) && LJ.chat.getLastMessage( m1.chat_id ).sent_at || m1.last_sent_at;
+				var last_m2 = LJ.chat.getLastMessage( m2.chat_id ) && LJ.chat.getLastMessage( m2.chat_id ).sent_at || m2.last_sent_at;
+				
+				return moment( last_m2 ) - moment( last_m1 );
 			});
 
 			return ordered_channel_items;
@@ -665,6 +800,15 @@
 			$chatrow.css({ display: 'flex', opacity: 1 });
 
 		},
+		removeChatRow: function( chat_id ){
+			LJ.chat.getChatRow( chat_id ).remove();
+
+		},
+		removeChatChannelItem: function( chat_id ){
+
+			LJ.chat.getChannelItem( chat_id ) = undefined;
+
+		},
 		addChatMessages: function( opts ){
 
 			LJ.log('Adding chat messages...');
@@ -704,6 +848,14 @@
 			var $s        = $( this );
 			var chat_id   = $s.attr('data-chat-id');
 
+			LJ.chat.showAndActivateChatInview( chat_id );
+			
+		},
+		showAndActivateChatInview: function( chat_id ){
+
+			if( LJ.chat.getChatIds().indexOf( chat_id ) == -1 ){
+				return LJ.wlog('The chat ' + chat_id + ' doesnt exist.');
+			}
 			// Store in local storage the info to know if user has "seen" a chat. Only used when no messages
 			// have been sent. Act like a "seen_by"  property, even if none is available (cause no message)
 			LJ.chat.setChatRowSeenLocal( chat_id );
@@ -731,6 +883,7 @@
 			// Finally, refresh the whole chat state (only bubbles and newified should be affected)
 			LJ.chat.refreshChatState( chat_id );
 
+
 		},
 		handleToggleChatWrap: function( e ){
 
@@ -742,7 +895,10 @@
 		},
 		toggleChatWrap: function(){
 
+			LJ.chat.checkAllChats();
+
 			if( LJ.chat.state == 'hidden' ){
+				LJ.chat.refreshChatStates();
 				LJ.chat.showChatWrap();
 
 			} else {
@@ -758,11 +914,11 @@
 			LJ.chat.state = 'visible';
 			$('.app__menu-item.--chats').addClass('--active');
 
-			var duration  = 300;
-			$('.chat').velocity('shradeIn', {
-				duration: duration
-			});
+			LJ.ui.adjustWrapperHeight( $('.chat') );
 
+			var duration  = 300;
+
+			LJ.ui.shradeIn( $('.chat'), duration );
 			LJ.chat.refreshChatRowsJsp();
 
 			return LJ.delay( duration );
@@ -975,21 +1131,24 @@
 
 			if( channel_item.type == "chat_all" ){
 
-				var before = LJ.before.findById( channel_item.before_id );
-				if( !before ){
-					return LJ.wlog('Unable to find user before details (not fetched), before_id="' + channel_item.before_id );
-				}
+				LJ.before.getBefore( channel_item.before_id )
+					.then(function( before ){
 
-				var m              = moment( before.begins_at );
-				var place_name     = before.address.place_name;
-				var formatted_date = LJ.text("chatinview_date", m );
+					if( !before ){
+						return LJ.wlog('Unable to find user before details (event after fetch)');
+					}
 
-				LJ.chat.updateChatInviewElements( chat_id, {
+					var m              = moment( before.begins_at );
+					var place_name     = before.address.place_name;
+					var formatted_date = LJ.text("chatinview_date", m );
 
-					header_h1  : '<span class="--date">'+ formatted_date +'</span>',
-					header_h2  : '<span class="--place-name">'+ place_name +'</span>'
+					LJ.chat.updateChatInviewElements( chat_id, {
 
-				});
+						header_h1  : '<span class="--date">'+ formatted_date +'</span>',
+						header_h2  : '<span class="--place-name">'+ place_name +'</span>'
+
+					});
+				});	
 			    
 			} else {
 
@@ -1011,6 +1170,33 @@
 			});
 			
 		},
+		clearChatState: function( chat_id ){
+
+			LJ.chat.unsetChat( chat_id );
+			LJ.chat.removeChatRow( chat_id );
+			LJ.chat.removeChatInview( chat_id );
+
+		},
+		clearChatStates: function(){
+
+			LJ.chat.getChatIds().forEach(function( chat_id ){
+				LJ.chat.clearChatState( chat_id );
+			});
+
+			LJ.chat.emptifyChatRows();
+
+		},
+		unsetChat: function( chat_id ){
+
+			delete LJ.chat.fetched_chats[ chat_id ];
+
+		},
+		checkAllChats: function(){
+
+			LJ.log('Checking all chats');
+			LJ.store.set("chats_checked_at", moment().toISOString() );
+
+		},
 		refreshChatState: function( chat_id ){
 
 			// Refresh the chatrow preview : either with last messages, or with the state. And update the time
@@ -1019,6 +1205,11 @@
 			LJ.chat.refreshChatRowTime( chat_id );
 
 			// Refresh the bubbles on the row, and inside the chat inview
+			// Only refresh the state if the panel is hidden
+			if( LJ.chat.getChatState() == "visible" ){
+				LJ.chat.checkAllChats();
+			}
+
 			LJ.chat.refreshChatRowBubbles( chat_id );
 			LJ.chat.refreshChatIconBubble();
 			LJ.chat.refreshAppTitle( true );
@@ -1318,46 +1509,91 @@
 		},
 		refreshAppTitle: function( bubble_page_title ){
 	     	
-		    var n_unseen_messages = 0;
+		    var n_untabbed_messages = 0;
 		    LJ.chat.getChatIds().forEach(function( chat_id ){
-		        n_unseen_messages += LJ.chat.getUnseenMessagesCount( chat_id );
+		        n_untabbed_messages += LJ.chat.getUntabbedMessagesCount( chat_id );
 		    });
 		     
-		    if( n_unseen_messages == 0 ){
+		    if( n_untabbed_messages == 0 ){
 
 		    	clearTimeout( LJ.chat.page_title_timer );
+		        LJ.ui.updatePageTitle( LJ.text("page_title") );
+		        return LJ.log('No untabbed messages to display');
 
-		        LJ.ui.updatePageTitle("Des rencontres avant d'aller en soirée");
-
-		       return  LJ.chat.page_title_timer = setTimeout(function(){
-		              LJ.chat.refreshAppTitle();
-		        }, 3000 );
 		    }
 		 	
 		 	if( bubble_page_title ){
 
 		 		clearTimeout( LJ.chat.page_title_timer );
 
-		        LJ.ui.updatePageTitle("(%n) Des rencontres avant d'aller en soirée".replace('%n',n_unseen_messages));
+		        LJ.ui.updatePageTitle("(%n) ".replace('%n',n_untabbed_messages) + (LJ.text("page_title") ));
 
 		        return LJ.chat.page_title_timer = setTimeout(function(){
 		              LJ.chat.refreshAppTitle( false );
-		        }, 3000 );
+		        }, 2000 );
 		 	}		 	
 
-	    	var sender_id   = LJ.chat.getLastMessageOfAll().sender_id;
-	    	var sender_name = LJ.chat.getUser( sender_id ).name;
+		 	var last_message_of_all =  LJ.chat.getLastMessageOfAll();
 
-		    LJ.ui.updatePageTitle("%name vous a envoyé un message".replace('%name', sender_name ));
+		 	if( last_message_of_all ){
+		    	var sender_id   = last_message_of_all.sender_id;
+		    	var sender_name = LJ.chat.getUser( sender_id ).name;
+
+			    LJ.ui.updatePageTitle("%name vous a envoyé un message".replace('%name', sender_name ));
+		 	} else {
+		 		LJ.ui.updatePageTitle("Nouveaux messages !");
+		 	}
 
 		    LJ.chat.page_title_timer = setTimeout(function(){
 		          LJ.chat.refreshAppTitle( true );
-		    }, 3000 );
-		    	
-		    
-     
-		}
+		    }, 2000 );
+	    			    
 
+		},
+		cancelChatWrap: function( chat_id ){
+
+			LJ.chat.removeChatRow( chat_id );
+			LJ.chat.refreshChatRowsJsp();
+			LJ.chat.hideChatInview();
+			LJ.chat.removeChatInview( chat_id );
+
+			if( $('.chat-row').length == 0 ){
+				LJ.chat.emptifyChatRows();
+			}
+
+		},	
+		resyncAllChats: function(){
+
+			var ux_done = LJ.ui.synchronify({
+				$wrap        : $('.chat-wrap'),
+				message_html : LJ.text("chat_just_canceled")
+			});
+
+			ux_done.then(function(){
+
+				var current_active_chat = LJ.chat.getActiveChatId();
+				
+				LJ.chat.clearChatStates();
+				LJ.chat.hideChatInviewWrap();
+				
+				var refresh_all_chats  = LJ.chat.refetchAndAddChats();
+
+				refresh_all_chats
+					.then(function(){
+
+						LJ.chat.showAndActivateChatInview( current_active_chat );
+						LJ.ui.desynchronify({ $wrap: $('.chat-wrap') });
+						LJ.ui.showToast( LJ.text("chat_sync_done") );
+
+					})
+					.catch(function( err ){
+						console.log( err );
+
+					});
+
+			});
+				
+		}
 
 
 	});

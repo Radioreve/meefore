@@ -19,11 +19,12 @@
     cursor: pointer;
     color: #ccc;
 }
-
+ 
 .be-create-row {
     margin: 10px 0px;
     display: flex;
     flex-flow: column;
+    position: relative;
 }
 
 .be-create-row__subtitle {
@@ -49,6 +50,7 @@
     font-size: 30px;
     justify-content: center;
     align-items: center;
+    display: flex;
 }
 
 .be-create__title h1 {}
@@ -94,7 +96,12 @@
 
 .be-create-row__explanations div {}
 
-.be-create__button {}
+.be-create__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+}
 
 .be-create.--ready .be-create__button button {
     opacity: 1;
@@ -107,7 +114,6 @@
     font-size: 16px;
     color: white;
     font-weight: 500;
-    margin-top: 40px;
     background: #1B69EC;
     opacity: .3;
     border: none;

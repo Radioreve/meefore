@@ -105,6 +105,16 @@
 			LJ.chat.deactivateChats();
 
 		},
+		removeChatInview: function( chat_id ){
+
+			if( LJ.chat.getActiveChatId() == chat_id ){
+				LJ.chat.deactivateChats();
+				LJ.chat.hideChatInviewWrap();
+			}
+
+			LJ.chat.getChatInview( chat_id ).remove();
+
+		},
 		showChatInviewWrap: function(){
 
 			$('.chat-inview-wrap').show();

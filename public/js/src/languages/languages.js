@@ -14,7 +14,7 @@
 		},
 		handleDomEvents: function(){
 
-			$('.js-changelang').click( LJ.lang.changeAppLang );
+			$('body').on('click', '.js-changelang', LJ.lang.changeAppLang );
 
 		},
 		sayCheers: function(){
@@ -172,7 +172,7 @@
 
 			$('.modal-body')
 				.find('.modal__loader')
-				.velocity('bounceOut', { duration: 500, delay: 500,
+				.velocity('bounceOut', { duration: 500, delay: 100,
 					complete: function(){
 
 						$('.change-lang')

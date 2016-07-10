@@ -22,7 +22,9 @@
 .search-filters-section.--age {
     flex: 1 0 auto;
 }
-.search-filters-section.--countries {}
+.search-filters-section.--countries {
+    margin-bottom: 0px;
+}
 
 .search-filters-section__title {
     font-size: 13px;
@@ -103,8 +105,8 @@
 }
 .search-filters-country__label {
     margin-right: 6px;
-    color: #919191;
-}
+    color: #454545;
+} 
 .search-filters-country__label label {
 }
 .search-filters-country__users-count {

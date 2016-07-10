@@ -157,6 +157,55 @@
 
 	}
 
+	function resetChannels( user, callback ){
+
+		console.log('Reseting channels');
+
+		user.channels = [];
+		user.channels.push( makeChannelItem__Personnal( user ) );
+		user.channels.push( makeChannelItem__Location( user ) );
+
+		user.findBeforesByPresence(function( err, befores ){
+
+			if( err ) return handleErr( req, res, err_ns, err );
+
+			befores.forEach(function( before ){
+
+				// Check if the user is hosting
+				if( before.hosts.indexOf( user.facebook_id ) != -1 ){
+
+					console.log('User is hosting this event, rendering hosts related channels');
+					user.channels.push( makeChannelItem__Before( before ) );
+
+					// Create a team chat with other hosts only if it doesnt already exists
+					addTeamChannel( user, before.hosts, before.created_at );
+
+					before.groups.forEach(function( group ){
+						addChatChannelHosts( user, before, group );
+					});
+
+				} else {
+
+					// User is not hosting, find his group to access members ids
+					var mygroup = _.find( before.groups, function( grp ){
+						return grp.members.indexOf( user.facebook_id ) != -1;
+					});
+
+					// Create a team chat with other hosts only if it doesnt already exists
+					addTeamChannel( user, mygroup.members, mygroup.requested_at );
+					addChatChannelUsers( user, before, mygroup );
+
+				}
+
+			});
+
+			user.markModified('channels');
+			user.save( callback ); 
+
+		});
+
+	}
+
 	// At each connexion, dynamically reset the channels that the users is gonna need
 	// One private channel to receive personnal events
 	// One location channel for pushing befores in his area 
@@ -173,58 +222,15 @@
 			return next();
 
 		} else {
-			console.log('Reseting channels');
 
-			user.channels = [];
-			user.channels.push( makeChannelItem__Personnal( user ) );
-			user.channels.push( makeChannelItem__Location( user ) );
-
-			user.findBeforesByPresence(function( err, befores ){
+			resetChannels( user, function( err, user ){
 
 				if( err ) return handleErr( req, res, err_ns, err );
 
-				befores.forEach(function( before ){
-
-					// Check if the user is hosting
-					if( before.hosts.indexOf( user.facebook_id ) != -1 ){
-
-						console.log('User is hosting this event, rendering hosts related channels');
-						user.channels.push( makeChannelItem__Before( before ) );
-
-						// Create a team chat with other hosts only if it doesnt already exists
-						addTeamChannel( user, before.hosts, before.created_at );
-
-						before.groups.forEach(function( group ){
-							addChatChannelHosts( user, before, group );
-						});
-
-					} else {
-
-						// User is not hosting, find his group to access members ids
-						var mygroup = _.find( before.groups, function( grp ){
-							return grp.members.indexOf( user.facebook_id ) != -1;
-						});
-
-						// Create a team chat with other hosts only if it doesnt already exists
-						addTeamChannel( user, mygroup.members, mygroup.requested_at );
-						addChatChannelUsers( user, before, mygroup );
-
-					}
-
-				});
-
-				user.markModified('channels');
-				user.save(function( err, user ){
-
-					if( err ) return handleErr( req, res, err_ns, err );
-
-					req.sent.user = user;
-					next();
-
-				});
+				req.sent.user = user;
+				next();
 
 			});
-
 		}
 	};
 
@@ -494,8 +500,7 @@
 		var data_users = {
 			before_id 	 : before._id,
 			hosts     	 : before.hosts,
-			status       : before.status,
-			notification : notification
+			status       : before.status
 		};
 
 		var data_hosts = {
@@ -506,8 +511,28 @@
 			notification : notification
 		};
 
-		// Global message : everyone will received it and react. Hosts too, but they are not
-		// supposed to react to it (see below)
+		var users = before.hosts;
+		before.groups.forEach(function( group ){
+			users.concat( group.members );
+		});
+
+		var tasks = [];
+		users.forEach(function( user_id ){
+			tasks.push(function( callback ){
+				User.findOne({ facebook_id: user_id }, function( err, user ){
+					if( err ) handleErrAsync( err_ns, err );
+					resetChannels( user, function( err, user ){
+						if( err ) handleErrAsync( err_ns, err );
+						callback();
+					})
+				});
+			})
+		});
+		async.parallel( tasks, function( err ){
+			if( err ) handleErrAsync( err_ns, err );
+		});
+
+		// Global message : everyone will received it.
 		var channel = makeLocationChannel( place_id );
 		pusher.trigger( channel, 'new before status', data_users, socket_id, handlePusherErr );
 
@@ -515,6 +540,14 @@
 		// by one of their friends, on which they were also hosts
 		var channel = makeBeforeChannel( before._id );
 		pusher.trigger( channel, 'new before status hosts', data_hosts, socket_id, handlePusherErr );
+
+		// All members need to resync their chat status
+		users.forEach(function( user_id ){
+
+			var channel = makePersonnalChannel( user_id );
+			pusher.trigger( channel, 'new before status members', data_users, handlePusherErr );
+
+		});
 
 		next();
 

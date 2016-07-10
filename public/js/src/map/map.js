@@ -7,13 +7,13 @@
 		init: function(){
 
 			LJ.map.setupMap();
-            LJ.map.initPlacesServices();
 
 			LJ.map.handleDomEvents();
             LJ.map.handleMapEvents();
-			LJ.map.initPlacesServices()
+			LJ.map.initPlacesServices();
 
-            LJ.before.displayBeforeMarkers( LJ.before.fetched_befores )
+            LJ.before.displayBeforeMarkers( LJ.before.fetched_befores );
+
             
             return LJ.before.refreshBrowserLocation();
 			
@@ -149,6 +149,29 @@
         },
         refreshMap: function(){
         	return google.maps.event.trigger( LJ.meemap, 'resize' );
+
+        },
+        activateDate: function( m ){
+
+            var $date_activated   = $('.be-dates__date.--active');
+            var $date_to_activate = $('.be-dates__date[data-day="'+ m.format('DD/MM') +'"]');
+
+             if( $date_to_activate.length != 1 ){
+                return LJ.wlog('Unable to find the date : ' + m.format('DD/MM') );
+            }
+
+            $date_activated
+                .removeClass('--active')
+                .find('.be-dates__bar')
+                .velocity('bounceOut', { duration: 450, display: 'none' });
+
+            $date_to_activate
+                .addClass('--active')
+                .find('.be-dates__bar')
+                .velocity('bounceInQuick', { duration: 450, display: 'block' });
+
+            // Specifics
+            LJ.map.updateMarkers__byDate();
 
         },
         findLocationWithLatLng: function( latlng ){
@@ -342,7 +365,7 @@
         makeIcon: function( url ){
             return {
                 url        : url,
-                scaledSize : new google.maps.Size( 28, 28 )
+                scaledSize : new google.maps.Size( 27, 31 )
             };
 
         },
@@ -530,6 +553,7 @@
         	return LJ.ui.render([
         		'<div class="map__overlay"></div>'
         		].join(''));
+
         },
         renderMapBrowser: function(){
 
@@ -538,19 +562,22 @@
         			'<input id="map-browser-input"/>',
         		'</div>'
         		].join(''));
+
         },
         updateMarkers__byDate: function(){
 
             var active_day = moment( $('.be-dates__date.--active').attr('data-day'), 'DD/MM' ).dayOfYear();
+
             LJ.map.markers.forEach(function( mrk ){
+
                 if( mrk.type == "before" ){
-                    if( mrk.data && mrk.data.begins_at ){
-                        if( moment( mrk.data.begins_at ).dayOfYear() == active_day ){
-                            mrk.marker.setOpacity(1);
-                        } else {
-                            mrk.marker.setOpacity(0.15);
-                        }
+
+                    if( mrk.data && mrk.data.begins_at && moment( mrk.data.begins_at ).dayOfYear() == active_day ){
+                        mrk.marker.setOpacity( 1 );
+                    } else {
+                        mrk.marker.setOpacity( 0.15 );
                     }
+
                 }
 
             });

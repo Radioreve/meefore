@@ -53,10 +53,7 @@
   <link rel="stylesheet" href="/css/src/friends/friends.css">
   <!-- <link rel="stylesheet" href="/css/src/invite/invite.css"> -->
   <link rel="stylesheet" href="/css/src/cheers/cheers.css">
-  <link rel="stylesheet" href="/css/src/landing/landing.css">
-  <link rel="stylesheet" href="/css/src/landing/landing_rtb.css">
-  <link rel="stylesheet" href="/css/src/landing/landing_contact.css">
-  <link rel="stylesheet" href="/css/src/landing/landing_footer.css">
+  <link rel="stylesheet" href="/css/src/landing/landing_v1.css">
   <link rel="stylesheet" href="/css/src/menu/menu.css">
   <link rel="stylesheet" href="/css/src/notifications/notifications.css">
   <link rel="stylesheet" href="/css/src/onboarding/onboarding.css">
@@ -70,7 +67,7 @@
   <link rel="stylesheet" href="/css/src/seek/seek.css">
   <link rel="stylesheet" href="/css/src/settings/settings.css">
   <!-- <link rel="stylesheet" href="/css/src/shared/shared.css"> -->
-  <link rel="stylesheet" href="/css/src/login/login.css">
+  <link rel="stylesheet" href="/css/src/login/login_v2.css">
   <link rel="stylesheet" href="/css/src/map/map.css">
   <link rel="stylesheet" href="/css/src/map/map_mapview.css">
   <link rel="stylesheet" href="/css/src/map/map_sideview.css">
@@ -104,125 +101,59 @@
   </script>
   
   
-  <div class="curtain sticky"></div>
+  <div class="curtain --sticky --light"></div>
     
    <!-- Landing Page Begin -->
   <div class="landing">
-    <!-- landing front page -->
-    <div class="landing-front">
-      <!-- landing kenburns -->
-      <div class="landing-kenburns">
-        <div class="kenburns-overlay"></div>
-        <ul class="bxslider">
-          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1456943482/landing_1.jpg" width="100%"/></li>
-          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1456943480/landing_2.jpg" width="100%"/></li>
-          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1456943479/landing_3.jpg" width="100%"/></li>
-          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1456943485/landing_4.jpg" width="100%"/></li>
-          <li><img src="http://res.cloudinary.com/radioreve/image/upload/v1456943479/landing_5.jpg" width="100%"/></li>
-        </ul>
-      </div>
-      <!-- end landing kenburns -->
-      <!-- landing hero -->
-      <div class="landing-hero">
-        <div class="hero-logo">
-          <img src="/img/app/logo-light.png" width="44" alt="Logo meefore soirées">
-          <!-- <h1 class="hero-logo-name">meefore</h1> -->
-        </div>
-        <div class="hero-languages">
-          <span data-code="fr" class="no-cb pick-lang hero-lang active">FR</span>
-          <span data-code="us" class="no-cb pick-lang hero-lang">EN</span>
-        </div>
-        <h1 data-lid="lp_subtitle" class="hero-header">
-          Faîtes des rencontres avant d'aller en soirée
-        </h1>
-        <h2 data-lid="lp_subtitle_sub" class="hero-header-sub">
-          Meefore est le 1er site qui vous permet de participer à des before avec les personnes qui vont aux mêmes soirées que vous.
-        </h2>
-        <div id="facebook_connect" class="js-login">
-            <i class="icon icon-facebook"></i>
-            <span data-lid="lp_conn_button">Connexion</span>
-            <div class="fb-overlay"></div>
-        </div>
-      </div>
-      <!-- end landing hero -->
-      <!-- moving arrow -->
-      <i class="icon moving-arrow icon-down-open-big"></i>
-      <!-- end Moving arrow -->
-       <!-- landing places -->
-      <div class="landing-places-wrap">
-        <div class="lp-places-hash">#</div>
-        <span class="landing-places"></span>
-      </div>
-      <!-- end landing places  -->
+    <div class="landing-logo --round-icon">
+      <span>M</span>
     </div>
-    <!-- end landing front page -->
-
-    <!--  landing rtb  -->
-      <div class="landing-rtb landing-rtb--1">
-        <div class="landing-rtb-screen">
-          <img class="landing-rtb-screen__img" src="/img/sc/sc1.png" width="300"></img>
-        </div>
-        <div class="landing-rtb-reason">
-          <div class="landing-rtb-reason__step">1</div>
-          <div data-lid="lp_reason_1_h1" class="landing-rtb-reason__h1">
-            Trouvez votre before
-          </div>
-          <div data-lid="lp_reason_1_h2" class="landing-rtb-reason__h2">
-            Parcourez et repérez sur la map les before qui s'organisent près de chez vous.
-          </div>
+    <div class="landing-lang">
+      <button class="js-changelang" data-lid="settings_ux_changelang_button"></button>
+    </div>
+    <div class="landing-body">
+      <div class="landing-title">
+        <h1>Trouvez votre before</h1>
+      </div>
+      <div class="landing-subtitle">
+        <h2>Repérez les before qui s'organisent près de chez vous en parcourant la Map.</h2>
+      </div>
+      <div class="landing-screenshots">
+        <div class="landing__screenshot">
+          <img src="/img/lp.png" alt="Find ur love" width="100%">
         </div>
       </div>
-      <div class="landing-rtb landing-rtb--2">
-        <div class="landing-rtb-screen">
-          <img class="landing-rtb-screen__img" src="/img/sc/sc2.png" width="300"></img>
-        </div>
-        <div class="landing-rtb-reason">
-        <div class="landing-rtb-reason__step">2</div>
-          <div data-lid="lp_reason_2_h1" class="landing-rtb-reason__h1">
-            Demandez à participer
-          </div>
-          <div data-lid="lp_reason_2_h2" class="landing-rtb-reason__h2">
-            Envoyez une demande de participation pour rejoindre le before qui vous ambiance le plus avec au moins un
-            de vos amis.
-          </div>
-        </div>
+      <div class="landing-bullets">
+        <div class="landing__bullet --active"></div>
+        <div class="landing__bullet"></div>
+        <div class="landing__bullet"></div>
+        <div class="landing__bullet"></div>
       </div>
-      <div class="landing-rtb landing-rtb--3">
-        <div class="landing-rtb-screen">
-          <img class="landing-rtb-screen__img" src="/img/sc/sc3.png" width="300"></img>
-        </div>
-        <div class="landing-rtb-reason">
-        <div class="landing-rtb-reason__step">3</div>
-          <div data-lid="lp_reason_3_h1" class="landing-rtb-reason__h1">
-            Faites connaissance
-          </div>
-          <div data-lid="lp_reason_3_h2" class="landing-rtb-reason__h2">
-            Une fois accepté, discutez avec les organisateurs pour préparer votre soirée avant de vous retrouver.
-          </div>
-        </div>
+      <div class="landing-privacy">
+        <h3>En continuant, vous acceptez nos <span class="js-terms landing-bold">Conditions d'Utilisation</span> et <span class="js-privacy landing-bold">Politique de Confidentialité.</span> Nous ne publierons <span class-"landing-bold">rien</span> sur Facebook.
+        </h3>
       </div>
-    <!-- end landing rtb  -->
-
-    <!-- landing footer -->
+      <div class="landing-connexion">
+        <button class="js-login">Se connecter via <span class="landing-bold">Facebook</span></button>
+      </div>
+    </div>
     <footer class="landing-footer">
-      <div data-lid="lp_footer_followus" class="footer-followus">
-        Nous suivre
+      <div class="landing-footer__item">
+        <span>Conditions d'Utilisation</span>
       </div>
-      <div class="footer-socials">
-        <a href="https://www.facebook.com/meefore" target="_blank"><i class="icon icon-facebook"></i></a>
-        <a href="https://www.facebook.com/meefore" target="_blank"><i class="icon icon-twitter"></i></a>
-        <a href="https://www.facebook.com/meefore" target="_blank"><i class="icon icon-instagram"></i></a>
-        <a href="https://www.facebook.com/meefore" target="_blank"><i class="icon icon-youtube"></i></a>
+      <div class="landing-footer__item">
+        <span>Politique de Confidentialité</span>
       </div>
-      <div class="footer-divider"></div>
-      <div class="footer-list">
-        <ul>
-          <li class="footer-list-item"><a href="/legals" target="_blank" >Mentions légales</a></li>
-          <li class="footer-list-item"><a id="contact" >Contact</a></li>
-        </ul>
+       <div class="landing-footer__item">
+        <span>Contact</span>
+      </div>
+       <div class="landing-footer__item">
+        <span>FAQ</span>
+      </div>
+       <div class="landing-footer__item">
+        <span>Page Facebook</span>
       </div>
     </footer>
-    <!-- end landing footer -->
   </div>
   <!-- Landing Page End -->
   
@@ -944,8 +875,7 @@
           <div class="search-filters-section__title">
             <h2 data-lid="search_filters_countries_title">Titre de la section 3</h2>
           </div>
-          <div class="search-filters-body">
-            <div class="js-filters-countries"></div>
+          <div class="search-filters-body js-filters-countries">
           </div>
           <div class="search-filters-section__explanations">
             <h5 data-lid="search_filters_countries_explanations">Explications supplémentaires...</h5>
@@ -1004,7 +934,6 @@
   <script src="js/src/chat/chat_test.js"></script>
   <script src="js/src/friends/friends.js"></script>
   <!-- <script src="js/src/invite/invite.js"></script> -->
-  <script src="js/src/landing/landing.js"></script>
   <script src="js/src/languages/languages.js"></script>
   <script src="js/src/languages/country.js"></script>
   <script src="js/src/languages/textsources.js"></script>
@@ -1027,7 +956,8 @@
   <script src="js/src/settings/settings.js"></script>
   <!-- <script src="js/src/shared/shared.js"></script> -->
   <script src="js/src/static/static.js"></script>
-  <script src="js/src/login/login.js"></script>
+  <!-- <script src="js/src/login/login.js"></script> -->
+  <script src="js/src/login/login_v2.js"></script>
   <script src="js/src/ui/ui.js"></script>
   <script src="js/src/ui/ui_toast.js"></script>
   <script src="js/src/ui/ui_modal.js"></script>

@@ -4,7 +4,7 @@
 		$filters_agerange : null,
 		filters_agerange  : null,
 
-		filters_duration: 200,
+		filters_duration: 400,
 
 		filter_state: {
 			age       : [],
@@ -57,14 +57,14 @@
 				.find('.toggle.--active')
 				.each(function( i, toggle ){
 
-					if( $(toggle).closest('.js-filters-male').length > 0 ){
+					if( $( toggle ).closest('.js-filters-male').length > 0 ){
 						LJ.search.filter_state.gender.push('male');
 					}
 
-					if( $(toggle).closest('.js-filters-female').length > 0 )
+					if( $( toggle ).closest('.js-filters-female').length > 0 )
 						LJ.search.filter_state.gender.push('female');
 
-					if( $(toggle).closest('.js-filters-country').length > 0 ){
+					if( $( toggle ).closest('.js-filters-country').length > 0 ){
 						var cc = $(toggle).closest('[data-country-code]').attr('data-country-code');
 						LJ.search.filter_state.countries.push( cc );
 					}
@@ -73,10 +73,9 @@
 
 			var min = $('.search-filters-min-age').html();
 			var max = $('.search-filters-max-age').html();
+
 			LJ.search.filter_state.age[0] = min;
 			LJ.search.filter_state.age[1] = max;
-
-
 
 		},
 		setCountriesInFilters: function(){
@@ -103,7 +102,7 @@
 		renderFilterCountry: function( cc ){
 
 			return LJ.ui.render([
-				'<div class="search-filters-countries" data-country-code="'+ cc +'">',
+				'<div class="search-filters-countries js-filters-countries" data-country-code="'+ cc +'">',
 					'<div class="search-filters-row js-filters-country">',
 	            		'<div class="search-filters-country__flag --round-icon">',
 	            			'<i class="flag-icon flag-icon-'+ cc +'"></i>',
@@ -121,7 +120,8 @@
 		},
 		addFilterCountries: function( countries_html ){
 
-			$('.js-filters-countries').replaceWith( countries_html );
+			$('.js-filters-countries').children().remove();
+			$('.js-filters-countries').append( countries_html );
 
 		},
 		showFilters: function(){
@@ -130,39 +130,39 @@
 			var $f     = $('.search-filters');
 			var d      = LJ.search.filters_duration;
 
+			LJ.ui.adjustWrapperHeight( $('.search-filters') );
+
 			$fi.velocity('shradeOut', {
 				duration : d,
 				display  : 'none'
 			});
 
-			LJ.delay( d )
-				.then(function(){
-					LJ.ui.shradeAndStagger( $f, {
-						duration: d
-					});
-				});
+			LJ.ui.shradeIn( $f, d );
+
+			// LJ.delay( d )
+			// 	.then(function(){
+			// 		return LJ.ui.shradeIn( $f, d );
+			// 	});
 			
 
 		},
 		hideFilters: function(){
 
-			var $fi = $('.search-filters__icon');
-			var $f  = $('.search-filters');
-			var $fc = $f.children();
-			var d   = LJ.search.filters_duration;
+			var $fi    = $('.search-filters__icon');
+			var $f     = $('.search-filters');
+			var d      = LJ.search.filters_duration;
 
-			$fi.hide().velocity('shradeIn', {
+			$f.velocity('shradeOut', {
 				duration : d,
-				display  : 'flex',
-				delay    : d
+				display  : 'none'
 			});
 
-			[ $fc, $f ].forEach(function( $el, i ){
-				$el.velocity('shradeOut', {
-					duration: d,
-					display : 'none'
-				});
-			});
+			LJ.ui.shradeIn( $fi, d );
+			
+			// LJ.delay( d )
+			// 	.then(function(){
+			// 		return LJ.ui.shradeIn( $fi, d );
+			// 	});
 
 		},
 		refreshFiltersSliderValues: function( value ){

@@ -52,7 +52,6 @@
 
             // Login flow
             LJ.login.init()
-                .then()
                 .then( LJ.facebook.fetchFacebookToken )
                 .then( LJ.start );
 

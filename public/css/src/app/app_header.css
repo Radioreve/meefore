@@ -56,9 +56,15 @@
     outline: none;
 }
 
+.app__menu-item:hover .app__menu-icon {
+	color: #696969;
+}
+}
 .app__menu-item.--active {
     background: black;
-    color: white;
+}
+.app__menu-item.--active .app__menu-icon {
+	color: white;
 }
 
 .app__menu-item .bubble {
@@ -74,6 +80,7 @@
 .app__menu-icon {
     margin: 14px auto;
     font-size: 26px;
+    transition: all ease-in .10s;
 } 
 
 .app-header__title {display: none;position: relative;top: 3px;}

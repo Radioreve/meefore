@@ -85,59 +85,6 @@
 
 	};
 
-	var addChatMessage2 = function( req, res, next ){
-
-		// Caching everything for performance 
-		var chats 		= 'chats';
-		var start_ns    = 'chat/' + req.sent.chat_id + '/start';
-		var count_ns	= 'chat/' + req.sent.chat_id + '/count';
-		var message_ns  = 'chat/' + req.sent.chat_id + '/messages/';
-		var seen_by_ns   = 'chat/' + req.sent.chat_id + '/seen_by';
-
-		req.sent.sent_at = moment().toISOString();
-		// Store all chat ids to iterate through messages when save to db
-		rd.sadd( chats, req.sent.chat_id, function( err ){
-
-			// Set starting messages to 1. This will be changed when updating (clearing) the cache,
-			// and is used to find to further message to fetch when browsing history. When clearing cache
-			// first messages are erased from redis and stored in mongodb, so start_ns value may increase only 
-			rd.setnx( start_ns, 1, function( err ){
-				// Reset le seen_by 
-				rd.del( seen_by_ns, function( err ){
-					// Add le sender au seen_by 
-					rd.sadd( seen_by_ns, req.sent.facebook_id, function( err ){
-
-						var data = {
-							chat_id      : req.sent.chat_id,
-							group_id 	 : req.sent.group_id,
-							before_id 	 : req.sent.before_id,
-							message      : req.sent.message,
-							sender_id    : req.sent.facebook_id,
-							sent_at      : req.sent.sent_at,
-							type 		 : "normal"
-						};
-
-						// Save to Database but dont wait for the call to finish. This is just used 
-						// for deep history retrievals and analytics
-						var message = new Message( data );
-						message.save(function( err ){
-							if( err ){ console.log( err ); }
-						});
-
-						rd.incr( count_ns, function( err, response ){
-							rd.get( count_ns, function( err, count ){
-								rd.hmset( message_ns + count, data, function( err, response ){
-									req.sent.expose.data = data;
-									next();
-								});
-							});
-
-						});
-					});
-				});
-			});
-		});
-	};
 
 
 	// Send back the first messages that havent been fetched from the cache
@@ -213,12 +160,12 @@
 				var data = {
 					chat_id   : chat_id,
 					before_id : before_id,
-					seen_by    : seen_by
+					seen_by   : seen_by
 				};
 				
-				req.sent.expose.chat_id = chat_id;
+				req.sent.expose.chat_id   = chat_id;
 				req.sent.expose.before_id = before_id;
-				req.sent.expose.seen_by = seen_by;
+				req.sent.expose.seen_by   = seen_by;
 
 				pusher.trigger( 'presence-' + chat_id, 'new chat seen_by', data );
 
@@ -250,6 +197,7 @@
 			if( err ){
 				term.red.bold("Error saving seen_by for user : " + facebook_id + '\n');
 			}
+
 		});
 
 		next();

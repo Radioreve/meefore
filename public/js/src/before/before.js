@@ -82,14 +82,14 @@
 		},
 		activateBrowserDate: function(){
 
-			var $s = $(this);
+			var $s = $( this );
 
 			if( $s.hasClass('--active') ) return;
 
-			$('.be-dates__date').removeClass('--active');
-			$s.addClass('--active');
+			var date = $s.attr('data-day');
+			var m = moment( date, 'DD/MM' );
 
-			LJ.map.updateMarkers__byDate();
+			LJ.map.activateDate( m );
 
 		},
 		sortIsoDates: function( iso_dates ){
@@ -156,7 +156,7 @@
 							complete: function(){
 
 								$('.js-current-location').find('.js-closeto').html( address );
-								$(this).velocity('fadeIn', {
+								$( this ).velocity('fadeIn', {
 										duration: 400,
 										display: 'flex'
 									});
@@ -188,28 +188,34 @@
 		},
 		refreshBrowserDates: function(){
 
-			var iso_dates = _.map( LJ.before.fetched_befores, 'begins_at' );
-
-			if( !iso_dates ){
-				return LJ.wlog('Cannot render browser without a set of proper iso dates');
-			}
-
-			var dates      = LJ.before.findDistinctDays( iso_dates );
+			var iso_dates  = _.map( LJ.before.fetched_befores, 'begins_at' );
 			var dates_html = [];
 
-			dates.forEach(function( date, i ){
+			if( iso_dates.length == 0 ){
 
-				var d = date.day_digit;
-				var w = date.day_word.slice(0,3);
+				LJ.wlog('No iso_dates found');
+				dates_html.push( LJ.before.renderBrowserDatesEmpty() );
 
-				var active = ( i == LJ.before.findActiveDateIndex() ) ? '--active' : '';
+			} else {
 
-				dates_html.push([
-					'<div class="be-dates__date '+ active +'" data-day="'+ d +'">',
-					w + '.<span>'+ d +'</span>',
-					'</div>'
-					].join(''));
-			});
+				var dates = LJ.before.findDistinctDays( iso_dates );
+				dates.forEach(function( date, i ){
+
+					var d = date.day_digit;
+					var w = date.day_word.slice( 0, 3 );
+
+					var active = ( i == LJ.before.findActiveDateIndex() ) ? '--active' : '';
+
+					dates_html.push([
+						'<div class="be-dates__date '+ active +'" data-day="'+ d +'">',
+							w + '.<span>'+ d +'</span>',
+							'<div class="be-dates__bar"></div>',
+						'</div>'
+						].join(''));
+				});
+				
+			}
+
 
 			$('.js-be-dates').html( dates_html.join('') );
 			LJ.ui.turnToJsp( $('.js-be-dates'), {
@@ -231,6 +237,15 @@
 					'</div>',
 				'</div>',
 
+			].join(''));
+
+		},
+		renderBrowserDatesEmpty: function(){
+
+			return LJ.ui.render([
+				'<div class="be-browser__empty">',
+					'<span data-lid="be_browser_empty"></span>',
+				'</div>'
 			].join(''));
 
 		},
@@ -306,8 +321,10 @@
 
 			befores.forEach(function( before ){
 				LJ.map.addBeforeMarker( before );
-
 			});
+
+			LJ.map.updateMarkers__byDate();
+
 
 		},
 		setPicturesSizes: function( $content ){
@@ -369,7 +386,8 @@
 				"fetchPromise"	: LJ.before.fetchBeforeAndHosts,
 				"promise_arg"   : before_id,
 
-				"complete"      : LJ.before.showBrowser
+				"complete"      : LJ.before.showBrowser,
+				"errHandler"    : LJ.before.handleShowBeforeInviewError
 
 			})
 			.then(function( expose ){	
@@ -435,17 +453,17 @@
 
         	return LJ.ui.render([
 
-        		'<div class="be-ghost">',
-        			'<div class="be-ghost__icon --round-icon">',
+        		'<div class="slide-ghost">',
+        			'<div class="slide-ghost__icon --round-icon">',
         				'<i class="icon icon-search-light"></i>',
         			'</div>',
-        			'<div class="be-ghost__title">',
+        			'<div class="slide-ghost__title">',
         				'<span data-lid="be_ghost_title"></span>',
         			'</div>',
-        			'<div class="be-ghost__subtitle">',
+        			'<div class="slide-ghost__subtitle">',
         				'<span data-lid="be_ghost_subtitle"></span>',
         			'</div>',
-        			'<div class="be-ghost__action">',
+        			'<div class="slide-ghost__action">',
         				'<button data-lid="be_ghost_btn" class="slide__close"></button>',
         			'</div>',
         		'</div>'
@@ -470,7 +488,8 @@
 				"fetchPromise"	: LJ.api.fetchUsers,
 				"promise_arg"   : host_ids,
 
-				"complete"      : LJ.before.showBrowser
+				"complete"      : LJ.before.showBrowser,
+				"errHandler"    : LJ.before.handleShowBeforeInviewError
 
 			})
 			.then(function( expose ){	
@@ -837,7 +856,11 @@
 				if( before ){
 					resolve( before );
 				} else {
-					return LJ.api.fetchBefore( before_id );
+					return LJ.api.fetchBefore( before_id )
+						.then(function( before ){
+							LJ.before.fetched_befores.push( before );
+							resolve( before );
+						});
 				}
 
 			});
@@ -865,6 +888,20 @@
 			return _.find( LJ.user.channels, function( chan ){
 				return chan.before_id == before_id;
 			});
+		},
+		cancelifyBeforeInview: function(){
+
+			LJ.ui.cancelify({
+
+				"$wrap"        : $('.slide.--before'),
+				"duration"     : 8000,
+				"message_html" : "<span>"+ LJ.text("before_just_canceled") +"</span>",
+				"callback"     : function(){
+					LJ.ui.hideSlide({ type: 'before' });
+				}
+
+			});
+
 		}
 
 	});

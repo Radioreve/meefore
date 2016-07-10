@@ -6,7 +6,7 @@
 			'$modal_logout'  : '.modal.--logout',
 			'opening_duration': 1000,
 			'prompt_duration': 600,
-			'prompt_buttons_duration': 500,
+			'prompt_buttons_duration': 900,
 			'completed_steps': 0,
 			'break_duration': 400,
 
@@ -24,39 +24,94 @@
 				LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
 
 			},
-			enterLoginProcess: function(){
+			showLandingElements: function(){
 
-				LJ.ui.showCurtain({
-					duration : LJ.login.opening_duration,
-					sticky   : true
+				var duration = 600;
+
+				$('.landing').find('.landing-logo')
+					.velocity('slideLeftIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-lang')
+					.velocity('slideRightIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-body')
+					.velocity('shradeIn', {
+						duration: duration*2,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-footer')
+					.velocity('slideUpIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+
+			},
+			hideLandingElements: function(){
+
+				$('.landing')
+					.children()
+					.velocity('shradeOut', {
+						duration : 800,
+						display  : 'none'
+					});
+
+			},
+			showLoginProgressBar: function(){
+
+				$('.login__message').velocity('shradeIn', {
+			 		duration: 1600, delay: LJ.login.opening_duration/2
+			 	});
+
+			},
+			addLoginProgression: function(){
+
+				$( LJ.login.renderLoginProgression() ).hide().appendTo( $('.curtain') )
+
+			},
+			showLoginProgression: function(){
+
+				$('.login').velocity('shradeIn', {
+					duration: 1000
 				});
 
+			},
+			showLoginProgressMessage: function(){
+
+				$('.login__message').velocity('shradeIn', {
+					duration: 1000
+				});
+
+			},
+			hideLoginProgressBar: function(){
+
+				$('.login__progress-bar').velocity('shradeIn', {
+			 		duration: 1000
+			 	});
+
+			},
+			enterLoginProcess: function(){
+
+				LJ.login.hideLandingElements();
 				LJ.ui.deactivateHtmlScroll();
-				// LJ.login.addLoginBackground();
 
 				return LJ.delay( 1000 )
 						 .then(function(){
 
-						 	$( LJ.login.renderLoginProgression() ).appendTo( $('.curtain') ).children().hide();
-						 	$('.login__message').velocity('shradeIn', {
-						 		duration: 1600, delay: LJ.login.opening_duration/2
-						 	});
-						 	$('.login__progress-bar').velocity('shradeIn', {
-						 		duration: 1600, delay: LJ.login.opening_duration/2
-						 	});
-							return;
+						 	LJ.ui.showCurtain({ duration: 600, theme: "light" });
+						 	LJ.login.addLoginProgression();
+						 	LJ.login.showLoginProgression();
+						 	// LJ.login.showLoginProgressMessage();
+						 	// LJ.login.showLoginProgressBar();
 
 						 });
-
-			},
-			addLoginBackground: function(){
-
-				$('<div class="login__bg"></div>')
-					.css({ opacity: 0 })
-					.appendTo('.curtain')
-					.velocity({ opacity: [ 0.09, 0 ]}, {
-						duration: 2500
-					});
 
 			},
 			hideLoginSteps: function(){
@@ -65,7 +120,7 @@
 					$('.app').removeClass('nonei');
 					$('.landing').remove();
 
-					$('.login__message, .login__progress-bar').velocity('shradeOut', {
+					$('.login__message, .login__progress-bar, .login__loader').velocity('shradeOut', {
 						duration: 400,
 						complete: resolve
 						
@@ -80,11 +135,11 @@
 				// - to allow the map to load in the right city
 				var L = LJ.user.location;
 				if( L && L.place_id && L.place_name && L.lat && L.lng ){
-					return;
+					//return;
 				}
 
 				if( LJ.user.access.indexOf('bot') == -1 ){
-					LJ.pictures.uploadFacebookPicture_Intro();
+					//LJ.pictures.uploadFacebookPicture_Intro();
 				}
 				
 	            return LJ.login.break()
@@ -131,17 +186,15 @@
 				return LJ.ui.render([
 
 					'<div class="login">',
+						'<div class="login__loader">',
+							LJ.static.renderStaticImage('slide_loader'),
+						'</div>',
 						'<div class="login__message">',
 							'<h1 data-lid="login_loading_msg"></h1>',
 						'</div>',
 						'<div class="login__progress-bar">',
 							'<div class="login__progress-bar-bg"></div>',
 						'</div>',
-						// '<div class="login-steps">',
-						// 	'<div class="login-steps__step">Etape 1</div>',
-						// 	'<div class="login-steps__step">Etape 2</div>',
-						// 	'<div class="login-steps__step">Etape 3</div>'
-						// '</div>',
 					'</div>'
 
 				].join(''));
@@ -229,18 +282,18 @@
 			},
 			showPlayButton: function(){
 
-				$('.init-location').find('.action__cancel')
-					.velocity('shradeOut', {
-						duration: LJ.login.prompt_buttons_duration,
-						display: 'none'
-					});
+				var $elm = $('.init-location').find('.init-location-action');
 
-				$('.init-location').find('.action__validate')
-					.velocity('shradeIn', {
-						duration : LJ.login.prompt_buttons_duration,
-						delay    : LJ.login.prompt_buttons_duration,
-						display  : 'flex'
-					});
+				if( $elm.css('opacity') != "0" ) return;
+
+				$elm.velocity('bounceInQuick', {
+					duration : LJ.login.prompt_buttons_duration,
+					delay    : 200,
+					display  : 'flex',
+					complete: function(){
+						$(this).addClass("pound-light");
+					}
+				});
 
 			},
 			// Do a bunch of functions right before the login happens
@@ -297,9 +350,6 @@
 						'<div class="init-location-action">',
 							'<div class="action__validate --round-icon">',
 								'<i class="icon icon-play"></i>',
-							'</div>',
-							'<div class="action__cancel --round-icon">',
-								'<i class="icon icon-pause"></i>',
 							'</div>',
 						'</div>',
 					'</div>'

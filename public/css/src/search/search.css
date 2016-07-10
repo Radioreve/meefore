@@ -330,8 +330,8 @@
 }
 
 .search-filters-body {
-    overflow-y: scroll;
     font-size: 12px;
+    overflow-y: scroll;
 }
 
 @media (min-width: 736px) {

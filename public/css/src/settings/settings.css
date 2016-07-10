@@ -45,7 +45,7 @@
 }
 
 .settings-item .action {
-    bottom: -16px;
+    top: -10px;
     right: 0px;
     font-size: 20px;
     color: #191919;
@@ -160,4 +160,18 @@
     display: block;
 }
 
+
+@media (max-width: 1000px) {
+    .menu-section.--settings .segment__part {
+        overflow: hidden;
+    }
+    .menu-section.--settings .segment__part h4 {
+        width: 200px;
+        padding: 0 13px;
+        text-align: center;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+}
 

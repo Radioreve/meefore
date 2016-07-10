@@ -46,53 +46,60 @@
     display: flex;
     flex-flow: column nowrap;
     width: 100%;
-    padding: 0 24px;
+    padding: 10px 20px 0 20px;
     box-sizing: border-box;
     position: absolute;
     background: white;
-    top: 280px;
+    top: 270px;
     z-index: 101;
 }
 
 .user-infos__item {
     display: flex;
     flex-flow: row nowrap;
-    margin: 4px 0;
+    margin: 2px 0;
     font-size: 16px;
     align-items: center;
     color: #333;
 }
 
-.user-infos__item.--name {
+.user-infos__item.--base {
     position: absolute;
     top: -58px;
     color: white;
     left: 20px;
-    /* transform: translate(-50%, 0); */
-    font-size: 18px;
+    border-radius: 100px;
     font-weight: 600;
     z-index: 10;
+    padding: 5px 26px;
+    font-size: 20px;
+    font-weight: 400;
 }
-.user-infos__item.--name.--female h2 {
+.user-infos__item.--base.--female {
     background: rgba(213, 93, 140, 0.79);
 }
 
-.user-infos__item.--name.--male h2 {
+.user-infos__item.--base.--male {
     background: rgba(63, 179, 198, 0.7);
 }
 
-.user-infos__item.--name h2 {
-    border-radius: 100px;
-    padding: 8px 26px;
+.user-infos__item.--base h2 {
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 128px;
     overflow: hidden;
     font-family: 'creamy';
-    font-size: 30px;
+    font-size: 34px;
     font-weight: 500;
-    padding: 5px 38px;
+    position: relative;
+    top: 2px;
 }
+
+.user-infos__item.--base comma {
+
+}
+
+.user-infos__item.--base span {margin-right: 4px;position: relative;}
 
 .user-infos__item.--age {
     font-family: 'Open Sans';
@@ -105,7 +112,7 @@
 }
 
 .user-infos__item label {
-    margin-left: 20px;
+    margin-left: 18px;
     padding-bottom: 0px;
     font-size: 13px;
     line-height: 20px;
@@ -125,7 +132,6 @@
 .user-infos__icon {
     /* background: #EAEAEA; */
     color: #454545;
-    border: 1px solid;
     height: 34px;
     width: 34px;
     flex-shrink: 0;
@@ -144,9 +150,6 @@
 }
 
 .user-infos__title label {
-    color: #ccc;
-    color: #1b69ec;
-    font-weight: 700;
     margin: 0 20px 0px;
     font-size: 12px;
 }
@@ -154,7 +157,6 @@
 .user-infos__title-splitter {
     height: 1px;
     background: #ccc;
-    background: #1b69ec;
     margin: auto;
     flex: 1;
 }

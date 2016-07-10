@@ -95,9 +95,11 @@
     align-items: center;
     justify-content: center;
     display: flex;
-    background-image: ur;
 }
 
+.curtain.--light {
+    background: #fff;
+}
 
 /* End app curtain */
 
@@ -182,7 +184,7 @@
     width: 70px;
     height: 70px;
     border-radius: 100px;
-    color: white;
+    color: #1b69ec;
     background: white;
     border: 4px solid;
 }
@@ -192,9 +194,10 @@
 .modal.--be-create button,
 .modal.--request button {
     background: #1B69EC;
+    color: white;
     border: 4px solid #1B69EC;
 }
-
+ 
 .modal.--logout button {
     color: #1b69ec;
     transform: scale(0.75);
@@ -259,7 +262,7 @@
     height: 30px;
     width: 30px;
     border-radius: 30px;
-    background: #33AFFF;
+    background: #1b69ec;
     color: white;
     box-sizing: border-box;
 }
@@ -466,8 +469,117 @@
   
 }
 
+.slide-ghost {
+    display: flex;
+    flex-flow: column nowrap;
+    text-align: center;
+    justify-content: center;
+    margin: auto;
+}
+.slide-ghost__icon {
+    font-size: 70px;
+    color: #eee;
+    margin-bottom: 30px;
+}
+.slide-ghost__icon i {}
+.slide-ghost__title {font-family: 'creamy';font-weight: 700;font-size: 34px;color: #1b69ec;margin-bottom: 20px;}
+.slide-ghost__title span {}
+.slide-ghost__subtitle {
+    font-size: 12px;
+    padding: 0 40px;
+    line-height: 20px;
+    margin-bottom: 60px;
+    color: #454545;
+}
+.slide-ghost__subtitle span {}
+.slide-ghost__action {
+    width: 100%;
+    height: 20px;
+}
+.slide-ghost__action button {
+    background: red;
+    position: static;
+    display: block;
+    width: 200px;
+    height: 36px;
+    background: white;
+    border: 1px dashed;
+    color: #1b69ec!important;
+    text-shadow: none;
+    font-size: 12px;
+}
+
 /* End slide */
 
+
+.ui-overlay {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    opacity: 0.7;
+}
+.ui-overlay--dark {
+    background: black;
+}
+.ui-overlay--light {
+    background: white;
+}
+
+
+.ui-overlay__message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%)!important;
+    text-align: center;
+    line-height: 20px;
+    font-size: 13px;
+    color: white;
+    font-weight: 500;
+    z-index: 101;
+    justify-content: center;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.ui-overlay--light .ui-overlay__message {
+    color: #3b5998;
+}
+
+.ui-synchronify {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 102;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+}
+.ui-synchronify .ui-overlay__message {
+    position: static;
+    transform: none!important;
+    color: #454545;
+    background: rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.ui-synchronify .ui-overlay__message span {
+    width: 100%;
+    display: block;
+    color: #1b69ec;
+}
+.ui-synchronify img {
+    margin;
+    margin: 10px;
+}
 
 .pictures-overlay {
     height: 100%;
@@ -519,14 +631,7 @@
     font-weight: 700;
 }
 
-.app__menu-item.--chats .bubble {
-    width: 14px;
-    height: 14px;
-    top: 10px;
-    right: 8px;
-    border-width: 3px;
-    background: #1b69ec;
-}
+.app__menu-item.--chats .bubble {/* background: #1b69ec; */}
 /* End bubble */
 
 

@@ -33,6 +33,11 @@
     height: 2px;
 }
 
+.be-browser__empty {
+
+}
+.be-browser__empty span {font-size: 12px;color: #191919;font-weight: 600;}
+
 .be-dates {
     width: 80%!important;
     display: flex;
@@ -62,22 +67,33 @@
     margin: 0 2px;
 }
 
+.be-dates__bar {
+    width: 70px;
+    border-radius: 100px;
+    position: absolute;
+    height: 3px;
+    background: #1b69ec;
+    bottom: -13px;
+    left: -4px;
+    display: none;
+}
 .be-dates__date {
     position: relative;
     top: 2px;
     margin: 0 20px;
     color: #ccc;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 12px;
     align-items: center;
     display: inline-flex;
-    transition: all ease-in-out .15s;
+    font-weight: 600;
 }
 
-.be-dates__date.--active {}
+.be-dates__date.--active .be-dates__bar {
+    display: block;
+}
 
 .be-dates__date:not(.--active):hover {
-    transform: scale(1.13);
 }
 
 .be-dates__date span {
@@ -85,15 +101,12 @@
 }
 
 .be-dates__date.--active {
-    font-weight: 800;
     position: relative;
     color: black;
-    /* transform: scale(1.3); */
-    font-size: 13px;
+    font-weight: 700;
 }
 
 .be-dates__date.--active span {
-    font-weight: 700;
 }
 
 .be-create__loader {
@@ -133,17 +146,20 @@
     overflow: hidden;
 }
 .be-inview__deleted-warning {
-    color: white;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%)!important;
     text-align: center;
-    line-height: 26px;
-    font-size: 16px;
+    line-height: 20px;
+    font-size: 13px;
     color: white;
     font-weight: 500;
-    width: 80%;
+    z-index: 101;
+    justify-content: center;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
 }
 .be-pictures {
     position: relative;
@@ -249,6 +265,8 @@
     border-radius: 100px;
     width: 60px;
     height: 60px;
+    overflow: hidden;
+    flex-shrink: 0;
 }
 .user-row__pic img {
     width: 60px;

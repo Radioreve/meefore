@@ -1,0 +1,158 @@
+.login {
+    color: #454545;
+    flex-flow: column nowrap;
+}
+
+.login__message {
+    text-align: center;
+    margin-top: 18px;
+    color: #99c0ff;
+    font-size: 10px;
+    font-weight: 700;
+    color: #1b69ec;
+} 
+ 
+.login__loader {
+    text-align: center;
+}
+ 
+.login__bg {
+    background-image: url('/img/bn/lp1.jpg');
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-position: center center;
+    opacity: .11;
+    top: 0;
+    left: 0;
+}
+
+.login__progress-bar {
+    width: 250px;
+    margin: 0 auto;
+    height: 3px;
+    background: rgba(27, 105, 236, 0.19);
+    border-radius: 30px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.login__progress-bar-bg {
+    height: 100%;
+    width: 0%;
+    transition: all ease-in-out .8s;
+    background: #1b69ec;
+    border-radius: 30px;
+}
+
+.init-location {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 1000px;
+    justify-content: center;
+    align-items: center;
+}
+
+.init-location__title {font-family: 'creamy';font-size: 60px;margin-bottom: 30px;}
+
+.init-location__title h2 {}
+
+.init-location__subtitle {
+    width: 60%;
+}
+
+.init-location__subtitle input {
+    padding: 16px 40px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 14px;
+    border: none;
+    background: transparent;
+    font-weight: 300;
+}
+
+.init-location__splitter {
+    height: 1px;
+    width: 40%;
+    margin: 0 0 10px 0;
+    background: #464646;
+}
+
+.init-location__explanation {color: #454545;font-size: 11px;margin-top: 10px;}
+
+.init-location__explanation p {}
+
+.init-location__geoloc {
+    margin-top: 50px;
+}
+
+.init-location__geoloc button {
+    width: 250px;
+    height: 45px;
+    font-size: 13px;
+    background: white;
+    color: #1b69ec;
+    border: 1px solid;
+}
+
+.init-location__geoloc button:hover {
+    opacity: 1;
+    color: #5d99ff;
+}
+ 
+.init-location-action {
+    margin-top: 30px;
+    opacity: 0;
+}
+
+.init-location .action__validate {
+    color: #e94f6a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    font-size: 70px;
+    border-radius: 200px;
+    overflow: hidden;
+    cursor: pointer;
+}
+.init-location .action__validate:hover {
+    color: #e6657b;
+}
+
+.init-location.--validating .action__validate {
+    color: #e88c9c;
+}
+
+.init-location .action__cancel {
+    opacity: 0;
+}
+
+.init-location .action__validate i {}
+
+.init-location .action__cancel i {}
+
+.init-location__action i {}
+
+.init-location__subtitle ::-webkit-input-placeholder {
+}
+
+.init-location__subtitle :-moz-placeholder { /* Firefox 18- */
+}
+
+.init-location__subtitle ::-moz-placeholder {  /* Firefox 19+ */
+}
+
+.init-location__subtitle :-ms-input-placeholder {  
+}
+
+.pound-light {
+    animation: pound-light .5s infinite alternate;
+}
+
+@keyframes pound-light {
+    to { transform: scale(1.15); }
+}

@@ -140,14 +140,38 @@ window.LJ = _.merge( window.LJ || {}, {
         console.info( message );
         
     },
+    getGhostUser: function(){
+
+        var ghost_user = {
+
+            facebook_id : 'ghost',
+            name        : LJ.text('ghost_user_name'),
+            age         : 18,
+            job         : LJ.text('ghost_user_job'),
+            img_id      : "ghost_user",
+            img_vs      : "1468060134"
+
+        }
+
+        return ghost_user;
+
+    },
     renderUserRow: function( user ){
+
+        var filterlay = 'js-filterlay';
+
+        if( !user || !user.img_id || !user.img_vs ){
+            LJ.log('No user was provided, rendering ghost user instead');
+            user = LJ.getGhostUser();
+            filterlay = '';
+        }
 
         var img_small = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-row" );
 
         return LJ.ui.render([
 
             '<div class="user-row js-user-profile" data-facebook-id="'+ user.facebook_id +'">',
-                '<div class="user-row__pic js-filterlay">',
+                '<div class="user-row__pic '+ filterlay +'">',
                   img_small,
                   '<div class="user-gender --'+ user.g +' js-user-gender"></div>',
                   '<div class="user-country js-user-country">',

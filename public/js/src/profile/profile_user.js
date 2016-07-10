@@ -86,7 +86,9 @@
 				"type"			: "profile",
 
 				"fetchPromise"	: LJ.api.fetchUserProfile,
-				"promise_arg"   : facebook_id
+				"promise_arg"   : facebook_id,
+
+				"errHandler"    : LJ.profile_user.handleShowUserProfileError
 
 			})
 			.then(function( expose ){				
@@ -111,7 +113,7 @@
 			.then(function(){
 				LJ.ui.shradeIn( $content, LJ.profile_user.slide_show_duration );				
 
-			});
+			})
 
 		},
 		addUserProfile: function( user_html, $container ){
@@ -143,13 +145,18 @@
 			var pictures_html = [];
 			user.pictures.forEach(function( pic ){
 
-				if( pic.img_id != LJ.app_settings.placeholder.img_id ){
+				// Only append picture if its not the placeholder one. In case the placeholder has changed 
+				// on the server, make also a test on the name to make sure the string "placeholder" isnt in there"
+				if( pic.img_id != LJ.app_settings.placeholder.img_id && !/placeholder/i.test( pic.img_id ) ){
 					var pic_html = LJ.profile_user.renderUserProfileImage( pic );
 					pictures_html.push( pic_html );
 				}
 
 			});
 			pictures_html = pictures_html.join('');
+
+			var job 		= user.job || LJ.text("w_na");
+			var ideal_night = user.ideal_night || LJ.text("w_na");
 
 			return LJ.ui.render([
 				'<div class="user-profile" data-facebook-id="' + user.facebook_id + '">',
@@ -171,25 +178,27 @@
 							// 	'<i class="icon icon-meepass"></i>',
 							// '</div>',
 						'</div>',
-						'<div class="user-infos__item --name --'+ user.gender +'">',
+						'<div class="user-infos__item --base --'+ user.gender +'">',
 							'<h2>' + user.name + '</h2>',
+							'<span class="comma">,</span>',
+							'<span>'+ user.age +'</span>',
 						'</div>',
-						'<div class="user-infos__title">',
-							'<div class="user-infos__title-splitter"></div>',
-							'<label data-lid="user_profile_about"></label>',
-							'<div class="user-infos__title-splitter"></div>',
-						'</div>',
-						'<div class="user-infos__item --age">',
-							'<div class="user-infos__icon --round-icon">',
-								'<i class="icon icon-gift"></i>',
-							'</div>',
-							'<label>' + user.age + '</label>',
-						'</div>',
+						// '<div class="user-infos__title">',
+						// 	'<div class="user-infos__title-splitter"></div>',
+						// 	'<label data-lid="user_profile_about"></label>',
+						// 	'<div class="user-infos__title-splitter"></div>',
+						// '</div>',
+						// '<div class="user-infos__item --age">',
+						// 	'<div class="user-infos__icon --round-icon">',
+						// 		'<i class="icon icon-gift"></i>',
+						// 	'</div>',
+						// 	'<label>' + user.age + '</label>',
+						// '</div>',
 						'<div class="user-infos__item --job">',
 							'<div class="user-infos__icon --round-icon">',
 								'<i class="icon icon-education"></i>',
 							'</div>',
-							'<label>' + user.job + '</label>',
+							'<label>' + job + '</label>',
 						'</div>',
 						'<div class="user-infos__item --country">',
 							'<div class="user-infos__icon --round-icon">',
@@ -212,7 +221,7 @@
 							'<div class="user-infos__icon --round-icon">',
 								'<i class="icon icon-dj"></i>',
 							'</div>',
-							'<label>' + user.ideal_night + '</label>',
+							'<label>' + ideal_night + '</label>',
 						'</div>',
 					'</div>',
 				'</div>'
@@ -220,6 +229,59 @@
 				].join(''));
 
 
-		}
+		},
+		handleShowUserProfileError: function( err ){
+
+        	if( err.err_id == "ghost_user" ){
+        		LJ.profile_user.ghostifyUserProfile();
+        	}
+
+        },
+		ghostifyUserProfile: function(){
+
+        	var duration      = 400;
+        	var $user_ghost = $( LJ.profile_user.renderUserProfileGhost() );
+
+        	$('.slide.--profile')
+        		.find('.slide__loader')
+        		.velocity('shradeOut', {
+        			duration: duration,
+        			complete: function(){
+        				$( this ).remove();
+        			}
+        		});
+
+        	$user_ghost
+        		.hide()
+        		.appendTo( $('.slide-body') )
+        		.velocity('shradeIn', {
+        			duration: duration,
+        			delay   : duration,
+        			display : 'flex'
+        		});
+
+        },
+        renderUserProfileGhost: function(){
+
+        	return LJ.ui.render([
+
+        		'<div class="slide-ghost">',
+        			'<div class="slide-ghost__icon --round-icon">',
+        				'<i class="icon icon-search-light"></i>',
+        			'</div>',
+        			'<div class="slide-ghost__title">',
+        				'<span data-lid="profile_ghost_title"></span>',
+        			'</div>',
+        			'<div class="slide-ghost__subtitle">',
+        				'<span data-lid="profile_ghost_subtitle"></span>',
+        			'</div>',
+        			'<div class="slide-ghost__action">',
+        				'<button data-lid="profile_ghost_btn" class="slide__close"></button>',
+        			'</div>',
+        		'</div>'
+
+        	].join(''));
+
+        }
 
 	});
