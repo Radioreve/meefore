@@ -6,6 +6,7 @@
 			'10205618910126551',  // Ben
 			'139625316382924' // David Dav [test user]
 		],
+		admin_api_key: "meeforever",
 		db: {
 		  	dev: {
 				uri: "mongodb://Radioreve:" + process.env.PW + "@dogen.mongohq.com:10008/meefore-staged"

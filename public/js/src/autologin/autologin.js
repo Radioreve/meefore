@@ -4,8 +4,6 @@
 
 		init: function(){
 
-			LJ.login.hideLandingElements();
-
 			return LJ.promise(function( resolve, reject ){
 
 				if( document.location.hash == "#1" ){
@@ -82,7 +80,7 @@
 		startLanding: function( message ){
 			return LJ.promise(function( resolve, reject ){
 				LJ.log( message );
-				LJ.log('Starting landing...');
+				LJ.log('Starting landing... v' + 1 );
 
 				$( LJ.static.renderStaticImage('slide_loader') )
 					.hide()
@@ -93,7 +91,7 @@
 					duration: 600,
 					complete: function(){
 						LJ.ui.hideCurtain({ duration: 800 });
-						LJ.login.showLandingElements();
+						LJ.landing.activateLanding( 2 );
 						
 					}
 				})

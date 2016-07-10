@@ -365,7 +365,7 @@
 			query.country_code = { '$in': country_codes };
 		}
 
-		console.log('Final query is : ' + JSON.stringify( query, null, 4 ));
+		// console.log('Final query is : ' + JSON.stringify( query, null, 4 ));
 
 		User
 			.find( query )

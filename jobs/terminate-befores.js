@@ -1,7 +1,7 @@
 	
 	// Databases
 	var mongoose = require('mongoose');
-	var alerter  = require( process.cwd() + '/services/alerter');
+	var Alerter  = require( process.cwd() + '/middlewares/alerter');
 	// Models
 	var User     = require('../models/UserModel');
 	var Before   = require('../models/BeforeModel');
@@ -52,7 +52,7 @@
 		}
 	}
 
-	var terminateBefores = function( options ){
+	var terminateBefores = function( options, callback ){
 
 		/*
 			Scheduler auto-update befores
@@ -121,7 +121,7 @@
 			var mail_html = []
 			mail_html.push('Connection to the database failed, Couldnt execute the cron job @reset-befores ');
 			mail_html.push( err );
-			alerter.sendAdminEmail({ subjet: 'Error connecting to Database', html: mail_html.join('') });
+			Alerter.sendAdminEmail({ subjet: 'Error connecting to Database', html: mail_html.join('') });
 			mail_html = [];
 
 		});
@@ -141,26 +141,30 @@
 			
 			console.log('Connected to the database! Updating... ');
 
-				async.waterfall([
-					updateBefores
-				], function(){
-
-					if( tracked.n_befores_matched == 0 ){
-						return console.log('No before matched the query');
-					}
+				updateBefores(function( tracked ){
 
 					console.log( tracked.n_users_updated + ' users updated');
+
+					var before_list_html = [];
+					tracker.before_list.forEach(function( bfr, i ){
+						before_list_html.push([
+							'<div>'+ i +' - ' + bfr._id + ' - ' + bfr.address.place_name + ' - ' + bfr.begins_at + '</div>'
+						].join(''));
+					});
+
+					before_list_html = before_list_html.join('');
 
 					var mail_html = [
 						'<div>Scheduler updated the database successfully in zone : ' + tracked.timezone + '</div>',
 						'<div>Local time 	   	         : ' + tracked.local_time 		 +'</div>',
 						'<div>Target time 	   	         : ' + tracked.target_time 		 +'</div>',
-						'<div>Number of befores match    : ' + tracked.n_befores_matched  +'</div>',
-						'<div>Number of befores updated  : ' + tracked.n_befores_updated  +'</div>'
+						'<div>Number of befores updated  : ' + tracked.n_befores_updated  +'</div>',
+						'<div>---------------------------</div>',
+						before_list_html
 					];
 
 					console.log('Scheduled job completed successfully');
-					alerter.sendAdminEmail({
+					Alerter.sendAdminEmail({
 						subject : 'Scheduler [' + process.env.NODE_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
 						html    : mail_html.join('') 
 					});
@@ -177,13 +181,15 @@
 		};
 	
 
-		function updateBefores(){
+		function updateBefores( callback ){
 
 			var g_callback = arguments[ arguments.length - 1 ];
 
 			Before.find( full_before_query, function( err, befores ){
 
-					if( err ) return handleError( err );
+					if( err ){
+						return callback( err, null );
+					}
 
 					var tasks = [];
 					befores.forEach(function( bfr ){
@@ -197,10 +203,15 @@
 
 					async.parallel( tasks, function( err ){
 
-						if( err ) return handleError( err );
+						if( err ){
+							return callback( err, null );
+						}
 
 						keeptrack({ n_befores_updated: befores.length });
 						g_callback( null, _.map( befores, '_id') );
+
+						callback( null, tracked );
+
 
 					});
 
@@ -208,9 +219,6 @@
 				});
 		};
 
-		function handleError( err ){
-			keeptrack( err );
-		};
 
 	};
 

@@ -216,7 +216,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		
 		var template = '';
 		$html.each(function( i, el ){
-			template += $(el).prop('outerHTML');
+			template += $( el ).prop('outerHTML');
 		});
 
 		return template;

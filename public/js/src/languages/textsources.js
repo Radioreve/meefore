@@ -14,6 +14,11 @@
 		}
 	};
 
+	LJ.textAdd = function( new_text_source ){
+
+		LJ.text_source = _.merge( LJ.text_source || {}, new_text_source );
+	}
+
 	LJ.text_source = _.merge( LJ.text_source || {}, {
 
 		page_title: {

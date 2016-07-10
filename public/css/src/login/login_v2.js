@@ -1,4 +1,4 @@
-
+	
 	window.LJ.login = _.merge( window.LJ.login || {}, {
 
 			'$trigger_login': '.js-login',
@@ -384,6 +384,7 @@
 				});
 
 			}
+			
 
 
 	});

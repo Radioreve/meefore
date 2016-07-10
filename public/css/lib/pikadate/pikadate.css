@@ -37,11 +37,11 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 
 .pika-single {*
    zoom:1;
-   top: 378px!important;
+   top: 348px!important;
    right: 18px!important;
    width: 328px;
    left: auto!important;
-   position: fixed!important;
+   position: absolute!important;
 }
 
 .pika-single.is-hidden {

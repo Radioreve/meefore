@@ -29,7 +29,7 @@
 
 .be-create-row__subtitle {
     font-weight: bold;
-    margin-top: 40px;
+    margin-top: 30px;
     font-size: 13px;
 }
 
@@ -126,18 +126,17 @@
 
 .be-create.--pending * {
 } 
-
+ 
 .hourpicker {
     background: white;
     border-radius: 4px;
-    position: fixed;
+    position: absolute;
     display: flex;
     z-index: 100;
     width: 100%;
-    top: 46px;
+    top: 50px;
     right: -6px;
-    /* box-shadow: 2px 2px 7px #C3C3C3; */
-    padding: 10px 4px;
+    padding: 4px 4px;
     border: 1px solid #ccc;
     justify-content: center;
 }

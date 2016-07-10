@@ -53,7 +53,7 @@
   <link rel="stylesheet" href="/css/src/friends/friends.css">
   <!-- <link rel="stylesheet" href="/css/src/invite/invite.css"> -->
   <link rel="stylesheet" href="/css/src/cheers/cheers.css">
-  <link rel="stylesheet" href="/css/src/landing/landing_v1.css">
+  <link rel="stylesheet" href="/css/src/landing/landing_v2.css">
   <link rel="stylesheet" href="/css/src/menu/menu.css">
   <link rel="stylesheet" href="/css/src/notifications/notifications.css">
   <link rel="stylesheet" href="/css/src/onboarding/onboarding.css">
@@ -104,57 +104,7 @@
   <div class="curtain --sticky --light"></div>
     
    <!-- Landing Page Begin -->
-  <div class="landing">
-    <div class="landing-logo --round-icon">
-      <span>M</span>
-    </div>
-    <div class="landing-lang">
-      <button class="js-changelang" data-lid="settings_ux_changelang_button"></button>
-    </div>
-    <div class="landing-body">
-      <div class="landing-title">
-        <h1>Trouvez votre before</h1>
-      </div>
-      <div class="landing-subtitle">
-        <h2>Repérez les before qui s'organisent près de chez vous en parcourant la Map.</h2>
-      </div>
-      <div class="landing-screenshots">
-        <div class="landing__screenshot">
-          <img src="/img/lp.png" alt="Find ur love" width="100%">
-        </div>
-      </div>
-      <div class="landing-bullets">
-        <div class="landing__bullet --active"></div>
-        <div class="landing__bullet"></div>
-        <div class="landing__bullet"></div>
-        <div class="landing__bullet"></div>
-      </div>
-      <div class="landing-privacy">
-        <h3>En continuant, vous acceptez nos <span class="js-terms landing-bold">Conditions d'Utilisation</span> et <span class="js-privacy landing-bold">Politique de Confidentialité.</span> Nous ne publierons <span class-"landing-bold">rien</span> sur Facebook.
-        </h3>
-      </div>
-      <div class="landing-connexion">
-        <button class="js-login">Se connecter via <span class="landing-bold">Facebook</span></button>
-      </div>
-    </div>
-    <footer class="landing-footer">
-      <div class="landing-footer__item">
-        <span>Conditions d'Utilisation</span>
-      </div>
-      <div class="landing-footer__item">
-        <span>Politique de Confidentialité</span>
-      </div>
-       <div class="landing-footer__item">
-        <span>Contact</span>
-      </div>
-       <div class="landing-footer__item">
-        <span>FAQ</span>
-      </div>
-       <div class="landing-footer__item">
-        <span>Page Facebook</span>
-      </div>
-    </footer>
-  </div>
+ <div class="multi-landing"></div>
   <!-- Landing Page End -->
   
 
@@ -923,6 +873,7 @@
   <script src="js/src/api/api.js"></script>
   <script src="js/src/pictures/pictures.js"></script>
   <script src="js/src/autologin/autologin.js"></script>
+  <script src="js/src/landing/landing.js"></script>
   <script src="js/src/admin/admin.js"></script>
   <script src="js/src/analytics/analytics_google.js"></script>
   <script src="js/src/cheers/cheers.js"></script>
@@ -973,7 +924,6 @@
   <!-- build:remove -->
   <script src="js/src/map/map_test.js"></script>
   <script src="js/src/before/before_test.js"></script>
-  <script src="js/src/login/login_test.js"></script>
   <!-- endbuild -->
 
    

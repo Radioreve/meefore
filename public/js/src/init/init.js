@@ -11,8 +11,8 @@
 
 		init: function( time ){
 
-            $(window).scrollTop(0)
-            
+            $( window ).scrollTop( 0 )
+
             // The application only starts when the Facebook pluggin has loaded
             if( typeof FB === 'undefined' )
                 return setTimeout(function(){ LJ.init( time ); }, time );

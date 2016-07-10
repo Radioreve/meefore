@@ -188,7 +188,13 @@
 			});
 		},
 		hideSearchUsers: function(){
+
 			return LJ.promise(function( resolve, reject ){
+
+				if( $('.search-users-row').length == 0 ){
+					return resolve();
+				}
+				
 				$('.search-users-row').velocity('shradeOut', {
 					duration : 300,
 					complete : function(){

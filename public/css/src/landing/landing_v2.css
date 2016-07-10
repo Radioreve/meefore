@@ -42,14 +42,15 @@
     font-size: 13px;
     width: 400px;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
 }
 .landing-subtitle h2 {}
 .landing-bullets {
     display: flex;
     justify-content: center;
     margin-bottom: 30px;
-}
+    display: none;
+} 
 .landing__bullet {
     width: 9px;
     height: 9px;
@@ -61,15 +62,29 @@
 }
 .landing__bullet.--active {
     background: #3b5998;
-}
+} 
 .landing-screenshots {
     width: 110px;
-    margin-bottom: 10px;
+    margin: 40px;
     padding: 10px;
+    height: 190px;
+    flex-shrink: 0;
+    position: relative;
 }
-.landing__screenshot {
+.landing__phone {
+    position: absolute;
+    width: 125px;
+    top: -44px;
+    left: 0;
+    z-index: -1;
 }
-.landing__screenshot img {}
+
+.landing__phone img {width: 100%;}
+ 
+.landing__screenshot {position: absolute;width: 108px;left: 10px;top: -9px;}
+.landing__screenshot img {
+    width: 100%;
+}
 .landing-privacy {
     width: 350px;
     text-align: center;
