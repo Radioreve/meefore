@@ -22,6 +22,6 @@
 	// Job #1 - Put "ended" all befores of yesterday, every day at 3:30 am	
 	(function terminateBeforesEveryHour(){
 		require('./jobs/terminate-befores').terminateBefores();
-		setTimeout( terminateEventsEveryHour, every_hour );
+		setTimeout( terminateBeforesEveryHour, every_hour );
 	})();
 
