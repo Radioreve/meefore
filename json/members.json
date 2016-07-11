@@ -50,5 +50,18 @@
         "interests": {
             "ec4795dc5b": false
         }
+    },
+    {
+        "id": "83c681de03067b922cdbb1c14808bbcc",
+        "email_address": "letourneau.benjamin@gmail.com",
+        "merge_fields": {
+            "NAME": "",
+            "AGE": "",
+            "JOB": "",
+            "GENDER": ""
+        },
+        "interests": {
+            "ec4795dc5b": false
+        }
     }
 ]

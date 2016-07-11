@@ -168,14 +168,17 @@ window.LJ = _.merge( window.LJ || {}, {
 
         var img_small = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-row" );
 
+        var gender = user.g  || user.gender;
+        var cc     = user.cc || user.country_code;
+
         return LJ.ui.render([
 
             '<div class="user-row js-user-profile" data-facebook-id="'+ user.facebook_id +'">',
                 '<div class="user-row__pic '+ filterlay +'">',
                   img_small,
-                  '<div class="user-gender --'+ user.g +' js-user-gender"></div>',
+                  '<div class="user-gender --'+ gender +' js-user-gender"></div>',
                   '<div class="user-country js-user-country">',
-                    '<i class="flag-icon flag-icon-'+ user.cc +'"></i>',
+                    '<i class="flag-icon flag-icon-'+ cc +'"></i>',
                   '</div>',
                 '</div>',
                 '<div class="user-row__informations">',

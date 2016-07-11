@@ -529,6 +529,9 @@
         	// Make sure the host is always on top of the list
         	LJ.mainifyUserRow( $w, main_host );
 
+        	// Set the ux preferences
+        	LJ.settings.applyUxPreferences();
+
         	// Prepend and hide the content, so that jsp compute the right height
 			$w.css({ 'opacity': 0 }).show();
 

@@ -226,7 +226,9 @@
 						'age' 		  : user.age,
 						'job' 		  : user.job,
 						'img_id'	  : user_main_img.img_id,
-						'img_vs'	  : user_main_img.img_version
+						'img_vs'	  : user_main_img.img_version,
+						'g' 		  : user.gender,
+						'cc' 		  : user.country_code
 					};
 
 					req.sent.expose.user = user;

@@ -31128,6 +31128,9 @@ function closure ( target, options ){
         	// Make sure the host is always on top of the list
         	LJ.mainifyUserRow( $w, main_host );
 
+        	// Set the ux preferences
+        	LJ.settings.applyUxPreferences();
+
         	// Prepend and hide the content, so that jsp compute the right height
 			$w.css({ 'opacity': 0 }).show();
 
@@ -32390,789 +32393,6 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 	 window.bcf = LJ.before.test.handleCreateBeforeWithSpecificFriend
 	 window.fid = function(){ return LJ.user.facebook_id;}
 
-
-	window.LJ.cheers = _.merge( window.LJ.cheers || {}, {
-
-		cheers_back_duration: 450,
-
-		fetched_cheers     : [],
-		fetched_profiles   : [],
-		active_cheers_back : null,
-		cheers_back_state  : "idle",
-
-		init: function(){
-
-			LJ.cheers.handleDomEvents();
-			LJ.cheers.activateCheers("received");
-			return;
-
-		},
-		handleDomEvents: function(){
-
-			$('.menu-section.--cheers').on('click', '.segment__part', LJ.cheers.handleSegmentClicked );
-			$('.menu-item.--cheers').one('click', LJ.cheers.handleCheersClicked );
-			$('.cheers').on('click', '.cheers__item', LJ.cheers.handleCheersItemClicked );
-			$('.chat').on('click', '.js-validate', LJ.cheers.handleValidate );
-			$('body').on('click', '.js-close-cheers-back', LJ.cheers.handleCloseCheersBack );
-
-		},
-		handleSegmentClicked: function(){
-
-			var $seg = $( this );
-			var link = $seg.attr('data-link');
-
-			LJ.cheers.activateCheers( link );
-
-		},
-		handleCloseCheersBack: function(){
-
-			var close_type = LJ.cheers.getCloseType();
-
-			LJ.chat.refreshChatRowsJsp().then(function(){
-
-				LJ.cheers.resetCheersBackState()
-
-				if( close_type == "hide_all" ){
-					LJ.chat.hideChatWrap().then(function(){
-						$('.cheers-back').remove();
-					});
-				}
-
-				if( close_type == "hide_cheers_back" ){
-					$('.cheers-back').remove();
-				}
-
-
-			});
-		},
-		activateCheers: function( link ){
-
-			var $seg = $('.menu-section.--cheers').find('.segment__part[data-link="'+ link +'"]');
-
-			if( $seg.hasClass('--active') ){
-				return LJ.wlog('Already activated');
-			}
-
-			$seg.siblings().removeClass('--active');
-			$seg.addClass('--active');
-
-			LJ.cheers.filterCheersItems( link );
-
-		},
-		filterCheersItems: function( link ){
-
-			$('.cheers').children().css({ display: 'none' });
-			$('.cheers [data-link="' + link + '"]').css({ display: 'flex' });
-
-		},
-		clearAllCheers: function(){
-
-			$('.cheers').html('');
-
-		},
-		showCheersLoader: function(){
-
-			LJ.cheers.$loader = $( LJ.static.renderStaticImage('menu_loader') );
-
-			LJ.cheers.$loader.addClass('none').appendTo('.cheers')
-				.velocity('bounceInQuick', {
-				   	delay: 125,
-				   	duration: 500,
-				   	display: 'block'
-				});		
-
-		},
-		hideCheersLoader: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.cheers.$loader.velocity('shradeOut', {
-					duration: 250,
-					complete: function(){
-						$( this ).remove();
-						resolve();
-					}
-				});
-
-			});
-		},
-		showCheersBackLoader: function(){
-
-			$( LJ.static.renderStaticImage('slide_loader') )
-				.addClass('cheers-back__loader')
-				.hide()
-				.appendTo($('.cheers-back'))
-				.show();
-
-		},
-		hideCheersBackLoader: function(){
-
-			$('.cheers-back').find('.cheers-back__loader').remove();
-
-		},
-		showCheersBackOverlay: function(){
-
-			$('<div class="loader__overlay"></div>')
-				.hide()
-				.appendTo( $('.cheers-back') )
-				.velocity('fadeIn', {
-					duration: 500
-				});
-
-		},
-		hideCheersBackOverlay: function(){
-
-			$('.cheers-back').find('.cheers-back__overlay').remove();
-
-		},
-		handleCheersClicked: function(){
-
-			LJ.cheers.showCheersLoader();
-			LJ.cheers.clearAllCheers();
-			LJ.cheers.fetchAndAddCheers();
-
-		},	
-		fetchAndAddCheers: function(){
-
-			LJ.log('Fetching and setting cheers items...');
-
-			LJ.cheers.removeAllCheers();
-			LJ.cheers.showCheersLoader();
-
-			LJ.api.fetchMeCheers()
-				.then(function( res ){
-					LJ.cheers.fetched_cheers = res.cheers;
-
-				})
-				.then(function(){
-
-					var main_hosts     = _.map( LJ.cheers.fetched_cheers, 'main_host' );
-					var members        = _.flatten( _.map( LJ.cheers.fetched_cheers, 'members' ) );
-
-					var facebook_ids = _.uniq( _.concat( main_hosts, members ) );
-					return LJ.api.fetchUsers( facebook_ids )
-
-				})
-				.then(function( res ){
-					LJ.cheers.fetched_profiles = _.filter( _.map( res, 'user' ), Boolean );
-					return LJ.cheers.renderCheersItems( LJ.cheers.fetched_cheers, LJ.cheers.fetched_profiles );
-
-				})
-				.then(function( cheers_html ){
-					return LJ.cheers.addCheersItems( cheers_html );
-
-				})
-				.then(function( $cheers ){
-					return LJ.cheers.hideCheersLoader();
-
-				})
-				.then(function(){
-					var type = LJ.cheers.getActiveCheersType();
-					return LJ.cheers.showCheersItems( type );
-
-				})
-				.catch(function( e ){
-					LJ.cheers.hideCheersLoader();
-					LJ.wlog(e);
-
-				});
-
-		},
-		getCheersItem: function( cheers_id ){
-
-			return _.find( LJ.cheers.fetched_cheers, function( ch ){
-				return ch.cheers_id == cheers_id;
-			});
-
-		},
-		handleCheersItemClicked: function(){
-
-			var $s        = $( this );
-			var cheers_id = $s.attr('data-cheers-id');
-
-			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
-
-			if( cheers_item.status == "accepted" ){
-
-				if( LJ.chat.getChatState() == "hidden" ){
-					LJ.chat.showChatWrap();
-				}
-
-				LJ.chat.hideChatInview();
-				LJ.cheers.removeCheersBack();
-				LJ.chat.activateChat( cheers_item.chat_id );
-				LJ.chat.showChatInview( cheers_item.chat_id );
-
-			} else {
-
-			// Cheers is in the pending state
-			cheers_item.cheers_type == "sent" ?
-				LJ.before.fetchAndShowBeforeInview( cheers_item.before_id ) :
-				LJ.cheers.validatifyCheersItem( cheers_id );
-
-			}
-
-		},
-		refreshCheersItems: function(){
-
-			var cheers   = LJ.cheers.fetched_cheers;
-			var profiles = LJ.cheers.fetched_profiles;
-
-			if( profiles.length == 0 ){
-				return LJ.cheers.fetchAndAddCheers();
-			}
-
-			var type 		= LJ.cheers.getActiveCheersType();
-			var cheers_html = LJ.cheers.renderCheersItems( cheers, profiles );
-
-			LJ.cheers.removeAllCheers();
-			LJ.cheers.addCheersItems( cheers_html );
-			LJ.cheers.showCheersItems( type, 1 );
-
-
-		},
-		removeAllCheers: function(){
-
-			$('.cheers').children().remove();
-
-		},
-		getActiveCheersType: function(){
-
-			return $('.menu-section.--cheers').find('.segment__part.--active').attr('data-link');
-
-		},
-		renderCheersItems: function( cheers, user_profiles ){
-
-			var html = [];
-			
-			var no_cheers_received = true;
-			var no_cheers_sent     = true;
-				
-			cheers.forEach(function( ch ){
-
-				if( ch.cheers_type == "received" ){
-
-					no_cheers_received = false;
-					var main_member_profile = _.find( user_profiles, function( u ){
-						return u.facebook_id == ch.main_member;
-					});
-					html.push( LJ.cheers.renderCheersItem__Received( ch, main_member_profile, ch.place_name ) );
-
-				}
-
-				if( ch.cheers_type == "sent" ){
-
-					no_cheers_sent = false;
-					var main_host_profile = _.find( user_profiles, function( u ){
-						return u.facebook_id == ch.main_host;
-					})
-					var requested_with_profiles = _.filter( user_profiles, function( u ){
-						return ch.members.indexOf( u.facebook_id ) != -1 && u.facebook_id != LJ.user.facebook_id;
-					});
-					html.push( LJ.cheers.renderCheersItem__Sent( ch, main_host_profile, requested_with_profiles, ch.place_name ));
-				}
-
-			});
-
-			if( no_cheers_sent ){
-				html.push( LJ.cheers.renderCheersItem__SentEmpty() );
-			}
-
-			if( no_cheers_received ){
-				html.push( LJ.cheers.renderCheersItem__ReceivedEmpty() );
-			}
-
-			return html.join('');
-
-		},
-		addCheersItems: function( cheers_html ){
-
-			var $w = $('.cheers');
-
-			$( cheers_html ).hide().appendTo( $w );
-
-		},
-		showCheersItems: function( type, duration ){
-
-			type = type || "sent";
-
-			var $w = $('.cheers');
-
-			$w.find('[data-link="' + type + '"]').velocity('shradeIn', {
-				duration : duration || 250,
-				display  : 'flex'
-			});
-
-		},
-		renderCheersItem__ReceivedEmpty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty" data-link="received">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-drinks"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_cheers_received_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_cheers_received_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderCheersItem__SentEmpty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty" data-link="sent">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-drinks"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_cheers_sent_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_cheers_sent_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderCheersItemIcon__Received: function( status ){
-
-			if( status == "pending" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
-					'<i class="icon icon-drinks"></i>',
-				'</div>'].join('');
-			}
-
-			if( status == "accepted" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
-					'<i class="icon icon-chat-bubble-duo"></i>',
-				'</div>'].join('');
-			}
-
-		},
-		renderCheersItem__Received: function( cheers_object, main_requester, address ){
-
-			var ch = cheers_object;
-
-			var formatted_date = LJ.text( "menurow_date", moment(ch.requested_at) );
-			var img_html       = LJ.pictures.makeImgHtml( main_requester.img_id, main_requester.img_vs, 'menu-row' );
-
-			var groupname 	   = LJ.renderGroupName( main_requester.name );
-			var groupname_html = LJ.text('cheers_item_title_received').replace('%groupname', groupname);
-
-			var address  	   = ch.place_name;
-
-			return LJ.ui.render([
-
-				'<div class="cheers__item" data-link="received" data-before-id="'+ ch.before_id +'" data-cheers-id="' + ch.cheers_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						LJ.cheers.renderCheersItemIcon__Received( ch.status ),
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + groupname_html +'</h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + address + '</h4>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderCheersItemIcon__Sent: function( status ){
-
-			if( status == "pending" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
-					'<i class="icon icon-pending"></i>',
-				'</div>'].join('');
-			}
-
-			if( status == "accepted" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
-					'<i class="icon icon-chat-bubble-duo"></i>',
-				'</div>'].join('');
-			}
-
-		},
-		renderCheersItem__Sent: function( cheers_object, main_host_profile, requested_with_profiles, address ){
-
-			var ch = cheers_object;
-
-			var formatted_date       = LJ.text( "menurow_date", moment(ch.requested_at) );
-			var img_html             = LJ.pictures.makeImgHtml( main_host_profile.img_id, main_host_profile.img_vs, 'menu-row' );
-
-			var groupname            = LJ.renderGroupName( main_host_profile.name );
-			var groupname_html       = LJ.text('cheers_item_title_sent').replace('%groupname', groupname );
-
-			var requested_with_names = LJ.renderMultipleNames( _.map( requested_with_profiles, 'name' ) );
-			var requested_with_html  = LJ.text("cheers_requested_with").replace( '%names', requested_with_names );
-
-			var address              = ch.place_name;
-
-			return LJ.ui.render([
-
-				'<div class="cheers__item" data-link="sent" data-before-id="'+ ch.before_id +'" data-cheers-id="' + ch.cheers_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						LJ.cheers.renderCheersItemIcon__Sent( ch.status ),
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + groupname_html +'</h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-users"></i></div>',
-							'<h4>' + requested_with_html + '</h4>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + address + '</h4>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		setCloseType: function( close_type ){
-
-			LJ.cheers.close_type = close_type;
-
-		},
-		getCloseType: function(){
-
-			return LJ.cheers.close_type;
-
-		},
-		validatifyCheersItem: function( cheers_id ){
-
-			if( LJ.cheers.getActiveCheersBack() == cheers_id ){
-				return;
-			}
-
-			LJ.cheers.setActiveCheersBack( cheers_id );
-
-			LJ.cheers.makeCheersBack( cheers_id );
-			LJ.cheers.refreshChatBackUsersJsp();
-
-			if( LJ.chat.getChatState() == "hidden" ){
-				LJ.cheers.setCloseType("hide_all");
-				LJ.chat.showChatWrap();
-			} else {
-				// Chat was already opened. Only set a cheers_mode if none was set before
-				if( !LJ.cheers.getCloseType() ){
-					LJ.cheers.setCloseType("hide_cheers_back");
-				}
-			}
-			LJ.cheers.showCheersBack();
-
-		},
-		setCheersBackState: function( state ){
-
-			LJ.cheers.cheers_back_state = state;
-
-		},
-		getCheersBackState: function(){
-
-			return LJ.cheers.cheers_back_state;
-
-		},
-		pendifyCheersItem: function(){
-
-			if( LJ.cheers.getCheersBackState() != "idle" ){
-				return LJ.wlog('Cheers back object isnt in an idle state');
-			}
-
-			LJ.cheers.setCheersBackState("pending");
-			LJ.cheers.showCheersBackLoader();
-			LJ.cheers.showCheersBackOverlay();
-
-		},
-		dependifyCheersItem: function(){
-
-			if( LJ.cheers.getCheersBackState() != "pending" ){
-				return LJ.wlog('Cheers back object isnt in an pending state');
-			}
-
-			LJ.cheers.setCheersBackState("idle");
-			LJ.cheers.hideCheersBackLoader();
-			LJ.cheers.hideCheersBackOverlay();
-
-		},
-		makeCheersBack: function( cheers_id ){
-
-			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
-
-			var members_profiles = _.filter( LJ.cheers.fetched_profiles, function(m){
-				return cheers_item.members.indexOf( m.facebook_id ) != -1;
-			});
-
-			var html = LJ.cheers.renderCheersBack( members_profiles );
-
-			LJ.cheers.addCheersBack( html );
-			LJ.mainifyUserRow( $('.cheers-back'), cheers_item.main_member );
-			LJ.cheers.setCheersBackHeader( cheers_item )
-			return;
-
-		},
-		acceptifyCheersItem: function( chat_id ){
-
-			LJ.log('Acceptifying cheers item... !');
-
-			// Prepare the chat in the background
-			LJ.chat.hideChatInview();
-			LJ.chat.activateChat( chat_id );
-			LJ.chat.showChatInview( chat_id );
-
-			LJ.chat.bounceChatHeaderIcons( chat_id, 400 );
-
-			// Fade out the chatback wrapper
-			LJ.cheers.hideCheersBack();
-
-		},
-		resetCheersBackState: function(){
-
-			LJ.cheers.setCloseType( null );
-			LJ.cheers.setActiveCheersBack( null );
-			LJ.cheers.setCheersBackState("idle");
-
-		},
-		removeCheersBack: function(){
-
-			LJ.cheers.resetCheersBackState();
-			$('.cheers-back').remove();
-
-		},	
-		hideCheersBack: function(){
-
-			$('.cheers-back').velocity('shradeOut', {
-				duration: 500,
-				complete: function(){
-
-					$( this ).remove();
-					LJ.cheers.resetCheersBackState();
-				}
-			});
-
-		},
-		updateCheersItem: function( cheers_id, opts ){
-
-			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
-
-			_.keys( cheers_item ).forEach(function( key ){
-				if( opts[ key ] && typeof opts[ key ] == typeof cheers_item[ key ] ){
-					cheers_item[ key ] = opts[ key ];
-				}
-			});
-
-		},
-		getCheersRow: function( cheers_id ){
-
-			return $('.cheers__item[data-cheers-id="'+ cheers_id +'"]');
-
-		},
-		acceptifyCheersRow: function( cheers_id ){
-
-			var $row        = LJ.cheers.getCheersRow( cheers_id );
-			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
-			
-			if( $row.length == 0 ){
-				return;
-			}
-			
-			var $icon;
-			if( cheers_item.cheers_type == "sent" ){
-				$icon = LJ.cheers.renderCheersItemIcon__Sent( "accepted" );
-			} else {
-				$icon = LJ.cheers.renderCheersItemIcon__Received( "accepted" );
-			}
-
-			$row.find('.row-pic__icon').replaceWith( $icon );
-
-		},	
-		setActiveCheersBack: function( cheers_id ){
-
-			LJ.cheers.active_cheers_back = cheers_id;
-
-		},
-		getActiveCheersBack: function(){
-
-			return LJ.cheers.active_cheers_back;
-
-		},
-		addCheersBack: function( html ){
-
-			$('.chat').find('.cheers-back').remove();
-			$( html ).hide().appendTo( $('.chat') );
-
-		},
-		showCheersBack: function(){
-
-			$('.chat').css({ 'display': 'flex' }).find('.cheers-back').show();
-
-		},
-		renderChatHeaderCloseIcon: function(){
-
-			return [
-				'<div class="chat-inview__icon --close js-close-cheers-back --round-icon">',
-					'<i class="icon icon-cancel"></div>',
-				'</div>'
-			].join('');
-
-		},
-		setCheersBackHeader: function( cheers_item ){
-			
-			var $chat_header = $('.cheers-back').find('.chat-inview-header');
-			// Replace icons
-			$chat_header.find('.chat-inview__icon').remove();
-			$chat_header.append( LJ.cheers.renderChatHeaderCloseIcon() );
-
-			var formatted_date = LJ.text('chatinview_date', moment(cheers_item.begins_at) );
-			$chat_header.find('.chat-inview-title__h1').html( '<span class="--date">'+ formatted_date +'</span>' );
-			$chat_header.find('.chat-inview-title__h2').html( '<span class="--place">'+ cheers_item.place_name +'</span>' );
-
-		},
-		acceptifyChat: function(){
-
-			
-			
-		},
-		refreshChatBackUsersJsp: function(){
-			
-			var $w = $('.cheers-back');
-			
-			return LJ.ui.turnToJsp( $w.find('.cheers-back-users'), {
-				jsp_id: 'cheers_back'
-			});
-
-		},
-		renderCheersBack: function( members_profiles ){
-
-			var pictures = [];
-			members_profiles.forEach(function( u ){
-				pictures.push({ img_id: u.img_id, img_vs: u.img_vs });
-			});
-			var pictures  = LJ.pictures.makeRosaceHtml( pictures, 'cheers-back' );
-			var user_rows = LJ.renderUserRows( members_profiles );
-
-			var cheers_back_html = LJ.chat.renderChatInviewHeader(); // Borrow it to the chat module
-
-			return LJ.ui.render([
-
-				'<div class="cheers-back">',
-					cheers_back_html,
-					'<div class="cheers-back-pictures">',
-			        	pictures, 
-			        '</div>',
-					'<div class="cheers-back-groupname">',
-						'<div class="cheers-back-groupname__h1">',
-							'<span data-lid="cheers_back_groupname"></span>',
-						'</div>',
-					'</div>',
-			        '<div class="cheers-back-users">',
-			        	user_rows,
-			        '</div>',
-			        '<div class="cheers-back-actions">',
-			        	'<button class="--round-icon js-validate">',
-			        		'<i class="icon icon-drinks"></i>',
-			        		'<span data-lid="chat_inview_validate"></span>',
-			        	'</button>',
-			        '</div>',
-				'</div>'
-
-			].join(''));
-
-		},
-        handleValidate: function(){
-
-			var $s = $( this );
-
-			if( LJ.cheers.getCheersBackState() == "pending" ){
-				return;
-			}
-
-			var cheers_id = LJ.cheers.getActiveCheersBack();
-
-        	LJ.log('Cheering back...');
-        	LJ.cheers.cheersBack( cheers_id );
-
-        },
-        cheersBack: function( cheers_id ){
-
-			var before_id = LJ.cheers.getCheersItem( cheers_id ).before_id;
-			var members   = LJ.cheers.getCheersItem( cheers_id ).members;
-			
-			LJ.cheers.pendifyCheersItem();
-        	LJ.api.changeGroupStatus({
-        		cheers_id : cheers_id,
-        		before_id : before_id,
-        		members   : members,
-        		status    : "accepted" 
-        	})
-    		.then(function( res ){
-    			LJ.log("Cheers back successfully");
-
-    		})
-    		.catch(function( e ){
-				
-				LJ.log(e);
-    			LJ.ui.showToast( LJ.text("to_default_error"), "error" );
-    			LJ.cheers.dependifyCheersItem();
-
-    		});
-
-        },
-        loaderifyCheersBack: function(){
-        	return LJ.promise(function( resolve, reject ){	
-
-        		var d = LJ.cheers.cheers_back_duration;
-
-        		$('.cheers-back')
-        			.children()
-        			.velocity('shradeOut', { duration: d, display: 'none' });
-
-	        	var d = LJ.static.renderStaticImage('slide_loader');
-				$( d ).addClass('js-cheers-back-loader')
-					  .hide().appendTo('.cheers-back')
-					  .velocity('shradeIn', { duration: d, delay: d } );
-
-				LJ.delay( 2*d ).then( resolve );
-
-        	});
-
-        },
-        deloaderifyCheersBack: function(){
-        	return LJ.promise(function( resolve, reject ){
-
-	        	var d = LJ.cheers.cheers_back_duration;
-
-				$('.js-cheers-back-loader')
-					  .velocity('shradeOut', { duration: d, complete: function(){ $(this).remove(); }} );
-
-        		$('.cheers-back')
-        			.children()
-        			.velocity('shradeIn', { duration: d, delay: d, display: 'flex' });
-
-
-				LJ.delay( 2*d ).then( resolve );
-
-        	});
-        }
-
-	});
-		
 
 	window.LJ.chat = _.merge( window.LJ.chat || {}, {
 
@@ -35971,6 +35191,789 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 	});
 
+	window.LJ.cheers = _.merge( window.LJ.cheers || {}, {
+
+		cheers_back_duration: 450,
+
+		fetched_cheers     : [],
+		fetched_profiles   : [],
+		active_cheers_back : null,
+		cheers_back_state  : "idle",
+
+		init: function(){
+
+			LJ.cheers.handleDomEvents();
+			LJ.cheers.activateCheers("received");
+			return;
+
+		},
+		handleDomEvents: function(){
+
+			$('.menu-section.--cheers').on('click', '.segment__part', LJ.cheers.handleSegmentClicked );
+			$('.menu-item.--cheers').one('click', LJ.cheers.handleCheersClicked );
+			$('.cheers').on('click', '.cheers__item', LJ.cheers.handleCheersItemClicked );
+			$('.chat').on('click', '.js-validate', LJ.cheers.handleValidate );
+			$('body').on('click', '.js-close-cheers-back', LJ.cheers.handleCloseCheersBack );
+
+		},
+		handleSegmentClicked: function(){
+
+			var $seg = $( this );
+			var link = $seg.attr('data-link');
+
+			LJ.cheers.activateCheers( link );
+
+		},
+		handleCloseCheersBack: function(){
+
+			var close_type = LJ.cheers.getCloseType();
+
+			LJ.chat.refreshChatRowsJsp().then(function(){
+
+				LJ.cheers.resetCheersBackState()
+
+				if( close_type == "hide_all" ){
+					LJ.chat.hideChatWrap().then(function(){
+						$('.cheers-back').remove();
+					});
+				}
+
+				if( close_type == "hide_cheers_back" ){
+					$('.cheers-back').remove();
+				}
+
+
+			});
+		},
+		activateCheers: function( link ){
+
+			var $seg = $('.menu-section.--cheers').find('.segment__part[data-link="'+ link +'"]');
+
+			if( $seg.hasClass('--active') ){
+				return LJ.wlog('Already activated');
+			}
+
+			$seg.siblings().removeClass('--active');
+			$seg.addClass('--active');
+
+			LJ.cheers.filterCheersItems( link );
+
+		},
+		filterCheersItems: function( link ){
+
+			$('.cheers').children().css({ display: 'none' });
+			$('.cheers [data-link="' + link + '"]').css({ display: 'flex' });
+
+		},
+		clearAllCheers: function(){
+
+			$('.cheers').html('');
+
+		},
+		showCheersLoader: function(){
+
+			LJ.cheers.$loader = $( LJ.static.renderStaticImage('menu_loader') );
+
+			LJ.cheers.$loader.addClass('none').appendTo('.cheers')
+				.velocity('bounceInQuick', {
+				   	delay: 125,
+				   	duration: 500,
+				   	display: 'block'
+				});		
+
+		},
+		hideCheersLoader: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.cheers.$loader.velocity('shradeOut', {
+					duration: 250,
+					complete: function(){
+						$( this ).remove();
+						resolve();
+					}
+				});
+
+			});
+		},
+		showCheersBackLoader: function(){
+
+			$( LJ.static.renderStaticImage('slide_loader') )
+				.addClass('cheers-back__loader')
+				.hide()
+				.appendTo($('.cheers-back'))
+				.show();
+
+		},
+		hideCheersBackLoader: function(){
+
+			$('.cheers-back').find('.cheers-back__loader').remove();
+
+		},
+		showCheersBackOverlay: function(){
+
+			$('<div class="loader__overlay"></div>')
+				.hide()
+				.appendTo( $('.cheers-back') )
+				.velocity('fadeIn', {
+					duration: 500
+				});
+
+		},
+		hideCheersBackOverlay: function(){
+
+			$('.cheers-back').find('.cheers-back__overlay').remove();
+
+		},
+		handleCheersClicked: function(){
+
+			LJ.cheers.showCheersLoader();
+			LJ.cheers.clearAllCheers();
+			LJ.cheers.fetchAndAddCheers();
+
+		},	
+		fetchAndAddCheers: function(){
+
+			LJ.log('Fetching and setting cheers items...');
+
+			LJ.cheers.removeAllCheers();
+			LJ.cheers.showCheersLoader();
+
+			LJ.api.fetchMeCheers()
+				.then(function( res ){
+					LJ.cheers.fetched_cheers = res.cheers;
+
+				})
+				.then(function(){
+
+					var main_hosts     = _.map( LJ.cheers.fetched_cheers, 'main_host' );
+					var members        = _.flatten( _.map( LJ.cheers.fetched_cheers, 'members' ) );
+
+					var facebook_ids = _.uniq( _.concat( main_hosts, members ) );
+					return LJ.api.fetchUsers( facebook_ids )
+
+				})
+				.then(function( res ){
+					LJ.cheers.fetched_profiles = _.filter( _.map( res, 'user' ), Boolean );
+					return LJ.cheers.renderCheersItems( LJ.cheers.fetched_cheers, LJ.cheers.fetched_profiles );
+
+				})
+				.then(function( cheers_html ){
+					return LJ.cheers.addCheersItems( cheers_html );
+
+				})
+				.then(function( $cheers ){
+					return LJ.cheers.hideCheersLoader();
+
+				})
+				.then(function(){
+					var type = LJ.cheers.getActiveCheersType();
+					return LJ.cheers.showCheersItems( type );
+
+				})
+				.catch(function( e ){
+					LJ.cheers.hideCheersLoader();
+					LJ.wlog(e);
+
+				});
+
+		},
+		getCheersItem: function( cheers_id ){
+
+			return _.find( LJ.cheers.fetched_cheers, function( ch ){
+				return ch.cheers_id == cheers_id;
+			});
+
+		},
+		handleCheersItemClicked: function(){
+
+			var $s        = $( this );
+			var cheers_id = $s.attr('data-cheers-id');
+
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+
+			if( cheers_item.status == "accepted" ){
+
+				if( LJ.chat.getChatState() == "hidden" ){
+					LJ.chat.showChatWrap();
+				}
+
+				LJ.chat.hideChatInview();
+				LJ.cheers.removeCheersBack();
+				LJ.chat.activateChat( cheers_item.chat_id );
+				LJ.chat.showChatInview( cheers_item.chat_id );
+
+			} else {
+
+			// Cheers is in the pending state
+			cheers_item.cheers_type == "sent" ?
+				LJ.before.fetchAndShowBeforeInview( cheers_item.before_id ) :
+				LJ.cheers.validatifyCheersItem( cheers_id );
+
+			}
+
+		},
+		refreshCheersItems: function(){
+
+			var cheers   = LJ.cheers.fetched_cheers;
+			var profiles = LJ.cheers.fetched_profiles;
+
+			if( profiles.length == 0 ){
+				return LJ.cheers.fetchAndAddCheers();
+			}
+
+			var type 		= LJ.cheers.getActiveCheersType();
+			var cheers_html = LJ.cheers.renderCheersItems( cheers, profiles );
+
+			LJ.cheers.removeAllCheers();
+			LJ.cheers.addCheersItems( cheers_html );
+			LJ.cheers.showCheersItems( type, 1 );
+
+
+		},
+		removeAllCheers: function(){
+
+			$('.cheers').children().remove();
+
+		},
+		getActiveCheersType: function(){
+
+			return $('.menu-section.--cheers').find('.segment__part.--active').attr('data-link');
+
+		},
+		renderCheersItems: function( cheers, user_profiles ){
+
+			var html = [];
+			
+			var no_cheers_received = true;
+			var no_cheers_sent     = true;
+				
+			cheers.forEach(function( ch ){
+
+				if( ch.cheers_type == "received" ){
+
+					no_cheers_received = false;
+					var main_member_profile = _.find( user_profiles, function( u ){
+						return u.facebook_id == ch.main_member;
+					});
+					html.push( LJ.cheers.renderCheersItem__Received( ch, main_member_profile, ch.place_name ) );
+
+				}
+
+				if( ch.cheers_type == "sent" ){
+
+					no_cheers_sent = false;
+					var main_host_profile = _.find( user_profiles, function( u ){
+						return u.facebook_id == ch.main_host;
+					})
+					var requested_with_profiles = _.filter( user_profiles, function( u ){
+						return ch.members.indexOf( u.facebook_id ) != -1 && u.facebook_id != LJ.user.facebook_id;
+					});
+					html.push( LJ.cheers.renderCheersItem__Sent( ch, main_host_profile, requested_with_profiles, ch.place_name ));
+				}
+
+			});
+
+			if( no_cheers_sent ){
+				html.push( LJ.cheers.renderCheersItem__SentEmpty() );
+			}
+
+			if( no_cheers_received ){
+				html.push( LJ.cheers.renderCheersItem__ReceivedEmpty() );
+			}
+
+			return html.join('');
+
+		},
+		addCheersItems: function( cheers_html ){
+
+			var $w = $('.cheers');
+
+			$( cheers_html ).hide().appendTo( $w );
+
+		},
+		showCheersItems: function( type, duration ){
+
+			type = type || "sent";
+
+			var $w = $('.cheers');
+
+			$w.find('[data-link="' + type + '"]').velocity('shradeIn', {
+				duration : duration || 250,
+				display  : 'flex'
+			});
+
+		},
+		renderCheersItem__ReceivedEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="received">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-drinks"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_cheers_received_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_cheers_received_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderCheersItem__SentEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="sent">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-drinks"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_cheers_sent_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_cheers_sent_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderCheersItemIcon__Received: function( status ){
+
+			if( status == "pending" ){
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
+					'<i class="icon icon-drinks"></i>',
+				'</div>'].join('');
+			}
+
+			if( status == "accepted" ){
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
+					'<i class="icon icon-chat-bubble-duo"></i>',
+				'</div>'].join('');
+			}
+
+		},
+		renderCheersItem__Received: function( cheers_object, main_requester, address ){
+
+			var ch = cheers_object;
+
+			var formatted_date = LJ.text( "menurow_date", moment(ch.requested_at) );
+			var img_html       = LJ.pictures.makeImgHtml( main_requester.img_id, main_requester.img_vs, 'menu-row' );
+
+			var groupname 	   = LJ.renderGroupName( main_requester.name );
+			var groupname_html = LJ.text('cheers_item_title_received').replace('%groupname', groupname);
+
+			var address  	   = ch.place_name;
+
+			return LJ.ui.render([
+
+				'<div class="cheers__item" data-link="received" data-before-id="'+ ch.before_id +'" data-cheers-id="' + ch.cheers_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						LJ.cheers.renderCheersItemIcon__Received( ch.status ),
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + groupname_html +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + address + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderCheersItemIcon__Sent: function( status ){
+
+			if( status == "pending" ){
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
+					'<i class="icon icon-pending"></i>',
+				'</div>'].join('');
+			}
+
+			if( status == "accepted" ){
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
+					'<i class="icon icon-chat-bubble-duo"></i>',
+				'</div>'].join('');
+			}
+
+		},
+		renderCheersItem__Sent: function( cheers_object, main_host_profile, requested_with_profiles, address ){
+
+			var ch = cheers_object;
+
+			var formatted_date       = LJ.text( "menurow_date", moment(ch.requested_at) );
+			var img_html             = LJ.pictures.makeImgHtml( main_host_profile.img_id, main_host_profile.img_vs, 'menu-row' );
+
+			var groupname            = LJ.renderGroupName( main_host_profile.name );
+			var groupname_html       = LJ.text('cheers_item_title_sent').replace('%groupname', groupname );
+
+			var requested_with_names = LJ.renderMultipleNames( _.map( requested_with_profiles, 'name' ) );
+			var requested_with_html  = LJ.text("cheers_requested_with").replace( '%names', requested_with_names );
+
+			var address              = ch.place_name;
+
+			return LJ.ui.render([
+
+				'<div class="cheers__item" data-link="sent" data-before-id="'+ ch.before_id +'" data-cheers-id="' + ch.cheers_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						LJ.cheers.renderCheersItemIcon__Sent( ch.status ),
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + groupname_html +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-users"></i></div>',
+							'<h4>' + requested_with_html + '</h4>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + address + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		setCloseType: function( close_type ){
+
+			LJ.cheers.close_type = close_type;
+
+		},
+		getCloseType: function(){
+
+			return LJ.cheers.close_type;
+
+		},
+		validatifyCheersItem: function( cheers_id ){
+
+			if( LJ.cheers.getActiveCheersBack() == cheers_id ){
+				return;
+			}
+
+			LJ.cheers.setActiveCheersBack( cheers_id );
+
+			LJ.cheers.makeCheersBack( cheers_id );
+			LJ.cheers.refreshChatBackUsersJsp();
+
+			if( LJ.chat.getChatState() == "hidden" ){
+				LJ.cheers.setCloseType("hide_all");
+				LJ.chat.showChatWrap();
+			} else {
+				// Chat was already opened. Only set a cheers_mode if none was set before
+				if( !LJ.cheers.getCloseType() ){
+					LJ.cheers.setCloseType("hide_cheers_back");
+				}
+			}
+			LJ.cheers.showCheersBack();
+
+		},
+		setCheersBackState: function( state ){
+
+			LJ.cheers.cheers_back_state = state;
+
+		},
+		getCheersBackState: function(){
+
+			return LJ.cheers.cheers_back_state;
+
+		},
+		pendifyCheersItem: function(){
+
+			if( LJ.cheers.getCheersBackState() != "idle" ){
+				return LJ.wlog('Cheers back object isnt in an idle state');
+			}
+
+			LJ.cheers.setCheersBackState("pending");
+			LJ.cheers.showCheersBackLoader();
+			LJ.cheers.showCheersBackOverlay();
+
+		},
+		dependifyCheersItem: function(){
+
+			if( LJ.cheers.getCheersBackState() != "pending" ){
+				return LJ.wlog('Cheers back object isnt in an pending state');
+			}
+
+			LJ.cheers.setCheersBackState("idle");
+			LJ.cheers.hideCheersBackLoader();
+			LJ.cheers.hideCheersBackOverlay();
+
+		},
+		makeCheersBack: function( cheers_id ){
+
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+
+			var members_profiles = _.filter( LJ.cheers.fetched_profiles, function(m){
+				return cheers_item.members.indexOf( m.facebook_id ) != -1;
+			});
+
+			var html = LJ.cheers.renderCheersBack( members_profiles );
+
+			LJ.cheers.addCheersBack( html );
+			LJ.mainifyUserRow( $('.cheers-back'), cheers_item.main_member );
+			LJ.cheers.setCheersBackHeader( cheers_item )
+			return;
+
+		},
+		acceptifyCheersItem: function( chat_id ){
+
+			LJ.log('Acceptifying cheers item... !');
+
+			// Prepare the chat in the background
+			LJ.chat.hideChatInview();
+			LJ.chat.activateChat( chat_id );
+			LJ.chat.showChatInview( chat_id );
+
+			LJ.chat.bounceChatHeaderIcons( chat_id, 400 );
+
+			// Fade out the chatback wrapper
+			LJ.cheers.hideCheersBack();
+
+		},
+		resetCheersBackState: function(){
+
+			LJ.cheers.setCloseType( null );
+			LJ.cheers.setActiveCheersBack( null );
+			LJ.cheers.setCheersBackState("idle");
+
+		},
+		removeCheersBack: function(){
+
+			LJ.cheers.resetCheersBackState();
+			$('.cheers-back').remove();
+
+		},	
+		hideCheersBack: function(){
+
+			$('.cheers-back').velocity('shradeOut', {
+				duration: 500,
+				complete: function(){
+
+					$( this ).remove();
+					LJ.cheers.resetCheersBackState();
+				}
+			});
+
+		},
+		updateCheersItem: function( cheers_id, opts ){
+
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+
+			_.keys( cheers_item ).forEach(function( key ){
+				if( opts[ key ] && typeof opts[ key ] == typeof cheers_item[ key ] ){
+					cheers_item[ key ] = opts[ key ];
+				}
+			});
+
+		},
+		getCheersRow: function( cheers_id ){
+
+			return $('.cheers__item[data-cheers-id="'+ cheers_id +'"]');
+
+		},
+		acceptifyCheersRow: function( cheers_id ){
+
+			var $row        = LJ.cheers.getCheersRow( cheers_id );
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+			
+			if( $row.length == 0 ){
+				return;
+			}
+			
+			var $icon;
+			if( cheers_item.cheers_type == "sent" ){
+				$icon = LJ.cheers.renderCheersItemIcon__Sent( "accepted" );
+			} else {
+				$icon = LJ.cheers.renderCheersItemIcon__Received( "accepted" );
+			}
+
+			$row.find('.row-pic__icon').replaceWith( $icon );
+
+		},	
+		setActiveCheersBack: function( cheers_id ){
+
+			LJ.cheers.active_cheers_back = cheers_id;
+
+		},
+		getActiveCheersBack: function(){
+
+			return LJ.cheers.active_cheers_back;
+
+		},
+		addCheersBack: function( html ){
+
+			$('.chat').find('.cheers-back').remove();
+			$( html ).hide().appendTo( $('.chat') );
+
+		},
+		showCheersBack: function(){
+
+			$('.chat').css({ 'display': 'flex' }).find('.cheers-back').show();
+
+		},
+		renderChatHeaderCloseIcon: function(){
+
+			return [
+				'<div class="chat-inview__icon --close js-close-cheers-back --round-icon">',
+					'<i class="icon icon-cancel"></div>',
+				'</div>'
+			].join('');
+
+		},
+		setCheersBackHeader: function( cheers_item ){
+			
+			var $chat_header = $('.cheers-back').find('.chat-inview-header');
+			// Replace icons
+			$chat_header.find('.chat-inview__icon').remove();
+			$chat_header.append( LJ.cheers.renderChatHeaderCloseIcon() );
+
+			var formatted_date = LJ.text('chatinview_date', moment(cheers_item.begins_at) );
+			$chat_header.find('.chat-inview-title__h1').html( '<span class="--date">'+ formatted_date +'</span>' );
+			$chat_header.find('.chat-inview-title__h2').html( '<span class="--place">'+ cheers_item.place_name +'</span>' );
+
+		},
+		acceptifyChat: function(){
+
+			
+			
+		},
+		refreshChatBackUsersJsp: function(){
+			
+			var $w = $('.cheers-back');
+			
+			return LJ.ui.turnToJsp( $w.find('.cheers-back-users'), {
+				jsp_id: 'cheers_back'
+			});
+
+		},
+		renderCheersBack: function( members_profiles ){
+
+			var pictures = [];
+			members_profiles.forEach(function( u ){
+				pictures.push({ img_id: u.img_id, img_vs: u.img_vs });
+			});
+			var pictures  = LJ.pictures.makeRosaceHtml( pictures, 'cheers-back' );
+			var user_rows = LJ.renderUserRows( members_profiles );
+
+			var cheers_back_html = LJ.chat.renderChatInviewHeader(); // Borrow it to the chat module
+
+			return LJ.ui.render([
+
+				'<div class="cheers-back">',
+					cheers_back_html,
+					'<div class="cheers-back-pictures">',
+			        	pictures, 
+			        '</div>',
+					'<div class="cheers-back-groupname">',
+						'<div class="cheers-back-groupname__h1">',
+							'<span data-lid="cheers_back_groupname"></span>',
+						'</div>',
+					'</div>',
+			        '<div class="cheers-back-users">',
+			        	user_rows,
+			        '</div>',
+			        '<div class="cheers-back-actions">',
+			        	'<button class="--round-icon js-validate">',
+			        		'<i class="icon icon-drinks"></i>',
+			        		'<span data-lid="chat_inview_validate"></span>',
+			        	'</button>',
+			        '</div>',
+				'</div>'
+
+			].join(''));
+
+		},
+        handleValidate: function(){
+
+			var $s = $( this );
+
+			if( LJ.cheers.getCheersBackState() == "pending" ){
+				return;
+			}
+
+			var cheers_id = LJ.cheers.getActiveCheersBack();
+
+        	LJ.log('Cheering back...');
+        	LJ.cheers.cheersBack( cheers_id );
+
+        },
+        cheersBack: function( cheers_id ){
+
+			var before_id = LJ.cheers.getCheersItem( cheers_id ).before_id;
+			var members   = LJ.cheers.getCheersItem( cheers_id ).members;
+			
+			LJ.cheers.pendifyCheersItem();
+        	LJ.api.changeGroupStatus({
+        		cheers_id : cheers_id,
+        		before_id : before_id,
+        		members   : members,
+        		status    : "accepted" 
+        	})
+    		.then(function( res ){
+    			LJ.log("Cheers back successfully");
+
+    		})
+    		.catch(function( e ){
+				
+				LJ.log(e);
+    			LJ.ui.showToast( LJ.text("to_default_error"), "error" );
+    			LJ.cheers.dependifyCheersItem();
+
+    		});
+
+        },
+        loaderifyCheersBack: function(){
+        	return LJ.promise(function( resolve, reject ){	
+
+        		var d = LJ.cheers.cheers_back_duration;
+
+        		$('.cheers-back')
+        			.children()
+        			.velocity('shradeOut', { duration: d, display: 'none' });
+
+	        	var d = LJ.static.renderStaticImage('slide_loader');
+				$( d ).addClass('js-cheers-back-loader')
+					  .hide().appendTo('.cheers-back')
+					  .velocity('shradeIn', { duration: d, delay: d } );
+
+				LJ.delay( 2*d ).then( resolve );
+
+        	});
+
+        },
+        deloaderifyCheersBack: function(){
+        	return LJ.promise(function( resolve, reject ){
+
+	        	var d = LJ.cheers.cheers_back_duration;
+
+				$('.js-cheers-back-loader')
+					  .velocity('shradeOut', { duration: d, complete: function(){ $(this).remove(); }} );
+
+        		$('.cheers-back')
+        			.children()
+        			.velocity('shradeIn', { duration: d, delay: d, display: 'flex' });
+
+
+				LJ.delay( 2*d ).then( resolve );
+
+        	});
+        }
+
+	});
+		
+
 	window.LJ.connecter = _.merge( window.LJ.connecter || {}, {
 
 		online_users: [],
@@ -36567,18 +36570,23 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		},
 		renderFriendItem: function( friend ){
 
+			var filterlay = 'js-filterlay';
+			var nonei 	  = '';
+
 			if( !friend ){
 				LJ.wlog('Trying to render undefined friend, rendering ghost user instead');
 				friend = LJ.getGhostUser();
+				filterlay = '';
+				nonei 	  = 'nonei';
 			}
 
 			var img_html = LJ.pictures.makeImgHtml( friend.img_id, friend.img_vs, 'menu-row' );
 
 			return LJ.ui.render([
 
-				'<div class="friend__item js-show-friend" data-facebook-id="' + friend.facebook_id + '">',
+				'<div class="friend__item js-show-friend '+ nonei +'" data-facebook-id="' + friend.facebook_id + '">',
 					'<div class="row-pic">',
-						'<div class="row-pic__image js-filterlay">' + img_html + '</div>',
+						'<div class="row-pic__image '+ filterlay +'">' + img_html + '</div>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',
@@ -36618,7 +36626,8 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		},
 		renderFriendsInModal: function(){
 
-			var friends = LJ.friends.friends_profiles;
+			
+			var friends = LJ.friends.friends_profiles.filter( Boolean );
  
 			if( friends.length == 0 ){
 
@@ -36631,7 +36640,6 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 				friends.forEach(function( f ){
 					html.push( LJ.friends.renderFriendInModal( f ) );
 				});
-
 
 				return html.join('');
 			}
@@ -36651,6 +36659,10 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		},
 		renderFriendInModal: function( f ){
 
+			if( !f ){
+				f = LJ.getGhostUser();
+			}
+			
 			var img_html = LJ.pictures.makeImgHtml( f.img_id, f.img_vs, 'user-modal' );
 
 			return LJ.ui.render([
@@ -45973,472 +45985,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 
-	window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
-
-		state    : null,
-		pusher   : {},
-		channels : {},
-
-		init: function(){
-
-			LJ.realtime.setupRealtimeService();
-			LJ.realtime.subscribeToAllChannels();
-			return;
-
-		},
-		getUserChannels: function( channel_type ){
-
-			var channels = _.filter( LJ.user.channels, function( chan ){
-				return chan.type == channel_type;
-			});
-
-			return _.map( channels, 'name' );
-
-		},
-		hasSubscribed: function( channel_name ){
-
-			return LJ.realtime.channels[ channel_name ];
-
-		},
-		addNotification: function( data ){
-
-			if( !data.notification || (data.requester && data.requester == LJ.user.facebook_id) ){
-				return;
-			}
-
-			LJ.notifications.cacheNotification( data.notification );
-			LJ.notifications.refreshNotifications();
-
-		},
-		setupRealtimeService: function(){
-
-			if( !LJ.app_token ){
-				return LJ.wlog('Cannot init realtime services without a valid app_token: ' + LJ.app_token );
-			}
-
-			 LJ.realtime.pusher = new Pusher( window.pusher_app_id, {
-                encrypted: true,
-                // The route to be called everytime the subscrib() method is called
-                authEndpoint: '/auth/pusher',
-                auth: {
-                    headers: {
-                        "x-access-token": LJ.app_token
-                    } // @48723
-                }
-            });
-
-            LJ.realtime.state = "idle";
-            LJ.realtime.pusher.connection.bind('state_change', function( states ) {
-
-            	var current_state = states.current;
-                LJ.ilog('Pusher state is now: ' + current_state );
-
-                // Reconnexion cases 
-                if( LJ.realtime.state == 'connected' ){
-
-                	if( current_state == 'connecting' ){
-                		LJ.ui.handleReconnection();
-
-                	}
-                	if( current_state == 'connected' ){
-                		LJ.ui.reconnectUser();
-
-                	}
-
-                } else {
-                	LJ.realtime.state = current_state;
-
-                }
-                
-
-            });
-
-		},
-		subscribeToAllChannels: function(){
-
-			LJ.realtime.subscribeToPrivateChannel();
-			LJ.realtime.subscribeToLocationChannel();
-			LJ.realtime.subscribeToBeforeChannels();
-			LJ.realtime.subscribeToChatChannels();
-
-		},
-		getSocketId: function(){
-			return LJ.realtime.pusher.connection ? LJ.realtime.pusher.connection.socket_id : null;
-
-		},
-		// Subscribe to private events
-		// main usage is to keep track of user's online status via a webhook
-		subscribeToPrivateChannel: function(){
-
-			var channel_name = LJ.realtime.getUserChannels("personnal")[0];
-
-			if( LJ.realtime.hasSubscribed( "personnal" ) ) return;
-
-			LJ.log('Subscribing to personnal channel');
-			LJ.realtime.channels.personnal = LJ.realtime.pusher.subscribe( channel_name );
-			
-			LJ.realtime.channels.personnal.bind('new hello'		 	 	    , LJ.log ); // Test channel
-			LJ.realtime.channels.personnal.bind('new before hosts'   	    , LJ.realtime.handleNewMarkedAsHost );
-			LJ.realtime.channels.personnal.bind('new request group'  	    , LJ.realtime.handleNewRequestGroup );
-			LJ.realtime.channels.personnal.bind('new before status members' , LJ.realtime.handleNewBeforeStatusMembers );
-
-
-		},
-		handleNewMarkedAsHost: function( data ){
-
-			LJ.log('Push event received, data : ');
-			LJ.log( data );
-
-			var before      = data.before;
-			var before_item = data.before_item;
-
-			var channel_item_before = data.channel_item_before;
-			var channel_item_team   = data.channel_item_team;
-
-			// Little toast to show for everyone but the main_host
-			if( before.main_host != LJ.user.facebook_id ){
-				var friend_name = LJ.friends.getFriendsProfiles( before.main_host )[0].name;
-				LJ.ui.showToast( LJ.text('to_before_create_success_friends').replace('%name', friend_name ));
-			} else {
-				LJ.ui.showToast( LJ.text('to_before_create_success') );
-			}
-
-			// Update user state and add marker accordingly
-			LJ.user.befores.push( before_item );
-
-			// Cache new channels
-			LJ.user.channels.push( channel_item_before );
-			LJ.user.channels.push( channel_item_team );
-
-			// Refresh all channels subscriptions
-			LJ.realtime.subscribeToAllChannels();
-			LJ.chat.fetchAndAddOneChat( channel_item_team );
-
-			// Add notification in real time
-			LJ.realtime.addNotification( data );
-
-		},
-		handleNewRequestGroup: function( data ){
-
-			LJ.log(data);
-			
-			if( data.group.main_member != LJ.user.facebook_id ){
-
-				LJ.log('A friend requested to participate in a before with you!');
-				LJ.ui.showToast( LJ.text('to_cheers_sent_success_friend') );
-
-			} else {
-
-				LJ.ui.showToast( LJ.text('to_cheers_sent_success') );
-
-			}
-
-			LJ.user.befores.push( data.before_item );
-			LJ.cheers.fetched_cheers.push( data.cheers_item );
-			LJ.cheers.refreshCheersItems();
-			LJ.user.channels.push( data.channel_item_team );
-
-			LJ.before.pendifyBeforeInview( data.before_id );
-			LJ.before.pendifyBeforeMarker( data.before_id );
-
-			LJ.realtime.subscribeToAllChannels();
-
-			LJ.chat.fetchAndAddOneChat( data.channel_item_team, {
-				"row_insert_mode": "top"
-			});
-
-			// Add notification in real time
-			LJ.realtime.addNotification( data );
-
-		},
-		handleNewBeforeStatusMembers: function( data ){
-
-			var hosts     = data.hosts;
-			var status    = data.status;
-			var before_id = data._id;
-
-			// Force a resync of all the chats with updated server values
-			LJ.chat.resyncAllChats();
-
-		},
-		// Subcribe to events about a specific geo area 
-		//to get pushed realtime notifications about newly created events
-		subscribeToLocationChannel: function(){
-
-			var channel_name =  LJ.realtime.getUserChannels("location")[0];
-
-			if( LJ.realtime.hasSubscribed( "location" ) ) return;
-
-			LJ.log('Subscribing to location channel');
-			LJ.realtime.channels.location = LJ.realtime.pusher.subscribe( channel_name );
-
-			LJ.realtime.channels.location.bind('new hello'		   , LJ.log ); // Test channel
-			LJ.realtime.channels.location.bind('new before' 	   , LJ.realtime.handleNewBefore );
-			LJ.realtime.channels.location.bind('new before status' , LJ.realtime.handleNewBeforeStatus );
-
-		},
-		handleNewBefore: function( data ){
-
-			var before = data.before;
-
-			LJ.map.addBeforeMarker( before );
-			LJ.before.fetched_befores.push( before );
-			LJ.before.refreshBrowserDates();
-		
-		},
-		handleNewBeforeStatus: function( data ){
-
-			LJ.log('Push event received, data : ');
-			LJ.log( data );
-
-			var before_id = data.before_id;
-			var status 	  = data.status;
-			var hosts 	  = data.hosts;
-
-			if( status == "canceled" ){
-
-				LJ.map.removeBeforeMarker( before_id );
-				LJ.before.removeOneBefore( before_id );
-				LJ.before.refreshBrowserDates();
-
-				// If the user is viewing the before, take control of his ui and notify before is gone
-				var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
-				if( $be.length > 0 ){
-
-					LJ.ui.hideModal();
-					LJ.before.cancelifyBeforeInview();
-
-				}
-
-			}
-
-
-		},
-		// Subscribe to channels for *hosts only*
-		// to get pushed anytime a group request a participation
-		subscribeToBeforeChannels: function(){
-
-			var before_channels = _.filter( LJ.user.channels, function( chan ){
-				return chan.type == "before";
-			});
-
-			before_channels.forEach(function( chan ){
-				LJ.realtime.subscribeToBeforeChannel( chan.name );
-			});
-
-		},
-		subscribeToBeforeChannel: function( channel_name ){
-
-			// LJ.log('Subscribing to before channel : ' + channel_name );
-			if( LJ.realtime.hasSubscribed( channel_name ) ) return;
-
-			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
-
-			LJ.realtime.channels[ channel_name ].bind('new hello'		  	   , LJ.log ); // Test channel
-			LJ.realtime.channels[ channel_name ].bind('new request host'  	   , LJ.realtime.handleNewRequestHost );
-			LJ.realtime.channels[ channel_name ].bind('new before status host' , LJ.realtime.handleNewBeforeStatusHosts );
-
-		},
-		handleNewRequestHost: function( data ){
-
-			LJ.log( data );
-			// LJ.log('Someone requested to participate in your before');
-
-			LJ.ui.showToast( LJ.text('to_cheers_received_success') );
-			LJ.cheers.fetched_cheers.push( data.cheers_item );
-			LJ.cheers.refreshCheersItems();
-
-			// Add notification in real time
-			LJ.realtime.addNotification( data );
-
-
-		},
-		handleNewBeforeStatusHosts: function( data ){
-
-			// LJ.log('Push event received, data : ');
-			LJ.log( data );
-
-			var before_id   = data.before_id;
-			var hosts 	    = data.hosts;
-			var status 	    = data.status;
-			var requester   = data.requester;
-
-			var friend_name = LJ.friends.getFriendsProfiles( requester )[0].name;
-
-			if( status == "canceled" ){
-				LJ.ui.showToast( LJ.text('to_friend_canceled_event').replace( '%name', friend_name ) );
-
-			}
-
-			// Add notification in real time
-			LJ.realtime.addNotification( data );
-
-		},
-		// Subscribe to specific chat channels for hosts & requesters.
-		// There are 2 chat channels per event.
-		subscribeToChatChannels: function( channels ){
-
-			var chat_channels = _.filter( LJ.user.channels, function( chan ){
-				return /chat/i.test( chan.type );
-			});
-
-			chat_channels.forEach(function( chan ){
-				LJ.realtime.subscribeToChatChannel( chan.name );
-			});
-
-		},
-		subscribeToChatChannel: function( channel_name ){
-
-			// LJ.log('Subscribing to chat channel : ' + channel_name );
-			if( LJ.realtime.hasSubscribed( channel_name ) ) return;
-
-			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
-
-			LJ.realtime.channels[ channel_name ].bind('new hello'		        , LJ.log ); // Test channel
-			LJ.realtime.channels[ channel_name ].bind('new group status hosts'  , LJ.realtime.handleNewGroupStatusHosts );
-			LJ.realtime.channels[ channel_name ].bind('new group status users'  , LJ.realtime.handleNewGroupStatusUsers );
-			LJ.realtime.channels[ channel_name ].bind('new chat message'        , LJ.realtime.handleNewChatMessage );
-			LJ.realtime.channels[ channel_name ].bind('new chat seen by'        , LJ.realtime.handleNewChatSeenBy );
-			
-		},
-		handleNewGroupStatusHosts: function( data ){
-
-			LJ.log( data );
-
-			var sender_id    = data.sender_id;
-			var before_id    = data.before_id;
-			var cheers_id    = data.cheers_id;
-			var channel_item = data.channel_item;
-			var status 	     = data.status;
-			var n_hosts 	 = data.n_hosts;
-
-			if( status != "accepted" ){
-				return LJ.wlog('Status != "accepted", not implemented yet');
-			}
-
-			// Refresh all channels subscriptions
-			LJ.user.channels.push( channel_item );
-			LJ.realtime.subscribeToAllChannels();
-
-			// Add the new chat for people to get to know each otha :)
-			LJ.chat.fetchAndAddOneChat( channel_item )
-				.then(function(){
-
-					LJ.ui.showToast( LJ.text("to_group_accepted_hosts") );
-
-					// Smooth ui transition to terminate the cheers back process
-					if( sender_id == LJ.user.facebook_id ){
-						LJ.cheers.acceptifyCheersItem( channel_item.chat_id );
-					}
-
-					// Update the cheers
-					LJ.cheers.updateCheersItem( cheers_id, { status: status });
-					LJ.cheers.acceptifyCheersRow( cheers_id );
-
-					// Add notification in real time
-					LJ.realtime.addNotification( data );
-
-				});
-
-		},
-		handleNewGroupStatusUsers: function( data ){
-
-			LJ.log( data );
-
-			var sender_id    = data.sender_id;
-			var before_id    = data.before_id;
-			var cheers_id    = data.cheers_id;
-			var channel_item = data.channel_item;
-			var status 	     = data.status;
-			var n_users 	 = data.n_users;
-
-			if( status != "accepted" ){
-				return LJ.wlog('Status != "accepted", not implemented yet');
-			}
-
-			// Refresh all channels subscriptions
-			LJ.user.channels.push( channel_item );
-			LJ.realtime.subscribeToAllChannels();
-
-
-			// Add the new chat for people to get to know each otha :)
-			LJ.chat.fetchAndAddOneChat( channel_item )
-				.then(function(){
-
-					LJ.ui.showToast( LJ.text("to_group_accepted_users") );
-
-					// Update the cheer_item
-					LJ.cheers.updateCheersItem( cheers_id, { status: status });
-					LJ.cheers.acceptifyCheersRow( cheers_id );
-
-					// Update the before_item and the before marker
-					LJ.before.updateBeforeItem( before_id, { status: status });
-					LJ.before.acceptifyBeforeMarker( before_id );
-
-					// Add notification in real time
-					LJ.realtime.addNotification( data );
-
-				});
-
-			// Specific to the users
-			LJ.chat.acceptifyChatInview( before_id );
-
-		},	
-		handleNewChatMessage: function( data ){
-
-			// LJ.log('Adding chatline ');
-
-			var chat_id   = data.chat_id;
-			var message   = data.message;
-			var sender_id = data.sender_id;
-			var call_id   = data.call_id;
-			var sent_at   = data.sent_at;
-			var seen_by   = data.seen_by;
-
-			var chat = LJ.chat.getChat( chat_id );
-
-			if( !chat ){
-
-				LJ.wlog('New message received for a chat that wasnt fetched. Fetching first...');
-				LJ.wlog('Not implemented yet! Construct the channel item, then fetch chat');
-				return LJ.chat.fetchAndAddOneChat( channel_item, {
-					row_insert_mode: "top"
-				})
-				.then(function(){
-					// Recall itself after the chat has been fetched
-					LJ.chat.handleNewChatMessage( data );
-
-				});
-			}
-
-			LJ.chat.cacheChatMessage( chat_id, data );
-
-			if( LJ.chat.getActiveChatId() == chat_id ){
-				LJ.chat.sendSeenByProxy( chat_id );
-				LJ.chat.seenifyChatInview( chat_id, LJ.user.facebook_id );
-
-			}
-
-
-			// Local variation regarding the inview ui of the chatline
-			sender_id == LJ.user.facebook_id ? LJ.chat.dependifyChatLine( call_id ) : LJ.chat.addChatLine( data );
-
-			LJ.chat.refreshChatState( chat_id );
-
-		},
-		handleNewChatSeenBy: function( data ){
-
-			var chat_id = data.chat_id;
-			var seen_by = data.seen_by;
-
-			LJ.log('New message seen by : ' + seen_by );
-			LJ.chat.seenifyChatInview( chat_id, seen_by );
-			LJ.chat.refreshChatSeenBy( chat_id );
-
-		}
-
-	});
-
 	window.LJ.profile = _.merge( window.LJ.profile || {}, {
 
 		$profile:   $('.menu-section.--profile'),
@@ -47044,6 +46590,472 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
         }
 
 	});
+
+	window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
+
+		state    : null,
+		pusher   : {},
+		channels : {},
+
+		init: function(){
+
+			LJ.realtime.setupRealtimeService();
+			LJ.realtime.subscribeToAllChannels();
+			return;
+
+		},
+		getUserChannels: function( channel_type ){
+
+			var channels = _.filter( LJ.user.channels, function( chan ){
+				return chan.type == channel_type;
+			});
+
+			return _.map( channels, 'name' );
+
+		},
+		hasSubscribed: function( channel_name ){
+
+			return LJ.realtime.channels[ channel_name ];
+
+		},
+		addNotification: function( data ){
+
+			if( !data.notification || (data.requester && data.requester == LJ.user.facebook_id) ){
+				return;
+			}
+
+			LJ.notifications.cacheNotification( data.notification );
+			LJ.notifications.refreshNotifications();
+
+		},
+		setupRealtimeService: function(){
+
+			if( !LJ.app_token ){
+				return LJ.wlog('Cannot init realtime services without a valid app_token: ' + LJ.app_token );
+			}
+
+			 LJ.realtime.pusher = new Pusher( window.pusher_app_id, {
+                encrypted: true,
+                // The route to be called everytime the subscrib() method is called
+                authEndpoint: '/auth/pusher',
+                auth: {
+                    headers: {
+                        "x-access-token": LJ.app_token
+                    } // @48723
+                }
+            });
+
+            LJ.realtime.state = "idle";
+            LJ.realtime.pusher.connection.bind('state_change', function( states ) {
+
+            	var current_state = states.current;
+                LJ.ilog('Pusher state is now: ' + current_state );
+
+                // Reconnexion cases 
+                if( LJ.realtime.state == 'connected' ){
+
+                	if( current_state == 'connecting' ){
+                		LJ.ui.handleReconnection();
+
+                	}
+                	if( current_state == 'connected' ){
+                		LJ.ui.reconnectUser();
+
+                	}
+
+                } else {
+                	LJ.realtime.state = current_state;
+
+                }
+                
+
+            });
+
+		},
+		subscribeToAllChannels: function(){
+
+			LJ.realtime.subscribeToPrivateChannel();
+			LJ.realtime.subscribeToLocationChannel();
+			LJ.realtime.subscribeToBeforeChannels();
+			LJ.realtime.subscribeToChatChannels();
+
+		},
+		getSocketId: function(){
+			return LJ.realtime.pusher.connection ? LJ.realtime.pusher.connection.socket_id : null;
+
+		},
+		// Subscribe to private events
+		// main usage is to keep track of user's online status via a webhook
+		subscribeToPrivateChannel: function(){
+
+			var channel_name = LJ.realtime.getUserChannels("personnal")[0];
+
+			if( LJ.realtime.hasSubscribed( "personnal" ) ) return;
+
+			LJ.log('Subscribing to personnal channel');
+			LJ.realtime.channels.personnal = LJ.realtime.pusher.subscribe( channel_name );
+			
+			LJ.realtime.channels.personnal.bind('new hello'		 	 	    , LJ.log ); // Test channel
+			LJ.realtime.channels.personnal.bind('new before hosts'   	    , LJ.realtime.handleNewMarkedAsHost );
+			LJ.realtime.channels.personnal.bind('new request group'  	    , LJ.realtime.handleNewRequestGroup );
+			LJ.realtime.channels.personnal.bind('new before status members' , LJ.realtime.handleNewBeforeStatusMembers );
+
+
+		},
+		handleNewMarkedAsHost: function( data ){
+
+			LJ.log('Push event received, data : ');
+			LJ.log( data );
+
+			var before      = data.before;
+			var before_item = data.before_item;
+
+			var channel_item_before = data.channel_item_before;
+			var channel_item_team   = data.channel_item_team;
+
+			// Little toast to show for everyone but the main_host
+			if( before.main_host != LJ.user.facebook_id ){
+				var friend_name = LJ.friends.getFriendsProfiles( before.main_host )[0].name;
+				LJ.ui.showToast( LJ.text('to_before_create_success_friends').replace('%name', friend_name ));
+			} else {
+				LJ.ui.showToast( LJ.text('to_before_create_success') );
+			}
+
+			// Update user state and add marker accordingly
+			LJ.user.befores.push( before_item );
+
+			// Cache new channels
+			LJ.user.channels.push( channel_item_before );
+			LJ.user.channels.push( channel_item_team );
+
+			// Refresh all channels subscriptions
+			LJ.realtime.subscribeToAllChannels();
+			LJ.chat.fetchAndAddOneChat( channel_item_team );
+
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
+
+		},
+		handleNewRequestGroup: function( data ){
+
+			LJ.log(data);
+			
+			if( data.group.main_member != LJ.user.facebook_id ){
+
+				LJ.log('A friend requested to participate in a before with you!');
+				LJ.ui.showToast( LJ.text('to_cheers_sent_success_friend') );
+
+			} else {
+
+				LJ.ui.showToast( LJ.text('to_cheers_sent_success') );
+
+			}
+
+			LJ.user.befores.push( data.before_item );
+			LJ.cheers.fetched_cheers.push( data.cheers_item );
+			LJ.cheers.refreshCheersItems();
+			LJ.user.channels.push( data.channel_item_team );
+
+			LJ.before.pendifyBeforeInview( data.before_id );
+			LJ.before.pendifyBeforeMarker( data.before_id );
+
+			LJ.realtime.subscribeToAllChannels();
+
+			LJ.chat.fetchAndAddOneChat( data.channel_item_team, {
+				"row_insert_mode": "top"
+			});
+
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
+
+		},
+		handleNewBeforeStatusMembers: function( data ){
+
+			var hosts     = data.hosts;
+			var status    = data.status;
+			var before_id = data._id;
+
+			// Force a resync of all the chats with updated server values
+			LJ.chat.resyncAllChats();
+
+		},
+		// Subcribe to events about a specific geo area 
+		//to get pushed realtime notifications about newly created events
+		subscribeToLocationChannel: function(){
+
+			var channel_name =  LJ.realtime.getUserChannels("location")[0];
+
+			if( LJ.realtime.hasSubscribed( "location" ) ) return;
+
+			LJ.log('Subscribing to location channel');
+			LJ.realtime.channels.location = LJ.realtime.pusher.subscribe( channel_name );
+
+			LJ.realtime.channels.location.bind('new hello'		   , LJ.log ); // Test channel
+			LJ.realtime.channels.location.bind('new before' 	   , LJ.realtime.handleNewBefore );
+			LJ.realtime.channels.location.bind('new before status' , LJ.realtime.handleNewBeforeStatus );
+
+		},
+		handleNewBefore: function( data ){
+
+			var before = data.before;
+
+			LJ.map.addBeforeMarker( before );
+			LJ.before.fetched_befores.push( before );
+			LJ.before.refreshBrowserDates();
+		
+		},
+		handleNewBeforeStatus: function( data ){
+
+			LJ.log('Push event received, data : ');
+			LJ.log( data );
+
+			var before_id = data.before_id;
+			var status 	  = data.status;
+			var hosts 	  = data.hosts;
+
+			if( status == "canceled" ){
+
+				LJ.map.removeBeforeMarker( before_id );
+				LJ.before.removeOneBefore( before_id );
+				LJ.before.refreshBrowserDates();
+
+				// If the user is viewing the before, take control of his ui and notify before is gone
+				var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
+				if( $be.length > 0 ){
+
+					LJ.ui.hideModal();
+					LJ.before.cancelifyBeforeInview();
+
+				}
+
+			}
+
+
+		},
+		// Subscribe to channels for *hosts only*
+		// to get pushed anytime a group request a participation
+		subscribeToBeforeChannels: function(){
+
+			var before_channels = _.filter( LJ.user.channels, function( chan ){
+				return chan.type == "before";
+			});
+
+			before_channels.forEach(function( chan ){
+				LJ.realtime.subscribeToBeforeChannel( chan.name );
+			});
+
+		},
+		subscribeToBeforeChannel: function( channel_name ){
+
+			// LJ.log('Subscribing to before channel : ' + channel_name );
+			if( LJ.realtime.hasSubscribed( channel_name ) ) return;
+
+			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
+
+			LJ.realtime.channels[ channel_name ].bind('new hello'		  	   , LJ.log ); // Test channel
+			LJ.realtime.channels[ channel_name ].bind('new request host'  	   , LJ.realtime.handleNewRequestHost );
+			LJ.realtime.channels[ channel_name ].bind('new before status host' , LJ.realtime.handleNewBeforeStatusHosts );
+
+		},
+		handleNewRequestHost: function( data ){
+
+			LJ.log( data );
+			// LJ.log('Someone requested to participate in your before');
+
+			LJ.ui.showToast( LJ.text('to_cheers_received_success') );
+			LJ.cheers.fetched_cheers.push( data.cheers_item );
+			LJ.cheers.refreshCheersItems();
+
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
+
+
+		},
+		handleNewBeforeStatusHosts: function( data ){
+
+			// LJ.log('Push event received, data : ');
+			LJ.log( data );
+
+			var before_id   = data.before_id;
+			var hosts 	    = data.hosts;
+			var status 	    = data.status;
+			var requester   = data.requester;
+
+			var friend_name = LJ.friends.getFriendsProfiles( requester )[0].name;
+
+			if( status == "canceled" ){
+				LJ.ui.showToast( LJ.text('to_friend_canceled_event').replace( '%name', friend_name ) );
+
+			}
+
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
+
+		},
+		// Subscribe to specific chat channels for hosts & requesters.
+		// There are 2 chat channels per event.
+		subscribeToChatChannels: function( channels ){
+
+			var chat_channels = _.filter( LJ.user.channels, function( chan ){
+				return /chat/i.test( chan.type );
+			});
+
+			chat_channels.forEach(function( chan ){
+				LJ.realtime.subscribeToChatChannel( chan.name );
+			});
+
+		},
+		subscribeToChatChannel: function( channel_name ){
+
+			// LJ.log('Subscribing to chat channel : ' + channel_name );
+			if( LJ.realtime.hasSubscribed( channel_name ) ) return;
+
+			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
+
+			LJ.realtime.channels[ channel_name ].bind('new hello'		        , LJ.log ); // Test channel
+			LJ.realtime.channels[ channel_name ].bind('new group status hosts'  , LJ.realtime.handleNewGroupStatusHosts );
+			LJ.realtime.channels[ channel_name ].bind('new group status users'  , LJ.realtime.handleNewGroupStatusUsers );
+			LJ.realtime.channels[ channel_name ].bind('new chat message'        , LJ.realtime.handleNewChatMessage );
+			LJ.realtime.channels[ channel_name ].bind('new chat seen by'        , LJ.realtime.handleNewChatSeenBy );
+			
+		},
+		handleNewGroupStatusHosts: function( data ){
+
+			LJ.log( data );
+
+			var sender_id    = data.sender_id;
+			var before_id    = data.before_id;
+			var cheers_id    = data.cheers_id;
+			var channel_item = data.channel_item;
+			var status 	     = data.status;
+			var n_hosts 	 = data.n_hosts;
+
+			if( status != "accepted" ){
+				return LJ.wlog('Status != "accepted", not implemented yet');
+			}
+
+			// Refresh all channels subscriptions
+			LJ.user.channels.push( channel_item );
+			LJ.realtime.subscribeToAllChannels();
+
+			// Add the new chat for people to get to know each otha :)
+			LJ.chat.fetchAndAddOneChat( channel_item )
+				.then(function(){
+
+					LJ.ui.showToast( LJ.text("to_group_accepted_hosts") );
+
+					// Smooth ui transition to terminate the cheers back process
+					if( sender_id == LJ.user.facebook_id ){
+						LJ.cheers.acceptifyCheersItem( channel_item.chat_id );
+					}
+
+					// Update the cheers
+					LJ.cheers.updateCheersItem( cheers_id, { status: status });
+					LJ.cheers.acceptifyCheersRow( cheers_id );
+
+					// Add notification in real time
+					LJ.realtime.addNotification( data );
+
+				});
+
+		},
+		handleNewGroupStatusUsers: function( data ){
+
+			LJ.log( data );
+
+			var sender_id    = data.sender_id;
+			var before_id    = data.before_id;
+			var cheers_id    = data.cheers_id;
+			var channel_item = data.channel_item;
+			var status 	     = data.status;
+			var n_users 	 = data.n_users;
+
+			if( status != "accepted" ){
+				return LJ.wlog('Status != "accepted", not implemented yet');
+			}
+
+			// Refresh all channels subscriptions
+			LJ.user.channels.push( channel_item );
+			LJ.realtime.subscribeToAllChannels();
+
+
+			// Add the new chat for people to get to know each otha :)
+			LJ.chat.fetchAndAddOneChat( channel_item )
+				.then(function(){
+
+					LJ.ui.showToast( LJ.text("to_group_accepted_users") );
+
+					// Update the cheer_item
+					LJ.cheers.updateCheersItem( cheers_id, { status: status });
+					LJ.cheers.acceptifyCheersRow( cheers_id );
+
+					// Update the before_item and the before marker
+					LJ.before.updateBeforeItem( before_id, { status: status });
+					LJ.before.acceptifyBeforeMarker( before_id );
+
+					// Add notification in real time
+					LJ.realtime.addNotification( data );
+
+				});
+
+			// Specific to the users
+			LJ.chat.acceptifyChatInview( before_id );
+
+		},	
+		handleNewChatMessage: function( data ){
+
+			// LJ.log('Adding chatline ');
+
+			var chat_id   = data.chat_id;
+			var message   = data.message;
+			var sender_id = data.sender_id;
+			var call_id   = data.call_id;
+			var sent_at   = data.sent_at;
+			var seen_by   = data.seen_by;
+
+			var chat = LJ.chat.getChat( chat_id );
+
+			if( !chat ){
+
+				LJ.wlog('New message received for a chat that wasnt fetched. Fetching first...');
+				LJ.wlog('Not implemented yet! Construct the channel item, then fetch chat');
+				return LJ.chat.fetchAndAddOneChat( channel_item, {
+					row_insert_mode: "top"
+				})
+				.then(function(){
+					// Recall itself after the chat has been fetched
+					LJ.chat.handleNewChatMessage( data );
+
+				});
+			}
+
+			LJ.chat.cacheChatMessage( chat_id, data );
+
+			if( LJ.chat.getActiveChatId() == chat_id ){
+				LJ.chat.sendSeenByProxy( chat_id );
+				LJ.chat.seenifyChatInview( chat_id, LJ.user.facebook_id );
+
+			}
+
+
+			// Local variation regarding the inview ui of the chatline
+			sender_id == LJ.user.facebook_id ? LJ.chat.dependifyChatLine( call_id ) : LJ.chat.addChatLine( data );
+
+			LJ.chat.refreshChatState( chat_id );
+
+		},
+		handleNewChatSeenBy: function( data ){
+
+			var chat_id = data.chat_id;
+			var seen_by = data.seen_by;
+
+			LJ.log('New message seen by : ' + seen_by );
+			LJ.chat.seenifyChatInview( chat_id, seen_by );
+			LJ.chat.refreshChatSeenBy( chat_id );
+
+		}
+
+	});
 	
 	// Needs to be loaded before lj-ui
 
@@ -47559,6 +47571,91 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		}
 
 	});
+	
+	window.LJ.seek = _.merge( window.LJ.seek || {}, {
+
+		init: function(){
+
+			return LJ.seek.activatePlacesInProfile()
+
+				.then(function(){
+					return LJ.delay(100);
+
+				})
+				.then(function(){
+					return LJ.seek.activatePlacesInMap()
+					
+				})
+				.then(function(){
+					return LJ.delay(100);
+
+				})
+				.then(function(){
+					return LJ.seek.activatePlacesInCreateBefore();
+
+				});
+
+
+		},
+		activatePlacesInProfile: function(){	
+
+			var input = document.getElementById('me__location');
+			var options = { types: ['(cities)'] };
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.profile_places = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-profile-places').addClass('js-alreadyhere');
+				return;
+			});
+
+
+		},
+		activatePlacesInFirstLogin: function(){
+
+			var input = document.getElementById('init-location__input');
+			var options = { types: ['(cities)'] };
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.login_places = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-login-places').addClass('js-alreadyhere');
+				return;
+			});
+
+		},
+		activatePlacesInMap: function(){
+
+			var input = document.getElementById('map-browser-input');
+			var options = { types: ['(cities)'] };
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.map_browser_places = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-map-browser-places').addClass('js-alreadyhere');
+				return;
+			});
+
+
+		},
+		activatePlacesInCreateBefore: function(){
+
+			var input = $('.be-create-row.--location input')[0];
+			var options = {};
+
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.be_create = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-be-create').addClass('js-alreadyhere');
+				return;
+			});
+
+		}
+
+
+
+	});
 
 	window.LJ.settings = _.merge( window.LJ.settings || {}, {
 
@@ -48059,91 +48156,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 
 
-	
-	window.LJ.seek = _.merge( window.LJ.seek || {}, {
-
-		init: function(){
-
-			return LJ.seek.activatePlacesInProfile()
-
-				.then(function(){
-					return LJ.delay(100);
-
-				})
-				.then(function(){
-					return LJ.seek.activatePlacesInMap()
-					
-				})
-				.then(function(){
-					return LJ.delay(100);
-
-				})
-				.then(function(){
-					return LJ.seek.activatePlacesInCreateBefore();
-
-				});
-
-
-		},
-		activatePlacesInProfile: function(){	
-
-			var input = document.getElementById('me__location');
-			var options = { types: ['(cities)'] };
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.profile_places = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-profile-places').addClass('js-alreadyhere');
-				return;
-			});
-
-
-		},
-		activatePlacesInFirstLogin: function(){
-
-			var input = document.getElementById('init-location__input');
-			var options = { types: ['(cities)'] };
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.login_places = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-login-places').addClass('js-alreadyhere');
-				return;
-			});
-
-		},
-		activatePlacesInMap: function(){
-
-			var input = document.getElementById('map-browser-input');
-			var options = { types: ['(cities)'] };
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.map_browser_places = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-map-browser-places').addClass('js-alreadyhere');
-				return;
-			});
-
-
-		},
-		activatePlacesInCreateBefore: function(){
-
-			var input = $('.be-create-row.--location input')[0];
-			var options = {};
-
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.be_create = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-be-create').addClass('js-alreadyhere');
-				return;
-			});
-
-		}
-
-
-
-	});
 
 	window.LJ.shared = _.merge( window.LJ.shared || {}, {
 
@@ -51211,14 +51223,17 @@ window.LJ = _.merge( window.LJ || {}, {
 
         var img_small = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-row" );
 
+        var gender = user.g  || user.gender;
+        var cc     = user.cc || user.country_code;
+
         return LJ.ui.render([
 
             '<div class="user-row js-user-profile" data-facebook-id="'+ user.facebook_id +'">',
                 '<div class="user-row__pic '+ filterlay +'">',
                   img_small,
-                  '<div class="user-gender --'+ user.g +' js-user-gender"></div>',
+                  '<div class="user-gender --'+ gender +' js-user-gender"></div>',
                   '<div class="user-country js-user-country">',
-                    '<i class="flag-icon flag-icon-'+ user.cc +'"></i>',
+                    '<i class="flag-icon flag-icon-'+ cc +'"></i>',
                   '</div>',
                 '</div>',
                 '<div class="user-row__informations">',

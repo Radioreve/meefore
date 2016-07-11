@@ -288,7 +288,6 @@
     border-radius: 100px;
     width: 60px;
     height: 60px;
-    overflow: hidden;
     flex-shrink: 0;
 }
 
@@ -311,6 +310,11 @@
     left: 2px;
     display: none;
     border: 2px solid white;
+}
+
+
+.user-row .pictures-overlay {
+    border-radius: 100px;
 }
 
 .be-inview .user-country {

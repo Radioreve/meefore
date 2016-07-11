@@ -81,7 +81,7 @@
 .user-infos__item.--base.--male {
     background: rgba(63, 179, 198, 0.7);
 }
-
+ 
 .user-infos__item.--base h2 {
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -92,6 +92,7 @@
     font-weight: 500;
     position: relative;
     top: 2px;
+    padding-right: 3px;
 }
 
 .user-infos__item.--base comma {}

@@ -176,18 +176,23 @@
 		},
 		renderFriendItem: function( friend ){
 
+			var filterlay = 'js-filterlay';
+			var nonei 	  = '';
+
 			if( !friend ){
 				LJ.wlog('Trying to render undefined friend, rendering ghost user instead');
 				friend = LJ.getGhostUser();
+				filterlay = '';
+				nonei 	  = 'nonei';
 			}
 
 			var img_html = LJ.pictures.makeImgHtml( friend.img_id, friend.img_vs, 'menu-row' );
 
 			return LJ.ui.render([
 
-				'<div class="friend__item js-show-friend" data-facebook-id="' + friend.facebook_id + '">',
+				'<div class="friend__item js-show-friend '+ nonei +'" data-facebook-id="' + friend.facebook_id + '">',
 					'<div class="row-pic">',
-						'<div class="row-pic__image js-filterlay">' + img_html + '</div>',
+						'<div class="row-pic__image '+ filterlay +'">' + img_html + '</div>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',
@@ -227,7 +232,8 @@
 		},
 		renderFriendsInModal: function(){
 
-			var friends = LJ.friends.friends_profiles;
+			
+			var friends = LJ.friends.friends_profiles.filter( Boolean );
  
 			if( friends.length == 0 ){
 
@@ -240,7 +246,6 @@
 				friends.forEach(function( f ){
 					html.push( LJ.friends.renderFriendInModal( f ) );
 				});
-
 
 				return html.join('');
 			}
@@ -260,6 +265,10 @@
 		},
 		renderFriendInModal: function( f ){
 
+			if( !f ){
+				f = LJ.getGhostUser();
+			}
+			
 			var img_html = LJ.pictures.makeImgHtml( f.img_id, f.img_vs, 'user-modal' );
 
 			return LJ.ui.render([
