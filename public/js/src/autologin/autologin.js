@@ -92,7 +92,8 @@
 					complete: function(){
 						LJ.ui.hideCurtain({ duration: 800 });
 						LJ.landing.activateLanding( 2 );
-						
+						 // Login flow
+									
 					}
 				})
 			});

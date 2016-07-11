@@ -1,4 +1,3 @@
-
 .me {
     flex-direction: column;
     width: 80%;
@@ -17,16 +16,16 @@
 }
 
 .me-item.--no-edit input {
-  opacity: .5;
-}
-.me-item-body {
-  position: relative;
-  width: 100%;
-  display: flex;
-  flex-flow: column  wrap;
-  justify-content: flex-start;
+    opacity: .5;
 }
 
+.me-item-body {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: flex-start;
+}
 
 .me-item label {
     font-size: 10px;
@@ -34,6 +33,7 @@
     text-transform: uppercase;
     /* margin-left: 30px; */
 }
+
 .me-item input,
 .me-item textarea {
     font-weight: 200;
@@ -48,6 +48,7 @@
     font-size: 17px;
     font-family: 'Open sans';
 }
+
 .menu-section__input {
     padding: 8px 10px 10px 0;
     outline: none;
@@ -61,12 +62,9 @@
     transition: all cubic-bezier(0, 0, 0.2, 1) .20s;
 }
 
-
 .me-item textarea {
     resize: none;
 }
-
-
 
 .me-item__explanation {
     color: #454545;
@@ -82,7 +80,6 @@
     padding-left: 16px;
 }
 
-
 .me-item .action {
     top: -2px;
     right: -20px;
@@ -91,19 +88,6 @@
     z-index: 1;
 }
 
-
 .me-item.--validating .menu-input-action {
     opacity: .5!important;
 }
-
-
-
-
-
-
-
-
-
-
-
-

@@ -19,7 +19,7 @@
     gulp.task('min-js', function(){
 
         var dir_lib = 'public/js/lib/';
-        var dir_src = 'public/js/src/';
+        var dir_src = 'public/js/src/**/*.js';
 
     	gulp.src([
             // Librairies
@@ -31,21 +31,21 @@
             .pipe( process.NODE_ENV === 'production' ? uglify() : gutil.noop() )
     		.pipe(gulp.dest('./public/dist'))
     }); 
-    // End minifications javasscrit
+    // End minifications javascript
 
 
     // Minification of all CSS files
     gulp.task('min-css', function(){
 
-        var dir_lib = 'public/css/lib/'
-        var dir_src = 'public/css/src/';
+        var fontello = 'public/css/lib/fontello/css/fontello.css';
+        var lib_path = 'public/css/lib/**/*.css';
+        var src_path = 'public/css/src/**/*.css';
 
         gulp.src([
-            // Librairies
-            dir_lib + 'jscrollpane/jscrollpane.css',
-            // Sources
-            dir_src + 'admin/admin.css'
-            ])
+            fontello,
+            lib_path,
+            src_path
+        ])
         .pipe(concat( NAMESPACE + '.css'))
         .pipe(postcss([ autoprefixer ]))
         .pipe(cssbeautify())
@@ -63,9 +63,14 @@
     // Adjusting html staged & prod versions
     // Thank god I dont have to do it manually !
     var replace_tasks = [];
-    ['staged','prod'].forEach(function( env_type ){
+    [ 'devbuild', 'staged','prod' ].forEach(function( env_type ){
 
         var task_name = 'replace-html-' + env_type;
+
+        if( env_type == "devbuild" ){
+            env_type = "dev";
+        }
+        
         gulp.task( task_name, function(){
 
             var fb_app_id     = config.facebook[ env_type ].client_id;
@@ -119,6 +124,9 @@
         gulp.watch('views/index-dev.html', ['replace-html']);
     });
 
+    gulp.task('devbuild', [ "replace-html-devbuild", "min-css" ], function(){
+        gutil.log('Gulp done');
+    });
 
 
     gulp.task('default', ['watch'], function() {

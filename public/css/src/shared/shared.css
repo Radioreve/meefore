@@ -1,30 +1,31 @@
+.menu-section.--shared {}
 
-	
-.menu-section.--shared {
-
+.shared {
+    width: 100%;
+    min-height: 280px;
+    display: flex;
+    flex-flow: column nowrap;
 }
-
-
-.shared {width: 100%;min-height: 280px;display: flex;flex-flow: column nowrap;}
 
 .shared__item {
-	border-bottom: 1px solid #eee;
-	position: relative;
-	padding: 16px 20px;
-	display: flex;
-	flex-flow: row nowrap;
-	justify-content: flex-start;
-	align-items: center;
-	cursor: pointer;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding: 16px 20px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
 }
+
 .shared__item:hover {
-	background: #f9f9f9;
+    background: #f9f9f9;
 }
+
 .shared__item:last-of-type {
-	border-bottom: none;
+    border-bottom: none;
 }
 
 .shared .row-pic__icon {
-	background: #1B69EC;
+    background: #1B69EC;
 }
-

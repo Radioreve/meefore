@@ -56,9 +56,10 @@
     margin: 0 14px 0;
 }
 
-.friend-modal.--noselect:hover{
+.friend-modal.--noselect:hover {
     cursor: not-allowed;
 }
+
 .friend-modal:hover {
     background: #fbfbfb;
 }
@@ -75,10 +76,14 @@
     font-size: 16px;
 }
 
-.friend-modal__name span {
-}
+.friend-modal__name span {}
 
-.item-modal__noselect {color: #1b69ec;font-weight: 600;font-size: 10px;margin-left: 10px;}
+.item-modal__noselect {
+    color: #1b69ec;
+    font-weight: 600;
+    font-size: 10px;
+    margin-left: 10px;
+}
 
 .friend-modal__icon {
     position: absolute;
@@ -109,13 +114,15 @@
     border-radius: 100px;
 }
 
-.friend-modal.--selected {
+.friend-modal.--selected {}
 
-}
 .friend-modal.--selected .friend-modal__icon {
     background: #1B69EC;
 }
-.friend-modal.--selected .friend-modal__name {font-weight: 700;}
+
+.friend-modal.--selected .friend-modal__name {
+    font-weight: 700;
+}
 
 .no-friends {
     display: flex;
@@ -124,8 +131,14 @@
     align-items: center;
     margin: 20px auto 0;
     width: 310px;
-} 
-.no-friends span {font-weight: 600;color: #D55D8C;font-size: 12px;}
+}
+
+.no-friends span {
+    font-weight: 600;
+    color: #D55D8C;
+    font-size: 12px;
+}
+
 .no-friends button {
     width: 100%;
     height: 50px;
@@ -137,8 +150,21 @@
     margin-top: 12px;
 }
 
+.invite-friends-popup {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 100;
+    font-size: 12px;
+    height: 100px;
+    background: white;
+    border: 1px solid #f7f7f7;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+}
 
-.invite-friends-popup {position: fixed;bottom: 30px;right: 30px;z-index: 100;font-size: 12px;height: 100px;background: white;border: 1px solid #f7f7f7;box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);justify-content: center;align-items: center;padding: 0 20px;}
 .invite-friends-popup__icon {
     font-size: 27px;
     background: white;
@@ -150,17 +176,43 @@
     animation: pound .5s infinite alternate;
     transform-origin: center;
 }
-.invite-friends-popup__close {position: absolute;right: 6px;top: 6px;cursor: pointer;color: #919191;}
+
+.invite-friends-popup__close {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    cursor: pointer;
+    color: #919191;
+}
+
 .invite-friends-popup__close i {}
-.invite-friends-popup-message {display: flex;flex-flow: column;width: 100%;margin-right: 20px;}
+
+.invite-friends-popup-message {
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+    margin-right: 20px;
+}
+
 .invite-friends-popup__icon i {}
-.invite-friends-popup__h1 {font-family: 'creamy';font-size: 22px;}
+
+.invite-friends-popup__h1 {
+    font-family: 'creamy';
+    font-size: 22px;
+}
+
 .invite-friends-popup__h1 span {}
+
 .invite-friends-popup__h2 {
     font-size: 12px;
 }
+
 .invite-friends-popup__h2 span {}
-.invite-friends-popup__btn { flex-shrink: 0; }
+
+.invite-friends-popup__btn {
+    flex-shrink: 0;
+}
+
 .invite-friends-popup__btn button {
     height: 40px;
     width: 150px;
@@ -169,7 +221,8 @@
     background: #3b5998;
 }
 
-
 @keyframes pound {
-	to { transform: scale(1.4); }
+    to {
+        transform: scale(1.4);
+    }
 }

@@ -19,7 +19,7 @@
     cursor: pointer;
     color: #ccc;
 }
- 
+
 .be-create-row {
     margin: 10px 0px;
     display: flex;
@@ -123,10 +123,8 @@
     opacity: .3;
 }
 
+.be-create.--pending * {}
 
-.be-create.--pending * {
-} 
- 
 .hourpicker {
     background: white;
     border-radius: 4px;
@@ -140,12 +138,23 @@
     border: 1px solid #ccc;
     justify-content: center;
 }
-.hourpicker__hour {font-family: 'Open sans';padding: 8px;border-radius: 4px;margin: 12px 0;cursor: pointer;color: #454545;font-size: 12px;}
+
+.hourpicker__hour {
+    font-family: 'Open sans';
+    padding: 8px;
+    border-radius: 4px;
+    margin: 12px 0;
+    cursor: pointer;
+    color: #454545;
+    font-size: 12px;
+}
+
 .hourpicker__hour:hover {
     color: white;
     font-weight: bold;
     background: #1b69ec;
 }
+
 .hourpicker-col {
     margin: 0px 10px;
 }

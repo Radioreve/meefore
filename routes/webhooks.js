@@ -1,5 +1,6 @@
 	
-	var config      = '../config/config';
+	var config      = require( '../config/config' );
+	
 	var apiDir      = '../api';
 	var jobsDir     = '../jobs';
 	var mdwDir      = '../middlewares';

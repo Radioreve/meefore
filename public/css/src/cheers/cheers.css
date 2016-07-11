@@ -2,8 +2,13 @@
 
 .menu-section.--cheers .menu-section-segment {}
 
-.menu-section.--cheers .segment {width: 500px;}
-.menu-section.--cheers .segment__part {font-size: 13px;}
+.menu-section.--cheers .segment {
+    width: 500px;
+}
+
+.menu-section.--cheers .segment__part {
+    font-size: 13px;
+}
 
 .cheers {
     width: 100%;
@@ -84,7 +89,6 @@
 
 .cheers-ribbon h2 {}
 
-
 .cheers-back {
     position: absolute;
     width: 100%;
@@ -97,6 +101,7 @@
     left: 0;
     z-index: 1000;
 }
+
 .cheers-back-pictures {
     width: 110px;
     height: 110px;
@@ -105,13 +110,16 @@
     font-size: 12px;
     text-align: center;
 }
+
 .cheers-back-pictures .rosace {}
+
 .cheers-back-users {
     width: 399px;
     flex-basis: 250px;
     height: 250px;
     outline: none;
 }
+
 .cheers-back-actions {
     margin-top: auto;
     padding: 30px 0 40px 0;
@@ -119,18 +127,22 @@
     flex-shrink: 0;
     border-top: 1px solid #eee;
 }
+
 .cheers-back-actions button {
     width: 70px;
     height: 70px;
     background: #1B69EC;
     color: white;
 }
+
 .cheers-back-actions button i {
     font-size: 38px;
 }
+
 .cheers-back-actions button span {
     display: none;
 }
+
 .chat-header__icon.--close {
     position: absolute;
     right: 10px;
@@ -154,6 +166,7 @@
     color: white;
     border: 2px solid;
 }
+
 .cheers-back-groupname__h1 {
     font-size: 12px;
     margin-right: 4px;
@@ -161,14 +174,21 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
 .cheers-back-groupname__h1 span {}
-.cheers-back-groupname__h2 {font-size: 11px;position: relative;top: -2px;}
+
+.cheers-back-groupname__h2 {
+    font-size: 11px;
+    position: relative;
+    top: -2px;
+}
+
 .cheers-back-groupname__h2 span {}
 
 .cheers-back-users .jspPane {
     padding: 0!important;
     width: 100%!important;
-} 
+}
 
 .cheers-back-users .jspDrag {
     background: #FFFFFF;
@@ -180,6 +200,7 @@
 .cheers-back-users .jspVerticalBar {
     right: 0;
 }
+
 .cheers-back-users .jspTrack {
     background: #ECECEC;
     right: 0;
@@ -188,12 +209,10 @@
 
 .cheers-back__loader {
     position: absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 100;
     margin: auto;
 }
-
-

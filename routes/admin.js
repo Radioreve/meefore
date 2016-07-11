@@ -1,5 +1,7 @@
 	
-	var config      = '../config/config';
+	var config      = require( '../config/config' );
+	var Alerter 	= require( '../middlewares/alerter' );
+
 	var apiDir      = '../api';
 	var jobsDir     = '../jobs';
 	var mdwDir      = '../middlewares';
@@ -37,110 +39,6 @@
 			mdw.auth.authenticate(['admin']),
 			mdw.meepass.updateMeepass('admin_credit')
 		);
-
-	    app.post('/admin/users/alerts/reset',
-	    	function( req, res ){
-
-	    		User
-	    			.find()
-	    			.exec(function( err, users ){
-
-	    				if( err ){
-	    					return res.status( 400 ).json({
-	    						msg: "Error occured", err: err, users: users
-	    					});
-	    				}
-
-	    				if( typeof req.sent.min_frequency != 'number' ){
-	    					return res.status( 400 ).json({
-	    						msg: "Please, provide min_frequency field of type number"
-	    					});
-	    				}
-
-	    				var async_tasks = [];
-	    				users.forEach(function( user ){
-
-	    					async_tasks.push(function( callback ){
-
-	    						rd.hmset('user_alerts/' + facebook_id, { min_frequency: req.sent.min_frequency }, function( err ){
-	    							callback();
-	    						});
-
-	    					});
-
-
-	    				});
-	    				
-    					async.parallel( async_tasks, function( err, response ){
-
-	    					if( err ){
-	    						return res.status( 400 ).json({
-	    							err: err, response: response
-	    						});
-	    					} else {
-	    						return res.status( 200 ).json({
-	    							res: "success!"
-	    						});
-	    					}
-    					});
-
-	    			});
-
-	    	});
-
-	    app.post('/admin/users/alerts/min_frequency',
-	    	function( req, res ){
-
-	    		User
-	    			.find()
-	    			.select('facebook_id')
-	    			.exec(function( err, data ){
-
-	    				if( err || data.length == 0 ){
-	    					return res.status(400).json({ msg: "Error occured", err: err, data: data });
-	    				}
-
-	    				if( typeof req.sent.min_frequency != 'number' ){
-	    					return res.status(400).json({ msg: "Please, provide min_frequency field of type number" });
-	    				}
-
-	    				var async_tasks = [];
-	    				data.forEach(function( o ){
-
-	    					var facebook_id = o.facebook_id;
-	    					async_tasks.push(function( callback ){
-
-	    						// (function( facebook_id ){
-
-			    					rd.hgetall('user_alerts/' + facebook_id, function( err, alerts ){
-
-			    						alerts.min_frequency = req.sent.min_frequency;
-			    						rd.hmset('user_alerts/' + facebook_id, alerts, function( err ){
-			    							console.log('Cache updated for user : ' + facebook_id );
-			    							callback();
-
-			    						});
-
-			    					});
-
-			    				// })( facebook_id );
-
-	    					});
-	    				});
-
-	    				async.parallel( async_tasks, function( err, response ){
-
-	    					if( err ){
-	    						return res.status( 400 ).json({ err: err, response: response });
-	    					} else {
-	    						return res.status( 200 ).json({ res: "success!" });
-	    					}
-	    				});
-
-	    			})
-
-	    	});
-
 
 
 	    app.post('/admin/auth/facebook/generate-app-token-local', // use the app_token shortcut
@@ -212,22 +110,18 @@
 	    );
 
 
-	   	app.post('/admin/jobs/terminate-befores',
-	   		function( req, res ){
-
-	   			if( req.sent.api_key != 'M33fore'){
-	   				return res.status( 403 ).json({
-	   					"msg": "unauthorized"
-	   				});
-	   			}
+	   	app.post('/admin/befores/terminate',
+	   		function( req, res, next ){
 
 	   			mdw.jobs.terminateBefores({
-						timezone   : req.sent.timezone,
-						target_day : req.sent.target_day  // format 'DD/MM/YYYY'
-	   			});
+					timezone   : req.sent.timezone,
+					target_day : req.sent.target_day  // format 'DD/MM/YYYY'
+	   			}, function( err, tracked ){
 
-	   			res.json({
-	   				"msg":"success" 
+	   				req.sent.expose.err 	= err;
+		   			req.sent.expose.tracked = tracked;
+		   			next();
+
 	   			});
 
 	   		});

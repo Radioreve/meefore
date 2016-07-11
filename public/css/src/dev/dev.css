@@ -1,45 +1,72 @@
-
-.ios, .palette {
-	width: 320px;
-	height: 668px;
-	position: fixed;
-	right: 100px;
-	top: 50%;
-	transform: translate(0,-50%);
-	z-index: 99999999;
+.ios,
+.palette {
+    width: 320px;
+    height: 668px;
+    position: fixed;
+    right: 100px;
+    top: 50%;
+    transform: translate(0, -50%);
+    z-index: 99999999;
 }
 
-.ios {
-
-}
+.ios {}
 
 .palette {
-	width: 100px;
-	display: flex;
-	flex-flow: column;
-	justify-content: center;
-	align-items: center;
-	background: rgba(255, 255, 255, 0.63);
-	border-radius: 4px;
-	height: auto;
-	padding: 20px 0;
-	right: 0;
+    width: 100px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.63);
+    border-radius: 4px;
+    height: auto;
+    padding: 20px 0;
+    right: 0;
 }
 
 .palette__color {
-	border-radius: 100px;
-	width: 40px;
-	height: 40px;
-	margin: 4px 0;
+    border-radius: 100px;
+    width: 40px;
+    height: 40px;
+    margin: 4px 0;
 }
 
-.palette__color.--mushia { background: #db4760 }
-.palette__color.--gentle { background: #33afff }
-.palette__color.--royal { background: #1b69ec }
-.palette__color.--odebo { background: #fd7124 }
-.palette__color.--blueboy { background: #3fb3c6 }
-.palette__color.--pinkirl { background: #d55d8c }
-.palette__color.--purplepills { background: #7b4cbb }
-.palette__color.--greenected { background: #6ae74f }
-.palette__color.--validateen { background: #6fe27e }
-.palette__color.--whispereen { background: #58c170 }
+.palette__color.--mushia {
+    background: #db4760
+}
+
+.palette__color.--gentle {
+    background: #33afff
+}
+
+.palette__color.--royal {
+    background: #1b69ec
+}
+
+.palette__color.--odebo {
+    background: #fd7124
+}
+
+.palette__color.--blueboy {
+    background: #3fb3c6
+}
+
+.palette__color.--pinkirl {
+    background: #d55d8c
+}
+
+.palette__color.--purplepills {
+    background: #7b4cbb
+}
+
+.palette__color.--greenected {
+    background: #6ae74f
+}
+
+.palette__color.--validateen {
+    background: #6fe27e
+}
+
+.palette__color.--whispereen {
+    background: #58c170
+}

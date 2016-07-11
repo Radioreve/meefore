@@ -235,13 +235,11 @@
 }
 
 .search-user__h2 .age,
-.search-user__h2 .location  {
-}
-.search-user__h2 .age {
-}
+.search-user__h2 .location {}
 
-.search-user__h2 .location {
-}
+.search-user__h2 .age {}
+
+.search-user__h2 .location {}
 
 .search-user__actions {
     background: #FFFFFF;
@@ -309,8 +307,7 @@
 }
 
 .search-user__name,
-.search-user__actions {
-}
+.search-user__actions {}
 
 .search-users > img {
     width: 32px;
@@ -337,8 +334,7 @@
 @media (min-width: 736px) {
     .search-user__name,
     .search-user__actions,
-    .search-user__location {
-    }
+    .search-user__location {}
     .search-user {
         margin-right: 40px;
         padding-bottom: 36%;
@@ -346,13 +342,11 @@
     .search-users-row {
         margin-bottom: 40px;
     }
-    .search-user__country {
-    }
+    .search-user__country {}
     .search-users {
         margin-top: 40px;
         min-width: 840px;
     }
-
     .search__title {
         display: block;
     }

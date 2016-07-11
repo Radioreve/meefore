@@ -14,15 +14,21 @@
 	// Parameters
 	var mongo_uri  = config.db[ process.env.NODE_ENV ].uri;
 
-	var tracked = {};
+	var tracked = {
+		timezone          : null,
+		server_time		  : null,
+		target_time		  : null,
+		n_befores_updated : null,
+		before_list       : []
+	};
 
 	// Given an hour and a timezone, return the timezone in which it is 6 am
-	function findDiffDay( day ){
+	function findDiffDay( date ){
 
-		var hour     = day.hour();
-		var timezone = day.utcOffset();
+		var hour     = date.hour();
+		var timezone = date.utcOffset();
 
-		// Get the absolute number of hours separating today and target day
+		// Get the absolute number of hours separating today and target date
 		var diff;
 		if( hour > 6 ){
 			diff = 24 - hour + 6;
@@ -83,13 +89,7 @@
 							  .set('hour', 14 )
 							  .set('minute', 0 )
 							  .set('second', 0 );
-		
-		keeptrack({
-			timezone   : target.timezone/60,
-			local_time : moment().toString(),
-			target_time: target_day.toString()
-		});
-
+	
 
 		// Custom overrides to have control via API
 		if( options.timezone ){
@@ -104,6 +104,12 @@
 						  .set('second', 0 );
 		}
 
+		keeptrack({
+			timezone    : target.timezone,
+			server_time : formatTime( moment() ),
+			target_time : formatTime( target_day )
+		});
+
 		// Cast moment dates to Date objects
 		var date_range_query     = { $lt: target_day.toDate() };// $gt: target_day.add( -2, 'days' ).toDate() };
 		var timezone_range_query = { $gt: target.timezone - 60, $lt: target.timezone + 60 };
@@ -116,12 +122,13 @@
 			'status'    : { $in: ['open'] }
 		};
 
+
 		mongoose.connection.on('error', function( err ){
 
 			var mail_html = []
-			mail_html.push('Connection to the database failed, Couldnt execute the cron job @reset-befores ');
+			mail_html.push('Connection to the database failed, Couldnt execute the cron job "terminateBefores"');
 			mail_html.push( err );
-			Alerter.sendAdminEmail({ subjet: 'Error connecting to Database', html: mail_html.join('') });
+			// Alerter.sendAdminEmail({ subjet: 'Error connecting to Database', html: mail_html.join('') });
 			mail_html = [];
 
 		});
@@ -132,23 +139,30 @@
 			mongoose.connect( mongo_uri );
 		} else {
 			console.log('Connection already opened');
-			handleMongooseOpen();
+			handleMongooseOpen( callback );
 		}
 
 		mongoose.connection.on('open', handleMongooseOpen );
-			
-		function handleMongooseOpen(){
+		
+		function formatTime( m ){
+			if( !m._isAMomentObject ){
+				m = moment( m );
+			}
+			return m.format('DD/MM') + ' - ' + m.format('HH:mm') 
+		}
+
+		function handleMongooseOpen( callback ){
 			
 			console.log('Connected to the database! Updating... ');
 
-				updateBefores(function( tracked ){
+				updateBefores(function(){
 
 					console.log( tracked.n_users_updated + ' users updated');
 
 					var before_list_html = [];
-					tracker.before_list.forEach(function( bfr, i ){
+					tracked.before_list.forEach(function( bfr, i ){
 						before_list_html.push([
-							'<div>'+ i +' - ' + bfr._id + ' - ' + bfr.address.place_name + ' - ' + bfr.begins_at + '</div>'
+							'<div>'+ i +' - ' + bfr._id + ' - ' + bfr.address.place_name + ' - ' + formatTime( moment( bfr.begins_at ) )+ '</div>'
 						].join(''));
 					});
 
@@ -156,7 +170,7 @@
 
 					var mail_html = [
 						'<div>Scheduler updated the database successfully in zone : ' + tracked.timezone + '</div>',
-						'<div>Local time 	   	         : ' + tracked.local_time 		 +'</div>',
+						'<div>Local time 	   	         : ' + tracked.server_time 		 +'</div>',
 						'<div>Target time 	   	         : ' + tracked.target_time 		 +'</div>',
 						'<div>Number of befores updated  : ' + tracked.n_befores_updated  +'</div>',
 						'<div>---------------------------</div>',
@@ -168,6 +182,7 @@
 						subject : 'Scheduler [' + process.env.NODE_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
 						html    : mail_html.join('') 
 					});
+					callback( null, tracked );
 					// mongoose.connection.close();
 
 				});
@@ -175,15 +190,11 @@
 
 		function keeptrack( obj ){
 			
-			_.keys( obj ).forEach(function( key ){
-				tracked[ key ] = obj[ key ];
-			});
+			tracked = _.merge( tracked || {}, obj );
 		};
 	
 
 		function updateBefores( callback ){
-
-			var g_callback = arguments[ arguments.length - 1 ];
 
 			Before.find( full_before_query, function( err, befores ){
 
@@ -194,8 +205,9 @@
 					var tasks = [];
 					befores.forEach(function( bfr ){
 						tasks.push(function( callback ){
-							bfr.status = "ended";
+							// bfr.status = "ended";
 							bfr.save(function( err ){
+								tracked.before_list.push( bfr );
 								callback();
 							});
 						});
@@ -204,27 +216,19 @@
 					async.parallel( tasks, function( err ){
 
 						if( err ){
-							return callback( err, null );
+							callback( err, null );
+						} else {
+							keeptrack({ n_befores_updated: befores.length });
+							callback();
 						}
 
-						keeptrack({ n_befores_updated: befores.length });
-						g_callback( null, _.map( befores, '_id') );
-
-						callback( null, tracked );
-
-
 					});
-
 
 				});
 		};
 
-
 	};
 
-
-	// Test purposes
-	// terminateBefores();
 
 	module.exports = {
 		terminateBefores : terminateBefores

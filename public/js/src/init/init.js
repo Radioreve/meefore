@@ -44,16 +44,11 @@
             // Profile user
             LJ.profile_user.init();
 
-
             // Autologin for users who asked the "remember me" feature in their settings
             LJ.autologin.init()
                 .then(  LJ.autologin.startLogin )
                 .catch( LJ.autologin.startLanding )
 
-            // Login flow
-            LJ.login.init()
-                .then( LJ.facebook.fetchFacebookToken )
-                .then( LJ.start );
 
         },
         start: function( facebook_token ){

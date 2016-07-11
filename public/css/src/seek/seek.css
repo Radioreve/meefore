@@ -55,7 +55,7 @@
     flex-flow: column nowrap;
     align-items: center;
 }
- 
+
 .seek-login-places .pac-item {
     border-color: #ececec;
     height: 50px;
@@ -83,8 +83,7 @@
     display: none;
 }
 
-.seek-login-places .pac-matched {
-}
+.seek-login-places .pac-matched {}
 
 
 /* Override for map browser */

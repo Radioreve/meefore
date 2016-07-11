@@ -1,5 +1,7 @@
 	
-	var config      = '../config/config';
+	var config      = require( '../config/config' );
+	var Alerter 	= require( '../middlewares/alerter' );
+
 	var apiDir      = '../api';
 	var jobsDir     = '../jobs';
 	var mdwDir      = '../middlewares';
@@ -94,5 +96,14 @@
 			mdw.pop.populateUser({ force_presence: true }),
 			api.users.fetchUserCheers
 		);
+
+
+		app.get('/test/send-admin-email', function( req, res, next ){
+			Alerter.sendAdminEmail({
+				subject : 'Hello admin',
+				html    : 'Test email'
+			});
+			next();
+		});
 
 	}	

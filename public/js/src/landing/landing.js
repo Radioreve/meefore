@@ -3,8 +3,12 @@
 
 		activateLanding: function( landing_version ){
 
-				var landing_html = LJ.landing.renderLanding( landing_version );
-				$('.multi-landing').html( landing_html );
+			var landing_html = LJ.landing.renderLanding( landing_version );
+			$('.multi-landing').html( landing_html );
+
+			LJ.login.init()
+                .then( LJ.facebook.fetchFacebookToken )
+                .then( LJ.start );
 
 		},
 		renderLanding: function( landing_version ){
