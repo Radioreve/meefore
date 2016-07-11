@@ -29741,6 +29741,111 @@ function closure ( target, options ){
 		}
 
 	});
+	
+	
+	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
+
+		init: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				if( document.location.hash == "#1" ){
+					LJ.log('Logging in with test user Victoriale...');
+					var tk = "EAAXR2Qo4lc4BAChEDRcMA17PowABdrp711d8Fl03VzjB1ptsqMFaKn2jhB4xOF70HpTfELjUVTtcSkJN1Ju9s0WZA5o1Rrez9uW0mgXsbJsxCMe650gLb3o92MLugROZAuQTKsAC2ZAMNwCSJwxIk1sLTEpv5kZD";
+					return resolve( tk );
+				}
+
+				if( document.location.hash == "#2" ){
+					LJ.log('Logging in with test user Angelah...');
+					var tk = "EAAXR2Qo4lc4BAMUbS4HfY6Uvk5sM1HkOpan12pCAd3tCZAZCGrXGPJXJBj8dazV5OMDqx6aCuX09VfZAb8CVqeEOfmGyCUUoSUzSHmng6GX9FWtpuzCdAPpVzWFxHXWE2VPjb4ybUCQ6ZClAggtLlNn232EZASEIZD";
+					return resolve( tk );
+				}
+
+				if( document.location.hash == "#3" ){
+					LJ.log('Logging in with test user Davida...');
+					var tk = "EAAXR2Qo4lc4BAOEKyewke6ibcU0zB0BvxJSyKdNsOdJFzTGD52MB1QFA1Ay3HHG1XD9WF747zF88rrBmZCODWXHx46Jp8hEWxi5PTZC3G9zjH4pyaZCcj586ZAZAvBExU0Jt8aKfVC9LR2XAzvjGBq8chED7EGlUZD";
+					return resolve( tk );
+				}
+
+				// Quick reference to the local store
+				var s = LJ.store;
+
+				if( !s.get('facebook_access_token') ){
+					return reject('No local data available, initializing lp...');
+				}
+
+				var facebook_access_token = s.get('facebook_access_token');
+
+				var token      = facebook_access_token.token;
+				var expires_at = facebook_access_token.expires_at;
+
+				if( !token || !expires_at ){
+					return reject('Missing init preference param, initializing lp...');
+				}
+
+				if( moment( expires_at ) < moment() ){
+					return reject('Facebook token found but has expired, initializing lp...');
+				} 
+
+				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
+				if( remaining_days < 30 ) {
+					return reject('Facebook token found but will expire soon, refresh is needed.');
+				}
+
+				// Unexpected error
+				if( s.get('reconnecting') && !token ){
+					return reject('User trying to reconnect but missing token from local store (unexpected)');
+				}
+
+				// Check if the app is trying to reconnect him 
+				if( s.get('reconnecting') && token ){
+					LJ.log('Reconnecting user from previous loss of connexion...');
+					s.remove('reconnecting');
+					return resolve( token );
+				}
+
+				if( s.get("autologin") == false ){
+					return reject("Autologin isnt activated, initializing lp...");
+				}
+
+				LJ.log('Init data ok, auto logging in...');
+				resolve( token );
+							
+			});
+		},
+		startLogin: function( facebook_token ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log('Starting login...');
+				LJ.start( facebook_token );
+			});
+
+		},
+		startLanding: function( message ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log( message );
+				LJ.log('Starting landing... v' + 1 );
+
+				$( LJ.static.renderStaticImage('slide_loader') )
+					.hide()
+					.appendTo('.curtain')
+					.velocity('shradeIn', { duration: 800 });
+
+				$('.curtain').find('.slide__loader').velocity('shradeOut', {
+					duration: 600,
+					complete: function(){
+						LJ.ui.hideCurtain({ duration: 800 });
+						LJ.landing.activateLanding( 2 );
+						 // Login flow
+									
+					}
+				})
+			});
+		}
+
+	});
+
+
+
 
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
@@ -30492,111 +30597,6 @@ function closure ( target, options ){
 		}
 
 	});
-	
-	
-	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
-
-		init: function(){
-
-			return LJ.promise(function( resolve, reject ){
-
-				if( document.location.hash == "#1" ){
-					LJ.log('Logging in with test user Victoriale...');
-					var tk = "EAAXR2Qo4lc4BAChEDRcMA17PowABdrp711d8Fl03VzjB1ptsqMFaKn2jhB4xOF70HpTfELjUVTtcSkJN1Ju9s0WZA5o1Rrez9uW0mgXsbJsxCMe650gLb3o92MLugROZAuQTKsAC2ZAMNwCSJwxIk1sLTEpv5kZD";
-					return resolve( tk );
-				}
-
-				if( document.location.hash == "#2" ){
-					LJ.log('Logging in with test user Angelah...');
-					var tk = "EAAXR2Qo4lc4BAMUbS4HfY6Uvk5sM1HkOpan12pCAd3tCZAZCGrXGPJXJBj8dazV5OMDqx6aCuX09VfZAb8CVqeEOfmGyCUUoSUzSHmng6GX9FWtpuzCdAPpVzWFxHXWE2VPjb4ybUCQ6ZClAggtLlNn232EZASEIZD";
-					return resolve( tk );
-				}
-
-				if( document.location.hash == "#3" ){
-					LJ.log('Logging in with test user Davida...');
-					var tk = "EAAXR2Qo4lc4BAOEKyewke6ibcU0zB0BvxJSyKdNsOdJFzTGD52MB1QFA1Ay3HHG1XD9WF747zF88rrBmZCODWXHx46Jp8hEWxi5PTZC3G9zjH4pyaZCcj586ZAZAvBExU0Jt8aKfVC9LR2XAzvjGBq8chED7EGlUZD";
-					return resolve( tk );
-				}
-
-				// Quick reference to the local store
-				var s = LJ.store;
-
-				if( !s.get('facebook_access_token') ){
-					return reject('No local data available, initializing lp...');
-				}
-
-				var facebook_access_token = s.get('facebook_access_token');
-
-				var token      = facebook_access_token.token;
-				var expires_at = facebook_access_token.expires_at;
-
-				if( !token || !expires_at ){
-					return reject('Missing init preference param, initializing lp...');
-				}
-
-				if( moment( expires_at ) < moment() ){
-					return reject('Facebook token found but has expired, initializing lp...');
-				} 
-
-				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
-				if( remaining_days < 30 ) {
-					return reject('Facebook token found but will expire soon, refresh is needed.');
-				}
-
-				// Unexpected error
-				if( s.get('reconnecting') && !token ){
-					return reject('User trying to reconnect but missing token from local store (unexpected)');
-				}
-
-				// Check if the app is trying to reconnect him 
-				if( s.get('reconnecting') && token ){
-					LJ.log('Reconnecting user from previous loss of connexion...');
-					s.remove('reconnecting');
-					return resolve( token );
-				}
-
-				if( s.get("autologin") == false ){
-					return reject("Autologin isnt activated, initializing lp...");
-				}
-
-				LJ.log('Init data ok, auto logging in...');
-				resolve( token );
-							
-			});
-		},
-		startLogin: function( facebook_token ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log('Starting login...');
-				LJ.start( facebook_token );
-			});
-
-		},
-		startLanding: function( message ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log( message );
-				LJ.log('Starting landing... v' + 1 );
-
-				$( LJ.static.renderStaticImage('slide_loader') )
-					.hide()
-					.appendTo('.curtain')
-					.velocity('shradeIn', { duration: 800 });
-
-				$('.curtain').find('.slide__loader').velocity('shradeOut', {
-					duration: 600,
-					complete: function(){
-						LJ.ui.hideCurtain({ duration: 800 });
-						LJ.landing.activateLanding( 2 );
-						 // Login flow
-									
-					}
-				})
-			});
-		}
-
-	});
-
-
-
 
 	window.LJ.before = _.merge( window.LJ.before || {}, {
 
@@ -36468,7 +36468,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		},
 		getFriendsProfiles: function( facebook_ids ){
 
-			LJ.friends.friends_profiles.filter( Boolean );
+			LJ.friends.friends_profiles = LJ.friends.friends_profiles.filter( Boolean );
 
 			if( facebook_ids ){
 				return _.filter( LJ.friends.friends_profiles, function( f ){
@@ -43277,6 +43277,172 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 
 
+	window.LJ.menu = _.merge( window.LJ.menu || {}, {
+
+		$menu: $('.menu'),
+		shrink_menu_height_limit: 0,
+		menu_slide_duration: 240,
+
+		init: function(){
+
+			LJ.menu.handleDomEvents();
+			LJ.menu.activateMenuSection('profile');
+			LJ.menu.shrinkMenu();
+
+			return;
+
+		},
+		handleDomEvents: function(){
+
+			LJ.ui.$body.on('click', '.menu-item', LJ.menu.showMenuItem );
+			LJ.ui.$window.on('scroll', _.debounce( LJ.menu.handleMenuApparition, 100 ) );
+
+		},
+		showMenuItem: function(){
+
+			var $self = $(this);
+
+			var section_id = $self.attr('data-link');
+			LJ.menu.activateMenuSection( section_id );
+
+		},
+		activateMenuSection: function( section_id ){	
+
+			var current_section_id = $('.menu-item.--active').attr('data-link');
+
+			var $menu_item_activated    = $('.menu-item[data-link="' + current_section_id + '"]');
+			var $menu_item_to_activate  = $('.menu-item[data-link="' + section_id + '"]');
+
+			var $menu_block_activated   = $('.menu-section[data-link="' + current_section_id + '"]');
+			var $menu_block_to_activate = $('.menu-section[data-link="' + section_id + '"]');
+
+
+			if( !current_section_id ){
+				$menu_item_to_activate.addClass('--active');
+				return $('.app-section.--menu').find('[data-link="' + section_id + '"]').css({ 'display': 'flex' });
+			}
+
+			if( section_id == current_section_id ){
+				
+				if( current_section_id == "shared" ){
+					return LJ.shared.handleShareClicked();
+				}
+				if( current_section_id == "cheers" ){
+					return LJ.cheers.handleCheersClicked();
+				}
+				if( current_section_id == "friends" ){
+					return LJ.friends.handleFriendsClicked();
+				}
+
+				return LJ.log('Section is already activated');
+			}
+
+			$menu_item_activated
+				.removeClass('--active')
+				.find('.menu-item__bar')
+				.velocity('bounceOut', { duration: 450, display: 'none' });
+
+			$menu_item_to_activate
+				.addClass('--active')
+				.find('.menu-item__bar')
+				.velocity('bounceInQuick', { duration: 450, display: 'block' });
+
+			$menu_block_activated.hide();
+			$menu_block_to_activate.css({ display: 'flex' });
+
+			// Specifics
+			section_id == "friends" ?
+				LJ.friends.displayInviteFriendsPopup():
+				LJ.friends.hideInviteFriendsPopup();
+
+
+		},
+		handleMenuApparition: function( e ){
+			
+			return;
+
+			var current_scrolltop = LJ.ui.$window.scrollTop();
+
+			if( LJ.ui.getScrollDirection() == "down" && LJ.ui.scrolltop > LJ.menu.shrink_menu_height_limit && $('--resizing').length == 0 ){
+				LJ.menu.shrinkMenu();
+			}
+
+			if( LJ.ui.getScrollDirection() == "up" && LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit  && $('--resizing').length == 0 ){
+				LJ.menu.expandMenu();
+			}
+
+				
+		},
+		toggleMenuState: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( $m.hasClass('--downsized') ){
+				LJ.menu.expandMenu();
+			} else {
+				LJ.menu.shrinkMenu();
+			}
+
+		},
+		shrinkMenu: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( $m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
+
+			$m.addClass('--resizing');
+			$m.velocity('slideUpOut', {
+				duration: LJ.menu.menu_slide_duration,
+				complete: function(){
+
+					if( LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit ){
+						return $m.velocity('slideDownIn', {
+							duration: LJ.menu.menu_slide_duration,
+							display: 'flex',
+							complete: function(){
+								$m.removeClass('--resizing');
+							}
+						})
+					}
+
+					$m.addClass('--downsized');
+					$m.closest('.app-section').addClass('--downsized');
+					$m.removeClass('--resizing');
+					$m.velocity('slideDownIn', {
+						duration: LJ.menu.menu_slide_duration,
+						display: 'flex'
+					});
+
+				}
+			});
+
+		},
+		expandMenu: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( !$m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
+
+			$m.addClass('--resizing');
+			$m.velocity('slideUpOut', {
+				duration: LJ.menu.menu_slide_duration,
+				complete: function(){
+
+					$m.removeClass('--resizing');
+					$m.removeClass('--downsized')
+					$m.closest('.app-section').removeClass('--downsized');
+					$m.velocity('slideDownIn', {
+						duration: LJ.menu.menu_slide_duration,
+						display: 'flex'
+					});
+
+				}
+			});
+
+		}
+
+	});
+
 	window.LJ.meepass = _.merge( window.LJ.meepass || {}, {
 
 		init: function(){
@@ -43546,172 +43712,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 		
-
-	window.LJ.menu = _.merge( window.LJ.menu || {}, {
-
-		$menu: $('.menu'),
-		shrink_menu_height_limit: 0,
-		menu_slide_duration: 240,
-
-		init: function(){
-
-			LJ.menu.handleDomEvents();
-			LJ.menu.activateMenuSection('profile');
-			LJ.menu.shrinkMenu();
-
-			return;
-
-		},
-		handleDomEvents: function(){
-
-			LJ.ui.$body.on('click', '.menu-item', LJ.menu.showMenuItem );
-			LJ.ui.$window.on('scroll', _.debounce( LJ.menu.handleMenuApparition, 100 ) );
-
-		},
-		showMenuItem: function(){
-
-			var $self = $(this);
-
-			var section_id = $self.attr('data-link');
-			LJ.menu.activateMenuSection( section_id );
-
-		},
-		activateMenuSection: function( section_id ){	
-
-			var current_section_id = $('.menu-item.--active').attr('data-link');
-
-			var $menu_item_activated    = $('.menu-item[data-link="' + current_section_id + '"]');
-			var $menu_item_to_activate  = $('.menu-item[data-link="' + section_id + '"]');
-
-			var $menu_block_activated   = $('.menu-section[data-link="' + current_section_id + '"]');
-			var $menu_block_to_activate = $('.menu-section[data-link="' + section_id + '"]');
-
-
-			if( !current_section_id ){
-				$menu_item_to_activate.addClass('--active');
-				return $('.app-section.--menu').find('[data-link="' + section_id + '"]').css({ 'display': 'flex' });
-			}
-
-			if( section_id == current_section_id ){
-				
-				if( current_section_id == "shared" ){
-					return LJ.shared.handleShareClicked();
-				}
-				if( current_section_id == "cheers" ){
-					return LJ.cheers.handleCheersClicked();
-				}
-				if( current_section_id == "friends" ){
-					return LJ.friends.handleFriendsClicked();
-				}
-
-				return LJ.log('Section is already activated');
-			}
-
-			$menu_item_activated
-				.removeClass('--active')
-				.find('.menu-item__bar')
-				.velocity('bounceOut', { duration: 450, display: 'none' });
-
-			$menu_item_to_activate
-				.addClass('--active')
-				.find('.menu-item__bar')
-				.velocity('bounceInQuick', { duration: 450, display: 'block' });
-
-			$menu_block_activated.hide();
-			$menu_block_to_activate.css({ display: 'flex' });
-
-			// Specifics
-			section_id == "friends" ?
-				LJ.friends.displayInviteFriendsPopup():
-				LJ.friends.hideInviteFriendsPopup();
-
-
-		},
-		handleMenuApparition: function( e ){
-			
-			return;
-
-			var current_scrolltop = LJ.ui.$window.scrollTop();
-
-			if( LJ.ui.getScrollDirection() == "down" && LJ.ui.scrolltop > LJ.menu.shrink_menu_height_limit && $('--resizing').length == 0 ){
-				LJ.menu.shrinkMenu();
-			}
-
-			if( LJ.ui.getScrollDirection() == "up" && LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit  && $('--resizing').length == 0 ){
-				LJ.menu.expandMenu();
-			}
-
-				
-		},
-		toggleMenuState: function(){
-
-			var $m = LJ.menu.$menu;
-
-			if( $m.hasClass('--downsized') ){
-				LJ.menu.expandMenu();
-			} else {
-				LJ.menu.shrinkMenu();
-			}
-
-		},
-		shrinkMenu: function(){
-
-			var $m = LJ.menu.$menu;
-
-			if( $m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
-
-			$m.addClass('--resizing');
-			$m.velocity('slideUpOut', {
-				duration: LJ.menu.menu_slide_duration,
-				complete: function(){
-
-					if( LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit ){
-						return $m.velocity('slideDownIn', {
-							duration: LJ.menu.menu_slide_duration,
-							display: 'flex',
-							complete: function(){
-								$m.removeClass('--resizing');
-							}
-						})
-					}
-
-					$m.addClass('--downsized');
-					$m.closest('.app-section').addClass('--downsized');
-					$m.removeClass('--resizing');
-					$m.velocity('slideDownIn', {
-						duration: LJ.menu.menu_slide_duration,
-						display: 'flex'
-					});
-
-				}
-			});
-
-		},
-		expandMenu: function(){
-
-			var $m = LJ.menu.$menu;
-
-			if( !$m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
-
-			$m.addClass('--resizing');
-			$m.velocity('slideUpOut', {
-				duration: LJ.menu.menu_slide_duration,
-				complete: function(){
-
-					$m.removeClass('--resizing');
-					$m.removeClass('--downsized')
-					$m.closest('.app-section').removeClass('--downsized');
-					$m.velocity('slideDownIn', {
-						duration: LJ.menu.menu_slide_duration,
-						display: 'flex'
-					});
-
-				}
-			});
-
-		}
-
-	});
 
 	window.LJ.nav = _.merge( window.LJ.nav || {}, {
 

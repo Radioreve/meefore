@@ -74,7 +74,7 @@
 		},
 		getFriendsProfiles: function( facebook_ids ){
 
-			LJ.friends.friends_profiles.filter( Boolean );
+			LJ.friends.friends_profiles = LJ.friends.friends_profiles.filter( Boolean );
 
 			if( facebook_ids ){
 				return _.filter( LJ.friends.friends_profiles, function( f ){
