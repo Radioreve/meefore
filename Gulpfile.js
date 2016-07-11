@@ -18,14 +18,34 @@
     // Minifcation of all Javascript files
     gulp.task('min-js', function(){
 
-        var dir_lib = 'public/js/lib/';
-        var dir_src = 'public/js/src/**/*.js';
+        var lib_path = 'public/js/lib';
+        var src_path = 'public/js/src/**/*.js';
+
+        var lodash         = lib_path + '/lodash/lodash.js';
+        var jquery         = lib_path + '/jquery/jquery.js';
+        var mousetrap      = lib_path + '/mousetrap/mousetrap.js';
+        var jsp            = lib_path + '/jscrollpane/jscrollpane.js';
+        var jsp_mousewhell = lib_path + '/jscrollpane/jscrollpane.mousewheel.js';
+        var cloudinary     = lib_path + '/cloudinary/jquery.cloudinary.js';
+        var typeahead      = lib_path + '/typeahead/jquery.typeahead.js';
+        var typed          = lib_path + '/typed/type.js';
+        var imagesloaded   = lib_path + '/imagesloaded/imagesloaded.js';
+        var velocity       = lib_path + '/velocity/velocity.js';
+        var velocity_ui    = lib_path + '/velocity/velocity-ui.js';
+        var moment         = lib_path + '/moment/moment.min.js';
+        var moment_locale  = lib_path + '/moment/momentwithlocale.js';
+        var nouislider     = lib_path + '/nouislider/nouislider.js';
+        var pikaday        = lib_path + '/pikaday/pikaday.js';
 
     	gulp.src([
             // Librairies
-    		dir_lib + 'lodash/lodash.js',
-            // Sources
-            dir_src + 'admin/admin.js'
+    		lodash, jquery, mousetrap, jsp, jsp_mousewhell, cloudinary,
+            typeahead, typed, imagesloaded, velocity, velocity_ui, moment,
+            moment_locale, pikaday, nouislider,
+
+            // Sources in any order
+            src_path
+
     		])
     		.pipe(concat( NAMESPACE + '.js'))
             .pipe( process.NODE_ENV === 'production' ? uglify() : gutil.noop() )
@@ -36,14 +56,25 @@
 
     // Minification of all CSS files
     gulp.task('min-css', function(){
+        
+        var lib_path    = 'public/css/lib';
+      //  var fontello    = 'public/css/lib/fontello/css/fontello.css';
+      //  var flags       = 'public/css/lib/flags/flags.css';
+        var hint        = lib_path + '/hint/hint.css';
+        var jscrollpane = lib_path + '/jscrollpane/jscrollpane.css';
+        var nouislider  = lib_path + '/nouislider/nouislider.css';
+        var pikadate    = lib_path + '/pikadate/pikadate.css';
+        var typeahead   = lib_path + '/typeahead/typeahead.css';
 
-        var fontello = 'public/css/lib/fontello/css/fontello.css';
-        var lib_path = 'public/css/lib/**/*.css';
-        var src_path = 'public/css/src/**/*.css';
+        var reset       = 'public/css/src/reset.css';
+        var common      = 'public/css/src/common.css';
+
+        // Sources, in any order
+        var src_path    = 'public/css/src/**/*.css';
 
         gulp.src([
-            fontello,
-            lib_path,
+            hint, jscrollpane, nouislider, pikadate, typeahead, reset,
+            common,
             src_path
         ])
         .pipe(concat( NAMESPACE + '.css'))
@@ -63,31 +94,32 @@
     // Adjusting html staged & prod versions
     // Thank god I dont have to do it manually !
     var replace_tasks = [];
-    [ 'devbuild', 'staged','prod' ].forEach(function( env_type ){
+    [ 'devbuild', 'staged','prod' ].forEach(function( task_type ){
 
-        var task_name = 'replace-html-' + env_type;
+        var suffix    = task_type;
+        var env_type  = task_type == "devbuild" ? "dev" : task_type;
+        var task_name = 'replace-html-' + task_type;
 
-        if( env_type == "devbuild" ){
-            env_type = "dev";
-        }
-        
+        var fb_app_id     = config.facebook[ env_type ].client_id;
+        var pusher_app_id = config.pusher[ env_type ].key;
+
+        var replace_config = {
+            'css'           : '<link rel="stylesheet" href="/dist/' + NAMESPACE + '.css" />',
+            'js'            : '<script src="/dist/' + NAMESPACE + '.js"></script>',
+            'header-fb-id'  : fb_app_id,
+            'fb-app-id'     : '\nwindow.facebook_app_id = "%";'.replace('%', fb_app_id ),
+            'pusher-app-id' : '\nwindow.pusher_app_id = "%";\n'.replace('%', pusher_app_id ),
+            'app-env'       : '\nwindow.LJ.app_mode = "%";\n'.replace('%', env_type ),
+            'remove'        : ''
+        };
+
         gulp.task( task_name, function(){
 
-            var fb_app_id     = config.facebook[ env_type ].client_id;
-            var pusher_app_id = config.pusher[ env_type ].key;
-
             gulp.src('./views/index-dev.html')
-                .pipe(htmlreplace({
-                    'css'           : '<link rel="stylesheet" href="/dist/' + NAMESPACE + '.css" />',
-                    'js'            : '<script src="/dist/' + NAMESPACE + '.js"></script>',
-                    'header-fb-id'  : fb_app_id,
-                    'fb-app-id'     : '\nwindow.facebook_app_id = "%";'.replace('%', fb_app_id ),
-                    'pusher-app-id' : '\nwindow.pusher_app_id = "%";\n'.replace('%', pusher_app_id ),
-                    'app-env'       : '\nwindow.LJ.app_mode = "%";\n'.replace('%', env_type ),
-                    'remove'        : ''
-                }))
-                .pipe(rename('./index-' + env_type + '.html'))
+                .pipe(htmlreplace( replace_config ))
+                .pipe(rename('./index-' + suffix + '.html'))
                 .pipe(gulp.dest('./views'));
+
         });
 
         replace_tasks.push( task_name );
@@ -124,7 +156,7 @@
         gulp.watch('views/index-dev.html', ['replace-html']);
     });
 
-    gulp.task('devbuild', [ "replace-html-devbuild", "min-css" ], function(){
+    gulp.task('devbuild', [ "replace-html-devbuild", "min-css", "min-js" ], function(){
         gutil.log('Gulp done');
     });
 

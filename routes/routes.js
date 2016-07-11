@@ -69,15 +69,20 @@
 	    	signEvents.sendHomepage
 	    );
 
+
 	    // Conditions générales
 	    app.get('/legals', function( req, res ){
-	    	res.sendfile( process.cwd() + '/views/legals.html' );
+	    	res.sendFile( process.cwd() + '/views/legals.html' );
 	    });
 
 	    // Redirection à la page d'accueil
 	    app.get('/',
 	    	signEvents.redirectToHome
 	    );
+
+	    app.get('/devbuild', function( req, res ){
+	    	res.sendFile( process.cwd() + '/views/index-devbuild.html' );
+	    });
 
 
 	    // Provide valid token based on secret key, for api calls

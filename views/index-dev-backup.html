@@ -25,18 +25,22 @@
   <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans:400,100,300,700,800" rel="stylesheet" type="text/css">
   <link href='https://fonts.googleapis.com/css?family=Assistant:200,300,400,600,700,800' rel='stylesheet' type='text/css'>
   
-  <link rel="stylesheet" href="/css/lib/fontello/css/fontello.css">
-  <link rel="stylesheet" href="/css/lib/flags/flags.css">
   <!-- Librairies -->
   <!-- build:css -->
+  <link rel="stylesheet" href="/css/lib/fontello/css/fontello.css">
   <link rel="stylesheet" href="/css/lib/jscrollpane/jscrollpane.css">
+  <link rel="stylesheet" href="/css/lib/flags/flags.css">
   <link rel="stylesheet" href="/css/lib/hint/hint.css">
   <link rel="stylesheet" href="/css/lib/nouislider/nouislider.css">
   <link rel="stylesheet" href="/css/lib/pikadate/pikadate.css">
   
-  <!-- Reset and common styles -->
-  <link rel="stylesheet" href="/css/src/reset.css">
-  <link rel="stylesheet" href="/css/src/common.css">
+  <!-- Reset -->
+  <link rel="stylesheet" href="/css/src/reset/reset.css">
+
+  <!-- App, first order -->
+  <link rel="stylesheet" href="/css/src/app/app_header.css">
+  <link rel="stylesheet" href="/css/src/app/app_layout.css">
+  <link rel="stylesheet" href="/css/src/app/app_ux.css">
   
   <!-- App, in any order -->
   <link rel="stylesheet" href="/css/src/ioptions/ioptions.css">
@@ -47,6 +51,7 @@
   <link rel="stylesheet" href="/css/src/chat/chat.css">
   <link rel="stylesheet" href="/css/src/chat/chat_inview.css">
   <link rel="stylesheet" href="/css/src/friends/friends.css">
+  <!-- <link rel="stylesheet" href="/css/src/invite/invite.css"> -->
   <link rel="stylesheet" href="/css/src/cheers/cheers.css">
   <link rel="stylesheet" href="/css/src/landing/landing.css">
   <link rel="stylesheet" href="/css/src/menu/menu.css">
@@ -61,10 +66,12 @@
   <link rel="stylesheet" href="/css/src/search/search_filters.css">
   <link rel="stylesheet" href="/css/src/seek/seek.css">
   <link rel="stylesheet" href="/css/src/settings/settings.css">
+  <!-- <link rel="stylesheet" href="/css/src/shared/shared.css"> -->
   <link rel="stylesheet" href="/css/src/login/login.css">
   <link rel="stylesheet" href="/css/src/map/map.css">
   <link rel="stylesheet" href="/css/src/map/map_mapview.css">
   <link rel="stylesheet" href="/css/src/map/map_sideview.css">
+  <link rel="stylesheet" href="/css/src/media/media.css">
   <link rel="stylesheet" href="/css/src/dev/dev.css">
   <!-- endbuild -->
 
@@ -824,10 +831,12 @@
 
     </section>
      <!-- Search end -->
+
   </section>
   
   <script src="//js.pusher.com/3.0/pusher.min.js"></script>
-  <script> window.LJ = {} </script>
+
+
   <!-- build:js -->
   <script src="js/lib/lodash/lodash.js"></script>
   <script src="js/lib/mousetrap/mousetrap.js"></script>
@@ -875,7 +884,9 @@
   <script src="js/src/connecter/connecter.js"></script>
   <script src="js/src/notifications/notifications.js"></script>
   <script src="js/src/onboarding/onboarding.js"></script>
+  <script src="js/src/party/party.js"></script>
   <script src="js/src/seek/seek.js"></script>
+  <script src="js/src/party/party_create.js"></script>
   <script src="js/src/profile/profile.js"></script>
   <script src="js/src/profile/profile_user.js"></script>
   <script src="js/src/menu/menu.js"></script>
@@ -897,11 +908,14 @@
   <script src="js/src/realtime/realtime.js"></script>
   <script src="js/src/init/init.js"></script>
   <!-- endbuild -->
+
+  
   <!-- build:remove -->
   <script src="js/src/map/map_test.js"></script>
   <script src="js/src/before/before_test.js"></script>
   <!-- endbuild -->
 
+   
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6QesJukMVpHVS6l8yvSt_pmCDCeYiYMI&libraries=places,geometry&callback=LJ.map.sayHello" type="text/javascript"></script>
   
   <script id="app_ids">  

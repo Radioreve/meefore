@@ -31,6 +31,7 @@
 		res.sendFile( config.homepage[ process.env.NODE_ENV ] );
 	};
 
+
 	var sendEarlyAdoptersPage = function( req, res ){
 		res.sendFile( process.cwd() + '/views/earlyadopters.html' );
 	}

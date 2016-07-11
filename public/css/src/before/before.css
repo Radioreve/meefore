@@ -257,6 +257,7 @@
     max-height: 260px;
     outline: none;
     border-bottom: 1px solid #eee;
+    position: relative;
 }
 
 .user-row {

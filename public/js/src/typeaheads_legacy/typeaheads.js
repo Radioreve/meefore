@@ -2,7 +2,7 @@
 
 	window.LJ = _.merge( window.LJ || {} , {
 
-		typeahead: {
+		typeahead_legacy: {
 			users: {
 				class_names: {
 					input      :'',
