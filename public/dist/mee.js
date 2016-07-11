@@ -29667,14 +29667,6 @@ function closure ( target, options ){
 
 }));
 
-	window.LJ.admin = _.merge( window.LJ.admin || {}, {
-
-		init: function(){
-			LJ.log('Initializing admin script');
-		}
-
-	});
-
 	window.LJ.analytics = _.merge( window.LJ.analytics || {}, {
 
 		init: function(){
@@ -29738,6 +29730,14 @@ function closure ( target, options ){
 				
 			});
 
+		}
+
+	});
+
+	window.LJ.admin = _.merge( window.LJ.admin || {}, {
+
+		init: function(){
+			LJ.log('Initializing admin script');
 		}
 
 	});
@@ -31162,7 +31162,7 @@ function closure ( target, options ){
 
 				var img_medium = LJ.pictures.makeImgHtml( h.img_id, h.img_vs, "user-before" );
 				be_pictures.push([
-					'<div class="be-pictures__pic">',
+					'<div class="be-pictures__pic js-filterlay">',
 						'<div class="be-pictures__shadolay"></div>',
 						img_medium,
 					'</div>'
@@ -31170,7 +31170,7 @@ function closure ( target, options ){
 
 			});
 
-			return be_pictures.join('');
+			return LJ.ui.render( be_pictures.join('') );
 
 		},
 		renderBeforeDate: function( date ){
@@ -32994,7 +32994,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		},
 		setupChatInviewJsp: function( chat_id ){
 
-			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w = LJ.chat.getChatInview( chat_id );
 
 			return LJ.ui.turnToJsp('.chat-inview-item[data-chat-id="'+ chat_id +'"] .chat-inview-messages', {
 					jsp_id   : chat_id,
@@ -33004,7 +33004,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 							// To make sure the first time usr loads the chat, no automatic refetch takes place
 							if( !$w.hasClass('--fetch-ready') ){
-								return //LJ.log('Cant fetch history, the chat is not set as ready');
+								return LJ.log('Cant fetch history, the chat is not set as ready');
 							}
 
 							// After a fetch history, the 'seen_by' element might be bugged (half hidden)
@@ -33293,8 +33293,8 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			LJ.chat.checkAllChats();
 
 			if( LJ.chat.state == 'hidden' ){
-				LJ.chat.refreshChatStates();
 				LJ.chat.showChatWrap();
+				LJ.chat.refreshChatStates();
 
 			} else {
 				LJ.chat.hideChatWrap();
@@ -33310,6 +33310,11 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			$('.app__menu-item.--chats').addClass('--active');
 
 			LJ.ui.adjustWrapperHeight( $('.chat') );
+
+			// $('.chat').css({ 'display': 'flex', 'opacity': '1' });
+			$('.chat').show();
+			LJ.chat.refreshChatRowsJsp();
+			return;
 
 			var duration  = 300;
 
@@ -33328,6 +33333,11 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 			LJ.chat.state = 'hidden';
 			$('.app__menu-item.--chats').removeClass('--active');
+
+			$('.chat').hide();
+
+			// $('.chat').css({ 'display': 'none', 'opacity': '0' });
+			return;
 
 			var duration = 200;
 			$('.chat').velocity('shradeOut', {
@@ -33551,8 +33561,8 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 				names     = LJ.renderMultipleNames( names, { lastify_user: LJ.user.name });
 
 				LJ.chat.updateChatInviewElements( chat_id, {
-					header_h1: '<span data-lid="chat_groupname_team"></span>',
-					header_h2: '<span>' + names + '</span>'
+					header_h1: '<span>' + names + '</span>',
+					header_h2: '<span data-lid="chat_team_h2"></span>',
 				});
 
 			}
@@ -34368,7 +34378,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		},
 		refreshChatJsp: function( chat_id ){
 
-			LJ.log('Refreshing chat jsp!');
+			// LJ.log('Refreshing chat jsp!');
 
 			var j = LJ.ui.jsp[ chat_id ];
 
@@ -34520,6 +34530,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 				var $b = $( bubble );
 
 				$b.removeClass('--last'); // Reset the last each time new bubbles are merged
+				$b.removeClass('--first');
 
 				if( i == 0 ){
 					$b.addClass('--first');
@@ -35980,6 +35991,10 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 		init: function(){
 
+			if( LJ.app_mode == "dev" ){
+				return LJ.log("Mode is 'dev', not initializing the connecter system");
+			}
+			
 			LJ.connecter.refreshOnlineUsers();
 			LJ.connecter.handleDomEvents();
 			return;
@@ -38020,6 +38035,395 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 
 
+
+	window.LJ.login = _.merge( window.LJ.login || {}, {
+
+			'$trigger_login': '.js-login',
+			'$trigger_logout': '.js-logout',
+			'$modal_logout'  : '.modal.--logout',
+			'opening_duration': 1000,
+			'prompt_duration': 600,
+			'prompt_buttons_duration': 900,
+			'completed_steps': 0,
+			'break_duration': 400,
+
+			'data': {},
+
+			init: function(){
+
+				return LJ.promise(function( resolve, reject ){
+					LJ.ui.$body.on('click', '.js-login', resolve );
+				});
+
+
+			},
+			showLandingElements: function(){
+
+				var duration = 600;
+
+				$('.landing').find('.landing-logo')
+					.velocity('slideLeftIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-lang')
+					.velocity('slideRightIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-body')
+					.velocity('shradeIn', {
+						duration: duration*2,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-footer')
+					.velocity('slideUpIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+
+			},
+			hideLandingElements: function(){
+
+				$('.landing')
+					.children()
+					.velocity('shradeOut', {
+						duration : 800,
+						display  : 'none'
+					});
+
+			},
+			showLoginProgressBar: function(){
+
+				$('.login__message').velocity('shradeIn', {
+			 		duration: 1600, delay: LJ.login.opening_duration/2
+			 	});
+
+			},
+			addLoginProgression: function(){
+
+				$( LJ.login.renderLoginProgression() ).hide().appendTo( $('.curtain') )
+
+			},
+			showLoginProgression: function(){
+
+				$('.login').velocity('shradeIn', {
+					duration: 1000
+				});
+
+			},
+			showLoginProgressMessage: function(){
+
+				$('.login__message').velocity('shradeIn', {
+					duration: 1000
+				});
+
+			},
+			hideLoginProgressBar: function(){
+
+				$('.login__progress-bar').velocity('shradeIn', {
+			 		duration: 1000
+			 	});
+
+			},
+			enterLoginProcess: function(){
+
+				LJ.login.hideLandingElements();
+				LJ.ui.deactivateHtmlScroll();
+
+				return LJ.delay( 1000 )
+						 .then(function(){
+
+						 	LJ.ui.showCurtain({ duration: 600, theme: "light", sticky: true });
+						 	LJ.login.addLoginProgression();
+						 	LJ.login.showLoginProgression();
+						 	// LJ.login.showLoginProgressMessage();
+						 	// LJ.login.showLoginProgressBar();
+
+						 });
+
+			},
+			hideLoginSteps: function(){
+				return LJ.promise(function( resolve, reject ){
+
+					$('.app').removeClass('nonei');
+					$('.landing').remove();
+
+					$('.login__message, .login__progress-bar, .login__loader').velocity('shradeOut', {
+						duration: 400,
+						complete: resolve
+						
+					});
+
+				});
+			},
+			firstSetup: function(){
+				// the app requires a user's location to boot properly
+				// - to be visible in the search section
+				// - to allow for geo requests to fetch the right befores
+				// - to allow the map to load in the right city
+				var L = LJ.user.location;
+				if( L && L.place_id && L.place_name && L.lat && L.lng ){
+					return;
+				}
+
+				if( LJ.user.access.indexOf('bot') == -1 ){
+					LJ.pictures.uploadFacebookPicture_Intro();
+				}
+				
+	            return LJ.login.break()
+	            		.then(function(){
+	            			return LJ.login.promptUserLocation();
+
+	            		})
+	            		.then(function(){
+	            			return LJ.login.debreak();
+
+	            		});
+
+			},
+			break: function(){
+				return LJ.ui.shradeOut( $('.login'), LJ.login.break_duration );
+
+			},
+			debreak: function(){
+				return LJ.ui.shradeIn( $('.login'), LJ.login.break_duration );
+
+			},
+			stepCompleted: function( fill_ratio ){
+
+				if( typeof fill_ratio != "number" ){
+					fill_ratio = 33.33;
+				}
+
+				LJ.login.completed_steps += 1;
+				LJ.login.fillProgressBar( fill_ratio );
+			},
+			fillProgressBar: function( fill_ratio ){
+
+				var max_width = $('.login__progress-bar').width();
+				var add_width = max_width * fill_ratio/100;
+				var cur_width = (LJ.login.completed_steps) * add_width;
+				var new_width = cur_width + add_width;
+
+				$('.login__progress-bar-bg')
+					.css({ 'width':  new_width });
+
+			},
+			renderLoginProgression: function(){
+
+				return LJ.ui.render([
+
+					'<div class="login">',
+						'<div class="login__loader">',
+							LJ.static.renderStaticImage('slide_loader'),
+						'</div>',
+						'<div class="login__message">',
+							'<h1 data-lid="login_loading_msg"></h1>',
+						'</div>',
+						'<div class="login__progress-bar">',
+							'<div class="login__progress-bar-bg"></div>',
+						'</div>',
+					'</div>'
+
+				].join(''));
+
+			},
+			promptUserLocation: function(){
+				return LJ.promise(function( resolve, reject ){
+
+					LJ.log('Requesting the user to provide a location...');
+
+					$( LJ.login.renderLocationPrompt() )
+						.hide()
+						.appendTo('.curtain')
+						.velocity('shradeIn', {
+							duration: LJ.login.prompt_duration,
+							display: 'flex'
+						});
+
+					LJ.seek.activatePlacesInFirstLogin();
+					LJ.seek.login_places.addListener('place_changed', function(){
+
+						var place = LJ.seek.login_places.getPlace();
+						$('.init-location').attr('data-place-id'   , place.place_id )
+							  			   .attr('data-place-name' , place.formatted_address )
+							  			   .attr('data-place-lat'  , place.geometry.location.lat() )
+							  			   .attr('data-place-lng'  , place.geometry.location.lng() );
+
+						LJ.login.showPlayButton();
+
+					});
+
+					// Resolve the promise when the user picked a location
+					$('.init-location .action__validate').click(function(){
+						var $block = $( this ).closest('.init-location');
+
+						if( $block.hasClass('--validating') ) return
+						$block.addClass('--validating');
+
+						LJ.login.updateProfileFirstLogin()
+							.then(function(){
+
+								$block
+									.removeClass('--validating')
+									.velocity('bounceOut', {
+										duration : LJ.login.prompt_duration,
+										complete : resolve
+									});
+								
+
+							}, function( err ){
+								LJ.wlog('An error occured');
+								LJ.log(err);
+
+							});
+					});
+				});	
+			},
+			updateProfileFirstLogin: function(){
+
+				LJ.log('Updating user location for the first time...');
+
+				var place_id   = $('.init-location').attr('data-place-id');
+				var place_name = $('.init-location').attr('data-place-name');
+				var lat        = $('.init-location').attr('data-place-lat');
+				var lng        = $('.init-location').attr('data-place-lng');
+
+				if( !( place_id && place_name && lat && lng) ){
+					return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
+				}
+
+				var update = {};
+				update.location = {
+					place_name : place_name,
+					place_id   : place_id,
+					lat 	   : lat,
+					lng 	   : lng
+				};
+
+				return LJ.api.updateProfile( update )
+						  .then(function( exposed ){
+							  	LJ.profile.setMyInformations();
+							  	return;
+						});
+
+			},
+			showPlayButton: function(){
+
+				var $elm = $('.init-location').find('.init-location-action');
+
+				if( $elm.css('opacity') != "0" ) return;
+
+				$elm.velocity('bounceInQuick', {
+					duration : LJ.login.prompt_buttons_duration,
+					display  : 'flex',
+					delay    : 500,
+					complete : function(){
+						$( this ).addClass('pound-light');
+					}
+				});
+
+			},
+			// Do a bunch of functions right before the login happens
+			terminateLoginProcess: function(){
+
+				LJ.ui.activateHtmlScroll();
+
+				$('.curtain')
+						.children('.login')
+						.velocity('bounceOut', {
+							duration: LJ.login.prompt_duration
+						});
+
+				$('.curtain')
+					.children('.login__bg')
+					.velocity({ 'opacity': [ 0, 0.09 ]}, {
+						duration: LJ.login.prompt_duration/2,
+						complete: function(){
+							$(this).remove();
+						}
+					});
+
+				return LJ.ui.hideCurtain({
+					delay: LJ.login.prompt_duration * 1.3,
+					duration: 1000
+
+				}).then(function(){
+
+					LJ.before.showBrowser();
+					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
+					LJ.before.refreshBrowserDates();
+					LJ.map.updateMarkers__byDate();
+					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
+					LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
+					
+					return
+				});	
+
+			},
+			renderLocationPrompt: function(){
+
+				return LJ.ui.render([
+
+					'<div class="init-location">',
+						'<div class="init-location__title">',
+							'<h2 data-lid="init_location_title"></h2>',
+						'</div>',
+						'<div class="init-location__subtitle">',
+							'<input id="init-location__input" type="text" data-lid="init_location_subtitle_placeholder">',
+						'</div>',
+						'<div class="init-location__splitter"></div>',
+						'<div class="init-location__explanation">',
+							'<p data-lid="init_location_explanation"></p>',
+						'</div>',
+						'<div class="init-location__geoloc">',
+							'<button data-lid="init_location_geoloc"></button>',
+						'</div>',
+						'<div class="init-location-action">',
+							'<div class="action__validate --round-icon">',
+								'<i class="icon icon-play"></i>',
+							'</div>',
+						'</div>',
+					'</div>'
+
+				].join(''));
+
+			},
+			handleLogout: function(){
+
+				LJ.ui.showModal({
+					"title"	   : LJ.text("logout_title"),
+					"subtitle" : LJ.text("logout_subtitle"),
+					"type"     : "logout",
+					"footer"   : "<button class='--rounded'><i class='icon icon-power'></i></button>"
+				});
+
+			},
+			logUserOut: function(){
+
+				var p1 = LJ.ui.shadeModal();
+				var p2 = LJ.api.updateUser({
+					"app_preferences": {
+						ux: {
+							auto_login: false
+						}
+					}
+				});
+
+				LJ.Promise.all([ p1, p2 ]).then(function(){
+					LJ.store.remove('facebook_access_token');
+					location.reload();
+				});
+
+			}
+
+
+	});
 LJ.text_source = _.merge( LJ.text_source || {}, {
 
    country_af: {
@@ -41323,9 +41727,9 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 			"fr": "Tout le monde",
 			"us": "All"
 		},
-		chat_groupname_team: {
-			"fr": "Mon groupe",
-			"us": "My group"
+		chat_team_h2: {
+			"fr": "Discussion privée avec vos amis",
+			"us": "Private discussion with your friends"
 		},
 		chat_row_request_all_title: {
 			"fr": "Vous avez un Match !",
@@ -41430,395 +41834,6 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 
 
 
-	window.LJ.login = _.merge( window.LJ.login || {}, {
-
-			'$trigger_login': '.js-login',
-			'$trigger_logout': '.js-logout',
-			'$modal_logout'  : '.modal.--logout',
-			'opening_duration': 1000,
-			'prompt_duration': 600,
-			'prompt_buttons_duration': 900,
-			'completed_steps': 0,
-			'break_duration': 400,
-
-			'data': {},
-
-			init: function(){
-				return LJ.promise(function( resolve, reject ){
-					LJ.login.handleDomEvents( resolve, reject );
-				});
-			},
-			handleDomEvents: function( resolve, reject ){
-
-				$( LJ.login.$trigger_login ).on('click', resolve );
-				$( LJ.login.$trigger_logout ).on('click', LJ.login.handleLogout );
-				LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
-
-			},
-			showLandingElements: function(){
-
-				var duration = 600;
-
-				$('.landing').find('.landing-logo')
-					.velocity('slideLeftIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-lang')
-					.velocity('slideRightIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-body')
-					.velocity('shradeIn', {
-						duration: duration*2,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-footer')
-					.velocity('slideUpIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-
-			},
-			hideLandingElements: function(){
-
-				$('.landing')
-					.children()
-					.velocity('shradeOut', {
-						duration : 800,
-						display  : 'none'
-					});
-
-			},
-			showLoginProgressBar: function(){
-
-				$('.login__message').velocity('shradeIn', {
-			 		duration: 1600, delay: LJ.login.opening_duration/2
-			 	});
-
-			},
-			addLoginProgression: function(){
-
-				$( LJ.login.renderLoginProgression() ).hide().appendTo( $('.curtain') )
-
-			},
-			showLoginProgression: function(){
-
-				$('.login').velocity('shradeIn', {
-					duration: 1000
-				});
-
-			},
-			showLoginProgressMessage: function(){
-
-				$('.login__message').velocity('shradeIn', {
-					duration: 1000
-				});
-
-			},
-			hideLoginProgressBar: function(){
-
-				$('.login__progress-bar').velocity('shradeIn', {
-			 		duration: 1000
-			 	});
-
-			},
-			enterLoginProcess: function(){
-
-				LJ.login.hideLandingElements();
-				LJ.ui.deactivateHtmlScroll();
-
-				return LJ.delay( 1000 )
-						 .then(function(){
-
-						 	LJ.ui.showCurtain({ duration: 600, theme: "light", sticky: true });
-						 	LJ.login.addLoginProgression();
-						 	LJ.login.showLoginProgression();
-						 	// LJ.login.showLoginProgressMessage();
-						 	// LJ.login.showLoginProgressBar();
-
-						 });
-
-			},
-			hideLoginSteps: function(){
-				return LJ.promise(function( resolve, reject ){
-
-					$('.app').removeClass('nonei');
-					$('.landing').remove();
-
-					$('.login__message, .login__progress-bar, .login__loader').velocity('shradeOut', {
-						duration: 400,
-						complete: resolve
-						
-					});
-
-				});
-			},
-			firstSetup: function(){
-				// the app requires a user's location to boot properly
-				// - to be visible in the search section
-				// - to allow for geo requests to fetch the right befores
-				// - to allow the map to load in the right city
-				var L = LJ.user.location;
-				if( L && L.place_id && L.place_name && L.lat && L.lng ){
-					return;
-				}
-
-				if( LJ.user.access.indexOf('bot') == -1 ){
-					LJ.pictures.uploadFacebookPicture_Intro();
-				}
-				
-	            return LJ.login.break()
-	            		.then(function(){
-	            			return LJ.login.promptUserLocation();
-
-	            		})
-	            		.then(function(){
-	            			return LJ.login.debreak();
-
-	            		});
-
-			},
-			break: function(){
-				return LJ.ui.shradeOut( $('.login'), LJ.login.break_duration );
-
-			},
-			debreak: function(){
-				return LJ.ui.shradeIn( $('.login'), LJ.login.break_duration );
-
-			},
-			stepCompleted: function( fill_ratio ){
-
-				if( typeof fill_ratio != "number" ){
-					fill_ratio = 33.33;
-				}
-
-				LJ.login.completed_steps += 1;
-				LJ.login.fillProgressBar( fill_ratio );
-			},
-			fillProgressBar: function( fill_ratio ){
-
-				var max_width = $('.login__progress-bar').width();
-				var add_width = max_width * fill_ratio/100;
-				var cur_width = (LJ.login.completed_steps) * add_width;
-				var new_width = cur_width + add_width;
-
-				$('.login__progress-bar-bg')
-					.css({ 'width':  new_width });
-
-			},
-			renderLoginProgression: function(){
-
-				return LJ.ui.render([
-
-					'<div class="login">',
-						'<div class="login__loader">',
-							LJ.static.renderStaticImage('slide_loader'),
-						'</div>',
-						'<div class="login__message">',
-							'<h1 data-lid="login_loading_msg"></h1>',
-						'</div>',
-						'<div class="login__progress-bar">',
-							'<div class="login__progress-bar-bg"></div>',
-						'</div>',
-					'</div>'
-
-				].join(''));
-
-			},
-			promptUserLocation: function(){
-				return LJ.promise(function( resolve, reject ){
-
-					LJ.log('Requesting the user to provide a location...');
-
-					$( LJ.login.renderLocationPrompt() )
-						.hide()
-						.appendTo('.curtain')
-						.velocity('shradeIn', {
-							duration: LJ.login.prompt_duration,
-							display: 'flex'
-						});
-
-					LJ.seek.activatePlacesInFirstLogin();
-					LJ.seek.login_places.addListener('place_changed', function(){
-
-						var place = LJ.seek.login_places.getPlace();
-						$('.init-location').attr('data-place-id'   , place.place_id )
-							  			   .attr('data-place-name' , place.formatted_address )
-							  			   .attr('data-place-lat'  , place.geometry.location.lat() )
-							  			   .attr('data-place-lng'  , place.geometry.location.lng() );
-
-						LJ.login.showPlayButton();
-
-					});
-
-					// Resolve the promise when the user picked a location
-					$('.init-location .action__validate').click(function(){
-						var $block = $( this ).closest('.init-location');
-
-						if( $block.hasClass('--validating') ) return
-						$block.addClass('--validating');
-
-						LJ.login.updateProfileFirstLogin()
-							.then(function(){
-
-								$block
-									.removeClass('--validating')
-									.velocity('bounceOut', {
-										duration : LJ.login.prompt_duration,
-										complete : resolve
-									});
-								
-
-							}, function( err ){
-								LJ.wlog('An error occured');
-								LJ.log(err);
-
-							});
-					});
-				});	
-			},
-			updateProfileFirstLogin: function(){
-
-				LJ.log('Updating user location for the first time...');
-
-				var place_id   = $('.init-location').attr('data-place-id');
-				var place_name = $('.init-location').attr('data-place-name');
-				var lat        = $('.init-location').attr('data-place-lat');
-				var lng        = $('.init-location').attr('data-place-lng');
-
-				if( !( place_id && place_name && lat && lng) ){
-					return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
-				}
-
-				var update = {};
-				update.location = {
-					place_name : place_name,
-					place_id   : place_id,
-					lat 	   : lat,
-					lng 	   : lng
-				};
-
-				return LJ.api.updateProfile( update )
-						  .then(function( exposed ){
-							  	LJ.profile.setMyInformations();
-							  	return;
-						});
-
-			},
-			showPlayButton: function(){
-
-				var $elm = $('.init-location').find('.init-location-action');
-
-				if( $elm.css('opacity') != "0" ) return;
-
-				$elm.velocity('bounceInQuick', {
-					duration : LJ.login.prompt_buttons_duration,
-					display  : 'flex',
-					delay    : 500,
-					complete : function(){
-						$( this ).addClass('pound-light');
-					}
-				});
-
-			},
-			// Do a bunch of functions right before the login happens
-			terminateLoginProcess: function(){
-
-				LJ.ui.activateHtmlScroll();
-
-				$('.curtain')
-						.children('.login')
-						.velocity('bounceOut', {
-							duration: LJ.login.prompt_duration
-						});
-
-				$('.curtain')
-					.children('.login__bg')
-					.velocity({ 'opacity': [ 0, 0.09 ]}, {
-						duration: LJ.login.prompt_duration/2,
-						complete: function(){
-							$(this).remove();
-						}
-					});
-
-				return LJ.ui.hideCurtain({
-					delay: LJ.login.prompt_duration * 1.3,
-					duration: 1000
-
-				}).then(function(){
-					LJ.before.showBrowser();
-					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
-					LJ.before.refreshBrowserDates();
-					LJ.map.updateMarkers__byDate();
-					return
-				});	
-
-			},
-			renderLocationPrompt: function(){
-
-				return LJ.ui.render([
-
-					'<div class="init-location">',
-						'<div class="init-location__title">',
-							'<h2 data-lid="init_location_title"></h2>',
-						'</div>',
-						'<div class="init-location__subtitle">',
-							'<input id="init-location__input" type="text" data-lid="init_location_subtitle_placeholder">',
-						'</div>',
-						'<div class="init-location__splitter"></div>',
-						'<div class="init-location__explanation">',
-							'<p data-lid="init_location_explanation"></p>',
-						'</div>',
-						'<div class="init-location__geoloc">',
-							'<button data-lid="init_location_geoloc"></button>',
-						'</div>',
-						'<div class="init-location-action">',
-							'<div class="action__validate --round-icon">',
-								'<i class="icon icon-play"></i>',
-							'</div>',
-						'</div>',
-					'</div>'
-
-				].join(''));
-
-			},
-			handleLogout: function(){
-
-				LJ.ui.showModal({
-					"title"	   : LJ.text("logout_title"),
-					"subtitle" : LJ.text("logout_subtitle"),
-					"type"     : "logout",
-					"footer"   : "<button class='--rounded'><i class='icon icon-power'></i></button>"
-				});
-
-			},
-			logUserOut: function(){
-
-				var p1 = LJ.ui.shadeModal();
-				var p2 = LJ.api.updateUser({
-					"app_preferences": {
-						ux: {
-							auto_login: false
-						}
-					}
-				});
-
-				LJ.Promise.all([ p1, p2 ]).then(function(){
-					LJ.store.remove('facebook_access_token');
-					location.reload();
-				});
-
-			}
-
-
-	});
-
 	window.LJ.map = _.merge( window.LJ.map || {}, {		
 
         markers: [],
@@ -41853,7 +41868,7 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 
 		},
 		handleDomEvents: function(){
-
+            
 			LJ.ui.$body.on('click', '.map__icon.--geoloc', LJ.map.centerMapAtUserLocation );
 			LJ.ui.$body.on('click', '.map__icon.--change-location', LJ.map.toggleMapBrowser );
 
@@ -42041,15 +42056,6 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
         	});
         	
         },
-        getDevicePixelRatio: function(){
-
-            if( window.devicePixelRatio ){
-                return window.devicePixelRatio;
-            } else {
-                return 1;
-            }
-
-        },
         findLatLngWithPlaceId: function( place_id ){
         	return LJ.promise(function( resolve, reject ){
 
@@ -42230,7 +42236,7 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
         },
         getBeforeMarkerUrlByType: function( type ){
 
-            var px  = LJ.map.getDevicePixelRatio() + 'x';
+            var px  = LJ.pictures.getDevicePixelRatio() + 'x';
 
             if( type == 'drink' ){
                 url = LJ.map.markers_url['drink'];
@@ -43277,172 +43283,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 
 
-	window.LJ.menu = _.merge( window.LJ.menu || {}, {
-
-		$menu: $('.menu'),
-		shrink_menu_height_limit: 0,
-		menu_slide_duration: 240,
-
-		init: function(){
-
-			LJ.menu.handleDomEvents();
-			LJ.menu.activateMenuSection('profile');
-			LJ.menu.shrinkMenu();
-
-			return;
-
-		},
-		handleDomEvents: function(){
-
-			LJ.ui.$body.on('click', '.menu-item', LJ.menu.showMenuItem );
-			LJ.ui.$window.on('scroll', _.debounce( LJ.menu.handleMenuApparition, 100 ) );
-
-		},
-		showMenuItem: function(){
-
-			var $self = $(this);
-
-			var section_id = $self.attr('data-link');
-			LJ.menu.activateMenuSection( section_id );
-
-		},
-		activateMenuSection: function( section_id ){	
-
-			var current_section_id = $('.menu-item.--active').attr('data-link');
-
-			var $menu_item_activated    = $('.menu-item[data-link="' + current_section_id + '"]');
-			var $menu_item_to_activate  = $('.menu-item[data-link="' + section_id + '"]');
-
-			var $menu_block_activated   = $('.menu-section[data-link="' + current_section_id + '"]');
-			var $menu_block_to_activate = $('.menu-section[data-link="' + section_id + '"]');
-
-
-			if( !current_section_id ){
-				$menu_item_to_activate.addClass('--active');
-				return $('.app-section.--menu').find('[data-link="' + section_id + '"]').css({ 'display': 'flex' });
-			}
-
-			if( section_id == current_section_id ){
-				
-				if( current_section_id == "shared" ){
-					return LJ.shared.handleShareClicked();
-				}
-				if( current_section_id == "cheers" ){
-					return LJ.cheers.handleCheersClicked();
-				}
-				if( current_section_id == "friends" ){
-					return LJ.friends.handleFriendsClicked();
-				}
-
-				return LJ.log('Section is already activated');
-			}
-
-			$menu_item_activated
-				.removeClass('--active')
-				.find('.menu-item__bar')
-				.velocity('bounceOut', { duration: 450, display: 'none' });
-
-			$menu_item_to_activate
-				.addClass('--active')
-				.find('.menu-item__bar')
-				.velocity('bounceInQuick', { duration: 450, display: 'block' });
-
-			$menu_block_activated.hide();
-			$menu_block_to_activate.css({ display: 'flex' });
-
-			// Specifics
-			section_id == "friends" ?
-				LJ.friends.displayInviteFriendsPopup():
-				LJ.friends.hideInviteFriendsPopup();
-
-
-		},
-		handleMenuApparition: function( e ){
-			
-			return;
-
-			var current_scrolltop = LJ.ui.$window.scrollTop();
-
-			if( LJ.ui.getScrollDirection() == "down" && LJ.ui.scrolltop > LJ.menu.shrink_menu_height_limit && $('--resizing').length == 0 ){
-				LJ.menu.shrinkMenu();
-			}
-
-			if( LJ.ui.getScrollDirection() == "up" && LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit  && $('--resizing').length == 0 ){
-				LJ.menu.expandMenu();
-			}
-
-				
-		},
-		toggleMenuState: function(){
-
-			var $m = LJ.menu.$menu;
-
-			if( $m.hasClass('--downsized') ){
-				LJ.menu.expandMenu();
-			} else {
-				LJ.menu.shrinkMenu();
-			}
-
-		},
-		shrinkMenu: function(){
-
-			var $m = LJ.menu.$menu;
-
-			if( $m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
-
-			$m.addClass('--resizing');
-			$m.velocity('slideUpOut', {
-				duration: LJ.menu.menu_slide_duration,
-				complete: function(){
-
-					if( LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit ){
-						return $m.velocity('slideDownIn', {
-							duration: LJ.menu.menu_slide_duration,
-							display: 'flex',
-							complete: function(){
-								$m.removeClass('--resizing');
-							}
-						})
-					}
-
-					$m.addClass('--downsized');
-					$m.closest('.app-section').addClass('--downsized');
-					$m.removeClass('--resizing');
-					$m.velocity('slideDownIn', {
-						duration: LJ.menu.menu_slide_duration,
-						display: 'flex'
-					});
-
-				}
-			});
-
-		},
-		expandMenu: function(){
-
-			var $m = LJ.menu.$menu;
-
-			if( !$m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
-
-			$m.addClass('--resizing');
-			$m.velocity('slideUpOut', {
-				duration: LJ.menu.menu_slide_duration,
-				complete: function(){
-
-					$m.removeClass('--resizing');
-					$m.removeClass('--downsized')
-					$m.closest('.app-section').removeClass('--downsized');
-					$m.velocity('slideDownIn', {
-						duration: LJ.menu.menu_slide_duration,
-						display: 'flex'
-					});
-
-				}
-			});
-
-		}
-
-	});
-
 	window.LJ.meepass = _.merge( window.LJ.meepass || {}, {
 
 		init: function(){
@@ -43713,6 +43553,172 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 	});
 		
 
+	window.LJ.menu = _.merge( window.LJ.menu || {}, {
+
+		$menu: $('.menu'),
+		shrink_menu_height_limit: 0,
+		menu_slide_duration: 240,
+
+		init: function(){
+
+			LJ.menu.handleDomEvents();
+			LJ.menu.activateMenuSection('profile');
+			LJ.menu.shrinkMenu();
+
+			return;
+
+		},
+		handleDomEvents: function(){
+
+			LJ.ui.$body.on('click', '.menu-item', LJ.menu.showMenuItem );
+			LJ.ui.$window.on('scroll', _.debounce( LJ.menu.handleMenuApparition, 100 ) );
+
+		},
+		showMenuItem: function(){
+
+			var $self = $(this);
+
+			var section_id = $self.attr('data-link');
+			LJ.menu.activateMenuSection( section_id );
+
+		},
+		activateMenuSection: function( section_id ){	
+
+			var current_section_id = $('.menu-item.--active').attr('data-link');
+
+			var $menu_item_activated    = $('.menu-item[data-link="' + current_section_id + '"]');
+			var $menu_item_to_activate  = $('.menu-item[data-link="' + section_id + '"]');
+
+			var $menu_block_activated   = $('.menu-section[data-link="' + current_section_id + '"]');
+			var $menu_block_to_activate = $('.menu-section[data-link="' + section_id + '"]');
+
+
+			if( !current_section_id ){
+				$menu_item_to_activate.addClass('--active');
+				return $('.app-section.--menu').find('[data-link="' + section_id + '"]').css({ 'display': 'flex' });
+			}
+
+			if( section_id == current_section_id ){
+				
+				if( current_section_id == "shared" ){
+					return LJ.shared.handleShareClicked();
+				}
+				if( current_section_id == "cheers" ){
+					return LJ.cheers.handleCheersClicked();
+				}
+				if( current_section_id == "friends" ){
+					return LJ.friends.handleFriendsClicked();
+				}
+
+				return LJ.log('Section is already activated');
+			}
+
+			$menu_item_activated
+				.removeClass('--active')
+				.find('.menu-item__bar')
+				.velocity('bounceOut', { duration: 450, display: 'none' });
+
+			$menu_item_to_activate
+				.addClass('--active')
+				.find('.menu-item__bar')
+				.velocity('bounceInQuick', { duration: 450, display: 'block' });
+
+			$menu_block_activated.hide();
+			$menu_block_to_activate.css({ display: 'flex' });
+
+			// Specifics
+			section_id == "friends" ?
+				LJ.friends.displayInviteFriendsPopup():
+				LJ.friends.hideInviteFriendsPopup();
+
+
+		},
+		handleMenuApparition: function( e ){
+			
+			return;
+
+			var current_scrolltop = LJ.ui.$window.scrollTop();
+
+			if( LJ.ui.getScrollDirection() == "down" && LJ.ui.scrolltop > LJ.menu.shrink_menu_height_limit && $('--resizing').length == 0 ){
+				LJ.menu.shrinkMenu();
+			}
+
+			if( LJ.ui.getScrollDirection() == "up" && LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit  && $('--resizing').length == 0 ){
+				LJ.menu.expandMenu();
+			}
+
+				
+		},
+		toggleMenuState: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( $m.hasClass('--downsized') ){
+				LJ.menu.expandMenu();
+			} else {
+				LJ.menu.shrinkMenu();
+			}
+
+		},
+		shrinkMenu: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( $m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
+
+			$m.addClass('--resizing');
+			$m.velocity('slideUpOut', {
+				duration: LJ.menu.menu_slide_duration,
+				complete: function(){
+
+					if( LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit ){
+						return $m.velocity('slideDownIn', {
+							duration: LJ.menu.menu_slide_duration,
+							display: 'flex',
+							complete: function(){
+								$m.removeClass('--resizing');
+							}
+						})
+					}
+
+					$m.addClass('--downsized');
+					$m.closest('.app-section').addClass('--downsized');
+					$m.removeClass('--resizing');
+					$m.velocity('slideDownIn', {
+						duration: LJ.menu.menu_slide_duration,
+						display: 'flex'
+					});
+
+				}
+			});
+
+		},
+		expandMenu: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( !$m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
+
+			$m.addClass('--resizing');
+			$m.velocity('slideUpOut', {
+				duration: LJ.menu.menu_slide_duration,
+				complete: function(){
+
+					$m.removeClass('--resizing');
+					$m.removeClass('--downsized')
+					$m.closest('.app-section').removeClass('--downsized');
+					$m.velocity('slideDownIn', {
+						duration: LJ.menu.menu_slide_duration,
+						display: 'flex'
+					});
+
+				}
+			});
+
+		}
+
+	});
+
 	window.LJ.nav = _.merge( window.LJ.nav || {}, {
 
 		$nav: $('.app-nav'),
@@ -43790,6 +43796,16 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 			if( target_link == 'map' ){
 				$('.app').removeClass('padded');
+
+				// Refresh the map dued to a bug when the window is resized and the map not visible
+				// The try catch is to avoid an ugly error in the console during app intitialization
+				try {
+					LJ.map.refreshMap();
+				} catch( e ){
+
+				}
+
+
 			} else {
 				$('.app').addClass('padded');
 			}
@@ -43843,6 +43859,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		},
 		refreshNotifications: function(){
 
+			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
 			LJ.notifications.addAndShowNotifications();
 			LJ.notifications.refreshNotificationsOrder();
 			LJ.notifications.refreshNotificationsJsp();
@@ -45753,6 +45770,15 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 
 		},
+		getDevicePixelRatio: function(){
+
+            if( window.devicePixelRatio ){
+                return window.devicePixelRatio;
+            } else {
+                return 1;
+            } 
+
+        },
 		makeImgHtml: function( img_id, img_version, scope ){
 
 			var cached_img = LJ.pictures.findImgInCache( img_id, img_version, scope );
@@ -45760,9 +45786,12 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 				return cached_img;
 
 			} else {
-				img_params            = LJ.pictures.img_params[ scope ];
+				
+				var img_params        = _.cloneDeep( LJ.pictures.img_params[ scope ] );
 				img_params.cloud_name = LJ.pictures.cloudinary_cloud_name;
 				img_params.version    = img_version;
+				img_params.width      = img_params.width * LJ.pictures.getDevicePixelRatio();
+				img_params.height     = img_params.height * LJ.pictures.getDevicePixelRatio();
 
 				LJ.dev.n_cloudinary_api_calls++;
 				var img = $.cloudinary.image( img_id, img_params ).attr('data-scopeid', scope ).prop('outerHTML');
@@ -45964,9 +45993,10 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			});
 
 		},
-		applyFilterlay( $wrapper ){
+		applyFilterlay: function( $wrapper ){
 
-			var $img_wrapper = $wrapper.find('.js-filterlay')
+
+			var $img_wrapper = $wrapper.hasClass('js-filterlay') ? $wrapper : $wrapper.find('.js-filterlay');
 			if( $img_wrapper.length == 0 ){
 				return;
 			}
@@ -46318,7 +46348,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		handleDomEvents: function(){
 
 			LJ.ui.$body.on('click', '.user-profile .user-pics__navigate', LJ.profile_user.handlePictureNavigation );
-			LJ.ui.$body.on('click', '.thumbnail__picture', LJ.profile_user.showMyUserProfile );
+			LJ.ui.$body.on('click', '.thumbnail__picture', LJ.profile_user.handleClickOnThumbnail );
 
 		},
 		handlePictureNavigation: function(){
@@ -46338,6 +46368,12 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			LJ.profile_user.activatePicture( img_place_to_activate );
 
 		},
+		handleClickOnThumbnail: function(){
+
+			LJ.nav.navigate('menu');
+			LJ.menu.activateMenuSection('profile')
+
+		},	
 		refreshNavigationArrow: function(){
 
 			var n_pic    = $('.user-pics__img').length;
@@ -51206,26 +51242,25 @@ window.LJ = _.merge( window.LJ || {}, {
 
         var img_small = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-row" );
 
-        var gender = user.g  || user.gender;
-        var cc     = user.cc || user.country_code;
+        var gender = user.g;
+        var cc     = user.cc;
 
         return LJ.ui.render([
 
             '<div class="user-row js-user-profile" data-facebook-id="'+ user.facebook_id +'">',
                 '<div class="user-row__pic '+ filterlay +'">',
                   img_small,
-                  '<div class="user-gender --'+ gender +' js-user-gender"></div>',
-                  '<div class="user-country js-user-country">',
-                    '<i class="flag-icon flag-icon-'+ cc +'"></i>',
-                  '</div>',
                 '</div>',
                 '<div class="user-row__informations">',
                   '<div class="user-row__about">',
+                    '<div class="user-gender --'+ gender +' js-user-gender"></div>',
                     '<span class="user-name">'+ user.name +'</span>',
                     '<span class="user-comma">,</span>',
                     '<span class="user-age">'+ user.age +'</span>',
+                    '<div class="user-country js-user-country">',
+                      '<i class="flag-icon flag-icon-'+ cc +'"></i>',
+                    '</div>',
                     '<span class="user-online user__status js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
-                    '<i class="icon icon-star user-host-icon"></i>',
                   '</div>',
                   '<div class="user-row__education">',
                     '<span class="user-row__education-icon --round-icon">',
@@ -51262,9 +51297,9 @@ window.LJ = _.merge( window.LJ || {}, {
 
             var $r = $( row );
             if( $r.attr('data-facebook-id') == main_user ){
-                $r.addClass('--main')
-                      .addClass('js-main') // do not change the class, used by the validateRequest function
-                      .insertBefore( $rows.first() );
+
+                $r.addClass('--main').addClass('js-main').insertBefore( $rows.first() );
+                $r.find('.user-row__pic').append('<div class="user__host --round-icon"><i class="icon icon-star"></i></div>');
             }
 
         }); 

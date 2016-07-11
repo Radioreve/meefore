@@ -361,7 +361,7 @@
                 return window.devicePixelRatio;
             } else {
                 return 1;
-            }
+            } 
 
         },
 		makeImgHtml: function( img_id, img_version, scope ){

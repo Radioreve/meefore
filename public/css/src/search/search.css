@@ -53,7 +53,7 @@
     margin: auto;
     width: 40%;
     position: relative;
-    display: none;
+    display: none; 
 }
 
 .search__input input {
