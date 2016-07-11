@@ -23,8 +23,13 @@
 .map__icon.--geoloc,
 .map__icon.--change-location {
     bottom: 30px;
-    font-size: 36px;
+    font-size: 30px;
     cursor: pointer;
+    background: #ffffff;
+    color: #1b69ec;
+    border: 2px solid;
+    width: 50px;
+    height: 50px;
 }
 
 .map__icon.--change-location {
@@ -39,7 +44,7 @@
     width: 50px;
     font-size: 20px;
     right: 20px;
-    top: 107px;
+    top: 122px;
     cursor: pointer;
     z-index: 10;
     display: none;
@@ -72,8 +77,8 @@
 
 .map-browse {
     position: fixed;
-    bottom: 32px;
-    right: 76px;
+    bottom: 36px;
+    right: 86px;
     width: 300px;
     height: 44px;
     border-radius: 100px;
@@ -86,26 +91,25 @@
     width: 330px;
     border-radius: 2px;
     padding: 0 30px;
-    font-family: 'Alegreya sans';
-    font-size: 16px;
+    font-size: 13px;
     border: none;
-    border-bottom: 3px solid #191919;
+    border-bottom: 3px solid #1b69ec;
 }
 
 .map-browse input::-webkit-input-placeholder {
-    color: black!important;
+    color: #ccc!important;
 }
 
 .map-browse input:-moz-placeholder {
     /* Firefox 18- */
-    color: black!important;
+    color: #ccc!important;
 }
 
 .map-browse input::-moz-placeholder {
     /* Firefox 19+ */
-    color: black!important;
+    color: #ccc!important;
 }
 
 .map-browse input:-ms-input-placeholder {
-    color: black!important;
+    color: #ccc!important;
 }

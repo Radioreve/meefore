@@ -6,14 +6,14 @@
 }
 
 .notifications-panel {
-    width: 450px;
+    width: 420px;
     height: 80%;
     position: fixed;
     background: white;
     color: #191919;
     top: 59px;
     box-shadow: 0px 2px 10px #B3B3B3;
-    left: 150px;
+    right: 0;
     z-index: 300;
     display: none;
 }
@@ -27,13 +27,13 @@
     outline: none;
     position: relative;
 }
-
+ 
 .notification {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     flex-direction: row;
-    height: 54px;
+    height: 74px;
     color: #191919;
     width: 95%;
     margin: 2px auto;
@@ -49,7 +49,7 @@
 }
  
 .notification--header {
-    height: 50px;
+    height: 74px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -63,6 +63,12 @@
 
 .notification--header__text {
     font-size: 26px;
+    position: relative;
+    top: 2px;
+    color: white;
+    background: #7b4cbb;
+    padding: 6px 30px;
+    border-radius: 100px;
 }
 
 .notification--footer {
@@ -150,11 +156,11 @@ Whispereen  : #58c170
     margin-left: 20px;
 }
 
-.notification .notification-message__text {font-weight: 700;font-size: 12px;}
+.notification .notification-message__text {font-weight: 700;font-size: 13px;}
 
 .notification .notification-message__subtext {
-    font-size: 10px;
-    margin-top: 4px;
+    font-size: 11px;
+    margin-top: 6px;
     color: #454545;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -164,13 +170,13 @@ Whispereen  : #58c170
 }
 
 .notification .notification__date {
-    font-size: 10px;
+    font-size: 9px;
     margin-left: auto;
-    font-family: 'Open sans';
     color: #454545;
     font-weight: 500;
     position: relative;
-    top: -10px;
+    top: -15px;
+    flex-shrink: 0;
 }
 
 .notification .notification__icon {
@@ -180,6 +186,7 @@ Whispereen  : #58c170
     width: 40px;
     font-size: 26px;
     color: #1b69ec;
+    color: #7b4cbb;
 }
 
 .notification.--seen .notification-message__text {color: #454545;}
@@ -237,7 +244,7 @@ Whispereen  : #58c170
 
 
 
-@media (max-width: 1000px ){
+@media (max-width: 650px ){
     .notifications-panel {
         width: 100%;
         left: 0;

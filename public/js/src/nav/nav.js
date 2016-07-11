@@ -76,6 +76,16 @@
 
 			if( target_link == 'map' ){
 				$('.app').removeClass('padded');
+
+				// Refresh the map dued to a bug when the window is resized and the map not visible
+				// The try catch is to avoid an ugly error in the console during app intitialization
+				try {
+					LJ.map.refreshMap();
+				} catch( e ){
+
+				}
+
+
 			} else {
 				$('.app').addClass('padded');
 			}

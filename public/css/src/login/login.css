@@ -10,6 +10,7 @@
     font-size: 10px;
     font-weight: 700;
     color: #1b69ec;
+    animation: blink infinite .6s alternate linear;
 }
 
 .login__loader {
@@ -165,5 +166,11 @@
 @keyframes pound-light {
     to {
         transform: scale(1.15);
+    }
+}
+
+@keyframes blink {
+    to {
+        opacity: 0.4
     }
 }

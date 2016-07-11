@@ -13,15 +13,11 @@
 			'data': {},
 
 			init: function(){
-				return LJ.promise(function( resolve, reject ){
-					LJ.login.handleDomEvents( resolve, reject );
-				});
-			},
-			handleDomEvents: function( resolve, reject ){
 
-				$( LJ.login.$trigger_login ).on('click', resolve );
-				$( LJ.login.$trigger_logout ).on('click', LJ.login.handleLogout );
-				LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
+				return LJ.promise(function( resolve, reject ){
+					LJ.ui.$body.on('click', '.js-login', resolve );
+				});
+
 
 			},
 			showLandingElements: function(){
@@ -321,10 +317,14 @@
 					duration: 1000
 
 				}).then(function(){
+
 					LJ.before.showBrowser();
 					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
 					LJ.before.refreshBrowserDates();
 					LJ.map.updateMarkers__byDate();
+					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
+					LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
+					
 					return
 				});	
 

@@ -37,6 +37,7 @@
 		},
 		refreshNotifications: function(){
 
+			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
 			LJ.notifications.addAndShowNotifications();
 			LJ.notifications.refreshNotificationsOrder();
 			LJ.notifications.refreshNotificationsJsp();

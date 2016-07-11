@@ -374,7 +374,7 @@
 		},
 		refreshChatJsp: function( chat_id ){
 
-			LJ.log('Refreshing chat jsp!');
+			// LJ.log('Refreshing chat jsp!');
 
 			var j = LJ.ui.jsp[ chat_id ];
 
@@ -526,6 +526,7 @@
 				var $b = $( bubble );
 
 				$b.removeClass('--last'); // Reset the last each time new bubbles are merged
+				$b.removeClass('--first');
 
 				if( i == 0 ){
 					$b.addClass('--first');

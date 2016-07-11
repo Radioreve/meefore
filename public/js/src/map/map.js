@@ -33,7 +33,7 @@
 
 		},
 		handleDomEvents: function(){
-
+            
 			LJ.ui.$body.on('click', '.map__icon.--geoloc', LJ.map.centerMapAtUserLocation );
 			LJ.ui.$body.on('click', '.map__icon.--change-location', LJ.map.toggleMapBrowser );
 
@@ -221,15 +221,6 @@
         	});
         	
         },
-        getDevicePixelRatio: function(){
-
-            if( window.devicePixelRatio ){
-                return window.devicePixelRatio;
-            } else {
-                return 1;
-            }
-
-        },
         findLatLngWithPlaceId: function( place_id ){
         	return LJ.promise(function( resolve, reject ){
 
@@ -410,7 +401,7 @@
         },
         getBeforeMarkerUrlByType: function( type ){
 
-            var px  = LJ.map.getDevicePixelRatio() + 'x';
+            var px  = LJ.pictures.getDevicePixelRatio() + 'x';
 
             if( type == 'drink' ){
                 url = LJ.map.markers_url['drink'];

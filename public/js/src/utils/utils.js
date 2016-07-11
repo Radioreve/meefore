@@ -168,26 +168,25 @@ window.LJ = _.merge( window.LJ || {}, {
 
         var img_small = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-row" );
 
-        var gender = user.g  || user.gender;
-        var cc     = user.cc || user.country_code;
+        var gender = user.g;
+        var cc     = user.cc;
 
         return LJ.ui.render([
 
             '<div class="user-row js-user-profile" data-facebook-id="'+ user.facebook_id +'">',
                 '<div class="user-row__pic '+ filterlay +'">',
                   img_small,
-                  '<div class="user-gender --'+ gender +' js-user-gender"></div>',
-                  '<div class="user-country js-user-country">',
-                    '<i class="flag-icon flag-icon-'+ cc +'"></i>',
-                  '</div>',
                 '</div>',
                 '<div class="user-row__informations">',
                   '<div class="user-row__about">',
+                    '<div class="user-gender --'+ gender +' js-user-gender"></div>',
                     '<span class="user-name">'+ user.name +'</span>',
                     '<span class="user-comma">,</span>',
                     '<span class="user-age">'+ user.age +'</span>',
+                    '<div class="user-country js-user-country">',
+                      '<i class="flag-icon flag-icon-'+ cc +'"></i>',
+                    '</div>',
                     '<span class="user-online user__status js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
-                    '<i class="icon icon-star user-host-icon"></i>',
                   '</div>',
                   '<div class="user-row__education">',
                     '<span class="user-row__education-icon --round-icon">',
@@ -224,9 +223,9 @@ window.LJ = _.merge( window.LJ || {}, {
 
             var $r = $( row );
             if( $r.attr('data-facebook-id') == main_user ){
-                $r.addClass('--main')
-                      .addClass('js-main') // do not change the class, used by the validateRequest function
-                      .insertBefore( $rows.first() );
+
+                $r.addClass('--main').addClass('js-main').insertBefore( $rows.first() );
+                $r.find('.user-row__pic').append('<div class="user__host --round-icon"><i class="icon icon-star"></i></div>');
             }
 
         }); 

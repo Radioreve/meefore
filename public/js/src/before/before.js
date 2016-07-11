@@ -563,7 +563,7 @@
 
 				var img_medium = LJ.pictures.makeImgHtml( h.img_id, h.img_vs, "user-before" );
 				be_pictures.push([
-					'<div class="be-pictures__pic">',
+					'<div class="be-pictures__pic js-filterlay">',
 						'<div class="be-pictures__shadolay"></div>',
 						img_medium,
 					'</div>'
@@ -571,7 +571,7 @@
 
 			});
 
-			return be_pictures.join('');
+			return LJ.ui.render( be_pictures.join('') );
 
 		},
 		renderBeforeDate: function( date ){

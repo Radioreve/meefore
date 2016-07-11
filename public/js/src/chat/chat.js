@@ -599,7 +599,7 @@
 		},
 		setupChatInviewJsp: function( chat_id ){
 
-			var $w = $('.chat-inview-item[data-chat-id="'+ chat_id +'"]');
+			var $w = LJ.chat.getChatInview( chat_id );
 
 			return LJ.ui.turnToJsp('.chat-inview-item[data-chat-id="'+ chat_id +'"] .chat-inview-messages', {
 					jsp_id   : chat_id,
@@ -609,7 +609,7 @@
 
 							// To make sure the first time usr loads the chat, no automatic refetch takes place
 							if( !$w.hasClass('--fetch-ready') ){
-								return //LJ.log('Cant fetch history, the chat is not set as ready');
+								return LJ.log('Cant fetch history, the chat is not set as ready');
 							}
 
 							// After a fetch history, the 'seen_by' element might be bugged (half hidden)
@@ -898,8 +898,8 @@
 			LJ.chat.checkAllChats();
 
 			if( LJ.chat.state == 'hidden' ){
-				LJ.chat.refreshChatStates();
 				LJ.chat.showChatWrap();
+				LJ.chat.refreshChatStates();
 
 			} else {
 				LJ.chat.hideChatWrap();
@@ -915,6 +915,11 @@
 			$('.app__menu-item.--chats').addClass('--active');
 
 			LJ.ui.adjustWrapperHeight( $('.chat') );
+
+			// $('.chat').css({ 'display': 'flex', 'opacity': '1' });
+			$('.chat').show();
+			LJ.chat.refreshChatRowsJsp();
+			return;
 
 			var duration  = 300;
 
@@ -933,6 +938,11 @@
 
 			LJ.chat.state = 'hidden';
 			$('.app__menu-item.--chats').removeClass('--active');
+
+			$('.chat').hide();
+
+			// $('.chat').css({ 'display': 'none', 'opacity': '0' });
+			return;
 
 			var duration = 200;
 			$('.chat').velocity('shradeOut', {
@@ -1156,8 +1166,8 @@
 				names     = LJ.renderMultipleNames( names, { lastify_user: LJ.user.name });
 
 				LJ.chat.updateChatInviewElements( chat_id, {
-					header_h1: '<span data-lid="chat_groupname_team"></span>',
-					header_h2: '<span>' + names + '</span>'
+					header_h1: '<span>' + names + '</span>',
+					header_h2: '<span data-lid="chat_team_h2"></span>',
 				});
 
 			}

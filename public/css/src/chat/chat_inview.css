@@ -234,11 +234,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 35px;
+    height: 35px;
 }
 
 .chat-inview-message__picture img {
     border-radius: 100px;
     flex-shrink: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .chat-inview-message__picture .user-online {
@@ -291,6 +295,16 @@
     line-height: 20px;
 }
 
+.chat-inview-message__bubble.--merged {
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
+}
+
+.chat-inview-message__bubble.--tall:not(.--merged) {
+    border-radius: 20px!important;
+}
+
+
 .chat-inview-message__bubble.--merged.--first {
     border-bottom-left-radius: 2px;
     border-top-left-radius: 20px;
@@ -301,15 +315,14 @@
     border-bottom-left-radius: 20px;
 }
 
-.chat-inview-message__bubble.--merged {
-    border-bottom-left-radius: 3px;
+
+.chat-inview-message__bubble.--tall.--merged {
     border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
 }
 
-.chat-inview-message__bubble.--tall {
-    border-radius: 20px;
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
+.chat-inview-message__bubble.--tall.--merged.--first {
+    border-top-left-radius: 20px;
 }
 
 .chat-inview-message.--me .chat-inview-message__bubble.--merged.--first,
@@ -339,6 +352,17 @@
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
 }
+
+.chat-inview-message.--me .chat-inview-message__bubble.--merged.--tall,
+.chat-inview-item.--all .chat-inview-message.--friend .chat-inview-message__bubble.--merged.--tall {
+    border-top-right-radius: 3px;
+}
+
+.chat-inview-message.--me .chat-inview-message__bubble.--merged.--tall.--first,
+.chat-inview-item.--all .chat-inview-message.--friend .chat-inview-message__bubble.--merged.--tall.--first {
+    border-top-right-radius: 20px;
+}
+
 
 .chat-inview-message__bubble:hover {
     /* opacity: .8; */

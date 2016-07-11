@@ -47,6 +47,7 @@
     box-sizing: border-box;
     font-size: 17px;
     font-family: 'Open sans';
+    cursor: pointer;
 }
 
 .menu-section__input {

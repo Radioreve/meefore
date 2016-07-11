@@ -5,6 +5,10 @@
 
 		init: function(){
 
+			if( LJ.app_mode == "dev" ){
+				return LJ.log("Mode is 'dev', not initializing the connecter system");
+			}
+			
 			LJ.connecter.refreshOnlineUsers();
 			LJ.connecter.handleDomEvents();
 			return;

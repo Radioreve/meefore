@@ -2019,9 +2019,9 @@
 			"fr": "Tout le monde",
 			"us": "All"
 		},
-		chat_groupname_team: {
-			"fr": "Mon groupe",
-			"us": "My group"
+		chat_team_h2: {
+			"fr": "Discussion privée avec vos amis",
+			"us": "Private discussion with your friends"
 		},
 		chat_row_request_all_title: {
 			"fr": "Vous avez un Match !",

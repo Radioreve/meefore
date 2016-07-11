@@ -64,7 +64,6 @@
     font-size: 16px;
     border: 1px solid white;
     font-weight: 600;
-    font-family: 'Alegreya sans';
     border-radius: 4px;
 }
 
@@ -76,7 +75,6 @@
     font-size: 12px;
     border: 1px dashed;
     font-weight: 600;
-    font-family: 'Alegreya sans';
     border-radius: 4px;
     margin-left: auto;
     margin-right: 0;

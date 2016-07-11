@@ -5,10 +5,10 @@
     background: rgb(255, 255, 255);
     box-shadow: 0 0 14px #B9B9B9;
     z-index: 1;
-    height: 74px;
+    height: 90px;
     display: none;
     flex-flow: column nowrap;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 }
 
@@ -18,7 +18,7 @@
     align-items: center;
     padding: 0!important;
     height: 44px;
-    overflow-y: hidden;
+    overflow: visible;
 }
 
 .be-browser .jspVerticalBar {
@@ -48,7 +48,7 @@
     outline: none;
     align-items: center;
     justify-content: center;
-    height: 44px;
+    height: 56px;
 }
 
 .be-address {
@@ -58,8 +58,7 @@
     align-items: center;
     justify-content: center;
     border-top: 1px solid #eee;
-    height: 30px;
-    padding-bottom: 2px;
+    height: 46px;
     /* color: #919191; */
     font-family: 'Open sans';
 }
@@ -68,15 +67,15 @@
 
 .be-address span {
     margin: 0 2px;
-}
-
+} 
+ 
 .be-dates__bar {
     width: 70px;
     border-radius: 100px;
     position: absolute;
     height: 3px;
     background: #1b69ec;
-    bottom: -13px;
+    bottom: -16px;
     left: -4px;
     display: none;
 }
@@ -202,7 +201,7 @@
 .be-pictures__pic {
     width: 50%;
     /* height: 124px; */
-    position: absolute;
+    position: absolute!important;
     transition: transform ease-in-out .2s;
 }
 
@@ -293,6 +292,7 @@
 
 .user-row__pic img {
     width: 60px;
+    height: 100%;
     border-radius: 100px;
 }
 
@@ -317,18 +317,9 @@
     border-radius: 100px;
 }
 
-.be-inview .user-country {
-    position: absolute;
-    bottom: 2px;
-    right: 0px;
-    overflow: hidden;
-    display: none;
-}
+.be-inview .user-country {}
 
 .be-inview .user-country i {
-    border-radius: 6px 0 6px 0;
-    border: 2px solid white;
-    font-size: 12px;
 }
 
 .user-row__about {
@@ -361,13 +352,9 @@
 .user-host-icon {
     color: #FD7124;
     display: none;
-    font-size: 12px;
-    margin-left: 2px;
 }
 
-.user-row.--main .user-host-icon {
-    display: block;
-}
+.user-row.--main .user-host-icon {}
 
 .user-row__education {
     display: flex;
@@ -443,11 +430,10 @@
     font-weight: 500;
     font-size: 12px;
 }
-
+  
 .be-ended span {
     padding: 14px 20px;
     color: #1b69ec;
-    border: 1px solid;
     display: block;
     border-radius: 100px;
     white-space: nowrap;

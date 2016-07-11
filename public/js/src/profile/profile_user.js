@@ -12,7 +12,7 @@
 		handleDomEvents: function(){
 
 			LJ.ui.$body.on('click', '.user-profile .user-pics__navigate', LJ.profile_user.handlePictureNavigation );
-			LJ.ui.$body.on('click', '.thumbnail__picture', LJ.profile_user.showMyUserProfile );
+			LJ.ui.$body.on('click', '.thumbnail__picture', LJ.profile_user.handleClickOnThumbnail );
 
 		},
 		handlePictureNavigation: function(){
@@ -32,6 +32,12 @@
 			LJ.profile_user.activatePicture( img_place_to_activate );
 
 		},
+		handleClickOnThumbnail: function(){
+
+			LJ.nav.navigate('menu');
+			LJ.menu.activateMenuSection('profile')
+
+		},	
 		refreshNavigationArrow: function(){
 
 			var n_pic    = $('.user-pics__img').length;
