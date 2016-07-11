@@ -182,7 +182,10 @@
 						subject : 'Scheduler [' + process.env.NODE_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
 						html    : mail_html.join('') 
 					});
-					callback( null, tracked );
+					
+					if( typeof callback == "function" ){
+						callback( null, tracked );
+					}
 					// mongoose.connection.close();
 
 				});

@@ -153,6 +153,7 @@
 
     gulp.task('watch', function(){
         gulp.watch('public/js/**/*.js', ['min-js']);
+        gulp.watch('public/css/**/*.css', ['min-css']);
         gulp.watch('views/index-dev.html', ['replace-html']);
     });
 

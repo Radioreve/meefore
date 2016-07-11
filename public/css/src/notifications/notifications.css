@@ -25,6 +25,7 @@
 .notifications-panel__wrapper {
     height: 90%;
     outline: none;
+    position: relative;
 }
 
 .notification {
