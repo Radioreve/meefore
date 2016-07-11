@@ -36458,8 +36458,17 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 				});
 
 
+		}, 
+		getFriendProfile: function( facebook_id ){
+
+			return _.find( LJ.friends.getFriendsProfiles(), function( f ){
+				return f.facebook_id == facebook_id;
+			});
+
 		},
 		getFriendsProfiles: function( facebook_ids ){
+
+			LJ.friends.friends_profiles.filter( Boolean );
 
 			if( facebook_ids ){
 				return _.filter( LJ.friends.friends_profiles, function( f ){
@@ -36626,8 +36635,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		},
 		renderFriendsInModal: function(){
 
-			
-			var friends = LJ.friends.friends_profiles.filter( Boolean );
+			var friends = LJ.friends.getFriendsProfiles();
  
 			if( friends.length == 0 ){
 
@@ -44111,9 +44119,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 			var options = {};
 
-			var friend = _.find( LJ.friends.friends_profiles, function( f ){
-				return f.facebook_id == notification.main_member;
-			});
+			var friend = LJ.friends.getFriendProfile( notification.main_member );
 
 			var name = friend && friend.name;
 
@@ -44132,9 +44138,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			var address   = notification.address;
 			var date 	  = moment( notification.begins_at ).format('DD/MM');
 
-			var friend = _.find( LJ.friends.friends_profiles, function( f ){
-				return f.facebook_id == main_host;
-			});
+			var friend = LJ.friends.getFriendProfile( main_host );
 
 			if( !friend ) return LJ.wlog('Cannot render marked as host, couldnt find friend: ' + friend );
 
@@ -44180,10 +44184,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			var options   = {};
 			var shared_by = notification.shared_by;
 
-			var friend = _.find( LJ.friends.friends_profiles, function( f ){
-				return f.facebook_id == shared_by;
-			});
-
+			var friend = LJ.friends.getFriendProfile( shared_by );
 			var name = friend && friend.name;
 			var type = notification.target_type == "user" ? LJ.text('lang_profile') : LJ.text('lang_before');
 
@@ -48451,9 +48452,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		},
 		renderSharedByItem__User: function( sho, target ){
 
-			var friend = _.find( LJ.friends.friends_profiles, function( f ){
-				return f.facebook_id == sho.shared_by;
-			});
+			var friend = LJ.friends.getFriendProfile( sho.shared_by );
 
 			var subtitle = [
 				'<div class="row-body__icon --round-icon">',
@@ -48473,16 +48472,9 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		renderSharedWithItem__User: function( sho, target ){
 
 			var friends = [];
-			var friends_profiles = LJ.friends.friends_profiles;
-
-			if( !Array.isArray( friends_profiles ) ){
-				return LJ.wlog('Unable to render, friends_profiles is not an array');
-			}
 
 			sho.shared_with.forEach(function( friend_id ){
-				friends.push( _.find( friends_profiles, function( f ){
-					return f.facebook_id == friend_id;
-				}))
+				friends.push( LJ.friends.getFriendProfile( friend_id ) );
 			});
 
 			var names = LJ.renderMultipleNames( _.map( friends, 'name') );
@@ -48505,9 +48497,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		},
 		renderSharedByItem__Before: function( sho, target ){
 
-			var friend = _.find( LJ.friends.friends_profiles, function( f ){
-				return f.facebook_id == sho.shared_by;
-			});
+			var friend = LJ.friends.getFriendProfile( sho.shared_by );
 
 			var subtitle = [
 				'<div class="row-body__icon --round-icon">',
@@ -48527,16 +48517,9 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		renderSharedWithItem__Before: function( sho, target ){
 
 			var friends = [];
-			var friends_profiles = LJ.friends.friends_profiles;
-
-			if( !Array.isArray( friends_profiles ) ){
-				return LJ.wlog('Unable to render, friends_profiles is not an array');
-			}
 
 			sho.shared_with.forEach(function( friend_id ){
-				friends.push( _.find( friends_profiles, function( f ){
-					return f.facebook_id == friend_id;
-				}))
+				friends.push( LJ.friends.getFriendProfile( friend_id ) );
 			});
 
 			var names = LJ.renderMultipleNames( _.map( friends, 'name') );

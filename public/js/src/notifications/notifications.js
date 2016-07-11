@@ -313,9 +313,7 @@
 
 			var options = {};
 
-			var friend = _.find( LJ.friends.friends_profiles, function( f ){
-				return f.facebook_id == notification.main_member;
-			});
+			var friend = LJ.friends.getFriendProfile( notification.main_member );
 
 			var name = friend && friend.name;
 
@@ -334,9 +332,7 @@
 			var address   = notification.address;
 			var date 	  = moment( notification.begins_at ).format('DD/MM');
 
-			var friend = _.find( LJ.friends.friends_profiles, function( f ){
-				return f.facebook_id == main_host;
-			});
+			var friend = LJ.friends.getFriendProfile( main_host );
 
 			if( !friend ) return LJ.wlog('Cannot render marked as host, couldnt find friend: ' + friend );
 
@@ -382,10 +378,7 @@
 			var options   = {};
 			var shared_by = notification.shared_by;
 
-			var friend = _.find( LJ.friends.friends_profiles, function( f ){
-				return f.facebook_id == shared_by;
-			});
-
+			var friend = LJ.friends.getFriendProfile( shared_by );
 			var name = friend && friend.name;
 			var type = notification.target_type == "user" ? LJ.text('lang_profile') : LJ.text('lang_before');
 

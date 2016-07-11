@@ -293,9 +293,7 @@
 		},
 		renderSharedByItem__User: function( sho, target ){
 
-			var friend = _.find( LJ.friends.friends_profiles, function( f ){
-				return f.facebook_id == sho.shared_by;
-			});
+			var friend = LJ.friends.getFriendProfile( sho.shared_by );
 
 			var subtitle = [
 				'<div class="row-body__icon --round-icon">',
@@ -315,16 +313,9 @@
 		renderSharedWithItem__User: function( sho, target ){
 
 			var friends = [];
-			var friends_profiles = LJ.friends.friends_profiles;
-
-			if( !Array.isArray( friends_profiles ) ){
-				return LJ.wlog('Unable to render, friends_profiles is not an array');
-			}
 
 			sho.shared_with.forEach(function( friend_id ){
-				friends.push( _.find( friends_profiles, function( f ){
-					return f.facebook_id == friend_id;
-				}))
+				friends.push( LJ.friends.getFriendProfile( friend_id ) );
 			});
 
 			var names = LJ.renderMultipleNames( _.map( friends, 'name') );
@@ -347,9 +338,7 @@
 		},
 		renderSharedByItem__Before: function( sho, target ){
 
-			var friend = _.find( LJ.friends.friends_profiles, function( f ){
-				return f.facebook_id == sho.shared_by;
-			});
+			var friend = LJ.friends.getFriendProfile( sho.shared_by );
 
 			var subtitle = [
 				'<div class="row-body__icon --round-icon">',
@@ -369,16 +358,9 @@
 		renderSharedWithItem__Before: function( sho, target ){
 
 			var friends = [];
-			var friends_profiles = LJ.friends.friends_profiles;
-
-			if( !Array.isArray( friends_profiles ) ){
-				return LJ.wlog('Unable to render, friends_profiles is not an array');
-			}
 
 			sho.shared_with.forEach(function( friend_id ){
-				friends.push( _.find( friends_profiles, function( f ){
-					return f.facebook_id == friend_id;
-				}))
+				friends.push( LJ.friends.getFriendProfile( friend_id ) );
 			});
 
 			var names = LJ.renderMultipleNames( _.map( friends, 'name') );

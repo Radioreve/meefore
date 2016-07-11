@@ -64,8 +64,17 @@
 				});
 
 
+		}, 
+		getFriendProfile: function( facebook_id ){
+
+			return _.find( LJ.friends.getFriendsProfiles(), function( f ){
+				return f.facebook_id == facebook_id;
+			});
+
 		},
 		getFriendsProfiles: function( facebook_ids ){
+
+			LJ.friends.friends_profiles.filter( Boolean );
 
 			if( facebook_ids ){
 				return _.filter( LJ.friends.friends_profiles, function( f ){
@@ -232,8 +241,7 @@
 		},
 		renderFriendsInModal: function(){
 
-			
-			var friends = LJ.friends.friends_profiles.filter( Boolean );
+			var friends = LJ.friends.getFriendsProfiles();
  
 			if( friends.length == 0 ){
 
