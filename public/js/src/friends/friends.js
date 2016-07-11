@@ -177,8 +177,8 @@
 		renderFriendItem: function( friend ){
 
 			if( !friend ){
-				LJ.wlog('Trying to render undefined friend');
-				return ''
+				LJ.wlog('Trying to render undefined friend, rendering ghost user instead');
+				friend = LJ.getGhostUser();
 			}
 
 			var img_html = LJ.pictures.makeImgHtml( friend.img_id, friend.img_vs, 'menu-row' );
