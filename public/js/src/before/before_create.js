@@ -289,6 +289,17 @@
 				});
 
 		},
+		hideCreateBeforeStraight: function(){
+
+			var $i  = $('.map__icon.--create-before');
+			var $w  = $('.be-create');
+			var d   = LJ.search.filters_duration;
+
+			$w.hide();
+			$i.css({ 'display': 'flex', 'opacity': 1 });
+
+
+		},
 		clearCreateBefore: function(){
 
 			$('.be-create__loader').remove();
@@ -403,6 +414,7 @@
 			// Ui update
 			LJ.before.hideCreateBefore();
 			LJ.before.showBrowser();
+			LJ.before.refreshBrowserDates();
 			LJ.delay( 1000 ).then(function(){
 
 				LJ.before.dependifyCreateBefore();
@@ -473,6 +485,70 @@
 			LJ.ui.showToast( err_msg ,'error' );
 			LJ.before.dependifyCreateBefore();
 
+		},
+		addCreateBefore: function(){
+
+			$( LJ.before.renderCreateBefore() )
+				.hide()
+				.appendTo( $('.app-section.--map') );
+
+		},
+		renderCreateBefore: function(){
+
+			return LJ.ui.render([
+
+				'<div class="be-create">',
+			        '<div class="be-create__close">',
+			          '<div class="icon icon-cancel"></div>',
+			        '</div>',
+			        '<div class="be-create__title">',
+			          '<h1 data-lid="be_create_title"></h1>',
+			        '</div>',
+			        '<div class="be-create-row__subtitle">',
+			          '<h2 data-lid="be_create_subtitle_hosts"></h2>',
+			        '</div>',
+			        '<div class="be-create-row --hosts --unset">',
+			          '<div class="be-create__icon --round-icon"><i class="icon icon-star"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input readonly data-lid="be_create_hosts_placeholder"/>',
+			          '</div>',
+			          '<div class="be-create-row__explanations">',
+			            '<div data-lid="be_create_hosts_explanations"></div>',
+			          '</div>',
+			          '<div class="js-create-host-selected">',
+			            // Will be used to know where append the selected users 
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create-row__subtitle">',
+			          '<h2 data-lid="be_create_subtitle_before"></h2>',
+			        '</div>',
+			        '<div class="be-create-row --date --unset">',
+			          '<div class="be-create__icon --round-icon"><i class="icon icon-calendar"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input data-lid="be_create_date_placeholder" readonly/>',
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create-row --hour --unset">',
+			          '<div class="be-create__icon --round-icon"><i class="icon icon-clock"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input readonly data-lid="be_create_hour_placeholder"/>',
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create-row --location --unset">',
+			          '<div class="be-create__icon --round-icon"><i class="icon icon-location"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input data-lid="be_create_location_placeholder" />',
+			          '</div>',
+			          '<div class="be-create-row__explanations">',
+			            '<div data-lid="be_create_before_explanations"></div>',
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create__button">',
+			          '<button data-lid="be_create_button"></button>',
+			        '</div>',
+		      '</div>'
+
+			].join(''));
 		}
 
 

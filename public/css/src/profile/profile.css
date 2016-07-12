@@ -32,7 +32,7 @@
     font-weight: 700;
     text-transform: uppercase;
     /* margin-left: 30px; */
-}
+} 
 
 .me-item input,
 .me-item textarea {
@@ -79,6 +79,7 @@
 .me-item.--active textarea {
     border-bottom: 1px solid #1B69EC;
     padding-left: 16px;
+    cursor: text;
 }
 
 .me-item .action {

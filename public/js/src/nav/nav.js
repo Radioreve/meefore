@@ -62,16 +62,22 @@
 			$current_section.hide();
 			$target_section.css({ display: 'flex' });
 
+			if( !$target_menuitem.is( $current_menuitem ) ){
+				LJ.ui.hideSlide();
+				LJ.before.hideCreateBeforeStraight();
+				LJ.before.showBrowser();
+			}
+
 			// Specificities
 			var duration = 220;
 			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
 
 			if( target_link == 'search' && hasMeepassRibbon ) {
-				LJ.ui.shradeIn( $('.meepass-ribbon'), duration )
+				LJ.ui.shradeIn( $('.meepass-ribbon'), duration );
 			} 
 
 			if( target_link != 'search' && hasMeepassRibbon ){
-				LJ.ui.shradeOut( $('.meepass-ribbon'), duration )
+				LJ.ui.shradeOut( $('.meepass-ribbon'), duration );
 			}
 
 			if( target_link == 'map' ){

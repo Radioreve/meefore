@@ -6,6 +6,7 @@
 
 		init: function(){
 			
+			LJ.before.addCreateBefore();
 			LJ.before.handleDomEvents();
 			LJ.before.initBrowser();
 
@@ -48,7 +49,6 @@
 					 	return;
 		 			});
 
-
 		},
 		handleShowCreateBefore: function(){
 
@@ -58,7 +58,9 @@
 		},
 		handleHideCreateBefore: function(){
 
-			LJ.before.showBrowser();
+			if( $('.slide').length == 0 ){
+				LJ.before.showBrowser();
+			}
 			LJ.before.hideCreateBefore();
 
 		},
@@ -83,8 +85,6 @@
 		activateBrowserDate: function(){
 
 			var $s = $( this );
-
-			if( $s.hasClass('--active') ) return;
 
 			var date = $s.attr('data-day');
 			var m = moment( date, 'DD/MM' );
@@ -204,10 +204,10 @@
 					var d = date.day_digit;
 					var w = date.day_word.slice( 0, 3 );
 
-					var active = ( i == LJ.before.findActiveDateIndex() ) ? '--active' : '';
+					// var active = ( i == LJ.before.findActiveDateIndex() ) ? '--active' : '';
 
 					dates_html.push([
-						'<div class="be-dates__date '+ active +'" data-day="'+ d +'">',
+						'<div class="be-dates__date" data-day="'+ d +'">',
 							w + '.<span>'+ d +'</span>',
 							'<div class="be-dates__bar"></div>',
 						'</div>'
@@ -251,16 +251,36 @@
 		},
 		hideBrowser: function(){
 
+			if( $('.be-browser').css('opacity') != 1 ){
+				return;
+			}
+
 			$('.be-browser').velocity('slideUpOut', {
-				duration: 500
+				duration : 500
 			});
 
 		},
 		showBrowser: function(){
 
+			var is_browser_visible   = $('.be-browser').css('opacity') != 0 && $('.be-browser').css('display') != 'none';
+			var is_slide_visible     = $('.slide').length > 0 && $('.slide').css('opacity') == '1';
+			var is_be_create_visible = $('.be-create').css('opacity') == '1';
+
+			if( is_browser_visible ){
+				return; //LJ.wlog("browser visible");
+			}
+
+			// if( is_slide_visible ){
+			// 	return LJ.wlog("slide visible");
+			// }
+
+			// if( is_be_create_visible ){
+			// 	return LJ.wlog("create visible");
+			// }
+
 			$('.be-browser').velocity('slideDownIn', {
-				duration: 500,
-				display : 'flex'
+				duration : 500,
+				display  : 'flex'
 			});
 
 		},
@@ -270,6 +290,7 @@
 
 		},
 		hideCreateBeforeBtn: function(){
+
 			$('.js-create-before').velocity('bounceOut', { duration: 800, display: 'none' });
 		},
 		fetchBefores: function(){
@@ -327,6 +348,13 @@
 
 
 		},
+		getMyBeforeById: function( before_id ){
+
+			return _.find( LJ.user.befores, function( bfr ){
+                return bfr.before_id == before_id;
+            });
+
+		},
 		setPicturesSizes: function( $content ){
 			
 			var $pictures = $content.find('.be-pictures__pic');
@@ -374,6 +402,14 @@
         			});
 
         },
+        handleCloseBeforeInview: function(){
+
+        	LJ.map.deactivateMarkers();
+        	LJ.map.refreshMarkers();
+
+        	LJ.before.showBrowser();
+
+        },
         fetchAndShowBeforeInview: function( before_id ){
 			
 			var before;
@@ -386,7 +422,7 @@
 				"fetchPromise"	: LJ.before.fetchBeforeAndHosts,
 				"promise_arg"   : before_id,
 
-				"complete"      : LJ.before.showBrowser,
+				"complete"      : LJ.before.handleCloseBeforeInview,
 				"errHandler"    : LJ.before.handleShowBeforeInviewError
 
 			})
@@ -488,7 +524,7 @@
 				"fetchPromise"	: LJ.api.fetchUsers,
 				"promise_arg"   : host_ids,
 
-				"complete"      : LJ.before.showBrowser,
+				"complete"      : LJ.before.handleCloseBeforeInview,
 				"errHandler"    : LJ.before.handleShowBeforeInviewError
 
 			})
@@ -664,7 +700,7 @@
 
 		},
 		renderBeforeInviewBtn__UserDefault: function(){
-			return '<button class="--round-icon js-request"><i class="icon icon-drinks"></i></button>'
+			return '<button class="--round-icon js-request"><i class="icon icon-meedrink"></i></button>'
 
 		},
 		renderBeforeInview__Base: function( before, hosts, options ){

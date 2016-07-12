@@ -29,7 +29,7 @@
 
         },
 		sayHello: function(){
-			LJ.ilog('Map has been successfully loaded');
+			LJ.log('Map has been successfully loaded');
 
 		},
 		handleDomEvents: function(){
@@ -160,17 +160,27 @@
                 return LJ.wlog('Unable to find the date : ' + m.format('DD/MM') );
             }
 
-            $date_activated
-                .removeClass('--active')
-                .find('.be-dates__bar')
-                .velocity('bounceOut', { duration: 450, display: 'none' });
+            if( $date_activated.is( $date_to_activate ) ){
 
-            $date_to_activate
-                .addClass('--active')
-                .find('.be-dates__bar')
-                .velocity('bounceInQuick', { duration: 450, display: 'block' });
+                 $date_activated
+                    .removeClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceOut', { duration: 450, display: 'none' });
 
-            // Specifics
+            } else {
+
+                $date_activated
+                    .removeClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceOut', { duration: 450, display: 'none' });
+
+                $date_to_activate
+                    .addClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceInQuick', { duration: 450, display: 'block' });
+
+            }
+
             LJ.map.updateMarkers__byDate();
 
         },
@@ -276,7 +286,7 @@
         shiftLatLng: function( latlng ){
 
             var a   = new google.maps.LatLng( latlng );
-            var rdm =  google.maps.geometry.spherical.computeOffset( a, LJ.randomInt(25,50), LJ.randomInt(0, 180) );
+            var rdm =  google.maps.geometry.spherical.computeOffset( a, LJ.randomInt( 100, 200 ), LJ.randomInt(0, 180) );
 
             return {
                 lng: rdm.lng(),
@@ -349,14 +359,30 @@
         markerAlreadyExists: function( marker_id ){
 
             return _.find( LJ.map.markers, function( mrk ){
-                return mrk && (mrk.marker_id == marker_id );
+                return mrk && ( mrk.marker_id == marker_id );
             });
             
         },
         makeIcon: function( url ){
+
+            var scaledSize;
+            var base_width  = 34;
+            var base_height = 41;
+            var base_width_active  = 44;
+            var base_height_active = 53;
+
+            var base_width_active  = 49;
+            var base_height_active = 59;
+
+            if( !/lg/i.test( url ) ){
+                scaledSize = new google.maps.Size( base_width, base_height );
+            } else {
+                scaledSize = new google.maps.Size( base_width_active, base_height_active );
+            }
+
             return {
                 url        : url,
-                scaledSize : new google.maps.Size( 27, 31 )
+                scaledSize : scaledSize
             };
 
         },
@@ -399,55 +425,59 @@
             }
 
         },
-        getBeforeMarkerUrlByType: function( type ){
+        getBeforeMarkerUrlByType: function( type, active ){
 
-            var px  = LJ.pictures.getDevicePixelRatio() + 'x';
+            var px     = LJ.pictures.getDevicePixelRatio() + 'x';
+            var suffix = active ? '_active' : '';
 
+            LJ.log('Getting marker for type : ' + type );
             if( type == 'drink' ){
-                url = LJ.map.markers_url['drink'];
+                url = LJ.map.markers_url[ 'drink' + suffix ];
             }
 
             if( type == 'drinknew' ){
-                url = LJ.map.markers_url['drinknew'];
+               url = LJ.map.markers_url['drinknew'];
             }
 
             if( type == 'hosting' ){
-                url = LJ.map.markers_url['chat'];
+                url = LJ.map.markers_url[ 'star' + suffix ];
             }
 
             if( type == 'pending' ){
-                url = LJ.map.markers_url['pending'];
+                url = LJ.map.markers_url[ 'pending' + suffix ];
             }
 
             if( type == 'accepted' ){
-                url = LJ.map.markers_url['chat'];
-            }
+                url = LJ.map.markers_url[ 'chat' + suffix ];
+            }  
+
+            LJ.log('Url found is ' + url[ px ]);
 
             return url[ px ];
 
 
         },  
-        getBeforeMarkerUrl: function( before ){
+        getBeforeMarkerUrl: function( before, active ){
 
             var url  = null;
 
-            var my_before = _.find( LJ.user.befores, function( bfr ){
-                return bfr.before_id == before._id;
-            });
+            var my_before = LJ.before.getMyBeforeById( before._id );
 
             if( !my_before ){
+
                 // Moment.js expresses the difference between 2 dates in ms
-                var diff_in_hour = (moment() - moment( before.created_at ))/(3600*1000);
-                if( diff_in_hour > 24 ){
-                    url = LJ.map.getBeforeMarkerUrlByType("drink");
+                var diff_in_hour = ( moment() - moment( before.created_at ) )/( 3600 * 1000 );
+
+                if( LJ.map.hasSeenMarker( before._id ) || diff_in_hour > 24 ){
+                    url = LJ.map.getBeforeMarkerUrlByType("drink", active );
 
                 } else {
-                    url = LJ.map.getBeforeMarkerUrlByType("drinknew");
+                    url = LJ.map.getBeforeMarkerUrlByType("drinknew", active );
 
                 }
 
             } else {
-                url = LJ.map.getBeforeMarkerUrlByType( my_before.status );
+                url = LJ.map.getBeforeMarkerUrlByType( my_before.status, active );
             }
 
             if( !url ){
@@ -468,7 +498,7 @@
                 lng: before.address.lng
             };
 
-           var url = LJ.map.getBeforeMarkerUrl( before );
+            var url  = LJ.map.getBeforeMarkerUrl( before, false );
 
             LJ.map.addMarker({
                 marker_id : before_id,
@@ -497,12 +527,88 @@
             });
 
         },
+        deactivateMarkers: function(){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                mrk.status = "inactive";
+                mrk.marker.setZIndex( 1 );
+ 
+            });
+
+        },
+        activateMarker: function( marker_id ){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( mrk.marker_id == marker_id ){
+                    mrk.status = "active";
+                    mrk.marker.setZIndex( 10 );
+
+                } else {
+                    mrk.status = "inactive";
+                    mrk.marker.setZIndex( 1 );
+                }
+
+            });
+
+        },  
+        refreshMarkers: function(){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( mrk.type == "before" ){
+
+                    LJ.before.getBefore( mrk.marker_id )
+                    .then(function( bfr ){
+
+                        var url;
+
+                        if( mrk.status == "active" ){
+                            url = LJ.map.getBeforeMarkerUrl( bfr, true );
+                        } else {
+                            url = LJ.map.getBeforeMarkerUrl( bfr, false );
+                        }
+
+                        var icon = LJ.map.makeIcon( url );     
+                        mrk.marker.setIcon( icon );                   
+                        
+                    });
+
+                }
+
+            });
+
+        },
+        getActiveMarker: function(){
+
+            return _.find( LJ.map.markers, function( mrk ){
+                return mrk.status == "active";
+            });
+
+        },
+        seenifyMarker: function( marker_id ){
+
+            var seen_markers = LJ.store.get('seen_markers') || [];
+
+            seen_markers.push( marker_id );
+            LJ.store.set( 'seen_markers', seen_markers );
+
+        },
+        hasSeenMarker: function( marker_id ){
+
+            var seen_markers = LJ.store.get('seen_markers') || [];
+
+            return seen_markers.indexOf( marker_id ) != -1;
+            
+
+        },
         handleClickOnEventMarker: function( marker, before ){
 
-            LJ.log(marker);
-
+            LJ.map.seenifyMarker( before._id );
             LJ.before.showBeforeInview( before );
-
+            LJ.map.activateMarker( before._id );
+            LJ.map.refreshMarkers();
 
         },
         renderCreateBefore: function(){
@@ -518,7 +624,7 @@
 
         	return LJ.ui.render([
         		'<div class="map__icon --round-icon --change-location js-map-change-location">',
-        			'<i class="icon icon-search-planet"></i>',
+        			'<i class="icon icon-search-zoom"></i>',
         		'</div>'
         		].join(''));
 
@@ -557,18 +663,29 @@
         },
         updateMarkers__byDate: function(){
 
-            var active_day = moment( $('.be-dates__date.--active').attr('data-day'), 'DD/MM' ).dayOfYear();
+            var active_day;
+            var $active_day = $('.be-dates__date.--active');
+
+            if( $active_day.length == 1 ){
+                active_day = moment( $active_day.attr('data-day'), 'DD/MM' ).dayOfYear();
+                
+            } else {
+                active_day = null;
+            }
+
 
             LJ.map.markers.forEach(function( mrk ){
 
-                if( mrk.type == "before" ){
+                if( mrk.type == "before" && active_day ){
 
                     if( mrk.data && mrk.data.begins_at && moment( mrk.data.begins_at ).dayOfYear() == active_day ){
                         mrk.marker.setOpacity( 1 );
                     } else {
-                        mrk.marker.setOpacity( 0.15 );
+                        mrk.marker.setOpacity( 0 );
                     }
 
+                } else {
+                    mrk.marker.setOpacity( 1 );
                 }
 
             });

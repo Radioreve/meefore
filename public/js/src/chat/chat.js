@@ -27,6 +27,7 @@
 		handleDomEvents: function(){
 
 			$('.app__menu-item.--chats').on('click', LJ.chat.handleToggleChatWrap );
+			$('.app__menu-item.--notifications').on('click', LJ.chat.hideChatWrap );
 			$('.chat__close').on('click', LJ.chat.hideChatWrap );
 			$('.chat').on('click', '.chat-row', LJ.chat.handleChatRowClicked );
 
@@ -1028,7 +1029,7 @@
 			var type 	 = opts.type;
 
 			var title    = opts.title || '<span data-lid="chat_empty_title"></span>';
-			var icon 	 = opts.icon  || '<i class="icon icon-telescope"></i>';
+			var icon 	 = opts.icon  || '<i class="icon icon-chat-bubble-duo"></i>';
 
 			return LJ.ui.render([
 

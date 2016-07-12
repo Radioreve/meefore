@@ -72,9 +72,9 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	},
 	getScrollRatio: function(){
 
-		var s = $(window).scrollTop(),
-		    d = $(document).height(),
-		    c = $(window).height();
+		var s = $( window ).scrollTop(),
+		    d = $( document ).height(),
+		    c = $( window ).height();
 
 		return scrollPercent = (s / (d-c));
 

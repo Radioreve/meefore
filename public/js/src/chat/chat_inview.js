@@ -723,7 +723,7 @@
 			return [
 					'<div class="chat-inview-header">',
 						'<div class="chat-inview__icon --previous js-chat-back --round-icon">',
-		            		'<i class="icon icon-arrow-left"></i>',
+		            		'<i class="icon icon-arrow-left-rounded"></i>',
 				        '</div>',
 				        '<div class="chat-inview__icon --options --round-icon">',
 				            '<i class="icon icon-pending-vertical"></i>',

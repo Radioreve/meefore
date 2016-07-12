@@ -219,7 +219,7 @@
 
 				'<div class="empty">',
 					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-telescope"></i>',
+						'<i class="icon icon-users"></i>',
 					'</div>',
 					'<div class="empty__title">',
 						'<h2 data-lid="empty_shared_title"></h2>',

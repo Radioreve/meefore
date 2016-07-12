@@ -49,6 +49,7 @@
     align-items: center;
     justify-content: center;
     height: 56px;
+    position: relative;
 }
 
 .be-address {
@@ -67,15 +68,15 @@
 
 .be-address span {
     margin: 0 2px;
-} 
- 
+}  
+  
 .be-dates__bar {
     width: 70px;
     border-radius: 100px;
     position: absolute;
     height: 3px;
     background: #1b69ec;
-    bottom: -16px;
+    bottom: -20px;
     left: -4px;
     display: none;
 }
@@ -188,6 +189,7 @@
     height: 50px;
     width: 50px;
     cursor: pointer;
+    font-size: 22px;
 }
 
 .be-actions__action:hover {
@@ -253,16 +255,16 @@
 }
 
 .be-users {
-    max-height: 260px;
+    max-height: 350px;
     outline: none;
     border-bottom: 1px solid #eee;
     position: relative;
 }
 
-.user-row {
+.user-row { 
     display: flex;
     align-items: center;
-    padding: 8px 20px;
+    padding: 12px 20px;
     border-bottom: 1px solid #eee;
     cursor: pointer;
     width: 100%;
@@ -274,6 +276,7 @@
 .user-row:hover {
     background: #fbfbfb;
 }
+
 
 .user-row:last-of-type {
     border-bottom: none;
@@ -369,9 +372,10 @@
 
 .be-request,
 .be-ended {
-    margin-top: auto;
-    padding: 40px 0 50px 0;
     order: 1;
+    height: 150px;
+    display: flex;
+    margin-top: auto;
 }
 
 .be-request button {
@@ -396,7 +400,11 @@
 }
 
 .be-request i {
-    font-size: 36px;
+    font-size: 30px;
+}
+
+.be-request i.icon-meedrink {
+    transform: rotate(20deg)
 }
 
 .be-users .jspPane {
@@ -423,20 +431,23 @@
 
 .be-ended {
     color: #919191;
-    width: 250px;
-    margin: auto auto 0px;
+    width: 100%;
     text-align: center;
-    padding: 16px 0px;
+    /* padding: 16px 0px; */
     font-weight: 500;
     font-size: 12px;
 }
   
 .be-ended span {
     padding: 14px 20px;
-    color: #1b69ec;
-    display: block;
+    color: #d94962;
     border-radius: 100px;
     white-space: nowrap;
+    background: #d94962;
+    color: white;
+    display: block;
+    margin: auto;
+    min-width: 200px;
 }
 
 

@@ -62,9 +62,9 @@
 }
 
 .chat-inview__icon {
-    font-size: 24px;
+    font-size: 22px;
     position: absolute;
-    top: 0;
+    top: 2px;
     bottom: 0;
     margin: auto 0;
     cursor: pointer;
@@ -81,8 +81,8 @@
 }
 
 .chat-inview__icon.--previous {
-    font-size: 20px;
-    left: 6px;
+    font-size: 18px;
+    left: 8px;
 }
 
 .chat-inview__icon.--close {
@@ -127,6 +127,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    height: 18px;
 }
 
 .chat-inview-title__h1 .--hour {}
@@ -485,6 +486,7 @@
     cursor: pointer;
     height: 40px;
     width: 40px;
+    font-size: 12px;
 }
 
 .chat-inview-users {

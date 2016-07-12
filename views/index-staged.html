@@ -4,7 +4,7 @@
  
 <head>
 
-  <title>Des rencontres avant d'aller en soirée </title>
+  <title>Des rencontres avant d'aller en soirée </title> 
 
   <meta charset="utf-8"> 
   <meta name="viewport"           content="width=device-width, initial-scale=1"> 
@@ -78,7 +78,7 @@
         <ul>
           <li class="app__menu-item --menu" data-link="menu">
             <a href="#menu">
-              <i class="app__menu-icon icon icon-menu"></i>
+              <i class="app__menu-icon icon icon-menu-app"></i>
             </a>
           </li>
           <li class="app__menu-item --map" data-link="map">
@@ -88,7 +88,7 @@
           </li>
           <li class="app__menu-item --search" data-link="search">
             <a href="#search">
-              <i class="app__menu-icon icon icon-search-zoom"></i>
+              <i class="app__menu-icon icon icon-members"></i>
             </a>
           </li>
         </ul>
@@ -142,7 +142,7 @@
         <li class="menu-item --profile" data-link="profile">
           <div class="menu-item__body">
             <div class="menu-item__icon --round-icon">
-              <i class="icon icon-pricetag"></i>
+              <i class="icon icon-profile-rounded"></i>
             </div>
             <h3 data-lid="menu_profile"></h2>
           </div>
@@ -160,7 +160,7 @@
         <li class="menu-item --cheers" data-link="cheers">
           <div class="menu-item__body">
             <div class="menu-item__icon --round-icon">
-              <i class="icon icon-drinks"></i>
+              <i class="icon icon-meedrink"></i>
             </div>
             <h3 data-lid="menu_cheers"></h2>
           </div>
@@ -223,7 +223,7 @@
           </div>
           <div class="me-item" data-param="age">
             <div class="icon-item --round-icon">
-              <i class="icon icon-gift"></i>
+              <i class="icon icon-birthday"></i>
             </div>
             <div class="edit">
               <i class="icon icon-pen"></i>
@@ -483,7 +483,7 @@
           </div>
           <div class="settings-item" data-settings-type-id="new_message">
             <div class="settings-input">
-              <div class="settings-input__icon --round-icon"><i class="icon icon-chat-bubble-duo"></i></div>
+              <div class="settings-input__icon --round-icon"><i class="icon icon-chat-bubble"></i></div>
               <div class="settings-input-label">
                 <div class="settings-input__label" data-lid="settings_emails_new_message_label"></div>
               </div>
@@ -496,7 +496,7 @@
           </div>
         <div class="settings-item" data-settings-type-id="marked_as_host">
             <div class="settings-input">
-              <div class="settings-input__icon --round-icon"><i class="icon icon-drinks"></i></div>
+              <div class="settings-input__icon --round-icon"><i class="icon icon-star"></i></div>
               <div class="settings-input-label">
                 <div class="settings-input__label" data-lid="settings_emails_marked_as_host_label"></div>
               </div>
@@ -509,7 +509,7 @@
           </div>
           <div class="settings-item" data-settings-type-id="new_match">
             <div class="settings-input">
-              <div class="settings-input__icon --round-icon"><i class="icon icon-drinks"></i></div>
+              <div class="settings-input__icon --round-icon"><i class="icon icon-thunder"></i></div>
               <div class="settings-input-label">
                 <div class="settings-input__label" data-lid="settings_emails_new_match_label"></div>
               </div>
@@ -522,7 +522,7 @@
           </div>
           <div class="settings-item" data-settings-type-id="new_cheers">
             <div class="settings-input">
-              <div class="settings-input__icon --round-icon"><i class="icon icon-drinks"></i></div>
+              <div class="settings-input__icon --round-icon"><i class="icon icon-meedrink"></i></div>
               <div class="settings-input-label">
                 <div class="settings-input__label" data-lid="settings_emails_new_cheers_label"></div>
               </div>
@@ -616,58 +616,6 @@
       <div class="js-map-wrap">
         <!-- Holds the Google map -->
       </div>
-
-      <div class="be-create">
-        <div class="be-create__close">
-          <div class="icon icon-cancel"></div>
-        </div>
-        <div class="be-create__title">
-          <h1 data-lid="be_create_title"></h1>
-        </div>
-        <div class="be-create-row__subtitle">
-          <h2 data-lid="be_create_subtitle_hosts"></h2>
-        </div>
-        <div class="be-create-row --hosts --unset">
-          <div class="be-create__icon --round-icon"><i class="icon icon-star"></i></div>
-          <div class="be-create-row__input">
-            <input readonly data-lid="be_create_hosts_placeholder"/>
-          </div>
-          <div class="be-create-row__explanations">
-            <div data-lid="be_create_hosts_explanations"></div>
-          </div>
-          <div class="js-create-host-selected">
-            <!-- Will be used to know where append the selected users -->
-          </div>
-        </div>
-        <div class="be-create-row__subtitle">
-          <h2 data-lid="be_create_subtitle_before"></h2>
-        </div>
-        <div class="be-create-row --date --unset">
-          <div class="be-create__icon --round-icon"><i class="icon icon-calendar"></i></div>
-          <div class="be-create-row__input">
-            <input data-lid="be_create_date_placeholder" readonly/>
-          </div>
-        </div>
-        <div class="be-create-row --hour --unset">
-          <div class="be-create__icon --round-icon"><i class="icon icon-clock"></i></div>
-          <div class="be-create-row__input">
-            <input readonly data-lid="be_create_hour_placeholder"/>
-          </div>
-        </div>
-        <div class="be-create-row --location --unset">
-          <div class="be-create__icon --round-icon"><i class="icon icon-location"></i></div>
-          <div class="be-create-row__input">
-            <input data-lid="be_create_location_placeholder" />
-          </div>
-          <div class="be-create-row__explanations">
-            <div data-lid="be_create_before_explanations"></div>
-          </div>
-        </div>
-        <div class="be-create__button">
-          <button data-lid="be_create_button"></button>
-        </div>
-      </div>
-
 
         
     </section>

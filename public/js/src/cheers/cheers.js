@@ -317,7 +317,7 @@
 
 				'<div class="empty" data-link="received">',
 					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-drinks"></i>',
+						'<i class="icon icon-meedrink"></i>',
 					'</div>',
 					'<div class="empty__title">',
 						'<h2 data-lid="empty_cheers_received_title"></h2>',
@@ -336,7 +336,7 @@
 
 				'<div class="empty" data-link="sent">',
 					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-drinks"></i>',
+						'<i class="icon icon-meedrink"></i>',
 					'</div>',
 					'<div class="empty__title">',
 						'<h2 data-lid="empty_cheers_sent_title"></h2>',
@@ -353,7 +353,7 @@
 
 			if( status == "pending" ){
 				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
-					'<i class="icon icon-drinks"></i>',
+					'<i class="icon icon-meedrink"></i>',
 				'</div>'].join('');
 			}
 
@@ -694,7 +694,7 @@
 			        '</div>',
 			        '<div class="cheers-back-actions">',
 			        	'<button class="--round-icon js-validate">',
-			        		'<i class="icon icon-drinks"></i>',
+			        		'<i class="icon icon-meedrink"></i>',
 			        		'<span data-lid="chat_inview_validate"></span>',
 			        	'</button>',
 			        '</div>',

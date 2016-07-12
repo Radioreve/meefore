@@ -135,6 +135,7 @@ button:hover {
 .row-pic__image img {
     width: 100%;
     height: 100%;
+    transition: all ease-in-out .2s;
 }
 
 .row-pic__icon {
@@ -144,7 +145,7 @@ button:hover {
     border: 3px solid white;
     color: white;
     background: #454545;
-    font-size: 20px;
+    font-size: 16px;
     height: 30px;
     width: 30px;
 }
@@ -237,7 +238,7 @@ button:hover {
     min-width: 60px;
     min-height: 60px;
     box-sizing: border-box;
-    font-size: 32px;
+    font-size: 22px;
     position: absolute;
     left: -50px;
     top: -8px;
@@ -349,8 +350,8 @@ button:hover {
 .icon-item {
     position: absolute;
     left: -60px;
-    top: 29px;
-    font-size: 30px;
+    top: 21px;
+    font-size: 22px;
 }
 
 .icon-item i {
@@ -363,7 +364,7 @@ button:hover {
     right: 0px;
     top: -10px;
     z-index: 1;
-    font-size: 22px;
+    font-size: 16px;
     cursor: pointer;
     border-radius: 100px;
     height: 40px;
@@ -400,6 +401,9 @@ button:hover {
     margin: auto;
 }
 
+.empty__icon .icon-meedrink {
+    transform: rotate(20deg);
+}
 .empty__title {
     font-size: 30px;
     margin-top: 30px;
@@ -425,7 +429,7 @@ button:hover {
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 40px;
+    font-size: 30px;
     margin-top: 30px;
     cursor: pointer;
     color: #1b69ec;
@@ -438,6 +442,10 @@ button:hover {
 }
 
 .empty__subicon i {}
+
+.empty__subicon i:hover {
+    opacity: .7;
+}
 
 .disconnected {
     display: none;
@@ -541,8 +549,8 @@ button:hover {
 }
 
 .app-logout {
-    color: #454545;
-    font-size: 26px;
+    color: #919191;
+    font-size: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -552,7 +560,7 @@ button:hover {
 }
 
 .app-logout:hover {
-    color: white;
+    color: #676767;
     transition: all ease-in-out .2s;
 }
 
@@ -661,8 +669,8 @@ button:hover {
     bottom: -4px;
     z-index: 10;
     border-radius: 100px;
-    color: #fd7124;
-    font-size: 15px;
+    color: #db4760;
+    font-size: 12px;
 }
 
 .user__host i {
@@ -936,7 +944,7 @@ button:hover {
 
 .app__menu-item {
     display: inline-block;
-    font-size: 20px;
+    font-size: 16px;
     width: 60px;
     height: 54px;
     text-align: center;
@@ -968,8 +976,8 @@ button:hover {
 }
 
 .app__menu-icon {
-    margin: 14px auto;
-    font-size: 26px;
+    margin: 18px auto;
+    font-size: 20px;
     transition: all ease-in .10s;
 }
 
@@ -1212,7 +1220,7 @@ button:hover {
 }
 
 .modal.--logout button i {
-    font-size: 36px;
+    font-size: 28px;
 }
 
 .modal-footer button.--squared {}
@@ -1241,7 +1249,7 @@ button:hover {
 }
 
 .modal-footer i {
-    font-size: 36px;
+    font-size: 30px;
 }
 
 .modal.--facebook:not(.--active) .modal-footer {
@@ -1459,7 +1467,7 @@ button:hover {
     height: 30px;
     width: 30px;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 16px;
     z-index: 100;
     display: none;
     text-shadow: 0 0 1px #919191;
@@ -1687,4 +1695,12 @@ button:hover {
     transform: translate(-50%, -50%);
     z-index: -1;
     transition: all ease-in .15s;
+}
+
+.ux__magnify {
+    overflow: hidden;
+}
+.ux__magnify img {
+    transform: scale(1.1);
+    border-radius: 1000px;
 }

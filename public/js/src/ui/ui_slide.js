@@ -108,17 +108,21 @@
 			$('.slide-overlay').velocity('fadeOut', {
 				duration: duration,
 				complete : function(){
-					$(this).children().remove();
+					$( this ).children().remove();
 				}
 			});
 
 		},
 		hideSlide: function( opts ){
 			
-			$('.slide.--' + opts.type ).velocity('shradeOut', {
+			opts = opts || {};
+			
+			var type = opts.type ? '.slide.--' + opts.type : '.slide';
+
+			$( type ).velocity('shradeOut', {
 				duration: LJ.ui.hide_slide_duration,
 				complete: function(){
-					$(this).remove();
+					$( this ).remove();
 				}
 			});
 

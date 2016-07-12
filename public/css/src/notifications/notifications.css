@@ -65,8 +65,7 @@
     font-size: 26px;
     position: relative;
     top: 2px;
-    color: white;
-    background: #7b4cbb;
+    color: #454545;
     padding: 6px 30px;
     border-radius: 100px;
 }
@@ -155,8 +154,8 @@ Whispereen  : #58c170
     align-items: flex-start;
     margin-left: 20px;
 }
-
-.notification .notification-message__text {font-weight: 700;font-size: 13px;}
+ 
+.notification .notification-message__text {font-weight: 700;font-size: 12px;max-width: 200px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;line-height: 14px;}
 
 .notification .notification-message__subtext {
     font-size: 11px;
@@ -184,9 +183,9 @@ Whispereen  : #58c170
     background: none;
     height: 40px;
     width: 40px;
-    font-size: 26px;
+    font-size: 18px;
     color: #1b69ec;
-    color: #7b4cbb;
+    flex-shrink: 0;
 }
 
 .notification.--seen .notification-message__text {color: #454545;}

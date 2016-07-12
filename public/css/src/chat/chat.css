@@ -46,6 +46,7 @@
     right: 8px;
     color: #ccc;
     z-index: 3;
+    display: none;
 }
 
 .chat__close i {}
@@ -356,20 +357,20 @@
 }
 
 .chat-empty__icon {
-    font-size: 80px;
+    font-size: 64px;
     color: #eee;
     margin-top: -20px;
 }
-
+ 
 .chat-empty__icon i {}
 
 .chat-empty__title {
-    font-size: 24px;
+    font-size: 28px;
     color: #454545;
     margin-top: 20px;
-    font-weight: 600;
+    /* font-weight: 600; */
     font-family: 'creamy';
-    /* color: #1b69ec; */
+    color: #1b69ec;
 }
 
 .chat-empty__title span {}
@@ -393,7 +394,6 @@
     height: 120px;
     width: 120px;
     margin-bottom: 20px;
-    color: #1b69ec;
 }
 
 .chat-empty.--pending .chat-empty__icon {

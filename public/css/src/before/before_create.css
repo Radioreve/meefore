@@ -10,14 +10,16 @@
     box-sizing: border-box;
     box-shadow: 0 0 14px #949494;
     flex-flow: column nowrap;
+    opacity: 0;
 }
 
 .be-create__close {
     position: absolute;
-    top: 12px;
+    top: 16px;
     right: 10px;
     cursor: pointer;
-    color: #ccc;
+    color: #1b69ec;
+    font-size: 14px;
 }
 
 .be-create-row {
@@ -40,6 +42,7 @@
     top: 19px;
     left: 6px;
     transform: translate(0, -50%);
+    font-size: 14px;
 }
 
 .be-create__icon i {}

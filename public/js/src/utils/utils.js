@@ -117,6 +117,10 @@ window.LJ = _.merge( window.LJ || {}, {
     },
     log: function log( message ){
 
+        if( LJ.app_mode == "prod" ){
+            console.log("Hello there.")
+            return LJ.log = function(){}
+        }
         console.log( message );
 
     },

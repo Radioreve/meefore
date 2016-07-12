@@ -29667,6 +29667,14 @@ function closure ( target, options ){
 
 }));
 
+	window.LJ.admin = _.merge( window.LJ.admin || {}, {
+
+		init: function(){
+			LJ.log('Initializing admin script');
+		}
+
+	});
+
 	window.LJ.analytics = _.merge( window.LJ.analytics || {}, {
 
 		init: function(){
@@ -29733,119 +29741,6 @@ function closure ( target, options ){
 		}
 
 	});
-
-	window.LJ.admin = _.merge( window.LJ.admin || {}, {
-
-		init: function(){
-			LJ.log('Initializing admin script');
-		}
-
-	});
-	
-	
-	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
-
-		init: function(){
-
-			return LJ.promise(function( resolve, reject ){
-
-				if( document.location.hash == "#1" ){
-					LJ.log('Logging in with test user Victoriale...');
-					var tk = "EAAXR2Qo4lc4BAChEDRcMA17PowABdrp711d8Fl03VzjB1ptsqMFaKn2jhB4xOF70HpTfELjUVTtcSkJN1Ju9s0WZA5o1Rrez9uW0mgXsbJsxCMe650gLb3o92MLugROZAuQTKsAC2ZAMNwCSJwxIk1sLTEpv5kZD";
-					return resolve( tk );
-				}
-
-				if( document.location.hash == "#2" ){
-					LJ.log('Logging in with test user Angelah...');
-					var tk = "EAAXR2Qo4lc4BAMUbS4HfY6Uvk5sM1HkOpan12pCAd3tCZAZCGrXGPJXJBj8dazV5OMDqx6aCuX09VfZAb8CVqeEOfmGyCUUoSUzSHmng6GX9FWtpuzCdAPpVzWFxHXWE2VPjb4ybUCQ6ZClAggtLlNn232EZASEIZD";
-					return resolve( tk );
-				}
-
-				if( document.location.hash == "#3" ){
-					LJ.log('Logging in with test user Davida...');
-					var tk = "EAAXR2Qo4lc4BAOEKyewke6ibcU0zB0BvxJSyKdNsOdJFzTGD52MB1QFA1Ay3HHG1XD9WF747zF88rrBmZCODWXHx46Jp8hEWxi5PTZC3G9zjH4pyaZCcj586ZAZAvBExU0Jt8aKfVC9LR2XAzvjGBq8chED7EGlUZD";
-					return resolve( tk );
-				}
-
-				// Quick reference to the local store
-				var s = LJ.store;
-
-				if( !s.get('facebook_access_token') ){
-					return reject('No local data available, initializing lp...');
-				}
-
-				var facebook_access_token = s.get('facebook_access_token');
-
-				var token      = facebook_access_token.token;
-				var expires_at = facebook_access_token.expires_at;
-
-				if( !token || !expires_at ){
-					return reject('Missing init preference param, initializing lp...');
-				}
-
-				if( moment( expires_at ) < moment() ){
-					return reject('Facebook token found but has expired, initializing lp...');
-				} 
-
-				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
-				if( remaining_days < 30 ) {
-					return reject('Facebook token found but will expire soon, refresh is needed.');
-				}
-
-				// Unexpected error
-				if( s.get('reconnecting') && !token ){
-					return reject('User trying to reconnect but missing token from local store (unexpected)');
-				}
-
-				// Check if the app is trying to reconnect him 
-				if( s.get('reconnecting') && token ){
-					LJ.log('Reconnecting user from previous loss of connexion...');
-					s.remove('reconnecting');
-					return resolve( token );
-				}
-
-				if( s.get("autologin") == false ){
-					return reject("Autologin isnt activated, initializing lp...");
-				}
-
-				LJ.log('Init data ok, auto logging in...');
-				resolve( token );
-							
-			});
-		},
-		startLogin: function( facebook_token ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log('Starting login...');
-				LJ.start( facebook_token );
-			});
-
-		},
-		startLanding: function( message ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log( message );
-				LJ.log('Starting landing... v' + 1 );
-
-				$( LJ.static.renderStaticImage('slide_loader') )
-					.hide()
-					.appendTo('.curtain')
-					.velocity('shradeIn', { duration: 800 });
-
-				$('.curtain').find('.slide__loader').velocity('shradeOut', {
-					duration: 600,
-					complete: function(){
-						LJ.ui.hideCurtain({ duration: 800 });
-						LJ.landing.activateLanding( 2 );
-						 // Login flow
-									
-					}
-				})
-			});
-		}
-
-	});
-
-
-
 
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
@@ -30597,6 +30492,111 @@ function closure ( target, options ){
 		}
 
 	});
+	
+	
+	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
+
+		init: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				if( document.location.hash == "#1" ){
+					LJ.log('Logging in with test user Victoriale...');
+					var tk = "EAAXR2Qo4lc4BAChEDRcMA17PowABdrp711d8Fl03VzjB1ptsqMFaKn2jhB4xOF70HpTfELjUVTtcSkJN1Ju9s0WZA5o1Rrez9uW0mgXsbJsxCMe650gLb3o92MLugROZAuQTKsAC2ZAMNwCSJwxIk1sLTEpv5kZD";
+					return resolve( tk );
+				}
+
+				if( document.location.hash == "#2" ){
+					LJ.log('Logging in with test user Angelah...');
+					var tk = "EAAXR2Qo4lc4BAMUbS4HfY6Uvk5sM1HkOpan12pCAd3tCZAZCGrXGPJXJBj8dazV5OMDqx6aCuX09VfZAb8CVqeEOfmGyCUUoSUzSHmng6GX9FWtpuzCdAPpVzWFxHXWE2VPjb4ybUCQ6ZClAggtLlNn232EZASEIZD";
+					return resolve( tk );
+				}
+
+				if( document.location.hash == "#3" ){
+					LJ.log('Logging in with test user Davida...');
+					var tk = "EAAXR2Qo4lc4BAOEKyewke6ibcU0zB0BvxJSyKdNsOdJFzTGD52MB1QFA1Ay3HHG1XD9WF747zF88rrBmZCODWXHx46Jp8hEWxi5PTZC3G9zjH4pyaZCcj586ZAZAvBExU0Jt8aKfVC9LR2XAzvjGBq8chED7EGlUZD";
+					return resolve( tk );
+				}
+
+				// Quick reference to the local store
+				var s = LJ.store;
+
+				if( !s.get('facebook_access_token') ){
+					return reject('No local data available, initializing lp...');
+				}
+
+				var facebook_access_token = s.get('facebook_access_token');
+
+				var token      = facebook_access_token.token;
+				var expires_at = facebook_access_token.expires_at;
+
+				if( !token || !expires_at ){
+					return reject('Missing init preference param, initializing lp...');
+				}
+
+				if( moment( expires_at ) < moment() ){
+					return reject('Facebook token found but has expired, initializing lp...');
+				} 
+
+				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
+				if( remaining_days < 30 ) {
+					return reject('Facebook token found but will expire soon, refresh is needed.');
+				}
+
+				// Unexpected error
+				if( s.get('reconnecting') && !token ){
+					return reject('User trying to reconnect but missing token from local store (unexpected)');
+				}
+
+				// Check if the app is trying to reconnect him 
+				if( s.get('reconnecting') && token ){
+					LJ.log('Reconnecting user from previous loss of connexion...');
+					s.remove('reconnecting');
+					return resolve( token );
+				}
+
+				if( s.get("autologin") == false ){
+					return reject("Autologin isnt activated, initializing lp...");
+				}
+
+				LJ.log('Init data ok, auto logging in...');
+				resolve( token );
+							
+			});
+		},
+		startLogin: function( facebook_token ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log('Starting login...');
+				LJ.start( facebook_token );
+			});
+
+		},
+		startLanding: function( message ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log( message );
+				LJ.log('Starting landing... v' + 1 );
+
+				$( LJ.static.renderStaticImage('slide_loader') )
+					.hide()
+					.appendTo('.curtain')
+					.velocity('shradeIn', { duration: 800 });
+
+				$('.curtain').find('.slide__loader').velocity('shradeOut', {
+					duration: 600,
+					complete: function(){
+						LJ.ui.hideCurtain({ duration: 800 });
+						LJ.landing.activateLanding( 2 );
+						 // Login flow
+									
+					}
+				})
+			});
+		}
+
+	});
+
+
+
 
 	window.LJ.before = _.merge( window.LJ.before || {}, {
 
@@ -30605,6 +30605,7 @@ function closure ( target, options ){
 
 		init: function(){
 			
+			LJ.before.addCreateBefore();
 			LJ.before.handleDomEvents();
 			LJ.before.initBrowser();
 
@@ -30647,7 +30648,6 @@ function closure ( target, options ){
 					 	return;
 		 			});
 
-
 		},
 		handleShowCreateBefore: function(){
 
@@ -30657,7 +30657,9 @@ function closure ( target, options ){
 		},
 		handleHideCreateBefore: function(){
 
-			LJ.before.showBrowser();
+			if( $('.slide').length == 0 ){
+				LJ.before.showBrowser();
+			}
 			LJ.before.hideCreateBefore();
 
 		},
@@ -30682,8 +30684,6 @@ function closure ( target, options ){
 		activateBrowserDate: function(){
 
 			var $s = $( this );
-
-			if( $s.hasClass('--active') ) return;
 
 			var date = $s.attr('data-day');
 			var m = moment( date, 'DD/MM' );
@@ -30803,10 +30803,10 @@ function closure ( target, options ){
 					var d = date.day_digit;
 					var w = date.day_word.slice( 0, 3 );
 
-					var active = ( i == LJ.before.findActiveDateIndex() ) ? '--active' : '';
+					// var active = ( i == LJ.before.findActiveDateIndex() ) ? '--active' : '';
 
 					dates_html.push([
-						'<div class="be-dates__date '+ active +'" data-day="'+ d +'">',
+						'<div class="be-dates__date" data-day="'+ d +'">',
 							w + '.<span>'+ d +'</span>',
 							'<div class="be-dates__bar"></div>',
 						'</div>'
@@ -30850,16 +30850,36 @@ function closure ( target, options ){
 		},
 		hideBrowser: function(){
 
+			if( $('.be-browser').css('opacity') != 1 ){
+				return;
+			}
+
 			$('.be-browser').velocity('slideUpOut', {
-				duration: 500
+				duration : 500
 			});
 
 		},
 		showBrowser: function(){
 
+			var is_browser_visible   = $('.be-browser').css('opacity') != 0 && $('.be-browser').css('display') != 'none';
+			var is_slide_visible     = $('.slide').length > 0 && $('.slide').css('opacity') == '1';
+			var is_be_create_visible = $('.be-create').css('opacity') == '1';
+
+			if( is_browser_visible ){
+				return; //LJ.wlog("browser visible");
+			}
+
+			// if( is_slide_visible ){
+			// 	return LJ.wlog("slide visible");
+			// }
+
+			// if( is_be_create_visible ){
+			// 	return LJ.wlog("create visible");
+			// }
+
 			$('.be-browser').velocity('slideDownIn', {
-				duration: 500,
-				display : 'flex'
+				duration : 500,
+				display  : 'flex'
 			});
 
 		},
@@ -30869,6 +30889,7 @@ function closure ( target, options ){
 
 		},
 		hideCreateBeforeBtn: function(){
+
 			$('.js-create-before').velocity('bounceOut', { duration: 800, display: 'none' });
 		},
 		fetchBefores: function(){
@@ -30926,6 +30947,13 @@ function closure ( target, options ){
 
 
 		},
+		getMyBeforeById: function( before_id ){
+
+			return _.find( LJ.user.befores, function( bfr ){
+                return bfr.before_id == before_id;
+            });
+
+		},
 		setPicturesSizes: function( $content ){
 			
 			var $pictures = $content.find('.be-pictures__pic');
@@ -30973,6 +31001,14 @@ function closure ( target, options ){
         			});
 
         },
+        handleCloseBeforeInview: function(){
+
+        	LJ.map.deactivateMarkers();
+        	LJ.map.refreshMarkers();
+
+        	LJ.before.showBrowser();
+
+        },
         fetchAndShowBeforeInview: function( before_id ){
 			
 			var before;
@@ -30985,7 +31021,7 @@ function closure ( target, options ){
 				"fetchPromise"	: LJ.before.fetchBeforeAndHosts,
 				"promise_arg"   : before_id,
 
-				"complete"      : LJ.before.showBrowser,
+				"complete"      : LJ.before.handleCloseBeforeInview,
 				"errHandler"    : LJ.before.handleShowBeforeInviewError
 
 			})
@@ -31087,7 +31123,7 @@ function closure ( target, options ){
 				"fetchPromise"	: LJ.api.fetchUsers,
 				"promise_arg"   : host_ids,
 
-				"complete"      : LJ.before.showBrowser,
+				"complete"      : LJ.before.handleCloseBeforeInview,
 				"errHandler"    : LJ.before.handleShowBeforeInviewError
 
 			})
@@ -31263,7 +31299,7 @@ function closure ( target, options ){
 
 		},
 		renderBeforeInviewBtn__UserDefault: function(){
-			return '<button class="--round-icon js-request"><i class="icon icon-drinks"></i></button>'
+			return '<button class="--round-icon js-request"><i class="icon icon-meedrink"></i></button>'
 
 		},
 		renderBeforeInview__Base: function( before, hosts, options ){
@@ -31798,6 +31834,17 @@ function closure ( target, options ){
 				});
 
 		},
+		hideCreateBeforeStraight: function(){
+
+			var $i  = $('.map__icon.--create-before');
+			var $w  = $('.be-create');
+			var d   = LJ.search.filters_duration;
+
+			$w.hide();
+			$i.css({ 'display': 'flex', 'opacity': 1 });
+
+
+		},
 		clearCreateBefore: function(){
 
 			$('.be-create__loader').remove();
@@ -31912,6 +31959,7 @@ function closure ( target, options ){
 			// Ui update
 			LJ.before.hideCreateBefore();
 			LJ.before.showBrowser();
+			LJ.before.refreshBrowserDates();
 			LJ.delay( 1000 ).then(function(){
 
 				LJ.before.dependifyCreateBefore();
@@ -31982,6 +32030,70 @@ function closure ( target, options ){
 			LJ.ui.showToast( err_msg ,'error' );
 			LJ.before.dependifyCreateBefore();
 
+		},
+		addCreateBefore: function(){
+
+			$( LJ.before.renderCreateBefore() )
+				.hide()
+				.appendTo( $('.app-section.--map') );
+
+		},
+		renderCreateBefore: function(){
+
+			return LJ.ui.render([
+
+				'<div class="be-create">',
+			        '<div class="be-create__close">',
+			          '<div class="icon icon-cancel"></div>',
+			        '</div>',
+			        '<div class="be-create__title">',
+			          '<h1 data-lid="be_create_title"></h1>',
+			        '</div>',
+			        '<div class="be-create-row__subtitle">',
+			          '<h2 data-lid="be_create_subtitle_hosts"></h2>',
+			        '</div>',
+			        '<div class="be-create-row --hosts --unset">',
+			          '<div class="be-create__icon --round-icon"><i class="icon icon-star"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input readonly data-lid="be_create_hosts_placeholder"/>',
+			          '</div>',
+			          '<div class="be-create-row__explanations">',
+			            '<div data-lid="be_create_hosts_explanations"></div>',
+			          '</div>',
+			          '<div class="js-create-host-selected">',
+			            // Will be used to know where append the selected users 
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create-row__subtitle">',
+			          '<h2 data-lid="be_create_subtitle_before"></h2>',
+			        '</div>',
+			        '<div class="be-create-row --date --unset">',
+			          '<div class="be-create__icon --round-icon"><i class="icon icon-calendar"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input data-lid="be_create_date_placeholder" readonly/>',
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create-row --hour --unset">',
+			          '<div class="be-create__icon --round-icon"><i class="icon icon-clock"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input readonly data-lid="be_create_hour_placeholder"/>',
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create-row --location --unset">',
+			          '<div class="be-create__icon --round-icon"><i class="icon icon-location"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input data-lid="be_create_location_placeholder" />',
+			          '</div>',
+			          '<div class="be-create-row__explanations">',
+			            '<div data-lid="be_create_before_explanations"></div>',
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create__button">',
+			          '<button data-lid="be_create_button"></button>',
+			        '</div>',
+		      '</div>'
+
+			].join(''));
 		}
 
 
@@ -32394,6 +32506,932 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 	 window.fid = function(){ return LJ.user.facebook_id;}
 
 
+	window.LJ.cheers = _.merge( window.LJ.cheers || {}, {
+
+		cheers_back_duration: 450,
+
+		fetched_cheers     : [],
+		fetched_profiles   : [],
+		active_cheers_back : null,
+		cheers_back_state  : "idle",
+
+		init: function(){
+
+			LJ.cheers.handleDomEvents();
+			LJ.cheers.activateCheers("received");
+			return;
+
+		},
+		handleDomEvents: function(){
+
+			$('.menu-section.--cheers').on('click', '.segment__part', LJ.cheers.handleSegmentClicked );
+			$('.menu-item.--cheers').one('click', LJ.cheers.handleCheersClicked );
+			$('.cheers').on('click', '.cheers__item', LJ.cheers.handleCheersItemClicked );
+			$('.chat').on('click', '.js-validate', LJ.cheers.handleValidate );
+			$('body').on('click', '.js-close-cheers-back', LJ.cheers.handleCloseCheersBack );
+
+		},
+		handleSegmentClicked: function(){
+
+			var $seg = $( this );
+			var link = $seg.attr('data-link');
+
+			LJ.cheers.activateCheers( link );
+
+		},
+		handleCloseCheersBack: function(){
+
+			var close_type = LJ.cheers.getCloseType();
+
+			LJ.chat.refreshChatRowsJsp().then(function(){
+
+				LJ.cheers.resetCheersBackState()
+
+				if( close_type == "hide_all" ){
+					LJ.chat.hideChatWrap().then(function(){
+						$('.cheers-back').remove();
+					});
+				}
+
+				if( close_type == "hide_cheers_back" ){
+					$('.cheers-back').remove();
+				}
+
+
+			});
+		},
+		activateCheers: function( link ){
+
+			var $seg = $('.menu-section.--cheers').find('.segment__part[data-link="'+ link +'"]');
+
+			if( $seg.hasClass('--active') ){
+				return LJ.wlog('Already activated');
+			}
+
+			$seg.siblings().removeClass('--active');
+			$seg.addClass('--active');
+
+			LJ.cheers.filterCheersItems( link );
+
+		},
+		filterCheersItems: function( link ){
+
+			$('.cheers').children().css({ display: 'none' });
+			$('.cheers [data-link="' + link + '"]').css({ display: 'flex' });
+
+		},
+		clearAllCheers: function(){
+
+			$('.cheers').html('');
+
+		},
+		showCheersLoader: function(){
+
+			LJ.cheers.$loader = $( LJ.static.renderStaticImage('menu_loader') );
+
+			LJ.cheers.$loader.addClass('none').appendTo('.cheers')
+				.velocity('bounceInQuick', {
+				   	delay: 125,
+				   	duration: 500,
+				   	display: 'block'
+				});		
+
+		},
+		hideCheersLoader: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.cheers.$loader.velocity('shradeOut', {
+					duration: 250,
+					complete: function(){
+						$( this ).remove();
+						resolve();
+					}
+				});
+
+			});
+		},
+		showCheersBackLoader: function(){
+
+			$( LJ.static.renderStaticImage('slide_loader') )
+				.addClass('cheers-back__loader')
+				.hide()
+				.appendTo($('.cheers-back'))
+				.show();
+
+		},
+		hideCheersBackLoader: function(){
+
+			$('.cheers-back').find('.cheers-back__loader').remove();
+
+		},
+		showCheersBackOverlay: function(){
+
+			$('<div class="loader__overlay"></div>')
+				.hide()
+				.appendTo( $('.cheers-back') )
+				.velocity('fadeIn', {
+					duration: 500
+				});
+
+		},
+		hideCheersBackOverlay: function(){
+
+			$('.cheers-back').find('.cheers-back__overlay').remove();
+
+		},
+		handleCheersClicked: function(){
+
+			LJ.cheers.showCheersLoader();
+			LJ.cheers.clearAllCheers();
+			LJ.cheers.fetchAndAddCheers();
+
+		},	
+		fetchAndAddCheers: function(){
+
+			LJ.log('Fetching and setting cheers items...');
+
+			LJ.cheers.removeAllCheers();
+			LJ.cheers.showCheersLoader();
+
+			LJ.api.fetchMeCheers()
+				.then(function( res ){
+					LJ.cheers.fetched_cheers = res.cheers;
+
+				})
+				.then(function(){
+
+					var main_hosts     = _.map( LJ.cheers.fetched_cheers, 'main_host' );
+					var members        = _.flatten( _.map( LJ.cheers.fetched_cheers, 'members' ) );
+
+					var facebook_ids = _.uniq( _.concat( main_hosts, members ) );
+					return LJ.api.fetchUsers( facebook_ids )
+
+				})
+				.then(function( res ){
+					LJ.cheers.fetched_profiles = _.filter( _.map( res, 'user' ), Boolean );
+					return LJ.cheers.renderCheersItems( LJ.cheers.fetched_cheers, LJ.cheers.fetched_profiles );
+
+				})
+				.then(function( cheers_html ){
+					return LJ.cheers.addCheersItems( cheers_html );
+
+				})
+				.then(function( $cheers ){
+					return LJ.cheers.hideCheersLoader();
+
+				})
+				.then(function(){
+					var type = LJ.cheers.getActiveCheersType();
+					return LJ.cheers.showCheersItems( type );
+
+				})
+				.catch(function( e ){
+					LJ.cheers.hideCheersLoader();
+					LJ.wlog(e);
+
+				});
+
+		},
+		getCheersItem: function( cheers_id ){
+
+			return _.find( LJ.cheers.fetched_cheers, function( ch ){
+				return ch.cheers_id == cheers_id;
+			});
+
+		},
+		handleCheersItemClicked: function(){
+
+			var $s        = $( this );
+			var cheers_id = $s.attr('data-cheers-id');
+
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+
+			if( cheers_item.status == "accepted" ){
+
+				if( LJ.chat.getChatState() == "hidden" ){
+					LJ.chat.showChatWrap();
+				}
+
+				LJ.chat.hideChatInview();
+				LJ.cheers.removeCheersBack();
+				LJ.chat.activateChat( cheers_item.chat_id );
+				LJ.chat.showChatInview( cheers_item.chat_id );
+
+			} else {
+
+			// Cheers is in the pending state
+			cheers_item.cheers_type == "sent" ?
+				LJ.before.fetchAndShowBeforeInview( cheers_item.before_id ) :
+				LJ.cheers.validatifyCheersItem( cheers_id );
+
+			}
+
+		},
+		refreshCheersItems: function(){
+
+			var cheers   = LJ.cheers.fetched_cheers;
+			var profiles = LJ.cheers.fetched_profiles;
+
+			if( profiles.length == 0 ){
+				return LJ.cheers.fetchAndAddCheers();
+			}
+
+			var type 		= LJ.cheers.getActiveCheersType();
+			var cheers_html = LJ.cheers.renderCheersItems( cheers, profiles );
+
+			LJ.cheers.removeAllCheers();
+			LJ.cheers.addCheersItems( cheers_html );
+			LJ.cheers.showCheersItems( type, 1 );
+
+
+		},
+		removeAllCheers: function(){
+
+			$('.cheers').children().remove();
+
+		},
+		getActiveCheersType: function(){
+
+			return $('.menu-section.--cheers').find('.segment__part.--active').attr('data-link');
+
+		},
+		renderCheersItems: function( cheers, user_profiles ){
+
+			var html = [];
+			
+			var no_cheers_received = true;
+			var no_cheers_sent     = true;
+				
+			cheers.forEach(function( ch ){
+
+				if( ch.cheers_type == "received" ){
+
+					no_cheers_received = false;
+					var main_member_profile = _.find( user_profiles, function( u ){
+						return u.facebook_id == ch.main_member;
+					});
+					html.push( LJ.cheers.renderCheersItem__Received( ch, main_member_profile, ch.place_name ) );
+
+				}
+
+				if( ch.cheers_type == "sent" ){
+
+					no_cheers_sent = false;
+					var main_host_profile = _.find( user_profiles, function( u ){
+						return u.facebook_id == ch.main_host;
+					})
+					var requested_with_profiles = _.filter( user_profiles, function( u ){
+						return ch.members.indexOf( u.facebook_id ) != -1 && u.facebook_id != LJ.user.facebook_id;
+					});
+					html.push( LJ.cheers.renderCheersItem__Sent( ch, main_host_profile, requested_with_profiles, ch.place_name ));
+				}
+
+			});
+
+			if( no_cheers_sent ){
+				html.push( LJ.cheers.renderCheersItem__SentEmpty() );
+			}
+
+			if( no_cheers_received ){
+				html.push( LJ.cheers.renderCheersItem__ReceivedEmpty() );
+			}
+
+			return html.join('');
+
+		},
+		addCheersItems: function( cheers_html ){
+
+			var $w = $('.cheers');
+
+			$( cheers_html ).hide().appendTo( $w );
+
+		},
+		showCheersItems: function( type, duration ){
+
+			type = type || "sent";
+
+			var $w = $('.cheers');
+
+			$w.find('[data-link="' + type + '"]').velocity('shradeIn', {
+				duration : duration || 250,
+				display  : 'flex'
+			});
+
+		},
+		renderCheersItem__ReceivedEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="received">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meedrink"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_cheers_received_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_cheers_received_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderCheersItem__SentEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="sent">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meedrink"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_cheers_sent_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_cheers_sent_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderCheersItemIcon__Received: function( status ){
+
+			if( status == "pending" ){
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
+					'<i class="icon icon-meedrink"></i>',
+				'</div>'].join('');
+			}
+
+			if( status == "accepted" ){
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
+					'<i class="icon icon-chat-bubble-duo"></i>',
+				'</div>'].join('');
+			}
+
+		},
+		renderCheersItem__Received: function( cheers_object, main_requester, address ){
+
+			var ch = cheers_object;
+
+			var formatted_date = LJ.text( "menurow_date", moment(ch.requested_at) );
+			var img_html       = LJ.pictures.makeImgHtml( main_requester.img_id, main_requester.img_vs, 'menu-row' );
+
+			var groupname 	   = LJ.renderGroupName( main_requester.name );
+			var groupname_html = LJ.text('cheers_item_title_received').replace('%groupname', groupname);
+
+			var address  	   = ch.place_name;
+
+			return LJ.ui.render([
+
+				'<div class="cheers__item" data-link="received" data-before-id="'+ ch.before_id +'" data-cheers-id="' + ch.cheers_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						LJ.cheers.renderCheersItemIcon__Received( ch.status ),
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + groupname_html +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + address + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderCheersItemIcon__Sent: function( status ){
+
+			if( status == "pending" ){
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
+					'<i class="icon icon-pending"></i>',
+				'</div>'].join('');
+			}
+
+			if( status == "accepted" ){
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
+					'<i class="icon icon-chat-bubble-duo"></i>',
+				'</div>'].join('');
+			}
+
+		},
+		renderCheersItem__Sent: function( cheers_object, main_host_profile, requested_with_profiles, address ){
+
+			var ch = cheers_object;
+
+			var formatted_date       = LJ.text( "menurow_date", moment(ch.requested_at) );
+			var img_html             = LJ.pictures.makeImgHtml( main_host_profile.img_id, main_host_profile.img_vs, 'menu-row' );
+
+			var groupname            = LJ.renderGroupName( main_host_profile.name );
+			var groupname_html       = LJ.text('cheers_item_title_sent').replace('%groupname', groupname );
+
+			var requested_with_names = LJ.renderMultipleNames( _.map( requested_with_profiles, 'name' ) );
+			var requested_with_html  = LJ.text("cheers_requested_with").replace( '%names', requested_with_names );
+
+			var address              = ch.place_name;
+
+			return LJ.ui.render([
+
+				'<div class="cheers__item" data-link="sent" data-before-id="'+ ch.before_id +'" data-cheers-id="' + ch.cheers_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						LJ.cheers.renderCheersItemIcon__Sent( ch.status ),
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + groupname_html +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-users"></i></div>',
+							'<h4>' + requested_with_html + '</h4>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + address + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		setCloseType: function( close_type ){
+
+			LJ.cheers.close_type = close_type;
+
+		},
+		getCloseType: function(){
+
+			return LJ.cheers.close_type;
+
+		},
+		validatifyCheersItem: function( cheers_id ){
+
+			if( LJ.cheers.getActiveCheersBack() == cheers_id ){
+				return;
+			}
+
+			LJ.cheers.setActiveCheersBack( cheers_id );
+
+			LJ.cheers.makeCheersBack( cheers_id );
+			LJ.cheers.refreshChatBackUsersJsp();
+
+			if( LJ.chat.getChatState() == "hidden" ){
+				LJ.cheers.setCloseType("hide_all");
+				LJ.chat.showChatWrap();
+			} else {
+				// Chat was already opened. Only set a cheers_mode if none was set before
+				if( !LJ.cheers.getCloseType() ){
+					LJ.cheers.setCloseType("hide_cheers_back");
+				}
+			}
+			LJ.cheers.showCheersBack();
+
+		},
+		setCheersBackState: function( state ){
+
+			LJ.cheers.cheers_back_state = state;
+
+		},
+		getCheersBackState: function(){
+
+			return LJ.cheers.cheers_back_state;
+
+		},
+		pendifyCheersItem: function(){
+
+			if( LJ.cheers.getCheersBackState() != "idle" ){
+				return LJ.wlog('Cheers back object isnt in an idle state');
+			}
+
+			LJ.cheers.setCheersBackState("pending");
+			LJ.cheers.showCheersBackLoader();
+			LJ.cheers.showCheersBackOverlay();
+
+		},
+		dependifyCheersItem: function(){
+
+			if( LJ.cheers.getCheersBackState() != "pending" ){
+				return LJ.wlog('Cheers back object isnt in an pending state');
+			}
+
+			LJ.cheers.setCheersBackState("idle");
+			LJ.cheers.hideCheersBackLoader();
+			LJ.cheers.hideCheersBackOverlay();
+
+		},
+		makeCheersBack: function( cheers_id ){
+
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+
+			var members_profiles = _.filter( LJ.cheers.fetched_profiles, function(m){
+				return cheers_item.members.indexOf( m.facebook_id ) != -1;
+			});
+
+			var html = LJ.cheers.renderCheersBack( members_profiles );
+
+			LJ.cheers.addCheersBack( html );
+			LJ.mainifyUserRow( $('.cheers-back'), cheers_item.main_member );
+			LJ.cheers.setCheersBackHeader( cheers_item )
+			return;
+
+		},
+		acceptifyCheersItem: function( chat_id ){
+
+			LJ.log('Acceptifying cheers item... !');
+
+			// Prepare the chat in the background
+			LJ.chat.hideChatInview();
+			LJ.chat.activateChat( chat_id );
+			LJ.chat.showChatInview( chat_id );
+
+			LJ.chat.bounceChatHeaderIcons( chat_id, 400 );
+
+			// Fade out the chatback wrapper
+			LJ.cheers.hideCheersBack();
+
+		},
+		resetCheersBackState: function(){
+
+			LJ.cheers.setCloseType( null );
+			LJ.cheers.setActiveCheersBack( null );
+			LJ.cheers.setCheersBackState("idle");
+
+		},
+		removeCheersBack: function(){
+
+			LJ.cheers.resetCheersBackState();
+			$('.cheers-back').remove();
+
+		},	
+		hideCheersBack: function(){
+
+			$('.cheers-back').velocity('shradeOut', {
+				duration: 500,
+				complete: function(){
+
+					$( this ).remove();
+					LJ.cheers.resetCheersBackState();
+				}
+			});
+
+		},
+		updateCheersItem: function( cheers_id, opts ){
+
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+
+			_.keys( cheers_item ).forEach(function( key ){
+				if( opts[ key ] && typeof opts[ key ] == typeof cheers_item[ key ] ){
+					cheers_item[ key ] = opts[ key ];
+				}
+			});
+
+		},
+		getCheersRow: function( cheers_id ){
+
+			return $('.cheers__item[data-cheers-id="'+ cheers_id +'"]');
+
+		},
+		acceptifyCheersRow: function( cheers_id ){
+
+			var $row        = LJ.cheers.getCheersRow( cheers_id );
+			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
+			
+			if( $row.length == 0 ){
+				return;
+			}
+			
+			var $icon;
+			if( cheers_item.cheers_type == "sent" ){
+				$icon = LJ.cheers.renderCheersItemIcon__Sent( "accepted" );
+			} else {
+				$icon = LJ.cheers.renderCheersItemIcon__Received( "accepted" );
+			}
+
+			$row.find('.row-pic__icon').replaceWith( $icon );
+
+		},	
+		setActiveCheersBack: function( cheers_id ){
+
+			LJ.cheers.active_cheers_back = cheers_id;
+
+		},
+		getActiveCheersBack: function(){
+
+			return LJ.cheers.active_cheers_back;
+
+		},
+		addCheersBack: function( html ){
+
+			$('.chat').find('.cheers-back').remove();
+			$( html ).hide().appendTo( $('.chat') );
+
+		},
+		showCheersBack: function(){
+
+			$('.chat').css({ 'display': 'flex' }).find('.cheers-back').show();
+
+		},
+		renderChatHeaderCloseIcon: function(){
+
+			return [
+				'<div class="chat-inview__icon --close js-close-cheers-back --round-icon">',
+					'<i class="icon icon-cancel"></div>',
+				'</div>'
+			].join('');
+
+		},
+		setCheersBackHeader: function( cheers_item ){
+			
+			var $chat_header = $('.cheers-back').find('.chat-inview-header');
+			// Replace icons
+			$chat_header.find('.chat-inview__icon').remove();
+			$chat_header.append( LJ.cheers.renderChatHeaderCloseIcon() );
+
+			var formatted_date = LJ.text('chatinview_date', moment(cheers_item.begins_at) );
+			$chat_header.find('.chat-inview-title__h1').html( '<span class="--date">'+ formatted_date +'</span>' );
+			$chat_header.find('.chat-inview-title__h2').html( '<span class="--place">'+ cheers_item.place_name +'</span>' );
+
+		},
+		acceptifyChat: function(){
+
+			
+			
+		},
+		refreshChatBackUsersJsp: function(){
+			
+			var $w = $('.cheers-back');
+			
+			return LJ.ui.turnToJsp( $w.find('.cheers-back-users'), {
+				jsp_id: 'cheers_back'
+			});
+
+		},
+		renderCheersBack: function( members_profiles ){
+
+			var pictures = [];
+			members_profiles.forEach(function( u ){
+				pictures.push({ img_id: u.img_id, img_vs: u.img_vs });
+			});
+			var pictures  = LJ.pictures.makeRosaceHtml( pictures, 'cheers-back' );
+			var user_rows = LJ.renderUserRows( members_profiles );
+
+			var cheers_back_html = LJ.chat.renderChatInviewHeader(); // Borrow it to the chat module
+
+			return LJ.ui.render([
+
+				'<div class="cheers-back">',
+					cheers_back_html,
+					'<div class="cheers-back-pictures">',
+			        	pictures, 
+			        '</div>',
+					'<div class="cheers-back-groupname">',
+						'<div class="cheers-back-groupname__h1">',
+							'<span data-lid="cheers_back_groupname"></span>',
+						'</div>',
+					'</div>',
+			        '<div class="cheers-back-users">',
+			        	user_rows,
+			        '</div>',
+			        '<div class="cheers-back-actions">',
+			        	'<button class="--round-icon js-validate">',
+			        		'<i class="icon icon-meedrink"></i>',
+			        		'<span data-lid="chat_inview_validate"></span>',
+			        	'</button>',
+			        '</div>',
+				'</div>'
+
+			].join(''));
+
+		},
+        handleValidate: function(){
+
+			var $s = $( this );
+
+			if( LJ.cheers.getCheersBackState() == "pending" ){
+				return;
+			}
+
+			var cheers_id = LJ.cheers.getActiveCheersBack();
+
+        	LJ.log('Cheering back...');
+        	LJ.cheers.cheersBack( cheers_id );
+
+        },
+        cheersBack: function( cheers_id ){
+
+			var before_id = LJ.cheers.getCheersItem( cheers_id ).before_id;
+			var members   = LJ.cheers.getCheersItem( cheers_id ).members;
+			
+			LJ.cheers.pendifyCheersItem();
+        	LJ.api.changeGroupStatus({
+        		cheers_id : cheers_id,
+        		before_id : before_id,
+        		members   : members,
+        		status    : "accepted" 
+        	})
+    		.then(function( res ){
+    			LJ.log("Cheers back successfully");
+
+    		})
+    		.catch(function( e ){
+				
+				LJ.log(e);
+    			LJ.ui.showToast( LJ.text("to_default_error"), "error" );
+    			LJ.cheers.dependifyCheersItem();
+
+    		});
+
+        },
+        loaderifyCheersBack: function(){
+        	return LJ.promise(function( resolve, reject ){	
+
+        		var d = LJ.cheers.cheers_back_duration;
+
+        		$('.cheers-back')
+        			.children()
+        			.velocity('shradeOut', { duration: d, display: 'none' });
+
+	        	var d = LJ.static.renderStaticImage('slide_loader');
+				$( d ).addClass('js-cheers-back-loader')
+					  .hide().appendTo('.cheers-back')
+					  .velocity('shradeIn', { duration: d, delay: d } );
+
+				LJ.delay( 2*d ).then( resolve );
+
+        	});
+
+        },
+        deloaderifyCheersBack: function(){
+        	return LJ.promise(function( resolve, reject ){
+
+	        	var d = LJ.cheers.cheers_back_duration;
+
+				$('.js-cheers-back-loader')
+					  .velocity('shradeOut', { duration: d, complete: function(){ $(this).remove(); }} );
+
+        		$('.cheers-back')
+        			.children()
+        			.velocity('shradeIn', { duration: d, delay: d, display: 'flex' });
+
+
+				LJ.delay( 2*d ).then( resolve );
+
+        	});
+        }
+
+	});
+		
+
+	window.LJ.dev = _.merge( window.LJ.dev || {}, {
+
+		n_cloudinary_api_calls: 0,
+		t_login_process: 0,
+
+		view_ids: {
+			"before": "/img/ios/before.jpg",
+			"chat"  : "/img/ios/chat.png",
+			"chat_inview": "/img/ios/chat_inview.png",
+			"request": "/img/ios/request.png"
+
+		},
+		init: function(){
+
+			Mousetrap.bind('command+c', LJ.dev.toggleColorPalette );
+			Mousetrap.bind('command+v', function(){
+				LJ.dev.toggleAppView();
+			});
+
+		},
+		toggleColorPalette: function(){
+
+			if( $('.palette').length > 0 ){
+				return $('.palette').toggleClass('nonei');
+			}
+
+			LJ.log('Showing color palette');
+			var $div = $([
+				'<div class="palette">',
+					'<div class="palette__color --gentle"></div>',
+					'<div class="palette__color --royal"></div>',
+					'<div class="palette__color --odebo"></div>',
+					'<div class="palette__color --mushia"></div>',
+					'<div class="palette__color --purplepills"></div>',
+					'<div class="palette__color --blueboy"></div>',
+					'<div class="palette__color --pinkirl"></div>',
+					'<div class="palette__color --greenected"></div>',
+					'<div class="palette__color --validateen"></div>',
+				'</div>'
+				].join('')
+			);
+
+			$div.appendTo('body');
+
+		},
+		toggleAppView: function( view_id ){
+
+			if( $('.ios').length > 0 ){
+				return $('.ios').toggleClass('nonei');
+			}
+
+		},
+		showAppView: function( view_id ){
+
+			if( $('.ios').length > 0 ){
+				$('.ios').remove();
+			}
+
+			LJ.log('Showing ios view');
+	      
+	        var $div = $('<div class="ios"></div>');
+	        var url = LJ.dev.view_ids[ view_id ];
+
+	        if( !url ){
+	            return LJ.wlog('Couldnt find the url');
+	        }
+
+	        var img = '<img width="100%" src="' + url + '"/>';
+	        $div
+	            .appendTo('body')
+	            .hide()
+	            .append( img )
+	            .show();
+
+		},
+		showAppView__Before: function(){
+			return LJ.dev.showAppView('before');
+		},
+		showAppView__Chat: function(){
+			return LJ.dev.showAppView('chat');
+		},
+		showAppView__ChatInview: function(){
+			return LJ.dev.showAppView('chat_inview');
+		},
+		showAppView__Request: function(){
+			return LJ.dev.showAppView('request');
+		}
+
+	});
+
+	window.LJ.connecter = _.merge( window.LJ.connecter || {}, {
+
+		online_users: [],
+
+		init: function(){
+
+			if( LJ.app_mode == "dev" ){
+				return LJ.log("Mode is 'dev', not initializing the connecter system");
+			}
+			
+			LJ.connecter.refreshOnlineUsers();
+			LJ.connecter.handleDomEvents();
+			return;
+
+		},
+		handleDomEvents: function(){
+
+		},
+		getUserStatus: function( facebook_id ){
+
+			return LJ.connecter.online_users.indexOf( facebook_id ) == -1 ? "offline" : "online";
+
+		},
+		refreshOnlineUsers: function(){
+
+			LJ.log('Refreshing online users...');
+			var thirty_seconds = 30000;
+
+			LJ.api.fetchOnlineUsers()
+				.then(function( online_users ){
+
+					$('.js-user-online').removeClass('--online');
+					LJ.connecter.online_users = online_users;
+					online_users.forEach(function( facebook_id ){
+
+						$('.js-user-online[data-facebook-id="'+ facebook_id +'"]').addClass('--online');
+
+					});
+
+				})
+				.then(function(){
+					return LJ.delay( thirty_seconds )
+
+				})
+				.then(function(){
+					return LJ.connecter.refreshOnlineUsers();
+
+				})
+
+		}
+
+	});
+
 	window.LJ.chat = _.merge( window.LJ.chat || {}, {
 
 		parallel_fetches_count: 30,
@@ -32422,6 +33460,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		handleDomEvents: function(){
 
 			$('.app__menu-item.--chats').on('click', LJ.chat.handleToggleChatWrap );
+			$('.app__menu-item.--notifications').on('click', LJ.chat.hideChatWrap );
 			$('.chat__close').on('click', LJ.chat.hideChatWrap );
 			$('.chat').on('click', '.chat-row', LJ.chat.handleChatRowClicked );
 
@@ -33423,7 +34462,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			var type 	 = opts.type;
 
 			var title    = opts.title || '<span data-lid="chat_empty_title"></span>';
-			var icon 	 = opts.icon  || '<i class="icon icon-telescope"></i>';
+			var icon 	 = opts.icon  || '<i class="icon icon-chat-bubble-duo"></i>';
 
 			return LJ.ui.render([
 
@@ -34727,7 +35766,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			return [
 					'<div class="chat-inview-header">',
 						'<div class="chat-inview__icon --previous js-chat-back --round-icon">',
-		            		'<i class="icon icon-arrow-left"></i>',
+		            		'<i class="icon icon-arrow-left-rounded"></i>',
 				        '</div>',
 				        '<div class="chat-inview__icon --options --round-icon">',
 				            '<i class="icon icon-pending-vertical"></i>',
@@ -35202,1212 +36241,6 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 	});
 
-	window.LJ.cheers = _.merge( window.LJ.cheers || {}, {
-
-		cheers_back_duration: 450,
-
-		fetched_cheers     : [],
-		fetched_profiles   : [],
-		active_cheers_back : null,
-		cheers_back_state  : "idle",
-
-		init: function(){
-
-			LJ.cheers.handleDomEvents();
-			LJ.cheers.activateCheers("received");
-			return;
-
-		},
-		handleDomEvents: function(){
-
-			$('.menu-section.--cheers').on('click', '.segment__part', LJ.cheers.handleSegmentClicked );
-			$('.menu-item.--cheers').one('click', LJ.cheers.handleCheersClicked );
-			$('.cheers').on('click', '.cheers__item', LJ.cheers.handleCheersItemClicked );
-			$('.chat').on('click', '.js-validate', LJ.cheers.handleValidate );
-			$('body').on('click', '.js-close-cheers-back', LJ.cheers.handleCloseCheersBack );
-
-		},
-		handleSegmentClicked: function(){
-
-			var $seg = $( this );
-			var link = $seg.attr('data-link');
-
-			LJ.cheers.activateCheers( link );
-
-		},
-		handleCloseCheersBack: function(){
-
-			var close_type = LJ.cheers.getCloseType();
-
-			LJ.chat.refreshChatRowsJsp().then(function(){
-
-				LJ.cheers.resetCheersBackState()
-
-				if( close_type == "hide_all" ){
-					LJ.chat.hideChatWrap().then(function(){
-						$('.cheers-back').remove();
-					});
-				}
-
-				if( close_type == "hide_cheers_back" ){
-					$('.cheers-back').remove();
-				}
-
-
-			});
-		},
-		activateCheers: function( link ){
-
-			var $seg = $('.menu-section.--cheers').find('.segment__part[data-link="'+ link +'"]');
-
-			if( $seg.hasClass('--active') ){
-				return LJ.wlog('Already activated');
-			}
-
-			$seg.siblings().removeClass('--active');
-			$seg.addClass('--active');
-
-			LJ.cheers.filterCheersItems( link );
-
-		},
-		filterCheersItems: function( link ){
-
-			$('.cheers').children().css({ display: 'none' });
-			$('.cheers [data-link="' + link + '"]').css({ display: 'flex' });
-
-		},
-		clearAllCheers: function(){
-
-			$('.cheers').html('');
-
-		},
-		showCheersLoader: function(){
-
-			LJ.cheers.$loader = $( LJ.static.renderStaticImage('menu_loader') );
-
-			LJ.cheers.$loader.addClass('none').appendTo('.cheers')
-				.velocity('bounceInQuick', {
-				   	delay: 125,
-				   	duration: 500,
-				   	display: 'block'
-				});		
-
-		},
-		hideCheersLoader: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.cheers.$loader.velocity('shradeOut', {
-					duration: 250,
-					complete: function(){
-						$( this ).remove();
-						resolve();
-					}
-				});
-
-			});
-		},
-		showCheersBackLoader: function(){
-
-			$( LJ.static.renderStaticImage('slide_loader') )
-				.addClass('cheers-back__loader')
-				.hide()
-				.appendTo($('.cheers-back'))
-				.show();
-
-		},
-		hideCheersBackLoader: function(){
-
-			$('.cheers-back').find('.cheers-back__loader').remove();
-
-		},
-		showCheersBackOverlay: function(){
-
-			$('<div class="loader__overlay"></div>')
-				.hide()
-				.appendTo( $('.cheers-back') )
-				.velocity('fadeIn', {
-					duration: 500
-				});
-
-		},
-		hideCheersBackOverlay: function(){
-
-			$('.cheers-back').find('.cheers-back__overlay').remove();
-
-		},
-		handleCheersClicked: function(){
-
-			LJ.cheers.showCheersLoader();
-			LJ.cheers.clearAllCheers();
-			LJ.cheers.fetchAndAddCheers();
-
-		},	
-		fetchAndAddCheers: function(){
-
-			LJ.log('Fetching and setting cheers items...');
-
-			LJ.cheers.removeAllCheers();
-			LJ.cheers.showCheersLoader();
-
-			LJ.api.fetchMeCheers()
-				.then(function( res ){
-					LJ.cheers.fetched_cheers = res.cheers;
-
-				})
-				.then(function(){
-
-					var main_hosts     = _.map( LJ.cheers.fetched_cheers, 'main_host' );
-					var members        = _.flatten( _.map( LJ.cheers.fetched_cheers, 'members' ) );
-
-					var facebook_ids = _.uniq( _.concat( main_hosts, members ) );
-					return LJ.api.fetchUsers( facebook_ids )
-
-				})
-				.then(function( res ){
-					LJ.cheers.fetched_profiles = _.filter( _.map( res, 'user' ), Boolean );
-					return LJ.cheers.renderCheersItems( LJ.cheers.fetched_cheers, LJ.cheers.fetched_profiles );
-
-				})
-				.then(function( cheers_html ){
-					return LJ.cheers.addCheersItems( cheers_html );
-
-				})
-				.then(function( $cheers ){
-					return LJ.cheers.hideCheersLoader();
-
-				})
-				.then(function(){
-					var type = LJ.cheers.getActiveCheersType();
-					return LJ.cheers.showCheersItems( type );
-
-				})
-				.catch(function( e ){
-					LJ.cheers.hideCheersLoader();
-					LJ.wlog(e);
-
-				});
-
-		},
-		getCheersItem: function( cheers_id ){
-
-			return _.find( LJ.cheers.fetched_cheers, function( ch ){
-				return ch.cheers_id == cheers_id;
-			});
-
-		},
-		handleCheersItemClicked: function(){
-
-			var $s        = $( this );
-			var cheers_id = $s.attr('data-cheers-id');
-
-			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
-
-			if( cheers_item.status == "accepted" ){
-
-				if( LJ.chat.getChatState() == "hidden" ){
-					LJ.chat.showChatWrap();
-				}
-
-				LJ.chat.hideChatInview();
-				LJ.cheers.removeCheersBack();
-				LJ.chat.activateChat( cheers_item.chat_id );
-				LJ.chat.showChatInview( cheers_item.chat_id );
-
-			} else {
-
-			// Cheers is in the pending state
-			cheers_item.cheers_type == "sent" ?
-				LJ.before.fetchAndShowBeforeInview( cheers_item.before_id ) :
-				LJ.cheers.validatifyCheersItem( cheers_id );
-
-			}
-
-		},
-		refreshCheersItems: function(){
-
-			var cheers   = LJ.cheers.fetched_cheers;
-			var profiles = LJ.cheers.fetched_profiles;
-
-			if( profiles.length == 0 ){
-				return LJ.cheers.fetchAndAddCheers();
-			}
-
-			var type 		= LJ.cheers.getActiveCheersType();
-			var cheers_html = LJ.cheers.renderCheersItems( cheers, profiles );
-
-			LJ.cheers.removeAllCheers();
-			LJ.cheers.addCheersItems( cheers_html );
-			LJ.cheers.showCheersItems( type, 1 );
-
-
-		},
-		removeAllCheers: function(){
-
-			$('.cheers').children().remove();
-
-		},
-		getActiveCheersType: function(){
-
-			return $('.menu-section.--cheers').find('.segment__part.--active').attr('data-link');
-
-		},
-		renderCheersItems: function( cheers, user_profiles ){
-
-			var html = [];
-			
-			var no_cheers_received = true;
-			var no_cheers_sent     = true;
-				
-			cheers.forEach(function( ch ){
-
-				if( ch.cheers_type == "received" ){
-
-					no_cheers_received = false;
-					var main_member_profile = _.find( user_profiles, function( u ){
-						return u.facebook_id == ch.main_member;
-					});
-					html.push( LJ.cheers.renderCheersItem__Received( ch, main_member_profile, ch.place_name ) );
-
-				}
-
-				if( ch.cheers_type == "sent" ){
-
-					no_cheers_sent = false;
-					var main_host_profile = _.find( user_profiles, function( u ){
-						return u.facebook_id == ch.main_host;
-					})
-					var requested_with_profiles = _.filter( user_profiles, function( u ){
-						return ch.members.indexOf( u.facebook_id ) != -1 && u.facebook_id != LJ.user.facebook_id;
-					});
-					html.push( LJ.cheers.renderCheersItem__Sent( ch, main_host_profile, requested_with_profiles, ch.place_name ));
-				}
-
-			});
-
-			if( no_cheers_sent ){
-				html.push( LJ.cheers.renderCheersItem__SentEmpty() );
-			}
-
-			if( no_cheers_received ){
-				html.push( LJ.cheers.renderCheersItem__ReceivedEmpty() );
-			}
-
-			return html.join('');
-
-		},
-		addCheersItems: function( cheers_html ){
-
-			var $w = $('.cheers');
-
-			$( cheers_html ).hide().appendTo( $w );
-
-		},
-		showCheersItems: function( type, duration ){
-
-			type = type || "sent";
-
-			var $w = $('.cheers');
-
-			$w.find('[data-link="' + type + '"]').velocity('shradeIn', {
-				duration : duration || 250,
-				display  : 'flex'
-			});
-
-		},
-		renderCheersItem__ReceivedEmpty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty" data-link="received">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-drinks"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_cheers_received_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_cheers_received_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderCheersItem__SentEmpty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty" data-link="sent">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-drinks"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_cheers_sent_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_cheers_sent_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderCheersItemIcon__Received: function( status ){
-
-			if( status == "pending" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
-					'<i class="icon icon-drinks"></i>',
-				'</div>'].join('');
-			}
-
-			if( status == "accepted" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
-					'<i class="icon icon-chat-bubble-duo"></i>',
-				'</div>'].join('');
-			}
-
-		},
-		renderCheersItem__Received: function( cheers_object, main_requester, address ){
-
-			var ch = cheers_object;
-
-			var formatted_date = LJ.text( "menurow_date", moment(ch.requested_at) );
-			var img_html       = LJ.pictures.makeImgHtml( main_requester.img_id, main_requester.img_vs, 'menu-row' );
-
-			var groupname 	   = LJ.renderGroupName( main_requester.name );
-			var groupname_html = LJ.text('cheers_item_title_received').replace('%groupname', groupname);
-
-			var address  	   = ch.place_name;
-
-			return LJ.ui.render([
-
-				'<div class="cheers__item" data-link="received" data-before-id="'+ ch.before_id +'" data-cheers-id="' + ch.cheers_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						LJ.cheers.renderCheersItemIcon__Received( ch.status ),
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + groupname_html +'</h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + address + '</h4>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderCheersItemIcon__Sent: function( status ){
-
-			if( status == "pending" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
-					'<i class="icon icon-pending"></i>',
-				'</div>'].join('');
-			}
-
-			if( status == "accepted" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
-					'<i class="icon icon-chat-bubble-duo"></i>',
-				'</div>'].join('');
-			}
-
-		},
-		renderCheersItem__Sent: function( cheers_object, main_host_profile, requested_with_profiles, address ){
-
-			var ch = cheers_object;
-
-			var formatted_date       = LJ.text( "menurow_date", moment(ch.requested_at) );
-			var img_html             = LJ.pictures.makeImgHtml( main_host_profile.img_id, main_host_profile.img_vs, 'menu-row' );
-
-			var groupname            = LJ.renderGroupName( main_host_profile.name );
-			var groupname_html       = LJ.text('cheers_item_title_sent').replace('%groupname', groupname );
-
-			var requested_with_names = LJ.renderMultipleNames( _.map( requested_with_profiles, 'name' ) );
-			var requested_with_html  = LJ.text("cheers_requested_with").replace( '%names', requested_with_names );
-
-			var address              = ch.place_name;
-
-			return LJ.ui.render([
-
-				'<div class="cheers__item" data-link="sent" data-before-id="'+ ch.before_id +'" data-cheers-id="' + ch.cheers_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						LJ.cheers.renderCheersItemIcon__Sent( ch.status ),
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + groupname_html +'</h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-users"></i></div>',
-							'<h4>' + requested_with_html + '</h4>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + address + '</h4>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		setCloseType: function( close_type ){
-
-			LJ.cheers.close_type = close_type;
-
-		},
-		getCloseType: function(){
-
-			return LJ.cheers.close_type;
-
-		},
-		validatifyCheersItem: function( cheers_id ){
-
-			if( LJ.cheers.getActiveCheersBack() == cheers_id ){
-				return;
-			}
-
-			LJ.cheers.setActiveCheersBack( cheers_id );
-
-			LJ.cheers.makeCheersBack( cheers_id );
-			LJ.cheers.refreshChatBackUsersJsp();
-
-			if( LJ.chat.getChatState() == "hidden" ){
-				LJ.cheers.setCloseType("hide_all");
-				LJ.chat.showChatWrap();
-			} else {
-				// Chat was already opened. Only set a cheers_mode if none was set before
-				if( !LJ.cheers.getCloseType() ){
-					LJ.cheers.setCloseType("hide_cheers_back");
-				}
-			}
-			LJ.cheers.showCheersBack();
-
-		},
-		setCheersBackState: function( state ){
-
-			LJ.cheers.cheers_back_state = state;
-
-		},
-		getCheersBackState: function(){
-
-			return LJ.cheers.cheers_back_state;
-
-		},
-		pendifyCheersItem: function(){
-
-			if( LJ.cheers.getCheersBackState() != "idle" ){
-				return LJ.wlog('Cheers back object isnt in an idle state');
-			}
-
-			LJ.cheers.setCheersBackState("pending");
-			LJ.cheers.showCheersBackLoader();
-			LJ.cheers.showCheersBackOverlay();
-
-		},
-		dependifyCheersItem: function(){
-
-			if( LJ.cheers.getCheersBackState() != "pending" ){
-				return LJ.wlog('Cheers back object isnt in an pending state');
-			}
-
-			LJ.cheers.setCheersBackState("idle");
-			LJ.cheers.hideCheersBackLoader();
-			LJ.cheers.hideCheersBackOverlay();
-
-		},
-		makeCheersBack: function( cheers_id ){
-
-			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
-
-			var members_profiles = _.filter( LJ.cheers.fetched_profiles, function(m){
-				return cheers_item.members.indexOf( m.facebook_id ) != -1;
-			});
-
-			var html = LJ.cheers.renderCheersBack( members_profiles );
-
-			LJ.cheers.addCheersBack( html );
-			LJ.mainifyUserRow( $('.cheers-back'), cheers_item.main_member );
-			LJ.cheers.setCheersBackHeader( cheers_item )
-			return;
-
-		},
-		acceptifyCheersItem: function( chat_id ){
-
-			LJ.log('Acceptifying cheers item... !');
-
-			// Prepare the chat in the background
-			LJ.chat.hideChatInview();
-			LJ.chat.activateChat( chat_id );
-			LJ.chat.showChatInview( chat_id );
-
-			LJ.chat.bounceChatHeaderIcons( chat_id, 400 );
-
-			// Fade out the chatback wrapper
-			LJ.cheers.hideCheersBack();
-
-		},
-		resetCheersBackState: function(){
-
-			LJ.cheers.setCloseType( null );
-			LJ.cheers.setActiveCheersBack( null );
-			LJ.cheers.setCheersBackState("idle");
-
-		},
-		removeCheersBack: function(){
-
-			LJ.cheers.resetCheersBackState();
-			$('.cheers-back').remove();
-
-		},	
-		hideCheersBack: function(){
-
-			$('.cheers-back').velocity('shradeOut', {
-				duration: 500,
-				complete: function(){
-
-					$( this ).remove();
-					LJ.cheers.resetCheersBackState();
-				}
-			});
-
-		},
-		updateCheersItem: function( cheers_id, opts ){
-
-			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
-
-			_.keys( cheers_item ).forEach(function( key ){
-				if( opts[ key ] && typeof opts[ key ] == typeof cheers_item[ key ] ){
-					cheers_item[ key ] = opts[ key ];
-				}
-			});
-
-		},
-		getCheersRow: function( cheers_id ){
-
-			return $('.cheers__item[data-cheers-id="'+ cheers_id +'"]');
-
-		},
-		acceptifyCheersRow: function( cheers_id ){
-
-			var $row        = LJ.cheers.getCheersRow( cheers_id );
-			var cheers_item = LJ.cheers.getCheersItem( cheers_id );
-			
-			if( $row.length == 0 ){
-				return;
-			}
-			
-			var $icon;
-			if( cheers_item.cheers_type == "sent" ){
-				$icon = LJ.cheers.renderCheersItemIcon__Sent( "accepted" );
-			} else {
-				$icon = LJ.cheers.renderCheersItemIcon__Received( "accepted" );
-			}
-
-			$row.find('.row-pic__icon').replaceWith( $icon );
-
-		},	
-		setActiveCheersBack: function( cheers_id ){
-
-			LJ.cheers.active_cheers_back = cheers_id;
-
-		},
-		getActiveCheersBack: function(){
-
-			return LJ.cheers.active_cheers_back;
-
-		},
-		addCheersBack: function( html ){
-
-			$('.chat').find('.cheers-back').remove();
-			$( html ).hide().appendTo( $('.chat') );
-
-		},
-		showCheersBack: function(){
-
-			$('.chat').css({ 'display': 'flex' }).find('.cheers-back').show();
-
-		},
-		renderChatHeaderCloseIcon: function(){
-
-			return [
-				'<div class="chat-inview__icon --close js-close-cheers-back --round-icon">',
-					'<i class="icon icon-cancel"></div>',
-				'</div>'
-			].join('');
-
-		},
-		setCheersBackHeader: function( cheers_item ){
-			
-			var $chat_header = $('.cheers-back').find('.chat-inview-header');
-			// Replace icons
-			$chat_header.find('.chat-inview__icon').remove();
-			$chat_header.append( LJ.cheers.renderChatHeaderCloseIcon() );
-
-			var formatted_date = LJ.text('chatinview_date', moment(cheers_item.begins_at) );
-			$chat_header.find('.chat-inview-title__h1').html( '<span class="--date">'+ formatted_date +'</span>' );
-			$chat_header.find('.chat-inview-title__h2').html( '<span class="--place">'+ cheers_item.place_name +'</span>' );
-
-		},
-		acceptifyChat: function(){
-
-			
-			
-		},
-		refreshChatBackUsersJsp: function(){
-			
-			var $w = $('.cheers-back');
-			
-			return LJ.ui.turnToJsp( $w.find('.cheers-back-users'), {
-				jsp_id: 'cheers_back'
-			});
-
-		},
-		renderCheersBack: function( members_profiles ){
-
-			var pictures = [];
-			members_profiles.forEach(function( u ){
-				pictures.push({ img_id: u.img_id, img_vs: u.img_vs });
-			});
-			var pictures  = LJ.pictures.makeRosaceHtml( pictures, 'cheers-back' );
-			var user_rows = LJ.renderUserRows( members_profiles );
-
-			var cheers_back_html = LJ.chat.renderChatInviewHeader(); // Borrow it to the chat module
-
-			return LJ.ui.render([
-
-				'<div class="cheers-back">',
-					cheers_back_html,
-					'<div class="cheers-back-pictures">',
-			        	pictures, 
-			        '</div>',
-					'<div class="cheers-back-groupname">',
-						'<div class="cheers-back-groupname__h1">',
-							'<span data-lid="cheers_back_groupname"></span>',
-						'</div>',
-					'</div>',
-			        '<div class="cheers-back-users">',
-			        	user_rows,
-			        '</div>',
-			        '<div class="cheers-back-actions">',
-			        	'<button class="--round-icon js-validate">',
-			        		'<i class="icon icon-drinks"></i>',
-			        		'<span data-lid="chat_inview_validate"></span>',
-			        	'</button>',
-			        '</div>',
-				'</div>'
-
-			].join(''));
-
-		},
-        handleValidate: function(){
-
-			var $s = $( this );
-
-			if( LJ.cheers.getCheersBackState() == "pending" ){
-				return;
-			}
-
-			var cheers_id = LJ.cheers.getActiveCheersBack();
-
-        	LJ.log('Cheering back...');
-        	LJ.cheers.cheersBack( cheers_id );
-
-        },
-        cheersBack: function( cheers_id ){
-
-			var before_id = LJ.cheers.getCheersItem( cheers_id ).before_id;
-			var members   = LJ.cheers.getCheersItem( cheers_id ).members;
-			
-			LJ.cheers.pendifyCheersItem();
-        	LJ.api.changeGroupStatus({
-        		cheers_id : cheers_id,
-        		before_id : before_id,
-        		members   : members,
-        		status    : "accepted" 
-        	})
-    		.then(function( res ){
-    			LJ.log("Cheers back successfully");
-
-    		})
-    		.catch(function( e ){
-				
-				LJ.log(e);
-    			LJ.ui.showToast( LJ.text("to_default_error"), "error" );
-    			LJ.cheers.dependifyCheersItem();
-
-    		});
-
-        },
-        loaderifyCheersBack: function(){
-        	return LJ.promise(function( resolve, reject ){	
-
-        		var d = LJ.cheers.cheers_back_duration;
-
-        		$('.cheers-back')
-        			.children()
-        			.velocity('shradeOut', { duration: d, display: 'none' });
-
-	        	var d = LJ.static.renderStaticImage('slide_loader');
-				$( d ).addClass('js-cheers-back-loader')
-					  .hide().appendTo('.cheers-back')
-					  .velocity('shradeIn', { duration: d, delay: d } );
-
-				LJ.delay( 2*d ).then( resolve );
-
-        	});
-
-        },
-        deloaderifyCheersBack: function(){
-        	return LJ.promise(function( resolve, reject ){
-
-	        	var d = LJ.cheers.cheers_back_duration;
-
-				$('.js-cheers-back-loader')
-					  .velocity('shradeOut', { duration: d, complete: function(){ $(this).remove(); }} );
-
-        		$('.cheers-back')
-        			.children()
-        			.velocity('shradeIn', { duration: d, delay: d, display: 'flex' });
-
-
-				LJ.delay( 2*d ).then( resolve );
-
-        	});
-        }
-
-	});
-		
-
-	window.LJ.connecter = _.merge( window.LJ.connecter || {}, {
-
-		online_users: [],
-
-		init: function(){
-
-			if( LJ.app_mode == "dev" ){
-				return LJ.log("Mode is 'dev', not initializing the connecter system");
-			}
-			
-			LJ.connecter.refreshOnlineUsers();
-			LJ.connecter.handleDomEvents();
-			return;
-
-		},
-		handleDomEvents: function(){
-
-		},
-		getUserStatus: function( facebook_id ){
-
-			return LJ.connecter.online_users.indexOf( facebook_id ) == -1 ? "offline" : "online";
-
-		},
-		refreshOnlineUsers: function(){
-
-			LJ.log('Refreshing online users...');
-			var thirty_seconds = 30000;
-
-			LJ.api.fetchOnlineUsers()
-				.then(function( online_users ){
-
-					$('.js-user-online').removeClass('--online');
-					LJ.connecter.online_users = online_users;
-					online_users.forEach(function( facebook_id ){
-
-						$('.js-user-online[data-facebook-id="'+ facebook_id +'"]').addClass('--online');
-
-					});
-
-				})
-				.then(function(){
-					return LJ.delay( thirty_seconds )
-
-				})
-				.then(function(){
-					return LJ.connecter.refreshOnlineUsers();
-
-				})
-
-		}
-
-	});
-
-	window.LJ.dev = _.merge( window.LJ.dev || {}, {
-
-		n_cloudinary_api_calls: 0,
-		t_login_process: 0,
-
-		view_ids: {
-			"before": "/img/ios/before.jpg",
-			"chat"  : "/img/ios/chat.png",
-			"chat_inview": "/img/ios/chat_inview.png",
-			"request": "/img/ios/request.png"
-
-		},
-		init: function(){
-
-			Mousetrap.bind('command+c', LJ.dev.toggleColorPalette );
-			Mousetrap.bind('command+v', function(){
-				LJ.dev.toggleAppView();
-			});
-
-		},
-		toggleColorPalette: function(){
-
-			if( $('.palette').length > 0 ){
-				return $('.palette').toggleClass('nonei');
-			}
-
-			LJ.log('Showing color palette');
-			var $div = $([
-				'<div class="palette">',
-					'<div class="palette__color --gentle"></div>',
-					'<div class="palette__color --royal"></div>',
-					'<div class="palette__color --odebo"></div>',
-					'<div class="palette__color --mushia"></div>',
-					'<div class="palette__color --purplepills"></div>',
-					'<div class="palette__color --blueboy"></div>',
-					'<div class="palette__color --pinkirl"></div>',
-					'<div class="palette__color --greenected"></div>',
-					'<div class="palette__color --validateen"></div>',
-				'</div>'
-				].join('')
-			);
-
-			$div.appendTo('body');
-
-		},
-		toggleAppView: function( view_id ){
-
-			if( $('.ios').length > 0 ){
-				return $('.ios').toggleClass('nonei');
-			}
-
-		},
-		showAppView: function( view_id ){
-
-			if( $('.ios').length > 0 ){
-				$('.ios').remove();
-			}
-
-			LJ.log('Showing ios view');
-	      
-	        var $div = $('<div class="ios"></div>');
-	        var url = LJ.dev.view_ids[ view_id ];
-
-	        if( !url ){
-	            return LJ.wlog('Couldnt find the url');
-	        }
-
-	        var img = '<img width="100%" src="' + url + '"/>';
-	        $div
-	            .appendTo('body')
-	            .hide()
-	            .append( img )
-	            .show();
-
-		},
-		showAppView__Before: function(){
-			return LJ.dev.showAppView('before');
-		},
-		showAppView__Chat: function(){
-			return LJ.dev.showAppView('chat');
-		},
-		showAppView__ChatInview: function(){
-			return LJ.dev.showAppView('chat_inview');
-		},
-		showAppView__Request: function(){
-			return LJ.dev.showAppView('request');
-		}
-
-	});
-
-window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
-
-	required_permissions : ['public_profile', 'email', 'user_friends', 'user_photos'],
-
-	friends_url			 : '/me/friends',
-	profile_url			 : '/me?fields=id,email,name,link,locale,gender',
-	album_url  			 : '/me?fields=albums{name,id}',
-	album_pictures_url   : '{{album_id}}/photos?fields=images',
-
-	init: function(){
-
-		LJ.facebook.startFacebookSdk();
-		
-	},
-	startFacebookSdk: function(){
-
-		FB.init({
-			appId: window.facebook_app_id,
-			xfbml: true, // parse social plugins on this page
-			version: 'v2.6' 
-		});
-
-	},
-	fetchFacebookToken: function(){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook token...');
-			FB.login(function( res ){
-
-				if( res.status == 'not_authorized' ){
-					return reject( Error("User didnt let Facebook access informations") )
-				}
-
-				if( res.status == 'connected' ){
-					var access_token = res.authResponse.accessToken;
-					LJ.login.data.access_token = access_token;
-
-					console.log('Short lived access token : ' + access_token.substring(0,20) + '.....');
-					return resolve( access_token );
-				}
-
-			}, { scope: LJ.facebook.required_permissions } );
-		});
-
-	},
-	fetchMe: function(){
-
-	},
-	fetchFriends: function(){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.facebook.GraphAPI( LJ.facebook.friends_url, function( res ){
-
-				if( res.err ){
-					return reject( err );
-				}
-
-				var fb_friends  = res.data;
-                var friend_ids  = _.pluck( fb_friends, 'id' );
-
-                var data = {
-                    'friend_ids' : friend_ids
-                };
-
-                resolve( data );
-
-			});
-
-		});
-	},
-	fetchFacebookProfile: function( facebook_token ){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook profile...');
-			
-			FB.api( LJ.facebook.profile_url, { access_token: facebook_token }, function( facebookProfile ){
-				
-				// Store it for reconnexion purposes
-				LJ.facebook_profile = facebookProfile;
-
-				if( facebookProfile.error ){
-					return reject( facebookProfile.error );
-				} else {
-					return resolve( facebookProfile );
-				}
-			});
-
-		});
-
-	},
-	GraphAPI: function( url, callback, opts ){
-
-        var s = LJ.store;
-
-        var access_token = LJ.user.facebook_access_token || s.get("facebook_access_token") || s.get("reconn_data");
-
-        if( !access_token || !access_token.token ){
-            return LJ.wlog('Cannot call the graph api without being able to find a valid facebook token');
-        }
-
-        FB.api( url, { access_token: access_token.token }, callback );
-
-    },
-    renderPicture: function( src ){
-
-    	return [
-    				'<div class="modal__facebook-picture" data-img-src="' + src + '">',
-    					'<img src="' + src + '" width="75"/>',
-    					'<div class="modal__picture-icon">',
-    						LJ.ui.renderIcon('check'), 
-    					'</div>', 
-    				'</div>'
-    	].join('');
-
-    },
-    fetchPictures: function( album_id ){
-    	return LJ.promise(function( resolve, reject ){
-
- 			LJ.facebook.GraphAPI( LJ.facebook.album_pictures_url.replace( '{{album_id}}', album_id ), function( res ){
-		
- 				if( !res || res.error ){
- 					return reject( res.error );
- 				} else {
- 					return resolve( res );
- 				}
-
- 			});
-
-    	});
-    },
-    fetchProfilePictures: function(){
-
-		return LJ.facebook.fetchProfilePicturesAlbumId().then( LJ.facebook.fetchPictures );
-
-    },
-	fetchProfilePicturesAlbumId: function( next_page ){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook profile picture album id...');
-
-			var album_url = next_page || LJ.facebook.album_url;
-			var album_id  = null;
-
-			LJ.facebook.GraphAPI( album_url, function( res ){
-
-				if( !res.albums ){
-					return reject('No album id to display');
-				}
-
-				var albums = res.albums.data;
-				albums.forEach(function( album ){
-
-					if( album.name == "Profile Pictures" ){
-						album_id = album.id;
-					}
-
-				});
-
-				if( !album_id && res.albums.paging && res.albums.paging.cursor && res.albums.paging.cursor.next ){
-
-					var next = res.albums.paging.cursor.next;
-
-					LJ.log('Didnt find on first page, trying with next page : ' + next );
-					return LJ.facebook.fetchProfilePicturesAlbumId( next );
-				}
-
-				if( !album_id && res.albums.paging && res.albums.paging.cursor && !res.albums.paging.cursor.next ){
-					return reject('Couldnt find album id, no next page to browse' );
-				}
-
-				LJ.log('Album id found, ' + album_id );
-				return resolve( album_id );
-
-			});
-
-		});
-
-	},
-	hasPictureRightDimensions: function( image_object ){
-
-		if( image_object.width > LJ.ui.facebook_img_min_width && image_object.width < LJ.ui.facebook_img_max_width ){
-			return true;
-		} else {
-			return false;
-		}
-
-	},
-	showFacebookPicturesInModal: function( img_place ){
-
-		LJ.ui.showModalAndFetch({
-
-			"type"			: "facebook",
-			"title"			: LJ.text("mod_facebook_pictures_title"),
-			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
-			"footer"		: "<button class='--rounded'>" + LJ.ui.renderIcon('check') + "</button>",
-			"attributes"	: [{ name: "img-place", val: img_place }],
-
-			"fetchPromise"	: LJ.facebook.fetchProfilePictures
-
-		})
-		.then( LJ.facebook.displayFacebookPicturesInModal )
-		.catch( LJ.facebook.displayFacebookPicturesInModal_Error );
-			
-
-	},
-	displayFacebookPicturesInModal: function( results ){
-		
-		console.log('Displaying images...');
-		var img_place = $('.modal').attr('data-img-place');
-
-		var html = LJ.facebook.$profile_pictures || [];
-
-			if( html.length == 0 ){
-				results.data.forEach(function( picture_object ){
-					picture_object.images.forEach(function( image_object ){
-						if( LJ.facebook.hasPictureRightDimensions( image_object )){
-							html.push( LJ.facebook.renderPicture( image_object.source ) );
-						}
-					});
-				});
-			}
-
-			LJ.facebook.$profile_pictures = html;
-			
-			$('.modal-body')
-				.append( html.join('') )	
-				.find('.modal__loader')
-				.velocity('bounceOut', { duration: 500, delay: 500,
-					complete: function(){
-
-						$('.modal__facebook-picture')
-							   .velocity('bounceInQuick', {
-							   		display: 'block'
-							   });
-
-						LJ.ui.turnToJsp('.modal-body', {
-							jsp_id: 'modal_facebook_pictures'
-						});
-
-					}
-				});
-
-				
-
-	},
-	displayFacebookPicturesInModal_Error: function( err ){
-
-		console.log( err );
-
-		LJ.delay( 1000 ).then(function(){
-
-			$('.modal-body')
-					.append('<div class="modal__loading-error none">' + LJ.text('modal_err_empty_fetch') + '</div>')
-
-			$('.modal__loader')
-			.velocity('bounceOut', { duration: 500, delay: 500,
-				complete: function(){
-
-					$('.modal-body').find('.modal__loading-error').velocity('bounceInQuick', {
-						display: 'block'
-					});
-
-				}
-			});
-
-		});
-
-
-	},
-	showModalSendMessageToFriends: function(){
-
-		FB.ui({
-			method: 'send',
-			link: 'http://www.meefore.com'
-		});
-
-	}
-
-});
-
 	window.LJ.friends = _.merge( window.LJ.friends || {}, {
 
 		friends_profiles: null,
@@ -36576,7 +36409,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 				'<div class="empty">',
 					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-telescope"></i>',
+						'<i class="icon icon-users"></i>',
 					'</div>',
 					'<div class="empty__title">',
 						'<h2 data-lid="empty_friends_title"></h2>',
@@ -37766,6 +37599,286 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 	});
 
+window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
+
+	required_permissions : ['public_profile', 'email', 'user_friends', 'user_photos'],
+
+	friends_url			 : '/me/friends',
+	profile_url			 : '/me?fields=id,email,name,link,locale,gender',
+	album_url  			 : '/me?fields=albums{name,id}',
+	album_pictures_url   : '{{album_id}}/photos?fields=images',
+
+	init: function(){
+
+		LJ.facebook.startFacebookSdk();
+		
+	},
+	startFacebookSdk: function(){
+
+		FB.init({
+			appId: window.facebook_app_id,
+			xfbml: true, // parse social plugins on this page
+			version: 'v2.6' 
+		});
+
+	},
+	fetchFacebookToken: function(){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook token...');
+			FB.login(function( res ){
+
+				if( res.status == 'not_authorized' ){
+					return reject( Error("User didnt let Facebook access informations") )
+				}
+
+				if( res.status == 'connected' ){
+					var access_token = res.authResponse.accessToken;
+					LJ.login.data.access_token = access_token;
+
+					console.log('Short lived access token : ' + access_token.substring(0,20) + '.....');
+					return resolve( access_token );
+				}
+
+			}, { scope: LJ.facebook.required_permissions } );
+		});
+
+	},
+	fetchMe: function(){
+
+	},
+	fetchFriends: function(){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.facebook.GraphAPI( LJ.facebook.friends_url, function( res ){
+
+				if( res.err ){
+					return reject( err );
+				}
+
+				var fb_friends  = res.data;
+                var friend_ids  = _.pluck( fb_friends, 'id' );
+
+                var data = {
+                    'friend_ids' : friend_ids
+                };
+
+                resolve( data );
+
+			});
+
+		});
+	},
+	fetchFacebookProfile: function( facebook_token ){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook profile...');
+			
+			FB.api( LJ.facebook.profile_url, { access_token: facebook_token }, function( facebookProfile ){
+				
+				// Store it for reconnexion purposes
+				LJ.facebook_profile = facebookProfile;
+
+				if( facebookProfile.error ){
+					return reject( facebookProfile.error );
+				} else {
+					return resolve( facebookProfile );
+				}
+			});
+
+		});
+
+	},
+	GraphAPI: function( url, callback, opts ){
+
+        var s = LJ.store;
+
+        var access_token = LJ.user.facebook_access_token || s.get("facebook_access_token") || s.get("reconn_data");
+
+        if( !access_token || !access_token.token ){
+            return LJ.wlog('Cannot call the graph api without being able to find a valid facebook token');
+        }
+
+        FB.api( url, { access_token: access_token.token }, callback );
+
+    },
+    renderPicture: function( src ){
+
+    	return [
+    				'<div class="modal__facebook-picture" data-img-src="' + src + '">',
+    					'<img src="' + src + '" width="75"/>',
+    					'<div class="modal__picture-icon">',
+    						LJ.ui.renderIcon('check'), 
+    					'</div>', 
+    				'</div>'
+    	].join('');
+
+    },
+    fetchPictures: function( album_id ){
+    	return LJ.promise(function( resolve, reject ){
+
+ 			LJ.facebook.GraphAPI( LJ.facebook.album_pictures_url.replace( '{{album_id}}', album_id ), function( res ){
+		
+ 				if( !res || res.error ){
+ 					return reject( res.error );
+ 				} else {
+ 					return resolve( res );
+ 				}
+
+ 			});
+
+    	});
+    },
+    fetchProfilePictures: function(){
+
+		return LJ.facebook.fetchProfilePicturesAlbumId().then( LJ.facebook.fetchPictures );
+
+    },
+	fetchProfilePicturesAlbumId: function( next_page ){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook profile picture album id...');
+
+			var album_url = next_page || LJ.facebook.album_url;
+			var album_id  = null;
+
+			LJ.facebook.GraphAPI( album_url, function( res ){
+
+				if( !res.albums ){
+					return reject('No album id to display');
+				}
+
+				var albums = res.albums.data;
+				albums.forEach(function( album ){
+
+					if( album.name == "Profile Pictures" ){
+						album_id = album.id;
+					}
+
+				});
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && res.albums.paging.cursor.next ){
+
+					var next = res.albums.paging.cursor.next;
+
+					LJ.log('Didnt find on first page, trying with next page : ' + next );
+					return LJ.facebook.fetchProfilePicturesAlbumId( next );
+				}
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && !res.albums.paging.cursor.next ){
+					return reject('Couldnt find album id, no next page to browse' );
+				}
+
+				LJ.log('Album id found, ' + album_id );
+				return resolve( album_id );
+
+			});
+
+		});
+
+	},
+	hasPictureRightDimensions: function( image_object ){
+
+		if( image_object.width > LJ.ui.facebook_img_min_width && image_object.width < LJ.ui.facebook_img_max_width ){
+			return true;
+		} else {
+			return false;
+		}
+
+	},
+	showFacebookPicturesInModal: function( img_place ){
+
+		LJ.ui.showModalAndFetch({
+
+			"type"			: "facebook",
+			"title"			: LJ.text("mod_facebook_pictures_title"),
+			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
+			"footer"		: "<button class='--rounded'>" + LJ.ui.renderIcon('check') + "</button>",
+			"attributes"	: [{ name: "img-place", val: img_place }],
+
+			"fetchPromise"	: LJ.facebook.fetchProfilePictures
+
+		})
+		.then( LJ.facebook.displayFacebookPicturesInModal )
+		.catch( LJ.facebook.displayFacebookPicturesInModal_Error );
+			
+
+	},
+	displayFacebookPicturesInModal: function( results ){
+		
+		console.log('Displaying images...');
+		var img_place = $('.modal').attr('data-img-place');
+
+		var html = LJ.facebook.$profile_pictures || [];
+
+			if( html.length == 0 ){
+				results.data.forEach(function( picture_object ){
+					picture_object.images.forEach(function( image_object ){
+						if( LJ.facebook.hasPictureRightDimensions( image_object )){
+							html.push( LJ.facebook.renderPicture( image_object.source ) );
+						}
+					});
+				});
+			}
+
+			LJ.facebook.$profile_pictures = html;
+			
+			$('.modal-body')
+				.append( html.join('') )	
+				.find('.modal__loader')
+				.velocity('bounceOut', { duration: 500, delay: 500,
+					complete: function(){
+
+						$('.modal__facebook-picture')
+							   .velocity('bounceInQuick', {
+							   		display: 'block'
+							   });
+
+						LJ.ui.turnToJsp('.modal-body', {
+							jsp_id: 'modal_facebook_pictures'
+						});
+
+					}
+				});
+
+				
+
+	},
+	displayFacebookPicturesInModal_Error: function( err ){
+
+		console.log( err );
+
+		LJ.delay( 1000 ).then(function(){
+
+			$('.modal-body')
+					.append('<div class="modal__loading-error none">' + LJ.text('modal_err_empty_fetch') + '</div>')
+
+			$('.modal__loader')
+			.velocity('bounceOut', { duration: 500, delay: 500,
+				complete: function(){
+
+					$('.modal-body').find('.modal__loading-error').velocity('bounceInQuick', {
+						display: 'block'
+					});
+
+				}
+			});
+
+		});
+
+
+	},
+	showModalSendMessageToFriends: function(){
+
+		FB.ui({
+			method: 'send',
+			link: 'http://www.meefore.com'
+		});
+
+	}
+
+});
+
 	window.LJ.ladder = _.merge( window.LJ.ladder || {}, {
 
 		initLadder: function( options ){
@@ -38356,8 +38469,8 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 				}).then(function(){
 
 					LJ.before.showBrowser();
-					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
 					LJ.before.refreshBrowserDates();
+					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
 					LJ.map.updateMarkers__byDate();
 					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
 					LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
@@ -41864,7 +41977,7 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 
         },
 		sayHello: function(){
-			LJ.ilog('Map has been successfully loaded');
+			LJ.log('Map has been successfully loaded');
 
 		},
 		handleDomEvents: function(){
@@ -41995,17 +42108,27 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
                 return LJ.wlog('Unable to find the date : ' + m.format('DD/MM') );
             }
 
-            $date_activated
-                .removeClass('--active')
-                .find('.be-dates__bar')
-                .velocity('bounceOut', { duration: 450, display: 'none' });
+            if( $date_activated.is( $date_to_activate ) ){
 
-            $date_to_activate
-                .addClass('--active')
-                .find('.be-dates__bar')
-                .velocity('bounceInQuick', { duration: 450, display: 'block' });
+                 $date_activated
+                    .removeClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceOut', { duration: 450, display: 'none' });
 
-            // Specifics
+            } else {
+
+                $date_activated
+                    .removeClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceOut', { duration: 450, display: 'none' });
+
+                $date_to_activate
+                    .addClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceInQuick', { duration: 450, display: 'block' });
+
+            }
+
             LJ.map.updateMarkers__byDate();
 
         },
@@ -42111,7 +42234,7 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
         shiftLatLng: function( latlng ){
 
             var a   = new google.maps.LatLng( latlng );
-            var rdm =  google.maps.geometry.spherical.computeOffset( a, LJ.randomInt(25,50), LJ.randomInt(0, 180) );
+            var rdm =  google.maps.geometry.spherical.computeOffset( a, LJ.randomInt( 100, 200 ), LJ.randomInt(0, 180) );
 
             return {
                 lng: rdm.lng(),
@@ -42184,14 +42307,30 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
         markerAlreadyExists: function( marker_id ){
 
             return _.find( LJ.map.markers, function( mrk ){
-                return mrk && (mrk.marker_id == marker_id );
+                return mrk && ( mrk.marker_id == marker_id );
             });
             
         },
         makeIcon: function( url ){
+
+            var scaledSize;
+            var base_width  = 34;
+            var base_height = 41;
+            var base_width_active  = 44;
+            var base_height_active = 53;
+
+            var base_width_active  = 49;
+            var base_height_active = 59;
+
+            if( !/lg/i.test( url ) ){
+                scaledSize = new google.maps.Size( base_width, base_height );
+            } else {
+                scaledSize = new google.maps.Size( base_width_active, base_height_active );
+            }
+
             return {
                 url        : url,
-                scaledSize : new google.maps.Size( 27, 31 )
+                scaledSize : scaledSize
             };
 
         },
@@ -42234,55 +42373,59 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
             }
 
         },
-        getBeforeMarkerUrlByType: function( type ){
+        getBeforeMarkerUrlByType: function( type, active ){
 
-            var px  = LJ.pictures.getDevicePixelRatio() + 'x';
+            var px     = LJ.pictures.getDevicePixelRatio() + 'x';
+            var suffix = active ? '_active' : '';
 
+            LJ.log('Getting marker for type : ' + type );
             if( type == 'drink' ){
-                url = LJ.map.markers_url['drink'];
+                url = LJ.map.markers_url[ 'drink' + suffix ];
             }
 
             if( type == 'drinknew' ){
-                url = LJ.map.markers_url['drinknew'];
+               url = LJ.map.markers_url['drinknew'];
             }
 
             if( type == 'hosting' ){
-                url = LJ.map.markers_url['chat'];
+                url = LJ.map.markers_url[ 'star' + suffix ];
             }
 
             if( type == 'pending' ){
-                url = LJ.map.markers_url['pending'];
+                url = LJ.map.markers_url[ 'pending' + suffix ];
             }
 
             if( type == 'accepted' ){
-                url = LJ.map.markers_url['chat'];
-            }
+                url = LJ.map.markers_url[ 'chat' + suffix ];
+            }  
+
+            LJ.log('Url found is ' + url[ px ]);
 
             return url[ px ];
 
 
         },  
-        getBeforeMarkerUrl: function( before ){
+        getBeforeMarkerUrl: function( before, active ){
 
             var url  = null;
 
-            var my_before = _.find( LJ.user.befores, function( bfr ){
-                return bfr.before_id == before._id;
-            });
+            var my_before = LJ.before.getMyBeforeById( before._id );
 
             if( !my_before ){
+
                 // Moment.js expresses the difference between 2 dates in ms
-                var diff_in_hour = (moment() - moment( before.created_at ))/(3600*1000);
-                if( diff_in_hour > 24 ){
-                    url = LJ.map.getBeforeMarkerUrlByType("drink");
+                var diff_in_hour = ( moment() - moment( before.created_at ) )/( 3600 * 1000 );
+
+                if( LJ.map.hasSeenMarker( before._id ) || diff_in_hour > 24 ){
+                    url = LJ.map.getBeforeMarkerUrlByType("drink", active );
 
                 } else {
-                    url = LJ.map.getBeforeMarkerUrlByType("drinknew");
+                    url = LJ.map.getBeforeMarkerUrlByType("drinknew", active );
 
                 }
 
             } else {
-                url = LJ.map.getBeforeMarkerUrlByType( my_before.status );
+                url = LJ.map.getBeforeMarkerUrlByType( my_before.status, active );
             }
 
             if( !url ){
@@ -42303,7 +42446,7 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
                 lng: before.address.lng
             };
 
-           var url = LJ.map.getBeforeMarkerUrl( before );
+            var url  = LJ.map.getBeforeMarkerUrl( before, false );
 
             LJ.map.addMarker({
                 marker_id : before_id,
@@ -42332,12 +42475,88 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
             });
 
         },
+        deactivateMarkers: function(){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                mrk.status = "inactive";
+                mrk.marker.setZIndex( 1 );
+ 
+            });
+
+        },
+        activateMarker: function( marker_id ){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( mrk.marker_id == marker_id ){
+                    mrk.status = "active";
+                    mrk.marker.setZIndex( 10 );
+
+                } else {
+                    mrk.status = "inactive";
+                    mrk.marker.setZIndex( 1 );
+                }
+
+            });
+
+        },  
+        refreshMarkers: function(){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( mrk.type == "before" ){
+
+                    LJ.before.getBefore( mrk.marker_id )
+                    .then(function( bfr ){
+
+                        var url;
+
+                        if( mrk.status == "active" ){
+                            url = LJ.map.getBeforeMarkerUrl( bfr, true );
+                        } else {
+                            url = LJ.map.getBeforeMarkerUrl( bfr, false );
+                        }
+
+                        var icon = LJ.map.makeIcon( url );     
+                        mrk.marker.setIcon( icon );                   
+                        
+                    });
+
+                }
+
+            });
+
+        },
+        getActiveMarker: function(){
+
+            return _.find( LJ.map.markers, function( mrk ){
+                return mrk.status == "active";
+            });
+
+        },
+        seenifyMarker: function( marker_id ){
+
+            var seen_markers = LJ.store.get('seen_markers') || [];
+
+            seen_markers.push( marker_id );
+            LJ.store.set( 'seen_markers', seen_markers );
+
+        },
+        hasSeenMarker: function( marker_id ){
+
+            var seen_markers = LJ.store.get('seen_markers') || [];
+
+            return seen_markers.indexOf( marker_id ) != -1;
+            
+
+        },
         handleClickOnEventMarker: function( marker, before ){
 
-            LJ.log(marker);
-
+            LJ.map.seenifyMarker( before._id );
             LJ.before.showBeforeInview( before );
-
+            LJ.map.activateMarker( before._id );
+            LJ.map.refreshMarkers();
 
         },
         renderCreateBefore: function(){
@@ -42353,7 +42572,7 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 
         	return LJ.ui.render([
         		'<div class="map__icon --round-icon --change-location js-map-change-location">',
-        			'<i class="icon icon-search-planet"></i>',
+        			'<i class="icon icon-search-zoom"></i>',
         		'</div>'
         		].join(''));
 
@@ -42392,18 +42611,29 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
         },
         updateMarkers__byDate: function(){
 
-            var active_day = moment( $('.be-dates__date.--active').attr('data-day'), 'DD/MM' ).dayOfYear();
+            var active_day;
+            var $active_day = $('.be-dates__date.--active');
+
+            if( $active_day.length == 1 ){
+                active_day = moment( $active_day.attr('data-day'), 'DD/MM' ).dayOfYear();
+                
+            } else {
+                active_day = null;
+            }
+
 
             LJ.map.markers.forEach(function( mrk ){
 
-                if( mrk.type == "before" ){
+                if( mrk.type == "before" && active_day ){
 
                     if( mrk.data && mrk.data.begins_at && moment( mrk.data.begins_at ).dayOfYear() == active_day ){
                         mrk.marker.setOpacity( 1 );
                     } else {
-                        mrk.marker.setOpacity( 0.15 );
+                        mrk.marker.setOpacity( 0 );
                     }
 
+                } else {
+                    mrk.marker.setOpacity( 1 );
                 }
 
             });
@@ -42622,44 +42852,40 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 		markers_url: {
             
 			drink: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1462314105/marker_dark_drink_1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1462313591/marker_dark_drink_2x.png'
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/drink_black45_rotate_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/drink_black45_rotate_md__2x.png'
             },
             drink_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1462358245/marker_blue_drink_1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1462357673/marker_blue_drink_2x.png'
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/drink_black45_rotate_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/drink_black45_rotate_lg__2x.png'
             },
             drinknew: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1462358245/marker_dark_drinknew_1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1462357673/marker_dark_drinknew_2x.png'
-            },
-            drinknew_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1462358245/marker_blue_drinknew_1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1462357673/marker_blue_drinknew_2x.png'
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/drink_black45_rotate_md_newred__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/drink_black45_rotate_md_newred__2x.png'
             },
             star: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1462314105/marker_dark_star_1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1462313591/marker_dark_star_2x.png'
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/star_mushia_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/star_mushia_md__2x.png'
             },
             star_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1462358245/marker_blue_star_1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1462357673/marker_blue_star_2x.png'
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/star_mushia_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/star_mushia_lg__2x.png'
             },
             pending: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1462314105/marker_dark_pending_1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1462313591/marker_dark_pending_2x.png'
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/pending_royalblue_inverse_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/pending_royalblue_inverse_md__2x.png'
             },
             pending_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1462358245/marker_blue_pending_1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1462357673/marker_blue_pending_2x.png'
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/pending_royalblue_inverse_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/pending_royalblue_inverse_lg__2x.png'
             },
             chat: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1462314105/marker_dark_chat_1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1462313591/marker_dark_chat_2x.png'
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/chat_royalblue_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/chat_royalblue_md__2x.png'
             },
             chat_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1462358245/marker_blue_chat_1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1462357673/marker_blue_chat_2x.png'
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/chat_royalblue_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468337647/markers/chat_royalblue_lg__2x.png'
             }
         }
 
@@ -43283,276 +43509,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 
 
-	window.LJ.meepass = _.merge( window.LJ.meepass || {}, {
-
-		init: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.meepass.handleDomEvents();
-				resolve();
-			});
-
-
-		},
-		handleDomEvents: function(){
-
-			$('.menu-section.--meepass').on('click', '.segment__part', LJ.meepass.refreshSegmentView );
-			$('.menu-item.--meepass').one('click', LJ.meepass.handleMeepassClicked );
-			LJ.ui.$body.on('click', '.js-send-meepass', LJ.meepass.handleSendMeepass );
-
-		},
-		refreshSegmentView: function(){
-
-			var $seg = $(this);
-			var link = $seg.attr('data-link');
-
-			if( $seg.hasClass('--active') ) return;
-
-			$seg.siblings().removeClass('--active');
-			$seg.addClass('--active');
-
-			$('.meepass').children().css({ display: 'none' });
-			$('.meepass [data-link="' + link + '"]').css({ display: 'flex' });
-
-		},
-		handleSendMeepass: function(){
-
-			// User is hosting more than one event...
-			if( 0 ){
-				LJ.ui.showModal({
-					"title"		: "Félicitations !",
-					"subtitle"	: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
-					"body"  	: LJ.meepass.renderEventsInModal(),
-					"footer"	: "<button class='--rounded'><i class='icon icon-check'></i></button>"
-				});
-
-			} else {
-				
-				var event_id = '';
-			//	LJ.meepass.sendMeepass()
-			//		.then( LJ.meepass.handleSendMeepassSuccess )
-			//		.catch( LJ.meepass.handleApiError );
-
-			}
-
-		},
-		renderMeepassRibbon: function(){
-
-			var n_meepass = LJ.user.meepass.length;
-
-			return LJ.ui.render([
-
-				'<div class="meepass-ribbon">',
-					'<h2 data-lid="meepass_ribbon"></h2>',
-				'</div>'
-
-				].join('')).replace('%n', n_meepass );
-
-		},
-		sendMeepass: function(){
-			
-		},
-		handleSendMeepassSuccess: function(){
-
-		},
-		handleApiError: function(){
-
-		},
-		renderEventsInModal: function(){
-
-		},
-		handleMeepassClicked: function(){
-
-			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
-
-			$('.meepass').html('');
-
-			$loader.addClass('none')
-				   .appendTo('.meepass')
-				   .velocity('bounceInQuick', {
-				   	delay: 125,
-				   	duration: 500,
-				   	display: 'block'
-				   });
-
-			LJ.meepass.fetchMeepassItems();
-
-		},	
-		fetchMeepassItems: function(){
-
-			LJ.api.fetchMeMeepass()
-				  .then( LJ.meepass.handleFetchMeMeepassSuccess, LJ.meepass.handleFetchMeMeepassError );
-
-
-		},
-		handleFetchMeMeepassSuccess: function( expose ){
-
-			var meepass = expose.meepass;
-
-			LJ.meepass.setMeepassItems( meepass );
-
-		},
-		setMeepassItems: function( meepass ){
-
-			var html = [];
-			meepass.sort();
-
-			var facebook_ids = _.pluck( meepass, 'sent_by' ).concat( _.pluck( meepass, 'sent_to' ) ).filter( Boolean );
-
-			LJ.api.fetchUsers( facebook_ids )
-				.then(function( res ){
-
-					var no_meepass_received = true;
-					var no_meepass_sent     = true;
-					meepass.forEach(function( mp ){
-
-						for( var i=0; i<res.length; i++ ){
-
-							var user = res[ i ].user;
-
-							if( mp.sent_by == user.facebook_id ){
-								no_meepass_received = false;
-								return html.push( LJ.meepass.renderMeepassItem__Received( mp, user ) );
-							}
-
-							if( mp.sent_to == user.facebook_id ){
-								no_meepass_sent = false;
-								return html.push( LJ.meepass.renderMeepassItem__Sent( mp, user ) );
-							}
-						}
-					});
-
-					if( no_meepass_sent ){
-						html.push( LJ.meepass.renderMeepassItem__SentEmpty() );
-					}
-
-					if( no_meepass_received ){
-						html.push( LJ.meepass.renderMeepassItem__ReceivedEmpty() );
-					}
-
-					$('.meepass').html( html.join('') )
-								 .find('[data-link="received"]')
-								 .velocity('fadeIn', {
-									duration: 250,
-									display: 'flex'
-								});
-
-					$('.menu-section.--meepass')
-								.find('.segment__part')
-								.removeClass('--active')
-								.first()
-								.addClass('--active');
-
-				});
-
-		},		
-		handleFetchMeMeepassError: function(){
-
-			LJ.elog('Error fetching meepass :/');
-
-		},
-		renderMeepassItem__ReceivedEmpty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty" data-link="received">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-meepass"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_meepass_received_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_meepass_received_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__SentEmpty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty" data-link="sent">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-meepass"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_meepass_sent_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_meepass_sent_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__Received: function( meepass_object, target ){
-
-			var mp 	   = meepass_object;
-			var target = target;
-
-			var formatted_date = LJ.renderDate( mp.sent_at );
-			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
-
-			return LJ.ui.render([
-
-				'<div class="meepass__item" data-link="received" data-event-id="' + mp.target_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + LJ.text('meepass_item_title_received').replace('%name', target.name) +'</h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__Sent: function( meepass_object, target, meepass_by ){
-
-			var mp 	   = meepass_object;
-			var target = target;
-
-			var formatted_date = LJ.renderDate( mp.sent_at );
-			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
-
-			return LJ.ui.render([
-
-				'<div class="meepass__item" data-link="sent" data-event-id="' + mp.target_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + LJ.text('meepass_item_title_sent').replace('%name', target.name) +'</h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		}
-
-	});
-		
-
 	window.LJ.menu = _.merge( window.LJ.menu || {}, {
 
 		$menu: $('.menu'),
@@ -43718,108 +43674,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		}
 
 	});
-
-	window.LJ.nav = _.merge( window.LJ.nav || {}, {
-
-		$nav: $('.app-nav'),
-		current_link: null,
-
-		init: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.nav.handleDomEvents();
-				LJ.nav.navigate('map');
-				resolve();
-
-			});
-		},
-		handleDomEvents: function(){
-
-			LJ.nav.$nav.on('click', 'li[data-link]', LJ.nav.handleNavigate );
-
-		},
-		handleNavigate: function(e){
-
-			e.preventDefault();
-			var $li = $(this);
-			var lk  = $li.attr('data-link');
-			LJ.nav.navigate( lk );
-
-		},
-		navigate: function( target_link ){
-
-			var current_link = LJ.nav.current_link;
-
-			var $target_section  = $('.app-section[data-link="' + target_link + '"]');
-			var $current_section = $('.app-section[data-link="' + current_link + '"]') || $target_section; // For the first activation
-
-			var $target_menuitem = $('.app__menu-item[data-link="' + target_link + '"]');
-			var $current_menuitem = $('.app__menu-item[data-link="' + current_link + '"]') || $target_menuitem
-
-			var $target_headertitle  = $('.app-header__title[data-link="' + target_link + '"]');
-			var $current_headertitle = $('.app-header__title[data-link="' + current_link + '"]') || $target_headertitle;
-
-			if( $target_section.length + $target_menuitem.length + $target_headertitle.length != 3 ){
-				return LJ.wlog('Ghost target for link : ' + link );
-			}
-
-			// Set the internal state
-			LJ.nav.current_link = target_link
-
-			// Update the Header ui
-			$current_menuitem.removeClass('--active');
-			$target_menuitem.addClass('--active');
-
-			// Update the header title
-			/*var duration = 220;
-			LJ.ui.shradeOut( $current_headertitle, duration )
-				.then(function(){
-					LJ.ui.shradeIn( $target_headertitle, duration );
-				});
-			*/
-			
-			// Display the view
-			$current_section.hide();
-			$target_section.css({ display: 'flex' });
-
-			// Specificities
-			var duration = 220;
-			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
-
-			if( target_link == 'search' && hasMeepassRibbon ) {
-				LJ.ui.shradeIn( $('.meepass-ribbon'), duration )
-			} 
-
-			if( target_link != 'search' && hasMeepassRibbon ){
-				LJ.ui.shradeOut( $('.meepass-ribbon'), duration )
-			}
-
-			if( target_link == 'map' ){
-				$('.app').removeClass('padded');
-
-				// Refresh the map dued to a bug when the window is resized and the map not visible
-				// The try catch is to avoid an ugly error in the console during app intitialization
-				try {
-					LJ.map.refreshMap();
-				} catch( e ){
-
-				}
-
-
-			} else {
-				$('.app').addClass('padded');
-			}
-
-			if( target_link != "menu" ){
-				LJ.friends.hideInviteFriendsPopup();
-			}
-
-
-		}
-
-	});
-
-
 
 	
 	window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
@@ -45413,6 +45267,384 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
                
 
 	});
+
+	window.LJ.nav = _.merge( window.LJ.nav || {}, {
+
+		$nav: $('.app-nav'),
+		current_link: null,
+
+		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.nav.handleDomEvents();
+				LJ.nav.navigate('map');
+				resolve();
+
+			});
+		},
+		handleDomEvents: function(){
+
+			LJ.nav.$nav.on('click', 'li[data-link]', LJ.nav.handleNavigate );
+
+		},
+		handleNavigate: function(e){
+
+			e.preventDefault();
+			var $li = $(this);
+			var lk  = $li.attr('data-link');
+			LJ.nav.navigate( lk );
+
+		},
+		navigate: function( target_link ){
+
+			var current_link = LJ.nav.current_link;
+
+			var $target_section  = $('.app-section[data-link="' + target_link + '"]');
+			var $current_section = $('.app-section[data-link="' + current_link + '"]') || $target_section; // For the first activation
+
+			var $target_menuitem = $('.app__menu-item[data-link="' + target_link + '"]');
+			var $current_menuitem = $('.app__menu-item[data-link="' + current_link + '"]') || $target_menuitem
+
+			var $target_headertitle  = $('.app-header__title[data-link="' + target_link + '"]');
+			var $current_headertitle = $('.app-header__title[data-link="' + current_link + '"]') || $target_headertitle;
+
+			if( $target_section.length + $target_menuitem.length + $target_headertitle.length != 3 ){
+				return LJ.wlog('Ghost target for link : ' + link );
+			}
+
+			// Set the internal state
+			LJ.nav.current_link = target_link
+
+			// Update the Header ui
+			$current_menuitem.removeClass('--active');
+			$target_menuitem.addClass('--active');
+
+			// Update the header title
+			/*var duration = 220;
+			LJ.ui.shradeOut( $current_headertitle, duration )
+				.then(function(){
+					LJ.ui.shradeIn( $target_headertitle, duration );
+				});
+			*/
+			
+			// Display the view
+			$current_section.hide();
+			$target_section.css({ display: 'flex' });
+
+			if( !$target_menuitem.is( $current_menuitem ) ){
+				LJ.ui.hideSlide();
+				LJ.before.hideCreateBeforeStraight();
+				LJ.before.showBrowser();
+			}
+
+			// Specificities
+			var duration = 220;
+			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
+
+			if( target_link == 'search' && hasMeepassRibbon ) {
+				LJ.ui.shradeIn( $('.meepass-ribbon'), duration );
+			} 
+
+			if( target_link != 'search' && hasMeepassRibbon ){
+				LJ.ui.shradeOut( $('.meepass-ribbon'), duration );
+			}
+
+			if( target_link == 'map' ){
+				$('.app').removeClass('padded');
+
+				// Refresh the map dued to a bug when the window is resized and the map not visible
+				// The try catch is to avoid an ugly error in the console during app intitialization
+				try {
+					LJ.map.refreshMap();
+				} catch( e ){
+
+				}
+
+
+			} else {
+				$('.app').addClass('padded');
+			}
+
+			if( target_link != "menu" ){
+				LJ.friends.hideInviteFriendsPopup();
+			}
+
+
+		}
+
+	});
+
+
+
+	window.LJ.meepass = _.merge( window.LJ.meepass || {}, {
+
+		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.meepass.handleDomEvents();
+				resolve();
+			});
+
+
+		},
+		handleDomEvents: function(){
+
+			$('.menu-section.--meepass').on('click', '.segment__part', LJ.meepass.refreshSegmentView );
+			$('.menu-item.--meepass').one('click', LJ.meepass.handleMeepassClicked );
+			LJ.ui.$body.on('click', '.js-send-meepass', LJ.meepass.handleSendMeepass );
+
+		},
+		refreshSegmentView: function(){
+
+			var $seg = $(this);
+			var link = $seg.attr('data-link');
+
+			if( $seg.hasClass('--active') ) return;
+
+			$seg.siblings().removeClass('--active');
+			$seg.addClass('--active');
+
+			$('.meepass').children().css({ display: 'none' });
+			$('.meepass [data-link="' + link + '"]').css({ display: 'flex' });
+
+		},
+		handleSendMeepass: function(){
+
+			// User is hosting more than one event...
+			if( 0 ){
+				LJ.ui.showModal({
+					"title"		: "Félicitations !",
+					"subtitle"	: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
+					"body"  	: LJ.meepass.renderEventsInModal(),
+					"footer"	: "<button class='--rounded'><i class='icon icon-check'></i></button>"
+				});
+
+			} else {
+				
+				var event_id = '';
+			//	LJ.meepass.sendMeepass()
+			//		.then( LJ.meepass.handleSendMeepassSuccess )
+			//		.catch( LJ.meepass.handleApiError );
+
+			}
+
+		},
+		renderMeepassRibbon: function(){
+
+			var n_meepass = LJ.user.meepass.length;
+
+			return LJ.ui.render([
+
+				'<div class="meepass-ribbon">',
+					'<h2 data-lid="meepass_ribbon"></h2>',
+				'</div>'
+
+				].join('')).replace('%n', n_meepass );
+
+		},
+		sendMeepass: function(){
+			
+		},
+		handleSendMeepassSuccess: function(){
+
+		},
+		handleApiError: function(){
+
+		},
+		renderEventsInModal: function(){
+
+		},
+		handleMeepassClicked: function(){
+
+			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
+
+			$('.meepass').html('');
+
+			$loader.addClass('none')
+				   .appendTo('.meepass')
+				   .velocity('bounceInQuick', {
+				   	delay: 125,
+				   	duration: 500,
+				   	display: 'block'
+				   });
+
+			LJ.meepass.fetchMeepassItems();
+
+		},	
+		fetchMeepassItems: function(){
+
+			LJ.api.fetchMeMeepass()
+				  .then( LJ.meepass.handleFetchMeMeepassSuccess, LJ.meepass.handleFetchMeMeepassError );
+
+
+		},
+		handleFetchMeMeepassSuccess: function( expose ){
+
+			var meepass = expose.meepass;
+
+			LJ.meepass.setMeepassItems( meepass );
+
+		},
+		setMeepassItems: function( meepass ){
+
+			var html = [];
+			meepass.sort();
+
+			var facebook_ids = _.pluck( meepass, 'sent_by' ).concat( _.pluck( meepass, 'sent_to' ) ).filter( Boolean );
+
+			LJ.api.fetchUsers( facebook_ids )
+				.then(function( res ){
+
+					var no_meepass_received = true;
+					var no_meepass_sent     = true;
+					meepass.forEach(function( mp ){
+
+						for( var i=0; i<res.length; i++ ){
+
+							var user = res[ i ].user;
+
+							if( mp.sent_by == user.facebook_id ){
+								no_meepass_received = false;
+								return html.push( LJ.meepass.renderMeepassItem__Received( mp, user ) );
+							}
+
+							if( mp.sent_to == user.facebook_id ){
+								no_meepass_sent = false;
+								return html.push( LJ.meepass.renderMeepassItem__Sent( mp, user ) );
+							}
+						}
+					});
+
+					if( no_meepass_sent ){
+						html.push( LJ.meepass.renderMeepassItem__SentEmpty() );
+					}
+
+					if( no_meepass_received ){
+						html.push( LJ.meepass.renderMeepassItem__ReceivedEmpty() );
+					}
+
+					$('.meepass').html( html.join('') )
+								 .find('[data-link="received"]')
+								 .velocity('fadeIn', {
+									duration: 250,
+									display: 'flex'
+								});
+
+					$('.menu-section.--meepass')
+								.find('.segment__part')
+								.removeClass('--active')
+								.first()
+								.addClass('--active');
+
+				});
+
+		},		
+		handleFetchMeMeepassError: function(){
+
+			LJ.elog('Error fetching meepass :/');
+
+		},
+		renderMeepassItem__ReceivedEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="received">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meepass"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_meepass_received_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_meepass_received_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__SentEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="sent">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meepass"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_meepass_sent_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_meepass_sent_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__Received: function( meepass_object, target ){
+
+			var mp 	   = meepass_object;
+			var target = target;
+
+			var formatted_date = LJ.renderDate( mp.sent_at );
+			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="meepass__item" data-link="received" data-event-id="' + mp.target_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + LJ.text('meepass_item_title_received').replace('%name', target.name) +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__Sent: function( meepass_object, target, meepass_by ){
+
+			var mp 	   = meepass_object;
+			var target = target;
+
+			var formatted_date = LJ.renderDate( mp.sent_at );
+			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="meepass__item" data-link="sent" data-event-id="' + mp.target_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + LJ.text('meepass_item_title_sent').replace('%name', target.name) +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		}
+
+	});
+		
 
 	window.LJ.pictures = _.merge( window.LJ.pictures || {}, {
 
@@ -47094,521 +47326,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 	
-	// Needs to be loaded before lj-ui
-
-	window.LJ.router = _.merge( window.LJ.router || {}, {
-
-		init: function(){
-			
-		}
-
-	});
-
-	window.LJ.fn = _.merge( window.LJ.fn || {}, {
-
-		initRouter: function(){
-
-			// Reference
-			var wl = window.location;
-
-			// Routing table to map each url to a button to click
-			LJ.router = {
-				me: {
-					elem: '#profile'
-				},
-				events: {
-					elem     : '#events',
-					callback : function(){
-
-					}
-				},
-				settings: {
-					elem: '#settings'
-				}
-			};
-
-			LJ.$body.on('click', '[data-hash]', function(e){
-
-				var $self = $(this);
-
-				// Prevent trigger state visit on parents
-				e.stopPropagation();
-
-				// Move the url to the current hash state
-				var hash = $self.attr('data-hash');
-				wl.hash = '#' + hash;
-
-			});
-
-			$( window ).on('hashchange', function(){
-
-				var hash   = wl.hash.split('#')[1]
-				var target = LJ.router[ hash ].elem; 
-
-				$( target ).click();
-
-			});
-
-		}
-
-	});
-
-	window.LJ.search = _.merge( window.LJ.search || {}, {
-
-		fetched_users 			: [],
-
-		users_count 			: 0,
-		fetching_users			: false,
-		all_fetched 		  	: false,
-
-		fetch_more_scroll_ratio : 0.97,
-		refetch_callstack: [],
-
-		init: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.search.handleDomEvents();
-				LJ.search.fetchAndShowMoreUsers();
-				LJ.search.setCountriesInFilters();
-				LJ.search.addLoader();
-				resolve();
-
-			});
-		},
-		handleDomEvents: function(){
-
-			LJ.ui.$body.on('click', '.search-user__pic', LJ.search.handleClickUser );
-			LJ.ui.$body.on('click', '.search-filters__icon', LJ.search.showFilters );
-			LJ.ui.$body.on('click', '.search-filters__close', LJ.search.hideFilters );
-			LJ.ui.$body.on('click', '.search-filters .toggle', LJ.search.handleToggleFilter );
-			LJ.ui.$window.scroll( LJ.search.handleFetchMoreUsers );
-			
-		},
-		addLoader: function(){
-
-			$('.search-users').append( LJ.static.renderStaticImage('search_loader') )
-
-		},
-		handleClickUser: function(){
-
-			var facebook_id = $(this).closest('.search-user').attr('data-facebook-id');
-
-			LJ.profile_user.showUserProfile( facebook_id );
-
-		},
-		handleToggleFilter: function(){
-
-			var $to = $(this);
-			$to.toggleClass('--active');
-			LJ.search.setFiltersState();
-			LJ.search.refetchAndShowMoreUsers();
-
-		},
-		allowedToFetchMore: function(){
-			
-			var data_to_fetch        = !LJ.search.all_fetched;
-			var scroll_almost_bottom = LJ.ui.getScrollRatio() > LJ.search.fetch_more_scroll_ratio;
-			var search_panel_active  = $('.app__menu-item.--search').hasClass('--active');
-			var user_not_fetching    = !LJ.search.fetching_users;
-
-			if( data_to_fetch && scroll_almost_bottom && search_panel_active && user_not_fetching ){
-				return true;
-			} else {
-				return false;
-			}
-
-		},
-		handleFetchMoreUsers: function(){
-
-			if( !LJ.search.allowedToFetchMore() ) return;
-
-			LJ.log('Fetching more users...');
-			LJ.search.fetchAndShowMoreUsers();
-
-		},
-		fetchMoreUsers: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.search.setFiltersState();
-
-				var facebook_ids = _.pluck( LJ.search.fetched_users, 'facebook_id' );
-				var filters      = LJ.search.filter_state;
-
-				LJ.api.fetchMoreUsers( facebook_ids, filters )
-					.then(function( exposed ){
-
-						var new_users   = exposed.users;
-						var users_count = exposed.users_count;
-
-						LJ.search.fetched_users = _.uniq( LJ.search.fetched_users.concat( new_users ) );
-						LJ.search.users_count   = users_count;
-						resolve( new_users );
-
-					})
-					.catch( reject );
-
-			});
-		},
-		refetchAndShowMoreUsers: function(){
-
-			LJ.log('[Re]Fetching and showing more users...');
-			LJ.search.all_fetched = false;
-
-			if( LJ.search.fetching_users ){
-				return LJ.wlog('Already fetching users...');
-			}
-
-			LJ.search.fetched_users = [];
-			LJ.search.hideSearchUsers()
-				.then(function(){
-					return LJ.search.fetchAndShowMoreUsers();
-				});
-
-		},
-		fetchAndShowMoreUsers: function(){
-
-			LJ.log('Fetching and showing more users...');
-			LJ.search.fetching_users = true;
-
-			var users;
-			LJ.search.showSearchLoader()
-
-				.then(function(){
-					return LJ.search.fetchMoreUsers();
-				})
-
-				.then(function( new_users ){
-					if( LJ.search.fetched_users.length == LJ.search.users_count || new_users.length == 0 ){
-						LJ.wlog('Everyone has been fetched for this filter.');
-						LJ.search.all_fetched = true;
-					}
-					users = new_users;
-					return;
-				})
-
-				.then(function(){
-					return LJ.search.hideSearchLoader();
-				})
-
-				.then(function(){
-					return LJ.search.showMoreUsers( users );
-				})
-				// When users loaded, give it one second of blocking, otherwise if user scrolls
-				// It will detect that he can fetch more users. One batch at a time is better :)
-				.then(function(){
-					setTimeout(function(){
-						LJ.search.fetching_users = false;
-					}, 1000 );
-				});
-
-		},
-		showMoreUsers: function( users ){
-
-			_.chunk( users, 3 ).forEach(function( user_group, i ){
-
-				var $users = $( LJ.search.renderUserRow( user_group ) );
-
-				$users
-					.css({ 'opacity': 0 })
-					.insertBefore('.search__loader');
-
-				LJ.settings.applyUxPreferences();
-
-				$users.velocity('slideUpIn', {
-					display  : 'flex',
-					duration : 700,
-					delay    : 100 + 250 * i
-				});
-
-			});
-
-		},
-		showSearchLoader: function( duration ){
-			return LJ.promise(function( resolve, reject ){
-				var $l = $('.search__loader');
-				if( $l.length == 0 ) return resolve();
-				$('.search__loader').velocity('shradeIn', {
-					duration: duration || 300,
-					complete: resolve
-				})
-			});
-		},
-		hideSearchLoader: function( duration ){
-			return LJ.promise(function( resolve, reject ){
-				$('.search__loader').velocity('shradeOut', {
-					duration: duration || 300,
-					complete: resolve
-				})
-			});
-		},
-		hideSearchUsers: function(){
-
-			return LJ.promise(function( resolve, reject ){
-
-				if( $('.search-users-row').length == 0 ){
-					return resolve();
-				}
-				
-				$('.search-users-row').velocity('shradeOut', {
-					duration : 300,
-					complete : function(){
-						$(this).remove();
-						resolve();
-					}
-				});
-			});
-
-		},
-		renderUserRow: function( users ){
-
-			if( !users ){
-				return LJ.wlog('No users to render here');
-			}
-
-			var html = ['<div class="search-users-row">'];
-
-			for( var i=0; i<3; i++ ){
-				if( users[ i ] ){
-					html.push( LJ.search.renderUser( users[i] ) );
-				} else {
-					html.push( LJ.search.renderUserBlank() );
-				}
-			}
-
-			html.push('</div>');
-
-			return html.join('');
-
-		},
-		renderUserBlank: function(){
-
-			return '<div class="search-user --blank"></div>';
-
-		},
-		renderUser: function( user ){
-
-			var n = user.name;
-			var a = user.age;
-			var i = user.facebook_id;
-			var c = user.country_code;
-			var l = user.location.place_name;
-			var p = user.location.place_id;
-			var g = user.gender;
-
-			var main_pic = LJ.findMainPic( user );
-			var img_html = LJ.pictures.makeImgHtml( main_pic.img_id, main_pic.img_version, 'user-search');
-
-
-			return LJ.ui.render([
-
-				'<div class="search-user" data-facebook-id="'+ i +'" data-age="' + a + '" data-gender="' + g + '" data-cc="' + c + '">',
-		            '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
-		            '<div class="search-user__pic js-filterlay">',
-		            	img_html,
-		               '<div class="search-user__pic-overlay"></div>',
-		            '</div>',
-		           '<div class="search-user-body">',
-		               '<div class="search-user__h1">',
-		            	  '<span class="search-user__gender user-gender js-user-gender --'+ g +'"></span>',
-		                  '<span class="name">'+ n +'</span>',
-			              '<span class="search-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
-		               '</div>',
-		               '<div class="search-user__h2">',
-		                  '<span class="age">'+ a +'</span>',
-		                  '<span class="comma">-</span>',
-			              '<span class="location" data-place-id="'+ p +'">'+ l +'</span>',
-		               '</div>',
-		           '</div>',
-		            '<div class="search-user__actions">',
-		              '<div class="search-user__action --round-icon --share js-share-profile"><i class="icon icon-forward"></i></div>',
-		              '<div class="search-user__splitter"></div>',
-		              '<div class="search-user__action --round-icon --meepass js-send-meepass"><i class="icon icon-meepass"></i></div>',
-		            '</div>',
-	          '</div>'
-
-				].join(''))
-
-		}
-
-	});
-	
-	window.LJ.search = _.merge( window.LJ.search || {}, {
-
-		$filters_agerange : null,
-		filters_agerange  : null,
-
-		filters_duration: 400,
-
-		filter_state: {
-			age       : [],
-			gender    : [],
-			countries : []
-		},
-
-		initFilters: function(){
-			return LJ.promise(function( resolve, reject ){
-				LJ.search.initFiltersSlider();
-				resolve();
-			});
-
-		},
-		initFiltersSlider: function(){
-			
-			LJ.search.$filters_agerange = document.getElementById('search-filters__input');
-			
-			LJ.search.filters_agerange = noUiSlider.create( LJ.search.$filters_agerange, {
-				start: [ LJ.app_settings.app.min_age, LJ.app_settings.app.max_age ], // Handle start position
-				step: 1, 					// Slider moves in increments of '10'
-				margin: 3, 					// Handles must be more than '20' apart
-				connect: true, 				// Display a colored bar between the handles
-				orientation: 'horizontal',  // Orient the slider vertically
-				behaviour: 'tap-drag',  	// Move handle on tap, bar is draggable
-				range: { 					// Slider can select '0' to '100'
-					'min': LJ.app_settings.app.min_age,
-					'max': LJ.app_settings.app.max_age
-				}
-			});
-
-			LJ.search.filters_agerange.on('update', LJ.search.refreshFiltersSliderValues );
-			LJ.search.filters_agerange.on('end', LJ.search.refetchAndShowMoreUsers );
-
-		},
-		resetFiltersState: function(){
-
-			LJ.search.filter_state = {
-				age       : [],
-				gender    : [],
-				countries : []
-			};
-
-		},
-		setFiltersState: function(){
-
-			LJ.search.resetFiltersState();
-
-			$('.search-filters')
-				.find('.toggle.--active')
-				.each(function( i, toggle ){
-
-					if( $( toggle ).closest('.js-filters-male').length > 0 ){
-						LJ.search.filter_state.gender.push('male');
-					}
-
-					if( $( toggle ).closest('.js-filters-female').length > 0 )
-						LJ.search.filter_state.gender.push('female');
-
-					if( $( toggle ).closest('.js-filters-country').length > 0 ){
-						var cc = $(toggle).closest('[data-country-code]').attr('data-country-code');
-						LJ.search.filter_state.countries.push( cc );
-					}
-
-				});
-
-			var min = $('.search-filters-min-age').html();
-			var max = $('.search-filters-max-age').html();
-
-			LJ.search.filter_state.age[0] = min;
-			LJ.search.filter_state.age[1] = max;
-
-		},
-		setCountriesInFilters: function(){
-
-			LJ.api.fetchDistinctCountries()
-				.then(function( country_codes ){
-					return LJ.search.renderFilterCountries( _.shuffle( country_codes ) );
-				})
-				.then(function( countries_html ){
-					return LJ.search.addFilterCountries( countries_html );
-				})
-
-		},
-		renderFilterCountries: function( country_codes ){
-
-			var html = [];
-			country_codes.forEach(function( cc ){
-				html.push( LJ.search.renderFilterCountry( cc ) );
-			});
-
-			return html.join('');
-
-		},
-		renderFilterCountry: function( cc ){
-
-			return LJ.ui.render([
-				'<div class="search-filters-countries js-filters-countries" data-country-code="'+ cc +'">',
-					'<div class="search-filters-row js-filters-country">',
-	            		'<div class="search-filters-country__flag --round-icon">',
-	            			'<i class="flag-icon flag-icon-'+ cc +'"></i>',
-	              		'</div>',
-		            	'<div class="search-filters-country__label">',
-		            		'<label data-lid="country_'+ cc +'"></label>',
-		            	'</div>',
-		            	'<div class="toggle">',
-		                	'<div class="toggle__background"></div>',
-		                	'<div class="toggle__button"></div>',
-		              	'</div>',
-	            	'</div>',
-	            '</div>'
-				].join(''));
-		},
-		addFilterCountries: function( countries_html ){
-
-			$('.js-filters-countries').children().remove();
-			$('.js-filters-countries').append( countries_html );
-
-		},
-		showFilters: function(){
-			
-			var $fi    = $('.search-filters__icon');
-			var $f     = $('.search-filters');
-			var d      = LJ.search.filters_duration;
-
-			LJ.ui.adjustWrapperHeight( $('.search-filters') );
-
-			$fi.velocity('shradeOut', {
-				duration : d,
-				display  : 'none'
-			});
-
-			LJ.ui.shradeIn( $f, d );
-
-			// LJ.delay( d )
-			// 	.then(function(){
-			// 		return LJ.ui.shradeIn( $f, d );
-			// 	});
-			
-
-		},
-		hideFilters: function(){
-
-			var $fi    = $('.search-filters__icon');
-			var $f     = $('.search-filters');
-			var d      = LJ.search.filters_duration;
-
-			$f.velocity('shradeOut', {
-				duration : d,
-				display  : 'none'
-			});
-
-			LJ.ui.shradeIn( $fi, d );
-			
-			// LJ.delay( d )
-			// 	.then(function(){
-			// 		return LJ.ui.shradeIn( $fi, d );
-			// 	});
-
-		},
-		refreshFiltersSliderValues: function( value ){
-
-			$('.search-filters-min-age').html( parseInt(value[0]) );
-			$('.search-filters-max-age').html( parseInt(value[1]) );
-
-			LJ.search.setFiltersState();
-
-		}
-
-	});
-	
 	window.LJ.seek = _.merge( window.LJ.seek || {}, {
 
 		init: function(){
@@ -47691,6 +47408,65 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		}
 
 
+
+	});
+	
+	// Needs to be loaded before lj-ui
+
+	window.LJ.router = _.merge( window.LJ.router || {}, {
+
+		init: function(){
+			
+		}
+
+	});
+
+	window.LJ.fn = _.merge( window.LJ.fn || {}, {
+
+		initRouter: function(){
+
+			// Reference
+			var wl = window.location;
+
+			// Routing table to map each url to a button to click
+			LJ.router = {
+				me: {
+					elem: '#profile'
+				},
+				events: {
+					elem     : '#events',
+					callback : function(){
+
+					}
+				},
+				settings: {
+					elem: '#settings'
+				}
+			};
+
+			LJ.$body.on('click', '[data-hash]', function(e){
+
+				var $self = $(this);
+
+				// Prevent trigger state visit on parents
+				e.stopPropagation();
+
+				// Move the url to the current hash state
+				var hash = $self.attr('data-hash');
+				wl.hash = '#' + hash;
+
+			});
+
+			$( window ).on('hashchange', function(){
+
+				var hash   = wl.hash.split('#')[1]
+				var target = LJ.router[ hash ].elem; 
+
+				$( target ).click();
+
+			});
+
+		}
 
 	});
 
@@ -48414,7 +48190,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 				'<div class="empty">',
 					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-telescope"></i>',
+						'<i class="icon icon-users"></i>',
 					'</div>',
 					'<div class="empty__title">',
 						'<h2 data-lid="empty_shared_title"></h2>',
@@ -48620,6 +48396,462 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 				LJ.ui.hideModal()
 
 			});
+
+		}
+
+	});
+
+	window.LJ.search = _.merge( window.LJ.search || {}, {
+
+		fetched_users 			: [],
+
+		users_count 			: 0,
+		fetching_users			: false,
+		all_fetched 		  	: false,
+
+		fetch_more_scroll_ratio : 0.97,
+		refetch_callstack: [],
+
+		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.search.handleDomEvents();
+				LJ.search.fetchAndShowMoreUsers();
+				LJ.search.setCountriesInFilters();
+				LJ.search.addLoader();
+				resolve();
+
+			});
+		},
+		handleDomEvents: function(){
+
+			LJ.ui.$body.on('click', '.search-user__pic', LJ.search.handleClickUser );
+			LJ.ui.$body.on('click', '.search-filters__icon', LJ.search.showFilters );
+			LJ.ui.$body.on('click', '.search-filters__close', LJ.search.hideFilters );
+			LJ.ui.$body.on('click', '.search-filters .toggle', LJ.search.handleToggleFilter );
+			LJ.ui.$window.scroll( LJ.search.handleFetchMoreUsers );
+			
+		},
+		addLoader: function(){
+
+			$('.search-users').append( LJ.static.renderStaticImage('search_loader') )
+
+		},
+		handleClickUser: function(){
+
+			var facebook_id = $(this).closest('.search-user').attr('data-facebook-id');
+
+			LJ.profile_user.showUserProfile( facebook_id );
+
+		},
+		handleToggleFilter: function(){
+
+			var $to = $(this);
+			$to.toggleClass('--active');
+			LJ.search.setFiltersState();
+			LJ.search.refetchAndShowMoreUsers();
+
+		},
+		allowedToFetchMore: function(){
+			
+			var data_to_fetch        = !LJ.search.all_fetched;
+			var scroll_almost_bottom = LJ.ui.getScrollRatio() > LJ.search.fetch_more_scroll_ratio;
+			var search_panel_active  = $('.app__menu-item.--search').hasClass('--active');
+			var user_not_fetching    = !LJ.search.fetching_users;
+
+			if( data_to_fetch && scroll_almost_bottom && search_panel_active && user_not_fetching ){
+				return true;
+			} else {
+				return false;
+			}
+
+		},
+		handleFetchMoreUsers: function(){
+
+			if( !LJ.search.allowedToFetchMore() ) return;
+
+			LJ.log('Fetching more users...');
+			LJ.search.fetchAndShowMoreUsers();
+
+		},
+		fetchMoreUsers: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.search.setFiltersState();
+
+				var facebook_ids = _.pluck( LJ.search.fetched_users, 'facebook_id' );
+				var filters      = LJ.search.filter_state;
+
+				LJ.api.fetchMoreUsers( facebook_ids, filters )
+					.then(function( exposed ){
+
+						var new_users   = exposed.users;
+						var users_count = exposed.users_count;
+
+						LJ.search.fetched_users = _.uniq( LJ.search.fetched_users.concat( new_users ) );
+						LJ.search.users_count   = users_count;
+						resolve( new_users );
+
+					})
+					.catch( reject );
+
+			});
+		},
+		refetchAndShowMoreUsers: function(){
+
+			LJ.log('[Re]Fetching and showing more users...');
+			LJ.search.all_fetched = false;
+
+			if( LJ.search.fetching_users ){
+				return LJ.wlog('Already fetching users...');
+			}
+
+			LJ.search.fetched_users = [];
+			LJ.search.hideSearchUsers()
+				.then(function(){
+					return LJ.search.fetchAndShowMoreUsers();
+				});
+
+		},
+		fetchAndShowMoreUsers: function(){
+
+			LJ.log('Fetching and showing more users...');
+			LJ.search.fetching_users = true;
+
+			var users;
+			LJ.search.showSearchLoader()
+
+				.then(function(){
+					return LJ.search.fetchMoreUsers();
+				})
+
+				.then(function( new_users ){
+					if( LJ.search.fetched_users.length == LJ.search.users_count || new_users.length == 0 ){
+						LJ.wlog('Everyone has been fetched for this filter.');
+						LJ.search.all_fetched = true;
+					}
+					users = new_users;
+					return;
+				})
+
+				.then(function(){
+					return LJ.search.hideSearchLoader();
+				})
+
+				.then(function(){
+					return LJ.search.showMoreUsers( users );
+				})
+				// When users loaded, give it one second of blocking, otherwise if user scrolls
+				// It will detect that he can fetch more users. One batch at a time is better :)
+				.then(function(){
+					setTimeout(function(){
+						LJ.search.fetching_users = false;
+					}, 1000 );
+				});
+
+		},
+		showMoreUsers: function( users ){
+
+			_.chunk( users, 3 ).forEach(function( user_group, i ){
+
+				var $users = $( LJ.search.renderUserRow( user_group ) );
+
+				$users
+					.css({ 'opacity': 0 })
+					.insertBefore('.search__loader');
+
+				LJ.settings.applyUxPreferences();
+
+				$users.velocity('slideUpIn', {
+					display  : 'flex',
+					duration : 700,
+					delay    : 100 + 250 * i
+				});
+
+			});
+
+		},
+		showSearchLoader: function( duration ){
+			return LJ.promise(function( resolve, reject ){
+				var $l = $('.search__loader');
+				if( $l.length == 0 ) return resolve();
+				$('.search__loader').velocity('shradeIn', {
+					duration: duration || 300,
+					complete: resolve
+				})
+			});
+		},
+		hideSearchLoader: function( duration ){
+			return LJ.promise(function( resolve, reject ){
+				$('.search__loader').velocity('shradeOut', {
+					duration: duration || 300,
+					complete: resolve
+				})
+			});
+		},
+		hideSearchUsers: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				if( $('.search-users-row').length == 0 ){
+					return resolve();
+				}
+				
+				$('.search-users-row').velocity('shradeOut', {
+					duration : 300,
+					complete : function(){
+						$(this).remove();
+						resolve();
+					}
+				});
+			});
+
+		},
+		renderUserRow: function( users ){
+
+			if( !users ){
+				return LJ.wlog('No users to render here');
+			}
+
+			var html = ['<div class="search-users-row">'];
+
+			for( var i=0; i<3; i++ ){
+				if( users[ i ] ){
+					html.push( LJ.search.renderUser( users[i] ) );
+				} else {
+					html.push( LJ.search.renderUserBlank() );
+				}
+			}
+
+			html.push('</div>');
+
+			return html.join('');
+
+		},
+		renderUserBlank: function(){
+
+			return '<div class="search-user --blank"></div>';
+
+		},
+		renderUser: function( user ){
+
+			var n = user.name;
+			var a = user.age;
+			var i = user.facebook_id;
+			var c = user.country_code;
+			var l = user.location.place_name;
+			var p = user.location.place_id;
+			var g = user.gender;
+
+			var main_pic = LJ.findMainPic( user );
+			var img_html = LJ.pictures.makeImgHtml( main_pic.img_id, main_pic.img_version, 'user-search');
+
+
+			return LJ.ui.render([
+
+				'<div class="search-user" data-facebook-id="'+ i +'" data-age="' + a + '" data-gender="' + g + '" data-cc="' + c + '">',
+		            '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
+		            '<div class="search-user__pic js-filterlay">',
+		            	img_html,
+		               '<div class="search-user__pic-overlay"></div>',
+		            '</div>',
+		           '<div class="search-user-body">',
+		               '<div class="search-user__h1">',
+		            	  '<span class="search-user__gender user-gender js-user-gender --'+ g +'"></span>',
+		                  '<span class="name">'+ n +'</span>',
+			              '<span class="search-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
+		               '</div>',
+		               '<div class="search-user__h2">',
+		                  '<span class="age">'+ a +'</span>',
+		                  '<span class="comma">-</span>',
+			              '<span class="location" data-place-id="'+ p +'">'+ l +'</span>',
+		               '</div>',
+		           '</div>',
+		            '<div class="search-user__actions">',
+		              '<div class="search-user__action --round-icon --share js-share-profile"><i class="icon icon-forward"></i></div>',
+		              '<div class="search-user__splitter"></div>',
+		              '<div class="search-user__action --round-icon --meepass js-send-meepass"><i class="icon icon-meepass"></i></div>',
+		            '</div>',
+	          '</div>'
+
+				].join(''))
+
+		}
+
+	});
+	
+	window.LJ.search = _.merge( window.LJ.search || {}, {
+
+		$filters_agerange : null,
+		filters_agerange  : null,
+
+		filters_duration: 400,
+
+		filter_state: {
+			age       : [],
+			gender    : [],
+			countries : []
+		},
+
+		initFilters: function(){
+			return LJ.promise(function( resolve, reject ){
+				LJ.search.initFiltersSlider();
+				resolve();
+			});
+
+		},
+		initFiltersSlider: function(){
+			
+			LJ.search.$filters_agerange = document.getElementById('search-filters__input');
+			
+			LJ.search.filters_agerange = noUiSlider.create( LJ.search.$filters_agerange, {
+				start: [ LJ.app_settings.app.min_age, LJ.app_settings.app.max_age ], // Handle start position
+				step: 1, 					// Slider moves in increments of '10'
+				margin: 3, 					// Handles must be more than '20' apart
+				connect: true, 				// Display a colored bar between the handles
+				orientation: 'horizontal',  // Orient the slider vertically
+				behaviour: 'tap-drag',  	// Move handle on tap, bar is draggable
+				range: { 					// Slider can select '0' to '100'
+					'min': LJ.app_settings.app.min_age,
+					'max': LJ.app_settings.app.max_age
+				}
+			});
+
+			LJ.search.filters_agerange.on('update', LJ.search.refreshFiltersSliderValues );
+			LJ.search.filters_agerange.on('end', LJ.search.refetchAndShowMoreUsers );
+
+		},
+		resetFiltersState: function(){
+
+			LJ.search.filter_state = {
+				age       : [],
+				gender    : [],
+				countries : []
+			};
+
+		},
+		setFiltersState: function(){
+
+			LJ.search.resetFiltersState();
+
+			$('.search-filters')
+				.find('.toggle.--active')
+				.each(function( i, toggle ){
+
+					if( $( toggle ).closest('.js-filters-male').length > 0 ){
+						LJ.search.filter_state.gender.push('male');
+					}
+
+					if( $( toggle ).closest('.js-filters-female').length > 0 )
+						LJ.search.filter_state.gender.push('female');
+
+					if( $( toggle ).closest('.js-filters-country').length > 0 ){
+						var cc = $(toggle).closest('[data-country-code]').attr('data-country-code');
+						LJ.search.filter_state.countries.push( cc );
+					}
+
+				});
+
+			var min = $('.search-filters-min-age').html();
+			var max = $('.search-filters-max-age').html();
+
+			LJ.search.filter_state.age[0] = min;
+			LJ.search.filter_state.age[1] = max;
+
+		},
+		setCountriesInFilters: function(){
+
+			LJ.api.fetchDistinctCountries()
+				.then(function( country_codes ){
+					return LJ.search.renderFilterCountries( _.shuffle( country_codes ) );
+				})
+				.then(function( countries_html ){
+					return LJ.search.addFilterCountries( countries_html );
+				})
+
+		},
+		renderFilterCountries: function( country_codes ){
+
+			var html = [];
+			country_codes.forEach(function( cc ){
+				html.push( LJ.search.renderFilterCountry( cc ) );
+			});
+
+			return html.join('');
+
+		},
+		renderFilterCountry: function( cc ){
+
+			return LJ.ui.render([
+				'<div class="search-filters-countries js-filters-countries" data-country-code="'+ cc +'">',
+					'<div class="search-filters-row js-filters-country">',
+	            		'<div class="search-filters-country__flag --round-icon">',
+	            			'<i class="flag-icon flag-icon-'+ cc +'"></i>',
+	              		'</div>',
+		            	'<div class="search-filters-country__label">',
+		            		'<label data-lid="country_'+ cc +'"></label>',
+		            	'</div>',
+		            	'<div class="toggle">',
+		                	'<div class="toggle__background"></div>',
+		                	'<div class="toggle__button"></div>',
+		              	'</div>',
+	            	'</div>',
+	            '</div>'
+				].join(''));
+		},
+		addFilterCountries: function( countries_html ){
+
+			$('.js-filters-countries').children().remove();
+			$('.js-filters-countries').append( countries_html );
+
+		},
+		showFilters: function(){
+			
+			var $fi    = $('.search-filters__icon');
+			var $f     = $('.search-filters');
+			var d      = LJ.search.filters_duration;
+
+			LJ.ui.adjustWrapperHeight( $('.search-filters') );
+
+			$fi.velocity('shradeOut', {
+				duration : d,
+				display  : 'none'
+			});
+
+			LJ.ui.shradeIn( $f, d );
+
+			// LJ.delay( d )
+			// 	.then(function(){
+			// 		return LJ.ui.shradeIn( $f, d );
+			// 	});
+			
+
+		},
+		hideFilters: function(){
+
+			var $fi    = $('.search-filters__icon');
+			var $f     = $('.search-filters');
+			var d      = LJ.search.filters_duration;
+
+			$f.velocity('shradeOut', {
+				duration : d,
+				display  : 'none'
+			});
+
+			LJ.ui.shradeIn( $fi, d );
+			
+			// LJ.delay( d )
+			// 	.then(function(){
+			// 		return LJ.ui.shradeIn( $fi, d );
+			// 	});
+
+		},
+		refreshFiltersSliderValues: function( value ){
+
+			$('.search-filters-min-age').html( parseInt(value[0]) );
+			$('.search-filters-max-age').html( parseInt(value[1]) );
+
+			LJ.search.setFiltersState();
 
 		}
 
@@ -48857,243 +49089,427 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		}
 
 	});
-	
 
-	window.LJ = _.merge( window.LJ || {} , {
+window.LJ = _.merge( window.LJ || {}, {
 
-		typeahead_legacy: {
-			users: {
-				class_names: {
-					input      :'',
-					hint       :'',
-					menu       :'search-results-users',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-users',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			// places: {
-			// 	class_names: {
-			// 		input:'',
-			// 		hint:'hint-places',
-			// 		menu:'search-results-autocomplete search-results-party-places',
-			// 		dataset:'search-wrap',
-			// 		suggestion:'search-result-default search-result-party-places',
-			// 		empty:'empty',
-			// 		open:'open',
-			// 		cursor:'cursor',
-			// 		highlight:'highlight'
-			// 	}
-			// },
-			friends: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			groups: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends search-results-groups',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			}
-		}
+    initAugmentations: function(){
 
-	});
+        String.prototype.capitalize = function() {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        }
+
+        /* La base! */
+        _.mixin({
+            pluckMany: function() {
+                var array = arguments[0],
+                    propertiesToPluck = _.rest(arguments, 1);
+                return _.map(array, function(item) {
+                    return _.partial(_.pick, item).apply(null, propertiesToPluck);
+                });
+            }
+        });
+
+        // upgrading version
+        _.pluck = _.map;
+
+        $('body').on('mouseenter', '.jspContainer', function(){
+            LJ.ui.deactivateHtmlScroll();
+        });
+
+        $('body').on('mouseleave', '.jspContainer', function(){
+            LJ.ui.activateHtmlScroll();
+        });
+
+                
+    },
+    promise: function( callback ){
+        return new Promise( callback );
+    },
+    Promise: Promise,
+
+    storeItem: function( key, value ){
+
+        if( !key || !value ){
+            var object = key;
+            key = _.keys( object )[0];
+            value = object[key];
+        }
+
+        value = typeof value == 'object' ? JSON.stringify(value) : value;
+        return localStorage.setItem( key, value );
+
+        localStorage.setItem( key, value );
+
+    },
+    cacheUser: function( user ){
+
+        if( !LJ.user ){
+            LJ.log('Caching user for the first time');
+            LJ.user = user;
+            LJ.user.cheers = [];
+            return LJ.user;
+        } else {
+            if( user.facebook_id == LJ.user.facebook_id ){
+                LJ.log('Facebook_id matched, updating user cache');
+                _.keys( user ).forEach(function( key ){
+                    if( LJ.user.hasOwnProperty( key ) ){
+                        LJ.user[ key ] = user[ key ];
+                    }
+                });
+            } else {
+                
+            }
+        }
+
+    },
+    isSameDay: function( d1, d2 ){
+        return m1.dayOfYear() == m2.dayOfYear();
+
+    },
+    findMainPic: function( user ){
+
+        var user = user || LJ.user;
+
+        return _.find( user.pictures, function( p ){
+            return p.is_main;
+        });
+
+    },
+    delay: function( delay ){
+
+        if( typeof delay != "number" ){
+            delay = 1000;
+        }
+
+        return LJ.promise(function( resolve, reject ){
+            setTimeout(function(){
+                resolve();
+            }, delay );
+        })
+    },
+    hashtagify: function( str ){
+
+        var hashtag_parts = [];
+
+        str.toLowerCase().trim().split(/[\s_-]/).forEach(function( el, i ){
+
+            if( i == 0 ){
+                hashtag_parts.push( el );
+            } else {
+                if( el != '') {
+                    var elm = el[0].toUpperCase() + el.substring(1);
+                    hashtag_parts.push( elm );
+                }
+            }
+        });
+
+        return hashtag_parts.join('');
+
+    },
+    log: function log( message ){
+
+        if( LJ.app_mode == "prod" ){
+            console.log("Hello there.")
+            return LJ.log = function(){}
+        }
+        console.log( message );
+
+    },
+    wlog: function wlog( message ){
+        
+        console.warn( message );
+
+    },
+    tlog: function tlog( message ){
+        
+        console.trace( message );
+
+    },
+    elog: function elog( message ){
+
+        console.error( message )
+
+    },
+    ilog: function ilog( message ){
+
+        console.info( message );
+        
+    },
+    getGhostUser: function(){
+
+        var ghost_user = {
+
+            facebook_id : 'ghost',
+            name        : LJ.text('ghost_user_name'),
+            age         : 18,
+            job         : LJ.text('ghost_user_job'),
+            img_id      : "ghost_user",
+            img_vs      : "1468060134"
+
+        }
+
+        return ghost_user;
+
+    },
+    renderUserRow: function( user ){
+
+        var filterlay = 'js-filterlay';
+
+        if( !user || !user.img_id || !user.img_vs ){
+            LJ.log('No user was provided, rendering ghost user instead');
+            user = LJ.getGhostUser();
+            filterlay = '';
+        }
+
+        var img_small = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-row" );
+
+        var gender = user.g;
+        var cc     = user.cc;
+
+        return LJ.ui.render([
+
+            '<div class="user-row js-user-profile" data-facebook-id="'+ user.facebook_id +'">',
+                '<div class="user-row__pic '+ filterlay +'">',
+                  img_small,
+                '</div>',
+                '<div class="user-row__informations">',
+                  '<div class="user-row__about">',
+                    '<div class="user-gender --'+ gender +' js-user-gender"></div>',
+                    '<span class="user-name">'+ user.name +'</span>',
+                    '<span class="user-comma">,</span>',
+                    '<span class="user-age">'+ user.age +'</span>',
+                    '<div class="user-country js-user-country">',
+                      '<i class="flag-icon flag-icon-'+ cc +'"></i>',
+                    '</div>',
+                    '<span class="user-online user__status js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
+                  '</div>',
+                  '<div class="user-row__education">',
+                    '<span class="user-row__education-icon --round-icon">',
+                      '<i class="icon icon-education"></i>',
+                    '</span>',
+                    '<span class="user-row__education-label">'+ user.job +'</span>',
+                  '</div>',
+                '</div>',
+          '</div>'
+
+        ].join(''));
+
+    },
+    renderUserRows: function( users ){
+
+        if( !Array.isArray( users ) ){
+            return LJ.wlog('Cant render users row with empty array, users='+ users );
+        }
+
+        var user_rows = [];
+        users.forEach(function( u ){
+            user_rows.push( LJ.renderUserRow( u ) );
+
+        });
+
+        return user_rows.join('');
 
 
-	window.LJ.fn = _.merge( window.LJ.fn || {} , 
+    },
+    mainifyUserRow: function( $w, main_user ){
 
-	{
-		initTypeaheadUsers: function(){
+        var $rows = $w.find('.user-row');
+        $rows.each(function( i, row ){
 
-			var users = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
+            var $r = $( row );
+            if( $r.attr('data-facebook-id') == main_user ){
 
-			users.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
+                $r.addClass('--main').addClass('js-main').insertBefore( $rows.first() );
+                $r.find('.user-row__pic').append('<div class="user__host --round-icon"><i class="icon icon-star"></i></div>');
+            }
 
-			$('#search input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
-				classNames: LJ.typeahead.users.class_names
-			},
-			{
-				name:'users',
-				display:'name',
-				source: users.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			})
-			.on('typeahead:select', function( ev, suggestion ){
+        }); 
 
-				LJ.fn.displayUserProfile( suggestion.facebook_id );
-				$(this).typeahead('val', '');
+    },
+    generateId: function(){
+        return LJ.randomInt( 100, 100000000000 );
 
-			});
+    },
+    randomInt: function(low, high) {
+        return Math.floor(Math.random() * (high - low + 1) + low);
 
-		},
-		initTypeaheadHosts: function( friends ){
+    },
+    renderDate: function( date ){
+        return moment( date ).format('hh:mm')
+        
+    },
+    renderMultipleNames: function( names, opts ){
+        
+        opts = opts || {};
 
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
+        if( typeof names == "string" ){
+            names = [ names ];
+        }
 
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
+        if( !Array.isArray( names ) ){
+            return LJ.wlog('Cannot render multiple names, wrong argument');
+        }
 
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+        names = names.filter( Boolean );
 
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
+        if( names.length == 0 ){
+            return LJ.wlog('Cannot render multiple names, empty array');
+        }
 
-			$('.row-create-friends input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.friends.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
+        var name_to_replace = opts.lastify_user;
+        if( name_to_replace ){
 
-		},
-		initTypeaheadGroups: function( friends ){
+            if( names.indexOf( name_to_replace ) == -1 ){
+                return LJ.wlog('Cannot lastify name, doesnt exist in the array');
+            }
 
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
+            names.forEach(function( name, i ){
+                if( name == name_to_replace ){
+                    delete names[ i ];
+                }
+            });
 
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
+            names.push( LJ.text("w_you") );
+            return LJ.renderMultipleNames( names );
 
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+        }
 
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
+        if( names.length == 1 ){
+            return names[0];
+        } 
 
-			$('.row-requestin-group-members input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.groups.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
+        if( names.length == 2 ){
+            return [ names[0], names[1] ].join(' ' + LJ.text('w_and') + ' ');
+        }
 
-		},
-		initTypeaheadPlaces: function(){
+        return [ names[0], LJ.renderMultipleNames( names.slice(1) ) ].join(', ');
 
-			var places = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
+    },
+    renderManyMultipleNames: function( names ){
+        
+        names = Array.isArray( names ) ? names : [ names ];
+        names.reverse();
+        var T = names.length;
+        var displayed = [].slice.call( arguments, -1 );
 
-			places.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
 
-			$('.row-create-party-place input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1,
-				classNames: LJ.typeahead.places.class_names
-			},
-			{
-				name:'places',
-				display:'name',
-				source: places.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
-				}
-			});
+        if( typeof displayed != "number" ){
+            displayed = 2;
+        }
 
-		}
-		
-	});
+        if( displayed >= T - 1 ){
+            displayed = T - 1;
+        }
+
+         if( names.length == 1 ){
+            return names[0];
+        }
+        if( names.length == 2 ){
+            return names[0] + ' '+ LJ.text('w_and') +' ' + names[1];
+        }
+
+        var cur = 1;
+        var str = names.pop();
+
+        while ( cur < displayed ){
+            str += ', ' + names.pop();
+            cur++;
+        }
+
+        str += ' '+ LJ.text('w_and') +' ' + names.length + ' ' + LJ.text('w_more');
+        return str;
+
+
+    },
+    renderGroupName: function( name ){
+        return name + ' & co';
+
+    },
+    swapNodes: function( a, b ){
+
+        var aparent = a.parentNode;
+        var asibling = a.nextSibling === b ? a : a.nextSibling;
+        b.parentNode.insertBefore(a, b);
+        aparent.insertBefore(b, asibling);
+
+    },
+    testTemplate: function( tplName, param, wrapper ){
+
+        var html = LJ.fn[tplName]( param );
+
+        if( wrapper ){
+            html = '<div class="' + wrapper + '">' + html + '</div>';
+        }
+
+        $( html )
+            .addClass('temp')
+
+            .css({
+
+                'opacity'   : '1',
+                'left'      : '50%',
+                'top'       : '50%',
+                'z-index'   :'1000000000000',
+                'transform' : 'translate(-50%,-50%)'
+
+            })
+
+            .appendTo('body');
+
+        $('.temp').click(function(){ 
+
+            $(this).remove(); 
+            
+        });
+
+    },
+    getDisconnectedAt: function(){
+
+        return LJ.user.disconnected_at;
+
+    },
+    roughSizeOfObject: function( object ) {
+
+            var objectList = [];
+            var stack = [ object ];
+            var bytes = 0;
+
+            while ( stack.length ) {
+                var value = stack.pop();
+
+                if ( typeof value === 'boolean' ) {
+                    bytes += 4;
+                }
+                else if ( typeof value === 'string' ) {
+                    bytes += value.length * 2;
+                }
+                else if ( typeof value === 'number' ) {
+                    bytes += 8;
+                }
+                else if
+                (
+                    typeof value === 'object'
+                    && objectList.indexOf( value ) === -1
+                )
+                {
+                    objectList.push( value );
+
+                    for( var i in value ) {
+                        stack.push( value[ i ] );
+                    }
+                }
+            }
+            return bytes;
+        },
+        isElementInViewport: function(el) {
+
+            var rect = el[0].getBoundingClientRect();
+            return ( rect.top >= 0 && rect.left >= 0 && rect.bottom <=  $(window).height() && rect.right <= $(window).width() );
+        }
+
+
+});
+
 
 window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
@@ -49168,9 +49584,9 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	},
 	getScrollRatio: function(){
 
-		var s = $(window).scrollTop(),
-		    d = $(document).height(),
-		    c = $(window).height();
+		var s = $( window ).scrollTop(),
+		    d = $( document ).height(),
+		    c = $( window ).height();
 
 		return scrollPercent = (s / (d-c));
 
@@ -50921,17 +51337,21 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 			$('.slide-overlay').velocity('fadeOut', {
 				duration: duration,
 				complete : function(){
-					$(this).children().remove();
+					$( this ).children().remove();
 				}
 			});
 
 		},
 		hideSlide: function( opts ){
 			
-			$('.slide.--' + opts.type ).velocity('shradeOut', {
+			opts = opts || {};
+			
+			var type = opts.type ? '.slide.--' + opts.type : '.slide';
+
+			$( type ).velocity('shradeOut', {
 				duration: LJ.ui.hide_slide_duration,
 				complete: function(){
-					$(this).remove();
+					$( this ).remove();
 				}
 			});
 
@@ -51072,419 +51492,240 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 		}
 
 	});
-
-window.LJ = _.merge( window.LJ || {}, {
-
-    initAugmentations: function(){
-
-        String.prototype.capitalize = function() {
-            return this.charAt(0).toUpperCase() + this.slice(1);
-        }
-
-        /* La base! */
-        _.mixin({
-            pluckMany: function() {
-                var array = arguments[0],
-                    propertiesToPluck = _.rest(arguments, 1);
-                return _.map(array, function(item) {
-                    return _.partial(_.pick, item).apply(null, propertiesToPluck);
-                });
-            }
-        });
-
-        // upgrading version
-        _.pluck = _.map;
-
-        $('body').on('mouseenter', '.jspContainer', function(){
-            LJ.ui.deactivateHtmlScroll();
-        });
-
-        $('body').on('mouseleave', '.jspContainer', function(){
-            LJ.ui.activateHtmlScroll();
-        });
-
-                
-    },
-    promise: function( callback ){
-        return new Promise( callback );
-    },
-    Promise: Promise,
-
-    storeItem: function( key, value ){
-
-        if( !key || !value ){
-            var object = key;
-            key = _.keys( object )[0];
-            value = object[key];
-        }
-
-        value = typeof value == 'object' ? JSON.stringify(value) : value;
-        return localStorage.setItem( key, value );
-
-        localStorage.setItem( key, value );
-
-    },
-    cacheUser: function( user ){
-
-        if( !LJ.user ){
-            LJ.log('Caching user for the first time');
-            LJ.user = user;
-            LJ.user.cheers = [];
-            return LJ.user;
-        } else {
-            if( user.facebook_id == LJ.user.facebook_id ){
-                LJ.log('Facebook_id matched, updating user cache');
-                _.keys( user ).forEach(function( key ){
-                    if( LJ.user.hasOwnProperty( key ) ){
-                        LJ.user[ key ] = user[ key ];
-                    }
-                });
-            } else {
-                
-            }
-        }
-
-    },
-    isSameDay: function( d1, d2 ){
-        return m1.dayOfYear() == m2.dayOfYear();
-
-    },
-    findMainPic: function( user ){
-
-        var user = user || LJ.user;
-
-        return _.find( user.pictures, function( p ){
-            return p.is_main;
-        });
-
-    },
-    delay: function( delay ){
-
-        if( typeof delay != "number" ){
-            delay = 1000;
-        }
-
-        return LJ.promise(function( resolve, reject ){
-            setTimeout(function(){
-                resolve();
-            }, delay );
-        })
-    },
-    hashtagify: function( str ){
-
-        var hashtag_parts = [];
-
-        str.toLowerCase().trim().split(/[\s_-]/).forEach(function( el, i ){
-
-            if( i == 0 ){
-                hashtag_parts.push( el );
-            } else {
-                if( el != '') {
-                    var elm = el[0].toUpperCase() + el.substring(1);
-                    hashtag_parts.push( elm );
-                }
-            }
-        });
-
-        return hashtag_parts.join('');
-
-    },
-    log: function log( message ){
-
-        console.log( message );
-
-    },
-    wlog: function wlog( message ){
-        
-        console.warn( message );
-
-    },
-    tlog: function tlog( message ){
-        
-        console.trace( message );
-
-    },
-    elog: function elog( message ){
-
-        console.error( message )
-
-    },
-    ilog: function ilog( message ){
-
-        console.info( message );
-        
-    },
-    getGhostUser: function(){
-
-        var ghost_user = {
-
-            facebook_id : 'ghost',
-            name        : LJ.text('ghost_user_name'),
-            age         : 18,
-            job         : LJ.text('ghost_user_job'),
-            img_id      : "ghost_user",
-            img_vs      : "1468060134"
-
-        }
-
-        return ghost_user;
-
-    },
-    renderUserRow: function( user ){
-
-        var filterlay = 'js-filterlay';
-
-        if( !user || !user.img_id || !user.img_vs ){
-            LJ.log('No user was provided, rendering ghost user instead');
-            user = LJ.getGhostUser();
-            filterlay = '';
-        }
-
-        var img_small = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-row" );
-
-        var gender = user.g;
-        var cc     = user.cc;
-
-        return LJ.ui.render([
-
-            '<div class="user-row js-user-profile" data-facebook-id="'+ user.facebook_id +'">',
-                '<div class="user-row__pic '+ filterlay +'">',
-                  img_small,
-                '</div>',
-                '<div class="user-row__informations">',
-                  '<div class="user-row__about">',
-                    '<div class="user-gender --'+ gender +' js-user-gender"></div>',
-                    '<span class="user-name">'+ user.name +'</span>',
-                    '<span class="user-comma">,</span>',
-                    '<span class="user-age">'+ user.age +'</span>',
-                    '<div class="user-country js-user-country">',
-                      '<i class="flag-icon flag-icon-'+ cc +'"></i>',
-                    '</div>',
-                    '<span class="user-online user__status js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
-                  '</div>',
-                  '<div class="user-row__education">',
-                    '<span class="user-row__education-icon --round-icon">',
-                      '<i class="icon icon-education"></i>',
-                    '</span>',
-                    '<span class="user-row__education-label">'+ user.job +'</span>',
-                  '</div>',
-                '</div>',
-          '</div>'
-
-        ].join(''));
-
-    },
-    renderUserRows: function( users ){
-
-        if( !Array.isArray( users ) ){
-            return LJ.wlog('Cant render users row with empty array, users='+ users );
-        }
-
-        var user_rows = [];
-        users.forEach(function( u ){
-            user_rows.push( LJ.renderUserRow( u ) );
-
-        });
-
-        return user_rows.join('');
-
-
-    },
-    mainifyUserRow: function( $w, main_user ){
-
-        var $rows = $w.find('.user-row');
-        $rows.each(function( i, row ){
-
-            var $r = $( row );
-            if( $r.attr('data-facebook-id') == main_user ){
-
-                $r.addClass('--main').addClass('js-main').insertBefore( $rows.first() );
-                $r.find('.user-row__pic').append('<div class="user__host --round-icon"><i class="icon icon-star"></i></div>');
-            }
-
-        }); 
-
-    },
-    generateId: function(){
-        return LJ.randomInt( 100, 100000000000 );
-
-    },
-    randomInt: function(low, high) {
-        return Math.floor(Math.random() * (high - low + 1) + low);
-
-    },
-    renderDate: function( date ){
-        return moment( date ).format('hh:mm')
-        
-    },
-    renderMultipleNames: function( names, opts ){
-        
-        opts = opts || {};
-
-        if( typeof names == "string" ){
-            names = [ names ];
-        }
-
-        if( !Array.isArray( names ) ){
-            return LJ.wlog('Cannot render multiple names, wrong argument');
-        }
-
-        names = names.filter( Boolean );
-
-        if( names.length == 0 ){
-            return LJ.wlog('Cannot render multiple names, empty array');
-        }
-
-        var name_to_replace = opts.lastify_user;
-        if( name_to_replace ){
-
-            if( names.indexOf( name_to_replace ) == -1 ){
-                return LJ.wlog('Cannot lastify name, doesnt exist in the array');
-            }
-
-            names.forEach(function( name, i ){
-                if( name == name_to_replace ){
-                    delete names[ i ];
-                }
-            });
-
-            names.push( LJ.text("w_you") );
-            return LJ.renderMultipleNames( names );
-
-        }
-
-        if( names.length == 1 ){
-            return names[0];
-        } 
-
-        if( names.length == 2 ){
-            return [ names[0], names[1] ].join(' ' + LJ.text('w_and') + ' ');
-        }
-
-        return [ names[0], LJ.renderMultipleNames( names.slice(1) ) ].join(', ');
-
-    },
-    renderManyMultipleNames: function( names ){
-        
-        names = Array.isArray( names ) ? names : [ names ];
-        names.reverse();
-        var T = names.length;
-        var displayed = [].slice.call( arguments, -1 );
-
-
-        if( typeof displayed != "number" ){
-            displayed = 2;
-        }
-
-        if( displayed >= T - 1 ){
-            displayed = T - 1;
-        }
-
-         if( names.length == 1 ){
-            return names[0];
-        }
-        if( names.length == 2 ){
-            return names[0] + ' '+ LJ.text('w_and') +' ' + names[1];
-        }
-
-        var cur = 1;
-        var str = names.pop();
-
-        while ( cur < displayed ){
-            str += ', ' + names.pop();
-            cur++;
-        }
-
-        str += ' '+ LJ.text('w_and') +' ' + names.length + ' ' + LJ.text('w_more');
-        return str;
-
-
-    },
-    renderGroupName: function( name ){
-        return name + ' & co';
-
-    },
-    swapNodes: function( a, b ){
-
-        var aparent = a.parentNode;
-        var asibling = a.nextSibling === b ? a : a.nextSibling;
-        b.parentNode.insertBefore(a, b);
-        aparent.insertBefore(b, asibling);
-
-    },
-    testTemplate: function( tplName, param, wrapper ){
-
-        var html = LJ.fn[tplName]( param );
-
-        if( wrapper ){
-            html = '<div class="' + wrapper + '">' + html + '</div>';
-        }
-
-        $( html )
-            .addClass('temp')
-
-            .css({
-
-                'opacity'   : '1',
-                'left'      : '50%',
-                'top'       : '50%',
-                'z-index'   :'1000000000000',
-                'transform' : 'translate(-50%,-50%)'
-
-            })
-
-            .appendTo('body');
-
-        $('.temp').click(function(){ 
-
-            $(this).remove(); 
-            
-        });
-
-    },
-    getDisconnectedAt: function(){
-
-        return LJ.user.disconnected_at;
-
-    },
-    roughSizeOfObject: function( object ) {
-
-            var objectList = [];
-            var stack = [ object ];
-            var bytes = 0;
-
-            while ( stack.length ) {
-                var value = stack.pop();
-
-                if ( typeof value === 'boolean' ) {
-                    bytes += 4;
-                }
-                else if ( typeof value === 'string' ) {
-                    bytes += value.length * 2;
-                }
-                else if ( typeof value === 'number' ) {
-                    bytes += 8;
-                }
-                else if
-                (
-                    typeof value === 'object'
-                    && objectList.indexOf( value ) === -1
-                )
-                {
-                    objectList.push( value );
-
-                    for( var i in value ) {
-                        stack.push( value[ i ] );
-                    }
-                }
-            }
-            return bytes;
-        },
-        isElementInViewport: function(el) {
-
-            var rect = el[0].getBoundingClientRect();
-            return ( rect.top >= 0 && rect.left >= 0 && rect.bottom <=  $(window).height() && rect.right <= $(window).width() );
-        }
-
-
-});
+	
+
+	window.LJ = _.merge( window.LJ || {} , {
+
+		typeahead_legacy: {
+			users: {
+				class_names: {
+					input      :'',
+					hint       :'',
+					menu       :'search-results-users',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-users',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			// places: {
+			// 	class_names: {
+			// 		input:'',
+			// 		hint:'hint-places',
+			// 		menu:'search-results-autocomplete search-results-party-places',
+			// 		dataset:'search-wrap',
+			// 		suggestion:'search-result-default search-result-party-places',
+			// 		empty:'empty',
+			// 		open:'open',
+			// 		cursor:'cursor',
+			// 		highlight:'highlight'
+			// 	}
+			// },
+			friends: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			groups: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends search-results-groups',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			}
+		}
+
+	});
+
+
+	window.LJ.fn = _.merge( window.LJ.fn || {} , 
+
+	{
+		initTypeaheadUsers: function(){
+
+			var users = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			users.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
+
+			$('#search input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
+				classNames: LJ.typeahead.users.class_names
+			},
+			{
+				name:'users',
+				display:'name',
+				source: users.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			})
+			.on('typeahead:select', function( ev, suggestion ){
+
+				LJ.fn.displayUserProfile( suggestion.facebook_id );
+				$(this).typeahead('val', '');
+
+			});
+
+		},
+		initTypeaheadHosts: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-create-friends input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.friends.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadGroups: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-requestin-group-members input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.groups.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadPlaces: function(){
+
+			var places = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			places.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
+
+			$('.row-create-party-place input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1,
+				classNames: LJ.typeahead.places.class_names
+			},
+			{
+				name:'places',
+				display:'name',
+				source: places.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
+				}
+			});
+
+		}
+		
+	});
