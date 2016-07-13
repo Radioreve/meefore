@@ -62,6 +62,8 @@
     height: 46px;
     /* color: #919191; */
     font-family: 'Open sans';
+    z-index: 0;
+    position: relative;
 }
 
 .be-address i {}
@@ -71,26 +73,29 @@
 }  
   
 .be-dates__bar {
-    width: 70px;
+    width: 98px;
     border-radius: 100px;
     position: absolute;
-    height: 3px;
+    height: 4px;
     background: #1b69ec;
-    bottom: -20px;
-    left: -4px;
+    bottom: -7px;
+    left: 2px;
     display: none;
 }
 
 .be-dates__date {
     position: relative;
     top: 2px;
-    margin: 0 20px;
+    margin: 0 10px;
     color: #ccc;
     cursor: pointer;
     font-size: 12px;
     align-items: center;
     display: inline-flex;
     font-weight: 600;
+    background: #ffffff;
+    padding: 7px 12px;
+    border-radius: 100px;
 }
 
 .be-dates__date.--active .be-dates__bar {
@@ -107,9 +112,16 @@
     position: relative;
     color: black;
     font-weight: 700;
+    padding: 7px 12px;
+    border-radius: 100px;
 }
 
 .be-dates__date.--active span {}
+
+span.be-dates__offset {
+    margin-top: 10px;
+}
+span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;}
 
 .be-create__loader {
     position: absolute;

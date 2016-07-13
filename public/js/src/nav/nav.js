@@ -66,6 +66,8 @@
 				LJ.ui.hideSlide();
 				LJ.before.hideCreateBeforeStraight();
 				LJ.before.showBrowser();
+				LJ.map.deactivateMarkers();
+				LJ.map.refreshMarkers();
 			}
 
 			// Specificities

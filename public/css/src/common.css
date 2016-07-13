@@ -150,8 +150,12 @@ button:hover {
     width: 30px;
 }
 
+.icon-meedrink {
+    transform: rotate(20deg);
+}
 .row-pic__icon i {
     margin: auto;
+    font-size: 13px;
 }
 
 .row-body {

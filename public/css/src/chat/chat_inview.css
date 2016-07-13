@@ -87,7 +87,7 @@
 
 .chat-inview__icon.--close {
     right: 8px;
-    font-size: 20px;
+    font-size: 14px;
 }
 
 .chat-inview__icon.--options {
@@ -151,7 +151,7 @@
     display: flex;
     align-items: flex-end;
     margin: 4px 0;
-    padding: 0 28px;
+    padding: 0 20px;
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
@@ -200,6 +200,8 @@
     color: white;
     background: #0084ff;
     margin-right: -10px;
+    position: relative;
+    right: 6px;
 }
 
 .chat-inview-message.--friend .chat-inview-message__bubble {
@@ -407,7 +409,7 @@
 .chat-inview-item.--pending .chat-inview-footer input {
     display: none;
 }
-
+ 
 .chat-inview-footer {
     height: 64px;
     border-top: 1px solid #eee;
@@ -480,9 +482,9 @@
 .chat-inview-options__close {
     position: absolute;
     top: 0px;
-    left: 100px;
-    z-index: 1000000;
-    color: #191919;
+    left: 0;
+    z-index: 10;
+    color: #ccc;
     cursor: pointer;
     height: 40px;
     width: 40px;

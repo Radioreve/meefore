@@ -64,10 +64,11 @@
 
 			LJ.meemap = new google.maps.Map( $wrap, options );
 			
-            LJ.map.setMapStyle('creamy');
+            LJ.map.setMapStyle('apple');
             LJ.map.setMapIcons();
             LJ.map.setMapOverlay();
             LJ.map.setMapBrowser();
+            LJ.map.setMapZoom();
 
             setTimeout(function(){
                 LJ.map.refreshMap();
@@ -145,12 +146,60 @@
                 // LJ.before.refreshNearestBefores();
             });
 
+            $('body').on('click', '.js-map-zoom-in', LJ.map.zoomIn );
+            $('body').on('click', '.js-map-zoom-out', LJ.map.zoomOut );
+
+
+        },
+        renderMapZoom: function(){
+
+            return LJ.ui.render([
+
+                '<div class="map__icon map-zoom">',
+                    '<div class="map-zoom__in js-map-zoom-in">',
+                        '<i class="icon icon-plus"></i>',
+                    '</div>',
+                    '<div class="map-zoom__splitter"></div>',
+                    '<div class="map-zoom__out js-map-zoom-out">',
+                        '<i class="icon icon-line"></i>',
+                    '</div>',
+                '</div>'
+
+
+            ].join(''));
+
+        },
+        setMapZoom: function(){
+
+            $('.app-section.--map').append( LJ.map.renderMapZoom() );
+
+        },
+        zoomIn: function(){
+
+            LJ.meemap.setZoom( LJ.meemap.getZoom() + 1 );
+
+        },
+        zoomOut: function(){
+
+            LJ.meemap.setZoom( LJ.meemap.getZoom() - 1 );
 
         },
         refreshMap: function(){
         	return google.maps.event.trigger( LJ.meemap, 'resize' );
 
         },
+        deactivateDate: function(){
+
+            var $date_activated = $('.be-dates__date.--active');
+
+            if( $date_activated.length == 0 ){
+                return LJ.log('Already deactivated');
+            }
+
+            var m = moment( $date_activated.attr('data-day') , 'DD/MM' );
+            LJ.map.activateDate( m );
+
+        },  
         activateDate: function( m ){
 
             var $date_activated   = $('.be-dates__date.--active');
@@ -430,7 +479,6 @@
             var px     = LJ.pictures.getDevicePixelRatio() + 'x';
             var suffix = active ? '_active' : '';
 
-            LJ.log('Getting marker for type : ' + type );
             if( type == 'drink' ){
                 url = LJ.map.markers_url[ 'drink' + suffix ];
             }
@@ -450,8 +498,6 @@
             if( type == 'accepted' ){
                 url = LJ.map.markers_url[ 'chat' + suffix ];
             }  
-
-            LJ.log('Url found is ' + url[ px ]);
 
             return url[ px ];
 
@@ -587,12 +633,33 @@
             });
 
         },
+        clearSeenMarkers: function(){
+
+            var seen_markers = LJ.store.get('seen_markers') || [];
+
+            seen_markers.forEach(function( mrk_id, i ){
+
+                var target_mrk = _.find( LJ.map.markers, function( m ){
+                    return m.marker_id == mrk_id;
+                });
+
+                // Marker was not found : means it wasnt fetched by the map,
+                // so remove it (obsolete before etc...)
+                if( !target_mrk ){
+                    delete seen_markers[ i ];
+                }
+
+            });
+
+            LJ.store.set('seen_markers', _.uniq( seen_markers.filter( Boolean ) ));
+
+        },
         seenifyMarker: function( marker_id ){
 
             var seen_markers = LJ.store.get('seen_markers') || [];
 
             seen_markers.push( marker_id );
-            LJ.store.set( 'seen_markers', seen_markers );
+            LJ.store.set( 'seen_markers', _.uniq( seen_markers ) );
 
         },
         hasSeenMarker: function( marker_id ){
@@ -603,11 +670,38 @@
             
 
         },
+        getMarker: function( marker_id ){
+	
+			return _.find( LJ.map.markers, function( mrk ){
+				return mrk && mrk.marker_id == marker_id;
+			});
+        		
+        },
         handleClickOnEventMarker: function( marker, before ){
 
             LJ.map.seenifyMarker( before._id );
-            LJ.before.showBeforeInview( before );
-            LJ.map.activateMarker( before._id );
+            var mrk = LJ.map.getMarker( before._id );
+            
+            if( mrk.marker.getOpacity() != 1 ){
+
+                LJ.map.deactivateDate();
+                LJ.before.handleCloseBeforeInview();
+                LJ.before.hideBeforeInview();
+                return;
+            }
+
+            if( !mrk.status || mrk.status == "inactive" ){
+
+                LJ.before.showBeforeInview( before );
+                LJ.map.activateMarker( before._id );
+
+            } else {
+
+                LJ.before.handleCloseBeforeInview();
+                LJ.before.hideBeforeInview();
+
+            }
+
             LJ.map.refreshMarkers();
 
         },
@@ -681,7 +775,7 @@
                     if( mrk.data && mrk.data.begins_at && moment( mrk.data.begins_at ).dayOfYear() == active_day ){
                         mrk.marker.setOpacity( 1 );
                     } else {
-                        mrk.marker.setOpacity( 0 );
+                        mrk.marker.setOpacity( 0.2 );
                     }
 
                 } else {

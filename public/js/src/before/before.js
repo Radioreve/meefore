@@ -204,11 +204,9 @@
 					var d = date.day_digit;
 					var w = date.day_word.slice( 0, 3 );
 
-					// var active = ( i == LJ.before.findActiveDateIndex() ) ? '--active' : '';
-
 					dates_html.push([
 						'<div class="be-dates__date" data-day="'+ d +'">',
-							w + '.<span>'+ d +'</span>',
+							'<span class="be-dates__offset">' + w + '.<span>'+ d +'</span></span>',
 							'<div class="be-dates__bar"></div>',
 						'</div>'
 						].join(''));
@@ -221,6 +219,32 @@
 			LJ.ui.turnToJsp( $('.js-be-dates'), {
 				jsp_id: 'before_dates'
 			});
+
+			LJ.before.refreshBrowserCount();
+
+		},
+		getBeforeCountByDate: function( date ){
+
+			var m = moment( date, 'DD/MM' );
+
+			return _.filter( LJ.before.fetched_befores, function( bfr ){
+				return m.dayOfYear() == moment( bfr.begins_at ).dayOfYear();
+			}).length;
+
+		},
+		refreshBrowserCount: function(){
+
+			$('.be-dates__date').each(function( i, el ){
+				var $el = $( el );
+
+				var day = $el.attr('data-day');
+				var cnt = LJ.before.getBeforeCountByDate( day );
+
+				$el.find('.be-dates__count').remove();
+				$el.append('<span class="be-dates__count">(' + cnt + ')</span>');
+
+			});
+
 
 		},
 		renderBrowser: function(){
@@ -267,16 +291,9 @@
 			var is_be_create_visible = $('.be-create').css('opacity') == '1';
 
 			if( is_browser_visible ){
-				return; //LJ.wlog("browser visible");
+				return;
 			}
 
-			// if( is_slide_visible ){
-			// 	return LJ.wlog("slide visible");
-			// }
-
-			// if( is_be_create_visible ){
-			// 	return LJ.wlog("create visible");
-			// }
 
 			$('.be-browser').velocity('slideDownIn', {
 				duration : 500,
@@ -345,7 +362,7 @@
 			});
 
 			LJ.map.updateMarkers__byDate();
-
+			LJ.map.clearSeenMarkers();
 
 		},
 		getMyBeforeById: function( before_id ){
@@ -408,6 +425,11 @@
         	LJ.map.refreshMarkers();
 
         	LJ.before.showBrowser();
+
+        },
+        hideBeforeInview: function(){
+
+        	LJ.ui.hideSlide({ type: 'before' });
 
         },
         fetchAndShowBeforeInview: function( before_id ){

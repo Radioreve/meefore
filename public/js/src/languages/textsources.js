@@ -1581,7 +1581,7 @@
 		},
 		hint_cheers_pending: {
 			"fr": "En attente de Match",
-			"us": "Waitinf for a Match"
+			"us": "Waiting for a Match"
 		},
 		hint_cheers_accepted: {
 			"fr": "Match !",

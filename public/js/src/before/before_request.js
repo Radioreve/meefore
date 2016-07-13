@@ -114,7 +114,7 @@
         			duration: 300,
         			complete: function(){
         				var $new = $( LJ.before.renderBeforeInviewBtn__UserDefault() ).hide();
-        				$(this).replaceWith( $new );
+        				$( this ).replaceWith( $new );
         				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
         			}
         		});
@@ -129,7 +129,7 @@
         			duration: 300,
         			complete: function(){
         				var $new = $( LJ.before.renderBeforeInviewBtn__UserPending() ).hide();
-        				$(this).replaceWith( $new );
+        				$( this ).replaceWith( $new );
         				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
         			}
         		});
@@ -144,7 +144,7 @@
         			duration: 300,
         			complete: function(){
         				var $new = $( LJ.before.renderBeforeInviewBtn__UserAccepted() ).hide();
-        				$(this).replaceWith( $new );
+        				$( this ).replaceWith( $new );
         				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
         			}
         		});
@@ -155,7 +155,10 @@
         	LJ.map.markers.forEach(function( mrk ){
 
         		if( mrk.marker_id == before_id ){
-        			var icon = LJ.map.makeIcon( LJ.map.getBeforeMarkerUrlByType("pending") );
+
+                    var active = ( mrk.status == "active" ) ? true : false;
+        			var icon   = LJ.map.makeIcon( LJ.map.getBeforeMarkerUrlByType("pending", active) );
+
         			mrk.marker.setIcon( icon );
 
         		}
@@ -168,7 +171,10 @@
         	LJ.map.markers.forEach(function( mrk ){
 
         		if( mrk.marker_id == before._id ){
-        			var icon = LJ.map.makeIcon( LJ.map.getBeforeMarkerUrlByType("accepted") );
+
+                    var active = ( mrk.status == "active" ) ? true : false;
+        			var icon   = LJ.map.makeIcon( LJ.map.getBeforeMarkerUrlByType("accepted", active) );
+
         			mrk.marker.setIcon( icon );
         			
         		}

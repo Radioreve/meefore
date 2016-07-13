@@ -77,7 +77,7 @@
 
 				LJ.search.setFiltersState();
 
-				var facebook_ids = _.pluck( LJ.search.fetched_users, 'facebook_id' );
+				var facebook_ids = _.map( LJ.search.fetched_users, 'facebook_id' ).concat([ LJ.user.facebook_id ]);
 				var filters      = LJ.search.filter_state;
 
 				LJ.api.fetchMoreUsers( facebook_ids, filters )
@@ -124,7 +124,7 @@
 				})
 
 				.then(function( new_users ){
-					if( LJ.search.fetched_users.length == LJ.search.users_count || new_users.length == 0 ){
+					if( LJ.search.fetched_users.length == ( LJ.search.users_count - 1 ) || new_users.length == 0 ){
 						LJ.wlog('Everyone has been fetched for this filter.');
 						LJ.search.all_fetched = true;
 					}

@@ -138,7 +138,28 @@
 			LJ.cheers.clearAllCheers();
 			LJ.cheers.fetchAndAddCheers();
 
-		},	
+		},
+		sortCheers: function(){
+
+			LJ.cheers.fetched_cheers.forEach(function( ch ){
+				ch.created_at = ch.requested_at || ch.sent_at;
+			});
+
+			LJ.cheers.fetched_cheers.sort(function( ch1, ch2 ){
+
+				if( moment( ch1.created_at ) > moment( ch2.created_at ) ){
+					return -1;
+				}
+
+				if( moment( ch1.created_at ) < moment( ch2.created_at ) ){
+					return 1;
+				}
+
+				return 0;
+
+			});
+
+		},
 		fetchAndAddCheers: function(){
 
 			LJ.log('Fetching and setting cheers items...');
@@ -149,6 +170,10 @@
 			LJ.api.fetchMeCheers()
 				.then(function( res ){
 					LJ.cheers.fetched_cheers = res.cheers;
+
+				})
+				.then(function(){
+					LJ.cheers.sortCheers();
 
 				})
 				.then(function(){
@@ -225,10 +250,13 @@
 			var cheers   = LJ.cheers.fetched_cheers;
 			var profiles = LJ.cheers.fetched_profiles;
 
+			
 			if( profiles.length == 0 ){
 				return LJ.cheers.fetchAndAddCheers();
 			}
 
+			LJ.cheers.sortCheers();
+			
 			var type 		= LJ.cheers.getActiveCheersType();
 			var cheers_html = LJ.cheers.renderCheersItems( cheers, profiles );
 
@@ -256,6 +284,7 @@
 			var no_cheers_sent     = true;
 				
 			cheers.forEach(function( ch ){
+
 
 				if( ch.cheers_type == "received" ){
 

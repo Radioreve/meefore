@@ -54,7 +54,7 @@
 		activatePlacesInMap: function(){
 
 			var input = document.getElementById('map-browser-input');
-			var options = { types: ['(cities)'] };
+			var options = {}; // { types: ['(cities)'] };
 
 			// To be able to isolate him from other place containers laters
 			LJ.seek.map_browser_places = new google.maps.places.Autocomplete( input, options );

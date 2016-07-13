@@ -112,9 +112,9 @@
 }
 
 .cheers-back-pictures .rosace {}
-
+ 
 .cheers-back-users {
-    width: 399px;
+    width: 100%!important;
     flex-basis: 250px;
     height: 250px;
     outline: none;
@@ -131,18 +131,23 @@
 .cheers-back-actions button {
     width: 70px;
     height: 70px;
-    background: #1B69EC;
+    background: #1b69ec;
     color: white;
 }
 
 .cheers-back-actions button i {
-    font-size: 38px;
+    font-size: 26px;
+    transform: rotate(-20deg);
+    transition: all ease-in-out .15s;
 }
 
 .cheers-back-actions button span {
     display: none;
 }
 
+.cheers-back-actions button:hover i {
+    transform: rotate(20deg);
+}
 .chat-header__icon.--close {
     position: absolute;
     right: 10px;

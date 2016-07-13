@@ -302,7 +302,7 @@
 
 			var options = {};
 
-			options.icon_code   = "drinks";
+			options.icon_code   = "meedrink";
 			options.text        = LJ.text("n_group_request_hosts_text");
 			options.subtext     = LJ.text("n_group_request_hosts_subtext");
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
@@ -318,7 +318,7 @@
 
 			var name = friend && friend.name;
 
-			options.icon_code   = "drinks";
+			options.icon_code   = "meedrink";
 			options.text        = LJ.text("n_group_request_members_text");
 			options.subtext     = LJ.text("n_group_request_members_subtext").replace( '%name', name );
 			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
@@ -444,7 +444,7 @@
 
                 return LJ.ui.render([
                     '<div class="notifications-panel">',
-                        '<div class="notification notification--header">',
+                        '<div class="notification--header">',
                        		'<div data-lid="n_header_text" class="notification--header__text">Notifications</div>',
                         '</div>',
                         '<div class="notifications-panel__wrapper">',

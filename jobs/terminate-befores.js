@@ -128,7 +128,7 @@
 			var mail_html = []
 			mail_html.push('Connection to the database failed, Couldnt execute the cron job "terminateBefores"');
 			mail_html.push( err );
-			// Alerter.sendAdminEmail({ subjet: 'Error connecting to Database', html: mail_html.join('') });
+			Alerter.sendAdminEmail({ subjet: 'Error connecting to Database', html: mail_html.join('') });
 			mail_html = [];
 
 		});
@@ -178,10 +178,13 @@
 					];
 
 					console.log('Scheduled job completed successfully');
-					Alerter.sendAdminEmail({
-						subject : 'Scheduler [' + process.env.NODE_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
-						html    : mail_html.join('') 
-					});
+
+					if( process.env.NODE_ENV != "dev" && process.env.NODE_ENV != "staged" ){
+						Alerter.sendAdminEmail({
+							subject : 'Scheduler [' + process.env.NODE_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
+							html    : mail_html.join('') 
+						});
+					}
 					
 					if( typeof callback == "function" ){
 						callback( null, tracked );
@@ -208,7 +211,7 @@
 					var tasks = [];
 					befores.forEach(function( bfr ){
 						tasks.push(function( callback ){
-							// bfr.status = "ended";
+							bfr.status = "ended";
 							bfr.save(function( err ){
 								tracked.before_list.push( bfr );
 								callback();

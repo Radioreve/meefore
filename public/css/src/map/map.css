@@ -32,8 +32,7 @@
     height: 50px;
 }
 
-.map__icon.--geoloc:hover,
-.map__icon.--change-location:hover {
+.map__icon.--geoloc:hover, .map__icon.--change-location:hover, .map__icon.map-zoom i:hover {
     color: #508aea;
 }
 
@@ -117,4 +116,28 @@
 
 .map-browse input:-ms-input-placeholder {
     color: #ccc!important;
+}
+ 
+.map-zoom {
+    bottom: 100px;
+    right: 26px;
+    height: 90px;
+    width: 40px;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    background: white;
+    border-radius: 100px;
+    color: #1b69ec;
+    cursor: pointer;
+}
+.map-zoom__in {}
+.map-zoom__out {}
+.map-zoom__splitter {
+    background: #d9d9d9;
+    height: 1px;
+    width: 80%;
+    margin: 10px 0px;
 }

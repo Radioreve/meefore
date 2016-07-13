@@ -110,6 +110,9 @@
     margin: auto;
 }
 
+.menu-item__body i.icon-meedrink {
+    transform: rotate(20deg);
+}
 .menu-item__body h3 {
     font-weight: 700;
     margin: 0px;

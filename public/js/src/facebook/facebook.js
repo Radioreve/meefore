@@ -16,9 +16,9 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 	startFacebookSdk: function(){
 
 		FB.init({
-			appId: window.facebook_app_id,
-			xfbml: true, // parse social plugins on this page
-			version: 'v2.6' 
+			appId   : window.facebook_app_id,
+			xfbml   : true, // parse social plugins on this page
+			version : 'v2.6' 
 		});
 
 	},
@@ -36,7 +36,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 					var access_token = res.authResponse.accessToken;
 					LJ.login.data.access_token = access_token;
 
-					console.log('Short lived access token : ' + access_token.substring(0,20) + '.....');
+					console.log('Short lived access token : ' + access_token.substring( 0, 20 ) + '.....');
 					return resolve( access_token );
 				}
 

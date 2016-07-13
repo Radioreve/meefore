@@ -340,8 +340,8 @@
 		var err_ns        = "fetching_more_users";
 
 		var facebook_ids  = req.sent.facebook_ids;
-		var min 		  = req.sent.filters.age[0];
-		var max 		  = req.sent.filters.age[1];
+		var min 		  = req.sent.filters.age[ 0 ];
+		var max 		  = req.sent.filters.age[ 1 ];
 		var gender 		  = req.sent.filters.gender;
 		var country_codes = req.sent.filters.countries;
 
@@ -378,6 +378,7 @@
 				if( err ) return handleErr( req, res, err_ns, err );
 
 				var random_users = _.chunk( _.shuffle( users ), 12 )[0];
+
 				req.sent.expose.users = random_users || [];
 				next();
 
