@@ -91,7 +91,7 @@
 				new_user.access = ['standard'];	
 
 				// Could be access via the _id from mongodb but who cares, let's explicit it
-				new_user.signup_date = new Date();
+				new_user.signed_up_at = new Date();
 				
 				// User name @facebookProfile
 				new_user.name = fb.name.split(' ')[0];

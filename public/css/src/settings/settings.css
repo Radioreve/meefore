@@ -10,7 +10,7 @@
 }
 
 .settings {
-    width: 80%;
+    width: 90%;
     display: flex;
     flex-flow: column;
     display: none;

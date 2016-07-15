@@ -159,6 +159,9 @@
     position: relative;
 }
 
+.chat-inview-message a {
+    text-decoration: underline
+}
 .chat-inview-message__bubble.--pending {
     opacity: .5;
 }

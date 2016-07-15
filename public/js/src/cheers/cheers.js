@@ -234,13 +234,14 @@
 				LJ.cheers.removeCheersBack();
 				LJ.chat.activateChat( cheers_item.chat_id );
 				LJ.chat.showChatInview( cheers_item.chat_id );
+				LJ.chat.refreshChatJsp( cheers_item.chat_id );
 
 			} else {
 
 			// Cheers is in the pending state
 			cheers_item.cheers_type == "sent" ?
 				LJ.before.fetchAndShowBeforeInview( cheers_item.before_id ) :
-				LJ.cheers.validatifyCheersItem( cheers_id );
+				LJ.cheers.showValidateCheers( cheers_id );
 
 			}
 
@@ -493,16 +494,14 @@
 			return LJ.cheers.close_type;
 
 		},
-		validatifyCheersItem: function( cheers_id ){
+		showValidateCheers: function( cheers_id ){
 
 			if( LJ.cheers.getActiveCheersBack() == cheers_id ){
-				return;
+				return 
 			}
 
 			LJ.cheers.setActiveCheersBack( cheers_id );
-
 			LJ.cheers.makeCheersBack( cheers_id );
-			LJ.cheers.refreshChatBackUsersJsp();
 
 			if( LJ.chat.getChatState() == "hidden" ){
 				LJ.cheers.setCloseType("hide_all");
@@ -657,7 +656,19 @@
 		},
 		showCheersBack: function(){
 
-			$('.chat').css({ 'display': 'flex' }).find('.cheers-back').show();
+			$('.chat, .chat .cheers-back').css({ 'display': 'flex', 'opacity': '0' })
+				.find('.cheers-back')
+				.css({ 'opacity': '0' });
+
+			LJ.cheers.refreshChatBackUsersJsp()
+				// .then(function(){
+				// 	return LJ.delay()
+				// })
+				.then(function(){
+					$('.chat, .chat .cheers-back')
+						.css({ 'display': 'flex', 'opacity': '1' });
+
+				});
 
 		},
 		renderChatHeaderCloseIcon: function(){

@@ -33,7 +33,7 @@
       long_lived_valid_until: null 
     }
   },
-  signup_date: {
+  signed_up_at: {
     type: Date
   },
   disconnected_at: {

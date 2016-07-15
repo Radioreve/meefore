@@ -1151,7 +1151,7 @@ button:hover {
 }
 
 .modal-subheader {
-    color: #919191;
+    /* color: #919191; */
     padding: 0 30px;
     text-align: center;
     font-weight: 400;

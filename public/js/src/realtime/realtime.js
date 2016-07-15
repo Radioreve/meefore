@@ -121,14 +121,6 @@
 			var channel_item_before = data.channel_item_before;
 			var channel_item_team   = data.channel_item_team;
 
-			// Little toast to show for everyone but the main_host
-			if( before.main_host != LJ.user.facebook_id ){
-				var friend_name = LJ.friends.getFriendsProfiles( before.main_host )[0].name;
-				LJ.ui.showToast( LJ.text('to_before_create_success_friends').replace('%name', friend_name ));
-			} else {
-				LJ.ui.showToast( LJ.text('to_before_create_success') );
-			}
-
 			// Update user state and add marker accordingly
 			LJ.user.befores.push( before_item );
 
@@ -142,6 +134,21 @@
 
 			// Add notification in real time
 			LJ.realtime.addNotification( data );
+
+			// Little toast to show for everyone but the main_host
+			if( before.main_host != LJ.user.facebook_id ){
+
+				var friend_name = LJ.friends.getFriendsProfiles( before.main_host )[0].name;
+				LJ.ui.showToast( LJ.text('to_before_create_success_friends').replace('%name', friend_name ));
+
+			} else {
+
+				LJ.map.refreshMarkers();
+				LJ.ui.showToast( LJ.text('to_before_create_success') );
+
+			}
+
+			LJ.map.refreshMarkers();
 
 		},
 		handleNewRequestGroup: function( data ){
@@ -207,9 +214,10 @@
 
 			var before = data.before;
 
-			LJ.map.addBeforeMarker( before );
 			LJ.before.fetched_befores.push( before );
 			LJ.before.refreshBrowserDates();
+			LJ.map.addBeforeMarker( before );
+			LJ.map.refreshMarkers();
 		
 		},
 		handleNewBeforeStatus: function( data ){

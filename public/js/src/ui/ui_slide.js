@@ -89,7 +89,12 @@
 					  	if( typeof options.complete == 'function' ) {
 					  		options.complete();
 					  	}
+
+					  	LJ.unoffsetElements();
+
 					  });
+
+				LJ.offsetElements();
 
 			});
 		},

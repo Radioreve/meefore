@@ -160,6 +160,10 @@
 
 				LJ.settings.applyUxPreferences();
 
+				if( $('.slide').length > 0 ){
+					LJ.offsetSearchUsers( 25 );
+				}
+
 				$users.velocity('slideUpIn', {
 					display  : 'flex',
 					duration : 700,

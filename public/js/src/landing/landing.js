@@ -101,7 +101,7 @@
 			"html": [
 					'<div class="landing">',
 					    '<div class="landing-logo --round-icon">',
-					      '<span>M</span>',
+					      '<span>Meefore</span>',
 					    '</div>',
 					    '<div class="landing-lang">',
 					      '<button class="js-changelang" data-lid="settings_ux_changelang_button"></button>',

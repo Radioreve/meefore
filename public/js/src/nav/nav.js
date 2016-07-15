@@ -26,6 +26,11 @@
 			LJ.nav.navigate( lk );
 
 		},
+		getActiveView: function(){
+
+			return $('.app__menu-item.--active').attr('data-link');
+
+		},
 		navigate: function( target_link ){
 
 			var current_link = LJ.nav.current_link;
@@ -85,6 +90,7 @@
 			if( target_link == 'map' ){
 				$('.app').removeClass('padded');
 
+				LJ.unoffsetAll();
 				// Refresh the map dued to a bug when the window is resized and the map not visible
 				// The try catch is to avoid an ugly error in the console during app intitialization
 				try {

@@ -11,6 +11,8 @@
         autoprefixer = require('autoprefixer'),
         syncdirs     = require('gulp-directory-sync')
         reset        = require( process.cwd() + '/scripts/reset/reset');
+        users_schema = require( process.cwd() + '/scripts/users/update-schema');
+
 
     var config    = require( process.cwd() + '/config/config');
     var NAMESPACE = 'mee'
@@ -90,6 +92,7 @@
     gulp.task('reset-requests', reset.db.resetRequests );
     gulp.task('reset-status', reset.db.resetStatus );
     gulp.task('reset-all-cache', reset.rd.resetAll );
+    gulp.task('update-user-schema', users_schema.updateSchema );
 
     // Adjusting html staged & prod versions
     // Thank god I dont have to do it manually !

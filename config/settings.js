@@ -61,7 +61,7 @@ var settings = {
 				'pictures',
 				'gender', 
 				'country_code', 
-				'signup_date', 
+				'signed_up_at', 
 				'channels',
 				'ideal_night'
 			],

@@ -69,9 +69,9 @@
 
 			rd.sadd('online_users', facebook_id, function( err ){
 
-			res.status( 200 ).json({
-				msg: "Update success"
-			});
+				res.status( 200 ).json({
+					msg: "Update success"
+				});
 
 			});
 

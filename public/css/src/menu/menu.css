@@ -96,7 +96,6 @@
 }
 
 .menu-item.--active .menu-item__body {
-    font-weight: bolder;
 }
 
 .menu-item.--active .menu-item__icon {
@@ -114,7 +113,7 @@
     transform: rotate(20deg);
 }
 .menu-item__body h3 {
-    font-weight: 700;
+    font-weight: 500;
     margin: 0px;
     font-size: 12px;
     display: none;
@@ -234,6 +233,10 @@
 
 .menu.--downsized h3 {
     display: block;
+    font-family: 'creamy';
+    font-size: 19px;
+    position: relative;
+    top: 2px;
 }
 
 .row-pic__filterlay {

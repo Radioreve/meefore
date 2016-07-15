@@ -2032,7 +2032,7 @@
 			"us": function( names ){ return  "with " + names; } 
 		},
 		chat_row_request_team_title: {
-			"fr": "Nouvelle conversation de groupe",
+			"fr": "Nouvelle conversation",
 			"us": "New group conversation"
 		},
 		chat_row_request_team_subtitle: {

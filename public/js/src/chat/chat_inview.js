@@ -245,6 +245,7 @@
 			
 			var $seen_by = LJ.chat.popSeenBy( chat_id );
 			LJ.chat.insertChatLine( chat_id, chat_line_html, opts.insert_mode );
+			LJ.chat.urlifyChatLine( call_id );
 			LJ.chat.tallifyChatLine( call_id );
 			LJ.chat.horodateChatLine( call_id );
 			LJ.chat.mergeChatLine( call_id ); 
@@ -279,6 +280,25 @@
 		},
 		pendifyChatLine: function( call_id ){
 			LJ.chat.getMessageElById( call_id ).addClass('--pending');
+
+		},
+		urlifyChatLine: function( call_id ){
+
+			var $msg       = LJ.chat.getMessageElById( call_id );
+			var msg_parts = $msg.text().split(' ');
+
+			msg_parts.forEach(function( msg_part, i ){
+
+				var prefix = /https:\/\//i.test( msg_part ) ? "https://" : "http://";
+
+				if( /http:\/\/|www\.|^\w+\.(com|fr|io|be|us|uk|org|net)$/i.test( msg_part ) ){
+					msg_parts[ i ] = '<a target="_blank" href="'+ prefix + msg_part.replace(/https?:\/\//i, '') +'">'+ msg_part +'</a>';
+				}
+
+			});
+
+			$msg.html( msg_parts.join(' ') );
+
 
 		},
 		classifyChatLine: function( call_id ){

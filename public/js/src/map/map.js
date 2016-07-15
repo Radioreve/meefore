@@ -156,11 +156,11 @@
             return LJ.ui.render([
 
                 '<div class="map__icon map-zoom">',
-                    '<div class="map-zoom__in js-map-zoom-in">',
+                    '<div class="map-zoom__in --round-icon js-map-zoom-in">',
                         '<i class="icon icon-plus"></i>',
                     '</div>',
                     '<div class="map-zoom__splitter"></div>',
-                    '<div class="map-zoom__out js-map-zoom-out">',
+                    '<div class="map-zoom__out --round-icon js-map-zoom-out">',
                         '<i class="icon icon-line"></i>',
                     '</div>',
                 '</div>'
@@ -417,11 +417,8 @@
             var scaledSize;
             var base_width  = 34;
             var base_height = 41;
-            var base_width_active  = 44;
-            var base_height_active = 53;
-
-            var base_width_active  = 49;
-            var base_height_active = 59;
+            var base_width_active  = 50;
+            var base_height_active = 60;
 
             if( !/lg/i.test( url ) ){
                 scaledSize = new google.maps.Size( base_width, base_height );

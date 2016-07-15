@@ -219,6 +219,8 @@
 			var $notif = $('.notifications-panel');
 			var $icon  = $('.app__menu-item.--notifications');
 
+			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
+
 			if( LJ.notifications.state == "visible" ){
 
 				LJ.log('Notification panel already there');
