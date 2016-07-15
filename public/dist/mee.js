@@ -29667,14 +29667,6 @@ function closure ( target, options ){
 
 }));
 
-	window.LJ.admin = _.merge( window.LJ.admin || {}, {
-
-		init: function(){
-			LJ.log('Initializing admin script');
-		}
-
-	});
-
 	window.LJ.analytics = _.merge( window.LJ.analytics || {}, {
 
 		init: function(){
@@ -29742,21 +29734,133 @@ function closure ( target, options ){
 
 	});
 
+	window.LJ.admin = _.merge( window.LJ.admin || {}, {
+
+		init: function(){
+			LJ.log('Initializing admin script');
+		}
+
+	});
+	
+	
+	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
+
+		init: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				if( document.location.hash == "#1" ){
+					LJ.log('Logging in with test user Victoriale...');
+					var tk = "EAAXR2Qo4lc4BAChEDRcMA17PowABdrp711d8Fl03VzjB1ptsqMFaKn2jhB4xOF70HpTfELjUVTtcSkJN1Ju9s0WZA5o1Rrez9uW0mgXsbJsxCMe650gLb3o92MLugROZAuQTKsAC2ZAMNwCSJwxIk1sLTEpv5kZD";
+					return resolve( tk );
+				}
+
+				if( document.location.hash == "#2" ){
+					LJ.log('Logging in with test user Angelah...');
+					var tk = "EAAXR2Qo4lc4BAMUbS4HfY6Uvk5sM1HkOpan12pCAd3tCZAZCGrXGPJXJBj8dazV5OMDqx6aCuX09VfZAb8CVqeEOfmGyCUUoSUzSHmng6GX9FWtpuzCdAPpVzWFxHXWE2VPjb4ybUCQ6ZClAggtLlNn232EZASEIZD";
+					return resolve( tk );
+				}
+
+				if( document.location.hash == "#3" ){
+					LJ.log('Logging in with test user Davida...');
+					var tk = "EAAXR2Qo4lc4BAOEKyewke6ibcU0zB0BvxJSyKdNsOdJFzTGD52MB1QFA1Ay3HHG1XD9WF747zF88rrBmZCODWXHx46Jp8hEWxi5PTZC3G9zjH4pyaZCcj586ZAZAvBExU0Jt8aKfVC9LR2XAzvjGBq8chED7EGlUZD";
+					return resolve( tk );
+				}
+
+				// Quick reference to the local store
+				var s = LJ.store;
+
+				if( !s.get('facebook_access_token') ){
+					return reject('No local data available, initializing lp...');
+				}
+
+				var facebook_access_token = s.get('facebook_access_token');
+
+				var token      = facebook_access_token.token;
+				var expires_at = facebook_access_token.expires_at;
+
+				if( !token || !expires_at ){
+					return reject('Missing init preference param, initializing lp...');
+				}
+
+				if( moment( expires_at ) < moment() ){
+					return reject('Facebook token found but has expired, initializing lp...');
+				} 
+
+				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
+				if( remaining_days < 30 ) {
+					return reject('Facebook token found but will expire soon, refresh is needed.');
+				}
+
+				// Unexpected error
+				if( s.get('reconnecting') && !token ){
+					return reject('User trying to reconnect but missing token from local store (unexpected)');
+				}
+
+				// Check if the app is trying to reconnect him 
+				if( s.get('reconnecting') && token ){
+					LJ.log('Reconnecting user from previous loss of connexion...');
+					s.remove('reconnecting');
+					return resolve( token );
+				}
+
+				if( s.get("autologin") == false ){
+					return reject("Autologin isnt activated, initializing lp...");
+				}
+
+				LJ.log('Init data ok, auto logging in...');
+				resolve( token );
+							
+			});
+		},
+		startLogin: function( facebook_token ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log('Starting login...');
+				LJ.start( facebook_token );
+			});
+
+		},
+		startLanding: function( message ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log( message );
+				LJ.log('Starting landing... v' + 1 );
+
+				$( LJ.static.renderStaticImage('slide_loader') )
+					.hide()
+					.appendTo('.curtain')
+					.velocity('shradeIn', { duration: 800 });
+
+				$('.curtain').find('.slide__loader').velocity('shradeOut', {
+					duration: 600,
+					complete: function(){
+						LJ.ui.hideCurtain({ duration: 800 });
+						LJ.landing.activateLanding( 2 );
+						 // Login flow
+									
+					}
+				})
+			});
+		}
+
+	});
+
+
+
+
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
 		fetched_users : [],
-		fetched_users_full: [],
+		fetched_users_full: [], 
 
 		app_token_url 			  	 	 	: '/auth/facebook',
 		me_url		  			  	 	 	: '/api/v1/users/:user_id/self',
 		user_url 							: '/api/v1/users/:user_id',
-		me_friends				 	 	 	: '/api/v1/users/:user_id/friends',
 		invite_code_url 			 	 	: '/api/v1/users/:user_id/invite-code',
 		fetch_shared_url		  	 	 	: '/api/v1/users/:user_id/shared',
 		fetch_meepass_url 		  	 	 	: '/api/v1/users/:user_id/meepass',
 		fetch_cheers_url 		  	 	 	: '/api/v1/users/:user_id/cheers',
-		fetch_user_url 	   	  	  	 	 	: '/api/v1/users/:user_id/core',
-		fetch_user_profile_url    	 	 	: '/api/v1/users/:user_id/full',
+		fetch_user_core_url 	   	  	  	: '/api/v1/users/:user_id/core',
+		fetch_user_full_url    	 	 	    : '/api/v1/users/:user_id/full',
 		fetch_more_channels_url 	 	 	: '/api/v1/users/:user_id/channels',
 		update_profile_url  	  	 	 	: '/api/v1/users/:user_id/update-profile',
 		upload_picture_dt		  	 	 	: '/api/v1/users/:user_id/update-picture-client',
@@ -29943,22 +30047,6 @@ function closure ( target, options ){
 					  });
 			});
 		},
-		fetchMeFriends: function(){
-
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.api.get( LJ.api.me_friends.replace(':user_id', LJ.user.facebook_id ))
-					  .then(function( exposed ){
-					  	return resolve( exposed );
-
-					  }, function( err ){
-					  	return reject( err );
-
-					  });
-
-			});
-
-		},
 		syncMeFriends: function( friend_ids ){
 
 			return LJ.promise(function( resolve, reject ){
@@ -29977,7 +30065,7 @@ function closure ( target, options ){
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.fetch_user_url.replace(':user_id', facebook_id ) )
+				LJ.api.get( LJ.api.fetch_user_core_url.replace(':user_id', facebook_id ) )
 					  .then(function( exposed ){
 					  	if( exposed.user ){
 					  		// Append the Facebook id, cause not present in cache 
@@ -30003,6 +30091,16 @@ function closure ( target, options ){
 
 			return LJ.Promise.all( promises );
 							 
+		},
+		fetchUsersFull: function( facebook_ids ){
+
+			var promises = [];
+			facebook_ids = facebook_ids || [];
+			facebook_ids.forEach(function( fb_id ){
+				promises.push( LJ.api.fetchUserFull( fb_id ) )
+			});
+
+			return LJ.Promise.all( promises );
 
 		},
 		// Fetch a random amount of users that is not already fetched (not in facebook_ids array)
@@ -30022,10 +30120,10 @@ function closure ( target, options ){
 
 			});
 		},
-		fetchUserProfile: function( facebook_id ){
+		fetchUserFull: function( facebook_id ){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.fetch_user_profile_url.replace(':user_id', facebook_id ) )
+				LJ.api.get( LJ.api.fetch_user_full_url.replace(':user_id', facebook_id ) )
 					  .then(function( exposed ){
 					  	return resolve( exposed );
 					  }, function( err ){
@@ -31961,7 +32059,7 @@ function closure ( target, options ){
 
 				'<div class="be-create">',
 			        '<div class="be-create__close">',
-			          '<div class="icon icon-cancel"></div>',
+			          '<div class="icon icon-cross-fat"></div>',
 			        '</div>',
 			        '<div class="be-create__title">',
 			          '<h1 data-lid="be_create_title"></h1>',
@@ -32316,7 +32414,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 				req.hosts_facebook_id = _.shuffle( LJ.user.friends ).slice(0,1).concat( LJ.user.facebook_id );
 				req.address   		  = _.shuffle( LJ.map.test.places )[0];
-				req.begins_at		  = '2016-0'+LJ.randomInt(6,9)+'-' + LJ.randomInt(10,30)+'T18:18:18Z'
+				req.begins_at		  = '2016-0'+LJ.randomInt( 8,9 )+'-' + LJ.randomInt( 10, 30 )+'T18:18:18Z'
 				req.timezone 		  = 120;
 
 				if( param && req[ param ] ){
@@ -32427,111 +32525,6 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 	 window.bc  = LJ.before.test.handleCreateBefore;
 	 window.bcf = LJ.before.test.handleCreateBeforeWithSpecificFriend
 	 window.fid = function(){ return LJ.user.facebook_id;}
-
-	
-	
-	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
-
-		init: function(){
-
-			return LJ.promise(function( resolve, reject ){
-
-				if( document.location.hash == "#1" ){
-					LJ.log('Logging in with test user Victoriale...');
-					var tk = "EAAXR2Qo4lc4BAChEDRcMA17PowABdrp711d8Fl03VzjB1ptsqMFaKn2jhB4xOF70HpTfELjUVTtcSkJN1Ju9s0WZA5o1Rrez9uW0mgXsbJsxCMe650gLb3o92MLugROZAuQTKsAC2ZAMNwCSJwxIk1sLTEpv5kZD";
-					return resolve( tk );
-				}
-
-				if( document.location.hash == "#2" ){
-					LJ.log('Logging in with test user Angelah...');
-					var tk = "EAAXR2Qo4lc4BAMUbS4HfY6Uvk5sM1HkOpan12pCAd3tCZAZCGrXGPJXJBj8dazV5OMDqx6aCuX09VfZAb8CVqeEOfmGyCUUoSUzSHmng6GX9FWtpuzCdAPpVzWFxHXWE2VPjb4ybUCQ6ZClAggtLlNn232EZASEIZD";
-					return resolve( tk );
-				}
-
-				if( document.location.hash == "#3" ){
-					LJ.log('Logging in with test user Davida...');
-					var tk = "EAAXR2Qo4lc4BAOEKyewke6ibcU0zB0BvxJSyKdNsOdJFzTGD52MB1QFA1Ay3HHG1XD9WF747zF88rrBmZCODWXHx46Jp8hEWxi5PTZC3G9zjH4pyaZCcj586ZAZAvBExU0Jt8aKfVC9LR2XAzvjGBq8chED7EGlUZD";
-					return resolve( tk );
-				}
-
-				// Quick reference to the local store
-				var s = LJ.store;
-
-				if( !s.get('facebook_access_token') ){
-					return reject('No local data available, initializing lp...');
-				}
-
-				var facebook_access_token = s.get('facebook_access_token');
-
-				var token      = facebook_access_token.token;
-				var expires_at = facebook_access_token.expires_at;
-
-				if( !token || !expires_at ){
-					return reject('Missing init preference param, initializing lp...');
-				}
-
-				if( moment( expires_at ) < moment() ){
-					return reject('Facebook token found but has expired, initializing lp...');
-				} 
-
-				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
-				if( remaining_days < 30 ) {
-					return reject('Facebook token found but will expire soon, refresh is needed.');
-				}
-
-				// Unexpected error
-				if( s.get('reconnecting') && !token ){
-					return reject('User trying to reconnect but missing token from local store (unexpected)');
-				}
-
-				// Check if the app is trying to reconnect him 
-				if( s.get('reconnecting') && token ){
-					LJ.log('Reconnecting user from previous loss of connexion...');
-					s.remove('reconnecting');
-					return resolve( token );
-				}
-
-				if( s.get("autologin") == false ){
-					return reject("Autologin isnt activated, initializing lp...");
-				}
-
-				LJ.log('Init data ok, auto logging in...');
-				resolve( token );
-							
-			});
-		},
-		startLogin: function( facebook_token ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log('Starting login...');
-				LJ.start( facebook_token );
-			});
-
-		},
-		startLanding: function( message ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log( message );
-				LJ.log('Starting landing... v' + 1 );
-
-				$( LJ.static.renderStaticImage('slide_loader') )
-					.hide()
-					.appendTo('.curtain')
-					.velocity('shradeIn', { duration: 800 });
-
-				$('.curtain').find('.slide__loader').velocity('shradeOut', {
-					duration: 600,
-					complete: function(){
-						LJ.ui.hideCurtain({ duration: 800 });
-						LJ.landing.activateLanding( 2 );
-						 // Login flow
-									
-					}
-				})
-			});
-		}
-
-	});
-
-
 
 
 	window.LJ.chat = _.merge( window.LJ.chat || {}, {
@@ -34390,6 +34383,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			
 			var $seen_by = LJ.chat.popSeenBy( chat_id );
 			LJ.chat.insertChatLine( chat_id, chat_line_html, opts.insert_mode );
+			LJ.chat.urlifyChatLine( call_id );
 			LJ.chat.tallifyChatLine( call_id );
 			LJ.chat.horodateChatLine( call_id );
 			LJ.chat.mergeChatLine( call_id ); 
@@ -34424,6 +34418,25 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		},
 		pendifyChatLine: function( call_id ){
 			LJ.chat.getMessageElById( call_id ).addClass('--pending');
+
+		},
+		urlifyChatLine: function( call_id ){
+
+			var $msg       = LJ.chat.getMessageElById( call_id );
+			var msg_parts = $msg.text().split(' ');
+
+			msg_parts.forEach(function( msg_part, i ){
+
+				var prefix = /https:\/\//i.test( msg_part ) ? "https://" : "http://";
+
+				if( /http:\/\/|www\.|^\w+\.(com|fr|io|be|us|uk|org|net)$/i.test( msg_part ) ){
+					msg_parts[ i ] = '<a target="_blank" href="'+ prefix + msg_part.replace(/https?:\/\//i, '') +'">'+ msg_part +'</a>';
+				}
+
+			});
+
+			$msg.html( msg_parts.join(' ') );
+
 
 		},
 		classifyChatLine: function( call_id ){
@@ -34853,7 +34866,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			return LJ.ui.render([
 				
 				'<div class="chat-inview-options__close --round-icon js-ioptions-close">',
-		            '<i class="icon icon-cancel"></i>',
+		            '<i class="icon icon-cross-fat"></i>',
 		        '</div>',
 		        '<div class="chat-inview-users">',
 		        	opts.hosts_group_html,
@@ -35578,13 +35591,14 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 				LJ.cheers.removeCheersBack();
 				LJ.chat.activateChat( cheers_item.chat_id );
 				LJ.chat.showChatInview( cheers_item.chat_id );
+				LJ.chat.refreshChatJsp( cheers_item.chat_id );
 
 			} else {
 
 			// Cheers is in the pending state
 			cheers_item.cheers_type == "sent" ?
 				LJ.before.fetchAndShowBeforeInview( cheers_item.before_id ) :
-				LJ.cheers.validatifyCheersItem( cheers_id );
+				LJ.cheers.showValidateCheers( cheers_id );
 
 			}
 
@@ -35837,16 +35851,14 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			return LJ.cheers.close_type;
 
 		},
-		validatifyCheersItem: function( cheers_id ){
+		showValidateCheers: function( cheers_id ){
 
 			if( LJ.cheers.getActiveCheersBack() == cheers_id ){
-				return;
+				return 
 			}
 
 			LJ.cheers.setActiveCheersBack( cheers_id );
-
 			LJ.cheers.makeCheersBack( cheers_id );
-			LJ.cheers.refreshChatBackUsersJsp();
 
 			if( LJ.chat.getChatState() == "hidden" ){
 				LJ.cheers.setCloseType("hide_all");
@@ -36001,14 +36013,26 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		},
 		showCheersBack: function(){
 
-			$('.chat').css({ 'display': 'flex' }).find('.cheers-back').show();
+			$('.chat, .chat .cheers-back').css({ 'display': 'flex', 'opacity': '0' })
+				.find('.cheers-back')
+				.css({ 'opacity': '0' });
+
+			LJ.cheers.refreshChatBackUsersJsp()
+				// .then(function(){
+				// 	return LJ.delay()
+				// })
+				.then(function(){
+					$('.chat, .chat .cheers-back')
+						.css({ 'display': 'flex', 'opacity': '1' });
+
+				});
 
 		},
 		renderChatHeaderCloseIcon: function(){
 
 			return [
 				'<div class="chat-inview__icon --close js-close-cheers-back --round-icon">',
-					'<i class="icon icon-cancel"></div>',
+					'<i class="icon icon-cross-fat"></div>',
 				'</div>'
 			].join('');
 
@@ -36155,6 +36179,59 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 	});
 		
 
+	window.LJ.connecter = _.merge( window.LJ.connecter || {}, {
+
+		online_users: [],
+
+		init: function(){
+
+			if( LJ.app_mode == "dev" ){
+				return LJ.log("Mode is 'dev', not initializing the connecter system");
+			}
+			
+			LJ.connecter.refreshOnlineUsers();
+			LJ.connecter.handleDomEvents();
+			return;
+
+		},
+		handleDomEvents: function(){
+
+		},
+		getUserStatus: function( facebook_id ){
+
+			return LJ.connecter.online_users.indexOf( facebook_id ) == -1 ? "offline" : "online";
+
+		},
+		refreshOnlineUsers: function(){
+
+			LJ.log('Refreshing online users...');
+			var thirty_seconds = 30000;
+
+			LJ.api.fetchOnlineUsers()
+				.then(function( online_users ){
+
+					$('.js-user-online').removeClass('--online');
+					LJ.connecter.online_users = online_users;
+					online_users.forEach(function( facebook_id ){
+
+						$('.js-user-online[data-facebook-id="'+ facebook_id +'"]').addClass('--online');
+
+					});
+
+				})
+				.then(function(){
+					return LJ.delay( thirty_seconds )
+
+				})
+				.then(function(){
+					return LJ.connecter.refreshOnlineUsers();
+
+				})
+
+		}
+
+	});
+
 	window.LJ.dev = _.merge( window.LJ.dev || {}, {
 
 		n_cloudinary_api_calls: 0,
@@ -36241,354 +36318,6 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		},
 		showAppView__Request: function(){
 			return LJ.dev.showAppView('request');
-		}
-
-	});
-
-	window.LJ.friends = _.merge( window.LJ.friends || {}, {
-
-		friends_profiles: null,
-		show_friends_duration: 600,
-		init: function(){
-
-			LJ.friends.handleDomEvents();
-			return LJ.friends.fetchAndAddFacebookFriends();
-
-		},
-		handleDomEvents: function(){
-
-			LJ.ui.$body.on('click', '.js-invite-friends', LJ.facebook.showModalSendMessageToFriends );
-			LJ.ui.$body.on('click', '.js-show-friend', LJ.friends.handleFriendProfileClicked );
-			LJ.ui.$body.on('click', '.js-close-friends-popup', LJ.friends.hideInviteFriendsPopup );
-
-		},
-		handleFriendsClicked: function(){
-
-			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
-
-			$('.friends').html('');
-
-			$loader.addClass('none')
-				   .appendTo('.friends')
-				   .velocity('bounceInQuick', {
-				   	delay: 125,
-				   	duration: 500,
-				   	display: 'block'
-				   });
-
-			LJ.friends.fetchAndAddFacebookFriends();
-
-		},	
-		handleFriendProfileClicked: function(){
-
-			var $s = $(this);
-			var facebook_id = $s.attr('data-facebook-id');
-
-			LJ.profile_user.showUserProfile( facebook_id );
-
-		},
-		fetchAndAddFacebookFriends: function(){
-
-			var friend_ids = LJ.user.friends;
-			return LJ.api.fetchUsers( friend_ids )
-
-				.then(function( friends_profiles ){
-					friends_profiles = _.map( friends_profiles, 'user' );
-					return LJ.friends.setFriendsProfiles( friends_profiles );
-
-				})
-				.then(function( friends_profiles ){
-					return LJ.friends.renderFriends( friends_profiles );
-
-				})
-				.then(function( friends_html ){
-					return LJ.friends.displayFriends( friends_html );
-
-				})
-				.catch(function( e ){
-					LJ.wlog(e);
-				});
-
-
-		}, 
-		getFriendProfile: function( facebook_id ){
-
-			return _.find( LJ.friends.getFriendsProfiles(), function( f ){
-				return f.facebook_id == facebook_id;
-			});
-
-		},
-		getFriendsProfiles: function( facebook_ids ){
-
-			LJ.friends.friends_profiles = LJ.friends.friends_profiles.filter( Boolean );
-
-			if( facebook_ids ){
-				return _.filter( LJ.friends.friends_profiles, function( f ){
-					return ( facebook_ids.indexOf( f.facebook_id ) != -1 );
-				});
-
-			} else {
-				return LJ.friends.friends_profiles;
-
-			}
-
-		},
-		fetchFriendsProfiles: function(){
-
-			LJ.api.fetchMeFriends()
-				.then(function( friend_ids ){
-					return LJ.api.fetchUsers( friend_ids )
-				})
-				.then(function( friends_profiles ){
-					friends_profiles = _.map( friends_profiles, 'user' );
-					return LJ.friends.setFriendsProfiles( friends_profiles );
-				});
-
-
-		},
-		setFriendsProfiles: function( friends_profiles ){
-
-			LJ.friends.friends_profiles = friends_profiles;
-			return LJ.Promise.resolve( friends_profiles );
-
-		},
-		renderFriends: function( friends_profiles ){
-
-			var html = [];
-
-			if( friends_profiles.length == 0 ){
-				html.push( LJ.friends.renderFriendItem__Empty() );
-
-			} else {
-				friends_profiles.forEach(function( friend ){
-					html.push( LJ.friends.renderFriendItem( friend ) );
-
-				});
-
-				html.push( LJ.friends.renderFriendItem__Last() );
-
-			}
-
-			return html.join('');
-
-		},
-		displayFriends: function( html ){
-
-			var $base;
-			if( $('.friends').children().length == 0 ){
-				$( html )
-					.hide()
-					.appendTo('.friends')
-					.velocity('shradeIn', {
-						duration : LJ.friends.show_friends_duration,
-						display  : 'flex',
-						stagger  : (LJ.friends.show_friends_duration / 4)
-					});
-
-			} else {
-				$('.friends')
-					.children()
-					.velocity('shradeOut', {
-						duration : LJ.friends.show_friends_duration / 2,
-						display  : 'none',
-						complete : function(){
-							$( html )
-								.hide()
-								.appendTo('.friends')
-								.velocity('shradeIn', {
-									duration : LJ.friends.show_friends_duration,
-									display  : 'flex',
-									stagger  : (LJ.friends.show_friends_duration / 4)
-								});
-
-						}
-					});
-
-			}
-
-		},
-		renderFriendItem__Empty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-users"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_friends_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_friends_subtitle"></p>',
-					'</div>',
-					'<div class="empty__subicon --round-icon js-invite-friends">',
-						'<i class="icon icon-gift"></i>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderFriendItem: function( friend ){
-
-			var filterlay = 'js-filterlay';
-			var nonei 	  = '';
-
-			if( !friend ){
-				LJ.wlog('Trying to render undefined friend, rendering ghost user instead');
-				friend = LJ.getGhostUser();
-				filterlay = '';
-				nonei 	  = 'nonei';
-			}
-
-			var img_html = LJ.pictures.makeImgHtml( friend.img_id, friend.img_vs, 'menu-row' );
-
-			return LJ.ui.render([
-
-				'<div class="friend__item js-show-friend '+ nonei +'" data-facebook-id="' + friend.facebook_id + '">',
-					'<div class="row-pic">',
-						'<div class="row-pic__image '+ filterlay +'">' + img_html + '</div>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + friend.name + ', <span class="row-body__age">' + friend.age + '</span></h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon">',
-								'<i class="icon icon-education"></i>',
-							'</div>',
-							'<span>' + friend.job + '</span>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderFriendItem__Last: function(){
-
-			return '';
-
-			return LJ.ui.render([
-
-				'<div class="friend__item --invite-friends js-invite-friends" >',
-					'<div class="row-pic">',
-						'<i class="icon icon-gift"></i>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2> ' + LJ.text('friends_title_invite') + '</h2>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderFriendsInModal: function(){
-
-			var friends = LJ.friends.getFriendsProfiles();
- 
-			if( friends.length == 0 ){
-
-				return LJ.friends.renderFriendsInModal__Empty();
-
-			} else {
-
-				var html = [];
-
-				friends.forEach(function( f ){
-					html.push( LJ.friends.renderFriendInModal( f ) );
-				});
-
-				return html.join('');
-			}
-
-		},
-		renderFriendsInModal__Empty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="no-friends">',
-					'<span data-lid="modal_no_friends_text"></span>',
-					'<button class="js-invite-friends" data-lid="modal_no_friends_btn"></button>',
-				'</div>'
-
-			].join(''));
-
-		},
-		renderFriendInModal: function( f ){
-
-			if( !f ){
-				f = LJ.getGhostUser();
-			}
-			
-			var img_html = LJ.pictures.makeImgHtml( f.img_id, f.img_vs, 'user-modal' );
-
-			return LJ.ui.render([
-
-				'<div class="modal-item friend-modal" data-name="' + f.name.toLowerCase() + '" data-item-id="' + f.facebook_id + '">',
-					'<div class="friend-modal__pic">',
-						img_html,
-						'<div class="friend-modal__icon --round-icon">',
-							'<i class="icon icon-check"></i>',
-						'</div>',
-					'</div>',
-					'<div class="friend-modal__name">',
-						'<span>' + f.name + '</span>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		displayInviteFriendsPopup: function(){
-
-			LJ.friends.invite_popup_timer = setTimeout(function(){
-
-				$( LJ.friends.renderInviteFriendsPopup() )
-					.hide()
-					.appendTo('body')
-					.velocity('shradeIn', {
-						duration: 400,
-						display : 'flex'
-					});
-
-			}, 2500 );
-
-		},
-		hideInviteFriendsPopup: function(){
-
-			clearTimeout( LJ.friends.invite_popup_timer );
-			$('.invite-friends-popup').remove();
-
-		},
-		renderInviteFriendsPopup: function(){
-
-			return LJ.ui.render([
-
-				'<div class="invite-friends-popup">',
-					'<div class="invite-friends-popup__close js-close-friends-popup --round-icon">',
-						'<i class="icon icon-cancel"></i>',
-					'</div>',
-					'<div class="invite-friends-popup__icon --round-icon">',
-						'<i class="icon icon-heart"></i>',
-					'</div>',
-					'<div class="invite-friends-popup-message">',
-						'<div class="invite-friends-popup__h1">',
-							'<span data-lid="invite_friends_popup_h1"></span>',
-						'</div>',
-						'<div class="invite-friends-popup__h2">',
-							'<span data-lid="invite_friends_popup_h2"></span>',
-						'</div>',
-					'</div>',
-					'<div class="invite-friends-popup__btn js-invite-friends">',
-						'<button data-lid="invite_friends_popup_btn"></button>',
-					'</div>',
-				'</div>'
-
-			].join(''));
-
 		}
 
 	});
@@ -36872,916 +36601,352 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 	}
 
 });
-	
-	window.LJ = _.merge( window.LJ || {}, 
 
-{
-    settings: {
-        app: {}
-    },
-	app_token: '',
-	ui:{
-		nearest_event_opacity: '.5',
-		artificialDelay: 700,
-		minimum_loading_time: 500,
+	window.LJ.friends = _.merge( window.LJ.friends || {}, {
 
-        //Down
-		slideDownInLight:  { opacity: [1, 0], translateY: [0, 10]   },
-        slideDownInVeryLight:  { opacity: [1, 0], translateY: [0, 7]   },
+		fetched_friends: null,
+		show_friends_duration: 600,
+		init: function(){
 
-        //Up
-		slideUpOutLight: { opacity: [0, 1], translateY: [-10, 0]   },
-		slideUpOutVeryLight: { opacity: [0, 1], translateY: [-7, 0]   },
-        slideUpInLight: { opacity: [1, 0], translateY: [0, -10]   },
-        slideUpInVeryLight: { opacity: [1, 0], translateY: [0, -7]   },
+			LJ.friends.handleDomEvents();
+			return LJ.friends.fetchAndAddFacebookFriends();
 
-        //Left
-		slideLeftInLight:  { opacity: [1, 0], translateX: [0, -10]   },
-		slideLeftOutLight:  { opacity: [0, 1], translateX: [-10, 0]   },
-        slideLeftInVeryLight:  { opacity: [1, 0], translateX: [0, -7]   },
-        slideLeftOutVeryLight:  { opacity: [0, 1], translateX: [-7, 0]   },
+		},
+		handleDomEvents: function(){
 
-        //Right
-        slideRightInLight: { opacity: [1, 0], translateX: [0, 10]   },
-		slideRightOutLight: { opacity: [0, 1], translateX: [10, 0]   },
-        slideRightInVeryLight: { opacity: [1, 0], translateX: [0, 7]   },
-        slideRightOutVeryLight: { opacity: [, 1], translateX: [7, 0]   }
-	},
-    event_markers: [],
-    party_markers: [],
-    page_default_title: "Meefore | Home",
-    intro: {
-        event_data: {
-            "__v": 0,
-            "begins_at": "2025-11-02T19:30:07.000Z",
-            "timezone": 60,
-            "created_at": "2015-11-02T12:18:07.000Z",
-            "_id": "5637547fff83d96c44fe3aa8",
-            "meta": [],
-            "groups": [],
-            "agerange": "20-26",
-            "party": {
-                "type": "anytype",
-                "address": {
-                    "city_name": "Earth",
-                    "place_name": "Bastille",
-                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
-                    "lng": 2.369002000000023,
-                    "lat": 48.853082
-                }
-            },
-            "address": {
-                "city_name": "Paris",
-                "place_name": "Rue du Bac",
-                "place_id": "ChIJOQ6CxtVx5kcRd4vbzGeYf_w",
-                "lng": 2.3249530000000505,
-                "lat": 48.85537069999999
-            },
-            "type": "before",
-            "status": "open",
-            "hosts": [
-                {
-                    "main_picture": {
-                        "hashtag": "meerofka",
-                        "is_main": true,
-                        "img_place": 1,
-                        "img_version": "1445890265",
-                        "img_id": "55e85819bc81dcecc1601e4d--1"
-                    },
-                    "channels": {
-                        "me": "121428001540741",
-                        "public_chan": "app"
-                    },
-                    "country_code": "us",
-                    "mood": "happy",
-                    "drink": "shots",
-                    "name": "Jennifer Jenr",
-                    "job": "",
-                    "gender": "female",
-                    "age": 18,
-                    "signup_date": "2015-09-03T14:24:25.000Z",
-                    "facebook_url": "https://www.facebook.com/app_scoped_user_id/121428001540741/",
-                    "facebook_id": "jenn"
-                },
-                {
-                    "main_picture": {
-                        "hashtag": "classic",
-                        "is_main": true,
-                        "img_place": 0,
-                        "img_version": "1444491565",
-                        "img_id": "55e85897bc81dcecc1601e4e--0"
-                    },
-                    "channels": {
-                        "me": "142944122715258",
-                        "public_chan": "app"
-                    },
-                    "country_code": "fr",
-                    "mood": "happy",
-                    "drink": "water",
-                    "name": "Kaitlin Kal",
-                    "job": "",
-                    "gender": "female",
-                    "age": 18,
-                    "signup_date": "2015-09-03T14:26:31.000Z",
-                    "facebook_url": "https://www.facebook.com/app_scoped_user_id/142944122715258/",
-                    "facebook_id": "kait"
-                },
-                {
-                    "main_picture": {
-                        "hashtag": "meerofka",
-                        "is_main": true,
-                        "img_place": 1,
-                        "img_version": "1445890096",
-                        "img_id": "561ec5f190a94cdc5229a0f5--1"
-                    },
-                    "channels": {
-                        "me": "122537181435106",
-                        "public_chan": "app"
-                    },
-                    "country_code": "fr",
-                    "mood": "happy",
-                    "drink": "water",
-                    "name": "Ben Beaumec",
-                    "job": "",
-                    "gender": "male",
-                    "age": 18,
-                    "signup_date": "2015-10-14T21:15:29.000Z",
-                    "facebook_url": "https://www.facebook.com/app_scoped_user_id/122537181435106/",
-                    "facebook_id": "benb"
-                },
-                {
-                    "main_picture": {
-                        "img_id": "5622110750ccf4741d63be8f--0",
-                        "img_version": "1445890920",
-                        "img_place": 0,
-                        "is_main": true,
-                        "hashtag": "classic"
-                    },
-                    "channels": {
-                        "me": "139625316382924",
-                        "public_chan": "app"
-                    },
-                    "country_code": "us",
-                    "mood": "happy",
-                    "drink": "water",
-                    "name": "David Dav",
-                    "job": "",
-                    "gender": "male",
-                    "age": 18,
-                    "signup_date": "2015-10-17T09:12:39.000Z",
-                    "facebook_url": "https://www.facebook.com/app_scoped_user_id/139625316382924/",
-                    "facebook_id": "will"
-                }
-            ]
-        },
-        party_data: {
-            "_id": "5629550f2157aaf81eb43a2c",
-            "address" : {
-                "city_name" : "Paris",
-                "place_name": "Bastille",
-                "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
-                "lng": 2.369002000000023,
-                "lat": 48.853082
-            },
-            "attendees" : "280-450",
-            "begins_at" : "2014-10-22T20:00:00.923Z",
-            "created_at" : "2015-10-22T21:28:47.000Z",
-            "ends_at" : "2014-10-23T20:00:00.926Z",
-            "hosted_by" : "OMG Nightclub",
-            "link" : "http://www.bitoku.com",
-            "name" : "The Gamma Party",
-            "picture_url" : "http://res.cloudinary.com/radioreve/image/upload/v1445867671/lp1.jpg",
-            "status" : "open",
-            "timezone" : 120,
-            "type" : "school"
-        },
-        message_data_user_1: {
-            name: "Will",
-            img_id: "5622110750ccf4741d63be8f--0",
-            img_vs: "1445890920",
-            facebook_id: "will"
-        },
-        message_data_user_2: {
-            name: "Sandy",
-            img_id: "55e85897bc81dcecc1601e4e--0",
-            img_vs: "1444491565",
-            facebook_id: "sandy"
-        },
-        events_data: [{
-            _id: 'intro_1',
-            party: {
-                "type": "anytype",
-                "address": {
-                    "city_name": "Earth",
-                    "place_name": "Bastille",
-                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
-                    "lng": 2.369002000000023,
-                    "lat": 48.853082
-                }
-            },
-            address: {
-                lat: 48.84726471793433,
-                lng: 2.3407745361328125
-            }
-        }, {
-            _id: 'intro_2',
-            party: {
-                "type": "anytype",
-                "address": {
-                    "city_name": "Earth",
-                    "place_name": "Bastille",
-                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
-                    "lng": 2.369002000000023,
-                    "lat": 48.853082
-                }
-            },
-            address: {
-                lat: 48.84189859515306,
-                lng: 2.3596572875976562
-            }
-        }, {
-            _id: 'intro_3',
-            party: {
-                "type": "anytype",
-                "address": {
-                    "city_name": "Earth",
-                    "place_name": "Bastille",
-                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
-                    "lng": 2.369002000000023,
-                    "lat": 48.853082
-                }
-            },
-            address: {
-                lat: 48.860931611800865,
-                lng: 2.3534774780273438
-            }
-        }, {
-            _id: 'intro_4',
-            party: {
-                "type": "anytype",
-                "address": {
-                    "city_name": "Earth",
-                    "place_name": "Bastille",
-                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
-                    "lng": 2.369002000000023,
-                    "lat": 48.853082
-                }
-            }, address: {
-                lat: 48.85968932107463,
-                lng: 2.3886680603027344
-            }
-        }, {
-            _id: 'intro_5',
-            party: {
-                "type": "anytype",
-                "address": {
-                    "city_name": "Earth",
-                    "place_name": "Bastille",
-                    "place_id": "ChIJS_r6rAFy5kcRmEpmy97_TnA",
-                    "lng": 2.369002000000023,
-                    "lat": 48.853082
-                }
-            },
-            address: {
-                lat: 48.84613505565775,
-                lng: 2.377767562866211
-            }
-        }]
-    },
-	jsp_api: {},
-	cache: {
-        events : [],
-        users  : []
-	},
-    bot_profile: {
-        name        : "meebot",
-        facebook_id : "1337",
-        img_id      : "logo_black_on_white",
-        img_version : "1438073167"
+			LJ.ui.$body.on('click', '.js-invite-friends', LJ.facebook.showModalSendMessageToFriends );
+			LJ.ui.$body.on('click', '.js-show-friend', LJ.friends.handleFriendProfileClicked );
+			LJ.ui.$body.on('click', '.js-close-friends-popup', LJ.friends.hideInviteFriendsPopup );
 
-    },
-	cloudinary:{
-		uploadParams: { cloud_name:"radioreve", api_key:"835413516756943" },
+		},
+		handleFriendsClicked: function(){
 
-		/* Image de l'host dans un event */
-		displayParamsEventHost: { cloud_name :"radioreve", width: 80, height: 80, crop: 'fill', gravity: 'face', radius: '2' },
+			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
 
-        /* Image des askers dans la vue event */
-        displayParamsEventAsker: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:'0' },
+			$('.friends').html('');
 
-		/* Image du user dans le header */
-		displayParamsHeaderUser: { cloud_name: "radioreve",width: 50,height: 50, crop: 'fill', gravity: 'face', radius: 'max' },
+			$loader.addClass('none')
+				   .appendTo('.friends')
+				   .velocity('bounceInQuick', {
+				   	delay: 125,
+				   	duration: 500,
+				   	display: 'block'
+				   });
 
-		/* Image zoom lorsqu'on clique sur une photo*/
-		displayParamsOverlayUser: { cloud_name: "radioreve", width: 280, height: 280, crop: 'fill', gravity: 'face', radius: 'max' },
+			LJ.friends.fetchAndAddFacebookFriends();
 
-        /* Image principale des askers dans vue managemnt */
-        displayParamsAskerMain: { cloud_name: "radioreve", width:120, height:120, crop:'fill', gravity:'face', radius:3 },
+		},	
+		handleFriendProfileClicked: function(){
 
-		/* Image secondaire des askers dans vue management */
-        displayParamsAskerThumb: { cloud_name: "radioreve", width:45, height:45, crop:'fill', gravity:'face', radius:'max' },
+			var $s = $(this);
+			var facebook_id = $s.attr('data-facebook-id');
 
-        /* Image secondaire des askers dans vue management, lorsqu'ils sont refusé */
-        displayParamsAskerThumbRefused: { cloud_name: "radioreve", width:45, height:45, crop:'fill', effect:'grayscale', gravity:'face', radius:'max' },
-        
-		/* Image of friends in profile view */
-		profile: {
-			me: {
-				params: { cloud_name: "radioreve", width: 150, height: 150, crop: 'fill', gravity: 'face' }
-			},
-			friends: {
-				params: { cloud_name: "radioreve", 'class': '', width: 65, height: 65, crop: 'fill', gravity: 'face' }
+			LJ.profile_user.showUserProfile( facebook_id );
+
+		},
+		fetchAndAddFacebookFriends: function(){
+
+			var friend_ids = LJ.user.friends;
+			return LJ.api.fetchUsersFull( friend_ids )
+
+				.then(function( fetched_friends ){
+					fetched_friends = _.map( fetched_friends, 'user' );
+					return LJ.friends.setFriendsProfiles( fetched_friends );
+
+				})
+				.then(function( fetched_friends ){
+					return LJ.friends.renderFriends( fetched_friends );
+
+				})
+				.then(function( friends_html ){
+					return LJ.friends.displayFriends( friends_html );
+
+				})
+				.catch(function( e ){
+					LJ.wlog(e);
+				});
+
+
+		}, 
+		getFriendProfile: function( facebook_id ){
+
+			return _.find( LJ.friends.getFriendsProfiles(), function( f ){
+				return f.facebook_id == facebook_id;
+			});
+
+		},
+		getFriendsProfiles: function( facebook_ids ){
+
+			LJ.friends.fetched_friends = LJ.friends.fetched_friends.filter( Boolean );
+
+			if( facebook_ids ){
+				return _.filter( LJ.friends.fetched_friends, function( f ){
+					return ( facebook_ids.indexOf( f.facebook_id ) != -1 );
+				});
+
+			} else {
+				return LJ.friends.fetched_friends;
+
 			}
-		},
-		events:
-		{
-			mapview: {
-				hosts: {
-					params: { cloud_name: "radioreve", 'class': 'rounded detailable', width: 42, height: 42, crop: 'fill', gravity: 'face'}
-				}
-			},
-            sideview: {
-                hosts: {
-                    params: { cloud_name: "radioreve", "class": "rounded detailable", width: 35, height: 35, crop: 'fill', gravity: 'face' }
-                }
-            },
-			preview: {
-				hosts: {
-					params: { cloud_name: "radioreve", 'class': 'rounded detailable', width: 62, height: 62, crop: 'fill', gravity: 'face'}
-				}
-			},
-			group: {
-				params: { cloud_name: "radioreve", 'class': 'rounded detailable', width: 40, height: 40, crop: 'fill', gravity: 'face' }
-			},
-			chat: {
-				params: { cloud_name: "radioreve", 'class': 'rounded', width: 30, height: 30, crop: 'fill', gravity: 'face' }
-			}
-		},
-		create: {
-			friends: {
-				params: { cloud_name: "radioreve", 'class': 'friend-img none rounded', width: 24, height: 24, crop: 'fill', gravity: 'face' }
-			}
-		},
-		search: {
-			user: {
-				params: { cloud_name: "radioreve", 'class': 'super-centered rounded', width: 40, height: 40, crop: 'fill', gravity: 'face'}
-			}
-		},
-		markers: {
-			base: {
-                open: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418376/marker_dark.png'
-                }, full: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418376/marker_dark_full.png'
-                }
-            },
-            base_active: {
-                open: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418425/marker_pink.png'
-                }, full: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418425/marker_pink_full.png'
-                }
-            },
-            hosting: {
-                open: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787505/marker_host_dark.png'
-                }, full: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787505/marker_host_dark_full.png'
-                }
-            },
-            hosting_active: {
-                open: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787504/marker_host_pink.png'
-                }, full: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1443787504/marker_host_pink_full.png'
-                }
-            },
-            pending: {
-                open: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/marker_pending_dark.png'
-                }, full: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/marker_pending_dark_full.png'
-                }
-            },
-            pending_active: {
-                open: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_pending_pink.png'
-                }, full: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_pending_pink_full.png'
-                }
-            },
-            kicked: {
-                open: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/marker_pending_dark.png'
-                }, full: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442431311/marker_pending_dark_full.png'
-                }
-            },
-            kicked_active: {
-                open: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_pending_pink.png'
-                }, full: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442867837/marker_pending_pink_full.png'
-                }
-            },
-            accepted: {
-                open: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418560/marker_chat_dark.png'
-                }, full: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418560/marker_chat_dark_full.png'
-                }
-            },
-            accepted_active: {
-                open: {
-                  url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418507/marker_chat_pink.png'
-                }, full: {
-                    url: 'http://res.cloudinary.com/radioreve/image/upload/v1442418507/marker_chat_pink_full.png'
-                }
-            },
-            party: {
-                url: 'http://res.cloudinary.com/radioreve/image/upload/v1442436513/marker_party_dark.png'
-            },
-            party_active: {
-                url:'http://res.cloudinary.com/radioreve/image/upload/v1442436750/marker_party_pink.png'
-            }
-		},
-        curtain: {
-        	main: {
-        		params: { cloud_name: "radioreve", 'class': 'modal-main-picture etiquette', width: 300, height: 300, crop: 'fill', gravity: 'face' }
-        	},
-        	main_active: {
-        		params: { cloud_name: "radioreve", 'class': 'modal-main-picture etiquette active', width: 300, height: 300, crop: 'fill', gravity: 'face' }
-        	},
-        	thumb: {
-        		params: { cloud_name: "radioreve", 'class': 'modal-thumb-picture', crop: 'fill', gravity: 'face' }	
-        	},
-        	thumb_active: {
-        		params: { cloud_name: "radioreve", 'class': 'modal-thumb-picture active', crop: 'fill', gravity: 'face' }
-        	}
-        },
-        logo: {
-        	black_on_white: {
-        		id:'logo_black_on_white'
-        	},
-        	white_on_black: {
-        		id:'logo_white_on_black'
-        	}
-        },
-        placeholder: {
-        	id: 'placeholder_picture',
-        	params: { version: "1444912756", cloud_name :"radioreve", html: { 'class': 'mainPicture' }, width: 150 }
-        },
-    	loaders: {
-    		main: {
-    			id: 'main_loader',
-    			params: { cloud_name :"radioreve", 'class': 'ajax-loader' }
-    		},
-            main_curtain: {
-                id: 'main_loader_curtain',
-                params: { cloud_name: "radioreve" }
-            },
-    		mobile: {
-    			id: 'mobile_loader',
-    			params: { cloud_name :"radioreve", 'class': 'ajax-loader', width: 25 }
-    		},
-    		bar: {
-    			id: 'bar_loader',
-    			params: { cloud_name :"radioreve" }
-    		},
-    		spinner: {
-    			id: 'spinner_loader',
-    			params: { cloud_name: "radioreve" }
-    		},
-    		curtain: {
-    			id: 'curtain_loader_v4',
-    			params: { cloud_name :"radioreve", 'class': 'curtain-loader super-centered', width: 20 }
-    		},
-            spinner_2: {
-                id: 'spinner_loader_2',
-                params: { cloud_name: "radioreve" }
-            }
-    	},
-	},
-	google: {
-        map_center: {
-            lat: 48.8566140,
-            lng: 2.3522219
-        },
-		map: {
-            style: {
-                meemap: [
-    {
-        "featureType": "administrative",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "simplified"
-            },
-            {
-                "hue": "#ff0000"
-            },
-            {
-                "weight": "0.27"
-            }
-        ]
-    },
-    {
-        "featureType": "administrative",
-        "elementType": "labels.text.fill",
-        "stylers": [
-            {
-                "color": "#444444"
-            }
-        ]
-    },
-    {
-        "featureType": "administrative.country",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "administrative.locality",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "administrative.neighborhood",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "administrative.land_parcel",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            },
-            {
-                "color": "#fdfdfd"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "visibility": "on"
-            },
-            {
-                "hue": "#ff0000"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.natural.terrain",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.natural.terrain",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "hue": "#ff0000"
-            }
-        ]
-    },
-    {
-        "featureType": "poi",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.park",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "simplified"
-            },
-            {
-                "hue": "#37ff00"
-            },
-            {
-                "lightness": "70"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.school",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.school",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.sports_complex",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.sports_complex",
-        "elementType": "labels.text",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "all",
-        "stylers": [
-            {
-                "saturation": -100
-            },
-            {
-                "lightness": 45
-            },
-            {
-                "visibility": "simplified"
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "visibility": "simplified"
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "color": "#a39bb2"
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "labels.icon",
-        "stylers": [
-            {
-                "visibility": "simplified"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "simplified"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "hue": "#ff0000"
-            },
-            {
-                "weight": "0.65"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "weight": "0.20"
-            },
-            {
-                "lightness": "82"
-            },
-            {
-                "gamma": "1.19"
-            },
-            {
-                "saturation": "-42"
-            },
-            {
-                "color": "#d59ca6"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            },
-            {
-                "lightness": "16"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "labels.icon",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "visibility": "on"
-            },
-            {
-                "weight": "0.4"
-            },
-            {
-                "color": "#dbdbdb"
-            },
-            {
-                "lightness": "10"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "labels.icon",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "simplified"
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "transit",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "transit.line",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "transit.station",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "all",
-        "stylers": [
-            {
-                "color": "#dae7f2"
-            },
-            {
-                "visibility": "on"
-            }
-        ]
-    }
-] 
 
-            }
-        }
-	}
+		},
+		setFriendsProfiles: function( fetched_friends ){
 
-});
+			LJ.friends.fetched_friends = fetched_friends;
+			return LJ.Promise.resolve( fetched_friends );
+
+		},
+		renderFriends: function( fetched_friends ){
+
+			var html = [];
+
+			if( fetched_friends.length == 0 ){
+				html.push( LJ.friends.renderFriendItem__Empty() );
+
+			} else {
+				fetched_friends.forEach(function( friend ){
+					html.push( LJ.friends.renderFriendItem( friend ) );
+
+				});
+
+				html.push( LJ.friends.renderFriendItem__Last() );
+
+			}
+
+			return html.join('');
+
+		},
+		displayFriends: function( html ){
+
+			var $base;
+			if( $('.friends').children().length == 0 ){
+				$( html )
+					.hide()
+					.appendTo('.friends')
+					.velocity('shradeIn', {
+						duration : LJ.friends.show_friends_duration,
+						display  : 'flex',
+						stagger  : (LJ.friends.show_friends_duration / 4)
+					});
+
+			} else {
+				$('.friends')
+					.children()
+					.velocity('shradeOut', {
+						duration : LJ.friends.show_friends_duration / 2,
+						display  : 'none',
+						complete : function(){
+							$( html )
+								.hide()
+								.appendTo('.friends')
+								.velocity('shradeIn', {
+									duration : LJ.friends.show_friends_duration,
+									display  : 'flex',
+									stagger  : (LJ.friends.show_friends_duration / 4)
+								});
+
+						}
+					});
+
+			}
+
+		},
+		renderFriendItem__Empty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-users"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_friends_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_friends_subtitle"></p>',
+					'</div>',
+					'<div class="empty__subicon --round-icon js-invite-friends">',
+						'<i class="icon icon-gift"></i>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderFriendItem: function( friend ){
+
+			var filterlay = 'js-filterlay';
+			var nonei 	  = '';
+
+			if( !friend ){
+				LJ.wlog('Trying to render undefined friend, rendering ghost user instead');
+				friend = LJ.getGhostUser();
+				filterlay = '';
+				nonei 	  = 'nonei';
+			}
+
+			var formatted_date = LJ.text("w_member_since") + " " + moment( friend.signed_up_at ).format('DD/MM/YY');
+
+			var main_img = LJ.findMainPic( friend );
+			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="friend__item js-show-friend '+ nonei +'" data-facebook-id="' + friend.facebook_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image '+ filterlay +'">' + img_html + '</div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + friend.name + ', <span class="row-body__age">' + friend.age + '</span></h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon">',
+								'<i class="icon icon-education"></i>',
+							'</div>',
+							'<span>' + friend.job + '</span>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon">',
+								'<i class="icon icon-location"></i>',
+							'</div>',
+							'<span>' + friend.location.place_name + '</span>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderFriendItem__Last: function(){
+
+			return '';
+
+			return LJ.ui.render([
+
+				'<div class="friend__item --invite-friends js-invite-friends" >',
+					'<div class="row-pic">',
+						'<i class="icon icon-gift"></i>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2> ' + LJ.text('friends_title_invite') + '</h2>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderFriendsInModal: function(){
+
+			var friends = LJ.friends.getFriendsProfiles();
+ 
+			if( friends.length == 0 ){
+
+				return LJ.friends.renderFriendsInModal__Empty();
+
+			} else {
+
+				var html = [];
+
+				friends.forEach(function( f ){
+					html.push( LJ.friends.renderFriendInModal( f ) );
+				});
+
+				return html.join('');
+			}
+
+		},
+		renderFriendsInModal__Empty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="no-friends">',
+					'<span data-lid="modal_no_friends_text"></span>',
+					'<button class="js-invite-friends" data-lid="modal_no_friends_btn"></button>',
+				'</div>'
+
+			].join(''));
+
+		},
+		renderFriendInModal: function( f ){
+
+			if( !f ){
+				f = LJ.getGhostUser();
+			}
+			
+			var main_img = LJ.findMainPic( f );
+			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'user-modal' );
+
+			return LJ.ui.render([
+
+				'<div class="modal-item friend-modal" data-name="' + f.name.toLowerCase() + '" data-item-id="' + f.facebook_id + '">',
+					'<div class="friend-modal__pic">',
+						img_html,
+						'<div class="friend-modal__icon --round-icon">',
+							'<i class="icon icon-check"></i>',
+						'</div>',
+					'</div>',
+					'<div class="friend-modal__name">',
+						'<span>' + f.name + '</span>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		displayInviteFriendsPopup: function(){
+
+			LJ.friends.invite_popup_timer = setTimeout(function(){
+
+				$( LJ.friends.renderInviteFriendsPopup() )
+					.hide()
+					.appendTo('body')
+					.velocity('shradeIn', {
+						duration: 400,
+						display : 'flex'
+					});
+
+			}, 2500 );
+
+		},
+		hideInviteFriendsPopup: function(){
+
+			clearTimeout( LJ.friends.invite_popup_timer );
+			$('.invite-friends-popup').remove();
+
+		},
+		renderInviteFriendsPopup: function(){
+
+			return LJ.ui.render([
+
+				'<div class="invite-friends-popup">',
+					'<div class="invite-friends-popup__close js-close-friends-popup --round-icon">',
+						'<i class="icon icon-cross-fat"></i>',
+					'</div>',
+					'<div class="invite-friends-popup__icon --round-icon">',
+						'<i class="icon icon-heart"></i>',
+					'</div>',
+					'<div class="invite-friends-popup-message">',
+						'<div class="invite-friends-popup__h1">',
+							'<span data-lid="invite_friends_popup_h1"></span>',
+						'</div>',
+						'<div class="invite-friends-popup__h2">',
+							'<span data-lid="invite_friends_popup_h2"></span>',
+						'</div>',
+					'</div>',
+					'<div class="invite-friends-popup__btn js-invite-friends">',
+						'<button data-lid="invite_friends_popup_btn"></button>',
+					'</div>',
+				'</div>'
+
+			].join(''));
+
+		}
+
+	});
     /*
         Initialisation script
         Recursively try to initialize the Facebook pluggin
@@ -37865,7 +37030,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
                 .then( LJ.map.init ) // Must be as close as possible to terminateLogin. Map doesnt render sometimes..
                 .then( LJ.login.terminateLoginProcess )
                 .then( LJ.onboarding.init )
-                // .then( LJ.connecter.init )
+                .then( LJ.connecter.init )
                 .then( LJ.dev.init )
 
         }
@@ -37874,14 +37039,6 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 	});
 
 
-	
-	window.LJ.invite = _.merge( window.LJ.invite || {}, {
-
-		init: function(){
-			
-		}
-
-	});
 
 	window.LJ.ladder = _.merge( window.LJ.ladder || {}, {
 
@@ -37986,56 +37143,11 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 
 
-
-	window.LJ.connecter = _.merge( window.LJ.connecter || {}, {
-
-		online_users: [],
+	
+	window.LJ.invite = _.merge( window.LJ.invite || {}, {
 
 		init: function(){
-
-			if( LJ.app_mode == "dev" ){
-				return LJ.log("Mode is 'dev', not initializing the connecter system");
-			}
 			
-			LJ.connecter.refreshOnlineUsers();
-			LJ.connecter.handleDomEvents();
-			return;
-
-		},
-		handleDomEvents: function(){
-
-		},
-		getUserStatus: function( facebook_id ){
-
-			return LJ.connecter.online_users.indexOf( facebook_id ) == -1 ? "offline" : "online";
-
-		},
-		refreshOnlineUsers: function(){
-
-			LJ.log('Refreshing online users...');
-			var thirty_seconds = 30000;
-
-			LJ.api.fetchOnlineUsers()
-				.then(function( online_users ){
-
-					$('.js-user-online').removeClass('--online');
-					LJ.connecter.online_users = online_users;
-					online_users.forEach(function( facebook_id ){
-
-						$('.js-user-online[data-facebook-id="'+ facebook_id +'"]').addClass('--online');
-
-					});
-
-				})
-				.then(function(){
-					return LJ.delay( thirty_seconds )
-
-				})
-				.then(function(){
-					return LJ.connecter.refreshOnlineUsers();
-
-				})
-
 		}
 
 	});
@@ -38142,7 +37254,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 			"html": [
 					'<div class="landing">',
 					    '<div class="landing-logo --round-icon">',
-					      '<span>M</span>',
+					      '<span>Meefore</span>',
 					    '</div>',
 					    '<div class="landing-lang">',
 					      '<button class="js-changelang" data-lid="settings_ux_changelang_button"></button>',
@@ -38205,267 +37317,1278 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 
 
+LJ.text_source = _.merge( LJ.text_source || {}, {
 
-	window.LJ.meepass = _.merge( window.LJ.meepass || {}, {
+   country_af: {
+      "us": "Afghanistan",
+      "fr": "Afghanistan"
+   },
+   country_ax: {
+      "us": "Åland Islands",
+      "fr": "Åland"
+   },
+   country_al: {
+      "us": "Albania",
+      "fr": "Albanie"
+   },
+   country_dz: {
+      "us": "Algeria",
+      "fr": "Algérie"
+   },
+   country_as: {
+      "us": "American Samoa",
+      "fr": "Samoa Américaines"
+   },
+   country_ad: {
+      "us": "Andorra",
+      "fr": "Andorre"
+   },
+   country_ao: {
+      "us": "Angola",
+      "fr": "Angola"
+   },
+   country_ai: {
+      "us": "Anguilla",
+      "fr": "Anguilla"
+   },
+   country_aq: {
+      "us": "Antarctica",
+      "fr": "Antarctique"
+   },
+   country_ag: {
+      "us": "Antigua and Barbuda",
+      "fr": "Antigua-et-Barbuda"
+   },
+   country_ar: {
+      "us": "Argentina",
+      "fr": "Argentine"
+   },
+   country_am: {
+      "us": "Armenia",
+      "fr": "Arménie"
+   },
+   country_aw: {
+      "us": "Aruba",
+      "fr": "Aruba"
+   },
+   country_au: {
+      "us": "Australia",
+      "fr": "Australie"
+   },
+   country_at: {
+      "us": "Austria",
+      "fr": "Autriche"
+   },
+   country_az: {
+      "us": "Azerbaijan",
+      "fr": "Azerbaïdjan"
+   },
+   country_bs: {
+      "us": "Bahamas",
+      "fr": "Bahamas"
+   },
+   country_bh: {
+      "us": "Bahrain",
+      "fr": "Bahreïn"
+   },
+   country_bd: {
+      "us": "Bangladesh",
+      "fr": "Bangladesh"
+   },
+   country_bb: {
+      "us": "Barbados",
+      "fr": "Barbade"
+   },
+   country_by: {
+      "us": "Belarus",
+      "fr": "Biélorussie"
+   },
+   country_be: {
+      "us": "Belgium",
+      "fr": "Belgique"
+   },
+   country_bz: {
+      "us": "Belize",
+      "fr": "Bélize"
+   },
+   country_bj: {
+      "us": "Benin",
+      "fr": "Bénin"
+   },
+   country_bm: {
+      "us": "Bermuda",
+      "fr": "Bermudes"
+   },
+   country_bt: {
+      "us": "Bhutan",
+      "fr": "Bhoutan"
+   },
+   country_bo: {
+      "us": "Bolivia",
+      "fr": "Bolivie"
+   },
+   country_ba: {
+      "us": "Bosnia and Herzegovina",
+      "fr": "Bosnie-Herzégovine"
+   },
+   country_bw: {
+      "us": "Botswana",
+      "fr": "Botswana"
+   },
+   country_bv: {
+      "us": "Bouvet Island",
+      "fr": "Île Bouvet"
+   },
+   country_br: {
+      "us": "Brazil",
+      "fr": "Brésil"
+   },
+   country_io: {
+      "us": "British Indian Ocean Territory",
+      "fr": "Territoire britannique de l'océan Indien"
+   },
+   country_bn: {
+      "us": "Brunei Darussalam",
+      "fr": "Brunei"
+   },
+   country_bg: {
+      "us": "Bulgaria",
+      "fr": "Bulgarie"
+   },
+   country_bf: {
+      "us": "Burkina Faso",
+      "fr": "Burkina Faso"
+   },
+   country_bi: {
+      "us": "Burundi",
+      "fr": "Burundi"
+   },
+   country_kh: {
+      "us": "Cambodia",
+      "fr": "Cambodge"
+   },
+   country_cm: {
+      "us": "Cameroon",
+      "fr": "Cameroun"
+   },
+   country_ca: {
+      "us": "Canada",
+      "fr": "Canada"
+   },
+   country_cv: {
+      "us": "Cape Verde",
+      "fr": "Cap-Vert"
+   },
+   country_ky: {
+      "us": "Cayman Islands",
+      "fr": "Îles Caïmans"
+   },
+   country_cf: {
+      "us": "Central African Republic",
+      "fr": ""
+   },
+   country_td: {
+      "us": "Chad",
+      "fr": "Tchad"
+   },
+   country_cl: {
+      "us": "Chile",
+      "fr": "Chili"
+   },
+   country_cn: {
+      "us": "China",
+      "fr": "Chine"
+   },
+   country_cx: {
+      "us": "Christmas Island",
+      "fr": "Île Christmas"
+   },
+   country_cc: {
+      "us": "Cocos (Keeling) Islands",
+      "fr": "Îles Cocos"
+   },
+   country_co: {
+      "us": "Colombia",
+      "fr": "Colombie"
+   },
+   country_km: {
+      "us": "Comoros",
+      "fr": "Comores"
+   },
+   country_cg: {
+      "us": "Congo",
+      "fr": "Congo"
+   },
+   country_cd: {
+      "us": "Congo, The Democratic Republic of the",
+      "fr": "Congo, République Démocratique du"
+   },
+   country_ck: {
+      "us": "Cook Islands",
+      "fr": "Îles Cook"
+   },
+   country_cr: {
+      "us": "Costa Rica",
+      "fr": "Costa Rica"
+   },
+   country_ci: {
+      "us": "Ivory Coast",
+      "fr": "Côte d’Ivoire"
+   },
+   country_hr: {
+      "us": "Croatia",
+      "fr": "Croatie"
+   },
+   country_cu: {
+      "us": "Cuba",
+      "fr": "Cuba"
+   },
+   country_cy: {
+      "us": "Cyprus",
+      "fr": "Chypre"
+   },
+   country_cz: {
+      "us": "Czech Republic",
+      "fr": "République tchèque"
+   },
+   country_dk: {
+      "us": "Denmark",
+      "fr": "Danemark"
+   },
+   country_dj: {
+      "us": "Djibouti",
+      "fr": "Djibouti"
+   },
+   country_dm: {
+      "us": "Dominica",
+      "fr": "Dominique"
+   },
+   country_do: {
+      "us": "Dominican Republic",
+      "fr": "République dominicaine"
+   },
+   country_ec: {
+      "us": "Ecuador",
+      "fr": "Équateur"
+   },
+   country_eg: {
+      "us": "Egypt",
+      "fr": "Égypte"
+   },
+   country_sv: {
+      "us": "El Salvador",
+      "fr": "Salvador"
+   },
+   country_gq: {
+      "us": "Equatorial Guinea",
+      "fr": "Guinée équatoriale"
+   },
+   country_er: {
+      "us": "Eritrea",
+      "fr": "Érythrée"
+   },
+   country_ee: {
+      "us": "Estonia",
+      "fr": "Estonie"
+   },
+   country_et: {
+      "us": "Ethiopia",
+      "fr": "Ethiopie"
+   },
+   country_fk: {
+      "us": "Falkland Islands (Malvinas)",
+      "fr": "Îles Malouines"
+   },
+   country_fo: {
+      "us": "Faroe Islands",
+      "fr": "Îles Féroé"
+   },
+   country_fj: {
+      "us": "Fiji",
+      "fr": "Fidji"
+   },
+   country_fi: {
+      "us": "Finland",
+      "fr": "Finlande"
+   },
+   country_fr: {
+      "us": "France",
+      "fr": "France"
+   },
+   country_gf: {
+      "us": "French Guiana",
+      "fr": "Guinée française"
+   },
+   country_pf: {
+      "us": "French Polynesia",
+      "fr": "Polynésie française"
+   },
+   country_tf: {
+      "us": "French Southern Territories",
+      "fr": ""
+   },
+   country_ga: {
+      "us": "Gabon",
+      "fr": "Gabon"
+   },
+   country_gm: {
+      "us": "Gambia",
+      "fr": "Gambie"
+   },
+   country_ge: {
+      "us": "Georgia",
+      "fr": "Géorgie"
+   },
+   country_de: {
+      "us": "Germany",
+      "fr": "Allemagne"
+   },
+   country_gh: {
+      "us": "Ghana",
+      "fr": "Ghana"
+   },
+   country_gi: {
+      "us": "Gibraltar",
+      "fr": "Gibraltar"
+   },
+   country_gr: {
+      "us": "Greece",
+      "fr": "Grèce"
+   },
+   country_gl: {
+      "us": "Greenland",
+      "fr": "Greenland"
+   },
+   country_gd: {
+      "us": "Grenada",
+      "fr": "Grenade"
+   },
+   country_gp: {
+      "us": "Guadeloupe",
+      "fr": "Guadeloupe"
+   },
+   country_gu: {
+      "us": "Guam",
+      "fr": "Guam"
+   },
+   country_gt: {
+      "us": "Guatemala",
+      "fr": "Guatemala"
+   },
+   country_gg: {
+      "us": "Guernsey",
+      "fr": "Guernesey"
+   },
+   country_gn: {
+      "us": "Guinea",
+      "fr": "Guinée"
+   },
+   country_gw: {
+      "us": "Guinea-Bissau",
+      "fr": "Guinée-Bissau"
+   },
+   country_gy: {
+      "us": "Guyana",
+      "fr": "Guyane"
+   },
+   country_ht: {
+      "us": "Haiti",
+      "fr": "Haïti"
+   },
+   country_hm: {
+      "us": "Heard Island and Mcdonald Islands",
+      "fr": "Îles Heard-et-MacDonald"
+   },
+   country_va: {
+      "us": "Holy See (Vatican City State)",
+      "fr": "Vatican"
+   },
+   country_hn: {
+      "us": "Honduras",
+      "fr": "Honduras"
+   },
+   country_hk: {
+      "us": "Hong Kong",
+      "fr": "Hong Kong"
+   },
+   country_hu: {
+      "us": "Hungary",
+      "fr": "Hongrie"
+   },
+   country_is: {
+      "us": "Iceland",
+      "fr": "Islande"
+   },
+   country_in: {
+      "us": "India",
+      "fr": "Inde"
+   },
+   country_id: {
+      "us": "Indonesia",
+      "fr": "Indonésie"
+   },
+   country_ir: {
+      "us": "Iran",
+      "fr": "Iran’"
+   },
+   country_iq: {
+      "us": "Iraq",
+      "fr": "Irak"
+   },
+   country_ie: {
+      "us": "Ireland",
+      "fr": "Irlande"
+   },
+   country_im: {
+      "us": "Isle of Man",
+      "fr": "Île de Man"
+   },
+   country_il: {
+      "us": "Israel",
+      "fr": "Israël"
+   },
+   country_it: {
+      "us": "Italy",
+      "fr": "Italie"
+   },
+   country_jm: {
+      "us": "Jamaica",
+      "fr": "Jamaïque"
+   },
+   country_jp: {
+      "us": "Japan",
+      "fr": "Japon"
+   },
+   country_je: {
+      "us": "Jersey",
+      "fr": "Jersey"
+   },
+   country_jo: {
+      "us": "Jordan",
+      "fr": "Jordanie"
+   },
+   country_kz: {
+      "us": "Kazakhstan",
+      "fr": "Kazakhstan"
+   },
+   country_ke: {
+      "us": "Kenya",
+      "fr": "Kenya"
+   },
+   country_ki: {
+      "us": "Kiribati",
+      "fr": "Kiribati"
+   },
+   country_kp: {
+      "us": "Korea, Democratic People's Republic of",
+      "fr": "Corée du Nord"
+   },
+   country_kr: {
+      "us": "Korea, Republic of",
+      "fr": "Corée du Sud"
+   },
+   country_kw: {
+      "us": "Kuwait",
+      "fr": "Koweït"
+   },
+   country_kg: {
+      "us": "Kyrgyzstan",
+      "fr": "Kirghizistan"
+   },
+   country_la: {
+      "us": "Laos",
+      "fr": "Laos"
+   },
+   country_lv: {
+      "us": "Latvia",
+      "fr": "Lettonie"
+   },
+   country_lb: {
+      "us": "Lebanon",
+      "fr": "Liban"
+   },
+   country_ls: {
+      "us": "Lesotho",
+      "fr": "Lesotho"
+   },
+   country_lr: {
+      "us": "Liberia",
+      "fr": "Liberia"
+   },
+   country_ly: {
+      "us": "Libya",
+      "fr": "Libye"
+   },
+   country_li: {
+      "us": "Liechtenstein",
+      "fr": "Liechtenstein"
+   },
+   country_lt: {
+      "us": "Lithuania",
+      "fr": ""
+   },
+   country_lu: {
+      "us": "Luxembourg",
+      "fr": "Lituanie"
+   },
+   country_mo: {
+      "us": "Macao",
+      "fr": "Macao"
+   },
+   country_mk: {
+      "us": "Macedonia",
+      "fr": "Macédoine"
+   },
+   country_mg: {
+      "us": "Madagascar",
+      "fr": "Madagascar"
+   },
+   country_mw: {
+      "us": "Malawi",
+      "fr": "Malawi"
+   },
+   country_my: {
+      "us": "Malaysia",
+      "fr": "Malaisie"
+   },
+   country_mv: {
+      "us": "Maldives",
+      "fr": "Maldives"
+   },
+   country_ml: {
+      "us": "Mali",
+      "fr": "Mali"
+   },
+   country_mt: {
+      "us": "Malta",
+      "fr": "Malte"
+   },
+   country_mh: {
+      "us": "Marshall Islands",
+      "fr": "Îles Marshall"
+   },
+   country_mq: {
+      "us": "Martinique",
+      "fr": "Martinique"
+   },
+   country_mr: {
+      "us": "Mauritania",
+      "fr": "Mauritanie"
+   },
+   country_mu: {
+      "us": "Mauritius",
+      "fr": "Maurice"
+   },
+   country_yt: {
+      "us": "Mayotte",
+      "fr": "Mayotte"
+   },
+   country_mx: {
+      "us": "Mexico",
+      "fr": "Mexique"
+   },
+   country_fm: {
+      "us": "Micronesia",
+      "fr": "Micronésie"
+   },
+   country_md: {
+      "us": "Moldova",
+      "fr": "Moldavie"
+   },
+   country_mc: {
+      "us": "Monaco",
+      "fr": "Monaco"
+   },
+   country_mn: {
+      "us": "Mongolia",
+      "fr": "Mongolie"
+   },
+   country_ms: {
+      "us": "Montserrat",
+      "fr": "Montserrat"
+   },
+   country_ma: {
+      "us": "Morocco",
+      "fr": "Maroc"
+   },
+   country_mz: {
+      "us": "Mozambique",
+      "fr": "Mozambique"
+   },
+   country_mm: {
+      "us": "Myanmar",
+      "fr": "Myanmar"
+   },
+   country_na: {
+      "us": "Namibia",
+      "fr": "Namibie"
+   },
+   country_nr: {
+      "us": "Nauru",
+      "fr": "Nauru"
+   },
+   country_np: {
+      "us": "Nepal",
+      "fr": "Népal"
+   },
+   country_nl: {
+      "us": "Netherlands",
+      "fr": "Pays-Bas"
+   },
+   country_an: {
+      "us": "Netherlands Antilles",
+      "fr": "Antilles néerlandaises"
+   },
+   country_nc: {
+      "us": "New Caledonia",
+      "fr": "Nouvelle-Calédonie"
+   },
+   country_nz: {
+      "us": "New Zealand",
+      "fr": "Nouvelle-Zélande"
+   },
+   country_ni: {
+      "us": "Nicaragua",
+      "fr": "Nicaragua"
+   },
+   country_ne: {
+      "us": "Niger",
+      "fr": "Niger"
+   },
+   country_ng: {
+      "us": "Nigeria",
+      "fr": "Nigéria"
+   },
+   country_nu: {
+      "us": "Niue",
+      "fr": "Niue"
+   },
+   country_nf: {
+      "us": "Norfolk Island",
+      "fr": "Île Norfolk"
+   },
+   country_mp: {
+      "us": "Northern Mariana Islands",
+      "fr": "Îles Mariannes du Nord"
+   },
+   country_no: {
+      "us": "Norway",
+      "fr": "Norvège"
+   },
+   country_om: {
+      "us": "Oman",
+      "fr": "Oman"
+   },
+   country_pk: {
+      "us": "Pakistan",
+      "fr": "Pakistan"
+   },
+   country_pw: {
+      "us": "Palau",
+      "fr": "Palau"
+   },
+   country_ps: {
+      "us": "Palestine",
+      "fr": "Palestine"
+   },
+   country_pa: {
+      "us": "Panama",
+      "fr": "Panama"
+   },
+   country_pg: {
+      "us": "Papua New Guinea",
+      "fr": "Papouasie-Nouvelle-Guinée"
+   },
+   country_py: {
+      "us": "Paraguay",
+      "fr": "Paraguay"
+   },
+   country_pe: {
+      "us": "Peru",
+      "fr": "Pérou"
+   },
+   country_ph: {
+      "us": "Philippines",
+      "fr": "Philippines"
+   },
+   country_pn: {
+      "us": "Pitcairn",
+      "fr": "Île Pitcairn"
+   },
+   country_pl: {
+      "us": "Poland",
+      "fr": "Pologne"
+   },
+   country_pt: {
+      "us": "Portugal",
+      "fr": "Portugal"
+   },
+   country_pr: {
+      "us": "Puerto Rico",
+      "fr": "Puerto Rico"
+   },
+   country_qa: {
+      "us": "Qatar",
+      "fr": "Qatar"
+   },
+   country_re: {
+      "us": "Reunion",
+      "fr": "La Réunion"
+   },
+   country_ro: {
+      "us": "Romania",
+      "fr": "Roumanie"
+   },
+   country_ru: {
+      "us": "Russia",
+      "fr": "Russie"
+   },
+   country_rw: {
+      "us": "Rwanda",
+      "fr": "Rwanda"
+   },
+   country_sh: {
+      "us": "Saint Helena",
+      "fr": "Sainte-Hélène"
+   },
+   country_kn: {
+      "us": "Saint Kitts and Nevis",
+      "fr": "Saint-Christophe-et-Niévès"
+   },
+   country_lc: {
+      "us": "Saint Lucia",
+      "fr": "Sainte-Lucie"
+   },
+   country_pm: {
+      "us": "Saint Pierre and Miquelon",
+      "fr": "Saint-Pierre-et-Miquelon"
+   },
+   country_vc: {
+      "us": "Saint Vincent and the Grenadines",
+      "fr": "Saint-Vincent-et-les-Grenadines"
+   },
+   country_ws: {
+      "us": "Samoa",
+      "fr": "Samoa"
+   },
+   country_sm: {
+      "us": "San Marino",
+      "fr": "Saint-Marin"
+   },
+   country_st: {
+      "us": "Sao Tome and Principe",
+      "fr": "Sao Tomé-et-Principe"
+   },
+   country_sa: {
+      "us": "Saudi Arabia",
+      "fr": "Arabie saoudite"
+   },
+   country_sn: {
+      "us": "Senegal",
+      "fr": "Sénégal"
+   },
+   country_cs: {
+      "us": "Serbia and Montenegro",
+      "fr": "Serbie-et-Monténégro"
+   },
+   country_sc: {
+      "us": "Seychelles",
+      "fr": "Seychelles"
+   },
+   country_sl: {
+      "us": "Sierra Leone",
+      "fr": "Sierra Leone"
+   },
+   country_sg: {
+      "us": "Singapore",
+      "fr": "Singapour"
+   },
+   country_sk: {
+      "us": "Slovakia",
+      "fr": "Slovaquie"
+   },
+   country_si: {
+      "us": "Slovenia",
+      "fr": "Slovénie"
+   },
+   country_sb: {
+      "us": "Solomon Islands",
+      "fr": "Îles Salomon"
+   },
+   country_so: {
+      "us": "Somalia",
+      "fr": "Somalie"
+   },
+   country_za: {
+      "us": "South Africa",
+      "fr": "Afrique du Sud"
+   },
+   country_gs: {
+      "us": "South Georgia and the South Sandwich Islands",
+      "fr": "Géorgie du Sud-et-les Îles Sandwich du Sud"
+   },
+   country_es: {
+      "us": "Spain",
+      "fr": "Espagne"
+   },
+   country_lk: {
+      "us": "Sri Lanka",
+      "fr": "Sri Lanka"
+   },
+   country_sd: {
+      "us": "Sudan",
+      "fr": "Soudan"
+   },
+   country_sr: {
+      "us": "Suriname",
+      "fr": "Suriname"
+   },
+   country_sj: {
+      "us": "Svalbard and Jan Mayen",
+      "fr": "Île Jan Mayen"
+   },
+   country_sz: {
+      "us": "Swaziland",
+      "fr": "Swaziland"
+   },
+   country_se: {
+      "us": "Sweden",
+      "fr": "Suède"
+   },
+   country_ch: {
+      "us": "Switzerland",
+      "fr": "Suisse"
+   },
+   country_sy: {
+      "us": "Syria",
+      "fr": "Syrie"
+   },
+   country_tw: {
+      "us": "Taiwan",
+      "fr": "Taïwan"
+   },
+   country_tj: {
+      "us": "Tajikistan",
+      "fr": "Tajikistan"
+   },
+   country_tz: {
+      "us": "Tanzania",
+      "fr": "Tanzanie"
+   },
+   country_th: {
+      "us": "Thailand",
+      "fr": "Thaïlande"
+   },
+   country_tl: {
+      "us": "Timor-Leste",
+      "fr": "Timor oriental"
+   },
+   country_tg: {
+      "us": "Togo",
+      "fr": "Togo"
+   },
+   country_tk: {
+      "us": "Tokelau",
+      "fr": "Tokelau"
+   },
+   country_to: {
+      "us": "Tonga",
+      "fr": "Tonga"
+   },
+   country_tt: {
+      "us": "Trinidad and Tobago",
+      "fr": "Trinité-et-Tobago"
+   },
+   country_tn: {
+      "us": "Tunisia",
+      "fr": "Tunisie"
+   },
+   country_tr: {
+      "us": "Turkey",
+      "fr": "Turquie"
+   },
+   country_tm: {
+      "us": "Turkmenistan",
+      "fr": "Turkménistan"
+   },
+   country_tc: {
+      "us": "Turks and Caicos Islands",
+      "fr": "îles Turques-et-Caïques"
+   },
+   country_tv: {
+      "us": "Tuvalu",
+      "fr": "Tuvalu"
+   },
+   country_ug: {
+      "us": "Uganda",
+      "fr": "Ouganda"
+   },
+   country_ua: {
+      "us": "Ukraine",
+      "fr": "Ukraine"
+   },
+   country_ae: {
+      "us": "United Arab Emirates",
+      "fr": "Émirats arabes unis"
+   },
+   country_gb: {
+      "us": "United Kingdom",
+      "fr": "Royaume-Uni"
+   },
+   country_us: {
+      "us": "United States",
+      "fr": "États-Unis"
+   },
+   country_um: {
+      "us": "United States Minor Outlying Islands",
+      "fr": "Îles mineures éloignées des États-Unis"
+   },
+   country_uy: {
+      "us": "Uruguay",
+      "fr": "Uruguay"
+   },
+   country_uz: {
+      "us": "Uzbekistan",
+      "fr": "Ouzbékistan"
+   },
+   country_vu: {
+      "us": "Vanuatu",
+      "fr": "Vanuatu"
+   },
+   country_ve: {
+      "us": "Venezuela",
+      "fr": "Venezuela"
+   },
+   country_vn: {
+      "us": "Viet Nam",
+      "fr": "Viêt Nam"
+   },
+   country_vg: {
+      "us": "Virgin Islands, British",
+      "fr": "Îles Vierges britanniques"
+   },
+   country_vi: {
+      "us": "Virgin Islands, U.S.",
+      "fr": "Îles Vierges américaines"
+   },
+   country_wf: {
+      "us": "Wallis and Futuna",
+      "fr": "Wallis et Futuna"
+   },
+   country_eh: {
+      "us": "Western Sahara",
+      "fr": "Sahara occidental"
+   },
+   country_ye: {
+      "us": "Yemen",
+      "fr": "Yémen"
+   },
+   country_zm: {
+      "us": "Zambia",
+      "fr": "Zambie"
+   },
+   country_zw: {
+      "us": "Zimbabwe",
+      "fr": " Zimbabwé"
+   }
+});
+
+
+
+
+	window.LJ.lang = _.merge( window.LJ.lang || {}, {
+
+		'supported_languages': ['fr','us'],
 
 		init: function(){
-			return LJ.promise(function( resolve, reject ){
 
-				LJ.meepass.handleDomEvents();
-				resolve();
-			});
-
+			LJ.Promise.resolve()
+				   .then( LJ.lang.findAppLang )
+				   .then( LJ.lang.setAppLang )
+				   .then( LJ.lang.translateApp )
+				   .then( LJ.lang.handleDomEvents )
 
 		},
 		handleDomEvents: function(){
 
-			$('.menu-section.--meepass').on('click', '.segment__part', LJ.meepass.refreshSegmentView );
-			$('.menu-item.--meepass').one('click', LJ.meepass.handleMeepassClicked );
-			LJ.ui.$body.on('click', '.js-send-meepass', LJ.meepass.handleSendMeepass );
+			$('body').on('click', '.js-changelang', LJ.lang.changeAppLang );
 
 		},
-		refreshSegmentView: function(){
+		sayCheers: function(){
 
-			var $seg = $(this);
-			var link = $seg.attr('data-link');
+			return "Cheers";
 
-			if( $seg.hasClass('--active') ) return;
+			// Legacy
+			return _.shuffle([
 
-			$seg.siblings().removeClass('--active');
-			$seg.addClass('--active');
+				'Santé',
+				'Saluti',
+				'Cheers',
+				'Skål',
+				'Na zdrowie',
+				'Noroc',
+				'Salud',
+				'Chok dee',
+				'Kanpai',
+				'Prost',
+				'Kippis'
 
-			$('.meepass').children().css({ display: 'none' });
-			$('.meepass [data-link="' + link + '"]').css({ display: 'flex' });
+			])[0] + ' !';
 
 		},
-		handleSendMeepass: function(){
+		getAppLang: function(){
 
-			// User is hosting more than one event...
-			if( 0 ){
-				LJ.ui.showModal({
-					"title"		: "Félicitations !",
-					"subtitle"	: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
-					"body"  	: LJ.meepass.renderEventsInModal(),
-					"footer"	: "<button class='--rounded'><i class='icon icon-check'></i></button>"
-				});
+			return LJ.lang.app_language;
 
-			} else {
+		},
+		setAppLang: function( app_language ){
+			return LJ.promise(function( resolve, reject ){
+
+				if( !LJ.lang.isLangSupported( app_language ) ){
+					return console.error('This language (' + app_language + ') is not currently supported');
+				}
+					
+
+				// Internal state variable
+				LJ.lang.app_language = app_language;
+
+				// Dom update
+				$('.app-lang').find('i').removeClass('--active');
+				$('.app-lang').find('[data-cc="' + app_language + '"]').addClass('--active');
+
+				// Local storage update
+				LJ.store.set('app_language', app_language )
 				
-				var event_id = '';
-			//	LJ.meepass.sendMeepass()
-			//		.then( LJ.meepass.handleSendMeepassSuccess )
-			//		.catch( LJ.meepass.handleApiError );
 
-			}
+				return resolve();
+			});
 
 		},
-		renderMeepassRibbon: function(){
+		findAppLang: function(){
+			return LJ.promise(function( resolve, reject ){
 
-			var n_meepass = LJ.user.meepass.length;
+				var app_language;
 
-			return LJ.ui.render([
+				if( LJ.store.get("app_language") ){
+					app_language = LJ.store.get('app_language');
+				} else {
+					app_language = "us";
+				}
 
-				'<div class="meepass-ribbon">',
-					'<h2 data-lid="meepass_ribbon"></h2>',
-				'</div>'
+				return resolve( app_language );		
 
-				].join('')).replace('%n', n_meepass );
-
-		},
-		sendMeepass: function(){
-			
-		},
-		handleSendMeepassSuccess: function(){
+			});
 
 		},
-		handleApiError: function(){
+		isLangSupported: function( app_language ){
+
+			return LJ.lang.supported_languages.indexOf( app_language ) == -1 ? false : true;
 
 		},
-		renderEventsInModal: function(){
+		translateApp: function(){
 
-		},
-		handleMeepassClicked: function(){
-
-			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
-
-			$('.meepass').html('');
-
-			$loader.addClass('none')
-				   .appendTo('.meepass')
-				   .velocity('bounceInQuick', {
-				   	delay: 125,
-				   	duration: 500,
-				   	display: 'block'
-				   });
-
-			LJ.meepass.fetchMeepassItems();
+			LJ.lang.translate('body');
 
 		},	
-		fetchMeepassItems: function(){
+		translate: function( container, options ){
 
-			LJ.api.fetchMeMeepass()
-				  .then( LJ.meepass.handleFetchMeMeepassSuccess, LJ.meepass.handleFetchMeMeepassError );
+			options = options || {};
+			
+			app_language = options.app_language || LJ.lang.getAppLang();
 
+			if( ! LJ.lang.isLangSupported( app_language ) ){
+				return LJ.elog('This language (' + app_language + ') is not currently supported');
+			}
+			
+			var $container = container instanceof jQuery ? container : $(container);
+
+			$container.find('[data-lid]').each(function( i, el ){
+				
+				var $el  = $(el);
+				var type = $el.prop('nodeName').toLowerCase();
+				var lid  = $el.attr('data-lid');
+				var lpm  = $el.attr('data-lpm') && $el.attr('data-lpm');
+				var lpmt = $el.attr('data-lpmt') && $el.attr('data-lpmt');
+
+				var text_object = LJ.text_source[ lid ];
+				if( !text_object ){
+					return LJ.elog('Cannot find the lang object for lid : ' + lid );
+				}
+
+				var translated_text = LJ.text_source[ lid ][ app_language ];
+
+				if( typeof translated_text == "function" ){
+					if( lpmt == "array" ){
+						lpm = lpm.split(',');
+					}
+					translated_text = translated_text( lpm );
+
+				}
+
+				if( /placeholder/i.test( lid ) ){
+					$el.attr('placeholder', translated_text );
+					
+					if( $('#searchbar').find('input').length > 1 ){
+						$('#searchbar').find('input').first().attr('placeholder', null);
+					}
+					return;
+				}
+
+				$el.html( translated_text );
+
+			});
 
 		},
-		handleFetchMeMeepassSuccess: function( expose ){
+		changeAppLang: function(){
 
-			var meepass = expose.meepass;
+			LJ.ui.showModalAndFetch({
 
-			LJ.meepass.setMeepassItems( meepass );
+			"type"			: "changelang",
+			"title"			: LJ.text("mod_change_lang_title"),
+			"subtitle"		: LJ.text("mod_change_lang_subtitle"),
+			"no_footer"     : true,
+
+			"fetchPromise"	: LJ.lang.fetchSupportedLanguages
+
+		})
+		.then( LJ.lang.displayChangeLangInModal )
 
 		},
-		setMeepassItems: function( meepass ){
+		fetchSupportedLanguages: function(){
 
-			var html = [];
-			meepass.sort();
+			return LJ.delay( 300 ).then(function(){
+				return ["fr","us"];
+			});
 
-			var facebook_ids = _.pluck( meepass, 'sent_by' ).concat( _.pluck( meepass, 'sent_to' ) ).filter( Boolean );
+		},
+		displayChangeLangInModal: function( result ){
 
-			LJ.api.fetchUsers( facebook_ids )
-				.then(function( res ){
+			var html = LJ.lang.renderChangeAppLang( result );
 
-					var no_meepass_received = true;
-					var no_meepass_sent     = true;
-					meepass.forEach(function( mp ){
+			$( html ).hide().appendTo( $('.modal-body') );
 
-						for( var i=0; i<res.length; i++ ){
+			$('.modal-body')
+				.find('.modal__loader')
+				.velocity('bounceOut', { duration: 500, delay: 100,
+					complete: function(){
 
-							var user = res[ i ].user;
+						$('.change-lang')
+						   .velocity('shradeIn', {
+						   		display: 'flex',
+						   		duration: 500
+						   })
+						   .find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('--active');
 
-							if( mp.sent_by == user.facebook_id ){
-								no_meepass_received = false;
-								return html.push( LJ.meepass.renderMeepassItem__Received( mp, user ) );
-							}
+						$('.change-lang__choice:not(.--unavailable)').click(function(){
 
-							if( mp.sent_to == user.facebook_id ){
-								no_meepass_sent = false;
-								return html.push( LJ.meepass.renderMeepassItem__Sent( mp, user ) );
-							}
-						}
-					});
+							var new_language = $( this ).attr('data-cc');
 
-					if( no_meepass_sent ){
-						html.push( LJ.meepass.renderMeepassItem__SentEmpty() );
+							LJ.lang.setAppLang( new_language );
+							LJ.lang.translateApp();
+
+							$('.modal__close').click();
+
+							LJ.delay( 500 ).then(function(){
+								LJ.ui.showToast( LJ.text('t_language_changed') );
+							});
+
+						});	
+
+
 					}
-
-					if( no_meepass_received ){
-						html.push( LJ.meepass.renderMeepassItem__ReceivedEmpty() );
-					}
-
-					$('.meepass').html( html.join('') )
-								 .find('[data-link="received"]')
-								 .velocity('fadeIn', {
-									duration: 250,
-									display: 'flex'
-								});
-
-					$('.menu-section.--meepass')
-								.find('.segment__part')
-								.removeClass('--active')
-								.first()
-								.addClass('--active');
-
 				});
 
-		},		
-		handleFetchMeMeepassError: function(){
-
-			LJ.elog('Error fetching meepass :/');
 
 		},
-		renderMeepassItem__ReceivedEmpty: function(){
+		changeAppLang2: function(){
+
+			var duration = 550;
+			LJ.ui.showModal({
+				duration: duration,
+
+
+			})
+			.then(function( $curtain ){
+				return LJ.promise(function( resolve, reject ){
+
+					$curtain
+						.html( LJ.lang.renderChangeAppLang() )
+						.find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('--active');
+
+					$curtain
+						.children()
+						.velocity('fadeIn', {
+							duration: duration,
+							display: 'flex',
+							complete: resolve
+						});
+				});
+			})
+			.then(function(){
+				return LJ.promise(function( resolve, reject ){
+
+					$('.change-lang__choice:not(.--unavailable)').click(function(){
+
+						var new_language = $(this).attr('data-cc');
+						if( ! LJ.lang.isLangSupported( new_language ) ){
+							return reject('This language (' + new_language + ') is not currently supported');
+						}
+						resolve( new_language );
+
+					});	
+				});
+			})
+			.then(function( app_language ){
+
+				$('.change-lang').velocity('bounceOut', {
+					duration: duration
+				});
+
+				LJ.delay( duration/1.5 ).then(function(){
+
+					LJ.lang.setAppLang( app_language );
+					LJ.lang.translateApp();
+					LJ.ui.showToast( LJ.text('t_language_changed') );
+
+				});
+				
+				LJ.ui.hideCurtain({
+					duration: duration, delay: duration/2,
+				}).then(function(){
+				});
+
+
+			}, function( err ){
+
+				LJ.wlog( err );
+				LJ.ui.hideCurtain({ duration: duration });
+
+			});
+
+		},
+		renderChangeAppLang: function( languages ){
+
+			var choices = [];
+			languages.forEach(function( cc ){
+				choices.push([
+
+						'<div class="change-lang__choice" data-cc="'+ cc +'">',
+							'<i class="flag-icon flag-icon-'+ cc +'"></i>',
+						'</div>'
+
+					].join(''));
+			});
 
 			return LJ.ui.render([
 
-				'<div class="empty" data-link="received">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-meepass"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_meepass_received_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_meepass_received_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__SentEmpty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty" data-link="sent">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-meepass"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_meepass_sent_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_meepass_sent_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__Received: function( meepass_object, target ){
-
-			var mp 	   = meepass_object;
-			var target = target;
-
-			var formatted_date = LJ.renderDate( mp.sent_at );
-			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
-
-			return LJ.ui.render([
-
-				'<div class="meepass__item" data-link="received" data-event-id="' + mp.target_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + LJ.text('meepass_item_title_received').replace('%name', target.name) +'</h2>',
+				'<div class="change-lang">',
+					'<div class="change-lang-available">',
+						choices.join(''),
+						'<div class="change-lang__choice --unavailable" data-cc="es">',
+							'<i class="flag-icon flag-icon-es"></i>',
+							'<div class="soon" data-lid="lang_soon">Prochaînement</div>',
 						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__Sent: function( meepass_object, target, meepass_by ){
-
-			var mp 	   = meepass_object;
-			var target = target;
-
-			var formatted_date = LJ.renderDate( mp.sent_at );
-			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
-
-			return LJ.ui.render([
-
-				'<div class="meepass__item" data-link="sent" data-event-id="' + mp.target_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + LJ.text('meepass_item_title_sent').replace('%name', target.name) +'</h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
-						'</div>',
+						'<div class="modal__close nonei"></div>',
 					'</div>',
 				'</div>'
 
@@ -38474,7 +38597,2528 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		}
 
 	});
-		
+
+
+	
+	LJ.text = function( text_id, param ){
+		var app_lang = LJ.lang.getAppLang();
+		var text_src = LJ.text_source[ text_id ];
+
+		if( !text_src ){
+			return LJ.wlog('Error, couldnt find text source for text_id : ' + text_id );
+		} else {
+			if( typeof text_src[ app_lang ] == "function" ){
+				return text_src[ app_lang ]( param );
+			} else {
+				return text_src[ app_lang ];
+			}
+		}
+	};
+
+	LJ.textAdd = function( new_text_source ){
+
+		LJ.text_source = _.merge( LJ.text_source || {}, new_text_source );
+	}
+
+	LJ.text_source = _.merge( LJ.text_source || {}, {
+
+		page_title: {
+			"fr": "Des rencontres avant d'aller en soirée",
+			"us": "Meet new people before going out"
+		},
+		pikaday: {
+			"us": {
+                previousMonth : 'Previous Month',
+                nextMonth     : 'Next Month',
+                months        : ['January','February','March','April','May','June','July','August','September','October','November','December'],
+                weekdays      : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+                weekdaysShort : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+            },
+            "fr": {
+            	previousMonth : 'Mois Précédant',
+                nextMonth     : 'Mois Suivant',
+                months        : ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+                weekdays      : ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'],
+                weekdaysShort : ['Dim','Lun','Ma','Me','Jeu','Ven','Sam']
+            }
+		},
+		day: {
+			"fr": [ "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi" ],
+			"us": [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ]
+		},
+		month: {
+			"fr": ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+			"us": ['January','February','March','April','May','June','July','August','September','October','November','December']
+		},
+		h_sec_ago: {
+			"fr": "à l'instant !",
+			"us": "just now !"
+		},
+		h_min_ago: {
+			"fr": "il y a quelques minutes",
+			"us": "a few minuts ago"
+		},
+		h_hour_ago: {
+			"fr": "il y a moins d'une heure",
+			"us": "less than an hour ago"
+		},
+		today: {
+			"fr": "Aujourd'hui",
+			"us": "Today"
+		},
+		tomorrow: {
+			"fr": "Demain",
+			"us": "Tomorrow"
+		},
+		yesterday: {
+			"fr": "Hier",
+			"us": "Yesterday"
+		},
+		before_date_hour: {
+			"fr": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			},
+			"us": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			}
+		},
+		chatrow_date_hour: {
+			"fr": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			},
+			"us": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			}
+		},
+		chatinview_date_hour: {
+			"fr": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			},
+			"us": function( m ){
+				return [ m.format('HH'), m.format('mm') ].join(':');
+			}
+		},
+		before_date_day: {
+			"fr": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return LJ.text_source['today']["fr"];
+				}
+
+				if( m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
+					return LJ.text_source['tomorrow']["fr"];
+				}
+
+				var d = LJ.text_source['day']['fr'][ m.day() ];
+				var n = m.format('DD').replace(/^0/,'');
+				var m = LJ.text_source['month']['fr'][ m.month() ].toLowerCase();
+
+				return [ d, n, m ].join(' ');
+			},
+			"us": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return LJ.text_source['today']["us"];
+				}
+
+				if(  m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
+					return LJ.text_source['tomorrow']["us"];
+				}
+
+				var d = LJ.text_source['day']['us'][ m.day() ];
+				var n = m.format('DD').replace(/^0/,'');
+				var m = LJ.text_source['month']['us'][ m.month() ];
+
+				m = m[0].toUpperCase() + m.slice(1); // english style
+
+				return [ d, n, m ].join(' ');
+			}
+		},
+		chatrow_date_day: {
+			"fr": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return '';
+				}
+
+				if(  m.dayOfYear() == moment().dayOfYear() - 1 || ( moment().dayOfYear() - 1 == 365 ) ){
+					return LJ.text_source['yesterday']["fr"].toLowerCase() + ', ';
+				}
+
+				var n = m.format('DD').replace(/^0/,'');
+				var m = LJ.text_source['month']['fr'][ m.month() ].toLowerCase();
+
+				return [ n, m ].join(' ') + ', ';
+			},
+			"us": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return '';
+				}
+
+				if(  m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
+					return LJ.text_source['yesterday']["us"].toLowerCase() + ', ';
+				}
+
+				var n = m.format('DD').replace(/^0/,'');
+				var m = LJ.text_source['month']['us'][ m.month() ];
+
+				m = m[0].toUpperCase() + m.slice(1); // english style
+
+				return [ n, m ].join(' ') + ', ';
+			}
+		},
+		chatinview_date_day: {
+			"fr": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return LJ.text_source['today']["fr"];
+				}
+
+				if( m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
+					return LJ.text_source['tomorrow']["fr"];
+				}
+
+				var d = LJ.text_source['day']['fr'][ m.day() ];
+				var n = m.format('DD').replace(/^0/,'');
+				var m = m.format('MM');
+
+				return [ d, [ n, m ].join('/') ].join(' ');
+			},
+			"us": function( m ){
+
+				if( m.dayOfYear() == moment().dayOfYear() ){
+					return LJ.text_source['today']["us"];
+				}
+
+				if(  m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
+					return LJ.text_source['tomorrow']["us"];
+				}
+
+				var d = LJ.text_source['day']['fr'][ m.day() ];
+				var n = m.format('DD').replace(/^0/,'');
+				var m = m.format('MM');
+
+				return [ d, [ n, m ].join('/') ].join(' ');
+
+			}
+		},
+		before_date: {
+			"fr": function( m ){
+
+				var day  = LJ.text_source["before_date_day"]["fr"]( m );
+				var hour = LJ.text_source["before_date_hour"]["fr"]( m );
+
+				return [ day, hour ].join(', ');
+
+			},
+			"us": function( m ){
+
+				var day  = LJ.text_source["before_date_day"]["us"]( m );
+				var hour = LJ.text_source["before_date_hour"]["us"]( m );
+
+				return [ day, hour ].join(', ');
+
+			}
+		},
+		chatrow_date: {
+			"fr": function( m ){
+
+				var day  = LJ.text_source["chatrow_date_day"]["fr"]( m );
+				var hour = LJ.text_source["chatrow_date_hour"]["fr"]( m );
+
+				return [ day, hour ].join('');
+
+			},
+			"us": function( m ){
+
+				var day  = LJ.text_source["chatrow_date_day"]["us"]( m );
+				var hour = LJ.text_source["chatrow_date_hour"]["us"]( m );
+
+				return [ day, hour ].join('');
+
+			}
+		},
+		chatinview_date: {
+			"fr": function( m ){
+
+				var day  = LJ.text_source["chatinview_date_day"]["fr"]( m );
+				var hour = LJ.text_source["chatinview_date_hour"]["fr"]( m );
+
+				return [ day, hour ].join(', ');
+
+			},
+			"us": function( m ){
+
+				var day  = LJ.text_source["chatinview_date_day"]["us"]( m );
+				var hour = LJ.text_source["chatinview_date_hour"]["us"]( m );
+
+				return [ day, hour ].join('');
+
+			}
+		},
+		menurow_date: {
+			"fr": function( m ){ return LJ.text_source.before_date["fr"]( m ); },
+			"us": function( m ){ return LJ.text_source.before_date["us"]( m ); }
+		},
+		h_today: {
+			"fr": "aujourd'hui, à %hh%m",
+			"us": "today, %hh%m"
+		},
+		h_past: {
+			"fr": "Le %moment, à %hh%m",
+			"us": "%moment, %hh%m"
+		},
+		t_language_changed: {
+			"fr": "La langue a été changée",
+			"us": "The language has been changed"
+		},
+		lang_change_title: {
+			"fr": "Changer de langue",
+			"us": "Change language"
+		},
+		lang_change_subtitle: {
+			"fr": "La langue ne devrait jamais être une barrière pour sortir faire la fête.",
+			"us": "Language should never get in the way of partying. Ever."
+		},
+		lang_soon: {
+			"fr": "Prochainement",
+			"us": "Soon"
+		},
+		lang_before: {
+			"fr": "before",
+			"us": "pregame"
+		},
+		lang_profile: {
+			"fr": "profil",
+			"us": "profile"
+		},
+		menu_profile: {
+			"fr": "Profil",
+			"us": "Profile"
+		},
+		menu_subsection_pictures: {
+			"fr": "Mes 5 photos",
+			"us": "My 5 photos"
+		},
+		menu_subsection_informations: {
+			"fr": "A propos de moi",
+			"us": "About me"
+		},
+		menu_subsection_account: {
+			"fr": "Paramètres du compte",
+			"us": "Account settings"
+		},
+		menu_subsection_code: {
+			"fr": "Code d'invitation",
+			"us": "Invite code"
+		},
+		menu_subsection_notifications: {
+			"fr": "Notifications",
+			"us": "Notifications"
+		},
+		menu_subsection_emails: {
+			"fr": "Emails",
+			"us": "Emails"
+		},
+		menu_subsection_ux: {
+			"fr": "Expérience d'utilisation",
+			"us": "User experience"
+		},
+		menu_shared: {
+			"fr": "Partagés",
+			"us": "Shared"
+		},
+		menu_cheers: {
+			"fr": "Cheers",
+			"us": "Cheers"
+		},
+		menu_friends: {
+			"fr": "Mes amis",
+			"us": "Friends"
+		},
+		menu_invite: {
+			"fr": "Inviter des amis",
+			"us": "Invite"
+		},
+		menu_settings: {
+			"fr": "Préférences",
+			"us": "Settings"
+		},
+		p_name_label: {
+			"fr": "Nom",
+			"us": "Name"
+		},
+		p_name_placeholder: {
+			"fr": "Prad Bitt",
+			"us": "Prad Bitt"
+		},
+		p_age_placeholder: {
+			"fr": "18",
+			"us": "18"
+		},
+		p_job_placeholder: {
+			"fr": "Etudiant",
+			"us": "Student"
+		},
+		p_ideal_night_placeholder: {
+			"fr": "Les amis, les soirées, les rencontres...",
+			"us": "Friends, parties, new people..."
+		},
+		p_age_label: {
+			"fr": "Âge",
+			"us": "Age"
+		},
+		p_country_label: {
+			"fr": "Pays",
+			"us": "Country"
+		},
+		p_job_label: {
+			"fr": "Situation",
+			"us": "Occupation"
+		},
+		p_location_label: {
+			"fr": "Ville actuelle",
+			"us": "Current city"
+		},
+		p_ideal_night_label: {
+			"fr": "Ma soirée idéale",
+			"us": "My dream night"
+		},
+		p_name_explanation: {
+			"fr": "Pseudonyme par lequel les autres membres vous appelerons. Choose wisely.",
+			"us": "Pseudo everyone will call you as. Choose wisely."
+		},
+		p_age_explanation: {
+			"fr": "On évite de mentir ;-)",
+			"us": "Please don't lie ;-)"
+		},
+		p_country_explanation: {
+			"fr": "Votre nationalité est celle indiquée sur Facebook. En cas d'erreur, envoyez-nous un mail.",
+			"us": "Your nationality is the one indicated on Facebook. If there is a mistake, please email us."
+		},
+		p_job_explanation: {
+			"fr": "Concrètement, vous faites quoi dans la vie ?",
+			"us": "So, how do you keep busy everyday ?"
+		},
+		p_location_explanation: {
+			"fr": "Où sortez-vous en ce moment ? Meefore works everywhere",
+			"us": "Where do you get out these days ? Meefore works everywhere"
+		},
+		p_ideal_night_explanation: {
+			"fr": "Sans alcool, la fête est plus...",
+			"us": "Knock yourself out"
+		},
+		p_friends_title: {
+			"fr": "Mes amis Facebook",
+			"us": "Everybody is on Meefore"
+		},
+		p_friends_subtitle: {
+			"fr": "Vos amis Facebook sont tous sur Meefore. Il en manque? Invitez-les à vous rejoindre!",
+			"us": "All your Facebook friends are on Meefore. Are some of them missing? Invite them to join!"
+		},
+		p_friends_nofriends: {
+			"fr": "Vous n'avez aucun ami Facebook inscrit sur Meefore. Invitez-les pour commencer à participer à des meefore!",
+			"us": "You don't have any Facebook friends on Meefore. Invite them all to start taking part in meefore!"
+		},
+		p_button_validate: {
+			"fr": "Valider",
+			"us": "OK"
+		},
+		p_button_cancel: {
+			"fr": "Annuler",
+			"us": "Cancel"
+		},
+		p_picture_upload_success: {
+			"fr": "Votre photo a été mise à jour",
+			"us": "Your photo has been uploaded"
+		},
+		p_picture_upload_error: {
+			"fr": "Une erreur s'est produite lors de l'envoie de la photo",
+			"us": "An error occured during the upload, please try again later"
+		},
+		p_facebook_upload_title: {
+			"fr": "Vos photos de profil Facebook",
+			"us": "Your Facebook profile pictures"
+		},
+		h_search_placeholder: {
+			"fr": "Rechercher quelqu'un",
+			"us": "Looking for someone?"
+		},
+		search_title: {
+			"fr": "Tous les membres",
+			"us": "All our members"
+		},
+		h_logout: {
+			"fr": "Se déconnecter",
+			"us": "Log out"
+		},
+		e_title: {
+			"fr": "Tous les meefore",
+			"us": "Get the party started"
+		},
+		e_subtitle: {
+			"fr": "L'abus de soirées est bon pour la santé",
+			"us": "Non-stop partying is actually healthy"
+		},
+		e_create_button: {
+			"fr": "Proposer un meefore",
+			"us": "Create a meefore"
+		},
+		e_create_title: {
+			"fr": "Proposer un meefore",
+			"us": "Create a meefore"
+		},
+		e_create_hosts: {
+			"fr": "Organisateurs",
+			"us": "Hosts"
+		},
+		e_create_hosts_placeholder: {
+			"fr": "Sélectionnez parmi vos amis (1 minimum)",
+			"us": "Select among your friends (1 minimum)"
+		},
+		e_create_begins_at: {
+			"fr": "Date du before",
+			"us": "Before date"
+		},
+		e_create_begins_at_placeholder: {
+			"fr": "Quel jour? ",
+			"us": "Which day?"
+		},
+		e_create_hour: {
+			"fr": "Heure du Before",
+			"us": "Before hour"
+		},
+		e_create_hour_placeholder: {
+			"fr": "Quelle heure?",
+			"us": "What time?"
+		},
+		e_create_address: {
+			"fr": "Lieu du before",
+			"us": "Location"
+		},
+		e_create_address_placeholder: {
+			"fr": "Où vous rejoignez-vous?",
+			"us": "Where will you meet?"
+		},
+		e_create_party: {
+			"fr": "Lieu de la soirée",
+			"us": "Party location"
+		},
+		e_create_party_placeholder: {
+			"fr": "Où allez-vous ensuite?",
+			"us": "Where are you going next?"
+		},
+		e_create_agerange: {
+			"fr": "Âge souhaité",
+			"us": "Age preference"
+		},
+		e_create_ambiance: {
+			"fr": "Ambiance",
+			"us": "Ambiance"
+		},
+		e_create_ambiance_placeholder: {
+			"fr": "#hashtagTonMeefore",
+			"us": "#hashtagYourMeefore"
+		},
+		e_create_guests_type: {
+			"fr": "Type d'invités",
+			"us": "Guests type"
+		},
+		e_create_button_validate: {
+			"fr": "Créer un meefore",
+			"us": "Create a meefore"
+		},
+		e_create_button_cancel: {
+			"fr": "Annuler",
+			"us": "Cancel"
+		},
+		e_create_loading_text: {
+			"fr": "Votre meefore a été créé avec succès ! ",
+			"us": "Your meefore has been successully created !"
+		},
+		e_request_title: {
+			"fr": "Demande de participation",
+			"us": "Participation request"
+		},
+		e_request_button_validate: {
+			"fr": "Rejoindre ce meefore",
+			"us": "Join this meefore"
+		},
+		e_request_group_name: {
+			"fr": "Nom de ton groupe",
+			"us": "Your group name"
+		},
+		e_request_group_members: {
+			"fr": "Membres de ton groupe",
+			"us": "Members of your group"
+		},
+		e_request_group_message: {
+			"fr": "Message",
+			"us": "Message"
+		},
+		e_request_group_name_placeholder: {
+			"fr": "Ce nom apparaîtra dans le chat",
+			"us": "This name will be displayed in the chat"
+		},
+		e_request_group_members_placeholder: {
+			"fr": "Choisissez les personnes avec qui vous souhaitez sortir",
+			"us": "Choose the people you wanna go out with"
+		},
+		e_request_group_message_placeholder: {
+			"fr": "Dites-nous en plus à propos de votre groupe",
+			"us": "Tell us more about your group"
+		},
+		e_request_button_cancel: {
+			"fr": "Annuler",
+			"us": "Cancel"
+		},
+		e_request_event_got_canceled: {
+			"fr": "Le meefore vient d'être annulé :/",
+			"us": "The meefore just got canceled :/"
+		},
+		e_preview_participate: {
+			"fr": "Participer",
+			"us": "Participate"
+		},
+		e_preview_manage: {
+			"fr": "Organiser",
+			"us": "Organize"
+		},
+		e_mapview_first_to_create: {
+			"fr": "Proposer un meefore",
+			"us": "Create a meefore"
+		},
+		e_preview_chat: {
+			"fr": "Discuter",
+			"us": "Chat"
+		},
+		e_preview_pending: {
+			"fr": "En attente",
+			"us": "Pending"
+		},
+		e_filters_location: {
+			"fr": "Changer d'endroit",
+			"us": "Change location"
+		},
+		e_filters_date: {
+			"fr": "Date(s)",
+			"us": "Date(s)"
+		},
+		e_create_party_button: {
+			"fr": "Soirée partenaire",
+			"us": "Partner event"
+		},
+		e_mapview_empty_text: {
+			"fr": "Aucun meefore de prévu",
+			"us": "No meefore is scheduled"
+		},
+		e_sideview_empty_text: {
+			"fr": "Aucun meefore de prévu ce jour-ci. Essayez un autre jour ou soyez le premier à en proposer un.",
+			"us": "No meefore is scheduled for this day. Try another day or be the first to create one."
+		},
+		p_sideview_default_text: {
+			"fr": "Sélectionner une soirée sur la carte pour voir plus de détails",
+			"us": "Select a party on the map to display more details"
+		},
+		p_sideview_header: {
+			"fr": "La où est l'ambiance",
+			"us": "Where the fun is"
+		},
+		e_sideview_header: {
+			"fr": "Ils vont y aller",
+			"us": "They are going"
+		},
+		e_preview_planned: {
+			"fr": "%n meefore à venir",
+			"us": "%n meefore are planned"
+		},
+		s_title: {
+			"fr": "Préférences",
+			"us": "Preferences"
+		},
+		s_app_title: {
+			"fr": "Application",
+			"us": "In app"
+		},
+		s_app_subtitle: {
+			"fr": "Modifier le comportement général de l'application",
+			"us": "Modify the general behavior of the app"
+		},
+		s_contact_title: {
+			"fr": "Informations de contact",
+			"us": "Contact information"
+		},
+		s_contact_subtitle: {
+			"fr": "Restez informé",
+			"us": "Stay in touch'"
+		},
+		s_contact_email_label: {
+			"fr": "Email de contact",
+			"us": "Contact email"
+		},
+		s_contact_email_desc: {
+			"fr": "Indiquez-nous l'email sur lequel vous souhaitez être contacté",
+			"us": "Let us know at what email address we can reach you"
+		},
+		s_autologin_label: {
+			"fr": "Connexion automatique",
+			"us": "AutoLogin"
+		},
+		s_autologin_desc: {
+			"fr": "Activez cette option pour accéder directement à Meefore sans passer par la page d'accueil",
+			"us": "Activate this option to reach directly Meefore and skip the landing page"
+		},
+		s_message_seen_by_label: {
+			"fr": "Connexion automatique",
+			"us": "AutoLogin"
+		},
+		s_message_seen_by_desc: {
+			"fr": "Activez cette option pour accéder directement à Meefore sans passer par la page d'accueil",
+			"us": "Activate this option to reach directly Meefore and skip the landing page"
+		},
+		s_news_title: {
+			"fr": "Newsletter et Invitations",
+			"us": "Newsletter and Invitations"
+		},
+		s_news_subtitle: {
+			"fr": "Recevez nos emails concernant soirées, bons plans et rencontres.",
+			"us": "Receive our emails that deal with parties, opportunities and meetups."
+		},
+		s_newsletter_label: {
+			"fr": "Newsletter",
+			"us": "Newsletter"
+		},
+		s_newsletter_desc: {
+			"fr": "Notre newsletter est envoyée chaque semaine",
+			"us": "Our newsletter is sent every week"
+		},
+		s_invits_label: {
+			"fr": "Invitations",
+			"us": "Invitations"
+		},
+		s_invits_desc: {
+			"fr": "Bons plans pour être invité à des soirées exclusives",
+			"us": "Get invited to exclusive parties"
+		},
+		s_alerts_title: {
+			"fr": "Alertes et notifications",
+			"us": "Alerts and notifications"
+		},
+		s_alerts_subtitle: {
+			"fr": "Soyez alerté dès que de l'activité vous concernant se présente",
+			"us": "Be informed when anything about you happens"
+		},
+		s_accepted_in_label: {
+			"fr": "Accepté dans un meefore",
+			"us": "Accepted in a meefore"
+		},
+		s_accepted_in_desc: {
+			"fr": "Recevez un email dès que vous êtes accepté dans un meefore",
+			"us": "Receive an email when you are accepted in a meefore"
+		},
+		s_new_message_received_label: {
+			"fr": "Message reçu hors-ligne",
+			"us": "Unread message"
+		},
+		s_new_message_received_desc: {
+			"fr": "Recevez un email dès que vous êtes hors-ligne et que vous recevez un nouveau message",
+			"us": "Receive an email when you're offline and someone sends you a new message"
+		},
+		s_message_seen_by_label: {
+			"fr": "Signaler message lu",
+			"us": "Signal message read"
+		},
+		s_message_seen_by_desc: {
+			"fr": "Signalez automatiquement aux autres utilisateurs que vous avez vu leur message",
+			"us": "Signal to other users that you have read their message"
+		},
+		s_min_frequency_label: {
+			"fr": "Temps entre chaque email",
+			"us": "Time lapse between each emails"
+		},
+		s_min_frequency_desc: {
+			"fr": "Pour éviter d'être spammé par l'application",
+			"us": "To avoid any spam by the app"
+		},
+		s_0min: {
+			"fr": "Aucune limite",
+			"us": "No limit"
+		},
+		s_15min: {
+			"fr": "15min",
+			"us": "15min"
+		},
+		s_60min: {
+			"fr": "1h",
+			"us": "1h"
+		},
+		s_360min: {
+			"fr": "6h",
+			"us": "6h"
+		},
+		s_720min: {
+			"fr": "12h",
+			"us": "12h"
+		},
+		s_1440min: {
+			"fr": "24h",
+			"us": "24h"
+		},
+		s_yes: {
+			"fr": "Oui",
+			"us": "Yes"
+		},
+		s_no: {
+			"fr": "Non",
+			"us": "No"
+		},
+		s_delete_goodbye: {
+			"fr": "Votre compte a bien été supprimé",
+			"us": "Your account has been deleted"
+		},
+		s_delete_title: {
+			"fr": "Supprimer mon profil",
+			"us": "Delete my profile"
+		},
+		s_delete_text: {
+			"fr": "Toutes les données vous concernant seront supprimées",
+			"us": "All your data will be deleted"
+		},
+		s_delete_validate: {
+			"fr": "Supprimer",
+			"us": "Delete"
+		},
+		s_delete_profile_btn: {
+			"fr": "Supprimer mon profil",
+			"us": "Delete my profile"
+		},
+		s_delete_cancel: {
+			"fr": "Annuler",
+			"us": "Cancel"
+		},
+		ch_hosts: {
+			"fr": "Organisateurs",
+			"us": "Hosts"
+		},
+		ch_placeholder: {
+			"fr": "Message...",
+			"us": "Message..."
+		},
+		ch_button_update: {
+			"fr": "Mettre à jour",
+			"us": "Update"
+		},
+		ch_button_cancel: {
+			"fr": "Annuler",
+			"us": "Cancel"
+		},
+		ch_settings_status_label: {
+			"fr": "Statut du meefore",
+			"us": "Meefore status"
+		},
+		ch_settings_status_open: {
+			"fr": "Ouvert",
+			"us": "Opened"
+		},
+		ch_settings_status_suspended: {
+			"fr": "Suspendu/Complet",
+			"us": "Suspended/Full"
+		},
+		ch_settings_status_canceled: {
+			"fr": "Supprimé",
+			"us": "Removed"
+		},
+		ch_bot_msg_group_pending: {
+			"fr": "Votre groupe a été suspendu de la discussion",
+			"us": "Your group has been suspended from the discussion"
+		},
+		ch_bot_msg_group_accepted: {
+			"fr": "Votre groupe vient d'être accepté dans la discussion!",
+			"us": "Your group just got accepted in the discussion"
+		},
+		ch_first_msg_host_channel: {
+			"fr": "Votre meefore a été créé avec succès. <br> Ce chat est privé entre vous et les autres organisateurs.",
+			"us": "Your meefore has been successully created. <br> This chat is dedicated to you and the other hosts."
+		},
+		ch_first_msg_host: {
+			"fr": "  a demandé à rejoindre votre meefore : ",
+			"us": "  has asked to join your meefore : "
+		},
+		ch_first_msg_group: {
+			"fr": "Votre demande a bien été envoyée. <br> Dès que l'un des organisateurs vous aura accepté, vous aurez accès à la discussion.",
+			"us": "Your request has been sent. <br> As soon as one of the hosts has approved your request, you'll have access to the chat."
+		},
+		ch_request_validate: {
+			"fr": "Accepter ce groupe",
+			"us": "Chat with this group"
+		},
+		ch_button_send: {
+			"fr": "Envoyer",
+			"us": "Send"
+		},
+		ch_button_whisper: {
+			"fr": "Chuchoter",
+			"us": "Whisper"
+		},
+		to_invite_code_already_taken: {
+			"fr": "Ce code est déjà utilisé par un autre utilisateur",
+			"us": "This code is already used by another user"
+		},
+		to_invite_code_bad_pattern: {
+			"fr": "Votre code ne doit contenir que des chiffres & des lettres",
+			"us": "Your code must contain only letters & numbers"
+		},
+		to_easy_on_api: {
+			"fr": "Une photo est déjà en cours de téléchargement",
+			"en ": "A photo is already downloading"
+		},
+		to_new_meefore: {
+			"fr": "%name propose un meefore le %date",
+			"us": "%name hosts a meefore the %date"
+		},
+		to_new_meefore_host: {
+			"fr": "Un ami vous a ajouté en tant qu'organisateur de son meefore",
+			"us": "A friend added you as host of his meefore"
+		},
+		to_default_error: {
+			"fr": "Une erreur est survenue",
+			"us": "Something went wrong"
+		}, 
+		to_chat_inp_not_in: {
+			"fr": "Vous n'avez pas encore été accepté!",
+			"us": "You haven't been accepted yet"
+		},
+		to_chat_inp_too_quick: {
+			"fr": "Moins vite",
+			"us": "Slow down"
+		},
+		to_chat_inp_empty: {
+			"fr": "Le message est vide!",
+			"us": "The message is empty"
+		},
+		to_event_created_success_2: {
+			"fr": "Que la fête commence...",
+			"us": "May the party get started..."
+		},
+		to_party_created_success: {
+			"fr": "La soirée a été ajoutée",
+			"us": "The party has been added"
+		},
+		to_event_group_accepted: { 
+			"fr": "Le groupe %s a été accepté",
+			"us": "The group %s has been accepted"
+		},
+		to_event_group_pending: {
+			"fr": "Le groupe %s a été mis en attente",
+			"us": "The group %s has been put on hold"
+		},
+		to_request_sent: {
+			"fr": "Votre demande a été envoyée!",
+			"us": "Your request has been sent"
+		},
+		to_request_event_status_modified: {
+			"fr": "Le statut de l'évènement a été modifié",
+			"us": "The event status has been modified"
+		},
+		// to_init_no_friends: {
+		// 	"fr": "Aucun de vos amis n'est sur Meefore? Invitez-les à vous rejoindre!",
+		// 	"us": "None of your friends is on Meefore? Invite them all!"
+		// },
+		to_noupload_necessary: {
+			"fr": "Aucune mise à jour n'est nécessaire!",
+			"us": "No update is necessary!"
+		},
+		to_upload_singlepic: {
+			"fr": "Ne téléchargez qu'une seule image à la fois",
+			"us": "Please, don't upload more than one picture at once"
+		},
+		to_profile_update_success: {
+			"fr": "Vos informations ont été modifiées",
+			"us": "Your informations has been updated"
+		},
+		to_settings_update_success: {
+			"fr": "Vos préférences ont été modifiées",
+			"us": "Your settings have been updated"
+		},
+		to_upload_pic_success: {
+			"fr": "Votre photo a été modifiée",
+			"us": "Your picture has been updated"
+		},
+		to_update_pic_success: {
+			"fr": "Vos photos ont été mise à jour",
+			"us": "Your pictures have been updated"
+		},
+		to_host_push_new_group: {
+			"fr": "Un groupe souhaite rejoindre votre meefore",
+			"us": "A group has requested to join your meefore"
+		},
+		to_push_new_request_by_friend: {
+			"fr": "Un ami vous a ajouté à un meefore",
+			"us": "A friend of yours has added you to a meefore"
+		},
+		to_push_new_status_by_friend: {
+			"fr": "Un de vos amis a modifié le statut d'un de vos meefore",
+			"us": "A friend of yours has modified the status of one of your meefore"
+		},
+		to_push_request_accepted: {
+			"fr": "Vous avez été accepté dans un meefore!",
+			"us": "You have been accepted in a meefore!"
+		},
+		to_push_group_validated_by_friend: {
+			"fr": "Un de vos amis a validé un groupe",
+			"us": "A friend of yours has validated a group"
+		},
+		to_push_group_suspended_by_friend: {
+			"fr": "Un de vos amis a suspendu un groupe de la discussion",
+			"us": "A friend of yours has suspended a group from the chat"
+		},
+		to_welcome: {
+			"fr": "Bienvenue sur Meefore",
+			"us": "Welcome to Meefore"
+		},
+
+		//mp stands for missing parameter
+		err_create_n_hosts: {
+			"fr": "Il faut être entre %min et %max pour organiser un before",
+			"us": "You must be between %min and %max to organize a pregame party",
+		},
+		err_create_mp_ambiance: {
+			"fr": "Hashtag ton meefore pour le décrire",
+			"us": "Hashtag your meefore to describe it"
+		},
+		err_create_mp_party: {
+			"fr": "Adresse de la soirée manquante",
+			"us": "Missing the address of the party"
+		},
+		err_create_mp_address: {
+			"fr": "Adresse du meefore manquante",
+			"us": "Missing meefore's address"
+		},
+		err_create_mp_begins_at: {
+			"fr": "Date manquante/incomplète",
+			"us": "Missing the date"
+		},
+		err_create_mp_default: {
+			"fr": "Une des valeurs semble manquer",
+			"us": "There is a field that seems to be missing "
+		},
+		err_create_already_hosting_me: {
+			"fr": "Vous organisez déjà un meefore ce jour là",
+			"us": "You have already planned a meefore this day"
+		},
+		err_create_already_hosting_other: {
+			"fr": "%s organise déjà un meefore ce jour là",
+			"us": "%s has already planned a meefore this day"
+		},
+		err_create_twin_hosts: {
+			"fr": "Tous les organisateurs doivent être différents",
+			"us": "Every host must be different"
+		},
+		err_create_time_travel: {
+			"fr": "La date de début ne peut être une date passée",
+			"us": "The date seems to be wrong"
+		},
+		err_create_ghost_hosts: {
+			"fr": "Un des organisateurs n'a pas été trouvé",
+			"us": "One of the hosts can't be found"
+		},
+		err_request_mp_members_facebook_id: {
+			"fr": "Il faut être au moins deux pour rejoindre un meefore",
+			"us": "You must be at least two to organize a meefore"
+		},
+		err_request_mp_name: {
+			"fr": "En manque d'inspiration? Un petit effort!",
+			"us": "Lacking inspiration? A little bit of extra effort!"
+		},
+		err_request_mp_message: {
+			"fr": "Un message de bienvenue est indispensable!",
+			"us": "A welcome message is much-needed!"
+		},
+		err_request_mp_default: {
+			"fr": "Une des valeurs semble manquer",
+			"us": "One of the values seems to be missing"
+		},
+		err_request_already_there: {
+			"fr": " déjà présent en tant ",
+			"us": " already there "
+		},
+		err_request_already_there_role_host: {
+			"fr": "qu'organisateur",
+			"us": "as host"
+		},
+		err_request_already_there_role_asker: {
+			"fr": "que participant",
+			"us": "as participant"
+		},
+		err_request_already_there_me: {
+			"fr": "Tu es",
+			"us": "You are"
+		},
+		err_request_already_there_other: {
+			"fr": "%s est",
+			"us": "%s is"
+		},
+		err_unknown: {
+			"fr": "Une erreur inconnue s'est produite",
+			"us": "An unknown error has occured"
+		},
+		err_request_name_bad_length: {
+			"fr": "Le nom doit avoir entre %min et %max caractères",
+			"us": "The name must be composed of a minimum of %min and a maximum of %max characters"
+		},
+		err_request_message_bad_length: {
+			"fr": "Le message doit avoir entre %min et %max caractères",
+			"us": "The message must be composed of a minimum of %min and a maximun of %max characters"
+		},
+		err_request_n_group: {
+			"fr": "Votre groupe doit avoir entre %min et %max personnes",
+			"us": "Your group must have between %min and %max people"
+		},
+		err_request_ghost_members: {
+			"fr": "Des membres ne sont pas encore inscrits sur Meefore",
+			"us": "Some members have not signed up to Meefore yet"
+		},
+		err_request_event_not_open: {
+			"fr": "Les organisateurs ont suspendu momentanément le meefore",
+			"us": "The hosts have suspended the meefore at the moment"
+		},
+		err_chat_send_message: {
+			"fr": "Une erreur inconnue s'est produite suite à l'envoie du message",
+			"us": "An unknown error has occured when sending the message"
+		},
+		err_chat_fetch_unauth_group: {
+			"fr": "Tu n'es pas autorisé à participer à cette discussion!",
+			"us": "You are not authorized to take part in this discussion"
+		},
+		err_chat_fetch_unauth_fetch: {
+			"fr": "Tu n'es pas autorisé à demander les messages de cette discussion",
+			"us": "You are not authorized to request this discussion's messages"
+		},
+		err_chat_fetch_unauth_admin: {
+			"fr": "Vous n'êtes pas autorisé à participer à cette discussion! (admin)",
+			"us": "You are not authorized to take part in this discussion"
+		},
+		err_chat_mp: {
+			"fr": "Il manque un paramètre pour envoyer le message",
+			"us": "A parameter is missing to send the message"
+		},
+		err_chat_seen_by: {
+			"fr": "Une erreur inconnue s'est produite à la lecture du message",
+			"us": "An unknown error has occured when reading the message"
+		},
+		err_pusher_unauth: {
+			"fr": "",
+			"us": "Cannot join the channel (access denied, auth failed)"
+		},
+		err_settings_invalid_email: {
+			"fr": "Nous avons besoin d'un email de contact valide pour changer vos préférences",
+			"us": "We need a valid contact email to change your preferences"
+		},
+		err_update_profile_age: {
+			"fr": "Votre âge ne semble pas avoir le bon format",
+			"us": "Your age doesnt seem to be properly formatted"
+		},
+		err_update_profile_mainify_placeholder: {
+			"fr": "Votre photo de profil doit vous représenter",
+			"us": "Your profile picture must represent yourself"
+		},
+		err_update_profile_delete_main_picture: {
+			"fr": "Vous ne pouvez pas supprimer votre photo de profil",
+			"us": "You can't delete your profile picture"
+		},
+		err_update_profile_default: {
+			"fr": "Une erreur inattendue s'est produite",
+			"us": "Something unexpected happened"
+		},
+		err_unexpected_message: {
+			"fr": "Une erreur inattendue s'est produite. <br> Cette erreur peut-être due à des circonstances exceptionnelles ou à un bug !" 
+			       + "<br> Nous vous invitons à retenter votre action plus tard et à nous contacter si l'erreur persiste :/",
+			"us": "Something unexpected happened. <br> This error might be caused by exceptionnal circumstances or simply bug a bug."
+				   + "<br> Please try again later and we thank you in advance to contact us if the problem persists :/"
+		},
+		lp_subtitle: {
+			"fr": "<div class='lp-subpart'>Des rencontres <div class='lp-avant'><span>avant</span><img src='/img/app/avant.png' width='90%' /></div> d'aller en soirée.   " ,
+			"us": "<div class='lp-subpart'>Meeting new people <div class='lp-avant'><span>before</span><img src='/img/app/avant.png' width='90%' /></div> partying.</div>"
+		},
+		lp_subtitle_sub: {
+			"fr": "Participez à des before près de chez vous.",
+			"us": "Join pregame parties around you."
+		},
+		lp_conn_button: {
+			"fr": "Connexion",
+			"us": "Connection"
+		},
+		lp_reason_1_h1: {
+			"fr": "Trouvez votre before",
+			"us": "Find a pregame party"
+		},
+		lp_reason_2_h1: {
+			"fr": "Demandez à participer",
+			"us": "Request to join"
+		},
+		lp_reason_3_h1: {
+			"fr": "Faites connaissance",
+			"us": "Get to know each other"
+		},
+		lp_reason_1_h2: {
+			"fr": "Parcourez et repérez sur la map les before qui s'organisent près de chez vous.",
+			"us": "Go on the map and find all the pregame parties happening around you."
+		},
+		lp_reason_2_h2: {
+			"fr": "Envoyez une demande de participation pour rejoindre le before qui vous ambiance le plus avec au moins un de vos amis.",
+			"us": "Request to join the pregame party that seems to fit you the most with at least one of your friends."
+		},
+		lp_reason_3_h2: {
+			"fr": "Une fois accepté, discutez avec les organisateurs pour préparer votre soirée avant de vous retrouver.",
+			"us": "Once accepted, chat with the hosts to plan your evening before you meet with them."
+		},
+		lp_footer_followus: {
+			"fr": "Nous suivre",
+			"us": "Follow us"
+		},
+		lp_contact_title: {
+			"fr": "Contactez-nous",
+			"us": "Contact us"
+		},
+		lp_contact_name: {
+			"fr": "Nom*",
+			"us": "Name*"
+		},
+		lp_contact_email: {
+			"fr": "Email*",
+			"us": "Email*"
+		},
+		lp_contact_message: {
+			"fr": "Message*",
+			"us": "Message*"
+		},
+		lp_contact_send_success: {
+			"fr": "Votre message a bien été envoyé <br> Merci !",
+			"us": "Your message has been sent <br> Thank you !"
+		},
+		lp_contact_error_fields: {
+			"fr": "Il manque certains champs",
+			"us": "Some fields are missing"
+		},
+		lp_contact_error_email: {
+			"fr": "L'adresse email indiquée semble avoir une petite erreur",
+			"us": "Your email address doesn't look like one "
+		},
+		lp_contact_error_generic: {
+			"fr": "Une erreur s'est produite. Contactez-nous directement à contact@meefore.com",
+			"us": "Something wrong happened. Mail us directly at contact@meefore.com"
+		},
+		login_loading_msg: {
+			"fr": "Chargement de l'application",
+			"us": "Loading the app"
+		},
+		app_mobile_warning: {
+			"fr": "Meefore est en mode navigation limitée sur web mobile. L'application sera bientôt disponible sur iOS !",
+			"us": "Meefore in limited mode on web mobile. The iOS app should be soon available on the AppleStore"
+		},
+		app_event_unavailable: {
+			"fr": "Ce before n'est plus d'actualité",
+			"us": "This before is no longer available"
+		},
+		app_reconnect: {
+			"fr": "Vous avez été déconnecté. <br> L'application redémarrera dès que vous aurez retrouvé la connexion.",
+			"us": "You have been disconnected. <br> App will reboot automatically once your connection is back."
+		},
+		app_button_invite: {
+			"fr": "Invitez vos amis",
+			"us": "Invite your friends"
+		},
+		app_searching_text: {
+			"fr": "Recherche...",
+			"us": "Searching..."
+		},
+		app_no_results_invite: {
+			"fr": "Aucun résultats à afficher",
+			"us": "The search returned no results"
+		},
+		n_new_meefore_text: {
+			"fr": "Nouveau meefore proposé pour %place",
+			"us": "New meefore created for %place"
+		},
+		n_new_meefore_subtext: {
+			"fr": "Il y a actuellement %n meefore pour cette soirée",
+			"us": "There are currently %n meefore for this party"
+		},
+		n_accepted_in_text: {
+			"fr": "Vous avez un Match !",
+			"us": "It's a Match !"
+		},
+		n_accepted_in_subtext: {
+			"fr": "Faites connaissance dès maintenant",
+			"us": "Get to know each other now"
+		},
+		n_group_request_hosts_text: {
+			"fr": "Cheers reçu",
+			"us": "Cheers received"
+		},
+		n_group_request_hosts_subtext: {
+			"fr": "Un groupe a montré un intérêt pour votre before",
+			"us": "A group seems to be interested by your pregame"
+		},
+		n_group_request_members_text: {
+			"fr": "Cheers envoyé",
+			"us": "Cheers sent"
+		},
+		n_group_request_members_subtext: {
+			"fr": "%name a envoyé un Cheers avec vous",
+			"us": "%name has sent a Cheers with you"
+		},
+		n_marked_as_host_text: {
+			"fr": "Marqué coorganisateur par %name",
+			"us": "Marked as co-host by %name"
+		},
+		n_marked_as_host_subtext: {
+			"fr": "%address - %date",
+			"us": "%address - %date"
+		},
+		n_fill_profile_text: {
+			"fr": "Complétez votre profil",
+			"us": "Complete your profile"
+		},
+		n_fill_profile_subtext: {
+			"fr": "Vous augmenterez vos chances d'avoir des Cheers",
+			"us": "That will increase your chances to get a Cheers"
+		},
+		n_new_friends_text: {
+			"fr": "Nouveaux amis",
+			"us": "New friends"
+		},
+		n_new_friends_subtext: {
+			"fr": function( names ){
+				return "Bienvenue à " + LJ.renderManyMultipleNames( names, 3 );
+				var came = names.length == 1 ? "vient" : "viennent";
+				return LJ.renderManyMultipleNames( names, 3 ) + ' ami(e)s '+ came +' de rejoindre Meefore';
+			},
+			"us": function( names ){
+				return "Welcome to " + LJ.renderManyMultipleNames( names, 3 );
+				return LJ.renderManyMultipleNames( names, 3 ) + ' friends just joined Meefore';
+			},
+		},
+		n_inscription_success_text: {
+			"fr": "Bienvenue sur Meefore",
+			"us": "Welcome on Meefore"
+		},
+		n_inscription_success_subtext: {
+			"fr": "Faites des rencontres avant d'aller en soirée",
+			"us": "Meet new people before going out"
+		},
+		n_before_canceled_text: {
+			"fr": "Before annulé",
+			"us": "Pregame canceled"
+		},
+		n_before_canceled_subtext: {
+			"fr": "%address",
+			"us": "%address"
+		},
+		n_item_shared_text: {
+			"fr": "Partagé par %name",
+			"us": "Shared by %name"
+		},
+		n_item_shared_subtext: {
+			"fr": "%name vient de vous partager un %type",
+			"us": "%name just shared a %type with you"
+		},
+		n_check_email_text: {
+			"fr": "Votre addresse email est-elle à jour ?",
+			"us": "Is your email address up-to-date ?"
+		},
+		n_check_email_subtext: {
+			"fr": "L'addresse récupérée avec Facebook est parfois très ancienne !",
+			"us": "The email address we got from Facebook might be outdated !"
+		},
+		n_new_notification: {
+			"fr": "Vous avez une nouvelle notification",
+			"us": "You have a new notification"
+		},
+		n_header_text: {
+			"fr": "Notifications",
+			"us": "Notifications"
+		},
+		n_footer_text: {
+			"fr": "Délivré avec <3 par meefore",
+			"us": "Delivered with <3 by meefore"
+		},
+		mod_facebook_pictures_title: {
+			"fr": "Photos Facebook",
+			"en ": "Facebook photos"
+		},
+		mod_facebook_pictures_subtitle: {
+			"fr": "Sélectionner la photo que vous souhaitez importer à partir de Facebook",
+			"en ": "Select the photo you wish to import from Facebook"
+		},
+		mod_change_lang_title: {
+			"fr": "Changer de langue",
+			"us": "Change language"
+		},
+		mod_change_lang_subtitle: {
+			"fr": "La langue ne devrait pas être une barrière pour faire la fête. L'application se traduit instantanément dans le langage de votre choix.",
+			"us": "The language should never be an obstacle to partying. The application translates itself instantaneously in the language of your choosing"
+		},
+		segment_cheers_received: {
+			"fr": "Reçus",
+			"us": "Received"
+		},
+		segment_cheers_sent: {
+			"fr": "Envoyés",
+			"us": "Sent"
+		},
+		cheers_requested_with: {
+			"fr": "Avec %names",
+			"us": "With %names"
+		},
+		shared_by_item_subtitle: {
+			"fr": "%type partagé par %name",
+			"us": "%type shared by %name"
+		},
+		shared_with_item_subtitle: {
+			"fr": "%type partagé avec %names",
+			"us": "%type shared with %names"
+		},
+		friends_title_invite: {
+			"fr": "Invitez plus d'amis",
+			"us": "Invite more friends"
+		},
+		cheers_item_title_sent: {
+			"fr": "%groupname",
+			"us": "%groupname"
+		},
+		cheers_item_title_received: {
+			"fr": "%groupname",
+			"us": "%groupname"
+		},
+		cheers_item_subtitle: {
+			"fr": "Pour un before le %date",
+			"us": "The pregame starts the %date"
+		},
+		w_profile: {
+			"fr": "profil",
+			"us": "profile"
+		},
+		w_and: {
+			"fr": "et",
+			"us": "and"
+		},
+		w_more: {
+			"fr": "autre(s)",
+			"us": "more"
+		},
+		w_you: {
+			"fr": "vous",
+			"us": "you"
+		},
+		w_member_since: {
+			"fr": "Membre depuis le",
+			"us": "Member since"
+		},
+		w_na: {
+			"fr": "Non renseigné(e)",
+			"us": "Unfilled"
+		},
+		ghost_user_name: {
+			"fr": "Inconnu(e)",
+			"us": "Unknown"
+		},
+		ghost_user_job: {
+			"fr": "Cet utilisateur a suspendu son compte",
+			"us": "This user has suspended his account"
+		},
+		settings_ux_message_seen_label: {
+			"fr": "Signaler messages lus",
+			"us": "Signal read messages"
+		},
+		settings_ux_message_seen_explanation: {
+			"fr": "Les autres utilisateurs sauront que vous avez lu leurs messages",
+			"us": "Other users will know that you have read their messages"
+		},
+		settings_ux_country_label: {
+			"fr": "Afficher les nationalités",
+			"us": "Display the nationalities"
+		},
+		settings_ux_country_explanation: {
+			"fr": "Afficher les nationalités autre que la mienne sur les miniatures",
+			"us": "Display nationalities other than mine on the thumbnail"
+		},
+		settings_ux_gender_label: {
+			"fr": "Afficher le sexe (H/F)",
+			"us": "Display the gender (H/F)"
+		},
+		settings_ux_gender_explanation: {
+			"fr": "Afficher le sexe des utilisateurs sur leur miniature pour les distinguer plus facilement",
+			"us": "Display the user's gender on his thumbnail"
+		},
+		settings_ux_auto_login_label: {
+			"fr": "Login automatique",
+			"us": "Auto login"
+		},
+		settings_ux_changelang_label: {
+			"fr": "Langue par défaut",
+			"us": "Default language"
+		},
+		settings_ux_changelang_explanation: {
+			"fr": "L'application est disponible dans plusieurs langues",
+			"us": "The application is available in several languages"
+		},
+		settings_ux_auto_login_explanation: {
+			"fr": "Se connecter directement sans passer par la page d'accueil",
+			"us": "Connect directly skipping the homepage"
+		},
+		settings_part_title_email: {
+			"fr": "Emails",
+			"us": "Emails"
+		},
+		settings_part_title_notifications_email: {
+			"fr": "Notifications par email",
+			"us": "Email notifications"
+		},
+		settings_emails_new_message_label: {
+			"fr": "Nouveau message reçu",
+			"us": "New message received"
+		},
+		settings_emails_new_message_explanation: {
+			"fr": "Envoyé à chaque nouveau message",
+			"us": "Sent every time you receive a new message"
+		},
+		settings_emails_marked_as_host_label: {
+			"fr": "Marqué(e) coorganisateur",
+			"us": "Marked as host"
+		},
+		settings_emails_marked_as_host_explanation: {
+			"fr": "Envoyé lorsqu'un ami vous désigne comme étant coorganisateur de son before",
+			"us": "Sent when your friends tags you as co-host of his pregame"
+		},
+		settings_emails_new_match_label: {
+			"fr": "Nouveau Match",
+			"us": "New Match"
+		},
+		settings_emails_new_match_explanation: {
+			"fr": "Envoyé lorsque vous avez un nouveau Match",
+			"us": "Sent when you have a new Match"
+		},
+		settings_emails_new_cheers_label: {
+			"fr": "Nouveau Cheers",
+			"us": "New Cheers"
+		},
+		settings_emails_new_cheers_explanation: {
+			"fr": "Envoyée lorsque vous reçu avez un nouveau Cheers",
+			"us": "Sent when you have received a new Cheers"
+		},
+		settings_notifs_newsletter_label: {
+			"fr": "Newsletter",
+			"us": "Newsletter"
+		},
+		settings_notifs_newsletter_explanation: {
+			"fr": "Notre newsletter hebdomadaire",
+			"us": "Our weekly newsletter"
+		},
+		settings_notifs_invitations_label: {
+			"fr": "Invitations",
+			"us": "Invitations"
+		},
+		settings_notifs_invitations_explanation: {
+			"fr": "Bon plans et invitations à des soirées spéciales",
+			"us": "Invitations to special events"
+		},
+		settings_code_sponsor_button: {
+			"fr": "Activer un code d'invitation",
+			"us": "Activate an invitation code"
+		},
+		settings_code_sponsor_explanation: {
+			"fr": "Partagez ce code avec vos amis pour les parrainer",
+			"us": "Share this code with your friends to sponsor them"
+		},
+		settings_part_title_code: {
+			"fr": "Code d'invitation",
+			"us": "Invite code"
+		},
+		settings_modal_sponsor_title: {
+			"fr": "Code parrainage",
+			"us": "Sponsor code"
+		},
+		settings_modal_sponsor_subtitle: {
+			"fr": "Entrez le code de votre parrain et bénéficiez chacun de 5 meepass",
+			"us": "Enter your sponsor's code and receive both 5 meepass"
+		},
+		settings_modal_sponsor_button: {
+			"fr": "Activer",
+			"us": "Activate"
+		},
+		picture_main_label: {
+			"fr": "Photo principale",
+			"us": "Main picture"
+		},
+		empty_shared_title: {
+			"fr": "Rien à l'horizon...",
+			"us": "Nothing on the horizon..."
+		},
+		empty_shared_subtitle: {
+			"fr": "Partagez des profils ou des before avec vos amis pour pouvoir vous organiser plus rapidement.",
+			"us": "Share profiles or pregame with your friends to help you organize your nights."
+		},
+		empty_cheers_sent_title: {
+			"fr": "Aucun Cheers envoyés",
+			"us": "No Cheers sent"
+		},
+		empty_cheers_sent_subtitle: {
+			"fr": "Les Cheers permettent à chaque membre de montrer à des organisateurs qu'ils sont intéressé par leur before.",
+			"us": "Cheers allow each member to let hosts of pregames know that they are interested in their pregame."
+		},
+		empty_cheers_received_title: {
+			"fr": "Aucun Cheers reçus",
+			"us": "No Cheers received"
+		},
+		empty_cheers_received_subtitle: {
+			"fr": "Les Cheers permettent à chaque membre de montrer à des organisateurs qu'ils sont intéressé par leur before.",
+			"us": "Cheers allow each member to let hosts of pregames know that they are interested in their pregame."
+		},
+		empty_friends_title: {
+			"fr": "Pas encore d'amis",
+			"us": "No friends yet"
+		},
+		empty_friends_subtitle: {
+			"fr": "Il faut être au moins 2 pour créer ou participer à un before. Invitez vos amis à vous rejoindre pour sortir et faire de nouvelles rencontres.",
+			"us": "You need to be at least 2 in order to pregrame. Invite your friends to join you to get out and meet new people."
+		},
+		hint_cheers_pending: {
+			"fr": "En attente de Match",
+			"us": "Waiting for a Match"
+		},
+		hint_cheers_accepted: {
+			"fr": "Match !",
+			"us": "It's a Match !"
+		},
+		to_group_accepted_hosts: {
+			"fr": "Vous avez un Match !",
+			"us": "You have a new Match !"
+		},
+		to_group_accepted_users: {
+			"fr": "Vous avez un Match !",
+			"us": "You have a new Match !"
+		},
+		disconnected_title: {
+			"fr": "Vous êtes déconnecté",
+			"us": "You are offline"
+		},
+		disconnected_subtitle: {
+			"fr": "Vous serez reconnecté automatiquement dès que vous aurez retrouvé internet.",
+			"us": "You will be automatically reconnected when you're back online. "
+		},
+		init_location_title: {
+			"fr": "Bienvenidos !",
+			"us": "Bienvenidos !"
+		},
+		init_location_subtitle_placeholder: {
+			"fr": "Où souhaitez-vous sortir ?",
+			"us": "Where would you like to go out ?"
+		},
+		init_location_explanation: {
+			"fr": "Vous pourrez toujours changer de ville ultérieurement",
+			"us": "You'll still be able to change that later"
+		},
+		init_location_geoloc: {
+			"fr": "Utiliser ma position",
+			"us": "Use my location"
+		},
+		user_profile_about: {
+			"fr": "Détails",
+			"us": "Details"
+		},
+		user_profile_ideal_night: {
+			"fr": "Sa soirée idéale",
+			"us": "The dream night"
+		},
+		logout_title: {
+			"fr": "A bientôt",
+			"us": "See you soon"
+		},
+		logout_subtitle: {
+			"fr": "Êtes vous-sûr de vouloir vous déconnecter ?",
+			"us": "Are you sure you want to log out ?"
+		},
+		modal_err_empty_fetch: {
+			"fr": "Nous n'avons pas trouvé vos photos de profil",
+			"us": "We were unable to find your profile pictures album"
+		},
+		settings_account_email: {
+			"fr": "Tous nos emails seront envoyés à cette addresse",
+			"us": "All our emails will be sent to this address"
+		},
+		settings_account_delete_button: {
+			"fr": "Supprimer mon compte",
+			"us": "Delete my account"
+		},
+		settings_modal_delete_title: {
+			"fr": "A bientôt !",
+			"us": "See you around !"
+		},
+		settings_modal_delete_subtitle: {
+			"fr": "En supprimant votre compte, toutes les données vous concernant seront supprimées de nos serveurs."
+				  + "<br><br><b>Attention, cette opération est irréversible.</b>",
+			"us": "By deleting your account, every data about you will be deleted from our servers."
+				  + "<br><br><b>Careful, this cannot be undone.</b>"
+		},
+		settings_modal_delete_button_confirm: {
+			"fr": "Supprimer mon compte",
+			"us": "Delete my account"
+		},
+		settings_modal_delete_button_cancel: {
+			"fr": "Annuler",
+			"us": "Cancel"
+		},
+		search_filters_gender_title: {
+			"fr": "Montrez-moi seulement :",
+			"us": "Show me only : "
+		},
+		search_filters_gender_explanations: {
+			"fr": "Sélectionner le sexe des personnes que vous recherchez.",
+			"us": "Select the gender of the people you wish to see."
+		},
+		search_filters_age_title: {
+			"fr": "Afficher les personnes de <span class='search-filters-min-age'></span> à <span class='search-filters-max-age'></span> ans",
+			"us": "Display people from <span class='search-filters-min-age'></span> to <span class='search-filters-max-age'></span> years old"
+		},
+		search_filters_age_explanations: {
+			"fr": "Seuls les utilisateurs dans la tranche d'âge sélectionnée apparaîtront dans la recherche.",
+			"us": "Only the users within the selected agerange will be displayed."
+		},
+		search_filters_countries_title: {
+			"fr": "Filtrer par pays :",
+			"us": "Filter by country :"
+		},
+		search_filters_countries_explanations: {
+			"fr": "Les pays proposés sont ceux comptant au moins un utilisateur.",
+			"us": "The countries displayed are those for which there is at least one user."
+		},
+		search_filters_gender_label_male: {
+			"fr": "Des hommes",
+			"us": "Men"
+		},
+		search_filters_gender_label_female: {
+			"fr": "Des femmes",
+			"us": "Women"
+		},
+		nav_search_title: {
+			"fr": "Tous les membres",
+			"us": "All members"
+		},
+		nav_menu_title: {
+			"fr": "Menu",
+			"us": "Menu"
+		},
+		nav_map_title: {
+			"fr": "Carte des soirées",
+			"us": "The Meemap"
+		},
+		modal_search_input_placeholder: {
+			"fr": "Rechercher",
+			"us": "Search"
+		},
+		modal_share_title_profile: {
+			"fr": "Partager un profil",
+			"us": "Share a profile"
+		},
+		modal_share_subtitle_profile: {
+			"fr": "Sélectionnez dans la liste les personnes avec qui vous souhaitez partager ce profil.",
+			"us": "Select in your friendlist who you wish to share this profile with."
+		},
+		to_profile_shared_success: {
+			"fr": "Le profil a bien été partagé",
+			"us": "The profile has been shared"
+		},
+		modal_share_title_before: {
+			"fr": "Partager un before",
+			"us": "Share a pregame"
+		},
+		modal_share_subtitle_before: {
+			"fr": "Sélectionnez dans la liste les personnes avec qui vous souhaitez partager ce before.",
+			"us": "Select in your friendlist who you wish to share this pregame with."
+		},
+		to_before_shared_success: {
+			"fr": "Le before a bien été partagé",
+			"us": "The pregame has been shared"
+		},
+		to_cheers_sent_success: {
+			"fr": "Votre Cheers a bien été envoyée",
+			"us": "Your Cheers has been sent"
+		},
+		to_cheers_received_success: {
+			"fr": "Vous avez reçu un Cheers",
+			"us": "You have received a Cheers"
+		},
+		to_cheers_sent_success_friend: {
+			"fr": "Un ami souhaite participer à un before avec vous",
+			"us": "A friend wishes to join a before with you"
+		},
+		meepass_ribbon2: {
+			"fr": "Il vous reste <span class='n_meepass'>%n</span> meepass",
+			"us": "You have <span class='n_meepass'>%n</span> meepass left"
+		},
+		meepass_ribbon: {
+			fr: function(){
+				var n_meepass = LJ.user.meepass.length;
+				return "Il vous reste <span class='n_meepass'>" + n_meepass + "</span> meepass";
+			},
+			us: function(){
+				var n_meepass = LJ.user.meepass.length;
+				return "You have <span class='n_meepass'>" + n_meepass + "</span> meepass left";
+			}
+		},
+		settings_ux_changelang_button: {
+			"fr": "Changer de langue",
+			"us": "Change the language"
+		},
+		be_close_to: {
+			"fr": "A proximité de",
+			"us": "Close to"
+		},
+		"be_create_title": {
+			"fr": "Créer un before",
+			"us": "Create a pregame"
+		},
+		be_create_subtitle_hosts: {
+			"fr": "Membres du groupe",
+			"us": "Hosts"
+		},
+		be_create_hosts_explanations: {
+			"fr": "Sélectionnez les autres coorganisateurs parmis vos amis",
+			"us": "Select the other hosts among your friends"
+		},
+		be_create_subtitle_before: {
+			"fr": "Le before",
+			"us": "The pregame"
+		},
+		be_create_hosts_placeholder: {
+			"fr": "Coorganisateurs",
+			"us": "Other hosts"
+		},
+		be_create_date_placeholder: {
+			"fr": "Date",
+			"us": "Date"
+		},
+		be_create_hour_placeholder: {
+			"fr": "Heure",
+			"us": "Hour"
+		},
+		be_create_location_placeholder: {
+			"fr": "Lieu",
+			"us": "Address"
+		},
+		be_create_before_explanations: {
+			"fr": "Où et quand vous rejoignez-vous ?",
+			"us": "Where and when will you guys meet ?"
+		},
+		be_create_button: {
+			"fr": "Créer",
+			"us": "Create"
+		},
+		modal_be_create_title: {
+			"fr": "Membres du groupe",
+			"us": "Group members"
+		},
+		modal_be_create_subtitle: {
+			"fr": function(){
+				var min = LJ.app_settings.app.min_hosts - 1;
+				var max = LJ.app_settings.app.max_hosts - 1;
+				return "Sélectionnez les autres organisateurs parmis vos amis <br> (%min minimum, %max maximum)".replace('%min', min).replace('%max', max);
+			},
+			"us": function(){
+				var min = LJ.app_settings.app.min_hosts - 1;
+				var max = LJ.app_settings.app.max_hosts - 1;
+				return "Select the other hosts among your friends <br> (%min minimum, %max maximum)".replace('%min', min).replace('%max', max);
+			}
+		},
+		err_be_create_missing_hosts: {
+			"fr": "Les coorganisateurs sont manquants",
+			"us": "Cohosts are missing"
+		},
+		err_be_create_missing_date: {
+			"fr": "La date de début est manquante",
+			"us": "The date is missing"
+		},
+		err_be_create_missing_location: {
+			"fr": "L'addresse est manquante",
+			"us": "The address is missing"
+		},
+		err_be_create_already_hosting_me: {
+			"fr": "Vous organisez déjà un before ce jour-là",
+			"us": "You already host an event on this day"
+		},
+		err_be_create_already_hosting: {
+			"fr": "%names organise(nt) déjà un before ce jour-là",
+			"us": "%names are already hosting a before on this day"
+		},
+		shared_before_title: {
+			"fr": function( names ){
+				return 'Before avec ' + LJ.renderMultipleNames( names );
+			},
+			"us": function( names ){
+				return 'Pregame with ' + LJ.renderMultipleNames( names );
+			}
+		},
+		slide_overlay_before_message: {
+			"fr": "Que souhaitez-vous faire ?",
+			"us": "What would you like to do ?"
+		},
+		slide_overlay_before_cancel: {
+			"fr": "Annuler mon before",
+			"us": "Cancel my pregame"
+		},
+		slide_overlay_back: {
+			"fr": "Retour",
+			"us": "Back"
+		},
+		to_cancel_before_success: {
+			"fr": "Le before a bien été annulé",
+			"us": "The pregame have been canceled"
+		},
+		before_just_canceled: {
+			"fr": "Nous sommes désolés, ce before vient d'être annulé par un des organisateurs.",
+			"us": "We are sorry, this pregame just got canceled by one of the hosts."
+		},
+		chat_just_canceled: {
+			"fr": "Un de vos Match vient d'annulé son before. <span>Synchronization en cours...</span>",
+			"us": "One of your Match just canceled his pregame.<span>Resync..."
+		},
+		be_ended: {
+			"fr": "Le before est terminé",
+			"us": "The pregame is over"
+		},
+		be_hosted: {
+			"fr": "Vous faites parti des organisateurs",
+			"us": "You are one of the hosts"
+		},
+		to_friend_canceled_event: {
+			"fr": "%name vient d'annulé un before que vous organisiez ensemble",
+			"us": "%name just canceled a pregame that you organized together"
+		},
+		modal_request_subtitle: {
+			"fr": "Sélectionnez au plus 3 amis avec lesquels vous souhaiteriez participer.",
+			"us": "Select at most 3 friends you would like to go with."
+		},
+		to_before_create_success: {
+			"fr": "Votre before vient d'être créé",
+			"us": "Your pregame was created successfully"
+		},
+		to_before_create_success_friends: {
+			"fr": "%name vous a marqué coorganisateur de son before",
+			"us": "%name marked you as host of his pregame"
+		},
+		modal_no_friends_btn: {
+			"fr": "Invitez des amis",
+			"us": "Invite your friends"
+		},
+		modal_no_friends_text: {
+			"fr": "Il faut être au moins 2 pour effectuer cette action",
+			"us": "You need to be at least two to perform this action"
+		},
+		be_request_already_there: {
+			"fr": "a déjà envoyé un Cheers pour ce before",
+			"us": "has already sent a Cheers for this before"
+		},
+		to_request_pending: {
+			"fr": "Vous pourrez discuter dès que vous aurez un Match",
+			"us": "You can start chatting when you have a Match"
+		},
+		chat_header_title: {
+			"fr": "Discussions",
+			"us": "Conversations"
+		},
+		chat_segment_all: {
+			"fr": "Toutes",
+			"us": "All"
+		},
+		chat_segment_hosted: {
+			"fr": "J'organise",
+			"us": "I host"
+		},
+		chat_segment_requested: {
+			"fr": "Je participe",
+			"us": "I join"
+		},
+		chat_empty_title: {
+			"fr": "Rien à l'horizon...",
+			"us": "Nothing on the horizon..."
+		},
+		chat_empty_subtitle_row: {
+			"fr": "Vous pourrez discuter avec vos amis et faire connaissance avec les autres membres lorsque vous aurez créé un before ou obtenu un Match",
+			"us": "You will be able to chat with your friends and the other members once you have created a pregame or obtained a Match"
+		},
+		chat_empty_title_inview_hosts: {
+			"fr": "Vous avez un Match !",
+			"us": "It's a Match !"
+		},
+		chat_empty_subtitle_inview_hosts: {
+			"fr": function( group_name ){
+				return  "Faîtes connaissance avec " + group_name + " dès maintenant."
+			},
+			"us": function( group_name ){
+				return "Get to know " + group_name + " now."
+			} 
+		},
+		chat_empty_title_inview_accepted: {
+			"fr": "Vous avez un Match !",
+			"us": "It's a Match !"
+		},
+		chat_empty_subtitle_inview_accepted: {
+			"fr": function( group_name ){
+				return  "Faîtes connaissance avec " + group_name + " dès maintenant."
+			},
+			"us": function( group_name ){
+				return "Get to know " + group_name + " now."
+			} 
+		},
+		chat_empty_title_inview_team: {
+			"fr": function( group_name ){ return group_name; },
+			"us": function( group_name ){ return group_name; }
+		},
+		chat_empty_subtitle_inview_team: {
+			"fr": "Seuls vous et les autres membres de ce groupe recevront les messages qui seront envoyés sur cette discussion.",
+			"us": "Only you and the other members of your group will receive messages that are sent on this chat."
+		},
+		chat_empty_title_inview_pending: {
+			"fr": "Un peu de patience...",
+			"us": "Be patient..."
+		},
+		chat_empty_subtitle_inview_pending: {
+			"fr": "Vous pourrez faire connaissance dès que vous aurez un Match avec les organisateurs.",
+			"us": "You'll be able to start chatting as soon as there is a Match with the hosts."
+		},
+		chat_rows_team_title: {
+			"fr": "Amis",
+			"us": "Friends"
+		},
+		chat_rows_all_title: {
+			"fr": "Match",
+			"us": "Match"
+		},
+		chat_inview_options_message: {
+			"fr": "Que souhaitez-vous faire ?",
+			"us": "What would you like to do ?"
+		},
+		chat_inview_options_message_show_users_all: {
+			"fr": "Voir tous les participants",
+			"us": "See everyone"
+		},
+		chat_inview_options_message_show_users_team: {
+			"fr": "Voir les membres de mon groupe",
+			"us": "See members of my group"
+		},
+		chat_inview_options_message_show_before: {
+			"fr": "Voir le before",
+			"us": "See the pregame"
+		},
+		chat_inview_users_group_users: {
+			"fr": "Votre groupe",
+			"us": "Your group"
+		},
+		chat_inview_users_group_hosts: {
+			"fr": "Organisateurs",
+			"us": "Hosts"
+		},
+		chat_groupname_all: {
+			"fr": "Tout le monde",
+			"us": "All"
+		},
+		chat_team_h2: {
+			"fr": "Discussion privée avec vos amis",
+			"us": "Private discussion with your friends"
+		},
+		chat_row_request_all_title: {
+			"fr": "Vous avez un Match !",
+			"us": "It's a Match !"
+		},
+		chat_row_request_all_subtitle: {
+			"fr": function( names ){ return "avec " + names; },
+			"us": function( names ){ return  "with " + names; } 
+		},
+		chat_row_request_team_title: {
+			"fr": "Nouvelle conversation",
+			"us": "New group conversation"
+		},
+		chat_row_request_team_subtitle: {
+			"fr": function( names ){ return "entre " + names; },
+			"us": function( names ){ return  "between " + names; } 
+		},
+		chat_inview_validate_later: {
+			"fr": "Plus tard",
+			"us": "Later"
+		},
+		chat_inview_validate: {
+			"fr": "Cheers !",
+			"us": "Cheers !"
+		},
+		seen_by_everyone: {
+			"fr": "Vu par tout le monde",
+			"us": "Seen by everyone"
+		},
+		seen_by_some: {
+			"fr": function( names ){
+				return "Vu par " + LJ.renderMultipleNames( names );
+			},
+			"us": function( names ){
+				return "Seen by " + LJ.renderMultipleNames( names );
+			}
+		},
+		cheers_back_groupname: {
+			"fr": "Vous avez reçu un Cheers de...",
+			"us": "You have been sent a Cheers by..."
+		},
+		be_ghost_title: {
+			"fr": "404 !",
+			"us": "404 !"
+		},
+		be_ghost_subtitle: {
+			"fr": "Ce before n'a pas été trouvé dans notre base de données, Cela peut vouloir dire qu'il a été annulé.",
+			"us": "This before is nowhere to be found in our database. This may mean that it has been canceled."
+		},
+		be_ghost_btn: {
+			"fr": "Fermer",
+			"us": "Close"
+		},
+		profile_ghost_title: {
+			"fr": "404 !",
+			"us": "404 !"
+		},
+		profile_ghost_subtitle: {
+			"fr": "Ce membre n'a pas été trouvé dans notre base de données. C'est le cas lorsqu'un utilisateur désactive son compte.",
+			"us": "This member is nowhere to be found in our database. This may mean that he has suspended his account."
+		},
+		profile_ghost_btn: {
+			"fr": "Fermer",
+			"us": "Close"
+		},
+		invite_friends_popup_h1: {
+			"fr": "Quand on aime...",
+			"us": "When one loves..."
+		},
+		invite_friends_popup_h2: {
+			"fr": "...on partage ! ",
+			"us": "...one shares !"
+		},
+		invite_friends_popup_btn: {
+			"fr": "Message Facebook",
+			"us": "Facebook message"
+		},
+		chat_input_placeholder: {
+			"fr": "Ecrivez un message...",
+			"us": "Write a message..."
+		},
+		be_browser_empty: {
+			"fr": "Aucun before n'est prévu dans cette ville dans les jours à venir",
+			"us": "No pregame is scheduled in this town for the days to come"
+		},
+		chat_sync_done: {
+			"fr": "Synchronization terminée",
+			"us": "Sync completed"
+		},
+		n_before_canceled: {
+			"fr": "Ce before a été annulé",
+			"us": "This pregame has been canceled"
+		},
+		n_outdated_notification: {
+			"fr": "Cette notification n'est plus d'actualité",
+			"us": "This notification is out of date"
+		}
+
+
+
+	});
+
+
+
+	window.LJ.login = _.merge( window.LJ.login || {}, {
+
+			'$trigger_login': '.js-login',
+			'$trigger_logout': '.js-logout',
+			'$modal_logout'  : '.modal.--logout',
+			'opening_duration': 1000,
+			'prompt_duration': 600,
+			'prompt_buttons_duration': 900,
+			'completed_steps': 0,
+			'break_duration': 400,
+
+			'data': {},
+
+			init: function(){
+
+				return LJ.promise(function( resolve, reject ){
+					LJ.ui.$body.on('click', '.js-login', resolve );
+				});
+
+
+			},
+			showLandingElements: function(){
+
+				var duration = 600;
+
+				$('.landing').find('.landing-logo')
+					.velocity('slideLeftIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-lang')
+					.velocity('slideRightIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-body')
+					.velocity('shradeIn', {
+						duration: duration*2,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-footer')
+					.velocity('slideUpIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+
+			},
+			hideLandingElements: function(){
+
+				$('.landing')
+					.children()
+					.velocity('shradeOut', {
+						duration : 800,
+						display  : 'none'
+					});
+
+			},
+			showLoginProgressBar: function(){
+
+				$('.login__message').velocity('shradeIn', {
+			 		duration: 1600, delay: LJ.login.opening_duration/2
+			 	});
+
+			},
+			addLoginProgression: function(){
+
+				$( LJ.login.renderLoginProgression() ).hide().appendTo( $('.curtain') )
+
+			},
+			showLoginProgression: function(){
+
+				$('.login').velocity('shradeIn', {
+					duration: 1000
+				});
+
+			},
+			showLoginProgressMessage: function(){
+
+				$('.login__message').velocity('shradeIn', {
+					duration: 1000
+				});
+
+			},
+			hideLoginProgressBar: function(){
+
+				$('.login__progress-bar').velocity('shradeIn', {
+			 		duration: 1000
+			 	});
+
+			},
+			enterLoginProcess: function(){
+
+				LJ.login.hideLandingElements();
+				LJ.ui.deactivateHtmlScroll();
+
+				return LJ.delay( 1000 )
+						 .then(function(){
+
+						 	LJ.ui.showCurtain({ duration: 600, theme: "light", sticky: true });
+						 	LJ.login.addLoginProgression();
+						 	LJ.login.showLoginProgression();
+						 	// LJ.login.showLoginProgressMessage();
+						 	// LJ.login.showLoginProgressBar();
+
+						 });
+
+			},
+			hideLoginSteps: function(){
+				return LJ.promise(function( resolve, reject ){
+
+					$('.app').removeClass('nonei');
+					$('.landing').remove();
+
+					$('.login__message, .login__progress-bar, .login__loader').velocity('shradeOut', {
+						duration: 400,
+						complete: resolve
+						
+					});
+
+				});
+			},
+			firstSetup: function(){
+				// the app requires a user's location to boot properly
+				// - to be visible in the search section
+				// - to allow for geo requests to fetch the right befores
+				// - to allow the map to load in the right city
+				var L = LJ.user.location;
+				if( L && L.place_id && L.place_name && L.lat && L.lng ){
+					return;
+				}
+
+				if( LJ.user.access.indexOf('bot') == -1 ){
+					LJ.pictures.uploadFacebookPicture_Intro();
+				}
+				
+	            return LJ.login.break()
+	            		.then(function(){
+	            			return LJ.login.promptUserLocation();
+
+	            		})
+	            		.then(function(){
+	            			return LJ.login.debreak();
+
+	            		});
+
+			},
+			break: function(){
+				return LJ.ui.shradeOut( $('.login'), LJ.login.break_duration );
+
+			},
+			debreak: function(){
+				return LJ.ui.shradeIn( $('.login'), LJ.login.break_duration );
+
+			},
+			stepCompleted: function( fill_ratio ){
+
+				if( typeof fill_ratio != "number" ){
+					fill_ratio = 33.33;
+				}
+
+				LJ.login.completed_steps += 1;
+				LJ.login.fillProgressBar( fill_ratio );
+			},
+			fillProgressBar: function( fill_ratio ){
+
+				var max_width = $('.login__progress-bar').width();
+				var add_width = max_width * fill_ratio/100;
+				var cur_width = (LJ.login.completed_steps) * add_width;
+				var new_width = cur_width + add_width;
+
+				$('.login__progress-bar-bg')
+					.css({ 'width':  new_width });
+
+			},
+			renderLoginProgression: function(){
+
+				return LJ.ui.render([
+
+					'<div class="login">',
+						'<div class="login__loader">',
+							LJ.static.renderStaticImage('slide_loader'),
+						'</div>',
+						'<div class="login__message">',
+							'<h1 data-lid="login_loading_msg"></h1>',
+						'</div>',
+						'<div class="login__progress-bar">',
+							'<div class="login__progress-bar-bg"></div>',
+						'</div>',
+					'</div>'
+
+				].join(''));
+
+			},
+			promptUserLocation: function(){
+				return LJ.promise(function( resolve, reject ){
+
+					LJ.log('Requesting the user to provide a location...');
+
+					$( LJ.login.renderLocationPrompt() )
+						.hide()
+						.appendTo('.curtain')
+						.velocity('shradeIn', {
+							duration: LJ.login.prompt_duration,
+							display: 'flex'
+						});
+
+					LJ.seek.activatePlacesInFirstLogin();
+					LJ.seek.login_places.addListener('place_changed', function(){
+
+						var place = LJ.seek.login_places.getPlace();
+						$('.init-location').attr('data-place-id'   , place.place_id )
+							  			   .attr('data-place-name' , place.formatted_address )
+							  			   .attr('data-place-lat'  , place.geometry.location.lat() )
+							  			   .attr('data-place-lng'  , place.geometry.location.lng() );
+
+						LJ.login.showPlayButton();
+
+					});
+
+					// Resolve the promise when the user picked a location
+					$('.init-location .action__validate').click(function(){
+						var $block = $( this ).closest('.init-location');
+
+						if( $block.hasClass('--validating') ) return
+						$block.addClass('--validating');
+
+						LJ.login.updateProfileFirstLogin()
+							.then(function(){
+
+								$block
+									.removeClass('--validating')
+									.velocity('bounceOut', {
+										duration : LJ.login.prompt_duration,
+										complete : resolve
+									});
+								
+
+							}, function( err ){
+								LJ.wlog('An error occured');
+								LJ.log(err);
+
+							});
+					});
+				});	
+			},
+			updateProfileFirstLogin: function(){
+
+				LJ.log('Updating user location for the first time...');
+
+				var place_id   = $('.init-location').attr('data-place-id');
+				var place_name = $('.init-location').attr('data-place-name');
+				var lat        = $('.init-location').attr('data-place-lat');
+				var lng        = $('.init-location').attr('data-place-lng');
+
+				if( !( place_id && place_name && lat && lng) ){
+					return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
+				}
+
+				var update = {};
+				update.location = {
+					place_name : place_name,
+					place_id   : place_id,
+					lat 	   : lat,
+					lng 	   : lng
+				};
+
+				return LJ.api.updateProfile( update )
+						  .then(function( exposed ){
+							  	LJ.profile.setMyInformations();
+							  	return;
+						});
+
+			},
+			showPlayButton: function(){
+
+				var $elm = $('.init-location').find('.init-location-action');
+
+				if( $elm.css('opacity') != "0" ) return;
+
+				$elm.velocity('bounceInQuick', {
+					duration : LJ.login.prompt_buttons_duration,
+					display  : 'flex',
+					delay    : 500,
+					complete : function(){
+						$( this ).addClass('pound-light');
+					}
+				});
+
+			},
+			// Do a bunch of functions right before the login happens
+			terminateLoginProcess: function(){
+
+				LJ.ui.activateHtmlScroll();
+
+				$('.curtain')
+						.children('.login')
+						.velocity('bounceOut', {
+							duration: LJ.login.prompt_duration
+						});
+
+				$('.curtain')
+					.children('.login__bg')
+					.velocity({ 'opacity': [ 0, 0.09 ]}, {
+						duration: LJ.login.prompt_duration/2,
+						complete: function(){
+							$(this).remove();
+						}
+					});
+
+				return LJ.ui.hideCurtain({
+					delay: LJ.login.prompt_duration * 1.3,
+					duration: 1000
+
+				}).then(function(){
+
+					LJ.before.showBrowser();
+					LJ.before.refreshBrowserDates();
+					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
+					LJ.map.updateMarkers__byDate();
+					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
+					LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
+					
+					return
+				});	
+
+			},
+			renderLocationPrompt: function(){
+
+				return LJ.ui.render([
+
+					'<div class="init-location">',
+						'<div class="init-location__title">',
+							'<h2 data-lid="init_location_title"></h2>',
+						'</div>',
+						'<div class="init-location__subtitle">',
+							'<input id="init-location__input" type="text" data-lid="init_location_subtitle_placeholder">',
+						'</div>',
+						'<div class="init-location__splitter"></div>',
+						'<div class="init-location__explanation">',
+							'<p data-lid="init_location_explanation"></p>',
+						'</div>',
+						'<div class="init-location__geoloc">',
+							'<button data-lid="init_location_geoloc"></button>',
+						'</div>',
+						'<div class="init-location-action">',
+							'<div class="action__validate --round-icon">',
+								'<i class="icon icon-play"></i>',
+							'</div>',
+						'</div>',
+					'</div>'
+
+				].join(''));
+
+			},
+			handleLogout: function(){
+
+				LJ.ui.showModal({
+					"title"	   : LJ.text("logout_title"),
+					"subtitle" : LJ.text("logout_subtitle"),
+					"type"     : "logout",
+					"footer"   : "<button class='--rounded'><i class='icon icon-power'></i></button>"
+				});
+
+			},
+			logUserOut: function(){
+
+				var p1 = LJ.ui.shadeModal();
+				var p2 = LJ.api.updateUser({
+					"app_preferences": {
+						ux: {
+							auto_login: false
+						}
+					}
+				});
+
+				LJ.Promise.all([ p1, p2 ]).then(function(){
+					LJ.store.remove('facebook_access_token');
+					location.reload();
+				});
+
+			}
+
+
+	});
 
 	window.LJ.map = _.merge( window.LJ.map || {}, {		
 
@@ -39861,8 +42505,9 @@ window.LJ.map.style = _.merge(window.LJ.map.style || {}, {
         "elementType": "geometry",
         "stylers": [
             {
-                "color": "#f7f1df" 
+                "color": "#f7f1df",
                 // "color": "#faf8f8" // apple map
+                "color": "#faf5ec"
             }
         ]
     },
@@ -40372,6 +43017,276 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 
 
+	window.LJ.meepass = _.merge( window.LJ.meepass || {}, {
+
+		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.meepass.handleDomEvents();
+				resolve();
+			});
+
+
+		},
+		handleDomEvents: function(){
+
+			$('.menu-section.--meepass').on('click', '.segment__part', LJ.meepass.refreshSegmentView );
+			$('.menu-item.--meepass').one('click', LJ.meepass.handleMeepassClicked );
+			LJ.ui.$body.on('click', '.js-send-meepass', LJ.meepass.handleSendMeepass );
+
+		},
+		refreshSegmentView: function(){
+
+			var $seg = $(this);
+			var link = $seg.attr('data-link');
+
+			if( $seg.hasClass('--active') ) return;
+
+			$seg.siblings().removeClass('--active');
+			$seg.addClass('--active');
+
+			$('.meepass').children().css({ display: 'none' });
+			$('.meepass [data-link="' + link + '"]').css({ display: 'flex' });
+
+		},
+		handleSendMeepass: function(){
+
+			// User is hosting more than one event...
+			if( 0 ){
+				LJ.ui.showModal({
+					"title"		: "Félicitations !",
+					"subtitle"	: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
+					"body"  	: LJ.meepass.renderEventsInModal(),
+					"footer"	: "<button class='--rounded'><i class='icon icon-check'></i></button>"
+				});
+
+			} else {
+				
+				var event_id = '';
+			//	LJ.meepass.sendMeepass()
+			//		.then( LJ.meepass.handleSendMeepassSuccess )
+			//		.catch( LJ.meepass.handleApiError );
+
+			}
+
+		},
+		renderMeepassRibbon: function(){
+
+			var n_meepass = LJ.user.meepass.length;
+
+			return LJ.ui.render([
+
+				'<div class="meepass-ribbon">',
+					'<h2 data-lid="meepass_ribbon"></h2>',
+				'</div>'
+
+				].join('')).replace('%n', n_meepass );
+
+		},
+		sendMeepass: function(){
+			
+		},
+		handleSendMeepassSuccess: function(){
+
+		},
+		handleApiError: function(){
+
+		},
+		renderEventsInModal: function(){
+
+		},
+		handleMeepassClicked: function(){
+
+			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
+
+			$('.meepass').html('');
+
+			$loader.addClass('none')
+				   .appendTo('.meepass')
+				   .velocity('bounceInQuick', {
+				   	delay: 125,
+				   	duration: 500,
+				   	display: 'block'
+				   });
+
+			LJ.meepass.fetchMeepassItems();
+
+		},	
+		fetchMeepassItems: function(){
+
+			LJ.api.fetchMeMeepass()
+				  .then( LJ.meepass.handleFetchMeMeepassSuccess, LJ.meepass.handleFetchMeMeepassError );
+
+
+		},
+		handleFetchMeMeepassSuccess: function( expose ){
+
+			var meepass = expose.meepass;
+
+			LJ.meepass.setMeepassItems( meepass );
+
+		},
+		setMeepassItems: function( meepass ){
+
+			var html = [];
+			meepass.sort();
+
+			var facebook_ids = _.pluck( meepass, 'sent_by' ).concat( _.pluck( meepass, 'sent_to' ) ).filter( Boolean );
+
+			LJ.api.fetchUsers( facebook_ids )
+				.then(function( res ){
+
+					var no_meepass_received = true;
+					var no_meepass_sent     = true;
+					meepass.forEach(function( mp ){
+
+						for( var i=0; i<res.length; i++ ){
+
+							var user = res[ i ].user;
+
+							if( mp.sent_by == user.facebook_id ){
+								no_meepass_received = false;
+								return html.push( LJ.meepass.renderMeepassItem__Received( mp, user ) );
+							}
+
+							if( mp.sent_to == user.facebook_id ){
+								no_meepass_sent = false;
+								return html.push( LJ.meepass.renderMeepassItem__Sent( mp, user ) );
+							}
+						}
+					});
+
+					if( no_meepass_sent ){
+						html.push( LJ.meepass.renderMeepassItem__SentEmpty() );
+					}
+
+					if( no_meepass_received ){
+						html.push( LJ.meepass.renderMeepassItem__ReceivedEmpty() );
+					}
+
+					$('.meepass').html( html.join('') )
+								 .find('[data-link="received"]')
+								 .velocity('fadeIn', {
+									duration: 250,
+									display: 'flex'
+								});
+
+					$('.menu-section.--meepass')
+								.find('.segment__part')
+								.removeClass('--active')
+								.first()
+								.addClass('--active');
+
+				});
+
+		},		
+		handleFetchMeMeepassError: function(){
+
+			LJ.elog('Error fetching meepass :/');
+
+		},
+		renderMeepassItem__ReceivedEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="received">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meepass"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_meepass_received_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_meepass_received_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__SentEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="sent">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meepass"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_meepass_sent_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_meepass_sent_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__Received: function( meepass_object, target ){
+
+			var mp 	   = meepass_object;
+			var target = target;
+
+			var formatted_date = LJ.renderDate( mp.sent_at );
+			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="meepass__item" data-link="received" data-event-id="' + mp.target_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + LJ.text('meepass_item_title_received').replace('%name', target.name) +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__Sent: function( meepass_object, target, meepass_by ){
+
+			var mp 	   = meepass_object;
+			var target = target;
+
+			var formatted_date = LJ.renderDate( mp.sent_at );
+			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="meepass__item" data-link="sent" data-event-id="' + mp.target_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + LJ.text('meepass_item_title_sent').replace('%name', target.name) +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		}
+
+	});
+		
+
 	window.LJ.menu = _.merge( window.LJ.menu || {}, {
 
 		$menu: $('.menu'),
@@ -40538,395 +43453,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 
-	window.LJ.login = _.merge( window.LJ.login || {}, {
-
-			'$trigger_login': '.js-login',
-			'$trigger_logout': '.js-logout',
-			'$modal_logout'  : '.modal.--logout',
-			'opening_duration': 1000,
-			'prompt_duration': 600,
-			'prompt_buttons_duration': 900,
-			'completed_steps': 0,
-			'break_duration': 400,
-
-			'data': {},
-
-			init: function(){
-
-				return LJ.promise(function( resolve, reject ){
-					LJ.ui.$body.on('click', '.js-login', resolve );
-				});
-
-
-			},
-			showLandingElements: function(){
-
-				var duration = 600;
-
-				$('.landing').find('.landing-logo')
-					.velocity('slideLeftIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-lang')
-					.velocity('slideRightIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-body')
-					.velocity('shradeIn', {
-						duration: duration*2,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-footer')
-					.velocity('slideUpIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-
-			},
-			hideLandingElements: function(){
-
-				$('.landing')
-					.children()
-					.velocity('shradeOut', {
-						duration : 800,
-						display  : 'none'
-					});
-
-			},
-			showLoginProgressBar: function(){
-
-				$('.login__message').velocity('shradeIn', {
-			 		duration: 1600, delay: LJ.login.opening_duration/2
-			 	});
-
-			},
-			addLoginProgression: function(){
-
-				$( LJ.login.renderLoginProgression() ).hide().appendTo( $('.curtain') )
-
-			},
-			showLoginProgression: function(){
-
-				$('.login').velocity('shradeIn', {
-					duration: 1000
-				});
-
-			},
-			showLoginProgressMessage: function(){
-
-				$('.login__message').velocity('shradeIn', {
-					duration: 1000
-				});
-
-			},
-			hideLoginProgressBar: function(){
-
-				$('.login__progress-bar').velocity('shradeIn', {
-			 		duration: 1000
-			 	});
-
-			},
-			enterLoginProcess: function(){
-
-				LJ.login.hideLandingElements();
-				LJ.ui.deactivateHtmlScroll();
-
-				return LJ.delay( 1000 )
-						 .then(function(){
-
-						 	LJ.ui.showCurtain({ duration: 600, theme: "light", sticky: true });
-						 	LJ.login.addLoginProgression();
-						 	LJ.login.showLoginProgression();
-						 	// LJ.login.showLoginProgressMessage();
-						 	// LJ.login.showLoginProgressBar();
-
-						 });
-
-			},
-			hideLoginSteps: function(){
-				return LJ.promise(function( resolve, reject ){
-
-					$('.app').removeClass('nonei');
-					$('.landing').remove();
-
-					$('.login__message, .login__progress-bar, .login__loader').velocity('shradeOut', {
-						duration: 400,
-						complete: resolve
-						
-					});
-
-				});
-			},
-			firstSetup: function(){
-				// the app requires a user's location to boot properly
-				// - to be visible in the search section
-				// - to allow for geo requests to fetch the right befores
-				// - to allow the map to load in the right city
-				var L = LJ.user.location;
-				if( L && L.place_id && L.place_name && L.lat && L.lng ){
-					return;
-				}
-
-				if( LJ.user.access.indexOf('bot') == -1 ){
-					LJ.pictures.uploadFacebookPicture_Intro();
-				}
-				
-	            return LJ.login.break()
-	            		.then(function(){
-	            			return LJ.login.promptUserLocation();
-
-	            		})
-	            		.then(function(){
-	            			return LJ.login.debreak();
-
-	            		});
-
-			},
-			break: function(){
-				return LJ.ui.shradeOut( $('.login'), LJ.login.break_duration );
-
-			},
-			debreak: function(){
-				return LJ.ui.shradeIn( $('.login'), LJ.login.break_duration );
-
-			},
-			stepCompleted: function( fill_ratio ){
-
-				if( typeof fill_ratio != "number" ){
-					fill_ratio = 33.33;
-				}
-
-				LJ.login.completed_steps += 1;
-				LJ.login.fillProgressBar( fill_ratio );
-			},
-			fillProgressBar: function( fill_ratio ){
-
-				var max_width = $('.login__progress-bar').width();
-				var add_width = max_width * fill_ratio/100;
-				var cur_width = (LJ.login.completed_steps) * add_width;
-				var new_width = cur_width + add_width;
-
-				$('.login__progress-bar-bg')
-					.css({ 'width':  new_width });
-
-			},
-			renderLoginProgression: function(){
-
-				return LJ.ui.render([
-
-					'<div class="login">',
-						'<div class="login__loader">',
-							LJ.static.renderStaticImage('slide_loader'),
-						'</div>',
-						'<div class="login__message">',
-							'<h1 data-lid="login_loading_msg"></h1>',
-						'</div>',
-						'<div class="login__progress-bar">',
-							'<div class="login__progress-bar-bg"></div>',
-						'</div>',
-					'</div>'
-
-				].join(''));
-
-			},
-			promptUserLocation: function(){
-				return LJ.promise(function( resolve, reject ){
-
-					LJ.log('Requesting the user to provide a location...');
-
-					$( LJ.login.renderLocationPrompt() )
-						.hide()
-						.appendTo('.curtain')
-						.velocity('shradeIn', {
-							duration: LJ.login.prompt_duration,
-							display: 'flex'
-						});
-
-					LJ.seek.activatePlacesInFirstLogin();
-					LJ.seek.login_places.addListener('place_changed', function(){
-
-						var place = LJ.seek.login_places.getPlace();
-						$('.init-location').attr('data-place-id'   , place.place_id )
-							  			   .attr('data-place-name' , place.formatted_address )
-							  			   .attr('data-place-lat'  , place.geometry.location.lat() )
-							  			   .attr('data-place-lng'  , place.geometry.location.lng() );
-
-						LJ.login.showPlayButton();
-
-					});
-
-					// Resolve the promise when the user picked a location
-					$('.init-location .action__validate').click(function(){
-						var $block = $( this ).closest('.init-location');
-
-						if( $block.hasClass('--validating') ) return
-						$block.addClass('--validating');
-
-						LJ.login.updateProfileFirstLogin()
-							.then(function(){
-
-								$block
-									.removeClass('--validating')
-									.velocity('bounceOut', {
-										duration : LJ.login.prompt_duration,
-										complete : resolve
-									});
-								
-
-							}, function( err ){
-								LJ.wlog('An error occured');
-								LJ.log(err);
-
-							});
-					});
-				});	
-			},
-			updateProfileFirstLogin: function(){
-
-				LJ.log('Updating user location for the first time...');
-
-				var place_id   = $('.init-location').attr('data-place-id');
-				var place_name = $('.init-location').attr('data-place-name');
-				var lat        = $('.init-location').attr('data-place-lat');
-				var lng        = $('.init-location').attr('data-place-lng');
-
-				if( !( place_id && place_name && lat && lng) ){
-					return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
-				}
-
-				var update = {};
-				update.location = {
-					place_name : place_name,
-					place_id   : place_id,
-					lat 	   : lat,
-					lng 	   : lng
-				};
-
-				return LJ.api.updateProfile( update )
-						  .then(function( exposed ){
-							  	LJ.profile.setMyInformations();
-							  	return;
-						});
-
-			},
-			showPlayButton: function(){
-
-				var $elm = $('.init-location').find('.init-location-action');
-
-				if( $elm.css('opacity') != "0" ) return;
-
-				$elm.velocity('bounceInQuick', {
-					duration : LJ.login.prompt_buttons_duration,
-					display  : 'flex',
-					delay    : 500,
-					complete : function(){
-						$( this ).addClass('pound-light');
-					}
-				});
-
-			},
-			// Do a bunch of functions right before the login happens
-			terminateLoginProcess: function(){
-
-				LJ.ui.activateHtmlScroll();
-
-				$('.curtain')
-						.children('.login')
-						.velocity('bounceOut', {
-							duration: LJ.login.prompt_duration
-						});
-
-				$('.curtain')
-					.children('.login__bg')
-					.velocity({ 'opacity': [ 0, 0.09 ]}, {
-						duration: LJ.login.prompt_duration/2,
-						complete: function(){
-							$(this).remove();
-						}
-					});
-
-				return LJ.ui.hideCurtain({
-					delay: LJ.login.prompt_duration * 1.3,
-					duration: 1000
-
-				}).then(function(){
-
-					LJ.before.showBrowser();
-					LJ.before.refreshBrowserDates();
-					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
-					LJ.map.updateMarkers__byDate();
-					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
-					LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
-					
-					return
-				});	
-
-			},
-			renderLocationPrompt: function(){
-
-				return LJ.ui.render([
-
-					'<div class="init-location">',
-						'<div class="init-location__title">',
-							'<h2 data-lid="init_location_title"></h2>',
-						'</div>',
-						'<div class="init-location__subtitle">',
-							'<input id="init-location__input" type="text" data-lid="init_location_subtitle_placeholder">',
-						'</div>',
-						'<div class="init-location__splitter"></div>',
-						'<div class="init-location__explanation">',
-							'<p data-lid="init_location_explanation"></p>',
-						'</div>',
-						'<div class="init-location__geoloc">',
-							'<button data-lid="init_location_geoloc"></button>',
-						'</div>',
-						'<div class="init-location-action">',
-							'<div class="action__validate --round-icon">',
-								'<i class="icon icon-play"></i>',
-							'</div>',
-						'</div>',
-					'</div>'
-
-				].join(''));
-
-			},
-			handleLogout: function(){
-
-				LJ.ui.showModal({
-					"title"	   : LJ.text("logout_title"),
-					"subtitle" : LJ.text("logout_subtitle"),
-					"type"     : "logout",
-					"footer"   : "<button class='--rounded'><i class='icon icon-power'></i></button>"
-				});
-
-			},
-			logUserOut: function(){
-
-				var p1 = LJ.ui.shadeModal();
-				var p2 = LJ.api.updateUser({
-					"app_preferences": {
-						ux: {
-							auto_login: false
-						}
-					}
-				});
-
-				LJ.Promise.all([ p1, p2 ]).then(function(){
-					LJ.store.remove('facebook_access_token');
-					location.reload();
-				});
-
-			}
-
-
-	});
-
 	window.LJ.nav = _.merge( window.LJ.nav || {}, {
 
 		$nav: $('.app-nav'),
@@ -41018,6 +43544,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			if( target_link == 'map' ){
 				$('.app').removeClass('padded');
 
+				LJ.unoffsetAll();
 				// Refresh the map dued to a bug when the window is resized and the map not visible
 				// The try catch is to avoid an ugly error in the console during app intitialization
 				try {
@@ -43650,7 +46177,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 				"type"			: "profile",
 
-				"fetchPromise"	: LJ.api.fetchUserProfile,
+				"fetchPromise"	: LJ.api.fetchUserFull,
 				"promise_arg"   : facebook_id,
 
 				"errHandler"    : LJ.profile_user.handleShowUserProfileError
@@ -43973,18 +46500,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			var channel_item_before = data.channel_item_before;
 			var channel_item_team   = data.channel_item_team;
 
-			// Little toast to show for everyone but the main_host
-			if( before.main_host != LJ.user.facebook_id ){
-
-				var friend_name = LJ.friends.getFriendsProfiles( before.main_host )[0].name;
-				LJ.ui.showToast( LJ.text('to_before_create_success_friends').replace('%name', friend_name ));
-
-			} else {
-
-				LJ.ui.showToast( LJ.text('to_before_create_success') );
-
-			}
-
 			// Update user state and add marker accordingly
 			LJ.user.befores.push( before_item );
 
@@ -43998,6 +46513,21 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 			// Add notification in real time
 			LJ.realtime.addNotification( data );
+
+			// Little toast to show for everyone but the main_host
+			if( before.main_host != LJ.user.facebook_id ){
+
+				var friend_name = LJ.friends.getFriendsProfiles( before.main_host )[0].name;
+				LJ.ui.showToast( LJ.text('to_before_create_success_friends').replace('%name', friend_name ));
+
+			} else {
+
+				LJ.map.refreshMarkers();
+				LJ.ui.showToast( LJ.text('to_before_create_success') );
+
+			}
+
+			LJ.map.refreshMarkers();
 
 		},
 		handleNewRequestGroup: function( data ){
@@ -44065,6 +46595,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 			LJ.before.fetched_befores.push( before );
 			LJ.before.refreshBrowserDates();
+			LJ.map.addBeforeMarker( before );
 			LJ.map.refreshMarkers();
 		
 		},
@@ -44633,7 +47164,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			return LJ.ui.render([
 
 				'<div class="search-user" data-facebook-id="'+ i +'" data-age="' + a + '" data-gender="' + g + '" data-cc="' + c + '">',
-		            '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
 		            '<div class="search-user__pic js-filterlay">',
 		            	img_html,
 		               '<div class="search-user__pic-overlay"></div>',
@@ -44643,6 +47173,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		            	  '<span class="search-user__gender user-gender js-user-gender --'+ g +'"></span>',
 		                  '<span class="name">'+ n +'</span>',
 			              '<span class="search-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
+			              '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
 		               '</div>',
 		               '<div class="search-user__h2">',
 		                  '<span class="age">'+ a +'</span>',
@@ -47785,7 +50316,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 				'<div class="modal ' + modifier + ' ' + disabled + '" ' + attributes + '>',
 					'<header class="modal-header">',
 						'<div class="modal__close">',
-							LJ.ui.renderIcon('cancel'),
+							'<i class="icon icon-cross-fat"></i>',
 						'</div>',
 						'<div class="modal__title">',
 							'<h1>' + options.title + '</h1>',
@@ -48223,7 +50754,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 					subheader,
 					'<section class="slide-body">',
 						'<div class="slide__close --round-icon">',
-							LJ.ui.renderIcon('cancel'),
+							'<i class="icon icon-cross-fat"></i>',
 						'</div>',
 						body_html,
 					'</section>',
@@ -48504,7 +51035,7 @@ window.LJ = _.merge( window.LJ || {}, {
                     '<div class="user-country js-user-country">',
                       '<i class="flag-icon flag-icon-'+ cc +'"></i>',
                     '</div>',
-                    '<span class="user-online user__status js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
+                    '<span class="user-online js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
                   '</div>',
                   '<div class="user-row__education">',
                     '<span class="user-row__education-icon --round-icon">',
@@ -48747,3438 +51278,39 @@ window.LJ = _.merge( window.LJ || {}, {
             }
 
         },
+        unoffsetAll: function(){
+            
+            try {
+                LJ.unoffsetSearchUsers();
+                LJ.unoffsetRows();
+            } catch( e ){
+                
+            }
+            
+        },  
         offsetSearchUsers: function( duration ){
 
-            duration = duration || 400;
+            duration = duration || 330;
             $('.search-user:not(.search-user--offset').addClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 190, 0 ]}, { duration: duration });
 
         },  
         unoffsetSearchUsers: function(){
 
             var current_offset = parseInt( $('.search-user--offset').css('left').split('px')[ 0 ] );
-            $('.search-user').removeClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 400 });
+            $('.search-user').removeClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
 
         },
         offsetRows: function(){
 
-            $('.row-pic, .row-body').addClass('row--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 250, 0 ]}, { duration: 400 });
+            $('.row-pic, .row-body').addClass('row--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 250, 0 ]}, { duration: 330 });
 
         },
         unoffsetRows: function(){
 
             var current_offset = parseInt( $('.row--offset').css('left').split('px')[ 0 ] );
-            $('.row-pic, .row-body').removeClass('row--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 400 });
+            $('.row-pic, .row-body').removeClass('row--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
 
         }
 
 
 });
-
-LJ.text_source = _.merge( LJ.text_source || {}, {
-
-   country_af: {
-      "us": "Afghanistan",
-      "fr": "Afghanistan"
-   },
-   country_ax: {
-      "us": "Åland Islands",
-      "fr": "Åland"
-   },
-   country_al: {
-      "us": "Albania",
-      "fr": "Albanie"
-   },
-   country_dz: {
-      "us": "Algeria",
-      "fr": "Algérie"
-   },
-   country_as: {
-      "us": "American Samoa",
-      "fr": "Samoa Américaines"
-   },
-   country_ad: {
-      "us": "Andorra",
-      "fr": "Andorre"
-   },
-   country_ao: {
-      "us": "Angola",
-      "fr": "Angola"
-   },
-   country_ai: {
-      "us": "Anguilla",
-      "fr": "Anguilla"
-   },
-   country_aq: {
-      "us": "Antarctica",
-      "fr": "Antarctique"
-   },
-   country_ag: {
-      "us": "Antigua and Barbuda",
-      "fr": "Antigua-et-Barbuda"
-   },
-   country_ar: {
-      "us": "Argentina",
-      "fr": "Argentine"
-   },
-   country_am: {
-      "us": "Armenia",
-      "fr": "Arménie"
-   },
-   country_aw: {
-      "us": "Aruba",
-      "fr": "Aruba"
-   },
-   country_au: {
-      "us": "Australia",
-      "fr": "Australie"
-   },
-   country_at: {
-      "us": "Austria",
-      "fr": "Autriche"
-   },
-   country_az: {
-      "us": "Azerbaijan",
-      "fr": "Azerbaïdjan"
-   },
-   country_bs: {
-      "us": "Bahamas",
-      "fr": "Bahamas"
-   },
-   country_bh: {
-      "us": "Bahrain",
-      "fr": "Bahreïn"
-   },
-   country_bd: {
-      "us": "Bangladesh",
-      "fr": "Bangladesh"
-   },
-   country_bb: {
-      "us": "Barbados",
-      "fr": "Barbade"
-   },
-   country_by: {
-      "us": "Belarus",
-      "fr": "Biélorussie"
-   },
-   country_be: {
-      "us": "Belgium",
-      "fr": "Belgique"
-   },
-   country_bz: {
-      "us": "Belize",
-      "fr": "Bélize"
-   },
-   country_bj: {
-      "us": "Benin",
-      "fr": "Bénin"
-   },
-   country_bm: {
-      "us": "Bermuda",
-      "fr": "Bermudes"
-   },
-   country_bt: {
-      "us": "Bhutan",
-      "fr": "Bhoutan"
-   },
-   country_bo: {
-      "us": "Bolivia",
-      "fr": "Bolivie"
-   },
-   country_ba: {
-      "us": "Bosnia and Herzegovina",
-      "fr": "Bosnie-Herzégovine"
-   },
-   country_bw: {
-      "us": "Botswana",
-      "fr": "Botswana"
-   },
-   country_bv: {
-      "us": "Bouvet Island",
-      "fr": "Île Bouvet"
-   },
-   country_br: {
-      "us": "Brazil",
-      "fr": "Brésil"
-   },
-   country_io: {
-      "us": "British Indian Ocean Territory",
-      "fr": "Territoire britannique de l'océan Indien"
-   },
-   country_bn: {
-      "us": "Brunei Darussalam",
-      "fr": "Brunei"
-   },
-   country_bg: {
-      "us": "Bulgaria",
-      "fr": "Bulgarie"
-   },
-   country_bf: {
-      "us": "Burkina Faso",
-      "fr": "Burkina Faso"
-   },
-   country_bi: {
-      "us": "Burundi",
-      "fr": "Burundi"
-   },
-   country_kh: {
-      "us": "Cambodia",
-      "fr": "Cambodge"
-   },
-   country_cm: {
-      "us": "Cameroon",
-      "fr": "Cameroun"
-   },
-   country_ca: {
-      "us": "Canada",
-      "fr": "Canada"
-   },
-   country_cv: {
-      "us": "Cape Verde",
-      "fr": "Cap-Vert"
-   },
-   country_ky: {
-      "us": "Cayman Islands",
-      "fr": "Îles Caïmans"
-   },
-   country_cf: {
-      "us": "Central African Republic",
-      "fr": ""
-   },
-   country_td: {
-      "us": "Chad",
-      "fr": "Tchad"
-   },
-   country_cl: {
-      "us": "Chile",
-      "fr": "Chili"
-   },
-   country_cn: {
-      "us": "China",
-      "fr": "Chine"
-   },
-   country_cx: {
-      "us": "Christmas Island",
-      "fr": "Île Christmas"
-   },
-   country_cc: {
-      "us": "Cocos (Keeling) Islands",
-      "fr": "Îles Cocos"
-   },
-   country_co: {
-      "us": "Colombia",
-      "fr": "Colombie"
-   },
-   country_km: {
-      "us": "Comoros",
-      "fr": "Comores"
-   },
-   country_cg: {
-      "us": "Congo",
-      "fr": "Congo"
-   },
-   country_cd: {
-      "us": "Congo, The Democratic Republic of the",
-      "fr": "Congo, République Démocratique du"
-   },
-   country_ck: {
-      "us": "Cook Islands",
-      "fr": "Îles Cook"
-   },
-   country_cr: {
-      "us": "Costa Rica",
-      "fr": "Costa Rica"
-   },
-   country_ci: {
-      "us": "Ivory Coast",
-      "fr": "Côte d’Ivoire"
-   },
-   country_hr: {
-      "us": "Croatia",
-      "fr": "Croatie"
-   },
-   country_cu: {
-      "us": "Cuba",
-      "fr": "Cuba"
-   },
-   country_cy: {
-      "us": "Cyprus",
-      "fr": "Chypre"
-   },
-   country_cz: {
-      "us": "Czech Republic",
-      "fr": "République tchèque"
-   },
-   country_dk: {
-      "us": "Denmark",
-      "fr": "Danemark"
-   },
-   country_dj: {
-      "us": "Djibouti",
-      "fr": "Djibouti"
-   },
-   country_dm: {
-      "us": "Dominica",
-      "fr": "Dominique"
-   },
-   country_do: {
-      "us": "Dominican Republic",
-      "fr": "République dominicaine"
-   },
-   country_ec: {
-      "us": "Ecuador",
-      "fr": "Équateur"
-   },
-   country_eg: {
-      "us": "Egypt",
-      "fr": "Égypte"
-   },
-   country_sv: {
-      "us": "El Salvador",
-      "fr": "Salvador"
-   },
-   country_gq: {
-      "us": "Equatorial Guinea",
-      "fr": "Guinée équatoriale"
-   },
-   country_er: {
-      "us": "Eritrea",
-      "fr": "Érythrée"
-   },
-   country_ee: {
-      "us": "Estonia",
-      "fr": "Estonie"
-   },
-   country_et: {
-      "us": "Ethiopia",
-      "fr": "Ethiopie"
-   },
-   country_fk: {
-      "us": "Falkland Islands (Malvinas)",
-      "fr": "Îles Malouines"
-   },
-   country_fo: {
-      "us": "Faroe Islands",
-      "fr": "Îles Féroé"
-   },
-   country_fj: {
-      "us": "Fiji",
-      "fr": "Fidji"
-   },
-   country_fi: {
-      "us": "Finland",
-      "fr": "Finlande"
-   },
-   country_fr: {
-      "us": "France",
-      "fr": "France"
-   },
-   country_gf: {
-      "us": "French Guiana",
-      "fr": "Guinée française"
-   },
-   country_pf: {
-      "us": "French Polynesia",
-      "fr": "Polynésie française"
-   },
-   country_tf: {
-      "us": "French Southern Territories",
-      "fr": ""
-   },
-   country_ga: {
-      "us": "Gabon",
-      "fr": "Gabon"
-   },
-   country_gm: {
-      "us": "Gambia",
-      "fr": "Gambie"
-   },
-   country_ge: {
-      "us": "Georgia",
-      "fr": "Géorgie"
-   },
-   country_de: {
-      "us": "Germany",
-      "fr": "Allemagne"
-   },
-   country_gh: {
-      "us": "Ghana",
-      "fr": "Ghana"
-   },
-   country_gi: {
-      "us": "Gibraltar",
-      "fr": "Gibraltar"
-   },
-   country_gr: {
-      "us": "Greece",
-      "fr": "Grèce"
-   },
-   country_gl: {
-      "us": "Greenland",
-      "fr": "Greenland"
-   },
-   country_gd: {
-      "us": "Grenada",
-      "fr": "Grenade"
-   },
-   country_gp: {
-      "us": "Guadeloupe",
-      "fr": "Guadeloupe"
-   },
-   country_gu: {
-      "us": "Guam",
-      "fr": "Guam"
-   },
-   country_gt: {
-      "us": "Guatemala",
-      "fr": "Guatemala"
-   },
-   country_gg: {
-      "us": "Guernsey",
-      "fr": "Guernesey"
-   },
-   country_gn: {
-      "us": "Guinea",
-      "fr": "Guinée"
-   },
-   country_gw: {
-      "us": "Guinea-Bissau",
-      "fr": "Guinée-Bissau"
-   },
-   country_gy: {
-      "us": "Guyana",
-      "fr": "Guyane"
-   },
-   country_ht: {
-      "us": "Haiti",
-      "fr": "Haïti"
-   },
-   country_hm: {
-      "us": "Heard Island and Mcdonald Islands",
-      "fr": "Îles Heard-et-MacDonald"
-   },
-   country_va: {
-      "us": "Holy See (Vatican City State)",
-      "fr": "Vatican"
-   },
-   country_hn: {
-      "us": "Honduras",
-      "fr": "Honduras"
-   },
-   country_hk: {
-      "us": "Hong Kong",
-      "fr": "Hong Kong"
-   },
-   country_hu: {
-      "us": "Hungary",
-      "fr": "Hongrie"
-   },
-   country_is: {
-      "us": "Iceland",
-      "fr": "Islande"
-   },
-   country_in: {
-      "us": "India",
-      "fr": "Inde"
-   },
-   country_id: {
-      "us": "Indonesia",
-      "fr": "Indonésie"
-   },
-   country_ir: {
-      "us": "Iran",
-      "fr": "Iran’"
-   },
-   country_iq: {
-      "us": "Iraq",
-      "fr": "Irak"
-   },
-   country_ie: {
-      "us": "Ireland",
-      "fr": "Irlande"
-   },
-   country_im: {
-      "us": "Isle of Man",
-      "fr": "Île de Man"
-   },
-   country_il: {
-      "us": "Israel",
-      "fr": "Israël"
-   },
-   country_it: {
-      "us": "Italy",
-      "fr": "Italie"
-   },
-   country_jm: {
-      "us": "Jamaica",
-      "fr": "Jamaïque"
-   },
-   country_jp: {
-      "us": "Japan",
-      "fr": "Japon"
-   },
-   country_je: {
-      "us": "Jersey",
-      "fr": "Jersey"
-   },
-   country_jo: {
-      "us": "Jordan",
-      "fr": "Jordanie"
-   },
-   country_kz: {
-      "us": "Kazakhstan",
-      "fr": "Kazakhstan"
-   },
-   country_ke: {
-      "us": "Kenya",
-      "fr": "Kenya"
-   },
-   country_ki: {
-      "us": "Kiribati",
-      "fr": "Kiribati"
-   },
-   country_kp: {
-      "us": "Korea, Democratic People's Republic of",
-      "fr": "Corée du Nord"
-   },
-   country_kr: {
-      "us": "Korea, Republic of",
-      "fr": "Corée du Sud"
-   },
-   country_kw: {
-      "us": "Kuwait",
-      "fr": "Koweït"
-   },
-   country_kg: {
-      "us": "Kyrgyzstan",
-      "fr": "Kirghizistan"
-   },
-   country_la: {
-      "us": "Laos",
-      "fr": "Laos"
-   },
-   country_lv: {
-      "us": "Latvia",
-      "fr": "Lettonie"
-   },
-   country_lb: {
-      "us": "Lebanon",
-      "fr": "Liban"
-   },
-   country_ls: {
-      "us": "Lesotho",
-      "fr": "Lesotho"
-   },
-   country_lr: {
-      "us": "Liberia",
-      "fr": "Liberia"
-   },
-   country_ly: {
-      "us": "Libya",
-      "fr": "Libye"
-   },
-   country_li: {
-      "us": "Liechtenstein",
-      "fr": "Liechtenstein"
-   },
-   country_lt: {
-      "us": "Lithuania",
-      "fr": ""
-   },
-   country_lu: {
-      "us": "Luxembourg",
-      "fr": "Lituanie"
-   },
-   country_mo: {
-      "us": "Macao",
-      "fr": "Macao"
-   },
-   country_mk: {
-      "us": "Macedonia",
-      "fr": "Macédoine"
-   },
-   country_mg: {
-      "us": "Madagascar",
-      "fr": "Madagascar"
-   },
-   country_mw: {
-      "us": "Malawi",
-      "fr": "Malawi"
-   },
-   country_my: {
-      "us": "Malaysia",
-      "fr": "Malaisie"
-   },
-   country_mv: {
-      "us": "Maldives",
-      "fr": "Maldives"
-   },
-   country_ml: {
-      "us": "Mali",
-      "fr": "Mali"
-   },
-   country_mt: {
-      "us": "Malta",
-      "fr": "Malte"
-   },
-   country_mh: {
-      "us": "Marshall Islands",
-      "fr": "Îles Marshall"
-   },
-   country_mq: {
-      "us": "Martinique",
-      "fr": "Martinique"
-   },
-   country_mr: {
-      "us": "Mauritania",
-      "fr": "Mauritanie"
-   },
-   country_mu: {
-      "us": "Mauritius",
-      "fr": "Maurice"
-   },
-   country_yt: {
-      "us": "Mayotte",
-      "fr": "Mayotte"
-   },
-   country_mx: {
-      "us": "Mexico",
-      "fr": "Mexique"
-   },
-   country_fm: {
-      "us": "Micronesia",
-      "fr": "Micronésie"
-   },
-   country_md: {
-      "us": "Moldova",
-      "fr": "Moldavie"
-   },
-   country_mc: {
-      "us": "Monaco",
-      "fr": "Monaco"
-   },
-   country_mn: {
-      "us": "Mongolia",
-      "fr": "Mongolie"
-   },
-   country_ms: {
-      "us": "Montserrat",
-      "fr": "Montserrat"
-   },
-   country_ma: {
-      "us": "Morocco",
-      "fr": "Maroc"
-   },
-   country_mz: {
-      "us": "Mozambique",
-      "fr": "Mozambique"
-   },
-   country_mm: {
-      "us": "Myanmar",
-      "fr": "Myanmar"
-   },
-   country_na: {
-      "us": "Namibia",
-      "fr": "Namibie"
-   },
-   country_nr: {
-      "us": "Nauru",
-      "fr": "Nauru"
-   },
-   country_np: {
-      "us": "Nepal",
-      "fr": "Népal"
-   },
-   country_nl: {
-      "us": "Netherlands",
-      "fr": "Pays-Bas"
-   },
-   country_an: {
-      "us": "Netherlands Antilles",
-      "fr": "Antilles néerlandaises"
-   },
-   country_nc: {
-      "us": "New Caledonia",
-      "fr": "Nouvelle-Calédonie"
-   },
-   country_nz: {
-      "us": "New Zealand",
-      "fr": "Nouvelle-Zélande"
-   },
-   country_ni: {
-      "us": "Nicaragua",
-      "fr": "Nicaragua"
-   },
-   country_ne: {
-      "us": "Niger",
-      "fr": "Niger"
-   },
-   country_ng: {
-      "us": "Nigeria",
-      "fr": "Nigéria"
-   },
-   country_nu: {
-      "us": "Niue",
-      "fr": "Niue"
-   },
-   country_nf: {
-      "us": "Norfolk Island",
-      "fr": "Île Norfolk"
-   },
-   country_mp: {
-      "us": "Northern Mariana Islands",
-      "fr": "Îles Mariannes du Nord"
-   },
-   country_no: {
-      "us": "Norway",
-      "fr": "Norvège"
-   },
-   country_om: {
-      "us": "Oman",
-      "fr": "Oman"
-   },
-   country_pk: {
-      "us": "Pakistan",
-      "fr": "Pakistan"
-   },
-   country_pw: {
-      "us": "Palau",
-      "fr": "Palau"
-   },
-   country_ps: {
-      "us": "Palestine",
-      "fr": "Palestine"
-   },
-   country_pa: {
-      "us": "Panama",
-      "fr": "Panama"
-   },
-   country_pg: {
-      "us": "Papua New Guinea",
-      "fr": "Papouasie-Nouvelle-Guinée"
-   },
-   country_py: {
-      "us": "Paraguay",
-      "fr": "Paraguay"
-   },
-   country_pe: {
-      "us": "Peru",
-      "fr": "Pérou"
-   },
-   country_ph: {
-      "us": "Philippines",
-      "fr": "Philippines"
-   },
-   country_pn: {
-      "us": "Pitcairn",
-      "fr": "Île Pitcairn"
-   },
-   country_pl: {
-      "us": "Poland",
-      "fr": "Pologne"
-   },
-   country_pt: {
-      "us": "Portugal",
-      "fr": "Portugal"
-   },
-   country_pr: {
-      "us": "Puerto Rico",
-      "fr": "Puerto Rico"
-   },
-   country_qa: {
-      "us": "Qatar",
-      "fr": "Qatar"
-   },
-   country_re: {
-      "us": "Reunion",
-      "fr": "La Réunion"
-   },
-   country_ro: {
-      "us": "Romania",
-      "fr": "Roumanie"
-   },
-   country_ru: {
-      "us": "Russia",
-      "fr": "Russie"
-   },
-   country_rw: {
-      "us": "Rwanda",
-      "fr": "Rwanda"
-   },
-   country_sh: {
-      "us": "Saint Helena",
-      "fr": "Sainte-Hélène"
-   },
-   country_kn: {
-      "us": "Saint Kitts and Nevis",
-      "fr": "Saint-Christophe-et-Niévès"
-   },
-   country_lc: {
-      "us": "Saint Lucia",
-      "fr": "Sainte-Lucie"
-   },
-   country_pm: {
-      "us": "Saint Pierre and Miquelon",
-      "fr": "Saint-Pierre-et-Miquelon"
-   },
-   country_vc: {
-      "us": "Saint Vincent and the Grenadines",
-      "fr": "Saint-Vincent-et-les-Grenadines"
-   },
-   country_ws: {
-      "us": "Samoa",
-      "fr": "Samoa"
-   },
-   country_sm: {
-      "us": "San Marino",
-      "fr": "Saint-Marin"
-   },
-   country_st: {
-      "us": "Sao Tome and Principe",
-      "fr": "Sao Tomé-et-Principe"
-   },
-   country_sa: {
-      "us": "Saudi Arabia",
-      "fr": "Arabie saoudite"
-   },
-   country_sn: {
-      "us": "Senegal",
-      "fr": "Sénégal"
-   },
-   country_cs: {
-      "us": "Serbia and Montenegro",
-      "fr": "Serbie-et-Monténégro"
-   },
-   country_sc: {
-      "us": "Seychelles",
-      "fr": "Seychelles"
-   },
-   country_sl: {
-      "us": "Sierra Leone",
-      "fr": "Sierra Leone"
-   },
-   country_sg: {
-      "us": "Singapore",
-      "fr": "Singapour"
-   },
-   country_sk: {
-      "us": "Slovakia",
-      "fr": "Slovaquie"
-   },
-   country_si: {
-      "us": "Slovenia",
-      "fr": "Slovénie"
-   },
-   country_sb: {
-      "us": "Solomon Islands",
-      "fr": "Îles Salomon"
-   },
-   country_so: {
-      "us": "Somalia",
-      "fr": "Somalie"
-   },
-   country_za: {
-      "us": "South Africa",
-      "fr": "Afrique du Sud"
-   },
-   country_gs: {
-      "us": "South Georgia and the South Sandwich Islands",
-      "fr": "Géorgie du Sud-et-les Îles Sandwich du Sud"
-   },
-   country_es: {
-      "us": "Spain",
-      "fr": "Espagne"
-   },
-   country_lk: {
-      "us": "Sri Lanka",
-      "fr": "Sri Lanka"
-   },
-   country_sd: {
-      "us": "Sudan",
-      "fr": "Soudan"
-   },
-   country_sr: {
-      "us": "Suriname",
-      "fr": "Suriname"
-   },
-   country_sj: {
-      "us": "Svalbard and Jan Mayen",
-      "fr": "Île Jan Mayen"
-   },
-   country_sz: {
-      "us": "Swaziland",
-      "fr": "Swaziland"
-   },
-   country_se: {
-      "us": "Sweden",
-      "fr": "Suède"
-   },
-   country_ch: {
-      "us": "Switzerland",
-      "fr": "Suisse"
-   },
-   country_sy: {
-      "us": "Syria",
-      "fr": "Syrie"
-   },
-   country_tw: {
-      "us": "Taiwan",
-      "fr": "Taïwan"
-   },
-   country_tj: {
-      "us": "Tajikistan",
-      "fr": "Tajikistan"
-   },
-   country_tz: {
-      "us": "Tanzania",
-      "fr": "Tanzanie"
-   },
-   country_th: {
-      "us": "Thailand",
-      "fr": "Thaïlande"
-   },
-   country_tl: {
-      "us": "Timor-Leste",
-      "fr": "Timor oriental"
-   },
-   country_tg: {
-      "us": "Togo",
-      "fr": "Togo"
-   },
-   country_tk: {
-      "us": "Tokelau",
-      "fr": "Tokelau"
-   },
-   country_to: {
-      "us": "Tonga",
-      "fr": "Tonga"
-   },
-   country_tt: {
-      "us": "Trinidad and Tobago",
-      "fr": "Trinité-et-Tobago"
-   },
-   country_tn: {
-      "us": "Tunisia",
-      "fr": "Tunisie"
-   },
-   country_tr: {
-      "us": "Turkey",
-      "fr": "Turquie"
-   },
-   country_tm: {
-      "us": "Turkmenistan",
-      "fr": "Turkménistan"
-   },
-   country_tc: {
-      "us": "Turks and Caicos Islands",
-      "fr": "îles Turques-et-Caïques"
-   },
-   country_tv: {
-      "us": "Tuvalu",
-      "fr": "Tuvalu"
-   },
-   country_ug: {
-      "us": "Uganda",
-      "fr": "Ouganda"
-   },
-   country_ua: {
-      "us": "Ukraine",
-      "fr": "Ukraine"
-   },
-   country_ae: {
-      "us": "United Arab Emirates",
-      "fr": "Émirats arabes unis"
-   },
-   country_gb: {
-      "us": "United Kingdom",
-      "fr": "Royaume-Uni"
-   },
-   country_us: {
-      "us": "United States",
-      "fr": "États-Unis"
-   },
-   country_um: {
-      "us": "United States Minor Outlying Islands",
-      "fr": "Îles mineures éloignées des États-Unis"
-   },
-   country_uy: {
-      "us": "Uruguay",
-      "fr": "Uruguay"
-   },
-   country_uz: {
-      "us": "Uzbekistan",
-      "fr": "Ouzbékistan"
-   },
-   country_vu: {
-      "us": "Vanuatu",
-      "fr": "Vanuatu"
-   },
-   country_ve: {
-      "us": "Venezuela",
-      "fr": "Venezuela"
-   },
-   country_vn: {
-      "us": "Viet Nam",
-      "fr": "Viêt Nam"
-   },
-   country_vg: {
-      "us": "Virgin Islands, British",
-      "fr": "Îles Vierges britanniques"
-   },
-   country_vi: {
-      "us": "Virgin Islands, U.S.",
-      "fr": "Îles Vierges américaines"
-   },
-   country_wf: {
-      "us": "Wallis and Futuna",
-      "fr": "Wallis et Futuna"
-   },
-   country_eh: {
-      "us": "Western Sahara",
-      "fr": "Sahara occidental"
-   },
-   country_ye: {
-      "us": "Yemen",
-      "fr": "Yémen"
-   },
-   country_zm: {
-      "us": "Zambia",
-      "fr": "Zambie"
-   },
-   country_zw: {
-      "us": "Zimbabwe",
-      "fr": " Zimbabwé"
-   }
-});
-
-
-
-
-	window.LJ.lang = _.merge( window.LJ.lang || {}, {
-
-		'supported_languages': ['fr','us'],
-
-		init: function(){
-
-			LJ.Promise.resolve()
-				   .then( LJ.lang.findAppLang )
-				   .then( LJ.lang.setAppLang )
-				   .then( LJ.lang.translateApp )
-				   .then( LJ.lang.handleDomEvents )
-
-		},
-		handleDomEvents: function(){
-
-			$('body').on('click', '.js-changelang', LJ.lang.changeAppLang );
-
-		},
-		sayCheers: function(){
-
-			return "Cheers";
-
-			// Legacy
-			return _.shuffle([
-
-				'Santé',
-				'Saluti',
-				'Cheers',
-				'Skål',
-				'Na zdrowie',
-				'Noroc',
-				'Salud',
-				'Chok dee',
-				'Kanpai',
-				'Prost',
-				'Kippis'
-
-			])[0] + ' !';
-
-		},
-		getAppLang: function(){
-
-			return LJ.lang.app_language;
-
-		},
-		setAppLang: function( app_language ){
-			return LJ.promise(function( resolve, reject ){
-
-				if( !LJ.lang.isLangSupported( app_language ) ){
-					return console.error('This language (' + app_language + ') is not currently supported');
-				}
-					
-
-				// Internal state variable
-				LJ.lang.app_language = app_language;
-
-				// Dom update
-				$('.app-lang').find('i').removeClass('--active');
-				$('.app-lang').find('[data-cc="' + app_language + '"]').addClass('--active');
-
-				// Local storage update
-				LJ.store.set('app_language', app_language )
-				
-
-				return resolve();
-			});
-
-		},
-		findAppLang: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				var app_language;
-
-				if( LJ.store.get("app_language") ){
-					app_language = LJ.store.get('app_language');
-				} else {
-					app_language = "us";
-				}
-
-				return resolve( app_language );		
-
-			});
-
-		},
-		isLangSupported: function( app_language ){
-
-			return LJ.lang.supported_languages.indexOf( app_language ) == -1 ? false : true;
-
-		},
-		translateApp: function(){
-
-			LJ.lang.translate('body');
-
-		},	
-		translate: function( container, options ){
-
-			options = options || {};
-			
-			app_language = options.app_language || LJ.lang.getAppLang();
-
-			if( ! LJ.lang.isLangSupported( app_language ) ){
-				return LJ.elog('This language (' + app_language + ') is not currently supported');
-			}
-			
-			var $container = container instanceof jQuery ? container : $(container);
-
-			$container.find('[data-lid]').each(function( i, el ){
-				
-				var $el  = $(el);
-				var type = $el.prop('nodeName').toLowerCase();
-				var lid  = $el.attr('data-lid');
-				var lpm  = $el.attr('data-lpm') && $el.attr('data-lpm');
-				var lpmt = $el.attr('data-lpmt') && $el.attr('data-lpmt');
-
-				var text_object = LJ.text_source[ lid ];
-				if( !text_object ){
-					return LJ.elog('Cannot find the lang object for lid : ' + lid );
-				}
-
-				var translated_text = LJ.text_source[ lid ][ app_language ];
-
-				if( typeof translated_text == "function" ){
-					if( lpmt == "array" ){
-						lpm = lpm.split(',');
-					}
-					translated_text = translated_text( lpm );
-
-				}
-
-				if( /placeholder/i.test( lid ) ){
-					$el.attr('placeholder', translated_text );
-					
-					if( $('#searchbar').find('input').length > 1 ){
-						$('#searchbar').find('input').first().attr('placeholder', null);
-					}
-					return;
-				}
-
-				$el.html( translated_text );
-
-			});
-
-		},
-		changeAppLang: function(){
-
-			LJ.ui.showModalAndFetch({
-
-			"type"			: "changelang",
-			"title"			: LJ.text("mod_change_lang_title"),
-			"subtitle"		: LJ.text("mod_change_lang_subtitle"),
-			"no_footer"     : true,
-
-			"fetchPromise"	: LJ.lang.fetchSupportedLanguages
-
-		})
-		.then( LJ.lang.displayChangeLangInModal )
-
-		},
-		fetchSupportedLanguages: function(){
-
-			return LJ.delay( 300 ).then(function(){
-				return ["fr","us"];
-			});
-
-		},
-		displayChangeLangInModal: function( result ){
-
-			var html = LJ.lang.renderChangeAppLang( result );
-
-			$( html ).hide().appendTo( $('.modal-body') );
-
-			$('.modal-body')
-				.find('.modal__loader')
-				.velocity('bounceOut', { duration: 500, delay: 100,
-					complete: function(){
-
-						$('.change-lang')
-						   .velocity('shradeIn', {
-						   		display: 'flex',
-						   		duration: 500
-						   })
-						   .find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('--active');
-
-						$('.change-lang__choice:not(.--unavailable)').click(function(){
-
-							var new_language = $( this ).attr('data-cc');
-
-							LJ.lang.setAppLang( new_language );
-							LJ.lang.translateApp();
-
-							$('.modal__close').click();
-
-							LJ.delay( 500 ).then(function(){
-								LJ.ui.showToast( LJ.text('t_language_changed') );
-							});
-
-						});	
-
-
-					}
-				});
-
-
-		},
-		changeAppLang2: function(){
-
-			var duration = 550;
-			LJ.ui.showModal({
-				duration: duration,
-
-
-			})
-			.then(function( $curtain ){
-				return LJ.promise(function( resolve, reject ){
-
-					$curtain
-						.html( LJ.lang.renderChangeAppLang() )
-						.find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('--active');
-
-					$curtain
-						.children()
-						.velocity('fadeIn', {
-							duration: duration,
-							display: 'flex',
-							complete: resolve
-						});
-				});
-			})
-			.then(function(){
-				return LJ.promise(function( resolve, reject ){
-
-					$('.change-lang__choice:not(.--unavailable)').click(function(){
-
-						var new_language = $(this).attr('data-cc');
-						if( ! LJ.lang.isLangSupported( new_language ) ){
-							return reject('This language (' + new_language + ') is not currently supported');
-						}
-						resolve( new_language );
-
-					});	
-				});
-			})
-			.then(function( app_language ){
-
-				$('.change-lang').velocity('bounceOut', {
-					duration: duration
-				});
-
-				LJ.delay( duration/1.5 ).then(function(){
-
-					LJ.lang.setAppLang( app_language );
-					LJ.lang.translateApp();
-					LJ.ui.showToast( LJ.text('t_language_changed') );
-
-				});
-				
-				LJ.ui.hideCurtain({
-					duration: duration, delay: duration/2,
-				}).then(function(){
-				});
-
-
-			}, function( err ){
-
-				LJ.wlog( err );
-				LJ.ui.hideCurtain({ duration: duration });
-
-			});
-
-		},
-		renderChangeAppLang: function( languages ){
-
-			var choices = [];
-			languages.forEach(function( cc ){
-				choices.push([
-
-						'<div class="change-lang__choice" data-cc="'+ cc +'">',
-							'<i class="flag-icon flag-icon-'+ cc +'"></i>',
-						'</div>'
-
-					].join(''));
-			});
-
-			return LJ.ui.render([
-
-				'<div class="change-lang">',
-					'<div class="change-lang-available">',
-						choices.join(''),
-						'<div class="change-lang__choice --unavailable" data-cc="es">',
-							'<i class="flag-icon flag-icon-es"></i>',
-							'<div class="soon" data-lid="lang_soon">Prochaînement</div>',
-						'</div>',
-						'<div class="modal__close nonei"></div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		}
-
-	});
-
-
-	
-	LJ.text = function( text_id, param ){
-		var app_lang = LJ.lang.getAppLang();
-		var text_src = LJ.text_source[ text_id ];
-
-		if( !text_src ){
-			return LJ.wlog('Error, couldnt find text source for text_id : ' + text_id );
-		} else {
-			if( typeof text_src[ app_lang ] == "function" ){
-				return text_src[ app_lang ]( param );
-			} else {
-				return text_src[ app_lang ];
-			}
-		}
-	};
-
-	LJ.textAdd = function( new_text_source ){
-
-		LJ.text_source = _.merge( LJ.text_source || {}, new_text_source );
-	}
-
-	LJ.text_source = _.merge( LJ.text_source || {}, {
-
-		page_title: {
-			"fr": "Des rencontres avant d'aller en soirée",
-			"us": "Meet new people before going out"
-		},
-		pikaday: {
-			"us": {
-                previousMonth : 'Previous Month',
-                nextMonth     : 'Next Month',
-                months        : ['January','February','March','April','May','June','July','August','September','October','November','December'],
-                weekdays      : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
-                weekdaysShort : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-            },
-            "fr": {
-            	previousMonth : 'Mois Précédant',
-                nextMonth     : 'Mois Suivant',
-                months        : ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
-                weekdays      : ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'],
-                weekdaysShort : ['Dim','Lun','Ma','Me','Jeu','Ven','Sam']
-            }
-		},
-		day: {
-			"fr": [ "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi" ],
-			"us": [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ]
-		},
-		month: {
-			"fr": ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
-			"us": ['January','February','March','April','May','June','July','August','September','October','November','December']
-		},
-		h_sec_ago: {
-			"fr": "à l'instant !",
-			"us": "just now !"
-		},
-		h_min_ago: {
-			"fr": "il y a quelques minutes",
-			"us": "a few minuts ago"
-		},
-		h_hour_ago: {
-			"fr": "il y a moins d'une heure",
-			"us": "less than an hour ago"
-		},
-		today: {
-			"fr": "Aujourd'hui",
-			"us": "Today"
-		},
-		tomorrow: {
-			"fr": "Demain",
-			"us": "Tomorrow"
-		},
-		yesterday: {
-			"fr": "Hier",
-			"us": "Yesterday"
-		},
-		before_date_hour: {
-			"fr": function( m ){
-				return [ m.format('HH'), m.format('mm') ].join(':');
-			},
-			"us": function( m ){
-				return [ m.format('HH'), m.format('mm') ].join(':');
-			}
-		},
-		chatrow_date_hour: {
-			"fr": function( m ){
-				return [ m.format('HH'), m.format('mm') ].join(':');
-			},
-			"us": function( m ){
-				return [ m.format('HH'), m.format('mm') ].join(':');
-			}
-		},
-		chatinview_date_hour: {
-			"fr": function( m ){
-				return [ m.format('HH'), m.format('mm') ].join(':');
-			},
-			"us": function( m ){
-				return [ m.format('HH'), m.format('mm') ].join(':');
-			}
-		},
-		before_date_day: {
-			"fr": function( m ){
-
-				if( m.dayOfYear() == moment().dayOfYear() ){
-					return LJ.text_source['today']["fr"];
-				}
-
-				if( m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
-					return LJ.text_source['tomorrow']["fr"];
-				}
-
-				var d = LJ.text_source['day']['fr'][ m.day() ];
-				var n = m.format('DD').replace(/^0/,'');
-				var m = LJ.text_source['month']['fr'][ m.month() ].toLowerCase();
-
-				return [ d, n, m ].join(' ');
-			},
-			"us": function( m ){
-
-				if( m.dayOfYear() == moment().dayOfYear() ){
-					return LJ.text_source['today']["us"];
-				}
-
-				if(  m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
-					return LJ.text_source['tomorrow']["us"];
-				}
-
-				var d = LJ.text_source['day']['us'][ m.day() ];
-				var n = m.format('DD').replace(/^0/,'');
-				var m = LJ.text_source['month']['us'][ m.month() ];
-
-				m = m[0].toUpperCase() + m.slice(1); // english style
-
-				return [ d, n, m ].join(' ');
-			}
-		},
-		chatrow_date_day: {
-			"fr": function( m ){
-
-				if( m.dayOfYear() == moment().dayOfYear() ){
-					return '';
-				}
-
-				if(  m.dayOfYear() == moment().dayOfYear() - 1 || ( moment().dayOfYear() - 1 == 365 ) ){
-					return LJ.text_source['yesterday']["fr"].toLowerCase() + ', ';
-				}
-
-				var n = m.format('DD').replace(/^0/,'');
-				var m = LJ.text_source['month']['fr'][ m.month() ].toLowerCase();
-
-				return [ n, m ].join(' ') + ', ';
-			},
-			"us": function( m ){
-
-				if( m.dayOfYear() == moment().dayOfYear() ){
-					return '';
-				}
-
-				if(  m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
-					return LJ.text_source['yesterday']["us"].toLowerCase() + ', ';
-				}
-
-				var n = m.format('DD').replace(/^0/,'');
-				var m = LJ.text_source['month']['us'][ m.month() ];
-
-				m = m[0].toUpperCase() + m.slice(1); // english style
-
-				return [ n, m ].join(' ') + ', ';
-			}
-		},
-		chatinview_date_day: {
-			"fr": function( m ){
-
-				if( m.dayOfYear() == moment().dayOfYear() ){
-					return LJ.text_source['today']["fr"];
-				}
-
-				if( m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
-					return LJ.text_source['tomorrow']["fr"];
-				}
-
-				var d = LJ.text_source['day']['fr'][ m.day() ];
-				var n = m.format('DD').replace(/^0/,'');
-				var m = m.format('MM');
-
-				return [ d, [ n, m ].join('/') ].join(' ');
-			},
-			"us": function( m ){
-
-				if( m.dayOfYear() == moment().dayOfYear() ){
-					return LJ.text_source['today']["us"];
-				}
-
-				if(  m.dayOfYear() == moment().dayOfYear() + 1 || ( moment().dayOfYear() + 1 == 1 ) ){
-					return LJ.text_source['tomorrow']["us"];
-				}
-
-				var d = LJ.text_source['day']['fr'][ m.day() ];
-				var n = m.format('DD').replace(/^0/,'');
-				var m = m.format('MM');
-
-				return [ d, [ n, m ].join('/') ].join(' ');
-
-			}
-		},
-		before_date: {
-			"fr": function( m ){
-
-				var day  = LJ.text_source["before_date_day"]["fr"]( m );
-				var hour = LJ.text_source["before_date_hour"]["fr"]( m );
-
-				return [ day, hour ].join(', ');
-
-			},
-			"us": function( m ){
-
-				var day  = LJ.text_source["before_date_day"]["us"]( m );
-				var hour = LJ.text_source["before_date_hour"]["us"]( m );
-
-				return [ day, hour ].join(', ');
-
-			}
-		},
-		chatrow_date: {
-			"fr": function( m ){
-
-				var day  = LJ.text_source["chatrow_date_day"]["fr"]( m );
-				var hour = LJ.text_source["chatrow_date_hour"]["fr"]( m );
-
-				return [ day, hour ].join('');
-
-			},
-			"us": function( m ){
-
-				var day  = LJ.text_source["chatrow_date_day"]["us"]( m );
-				var hour = LJ.text_source["chatrow_date_hour"]["us"]( m );
-
-				return [ day, hour ].join('');
-
-			}
-		},
-		chatinview_date: {
-			"fr": function( m ){
-
-				var day  = LJ.text_source["chatinview_date_day"]["fr"]( m );
-				var hour = LJ.text_source["chatinview_date_hour"]["fr"]( m );
-
-				return [ day, hour ].join(', ');
-
-			},
-			"us": function( m ){
-
-				var day  = LJ.text_source["chatinview_date_day"]["us"]( m );
-				var hour = LJ.text_source["chatinview_date_hour"]["us"]( m );
-
-				return [ day, hour ].join('');
-
-			}
-		},
-		menurow_date: {
-			"fr": function( m ){ return LJ.text_source.before_date["fr"]( m ); },
-			"us": function( m ){ return LJ.text_source.before_date["us"]( m ); }
-		},
-		h_today: {
-			"fr": "aujourd'hui, à %hh%m",
-			"us": "today, %hh%m"
-		},
-		h_past: {
-			"fr": "Le %moment, à %hh%m",
-			"us": "%moment, %hh%m"
-		},
-		t_language_changed: {
-			"fr": "La langue a été changée",
-			"us": "The language has been changed"
-		},
-		lang_change_title: {
-			"fr": "Changer de langue",
-			"us": "Change language"
-		},
-		lang_change_subtitle: {
-			"fr": "La langue ne devrait jamais être une barrière pour sortir faire la fête.",
-			"us": "Language should never get in the way of partying. Ever."
-		},
-		lang_soon: {
-			"fr": "Prochainement",
-			"us": "Soon"
-		},
-		lang_before: {
-			"fr": "before",
-			"us": "pregame"
-		},
-		lang_profile: {
-			"fr": "profil",
-			"us": "profile"
-		},
-		menu_profile: {
-			"fr": "Profil",
-			"us": "Profile"
-		},
-		menu_subsection_pictures: {
-			"fr": "Mes 5 photos",
-			"us": "My 5 photos"
-		},
-		menu_subsection_informations: {
-			"fr": "A propos de moi",
-			"us": "About me"
-		},
-		menu_subsection_account: {
-			"fr": "Paramètres du compte",
-			"us": "Account settings"
-		},
-		menu_subsection_code: {
-			"fr": "Code d'invitation",
-			"us": "Invite code"
-		},
-		menu_subsection_notifications: {
-			"fr": "Notifications",
-			"us": "Notifications"
-		},
-		menu_subsection_emails: {
-			"fr": "Emails",
-			"us": "Emails"
-		},
-		menu_subsection_ux: {
-			"fr": "Expérience d'utilisation",
-			"us": "User experience"
-		},
-		menu_shared: {
-			"fr": "Partagés",
-			"us": "Shared"
-		},
-		menu_cheers: {
-			"fr": "Cheers",
-			"us": "Cheers"
-		},
-		menu_friends: {
-			"fr": "Mes amis",
-			"us": "Friends"
-		},
-		menu_invite: {
-			"fr": "Inviter des amis",
-			"us": "Invite"
-		},
-		menu_settings: {
-			"fr": "Préférences",
-			"us": "Settings"
-		},
-		p_name_label: {
-			"fr": "Nom",
-			"us": "Name"
-		},
-		p_name_placeholder: {
-			"fr": "Prad Bitt",
-			"us": "Prad Bitt"
-		},
-		p_age_placeholder: {
-			"fr": "18",
-			"us": "18"
-		},
-		p_job_placeholder: {
-			"fr": "Etudiant",
-			"us": "Student"
-		},
-		p_ideal_night_placeholder: {
-			"fr": "Les amis, les soirées, les rencontres...",
-			"us": "Friends, parties, new people..."
-		},
-		p_age_label: {
-			"fr": "Âge",
-			"us": "Age"
-		},
-		p_country_label: {
-			"fr": "Pays",
-			"us": "Country"
-		},
-		p_job_label: {
-			"fr": "Situation",
-			"us": "Occupation"
-		},
-		p_location_label: {
-			"fr": "Ville actuelle",
-			"us": "Current city"
-		},
-		p_ideal_night_label: {
-			"fr": "Ma soirée idéale",
-			"us": "My dream night"
-		},
-		p_name_explanation: {
-			"fr": "Pseudonyme par lequel les autres membres vous appelerons. Choose wisely.",
-			"us": "Pseudo everyone will call you as. Choose wisely."
-		},
-		p_age_explanation: {
-			"fr": "On évite de mentir ;-)",
-			"us": "Please don't lie ;-)"
-		},
-		p_country_explanation: {
-			"fr": "Votre nationalité est celle indiquée sur Facebook. En cas d'erreur, envoyez-nous un mail.",
-			"us": "Your nationality is the one indicated on Facebook. If there is a mistake, please email us."
-		},
-		p_job_explanation: {
-			"fr": "Concrètement, vous faites quoi dans la vie ?",
-			"us": "So, how do you keep busy everyday ?"
-		},
-		p_location_explanation: {
-			"fr": "Où sortez-vous en ce moment ? Meefore works everywhere",
-			"us": "Where do you get out these days ? Meefore works everywhere"
-		},
-		p_ideal_night_explanation: {
-			"fr": "Sans alcool, la fête est plus...",
-			"us": "Knock yourself out"
-		},
-		p_friends_title: {
-			"fr": "Mes amis Facebook",
-			"us": "Everybody is on Meefore"
-		},
-		p_friends_subtitle: {
-			"fr": "Vos amis Facebook sont tous sur Meefore. Il en manque? Invitez-les à vous rejoindre!",
-			"us": "All your Facebook friends are on Meefore. Are some of them missing? Invite them to join!"
-		},
-		p_friends_nofriends: {
-			"fr": "Vous n'avez aucun ami Facebook inscrit sur Meefore. Invitez-les pour commencer à participer à des meefore!",
-			"us": "You don't have any Facebook friends on Meefore. Invite them all to start taking part in meefore!"
-		},
-		p_button_validate: {
-			"fr": "Valider",
-			"us": "OK"
-		},
-		p_button_cancel: {
-			"fr": "Annuler",
-			"us": "Cancel"
-		},
-		p_picture_upload_success: {
-			"fr": "Votre photo a été mise à jour",
-			"us": "Your photo has been uploaded"
-		},
-		p_picture_upload_error: {
-			"fr": "Une erreur s'est produite lors de l'envoie de la photo",
-			"us": "An error occured during the upload, please try again later"
-		},
-		p_facebook_upload_title: {
-			"fr": "Vos photos de profil Facebook",
-			"us": "Your Facebook profile pictures"
-		},
-		h_search_placeholder: {
-			"fr": "Rechercher quelqu'un",
-			"us": "Looking for someone?"
-		},
-		search_title: {
-			"fr": "Tous les membres",
-			"us": "All our members"
-		},
-		h_logout: {
-			"fr": "Se déconnecter",
-			"us": "Log out"
-		},
-		e_title: {
-			"fr": "Tous les meefore",
-			"us": "Get the party started"
-		},
-		e_subtitle: {
-			"fr": "L'abus de soirées est bon pour la santé",
-			"us": "Non-stop partying is actually healthy"
-		},
-		e_create_button: {
-			"fr": "Proposer un meefore",
-			"us": "Create a meefore"
-		},
-		e_create_title: {
-			"fr": "Proposer un meefore",
-			"us": "Create a meefore"
-		},
-		e_create_hosts: {
-			"fr": "Organisateurs",
-			"us": "Hosts"
-		},
-		e_create_hosts_placeholder: {
-			"fr": "Sélectionnez parmi vos amis (1 minimum)",
-			"us": "Select among your friends (1 minimum)"
-		},
-		e_create_begins_at: {
-			"fr": "Date du before",
-			"us": "Before date"
-		},
-		e_create_begins_at_placeholder: {
-			"fr": "Quel jour? ",
-			"us": "Which day?"
-		},
-		e_create_hour: {
-			"fr": "Heure du Before",
-			"us": "Before hour"
-		},
-		e_create_hour_placeholder: {
-			"fr": "Quelle heure?",
-			"us": "What time?"
-		},
-		e_create_address: {
-			"fr": "Lieu du before",
-			"us": "Location"
-		},
-		e_create_address_placeholder: {
-			"fr": "Où vous rejoignez-vous?",
-			"us": "Where will you meet?"
-		},
-		e_create_party: {
-			"fr": "Lieu de la soirée",
-			"us": "Party location"
-		},
-		e_create_party_placeholder: {
-			"fr": "Où allez-vous ensuite?",
-			"us": "Where are you going next?"
-		},
-		e_create_agerange: {
-			"fr": "Âge souhaité",
-			"us": "Age preference"
-		},
-		e_create_ambiance: {
-			"fr": "Ambiance",
-			"us": "Ambiance"
-		},
-		e_create_ambiance_placeholder: {
-			"fr": "#hashtagTonMeefore",
-			"us": "#hashtagYourMeefore"
-		},
-		e_create_guests_type: {
-			"fr": "Type d'invités",
-			"us": "Guests type"
-		},
-		e_create_button_validate: {
-			"fr": "Créer un meefore",
-			"us": "Create a meefore"
-		},
-		e_create_button_cancel: {
-			"fr": "Annuler",
-			"us": "Cancel"
-		},
-		e_create_loading_text: {
-			"fr": "Votre meefore a été créé avec succès ! ",
-			"us": "Your meefore has been successully created !"
-		},
-		e_request_title: {
-			"fr": "Demande de participation",
-			"us": "Participation request"
-		},
-		e_request_button_validate: {
-			"fr": "Rejoindre ce meefore",
-			"us": "Join this meefore"
-		},
-		e_request_group_name: {
-			"fr": "Nom de ton groupe",
-			"us": "Your group name"
-		},
-		e_request_group_members: {
-			"fr": "Membres de ton groupe",
-			"us": "Members of your group"
-		},
-		e_request_group_message: {
-			"fr": "Message",
-			"us": "Message"
-		},
-		e_request_group_name_placeholder: {
-			"fr": "Ce nom apparaîtra dans le chat",
-			"us": "This name will be displayed in the chat"
-		},
-		e_request_group_members_placeholder: {
-			"fr": "Choisissez les personnes avec qui vous souhaitez sortir",
-			"us": "Choose the people you wanna go out with"
-		},
-		e_request_group_message_placeholder: {
-			"fr": "Dites-nous en plus à propos de votre groupe",
-			"us": "Tell us more about your group"
-		},
-		e_request_button_cancel: {
-			"fr": "Annuler",
-			"us": "Cancel"
-		},
-		e_request_event_got_canceled: {
-			"fr": "Le meefore vient d'être annulé :/",
-			"us": "The meefore just got canceled :/"
-		},
-		e_preview_participate: {
-			"fr": "Participer",
-			"us": "Participate"
-		},
-		e_preview_manage: {
-			"fr": "Organiser",
-			"us": "Organize"
-		},
-		e_mapview_first_to_create: {
-			"fr": "Proposer un meefore",
-			"us": "Create a meefore"
-		},
-		e_preview_chat: {
-			"fr": "Discuter",
-			"us": "Chat"
-		},
-		e_preview_pending: {
-			"fr": "En attente",
-			"us": "Pending"
-		},
-		e_filters_location: {
-			"fr": "Changer d'endroit",
-			"us": "Change location"
-		},
-		e_filters_date: {
-			"fr": "Date(s)",
-			"us": "Date(s)"
-		},
-		e_create_party_button: {
-			"fr": "Soirée partenaire",
-			"us": "Partner event"
-		},
-		e_mapview_empty_text: {
-			"fr": "Aucun meefore de prévu",
-			"us": "No meefore is scheduled"
-		},
-		e_sideview_empty_text: {
-			"fr": "Aucun meefore de prévu ce jour-ci. Essayez un autre jour ou soyez le premier à en proposer un.",
-			"us": "No meefore is scheduled for this day. Try another day or be the first to create one."
-		},
-		p_sideview_default_text: {
-			"fr": "Sélectionner une soirée sur la carte pour voir plus de détails",
-			"us": "Select a party on the map to display more details"
-		},
-		p_sideview_header: {
-			"fr": "La où est l'ambiance",
-			"us": "Where the fun is"
-		},
-		e_sideview_header: {
-			"fr": "Ils vont y aller",
-			"us": "They are going"
-		},
-		e_preview_planned: {
-			"fr": "%n meefore à venir",
-			"us": "%n meefore are planned"
-		},
-		s_title: {
-			"fr": "Préférences",
-			"us": "Preferences"
-		},
-		s_app_title: {
-			"fr": "Application",
-			"us": "In app"
-		},
-		s_app_subtitle: {
-			"fr": "Modifier le comportement général de l'application",
-			"us": "Modify the general behavior of the app"
-		},
-		s_contact_title: {
-			"fr": "Informations de contact",
-			"us": "Contact information"
-		},
-		s_contact_subtitle: {
-			"fr": "Restez informé",
-			"us": "Stay in touch'"
-		},
-		s_contact_email_label: {
-			"fr": "Email de contact",
-			"us": "Contact email"
-		},
-		s_contact_email_desc: {
-			"fr": "Indiquez-nous l'email sur lequel vous souhaitez être contacté",
-			"us": "Let us know at what email address we can reach you"
-		},
-		s_autologin_label: {
-			"fr": "Connexion automatique",
-			"us": "AutoLogin"
-		},
-		s_autologin_desc: {
-			"fr": "Activez cette option pour accéder directement à Meefore sans passer par la page d'accueil",
-			"us": "Activate this option to reach directly Meefore and skip the landing page"
-		},
-		s_message_seen_by_label: {
-			"fr": "Connexion automatique",
-			"us": "AutoLogin"
-		},
-		s_message_seen_by_desc: {
-			"fr": "Activez cette option pour accéder directement à Meefore sans passer par la page d'accueil",
-			"us": "Activate this option to reach directly Meefore and skip the landing page"
-		},
-		s_news_title: {
-			"fr": "Newsletter et Invitations",
-			"us": "Newsletter and Invitations"
-		},
-		s_news_subtitle: {
-			"fr": "Recevez nos emails concernant soirées, bons plans et rencontres.",
-			"us": "Receive our emails that deal with parties, opportunities and meetups."
-		},
-		s_newsletter_label: {
-			"fr": "Newsletter",
-			"us": "Newsletter"
-		},
-		s_newsletter_desc: {
-			"fr": "Notre newsletter est envoyée chaque semaine",
-			"us": "Our newsletter is sent every week"
-		},
-		s_invits_label: {
-			"fr": "Invitations",
-			"us": "Invitations"
-		},
-		s_invits_desc: {
-			"fr": "Bons plans pour être invité à des soirées exclusives",
-			"us": "Get invited to exclusive parties"
-		},
-		s_alerts_title: {
-			"fr": "Alertes et notifications",
-			"us": "Alerts and notifications"
-		},
-		s_alerts_subtitle: {
-			"fr": "Soyez alerté dès que de l'activité vous concernant se présente",
-			"us": "Be informed when anything about you happens"
-		},
-		s_accepted_in_label: {
-			"fr": "Accepté dans un meefore",
-			"us": "Accepted in a meefore"
-		},
-		s_accepted_in_desc: {
-			"fr": "Recevez un email dès que vous êtes accepté dans un meefore",
-			"us": "Receive an email when you are accepted in a meefore"
-		},
-		s_new_message_received_label: {
-			"fr": "Message reçu hors-ligne",
-			"us": "Unread message"
-		},
-		s_new_message_received_desc: {
-			"fr": "Recevez un email dès que vous êtes hors-ligne et que vous recevez un nouveau message",
-			"us": "Receive an email when you're offline and someone sends you a new message"
-		},
-		s_message_seen_by_label: {
-			"fr": "Signaler message lu",
-			"us": "Signal message read"
-		},
-		s_message_seen_by_desc: {
-			"fr": "Signalez automatiquement aux autres utilisateurs que vous avez vu leur message",
-			"us": "Signal to other users that you have read their message"
-		},
-		s_min_frequency_label: {
-			"fr": "Temps entre chaque email",
-			"us": "Time lapse between each emails"
-		},
-		s_min_frequency_desc: {
-			"fr": "Pour éviter d'être spammé par l'application",
-			"us": "To avoid any spam by the app"
-		},
-		s_0min: {
-			"fr": "Aucune limite",
-			"us": "No limit"
-		},
-		s_15min: {
-			"fr": "15min",
-			"us": "15min"
-		},
-		s_60min: {
-			"fr": "1h",
-			"us": "1h"
-		},
-		s_360min: {
-			"fr": "6h",
-			"us": "6h"
-		},
-		s_720min: {
-			"fr": "12h",
-			"us": "12h"
-		},
-		s_1440min: {
-			"fr": "24h",
-			"us": "24h"
-		},
-		s_yes: {
-			"fr": "Oui",
-			"us": "Yes"
-		},
-		s_no: {
-			"fr": "Non",
-			"us": "No"
-		},
-		s_delete_goodbye: {
-			"fr": "Votre compte a bien été supprimé",
-			"us": "Your account has been deleted"
-		},
-		s_delete_title: {
-			"fr": "Supprimer mon profil",
-			"us": "Delete my profile"
-		},
-		s_delete_text: {
-			"fr": "Toutes les données vous concernant seront supprimées",
-			"us": "All your data will be deleted"
-		},
-		s_delete_validate: {
-			"fr": "Supprimer",
-			"us": "Delete"
-		},
-		s_delete_profile_btn: {
-			"fr": "Supprimer mon profil",
-			"us": "Delete my profile"
-		},
-		s_delete_cancel: {
-			"fr": "Annuler",
-			"us": "Cancel"
-		},
-		ch_hosts: {
-			"fr": "Organisateurs",
-			"us": "Hosts"
-		},
-		ch_placeholder: {
-			"fr": "Message...",
-			"us": "Message..."
-		},
-		ch_button_update: {
-			"fr": "Mettre à jour",
-			"us": "Update"
-		},
-		ch_button_cancel: {
-			"fr": "Annuler",
-			"us": "Cancel"
-		},
-		ch_settings_status_label: {
-			"fr": "Statut du meefore",
-			"us": "Meefore status"
-		},
-		ch_settings_status_open: {
-			"fr": "Ouvert",
-			"us": "Opened"
-		},
-		ch_settings_status_suspended: {
-			"fr": "Suspendu/Complet",
-			"us": "Suspended/Full"
-		},
-		ch_settings_status_canceled: {
-			"fr": "Supprimé",
-			"us": "Removed"
-		},
-		ch_bot_msg_group_pending: {
-			"fr": "Votre groupe a été suspendu de la discussion",
-			"us": "Your group has been suspended from the discussion"
-		},
-		ch_bot_msg_group_accepted: {
-			"fr": "Votre groupe vient d'être accepté dans la discussion!",
-			"us": "Your group just got accepted in the discussion"
-		},
-		ch_first_msg_host_channel: {
-			"fr": "Votre meefore a été créé avec succès. <br> Ce chat est privé entre vous et les autres organisateurs.",
-			"us": "Your meefore has been successully created. <br> This chat is dedicated to you and the other hosts."
-		},
-		ch_first_msg_host: {
-			"fr": "  a demandé à rejoindre votre meefore : ",
-			"us": "  has asked to join your meefore : "
-		},
-		ch_first_msg_group: {
-			"fr": "Votre demande a bien été envoyée. <br> Dès que l'un des organisateurs vous aura accepté, vous aurez accès à la discussion.",
-			"us": "Your request has been sent. <br> As soon as one of the hosts has approved your request, you'll have access to the chat."
-		},
-		ch_request_validate: {
-			"fr": "Accepter ce groupe",
-			"us": "Chat with this group"
-		},
-		ch_button_send: {
-			"fr": "Envoyer",
-			"us": "Send"
-		},
-		ch_button_whisper: {
-			"fr": "Chuchoter",
-			"us": "Whisper"
-		},
-		to_invite_code_already_taken: {
-			"fr": "Ce code est déjà utilisé par un autre utilisateur",
-			"us": "This code is already used by another user"
-		},
-		to_invite_code_bad_pattern: {
-			"fr": "Votre code ne doit contenir que des chiffres & des lettres",
-			"us": "Your code must contain only letters & numbers"
-		},
-		to_easy_on_api: {
-			"fr": "Une photo est déjà en cours de téléchargement",
-			"en ": "A photo is already downloading"
-		},
-		to_new_meefore: {
-			"fr": "%name propose un meefore le %date",
-			"us": "%name hosts a meefore the %date"
-		},
-		to_new_meefore_host: {
-			"fr": "Un ami vous a ajouté en tant qu'organisateur de son meefore",
-			"us": "A friend added you as host of his meefore"
-		},
-		to_default_error: {
-			"fr": "Une erreur est survenue",
-			"us": "Something went wrong"
-		}, 
-		to_chat_inp_not_in: {
-			"fr": "Vous n'avez pas encore été accepté!",
-			"us": "You haven't been accepted yet"
-		},
-		to_chat_inp_too_quick: {
-			"fr": "Moins vite",
-			"us": "Slow down"
-		},
-		to_chat_inp_empty: {
-			"fr": "Le message est vide!",
-			"us": "The message is empty"
-		},
-		to_event_created_success_2: {
-			"fr": "Que la fête commence...",
-			"us": "May the party get started..."
-		},
-		to_party_created_success: {
-			"fr": "La soirée a été ajoutée",
-			"us": "The party has been added"
-		},
-		to_event_group_accepted: { 
-			"fr": "Le groupe %s a été accepté",
-			"us": "The group %s has been accepted"
-		},
-		to_event_group_pending: {
-			"fr": "Le groupe %s a été mis en attente",
-			"us": "The group %s has been put on hold"
-		},
-		to_request_sent: {
-			"fr": "Votre demande a été envoyée!",
-			"us": "Your request has been sent"
-		},
-		to_request_event_status_modified: {
-			"fr": "Le statut de l'évènement a été modifié",
-			"us": "The event status has been modified"
-		},
-		// to_init_no_friends: {
-		// 	"fr": "Aucun de vos amis n'est sur Meefore? Invitez-les à vous rejoindre!",
-		// 	"us": "None of your friends is on Meefore? Invite them all!"
-		// },
-		to_noupload_necessary: {
-			"fr": "Aucune mise à jour n'est nécessaire!",
-			"us": "No update is necessary!"
-		},
-		to_upload_singlepic: {
-			"fr": "Ne téléchargez qu'une seule image à la fois",
-			"us": "Please, don't upload more than one picture at once"
-		},
-		to_profile_update_success: {
-			"fr": "Vos informations ont été modifiées",
-			"us": "Your informations has been updated"
-		},
-		to_settings_update_success: {
-			"fr": "Vos préférences ont été modifiées",
-			"us": "Your settings have been updated"
-		},
-		to_upload_pic_success: {
-			"fr": "Votre photo a été modifiée",
-			"us": "Your picture has been updated"
-		},
-		to_update_pic_success: {
-			"fr": "Vos photos ont été mise à jour",
-			"us": "Your pictures have been updated"
-		},
-		to_host_push_new_group: {
-			"fr": "Un groupe souhaite rejoindre votre meefore",
-			"us": "A group has requested to join your meefore"
-		},
-		to_push_new_request_by_friend: {
-			"fr": "Un ami vous a ajouté à un meefore",
-			"us": "A friend of yours has added you to a meefore"
-		},
-		to_push_new_status_by_friend: {
-			"fr": "Un de vos amis a modifié le statut d'un de vos meefore",
-			"us": "A friend of yours has modified the status of one of your meefore"
-		},
-		to_push_request_accepted: {
-			"fr": "Vous avez été accepté dans un meefore!",
-			"us": "You have been accepted in a meefore!"
-		},
-		to_push_group_validated_by_friend: {
-			"fr": "Un de vos amis a validé un groupe",
-			"us": "A friend of yours has validated a group"
-		},
-		to_push_group_suspended_by_friend: {
-			"fr": "Un de vos amis a suspendu un groupe de la discussion",
-			"us": "A friend of yours has suspended a group from the chat"
-		},
-		to_welcome: {
-			"fr": "Bienvenue sur Meefore",
-			"us": "Welcome to Meefore"
-		},
-
-		//mp stands for missing parameter
-		err_create_n_hosts: {
-			"fr": "Il faut être entre %min et %max pour organiser un before",
-			"us": "You must be between %min and %max to organize a pregame party",
-		},
-		err_create_mp_ambiance: {
-			"fr": "Hashtag ton meefore pour le décrire",
-			"us": "Hashtag your meefore to describe it"
-		},
-		err_create_mp_party: {
-			"fr": "Adresse de la soirée manquante",
-			"us": "Missing the address of the party"
-		},
-		err_create_mp_address: {
-			"fr": "Adresse du meefore manquante",
-			"us": "Missing meefore's address"
-		},
-		err_create_mp_begins_at: {
-			"fr": "Date manquante/incomplète",
-			"us": "Missing the date"
-		},
-		err_create_mp_default: {
-			"fr": "Une des valeurs semble manquer",
-			"us": "There is a field that seems to be missing "
-		},
-		err_create_already_hosting_me: {
-			"fr": "Vous organisez déjà un meefore ce jour là",
-			"us": "You have already planned a meefore this day"
-		},
-		err_create_already_hosting_other: {
-			"fr": "%s organise déjà un meefore ce jour là",
-			"us": "%s has already planned a meefore this day"
-		},
-		err_create_twin_hosts: {
-			"fr": "Tous les organisateurs doivent être différents",
-			"us": "Every host must be different"
-		},
-		err_create_time_travel: {
-			"fr": "La date de début ne peut être une date passée",
-			"us": "The date seems to be wrong"
-		},
-		err_create_ghost_hosts: {
-			"fr": "Un des organisateurs n'a pas été trouvé",
-			"us": "One of the hosts can't be found"
-		},
-		err_request_mp_members_facebook_id: {
-			"fr": "Il faut être au moins deux pour rejoindre un meefore",
-			"us": "You must be at least two to organize a meefore"
-		},
-		err_request_mp_name: {
-			"fr": "En manque d'inspiration? Un petit effort!",
-			"us": "Lacking inspiration? A little bit of extra effort!"
-		},
-		err_request_mp_message: {
-			"fr": "Un message de bienvenue est indispensable!",
-			"us": "A welcome message is much-needed!"
-		},
-		err_request_mp_default: {
-			"fr": "Une des valeurs semble manquer",
-			"us": "One of the values seems to be missing"
-		},
-		err_request_already_there: {
-			"fr": " déjà présent en tant ",
-			"us": " already there "
-		},
-		err_request_already_there_role_host: {
-			"fr": "qu'organisateur",
-			"us": "as host"
-		},
-		err_request_already_there_role_asker: {
-			"fr": "que participant",
-			"us": "as participant"
-		},
-		err_request_already_there_me: {
-			"fr": "Tu es",
-			"us": "You are"
-		},
-		err_request_already_there_other: {
-			"fr": "%s est",
-			"us": "%s is"
-		},
-		err_unknown: {
-			"fr": "Une erreur inconnue s'est produite",
-			"us": "An unknown error has occured"
-		},
-		err_request_name_bad_length: {
-			"fr": "Le nom doit avoir entre %min et %max caractères",
-			"us": "The name must be composed of a minimum of %min and a maximum of %max characters"
-		},
-		err_request_message_bad_length: {
-			"fr": "Le message doit avoir entre %min et %max caractères",
-			"us": "The message must be composed of a minimum of %min and a maximun of %max characters"
-		},
-		err_request_n_group: {
-			"fr": "Votre groupe doit avoir entre %min et %max personnes",
-			"us": "Your group must have between %min and %max people"
-		},
-		err_request_ghost_members: {
-			"fr": "Des membres ne sont pas encore inscrits sur Meefore",
-			"us": "Some members have not signed up to Meefore yet"
-		},
-		err_request_event_not_open: {
-			"fr": "Les organisateurs ont suspendu momentanément le meefore",
-			"us": "The hosts have suspended the meefore at the moment"
-		},
-		err_chat_send_message: {
-			"fr": "Une erreur inconnue s'est produite suite à l'envoie du message",
-			"us": "An unknown error has occured when sending the message"
-		},
-		err_chat_fetch_unauth_group: {
-			"fr": "Tu n'es pas autorisé à participer à cette discussion!",
-			"us": "You are not authorized to take part in this discussion"
-		},
-		err_chat_fetch_unauth_fetch: {
-			"fr": "Tu n'es pas autorisé à demander les messages de cette discussion",
-			"us": "You are not authorized to request this discussion's messages"
-		},
-		err_chat_fetch_unauth_admin: {
-			"fr": "Vous n'êtes pas autorisé à participer à cette discussion! (admin)",
-			"us": "You are not authorized to take part in this discussion"
-		},
-		err_chat_mp: {
-			"fr": "Il manque un paramètre pour envoyer le message",
-			"us": "A parameter is missing to send the message"
-		},
-		err_chat_seen_by: {
-			"fr": "Une erreur inconnue s'est produite à la lecture du message",
-			"us": "An unknown error has occured when reading the message"
-		},
-		err_pusher_unauth: {
-			"fr": "",
-			"us": "Cannot join the channel (access denied, auth failed)"
-		},
-		err_settings_invalid_email: {
-			"fr": "Nous avons besoin d'un email de contact valide pour changer vos préférences",
-			"us": "We need a valid contact email to change your preferences"
-		},
-		err_update_profile_age: {
-			"fr": "Votre âge ne semble pas avoir le bon format",
-			"us": "Your age doesnt seem to be properly formatted"
-		},
-		err_update_profile_mainify_placeholder: {
-			"fr": "Votre photo de profil doit vous représenter",
-			"us": "Your profile picture must represent yourself"
-		},
-		err_update_profile_delete_main_picture: {
-			"fr": "Vous ne pouvez pas supprimer votre photo de profil",
-			"us": "You can't delete your profile picture"
-		},
-		err_update_profile_default: {
-			"fr": "Une erreur inattendue s'est produite",
-			"us": "Something unexpected happened"
-		},
-		err_unexpected_message: {
-			"fr": "Une erreur inattendue s'est produite. <br> Cette erreur peut-être due à des circonstances exceptionnelles ou à un bug !" 
-			       + "<br> Nous vous invitons à retenter votre action plus tard et à nous contacter si l'erreur persiste :/",
-			"us": "Something unexpected happened. <br> This error might be caused by exceptionnal circumstances or simply bug a bug."
-				   + "<br> Please try again later and we thank you in advance to contact us if the problem persists :/"
-		},
-		lp_subtitle: {
-			"fr": "<div class='lp-subpart'>Des rencontres <div class='lp-avant'><span>avant</span><img src='/img/app/avant.png' width='90%' /></div> d'aller en soirée.   " ,
-			"us": "<div class='lp-subpart'>Meeting new people <div class='lp-avant'><span>before</span><img src='/img/app/avant.png' width='90%' /></div> partying.</div>"
-		},
-		lp_subtitle_sub: {
-			"fr": "Participez à des before près de chez vous.",
-			"us": "Join pregame parties around you."
-		},
-		lp_conn_button: {
-			"fr": "Connexion",
-			"us": "Connection"
-		},
-		lp_reason_1_h1: {
-			"fr": "Trouvez votre before",
-			"us": "Find a pregame party"
-		},
-		lp_reason_2_h1: {
-			"fr": "Demandez à participer",
-			"us": "Request to join"
-		},
-		lp_reason_3_h1: {
-			"fr": "Faites connaissance",
-			"us": "Get to know each other"
-		},
-		lp_reason_1_h2: {
-			"fr": "Parcourez et repérez sur la map les before qui s'organisent près de chez vous.",
-			"us": "Go on the map and find all the pregame parties happening around you."
-		},
-		lp_reason_2_h2: {
-			"fr": "Envoyez une demande de participation pour rejoindre le before qui vous ambiance le plus avec au moins un de vos amis.",
-			"us": "Request to join the pregame party that seems to fit you the most with at least one of your friends."
-		},
-		lp_reason_3_h2: {
-			"fr": "Une fois accepté, discutez avec les organisateurs pour préparer votre soirée avant de vous retrouver.",
-			"us": "Once accepted, chat with the hosts to plan your evening before you meet with them."
-		},
-		lp_footer_followus: {
-			"fr": "Nous suivre",
-			"us": "Follow us"
-		},
-		lp_contact_title: {
-			"fr": "Contactez-nous",
-			"us": "Contact us"
-		},
-		lp_contact_name: {
-			"fr": "Nom*",
-			"us": "Name*"
-		},
-		lp_contact_email: {
-			"fr": "Email*",
-			"us": "Email*"
-		},
-		lp_contact_message: {
-			"fr": "Message*",
-			"us": "Message*"
-		},
-		lp_contact_send_success: {
-			"fr": "Votre message a bien été envoyé <br> Merci !",
-			"us": "Your message has been sent <br> Thank you !"
-		},
-		lp_contact_error_fields: {
-			"fr": "Il manque certains champs",
-			"us": "Some fields are missing"
-		},
-		lp_contact_error_email: {
-			"fr": "L'adresse email indiquée semble avoir une petite erreur",
-			"us": "Your email address doesn't look like one "
-		},
-		lp_contact_error_generic: {
-			"fr": "Une erreur s'est produite. Contactez-nous directement à contact@meefore.com",
-			"us": "Something wrong happened. Mail us directly at contact@meefore.com"
-		},
-		login_loading_msg: {
-			"fr": "Chargement de l'application",
-			"us": "Loading the app"
-		},
-		app_mobile_warning: {
-			"fr": "Meefore est en mode navigation limitée sur web mobile. L'application sera bientôt disponible sur iOS !",
-			"us": "Meefore in limited mode on web mobile. The iOS app should be soon available on the AppleStore"
-		},
-		app_event_unavailable: {
-			"fr": "Ce before n'est plus d'actualité",
-			"us": "This before is no longer available"
-		},
-		app_reconnect: {
-			"fr": "Vous avez été déconnecté. <br> L'application redémarrera dès que vous aurez retrouvé la connexion.",
-			"us": "You have been disconnected. <br> App will reboot automatically once your connection is back."
-		},
-		app_button_invite: {
-			"fr": "Invitez vos amis",
-			"us": "Invite your friends"
-		},
-		app_searching_text: {
-			"fr": "Recherche...",
-			"us": "Searching..."
-		},
-		app_no_results_invite: {
-			"fr": "Aucun résultats à afficher",
-			"us": "The search returned no results"
-		},
-		n_new_meefore_text: {
-			"fr": "Nouveau meefore proposé pour %place",
-			"us": "New meefore created for %place"
-		},
-		n_new_meefore_subtext: {
-			"fr": "Il y a actuellement %n meefore pour cette soirée",
-			"us": "There are currently %n meefore for this party"
-		},
-		n_accepted_in_text: {
-			"fr": "Vous avez un Match !",
-			"us": "It's a Match !"
-		},
-		n_accepted_in_subtext: {
-			"fr": "Faites connaissance dès maintenant",
-			"us": "Get to know each other now"
-		},
-		n_group_request_hosts_text: {
-			"fr": "Cheers reçu",
-			"us": "Cheers received"
-		},
-		n_group_request_hosts_subtext: {
-			"fr": "Un groupe a montré un intérêt pour votre before",
-			"us": "A group seems to be interested by your pregame"
-		},
-		n_group_request_members_text: {
-			"fr": "Cheers envoyé",
-			"us": "Cheers sent"
-		},
-		n_group_request_members_subtext: {
-			"fr": "%name a envoyé un Cheers avec vous",
-			"us": "%name has sent a Cheers with you"
-		},
-		n_marked_as_host_text: {
-			"fr": "Marqué coorganisateur par %name",
-			"us": "Marked as co-host by %name"
-		},
-		n_marked_as_host_subtext: {
-			"fr": "%address - %date",
-			"us": "%address - %date"
-		},
-		n_fill_profile_text: {
-			"fr": "Complétez votre profil",
-			"us": "Complete your profile"
-		},
-		n_fill_profile_subtext: {
-			"fr": "Vous augmenterez vos chances d'avoir des Cheers",
-			"us": "That will increase your chances to get a Cheers"
-		},
-		n_new_friends_text: {
-			"fr": "Nouveaux amis",
-			"us": "New friends"
-		},
-		n_new_friends_subtext: {
-			"fr": function( names ){
-				return "Bienvenue à " + LJ.renderManyMultipleNames( names, 3 );
-				var came = names.length == 1 ? "vient" : "viennent";
-				return LJ.renderManyMultipleNames( names, 3 ) + ' ami(e)s '+ came +' de rejoindre Meefore';
-			},
-			"us": function( names ){
-				return "Welcome to " + LJ.renderManyMultipleNames( names, 3 );
-				return LJ.renderManyMultipleNames( names, 3 ) + ' friends just joined Meefore';
-			},
-		},
-		n_inscription_success_text: {
-			"fr": "Bienvenue sur Meefore",
-			"us": "Welcome on Meefore"
-		},
-		n_inscription_success_subtext: {
-			"fr": "Faites des rencontres avant d'aller en soirée",
-			"us": "Meet new people before going out"
-		},
-		n_before_canceled_text: {
-			"fr": "Before annulé",
-			"us": "Pregame canceled"
-		},
-		n_before_canceled_subtext: {
-			"fr": "%address",
-			"us": "%address"
-		},
-		n_item_shared_text: {
-			"fr": "Partagé par %name",
-			"us": "Shared by %name"
-		},
-		n_item_shared_subtext: {
-			"fr": "%name vient de vous partager un %type",
-			"us": "%name just shared a %type with you"
-		},
-		n_check_email_text: {
-			"fr": "Votre addresse email est-elle à jour ?",
-			"us": "Is your email address up-to-date ?"
-		},
-		n_check_email_subtext: {
-			"fr": "L'addresse récupérée avec Facebook est parfois très ancienne !",
-			"us": "The email address we got from Facebook might be outdated !"
-		},
-		n_new_notification: {
-			"fr": "Vous avez une nouvelle notification",
-			"us": "You have a new notification"
-		},
-		n_header_text: {
-			"fr": "Notifications",
-			"us": "Notifications"
-		},
-		n_footer_text: {
-			"fr": "Délivré avec <3 par meefore",
-			"us": "Delivered with <3 by meefore"
-		},
-		mod_facebook_pictures_title: {
-			"fr": "Photos Facebook",
-			"en ": "Facebook photos"
-		},
-		mod_facebook_pictures_subtitle: {
-			"fr": "Sélectionner la photo que vous souhaitez importer à partir de Facebook",
-			"en ": "Select the photo you wish to import from Facebook"
-		},
-		mod_change_lang_title: {
-			"fr": "Changer de langue",
-			"us": "Change language"
-		},
-		mod_change_lang_subtitle: {
-			"fr": "La langue ne devrait pas être une barrière pour faire la fête. L'application se traduit instantanément dans le langage de votre choix.",
-			"us": "The language should never be an obstacle to partying. The application translates itself instantaneously in the language of your choosing"
-		},
-		segment_cheers_received: {
-			"fr": "Reçus",
-			"us": "Received"
-		},
-		segment_cheers_sent: {
-			"fr": "Envoyés",
-			"us": "Sent"
-		},
-		cheers_requested_with: {
-			"fr": "Avec %names",
-			"us": "With %names"
-		},
-		shared_by_item_subtitle: {
-			"fr": "%type partagé par %name",
-			"us": "%type shared by %name"
-		},
-		shared_with_item_subtitle: {
-			"fr": "%type partagé avec %names",
-			"us": "%type shared with %names"
-		},
-		friends_title_invite: {
-			"fr": "Invitez plus d'amis",
-			"us": "Invite more friends"
-		},
-		cheers_item_title_sent: {
-			"fr": "%groupname",
-			"us": "%groupname"
-		},
-		cheers_item_title_received: {
-			"fr": "%groupname",
-			"us": "%groupname"
-		},
-		cheers_item_subtitle: {
-			"fr": "Pour un before le %date",
-			"us": "The pregame starts the %date"
-		},
-		w_profile: {
-			"fr": "profil",
-			"us": "profile"
-		},
-		w_and: {
-			"fr": "et",
-			"us": "and"
-		},
-		w_more: {
-			"fr": "autre(s)",
-			"us": "more"
-		},
-		w_you: {
-			"fr": "vous",
-			"us": "you"
-		},
-		w_na: {
-			"fr": "Non renseigné(e)",
-			"us": "Unfilled"
-		},
-		ghost_user_name: {
-			"fr": "Inconnu(e)",
-			"us": "Unknown"
-		},
-		ghost_user_job: {
-			"fr": "Cet utilisateur a suspendu son compte",
-			"us": "This user has suspended his account"
-		},
-		settings_ux_message_seen_label: {
-			"fr": "Signaler messages lus",
-			"us": "Signal read messages"
-		},
-		settings_ux_message_seen_explanation: {
-			"fr": "Les autres utilisateurs sauront que vous avez lu leurs messages",
-			"us": "Other users will know that you have read their messages"
-		},
-		settings_ux_country_label: {
-			"fr": "Afficher les nationalités",
-			"us": "Display the nationalities"
-		},
-		settings_ux_country_explanation: {
-			"fr": "Afficher les nationalités autre que la mienne sur les miniatures",
-			"us": "Display nationalities other than mine on the thumbnail"
-		},
-		settings_ux_gender_label: {
-			"fr": "Afficher le sexe (H/F)",
-			"us": "Display the gender (H/F)"
-		},
-		settings_ux_gender_explanation: {
-			"fr": "Afficher le sexe des utilisateurs sur leur miniature pour les distinguer plus facilement",
-			"us": "Display the user's gender on his thumbnail"
-		},
-		settings_ux_auto_login_label: {
-			"fr": "Login automatique",
-			"us": "Auto login"
-		},
-		settings_ux_changelang_label: {
-			"fr": "Langue par défaut",
-			"us": "Default language"
-		},
-		settings_ux_changelang_explanation: {
-			"fr": "L'application est disponible dans plusieurs langues",
-			"us": "The application is available in several languages"
-		},
-		settings_ux_auto_login_explanation: {
-			"fr": "Se connecter directement sans passer par la page d'accueil",
-			"us": "Connect directly skipping the homepage"
-		},
-		settings_part_title_email: {
-			"fr": "Emails",
-			"us": "Emails"
-		},
-		settings_part_title_notifications_email: {
-			"fr": "Notifications par email",
-			"us": "Email notifications"
-		},
-		settings_emails_new_message_label: {
-			"fr": "Nouveau message reçu",
-			"us": "New message received"
-		},
-		settings_emails_new_message_explanation: {
-			"fr": "Envoyé à chaque nouveau message",
-			"us": "Sent every time you receive a new message"
-		},
-		settings_emails_marked_as_host_label: {
-			"fr": "Marqué(e) coorganisateur",
-			"us": "Marked as host"
-		},
-		settings_emails_marked_as_host_explanation: {
-			"fr": "Envoyé lorsqu'un ami vous désigne comme étant coorganisateur de son before",
-			"us": "Sent when your friends tags you as co-host of his pregame"
-		},
-		settings_emails_new_match_label: {
-			"fr": "Nouveau Match",
-			"us": "New Match"
-		},
-		settings_emails_new_match_explanation: {
-			"fr": "Envoyé lorsque vous avez un nouveau Match",
-			"us": "Sent when you have a new Match"
-		},
-		settings_emails_new_cheers_label: {
-			"fr": "Nouveau Cheers",
-			"us": "New Cheers"
-		},
-		settings_emails_new_cheers_explanation: {
-			"fr": "Envoyée lorsque vous reçu avez un nouveau Cheers",
-			"us": "Sent when you have received a new Cheers"
-		},
-		settings_notifs_newsletter_label: {
-			"fr": "Newsletter",
-			"us": "Newsletter"
-		},
-		settings_notifs_newsletter_explanation: {
-			"fr": "Notre newsletter hebdomadaire",
-			"us": "Our weekly newsletter"
-		},
-		settings_notifs_invitations_label: {
-			"fr": "Invitations",
-			"us": "Invitations"
-		},
-		settings_notifs_invitations_explanation: {
-			"fr": "Bon plans et invitations à des soirées spéciales",
-			"us": "Invitations to special events"
-		},
-		settings_code_sponsor_button: {
-			"fr": "Activer un code d'invitation",
-			"us": "Activate an invitation code"
-		},
-		settings_code_sponsor_explanation: {
-			"fr": "Partagez ce code avec vos amis pour les parrainer",
-			"us": "Share this code with your friends to sponsor them"
-		},
-		settings_part_title_code: {
-			"fr": "Code d'invitation",
-			"us": "Invite code"
-		},
-		settings_modal_sponsor_title: {
-			"fr": "Code parrainage",
-			"us": "Sponsor code"
-		},
-		settings_modal_sponsor_subtitle: {
-			"fr": "Entrez le code de votre parrain et bénéficiez chacun de 5 meepass",
-			"us": "Enter your sponsor's code and receive both 5 meepass"
-		},
-		settings_modal_sponsor_button: {
-			"fr": "Activer",
-			"us": "Activate"
-		},
-		picture_main_label: {
-			"fr": "Photo principale",
-			"us": "Main picture"
-		},
-		empty_shared_title: {
-			"fr": "Rien à l'horizon...",
-			"us": "Nothing on the horizon..."
-		},
-		empty_shared_subtitle: {
-			"fr": "Partagez des profils ou des before avec vos amis pour pouvoir vous organiser plus rapidement.",
-			"us": "Share profiles or pregame with your friends to help you organize your nights."
-		},
-		empty_cheers_sent_title: {
-			"fr": "Aucun Cheers envoyés",
-			"us": "No Cheers sent"
-		},
-		empty_cheers_sent_subtitle: {
-			"fr": "Les Cheers permettent à chaque membre de montrer à des organisateurs qu'ils sont intéressé par leur before.",
-			"us": "Cheers allow each member to let hosts of pregames know that they are interested in their pregame."
-		},
-		empty_cheers_received_title: {
-			"fr": "Aucun Cheers reçus",
-			"us": "No Cheers received"
-		},
-		empty_cheers_received_subtitle: {
-			"fr": "Les Cheers permettent à chaque membre de montrer à des organisateurs qu'ils sont intéressé par leur before.",
-			"us": "Cheers allow each member to let hosts of pregames know that they are interested in their pregame."
-		},
-		empty_friends_title: {
-			"fr": "Pas encore d'amis",
-			"us": "No friends yet"
-		},
-		empty_friends_subtitle: {
-			"fr": "Il faut être au moins 2 pour créer ou participer à un before. Invitez vos amis à vous rejoindre pour sortir et faire de nouvelles rencontres.",
-			"us": "You need to be at least 2 in order to pregrame. Invite your friends to join you to get out and meet new people."
-		},
-		hint_cheers_pending: {
-			"fr": "En attente de Match",
-			"us": "Waiting for a Match"
-		},
-		hint_cheers_accepted: {
-			"fr": "Match !",
-			"us": "It's a Match !"
-		},
-		to_group_accepted_hosts: {
-			"fr": "Vous avez un Match !",
-			"us": "You have a new Match !"
-		},
-		to_group_accepted_users: {
-			"fr": "Vous avez un Match !",
-			"us": "You have a new Match !"
-		},
-		disconnected_title: {
-			"fr": "Vous êtes déconnecté",
-			"us": "You are offline"
-		},
-		disconnected_subtitle: {
-			"fr": "Vous serez reconnecté automatiquement dès que vous aurez retrouvé internet.",
-			"us": "You will be automatically reconnected when you're back online. "
-		},
-		init_location_title: {
-			"fr": "Bienvenidos !",
-			"us": "Bienvenidos !"
-		},
-		init_location_subtitle_placeholder: {
-			"fr": "Où souhaitez-vous sortir ?",
-			"us": "Where would you like to go out ?"
-		},
-		init_location_explanation: {
-			"fr": "Vous pourrez toujours changer de ville ultérieurement",
-			"us": "You'll still be able to change that later"
-		},
-		init_location_geoloc: {
-			"fr": "Utiliser ma position",
-			"us": "Use my location"
-		},
-		user_profile_about: {
-			"fr": "Détails",
-			"us": "Details"
-		},
-		user_profile_ideal_night: {
-			"fr": "Sa soirée idéale",
-			"us": "The dream night"
-		},
-		logout_title: {
-			"fr": "A bientôt",
-			"us": "See you soon"
-		},
-		logout_subtitle: {
-			"fr": "Êtes vous-sûr de vouloir vous déconnecter ?",
-			"us": "Are you sure you want to log out ?"
-		},
-		modal_err_empty_fetch: {
-			"fr": "Nous n'avons pas trouvé vos photos de profil",
-			"us": "We were unable to find your profile pictures album"
-		},
-		settings_account_email: {
-			"fr": "Tous nos emails seront envoyés à cette addresse",
-			"us": "All our emails will be sent to this address"
-		},
-		settings_account_delete_button: {
-			"fr": "Supprimer mon compte",
-			"us": "Delete my account"
-		},
-		settings_modal_delete_title: {
-			"fr": "A bientôt !",
-			"us": "See you around !"
-		},
-		settings_modal_delete_subtitle: {
-			"fr": "En supprimant votre compte, toutes les données vous concernant seront supprimées de nos serveurs."
-				  + "<br><br><b>Attention, cette opération est irréversible.</b>",
-			"us": "By deleting your account, every data about you will be deleted from our servers."
-				  + "<br><br><b>Careful, this cannot be undone.</b>"
-		},
-		settings_modal_delete_button_confirm: {
-			"fr": "Supprimer mon compte",
-			"us": "Delete my account"
-		},
-		settings_modal_delete_button_cancel: {
-			"fr": "Annuler",
-			"us": "Cancel"
-		},
-		search_filters_gender_title: {
-			"fr": "Montrez-moi seulement :",
-			"us": "Show me only : "
-		},
-		search_filters_gender_explanations: {
-			"fr": "Sélectionner le sexe des personnes que vous recherchez.",
-			"us": "Select the gender of the people you wish to see."
-		},
-		search_filters_age_title: {
-			"fr": "Afficher les personnes de <span class='search-filters-min-age'></span> à <span class='search-filters-max-age'></span> ans",
-			"us": "Display people from <span class='search-filters-min-age'></span> to <span class='search-filters-max-age'></span> years old"
-		},
-		search_filters_age_explanations: {
-			"fr": "Seuls les utilisateurs dans la tranche d'âge sélectionnée apparaîtront dans la recherche.",
-			"us": "Only the users within the selected agerange will be displayed."
-		},
-		search_filters_countries_title: {
-			"fr": "Filtrer par pays :",
-			"us": "Filter by country :"
-		},
-		search_filters_countries_explanations: {
-			"fr": "Les pays proposés sont ceux comptant au moins un utilisateur.",
-			"us": "The countries displayed are those for which there is at least one user."
-		},
-		search_filters_gender_label_male: {
-			"fr": "Des hommes",
-			"us": "Men"
-		},
-		search_filters_gender_label_female: {
-			"fr": "Des femmes",
-			"us": "Women"
-		},
-		nav_search_title: {
-			"fr": "Tous les membres",
-			"us": "All members"
-		},
-		nav_menu_title: {
-			"fr": "Menu",
-			"us": "Menu"
-		},
-		nav_map_title: {
-			"fr": "Carte des soirées",
-			"us": "The Meemap"
-		},
-		modal_search_input_placeholder: {
-			"fr": "Rechercher",
-			"us": "Search"
-		},
-		modal_share_title_profile: {
-			"fr": "Partager un profil",
-			"us": "Share a profile"
-		},
-		modal_share_subtitle_profile: {
-			"fr": "Sélectionnez dans la liste les personnes avec qui vous souhaitez partager ce profil.",
-			"us": "Select in your friendlist who you wish to share this profile with."
-		},
-		to_profile_shared_success: {
-			"fr": "Le profil a bien été partagé",
-			"us": "The profile has been shared"
-		},
-		modal_share_title_before: {
-			"fr": "Partager un before",
-			"us": "Share a pregame"
-		},
-		modal_share_subtitle_before: {
-			"fr": "Sélectionnez dans la liste les personnes avec qui vous souhaitez partager ce before.",
-			"us": "Select in your friendlist who you wish to share this pregame with."
-		},
-		to_before_shared_success: {
-			"fr": "Le before a bien été partagé",
-			"us": "The pregame has been shared"
-		},
-		to_cheers_sent_success: {
-			"fr": "Votre Cheers a bien été envoyée",
-			"us": "Your Cheers has been sent"
-		},
-		to_cheers_received_success: {
-			"fr": "Vous avez reçu un Cheers",
-			"us": "You have received a Cheers"
-		},
-		to_cheers_sent_success_friend: {
-			"fr": "Un ami souhaite participer à un before avec vous",
-			"us": "A friend wishes to join a before with you"
-		},
-		meepass_ribbon2: {
-			"fr": "Il vous reste <span class='n_meepass'>%n</span> meepass",
-			"us": "You have <span class='n_meepass'>%n</span> meepass left"
-		},
-		meepass_ribbon: {
-			fr: function(){
-				var n_meepass = LJ.user.meepass.length;
-				return "Il vous reste <span class='n_meepass'>" + n_meepass + "</span> meepass";
-			},
-			us: function(){
-				var n_meepass = LJ.user.meepass.length;
-				return "You have <span class='n_meepass'>" + n_meepass + "</span> meepass left";
-			}
-		},
-		settings_ux_changelang_button: {
-			"fr": "Changer de langue",
-			"us": "Change the language"
-		},
-		be_close_to: {
-			"fr": "A proximité de",
-			"us": "Close to"
-		},
-		"be_create_title": {
-			"fr": "Créer un before",
-			"us": "Create a pregame"
-		},
-		be_create_subtitle_hosts: {
-			"fr": "Membres du groupe",
-			"us": "Hosts"
-		},
-		be_create_hosts_explanations: {
-			"fr": "Sélectionnez les autres coorganisateurs parmis vos amis",
-			"us": "Select the other hosts among your friends"
-		},
-		be_create_subtitle_before: {
-			"fr": "Le before",
-			"us": "The pregame"
-		},
-		be_create_hosts_placeholder: {
-			"fr": "Coorganisateurs",
-			"us": "Other hosts"
-		},
-		be_create_date_placeholder: {
-			"fr": "Date",
-			"us": "Date"
-		},
-		be_create_hour_placeholder: {
-			"fr": "Heure",
-			"us": "Hour"
-		},
-		be_create_location_placeholder: {
-			"fr": "Lieu",
-			"us": "Address"
-		},
-		be_create_before_explanations: {
-			"fr": "Où et quand vous rejoignez-vous ?",
-			"us": "Where and when will you guys meet ?"
-		},
-		be_create_button: {
-			"fr": "Créer",
-			"us": "Create"
-		},
-		modal_be_create_title: {
-			"fr": "Membres du groupe",
-			"us": "Group members"
-		},
-		modal_be_create_subtitle: {
-			"fr": function(){
-				var min = LJ.app_settings.app.min_hosts - 1;
-				var max = LJ.app_settings.app.max_hosts - 1;
-				return "Sélectionnez les autres organisateurs parmis vos amis <br> (%min minimum, %max maximum)".replace('%min', min).replace('%max', max);
-			},
-			"us": function(){
-				var min = LJ.app_settings.app.min_hosts - 1;
-				var max = LJ.app_settings.app.max_hosts - 1;
-				return "Select the other hosts among your friends <br> (%min minimum, %max maximum)".replace('%min', min).replace('%max', max);
-			}
-		},
-		err_be_create_missing_hosts: {
-			"fr": "Les coorganisateurs sont manquants",
-			"us": "Cohosts are missing"
-		},
-		err_be_create_missing_date: {
-			"fr": "La date de début est manquante",
-			"us": "The date is missing"
-		},
-		err_be_create_missing_location: {
-			"fr": "L'addresse est manquante",
-			"us": "The address is missing"
-		},
-		err_be_create_already_hosting_me: {
-			"fr": "Vous organisez déjà un before ce jour-là",
-			"us": "You already host an event on this day"
-		},
-		err_be_create_already_hosting: {
-			"fr": "%names organise(nt) déjà un before ce jour-là",
-			"us": "%names are already hosting a before on this day"
-		},
-		shared_before_title: {
-			"fr": function( names ){
-				return 'Before avec ' + LJ.renderMultipleNames( names );
-			},
-			"us": function( names ){
-				return 'Pregame with ' + LJ.renderMultipleNames( names );
-			}
-		},
-		slide_overlay_before_message: {
-			"fr": "Que souhaitez-vous faire ?",
-			"us": "What would you like to do ?"
-		},
-		slide_overlay_before_cancel: {
-			"fr": "Annuler mon before",
-			"us": "Cancel my pregame"
-		},
-		slide_overlay_back: {
-			"fr": "Retour",
-			"us": "Back"
-		},
-		to_cancel_before_success: {
-			"fr": "Le before a bien été annulé",
-			"us": "The pregame have been canceled"
-		},
-		before_just_canceled: {
-			"fr": "Nous sommes désolés, ce before vient d'être annulé par un des organisateurs.",
-			"us": "We are sorry, this pregame just got canceled by one of the hosts."
-		},
-		chat_just_canceled: {
-			"fr": "Un de vos Match vient d'annulé son before. <span>Synchronization en cours...</span>",
-			"us": "One of your Match just canceled his pregame.<span>Resync..."
-		},
-		be_ended: {
-			"fr": "Le before est terminé",
-			"us": "The pregame is over"
-		},
-		be_hosted: {
-			"fr": "Vous faites parti des organisateurs",
-			"us": "You are one of the hosts"
-		},
-		to_friend_canceled_event: {
-			"fr": "%name vient d'annulé un before que vous organisiez ensemble",
-			"us": "%name just canceled a pregame that you organized together"
-		},
-		modal_request_subtitle: {
-			"fr": "Sélectionnez au plus 3 amis avec lesquels vous souhaiteriez participer.",
-			"us": "Select at most 3 friends you would like to go with."
-		},
-		to_before_create_success: {
-			"fr": "Votre before vient d'être créé",
-			"us": "Your pregame was created successfully"
-		},
-		to_before_create_success_friends: {
-			"fr": "%name vous a marqué coorganisateur de son before",
-			"us": "%name marked you as host of his pregame"
-		},
-		modal_no_friends_btn: {
-			"fr": "Invitez des amis",
-			"us": "Invite your friends"
-		},
-		modal_no_friends_text: {
-			"fr": "Il faut être au moins 2 pour effectuer cette action",
-			"us": "You need to be at least two to perform this action"
-		},
-		be_request_already_there: {
-			"fr": "a déjà envoyé un Cheers pour ce before",
-			"us": "has already sent a Cheers for this before"
-		},
-		to_request_pending: {
-			"fr": "Vous pourrez discuter dès que vous aurez un Match",
-			"us": "You can start chatting when you have a Match"
-		},
-		chat_header_title: {
-			"fr": "Discussions",
-			"us": "Conversations"
-		},
-		chat_segment_all: {
-			"fr": "Toutes",
-			"us": "All"
-		},
-		chat_segment_hosted: {
-			"fr": "J'organise",
-			"us": "I host"
-		},
-		chat_segment_requested: {
-			"fr": "Je participe",
-			"us": "I join"
-		},
-		chat_empty_title: {
-			"fr": "Rien à l'horizon...",
-			"us": "Nothing on the horizon..."
-		},
-		chat_empty_subtitle_row: {
-			"fr": "Vous pourrez discuter avec vos amis et faire connaissance avec les autres membres lorsque vous aurez créé un before ou obtenu un Match",
-			"us": "You will be able to chat with your friends and the other members once you have created a pregame or obtained a Match"
-		},
-		chat_empty_title_inview_hosts: {
-			"fr": "Vous avez un Match !",
-			"us": "It's a Match !"
-		},
-		chat_empty_subtitle_inview_hosts: {
-			"fr": function( group_name ){
-				return  "Faîtes connaissance avec " + group_name + " dès maintenant."
-			},
-			"us": function( group_name ){
-				return "Get to know " + group_name + " now."
-			} 
-		},
-		chat_empty_title_inview_accepted: {
-			"fr": "Vous avez un Match !",
-			"us": "It's a Match !"
-		},
-		chat_empty_subtitle_inview_accepted: {
-			"fr": function( group_name ){
-				return  "Faîtes connaissance avec " + group_name + " dès maintenant."
-			},
-			"us": function( group_name ){
-				return "Get to know " + group_name + " now."
-			} 
-		},
-		chat_empty_title_inview_team: {
-			"fr": function( group_name ){ return group_name; },
-			"us": function( group_name ){ return group_name; }
-		},
-		chat_empty_subtitle_inview_team: {
-			"fr": "Seuls vous et les autres membres de ce groupe recevront les messages qui seront envoyés sur cette discussion.",
-			"us": "Only you and the other members of your group will receive messages that are sent on this chat."
-		},
-		chat_empty_title_inview_pending: {
-			"fr": "Un peu de patience...",
-			"us": "Be patient..."
-		},
-		chat_empty_subtitle_inview_pending: {
-			"fr": "Vous pourrez faire connaissance dès que vous aurez un Match avec les organisateurs.",
-			"us": "You'll be able to start chatting as soon as there is a Match with the hosts."
-		},
-		chat_rows_team_title: {
-			"fr": "Amis",
-			"us": "Friends"
-		},
-		chat_rows_all_title: {
-			"fr": "Match",
-			"us": "Match"
-		},
-		chat_inview_options_message: {
-			"fr": "Que souhaitez-vous faire ?",
-			"us": "What would you like to do ?"
-		},
-		chat_inview_options_message_show_users_all: {
-			"fr": "Voir tous les participants",
-			"us": "See everyone"
-		},
-		chat_inview_options_message_show_users_team: {
-			"fr": "Voir les membres de mon groupe",
-			"us": "See members of my group"
-		},
-		chat_inview_options_message_show_before: {
-			"fr": "Voir le before",
-			"us": "See the pregame"
-		},
-		chat_inview_users_group_users: {
-			"fr": "Votre groupe",
-			"us": "Your group"
-		},
-		chat_inview_users_group_hosts: {
-			"fr": "Organisateurs",
-			"us": "Hosts"
-		},
-		chat_groupname_all: {
-			"fr": "Tout le monde",
-			"us": "All"
-		},
-		chat_team_h2: {
-			"fr": "Discussion privée avec vos amis",
-			"us": "Private discussion with your friends"
-		},
-		chat_row_request_all_title: {
-			"fr": "Vous avez un Match !",
-			"us": "It's a Match !"
-		},
-		chat_row_request_all_subtitle: {
-			"fr": function( names ){ return "avec " + names; },
-			"us": function( names ){ return  "with " + names; } 
-		},
-		chat_row_request_team_title: {
-			"fr": "Nouvelle conversation de groupe",
-			"us": "New group conversation"
-		},
-		chat_row_request_team_subtitle: {
-			"fr": function( names ){ return "entre " + names; },
-			"us": function( names ){ return  "between " + names; } 
-		},
-		chat_inview_validate_later: {
-			"fr": "Plus tard",
-			"us": "Later"
-		},
-		chat_inview_validate: {
-			"fr": "Cheers !",
-			"us": "Cheers !"
-		},
-		seen_by_everyone: {
-			"fr": "Vu par tout le monde",
-			"us": "Seen by everyone"
-		},
-		seen_by_some: {
-			"fr": function( names ){
-				return "Vu par " + LJ.renderMultipleNames( names );
-			},
-			"us": function( names ){
-				return "Seen by " + LJ.renderMultipleNames( names );
-			}
-		},
-		cheers_back_groupname: {
-			"fr": "Vous avez reçu un Cheers de...",
-			"us": "You have been sent a Cheers by..."
-		},
-		be_ghost_title: {
-			"fr": "404 !",
-			"us": "404 !"
-		},
-		be_ghost_subtitle: {
-			"fr": "Ce before n'a pas été trouvé dans notre base de données, Cela peut vouloir dire qu'il a été annulé.",
-			"us": "This before is nowhere to be found in our database. This may mean that it has been canceled."
-		},
-		be_ghost_btn: {
-			"fr": "Fermer",
-			"us": "Close"
-		},
-		profile_ghost_title: {
-			"fr": "404 !",
-			"us": "404 !"
-		},
-		profile_ghost_subtitle: {
-			"fr": "Ce membre n'a pas été trouvé dans notre base de données. C'est le cas lorsqu'un utilisateur désactive son compte.",
-			"us": "This member is nowhere to be found in our database. This may mean that he has suspended his account."
-		},
-		profile_ghost_btn: {
-			"fr": "Fermer",
-			"us": "Close"
-		},
-		invite_friends_popup_h1: {
-			"fr": "Parlez-en à vos amis",
-			"us": "Bring your friends"
-		},
-		invite_friends_popup_h2: {
-			"fr": "En leur partageant par message Facebook ",
-			"us": "Share with them by message on Facebook"
-		},
-		invite_friends_popup_btn: {
-			"fr": "Message Facebook",
-			"us": "Facebook message"
-		},
-		chat_input_placeholder: {
-			"fr": "Ecrivez un message...",
-			"us": "Write a message..."
-		},
-		be_browser_empty: {
-			"fr": "Aucun before n'est prévu dans cette ville dans les jours à venir",
-			"us": "No pregame is scheduled in this town for the days to come"
-		},
-		chat_sync_done: {
-			"fr": "Synchronization terminée",
-			"us": "Sync completed"
-		},
-		n_before_canceled: {
-			"fr": "Ce before a été annulé",
-			"us": "This pregame has been canceled"
-		},
-		n_outdated_notification: {
-			"fr": "Cette notification n'est plus d'actualité",
-			"us": "This notification is out of date"
-		}
-
-
-
-	});
-

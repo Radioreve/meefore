@@ -31,7 +31,7 @@ var settings = {
 	default_app_preferences: {
 
 		min_frequency: 7200,
-		alerts_push: {},	
+		alerts_push: {},	 
 		alerts_phone: {},
 		alerts_email: {
 			"new_message"    : false,

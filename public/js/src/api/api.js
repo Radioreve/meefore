@@ -2,7 +2,7 @@
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
 		fetched_users : [],
-		fetched_users_full: [],
+		fetched_users_full: [], 
 
 		app_token_url 			  	 	 	: '/auth/facebook',
 		me_url		  			  	 	 	: '/api/v1/users/:user_id/self',
