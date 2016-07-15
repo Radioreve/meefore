@@ -94,7 +94,11 @@
 		function debugUser( step ){
 			return function( req, res, next ){
 				console.log( step );
-				console.log( JSON.stringify( req.sent.user, null, 4 ) );
+				if( req.sent.user ){
+					console.log( JSON.stringify( req.sent.user.friends, null, 4 ) );
+				} else {
+					console.log("req.sent.user=undefined?")
+				}
 				next();
 			}
 		}

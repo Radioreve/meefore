@@ -203,12 +203,14 @@
 				return handleErr( req, res, err_ns, err );
 			}
 
+			console.log( req.sent.user );
 			console.log("user friends now : " + user.friends );
 			var facebook_res = body;
 
 			var friends     = facebook_res.data;
 			var friends_ids = _.map( friends, 'id' );
 
+			console.log( friends_ids );
 			console.log('Syncing new friends! Updating...');
 			
 			var new_friends = [];
