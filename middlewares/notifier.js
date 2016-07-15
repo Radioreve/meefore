@@ -107,6 +107,7 @@
 
 			if( err ) return handleErr( req, res, err_ns, err );
 
+			req.sent.user = user;
 			next();
 
 		});
