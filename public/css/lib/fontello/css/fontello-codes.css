@@ -82,3 +82,6 @@
 .icon-angle-down:before { content: '\e850'; } /* '' */
 .icon-match:before { content: '\e851'; } /* '' */
 .icon-power:before { content: '\e852'; } /* '' */
+.icon-cross-medium:before { content: '\e853'; } /* '' */
+.icon-cross-thin:before { content: '\e854'; } /* '' */
+.icon-cross-fat:before { content: '\e855'; } /* '' */

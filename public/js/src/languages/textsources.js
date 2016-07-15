@@ -1411,6 +1411,10 @@
 			"fr": "vous",
 			"us": "you"
 		},
+		w_member_since: {
+			"fr": "Membre depuis le",
+			"us": "Member since"
+		},
 		w_na: {
 			"fr": "Non renseigné(e)",
 			"us": "Unfilled"
@@ -2088,12 +2092,12 @@
 			"us": "Close"
 		},
 		invite_friends_popup_h1: {
-			"fr": "Parlez-en à vos amis",
-			"us": "Bring your friends"
+			"fr": "Quand on aime...",
+			"us": "When one loves..."
 		},
 		invite_friends_popup_h2: {
-			"fr": "En leur partageant par message Facebook ",
-			"us": "Share with them by message on Facebook"
+			"fr": "...on partage ! ",
+			"us": "...one shares !"
 		},
 		invite_friends_popup_btn: {
 			"fr": "Message Facebook",

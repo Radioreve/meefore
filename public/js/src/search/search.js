@@ -252,7 +252,6 @@
 			return LJ.ui.render([
 
 				'<div class="search-user" data-facebook-id="'+ i +'" data-age="' + a + '" data-gender="' + g + '" data-cc="' + c + '">',
-		            '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
 		            '<div class="search-user__pic js-filterlay">',
 		            	img_html,
 		               '<div class="search-user__pic-overlay"></div>',
@@ -262,6 +261,7 @@
 		            	  '<span class="search-user__gender user-gender js-user-gender --'+ g +'"></span>',
 		                  '<span class="name">'+ n +'</span>',
 			              '<span class="search-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
+			              '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
 		               '</div>',
 		               '<div class="search-user__h2">',
 		                  '<span class="age">'+ a +'</span>',

@@ -344,8 +344,9 @@ window.LJ.map.style = _.merge(window.LJ.map.style || {}, {
         "elementType": "geometry",
         "stylers": [
             {
-                "color": "#f7f1df" 
+                "color": "#f7f1df",
                 // "color": "#faf8f8" // apple map
+                "color": "#faf5ec"
             }
         ]
     },

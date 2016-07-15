@@ -221,8 +221,8 @@
 .menu.--downsized .menu-item__icon {
     width: 24px;
     height: 24px;
-    font-size: 16px;
-    margin: 0 6px;
+    font-size: 12px;
+    margin: 0 8px;
 }
 
 .menu.--downsized .menu-item__bar {

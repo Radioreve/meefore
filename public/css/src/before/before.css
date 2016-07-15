@@ -378,9 +378,12 @@ span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;}
     align-items: center;
     margin-top: 4px;
     color: #454545;
+    display: none;
 }
 
-.user-row__education-icon {}
+.user-row__education-icon {
+    font-size: 1;
+}
 
 .user-row__education-icon i {}
 

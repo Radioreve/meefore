@@ -675,7 +675,7 @@
 
 			return [
 				'<div class="chat-inview__icon --close js-close-cheers-back --round-icon">',
-					'<i class="icon icon-cancel"></div>',
+					'<i class="icon icon-cross-fat"></div>',
 				'</div>'
 			].join('');
 

@@ -1,7 +1,7 @@
 
 	window.LJ.friends = _.merge( window.LJ.friends || {}, {
 
-		friends_profiles: null,
+		fetched_friends: null,
 		show_friends_duration: 600,
 		init: function(){
 
@@ -44,15 +44,15 @@
 		fetchAndAddFacebookFriends: function(){
 
 			var friend_ids = LJ.user.friends;
-			return LJ.api.fetchUsers( friend_ids )
+			return LJ.api.fetchUsersFull( friend_ids )
 
-				.then(function( friends_profiles ){
-					friends_profiles = _.map( friends_profiles, 'user' );
-					return LJ.friends.setFriendsProfiles( friends_profiles );
+				.then(function( fetched_friends ){
+					fetched_friends = _.map( fetched_friends, 'user' );
+					return LJ.friends.setFriendsProfiles( fetched_friends );
 
 				})
-				.then(function( friends_profiles ){
-					return LJ.friends.renderFriends( friends_profiles );
+				.then(function( fetched_friends ){
+					return LJ.friends.renderFriends( fetched_friends );
 
 				})
 				.then(function( friends_html ){
@@ -74,47 +74,34 @@
 		},
 		getFriendsProfiles: function( facebook_ids ){
 
-			LJ.friends.friends_profiles = LJ.friends.friends_profiles.filter( Boolean );
+			LJ.friends.fetched_friends = LJ.friends.fetched_friends.filter( Boolean );
 
 			if( facebook_ids ){
-				return _.filter( LJ.friends.friends_profiles, function( f ){
+				return _.filter( LJ.friends.fetched_friends, function( f ){
 					return ( facebook_ids.indexOf( f.facebook_id ) != -1 );
 				});
 
 			} else {
-				return LJ.friends.friends_profiles;
+				return LJ.friends.fetched_friends;
 
 			}
 
 		},
-		fetchFriendsProfiles: function(){
+		setFriendsProfiles: function( fetched_friends ){
 
-			LJ.api.fetchMeFriends()
-				.then(function( friend_ids ){
-					return LJ.api.fetchUsers( friend_ids )
-				})
-				.then(function( friends_profiles ){
-					friends_profiles = _.map( friends_profiles, 'user' );
-					return LJ.friends.setFriendsProfiles( friends_profiles );
-				});
-
+			LJ.friends.fetched_friends = fetched_friends;
+			return LJ.Promise.resolve( fetched_friends );
 
 		},
-		setFriendsProfiles: function( friends_profiles ){
-
-			LJ.friends.friends_profiles = friends_profiles;
-			return LJ.Promise.resolve( friends_profiles );
-
-		},
-		renderFriends: function( friends_profiles ){
+		renderFriends: function( fetched_friends ){
 
 			var html = [];
 
-			if( friends_profiles.length == 0 ){
+			if( fetched_friends.length == 0 ){
 				html.push( LJ.friends.renderFriendItem__Empty() );
 
 			} else {
-				friends_profiles.forEach(function( friend ){
+				fetched_friends.forEach(function( friend ){
 					html.push( LJ.friends.renderFriendItem( friend ) );
 
 				});
@@ -195,11 +182,15 @@
 				nonei 	  = 'nonei';
 			}
 
-			var img_html = LJ.pictures.makeImgHtml( friend.img_id, friend.img_vs, 'menu-row' );
+			var formatted_date = LJ.text("w_member_since") + " " + moment( friend.signed_up_at ).format('DD/MM/YY');
+
+			var main_img = LJ.findMainPic( friend );
+			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'menu-row' );
 
 			return LJ.ui.render([
 
 				'<div class="friend__item js-show-friend '+ nonei +'" data-facebook-id="' + friend.facebook_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
 					'<div class="row-pic">',
 						'<div class="row-pic__image '+ filterlay +'">' + img_html + '</div>',
 					'</div>',
@@ -212,6 +203,12 @@
 								'<i class="icon icon-education"></i>',
 							'</div>',
 							'<span>' + friend.job + '</span>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon">',
+								'<i class="icon icon-location"></i>',
+							'</div>',
+							'<span>' + friend.location.place_name + '</span>',
 						'</div>',
 					'</div>',
 				'</div>'
@@ -277,7 +274,8 @@
 				f = LJ.getGhostUser();
 			}
 			
-			var img_html = LJ.pictures.makeImgHtml( f.img_id, f.img_vs, 'user-modal' );
+			var main_img = LJ.findMainPic( f );
+			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'user-modal' );
 
 			return LJ.ui.render([
 
@@ -323,7 +321,7 @@
 
 				'<div class="invite-friends-popup">',
 					'<div class="invite-friends-popup__close js-close-friends-popup --round-icon">',
-						'<i class="icon icon-cancel"></i>',
+						'<i class="icon icon-cross-fat"></i>',
 					'</div>',
 					'<div class="invite-friends-popup__icon --round-icon">',
 						'<i class="icon icon-heart"></i>',

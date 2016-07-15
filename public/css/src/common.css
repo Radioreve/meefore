@@ -691,6 +691,7 @@ button:hover {
 .user-online {
     height: 10px;
     width: 10px;
+    margin-left: 6px;
     border-radius: 100px;
     opacity: 0;
     display: inline-block;
@@ -1023,15 +1024,6 @@ button:hover {
    - Modals
    
 */
-
-.user__status {
-    width: 18px;
-    height: 18px;
-    border-radius: 100px;
-    position: absolute;
-    top: 0;
-    right: 0;
-}
 
 .--online {
     background: #6ae74f;

@@ -499,7 +499,7 @@
 
 				'<div class="be-create">',
 			        '<div class="be-create__close">',
-			          '<div class="icon icon-cancel"></div>',
+			          '<div class="icon icon-cross-fat"></div>',
 			        '</div>',
 			        '<div class="be-create__title">',
 			          '<h1 data-lid="be_create_title"></h1>',

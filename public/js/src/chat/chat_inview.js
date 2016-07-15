@@ -728,7 +728,7 @@
 			return LJ.ui.render([
 				
 				'<div class="chat-inview-options__close --round-icon js-ioptions-close">',
-		            '<i class="icon icon-cancel"></i>',
+		            '<i class="icon icon-cross-fat"></i>',
 		        '</div>',
 		        '<div class="chat-inview-users">',
 		        	opts.hosts_group_html,

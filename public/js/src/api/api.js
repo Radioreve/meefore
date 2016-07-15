@@ -7,13 +7,12 @@
 		app_token_url 			  	 	 	: '/auth/facebook',
 		me_url		  			  	 	 	: '/api/v1/users/:user_id/self',
 		user_url 							: '/api/v1/users/:user_id',
-		me_friends				 	 	 	: '/api/v1/users/:user_id/friends',
 		invite_code_url 			 	 	: '/api/v1/users/:user_id/invite-code',
 		fetch_shared_url		  	 	 	: '/api/v1/users/:user_id/shared',
 		fetch_meepass_url 		  	 	 	: '/api/v1/users/:user_id/meepass',
 		fetch_cheers_url 		  	 	 	: '/api/v1/users/:user_id/cheers',
-		fetch_user_url 	   	  	  	 	 	: '/api/v1/users/:user_id/core',
-		fetch_user_profile_url    	 	 	: '/api/v1/users/:user_id/full',
+		fetch_user_core_url 	   	  	  	: '/api/v1/users/:user_id/core',
+		fetch_user_full_url    	 	 	    : '/api/v1/users/:user_id/full',
 		fetch_more_channels_url 	 	 	: '/api/v1/users/:user_id/channels',
 		update_profile_url  	  	 	 	: '/api/v1/users/:user_id/update-profile',
 		upload_picture_dt		  	 	 	: '/api/v1/users/:user_id/update-picture-client',
@@ -200,22 +199,6 @@
 					  });
 			});
 		},
-		fetchMeFriends: function(){
-
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.api.get( LJ.api.me_friends.replace(':user_id', LJ.user.facebook_id ))
-					  .then(function( exposed ){
-					  	return resolve( exposed );
-
-					  }, function( err ){
-					  	return reject( err );
-
-					  });
-
-			});
-
-		},
 		syncMeFriends: function( friend_ids ){
 
 			return LJ.promise(function( resolve, reject ){
@@ -234,7 +217,7 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.fetch_user_url.replace(':user_id', facebook_id ) )
+				LJ.api.get( LJ.api.fetch_user_core_url.replace(':user_id', facebook_id ) )
 					  .then(function( exposed ){
 					  	if( exposed.user ){
 					  		// Append the Facebook id, cause not present in cache 
@@ -260,6 +243,16 @@
 
 			return LJ.Promise.all( promises );
 							 
+		},
+		fetchUsersFull: function( facebook_ids ){
+
+			var promises = [];
+			facebook_ids = facebook_ids || [];
+			facebook_ids.forEach(function( fb_id ){
+				promises.push( LJ.api.fetchUserFull( fb_id ) )
+			});
+
+			return LJ.Promise.all( promises );
 
 		},
 		// Fetch a random amount of users that is not already fetched (not in facebook_ids array)
@@ -279,10 +272,10 @@
 
 			});
 		},
-		fetchUserProfile: function( facebook_id ){
+		fetchUserFull: function( facebook_id ){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.get( LJ.api.fetch_user_profile_url.replace(':user_id', facebook_id ) )
+				LJ.api.get( LJ.api.fetch_user_full_url.replace(':user_id', facebook_id ) )
 					  .then(function( exposed ){
 					  	return resolve( exposed );
 					  }, function( err ){

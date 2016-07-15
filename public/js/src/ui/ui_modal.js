@@ -144,7 +144,7 @@
 				'<div class="modal ' + modifier + ' ' + disabled + '" ' + attributes + '>',
 					'<header class="modal-header">',
 						'<div class="modal__close">',
-							LJ.ui.renderIcon('cancel'),
+							'<i class="icon icon-cross-fat"></i>',
 						'</div>',
 						'<div class="modal__title">',
 							'<h1>' + options.title + '</h1>',

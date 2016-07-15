@@ -179,7 +179,7 @@
 					subheader,
 					'<section class="slide-body">',
 						'<div class="slide__close --round-icon">',
-							LJ.ui.renderIcon('cancel'),
+							'<i class="icon icon-cross-fat"></i>',
 						'</div>',
 						body_html,
 					'</section>',

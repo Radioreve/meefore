@@ -22,7 +22,8 @@
     background: #f9f9f9;
 }
 
-.friend__item:hover i{
+.friend__item:hover i,
+.friend__item:hover .row-date {
     color: #1b69ec;
 }
 

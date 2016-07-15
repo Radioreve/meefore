@@ -118,6 +118,7 @@
     flex-basis: 250px;
     height: 250px;
     outline: none;
+    position: relative;
 }
 
 .cheers-back-actions {

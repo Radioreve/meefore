@@ -62,7 +62,7 @@ var settings = {
 				'gender', 
 				'country_code', 
 				'signed_up_at', 
-				'channels',
+				// 'channels',
 				'ideal_night'
 			],
 		befores: []

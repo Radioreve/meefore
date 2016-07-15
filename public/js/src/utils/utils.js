@@ -190,7 +190,7 @@ window.LJ = _.merge( window.LJ || {}, {
                     '<div class="user-country js-user-country">',
                       '<i class="flag-icon flag-icon-'+ cc +'"></i>',
                     '</div>',
-                    '<span class="user-online user__status js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
+                    '<span class="user-online js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
                   '</div>',
                   '<div class="user-row__education">',
                     '<span class="user-row__education-icon --round-icon">',

@@ -91,7 +91,7 @@
 
 				"type"			: "profile",
 
-				"fetchPromise"	: LJ.api.fetchUserProfile,
+				"fetchPromise"	: LJ.api.fetchUserFull,
 				"promise_arg"   : facebook_id,
 
 				"errHandler"    : LJ.profile_user.handleShowUserProfileError
