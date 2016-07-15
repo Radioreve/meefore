@@ -153,7 +153,12 @@ window.LJ = _.merge( window.LJ || {}, {
             age         : 18,
             job         : LJ.text('ghost_user_job'),
             img_id      : "ghost_user",
-            img_vs      : "1468060134"
+            img_vs      : "1468060134",
+            pictures: [
+                img_id      : "ghost_user",
+                img_version : "1468060134",
+                is_main     : true
+            ]
 
         }
 
@@ -442,7 +447,8 @@ window.LJ = _.merge( window.LJ || {}, {
         offsetSearchUsers: function( duration ){
 
             duration = duration || 330;
-            $('.search-user:not(.search-user--offset').addClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 190, 0 ]}, { duration: duration });
+
+            $('.search-user:not(.search-user--offset), .app-subheader.--search h2:not(.search-user--offset)').addClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 190, 0 ]}, { duration: duration });
 
         },  
         unoffsetSearchUsers: function(){
@@ -450,7 +456,7 @@ window.LJ = _.merge( window.LJ || {}, {
             try {
 
                 var current_offset = parseInt( $('.search-user--offset').css('left').split('px')[ 0 ] );
-                $('.search-user').removeClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
+                $('.search-user--offset').removeClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
                 
             } catch( e ){
                 

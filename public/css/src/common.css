@@ -98,6 +98,23 @@ button:hover {
     transform: translate(-50%, -50%)
 }
 
+.app-subheader {
+    height: 52px;
+    padding-bottom: 0px;
+    background: white;
+    box-shadow: 0 0 11px  #ADADAD;
+    align-items: center;
+    border-bottom: none;
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    top: 58px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .row-date {
     position: absolute;
     top: 20px;

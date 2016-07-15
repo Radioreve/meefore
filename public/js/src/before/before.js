@@ -131,7 +131,7 @@
 		addBrowser: function(){
 
 			$('.be-browser').remove();
-			$('.app-section.--map')
+			$('.app-subheader.--map')
 				.append( LJ.before.renderBrowser() );			
 
 		},
@@ -276,18 +276,18 @@
 		},
 		hideBrowser: function(){
 
-			if( $('.be-browser').css('opacity') != 1 ){
+			if( $('.app-subheader.--map').css('opacity') != 1 ){
 				return;
 			}
 
-			$('.be-browser').velocity('slideUpOut', {
+			$('.app-subheader.--map').velocity('slideUpOut', {
 				duration : 500
 			});
 
 		},
 		showBrowser: function(){
 
-			var is_browser_visible   = $('.be-browser').css('opacity') != 0 && $('.be-browser').css('display') != 'none';
+			var is_browser_visible   = $('.app-subheader.--map').css('opacity') != 0 && $('.app-subheader.--map').css('display') != 'none';
 			var is_slide_visible     = $('.slide').length > 0 && $('.slide').css('opacity') == '1';
 			var is_be_create_visible = $('.be-create').css('opacity') == '1';
 
@@ -296,7 +296,7 @@
 			}
 
 
-			$('.be-browser').velocity('slideDownIn', {
+			$('.app-subheader.--map').velocity('slideDownIn', {
 				duration : 500,
 				display  : 'flex'
 			});
