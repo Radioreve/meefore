@@ -18,7 +18,8 @@
 		},
 		handleDomEvents: function(){
 
-			LJ.ui.$body.on('click', '.map__icon.--create-before', LJ.before.handleShowCreateBefore );
+			LJ.ui.$body.on('click', '.map__icon.js-create-before', LJ.before.handleShowCreateBefore );
+			// LJ.ui.$body.on('click', '.map__icon.js-expand-browser', LJ.map.handleShrinkBrowserDates );
 			LJ.ui.$body.on('click', '.be-create__close', LJ.before.handleHideCreateBefore );
 			LJ.ui.$body.on('click', '.be-dates__date', LJ.before.activateBrowserDate );
 			LJ.ui.$body.on('click', '.be-create.--ready .be-create__button', LJ.before.handleCreateBefore );

@@ -26,6 +26,8 @@
 
 			var section_id = $self.attr('data-link');
 			LJ.menu.activateMenuSection( section_id );
+			LJ.ui.hideSlide();
+			LJ.unoffsetRows();
 
 		},
 		activateMenuSection: function( section_id ){	

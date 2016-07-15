@@ -3252,81 +3252,6 @@ animation: cssload-animate 0.475s linear infinite;
     border-radius: 1000px;
 }
 
-.admin {
-    position: absolute;
-    top: 123px;
-    right: 0;
-    background: rgba(235, 235, 235, 0.7);
-    border-left: 1px solid #cacaca;
-    border-bottom: 1px solid #cacaca;
-    width: 300px;
-    height: 300px;
-    z-index: 999999999;
-    opacity: 0;
-    display: none;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-box-pack: start;
-    -ms-flex-pack: start;
-    justify-content: flex-start;
-    padding: 20px;
-    -webkit-box-align: start;
-    -ms-flex-align: start;
-    -ms-grid-row-align: flex-start;
-    align-items: flex-start;
-}
-
-.admin-parties,
-	.admin-places {
-    background: #FCFCFC;
-    width: 100%;
-    padding: 10px;
-    border-radius: 4px;
-}
-
-.admin-parties__title,
-	.admin-places__title {
-    font-family: 'Pacifico';
-    font-size: 20px;
-}
-
-.admin-parties__btn {
-}
-
-.admin-places {
-    margin-top: 20px;
-}
-
-.admin-places__title {
-}
-
-.admin-places__btn,
-	.admin-parties__btn {
-    margin-top: 10px;
-    background: #E94F6A;
-    border: 1px solid #FBE3E7;
-    color: white;
-    font-size: 11px;
-    text-transform: none;
-    width: 100%;
-}
-
-.admin-places__btn:hover,
-	.admin-parties__btn:hover {
-    background: #FC738A;
-}
-
-.admin-places__search-input {
-    display: block;
-    background: white;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    width: 100%;
-    padding: 5px 8px;
-}
-
 .be-browser {
     position: fixed;
     top: 58px;
@@ -3388,7 +3313,6 @@ animation: cssload-animate 0.475s linear infinite;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    color: #919191;
     outline: none;
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -3446,7 +3370,7 @@ animation: cssload-animate 0.475s linear infinite;
     position: relative;
     top: 2px;
     margin: 0 10px;
-    color: #ccc;
+    /* color: #ccc; */
     cursor: pointer;
     font-size: 12px;
     -webkit-box-align: center;
@@ -4149,6 +4073,81 @@ span.be-dates__count {
     margin: 0px 10px;
 }
 
+.admin {
+    position: absolute;
+    top: 123px;
+    right: 0;
+    background: rgba(235, 235, 235, 0.7);
+    border-left: 1px solid #cacaca;
+    border-bottom: 1px solid #cacaca;
+    width: 300px;
+    height: 300px;
+    z-index: 999999999;
+    opacity: 0;
+    display: none;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    padding: 20px;
+    -webkit-box-align: start;
+    -ms-flex-align: start;
+    -ms-grid-row-align: flex-start;
+    align-items: flex-start;
+}
+
+.admin-parties,
+	.admin-places {
+    background: #FCFCFC;
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.admin-parties__title,
+	.admin-places__title {
+    font-family: 'Pacifico';
+    font-size: 20px;
+}
+
+.admin-parties__btn {
+}
+
+.admin-places {
+    margin-top: 20px;
+}
+
+.admin-places__title {
+}
+
+.admin-places__btn,
+	.admin-parties__btn {
+    margin-top: 10px;
+    background: #E94F6A;
+    border: 1px solid #FBE3E7;
+    color: white;
+    font-size: 11px;
+    text-transform: none;
+    width: 100%;
+}
+
+.admin-places__btn:hover,
+	.admin-parties__btn:hover {
+    background: #FC738A;
+}
+
+.admin-places__search-input {
+    display: block;
+    background: white;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    width: 100%;
+    padding: 5px 8px;
+}
+
 .chat {
     display: none;
     position: fixed;
@@ -4309,6 +4308,7 @@ span.be-dates__count {
     z-index: 1;
     outline: none;
     width: 100%;
+    height: 100%!important;
 }
 
 .chat-rows .jspPane {
@@ -4479,7 +4479,8 @@ span.be-dates__count {
 .chat-row-infos__name .--name {
     font-weight: 500;
     margin-right: 6px;
-    font-size: 14px;
+    font-size: 13.5px;
+    letter-spacing: -.2px;
 }
 
 .chat-row-infos__preview {
@@ -4585,6 +4586,12 @@ span.be-dates__count {
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+}
+
+.chat-empty__image {
+    width: 130px;
+    height: 130px;
+    margin-bottom: 20px;
 }
 
 .chat-empty__icon {
@@ -5411,7 +5418,7 @@ span.be-dates__count {
     background: #fd7124;
     background: white;
     color: #1b69ec;
-    border: 1px solid;
+    border: 2px solid;
 }
 
 .cheers-ribbon {
@@ -6505,18 +6512,32 @@ span.be-dates__count {
     right: 20px;
 }
 
-.map__icon.--create-before {
+.map__icon.--create-before, .map__icon.--filter-dates {
     position: fixed;
-    background: #1B69EC;
-    color: white;
     height: 50px;
     width: 50px;
     font-size: 20px;
-    right: 20px;
-    top: 122px;
+    top: 130px;
     cursor: pointer;
     z-index: 10;
     display: none;
+}
+
+.map__icon.--create-before {
+    background: #1B69EC;
+    padding: 2px;
+    color: white;
+    right: 20px;
+    font-size: 24px;
+}
+
+.map__icon.--filter-dates {
+    color: #1b69ec;
+    right: 10px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    top: 110px;
 }
 
 .map__icon.--create-before:hover {
@@ -7395,7 +7416,8 @@ Whispereen  : #58c170
 
 .notification .notification-message__text {
     font-weight: 700;
-    font-size: 12px;
+    font-size: 13.5px;
+    letter-spacing: -.2px;
     max-width: 200px;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -7451,7 +7473,7 @@ Whispereen  : #58c170
 }
 
 .notification.--clicked .notification-message__text {
-    /* font-weight: 500; */
+    font-weight: 500;
 }
 
 .notification.--clicked .notification-message__subtext {
@@ -8570,8 +8592,9 @@ Whispereen  : #58c170
     top: 80px;
     font-size: 20px;
     cursor: pointer;
-    background: #1B69EC;
-    color: #FFFFFF;
+    background: white;
+    border: 2px solid;
+    color: #1b69ec;
     height: 50px;
     width: 50px;
     z-index: 10;
@@ -8580,7 +8603,7 @@ Whispereen  : #58c170
 }
 
 .search-filters__icon:hover {
-    background: #4E90FF;
+    color: #4E90FF;
 }
 
 .search-filters__icon i {

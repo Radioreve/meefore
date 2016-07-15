@@ -19,7 +19,7 @@
 			'user-row'       : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
 			'chat-row'		 : { width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
 			'chat-line'		 : { width: 35,  height: 35,  crop: 'fill', gravity: 'face' },
-			'cheers-back'    : { width: 200, height: 200, crop: 'fill', gravity: 'face' }
+			'chat-inview'    : { width: 200, height: 200, crop: 'fill', gravity: 'face' }
 		},
 		cached: [],
 
@@ -383,6 +383,22 @@
 				LJ.pictures.storeImgInCache( img, img_id, img_version, scope );
 				return img;
 			}
+
+		},
+		makeGroupRosace: function( users, max, context ){
+
+			var pictures = [];
+
+			// Only allow 2-rosaces maximum. More, rosace appearance is confusing...
+			users.slice( 0, max ).forEach(function( user ){
+				pictures.push({
+					img_id: user.img_id,
+					img_vs: user.img_vs
+				});
+			});
+
+			// Insert rosace into the markup
+			return LJ.pictures.makeRosaceHtml( pictures, context );
 
 		},
 		makeRosaceHtml: function( pictures, scope ){

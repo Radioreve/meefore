@@ -165,6 +165,8 @@
 		user.channels.push( makeChannelItem__Personnal( user ) );
 		user.channels.push( makeChannelItem__Location( user ) );
 
+		user.befores = [];
+
 		user.findBeforesByPresence(function( err, befores ){
 
 			if( err ) return handleErr( req, res, err_ns, err );
@@ -175,6 +177,8 @@
 				if( before.hosts.indexOf( user.facebook_id ) != -1 ){
 
 					console.log('User is hosting this event, rendering hosts related channels');
+
+					user.befores.push( User.makeBeforeItem__Host( before ) );
 					user.channels.push( makeChannelItem__Before( before ) );
 
 					// Create a team chat with other hosts only if it doesnt already exists
@@ -190,6 +194,8 @@
 					var mygroup = _.find( before.groups, function( grp ){
 						return grp.members.indexOf( user.facebook_id ) != -1;
 					});
+
+					user.befores.push( User.makeBeforeItem__Member( before, mygroup.status ) );
 
 					// Create a team chat with other hosts only if it doesnt already exists
 					addTeamChannel( user, mygroup.members, mygroup.requested_at );

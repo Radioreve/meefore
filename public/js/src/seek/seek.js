@@ -6,7 +6,7 @@
 			return LJ.seek.activatePlacesInProfile()
 
 				.then(function(){
-					return LJ.delay(100);
+					return LJ.delay( 100 );
 
 				})
 				.then(function(){
@@ -14,7 +14,7 @@
 					
 				})
 				.then(function(){
-					return LJ.delay(100);
+					return LJ.delay( 100 );
 
 				})
 				.then(function(){

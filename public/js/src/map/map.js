@@ -2,16 +2,17 @@
 	window.LJ.map = _.merge( window.LJ.map || {}, {		
 
         markers: [],
+        browser_uistate: null,
 
        	// Called as soon as the script finished loading everything
 		init: function(){
 
 			LJ.map.setupMap();
+            LJ.map.preloadMarkers();
 
 			LJ.map.handleDomEvents();
             LJ.map.handleMapEvents();
 			LJ.map.initPlacesServices();
-
             LJ.before.displayBeforeMarkers( LJ.before.fetched_befores );
 
             
@@ -32,6 +33,21 @@
 			LJ.log('Map has been successfully loaded');
 
 		},
+        preloadMarkers: function(){
+
+            var markers_html = [];
+            Object.keys( LJ.map.markers_url ).forEach(function( type ){
+
+                var size = LJ.pictures.getDevicePixelRatio() + "x";
+                var url  = LJ.map.markers_url[ type ][ size ];
+
+                markers_html.push('<img src="'+ url +'">');
+
+            });
+
+            $( markers_html.join('') ).hide().appendTo('body');
+
+        },
 		handleDomEvents: function(){
             
 			LJ.ui.$body.on('click', '.map__icon.--geoloc', LJ.map.centerMapAtUserLocation );
@@ -98,6 +114,7 @@
         		.append( LJ.map.renderChangeLocation() )
         		.append( LJ.map.renderGeoLocation() )
                 .append( LJ.map.renderCreateBefore() )
+                // .append( LJ.map.renderExpandBrowser() )
         		.append( LJ.map.renderPinLocation() );
 
 
@@ -122,6 +139,7 @@
                     		var latlng = place.geometry.location;
 
                     		LJ.meemap.setCenter( latlng );
+                            $('#map-browser-input').val('');
 
                     	});
                         
@@ -149,6 +167,38 @@
             $('body').on('click', '.js-map-zoom-in', LJ.map.zoomIn );
             $('body').on('click', '.js-map-zoom-out', LJ.map.zoomOut );
 
+
+        },
+        expandBrowser: function(){
+
+            $('.map__icon.--create-before, .map__icon.--filter-dates, .be-browser' ).velocity({ 'translateY':'0' }, { duration: 300 });
+
+        },
+        shrinkBrowser: function(){
+
+            $('.map__icon.--create-before, .map__icon.--filter-dates, .be-browser' ).velocity({ 'translateY':'-54' }, { duration: 300 });
+
+        },
+        handleShrinkBrowserDates: function(){
+
+            if( LJ.map.browser_uistate == "shrinked" ){
+                LJ.map.activateBrowserState( "expanded" );
+            } else {
+                LJ.map.activateBrowserState( "shrinked" );
+            }
+
+        },
+        activateBrowserState: function( state ){
+
+            if( state == "expanded" ){
+                LJ.map.expandBrowser();
+                LJ.map.browser_uistate = "expanded";
+            }
+
+            if( state == "shrinked" ){
+                LJ.map.shrinkBrowser();
+                LJ.map.browser_uistate = "shrinked";
+            }
 
         },
         renderMapZoom: function(){
@@ -706,7 +756,16 @@
 
             return LJ.ui.render([
                 '<div class="map__icon --round-icon --create-before js-create-before">',
-                    '<i class="icon icon-plus"></i>',
+                    '<i class="icon icon-create-before"></i>',
+                '</div>'
+                ].join(''));
+
+        },
+        renderExpandBrowser: function(){
+
+            return LJ.ui.render([
+                '<div class="map__icon --round-icon --filter-dates js-expand-browser">',
+                    '<i class="icon icon-filters"></i>',
                 '</div>'
                 ].join(''));
 

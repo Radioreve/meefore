@@ -125,6 +125,7 @@
     z-index: 1;
     outline: none;
     width: 100%;
+    height: 100%!important;
 }
 
 .chat-rows .jspPane {
@@ -270,7 +271,8 @@
 .chat-row-infos__name .--name {
     font-weight: 500;
     margin-right: 6px;
-    font-size: 14px;
+    font-size: 13.5px;
+    letter-spacing: -.2px;
 }
 
 .chat-row-infos__preview {
@@ -366,6 +368,11 @@
     transform: translate(-50%, -50%);
 }
 
+.chat-empty__image {
+    width: 130px;
+    height: 130px;
+    margin-bottom: 20px;
+}
 .chat-empty__icon {
     font-size: 64px;
     color: #eee;

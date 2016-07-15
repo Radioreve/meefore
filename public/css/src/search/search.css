@@ -32,8 +32,9 @@
     top: 80px;
     font-size: 20px;
     cursor: pointer;
-    background: #1B69EC;
-    color: #FFFFFF;
+    background: white;
+    border: 2px solid;
+    color: #1b69ec;
     height: 50px;
     width: 50px;
     z-index: 10;
@@ -42,7 +43,7 @@
 }
 
 .search-filters__icon:hover {
-    background: #4E90FF;
+    color: #4E90FF;
 }
 
 .search-filters__icon i {

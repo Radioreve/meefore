@@ -31,6 +31,10 @@
 
 			LJ.cheers.activateCheers( link );
 
+			LJ.ui.hideSlide();
+			LJ.unoffsetRows();
+			
+
 		},
 		handleCloseCheersBack: function(){
 
@@ -712,7 +716,7 @@
 			members_profiles.forEach(function( u ){
 				pictures.push({ img_id: u.img_id, img_vs: u.img_vs });
 			});
-			var pictures  = LJ.pictures.makeRosaceHtml( pictures, 'cheers-back' );
+			var pictures  = LJ.pictures.makeRosaceHtml( pictures, 'chat-inview' );
 			var user_rows = LJ.renderUserRows( members_profiles );
 
 			var cheers_back_html = LJ.chat.renderChatInviewHeader(); // Borrow it to the chat module

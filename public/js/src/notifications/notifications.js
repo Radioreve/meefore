@@ -684,16 +684,16 @@
 		notificationCallback__MarkedAsHost: function( n ){
 
 			var before_id  = n.before_id;
-			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
+			// var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
 
-			if( LJ.chat.getChatState() == "hidden" ){
-				LJ.chat.showChatWrap();
-			}
+			// if( LJ.chat.getChatState() == "hidden" ){
+			// 	LJ.chat.showChatWrap();
+			// }
 
-			LJ.chat.showChatInview( chat_id );
-			LJ.chat.activateChat( chat_id );
-			LJ.chat.refreshChatJsp( chat_id );
-			LJ.chat.refreshChatState( chat_id );
+			// LJ.chat.showChatInview( chat_id );
+			// LJ.chat.activateChat( chat_id );
+			// LJ.chat.refreshChatJsp( chat_id );
+			// LJ.chat.refreshChatState( chat_id );
 
 			LJ.before.fetchAndShowBeforeInview( before_id );
 

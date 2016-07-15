@@ -29667,6 +29667,14 @@ function closure ( target, options ){
 
 }));
 
+	window.LJ.admin = _.merge( window.LJ.admin || {}, {
+
+		init: function(){
+			LJ.log('Initializing admin script');
+		}
+
+	});
+
 	window.LJ.analytics = _.merge( window.LJ.analytics || {}, {
 
 		init: function(){
@@ -29733,119 +29741,6 @@ function closure ( target, options ){
 		}
 
 	});
-
-	window.LJ.admin = _.merge( window.LJ.admin || {}, {
-
-		init: function(){
-			LJ.log('Initializing admin script');
-		}
-
-	});
-	
-	
-	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
-
-		init: function(){
-
-			return LJ.promise(function( resolve, reject ){
-
-				if( document.location.hash == "#1" ){
-					LJ.log('Logging in with test user Victoriale...');
-					var tk = "EAAXR2Qo4lc4BAChEDRcMA17PowABdrp711d8Fl03VzjB1ptsqMFaKn2jhB4xOF70HpTfELjUVTtcSkJN1Ju9s0WZA5o1Rrez9uW0mgXsbJsxCMe650gLb3o92MLugROZAuQTKsAC2ZAMNwCSJwxIk1sLTEpv5kZD";
-					return resolve( tk );
-				}
-
-				if( document.location.hash == "#2" ){
-					LJ.log('Logging in with test user Angelah...');
-					var tk = "EAAXR2Qo4lc4BAMUbS4HfY6Uvk5sM1HkOpan12pCAd3tCZAZCGrXGPJXJBj8dazV5OMDqx6aCuX09VfZAb8CVqeEOfmGyCUUoSUzSHmng6GX9FWtpuzCdAPpVzWFxHXWE2VPjb4ybUCQ6ZClAggtLlNn232EZASEIZD";
-					return resolve( tk );
-				}
-
-				if( document.location.hash == "#3" ){
-					LJ.log('Logging in with test user Davida...');
-					var tk = "EAAXR2Qo4lc4BAOEKyewke6ibcU0zB0BvxJSyKdNsOdJFzTGD52MB1QFA1Ay3HHG1XD9WF747zF88rrBmZCODWXHx46Jp8hEWxi5PTZC3G9zjH4pyaZCcj586ZAZAvBExU0Jt8aKfVC9LR2XAzvjGBq8chED7EGlUZD";
-					return resolve( tk );
-				}
-
-				// Quick reference to the local store
-				var s = LJ.store;
-
-				if( !s.get('facebook_access_token') ){
-					return reject('No local data available, initializing lp...');
-				}
-
-				var facebook_access_token = s.get('facebook_access_token');
-
-				var token      = facebook_access_token.token;
-				var expires_at = facebook_access_token.expires_at;
-
-				if( !token || !expires_at ){
-					return reject('Missing init preference param, initializing lp...');
-				}
-
-				if( moment( expires_at ) < moment() ){
-					return reject('Facebook token found but has expired, initializing lp...');
-				} 
-
-				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
-				if( remaining_days < 30 ) {
-					return reject('Facebook token found but will expire soon, refresh is needed.');
-				}
-
-				// Unexpected error
-				if( s.get('reconnecting') && !token ){
-					return reject('User trying to reconnect but missing token from local store (unexpected)');
-				}
-
-				// Check if the app is trying to reconnect him 
-				if( s.get('reconnecting') && token ){
-					LJ.log('Reconnecting user from previous loss of connexion...');
-					s.remove('reconnecting');
-					return resolve( token );
-				}
-
-				if( s.get("autologin") == false ){
-					return reject("Autologin isnt activated, initializing lp...");
-				}
-
-				LJ.log('Init data ok, auto logging in...');
-				resolve( token );
-							
-			});
-		},
-		startLogin: function( facebook_token ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log('Starting login...');
-				LJ.start( facebook_token );
-			});
-
-		},
-		startLanding: function( message ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log( message );
-				LJ.log('Starting landing... v' + 1 );
-
-				$( LJ.static.renderStaticImage('slide_loader') )
-					.hide()
-					.appendTo('.curtain')
-					.velocity('shradeIn', { duration: 800 });
-
-				$('.curtain').find('.slide__loader').velocity('shradeOut', {
-					duration: 600,
-					complete: function(){
-						LJ.ui.hideCurtain({ duration: 800 });
-						LJ.landing.activateLanding( 2 );
-						 // Login flow
-									
-					}
-				})
-			});
-		}
-
-	});
-
-
-
 
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
@@ -30590,6 +30485,111 @@ function closure ( target, options ){
 		}
 
 	});
+	
+	
+	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
+
+		init: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				if( document.location.hash == "#1" ){
+					LJ.log('Logging in with test user Victoriale...');
+					var tk = "EAAXR2Qo4lc4BAChEDRcMA17PowABdrp711d8Fl03VzjB1ptsqMFaKn2jhB4xOF70HpTfELjUVTtcSkJN1Ju9s0WZA5o1Rrez9uW0mgXsbJsxCMe650gLb3o92MLugROZAuQTKsAC2ZAMNwCSJwxIk1sLTEpv5kZD";
+					return resolve( tk );
+				}
+
+				if( document.location.hash == "#2" ){
+					LJ.log('Logging in with test user Angelah...');
+					var tk = "EAAXR2Qo4lc4BAMUbS4HfY6Uvk5sM1HkOpan12pCAd3tCZAZCGrXGPJXJBj8dazV5OMDqx6aCuX09VfZAb8CVqeEOfmGyCUUoSUzSHmng6GX9FWtpuzCdAPpVzWFxHXWE2VPjb4ybUCQ6ZClAggtLlNn232EZASEIZD";
+					return resolve( tk );
+				}
+
+				if( document.location.hash == "#3" ){
+					LJ.log('Logging in with test user Davida...');
+					var tk = "EAAXR2Qo4lc4BAOEKyewke6ibcU0zB0BvxJSyKdNsOdJFzTGD52MB1QFA1Ay3HHG1XD9WF747zF88rrBmZCODWXHx46Jp8hEWxi5PTZC3G9zjH4pyaZCcj586ZAZAvBExU0Jt8aKfVC9LR2XAzvjGBq8chED7EGlUZD";
+					return resolve( tk );
+				}
+
+				// Quick reference to the local store
+				var s = LJ.store;
+
+				if( !s.get('facebook_access_token') ){
+					return reject('No local data available, initializing lp...');
+				}
+
+				var facebook_access_token = s.get('facebook_access_token');
+
+				var token      = facebook_access_token.token;
+				var expires_at = facebook_access_token.expires_at;
+
+				if( !token || !expires_at ){
+					return reject('Missing init preference param, initializing lp...');
+				}
+
+				if( moment( expires_at ) < moment() ){
+					return reject('Facebook token found but has expired, initializing lp...');
+				} 
+
+				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
+				if( remaining_days < 30 ) {
+					return reject('Facebook token found but will expire soon, refresh is needed.');
+				}
+
+				// Unexpected error
+				if( s.get('reconnecting') && !token ){
+					return reject('User trying to reconnect but missing token from local store (unexpected)');
+				}
+
+				// Check if the app is trying to reconnect him 
+				if( s.get('reconnecting') && token ){
+					LJ.log('Reconnecting user from previous loss of connexion...');
+					s.remove('reconnecting');
+					return resolve( token );
+				}
+
+				if( s.get("autologin") == false ){
+					return reject("Autologin isnt activated, initializing lp...");
+				}
+
+				LJ.log('Init data ok, auto logging in...');
+				resolve( token );
+							
+			});
+		},
+		startLogin: function( facebook_token ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log('Starting login...');
+				LJ.start( facebook_token );
+			});
+
+		},
+		startLanding: function( message ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log( message );
+				LJ.log('Starting landing... v' + 1 );
+
+				$( LJ.static.renderStaticImage('slide_loader') )
+					.hide()
+					.appendTo('.curtain')
+					.velocity('shradeIn', { duration: 800 });
+
+				$('.curtain').find('.slide__loader').velocity('shradeOut', {
+					duration: 600,
+					complete: function(){
+						LJ.ui.hideCurtain({ duration: 800 });
+						LJ.landing.activateLanding( 2 );
+						 // Login flow
+									
+					}
+				})
+			});
+		}
+
+	});
+
+
+
 
 	window.LJ.before = _.merge( window.LJ.before || {}, {
 
@@ -30610,7 +30610,8 @@ function closure ( target, options ){
 		},
 		handleDomEvents: function(){
 
-			LJ.ui.$body.on('click', '.map__icon.--create-before', LJ.before.handleShowCreateBefore );
+			LJ.ui.$body.on('click', '.map__icon.js-create-before', LJ.before.handleShowCreateBefore );
+			// LJ.ui.$body.on('click', '.map__icon.js-expand-browser', LJ.map.handleShrinkBrowserDates );
 			LJ.ui.$body.on('click', '.be-create__close', LJ.before.handleHideCreateBefore );
 			LJ.ui.$body.on('click', '.be-dates__date', LJ.before.activateBrowserDate );
 			LJ.ui.$body.on('click', '.be-create.--ready .be-create__button', LJ.before.handleCreateBefore );
@@ -32527,6 +32528,149 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 	 window.fid = function(){ return LJ.user.facebook_id;}
 
 
+	window.LJ.dev = _.merge( window.LJ.dev || {}, {
+
+		n_cloudinary_api_calls: 0,
+		t_login_process: 0,
+
+		view_ids: {
+			"before": "/img/ios/before.jpg",
+			"chat"  : "/img/ios/chat.png",
+			"chat_inview": "/img/ios/chat_inview.png",
+			"request": "/img/ios/request.png"
+
+		},
+		init: function(){
+
+			Mousetrap.bind('command+c', LJ.dev.toggleColorPalette );
+			Mousetrap.bind('command+v', function(){
+				LJ.dev.toggleAppView();
+			});
+
+		},
+		toggleColorPalette: function(){
+
+			if( $('.palette').length > 0 ){
+				return $('.palette').toggleClass('nonei');
+			}
+
+			LJ.log('Showing color palette');
+			var $div = $([
+				'<div class="palette">',
+					'<div class="palette__color --gentle"></div>',
+					'<div class="palette__color --royal"></div>',
+					'<div class="palette__color --odebo"></div>',
+					'<div class="palette__color --mushia"></div>',
+					'<div class="palette__color --purplepills"></div>',
+					'<div class="palette__color --blueboy"></div>',
+					'<div class="palette__color --pinkirl"></div>',
+					'<div class="palette__color --greenected"></div>',
+					'<div class="palette__color --validateen"></div>',
+				'</div>'
+				].join('')
+			);
+
+			$div.appendTo('body');
+
+		},
+		toggleAppView: function( view_id ){
+
+			if( $('.ios').length > 0 ){
+				return $('.ios').toggleClass('nonei');
+			}
+
+		},
+		showAppView: function( view_id ){
+
+			if( $('.ios').length > 0 ){
+				$('.ios').remove();
+			}
+
+			LJ.log('Showing ios view');
+	      
+	        var $div = $('<div class="ios"></div>');
+	        var url = LJ.dev.view_ids[ view_id ];
+
+	        if( !url ){
+	            return LJ.wlog('Couldnt find the url');
+	        }
+
+	        var img = '<img width="100%" src="' + url + '"/>';
+	        $div
+	            .appendTo('body')
+	            .hide()
+	            .append( img )
+	            .show();
+
+		},
+		showAppView__Before: function(){
+			return LJ.dev.showAppView('before');
+		},
+		showAppView__Chat: function(){
+			return LJ.dev.showAppView('chat');
+		},
+		showAppView__ChatInview: function(){
+			return LJ.dev.showAppView('chat_inview');
+		},
+		showAppView__Request: function(){
+			return LJ.dev.showAppView('request');
+		}
+
+	});
+
+	window.LJ.connecter = _.merge( window.LJ.connecter || {}, {
+
+		online_users: [],
+
+		init: function(){
+
+			if( LJ.app_mode == "dev" ){
+				return LJ.log("Mode is 'dev', not initializing the connecter system");
+			}
+			
+			LJ.connecter.refreshOnlineUsers();
+			LJ.connecter.handleDomEvents();
+			return;
+
+		},
+		handleDomEvents: function(){
+
+		},
+		getUserStatus: function( facebook_id ){
+
+			return LJ.connecter.online_users.indexOf( facebook_id ) == -1 ? "offline" : "online";
+
+		},
+		refreshOnlineUsers: function(){
+
+			LJ.log('Refreshing online users...');
+			var thirty_seconds = 30000;
+
+			LJ.api.fetchOnlineUsers()
+				.then(function( online_users ){
+
+					$('.js-user-online').removeClass('--online');
+					LJ.connecter.online_users = online_users;
+					online_users.forEach(function( facebook_id ){
+
+						$('.js-user-online[data-facebook-id="'+ facebook_id +'"]').addClass('--online');
+
+					});
+
+				})
+				.then(function(){
+					return LJ.delay( thirty_seconds )
+
+				})
+				.then(function(){
+					return LJ.connecter.refreshOnlineUsers();
+
+				})
+
+		}
+
+	});
+
 	window.LJ.chat = _.merge( window.LJ.chat || {}, {
 
 		parallel_fetches_count: 30,
@@ -32933,9 +33077,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 			var channel_item = _.find( LJ.user.channels, function( chan ){
 
-				if( chan.chat_id && chan.before_id && chan.before_id == before_id ){
-					return chan.chat_id;
-				}
+				return chan && chan.chat_id && chan.before_id && chan.before_id == before_id;
 
 			});
 
@@ -33559,11 +33701,21 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			var title    = opts.title || '<span data-lid="chat_empty_title"></span>';
 			var icon 	 = opts.icon  || '<i class="icon icon-chat-bubble-duo"></i>';
 
+			var img_html = [
+				'<div class="chat-empty__icon --round-icon">',
+						icon,
+					'</div>',
+			].join('');
+
+			if( opts.img_html ){
+				img_html = opts.img_html;
+			}
+
 			return LJ.ui.render([
 
 				'<div class="chat-empty --'+ type + '">',
-					'<div class="chat-empty__icon --round-icon">',
-						icon,
+					'<div class="chat-empty__image">',
+						img_html,
 					'</div>',
 					'<div class="chat-empty__title">',
 						title,
@@ -33594,19 +33746,9 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 				var users = LJ.chat.getMembers( chat_id );
 
 			}
-			
-			var pictures = [];
-
-			// Only allow 2-rosaces maximum. More, rosace appearance is confusing...
-			users.slice(0,2).forEach(function( user ){
-				pictures.push({
-					img_id: user.img_id,
-					img_vs: user.img_vs
-				});
-			});
 
 			// Insert rosace into the markup
-			var pictures_html = LJ.pictures.makeRosaceHtml( pictures, 'chat-row' );
+			var pictures_html = LJ.pictures.makeGroupRosace( users, 2, 'chat-row' );
 
 			LJ.chat.updateChatRowElements( chat_id, {
 				picture: pictures_html
@@ -34275,21 +34417,21 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			LJ.profile_user.showUserProfile( facebook_id );
 
 		},
-		renderChatInview__AllEmpty: function( group_name ){
+		renderChatInview__AllEmpty: function( group_name, img_html ){
 
 			return LJ.chat.renderChatEmpty({
 				type 	 : 'accepted',
-				icon 	 : '<i class="icon icon-chat-bubble-duo"></i>',
+				img_html : img_html,
 				title 	 : '<span data-lid="chat_empty_title_inview_accepted"></span>',
 				subtitle : '<span data-lid="chat_empty_subtitle_inview_accepted" data-lpm="'+ group_name +'"></span>'
 			});
 
 		},
-		renderChatInview__TeamEmpty: function( group_name ){
+		renderChatInview__TeamEmpty: function( group_name, img_html ){
 
 			return LJ.chat.renderChatEmpty({
 				type 	 : 'team',
-				icon 	 : '<i class="icon icon-chat-bubble-duo"></i>',
+				img_html : img_html,
 				title 	 : '<span data-lid="chat_empty_title_inview_team" data-lpm="'+ group_name +'"></span>',
 				subtitle : '<span data-lid="chat_empty_subtitle_inview_team"></span>'
 			});
@@ -35152,18 +35294,21 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 				var members    = LJ.chat.getMembers( chat_id );
 				var names      = _.map( members, 'name' );
 				var group_name = LJ.renderMultipleNames( names, { lastify_user: LJ.user.name });
+				var img_html   = LJ.pictures.makeGroupRosace( members, 2, 'chat-inview' );
 
-				html = LJ.chat.renderChatInview__TeamEmpty( group_name );
+				html = LJ.chat.renderChatInview__TeamEmpty( group_name, img_html );
 
 			} else {
 
-				var user_profile = chan.role == "hosted" ?
-					LJ.chat.getMainMember( chat_id ) :
-					LJ.chat.getMainHost( chat_id );
+				var members = chan.role == "hosted" ?
+					LJ.chat.getMembers( chat_id ) :
+					LJ.chat.getHosts( chat_id );
 
-				var group_name = LJ.renderGroupName( user_profile.name );
+				var names      = _.map( members, 'name' );
+				var group_name = LJ.renderMultipleNames( names );
+				var img_html   = LJ.pictures.makeGroupRosace( members, 2, 'chat-inview' );
 
-				html = LJ.chat.renderChatInview__AllEmpty( group_name );
+				html = LJ.chat.renderChatInview__AllEmpty( group_name, img_html );
 				
 			}
 
@@ -35356,6 +35501,941 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 	});
 
+window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
+
+	required_permissions : ['public_profile', 'email', 'user_friends', 'user_photos'],
+
+	friends_url			 : '/me/friends',
+	profile_url			 : '/me?fields=id,email,name,link,locale,gender',
+	album_url  			 : '/me?fields=albums{name,id}',
+	album_pictures_url   : '{{album_id}}/photos?fields=images',
+
+	init: function(){
+
+		LJ.facebook.startFacebookSdk();
+		
+	},
+	startFacebookSdk: function(){
+
+		FB.init({
+			appId   : window.facebook_app_id,
+			xfbml   : true, // parse social plugins on this page
+			version : 'v2.7' 
+		});
+
+	},
+	fetchFacebookToken: function(){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook token...');
+			FB.login(function( res ){
+
+				if( res.status == 'not_authorized' ){
+					return reject( Error("User didnt let Facebook access informations") )
+				}
+
+				if( res.status == 'connected' ){
+					var access_token = res.authResponse.accessToken;
+					LJ.login.data.access_token = access_token;
+
+					console.log('Short lived access token : ' + access_token.substring( 0, 20 ) + '.....');
+					return resolve( access_token );
+				}
+
+			}, { scope: LJ.facebook.required_permissions } );
+		});
+
+	},
+	fetchMe: function(){
+
+	},
+	fetchFriends: function(){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.facebook.GraphAPI( LJ.facebook.friends_url, function( res ){
+
+				if( res.err ){
+					return reject( err );
+				}
+
+				var fb_friends  = res.data;
+                var friend_ids  = _.pluck( fb_friends, 'id' );
+
+                var data = {
+                    'friend_ids' : friend_ids
+                };
+
+                resolve( data );
+
+			});
+
+		});
+	},
+	fetchFacebookProfile: function( facebook_token ){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook profile...');
+			
+			FB.api( LJ.facebook.profile_url, { access_token: facebook_token }, function( facebookProfile ){
+				
+				// Store it for reconnexion purposes
+				LJ.facebook_profile = facebookProfile;
+
+				if( facebookProfile.error ){
+					return reject( facebookProfile.error );
+				} else {
+					return resolve( facebookProfile );
+				}
+			});
+
+		});
+
+	},
+	GraphAPI: function( url, callback, opts ){
+
+        var s = LJ.store;
+
+        var access_token = LJ.user.facebook_access_token || s.get("facebook_access_token") || s.get("reconn_data");
+
+        if( !access_token || !access_token.token ){
+            return LJ.wlog('Cannot call the graph api without being able to find a valid facebook token');
+        }
+
+        FB.api( url, { access_token: access_token.token }, callback );
+
+    },
+    renderPicture: function( medium_url, high_url ){
+
+    	return [
+    				'<div class="modal__facebook-picture" data-img-src="' + high_url + '">',
+    					'<img src="' + medium_url + '" width="75"/>',
+    					'<div class="modal__picture-icon">',
+    						'<i class="icon icon-check"></i>', 
+    					'</div>', 
+    				'</div>'
+    	].join('');
+
+    },
+    fetchPictures: function( album_id ){
+    	return LJ.promise(function( resolve, reject ){
+
+ 			LJ.facebook.GraphAPI( LJ.facebook.album_pictures_url.replace( '{{album_id}}', album_id ), function( res ){
+		
+ 				if( !res || res.error ){
+ 					return reject( res.error );
+ 				} else {
+ 					return resolve( res );
+ 				}
+
+ 			});
+
+    	});
+    },
+    fetchProfilePictures: function(){
+
+		return LJ.facebook.fetchProfilePicturesAlbumId().then( LJ.facebook.fetchPictures );
+
+    },
+	fetchProfilePicturesAlbumId: function( next_page ){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook profile picture album id...');
+
+			var album_url = next_page || LJ.facebook.album_url;
+			var album_id  = null;
+
+			LJ.facebook.GraphAPI( album_url, function( res ){
+
+				if( !res.albums ){
+					return reject('No album id to display');
+				}
+					
+				var albums   = res.albums.data;
+				var album_id = _.find( albums, function( alb ){
+					return alb.name == "Profile Pictures";
+				}).id;
+
+				if( /^10152931/i.test( LJ.user.facebook_id ) ){
+					album_id = _.find( albums, function( alb ){
+						return alb.name == "Mobile Uploads";
+					}).id;
+				}
+
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && res.albums.paging.cursor.next ){
+
+					var next = res.albums.paging.cursor.next;
+
+					LJ.log('Didnt find on first page, trying with next page : ' + next );
+					return LJ.facebook.fetchProfilePicturesAlbumId( next );
+				}
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && !res.albums.paging.cursor.next ){
+					return reject('Couldnt find album id, no next page to browse' );
+				}
+
+				LJ.log('Album id found, ' + album_id );
+				return resolve( album_id );
+
+			});
+
+		});
+
+	},
+	findPictureWithMediumDimensions: function( picture_object ){
+	
+
+	return picture_object.slice(-1)[ 0 ].source;
+		var medium_pic;
+	
+		picture_object.forEach(function( image_object ){
+
+			if( image_object.width > 200 && image_object.width < 300 ){
+				medium_pic = image_object
+			} 
+
+		});
+
+		return medium_pic.source;
+
+	},
+	findPictureWithHighDimensions: function( picture_object ){
+
+		return picture_object[ 0 ].source;
+
+	},
+	showFacebookPicturesInModal: function( img_place ){
+
+		LJ.ui.showModalAndFetch({
+
+			"type"			: "facebook",
+			"title"			: LJ.text("mod_facebook_pictures_title"),
+			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
+			"footer"		: "<button class='--rounded'>" + LJ.ui.renderIcon('check') + "</button>",
+			"attributes"	: [{ name: "img-place", val: img_place }],
+
+			"fetchPromise"	: LJ.facebook.fetchProfilePictures
+
+		})
+		.then( LJ.facebook.displayFacebookPicturesInModal )
+		.catch( LJ.facebook.displayFacebookPicturesInModal_Error );
+			
+
+	},
+	displayFacebookPicturesInModal: function( results ){
+		
+		console.log('Displaying images...');
+		var img_place = $('.modal').attr('data-img-place');
+
+		var html = LJ.facebook.$profile_pictures || [];
+ 
+			if( html.length == 0 ){
+				results.data.forEach(function( picture_object ){
+
+					// Each photo node has a 'images' field that store the different representations Facebook has
+					// The first one is the highest in quality. Display in thumb a medium one, and upload a HQ one
+					// because of Retina displays
+					try {
+
+					
+					var thumbpic_url  = LJ.facebook.findPictureWithMediumDimensions( picture_object.images );
+					var hd_upload_url = LJ.facebook.findPictureWithHighDimensions( picture_object.images );
+					} catch (e ){
+						console.log( picture_object );
+					}
+					html.push( LJ.facebook.renderPicture( thumbpic_url, hd_upload_url ) );
+						
+				});
+			}
+
+			LJ.facebook.$profile_pictures = html;
+			
+			$('.modal-body')
+				.append( html.join('') )	
+				.find('.modal__loader')
+				.velocity('bounceOut', { duration: 500, delay: 500,
+					complete: function(){
+
+						$('.modal__facebook-picture')
+							   .velocity('bounceInQuick', {
+							   		display: 'block'
+							   });
+
+						LJ.ui.turnToJsp('.modal-body', {
+							jsp_id: 'modal_facebook_pictures'
+						});
+
+					}
+				});
+
+				
+
+	},
+	displayFacebookPicturesInModal_Error: function( err ){
+
+		console.log( err );
+
+		LJ.delay( 1000 ).then(function(){
+
+			$('.modal-body')
+					.append('<div class="modal__loading-error none">' + LJ.text('modal_err_empty_fetch') + '</div>')
+
+			$('.modal__loader')
+			.velocity('bounceOut', { duration: 500, delay: 500,
+				complete: function(){
+
+					$('.modal-body').find('.modal__loading-error').velocity('bounceInQuick', {
+						display: 'block'
+					});
+
+				}
+			});
+
+		});
+
+
+	},
+	showModalSendMessageToFriends: function(){
+
+		FB.ui({
+			method: 'send',
+			link: 'http://www.meefore.com'
+		});
+
+	}
+
+});
+
+	window.LJ.friends = _.merge( window.LJ.friends || {}, {
+
+		fetched_friends: null,
+		show_friends_duration: 600,
+		init: function(){
+
+			LJ.friends.handleDomEvents();
+			return LJ.friends.fetchAndAddFacebookFriends();
+
+		},
+		handleDomEvents: function(){
+
+			LJ.ui.$body.on('click', '.js-invite-friends', LJ.facebook.showModalSendMessageToFriends );
+			LJ.ui.$body.on('click', '.js-show-friend', LJ.friends.handleFriendProfileClicked );
+			LJ.ui.$body.on('click', '.js-close-friends-popup', LJ.friends.hideInviteFriendsPopup );
+
+		},
+		handleFriendsClicked: function(){
+
+			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
+
+			$('.friends').html('');
+
+			$loader.addClass('none')
+				   .appendTo('.friends')
+				   .velocity('bounceInQuick', {
+				   	delay: 125,
+				   	duration: 500,
+				   	display: 'block'
+				   });
+
+			LJ.friends.fetchAndAddFacebookFriends();
+
+		},	
+		handleFriendProfileClicked: function(){
+
+			var $s = $(this);
+			var facebook_id = $s.attr('data-facebook-id');
+
+			LJ.profile_user.showUserProfile( facebook_id );
+
+		},
+		fetchAndAddFacebookFriends: function(){
+
+			var friend_ids = LJ.user.friends;
+			return LJ.api.fetchUsersFull( friend_ids )
+
+				.then(function( fetched_friends ){
+					fetched_friends = _.map( fetched_friends, 'user' );
+					LJ.friends.setFriendsProfiles( fetched_friends );
+					LJ.friends.sortFriends();
+					return;
+
+				})
+				.then(function(){
+					return LJ.friends.renderFriends( LJ.friends.fetched_friends );
+
+				})
+				.then(function( friends_html ){
+					return LJ.friends.displayFriends( friends_html );
+
+				})
+				.catch(function( e ){
+					LJ.wlog(e);
+				});
+
+
+		}, 
+		getFriendProfile: function( facebook_id ){
+
+			return _.find( LJ.friends.getFriendsProfiles(), function( f ){
+				return f.facebook_id == facebook_id;
+			});
+
+		},
+		getFriendsProfiles: function( facebook_ids ){
+
+			LJ.friends.fetched_friends = LJ.friends.fetched_friends.filter( Boolean );
+
+			if( facebook_ids ){
+				return _.filter( LJ.friends.fetched_friends, function( f ){
+					return ( facebook_ids.indexOf( f.facebook_id ) != -1 );
+				});
+
+			} else {
+				return LJ.friends.fetched_friends;
+
+			}
+
+		},
+		setFriendsProfiles: function( fetched_friends ){
+
+			LJ.friends.fetched_friends = fetched_friends;
+
+		},
+		sortFriends: function(){
+
+			LJ.friends.fetched_friends.sort(function( fa, fb ){
+
+				if( fa.name[ 0 ].toLowerCase() < fb.name[ 0 ].toLowerCase() ){
+					return -1;
+				}
+
+				if( fa.name[ 0 ].toLowerCase() > fb.name[ 0 ].toLowerCase() ){
+					return 1;
+				}
+
+				return 0;
+
+			});
+
+		},
+		renderFriends: function( fetched_friends ){
+
+			var html = [];
+
+			if( fetched_friends.length == 0 ){
+				html.push( LJ.friends.renderFriendItem__Empty() );
+
+			} else {
+				fetched_friends.forEach(function( friend ){
+					html.push( LJ.friends.renderFriendItem( friend ) );
+
+				});
+
+				html.push( LJ.friends.renderFriendItem__Last() );
+
+			}
+
+			return html.join('');
+
+		},
+		displayFriends: function( html ){
+
+			var $base;
+			if( $('.friends').children().length == 0 ){
+				$( html )
+					.hide()
+					.appendTo('.friends')
+					.velocity('shradeIn', {
+						duration : LJ.friends.show_friends_duration,
+						display  : 'flex',
+						stagger  : (LJ.friends.show_friends_duration / 4)
+					});
+
+			} else {
+				$('.friends')
+					.children()
+					.velocity('shradeOut', {
+						duration : LJ.friends.show_friends_duration / 2,
+						display  : 'none',
+						complete : function(){
+							$( html )
+								.hide()
+								.appendTo('.friends')
+								.velocity('shradeIn', {
+									duration : LJ.friends.show_friends_duration,
+									display  : 'flex',
+									stagger  : (LJ.friends.show_friends_duration / 4)
+								});
+
+						}
+					});
+
+			}
+
+		},
+		renderFriendItem__Empty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-users"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_friends_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_friends_subtitle"></p>',
+					'</div>',
+					'<div class="empty__subicon --round-icon js-invite-friends">',
+						'<i class="icon icon-gift"></i>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderFriendItem: function( friend ){
+
+			var filterlay = 'js-filterlay';
+			var nonei 	  = '';
+
+			if( !friend ){
+				LJ.wlog('Trying to render undefined friend, rendering ghost user instead');
+				friend = LJ.getGhostUser();
+				filterlay = '';
+				nonei 	  = 'nonei';
+			}
+
+			var formatted_date = LJ.text("w_member_since") + " " + moment( friend.signed_up_at ).format('DD/MM/YY');
+
+			var main_img = LJ.findMainPic( friend );
+			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="friend__item js-show-friend '+ nonei +'" data-facebook-id="' + friend.facebook_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image '+ filterlay +'">' + img_html + '</div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + friend.name + ', <span class="row-body__age">' + friend.age + '</span></h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon">',
+								'<i class="icon icon-education"></i>',
+							'</div>',
+							'<span>' + friend.job + '</span>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon">',
+								'<i class="icon icon-location"></i>',
+							'</div>',
+							'<span>' + friend.location.place_name + '</span>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderFriendItem__Last: function(){
+
+			return '';
+
+			return LJ.ui.render([
+
+				'<div class="friend__item --invite-friends js-invite-friends" >',
+					'<div class="row-pic">',
+						'<i class="icon icon-gift"></i>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2> ' + LJ.text('friends_title_invite') + '</h2>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderFriendsInModal: function(){
+
+			var friends = LJ.friends.getFriendsProfiles();
+ 
+			if( friends.length == 0 ){
+
+				return LJ.friends.renderFriendsInModal__Empty();
+
+			} else {
+
+				var html = [];
+
+				friends.forEach(function( f ){
+					html.push( LJ.friends.renderFriendInModal( f ) );
+				});
+
+				return html.join('');
+			}
+
+		},
+		renderFriendsInModal__Empty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="no-friends">',
+					'<span data-lid="modal_no_friends_text"></span>',
+					'<button class="js-invite-friends" data-lid="modal_no_friends_btn"></button>',
+				'</div>'
+
+			].join(''));
+
+		},
+		renderFriendInModal: function( f ){
+
+			if( !f ){
+				f = LJ.getGhostUser();
+			}
+			
+			var main_img = LJ.findMainPic( f );
+			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'user-modal' );
+
+			return LJ.ui.render([
+
+				'<div class="modal-item friend-modal" data-name="' + f.name.toLowerCase() + '" data-item-id="' + f.facebook_id + '">',
+					'<div class="friend-modal__pic">',
+						img_html,
+						'<div class="friend-modal__icon --round-icon">',
+							'<i class="icon icon-check"></i>',
+						'</div>',
+					'</div>',
+					'<div class="friend-modal__name">',
+						'<span>' + f.name + '</span>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		displayInviteFriendsPopup: function(){
+
+			LJ.friends.invite_popup_timer = setTimeout(function(){
+
+				$( LJ.friends.renderInviteFriendsPopup() )
+					.hide()
+					.appendTo('body')
+					.velocity('shradeIn', {
+						duration: 400,
+						display : 'flex'
+					});
+
+			}, 2500 );
+
+		},
+		hideInviteFriendsPopup: function(){
+
+			clearTimeout( LJ.friends.invite_popup_timer );
+			$('.invite-friends-popup').remove();
+
+		},
+		renderInviteFriendsPopup: function(){
+
+			return LJ.ui.render([
+
+				'<div class="invite-friends-popup">',
+					'<div class="invite-friends-popup__close js-close-friends-popup --round-icon">',
+						'<i class="icon icon-cross-fat"></i>',
+					'</div>',
+					'<div class="invite-friends-popup__icon --round-icon">',
+						'<i class="icon icon-heart"></i>',
+					'</div>',
+					'<div class="invite-friends-popup-message">',
+						'<div class="invite-friends-popup__h1">',
+							'<span data-lid="invite_friends_popup_h1"></span>',
+						'</div>',
+						'<div class="invite-friends-popup__h2">',
+							'<span data-lid="invite_friends_popup_h2"></span>',
+						'</div>',
+					'</div>',
+					'<div class="invite-friends-popup__btn js-invite-friends">',
+						'<button data-lid="invite_friends_popup_btn"></button>',
+					'</div>',
+				'</div>'
+
+			].join(''));
+
+		}
+
+	});
+    /*
+        Initialisation script
+        Recursively try to initialize the Facebook pluggin
+        When it's loaded, app starts.
+        Follow the code...
+        Léo Jacquemin, 10/03/16, 17h56
+    */
+    
+
+	window.LJ = _.merge( window.LJ || {}, { 
+
+		init: function( time ){
+
+            $( window ).scrollTop( 0 )
+
+            // The application only starts when the Facebook pluggin has loaded
+            if( typeof FB === 'undefined' )
+                return setTimeout(function(){ LJ.init( time ); }, time );
+            
+            // Language, Lodash & jQuery augmentations
+            LJ.initAugmentations();
+            // Translate the whole page based on sourcetext & data-lid attributes
+            LJ.lang.init();
+            // Cache static assets images used accross modules
+            LJ.static.init();
+            // Store mechanism (local storage / cookie)
+            LJ.store.init();
+            // Analytics for tracking what's going on
+            LJ.analytics.init();
+            // Starts the Facebook SDK
+            LJ.facebook.init();
+            // Basic routing functionalities to prevent user from accidentally leaving the page
+            LJ.router.init();
+            // Menu dom interactions
+            LJ.menu.init();
+            // Navigation for macro views 
+            LJ.nav.init();
+            // Scrolling globals etc
+            LJ.ui.init();
+            // Cheers
+            LJ.cheers.init();
+            // Shared module
+            // LJ.shared.init();  // Keep it for ulterior version
+            // Profile user
+            LJ.profile_user.init();
+
+            // Autologin for users who asked the "remember me" feature in their settings
+            LJ.autologin.init()
+                .then(  LJ.autologin.startLogin )
+                .catch( LJ.autologin.startLanding )
+
+
+        },
+        start: function( facebook_token ){
+
+            return LJ.Promise.resolve( facebook_token )
+                .then( LJ.login.enterLoginProcess )  
+                .then(function(){
+                    return LJ.api.fetchAppToken( facebook_token );
+                })
+                .then( LJ.login.stepCompleted )
+                // Enter the following step with a valid app token
+                // Two kinds of data are fetch :
+                // - datas that are self-related  : profile infos, pictures, friends, notifications, chats...
+                // - datas that are users-related : search users module, map events...
+                .then( LJ.profile.init )
+                .then( LJ.login.firstSetup )
+                .then( LJ.login.stepCompleted )
+                .then( LJ.map.initGeocoder )
+                // .then(function(){ return LJ.delayd[ lol ]})
+                .then(function(){
+                    var a = LJ.friends.init();
+                    var b = LJ.search.init();
+                    var c = LJ.realtime.init();
+                    return LJ.Promise.all([ a, b, c ]);
+                })
+                .then( LJ.notifications.init )
+                .then( LJ.before.init )
+                .then( LJ.chat.init )
+                .then( LJ.login.hideLoginSteps )
+                .then( LJ.map.init ) // Must be as close as possible to terminateLogin. Map doesnt render sometimes..
+                .then( LJ.login.terminateLoginProcess )
+                .then( LJ.onboarding.init )
+                .then( LJ.connecter.init )
+                .then( LJ.dev.init )
+
+        }
+
+
+	});
+
+
+	
+	window.LJ.invite = _.merge( window.LJ.invite || {}, {
+
+		init: function(){
+			
+		}
+
+	});
+
+	window.LJ.landing = _.merge( window.LJ.landing || {}, {
+
+		activateLanding: function( landing_version ){
+
+			var landing_html = LJ.landing.renderLanding( landing_version );
+			$('.multi-landing').html( landing_html );
+
+			LJ.login.init()
+                .then( LJ.facebook.fetchFacebookToken )
+                .then( LJ.start );
+
+		},
+		renderLanding: function( landing_version ){
+
+			// Add the texts that are needed 
+			LJ.textAdd( LJ.landing.texts );
+			// Render the html
+			var landing_object = LJ.landing[ "v" + landing_version ];
+
+			if( !landing_object ){
+				return LJ.wlog('This version of the landing page (v'+ landing_version +') doesnt exist');
+			}
+
+			return LJ.ui.render( landing_object.html.join('') );
+
+		},
+		texts: {
+
+			"landing_browse_title": {
+				"fr" :"Trouvez votre before",
+				"us": "Find your pregame"
+			},
+			"landing_browse_subtitle": {
+				"fr" :"Repérez les before qui s\'organisent près de chez vous en parcourant la Map.",
+				"us": "Spot the pregames around you by browsing the map"
+			},
+			"landing_cheers_title": {
+				"fr" :"Un before vous intéresse ?",
+				"us": "Interested in a pregame ?"
+			},
+			"landing_cheers_subtitle": {
+				"fr" :"Envois un Cheers pour montrer ton intérêt",
+				"us": "Send a Cheers to show our interest"
+			},
+			"landing_chat_title": {
+				"fr" :"Faites connaissance",
+				"us": "Faites connaissance"
+			},
+			"landing_chat_subtitle": {
+				"fr" :"Discutez entre groupes dans le chat",
+				"us": "Chat with the other group"
+			},
+			"landing_privacy": {
+				"fr": [
+						'En continuant, vous acceptez nos <span class="js-terms landing-bold">Conditions d\'Utilisation</span>',
+						'et <span class="js-privacy landing-bold">Politique de Confidentialité.</span>',
+						'Nous ne publierons <span class="landing-bold">rien</span> sur Facebook.'
+					].join(''),
+				"us": [
+						'By continuing, you\'re agreeing to our <span class="js-terms landing-bold">Terms</span>',
+						'and <span class="js-privacy landing-bold">Confidentiality.</span>',
+						'Will will <span class="landing-bold">never</span> publish on Facebook.'
+					].join('')
+			},
+			"landing_connexion_btn": {
+				"fr": "Se connecter via <span class=\"landing-bold\">Facebook</span>",
+				"us": "Connection with <span class=\"landing-bold\">Facebook</span>"
+			},
+			"landing_terms": {
+				"fr": "Conditions d\'Utilisation",
+				"us": "Terms"
+			},
+			"landing_policy": {
+				"fr": "Politique de Confidentialité",
+				"us": "Confidentiality"
+			},
+			"landing_faq": {
+				"fr": "FAQ",
+				"us": "FAQ"
+			},
+			"landing_contact" :{
+				"fr": "Contact",
+				"us": "Contact"
+			},
+			"landing_facebook_page": {
+				"fr": "Page Facebook",
+				"us": "Facebook page"
+			}
+
+		},
+		v0: {
+			name: "Blank page",
+			desc: "Blank page for test purposes only",
+			html: []
+		},
+		v2: {
+			"name": "Landing Light",
+			"desc": "Light theme, clear landing with phone in mid screen and almost nothing",
+
+			"html": [
+					'<div class="landing">',
+					    '<div class="landing-logo --round-icon">',
+					      '<span>Meefore</span>',
+					    '</div>',
+					    '<div class="landing-lang">',
+					      '<button class="js-changelang" data-lid="settings_ux_changelang_button"></button>',
+					    '</div>',
+					    '<div class="landing-body">',
+					      '<div class="landing-title">',
+					        '<h1 data-lid="landing_browse_title"></h1>',
+					      '</div>',
+					      '<div class="landing-subtitle">',
+					        '<h2 data-lid="landing_browse_subtitle"></h2>',
+					      '</div>',
+					      '<div class="landing-screenshots">',
+					        '<div class="landing__phone">',
+					          '<img src="/img/iphone.png" alt=iPhone">',
+					        '</div>',
+					        '<div class="landing__screenshot">',
+					          '<img src="/img/lp.png" alt="Find ur love" width="100%">',
+					        '</div>',
+					      '</div>',
+					      '<div class="landing-bullets">',
+					        '<div class="landing__bullet --active"></div>',
+					        '<div class="landing__bullet"></div>',
+					        '<div class="landing__bullet"></div>',
+					        '<div class="landing__bullet"></div>',
+					      '</div>',
+					      '<div class="landing-privacy">',
+					      	'<h3 data-lid="landing_privacy"></h3>',
+					      '</div>',
+					      '<div class="landing-connexion">',
+					        '<button class="js-login" data-lid="landing_connexion_btn"></button>',
+					      '</div>',
+					    '</div>',
+					    '<footer class="landing-footer">',
+					      '<div class="landing-footer__item">',
+					        '<span data-lid="landing_terms"></span>',
+					      '</div>',
+					      '<div class="landing-footer__item">',
+					        '<span data-lid="landing_policy"></span>',
+					      '</div>',
+					       '<div class="landing-footer__item">',
+					        '<span data-lid="landing_contact"></span>',
+					      '</div>',
+					       '<div class="landing-footer__item">',
+					        '<span data-lid="landing_faq"></span>',
+					      '</div>',
+					       '<div class="landing-footer__item">',
+					        '<span data-lid="landing_facebook_page"></span>',
+					      '</div>',
+					    '</footer>',
+					  '</div>'
+					],
+				activateScreenshot: function( link ){
+
+				}
+
+
+		}
+
+	});
+
+
+
+
 	window.LJ.cheers = _.merge( window.LJ.cheers || {}, {
 
 		cheers_back_duration: 450,
@@ -35387,6 +36467,10 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			var link = $seg.attr('data-link');
 
 			LJ.cheers.activateCheers( link );
+
+			LJ.ui.hideSlide();
+			LJ.unoffsetRows();
+			
 
 		},
 		handleCloseCheersBack: function(){
@@ -36069,7 +37153,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			members_profiles.forEach(function( u ){
 				pictures.push({ img_id: u.img_id, img_vs: u.img_vs });
 			});
-			var pictures  = LJ.pictures.makeRosaceHtml( pictures, 'cheers-back' );
+			var pictures  = LJ.pictures.makeRosaceHtml( pictures, 'chat-inview' );
 			var user_rows = LJ.renderUserRows( members_profiles );
 
 			var cheers_back_html = LJ.chat.renderChatInviewHeader(); // Borrow it to the chat module
@@ -36179,864 +37263,2349 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 	});
 		
 
-	window.LJ.connecter = _.merge( window.LJ.connecter || {}, {
+	window.LJ.login = _.merge( window.LJ.login || {}, {
 
-		online_users: [],
+			'$trigger_login': '.js-login',
+			'$trigger_logout': '.js-logout',
+			'$modal_logout'  : '.modal.--logout',
+			'opening_duration': 1000,
+			'prompt_duration': 600,
+			'prompt_buttons_duration': 900,
+			'completed_steps': 0,
+			'break_duration': 400,
 
-		init: function(){
+			'data': {},
 
-			if( LJ.app_mode == "dev" ){
-				return LJ.log("Mode is 'dev', not initializing the connecter system");
-			}
-			
-			LJ.connecter.refreshOnlineUsers();
-			LJ.connecter.handleDomEvents();
-			return;
+			init: function(){
 
-		},
-		handleDomEvents: function(){
+				return LJ.promise(function( resolve, reject ){
+					LJ.ui.$body.on('click', '.js-login', resolve );
+				});
 
-		},
-		getUserStatus: function( facebook_id ){
 
-			return LJ.connecter.online_users.indexOf( facebook_id ) == -1 ? "offline" : "online";
+			},
+			showLandingElements: function(){
 
-		},
-		refreshOnlineUsers: function(){
+				var duration = 600;
 
-			LJ.log('Refreshing online users...');
-			var thirty_seconds = 30000;
-
-			LJ.api.fetchOnlineUsers()
-				.then(function( online_users ){
-
-					$('.js-user-online').removeClass('--online');
-					LJ.connecter.online_users = online_users;
-					online_users.forEach(function( facebook_id ){
-
-						$('.js-user-online[data-facebook-id="'+ facebook_id +'"]').addClass('--online');
-
+				$('.landing').find('.landing-logo')
+					.velocity('slideLeftIn', {
+						duration: duration,
+						display : 'flex'
 					});
 
-				})
-				.then(function(){
-					return LJ.delay( thirty_seconds )
+				$('.landing').find('.landing-lang')
+					.velocity('slideRightIn', {
+						duration: duration,
+						display : 'flex'
+					});
 
-				})
-				.then(function(){
-					return LJ.connecter.refreshOnlineUsers();
+				$('.landing').find('.landing-body')
+					.velocity('shradeIn', {
+						duration: duration*2,
+						display : 'flex'
+					});
 
-				})
+				$('.landing').find('.landing-footer')
+					.velocity('slideUpIn', {
+						duration: duration,
+						display : 'flex'
+					});
 
-		}
 
-	});
+			},
+			hideLandingElements: function(){
 
-	window.LJ.dev = _.merge( window.LJ.dev || {}, {
+				$('.landing')
+					.children()
+					.velocity('shradeOut', {
+						duration : 800,
+						display  : 'none'
+					});
 
-		n_cloudinary_api_calls: 0,
-		t_login_process: 0,
+			},
+			showLoginProgressBar: function(){
 
-		view_ids: {
-			"before": "/img/ios/before.jpg",
-			"chat"  : "/img/ios/chat.png",
-			"chat_inview": "/img/ios/chat_inview.png",
-			"request": "/img/ios/request.png"
+				$('.login__message').velocity('shradeIn', {
+			 		duration: 1600, delay: LJ.login.opening_duration/2
+			 	});
 
-		},
-		init: function(){
+			},
+			addLoginProgression: function(){
 
-			Mousetrap.bind('command+c', LJ.dev.toggleColorPalette );
-			Mousetrap.bind('command+v', function(){
-				LJ.dev.toggleAppView();
-			});
+				$( LJ.login.renderLoginProgression() ).hide().appendTo( $('.curtain') )
 
-		},
-		toggleColorPalette: function(){
+			},
+			showLoginProgression: function(){
 
-			if( $('.palette').length > 0 ){
-				return $('.palette').toggleClass('nonei');
-			}
+				$('.login').velocity('shradeIn', {
+					duration: 1000
+				});
 
-			LJ.log('Showing color palette');
-			var $div = $([
-				'<div class="palette">',
-					'<div class="palette__color --gentle"></div>',
-					'<div class="palette__color --royal"></div>',
-					'<div class="palette__color --odebo"></div>',
-					'<div class="palette__color --mushia"></div>',
-					'<div class="palette__color --purplepills"></div>',
-					'<div class="palette__color --blueboy"></div>',
-					'<div class="palette__color --pinkirl"></div>',
-					'<div class="palette__color --greenected"></div>',
-					'<div class="palette__color --validateen"></div>',
-				'</div>'
-				].join('')
-			);
+			},
+			showLoginProgressMessage: function(){
 
-			$div.appendTo('body');
+				$('.login__message').velocity('shradeIn', {
+					duration: 1000
+				});
 
-		},
-		toggleAppView: function( view_id ){
+			},
+			hideLoginProgressBar: function(){
 
-			if( $('.ios').length > 0 ){
-				return $('.ios').toggleClass('nonei');
-			}
+				$('.login__progress-bar').velocity('shradeIn', {
+			 		duration: 1000
+			 	});
 
-		},
-		showAppView: function( view_id ){
+			},
+			enterLoginProcess: function(){
 
-			if( $('.ios').length > 0 ){
-				$('.ios').remove();
-			}
+				LJ.login.hideLandingElements();
+				LJ.ui.deactivateHtmlScroll();
 
-			LJ.log('Showing ios view');
-	      
-	        var $div = $('<div class="ios"></div>');
-	        var url = LJ.dev.view_ids[ view_id ];
+				return LJ.delay( 1000 )
+						 .then(function(){
 
-	        if( !url ){
-	            return LJ.wlog('Couldnt find the url');
-	        }
+						 	LJ.ui.showCurtain({ duration: 600, theme: "light", sticky: true });
+						 	LJ.login.addLoginProgression();
+						 	LJ.login.showLoginProgression();
+						 	// LJ.login.showLoginProgressMessage();
+						 	// LJ.login.showLoginProgressBar();
 
-	        var img = '<img width="100%" src="' + url + '"/>';
-	        $div
-	            .appendTo('body')
-	            .hide()
-	            .append( img )
-	            .show();
+						 });
 
-		},
-		showAppView__Before: function(){
-			return LJ.dev.showAppView('before');
-		},
-		showAppView__Chat: function(){
-			return LJ.dev.showAppView('chat');
-		},
-		showAppView__ChatInview: function(){
-			return LJ.dev.showAppView('chat_inview');
-		},
-		showAppView__Request: function(){
-			return LJ.dev.showAppView('request');
-		}
+			},
+			hideLoginSteps: function(){
+				return LJ.promise(function( resolve, reject ){
 
-	});
+					$('.app').removeClass('nonei');
+					$('.landing').remove();
 
-window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
+					$('.login__message, .login__progress-bar, .login__loader').velocity('shradeOut', {
+						duration: 400,
+						complete: resolve
+						
+					});
 
-	required_permissions : ['public_profile', 'email', 'user_friends', 'user_photos'],
-
-	friends_url			 : '/me/friends',
-	profile_url			 : '/me?fields=id,email,name,link,locale,gender',
-	album_url  			 : '/me?fields=albums{name,id}',
-	album_pictures_url   : '{{album_id}}/photos?fields=images',
-
-	init: function(){
-
-		LJ.facebook.startFacebookSdk();
-		
-	},
-	startFacebookSdk: function(){
-
-		FB.init({
-			appId   : window.facebook_app_id,
-			xfbml   : true, // parse social plugins on this page
-			version : 'v2.6' 
-		});
-
-	},
-	fetchFacebookToken: function(){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook token...');
-			FB.login(function( res ){
-
-				if( res.status == 'not_authorized' ){
-					return reject( Error("User didnt let Facebook access informations") )
+				});
+			},
+			firstSetup: function(){
+				// the app requires a user's location to boot properly
+				// - to be visible in the search section
+				// - to allow for geo requests to fetch the right befores
+				// - to allow the map to load in the right city
+				var L = LJ.user.location;
+				if( L && L.place_id && L.place_name && L.lat && L.lng ){
+					return;
 				}
 
-				if( res.status == 'connected' ){
-					var access_token = res.authResponse.accessToken;
-					LJ.login.data.access_token = access_token;
-
-					console.log('Short lived access token : ' + access_token.substring( 0, 20 ) + '.....');
-					return resolve( access_token );
+				if( LJ.user.access.indexOf('bot') == -1 ){
+					LJ.pictures.uploadFacebookPicture_Intro();
 				}
-
-			}, { scope: LJ.facebook.required_permissions } );
-		});
-
-	},
-	fetchMe: function(){
-
-	},
-	fetchFriends: function(){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.facebook.GraphAPI( LJ.facebook.friends_url, function( res ){
-
-				if( res.err ){
-					return reject( err );
-				}
-
-				var fb_friends  = res.data;
-                var friend_ids  = _.pluck( fb_friends, 'id' );
-
-                var data = {
-                    'friend_ids' : friend_ids
-                };
-
-                resolve( data );
-
-			});
-
-		});
-	},
-	fetchFacebookProfile: function( facebook_token ){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook profile...');
-			
-			FB.api( LJ.facebook.profile_url, { access_token: facebook_token }, function( facebookProfile ){
 				
-				// Store it for reconnexion purposes
-				LJ.facebook_profile = facebookProfile;
+	            return LJ.login.break()
+	            		.then(function(){
+	            			return LJ.login.promptUserLocation();
 
-				if( facebookProfile.error ){
-					return reject( facebookProfile.error );
-				} else {
-					return resolve( facebookProfile );
-				}
-			});
+	            		})
+	            		.then(function(){
+	            			return LJ.login.debreak();
 
-		});
+	            		});
 
-	},
-	GraphAPI: function( url, callback, opts ){
+			},
+			break: function(){
+				return LJ.ui.shradeOut( $('.login'), LJ.login.break_duration );
 
-        var s = LJ.store;
+			},
+			debreak: function(){
+				return LJ.ui.shradeIn( $('.login'), LJ.login.break_duration );
 
-        var access_token = LJ.user.facebook_access_token || s.get("facebook_access_token") || s.get("reconn_data");
+			},
+			stepCompleted: function( fill_ratio ){
 
-        if( !access_token || !access_token.token ){
-            return LJ.wlog('Cannot call the graph api without being able to find a valid facebook token');
-        }
-
-        FB.api( url, { access_token: access_token.token }, callback );
-
-    },
-    renderPicture: function( src ){
-
-    	return [
-    				'<div class="modal__facebook-picture" data-img-src="' + src + '">',
-    					'<img src="' + src + '" width="75"/>',
-    					'<div class="modal__picture-icon">',
-    						LJ.ui.renderIcon('check'), 
-    					'</div>', 
-    				'</div>'
-    	].join('');
-
-    },
-    fetchPictures: function( album_id ){
-    	return LJ.promise(function( resolve, reject ){
-
- 			LJ.facebook.GraphAPI( LJ.facebook.album_pictures_url.replace( '{{album_id}}', album_id ), function( res ){
-		
- 				if( !res || res.error ){
- 					return reject( res.error );
- 				} else {
- 					return resolve( res );
- 				}
-
- 			});
-
-    	});
-    },
-    fetchProfilePictures: function(){
-
-		return LJ.facebook.fetchProfilePicturesAlbumId().then( LJ.facebook.fetchPictures );
-
-    },
-	fetchProfilePicturesAlbumId: function( next_page ){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook profile picture album id...');
-
-			var album_url = next_page || LJ.facebook.album_url;
-			var album_id  = null;
-
-			LJ.facebook.GraphAPI( album_url, function( res ){
-
-				if( !res.albums ){
-					return reject('No album id to display');
+				if( typeof fill_ratio != "number" ){
+					fill_ratio = 33.33;
 				}
 
-				var albums = res.albums.data;
-				albums.forEach(function( album ){
+				LJ.login.completed_steps += 1;
+				LJ.login.fillProgressBar( fill_ratio );
+			},
+			fillProgressBar: function( fill_ratio ){
 
-					if( album.name == "Profile Pictures" ){
-						album_id = album.id;
-					}
+				var max_width = $('.login__progress-bar').width();
+				var add_width = max_width * fill_ratio/100;
+				var cur_width = (LJ.login.completed_steps) * add_width;
+				var new_width = cur_width + add_width;
 
-				});
+				$('.login__progress-bar-bg')
+					.css({ 'width':  new_width });
 
-				if( !album_id && res.albums.paging && res.albums.paging.cursor && res.albums.paging.cursor.next ){
+			},
+			renderLoginProgression: function(){
 
-					var next = res.albums.paging.cursor.next;
+				return LJ.ui.render([
 
-					LJ.log('Didnt find on first page, trying with next page : ' + next );
-					return LJ.facebook.fetchProfilePicturesAlbumId( next );
-				}
+					'<div class="login">',
+						'<div class="login__loader">',
+							LJ.static.renderStaticImage('slide_loader'),
+						'</div>',
+						'<div class="login__message">',
+							'<h1 data-lid="login_loading_msg"></h1>',
+						'</div>',
+						'<div class="login__progress-bar">',
+							'<div class="login__progress-bar-bg"></div>',
+						'</div>',
+					'</div>'
 
-				if( !album_id && res.albums.paging && res.albums.paging.cursor && !res.albums.paging.cursor.next ){
-					return reject('Couldnt find album id, no next page to browse' );
-				}
+				].join(''));
 
-				LJ.log('Album id found, ' + album_id );
-				return resolve( album_id );
+			},
+			promptUserLocation: function(){
+				return LJ.promise(function( resolve, reject ){
 
-			});
+					LJ.log('Requesting the user to provide a location...');
 
-		});
-
-	},
-	hasPictureRightDimensions: function( image_object ){
-
-		if( image_object.width > LJ.ui.facebook_img_min_width && image_object.width < LJ.ui.facebook_img_max_width ){
-			return true;
-		} else {
-			return false;
-		}
-
-	},
-	showFacebookPicturesInModal: function( img_place ){
-
-		LJ.ui.showModalAndFetch({
-
-			"type"			: "facebook",
-			"title"			: LJ.text("mod_facebook_pictures_title"),
-			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
-			"footer"		: "<button class='--rounded'>" + LJ.ui.renderIcon('check') + "</button>",
-			"attributes"	: [{ name: "img-place", val: img_place }],
-
-			"fetchPromise"	: LJ.facebook.fetchProfilePictures
-
-		})
-		.then( LJ.facebook.displayFacebookPicturesInModal )
-		.catch( LJ.facebook.displayFacebookPicturesInModal_Error );
-			
-
-	},
-	displayFacebookPicturesInModal: function( results ){
-		
-		console.log('Displaying images...');
-		var img_place = $('.modal').attr('data-img-place');
-
-		var html = LJ.facebook.$profile_pictures || [];
-
-			if( html.length == 0 ){
-				results.data.forEach(function( picture_object ){
-					picture_object.images.forEach(function( image_object ){
-						if( LJ.facebook.hasPictureRightDimensions( image_object )){
-							html.push( LJ.facebook.renderPicture( image_object.source ) );
-						}
-					});
-				});
-			}
-
-			LJ.facebook.$profile_pictures = html;
-			
-			$('.modal-body')
-				.append( html.join('') )	
-				.find('.modal__loader')
-				.velocity('bounceOut', { duration: 500, delay: 500,
-					complete: function(){
-
-						$('.modal__facebook-picture')
-							   .velocity('bounceInQuick', {
-							   		display: 'block'
-							   });
-
-						LJ.ui.turnToJsp('.modal-body', {
-							jsp_id: 'modal_facebook_pictures'
+					$( LJ.login.renderLocationPrompt() )
+						.hide()
+						.appendTo('.curtain')
+						.velocity('shradeIn', {
+							duration: LJ.login.prompt_duration,
+							display: 'flex'
 						});
 
+					LJ.seek.activatePlacesInFirstLogin();
+					LJ.seek.login_places.addListener('place_changed', function(){
+
+						var place = LJ.seek.login_places.getPlace();
+						$('.init-location').attr('data-place-id'   , place.place_id )
+							  			   .attr('data-place-name' , place.formatted_address )
+							  			   .attr('data-place-lat'  , place.geometry.location.lat() )
+							  			   .attr('data-place-lng'  , place.geometry.location.lng() );
+
+						LJ.login.showPlayButton();
+
+					});
+
+					// Resolve the promise when the user picked a location
+					$('.init-location .action__validate').click(function(){
+						var $block = $( this ).closest('.init-location');
+
+						if( $block.hasClass('--validating') ) return
+						$block.addClass('--validating');
+
+						LJ.login.updateProfileFirstLogin()
+							.then(function(){
+
+								$block
+									.removeClass('--validating')
+									.velocity('bounceOut', {
+										duration : LJ.login.prompt_duration,
+										complete : resolve
+									});
+								
+
+							}, function( err ){
+								LJ.wlog('An error occured');
+								LJ.log(err);
+
+							});
+					});
+				});	
+			},
+			updateProfileFirstLogin: function(){
+
+				LJ.log('Updating user location for the first time...');
+
+				var place_id   = $('.init-location').attr('data-place-id');
+				var place_name = $('.init-location').attr('data-place-name');
+				var lat        = $('.init-location').attr('data-place-lat');
+				var lng        = $('.init-location').attr('data-place-lng');
+
+				if( !( place_id && place_name && lat && lng) ){
+					return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
+				}
+
+				var update = {};
+				update.location = {
+					place_name : place_name,
+					place_id   : place_id,
+					lat 	   : lat,
+					lng 	   : lng
+				};
+
+				return LJ.api.updateProfile( update )
+						  .then(function( exposed ){
+							  	LJ.profile.setMyInformations();
+							  	return;
+						});
+
+			},
+			showPlayButton: function(){
+
+				var $elm = $('.init-location').find('.init-location-action');
+
+				if( $elm.css('opacity') != "0" ) return;
+
+				$elm.velocity('bounceInQuick', {
+					duration : LJ.login.prompt_buttons_duration,
+					display  : 'flex',
+					delay    : 500,
+					complete : function(){
+						$( this ).addClass('pound-light');
 					}
 				});
 
-				
+			},
+			// Do a bunch of functions right before the login happens
+			terminateLoginProcess: function(){
 
-	},
-	displayFacebookPicturesInModal_Error: function( err ){
+				LJ.ui.activateHtmlScroll();
 
-		console.log( err );
+				$('.curtain')
+						.children('.login')
+						.velocity('bounceOut', {
+							duration: LJ.login.prompt_duration
+						});
 
-		LJ.delay( 1000 ).then(function(){
-
-			$('.modal-body')
-					.append('<div class="modal__loading-error none">' + LJ.text('modal_err_empty_fetch') + '</div>')
-
-			$('.modal__loader')
-			.velocity('bounceOut', { duration: 500, delay: 500,
-				complete: function(){
-
-					$('.modal-body').find('.modal__loading-error').velocity('bounceInQuick', {
-						display: 'block'
+				$('.curtain')
+					.children('.login__bg')
+					.velocity({ 'opacity': [ 0, 0.09 ]}, {
+						duration: LJ.login.prompt_duration/2,
+						complete: function(){
+							$(this).remove();
+						}
 					});
 
-				}
+				return LJ.ui.hideCurtain({
+					delay: LJ.login.prompt_duration * 1.3,
+					duration: 1000
+
+				}).then(function(){
+
+					// LJ.map.activateBrowserState("shrinked");
+					LJ.before.showBrowser();
+					LJ.before.refreshBrowserDates();
+					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
+					LJ.map.updateMarkers__byDate();
+					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
+					LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
+					
+					return
+				});	
+
+			},
+			renderLocationPrompt: function(){
+
+				return LJ.ui.render([
+
+					'<div class="init-location">',
+						'<div class="init-location__title">',
+							'<h2 data-lid="init_location_title"></h2>',
+						'</div>',
+						'<div class="init-location__subtitle">',
+							'<input id="init-location__input" type="text" data-lid="init_location_subtitle_placeholder">',
+						'</div>',
+						'<div class="init-location__splitter"></div>',
+						'<div class="init-location__explanation">',
+							'<p data-lid="init_location_explanation"></p>',
+						'</div>',
+						'<div class="init-location__geoloc">',
+							'<button data-lid="init_location_geoloc"></button>',
+						'</div>',
+						'<div class="init-location-action">',
+							'<div class="action__validate --round-icon">',
+								'<i class="icon icon-play"></i>',
+							'</div>',
+						'</div>',
+					'</div>'
+
+				].join(''));
+
+			},
+			handleLogout: function(){
+
+				LJ.ui.showModal({
+					"title"	   : LJ.text("logout_title"),
+					"subtitle" : LJ.text("logout_subtitle"),
+					"type"     : "logout",
+					"footer"   : "<button class='--rounded'><i class='icon icon-power'></i></button>"
+				});
+
+			},
+			logUserOut: function(){
+
+				var p1 = LJ.ui.shadeModal();
+				var p2 = LJ.api.updateUser({
+					"app_preferences": {
+						ux: {
+							auto_login: false
+						}
+					}
+				});
+
+				LJ.Promise.all([ p1, p2 ]).then(function(){
+					LJ.store.remove('facebook_access_token');
+					location.reload();
+				});
+
+			}
+
+
+	});
+
+	window.LJ.map = _.merge( window.LJ.map || {}, {		
+
+        markers: [],
+        browser_uistate: null,
+
+       	// Called as soon as the script finished loading everything
+		init: function(){
+
+			LJ.map.setupMap();
+            LJ.map.preloadMarkers();
+
+			LJ.map.handleDomEvents();
+            LJ.map.handleMapEvents();
+			LJ.map.initPlacesServices();
+            LJ.before.displayBeforeMarkers( LJ.before.fetched_befores );
+
+            
+            return LJ.before.refreshBrowserLocation();
+			
+		},
+        initGeocoder: function(){
+            LJ.meegeo = new google.maps.Geocoder();
+            return;
+
+        },
+        initPlacesServices: function(){
+            LJ.meeservices = new google.maps.places.PlacesService( LJ.meemap );
+            return;
+
+        },
+		sayHello: function(){
+			LJ.log('Map has been successfully loaded');
+
+		},
+        preloadMarkers: function(){
+
+            var markers_html = [];
+            Object.keys( LJ.map.markers_url ).forEach(function( type ){
+
+                var size = LJ.pictures.getDevicePixelRatio() + "x";
+                var url  = LJ.map.markers_url[ type ][ size ];
+
+                markers_html.push('<img src="'+ url +'">');
+
+            });
+
+            $( markers_html.join('') ).hide().appendTo('body');
+
+        },
+		handleDomEvents: function(){
+            
+			LJ.ui.$body.on('click', '.map__icon.--geoloc', LJ.map.centerMapAtUserLocation );
+			LJ.ui.$body.on('click', '.map__icon.--change-location', LJ.map.toggleMapBrowser );
+
+		},
+		setupMap: function(){
+
+			LJ.log('Setting up google map...');
+
+            var latlng = {
+                lat: parseFloat( LJ.user.location.lat ),
+                lng: parseFloat( LJ.user.location.lng )
+            };
+
+			var options = {
+				center: latlng,
+	            zoom: 13,
+	            disableDefaultUI: true,
+	            zoomControlOptions: {
+	                style    : google.maps.ZoomControlStyle.SMALL,
+	                position : google.maps.ControlPosition.RIGHT_TOP
+	            },
+	            mapTypeControlOptions: {
+	                mapTypeIds: ['meemap']
+	            }
+			}
+
+			var $wrap = document.getElementsByClassName('js-map-wrap')[0];
+
+			LJ.meemap = new google.maps.Map( $wrap, options );
+			
+            LJ.map.setMapStyle('apple');
+            LJ.map.setMapIcons();
+            LJ.map.setMapOverlay();
+            LJ.map.setMapBrowser();
+            LJ.map.setMapZoom();
+
+            setTimeout(function(){
+                LJ.map.refreshMap();
+            }, 1000 );
+
+			return;
+
+        },
+        setMapStyle: function( map_style ){
+
+        	var custom_style = LJ.map.style[ map_style ];
+        	if( !custom_style ){
+        		return LJ.wlog('Unable to find a custom style for : ' + map_style );
+        	}
+
+        	var styled_map = new google.maps.StyledMapType( custom_style, {
+                name: 'meemap'
+            });
+            // Set map styling 
+            LJ.meemap.mapTypes.set('meemap', styled_map );
+            LJ.meemap.setMapTypeId('meemap');
+
+        },
+        setMapIcons: function(){
+
+        	$('.app-section.--map')
+        		.append( LJ.map.renderChangeLocation() )
+        		.append( LJ.map.renderGeoLocation() )
+                .append( LJ.map.renderCreateBefore() )
+                // .append( LJ.map.renderExpandBrowser() )
+        		.append( LJ.map.renderPinLocation() );
+
+
+        },
+        setMapOverlay: function(){
+
+        	$('.app-section.--map')
+        		.append( LJ.map.renderMapOverlay() );
+
+        },
+        setMapBrowser: function(){
+
+        	$('.app-section.--map')
+        		.append( LJ.map.renderMapBrowser() );
+
+            return LJ.seek.activatePlacesInMap()
+                    .then(function(){
+
+                    	LJ.seek.map_browser_places.addListener('place_changed', function( place ){
+
+                    		var place  = LJ.seek.map_browser_places.getPlace();
+                    		var latlng = place.geometry.location;
+
+                    		LJ.meemap.setCenter( latlng );
+                            $('#map-browser-input').val('');
+
+                    	});
+                        
+                    });
+
+        },
+        handleMapEvents: function(){
+
+            LJ.meemap.addListener('dragstart', function(){
+                LJ.before.preRefreshBrowserLocation();
+            });
+
+            LJ.meemap.addListener('dragend', function(){
+                LJ.before.refreshBrowserLocation();
+            });
+
+            LJ.meemap.addListener('click', function(e){
+                
+            });
+            
+            LJ.meemap.addListener('center_changed', function(){
+                // LJ.before.refreshNearestBefores();
+            });
+
+            $('body').on('click', '.js-map-zoom-in', LJ.map.zoomIn );
+            $('body').on('click', '.js-map-zoom-out', LJ.map.zoomOut );
+
+
+        },
+        expandBrowser: function(){
+
+            $('.map__icon.--create-before, .map__icon.--filter-dates, .be-browser' ).velocity({ 'translateY':'0' }, { duration: 300 });
+
+        },
+        shrinkBrowser: function(){
+
+            $('.map__icon.--create-before, .map__icon.--filter-dates, .be-browser' ).velocity({ 'translateY':'-54' }, { duration: 300 });
+
+        },
+        handleShrinkBrowserDates: function(){
+
+            if( LJ.map.browser_uistate == "shrinked" ){
+                LJ.map.activateBrowserState( "expanded" );
+            } else {
+                LJ.map.activateBrowserState( "shrinked" );
+            }
+
+        },
+        activateBrowserState: function( state ){
+
+            if( state == "expanded" ){
+                LJ.map.expandBrowser();
+                LJ.map.browser_uistate = "expanded";
+            }
+
+            if( state == "shrinked" ){
+                LJ.map.shrinkBrowser();
+                LJ.map.browser_uistate = "shrinked";
+            }
+
+        },
+        renderMapZoom: function(){
+
+            return LJ.ui.render([
+
+                '<div class="map__icon map-zoom">',
+                    '<div class="map-zoom__in --round-icon js-map-zoom-in">',
+                        '<i class="icon icon-plus"></i>',
+                    '</div>',
+                    '<div class="map-zoom__splitter"></div>',
+                    '<div class="map-zoom__out --round-icon js-map-zoom-out">',
+                        '<i class="icon icon-line"></i>',
+                    '</div>',
+                '</div>'
+
+
+            ].join(''));
+
+        },
+        setMapZoom: function(){
+
+            $('.app-section.--map').append( LJ.map.renderMapZoom() );
+
+        },
+        zoomIn: function(){
+
+            LJ.meemap.setZoom( LJ.meemap.getZoom() + 1 );
+
+        },
+        zoomOut: function(){
+
+            LJ.meemap.setZoom( LJ.meemap.getZoom() - 1 );
+
+        },
+        refreshMap: function(){
+        	return google.maps.event.trigger( LJ.meemap, 'resize' );
+
+        },
+        deactivateDate: function(){
+
+            var $date_activated = $('.be-dates__date.--active');
+
+            if( $date_activated.length == 0 ){
+                return LJ.log('Already deactivated');
+            }
+
+            var m = moment( $date_activated.attr('data-day') , 'DD/MM' );
+            LJ.map.activateDate( m );
+
+        },  
+        activateDate: function( m ){
+
+            var $date_activated   = $('.be-dates__date.--active');
+            var $date_to_activate = $('.be-dates__date[data-day="'+ m.format('DD/MM') +'"]');
+
+             if( $date_to_activate.length != 1 ){
+                return LJ.wlog('Unable to find the date : ' + m.format('DD/MM') );
+            }
+
+            if( $date_activated.is( $date_to_activate ) ){
+
+                 $date_activated
+                    .removeClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceOut', { duration: 450, display: 'none' });
+
+            } else {
+
+                $date_activated
+                    .removeClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceOut', { duration: 450, display: 'none' });
+
+                $date_to_activate
+                    .addClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceInQuick', { duration: 450, display: 'block' });
+
+            }
+
+            LJ.map.updateMarkers__byDate();
+
+        },
+        findLocationWithLatLng: function( latlng ){
+            return LJ.promise(function( resolve, reject ){
+
+                if( !latlng ){
+                    return LJ.wlog('Cant find address without latlng');
+                }
+
+                LJ.meegeo.geocode({ location: latlng }, function( res, status ){
+
+                    if( status === google.maps.GeocoderStatus.OK && res[0] ){
+                        resolve( res[0] );
+                    } else {
+                        reject( status );
+                    }
+                });
+
+            });
+
+
+        },
+        findAddressWithLatLng: function( latlng ){
+            return LJ.map.findLocationWithLatLng( latlng )
+
+                    .then(function( location ){
+                        return location.formatted_address;
+                    });
+
+        },
+        findLatLngWithAddress: function( address ){
+        	return LJ.promise(function( resolve, reject ){
+
+	        	if( !address ){
+	        		return LJ.wlog('Cant find LatLng without adress');
+	        	}
+
+	        	LJ.meegeo.geocode({ address: address }, function( res, status ){
+
+	        		if( status === google.maps.GeocoderStatus.OK && res[0] ){
+	        			resolve( res[0].geometry.location );
+	        		} else {
+	        			reject( status );
+	        		}
+	        	});
+
+        	});
+        	
+        },
+        findLatLngWithPlaceId: function( place_id ){
+        	return LJ.promise(function( resolve, reject ){
+
+	        	if( !place_id ){
+	        		return LJ.wlog('Cant find LatLng without place_id');
+	        	}
+
+	        	LJ.meegeo.geocode({ placeId: place_id }, function( res, status ){
+
+	        		if( status === google.maps.GeocoderStatus.OK && res[0] ){
+	        			resolve( res[0].geometry.location );
+	        		} else {
+	        			reject( status );
+	        		}
+	        	});
+
+        	});
+        	
+        },
+        toggleMapBrowser: function(){
+
+        	var $mb = $('.map-browse');
+
+        	if( $mb.hasClass('--active') ){
+
+        		$mb.removeClass('--active');
+        		$mb.velocity('shradeOut', { duration: 200, display: 'none' });
+
+        	} else {
+
+        		$mb.addClass('--active');
+        		$mb.velocity('shradeIn', { duration: 200, display: 'flex' });
+
+        	}
+        },
+        centerMapAtUserLocation: function( pan ){
+
+        	var place_id = LJ.user.location.place_id;
+        	return LJ.map.findLatLngWithPlaceId( place_id )
+        			.then(function( latlng ){
+        				pan ? LJ.meemap.panTo( latlng ) : LJ.meemap.setCenter( latlng );
+        			});
+
+        },
+        distanceBetweenTwoLatLng: function( latlng1, latlng2 ){
+
+            var a = new google.maps.LatLng( latlng1 );
+            var b = new google.maps.LatLng( latlng2 );
+
+            return google.maps.geometry.spherical.computeDistanceBetween( a, b );
+
+        },
+        shiftLatLng: function( latlng ){
+
+            var a   = new google.maps.LatLng( latlng );
+            var rdm =  google.maps.geometry.spherical.computeOffset( a, LJ.randomInt( 100, 200 ), LJ.randomInt(0, 180) );
+
+            return {
+                lng: rdm.lng(),
+                lat: rdm.lat()
+            };
+
+        },
+        findClosestMarkers: function( latlng, distance ){
+
+            var markers = [];
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < distance ){
+                    markers.push( mrk );
+                }
+
+            });
+
+            return markers; 
+
+        },
+        offsetLatLng: function( latlng ){
+
+            var offsetted = false;
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < 100 && !offsetted){
+
+                    LJ.wlog('Markers are too close, shifting latlng');
+                    offsetted = true;
+                    latlng = LJ.map.shiftLatLng( latlng );
+
+                }
+                
+            });
+
+            return latlng;
+
+        },
+        offsetLatLngRecursive: function( latlng, i ){
+
+            // Display the marker in a more intelligent way, to put it randomy close to where its supposed to be
+            // But also taking into account where other markers are places :) 
+
+        },
+        validateMarkerOptions: function( opts ){
+
+        	var ok = true;
+
+        	if( !opts.url ){
+        		ok = false;
+        		LJ.wlog('Cannot add marker without url: %s', opts.url );
+        	}
+        	if( !opts.latlng ){
+        		ok = false;
+        		LJ.wlog('Cannot add marker without latlng: %s', opts.latlng );
+        	}
+        	if( !opts.marker_id ){
+        		ok = false;
+        		LJ.wlog('Cannot add marker without marke_id: %s', opts.marker_id );
+        	}
+        	if( !opts.type ){
+        		ok = false;
+        		LJ.wlog('Cannot add marker without type: %s', opts.tpye );
+        	}
+        	
+        	return ok
+
+        },
+        markerAlreadyExists: function( marker_id ){
+
+            return _.find( LJ.map.markers, function( mrk ){
+                return mrk && ( mrk.marker_id == marker_id );
+            });
+            
+        },
+        makeIcon: function( url ){
+
+            var scaledSize;
+            var base_width  = 34;
+            var base_height = 41;
+            var base_width_active  = 50;
+            var base_height_active = 60;
+
+            if( !/lg/i.test( url ) ){
+                scaledSize = new google.maps.Size( base_width, base_height );
+            } else {
+                scaledSize = new google.maps.Size( base_width_active, base_height_active );
+            }
+
+            return {
+                url        : url,
+                scaledSize : scaledSize
+            };
+
+        },
+        addMarker: function( opts ){
+
+        	if( !LJ.map.validateMarkerOptions( opts ) ) return;
+
+            if( LJ.map.markerAlreadyExists( opts.marker_id ) ){
+                return LJ.wlog('A marker with id : ' + opts.marker_id + ' is already set on the map');
+            }
+
+            var latlng = LJ.map.offsetLatLng( opts.latlng );
+            var icon   = LJ.map.makeIcon( opts.url );
+
+        	var marker = new google.maps.Marker({
+                map        : LJ.meemap,
+                position   : latlng,
+                icon       : icon
+            });
+
+            var data = opts.data || null;
+
+        	// Store the reference for further usage
+        	LJ.map.markers.push({
+        		marker_id : opts.marker_id,
+        		marker 	  : marker,
+        		data      : data,
+                type      : opts.type,
+                latlng    : latlng
+        	});
+
+        	// Attach listenres if there are any
+        	if( Array.isArray( opts.listeners )){
+                opts.listeners.forEach(function( listener ){
+                    marker.addListener( listener.event_type, function(){
+                    	listener.callback( marker, data );
+                    });
+                });
+
+            }
+
+        },
+        getBeforeMarkerUrlByType: function( type, active ){
+
+            var px     = LJ.pictures.getDevicePixelRatio() + 'x';
+            var suffix = active ? '_active' : '';
+
+            if( type == 'drink' ){
+                url = LJ.map.markers_url[ 'drink' + suffix ];
+            }
+
+            if( type == 'drinknew' ){
+               url = LJ.map.markers_url['drinknew'];
+            }
+
+            if( type == 'hosting' ){
+                url = LJ.map.markers_url[ 'star' + suffix ];
+            }
+
+            if( type == 'pending' ){
+                url = LJ.map.markers_url[ 'pending' + suffix ];
+            }
+
+            if( type == 'accepted' ){
+                url = LJ.map.markers_url[ 'chat' + suffix ];
+            }  
+
+            return url[ px ];
+
+
+        },  
+        getBeforeMarkerUrl: function( before, active ){
+
+            var url  = null;
+
+            var my_before = LJ.before.getMyBeforeById( before._id );
+
+            if( !my_before ){
+
+                // Moment.js expresses the difference between 2 dates in ms
+                var diff_in_hour = ( moment() - moment( before.created_at ) )/( 3600 * 1000 );
+
+                if( LJ.map.hasSeenMarker( before._id ) || diff_in_hour > 24 ){
+                    url = LJ.map.getBeforeMarkerUrlByType("drink", active );
+
+                } else {
+                    url = LJ.map.getBeforeMarkerUrlByType("drinknew", active );
+
+                }
+
+            } else {
+                url = LJ.map.getBeforeMarkerUrlByType( my_before.status, active );
+            }
+
+            if( !url ){
+                return LJ.wlog('Cant render marker, unable to find marker type');
+
+            } else {
+                return url;
+            }
+
+        },
+        // Before must be the whole before object and not an itemized version;
+        addBeforeMarker: function( before ){
+
+        	var before_id = before._id;
+
+            var latlng  = {
+                lat: before.address.lat,
+                lng: before.address.lng
+            };
+
+            var url  = LJ.map.getBeforeMarkerUrl( before, false );
+
+            LJ.map.addMarker({
+                marker_id : before_id,
+                latlng    : latlng,
+                url       : url,
+                type      : 'before',
+                data      : before,
+                listeners : [
+                    {
+                        'event_type': 'click',
+                        'callback'  : LJ.map.handleClickOnEventMarker
+                    }]
+
+            });
+
+        },
+        removeBeforeMarker: function( before_id ){
+
+            LJ.map.markers.forEach(function( mrk, i){
+
+                if( mrk.marker_id == before_id ){
+                    mrk.marker.setMap( null );
+                    delete LJ.map.markers[ i ];
+                }
+
+            });
+
+        },
+        deactivateMarkers: function(){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                mrk.status = "inactive";
+                mrk.marker.setZIndex( 1 );
+ 
+            });
+
+        },
+        activateMarker: function( marker_id ){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( mrk.marker_id == marker_id ){
+                    mrk.status = "active";
+                    mrk.marker.setZIndex( 10 );
+
+                } else {
+                    mrk.status = "inactive";
+                    mrk.marker.setZIndex( 1 );
+                }
+
+            });
+
+        },  
+        refreshMarkers: function(){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( mrk.type == "before" ){
+
+                    LJ.before.getBefore( mrk.marker_id )
+                    .then(function( bfr ){
+
+                        var url;
+
+                        if( mrk.status == "active" ){
+                            url = LJ.map.getBeforeMarkerUrl( bfr, true );
+                        } else {
+                            url = LJ.map.getBeforeMarkerUrl( bfr, false );
+                        }
+
+                        var icon = LJ.map.makeIcon( url );     
+                        mrk.marker.setIcon( icon );                   
+                        
+                    });
+
+                }
+
+            });
+
+        },
+        getActiveMarker: function(){
+
+            return _.find( LJ.map.markers, function( mrk ){
+                return mrk.status == "active";
+            });
+
+        },
+        clearSeenMarkers: function(){
+
+            var seen_markers = LJ.store.get('seen_markers') || [];
+
+            seen_markers.forEach(function( mrk_id, i ){
+
+                var target_mrk = _.find( LJ.map.markers, function( m ){
+                    return m.marker_id == mrk_id;
+                });
+
+                // Marker was not found : means it wasnt fetched by the map,
+                // so remove it (obsolete before etc...)
+                if( !target_mrk ){
+                    delete seen_markers[ i ];
+                }
+
+            });
+
+            LJ.store.set('seen_markers', _.uniq( seen_markers.filter( Boolean ) ));
+
+        },
+        seenifyMarker: function( marker_id ){
+
+            var seen_markers = LJ.store.get('seen_markers') || [];
+
+            seen_markers.push( marker_id );
+            LJ.store.set( 'seen_markers', _.uniq( seen_markers ) );
+
+        },
+        hasSeenMarker: function( marker_id ){
+
+            var seen_markers = LJ.store.get('seen_markers') || [];
+
+            return seen_markers.indexOf( marker_id ) != -1;
+            
+
+        },
+        getMarker: function( marker_id ){
+	
+			return _.find( LJ.map.markers, function( mrk ){
+				return mrk && mrk.marker_id == marker_id;
+			});
+        		
+        },
+        handleClickOnEventMarker: function( marker, before ){
+
+            LJ.map.seenifyMarker( before._id );
+            var mrk = LJ.map.getMarker( before._id );
+            
+            if( mrk.marker.getOpacity() != 1 ){
+
+                LJ.map.deactivateDate();
+                LJ.before.handleCloseBeforeInview();
+                LJ.before.hideBeforeInview();
+                return;
+            }
+
+            if( !mrk.status || mrk.status == "inactive" ){
+
+                LJ.before.showBeforeInview( before );
+                LJ.map.activateMarker( before._id );
+
+            } else {
+
+                LJ.before.handleCloseBeforeInview();
+                LJ.before.hideBeforeInview();
+
+            }
+
+            LJ.map.refreshMarkers();
+
+        },
+        renderCreateBefore: function(){
+
+            return LJ.ui.render([
+                '<div class="map__icon --round-icon --create-before js-create-before">',
+                    '<i class="icon icon-create-before"></i>',
+                '</div>'
+                ].join(''));
+
+        },
+        renderExpandBrowser: function(){
+
+            return LJ.ui.render([
+                '<div class="map__icon --round-icon --filter-dates js-expand-browser">',
+                    '<i class="icon icon-filters"></i>',
+                '</div>'
+                ].join(''));
+
+        },
+        renderChangeLocation: function(){
+
+        	return LJ.ui.render([
+        		'<div class="map__icon --round-icon --change-location js-map-change-location">',
+        			'<i class="icon icon-search-zoom"></i>',
+        		'</div>'
+        		].join(''));
+
+        },
+        renderGeoLocation: function(){
+
+        	return LJ.ui.render([
+        		'<div class="map__icon --round-icon --geoloc js-map-geoloc">',
+        			'<i class="icon icon-geoloc"></i>',
+        		'</div>'
+        		].join(''));
+        },
+        renderPinLocation: function(){
+
+        	return LJ.ui.render([
+        		'<div class="map__icon --round-icon --location js-map-location">',
+        			'<i class="icon icon-location"></i>',
+        		'</div>'
+        		].join(''));
+        },
+        renderMapOverlay: function(){
+
+        	return LJ.ui.render([
+        		'<div class="map__overlay"></div>'
+        		].join(''));
+
+        },
+        renderMapBrowser: function(){
+
+        	return LJ.ui.render([
+        		'<div class="map-browse">',
+        			'<input id="map-browser-input"/>',
+        		'</div>'
+        		].join(''));
+
+        },
+        updateMarkers__byDate: function(){
+
+            var active_day;
+            var $active_day = $('.be-dates__date.--active');
+
+            if( $active_day.length == 1 ){
+                active_day = moment( $active_day.attr('data-day'), 'DD/MM' ).dayOfYear();
+                
+            } else {
+                active_day = null;
+            }
+
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( mrk.type == "before" && active_day ){
+
+                    if( mrk.data && mrk.data.begins_at && moment( mrk.data.begins_at ).dayOfYear() == active_day ){
+                        mrk.marker.setOpacity( 1 );
+                    } else {
+                        mrk.marker.setOpacity( 0.2 );
+                    }
+
+                } else {
+                    mrk.marker.setOpacity( 1 );
+                }
+
+            });
+        }
+
+
+	});		
+
+	
+	testClearAllMarkers = function(){
+		if( LJ.map.marker_test ){
+
+			LJ.map.marker_test.forEach(function(mrk){
+				mrk.marker.setMap(null);
+			});
+		}			
+	};	
+
+
+
+
+
+
+	window.LJ.map = _.merge( window.LJ.map || {}, {
+
+
+		renderEventMapview_User: function( evt ){
+
+			return LJ.fn.renderEventMapview( evt, {
+				request_html: '<button  data-lid="e_preview_participate" class="theme-btn btn-requestin mapview-action__btn">Participer</div>'
 			});
 
-		});
+		},
+		renderEventMapview_MemberPending: function( evt ){
+
+			return LJ.fn.renderEventMapview( evt, {
+				request_html: '<button  data-lid="e_preview_pending" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
+			});
+
+		},
+		renderEventMapview_MemberAccepted: function( evt ){
+
+			return LJ.fn.renderEventMapview( evt, {
+				request_html: '<button  data-lid="e_preview_chat" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
+			});
+
+		},
+		renderEventMapview_Host: function( evt ){
+
+			return LJ.fn.renderEventMapview( evt, {
+				request_html: '<button  data-lid="e_preview_manage" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
+			});
+
+		},
+		renderEventMapview: function( evt, opts ){
+
+			//Hosts pictures 
+			var hosts_pictures_html = '';
+
+			hosts_pictures_html = '<div class="mapview-hosts">';
+			evt.hosts.forEach(function( host ){
+
+			var display_params     = LJ.cloudinary.events.mapview.hosts.params;
+			display_params.version = LJ.fn.findMainImage( host ).img_version;
+
+			var img_tag = $.cloudinary.image( LJ.fn.findMainImage( host ).img_id, display_params ).prop('outerHTML');
+			var country = '<div class="user-flag mapview-host__flag"><span class="flag-icon flag-icon-' + host.country_code + '"></span></div>';
+
+			hosts_pictures_html += '<div class="mapview-host" data-userid="' + host.facebook_id + '">' 
+										+ img_tag + country 
+									+'</div>'
+
+			});
+			hosts_pictures_html += '</div>';
 
 
-	},
-	showModalSendMessageToFriends: function(){
+			// Context
+			var context_html = '<div class="mapview-context">';
 
-		FB.ui({
-			method: 'send',
-			link: 'http://www.meefore.com'
-		});
+			// Address
+			var address_html = '';
+			address_html += '<div class="mapview-address mapview-context__element">'
+				+ '<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>'
+				+ '<div class="mapview-address__name">'+evt.address.place_name+'</div>'
+			+'</div>';
 
+			// Date
+			var date = moment( evt.begins_at ).format('DD/MM');
+			var hour = moment( evt.begins_at ).format('HH/MM').replace('/', 'H');
+
+			var date_html = ['<div class="mapview-date mapview-context__element">',
+				'<i class="icon icon-calendar mapview-context__icon mapview-date__icon"></i>',
+				'<div class="mapview-date__day">'+ date +'</div>',
+				'<div class="mapview-date__splitter">, </div>',
+				'<div class="mapview-date__hour">'+ hour +'</div>',
+			'</div>'].join('');
+
+
+			// Host names
+			var hosts_names_html = '<div class="mapview-hostnames mapview-context__element">';
+			evt.hosts.forEach(function( host ){ hosts_names_html += '<div class="mapview-hostnames__name">'+ host.name +'</div>'; });
+			hosts_names_html += '</div>';
+
+			context_html += address_html;
+			context_html += date_html;
+			context_html += hosts_names_html;
+
+			context_html += '</div>';
+
+
+			// Action buttons
+			var action_html = ['<div class="mapview-action">',
+			opts.request_html,
+			'</div>'].join('');
+
+			// Main HTML
+			var divider_html = '<div class="mapview__divider--md"></div>';
+			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
+
+			var html = '<div class="mapview mapview--event" data-eventid="'+evt._id+'">'
+							+ close_html
+							+ hosts_pictures_html
+							+ divider_html
+							+ context_html
+							+ divider_html
+							+ action_html
+					  '</div>';
+
+
+			return LJ.fn.translateView( html );
+
+
+		},
+		renderPartyMapview_Event: function( party, opts ){
+
+			// Icon party to ambience everyone
+			var main_icon_html = [
+				'<div class="mapview-main-icon">',
+					'<i class="icon icon-glass mapview-main-icon__icon"></i>',
+				'</div>'
+			].join('');
+
+
+			// Party context & various informations
+			var context_html = '<div class="mapview-context mapview-context--party">';
+
+			// Address
+			var address_html = '';
+			address_html += '<div class="mapview-address mapview-context__element">'
+								+ '<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>'
+								+ '<div class="mapview-address__name">'+ party.address.place_name +'</div>'
+							+'</div>';
+
+
+			// Closing context part
+			context_html += address_html;
+			context_html += '</div>';
+
+			var divider_html = '<div class="mapview__divider--md"></div>';
+			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
+
+			var html = '<div class="mapview mapview--party" data-placeid="'+ party.address.place_id +'">'
+				+ close_html
+				+ context_html
+				+ '</div>'
+
+			return LJ.fn.translateView( html );
+
+
+		},
+		renderPartyMapview_Party: function( party ){
+
+			LJ.fn.renderPartyPreview_Event( party );
+
+		},
+		renderPartyMapview_Empty: function( party ){
+
+			var context_html = [
+				'<div class="mapview-context">',
+					'<div class="mapview-address mapview-context__element">',
+					'<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>',
+					'<div class="mapview-address__name">'+ party.address.place_name +'</div>',
+				'</div>',
+				'<div class="mapview-emptytext mapview-context__element">',
+					'<i class="mapview-emptytext__icon icon icon-star-empty mapview-context__icon"></i>',
+					'<div class="mapview-emptytext__name" data-lid="e_mapview_empty_text">...</div>',
+					'</div>',
+				'</div>'
+			].join('');
+
+			var action_html = [
+				'<div class="mapview-action">',
+					'<div class="theme-btn mapview-action__btn js-create-event" data-lid="e_mapview_first_to_create">...</div>',
+				'</div>'
+			].join('');
+
+			var divider_html = '<div class="mapview__divider--md"></div>';
+			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
+
+			var html = [
+				'<div class="mapview mapview-empty mapview--party">',
+					close_html,
+					context_html,
+					divider_html,
+					action_html,
+				'</div>'
+			].join('');
+
+			return LJ.fn.translateView( html );
+
+		}
+	});
+
+	window.LJ.map = _.merge( window.LJ.map || {}, {
+        
+		markers_url: {
+            
+			drink: { 
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md__2x.png'
+            },
+            drink_active: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__2x.png'
+            },
+            drinknew: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md_newred__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md_newred__2x.png'
+            },
+            star: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__2x.png'
+            },
+            star_active: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__2x.png'
+            },
+            pending: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__2x.png'
+            },
+            pending_active: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__2x.png'
+            },
+            chat: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__2x.png'
+            },
+            chat_active: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__2x.png'
+            }
+        }
+
+	});
+
+	window.LJ.map = _.merge( window.LJ.map || {}, {
+
+
+	});
+
+window.LJ.map.style = _.merge(window.LJ.map.style || {}, {
+    snow: [{
+        "featureType": "administrative",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "simplified"
+        }, {
+            "hue": "#ff0000"
+        }, {
+            "weight": "0.27"
+        }]
+    }, {
+        "featureType": "administrative",
+        "elementType": "labels.text.fill",
+        "stylers": [{
+            "color": "#444444"
+        }]
+    }, {
+        "featureType": "administrative.country",
+        "elementType": "geometry.fill",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "administrative.locality",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "administrative.neighborhood",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "administrative.land_parcel",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "landscape",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "on"
+        }, {
+            "color": "#fdfdfd"
+        }]
+    }, {
+        "featureType": "landscape.man_made",
+        "elementType": "geometry",
+        "stylers": [{
+            "visibility": "on"
+        }, {
+            "hue": "#ff0000"
+        }]
+    }, {
+        "featureType": "landscape.man_made",
+        "elementType": "geometry.fill",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "landscape.man_made",
+        "elementType": "geometry.stroke",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "landscape.natural.terrain",
+        "elementType": "geometry.fill",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "landscape.natural.terrain",
+        "elementType": "geometry.stroke",
+        "stylers": [{
+            "hue": "#ff0000"
+        }]
+    }, {
+        "featureType": "poi",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "poi.park",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "simplified"
+        }, {
+            "hue": "#37ff00"
+        }, {
+            "lightness": "70"
+        }]
+    }, {
+        "featureType": "poi.school",
+        "elementType": "geometry",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "poi.school",
+        "elementType": "labels",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "poi.sports_complex",
+        "elementType": "geometry",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "poi.sports_complex",
+        "elementType": "labels.text",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "road",
+        "elementType": "all",
+        "stylers": [{
+            "saturation": -100
+        }, {
+            "lightness": 45
+        }, {
+            "visibility": "simplified"
+        }]
+    }, {
+        "featureType": "road",
+        "elementType": "geometry",
+        "stylers": [{
+            "visibility": "simplified"
+        }]
+    }, {
+        "featureType": "road",
+        "elementType": "labels",
+        "stylers": [{
+            "color": "#a39bb2"
+        }]
+    }, {
+        "featureType": "road",
+        "elementType": "labels.icon",
+        "stylers": [{
+            "visibility": "simplified"
+        }]
+    }, {
+        "featureType": "road.highway",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "simplified"
+        }]
+    }, {
+        "featureType": "road.highway",
+        "elementType": "geometry.fill",
+        "stylers": [{
+            "hue": "#ff0000"
+        }, {
+            "weight": "0.65"
+        }]
+    }, {
+        "featureType": "road.highway",
+        "elementType": "geometry.stroke",
+        "stylers": [{
+            "weight": "0.20"
+        }, {
+            "lightness": "82"
+        }, {
+            "gamma": "1.19"
+        }, {
+            "saturation": "-42"
+        }, {
+            "color": "#d59ca6"
+        }]
+    }, {
+        "featureType": "road.highway",
+        "elementType": "labels",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "labels",
+        "stylers": [{
+            "visibility": "off"
+        }, {
+            "lightness": "16"
+        }]
+    }, {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "labels.icon",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "road.arterial",
+        "elementType": "geometry",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "road.arterial",
+        "elementType": "geometry.stroke",
+        "stylers": [{
+            "visibility": "on"
+        }, {
+            "weight": "0.4"
+        }, {
+            "color": "#dbdbdb"
+        }, {
+            "lightness": "10"
+        }]
+    }, {
+        "featureType": "road.arterial",
+        "elementType": "labels.icon",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "road.local",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "simplified"
+        }]
+    }, {
+        "featureType": "road.local",
+        "elementType": "geometry.fill",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "road.local",
+        "elementType": "geometry.stroke",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "transit",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "transit.line",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "transit.station",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "water",
+        "elementType": "all",
+        "stylers": [{
+            "color": "#dae7f2"
+        }, {
+            "visibility": "on"
+        }]
+    }],
+    creamy: [{
+        "featureType": "landscape",
+        "stylers": [{
+            "hue": "#FFBB00"
+        }, {
+            "saturation": 43.400000000000006
+        }, {
+            "lightness": 37.599999999999994
+        }, {
+            "gamma": 1
+        }]
+    }, {
+        "featureType": "road.highway",
+        "stylers": [{
+            "hue": "#FFC200"
+        }, {
+            "saturation": -61.8
+        }, {
+            "lightness": 45.599999999999994
+        }, {
+            "gamma": 1
+        }]
+    }, {
+        "featureType": "road.arterial",
+        "stylers": [{
+            "hue": "#FF0300"
+        }, {
+            "saturation": -100
+        }, {
+            "lightness": 51.19999999999999
+        }, {
+            "gamma": 1
+        }]
+    }, {
+        "featureType": "road.local",
+        "stylers": [{
+            "hue": "#FF0300"
+        }, {
+            "saturation": -100
+        }, {
+            "lightness": 52
+        }, {
+            "gamma": 1
+        }]
+    }, {
+        "featureType": "water",
+        "stylers": [{
+            "hue": "#0078FF"
+        }, {
+            "saturation": -13.200000000000003
+        }, {
+            "lightness": 2.4000000000000057
+        }, {
+            "gamma": 1
+        }]
+    }, {
+        "featureType": "poi",
+        "stylers": [{
+            "hue": "#00FF6A"
+        }, {
+            "saturation": -1.0989010989011234
+        }, {
+            "lightness": 11.200000000000017
+        }, {
+            "gamma": 1
+        }]
+    }],
+    apple: [
+    {
+        "featureType": "landscape.man_made",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#f7f1df",
+                // "color": "#faf8f8" // apple map
+                "color": "#faf5ec"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape.natural",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#d0e3b4"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape.natural.terrain",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.business",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.medical",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.medical",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#fbd3da"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#bde6ab"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#ffeea6"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#e1c033"
+            },
+            {
+                "saturation": "2"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#ffffff"
+            },
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "black"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.line",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.station",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.station.airport",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#cfb2db"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.station.rail",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#a2daf2"
+            }
+        ]
+    }
+]
+});
+
+window.LJ.map = _.merge( window.LJ.map || {}, {
+
+	test: {
+
+		addOneMarker_Url: function( url ){
+
+			var i = LJ.randomInt( 0, LJ.map.test.places.length -1 );
+			var latlng = LJ.map.test.places[ i ];	
+			
+			LJ.map.addMarker({
+				latlng    : latlng,
+				url       : url,
+				type      : 'test',
+				marker_id : 'test-' + LJ.generateId()
+			})		
+
+		},
+		addOneMarker: function( i ){
+
+			i = i || LJ.randomInt( 0, LJ.map.test.places.length -1 );
+			var latlng = LJ.map.test.places[ i ];
+
+			LJ.map.addBeforeMarker({
+				_id    : i + '--' + LJ.generateId(),
+				address: {
+					place_id : 'lol',
+					'lat'    : latlng.lat,
+					'lng' 	 : latlng.lng
+				},
+				begins_at: _.shuffle(LJ.before.test.iso_dates)[0]
+			});
+
+		},
+		showMarkers: function(){
+			LJ.map.test.places.forEach(function( latlng, i ){
+				LJ.map.test.addOneMarker( i );
+			});
+		},
+		buildPlaces: function(){
+
+			LJ.meemap.addListener('click', function( e ){
+				LJ.map.findLocationWithLatLng( e.latLng )
+					.then(function( location ){
+						LJ.map.test.places.push({
+							place_name: location.formatted_address,
+							place_id  : location.place_id,
+							lat       : e.latLng.lat(),
+							lng 	  : e.latLng.lng()
+						});
+					});
+			});
+
+		},
+		places: [
+			{
+		        "place_name": "50 Boulevard Voltaire, 75011 Paris, France",
+		        "place_id": "ChIJBUAfVPxt5kcRS88-nrqe0Mw",
+		        "lat": 48.8630208493969,
+		        "lng": 2.3704749436319617
+		    },
+		    {
+		        "place_name": "16 Rue Dugommier, 75012 Paris, France",
+		        "place_id": "ChIJ1WUGhWty5kcRY2JuVjGxkOw",
+		        "lat": 48.83975198504333,
+		        "lng": 2.391417631620243
+		    },
+		    {
+		        "place_name": "157 Rue du Château des Rentiers, 75013 Paris, France",
+		        "place_id": "ChIJZRaVxYlx5kcRwiZA6MdV-9g",
+		        "lat": 48.82867853499684,
+		        "lng": 2.3634368271768835
+		    },
+		    {
+		        "place_name": "21 Passage Montbrun, 75014 Paris, France",
+		        "place_id": "EigyMSBQYXNzYWdlIE1vbnRicnVuLCA3NTAxNCBQYXJpcywgRnJhbmNl",
+		        "lat": 48.82822650545324,
+		        "lng": 2.3291045517862585
+		    },
+		    {
+		        "place_name": "92-100 Boulevard du Montparnasse, 75014 Paris, France",
+		        "place_id": "EjU5Mi0xMDAgQm91bGV2YXJkIGR1IE1vbnRwYXJuYXNzZSwgNzUwMTQgUGFyaXMsIEZyYW5jZQ",
+		        "lat": 48.84235050134804,
+		        "lng": 2.328417906278446
+		    },
+		    {
+		        "place_name": "29 Rue Dombasle, 75015 Paris, France",
+		        "place_id": "ChIJn89KGkBw5kcR-gtCxLs84DE",
+		        "lat": 48.83613643374479,
+		        "lng": 2.298377165311649
+		    },
+		    {
+		        "place_name": "121 Rue Saint-Jacques, 75005 Paris, France",
+		        "place_id": "ChIJO537Cudx5kcRHlyK46hFZEQ",
+		        "lat": 48.84867675994344,
+		        "lng": 2.3457557053507117
+		    },
+		    {
+		        "place_name": "132 Boulevard de Charonne, 75020 Paris, France",
+		        "place_id": "ChIJrbkp-olt5kcRZIKCJOkaQ14",
+		        "lat": 48.85545400732256,
+		        "lng": 2.3953658432901648
+		    },
+		    {
+		        "place_name": "1 Cité de l'Ermitage, 75020 Paris, France",
+		        "place_id": "ChIJj9Qqb5Nt5kcRof-N1p88Vw8",
+		        "lat": 48.86957032627758,
+		        "lng": 2.3922759385050085
+		    },
+		    {
+		        "place_name": "40 Quai de Jemmapes, 75010 Paris, France",
+		        "place_id": "ChIJ52rI3Alu5kcRTNSL-ANtmsE",
+		        "lat": 48.86934449651679,
+		        "lng": 2.3672133774698523
+		    },
+		    {
+		        "place_name": "115 Rue Réaumur, 75002 Paris, France",
+		        "place_id": "ChIJS-wuAz1u5kcRIzAAtPyAXgg",
+		        "lat": 48.86821533242417,
+		        "lng": 2.3426658005655554
+		    },
+		    {
+		        "place_name": "115 Rue Saint-Dominique, 75007 Paris, France",
+		        "place_id": "ChIJXYBKLt9v5kcRMPaVcBVFqfs",
+		        "lat": 48.85895522569791,
+		        "lng": 2.304900297635868
+		    },
+		    {
+		        "place_name": "3 Rue de Lourmel, 75015 Paris, France",
+		        "place_id": "ChIJvxSayBtw5kcR9jRaZn6tw0Y",
+		        "lat": 48.850258199721495,
+		        "lng": 2.2923690171182898
+		    },
+		    {
+		        "place_name": "64 Avenue Victor Hugo, 75116 Paris, France",
+		        "place_id": "ChIJV42nCPFv5kcR2zE8Exqq-uw",
+		        "lat": 48.87047363512827,
+		        "lng": 2.2865325303018835
+		    },
+		    {
+		        "place_name": "44 Rue de Rome, 75008 Paris, France",
+		        "place_id": "ChIJQeqxR7Vv5kcRGeKJKSkSCfY",
+		        "lat": 48.87792531090652,
+		        "lng": 2.3236113877237585
+		    },
+		    {
+		        "place_name": "7 Boulevard de Rochechouart, 75009 Paris, France",
+		        "place_id": "ChIJJxdCsGlu5kcRPp5zWKxWq0c",
+		        "lat": 48.8832311306673,
+		        "lng": 2.348845610135868
+		    },
+		    {
+		        "place_name": "155 Rue de Rome, 75017 Paris, France",
+		        "place_id": "ChIJQVlaJLBv5kcRxJknss5CnGw",
+		        "lat": 48.8866175298428,
+		        "lng": 2.3151999802530554
+		    },
+		    {
+		        "place_name": "45 Boulevard de Rochechouart, 75009 Paris, France",
+		        "place_id": "EjE0NSBCb3VsZXZhcmQgZGUgUm9jaGVjaG91YXJ0LCA3NTAwOSBQYXJpcywgRnJhbmNl",
+		        "lat": 48.882328052158506,
+		        "lng": 2.343352446073368
+		    },
+		    {
+		        "place_name": "41 Rue de la Chapelle, 75018 Paris, France",
+		        "place_id": "ChIJWWWH03xu5kcRXwkbrq-Plxo",
+		        "lat": 48.89338964026286,
+		        "lng": 2.358801969999149
+		    },
+		    {
+		        "place_name": "43-45 Rue de l'Evangile, 75018 Paris, France",
+		        "place_id": "Eiw0My00NSBSdWUgZGUgbCdFdmFuZ2lsZSwgNzUwMTggUGFyaXMsIEZyYW5jZQ",
+		        "lat": 48.89395394139533,
+		        "lng": 2.367041716092899
+		    },
+		    {
+		        "place_name": "10 Rue de l'Encheval, 75019 Paris, France",
+		        "place_id": "ChIJ0UA45sBt5kcRH8AEd97H0vc",
+		        "lat": 48.87905425586569,
+		        "lng": 2.3891860337198523
+		    },
+		    {
+		        "place_name": "17 Rue Vitruve, 75020 Paris, France",
+		        "place_id": "ChIJ59Ierodt5kcRLJVhtGyE6Fk",
+		        "lat": 48.85703523304221,
+		        "lng": 2.402747282499149
+		    },
+		    {
+		        "place_name": "9 Rue de la Révolution, 93100 Montreuil, France",
+		        "place_id": "ChIJx0cAjGFt5kcRJdx3tOBZV8U",
+		        "lat": 48.85601873652745,
+		        "lng": 2.4291831345499304
+		    },
+		    {
+		        "place_name": "7 Place de la Republique, 92110 Clichy, France",
+		        "place_id": "ChIJXe6oJA9v5kcR2gOs5pzwe2w",
+		        "lat": 48.90309473234857,
+		        "lng": 2.3124533982218054
+		    },
+		    {
+		        "place_name": "22 Rue Saint-Pierre, 92200 Neuilly-sur-Seine, France",
+		        "place_id": "ChIJ6WfmJmRl5kcRnhsL-FQlZ7U",
+		        "lat": 48.883118246745475,
+		        "lng": 2.2717696518839148
+		    },
+		    {
+		        "place_name": "1 Avenue André Morizet, 92100 Boulogne-Billancourt, France",
+		        "place_id": "ChIJY25Wt-h65kcRaYJKfJ1WavU",
+		        "lat": 48.83365059084553,
+		        "lng": 2.2425872178018835
+		    },
+		    {
+		        "place_name": "87 Rue du Point du Jour, 92100 Boulogne-Billancourt, France",
+		        "place_id": "ChIJU0YgEO165kcRu1yP4bPfHFI",
+		        "lat": 48.829582581850715,
+		        "lng": 2.250311979764774
+		    },
+		    {
+		        "place_name": "31 Avenue Verdier, 92120 Montrouge, France",
+		        "place_id": "ChIJrWyMvf9w5kcRkZ4Wg0nGaJo",
+		        "lat": 48.815228912154815,
+		        "lng": 2.3169165940225867
+		    },
+		    {
+		        "place_name": "68 Avenue Raspail, 94250 Gentilly, France",
+		        "place_id": "ChIJt4bSOnRx5kcRIVVq02VkWAw",
+		        "lat": 48.81251594581754,
+		        "lng": 2.3455840439737585
+		    },
+		    {
+		        "place_name": "22 Quai d'Orléans, 75004 Paris, France",
+		        "place_id": "ChIJ0aztRONx5kcRiYkOqMVLaao",
+		        "lat": 48.851726634791916,
+		        "lng": 2.354338774198368
+		    },
+		    {
+		        "place_name": "7-11 Quai de Conti, 75006 Paris, France",
+		        "place_id": "Eic3LTExIFF1YWkgZGUgQ29udGksIDc1MDA2IFBhcmlzLCBGcmFuY2U",
+		        "lat": 48.8568093467116,
+		        "lng": 2.3402625412882117
+		    },
+		    {
+		        "place_name": "42 Quai des Orfèvres, 75001 Paris, France",
+		        "place_id": "ChIJA6bfiN9x5kcR_FBUHRIFm7M",
+		        "lat": 48.85579284560999,
+		        "lng": 2.342322477811649
+		    },
+		    {
+		        "place_name": "5-7 Rue du Sabot, 75006 Paris, France",
+		        "place_id": "EiU1LTcgUnVlIGR1IFNhYm90LCA3NTAwNiBQYXJpcywgRnJhbmNl",
+		        "lat": 48.85251731276075,
+		        "lng": 2.3316794724405554
+		    },
+		    {
+		        "place_name": "9 Avenue de Lowendal, 75007 Paris, France",
+		        "place_id": "ChIJTZPVeCZw5kcRb-MkJcrj1mw",
+		        "lat": 48.85217845230312,
+		        "lng": 2.3081618637979773
+		    },
+		    {
+		        "place_name": "23 Rue de la Forge Royale, 75011 Paris, France",
+		        "place_id": "ChIJDd0e4ghy5kcRiAMxGj3923o",
+		        "lat": 48.85206549830757,
+		        "lng": 2.380602964872196
+		    }
+		]
 	}
 
 });
 
-	window.LJ.friends = _.merge( window.LJ.friends || {}, {
-
-		fetched_friends: null,
-		show_friends_duration: 600,
-		init: function(){
-
-			LJ.friends.handleDomEvents();
-			return LJ.friends.fetchAndAddFacebookFriends();
-
-		},
-		handleDomEvents: function(){
-
-			LJ.ui.$body.on('click', '.js-invite-friends', LJ.facebook.showModalSendMessageToFriends );
-			LJ.ui.$body.on('click', '.js-show-friend', LJ.friends.handleFriendProfileClicked );
-			LJ.ui.$body.on('click', '.js-close-friends-popup', LJ.friends.hideInviteFriendsPopup );
-
-		},
-		handleFriendsClicked: function(){
-
-			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
-
-			$('.friends').html('');
-
-			$loader.addClass('none')
-				   .appendTo('.friends')
-				   .velocity('bounceInQuick', {
-				   	delay: 125,
-				   	duration: 500,
-				   	display: 'block'
-				   });
-
-			LJ.friends.fetchAndAddFacebookFriends();
-
-		},	
-		handleFriendProfileClicked: function(){
-
-			var $s = $(this);
-			var facebook_id = $s.attr('data-facebook-id');
-
-			LJ.profile_user.showUserProfile( facebook_id );
-
-		},
-		fetchAndAddFacebookFriends: function(){
-
-			var friend_ids = LJ.user.friends;
-			return LJ.api.fetchUsersFull( friend_ids )
-
-				.then(function( fetched_friends ){
-					fetched_friends = _.map( fetched_friends, 'user' );
-					return LJ.friends.setFriendsProfiles( fetched_friends );
-
-				})
-				.then(function( fetched_friends ){
-					return LJ.friends.renderFriends( fetched_friends );
-
-				})
-				.then(function( friends_html ){
-					return LJ.friends.displayFriends( friends_html );
-
-				})
-				.catch(function( e ){
-					LJ.wlog(e);
-				});
-
-
-		}, 
-		getFriendProfile: function( facebook_id ){
-
-			return _.find( LJ.friends.getFriendsProfiles(), function( f ){
-				return f.facebook_id == facebook_id;
-			});
-
-		},
-		getFriendsProfiles: function( facebook_ids ){
-
-			LJ.friends.fetched_friends = LJ.friends.fetched_friends.filter( Boolean );
-
-			if( facebook_ids ){
-				return _.filter( LJ.friends.fetched_friends, function( f ){
-					return ( facebook_ids.indexOf( f.facebook_id ) != -1 );
-				});
-
-			} else {
-				return LJ.friends.fetched_friends;
-
-			}
-
-		},
-		setFriendsProfiles: function( fetched_friends ){
-
-			LJ.friends.fetched_friends = fetched_friends;
-			return LJ.Promise.resolve( fetched_friends );
-
-		},
-		renderFriends: function( fetched_friends ){
-
-			var html = [];
-
-			if( fetched_friends.length == 0 ){
-				html.push( LJ.friends.renderFriendItem__Empty() );
-
-			} else {
-				fetched_friends.forEach(function( friend ){
-					html.push( LJ.friends.renderFriendItem( friend ) );
-
-				});
-
-				html.push( LJ.friends.renderFriendItem__Last() );
-
-			}
-
-			return html.join('');
-
-		},
-		displayFriends: function( html ){
-
-			var $base;
-			if( $('.friends').children().length == 0 ){
-				$( html )
-					.hide()
-					.appendTo('.friends')
-					.velocity('shradeIn', {
-						duration : LJ.friends.show_friends_duration,
-						display  : 'flex',
-						stagger  : (LJ.friends.show_friends_duration / 4)
-					});
-
-			} else {
-				$('.friends')
-					.children()
-					.velocity('shradeOut', {
-						duration : LJ.friends.show_friends_duration / 2,
-						display  : 'none',
-						complete : function(){
-							$( html )
-								.hide()
-								.appendTo('.friends')
-								.velocity('shradeIn', {
-									duration : LJ.friends.show_friends_duration,
-									display  : 'flex',
-									stagger  : (LJ.friends.show_friends_duration / 4)
-								});
-
-						}
-					});
-
-			}
-
-		},
-		renderFriendItem__Empty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-users"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_friends_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_friends_subtitle"></p>',
-					'</div>',
-					'<div class="empty__subicon --round-icon js-invite-friends">',
-						'<i class="icon icon-gift"></i>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderFriendItem: function( friend ){
-
-			var filterlay = 'js-filterlay';
-			var nonei 	  = '';
-
-			if( !friend ){
-				LJ.wlog('Trying to render undefined friend, rendering ghost user instead');
-				friend = LJ.getGhostUser();
-				filterlay = '';
-				nonei 	  = 'nonei';
-			}
-
-			var formatted_date = LJ.text("w_member_since") + " " + moment( friend.signed_up_at ).format('DD/MM/YY');
-
-			var main_img = LJ.findMainPic( friend );
-			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'menu-row' );
-
-			return LJ.ui.render([
-
-				'<div class="friend__item js-show-friend '+ nonei +'" data-facebook-id="' + friend.facebook_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image '+ filterlay +'">' + img_html + '</div>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + friend.name + ', <span class="row-body__age">' + friend.age + '</span></h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon">',
-								'<i class="icon icon-education"></i>',
-							'</div>',
-							'<span>' + friend.job + '</span>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon">',
-								'<i class="icon icon-location"></i>',
-							'</div>',
-							'<span>' + friend.location.place_name + '</span>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderFriendItem__Last: function(){
-
-			return '';
-
-			return LJ.ui.render([
-
-				'<div class="friend__item --invite-friends js-invite-friends" >',
-					'<div class="row-pic">',
-						'<i class="icon icon-gift"></i>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2> ' + LJ.text('friends_title_invite') + '</h2>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderFriendsInModal: function(){
-
-			var friends = LJ.friends.getFriendsProfiles();
- 
-			if( friends.length == 0 ){
-
-				return LJ.friends.renderFriendsInModal__Empty();
-
-			} else {
-
-				var html = [];
-
-				friends.forEach(function( f ){
-					html.push( LJ.friends.renderFriendInModal( f ) );
-				});
-
-				return html.join('');
-			}
-
-		},
-		renderFriendsInModal__Empty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="no-friends">',
-					'<span data-lid="modal_no_friends_text"></span>',
-					'<button class="js-invite-friends" data-lid="modal_no_friends_btn"></button>',
-				'</div>'
-
-			].join(''));
-
-		},
-		renderFriendInModal: function( f ){
-
-			if( !f ){
-				f = LJ.getGhostUser();
-			}
-			
-			var main_img = LJ.findMainPic( f );
-			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'user-modal' );
-
-			return LJ.ui.render([
-
-				'<div class="modal-item friend-modal" data-name="' + f.name.toLowerCase() + '" data-item-id="' + f.facebook_id + '">',
-					'<div class="friend-modal__pic">',
-						img_html,
-						'<div class="friend-modal__icon --round-icon">',
-							'<i class="icon icon-check"></i>',
-						'</div>',
-					'</div>',
-					'<div class="friend-modal__name">',
-						'<span>' + f.name + '</span>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		displayInviteFriendsPopup: function(){
-
-			LJ.friends.invite_popup_timer = setTimeout(function(){
-
-				$( LJ.friends.renderInviteFriendsPopup() )
-					.hide()
-					.appendTo('body')
-					.velocity('shradeIn', {
-						duration: 400,
-						display : 'flex'
-					});
-
-			}, 2500 );
-
-		},
-		hideInviteFriendsPopup: function(){
-
-			clearTimeout( LJ.friends.invite_popup_timer );
-			$('.invite-friends-popup').remove();
-
-		},
-		renderInviteFriendsPopup: function(){
-
-			return LJ.ui.render([
-
-				'<div class="invite-friends-popup">',
-					'<div class="invite-friends-popup__close js-close-friends-popup --round-icon">',
-						'<i class="icon icon-cross-fat"></i>',
-					'</div>',
-					'<div class="invite-friends-popup__icon --round-icon">',
-						'<i class="icon icon-heart"></i>',
-					'</div>',
-					'<div class="invite-friends-popup-message">',
-						'<div class="invite-friends-popup__h1">',
-							'<span data-lid="invite_friends_popup_h1"></span>',
-						'</div>',
-						'<div class="invite-friends-popup__h2">',
-							'<span data-lid="invite_friends_popup_h2"></span>',
-						'</div>',
-					'</div>',
-					'<div class="invite-friends-popup__btn js-invite-friends">',
-						'<button data-lid="invite_friends_popup_btn"></button>',
-					'</div>',
-				'</div>'
-
-			].join(''));
-
-		}
-
-	});
-    /*
-        Initialisation script
-        Recursively try to initialize the Facebook pluggin
-        When it's loaded, app starts.
-        Follow the code...
-        Léo Jacquemin, 10/03/16, 17h56
-    */
-    
-
-	window.LJ = _.merge( window.LJ || {}, { 
-
-		init: function( time ){
-
-            $( window ).scrollTop( 0 )
-
-            // The application only starts when the Facebook pluggin has loaded
-            if( typeof FB === 'undefined' )
-                return setTimeout(function(){ LJ.init( time ); }, time );
-            
-            // Language, Lodash & jQuery augmentations
-            LJ.initAugmentations();
-            // Translate the whole page based on sourcetext & data-lid attributes
-            LJ.lang.init();
-            // Cache static assets images used accross modules
-            LJ.static.init();
-            // Store mechanism (local storage / cookie)
-            LJ.store.init();
-            // Analytics for tracking what's going on
-            LJ.analytics.init();
-            // Starts the Facebook SDK
-            LJ.facebook.init();
-            // Basic routing functionalities to prevent user from accidentally leaving the page
-            LJ.router.init();
-            // Menu dom interactions
-            LJ.menu.init();
-            // Navigation for macro views 
-            LJ.nav.init();
-            // Scrolling globals etc
-            LJ.ui.init();
-            // Cheers
-            LJ.cheers.init();
-            // Shared module
-            // LJ.shared.init();  // Keep it for ulterior version
-            // Profile user
-            LJ.profile_user.init();
-
-            // Autologin for users who asked the "remember me" feature in their settings
-            LJ.autologin.init()
-                .then(  LJ.autologin.startLogin )
-                .catch( LJ.autologin.startLanding )
-
-
-        },
-        start: function( facebook_token ){
-
-            return LJ.Promise.resolve( facebook_token )
-                .then( LJ.login.enterLoginProcess )  
-                .then(function(){
-                    return LJ.api.fetchAppToken( facebook_token );
-                })
-                .then( LJ.login.stepCompleted )
-                // Enter the following step with a valid app token
-                // Two kinds of data are fetch :
-                // - datas that are self-related  : profile infos, pictures, friends, notifications, chats...
-                // - datas that are users-related : search users module, map events...
-                .then( LJ.profile.init )
-                .then( LJ.login.firstSetup )
-                .then( LJ.login.stepCompleted )
-                .then( LJ.map.initGeocoder )
-                // .then(function(){ return LJ.delayd[ lol ]})
-                .then(function(){
-                    var a = LJ.friends.init();
-                    var b = LJ.search.init();
-                    var c = LJ.realtime.init();
-                    return LJ.Promise.all([ a, b, c ]);
-                })
-                .then( LJ.notifications.init )
-                .then( LJ.before.init )
-                .then( LJ.chat.init )
-                .then( LJ.login.hideLoginSteps )
-                .then( LJ.map.init ) // Must be as close as possible to terminateLogin. Map doesnt render sometimes..
-                .then( LJ.login.terminateLoginProcess )
-                .then( LJ.onboarding.init )
-                .then( LJ.connecter.init )
-                .then( LJ.dev.init )
-
-        }
-
-
-	});
 
 
 
@@ -37143,178 +39712,1278 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 
 
-	
-	window.LJ.invite = _.merge( window.LJ.invite || {}, {
+
+	window.LJ.meepass = _.merge( window.LJ.meepass || {}, {
 
 		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.meepass.handleDomEvents();
+				resolve();
+			});
+
+
+		},
+		handleDomEvents: function(){
+
+			$('.menu-section.--meepass').on('click', '.segment__part', LJ.meepass.refreshSegmentView );
+			$('.menu-item.--meepass').one('click', LJ.meepass.handleMeepassClicked );
+			LJ.ui.$body.on('click', '.js-send-meepass', LJ.meepass.handleSendMeepass );
+
+		},
+		refreshSegmentView: function(){
+
+			var $seg = $(this);
+			var link = $seg.attr('data-link');
+
+			if( $seg.hasClass('--active') ) return;
+
+			$seg.siblings().removeClass('--active');
+			$seg.addClass('--active');
+
+			$('.meepass').children().css({ display: 'none' });
+			$('.meepass [data-link="' + link + '"]').css({ display: 'flex' });
+
+		},
+		handleSendMeepass: function(){
+
+			// User is hosting more than one event...
+			if( 0 ){
+				LJ.ui.showModal({
+					"title"		: "Félicitations !",
+					"subtitle"	: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
+					"body"  	: LJ.meepass.renderEventsInModal(),
+					"footer"	: "<button class='--rounded'><i class='icon icon-check'></i></button>"
+				});
+
+			} else {
+				
+				var event_id = '';
+			//	LJ.meepass.sendMeepass()
+			//		.then( LJ.meepass.handleSendMeepassSuccess )
+			//		.catch( LJ.meepass.handleApiError );
+
+			}
+
+		},
+		renderMeepassRibbon: function(){
+
+			var n_meepass = LJ.user.meepass.length;
+
+			return LJ.ui.render([
+
+				'<div class="meepass-ribbon">',
+					'<h2 data-lid="meepass_ribbon"></h2>',
+				'</div>'
+
+				].join('')).replace('%n', n_meepass );
+
+		},
+		sendMeepass: function(){
 			
+		},
+		handleSendMeepassSuccess: function(){
+
+		},
+		handleApiError: function(){
+
+		},
+		renderEventsInModal: function(){
+
+		},
+		handleMeepassClicked: function(){
+
+			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
+
+			$('.meepass').html('');
+
+			$loader.addClass('none')
+				   .appendTo('.meepass')
+				   .velocity('bounceInQuick', {
+				   	delay: 125,
+				   	duration: 500,
+				   	display: 'block'
+				   });
+
+			LJ.meepass.fetchMeepassItems();
+
+		},	
+		fetchMeepassItems: function(){
+
+			LJ.api.fetchMeMeepass()
+				  .then( LJ.meepass.handleFetchMeMeepassSuccess, LJ.meepass.handleFetchMeMeepassError );
+
+
+		},
+		handleFetchMeMeepassSuccess: function( expose ){
+
+			var meepass = expose.meepass;
+
+			LJ.meepass.setMeepassItems( meepass );
+
+		},
+		setMeepassItems: function( meepass ){
+
+			var html = [];
+			meepass.sort();
+
+			var facebook_ids = _.pluck( meepass, 'sent_by' ).concat( _.pluck( meepass, 'sent_to' ) ).filter( Boolean );
+
+			LJ.api.fetchUsers( facebook_ids )
+				.then(function( res ){
+
+					var no_meepass_received = true;
+					var no_meepass_sent     = true;
+					meepass.forEach(function( mp ){
+
+						for( var i=0; i<res.length; i++ ){
+
+							var user = res[ i ].user;
+
+							if( mp.sent_by == user.facebook_id ){
+								no_meepass_received = false;
+								return html.push( LJ.meepass.renderMeepassItem__Received( mp, user ) );
+							}
+
+							if( mp.sent_to == user.facebook_id ){
+								no_meepass_sent = false;
+								return html.push( LJ.meepass.renderMeepassItem__Sent( mp, user ) );
+							}
+						}
+					});
+
+					if( no_meepass_sent ){
+						html.push( LJ.meepass.renderMeepassItem__SentEmpty() );
+					}
+
+					if( no_meepass_received ){
+						html.push( LJ.meepass.renderMeepassItem__ReceivedEmpty() );
+					}
+
+					$('.meepass').html( html.join('') )
+								 .find('[data-link="received"]')
+								 .velocity('fadeIn', {
+									duration: 250,
+									display: 'flex'
+								});
+
+					$('.menu-section.--meepass')
+								.find('.segment__part')
+								.removeClass('--active')
+								.first()
+								.addClass('--active');
+
+				});
+
+		},		
+		handleFetchMeMeepassError: function(){
+
+			LJ.elog('Error fetching meepass :/');
+
+		},
+		renderMeepassItem__ReceivedEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="received">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meepass"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_meepass_received_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_meepass_received_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__SentEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="sent">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meepass"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_meepass_sent_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_meepass_sent_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__Received: function( meepass_object, target ){
+
+			var mp 	   = meepass_object;
+			var target = target;
+
+			var formatted_date = LJ.renderDate( mp.sent_at );
+			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="meepass__item" data-link="received" data-event-id="' + mp.target_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + LJ.text('meepass_item_title_received').replace('%name', target.name) +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__Sent: function( meepass_object, target, meepass_by ){
+
+			var mp 	   = meepass_object;
+			var target = target;
+
+			var formatted_date = LJ.renderDate( mp.sent_at );
+			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="meepass__item" data-link="sent" data-event-id="' + mp.target_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + LJ.text('meepass_item_title_sent').replace('%name', target.name) +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		}
+
+	});
+		
+
+	window.LJ.menu = _.merge( window.LJ.menu || {}, {
+
+		$menu: $('.menu'),
+		shrink_menu_height_limit: 0,
+		menu_slide_duration: 240,
+
+		init: function(){
+
+			LJ.menu.handleDomEvents();
+			LJ.menu.activateMenuSection('profile');
+			LJ.menu.shrinkMenu();
+
+			return;
+
+		},
+		handleDomEvents: function(){
+
+			LJ.ui.$body.on('click', '.menu-item', LJ.menu.showMenuItem );
+			LJ.ui.$window.on('scroll', _.debounce( LJ.menu.handleMenuApparition, 100 ) );
+
+		},
+		showMenuItem: function(){
+
+			var $self = $(this);
+
+			var section_id = $self.attr('data-link');
+			LJ.menu.activateMenuSection( section_id );
+			LJ.ui.hideSlide();
+			LJ.unoffsetRows();
+
+		},
+		activateMenuSection: function( section_id ){	
+
+			var current_section_id = $('.menu-item.--active').attr('data-link');
+
+			var $menu_item_activated    = $('.menu-item[data-link="' + current_section_id + '"]');
+			var $menu_item_to_activate  = $('.menu-item[data-link="' + section_id + '"]');
+
+			var $menu_block_activated   = $('.menu-section[data-link="' + current_section_id + '"]');
+			var $menu_block_to_activate = $('.menu-section[data-link="' + section_id + '"]');
+
+
+			if( !current_section_id ){
+				$menu_item_to_activate.addClass('--active');
+				return $('.app-section.--menu').find('[data-link="' + section_id + '"]').css({ 'display': 'flex' });
+			}
+
+			if( section_id == current_section_id ){
+				
+				if( current_section_id == "shared" ){
+					return LJ.shared.handleShareClicked();
+				}
+				if( current_section_id == "cheers" ){
+					return LJ.cheers.handleCheersClicked();
+				}
+				if( current_section_id == "friends" ){
+					return LJ.friends.handleFriendsClicked();
+				}
+
+				return LJ.log('Section is already activated');
+			}
+
+			$menu_item_activated
+				.removeClass('--active')
+				.find('.menu-item__bar')
+				.velocity('bounceOut', { duration: 450, display: 'none' });
+
+			$menu_item_to_activate
+				.addClass('--active')
+				.find('.menu-item__bar')
+				.velocity('bounceInQuick', { duration: 450, display: 'block' });
+
+			$menu_block_activated.hide();
+			$menu_block_to_activate.css({ display: 'flex' });
+
+			// Specifics
+			section_id == "friends" ?
+				LJ.friends.displayInviteFriendsPopup():
+				LJ.friends.hideInviteFriendsPopup();
+
+
+		},
+		handleMenuApparition: function( e ){
+			
+			return;
+
+			var current_scrolltop = LJ.ui.$window.scrollTop();
+
+			if( LJ.ui.getScrollDirection() == "down" && LJ.ui.scrolltop > LJ.menu.shrink_menu_height_limit && $('--resizing').length == 0 ){
+				LJ.menu.shrinkMenu();
+			}
+
+			if( LJ.ui.getScrollDirection() == "up" && LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit  && $('--resizing').length == 0 ){
+				LJ.menu.expandMenu();
+			}
+
+				
+		},
+		toggleMenuState: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( $m.hasClass('--downsized') ){
+				LJ.menu.expandMenu();
+			} else {
+				LJ.menu.shrinkMenu();
+			}
+
+		},
+		shrinkMenu: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( $m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
+
+			$m.addClass('--resizing');
+			$m.velocity('slideUpOut', {
+				duration: LJ.menu.menu_slide_duration,
+				complete: function(){
+
+					if( LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit ){
+						return $m.velocity('slideDownIn', {
+							duration: LJ.menu.menu_slide_duration,
+							display: 'flex',
+							complete: function(){
+								$m.removeClass('--resizing');
+							}
+						})
+					}
+
+					$m.addClass('--downsized');
+					$m.closest('.app-section').addClass('--downsized');
+					$m.removeClass('--resizing');
+					$m.velocity('slideDownIn', {
+						duration: LJ.menu.menu_slide_duration,
+						display: 'flex'
+					});
+
+				}
+			});
+
+		},
+		expandMenu: function(){
+
+			var $m = LJ.menu.$menu;
+
+			if( !$m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
+
+			$m.addClass('--resizing');
+			$m.velocity('slideUpOut', {
+				duration: LJ.menu.menu_slide_duration,
+				complete: function(){
+
+					$m.removeClass('--resizing');
+					$m.removeClass('--downsized')
+					$m.closest('.app-section').removeClass('--downsized');
+					$m.velocity('slideDownIn', {
+						duration: LJ.menu.menu_slide_duration,
+						display: 'flex'
+					});
+
+				}
+			});
+
 		}
 
 	});
 
-	window.LJ.landing = _.merge( window.LJ.landing || {}, {
+	
+	window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
 
-		activateLanding: function( landing_version ){
+		state : 'hidden',
+		jsp_id: 'notifications',
 
-			var landing_html = LJ.landing.renderLanding( landing_version );
-			$('.multi-landing').html( landing_html );
+		init: function(){
 
-			LJ.login.init()
-                .then( LJ.facebook.fetchFacebookToken )
-                .then( LJ.start );
+			return LJ.notifications.addNotificationsPanel()
+					.then(function(){
+						LJ.notifications.refreshNotifications();
+						LJ.notifications.handleDomEvents();
+					});
 
 		},
-		renderLanding: function( landing_version ){
+		handleDomEvents: function(){
 
-			// Add the texts that are needed 
-			LJ.textAdd( LJ.landing.texts );
-			// Render the html
-			var landing_object = LJ.landing[ "v" + landing_version ];
+			$('.app__menu-item.--notifications').click( LJ.notifications.handleToggleNotifications );
+			$('.app__menu-item.--notifications').click( LJ.notifications.updateNotificationsSeenAt );
+			$('.notifications-panel').on('click', '.notification', LJ.notifications.updateNotificationClickedAt );
 
-			if( !landing_object ){
-				return LJ.wlog('This version of the landing page (v'+ landing_version +') doesnt exist');
+			LJ.ui.$body.on('click', LJ.notifications.handleHideNotifications );
+
+		},
+		getNotification: function( n_id ){
+
+			return _.find( LJ.user.notifications, function( n ){
+				return n.notification_id == n_id;
+			});
+
+		},
+		cacheNotification: function( notification ){
+
+			LJ.user.notifications.push( notification );
+
+		},
+		refreshNotifications: function(){
+
+			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
+			LJ.notifications.addAndShowNotifications();
+			LJ.notifications.refreshNotificationsOrder();
+			LJ.notifications.refreshNotificationsJsp();
+			LJ.notifications.classifyNotifications();  
+			LJ.notifications.refreshNotificationsBubble();   
+
+		},
+		resetBubbleToNotificationsIcon: function(){
+
+			var $i = $('.app__menu-item.--notifications');
+			LJ.ui.setBubble( $i, 0 );
+
+		},
+		addBubbleToNotificationsIcon: function(){
+
+			var $i = $('.app__menu-item.--notifications');
+			LJ.ui.bubbleUp( $i );
+
+		},
+		refreshNotificationsBubble: function(){
+
+			var $w = $('.notifications-panel');
+
+			LJ.notifications.resetBubbleToNotificationsIcon();
+
+			LJ.user.notifications.forEach(function( n ){
+
+				if( !n.seen_at ){
+					return LJ.notifications.addBubbleToNotificationsIcon();
+				}
+
+			});
+
+		},
+		classifyNotifications: function(){
+
+			var $w = $('.notifications-panel');
+
+			$w.find('.notification').removeClass('--seen').removeClass('--clicked');
+
+			LJ.user.notifications.forEach(function( n ){
+
+				var $n = $w.find('.notification[data-notification-id="'+ n.notification_id +'"]');
+
+				// if( n.seen_at ){
+				// 	$n.addClass('--seen');
+				// }
+
+				if( n.clicked_at ){
+					$n.addClass('--clicked');
+				}
+
+			});
+
+		},
+		reorderNotifications: function( i ){
+
+			i = i || 1;
+
+			var notifs = LJ.user.notifications;	
+
+			notifs.sort(function( n1, n2 ){
+				return ( moment( n2.happened_at ) - moment( n1.happened_at ) ) * i;
+			});
+
+		},
+		refreshNotificationsOrder: function(){
+			
+			var notifs = LJ.user.notifications;			
+
+			LJ.notifications.reorderNotifications();
+
+			notifs.forEach(function( n, i ){
+				$('.notification[data-notification-id="'+ n.notification_id +'"]').css({ 'order': i });
+			});
+
+		},
+		refreshNotificationsJsp: function(){
+
+			LJ.ui.jsp[ LJ.notifications.jsp_id ].reinitialise();
+
+		},
+		addAndShowNotifications: function(){
+
+			$('.notifications-panel').find('.js-notification-item').remove();
+
+			LJ.user.notifications.forEach(function( notification ){
+            	LJ.notifications.insertNotification( notification );
+            });
+
+		},
+		findById: function( n_id ){
+
+			return _.find( LJ.user.notifications, function( n ){
+				return n.notification_id == n_id;
+			});
+
+		},
+		updateNotificationsSeenAt: function(){
+
+			var unseen_notifications = _.filter( LJ.user.notifications, function( n ){
+				return !n.seen_at;
+			});
+
+			// Only call the api if there is something to call
+			if( unseen_notifications.length != 0 ){
+				LJ.api.updateNotificationsSeenAt();
 			}
 
-			return LJ.ui.render( landing_object.html.join('') );
-
 		},
-		texts: {
+		updateNotificationClickedAt: function(){
 
-			"landing_browse_title": {
-				"fr" :"Trouvez votre before",
-				"us": "Find your pregame"
-			},
-			"landing_browse_subtitle": {
-				"fr" :"Repérez les before qui s\'organisent près de chez vous en parcourant la Map.",
-				"us": "Spot the pregames around you by browsing the map"
-			},
-			"landing_cheers_title": {
-				"fr" :"Un before vous intéresse ?",
-				"us": "Interested in a pregame ?"
-			},
-			"landing_cheers_subtitle": {
-				"fr" :"Envois un Cheers pour montrer ton intérêt",
-				"us": "Send a Cheers to show our interest"
-			},
-			"landing_chat_title": {
-				"fr" :"Faites connaissance",
-				"us": "Faites connaissance"
-			},
-			"landing_chat_subtitle": {
-				"fr" :"Discutez entre groupes dans le chat",
-				"us": "Chat with the other group"
-			},
-			"landing_privacy": {
-				"fr": [
-						'En continuant, vous acceptez nos <span class="js-terms landing-bold">Conditions d\'Utilisation</span>',
-						'et <span class="js-privacy landing-bold">Politique de Confidentialité.</span>',
-						'Nous ne publierons <span class="landing-bold">rien</span> sur Facebook.'
-					].join(''),
-				"us": [
-						'By continuing, you\'re agreeing to our <span class="js-terms landing-bold">Terms</span>',
-						'and <span class="js-privacy landing-bold">Confidentiality.</span>',
-						'Will will <span class="landing-bold">never</span> publish on Facebook.'
-					].join('')
-			},
-			"landing_connexion_btn": {
-				"fr": "Se connecter via <span class=\"landing-bold\">Facebook</span>",
-				"us": "Connection with <span class=\"landing-bold\">Facebook</span>"
-			},
-			"landing_terms": {
-				"fr": "Conditions d\'Utilisation",
-				"us": "Terms"
-			},
-			"landing_policy": {
-				"fr": "Politique de Confidentialité",
-				"us": "Confidentiality"
-			},
-			"landing_faq": {
-				"fr": "FAQ",
-				"us": "FAQ"
-			},
-			"landing_contact" :{
-				"fr": "Contact",
-				"us": "Contact"
-			},
-			"landing_facebook_page": {
-				"fr": "Page Facebook",
-				"us": "Facebook page"
+			var $n              = $( this );
+			var notification_id = $n.attr('data-notification-id');
+			var n               = LJ.notifications.findById( notification_id );
+
+			if( !n.clicked_at ){
+
+				LJ.api.updateNotificationClickedAt( notification_id );
+				n.clicked_at = new Date();
+				LJ.notifications.refreshNotifications();
+			
 			}
 
 		},
-		v0: {
-			name: "Blank page",
-			desc: "Blank page for test purposes only",
-			html: []
-		},
-		v2: {
-			"name": "Landing Light",
-			"desc": "Light theme, clear landing with phone in mid screen and almost nothing",
+		handleToggleNotifications: function(e){
 
-			"html": [
-					'<div class="landing">',
-					    '<div class="landing-logo --round-icon">',
-					      '<span>Meefore</span>',
-					    '</div>',
-					    '<div class="landing-lang">',
-					      '<button class="js-changelang" data-lid="settings_ux_changelang_button"></button>',
-					    '</div>',
-					    '<div class="landing-body">',
-					      '<div class="landing-title">',
-					        '<h1 data-lid="landing_browse_title"></h1>',
-					      '</div>',
-					      '<div class="landing-subtitle">',
-					        '<h2 data-lid="landing_browse_subtitle"></h2>',
-					      '</div>',
-					      '<div class="landing-screenshots">',
-					        '<div class="landing__phone">',
-					          '<img src="/img/iphone.png" alt=iPhone">',
-					        '</div>',
-					        '<div class="landing__screenshot">',
-					          '<img src="/img/lp.png" alt="Find ur love" width="100%">',
-					        '</div>',
-					      '</div>',
-					      '<div class="landing-bullets">',
-					        '<div class="landing__bullet --active"></div>',
-					        '<div class="landing__bullet"></div>',
-					        '<div class="landing__bullet"></div>',
-					        '<div class="landing__bullet"></div>',
-					      '</div>',
-					      '<div class="landing-privacy">',
-					      	'<h3 data-lid="landing_privacy"></h3>',
-					      '</div>',
-					      '<div class="landing-connexion">',
-					        '<button class="js-login" data-lid="landing_connexion_btn"></button>',
-					      '</div>',
-					    '</div>',
-					    '<footer class="landing-footer">',
-					      '<div class="landing-footer__item">',
-					        '<span data-lid="landing_terms"></span>',
-					      '</div>',
-					      '<div class="landing-footer__item">',
-					        '<span data-lid="landing_policy"></span>',
-					      '</div>',
-					       '<div class="landing-footer__item">',
-					        '<span data-lid="landing_contact"></span>',
-					      '</div>',
-					       '<div class="landing-footer__item">',
-					        '<span data-lid="landing_faq"></span>',
-					      '</div>',
-					       '<div class="landing-footer__item">',
-					        '<span data-lid="landing_facebook_page"></span>',
-					      '</div>',
-					    '</footer>',
-					  '</div>'
-					],
-				activateScreenshot: function( link ){
+			e.preventDefault();
+				
+			var $self = $( this );
+			// Toggle notifications pannel
+			LJ.notifications.toggleNotificationsPanel();
+
+			// Kill bubbls
+			LJ.notifications.resetBubbleToNotificationsIcon();
+
+		},
+		handleHideNotifications: function(e){
+
+			var $t = $( e.target );
+
+			var is_not_nav_item    = !$t.closest('.app__menu-item.--notifications').length;
+			var panel_visible      = $('.notifications-panel.--active').length;
+			var is_not_panel_child = !$t.closest('.notifications-panel').length;
+			
+			if( is_not_nav_item && is_not_panel_child && panel_visible ){
+				LJ.notifications.hideNotificationsPanel();
+			}
+
+		},
+		addNotificationsPanel: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.ui.$body.append( LJ.notifications.renderNotificationsPanel() );
+				LJ.notifications.turnToJspNotificationsPanel()
+					.then( resolve, reject );
+
+			});
+		},
+		turnToJspNotificationsPanel: function(){
+
+			return LJ.ui.turnToJsp('.notifications-panel__wrapper', {
+					jsp_id: LJ.notifications.jsp_id
+				})
+
+		},
+		toggleNotificationsPanel: function(){
+
+			if( LJ.notifications.state == "visible" ){
+				LJ.notifications.hideNotificationsPanel();
+
+			} else {
+				LJ.notifications.showNotificationsPanel();
+			}
+
+		},
+		showNotificationsPanel: function(){
+
+			var $notif = $('.notifications-panel');
+			var $icon  = $('.app__menu-item.--notifications');
+
+			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
+
+			if( LJ.notifications.state == "visible" ){
+
+				LJ.log('Notification panel already there');
+
+			} else {
+
+				LJ.notifications.state = "visible";
+				$icon.addClass('--active');
+				$notif.addClass('--active').show();
+
+			}
+
+			LJ.notifications.refreshNotificationsJsp();
+
+		},
+		hideNotificationsPanel: function(){
+
+			LJ.ui.activateHtmlScroll();
+			
+			var $notif = $('.notifications-panel');
+			var $icon  = $('.app__menu-item.--notifications');
+
+			if( LJ.notifications.state == "visible" ){
+
+				LJ.notifications.state = "hidden";
+				$icon.removeClass('--active');
+				$notif.removeClass('--active').hide();
+
+			} else {
+				LJ.log('Notification panel already hidden');
+
+			}
+
+		},
+		renderNotificationsPanel: function(){
+
+			return LJ.notifications.renderNotificationsElement('wrapper');
+
+		},
+		renderNotification__RequestAcceptedHosts: function( notification ){
+
+			var options    = {};
+			var group_html = LJ.notifications.renderNotificationsElement('group_name');
+			
+			options.icon_code   = "chat-bubble-duo";
+			options.text        = LJ.text("n_accepted_in_text");
+			options.subtext     = LJ.text("n_accepted_in_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		// Identical to the one just above, for now at least 
+		renderNotification__RequestAcceptedMembers: function( notification ){
+
+			var options    = {};
+			var group_html = LJ.notifications.renderNotificationsElement('group_name');
+			
+			options.icon_code   = "chat-bubble-duo";
+			options.text        = LJ.text("n_accepted_in_text");
+			options.subtext     = LJ.text("n_accepted_in_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		renderNotification__FillProfile: function( notification ){
+
+			var options = {};
+			
+			options.icon_code   = "question-mark";
+			options.text        = LJ.text("n_fill_profile_text");
+			options.subtext     = LJ.text("n_fill_profile_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+
+		},
+		renderNotification__GroupRequestHosts: function( notification ){
+
+			var options = {};
+
+			options.icon_code   = "meedrink";
+			options.text        = LJ.text("n_group_request_hosts_text");
+			options.subtext     = LJ.text("n_group_request_hosts_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		renderNotification__GroupRequestMembers: function( notification ){
+
+			var options = {};
+
+			var friend = LJ.friends.getFriendProfile( notification.main_member );
+
+			var name = friend && friend.name;
+
+			options.icon_code   = "meedrink";
+			options.text        = LJ.text("n_group_request_members_text");
+			options.subtext     = LJ.text("n_group_request_members_subtext").replace( '%name', name );
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		renderNotification__MarkedAsHost: function( notification ){
+
+			var options = {};
+			var main_host = notification.main_host;
+			var address   = notification.address;
+			var date 	  = moment( notification.begins_at ).format('DD/MM');
+
+			var friend = LJ.friends.getFriendProfile( main_host );
+
+			if( !friend ) return LJ.wlog('Cannot render marked as host, couldnt find friend: ' + friend );
+
+			var friend_name = friend.name;
+			
+			options.icon_code   = "star";
+			options.text        = LJ.text("n_marked_as_host_text").replace('%name', friend_name );
+			options.subtext     = LJ.text("n_marked_as_host_subtext").replace('%date', date ).replace('%address', address );
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		renderNotification__NewFriends: function( notification ){
+
+			var options = {};
+
+			var new_friends = _.map( notification.new_friends, 'facebook_name' );
+			
+			options.icon_code   = "users";
+			options.text 		= LJ.text("n_new_friends_text", new_friends );
+			options.subtext     = LJ.text("n_new_friends_subtext", new_friends );
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		renderNotification__BeforeCanceled: function( notification ){
+
+			var options = {};
+			var address = notification.address;
+			
+			options.icon_code   = "line";
+			options.text        = LJ.text("n_before_canceled_text");
+			options.subtext     = LJ.text("n_before_canceled_subtext").replace('%address', address);
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+			
+		},
+		renderNotification__ItemShared: function( notification ){
+
+			var options   = {};
+			var shared_by = notification.shared_by;
+
+			var friend = LJ.friends.getFriendProfile( shared_by );
+			var name = friend && friend.name;
+			var type = notification.target_type == "user" ? LJ.text('lang_profile') : LJ.text('lang_before');
+
+			options.icon_code   = "forward";
+			options.text        = LJ.text("n_item_shared_text").replace( '%name', name );
+			options.subtext     = LJ.text("n_item_shared_subtext").replace( '%name', name ).replace( '%type', type );
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+			
+		},
+		renderNotification__InscriptionSuccess: function( notification ){
+
+			var options = {};
+			
+			options.icon_code   = "heart";
+			options.text        = LJ.text("n_inscription_success_text");
+			options.subtext     = LJ.text("n_inscription_success_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+
+		},
+		renderNotification__NoFriends: function( notification ){
+
+			var options = {};
+			
+			options.icon_code   = "add-friend";
+			options.text        = LJ.text("n_no_friends_text");
+			options.subtext     = LJ.text("n_no_friends_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+
+		},
+		renderNotification__CheckEmail: function( notification ){
+
+			var options = {};
+			
+			options.icon_code   = "arobat";
+			options.text        = LJ.text("n_check_email_text");
+			options.subtext     = LJ.text("n_check_email_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+
+		},
+		renderNotificationItem: function( options ){
+
+			return LJ.notifications.renderNotificationsElement( 'item', options );
+
+		},
+		renderNotificationsElement: function( element, options ){
+
+			var html = [];
+			var options = options || {};
+
+            if( element == "wrapper" ){
+
+                return LJ.ui.render([
+                    '<div class="notifications-panel">',
+                        '<div class="notification--header">',
+                       		'<div data-lid="n_header_text" class="notification--header__text">Notifications</div>',
+                        '</div>',
+                        '<div class="notifications-panel__wrapper">',
+	                        '<div class="js-notification-appender notification--none"></div>',
+							// There goes the notifications                        
+						'</div>',
+                        '<div class="notification notification--footer">',
+                            '<div data-lid="n_footer_text" class="notification--footer_text">This is the footer</div>',
+                        '</div>',
+                    '</div>'
+                ].join(''));
+
+            }
+
+            if( element == "item" ){
+
+				var type            = options.type;
+				var icon_code       = options.icon_code;
+				var text            = options.text;
+				var subtext         = options.subtext;
+				var happened_at     = options.happened_at;
+				var notification_id = options.notification_id;
+
+				var happened_at_html = happened_at ? '<div class="notification__date">' + happened_at + '</div>' : '';
+
+            	return LJ.ui.render([
+            		'<div class="notification js-notification-item" data-type="'+ type +'" data-notification-id="'+ notification_id +'">',
+                    	'<div class="notification__icon --round-icon"><i class="icon icon-' + icon_code + '"></i></div>',
+                    	'<div class="notification-message">',
+	                    	'<div class="notification-message__text">' + text + '</div>',
+	                    	'<div class="notification-message__subtext">' + subtext + '</div>',
+                    	'</div>',
+                    	happened_at_html,
+                    '</div>',
+            	].join(''));
+            }
+			
+
+		},
+		stringifyDuration: function( happened_at ){
+
+			var m = moment( happened_at );
+
+			var hour = m.hour();
+			var minute = m.minute();
+
+			if( hour == 0 ){
+				hour = "00";
+			}
+
+			if( minute < 10 ){
+				minute = "0" + minute;
+			}
+
+			var now = moment();
+
+			if( (now - m)/1000 < 5 * 60 ){
+				return LJ.text("h_sec_ago");
+			}
+
+			if( (now - m)/1000 < 15 * 60 ){
+				return LJ.text("h_min_ago");
+			}
+
+			if( (now - m)/1000 < 3600 ){
+				return LJ.text("h_hour_ago");
+			}
+
+			if( m.dayOfYear() == now.dayOfYear() ){
+				return LJ.text("h_today").replace('%h', hour ).replace('%m', minute );
+			}
+
+			return LJ.text("h_past").replace('%moment', m.format('DD/MM'))
+															  .replace('%h', hour )
+															  .replace('%m', minute )
+			
+
+		},
+		insertNotification: function( notification ){
+			
+			var html = '';
+			var type = notification.type;
+			var type = notification.type || "default";
+
+			var notificationCallback;
+
+			// Accepted in a meefore
+			if( type === "accepted_in_hosts" ){
+				html = LJ.notifications.renderNotification__RequestAcceptedHosts( notification );
+				notificationCallback = LJ.notifications.notificationCallback__AcceptedInHosts;
+			}
+
+			// Accepted in a meefore
+			if( type === "accepted_in_members" ){
+				html = LJ.notifications.renderNotification__RequestAcceptedMembers( notification );
+				notificationCallback = LJ.notifications.notificationCallback__AcceptedInMembers;
+			}
+
+
+			// Profile isnt 100% complete! Especially photos...
+			if( type === "fill_profile" ){
+				html = LJ.notifications.renderNotification__FillProfile( notification );
+				notificationCallback = LJ.notifications.notificationCallback__FillProfile;
+			}
+
+
+			// A group requested to join in a meefore, host version
+			if( type === "group_request_hosts" ){
+				html = LJ.notifications.renderNotification__GroupRequestHosts( notification );
+				notificationCallback = LJ.notifications.notificationCallback__GroupRequestHosts;
+			}
+
+			// A group requested to join in a meefore, members version
+			if( type === "group_request_members" ){
+				html = LJ.notifications.renderNotification__GroupRequestMembers( notification );
+				notificationCallback = LJ.notifications.notificationCallback__GroupRequestMembers;
+			}
+
+
+			// A friend taggued us as host on one of its meefore
+			if( type === "marked_as_host" ){
+				html = LJ.notifications.renderNotification__MarkedAsHost( notification );
+				notificationCallback = LJ.notifications.notificationCallback__MarkedAsHost;
+			}
+
+
+			// New friends joined meefore
+			if( type === "new_friends" ){
+				html = LJ.notifications.renderNotification__NewFriends( notification );
+				notificationCallback = LJ.notifications.notificationCallback__NewFriends;
+			}
+
+
+			// A before has been canceled 
+			if( type === "before_canceled" ){
+				html = LJ.notifications.renderNotification__BeforeCanceled( notification );
+				notificationCallback = LJ.notifications.notificationCallback__BeforeCanceled;
+			}
+
+			
+			// Someone has shared something
+			if( type === "item_shared" ){
+				html = LJ.notifications.renderNotification__ItemShared( notification );
+				notificationCallback = LJ.notifications.notificationCallback__ItemShared;
+			}
+
+
+			// Welcome in meefore !
+			if( type === "inscription_success" ){
+				html = LJ.notifications.renderNotification__InscriptionSuccess( notification );
+				notificationCallback = LJ.notifications.notificationCallback__InscriptionSuccess;
+			}
+
+
+			// Make sure user knows its important we got its right email
+			if( type === "check_email" ){
+				html = LJ.notifications.renderNotification__CheckEmail( notification );
+				notificationCallback = LJ.notifications.notificationCallback__CheckEmail;
+			}
+
+			var $notif = $( html );
+
+			// Fire callback if registered
+			if( typeof notificationCallback == "function" ){
+				$notif.on('click', function(){
+					try {
+						notificationCallback( notification );
+					} catch( e ){
+						LJ.ui.showToast( LJ.text("n_outdated_notification") );
+					}
+					LJ.notifications.hideNotificationsPanel();
+				});
+			}
+
+			// Append the new notification on top of all
+			$notif.insertAfter( $('.js-notification-appender') );
+				
+		},
+		notificationCallback__InscriptionSuccess: function( n ){
+
+			LJ.log('Welcome onboard !');
+
+		},
+		notificationCallback__NewFriends: function( n ){
+
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("friends");
+
+		},
+		notificationCallback__GroupRequestHosts: function( n ){
+
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("cheers");
+			LJ.cheers.activateCheers("received");
+
+
+		},
+		notificationCallback__GroupRequestMembers: function( n ){
+
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("cheers");
+			LJ.cheers.activateCheers("sent");
+
+		},
+		notificationCallback__AcceptedInMembers: function( n ){
+
+			var before_id  = n.before_id;
+			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
+
+			if( LJ.chat.getChatState() == "hidden" ){
+				LJ.chat.showChatWrap();
+			}
+
+			LJ.chat.showChatInview( chat_id );
+			LJ.chat.activateChat( chat_id );
+			LJ.chat.refreshChatJsp( chat_id );
+			LJ.chat.refreshChatState( chat_id );
+
+		},
+		notificationCallback__AcceptedInHosts: function( n ){
+
+			var before_id  = n.before_id;
+			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
+
+			if( LJ.chat.getChatState() == "hidden" ){
+				LJ.chat.showChatWrap();
+			}
+
+			LJ.chat.showChatInview( chat_id );
+			LJ.chat.activateChat( chat_id );
+			LJ.chat.refreshChatJsp( chat_id );
+			LJ.chat.refreshChatState( chat_id );
+
+		},
+		notificationCallback__MarkedAsHost: function( n ){
+
+			var before_id  = n.before_id;
+			// var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
+
+			// if( LJ.chat.getChatState() == "hidden" ){
+			// 	LJ.chat.showChatWrap();
+			// }
+
+			// LJ.chat.showChatInview( chat_id );
+			// LJ.chat.activateChat( chat_id );
+			// LJ.chat.refreshChatJsp( chat_id );
+			// LJ.chat.refreshChatState( chat_id );
+
+			LJ.before.fetchAndShowBeforeInview( before_id );
+
+		},
+		notificationCallback__FillProfile: function( n ){
+
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("profile");
+
+		},
+		notificationCallback__CheckEmail: function( n ){
+
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("settings");
+			LJ.settings.activateSubmenuSection("account")
+
+		},
+		notificationCallback__BeforeCanceled: function( n ){
+
+			LJ.ui.showToast( LJ.text("n_before_canceled") );
+
+		}
+
+	});
+
+	window.LJ.nav = _.merge( window.LJ.nav || {}, {
+
+		$nav: $('.app-nav'),
+		current_link: null,
+
+		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.nav.handleDomEvents();
+				LJ.nav.navigate('map');
+				resolve();
+
+			});
+		},
+		handleDomEvents: function(){
+
+			LJ.nav.$nav.on('click', 'li[data-link]', LJ.nav.handleNavigate );
+
+		},
+		handleNavigate: function(e){
+
+			e.preventDefault();
+			var $li = $(this);
+			var lk  = $li.attr('data-link');
+			LJ.nav.navigate( lk );
+
+		},
+		getActiveView: function(){
+
+			return $('.app__menu-item.--active').attr('data-link');
+
+		},
+		navigate: function( target_link ){
+
+			var current_link = LJ.nav.current_link;
+
+			var $target_section  = $('.app-section[data-link="' + target_link + '"]');
+			var $current_section = $('.app-section[data-link="' + current_link + '"]') || $target_section; // For the first activation
+
+			var $target_menuitem = $('.app__menu-item[data-link="' + target_link + '"]');
+			var $current_menuitem = $('.app__menu-item[data-link="' + current_link + '"]') || $target_menuitem
+
+			var $target_headertitle  = $('.app-header__title[data-link="' + target_link + '"]');
+			var $current_headertitle = $('.app-header__title[data-link="' + current_link + '"]') || $target_headertitle;
+
+			if( $target_section.length + $target_menuitem.length + $target_headertitle.length != 3 ){
+				return LJ.wlog('Ghost target for link : ' + link );
+			}
+
+			// Set the internal state
+			LJ.nav.current_link = target_link
+
+			// Update the Header ui
+			$current_menuitem.removeClass('--active');
+			$target_menuitem.addClass('--active');
+
+			// Update the header title
+			/*var duration = 220;
+			LJ.ui.shradeOut( $current_headertitle, duration )
+				.then(function(){
+					LJ.ui.shradeIn( $target_headertitle, duration );
+				});
+			*/
+			
+			// Display the view
+			$current_section.hide();
+			$target_section.css({ display: 'flex' });
+
+			if( !$target_menuitem.is( $current_menuitem ) ){
+				LJ.ui.hideSlide();
+				LJ.before.hideCreateBeforeStraight();
+				LJ.before.showBrowser();
+				LJ.map.deactivateMarkers();
+				LJ.map.refreshMarkers();
+			}
+
+			// Specificities
+			var duration = 220;
+			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
+
+			if( target_link == 'search' && hasMeepassRibbon ) {
+				LJ.ui.shradeIn( $('.meepass-ribbon'), duration );
+			} 
+
+			if( target_link != 'search' && hasMeepassRibbon ){
+				LJ.ui.shradeOut( $('.meepass-ribbon'), duration );
+			}
+
+			if( target_link == 'map' ){
+				$('.app').removeClass('padded');
+
+				LJ.unoffsetAll();
+				// Refresh the map dued to a bug when the window is resized and the map not visible
+				// The try catch is to avoid an ugly error in the console during app intitialization
+				try {
+					LJ.map.refreshMap();
+				} catch( e ){
 
 				}
 
 
+			} else {
+				$('.app').addClass('padded');
+			}
+
+			if( target_link != "menu" ){
+				LJ.friends.hideInviteFriendsPopup();
+			}
+
+
 		}
 
 	});
-
 
 
 LJ.text_source = _.merge( LJ.text_source || {}, {
@@ -40731,3564 +44400,6 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 
 
 
-	window.LJ.login = _.merge( window.LJ.login || {}, {
-
-			'$trigger_login': '.js-login',
-			'$trigger_logout': '.js-logout',
-			'$modal_logout'  : '.modal.--logout',
-			'opening_duration': 1000,
-			'prompt_duration': 600,
-			'prompt_buttons_duration': 900,
-			'completed_steps': 0,
-			'break_duration': 400,
-
-			'data': {},
-
-			init: function(){
-
-				return LJ.promise(function( resolve, reject ){
-					LJ.ui.$body.on('click', '.js-login', resolve );
-				});
-
-
-			},
-			showLandingElements: function(){
-
-				var duration = 600;
-
-				$('.landing').find('.landing-logo')
-					.velocity('slideLeftIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-lang')
-					.velocity('slideRightIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-body')
-					.velocity('shradeIn', {
-						duration: duration*2,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-footer')
-					.velocity('slideUpIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-
-			},
-			hideLandingElements: function(){
-
-				$('.landing')
-					.children()
-					.velocity('shradeOut', {
-						duration : 800,
-						display  : 'none'
-					});
-
-			},
-			showLoginProgressBar: function(){
-
-				$('.login__message').velocity('shradeIn', {
-			 		duration: 1600, delay: LJ.login.opening_duration/2
-			 	});
-
-			},
-			addLoginProgression: function(){
-
-				$( LJ.login.renderLoginProgression() ).hide().appendTo( $('.curtain') )
-
-			},
-			showLoginProgression: function(){
-
-				$('.login').velocity('shradeIn', {
-					duration: 1000
-				});
-
-			},
-			showLoginProgressMessage: function(){
-
-				$('.login__message').velocity('shradeIn', {
-					duration: 1000
-				});
-
-			},
-			hideLoginProgressBar: function(){
-
-				$('.login__progress-bar').velocity('shradeIn', {
-			 		duration: 1000
-			 	});
-
-			},
-			enterLoginProcess: function(){
-
-				LJ.login.hideLandingElements();
-				LJ.ui.deactivateHtmlScroll();
-
-				return LJ.delay( 1000 )
-						 .then(function(){
-
-						 	LJ.ui.showCurtain({ duration: 600, theme: "light", sticky: true });
-						 	LJ.login.addLoginProgression();
-						 	LJ.login.showLoginProgression();
-						 	// LJ.login.showLoginProgressMessage();
-						 	// LJ.login.showLoginProgressBar();
-
-						 });
-
-			},
-			hideLoginSteps: function(){
-				return LJ.promise(function( resolve, reject ){
-
-					$('.app').removeClass('nonei');
-					$('.landing').remove();
-
-					$('.login__message, .login__progress-bar, .login__loader').velocity('shradeOut', {
-						duration: 400,
-						complete: resolve
-						
-					});
-
-				});
-			},
-			firstSetup: function(){
-				// the app requires a user's location to boot properly
-				// - to be visible in the search section
-				// - to allow for geo requests to fetch the right befores
-				// - to allow the map to load in the right city
-				var L = LJ.user.location;
-				if( L && L.place_id && L.place_name && L.lat && L.lng ){
-					return;
-				}
-
-				if( LJ.user.access.indexOf('bot') == -1 ){
-					LJ.pictures.uploadFacebookPicture_Intro();
-				}
-				
-	            return LJ.login.break()
-	            		.then(function(){
-	            			return LJ.login.promptUserLocation();
-
-	            		})
-	            		.then(function(){
-	            			return LJ.login.debreak();
-
-	            		});
-
-			},
-			break: function(){
-				return LJ.ui.shradeOut( $('.login'), LJ.login.break_duration );
-
-			},
-			debreak: function(){
-				return LJ.ui.shradeIn( $('.login'), LJ.login.break_duration );
-
-			},
-			stepCompleted: function( fill_ratio ){
-
-				if( typeof fill_ratio != "number" ){
-					fill_ratio = 33.33;
-				}
-
-				LJ.login.completed_steps += 1;
-				LJ.login.fillProgressBar( fill_ratio );
-			},
-			fillProgressBar: function( fill_ratio ){
-
-				var max_width = $('.login__progress-bar').width();
-				var add_width = max_width * fill_ratio/100;
-				var cur_width = (LJ.login.completed_steps) * add_width;
-				var new_width = cur_width + add_width;
-
-				$('.login__progress-bar-bg')
-					.css({ 'width':  new_width });
-
-			},
-			renderLoginProgression: function(){
-
-				return LJ.ui.render([
-
-					'<div class="login">',
-						'<div class="login__loader">',
-							LJ.static.renderStaticImage('slide_loader'),
-						'</div>',
-						'<div class="login__message">',
-							'<h1 data-lid="login_loading_msg"></h1>',
-						'</div>',
-						'<div class="login__progress-bar">',
-							'<div class="login__progress-bar-bg"></div>',
-						'</div>',
-					'</div>'
-
-				].join(''));
-
-			},
-			promptUserLocation: function(){
-				return LJ.promise(function( resolve, reject ){
-
-					LJ.log('Requesting the user to provide a location...');
-
-					$( LJ.login.renderLocationPrompt() )
-						.hide()
-						.appendTo('.curtain')
-						.velocity('shradeIn', {
-							duration: LJ.login.prompt_duration,
-							display: 'flex'
-						});
-
-					LJ.seek.activatePlacesInFirstLogin();
-					LJ.seek.login_places.addListener('place_changed', function(){
-
-						var place = LJ.seek.login_places.getPlace();
-						$('.init-location').attr('data-place-id'   , place.place_id )
-							  			   .attr('data-place-name' , place.formatted_address )
-							  			   .attr('data-place-lat'  , place.geometry.location.lat() )
-							  			   .attr('data-place-lng'  , place.geometry.location.lng() );
-
-						LJ.login.showPlayButton();
-
-					});
-
-					// Resolve the promise when the user picked a location
-					$('.init-location .action__validate').click(function(){
-						var $block = $( this ).closest('.init-location');
-
-						if( $block.hasClass('--validating') ) return
-						$block.addClass('--validating');
-
-						LJ.login.updateProfileFirstLogin()
-							.then(function(){
-
-								$block
-									.removeClass('--validating')
-									.velocity('bounceOut', {
-										duration : LJ.login.prompt_duration,
-										complete : resolve
-									});
-								
-
-							}, function( err ){
-								LJ.wlog('An error occured');
-								LJ.log(err);
-
-							});
-					});
-				});	
-			},
-			updateProfileFirstLogin: function(){
-
-				LJ.log('Updating user location for the first time...');
-
-				var place_id   = $('.init-location').attr('data-place-id');
-				var place_name = $('.init-location').attr('data-place-name');
-				var lat        = $('.init-location').attr('data-place-lat');
-				var lng        = $('.init-location').attr('data-place-lng');
-
-				if( !( place_id && place_name && lat && lng) ){
-					return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
-				}
-
-				var update = {};
-				update.location = {
-					place_name : place_name,
-					place_id   : place_id,
-					lat 	   : lat,
-					lng 	   : lng
-				};
-
-				return LJ.api.updateProfile( update )
-						  .then(function( exposed ){
-							  	LJ.profile.setMyInformations();
-							  	return;
-						});
-
-			},
-			showPlayButton: function(){
-
-				var $elm = $('.init-location').find('.init-location-action');
-
-				if( $elm.css('opacity') != "0" ) return;
-
-				$elm.velocity('bounceInQuick', {
-					duration : LJ.login.prompt_buttons_duration,
-					display  : 'flex',
-					delay    : 500,
-					complete : function(){
-						$( this ).addClass('pound-light');
-					}
-				});
-
-			},
-			// Do a bunch of functions right before the login happens
-			terminateLoginProcess: function(){
-
-				LJ.ui.activateHtmlScroll();
-
-				$('.curtain')
-						.children('.login')
-						.velocity('bounceOut', {
-							duration: LJ.login.prompt_duration
-						});
-
-				$('.curtain')
-					.children('.login__bg')
-					.velocity({ 'opacity': [ 0, 0.09 ]}, {
-						duration: LJ.login.prompt_duration/2,
-						complete: function(){
-							$(this).remove();
-						}
-					});
-
-				return LJ.ui.hideCurtain({
-					delay: LJ.login.prompt_duration * 1.3,
-					duration: 1000
-
-				}).then(function(){
-
-					LJ.before.showBrowser();
-					LJ.before.refreshBrowserDates();
-					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
-					LJ.map.updateMarkers__byDate();
-					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
-					LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
-					
-					return
-				});	
-
-			},
-			renderLocationPrompt: function(){
-
-				return LJ.ui.render([
-
-					'<div class="init-location">',
-						'<div class="init-location__title">',
-							'<h2 data-lid="init_location_title"></h2>',
-						'</div>',
-						'<div class="init-location__subtitle">',
-							'<input id="init-location__input" type="text" data-lid="init_location_subtitle_placeholder">',
-						'</div>',
-						'<div class="init-location__splitter"></div>',
-						'<div class="init-location__explanation">',
-							'<p data-lid="init_location_explanation"></p>',
-						'</div>',
-						'<div class="init-location__geoloc">',
-							'<button data-lid="init_location_geoloc"></button>',
-						'</div>',
-						'<div class="init-location-action">',
-							'<div class="action__validate --round-icon">',
-								'<i class="icon icon-play"></i>',
-							'</div>',
-						'</div>',
-					'</div>'
-
-				].join(''));
-
-			},
-			handleLogout: function(){
-
-				LJ.ui.showModal({
-					"title"	   : LJ.text("logout_title"),
-					"subtitle" : LJ.text("logout_subtitle"),
-					"type"     : "logout",
-					"footer"   : "<button class='--rounded'><i class='icon icon-power'></i></button>"
-				});
-
-			},
-			logUserOut: function(){
-
-				var p1 = LJ.ui.shadeModal();
-				var p2 = LJ.api.updateUser({
-					"app_preferences": {
-						ux: {
-							auto_login: false
-						}
-					}
-				});
-
-				LJ.Promise.all([ p1, p2 ]).then(function(){
-					LJ.store.remove('facebook_access_token');
-					location.reload();
-				});
-
-			}
-
-
-	});
-
-	window.LJ.map = _.merge( window.LJ.map || {}, {		
-
-        markers: [],
-
-       	// Called as soon as the script finished loading everything
-		init: function(){
-
-			LJ.map.setupMap();
-
-			LJ.map.handleDomEvents();
-            LJ.map.handleMapEvents();
-			LJ.map.initPlacesServices();
-
-            LJ.before.displayBeforeMarkers( LJ.before.fetched_befores );
-
-            
-            return LJ.before.refreshBrowserLocation();
-			
-		},
-        initGeocoder: function(){
-            LJ.meegeo = new google.maps.Geocoder();
-            return;
-
-        },
-        initPlacesServices: function(){
-            LJ.meeservices = new google.maps.places.PlacesService( LJ.meemap );
-            return;
-
-        },
-		sayHello: function(){
-			LJ.log('Map has been successfully loaded');
-
-		},
-		handleDomEvents: function(){
-            
-			LJ.ui.$body.on('click', '.map__icon.--geoloc', LJ.map.centerMapAtUserLocation );
-			LJ.ui.$body.on('click', '.map__icon.--change-location', LJ.map.toggleMapBrowser );
-
-		},
-		setupMap: function(){
-
-			LJ.log('Setting up google map...');
-
-            var latlng = {
-                lat: parseFloat( LJ.user.location.lat ),
-                lng: parseFloat( LJ.user.location.lng )
-            };
-
-			var options = {
-				center: latlng,
-	            zoom: 13,
-	            disableDefaultUI: true,
-	            zoomControlOptions: {
-	                style    : google.maps.ZoomControlStyle.SMALL,
-	                position : google.maps.ControlPosition.RIGHT_TOP
-	            },
-	            mapTypeControlOptions: {
-	                mapTypeIds: ['meemap']
-	            }
-			}
-
-			var $wrap = document.getElementsByClassName('js-map-wrap')[0];
-
-			LJ.meemap = new google.maps.Map( $wrap, options );
-			
-            LJ.map.setMapStyle('apple');
-            LJ.map.setMapIcons();
-            LJ.map.setMapOverlay();
-            LJ.map.setMapBrowser();
-            LJ.map.setMapZoom();
-
-            setTimeout(function(){
-                LJ.map.refreshMap();
-            }, 1000 );
-
-			return;
-
-        },
-        setMapStyle: function( map_style ){
-
-        	var custom_style = LJ.map.style[ map_style ];
-        	if( !custom_style ){
-        		return LJ.wlog('Unable to find a custom style for : ' + map_style );
-        	}
-
-        	var styled_map = new google.maps.StyledMapType( custom_style, {
-                name: 'meemap'
-            });
-            // Set map styling 
-            LJ.meemap.mapTypes.set('meemap', styled_map );
-            LJ.meemap.setMapTypeId('meemap');
-
-        },
-        setMapIcons: function(){
-
-        	$('.app-section.--map')
-        		.append( LJ.map.renderChangeLocation() )
-        		.append( LJ.map.renderGeoLocation() )
-                .append( LJ.map.renderCreateBefore() )
-        		.append( LJ.map.renderPinLocation() );
-
-
-        },
-        setMapOverlay: function(){
-
-        	$('.app-section.--map')
-        		.append( LJ.map.renderMapOverlay() );
-
-        },
-        setMapBrowser: function(){
-
-        	$('.app-section.--map')
-        		.append( LJ.map.renderMapBrowser() );
-
-            return LJ.seek.activatePlacesInMap()
-                    .then(function(){
-
-                    	LJ.seek.map_browser_places.addListener('place_changed', function( place ){
-
-                    		var place  = LJ.seek.map_browser_places.getPlace();
-                    		var latlng = place.geometry.location;
-
-                    		LJ.meemap.setCenter( latlng );
-
-                    	});
-                        
-                    });
-
-        },
-        handleMapEvents: function(){
-
-            LJ.meemap.addListener('dragstart', function(){
-                LJ.before.preRefreshBrowserLocation();
-            });
-
-            LJ.meemap.addListener('dragend', function(){
-                LJ.before.refreshBrowserLocation();
-            });
-
-            LJ.meemap.addListener('click', function(e){
-                
-            });
-            
-            LJ.meemap.addListener('center_changed', function(){
-                // LJ.before.refreshNearestBefores();
-            });
-
-            $('body').on('click', '.js-map-zoom-in', LJ.map.zoomIn );
-            $('body').on('click', '.js-map-zoom-out', LJ.map.zoomOut );
-
-
-        },
-        renderMapZoom: function(){
-
-            return LJ.ui.render([
-
-                '<div class="map__icon map-zoom">',
-                    '<div class="map-zoom__in --round-icon js-map-zoom-in">',
-                        '<i class="icon icon-plus"></i>',
-                    '</div>',
-                    '<div class="map-zoom__splitter"></div>',
-                    '<div class="map-zoom__out --round-icon js-map-zoom-out">',
-                        '<i class="icon icon-line"></i>',
-                    '</div>',
-                '</div>'
-
-
-            ].join(''));
-
-        },
-        setMapZoom: function(){
-
-            $('.app-section.--map').append( LJ.map.renderMapZoom() );
-
-        },
-        zoomIn: function(){
-
-            LJ.meemap.setZoom( LJ.meemap.getZoom() + 1 );
-
-        },
-        zoomOut: function(){
-
-            LJ.meemap.setZoom( LJ.meemap.getZoom() - 1 );
-
-        },
-        refreshMap: function(){
-        	return google.maps.event.trigger( LJ.meemap, 'resize' );
-
-        },
-        deactivateDate: function(){
-
-            var $date_activated = $('.be-dates__date.--active');
-
-            if( $date_activated.length == 0 ){
-                return LJ.log('Already deactivated');
-            }
-
-            var m = moment( $date_activated.attr('data-day') , 'DD/MM' );
-            LJ.map.activateDate( m );
-
-        },  
-        activateDate: function( m ){
-
-            var $date_activated   = $('.be-dates__date.--active');
-            var $date_to_activate = $('.be-dates__date[data-day="'+ m.format('DD/MM') +'"]');
-
-             if( $date_to_activate.length != 1 ){
-                return LJ.wlog('Unable to find the date : ' + m.format('DD/MM') );
-            }
-
-            if( $date_activated.is( $date_to_activate ) ){
-
-                 $date_activated
-                    .removeClass('--active')
-                    .find('.be-dates__bar')
-                    .velocity('bounceOut', { duration: 450, display: 'none' });
-
-            } else {
-
-                $date_activated
-                    .removeClass('--active')
-                    .find('.be-dates__bar')
-                    .velocity('bounceOut', { duration: 450, display: 'none' });
-
-                $date_to_activate
-                    .addClass('--active')
-                    .find('.be-dates__bar')
-                    .velocity('bounceInQuick', { duration: 450, display: 'block' });
-
-            }
-
-            LJ.map.updateMarkers__byDate();
-
-        },
-        findLocationWithLatLng: function( latlng ){
-            return LJ.promise(function( resolve, reject ){
-
-                if( !latlng ){
-                    return LJ.wlog('Cant find address without latlng');
-                }
-
-                LJ.meegeo.geocode({ location: latlng }, function( res, status ){
-
-                    if( status === google.maps.GeocoderStatus.OK && res[0] ){
-                        resolve( res[0] );
-                    } else {
-                        reject( status );
-                    }
-                });
-
-            });
-
-
-        },
-        findAddressWithLatLng: function( latlng ){
-            return LJ.map.findLocationWithLatLng( latlng )
-
-                    .then(function( location ){
-                        return location.formatted_address;
-                    });
-
-        },
-        findLatLngWithAddress: function( address ){
-        	return LJ.promise(function( resolve, reject ){
-
-	        	if( !address ){
-	        		return LJ.wlog('Cant find LatLng without adress');
-	        	}
-
-	        	LJ.meegeo.geocode({ address: address }, function( res, status ){
-
-	        		if( status === google.maps.GeocoderStatus.OK && res[0] ){
-	        			resolve( res[0].geometry.location );
-	        		} else {
-	        			reject( status );
-	        		}
-	        	});
-
-        	});
-        	
-        },
-        findLatLngWithPlaceId: function( place_id ){
-        	return LJ.promise(function( resolve, reject ){
-
-	        	if( !place_id ){
-	        		return LJ.wlog('Cant find LatLng without place_id');
-	        	}
-
-	        	LJ.meegeo.geocode({ placeId: place_id }, function( res, status ){
-
-	        		if( status === google.maps.GeocoderStatus.OK && res[0] ){
-	        			resolve( res[0].geometry.location );
-	        		} else {
-	        			reject( status );
-	        		}
-	        	});
-
-        	});
-        	
-        },
-        toggleMapBrowser: function(){
-
-        	var $mb = $('.map-browse');
-
-        	if( $mb.hasClass('--active') ){
-
-        		$mb.removeClass('--active');
-        		$mb.velocity('shradeOut', { duration: 200, display: 'none' });
-
-        	} else {
-
-        		$mb.addClass('--active');
-        		$mb.velocity('shradeIn', { duration: 200, display: 'flex' });
-
-        	}
-        },
-        centerMapAtUserLocation: function( pan ){
-
-        	var place_id = LJ.user.location.place_id;
-        	return LJ.map.findLatLngWithPlaceId( place_id )
-        			.then(function( latlng ){
-        				pan ? LJ.meemap.panTo( latlng ) : LJ.meemap.setCenter( latlng );
-        			});
-
-        },
-        distanceBetweenTwoLatLng: function( latlng1, latlng2 ){
-
-            var a = new google.maps.LatLng( latlng1 );
-            var b = new google.maps.LatLng( latlng2 );
-
-            return google.maps.geometry.spherical.computeDistanceBetween( a, b );
-
-        },
-        shiftLatLng: function( latlng ){
-
-            var a   = new google.maps.LatLng( latlng );
-            var rdm =  google.maps.geometry.spherical.computeOffset( a, LJ.randomInt( 100, 200 ), LJ.randomInt(0, 180) );
-
-            return {
-                lng: rdm.lng(),
-                lat: rdm.lat()
-            };
-
-        },
-        findClosestMarkers: function( latlng, distance ){
-
-            var markers = [];
-            LJ.map.markers.forEach(function( mrk ){
-
-                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < distance ){
-                    markers.push( mrk );
-                }
-
-            });
-
-            return markers; 
-
-        },
-        offsetLatLng: function( latlng ){
-
-            var offsetted = false;
-            LJ.map.markers.forEach(function( mrk ){
-
-                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < 100 && !offsetted){
-
-                    LJ.wlog('Markers are too close, shifting latlng');
-                    offsetted = true;
-                    latlng = LJ.map.shiftLatLng( latlng );
-
-                }
-                
-            });
-
-            return latlng;
-
-        },
-        offsetLatLngRecursive: function( latlng, i ){
-
-            // Display the marker in a more intelligent way, to put it randomy close to where its supposed to be
-            // But also taking into account where other markers are places :) 
-
-        },
-        validateMarkerOptions: function( opts ){
-
-        	var ok = true;
-
-        	if( !opts.url ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without url: %s', opts.url );
-        	}
-        	if( !opts.latlng ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without latlng: %s', opts.latlng );
-        	}
-        	if( !opts.marker_id ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without marke_id: %s', opts.marker_id );
-        	}
-        	if( !opts.type ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without type: %s', opts.tpye );
-        	}
-        	
-        	return ok
-
-        },
-        markerAlreadyExists: function( marker_id ){
-
-            return _.find( LJ.map.markers, function( mrk ){
-                return mrk && ( mrk.marker_id == marker_id );
-            });
-            
-        },
-        makeIcon: function( url ){
-
-            var scaledSize;
-            var base_width  = 34;
-            var base_height = 41;
-            var base_width_active  = 50;
-            var base_height_active = 60;
-
-            if( !/lg/i.test( url ) ){
-                scaledSize = new google.maps.Size( base_width, base_height );
-            } else {
-                scaledSize = new google.maps.Size( base_width_active, base_height_active );
-            }
-
-            return {
-                url        : url,
-                scaledSize : scaledSize
-            };
-
-        },
-        addMarker: function( opts ){
-
-        	if( !LJ.map.validateMarkerOptions( opts ) ) return;
-
-            if( LJ.map.markerAlreadyExists( opts.marker_id ) ){
-                return LJ.wlog('A marker with id : ' + opts.marker_id + ' is already set on the map');
-            }
-
-            var latlng = LJ.map.offsetLatLng( opts.latlng );
-            var icon   = LJ.map.makeIcon( opts.url );
-
-        	var marker = new google.maps.Marker({
-                map        : LJ.meemap,
-                position   : latlng,
-                icon       : icon
-            });
-
-            var data = opts.data || null;
-
-        	// Store the reference for further usage
-        	LJ.map.markers.push({
-        		marker_id : opts.marker_id,
-        		marker 	  : marker,
-        		data      : data,
-                type      : opts.type,
-                latlng    : latlng
-        	});
-
-        	// Attach listenres if there are any
-        	if( Array.isArray( opts.listeners )){
-                opts.listeners.forEach(function( listener ){
-                    marker.addListener( listener.event_type, function(){
-                    	listener.callback( marker, data );
-                    });
-                });
-
-            }
-
-        },
-        getBeforeMarkerUrlByType: function( type, active ){
-
-            var px     = LJ.pictures.getDevicePixelRatio() + 'x';
-            var suffix = active ? '_active' : '';
-
-            if( type == 'drink' ){
-                url = LJ.map.markers_url[ 'drink' + suffix ];
-            }
-
-            if( type == 'drinknew' ){
-               url = LJ.map.markers_url['drinknew'];
-            }
-
-            if( type == 'hosting' ){
-                url = LJ.map.markers_url[ 'star' + suffix ];
-            }
-
-            if( type == 'pending' ){
-                url = LJ.map.markers_url[ 'pending' + suffix ];
-            }
-
-            if( type == 'accepted' ){
-                url = LJ.map.markers_url[ 'chat' + suffix ];
-            }  
-
-            return url[ px ];
-
-
-        },  
-        getBeforeMarkerUrl: function( before, active ){
-
-            var url  = null;
-
-            var my_before = LJ.before.getMyBeforeById( before._id );
-
-            if( !my_before ){
-
-                // Moment.js expresses the difference between 2 dates in ms
-                var diff_in_hour = ( moment() - moment( before.created_at ) )/( 3600 * 1000 );
-
-                if( LJ.map.hasSeenMarker( before._id ) || diff_in_hour > 24 ){
-                    url = LJ.map.getBeforeMarkerUrlByType("drink", active );
-
-                } else {
-                    url = LJ.map.getBeforeMarkerUrlByType("drinknew", active );
-
-                }
-
-            } else {
-                url = LJ.map.getBeforeMarkerUrlByType( my_before.status, active );
-            }
-
-            if( !url ){
-                return LJ.wlog('Cant render marker, unable to find marker type');
-
-            } else {
-                return url;
-            }
-
-        },
-        // Before must be the whole before object and not an itemized version;
-        addBeforeMarker: function( before ){
-
-        	var before_id = before._id;
-
-            var latlng  = {
-                lat: before.address.lat,
-                lng: before.address.lng
-            };
-
-            var url  = LJ.map.getBeforeMarkerUrl( before, false );
-
-            LJ.map.addMarker({
-                marker_id : before_id,
-                latlng    : latlng,
-                url       : url,
-                type      : 'before',
-                data      : before,
-                listeners : [
-                    {
-                        'event_type': 'click',
-                        'callback'  : LJ.map.handleClickOnEventMarker
-                    }]
-
-            });
-
-        },
-        removeBeforeMarker: function( before_id ){
-
-            LJ.map.markers.forEach(function( mrk, i){
-
-                if( mrk.marker_id == before_id ){
-                    mrk.marker.setMap( null );
-                    delete LJ.map.markers[ i ];
-                }
-
-            });
-
-        },
-        deactivateMarkers: function(){
-
-            LJ.map.markers.forEach(function( mrk ){
-
-                mrk.status = "inactive";
-                mrk.marker.setZIndex( 1 );
- 
-            });
-
-        },
-        activateMarker: function( marker_id ){
-
-            LJ.map.markers.forEach(function( mrk ){
-
-                if( mrk.marker_id == marker_id ){
-                    mrk.status = "active";
-                    mrk.marker.setZIndex( 10 );
-
-                } else {
-                    mrk.status = "inactive";
-                    mrk.marker.setZIndex( 1 );
-                }
-
-            });
-
-        },  
-        refreshMarkers: function(){
-
-            LJ.map.markers.forEach(function( mrk ){
-
-                if( mrk.type == "before" ){
-
-                    LJ.before.getBefore( mrk.marker_id )
-                    .then(function( bfr ){
-
-                        var url;
-
-                        if( mrk.status == "active" ){
-                            url = LJ.map.getBeforeMarkerUrl( bfr, true );
-                        } else {
-                            url = LJ.map.getBeforeMarkerUrl( bfr, false );
-                        }
-
-                        var icon = LJ.map.makeIcon( url );     
-                        mrk.marker.setIcon( icon );                   
-                        
-                    });
-
-                }
-
-            });
-
-        },
-        getActiveMarker: function(){
-
-            return _.find( LJ.map.markers, function( mrk ){
-                return mrk.status == "active";
-            });
-
-        },
-        clearSeenMarkers: function(){
-
-            var seen_markers = LJ.store.get('seen_markers') || [];
-
-            seen_markers.forEach(function( mrk_id, i ){
-
-                var target_mrk = _.find( LJ.map.markers, function( m ){
-                    return m.marker_id == mrk_id;
-                });
-
-                // Marker was not found : means it wasnt fetched by the map,
-                // so remove it (obsolete before etc...)
-                if( !target_mrk ){
-                    delete seen_markers[ i ];
-                }
-
-            });
-
-            LJ.store.set('seen_markers', _.uniq( seen_markers.filter( Boolean ) ));
-
-        },
-        seenifyMarker: function( marker_id ){
-
-            var seen_markers = LJ.store.get('seen_markers') || [];
-
-            seen_markers.push( marker_id );
-            LJ.store.set( 'seen_markers', _.uniq( seen_markers ) );
-
-        },
-        hasSeenMarker: function( marker_id ){
-
-            var seen_markers = LJ.store.get('seen_markers') || [];
-
-            return seen_markers.indexOf( marker_id ) != -1;
-            
-
-        },
-        getMarker: function( marker_id ){
-	
-			return _.find( LJ.map.markers, function( mrk ){
-				return mrk && mrk.marker_id == marker_id;
-			});
-        		
-        },
-        handleClickOnEventMarker: function( marker, before ){
-
-            LJ.map.seenifyMarker( before._id );
-            var mrk = LJ.map.getMarker( before._id );
-            
-            if( mrk.marker.getOpacity() != 1 ){
-
-                LJ.map.deactivateDate();
-                LJ.before.handleCloseBeforeInview();
-                LJ.before.hideBeforeInview();
-                return;
-            }
-
-            if( !mrk.status || mrk.status == "inactive" ){
-
-                LJ.before.showBeforeInview( before );
-                LJ.map.activateMarker( before._id );
-
-            } else {
-
-                LJ.before.handleCloseBeforeInview();
-                LJ.before.hideBeforeInview();
-
-            }
-
-            LJ.map.refreshMarkers();
-
-        },
-        renderCreateBefore: function(){
-
-            return LJ.ui.render([
-                '<div class="map__icon --round-icon --create-before js-create-before">',
-                    '<i class="icon icon-plus"></i>',
-                '</div>'
-                ].join(''));
-
-        },
-        renderChangeLocation: function(){
-
-        	return LJ.ui.render([
-        		'<div class="map__icon --round-icon --change-location js-map-change-location">',
-        			'<i class="icon icon-search-zoom"></i>',
-        		'</div>'
-        		].join(''));
-
-        },
-        renderGeoLocation: function(){
-
-        	return LJ.ui.render([
-        		'<div class="map__icon --round-icon --geoloc js-map-geoloc">',
-        			'<i class="icon icon-geoloc"></i>',
-        		'</div>'
-        		].join(''));
-        },
-        renderPinLocation: function(){
-
-        	return LJ.ui.render([
-        		'<div class="map__icon --round-icon --location js-map-location">',
-        			'<i class="icon icon-location"></i>',
-        		'</div>'
-        		].join(''));
-        },
-        renderMapOverlay: function(){
-
-        	return LJ.ui.render([
-        		'<div class="map__overlay"></div>'
-        		].join(''));
-
-        },
-        renderMapBrowser: function(){
-
-        	return LJ.ui.render([
-        		'<div class="map-browse">',
-        			'<input id="map-browser-input"/>',
-        		'</div>'
-        		].join(''));
-
-        },
-        updateMarkers__byDate: function(){
-
-            var active_day;
-            var $active_day = $('.be-dates__date.--active');
-
-            if( $active_day.length == 1 ){
-                active_day = moment( $active_day.attr('data-day'), 'DD/MM' ).dayOfYear();
-                
-            } else {
-                active_day = null;
-            }
-
-
-            LJ.map.markers.forEach(function( mrk ){
-
-                if( mrk.type == "before" && active_day ){
-
-                    if( mrk.data && mrk.data.begins_at && moment( mrk.data.begins_at ).dayOfYear() == active_day ){
-                        mrk.marker.setOpacity( 1 );
-                    } else {
-                        mrk.marker.setOpacity( 0.2 );
-                    }
-
-                } else {
-                    mrk.marker.setOpacity( 1 );
-                }
-
-            });
-        }
-
-
-	});		
-
-	
-	testClearAllMarkers = function(){
-		if( LJ.map.marker_test ){
-
-			LJ.map.marker_test.forEach(function(mrk){
-				mrk.marker.setMap(null);
-			});
-		}			
-	};	
-
-
-
-
-
-
-	window.LJ.map = _.merge( window.LJ.map || {}, {
-
-
-		renderEventMapview_User: function( evt ){
-
-			return LJ.fn.renderEventMapview( evt, {
-				request_html: '<button  data-lid="e_preview_participate" class="theme-btn btn-requestin mapview-action__btn">Participer</div>'
-			});
-
-		},
-		renderEventMapview_MemberPending: function( evt ){
-
-			return LJ.fn.renderEventMapview( evt, {
-				request_html: '<button  data-lid="e_preview_pending" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
-			});
-
-		},
-		renderEventMapview_MemberAccepted: function( evt ){
-
-			return LJ.fn.renderEventMapview( evt, {
-				request_html: '<button  data-lid="e_preview_chat" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
-			});
-
-		},
-		renderEventMapview_Host: function( evt ){
-
-			return LJ.fn.renderEventMapview( evt, {
-				request_html: '<button  data-lid="e_preview_manage" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
-			});
-
-		},
-		renderEventMapview: function( evt, opts ){
-
-			//Hosts pictures 
-			var hosts_pictures_html = '';
-
-			hosts_pictures_html = '<div class="mapview-hosts">';
-			evt.hosts.forEach(function( host ){
-
-			var display_params     = LJ.cloudinary.events.mapview.hosts.params;
-			display_params.version = LJ.fn.findMainImage( host ).img_version;
-
-			var img_tag = $.cloudinary.image( LJ.fn.findMainImage( host ).img_id, display_params ).prop('outerHTML');
-			var country = '<div class="user-flag mapview-host__flag"><span class="flag-icon flag-icon-' + host.country_code + '"></span></div>';
-
-			hosts_pictures_html += '<div class="mapview-host" data-userid="' + host.facebook_id + '">' 
-										+ img_tag + country 
-									+'</div>'
-
-			});
-			hosts_pictures_html += '</div>';
-
-
-			// Context
-			var context_html = '<div class="mapview-context">';
-
-			// Address
-			var address_html = '';
-			address_html += '<div class="mapview-address mapview-context__element">'
-				+ '<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>'
-				+ '<div class="mapview-address__name">'+evt.address.place_name+'</div>'
-			+'</div>';
-
-			// Date
-			var date = moment( evt.begins_at ).format('DD/MM');
-			var hour = moment( evt.begins_at ).format('HH/MM').replace('/', 'H');
-
-			var date_html = ['<div class="mapview-date mapview-context__element">',
-				'<i class="icon icon-calendar mapview-context__icon mapview-date__icon"></i>',
-				'<div class="mapview-date__day">'+ date +'</div>',
-				'<div class="mapview-date__splitter">, </div>',
-				'<div class="mapview-date__hour">'+ hour +'</div>',
-			'</div>'].join('');
-
-
-			// Host names
-			var hosts_names_html = '<div class="mapview-hostnames mapview-context__element">';
-			evt.hosts.forEach(function( host ){ hosts_names_html += '<div class="mapview-hostnames__name">'+ host.name +'</div>'; });
-			hosts_names_html += '</div>';
-
-			context_html += address_html;
-			context_html += date_html;
-			context_html += hosts_names_html;
-
-			context_html += '</div>';
-
-
-			// Action buttons
-			var action_html = ['<div class="mapview-action">',
-			opts.request_html,
-			'</div>'].join('');
-
-			// Main HTML
-			var divider_html = '<div class="mapview__divider--md"></div>';
-			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
-
-			var html = '<div class="mapview mapview--event" data-eventid="'+evt._id+'">'
-							+ close_html
-							+ hosts_pictures_html
-							+ divider_html
-							+ context_html
-							+ divider_html
-							+ action_html
-					  '</div>';
-
-
-			return LJ.fn.translateView( html );
-
-
-		},
-		renderPartyMapview_Event: function( party, opts ){
-
-			// Icon party to ambience everyone
-			var main_icon_html = [
-				'<div class="mapview-main-icon">',
-					'<i class="icon icon-glass mapview-main-icon__icon"></i>',
-				'</div>'
-			].join('');
-
-
-			// Party context & various informations
-			var context_html = '<div class="mapview-context mapview-context--party">';
-
-			// Address
-			var address_html = '';
-			address_html += '<div class="mapview-address mapview-context__element">'
-								+ '<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>'
-								+ '<div class="mapview-address__name">'+ party.address.place_name +'</div>'
-							+'</div>';
-
-
-			// Closing context part
-			context_html += address_html;
-			context_html += '</div>';
-
-			var divider_html = '<div class="mapview__divider--md"></div>';
-			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
-
-			var html = '<div class="mapview mapview--party" data-placeid="'+ party.address.place_id +'">'
-				+ close_html
-				+ context_html
-				+ '</div>'
-
-			return LJ.fn.translateView( html );
-
-
-		},
-		renderPartyMapview_Party: function( party ){
-
-			LJ.fn.renderPartyPreview_Event( party );
-
-		},
-		renderPartyMapview_Empty: function( party ){
-
-			var context_html = [
-				'<div class="mapview-context">',
-					'<div class="mapview-address mapview-context__element">',
-					'<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>',
-					'<div class="mapview-address__name">'+ party.address.place_name +'</div>',
-				'</div>',
-				'<div class="mapview-emptytext mapview-context__element">',
-					'<i class="mapview-emptytext__icon icon icon-star-empty mapview-context__icon"></i>',
-					'<div class="mapview-emptytext__name" data-lid="e_mapview_empty_text">...</div>',
-					'</div>',
-				'</div>'
-			].join('');
-
-			var action_html = [
-				'<div class="mapview-action">',
-					'<div class="theme-btn mapview-action__btn js-create-event" data-lid="e_mapview_first_to_create">...</div>',
-				'</div>'
-			].join('');
-
-			var divider_html = '<div class="mapview__divider--md"></div>';
-			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
-
-			var html = [
-				'<div class="mapview mapview-empty mapview--party">',
-					close_html,
-					context_html,
-					divider_html,
-					action_html,
-				'</div>'
-			].join('');
-
-			return LJ.fn.translateView( html );
-
-		}
-	});
-
-	window.LJ.map = _.merge( window.LJ.map || {}, {
-        
-		markers_url: {
-            
-			drink: { 
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md__2x.png'
-            },
-            drink_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__2x.png'
-            },
-            drinknew: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md_newred__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md_newred__2x.png'
-            },
-            star: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__2x.png'
-            },
-            star_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__2x.png'
-            },
-            pending: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__2x.png'
-            },
-            pending_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__2x.png'
-            },
-            chat: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__2x.png'
-            },
-            chat_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__2x.png'
-            }
-        }
-
-	});
-
-	window.LJ.map = _.merge( window.LJ.map || {}, {
-
-
-	});
-
-window.LJ.map.style = _.merge(window.LJ.map.style || {}, {
-    snow: [{
-        "featureType": "administrative",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "simplified"
-        }, {
-            "hue": "#ff0000"
-        }, {
-            "weight": "0.27"
-        }]
-    }, {
-        "featureType": "administrative",
-        "elementType": "labels.text.fill",
-        "stylers": [{
-            "color": "#444444"
-        }]
-    }, {
-        "featureType": "administrative.country",
-        "elementType": "geometry.fill",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "administrative.locality",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "administrative.neighborhood",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "administrative.land_parcel",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "landscape",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "on"
-        }, {
-            "color": "#fdfdfd"
-        }]
-    }, {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry",
-        "stylers": [{
-            "visibility": "on"
-        }, {
-            "hue": "#ff0000"
-        }]
-    }, {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry.fill",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry.stroke",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "landscape.natural.terrain",
-        "elementType": "geometry.fill",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "landscape.natural.terrain",
-        "elementType": "geometry.stroke",
-        "stylers": [{
-            "hue": "#ff0000"
-        }]
-    }, {
-        "featureType": "poi",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "poi.park",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "simplified"
-        }, {
-            "hue": "#37ff00"
-        }, {
-            "lightness": "70"
-        }]
-    }, {
-        "featureType": "poi.school",
-        "elementType": "geometry",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "poi.school",
-        "elementType": "labels",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "poi.sports_complex",
-        "elementType": "geometry",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "poi.sports_complex",
-        "elementType": "labels.text",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "road",
-        "elementType": "all",
-        "stylers": [{
-            "saturation": -100
-        }, {
-            "lightness": 45
-        }, {
-            "visibility": "simplified"
-        }]
-    }, {
-        "featureType": "road",
-        "elementType": "geometry",
-        "stylers": [{
-            "visibility": "simplified"
-        }]
-    }, {
-        "featureType": "road",
-        "elementType": "labels",
-        "stylers": [{
-            "color": "#a39bb2"
-        }]
-    }, {
-        "featureType": "road",
-        "elementType": "labels.icon",
-        "stylers": [{
-            "visibility": "simplified"
-        }]
-    }, {
-        "featureType": "road.highway",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "simplified"
-        }]
-    }, {
-        "featureType": "road.highway",
-        "elementType": "geometry.fill",
-        "stylers": [{
-            "hue": "#ff0000"
-        }, {
-            "weight": "0.65"
-        }]
-    }, {
-        "featureType": "road.highway",
-        "elementType": "geometry.stroke",
-        "stylers": [{
-            "weight": "0.20"
-        }, {
-            "lightness": "82"
-        }, {
-            "gamma": "1.19"
-        }, {
-            "saturation": "-42"
-        }, {
-            "color": "#d59ca6"
-        }]
-    }, {
-        "featureType": "road.highway",
-        "elementType": "labels",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "labels",
-        "stylers": [{
-            "visibility": "off"
-        }, {
-            "lightness": "16"
-        }]
-    }, {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "labels.icon",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "road.arterial",
-        "elementType": "geometry",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "road.arterial",
-        "elementType": "geometry.stroke",
-        "stylers": [{
-            "visibility": "on"
-        }, {
-            "weight": "0.4"
-        }, {
-            "color": "#dbdbdb"
-        }, {
-            "lightness": "10"
-        }]
-    }, {
-        "featureType": "road.arterial",
-        "elementType": "labels.icon",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "road.local",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "simplified"
-        }]
-    }, {
-        "featureType": "road.local",
-        "elementType": "geometry.fill",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "road.local",
-        "elementType": "geometry.stroke",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "transit",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "transit.line",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "transit.station",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "water",
-        "elementType": "all",
-        "stylers": [{
-            "color": "#dae7f2"
-        }, {
-            "visibility": "on"
-        }]
-    }],
-    creamy: [{
-        "featureType": "landscape",
-        "stylers": [{
-            "hue": "#FFBB00"
-        }, {
-            "saturation": 43.400000000000006
-        }, {
-            "lightness": 37.599999999999994
-        }, {
-            "gamma": 1
-        }]
-    }, {
-        "featureType": "road.highway",
-        "stylers": [{
-            "hue": "#FFC200"
-        }, {
-            "saturation": -61.8
-        }, {
-            "lightness": 45.599999999999994
-        }, {
-            "gamma": 1
-        }]
-    }, {
-        "featureType": "road.arterial",
-        "stylers": [{
-            "hue": "#FF0300"
-        }, {
-            "saturation": -100
-        }, {
-            "lightness": 51.19999999999999
-        }, {
-            "gamma": 1
-        }]
-    }, {
-        "featureType": "road.local",
-        "stylers": [{
-            "hue": "#FF0300"
-        }, {
-            "saturation": -100
-        }, {
-            "lightness": 52
-        }, {
-            "gamma": 1
-        }]
-    }, {
-        "featureType": "water",
-        "stylers": [{
-            "hue": "#0078FF"
-        }, {
-            "saturation": -13.200000000000003
-        }, {
-            "lightness": 2.4000000000000057
-        }, {
-            "gamma": 1
-        }]
-    }, {
-        "featureType": "poi",
-        "stylers": [{
-            "hue": "#00FF6A"
-        }, {
-            "saturation": -1.0989010989011234
-        }, {
-            "lightness": 11.200000000000017
-        }, {
-            "gamma": 1
-        }]
-    }],
-    apple: [
-    {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#f7f1df",
-                // "color": "#faf8f8" // apple map
-                "color": "#faf5ec"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.natural",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#d0e3b4"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.natural.terrain",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.business",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.medical",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.medical",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#fbd3da"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.park",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.park",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#bde6ab"
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#ffeea6"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "color": "#e1c033"
-            },
-            {
-                "saturation": "2"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#ffffff"
-            },
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "labels.icon",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "black"
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "transit.line",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "transit.station",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "transit.station.airport",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#cfb2db"
-            }
-        ]
-    },
-    {
-        "featureType": "transit.station.rail",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#a2daf2"
-            }
-        ]
-    }
-]
-});
-
-window.LJ.map = _.merge( window.LJ.map || {}, {
-
-	test: {
-
-		addOneMarker_Url: function( url ){
-
-			var i = LJ.randomInt( 0, LJ.map.test.places.length -1 );
-			var latlng = LJ.map.test.places[ i ];	
-			
-			LJ.map.addMarker({
-				latlng    : latlng,
-				url       : url,
-				type      : 'test',
-				marker_id : 'test-' + LJ.generateId()
-			})		
-
-		},
-		addOneMarker: function( i ){
-
-			i = i || LJ.randomInt( 0, LJ.map.test.places.length -1 );
-			var latlng = LJ.map.test.places[ i ];
-
-			LJ.map.addBeforeMarker({
-				_id    : i + '--' + LJ.generateId(),
-				address: {
-					place_id : 'lol',
-					'lat'    : latlng.lat,
-					'lng' 	 : latlng.lng
-				},
-				begins_at: _.shuffle(LJ.before.test.iso_dates)[0]
-			});
-
-		},
-		showMarkers: function(){
-			LJ.map.test.places.forEach(function( latlng, i ){
-				LJ.map.test.addOneMarker( i );
-			});
-		},
-		buildPlaces: function(){
-
-			LJ.meemap.addListener('click', function( e ){
-				LJ.map.findLocationWithLatLng( e.latLng )
-					.then(function( location ){
-						LJ.map.test.places.push({
-							place_name: location.formatted_address,
-							place_id  : location.place_id,
-							lat       : e.latLng.lat(),
-							lng 	  : e.latLng.lng()
-						});
-					});
-			});
-
-		},
-		places: [
-			{
-		        "place_name": "50 Boulevard Voltaire, 75011 Paris, France",
-		        "place_id": "ChIJBUAfVPxt5kcRS88-nrqe0Mw",
-		        "lat": 48.8630208493969,
-		        "lng": 2.3704749436319617
-		    },
-		    {
-		        "place_name": "16 Rue Dugommier, 75012 Paris, France",
-		        "place_id": "ChIJ1WUGhWty5kcRY2JuVjGxkOw",
-		        "lat": 48.83975198504333,
-		        "lng": 2.391417631620243
-		    },
-		    {
-		        "place_name": "157 Rue du Château des Rentiers, 75013 Paris, France",
-		        "place_id": "ChIJZRaVxYlx5kcRwiZA6MdV-9g",
-		        "lat": 48.82867853499684,
-		        "lng": 2.3634368271768835
-		    },
-		    {
-		        "place_name": "21 Passage Montbrun, 75014 Paris, France",
-		        "place_id": "EigyMSBQYXNzYWdlIE1vbnRicnVuLCA3NTAxNCBQYXJpcywgRnJhbmNl",
-		        "lat": 48.82822650545324,
-		        "lng": 2.3291045517862585
-		    },
-		    {
-		        "place_name": "92-100 Boulevard du Montparnasse, 75014 Paris, France",
-		        "place_id": "EjU5Mi0xMDAgQm91bGV2YXJkIGR1IE1vbnRwYXJuYXNzZSwgNzUwMTQgUGFyaXMsIEZyYW5jZQ",
-		        "lat": 48.84235050134804,
-		        "lng": 2.328417906278446
-		    },
-		    {
-		        "place_name": "29 Rue Dombasle, 75015 Paris, France",
-		        "place_id": "ChIJn89KGkBw5kcR-gtCxLs84DE",
-		        "lat": 48.83613643374479,
-		        "lng": 2.298377165311649
-		    },
-		    {
-		        "place_name": "121 Rue Saint-Jacques, 75005 Paris, France",
-		        "place_id": "ChIJO537Cudx5kcRHlyK46hFZEQ",
-		        "lat": 48.84867675994344,
-		        "lng": 2.3457557053507117
-		    },
-		    {
-		        "place_name": "132 Boulevard de Charonne, 75020 Paris, France",
-		        "place_id": "ChIJrbkp-olt5kcRZIKCJOkaQ14",
-		        "lat": 48.85545400732256,
-		        "lng": 2.3953658432901648
-		    },
-		    {
-		        "place_name": "1 Cité de l'Ermitage, 75020 Paris, France",
-		        "place_id": "ChIJj9Qqb5Nt5kcRof-N1p88Vw8",
-		        "lat": 48.86957032627758,
-		        "lng": 2.3922759385050085
-		    },
-		    {
-		        "place_name": "40 Quai de Jemmapes, 75010 Paris, France",
-		        "place_id": "ChIJ52rI3Alu5kcRTNSL-ANtmsE",
-		        "lat": 48.86934449651679,
-		        "lng": 2.3672133774698523
-		    },
-		    {
-		        "place_name": "115 Rue Réaumur, 75002 Paris, France",
-		        "place_id": "ChIJS-wuAz1u5kcRIzAAtPyAXgg",
-		        "lat": 48.86821533242417,
-		        "lng": 2.3426658005655554
-		    },
-		    {
-		        "place_name": "115 Rue Saint-Dominique, 75007 Paris, France",
-		        "place_id": "ChIJXYBKLt9v5kcRMPaVcBVFqfs",
-		        "lat": 48.85895522569791,
-		        "lng": 2.304900297635868
-		    },
-		    {
-		        "place_name": "3 Rue de Lourmel, 75015 Paris, France",
-		        "place_id": "ChIJvxSayBtw5kcR9jRaZn6tw0Y",
-		        "lat": 48.850258199721495,
-		        "lng": 2.2923690171182898
-		    },
-		    {
-		        "place_name": "64 Avenue Victor Hugo, 75116 Paris, France",
-		        "place_id": "ChIJV42nCPFv5kcR2zE8Exqq-uw",
-		        "lat": 48.87047363512827,
-		        "lng": 2.2865325303018835
-		    },
-		    {
-		        "place_name": "44 Rue de Rome, 75008 Paris, France",
-		        "place_id": "ChIJQeqxR7Vv5kcRGeKJKSkSCfY",
-		        "lat": 48.87792531090652,
-		        "lng": 2.3236113877237585
-		    },
-		    {
-		        "place_name": "7 Boulevard de Rochechouart, 75009 Paris, France",
-		        "place_id": "ChIJJxdCsGlu5kcRPp5zWKxWq0c",
-		        "lat": 48.8832311306673,
-		        "lng": 2.348845610135868
-		    },
-		    {
-		        "place_name": "155 Rue de Rome, 75017 Paris, France",
-		        "place_id": "ChIJQVlaJLBv5kcRxJknss5CnGw",
-		        "lat": 48.8866175298428,
-		        "lng": 2.3151999802530554
-		    },
-		    {
-		        "place_name": "45 Boulevard de Rochechouart, 75009 Paris, France",
-		        "place_id": "EjE0NSBCb3VsZXZhcmQgZGUgUm9jaGVjaG91YXJ0LCA3NTAwOSBQYXJpcywgRnJhbmNl",
-		        "lat": 48.882328052158506,
-		        "lng": 2.343352446073368
-		    },
-		    {
-		        "place_name": "41 Rue de la Chapelle, 75018 Paris, France",
-		        "place_id": "ChIJWWWH03xu5kcRXwkbrq-Plxo",
-		        "lat": 48.89338964026286,
-		        "lng": 2.358801969999149
-		    },
-		    {
-		        "place_name": "43-45 Rue de l'Evangile, 75018 Paris, France",
-		        "place_id": "Eiw0My00NSBSdWUgZGUgbCdFdmFuZ2lsZSwgNzUwMTggUGFyaXMsIEZyYW5jZQ",
-		        "lat": 48.89395394139533,
-		        "lng": 2.367041716092899
-		    },
-		    {
-		        "place_name": "10 Rue de l'Encheval, 75019 Paris, France",
-		        "place_id": "ChIJ0UA45sBt5kcRH8AEd97H0vc",
-		        "lat": 48.87905425586569,
-		        "lng": 2.3891860337198523
-		    },
-		    {
-		        "place_name": "17 Rue Vitruve, 75020 Paris, France",
-		        "place_id": "ChIJ59Ierodt5kcRLJVhtGyE6Fk",
-		        "lat": 48.85703523304221,
-		        "lng": 2.402747282499149
-		    },
-		    {
-		        "place_name": "9 Rue de la Révolution, 93100 Montreuil, France",
-		        "place_id": "ChIJx0cAjGFt5kcRJdx3tOBZV8U",
-		        "lat": 48.85601873652745,
-		        "lng": 2.4291831345499304
-		    },
-		    {
-		        "place_name": "7 Place de la Republique, 92110 Clichy, France",
-		        "place_id": "ChIJXe6oJA9v5kcR2gOs5pzwe2w",
-		        "lat": 48.90309473234857,
-		        "lng": 2.3124533982218054
-		    },
-		    {
-		        "place_name": "22 Rue Saint-Pierre, 92200 Neuilly-sur-Seine, France",
-		        "place_id": "ChIJ6WfmJmRl5kcRnhsL-FQlZ7U",
-		        "lat": 48.883118246745475,
-		        "lng": 2.2717696518839148
-		    },
-		    {
-		        "place_name": "1 Avenue André Morizet, 92100 Boulogne-Billancourt, France",
-		        "place_id": "ChIJY25Wt-h65kcRaYJKfJ1WavU",
-		        "lat": 48.83365059084553,
-		        "lng": 2.2425872178018835
-		    },
-		    {
-		        "place_name": "87 Rue du Point du Jour, 92100 Boulogne-Billancourt, France",
-		        "place_id": "ChIJU0YgEO165kcRu1yP4bPfHFI",
-		        "lat": 48.829582581850715,
-		        "lng": 2.250311979764774
-		    },
-		    {
-		        "place_name": "31 Avenue Verdier, 92120 Montrouge, France",
-		        "place_id": "ChIJrWyMvf9w5kcRkZ4Wg0nGaJo",
-		        "lat": 48.815228912154815,
-		        "lng": 2.3169165940225867
-		    },
-		    {
-		        "place_name": "68 Avenue Raspail, 94250 Gentilly, France",
-		        "place_id": "ChIJt4bSOnRx5kcRIVVq02VkWAw",
-		        "lat": 48.81251594581754,
-		        "lng": 2.3455840439737585
-		    },
-		    {
-		        "place_name": "22 Quai d'Orléans, 75004 Paris, France",
-		        "place_id": "ChIJ0aztRONx5kcRiYkOqMVLaao",
-		        "lat": 48.851726634791916,
-		        "lng": 2.354338774198368
-		    },
-		    {
-		        "place_name": "7-11 Quai de Conti, 75006 Paris, France",
-		        "place_id": "Eic3LTExIFF1YWkgZGUgQ29udGksIDc1MDA2IFBhcmlzLCBGcmFuY2U",
-		        "lat": 48.8568093467116,
-		        "lng": 2.3402625412882117
-		    },
-		    {
-		        "place_name": "42 Quai des Orfèvres, 75001 Paris, France",
-		        "place_id": "ChIJA6bfiN9x5kcR_FBUHRIFm7M",
-		        "lat": 48.85579284560999,
-		        "lng": 2.342322477811649
-		    },
-		    {
-		        "place_name": "5-7 Rue du Sabot, 75006 Paris, France",
-		        "place_id": "EiU1LTcgUnVlIGR1IFNhYm90LCA3NTAwNiBQYXJpcywgRnJhbmNl",
-		        "lat": 48.85251731276075,
-		        "lng": 2.3316794724405554
-		    },
-		    {
-		        "place_name": "9 Avenue de Lowendal, 75007 Paris, France",
-		        "place_id": "ChIJTZPVeCZw5kcRb-MkJcrj1mw",
-		        "lat": 48.85217845230312,
-		        "lng": 2.3081618637979773
-		    },
-		    {
-		        "place_name": "23 Rue de la Forge Royale, 75011 Paris, France",
-		        "place_id": "ChIJDd0e4ghy5kcRiAMxGj3923o",
-		        "lat": 48.85206549830757,
-		        "lng": 2.380602964872196
-		    }
-		]
-	}
-
-});
-
-
-
-
-	window.LJ.meepass = _.merge( window.LJ.meepass || {}, {
-
-		init: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.meepass.handleDomEvents();
-				resolve();
-			});
-
-
-		},
-		handleDomEvents: function(){
-
-			$('.menu-section.--meepass').on('click', '.segment__part', LJ.meepass.refreshSegmentView );
-			$('.menu-item.--meepass').one('click', LJ.meepass.handleMeepassClicked );
-			LJ.ui.$body.on('click', '.js-send-meepass', LJ.meepass.handleSendMeepass );
-
-		},
-		refreshSegmentView: function(){
-
-			var $seg = $(this);
-			var link = $seg.attr('data-link');
-
-			if( $seg.hasClass('--active') ) return;
-
-			$seg.siblings().removeClass('--active');
-			$seg.addClass('--active');
-
-			$('.meepass').children().css({ display: 'none' });
-			$('.meepass [data-link="' + link + '"]').css({ display: 'flex' });
-
-		},
-		handleSendMeepass: function(){
-
-			// User is hosting more than one event...
-			if( 0 ){
-				LJ.ui.showModal({
-					"title"		: "Félicitations !",
-					"subtitle"	: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
-					"body"  	: LJ.meepass.renderEventsInModal(),
-					"footer"	: "<button class='--rounded'><i class='icon icon-check'></i></button>"
-				});
-
-			} else {
-				
-				var event_id = '';
-			//	LJ.meepass.sendMeepass()
-			//		.then( LJ.meepass.handleSendMeepassSuccess )
-			//		.catch( LJ.meepass.handleApiError );
-
-			}
-
-		},
-		renderMeepassRibbon: function(){
-
-			var n_meepass = LJ.user.meepass.length;
-
-			return LJ.ui.render([
-
-				'<div class="meepass-ribbon">',
-					'<h2 data-lid="meepass_ribbon"></h2>',
-				'</div>'
-
-				].join('')).replace('%n', n_meepass );
-
-		},
-		sendMeepass: function(){
-			
-		},
-		handleSendMeepassSuccess: function(){
-
-		},
-		handleApiError: function(){
-
-		},
-		renderEventsInModal: function(){
-
-		},
-		handleMeepassClicked: function(){
-
-			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
-
-			$('.meepass').html('');
-
-			$loader.addClass('none')
-				   .appendTo('.meepass')
-				   .velocity('bounceInQuick', {
-				   	delay: 125,
-				   	duration: 500,
-				   	display: 'block'
-				   });
-
-			LJ.meepass.fetchMeepassItems();
-
-		},	
-		fetchMeepassItems: function(){
-
-			LJ.api.fetchMeMeepass()
-				  .then( LJ.meepass.handleFetchMeMeepassSuccess, LJ.meepass.handleFetchMeMeepassError );
-
-
-		},
-		handleFetchMeMeepassSuccess: function( expose ){
-
-			var meepass = expose.meepass;
-
-			LJ.meepass.setMeepassItems( meepass );
-
-		},
-		setMeepassItems: function( meepass ){
-
-			var html = [];
-			meepass.sort();
-
-			var facebook_ids = _.pluck( meepass, 'sent_by' ).concat( _.pluck( meepass, 'sent_to' ) ).filter( Boolean );
-
-			LJ.api.fetchUsers( facebook_ids )
-				.then(function( res ){
-
-					var no_meepass_received = true;
-					var no_meepass_sent     = true;
-					meepass.forEach(function( mp ){
-
-						for( var i=0; i<res.length; i++ ){
-
-							var user = res[ i ].user;
-
-							if( mp.sent_by == user.facebook_id ){
-								no_meepass_received = false;
-								return html.push( LJ.meepass.renderMeepassItem__Received( mp, user ) );
-							}
-
-							if( mp.sent_to == user.facebook_id ){
-								no_meepass_sent = false;
-								return html.push( LJ.meepass.renderMeepassItem__Sent( mp, user ) );
-							}
-						}
-					});
-
-					if( no_meepass_sent ){
-						html.push( LJ.meepass.renderMeepassItem__SentEmpty() );
-					}
-
-					if( no_meepass_received ){
-						html.push( LJ.meepass.renderMeepassItem__ReceivedEmpty() );
-					}
-
-					$('.meepass').html( html.join('') )
-								 .find('[data-link="received"]')
-								 .velocity('fadeIn', {
-									duration: 250,
-									display: 'flex'
-								});
-
-					$('.menu-section.--meepass')
-								.find('.segment__part')
-								.removeClass('--active')
-								.first()
-								.addClass('--active');
-
-				});
-
-		},		
-		handleFetchMeMeepassError: function(){
-
-			LJ.elog('Error fetching meepass :/');
-
-		},
-		renderMeepassItem__ReceivedEmpty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty" data-link="received">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-meepass"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_meepass_received_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_meepass_received_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__SentEmpty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty" data-link="sent">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-meepass"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_meepass_sent_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_meepass_sent_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__Received: function( meepass_object, target ){
-
-			var mp 	   = meepass_object;
-			var target = target;
-
-			var formatted_date = LJ.renderDate( mp.sent_at );
-			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
-
-			return LJ.ui.render([
-
-				'<div class="meepass__item" data-link="received" data-event-id="' + mp.target_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + LJ.text('meepass_item_title_received').replace('%name', target.name) +'</h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__Sent: function( meepass_object, target, meepass_by ){
-
-			var mp 	   = meepass_object;
-			var target = target;
-
-			var formatted_date = LJ.renderDate( mp.sent_at );
-			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
-
-			return LJ.ui.render([
-
-				'<div class="meepass__item" data-link="sent" data-event-id="' + mp.target_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + LJ.text('meepass_item_title_sent').replace('%name', target.name) +'</h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		}
-
-	});
-		
-
-	window.LJ.menu = _.merge( window.LJ.menu || {}, {
-
-		$menu: $('.menu'),
-		shrink_menu_height_limit: 0,
-		menu_slide_duration: 240,
-
-		init: function(){
-
-			LJ.menu.handleDomEvents();
-			LJ.menu.activateMenuSection('profile');
-			LJ.menu.shrinkMenu();
-
-			return;
-
-		},
-		handleDomEvents: function(){
-
-			LJ.ui.$body.on('click', '.menu-item', LJ.menu.showMenuItem );
-			LJ.ui.$window.on('scroll', _.debounce( LJ.menu.handleMenuApparition, 100 ) );
-
-		},
-		showMenuItem: function(){
-
-			var $self = $(this);
-
-			var section_id = $self.attr('data-link');
-			LJ.menu.activateMenuSection( section_id );
-
-		},
-		activateMenuSection: function( section_id ){	
-
-			var current_section_id = $('.menu-item.--active').attr('data-link');
-
-			var $menu_item_activated    = $('.menu-item[data-link="' + current_section_id + '"]');
-			var $menu_item_to_activate  = $('.menu-item[data-link="' + section_id + '"]');
-
-			var $menu_block_activated   = $('.menu-section[data-link="' + current_section_id + '"]');
-			var $menu_block_to_activate = $('.menu-section[data-link="' + section_id + '"]');
-
-
-			if( !current_section_id ){
-				$menu_item_to_activate.addClass('--active');
-				return $('.app-section.--menu').find('[data-link="' + section_id + '"]').css({ 'display': 'flex' });
-			}
-
-			if( section_id == current_section_id ){
-				
-				if( current_section_id == "shared" ){
-					return LJ.shared.handleShareClicked();
-				}
-				if( current_section_id == "cheers" ){
-					return LJ.cheers.handleCheersClicked();
-				}
-				if( current_section_id == "friends" ){
-					return LJ.friends.handleFriendsClicked();
-				}
-
-				return LJ.log('Section is already activated');
-			}
-
-			$menu_item_activated
-				.removeClass('--active')
-				.find('.menu-item__bar')
-				.velocity('bounceOut', { duration: 450, display: 'none' });
-
-			$menu_item_to_activate
-				.addClass('--active')
-				.find('.menu-item__bar')
-				.velocity('bounceInQuick', { duration: 450, display: 'block' });
-
-			$menu_block_activated.hide();
-			$menu_block_to_activate.css({ display: 'flex' });
-
-			// Specifics
-			section_id == "friends" ?
-				LJ.friends.displayInviteFriendsPopup():
-				LJ.friends.hideInviteFriendsPopup();
-
-
-		},
-		handleMenuApparition: function( e ){
-			
-			return;
-
-			var current_scrolltop = LJ.ui.$window.scrollTop();
-
-			if( LJ.ui.getScrollDirection() == "down" && LJ.ui.scrolltop > LJ.menu.shrink_menu_height_limit && $('--resizing').length == 0 ){
-				LJ.menu.shrinkMenu();
-			}
-
-			if( LJ.ui.getScrollDirection() == "up" && LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit  && $('--resizing').length == 0 ){
-				LJ.menu.expandMenu();
-			}
-
-				
-		},
-		toggleMenuState: function(){
-
-			var $m = LJ.menu.$menu;
-
-			if( $m.hasClass('--downsized') ){
-				LJ.menu.expandMenu();
-			} else {
-				LJ.menu.shrinkMenu();
-			}
-
-		},
-		shrinkMenu: function(){
-
-			var $m = LJ.menu.$menu;
-
-			if( $m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
-
-			$m.addClass('--resizing');
-			$m.velocity('slideUpOut', {
-				duration: LJ.menu.menu_slide_duration,
-				complete: function(){
-
-					if( LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit ){
-						return $m.velocity('slideDownIn', {
-							duration: LJ.menu.menu_slide_duration,
-							display: 'flex',
-							complete: function(){
-								$m.removeClass('--resizing');
-							}
-						})
-					}
-
-					$m.addClass('--downsized');
-					$m.closest('.app-section').addClass('--downsized');
-					$m.removeClass('--resizing');
-					$m.velocity('slideDownIn', {
-						duration: LJ.menu.menu_slide_duration,
-						display: 'flex'
-					});
-
-				}
-			});
-
-		},
-		expandMenu: function(){
-
-			var $m = LJ.menu.$menu;
-
-			if( !$m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
-
-			$m.addClass('--resizing');
-			$m.velocity('slideUpOut', {
-				duration: LJ.menu.menu_slide_duration,
-				complete: function(){
-
-					$m.removeClass('--resizing');
-					$m.removeClass('--downsized')
-					$m.closest('.app-section').removeClass('--downsized');
-					$m.velocity('slideDownIn', {
-						duration: LJ.menu.menu_slide_duration,
-						display: 'flex'
-					});
-
-				}
-			});
-
-		}
-
-	});
-
-	window.LJ.nav = _.merge( window.LJ.nav || {}, {
-
-		$nav: $('.app-nav'),
-		current_link: null,
-
-		init: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.nav.handleDomEvents();
-				LJ.nav.navigate('map');
-				resolve();
-
-			});
-		},
-		handleDomEvents: function(){
-
-			LJ.nav.$nav.on('click', 'li[data-link]', LJ.nav.handleNavigate );
-
-		},
-		handleNavigate: function(e){
-
-			e.preventDefault();
-			var $li = $(this);
-			var lk  = $li.attr('data-link');
-			LJ.nav.navigate( lk );
-
-		},
-		getActiveView: function(){
-
-			return $('.app__menu-item.--active').attr('data-link');
-
-		},
-		navigate: function( target_link ){
-
-			var current_link = LJ.nav.current_link;
-
-			var $target_section  = $('.app-section[data-link="' + target_link + '"]');
-			var $current_section = $('.app-section[data-link="' + current_link + '"]') || $target_section; // For the first activation
-
-			var $target_menuitem = $('.app__menu-item[data-link="' + target_link + '"]');
-			var $current_menuitem = $('.app__menu-item[data-link="' + current_link + '"]') || $target_menuitem
-
-			var $target_headertitle  = $('.app-header__title[data-link="' + target_link + '"]');
-			var $current_headertitle = $('.app-header__title[data-link="' + current_link + '"]') || $target_headertitle;
-
-			if( $target_section.length + $target_menuitem.length + $target_headertitle.length != 3 ){
-				return LJ.wlog('Ghost target for link : ' + link );
-			}
-
-			// Set the internal state
-			LJ.nav.current_link = target_link
-
-			// Update the Header ui
-			$current_menuitem.removeClass('--active');
-			$target_menuitem.addClass('--active');
-
-			// Update the header title
-			/*var duration = 220;
-			LJ.ui.shradeOut( $current_headertitle, duration )
-				.then(function(){
-					LJ.ui.shradeIn( $target_headertitle, duration );
-				});
-			*/
-			
-			// Display the view
-			$current_section.hide();
-			$target_section.css({ display: 'flex' });
-
-			if( !$target_menuitem.is( $current_menuitem ) ){
-				LJ.ui.hideSlide();
-				LJ.before.hideCreateBeforeStraight();
-				LJ.before.showBrowser();
-				LJ.map.deactivateMarkers();
-				LJ.map.refreshMarkers();
-			}
-
-			// Specificities
-			var duration = 220;
-			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
-
-			if( target_link == 'search' && hasMeepassRibbon ) {
-				LJ.ui.shradeIn( $('.meepass-ribbon'), duration );
-			} 
-
-			if( target_link != 'search' && hasMeepassRibbon ){
-				LJ.ui.shradeOut( $('.meepass-ribbon'), duration );
-			}
-
-			if( target_link == 'map' ){
-				$('.app').removeClass('padded');
-
-				LJ.unoffsetAll();
-				// Refresh the map dued to a bug when the window is resized and the map not visible
-				// The try catch is to avoid an ugly error in the console during app intitialization
-				try {
-					LJ.map.refreshMap();
-				} catch( e ){
-
-				}
-
-
-			} else {
-				$('.app').addClass('padded');
-			}
-
-			if( target_link != "menu" ){
-				LJ.friends.hideInviteFriendsPopup();
-			}
-
-
-		}
-
-	});
-
-
-
-	
-	window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
-
-		state : 'hidden',
-		jsp_id: 'notifications',
-
-		init: function(){
-
-			return LJ.notifications.addNotificationsPanel()
-					.then(function(){
-						LJ.notifications.refreshNotifications();
-						LJ.notifications.handleDomEvents();
-					});
-
-		},
-		handleDomEvents: function(){
-
-			$('.app__menu-item.--notifications').click( LJ.notifications.handleToggleNotifications );
-			$('.app__menu-item.--notifications').click( LJ.notifications.updateNotificationsSeenAt );
-			$('.notifications-panel').on('click', '.notification', LJ.notifications.updateNotificationClickedAt );
-
-			LJ.ui.$body.on('click', LJ.notifications.handleHideNotifications );
-
-		},
-		getNotification: function( n_id ){
-
-			return _.find( LJ.user.notifications, function( n ){
-				return n.notification_id == n_id;
-			});
-
-		},
-		cacheNotification: function( notification ){
-
-			LJ.user.notifications.push( notification );
-
-		},
-		refreshNotifications: function(){
-
-			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
-			LJ.notifications.addAndShowNotifications();
-			LJ.notifications.refreshNotificationsOrder();
-			LJ.notifications.refreshNotificationsJsp();
-			LJ.notifications.classifyNotifications();  
-			LJ.notifications.refreshNotificationsBubble();   
-
-		},
-		resetBubbleToNotificationsIcon: function(){
-
-			var $i = $('.app__menu-item.--notifications');
-			LJ.ui.setBubble( $i, 0 );
-
-		},
-		addBubbleToNotificationsIcon: function(){
-
-			var $i = $('.app__menu-item.--notifications');
-			LJ.ui.bubbleUp( $i );
-
-		},
-		refreshNotificationsBubble: function(){
-
-			var $w = $('.notifications-panel');
-
-			LJ.notifications.resetBubbleToNotificationsIcon();
-
-			LJ.user.notifications.forEach(function( n ){
-
-				if( !n.seen_at ){
-					return LJ.notifications.addBubbleToNotificationsIcon();
-				}
-
-			});
-
-		},
-		classifyNotifications: function(){
-
-			var $w = $('.notifications-panel');
-
-			$w.find('.notification').removeClass('--seen').removeClass('--clicked');
-
-			LJ.user.notifications.forEach(function( n ){
-
-				var $n = $w.find('.notification[data-notification-id="'+ n.notification_id +'"]');
-
-				// if( n.seen_at ){
-				// 	$n.addClass('--seen');
-				// }
-
-				if( n.clicked_at ){
-					$n.addClass('--clicked');
-				}
-
-			});
-
-		},
-		reorderNotifications: function( i ){
-
-			i = i || 1;
-
-			var notifs = LJ.user.notifications;	
-
-			notifs.sort(function( n1, n2 ){
-				return ( moment( n2.happened_at ) - moment( n1.happened_at ) ) * i;
-			});
-
-		},
-		refreshNotificationsOrder: function(){
-			
-			var notifs = LJ.user.notifications;			
-
-			LJ.notifications.reorderNotifications();
-
-			notifs.forEach(function( n, i ){
-				$('.notification[data-notification-id="'+ n.notification_id +'"]').css({ 'order': i });
-			});
-
-		},
-		refreshNotificationsJsp: function(){
-
-			LJ.ui.jsp[ LJ.notifications.jsp_id ].reinitialise();
-
-		},
-		addAndShowNotifications: function(){
-
-			$('.notifications-panel').find('.js-notification-item').remove();
-
-			LJ.user.notifications.forEach(function( notification ){
-            	LJ.notifications.insertNotification( notification );
-            });
-
-		},
-		findById: function( n_id ){
-
-			return _.find( LJ.user.notifications, function( n ){
-				return n.notification_id == n_id;
-			});
-
-		},
-		updateNotificationsSeenAt: function(){
-
-			var unseen_notifications = _.filter( LJ.user.notifications, function( n ){
-				return !n.seen_at;
-			});
-
-			// Only call the api if there is something to call
-			if( unseen_notifications.length != 0 ){
-				LJ.api.updateNotificationsSeenAt();
-			}
-
-		},
-		updateNotificationClickedAt: function(){
-
-			var $n              = $( this );
-			var notification_id = $n.attr('data-notification-id');
-			var n               = LJ.notifications.findById( notification_id );
-
-			if( !n.clicked_at ){
-
-				LJ.api.updateNotificationClickedAt( notification_id );
-				n.clicked_at = new Date();
-				LJ.notifications.refreshNotifications();
-			
-			}
-
-		},
-		handleToggleNotifications: function(e){
-
-			e.preventDefault();
-				
-			var $self = $( this );
-			// Toggle notifications pannel
-			LJ.notifications.toggleNotificationsPanel();
-
-			// Kill bubbls
-			LJ.notifications.resetBubbleToNotificationsIcon();
-
-		},
-		handleHideNotifications: function(e){
-
-			var $t = $( e.target );
-
-			var is_not_nav_item    = !$t.closest('.app__menu-item.--notifications').length;
-			var panel_visible      = $('.notifications-panel.--active').length;
-			var is_not_panel_child = !$t.closest('.notifications-panel').length;
-			
-			if( is_not_nav_item && is_not_panel_child && panel_visible ){
-				LJ.notifications.hideNotificationsPanel();
-			}
-
-		},
-		addNotificationsPanel: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.ui.$body.append( LJ.notifications.renderNotificationsPanel() );
-				LJ.notifications.turnToJspNotificationsPanel()
-					.then( resolve, reject );
-
-			});
-		},
-		turnToJspNotificationsPanel: function(){
-
-			return LJ.ui.turnToJsp('.notifications-panel__wrapper', {
-					jsp_id: LJ.notifications.jsp_id
-				})
-
-		},
-		toggleNotificationsPanel: function(){
-
-			if( LJ.notifications.state == "visible" ){
-				LJ.notifications.hideNotificationsPanel();
-
-			} else {
-				LJ.notifications.showNotificationsPanel();
-			}
-
-		},
-		showNotificationsPanel: function(){
-
-			var $notif = $('.notifications-panel');
-			var $icon  = $('.app__menu-item.--notifications');
-
-			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
-
-			if( LJ.notifications.state == "visible" ){
-
-				LJ.log('Notification panel already there');
-
-			} else {
-
-				LJ.notifications.state = "visible";
-				$icon.addClass('--active');
-				$notif.addClass('--active').show();
-
-			}
-
-			LJ.notifications.refreshNotificationsJsp();
-
-		},
-		hideNotificationsPanel: function(){
-
-			LJ.ui.activateHtmlScroll();
-			
-			var $notif = $('.notifications-panel');
-			var $icon  = $('.app__menu-item.--notifications');
-
-			if( LJ.notifications.state == "visible" ){
-
-				LJ.notifications.state = "hidden";
-				$icon.removeClass('--active');
-				$notif.removeClass('--active').hide();
-
-			} else {
-				LJ.log('Notification panel already hidden');
-
-			}
-
-		},
-		renderNotificationsPanel: function(){
-
-			return LJ.notifications.renderNotificationsElement('wrapper');
-
-		},
-		renderNotification__RequestAcceptedHosts: function( notification ){
-
-			var options    = {};
-			var group_html = LJ.notifications.renderNotificationsElement('group_name');
-			
-			options.icon_code   = "chat-bubble-duo";
-			options.text        = LJ.text("n_accepted_in_text");
-			options.subtext     = LJ.text("n_accepted_in_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		// Identical to the one just above, for now at least 
-		renderNotification__RequestAcceptedMembers: function( notification ){
-
-			var options    = {};
-			var group_html = LJ.notifications.renderNotificationsElement('group_name');
-			
-			options.icon_code   = "chat-bubble-duo";
-			options.text        = LJ.text("n_accepted_in_text");
-			options.subtext     = LJ.text("n_accepted_in_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		renderNotification__FillProfile: function( notification ){
-
-			var options = {};
-			
-			options.icon_code   = "question-mark";
-			options.text        = LJ.text("n_fill_profile_text");
-			options.subtext     = LJ.text("n_fill_profile_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-
-		},
-		renderNotification__GroupRequestHosts: function( notification ){
-
-			var options = {};
-
-			options.icon_code   = "meedrink";
-			options.text        = LJ.text("n_group_request_hosts_text");
-			options.subtext     = LJ.text("n_group_request_hosts_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		renderNotification__GroupRequestMembers: function( notification ){
-
-			var options = {};
-
-			var friend = LJ.friends.getFriendProfile( notification.main_member );
-
-			var name = friend && friend.name;
-
-			options.icon_code   = "meedrink";
-			options.text        = LJ.text("n_group_request_members_text");
-			options.subtext     = LJ.text("n_group_request_members_subtext").replace( '%name', name );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		renderNotification__MarkedAsHost: function( notification ){
-
-			var options = {};
-			var main_host = notification.main_host;
-			var address   = notification.address;
-			var date 	  = moment( notification.begins_at ).format('DD/MM');
-
-			var friend = LJ.friends.getFriendProfile( main_host );
-
-			if( !friend ) return LJ.wlog('Cannot render marked as host, couldnt find friend: ' + friend );
-
-			var friend_name = friend.name;
-			
-			options.icon_code   = "star";
-			options.text        = LJ.text("n_marked_as_host_text").replace('%name', friend_name );
-			options.subtext     = LJ.text("n_marked_as_host_subtext").replace('%date', date ).replace('%address', address );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		renderNotification__NewFriends: function( notification ){
-
-			var options = {};
-
-			var new_friends = _.map( notification.new_friends, 'facebook_name' );
-			
-			options.icon_code   = "users";
-			options.text 		= LJ.text("n_new_friends_text", new_friends );
-			options.subtext     = LJ.text("n_new_friends_subtext", new_friends );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		renderNotification__BeforeCanceled: function( notification ){
-
-			var options = {};
-			var address = notification.address;
-			
-			options.icon_code   = "line";
-			options.text        = LJ.text("n_before_canceled_text");
-			options.subtext     = LJ.text("n_before_canceled_subtext").replace('%address', address);
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-			
-		},
-		renderNotification__ItemShared: function( notification ){
-
-			var options   = {};
-			var shared_by = notification.shared_by;
-
-			var friend = LJ.friends.getFriendProfile( shared_by );
-			var name = friend && friend.name;
-			var type = notification.target_type == "user" ? LJ.text('lang_profile') : LJ.text('lang_before');
-
-			options.icon_code   = "forward";
-			options.text        = LJ.text("n_item_shared_text").replace( '%name', name );
-			options.subtext     = LJ.text("n_item_shared_subtext").replace( '%name', name ).replace( '%type', type );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-			
-		},
-		renderNotification__InscriptionSuccess: function( notification ){
-
-			var options = {};
-			
-			options.icon_code   = "heart";
-			options.text        = LJ.text("n_inscription_success_text");
-			options.subtext     = LJ.text("n_inscription_success_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-
-		},
-		renderNotification__NoFriends: function( notification ){
-
-			var options = {};
-			
-			options.icon_code   = "add-friend";
-			options.text        = LJ.text("n_no_friends_text");
-			options.subtext     = LJ.text("n_no_friends_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-
-		},
-		renderNotification__CheckEmail: function( notification ){
-
-			var options = {};
-			
-			options.icon_code   = "arobat";
-			options.text        = LJ.text("n_check_email_text");
-			options.subtext     = LJ.text("n_check_email_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-
-		},
-		renderNotificationItem: function( options ){
-
-			return LJ.notifications.renderNotificationsElement( 'item', options );
-
-		},
-		renderNotificationsElement: function( element, options ){
-
-			var html = [];
-			var options = options || {};
-
-            if( element == "wrapper" ){
-
-                return LJ.ui.render([
-                    '<div class="notifications-panel">',
-                        '<div class="notification--header">',
-                       		'<div data-lid="n_header_text" class="notification--header__text">Notifications</div>',
-                        '</div>',
-                        '<div class="notifications-panel__wrapper">',
-	                        '<div class="js-notification-appender notification--none"></div>',
-							// There goes the notifications                        
-						'</div>',
-                        '<div class="notification notification--footer">',
-                            '<div data-lid="n_footer_text" class="notification--footer_text">This is the footer</div>',
-                        '</div>',
-                    '</div>'
-                ].join(''));
-
-            }
-
-            if( element == "item" ){
-
-				var type            = options.type;
-				var icon_code       = options.icon_code;
-				var text            = options.text;
-				var subtext         = options.subtext;
-				var happened_at     = options.happened_at;
-				var notification_id = options.notification_id;
-
-				var happened_at_html = happened_at ? '<div class="notification__date">' + happened_at + '</div>' : '';
-
-            	return LJ.ui.render([
-            		'<div class="notification js-notification-item" data-type="'+ type +'" data-notification-id="'+ notification_id +'">',
-                    	'<div class="notification__icon --round-icon"><i class="icon icon-' + icon_code + '"></i></div>',
-                    	'<div class="notification-message">',
-	                    	'<div class="notification-message__text">' + text + '</div>',
-	                    	'<div class="notification-message__subtext">' + subtext + '</div>',
-                    	'</div>',
-                    	happened_at_html,
-                    '</div>',
-            	].join(''));
-            }
-			
-
-		},
-		stringifyDuration: function( happened_at ){
-
-			var m = moment( happened_at );
-
-			var hour = m.hour();
-			var minute = m.minute();
-
-			if( hour == 0 ){
-				hour = "00";
-			}
-
-			if( minute < 10 ){
-				minute = "0" + minute;
-			}
-
-			var now = moment();
-
-			if( (now - m)/1000 < 5 * 60 ){
-				return LJ.text("h_sec_ago");
-			}
-
-			if( (now - m)/1000 < 15 * 60 ){
-				return LJ.text("h_min_ago");
-			}
-
-			if( (now - m)/1000 < 3600 ){
-				return LJ.text("h_hour_ago");
-			}
-
-			if( m.dayOfYear() == now.dayOfYear() ){
-				return LJ.text("h_today").replace('%h', hour ).replace('%m', minute );
-			}
-
-			return LJ.text("h_past").replace('%moment', m.format('DD/MM'))
-															  .replace('%h', hour )
-															  .replace('%m', minute )
-			
-
-		},
-		insertNotification: function( notification ){
-			
-			var html = '';
-			var type = notification.type;
-			var type = notification.type || "default";
-
-			var notificationCallback;
-
-			// Accepted in a meefore
-			if( type === "accepted_in_hosts" ){
-				html = LJ.notifications.renderNotification__RequestAcceptedHosts( notification );
-				notificationCallback = LJ.notifications.notificationCallback__AcceptedInHosts;
-			}
-
-			// Accepted in a meefore
-			if( type === "accepted_in_members" ){
-				html = LJ.notifications.renderNotification__RequestAcceptedMembers( notification );
-				notificationCallback = LJ.notifications.notificationCallback__AcceptedInMembers;
-			}
-
-
-			// Profile isnt 100% complete! Especially photos...
-			if( type === "fill_profile" ){
-				html = LJ.notifications.renderNotification__FillProfile( notification );
-				notificationCallback = LJ.notifications.notificationCallback__FillProfile;
-			}
-
-
-			// A group requested to join in a meefore, host version
-			if( type === "group_request_hosts" ){
-				html = LJ.notifications.renderNotification__GroupRequestHosts( notification );
-				notificationCallback = LJ.notifications.notificationCallback__GroupRequestHosts;
-			}
-
-			// A group requested to join in a meefore, members version
-			if( type === "group_request_members" ){
-				html = LJ.notifications.renderNotification__GroupRequestMembers( notification );
-				notificationCallback = LJ.notifications.notificationCallback__GroupRequestMembers;
-			}
-
-
-			// A friend taggued us as host on one of its meefore
-			if( type === "marked_as_host" ){
-				html = LJ.notifications.renderNotification__MarkedAsHost( notification );
-				notificationCallback = LJ.notifications.notificationCallback__MarkedAsHost;
-			}
-
-
-			// New friends joined meefore
-			if( type === "new_friends" ){
-				html = LJ.notifications.renderNotification__NewFriends( notification );
-				notificationCallback = LJ.notifications.notificationCallback__NewFriends;
-			}
-
-
-			// A before has been canceled 
-			if( type === "before_canceled" ){
-				html = LJ.notifications.renderNotification__BeforeCanceled( notification );
-				notificationCallback = LJ.notifications.notificationCallback__BeforeCanceled;
-			}
-
-			
-			// Someone has shared something
-			if( type === "item_shared" ){
-				html = LJ.notifications.renderNotification__ItemShared( notification );
-				notificationCallback = LJ.notifications.notificationCallback__ItemShared;
-			}
-
-
-			// Welcome in meefore !
-			if( type === "inscription_success" ){
-				html = LJ.notifications.renderNotification__InscriptionSuccess( notification );
-				notificationCallback = LJ.notifications.notificationCallback__InscriptionSuccess;
-			}
-
-
-			// Make sure user knows its important we got its right email
-			if( type === "check_email" ){
-				html = LJ.notifications.renderNotification__CheckEmail( notification );
-				notificationCallback = LJ.notifications.notificationCallback__CheckEmail;
-			}
-
-			var $notif = $( html );
-
-			// Fire callback if registered
-			if( typeof notificationCallback == "function" ){
-				$notif.on('click', function(){
-					try {
-						notificationCallback( notification );
-					} catch( e ){
-						LJ.ui.showToast( LJ.text("n_outdated_notification") );
-					}
-					LJ.notifications.hideNotificationsPanel();
-				});
-			}
-
-			// Append the new notification on top of all
-			$notif.insertAfter( $('.js-notification-appender') );
-				
-		},
-		notificationCallback__InscriptionSuccess: function( n ){
-
-			LJ.log('Welcome onboard !');
-
-		},
-		notificationCallback__NewFriends: function( n ){
-
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("friends");
-
-		},
-		notificationCallback__GroupRequestHosts: function( n ){
-
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("cheers");
-			LJ.cheers.activateCheers("received");
-
-
-		},
-		notificationCallback__GroupRequestMembers: function( n ){
-
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("cheers");
-			LJ.cheers.activateCheers("sent");
-
-		},
-		notificationCallback__AcceptedInMembers: function( n ){
-
-			var before_id  = n.before_id;
-			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
-
-			if( LJ.chat.getChatState() == "hidden" ){
-				LJ.chat.showChatWrap();
-			}
-
-			LJ.chat.showChatInview( chat_id );
-			LJ.chat.activateChat( chat_id );
-			LJ.chat.refreshChatJsp( chat_id );
-			LJ.chat.refreshChatState( chat_id );
-
-		},
-		notificationCallback__AcceptedInHosts: function( n ){
-
-			var before_id  = n.before_id;
-			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
-
-			if( LJ.chat.getChatState() == "hidden" ){
-				LJ.chat.showChatWrap();
-			}
-
-			LJ.chat.showChatInview( chat_id );
-			LJ.chat.activateChat( chat_id );
-			LJ.chat.refreshChatJsp( chat_id );
-			LJ.chat.refreshChatState( chat_id );
-
-		},
-		notificationCallback__MarkedAsHost: function( n ){
-
-			var before_id  = n.before_id;
-			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
-
-			if( LJ.chat.getChatState() == "hidden" ){
-				LJ.chat.showChatWrap();
-			}
-
-			LJ.chat.showChatInview( chat_id );
-			LJ.chat.activateChat( chat_id );
-			LJ.chat.refreshChatJsp( chat_id );
-			LJ.chat.refreshChatState( chat_id );
-
-			LJ.before.fetchAndShowBeforeInview( before_id );
-
-		},
-		notificationCallback__FillProfile: function( n ){
-
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("profile");
-
-		},
-		notificationCallback__CheckEmail: function( n ){
-
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("settings");
-			LJ.settings.activateSubmenuSection("account")
-
-		},
-		notificationCallback__BeforeCanceled: function( n ){
-
-			LJ.ui.showToast( LJ.text("n_before_canceled") );
-
-		}
-
-	});
-
 	
 	window.LJ.onboarding = _.merge( window.LJ.onboarding || {}, {
 
@@ -45184,7 +45295,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			'user-row'       : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
 			'chat-row'		 : { width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
 			'chat-line'		 : { width: 35,  height: 35,  crop: 'fill', gravity: 'face' },
-			'cheers-back'    : { width: 200, height: 200, crop: 'fill', gravity: 'face' }
+			'chat-inview'    : { width: 200, height: 200, crop: 'fill', gravity: 'face' }
 		},
 		cached: [],
 
@@ -45548,6 +45659,22 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 				LJ.pictures.storeImgInCache( img, img_id, img_version, scope );
 				return img;
 			}
+
+		},
+		makeGroupRosace: function( users, max, context ){
+
+			var pictures = [];
+
+			// Only allow 2-rosaces maximum. More, rosace appearance is confusing...
+			users.slice( 0, max ).forEach(function( user ){
+				pictures.push({
+					img_id: user.img_id,
+					img_vs: user.img_vs
+				});
+			});
+
+			// Insert rosace into the markup
+			return LJ.pictures.makeRosaceHtml( pictures, context );
 
 		},
 		makeRosaceHtml: function( pictures, scope ){
@@ -46740,9 +46867,10 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 					LJ.ui.showToast( LJ.text("to_group_accepted_hosts") );
 
 					// Smooth ui transition to terminate the cheers back process
-					if( sender_id == LJ.user.facebook_id ){
-						LJ.cheers.acceptifyCheersItem( channel_item.chat_id );
-					}
+					try {
+						LJ.cheers.acceptifyCheersItem( channel_item.chat_id );						
+					} catch( e ){}
+					
 
 					// Update the cheers
 					LJ.cheers.updateCheersItem( cheers_id, { status: status });
@@ -46849,6 +46977,91 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			LJ.chat.refreshChatSeenBy( chat_id );
 
 		}
+
+	});
+	
+	window.LJ.seek = _.merge( window.LJ.seek || {}, {
+
+		init: function(){
+
+			return LJ.seek.activatePlacesInProfile()
+
+				.then(function(){
+					return LJ.delay( 100 );
+
+				})
+				.then(function(){
+					return LJ.seek.activatePlacesInMap()
+					
+				})
+				.then(function(){
+					return LJ.delay( 100 );
+
+				})
+				.then(function(){
+					return LJ.seek.activatePlacesInCreateBefore();
+
+				});
+
+
+		},
+		activatePlacesInProfile: function(){	
+
+			var input = document.getElementById('me__location');
+			var options = { types: ['(cities)'] };
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.profile_places = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-profile-places').addClass('js-alreadyhere');
+				return;
+			});
+
+
+		},
+		activatePlacesInFirstLogin: function(){
+
+			var input = document.getElementById('init-location__input');
+			var options = { types: ['(cities)'] };
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.login_places = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-login-places').addClass('js-alreadyhere');
+				return;
+			});
+
+		},
+		activatePlacesInMap: function(){
+
+			var input = document.getElementById('map-browser-input');
+			var options = {}; // { types: ['(cities)'] };
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.map_browser_places = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-map-browser-places').addClass('js-alreadyhere');
+				return;
+			});
+
+
+		},
+		activatePlacesInCreateBefore: function(){
+
+			var input = $('.be-create-row.--location input')[0];
+			var options = {};
+
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.be_create = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-be-create').addClass('js-alreadyhere');
+				return;
+			});
+
+		}
+
+
 
 	});
 	
@@ -47370,91 +47583,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		}
 
 	});
-	
-	window.LJ.seek = _.merge( window.LJ.seek || {}, {
-
-		init: function(){
-
-			return LJ.seek.activatePlacesInProfile()
-
-				.then(function(){
-					return LJ.delay(100);
-
-				})
-				.then(function(){
-					return LJ.seek.activatePlacesInMap()
-					
-				})
-				.then(function(){
-					return LJ.delay(100);
-
-				})
-				.then(function(){
-					return LJ.seek.activatePlacesInCreateBefore();
-
-				});
-
-
-		},
-		activatePlacesInProfile: function(){	
-
-			var input = document.getElementById('me__location');
-			var options = { types: ['(cities)'] };
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.profile_places = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-profile-places').addClass('js-alreadyhere');
-				return;
-			});
-
-
-		},
-		activatePlacesInFirstLogin: function(){
-
-			var input = document.getElementById('init-location__input');
-			var options = { types: ['(cities)'] };
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.login_places = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-login-places').addClass('js-alreadyhere');
-				return;
-			});
-
-		},
-		activatePlacesInMap: function(){
-
-			var input = document.getElementById('map-browser-input');
-			var options = {}; // { types: ['(cities)'] };
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.map_browser_places = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-map-browser-places').addClass('js-alreadyhere');
-				return;
-			});
-
-
-		},
-		activatePlacesInCreateBefore: function(){
-
-			var input = $('.be-create-row.--location input')[0];
-			var options = {};
-
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.be_create = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-be-create').addClass('js-alreadyhere');
-				return;
-			});
-
-		}
-
-
-
-	});
 
 	window.LJ.settings = _.merge( window.LJ.settings || {}, {
 
@@ -47956,6 +48084,99 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 
 
+	
+	window.LJ.static = _.merge( window.LJ.static || {}, {
+
+		'images': [
+			{
+				'access_name' : 'main_loader',
+				'image_id' 	  : 'app_loader',
+				'param'		  : { 'class': 'app__loader', 'width': 80 }
+			},
+			{
+				'access_name' : 'modal_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'modal__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'menu_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'menu__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'slide_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'slide__loader', 'width': 32  }	
+			},
+			{
+				'access_name' : 'search_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'search__loader', 'width': 32  }	
+			},
+			{
+				'access_name' : 'be_create_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'be-create__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'chat_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
+			},
+			{ "access_name" : ":D", "image_id": "emoticon_smile" },
+			{ "access_name" : "xD", "image_id": "emoticon_smilexd" },
+			{ "access_name" : ";)", "image_id": "emoticon_blink" },
+			{ "access_name" : ":p", "image_id": "emoticon_tongue" },
+			{ "access_name" : "<3", "image_id": "emoticon_love" },
+			{ "access_name" : ":%", "image_id": "emoticon_sun" },
+			{ "access_name" : "-)", "image_id": "emoticon_bg" },
+			{ "access_name" : ":o", "image_id": "emoticon_oh" },
+			{ "access_name" : ":(", "image_id": "emoticon_sad" },
+			{ "access_name" : ":â", "image_id": "emoticon_angel" },
+			{ "access_name" : ":z", "image_id": "emoticon_zzz" },
+			{ "access_name" : ":/", "image_id": "emoticon_noop" }
+		],
+		// Constructs a list of static pictures hosted on Cloudinary that are available
+		// to use accross all others modules
+		init: function(){
+
+			LJ.static.cacheStaticImages();
+			return;
+
+		},
+		cacheStaticImages: function(){
+
+			LJ.static.images.forEach(function( img ){
+
+				img.param = img.param || {};
+				img.param['cloud_name'] = 'radioreve';
+
+				LJ.static[ '$' + img.access_name ] = $.cloudinary.image(
+					img.image_id,
+					img.param
+				);
+
+
+			});
+
+		},
+		getLoader: function( loader_id ){
+			var $l = $('.app__loader[data-loaderid="' + loader_id + '"]');
+
+			if( $l.length != 1 ){
+				return LJ.wlog('Unable to uniquely identify the loader with id : ' + loader_id +', length is : ' + $l.length );
+			} else {
+				return $l;
+			}
+		},
+		renderStaticImage: function( access_name ){
+
+			return LJ.static[ '$' + access_name ].clone().prop('outerHTML');
+
+		}
+
+	});
+
 	window.LJ.shared = _.merge( window.LJ.shared || {}, {
 
 		shared_item_duration: 600,
@@ -48387,475 +48608,485 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 
-	
-	window.LJ.static = _.merge( window.LJ.static || {}, {
-
-		'images': [
-			{
-				'access_name' : 'main_loader',
-				'image_id' 	  : 'app_loader',
-				'param'		  : { 'class': 'app__loader', 'width': 80 }
-			},
-			{
-				'access_name' : 'modal_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'modal__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'menu_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'menu__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'slide_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'slide__loader', 'width': 32  }	
-			},
-			{
-				'access_name' : 'search_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'search__loader', 'width': 32  }	
-			},
-			{
-				'access_name' : 'be_create_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'be-create__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'chat_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
-			},
-			{ "access_name" : ":D", "image_id": "emoticon_smile" },
-			{ "access_name" : "xD", "image_id": "emoticon_smilexd" },
-			{ "access_name" : ";)", "image_id": "emoticon_blink" },
-			{ "access_name" : ":p", "image_id": "emoticon_tongue" },
-			{ "access_name" : "<3", "image_id": "emoticon_love" },
-			{ "access_name" : ":%", "image_id": "emoticon_sun" },
-			{ "access_name" : "-)", "image_id": "emoticon_bg" },
-			{ "access_name" : ":o", "image_id": "emoticon_oh" },
-			{ "access_name" : ":(", "image_id": "emoticon_sad" },
-			{ "access_name" : ":â", "image_id": "emoticon_angel" },
-			{ "access_name" : ":z", "image_id": "emoticon_zzz" },
-			{ "access_name" : ":/", "image_id": "emoticon_noop" }
-		],
-		// Constructs a list of static pictures hosted on Cloudinary that are available
-		// to use accross all others modules
-		init: function(){
-
-			LJ.static.cacheStaticImages();
-			return;
-
-		},
-		cacheStaticImages: function(){
-
-			LJ.static.images.forEach(function( img ){
-
-				img.param = img.param || {};
-				img.param['cloud_name'] = 'radioreve';
-
-				LJ.static[ '$' + img.access_name ] = $.cloudinary.image(
-					img.image_id,
-					img.param
-				);
-
-
-			});
-
-		},
-		getLoader: function( loader_id ){
-			var $l = $('.app__loader[data-loaderid="' + loader_id + '"]');
-
-			if( $l.length != 1 ){
-				return LJ.wlog('Unable to uniquely identify the loader with id : ' + loader_id +', length is : ' + $l.length );
-			} else {
-				return $l;
-			}
-		},
-		renderStaticImage: function( access_name ){
-
-			return LJ.static[ '$' + access_name ].clone().prop('outerHTML');
-
-		}
-
-	});
-
-	window.LJ.store = _.merge( window.LJ.store || {}, {
-
-		mode: null,
-
-		init: function(){
-
-			LJ.store.activateStoreMode();
-			return;
-		},
-		activateStoreMode: function(){
+window.LJ = _.merge( window.LJ || {}, {
+
+    initAugmentations: function(){
+
+        String.prototype.capitalize = function() {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        }
+
+        /* La base! */
+        _.mixin({
+            pluckMany: function() {
+                var array = arguments[0],
+                    propertiesToPluck = _.rest(arguments, 1);
+                return _.map(array, function(item) {
+                    return _.partial(_.pick, item).apply(null, propertiesToPluck);
+                });
+            }
+        });
+
+        // upgrading version
+        _.pluck = _.map;
+
+        $('body').on('mouseenter', '.jspContainer', function(){
+            LJ.ui.deactivateHtmlScroll();
+        });
+
+        $('body').on('mouseleave', '.jspContainer', function(){
+            LJ.ui.activateHtmlScroll();
+        });
+
+                
+    },
+    promise: function( callback ){
+        return new Promise( callback );
+    },
+    Promise: Promise,
+
+    storeItem: function( key, value ){
+
+        if( !key || !value ){
+            var object = key;
+            key = _.keys( object )[0];
+            value = object[key];
+        }
+
+        value = typeof value == 'object' ? JSON.stringify(value) : value;
+        return localStorage.setItem( key, value );
+
+        localStorage.setItem( key, value );
+
+    },
+    cacheUser: function( user ){
+
+        if( !LJ.user ){
+            LJ.log('Caching user for the first time');
+            LJ.user = user;
+            LJ.user.cheers = [];
+            return LJ.user;
+        } else {
+            if( user.facebook_id == LJ.user.facebook_id ){
+                LJ.log('Facebook_id matched, updating user cache');
+                _.keys( user ).forEach(function( key ){
+                    if( LJ.user.hasOwnProperty( key ) ){
+                        LJ.user[ key ] = user[ key ];
+                    }
+                });
+            } else {
+                
+            }
+        }
+
+    },
+    isSameDay: function( d1, d2 ){
+        return m1.dayOfYear() == m2.dayOfYear();
+
+    },
+    findMainPic: function( user ){
+
+        var user = user || LJ.user;
+
+        return _.find( user.pictures, function( p ){
+            return p.is_main;
+        });
+
+    },
+    delay: function( delay ){
+
+        if( typeof delay != "number" ){
+            delay = 1000;
+        }
+
+        return LJ.promise(function( resolve, reject ){
+            setTimeout(function(){
+                resolve();
+            }, delay );
+        })
+    },
+    hashtagify: function( str ){
+
+        var hashtag_parts = [];
+
+        str.toLowerCase().trim().split(/[\s_-]/).forEach(function( el, i ){
+
+            if( i == 0 ){
+                hashtag_parts.push( el );
+            } else {
+                if( el != '') {
+                    var elm = el[0].toUpperCase() + el.substring(1);
+                    hashtag_parts.push( elm );
+                }
+            }
+        });
+
+        return hashtag_parts.join('');
+
+    },
+    log: function log( message ){
+
+        if( LJ.app_mode == "prod" ){
+            console.log("Hello there.")
+            return LJ.log = function(){}
+        }
+        console.log( message );
 
-			if( window.localStorage ){
-				LJ.store.mode = "localstorage";
-			} else {
-				LJ.store.mode = "cookie";
-			}
+    },
+    wlog: function wlog( message ){
+        
+        console.warn( message );
 
-		},
-		changeStoreMode: function( new_mode ){
+    },
+    tlog: function tlog( message ){
+        
+        console.trace( message );
 
-			if( [ "cookie", "localstorage" ].indexOf( new_mode ) == -1 ){
-				return LJ.wlog('This storage mode is not supported, please use "cookie" or "localstorage"');
-			}
+    },
+    elog: function elog( message ){
 
-			LJ.store.mode = new_mode;
+        console.error( message )
 
-		},
-		getStore: function(){
+    },
+    ilog: function ilog( message ){
 
-			if( LJ.store.mode == "localstorage" ){
-				return window.localStorage;
-			} else {
-				return document.cookie;
-			}
+        console.info( message );
+        
+    },
+    getGhostUser: function(){
 
-		},
-		get: function( name ){
+        var ghost_user = {
 
-			var mode = LJ.store.mode;
+            facebook_id : 'ghost',
+            name        : LJ.text('ghost_user_name'),
+            age         : 18,
+            job         : LJ.text('ghost_user_job'),
+            img_id      : "ghost_user",
+            img_vs      : "1468060134"
+
+        }
+
+        return ghost_user;
+
+    },
+    renderUserRow: function( user ){
 
-			if( mode == "localstorage" ){
-				return LJ.store.getLocalItem( name );
-			}
+        var filterlay = 'js-filterlay';
 
-			if( mode == "cookie" ){
-				return LJ.store.getCookie( name );
-			}
+        if( !user || !user.img_id || !user.img_vs ){
+            LJ.log('No user was provided, rendering ghost user instead');
+            user = LJ.getGhostUser();
+            filterlay = '';
+        }
 
-		},
-		set: function( key, item ){
+        var img_small = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-row" );
 
-			var mode = LJ.store.mode;
+        var gender = user.g;
+        var cc     = user.cc;
 
-			if( mode == "localstorage" ){
-				return LJ.store.setLocalItem( key, item );
-			}
+        return LJ.ui.render([
+
+            '<div class="user-row js-user-profile" data-facebook-id="'+ user.facebook_id +'">',
+                '<div class="user-row__pic '+ filterlay +'">',
+                  img_small,
+                '</div>',
+                '<div class="user-row__informations">',
+                  '<div class="user-row__about">',
+                    '<div class="user-gender --'+ gender +' js-user-gender"></div>',
+                    '<span class="user-name">'+ user.name +'</span>',
+                    '<span class="user-comma">,</span>',
+                    '<span class="user-age">'+ user.age +'</span>',
+                    '<div class="user-country js-user-country">',
+                      '<i class="flag-icon flag-icon-'+ cc +'"></i>',
+                    '</div>',
+                    '<span class="user-online js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
+                  '</div>',
+                  '<div class="user-row__education">',
+                    '<span class="user-row__education-icon --round-icon">',
+                      '<i class="icon icon-education"></i>',
+                    '</span>',
+                    '<span class="user-row__education-label">'+ user.job +'</span>',
+                  '</div>',
+                '</div>',
+          '</div>'
+
+        ].join(''));
 
-			if( mode == "cookie" ){
-				return LJ.store.setCookie( key, item );
-			}
+    },
+    renderUserRows: function( users ){
 
-		},
-		remove: function( key ){
+        if( !Array.isArray( users ) ){
+            return LJ.wlog('Cant render users row with empty array, users='+ users );
+        }
 
-			var mode = LJ.store.mode;
+        var user_rows = [];
+        users.forEach(function( u ){
+            user_rows.push( LJ.renderUserRow( u ) );
 
-			if( mode == "localstorage" ){
-				return LJ.store.removeLocalItem( key );
-			}
+        });
 
-			if( mode == "cookie" ){
-				return LJ.store.removeCookie( key );
-			}
+        return user_rows.join('');
 
-		},
-		setLocalItem: function( key, item ){
 
-			if( typeof item == "object" ){
-				item = JSON.stringify( item );
-			}
-
-			window.localStorage.setItem( key, item );
-
-		},
-		getLocalItem: function( key ){
-
-			var item = window.localStorage.getItem( key );
-
-			try {
-				item = JSON.parse( item );
-
-			} catch( e ){
-				// Do nothing
-			}
-
-			return item;
-
-		},
-		removeLocalItem: function( key ){
-
-			window.localStorage.removeItem( key );
-
-		},
-		setCookie: function( cname, cvalue, exdays ){
-
-		    var d = new Date();
-		    d.setTime( d.getTime() + ( exdays * 24 * 60 * 60 * 1000 ) );
-
-		    var expires = "expires="+ d.toUTCString();
-
-		    document.cookie = cname + "=" + cvalue + "; " + expires;
-
-		},
-		getCookie: function( cname ){
-
-		    var name = cname + "=";
-		    var ca = document.cookie.split(';');
-
-		    for( var i = 0; i <ca.length; i++ ){
-
-		        var c = ca[i];
-		        while( c.charAt(0)==' ' ){
-		            c = c.substring(1);
-		        }
-
-		        if( c.indexOf( name ) == 0 ){
-		            return c.substring(name.length,c.length);
-		        }
-		    }
-
-		    return null;
-		},
-		removeCookie: function( cname ){
-
-			LJ.store.setCookie( cname, '', -1 );
-
-		}
-
-	});
-	
-
-	window.LJ = _.merge( window.LJ || {} , {
-
-		typeahead_legacy: {
-			users: {
-				class_names: {
-					input      :'',
-					hint       :'',
-					menu       :'search-results-users',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-users',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			// places: {
-			// 	class_names: {
-			// 		input:'',
-			// 		hint:'hint-places',
-			// 		menu:'search-results-autocomplete search-results-party-places',
-			// 		dataset:'search-wrap',
-			// 		suggestion:'search-result-default search-result-party-places',
-			// 		empty:'empty',
-			// 		open:'open',
-			// 		cursor:'cursor',
-			// 		highlight:'highlight'
-			// 	}
-			// },
-			friends: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			groups: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends search-results-groups',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			}
-		}
-
-	});
-
-
-	window.LJ.fn = _.merge( window.LJ.fn || {} , 
-
-	{
-		initTypeaheadUsers: function(){
-
-			var users = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			users.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
-
-			$('#search input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
-				classNames: LJ.typeahead.users.class_names
-			},
-			{
-				name:'users',
-				display:'name',
-				source: users.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			})
-			.on('typeahead:select', function( ev, suggestion ){
-
-				LJ.fn.displayUserProfile( suggestion.facebook_id );
-				$(this).typeahead('val', '');
-
-			});
-
-		},
-		initTypeaheadHosts: function( friends ){
-
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
-
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
-
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
-
-			$('.row-create-friends input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.friends.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
-
-		},
-		initTypeaheadGroups: function( friends ){
-
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
-
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
-
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
-
-			$('.row-requestin-group-members input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.groups.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
-
-		},
-		initTypeaheadPlaces: function(){
-
-			var places = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			places.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
-
-			$('.row-create-party-place input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1,
-				classNames: LJ.typeahead.places.class_names
-			},
-			{
-				name:'places',
-				display:'name',
-				source: places.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
-				}
-			});
-
-		}
-		
-	});
+    },
+    mainifyUserRow: function( $w, main_user ){
+
+        var $rows = $w.find('.user-row');
+        $rows.each(function( i, row ){
+
+            var $r = $( row );
+            if( $r.attr('data-facebook-id') == main_user ){
+
+                $r.addClass('--main').addClass('js-main').insertBefore( $rows.first() );
+                $r.find('.user-row__pic').append('<div class="user__host --round-icon"><i class="icon icon-star"></i></div>');
+            }
+
+        }); 
+
+    },
+    generateId: function(){
+        return LJ.randomInt( 100, 100000000000 );
+
+    },
+    randomInt: function(low, high) {
+        return Math.floor(Math.random() * (high - low + 1) + low);
+
+    },
+    renderDate: function( date ){
+        return moment( date ).format('hh:mm')
+        
+    },
+    renderMultipleNames: function( names, opts ){
+        
+        opts = opts || {};
+
+        if( typeof names == "string" ){
+            names = [ names ];
+        }
+
+        if( !Array.isArray( names ) ){
+            return LJ.wlog('Cannot render multiple names, wrong argument');
+        }
+
+        names = names.filter( Boolean );
+
+        if( names.length == 0 ){
+            return LJ.wlog('Cannot render multiple names, empty array');
+        }
+
+        var name_to_replace = opts.lastify_user;
+        if( name_to_replace ){
+
+            if( names.indexOf( name_to_replace ) == -1 ){
+                return LJ.wlog('Cannot lastify name, doesnt exist in the array');
+            }
+
+            names.forEach(function( name, i ){
+                if( name == name_to_replace ){
+                    delete names[ i ];
+                }
+            });
+
+            names.push( LJ.text("w_you") );
+            return LJ.renderMultipleNames( names );
+
+        }
+
+        if( names.length == 1 ){
+            return names[0];
+        } 
+
+        if( names.length == 2 ){
+            return [ names[0], names[1] ].join(' ' + LJ.text('w_and') + ' ');
+        }
+
+        return [ names[0], LJ.renderMultipleNames( names.slice(1) ) ].join(', ');
+
+    },
+    renderManyMultipleNames: function( names ){
+        
+        names = Array.isArray( names ) ? names : [ names ];
+        names.reverse();
+        var T = names.length;
+        var displayed = [].slice.call( arguments, -1 );
+
+
+        if( typeof displayed != "number" ){
+            displayed = 2;
+        }
+
+        if( displayed >= T - 1 ){
+            displayed = T - 1;
+        }
+
+         if( names.length == 1 ){
+            return names[0];
+        }
+        if( names.length == 2 ){
+            return names[0] + ' '+ LJ.text('w_and') +' ' + names[1];
+        }
+
+        var cur = 1;
+        var str = names.pop();
+
+        while ( cur < displayed ){
+            str += ', ' + names.pop();
+            cur++;
+        }
+
+        str += ' '+ LJ.text('w_and') +' ' + names.length + ' ' + LJ.text('w_more');
+        return str;
+
+
+    },
+    renderGroupName: function( name ){
+        return name + ' & co';
+
+    },
+    swapNodes: function( a, b ){
+
+        var aparent = a.parentNode;
+        var asibling = a.nextSibling === b ? a : a.nextSibling;
+        b.parentNode.insertBefore(a, b);
+        aparent.insertBefore(b, asibling);
+
+    },
+    testTemplate: function( tplName, param, wrapper ){
+
+        var html = LJ.fn[tplName]( param );
+
+        if( wrapper ){
+            html = '<div class="' + wrapper + '">' + html + '</div>';
+        }
+
+        $( html )
+            .addClass('temp')
+
+            .css({
+
+                'opacity'   : '1',
+                'left'      : '50%',
+                'top'       : '50%',
+                'z-index'   :'1000000000000',
+                'transform' : 'translate(-50%,-50%)'
+
+            })
+
+            .appendTo('body');
+
+        $('.temp').click(function(){ 
+
+            $(this).remove(); 
+            
+        });
+
+    },
+    getDisconnectedAt: function(){
+
+        return LJ.user.disconnected_at;
+
+    },
+    roughSizeOfObject: function( object ) {
+
+            var objectList = [];
+            var stack = [ object ];
+            var bytes = 0;
+
+            while ( stack.length ) {
+                var value = stack.pop();
+
+                if ( typeof value === 'boolean' ) {
+                    bytes += 4;
+                }
+                else if ( typeof value === 'string' ) {
+                    bytes += value.length * 2;
+                }
+                else if ( typeof value === 'number' ) {
+                    bytes += 8;
+                }
+                else if
+                (
+                    typeof value === 'object'
+                    && objectList.indexOf( value ) === -1
+                )
+                {
+                    objectList.push( value );
+
+                    for( var i in value ) {
+                        stack.push( value[ i ] );
+                    }
+                }
+            }
+            return bytes;
+        },
+        isElementInViewport: function(el) {
+
+            var rect = el[0].getBoundingClientRect();
+            return ( rect.top >= 0 && rect.left >= 0 && rect.bottom <=  $(window).height() && rect.right <= $(window).width() );
+        },
+        offsetElements: function(){
+
+            if( LJ.nav.getActiveView() == "search" ){
+                LJ.offsetSearchUsers();
+            } else {
+                LJ.offsetRows();
+            }
+
+        },
+        unoffsetElements: function(){
+
+             if( LJ.nav.getActiveView() == "search" ){
+                LJ.unoffsetSearchUsers();
+            } else {
+                LJ.unoffsetRows();
+            }
+
+        },
+        unoffsetAll: function(){
+            
+            LJ.unoffsetSearchUsers();
+            LJ.unoffsetRows();
+                            
+        },  
+        offsetSearchUsers: function( duration ){
+
+            duration = duration || 330;
+            $('.search-user:not(.search-user--offset').addClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 190, 0 ]}, { duration: duration });
+
+        },  
+        unoffsetSearchUsers: function(){
+
+            try {
+
+                var current_offset = parseInt( $('.search-user--offset').css('left').split('px')[ 0 ] );
+                $('.search-user').removeClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
+                
+            } catch( e ){
+                
+            }
+
+        },
+        offsetRows: function(){
+
+            $('.row-pic, .row-body').addClass('row--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 250, 0 ]}, { duration: 330 });
+
+        },
+        unoffsetRows: function(){
+
+            try {
+
+                var current_offset = parseInt( $('.row--offset').css('left').split('px')[ 0 ] );
+                $('.row-pic, .row-body').removeClass('row--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
+
+            } catch( e ){
+                
+            }
+
+        }
+
+
+});
+
 
 window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
@@ -50178,9 +50409,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 		show_modal_delay   : 200,
 		hide_modal_delay   : 100,
 
-		facebook_img_min_width: 200,
-		facebook_img_max_width: 300,
-
 		showModalAndFetch: function( options ){
 			return LJ.promise(function( resolve, reject ){
 				LJ.Promise.all([
@@ -50844,473 +51072,379 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
 	});
 
-window.LJ = _.merge( window.LJ || {}, {
-
-    initAugmentations: function(){
-
-        String.prototype.capitalize = function() {
-            return this.charAt(0).toUpperCase() + this.slice(1);
-        }
-
-        /* La base! */
-        _.mixin({
-            pluckMany: function() {
-                var array = arguments[0],
-                    propertiesToPluck = _.rest(arguments, 1);
-                return _.map(array, function(item) {
-                    return _.partial(_.pick, item).apply(null, propertiesToPluck);
-                });
-            }
-        });
-
-        // upgrading version
-        _.pluck = _.map;
-
-        $('body').on('mouseenter', '.jspContainer', function(){
-            LJ.ui.deactivateHtmlScroll();
-        });
-
-        $('body').on('mouseleave', '.jspContainer', function(){
-            LJ.ui.activateHtmlScroll();
-        });
-
-                
-    },
-    promise: function( callback ){
-        return new Promise( callback );
-    },
-    Promise: Promise,
-
-    storeItem: function( key, value ){
-
-        if( !key || !value ){
-            var object = key;
-            key = _.keys( object )[0];
-            value = object[key];
-        }
-
-        value = typeof value == 'object' ? JSON.stringify(value) : value;
-        return localStorage.setItem( key, value );
-
-        localStorage.setItem( key, value );
-
-    },
-    cacheUser: function( user ){
-
-        if( !LJ.user ){
-            LJ.log('Caching user for the first time');
-            LJ.user = user;
-            LJ.user.cheers = [];
-            return LJ.user;
-        } else {
-            if( user.facebook_id == LJ.user.facebook_id ){
-                LJ.log('Facebook_id matched, updating user cache');
-                _.keys( user ).forEach(function( key ){
-                    if( LJ.user.hasOwnProperty( key ) ){
-                        LJ.user[ key ] = user[ key ];
-                    }
-                });
-            } else {
-                
-            }
-        }
-
-    },
-    isSameDay: function( d1, d2 ){
-        return m1.dayOfYear() == m2.dayOfYear();
-
-    },
-    findMainPic: function( user ){
-
-        var user = user || LJ.user;
-
-        return _.find( user.pictures, function( p ){
-            return p.is_main;
-        });
-
-    },
-    delay: function( delay ){
-
-        if( typeof delay != "number" ){
-            delay = 1000;
-        }
-
-        return LJ.promise(function( resolve, reject ){
-            setTimeout(function(){
-                resolve();
-            }, delay );
-        })
-    },
-    hashtagify: function( str ){
-
-        var hashtag_parts = [];
-
-        str.toLowerCase().trim().split(/[\s_-]/).forEach(function( el, i ){
-
-            if( i == 0 ){
-                hashtag_parts.push( el );
-            } else {
-                if( el != '') {
-                    var elm = el[0].toUpperCase() + el.substring(1);
-                    hashtag_parts.push( elm );
-                }
-            }
-        });
-
-        return hashtag_parts.join('');
-
-    },
-    log: function log( message ){
-
-        if( LJ.app_mode == "prod" ){
-            console.log("Hello there.")
-            return LJ.log = function(){}
-        }
-        console.log( message );
+	window.LJ.store = _.merge( window.LJ.store || {}, {
 
-    },
-    wlog: function wlog( message ){
-        
-        console.warn( message );
+		mode: null,
 
-    },
-    tlog: function tlog( message ){
-        
-        console.trace( message );
+		init: function(){
 
-    },
-    elog: function elog( message ){
+			LJ.store.activateStoreMode();
+			return;
+		},
+		activateStoreMode: function(){
 
-        console.error( message )
+			if( window.localStorage ){
+				LJ.store.mode = "localstorage";
+			} else {
+				LJ.store.mode = "cookie";
+			}
 
-    },
-    ilog: function ilog( message ){
+		},
+		changeStoreMode: function( new_mode ){
 
-        console.info( message );
-        
-    },
-    getGhostUser: function(){
+			if( [ "cookie", "localstorage" ].indexOf( new_mode ) == -1 ){
+				return LJ.wlog('This storage mode is not supported, please use "cookie" or "localstorage"');
+			}
 
-        var ghost_user = {
+			LJ.store.mode = new_mode;
 
-            facebook_id : 'ghost',
-            name        : LJ.text('ghost_user_name'),
-            age         : 18,
-            job         : LJ.text('ghost_user_job'),
-            img_id      : "ghost_user",
-            img_vs      : "1468060134"
-
-        }
-
-        return ghost_user;
-
-    },
-    renderUserRow: function( user ){
+		},
+		getStore: function(){
 
-        var filterlay = 'js-filterlay';
+			if( LJ.store.mode == "localstorage" ){
+				return window.localStorage;
+			} else {
+				return document.cookie;
+			}
 
-        if( !user || !user.img_id || !user.img_vs ){
-            LJ.log('No user was provided, rendering ghost user instead');
-            user = LJ.getGhostUser();
-            filterlay = '';
-        }
+		},
+		get: function( name ){
 
-        var img_small = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-row" );
+			var mode = LJ.store.mode;
 
-        var gender = user.g;
-        var cc     = user.cc;
+			if( mode == "localstorage" ){
+				return LJ.store.getLocalItem( name );
+			}
 
-        return LJ.ui.render([
-
-            '<div class="user-row js-user-profile" data-facebook-id="'+ user.facebook_id +'">',
-                '<div class="user-row__pic '+ filterlay +'">',
-                  img_small,
-                '</div>',
-                '<div class="user-row__informations">',
-                  '<div class="user-row__about">',
-                    '<div class="user-gender --'+ gender +' js-user-gender"></div>',
-                    '<span class="user-name">'+ user.name +'</span>',
-                    '<span class="user-comma">,</span>',
-                    '<span class="user-age">'+ user.age +'</span>',
-                    '<div class="user-country js-user-country">',
-                      '<i class="flag-icon flag-icon-'+ cc +'"></i>',
-                    '</div>',
-                    '<span class="user-online js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
-                  '</div>',
-                  '<div class="user-row__education">',
-                    '<span class="user-row__education-icon --round-icon">',
-                      '<i class="icon icon-education"></i>',
-                    '</span>',
-                    '<span class="user-row__education-label">'+ user.job +'</span>',
-                  '</div>',
-                '</div>',
-          '</div>'
-
-        ].join(''));
+			if( mode == "cookie" ){
+				return LJ.store.getCookie( name );
+			}
 
-    },
-    renderUserRows: function( users ){
+		},
+		set: function( key, item ){
 
-        if( !Array.isArray( users ) ){
-            return LJ.wlog('Cant render users row with empty array, users='+ users );
-        }
+			var mode = LJ.store.mode;
 
-        var user_rows = [];
-        users.forEach(function( u ){
-            user_rows.push( LJ.renderUserRow( u ) );
+			if( mode == "localstorage" ){
+				return LJ.store.setLocalItem( key, item );
+			}
 
-        });
+			if( mode == "cookie" ){
+				return LJ.store.setCookie( key, item );
+			}
 
-        return user_rows.join('');
+		},
+		remove: function( key ){
 
+			var mode = LJ.store.mode;
 
-    },
-    mainifyUserRow: function( $w, main_user ){
+			if( mode == "localstorage" ){
+				return LJ.store.removeLocalItem( key );
+			}
 
-        var $rows = $w.find('.user-row');
-        $rows.each(function( i, row ){
-
-            var $r = $( row );
-            if( $r.attr('data-facebook-id') == main_user ){
+			if( mode == "cookie" ){
+				return LJ.store.removeCookie( key );
+			}
 
-                $r.addClass('--main').addClass('js-main').insertBefore( $rows.first() );
-                $r.find('.user-row__pic').append('<div class="user__host --round-icon"><i class="icon icon-star"></i></div>');
-            }
+		},
+		setLocalItem: function( key, item ){
 
-        }); 
+			if( typeof item == "object" ){
+				item = JSON.stringify( item );
+			}
 
-    },
-    generateId: function(){
-        return LJ.randomInt( 100, 100000000000 );
+			window.localStorage.setItem( key, item );
 
-    },
-    randomInt: function(low, high) {
-        return Math.floor(Math.random() * (high - low + 1) + low);
-
-    },
-    renderDate: function( date ){
-        return moment( date ).format('hh:mm')
-        
-    },
-    renderMultipleNames: function( names, opts ){
-        
-        opts = opts || {};
-
-        if( typeof names == "string" ){
-            names = [ names ];
-        }
-
-        if( !Array.isArray( names ) ){
-            return LJ.wlog('Cannot render multiple names, wrong argument');
-        }
-
-        names = names.filter( Boolean );
-
-        if( names.length == 0 ){
-            return LJ.wlog('Cannot render multiple names, empty array');
-        }
-
-        var name_to_replace = opts.lastify_user;
-        if( name_to_replace ){
-
-            if( names.indexOf( name_to_replace ) == -1 ){
-                return LJ.wlog('Cannot lastify name, doesnt exist in the array');
-            }
-
-            names.forEach(function( name, i ){
-                if( name == name_to_replace ){
-                    delete names[ i ];
-                }
-            });
-
-            names.push( LJ.text("w_you") );
-            return LJ.renderMultipleNames( names );
-
-        }
-
-        if( names.length == 1 ){
-            return names[0];
-        } 
-
-        if( names.length == 2 ){
-            return [ names[0], names[1] ].join(' ' + LJ.text('w_and') + ' ');
-        }
-
-        return [ names[0], LJ.renderMultipleNames( names.slice(1) ) ].join(', ');
-
-    },
-    renderManyMultipleNames: function( names ){
-        
-        names = Array.isArray( names ) ? names : [ names ];
-        names.reverse();
-        var T = names.length;
-        var displayed = [].slice.call( arguments, -1 );
-
-
-        if( typeof displayed != "number" ){
-            displayed = 2;
-        }
-
-        if( displayed >= T - 1 ){
-            displayed = T - 1;
-        }
-
-         if( names.length == 1 ){
-            return names[0];
-        }
-        if( names.length == 2 ){
-            return names[0] + ' '+ LJ.text('w_and') +' ' + names[1];
-        }
-
-        var cur = 1;
-        var str = names.pop();
-
-        while ( cur < displayed ){
-            str += ', ' + names.pop();
-            cur++;
-        }
-
-        str += ' '+ LJ.text('w_and') +' ' + names.length + ' ' + LJ.text('w_more');
-        return str;
-
-
-    },
-    renderGroupName: function( name ){
-        return name + ' & co';
-
-    },
-    swapNodes: function( a, b ){
-
-        var aparent = a.parentNode;
-        var asibling = a.nextSibling === b ? a : a.nextSibling;
-        b.parentNode.insertBefore(a, b);
-        aparent.insertBefore(b, asibling);
-
-    },
-    testTemplate: function( tplName, param, wrapper ){
-
-        var html = LJ.fn[tplName]( param );
-
-        if( wrapper ){
-            html = '<div class="' + wrapper + '">' + html + '</div>';
-        }
-
-        $( html )
-            .addClass('temp')
-
-            .css({
-
-                'opacity'   : '1',
-                'left'      : '50%',
-                'top'       : '50%',
-                'z-index'   :'1000000000000',
-                'transform' : 'translate(-50%,-50%)'
-
-            })
-
-            .appendTo('body');
-
-        $('.temp').click(function(){ 
-
-            $(this).remove(); 
-            
-        });
-
-    },
-    getDisconnectedAt: function(){
-
-        return LJ.user.disconnected_at;
-
-    },
-    roughSizeOfObject: function( object ) {
-
-            var objectList = [];
-            var stack = [ object ];
-            var bytes = 0;
-
-            while ( stack.length ) {
-                var value = stack.pop();
-
-                if ( typeof value === 'boolean' ) {
-                    bytes += 4;
-                }
-                else if ( typeof value === 'string' ) {
-                    bytes += value.length * 2;
-                }
-                else if ( typeof value === 'number' ) {
-                    bytes += 8;
-                }
-                else if
-                (
-                    typeof value === 'object'
-                    && objectList.indexOf( value ) === -1
-                )
-                {
-                    objectList.push( value );
-
-                    for( var i in value ) {
-                        stack.push( value[ i ] );
-                    }
-                }
-            }
-            return bytes;
-        },
-        isElementInViewport: function(el) {
-
-            var rect = el[0].getBoundingClientRect();
-            return ( rect.top >= 0 && rect.left >= 0 && rect.bottom <=  $(window).height() && rect.right <= $(window).width() );
-        },
-        offsetElements: function(){
-
-            if( LJ.nav.getActiveView() == "search" ){
-                LJ.offsetSearchUsers();
-            } else {
-                LJ.offsetRows();
-            }
-
-        },
-        unoffsetElements: function(){
-
-             if( LJ.nav.getActiveView() == "search" ){
-                LJ.unoffsetSearchUsers();
-            } else {
-                LJ.unoffsetRows();
-            }
-
-        },
-        unoffsetAll: function(){
-            
-            try {
-                LJ.unoffsetSearchUsers();
-                LJ.unoffsetRows();
-            } catch( e ){
-                
-            }
-            
-        },  
-        offsetSearchUsers: function( duration ){
-
-            duration = duration || 330;
-            $('.search-user:not(.search-user--offset').addClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 190, 0 ]}, { duration: duration });
-
-        },  
-        unoffsetSearchUsers: function(){
-
-            var current_offset = parseInt( $('.search-user--offset').css('left').split('px')[ 0 ] );
-            $('.search-user').removeClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
-
-        },
-        offsetRows: function(){
-
-            $('.row-pic, .row-body').addClass('row--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 250, 0 ]}, { duration: 330 });
-
-        },
-        unoffsetRows: function(){
-
-            var current_offset = parseInt( $('.row--offset').css('left').split('px')[ 0 ] );
-            $('.row-pic, .row-body').removeClass('row--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
-
-        }
-
-
-});
+		},
+		getLocalItem: function( key ){
+
+			var item = window.localStorage.getItem( key );
+
+			try {
+				item = JSON.parse( item );
+
+			} catch( e ){
+				// Do nothing
+			}
+
+			return item;
+
+		},
+		removeLocalItem: function( key ){
+
+			window.localStorage.removeItem( key );
+
+		},
+		setCookie: function( cname, cvalue, exdays ){
+
+		    var d = new Date();
+		    d.setTime( d.getTime() + ( exdays * 24 * 60 * 60 * 1000 ) );
+
+		    var expires = "expires="+ d.toUTCString();
+
+		    document.cookie = cname + "=" + cvalue + "; " + expires;
+
+		},
+		getCookie: function( cname ){
+
+		    var name = cname + "=";
+		    var ca = document.cookie.split(';');
+
+		    for( var i = 0; i <ca.length; i++ ){
+
+		        var c = ca[i];
+		        while( c.charAt(0)==' ' ){
+		            c = c.substring(1);
+		        }
+
+		        if( c.indexOf( name ) == 0 ){
+		            return c.substring(name.length,c.length);
+		        }
+		    }
+
+		    return null;
+		},
+		removeCookie: function( cname ){
+
+			LJ.store.setCookie( cname, '', -1 );
+
+		}
+
+	});
+	
+
+	window.LJ = _.merge( window.LJ || {} , {
+
+		typeahead_legacy: {
+			users: {
+				class_names: {
+					input      :'',
+					hint       :'',
+					menu       :'search-results-users',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-users',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			// places: {
+			// 	class_names: {
+			// 		input:'',
+			// 		hint:'hint-places',
+			// 		menu:'search-results-autocomplete search-results-party-places',
+			// 		dataset:'search-wrap',
+			// 		suggestion:'search-result-default search-result-party-places',
+			// 		empty:'empty',
+			// 		open:'open',
+			// 		cursor:'cursor',
+			// 		highlight:'highlight'
+			// 	}
+			// },
+			friends: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			groups: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends search-results-groups',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			}
+		}
+
+	});
+
+
+	window.LJ.fn = _.merge( window.LJ.fn || {} , 
+
+	{
+		initTypeaheadUsers: function(){
+
+			var users = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			users.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
+
+			$('#search input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
+				classNames: LJ.typeahead.users.class_names
+			},
+			{
+				name:'users',
+				display:'name',
+				source: users.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			})
+			.on('typeahead:select', function( ev, suggestion ){
+
+				LJ.fn.displayUserProfile( suggestion.facebook_id );
+				$(this).typeahead('val', '');
+
+			});
+
+		},
+		initTypeaheadHosts: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-create-friends input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.friends.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadGroups: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-requestin-group-members input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.groups.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadPlaces: function(){
+
+			var places = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			places.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
+
+			$('.row-create-party-place input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1,
+				classNames: LJ.typeahead.places.class_names
+			},
+			{
+				name:'places',
+				display:'name',
+				source: places.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
+				}
+			});
+
+		}
+		
+	});

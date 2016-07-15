@@ -163,6 +163,8 @@ UserSchema.methods.findBeforesByPresence = function( callback ){
   });
 }
 
+
+
 UserSchema.methods.getChannel = function( channel_name ){
 
   return _.find( this.channels, function( chan ){
@@ -191,6 +193,37 @@ UserSchema.methods.getPrivateChannel = function(){
   return _.find( this.channels, function( chan ){
           return chan.type == 'personnal'
   }).name;
+
+}
+
+UserSchema.statics._makeBeforeItem = function( before, opts ){
+
+  return {
+
+      timezone  : parseFloat( before.timezone ),
+      before_id : before._id,
+      begins_at : before.begins_at,
+
+      status    : opts.status
+
+  };
+
+}
+
+UserSchema.statics.makeBeforeItem__Host = function( before ){
+
+  return this._makeBeforeItem( before, {
+    status: "hosting"
+  });
+
+
+}
+
+UserSchema.statics.makeBeforeItem__Member = function( before, group_status ){
+
+  return this._makeBeforeItem( before, {
+    status: group_status
+  });
 
 }
 

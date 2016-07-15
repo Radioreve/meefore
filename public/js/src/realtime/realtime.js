@@ -361,9 +361,10 @@
 					LJ.ui.showToast( LJ.text("to_group_accepted_hosts") );
 
 					// Smooth ui transition to terminate the cheers back process
-					if( sender_id == LJ.user.facebook_id ){
-						LJ.cheers.acceptifyCheersItem( channel_item.chat_id );
-					}
+					try {
+						LJ.cheers.acceptifyCheersItem( channel_item.chat_id );						
+					} catch( e ){}
+					
 
 					// Update the cheers
 					LJ.cheers.updateCheersItem( cheers_id, { status: status });

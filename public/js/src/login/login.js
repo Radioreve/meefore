@@ -318,6 +318,7 @@
 
 				}).then(function(){
 
+					// LJ.map.activateBrowserState("shrinked");
 					LJ.before.showBrowser();
 					LJ.before.refreshBrowserDates();
 					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );

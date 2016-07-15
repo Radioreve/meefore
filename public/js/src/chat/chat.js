@@ -405,9 +405,7 @@
 
 			var channel_item = _.find( LJ.user.channels, function( chan ){
 
-				if( chan.chat_id && chan.before_id && chan.before_id == before_id ){
-					return chan.chat_id;
-				}
+				return chan && chan.chat_id && chan.before_id && chan.before_id == before_id;
 
 			});
 
@@ -1031,11 +1029,21 @@
 			var title    = opts.title || '<span data-lid="chat_empty_title"></span>';
 			var icon 	 = opts.icon  || '<i class="icon icon-chat-bubble-duo"></i>';
 
+			var img_html = [
+				'<div class="chat-empty__icon --round-icon">',
+						icon,
+					'</div>',
+			].join('');
+
+			if( opts.img_html ){
+				img_html = opts.img_html;
+			}
+
 			return LJ.ui.render([
 
 				'<div class="chat-empty --'+ type + '">',
-					'<div class="chat-empty__icon --round-icon">',
-						icon,
+					'<div class="chat-empty__image">',
+						img_html,
 					'</div>',
 					'<div class="chat-empty__title">',
 						title,
@@ -1066,19 +1074,9 @@
 				var users = LJ.chat.getMembers( chat_id );
 
 			}
-			
-			var pictures = [];
-
-			// Only allow 2-rosaces maximum. More, rosace appearance is confusing...
-			users.slice(0,2).forEach(function( user ){
-				pictures.push({
-					img_id: user.img_id,
-					img_vs: user.img_vs
-				});
-			});
 
 			// Insert rosace into the markup
-			var pictures_html = LJ.pictures.makeRosaceHtml( pictures, 'chat-row' );
+			var pictures_html = LJ.pictures.makeGroupRosace( users, 2, 'chat-row' );
 
 			LJ.chat.updateChatRowElements( chat_id, {
 				picture: pictures_html

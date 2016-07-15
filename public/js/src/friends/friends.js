@@ -48,11 +48,13 @@
 
 				.then(function( fetched_friends ){
 					fetched_friends = _.map( fetched_friends, 'user' );
-					return LJ.friends.setFriendsProfiles( fetched_friends );
+					LJ.friends.setFriendsProfiles( fetched_friends );
+					LJ.friends.sortFriends();
+					return;
 
 				})
-				.then(function( fetched_friends ){
-					return LJ.friends.renderFriends( fetched_friends );
+				.then(function(){
+					return LJ.friends.renderFriends( LJ.friends.fetched_friends );
 
 				})
 				.then(function( friends_html ){
@@ -90,7 +92,23 @@
 		setFriendsProfiles: function( fetched_friends ){
 
 			LJ.friends.fetched_friends = fetched_friends;
-			return LJ.Promise.resolve( fetched_friends );
+
+		},
+		sortFriends: function(){
+
+			LJ.friends.fetched_friends.sort(function( fa, fb ){
+
+				if( fa.name[ 0 ].toLowerCase() < fb.name[ 0 ].toLowerCase() ){
+					return -1;
+				}
+
+				if( fa.name[ 0 ].toLowerCase() > fb.name[ 0 ].toLowerCase() ){
+					return 1;
+				}
+
+				return 0;
+
+			});
 
 		},
 		renderFriends: function( fetched_friends ){

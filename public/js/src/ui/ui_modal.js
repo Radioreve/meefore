@@ -6,9 +6,6 @@
 		show_modal_delay   : 200,
 		hide_modal_delay   : 100,
 
-		facebook_img_min_width: 200,
-		facebook_img_max_width: 300,
-
 		showModalAndFetch: function( options ){
 			return LJ.promise(function( resolve, reject ){
 				LJ.Promise.all([

@@ -435,13 +435,9 @@ window.LJ = _.merge( window.LJ || {}, {
         },
         unoffsetAll: function(){
             
-            try {
-                LJ.unoffsetSearchUsers();
-                LJ.unoffsetRows();
-            } catch( e ){
-                
-            }
-            
+            LJ.unoffsetSearchUsers();
+            LJ.unoffsetRows();
+                            
         },  
         offsetSearchUsers: function( duration ){
 
@@ -451,8 +447,14 @@ window.LJ = _.merge( window.LJ || {}, {
         },  
         unoffsetSearchUsers: function(){
 
-            var current_offset = parseInt( $('.search-user--offset').css('left').split('px')[ 0 ] );
-            $('.search-user').removeClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
+            try {
+
+                var current_offset = parseInt( $('.search-user--offset').css('left').split('px')[ 0 ] );
+                $('.search-user').removeClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
+                
+            } catch( e ){
+                
+            }
 
         },
         offsetRows: function(){
@@ -462,8 +464,14 @@ window.LJ = _.merge( window.LJ || {}, {
         },
         unoffsetRows: function(){
 
-            var current_offset = parseInt( $('.row--offset').css('left').split('px')[ 0 ] );
-            $('.row-pic, .row-body').removeClass('row--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
+            try {
+
+                var current_offset = parseInt( $('.row--offset').css('left').split('px')[ 0 ] );
+                $('.row-pic, .row-body').removeClass('row--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 0, current_offset ]}, { duration: 330 });
+
+            } catch( e ){
+                
+            }
 
         }
 

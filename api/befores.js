@@ -59,12 +59,7 @@
 
 	    	var before_id = new_before._id;
 
-	    	var before_item_host = {
-				status    : 'hosting',
-				timezone  : parseFloat( data.timezone ),
-				before_id : before_id,
-				begins_at : new Date( new_before.begins_at )
-	    	};
+	    	var before_item_host = User.makeBeforeItem__Host( new_before );
 
 	    	User.update({'facebook_id': { $in: data.hosts } },
 	    				{ $push: { 'befores': before_item_host }},
@@ -127,12 +122,7 @@
 				return handleErr( req, res, err_ns, err );
 			}
 
-			var before_item = {
-				before_id   : bfr._id, // Important, to keep the ObjectId type 
-				begins_at   : bfr.begins_at,
-				timezone	: parseFloat( bfr.timezone ),
-				status 		: 'pending'
-			};
+			var before_item = User.makeBeforeItem__Member( bfr );
 
 			User
 				.update(

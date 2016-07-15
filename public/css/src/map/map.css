@@ -40,18 +40,30 @@
     right: 20px;
 }
 
-.map__icon.--create-before {
+.map__icon.--create-before, .map__icon.--filter-dates {
     position: fixed;
-    background: #1B69EC;
-    color: white;
     height: 50px;
     width: 50px;
     font-size: 20px;
-    right: 20px;
-    top: 122px;
+    top: 130px;
     cursor: pointer;
     z-index: 10;
     display: none;
+}
+
+.map__icon.--create-before {
+    background: #1B69EC;
+    padding: 2px;
+    color: white;
+    right: 20px;
+    font-size: 24px;
+}
+
+.map__icon.--filter-dates {
+    color: #1b69ec;
+    right: 10px;
+    display: flex;
+    top: 110px;
 }
 
 .map__icon.--create-before:hover {

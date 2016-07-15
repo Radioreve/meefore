@@ -156,7 +156,7 @@ Whispereen  : #58c170
     margin-left: 20px;
 }
  
-.notification .notification-message__text {font-weight: 700;font-size: 12px;max-width: 200px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;line-height: 14px;}
+.notification .notification-message__text {font-weight: 700;font-size: 13.5px;letter-spacing: -.2px;max-width: 200px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;line-height: 14px;}
 
 .notification .notification-message__subtext {
     font-size: 11px;
@@ -201,7 +201,7 @@ Whispereen  : #58c170
 }
 
 .notification.--clicked .notification-message__text {
-    /* font-weight: 500; */
+    font-weight: 500;
 }
 
 .notification.--clicked .notification-message__subtext {

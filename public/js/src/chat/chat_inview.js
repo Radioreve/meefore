@@ -137,21 +137,21 @@
 			LJ.profile_user.showUserProfile( facebook_id );
 
 		},
-		renderChatInview__AllEmpty: function( group_name ){
+		renderChatInview__AllEmpty: function( group_name, img_html ){
 
 			return LJ.chat.renderChatEmpty({
 				type 	 : 'accepted',
-				icon 	 : '<i class="icon icon-chat-bubble-duo"></i>',
+				img_html : img_html,
 				title 	 : '<span data-lid="chat_empty_title_inview_accepted"></span>',
 				subtitle : '<span data-lid="chat_empty_subtitle_inview_accepted" data-lpm="'+ group_name +'"></span>'
 			});
 
 		},
-		renderChatInview__TeamEmpty: function( group_name ){
+		renderChatInview__TeamEmpty: function( group_name, img_html ){
 
 			return LJ.chat.renderChatEmpty({
 				type 	 : 'team',
-				icon 	 : '<i class="icon icon-chat-bubble-duo"></i>',
+				img_html : img_html,
 				title 	 : '<span data-lid="chat_empty_title_inview_team" data-lpm="'+ group_name +'"></span>',
 				subtitle : '<span data-lid="chat_empty_subtitle_inview_team"></span>'
 			});
@@ -1014,18 +1014,21 @@
 				var members    = LJ.chat.getMembers( chat_id );
 				var names      = _.map( members, 'name' );
 				var group_name = LJ.renderMultipleNames( names, { lastify_user: LJ.user.name });
+				var img_html   = LJ.pictures.makeGroupRosace( members, 2, 'chat-inview' );
 
-				html = LJ.chat.renderChatInview__TeamEmpty( group_name );
+				html = LJ.chat.renderChatInview__TeamEmpty( group_name, img_html );
 
 			} else {
 
-				var user_profile = chan.role == "hosted" ?
-					LJ.chat.getMainMember( chat_id ) :
-					LJ.chat.getMainHost( chat_id );
+				var members = chan.role == "hosted" ?
+					LJ.chat.getMembers( chat_id ) :
+					LJ.chat.getHosts( chat_id );
 
-				var group_name = LJ.renderGroupName( user_profile.name );
+				var names      = _.map( members, 'name' );
+				var group_name = LJ.renderMultipleNames( names );
+				var img_html   = LJ.pictures.makeGroupRosace( members, 2, 'chat-inview' );
 
-				html = LJ.chat.renderChatInview__AllEmpty( group_name );
+				html = LJ.chat.renderChatInview__AllEmpty( group_name, img_html );
 				
 			}
 

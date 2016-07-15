@@ -162,11 +162,8 @@
 			}
 
 			if( !user ){
-				return handleErr( req, res, err, {
-					'err_id' 	  : 'ghost_user',
-					'msg'         : 'No user was found with this id in the database in the database',
-					'facebook_id' : facebook_id
-				});
+				console.log('User (full) wasnt found either in cache or in db');
+				return next();
 			}
 
 			req.sent.expose.user = user;
@@ -209,7 +206,7 @@
 					}
 
 					if( !user ){
-						console.log('User wasnt found either in cache or in db');
+						console.log('User (core) wasnt found either in cache or in db');
 						return next();
 					}
 

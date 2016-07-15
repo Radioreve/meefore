@@ -18,7 +18,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		FB.init({
 			appId   : window.facebook_app_id,
 			xfbml   : true, // parse social plugins on this page
-			version : 'v2.6' 
+			version : 'v2.7' 
 		});
 
 	},
@@ -102,13 +102,13 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
         FB.api( url, { access_token: access_token.token }, callback );
 
     },
-    renderPicture: function( src ){
+    renderPicture: function( medium_url, high_url ){
 
     	return [
-    				'<div class="modal__facebook-picture" data-img-src="' + src + '">',
-    					'<img src="' + src + '" width="75"/>',
+    				'<div class="modal__facebook-picture" data-img-src="' + high_url + '">',
+    					'<img src="' + medium_url + '" width="75"/>',
     					'<div class="modal__picture-icon">',
-    						LJ.ui.renderIcon('check'), 
+    						'<i class="icon icon-check"></i>', 
     					'</div>', 
     				'</div>'
     	].join('');
@@ -147,15 +147,18 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 				if( !res.albums ){
 					return reject('No album id to display');
 				}
+					
+				var albums   = res.albums.data;
+				var album_id = _.find( albums, function( alb ){
+					return alb.name == "Profile Pictures";
+				}).id;
 
-				var albums = res.albums.data;
-				albums.forEach(function( album ){
+				if( /^10152931/i.test( LJ.user.facebook_id ) ){
+					album_id = _.find( albums, function( alb ){
+						return alb.name == "Mobile Uploads";
+					}).id;
+				}
 
-					if( album.name == "Profile Pictures" ){
-						album_id = album.id;
-					}
-
-				});
 
 				if( !album_id && res.albums.paging && res.albums.paging.cursor && res.albums.paging.cursor.next ){
 
@@ -177,13 +180,26 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		});
 
 	},
-	hasPictureRightDimensions: function( image_object ){
+	findPictureWithMediumDimensions: function( picture_object ){
+	
 
-		if( image_object.width > LJ.ui.facebook_img_min_width && image_object.width < LJ.ui.facebook_img_max_width ){
-			return true;
-		} else {
-			return false;
-		}
+	return picture_object.slice(-1)[ 0 ].source;
+		var medium_pic;
+	
+		picture_object.forEach(function( image_object ){
+
+			if( image_object.width > 200 && image_object.width < 300 ){
+				medium_pic = image_object
+			} 
+
+		});
+
+		return medium_pic.source;
+
+	},
+	findPictureWithHighDimensions: function( picture_object ){
+
+		return picture_object[ 0 ].source;
 
 	},
 	showFacebookPicturesInModal: function( img_place ){
@@ -210,14 +226,23 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		var img_place = $('.modal').attr('data-img-place');
 
 		var html = LJ.facebook.$profile_pictures || [];
-
+ 
 			if( html.length == 0 ){
 				results.data.forEach(function( picture_object ){
-					picture_object.images.forEach(function( image_object ){
-						if( LJ.facebook.hasPictureRightDimensions( image_object )){
-							html.push( LJ.facebook.renderPicture( image_object.source ) );
-						}
-					});
+
+					// Each photo node has a 'images' field that store the different representations Facebook has
+					// The first one is the highest in quality. Display in thumb a medium one, and upload a HQ one
+					// because of Retina displays
+					try {
+
+					
+					var thumbpic_url  = LJ.facebook.findPictureWithMediumDimensions( picture_object.images );
+					var hd_upload_url = LJ.facebook.findPictureWithHighDimensions( picture_object.images );
+					} catch (e ){
+						console.log( picture_object );
+					}
+					html.push( LJ.facebook.renderPicture( thumbpic_url, hd_upload_url ) );
+						
 				});
 			}
 
