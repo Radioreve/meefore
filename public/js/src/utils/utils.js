@@ -154,11 +154,11 @@ window.LJ = _.merge( window.LJ || {}, {
             job         : LJ.text('ghost_user_job'),
             img_id      : "ghost_user",
             img_vs      : "1468060134",
-            pictures: [
+            pictures: [{
                 img_id      : "ghost_user",
                 img_version : "1468060134",
                 is_main     : true
-            ]
+            }]
 
         }
 

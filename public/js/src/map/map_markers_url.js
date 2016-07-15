@@ -12,8 +12,8 @@
                 '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__2x.png'
             },
             drinknew: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md_newred__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md_newred__2x.png'
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468612014/markers/drink_black45_rotate_md_newred__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468612014/markers/drink_black45_rotate_md_newred__2x.png'
             },
             star: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__1x.png',

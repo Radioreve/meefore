@@ -203,13 +203,11 @@
 				return handleErr( req, res, err_ns, err );
 			}
 
+			console.log("user friends now : " + user.friends );
 			var facebook_res = body;
 
 			var friends     = facebook_res.data;
 			var friends_ids = _.map( friends, 'id' );
-
-			var n_friends_new = facebook_res.summary.total_count;
-			var n_friends_old = user.friends.length;
 
 			console.log('Syncing new friends! Updating...');
 			
@@ -217,6 +215,7 @@
 			friends.forEach(function( f ){
 
 				if( user.friends.indexOf( f.id ) == -1 ){
+					console.log("Pushing : " + f.id +", not found in : " + user.friends );
 					new_friends.push({
 						facebook_name : f.name,
 						facebook_id   : f.id

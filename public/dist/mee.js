@@ -33355,865 +33355,6 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 	});
 		
 
-	window.LJ.dev = _.merge( window.LJ.dev || {}, {
-
-		n_cloudinary_api_calls: 0,
-		t_login_process: 0,
-
-		view_ids: {
-			"before": "/img/ios/before.jpg",
-			"chat"  : "/img/ios/chat.png",
-			"chat_inview": "/img/ios/chat_inview.png",
-			"request": "/img/ios/request.png"
-
-		},
-		init: function(){
-
-			Mousetrap.bind('command+c', LJ.dev.toggleColorPalette );
-			Mousetrap.bind('command+v', function(){
-				LJ.dev.toggleAppView();
-			});
-
-		},
-		toggleColorPalette: function(){
-
-			if( $('.palette').length > 0 ){
-				return $('.palette').toggleClass('nonei');
-			}
-
-			LJ.log('Showing color palette');
-			var $div = $([
-				'<div class="palette">',
-					'<div class="palette__color --gentle"></div>',
-					'<div class="palette__color --royal"></div>',
-					'<div class="palette__color --odebo"></div>',
-					'<div class="palette__color --mushia"></div>',
-					'<div class="palette__color --purplepills"></div>',
-					'<div class="palette__color --blueboy"></div>',
-					'<div class="palette__color --pinkirl"></div>',
-					'<div class="palette__color --greenected"></div>',
-					'<div class="palette__color --validateen"></div>',
-				'</div>'
-				].join('')
-			);
-
-			$div.appendTo('body');
-
-		},
-		toggleAppView: function( view_id ){
-
-			if( $('.ios').length > 0 ){
-				return $('.ios').toggleClass('nonei');
-			}
-
-		},
-		showAppView: function( view_id ){
-
-			if( $('.ios').length > 0 ){
-				$('.ios').remove();
-			}
-
-			LJ.log('Showing ios view');
-	      
-	        var $div = $('<div class="ios"></div>');
-	        var url = LJ.dev.view_ids[ view_id ];
-
-	        if( !url ){
-	            return LJ.wlog('Couldnt find the url');
-	        }
-
-	        var img = '<img width="100%" src="' + url + '"/>';
-	        $div
-	            .appendTo('body')
-	            .hide()
-	            .append( img )
-	            .show();
-
-		},
-		showAppView__Before: function(){
-			return LJ.dev.showAppView('before');
-		},
-		showAppView__Chat: function(){
-			return LJ.dev.showAppView('chat');
-		},
-		showAppView__ChatInview: function(){
-			return LJ.dev.showAppView('chat_inview');
-		},
-		showAppView__Request: function(){
-			return LJ.dev.showAppView('request');
-		}
-
-	});
-
-window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
-
-	required_permissions : ['public_profile', 'email', 'user_friends', 'user_photos'],
-
-	friends_url			 : '/me/friends',
-	profile_url			 : '/me?fields=id,email,name,link,locale,gender',
-	album_url  			 : '/me?fields=albums{name,id}',
-	album_pictures_url   : '{{album_id}}/photos?fields=images',
-
-	init: function(){
-
-		LJ.facebook.startFacebookSdk();
-		
-	},
-	startFacebookSdk: function(){
-
-		FB.init({
-			appId   : window.facebook_app_id,
-			xfbml   : true, // parse social plugins on this page
-			version : 'v2.7' 
-		});
-
-	},
-	fetchFacebookToken: function(){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook token...');
-			FB.login(function( res ){
-
-				if( res.status == 'not_authorized' ){
-					return reject( Error("User didnt let Facebook access informations") )
-				}
-
-				if( res.status == 'connected' ){
-					var access_token = res.authResponse.accessToken;
-					LJ.login.data.access_token = access_token;
-
-					console.log('Short lived access token : ' + access_token.substring( 0, 20 ) + '.....');
-					return resolve( access_token );
-				}
-
-			}, { scope: LJ.facebook.required_permissions } );
-		});
-
-	},
-	fetchMe: function(){
-
-	},
-	fetchFriends: function(){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.facebook.GraphAPI( LJ.facebook.friends_url, function( res ){
-
-				if( res.err ){
-					return reject( err );
-				}
-
-				var fb_friends  = res.data;
-                var friend_ids  = _.pluck( fb_friends, 'id' );
-
-                var data = {
-                    'friend_ids' : friend_ids
-                };
-
-                resolve( data );
-
-			});
-
-		});
-	},
-	fetchFacebookProfile: function( facebook_token ){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook profile...');
-			
-			FB.api( LJ.facebook.profile_url, { access_token: facebook_token }, function( facebookProfile ){
-				
-				// Store it for reconnexion purposes
-				LJ.facebook_profile = facebookProfile;
-
-				if( facebookProfile.error ){
-					return reject( facebookProfile.error );
-				} else {
-					return resolve( facebookProfile );
-				}
-			});
-
-		});
-
-	},
-	GraphAPI: function( url, callback, opts ){
-
-        var s = LJ.store;
-
-        var access_token = LJ.user.facebook_access_token || s.get("facebook_access_token") || s.get("reconn_data");
-
-        if( !access_token || !access_token.token ){
-            return LJ.wlog('Cannot call the graph api without being able to find a valid facebook token');
-        }
-
-        FB.api( url, { access_token: access_token.token }, callback );
-
-    },
-    renderPicture: function( medium_url, high_url ){
-
-    	return [
-    				'<div class="modal__facebook-picture" data-img-src="' + high_url + '">',
-    					'<img src="' + medium_url + '" width="75"/>',
-    					'<div class="modal__picture-icon">',
-    						'<i class="icon icon-check"></i>', 
-    					'</div>', 
-    				'</div>'
-    	].join('');
-
-    },
-    fetchPictures: function( album_id ){
-    	return LJ.promise(function( resolve, reject ){
-
- 			LJ.facebook.GraphAPI( LJ.facebook.album_pictures_url.replace( '{{album_id}}', album_id ), function( res ){
-		
- 				if( !res || res.error ){
- 					return reject( res.error );
- 				} else {
- 					return resolve( res );
- 				}
-
- 			});
-
-    	});
-    },
-    fetchProfilePictures: function(){
-
-		return LJ.facebook.fetchProfilePicturesAlbumId().then( LJ.facebook.fetchPictures );
-
-    },
-	fetchProfilePicturesAlbumId: function( next_page ){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook profile picture album id...');
-
-			var album_url = next_page || LJ.facebook.album_url;
-			var album_id  = null;
-
-			LJ.facebook.GraphAPI( album_url, function( res ){
-
-				if( !res.albums ){
-					return reject('No album id to display');
-				}
-					
-				var albums   = res.albums.data;
-				var album_id = _.find( albums, function( alb ){
-					return alb.name == "Profile Pictures";
-				}).id;
-
-				if( /^10152931/i.test( LJ.user.facebook_id ) ){
-					album_id = _.find( albums, function( alb ){
-						return alb.name == "Mobile Uploads";
-					}).id;
-				}
-
-
-				if( !album_id && res.albums.paging && res.albums.paging.cursor && res.albums.paging.cursor.next ){
-
-					var next = res.albums.paging.cursor.next;
-
-					LJ.log('Didnt find on first page, trying with next page : ' + next );
-					return LJ.facebook.fetchProfilePicturesAlbumId( next );
-				}
-
-				if( !album_id && res.albums.paging && res.albums.paging.cursor && !res.albums.paging.cursor.next ){
-					return reject('Couldnt find album id, no next page to browse' );
-				}
-
-				LJ.log('Album id found, ' + album_id );
-				return resolve( album_id );
-
-			});
-
-		});
-
-	},
-	findPictureWithMediumDimensions: function( picture_object ){
-	
-
-	return picture_object.slice(-1)[ 0 ].source;
-		var medium_pic;
-	
-		picture_object.forEach(function( image_object ){
-
-			if( image_object.width > 200 && image_object.width < 300 ){
-				medium_pic = image_object
-			} 
-
-		});
-
-		return medium_pic.source;
-
-	},
-	findPictureWithHighDimensions: function( picture_object ){
-
-		return picture_object[ 0 ].source;
-
-	},
-	showFacebookPicturesInModal: function( img_place ){
-
-		LJ.ui.showModalAndFetch({
-
-			"type"			: "facebook",
-			"title"			: LJ.text("mod_facebook_pictures_title"),
-			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
-			"footer"		: "<button class='--rounded'>" + LJ.ui.renderIcon('check') + "</button>",
-			"attributes"	: [{ name: "img-place", val: img_place }],
-
-			"fetchPromise"	: LJ.facebook.fetchProfilePictures
-
-		})
-		.then( LJ.facebook.displayFacebookPicturesInModal )
-		.catch( LJ.facebook.displayFacebookPicturesInModal_Error );
-			
-
-	},
-	displayFacebookPicturesInModal: function( results ){
-		
-		console.log('Displaying images...');
-		var img_place = $('.modal').attr('data-img-place');
-
-		var html = LJ.facebook.$profile_pictures || [];
- 
-			if( html.length == 0 ){
-				results.data.forEach(function( picture_object ){
-
-					// Each photo node has a 'images' field that store the different representations Facebook has
-					// The first one is the highest in quality. Display in thumb a medium one, and upload a HQ one
-					// because of Retina displays
-					try {
-
-					
-					var thumbpic_url  = LJ.facebook.findPictureWithMediumDimensions( picture_object.images );
-					var hd_upload_url = LJ.facebook.findPictureWithHighDimensions( picture_object.images );
-					} catch (e ){
-						console.log( picture_object );
-					}
-					html.push( LJ.facebook.renderPicture( thumbpic_url, hd_upload_url ) );
-						
-				});
-			}
-
-			LJ.facebook.$profile_pictures = html;
-			
-			$('.modal-body')
-				.append( html.join('') )	
-				.find('.modal__loader')
-				.velocity('bounceOut', { duration: 500, delay: 500,
-					complete: function(){
-
-						$('.modal__facebook-picture')
-							   .velocity('bounceInQuick', {
-							   		display: 'block'
-							   });
-
-						LJ.ui.turnToJsp('.modal-body', {
-							jsp_id: 'modal_facebook_pictures'
-						});
-
-					}
-				});
-
-				
-
-	},
-	displayFacebookPicturesInModal_Error: function( err ){
-
-		console.log( err );
-
-		LJ.delay( 1000 ).then(function(){
-
-			$('.modal-body')
-					.append('<div class="modal__loading-error none">' + LJ.text('modal_err_empty_fetch') + '</div>')
-
-			$('.modal__loader')
-			.velocity('bounceOut', { duration: 500, delay: 500,
-				complete: function(){
-
-					$('.modal-body').find('.modal__loading-error').velocity('bounceInQuick', {
-						display: 'block'
-					});
-
-				}
-			});
-
-		});
-
-
-	},
-	showModalSendMessageToFriends: function(){
-
-		FB.ui({
-			method: 'send',
-			link: 'http://www.meefore.com'
-		});
-
-	}
-
-});
-
-	window.LJ.friends = _.merge( window.LJ.friends || {}, {
-
-		fetched_friends: null,
-		show_friends_duration: 600,
-		init: function(){
-
-			LJ.friends.handleDomEvents();
-			return LJ.friends.fetchAndAddFacebookFriends();
-
-		},
-		handleDomEvents: function(){
-
-			LJ.ui.$body.on('click', '.js-invite-friends', LJ.facebook.showModalSendMessageToFriends );
-			LJ.ui.$body.on('click', '.js-show-friend', LJ.friends.handleFriendProfileClicked );
-			LJ.ui.$body.on('click', '.js-close-friends-popup', LJ.friends.hideInviteFriendsPopup );
-
-		},
-		handleFriendsClicked: function(){
-
-			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
-
-			$('.friends').html('');
-
-			$loader.addClass('none')
-				   .appendTo('.friends')
-				   .velocity('bounceInQuick', {
-				   	delay: 125,
-				   	duration: 500,
-				   	display: 'block'
-				   });
-
-			LJ.friends.fetchAndAddFacebookFriends();
-
-		},	
-		handleFriendProfileClicked: function(){
-
-			var $s = $(this);
-			var facebook_id = $s.attr('data-facebook-id');
-
-			LJ.profile_user.showUserProfile( facebook_id );
-
-		},
-		fetchAndAddFacebookFriends: function(){
-
-			var friend_ids = LJ.user.friends;
-			return LJ.api.fetchUsersFull( friend_ids )
-
-				.then(function( fetched_friends ){
-					fetched_friends = _.map( fetched_friends, 'user' );
-					LJ.friends.setFriendsProfiles( fetched_friends );
-					LJ.friends.sortFriends();
-					return;
-
-				})
-				.then(function(){
-					return LJ.friends.renderFriends( LJ.friends.fetched_friends );
-
-				})
-				.then(function( friends_html ){
-					return LJ.friends.displayFriends( friends_html );
-
-				})
-				.catch(function( e ){
-					LJ.wlog(e);
-				});
-
-
-		}, 
-		getFriendProfile: function( facebook_id ){
-
-			return _.find( LJ.friends.getFriendsProfiles(), function( f ){
-				return f.facebook_id == facebook_id;
-			});
-
-		},
-		getFriendsProfiles: function( facebook_ids ){
-
-			LJ.friends.fetched_friends = LJ.friends.fetched_friends.filter( Boolean );
-
-			if( facebook_ids ){
-				return _.filter( LJ.friends.fetched_friends, function( f ){
-					return ( facebook_ids.indexOf( f.facebook_id ) != -1 );
-				});
-
-			} else {
-				return LJ.friends.fetched_friends;
-
-			}
-
-		},
-		setFriendsProfiles: function( fetched_friends ){
-
-			LJ.friends.fetched_friends = fetched_friends;
-
-		},
-		sortFriends: function(){
-
-			LJ.friends.fetched_friends.sort(function( fa, fb ){
-
-				if( fa.name[ 0 ].toLowerCase() < fb.name[ 0 ].toLowerCase() ){
-					return -1;
-				}
-
-				if( fa.name[ 0 ].toLowerCase() > fb.name[ 0 ].toLowerCase() ){
-					return 1;
-				}
-
-				return 0;
-
-			});
-
-		},
-		renderFriends: function( fetched_friends ){
-
-			var html = [];
-
-			if( fetched_friends.length == 0 ){
-				html.push( LJ.friends.renderFriendItem__Empty() );
-
-			} else {
-				fetched_friends.forEach(function( friend ){
-					html.push( LJ.friends.renderFriendItem( friend ) );
-
-				});
-
-				html.push( LJ.friends.renderFriendItem__Last() );
-
-			}
-
-			return html.join('');
-
-		},
-		displayFriends: function( html ){
-
-			var $base;
-			if( $('.friends').children().length == 0 ){
-				$( html )
-					.hide()
-					.appendTo('.friends')
-					.velocity('shradeIn', {
-						duration : LJ.friends.show_friends_duration,
-						display  : 'flex',
-						stagger  : (LJ.friends.show_friends_duration / 4)
-					});
-
-			} else {
-				$('.friends')
-					.children()
-					.velocity('shradeOut', {
-						duration : LJ.friends.show_friends_duration / 2,
-						display  : 'none',
-						complete : function(){
-							$( html )
-								.hide()
-								.appendTo('.friends')
-								.velocity('shradeIn', {
-									duration : LJ.friends.show_friends_duration,
-									display  : 'flex',
-									stagger  : (LJ.friends.show_friends_duration / 4)
-								});
-
-						}
-					});
-
-			}
-
-		},
-		renderFriendItem__Empty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-users"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_friends_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_friends_subtitle"></p>',
-					'</div>',
-					'<div class="empty__subicon --round-icon js-invite-friends">',
-						'<i class="icon icon-gift"></i>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderFriendItem: function( friend ){
-
-			var filterlay = 'js-filterlay';
-			var nonei 	  = '';
-
-			if( !friend ){
-				LJ.wlog('Trying to render undefined friend, rendering ghost user instead');
-				friend = LJ.getGhostUser();
-				filterlay = '';
-				nonei 	  = 'nonei';
-			}
-
-			var formatted_date = LJ.text("w_member_since") + " " + moment( friend.signed_up_at ).format('DD/MM/YY');
-
-			var main_img = LJ.findMainPic( friend );
-			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'menu-row' );
-
-			return LJ.ui.render([
-
-				'<div class="friend__item js-show-friend '+ nonei +'" data-facebook-id="' + friend.facebook_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image '+ filterlay +'">' + img_html + '</div>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + friend.name + ', <span class="row-body__age">' + friend.age + '</span></h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon">',
-								'<i class="icon icon-education"></i>',
-							'</div>',
-							'<span>' + friend.job + '</span>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon">',
-								'<i class="icon icon-location"></i>',
-							'</div>',
-							'<span>' + friend.location.place_name + '</span>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderFriendItem__Last: function(){
-
-			return '';
-
-			return LJ.ui.render([
-
-				'<div class="friend__item --invite-friends js-invite-friends" >',
-					'<div class="row-pic">',
-						'<i class="icon icon-gift"></i>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2> ' + LJ.text('friends_title_invite') + '</h2>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderFriendsInModal: function(){
-
-			var friends = LJ.friends.getFriendsProfiles();
- 
-			if( friends.length == 0 ){
-
-				return LJ.friends.renderFriendsInModal__Empty();
-
-			} else {
-
-				var html = [];
-
-				friends.forEach(function( f ){
-					html.push( LJ.friends.renderFriendInModal( f ) );
-				});
-
-				return html.join('');
-			}
-
-		},
-		renderFriendsInModal__Empty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="no-friends">',
-					'<span data-lid="modal_no_friends_text"></span>',
-					'<button class="js-invite-friends" data-lid="modal_no_friends_btn"></button>',
-				'</div>'
-
-			].join(''));
-
-		},
-		renderFriendInModal: function( f ){
-
-			if( !f ){
-				f = LJ.getGhostUser();
-			}
-			
-			var main_img = LJ.findMainPic( f );
-			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'user-modal' );
-
-			return LJ.ui.render([
-
-				'<div class="modal-item friend-modal" data-name="' + f.name.toLowerCase() + '" data-item-id="' + f.facebook_id + '">',
-					'<div class="friend-modal__pic">',
-						img_html,
-						'<div class="friend-modal__icon --round-icon">',
-							'<i class="icon icon-check"></i>',
-						'</div>',
-					'</div>',
-					'<div class="friend-modal__name">',
-						'<span>' + f.name + '</span>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		displayInviteFriendsPopup: function(){
-
-			LJ.friends.invite_popup_timer = setTimeout(function(){
-
-				$( LJ.friends.renderInviteFriendsPopup() )
-					.hide()
-					.appendTo('body')
-					.velocity('shradeIn', {
-						duration: 400,
-						display : 'flex'
-					});
-
-			}, 2500 );
-
-		},
-		hideInviteFriendsPopup: function(){
-
-			clearTimeout( LJ.friends.invite_popup_timer );
-			$('.invite-friends-popup').remove();
-
-		},
-		renderInviteFriendsPopup: function(){
-
-			return LJ.ui.render([
-
-				'<div class="invite-friends-popup">',
-					'<div class="invite-friends-popup__close js-close-friends-popup --round-icon">',
-						'<i class="icon icon-cross-fat"></i>',
-					'</div>',
-					'<div class="invite-friends-popup__icon --round-icon">',
-						'<i class="icon icon-heart"></i>',
-					'</div>',
-					'<div class="invite-friends-popup-message">',
-						'<div class="invite-friends-popup__h1">',
-							'<span data-lid="invite_friends_popup_h1"></span>',
-						'</div>',
-						'<div class="invite-friends-popup__h2">',
-							'<span data-lid="invite_friends_popup_h2"></span>',
-						'</div>',
-					'</div>',
-					'<div class="invite-friends-popup__btn js-invite-friends">',
-						'<button data-lid="invite_friends_popup_btn"></button>',
-					'</div>',
-				'</div>'
-
-			].join(''));
-
-		}
-
-	});
-    /*
-        Initialisation script
-        Recursively try to initialize the Facebook pluggin
-        When it's loaded, app starts.
-        Follow the code...
-        Léo Jacquemin, 10/03/16, 17h56
-    */
-    
-
-	window.LJ = _.merge( window.LJ || {}, { 
-
-		init: function( time ){
-
-            $( window ).scrollTop( 0 )
-
-            // The application only starts when the Facebook pluggin has loaded
-            if( typeof FB === 'undefined' )
-                return setTimeout(function(){ LJ.init( time ); }, time );
-            
-            // Language, Lodash & jQuery augmentations
-            LJ.initAugmentations();
-            // Translate the whole page based on sourcetext & data-lid attributes
-            LJ.lang.init();
-            // Cache static assets images used accross modules
-            LJ.static.init();
-            // Store mechanism (local storage / cookie)
-            LJ.store.init();
-            // Analytics for tracking what's going on
-            LJ.analytics.init();
-            // Starts the Facebook SDK
-            LJ.facebook.init();
-            // Basic routing functionalities to prevent user from accidentally leaving the page
-            LJ.router.init();
-            // Menu dom interactions
-            LJ.menu.init();
-            // Navigation for macro views 
-            LJ.nav.init();
-            // Scrolling globals etc
-            LJ.ui.init();
-            // Cheers
-            LJ.cheers.init();
-            // Shared module
-            // LJ.shared.init();  // Keep it for ulterior version
-            // Profile user
-            LJ.profile_user.init();
-
-            // Autologin for users who asked the "remember me" feature in their settings
-            LJ.autologin.init()
-                .then(  LJ.autologin.startLogin )
-                .catch( LJ.autologin.startLanding )
-
-
-        },
-        start: function( facebook_token ){
-
-            return LJ.Promise.resolve( facebook_token )
-                .then( LJ.login.enterLoginProcess )  
-                .then(function(){
-                    return LJ.api.fetchAppToken( facebook_token );
-                })
-                .then( LJ.login.stepCompleted )
-                // Enter the following step with a valid app token
-                // Two kinds of data are fetch :
-                // - datas that are self-related  : profile infos, pictures, friends, notifications, chats...
-                // - datas that are users-related : search users module, map events...
-                .then( LJ.profile.init )
-                .then( LJ.login.firstSetup )
-                .then( LJ.login.stepCompleted )
-                .then( LJ.map.initGeocoder )
-                // .then(function(){ return LJ.delayd[ lol ]})
-                .then(function(){
-                    var a = LJ.friends.init();
-                    var b = LJ.search.init();
-                    var c = LJ.realtime.init();
-                    return LJ.Promise.all([ a, b, c ]);
-                })
-                .then( LJ.notifications.init )
-                .then( LJ.before.init )
-                .then( LJ.chat.init )
-                .then( LJ.login.hideLoginSteps )
-                .then( LJ.map.init ) // Must be as close as possible to terminateLogin. Map doesnt render sometimes..
-                .then( LJ.login.terminateLoginProcess )
-                .then( LJ.onboarding.init )
-                .then( LJ.connecter.init )
-                .then( LJ.dev.init )
-
-        }
-
-
-	});
-
-
-	
-	window.LJ.invite = _.merge( window.LJ.invite || {}, {
-
-		init: function(){
-			
-		}
-
-	});
-
 	window.LJ.chat = _.merge( window.LJ.chat || {}, {
 
 		parallel_fetches_count: 30,
@@ -37097,6 +36238,865 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 	});
 
+	window.LJ.dev = _.merge( window.LJ.dev || {}, {
+
+		n_cloudinary_api_calls: 0,
+		t_login_process: 0,
+
+		view_ids: {
+			"before": "/img/ios/before.jpg",
+			"chat"  : "/img/ios/chat.png",
+			"chat_inview": "/img/ios/chat_inview.png",
+			"request": "/img/ios/request.png"
+
+		},
+		init: function(){
+
+			Mousetrap.bind('command+c', LJ.dev.toggleColorPalette );
+			Mousetrap.bind('command+v', function(){
+				LJ.dev.toggleAppView();
+			});
+
+		},
+		toggleColorPalette: function(){
+
+			if( $('.palette').length > 0 ){
+				return $('.palette').toggleClass('nonei');
+			}
+
+			LJ.log('Showing color palette');
+			var $div = $([
+				'<div class="palette">',
+					'<div class="palette__color --gentle"></div>',
+					'<div class="palette__color --royal"></div>',
+					'<div class="palette__color --odebo"></div>',
+					'<div class="palette__color --mushia"></div>',
+					'<div class="palette__color --purplepills"></div>',
+					'<div class="palette__color --blueboy"></div>',
+					'<div class="palette__color --pinkirl"></div>',
+					'<div class="palette__color --greenected"></div>',
+					'<div class="palette__color --validateen"></div>',
+				'</div>'
+				].join('')
+			);
+
+			$div.appendTo('body');
+
+		},
+		toggleAppView: function( view_id ){
+
+			if( $('.ios').length > 0 ){
+				return $('.ios').toggleClass('nonei');
+			}
+
+		},
+		showAppView: function( view_id ){
+
+			if( $('.ios').length > 0 ){
+				$('.ios').remove();
+			}
+
+			LJ.log('Showing ios view');
+	      
+	        var $div = $('<div class="ios"></div>');
+	        var url = LJ.dev.view_ids[ view_id ];
+
+	        if( !url ){
+	            return LJ.wlog('Couldnt find the url');
+	        }
+
+	        var img = '<img width="100%" src="' + url + '"/>';
+	        $div
+	            .appendTo('body')
+	            .hide()
+	            .append( img )
+	            .show();
+
+		},
+		showAppView__Before: function(){
+			return LJ.dev.showAppView('before');
+		},
+		showAppView__Chat: function(){
+			return LJ.dev.showAppView('chat');
+		},
+		showAppView__ChatInview: function(){
+			return LJ.dev.showAppView('chat_inview');
+		},
+		showAppView__Request: function(){
+			return LJ.dev.showAppView('request');
+		}
+
+	});
+
+window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
+
+	required_permissions : ['public_profile', 'email', 'user_friends', 'user_photos'],
+
+	friends_url			 : '/me/friends',
+	profile_url			 : '/me?fields=id,email,name,link,locale,gender',
+	album_url  			 : '/me?fields=albums{name,id}',
+	album_pictures_url   : '{{album_id}}/photos?fields=images',
+
+	init: function(){
+
+		LJ.facebook.startFacebookSdk();
+		
+	},
+	startFacebookSdk: function(){
+
+		FB.init({
+			appId   : window.facebook_app_id,
+			xfbml   : true, // parse social plugins on this page
+			version : 'v2.7' 
+		});
+
+	},
+	fetchFacebookToken: function(){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook token...');
+			FB.login(function( res ){
+
+				if( res.status == 'not_authorized' ){
+					return reject( Error("User didnt let Facebook access informations") )
+				}
+
+				if( res.status == 'connected' ){
+					var access_token = res.authResponse.accessToken;
+					LJ.login.data.access_token = access_token;
+
+					console.log('Short lived access token : ' + access_token.substring( 0, 20 ) + '.....');
+					return resolve( access_token );
+				}
+
+			}, { scope: LJ.facebook.required_permissions } );
+		});
+
+	},
+	fetchMe: function(){
+
+	},
+	fetchFriends: function(){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.facebook.GraphAPI( LJ.facebook.friends_url, function( res ){
+
+				if( res.err ){
+					return reject( err );
+				}
+
+				var fb_friends  = res.data;
+                var friend_ids  = _.pluck( fb_friends, 'id' );
+
+                var data = {
+                    'friend_ids' : friend_ids
+                };
+
+                resolve( data );
+
+			});
+
+		});
+	},
+	fetchFacebookProfile: function( facebook_token ){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook profile...');
+			
+			FB.api( LJ.facebook.profile_url, { access_token: facebook_token }, function( facebookProfile ){
+				
+				// Store it for reconnexion purposes
+				LJ.facebook_profile = facebookProfile;
+
+				if( facebookProfile.error ){
+					return reject( facebookProfile.error );
+				} else {
+					return resolve( facebookProfile );
+				}
+			});
+
+		});
+
+	},
+	GraphAPI: function( url, callback, opts ){
+
+        var s = LJ.store;
+
+        var access_token = LJ.user.facebook_access_token || s.get("facebook_access_token") || s.get("reconn_data");
+
+        if( !access_token || !access_token.token ){
+            return LJ.wlog('Cannot call the graph api without being able to find a valid facebook token');
+        }
+
+        FB.api( url, { access_token: access_token.token }, callback );
+
+    },
+    renderPicture: function( medium_url, high_url ){
+
+    	return [
+    				'<div class="modal__facebook-picture" data-img-src="' + high_url + '">',
+    					'<img src="' + medium_url + '" width="75"/>',
+    					'<div class="modal__picture-icon">',
+    						'<i class="icon icon-check"></i>', 
+    					'</div>', 
+    				'</div>'
+    	].join('');
+
+    },
+    fetchPictures: function( album_id ){
+    	return LJ.promise(function( resolve, reject ){
+
+ 			LJ.facebook.GraphAPI( LJ.facebook.album_pictures_url.replace( '{{album_id}}', album_id ), function( res ){
+		
+ 				if( !res || res.error ){
+ 					return reject( res.error );
+ 				} else {
+ 					return resolve( res );
+ 				}
+
+ 			});
+
+    	});
+    },
+    fetchProfilePictures: function(){
+
+		return LJ.facebook.fetchProfilePicturesAlbumId().then( LJ.facebook.fetchPictures );
+
+    },
+	fetchProfilePicturesAlbumId: function( next_page ){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook profile picture album id...');
+
+			var album_url = next_page || LJ.facebook.album_url;
+			var album_id  = null;
+
+			LJ.facebook.GraphAPI( album_url, function( res ){
+
+				if( !res.albums ){
+					return reject('No album id to display');
+				}
+					
+				var albums   = res.albums.data;
+				var album_id = _.find( albums, function( alb ){
+					return alb.name == "Profile Pictures";
+				}).id;
+
+				if( /^10152931/i.test( LJ.user.facebook_id ) ){
+					album_id = _.find( albums, function( alb ){
+						return alb.name == "Mobile Uploads";
+					}).id;
+				}
+
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && res.albums.paging.cursor.next ){
+
+					var next = res.albums.paging.cursor.next;
+
+					LJ.log('Didnt find on first page, trying with next page : ' + next );
+					return LJ.facebook.fetchProfilePicturesAlbumId( next );
+				}
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && !res.albums.paging.cursor.next ){
+					return reject('Couldnt find album id, no next page to browse' );
+				}
+
+				LJ.log('Album id found, ' + album_id );
+				return resolve( album_id );
+
+			});
+
+		});
+
+	},
+	findPictureWithMediumDimensions: function( picture_object ){
+	
+
+	return picture_object.slice(-1)[ 0 ].source;
+		var medium_pic;
+	
+		picture_object.forEach(function( image_object ){
+
+			if( image_object.width > 200 && image_object.width < 300 ){
+				medium_pic = image_object
+			} 
+
+		});
+
+		return medium_pic.source;
+
+	},
+	findPictureWithHighDimensions: function( picture_object ){
+
+		return picture_object[ 0 ].source;
+
+	},
+	showFacebookPicturesInModal: function( img_place ){
+
+		LJ.ui.showModalAndFetch({
+
+			"type"			: "facebook",
+			"title"			: LJ.text("mod_facebook_pictures_title"),
+			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
+			"footer"		: "<button class='--rounded'>" + LJ.ui.renderIcon('check') + "</button>",
+			"attributes"	: [{ name: "img-place", val: img_place }],
+
+			"fetchPromise"	: LJ.facebook.fetchProfilePictures
+
+		})
+		.then( LJ.facebook.displayFacebookPicturesInModal )
+		.catch( LJ.facebook.displayFacebookPicturesInModal_Error );
+			
+
+	},
+	displayFacebookPicturesInModal: function( results ){
+		
+		console.log('Displaying images...');
+		var img_place = $('.modal').attr('data-img-place');
+
+		var html = LJ.facebook.$profile_pictures || [];
+ 
+			if( html.length == 0 ){
+				results.data.forEach(function( picture_object ){
+
+					// Each photo node has a 'images' field that store the different representations Facebook has
+					// The first one is the highest in quality. Display in thumb a medium one, and upload a HQ one
+					// because of Retina displays
+					try {
+
+					
+					var thumbpic_url  = LJ.facebook.findPictureWithMediumDimensions( picture_object.images );
+					var hd_upload_url = LJ.facebook.findPictureWithHighDimensions( picture_object.images );
+					} catch (e ){
+						console.log( picture_object );
+					}
+					html.push( LJ.facebook.renderPicture( thumbpic_url, hd_upload_url ) );
+						
+				});
+			}
+
+			LJ.facebook.$profile_pictures = html;
+			
+			$('.modal-body')
+				.append( html.join('') )	
+				.find('.modal__loader')
+				.velocity('bounceOut', { duration: 500, delay: 500,
+					complete: function(){
+
+						$('.modal__facebook-picture')
+							   .velocity('bounceInQuick', {
+							   		display: 'block'
+							   });
+
+						LJ.ui.turnToJsp('.modal-body', {
+							jsp_id: 'modal_facebook_pictures'
+						});
+
+					}
+				});
+
+				
+
+	},
+	displayFacebookPicturesInModal_Error: function( err ){
+
+		console.log( err );
+
+		LJ.delay( 1000 ).then(function(){
+
+			$('.modal-body')
+					.append('<div class="modal__loading-error none">' + LJ.text('modal_err_empty_fetch') + '</div>')
+
+			$('.modal__loader')
+			.velocity('bounceOut', { duration: 500, delay: 500,
+				complete: function(){
+
+					$('.modal-body').find('.modal__loading-error').velocity('bounceInQuick', {
+						display: 'block'
+					});
+
+				}
+			});
+
+		});
+
+
+	},
+	showModalSendMessageToFriends: function(){
+
+		FB.ui({
+			method: 'send',
+			link: 'http://www.meefore.com'
+		});
+
+	}
+
+});
+
+	window.LJ.friends = _.merge( window.LJ.friends || {}, {
+
+		fetched_friends: null,
+		show_friends_duration: 600,
+		init: function(){
+
+			LJ.friends.handleDomEvents();
+			return LJ.friends.fetchAndAddFacebookFriends();
+
+		},
+		handleDomEvents: function(){
+
+			LJ.ui.$body.on('click', '.js-invite-friends', LJ.facebook.showModalSendMessageToFriends );
+			LJ.ui.$body.on('click', '.js-show-friend', LJ.friends.handleFriendProfileClicked );
+			LJ.ui.$body.on('click', '.js-close-friends-popup', LJ.friends.hideInviteFriendsPopup );
+
+		},
+		handleFriendsClicked: function(){
+
+			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
+
+			$('.friends').html('');
+
+			$loader.addClass('none')
+				   .appendTo('.friends')
+				   .velocity('bounceInQuick', {
+				   	delay: 125,
+				   	duration: 500,
+				   	display: 'block'
+				   });
+
+			LJ.friends.fetchAndAddFacebookFriends();
+
+		},	
+		handleFriendProfileClicked: function(){
+
+			var $s = $(this);
+			var facebook_id = $s.attr('data-facebook-id');
+
+			LJ.profile_user.showUserProfile( facebook_id );
+
+		},
+		fetchAndAddFacebookFriends: function(){
+
+			var friend_ids = LJ.user.friends;
+			return LJ.api.fetchUsersFull( friend_ids )
+
+				.then(function( fetched_friends ){
+					fetched_friends = _.map( fetched_friends, 'user' );
+					LJ.friends.setFriendsProfiles( fetched_friends );
+					LJ.friends.sortFriends();
+					return;
+
+				})
+				.then(function(){
+					return LJ.friends.renderFriends( LJ.friends.fetched_friends );
+
+				})
+				.then(function( friends_html ){
+					return LJ.friends.displayFriends( friends_html );
+
+				})
+				.catch(function( e ){
+					LJ.wlog(e);
+				});
+
+
+		}, 
+		getFriendProfile: function( facebook_id ){
+
+			return _.find( LJ.friends.getFriendsProfiles(), function( f ){
+				return f.facebook_id == facebook_id;
+			});
+
+		},
+		getFriendsProfiles: function( facebook_ids ){
+
+			LJ.friends.fetched_friends = LJ.friends.fetched_friends.filter( Boolean );
+
+			if( facebook_ids ){
+				return _.filter( LJ.friends.fetched_friends, function( f ){
+					return ( facebook_ids.indexOf( f.facebook_id ) != -1 );
+				});
+
+			} else {
+				return LJ.friends.fetched_friends;
+
+			}
+
+		},
+		setFriendsProfiles: function( fetched_friends ){
+
+			LJ.friends.fetched_friends = fetched_friends;
+
+		},
+		sortFriends: function(){
+
+			LJ.friends.fetched_friends.sort(function( fa, fb ){
+
+				if( fa.name[ 0 ].toLowerCase() < fb.name[ 0 ].toLowerCase() ){
+					return -1;
+				}
+
+				if( fa.name[ 0 ].toLowerCase() > fb.name[ 0 ].toLowerCase() ){
+					return 1;
+				}
+
+				return 0;
+
+			});
+
+		},
+		renderFriends: function( fetched_friends ){
+
+			var html = [];
+
+			if( fetched_friends.length == 0 ){
+				html.push( LJ.friends.renderFriendItem__Empty() );
+
+			} else {
+				fetched_friends.forEach(function( friend ){
+					html.push( LJ.friends.renderFriendItem( friend ) );
+
+				});
+
+				html.push( LJ.friends.renderFriendItem__Last() );
+
+			}
+
+			return html.join('');
+
+		},
+		displayFriends: function( html ){
+
+			var $base;
+			if( $('.friends').children().length == 0 ){
+				$( html )
+					.hide()
+					.appendTo('.friends')
+					.velocity('shradeIn', {
+						duration : LJ.friends.show_friends_duration,
+						display  : 'flex',
+						stagger  : (LJ.friends.show_friends_duration / 4)
+					});
+
+			} else {
+				$('.friends')
+					.children()
+					.velocity('shradeOut', {
+						duration : LJ.friends.show_friends_duration / 2,
+						display  : 'none',
+						complete : function(){
+							$( html )
+								.hide()
+								.appendTo('.friends')
+								.velocity('shradeIn', {
+									duration : LJ.friends.show_friends_duration,
+									display  : 'flex',
+									stagger  : (LJ.friends.show_friends_duration / 4)
+								});
+
+						}
+					});
+
+			}
+
+		},
+		renderFriendItem__Empty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-users"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_friends_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_friends_subtitle"></p>',
+					'</div>',
+					'<div class="empty__subicon --round-icon js-invite-friends">',
+						'<i class="icon icon-gift"></i>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderFriendItem: function( friend ){
+
+			var filterlay = 'js-filterlay';
+			var nonei 	  = '';
+
+			if( !friend ){
+				LJ.wlog('Trying to render undefined friend, rendering ghost user instead');
+				friend = LJ.getGhostUser();
+				filterlay = '';
+				nonei 	  = 'nonei';
+			}
+
+			var formatted_date = LJ.text("w_member_since") + " " + moment( friend.signed_up_at ).format('DD/MM/YY');
+
+			var main_img = LJ.findMainPic( friend );
+			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="friend__item js-show-friend '+ nonei +'" data-facebook-id="' + friend.facebook_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image '+ filterlay +'">' + img_html + '</div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + friend.name + ', <span class="row-body__age">' + friend.age + '</span></h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon">',
+								'<i class="icon icon-education"></i>',
+							'</div>',
+							'<span>' + friend.job + '</span>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon">',
+								'<i class="icon icon-location"></i>',
+							'</div>',
+							'<span>' + friend.location.place_name + '</span>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderFriendItem__Last: function(){
+
+			return '';
+
+			return LJ.ui.render([
+
+				'<div class="friend__item --invite-friends js-invite-friends" >',
+					'<div class="row-pic">',
+						'<i class="icon icon-gift"></i>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2> ' + LJ.text('friends_title_invite') + '</h2>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderFriendsInModal: function(){
+
+			var friends = LJ.friends.getFriendsProfiles();
+ 
+			if( friends.length == 0 ){
+
+				return LJ.friends.renderFriendsInModal__Empty();
+
+			} else {
+
+				var html = [];
+
+				friends.forEach(function( f ){
+					html.push( LJ.friends.renderFriendInModal( f ) );
+				});
+
+				return html.join('');
+			}
+
+		},
+		renderFriendsInModal__Empty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="no-friends">',
+					'<span data-lid="modal_no_friends_text"></span>',
+					'<button class="js-invite-friends" data-lid="modal_no_friends_btn"></button>',
+				'</div>'
+
+			].join(''));
+
+		},
+		renderFriendInModal: function( f ){
+
+			if( !f ){
+				f = LJ.getGhostUser();
+			}
+			
+			var main_img = LJ.findMainPic( f );
+			var img_html = LJ.pictures.makeImgHtml( main_img.img_id, main_img.img_version, 'user-modal' );
+
+			return LJ.ui.render([
+
+				'<div class="modal-item friend-modal" data-name="' + f.name.toLowerCase() + '" data-item-id="' + f.facebook_id + '">',
+					'<div class="friend-modal__pic">',
+						img_html,
+						'<div class="friend-modal__icon --round-icon">',
+							'<i class="icon icon-check"></i>',
+						'</div>',
+					'</div>',
+					'<div class="friend-modal__name">',
+						'<span>' + f.name + '</span>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		displayInviteFriendsPopup: function(){
+
+			LJ.friends.invite_popup_timer = setTimeout(function(){
+
+				$( LJ.friends.renderInviteFriendsPopup() )
+					.hide()
+					.appendTo('body')
+					.velocity('shradeIn', {
+						duration: 400,
+						display : 'flex'
+					});
+
+			}, 2500 );
+
+		},
+		hideInviteFriendsPopup: function(){
+
+			clearTimeout( LJ.friends.invite_popup_timer );
+			$('.invite-friends-popup').remove();
+
+		},
+		renderInviteFriendsPopup: function(){
+
+			return LJ.ui.render([
+
+				'<div class="invite-friends-popup">',
+					'<div class="invite-friends-popup__close js-close-friends-popup --round-icon">',
+						'<i class="icon icon-cross-fat"></i>',
+					'</div>',
+					'<div class="invite-friends-popup__icon --round-icon">',
+						'<i class="icon icon-heart"></i>',
+					'</div>',
+					'<div class="invite-friends-popup-message">',
+						'<div class="invite-friends-popup__h1">',
+							'<span data-lid="invite_friends_popup_h1"></span>',
+						'</div>',
+						'<div class="invite-friends-popup__h2">',
+							'<span data-lid="invite_friends_popup_h2"></span>',
+						'</div>',
+					'</div>',
+					'<div class="invite-friends-popup__btn js-invite-friends">',
+						'<button data-lid="invite_friends_popup_btn"></button>',
+					'</div>',
+				'</div>'
+
+			].join(''));
+
+		}
+
+	});
+    /*
+        Initialisation script
+        Recursively try to initialize the Facebook pluggin
+        When it's loaded, app starts.
+        Follow the code...
+        Léo Jacquemin, 10/03/16, 17h56
+    */
+    
+
+	window.LJ = _.merge( window.LJ || {}, { 
+
+		init: function( time ){
+
+            $( window ).scrollTop( 0 )
+
+            // The application only starts when the Facebook pluggin has loaded
+            if( typeof FB === 'undefined' )
+                return setTimeout(function(){ LJ.init( time ); }, time );
+            
+            // Language, Lodash & jQuery augmentations
+            LJ.initAugmentations();
+            // Translate the whole page based on sourcetext & data-lid attributes
+            LJ.lang.init();
+            // Cache static assets images used accross modules
+            LJ.static.init();
+            // Store mechanism (local storage / cookie)
+            LJ.store.init();
+            // Analytics for tracking what's going on
+            LJ.analytics.init();
+            // Starts the Facebook SDK
+            LJ.facebook.init();
+            // Basic routing functionalities to prevent user from accidentally leaving the page
+            LJ.router.init();
+            // Menu dom interactions
+            LJ.menu.init();
+            // Navigation for macro views 
+            LJ.nav.init();
+            // Scrolling globals etc
+            LJ.ui.init();
+            // Cheers
+            LJ.cheers.init();
+            // Shared module
+            // LJ.shared.init();  // Keep it for ulterior version
+            // Profile user
+            LJ.profile_user.init();
+
+            // Autologin for users who asked the "remember me" feature in their settings
+            LJ.autologin.init()
+                .then(  LJ.autologin.startLogin )
+                .catch( LJ.autologin.startLanding )
+
+
+        },
+        start: function( facebook_token ){
+
+            return LJ.Promise.resolve( facebook_token )
+                .then( LJ.login.enterLoginProcess )  
+                .then(function(){
+                    return LJ.api.fetchAppToken( facebook_token );
+                })
+                .then( LJ.login.stepCompleted )
+                // Enter the following step with a valid app token
+                // Two kinds of data are fetch :
+                // - datas that are self-related  : profile infos, pictures, friends, notifications, chats...
+                // - datas that are users-related : search users module, map events...
+                .then( LJ.profile.init )
+                .then( LJ.login.firstSetup )
+                .then( LJ.login.stepCompleted )
+                .then( LJ.map.initGeocoder )
+                // .then(function(){ return LJ.delayd[ lol ]})
+                .then(function(){
+                    var a = LJ.friends.init();
+                    var b = LJ.search.init();
+                    var c = LJ.realtime.init();
+                    return LJ.Promise.all([ a, b, c ]);
+                })
+                .then( LJ.notifications.init )
+                .then( LJ.before.init )
+                .then( LJ.chat.init )
+                .then( LJ.login.hideLoginSteps )
+                .then( LJ.map.init ) // Must be as close as possible to terminateLogin. Map doesnt render sometimes..
+                .then( LJ.login.terminateLoginProcess )
+                .then( LJ.onboarding.init )
+                .then( LJ.connecter.init )
+                .then( LJ.dev.init )
+
+        }
+
+
+	});
+
+
+	
+	window.LJ.invite = _.merge( window.LJ.invite || {}, {
+
+		init: function(){
+			
+		}
+
+	});
+
 	window.LJ.ladder = _.merge( window.LJ.ladder || {}, {
 
 		initLadder: function( options ){
@@ -37363,1962 +37363,6 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		}
 
 	});
-
-
-
-
-	window.LJ.map = _.merge( window.LJ.map || {}, {		
-
-        markers: [],
-        browser_uistate: null,
-
-       	// Called as soon as the script finished loading everything
-		init: function(){
-
-			LJ.map.setupMap();
-            LJ.map.preloadMarkers();
-
-			LJ.map.handleDomEvents();
-            LJ.map.handleMapEvents();
-			LJ.map.initPlacesServices();
-            LJ.before.displayBeforeMarkers( LJ.before.fetched_befores );
-
-            
-            return LJ.before.refreshBrowserLocation();
-			
-		},
-        initGeocoder: function(){
-            LJ.meegeo = new google.maps.Geocoder();
-            return;
-
-        },
-        initPlacesServices: function(){
-            LJ.meeservices = new google.maps.places.PlacesService( LJ.meemap );
-            return;
-
-        },
-		sayHello: function(){
-			LJ.log('Map has been successfully loaded');
-
-		},
-        preloadMarkers: function(){
-
-            var markers_html = [];
-            Object.keys( LJ.map.markers_url ).forEach(function( type ){
-
-                var size = LJ.pictures.getDevicePixelRatio() + "x";
-                var url  = LJ.map.markers_url[ type ][ size ];
-
-                markers_html.push('<img src="'+ url +'">');
-
-            });
-
-            $( markers_html.join('') ).hide().appendTo('body');
-
-        },
-		handleDomEvents: function(){
-            
-			LJ.ui.$body.on('click', '.map__icon.--geoloc', LJ.map.centerMapAtUserLocation );
-			LJ.ui.$body.on('click', '.map__icon.--change-location', LJ.map.toggleMapBrowser );
-
-		},
-		setupMap: function(){
-
-			LJ.log('Setting up google map...');
-
-            var latlng = {
-                lat: parseFloat( LJ.user.location.lat ),
-                lng: parseFloat( LJ.user.location.lng )
-            };
-
-			var options = {
-				center: latlng,
-	            zoom: 13,
-	            disableDefaultUI: true,
-	            zoomControlOptions: {
-	                style    : google.maps.ZoomControlStyle.SMALL,
-	                position : google.maps.ControlPosition.RIGHT_TOP
-	            },
-	            mapTypeControlOptions: {
-	                mapTypeIds: ['meemap']
-	            }
-			}
-
-			var $wrap = document.getElementsByClassName('js-map-wrap')[0];
-
-			LJ.meemap = new google.maps.Map( $wrap, options );
-			
-            LJ.map.setMapStyle('apple');
-            LJ.map.setMapIcons();
-            LJ.map.setMapOverlay();
-            LJ.map.setMapBrowser();
-            LJ.map.setMapZoom();
-
-            setTimeout(function(){
-                LJ.map.refreshMap();
-            }, 1000 );
-
-			return;
-
-        },
-        setMapStyle: function( map_style ){
-
-        	var custom_style = LJ.map.style[ map_style ];
-        	if( !custom_style ){
-        		return LJ.wlog('Unable to find a custom style for : ' + map_style );
-        	}
-
-        	var styled_map = new google.maps.StyledMapType( custom_style, {
-                name: 'meemap'
-            });
-            // Set map styling 
-            LJ.meemap.mapTypes.set('meemap', styled_map );
-            LJ.meemap.setMapTypeId('meemap');
-
-        },
-        setMapIcons: function(){
-
-        	$('.app-section.--map')
-        		.append( LJ.map.renderChangeLocation() )
-        		.append( LJ.map.renderGeoLocation() )
-                .append( LJ.map.renderCreateBefore() )
-                // .append( LJ.map.renderExpandBrowser() )
-        		.append( LJ.map.renderPinLocation() );
-
-
-        },
-        setMapOverlay: function(){
-
-        	$('.app-section.--map')
-        		.append( LJ.map.renderMapOverlay() );
-
-        },
-        setMapBrowser: function(){
-
-        	$('.app-section.--map')
-        		.append( LJ.map.renderMapBrowser() );
-
-            return LJ.seek.activatePlacesInMap()
-                    .then(function(){
-
-                    	LJ.seek.map_browser_places.addListener('place_changed', function( place ){
-
-                    		var place  = LJ.seek.map_browser_places.getPlace();
-                    		var latlng = place.geometry.location;
-
-                    		LJ.meemap.setCenter( latlng );
-                            $('#map-browser-input').val('');
-
-                    	});
-                        
-                    });
-
-        },
-        handleMapEvents: function(){
-
-            LJ.meemap.addListener('dragstart', function(){
-                LJ.before.preRefreshBrowserLocation();
-            });
-
-            LJ.meemap.addListener('dragend', function(){
-                LJ.before.refreshBrowserLocation();
-            });
-
-            LJ.meemap.addListener('click', function(e){
-                
-            });
-            
-            LJ.meemap.addListener('center_changed', function(){
-                // LJ.before.refreshNearestBefores();
-            });
-
-            $('body').on('click', '.js-map-zoom-in', LJ.map.zoomIn );
-            $('body').on('click', '.js-map-zoom-out', LJ.map.zoomOut );
-
-
-        },
-        expandBrowser: function(){
-
-            $('.map__icon.--create-before, .map__icon.--filter-dates, .be-browser' ).velocity({ 'translateY':'0' }, { duration: 300 });
-
-        },
-        shrinkBrowser: function(){
-
-            $('.map__icon.--create-before, .map__icon.--filter-dates, .be-browser' ).velocity({ 'translateY':'-54' }, { duration: 300 });
-
-        },
-        handleShrinkBrowserDates: function(){
-
-            if( LJ.map.browser_uistate == "shrinked" ){
-                LJ.map.activateBrowserState( "expanded" );
-            } else {
-                LJ.map.activateBrowserState( "shrinked" );
-            }
-
-        },
-        activateBrowserState: function( state ){
-
-            if( state == "expanded" ){
-                LJ.map.expandBrowser();
-                LJ.map.browser_uistate = "expanded";
-            }
-
-            if( state == "shrinked" ){
-                LJ.map.shrinkBrowser();
-                LJ.map.browser_uistate = "shrinked";
-            }
-
-        },
-        renderMapZoom: function(){
-
-            return LJ.ui.render([
-
-                '<div class="map__icon map-zoom">',
-                    '<div class="map-zoom__in --round-icon js-map-zoom-in">',
-                        '<i class="icon icon-plus"></i>',
-                    '</div>',
-                    '<div class="map-zoom__splitter"></div>',
-                    '<div class="map-zoom__out --round-icon js-map-zoom-out">',
-                        '<i class="icon icon-line"></i>',
-                    '</div>',
-                '</div>'
-
-
-            ].join(''));
-
-        },
-        setMapZoom: function(){
-
-            $('.app-section.--map').append( LJ.map.renderMapZoom() );
-
-        },
-        zoomIn: function(){
-
-            LJ.meemap.setZoom( LJ.meemap.getZoom() + 1 );
-
-        },
-        zoomOut: function(){
-
-            LJ.meemap.setZoom( LJ.meemap.getZoom() - 1 );
-
-        },
-        refreshMap: function(){
-        	return google.maps.event.trigger( LJ.meemap, 'resize' );
-
-        },
-        deactivateDate: function(){
-
-            var $date_activated = $('.be-dates__date.--active');
-
-            if( $date_activated.length == 0 ){
-                return LJ.log('Already deactivated');
-            }
-
-            var m = moment( $date_activated.attr('data-day') , 'DD/MM' );
-            LJ.map.activateDate( m );
-
-        },  
-        activateDate: function( m ){
-
-            var $date_activated   = $('.be-dates__date.--active');
-            var $date_to_activate = $('.be-dates__date[data-day="'+ m.format('DD/MM') +'"]');
-
-             if( $date_to_activate.length != 1 ){
-                return LJ.wlog('Unable to find the date : ' + m.format('DD/MM') );
-            }
-
-            if( $date_activated.is( $date_to_activate ) ){
-
-                 $date_activated
-                    .removeClass('--active')
-                    .find('.be-dates__bar')
-                    .velocity('bounceOut', { duration: 450, display: 'none' });
-
-            } else {
-
-                $date_activated
-                    .removeClass('--active')
-                    .find('.be-dates__bar')
-                    .velocity('bounceOut', { duration: 450, display: 'none' });
-
-                $date_to_activate
-                    .addClass('--active')
-                    .find('.be-dates__bar')
-                    .velocity('bounceInQuick', { duration: 450, display: 'block' });
-
-            }
-
-            LJ.map.updateMarkers__byDate();
-
-        },
-        findLocationWithLatLng: function( latlng ){
-            return LJ.promise(function( resolve, reject ){
-
-                if( !latlng ){
-                    return LJ.wlog('Cant find address without latlng');
-                }
-
-                LJ.meegeo.geocode({ location: latlng }, function( res, status ){
-
-                    if( status === google.maps.GeocoderStatus.OK && res[0] ){
-                        resolve( res[0] );
-                    } else {
-                        reject( status );
-                    }
-                });
-
-            });
-
-
-        },
-        findAddressWithLatLng: function( latlng ){
-            return LJ.map.findLocationWithLatLng( latlng )
-
-                    .then(function( location ){
-                        return location.formatted_address;
-                    });
-
-        },
-        findLatLngWithAddress: function( address ){
-        	return LJ.promise(function( resolve, reject ){
-
-	        	if( !address ){
-	        		return LJ.wlog('Cant find LatLng without adress');
-	        	}
-
-	        	LJ.meegeo.geocode({ address: address }, function( res, status ){
-
-	        		if( status === google.maps.GeocoderStatus.OK && res[0] ){
-	        			resolve( res[0].geometry.location );
-	        		} else {
-	        			reject( status );
-	        		}
-	        	});
-
-        	});
-        	
-        },
-        findLatLngWithPlaceId: function( place_id ){
-        	return LJ.promise(function( resolve, reject ){
-
-	        	if( !place_id ){
-	        		return LJ.wlog('Cant find LatLng without place_id');
-	        	}
-
-	        	LJ.meegeo.geocode({ placeId: place_id }, function( res, status ){
-
-	        		if( status === google.maps.GeocoderStatus.OK && res[0] ){
-	        			resolve( res[0].geometry.location );
-	        		} else {
-	        			reject( status );
-	        		}
-	        	});
-
-        	});
-        	
-        },
-        toggleMapBrowser: function(){
-
-        	var $mb = $('.map-browse');
-
-        	if( $mb.hasClass('--active') ){
-
-        		$mb.removeClass('--active');
-        		$mb.velocity('shradeOut', { duration: 200, display: 'none' });
-
-        	} else {
-
-        		$mb.addClass('--active');
-        		$mb.velocity('shradeIn', { duration: 200, display: 'flex' });
-
-        	}
-        },
-        centerMapAtUserLocation: function( pan ){
-
-        	var place_id = LJ.user.location.place_id;
-        	return LJ.map.findLatLngWithPlaceId( place_id )
-        			.then(function( latlng ){
-        				pan ? LJ.meemap.panTo( latlng ) : LJ.meemap.setCenter( latlng );
-        			});
-
-        },
-        distanceBetweenTwoLatLng: function( latlng1, latlng2 ){
-
-            var a = new google.maps.LatLng( latlng1 );
-            var b = new google.maps.LatLng( latlng2 );
-
-            return google.maps.geometry.spherical.computeDistanceBetween( a, b );
-
-        },
-        shiftLatLng: function( latlng ){
-
-            var a   = new google.maps.LatLng( latlng );
-            var rdm =  google.maps.geometry.spherical.computeOffset( a, LJ.randomInt( 100, 200 ), LJ.randomInt(0, 180) );
-
-            return {
-                lng: rdm.lng(),
-                lat: rdm.lat()
-            };
-
-        },
-        findClosestMarkers: function( latlng, distance ){
-
-            var markers = [];
-            LJ.map.markers.forEach(function( mrk ){
-
-                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < distance ){
-                    markers.push( mrk );
-                }
-
-            });
-
-            return markers; 
-
-        },
-        offsetLatLng: function( latlng ){
-
-            var offsetted = false;
-            LJ.map.markers.forEach(function( mrk ){
-
-                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < 100 && !offsetted){
-
-                    LJ.wlog('Markers are too close, shifting latlng');
-                    offsetted = true;
-                    latlng = LJ.map.shiftLatLng( latlng );
-
-                }
-                
-            });
-
-            return latlng;
-
-        },
-        offsetLatLngRecursive: function( latlng, i ){
-
-            // Display the marker in a more intelligent way, to put it randomy close to where its supposed to be
-            // But also taking into account where other markers are places :) 
-
-        },
-        validateMarkerOptions: function( opts ){
-
-        	var ok = true;
-
-        	if( !opts.url ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without url: %s', opts.url );
-        	}
-        	if( !opts.latlng ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without latlng: %s', opts.latlng );
-        	}
-        	if( !opts.marker_id ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without marke_id: %s', opts.marker_id );
-        	}
-        	if( !opts.type ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without type: %s', opts.tpye );
-        	}
-        	
-        	return ok
-
-        },
-        markerAlreadyExists: function( marker_id ){
-
-            return _.find( LJ.map.markers, function( mrk ){
-                return mrk && ( mrk.marker_id == marker_id );
-            });
-            
-        },
-        makeIcon: function( url ){
-
-            var scaledSize;
-            var base_width  = 34;
-            var base_height = 41;
-            var base_width_active  = 50;
-            var base_height_active = 60;
-
-            if( !/lg/i.test( url ) ){
-                scaledSize = new google.maps.Size( base_width, base_height );
-            } else {
-                scaledSize = new google.maps.Size( base_width_active, base_height_active );
-            }
-
-            return {
-                url        : url,
-                scaledSize : scaledSize
-            };
-
-        },
-        addMarker: function( opts ){
-
-        	if( !LJ.map.validateMarkerOptions( opts ) ) return;
-
-            if( LJ.map.markerAlreadyExists( opts.marker_id ) ){
-                return LJ.wlog('A marker with id : ' + opts.marker_id + ' is already set on the map');
-            }
-
-            var latlng = LJ.map.offsetLatLng( opts.latlng );
-            var icon   = LJ.map.makeIcon( opts.url );
-
-        	var marker = new google.maps.Marker({
-                map        : LJ.meemap,
-                position   : latlng,
-                icon       : icon
-            });
-
-            var data = opts.data || null;
-
-        	// Store the reference for further usage
-        	LJ.map.markers.push({
-        		marker_id : opts.marker_id,
-        		marker 	  : marker,
-        		data      : data,
-                type      : opts.type,
-                latlng    : latlng
-        	});
-
-        	// Attach listenres if there are any
-        	if( Array.isArray( opts.listeners )){
-                opts.listeners.forEach(function( listener ){
-                    marker.addListener( listener.event_type, function(){
-                    	listener.callback( marker, data );
-                    });
-                });
-
-            }
-
-        },
-        getBeforeMarkerUrlByType: function( type, active ){
-
-            var px     = LJ.pictures.getDevicePixelRatio() + 'x';
-            var suffix = active ? '_active' : '';
-
-            if( type == 'drink' ){
-                url = LJ.map.markers_url[ 'drink' + suffix ];
-            }
-
-            if( type == 'drinknew' ){
-               url = LJ.map.markers_url['drinknew'];
-            }
-
-            if( type == 'hosting' ){
-                url = LJ.map.markers_url[ 'star' + suffix ];
-            }
-
-            if( type == 'pending' ){
-                url = LJ.map.markers_url[ 'pending' + suffix ];
-            }
-
-            if( type == 'accepted' ){
-                url = LJ.map.markers_url[ 'chat' + suffix ];
-            }  
-
-            return url[ px ];
-
-
-        },  
-        getBeforeMarkerUrl: function( before, active ){
-
-            var url  = null;
-
-            var my_before = LJ.before.getMyBeforeById( before._id );
-
-            if( !my_before ){
-
-                // Moment.js expresses the difference between 2 dates in ms
-                var diff_in_hour = ( moment() - moment( before.created_at ) )/( 3600 * 1000 );
-
-                if( LJ.map.hasSeenMarker( before._id ) || diff_in_hour > 24 ){
-                    url = LJ.map.getBeforeMarkerUrlByType("drink", active );
-
-                } else {
-                    url = LJ.map.getBeforeMarkerUrlByType("drinknew", active );
-
-                }
-
-            } else {
-                url = LJ.map.getBeforeMarkerUrlByType( my_before.status, active );
-            }
-
-            if( !url ){
-                return LJ.wlog('Cant render marker, unable to find marker type');
-
-            } else {
-                return url;
-            }
-
-        },
-        // Before must be the whole before object and not an itemized version;
-        addBeforeMarker: function( before ){
-
-        	var before_id = before._id;
-
-            var latlng  = {
-                lat: before.address.lat,
-                lng: before.address.lng
-            };
-
-            var url  = LJ.map.getBeforeMarkerUrl( before, false );
-
-            LJ.map.addMarker({
-                marker_id : before_id,
-                latlng    : latlng,
-                url       : url,
-                type      : 'before',
-                data      : before,
-                listeners : [
-                    {
-                        'event_type': 'click',
-                        'callback'  : LJ.map.handleClickOnEventMarker
-                    }]
-
-            });
-
-        },
-        removeBeforeMarker: function( before_id ){
-
-            LJ.map.markers.forEach(function( mrk, i){
-
-                if( mrk.marker_id == before_id ){
-                    mrk.marker.setMap( null );
-                    delete LJ.map.markers[ i ];
-                }
-
-            });
-
-        },
-        deactivateMarkers: function(){
-
-            LJ.map.markers.forEach(function( mrk ){
-
-                mrk.status = "inactive";
-                mrk.marker.setZIndex( 1 );
- 
-            });
-
-        },
-        activateMarker: function( marker_id ){
-
-            LJ.map.markers.forEach(function( mrk ){
-
-                if( mrk.marker_id == marker_id ){
-                    mrk.status = "active";
-                    mrk.marker.setZIndex( 10 );
-
-                } else {
-                    mrk.status = "inactive";
-                    mrk.marker.setZIndex( 1 );
-                }
-
-            });
-
-        },  
-        refreshMarkers: function(){
-
-            LJ.map.markers.forEach(function( mrk ){
-
-                if( mrk.type == "before" ){
-
-                    LJ.before.getBefore( mrk.marker_id )
-                    .then(function( bfr ){
-
-                        var url;
-
-                        if( mrk.status == "active" ){
-                            url = LJ.map.getBeforeMarkerUrl( bfr, true );
-                        } else {
-                            url = LJ.map.getBeforeMarkerUrl( bfr, false );
-                        }
-
-                        var icon = LJ.map.makeIcon( url );     
-                        mrk.marker.setIcon( icon );                   
-                        
-                    });
-
-                }
-
-            });
-
-        },
-        getActiveMarker: function(){
-
-            return _.find( LJ.map.markers, function( mrk ){
-                return mrk.status == "active";
-            });
-
-        },
-        clearSeenMarkers: function(){
-
-            var seen_markers = LJ.store.get('seen_markers') || [];
-
-            seen_markers.forEach(function( mrk_id, i ){
-
-                var target_mrk = _.find( LJ.map.markers, function( m ){
-                    return m.marker_id == mrk_id;
-                });
-
-                // Marker was not found : means it wasnt fetched by the map,
-                // so remove it (obsolete before etc...)
-                if( !target_mrk ){
-                    delete seen_markers[ i ];
-                }
-
-            });
-
-            LJ.store.set('seen_markers', _.uniq( seen_markers.filter( Boolean ) ));
-
-        },
-        seenifyMarker: function( marker_id ){
-
-            var seen_markers = LJ.store.get('seen_markers') || [];
-
-            seen_markers.push( marker_id );
-            LJ.store.set( 'seen_markers', _.uniq( seen_markers ) );
-
-        },
-        hasSeenMarker: function( marker_id ){
-
-            var seen_markers = LJ.store.get('seen_markers') || [];
-
-            return seen_markers.indexOf( marker_id ) != -1;
-            
-
-        },
-        getMarker: function( marker_id ){
-	
-			return _.find( LJ.map.markers, function( mrk ){
-				return mrk && mrk.marker_id == marker_id;
-			});
-        		
-        },
-        handleClickOnEventMarker: function( marker, before ){
-
-            LJ.map.seenifyMarker( before._id );
-            var mrk = LJ.map.getMarker( before._id );
-            
-            if( mrk.marker.getOpacity() != 1 ){
-
-                LJ.map.deactivateDate();
-                LJ.before.handleCloseBeforeInview();
-                LJ.before.hideBeforeInview();
-                return;
-            }
-
-            if( !mrk.status || mrk.status == "inactive" ){
-
-                LJ.before.showBeforeInview( before );
-                LJ.map.activateMarker( before._id );
-
-            } else {
-
-                LJ.before.handleCloseBeforeInview();
-                LJ.before.hideBeforeInview();
-
-            }
-
-            LJ.map.refreshMarkers();
-
-        },
-        renderCreateBefore: function(){
-
-            return LJ.ui.render([
-                '<div class="map__icon --round-icon --create-before js-create-before">',
-                    '<i class="icon icon-create-before"></i>',
-                '</div>'
-                ].join(''));
-
-        },
-        renderExpandBrowser: function(){
-
-            return LJ.ui.render([
-                '<div class="map__icon --round-icon --filter-dates js-expand-browser">',
-                    '<i class="icon icon-filters"></i>',
-                '</div>'
-                ].join(''));
-
-        },
-        renderChangeLocation: function(){
-
-        	return LJ.ui.render([
-        		'<div class="map__icon --round-icon --change-location js-map-change-location">',
-        			'<i class="icon icon-search-zoom"></i>',
-        		'</div>'
-        		].join(''));
-
-        },
-        renderGeoLocation: function(){
-
-        	return LJ.ui.render([
-        		'<div class="map__icon --round-icon --geoloc js-map-geoloc">',
-        			'<i class="icon icon-geoloc"></i>',
-        		'</div>'
-        		].join(''));
-        },
-        renderPinLocation: function(){
-
-        	return LJ.ui.render([
-        		'<div class="map__icon --round-icon --location js-map-location">',
-        			'<i class="icon icon-location"></i>',
-        		'</div>'
-        		].join(''));
-        },
-        renderMapOverlay: function(){
-
-        	return LJ.ui.render([
-        		'<div class="map__overlay"></div>'
-        		].join(''));
-
-        },
-        renderMapBrowser: function(){
-
-        	return LJ.ui.render([
-        		'<div class="map-browse">',
-        			'<input id="map-browser-input"/>',
-        		'</div>'
-        		].join(''));
-
-        },
-        updateMarkers__byDate: function(){
-
-            var active_day;
-            var $active_day = $('.be-dates__date.--active');
-
-            if( $active_day.length == 1 ){
-                active_day = moment( $active_day.attr('data-day'), 'DD/MM' ).dayOfYear();
-                
-            } else {
-                active_day = null;
-            }
-
-
-            LJ.map.markers.forEach(function( mrk ){
-
-                if( mrk.type == "before" && active_day ){
-
-                    if( mrk.data && mrk.data.begins_at && moment( mrk.data.begins_at ).dayOfYear() == active_day ){
-                        mrk.marker.setOpacity( 1 );
-                    } else {
-                        mrk.marker.setOpacity( 0.2 );
-                    }
-
-                } else {
-                    mrk.marker.setOpacity( 1 );
-                }
-
-            });
-        }
-
-
-	});		
-
-	
-	testClearAllMarkers = function(){
-		if( LJ.map.marker_test ){
-
-			LJ.map.marker_test.forEach(function(mrk){
-				mrk.marker.setMap(null);
-			});
-		}			
-	};	
-
-
-
-
-
-
-	window.LJ.map = _.merge( window.LJ.map || {}, {
-
-
-		renderEventMapview_User: function( evt ){
-
-			return LJ.fn.renderEventMapview( evt, {
-				request_html: '<button  data-lid="e_preview_participate" class="theme-btn btn-requestin mapview-action__btn">Participer</div>'
-			});
-
-		},
-		renderEventMapview_MemberPending: function( evt ){
-
-			return LJ.fn.renderEventMapview( evt, {
-				request_html: '<button  data-lid="e_preview_pending" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
-			});
-
-		},
-		renderEventMapview_MemberAccepted: function( evt ){
-
-			return LJ.fn.renderEventMapview( evt, {
-				request_html: '<button  data-lid="e_preview_chat" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
-			});
-
-		},
-		renderEventMapview_Host: function( evt ){
-
-			return LJ.fn.renderEventMapview( evt, {
-				request_html: '<button  data-lid="e_preview_manage" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
-			});
-
-		},
-		renderEventMapview: function( evt, opts ){
-
-			//Hosts pictures 
-			var hosts_pictures_html = '';
-
-			hosts_pictures_html = '<div class="mapview-hosts">';
-			evt.hosts.forEach(function( host ){
-
-			var display_params     = LJ.cloudinary.events.mapview.hosts.params;
-			display_params.version = LJ.fn.findMainImage( host ).img_version;
-
-			var img_tag = $.cloudinary.image( LJ.fn.findMainImage( host ).img_id, display_params ).prop('outerHTML');
-			var country = '<div class="user-flag mapview-host__flag"><span class="flag-icon flag-icon-' + host.country_code + '"></span></div>';
-
-			hosts_pictures_html += '<div class="mapview-host" data-userid="' + host.facebook_id + '">' 
-										+ img_tag + country 
-									+'</div>'
-
-			});
-			hosts_pictures_html += '</div>';
-
-
-			// Context
-			var context_html = '<div class="mapview-context">';
-
-			// Address
-			var address_html = '';
-			address_html += '<div class="mapview-address mapview-context__element">'
-				+ '<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>'
-				+ '<div class="mapview-address__name">'+evt.address.place_name+'</div>'
-			+'</div>';
-
-			// Date
-			var date = moment( evt.begins_at ).format('DD/MM');
-			var hour = moment( evt.begins_at ).format('HH/MM').replace('/', 'H');
-
-			var date_html = ['<div class="mapview-date mapview-context__element">',
-				'<i class="icon icon-calendar mapview-context__icon mapview-date__icon"></i>',
-				'<div class="mapview-date__day">'+ date +'</div>',
-				'<div class="mapview-date__splitter">, </div>',
-				'<div class="mapview-date__hour">'+ hour +'</div>',
-			'</div>'].join('');
-
-
-			// Host names
-			var hosts_names_html = '<div class="mapview-hostnames mapview-context__element">';
-			evt.hosts.forEach(function( host ){ hosts_names_html += '<div class="mapview-hostnames__name">'+ host.name +'</div>'; });
-			hosts_names_html += '</div>';
-
-			context_html += address_html;
-			context_html += date_html;
-			context_html += hosts_names_html;
-
-			context_html += '</div>';
-
-
-			// Action buttons
-			var action_html = ['<div class="mapview-action">',
-			opts.request_html,
-			'</div>'].join('');
-
-			// Main HTML
-			var divider_html = '<div class="mapview__divider--md"></div>';
-			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
-
-			var html = '<div class="mapview mapview--event" data-eventid="'+evt._id+'">'
-							+ close_html
-							+ hosts_pictures_html
-							+ divider_html
-							+ context_html
-							+ divider_html
-							+ action_html
-					  '</div>';
-
-
-			return LJ.fn.translateView( html );
-
-
-		},
-		renderPartyMapview_Event: function( party, opts ){
-
-			// Icon party to ambience everyone
-			var main_icon_html = [
-				'<div class="mapview-main-icon">',
-					'<i class="icon icon-glass mapview-main-icon__icon"></i>',
-				'</div>'
-			].join('');
-
-
-			// Party context & various informations
-			var context_html = '<div class="mapview-context mapview-context--party">';
-
-			// Address
-			var address_html = '';
-			address_html += '<div class="mapview-address mapview-context__element">'
-								+ '<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>'
-								+ '<div class="mapview-address__name">'+ party.address.place_name +'</div>'
-							+'</div>';
-
-
-			// Closing context part
-			context_html += address_html;
-			context_html += '</div>';
-
-			var divider_html = '<div class="mapview__divider--md"></div>';
-			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
-
-			var html = '<div class="mapview mapview--party" data-placeid="'+ party.address.place_id +'">'
-				+ close_html
-				+ context_html
-				+ '</div>'
-
-			return LJ.fn.translateView( html );
-
-
-		},
-		renderPartyMapview_Party: function( party ){
-
-			LJ.fn.renderPartyPreview_Event( party );
-
-		},
-		renderPartyMapview_Empty: function( party ){
-
-			var context_html = [
-				'<div class="mapview-context">',
-					'<div class="mapview-address mapview-context__element">',
-					'<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>',
-					'<div class="mapview-address__name">'+ party.address.place_name +'</div>',
-				'</div>',
-				'<div class="mapview-emptytext mapview-context__element">',
-					'<i class="mapview-emptytext__icon icon icon-star-empty mapview-context__icon"></i>',
-					'<div class="mapview-emptytext__name" data-lid="e_mapview_empty_text">...</div>',
-					'</div>',
-				'</div>'
-			].join('');
-
-			var action_html = [
-				'<div class="mapview-action">',
-					'<div class="theme-btn mapview-action__btn js-create-event" data-lid="e_mapview_first_to_create">...</div>',
-				'</div>'
-			].join('');
-
-			var divider_html = '<div class="mapview__divider--md"></div>';
-			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
-
-			var html = [
-				'<div class="mapview mapview-empty mapview--party">',
-					close_html,
-					context_html,
-					divider_html,
-					action_html,
-				'</div>'
-			].join('');
-
-			return LJ.fn.translateView( html );
-
-		}
-	});
-
-	window.LJ.map = _.merge( window.LJ.map || {}, {
-        
-		markers_url: {
-            
-			drink: { 
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md__2x.png'
-            },
-            drink_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__2x.png'
-            },
-            drinknew: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md_newred__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md_newred__2x.png'
-            },
-            star: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__2x.png'
-            },
-            star_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__2x.png'
-            },
-            pending: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__2x.png'
-            },
-            pending_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__2x.png'
-            },
-            chat: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__2x.png'
-            },
-            chat_active: {
-                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__2x.png'
-            }
-        }
-
-	});
-
-	window.LJ.map = _.merge( window.LJ.map || {}, {
-
-
-	});
-
-window.LJ.map.style = _.merge(window.LJ.map.style || {}, {
-    snow: [{
-        "featureType": "administrative",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "simplified"
-        }, {
-            "hue": "#ff0000"
-        }, {
-            "weight": "0.27"
-        }]
-    }, {
-        "featureType": "administrative",
-        "elementType": "labels.text.fill",
-        "stylers": [{
-            "color": "#444444"
-        }]
-    }, {
-        "featureType": "administrative.country",
-        "elementType": "geometry.fill",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "administrative.locality",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "administrative.neighborhood",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "administrative.land_parcel",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "landscape",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "on"
-        }, {
-            "color": "#fdfdfd"
-        }]
-    }, {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry",
-        "stylers": [{
-            "visibility": "on"
-        }, {
-            "hue": "#ff0000"
-        }]
-    }, {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry.fill",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry.stroke",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "landscape.natural.terrain",
-        "elementType": "geometry.fill",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "landscape.natural.terrain",
-        "elementType": "geometry.stroke",
-        "stylers": [{
-            "hue": "#ff0000"
-        }]
-    }, {
-        "featureType": "poi",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "poi.park",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "simplified"
-        }, {
-            "hue": "#37ff00"
-        }, {
-            "lightness": "70"
-        }]
-    }, {
-        "featureType": "poi.school",
-        "elementType": "geometry",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "poi.school",
-        "elementType": "labels",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "poi.sports_complex",
-        "elementType": "geometry",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "poi.sports_complex",
-        "elementType": "labels.text",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "road",
-        "elementType": "all",
-        "stylers": [{
-            "saturation": -100
-        }, {
-            "lightness": 45
-        }, {
-            "visibility": "simplified"
-        }]
-    }, {
-        "featureType": "road",
-        "elementType": "geometry",
-        "stylers": [{
-            "visibility": "simplified"
-        }]
-    }, {
-        "featureType": "road",
-        "elementType": "labels",
-        "stylers": [{
-            "color": "#a39bb2"
-        }]
-    }, {
-        "featureType": "road",
-        "elementType": "labels.icon",
-        "stylers": [{
-            "visibility": "simplified"
-        }]
-    }, {
-        "featureType": "road.highway",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "simplified"
-        }]
-    }, {
-        "featureType": "road.highway",
-        "elementType": "geometry.fill",
-        "stylers": [{
-            "hue": "#ff0000"
-        }, {
-            "weight": "0.65"
-        }]
-    }, {
-        "featureType": "road.highway",
-        "elementType": "geometry.stroke",
-        "stylers": [{
-            "weight": "0.20"
-        }, {
-            "lightness": "82"
-        }, {
-            "gamma": "1.19"
-        }, {
-            "saturation": "-42"
-        }, {
-            "color": "#d59ca6"
-        }]
-    }, {
-        "featureType": "road.highway",
-        "elementType": "labels",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "labels",
-        "stylers": [{
-            "visibility": "off"
-        }, {
-            "lightness": "16"
-        }]
-    }, {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "labels.icon",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "road.arterial",
-        "elementType": "geometry",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "road.arterial",
-        "elementType": "geometry.stroke",
-        "stylers": [{
-            "visibility": "on"
-        }, {
-            "weight": "0.4"
-        }, {
-            "color": "#dbdbdb"
-        }, {
-            "lightness": "10"
-        }]
-    }, {
-        "featureType": "road.arterial",
-        "elementType": "labels.icon",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "road.local",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "simplified"
-        }]
-    }, {
-        "featureType": "road.local",
-        "elementType": "geometry.fill",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "road.local",
-        "elementType": "geometry.stroke",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "transit",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "on"
-        }]
-    }, {
-        "featureType": "transit.line",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "transit.station",
-        "elementType": "all",
-        "stylers": [{
-            "visibility": "off"
-        }]
-    }, {
-        "featureType": "water",
-        "elementType": "all",
-        "stylers": [{
-            "color": "#dae7f2"
-        }, {
-            "visibility": "on"
-        }]
-    }],
-    creamy: [{
-        "featureType": "landscape",
-        "stylers": [{
-            "hue": "#FFBB00"
-        }, {
-            "saturation": 43.400000000000006
-        }, {
-            "lightness": 37.599999999999994
-        }, {
-            "gamma": 1
-        }]
-    }, {
-        "featureType": "road.highway",
-        "stylers": [{
-            "hue": "#FFC200"
-        }, {
-            "saturation": -61.8
-        }, {
-            "lightness": 45.599999999999994
-        }, {
-            "gamma": 1
-        }]
-    }, {
-        "featureType": "road.arterial",
-        "stylers": [{
-            "hue": "#FF0300"
-        }, {
-            "saturation": -100
-        }, {
-            "lightness": 51.19999999999999
-        }, {
-            "gamma": 1
-        }]
-    }, {
-        "featureType": "road.local",
-        "stylers": [{
-            "hue": "#FF0300"
-        }, {
-            "saturation": -100
-        }, {
-            "lightness": 52
-        }, {
-            "gamma": 1
-        }]
-    }, {
-        "featureType": "water",
-        "stylers": [{
-            "hue": "#0078FF"
-        }, {
-            "saturation": -13.200000000000003
-        }, {
-            "lightness": 2.4000000000000057
-        }, {
-            "gamma": 1
-        }]
-    }, {
-        "featureType": "poi",
-        "stylers": [{
-            "hue": "#00FF6A"
-        }, {
-            "saturation": -1.0989010989011234
-        }, {
-            "lightness": 11.200000000000017
-        }, {
-            "gamma": 1
-        }]
-    }],
-    apple: [
-    {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#f7f1df",
-                // "color": "#faf8f8" // apple map
-                "color": "#faf5ec"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.natural",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#d0e3b4"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.natural.terrain",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.business",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.medical",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.medical",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#fbd3da"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.park",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.park",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#bde6ab"
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#ffeea6"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "color": "#e1c033"
-            },
-            {
-                "saturation": "2"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#ffffff"
-            },
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "labels.icon",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "black"
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "transit.line",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "transit.station",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "transit.station.airport",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#cfb2db"
-            }
-        ]
-    },
-    {
-        "featureType": "transit.station.rail",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#a2daf2"
-            }
-        ]
-    }
-]
-});
-
-window.LJ.map = _.merge( window.LJ.map || {}, {
-
-	test: {
-
-		addOneMarker_Url: function( url ){
-
-			var i = LJ.randomInt( 0, LJ.map.test.places.length -1 );
-			var latlng = LJ.map.test.places[ i ];	
-			
-			LJ.map.addMarker({
-				latlng    : latlng,
-				url       : url,
-				type      : 'test',
-				marker_id : 'test-' + LJ.generateId()
-			})		
-
-		},
-		addOneMarker: function( i ){
-
-			i = i || LJ.randomInt( 0, LJ.map.test.places.length -1 );
-			var latlng = LJ.map.test.places[ i ];
-
-			LJ.map.addBeforeMarker({
-				_id    : i + '--' + LJ.generateId(),
-				address: {
-					place_id : 'lol',
-					'lat'    : latlng.lat,
-					'lng' 	 : latlng.lng
-				},
-				begins_at: _.shuffle(LJ.before.test.iso_dates)[0]
-			});
-
-		},
-		showMarkers: function(){
-			LJ.map.test.places.forEach(function( latlng, i ){
-				LJ.map.test.addOneMarker( i );
-			});
-		},
-		buildPlaces: function(){
-
-			LJ.meemap.addListener('click', function( e ){
-				LJ.map.findLocationWithLatLng( e.latLng )
-					.then(function( location ){
-						LJ.map.test.places.push({
-							place_name: location.formatted_address,
-							place_id  : location.place_id,
-							lat       : e.latLng.lat(),
-							lng 	  : e.latLng.lng()
-						});
-					});
-			});
-
-		},
-		places: [
-			{
-		        "place_name": "50 Boulevard Voltaire, 75011 Paris, France",
-		        "place_id": "ChIJBUAfVPxt5kcRS88-nrqe0Mw",
-		        "lat": 48.8630208493969,
-		        "lng": 2.3704749436319617
-		    },
-		    {
-		        "place_name": "16 Rue Dugommier, 75012 Paris, France",
-		        "place_id": "ChIJ1WUGhWty5kcRY2JuVjGxkOw",
-		        "lat": 48.83975198504333,
-		        "lng": 2.391417631620243
-		    },
-		    {
-		        "place_name": "157 Rue du Château des Rentiers, 75013 Paris, France",
-		        "place_id": "ChIJZRaVxYlx5kcRwiZA6MdV-9g",
-		        "lat": 48.82867853499684,
-		        "lng": 2.3634368271768835
-		    },
-		    {
-		        "place_name": "21 Passage Montbrun, 75014 Paris, France",
-		        "place_id": "EigyMSBQYXNzYWdlIE1vbnRicnVuLCA3NTAxNCBQYXJpcywgRnJhbmNl",
-		        "lat": 48.82822650545324,
-		        "lng": 2.3291045517862585
-		    },
-		    {
-		        "place_name": "92-100 Boulevard du Montparnasse, 75014 Paris, France",
-		        "place_id": "EjU5Mi0xMDAgQm91bGV2YXJkIGR1IE1vbnRwYXJuYXNzZSwgNzUwMTQgUGFyaXMsIEZyYW5jZQ",
-		        "lat": 48.84235050134804,
-		        "lng": 2.328417906278446
-		    },
-		    {
-		        "place_name": "29 Rue Dombasle, 75015 Paris, France",
-		        "place_id": "ChIJn89KGkBw5kcR-gtCxLs84DE",
-		        "lat": 48.83613643374479,
-		        "lng": 2.298377165311649
-		    },
-		    {
-		        "place_name": "121 Rue Saint-Jacques, 75005 Paris, France",
-		        "place_id": "ChIJO537Cudx5kcRHlyK46hFZEQ",
-		        "lat": 48.84867675994344,
-		        "lng": 2.3457557053507117
-		    },
-		    {
-		        "place_name": "132 Boulevard de Charonne, 75020 Paris, France",
-		        "place_id": "ChIJrbkp-olt5kcRZIKCJOkaQ14",
-		        "lat": 48.85545400732256,
-		        "lng": 2.3953658432901648
-		    },
-		    {
-		        "place_name": "1 Cité de l'Ermitage, 75020 Paris, France",
-		        "place_id": "ChIJj9Qqb5Nt5kcRof-N1p88Vw8",
-		        "lat": 48.86957032627758,
-		        "lng": 2.3922759385050085
-		    },
-		    {
-		        "place_name": "40 Quai de Jemmapes, 75010 Paris, France",
-		        "place_id": "ChIJ52rI3Alu5kcRTNSL-ANtmsE",
-		        "lat": 48.86934449651679,
-		        "lng": 2.3672133774698523
-		    },
-		    {
-		        "place_name": "115 Rue Réaumur, 75002 Paris, France",
-		        "place_id": "ChIJS-wuAz1u5kcRIzAAtPyAXgg",
-		        "lat": 48.86821533242417,
-		        "lng": 2.3426658005655554
-		    },
-		    {
-		        "place_name": "115 Rue Saint-Dominique, 75007 Paris, France",
-		        "place_id": "ChIJXYBKLt9v5kcRMPaVcBVFqfs",
-		        "lat": 48.85895522569791,
-		        "lng": 2.304900297635868
-		    },
-		    {
-		        "place_name": "3 Rue de Lourmel, 75015 Paris, France",
-		        "place_id": "ChIJvxSayBtw5kcR9jRaZn6tw0Y",
-		        "lat": 48.850258199721495,
-		        "lng": 2.2923690171182898
-		    },
-		    {
-		        "place_name": "64 Avenue Victor Hugo, 75116 Paris, France",
-		        "place_id": "ChIJV42nCPFv5kcR2zE8Exqq-uw",
-		        "lat": 48.87047363512827,
-		        "lng": 2.2865325303018835
-		    },
-		    {
-		        "place_name": "44 Rue de Rome, 75008 Paris, France",
-		        "place_id": "ChIJQeqxR7Vv5kcRGeKJKSkSCfY",
-		        "lat": 48.87792531090652,
-		        "lng": 2.3236113877237585
-		    },
-		    {
-		        "place_name": "7 Boulevard de Rochechouart, 75009 Paris, France",
-		        "place_id": "ChIJJxdCsGlu5kcRPp5zWKxWq0c",
-		        "lat": 48.8832311306673,
-		        "lng": 2.348845610135868
-		    },
-		    {
-		        "place_name": "155 Rue de Rome, 75017 Paris, France",
-		        "place_id": "ChIJQVlaJLBv5kcRxJknss5CnGw",
-		        "lat": 48.8866175298428,
-		        "lng": 2.3151999802530554
-		    },
-		    {
-		        "place_name": "45 Boulevard de Rochechouart, 75009 Paris, France",
-		        "place_id": "EjE0NSBCb3VsZXZhcmQgZGUgUm9jaGVjaG91YXJ0LCA3NTAwOSBQYXJpcywgRnJhbmNl",
-		        "lat": 48.882328052158506,
-		        "lng": 2.343352446073368
-		    },
-		    {
-		        "place_name": "41 Rue de la Chapelle, 75018 Paris, France",
-		        "place_id": "ChIJWWWH03xu5kcRXwkbrq-Plxo",
-		        "lat": 48.89338964026286,
-		        "lng": 2.358801969999149
-		    },
-		    {
-		        "place_name": "43-45 Rue de l'Evangile, 75018 Paris, France",
-		        "place_id": "Eiw0My00NSBSdWUgZGUgbCdFdmFuZ2lsZSwgNzUwMTggUGFyaXMsIEZyYW5jZQ",
-		        "lat": 48.89395394139533,
-		        "lng": 2.367041716092899
-		    },
-		    {
-		        "place_name": "10 Rue de l'Encheval, 75019 Paris, France",
-		        "place_id": "ChIJ0UA45sBt5kcRH8AEd97H0vc",
-		        "lat": 48.87905425586569,
-		        "lng": 2.3891860337198523
-		    },
-		    {
-		        "place_name": "17 Rue Vitruve, 75020 Paris, France",
-		        "place_id": "ChIJ59Ierodt5kcRLJVhtGyE6Fk",
-		        "lat": 48.85703523304221,
-		        "lng": 2.402747282499149
-		    },
-		    {
-		        "place_name": "9 Rue de la Révolution, 93100 Montreuil, France",
-		        "place_id": "ChIJx0cAjGFt5kcRJdx3tOBZV8U",
-		        "lat": 48.85601873652745,
-		        "lng": 2.4291831345499304
-		    },
-		    {
-		        "place_name": "7 Place de la Republique, 92110 Clichy, France",
-		        "place_id": "ChIJXe6oJA9v5kcR2gOs5pzwe2w",
-		        "lat": 48.90309473234857,
-		        "lng": 2.3124533982218054
-		    },
-		    {
-		        "place_name": "22 Rue Saint-Pierre, 92200 Neuilly-sur-Seine, France",
-		        "place_id": "ChIJ6WfmJmRl5kcRnhsL-FQlZ7U",
-		        "lat": 48.883118246745475,
-		        "lng": 2.2717696518839148
-		    },
-		    {
-		        "place_name": "1 Avenue André Morizet, 92100 Boulogne-Billancourt, France",
-		        "place_id": "ChIJY25Wt-h65kcRaYJKfJ1WavU",
-		        "lat": 48.83365059084553,
-		        "lng": 2.2425872178018835
-		    },
-		    {
-		        "place_name": "87 Rue du Point du Jour, 92100 Boulogne-Billancourt, France",
-		        "place_id": "ChIJU0YgEO165kcRu1yP4bPfHFI",
-		        "lat": 48.829582581850715,
-		        "lng": 2.250311979764774
-		    },
-		    {
-		        "place_name": "31 Avenue Verdier, 92120 Montrouge, France",
-		        "place_id": "ChIJrWyMvf9w5kcRkZ4Wg0nGaJo",
-		        "lat": 48.815228912154815,
-		        "lng": 2.3169165940225867
-		    },
-		    {
-		        "place_name": "68 Avenue Raspail, 94250 Gentilly, France",
-		        "place_id": "ChIJt4bSOnRx5kcRIVVq02VkWAw",
-		        "lat": 48.81251594581754,
-		        "lng": 2.3455840439737585
-		    },
-		    {
-		        "place_name": "22 Quai d'Orléans, 75004 Paris, France",
-		        "place_id": "ChIJ0aztRONx5kcRiYkOqMVLaao",
-		        "lat": 48.851726634791916,
-		        "lng": 2.354338774198368
-		    },
-		    {
-		        "place_name": "7-11 Quai de Conti, 75006 Paris, France",
-		        "place_id": "Eic3LTExIFF1YWkgZGUgQ29udGksIDc1MDA2IFBhcmlzLCBGcmFuY2U",
-		        "lat": 48.8568093467116,
-		        "lng": 2.3402625412882117
-		    },
-		    {
-		        "place_name": "42 Quai des Orfèvres, 75001 Paris, France",
-		        "place_id": "ChIJA6bfiN9x5kcR_FBUHRIFm7M",
-		        "lat": 48.85579284560999,
-		        "lng": 2.342322477811649
-		    },
-		    {
-		        "place_name": "5-7 Rue du Sabot, 75006 Paris, France",
-		        "place_id": "EiU1LTcgUnVlIGR1IFNhYm90LCA3NTAwNiBQYXJpcywgRnJhbmNl",
-		        "lat": 48.85251731276075,
-		        "lng": 2.3316794724405554
-		    },
-		    {
-		        "place_name": "9 Avenue de Lowendal, 75007 Paris, France",
-		        "place_id": "ChIJTZPVeCZw5kcRb-MkJcrj1mw",
-		        "lat": 48.85217845230312,
-		        "lng": 2.3081618637979773
-		    },
-		    {
-		        "place_name": "23 Rue de la Forge Royale, 75011 Paris, France",
-		        "place_id": "ChIJDd0e4ghy5kcRiAMxGj3923o",
-		        "lat": 48.85206549830757,
-		        "lng": 2.380602964872196
-		    }
-		]
-	}
-
-});
 
 
 
@@ -42736,6 +40780,2622 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 
 
 
+	window.LJ.login = _.merge( window.LJ.login || {}, {
+
+			'$trigger_login': '.js-login',
+			'$trigger_logout': '.js-logout',
+			'$modal_logout'  : '.modal.--logout',
+			'opening_duration': 1000,
+			'prompt_duration': 600,
+			'prompt_buttons_duration': 900,
+			'completed_steps': 0,
+			'break_duration': 400,
+
+			'data': {},
+
+			init: function(){
+
+				return LJ.promise(function( resolve, reject ){
+					LJ.ui.$body.on('click', '.js-login', resolve );
+				});
+
+
+			},
+			showLandingElements: function(){
+
+				var duration = 600;
+
+				$('.landing').find('.landing-logo')
+					.velocity('slideLeftIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-lang')
+					.velocity('slideRightIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-body')
+					.velocity('shradeIn', {
+						duration: duration*2,
+						display : 'flex'
+					});
+
+				$('.landing').find('.landing-footer')
+					.velocity('slideUpIn', {
+						duration: duration,
+						display : 'flex'
+					});
+
+
+			},
+			hideLandingElements: function(){
+
+				$('.landing')
+					.children()
+					.velocity('shradeOut', {
+						duration : 800,
+						display  : 'none'
+					});
+
+			},
+			showLoginProgressBar: function(){
+
+				$('.login__message').velocity('shradeIn', {
+			 		duration: 1600, delay: LJ.login.opening_duration/2
+			 	});
+
+			},
+			addLoginProgression: function(){
+
+				$( LJ.login.renderLoginProgression() ).hide().appendTo( $('.curtain') )
+
+			},
+			showLoginProgression: function(){
+
+				$('.login').velocity('shradeIn', {
+					duration: 1000
+				});
+
+			},
+			showLoginProgressMessage: function(){
+
+				$('.login__message').velocity('shradeIn', {
+					duration: 1000
+				});
+
+			},
+			hideLoginProgressBar: function(){
+
+				$('.login__progress-bar').velocity('shradeIn', {
+			 		duration: 1000
+			 	});
+
+			},
+			enterLoginProcess: function(){
+
+				LJ.login.hideLandingElements();
+				LJ.ui.deactivateHtmlScroll();
+
+				return LJ.delay( 1000 )
+						 .then(function(){
+
+						 	LJ.ui.showCurtain({ duration: 600, theme: "light", sticky: true });
+						 	LJ.login.addLoginProgression();
+						 	LJ.login.showLoginProgression();
+						 	// LJ.login.showLoginProgressMessage();
+						 	// LJ.login.showLoginProgressBar();
+
+						 });
+
+			},
+			hideLoginSteps: function(){
+				return LJ.promise(function( resolve, reject ){
+
+					$('.app').removeClass('nonei');
+					$('.landing').remove();
+
+					$('.login__message, .login__progress-bar, .login__loader').velocity('shradeOut', {
+						duration: 400,
+						complete: resolve
+						
+					});
+
+				});
+			},
+			firstSetup: function(){
+				// the app requires a user's location to boot properly
+				// - to be visible in the search section
+				// - to allow for geo requests to fetch the right befores
+				// - to allow the map to load in the right city
+				var L = LJ.user.location;
+				if( L && L.place_id && L.place_name && L.lat && L.lng ){
+					return;
+				}
+
+				if( LJ.user.access.indexOf('bot') == -1 ){
+					LJ.pictures.uploadFacebookPicture_Intro();
+				}
+				
+	            return LJ.login.break()
+	            		.then(function(){
+	            			return LJ.login.promptUserLocation();
+
+	            		})
+	            		.then(function(){
+	            			return LJ.login.debreak();
+
+	            		});
+
+			},
+			break: function(){
+				return LJ.ui.shradeOut( $('.login'), LJ.login.break_duration );
+
+			},
+			debreak: function(){
+				return LJ.ui.shradeIn( $('.login'), LJ.login.break_duration );
+
+			},
+			stepCompleted: function( fill_ratio ){
+
+				if( typeof fill_ratio != "number" ){
+					fill_ratio = 33.33;
+				}
+
+				LJ.login.completed_steps += 1;
+				LJ.login.fillProgressBar( fill_ratio );
+			},
+			fillProgressBar: function( fill_ratio ){
+
+				var max_width = $('.login__progress-bar').width();
+				var add_width = max_width * fill_ratio/100;
+				var cur_width = (LJ.login.completed_steps) * add_width;
+				var new_width = cur_width + add_width;
+
+				$('.login__progress-bar-bg')
+					.css({ 'width':  new_width });
+
+			},
+			renderLoginProgression: function(){
+
+				return LJ.ui.render([
+
+					'<div class="login">',
+						'<div class="login__loader">',
+							LJ.static.renderStaticImage('slide_loader'),
+						'</div>',
+						'<div class="login__message">',
+							'<h1 data-lid="login_loading_msg"></h1>',
+						'</div>',
+						'<div class="login__progress-bar">',
+							'<div class="login__progress-bar-bg"></div>',
+						'</div>',
+					'</div>'
+
+				].join(''));
+
+			},
+			promptUserLocation: function(){
+				return LJ.promise(function( resolve, reject ){
+
+					LJ.log('Requesting the user to provide a location...');
+
+					$( LJ.login.renderLocationPrompt() )
+						.hide()
+						.appendTo('.curtain')
+						.velocity('shradeIn', {
+							duration: LJ.login.prompt_duration,
+							display: 'flex'
+						});
+
+					LJ.seek.activatePlacesInFirstLogin();
+					LJ.seek.login_places.addListener('place_changed', function(){
+
+						var place = LJ.seek.login_places.getPlace();
+						$('.init-location').attr('data-place-id'   , place.place_id )
+							  			   .attr('data-place-name' , place.formatted_address )
+							  			   .attr('data-place-lat'  , place.geometry.location.lat() )
+							  			   .attr('data-place-lng'  , place.geometry.location.lng() );
+
+						LJ.login.showPlayButton();
+
+					});
+
+					// Resolve the promise when the user picked a location
+					$('.init-location .action__validate').click(function(){
+						var $block = $( this ).closest('.init-location');
+
+						if( $block.hasClass('--validating') ) return
+						$block.addClass('--validating');
+
+						LJ.login.updateProfileFirstLogin()
+							.then(function(){
+
+								$block
+									.removeClass('--validating')
+									.velocity('bounceOut', {
+										duration : LJ.login.prompt_duration,
+										complete : resolve
+									});
+								
+
+							}, function( err ){
+								LJ.wlog('An error occured');
+								LJ.log(err);
+
+							});
+					});
+				});	
+			},
+			updateProfileFirstLogin: function(){
+
+				LJ.log('Updating user location for the first time...');
+
+				var place_id   = $('.init-location').attr('data-place-id');
+				var place_name = $('.init-location').attr('data-place-name');
+				var lat        = $('.init-location').attr('data-place-lat');
+				var lng        = $('.init-location').attr('data-place-lng');
+
+				if( !( place_id && place_name && lat && lng) ){
+					return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
+				}
+
+				var update = {};
+				update.location = {
+					place_name : place_name,
+					place_id   : place_id,
+					lat 	   : lat,
+					lng 	   : lng
+				};
+
+				return LJ.api.updateProfile( update )
+						  .then(function( exposed ){
+							  	LJ.profile.setMyInformations();
+							  	return;
+						});
+
+			},
+			showPlayButton: function(){
+
+				var $elm = $('.init-location').find('.init-location-action');
+
+				if( $elm.css('opacity') != "0" ) return;
+
+				$elm.velocity('bounceInQuick', {
+					duration : LJ.login.prompt_buttons_duration,
+					display  : 'flex',
+					delay    : 500,
+					complete : function(){
+						$( this ).addClass('pound-light');
+					}
+				});
+
+			},
+			// Do a bunch of functions right before the login happens
+			terminateLoginProcess: function(){
+
+				LJ.ui.activateHtmlScroll();
+
+				$('.curtain')
+						.children('.login')
+						.velocity('bounceOut', {
+							duration: LJ.login.prompt_duration
+						});
+
+				$('.curtain')
+					.children('.login__bg')
+					.velocity({ 'opacity': [ 0, 0.09 ]}, {
+						duration: LJ.login.prompt_duration/2,
+						complete: function(){
+							$(this).remove();
+						}
+					});
+
+				return LJ.ui.hideCurtain({
+					delay: LJ.login.prompt_duration * 1.3,
+					duration: 1000
+
+				}).then(function(){
+
+					// LJ.map.activateBrowserState("shrinked");
+					LJ.before.showBrowser();
+					LJ.before.refreshBrowserDates();
+					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
+					LJ.map.updateMarkers__byDate();
+					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
+					LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
+					
+					return
+				});	
+
+			},
+			renderLocationPrompt: function(){
+
+				return LJ.ui.render([
+
+					'<div class="init-location">',
+						'<div class="init-location__title">',
+							'<h2 data-lid="init_location_title"></h2>',
+						'</div>',
+						'<div class="init-location__subtitle">',
+							'<input id="init-location__input" type="text" data-lid="init_location_subtitle_placeholder">',
+						'</div>',
+						'<div class="init-location__splitter"></div>',
+						'<div class="init-location__explanation">',
+							'<p data-lid="init_location_explanation"></p>',
+						'</div>',
+						'<div class="init-location__geoloc">',
+							'<button data-lid="init_location_geoloc"></button>',
+						'</div>',
+						'<div class="init-location-action">',
+							'<div class="action__validate --round-icon">',
+								'<i class="icon icon-play"></i>',
+							'</div>',
+						'</div>',
+					'</div>'
+
+				].join(''));
+
+			},
+			handleLogout: function(){
+
+				LJ.ui.showModal({
+					"title"	   : LJ.text("logout_title"),
+					"subtitle" : LJ.text("logout_subtitle"),
+					"type"     : "logout",
+					"footer"   : "<button class='--rounded'><i class='icon icon-power'></i></button>"
+				});
+
+			},
+			logUserOut: function(){
+
+				var p1 = LJ.ui.shadeModal();
+				var p2 = LJ.api.updateUser({
+					"app_preferences": {
+						ux: {
+							auto_login: false
+						}
+					}
+				});
+
+				LJ.Promise.all([ p1, p2 ]).then(function(){
+					LJ.store.remove('facebook_access_token');
+					location.reload();
+				});
+
+			}
+
+
+	});
+
+	window.LJ.map = _.merge( window.LJ.map || {}, {		
+
+        markers: [],
+        browser_uistate: null,
+
+       	// Called as soon as the script finished loading everything
+		init: function(){
+
+			LJ.map.setupMap();
+            LJ.map.preloadMarkers();
+
+			LJ.map.handleDomEvents();
+            LJ.map.handleMapEvents();
+			LJ.map.initPlacesServices();
+            LJ.before.displayBeforeMarkers( LJ.before.fetched_befores );
+
+            
+            return LJ.before.refreshBrowserLocation();
+			
+		},
+        initGeocoder: function(){
+            LJ.meegeo = new google.maps.Geocoder();
+            return;
+
+        },
+        initPlacesServices: function(){
+            LJ.meeservices = new google.maps.places.PlacesService( LJ.meemap );
+            return;
+
+        },
+		sayHello: function(){
+			LJ.log('Map has been successfully loaded');
+
+		},
+        preloadMarkers: function(){
+
+            var markers_html = [];
+            Object.keys( LJ.map.markers_url ).forEach(function( type ){
+
+                var size = LJ.pictures.getDevicePixelRatio() + "x";
+                var url  = LJ.map.markers_url[ type ][ size ];
+
+                markers_html.push('<img src="'+ url +'">');
+
+            });
+
+            $( markers_html.join('') ).hide().appendTo('body');
+
+        },
+		handleDomEvents: function(){
+            
+			LJ.ui.$body.on('click', '.map__icon.--geoloc', LJ.map.centerMapAtUserLocation );
+			LJ.ui.$body.on('click', '.map__icon.--change-location', LJ.map.toggleMapBrowser );
+
+		},
+		setupMap: function(){
+
+			LJ.log('Setting up google map...');
+
+            var latlng = {
+                lat: parseFloat( LJ.user.location.lat ),
+                lng: parseFloat( LJ.user.location.lng )
+            };
+
+			var options = {
+				center: latlng,
+	            zoom: 13,
+	            disableDefaultUI: true,
+	            zoomControlOptions: {
+	                style    : google.maps.ZoomControlStyle.SMALL,
+	                position : google.maps.ControlPosition.RIGHT_TOP
+	            },
+	            mapTypeControlOptions: {
+	                mapTypeIds: ['meemap']
+	            }
+			}
+
+			var $wrap = document.getElementsByClassName('js-map-wrap')[0];
+
+			LJ.meemap = new google.maps.Map( $wrap, options );
+			
+            LJ.map.setMapStyle('apple');
+            LJ.map.setMapIcons();
+            LJ.map.setMapOverlay();
+            LJ.map.setMapBrowser();
+            LJ.map.setMapZoom();
+
+            setTimeout(function(){
+                LJ.map.refreshMap();
+            }, 1000 );
+
+			return;
+
+        },
+        setMapStyle: function( map_style ){
+
+        	var custom_style = LJ.map.style[ map_style ];
+        	if( !custom_style ){
+        		return LJ.wlog('Unable to find a custom style for : ' + map_style );
+        	}
+
+        	var styled_map = new google.maps.StyledMapType( custom_style, {
+                name: 'meemap'
+            });
+            // Set map styling 
+            LJ.meemap.mapTypes.set('meemap', styled_map );
+            LJ.meemap.setMapTypeId('meemap');
+
+        },
+        setMapIcons: function(){
+
+        	$('.app-section.--map')
+        		.append( LJ.map.renderChangeLocation() )
+        		.append( LJ.map.renderGeoLocation() )
+                .append( LJ.map.renderCreateBefore() )
+                // .append( LJ.map.renderExpandBrowser() )
+        		.append( LJ.map.renderPinLocation() );
+
+
+        },
+        setMapOverlay: function(){
+
+        	$('.app-section.--map')
+        		.append( LJ.map.renderMapOverlay() );
+
+        },
+        setMapBrowser: function(){
+
+        	$('.app-section.--map')
+        		.append( LJ.map.renderMapBrowser() );
+
+            return LJ.seek.activatePlacesInMap()
+                    .then(function(){
+
+                    	LJ.seek.map_browser_places.addListener('place_changed', function( place ){
+
+                    		var place  = LJ.seek.map_browser_places.getPlace();
+                    		var latlng = place.geometry.location;
+
+                    		LJ.meemap.setCenter( latlng );
+                            $('#map-browser-input').val('');
+
+                    	});
+                        
+                    });
+
+        },
+        handleMapEvents: function(){
+
+            LJ.meemap.addListener('dragstart', function(){
+                LJ.before.preRefreshBrowserLocation();
+            });
+
+            LJ.meemap.addListener('dragend', function(){
+                LJ.before.refreshBrowserLocation();
+            });
+
+            LJ.meemap.addListener('click', function(e){
+                
+            });
+            
+            LJ.meemap.addListener('center_changed', function(){
+                // LJ.before.refreshNearestBefores();
+            });
+
+            $('body').on('click', '.js-map-zoom-in', LJ.map.zoomIn );
+            $('body').on('click', '.js-map-zoom-out', LJ.map.zoomOut );
+
+
+        },
+        expandBrowser: function(){
+
+            $('.map__icon.--create-before, .map__icon.--filter-dates, .be-browser' ).velocity({ 'translateY':'0' }, { duration: 300 });
+
+        },
+        shrinkBrowser: function(){
+
+            $('.map__icon.--create-before, .map__icon.--filter-dates, .be-browser' ).velocity({ 'translateY':'-54' }, { duration: 300 });
+
+        },
+        handleShrinkBrowserDates: function(){
+
+            if( LJ.map.browser_uistate == "shrinked" ){
+                LJ.map.activateBrowserState( "expanded" );
+            } else {
+                LJ.map.activateBrowserState( "shrinked" );
+            }
+
+        },
+        activateBrowserState: function( state ){
+
+            if( state == "expanded" ){
+                LJ.map.expandBrowser();
+                LJ.map.browser_uistate = "expanded";
+            }
+
+            if( state == "shrinked" ){
+                LJ.map.shrinkBrowser();
+                LJ.map.browser_uistate = "shrinked";
+            }
+
+        },
+        renderMapZoom: function(){
+
+            return LJ.ui.render([
+
+                '<div class="map__icon map-zoom">',
+                    '<div class="map-zoom__in --round-icon js-map-zoom-in">',
+                        '<i class="icon icon-plus"></i>',
+                    '</div>',
+                    '<div class="map-zoom__splitter"></div>',
+                    '<div class="map-zoom__out --round-icon js-map-zoom-out">',
+                        '<i class="icon icon-line"></i>',
+                    '</div>',
+                '</div>'
+
+
+            ].join(''));
+
+        },
+        setMapZoom: function(){
+
+            $('.app-section.--map').append( LJ.map.renderMapZoom() );
+
+        },
+        zoomIn: function(){
+
+            LJ.meemap.setZoom( LJ.meemap.getZoom() + 1 );
+
+        },
+        zoomOut: function(){
+
+            LJ.meemap.setZoom( LJ.meemap.getZoom() - 1 );
+
+        },
+        refreshMap: function(){
+        	return google.maps.event.trigger( LJ.meemap, 'resize' );
+
+        },
+        deactivateDate: function(){
+
+            var $date_activated = $('.be-dates__date.--active');
+
+            if( $date_activated.length == 0 ){
+                return LJ.log('Already deactivated');
+            }
+
+            var m = moment( $date_activated.attr('data-day') , 'DD/MM' );
+            LJ.map.activateDate( m );
+
+        },  
+        activateDate: function( m ){
+
+            var $date_activated   = $('.be-dates__date.--active');
+            var $date_to_activate = $('.be-dates__date[data-day="'+ m.format('DD/MM') +'"]');
+
+             if( $date_to_activate.length != 1 ){
+                return LJ.wlog('Unable to find the date : ' + m.format('DD/MM') );
+            }
+
+            if( $date_activated.is( $date_to_activate ) ){
+
+                 $date_activated
+                    .removeClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceOut', { duration: 450, display: 'none' });
+
+            } else {
+
+                $date_activated
+                    .removeClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceOut', { duration: 450, display: 'none' });
+
+                $date_to_activate
+                    .addClass('--active')
+                    .find('.be-dates__bar')
+                    .velocity('bounceInQuick', { duration: 450, display: 'block' });
+
+            }
+
+            LJ.map.updateMarkers__byDate();
+
+        },
+        findLocationWithLatLng: function( latlng ){
+            return LJ.promise(function( resolve, reject ){
+
+                if( !latlng ){
+                    return LJ.wlog('Cant find address without latlng');
+                }
+
+                LJ.meegeo.geocode({ location: latlng }, function( res, status ){
+
+                    if( status === google.maps.GeocoderStatus.OK && res[0] ){
+                        resolve( res[0] );
+                    } else {
+                        reject( status );
+                    }
+                });
+
+            });
+
+
+        },
+        findAddressWithLatLng: function( latlng ){
+            return LJ.map.findLocationWithLatLng( latlng )
+
+                    .then(function( location ){
+                        return location.formatted_address;
+                    });
+
+        },
+        findLatLngWithAddress: function( address ){
+        	return LJ.promise(function( resolve, reject ){
+
+	        	if( !address ){
+	        		return LJ.wlog('Cant find LatLng without adress');
+	        	}
+
+	        	LJ.meegeo.geocode({ address: address }, function( res, status ){
+
+	        		if( status === google.maps.GeocoderStatus.OK && res[0] ){
+	        			resolve( res[0].geometry.location );
+	        		} else {
+	        			reject( status );
+	        		}
+	        	});
+
+        	});
+        	
+        },
+        findLatLngWithPlaceId: function( place_id ){
+        	return LJ.promise(function( resolve, reject ){
+
+	        	if( !place_id ){
+	        		return LJ.wlog('Cant find LatLng without place_id');
+	        	}
+
+	        	LJ.meegeo.geocode({ placeId: place_id }, function( res, status ){
+
+	        		if( status === google.maps.GeocoderStatus.OK && res[0] ){
+	        			resolve( res[0].geometry.location );
+	        		} else {
+	        			reject( status );
+	        		}
+	        	});
+
+        	});
+        	
+        },
+        toggleMapBrowser: function(){
+
+        	var $mb = $('.map-browse');
+
+        	if( $mb.hasClass('--active') ){
+
+        		$mb.removeClass('--active');
+        		$mb.velocity('shradeOut', { duration: 200, display: 'none' });
+
+        	} else {
+
+        		$mb.addClass('--active');
+        		$mb.velocity('shradeIn', { duration: 200, display: 'flex' });
+
+        	}
+        },
+        centerMapAtUserLocation: function( pan ){
+
+        	var place_id = LJ.user.location.place_id;
+        	return LJ.map.findLatLngWithPlaceId( place_id )
+        			.then(function( latlng ){
+        				pan ? LJ.meemap.panTo( latlng ) : LJ.meemap.setCenter( latlng );
+        			});
+
+        },
+        distanceBetweenTwoLatLng: function( latlng1, latlng2 ){
+
+            var a = new google.maps.LatLng( latlng1 );
+            var b = new google.maps.LatLng( latlng2 );
+
+            return google.maps.geometry.spherical.computeDistanceBetween( a, b );
+
+        },
+        shiftLatLng: function( latlng ){
+
+            var a   = new google.maps.LatLng( latlng );
+            var rdm =  google.maps.geometry.spherical.computeOffset( a, LJ.randomInt( 100, 200 ), LJ.randomInt(0, 180) );
+
+            return {
+                lng: rdm.lng(),
+                lat: rdm.lat()
+            };
+
+        },
+        findClosestMarkers: function( latlng, distance ){
+
+            var markers = [];
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < distance ){
+                    markers.push( mrk );
+                }
+
+            });
+
+            return markers; 
+
+        },
+        offsetLatLng: function( latlng ){
+
+            var offsetted = false;
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < 100 && !offsetted){
+
+                    LJ.wlog('Markers are too close, shifting latlng');
+                    offsetted = true;
+                    latlng = LJ.map.shiftLatLng( latlng );
+
+                }
+                
+            });
+
+            return latlng;
+
+        },
+        offsetLatLngRecursive: function( latlng, i ){
+
+            // Display the marker in a more intelligent way, to put it randomy close to where its supposed to be
+            // But also taking into account where other markers are places :) 
+
+        },
+        validateMarkerOptions: function( opts ){
+
+        	var ok = true;
+
+        	if( !opts.url ){
+        		ok = false;
+        		LJ.wlog('Cannot add marker without url: %s', opts.url );
+        	}
+        	if( !opts.latlng ){
+        		ok = false;
+        		LJ.wlog('Cannot add marker without latlng: %s', opts.latlng );
+        	}
+        	if( !opts.marker_id ){
+        		ok = false;
+        		LJ.wlog('Cannot add marker without marke_id: %s', opts.marker_id );
+        	}
+        	if( !opts.type ){
+        		ok = false;
+        		LJ.wlog('Cannot add marker without type: %s', opts.tpye );
+        	}
+        	
+        	return ok
+
+        },
+        markerAlreadyExists: function( marker_id ){
+
+            return _.find( LJ.map.markers, function( mrk ){
+                return mrk && ( mrk.marker_id == marker_id );
+            });
+            
+        },
+        makeIcon: function( url ){
+
+            var scaledSize;
+            var base_width  = 34;
+            var base_height = 41;
+            var base_width_active  = 50;
+            var base_height_active = 60;
+
+            if( !/lg/i.test( url ) ){
+                scaledSize = new google.maps.Size( base_width, base_height );
+            } else {
+                scaledSize = new google.maps.Size( base_width_active, base_height_active );
+            }
+
+            return {
+                url        : url,
+                scaledSize : scaledSize
+            };
+
+        },
+        addMarker: function( opts ){
+
+        	if( !LJ.map.validateMarkerOptions( opts ) ) return;
+
+            if( LJ.map.markerAlreadyExists( opts.marker_id ) ){
+                return LJ.wlog('A marker with id : ' + opts.marker_id + ' is already set on the map');
+            }
+
+            var latlng = LJ.map.offsetLatLng( opts.latlng );
+            var icon   = LJ.map.makeIcon( opts.url );
+
+        	var marker = new google.maps.Marker({
+                map        : LJ.meemap,
+                position   : latlng,
+                icon       : icon
+            });
+
+            var data = opts.data || null;
+
+        	// Store the reference for further usage
+        	LJ.map.markers.push({
+        		marker_id : opts.marker_id,
+        		marker 	  : marker,
+        		data      : data,
+                type      : opts.type,
+                latlng    : latlng
+        	});
+
+        	// Attach listenres if there are any
+        	if( Array.isArray( opts.listeners )){
+                opts.listeners.forEach(function( listener ){
+                    marker.addListener( listener.event_type, function(){
+                    	listener.callback( marker, data );
+                    });
+                });
+
+            }
+
+        },
+        getBeforeMarkerUrlByType: function( type, active ){
+
+            var px     = LJ.pictures.getDevicePixelRatio() + 'x';
+            var suffix = active ? '_active' : '';
+
+            if( type == 'drink' ){
+                url = LJ.map.markers_url[ 'drink' + suffix ];
+            }
+
+            if( type == 'drinknew' ){
+               url = LJ.map.markers_url['drinknew'];
+            }
+
+            if( type == 'hosting' ){
+                url = LJ.map.markers_url[ 'star' + suffix ];
+            }
+
+            if( type == 'pending' ){
+                url = LJ.map.markers_url[ 'pending' + suffix ];
+            }
+
+            if( type == 'accepted' ){
+                url = LJ.map.markers_url[ 'chat' + suffix ];
+            }  
+
+            return url[ px ];
+
+
+        },  
+        getBeforeMarkerUrl: function( before, active ){
+
+            var url  = null;
+
+            var my_before = LJ.before.getMyBeforeById( before._id );
+
+            if( !my_before ){
+
+                // Moment.js expresses the difference between 2 dates in ms
+                var diff_in_hour = ( moment() - moment( before.created_at ) )/( 3600 * 1000 );
+
+                if( LJ.map.hasSeenMarker( before._id ) || diff_in_hour > 24 ){
+                    url = LJ.map.getBeforeMarkerUrlByType("drink", active );
+
+                } else {
+                    url = LJ.map.getBeforeMarkerUrlByType("drinknew", active );
+
+                }
+
+            } else {
+                url = LJ.map.getBeforeMarkerUrlByType( my_before.status, active );
+            }
+
+            if( !url ){
+                return LJ.wlog('Cant render marker, unable to find marker type');
+
+            } else {
+                return url;
+            }
+
+        },
+        // Before must be the whole before object and not an itemized version;
+        addBeforeMarker: function( before ){
+
+        	var before_id = before._id;
+
+            var latlng  = {
+                lat: before.address.lat,
+                lng: before.address.lng
+            };
+
+            var url  = LJ.map.getBeforeMarkerUrl( before, false );
+
+            LJ.map.addMarker({
+                marker_id : before_id,
+                latlng    : latlng,
+                url       : url,
+                type      : 'before',
+                data      : before,
+                listeners : [
+                    {
+                        'event_type': 'click',
+                        'callback'  : LJ.map.handleClickOnEventMarker
+                    }]
+
+            });
+
+        },
+        removeBeforeMarker: function( before_id ){
+
+            LJ.map.markers.forEach(function( mrk, i){
+
+                if( mrk.marker_id == before_id ){
+                    mrk.marker.setMap( null );
+                    delete LJ.map.markers[ i ];
+                }
+
+            });
+
+        },
+        deactivateMarkers: function(){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                mrk.status = "inactive";
+                mrk.marker.setZIndex( 1 );
+ 
+            });
+
+        },
+        activateMarker: function( marker_id ){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( mrk.marker_id == marker_id ){
+                    mrk.status = "active";
+                    mrk.marker.setZIndex( 10 );
+
+                } else {
+                    mrk.status = "inactive";
+                    mrk.marker.setZIndex( 1 );
+                }
+
+            });
+
+        },  
+        refreshMarkers: function(){
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( mrk.type == "before" ){
+
+                    LJ.before.getBefore( mrk.marker_id )
+                    .then(function( bfr ){
+
+                        var url;
+
+                        if( mrk.status == "active" ){
+                            url = LJ.map.getBeforeMarkerUrl( bfr, true );
+                        } else {
+                            url = LJ.map.getBeforeMarkerUrl( bfr, false );
+                        }
+
+                        var icon = LJ.map.makeIcon( url );     
+                        mrk.marker.setIcon( icon );                   
+                        
+                    });
+
+                }
+
+            });
+
+        },
+        getActiveMarker: function(){
+
+            return _.find( LJ.map.markers, function( mrk ){
+                return mrk.status == "active";
+            });
+
+        },
+        clearSeenMarkers: function(){
+
+            var seen_markers = LJ.store.get('seen_markers') || [];
+
+            seen_markers.forEach(function( mrk_id, i ){
+
+                var target_mrk = _.find( LJ.map.markers, function( m ){
+                    return m.marker_id == mrk_id;
+                });
+
+                // Marker was not found : means it wasnt fetched by the map,
+                // so remove it (obsolete before etc...)
+                if( !target_mrk ){
+                    delete seen_markers[ i ];
+                }
+
+            });
+
+            LJ.store.set('seen_markers', _.uniq( seen_markers.filter( Boolean ) ));
+
+        },
+        seenifyMarker: function( marker_id ){
+
+            var seen_markers = LJ.store.get('seen_markers') || [];
+
+            seen_markers.push( marker_id );
+            LJ.store.set( 'seen_markers', _.uniq( seen_markers ) );
+
+        },
+        hasSeenMarker: function( marker_id ){
+
+            var seen_markers = LJ.store.get('seen_markers') || [];
+
+            return seen_markers.indexOf( marker_id ) != -1;
+            
+
+        },
+        getMarker: function( marker_id ){
+	
+			return _.find( LJ.map.markers, function( mrk ){
+				return mrk && mrk.marker_id == marker_id;
+			});
+        		
+        },
+        handleClickOnEventMarker: function( marker, before ){
+
+            LJ.map.seenifyMarker( before._id );
+            var mrk = LJ.map.getMarker( before._id );
+            
+            if( mrk.marker.getOpacity() != 1 ){
+
+                LJ.map.deactivateDate();
+                LJ.before.handleCloseBeforeInview();
+                LJ.before.hideBeforeInview();
+                return;
+            }
+
+            if( !mrk.status || mrk.status == "inactive" ){
+
+                LJ.before.showBeforeInview( before );
+                LJ.map.activateMarker( before._id );
+
+            } else {
+
+                LJ.before.handleCloseBeforeInview();
+                LJ.before.hideBeforeInview();
+
+            }
+
+            LJ.map.refreshMarkers();
+
+        },
+        renderCreateBefore: function(){
+
+            return LJ.ui.render([
+                '<div class="map__icon --round-icon --create-before js-create-before">',
+                    '<i class="icon icon-create-before"></i>',
+                '</div>'
+                ].join(''));
+
+        },
+        renderExpandBrowser: function(){
+
+            return LJ.ui.render([
+                '<div class="map__icon --round-icon --filter-dates js-expand-browser">',
+                    '<i class="icon icon-filters"></i>',
+                '</div>'
+                ].join(''));
+
+        },
+        renderChangeLocation: function(){
+
+        	return LJ.ui.render([
+        		'<div class="map__icon --round-icon --change-location js-map-change-location">',
+        			'<i class="icon icon-search-zoom"></i>',
+        		'</div>'
+        		].join(''));
+
+        },
+        renderGeoLocation: function(){
+
+        	return LJ.ui.render([
+        		'<div class="map__icon --round-icon --geoloc js-map-geoloc">',
+        			'<i class="icon icon-geoloc"></i>',
+        		'</div>'
+        		].join(''));
+        },
+        renderPinLocation: function(){
+
+        	return LJ.ui.render([
+        		'<div class="map__icon --round-icon --location js-map-location">',
+        			'<i class="icon icon-location"></i>',
+        		'</div>'
+        		].join(''));
+        },
+        renderMapOverlay: function(){
+
+        	return LJ.ui.render([
+        		'<div class="map__overlay"></div>'
+        		].join(''));
+
+        },
+        renderMapBrowser: function(){
+
+        	return LJ.ui.render([
+        		'<div class="map-browse">',
+        			'<input id="map-browser-input"/>',
+        		'</div>'
+        		].join(''));
+
+        },
+        updateMarkers__byDate: function(){
+
+            var active_day;
+            var $active_day = $('.be-dates__date.--active');
+
+            if( $active_day.length == 1 ){
+                active_day = moment( $active_day.attr('data-day'), 'DD/MM' ).dayOfYear();
+                
+            } else {
+                active_day = null;
+            }
+
+
+            LJ.map.markers.forEach(function( mrk ){
+
+                if( mrk.type == "before" && active_day ){
+
+                    if( mrk.data && mrk.data.begins_at && moment( mrk.data.begins_at ).dayOfYear() == active_day ){
+                        mrk.marker.setOpacity( 1 );
+                    } else {
+                        mrk.marker.setOpacity( 0.2 );
+                    }
+
+                } else {
+                    mrk.marker.setOpacity( 1 );
+                }
+
+            });
+        }
+
+
+	});		
+
+	
+	testClearAllMarkers = function(){
+		if( LJ.map.marker_test ){
+
+			LJ.map.marker_test.forEach(function(mrk){
+				mrk.marker.setMap(null);
+			});
+		}			
+	};	
+
+
+
+
+
+
+	window.LJ.map = _.merge( window.LJ.map || {}, {
+
+
+		renderEventMapview_User: function( evt ){
+
+			return LJ.fn.renderEventMapview( evt, {
+				request_html: '<button  data-lid="e_preview_participate" class="theme-btn btn-requestin mapview-action__btn">Participer</div>'
+			});
+
+		},
+		renderEventMapview_MemberPending: function( evt ){
+
+			return LJ.fn.renderEventMapview( evt, {
+				request_html: '<button  data-lid="e_preview_pending" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
+			});
+
+		},
+		renderEventMapview_MemberAccepted: function( evt ){
+
+			return LJ.fn.renderEventMapview( evt, {
+				request_html: '<button  data-lid="e_preview_chat" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
+			});
+
+		},
+		renderEventMapview_Host: function( evt ){
+
+			return LJ.fn.renderEventMapview( evt, {
+				request_html: '<button  data-lid="e_preview_manage" class="theme-btn btn-jumpto mapview-action__btn">Participer</div>'
+			});
+
+		},
+		renderEventMapview: function( evt, opts ){
+
+			//Hosts pictures 
+			var hosts_pictures_html = '';
+
+			hosts_pictures_html = '<div class="mapview-hosts">';
+			evt.hosts.forEach(function( host ){
+
+			var display_params     = LJ.cloudinary.events.mapview.hosts.params;
+			display_params.version = LJ.fn.findMainImage( host ).img_version;
+
+			var img_tag = $.cloudinary.image( LJ.fn.findMainImage( host ).img_id, display_params ).prop('outerHTML');
+			var country = '<div class="user-flag mapview-host__flag"><span class="flag-icon flag-icon-' + host.country_code + '"></span></div>';
+
+			hosts_pictures_html += '<div class="mapview-host" data-userid="' + host.facebook_id + '">' 
+										+ img_tag + country 
+									+'</div>'
+
+			});
+			hosts_pictures_html += '</div>';
+
+
+			// Context
+			var context_html = '<div class="mapview-context">';
+
+			// Address
+			var address_html = '';
+			address_html += '<div class="mapview-address mapview-context__element">'
+				+ '<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>'
+				+ '<div class="mapview-address__name">'+evt.address.place_name+'</div>'
+			+'</div>';
+
+			// Date
+			var date = moment( evt.begins_at ).format('DD/MM');
+			var hour = moment( evt.begins_at ).format('HH/MM').replace('/', 'H');
+
+			var date_html = ['<div class="mapview-date mapview-context__element">',
+				'<i class="icon icon-calendar mapview-context__icon mapview-date__icon"></i>',
+				'<div class="mapview-date__day">'+ date +'</div>',
+				'<div class="mapview-date__splitter">, </div>',
+				'<div class="mapview-date__hour">'+ hour +'</div>',
+			'</div>'].join('');
+
+
+			// Host names
+			var hosts_names_html = '<div class="mapview-hostnames mapview-context__element">';
+			evt.hosts.forEach(function( host ){ hosts_names_html += '<div class="mapview-hostnames__name">'+ host.name +'</div>'; });
+			hosts_names_html += '</div>';
+
+			context_html += address_html;
+			context_html += date_html;
+			context_html += hosts_names_html;
+
+			context_html += '</div>';
+
+
+			// Action buttons
+			var action_html = ['<div class="mapview-action">',
+			opts.request_html,
+			'</div>'].join('');
+
+			// Main HTML
+			var divider_html = '<div class="mapview__divider--md"></div>';
+			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
+
+			var html = '<div class="mapview mapview--event" data-eventid="'+evt._id+'">'
+							+ close_html
+							+ hosts_pictures_html
+							+ divider_html
+							+ context_html
+							+ divider_html
+							+ action_html
+					  '</div>';
+
+
+			return LJ.fn.translateView( html );
+
+
+		},
+		renderPartyMapview_Event: function( party, opts ){
+
+			// Icon party to ambience everyone
+			var main_icon_html = [
+				'<div class="mapview-main-icon">',
+					'<i class="icon icon-glass mapview-main-icon__icon"></i>',
+				'</div>'
+			].join('');
+
+
+			// Party context & various informations
+			var context_html = '<div class="mapview-context mapview-context--party">';
+
+			// Address
+			var address_html = '';
+			address_html += '<div class="mapview-address mapview-context__element">'
+								+ '<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>'
+								+ '<div class="mapview-address__name">'+ party.address.place_name +'</div>'
+							+'</div>';
+
+
+			// Closing context part
+			context_html += address_html;
+			context_html += '</div>';
+
+			var divider_html = '<div class="mapview__divider--md"></div>';
+			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
+
+			var html = '<div class="mapview mapview--party" data-placeid="'+ party.address.place_id +'">'
+				+ close_html
+				+ context_html
+				+ '</div>'
+
+			return LJ.fn.translateView( html );
+
+
+		},
+		renderPartyMapview_Party: function( party ){
+
+			LJ.fn.renderPartyPreview_Event( party );
+
+		},
+		renderPartyMapview_Empty: function( party ){
+
+			var context_html = [
+				'<div class="mapview-context">',
+					'<div class="mapview-address mapview-context__element">',
+					'<i class="mapview-address__icon icon icon-location mapview-context__icon"></i>',
+					'<div class="mapview-address__name">'+ party.address.place_name +'</div>',
+				'</div>',
+				'<div class="mapview-emptytext mapview-context__element">',
+					'<i class="mapview-emptytext__icon icon icon-star-empty mapview-context__icon"></i>',
+					'<div class="mapview-emptytext__name" data-lid="e_mapview_empty_text">...</div>',
+					'</div>',
+				'</div>'
+			].join('');
+
+			var action_html = [
+				'<div class="mapview-action">',
+					'<div class="theme-btn mapview-action__btn js-create-event" data-lid="e_mapview_first_to_create">...</div>',
+				'</div>'
+			].join('');
+
+			var divider_html = '<div class="mapview__divider--md"></div>';
+			var close_html   = '<i class="mapview__close icon icon-minus"></i>';
+
+			var html = [
+				'<div class="mapview mapview-empty mapview--party">',
+					close_html,
+					context_html,
+					divider_html,
+					action_html,
+				'</div>'
+			].join('');
+
+			return LJ.fn.translateView( html );
+
+		}
+	});
+
+	window.LJ.map = _.merge( window.LJ.map || {}, {
+        
+		markers_url: {
+            
+			drink: { 
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md__2x.png'
+            },
+            drink_active: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__2x.png'
+            },
+            drinknew: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468612014/markers/drink_black45_rotate_md_newred__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468612014/markers/drink_black45_rotate_md_newred__2x.png'
+            },
+            star: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__2x.png'
+            },
+            star_active: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__2x.png'
+            },
+            pending: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__2x.png'
+            },
+            pending_active: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__2x.png'
+            },
+            chat: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__2x.png'
+            },
+            chat_active: {
+                '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__1x.png',
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__2x.png'
+            }
+        }
+
+	});
+
+	window.LJ.map = _.merge( window.LJ.map || {}, {
+
+
+	});
+
+window.LJ.map.style = _.merge(window.LJ.map.style || {}, {
+    snow: [{
+        "featureType": "administrative",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "simplified"
+        }, {
+            "hue": "#ff0000"
+        }, {
+            "weight": "0.27"
+        }]
+    }, {
+        "featureType": "administrative",
+        "elementType": "labels.text.fill",
+        "stylers": [{
+            "color": "#444444"
+        }]
+    }, {
+        "featureType": "administrative.country",
+        "elementType": "geometry.fill",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "administrative.locality",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "administrative.neighborhood",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "administrative.land_parcel",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "landscape",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "on"
+        }, {
+            "color": "#fdfdfd"
+        }]
+    }, {
+        "featureType": "landscape.man_made",
+        "elementType": "geometry",
+        "stylers": [{
+            "visibility": "on"
+        }, {
+            "hue": "#ff0000"
+        }]
+    }, {
+        "featureType": "landscape.man_made",
+        "elementType": "geometry.fill",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "landscape.man_made",
+        "elementType": "geometry.stroke",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "landscape.natural.terrain",
+        "elementType": "geometry.fill",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "landscape.natural.terrain",
+        "elementType": "geometry.stroke",
+        "stylers": [{
+            "hue": "#ff0000"
+        }]
+    }, {
+        "featureType": "poi",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "poi.park",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "simplified"
+        }, {
+            "hue": "#37ff00"
+        }, {
+            "lightness": "70"
+        }]
+    }, {
+        "featureType": "poi.school",
+        "elementType": "geometry",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "poi.school",
+        "elementType": "labels",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "poi.sports_complex",
+        "elementType": "geometry",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "poi.sports_complex",
+        "elementType": "labels.text",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "road",
+        "elementType": "all",
+        "stylers": [{
+            "saturation": -100
+        }, {
+            "lightness": 45
+        }, {
+            "visibility": "simplified"
+        }]
+    }, {
+        "featureType": "road",
+        "elementType": "geometry",
+        "stylers": [{
+            "visibility": "simplified"
+        }]
+    }, {
+        "featureType": "road",
+        "elementType": "labels",
+        "stylers": [{
+            "color": "#a39bb2"
+        }]
+    }, {
+        "featureType": "road",
+        "elementType": "labels.icon",
+        "stylers": [{
+            "visibility": "simplified"
+        }]
+    }, {
+        "featureType": "road.highway",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "simplified"
+        }]
+    }, {
+        "featureType": "road.highway",
+        "elementType": "geometry.fill",
+        "stylers": [{
+            "hue": "#ff0000"
+        }, {
+            "weight": "0.65"
+        }]
+    }, {
+        "featureType": "road.highway",
+        "elementType": "geometry.stroke",
+        "stylers": [{
+            "weight": "0.20"
+        }, {
+            "lightness": "82"
+        }, {
+            "gamma": "1.19"
+        }, {
+            "saturation": "-42"
+        }, {
+            "color": "#d59ca6"
+        }]
+    }, {
+        "featureType": "road.highway",
+        "elementType": "labels",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "labels",
+        "stylers": [{
+            "visibility": "off"
+        }, {
+            "lightness": "16"
+        }]
+    }, {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "labels.icon",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "road.arterial",
+        "elementType": "geometry",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "road.arterial",
+        "elementType": "geometry.stroke",
+        "stylers": [{
+            "visibility": "on"
+        }, {
+            "weight": "0.4"
+        }, {
+            "color": "#dbdbdb"
+        }, {
+            "lightness": "10"
+        }]
+    }, {
+        "featureType": "road.arterial",
+        "elementType": "labels.icon",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "road.local",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "simplified"
+        }]
+    }, {
+        "featureType": "road.local",
+        "elementType": "geometry.fill",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "road.local",
+        "elementType": "geometry.stroke",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "transit",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "on"
+        }]
+    }, {
+        "featureType": "transit.line",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "transit.station",
+        "elementType": "all",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }, {
+        "featureType": "water",
+        "elementType": "all",
+        "stylers": [{
+            "color": "#dae7f2"
+        }, {
+            "visibility": "on"
+        }]
+    }],
+    creamy: [{
+        "featureType": "landscape",
+        "stylers": [{
+            "hue": "#FFBB00"
+        }, {
+            "saturation": 43.400000000000006
+        }, {
+            "lightness": 37.599999999999994
+        }, {
+            "gamma": 1
+        }]
+    }, {
+        "featureType": "road.highway",
+        "stylers": [{
+            "hue": "#FFC200"
+        }, {
+            "saturation": -61.8
+        }, {
+            "lightness": 45.599999999999994
+        }, {
+            "gamma": 1
+        }]
+    }, {
+        "featureType": "road.arterial",
+        "stylers": [{
+            "hue": "#FF0300"
+        }, {
+            "saturation": -100
+        }, {
+            "lightness": 51.19999999999999
+        }, {
+            "gamma": 1
+        }]
+    }, {
+        "featureType": "road.local",
+        "stylers": [{
+            "hue": "#FF0300"
+        }, {
+            "saturation": -100
+        }, {
+            "lightness": 52
+        }, {
+            "gamma": 1
+        }]
+    }, {
+        "featureType": "water",
+        "stylers": [{
+            "hue": "#0078FF"
+        }, {
+            "saturation": -13.200000000000003
+        }, {
+            "lightness": 2.4000000000000057
+        }, {
+            "gamma": 1
+        }]
+    }, {
+        "featureType": "poi",
+        "stylers": [{
+            "hue": "#00FF6A"
+        }, {
+            "saturation": -1.0989010989011234
+        }, {
+            "lightness": 11.200000000000017
+        }, {
+            "gamma": 1
+        }]
+    }],
+    apple: [
+    {
+        "featureType": "landscape.man_made",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#f7f1df",
+                // "color": "#faf8f8" // apple map
+                "color": "#faf5ec"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape.natural",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#d0e3b4"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape.natural.terrain",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.business",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.medical",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.medical",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#fbd3da"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#bde6ab"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#ffeea6"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#e1c033"
+            },
+            {
+                "saturation": "2"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#ffffff"
+            },
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "black"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.line",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.station",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.station.airport",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#cfb2db"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.station.rail",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#a2daf2"
+            }
+        ]
+    }
+]
+});
+
+window.LJ.map = _.merge( window.LJ.map || {}, {
+
+	test: {
+
+		addOneMarker_Url: function( url ){
+
+			var i = LJ.randomInt( 0, LJ.map.test.places.length -1 );
+			var latlng = LJ.map.test.places[ i ];	
+			
+			LJ.map.addMarker({
+				latlng    : latlng,
+				url       : url,
+				type      : 'test',
+				marker_id : 'test-' + LJ.generateId()
+			})		
+
+		},
+		addOneMarker: function( i ){
+
+			i = i || LJ.randomInt( 0, LJ.map.test.places.length -1 );
+			var latlng = LJ.map.test.places[ i ];
+
+			LJ.map.addBeforeMarker({
+				_id    : i + '--' + LJ.generateId(),
+				address: {
+					place_id : 'lol',
+					'lat'    : latlng.lat,
+					'lng' 	 : latlng.lng
+				},
+				begins_at: _.shuffle(LJ.before.test.iso_dates)[0]
+			});
+
+		},
+		showMarkers: function(){
+			LJ.map.test.places.forEach(function( latlng, i ){
+				LJ.map.test.addOneMarker( i );
+			});
+		},
+		buildPlaces: function(){
+
+			LJ.meemap.addListener('click', function( e ){
+				LJ.map.findLocationWithLatLng( e.latLng )
+					.then(function( location ){
+						LJ.map.test.places.push({
+							place_name: location.formatted_address,
+							place_id  : location.place_id,
+							lat       : e.latLng.lat(),
+							lng 	  : e.latLng.lng()
+						});
+					});
+			});
+
+		},
+		places: [
+			{
+		        "place_name": "50 Boulevard Voltaire, 75011 Paris, France",
+		        "place_id": "ChIJBUAfVPxt5kcRS88-nrqe0Mw",
+		        "lat": 48.8630208493969,
+		        "lng": 2.3704749436319617
+		    },
+		    {
+		        "place_name": "16 Rue Dugommier, 75012 Paris, France",
+		        "place_id": "ChIJ1WUGhWty5kcRY2JuVjGxkOw",
+		        "lat": 48.83975198504333,
+		        "lng": 2.391417631620243
+		    },
+		    {
+		        "place_name": "157 Rue du Château des Rentiers, 75013 Paris, France",
+		        "place_id": "ChIJZRaVxYlx5kcRwiZA6MdV-9g",
+		        "lat": 48.82867853499684,
+		        "lng": 2.3634368271768835
+		    },
+		    {
+		        "place_name": "21 Passage Montbrun, 75014 Paris, France",
+		        "place_id": "EigyMSBQYXNzYWdlIE1vbnRicnVuLCA3NTAxNCBQYXJpcywgRnJhbmNl",
+		        "lat": 48.82822650545324,
+		        "lng": 2.3291045517862585
+		    },
+		    {
+		        "place_name": "92-100 Boulevard du Montparnasse, 75014 Paris, France",
+		        "place_id": "EjU5Mi0xMDAgQm91bGV2YXJkIGR1IE1vbnRwYXJuYXNzZSwgNzUwMTQgUGFyaXMsIEZyYW5jZQ",
+		        "lat": 48.84235050134804,
+		        "lng": 2.328417906278446
+		    },
+		    {
+		        "place_name": "29 Rue Dombasle, 75015 Paris, France",
+		        "place_id": "ChIJn89KGkBw5kcR-gtCxLs84DE",
+		        "lat": 48.83613643374479,
+		        "lng": 2.298377165311649
+		    },
+		    {
+		        "place_name": "121 Rue Saint-Jacques, 75005 Paris, France",
+		        "place_id": "ChIJO537Cudx5kcRHlyK46hFZEQ",
+		        "lat": 48.84867675994344,
+		        "lng": 2.3457557053507117
+		    },
+		    {
+		        "place_name": "132 Boulevard de Charonne, 75020 Paris, France",
+		        "place_id": "ChIJrbkp-olt5kcRZIKCJOkaQ14",
+		        "lat": 48.85545400732256,
+		        "lng": 2.3953658432901648
+		    },
+		    {
+		        "place_name": "1 Cité de l'Ermitage, 75020 Paris, France",
+		        "place_id": "ChIJj9Qqb5Nt5kcRof-N1p88Vw8",
+		        "lat": 48.86957032627758,
+		        "lng": 2.3922759385050085
+		    },
+		    {
+		        "place_name": "40 Quai de Jemmapes, 75010 Paris, France",
+		        "place_id": "ChIJ52rI3Alu5kcRTNSL-ANtmsE",
+		        "lat": 48.86934449651679,
+		        "lng": 2.3672133774698523
+		    },
+		    {
+		        "place_name": "115 Rue Réaumur, 75002 Paris, France",
+		        "place_id": "ChIJS-wuAz1u5kcRIzAAtPyAXgg",
+		        "lat": 48.86821533242417,
+		        "lng": 2.3426658005655554
+		    },
+		    {
+		        "place_name": "115 Rue Saint-Dominique, 75007 Paris, France",
+		        "place_id": "ChIJXYBKLt9v5kcRMPaVcBVFqfs",
+		        "lat": 48.85895522569791,
+		        "lng": 2.304900297635868
+		    },
+		    {
+		        "place_name": "3 Rue de Lourmel, 75015 Paris, France",
+		        "place_id": "ChIJvxSayBtw5kcR9jRaZn6tw0Y",
+		        "lat": 48.850258199721495,
+		        "lng": 2.2923690171182898
+		    },
+		    {
+		        "place_name": "64 Avenue Victor Hugo, 75116 Paris, France",
+		        "place_id": "ChIJV42nCPFv5kcR2zE8Exqq-uw",
+		        "lat": 48.87047363512827,
+		        "lng": 2.2865325303018835
+		    },
+		    {
+		        "place_name": "44 Rue de Rome, 75008 Paris, France",
+		        "place_id": "ChIJQeqxR7Vv5kcRGeKJKSkSCfY",
+		        "lat": 48.87792531090652,
+		        "lng": 2.3236113877237585
+		    },
+		    {
+		        "place_name": "7 Boulevard de Rochechouart, 75009 Paris, France",
+		        "place_id": "ChIJJxdCsGlu5kcRPp5zWKxWq0c",
+		        "lat": 48.8832311306673,
+		        "lng": 2.348845610135868
+		    },
+		    {
+		        "place_name": "155 Rue de Rome, 75017 Paris, France",
+		        "place_id": "ChIJQVlaJLBv5kcRxJknss5CnGw",
+		        "lat": 48.8866175298428,
+		        "lng": 2.3151999802530554
+		    },
+		    {
+		        "place_name": "45 Boulevard de Rochechouart, 75009 Paris, France",
+		        "place_id": "EjE0NSBCb3VsZXZhcmQgZGUgUm9jaGVjaG91YXJ0LCA3NTAwOSBQYXJpcywgRnJhbmNl",
+		        "lat": 48.882328052158506,
+		        "lng": 2.343352446073368
+		    },
+		    {
+		        "place_name": "41 Rue de la Chapelle, 75018 Paris, France",
+		        "place_id": "ChIJWWWH03xu5kcRXwkbrq-Plxo",
+		        "lat": 48.89338964026286,
+		        "lng": 2.358801969999149
+		    },
+		    {
+		        "place_name": "43-45 Rue de l'Evangile, 75018 Paris, France",
+		        "place_id": "Eiw0My00NSBSdWUgZGUgbCdFdmFuZ2lsZSwgNzUwMTggUGFyaXMsIEZyYW5jZQ",
+		        "lat": 48.89395394139533,
+		        "lng": 2.367041716092899
+		    },
+		    {
+		        "place_name": "10 Rue de l'Encheval, 75019 Paris, France",
+		        "place_id": "ChIJ0UA45sBt5kcRH8AEd97H0vc",
+		        "lat": 48.87905425586569,
+		        "lng": 2.3891860337198523
+		    },
+		    {
+		        "place_name": "17 Rue Vitruve, 75020 Paris, France",
+		        "place_id": "ChIJ59Ierodt5kcRLJVhtGyE6Fk",
+		        "lat": 48.85703523304221,
+		        "lng": 2.402747282499149
+		    },
+		    {
+		        "place_name": "9 Rue de la Révolution, 93100 Montreuil, France",
+		        "place_id": "ChIJx0cAjGFt5kcRJdx3tOBZV8U",
+		        "lat": 48.85601873652745,
+		        "lng": 2.4291831345499304
+		    },
+		    {
+		        "place_name": "7 Place de la Republique, 92110 Clichy, France",
+		        "place_id": "ChIJXe6oJA9v5kcR2gOs5pzwe2w",
+		        "lat": 48.90309473234857,
+		        "lng": 2.3124533982218054
+		    },
+		    {
+		        "place_name": "22 Rue Saint-Pierre, 92200 Neuilly-sur-Seine, France",
+		        "place_id": "ChIJ6WfmJmRl5kcRnhsL-FQlZ7U",
+		        "lat": 48.883118246745475,
+		        "lng": 2.2717696518839148
+		    },
+		    {
+		        "place_name": "1 Avenue André Morizet, 92100 Boulogne-Billancourt, France",
+		        "place_id": "ChIJY25Wt-h65kcRaYJKfJ1WavU",
+		        "lat": 48.83365059084553,
+		        "lng": 2.2425872178018835
+		    },
+		    {
+		        "place_name": "87 Rue du Point du Jour, 92100 Boulogne-Billancourt, France",
+		        "place_id": "ChIJU0YgEO165kcRu1yP4bPfHFI",
+		        "lat": 48.829582581850715,
+		        "lng": 2.250311979764774
+		    },
+		    {
+		        "place_name": "31 Avenue Verdier, 92120 Montrouge, France",
+		        "place_id": "ChIJrWyMvf9w5kcRkZ4Wg0nGaJo",
+		        "lat": 48.815228912154815,
+		        "lng": 2.3169165940225867
+		    },
+		    {
+		        "place_name": "68 Avenue Raspail, 94250 Gentilly, France",
+		        "place_id": "ChIJt4bSOnRx5kcRIVVq02VkWAw",
+		        "lat": 48.81251594581754,
+		        "lng": 2.3455840439737585
+		    },
+		    {
+		        "place_name": "22 Quai d'Orléans, 75004 Paris, France",
+		        "place_id": "ChIJ0aztRONx5kcRiYkOqMVLaao",
+		        "lat": 48.851726634791916,
+		        "lng": 2.354338774198368
+		    },
+		    {
+		        "place_name": "7-11 Quai de Conti, 75006 Paris, France",
+		        "place_id": "Eic3LTExIFF1YWkgZGUgQ29udGksIDc1MDA2IFBhcmlzLCBGcmFuY2U",
+		        "lat": 48.8568093467116,
+		        "lng": 2.3402625412882117
+		    },
+		    {
+		        "place_name": "42 Quai des Orfèvres, 75001 Paris, France",
+		        "place_id": "ChIJA6bfiN9x5kcR_FBUHRIFm7M",
+		        "lat": 48.85579284560999,
+		        "lng": 2.342322477811649
+		    },
+		    {
+		        "place_name": "5-7 Rue du Sabot, 75006 Paris, France",
+		        "place_id": "EiU1LTcgUnVlIGR1IFNhYm90LCA3NTAwNiBQYXJpcywgRnJhbmNl",
+		        "lat": 48.85251731276075,
+		        "lng": 2.3316794724405554
+		    },
+		    {
+		        "place_name": "9 Avenue de Lowendal, 75007 Paris, France",
+		        "place_id": "ChIJTZPVeCZw5kcRb-MkJcrj1mw",
+		        "lat": 48.85217845230312,
+		        "lng": 2.3081618637979773
+		    },
+		    {
+		        "place_name": "23 Rue de la Forge Royale, 75011 Paris, France",
+		        "place_id": "ChIJDd0e4ghy5kcRiAMxGj3923o",
+		        "lat": 48.85206549830757,
+		        "lng": 2.380602964872196
+		    }
+		]
+	}
+
+});
+
+
+
+
+	window.LJ.meepass = _.merge( window.LJ.meepass || {}, {
+
+		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.meepass.handleDomEvents();
+				resolve();
+			});
+
+
+		},
+		handleDomEvents: function(){
+
+			$('.menu-section.--meepass').on('click', '.segment__part', LJ.meepass.refreshSegmentView );
+			$('.menu-item.--meepass').one('click', LJ.meepass.handleMeepassClicked );
+			LJ.ui.$body.on('click', '.js-send-meepass', LJ.meepass.handleSendMeepass );
+
+		},
+		refreshSegmentView: function(){
+
+			var $seg = $(this);
+			var link = $seg.attr('data-link');
+
+			if( $seg.hasClass('--active') ) return;
+
+			$seg.siblings().removeClass('--active');
+			$seg.addClass('--active');
+
+			$('.meepass').children().css({ display: 'none' });
+			$('.meepass [data-link="' + link + '"]').css({ display: 'flex' });
+
+		},
+		handleSendMeepass: function(){
+
+			// User is hosting more than one event...
+			if( 0 ){
+				LJ.ui.showModal({
+					"title"		: "Félicitations !",
+					"subtitle"	: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
+					"body"  	: LJ.meepass.renderEventsInModal(),
+					"footer"	: "<button class='--rounded'><i class='icon icon-check'></i></button>"
+				});
+
+			} else {
+				
+				var event_id = '';
+			//	LJ.meepass.sendMeepass()
+			//		.then( LJ.meepass.handleSendMeepassSuccess )
+			//		.catch( LJ.meepass.handleApiError );
+
+			}
+
+		},
+		renderMeepassRibbon: function(){
+
+			var n_meepass = LJ.user.meepass.length;
+
+			return LJ.ui.render([
+
+				'<div class="meepass-ribbon">',
+					'<h2 data-lid="meepass_ribbon"></h2>',
+				'</div>'
+
+				].join('')).replace('%n', n_meepass );
+
+		},
+		sendMeepass: function(){
+			
+		},
+		handleSendMeepassSuccess: function(){
+
+		},
+		handleApiError: function(){
+
+		},
+		renderEventsInModal: function(){
+
+		},
+		handleMeepassClicked: function(){
+
+			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
+
+			$('.meepass').html('');
+
+			$loader.addClass('none')
+				   .appendTo('.meepass')
+				   .velocity('bounceInQuick', {
+				   	delay: 125,
+				   	duration: 500,
+				   	display: 'block'
+				   });
+
+			LJ.meepass.fetchMeepassItems();
+
+		},	
+		fetchMeepassItems: function(){
+
+			LJ.api.fetchMeMeepass()
+				  .then( LJ.meepass.handleFetchMeMeepassSuccess, LJ.meepass.handleFetchMeMeepassError );
+
+
+		},
+		handleFetchMeMeepassSuccess: function( expose ){
+
+			var meepass = expose.meepass;
+
+			LJ.meepass.setMeepassItems( meepass );
+
+		},
+		setMeepassItems: function( meepass ){
+
+			var html = [];
+			meepass.sort();
+
+			var facebook_ids = _.pluck( meepass, 'sent_by' ).concat( _.pluck( meepass, 'sent_to' ) ).filter( Boolean );
+
+			LJ.api.fetchUsers( facebook_ids )
+				.then(function( res ){
+
+					var no_meepass_received = true;
+					var no_meepass_sent     = true;
+					meepass.forEach(function( mp ){
+
+						for( var i=0; i<res.length; i++ ){
+
+							var user = res[ i ].user;
+
+							if( mp.sent_by == user.facebook_id ){
+								no_meepass_received = false;
+								return html.push( LJ.meepass.renderMeepassItem__Received( mp, user ) );
+							}
+
+							if( mp.sent_to == user.facebook_id ){
+								no_meepass_sent = false;
+								return html.push( LJ.meepass.renderMeepassItem__Sent( mp, user ) );
+							}
+						}
+					});
+
+					if( no_meepass_sent ){
+						html.push( LJ.meepass.renderMeepassItem__SentEmpty() );
+					}
+
+					if( no_meepass_received ){
+						html.push( LJ.meepass.renderMeepassItem__ReceivedEmpty() );
+					}
+
+					$('.meepass').html( html.join('') )
+								 .find('[data-link="received"]')
+								 .velocity('fadeIn', {
+									duration: 250,
+									display: 'flex'
+								});
+
+					$('.menu-section.--meepass')
+								.find('.segment__part')
+								.removeClass('--active')
+								.first()
+								.addClass('--active');
+
+				});
+
+		},		
+		handleFetchMeMeepassError: function(){
+
+			LJ.elog('Error fetching meepass :/');
+
+		},
+		renderMeepassItem__ReceivedEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="received">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meepass"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_meepass_received_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_meepass_received_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__SentEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="empty" data-link="sent">',
+					'<div class="empty__icon --round-icon">',
+						'<i class="icon icon-meepass"></i>',
+					'</div>',
+					'<div class="empty__title">',
+						'<h2 data-lid="empty_meepass_sent_title"></h2>',
+					'</div>',
+					'<div class="empty__subtitle">',
+						'<p data-lid="empty_meepass_sent_subtitle"></p>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__Received: function( meepass_object, target ){
+
+			var mp 	   = meepass_object;
+			var target = target;
+
+			var formatted_date = LJ.renderDate( mp.sent_at );
+			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="meepass__item" data-link="received" data-event-id="' + mp.target_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + LJ.text('meepass_item_title_received').replace('%name', target.name) +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		renderMeepassItem__Sent: function( meepass_object, target, meepass_by ){
+
+			var mp 	   = meepass_object;
+			var target = target;
+
+			var formatted_date = LJ.renderDate( mp.sent_at );
+			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
+
+			return LJ.ui.render([
+
+				'<div class="meepass__item" data-link="sent" data-event-id="' + mp.target_id + '">',
+					'<div class="row-date date">' + formatted_date + '</div>',
+					'<div class="row-pic">',
+						'<div class="row-pic__image">' + img_html + '</div>',
+						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
+					'</div>',
+					'<div class="row-body">',
+						'<div class="row-body__title">',
+							'<h2>' + LJ.text('meepass_item_title_sent').replace('%name', target.name) +'</h2>',
+						'</div>',
+						'<div class="row-body__subtitle">',
+							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		}
+
+	});
+		
+
 	window.LJ.menu = _.merge( window.LJ.menu || {}, {
 
 		$menu: $('.menu'),
@@ -45845,396 +46505,6 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 
 	});
 
-	window.LJ.login = _.merge( window.LJ.login || {}, {
-
-			'$trigger_login': '.js-login',
-			'$trigger_logout': '.js-logout',
-			'$modal_logout'  : '.modal.--logout',
-			'opening_duration': 1000,
-			'prompt_duration': 600,
-			'prompt_buttons_duration': 900,
-			'completed_steps': 0,
-			'break_duration': 400,
-
-			'data': {},
-
-			init: function(){
-
-				return LJ.promise(function( resolve, reject ){
-					LJ.ui.$body.on('click', '.js-login', resolve );
-				});
-
-
-			},
-			showLandingElements: function(){
-
-				var duration = 600;
-
-				$('.landing').find('.landing-logo')
-					.velocity('slideLeftIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-lang')
-					.velocity('slideRightIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-body')
-					.velocity('shradeIn', {
-						duration: duration*2,
-						display : 'flex'
-					});
-
-				$('.landing').find('.landing-footer')
-					.velocity('slideUpIn', {
-						duration: duration,
-						display : 'flex'
-					});
-
-
-			},
-			hideLandingElements: function(){
-
-				$('.landing')
-					.children()
-					.velocity('shradeOut', {
-						duration : 800,
-						display  : 'none'
-					});
-
-			},
-			showLoginProgressBar: function(){
-
-				$('.login__message').velocity('shradeIn', {
-			 		duration: 1600, delay: LJ.login.opening_duration/2
-			 	});
-
-			},
-			addLoginProgression: function(){
-
-				$( LJ.login.renderLoginProgression() ).hide().appendTo( $('.curtain') )
-
-			},
-			showLoginProgression: function(){
-
-				$('.login').velocity('shradeIn', {
-					duration: 1000
-				});
-
-			},
-			showLoginProgressMessage: function(){
-
-				$('.login__message').velocity('shradeIn', {
-					duration: 1000
-				});
-
-			},
-			hideLoginProgressBar: function(){
-
-				$('.login__progress-bar').velocity('shradeIn', {
-			 		duration: 1000
-			 	});
-
-			},
-			enterLoginProcess: function(){
-
-				LJ.login.hideLandingElements();
-				LJ.ui.deactivateHtmlScroll();
-
-				return LJ.delay( 1000 )
-						 .then(function(){
-
-						 	LJ.ui.showCurtain({ duration: 600, theme: "light", sticky: true });
-						 	LJ.login.addLoginProgression();
-						 	LJ.login.showLoginProgression();
-						 	// LJ.login.showLoginProgressMessage();
-						 	// LJ.login.showLoginProgressBar();
-
-						 });
-
-			},
-			hideLoginSteps: function(){
-				return LJ.promise(function( resolve, reject ){
-
-					$('.app').removeClass('nonei');
-					$('.landing').remove();
-
-					$('.login__message, .login__progress-bar, .login__loader').velocity('shradeOut', {
-						duration: 400,
-						complete: resolve
-						
-					});
-
-				});
-			},
-			firstSetup: function(){
-				// the app requires a user's location to boot properly
-				// - to be visible in the search section
-				// - to allow for geo requests to fetch the right befores
-				// - to allow the map to load in the right city
-				var L = LJ.user.location;
-				if( L && L.place_id && L.place_name && L.lat && L.lng ){
-					return;
-				}
-
-				if( LJ.user.access.indexOf('bot') == -1 ){
-					LJ.pictures.uploadFacebookPicture_Intro();
-				}
-				
-	            return LJ.login.break()
-	            		.then(function(){
-	            			return LJ.login.promptUserLocation();
-
-	            		})
-	            		.then(function(){
-	            			return LJ.login.debreak();
-
-	            		});
-
-			},
-			break: function(){
-				return LJ.ui.shradeOut( $('.login'), LJ.login.break_duration );
-
-			},
-			debreak: function(){
-				return LJ.ui.shradeIn( $('.login'), LJ.login.break_duration );
-
-			},
-			stepCompleted: function( fill_ratio ){
-
-				if( typeof fill_ratio != "number" ){
-					fill_ratio = 33.33;
-				}
-
-				LJ.login.completed_steps += 1;
-				LJ.login.fillProgressBar( fill_ratio );
-			},
-			fillProgressBar: function( fill_ratio ){
-
-				var max_width = $('.login__progress-bar').width();
-				var add_width = max_width * fill_ratio/100;
-				var cur_width = (LJ.login.completed_steps) * add_width;
-				var new_width = cur_width + add_width;
-
-				$('.login__progress-bar-bg')
-					.css({ 'width':  new_width });
-
-			},
-			renderLoginProgression: function(){
-
-				return LJ.ui.render([
-
-					'<div class="login">',
-						'<div class="login__loader">',
-							LJ.static.renderStaticImage('slide_loader'),
-						'</div>',
-						'<div class="login__message">',
-							'<h1 data-lid="login_loading_msg"></h1>',
-						'</div>',
-						'<div class="login__progress-bar">',
-							'<div class="login__progress-bar-bg"></div>',
-						'</div>',
-					'</div>'
-
-				].join(''));
-
-			},
-			promptUserLocation: function(){
-				return LJ.promise(function( resolve, reject ){
-
-					LJ.log('Requesting the user to provide a location...');
-
-					$( LJ.login.renderLocationPrompt() )
-						.hide()
-						.appendTo('.curtain')
-						.velocity('shradeIn', {
-							duration: LJ.login.prompt_duration,
-							display: 'flex'
-						});
-
-					LJ.seek.activatePlacesInFirstLogin();
-					LJ.seek.login_places.addListener('place_changed', function(){
-
-						var place = LJ.seek.login_places.getPlace();
-						$('.init-location').attr('data-place-id'   , place.place_id )
-							  			   .attr('data-place-name' , place.formatted_address )
-							  			   .attr('data-place-lat'  , place.geometry.location.lat() )
-							  			   .attr('data-place-lng'  , place.geometry.location.lng() );
-
-						LJ.login.showPlayButton();
-
-					});
-
-					// Resolve the promise when the user picked a location
-					$('.init-location .action__validate').click(function(){
-						var $block = $( this ).closest('.init-location');
-
-						if( $block.hasClass('--validating') ) return
-						$block.addClass('--validating');
-
-						LJ.login.updateProfileFirstLogin()
-							.then(function(){
-
-								$block
-									.removeClass('--validating')
-									.velocity('bounceOut', {
-										duration : LJ.login.prompt_duration,
-										complete : resolve
-									});
-								
-
-							}, function( err ){
-								LJ.wlog('An error occured');
-								LJ.log(err);
-
-							});
-					});
-				});	
-			},
-			updateProfileFirstLogin: function(){
-
-				LJ.log('Updating user location for the first time...');
-
-				var place_id   = $('.init-location').attr('data-place-id');
-				var place_name = $('.init-location').attr('data-place-name');
-				var lat        = $('.init-location').attr('data-place-lat');
-				var lng        = $('.init-location').attr('data-place-lng');
-
-				if( !( place_id && place_name && lat && lng) ){
-					return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
-				}
-
-				var update = {};
-				update.location = {
-					place_name : place_name,
-					place_id   : place_id,
-					lat 	   : lat,
-					lng 	   : lng
-				};
-
-				return LJ.api.updateProfile( update )
-						  .then(function( exposed ){
-							  	LJ.profile.setMyInformations();
-							  	return;
-						});
-
-			},
-			showPlayButton: function(){
-
-				var $elm = $('.init-location').find('.init-location-action');
-
-				if( $elm.css('opacity') != "0" ) return;
-
-				$elm.velocity('bounceInQuick', {
-					duration : LJ.login.prompt_buttons_duration,
-					display  : 'flex',
-					delay    : 500,
-					complete : function(){
-						$( this ).addClass('pound-light');
-					}
-				});
-
-			},
-			// Do a bunch of functions right before the login happens
-			terminateLoginProcess: function(){
-
-				LJ.ui.activateHtmlScroll();
-
-				$('.curtain')
-						.children('.login')
-						.velocity('bounceOut', {
-							duration: LJ.login.prompt_duration
-						});
-
-				$('.curtain')
-					.children('.login__bg')
-					.velocity({ 'opacity': [ 0, 0.09 ]}, {
-						duration: LJ.login.prompt_duration/2,
-						complete: function(){
-							$(this).remove();
-						}
-					});
-
-				return LJ.ui.hideCurtain({
-					delay: LJ.login.prompt_duration * 1.3,
-					duration: 1000
-
-				}).then(function(){
-
-					// LJ.map.activateBrowserState("shrinked");
-					LJ.before.showBrowser();
-					LJ.before.refreshBrowserDates();
-					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
-					LJ.map.updateMarkers__byDate();
-					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
-					LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
-					
-					return
-				});	
-
-			},
-			renderLocationPrompt: function(){
-
-				return LJ.ui.render([
-
-					'<div class="init-location">',
-						'<div class="init-location__title">',
-							'<h2 data-lid="init_location_title"></h2>',
-						'</div>',
-						'<div class="init-location__subtitle">',
-							'<input id="init-location__input" type="text" data-lid="init_location_subtitle_placeholder">',
-						'</div>',
-						'<div class="init-location__splitter"></div>',
-						'<div class="init-location__explanation">',
-							'<p data-lid="init_location_explanation"></p>',
-						'</div>',
-						'<div class="init-location__geoloc">',
-							'<button data-lid="init_location_geoloc"></button>',
-						'</div>',
-						'<div class="init-location-action">',
-							'<div class="action__validate --round-icon">',
-								'<i class="icon icon-play"></i>',
-							'</div>',
-						'</div>',
-					'</div>'
-
-				].join(''));
-
-			},
-			handleLogout: function(){
-
-				LJ.ui.showModal({
-					"title"	   : LJ.text("logout_title"),
-					"subtitle" : LJ.text("logout_subtitle"),
-					"type"     : "logout",
-					"footer"   : "<button class='--rounded'><i class='icon icon-power'></i></button>"
-				});
-
-			},
-			logUserOut: function(){
-
-				var p1 = LJ.ui.shadeModal();
-				var p2 = LJ.api.updateUser({
-					"app_preferences": {
-						ux: {
-							auto_login: false
-						}
-					}
-				});
-
-				LJ.Promise.all([ p1, p2 ]).then(function(){
-					LJ.store.remove('facebook_access_token');
-					location.reload();
-				});
-
-			}
-
-
-	});
-
 	window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 		state    : null,
@@ -46705,6 +46975,525 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 			LJ.log('New message seen by : ' + seen_by );
 			LJ.chat.seenifyChatInview( chat_id, seen_by );
 			LJ.chat.refreshChatSeenBy( chat_id );
+
+		}
+
+	});
+	
+	// Needs to be loaded before lj-ui
+
+	window.LJ.router = _.merge( window.LJ.router || {}, {
+
+		init: function(){
+			
+		}
+
+	});
+
+	window.LJ.fn = _.merge( window.LJ.fn || {}, {
+
+		initRouter: function(){
+
+			// Reference
+			var wl = window.location;
+
+			// Routing table to map each url to a button to click
+			LJ.router = {
+				me: {
+					elem: '#profile'
+				},
+				events: {
+					elem     : '#events',
+					callback : function(){
+
+					}
+				},
+				settings: {
+					elem: '#settings'
+				}
+			};
+
+			LJ.$body.on('click', '[data-hash]', function(e){
+
+				var $self = $(this);
+
+				// Prevent trigger state visit on parents
+				e.stopPropagation();
+
+				// Move the url to the current hash state
+				var hash = $self.attr('data-hash');
+				wl.hash = '#' + hash;
+
+			});
+
+			$( window ).on('hashchange', function(){
+
+				var hash   = wl.hash.split('#')[1]
+				var target = LJ.router[ hash ].elem; 
+
+				$( target ).click();
+
+			});
+
+		}
+
+	});
+
+	window.LJ.search = _.merge( window.LJ.search || {}, {
+
+		fetched_users 			: [],
+
+		users_count 			: 0,
+		fetching_users			: false,
+		all_fetched 		  	: false,
+
+		fetch_more_scroll_ratio : 0.97,
+		refetch_callstack: [],
+
+		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.search.handleDomEvents();
+				LJ.search.fetchAndShowMoreUsers();
+				LJ.search.setCountriesInFilters();
+				LJ.search.addLoader();
+				resolve();
+
+			});
+		},
+		handleDomEvents: function(){
+
+			LJ.ui.$body.on('click', '.search-user__pic', LJ.search.handleClickUser );
+			LJ.ui.$body.on('click', '.search-filters__icon', LJ.search.showFilters );
+			LJ.ui.$body.on('click', '.search-filters__close', LJ.search.hideFilters );
+			LJ.ui.$body.on('click', '.search-filters .toggle', LJ.search.handleToggleFilter );
+			LJ.ui.$window.scroll( LJ.search.handleFetchMoreUsers );
+			
+		},
+		addLoader: function(){
+
+			$('.search-users').append( LJ.static.renderStaticImage('search_loader') )
+
+		},
+		handleClickUser: function(){
+
+			var facebook_id = $(this).closest('.search-user').attr('data-facebook-id');
+
+			LJ.profile_user.showUserProfile( facebook_id );
+
+		},
+		handleToggleFilter: function(){
+
+			var $to = $(this);
+			$to.toggleClass('--active');
+			LJ.search.setFiltersState();
+			LJ.search.refetchAndShowMoreUsers();
+
+		},
+		allowedToFetchMore: function(){
+			
+			var data_to_fetch        = !LJ.search.all_fetched;
+			var scroll_almost_bottom = LJ.ui.getScrollRatio() > LJ.search.fetch_more_scroll_ratio;
+			var search_panel_active  = $('.app__menu-item.--search').hasClass('--active');
+			var user_not_fetching    = !LJ.search.fetching_users;
+
+			if( data_to_fetch && scroll_almost_bottom && search_panel_active && user_not_fetching ){
+				return true;
+			} else {
+				return false;
+			}
+
+		},
+		handleFetchMoreUsers: function(){
+
+			if( !LJ.search.allowedToFetchMore() ) return;
+
+			LJ.log('Fetching more users...');
+			LJ.search.fetchAndShowMoreUsers();
+
+		},
+		fetchMoreUsers: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.search.setFiltersState();
+
+				var facebook_ids = _.map( LJ.search.fetched_users, 'facebook_id' ).concat([ LJ.user.facebook_id ]);
+				var filters      = LJ.search.filter_state;
+
+				LJ.api.fetchMoreUsers( facebook_ids, filters )
+					.then(function( exposed ){
+
+						var new_users   = exposed.users;
+						var users_count = exposed.users_count;
+
+						LJ.search.fetched_users = _.uniq( LJ.search.fetched_users.concat( new_users ) );
+						LJ.search.users_count   = users_count;
+						resolve( new_users );
+
+					})
+					.catch( reject );
+
+			});
+		},
+		refetchAndShowMoreUsers: function(){
+
+			LJ.log('[Re]Fetching and showing more users...');
+			LJ.search.all_fetched = false;
+
+			if( LJ.search.fetching_users ){
+				return LJ.wlog('Already fetching users...');
+			}
+
+			LJ.search.fetched_users = [];
+			LJ.search.hideSearchUsers()
+				.then(function(){
+					return LJ.search.fetchAndShowMoreUsers();
+				});
+
+		},
+		fetchAndShowMoreUsers: function(){
+
+			LJ.log('Fetching and showing more users...');
+			LJ.search.fetching_users = true;
+
+			var users;
+			LJ.search.showSearchLoader()
+
+				.then(function(){
+					return LJ.search.fetchMoreUsers();
+				})
+
+				.then(function( new_users ){
+					if( LJ.search.fetched_users.length == ( LJ.search.users_count - 1 ) || new_users.length == 0 ){
+						LJ.wlog('Everyone has been fetched for this filter.');
+						LJ.search.all_fetched = true;
+					}
+					users = new_users;
+					return;
+				})
+
+				.then(function(){
+					return LJ.search.hideSearchLoader();
+				})
+
+				.then(function(){
+					return LJ.search.showMoreUsers( users );
+				})
+				// When users loaded, give it one second of blocking, otherwise if user scrolls
+				// It will detect that he can fetch more users. One batch at a time is better :)
+				.then(function(){
+					setTimeout(function(){
+						LJ.search.fetching_users = false;
+					}, 1000 );
+				});
+
+		},
+		showMoreUsers: function( users ){
+
+			_.chunk( users, 3 ).forEach(function( user_group, i ){
+
+				var $users = $( LJ.search.renderUserRow( user_group ) );
+
+				$users
+					.css({ 'opacity': 0 })
+					.insertBefore('.search__loader');
+
+				LJ.settings.applyUxPreferences();
+
+				if( $('.slide').length > 0 ){
+					LJ.offsetSearchUsers( 25 );
+				}
+
+				$users.velocity('slideUpIn', {
+					display  : 'flex',
+					duration : 700,
+					delay    : 100 + 250 * i
+				});
+
+			});
+
+		},
+		showSearchLoader: function( duration ){
+			return LJ.promise(function( resolve, reject ){
+				var $l = $('.search__loader');
+				if( $l.length == 0 ) return resolve();
+				$('.search__loader').velocity('shradeIn', {
+					duration: duration || 300,
+					complete: resolve
+				})
+			});
+		},
+		hideSearchLoader: function( duration ){
+			return LJ.promise(function( resolve, reject ){
+				$('.search__loader').velocity('shradeOut', {
+					duration: duration || 300,
+					complete: resolve
+				})
+			});
+		},
+		hideSearchUsers: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				if( $('.search-users-row').length == 0 ){
+					return resolve();
+				}
+				
+				$('.search-users-row').velocity('shradeOut', {
+					duration : 300,
+					complete : function(){
+						$(this).remove();
+						resolve();
+					}
+				});
+			});
+
+		},
+		renderUserRow: function( users ){
+
+			if( !users ){
+				return LJ.wlog('No users to render here');
+			}
+
+			var html = ['<div class="search-users-row">'];
+
+			for( var i=0; i<3; i++ ){
+				if( users[ i ] ){
+					html.push( LJ.search.renderUser( users[i] ) );
+				} else {
+					html.push( LJ.search.renderUserBlank() );
+				}
+			}
+
+			html.push('</div>');
+
+			return html.join('');
+
+		},
+		renderUserBlank: function(){
+
+			return '<div class="search-user --blank"></div>';
+
+		},
+		renderUser: function( user ){
+
+			var n = user.name;
+			var a = user.age;
+			var i = user.facebook_id;
+			var c = user.country_code;
+			var l = user.location.place_name;
+			var p = user.location.place_id;
+			var g = user.gender;
+
+			var main_pic = LJ.findMainPic( user );
+			var img_html = LJ.pictures.makeImgHtml( main_pic.img_id, main_pic.img_version, 'user-search');
+
+
+			return LJ.ui.render([
+
+				'<div class="search-user" data-facebook-id="'+ i +'" data-age="' + a + '" data-gender="' + g + '" data-cc="' + c + '">',
+		            '<div class="search-user__pic js-filterlay">',
+		            	img_html,
+		               '<div class="search-user__pic-overlay"></div>',
+		            '</div>',
+		           '<div class="search-user-body">',
+		               '<div class="search-user__h1">',
+		            	  '<span class="search-user__gender user-gender js-user-gender --'+ g +'"></span>',
+		                  '<span class="name">'+ n +'</span>',
+			              '<span class="search-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
+			              '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
+		               '</div>',
+		               '<div class="search-user__h2">',
+		                  '<span class="age">'+ a +'</span>',
+		                  '<span class="comma">-</span>',
+			              '<span class="location" data-place-id="'+ p +'">'+ l +'</span>',
+		               '</div>',
+		           '</div>',
+		            '<div class="search-user__actions">',
+		              '<div class="search-user__action --round-icon --share js-share-profile"><i class="icon icon-forward"></i></div>',
+		              '<div class="search-user__splitter"></div>',
+		              '<div class="search-user__action --round-icon --meepass js-send-meepass"><i class="icon icon-meepass"></i></div>',
+		            '</div>',
+	          '</div>'
+
+				].join(''))
+
+		}
+
+	});
+	
+	window.LJ.search = _.merge( window.LJ.search || {}, {
+
+		$filters_agerange : null,
+		filters_agerange  : null,
+
+		filters_duration: 400,
+
+		filter_state: {
+			age       : [],
+			gender    : [],
+			countries : []
+		},
+
+		initFilters: function(){
+			return LJ.promise(function( resolve, reject ){
+				LJ.search.initFiltersSlider();
+				resolve();
+			});
+
+		},
+		initFiltersSlider: function(){
+			
+			LJ.search.$filters_agerange = document.getElementById('search-filters__input');
+			
+			LJ.search.filters_agerange = noUiSlider.create( LJ.search.$filters_agerange, {
+				start: [ LJ.app_settings.app.min_age, LJ.app_settings.app.max_age ], // Handle start position
+				step: 1, 					// Slider moves in increments of '10'
+				margin: 3, 					// Handles must be more than '20' apart
+				connect: true, 				// Display a colored bar between the handles
+				orientation: 'horizontal',  // Orient the slider vertically
+				behaviour: 'tap-drag',  	// Move handle on tap, bar is draggable
+				range: { 					// Slider can select '0' to '100'
+					'min': LJ.app_settings.app.min_age,
+					'max': LJ.app_settings.app.max_age
+				}
+			});
+
+			LJ.search.filters_agerange.on('update', LJ.search.refreshFiltersSliderValues );
+			LJ.search.filters_agerange.on('end', LJ.search.refetchAndShowMoreUsers );
+
+		},
+		resetFiltersState: function(){
+
+			LJ.search.filter_state = {
+				age       : [],
+				gender    : [],
+				countries : []
+			};
+
+		},
+		setFiltersState: function(){
+
+			LJ.search.resetFiltersState();
+
+			$('.search-filters')
+				.find('.toggle.--active')
+				.each(function( i, toggle ){
+
+					if( $( toggle ).closest('.js-filters-male').length > 0 ){
+						LJ.search.filter_state.gender.push('male');
+					}
+
+					if( $( toggle ).closest('.js-filters-female').length > 0 )
+						LJ.search.filter_state.gender.push('female');
+
+					if( $( toggle ).closest('.js-filters-country').length > 0 ){
+						var cc = $(toggle).closest('[data-country-code]').attr('data-country-code');
+						LJ.search.filter_state.countries.push( cc );
+					}
+
+				});
+
+			var min = $('.search-filters-min-age').html();
+			var max = $('.search-filters-max-age').html();
+
+			LJ.search.filter_state.age[0] = min;
+			LJ.search.filter_state.age[1] = max;
+
+		},
+		setCountriesInFilters: function(){
+
+			LJ.api.fetchDistinctCountries()
+				.then(function( country_codes ){
+					return LJ.search.renderFilterCountries( _.shuffle( country_codes ) );
+				})
+				.then(function( countries_html ){
+					return LJ.search.addFilterCountries( countries_html );
+				})
+
+		},
+		renderFilterCountries: function( country_codes ){
+
+			var html = [];
+			country_codes.forEach(function( cc ){
+				html.push( LJ.search.renderFilterCountry( cc ) );
+			});
+
+			return html.join('');
+
+		},
+		renderFilterCountry: function( cc ){
+
+			return LJ.ui.render([
+				'<div class="search-filters-countries js-filters-countries" data-country-code="'+ cc +'">',
+					'<div class="search-filters-row js-filters-country">',
+	            		'<div class="search-filters-country__flag --round-icon">',
+	            			'<i class="flag-icon flag-icon-'+ cc +'"></i>',
+	              		'</div>',
+		            	'<div class="search-filters-country__label">',
+		            		'<label data-lid="country_'+ cc +'"></label>',
+		            	'</div>',
+		            	'<div class="toggle">',
+		                	'<div class="toggle__background"></div>',
+		                	'<div class="toggle__button"></div>',
+		              	'</div>',
+	            	'</div>',
+	            '</div>'
+				].join(''));
+		},
+		addFilterCountries: function( countries_html ){
+
+			$('.js-filters-countries').children().remove();
+			$('.js-filters-countries').append( countries_html );
+
+		},
+		showFilters: function(){
+			
+			var $fi    = $('.search-filters__icon');
+			var $f     = $('.search-filters');
+			var d      = LJ.search.filters_duration;
+
+			LJ.ui.adjustWrapperHeight( $('.search-filters') );
+
+			$fi.velocity('shradeOut', {
+				duration : d,
+				display  : 'none'
+			});
+
+			LJ.ui.shradeIn( $f, d );
+
+			// LJ.delay( d )
+			// 	.then(function(){
+			// 		return LJ.ui.shradeIn( $f, d );
+			// 	});
+			
+
+		},
+		hideFilters: function(){
+
+			var $fi    = $('.search-filters__icon');
+			var $f     = $('.search-filters');
+			var d      = LJ.search.filters_duration;
+
+			$f.velocity('shradeOut', {
+				duration : d,
+				display  : 'none'
+			});
+
+			LJ.ui.shradeIn( $fi, d );
+			
+			// LJ.delay( d )
+			// 	.then(function(){
+			// 		return LJ.ui.shradeIn( $fi, d );
+			// 	});
+
+		},
+		refreshFiltersSliderValues: function( value ){
+
+			$('.search-filters-min-age').html( parseInt(value[0]) );
+			$('.search-filters-max-age').html( parseInt(value[1]) );
+
+			LJ.search.setFiltersState();
 
 		}
 
@@ -47819,473 +48608,241 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 
 	});
 	
-	// Needs to be loaded before lj-ui
 
-	window.LJ.router = _.merge( window.LJ.router || {}, {
+	window.LJ = _.merge( window.LJ || {} , {
 
-		init: function(){
-			
-		}
-
-	});
-
-	window.LJ.fn = _.merge( window.LJ.fn || {}, {
-
-		initRouter: function(){
-
-			// Reference
-			var wl = window.location;
-
-			// Routing table to map each url to a button to click
-			LJ.router = {
-				me: {
-					elem: '#profile'
-				},
-				events: {
-					elem     : '#events',
-					callback : function(){
-
-					}
-				},
-				settings: {
-					elem: '#settings'
+		typeahead_legacy: {
+			users: {
+				class_names: {
+					input      :'',
+					hint       :'',
+					menu       :'search-results-users',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-users',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
 				}
-			};
-
-			LJ.$body.on('click', '[data-hash]', function(e){
-
-				var $self = $(this);
-
-				// Prevent trigger state visit on parents
-				e.stopPropagation();
-
-				// Move the url to the current hash state
-				var hash = $self.attr('data-hash');
-				wl.hash = '#' + hash;
-
-			});
-
-			$( window ).on('hashchange', function(){
-
-				var hash   = wl.hash.split('#')[1]
-				var target = LJ.router[ hash ].elem; 
-
-				$( target ).click();
-
-			});
-
+			},
+			// places: {
+			// 	class_names: {
+			// 		input:'',
+			// 		hint:'hint-places',
+			// 		menu:'search-results-autocomplete search-results-party-places',
+			// 		dataset:'search-wrap',
+			// 		suggestion:'search-result-default search-result-party-places',
+			// 		empty:'empty',
+			// 		open:'open',
+			// 		cursor:'cursor',
+			// 		highlight:'highlight'
+			// 	}
+			// },
+			friends: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			groups: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends search-results-groups',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			}
 		}
 
 	});
 
-	window.LJ.meepass = _.merge( window.LJ.meepass || {}, {
 
-		init: function(){
-			return LJ.promise(function( resolve, reject ){
+	window.LJ.fn = _.merge( window.LJ.fn || {} , 
 
-				LJ.meepass.handleDomEvents();
-				resolve();
+	{
+		initTypeaheadUsers: function(){
+
+			var users = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
 			});
 
+			users.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
+
+			$('#search input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
+				classNames: LJ.typeahead.users.class_names
+			},
+			{
+				name:'users',
+				display:'name',
+				source: users.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			})
+			.on('typeahead:select', function( ev, suggestion ){
+
+				LJ.fn.displayUserProfile( suggestion.facebook_id );
+				$(this).typeahead('val', '');
+
+			});
 
 		},
-		handleDomEvents: function(){
+		initTypeaheadHosts: function( friends ){
 
-			$('.menu-section.--meepass').on('click', '.segment__part', LJ.meepass.refreshSegmentView );
-			$('.menu-item.--meepass').one('click', LJ.meepass.handleMeepassClicked );
-			LJ.ui.$body.on('click', '.js-send-meepass', LJ.meepass.handleSendMeepass );
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
 
-		},
-		refreshSegmentView: function(){
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
 
-			var $seg = $(this);
-			var link = $seg.attr('data-link');
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
 
-			if( $seg.hasClass('--active') ) return;
-
-			$seg.siblings().removeClass('--active');
-			$seg.addClass('--active');
-
-			$('.meepass').children().css({ display: 'none' });
-			$('.meepass [data-link="' + link + '"]').css({ display: 'flex' });
-
-		},
-		handleSendMeepass: function(){
-
-			// User is hosting more than one event...
-			if( 0 ){
-				LJ.ui.showModal({
-					"title"		: "Félicitations !",
-					"subtitle"	: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
-					"body"  	: LJ.meepass.renderEventsInModal(),
-					"footer"	: "<button class='--rounded'><i class='icon icon-check'></i></button>"
-				});
-
-			} else {
-				
-				var event_id = '';
-			//	LJ.meepass.sendMeepass()
-			//		.then( LJ.meepass.handleSendMeepassSuccess )
-			//		.catch( LJ.meepass.handleApiError );
-
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
 			}
 
-		},
-		renderMeepassRibbon: function(){
-
-			var n_meepass = LJ.user.meepass.length;
-
-			return LJ.ui.render([
-
-				'<div class="meepass-ribbon">',
-					'<h2 data-lid="meepass_ribbon"></h2>',
-				'</div>'
-
-				].join('')).replace('%n', n_meepass );
-
-		},
-		sendMeepass: function(){
-			
-		},
-		handleSendMeepassSuccess: function(){
+			$('.row-create-friends input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.friends.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
 
 		},
-		handleApiError: function(){
+		initTypeaheadGroups: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-requestin-group-members input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.groups.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
 
 		},
-		renderEventsInModal: function(){
+		initTypeaheadPlaces: function(){
 
-		},
-		handleMeepassClicked: function(){
+			var places = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
 
-			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
+			places.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
 
-			$('.meepass').html('');
-
-			$loader.addClass('none')
-				   .appendTo('.meepass')
-				   .velocity('bounceInQuick', {
-				   	delay: 125,
-				   	duration: 500,
-				   	display: 'block'
-				   });
-
-			LJ.meepass.fetchMeepassItems();
-
-		},	
-		fetchMeepassItems: function(){
-
-			LJ.api.fetchMeMeepass()
-				  .then( LJ.meepass.handleFetchMeMeepassSuccess, LJ.meepass.handleFetchMeMeepassError );
-
-
-		},
-		handleFetchMeMeepassSuccess: function( expose ){
-
-			var meepass = expose.meepass;
-
-			LJ.meepass.setMeepassItems( meepass );
-
-		},
-		setMeepassItems: function( meepass ){
-
-			var html = [];
-			meepass.sort();
-
-			var facebook_ids = _.pluck( meepass, 'sent_by' ).concat( _.pluck( meepass, 'sent_to' ) ).filter( Boolean );
-
-			LJ.api.fetchUsers( facebook_ids )
-				.then(function( res ){
-
-					var no_meepass_received = true;
-					var no_meepass_sent     = true;
-					meepass.forEach(function( mp ){
-
-						for( var i=0; i<res.length; i++ ){
-
-							var user = res[ i ].user;
-
-							if( mp.sent_by == user.facebook_id ){
-								no_meepass_received = false;
-								return html.push( LJ.meepass.renderMeepassItem__Received( mp, user ) );
-							}
-
-							if( mp.sent_to == user.facebook_id ){
-								no_meepass_sent = false;
-								return html.push( LJ.meepass.renderMeepassItem__Sent( mp, user ) );
-							}
-						}
-					});
-
-					if( no_meepass_sent ){
-						html.push( LJ.meepass.renderMeepassItem__SentEmpty() );
-					}
-
-					if( no_meepass_received ){
-						html.push( LJ.meepass.renderMeepassItem__ReceivedEmpty() );
-					}
-
-					$('.meepass').html( html.join('') )
-								 .find('[data-link="received"]')
-								 .velocity('fadeIn', {
-									duration: 250,
-									display: 'flex'
-								});
-
-					$('.menu-section.--meepass')
-								.find('.segment__part')
-								.removeClass('--active')
-								.first()
-								.addClass('--active');
-
-				});
-
-		},		
-		handleFetchMeMeepassError: function(){
-
-			LJ.elog('Error fetching meepass :/');
-
-		},
-		renderMeepassItem__ReceivedEmpty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty" data-link="received">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-meepass"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_meepass_received_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_meepass_received_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__SentEmpty: function(){
-
-			return LJ.ui.render([
-
-				'<div class="empty" data-link="sent">',
-					'<div class="empty__icon --round-icon">',
-						'<i class="icon icon-meepass"></i>',
-					'</div>',
-					'<div class="empty__title">',
-						'<h2 data-lid="empty_meepass_sent_title"></h2>',
-					'</div>',
-					'<div class="empty__subtitle">',
-						'<p data-lid="empty_meepass_sent_subtitle"></p>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__Received: function( meepass_object, target ){
-
-			var mp 	   = meepass_object;
-			var target = target;
-
-			var formatted_date = LJ.renderDate( mp.sent_at );
-			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
-
-			return LJ.ui.render([
-
-				'<div class="meepass__item" data-link="received" data-event-id="' + mp.target_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + LJ.text('meepass_item_title_received').replace('%name', target.name) +'</h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		renderMeepassItem__Sent: function( meepass_object, target, meepass_by ){
-
-			var mp 	   = meepass_object;
-			var target = target;
-
-			var formatted_date = LJ.renderDate( mp.sent_at );
-			var img_html       = LJ.pictures.makeImgHtml( target.img_id, target.img_vs, 'menu-row' );
-
-			return LJ.ui.render([
-
-				'<div class="meepass__item" data-link="sent" data-event-id="' + mp.target_id + '">',
-					'<div class="row-date date">' + formatted_date + '</div>',
-					'<div class="row-pic">',
-						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
-					'</div>',
-					'<div class="row-body">',
-						'<div class="row-body__title">',
-							'<h2>' + LJ.text('meepass_item_title_sent').replace('%name', target.name) +'</h2>',
-						'</div>',
-						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
-							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
-						'</div>',
-					'</div>',
-				'</div>'
-
-				].join(''));
+			$('.row-create-party-place input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1,
+				classNames: LJ.typeahead.places.class_names
+			},
+			{
+				name:'places',
+				display:'name',
+				source: places.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
+				}
+			});
 
 		}
-
-	});
 		
-
-	window.LJ.store = _.merge( window.LJ.store || {}, {
-
-		mode: null,
-
-		init: function(){
-
-			LJ.store.activateStoreMode();
-			return;
-		},
-		activateStoreMode: function(){
-
-			if( window.localStorage ){
-				LJ.store.mode = "localstorage";
-			} else {
-				LJ.store.mode = "cookie";
-			}
-
-		},
-		changeStoreMode: function( new_mode ){
-
-			if( [ "cookie", "localstorage" ].indexOf( new_mode ) == -1 ){
-				return LJ.wlog('This storage mode is not supported, please use "cookie" or "localstorage"');
-			}
-
-			LJ.store.mode = new_mode;
-
-		},
-		getStore: function(){
-
-			if( LJ.store.mode == "localstorage" ){
-				return window.localStorage;
-			} else {
-				return document.cookie;
-			}
-
-		},
-		get: function( name ){
-
-			var mode = LJ.store.mode;
-
-			if( mode == "localstorage" ){
-				return LJ.store.getLocalItem( name );
-			}
-
-			if( mode == "cookie" ){
-				return LJ.store.getCookie( name );
-			}
-
-		},
-		set: function( key, item ){
-
-			var mode = LJ.store.mode;
-
-			if( mode == "localstorage" ){
-				return LJ.store.setLocalItem( key, item );
-			}
-
-			if( mode == "cookie" ){
-				return LJ.store.setCookie( key, item );
-			}
-
-		},
-		remove: function( key ){
-
-			var mode = LJ.store.mode;
-
-			if( mode == "localstorage" ){
-				return LJ.store.removeLocalItem( key );
-			}
-
-			if( mode == "cookie" ){
-				return LJ.store.removeCookie( key );
-			}
-
-		},
-		setLocalItem: function( key, item ){
-
-			if( typeof item == "object" ){
-				item = JSON.stringify( item );
-			}
-
-			window.localStorage.setItem( key, item );
-
-		},
-		getLocalItem: function( key ){
-
-			var item = window.localStorage.getItem( key );
-
-			try {
-				item = JSON.parse( item );
-
-			} catch( e ){
-				// Do nothing
-			}
-
-			return item;
-
-		},
-		removeLocalItem: function( key ){
-
-			window.localStorage.removeItem( key );
-
-		},
-		setCookie: function( cname, cvalue, exdays ){
-
-		    var d = new Date();
-		    d.setTime( d.getTime() + ( exdays * 24 * 60 * 60 * 1000 ) );
-
-		    var expires = "expires="+ d.toUTCString();
-
-		    document.cookie = cname + "=" + cvalue + "; " + expires;
-
-		},
-		getCookie: function( cname ){
-
-		    var name = cname + "=";
-		    var ca = document.cookie.split(';');
-
-		    for( var i = 0; i <ca.length; i++ ){
-
-		        var c = ca[i];
-		        while( c.charAt(0)==' ' ){
-		            c = c.substring(1);
-		        }
-
-		        if( c.indexOf( name ) == 0 ){
-		            return c.substring(name.length,c.length);
-		        }
-		    }
-
-		    return null;
-		},
-		removeCookie: function( cname ){
-
-			LJ.store.setCookie( cname, '', -1 );
-
-		}
-
 	});
 
 window.LJ = _.merge( window.LJ || {}, {
@@ -48443,11 +49000,11 @@ window.LJ = _.merge( window.LJ || {}, {
             job         : LJ.text('ghost_user_job'),
             img_id      : "ghost_user",
             img_vs      : "1468060134",
-            pictures: [
+            pictures: [{
                 img_id      : "ghost_user",
                 img_version : "1468060134",
                 is_main     : true
-            ]
+            }]
 
         }
 
@@ -48773,243 +49330,6 @@ window.LJ = _.merge( window.LJ || {}, {
 
 });
 
-	
-
-	window.LJ = _.merge( window.LJ || {} , {
-
-		typeahead_legacy: {
-			users: {
-				class_names: {
-					input      :'',
-					hint       :'',
-					menu       :'search-results-users',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-users',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			// places: {
-			// 	class_names: {
-			// 		input:'',
-			// 		hint:'hint-places',
-			// 		menu:'search-results-autocomplete search-results-party-places',
-			// 		dataset:'search-wrap',
-			// 		suggestion:'search-result-default search-result-party-places',
-			// 		empty:'empty',
-			// 		open:'open',
-			// 		cursor:'cursor',
-			// 		highlight:'highlight'
-			// 	}
-			// },
-			friends: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			groups: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends search-results-groups',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			}
-		}
-
-	});
-
-
-	window.LJ.fn = _.merge( window.LJ.fn || {} , 
-
-	{
-		initTypeaheadUsers: function(){
-
-			var users = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			users.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
-
-			$('#search input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
-				classNames: LJ.typeahead.users.class_names
-			},
-			{
-				name:'users',
-				display:'name',
-				source: users.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			})
-			.on('typeahead:select', function( ev, suggestion ){
-
-				LJ.fn.displayUserProfile( suggestion.facebook_id );
-				$(this).typeahead('val', '');
-
-			});
-
-		},
-		initTypeaheadHosts: function( friends ){
-
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
-
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
-
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
-
-			$('.row-create-friends input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.friends.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
-
-		},
-		initTypeaheadGroups: function( friends ){
-
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
-
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
-
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
-
-			$('.row-requestin-group-members input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.groups.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
-
-		},
-		initTypeaheadPlaces: function(){
-
-			var places = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			places.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
-
-			$('.row-create-party-place input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1,
-				classNames: LJ.typeahead.places.class_names
-			},
-			{
-				name:'places',
-				display:'name',
-				source: places.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
-				}
-			});
-
-		}
-		
-	});
 
 window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
@@ -50995,461 +51315,141 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
 	});
 
-	window.LJ.search = _.merge( window.LJ.search || {}, {
+	window.LJ.store = _.merge( window.LJ.store || {}, {
 
-		fetched_users 			: [],
-
-		users_count 			: 0,
-		fetching_users			: false,
-		all_fetched 		  	: false,
-
-		fetch_more_scroll_ratio : 0.97,
-		refetch_callstack: [],
+		mode: null,
 
 		init: function(){
-			return LJ.promise(function( resolve, reject ){
 
-				LJ.search.handleDomEvents();
-				LJ.search.fetchAndShowMoreUsers();
-				LJ.search.setCountriesInFilters();
-				LJ.search.addLoader();
-				resolve();
-
-			});
+			LJ.store.activateStoreMode();
+			return;
 		},
-		handleDomEvents: function(){
+		activateStoreMode: function(){
 
-			LJ.ui.$body.on('click', '.search-user__pic', LJ.search.handleClickUser );
-			LJ.ui.$body.on('click', '.search-filters__icon', LJ.search.showFilters );
-			LJ.ui.$body.on('click', '.search-filters__close', LJ.search.hideFilters );
-			LJ.ui.$body.on('click', '.search-filters .toggle', LJ.search.handleToggleFilter );
-			LJ.ui.$window.scroll( LJ.search.handleFetchMoreUsers );
-			
-		},
-		addLoader: function(){
-
-			$('.search-users').append( LJ.static.renderStaticImage('search_loader') )
-
-		},
-		handleClickUser: function(){
-
-			var facebook_id = $(this).closest('.search-user').attr('data-facebook-id');
-
-			LJ.profile_user.showUserProfile( facebook_id );
-
-		},
-		handleToggleFilter: function(){
-
-			var $to = $(this);
-			$to.toggleClass('--active');
-			LJ.search.setFiltersState();
-			LJ.search.refetchAndShowMoreUsers();
-
-		},
-		allowedToFetchMore: function(){
-			
-			var data_to_fetch        = !LJ.search.all_fetched;
-			var scroll_almost_bottom = LJ.ui.getScrollRatio() > LJ.search.fetch_more_scroll_ratio;
-			var search_panel_active  = $('.app__menu-item.--search').hasClass('--active');
-			var user_not_fetching    = !LJ.search.fetching_users;
-
-			if( data_to_fetch && scroll_almost_bottom && search_panel_active && user_not_fetching ){
-				return true;
+			if( window.localStorage ){
+				LJ.store.mode = "localstorage";
 			} else {
-				return false;
+				LJ.store.mode = "cookie";
 			}
 
 		},
-		handleFetchMoreUsers: function(){
+		changeStoreMode: function( new_mode ){
 
-			if( !LJ.search.allowedToFetchMore() ) return;
-
-			LJ.log('Fetching more users...');
-			LJ.search.fetchAndShowMoreUsers();
-
-		},
-		fetchMoreUsers: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.search.setFiltersState();
-
-				var facebook_ids = _.map( LJ.search.fetched_users, 'facebook_id' ).concat([ LJ.user.facebook_id ]);
-				var filters      = LJ.search.filter_state;
-
-				LJ.api.fetchMoreUsers( facebook_ids, filters )
-					.then(function( exposed ){
-
-						var new_users   = exposed.users;
-						var users_count = exposed.users_count;
-
-						LJ.search.fetched_users = _.uniq( LJ.search.fetched_users.concat( new_users ) );
-						LJ.search.users_count   = users_count;
-						resolve( new_users );
-
-					})
-					.catch( reject );
-
-			});
-		},
-		refetchAndShowMoreUsers: function(){
-
-			LJ.log('[Re]Fetching and showing more users...');
-			LJ.search.all_fetched = false;
-
-			if( LJ.search.fetching_users ){
-				return LJ.wlog('Already fetching users...');
+			if( [ "cookie", "localstorage" ].indexOf( new_mode ) == -1 ){
+				return LJ.wlog('This storage mode is not supported, please use "cookie" or "localstorage"');
 			}
 
-			LJ.search.fetched_users = [];
-			LJ.search.hideSearchUsers()
-				.then(function(){
-					return LJ.search.fetchAndShowMoreUsers();
-				});
+			LJ.store.mode = new_mode;
 
 		},
-		fetchAndShowMoreUsers: function(){
+		getStore: function(){
 
-			LJ.log('Fetching and showing more users...');
-			LJ.search.fetching_users = true;
-
-			var users;
-			LJ.search.showSearchLoader()
-
-				.then(function(){
-					return LJ.search.fetchMoreUsers();
-				})
-
-				.then(function( new_users ){
-					if( LJ.search.fetched_users.length == ( LJ.search.users_count - 1 ) || new_users.length == 0 ){
-						LJ.wlog('Everyone has been fetched for this filter.');
-						LJ.search.all_fetched = true;
-					}
-					users = new_users;
-					return;
-				})
-
-				.then(function(){
-					return LJ.search.hideSearchLoader();
-				})
-
-				.then(function(){
-					return LJ.search.showMoreUsers( users );
-				})
-				// When users loaded, give it one second of blocking, otherwise if user scrolls
-				// It will detect that he can fetch more users. One batch at a time is better :)
-				.then(function(){
-					setTimeout(function(){
-						LJ.search.fetching_users = false;
-					}, 1000 );
-				});
-
-		},
-		showMoreUsers: function( users ){
-
-			_.chunk( users, 3 ).forEach(function( user_group, i ){
-
-				var $users = $( LJ.search.renderUserRow( user_group ) );
-
-				$users
-					.css({ 'opacity': 0 })
-					.insertBefore('.search__loader');
-
-				LJ.settings.applyUxPreferences();
-
-				if( $('.slide').length > 0 ){
-					LJ.offsetSearchUsers( 25 );
-				}
-
-				$users.velocity('slideUpIn', {
-					display  : 'flex',
-					duration : 700,
-					delay    : 100 + 250 * i
-				});
-
-			});
-
-		},
-		showSearchLoader: function( duration ){
-			return LJ.promise(function( resolve, reject ){
-				var $l = $('.search__loader');
-				if( $l.length == 0 ) return resolve();
-				$('.search__loader').velocity('shradeIn', {
-					duration: duration || 300,
-					complete: resolve
-				})
-			});
-		},
-		hideSearchLoader: function( duration ){
-			return LJ.promise(function( resolve, reject ){
-				$('.search__loader').velocity('shradeOut', {
-					duration: duration || 300,
-					complete: resolve
-				})
-			});
-		},
-		hideSearchUsers: function(){
-
-			return LJ.promise(function( resolve, reject ){
-
-				if( $('.search-users-row').length == 0 ){
-					return resolve();
-				}
-				
-				$('.search-users-row').velocity('shradeOut', {
-					duration : 300,
-					complete : function(){
-						$(this).remove();
-						resolve();
-					}
-				});
-			});
-
-		},
-		renderUserRow: function( users ){
-
-			if( !users ){
-				return LJ.wlog('No users to render here');
+			if( LJ.store.mode == "localstorage" ){
+				return window.localStorage;
+			} else {
+				return document.cookie;
 			}
 
-			var html = ['<div class="search-users-row">'];
+		},
+		get: function( name ){
 
-			for( var i=0; i<3; i++ ){
-				if( users[ i ] ){
-					html.push( LJ.search.renderUser( users[i] ) );
-				} else {
-					html.push( LJ.search.renderUserBlank() );
-				}
+			var mode = LJ.store.mode;
+
+			if( mode == "localstorage" ){
+				return LJ.store.getLocalItem( name );
 			}
 
-			html.push('</div>');
-
-			return html.join('');
-
-		},
-		renderUserBlank: function(){
-
-			return '<div class="search-user --blank"></div>';
+			if( mode == "cookie" ){
+				return LJ.store.getCookie( name );
+			}
 
 		},
-		renderUser: function( user ){
+		set: function( key, item ){
 
-			var n = user.name;
-			var a = user.age;
-			var i = user.facebook_id;
-			var c = user.country_code;
-			var l = user.location.place_name;
-			var p = user.location.place_id;
-			var g = user.gender;
+			var mode = LJ.store.mode;
 
-			var main_pic = LJ.findMainPic( user );
-			var img_html = LJ.pictures.makeImgHtml( main_pic.img_id, main_pic.img_version, 'user-search');
+			if( mode == "localstorage" ){
+				return LJ.store.setLocalItem( key, item );
+			}
 
-
-			return LJ.ui.render([
-
-				'<div class="search-user" data-facebook-id="'+ i +'" data-age="' + a + '" data-gender="' + g + '" data-cc="' + c + '">',
-		            '<div class="search-user__pic js-filterlay">',
-		            	img_html,
-		               '<div class="search-user__pic-overlay"></div>',
-		            '</div>',
-		           '<div class="search-user-body">',
-		               '<div class="search-user__h1">',
-		            	  '<span class="search-user__gender user-gender js-user-gender --'+ g +'"></span>',
-		                  '<span class="name">'+ n +'</span>',
-			              '<span class="search-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
-			              '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
-		               '</div>',
-		               '<div class="search-user__h2">',
-		                  '<span class="age">'+ a +'</span>',
-		                  '<span class="comma">-</span>',
-			              '<span class="location" data-place-id="'+ p +'">'+ l +'</span>',
-		               '</div>',
-		           '</div>',
-		            '<div class="search-user__actions">',
-		              '<div class="search-user__action --round-icon --share js-share-profile"><i class="icon icon-forward"></i></div>',
-		              '<div class="search-user__splitter"></div>',
-		              '<div class="search-user__action --round-icon --meepass js-send-meepass"><i class="icon icon-meepass"></i></div>',
-		            '</div>',
-	          '</div>'
-
-				].join(''))
-
-		}
-
-	});
-	
-	window.LJ.search = _.merge( window.LJ.search || {}, {
-
-		$filters_agerange : null,
-		filters_agerange  : null,
-
-		filters_duration: 400,
-
-		filter_state: {
-			age       : [],
-			gender    : [],
-			countries : []
-		},
-
-		initFilters: function(){
-			return LJ.promise(function( resolve, reject ){
-				LJ.search.initFiltersSlider();
-				resolve();
-			});
+			if( mode == "cookie" ){
+				return LJ.store.setCookie( key, item );
+			}
 
 		},
-		initFiltersSlider: function(){
-			
-			LJ.search.$filters_agerange = document.getElementById('search-filters__input');
-			
-			LJ.search.filters_agerange = noUiSlider.create( LJ.search.$filters_agerange, {
-				start: [ LJ.app_settings.app.min_age, LJ.app_settings.app.max_age ], // Handle start position
-				step: 1, 					// Slider moves in increments of '10'
-				margin: 3, 					// Handles must be more than '20' apart
-				connect: true, 				// Display a colored bar between the handles
-				orientation: 'horizontal',  // Orient the slider vertically
-				behaviour: 'tap-drag',  	// Move handle on tap, bar is draggable
-				range: { 					// Slider can select '0' to '100'
-					'min': LJ.app_settings.app.min_age,
-					'max': LJ.app_settings.app.max_age
-				}
-			});
+		remove: function( key ){
 
-			LJ.search.filters_agerange.on('update', LJ.search.refreshFiltersSliderValues );
-			LJ.search.filters_agerange.on('end', LJ.search.refetchAndShowMoreUsers );
+			var mode = LJ.store.mode;
+
+			if( mode == "localstorage" ){
+				return LJ.store.removeLocalItem( key );
+			}
+
+			if( mode == "cookie" ){
+				return LJ.store.removeCookie( key );
+			}
 
 		},
-		resetFiltersState: function(){
+		setLocalItem: function( key, item ){
 
-			LJ.search.filter_state = {
-				age       : [],
-				gender    : [],
-				countries : []
-			};
+			if( typeof item == "object" ){
+				item = JSON.stringify( item );
+			}
 
-		},
-		setFiltersState: function(){
-
-			LJ.search.resetFiltersState();
-
-			$('.search-filters')
-				.find('.toggle.--active')
-				.each(function( i, toggle ){
-
-					if( $( toggle ).closest('.js-filters-male').length > 0 ){
-						LJ.search.filter_state.gender.push('male');
-					}
-
-					if( $( toggle ).closest('.js-filters-female').length > 0 )
-						LJ.search.filter_state.gender.push('female');
-
-					if( $( toggle ).closest('.js-filters-country').length > 0 ){
-						var cc = $(toggle).closest('[data-country-code]').attr('data-country-code');
-						LJ.search.filter_state.countries.push( cc );
-					}
-
-				});
-
-			var min = $('.search-filters-min-age').html();
-			var max = $('.search-filters-max-age').html();
-
-			LJ.search.filter_state.age[0] = min;
-			LJ.search.filter_state.age[1] = max;
+			window.localStorage.setItem( key, item );
 
 		},
-		setCountriesInFilters: function(){
+		getLocalItem: function( key ){
 
-			LJ.api.fetchDistinctCountries()
-				.then(function( country_codes ){
-					return LJ.search.renderFilterCountries( _.shuffle( country_codes ) );
-				})
-				.then(function( countries_html ){
-					return LJ.search.addFilterCountries( countries_html );
-				})
+			var item = window.localStorage.getItem( key );
 
-		},
-		renderFilterCountries: function( country_codes ){
+			try {
+				item = JSON.parse( item );
 
-			var html = [];
-			country_codes.forEach(function( cc ){
-				html.push( LJ.search.renderFilterCountry( cc ) );
-			});
+			} catch( e ){
+				// Do nothing
+			}
 
-			return html.join('');
+			return item;
 
 		},
-		renderFilterCountry: function( cc ){
+		removeLocalItem: function( key ){
 
-			return LJ.ui.render([
-				'<div class="search-filters-countries js-filters-countries" data-country-code="'+ cc +'">',
-					'<div class="search-filters-row js-filters-country">',
-	            		'<div class="search-filters-country__flag --round-icon">',
-	            			'<i class="flag-icon flag-icon-'+ cc +'"></i>',
-	              		'</div>',
-		            	'<div class="search-filters-country__label">',
-		            		'<label data-lid="country_'+ cc +'"></label>',
-		            	'</div>',
-		            	'<div class="toggle">',
-		                	'<div class="toggle__background"></div>',
-		                	'<div class="toggle__button"></div>',
-		              	'</div>',
-	            	'</div>',
-	            '</div>'
-				].join(''));
-		},
-		addFilterCountries: function( countries_html ){
-
-			$('.js-filters-countries').children().remove();
-			$('.js-filters-countries').append( countries_html );
+			window.localStorage.removeItem( key );
 
 		},
-		showFilters: function(){
-			
-			var $fi    = $('.search-filters__icon');
-			var $f     = $('.search-filters');
-			var d      = LJ.search.filters_duration;
+		setCookie: function( cname, cvalue, exdays ){
 
-			LJ.ui.adjustWrapperHeight( $('.search-filters') );
+		    var d = new Date();
+		    d.setTime( d.getTime() + ( exdays * 24 * 60 * 60 * 1000 ) );
 
-			$fi.velocity('shradeOut', {
-				duration : d,
-				display  : 'none'
-			});
+		    var expires = "expires="+ d.toUTCString();
 
-			LJ.ui.shradeIn( $f, d );
-
-			// LJ.delay( d )
-			// 	.then(function(){
-			// 		return LJ.ui.shradeIn( $f, d );
-			// 	});
-			
+		    document.cookie = cname + "=" + cvalue + "; " + expires;
 
 		},
-		hideFilters: function(){
+		getCookie: function( cname ){
 
-			var $fi    = $('.search-filters__icon');
-			var $f     = $('.search-filters');
-			var d      = LJ.search.filters_duration;
+		    var name = cname + "=";
+		    var ca = document.cookie.split(';');
 
-			$f.velocity('shradeOut', {
-				duration : d,
-				display  : 'none'
-			});
+		    for( var i = 0; i <ca.length; i++ ){
 
-			LJ.ui.shradeIn( $fi, d );
-			
-			// LJ.delay( d )
-			// 	.then(function(){
-			// 		return LJ.ui.shradeIn( $fi, d );
-			// 	});
+		        var c = ca[i];
+		        while( c.charAt(0)==' ' ){
+		            c = c.substring(1);
+		        }
 
+		        if( c.indexOf( name ) == 0 ){
+		            return c.substring(name.length,c.length);
+		        }
+		    }
+
+		    return null;
 		},
-		refreshFiltersSliderValues: function( value ){
+		removeCookie: function( cname ){
 
-			$('.search-filters-min-age').html( parseInt(value[0]) );
-			$('.search-filters-max-age').html( parseInt(value[1]) );
-
-			LJ.search.setFiltersState();
+			LJ.store.setCookie( cname, '', -1 );
 
 		}
 
