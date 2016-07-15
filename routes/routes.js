@@ -95,6 +95,7 @@
 			return function( req, res, next ){
 				console.log( step );
 				console.log( JSON.stringify( req.sent.user, null, 4 ) );
+				next();
 			}
 		}
 	    // Main entry point
