@@ -254,7 +254,7 @@
 .chat-inview-message__picture .user-online {
     position: absolute;
     bottom: 0px;
-    left: 0px;
+    left: -8px;
     border: 2px solid white;
     width: 8px;
     height: 8px;
