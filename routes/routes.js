@@ -109,33 +109,23 @@
 
 	    	// Validate the form of the request (dont hit db for nothing)
 	    	mdw.validate('auth_facebook'),
-	    	debugUser("authfb"),
 	    	// Fetch the user, but dont generate error if isnt found (could be signup)
 	    	mdw.pop.populateUser({ force_presence: false }),
-	    	debugUser("pop"),
 	    	// Update the Facebook token that has been sent if needed, from short to long
 	    	mdw.facebook.updateFacebookToken,
-	    	debugUser("token"),
 	    	// Signup/Login logic 
 	    	signEvents.handleFacebookAuth,
-	    	debugUser("authapp"),
 	    	// Update dynamically the profile with channel informations for realtime actions
 	    	mdw.realtime.setChannels,
-	    	debugUser("setchan"),
 	    	// Update dynamically a parameter that allow to retrieve chats by activity for one user
 	    	mdw.realtime.setLastSentAtInChannels,
-	    	debugUser("lastinchan"),
 	    	// Synchronise all his friends with Facebook at each connexion
 	    	mdw.facebook.fetchAndSyncFriends,
-	    	debugUser("syncfriends"),
 	    	// Set cache basic info in Redis for max perf during fetch profile (short version)
 	    	mdw.profile_watcher.updateCachedProfile,
-	    	debugUser("cacheprofile"),
 	    	// Check if some notifications are needed
 	    	mdw.notifier.addNotification('inscription_success'),
-	    	debugUser("signup"),
 	    	mdw.notifier.addNotification('new_friends'),
-	    	debugUser("nufriends"),
 	    	// Always ensure the user is subscribed at mailchimp
 	    	mdw.mailchimp.api("ensure_subscription")
 	    );

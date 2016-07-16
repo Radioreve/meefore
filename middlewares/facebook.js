@@ -203,13 +203,9 @@
 				return handleErr( req, res, err_ns, err );
 			}
 
-			console.log("user friends now : " + user.friends );
 			var facebook_res = body;
+			var friends      = facebook_res.data;
 
-			var friends     = facebook_res.data;
-			var friends_ids = _.map( friends, 'id' );
-
-			console.log( friends_ids );
 			console.log('Syncing new friends! Updating...');
 			
 			var new_friends = [];
@@ -227,8 +223,8 @@
 
 			req.sent.new_friends = new_friends;
 
-			user.friends = friends_ids;
-			user.markModified('friends');
+			user.friends =  _.map( friends, 'id' );;
+			// user.markModified('friends');
 
 			user.save(function( err, user ){
 
