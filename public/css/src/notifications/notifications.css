@@ -47,6 +47,10 @@
     opacity: 1;
     background: #fbfbfb;
 }
+
+.notification .icon-heart {
+    color: #e94f6a;
+}
  
 .notification--header {
     /* height: 74px; */
