@@ -203,7 +203,6 @@
 				return handleErr( req, res, err_ns, err );
 			}
 
-			console.log( req.sent.user );
 			console.log("user friends now : " + user.friends );
 			var facebook_res = body;
 

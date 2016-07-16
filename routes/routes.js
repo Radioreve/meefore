@@ -94,8 +94,8 @@
 		function debugUser( step ){
 			return function( req, res, next ){
 				console.log( step );
-				if( req.sent.user ){
-					console.log( JSON.stringify( req.sent.user.friends, null, 4 ) );
+				if( req.sent.user ){ 
+					console.log( _.pick( req.sent.user, [ 'facebook_id','name','friends' ]) );
 				} else {
 					console.log("req.sent.user=undefined?")
 				}
