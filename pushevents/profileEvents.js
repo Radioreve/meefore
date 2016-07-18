@@ -17,7 +17,7 @@
 		api_secret : config.cloudinary.api_secret
 
 	});
-
+ 
 	var pusher = require('../services/pusher');
 
 	var handleErr = function( req, res, namespace, err ){
