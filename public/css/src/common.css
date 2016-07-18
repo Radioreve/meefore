@@ -635,6 +635,7 @@ button:hover {
 .change-lang__choice i {
     cursor: pointer;
     opacity: .7;
+    width: 100%;
     /* border-radius: 10px 0 10px 0; */
 }
 

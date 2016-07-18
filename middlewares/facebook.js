@@ -278,7 +278,7 @@
 			friends.forEach(function( f ){
 
 				if( user.friends.indexOf( f.id ) == -1 ){
-					console.log("Pushing : " + f.id +", not found in : " + user.friends );
+					term.bold.red("[ Notificatons ] Pushing : " + f.id +", not found in : " + user.friends + '\n' );
 					new_friends.push({
 						facebook_name : f.name,
 						facebook_id   : f.id
