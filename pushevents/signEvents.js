@@ -89,7 +89,7 @@
 				new_user.status = 'new';
 
 				// Default access is standard for everyone, plus specific rules
-				new_user.access = ['standard'];	
+				new_user.access = ['standard', process.env.APP_ENV ];
 
 				// Could be access via the _id from mongodb but who cares, let's explicit it
 				new_user.signed_up_at = new Date();
