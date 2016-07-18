@@ -1345,11 +1345,11 @@
 		},
 		mod_facebook_pictures_title: {
 			"fr": "Photos Facebook",
-			"en ": "Facebook photos"
+			"us": "Facebook photos"
 		},
 		mod_facebook_pictures_subtitle: {
 			"fr": "Sélectionner la photo que vous souhaitez importer à partir de Facebook",
-			"en ": "Select the photo you wish to import from Facebook"
+			"us ": "Select the photo you wish to import from Facebook"
 		},
 		mod_change_lang_title: {
 			"fr": "Changer de langue",
