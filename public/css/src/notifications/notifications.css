@@ -48,10 +48,7 @@
     background: #fbfbfb;
 }
 
-.notification .icon-heart {
-    color: #e94f6a;
-}
- 
+
 .notification--header {
     /* height: 74px; */
     /* display: flex; */
@@ -133,7 +130,7 @@ Whispereen  : #58c170
 }
 
 [data-type="inscription_success"] .notification__icon {
-    color: red;
+    color: #e94f6a!important;
 }
 
 [data-type="new_friends"] .notification__icon {

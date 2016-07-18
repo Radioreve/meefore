@@ -15,7 +15,7 @@
 	// otherwise, it wont work
 	var updateSchema = function(){
 
-		mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
+		mongoose.connect( config.db[ process.env.APP_ENV ].uri );
 
 		mongoose.connection.on( 'open', function(){
 			

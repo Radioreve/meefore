@@ -2,9 +2,9 @@
 	var config = require('../config/config');
 	var redis  = require('redis')
 
-	var node_env = process.env.NODE_ENV;
+	var APP_ENV = process.env.APP_ENV;
 
-	var client = redis.createClient( config.redis[ node_env ].port, config.redis[ node_env ].host, {
+	var client = redis.createClient( config.redis[ APP_ENV ].port, config.redis[ APP_ENV ].host, {
 			auth_pass        : process.env.PW,
 			socket_keepalive : true // Prevent redis from disconnecting with ETIMEOUT
 		}

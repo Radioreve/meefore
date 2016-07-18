@@ -39,19 +39,6 @@
         }
     },
     {
-        "id": "a983c6aea24095b8591881a787102e3b",
-        "email_address": "leo@jeanfree.com",
-        "merge_fields": {
-            "NAME": "Léonidas",
-            "AGE": 27,
-            "JOB": "CEO@Meefore",
-            "GENDER": "male"
-        },
-        "interests": {
-            "ec4795dc5b": true
-        }
-    },
-    {
         "id": "83c681de03067b922cdbb1c14808bbcc",
         "email_address": "letourneau.benjamin@gmail.com",
         "merge_fields": {

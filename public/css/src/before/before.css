@@ -21,7 +21,9 @@
     height: 2px;
 }
 
-.be-browser__empty {}
+.be-browser__empty {
+    text-align: center;
+}
 
 .be-browser__empty span {
     font-size: 12px;

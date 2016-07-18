@@ -1,0 +1,14 @@
+
+
+@font-face { 
+	font-family: 'quenda';
+
+    src: url('/fonts/quenda-medium/webfonts/quenda-medium.eot');
+    src: url('/fonts/quenda-medium/webfonts/quenda-medium.eot?#iefix') format('embedded-opentype'),
+    	 url('/fonts/quenda-medium/webfonts/quenda-medium.woff2') format('woff2'),
+    	 url('/fonts/quenda-medium/webfonts/quenda-medium.woff') format('woff'),
+    	 url('/fonts/quenda-medium/webfonts/quenda-medium.ttf') format('truetype');
+
+    font-weight: normal;
+    font-style: normal;
+}

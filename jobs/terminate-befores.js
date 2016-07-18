@@ -12,7 +12,7 @@
 	var moment   = require('moment');
 	var _		 = require('lodash');
 	// Parameters
-	var mongo_uri  = config.db[ process.env.NODE_ENV ].uri;
+	var mongo_uri  = config.db[ process.env.APP_ENV ].uri;
 
 	var tracked = {
 		timezone          : null,
@@ -179,9 +179,9 @@
 
 					console.log('Scheduled job completed successfully');
 
-					if( process.env.NODE_ENV != "dev" && process.env.NODE_ENV != "staged" ){
+					if( process.env.APP_ENV != "dev" && process.env.APP_ENV != "staged" ){
 						Alerter.sendAdminEmail({
-							subject : 'Scheduler [' + process.env.NODE_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
+							subject : 'Scheduler [' + process.env.APP_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
 							html    : mail_html.join('') 
 						});
 					}

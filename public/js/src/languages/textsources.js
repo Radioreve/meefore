@@ -2122,6 +2122,10 @@
 		n_outdated_notification: {
 			"fr": "Cette notification n'est plus d'actualité",
 			"us": "This notification is out of date"
+		},
+		mb_update_pictures: {
+			"fr": "Editer mes photos",
+			"us": "Edit my pictures"
 		}
 
 

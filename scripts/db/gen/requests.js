@@ -18,7 +18,7 @@
 		var app_events      = [];
 
 
-		mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
+		mongoose.connect( config.db[ process.env.APP_ENV ].uri );
 
 		mongoose.connection.on('error', function(err){
 			console.log('Connection to the database failed : '+err);

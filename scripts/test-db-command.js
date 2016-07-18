@@ -7,7 +7,7 @@
 		config        = require('../config/config'),
 		_             = require('lodash');
 
-		mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
+		mongoose.connect( config.db[ process.env.APP_ENV ].uri );
 
 		mongoose.connection.on( 'open', function(){
 			console.log('Connected to the database! Running operation... : ');

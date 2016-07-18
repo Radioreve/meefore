@@ -34,7 +34,17 @@
 }
 
 @media (max-width: 500px) {
-    .thumbnail__picture {
+
+    .app-thumbnail {
+        right: 0%;
+    }
+    .app-thumbnail ul {
+        margin-left: auto;
+    }
+    .app__menu-item {
+       width: 50px;
+    }
+    .thumbnail__picture, .thumbnail__name {
         display: none;
     }
 }

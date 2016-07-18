@@ -10,7 +10,8 @@
 	function check( req, res, next ){
 
 		var checkAuthRequest = nv.isAnyObject()
-			.withRequired('token' , nv.isString())
+			.withOptional('fb_token' , nv.isString())
+			.withOptional('fb_code'  , nv.isString())
 
 		nv.run( checkAuthRequest, req.sent, function( n, errors ){
 			if( n != 0 ){
@@ -30,7 +31,29 @@
 
 	function checkWithDatabase( req, callback ){
 
-		var token = req.sent.token;
+		var code  = req.sent.fb_code;
+		var token = req.sent.fb_token;
+
+		if( code ){
+			return fb.verifyFacebookCode( code, function( err, res ){
+
+				if( err ){
+					return callback({
+						message : 'Error code was unable to be exchanged for a token',
+						err_id  : 'fb_api_expected',
+						err 	: err
+					});
+				}
+
+				req.sent.fb_token = res.fb_token;
+				req.sent.fb_code  = null;
+
+				return checkWithDatabase( req, callback );
+
+			});
+		}
+
+		console.log('Verifying facebook token : ' + token.slice( 0, 10 ) + '....' );
 		fb.verifyFacebookToken( token, function( err, res ){
 
 			if( err ){

@@ -9,7 +9,7 @@
 	var User     = require( dir +  '/models/UserModel');
 	var config   = require( dir + '/config/config');
 
-	mongoose.connect( config.db[ process.env.NODE_ENV ].uri );
+	mongoose.connect( config.db[ process.env.APP_ENV ].uri );
 
 	mongoose.connection.on( 'open', function(){
 		

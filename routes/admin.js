@@ -66,7 +66,7 @@
 	    app.post('/admin/auth/facebook/verify-token',
 	    	function( req, res, next ){
 
-	    		var token = req.sent.token;
+	    		var token = req.sent.fb_token;
 
 	    		mdw.facebook.verifyFacebookToken( token, function( err, res ){
 	    			req.sent.expose.err = err;
@@ -79,9 +79,22 @@
 	    app.post('/admin/auth/facebook/update-token',
 	    	function( req, res, next ){
 
-	    		var token = req.sent.token;
+	    		var token = req.sent.fb_token;
 
 	    		mdw.facebook.fetchLongLivedToken( token, function( err, res ){
+	    			req.sent.expose.err = err;
+	    			req.sent.expose.res = res;
+	    			next();
+	    		});
+	    	}
+	    );
+
+	    app.post('/admin/auth/facebook/token-with-code',
+	    	function( req, res, next ){
+
+	    		var token = req.sent.fb_token;
+
+	    		mdw.facebook.fetchTokenWithCode( token, function( err, res ){
 	    			req.sent.expose.err = err;
 	    			req.sent.expose.res = res;
 	    			next();
@@ -92,7 +105,7 @@
 	    app.post('/admin/auth/facebook/profile',
 	    	function( req, res, next ){
 
-	    		var token       = req.sent.token;
+	    		var token       = req.sent.fb_token;
 	    		var facebook_id = req.sent.facebook_id;
 
 	    		mdw.facebook.fetchFacebookProfile( facebook_id, token, function( err, res ){

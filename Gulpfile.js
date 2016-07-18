@@ -50,7 +50,7 @@
 
     		])
     		.pipe(concat( NAMESPACE + '.js'))
-            .pipe( process.NODE_ENV === 'production' ? uglify() : gutil.noop() )
+            .pipe( process.APP_ENV === 'production' ? uglify() : gutil.noop() )
     		.pipe(gulp.dest('./public/dist'))
     }); 
     // End minifications javascript
@@ -70,14 +70,16 @@
 
         var reset       = 'public/css/src/reset.css';
         var common      = 'public/css/src/common.css';
+        var media       = 'public/css/src/media.css';
 
         // Sources, in any order
-        var src_path    = 'public/css/src/**/*.css';
+        var sources     = 'public/css/src/**/*.css';
 
         gulp.src([
             hint, jscrollpane, nouislider, pikadate, typeahead, reset,
             common,
-            src_path
+            sources,
+            media
         ])
         .pipe(concat( NAMESPACE + '.css'))
         .pipe(postcss([ autoprefixer ]))

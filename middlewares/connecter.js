@@ -31,7 +31,7 @@
 		}
 
 		// Check if proper call from pusher
-		if( req.headers['x-pusher-key'] != config.pusher[ process.env.NODE_ENV ].key ){
+		if( req.headers['x-pusher-key'] != config.pusher[ process.env.APP_ENV ].key ){
 			console.log('Wrong Pusher Key');
 			return res.status( 400 ).json({
 				err: "Request failed, wrong api key"

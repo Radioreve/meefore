@@ -1,15 +1,13 @@
 
-/*import url("//hello.myfonts.net/count/307b33");
-*/
 
 @font-face { 
 	font-family: 'creamy';
 
-    src: url('/fonts/creamy/webfonts/307B33_0_0.eot');
-    src: url('/fonts/creamy/webfonts/307B33_0_0.eot?#iefix') format('embedded-opentype'),
-    	 url('/fonts/creamy/webfonts/307B33_0_0.woff2') format('woff2'),
-    	 url('/fonts/creamy/webfonts/307B33_0_0.woff') format('woff'),
-    	 url('/fonts/creamy/webfonts/307B33_0_0.ttf') format('truetype');
+    src: url('/fonts/creamy/webfonts/creamy.eot');
+    src: url('/fonts/creamy/webfonts/creamy.eot?#iefix') format('embedded-opentype'),
+    	 url('/fonts/creamy/webfonts/creamy.woff2') format('woff2'),
+    	 url('/fonts/creamy/webfonts/creamy.woff') format('woff'),
+    	 url('/fonts/creamy/webfonts/creamy.ttf') format('truetype');
 
     font-weight: normal;
     font-style: normal;

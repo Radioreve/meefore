@@ -51,12 +51,12 @@
 
 
         },
-        start: function( facebook_token ){
+        start: function( login_params ){
 
-            return LJ.Promise.resolve( facebook_token )
+            return LJ.Promise.resolve( login_params )
                 .then( LJ.login.enterLoginProcess )  
                 .then(function(){
-                    return LJ.api.fetchAppToken( facebook_token );
+                    return LJ.api.fetchAppToken( login_params );
                 })
                 .then( LJ.login.stepCompleted )
                 // Enter the following step with a valid app token

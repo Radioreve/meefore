@@ -136,6 +136,7 @@
     align-items: center;
     margin: 20px auto 0;
     width: 310px;
+    text-align: center;
 }
 
 .no-friends span {

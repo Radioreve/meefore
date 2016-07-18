@@ -50,15 +50,18 @@
 		, facebook: {
 			dev: {
 				client_id	  : "1638104993142222",
-				client_secret : "303aae46230e0859af0e4bbe235f3ab7"
+				client_secret : "303aae46230e0859af0e4bbe235f3ab7",
+				redirect_uri  : "http://localhost:1234/home/"
 			},
 			staged: {
 				client_id 	  : "1638108873141834",
-				client_secret : "be00dd6b64d9f8bb10a33e4f76041d7f"
+				client_secret : "be00dd6b64d9f8bb10a33e4f76041d7f",
+				redirect_uri  : "http://staged.meefore.com/home/"
 			},
 			prod: {
 				client_id     : "1509405206012202",
-				client_secret : "4525e27d90dcc73f716dae4fa36c6885"
+				client_secret : "4525e27d90dcc73f716dae4fa36c6885",
+				redirect_uri  : "http://www.meefore.com/home/"
 			}
 		}
 		, pusher: {

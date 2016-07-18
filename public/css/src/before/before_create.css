@@ -3,7 +3,7 @@
     position: fixed;
     right: 0px;
     top: 58px;
-    z-index: 100;
+    z-index: 1000;
     background: rgb(255, 255, 255);
     width: 400px;
     padding: 40px 24px;

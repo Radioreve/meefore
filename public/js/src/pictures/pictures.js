@@ -70,7 +70,27 @@
 		handleDomEvents: function(){
 
 			$('.pictures').on('click', LJ.pictures.handleClickOnPicture );
+			LJ.ui.$body.on('click', '.js-edit-pictures', LJ.pictures.handleEditPicturesClicked );
 			LJ.ui.$body.on('click', LJ.pictures.handleClickInModal );
+
+		},
+		handleEditPicturesClicked: function(){
+
+			if( $('.picture-icon').css('opacity') == 1 ){
+				LJ.pictures.hidePictureEditOptions();
+			} else {
+				LJ.pictures.showPictureEditOptions();
+			}
+
+		},
+		showPictureEditOptions: function(){
+
+			$('.picture-icon').css({ 'opacity': '1' });
+
+		},
+		hidePictureEditOptions: function(){
+
+			$('.picture-icon').css({ 'opacity': '0' });
 
 		},
 		handleClickInModal: function( e ){

@@ -9,20 +9,44 @@
 				if( document.location.hash == "#1" ){
 					LJ.log('Logging in with test user Victoriale...');
 					var tk = "EAAXR2Qo4lc4BAChEDRcMA17PowABdrp711d8Fl03VzjB1ptsqMFaKn2jhB4xOF70HpTfELjUVTtcSkJN1Ju9s0WZA5o1Rrez9uW0mgXsbJsxCMe650gLb3o92MLugROZAuQTKsAC2ZAMNwCSJwxIk1sLTEpv5kZD";
-					return resolve( tk );
+					return resolve({ fb_token: tk });
 				}
 
 				if( document.location.hash == "#2" ){
 					LJ.log('Logging in with test user Angelah...');
 					var tk = "EAAXR2Qo4lc4BAMUbS4HfY6Uvk5sM1HkOpan12pCAd3tCZAZCGrXGPJXJBj8dazV5OMDqx6aCuX09VfZAb8CVqeEOfmGyCUUoSUzSHmng6GX9FWtpuzCdAPpVzWFxHXWE2VPjb4ybUCQ6ZClAggtLlNn232EZASEIZD";
-					return resolve( tk );
+					return resolve({ fb_token: tk });
 				}
 
 				if( document.location.hash == "#3" ){
 					LJ.log('Logging in with test user Davida...');
 					var tk = "EAAXR2Qo4lc4BAOEKyewke6ibcU0zB0BvxJSyKdNsOdJFzTGD52MB1QFA1Ay3HHG1XD9WF747zF88rrBmZCODWXHx46Jp8hEWxi5PTZC3G9zjH4pyaZCcj586ZAZAvBExU0Jt8aKfVC9LR2XAzvjGBq8chED7EGlUZD";
-					return resolve( tk );
+					return resolve({ fb_token: tk });
 				}
+
+				var code;
+				try {
+					code  = document.location.href.split('code=')[ 1 ].split(/&|#/i)[ 0 ];
+				} catch( e ){ }
+
+				var token;
+				try {
+					token = document.location.href.split('access_token=')[ 1 ].split(/&|#/i)[ 0 ];
+				} catch( e ){ }
+
+
+				if( history && history.pushState ){
+					history.pushState( {}, document.title, window.location.pathname );
+				}
+
+				if( code ){
+					return resolve({ fb_code: code });
+				}
+
+				if( token ){
+					return resolve({ fb_token: token });
+				}
+				
 
 				// Quick reference to the local store
 				var s = LJ.store;
@@ -58,7 +82,7 @@
 				if( s.get('reconnecting') && token ){
 					LJ.log('Reconnecting user from previous loss of connexion...');
 					s.remove('reconnecting');
-					return resolve( token );
+					return resolve({ fb_token: token });
 				}
 
 				if( s.get("autologin") == false ){
@@ -66,14 +90,14 @@
 				}
 
 				LJ.log('Init data ok, auto logging in...');
-				resolve( token );
+				resolve({ fb_token: token });
 							
 			});
 		},
-		startLogin: function( facebook_token ){
+		startLogin: function( login_params ){
 			return LJ.promise(function( resolve, reject ){
 				LJ.log('Starting login...');
-				LJ.start( facebook_token );
+				LJ.start( login_params );
 			});
 
 		},
@@ -92,7 +116,6 @@
 					complete: function(){
 						LJ.ui.hideCurtain({ duration: 800 });
 						LJ.landing.activateLanding( 2 );
-						 // Login flow
 									
 					}
 				})

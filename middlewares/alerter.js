@@ -132,7 +132,7 @@
 
 		var recipients = [{ email: 'leo@meefore.com', name: 'Léo' }];
 
-		if( process.env.NODE_ENV == 'prod' ){
+		if( process.env.APP_ENV == 'prod' ){
 			recipients.push({ email: 'ben@meefore.com', name: 'Ben' });
 		}
 

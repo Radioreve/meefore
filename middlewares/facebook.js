@@ -28,7 +28,7 @@
 		// version is soon out-dated, it has to force the client to give its credentials back
 
 		var user        = req.sent.user;
-		var token       = req.sent.token;
+		var token       = req.sent.fb_token;
 		var expires_at  = req.sent.expires_at;
 
 		if( req.sent.bot ){
@@ -120,11 +120,49 @@
 	}
 
 	function getAppId(){
-		return config.facebook[ process.env.NODE_ENV ].client_id;
+		return config.facebook[ process.env.APP_ENV ].client_id;
 	}
 
 	function getAppSecret(){
-		return config.facebook[ process.env.NODE_ENV ].client_secret;
+		return config.facebook[ process.env.APP_ENV ].client_secret;
+	}
+
+	function getRedirectUri(){
+		return config.facebook[ process.env.APP_ENV ].redirect_uri;
+	}
+
+	function verifyFacebookCode( code, callback ){
+
+		console.log('Fetching facebook_token with code : ' + code.slice( 0, 15 ) + '......' );
+
+		fetchTokenWithCode( code, function( err, body ){
+
+			if( err ){
+				return handleErr( req, res, 'fetching_facebook_long_token', err );
+			}
+
+			// Parse with querystring because response is a querystring, and not JSON
+			var r;
+
+			try {
+				r = JSON.parse( body );
+			} catch( e ){
+				try {
+					r = querystring.parse( body );
+				} catch( e ){
+					return callback({
+						message: "Unable to parse the response body from Facebook"
+					}, null );
+				}
+			}
+			
+			callback( r.error, {
+				fb_token   : r.access_token,
+				expires_at : r.expires_at
+			});
+
+		});
+
 	}
 
 	function verifyFacebookToken( access_token, callback ){
@@ -181,7 +219,35 @@
 			}
 
 		});
-    };
+    }
+
+    function fetchTokenWithCode( code, callback ){
+
+		var client_id     = getAppId();
+		var client_secret = getAppSecret();
+		var redirect_uri  = getRedirectUri();
+
+		var url = 'https://graph.facebook.com/oauth/access_token?'
+					+ querystring.stringify
+					({
+						client_id     : client_id,
+						client_secret : client_secret,
+						redirect_uri  : redirect_uri,
+						code          : code
+					});
+
+		request.get( url, function( err, response, body ){
+
+			if( err ){
+				return callback( err, null );
+
+			} else {
+				return callback( null, body );
+			}
+
+		});
+
+    }
 
 	var fetchAndSyncFriends = function( req, res, next ){
 
@@ -294,7 +360,9 @@
 		generateAppToken     : generateAppToken,
 		updateFacebookToken  : updateFacebookToken,
 		verifyFacebookToken  : verifyFacebookToken,
+		verifyFacebookCode   : verifyFacebookCode,
 		fetchAndSyncFriends  : fetchAndSyncFriends,
 		fetchLongLivedToken  : fetchLongLivedToken,
-		fetchFacebookProfile : fetchFacebookProfile
+		fetchFacebookProfile : fetchFacebookProfile,
+		fetchTokenWithCode   : fetchTokenWithCode
 	};

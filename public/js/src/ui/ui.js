@@ -94,7 +94,6 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 			var alpha = o.opacity || 1;
 			var color = o.theme == "light" ? 'rgba(255,255,255,' : 'rgba(19,19,19,';
 
-
 			$curtain = $('<div class="curtain"></div>');
 			$curtain.hide().css({ 'background': color + alpha + ')' }).appendTo( LJ.ui.$body );
 

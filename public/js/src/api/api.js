@@ -131,12 +131,13 @@
 			return formatted_err;
 
 		},
-		fetchAppToken: function( access_token ){
+		fetchAppToken: function( login_params ){
 
 			LJ.log('Fetching app token...');
 
 			return LJ.api.post( LJ.api.app_token_url, {
-					token: access_token
+					fb_token : login_params.fb_token,
+					fb_code  : login_params.fb_code
 
 				}).then(function( data ){
 					LJ.facebook_id = data.facebook_id

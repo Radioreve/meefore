@@ -28,7 +28,7 @@
 	};
 
 	var sendHomepage = function( req, res ){
-		res.sendFile( config.homepage[ process.env.NODE_ENV ] );
+		res.sendFile( config.homepage[ process.env.APP_ENV ] );
 	};
 
 

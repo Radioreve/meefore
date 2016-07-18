@@ -26,10 +26,30 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		return LJ.promise(function( resolve, reject ){
 
 			LJ.log('Fetching facebook token...');
+
+			// Manual loginflow for Chrome iOS
+			if( navigator.userAgent.match('CriOS') ){
+
+				var redirect_uri = document.location.href;
+
+			 	var url = 'https://www.facebook.com/dialog/oauth?display=popup&response_type=token&client_id='+ facebook_app_id +'&redirect_uri='+ redirect_uri +'&scope='+ LJ.facebook.required_permissions.join(',');
+			 	// var url_login = 'https://www.facebook.com/login.php?skip_api_login=1&api_key=1638104993142222';
+
+			  	open( url );
+			  	return;
+
+			}
+
 			FB.login(function( res ){
 
-				if( res.status == 'not_authorized' ){
-					return reject( Error("User didnt let Facebook access informations") )
+				if( !res.status || res.status == 'not_authorized' ){
+
+					// Rebind the login promise
+					LJ.wlog("User didnt let Facebook access informations");
+					return LJ.login.init()
+		                .then( LJ.facebook.fetchFacebookToken )
+		                .then( LJ.start );
+
 				}
 
 				if( res.status == 'connected' ){
@@ -37,7 +57,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 					LJ.login.data.access_token = access_token;
 
 					console.log('Short lived access token : ' + access_token.substring( 0, 20 ) + '.....');
-					return resolve( access_token );
+					return resolve({ fb_token: access_token });
 				}
 
 			}, { scope: LJ.facebook.required_permissions } );

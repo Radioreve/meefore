@@ -60,6 +60,10 @@ button:hover {
     margin: auto;
 }
 
+.--mb {
+    display: none;
+}
+
 .app {
     display: flex;
     align-items: center;
@@ -1025,14 +1029,6 @@ button:hover {
 
 .app-header__title {}
 
-@media screen and (max-width: 1000px) {
-    .app-header__logo {
-        display: none;
-    }
-    .app-nav {
-        justify-content: flex-start;
-    }
-}
 
 
 /*
@@ -1118,7 +1114,6 @@ button:hover {
     top: 0;
     width: 100%;
     height: 100%;
-    background: #191919;
     z-index: 12345;
     flex-direction: column;
     align-items: center;
@@ -1718,3 +1713,4 @@ button:hover {
     transform: scale(1.1);
     border-radius: 1000px;
 }
+

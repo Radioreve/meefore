@@ -17,7 +17,7 @@
 			if( req.sent.api_key == "M33foreverr" ){
 				return next();
 			}
-			// if( process.env.NODE_ENV == 'dev' && req.sent.env == "dev" ){
+			// if( process.env.APP_ENV == 'dev' && req.sent.env == "dev" ){
 			// 	return next();
 			// }
 

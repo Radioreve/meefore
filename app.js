@@ -4,7 +4,7 @@
 		var express      = require('express');
 		var bodyParser   = require('body-parser');
 		var app          = express();
-		var favicon      = require('serve-favicon');
+		// var favicon      = require('serve-favicon');
 		var compression  = require('compression');
 		var cookieParser = require('cookie-parser');
 		var server       = require('http').createServer( app );
@@ -15,11 +15,11 @@
 		app.use( express.static( __dirname + '/public') );
 		app.use( bodyParser.json() );
 		app.use( bodyParser.urlencoded({ extended: true }) );
-		app.use( favicon( __dirname + '/public/favicon.ico' ));
+		// app.use( favicon( __dirname + '/public/img/favicon/favicon2.ico' ));
 
 	// Database
 		var config = require('./config/config');
-		var uri    = config.db[ process.env.NODE_ENV ].uri;
+		var uri    = config.db[ process.env.APP_ENV ].uri;
 
 		require('./services/db')( uri );
 
