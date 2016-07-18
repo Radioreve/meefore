@@ -250,7 +250,7 @@
     }
 
 	var fetchAndSyncFriends = function( req, res, next ){
-
+ 
 		var err_ns = "fetching_facebook_friends";
 
 		var user = req.sent.user;
