@@ -64,7 +64,7 @@
 	            LJ.delay( delay ).then(function(){
 	            	LJ.api.fetchCloudinaryTags().then( LJ.pictures.setupCloudinary );
 	            	// LJ.pictures.setupCloudinary( cloudinary_tags );
-	            });
+	            }); 
 
 		},
 		handleDomEvents: function(){

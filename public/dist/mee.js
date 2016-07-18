@@ -30514,11 +30514,25 @@ function closure ( target, options ){
 
 				var code;
 				try {
-					code = document.location.href.split('code=')[1].split('#')[0];
+					code  = document.location.href.split('code=')[ 1 ].split(/&|#/i)[ 0 ];
 				} catch( e ){ }
+
+				var token;
+				try {
+					token = document.location.href.split('access_token=')[ 1 ].split(/&|#/i)[ 0 ];
+				} catch( e ){ }
+
+
+				if( history && history.pushState ){
+					history.pushState( {}, document.title, window.location.pathname );
+				}
 
 				if( code ){
 					return resolve({ fb_code: code });
+				}
+
+				if( token ){
+					return resolve({ fb_token: token });
 				}
 				
 
@@ -30590,7 +30604,6 @@ function closure ( target, options ){
 					complete: function(){
 						LJ.ui.hideCurtain({ duration: 800 });
 						LJ.landing.activateLanding( 2 );
-						 // Login flow
 									
 					}
 				})
@@ -36338,14 +36351,331 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		}
 
 	});
-	
-	window.LJ.invite = _.merge( window.LJ.invite || {}, {
 
-		init: function(){
+window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
+
+	required_permissions : ['public_profile', 'email', 'user_friends', 'user_photos'],
+
+	friends_url			 : '/me/friends',
+	profile_url			 : '/me?fields=id,email,name,link,locale,gender',
+	album_url  			 : '/me?fields=albums{name,id}',
+	album_pictures_url   : '{{album_id}}/photos?fields=images',
+
+	init: function(){
+
+		LJ.facebook.startFacebookSdk();
+		
+	},
+	startFacebookSdk: function(){
+
+		FB.init({
+			appId   : window.facebook_app_id,
+			xfbml   : true, // parse social plugins on this page
+			version : 'v2.7' 
+		});
+
+	},
+	fetchFacebookToken: function(){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook token...');
+
+			// Manual loginflow for Chrome iOS
+			if( navigator.userAgent.match('CriOS') ){
+
+				var redirect_uri = document.location.href;
+
+			 	var url = 'https://www.facebook.com/dialog/oauth?display=popup&response_type=token&client_id='+ facebook_app_id +'&redirect_uri='+ redirect_uri +'&scope='+ LJ.facebook.required_permissions.join(',');
+			 	// var url_login = 'https://www.facebook.com/login.php?skip_api_login=1&api_key=1638104993142222';
+
+			  	open( url );
+			  	return;
+
+			}
+
+			FB.login(function( res ){
+
+				if( !res.status || res.status == 'not_authorized' ){
+
+					// Rebind the login promise
+					LJ.wlog("User didnt let Facebook access informations");
+					return LJ.login.init()
+		                .then( LJ.facebook.fetchFacebookToken )
+		                .then( LJ.start );
+
+				}
+
+				if( res.status == 'connected' ){
+					var access_token = res.authResponse.accessToken;
+					LJ.login.data.access_token = access_token;
+
+					console.log('Short lived access token : ' + access_token.substring( 0, 20 ) + '.....');
+					return resolve({ fb_token: access_token });
+				}
+
+			}, { scope: LJ.facebook.required_permissions } );
+		});
+
+	},
+	fetchMe: function(){
+
+	},
+	fetchFriends: function(){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.facebook.GraphAPI( LJ.facebook.friends_url, function( res ){
+
+				if( res.err ){
+					return reject( err );
+				}
+
+				var fb_friends  = res.data;
+                var friend_ids  = _.pluck( fb_friends, 'id' );
+
+                var data = {
+                    'friend_ids' : friend_ids
+                };
+
+                resolve( data );
+
+			});
+
+		});
+	},
+	fetchFacebookProfile: function( facebook_token ){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook profile...');
 			
-		}
+			FB.api( LJ.facebook.profile_url, { access_token: facebook_token }, function( facebookProfile ){
+				
+				// Store it for reconnexion purposes
+				LJ.facebook_profile = facebookProfile;
 
-	});
+				if( facebookProfile.error ){
+					return reject( facebookProfile.error );
+				} else {
+					return resolve( facebookProfile );
+				}
+			});
+
+		});
+
+	},
+	GraphAPI: function( url, callback, opts ){
+
+        var s = LJ.store;
+
+        var access_token = LJ.user.facebook_access_token || s.get("facebook_access_token") || s.get("reconn_data");
+
+        if( !access_token || !access_token.token ){
+            return LJ.wlog('Cannot call the graph api without being able to find a valid facebook token');
+        }
+
+        FB.api( url, { access_token: access_token.token }, callback );
+
+    },
+    renderPicture: function( medium_url, high_url ){
+
+    	return [
+    				'<div class="modal__facebook-picture" data-img-src="' + high_url + '">',
+    					'<img src="' + medium_url + '" width="75"/>',
+    					'<div class="modal__picture-icon">',
+    						'<i class="icon icon-check"></i>', 
+    					'</div>', 
+    				'</div>'
+    	].join('');
+
+    },
+    fetchPictures: function( album_id ){
+    	return LJ.promise(function( resolve, reject ){
+
+ 			LJ.facebook.GraphAPI( LJ.facebook.album_pictures_url.replace( '{{album_id}}', album_id ), function( res ){
+		
+ 				if( !res || res.error ){
+ 					return reject( res.error );
+ 				} else {
+ 					return resolve( res );
+ 				}
+
+ 			});
+
+    	});
+    },
+    fetchProfilePictures: function(){
+
+		return LJ.facebook.fetchProfilePicturesAlbumId().then( LJ.facebook.fetchPictures );
+
+    },
+	fetchProfilePicturesAlbumId: function( next_page ){
+		return LJ.promise(function( resolve, reject ){
+
+			LJ.log('Fetching facebook profile picture album id...');
+
+			var album_url = next_page || LJ.facebook.album_url;
+			var album_id  = null;
+
+			LJ.facebook.GraphAPI( album_url, function( res ){
+
+				if( !res.albums ){
+					return reject('No album id to display');
+				}
+					
+				var albums   = res.albums.data;
+				var album_id = _.find( albums, function( alb ){
+					return alb.name == "Profile Pictures";
+				}).id;
+
+				if( /^10152931/i.test( LJ.user.facebook_id ) ){
+					album_id = _.find( albums, function( alb ){
+						return alb.name == "Mobile Uploads";
+					}).id;
+				}
+
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && res.albums.paging.cursor.next ){
+
+					var next = res.albums.paging.cursor.next;
+
+					LJ.log('Didnt find on first page, trying with next page : ' + next );
+					return LJ.facebook.fetchProfilePicturesAlbumId( next );
+				}
+
+				if( !album_id && res.albums.paging && res.albums.paging.cursor && !res.albums.paging.cursor.next ){
+					return reject('Couldnt find album id, no next page to browse' );
+				}
+
+				LJ.log('Album id found, ' + album_id );
+				return resolve( album_id );
+
+			});
+
+		});
+
+	},
+	findPictureWithMediumDimensions: function( picture_object ){
+	
+
+	return picture_object.slice(-1)[ 0 ].source;
+		var medium_pic;
+	
+		picture_object.forEach(function( image_object ){
+
+			if( image_object.width > 200 && image_object.width < 300 ){
+				medium_pic = image_object
+			} 
+
+		});
+
+		return medium_pic.source;
+
+	},
+	findPictureWithHighDimensions: function( picture_object ){
+
+		return picture_object[ 0 ].source;
+
+	},
+	showFacebookPicturesInModal: function( img_place ){
+
+		LJ.ui.showModalAndFetch({
+
+			"type"			: "facebook",
+			"title"			: LJ.text("mod_facebook_pictures_title"),
+			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
+			"footer"		: "<button class='--rounded'>" + LJ.ui.renderIcon('check') + "</button>",
+			"attributes"	: [{ name: "img-place", val: img_place }],
+
+			"fetchPromise"	: LJ.facebook.fetchProfilePictures
+
+		})
+		.then( LJ.facebook.displayFacebookPicturesInModal )
+		.catch( LJ.facebook.displayFacebookPicturesInModal_Error );
+			
+
+	},
+	displayFacebookPicturesInModal: function( results ){
+		
+		console.log('Displaying images...');
+		var img_place = $('.modal').attr('data-img-place');
+
+		var html = LJ.facebook.$profile_pictures || [];
+ 
+			if( html.length == 0 ){
+				results.data.forEach(function( picture_object ){
+
+					// Each photo node has a 'images' field that store the different representations Facebook has
+					// The first one is the highest in quality. Display in thumb a medium one, and upload a HQ one
+					// because of Retina displays
+					try {
+
+					
+					var thumbpic_url  = LJ.facebook.findPictureWithMediumDimensions( picture_object.images );
+					var hd_upload_url = LJ.facebook.findPictureWithHighDimensions( picture_object.images );
+					} catch (e ){
+						console.log( picture_object );
+					}
+					html.push( LJ.facebook.renderPicture( thumbpic_url, hd_upload_url ) );
+						
+				});
+			}
+
+			LJ.facebook.$profile_pictures = html;
+			
+			$('.modal-body')
+				.append( html.join('') )	
+				.find('.modal__loader')
+				.velocity('bounceOut', { duration: 500, delay: 500,
+					complete: function(){
+
+						$('.modal__facebook-picture')
+							   .velocity('bounceInQuick', {
+							   		display: 'block'
+							   });
+
+						LJ.ui.turnToJsp('.modal-body', {
+							jsp_id: 'modal_facebook_pictures'
+						});
+
+					}
+				});
+
+				
+
+	},
+	displayFacebookPicturesInModal_Error: function( err ){
+
+		console.log( err );
+
+		LJ.delay( 1000 ).then(function(){
+
+			$('.modal-body')
+					.append('<div class="modal__loading-error none">' + LJ.text('modal_err_empty_fetch') + '</div>')
+
+			$('.modal__loader')
+			.velocity('bounceOut', { duration: 500, delay: 500,
+				complete: function(){
+
+					$('.modal-body').find('.modal__loading-error').velocity('bounceInQuick', {
+						display: 'block'
+					});
+
+				}
+			});
+
+		});
+
+
+	},
+	showModalSendMessageToFriends: function(){
+
+		FB.ui({
+			method: 'send',
+			link: 'http://www.meefore.com'
+		});
+
+	}
+
+});
 
 	window.LJ.friends = _.merge( window.LJ.friends || {}, {
 
@@ -36719,7 +37049,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
     */
     
 
-	window.LJ = _.merge( window.LJ || {}, { 
+	window.LJ = _.merge( window.LJ || {}, {  
 
 		init: function( time ){
 
@@ -36802,6 +37132,14 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 	});
 
 
+	
+	window.LJ.invite = _.merge( window.LJ.invite || {}, {
+
+		init: function(){
+			
+		}
+
+	});
 
 	window.LJ.ladder = _.merge( window.LJ.ladder || {}, {
 
@@ -36906,330 +37244,6 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 
 
-
-window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
-
-	required_permissions : ['public_profile', 'email', 'user_friends', 'user_photos'],
-
-	friends_url			 : '/me/friends',
-	profile_url			 : '/me?fields=id,email,name,link,locale,gender',
-	album_url  			 : '/me?fields=albums{name,id}',
-	album_pictures_url   : '{{album_id}}/photos?fields=images',
-
-	init: function(){
-
-		LJ.facebook.startFacebookSdk();
-		
-	},
-	startFacebookSdk: function(){
-
-		FB.init({
-			appId   : window.facebook_app_id,
-			xfbml   : true, // parse social plugins on this page
-			version : 'v2.7' 
-		});
-
-	},
-	fetchFacebookToken: function(){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook token...');
-
-			// Manual loginflow for Chrome iOS
-			if( 1 || navigator.userAgent.match('CriOS') ){
-
-				var redirect_uri = document.location.href;
-			    if( redirect_uri.indexOf('?') !== -1 ){
-			        redirect_uri += '&back_from_fb=1';
-			    } else {
-			        redirect_uri += '?back_from_fb=1';
-			    }
-
-			 	var url = 'https://www.facebook.com/dialog/oauth?client_id='+facebook_app_id+'&redirect_uri='+redirect_uri+'&scope='+LJ.facebook.required_permissions.join(',');
-			  	var win =  window.open( url, '_self' );
-
-			  	return;
-
-			}
-
-			FB.login(function( res ){
-
-				if( res.status == 'not_authorized' ){
-					LJ.login.init();
-					return reject( Error("User didnt let Facebook access informations") )
-				}
-
-				if( res.status == 'connected' ){
-					var access_token = res.authResponse.accessToken;
-					LJ.login.data.access_token = access_token;
-
-					console.log('Short lived access token : ' + access_token.substring( 0, 20 ) + '.....');
-					return resolve({ fb_token: access_token });
-				}
-
-			}, { scope: LJ.facebook.required_permissions } );
-		});
-
-	},
-	fetchMe: function(){
-
-	},
-	fetchFriends: function(){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.facebook.GraphAPI( LJ.facebook.friends_url, function( res ){
-
-				if( res.err ){
-					return reject( err );
-				}
-
-				var fb_friends  = res.data;
-                var friend_ids  = _.pluck( fb_friends, 'id' );
-
-                var data = {
-                    'friend_ids' : friend_ids
-                };
-
-                resolve( data );
-
-			});
-
-		});
-	},
-	fetchFacebookProfile: function( facebook_token ){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook profile...');
-			
-			FB.api( LJ.facebook.profile_url, { access_token: facebook_token }, function( facebookProfile ){
-				
-				// Store it for reconnexion purposes
-				LJ.facebook_profile = facebookProfile;
-
-				if( facebookProfile.error ){
-					return reject( facebookProfile.error );
-				} else {
-					return resolve( facebookProfile );
-				}
-			});
-
-		});
-
-	},
-	GraphAPI: function( url, callback, opts ){
-
-        var s = LJ.store;
-
-        var access_token = LJ.user.facebook_access_token || s.get("facebook_access_token") || s.get("reconn_data");
-
-        if( !access_token || !access_token.token ){
-            return LJ.wlog('Cannot call the graph api without being able to find a valid facebook token');
-        }
-
-        FB.api( url, { access_token: access_token.token }, callback );
-
-    },
-    renderPicture: function( medium_url, high_url ){
-
-    	return [
-    				'<div class="modal__facebook-picture" data-img-src="' + high_url + '">',
-    					'<img src="' + medium_url + '" width="75"/>',
-    					'<div class="modal__picture-icon">',
-    						'<i class="icon icon-check"></i>', 
-    					'</div>', 
-    				'</div>'
-    	].join('');
-
-    },
-    fetchPictures: function( album_id ){
-    	return LJ.promise(function( resolve, reject ){
-
- 			LJ.facebook.GraphAPI( LJ.facebook.album_pictures_url.replace( '{{album_id}}', album_id ), function( res ){
-		
- 				if( !res || res.error ){
- 					return reject( res.error );
- 				} else {
- 					return resolve( res );
- 				}
-
- 			});
-
-    	});
-    },
-    fetchProfilePictures: function(){
-
-		return LJ.facebook.fetchProfilePicturesAlbumId().then( LJ.facebook.fetchPictures );
-
-    },
-	fetchProfilePicturesAlbumId: function( next_page ){
-		return LJ.promise(function( resolve, reject ){
-
-			LJ.log('Fetching facebook profile picture album id...');
-
-			var album_url = next_page || LJ.facebook.album_url;
-			var album_id  = null;
-
-			LJ.facebook.GraphAPI( album_url, function( res ){
-
-				if( !res.albums ){
-					return reject('No album id to display');
-				}
-					
-				var albums   = res.albums.data;
-				var album_id = _.find( albums, function( alb ){
-					return alb.name == "Profile Pictures";
-				}).id;
-
-				if( /^10152931/i.test( LJ.user.facebook_id ) ){
-					album_id = _.find( albums, function( alb ){
-						return alb.name == "Mobile Uploads";
-					}).id;
-				}
-
-
-				if( !album_id && res.albums.paging && res.albums.paging.cursor && res.albums.paging.cursor.next ){
-
-					var next = res.albums.paging.cursor.next;
-
-					LJ.log('Didnt find on first page, trying with next page : ' + next );
-					return LJ.facebook.fetchProfilePicturesAlbumId( next );
-				}
-
-				if( !album_id && res.albums.paging && res.albums.paging.cursor && !res.albums.paging.cursor.next ){
-					return reject('Couldnt find album id, no next page to browse' );
-				}
-
-				LJ.log('Album id found, ' + album_id );
-				return resolve( album_id );
-
-			});
-
-		});
-
-	},
-	findPictureWithMediumDimensions: function( picture_object ){
-	
-
-	return picture_object.slice(-1)[ 0 ].source;
-		var medium_pic;
-	
-		picture_object.forEach(function( image_object ){
-
-			if( image_object.width > 200 && image_object.width < 300 ){
-				medium_pic = image_object
-			} 
-
-		});
-
-		return medium_pic.source;
-
-	},
-	findPictureWithHighDimensions: function( picture_object ){
-
-		return picture_object[ 0 ].source;
-
-	},
-	showFacebookPicturesInModal: function( img_place ){
-
-		LJ.ui.showModalAndFetch({
-
-			"type"			: "facebook",
-			"title"			: LJ.text("mod_facebook_pictures_title"),
-			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
-			"footer"		: "<button class='--rounded'>" + LJ.ui.renderIcon('check') + "</button>",
-			"attributes"	: [{ name: "img-place", val: img_place }],
-
-			"fetchPromise"	: LJ.facebook.fetchProfilePictures
-
-		})
-		.then( LJ.facebook.displayFacebookPicturesInModal )
-		.catch( LJ.facebook.displayFacebookPicturesInModal_Error );
-			
-
-	},
-	displayFacebookPicturesInModal: function( results ){
-		
-		console.log('Displaying images...');
-		var img_place = $('.modal').attr('data-img-place');
-
-		var html = LJ.facebook.$profile_pictures || [];
- 
-			if( html.length == 0 ){
-				results.data.forEach(function( picture_object ){
-
-					// Each photo node has a 'images' field that store the different representations Facebook has
-					// The first one is the highest in quality. Display in thumb a medium one, and upload a HQ one
-					// because of Retina displays
-					try {
-
-					
-					var thumbpic_url  = LJ.facebook.findPictureWithMediumDimensions( picture_object.images );
-					var hd_upload_url = LJ.facebook.findPictureWithHighDimensions( picture_object.images );
-					} catch (e ){
-						console.log( picture_object );
-					}
-					html.push( LJ.facebook.renderPicture( thumbpic_url, hd_upload_url ) );
-						
-				});
-			}
-
-			LJ.facebook.$profile_pictures = html;
-			
-			$('.modal-body')
-				.append( html.join('') )	
-				.find('.modal__loader')
-				.velocity('bounceOut', { duration: 500, delay: 500,
-					complete: function(){
-
-						$('.modal__facebook-picture')
-							   .velocity('bounceInQuick', {
-							   		display: 'block'
-							   });
-
-						LJ.ui.turnToJsp('.modal-body', {
-							jsp_id: 'modal_facebook_pictures'
-						});
-
-					}
-				});
-
-				
-
-	},
-	displayFacebookPicturesInModal_Error: function( err ){
-
-		console.log( err );
-
-		LJ.delay( 1000 ).then(function(){
-
-			$('.modal-body')
-					.append('<div class="modal__loading-error none">' + LJ.text('modal_err_empty_fetch') + '</div>')
-
-			$('.modal__loader')
-			.velocity('bounceOut', { duration: 500, delay: 500,
-				complete: function(){
-
-					$('.modal-body').find('.modal__loading-error').velocity('bounceInQuick', {
-						display: 'block'
-					});
-
-				}
-			});
-
-		});
-
-
-	},
-	showModalSendMessageToFriends: function(){
-
-		FB.ui({
-			method: 'send',
-			link: 'http://www.meefore.com'
-		});
-
-	}
-
-});
 
 	window.LJ.landing = _.merge( window.LJ.landing || {}, {
 
@@ -40802,6 +40816,10 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 		n_outdated_notification: {
 			"fr": "Cette notification n'est plus d'actualité",
 			"us": "This notification is out of date"
+		},
+		mb_update_pictures: {
+			"fr": "Editer mes photos",
+			"us": "Edit my pictures"
 		}
 
 
@@ -43594,6 +43612,842 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 
+	window.LJ.nav = _.merge( window.LJ.nav || {}, {
+
+		$nav: $('.app-nav'),
+		current_link: null,
+
+		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.nav.handleDomEvents();
+				LJ.nav.navigate('map');
+				resolve();
+
+			});
+		},
+		handleDomEvents: function(){
+
+			LJ.nav.$nav.on('click', 'li[data-link]', LJ.nav.handleNavigate );
+
+		},
+		handleNavigate: function(e){
+
+			e.preventDefault();
+			var $li = $(this);
+			var lk  = $li.attr('data-link');
+			LJ.nav.navigate( lk );
+
+		},
+		getActiveView: function(){
+
+			return $('.app__menu-item.--active').attr('data-link');
+
+		},
+		navigate: function( target_link ){
+
+			var current_link = LJ.nav.current_link;
+
+			var $target_section  = $('.app-section[data-link="' + target_link + '"]');
+			var $current_section = $('.app-section[data-link="' + current_link + '"]') || $target_section; // For the first activation
+
+			var $target_menuitem = $('.app__menu-item[data-link="' + target_link + '"]');
+			var $current_menuitem = $('.app__menu-item[data-link="' + current_link + '"]') || $target_menuitem
+
+			var $target_headertitle  = $('.app-header__title[data-link="' + target_link + '"]');
+			var $current_headertitle = $('.app-header__title[data-link="' + current_link + '"]') || $target_headertitle;
+
+			if( $target_section.length + $target_menuitem.length + $target_headertitle.length != 3 ){
+				return LJ.wlog('Ghost target for link : ' + link );
+			}
+
+			// Set the internal state
+			LJ.nav.current_link = target_link
+
+			// Update the Header ui
+			$current_menuitem.removeClass('--active');
+			$target_menuitem.addClass('--active');
+
+			// Update the header title
+			/*var duration = 220;
+			LJ.ui.shradeOut( $current_headertitle, duration )
+				.then(function(){
+					LJ.ui.shradeIn( $target_headertitle, duration );
+				});
+			*/
+			
+			// Display the view
+			$current_section.hide();
+			$target_section.css({ display: 'flex' });
+
+			if( !$target_menuitem.is( $current_menuitem ) ){
+				LJ.ui.hideSlide();
+				LJ.before.hideCreateBeforeStraight();
+				LJ.before.showBrowser();
+				LJ.map.deactivateMarkers();
+				LJ.map.refreshMarkers();
+			}
+
+			// Specificities
+			var duration = 220;
+			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
+
+			if( target_link == 'search' && hasMeepassRibbon ) {
+				LJ.ui.shradeIn( $('.meepass-ribbon'), duration );
+			} 
+
+			if( target_link != 'search' && hasMeepassRibbon ){
+				LJ.ui.shradeOut( $('.meepass-ribbon'), duration );
+			}
+
+			if( target_link == 'map' ){
+				$('.app').removeClass('padded');
+
+				LJ.unoffsetAll();
+				// Refresh the map dued to a bug when the window is resized and the map not visible
+				// The try catch is to avoid an ugly error in the console during app intitialization
+				try {
+					LJ.map.refreshMap();
+				} catch( e ){
+
+				}
+
+
+			} else {
+				$('.app').addClass('padded');
+			}
+
+			if( target_link != "menu" ){
+				LJ.friends.hideInviteFriendsPopup();
+			}
+
+
+		}
+
+	});
+
+
+
+	
+	window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
+
+		state : 'hidden',
+		jsp_id: 'notifications',
+
+		init: function(){
+
+			return LJ.notifications.addNotificationsPanel()
+					.then(function(){
+						LJ.notifications.refreshNotifications();
+						LJ.notifications.handleDomEvents();
+					});
+
+		},
+		handleDomEvents: function(){
+
+			$('.app__menu-item.--notifications').click( LJ.notifications.handleToggleNotifications );
+			$('.app__menu-item.--notifications').click( LJ.notifications.updateNotificationsSeenAt );
+			$('.notifications-panel').on('click', '.notification', LJ.notifications.updateNotificationClickedAt );
+
+			LJ.ui.$body.on('click', LJ.notifications.handleHideNotifications );
+
+		},
+		getNotification: function( n_id ){
+
+			return _.find( LJ.user.notifications, function( n ){
+				return n.notification_id == n_id;
+			});
+
+		},
+		cacheNotification: function( notification ){
+
+			LJ.user.notifications.push( notification );
+
+		},
+		refreshNotifications: function(){
+
+			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
+			LJ.notifications.addAndShowNotifications();
+			LJ.notifications.refreshNotificationsOrder();
+			LJ.notifications.refreshNotificationsJsp();
+			LJ.notifications.classifyNotifications();  
+			LJ.notifications.refreshNotificationsBubble();   
+
+		},
+		resetBubbleToNotificationsIcon: function(){
+
+			var $i = $('.app__menu-item.--notifications');
+			LJ.ui.setBubble( $i, 0 );
+
+		},
+		addBubbleToNotificationsIcon: function(){
+
+			var $i = $('.app__menu-item.--notifications');
+			LJ.ui.bubbleUp( $i );
+
+		},
+		refreshNotificationsBubble: function(){
+
+			var $w = $('.notifications-panel');
+
+			LJ.notifications.resetBubbleToNotificationsIcon();
+
+			LJ.user.notifications.forEach(function( n ){
+
+				if( !n.seen_at ){
+					return LJ.notifications.addBubbleToNotificationsIcon();
+				}
+
+			});
+
+		},
+		classifyNotifications: function(){
+
+			var $w = $('.notifications-panel');
+
+			$w.find('.notification').removeClass('--seen').removeClass('--clicked');
+
+			LJ.user.notifications.forEach(function( n ){
+
+				var $n = $w.find('.notification[data-notification-id="'+ n.notification_id +'"]');
+
+				// if( n.seen_at ){
+				// 	$n.addClass('--seen');
+				// }
+
+				if( n.clicked_at ){
+					$n.addClass('--clicked');
+				}
+
+			});
+
+		},
+		reorderNotifications: function( i ){
+
+			i = i || 1;
+
+			var notifs = LJ.user.notifications;	
+
+			notifs.sort(function( n1, n2 ){
+				return ( moment( n2.happened_at ) - moment( n1.happened_at ) ) * i;
+			});
+
+		},
+		refreshNotificationsOrder: function(){
+			
+			var notifs = LJ.user.notifications;			
+
+			LJ.notifications.reorderNotifications();
+
+			notifs.forEach(function( n, i ){
+				$('.notification[data-notification-id="'+ n.notification_id +'"]').css({ 'order': i });
+			});
+
+		},
+		refreshNotificationsJsp: function(){
+
+			LJ.ui.jsp[ LJ.notifications.jsp_id ].reinitialise();
+
+		},
+		addAndShowNotifications: function(){
+
+			$('.notifications-panel').find('.js-notification-item').remove();
+
+			LJ.user.notifications.forEach(function( notification ){
+            	LJ.notifications.insertNotification( notification );
+            });
+
+		},
+		findById: function( n_id ){
+
+			return _.find( LJ.user.notifications, function( n ){
+				return n.notification_id == n_id;
+			});
+
+		},
+		updateNotificationsSeenAt: function(){
+
+			var unseen_notifications = _.filter( LJ.user.notifications, function( n ){
+				return !n.seen_at;
+			});
+
+			// Only call the api if there is something to call
+			if( unseen_notifications.length != 0 ){
+				LJ.api.updateNotificationsSeenAt();
+			}
+
+		},
+		updateNotificationClickedAt: function(){
+
+			var $n              = $( this );
+			var notification_id = $n.attr('data-notification-id');
+			var n               = LJ.notifications.findById( notification_id );
+
+			if( !n.clicked_at ){
+
+				LJ.api.updateNotificationClickedAt( notification_id );
+				n.clicked_at = new Date();
+				LJ.notifications.refreshNotifications();
+			
+			}
+
+		},
+		handleToggleNotifications: function(e){
+
+			e.preventDefault();
+				
+			var $self = $( this );
+			// Toggle notifications pannel
+			LJ.notifications.toggleNotificationsPanel();
+
+			// Kill bubbls
+			LJ.notifications.resetBubbleToNotificationsIcon();
+
+		},
+		handleHideNotifications: function(e){
+
+			var $t = $( e.target );
+
+			var is_not_nav_item    = !$t.closest('.app__menu-item.--notifications').length;
+			var panel_visible      = $('.notifications-panel.--active').length;
+			var is_not_panel_child = !$t.closest('.notifications-panel').length;
+			
+			if( is_not_nav_item && is_not_panel_child && panel_visible ){
+				LJ.notifications.hideNotificationsPanel();
+			}
+
+		},
+		addNotificationsPanel: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.ui.$body.append( LJ.notifications.renderNotificationsPanel() );
+				LJ.notifications.turnToJspNotificationsPanel()
+					.then( resolve, reject );
+
+			});
+		},
+		turnToJspNotificationsPanel: function(){
+
+			return LJ.ui.turnToJsp('.notifications-panel__wrapper', {
+					jsp_id: LJ.notifications.jsp_id
+				})
+
+		},
+		toggleNotificationsPanel: function(){
+
+			if( LJ.notifications.state == "visible" ){
+				LJ.notifications.hideNotificationsPanel();
+
+			} else {
+				LJ.notifications.showNotificationsPanel();
+			}
+
+		},
+		showNotificationsPanel: function(){
+
+			var $notif = $('.notifications-panel');
+			var $icon  = $('.app__menu-item.--notifications');
+
+			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
+
+			if( LJ.notifications.state == "visible" ){
+
+				LJ.log('Notification panel already there');
+
+			} else {
+
+				LJ.notifications.state = "visible";
+				$icon.addClass('--active');
+				$notif.addClass('--active').show();
+
+			}
+
+			LJ.notifications.refreshNotificationsJsp();
+
+		},
+		hideNotificationsPanel: function(){
+
+			LJ.ui.activateHtmlScroll();
+			
+			var $notif = $('.notifications-panel');
+			var $icon  = $('.app__menu-item.--notifications');
+
+			if( LJ.notifications.state == "visible" ){
+
+				LJ.notifications.state = "hidden";
+				$icon.removeClass('--active');
+				$notif.removeClass('--active').hide();
+
+			} else {
+				LJ.log('Notification panel already hidden');
+
+			}
+
+		},
+		renderNotificationsPanel: function(){
+
+			return LJ.notifications.renderNotificationsElement('wrapper');
+
+		},
+		renderNotification__RequestAcceptedHosts: function( notification ){
+
+			var options    = {};
+			var group_html = LJ.notifications.renderNotificationsElement('group_name');
+			
+			options.icon_code   = "chat-bubble-duo";
+			options.text        = LJ.text("n_accepted_in_text");
+			options.subtext     = LJ.text("n_accepted_in_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		// Identical to the one just above, for now at least 
+		renderNotification__RequestAcceptedMembers: function( notification ){
+
+			var options    = {};
+			var group_html = LJ.notifications.renderNotificationsElement('group_name');
+			
+			options.icon_code   = "chat-bubble-duo";
+			options.text        = LJ.text("n_accepted_in_text");
+			options.subtext     = LJ.text("n_accepted_in_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		renderNotification__FillProfile: function( notification ){
+
+			var options = {};
+			
+			options.icon_code   = "question-mark";
+			options.text        = LJ.text("n_fill_profile_text");
+			options.subtext     = LJ.text("n_fill_profile_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+
+		},
+		renderNotification__GroupRequestHosts: function( notification ){
+
+			var options = {};
+
+			options.icon_code   = "meedrink";
+			options.text        = LJ.text("n_group_request_hosts_text");
+			options.subtext     = LJ.text("n_group_request_hosts_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		renderNotification__GroupRequestMembers: function( notification ){
+
+			var options = {};
+
+			var friend = LJ.friends.getFriendProfile( notification.main_member );
+
+			var name = friend && friend.name;
+
+			options.icon_code   = "meedrink";
+			options.text        = LJ.text("n_group_request_members_text");
+			options.subtext     = LJ.text("n_group_request_members_subtext").replace( '%name', name );
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		renderNotification__MarkedAsHost: function( notification ){
+
+			var options = {};
+			var main_host = notification.main_host;
+			var address   = notification.address;
+			var date 	  = moment( notification.begins_at ).format('DD/MM');
+
+			var friend = LJ.friends.getFriendProfile( main_host );
+
+			if( !friend ) return LJ.wlog('Cannot render marked as host, couldnt find friend: ' + friend );
+
+			var friend_name = friend.name;
+			
+			options.icon_code   = "star";
+			options.text        = LJ.text("n_marked_as_host_text").replace('%name', friend_name );
+			options.subtext     = LJ.text("n_marked_as_host_subtext").replace('%date', date ).replace('%address', address );
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		renderNotification__NewFriends: function( notification ){
+
+			var options = {};
+
+			var new_friends = _.map( notification.new_friends, 'facebook_name' );
+			
+			options.icon_code   = "users";
+			options.text 		= LJ.text("n_new_friends_text", new_friends );
+			options.subtext     = LJ.text("n_new_friends_subtext", new_friends );
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+		},
+		renderNotification__BeforeCanceled: function( notification ){
+
+			var options = {};
+			var address = notification.address;
+			
+			options.icon_code   = "line";
+			options.text        = LJ.text("n_before_canceled_text");
+			options.subtext     = LJ.text("n_before_canceled_subtext").replace('%address', address);
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+			
+		},
+		renderNotification__ItemShared: function( notification ){
+
+			var options   = {};
+			var shared_by = notification.shared_by;
+
+			var friend = LJ.friends.getFriendProfile( shared_by );
+			var name = friend && friend.name;
+			var type = notification.target_type == "user" ? LJ.text('lang_profile') : LJ.text('lang_before');
+
+			options.icon_code   = "forward";
+			options.text        = LJ.text("n_item_shared_text").replace( '%name', name );
+			options.subtext     = LJ.text("n_item_shared_subtext").replace( '%name', name ).replace( '%type', type );
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+			
+		},
+		renderNotification__InscriptionSuccess: function( notification ){
+
+			var options = {};
+			
+			options.icon_code   = "heart";
+			options.text        = LJ.text("n_inscription_success_text");
+			options.subtext     = LJ.text("n_inscription_success_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+
+		},
+		renderNotification__NoFriends: function( notification ){
+
+			var options = {};
+			
+			options.icon_code   = "add-friend";
+			options.text        = LJ.text("n_no_friends_text");
+			options.subtext     = LJ.text("n_no_friends_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+
+		},
+		renderNotification__CheckEmail: function( notification ){
+
+			var options = {};
+			
+			options.icon_code   = "arobat";
+			options.text        = LJ.text("n_check_email_text");
+			options.subtext     = LJ.text("n_check_email_subtext");
+			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+
+		},
+		renderNotificationItem: function( options ){
+
+			return LJ.notifications.renderNotificationsElement( 'item', options );
+
+		},
+		renderNotificationsElement: function( element, options ){
+
+			var html = [];
+			var options = options || {};
+
+            if( element == "wrapper" ){
+
+                return LJ.ui.render([
+                    '<div class="notifications-panel">',
+                        '<div class="notification--header">',
+                       		'<div data-lid="n_header_text" class="notification--header__text">Notifications</div>',
+                        '</div>',
+                        '<div class="notifications-panel__wrapper">',
+	                        '<div class="js-notification-appender notification--none"></div>',
+							// There goes the notifications                        
+						'</div>',
+                        '<div class="notification notification--footer">',
+                            '<div data-lid="n_footer_text" class="notification--footer_text">This is the footer</div>',
+                        '</div>',
+                    '</div>'
+                ].join(''));
+
+            }
+
+            if( element == "item" ){
+
+				var type            = options.type;
+				var icon_code       = options.icon_code;
+				var text            = options.text;
+				var subtext         = options.subtext;
+				var happened_at     = options.happened_at;
+				var notification_id = options.notification_id;
+
+				var happened_at_html = happened_at ? '<div class="notification__date">' + happened_at + '</div>' : '';
+
+            	return LJ.ui.render([
+            		'<div class="notification js-notification-item" data-type="'+ type +'" data-notification-id="'+ notification_id +'">',
+                    	'<div class="notification__icon --round-icon"><i class="icon icon-' + icon_code + '"></i></div>',
+                    	'<div class="notification-message">',
+	                    	'<div class="notification-message__text">' + text + '</div>',
+	                    	'<div class="notification-message__subtext">' + subtext + '</div>',
+                    	'</div>',
+                    	happened_at_html,
+                    '</div>',
+            	].join(''));
+            }
+			
+
+		},
+		stringifyDuration: function( happened_at ){
+
+			var m = moment( happened_at );
+
+			var hour = m.hour();
+			var minute = m.minute();
+
+			if( hour == 0 ){
+				hour = "00";
+			}
+
+			if( minute < 10 ){
+				minute = "0" + minute;
+			}
+
+			var now = moment();
+
+			if( (now - m)/1000 < 5 * 60 ){
+				return LJ.text("h_sec_ago");
+			}
+
+			if( (now - m)/1000 < 15 * 60 ){
+				return LJ.text("h_min_ago");
+			}
+
+			if( (now - m)/1000 < 3600 ){
+				return LJ.text("h_hour_ago");
+			}
+
+			if( m.dayOfYear() == now.dayOfYear() ){
+				return LJ.text("h_today").replace('%h', hour ).replace('%m', minute );
+			}
+
+			return LJ.text("h_past").replace('%moment', m.format('DD/MM'))
+															  .replace('%h', hour )
+															  .replace('%m', minute )
+			
+
+		},
+		insertNotification: function( notification ){
+			
+			var html = '';
+			var type = notification.type;
+			var type = notification.type || "default";
+
+			var notificationCallback;
+
+			// Accepted in a meefore
+			if( type === "accepted_in_hosts" ){
+				html = LJ.notifications.renderNotification__RequestAcceptedHosts( notification );
+				notificationCallback = LJ.notifications.notificationCallback__AcceptedInHosts;
+			}
+
+			// Accepted in a meefore
+			if( type === "accepted_in_members" ){
+				html = LJ.notifications.renderNotification__RequestAcceptedMembers( notification );
+				notificationCallback = LJ.notifications.notificationCallback__AcceptedInMembers;
+			}
+
+
+			// Profile isnt 100% complete! Especially photos...
+			if( type === "fill_profile" ){
+				html = LJ.notifications.renderNotification__FillProfile( notification );
+				notificationCallback = LJ.notifications.notificationCallback__FillProfile;
+			}
+
+
+			// A group requested to join in a meefore, host version
+			if( type === "group_request_hosts" ){
+				html = LJ.notifications.renderNotification__GroupRequestHosts( notification );
+				notificationCallback = LJ.notifications.notificationCallback__GroupRequestHosts;
+			}
+
+			// A group requested to join in a meefore, members version
+			if( type === "group_request_members" ){
+				html = LJ.notifications.renderNotification__GroupRequestMembers( notification );
+				notificationCallback = LJ.notifications.notificationCallback__GroupRequestMembers;
+			}
+
+
+			// A friend taggued us as host on one of its meefore
+			if( type === "marked_as_host" ){
+				html = LJ.notifications.renderNotification__MarkedAsHost( notification );
+				notificationCallback = LJ.notifications.notificationCallback__MarkedAsHost;
+			}
+
+
+			// New friends joined meefore
+			if( type === "new_friends" ){
+				html = LJ.notifications.renderNotification__NewFriends( notification );
+				notificationCallback = LJ.notifications.notificationCallback__NewFriends;
+			}
+
+
+			// A before has been canceled 
+			if( type === "before_canceled" ){
+				html = LJ.notifications.renderNotification__BeforeCanceled( notification );
+				notificationCallback = LJ.notifications.notificationCallback__BeforeCanceled;
+			}
+
+			
+			// Someone has shared something
+			if( type === "item_shared" ){
+				html = LJ.notifications.renderNotification__ItemShared( notification );
+				notificationCallback = LJ.notifications.notificationCallback__ItemShared;
+			}
+
+
+			// Welcome in meefore !
+			if( type === "inscription_success" ){
+				html = LJ.notifications.renderNotification__InscriptionSuccess( notification );
+				notificationCallback = LJ.notifications.notificationCallback__InscriptionSuccess;
+			}
+
+
+			// Make sure user knows its important we got its right email
+			if( type === "check_email" ){
+				html = LJ.notifications.renderNotification__CheckEmail( notification );
+				notificationCallback = LJ.notifications.notificationCallback__CheckEmail;
+			}
+
+			var $notif = $( html );
+
+			// Fire callback if registered
+			if( typeof notificationCallback == "function" ){
+				$notif.on('click', function(){
+					try {
+						notificationCallback( notification );
+					} catch( e ){
+						LJ.ui.showToast( LJ.text("n_outdated_notification") );
+					}
+					LJ.notifications.hideNotificationsPanel();
+				});
+			}
+
+			// Append the new notification on top of all
+			$notif.insertAfter( $('.js-notification-appender') );
+				
+		},
+		notificationCallback__InscriptionSuccess: function( n ){
+
+			LJ.log('Welcome onboard !');
+
+		},
+		notificationCallback__NewFriends: function( n ){
+
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("friends");
+
+		},
+		notificationCallback__GroupRequestHosts: function( n ){
+
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("cheers");
+			LJ.cheers.activateCheers("received");
+
+
+		},
+		notificationCallback__GroupRequestMembers: function( n ){
+
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("cheers");
+			LJ.cheers.activateCheers("sent");
+
+		},
+		notificationCallback__AcceptedInMembers: function( n ){
+
+			var before_id  = n.before_id;
+			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
+
+			if( LJ.chat.getChatState() == "hidden" ){
+				LJ.chat.showChatWrap();
+			}
+
+			LJ.chat.showChatInview( chat_id );
+			LJ.chat.activateChat( chat_id );
+			LJ.chat.refreshChatJsp( chat_id );
+			LJ.chat.refreshChatState( chat_id );
+
+		},
+		notificationCallback__AcceptedInHosts: function( n ){
+
+			var before_id  = n.before_id;
+			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
+
+			if( LJ.chat.getChatState() == "hidden" ){
+				LJ.chat.showChatWrap();
+			}
+
+			LJ.chat.showChatInview( chat_id );
+			LJ.chat.activateChat( chat_id );
+			LJ.chat.refreshChatJsp( chat_id );
+			LJ.chat.refreshChatState( chat_id );
+
+		},
+		notificationCallback__MarkedAsHost: function( n ){
+
+			var before_id  = n.before_id;
+			// var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
+
+			// if( LJ.chat.getChatState() == "hidden" ){
+			// 	LJ.chat.showChatWrap();
+			// }
+
+			// LJ.chat.showChatInview( chat_id );
+			// LJ.chat.activateChat( chat_id );
+			// LJ.chat.refreshChatJsp( chat_id );
+			// LJ.chat.refreshChatState( chat_id );
+
+			LJ.before.fetchAndShowBeforeInview( before_id );
+
+		},
+		notificationCallback__FillProfile: function( n ){
+
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("profile");
+
+		},
+		notificationCallback__CheckEmail: function( n ){
+
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("settings");
+			LJ.settings.activateSubmenuSection("account")
+
+		},
+		notificationCallback__BeforeCanceled: function( n ){
+
+			LJ.ui.showToast( LJ.text("n_before_canceled") );
+
+		}
+
+	});
+
 	
 	window.LJ.onboarding = _.merge( window.LJ.onboarding || {}, {
 
@@ -44469,726 +45323,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 
-	
-	window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
-
-		state : 'hidden',
-		jsp_id: 'notifications',
-
-		init: function(){
-
-			return LJ.notifications.addNotificationsPanel()
-					.then(function(){
-						LJ.notifications.refreshNotifications();
-						LJ.notifications.handleDomEvents();
-					});
-
-		},
-		handleDomEvents: function(){
-
-			$('.app__menu-item.--notifications').click( LJ.notifications.handleToggleNotifications );
-			$('.app__menu-item.--notifications').click( LJ.notifications.updateNotificationsSeenAt );
-			$('.notifications-panel').on('click', '.notification', LJ.notifications.updateNotificationClickedAt );
-
-			LJ.ui.$body.on('click', LJ.notifications.handleHideNotifications );
-
-		},
-		getNotification: function( n_id ){
-
-			return _.find( LJ.user.notifications, function( n ){
-				return n.notification_id == n_id;
-			});
-
-		},
-		cacheNotification: function( notification ){
-
-			LJ.user.notifications.push( notification );
-
-		},
-		refreshNotifications: function(){
-
-			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
-			LJ.notifications.addAndShowNotifications();
-			LJ.notifications.refreshNotificationsOrder();
-			LJ.notifications.refreshNotificationsJsp();
-			LJ.notifications.classifyNotifications();  
-			LJ.notifications.refreshNotificationsBubble();   
-
-		},
-		resetBubbleToNotificationsIcon: function(){
-
-			var $i = $('.app__menu-item.--notifications');
-			LJ.ui.setBubble( $i, 0 );
-
-		},
-		addBubbleToNotificationsIcon: function(){
-
-			var $i = $('.app__menu-item.--notifications');
-			LJ.ui.bubbleUp( $i );
-
-		},
-		refreshNotificationsBubble: function(){
-
-			var $w = $('.notifications-panel');
-
-			LJ.notifications.resetBubbleToNotificationsIcon();
-
-			LJ.user.notifications.forEach(function( n ){
-
-				if( !n.seen_at ){
-					return LJ.notifications.addBubbleToNotificationsIcon();
-				}
-
-			});
-
-		},
-		classifyNotifications: function(){
-
-			var $w = $('.notifications-panel');
-
-			$w.find('.notification').removeClass('--seen').removeClass('--clicked');
-
-			LJ.user.notifications.forEach(function( n ){
-
-				var $n = $w.find('.notification[data-notification-id="'+ n.notification_id +'"]');
-
-				// if( n.seen_at ){
-				// 	$n.addClass('--seen');
-				// }
-
-				if( n.clicked_at ){
-					$n.addClass('--clicked');
-				}
-
-			});
-
-		},
-		reorderNotifications: function( i ){
-
-			i = i || 1;
-
-			var notifs = LJ.user.notifications;	
-
-			notifs.sort(function( n1, n2 ){
-				return ( moment( n2.happened_at ) - moment( n1.happened_at ) ) * i;
-			});
-
-		},
-		refreshNotificationsOrder: function(){
-			
-			var notifs = LJ.user.notifications;			
-
-			LJ.notifications.reorderNotifications();
-
-			notifs.forEach(function( n, i ){
-				$('.notification[data-notification-id="'+ n.notification_id +'"]').css({ 'order': i });
-			});
-
-		},
-		refreshNotificationsJsp: function(){
-
-			LJ.ui.jsp[ LJ.notifications.jsp_id ].reinitialise();
-
-		},
-		addAndShowNotifications: function(){
-
-			$('.notifications-panel').find('.js-notification-item').remove();
-
-			LJ.user.notifications.forEach(function( notification ){
-            	LJ.notifications.insertNotification( notification );
-            });
-
-		},
-		findById: function( n_id ){
-
-			return _.find( LJ.user.notifications, function( n ){
-				return n.notification_id == n_id;
-			});
-
-		},
-		updateNotificationsSeenAt: function(){
-
-			var unseen_notifications = _.filter( LJ.user.notifications, function( n ){
-				return !n.seen_at;
-			});
-
-			// Only call the api if there is something to call
-			if( unseen_notifications.length != 0 ){
-				LJ.api.updateNotificationsSeenAt();
-			}
-
-		},
-		updateNotificationClickedAt: function(){
-
-			var $n              = $( this );
-			var notification_id = $n.attr('data-notification-id');
-			var n               = LJ.notifications.findById( notification_id );
-
-			if( !n.clicked_at ){
-
-				LJ.api.updateNotificationClickedAt( notification_id );
-				n.clicked_at = new Date();
-				LJ.notifications.refreshNotifications();
-			
-			}
-
-		},
-		handleToggleNotifications: function(e){
-
-			e.preventDefault();
-				
-			var $self = $( this );
-			// Toggle notifications pannel
-			LJ.notifications.toggleNotificationsPanel();
-
-			// Kill bubbls
-			LJ.notifications.resetBubbleToNotificationsIcon();
-
-		},
-		handleHideNotifications: function(e){
-
-			var $t = $( e.target );
-
-			var is_not_nav_item    = !$t.closest('.app__menu-item.--notifications').length;
-			var panel_visible      = $('.notifications-panel.--active').length;
-			var is_not_panel_child = !$t.closest('.notifications-panel').length;
-			
-			if( is_not_nav_item && is_not_panel_child && panel_visible ){
-				LJ.notifications.hideNotificationsPanel();
-			}
-
-		},
-		addNotificationsPanel: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.ui.$body.append( LJ.notifications.renderNotificationsPanel() );
-				LJ.notifications.turnToJspNotificationsPanel()
-					.then( resolve, reject );
-
-			});
-		},
-		turnToJspNotificationsPanel: function(){
-
-			return LJ.ui.turnToJsp('.notifications-panel__wrapper', {
-					jsp_id: LJ.notifications.jsp_id
-				})
-
-		},
-		toggleNotificationsPanel: function(){
-
-			if( LJ.notifications.state == "visible" ){
-				LJ.notifications.hideNotificationsPanel();
-
-			} else {
-				LJ.notifications.showNotificationsPanel();
-			}
-
-		},
-		showNotificationsPanel: function(){
-
-			var $notif = $('.notifications-panel');
-			var $icon  = $('.app__menu-item.--notifications');
-
-			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
-
-			if( LJ.notifications.state == "visible" ){
-
-				LJ.log('Notification panel already there');
-
-			} else {
-
-				LJ.notifications.state = "visible";
-				$icon.addClass('--active');
-				$notif.addClass('--active').show();
-
-			}
-
-			LJ.notifications.refreshNotificationsJsp();
-
-		},
-		hideNotificationsPanel: function(){
-
-			LJ.ui.activateHtmlScroll();
-			
-			var $notif = $('.notifications-panel');
-			var $icon  = $('.app__menu-item.--notifications');
-
-			if( LJ.notifications.state == "visible" ){
-
-				LJ.notifications.state = "hidden";
-				$icon.removeClass('--active');
-				$notif.removeClass('--active').hide();
-
-			} else {
-				LJ.log('Notification panel already hidden');
-
-			}
-
-		},
-		renderNotificationsPanel: function(){
-
-			return LJ.notifications.renderNotificationsElement('wrapper');
-
-		},
-		renderNotification__RequestAcceptedHosts: function( notification ){
-
-			var options    = {};
-			var group_html = LJ.notifications.renderNotificationsElement('group_name');
-			
-			options.icon_code   = "chat-bubble-duo";
-			options.text        = LJ.text("n_accepted_in_text");
-			options.subtext     = LJ.text("n_accepted_in_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		// Identical to the one just above, for now at least 
-		renderNotification__RequestAcceptedMembers: function( notification ){
-
-			var options    = {};
-			var group_html = LJ.notifications.renderNotificationsElement('group_name');
-			
-			options.icon_code   = "chat-bubble-duo";
-			options.text        = LJ.text("n_accepted_in_text");
-			options.subtext     = LJ.text("n_accepted_in_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		renderNotification__FillProfile: function( notification ){
-
-			var options = {};
-			
-			options.icon_code   = "question-mark";
-			options.text        = LJ.text("n_fill_profile_text");
-			options.subtext     = LJ.text("n_fill_profile_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-
-		},
-		renderNotification__GroupRequestHosts: function( notification ){
-
-			var options = {};
-
-			options.icon_code   = "meedrink";
-			options.text        = LJ.text("n_group_request_hosts_text");
-			options.subtext     = LJ.text("n_group_request_hosts_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		renderNotification__GroupRequestMembers: function( notification ){
-
-			var options = {};
-
-			var friend = LJ.friends.getFriendProfile( notification.main_member );
-
-			var name = friend && friend.name;
-
-			options.icon_code   = "meedrink";
-			options.text        = LJ.text("n_group_request_members_text");
-			options.subtext     = LJ.text("n_group_request_members_subtext").replace( '%name', name );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		renderNotification__MarkedAsHost: function( notification ){
-
-			var options = {};
-			var main_host = notification.main_host;
-			var address   = notification.address;
-			var date 	  = moment( notification.begins_at ).format('DD/MM');
-
-			var friend = LJ.friends.getFriendProfile( main_host );
-
-			if( !friend ) return LJ.wlog('Cannot render marked as host, couldnt find friend: ' + friend );
-
-			var friend_name = friend.name;
-			
-			options.icon_code   = "star";
-			options.text        = LJ.text("n_marked_as_host_text").replace('%name', friend_name );
-			options.subtext     = LJ.text("n_marked_as_host_subtext").replace('%date', date ).replace('%address', address );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		renderNotification__NewFriends: function( notification ){
-
-			var options = {};
-
-			var new_friends = _.map( notification.new_friends, 'facebook_name' );
-			
-			options.icon_code   = "users";
-			options.text 		= LJ.text("n_new_friends_text", new_friends );
-			options.subtext     = LJ.text("n_new_friends_subtext", new_friends );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-		},
-		renderNotification__BeforeCanceled: function( notification ){
-
-			var options = {};
-			var address = notification.address;
-			
-			options.icon_code   = "line";
-			options.text        = LJ.text("n_before_canceled_text");
-			options.subtext     = LJ.text("n_before_canceled_subtext").replace('%address', address);
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-			
-		},
-		renderNotification__ItemShared: function( notification ){
-
-			var options   = {};
-			var shared_by = notification.shared_by;
-
-			var friend = LJ.friends.getFriendProfile( shared_by );
-			var name = friend && friend.name;
-			var type = notification.target_type == "user" ? LJ.text('lang_profile') : LJ.text('lang_before');
-
-			options.icon_code   = "forward";
-			options.text        = LJ.text("n_item_shared_text").replace( '%name', name );
-			options.subtext     = LJ.text("n_item_shared_subtext").replace( '%name', name ).replace( '%type', type );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-			
-		},
-		renderNotification__InscriptionSuccess: function( notification ){
-
-			var options = {};
-			
-			options.icon_code   = "heart";
-			options.text        = LJ.text("n_inscription_success_text");
-			options.subtext     = LJ.text("n_inscription_success_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-
-		},
-		renderNotification__NoFriends: function( notification ){
-
-			var options = {};
-			
-			options.icon_code   = "add-friend";
-			options.text        = LJ.text("n_no_friends_text");
-			options.subtext     = LJ.text("n_no_friends_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-
-		},
-		renderNotification__CheckEmail: function( notification ){
-
-			var options = {};
-			
-			options.icon_code   = "arobat";
-			options.text        = LJ.text("n_check_email_text");
-			options.subtext     = LJ.text("n_check_email_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-
-		},
-		renderNotificationItem: function( options ){
-
-			return LJ.notifications.renderNotificationsElement( 'item', options );
-
-		},
-		renderNotificationsElement: function( element, options ){
-
-			var html = [];
-			var options = options || {};
-
-            if( element == "wrapper" ){
-
-                return LJ.ui.render([
-                    '<div class="notifications-panel">',
-                        '<div class="notification--header">',
-                       		'<div data-lid="n_header_text" class="notification--header__text">Notifications</div>',
-                        '</div>',
-                        '<div class="notifications-panel__wrapper">',
-	                        '<div class="js-notification-appender notification--none"></div>',
-							// There goes the notifications                        
-						'</div>',
-                        '<div class="notification notification--footer">',
-                            '<div data-lid="n_footer_text" class="notification--footer_text">This is the footer</div>',
-                        '</div>',
-                    '</div>'
-                ].join(''));
-
-            }
-
-            if( element == "item" ){
-
-				var type            = options.type;
-				var icon_code       = options.icon_code;
-				var text            = options.text;
-				var subtext         = options.subtext;
-				var happened_at     = options.happened_at;
-				var notification_id = options.notification_id;
-
-				var happened_at_html = happened_at ? '<div class="notification__date">' + happened_at + '</div>' : '';
-
-            	return LJ.ui.render([
-            		'<div class="notification js-notification-item" data-type="'+ type +'" data-notification-id="'+ notification_id +'">',
-                    	'<div class="notification__icon --round-icon"><i class="icon icon-' + icon_code + '"></i></div>',
-                    	'<div class="notification-message">',
-	                    	'<div class="notification-message__text">' + text + '</div>',
-	                    	'<div class="notification-message__subtext">' + subtext + '</div>',
-                    	'</div>',
-                    	happened_at_html,
-                    '</div>',
-            	].join(''));
-            }
-			
-
-		},
-		stringifyDuration: function( happened_at ){
-
-			var m = moment( happened_at );
-
-			var hour = m.hour();
-			var minute = m.minute();
-
-			if( hour == 0 ){
-				hour = "00";
-			}
-
-			if( minute < 10 ){
-				minute = "0" + minute;
-			}
-
-			var now = moment();
-
-			if( (now - m)/1000 < 5 * 60 ){
-				return LJ.text("h_sec_ago");
-			}
-
-			if( (now - m)/1000 < 15 * 60 ){
-				return LJ.text("h_min_ago");
-			}
-
-			if( (now - m)/1000 < 3600 ){
-				return LJ.text("h_hour_ago");
-			}
-
-			if( m.dayOfYear() == now.dayOfYear() ){
-				return LJ.text("h_today").replace('%h', hour ).replace('%m', minute );
-			}
-
-			return LJ.text("h_past").replace('%moment', m.format('DD/MM'))
-															  .replace('%h', hour )
-															  .replace('%m', minute )
-			
-
-		},
-		insertNotification: function( notification ){
-			
-			var html = '';
-			var type = notification.type;
-			var type = notification.type || "default";
-
-			var notificationCallback;
-
-			// Accepted in a meefore
-			if( type === "accepted_in_hosts" ){
-				html = LJ.notifications.renderNotification__RequestAcceptedHosts( notification );
-				notificationCallback = LJ.notifications.notificationCallback__AcceptedInHosts;
-			}
-
-			// Accepted in a meefore
-			if( type === "accepted_in_members" ){
-				html = LJ.notifications.renderNotification__RequestAcceptedMembers( notification );
-				notificationCallback = LJ.notifications.notificationCallback__AcceptedInMembers;
-			}
-
-
-			// Profile isnt 100% complete! Especially photos...
-			if( type === "fill_profile" ){
-				html = LJ.notifications.renderNotification__FillProfile( notification );
-				notificationCallback = LJ.notifications.notificationCallback__FillProfile;
-			}
-
-
-			// A group requested to join in a meefore, host version
-			if( type === "group_request_hosts" ){
-				html = LJ.notifications.renderNotification__GroupRequestHosts( notification );
-				notificationCallback = LJ.notifications.notificationCallback__GroupRequestHosts;
-			}
-
-			// A group requested to join in a meefore, members version
-			if( type === "group_request_members" ){
-				html = LJ.notifications.renderNotification__GroupRequestMembers( notification );
-				notificationCallback = LJ.notifications.notificationCallback__GroupRequestMembers;
-			}
-
-
-			// A friend taggued us as host on one of its meefore
-			if( type === "marked_as_host" ){
-				html = LJ.notifications.renderNotification__MarkedAsHost( notification );
-				notificationCallback = LJ.notifications.notificationCallback__MarkedAsHost;
-			}
-
-
-			// New friends joined meefore
-			if( type === "new_friends" ){
-				html = LJ.notifications.renderNotification__NewFriends( notification );
-				notificationCallback = LJ.notifications.notificationCallback__NewFriends;
-			}
-
-
-			// A before has been canceled 
-			if( type === "before_canceled" ){
-				html = LJ.notifications.renderNotification__BeforeCanceled( notification );
-				notificationCallback = LJ.notifications.notificationCallback__BeforeCanceled;
-			}
-
-			
-			// Someone has shared something
-			if( type === "item_shared" ){
-				html = LJ.notifications.renderNotification__ItemShared( notification );
-				notificationCallback = LJ.notifications.notificationCallback__ItemShared;
-			}
-
-
-			// Welcome in meefore !
-			if( type === "inscription_success" ){
-				html = LJ.notifications.renderNotification__InscriptionSuccess( notification );
-				notificationCallback = LJ.notifications.notificationCallback__InscriptionSuccess;
-			}
-
-
-			// Make sure user knows its important we got its right email
-			if( type === "check_email" ){
-				html = LJ.notifications.renderNotification__CheckEmail( notification );
-				notificationCallback = LJ.notifications.notificationCallback__CheckEmail;
-			}
-
-			var $notif = $( html );
-
-			// Fire callback if registered
-			if( typeof notificationCallback == "function" ){
-				$notif.on('click', function(){
-					try {
-						notificationCallback( notification );
-					} catch( e ){
-						LJ.ui.showToast( LJ.text("n_outdated_notification") );
-					}
-					LJ.notifications.hideNotificationsPanel();
-				});
-			}
-
-			// Append the new notification on top of all
-			$notif.insertAfter( $('.js-notification-appender') );
-				
-		},
-		notificationCallback__InscriptionSuccess: function( n ){
-
-			LJ.log('Welcome onboard !');
-
-		},
-		notificationCallback__NewFriends: function( n ){
-
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("friends");
-
-		},
-		notificationCallback__GroupRequestHosts: function( n ){
-
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("cheers");
-			LJ.cheers.activateCheers("received");
-
-
-		},
-		notificationCallback__GroupRequestMembers: function( n ){
-
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("cheers");
-			LJ.cheers.activateCheers("sent");
-
-		},
-		notificationCallback__AcceptedInMembers: function( n ){
-
-			var before_id  = n.before_id;
-			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
-
-			if( LJ.chat.getChatState() == "hidden" ){
-				LJ.chat.showChatWrap();
-			}
-
-			LJ.chat.showChatInview( chat_id );
-			LJ.chat.activateChat( chat_id );
-			LJ.chat.refreshChatJsp( chat_id );
-			LJ.chat.refreshChatState( chat_id );
-
-		},
-		notificationCallback__AcceptedInHosts: function( n ){
-
-			var before_id  = n.before_id;
-			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
-
-			if( LJ.chat.getChatState() == "hidden" ){
-				LJ.chat.showChatWrap();
-			}
-
-			LJ.chat.showChatInview( chat_id );
-			LJ.chat.activateChat( chat_id );
-			LJ.chat.refreshChatJsp( chat_id );
-			LJ.chat.refreshChatState( chat_id );
-
-		},
-		notificationCallback__MarkedAsHost: function( n ){
-
-			var before_id  = n.before_id;
-			// var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
-
-			// if( LJ.chat.getChatState() == "hidden" ){
-			// 	LJ.chat.showChatWrap();
-			// }
-
-			// LJ.chat.showChatInview( chat_id );
-			// LJ.chat.activateChat( chat_id );
-			// LJ.chat.refreshChatJsp( chat_id );
-			// LJ.chat.refreshChatState( chat_id );
-
-			LJ.before.fetchAndShowBeforeInview( before_id );
-
-		},
-		notificationCallback__FillProfile: function( n ){
-
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("profile");
-
-		},
-		notificationCallback__CheckEmail: function( n ){
-
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("settings");
-			LJ.settings.activateSubmenuSection("account")
-
-		},
-		notificationCallback__BeforeCanceled: function( n ){
-
-			LJ.ui.showToast( LJ.text("n_before_canceled") );
-
-		}
-
-	});
-
 	window.LJ.pictures = _.merge( window.LJ.pictures || {}, {
 
 		$upload_form: $(''),
@@ -45254,13 +45388,33 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 	            LJ.delay( delay ).then(function(){
 	            	LJ.api.fetchCloudinaryTags().then( LJ.pictures.setupCloudinary );
 	            	// LJ.pictures.setupCloudinary( cloudinary_tags );
-	            });
+	            }); 
 
 		},
 		handleDomEvents: function(){
 
 			$('.pictures').on('click', LJ.pictures.handleClickOnPicture );
+			LJ.ui.$body.on('click', '.js-edit-pictures', LJ.pictures.handleEditPicturesClicked );
 			LJ.ui.$body.on('click', LJ.pictures.handleClickInModal );
+
+		},
+		handleEditPicturesClicked: function(){
+
+			if( $('.picture-icon').css('opacity') == 1 ){
+				LJ.pictures.hidePictureEditOptions();
+			} else {
+				LJ.pictures.showPictureEditOptions();
+			}
+
+		},
+		showPictureEditOptions: function(){
+
+			$('.picture-icon').css({ 'opacity': '1' });
+
+		},
+		hidePictureEditOptions: function(){
+
+			$('.picture-icon').css({ 'opacity': '0' });
 
 		},
 		handleClickInModal: function( e ){
@@ -45804,597 +45958,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 		}
 
-
-	});
-
-	window.LJ.nav = _.merge( window.LJ.nav || {}, {
-
-		$nav: $('.app-nav'),
-		current_link: null,
-
-		init: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.nav.handleDomEvents();
-				LJ.nav.navigate('map');
-				resolve();
-
-			});
-		},
-		handleDomEvents: function(){
-
-			LJ.nav.$nav.on('click', 'li[data-link]', LJ.nav.handleNavigate );
-
-		},
-		handleNavigate: function(e){
-
-			e.preventDefault();
-			var $li = $(this);
-			var lk  = $li.attr('data-link');
-			LJ.nav.navigate( lk );
-
-		},
-		getActiveView: function(){
-
-			return $('.app__menu-item.--active').attr('data-link');
-
-		},
-		navigate: function( target_link ){
-
-			var current_link = LJ.nav.current_link;
-
-			var $target_section  = $('.app-section[data-link="' + target_link + '"]');
-			var $current_section = $('.app-section[data-link="' + current_link + '"]') || $target_section; // For the first activation
-
-			var $target_menuitem = $('.app__menu-item[data-link="' + target_link + '"]');
-			var $current_menuitem = $('.app__menu-item[data-link="' + current_link + '"]') || $target_menuitem
-
-			var $target_headertitle  = $('.app-header__title[data-link="' + target_link + '"]');
-			var $current_headertitle = $('.app-header__title[data-link="' + current_link + '"]') || $target_headertitle;
-
-			if( $target_section.length + $target_menuitem.length + $target_headertitle.length != 3 ){
-				return LJ.wlog('Ghost target for link : ' + link );
-			}
-
-			// Set the internal state
-			LJ.nav.current_link = target_link
-
-			// Update the Header ui
-			$current_menuitem.removeClass('--active');
-			$target_menuitem.addClass('--active');
-
-			// Update the header title
-			/*var duration = 220;
-			LJ.ui.shradeOut( $current_headertitle, duration )
-				.then(function(){
-					LJ.ui.shradeIn( $target_headertitle, duration );
-				});
-			*/
-			
-			// Display the view
-			$current_section.hide();
-			$target_section.css({ display: 'flex' });
-
-			if( !$target_menuitem.is( $current_menuitem ) ){
-				LJ.ui.hideSlide();
-				LJ.before.hideCreateBeforeStraight();
-				LJ.before.showBrowser();
-				LJ.map.deactivateMarkers();
-				LJ.map.refreshMarkers();
-			}
-
-			// Specificities
-			var duration = 220;
-			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
-
-			if( target_link == 'search' && hasMeepassRibbon ) {
-				LJ.ui.shradeIn( $('.meepass-ribbon'), duration );
-			} 
-
-			if( target_link != 'search' && hasMeepassRibbon ){
-				LJ.ui.shradeOut( $('.meepass-ribbon'), duration );
-			}
-
-			if( target_link == 'map' ){
-				$('.app').removeClass('padded');
-
-				LJ.unoffsetAll();
-				// Refresh the map dued to a bug when the window is resized and the map not visible
-				// The try catch is to avoid an ugly error in the console during app intitialization
-				try {
-					LJ.map.refreshMap();
-				} catch( e ){
-
-				}
-
-
-			} else {
-				$('.app').addClass('padded');
-			}
-
-			if( target_link != "menu" ){
-				LJ.friends.hideInviteFriendsPopup();
-			}
-
-
-		}
-
-	});
-
-
-
-	window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
-
-		state    : null,
-		pusher   : {},
-		channels : {},
-
-		init: function(){
-
-			LJ.realtime.setupRealtimeService();
-			LJ.realtime.subscribeToAllChannels();
-			return;
-
-		},
-		getUserChannels: function( channel_type ){
-
-			var channels = _.filter( LJ.user.channels, function( chan ){
-				return chan.type == channel_type;
-			});
-
-			return _.map( channels, 'name' );
-
-		},
-		hasSubscribed: function( channel_name ){
-
-			return LJ.realtime.channels[ channel_name ];
-
-		},
-		addNotification: function( data ){
-
-			if( !data.notification || (data.requester && data.requester == LJ.user.facebook_id) ){
-				return;
-			}
-
-			LJ.notifications.cacheNotification( data.notification );
-			LJ.notifications.refreshNotifications();
-
-		},
-		setupRealtimeService: function(){
-
-			if( !LJ.app_token ){
-				return LJ.wlog('Cannot init realtime services without a valid app_token: ' + LJ.app_token );
-			}
-
-			 LJ.realtime.pusher = new Pusher( window.pusher_app_id, {
-                encrypted: true,
-                // The route to be called everytime the subscrib() method is called
-                authEndpoint: '/auth/pusher',
-                auth: {
-                    headers: {
-                        "x-access-token": LJ.app_token
-                    } // @48723
-                }
-            });
-
-            LJ.realtime.state = "idle";
-            LJ.realtime.pusher.connection.bind('state_change', function( states ) {
-
-            	var current_state = states.current;
-                LJ.ilog('Pusher state is now: ' + current_state );
-
-                // Reconnexion cases 
-                if( LJ.realtime.state == 'connected' ){
-
-                	if( current_state == 'connecting' ){
-                		LJ.ui.handleReconnection();
-
-                	}
-                	if( current_state == 'connected' ){
-                		LJ.ui.reconnectUser();
-
-                	}
-
-                } else {
-                	LJ.realtime.state = current_state;
-
-                }
-                
-
-            });
-
-		},
-		subscribeToAllChannels: function(){
-
-			LJ.realtime.subscribeToPrivateChannel();
-			LJ.realtime.subscribeToLocationChannel();
-			LJ.realtime.subscribeToBeforeChannels();
-			LJ.realtime.subscribeToChatChannels();
-
-		},
-		getSocketId: function(){
-			return LJ.realtime.pusher.connection ? LJ.realtime.pusher.connection.socket_id : null;
-
-		},
-		// Subscribe to private events
-		// main usage is to keep track of user's online status via a webhook
-		subscribeToPrivateChannel: function(){
-
-			var channel_name = LJ.realtime.getUserChannels("personnal")[0];
-
-			if( LJ.realtime.hasSubscribed( "personnal" ) ) return;
-
-			LJ.log('Subscribing to personnal channel');
-			LJ.realtime.channels.personnal = LJ.realtime.pusher.subscribe( channel_name );
-			
-			LJ.realtime.channels.personnal.bind('new hello'		 	 	    , LJ.log ); // Test channel
-			LJ.realtime.channels.personnal.bind('new before hosts'   	    , LJ.realtime.handleNewMarkedAsHost );
-			LJ.realtime.channels.personnal.bind('new request group'  	    , LJ.realtime.handleNewRequestGroup );
-			LJ.realtime.channels.personnal.bind('new before status members' , LJ.realtime.handleNewBeforeStatusMembers );
-
-
-		},
-		handleNewMarkedAsHost: function( data ){
-
-			LJ.log('Push event received, data : ');
-			LJ.log( data );
-
-			var before      = data.before;
-			var before_item = data.before_item;
-
-			var channel_item_before = data.channel_item_before;
-			var channel_item_team   = data.channel_item_team;
-
-			// Update user state and add marker accordingly
-			LJ.user.befores.push( before_item );
-
-			// Cache new channels
-			LJ.user.channels.push( channel_item_before );
-			LJ.user.channels.push( channel_item_team );
-
-			// Refresh all channels subscriptions
-			LJ.realtime.subscribeToAllChannels();
-			LJ.chat.fetchAndAddOneChat( channel_item_team );
-
-			// Add notification in real time
-			LJ.realtime.addNotification( data );
-
-			// Little toast to show for everyone but the main_host
-			if( before.main_host != LJ.user.facebook_id ){
-
-				var friend_name = LJ.friends.getFriendsProfiles( before.main_host )[0].name;
-				LJ.ui.showToast( LJ.text('to_before_create_success_friends').replace('%name', friend_name ));
-
-			} else {
-
-				LJ.map.refreshMarkers();
-				LJ.ui.showToast( LJ.text('to_before_create_success') );
-
-			}
-
-			LJ.map.refreshMarkers();
-
-		},
-		handleNewRequestGroup: function( data ){
-
-			LJ.log(data);
-			
-			if( data.group.main_member != LJ.user.facebook_id ){
-
-				LJ.log('A friend requested to participate in a before with you!');
-				LJ.ui.showToast( LJ.text('to_cheers_sent_success_friend') );
-
-			} else {
-
-				LJ.ui.showToast( LJ.text('to_cheers_sent_success') );
-
-			}
-
-			LJ.user.befores.push( data.before_item );
-			LJ.cheers.fetched_cheers.push( data.cheers_item );
-			LJ.cheers.refreshCheersItems();
-			LJ.user.channels.push( data.channel_item_team );
-
-			LJ.before.pendifyBeforeInview( data.before_id );
-			LJ.before.pendifyBeforeMarker( data.before_id );
-
-			LJ.realtime.subscribeToAllChannels();
-
-			LJ.chat.fetchAndAddOneChat( data.channel_item_team, {
-				"row_insert_mode": "top"
-			});
-
-			// Add notification in real time
-			LJ.realtime.addNotification( data );
-
-		},
-		handleNewBeforeStatusMembers: function( data ){
-
-			var hosts     = data.hosts;
-			var status    = data.status;
-			var before_id = data._id;
-
-			// Force a resync of all the chats with updated server values
-			LJ.chat.resyncAllChats();
-
-		},
-		// Subcribe to events about a specific geo area 
-		//to get pushed realtime notifications about newly created events
-		subscribeToLocationChannel: function(){
-
-			var channel_name =  LJ.realtime.getUserChannels("location")[0];
-
-			if( LJ.realtime.hasSubscribed( "location" ) ) return;
-
-			LJ.log('Subscribing to location channel');
-			LJ.realtime.channels.location = LJ.realtime.pusher.subscribe( channel_name );
-
-			LJ.realtime.channels.location.bind('new hello'		   , LJ.log ); // Test channel
-			LJ.realtime.channels.location.bind('new before' 	   , LJ.realtime.handleNewBefore );
-			LJ.realtime.channels.location.bind('new before status' , LJ.realtime.handleNewBeforeStatus );
-
-		},
-		handleNewBefore: function( data ){
-
-			var before = data.before;
-
-			LJ.before.fetched_befores.push( before );
-			LJ.before.refreshBrowserDates();
-			LJ.map.addBeforeMarker( before );
-			LJ.map.refreshMarkers();
-		
-		},
-		handleNewBeforeStatus: function( data ){
-
-			LJ.log('Push event received, data : ');
-			LJ.log( data );
-
-			var before_id = data.before_id;
-			var status 	  = data.status;
-			var hosts 	  = data.hosts;
-
-			if( status == "canceled" ){
-
-				LJ.map.removeBeforeMarker( before_id );
-				LJ.before.removeOneBefore( before_id );
-				LJ.before.refreshBrowserDates();
-
-				// If the user is viewing the before, take control of his ui and notify before is gone
-				var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
-				if( $be.length > 0 ){
-
-					LJ.ui.hideModal();
-					LJ.before.cancelifyBeforeInview();
-
-				}
-
-			}
-
-
-		},
-		// Subscribe to channels for *hosts only*
-		// to get pushed anytime a group request a participation
-		subscribeToBeforeChannels: function(){
-
-			var before_channels = _.filter( LJ.user.channels, function( chan ){
-				return chan.type == "before";
-			});
-
-			before_channels.forEach(function( chan ){
-				LJ.realtime.subscribeToBeforeChannel( chan.name );
-			});
-
-		},
-		subscribeToBeforeChannel: function( channel_name ){
-
-			// LJ.log('Subscribing to before channel : ' + channel_name );
-			if( LJ.realtime.hasSubscribed( channel_name ) ) return;
-
-			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
-
-			LJ.realtime.channels[ channel_name ].bind('new hello'		  	   , LJ.log ); // Test channel
-			LJ.realtime.channels[ channel_name ].bind('new request host'  	   , LJ.realtime.handleNewRequestHost );
-			LJ.realtime.channels[ channel_name ].bind('new before status host' , LJ.realtime.handleNewBeforeStatusHosts );
-
-		},
-		handleNewRequestHost: function( data ){
-
-			LJ.log( data );
-			// LJ.log('Someone requested to participate in your before');
-
-			LJ.ui.showToast( LJ.text('to_cheers_received_success') );
-			LJ.cheers.fetched_cheers.push( data.cheers_item );
-			LJ.cheers.refreshCheersItems();
-
-			// Add notification in real time
-			LJ.realtime.addNotification( data );
-
-
-		},
-		handleNewBeforeStatusHosts: function( data ){
-
-			// LJ.log('Push event received, data : ');
-			LJ.log( data );
-
-			var before_id   = data.before_id;
-			var hosts 	    = data.hosts;
-			var status 	    = data.status;
-			var requester   = data.requester;
-
-			var friend_name = LJ.friends.getFriendsProfiles( requester )[0].name;
-
-			if( status == "canceled" ){
-				LJ.ui.showToast( LJ.text('to_friend_canceled_event').replace( '%name', friend_name ) );
-
-			}
-
-			// Add notification in real time
-			LJ.realtime.addNotification( data );
-
-		},
-		// Subscribe to specific chat channels for hosts & requesters.
-		// There are 2 chat channels per event.
-		subscribeToChatChannels: function( channels ){
-
-			var chat_channels = _.filter( LJ.user.channels, function( chan ){
-				return /chat/i.test( chan.type );
-			});
-
-			chat_channels.forEach(function( chan ){
-				LJ.realtime.subscribeToChatChannel( chan.name );
-			});
-
-		},
-		subscribeToChatChannel: function( channel_name ){
-
-			// LJ.log('Subscribing to chat channel : ' + channel_name );
-			if( LJ.realtime.hasSubscribed( channel_name ) ) return;
-
-			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
-
-			LJ.realtime.channels[ channel_name ].bind('new hello'		        , LJ.log ); // Test channel
-			LJ.realtime.channels[ channel_name ].bind('new group status hosts'  , LJ.realtime.handleNewGroupStatusHosts );
-			LJ.realtime.channels[ channel_name ].bind('new group status users'  , LJ.realtime.handleNewGroupStatusUsers );
-			LJ.realtime.channels[ channel_name ].bind('new chat message'        , LJ.realtime.handleNewChatMessage );
-			LJ.realtime.channels[ channel_name ].bind('new chat seen by'        , LJ.realtime.handleNewChatSeenBy );
-			
-		},
-		handleNewGroupStatusHosts: function( data ){
-
-			LJ.log( data );
-
-			var sender_id    = data.sender_id;
-			var before_id    = data.before_id;
-			var cheers_id    = data.cheers_id;
-			var channel_item = data.channel_item;
-			var status 	     = data.status;
-			var n_hosts 	 = data.n_hosts;
-
-			if( status != "accepted" ){
-				return LJ.wlog('Status != "accepted", not implemented yet');
-			}
-
-			// Refresh all channels subscriptions
-			LJ.user.channels.push( channel_item );
-			LJ.realtime.subscribeToAllChannels();
-
-			// Add the new chat for people to get to know each otha :)
-			LJ.chat.fetchAndAddOneChat( channel_item )
-				.then(function(){
-
-					LJ.ui.showToast( LJ.text("to_group_accepted_hosts") );
-
-					// Smooth ui transition to terminate the cheers back process
-					try {
-						LJ.cheers.acceptifyCheersItem( channel_item.chat_id );						
-					} catch( e ){}
-					
-
-					// Update the cheers
-					LJ.cheers.updateCheersItem( cheers_id, { status: status });
-					LJ.cheers.acceptifyCheersRow( cheers_id );
-
-					// Add notification in real time
-					LJ.realtime.addNotification( data );
-
-				});
-
-		},
-		handleNewGroupStatusUsers: function( data ){
-
-			LJ.log( data );
-
-			var sender_id    = data.sender_id;
-			var before_id    = data.before_id;
-			var cheers_id    = data.cheers_id;
-			var channel_item = data.channel_item;
-			var status 	     = data.status;
-			var n_users 	 = data.n_users;
-
-			if( status != "accepted" ){
-				return LJ.wlog('Status != "accepted", not implemented yet');
-			}
-
-			// Refresh all channels subscriptions
-			LJ.user.channels.push( channel_item );
-			LJ.realtime.subscribeToAllChannels();
-
-
-			// Add the new chat for people to get to know each otha :)
-			LJ.chat.fetchAndAddOneChat( channel_item )
-				.then(function(){
-
-					LJ.ui.showToast( LJ.text("to_group_accepted_users") );
-
-					// Update the cheer_item
-					LJ.cheers.updateCheersItem( cheers_id, { status: status });
-					LJ.cheers.acceptifyCheersRow( cheers_id );
-
-					// Update the before_item and the before marker
-					LJ.before.updateBeforeItem( before_id, { status: status });
-					LJ.before.acceptifyBeforeMarker( before_id );
-
-					// Add notification in real time
-					LJ.realtime.addNotification( data );
-
-				});
-
-			// Specific to the users
-			LJ.chat.acceptifyChatInview( before_id );
-
-		},	
-		handleNewChatMessage: function( data ){
-
-			// LJ.log('Adding chatline ');
-
-			var chat_id   = data.chat_id;
-			var message   = data.message;
-			var sender_id = data.sender_id;
-			var call_id   = data.call_id;
-			var sent_at   = data.sent_at;
-			var seen_by   = data.seen_by;
-
-			var chat = LJ.chat.getChat( chat_id );
-
-			if( !chat ){
-
-				LJ.wlog('New message received for a chat that wasnt fetched. Fetching first...');
-				LJ.wlog('Not implemented yet! Construct the channel item, then fetch chat');
-				return LJ.chat.fetchAndAddOneChat( channel_item, {
-					row_insert_mode: "top"
-				})
-				.then(function(){
-					// Recall itself after the chat has been fetched
-					LJ.chat.handleNewChatMessage( data );
-
-				});
-			}
-
-			LJ.chat.cacheChatMessage( chat_id, data );
-
-			if( LJ.chat.getActiveChatId() == chat_id ){
-				LJ.chat.sendSeenByProxy( chat_id );
-				LJ.chat.seenifyChatInview( chat_id, LJ.user.facebook_id );
-
-			}
-
-
-			// Local variation regarding the inview ui of the chatline
-			sender_id == LJ.user.facebook_id ? LJ.chat.dependifyChatLine( call_id ) : LJ.chat.addChatLine( data );
-
-			LJ.chat.refreshChatState( chat_id );
-
-		},
-		handleNewChatSeenBy: function( data ){
-
-			var chat_id = data.chat_id;
-			var seen_by = data.seen_by;
-
-			LJ.log('New message seen by : ' + seen_by );
-			LJ.chat.seenifyChatInview( chat_id, seen_by );
-			LJ.chat.refreshChatSeenBy( chat_id );
-
-		}
 
 	});
 
@@ -47009,6 +46572,481 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
         }
 
 	});
+
+	window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
+
+		state    : null,
+		pusher   : {},
+		channels : {},
+
+		init: function(){
+
+			LJ.realtime.setupRealtimeService();
+			LJ.realtime.subscribeToAllChannels();
+			return;
+
+		},
+		getUserChannels: function( channel_type ){
+
+			var channels = _.filter( LJ.user.channels, function( chan ){
+				return chan.type == channel_type;
+			});
+
+			return _.map( channels, 'name' );
+
+		},
+		hasSubscribed: function( channel_name ){
+
+			return LJ.realtime.channels[ channel_name ];
+
+		},
+		addNotification: function( data ){
+
+			if( !data.notification || (data.requester && data.requester == LJ.user.facebook_id) ){
+				return;
+			}
+
+			LJ.notifications.cacheNotification( data.notification );
+			LJ.notifications.refreshNotifications();
+
+		},
+		setupRealtimeService: function(){
+
+			if( !LJ.app_token ){
+				return LJ.wlog('Cannot init realtime services without a valid app_token: ' + LJ.app_token );
+			}
+
+			 LJ.realtime.pusher = new Pusher( window.pusher_app_id, {
+                encrypted: true,
+                // The route to be called everytime the subscrib() method is called
+                authEndpoint: '/auth/pusher',
+                auth: {
+                    headers: {
+                        "x-access-token": LJ.app_token
+                    } // @48723
+                }
+            });
+
+            LJ.realtime.state = "idle";
+            LJ.realtime.pusher.connection.bind('state_change', function( states ) {
+
+            	var current_state = states.current;
+                LJ.ilog('Pusher state is now: ' + current_state );
+
+                // Reconnexion cases 
+                if( LJ.realtime.state == 'connected' ){
+
+                	if( current_state == 'connecting' ){
+                		LJ.ui.handleReconnection();
+
+                	}
+                	if( current_state == 'connected' ){
+                		LJ.ui.reconnectUser();
+
+                	}
+
+                } else {
+                	LJ.realtime.state = current_state;
+
+                }
+                
+
+            });
+
+		},
+		subscribeToAllChannels: function(){
+
+			LJ.realtime.subscribeToPrivateChannel();
+			LJ.realtime.subscribeToLocationChannel();
+			LJ.realtime.subscribeToBeforeChannels();
+			LJ.realtime.subscribeToChatChannels();
+
+		},
+		getSocketId: function(){
+			return LJ.realtime.pusher.connection ? LJ.realtime.pusher.connection.socket_id : null;
+
+		},
+		// Subscribe to private events
+		// main usage is to keep track of user's online status via a webhook
+		subscribeToPrivateChannel: function(){
+
+			var channel_name = LJ.realtime.getUserChannels("personnal")[0];
+
+			if( LJ.realtime.hasSubscribed( "personnal" ) ) return;
+
+			LJ.log('Subscribing to personnal channel');
+			LJ.realtime.channels.personnal = LJ.realtime.pusher.subscribe( channel_name );
+			
+			LJ.realtime.channels.personnal.bind('new hello'		 	 	    , LJ.log ); // Test channel
+			LJ.realtime.channels.personnal.bind('new before hosts'   	    , LJ.realtime.handleNewMarkedAsHost );
+			LJ.realtime.channels.personnal.bind('new request group'  	    , LJ.realtime.handleNewRequestGroup );
+			LJ.realtime.channels.personnal.bind('new before status members' , LJ.realtime.handleNewBeforeStatusMembers );
+
+
+		},
+		handleNewMarkedAsHost: function( data ){
+
+			LJ.log('Push event received, data : ');
+			LJ.log( data );
+
+			var before      = data.before;
+			var before_item = data.before_item;
+
+			var channel_item_before = data.channel_item_before;
+			var channel_item_team   = data.channel_item_team;
+
+			// Update user state and add marker accordingly
+			LJ.user.befores.push( before_item );
+
+			// Cache new channels
+			LJ.user.channels.push( channel_item_before );
+			LJ.user.channels.push( channel_item_team );
+
+			// Refresh all channels subscriptions
+			LJ.realtime.subscribeToAllChannels();
+			LJ.chat.fetchAndAddOneChat( channel_item_team );
+
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
+
+			// Little toast to show for everyone but the main_host
+			if( before.main_host != LJ.user.facebook_id ){
+
+				var friend_name = LJ.friends.getFriendsProfiles( before.main_host )[0].name;
+				LJ.ui.showToast( LJ.text('to_before_create_success_friends').replace('%name', friend_name ));
+
+			} else {
+
+				LJ.map.refreshMarkers();
+				LJ.ui.showToast( LJ.text('to_before_create_success') );
+
+			}
+
+			LJ.map.refreshMarkers();
+
+		},
+		handleNewRequestGroup: function( data ){
+
+			LJ.log(data);
+			
+			if( data.group.main_member != LJ.user.facebook_id ){
+
+				LJ.log('A friend requested to participate in a before with you!');
+				LJ.ui.showToast( LJ.text('to_cheers_sent_success_friend') );
+
+			} else {
+
+				LJ.ui.showToast( LJ.text('to_cheers_sent_success') );
+
+			}
+
+			LJ.user.befores.push( data.before_item );
+			LJ.cheers.fetched_cheers.push( data.cheers_item );
+			LJ.cheers.refreshCheersItems();
+			LJ.user.channels.push( data.channel_item_team );
+
+			LJ.before.pendifyBeforeInview( data.before_id );
+			LJ.before.pendifyBeforeMarker( data.before_id );
+
+			LJ.realtime.subscribeToAllChannels();
+
+			LJ.chat.fetchAndAddOneChat( data.channel_item_team, {
+				"row_insert_mode": "top"
+			});
+
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
+
+		},
+		handleNewBeforeStatusMembers: function( data ){
+
+			var hosts     = data.hosts;
+			var status    = data.status;
+			var before_id = data._id;
+
+			// Force a resync of all the chats with updated server values
+			LJ.chat.resyncAllChats();
+
+		},
+		// Subcribe to events about a specific geo area 
+		//to get pushed realtime notifications about newly created events
+		subscribeToLocationChannel: function(){
+
+			var channel_name =  LJ.realtime.getUserChannels("location")[0];
+
+			if( LJ.realtime.hasSubscribed( "location" ) ) return;
+
+			LJ.log('Subscribing to location channel');
+			LJ.realtime.channels.location = LJ.realtime.pusher.subscribe( channel_name );
+
+			LJ.realtime.channels.location.bind('new hello'		   , LJ.log ); // Test channel
+			LJ.realtime.channels.location.bind('new before' 	   , LJ.realtime.handleNewBefore );
+			LJ.realtime.channels.location.bind('new before status' , LJ.realtime.handleNewBeforeStatus );
+
+		},
+		handleNewBefore: function( data ){
+
+			var before = data.before;
+
+			LJ.before.fetched_befores.push( before );
+			LJ.before.refreshBrowserDates();
+			LJ.map.addBeforeMarker( before );
+			LJ.map.refreshMarkers();
+		
+		},
+		handleNewBeforeStatus: function( data ){
+
+			LJ.log('Push event received, data : ');
+			LJ.log( data );
+
+			var before_id = data.before_id;
+			var status 	  = data.status;
+			var hosts 	  = data.hosts;
+
+			if( status == "canceled" ){
+
+				LJ.map.removeBeforeMarker( before_id );
+				LJ.before.removeOneBefore( before_id );
+				LJ.before.refreshBrowserDates();
+
+				// If the user is viewing the before, take control of his ui and notify before is gone
+				var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
+				if( $be.length > 0 ){
+
+					LJ.ui.hideModal();
+					LJ.before.cancelifyBeforeInview();
+
+				}
+
+			}
+
+
+		},
+		// Subscribe to channels for *hosts only*
+		// to get pushed anytime a group request a participation
+		subscribeToBeforeChannels: function(){
+
+			var before_channels = _.filter( LJ.user.channels, function( chan ){
+				return chan.type == "before";
+			});
+
+			before_channels.forEach(function( chan ){
+				LJ.realtime.subscribeToBeforeChannel( chan.name );
+			});
+
+		},
+		subscribeToBeforeChannel: function( channel_name ){
+
+			// LJ.log('Subscribing to before channel : ' + channel_name );
+			if( LJ.realtime.hasSubscribed( channel_name ) ) return;
+
+			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
+
+			LJ.realtime.channels[ channel_name ].bind('new hello'		  	   , LJ.log ); // Test channel
+			LJ.realtime.channels[ channel_name ].bind('new request host'  	   , LJ.realtime.handleNewRequestHost );
+			LJ.realtime.channels[ channel_name ].bind('new before status host' , LJ.realtime.handleNewBeforeStatusHosts );
+
+		},
+		handleNewRequestHost: function( data ){
+
+			LJ.log( data );
+			// LJ.log('Someone requested to participate in your before');
+
+			LJ.ui.showToast( LJ.text('to_cheers_received_success') );
+			LJ.cheers.fetched_cheers.push( data.cheers_item );
+			LJ.cheers.refreshCheersItems();
+
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
+
+
+		},
+		handleNewBeforeStatusHosts: function( data ){
+
+			// LJ.log('Push event received, data : ');
+			LJ.log( data );
+
+			var before_id   = data.before_id;
+			var hosts 	    = data.hosts;
+			var status 	    = data.status;
+			var requester   = data.requester;
+
+			var friend_name = LJ.friends.getFriendsProfiles( requester )[0].name;
+
+			if( status == "canceled" ){
+				LJ.ui.showToast( LJ.text('to_friend_canceled_event').replace( '%name', friend_name ) );
+
+			}
+
+			// Add notification in real time
+			LJ.realtime.addNotification( data );
+
+		},
+		// Subscribe to specific chat channels for hosts & requesters.
+		// There are 2 chat channels per event.
+		subscribeToChatChannels: function( channels ){
+
+			var chat_channels = _.filter( LJ.user.channels, function( chan ){
+				return /chat/i.test( chan.type );
+			});
+
+			chat_channels.forEach(function( chan ){
+				LJ.realtime.subscribeToChatChannel( chan.name );
+			});
+
+		},
+		subscribeToChatChannel: function( channel_name ){
+
+			// LJ.log('Subscribing to chat channel : ' + channel_name );
+			if( LJ.realtime.hasSubscribed( channel_name ) ) return;
+
+			LJ.realtime.channels[ channel_name ] = LJ.realtime.pusher.subscribe( channel_name );
+
+			LJ.realtime.channels[ channel_name ].bind('new hello'		        , LJ.log ); // Test channel
+			LJ.realtime.channels[ channel_name ].bind('new group status hosts'  , LJ.realtime.handleNewGroupStatusHosts );
+			LJ.realtime.channels[ channel_name ].bind('new group status users'  , LJ.realtime.handleNewGroupStatusUsers );
+			LJ.realtime.channels[ channel_name ].bind('new chat message'        , LJ.realtime.handleNewChatMessage );
+			LJ.realtime.channels[ channel_name ].bind('new chat seen by'        , LJ.realtime.handleNewChatSeenBy );
+			
+		},
+		handleNewGroupStatusHosts: function( data ){
+
+			LJ.log( data );
+
+			var sender_id    = data.sender_id;
+			var before_id    = data.before_id;
+			var cheers_id    = data.cheers_id;
+			var channel_item = data.channel_item;
+			var status 	     = data.status;
+			var n_hosts 	 = data.n_hosts;
+
+			if( status != "accepted" ){
+				return LJ.wlog('Status != "accepted", not implemented yet');
+			}
+
+			// Refresh all channels subscriptions
+			LJ.user.channels.push( channel_item );
+			LJ.realtime.subscribeToAllChannels();
+
+			// Add the new chat for people to get to know each otha :)
+			LJ.chat.fetchAndAddOneChat( channel_item )
+				.then(function(){
+
+					LJ.ui.showToast( LJ.text("to_group_accepted_hosts") );
+
+					// Smooth ui transition to terminate the cheers back process
+					try {
+						LJ.cheers.acceptifyCheersItem( channel_item.chat_id );						
+					} catch( e ){}
+					
+
+					// Update the cheers
+					LJ.cheers.updateCheersItem( cheers_id, { status: status });
+					LJ.cheers.acceptifyCheersRow( cheers_id );
+
+					// Add notification in real time
+					LJ.realtime.addNotification( data );
+
+				});
+
+		},
+		handleNewGroupStatusUsers: function( data ){
+
+			LJ.log( data );
+
+			var sender_id    = data.sender_id;
+			var before_id    = data.before_id;
+			var cheers_id    = data.cheers_id;
+			var channel_item = data.channel_item;
+			var status 	     = data.status;
+			var n_users 	 = data.n_users;
+
+			if( status != "accepted" ){
+				return LJ.wlog('Status != "accepted", not implemented yet');
+			}
+
+			// Refresh all channels subscriptions
+			LJ.user.channels.push( channel_item );
+			LJ.realtime.subscribeToAllChannels();
+
+
+			// Add the new chat for people to get to know each otha :)
+			LJ.chat.fetchAndAddOneChat( channel_item )
+				.then(function(){
+
+					LJ.ui.showToast( LJ.text("to_group_accepted_users") );
+
+					// Update the cheer_item
+					LJ.cheers.updateCheersItem( cheers_id, { status: status });
+					LJ.cheers.acceptifyCheersRow( cheers_id );
+
+					// Update the before_item and the before marker
+					LJ.before.updateBeforeItem( before_id, { status: status });
+					LJ.before.acceptifyBeforeMarker( before_id );
+
+					// Add notification in real time
+					LJ.realtime.addNotification( data );
+
+				});
+
+			// Specific to the users
+			LJ.chat.acceptifyChatInview( before_id );
+
+		},	
+		handleNewChatMessage: function( data ){
+
+			// LJ.log('Adding chatline ');
+
+			var chat_id   = data.chat_id;
+			var message   = data.message;
+			var sender_id = data.sender_id;
+			var call_id   = data.call_id;
+			var sent_at   = data.sent_at;
+			var seen_by   = data.seen_by;
+
+			var chat = LJ.chat.getChat( chat_id );
+
+			if( !chat ){
+
+				LJ.wlog('New message received for a chat that wasnt fetched. Fetching first...');
+				LJ.wlog('Not implemented yet! Construct the channel item, then fetch chat');
+				return LJ.chat.fetchAndAddOneChat( channel_item, {
+					row_insert_mode: "top"
+				})
+				.then(function(){
+					// Recall itself after the chat has been fetched
+					LJ.chat.handleNewChatMessage( data );
+
+				});
+			}
+
+			LJ.chat.cacheChatMessage( chat_id, data );
+
+			if( LJ.chat.getActiveChatId() == chat_id ){
+				LJ.chat.sendSeenByProxy( chat_id );
+				LJ.chat.seenifyChatInview( chat_id, LJ.user.facebook_id );
+
+			}
+
+
+			// Local variation regarding the inview ui of the chatline
+			sender_id == LJ.user.facebook_id ? LJ.chat.dependifyChatLine( call_id ) : LJ.chat.addChatLine( data );
+
+			LJ.chat.refreshChatState( chat_id );
+
+		},
+		handleNewChatSeenBy: function( data ){
+
+			var chat_id = data.chat_id;
+			var seen_by = data.seen_by;
+
+			LJ.log('New message seen by : ' + seen_by );
+			LJ.chat.seenifyChatInview( chat_id, seen_by );
+			LJ.chat.refreshChatSeenBy( chat_id );
+
+		}
+
+	});
 	
 	// Needs to be loaded before lj-ui
 
@@ -47066,6 +47104,551 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			});
 
 		}
+
+	});
+
+	window.LJ.search = _.merge( window.LJ.search || {}, {
+
+		fetched_users 			: [],
+
+		users_count 			: 0,
+		fetching_users			: false,
+		all_fetched 		  	: false,
+
+		fetch_more_scroll_ratio : 0.97,
+		refetch_callstack: [],
+
+		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.search.handleDomEvents();
+				LJ.search.fetchAndShowMoreUsers();
+				LJ.search.setCountriesInFilters();
+				LJ.search.addLoader();
+				resolve();
+
+			});
+		},
+		handleDomEvents: function(){
+
+			LJ.ui.$body.on('click', '.search-user__pic', LJ.search.handleClickUser );
+			LJ.ui.$body.on('click', '.search-filters__icon', LJ.search.showFilters );
+			LJ.ui.$body.on('click', '.search-filters__close', LJ.search.hideFilters );
+			LJ.ui.$body.on('click', '.search-filters .toggle', LJ.search.handleToggleFilter );
+			LJ.ui.$window.scroll( LJ.search.handleFetchMoreUsers );
+			
+		},
+		addLoader: function(){
+
+			$('.search-users').append( LJ.static.renderStaticImage('search_loader') )
+
+		},
+		handleClickUser: function(){
+
+			var facebook_id = $(this).closest('.search-user').attr('data-facebook-id');
+
+			LJ.profile_user.showUserProfile( facebook_id );
+
+		},
+		handleToggleFilter: function(){
+
+			var $to = $(this);
+			$to.toggleClass('--active');
+			LJ.search.setFiltersState();
+			LJ.search.refetchAndShowMoreUsers();
+
+		},
+		allowedToFetchMore: function(){
+			
+			var data_to_fetch        = !LJ.search.all_fetched;
+			var scroll_almost_bottom = LJ.ui.getScrollRatio() > LJ.search.fetch_more_scroll_ratio;
+			var search_panel_active  = $('.app__menu-item.--search').hasClass('--active');
+			var user_not_fetching    = !LJ.search.fetching_users;
+
+			if( data_to_fetch && scroll_almost_bottom && search_panel_active && user_not_fetching ){
+				return true;
+			} else {
+				return false;
+			}
+
+		},
+		handleFetchMoreUsers: function(){
+
+			if( !LJ.search.allowedToFetchMore() ) return;
+
+			LJ.log('Fetching more users...');
+			LJ.search.fetchAndShowMoreUsers();
+
+		},
+		fetchMoreUsers: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.search.setFiltersState();
+
+				var facebook_ids = _.map( LJ.search.fetched_users, 'facebook_id' ).concat([ LJ.user.facebook_id ]);
+				var filters      = LJ.search.filter_state;
+
+				LJ.api.fetchMoreUsers( facebook_ids, filters )
+					.then(function( exposed ){
+
+						var new_users   = exposed.users;
+						var users_count = exposed.users_count;
+
+						LJ.search.fetched_users = _.uniq( LJ.search.fetched_users.concat( new_users ) );
+						LJ.search.users_count   = users_count;
+						resolve( new_users );
+
+					})
+					.catch( reject );
+
+			});
+		},
+		refetchAndShowMoreUsers: function(){
+
+			LJ.log('[Re]Fetching and showing more users...');
+			LJ.search.all_fetched = false;
+
+			if( LJ.search.fetching_users ){
+				return LJ.wlog('Already fetching users...');
+			}
+
+			LJ.search.fetched_users = [];
+			LJ.search.hideSearchUsers()
+				.then(function(){
+					return LJ.search.fetchAndShowMoreUsers();
+				});
+
+		},
+		fetchAndShowMoreUsers: function(){
+
+			LJ.log('Fetching and showing more users...');
+			LJ.search.fetching_users = true;
+
+			var users;
+			LJ.search.showSearchLoader()
+
+				.then(function(){
+					return LJ.search.fetchMoreUsers();
+				})
+
+				.then(function( new_users ){
+					if( LJ.search.fetched_users.length == ( LJ.search.users_count - 1 ) || new_users.length == 0 ){
+						LJ.wlog('Everyone has been fetched for this filter.');
+						LJ.search.all_fetched = true;
+					}
+					users = new_users;
+					return;
+				})
+
+				.then(function(){
+					return LJ.search.hideSearchLoader();
+				})
+
+				.then(function(){
+					return LJ.search.showMoreUsers( users );
+				})
+				// When users loaded, give it one second of blocking, otherwise if user scrolls
+				// It will detect that he can fetch more users. One batch at a time is better :)
+				.then(function(){
+					setTimeout(function(){
+						LJ.search.fetching_users = false;
+					}, 1000 );
+				});
+
+		},
+		showMoreUsers: function( users ){
+
+			_.chunk( users, 3 ).forEach(function( user_group, i ){
+
+				var $users = $( LJ.search.renderUserRow( user_group ) );
+
+				$users
+					.css({ 'opacity': 0 })
+					.insertBefore('.search__loader');
+
+				LJ.settings.applyUxPreferences();
+
+				if( $('.slide').length > 0 ){
+					LJ.offsetSearchUsers( 25 );
+				}
+
+				$users.velocity('slideUpIn', {
+					display  : 'flex',
+					duration : 700,
+					delay    : 100 + 250 * i
+				});
+
+			});
+
+		},
+		showSearchLoader: function( duration ){
+			return LJ.promise(function( resolve, reject ){
+				var $l = $('.search__loader');
+				if( $l.length == 0 ) return resolve();
+				$('.search__loader').velocity('shradeIn', {
+					duration: duration || 300,
+					complete: resolve
+				})
+			});
+		},
+		hideSearchLoader: function( duration ){
+			return LJ.promise(function( resolve, reject ){
+				$('.search__loader').velocity('shradeOut', {
+					duration: duration || 300,
+					complete: resolve
+				})
+			});
+		},
+		hideSearchUsers: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				if( $('.search-users-row').length == 0 ){
+					return resolve();
+				}
+				
+				$('.search-users-row').velocity('shradeOut', {
+					duration : 300,
+					complete : function(){
+						$(this).remove();
+						resolve();
+					}
+				});
+			});
+
+		},
+		renderUserRow: function( users ){
+
+			if( !users ){
+				return LJ.wlog('No users to render here');
+			}
+
+			var html = ['<div class="search-users-row">'];
+
+			for( var i=0; i<3; i++ ){
+				if( users[ i ] ){
+					html.push( LJ.search.renderUser( users[i] ) );
+				} else {
+					html.push( LJ.search.renderUserBlank() );
+				}
+			}
+
+			html.push('</div>');
+
+			return html.join('');
+
+		},
+		renderUserBlank: function(){
+
+			return '<div class="search-user --blank"></div>';
+
+		},
+		renderUser: function( user ){
+
+			var n = user.name;
+			var a = user.age;
+			var i = user.facebook_id;
+			var c = user.country_code;
+			var l = user.location.place_name;
+			var p = user.location.place_id;
+			var g = user.gender;
+
+			var main_pic = LJ.findMainPic( user );
+			var img_html = LJ.pictures.makeImgHtml( main_pic.img_id, main_pic.img_version, 'user-search');
+
+
+			return LJ.ui.render([
+
+				'<div class="search-user" data-facebook-id="'+ i +'" data-age="' + a + '" data-gender="' + g + '" data-cc="' + c + '">',
+		            '<div class="search-user__pic js-filterlay">',
+		            	img_html,
+		               '<div class="search-user__pic-overlay"></div>',
+		            '</div>',
+		           '<div class="search-user-body">',
+		               '<div class="search-user__h1">',
+		            	  '<span class="search-user__gender user-gender js-user-gender --'+ g +'"></span>',
+		                  '<span class="name">'+ n +'</span>',
+			              '<span class="search-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
+			              '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
+		               '</div>',
+		               '<div class="search-user__h2">',
+		                  '<span class="age">'+ a +'</span>',
+		                  '<span class="comma">-</span>',
+			              '<span class="location" data-place-id="'+ p +'">'+ l +'</span>',
+		               '</div>',
+		           '</div>',
+		            '<div class="search-user__actions">',
+		              '<div class="search-user__action --round-icon --share js-share-profile"><i class="icon icon-forward"></i></div>',
+		              '<div class="search-user__splitter"></div>',
+		              '<div class="search-user__action --round-icon --meepass js-send-meepass"><i class="icon icon-meepass"></i></div>',
+		            '</div>',
+	          '</div>'
+
+				].join(''))
+
+		}
+
+	});
+	
+	window.LJ.search = _.merge( window.LJ.search || {}, {
+
+		$filters_agerange : null,
+		filters_agerange  : null,
+
+		filters_duration: 400,
+
+		filter_state: {
+			age       : [],
+			gender    : [],
+			countries : []
+		},
+
+		initFilters: function(){
+			return LJ.promise(function( resolve, reject ){
+				LJ.search.initFiltersSlider();
+				resolve();
+			});
+
+		},
+		initFiltersSlider: function(){
+			
+			LJ.search.$filters_agerange = document.getElementById('search-filters__input');
+			
+			LJ.search.filters_agerange = noUiSlider.create( LJ.search.$filters_agerange, {
+				start: [ LJ.app_settings.app.min_age, LJ.app_settings.app.max_age ], // Handle start position
+				step: 1, 					// Slider moves in increments of '10'
+				margin: 3, 					// Handles must be more than '20' apart
+				connect: true, 				// Display a colored bar between the handles
+				orientation: 'horizontal',  // Orient the slider vertically
+				behaviour: 'tap-drag',  	// Move handle on tap, bar is draggable
+				range: { 					// Slider can select '0' to '100'
+					'min': LJ.app_settings.app.min_age,
+					'max': LJ.app_settings.app.max_age
+				}
+			});
+
+			LJ.search.filters_agerange.on('update', LJ.search.refreshFiltersSliderValues );
+			LJ.search.filters_agerange.on('end', LJ.search.refetchAndShowMoreUsers );
+
+		},
+		resetFiltersState: function(){
+
+			LJ.search.filter_state = {
+				age       : [],
+				gender    : [],
+				countries : []
+			};
+
+		},
+		setFiltersState: function(){
+
+			LJ.search.resetFiltersState();
+
+			$('.search-filters')
+				.find('.toggle.--active')
+				.each(function( i, toggle ){
+
+					if( $( toggle ).closest('.js-filters-male').length > 0 ){
+						LJ.search.filter_state.gender.push('male');
+					}
+
+					if( $( toggle ).closest('.js-filters-female').length > 0 )
+						LJ.search.filter_state.gender.push('female');
+
+					if( $( toggle ).closest('.js-filters-country').length > 0 ){
+						var cc = $(toggle).closest('[data-country-code]').attr('data-country-code');
+						LJ.search.filter_state.countries.push( cc );
+					}
+
+				});
+
+			var min = $('.search-filters-min-age').html();
+			var max = $('.search-filters-max-age').html();
+
+			LJ.search.filter_state.age[0] = min;
+			LJ.search.filter_state.age[1] = max;
+
+		},
+		setCountriesInFilters: function(){
+
+			LJ.api.fetchDistinctCountries()
+				.then(function( country_codes ){
+					return LJ.search.renderFilterCountries( _.shuffle( country_codes ) );
+				})
+				.then(function( countries_html ){
+					return LJ.search.addFilterCountries( countries_html );
+				})
+
+		},
+		renderFilterCountries: function( country_codes ){
+
+			var html = [];
+			country_codes.forEach(function( cc ){
+				html.push( LJ.search.renderFilterCountry( cc ) );
+			});
+
+			return html.join('');
+
+		},
+		renderFilterCountry: function( cc ){
+
+			return LJ.ui.render([
+				'<div class="search-filters-countries js-filters-countries" data-country-code="'+ cc +'">',
+					'<div class="search-filters-row js-filters-country">',
+	            		'<div class="search-filters-country__flag --round-icon">',
+	            			'<i class="flag-icon flag-icon-'+ cc +'"></i>',
+	              		'</div>',
+		            	'<div class="search-filters-country__label">',
+		            		'<label data-lid="country_'+ cc +'"></label>',
+		            	'</div>',
+		            	'<div class="toggle">',
+		                	'<div class="toggle__background"></div>',
+		                	'<div class="toggle__button"></div>',
+		              	'</div>',
+	            	'</div>',
+	            '</div>'
+				].join(''));
+		},
+		addFilterCountries: function( countries_html ){
+
+			$('.js-filters-countries').children().remove();
+			$('.js-filters-countries').append( countries_html );
+
+		},
+		showFilters: function(){
+			
+			var $fi    = $('.search-filters__icon');
+			var $f     = $('.search-filters');
+			var d      = LJ.search.filters_duration;
+
+			LJ.ui.adjustWrapperHeight( $('.search-filters') );
+
+			$fi.velocity('shradeOut', {
+				duration : d,
+				display  : 'none'
+			});
+
+			LJ.ui.shradeIn( $f, d );
+
+			// LJ.delay( d )
+			// 	.then(function(){
+			// 		return LJ.ui.shradeIn( $f, d );
+			// 	});
+			
+
+		},
+		hideFilters: function(){
+
+			var $fi    = $('.search-filters__icon');
+			var $f     = $('.search-filters');
+			var d      = LJ.search.filters_duration;
+
+			$f.velocity('shradeOut', {
+				duration : d,
+				display  : 'none'
+			});
+
+			LJ.ui.shradeIn( $fi, d );
+			
+			// LJ.delay( d )
+			// 	.then(function(){
+			// 		return LJ.ui.shradeIn( $fi, d );
+			// 	});
+
+		},
+		refreshFiltersSliderValues: function( value ){
+
+			$('.search-filters-min-age').html( parseInt(value[0]) );
+			$('.search-filters-max-age').html( parseInt(value[1]) );
+
+			LJ.search.setFiltersState();
+
+		}
+
+	});
+	
+	window.LJ.seek = _.merge( window.LJ.seek || {}, {
+
+		init: function(){
+
+			return LJ.seek.activatePlacesInProfile()
+
+				.then(function(){
+					return LJ.delay( 100 );
+
+				})
+				.then(function(){
+					return LJ.seek.activatePlacesInMap()
+					
+				})
+				.then(function(){
+					return LJ.delay( 100 );
+
+				})
+				.then(function(){
+					return LJ.seek.activatePlacesInCreateBefore();
+
+				});
+
+
+		},
+		activatePlacesInProfile: function(){	
+
+			var input = document.getElementById('me__location');
+			var options = { types: ['(cities)'] };
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.profile_places = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-profile-places').addClass('js-alreadyhere');
+				return;
+			});
+
+
+		},
+		activatePlacesInFirstLogin: function(){
+
+			var input = document.getElementById('init-location__input');
+			var options = { types: ['(cities)'] };
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.login_places = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-login-places').addClass('js-alreadyhere');
+				return;
+			});
+
+		},
+		activatePlacesInMap: function(){
+
+			var input = document.getElementById('map-browser-input');
+			var options = {}; // { types: ['(cities)'] };
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.map_browser_places = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-map-browser-places').addClass('js-alreadyhere');
+				return;
+			});
+
+
+		},
+		activatePlacesInCreateBefore: function(){
+
+			var input = $('.be-create-row.--location input')[0];
+			var options = {};
+
+
+			// To be able to isolate him from other place containers laters
+			LJ.seek.be_create = new google.maps.places.Autocomplete( input, options );
+			return LJ.delay( 100 ).then(function(){
+				$('.pac-container:not(.js-alreadyhere)').addClass('seek-be-create').addClass('js-alreadyhere');
+				return;
+			});
+
+		}
+
+
 
 	});
 
@@ -47569,784 +48152,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 
 
-	window.LJ.search = _.merge( window.LJ.search || {}, {
-
-		fetched_users 			: [],
-
-		users_count 			: 0,
-		fetching_users			: false,
-		all_fetched 		  	: false,
-
-		fetch_more_scroll_ratio : 0.97,
-		refetch_callstack: [],
-
-		init: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.search.handleDomEvents();
-				LJ.search.fetchAndShowMoreUsers();
-				LJ.search.setCountriesInFilters();
-				LJ.search.addLoader();
-				resolve();
-
-			});
-		},
-		handleDomEvents: function(){
-
-			LJ.ui.$body.on('click', '.search-user__pic', LJ.search.handleClickUser );
-			LJ.ui.$body.on('click', '.search-filters__icon', LJ.search.showFilters );
-			LJ.ui.$body.on('click', '.search-filters__close', LJ.search.hideFilters );
-			LJ.ui.$body.on('click', '.search-filters .toggle', LJ.search.handleToggleFilter );
-			LJ.ui.$window.scroll( LJ.search.handleFetchMoreUsers );
-			
-		},
-		addLoader: function(){
-
-			$('.search-users').append( LJ.static.renderStaticImage('search_loader') )
-
-		},
-		handleClickUser: function(){
-
-			var facebook_id = $(this).closest('.search-user').attr('data-facebook-id');
-
-			LJ.profile_user.showUserProfile( facebook_id );
-
-		},
-		handleToggleFilter: function(){
-
-			var $to = $(this);
-			$to.toggleClass('--active');
-			LJ.search.setFiltersState();
-			LJ.search.refetchAndShowMoreUsers();
-
-		},
-		allowedToFetchMore: function(){
-			
-			var data_to_fetch        = !LJ.search.all_fetched;
-			var scroll_almost_bottom = LJ.ui.getScrollRatio() > LJ.search.fetch_more_scroll_ratio;
-			var search_panel_active  = $('.app__menu-item.--search').hasClass('--active');
-			var user_not_fetching    = !LJ.search.fetching_users;
-
-			if( data_to_fetch && scroll_almost_bottom && search_panel_active && user_not_fetching ){
-				return true;
-			} else {
-				return false;
-			}
-
-		},
-		handleFetchMoreUsers: function(){
-
-			if( !LJ.search.allowedToFetchMore() ) return;
-
-			LJ.log('Fetching more users...');
-			LJ.search.fetchAndShowMoreUsers();
-
-		},
-		fetchMoreUsers: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.search.setFiltersState();
-
-				var facebook_ids = _.map( LJ.search.fetched_users, 'facebook_id' ).concat([ LJ.user.facebook_id ]);
-				var filters      = LJ.search.filter_state;
-
-				LJ.api.fetchMoreUsers( facebook_ids, filters )
-					.then(function( exposed ){
-
-						var new_users   = exposed.users;
-						var users_count = exposed.users_count;
-
-						LJ.search.fetched_users = _.uniq( LJ.search.fetched_users.concat( new_users ) );
-						LJ.search.users_count   = users_count;
-						resolve( new_users );
-
-					})
-					.catch( reject );
-
-			});
-		},
-		refetchAndShowMoreUsers: function(){
-
-			LJ.log('[Re]Fetching and showing more users...');
-			LJ.search.all_fetched = false;
-
-			if( LJ.search.fetching_users ){
-				return LJ.wlog('Already fetching users...');
-			}
-
-			LJ.search.fetched_users = [];
-			LJ.search.hideSearchUsers()
-				.then(function(){
-					return LJ.search.fetchAndShowMoreUsers();
-				});
-
-		},
-		fetchAndShowMoreUsers: function(){
-
-			LJ.log('Fetching and showing more users...');
-			LJ.search.fetching_users = true;
-
-			var users;
-			LJ.search.showSearchLoader()
-
-				.then(function(){
-					return LJ.search.fetchMoreUsers();
-				})
-
-				.then(function( new_users ){
-					if( LJ.search.fetched_users.length == ( LJ.search.users_count - 1 ) || new_users.length == 0 ){
-						LJ.wlog('Everyone has been fetched for this filter.');
-						LJ.search.all_fetched = true;
-					}
-					users = new_users;
-					return;
-				})
-
-				.then(function(){
-					return LJ.search.hideSearchLoader();
-				})
-
-				.then(function(){
-					return LJ.search.showMoreUsers( users );
-				})
-				// When users loaded, give it one second of blocking, otherwise if user scrolls
-				// It will detect that he can fetch more users. One batch at a time is better :)
-				.then(function(){
-					setTimeout(function(){
-						LJ.search.fetching_users = false;
-					}, 1000 );
-				});
-
-		},
-		showMoreUsers: function( users ){
-
-			_.chunk( users, 3 ).forEach(function( user_group, i ){
-
-				var $users = $( LJ.search.renderUserRow( user_group ) );
-
-				$users
-					.css({ 'opacity': 0 })
-					.insertBefore('.search__loader');
-
-				LJ.settings.applyUxPreferences();
-
-				if( $('.slide').length > 0 ){
-					LJ.offsetSearchUsers( 25 );
-				}
-
-				$users.velocity('slideUpIn', {
-					display  : 'flex',
-					duration : 700,
-					delay    : 100 + 250 * i
-				});
-
-			});
-
-		},
-		showSearchLoader: function( duration ){
-			return LJ.promise(function( resolve, reject ){
-				var $l = $('.search__loader');
-				if( $l.length == 0 ) return resolve();
-				$('.search__loader').velocity('shradeIn', {
-					duration: duration || 300,
-					complete: resolve
-				})
-			});
-		},
-		hideSearchLoader: function( duration ){
-			return LJ.promise(function( resolve, reject ){
-				$('.search__loader').velocity('shradeOut', {
-					duration: duration || 300,
-					complete: resolve
-				})
-			});
-		},
-		hideSearchUsers: function(){
-
-			return LJ.promise(function( resolve, reject ){
-
-				if( $('.search-users-row').length == 0 ){
-					return resolve();
-				}
-				
-				$('.search-users-row').velocity('shradeOut', {
-					duration : 300,
-					complete : function(){
-						$(this).remove();
-						resolve();
-					}
-				});
-			});
-
-		},
-		renderUserRow: function( users ){
-
-			if( !users ){
-				return LJ.wlog('No users to render here');
-			}
-
-			var html = ['<div class="search-users-row">'];
-
-			for( var i=0; i<3; i++ ){
-				if( users[ i ] ){
-					html.push( LJ.search.renderUser( users[i] ) );
-				} else {
-					html.push( LJ.search.renderUserBlank() );
-				}
-			}
-
-			html.push('</div>');
-
-			return html.join('');
-
-		},
-		renderUserBlank: function(){
-
-			return '<div class="search-user --blank"></div>';
-
-		},
-		renderUser: function( user ){
-
-			var n = user.name;
-			var a = user.age;
-			var i = user.facebook_id;
-			var c = user.country_code;
-			var l = user.location.place_name;
-			var p = user.location.place_id;
-			var g = user.gender;
-
-			var main_pic = LJ.findMainPic( user );
-			var img_html = LJ.pictures.makeImgHtml( main_pic.img_id, main_pic.img_version, 'user-search');
-
-
-			return LJ.ui.render([
-
-				'<div class="search-user" data-facebook-id="'+ i +'" data-age="' + a + '" data-gender="' + g + '" data-cc="' + c + '">',
-		            '<div class="search-user__pic js-filterlay">',
-		            	img_html,
-		               '<div class="search-user__pic-overlay"></div>',
-		            '</div>',
-		           '<div class="search-user-body">',
-		               '<div class="search-user__h1">',
-		            	  '<span class="search-user__gender user-gender js-user-gender --'+ g +'"></span>',
-		                  '<span class="name">'+ n +'</span>',
-			              '<span class="search-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
-			              '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
-		               '</div>',
-		               '<div class="search-user__h2">',
-		                  '<span class="age">'+ a +'</span>',
-		                  '<span class="comma">-</span>',
-			              '<span class="location" data-place-id="'+ p +'">'+ l +'</span>',
-		               '</div>',
-		           '</div>',
-		            '<div class="search-user__actions">',
-		              '<div class="search-user__action --round-icon --share js-share-profile"><i class="icon icon-forward"></i></div>',
-		              '<div class="search-user__splitter"></div>',
-		              '<div class="search-user__action --round-icon --meepass js-send-meepass"><i class="icon icon-meepass"></i></div>',
-		            '</div>',
-	          '</div>'
-
-				].join(''))
-
-		}
-
-	});
-	
-	window.LJ.search = _.merge( window.LJ.search || {}, {
-
-		$filters_agerange : null,
-		filters_agerange  : null,
-
-		filters_duration: 400,
-
-		filter_state: {
-			age       : [],
-			gender    : [],
-			countries : []
-		},
-
-		initFilters: function(){
-			return LJ.promise(function( resolve, reject ){
-				LJ.search.initFiltersSlider();
-				resolve();
-			});
-
-		},
-		initFiltersSlider: function(){
-			
-			LJ.search.$filters_agerange = document.getElementById('search-filters__input');
-			
-			LJ.search.filters_agerange = noUiSlider.create( LJ.search.$filters_agerange, {
-				start: [ LJ.app_settings.app.min_age, LJ.app_settings.app.max_age ], // Handle start position
-				step: 1, 					// Slider moves in increments of '10'
-				margin: 3, 					// Handles must be more than '20' apart
-				connect: true, 				// Display a colored bar between the handles
-				orientation: 'horizontal',  // Orient the slider vertically
-				behaviour: 'tap-drag',  	// Move handle on tap, bar is draggable
-				range: { 					// Slider can select '0' to '100'
-					'min': LJ.app_settings.app.min_age,
-					'max': LJ.app_settings.app.max_age
-				}
-			});
-
-			LJ.search.filters_agerange.on('update', LJ.search.refreshFiltersSliderValues );
-			LJ.search.filters_agerange.on('end', LJ.search.refetchAndShowMoreUsers );
-
-		},
-		resetFiltersState: function(){
-
-			LJ.search.filter_state = {
-				age       : [],
-				gender    : [],
-				countries : []
-			};
-
-		},
-		setFiltersState: function(){
-
-			LJ.search.resetFiltersState();
-
-			$('.search-filters')
-				.find('.toggle.--active')
-				.each(function( i, toggle ){
-
-					if( $( toggle ).closest('.js-filters-male').length > 0 ){
-						LJ.search.filter_state.gender.push('male');
-					}
-
-					if( $( toggle ).closest('.js-filters-female').length > 0 )
-						LJ.search.filter_state.gender.push('female');
-
-					if( $( toggle ).closest('.js-filters-country').length > 0 ){
-						var cc = $(toggle).closest('[data-country-code]').attr('data-country-code');
-						LJ.search.filter_state.countries.push( cc );
-					}
-
-				});
-
-			var min = $('.search-filters-min-age').html();
-			var max = $('.search-filters-max-age').html();
-
-			LJ.search.filter_state.age[0] = min;
-			LJ.search.filter_state.age[1] = max;
-
-		},
-		setCountriesInFilters: function(){
-
-			LJ.api.fetchDistinctCountries()
-				.then(function( country_codes ){
-					return LJ.search.renderFilterCountries( _.shuffle( country_codes ) );
-				})
-				.then(function( countries_html ){
-					return LJ.search.addFilterCountries( countries_html );
-				})
-
-		},
-		renderFilterCountries: function( country_codes ){
-
-			var html = [];
-			country_codes.forEach(function( cc ){
-				html.push( LJ.search.renderFilterCountry( cc ) );
-			});
-
-			return html.join('');
-
-		},
-		renderFilterCountry: function( cc ){
-
-			return LJ.ui.render([
-				'<div class="search-filters-countries js-filters-countries" data-country-code="'+ cc +'">',
-					'<div class="search-filters-row js-filters-country">',
-	            		'<div class="search-filters-country__flag --round-icon">',
-	            			'<i class="flag-icon flag-icon-'+ cc +'"></i>',
-	              		'</div>',
-		            	'<div class="search-filters-country__label">',
-		            		'<label data-lid="country_'+ cc +'"></label>',
-		            	'</div>',
-		            	'<div class="toggle">',
-		                	'<div class="toggle__background"></div>',
-		                	'<div class="toggle__button"></div>',
-		              	'</div>',
-	            	'</div>',
-	            '</div>'
-				].join(''));
-		},
-		addFilterCountries: function( countries_html ){
-
-			$('.js-filters-countries').children().remove();
-			$('.js-filters-countries').append( countries_html );
-
-		},
-		showFilters: function(){
-			
-			var $fi    = $('.search-filters__icon');
-			var $f     = $('.search-filters');
-			var d      = LJ.search.filters_duration;
-
-			LJ.ui.adjustWrapperHeight( $('.search-filters') );
-
-			$fi.velocity('shradeOut', {
-				duration : d,
-				display  : 'none'
-			});
-
-			LJ.ui.shradeIn( $f, d );
-
-			// LJ.delay( d )
-			// 	.then(function(){
-			// 		return LJ.ui.shradeIn( $f, d );
-			// 	});
-			
-
-		},
-		hideFilters: function(){
-
-			var $fi    = $('.search-filters__icon');
-			var $f     = $('.search-filters');
-			var d      = LJ.search.filters_duration;
-
-			$f.velocity('shradeOut', {
-				duration : d,
-				display  : 'none'
-			});
-
-			LJ.ui.shradeIn( $fi, d );
-			
-			// LJ.delay( d )
-			// 	.then(function(){
-			// 		return LJ.ui.shradeIn( $fi, d );
-			// 	});
-
-		},
-		refreshFiltersSliderValues: function( value ){
-
-			$('.search-filters-min-age').html( parseInt(value[0]) );
-			$('.search-filters-max-age').html( parseInt(value[1]) );
-
-			LJ.search.setFiltersState();
-
-		}
-
-	});
-
-	
-	window.LJ.static = _.merge( window.LJ.static || {}, {
-
-		'images': [
-			{
-				'access_name' : 'main_loader',
-				'image_id' 	  : 'app_loader',
-				'param'		  : { 'class': 'app__loader', 'width': 80 }
-			},
-			{
-				'access_name' : 'modal_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'modal__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'menu_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'menu__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'slide_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'slide__loader', 'width': 32  }	
-			},
-			{
-				'access_name' : 'search_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'search__loader', 'width': 32  }	
-			},
-			{
-				'access_name' : 'be_create_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'be-create__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'chat_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
-			},
-			{ "access_name" : ":D", "image_id": "emoticon_smile" },
-			{ "access_name" : "xD", "image_id": "emoticon_smilexd" },
-			{ "access_name" : ";)", "image_id": "emoticon_blink" },
-			{ "access_name" : ":p", "image_id": "emoticon_tongue" },
-			{ "access_name" : "<3", "image_id": "emoticon_love" },
-			{ "access_name" : ":%", "image_id": "emoticon_sun" },
-			{ "access_name" : "-)", "image_id": "emoticon_bg" },
-			{ "access_name" : ":o", "image_id": "emoticon_oh" },
-			{ "access_name" : ":(", "image_id": "emoticon_sad" },
-			{ "access_name" : ":â", "image_id": "emoticon_angel" },
-			{ "access_name" : ":z", "image_id": "emoticon_zzz" },
-			{ "access_name" : ":/", "image_id": "emoticon_noop" }
-		],
-		// Constructs a list of static pictures hosted on Cloudinary that are available
-		// to use accross all others modules
-		init: function(){
-
-			LJ.static.cacheStaticImages();
-			return;
-
-		},
-		cacheStaticImages: function(){
-
-			LJ.static.images.forEach(function( img ){
-
-				img.param = img.param || {};
-				img.param['cloud_name'] = 'radioreve';
-
-				LJ.static[ '$' + img.access_name ] = $.cloudinary.image(
-					img.image_id,
-					img.param
-				);
-
-
-			});
-
-		},
-		getLoader: function( loader_id ){
-			var $l = $('.app__loader[data-loaderid="' + loader_id + '"]');
-
-			if( $l.length != 1 ){
-				return LJ.wlog('Unable to uniquely identify the loader with id : ' + loader_id +', length is : ' + $l.length );
-			} else {
-				return $l;
-			}
-		},
-		renderStaticImage: function( access_name ){
-
-			return LJ.static[ '$' + access_name ].clone().prop('outerHTML');
-
-		}
-
-	});
-	
-	window.LJ.seek = _.merge( window.LJ.seek || {}, {
-
-		init: function(){
-
-			return LJ.seek.activatePlacesInProfile()
-
-				.then(function(){
-					return LJ.delay( 100 );
-
-				})
-				.then(function(){
-					return LJ.seek.activatePlacesInMap()
-					
-				})
-				.then(function(){
-					return LJ.delay( 100 );
-
-				})
-				.then(function(){
-					return LJ.seek.activatePlacesInCreateBefore();
-
-				});
-
-
-		},
-		activatePlacesInProfile: function(){	
-
-			var input = document.getElementById('me__location');
-			var options = { types: ['(cities)'] };
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.profile_places = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-profile-places').addClass('js-alreadyhere');
-				return;
-			});
-
-
-		},
-		activatePlacesInFirstLogin: function(){
-
-			var input = document.getElementById('init-location__input');
-			var options = { types: ['(cities)'] };
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.login_places = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-login-places').addClass('js-alreadyhere');
-				return;
-			});
-
-		},
-		activatePlacesInMap: function(){
-
-			var input = document.getElementById('map-browser-input');
-			var options = {}; // { types: ['(cities)'] };
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.map_browser_places = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-map-browser-places').addClass('js-alreadyhere');
-				return;
-			});
-
-
-		},
-		activatePlacesInCreateBefore: function(){
-
-			var input = $('.be-create-row.--location input')[0];
-			var options = {};
-
-
-			// To be able to isolate him from other place containers laters
-			LJ.seek.be_create = new google.maps.places.Autocomplete( input, options );
-			return LJ.delay( 100 ).then(function(){
-				$('.pac-container:not(.js-alreadyhere)').addClass('seek-be-create').addClass('js-alreadyhere');
-				return;
-			});
-
-		}
-
-
-
-	});
-
-	window.LJ.store = _.merge( window.LJ.store || {}, {
-
-		mode: null,
-
-		init: function(){
-
-			LJ.store.activateStoreMode();
-			return;
-		},
-		activateStoreMode: function(){
-
-			if( window.localStorage ){
-				LJ.store.mode = "localstorage";
-			} else {
-				LJ.store.mode = "cookie";
-			}
-
-		},
-		changeStoreMode: function( new_mode ){
-
-			if( [ "cookie", "localstorage" ].indexOf( new_mode ) == -1 ){
-				return LJ.wlog('This storage mode is not supported, please use "cookie" or "localstorage"');
-			}
-
-			LJ.store.mode = new_mode;
-
-		},
-		getStore: function(){
-
-			if( LJ.store.mode == "localstorage" ){
-				return window.localStorage;
-			} else {
-				return document.cookie;
-			}
-
-		},
-		get: function( name ){
-
-			var mode = LJ.store.mode;
-
-			if( mode == "localstorage" ){
-				return LJ.store.getLocalItem( name );
-			}
-
-			if( mode == "cookie" ){
-				return LJ.store.getCookie( name );
-			}
-
-		},
-		set: function( key, item ){
-
-			var mode = LJ.store.mode;
-
-			if( mode == "localstorage" ){
-				return LJ.store.setLocalItem( key, item );
-			}
-
-			if( mode == "cookie" ){
-				return LJ.store.setCookie( key, item );
-			}
-
-		},
-		remove: function( key ){
-
-			var mode = LJ.store.mode;
-
-			if( mode == "localstorage" ){
-				return LJ.store.removeLocalItem( key );
-			}
-
-			if( mode == "cookie" ){
-				return LJ.store.removeCookie( key );
-			}
-
-		},
-		setLocalItem: function( key, item ){
-
-			if( typeof item == "object" ){
-				item = JSON.stringify( item );
-			}
-
-			window.localStorage.setItem( key, item );
-
-		},
-		getLocalItem: function( key ){
-
-			var item = window.localStorage.getItem( key );
-
-			try {
-				item = JSON.parse( item );
-
-			} catch( e ){
-				// Do nothing
-			}
-
-			return item;
-
-		},
-		removeLocalItem: function( key ){
-
-			window.localStorage.removeItem( key );
-
-		},
-		setCookie: function( cname, cvalue, exdays ){
-
-		    var d = new Date();
-		    d.setTime( d.getTime() + ( exdays * 24 * 60 * 60 * 1000 ) );
-
-		    var expires = "expires="+ d.toUTCString();
-
-		    document.cookie = cname + "=" + cvalue + "; " + expires;
-
-		},
-		getCookie: function( cname ){
-
-		    var name = cname + "=";
-		    var ca = document.cookie.split(';');
-
-		    for( var i = 0; i <ca.length; i++ ){
-
-		        var c = ca[i];
-		        while( c.charAt(0)==' ' ){
-		            c = c.substring(1);
-		        }
-
-		        if( c.indexOf( name ) == 0 ){
-		            return c.substring(name.length,c.length);
-		        }
-		    }
-
-		    return null;
-		},
-		removeCookie: function( cname ){
-
-			LJ.store.setCookie( cname, '', -1 );
-
-		}
-
-	});
-
 	window.LJ.shared = _.merge( window.LJ.shared || {}, {
 
 		shared_item_duration: 600,
@@ -48777,6 +48582,239 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		}
 
 	});
+
+	
+	window.LJ.static = _.merge( window.LJ.static || {}, {
+
+		'images': [
+			{
+				'access_name' : 'main_loader',
+				'image_id' 	  : 'app_loader',
+				'param'		  : { 'class': 'app__loader', 'width': 80 }
+			},
+			{
+				'access_name' : 'modal_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'modal__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'menu_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'menu__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'slide_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'slide__loader', 'width': 32  }	
+			},
+			{
+				'access_name' : 'search_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'search__loader', 'width': 32  }	
+			},
+			{
+				'access_name' : 'be_create_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'be-create__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'chat_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
+			},
+			{ "access_name" : ":D", "image_id": "emoticon_smile" },
+			{ "access_name" : "xD", "image_id": "emoticon_smilexd" },
+			{ "access_name" : ";)", "image_id": "emoticon_blink" },
+			{ "access_name" : ":p", "image_id": "emoticon_tongue" },
+			{ "access_name" : "<3", "image_id": "emoticon_love" },
+			{ "access_name" : ":%", "image_id": "emoticon_sun" },
+			{ "access_name" : "-)", "image_id": "emoticon_bg" },
+			{ "access_name" : ":o", "image_id": "emoticon_oh" },
+			{ "access_name" : ":(", "image_id": "emoticon_sad" },
+			{ "access_name" : ":â", "image_id": "emoticon_angel" },
+			{ "access_name" : ":z", "image_id": "emoticon_zzz" },
+			{ "access_name" : ":/", "image_id": "emoticon_noop" }
+		],
+		// Constructs a list of static pictures hosted on Cloudinary that are available
+		// to use accross all others modules
+		init: function(){
+
+			LJ.static.cacheStaticImages();
+			return;
+
+		},
+		cacheStaticImages: function(){
+
+			LJ.static.images.forEach(function( img ){
+
+				img.param = img.param || {};
+				img.param['cloud_name'] = 'radioreve';
+
+				LJ.static[ '$' + img.access_name ] = $.cloudinary.image(
+					img.image_id,
+					img.param
+				);
+
+
+			});
+
+		},
+		getLoader: function( loader_id ){
+			var $l = $('.app__loader[data-loaderid="' + loader_id + '"]');
+
+			if( $l.length != 1 ){
+				return LJ.wlog('Unable to uniquely identify the loader with id : ' + loader_id +', length is : ' + $l.length );
+			} else {
+				return $l;
+			}
+		},
+		renderStaticImage: function( access_name ){
+
+			return LJ.static[ '$' + access_name ].clone().prop('outerHTML');
+
+		}
+
+	});
+
+	window.LJ.store = _.merge( window.LJ.store || {}, {
+
+		mode: null,
+
+		init: function(){
+
+			LJ.store.activateStoreMode();
+			return;
+		},
+		activateStoreMode: function(){
+
+			if( window.localStorage ){
+				LJ.store.mode = "localstorage";
+			} else {
+				LJ.store.mode = "cookie";
+			}
+
+		},
+		changeStoreMode: function( new_mode ){
+
+			if( [ "cookie", "localstorage" ].indexOf( new_mode ) == -1 ){
+				return LJ.wlog('This storage mode is not supported, please use "cookie" or "localstorage"');
+			}
+
+			LJ.store.mode = new_mode;
+
+		},
+		getStore: function(){
+
+			if( LJ.store.mode == "localstorage" ){
+				return window.localStorage;
+			} else {
+				return document.cookie;
+			}
+
+		},
+		get: function( name ){
+
+			var mode = LJ.store.mode;
+
+			if( mode == "localstorage" ){
+				return LJ.store.getLocalItem( name );
+			}
+
+			if( mode == "cookie" ){
+				return LJ.store.getCookie( name );
+			}
+
+		},
+		set: function( key, item ){
+
+			var mode = LJ.store.mode;
+
+			if( mode == "localstorage" ){
+				return LJ.store.setLocalItem( key, item );
+			}
+
+			if( mode == "cookie" ){
+				return LJ.store.setCookie( key, item );
+			}
+
+		},
+		remove: function( key ){
+
+			var mode = LJ.store.mode;
+
+			if( mode == "localstorage" ){
+				return LJ.store.removeLocalItem( key );
+			}
+
+			if( mode == "cookie" ){
+				return LJ.store.removeCookie( key );
+			}
+
+		},
+		setLocalItem: function( key, item ){
+
+			if( typeof item == "object" ){
+				item = JSON.stringify( item );
+			}
+
+			window.localStorage.setItem( key, item );
+
+		},
+		getLocalItem: function( key ){
+
+			var item = window.localStorage.getItem( key );
+
+			try {
+				item = JSON.parse( item );
+
+			} catch( e ){
+				// Do nothing
+			}
+
+			return item;
+
+		},
+		removeLocalItem: function( key ){
+
+			window.localStorage.removeItem( key );
+
+		},
+		setCookie: function( cname, cvalue, exdays ){
+
+		    var d = new Date();
+		    d.setTime( d.getTime() + ( exdays * 24 * 60 * 60 * 1000 ) );
+
+		    var expires = "expires="+ d.toUTCString();
+
+		    document.cookie = cname + "=" + cvalue + "; " + expires;
+
+		},
+		getCookie: function( cname ){
+
+		    var name = cname + "=";
+		    var ca = document.cookie.split(';');
+
+		    for( var i = 0; i <ca.length; i++ ){
+
+		        var c = ca[i];
+		        while( c.charAt(0)==' ' ){
+		            c = c.substring(1);
+		        }
+
+		        if( c.indexOf( name ) == 0 ){
+		            return c.substring(name.length,c.length);
+		        }
+		    }
+
+		    return null;
+		},
+		removeCookie: function( cname ){
+
+			LJ.store.setCookie( cname, '', -1 );
+
+		}
+
+	});
 	
 
 	window.LJ = _.merge( window.LJ || {} , {
@@ -49109,7 +49147,6 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		} else {
 			var alpha = o.opacity || 1;
 			var color = o.theme == "light" ? 'rgba(255,255,255,' : 'rgba(19,19,19,';
-
 
 			$curtain = $('<div class="curtain"></div>');
 			$curtain.hide().css({ 'background': color + alpha + ')' }).appendTo( LJ.ui.$body );

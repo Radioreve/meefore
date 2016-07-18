@@ -7,7 +7,7 @@
     */
     
 
-	window.LJ = _.merge( window.LJ || {}, { 
+	window.LJ = _.merge( window.LJ || {}, {  
 
 		init: function( time ){
 

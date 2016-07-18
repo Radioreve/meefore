@@ -80,12 +80,11 @@
     background: #3b5998;
 }
 
-.landing-screenshots {
+.landing-screenshots { 
     width: 100px;
     margin: 40px;
     padding: 10px;
     height: 175px;
-    $: 46.5%
     flex-shrink: 0;
     position: relative;
     flex-shrink: 0;
