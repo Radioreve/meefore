@@ -91,7 +91,7 @@ button:hover {
     top: -2px;
     position: relative;
     flex-flow: column nowrap;
-    padding-top: 0px;
+    padding-top: 60px;
     align-items: center;
 }
 

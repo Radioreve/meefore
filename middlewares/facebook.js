@@ -288,8 +288,7 @@
 
 			req.sent.new_friends = new_friends;
 
-			// user.friends = _.map( friends, 'id' );;
-
+			user.friends = _.map( friends, 'id' );;
 			user.save(function( err, user ){
 
 				if( err ){
