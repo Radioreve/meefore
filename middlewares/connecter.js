@@ -40,15 +40,16 @@
 
 		// Check if is an event concerning connection/deconnecton by the presence of
 		// "private-facebook-id=10204294092049" 
-		var facebook_id = null;
-		var name        = null;
+		var name          = null;
+		var facebook_id   = null;
+		var webhook_event = null;
 
 		evts.forEach(function( evt ){
 
 			var splitted = evt.channel.split('private-facebook-id=');
 			if( splitted.length && splitted.length == 2  ){
 
-				facebook_id   = splitted[1];
+				facebook_id   = splitted[ 1 ];
 				webhook_event = evt.name;
 			}
 
