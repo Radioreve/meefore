@@ -36,6 +36,13 @@
 			}
 			
 		}
+		, app: {
+		  	uri: {
+		  		dev    : 'http://localhost:1234',
+		  		staged : 'http://staged.meefore.com',
+		  		prod   : 'http://www.meefore.com'
+		  	}
+		  }
 		, homepage: {
 			dev      : process.cwd()  + '/views/index-dev.html',
 			staged   : process.cwd()  + '/views/index-staged.html',

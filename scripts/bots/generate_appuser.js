@@ -1,7 +1,7 @@
 
 	// Create a user in database
-	var u    = require('../utils');
-
+	var u           = require('../utils');
+	var config      = require( process.cwd() + '/config/config' );
 	var Promise     = require('bluebird');
 	var request     = require('request');
 	var _           = require('lodash');
@@ -37,7 +37,7 @@
 					request({
 						method    : 'post',
 						json      : data,
-						url       : 'http://localhost:1234/auth/facebook'
+						url       : config.app.uri[ process.env.APP_ENV ] + '/auth/facebook'
 
 					}, function( err, body, res ){	
 						if( err ){
