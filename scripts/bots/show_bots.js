@@ -21,7 +21,7 @@
 
 			if( users.length == 0 ){
 				console.log('Zero user with bot access in database');
-				return process.exit(0);
+				return process.exit( 0 );
 			}
 
 			users.forEach(function( user ){

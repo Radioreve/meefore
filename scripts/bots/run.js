@@ -11,13 +11,12 @@
 	// Generate multiple bots from the source
 	var folder_path = '/Users/MacLJ/Node/App/Meefore/bots/girls';
 
-
 	// Constructor to iterate on a whole folder
 	var multiply = function( promiseFn, indexes ){
 
 		return function(){
 
-			indexes = Array.isArray( indexes ) ? indexes :  _.range(0,51);
+			indexes = Array.isArray( indexes ) ? indexes : _.range( 0, 51 );
 			console.log('Indexing from : ' + indexes );
 			return u.readDir( folder_path )
 				.then(function( dir ){
@@ -26,7 +25,7 @@
 							console.log('Path was okay : ' + dir_name );
 							return promiseFn( folder_path + '/' + dir_name );
 						} else {
-							console.log('Skipping this path : ' + dir_name );
+							// console.log('Skipping this path : ' + dir_name );
 						}
 					});
 				});
@@ -37,7 +36,7 @@
 
 		return function(){
 
-			indexes = Array.isArray( indexes ) ? indexes :  _.range(0,51);
+			indexes = Array.isArray( indexes ) ? indexes : _.range( 0, 51 );
 			console.log('Indexing from : ' + indexes );
 			return u.readDir( folder_path )
 				.then(function( dir ){
@@ -47,7 +46,7 @@
 							console.log('Path was okay : ' + dir_name );
 							 promises.push( promiseFn( folder_path + '/' + dir_name ) );
 						} else {
-							console.log('Skipping this path : ' + dir_name );
+							// console.log('Skipping this path : ' + dir_name );
 						}
 					});	
 					return Promise.all( promises );
@@ -63,6 +62,8 @@
 		console.log('Deleting all facebook test users...');
 		p = bots.deleteAllFacebookTestUsers;
 	}
+
+	console.log( flags.get('a') );
 
 	if( flags.get('a') == 'gen'){
 		if( flags.get('name') ){
@@ -83,7 +84,7 @@
 	// Deleting all bots from facebook_interface along with associated files 
 	if( 0 ){
 		console.log('Deleting test users');
-		p = multiplyParallel( bots.deleteOneBot, _.range(0,2) );
+		p = multiplyParallel( bots.deleteOneBot, _.range( 0, 2 ) );
 	}
 
 	// Generating bot_data.json & bot_data_default.json in each folders 

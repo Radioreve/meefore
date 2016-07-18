@@ -20,7 +20,7 @@
 		  	// Make sure mandatory fields are set
 		  	if( !update.job || !update.ideal_night ){
 		  		console.log('Cannot safely create a bot without custom job and ideal_night parameters');
-		  		process.exit(0);
+		  		process.exit( 0 );
 		  	}
 
 		  	// Override if missing values with specific rules of randomness

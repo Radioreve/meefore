@@ -7,7 +7,7 @@
 	var _           = require('lodash');
 	var querystring = require('querystring');
 
-	var generateAppUser = function( path ){
+	var generateAppUser = function( path, access_token ){
 
 		console.log('Generating app user...');
 		return u.readJson( path )
@@ -15,15 +15,13 @@
 
 				var user = JSON.parse( user_string );
 
-				var data = { facebook_profile: {}, bot: {} };
+				var data = { bot: {} };
 
 				// Setting globals
-				data.facebook_id = user.id;
+				// data.facebook_id = user.id;
 
 				// 'facebook_profile' field is necessary to mimicate the normal flow
-				data.facebook_profile.id           = user.id;
-				data.facebook_profile.email        = user.email
-				data.facebook_profile.access_token = user.access_token;
+				data.fb_token = user.access_token;
 
 				// 'bot' field is necessary to override any other parameters just before saving to db
 				data.bot.name         = user.name;

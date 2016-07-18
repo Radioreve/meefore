@@ -1,14 +1,20 @@
 
 	var moment = require('moment');
-	var nv = require('node-validator');
-	var st = require('../../config/settings');
-	var _  = require('lodash');
-	var rg = require('../../config/regex');
-	var fb = require('../../middlewares/facebook');
+	var nv     = require('node-validator');
+	var st     = require('../../config/settings');
+	var _      = require('lodash');
+	var rg     = require('../../config/regex');
+	var fb     = require('../../middlewares/facebook');
+	var term   = require('terminal-kit').terminal;
 
 
 	function check( req, res, next ){
 
+		// if( req.sent.bot ){
+		// 	term.bold.green('Skipping the auth part... (bearly)\n');
+		// 	return next();
+		// }
+		
 		var checkAuthRequest = nv.isAnyObject()
 			.withOptional('fb_token' , nv.isString())
 			.withOptional('fb_code'  , nv.isString())

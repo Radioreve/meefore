@@ -31,10 +31,10 @@
 		var token       = req.sent.fb_token;
 		var expires_at  = req.sent.expires_at;
 
-		if( req.sent.bot ){
-			term.bold.green('Skipping the token update... (no user or bot)');
-			return next();
-		}
+		// if( req.sent.bot ){
+		// 	term.bold.green('Skipping the token update... (bearly)\n');
+		// 	return next();
+		// }
 
 		// Check is long_lived needs to be refreshed with the short lived token from login
 		// It is never the case when the user doesnt exist (signup), because the token is always a short one
@@ -263,14 +263,11 @@
 		var facebook_id  = user.facebook_id;
 		var access_token = user.facebook_access_token.token;
 		
-		fetchFacebookFriends( facebook_id, access_token, function( err, body ){
+		fetchFacebookFriends( facebook_id, access_token, function( err, friends ){
 
 			if( err ){
 				return handleErr( req, res, err_ns, err );
 			}
-
-			var facebook_res = body;
-			var friends      = facebook_res.data;
 
 			console.log('Syncing new friends! Updating...');
 			
@@ -289,8 +286,7 @@
 
 			req.sent.new_friends = new_friends;
 
-			user.friends =  _.map( friends, 'id' );;
-			// user.markModified('friends');
+			// user.friends = _.map( friends, 'id' );;
 
 			user.save(function( err, user ){
 

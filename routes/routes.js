@@ -125,7 +125,7 @@
 	    	mdw.profile_watcher.updateCachedProfile,
 	    	// Check if some notifications are needed
 	    	mdw.notifier.addNotification('inscription_success'),
-	    	mdw.notifier.addNotification('new_friends'),
+	    	// mdw.notifier.addNotification('new_friends'),
 	    	// Always ensure the user is subscribed at mailchimp
 	    	mdw.mailchimp.api("ensure_subscription")
 	    );

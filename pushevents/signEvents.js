@@ -47,17 +47,18 @@
 		var user = req.sent.user;
 
 		// The only thing useful for users tryna signing up
+		// These informations are extracted solely from the fb_token that is passed
+		// and merged together in an object by the facebook middleware
 		var facebook_id           = req.sent.facebook_id;
 		var facebook_access_token = req.sent.facebook_access_token;
-
 
 		// User exists, generate an app token and thats it ! His profile has already
 		// been fetched, and token already being updated
 		if( user ){
 
-			req.sent.expose.user = user;
+			req.sent.expose.user        = user;
 			req.sent.expose.facebook_id = facebook_id;
-			req.sent.expose.app_token = eventUtils.generateAppToken( "user", user );
+			req.sent.expose.app_token   = eventUtils.generateAppToken( "user", user );
 
 			next();
 
@@ -121,10 +122,10 @@
 				// Important: all params must be set to null otherwise the user.patch method fail for security reasons
 				// (fields that are not initially present will not be patched)
 				new_user.location = {
-					place_name: null,
-					place_id: null,
-					lat: null,
-					lng: null
+					place_name : null,
+					place_id   : null,
+					lat        : null,
+					lng        : null
 				};
 
 				// Default invite code, can be changed by client. Use facebook_id to ensure uniqueness
@@ -143,7 +144,7 @@
 				if( req.sent.bot ){
 					new_user.access.push('bot');
 					new_user = _.merge( new_user, req.sent.bot );
-					console.log('New #bot about to join the force...')
+					term.bold.yellow("New 'bearly' to join the force...\n");
 				}
 
 				new_user.save(function( err, user ){

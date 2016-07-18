@@ -57,13 +57,13 @@
 					return geninfos.generateBotBaseInformations( user_path )
 				})
 				.then(function(){
-					return genfacebookuser.generateFacebookTestUser( genconfig.fb.url, genconfig.fb.token );
+					return genfacebookuser.generateFacebookTestUser();
 				})
 				.then(function( facebook_data ){
 					return u.updateKeysInJsonFile( data_path, facebook_data );
 				})
 				.then(function( res ){
-					var facebook_id = res[0].id;
+					var facebook_id = res[ 0 ].id;
 					return genpics.generateBotPicturesInformations( user_path, facebook_id );
 				})
 				.then(function(){
@@ -75,19 +75,18 @@
 	};
 
 
-
 	var deleteOneBot = function( user_path ){
 
 		console.log('Reading data from file : ' +  user_path + '/bot_data' );
 
 		return u.readJson( user_path + '/bot_data' )		
 				.then(function( json ){
-					var id = JSON.parse(json).id;
-					if( !id ){
+					var facebook_id = JSON.parse(json).id;
+					if( !facebook_id ){
 						return console.log('[Warning] - Unable to read the id for the path : ' + user_path );
 					} else {
-					console.log( 'Deleting user with facebook_id : ' + JSON.parse(json).id );
-					return genfacebookuser.deleteFacebookTestUser( genconfig.fb.test_user_url + JSON.parse( json ).id,  genconfig.fb.token );
+						console.log( 'Deleting user with facebook_id : ' + facebook_id );
+						return genfacebookuser.deleteFacebookTestUser( facebook_id );
 					}
 				});
 	}

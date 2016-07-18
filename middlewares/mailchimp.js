@@ -4,6 +4,7 @@
 	var config     = require('../config/config');
 	var Alerter    = require('./alerter');
 	var _          = require('lodash');
+	var term 	   = require('terminal-kit').terminal;;
 
 	// Mailchimp interface
 	var MC        = require('../services/mc');
@@ -26,6 +27,11 @@
 			// All api calls are non blocking call (important)
 			// otherwise, each requests would be slowed hugely
 			next();
+
+			if( req.sent.bot ){
+				term.bold.green('Skipping the mailchimp update... (bearly)\n');
+				return next();
+			}
 
 			if( action == "ensure_subscription" ){
 				ensureSubscription( req );
