@@ -263,15 +263,17 @@
 		var facebook_id  = user.facebook_id;
 		var access_token = user.facebook_access_token.token;
 		
-		fetchFacebookFriends( facebook_id, access_token, function( err, friends ){
+		fetchFacebookFriends( facebook_id, access_token, function( err, res ){
 
 			if( err ){
 				return handleErr( req, res, err_ns, err );
 			}
 
 			console.log('Syncing new friends! Updating...');
-			
+
+			var friends = res.data;
 			var new_friends = [];
+
 			friends.forEach(function( f ){
 
 				if( user.friends.indexOf( f.id ) == -1 ){
