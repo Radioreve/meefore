@@ -179,7 +179,7 @@
 
 					console.log('Scheduled job completed successfully');
 
-					if( process.env.APP_ENV != "dev" && process.env.APP_ENV != "staged" ){
+					if( tracked.n_befores_updated != 0 ){
 						Alerter.sendAdminEmail({
 							subject : 'Scheduler [' + process.env.APP_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
 							html    : mail_html.join('') 
