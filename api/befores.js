@@ -254,8 +254,11 @@
 				bfr.members = null;
 			}
 			
-			req.sent.expose.before = bfr;
-			delete req.sent.expose.before.groups;
+			if( bfr ){ // Before should always exist but just in case..
+				req.sent.expose.before = bfr;
+				delete req.sent.expose.before.groups;
+			}
+
 			next();
 			
 		});

@@ -602,7 +602,7 @@
                 listeners : [
                     {
                         'event_type': 'click',
-                        'callback'  : LJ.map.handleClickOnEventMarker
+                        'callback'  : LJ.map.handleClickOnBeforeMarker
                     }]
 
             });
@@ -724,7 +724,7 @@
 			});
         		
         },
-        handleClickOnEventMarker: function( marker, before ){
+        handleClickOnBeforeMarker: function( marker, before ){
 
             LJ.map.seenifyMarker( before._id );
             var mrk = LJ.map.getMarker( before._id );
@@ -734,6 +734,7 @@
                 LJ.map.deactivateDate();
                 LJ.before.handleCloseBeforeInview();
                 LJ.before.hideBeforeInview();
+                LJ.profile_user.hideUserProfile();
                 return;
             }
 
@@ -746,6 +747,7 @@
 
                 LJ.before.handleCloseBeforeInview();
                 LJ.before.hideBeforeInview();
+                LJ.profile_user.hideUserProfile();
 
             }
 

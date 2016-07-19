@@ -122,6 +122,11 @@
 			})
 
 		},
+		hideUserProfile: function(){
+
+			LJ.ui.hideSlide({ type: 'profile' });
+
+		},
 		addUserProfile: function( user_html, $container ){
 			return $container.append( user_html );
 

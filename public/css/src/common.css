@@ -1118,7 +1118,7 @@ button:hover {
     top: 0;
     width: 100%;
     height: 100%;
-    z-index: 12345;
+    z-index: 1234;
     flex-direction: column;
     align-items: center;
     justify-content: center;
