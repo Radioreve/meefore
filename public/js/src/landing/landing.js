@@ -119,7 +119,7 @@
 					        '</div>',
 					        '<div class="landing__screenshot">',
 					          '<img src="/img/lp.png" alt="Find ur love" width="100%">',
-					        '</div>',
+					        '</div>', 
 					      '</div>',
 					      '<div class="landing-bullets">',
 					        '<div class="landing__bullet x--active"></div>',
