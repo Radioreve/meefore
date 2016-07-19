@@ -40,9 +40,9 @@ var settings = {
 			"new_match"      : false
 		},
       	ux: {
-	        'auto_login'   : false,
-	        'message_seen' : false,
-	        'show_gender'  : false,
+	        'auto_login'   : true,
+	        'message_seen' : true,
+	        'show_gender'  : true,
 	        'show_country' : false
       	},
       	subscribed_emails: {

@@ -130,7 +130,7 @@ Whispereen  : #58c170
 }
 
 [data-type="inscription_success"] .notification__icon {
-    color: #e94f6a!important;
+    /* color: #e94f6a!important; */
 }
 
 [data-type="new_friends"] .notification__icon {
@@ -174,7 +174,7 @@ Whispereen  : #58c170
     font-size: 9px;
     margin-left: auto;
     color: #454545;
-    font-weight: 500;
+    font-weight: 700;
     position: relative;
     top: -25px;
     flex-shrink: 0;
@@ -208,7 +208,10 @@ Whispereen  : #58c170
 .notification.--clicked .notification-message__subtext {
     /* color: #919191; */
 }
-.notification.--clicked .notification__date {}
+
+.notification.--clicked .notification__date {
+    font-weight: 400
+}
 .notification.--clicked .notification__icon {
     color: #ccc;
 }

@@ -1531,6 +1531,10 @@
 			"fr": "Partagez ce code avec vos amis pour les parrainer",
 			"us": "Share this code with your friends to sponsor them"
 		},
+		settings_email_address_explanation: {
+			"fr": "Tous nos emails seront envoyés à cette addresse",
+			"us": "All our emails will be sent to you at this address"
+		},
 		settings_part_title_code: {
 			"fr": "Code d'invitation",
 			"us": "Invite code"
