@@ -54,7 +54,7 @@
 			LJ.search.resetFiltersState();
 
 			$('.search-filters')
-				.find('.toggle.--active')
+				.find('.toggle.x--active')
 				.each(function( i, toggle ){
 
 					if( $( toggle ).closest('.js-filters-male').length > 0 ){
@@ -104,7 +104,7 @@
 			return LJ.ui.render([
 				'<div class="search-filters-countries js-filters-countries" data-country-code="'+ cc +'">',
 					'<div class="search-filters-row js-filters-country">',
-	            		'<div class="search-filters-country__flag --round-icon">',
+	            		'<div class="search-filters-country__flag x--round-icon">',
 	            			'<i class="flag-icon flag-icon-'+ cc +'"></i>',
 	              		'</div>',
 		            	'<div class="search-filters-country__label">',

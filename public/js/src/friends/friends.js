@@ -171,7 +171,7 @@
 			return LJ.ui.render([
 
 				'<div class="empty">',
-					'<div class="empty__icon --round-icon">',
+					'<div class="empty__icon x--round-icon">',
 						'<i class="icon icon-users"></i>',
 					'</div>',
 					'<div class="empty__title">',
@@ -180,7 +180,7 @@
 					'<div class="empty__subtitle">',
 						'<p data-lid="empty_friends_subtitle"></p>',
 					'</div>',
-					'<div class="empty__subicon --round-icon js-invite-friends">',
+					'<div class="empty__subicon x--round-icon js-invite-friends">',
 						'<i class="icon icon-gift"></i>',
 					'</div>',
 				'</div>'
@@ -217,13 +217,13 @@
 							'<h2>' + friend.name + ', <span class="row-body__age">' + friend.age + '</span></h2>',
 						'</div>',
 						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon">',
+							'<div class="row-body__icon x--round-icon">',
 								'<i class="icon icon-education"></i>',
 							'</div>',
 							'<span>' + friend.job + '</span>',
 						'</div>',
 						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon">',
+							'<div class="row-body__icon x--round-icon">',
 								'<i class="icon icon-location"></i>',
 							'</div>',
 							'<span>' + friend.location.place_name + '</span>',
@@ -240,7 +240,7 @@
 
 			return LJ.ui.render([
 
-				'<div class="friend__item --invite-friends js-invite-friends" >',
+				'<div class="friend__item x--invite-friends js-invite-friends" >',
 					'<div class="row-pic">',
 						'<i class="icon icon-gift"></i>',
 					'</div>',
@@ -300,7 +300,7 @@
 				'<div class="modal-item friend-modal" data-name="' + f.name.toLowerCase() + '" data-item-id="' + f.facebook_id + '">',
 					'<div class="friend-modal__pic">',
 						img_html,
-						'<div class="friend-modal__icon --round-icon">',
+						'<div class="friend-modal__icon x--round-icon">',
 							'<i class="icon icon-check"></i>',
 						'</div>',
 					'</div>',
@@ -338,10 +338,10 @@
 			return LJ.ui.render([
 
 				'<div class="invite-friends-popup">',
-					'<div class="invite-friends-popup__close js-close-friends-popup --round-icon">',
+					'<div class="invite-friends-popup__close js-close-friends-popup x--round-icon">',
 						'<i class="icon icon-cross-fat"></i>',
 					'</div>',
-					'<div class="invite-friends-popup__icon --round-icon">',
+					'<div class="invite-friends-popup__icon x--round-icon">',
 						'<i class="icon icon-heart"></i>',
 					'</div>',
 					'<div class="invite-friends-popup-message">',

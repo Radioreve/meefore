@@ -1,6 +1,6 @@
-.menu-section.--meepass {}
+.menu-section.x--meepass {}
 
-.menu-section.--meepass .menu-section-segment {}
+.menu-section.x--meepass .menu-section-segment {}
 
 .meepass {
     width: 100%;
@@ -24,7 +24,7 @@
     background: #f9f9f9;
 }
 
-.meepass__item.--last {
+.meepass__item.x--last {
     border-bottom: none;
 }
 

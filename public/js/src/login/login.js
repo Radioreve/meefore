@@ -3,7 +3,7 @@
 
 			'$trigger_login': '.js-login',
 			'$trigger_logout': '.js-logout',
-			'$modal_logout'  : '.modal.--logout',
+			'$modal_logout'  : '.modal.x--logout',
 			'opening_duration': 1000,
 			'prompt_duration': 600,
 			'prompt_buttons_duration': 900,
@@ -13,6 +13,11 @@
 			'data': {},
 
 			init: function(){
+
+				if( LJ.isBrowserSafari() ){
+	                LJ.log('Safari browser detected, binding the promise to the anchor tag');
+	                $('.js-no-popup').show().attr('href', LJ.facebook.makeFacebookLoginUrl() );
+	            }
 
 				return LJ.promise(function( resolve, reject ){
 					LJ.ui.$body.on('click', '.js-login', resolve );
@@ -226,14 +231,14 @@
 					$('.init-location .action__validate').click(function(){
 						var $block = $( this ).closest('.init-location');
 
-						if( $block.hasClass('--validating') ) return
-						$block.addClass('--validating');
+						if( $block.hasClass('x--validating') ) return
+						$block.addClass('x--validating');
 
 						LJ.login.updateProfileFirstLogin()
 							.then(function(){
 
 								$block
-									.removeClass('--validating')
+									.removeClass('x--validating')
 									.velocity('bounceOut', {
 										duration : LJ.login.prompt_duration,
 										complete : resolve
@@ -324,7 +329,7 @@
 					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
 					LJ.map.updateMarkers__byDate();
 					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
-					LJ.ui.$body.on('click', '.modal.--logout .modal-footer button', LJ.login.logUserOut );
+					LJ.ui.$body.on('click', '.modal.x--logout .modal-footer button', LJ.login.logUserOut );
 					
 					return
 				});	
@@ -349,7 +354,7 @@
 							'<button data-lid="init_location_geoloc"></button>',
 						'</div>',
 						'<div class="init-location-action">',
-							'<div class="action__validate --round-icon">',
+							'<div class="action__validate x--round-icon">',
 								'<i class="icon icon-play"></i>',
 							'</div>',
 						'</div>',
@@ -364,7 +369,7 @@
 					"title"	   : LJ.text("logout_title"),
 					"subtitle" : LJ.text("logout_subtitle"),
 					"type"     : "logout",
-					"footer"   : "<button class='--rounded'><i class='icon icon-power'></i></button>"
+					"footer"   : "<button class='x--rounded'><i class='icon icon-power'></i></button>"
 				});
 
 			},

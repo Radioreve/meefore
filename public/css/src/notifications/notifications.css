@@ -190,29 +190,29 @@ Whispereen  : #58c170
     flex-shrink: 0;
 }
 
-.notification.--seen .notification-message__text {color: #454545;}
+.notification.x--seen .notification-message__text {color: #454545;}
 
-.notification.--seen .notification-message__subtext {
+.notification.x--seen .notification-message__subtext {
    
 }
-.notification.--seen .notification__date { 
+.notification.x--seen .notification__date { 
 }
-.notification.--seen .notification__icon {
+.notification.x--seen .notification__icon {
     color: #919191;
 }
 
-.notification.--clicked .notification-message__text {
+.notification.x--clicked .notification-message__text {
     font-weight: 500;
 }
 
-.notification.--clicked .notification-message__subtext {
+.notification.x--clicked .notification-message__subtext {
     /* color: #919191; */
 }
 
-.notification.--clicked .notification__date {
+.notification.x--clicked .notification__date {
     font-weight: 400
 }
-.notification.--clicked .notification__icon {
+.notification.x--clicked .notification__icon {
     color: #ccc;
 }
 

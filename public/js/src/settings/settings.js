@@ -1,7 +1,7 @@
 
 	window.LJ.settings = _.merge( window.LJ.settings || {}, {
 
-		$settings: $('.menu-section.--settings'),
+		$settings: $('.menu-section.x--settings'),
 
 		allowed_ids: [ 
 
@@ -58,7 +58,7 @@
 		setMyPreferences: function(){
 
 			// Reset
-			$('[data-settings-type-id]').find('.toggle').removeClass('--active');
+			$('[data-settings-type-id]').find('.toggle').removeClass('x--active');
 			
 			// Setting the toggles to active/inactive
 			LJ.settings.findObjectLeaves( LJ.user.app_preferences ).forEach(function( leaf ){
@@ -67,7 +67,7 @@
 				var $input  = $('[data-settings-type-id="' + leaf.key + '"]').find('input');
 
 				if( $toggle.length > 0 && leaf.value === true ){
-                    	$toggle.addClass('--active');
+                    	$toggle.addClass('x--active');
                 }
 
                 // if someday some preferences are of type string...
@@ -102,10 +102,10 @@
 			LJ.settings.$settings.on('click', 'input, textarea, .edit',   	 LJ.settings.activateInput );
 			LJ.settings.$settings.on('click', '.action__cancel',   		  	 LJ.settings.deactivateInput );
 			LJ.settings.$settings.on('click', '.action__validate', 		     LJ.settings.updateSettingsInput );
-			LJ.settings.$settings.on('click', '.settings__button.--sponsor', LJ.settings.showSponsorshipModal );
+			LJ.settings.$settings.on('click', '.settings__button.x--sponsor', LJ.settings.showSponsorshipModal );
 			LJ.settings.$settings.on('click', '.segment__part', 			 LJ.settings.showSubmenuItem );
-			LJ.settings.$settings.on('click', '.settings__button.--delete',  LJ.settings.showDeleteAccountModal );
-			LJ.ui.$body.on('click', '.modal.--delete button',				 LJ.settings.handleDeleteAccountAction );
+			LJ.settings.$settings.on('click', '.settings__button.x--delete',  LJ.settings.showDeleteAccountModal );
+			LJ.ui.$body.on('click', '.modal.x--delete button',				 LJ.settings.handleDeleteAccountAction );
 
 		},
 		showSubmenuItem: function(){
@@ -118,18 +118,18 @@
 		},
 		activateSubmenuSection: function( section_id ){	
 
-			var current_section_id = $('.menu-section.--settings').find('.segment__part.--active').attr('data-link');
+			var current_section_id = $('.menu-section.x--settings').find('.segment__part.x--active').attr('data-link');
 
-			var $submenu_item_activated    = $('.menu-section.--settings').find('.segment__part[data-link="' + current_section_id + '"]');
-			var $submenu_item_to_activate  = $('.menu-section.--settings').find('.segment__part[data-link="' + section_id + '"]');
+			var $submenu_item_activated    = $('.menu-section.x--settings').find('.segment__part[data-link="' + current_section_id + '"]');
+			var $submenu_item_to_activate  = $('.menu-section.x--settings').find('.segment__part[data-link="' + section_id + '"]');
 
 			var $submenu_block_activated   = $('.settings[data-link="' + current_section_id + '"]');
 			var $submenu_block_to_activate = $('.settings[data-link="' + section_id + '"]');
 
 
 			if( !current_section_id ){
-				$submenu_item_to_activate.addClass('--active');
-				return $('.menu-section.--settings').find('[data-link="' + section_id + '"]').css({ 'display': 'flex' });
+				$submenu_item_to_activate.addClass('x--active');
+				return $('.menu-section.x--settings').find('[data-link="' + section_id + '"]').css({ 'display': 'flex' });
 			}
 
 
@@ -139,12 +139,12 @@
 
 
 			$submenu_item_activated
-				.removeClass('--active')
+				.removeClass('x--active')
 				.find('.menu-section-submenu__bar')
 				.velocity('bounceOut', { duration: 450, display: 'none' });
 
 			$submenu_item_to_activate
-				.addClass('--active')
+				.addClass('x--active')
 				.find('.menu-section-submenu__bar')
 				.velocity('bounceInQuick', { duration: 450, display: 'block' });
 
@@ -168,7 +168,7 @@
 			var $block = $self.closest('.settings-item');
 			var $input = $block.find('input, textarea');
 
-			if( $block.length == 0 || !$block.hasClass('--active') || $block.hasClass('--validating') ){
+			if( $block.length == 0 || !$block.hasClass('x--active') || $block.hasClass('x--validating') ){
 				return LJ.wlog('Not calling the api');
 			}
 
@@ -200,7 +200,7 @@
 			var call_id = LJ.generateId();
 			LJ.ui.showLoader( call_id );
 
-			$block.attr('data-callid', call_id ).addClass('--validating');
+			$block.attr('data-callid', call_id ).addClass('x--validating');
 
 			var update = {
 				call_id     : call_id,
@@ -218,14 +218,14 @@
 			var $input = $('#settings__contact-email');
 			var $block = $input.closest('.settings-item');
 
-			if( $block.hasClass('--validating') ) return;
+			if( $block.hasClass('x--validating') ) return;
 
 			var new_contact_email = $input.val();
 
 			var call_id = LJ.generateId();
 			LJ.ui.showLoader( call_id );
 
-			$block.attr('data-callid', call_id ).addClass('--validating');
+			$block.attr('data-callid', call_id ).addClass('x--validating');
 
 			var update = {
 				call_id       : call_id,
@@ -265,13 +265,13 @@
 				return LJ.wlog('This settings id : ' + settings_id + ' is not into the allowed list : ' + allowed_ids );
 			}
 
-			var settings_value = $toggle.hasClass('--active') ? false : true;
+			var settings_value = $toggle.hasClass('x--active') ? false : true;
 			LJ.settings.updateKey( LJ.user.app_preferences, settings_id, settings_value );
 						
 			// Update the ui
 			var call_id = LJ.generateId();
 			LJ.ui.showLoader( call_id );
-			$toggle.toggleClass('--active');
+			$toggle.toggleClass('x--active');
 	
 			
 			var update = {
@@ -298,7 +298,7 @@
 
 				LJ.ui.showToast('La mise à jour na pas été effectuée', 'error');
 				LJ.ui.hideLoader( call_id );
-				$('.toggle[data-callid="' + call_id + '"]').toggleClass('--active');
+				$('.toggle[data-callid="' + call_id + '"]').toggleClass('x--active');
 				return;
 
 			}
@@ -306,14 +306,14 @@
 			if( err_id == 'already_taken' ){
 				LJ.ui.showToast( LJ.text('to_invite_code_already_taken'), 'error' );
 				LJ.ui.hideLoader( call_id );
-				$('.settings-item[data-callid="' + call_id + '"]').removeClass('--validating');
+				$('.settings-item[data-callid="' + call_id + '"]').removeClass('x--validating');
 				return;
 			}
 
 			 if( err_id == 'bad_pattern' ){
 				LJ.ui.showToast( LJ.text('to_invite_code_bad_pattern'), 'error' );
 				LJ.ui.hideLoader( call_id );
-				$('.settings-item[data-callid="' + call_id + '"]').removeClass('--validating');
+				$('.settings-item[data-callid="' + call_id + '"]').removeClass('x--validating');
 				return;
 			}
 
@@ -386,10 +386,10 @@
 			var $block = $self.closest('.settings-item');
 			var $input = $block.find('input, textarea');
 
-			if( $block.hasClass('--active') || $block.hasClass('--no-edit') ){
+			if( $block.hasClass('x--active') || $block.hasClass('x--no-edit') ){
 				return;
 			} else {
-				$block.addClass('--active'); 
+				$block.addClass('x--active'); 
 			}
 
 			$input.attr( 'readonly', false );
@@ -423,9 +423,9 @@
 			var $block = $self.closest('.settings-item');
 			var $input = $block.find('input, textarea');
 
-			if( $block.hasClass('--active') ){
-				$block.removeClass('--active')
-					  .removeClass('--validating');
+			if( $block.hasClass('x--active') ){
+				$block.removeClass('x--active')
+					  .removeClass('x--validating');
 			} else {
 				return;
 			}
@@ -466,12 +466,12 @@
 				return LJ.ui.hideModal();
 			}
 
-			if( $btn.hasClass('--pending') ){
+			if( $btn.hasClass('x--pending') ){
 				return LJ.log('Already hiding...');
 			}
 			
 			LJ.log('Deleting user account...');
-			$btn.addClass('--pending');
+			$btn.addClass('x--pending');
 			LJ.api.deleteMyAccount()
 				.then( LJ.ui.shadeModal )
 				.then(function(){
@@ -485,7 +485,7 @@
 
 				})
 				.catch(function(){
-					$btn.removeClass('--pending');
+					$btn.removeClass('x--pending');
 					LJ.ui.hideModal()
 						.then(function(){
 							LJ.ui.showToast("Une erreur s'est produite, nous avons été notifié", "error" );

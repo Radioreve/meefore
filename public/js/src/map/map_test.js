@@ -22,7 +22,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			var latlng = LJ.map.test.places[ i ];
 
 			LJ.map.addBeforeMarker({
-				_id    : i + '--' + LJ.generateId(),
+				_id    : i + 'x--' + LJ.generateId(),
 				address: {
 					place_id : 'lol',
 					'lat'    : latlng.lat,

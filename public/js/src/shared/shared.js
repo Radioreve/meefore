@@ -11,7 +11,7 @@
 		},
 		handleDomEvents: function(){
 
-			$('.menu-item.--shared').one('click', LJ.shared.handleShareClicked );
+			$('.menu-item.x--shared').one('click', LJ.shared.handleShareClicked );
 			LJ.ui.$body.on('click', '.js-share-profile', LJ.shared.handleShareProfile );
 			LJ.ui.$body.on('keydown', '.modal-search__input input', LJ.ui.filterModalResults );
 			LJ.ui.$body.on('click', '.shared__item', LJ.shared.handleSharedItemClicked )
@@ -218,7 +218,7 @@
 			return LJ.ui.render([
 
 				'<div class="empty">',
-					'<div class="empty__icon --round-icon">',
+					'<div class="empty__icon x--round-icon">',
 						'<i class="icon icon-users"></i>',
 					'</div>',
 					'<div class="empty__title">',
@@ -244,7 +244,7 @@
 					'<div class="row-date date">' + formatted_date + '</div>',
 					'<div class="row-pic">',
 						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-forward"></i></div>',
+						'<div class="row-pic__icon x--round-icon"><i class="icon icon-forward"></i></div>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',
@@ -276,7 +276,7 @@
 					'<div class="row-date date">' + formatted_date + '</div>',
 					'<div class="row-pic">',
 						'<div class="row-pic__image">' + rosace_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-forward"></i></div>',
+						'<div class="row-pic__icon x--round-icon"><i class="icon icon-forward"></i></div>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',
@@ -296,7 +296,7 @@
 			var friend = LJ.friends.getFriendProfile( sho.shared_by );
 
 			var subtitle = [
-				'<div class="row-body__icon --round-icon">',
+				'<div class="row-body__icon x--round-icon">',
 					'<i class="icon icon-pricetag"></i>',
 				'</div>',
 				'<h4>',
@@ -321,7 +321,7 @@
 			var names = LJ.renderMultipleNames( _.map( friends, 'name') );
 
 			var subtitle = [
-				'<div class="row-body__icon --round-icon">',
+				'<div class="row-body__icon x--round-icon">',
 					'<i class="icon icon-forward"></i>',
 				'</div>',
 				'<h4>',
@@ -341,7 +341,7 @@
 			var friend = LJ.friends.getFriendProfile( sho.shared_by );
 
 			var subtitle = [
-				'<div class="row-body__icon --round-icon">',
+				'<div class="row-body__icon x--round-icon">',
 					'<i class="icon icon-pricetag"></i>',
 				'</div>',
 				'<h4>',
@@ -366,7 +366,7 @@
 			var names = LJ.renderMultipleNames( _.map( friends, 'name') );
 
 			var subtitle = [
-				'<div class="row-body__icon --round-icon">',
+				'<div class="row-body__icon x--round-icon">',
 					'<i class="icon icon-forward"></i>',
 				'</div>',
 				'<h4>',
@@ -393,7 +393,7 @@
 				"attributes"	: [{ name: "item-id", val: target_id }],
 				"subtitle"		: LJ.text('modal_share_subtitle_profile'),
 				"body"  		: LJ.friends.renderFriendsInModal(),
-				"footer"		: "<button class='--rounded'><i class='icon icon-forward'></i></button>"
+				"footer"		: "<button class='x--rounded'><i class='icon icon-forward'></i></button>"
 			})
 			.then(function(){
 				return LJ.ui.getModalItemIds();

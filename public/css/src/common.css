@@ -51,16 +51,16 @@ button:hover {
     font-family: 'Open sans';
 }
 
-.--round-icon {
+.x--round-icon {
     display: flex;
     border-radius: 1000px;
 }
 
-.--round-icon i {
+.x--round-icon i {
     margin: auto;
 }
 
-.--mb {
+.x--mb {
     display: none;
 }
 
@@ -87,7 +87,7 @@ button:hover {
     display: flex;
 }
 
-.app-section.--search {
+.app-section.x--search {
     top: -2px;
     position: relative;
     flex-flow: column nowrap;
@@ -147,7 +147,7 @@ button:hover {
     margin: auto;
 }
 
-.row-pic.--invite-friends {
+.row-pic.x--invite-friends {
     font-size: 50px;
     background: #7b4cbb;
     border-radius: 100px;
@@ -328,17 +328,17 @@ button:hover {
     transition: all ease-in-out .2s;
 }
 
-.toggle.--active {
+.toggle.x--active {
     background: #1B69EC;
     border-color: #1B69EC;
 }
 
-.toggle.--active .toggle__button {
+.toggle.x--active .toggle__button {
     margin-left: 42%;
     box-shadow: 1px 1px 3px #616161;
 }
 
-.toggle.--active .toggle__background {
+.toggle.x--active .toggle__background {
     height: 0%;
     width: 0%;
     opacity: 0;
@@ -541,7 +541,7 @@ button:hover {
     color: #eee;
 }
 
-.app-lang:hover .app-lang__flag-icons i.--active {
+.app-lang:hover .app-lang__flag-icons i.x--active {
     opacity: 1;
 }
 
@@ -573,7 +573,7 @@ button:hover {
     opacity: .75;
 }
 
-.app-lang__flag-icons i.--active {
+.app-lang__flag-icons i.x--active {
     display: block;
 }
 
@@ -627,11 +627,11 @@ button:hover {
     opacity: 1;
 }
 
-.change-lang__choice.--active {
+.change-lang__choice.x--active {
     border-bottom: 3px solid #1b69ec;
 }
 
-.change-lang__choice.--active i {
+.change-lang__choice.x--active i {
     opacity: 1
 }
 
@@ -642,16 +642,16 @@ button:hover {
     /* border-radius: 10px 0 10px 0; */
 }
 
-.change-lang__choice.--unavailable {
+.change-lang__choice.x--unavailable {
     cursor: not-allowed;
     opacity: .8;
 }
 
-.change-lang__choice.--unavailable i {
+.change-lang__choice.x--unavailable i {
     cursor: not-allowed;
 }
 
-.change-lang__choice.--unavailable i {
+.change-lang__choice.x--unavailable i {
     opacity: .2;
 }
 
@@ -674,11 +674,11 @@ button:hover {
     border-radius: 100px;
 }
 
-.user-gender.--male {
+.user-gender.x--male {
     background: #3fb3c6;
 }
 
-.user-gender.--female {
+.user-gender.x--female {
     background: rgb(213, 93, 140);
 }
 
@@ -960,7 +960,7 @@ button:hover {
     position: relative;
 }
 
-.app-nav.--thumbnail {
+.app-nav.x--thumbnail {
     width: 130px;
     position: absolute;
     left: -130px;
@@ -977,7 +977,7 @@ button:hover {
     display: inline-block;
     font-size: 16px;
     width: 60px;
-    height: 54px;
+    height: 52px;
     text-align: center;
     position: relative;
     outline: none;
@@ -988,11 +988,11 @@ button:hover {
     color: #696969;
 }
 
-.app__menu-item.--active {
+.app__menu-item.x--active {
     background: black;
 }
 
-.app__menu-item.--active .app__menu-icon {
+.app__menu-item.x--active .app__menu-icon {
     color: white;
 }
 
@@ -1043,7 +1043,7 @@ button:hover {
    
 */
 
-.--online {
+.x--online {
     background: #6ae74f;
     opacity: 1;
 }
@@ -1125,7 +1125,7 @@ button:hover {
     display: flex;
 }
 
-.curtain.--light {
+.curtain.x--light {
     background: #fff;
 }
 
@@ -1145,7 +1145,7 @@ button:hover {
     flex-flow: column nowrap;
 }
 
-.modal.--facebook {
+.modal.x--facebook {
     padding: 10px 30px;
 }
 
@@ -1210,7 +1210,7 @@ button:hover {
 
 .modal__close i {}
 
-.modal-footer button.--rounded {
+.modal-footer button.x--rounded {
     width: 70px;
     height: 70px;
     border-radius: 100px;
@@ -1219,24 +1219,24 @@ button:hover {
     border: 4px solid;
 }
 
-.modal.--share button,
-.modal.--be-create button,
-.modal.--request button {
+.modal.x--share button,
+.modal.x--be-create button,
+.modal.x--request button {
     background: #1B69EC;
     color: white;
     border: 4px solid #1B69EC;
 }
 
-.modal.--logout button {
+.modal.x--logout button {
     color: #1b69ec;
     transform: scale(0.75);
 }
 
-.modal.--logout button i {
+.modal.x--logout button i {
     font-size: 28px;
 }
 
-.modal-footer button.--squared {}
+.modal-footer button.x--squared {}
 
 .modal__loader {
     margin: auto;
@@ -1265,11 +1265,11 @@ button:hover {
     font-size: 30px;
 }
 
-.modal.--facebook:not(.--active) .modal-footer {
+.modal.x--facebook:not(.x--active) .modal-footer {
     opacity: .2;
 }
 
-.modal.--facebook:not(.--active) button {
+.modal.x--facebook:not(.x--active) button {
     color: #919191;
     cursor: default;
 }
@@ -1302,7 +1302,7 @@ button:hover {
     margin: auto;
 }
 
-.modal__facebook-picture.--active .modal__picture-icon {
+.modal__facebook-picture.x--active .modal__picture-icon {
     display: flex;
 }
 
@@ -1328,12 +1328,12 @@ button:hover {
     width: 100%;
 }
 
-.modal.--delete .modal-footer {
+.modal.x--delete .modal-footer {
     flex-flow: column;
     margin: 16px 0;
 }
 
-.modal.--delete button {
+.modal.x--delete button {
     background: #eee;
     width: 260px;
     padding: 14px 0;
@@ -1343,18 +1343,18 @@ button:hover {
     margin: 4px 0;
 }
 
-.modal.--delete button.--pending {
+.modal.x--delete button.x--pending {
     opacity: .5;
 }
 
-.modal.--delete button[data-action="confirm"] {
+.modal.x--delete button[data-action="confirm"] {
     color: #1b69ec;
     font-weight: bolder;
     background: white;
     border: 1px dashed;
 }
 
-.modal.--delete button[data-action="cancel"] {}
+.modal.x--delete button[data-action="cancel"] {}
 
 .modal-search__input {
     display: flex;
@@ -1372,23 +1372,23 @@ button:hover {
     font-size: 16px;
 }
 
-.modal.--share .modal-body {
+.modal.x--share .modal-body {
     margin-top: 0px;
 }
 
-.modal.--share .jspPane {}
+.modal.x--share .jspPane {}
 
-.modal.--share .jspDrag {}
+.modal.x--share .jspDrag {}
 
-.modal.--share .jspTrack {}
+.modal.x--share .jspTrack {}
 
-.modal.--disabled button {
+.modal.x--disabled button {
     color: white;
     border: 4px solid #eee;
     background: #eee;
 }
 
-.modal.--pending button {
+.modal.x--pending button {
     color: #eee;
     opacity: .6;
 }
@@ -1422,7 +1422,7 @@ button:hover {
     box-shadow: 0 0 14px #949494;
 }
 
-.slide.--facebook {}
+.slide.x--facebook {}
 
 .slide-content {}
 
@@ -1491,9 +1491,9 @@ button:hover {
     margin: auto;
 }
 
-.slide-footer button.--rounded {}
+.slide-footer button.x--rounded {}
 
-.slide-footer button.--squared {}
+.slide-footer button.x--squared {}
 
 .slide__loader {}
 
@@ -1649,7 +1649,7 @@ button:hover {
     overflow: hidden;
 }
 
-.--filterlay {
+.x--filterlay {
     background: rgb(228, 189, 178)!important;
 }
 
@@ -1688,7 +1688,7 @@ button:hover {
     font-weight: 700;
 }
 
-.app__menu-item.--chats .bubble {
+.app__menu-item.x--chats .bubble {
     /* background: #1b69ec; */
 }
 

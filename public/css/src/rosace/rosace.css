@@ -21,7 +21,7 @@
     transform: translate(-50%, 0);
 }
 
-.rosace__part.--left {
+.rosace__part.x--left {
     top: 0;
     left: 0;
     width: 50%;
@@ -29,7 +29,7 @@
     border-right: 1px solid white;
 }
 
-.rosace__part.--right {
+.rosace__part.x--right {
     top: 0;
     right: 0;
     background: #eee;
@@ -38,7 +38,7 @@
     border-left: 1px solid white;
 }
 
-.rosace__part.--down {
+.rosace__part.x--down {
     width: 50%;
     height: 50%;
     bottom: -2px;
@@ -48,12 +48,12 @@
     border: 2px solid white;
 }
 
-.rosace__part.--center img {
+.rosace__part.x--center img {
     position: relative;
     width: 100%;
     height: 100%;
 }
 
-.rosace__part.--down img {
+.rosace__part.x--down img {
     width: 100%;
 }

@@ -96,7 +96,7 @@
 		},
 		renderModal: function( options ){
 
-			var modifier  = '--' + options.type;
+			var modifier  = 'x--' + options.type;
 
 			if( !options.body ){
 				body_html = '';
@@ -122,7 +122,7 @@
 			var search_input_html = '';
 			var disabled = '';
 			if( options.search_input ){
-				disabled = '--disabled';
+				disabled = 'x--disabled';
 				search_input_html = LJ.ui.renderModalSearchInput();
 			}
 
@@ -181,10 +181,10 @@
 					return $('.modal-item').removeClass('nonei');
 				}
 
-				$('.modal-item:not(.--selected):not([data-name^="' + text + '"])')
+				$('.modal-item:not(.x--selected):not([data-name^="' + text + '"])')
 					.addClass('nonei');
 
-				$('.modal-item:not(.--selected)[data-name^="' + text + '"]')
+				$('.modal-item:not(.x--selected)[data-name^="' + text + '"]')
 					.removeClass('nonei');
 					
 				});	
@@ -194,24 +194,24 @@
 
 			var $s = $(this);
 			
-			if( $s.hasClass('--noselect') ){
+			if( $s.hasClass('x--noselect') ){
 				return;
 			}
 			
 			var max = $('.modal').attr('data-max-items');
-			if( max && $('.modal-item.--selected').length == parseInt( max ) && !$s.hasClass('--selected') ){
+			if( max && $('.modal-item.x--selected').length == parseInt( max ) && !$s.hasClass('x--selected') ){
 				return LJ.wlog('Already max items');
 			}
 
 			var $modal = $('.modal');
-			var $el = $('.friend-modal:not(.--selected)').first();
+			var $el = $('.friend-modal:not(.x--selected)').first();
 
-			$s.toggleClass('--selected').insertBefore( $el );
+			$s.toggleClass('x--selected').insertBefore( $el );
 
-			if( $('.modal-item.--selected').length == 0 ){
-				$modal.addClass('--disabled');
+			if( $('.modal-item.x--selected').length == 0 ){
+				$modal.addClass('x--disabled');
 			} else {
-				$modal.removeClass('--disabled');
+				$modal.removeClass('x--disabled');
 			}
 			$('.modal-search__input input').val('');
 			
@@ -230,14 +230,14 @@
 				$('.modal-footer button').click(function(){
 
 					var $modal = $('.modal');
-					if( $modal.hasClass('--disabled') ){
+					if( $modal.hasClass('x--disabled') ){
 						return;
 					} else {
-						$modal.addClass('--pending');
+						$modal.addClass('x--pending');
 					}
 
 					var item_ids = [];
-					$('.modal-item.--selected').each(function( i, itm ){
+					$('.modal-item.x--selected').each(function( i, itm ){
 						item_ids.push( $(itm).attr('data-item-id') );
 					});
 					
@@ -254,8 +254,8 @@
 			var $item = $('.modal-item[data-item-id="'+ item_id +'"]');
 
 			$item.find('.item-modal__noselect').remove(); // clear
-			$item.removeClass('--selected')
-				 .addClass('--noselect')
+			$item.removeClass('x--selected')
+				 .addClass('x--noselect')
 				 .append('<span class="item-modal__noselect">'+ message +'</span>');
 
 
@@ -355,7 +355,7 @@
 			"title": "Félicitations !",
 			"subtitle": "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
 			"body": "Then there goes the body...",
-			"footer": "<button class='--rounded'><i class='icon icon-check'></i></button>"
+			"footer": "<button class='x--rounded'><i class='icon icon-check'></i></button>"
 		});
 	};
 
@@ -366,7 +366,7 @@
 			"type"			: "facebook",
 			"title"			: "Félicitations fetch!",
 			"subtitle"		: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
-			"footer"		: "<button class='--rounded'><i class='icon icon-plus'></i></button>",
+			"footer"		: "<button class='x--rounded'><i class='icon icon-plus'></i></button>",
 
 			"fetchPromise"	: LJ.facebook.fetchProfilePictures
 

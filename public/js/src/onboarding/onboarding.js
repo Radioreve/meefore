@@ -829,7 +829,7 @@
         	fetchFacebookPictureIntro: function(){
 
         		var img_place = 0;
-                var img_id    = LJ.user._id + '--0'; //important 
+                var img_id    = LJ.user._id + 'x--0'; //important 
                 var userId    = LJ.user._id;
                 var url       = 'https://graph.facebook.com/' + LJ.user.facebook_id + '/picture?width=320&height=320';
 

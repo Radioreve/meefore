@@ -74,22 +74,22 @@
     font-weight: 500;
 }
 
-.be-create-row.--hosts {}
+.be-create-row.x--hosts {}
 
-.be-create-row.--hosts input {
+.be-create-row.x--hosts input {
     cursor: pointer;
 }
 
-.be-create-row.--date {
+.be-create-row.x--date {
     z-index: 1;
 }
 
-.be-create-row.--hour {
+.be-create-row.x--hour {
     z-index: 1;
     cursor: pointer;
 }
 
-.be-create-row.--location {}
+.be-create-row.x--location {}
 
 .be-create-row__explanations {
     font-size: 11px;
@@ -106,7 +106,7 @@
     margin-top: auto;
 }
 
-.be-create.--ready .be-create__button button {
+.be-create.x--ready .be-create__button button {
     opacity: 1;
 }
 
@@ -122,11 +122,11 @@
     border: none;
 }
 
-.be-create.--pending .be-create__button button {
+.be-create.x--pending .be-create__button button {
     opacity: .3;
 }
 
-.be-create.--pending * {}
+.be-create.x--pending * {}
 
 .hourpicker {
     background: white;

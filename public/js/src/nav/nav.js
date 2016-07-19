@@ -28,7 +28,7 @@
 		},
 		getActiveView: function(){
 
-			return $('.app__menu-item.--active').attr('data-link');
+			return $('.app__menu-item.x--active').attr('data-link');
 
 		},
 		navigate: function( target_link ){
@@ -52,8 +52,8 @@
 			LJ.nav.current_link = target_link
 
 			// Update the Header ui
-			$current_menuitem.removeClass('--active');
-			$target_menuitem.addClass('--active');
+			$current_menuitem.removeClass('x--active');
+			$target_menuitem.addClass('x--active');
 
 			// Update the header title
 			/*var duration = 220;

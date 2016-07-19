@@ -1,4 +1,4 @@
-.menu-section.--friends {}
+.menu-section.x--friends {}
 
 .friends {
     width: 100%;
@@ -32,7 +32,7 @@
     display: none;
 }
 
-.friends .--invite-friends .row-pic {
+.friends .x--invite-friends .row-pic {
     font-size: 50px;
     background: white;
     color: #1b69ec;
@@ -40,12 +40,12 @@
     border-radius: 100px;
 }
 
-.friend__item.--invite-friends h2 {
+.friend__item.x--invite-friends h2 {
     font-family: 'creamy';
     font-size: 32px;
 }
 
-.friend__item.--invite-friends i {
+.friend__item.x--invite-friends i {
     margin: auto;
 }
 
@@ -61,7 +61,7 @@
     margin: 0 14px 0;
 }
 
-.friend-modal.--noselect:hover {
+.friend-modal.x--noselect:hover {
     cursor: not-allowed;
 }
 
@@ -119,13 +119,13 @@
     border-radius: 100px;
 }
 
-.friend-modal.--selected {}
+.friend-modal.x--selected {}
 
-.friend-modal.--selected .friend-modal__icon {
+.friend-modal.x--selected .friend-modal__icon {
     background: #1B69EC;
 }
 
-.friend-modal.--selected .friend-modal__name {
+.friend-modal.x--selected .friend-modal__name {
     font-weight: 700;
 }
 

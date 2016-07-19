@@ -1,4 +1,4 @@
-.slide.--profile {
+.slide.x--profile {
     left: 0px;
     width: 350px;
 }
@@ -33,7 +33,7 @@
     height: 100%;
 }
 
-.user-pics__img.--active {}
+.user-pics__img.x--active {}
 
 .user-pics__img img {
     width: 100%;
@@ -61,7 +61,7 @@
     color: #333;
 }
 
-.user-infos__item.--base {
+.user-infos__item.x--base {
     position: absolute;
     top: -23px;
     color: white;
@@ -75,17 +75,17 @@
     font-weight: 400;
 }
 
-.user-infos__item.--base.--female {
+.user-infos__item.x--base.x--female {
     background: rgba(213, 93, 140, 0.79);
     background: rgb(213, 93, 140);
 }
 
-.user-infos__item.--base.--male {
+.user-infos__item.x--base.x--male {
     background: rgba(63, 179, 198, 0.7);
     background: rgb(63, 179, 198);
 }
  
-.user-infos__item.--base h2 {
+.user-infos__item.x--base h2 {
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 128px;
@@ -98,18 +98,18 @@
     padding-right: 3px;
 }
 
-.user-infos__item.--base comma {}
+.user-infos__item.x--base comma {}
 
-.user-infos__item.--base span {
+.user-infos__item.x--base span {
     margin-right: 4px;
     position: relative;
 }
 
-.user-infos__item.--age {
+.user-infos__item.x--age {
     font-family: 'Open Sans';
 }
 
-.user-infos__item.--location span {
+.user-infos__item.x--location span {
     color: #ccc;
     margin-left: 2px;
     font-size: .8em;
@@ -221,7 +221,7 @@
     z-index: 10;
 }
 
-.user-pics__navigate.--left {
+.user-pics__navigate.x--left {
     left: 10px;
 }
 
@@ -235,7 +235,7 @@
     opacity: .2;
 }
 
-.user-pics__navigate.--right {
+.user-pics__navigate.x--right {
     right: 10px;
 }
 

@@ -20,7 +20,7 @@
 		showSlideAndFetch: function( options ){
 
 			var uiPromise;
-			if( $('.slide.--'+ options.type ).length ){
+			if( $('.slide.x--'+ options.type ).length ){
 				uiPromise = LJ.ui.replaceSlide
 			} else {
 				uiPromise = LJ.ui.showSlide
@@ -48,7 +48,7 @@
 		replaceSlide: function( options ){
 			return LJ.promise(function( resolve, reject ){
 
-				var $l = $('.slide.--'+ options.type ).find('.slide__loader');
+				var $l = $('.slide.x--'+ options.type ).find('.slide__loader');
 				
 				$l.siblings(':not(.slide__close)').velocity('shradeOut', {
 					duration : LJ.ui.replace_slide_duration,
@@ -122,7 +122,7 @@
 			
 			opts = opts || {};
 			
-			var type = opts.type ? '.slide.--' + opts.type : '.slide';
+			var type = opts.type ? '.slide.x--' + opts.type : '.slide';
 
 			$( type ).velocity('shradeOut', {
 				duration: LJ.ui.hide_slide_duration,
@@ -136,7 +136,7 @@
 		renderSlide: function( options ){
 
 			var body_html = options.body || LJ.static.renderStaticImage('slide_loader');
-			var modifier  = '--' + options.type;
+			var modifier  = 'x--' + options.type;
 
 			var attributes = [];
 			if( options.attributes ){
@@ -178,7 +178,7 @@
 					header,
 					subheader,
 					'<section class="slide-body">',
-						'<div class="slide__close --round-icon">',
+						'<div class="slide__close x--round-icon">',
 							'<i class="icon icon-cross-fat"></i>',
 						'</div>',
 						body_html,
@@ -200,7 +200,7 @@
 			"title": "Félicitations !",
 			"subtitle": "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
 			"body": "<div> This is my super body </div>",
-			"footer": "<button class='--rounded'><i class='icon icon-check'></i></button>",
+			"footer": "<button class='x--rounded'><i class='icon icon-check'></i></button>",
 			"type": "test"
 		});
 	};

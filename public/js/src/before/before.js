@@ -22,11 +22,11 @@
 			// LJ.ui.$body.on('click', '.map__icon.js-expand-browser', LJ.map.handleShrinkBrowserDates );
 			LJ.ui.$body.on('click', '.be-create__close', LJ.before.handleHideCreateBefore );
 			LJ.ui.$body.on('click', '.be-dates__date', LJ.before.activateBrowserDate );
-			LJ.ui.$body.on('click', '.be-create.--ready .be-create__button', LJ.before.handleCreateBefore );
+			LJ.ui.$body.on('click', '.be-create.x--ready .be-create__button', LJ.before.handleCreateBefore );
 			LJ.ui.$body.on('click', '.be-inview .user-row', LJ.before.handleClickOnUserRow );
-			// LJ.ui.$body.on('click', '.be-actions__action.--share', LJ.before.handleShareBefore );
+			// LJ.ui.$body.on('click', '.be-actions__action.x--share', LJ.before.handleShareBefore );
 			LJ.ui.$body.on('click', '.js-cancel-before', LJ.before.handleCancelBefore );
-			LJ.ui.$body.on('click', '.slide.--before .js-show-options', LJ.before.showBeforeOptions );
+			LJ.ui.$body.on('click', '.slide.x--before .js-show-options', LJ.before.showBeforeOptions );
 			LJ.ui.$body.on('click', '.js-request', LJ.before.handleRequest );
 			LJ.ui.$body.on('click', '.js-request-pending', LJ.before.handleClickOnRequestPending );
 			LJ.ui.$body.on('click', '.js-request-accepted', LJ.before.handleClickOnRequestAccepted );
@@ -131,7 +131,7 @@
 		addBrowser: function(){
 
 			$('.be-browser').remove();
-			$('.app-subheader.--map')
+			$('.app-subheader.x--map')
 				.append( LJ.before.renderBrowser() );			
 
 		},
@@ -170,10 +170,10 @@
 		findActiveDateIndex: function(){
 
 			var i = 0;
-			var $bd = $('.be-dates__date.--active');
+			var $bd = $('.be-dates__date.x--active');
 			if( $bd.length > 0 ){
 				$('.be-dates__date').each(function( j, el ){
-					if( $(el).hasClass('--active') ){
+					if( $(el).hasClass('x--active') ){
 						i = j;
 					}
 				});
@@ -276,18 +276,18 @@
 		},
 		hideBrowser: function(){
 
-			if( $('.app-subheader.--map').css('opacity') != 1 ){
+			if( $('.app-subheader.x--map').css('opacity') != 1 ){
 				return;
 			}
 
-			$('.app-subheader.--map').velocity('slideUpOut', {
+			$('.app-subheader.x--map').velocity('slideUpOut', {
 				duration : 500
 			});
 
 		},
 		showBrowser: function(){
 
-			var is_browser_visible   = $('.app-subheader.--map').css('opacity') != 0 && $('.app-subheader.--map').css('display') != 'none';
+			var is_browser_visible   = $('.app-subheader.x--map').css('opacity') != 0 && $('.app-subheader.x--map').css('display') != 'none';
 			var is_slide_visible     = $('.slide').length > 0 && $('.slide').css('opacity') == '1';
 			var is_be_create_visible = $('.be-create').css('opacity') == '1';
 
@@ -296,7 +296,7 @@
 			}
 
 
-			$('.app-subheader.--map').velocity('slideDownIn', {
+			$('.app-subheader.x--map').velocity('slideDownIn', {
 				duration : 500,
 				display  : 'flex'
 			});
@@ -457,7 +457,7 @@
 
 			})
 			.then(function( before_html ){
-				$container = $('.slide.--before').find('.slide-body');
+				$container = $('.slide.x--before').find('.slide-body');
 				LJ.before.addBefore( before_html, $container );
 				$content = $container.children(':not(.slide__loader)');
 
@@ -489,7 +489,7 @@
         	var duration      = 400;
         	var $before_ghost = $( LJ.before.renderBeforeGhost() );
 
-        	$('.slide.--before')
+        	$('.slide.x--before')
         		.find('.slide__loader')
         		.velocity('shradeOut', {
         			duration: duration,
@@ -513,7 +513,7 @@
         	return LJ.ui.render([
 
         		'<div class="slide-ghost">',
-        			'<div class="slide-ghost__icon --round-icon">',
+        			'<div class="slide-ghost__icon x--round-icon">',
         				'<i class="icon icon-search-light"></i>',
         			'</div>',
         			'<div class="slide-ghost__title">',
@@ -557,7 +557,7 @@
 
 			})
 			.then(function( before_html ){
-				$container = $('.slide.--before').find('.slide-body');
+				$container = $('.slide.x--before').find('.slide-body');
 				LJ.before.addBefore( before_html, $container );
 				$content = $container.children(':not(.slide__loader)');
 
@@ -609,7 +609,7 @@
         renderCreateBefore: function(){
 
             return LJ.ui.render([
-                '<div class="map__icon --round-icon --create-before js-create-before">',
+                '<div class="map__icon x--round-icon x--create-before js-create-before">',
                     '<i class="icon icon-plus"></i>',
                 '</div>'
                 ].join(''));
@@ -675,7 +675,7 @@
 
 			return LJ.before.renderBeforeInview__Base( before, hosts, {
 
-				be_action: '<div class="be-actions__action --settings --round-icon js-show-options"><i class="icon icon-cog"></i></div>',
+				be_action: '<div class="be-actions__action x--settings x--round-icon js-show-options"><i class="icon icon-cog"></i></div>',
 				be_button: LJ.before.renderBeforeInviewBtn__Host()
 
 			});
@@ -685,7 +685,7 @@
 
 			return LJ.before.renderBeforeInview__Base( before, hosts, {
 
-				// be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
+				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
 				be_button:  LJ.before.renderBeforeInviewBtn__UserDefault()
 
 			});
@@ -695,7 +695,7 @@
 
 			return LJ.before.renderBeforeInview__Base( before, hosts, {
 
-				// be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
+				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
 				be_button:  LJ.before.renderBeforeInviewBtn__UserPending()
 
 			});
@@ -705,7 +705,7 @@
 
 			return LJ.before.renderBeforeInview__Base( before, hosts, {
 
-				// be_action: '<div class="be-actions__action --share --round-icon"><i class="icon icon-forward"></i></div>',
+				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
 				be_button:  LJ.before.renderBeforeInviewBtn__UserAccepted()
 
 			});
@@ -715,15 +715,15 @@
 			return '<div class="be-ended"><span data-lid="be_hosted"></span></div>';
 		},
 		renderBeforeInviewBtn__UserAccepted: function(){
-			return '<button class="--round-icon --accepted js-request-accepted"><i class="icon icon-chat-bubble-duo"></i></button>'
+			return '<button class="x--round-icon x--accepted js-request-accepted"><i class="icon icon-chat-bubble-duo"></i></button>'
 
 		},
 		renderBeforeInviewBtn__UserPending: function(){
-			return '<button class="--round-icon --pending js-request-pending"><i class="icon icon-pending"></i></button>'
+			return '<button class="x--round-icon x--pending js-request-pending"><i class="icon icon-pending"></i></button>'
 
 		},
 		renderBeforeInviewBtn__UserDefault: function(){
-			return '<button class="--round-icon js-request"><i class="icon icon-meedrink"></i></button>'
+			return '<button class="x--round-icon js-request"><i class="icon icon-meedrink"></i></button>'
 
 		},
 		renderBeforeInview__Base: function( before, hosts, options ){
@@ -819,7 +819,7 @@
 					'<div class="ioptions__action js-cancel-before">',
 						'<span data-lid="slide_overlay_before_cancel"></span>',
 					'</div>',
-					'<div class="ioptions__action --back js-ioptions-close">',
+					'<div class="ioptions__action x--back js-ioptions-close">',
 						'<span data-lid="slide_overlay_back"></span>',
 					'</div>',
 				'</div>'
@@ -829,7 +829,7 @@
 		},
 		showBeforeOptions: function(){
 
-			var $wrap = $('.slide.--before');
+			var $wrap = $('.slide.x--before');
 
 			if( $wrap.length != 1 ){
 				return LJ.wlog('Cannot uniquely identify the wrapper');
@@ -873,7 +873,7 @@
 				"attributes"	: [{ name: "item-id", val: target_id }],
 				"subtitle"		: LJ.text('modal_share_subtitle_before'),
 				"body"  		: LJ.friends.renderFriendsInModal(),
-				"footer"		: "<button class='--rounded'><i class='icon icon-check'></i></button>"
+				"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>"
 			})
 			.then(function(){
 				return LJ.ui.getModalItemIds();
@@ -955,7 +955,7 @@
 
 			LJ.ui.cancelify({
 
-				"$wrap"        : $('.slide.--before'),
+				"$wrap"        : $('.slide.x--before'),
 				"duration"     : 8000,
 				"message_html" : "<span>"+ LJ.text("before_just_canceled") +"</span>",
 				"callback"     : function(){

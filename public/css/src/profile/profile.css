@@ -15,7 +15,7 @@
     width: 100%;
 }
 
-.me-item.--no-edit input {
+.me-item.x--no-edit input {
     opacity: .5;
 }
 
@@ -75,8 +75,8 @@
     font-size: 11px;
 }
 
-.me-item.--active input,
-.me-item.--active textarea {
+.me-item.x--active input,
+.me-item.x--active textarea {
     border-bottom: 1px solid #1B69EC;
     padding-left: 16px;
     cursor: text;
@@ -90,6 +90,6 @@
     z-index: 1;
 }
 
-.me-item.--validating .menu-input-action {
+.me-item.x--validating .menu-input-action {
     opacity: .5!important;
 }

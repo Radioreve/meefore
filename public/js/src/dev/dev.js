@@ -13,10 +13,14 @@
 		},
 		init: function(){
 
-			Mousetrap.bind('command+c', LJ.dev.toggleColorPalette );
-			Mousetrap.bind('command+v', function(){
-				LJ.dev.toggleAppView();
-			});
+			if( LJ.app_mode == "dev" ){
+
+				Mousetrap.bind('command+c', LJ.dev.toggleColorPalette );
+				Mousetrap.bind('command+v', function(){
+					LJ.dev.toggleAppView();
+				});
+				
+			}
 
 		},
 		toggleColorPalette: function(){
@@ -28,15 +32,15 @@
 			LJ.log('Showing color palette');
 			var $div = $([
 				'<div class="palette">',
-					'<div class="palette__color --gentle"></div>',
-					'<div class="palette__color --royal"></div>',
-					'<div class="palette__color --odebo"></div>',
-					'<div class="palette__color --mushia"></div>',
-					'<div class="palette__color --purplepills"></div>',
-					'<div class="palette__color --blueboy"></div>',
-					'<div class="palette__color --pinkirl"></div>',
-					'<div class="palette__color --greenected"></div>',
-					'<div class="palette__color --validateen"></div>',
+					'<div class="palette__color x--gentle"></div>',
+					'<div class="palette__color x--royal"></div>',
+					'<div class="palette__color x--odebo"></div>',
+					'<div class="palette__color x--mushia"></div>',
+					'<div class="palette__color x--purplepills"></div>',
+					'<div class="palette__color x--blueboy"></div>',
+					'<div class="palette__color x--pinkirl"></div>',
+					'<div class="palette__color x--greenected"></div>',
+					'<div class="palette__color x--validateen"></div>',
 				'</div>'
 				].join('')
 			);

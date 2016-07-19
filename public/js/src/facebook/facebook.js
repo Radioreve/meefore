@@ -22,17 +22,23 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 		});
 
 	},
+	makeFacebookLoginUrl: function(){
+
+		var redirect_uri = document.location.href;
+		var url = 'https://www.facebook.com/dialog/oauth?response_type=token&client_id='+ facebook_app_id +'&redirect_uri='+ redirect_uri +'&scope='+ LJ.facebook.required_permissions.join(',');
+
+		return url;
+
+	},
 	fetchFacebookToken: function(){
 		return LJ.promise(function( resolve, reject ){
 
 			LJ.log('Fetching facebook token...');
 
 			// Manual loginflow for Chrome iOS
-			if( navigator.userAgent.match('CriOS') ){
+			if( /CriOS/i.test( navigator.userAgent) ){
 
-				var redirect_uri = document.location.href;
-
-			 	var url = 'https://www.facebook.com/dialog/oauth?display=popup&response_type=token&client_id='+ facebook_app_id +'&redirect_uri='+ redirect_uri +'&scope='+ LJ.facebook.required_permissions.join(',');
+				var url = LJ.facebook.makeFacebookLoginUrl();
 			 	// var url_login = 'https://www.facebook.com/login.php?skip_api_login=1&api_key=1638104993142222';
 
 			  	open( url );
@@ -229,7 +235,7 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 			"type"			: "facebook",
 			"title"			: LJ.text("mod_facebook_pictures_title"),
 			"subtitle"		: LJ.text("mod_facebook_pictures_subtitle"),
-			"footer"		: "<button class='--rounded'>" + LJ.ui.renderIcon('check') + "</button>",
+			"footer"		: "<button class='x--rounded'>" + LJ.ui.renderIcon('check') + "</button>",
 			"attributes"	: [{ name: "img-place", val: img_place }],
 
 			"fetchPromise"	: LJ.facebook.fetchProfilePictures

@@ -17,8 +17,8 @@
 			],
 			setup: function(){
 
-				var chat_id  = $('.chat-inview-item.--active').attr('data-chat-id');
-				var group_id = $('.chat-inview-item.--active').attr('data-group-id');
+				var chat_id  = $('.chat-inview-item.x--active').attr('data-chat-id');
+				var group_id = $('.chat-inview-item.x--active').attr('data-group-id');
 
 				var m = moment();
 

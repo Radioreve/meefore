@@ -32,7 +32,7 @@
 		},
 		activateMenuSection: function( section_id ){	
 
-			var current_section_id = $('.menu-item.--active').attr('data-link');
+			var current_section_id = $('.menu-item.x--active').attr('data-link');
 
 			var $menu_item_activated    = $('.menu-item[data-link="' + current_section_id + '"]');
 			var $menu_item_to_activate  = $('.menu-item[data-link="' + section_id + '"]');
@@ -42,8 +42,8 @@
 
 
 			if( !current_section_id ){
-				$menu_item_to_activate.addClass('--active');
-				return $('.app-section.--menu').find('[data-link="' + section_id + '"]').css({ 'display': 'flex' });
+				$menu_item_to_activate.addClass('x--active');
+				return $('.app-section.x--menu').find('[data-link="' + section_id + '"]').css({ 'display': 'flex' });
 			}
 
 			if( section_id == current_section_id ){
@@ -62,12 +62,12 @@
 			}
 
 			$menu_item_activated
-				.removeClass('--active')
+				.removeClass('x--active')
 				.find('.menu-item__bar')
 				.velocity('bounceOut', { duration: 450, display: 'none' });
 
 			$menu_item_to_activate
-				.addClass('--active')
+				.addClass('x--active')
 				.find('.menu-item__bar')
 				.velocity('bounceInQuick', { duration: 450, display: 'block' });
 
@@ -87,11 +87,11 @@
 
 			var current_scrolltop = LJ.ui.$window.scrollTop();
 
-			if( LJ.ui.getScrollDirection() == "down" && LJ.ui.scrolltop > LJ.menu.shrink_menu_height_limit && $('--resizing').length == 0 ){
+			if( LJ.ui.getScrollDirection() == "down" && LJ.ui.scrolltop > LJ.menu.shrink_menu_height_limit && $('x--resizing').length == 0 ){
 				LJ.menu.shrinkMenu();
 			}
 
-			if( LJ.ui.getScrollDirection() == "up" && LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit  && $('--resizing').length == 0 ){
+			if( LJ.ui.getScrollDirection() == "up" && LJ.ui.scrolltop < LJ.menu.shrink_menu_height_limit  && $('x--resizing').length == 0 ){
 				LJ.menu.expandMenu();
 			}
 
@@ -101,7 +101,7 @@
 
 			var $m = LJ.menu.$menu;
 
-			if( $m.hasClass('--downsized') ){
+			if( $m.hasClass('x--downsized') ){
 				LJ.menu.expandMenu();
 			} else {
 				LJ.menu.shrinkMenu();
@@ -112,9 +112,9 @@
 
 			var $m = LJ.menu.$menu;
 
-			if( $m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
+			if( $m.hasClass('x--downsized') || $m.hasClass('x--resizing') ) return;
 
-			$m.addClass('--resizing');
+			$m.addClass('x--resizing');
 			$m.velocity('slideUpOut', {
 				duration: LJ.menu.menu_slide_duration,
 				complete: function(){
@@ -124,14 +124,14 @@
 							duration: LJ.menu.menu_slide_duration,
 							display: 'flex',
 							complete: function(){
-								$m.removeClass('--resizing');
+								$m.removeClass('x--resizing');
 							}
 						})
 					}
 
-					$m.addClass('--downsized');
-					$m.closest('.app-section').addClass('--downsized');
-					$m.removeClass('--resizing');
+					$m.addClass('x--downsized');
+					$m.closest('.app-section').addClass('x--downsized');
+					$m.removeClass('x--resizing');
 					$m.velocity('slideDownIn', {
 						duration: LJ.menu.menu_slide_duration,
 						display: 'flex'
@@ -145,16 +145,16 @@
 
 			var $m = LJ.menu.$menu;
 
-			if( !$m.hasClass('--downsized') || $m.hasClass('--resizing') ) return;
+			if( !$m.hasClass('x--downsized') || $m.hasClass('x--resizing') ) return;
 
-			$m.addClass('--resizing');
+			$m.addClass('x--resizing');
 			$m.velocity('slideUpOut', {
 				duration: LJ.menu.menu_slide_duration,
 				complete: function(){
 
-					$m.removeClass('--resizing');
-					$m.removeClass('--downsized')
-					$m.closest('.app-section').removeClass('--downsized');
+					$m.removeClass('x--resizing');
+					$m.removeClass('x--downsized')
+					$m.closest('.app-section').removeClass('x--downsized');
 					$m.velocity('slideDownIn', {
 						duration: LJ.menu.menu_slide_duration,
 						display: 'flex'

@@ -2,7 +2,7 @@
     width: 100%;
 }
 
-.app-section.--map {
+.app-section.x--map {
     height: 100vh;
     position: relative;
     top: -2px;
@@ -20,8 +20,8 @@
     font-size: 30px;
 }
 
-.map__icon.--geoloc,
-.map__icon.--change-location {
+.map__icon.x--geoloc,
+.map__icon.x--change-location {
     bottom: 31px;
     font-size: 22px;
     cursor: pointer;
@@ -32,15 +32,15 @@
     height: 50px;
 }
 
-.map__icon.--geoloc:hover, .map__icon.--change-location:hover, .map__icon.map-zoom i:hover {
+.map__icon.x--geoloc:hover, .map__icon.x--change-location:hover, .map__icon.map-zoom i:hover {
     color: #508aea;
 }
 
-.map__icon.--change-location {
+.map__icon.x--change-location {
     right: 20px;
 }
 
-.map__icon.--create-before, .map__icon.--filter-dates {
+.map__icon.x--create-before, .map__icon.x--filter-dates {
     position: fixed;
     height: 50px;
     width: 50px;
@@ -51,7 +51,7 @@
     display: none;
 }
 
-.map__icon.--create-before {
+.map__icon.x--create-before {
     background: #1B69EC;
     padding: 2px;
     color: white;
@@ -59,22 +59,22 @@
     font-size: 24px;
 }
 
-.map__icon.--filter-dates {
+.map__icon.x--filter-dates {
     color: #1b69ec;
     right: 10px;
     display: flex;
     top: 110px;
 }
 
-.map__icon.--create-before:hover {
+.map__icon.x--create-before:hover {
     background: rgba(27, 105, 236, 0.75);
 }
 
-.map__icon.--geoloc {
+.map__icon.x--geoloc {
     left: 20px;
 }
 
-.map__icon.--location {
+.map__icon.x--location {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

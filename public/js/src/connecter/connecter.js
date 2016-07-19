@@ -30,11 +30,11 @@
 			LJ.api.fetchOnlineUsers()
 				.then(function( online_users ){
 
-					$('.js-user-online').removeClass('--online');
+					$('.js-user-online').removeClass('x--online');
 					LJ.connecter.online_users = online_users;
 					online_users.forEach(function( facebook_id ){
 
-						$('.js-user-online[data-facebook-id="'+ facebook_id +'"]').addClass('--online');
+						$('.js-user-online[data-facebook-id="'+ facebook_id +'"]').addClass('x--online');
 
 					});
 

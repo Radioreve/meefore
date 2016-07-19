@@ -92,17 +92,17 @@
     box-sizing: border-box;
 }
 
-.be-dates__date.--active .be-dates__bar {
+.be-dates__date.x--active .be-dates__bar {
     display: block;
 }
 
-.be-dates__date:not(.--active):hover {}
+.be-dates__date:not(.x--active):hover {}
 
 .be-dates__date span {
     margin-left: 4px;
 }
 
-.be-dates__date.--active {
+.be-dates__date.x--active {
     position: relative;
     color: black;
     font-weight: 700;
@@ -110,7 +110,7 @@
     border-radius: 100px;
 }
 
-.be-dates__date.--active span {}
+.be-dates__date.x--active span {}
 
 span.be-dates__offset {
     /* margin-top: 10px; */
@@ -129,13 +129,13 @@ span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;margin-b
 
 /* Before inview begin */
 
-.slide.--before {
+.slide.x--before {
     left: 0px;
     padding: 0;
     margin: 0;
 }
 
-.slide.--before .slide__close {
+.slide.x--before .slide__close {
     color: white;
 }
 
@@ -202,9 +202,9 @@ span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;margin-b
     opacity: .8;
 }
 
-.be-actions__action.--share {}
+.be-actions__action.x--share {}
 
-.be-actions__action.--share i {}
+.be-actions__action.x--share i {}
 
 .be-pictures__pic {
     width: 50%;
@@ -363,7 +363,7 @@ span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;margin-b
     display: none;
 }
 
-.user-row.--main .user-host-icon {}
+.user-row.x--main .user-host-icon {}
 
 .user-row__education {
     display: flex;
@@ -394,7 +394,7 @@ span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;margin-b
     color: white;
 }
 
-.be-request button.--pending {
+.be-request button.x--pending {
     color: white;
     border: 2px solid;
     background: #FD7124;
@@ -402,7 +402,7 @@ span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;margin-b
     color: #1b69ec;
 }
 
-.be-request button.--accepted {
+.be-request button.x--accepted {
     /* background: white; */
     /* border: 2px solid; */
     /* color: #1B69EC; */

@@ -12,8 +12,8 @@
 		},
 		handleDomEvents: function(){
 
-			$('.menu-section.--meepass').on('click', '.segment__part', LJ.meepass.refreshSegmentView );
-			$('.menu-item.--meepass').one('click', LJ.meepass.handleMeepassClicked );
+			$('.menu-section.x--meepass').on('click', '.segment__part', LJ.meepass.refreshSegmentView );
+			$('.menu-item.x--meepass').one('click', LJ.meepass.handleMeepassClicked );
 			LJ.ui.$body.on('click', '.js-send-meepass', LJ.meepass.handleSendMeepass );
 
 		},
@@ -22,10 +22,10 @@
 			var $seg = $(this);
 			var link = $seg.attr('data-link');
 
-			if( $seg.hasClass('--active') ) return;
+			if( $seg.hasClass('x--active') ) return;
 
-			$seg.siblings().removeClass('--active');
-			$seg.addClass('--active');
+			$seg.siblings().removeClass('x--active');
+			$seg.addClass('x--active');
 
 			$('.meepass').children().css({ display: 'none' });
 			$('.meepass [data-link="' + link + '"]').css({ display: 'flex' });
@@ -39,7 +39,7 @@
 					"title"		: "Félicitations !",
 					"subtitle"	: "Vous allez désormais pouvoir créer votre propre évènement privé avec vos amis.",
 					"body"  	: LJ.meepass.renderEventsInModal(),
-					"footer"	: "<button class='--rounded'><i class='icon icon-check'></i></button>"
+					"footer"	: "<button class='x--rounded'><i class='icon icon-check'></i></button>"
 				});
 
 			} else {
@@ -153,11 +153,11 @@
 									display: 'flex'
 								});
 
-					$('.menu-section.--meepass')
+					$('.menu-section.x--meepass')
 								.find('.segment__part')
-								.removeClass('--active')
+								.removeClass('x--active')
 								.first()
-								.addClass('--active');
+								.addClass('x--active');
 
 				});
 
@@ -172,7 +172,7 @@
 			return LJ.ui.render([
 
 				'<div class="empty" data-link="received">',
-					'<div class="empty__icon --round-icon">',
+					'<div class="empty__icon x--round-icon">',
 						'<i class="icon icon-meepass"></i>',
 					'</div>',
 					'<div class="empty__title">',
@@ -191,7 +191,7 @@
 			return LJ.ui.render([
 
 				'<div class="empty" data-link="sent">',
-					'<div class="empty__icon --round-icon">',
+					'<div class="empty__icon x--round-icon">',
 						'<i class="icon icon-meepass"></i>',
 					'</div>',
 					'<div class="empty__title">',
@@ -219,14 +219,14 @@
 					'<div class="row-date date">' + formatted_date + '</div>',
 					'<div class="row-pic">',
 						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
+						'<div class="row-pic__icon x--round-icon"><i class="icon icon-meepass"></i></div>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',
 							'<h2>' + LJ.text('meepass_item_title_received').replace('%name', target.name) +'</h2>',
 						'</div>',
 						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<div class="row-body__icon x--round-icon"><i class="icon icon-location"></i></div>',
 							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
 						'</div>',
 					'</div>',
@@ -249,14 +249,14 @@
 					'<div class="row-date date">' + formatted_date + '</div>',
 					'<div class="row-pic">',
 						'<div class="row-pic__image">' + img_html + '</div>',
-						'<div class="row-pic__icon --round-icon"><i class="icon icon-meepass"></i></div>',
+						'<div class="row-pic__icon x--round-icon"><i class="icon icon-meepass"></i></div>',
 					'</div>',
 					'<div class="row-body">',
 						'<div class="row-body__title">',
 							'<h2>' + LJ.text('meepass_item_title_sent').replace('%name', target.name) +'</h2>',
 						'</div>',
 						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<div class="row-body__icon x--round-icon"><i class="icon icon-location"></i></div>',
 							'<h4>' + LJ.text('meepass_item_subtitle').replace('%date',  '22/04/16' ).capitalize() + '</h4>',
 						'</div>',
 					'</div>',

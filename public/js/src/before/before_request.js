@@ -41,7 +41,7 @@
 				"subtitle"		: LJ.text('modal_request_subtitle'),
 				"body"  		: LJ.friends.renderFriendsInModal(),
 				"max_items"     : (LJ.app_settings.app.max_group - 1),
-				"footer"		: "<button class='--rounded'><i class='icon icon-check'></i></button>"
+				"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>"
 			})
 			.then(function(){
 				return LJ.before.processRequest( before_id );
@@ -68,8 +68,8 @@
 				});
 
 				$('.modal')
-					.removeClass('--pending')
-                    .addClass('--disabled')
+					.removeClass('x--pending')
+                    .addClass('x--disabled')
 					.find('.modal__search-loader').hide();
 					
 				return LJ.before.processRequest( before_id );

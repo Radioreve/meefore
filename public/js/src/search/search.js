@@ -45,7 +45,7 @@
 		handleToggleFilter: function(){
 
 			var $to = $(this);
-			$to.toggleClass('--active');
+			$to.toggleClass('x--active');
 			LJ.search.setFiltersState();
 			LJ.search.refetchAndShowMoreUsers();
 
@@ -54,7 +54,7 @@
 			
 			var data_to_fetch        = !LJ.search.all_fetched;
 			var scroll_almost_bottom = LJ.ui.getScrollRatio() > LJ.search.fetch_more_scroll_ratio;
-			var search_panel_active  = $('.app__menu-item.--search').hasClass('--active');
+			var search_panel_active  = $('.app__menu-item.x--search').hasClass('x--active');
 			var user_not_fetching    = !LJ.search.fetching_users;
 
 			if( data_to_fetch && scroll_almost_bottom && search_panel_active && user_not_fetching ){
@@ -232,7 +232,7 @@
 		},
 		renderUserBlank: function(){
 
-			return '<div class="search-user --blank"></div>';
+			return '<div class="search-user x--blank"></div>';
 
 		},
 		renderUser: function( user ){
@@ -258,7 +258,7 @@
 		            '</div>',
 		           '<div class="search-user-body">',
 		               '<div class="search-user__h1">',
-		            	  '<span class="search-user__gender user-gender js-user-gender --'+ g +'"></span>',
+		            	  '<span class="search-user__gender user-gender js-user-gender x--'+ g +'"></span>',
 		                  '<span class="name">'+ n +'</span>',
 			              '<span class="search-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
 			              '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
@@ -270,9 +270,9 @@
 		               '</div>',
 		           '</div>',
 		            '<div class="search-user__actions">',
-		              '<div class="search-user__action --round-icon --share js-share-profile"><i class="icon icon-forward"></i></div>',
+		              '<div class="search-user__action x--round-icon x--share js-share-profile"><i class="icon icon-forward"></i></div>',
 		              '<div class="search-user__splitter"></div>',
-		              '<div class="search-user__action --round-icon --meepass js-send-meepass"><i class="icon icon-meepass"></i></div>',
+		              '<div class="search-user__action x--round-icon x--meepass js-send-meepass"><i class="icon icon-meepass"></i></div>',
 		            '</div>',
 	          '</div>'
 

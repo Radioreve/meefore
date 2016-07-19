@@ -153,11 +153,11 @@
     box-sizing: border-box;
 }
 
-.chat-row.--loading {
+.chat-row.x--loading {
     opacity: .5;
 }
 
-.chat-row.--loading .chat-row-infos__name .--name {
+.chat-row.x--loading .chat-row-infos__name .x--name {
     font-weight: 500;
     color: #919191
 }
@@ -219,8 +219,8 @@
 .chat-row-date__status i {}
 .chat-row-date__day {}
 .chat-row-date__day span {}
-.chat-row-date__day .--day {}
-.chat-row-date__day .--month {
+.chat-row-date__day .x--day {}
+.chat-row-date__day .x--month {
     font-size: 10px;
     text-transform: uppercase;
 }
@@ -231,7 +231,7 @@
     margin: 3px;
 }
 .chat-row-date__hour {}
-.chat-row-date__hour .--hour {
+.chat-row-date__hour .x--hour {
     font-size: 12px;
     color: #191919;
     font-weight: 600;
@@ -268,7 +268,7 @@
 
 .chat-row-infos-name span {}
 
-.chat-row-infos__name .--name {
+.chat-row-infos__name .x--name {
     font-weight: 500;
     margin-right: 6px;
     font-size: 13.5px;
@@ -318,39 +318,39 @@
     margin: auto;
 }
 
-.chat-row.--new .chat-row__status {
+.chat-row.x--new .chat-row__status {
     color: #1B69EC;
 }
 
-.chat-row.--new.--pending .chat-row__status {
+.chat-row.x--new.x--pending .chat-row__status {
     color: #FD7124;
 }
 
-.chat-row.--new .chat-row-infos__preview {
+.chat-row.x--new .chat-row-infos__preview {
     color: #191919;
 }
 
-.chat-row.--new .chat-row-infos__name .--name {font-weight: 700;color: #191919;}
+.chat-row.x--new .chat-row-infos__name .x--name {font-weight: 700;color: #191919;}
 
-.chat-row.--new .chat-row-time span {
+.chat-row.x--new .chat-row-time span {
     font-weight: 700;
     color: #191919;
 }
 
-.chat-row.--new.--pending .chat-row-time span {
+.chat-row.x--new.x--pending .chat-row-time span {
     color: #FD7124;
 }
 
-.chat-row.--new .bubble {
+.chat-row.x--new .bubble {
     color: #1B69EC;
 }
 
-.chat-row.--new.--pending .bubble {
+.chat-row.x--new.x--pending .bubble {
     color: #FD7124;
 }
 
-.chat-row.--filtered .chat-row-date__day,
-.chat-row.--filtered .chat-row-date__status {
+.chat-row.x--filtered .chat-row-date__day,
+.chat-row.x--filtered .chat-row-date__status {
     color: #33afff;
     font-weight: 700;
 }
@@ -403,17 +403,17 @@
 
 .chat-empty__subtitle span {}
 
-.chat-empty.--hosts .chat-empty__icon,
-.chat-empty.--pending .chat-empty__icon,
-.chat-empty.--accepted .chat-empty__icon,
-.chat-empty.--team .chat-empty__icon {
+.chat-empty.x--hosts .chat-empty__icon,
+.chat-empty.x--pending .chat-empty__icon,
+.chat-empty.x--accepted .chat-empty__icon,
+.chat-empty.x--team .chat-empty__icon {
     border: 2px solid;
     height: 120px;
     width: 120px;
     margin-bottom: 20px;
 }
 
-.chat-empty.--pending .chat-empty__icon {
+.chat-empty.x--pending .chat-empty__icon {
     color: #FD7124;
 }
 
@@ -448,7 +448,7 @@
     height: 90px;
 }
 
-.chat-inview-group .be-request button.--later {
+.chat-inview-group .be-request button.x--later {
     background: #eee;
     color: #919191;
 }
@@ -457,7 +457,7 @@
     font-size: 42px;
 }
 
-.chat-inview-group .be-request button.--now {
+.chat-inview-group .be-request button.x--now {
     background: #1b69ec;
     /* background: #191919; */
 }
@@ -468,6 +468,6 @@
     font-size: 12px;
 }
 
-.chat-inview-group .be-request button.--validating {
+.chat-inview-group .be-request button.x--validating {
     opacity: .5;
 }

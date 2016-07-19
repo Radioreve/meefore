@@ -56,8 +56,8 @@
 				LJ.lang.app_language = app_language;
 
 				// Dom update
-				$('.app-lang').find('i').removeClass('--active');
-				$('.app-lang').find('[data-cc="' + app_language + '"]').addClass('--active');
+				$('.app-lang').find('i').removeClass('x--active');
+				$('.app-lang').find('[data-cc="' + app_language + '"]').addClass('x--active');
 
 				// Local storage update
 				LJ.store.set('app_language', app_language )
@@ -180,9 +180,9 @@
 						   		display: 'flex',
 						   		duration: 500
 						   })
-						   .find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('--active');
+						   .find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('x--active');
 
-						$('.change-lang__choice:not(.--unavailable)').click(function(){
+						$('.change-lang__choice:not(.x--unavailable)').click(function(){
 
 							var new_language = $( this ).attr('data-cc');
 
@@ -216,7 +216,7 @@
 
 					$curtain
 						.html( LJ.lang.renderChangeAppLang() )
-						.find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('--active');
+						.find('[data-cc="' + LJ.lang.getAppLang() + '"]').addClass('x--active');
 
 					$curtain
 						.children()
@@ -230,7 +230,7 @@
 			.then(function(){
 				return LJ.promise(function( resolve, reject ){
 
-					$('.change-lang__choice:not(.--unavailable)').click(function(){
+					$('.change-lang__choice:not(.x--unavailable)').click(function(){
 
 						var new_language = $(this).attr('data-cc');
 						if( ! LJ.lang.isLangSupported( new_language ) ){
@@ -287,7 +287,7 @@
 				'<div class="change-lang">',
 					'<div class="change-lang-available">',
 						choices.join(''),
-						'<div class="change-lang__choice --unavailable" data-cc="es">',
+						'<div class="change-lang__choice x--unavailable" data-cc="es">',
 							'<i class="flag-icon flag-icon-es"></i>',
 							'<div class="soon" data-lid="lang_soon">Prochaînement</div>',
 						'</div>',

@@ -17,8 +17,8 @@
 		},
 		handleDomEvents: function(){
 
-			$('.menu-section.--cheers').on('click', '.segment__part', LJ.cheers.handleSegmentClicked );
-			$('.menu-item.--cheers').one('click', LJ.cheers.handleCheersClicked );
+			$('.menu-section.x--cheers').on('click', '.segment__part', LJ.cheers.handleSegmentClicked );
+			$('.menu-item.x--cheers').one('click', LJ.cheers.handleCheersClicked );
 			$('.cheers').on('click', '.cheers__item', LJ.cheers.handleCheersItemClicked );
 			$('.chat').on('click', '.js-validate', LJ.cheers.handleValidate );
 			$('body').on('click', '.js-close-cheers-back', LJ.cheers.handleCloseCheersBack );
@@ -59,14 +59,14 @@
 		},
 		activateCheers: function( link ){
 
-			var $seg = $('.menu-section.--cheers').find('.segment__part[data-link="'+ link +'"]');
+			var $seg = $('.menu-section.x--cheers').find('.segment__part[data-link="'+ link +'"]');
 
-			if( $seg.hasClass('--active') ){
+			if( $seg.hasClass('x--active') ){
 				return LJ.wlog('Already activated');
 			}
 
-			$seg.siblings().removeClass('--active');
-			$seg.addClass('--active');
+			$seg.siblings().removeClass('x--active');
+			$seg.addClass('x--active');
 
 			LJ.cheers.filterCheersItems( link );
 
@@ -278,7 +278,7 @@
 		},
 		getActiveCheersType: function(){
 
-			return $('.menu-section.--cheers').find('.segment__part.--active').attr('data-link');
+			return $('.menu-section.x--cheers').find('.segment__part.x--active').attr('data-link');
 
 		},
 		renderCheersItems: function( cheers, user_profiles ){
@@ -350,7 +350,7 @@
 			return LJ.ui.render([
 
 				'<div class="empty" data-link="received">',
-					'<div class="empty__icon --round-icon">',
+					'<div class="empty__icon x--round-icon">',
 						'<i class="icon icon-meedrink"></i>',
 					'</div>',
 					'<div class="empty__title">',
@@ -369,7 +369,7 @@
 			return LJ.ui.render([
 
 				'<div class="empty" data-link="sent">',
-					'<div class="empty__icon --round-icon">',
+					'<div class="empty__icon x--round-icon">',
 						'<i class="icon icon-meedrink"></i>',
 					'</div>',
 					'<div class="empty__title">',
@@ -386,13 +386,13 @@
 		renderCheersItemIcon__Received: function( status ){
 
 			if( status == "pending" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon x--round-icon x--pending hint--left hint--rounded">',
 					'<i class="icon icon-meedrink"></i>',
 				'</div>'].join('');
 			}
 
 			if( status == "accepted" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon x--round-icon x--accepted hint--left hint--rounded">',
 					'<i class="icon icon-chat-bubble-duo"></i>',
 				'</div>'].join('');
 			}
@@ -423,7 +423,7 @@
 							'<h2>' + groupname_html +'</h2>',
 						'</div>',
 						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<div class="row-body__icon x--round-icon"><i class="icon icon-location"></i></div>',
 							'<h4>' + address + '</h4>',
 						'</div>',
 					'</div>',
@@ -435,13 +435,13 @@
 		renderCheersItemIcon__Sent: function( status ){
 
 			if( status == "pending" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon --round-icon --pending hint--left hint--rounded">',
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon x--round-icon x--pending hint--left hint--rounded">',
 					'<i class="icon icon-pending"></i>',
 				'</div>'].join('');
 			}
 
 			if( status == "accepted" ){
-				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon --round-icon --accepted hint--left hint--rounded">',
+				return [ '<div data-hint="'+ LJ.text("hint_cheers_accepted") +'" class="row-pic__icon x--round-icon x--accepted hint--left hint--rounded">',
 					'<i class="icon icon-chat-bubble-duo"></i>',
 				'</div>'].join('');
 			}
@@ -475,11 +475,11 @@
 							'<h2>' + groupname_html +'</h2>',
 						'</div>',
 						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-users"></i></div>',
+							'<div class="row-body__icon x--round-icon"><i class="icon icon-users"></i></div>',
 							'<h4>' + requested_with_html + '</h4>',
 						'</div>',
 						'<div class="row-body__subtitle">',
-							'<div class="row-body__icon --round-icon"><i class="icon icon-location"></i></div>',
+							'<div class="row-body__icon x--round-icon"><i class="icon icon-location"></i></div>',
 							'<h4>' + address + '</h4>',
 						'</div>',
 					'</div>',
@@ -678,7 +678,7 @@
 		renderChatHeaderCloseIcon: function(){
 
 			return [
-				'<div class="chat-inview__icon --close js-close-cheers-back --round-icon">',
+				'<div class="chat-inview__icon x--close js-close-cheers-back x--round-icon">',
 					'<i class="icon icon-cross-fat"></div>',
 				'</div>'
 			].join('');
@@ -692,8 +692,8 @@
 			$chat_header.append( LJ.cheers.renderChatHeaderCloseIcon() );
 
 			var formatted_date = LJ.text('chatinview_date', moment(cheers_item.begins_at) );
-			$chat_header.find('.chat-inview-title__h1').html( '<span class="--date">'+ formatted_date +'</span>' );
-			$chat_header.find('.chat-inview-title__h2').html( '<span class="--place">'+ cheers_item.place_name +'</span>' );
+			$chat_header.find('.chat-inview-title__h1').html( '<span class="x--date">'+ formatted_date +'</span>' );
+			$chat_header.find('.chat-inview-title__h2').html( '<span class="x--place">'+ cheers_item.place_name +'</span>' );
 
 		},
 		acceptifyChat: function(){
@@ -737,7 +737,7 @@
 			        	user_rows,
 			        '</div>',
 			        '<div class="cheers-back-actions">',
-			        	'<button class="--round-icon js-validate">',
+			        	'<button class="x--round-icon js-validate">',
 			        		'<i class="icon icon-meedrink"></i>',
 			        		'<span data-lid="chat_inview_validate"></span>',
 			        	'</button>',

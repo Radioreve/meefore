@@ -10,7 +10,7 @@
 
 			LJ.before.date_picker = new Pikaday({ 
 
-                field   : document.getElementsByClassName('be-create-row --date')[0],
+                field   : document.getElementsByClassName('be-create-row x--date')[0],
                 container : document.getElementsByClassName('be-create')[0],
                 i18n	: LJ.text_source[ "pikaday" ][ LJ.lang.getAppLang() ],
                 format  : 'DD/MM/YY',
@@ -25,7 +25,7 @@
 		},
 		initHourPicker: function( begin, stop, step ){
 
-			$('.be-create-row.--hour')
+			$('.be-create-row.x--hour')
 				.append( LJ.before.renderHourPicker( begin, stop, step ) );
 
 			LJ.before.hideHourPicker();
@@ -48,13 +48,13 @@
 				var lat 		= place.geometry.location.lat();
 				var lng 		= place.geometry.location.lng();
 
-				$('.be-create-row.--location')
+				$('.be-create-row.x--location')
 					.attr('data-place-id', place_id )
 					.attr('data-place-name', place_name )
 					.attr('data-lat', lat )
 					.attr('data-lng', lng );
 
-				$('.be-create-row.--location').removeClass('--unset');
+				$('.be-create-row.x--location').removeClass('x--unset');
 				LJ.before.validateInputs();
 
 			});
@@ -62,14 +62,14 @@
 		},
 		handleDomEvents__HostsPicker: function(){
 
-			LJ.ui.$body.on('click', '.be-create-row.--hosts', function(){
+			LJ.ui.$body.on('click', '.be-create-row.x--hosts', function(){
 
 				LJ.ui.showModal({
 					"type"      	: "be-create",
 					"title"			: LJ.text('modal_be_create_title'),
 					"subtitle"		: LJ.text('modal_be_create_subtitle'),
 					"body"  		: LJ.friends.renderFriendsInModal(),
-					"footer"		: "<button class='--rounded'><i class='icon icon-check'></i></button>",
+					"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>",
 					"search_input"	: true,
 					"max_items"     : (LJ.app_settings.app.max_hosts - 1),
 					"jsp_body" 	    : true
@@ -78,7 +78,7 @@
 					return LJ.ui.getModalItemIds()
 				})
 				.then(function( facebook_ids ){
-					$('.be-create-row.--hosts').attr('data-host-ids', facebook_ids.join(',') ).removeClass('--unset');
+					$('.be-create-row.x--hosts').attr('data-host-ids', facebook_ids.join(',') ).removeClass('x--unset');
 					LJ.before.validateInputs();
 					return LJ.before.addHostsNames( facebook_ids );
 
@@ -101,18 +101,18 @@
 
 				var hour = $(this).attr('data-hour');
 
-				$('.be-create-row.--hour input').val( hour );
-				$('.be-create-row.--hour')
+				$('.be-create-row.x--hour input').val( hour );
+				$('.be-create-row.x--hour')
 					.attr('data-hh', hour.split(':')[0])
 					.attr('data-mm', hour.split(':')[1]);
 
 				LJ.before.hideHourPicker();
-				$('.be-create-row.--hour').removeClass('--unset');
+				$('.be-create-row.x--hour').removeClass('x--unset');
 				LJ.before.validateInputs();
 
 			});
 
-			LJ.ui.$body.on('click', '.be-create-row.--hour input', function(){
+			LJ.ui.$body.on('click', '.be-create-row.x--hour input', function(){
 				LJ.before.showHourPicker();
 
 			});
@@ -137,7 +137,7 @@
 
                 .format('DD/MM/YY');
 
-            	$('.be-create-row.--date')
+            	$('.be-create-row.x--date')
                		.attr('data-dd', date_str.split('/')[0] )
                		.attr('data-mm', date_str.split('/')[1] )
                		.attr('data-yy', date_str.split('/')[2] )
@@ -146,7 +146,7 @@
 
             	LJ.before.date_picker.hide();
 
-            	$('.be-create-row.--date').removeClass('--unset');
+            	$('.be-create-row.x--date').removeClass('x--unset');
 				LJ.before.validateInputs();
 
             });
@@ -165,7 +165,7 @@
                 LJ.before.date_picker.hide();
             });
 
-            LJ.ui.$body.on('focus', '.be-create-row.--date input', function(){
+            LJ.ui.$body.on('focus', '.be-create-row.x--date input', function(){
                 LJ.before.date_picker.show();
             });
 
@@ -177,7 +177,7 @@
 			var names    = _.map( profiles, 'name' );
 			names = LJ.renderMultipleNames( names );
 
-			$('.be-create-row.--hosts')
+			$('.be-create-row.x--hosts')
 				.find('input')
 				.val( names );
 
@@ -244,16 +244,16 @@
 		},
 		validateInputs: function(){
 
-			var $unset = $('.be-create-row.--unset');
+			var $unset = $('.be-create-row.x--unset');
 
 			if( $unset.length == 0 ){
-				return $('.be-create').addClass('--ready');
+				return $('.be-create').addClass('x--ready');
 			}
 
 		},
 		showCreateBefore: function(){
 
-			var $i = $('.map__icon.--create-before');
+			var $i = $('.map__icon.x--create-before');
 			var $w = $('.be-create');
 			var d  = LJ.search.filters_duration || 300;
 
@@ -274,7 +274,7 @@
 		},
 		hideCreateBefore: function(){
 
-			var $i  = $('.map__icon.--create-before');
+			var $i  = $('.map__icon.x--create-before');
 			var $w  = $('.be-create');
 			var d   = LJ.search.filters_duration;
 
@@ -291,7 +291,7 @@
 		},
 		hideCreateBeforeStraight: function(){
 
-			var $i  = $('.map__icon.--create-before');
+			var $i  = $('.map__icon.x--create-before');
 			var $w  = $('.be-create');
 			var d   = LJ.search.filters_duration;
 
@@ -303,27 +303,27 @@
 		clearCreateBefore: function(){
 
 			$('.be-create__loader').remove();
-			$('.be-create').removeClass('--pending').removeClass('--ready');
-			$('.be-create-row.--hosts').addClass('--unset').find('input').val('');
-			$('.be-create-row.--date').addClass('--unset').find('input').val('');
-			$('.be-create-row.--hour').addClass('--unset').find('input').val('');
-			$('.be-create-row.--location').addClass('--unset').find('input').val('');
+			$('.be-create').removeClass('x--pending').removeClass('x--ready');
+			$('.be-create-row.x--hosts').addClass('x--unset').find('input').val('');
+			$('.be-create-row.x--date').addClass('x--unset').find('input').val('');
+			$('.be-create-row.x--hour').addClass('x--unset').find('input').val('');
+			$('.be-create-row.x--location').addClass('x--unset').find('input').val('');
 
 		},
 		readCreateAttributes: function(){
 
 			var req = {};
 
-			req.hosts_facebook_id = $('.be-create-row.--hosts').attr('data-host-ids').split(',');
+			req.hosts_facebook_id = $('.be-create-row.x--hosts').attr('data-host-ids').split(',');
 			req.hosts_facebook_id.push( LJ.user.facebook_id );
 
 			req.begins_at = moment().set({
 
-				h: $('.be-create-row.--hour').attr('data-hh'),
-				m: $('.be-create-row.--hour').attr('data-mm'),
-				D: $('.be-create-row.--date').attr('data-dd'),
-				M: parseInt( $('.be-create-row.--date').attr('data-mm') ) - 1, // month starts at 0...
-				Y: $('.be-create-row.--date').attr('data-yyyy')
+				h: $('.be-create-row.x--hour').attr('data-hh'),
+				m: $('.be-create-row.x--hour').attr('data-mm'),
+				D: $('.be-create-row.x--date').attr('data-dd'),
+				M: parseInt( $('.be-create-row.x--date').attr('data-mm') ) - 1, // month starts at 0...
+				Y: $('.be-create-row.x--date').attr('data-yyyy')
 
 			}).toISOString();
 
@@ -333,10 +333,10 @@
 
 			req.address = {
 
-				place_id   : $('.be-create-row.--location').attr('data-place-id'),
-				place_name : $('.be-create-row.--location').attr('data-place-name'),
-				lat 	   : $('.be-create-row.--location').attr('data-lat'),
-				lng 	   : $('.be-create-row.--location').attr('data-lng')
+				place_id   : $('.be-create-row.x--location').attr('data-place-id'),
+				place_name : $('.be-create-row.x--location').attr('data-place-name'),
+				lat 	   : $('.be-create-row.x--location').attr('data-lat'),
+				lng 	   : $('.be-create-row.x--location').attr('data-lng')
 
 			}
 
@@ -389,7 +389,7 @@
 		},
 		pendifyCreateBefore: function(){
 
-			$('.be-create').addClass('--pending');
+			$('.be-create').addClass('x--pending');
 			LJ.before.showCreateBeforeOverlay();
 			LJ.before.showCreateBeforeLoader();
 			
@@ -398,7 +398,7 @@
 		},
 		dependifyCreateBefore: function(){
 
-			$('.be-create').removeClass('--pending');
+			$('.be-create').removeClass('x--pending');
 			LJ.before.hideCreateBeforeLoader();
 			LJ.before.hideCreateBeforeOverlay();
 
@@ -490,7 +490,7 @@
 
 			$( LJ.before.renderCreateBefore() )
 				.hide()
-				.appendTo( $('.app-section.--map') );
+				.appendTo( $('.app-section.x--map') );
 
 		},
 		renderCreateBefore: function(){
@@ -507,8 +507,8 @@
 			        '<div class="be-create-row__subtitle">',
 			          '<h2 data-lid="be_create_subtitle_hosts"></h2>',
 			        '</div>',
-			        '<div class="be-create-row --hosts --unset">',
-			          '<div class="be-create__icon --round-icon"><i class="icon icon-star"></i></div>',
+			        '<div class="be-create-row x--hosts x--unset">',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-star"></i></div>',
 			          '<div class="be-create-row__input">',
 			            '<input readonly data-lid="be_create_hosts_placeholder"/>',
 			          '</div>',
@@ -522,20 +522,20 @@
 			        '<div class="be-create-row__subtitle">',
 			          '<h2 data-lid="be_create_subtitle_before"></h2>',
 			        '</div>',
-			        '<div class="be-create-row --date --unset">',
-			          '<div class="be-create__icon --round-icon"><i class="icon icon-calendar"></i></div>',
+			        '<div class="be-create-row x--date x--unset">',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-calendar"></i></div>',
 			          '<div class="be-create-row__input">',
 			            '<input data-lid="be_create_date_placeholder" readonly/>',
 			          '</div>',
 			        '</div>',
-			        '<div class="be-create-row --hour --unset">',
-			          '<div class="be-create__icon --round-icon"><i class="icon icon-clock"></i></div>',
+			        '<div class="be-create-row x--hour x--unset">',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-clock"></i></div>',
 			          '<div class="be-create-row__input">',
 			            '<input readonly data-lid="be_create_hour_placeholder"/>',
 			          '</div>',
 			        '</div>',
-			        '<div class="be-create-row --location --unset">',
-			          '<div class="be-create__icon --round-icon"><i class="icon icon-location"></i></div>',
+			        '<div class="be-create-row x--location x--unset">',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-location"></i></div>',
 			          '<div class="be-create-row__input">',
 			            '<input data-lid="be_create_location_placeholder" />',
 			          '</div>',

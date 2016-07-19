@@ -18,9 +18,9 @@
 		handlePictureNavigation: function(){
 
 			var $self = $(this);
-			var $picture_activated = $('.user-pics__img.--active');
+			var $picture_activated = $('.user-pics__img.x--active');
 
-			if( $self.hasClass('--right') ){
+			if( $self.hasClass('x--right') ){
 				var $picture_to_activate = $picture_activated.next();
 			} else {
 				var $picture_to_activate = $picture_activated.prev();
@@ -45,18 +45,18 @@
 			
 			$('.user-pics__navigate.out').removeClass('out').velocity('fadeIn', { duration: duration, display: 'flex' });
 
-			if( $('.user-pics__img').eq(n_pic - 1).hasClass('--active') ){
-				$('.user-pics__navigate.--right').addClass('out').velocity('fadeOut', { duration: duration });
+			if( $('.user-pics__img').eq(n_pic - 1).hasClass('x--active') ){
+				$('.user-pics__navigate.x--right').addClass('out').velocity('fadeOut', { duration: duration });
 			} 
 
-			if( $('.user-pics__img').eq( 0 ).hasClass('--active') ){
-				return $('.user-pics__navigate.--left').addClass('out').velocity('fadeOut', { duration: duration });
+			if( $('.user-pics__img').eq( 0 ).hasClass('x--active') ){
+				return $('.user-pics__navigate.x--left').addClass('out').velocity('fadeOut', { duration: duration });
 			}
 
 		},
 		activatePicture: function( img_place ){
 
-			var $picture_activated   = $('.user-pics__img.--active');
+			var $picture_activated   = $('.user-pics__img.x--active');
 			var $picture_to_activate = $('.user-pics__img[data-img-place="' + img_place + '"]');
 
 			if( $picture_activated.is( $picture_to_activate ) ){
@@ -64,12 +64,12 @@
 			}
 
 			var start_opa_1 = $picture_to_activate.css('opacity');
-			$picture_to_activate.addClass('--active').velocity({ opacity: [ 1, start_opa_1 ] }, {
+			$picture_to_activate.addClass('x--active').velocity({ opacity: [ 1, start_opa_1 ] }, {
 				duration: 300
 			});
 
 			var start_opa_2 = $picture_activated.css('opacity');
-			$picture_activated.removeClass('--active').velocity({ opacity: [ 0, start_opa_2 ] }, {
+			$picture_activated.removeClass('x--active').velocity({ opacity: [ 0, start_opa_2 ] }, {
 				duration: 300
 			});
 
@@ -103,7 +103,7 @@
 
 			})
 			.then(function( user_html ){
-				$container = $('.slide.--profile').find('.slide-body');
+				$container = $('.slide.x--profile').find('.slide-body');
 				LJ.profile_user.addUserProfile( user_html, $container );
 				$content = $container.children(':not(.slide__loader)');
 
@@ -172,24 +172,24 @@
 			return LJ.ui.render([
 				'<div class="user-profile" data-facebook-id="' + user.facebook_id + '">',
 					'<div class="user-pics js-filterlay">',
-						'<div class="user-pics__navigate --left --round-icon">',
+						'<div class="user-pics__navigate x--left x--round-icon">',
 							'<i class="icon icon-arrow-left"></i>',
 						'</div>',
-						'<div class="user-pics__navigate --right --round-icon">',
+						'<div class="user-pics__navigate x--right x--round-icon">',
 							'<i class="icon icon-arrow-right"></i>',
 						'</div>',
 						pictures_html,
 					'</div>',
 					'<div class="user-infos">',
 						'<div class="user-actions">',
-							// '<div class="user-actions__share --round-icon">',
+							// '<div class="user-actions__share x--round-icon">',
 							// 	'<i class="icon icon-forward"></i>',
 							// '</div>',
-							// '<div class="user-actions__meepass --round-icon">',
+							// '<div class="user-actions__meepass x--round-icon">',
 							// 	'<i class="icon icon-meepass"></i>',
 							// '</div>',
 						'</div>',
-						'<div class="user-infos__item --base --'+ user.gender +'">',
+						'<div class="user-infos__item x--base x--'+ user.gender +'">',
 							'<h2>' + user.name + '</h2>',
 							'<span class="comma">,</span>',
 							'<span>'+ user.age +'</span>',
@@ -199,26 +199,26 @@
 						// 	'<label data-lid="user_profile_about"></label>',
 						// 	'<div class="user-infos__title-splitter"></div>',
 						// '</div>',
-						// '<div class="user-infos__item --age">',
-						// 	'<div class="user-infos__icon --round-icon">',
+						// '<div class="user-infos__item x--age">',
+						// 	'<div class="user-infos__icon x--round-icon">',
 						// 		'<i class="icon icon-gift"></i>',
 						// 	'</div>',
 						// 	'<label>' + user.age + '</label>',
 						// '</div>',
-						'<div class="user-infos__item --job">',
-							'<div class="user-infos__icon --round-icon">',
+						'<div class="user-infos__item x--job">',
+							'<div class="user-infos__icon x--round-icon">',
 								'<i class="icon icon-education"></i>',
 							'</div>',
 							'<label>' + job + '</label>',
 						'</div>',
-						'<div class="user-infos__item --country">',
-							'<div class="user-infos__icon --round-icon">',
+						'<div class="user-infos__item x--country">',
+							'<div class="user-infos__icon x--round-icon">',
 								'<i class="icon icon-flag"></i>',
 							'</div>',
 							'<label>' + country_html + '</label>',
 						'</div>',
-						'<div class="user-infos__item --location">',
-							'<div class="user-infos__icon --round-icon">',
+						'<div class="user-infos__item x--location">',
+							'<div class="user-infos__icon x--round-icon">',
 								'<i class="icon icon-location-barred"></i>',
 							'</div>',
 							'<label>' + user.location.place_name.split(',').join('<span>') + '</span></label>',
@@ -228,8 +228,8 @@
 							'<label data-lid="user_profile_ideal_night"></label>',
 							'<div class="user-infos__title-splitter"></div>',
 						'</div>',
-						'<div class="user-infos__item --ideal-night">',
-							'<div class="user-infos__icon --round-icon">',
+						'<div class="user-infos__item x--ideal-night">',
+							'<div class="user-infos__icon x--round-icon">',
 								'<i class="icon icon-dj"></i>',
 							'</div>',
 							'<label>' + ideal_night + '</label>',
@@ -253,7 +253,7 @@
         	var duration      = 400;
         	var $user_ghost = $( LJ.profile_user.renderUserProfileGhost() );
 
-        	$('.slide.--profile')
+        	$('.slide.x--profile')
         		.find('.slide__loader')
         		.velocity('shradeOut', {
         			duration: duration,
@@ -277,7 +277,7 @@
         	return LJ.ui.render([
 
         		'<div class="slide-ghost">',
-        			'<div class="slide-ghost__icon --round-icon">',
+        			'<div class="slide-ghost__icon x--round-icon">',
         				'<i class="icon icon-search-light"></i>',
         			'</div>',
         			'<div class="slide-ghost__title">',

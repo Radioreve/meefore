@@ -67,7 +67,7 @@
 		},
 		activatePlacesInCreateBefore: function(){
 
-			var input = $('.be-create-row.--location input')[0];
+			var input = $('.be-create-row.x--location input')[0];
 			var options = {};
 
 

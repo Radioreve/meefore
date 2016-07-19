@@ -26,8 +26,8 @@
 		},
 		handleDomEvents: function(){
 
-			$('.app__menu-item.--chats').on('click', LJ.chat.handleToggleChatWrap );
-			$('.app__menu-item.--notifications').on('click', LJ.chat.hideChatWrap );
+			$('.app__menu-item.x--chats').on('click', LJ.chat.handleToggleChatWrap );
+			$('.app__menu-item.x--notifications').on('click', LJ.chat.hideChatWrap );
 			$('.chat__close').on('click', LJ.chat.hideChatWrap );
 			$('.chat').on('click', '.chat-row', LJ.chat.handleChatRowClicked );
 
@@ -343,12 +343,12 @@
 		},
 		addBubbleToChatIcon: function( n ){
 
-			LJ.ui.setBubble( $('.app__menu-item.--chats'), n );
+			LJ.ui.setBubble( $('.app__menu-item.x--chats'), n );
 
 		},
 		resetBubbleToChatIcon: function(){
 
-			LJ.ui.setBubble( $('.app__menu-item.--chats'), 0 );
+			LJ.ui.setBubble( $('.app__menu-item.x--chats'), 0 );
 
 		},
 		addBubbleToChatRow: function( chat_id ){
@@ -579,8 +579,8 @@
 						'callback'   : function( e, scroll_pose_y, is_at_top, is_at_bottom ){
 
 							if( is_at_bottom
-								&& !$w.hasClass('--fetching-history')
-								&& !$w.hasClass('--fetching-done')
+								&& !$w.hasClass('x--fetching-history')
+								&& !$w.hasClass('x--fetching-done')
 								&& !$w.find('.chat-row').length >= LJ.chat.parallel_fetches_count
 							){	
 
@@ -607,7 +607,7 @@
 						'callback'   : function( e, scroll_pose_y, is_at_top, is_at_bottom ){
 
 							// To make sure the first time usr loads the chat, no automatic refetch takes place
-							if( !$w.hasClass('--fetch-ready') ){
+							if( !$w.hasClass('x--fetch-ready') ){
 								return LJ.log('Cant fetch history, the chat is not set as ready');
 							}
 
@@ -619,9 +619,9 @@
 							}
 
 							if( is_at_top
-								&& !$w.hasClass('--fetching-history')
-								&& !$w.hasClass('--fetching-done') 
-								&& $w.find('.chat-inview-message__bubble:not(.--pending)').length >= LJ.app_settings.app.chat_fetch_count
+								&& !$w.hasClass('x--fetching-history')
+								&& !$w.hasClass('x--fetching-done') 
+								&& $w.find('.chat-inview-message__bubble:not(.x--pending)').length >= LJ.app_settings.app.chat_fetch_count
 							){
 								LJ.log('Fetching history...(inview)');
 								LJ.chat.refetchChatHistory( chat_id );
@@ -641,8 +641,8 @@
 
 			// Add chat row in a different location, based on the type
 			type == "chat_all" ? 
-				LJ.chat.addChatRow( html, _.extend( {}, opts, { $wrap: $('.chat-rows-body.--all') }) ):
-				LJ.chat.addChatRow( html, _.extend( {}, opts, { $wrap: $('.chat-rows-body.--team') }) );
+				LJ.chat.addChatRow( html, _.extend( {}, opts, { $wrap: $('.chat-rows-body.x--all') }) ):
+				LJ.chat.addChatRow( html, _.extend( {}, opts, { $wrap: $('.chat-rows-body.x--team') }) );
 
 			LJ.chat.refreshChatRowsJsp()
 			LJ.chat.loaderifyChatRow( chat_id );
@@ -911,7 +911,7 @@
 			opts = opts || {};
 
 			LJ.chat.state = 'visible';
-			$('.app__menu-item.--chats').addClass('--active');
+			$('.app__menu-item.x--chats').addClass('x--active');
 
 			LJ.ui.adjustWrapperHeight( $('.chat') );
 
@@ -936,7 +936,7 @@
 			}
 
 			LJ.chat.state = 'hidden';
-			$('.app__menu-item.--chats').removeClass('--active');
+			$('.app__menu-item.x--chats').removeClass('x--active');
 
 			$('.chat').hide();
 
@@ -1030,7 +1030,7 @@
 			var icon 	 = opts.icon  || '<i class="icon icon-chat-bubble-duo"></i>';
 
 			var img_html = [
-				'<div class="chat-empty__icon --round-icon">',
+				'<div class="chat-empty__icon x--round-icon">',
 						icon,
 					'</div>',
 			].join('');
@@ -1041,7 +1041,7 @@
 
 			return LJ.ui.render([
 
-				'<div class="chat-empty --'+ type + '">',
+				'<div class="chat-empty x--'+ type + '">',
 					'<div class="chat-empty__image">',
 						img_html,
 					'</div>',
@@ -1153,8 +1153,8 @@
 
 					LJ.chat.updateChatInviewElements( chat_id, {
 
-						header_h1  : '<span class="--date">'+ formatted_date +'</span>',
-						header_h2  : '<span class="--place-name">'+ place_name +'</span>'
+						header_h1  : '<span class="x--date">'+ formatted_date +'</span>',
+						header_h2  : '<span class="x--place-name">'+ place_name +'</span>'
 
 					});
 				});	
@@ -1289,7 +1289,7 @@
 			var $chatrow = LJ.chat.getChatRow( chat_id );
 
 			if( opts.h1 ){
-				$chatrow.find('.chat-row-infos__name .--name').text( opts.h1 );
+				$chatrow.find('.chat-row-infos__name .x--name').text( opts.h1 );
 			}
 
 			if( opts.h2 ){
@@ -1308,7 +1308,7 @@
 				$chatrow.find('.js-user-online').attr('data-facebook-id', opts.sender_id );
 
 				if( LJ.connecter.getUserStatus( opts.sender_id ) == "online" ){
-					$chatrow.find('.js-user-online').addClass('--online');
+					$chatrow.find('.js-user-online').addClass('x--online');
 				}
 			}
 
@@ -1346,17 +1346,17 @@
 					// empty of any messages. So no need to track each click on that section.
 
 					if( LJ.chat.wasNeverSeen( chat_id ) ){
-						$chatrow.addClass('--new');
+						$chatrow.addClass('x--new');
 					} else {
-						$chatrow.removeClass('--new');
+						$chatrow.removeClass('x--new');
 					}
 
 				} else {
 
 					if( last_seen_by.indexOf( LJ.user.facebook_id ) == -1 ){
-						$chatrow.addClass('--new');
+						$chatrow.addClass('x--new');
 					} else {
-						$chatrow.removeClass('--new');
+						$chatrow.removeClass('x--new');
 					}
 
 				}
@@ -1380,7 +1380,7 @@
 
 				'<div class="chat-row-infos">',
 					'<div class="chat-row-infos__name">',
-						'<span class="--name"></span>',
+						'<span class="x--name"></span>',
 						'<span class="js-user-online user-online"></span>',
 					'</div>',
 					'<div class="chat-row-infos__preview">',

@@ -1,7 +1,7 @@
 
 	window.LJ.profile = _.merge( window.LJ.profile || {}, {
 
-		$profile:   $('.menu-section.--profile'),
+		$profile:   $('.menu-section.x--profile'),
 		$pictures:  $('.pictures'),
 		$thumbnail: $('.app-thumbnail'),
 
@@ -81,7 +81,7 @@
 			var call_id   = err.call_id
 
 			if( err.namespace == 'update_profile_base' ){
-				$('[data-callid="' + call_id + '"]').removeClass('--validating'); 
+				$('[data-callid="' + call_id + '"]').removeClass('x--validating'); 
 				LJ.ui.showToast('La mise à jour na pas été effectuée', 'error');
 				return;
 			}
@@ -101,10 +101,10 @@
 			var $block = $self.closest('.me-item');
 			var $input = $block.find('input, textarea');
 
-			if( $block.hasClass('--active') || $block.hasClass('--no-edit') ){
+			if( $block.hasClass('x--active') || $block.hasClass('x--no-edit') ){
 				return;
 			} else {
-				$block.addClass('--active'); 
+				$block.addClass('x--active'); 
 			}
 
 			$input.attr( 'readonly', false );
@@ -138,8 +138,8 @@
 			var $block = $self.closest('.me-item');
 			var $input = $block.find('input, textarea');
 
-			if( $block.hasClass('--active') ){
-				$block.removeClass('--active').removeClass('--validating');
+			if( $block.hasClass('x--active') ){
+				$block.removeClass('x--active').removeClass('x--validating');
 			} else {
 				return;
 			}
@@ -182,7 +182,7 @@
 			var $block = $self.closest('.me-item');
 			var $input = $block.find('input, textarea');
 
-			if( $block.length == 0 || !$block.hasClass('--active') || $block.hasClass('--validating') ){
+			if( $block.length == 0 || !$block.hasClass('x--active') || $block.hasClass('x--validating') ){
 				return LJ.wlog('Not calling the api');
 			}
 
@@ -212,7 +212,7 @@
 				};
 			}
 
-			$block.attr( 'data-callid', call_id ).addClass('--validating');
+			$block.attr( 'data-callid', call_id ).addClass('x--validating');
 			
 			LJ.log('Updating profile...');
 			LJ.api.updateProfile( update )
@@ -242,7 +242,7 @@
 		renderPicture: function( pic ){
 
 			var img_html = LJ.pictures.makeImgHtml( pic.img_id, pic.img_version, "me" );
-			var main     = pic.is_main ? '--main' : '';
+			var main     = pic.is_main ? 'x--main' : '';
 			return LJ.ui.render([
 
 				'<div class="picture ' + main + '" data-img-place="' + pic.img_place + '" data-img-id="' + pic.img_id + '" data-img-vs="' + pic.img_version + '">',
@@ -252,10 +252,10 @@
 		            	'<div class="picture__progress-bar-bg"></div>',
 		            '</div>',
 		            '<div class="picture-icon">',
-		            	LJ.ui.renderIcon('upload', 	 	 ['picture__icon', '--upload-desktop']),
-		            	LJ.ui.renderIcon('facebook', 	 ['picture__icon', '--upload-facebook']),
-		            	LJ.ui.renderIcon('main-picture', ['picture__icon', '--mainify']),
-		            	LJ.ui.renderIcon('trash', 		 ['picture__icon', '--trash']),
+		            	LJ.ui.renderIcon('upload', 	 	 ['picture__icon', 'x--upload-desktop']),
+		            	LJ.ui.renderIcon('facebook', 	 ['picture__icon', 'x--upload-facebook']),
+		            	LJ.ui.renderIcon('main-picture', ['picture__icon', 'x--mainify']),
+		            	LJ.ui.renderIcon('trash', 		 ['picture__icon', 'x--trash']),
 		            '</div>',
 		            '<div class="picture__hashtag hashtag">',
 		            	'<span class="hashtag__hash">#</span>',

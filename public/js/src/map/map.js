@@ -50,8 +50,8 @@
         },
 		handleDomEvents: function(){
             
-			LJ.ui.$body.on('click', '.map__icon.--geoloc', LJ.map.centerMapAtUserLocation );
-			LJ.ui.$body.on('click', '.map__icon.--change-location', LJ.map.toggleMapBrowser );
+			LJ.ui.$body.on('click', '.map__icon.x--geoloc', LJ.map.centerMapAtUserLocation );
+			LJ.ui.$body.on('click', '.map__icon.x--change-location', LJ.map.toggleMapBrowser );
 
 		},
 		setupMap: function(){
@@ -110,7 +110,7 @@
         },
         setMapIcons: function(){
 
-        	$('.app-section.--map')
+        	$('.app-section.x--map')
         		.append( LJ.map.renderChangeLocation() )
         		.append( LJ.map.renderGeoLocation() )
                 .append( LJ.map.renderCreateBefore() )
@@ -121,13 +121,13 @@
         },
         setMapOverlay: function(){
 
-        	$('.app-section.--map')
+        	$('.app-section.x--map')
         		.append( LJ.map.renderMapOverlay() );
 
         },
         setMapBrowser: function(){
 
-        	$('.app-section.--map')
+        	$('.app-section.x--map')
         		.append( LJ.map.renderMapBrowser() );
 
             return LJ.seek.activatePlacesInMap()
@@ -171,12 +171,12 @@
         },
         expandBrowser: function(){
 
-            $('.map__icon.--create-before, .map__icon.--filter-dates, .be-browser' ).velocity({ 'translateY':'0' }, { duration: 300 });
+            $('.map__icon.x--create-before, .map__icon.x--filter-dates, .be-browser' ).velocity({ 'translateY':'0' }, { duration: 300 });
 
         },
         shrinkBrowser: function(){
 
-            $('.map__icon.--create-before, .map__icon.--filter-dates, .be-browser' ).velocity({ 'translateY':'-54' }, { duration: 300 });
+            $('.map__icon.x--create-before, .map__icon.x--filter-dates, .be-browser' ).velocity({ 'translateY':'-54' }, { duration: 300 });
 
         },
         handleShrinkBrowserDates: function(){
@@ -206,11 +206,11 @@
             return LJ.ui.render([
 
                 '<div class="map__icon map-zoom">',
-                    '<div class="map-zoom__in --round-icon js-map-zoom-in">',
+                    '<div class="map-zoom__in x--round-icon js-map-zoom-in">',
                         '<i class="icon icon-plus"></i>',
                     '</div>',
                     '<div class="map-zoom__splitter"></div>',
-                    '<div class="map-zoom__out --round-icon js-map-zoom-out">',
+                    '<div class="map-zoom__out x--round-icon js-map-zoom-out">',
                         '<i class="icon icon-line"></i>',
                     '</div>',
                 '</div>'
@@ -221,7 +221,7 @@
         },
         setMapZoom: function(){
 
-            $('.app-section.--map').append( LJ.map.renderMapZoom() );
+            $('.app-section.x--map').append( LJ.map.renderMapZoom() );
 
         },
         zoomIn: function(){
@@ -240,7 +240,7 @@
         },
         deactivateDate: function(){
 
-            var $date_activated = $('.be-dates__date.--active');
+            var $date_activated = $('.be-dates__date.x--active');
 
             if( $date_activated.length == 0 ){
                 return LJ.log('Already deactivated');
@@ -252,7 +252,7 @@
         },  
         activateDate: function( m ){
 
-            var $date_activated   = $('.be-dates__date.--active');
+            var $date_activated   = $('.be-dates__date.x--active');
             var $date_to_activate = $('.be-dates__date[data-day="'+ m.format('DD/MM') +'"]');
 
              if( $date_to_activate.length != 1 ){
@@ -262,19 +262,19 @@
             if( $date_activated.is( $date_to_activate ) ){
 
                  $date_activated
-                    .removeClass('--active')
+                    .removeClass('x--active')
                     .find('.be-dates__bar')
                     .velocity('bounceOut', { duration: 450, display: 'none' });
 
             } else {
 
                 $date_activated
-                    .removeClass('--active')
+                    .removeClass('x--active')
                     .find('.be-dates__bar')
                     .velocity('bounceOut', { duration: 450, display: 'none' });
 
                 $date_to_activate
-                    .addClass('--active')
+                    .addClass('x--active')
                     .find('.be-dates__bar')
                     .velocity('bounceInQuick', { duration: 450, display: 'block' });
 
@@ -353,14 +353,14 @@
 
         	var $mb = $('.map-browse');
 
-        	if( $mb.hasClass('--active') ){
+        	if( $mb.hasClass('x--active') ){
 
-        		$mb.removeClass('--active');
+        		$mb.removeClass('x--active');
         		$mb.velocity('shradeOut', { duration: 200, display: 'none' });
 
         	} else {
 
-        		$mb.addClass('--active');
+        		$mb.addClass('x--active');
         		$mb.velocity('shradeIn', { duration: 200, display: 'flex' });
 
         	}
@@ -757,7 +757,7 @@
         renderCreateBefore: function(){
 
             return LJ.ui.render([
-                '<div class="map__icon --round-icon --create-before js-create-before">',
+                '<div class="map__icon x--round-icon x--create-before js-create-before">',
                     '<i class="icon icon-create-before"></i>',
                 '</div>'
                 ].join(''));
@@ -766,7 +766,7 @@
         renderExpandBrowser: function(){
 
             return LJ.ui.render([
-                '<div class="map__icon --round-icon --filter-dates js-expand-browser">',
+                '<div class="map__icon x--round-icon x--filter-dates js-expand-browser">',
                     '<i class="icon icon-filters"></i>',
                 '</div>'
                 ].join(''));
@@ -775,7 +775,7 @@
         renderChangeLocation: function(){
 
         	return LJ.ui.render([
-        		'<div class="map__icon --round-icon --change-location js-map-change-location">',
+        		'<div class="map__icon x--round-icon x--change-location js-map-change-location">',
         			'<i class="icon icon-search-zoom"></i>',
         		'</div>'
         		].join(''));
@@ -784,7 +784,7 @@
         renderGeoLocation: function(){
 
         	return LJ.ui.render([
-        		'<div class="map__icon --round-icon --geoloc js-map-geoloc">',
+        		'<div class="map__icon x--round-icon x--geoloc js-map-geoloc">',
         			'<i class="icon icon-geoloc"></i>',
         		'</div>'
         		].join(''));
@@ -792,7 +792,7 @@
         renderPinLocation: function(){
 
         	return LJ.ui.render([
-        		'<div class="map__icon --round-icon --location js-map-location">',
+        		'<div class="map__icon x--round-icon x--location js-map-location">',
         			'<i class="icon icon-location"></i>',
         		'</div>'
         		].join(''));
@@ -816,7 +816,7 @@
         updateMarkers__byDate: function(){
 
             var active_day;
-            var $active_day = $('.be-dates__date.--active');
+            var $active_day = $('.be-dates__date.x--active');
 
             if( $active_day.length == 1 ){
                 active_day = moment( $active_day.attr('data-day'), 'DD/MM' ).dayOfYear();

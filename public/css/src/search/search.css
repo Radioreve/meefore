@@ -111,24 +111,23 @@
     border: 1px solid #eee;
 }
 
-.search-user:not(.--blank):hover {}
+.search-user:not(.x--blank):hover {}
 
-.search-user:not(.--blank):hover .search-user__pic-overlay {
+.search-user:not(.x--blank):hover .search-user__pic-overlay {
     opacity: 0.5;
 }
 
-.search-user:not(.--blank):hover .search-user__pic img {
+.search-user:not(.x--blank):hover .search-user__pic img {
     transform: scale(1.1);
 }
 
-.search-user.--blank {
+.search-user.x--blank {
     opacity: 0;
     cursor: default;
 }
 
 .search-user__pic {
     overflow: hidden;
-    width: 100%;
     position: relative;
     transition: all ease-in-out .2s;
 }
@@ -163,7 +162,8 @@
 .search-user__pic img {
     transition: all ease-in-out .2s;
     width: 100%;
-    height: auto;
+    /* height: auto; */
+    height: 100%;
 }
 
 .search-user__country {
@@ -255,11 +255,11 @@
     cursor: pointer;
 }
 
-.search-user__action.--meepass {
+.search-user__action.x--meepass {
     color: #ccc;
 }
 
-.search-user__action.--share {
+.search-user__action.x--share {
     color: #1B69EC;
 }
 
@@ -329,6 +329,8 @@
     .search-user {
         margin-right: 40px;
         padding-bottom: 36%;
+        padding-bottom: 0;
+        height: 300px;
     }
     .search-users-row {
         margin-bottom: 40px;

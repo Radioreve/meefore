@@ -50,6 +50,14 @@ window.LJ = _.merge( window.LJ || {}, {
         localStorage.setItem( key, value );
 
     },
+    isBrowserSafari: function(){
+
+        var is_safari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
+               navigator.userAgent && !navigator.userAgent.match('CriOS');
+
+        return is_safari;
+
+    },
     cacheUser: function( user ){
 
         if( !LJ.user ){
@@ -193,7 +201,7 @@ window.LJ = _.merge( window.LJ || {}, {
                 '</div>',
                 '<div class="user-row__informations">',
                   '<div class="user-row__about">',
-                    '<div class="user-gender --'+ gender +' js-user-gender"></div>',
+                    '<div class="user-gender x--'+ gender +' js-user-gender"></div>',
                     '<span class="user-name">'+ user.name +'</span>',
                     '<span class="user-comma">,</span>',
                     '<span class="user-age">'+ user.age +'</span>',
@@ -203,7 +211,7 @@ window.LJ = _.merge( window.LJ || {}, {
                     '<span class="user-online js-user-online" data-facebook-id="'+ user.facebook_id +'"></span>',
                   '</div>',
                   '<div class="user-row__education">',
-                    '<span class="user-row__education-icon --round-icon">',
+                    '<span class="user-row__education-icon x--round-icon">',
                       '<i class="icon icon-education"></i>',
                     '</span>',
                     '<span class="user-row__education-label">'+ user.job +'</span>',
@@ -238,8 +246,8 @@ window.LJ = _.merge( window.LJ || {}, {
             var $r = $( row );
             if( $r.attr('data-facebook-id') == main_user ){
 
-                $r.addClass('--main').addClass('js-main').insertBefore( $rows.first() );
-                $r.find('.user-row__pic').append('<div class="user__host --round-icon"><i class="icon icon-star"></i></div>');
+                $r.addClass('x--main').addClass('js-main').insertBefore( $rows.first() );
+                $r.find('.user-row__pic').append('<div class="user__host x--round-icon"><i class="icon icon-star"></i></div>');
             }
 
         }); 
@@ -453,7 +461,7 @@ window.LJ = _.merge( window.LJ || {}, {
 
             duration = duration || 330;
 
-            $('.search-user:not(.search-user--offset), .app-subheader.--search h2:not(.search-user--offset)').addClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 190, 0 ]}, { duration: duration });
+            $('.search-user:not(.search-user--offset), .app-subheader.x--search h2:not(.search-user--offset)').addClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 190, 0 ]}, { duration: duration });
 
         },  
         unoffsetSearchUsers: function(){

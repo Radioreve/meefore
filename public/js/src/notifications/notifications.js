@@ -16,8 +16,8 @@
 		},
 		handleDomEvents: function(){
 
-			$('.app__menu-item.--notifications').click( LJ.notifications.handleToggleNotifications );
-			$('.app__menu-item.--notifications').click( LJ.notifications.updateNotificationsSeenAt );
+			$('.app__menu-item.x--notifications').click( LJ.notifications.handleToggleNotifications );
+			$('.app__menu-item.x--notifications').click( LJ.notifications.updateNotificationsSeenAt );
 			$('.notifications-panel').on('click', '.notification', LJ.notifications.updateNotificationClickedAt );
 
 			LJ.ui.$body.on('click', LJ.notifications.handleHideNotifications );
@@ -47,13 +47,13 @@
 		},
 		resetBubbleToNotificationsIcon: function(){
 
-			var $i = $('.app__menu-item.--notifications');
+			var $i = $('.app__menu-item.x--notifications');
 			LJ.ui.setBubble( $i, 0 );
 
 		},
 		addBubbleToNotificationsIcon: function(){
 
-			var $i = $('.app__menu-item.--notifications');
+			var $i = $('.app__menu-item.x--notifications');
 			LJ.ui.bubbleUp( $i );
 
 		},
@@ -76,18 +76,18 @@
 
 			var $w = $('.notifications-panel');
 
-			$w.find('.notification').removeClass('--seen').removeClass('--clicked');
+			$w.find('.notification').removeClass('x--seen').removeClass('x--clicked');
 
 			LJ.user.notifications.forEach(function( n ){
 
 				var $n = $w.find('.notification[data-notification-id="'+ n.notification_id +'"]');
 
 				// if( n.seen_at ){
-				// 	$n.addClass('--seen');
+				// 	$n.addClass('x--seen');
 				// }
 
 				if( n.clicked_at ){
-					$n.addClass('--clicked');
+					$n.addClass('x--clicked');
 				}
 
 			});
@@ -179,8 +179,8 @@
 
 			var $t = $( e.target );
 
-			var is_not_nav_item    = !$t.closest('.app__menu-item.--notifications').length;
-			var panel_visible      = $('.notifications-panel.--active').length;
+			var is_not_nav_item    = !$t.closest('.app__menu-item.x--notifications').length;
+			var panel_visible      = $('.notifications-panel.x--active').length;
 			var is_not_panel_child = !$t.closest('.notifications-panel').length;
 			
 			if( is_not_nav_item && is_not_panel_child && panel_visible ){
@@ -217,7 +217,7 @@
 		showNotificationsPanel: function(){
 
 			var $notif = $('.notifications-panel');
-			var $icon  = $('.app__menu-item.--notifications');
+			var $icon  = $('.app__menu-item.x--notifications');
 
 			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
 
@@ -228,8 +228,8 @@
 			} else {
 
 				LJ.notifications.state = "visible";
-				$icon.addClass('--active');
-				$notif.addClass('--active').show();
+				$icon.addClass('x--active');
+				$notif.addClass('x--active').show();
 
 			}
 
@@ -241,13 +241,13 @@
 			LJ.ui.activateHtmlScroll();
 			
 			var $notif = $('.notifications-panel');
-			var $icon  = $('.app__menu-item.--notifications');
+			var $icon  = $('.app__menu-item.x--notifications');
 
 			if( LJ.notifications.state == "visible" ){
 
 				LJ.notifications.state = "hidden";
-				$icon.removeClass('--active');
-				$notif.removeClass('--active').hide();
+				$icon.removeClass('x--active');
+				$notif.removeClass('x--active').hide();
 
 			} else {
 				LJ.log('Notification panel already hidden');
@@ -474,7 +474,7 @@
 
             	return LJ.ui.render([
             		'<div class="notification js-notification-item" data-type="'+ type +'" data-notification-id="'+ notification_id +'">',
-                    	'<div class="notification__icon --round-icon"><i class="icon icon-' + icon_code + '"></i></div>',
+                    	'<div class="notification__icon x--round-icon"><i class="icon icon-' + icon_code + '"></i></div>',
                     	'<div class="notification-message">',
 	                    	'<div class="notification-message__text">' + text + '</div>',
 	                    	'<div class="notification-message__subtext">' + subtext + '</div>',

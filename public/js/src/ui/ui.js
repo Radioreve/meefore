@@ -257,7 +257,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 		return LJ.ui.render([
 				'<div class="disconnected">',
-					'<div class="disconnected__icon --round-icon">',
+					'<div class="disconnected__icon x--round-icon">',
 						'<i class="icon icon-pending"></i>',
 					'</div>',
 					'<div class="disconnected__title">',

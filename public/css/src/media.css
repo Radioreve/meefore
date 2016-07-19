@@ -22,7 +22,7 @@
         cursor: pointer!important;
     }
 
-    .--mb {
+    .x--mb {
         display: flex;
     }
     
@@ -31,12 +31,12 @@
     }
     
     .app-logout,
-    .app-subheader.--menu h3,
+    .app-subheader.x--menu h3,
     .settings-input__explanation,
     .me-item__explanation,
     .me .icon-item,
     .settings-input__icon,
-    settings-input__label.--lang {
+    settings-input__label.x--lang {
         display: none;
     }
 
@@ -45,9 +45,9 @@
     .chat,
     .slide, 
     .search-filters,
-    .menu-section.--cheers .segment,
+    .menu-section.x--cheers .segment,
     .empty,
-    .settings__button.--delete,
+    .settings__button.x--delete,
     .settings__button,
     .map-browse input
      {
@@ -57,7 +57,7 @@
     .settings-input-label {
         margin: 0;
     }
-    .app-subheader.--menu .menu-item__bar {
+    .app-subheader.x--menu .menu-item__bar {
         margin-left: 8px;
     }
     
@@ -77,7 +77,7 @@
         right: 0!important;
     }
 
-    .map__icon.--change-location {
+    .map__icon.x--change-location {
         z-index: 100;
     }
 

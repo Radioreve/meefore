@@ -100,7 +100,7 @@
 		renderBubble: function(){
 
 			return LJ.ui.render([
-				'<div class="bubble --round-icon">',
+				'<div class="bubble x--round-icon">',
 					'<div class="bubble__number"></div>',
 				'</div>'
 				].join(''));

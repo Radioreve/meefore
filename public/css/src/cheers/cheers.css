@@ -1,12 +1,12 @@
-.menu-section.--cheers {}
+.menu-section.x--cheers {}
 
-.menu-section.--cheers .menu-section-segment {}
+.menu-section.x--cheers .menu-section-segment {}
 
-.menu-section.--cheers .segment {
+.menu-section.x--cheers .segment {
     width: 500px;
 }
 
-.menu-section.--cheers .segment__part {
+.menu-section.x--cheers .segment__part {
     font-size: 13px;
 }
 
@@ -49,7 +49,7 @@
     color: #1b69ec;
 }
 
-.cheers__item.--last {
+.cheers__item.x--last {
     border-bottom: none;
 }
 
@@ -57,7 +57,7 @@
     background: #1b69ec;
 }
 
-.cheers .row-pic__icon.--pending {
+.cheers .row-pic__icon.x--pending {
     background: #fd7124;
     background: white;
     color: #1b69ec;
@@ -149,7 +149,7 @@
 .cheers-back-actions button:hover i {
     transform: rotate(20deg);
 }
-.chat-header__icon.--close {
+.chat-header__icon.x--close {
     position: absolute;
     right: 10px;
     top: 16px;

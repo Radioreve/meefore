@@ -45,7 +45,7 @@
 				// Add the input that triggers the upload to the element
 				// The element is signed serverside to allow upload to cloudinary
 				// Just use a CSS hack to display it on top of icon with opacity 0.01
-				$('.picture__icon.--upload-desktop').each(function( i, icon ){
+				$('.picture__icon.x--upload-desktop').each(function( i, icon ){
 
 					$( icon ).find('.cloudinary-fileupload').remove(); // Remove previous if existed
 
@@ -104,10 +104,10 @@
 			}
 
 			if( $tar.is('.modal-footer button') || $tar.closest('.modal-footer button').length == 1 ){
-				if( $block.hasClass('--active') ){
-					$block.removeClass('--active');
+				if( $block.hasClass('x--active') ){
+					$block.removeClass('x--active');
 					LJ.ui.hideModal();
-					var src = $('.modal__facebook-picture.--active').attr('data-img-src');
+					var src = $('.modal__facebook-picture.x--active').attr('data-img-src');
 					LJ.pictures.uploadFacebookPicture( src, img_place )
 						.then( LJ.pictures.handleUpdatePicturesSuccess );
 				}
@@ -120,15 +120,15 @@
 			var $block    = $tar.closest('.picture');
 			var img_place = $block.attr('data-img-place');
 
-			if( $tar.is('.picture__icon.--upload-facebook') ){
+			if( $tar.is('.picture__icon.x--upload-facebook') ){
 				return LJ.facebook.showFacebookPicturesInModal( img_place );
 			}
 
-			if( $tar.is('.picture__icon.--mainify') ){
+			if( $tar.is('.picture__icon.x--mainify') ){
 				return LJ.pictures.mainifyPicture( img_place );
 			}
 
-			if( $tar.is('.picture__icon.--trash') ){
+			if( $tar.is('.picture__icon.x--trash') ){
 				return LJ.pictures.deletePicture( img_place );
 			}
 
@@ -137,13 +137,13 @@
 			}
 
 			if( $tar.is('.hashtag__action-validate i') || $tar.is('.hashtag__action-validate') ){
-				if( $tar.closest('.hashtag-action').hasClass('--pending') ) return;
-				$tar.closest('.hashtag-action').addClass('--pending');
+				if( $tar.closest('.hashtag-action').hasClass('x--pending') ) return;
+				$tar.closest('.hashtag-action').addClass('x--pending');
 				return LJ.pictures.updateHashtag( img_place );
 			}
 
 			if( $tar.is('.hashtag__action-cancel i') || $tar.is('.hashtag__action-cancel') ){
-				if( $tar.closest('.hashtag-action').hasClass('--pending') ) return;
+				if( $tar.closest('.hashtag-action').hasClass('x--pending') ) return;
 				return LJ.pictures.deactivateHashtagEdit( img_place );
 			}
 
@@ -154,12 +154,12 @@
 			var $block = $pic.closest('.modal');
 			var $pic   = $pic.closest('.modal__facebook-picture');
 			
-			if( $pic.hasClass('--active') ){
-				return $block.add( $('.modal__facebook-picture') ).removeClass('--active');
+			if( $pic.hasClass('x--active') ){
+				return $block.add( $('.modal__facebook-picture') ).removeClass('x--active');
 			}
 			
-			$('.modal__facebook-picture').removeClass('--active');
-			$block.add( $pic ).addClass('--active');
+			$('.modal__facebook-picture').removeClass('x--active');
+			$block.add( $pic ).addClass('x--active');
 
 
 		},
@@ -221,9 +221,9 @@
 			$input.attr('data-restore', $input.val() );
 			$input.attr( 'readonly', false );
 
-			if( $input.hasClass('--active') ) return;
+			if( $input.hasClass('x--active') ) return;
 
-			$input.addClass('--active');
+			$input.addClass('x--active');
 
 			var css_transition = $picture.css('transition');
 			$picture.css({ transition: 'none' }).velocity({ height: parseInt( $picture.css('height') ) + 40 }, {
@@ -244,12 +244,12 @@
 			var $picture = $('.picture[data-img-place="' + img_place + '"]');
 			var $input   = $picture.find('.picture__hashtag input');
 
-			if( !$input.hasClass('--active') ) return;
+			if( !$input.hasClass('x--active') ) return;
 
 			$input.attr( 'readonly', true )
 				  .val( $input.attr('data-restore') )
 				  .attr('data-restore', null )
-				  .removeClass('--active');
+				  .removeClass('x--active');
 
 			var css_transition = $picture.css('transition');
 			$picture.find('.hashtag-action').velocity('bounceOut', { duration: LJ.ui.action_hide_duration });
@@ -307,13 +307,13 @@
 			LJ.user.pictures = pictures;
 
 			// Check if the main picture has changed
-			var $o_main_pic = $('.picture.--main');
+			var $o_main_pic = $('.picture.x--main');
 			var $n_main_pic = $('.picture[data-img-place="' + LJ.findMainPic().img_place + '"]');
 
 			if( ! $o_main_pic.is( $n_main_pic ) ){
 
-				$o_main_pic.removeClass('--main');
-				$n_main_pic.addClass('--main');
+				$o_main_pic.removeClass('x--main');
+				$n_main_pic.addClass('x--main');
 
 				// Update the thumbnail
 				var $img = $('.app-thumbnail').find('img');
@@ -333,7 +333,7 @@
 						img_version : pic.img_version
 					};
 
-					if( $pic.hasClass('--main') ){
+					if( $pic.hasClass('x--main') ){
 						LJ.pictures.replaceImage( $('.app-thumbnail').find('img'), options );
 					}
 					LJ.pictures.replaceImage( $pic.find('img'), options );
@@ -341,7 +341,7 @@
 
 				var $hashtag_input = $pic.find('.picture__hashtag input');
 				if( $hashtag_input.val() == pic.hashtag ){
-					$pic.find('.hashtag-action').removeClass('--pending');
+					$pic.find('.hashtag-action').removeClass('x--pending');
 					LJ.pictures.deactivateHashtagEdit( pic.img_place );
 					$hashtag_input.val( pic.hashtag );
 				}
@@ -431,9 +431,9 @@
 			var rosace_imgs_html = ['<div class="rosace">'];
 			imgs_html.forEach(function( img_html, i ){
 
-				var part = [ "--left", "--right", "--down" ][ i ];
+				var part = [ "x--left", "x--right", "x--down" ][ i ];
 				if( !part ) return; // Support only 3 images max
-				if( pictures.length == 1 ) part = "--center"; // Fallback to plain normal img 
+				if( pictures.length == 1 ) part = "x--center"; // Fallback to plain normal img 
 
 				rosace_imgs_html.push([
 
@@ -622,7 +622,7 @@
 				return;
 			}
 
-			if( $img_wrapper.find('.--filterlay').length != 0 ){
+			if( $img_wrapper.find('.x--filterlay').length != 0 ){
 				return;
 			}
 
@@ -630,7 +630,7 @@
 				$img_wrapper.css({ 'position': 'relative' });
 			}
 
-			$img_wrapper.append( $('<div class="pictures-overlay --filterlay"></div>') );
+			$img_wrapper.append( $('<div class="pictures-overlay x--filterlay"></div>') );
 
 		}
 

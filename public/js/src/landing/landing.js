@@ -100,7 +100,7 @@
 
 			"html": [
 					'<div class="landing">',
-					    '<div class="landing-logo --round-icon">',
+					    '<div class="landing-logo x--round-icon">',
 					      '<img src="/img/meefore-logo.png" alt="Meefore logo"></span>',
 					    '</div>',
 					    '<div class="landing-lang">',
@@ -122,7 +122,7 @@
 					        '</div>',
 					      '</div>',
 					      '<div class="landing-bullets">',
-					        '<div class="landing__bullet --active"></div>',
+					        '<div class="landing__bullet x--active"></div>',
 					        '<div class="landing__bullet"></div>',
 					        '<div class="landing__bullet"></div>',
 					        '<div class="landing__bullet"></div>',
@@ -131,6 +131,7 @@
 					      	'<h3 data-lid="landing_privacy"></h3>',
 					      '</div>',
 					      '<div class="landing-connexion">',
+					      	'<a class="js-no-popup" href="http://www.meefore.com/home"></a>',
 					        '<button class="js-login" data-lid="landing_connexion_btn"></button>',
 					      '</div>',
 					    '</div>',
