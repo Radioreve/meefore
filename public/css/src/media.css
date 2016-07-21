@@ -165,8 +165,8 @@
 
     .pika-prev,
     .pika-next {
-    width: auto;
-    background: none;
+        width: auto;
+        background: none;
     }
 
     .app-subheader.x--search {
@@ -187,7 +187,13 @@
     .disconnected__title {
         font-size: 36px;
     }
- 
+    
+    .slide {
+        top: 0!important;
+        z-index: 1000;
+        height: 100%!important;
+        overflow: scroll;
+    }
 
     
 }

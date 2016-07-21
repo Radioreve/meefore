@@ -235,7 +235,7 @@
 		// Remove from the cache the out-dated chat_ids that would stay here permanently otherwise
 		refreshLocalChats: function(){
 
-			var seen_chats = LJ.store.get('seen_chats');
+			var seen_chats = Array.isArray( LJ.store.get('seen_chats') ) ? LJ.store.get('seen_chats') : [];
 
 			_.remove( seen_chats, function( seen_chat_id ){
 				return LJ.chat.getChatIds().indexOf( seen_chat_id ) == -1;
@@ -280,7 +280,7 @@
 		},
 		wasNeverSeen: function( chat_id ){
 
-			var seen_chats = LJ.store.get('seen_chats') || [];
+			var seen_chats = Array.isArray( LJ.store.get('seen_chats') ) ? LJ.store.get('seen_chats') : [];
 
 			return seen_chats.indexOf( chat_id ) == -1 ? true : false;
 
@@ -909,7 +909,11 @@
 
 		},
 		showChatWrap: function( opts ){
-			
+				
+			if( LJ.isMobileMode() ){
+				LJ.ui.deactivateHtmlScroll();
+			}
+
 			opts = opts || {};
 
 			LJ.chat.state = 'visible';
@@ -925,12 +929,14 @@
 			var duration  = 300;
 
 			LJ.ui.shradeIn( $('.chat'), duration );
-			LJ.chat.refreshChatRowsJsp();
+			LJ.chat.refreshChatRowsJsp(); 
 
 			return LJ.delay( duration );
 
 		},
 		hideChatWrap: function(){
+
+			LJ.ui.activateHtmlScroll();
 
 			if( LJ.cheers.getActiveCheersBack() ){
 				LJ.log('Cheers back is active, resolving now');
@@ -1424,9 +1430,7 @@
 		},
 		setChatRowSeenLocal: function( chat_id ){
 
-			var seen_chats = Array.isArray( LJ.store.get('seen_chats') ) ? 
-							 LJ.store.get('seen_chats') :
-							 [];
+			var seen_chats = Array.isArray( LJ.store.get('seen_chats') ) ? LJ.store.get('seen_chats') : [];
 							 
 			seen_chats.push( chat_id );
 			LJ.store.set( 'seen_chats', _.uniq(seen_chats) );

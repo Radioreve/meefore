@@ -7,13 +7,19 @@
        	// Called as soon as the script finished loading everything
 		init: function(){
 
-			LJ.map.setupMap();
-            LJ.map.preloadMarkers();
+            try {
+    			LJ.map.setupMap();
+                LJ.map.preloadMarkers();
 
-			LJ.map.handleDomEvents();
-            LJ.map.handleMapEvents();
-			LJ.map.initPlacesServices();
-            LJ.before.displayBeforeMarkers( LJ.before.fetched_befores );
+    			LJ.map.handleDomEvents();
+                LJ.map.handleMapEvents();
+    			LJ.map.initPlacesServices();
+                LJ.before.displayBeforeMarkers( LJ.before.fetched_befores );
+                
+            } catch( e ){
+                LJ.wlog("unable to initialize the map");
+                LJ.log( e );
+            }
 
             
             return LJ.before.refreshBrowserLocation();
@@ -682,7 +688,7 @@
         },
         clearSeenMarkers: function(){
 
-            var seen_markers = LJ.store.get('seen_markers') || [];
+            var seen_markers = Array.isArray( LJ.store.get('seen_markers') ) ? LJ.store.get('seen_markers') : [];
 
             seen_markers.forEach(function( mrk_id, i ){
 
@@ -703,7 +709,7 @@
         },
         seenifyMarker: function( marker_id ){
 
-            var seen_markers = LJ.store.get('seen_markers') || [];
+            var seen_markers = Array.isArray( LJ.store.get('seen_markers') ) ? LJ.store.get('seen_markers') : [];
 
             seen_markers.push( marker_id );
             LJ.store.set( 'seen_markers', _.uniq( seen_markers ) );
@@ -711,7 +717,7 @@
         },
         hasSeenMarker: function( marker_id ){
 
-            var seen_markers = LJ.store.get('seen_markers') || [];
+            var seen_markers = Array.isArray( LJ.store.get('seen_markers') ) ? LJ.store.get('seen_markers') : [];
 
             return seen_markers.indexOf( marker_id ) != -1;
             

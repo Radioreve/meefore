@@ -221,6 +221,10 @@
 
 			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
 
+			if( LJ.isMobileMode() ){
+				LJ.ui.deactivateHtmlScroll();
+			}
+
 			if( LJ.notifications.state == "visible" ){
 
 				LJ.log('Notification panel already there');
