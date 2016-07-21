@@ -82,7 +82,8 @@
                 .then( LJ.login.terminateLoginProcess )
                 .then( LJ.onboarding.init )
                 .then( LJ.connecter.init )
-                .then( LJ.dev.init )
+                .then( LJ.dev.init );
+
 
         }
 

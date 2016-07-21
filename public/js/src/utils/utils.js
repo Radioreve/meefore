@@ -50,6 +50,13 @@ window.LJ = _.merge( window.LJ || {}, {
         localStorage.setItem( key, value );
 
     },
+    isMobileMode: function(){
+
+        var is_mobile = window.innerWidth <= 500;
+
+        return is_mobile;
+
+    },
     isBrowserSafari: function(){
 
         var is_safari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
@@ -212,7 +219,7 @@ window.LJ = _.merge( window.LJ || {}, {
                   '</div>',
                   '<div class="user-row__education">',
                     '<span class="user-row__education-icon x--round-icon">',
-                      '<i class="icon icon-education"></i>',
+                      '<i class="icon icon-education-empty"></i>',
                     '</span>',
                     '<span class="user-row__education-label">'+ user.job +'</span>',
                   '</div>',
@@ -459,12 +466,16 @@ window.LJ = _.merge( window.LJ || {}, {
         },  
         offsetSearchUsers: function( duration ){
 
+            if( LJ.isMobileMode() ) return;
+
             duration = duration || 330;
 
             $('.search-user:not(.search-user--offset), .app-subheader.x--search h2:not(.search-user--offset)').addClass('search-user--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 190, 0 ]}, { duration: duration });
 
         },  
         unoffsetSearchUsers: function(){
+
+            if( LJ.isMobileMode() ) return;
 
             try {
 
@@ -478,10 +489,14 @@ window.LJ = _.merge( window.LJ || {}, {
         },
         offsetRows: function(){
 
+            if( LJ.isMobileMode() ) return;
+
             $('.row-pic, .row-body').addClass('row--offset').css({ 'position': 'relative' }).velocity({ 'left': [ 250, 0 ]}, { duration: 330 });
 
         },
         unoffsetRows: function(){
+
+            if( LJ.isMobileMode() ) return;
 
             try {
 

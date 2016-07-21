@@ -8,13 +8,6 @@
 }
 
 
-@media (max-width: 500px) {
-
-    .modal {
-        width: 80%;
-    }
-}
-
 
 @media (max-width: 500px) {
 
@@ -27,7 +20,7 @@
     }
     
     .app-section {
-        padding-top: 20px!important;
+        padding-top: 45px!important;
     }
     
     .app-logout,
@@ -36,7 +29,10 @@
     .me-item__explanation,
     .me .icon-item,
     .settings-input__icon,
-    settings-input__label.x--lang {
+    .settings-input__label.x--lang,
+    .search-filters-section__explanations,
+    .be-dates__count,
+    .be-create-row__explanations {
         display: none;
     }
 
@@ -52,6 +48,10 @@
     .map-browse input
      {
         width: 100%!important;
+    }
+
+     .modal {
+        width: 80%;
     }
     
     .settings-input-label {
@@ -92,6 +92,102 @@
     .settings-input__label {
         font-size: 13px!important;
     }
+
+    .settings-input__label.x--settings-btn {
+        display: none;
+    }
+
+    .invite-friends-popup {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 220px;
+        flex-flow: column nowrap;
+        background: rgba(255,255,255,.8);
+    }
+    .invite-friends-popup > div {
+        margin: 10px 0;
+    }
+
+    .invite-friends-popup-message {
+        text-align: center;
+        margin: 10px 0;
+        flex-shrink: 0;
+    }
+
+    .friend__item,
+    .cheers__item {
+        padding: 0;
+    }
+
+
+    .row-pic {width: 50px;height: 50px;}
+
+    .row-body {
+        padding-left: 20px;
+    }
+    .row-body h4 {
+        max-width: 150px;
+    }
+    .row-date {
+        display: none;
+    }
+
+    .pika-single {
+        width: 100%;
+        /* left: 0!important; */
+        right: 0!important;
+        bottom: -2px;
+        top: auto!important;
+        box-sizing: border-box;
+        padding: 0;
+        transform: translate(-50%,0);
+        left: 50%!important;
+    }
+    .pika-lendar {
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .hourpicker {
+        width: 100%;
+        left: 0;
+        right: 0;
+        top: auto;
+        box-sizing: border-box;
+    }
+
+    .hourpicker-col {
+        margin: 0 2px;
+    }
+
+    .pika-prev,
+    .pika-next {
+    width: auto;
+    background: none;
+    }
+
+    .app-subheader.x--search {
+        background: rgba( 255, 255, 255, .85 );
+    }
+
+    .user-online {
+        bottom: 80px;
+        right: 10px;
+        position: absolute;
+    }
+
+    .disconnected {
+        padding: 0 10px;
+        width: 100%;
+    }
+
+    .disconnected__title {
+        font-size: 36px;
+    }
+ 
 
     
 }

@@ -10,12 +10,14 @@
     z-index: 10000000000000;
     color: white;
     right: 43%;
-}
+} 
 
 .search__title {
     font-family: 'creamy';
     font-size: 22px;
     display: none;
+    position: relative;
+    top: 2px;
 }
 
 .search-header__title {

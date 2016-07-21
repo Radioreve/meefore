@@ -370,7 +370,7 @@ span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;margin-b
     align-items: center;
     margin-top: 4px;
     color: #454545;
-    display: none;
+    /* display: none; */
 }
 
 .user-row__education-icon {

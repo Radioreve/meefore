@@ -715,7 +715,7 @@
 			return '<div class="be-ended"><span data-lid="be_hosted"></span></div>';
 		},
 		renderBeforeInviewBtn__UserAccepted: function(){
-			return '<button class="x--round-icon x--accepted js-request-accepted"><i class="icon icon-chat-bubble-duo"></i></button>'
+			return '<button class="x--round-icon x--accepted js-request-accepted"><i class="icon icon-chat-bubble-empty"></i></button>'
 
 		},
 		renderBeforeInviewBtn__UserPending: function(){

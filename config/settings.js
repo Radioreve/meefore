@@ -1,8 +1,8 @@
 
 var config = require('./config');
 
-var placeholder_img_id = "placeholder_picture2";
-var placeholder_img_vs = "1467901779";
+var placeholder_img_id = "placeholder_sketched_rounded";
+var placeholder_img_vs = "1469003035";
 var min_age            = 18;
 
 var settings = {

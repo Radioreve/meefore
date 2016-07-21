@@ -59,6 +59,8 @@
 
 				var call_started = new Date();
 
+				data.token = LJ.app_token;
+
 				$.ajax({
 
 					method: method,
@@ -66,9 +68,7 @@
 					data: data,
 					url: url,
 					beforeSend: function( req ){
-                    	req.setRequestHeader('x-access-token', LJ.app_token );
-
-                   
+                    	// req.setRequestHeader('x-access-token', LJ.app_token );
 
                 	},
 					success: function( data ){
@@ -140,6 +140,7 @@
 					fb_code  : login_params.fb_code
 
 				}).then(function( data ){
+					console.log(data);
 					LJ.facebook_id = data.facebook_id
 					LJ.app_token   = data.app_token;
 
@@ -148,20 +149,17 @@
 		},
 		fetchMe: function(){
 
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.api.get( LJ.api.me_url.replace(':user_id', LJ.facebook_id ) )
+				return LJ.api.get( LJ.api.me_url.replace(':user_id', LJ.facebook_id ) )
 
 					  .then(function( exposed ){
 							LJ.cacheUser( exposed.me );
 							LJ.app_settings = exposed.settings
 							LJ.store.set("facebook_access_token", exposed.me.facebook_access_token );
-					  		return resolve();
+					  		return;
 
 					  }, function( err ){
 					  		return reject( err );
 					  });
-			});
 		},
 		fetchMeShared: function(){
 

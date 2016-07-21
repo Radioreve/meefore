@@ -175,6 +175,8 @@ button:hover {
 .icon-meedrink {
     transform: rotate(20deg);
 }
+
+
 .row-pic__icon i {
     margin: auto;
     font-size: 13px;
@@ -225,7 +227,11 @@ button:hover {
 
 .row-body__icon i {}
 
-.row-body h4 {}
+.row-body h4 {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
 .row-body h4 span {
     font-size: 14px;
@@ -242,7 +248,7 @@ button:hover {
     padding-bottom: 5px;
 }
 
-.settings-input + .settings-input__explanation {
+.settings-item.x--no-border .settings-input__explanation {
     left: 20px;
 }
 .settings-input-label {
@@ -430,7 +436,7 @@ button:hover {
     margin: auto;
 }
 
-.empty__icon .icon-meedrink {
+.icon-meedrink, .icon-meedrink-empty {
     transform: rotate(20deg);
 }
 .empty__title {

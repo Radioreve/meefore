@@ -88,7 +88,7 @@
 
             setTimeout(function(){
                 LJ.map.refreshMap();
-            }, 1000 );
+            }, 10000 );
 
 			return;
 

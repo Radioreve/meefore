@@ -74,6 +74,10 @@
 				var $slide = $( LJ.ui.renderSlide( options ) );
 				var height = $( window ).height() - LJ.ui.slide_top;
 
+				if( LJ.isMobileMode() ){
+					LJ.ui.deactivateHtmlScroll();
+				}
+
 				$slide
 					  .hide()
 					  .appendTo('body')
@@ -85,6 +89,7 @@
 					  	complete : resolve
 					  })
 					  .on('click', '.slide__close', function(){
+					  	LJ.ui.activateHtmlScroll();
 					  	LJ.ui.hideSlide( options );
 					  	if( typeof options.complete == 'function' ) {
 					  		options.complete();
@@ -128,6 +133,7 @@
 				duration: LJ.ui.hide_slide_duration,
 				complete: function(){
 					$( this ).remove();
+
 				}
 			});
 

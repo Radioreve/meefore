@@ -48,6 +48,7 @@
     font-size: 17px;
     font-family: 'Open sans';
     cursor: pointer;
+    border-top: none;
 }
 
 .menu-section__input {

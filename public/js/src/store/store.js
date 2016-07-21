@@ -10,11 +10,20 @@
 		},
 		activateStoreMode: function(){
 
-			if( window.localStorage ){
+			try {
+				localStorage && localStorage.setItem( "local", "storage" );
+				LJ.log("Local storage is supported");
 				LJ.store.mode = "localstorage";
-			} else {
+			} catch( e ){
+				LJ.wlog("Local storage is not supported");
 				LJ.store.mode = "cookie";
 			}
+
+			// if( window.localStorage ){
+			// 	LJ.store.mode = "localstorage";
+			// } else {
+			// 	LJ.store.mode = "cookie";
+			// }
 
 		},
 		changeStoreMode: function( new_mode ){

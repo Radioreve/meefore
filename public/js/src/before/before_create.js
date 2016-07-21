@@ -260,6 +260,10 @@
 			LJ.before.clearCreateBefore();
 			LJ.ui.adjustWrapperHeight( $('.be-create') );
 
+			if( LJ.isMobileMode() ){
+				LJ.ui.deactivateHtmlScroll();
+			}
+
 			$i.velocity('shradeOut', {
 				duration : d,
 				display  : 'none'
@@ -285,6 +289,7 @@
 
 			LJ.delay( d )
 				.then(function(){
+					LJ.ui.activateHtmlScroll();
 					return LJ.ui.shradeIn( $i, d );
 				});
 
@@ -508,7 +513,7 @@
 			          '<h2 data-lid="be_create_subtitle_hosts"></h2>',
 			        '</div>',
 			        '<div class="be-create-row x--hosts x--unset">',
-			          '<div class="be-create__icon x--round-icon"><i class="icon icon-star"></i></div>',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-star-empty"></i></div>',
 			          '<div class="be-create-row__input">',
 			            '<input readonly data-lid="be_create_hosts_placeholder"/>',
 			          '</div>',
@@ -523,19 +528,19 @@
 			          '<h2 data-lid="be_create_subtitle_before"></h2>',
 			        '</div>',
 			        '<div class="be-create-row x--date x--unset">',
-			          '<div class="be-create__icon x--round-icon"><i class="icon icon-calendar"></i></div>',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-calendar-empty"></i></div>',
 			          '<div class="be-create-row__input">',
 			            '<input data-lid="be_create_date_placeholder" readonly/>',
 			          '</div>',
 			        '</div>',
 			        '<div class="be-create-row x--hour x--unset">',
-			          '<div class="be-create__icon x--round-icon"><i class="icon icon-clock"></i></div>',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-clock-empty"></i></div>',
 			          '<div class="be-create-row__input">',
 			            '<input readonly data-lid="be_create_hour_placeholder"/>',
 			          '</div>',
 			        '</div>',
 			        '<div class="be-create-row x--location x--unset">',
-			          '<div class="be-create__icon x--round-icon"><i class="icon icon-location"></i></div>',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-location-empty"></i></div>',
 			          '<div class="be-create-row__input">',
 			            '<input data-lid="be_create_location_placeholder" />',
 			          '</div>',

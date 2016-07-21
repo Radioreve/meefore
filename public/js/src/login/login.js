@@ -116,10 +116,11 @@
 
 			},
 			hideLoginSteps: function(){
+
+				LJ.log('Hiding login steps...');
 				return LJ.promise(function( resolve, reject ){
 
 					$('.app').removeClass('nonei');
-					$('.landing').remove();
 
 					$('.login__message, .login__progress-bar, .login__loader').velocity('shradeOut', {
 						duration: 400,
@@ -330,6 +331,7 @@
 					LJ.map.updateMarkers__byDate();
 					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
 					LJ.ui.$body.on('click', '.modal.x--logout .modal-footer button', LJ.login.logUserOut );
+					$('.multi-landing').remove();
 					
 					return
 				});	

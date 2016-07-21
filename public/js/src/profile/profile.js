@@ -6,22 +6,22 @@
 		$thumbnail: $('.app-thumbnail'),
 
 		init: function( resolve, reject ){
-			return LJ.promise(function( resolve, reject ){
 				
-				LJ.api.fetchMe()
-					.then( LJ.log("User profile fetched"))
-					.then( LJ.profile.setMyInformations )
-					.then( LJ.profile.setMyThumbnail )
-					.then( LJ.profile.setMyPictures )
-					.then( LJ.profile.setMyHashtags )
-					.then( LJ.pictures.init )
-					.then( LJ.settings.init )
-					.then( LJ.profile.handleDomEvents )
-					.then( LJ.search.initFilters )
-					.then( LJ.seek.activatePlacesInProfile )
-					.then( resolve )
+				return LJ.promise(function( resolve, reject ){
 
-			});
+					LJ.api.fetchMe()
+						.then( LJ.profile.setMyInformations )
+						.then( LJ.profile.setMyThumbnail )
+						.then( LJ.profile.setMyPictures )
+						.then( LJ.profile.setMyHashtags )
+						.then( LJ.pictures.init )
+						.then( LJ.settings.init )
+						.then( LJ.profile.handleDomEvents )
+						.then( LJ.search.initFilters )
+						.then( LJ.seek.activatePlacesInProfile )
+						.then( resolve );
+
+				});
 
 		},
 		setMyInformations: function(){

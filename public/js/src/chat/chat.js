@@ -8,7 +8,8 @@
 		fetched_chats: {},
 
 		init: function(){
-				
+			
+			LJ.log('Init chat...');
 			LJ.chat.handleDomEvents();
 			LJ.chat.setupChat();
 			
@@ -21,6 +22,7 @@
 					LJ.chat.refreshLocalChats();
 				})
 			// Non blocking promise, return now
+			LJ.log('Done');
 			return;
 
 		},
@@ -1027,7 +1029,7 @@
 			var type 	 = opts.type;
 
 			var title    = opts.title || '<span data-lid="chat_empty_title"></span>';
-			var icon 	 = opts.icon  || '<i class="icon icon-chat-bubble-duo"></i>';
+			var icon 	 = opts.icon  || '<i class="icon icon-chat-bubble-empty"></i>';
 
 			var img_html = [
 				'<div class="chat-empty__icon x--round-icon">',
@@ -1422,7 +1424,10 @@
 		},
 		setChatRowSeenLocal: function( chat_id ){
 
-			var seen_chats = LJ.store.get('seen_chats') || [];
+			var seen_chats = Array.isArray( LJ.store.get('seen_chats') ) ? 
+							 LJ.store.get('seen_chats') :
+							 [];
+							 
 			seen_chats.push( chat_id );
 			LJ.store.set( 'seen_chats', _.uniq(seen_chats) );
 

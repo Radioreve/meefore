@@ -30,9 +30,17 @@
 					tasks.push(function( done ){
 
 						// Update part
-						user.signed_up_at = user.signup_date;
-						user.signup_date  = undefined;
+						user.pictures.forEach(function( pic ){
+
+							if( /placeholder/i.test( pic.img_id ) ){
+								pic.img_id      = settings.placeholder.img_id,
+								pic.img_version = settings.placeholder.img_version
+							}
+
+						});	
 						
+						user.markModified('pictures');
+
 						user.save(function( err ){
 							if( err ) console.log('Error : ' + err );
 							console.log('user updated');
