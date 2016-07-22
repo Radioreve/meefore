@@ -252,7 +252,7 @@
 				var day  = LJ.text_source["chatinview_date_day"]["us"]( m );
 				var hour = LJ.text_source["chatinview_date_hour"]["us"]( m );
 
-				return [ day, hour ].join('');
+				return [ day, hour ].join(', ');
 
 			}
 		},
@@ -279,18 +279,6 @@
 		lang_change_subtitle: {
 			"fr": "La langue ne devrait jamais être une barrière pour sortir faire la fête.",
 			"us": "Language should never get in the way of partying. Ever."
-		},
-		lang_soon: {
-			"fr": "Prochainement",
-			"us": "Soon"
-		},
-		lang_before: {
-			"fr": "before",
-			"us": "pregame"
-		},
-		lang_profile: {
-			"fr": "profil",
-			"us": "profile"
 		},
 		menu_profile: {
 			"fr": "Profil",
@@ -1407,9 +1395,29 @@
 			"fr": "autre(s)",
 			"us": "more"
 		},
+		w_send: {
+			"fr": "Envoyer",
+			"us": "Send"
+		},
 		w_you: {
 			"fr": "vous",
 			"us": "you"
+		},
+		w_with: {
+			"fr": "avez",
+			"us": "with"
+		},
+		w_soon: {
+			"fr": "Prochainement",
+			"us": "Soon"
+		},
+		w_before: {
+			"fr": "before",
+			"us": "pregame"
+		},
+		w_profile: {
+			"fr": "profil",
+			"us": "profile"
 		},
 		w_member_since: {
 			"fr": "Membre depuis le",
@@ -2031,22 +2039,22 @@
 			"fr": "Discussion privée avec vos amis",
 			"us": "Private discussion with your friends"
 		},
-		chat_row_request_all_title: {
+		chat_row_request_all_subtitle: {
 			"fr": "Vous avez un Match !",
 			"us": "It's a Match !"
 		},
-		chat_row_request_all_subtitle: {
-			"fr": function( names ){ return "avec " + names; },
-			"us": function( names ){ return  "with " + names; } 
-		},
-		chat_row_request_team_title: {
+		// chat_row_request_all_subtitle: {
+		// 	"fr": function( names ){ return "avec " + names; },
+		// 	"us": function( names ){ return  "with " + names; } 
+		// },
+		chat_row_request_team_subtitle: {
 			"fr": "Nouvelle conversation",
 			"us": "New group conversation"
 		},
-		chat_row_request_team_subtitle: {
-			"fr": function( names ){ return "entre " + names; },
-			"us": function( names ){ return  "between " + names; } 
-		},
+		// chat_row_request_team_subtitle: {
+		// 	"fr": function( names ){ return "entre " + names; },
+		// 	"us": function( names ){ return  "between " + names; } 
+		// },
 		chat_inview_validate_later: {
 			"fr": "Plus tard",
 			"us": "Later"

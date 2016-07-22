@@ -32,8 +32,10 @@
     .settings-input__label.x--lang,
     .search-filters-section__explanations,
     .be-dates__count,
-    .be-create-row__explanations {
-        display: none;
+    .be-create-row__explanations,
+    .app-subheader.x--map, 
+    .modal-search__input {
+        display: none!important;
     }
 
     .be-create,
@@ -81,12 +83,24 @@
         z-index: 100;
     }
 
+     .map__icon.x--change-location,
+     .map__icon.x--geoloc {
+          bottom: 4px;
+     }
+
+     .map-zoom {
+         bottom: 70px;
+     }
+
     .picture,
     .picture-icon {
         width: 220px;
-        height: 220px
+        height: 220px;
     }
-
+    .picture-icon i {
+        /* display: none; */
+    }
+    
     input,
     textarea,
     .settings-input__label {
@@ -117,7 +131,7 @@
 
     .friend__item,
     .cheers__item {
-        padding: 0;
+        
     }
 
 
@@ -173,10 +187,12 @@
         background: rgba( 255, 255, 255, .85 );
     }
 
-    .user-online {
+    .search-user .user-online {
         bottom: 80px;
         right: 10px;
         position: absolute;
+        width: 16px;
+        height: 16px;
     }
 
     .disconnected {
@@ -194,6 +210,50 @@
         height: 100%!important;
         overflow: scroll;
     }
-
     
+    .row-pic__icon {
+        width: 20px;
+        height: 20px;
+        border: 2px solid!important;
+    }
+
+    .map__icon.x--create-before {
+        top: 80px;
+    }
+
+    .search-users {
+        margin-top: 10px;
+    } 
+    
+    .app__menu-item:not(.x--active):hover .app__menu-icon {
+        color: inherit;
+    }
+
+    .search-filters {
+        padding-bottom: 0;
+    }
+
+    .be-create-row__input input {
+        border: none;
+        border-bottom: 1px solid #eee;
+    }
+
+    .chat-inview-footer button {
+        display: flex;
+    }
+
+    .search-filters-section {
+        margin-bottom: 40px;
+    }
+
+    .user-infos {
+        position: relative;
+        top: 0px;
+    }
+    
+    .me-item .action {
+        top: -20px;
+    }
+
+
 }

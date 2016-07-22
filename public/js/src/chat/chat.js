@@ -713,7 +713,7 @@
 		},
 		getLastMessage: function( chat_id ){
 
-			var last_message  = LJ.chat.getChat( chat_id ).messages[0];
+			var last_message  = LJ.chat.getChat( chat_id ).messages[ 0 ];
 
 			// If no messages was sent, let's use the fact that each chat has at least a last_sent_at attribute
 			// that is equals to requested_at. It is set server-side to help clientside deal with issues when no
@@ -725,6 +725,17 @@
 			}
 
 		},
+		getLastMessageOther: function( chat_id ){
+
+			try {
+				return _.filter( LJ.chat.getChat( chat_id ).messages, function( msg ){
+					return msg.sender_id != LJ.user.facebook_id;
+				})[ 0 ];
+			} catch( e ){
+				return null
+			}
+
+		},	
 		getOrderedChats: function(){
 
 			var ordered_channel_items = [];
@@ -889,12 +900,16 @@
 		handleToggleChatWrap: function( e ){
 
 			e.preventDefault();
-			var $s = $(this);
+			var $s = $( this );
 
 			LJ.chat.toggleChatWrap();
 
 		},
 		toggleChatWrap: function(){
+
+			if( LJ.isMobileMode() && LJ.chat.state == "visible" ){
+				return;
+			}
 
 			LJ.chat.checkAllChats();
 
@@ -911,6 +926,7 @@
 		showChatWrap: function( opts ){
 				
 			if( LJ.isMobileMode() ){
+				LJ.nav.denavigate();
 				LJ.ui.deactivateHtmlScroll();
 			}
 
@@ -1102,25 +1118,23 @@
 
 			if( type == "chat_all" ){
 
-				var names = channel_item.role == "requested" ?
-					_.map( LJ.chat.getHosts( chat_id ), 'name' ) :
-					_.map( LJ.chat.getMembers( chat_id ), 'name' );
-
-				names = LJ.renderMultipleNames( names );
+				var members    = channel_item.role == "requested" ? LJ.chat.getHosts( chat_id ) : LJ.chat.getMembers( chat_id ) ;
+				var without_me = _.filter( members, function( m ){ return m.facebook_id != LJ.user.facebook_id; });
+				var names 	   = _.map( without_me, 'name' );
 
 				LJ.chat.updateChatRowElements( chat_id, {
-					h1: LJ.text("chat_row_request_all_title"),
+					h1: LJ.renderMultipleNames( names ),
 					h2: LJ.text("chat_row_request_all_subtitle", names )
 				});
 
 			} else {
 
-				var names = _.map( LJ.chat.getMembers( chat_id ), 'name' );
-
-				names = LJ.renderMultipleNames( names, { lastify_user: LJ.user.name });
-
+				var members    = LJ.chat.getMembers( chat_id );
+				var without_me = _.filter( members, function( m ){ return m.facebook_id != LJ.user.facebook_id; });
+				var names 	   = _.map( without_me, 'name' );
+				
 				LJ.chat.updateChatRowElements( chat_id, {
-					h1: LJ.text("chat_row_request_team_title"),
+					h1: LJ.renderMultipleNames( names ),
 					h2: LJ.text("chat_row_request_team_subtitle", names )
 				});
 
@@ -1262,19 +1276,32 @@
 		},
 		refreshChatRowPreview: function( chat_id ){
 
-			var last_message = LJ.chat.getLastMessage( chat_id );
+			var last_message       = LJ.chat.getLastMessage( chat_id );
+			var last_message_other = LJ.chat.getLastMessageOther( chat_id );
 
 			if( !last_message ){
 				return;
 			}
-
-			var sender = LJ.chat.getUser( last_message.sender_id );
-
-			LJ.chat.updateChatRowElements( chat_id, {
+			
+			var sender     = LJ.chat.getUser( last_message_other.sender_id );
+			var members    = _.concat( LJ.chat.getMembers( chat_id ), LJ.chat.getHosts( chat_id ) );
+			var without_me = _.filter( members, function( m ){ return m.facebook_id != LJ.user.facebook_id; });
+			var names 	   = _.map( without_me, 'name' );
+				
+			var update = {
 				sender_id: sender.facebook_id,
-				h1: sender.name,
-				h2: last_message.message
-			});
+				h1       : LJ.renderMultipleNames( names )
+			};
+
+			if( last_message_other ){
+				if( without_me.length != 1 ){
+					update.h2 = sender.name +' : ' + last_message_other.message;
+				} else {
+					update.h2 = last_message_other.message;
+				}
+			} 
+
+			LJ.chat.updateChatRowElements( chat_id, update );
 
 		},
 		refreshChatRowTime: function( chat_id ){
@@ -1433,7 +1460,7 @@
 			var seen_chats = Array.isArray( LJ.store.get('seen_chats') ) ? LJ.store.get('seen_chats') : [];
 							 
 			seen_chats.push( chat_id );
-			LJ.store.set( 'seen_chats', _.uniq(seen_chats) );
+			LJ.store.set( 'seen_chats', _.uniq( seen_chats ) );
 
 		},
 		getUser: function( facebook_id ){
@@ -1443,14 +1470,19 @@
 			}
 			
 			return _.find( LJ.chat.fetched_profiles, function( u ){
-				return u.facebook_id == facebook_id;
+				return u && u.facebook_id == facebook_id;
 			});
 
 		},
 		getUsers: function( facebook_ids ){
-
+			
+			if( !facebook_ids ){
+				LJ.log('Calling getUsers on undefined array of ids');
+				return [];
+			}
+			
 			return _.filter( LJ.chat.fetched_profiles, function( u ){
-				return facebook_ids.indexOf( u.facebook_id ) != -1;
+				return u && u.facebook_id && facebook_ids.indexOf( u.facebook_id ) != -1;
 			});
 
 		},

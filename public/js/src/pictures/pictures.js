@@ -76,21 +76,23 @@
 		},
 		handleEditPicturesClicked: function(){
 
-			if( $('.picture-icon').css('opacity') == 1 ){
+			if( $('.picture-icon').css('display') != 'none' ){
+				$('.js-edit-pictures').removeClass('x--active');
 				LJ.pictures.hidePictureEditOptions();
 			} else {
+				$('.js-edit-pictures').addClass('x--active');
 				LJ.pictures.showPictureEditOptions();
 			}
 
 		},
 		showPictureEditOptions: function(){
 
-			$('.picture-icon').css({ 'opacity': '1' });
+			$('.picture-icon').css({ 'display': 'flex', 'opacity': '1' });
 
 		},
 		hidePictureEditOptions: function(){
 
-			$('.picture-icon').css({ 'opacity': '0' });
+			$('.picture-icon').css({ 'display': 'none' });
 
 		},
 		handleClickInModal: function( e ){
@@ -446,6 +448,43 @@
 			rosace_imgs_html.push('</div>');
 
 			return rosace_imgs_html.join('');
+
+		},
+		makeHiveHtml: function( pictures, scope ){
+
+			var L         = pictures.length;
+			var imgs_html = [];
+
+			pictures.forEach(function( pic ){
+				imgs_html.push( LJ.pictures.makeImgHtml( pic.img_id, pic.img_vs, scope ) );
+			});
+
+			var hive_imgs_html = ['<div class="hive x--' + L + '"><div class="hive__background"></div>'];
+			var parts = {
+
+				"2": [ "x--2-top", "x--2-bottom" ],
+				"3": [ "x--3-top", "x--3-left", "x--3-right" ],
+				"4": [ "x--4-top", "x--4-bottom", "x--4-left", "x--4-right" ]
+
+			};
+
+			imgs_html.forEach(function( img_html, i ){
+
+				var part = parts[ L ][ i ];
+				hive_imgs_html.push([
+
+					'<div class="hive__picture ' + part + '">',
+						img_html,
+					'</div>'
+
+				].join(''));
+
+			});
+
+
+			hive_imgs_html.push('</div>');
+
+			return hive_imgs_html.join('');
 
 		},
 		getUploadingState: function(){

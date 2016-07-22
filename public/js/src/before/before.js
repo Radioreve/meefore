@@ -675,7 +675,7 @@
 
 			return LJ.before.renderBeforeInview__Base( before, hosts, {
 
-				be_action: '<div class="be-actions__action x--settings x--round-icon js-show-options"><i class="icon icon-cog"></i></div>',
+				be_action: '<div class="be-actions__action x--settings x--round-icon js-show-options"><i class="icon icon-cog-empty"></i></div>',
 				be_button: LJ.before.renderBeforeInviewBtn__Host()
 
 			});
@@ -715,7 +715,7 @@
 			return '<div class="be-ended"><span data-lid="be_hosted"></span></div>';
 		},
 		renderBeforeInviewBtn__UserAccepted: function(){
-			return '<button class="x--round-icon x--accepted js-request-accepted"><i class="icon icon-chat-bubble-empty"></i></button>'
+			return '<button class="x--round-icon x--accepted js-request-accepted"><i class="icon icon-chat-bubble-duo"></i></button>'
 
 		},
 		renderBeforeInviewBtn__UserPending: function(){
@@ -727,6 +727,58 @@
 
 		},
 		renderBeforeInview__Base: function( before, hosts, options ){
+
+			options = options || [];
+
+			if( !before || !hosts ){
+				return LJ.wlog('Cannot render before without before object and hosts profiles');
+			}
+		
+			var usernames   = LJ.text("w_before").capitalize() + " " + LJ.text("w_with") + " " + LJ.renderMultipleNames( _.map( hosts, 'name') );
+			var be_addr     = LJ.before.renderBeforeAddress( before.address );
+			var be_date     = LJ.before.renderBeforeDate( before.begins_at );
+			var be_pictures = LJ.pictures.makeHiveHtml( hosts, "user-before" );
+			var be_action   = options.be_action;
+
+			var be_request = '<div class="be-request">' + options.be_button + '</div>';
+			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
+				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
+			}
+
+ 
+			return LJ.ui.render([
+
+				'<div class="be-inview x--hive" data-before-id="'+ before._id +'">',
+					'<div class="be-usernames">',
+						'<span>'+ usernames +'</span>',
+					'</div>',
+		            '<div class="be-actions">',
+		        	  be_action,
+		            '</div>',
+			      	'<div class="be-pictures">',
+			           be_pictures,
+			        '</div>',
+			        '<div class="be-inview-address">',
+			          '<div class="be-inview-address__date">',
+			          	'<div class="be-inview-address__icon x--round-icon">',
+			          		'<i class="icon icon-clock-empty"></i>',
+			          	'</div>',
+			            '<span>'+ be_date +'</span>',
+			          '</div>',
+			          '<div class="be-inview-address__address">',
+			          	'<div class="be-inview-address__icon x--round-icon">',
+			          		'<i class="icon icon-location-empty"></i>',
+			          	'</div>',
+			            '<span>'+ be_addr +'</span>',
+			          '</div>',
+			        '</div>',
+			        be_request,
+		      	'</div>'
+
+			].join(''));
+
+		},
+		renderBeforeInview__Base2: function( before, hosts, options ){
 
 			options = options || [];
 
@@ -790,6 +842,7 @@
 
 					LJ.before.removeOneBefore( before_id );
 					LJ.before.refreshBrowserDates();
+					LJ.before.showBrowser();
 					
 					LJ.map.removeBeforeMarker( before_id );
 					LJ.ui.hideSlide({ type: 'before' });

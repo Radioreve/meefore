@@ -11,7 +11,8 @@
 			$('.chat').on('click', '.js-show-before', LJ.chat.handleShowBefore );
 			$('.chat').on('click', '.js-show-users', LJ.chat.handleShowUsers );
 			$('.chat').on('click', '.js-chat-back', LJ.chat.handleChatBack );
-			$('.chat').on('keydown', '.js-send-message', LJ.chat.handleSendMessage );
+			$('.chat').on('keydown', '.js-send-message', LJ.chat.handleSendMessageKeypress );
+			$('.chat').on('click', 'button.js-send-message', LJ.chat.handleSendMessageClick );
 
 		},
 		handleChatBack: function(){
@@ -157,7 +158,7 @@
 			});
 
 		},
-		handleSendMessage: function( e ){
+		handleSendMessageKeypress: function( e ){
 
 			var $s      = $( this );
 			var chat_id = $s.closest('[data-chat-id]').attr('data-chat-id');
@@ -191,6 +192,26 @@
 
 
 		},
+		handleSendMessageClick: function(){
+
+			var $s      = $( this );
+			var chat_id = $s.closest('[data-chat-id]').attr('data-chat-id');
+			var $input  = LJ.chat.getChatInview( chat_id ).find('input');
+			var message = $input.val();
+
+			if( message.length == 0 ) return;
+
+        	$input.val('');
+
+            LJ.chat.sendAndAddMessage({
+            	chat_id  : chat_id,
+            	message  : message
+            });
+            return;
+
+            LJ.chat.updateInputState( chat_id, e );
+
+		},
 		getKeyname: function( key_code ){
 
 			if( key_code == 13 ){
@@ -208,6 +229,8 @@
 			if( key_code == 8 ){
 				return "return";
 			}
+
+			return false;
 
 		},
 		sendAndAddMessage: function( data ){
@@ -784,6 +807,7 @@
 			            '<div class="chat-inview-input js-send-message">',
 			             	'<input data-lid="chat_input_placeholder" placeholder="lol">',
 			            '</div>',
+			            '<button data-lid="w_send" class="x--mb js-send-message">Envoyer</button>',
 		          	'</div>', 
 			    '</div>'
 

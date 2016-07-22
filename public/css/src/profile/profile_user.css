@@ -39,16 +39,16 @@
     width: 100%;
     height: 100%;
 }
-
+ 
 .user-infos {
     display: flex;
     flex-flow: column nowrap;
     width: 100%;
-    padding: 40px 20px 0 20px;
+    padding: 40px 20px 20px 20px;
     box-sizing: border-box;
     position: absolute;
     background: white;
-    top: 280px;
+    top: 309px;
     z-index: 101;
 }
 
@@ -212,7 +212,7 @@
     font-size: 18px;
     height: 40px;
     width: 40px;
-    top: 39%;
+    top: 47%;
     transform: translate(0, -56%);
     cursor: pointer;
     color: #FFFFFF;

@@ -304,10 +304,24 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 			});
 	},
 	activateHtmlScroll: function(){
-		$('html').css({ 'overflow': 'auto' });
+
+		$('html').css({
+			'overflow': 'auto',
+			'position': 'static',
+			'width': '100%',
+			'height': '100%'
+		});
+
 	},
 	deactivateHtmlScroll: function(){
-		$('html').css({ 'overflow': 'hidden' });
+
+		$('html').css({
+			'overflow': 'hidden',
+			'position': 'fixed',
+			'width': '100%',
+			'height': '100%'
+		});
+
 	},
 	reconnectUser: function(){
 

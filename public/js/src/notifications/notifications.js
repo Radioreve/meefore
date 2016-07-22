@@ -206,6 +206,10 @@
 		},
 		toggleNotificationsPanel: function(){
 
+			if( LJ.isMobileMode() && LJ.notifications.state == "visible" ){
+				return;
+			}
+
 			if( LJ.notifications.state == "visible" ){
 				LJ.notifications.hideNotificationsPanel();
 
@@ -222,6 +226,7 @@
 			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
 
 			if( LJ.isMobileMode() ){
+				LJ.nav.denavigate();
 				LJ.ui.deactivateHtmlScroll();
 			}
 
@@ -387,7 +392,7 @@
 
 			var friend = LJ.friends.getFriendProfile( shared_by );
 			var name = friend && friend.name;
-			var type = notification.target_type == "user" ? LJ.text('lang_profile') : LJ.text('lang_before');
+			var type = notification.target_type == "user" ? LJ.text('w_profile') : LJ.text('w_before');
 
 			options.icon_code   = "forward";
 			options.text        = LJ.text("n_item_shared_text").replace( '%name', name );

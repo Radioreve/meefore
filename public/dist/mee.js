@@ -31271,7 +31271,7 @@ function closure ( target, options ){
 
 			return LJ.before.renderBeforeInview__Base( before, hosts, {
 
-				be_action: '<div class="be-actions__action x--settings x--round-icon js-show-options"><i class="icon icon-cog"></i></div>',
+				be_action: '<div class="be-actions__action x--settings x--round-icon js-show-options"><i class="icon icon-cog-empty"></i></div>',
 				be_button: LJ.before.renderBeforeInviewBtn__Host()
 
 			});
@@ -31311,7 +31311,7 @@ function closure ( target, options ){
 			return '<div class="be-ended"><span data-lid="be_hosted"></span></div>';
 		},
 		renderBeforeInviewBtn__UserAccepted: function(){
-			return '<button class="x--round-icon x--accepted js-request-accepted"><i class="icon icon-chat-bubble-empty"></i></button>'
+			return '<button class="x--round-icon x--accepted js-request-accepted"><i class="icon icon-chat-bubble-duo"></i></button>'
 
 		},
 		renderBeforeInviewBtn__UserPending: function(){
@@ -31323,6 +31323,58 @@ function closure ( target, options ){
 
 		},
 		renderBeforeInview__Base: function( before, hosts, options ){
+
+			options = options || [];
+
+			if( !before || !hosts ){
+				return LJ.wlog('Cannot render before without before object and hosts profiles');
+			}
+		
+			var usernames   = LJ.text("w_before").capitalize() + " " + LJ.text("w_with") + " " + LJ.renderMultipleNames( _.map( hosts, 'name') );
+			var be_addr     = LJ.before.renderBeforeAddress( before.address );
+			var be_date     = LJ.before.renderBeforeDate( before.begins_at );
+			var be_pictures = LJ.pictures.makeHiveHtml( hosts, "user-before" );
+			var be_action   = options.be_action;
+
+			var be_request = '<div class="be-request">' + options.be_button + '</div>';
+			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
+				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
+			}
+
+ 
+			return LJ.ui.render([
+
+				'<div class="be-inview x--hive" data-before-id="'+ before._id +'">',
+					'<div class="be-usernames">',
+						'<span>'+ usernames +'</span>',
+					'</div>',
+		            '<div class="be-actions">',
+		        	  be_action,
+		            '</div>',
+			      	'<div class="be-pictures">',
+			           be_pictures,
+			        '</div>',
+			        '<div class="be-inview-address">',
+			          '<div class="be-inview-address__date">',
+			          	'<div class="be-inview-address__icon x--round-icon">',
+			          		'<i class="icon icon-clock-empty"></i>',
+			          	'</div>',
+			            '<span>'+ be_date +'</span>',
+			          '</div>',
+			          '<div class="be-inview-address__address">',
+			          	'<div class="be-inview-address__icon x--round-icon">',
+			          		'<i class="icon icon-location-empty"></i>',
+			          	'</div>',
+			            '<span>'+ be_addr +'</span>',
+			          '</div>',
+			        '</div>',
+			        be_request,
+		      	'</div>'
+
+			].join(''));
+
+		},
+		renderBeforeInview__Base2: function( before, hosts, options ){
 
 			options = options || [];
 
@@ -31386,6 +31438,7 @@ function closure ( target, options ){
 
 					LJ.before.removeOneBefore( before_id );
 					LJ.before.refreshBrowserDates();
+					LJ.before.showBrowser();
 					
 					LJ.map.removeBeforeMarker( before_id );
 					LJ.ui.hideSlide({ type: 'before' });
@@ -33251,7 +33304,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		},
 		getLastMessage: function( chat_id ){
 
-			var last_message  = LJ.chat.getChat( chat_id ).messages[0];
+			var last_message  = LJ.chat.getChat( chat_id ).messages[ 0 ];
 
 			// If no messages was sent, let's use the fact that each chat has at least a last_sent_at attribute
 			// that is equals to requested_at. It is set server-side to help clientside deal with issues when no
@@ -33263,6 +33316,17 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			}
 
 		},
+		getLastMessageOther: function( chat_id ){
+
+			try {
+				return _.filter( LJ.chat.getChat( chat_id ).messages, function( msg ){
+					return msg.sender_id != LJ.user.facebook_id;
+				})[ 0 ];
+			} catch( e ){
+				return null
+			}
+
+		},	
 		getOrderedChats: function(){
 
 			var ordered_channel_items = [];
@@ -33427,12 +33491,16 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		handleToggleChatWrap: function( e ){
 
 			e.preventDefault();
-			var $s = $(this);
+			var $s = $( this );
 
 			LJ.chat.toggleChatWrap();
 
 		},
 		toggleChatWrap: function(){
+
+			if( LJ.isMobileMode() && LJ.chat.state == "visible" ){
+				return;
+			}
 
 			LJ.chat.checkAllChats();
 
@@ -33449,6 +33517,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		showChatWrap: function( opts ){
 				
 			if( LJ.isMobileMode() ){
+				LJ.nav.denavigate();
 				LJ.ui.deactivateHtmlScroll();
 			}
 
@@ -33640,25 +33709,23 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 			if( type == "chat_all" ){
 
-				var names = channel_item.role == "requested" ?
-					_.map( LJ.chat.getHosts( chat_id ), 'name' ) :
-					_.map( LJ.chat.getMembers( chat_id ), 'name' );
-
-				names = LJ.renderMultipleNames( names );
+				var members    = channel_item.role == "requested" ? LJ.chat.getHosts( chat_id ) : LJ.chat.getMembers( chat_id ) ;
+				var without_me = _.filter( members, function( m ){ return m.facebook_id != LJ.user.facebook_id; });
+				var names 	   = _.map( without_me, 'name' );
 
 				LJ.chat.updateChatRowElements( chat_id, {
-					h1: LJ.text("chat_row_request_all_title"),
+					h1: LJ.renderMultipleNames( names ),
 					h2: LJ.text("chat_row_request_all_subtitle", names )
 				});
 
 			} else {
 
-				var names = _.map( LJ.chat.getMembers( chat_id ), 'name' );
-
-				names = LJ.renderMultipleNames( names, { lastify_user: LJ.user.name });
-
+				var members    = LJ.chat.getMembers( chat_id );
+				var without_me = _.filter( members, function( m ){ return m.facebook_id != LJ.user.facebook_id; });
+				var names 	   = _.map( without_me, 'name' );
+				
 				LJ.chat.updateChatRowElements( chat_id, {
-					h1: LJ.text("chat_row_request_team_title"),
+					h1: LJ.renderMultipleNames( names ),
 					h2: LJ.text("chat_row_request_team_subtitle", names )
 				});
 
@@ -33800,19 +33867,32 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		},
 		refreshChatRowPreview: function( chat_id ){
 
-			var last_message = LJ.chat.getLastMessage( chat_id );
+			var last_message       = LJ.chat.getLastMessage( chat_id );
+			var last_message_other = LJ.chat.getLastMessageOther( chat_id );
 
 			if( !last_message ){
 				return;
 			}
-
-			var sender = LJ.chat.getUser( last_message.sender_id );
-
-			LJ.chat.updateChatRowElements( chat_id, {
+			
+			var sender     = LJ.chat.getUser( last_message_other.sender_id );
+			var members    = _.concat( LJ.chat.getMembers( chat_id ), LJ.chat.getHosts( chat_id ) );
+			var without_me = _.filter( members, function( m ){ return m.facebook_id != LJ.user.facebook_id; });
+			var names 	   = _.map( without_me, 'name' );
+				
+			var update = {
 				sender_id: sender.facebook_id,
-				h1: sender.name,
-				h2: last_message.message
-			});
+				h1       : LJ.renderMultipleNames( names )
+			};
+
+			if( last_message_other ){
+				if( without_me.length != 1 ){
+					update.h2 = sender.name +' : ' + last_message_other.message;
+				} else {
+					update.h2 = last_message_other.message;
+				}
+			} 
+
+			LJ.chat.updateChatRowElements( chat_id, update );
 
 		},
 		refreshChatRowTime: function( chat_id ){
@@ -33971,7 +34051,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			var seen_chats = Array.isArray( LJ.store.get('seen_chats') ) ? LJ.store.get('seen_chats') : [];
 							 
 			seen_chats.push( chat_id );
-			LJ.store.set( 'seen_chats', _.uniq(seen_chats) );
+			LJ.store.set( 'seen_chats', _.uniq( seen_chats ) );
 
 		},
 		getUser: function( facebook_id ){
@@ -33981,14 +34061,19 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			}
 			
 			return _.find( LJ.chat.fetched_profiles, function( u ){
-				return u.facebook_id == facebook_id;
+				return u && u.facebook_id == facebook_id;
 			});
 
 		},
 		getUsers: function( facebook_ids ){
-
+			
+			if( !facebook_ids ){
+				LJ.log('Calling getUsers on undefined array of ids');
+				return [];
+			}
+			
 			return _.filter( LJ.chat.fetched_profiles, function( u ){
-				return facebook_ids.indexOf( u.facebook_id ) != -1;
+				return u && u.facebook_id && facebook_ids.indexOf( u.facebook_id ) != -1;
 			});
 
 		},
@@ -34166,7 +34251,8 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			$('.chat').on('click', '.js-show-before', LJ.chat.handleShowBefore );
 			$('.chat').on('click', '.js-show-users', LJ.chat.handleShowUsers );
 			$('.chat').on('click', '.js-chat-back', LJ.chat.handleChatBack );
-			$('.chat').on('keydown', '.js-send-message', LJ.chat.handleSendMessage );
+			$('.chat').on('keydown', '.js-send-message', LJ.chat.handleSendMessageKeypress );
+			$('.chat').on('click', 'button.js-send-message', LJ.chat.handleSendMessageClick );
 
 		},
 		handleChatBack: function(){
@@ -34312,7 +34398,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			});
 
 		},
-		handleSendMessage: function( e ){
+		handleSendMessageKeypress: function( e ){
 
 			var $s      = $( this );
 			var chat_id = $s.closest('[data-chat-id]').attr('data-chat-id');
@@ -34346,6 +34432,26 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 
 		},
+		handleSendMessageClick: function(){
+
+			var $s      = $( this );
+			var chat_id = $s.closest('[data-chat-id]').attr('data-chat-id');
+			var $input  = LJ.chat.getChatInview( chat_id ).find('input');
+			var message = $input.val();
+
+			if( message.length == 0 ) return;
+
+        	$input.val('');
+
+            LJ.chat.sendAndAddMessage({
+            	chat_id  : chat_id,
+            	message  : message
+            });
+            return;
+
+            LJ.chat.updateInputState( chat_id, e );
+
+		},
 		getKeyname: function( key_code ){
 
 			if( key_code == 13 ){
@@ -34363,6 +34469,8 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			if( key_code == 8 ){
 				return "return";
 			}
+
+			return false;
 
 		},
 		sendAndAddMessage: function( data ){
@@ -34939,6 +35047,7 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 			            '<div class="chat-inview-input js-send-message">',
 			             	'<input data-lid="chat_input_placeholder" placeholder="lol">',
 			            '</div>',
+			            '<button data-lid="w_send" class="x--mb js-send-message">Envoyer</button>',
 		          	'</div>', 
 			    '</div>'
 
@@ -36211,6 +36320,59 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 	});
 		
 
+	window.LJ.connecter = _.merge( window.LJ.connecter || {}, {
+
+		online_users: [],
+
+		init: function(){
+
+			if( LJ.app_mode == "dev" ){
+				return LJ.log("Mode is 'dev', not initializing the connecter system");
+			}
+			
+			LJ.connecter.refreshOnlineUsers();
+			LJ.connecter.handleDomEvents();
+			return;
+
+		},
+		handleDomEvents: function(){
+
+		},
+		getUserStatus: function( facebook_id ){
+
+			return LJ.connecter.online_users.indexOf( facebook_id ) == -1 ? "offline" : "online";
+
+		},
+		refreshOnlineUsers: function(){
+
+			LJ.log('Refreshing online users...');
+			var thirty_seconds = 30000;
+
+			LJ.api.fetchOnlineUsers()
+				.then(function( online_users ){
+
+					$('.js-user-online').removeClass('x--online');
+					LJ.connecter.online_users = online_users;
+					online_users.forEach(function( facebook_id ){
+
+						$('.js-user-online[data-facebook-id="'+ facebook_id +'"]').addClass('x--online');
+
+					});
+
+				})
+				.then(function(){
+					return LJ.delay( thirty_seconds )
+
+				})
+				.then(function(){
+					return LJ.connecter.refreshOnlineUsers();
+
+				})
+
+		}
+
+	});
+
 	window.LJ.dev = _.merge( window.LJ.dev || {}, {
 
 		n_cloudinary_api_calls: 0,
@@ -36953,6 +37115,8 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 
 			LJ.friends.invite_popup_timer = setTimeout(function(){
 
+				if( LJ.isMobileMode() ) return;
+				
 				$( LJ.friends.renderInviteFriendsPopup() )
 					.hide()
 					.appendTo('body')
@@ -36995,59 +37159,6 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 				'</div>'
 
 			].join(''));
-
-		}
-
-	});
-
-	window.LJ.connecter = _.merge( window.LJ.connecter || {}, {
-
-		online_users: [],
-
-		init: function(){
-
-			if( LJ.app_mode == "dev" ){
-				return LJ.log("Mode is 'dev', not initializing the connecter system");
-			}
-			
-			LJ.connecter.refreshOnlineUsers();
-			LJ.connecter.handleDomEvents();
-			return;
-
-		},
-		handleDomEvents: function(){
-
-		},
-		getUserStatus: function( facebook_id ){
-
-			return LJ.connecter.online_users.indexOf( facebook_id ) == -1 ? "offline" : "online";
-
-		},
-		refreshOnlineUsers: function(){
-
-			LJ.log('Refreshing online users...');
-			var thirty_seconds = 30000;
-
-			LJ.api.fetchOnlineUsers()
-				.then(function( online_users ){
-
-					$('.js-user-online').removeClass('x--online');
-					LJ.connecter.online_users = online_users;
-					online_users.forEach(function( facebook_id ){
-
-						$('.js-user-online[data-facebook-id="'+ facebook_id +'"]').addClass('x--online');
-
-					});
-
-				})
-				.then(function(){
-					return LJ.delay( thirty_seconds )
-
-				})
-				.then(function(){
-					return LJ.connecter.refreshOnlineUsers();
-
-				})
 
 		}
 
@@ -38693,7 +38804,7 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 						choices.join(''),
 						'<div class="change-lang__choice x--unavailable" data-cc="es">',
 							'<i class="flag-icon flag-icon-es"></i>',
-							'<div class="soon" data-lid="lang_soon">Prochaînement</div>',
+							'<div class="soon" data-lid="w_soon">Prochaînement</div>',
 						'</div>',
 						'<div class="modal__close nonei"></div>',
 					'</div>',
@@ -38960,7 +39071,7 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 				var day  = LJ.text_source["chatinview_date_day"]["us"]( m );
 				var hour = LJ.text_source["chatinview_date_hour"]["us"]( m );
 
-				return [ day, hour ].join('');
+				return [ day, hour ].join(', ');
 
 			}
 		},
@@ -38987,18 +39098,6 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 		lang_change_subtitle: {
 			"fr": "La langue ne devrait jamais être une barrière pour sortir faire la fête.",
 			"us": "Language should never get in the way of partying. Ever."
-		},
-		lang_soon: {
-			"fr": "Prochainement",
-			"us": "Soon"
-		},
-		lang_before: {
-			"fr": "before",
-			"us": "pregame"
-		},
-		lang_profile: {
-			"fr": "profil",
-			"us": "profile"
 		},
 		menu_profile: {
 			"fr": "Profil",
@@ -40115,9 +40214,29 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 			"fr": "autre(s)",
 			"us": "more"
 		},
+		w_send: {
+			"fr": "Envoyer",
+			"us": "Send"
+		},
 		w_you: {
 			"fr": "vous",
 			"us": "you"
+		},
+		w_with: {
+			"fr": "avez",
+			"us": "with"
+		},
+		w_soon: {
+			"fr": "Prochainement",
+			"us": "Soon"
+		},
+		w_before: {
+			"fr": "before",
+			"us": "pregame"
+		},
+		w_profile: {
+			"fr": "profil",
+			"us": "profile"
 		},
 		w_member_since: {
 			"fr": "Membre depuis le",
@@ -40739,22 +40858,22 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 			"fr": "Discussion privée avec vos amis",
 			"us": "Private discussion with your friends"
 		},
-		chat_row_request_all_title: {
+		chat_row_request_all_subtitle: {
 			"fr": "Vous avez un Match !",
 			"us": "It's a Match !"
 		},
-		chat_row_request_all_subtitle: {
-			"fr": function( names ){ return "avec " + names; },
-			"us": function( names ){ return  "with " + names; } 
-		},
-		chat_row_request_team_title: {
+		// chat_row_request_all_subtitle: {
+		// 	"fr": function( names ){ return "avec " + names; },
+		// 	"us": function( names ){ return  "with " + names; } 
+		// },
+		chat_row_request_team_subtitle: {
 			"fr": "Nouvelle conversation",
 			"us": "New group conversation"
 		},
-		chat_row_request_team_subtitle: {
-			"fr": function( names ){ return "entre " + names; },
-			"us": function( names ){ return  "between " + names; } 
-		},
+		// chat_row_request_team_subtitle: {
+		// 	"fr": function( names ){ return "entre " + names; },
+		// 	"us": function( names ){ return  "between " + names; } 
+		// },
 		chat_inview_validate_later: {
 			"fr": "Plus tard",
 			"us": "Later"
@@ -42307,39 +42426,48 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
             
 			drink: { 
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md__2x.png'
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_md__2x.png',
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
             },
             drink_active: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__2x.png'
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__2x.png',
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
             },
             drinknew: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468612014/markers/drink_black45_rotate_md_newred__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468612014/markers/drink_black45_rotate_md_newred__2x.png'
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468612014/markers/drink_black45_rotate_md_newred__2x.png',
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
             },
             star: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__2x.png'
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__2x.png',
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
             },
             star_active: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__2x.png'
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__2x.png',
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
             },
             pending: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__2x.png'
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__2x.png',
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
             },
             pending_active: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__2x.png'
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__2x.png',
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
             },
             chat: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__2x.png'
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__2x.png',
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
             },
             chat_active: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__1x.png',
-                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__2x.png'
+                '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__2x.png',
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
             }
         }
 
@@ -43645,122 +43773,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 
-	window.LJ.nav = _.merge( window.LJ.nav || {}, {
-
-		$nav: $('.app-nav'),
-		current_link: null,
-
-		init: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.nav.handleDomEvents();
-				LJ.nav.navigate('map');
-				resolve();
-
-			});
-		},
-		handleDomEvents: function(){
-
-			LJ.nav.$nav.on('click', 'li[data-link]', LJ.nav.handleNavigate );
-
-		},
-		handleNavigate: function(e){
-
-			e.preventDefault();
-			var $li = $(this);
-			var lk  = $li.attr('data-link');
-			LJ.nav.navigate( lk );
-
-		},
-		getActiveView: function(){
-
-			return $('.app__menu-item.x--active').attr('data-link');
-
-		},
-		navigate: function( target_link ){
-
-			var current_link = LJ.nav.current_link;
-
-			var $target_section  = $('.app-section[data-link="' + target_link + '"]');
-			var $current_section = $('.app-section[data-link="' + current_link + '"]') || $target_section; // For the first activation
-
-			var $target_menuitem = $('.app__menu-item[data-link="' + target_link + '"]');
-			var $current_menuitem = $('.app__menu-item[data-link="' + current_link + '"]') || $target_menuitem
-
-			var $target_headertitle  = $('.app-header__title[data-link="' + target_link + '"]');
-			var $current_headertitle = $('.app-header__title[data-link="' + current_link + '"]') || $target_headertitle;
-
-			if( $target_section.length + $target_menuitem.length + $target_headertitle.length != 3 ){
-				return LJ.wlog('Ghost target for link : ' + link );
-			}
-
-			// Set the internal state
-			LJ.nav.current_link = target_link
-
-			// Update the Header ui
-			$current_menuitem.removeClass('x--active');
-			$target_menuitem.addClass('x--active');
-
-			// Update the header title
-			/*var duration = 220;
-			LJ.ui.shradeOut( $current_headertitle, duration )
-				.then(function(){
-					LJ.ui.shradeIn( $target_headertitle, duration );
-				});
-			*/
-			
-			// Display the view
-			$current_section.hide();
-			$target_section.css({ display: 'flex' });
-
-			if( !$target_menuitem.is( $current_menuitem ) ){
-				LJ.ui.hideSlide();
-				LJ.before.hideCreateBeforeStraight();
-				LJ.before.showBrowser();
-				LJ.map.deactivateMarkers();
-				LJ.map.refreshMarkers();
-			}
-
-			// Specificities
-			var duration = 220;
-			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
-
-			if( target_link == 'search' && hasMeepassRibbon ) {
-				LJ.ui.shradeIn( $('.meepass-ribbon'), duration );
-			} 
-
-			if( target_link != 'search' && hasMeepassRibbon ){
-				LJ.ui.shradeOut( $('.meepass-ribbon'), duration );
-			}
-
-			if( target_link == 'map' ){
-				$('.app').removeClass('padded');
-
-				LJ.unoffsetAll();
-				// Refresh the map dued to a bug when the window is resized and the map not visible
-				// The try catch is to avoid an ugly error in the console during app intitialization
-				try {
-					LJ.map.refreshMap();
-				} catch( e ){
-
-				}
-
-
-			} else {
-				$('.app').addClass('padded');
-			}
-
-			if( target_link != "menu" ){
-				LJ.friends.hideInviteFriendsPopup();
-			}
-
-
-		}
-
-	});
-
-
-
 	
 	window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
 
@@ -43968,6 +43980,10 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		},
 		toggleNotificationsPanel: function(){
 
+			if( LJ.isMobileMode() && LJ.notifications.state == "visible" ){
+				return;
+			}
+
 			if( LJ.notifications.state == "visible" ){
 				LJ.notifications.hideNotificationsPanel();
 
@@ -43984,6 +44000,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
 
 			if( LJ.isMobileMode() ){
+				LJ.nav.denavigate();
 				LJ.ui.deactivateHtmlScroll();
 			}
 
@@ -44149,7 +44166,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 			var friend = LJ.friends.getFriendProfile( shared_by );
 			var name = friend && friend.name;
-			var type = notification.target_type == "user" ? LJ.text('lang_profile') : LJ.text('lang_before');
+			var type = notification.target_type == "user" ? LJ.text('w_profile') : LJ.text('w_before');
 
 			options.icon_code   = "forward";
 			options.text        = LJ.text("n_item_shared_text").replace( '%name', name );
@@ -44484,6 +44501,135 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		}
 
 	});
+
+	window.LJ.nav = _.merge( window.LJ.nav || {}, {
+
+		$nav: $('.app-nav'),
+		current_link: null,
+
+		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.nav.handleDomEvents();
+				LJ.nav.navigate('map');
+				resolve();
+
+			});
+		},
+		handleDomEvents: function(){
+
+			LJ.nav.$nav.on('click', 'li[data-link]', LJ.nav.handleNavigate );
+
+		},
+		handleNavigate: function(e){
+
+			e.preventDefault();
+			var $li = $(this);
+			var lk  = $li.attr('data-link');
+			LJ.nav.navigate( lk );
+
+		},
+		getActiveView: function(){
+
+			return $('.app__menu-item.x--active').attr('data-link');
+
+		},
+		denavigate: function(){
+
+			var active_view = LJ.nav.getActiveView();
+
+			$('.app__menu-item[data-link="'+ active_view +'"]').removeClass('x--active');
+			$('.app-section[data-link="'+ active_view +'"]').hide();
+
+		},
+		navigate: function( target_link ){
+
+			if( LJ.isMobileMode() ){
+				LJ.chat.hideChatWrap();
+				LJ.notifications.hideNotificationsPanel();
+			}
+
+			var current_link = LJ.nav.current_link;
+
+			var $target_section  = $('.app-section[data-link="' + target_link + '"]');
+			var $current_section = $('.app-section[data-link="' + current_link + '"]') || $target_section; // For the first activation
+
+			var $target_menuitem = $('.app__menu-item[data-link="' + target_link + '"]');
+			var $current_menuitem = $('.app__menu-item[data-link="' + current_link + '"]') || $target_menuitem
+
+			var $target_headertitle  = $('.app-header__title[data-link="' + target_link + '"]');
+			var $current_headertitle = $('.app-header__title[data-link="' + current_link + '"]') || $target_headertitle;
+
+			if( $target_section.length + $target_menuitem.length + $target_headertitle.length != 3 ){
+				return LJ.wlog('Ghost target for link : ' + link );
+			}
+
+			// Set the internal state
+			LJ.nav.current_link = target_link
+
+			// Update the Header ui
+			$current_menuitem.removeClass('x--active');
+			$target_menuitem.addClass('x--active');
+
+			// Update the header title
+			/*var duration = 220;
+			LJ.ui.shradeOut( $current_headertitle, duration )
+				.then(function(){
+					LJ.ui.shradeIn( $target_headertitle, duration );
+				});
+			*/
+			
+			// Display the view
+			$current_section.hide();
+			$target_section.css({ display: 'flex' });
+
+			if( !$target_menuitem.is( $current_menuitem ) ){
+				LJ.ui.hideSlide();
+				LJ.before.hideCreateBeforeStraight();
+				LJ.before.showBrowser();
+				LJ.map.deactivateMarkers();
+				LJ.map.refreshMarkers();
+			}
+
+			// Specificities
+			var duration = 220;
+			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
+
+			if( target_link == 'search' && hasMeepassRibbon ) {
+				LJ.ui.shradeIn( $('.meepass-ribbon'), duration );
+			} 
+
+			if( target_link != 'search' && hasMeepassRibbon ){
+				LJ.ui.shradeOut( $('.meepass-ribbon'), duration );
+			}
+
+			if( target_link == 'map' ){
+				$('.app').removeClass('padded');
+
+				LJ.unoffsetAll();
+				// Refresh the map dued to a bug when the window is resized and the map not visible
+				// The try catch is to avoid an ugly error in the console during app intitialization
+				try {
+					LJ.map.refreshMap();
+				} catch( e ){
+
+				}
+
+
+			} else {
+				$('.app').addClass('padded');
+			}
+
+			if( target_link != "menu" ){
+				LJ.friends.hideInviteFriendsPopup();
+			}
+
+
+		}
+
+	});
+
+
 
 	
 	window.LJ.onboarding = _.merge( window.LJ.onboarding || {}, {
@@ -45437,21 +45583,23 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		},
 		handleEditPicturesClicked: function(){
 
-			if( $('.picture-icon').css('opacity') == 1 ){
+			if( $('.picture-icon').css('display') != 'none' ){
+				$('.js-edit-pictures').removeClass('x--active');
 				LJ.pictures.hidePictureEditOptions();
 			} else {
+				$('.js-edit-pictures').addClass('x--active');
 				LJ.pictures.showPictureEditOptions();
 			}
 
 		},
 		showPictureEditOptions: function(){
 
-			$('.picture-icon').css({ 'opacity': '1' });
+			$('.picture-icon').css({ 'display': 'flex', 'opacity': '1' });
 
 		},
 		hidePictureEditOptions: function(){
 
-			$('.picture-icon').css({ 'opacity': '0' });
+			$('.picture-icon').css({ 'display': 'none' });
 
 		},
 		handleClickInModal: function( e ){
@@ -45807,6 +45955,43 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			rosace_imgs_html.push('</div>');
 
 			return rosace_imgs_html.join('');
+
+		},
+		makeHiveHtml: function( pictures, scope ){
+
+			var L         = pictures.length;
+			var imgs_html = [];
+
+			pictures.forEach(function( pic ){
+				imgs_html.push( LJ.pictures.makeImgHtml( pic.img_id, pic.img_vs, scope ) );
+			});
+
+			var hive_imgs_html = ['<div class="hive x--' + L + '"><div class="hive__background"></div>'];
+			var parts = {
+
+				"2": [ "x--2-top", "x--2-bottom" ],
+				"3": [ "x--3-top", "x--3-left", "x--3-right" ],
+				"4": [ "x--4-top", "x--4-bottom", "x--4-left", "x--4-right" ]
+
+			};
+
+			imgs_html.forEach(function( img_html, i ){
+
+				var part = parts[ L ][ i ];
+				hive_imgs_html.push([
+
+					'<div class="hive__picture ' + part + '">',
+						img_html,
+					'</div>'
+
+				].join(''));
+
+			});
+
+
+			hive_imgs_html.push('</div>');
+
+			return hive_imgs_html.join('');
 
 		},
 		getUploadingState: function(){
@@ -47227,7 +47412,8 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 				LJ.search.setFiltersState();
 
-				var facebook_ids = _.map( LJ.search.fetched_users, 'facebook_id' ).concat([ LJ.user.facebook_id ]);
+				// To disallow user to see himself, uncomment the concat part (and the "-1" part too)
+				var facebook_ids = _.map( LJ.search.fetched_users, 'facebook_id' ); //.concat([ LJ.user.facebook_id ]);
 				var filters      = LJ.search.filter_state;
 
 				LJ.api.fetchMoreUsers( facebook_ids, filters )
@@ -47274,7 +47460,8 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 				})
 
 				.then(function( new_users ){
-					if( LJ.search.fetched_users.length == ( LJ.search.users_count - 1 ) || new_users.length == 0 ){
+
+					if( LJ.search.fetched_users.length == ( LJ.search.users_count /* - 1 */ ) || new_users.length == 0 ){
 						LJ.wlog('Everyone has been fetched for this filter.');
 						LJ.search.all_fetched = true;
 					}
@@ -48745,7 +48932,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			// }
 
 		},
-		changeStoreMode: function( new_mode ){
+		setStoreMode: function( new_mode ){
 
 			if( [ "cookie", "localstorage" ].indexOf( new_mode ) == -1 ){
 				return LJ.wlog('This storage mode is not supported, please use "cookie" or "localstorage"');
@@ -48832,6 +49019,10 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		},
 		setCookie: function( cname, cvalue, exdays ){
 
+			if( typeof cvalue == "object" ){
+				cvalue = JSON.stringify( cvalue );
+			}
+
 		    var d = new Date();
 		    d.setTime( d.getTime() + ( exdays * 24 * 60 * 60 * 1000 ) );
 
@@ -48853,7 +49044,13 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		        }
 
 		        if( c.indexOf( name ) == 0 ){
-		            return c.substring(name.length,c.length);
+		            var str = c.substring( name.length,c.length );
+
+		            try {
+		            	return JSON.parse( str );
+		            } catch( e ){
+		            	return str;
+		            }
 		        }
 		    }
 
@@ -49409,10 +49606,24 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 			});
 	},
 	activateHtmlScroll: function(){
-		$('html').css({ 'overflow': 'auto' });
+
+		$('html').css({
+			'overflow': 'auto',
+			'position': 'static',
+			'width': '100%',
+			'height': '100%'
+		});
+
 	},
 	deactivateHtmlScroll: function(){
-		$('html').css({ 'overflow': 'hidden' });
+
+		$('html').css({
+			'overflow': 'hidden',
+			'position': 'fixed',
+			'width': '100%',
+			'height': '100%'
+		});
+
 	},
 	reconnectUser: function(){
 
@@ -50443,7 +50654,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
 				var $modal = $( LJ.ui.renderModal( options ) );
 
-				LJ.ui.showCurtain({ duration: 500, opacity: .75 })
+				LJ.ui.showCurtain({ duration: 500, opacity: .75 });
+
+				if( LJ.isMobileMode() ){
+					LJ.ui.deactivateHtmlScroll();
+				}
 
 				$modal.hide()
 					  .appendTo( $('.curtain') )
@@ -50457,9 +50672,11 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 					  			$('.modal-body').jScrollPane();
 					  		}
 
+
 					  		if( options.search_input ){
 					  			var item_id = $('.modal').attr('data-item-id');
 					  			$('.modal-item[data-item-id="' + item_id + '"]').remove();
+					  			$modal.find('input').focus();
 					  		}
 
 					  		return resolve();
@@ -50471,6 +50688,8 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 		},
 		hideModal: function(){
 			return LJ.promise(function( resolve, reject ){
+
+				LJ.ui.activateHtmlScroll();
 
 				$('.modal').velocity('shradeOut', {
 					duration: LJ.ui.hide_modal_duration
@@ -50539,7 +50758,7 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 
 			var search_input_html = '';
 			var disabled = '';
-			if( options.search_input ){
+			if( options.search_input && !LJ.isMobileMode() ){
 				disabled = 'x--disabled';
 				search_input_html = LJ.ui.renderModalSearchInput();
 			}
@@ -51098,7 +51317,7 @@ window.LJ = _.merge( window.LJ || {}, {
     initAugmentations: function(){
 
         String.prototype.capitalize = function() {
-            return this.charAt(0).toUpperCase() + this.slice(1);
+            return this.charAt( 0 ).toUpperCase() + this.slice( 1 );
         }
 
         /* La base! */

@@ -25,7 +25,11 @@
 
 				var $modal = $( LJ.ui.renderModal( options ) );
 
-				LJ.ui.showCurtain({ duration: 500, opacity: .75 })
+				LJ.ui.showCurtain({ duration: 500, opacity: .75 });
+
+				if( LJ.isMobileMode() ){
+					LJ.ui.deactivateHtmlScroll();
+				}
 
 				$modal.hide()
 					  .appendTo( $('.curtain') )
@@ -39,9 +43,11 @@
 					  			$('.modal-body').jScrollPane();
 					  		}
 
+
 					  		if( options.search_input ){
 					  			var item_id = $('.modal').attr('data-item-id');
 					  			$('.modal-item[data-item-id="' + item_id + '"]').remove();
+					  			$modal.find('input').focus();
 					  		}
 
 					  		return resolve();
@@ -53,6 +59,8 @@
 		},
 		hideModal: function(){
 			return LJ.promise(function( resolve, reject ){
+
+				LJ.ui.activateHtmlScroll();
 
 				$('.modal').velocity('shradeOut', {
 					duration: LJ.ui.hide_modal_duration
@@ -121,7 +129,7 @@
 
 			var search_input_html = '';
 			var disabled = '';
-			if( options.search_input ){
+			if( options.search_input && !LJ.isMobileMode() ){
 				disabled = 'x--disabled';
 				search_input_html = LJ.ui.renderModalSearchInput();
 			}

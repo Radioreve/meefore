@@ -1,0 +1,88 @@
+
+.hive {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hive__background {
+  border-radius: 1000px;
+  width: 45%;
+  height: 45%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  background: #eee;
+}
+
+.hive__picture {
+  border-radius: 100px;
+  overflow: hidden;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid #eee;
+  border: 3px solid white;
+}
+
+.hive.x--2 .hive__picture {
+    width: 43%;
+    height: 43%;
+}
+
+.hive.x--3 .hive__picture {
+    width: 40%;
+    height: 40%;
+}
+
+.hive.x--4 .hive__picture {
+    width: 33%;
+    height: 33%;
+}
+
+.hive__picture img {
+  width: 100%;
+  height: 100%;
+}
+
+.hive__picture.x--2-top {
+  transform: translate( 0, -52% );
+}
+
+.hive__picture.x--2-bottom {
+  transform: translate( 0, 52% );
+}
+
+.hive__picture.x--3-top {
+  transform: translate( 0, -45% );
+}
+.hive__picture.x--3-left {
+  transform: translate( -52%, 45% );
+}
+
+.hive__picture.x--3-right {
+  transform: translate( 52%, 45% );
+}
+
+
+.hive__picture.x--4-top {
+  transform: translate( 0, -77% );
+}
+
+.hive__picture.x--4-bottom {
+  transform: translate( 0, 77% );
+}
+
+.hive__picture.x--4-left {
+  transform: translate( -70%, 0 );
+}
+
+.hive__picture.x--4-right {
+  transform: translate( 70%, 0 );
+}

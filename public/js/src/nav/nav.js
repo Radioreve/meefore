@@ -31,7 +31,20 @@
 			return $('.app__menu-item.x--active').attr('data-link');
 
 		},
+		denavigate: function(){
+
+			var active_view = LJ.nav.getActiveView();
+
+			$('.app__menu-item[data-link="'+ active_view +'"]').removeClass('x--active');
+			$('.app-section[data-link="'+ active_view +'"]').hide();
+
+		},
 		navigate: function( target_link ){
+
+			if( LJ.isMobileMode() ){
+				LJ.chat.hideChatWrap();
+				LJ.notifications.hideNotificationsPanel();
+			}
 
 			var current_link = LJ.nav.current_link;
 

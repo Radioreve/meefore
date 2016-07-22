@@ -316,6 +316,8 @@
 
 			LJ.friends.invite_popup_timer = setTimeout(function(){
 
+				if( LJ.isMobileMode() ) return;
+				
 				$( LJ.friends.renderInviteFriendsPopup() )
 					.hide()
 					.appendTo('body')

@@ -289,7 +289,7 @@
 						choices.join(''),
 						'<div class="change-lang__choice x--unavailable" data-cc="es">',
 							'<i class="flag-icon flag-icon-es"></i>',
-							'<div class="soon" data-lid="lang_soon">Prochaînement</div>',
+							'<div class="soon" data-lid="w_soon">Prochaînement</div>',
 						'</div>',
 						'<div class="modal__close nonei"></div>',
 					'</div>',

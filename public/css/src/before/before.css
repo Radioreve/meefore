@@ -137,6 +137,8 @@ span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;margin-b
 
 .slide.x--before .slide__close {
     color: white;
+    color: #1b69ec;
+    text-shadow: none;
 }
 
 .be-inview {
@@ -183,19 +185,20 @@ span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;margin-b
 
 .be-actions {
     position: absolute;
-    bottom: 15px;
-    right: 14px;
-    color: white;
+    top: 0;
+    left: 0;
+    /* color: white; */
     font-size: 26px;
     z-index: 101;
 }
 
 .be-actions__action {
     border: 2px solid white;
-    height: 50px;
-    width: 50px;
+    height: 36px;
+    width: 36px;
     cursor: pointer;
     font-size: 22px;
+    color: #1b69ec;
 }
 
 .be-actions__action:hover {
@@ -232,32 +235,37 @@ span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;margin-b
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
-    align-items: center;
-    height: 74px;
-    border-bottom: 1px solid #eee;
+    height: 60px;
     padding: 0px 40px;
+    font-size: 12px;
+    align-items: center;
 }
 
 .be-inview-address__address {
-    font-size: 11px;
-    height: 13px;
-    margin-top: 6px;
+    display: flex;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+} 
+
+.be-inview-address__address span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
 }
 
-.be-inview-address__address span {}
-
 .be-inview-address__date {
-    font-family: 'Open sans';
+    margin-bottom: 8px;
     font-weight: 700;
+    font-size: 12px;
+    display: flex;
 }
 
 .be-inview-address__date span {
-    font-size: 14px;
-    color: #333;
+    /* font-size: 14px; */
+    /* color: #333; */
 }
 
 .be-users {
@@ -514,4 +522,38 @@ span.be-dates__count {font-weight: 400;margin-left: 6px;font-size: 10px;margin-b
     color: #1b69ec!important;
     text-shadow: none;
     font-size: 12px;
+}
+
+
+.be-usernames {
+    color: #1b69ec;
+    font-family: 'creamy';
+    font-size: 26px;
+    display: flex;
+    align-items: flex-end;
+    height: 90px;
+    justify-content: center;
+}
+
+.be-usernames span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 220px;
+    white-space: nowrap;
+}
+
+.be-inview.x--hive .be-pictures {
+    width: 280px;
+    height: 280px;
+    padding: 0;
+    flex-shrink: 0;
+    margin: 0 auto;
+}
+
+.be-inview-address__icon {
+    margin-right: 4px;
+}
+
+.be-inview-address__icon i {
+    
 }

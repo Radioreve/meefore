@@ -26,7 +26,7 @@
 			// }
 
 		},
-		changeStoreMode: function( new_mode ){
+		setStoreMode: function( new_mode ){
 
 			if( [ "cookie", "localstorage" ].indexOf( new_mode ) == -1 ){
 				return LJ.wlog('This storage mode is not supported, please use "cookie" or "localstorage"');
@@ -113,6 +113,10 @@
 		},
 		setCookie: function( cname, cvalue, exdays ){
 
+			if( typeof cvalue == "object" ){
+				cvalue = JSON.stringify( cvalue );
+			}
+
 		    var d = new Date();
 		    d.setTime( d.getTime() + ( exdays * 24 * 60 * 60 * 1000 ) );
 
@@ -134,7 +138,13 @@
 		        }
 
 		        if( c.indexOf( name ) == 0 ){
-		            return c.substring(name.length,c.length);
+		            var str = c.substring( name.length,c.length );
+
+		            try {
+		            	return JSON.parse( str );
+		            } catch( e ){
+		            	return str;
+		            }
 		        }
 		    }
 
