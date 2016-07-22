@@ -85,11 +85,11 @@
 
      .map__icon.x--change-location,
      .map__icon.x--geoloc {
-          bottom: 4px;
+          bottom: 4px!important;
      }
 
      .map-zoom {
-         bottom: 70px;
+         bottom: 70px!important;
      }
 
     .picture,
@@ -218,7 +218,7 @@
     }
 
     .map__icon.x--create-before {
-        top: 80px;
+        top: 80px!important;
     }
 
     .search-users {
@@ -234,8 +234,8 @@
     }
 
     .be-create-row__input input {
-        border: none;
-        border-bottom: 1px solid #eee;
+        border: none!important;
+        border-bottom: 1px solid #eee!important;
     }
 
     .chat-inview-footer button {
