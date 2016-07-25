@@ -335,12 +335,13 @@
 	var fetchMoreUsers = function( req, res, next ){
 
 		var err_ns        = "fetching_more_users";
-
+		var f 			  = req.sent.filters;
 		var facebook_ids  = req.sent.facebook_ids;
-		var min 		  = req.sent.filters.age[ 0 ];
-		var max 		  = req.sent.filters.age[ 1 ];
-		var gender 		  = req.sent.filters.gender;
-		var country_codes = req.sent.filters.countries;
+		
+		var min 		  = f && f.age[ 0 ];
+		var max 		  = f && f.age[ 1 ];
+		var gender 		  = f && f.gender;
+		var country_codes = f && f.countries;
 
 		var query = {};
 

@@ -4,8 +4,7 @@
 
 	var checkFilters = nv.isAnyObject()
 
-		.withOptional('min'		  , nv.isNumber({ min: st.app.min_age, max: st.app.max_age }) )
-		.withOptional('max' 	  , nv.isNumber({ min: st.app.min_age, max: st.app.max_age }) )
+		.withOptional('age' 	  , nv.isArray() )
 		.withOptional('countries' , nv.isArray() )
 		.withOptional('gender'	  , nv.isArray() )
 
@@ -13,15 +12,14 @@
 
 		.withRequired('facebook_id' , nv.isString())
 		.withOptional('facebook_ids', nv.isArray())
-		.withRequired('filters',      checkFilters )
+		.withOptional('filters',      checkFilters )
 
 
 	function check( req, res, next ){
 		
 		req.sent.min 	 = parseInt( req.sent.min );
 		req.sent.max 	 = parseInt( req.sent.max );
-		req.sent.filters = req.sent.filters || {};
-
+		
 		nv.run( checkRequest, req.sent, function( n, errors ){
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );
