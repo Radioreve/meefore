@@ -162,7 +162,7 @@
         gulp.watch('views/index-dev.html', ['replace-html']);
     });
 
-    gulp.task('devbuild', [ "replace-html-devbuild", "min-css", "min-js" ], function(){
+    gulp.task('build', [ "replace-html", "min-css", "min-js" ], function(){
         gutil.log('Gulp done');
     });
 
