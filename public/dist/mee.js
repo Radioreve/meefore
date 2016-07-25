@@ -30598,6 +30598,10 @@ function closure ( target, options ){
 	window.LJ.before = _.merge( window.LJ.before || {}, {
 
 		fetched_befores: [],
+		switch_view_duration: 1000,
+		render_mode_active : null,
+		render_mode_primary: "hive",
+		render_mode_secondary: "flat",
 
 
 		init: function(){
@@ -30626,6 +30630,8 @@ function closure ( target, options ){
 			LJ.ui.$body.on('click', '.js-request', LJ.before.handleRequest );
 			LJ.ui.$body.on('click', '.js-request-pending', LJ.before.handleClickOnRequestPending );
 			LJ.ui.$body.on('click', '.js-request-accepted', LJ.before.handleClickOnRequestAccepted );
+			LJ.ui.$body.on('click', '.js-show-profile', LJ.before.handleShowUserProfile );
+			LJ.ui.$body.on('click', '.js-switch-mode', LJ.before.handleSwitchInviewMode );
 
 
 		},
@@ -31322,7 +31328,47 @@ function closure ( target, options ){
 			return '<button class="x--round-icon js-request"><i class="icon icon-meedrink"></i></button>'
 
 		},
+		// renderBeforeInview__Base: LJ.before.renderBeforeInviewHive,
 		renderBeforeInview__Base: function( before, hosts, options ){
+			
+			LJ.before.active_before  = before;
+			LJ.before.active_hosts   = hosts;
+			LJ.before.active_options = options;
+
+			LJ.before.render_mode_active = LJ.before.render_mode_primary;
+			var renderFn = LJ.before.getRenderFn( LJ.before.render_mode_primary );
+
+			return renderFn( before, hosts, options );
+
+		},
+		getRenderFn: function( mode ){
+
+			var mode = mode || LJ.before.render_mode_active || LJ.before.render_mode_primary;
+
+			if( mode == "hive" ){
+				return LJ.before.renderBeforeInviewHive;
+			}
+
+			if( mode == "flat" ){
+				return LJ.before.renderBeforeInviewFlat;
+			}
+
+			if( mode == "rows" ){
+				return LJ.before.renderBeforeInviewRows;
+			}
+
+		},	
+		switchBeforeInview: function( mode ){
+
+			var renderFn = LJ.before.getRenderFn( mode );
+		
+			$( renderFn( LJ.before.active_before, LJ.before.active_hosts, LJ.before.active_options ) )
+				.css({ 'display': 'flex' })
+				.replaceAll('.be-inview');
+
+
+		},
+		renderBeforeInviewHive: function( before, hosts, options ){
 
 			options = options || [];
 
@@ -31349,9 +31395,10 @@ function closure ( target, options ){
 						'<span>'+ usernames +'</span>',
 					'</div>',
 		            '<div class="be-actions">',
+		              '<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-refresh"></i></div>',
 		        	  be_action,
 		            '</div>',
-			      	'<div class="be-pictures">',
+			      	'<div class="be-pictures js-switch-mode">',
 			           be_pictures,
 			        '</div>',
 			        '<div class="be-inview-address">',
@@ -31374,7 +31421,81 @@ function closure ( target, options ){
 			].join(''));
 
 		},
-		renderBeforeInview__Base2: function( before, hosts, options ){
+		renderUserFlat: function( user ){
+
+			var n = user.name;
+			var a = user.age;
+			var i = user.facebook_id;
+			var c = user.country_code;
+			var g = user.gender;
+			var j = user.job;
+
+			var img_html = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, 'user-flat');
+
+			return LJ.ui.render([
+
+				'<div class="user-flat" data-facebook-id="'+ i +'">',
+		            '<div class="flat-user__pic js-show-profile js-filterlay">',
+		            	img_html,
+		            '</div>',
+		           '<div class="flat-user-body">',
+		               '<div class="flat-user__h1">',
+		            	  '<span class="flat-user__gender user-gender js-user-gender x--'+ g +'"></span>',
+		                  '<span class="flat-user__name">'+ n +'</span>',
+			              '<span class="flat-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
+			              '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
+		               '</div>',
+		               '<div class="flat-user__h2">',
+		                  '<span class="flat-user__age age">'+ a +'</span>',
+	                  	  '<span class="comma">-</span>',
+	               		  '<span class="flat-user__job">'+ j +'</span>',
+		               '</div>',
+		           '</div>',
+		            '<div class="flat-user-actions">',
+		              // '<div class="flat-user__action x--round-icon js-show-profile"><i class="icon icon-main-picture"></i></div>',
+		            '</div>',
+	          '</div>'
+
+			]);
+
+		},
+		renderBeforeInviewFlat: function( before, hosts, options ){
+
+			options = options || [];
+
+			if( !before || !hosts ){
+				return LJ.wlog('Cannot render before without before object and hosts profiles');
+			}
+			
+			var flat_users = [ '<div class="flat-users">' ];
+			hosts.forEach(function( h ){
+				flat_users.push( LJ.before.renderUserFlat( h ) );
+			});
+			flat_users.push( '</div>' );
+
+			var be_action  = options.be_action;
+
+			var be_request = '<div class="be-request">' + options.be_button + '</div>';
+			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
+				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
+			}
+
+ 
+			return LJ.ui.render([
+
+				'<div class="be-inview x--flat" data-before-id="'+ before._id +'">',
+					'<div class="be-actions">',
+			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-refresh"></i></div>',
+			          	be_action,
+			        '</div>',
+					flat_users.join(''),
+			        be_request,
+		      	'</div>'
+
+			]);
+
+		},
+		renderBeforeInviewRows: function( before, hosts, options ){
 
 			options = options || [];
 
@@ -31400,6 +31521,7 @@ function closure ( target, options ){
 				'<div class="be-inview" data-before-id="'+ before._id +'">',
 			      	'<div class="be-pictures">',
 			          '<div class="be-actions">',
+			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-refresh"></i></div>',
 			          	be_action,
 			          '</div>',
 			          be_pictures,
@@ -31418,12 +31540,12 @@ function closure ( target, options ){
 			        be_request,
 		      	'</div>'
 
-			].join(''));
+			]);
 
 		},
 		handleCancelBefore: function(){
 
-			var $s = $(this);
+			var $s = $( this );
 
 			var before_id  = $s.closest('.slide').find('[data-before-id]').attr('data-before-id');
 			var new_status = "canceled";
@@ -31606,12 +31728,30 @@ function closure ( target, options ){
 
 				"$wrap"        : $('.slide.x--before'),
 				"duration"     : 8000,
-				"message_html" : "<span>"+ LJ.text("before_just_canceled") +"</span>",
+				"message_html" : "<span>" + LJ.text("before_just_canceled") + "</span>",
 				"callback"     : function(){
 					LJ.ui.hideSlide({ type: 'before' });
 				}
 
 			});
+
+		},
+		handleSwitchInviewMode: function(){
+
+			LJ.before.render_mode_active = ( LJ.before.render_mode_active == LJ.before.render_mode_primary ) ?
+										     LJ.before.render_mode_secondary : 
+										     LJ.before.render_mode_primary;
+						
+			LJ.before.switchBeforeInview( LJ.before.render_mode_active );
+
+		},
+		handleShowUserProfile: function(){
+
+			var $s = $( this );
+			var facebook_id = $s.closest('[data-facebook-id]').attr('data-facebook-id');
+
+			LJ.profile_user.showUserProfile( facebook_id );
+
 
 		}
 
@@ -33848,13 +33988,14 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 		},
 		refreshChatRowPicture: function( chat_id ){
 
-			var last_message = LJ.chat.getLastMessage( chat_id );
+			var last_message       = LJ.chat.getLastMessage( chat_id );
+			var last_message_other = LJ.chat.getLastMessageOther( chat_id );
 
-			if( !last_message ){
+			if( !last_message || !last_message_other ){
 				return;
 			}
 
-			var sender = LJ.chat.getUser( last_message.sender_id );
+			var sender = LJ.chat.getUser( last_message_other.sender_id );
 			var pictures_html = LJ.pictures.makeRosaceHtml([{
 				img_id: sender.img_id,
 				img_vs: sender.img_vs
@@ -42432,42 +42573,42 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
             drink_active: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__1x.png',
                 '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/drink_black45_rotate_lg__2x.png',
-                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469367023/markers/drink_black45_rotate_lg__3x.png'
             },
             drinknew: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468612014/markers/drink_black45_rotate_md_newred__1x.png',
                 '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468612014/markers/drink_black45_rotate_md_newred__2x.png',
-                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469367023/markers/drink_black45_rotate_md_newred__3x.png'
             },
             star: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__1x.png',
                 '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_md__2x.png',
-                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469367023/markers/star_mushia_md__3x.png'
             },
             star_active: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__1x.png',
                 '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/star_mushia_lg__2x.png',
-                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469367023/markers/star_mushia_lg__3x.png'
             },
             pending: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__1x.png',
                 '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_md__2x.png',
-                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469367023/markers/pending_royalblue_inverse_md__3x.png'
             },
             pending_active: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__1x.png',
                 '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/pending_royalblue_inverse_lg__2x.png',
-                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469367023/markers/pending_royalblue_inverse_lg__3x.png'
             },
             chat: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__1x.png',
                 '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_md__2x.png',
-                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469367023/markers/chat_royalblue_md__3x.png'
             },
             chat_active: {
                 '1x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__1x.png',
                 '2x': 'http://res.cloudinary.com/radioreve/image/upload/v1468424123/markers/chat_royalblue_lg__2x.png',
-                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469200715/markers/drink_black45_rotate_md__3x.png'
+                '3x': 'http://res.cloudinary.com/radioreve/image/upload/v1469367023/markers/chat_royalblue_lg__3x.png'
             }
         }
 
@@ -43773,6 +43914,135 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 
+	window.LJ.nav = _.merge( window.LJ.nav || {}, {
+
+		$nav: $('.app-nav'),
+		current_link: null,
+
+		init: function(){
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.nav.handleDomEvents();
+				LJ.nav.navigate('map');
+				resolve();
+
+			});
+		},
+		handleDomEvents: function(){
+
+			LJ.nav.$nav.on('click', 'li[data-link]', LJ.nav.handleNavigate );
+
+		},
+		handleNavigate: function(e){
+
+			e.preventDefault();
+			var $li = $(this);
+			var lk  = $li.attr('data-link');
+			LJ.nav.navigate( lk );
+
+		},
+		getActiveView: function(){
+
+			return $('.app__menu-item.x--active').attr('data-link');
+
+		},
+		denavigate: function(){
+
+			var active_view = LJ.nav.getActiveView();
+
+			$('.app__menu-item[data-link="'+ active_view +'"]').removeClass('x--active');
+			$('.app-section[data-link="'+ active_view +'"]').hide();
+
+		},
+		navigate: function( target_link ){
+
+			if( LJ.isMobileMode() ){
+				LJ.chat.hideChatWrap();
+				LJ.notifications.hideNotificationsPanel();
+			}
+
+			var current_link = LJ.nav.current_link;
+
+			var $target_section  = $('.app-section[data-link="' + target_link + '"]');
+			var $current_section = $('.app-section[data-link="' + current_link + '"]') || $target_section; // For the first activation
+
+			var $target_menuitem = $('.app__menu-item[data-link="' + target_link + '"]');
+			var $current_menuitem = $('.app__menu-item[data-link="' + current_link + '"]') || $target_menuitem
+
+			var $target_headertitle  = $('.app-header__title[data-link="' + target_link + '"]');
+			var $current_headertitle = $('.app-header__title[data-link="' + current_link + '"]') || $target_headertitle;
+
+			if( $target_section.length + $target_menuitem.length + $target_headertitle.length != 3 ){
+				return LJ.wlog('Ghost target for link : ' + link );
+			}
+
+			// Set the internal state
+			LJ.nav.current_link = target_link
+
+			// Update the Header ui
+			$current_menuitem.removeClass('x--active');
+			$target_menuitem.addClass('x--active');
+
+			// Update the header title
+			/*var duration = 220;
+			LJ.ui.shradeOut( $current_headertitle, duration )
+				.then(function(){
+					LJ.ui.shradeIn( $target_headertitle, duration );
+				});
+			*/
+			
+			// Display the view
+			$current_section.hide();
+			$target_section.css({ display: 'flex' });
+
+			if( !$target_menuitem.is( $current_menuitem ) ){
+				LJ.ui.hideSlide();
+				LJ.before.hideCreateBeforeStraight();
+				LJ.before.showBrowser();
+				LJ.map.deactivateMarkers();
+				LJ.map.refreshMarkers();
+			}
+
+			// Specificities
+			var duration = 220;
+			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
+
+			if( target_link == 'search' && hasMeepassRibbon ) {
+				LJ.ui.shradeIn( $('.meepass-ribbon'), duration );
+			} 
+
+			if( target_link != 'search' && hasMeepassRibbon ){
+				LJ.ui.shradeOut( $('.meepass-ribbon'), duration );
+			}
+
+			if( target_link == 'map' ){
+				$('.app').removeClass('padded');
+
+				LJ.unoffsetAll();
+				// Refresh the map dued to a bug when the window is resized and the map not visible
+				// The try catch is to avoid an ugly error in the console during app intitialization
+				try {
+					LJ.map.refreshMap();
+				} catch( e ){
+
+				}
+
+
+			} else {
+				$('.app').addClass('padded');
+			}
+
+			if( target_link != "menu" ){
+				LJ.friends.hideInviteFriendsPopup();
+			}
+
+
+		}
+
+	});
+
+
+
 	
 	window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
 
@@ -44501,135 +44771,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		}
 
 	});
-
-	window.LJ.nav = _.merge( window.LJ.nav || {}, {
-
-		$nav: $('.app-nav'),
-		current_link: null,
-
-		init: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.nav.handleDomEvents();
-				LJ.nav.navigate('map');
-				resolve();
-
-			});
-		},
-		handleDomEvents: function(){
-
-			LJ.nav.$nav.on('click', 'li[data-link]', LJ.nav.handleNavigate );
-
-		},
-		handleNavigate: function(e){
-
-			e.preventDefault();
-			var $li = $(this);
-			var lk  = $li.attr('data-link');
-			LJ.nav.navigate( lk );
-
-		},
-		getActiveView: function(){
-
-			return $('.app__menu-item.x--active').attr('data-link');
-
-		},
-		denavigate: function(){
-
-			var active_view = LJ.nav.getActiveView();
-
-			$('.app__menu-item[data-link="'+ active_view +'"]').removeClass('x--active');
-			$('.app-section[data-link="'+ active_view +'"]').hide();
-
-		},
-		navigate: function( target_link ){
-
-			if( LJ.isMobileMode() ){
-				LJ.chat.hideChatWrap();
-				LJ.notifications.hideNotificationsPanel();
-			}
-
-			var current_link = LJ.nav.current_link;
-
-			var $target_section  = $('.app-section[data-link="' + target_link + '"]');
-			var $current_section = $('.app-section[data-link="' + current_link + '"]') || $target_section; // For the first activation
-
-			var $target_menuitem = $('.app__menu-item[data-link="' + target_link + '"]');
-			var $current_menuitem = $('.app__menu-item[data-link="' + current_link + '"]') || $target_menuitem
-
-			var $target_headertitle  = $('.app-header__title[data-link="' + target_link + '"]');
-			var $current_headertitle = $('.app-header__title[data-link="' + current_link + '"]') || $target_headertitle;
-
-			if( $target_section.length + $target_menuitem.length + $target_headertitle.length != 3 ){
-				return LJ.wlog('Ghost target for link : ' + link );
-			}
-
-			// Set the internal state
-			LJ.nav.current_link = target_link
-
-			// Update the Header ui
-			$current_menuitem.removeClass('x--active');
-			$target_menuitem.addClass('x--active');
-
-			// Update the header title
-			/*var duration = 220;
-			LJ.ui.shradeOut( $current_headertitle, duration )
-				.then(function(){
-					LJ.ui.shradeIn( $target_headertitle, duration );
-				});
-			*/
-			
-			// Display the view
-			$current_section.hide();
-			$target_section.css({ display: 'flex' });
-
-			if( !$target_menuitem.is( $current_menuitem ) ){
-				LJ.ui.hideSlide();
-				LJ.before.hideCreateBeforeStraight();
-				LJ.before.showBrowser();
-				LJ.map.deactivateMarkers();
-				LJ.map.refreshMarkers();
-			}
-
-			// Specificities
-			var duration = 220;
-			var hasMeepassRibbon = $('.meepass-ribbon').length > 0;
-
-			if( target_link == 'search' && hasMeepassRibbon ) {
-				LJ.ui.shradeIn( $('.meepass-ribbon'), duration );
-			} 
-
-			if( target_link != 'search' && hasMeepassRibbon ){
-				LJ.ui.shradeOut( $('.meepass-ribbon'), duration );
-			}
-
-			if( target_link == 'map' ){
-				$('.app').removeClass('padded');
-
-				LJ.unoffsetAll();
-				// Refresh the map dued to a bug when the window is resized and the map not visible
-				// The try catch is to avoid an ugly error in the console during app intitialization
-				try {
-					LJ.map.refreshMap();
-				} catch( e ){
-
-				}
-
-
-			} else {
-				$('.app').addClass('padded');
-			}
-
-			if( target_link != "menu" ){
-				LJ.friends.hideInviteFriendsPopup();
-			}
-
-
-		}
-
-	});
-
-
 
 	
 	window.LJ.onboarding = _.merge( window.LJ.onboarding || {}, {
@@ -45521,6 +45662,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			'menu-row'       : { width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
 			'user-profile'   : { width: 320, height: 320, crop: 'fill', gravity: 'face' }, 
 			'user-search'    : { width: 240, height: 240, crop: 'fill', gravity: 'face' },
+			'user-flat'      : { width: 240, height: 240, crop: 'fill', gravity: 'face' },
 			'user-modal'     : { width: 50,  height: 50,  crop: 'fill', gravity: 'face' },
 			'user-before'    : { width: 185, height: 185, crop: 'fill', gravity: 'face' },
 			'user-row'       : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
@@ -45980,7 +46122,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 				var part = parts[ L ][ i ];
 				hive_imgs_html.push([
 
-					'<div class="hive__picture ' + part + '">',
+					'<div class="hive__picture js-filterlay ' + part + '">',
 						img_html,
 					'</div>'
 
@@ -46171,12 +46313,20 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			if( $img_wrapper.find('.x--filterlay').length != 0 ){
 				return;
 			}
+			
+			$img_wrapper.each(function( i, imgwrp ){
+				
+				var $img_wrapper = $( imgwrp );
+				
+				if( $img_wrapper.css('position') == "static" ){
+					$img_wrapper.css({ 'position': 'relative' });
+				}
 
-			if( $img_wrapper.css('position') != "absolute" ){
-				$img_wrapper.css({ 'position': 'relative' });
-			}
+				$img_wrapper.append( $('<div class="pictures-overlay x--filterlay"></div>') );
+			
 
-			$img_wrapper.append( $('<div class="pictures-overlay x--filterlay"></div>') );
+			});
+			
 
 		}
 
@@ -47613,7 +47763,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		            '</div>',
 	          '</div>'
 
-				].join(''))
+			]);
 
 		}
 
@@ -48381,6 +48531,99 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 
 
+	
+	window.LJ.static = _.merge( window.LJ.static || {}, {
+
+		'images': [
+			{
+				'access_name' : 'main_loader',
+				'image_id' 	  : 'app_loader',
+				'param'		  : { 'class': 'app__loader', 'width': 80 }
+			},
+			{
+				'access_name' : 'modal_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'modal__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'menu_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'menu__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'slide_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'slide__loader', 'width': 32  }	
+			},
+			{
+				'access_name' : 'search_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'search__loader', 'width': 32  }	
+			},
+			{
+				'access_name' : 'be_create_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'be-create__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'chat_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
+			},
+			{ "access_name" : ":D", "image_id": "emoticon_smile" },
+			{ "access_name" : "xD", "image_id": "emoticon_smilexd" },
+			{ "access_name" : ";)", "image_id": "emoticon_blink" },
+			{ "access_name" : ":p", "image_id": "emoticon_tongue" },
+			{ "access_name" : "<3", "image_id": "emoticon_love" },
+			{ "access_name" : ":%", "image_id": "emoticon_sun" },
+			{ "access_name" : "-)", "image_id": "emoticon_bg" },
+			{ "access_name" : ":o", "image_id": "emoticon_oh" },
+			{ "access_name" : ":(", "image_id": "emoticon_sad" },
+			{ "access_name" : ":â", "image_id": "emoticon_angel" },
+			{ "access_name" : ":z", "image_id": "emoticon_zzz" },
+			{ "access_name" : ":/", "image_id": "emoticon_noop" }
+		],
+		// Constructs a list of static pictures hosted on Cloudinary that are available
+		// to use accross all others modules
+		init: function(){
+
+			LJ.static.cacheStaticImages();
+			return;
+
+		},
+		cacheStaticImages: function(){
+
+			LJ.static.images.forEach(function( img ){
+
+				img.param = img.param || {};
+				img.param['cloud_name'] = 'radioreve';
+
+				LJ.static[ '$' + img.access_name ] = $.cloudinary.image(
+					img.image_id,
+					img.param
+				);
+
+
+			});
+
+		},
+		getLoader: function( loader_id ){
+			var $l = $('.app__loader[data-loaderid="' + loader_id + '"]');
+
+			if( $l.length != 1 ){
+				return LJ.wlog('Unable to uniquely identify the loader with id : ' + loader_id +', length is : ' + $l.length );
+			} else {
+				return $l;
+			}
+		},
+		renderStaticImage: function( access_name ){
+
+			return LJ.static[ '$' + access_name ].clone().prop('outerHTML');
+
+		}
+
+	});
+
 	window.LJ.shared = _.merge( window.LJ.shared || {}, {
 
 		shared_item_duration: 600,
@@ -48812,106 +49055,16 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 
-	
-	window.LJ.static = _.merge( window.LJ.static || {}, {
-
-		'images': [
-			{
-				'access_name' : 'main_loader',
-				'image_id' 	  : 'app_loader',
-				'param'		  : { 'class': 'app__loader', 'width': 80 }
-			},
-			{
-				'access_name' : 'modal_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'modal__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'menu_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'menu__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'slide_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'slide__loader', 'width': 32  }	
-			},
-			{
-				'access_name' : 'search_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'search__loader', 'width': 32  }	
-			},
-			{
-				'access_name' : 'be_create_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'be-create__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'chat_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
-			},
-			{ "access_name" : ":D", "image_id": "emoticon_smile" },
-			{ "access_name" : "xD", "image_id": "emoticon_smilexd" },
-			{ "access_name" : ";)", "image_id": "emoticon_blink" },
-			{ "access_name" : ":p", "image_id": "emoticon_tongue" },
-			{ "access_name" : "<3", "image_id": "emoticon_love" },
-			{ "access_name" : ":%", "image_id": "emoticon_sun" },
-			{ "access_name" : "-)", "image_id": "emoticon_bg" },
-			{ "access_name" : ":o", "image_id": "emoticon_oh" },
-			{ "access_name" : ":(", "image_id": "emoticon_sad" },
-			{ "access_name" : ":â", "image_id": "emoticon_angel" },
-			{ "access_name" : ":z", "image_id": "emoticon_zzz" },
-			{ "access_name" : ":/", "image_id": "emoticon_noop" }
-		],
-		// Constructs a list of static pictures hosted on Cloudinary that are available
-		// to use accross all others modules
-		init: function(){
-
-			LJ.static.cacheStaticImages();
-			return;
-
-		},
-		cacheStaticImages: function(){
-
-			LJ.static.images.forEach(function( img ){
-
-				img.param = img.param || {};
-				img.param['cloud_name'] = 'radioreve';
-
-				LJ.static[ '$' + img.access_name ] = $.cloudinary.image(
-					img.image_id,
-					img.param
-				);
-
-
-			});
-
-		},
-		getLoader: function( loader_id ){
-			var $l = $('.app__loader[data-loaderid="' + loader_id + '"]');
-
-			if( $l.length != 1 ){
-				return LJ.wlog('Unable to uniquely identify the loader with id : ' + loader_id +', length is : ' + $l.length );
-			} else {
-				return $l;
-			}
-		},
-		renderStaticImage: function( access_name ){
-
-			return LJ.static[ '$' + access_name ].clone().prop('outerHTML');
-
-		}
-
-	});
-
 	window.LJ.store = _.merge( window.LJ.store || {}, {
 
 		mode: null,
+		namespace: null,
 
 		init: function(){
 
 			LJ.store.activateStoreMode();
+			LJ.store.setStoreNamespace();
+
 			return;
 		},
 		activateStoreMode: function(){
@@ -48930,6 +49083,22 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			// } else {
 			// 	LJ.store.mode = "cookie";
 			// }
+
+		},
+		setStoreNamespace: function(){
+
+			LJ.store.namespace = LJ.app_mode;
+
+		},
+		getNs: function(){
+
+			var ns = LJ.store.namespace;
+
+			if( !ns ){
+				return LJ.wlog("Warning, the store namespace is not properly set");
+			} else {
+				return ns;
+			}
 
 		},
 		setStoreMode: function( new_mode ){
@@ -48995,11 +49164,13 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 				item = JSON.stringify( item );
 			}
 
-			window.localStorage.setItem( key, item );
+			window.localStorage.setItem( LJ.store.getNs() + ":" + key, item );
 
 		},
 		getLocalItem: function( key ){
 
+			key = LJ.store.getNs() + ":" + key;
+			
 			var item = window.localStorage.getItem( key );
 
 			try {
@@ -49028,10 +49199,12 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 		    var expires = "expires="+ d.toUTCString();
 
-		    document.cookie = cname + "=" + cvalue + "; " + expires;
+		    document.cookie = LJ.store.getNs() + ":" + cname + "=" + cvalue + "; " + expires;
 
 		},
 		getCookie: function( cname ){
+
+			cname += LJ.store.getNs() + ":";
 
 		    var name = cname + "=";
 		    var ca = document.cookie.split(';');
@@ -49062,243 +49235,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 		}
 
-	});
-	
-
-	window.LJ = _.merge( window.LJ || {} , {
-
-		typeahead_legacy: {
-			users: {
-				class_names: {
-					input      :'',
-					hint       :'',
-					menu       :'search-results-users',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-users',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			// places: {
-			// 	class_names: {
-			// 		input:'',
-			// 		hint:'hint-places',
-			// 		menu:'search-results-autocomplete search-results-party-places',
-			// 		dataset:'search-wrap',
-			// 		suggestion:'search-result-default search-result-party-places',
-			// 		empty:'empty',
-			// 		open:'open',
-			// 		cursor:'cursor',
-			// 		highlight:'highlight'
-			// 	}
-			// },
-			friends: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			groups: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends search-results-groups',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			}
-		}
-
-	});
-
-
-	window.LJ.fn = _.merge( window.LJ.fn || {} , 
-
-	{
-		initTypeaheadUsers: function(){
-
-			var users = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			users.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
-
-			$('#search input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
-				classNames: LJ.typeahead.users.class_names
-			},
-			{
-				name:'users',
-				display:'name',
-				source: users.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			})
-			.on('typeahead:select', function( ev, suggestion ){
-
-				LJ.fn.displayUserProfile( suggestion.facebook_id );
-				$(this).typeahead('val', '');
-
-			});
-
-		},
-		initTypeaheadHosts: function( friends ){
-
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
-
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
-
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
-
-			$('.row-create-friends input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.friends.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
-
-		},
-		initTypeaheadGroups: function( friends ){
-
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
-
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
-
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
-
-			$('.row-requestin-group-members input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.groups.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
-
-		},
-		initTypeaheadPlaces: function(){
-
-			var places = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			places.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
-
-			$('.row-create-party-place input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1,
-				classNames: LJ.typeahead.places.class_names
-			},
-			{
-				name:'places',
-				display:'name',
-				source: places.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
-				}
-			});
-
-		}
-		
 	});
 
 window.LJ.ui = _.merge( window.LJ.ui || {}, {
@@ -49511,6 +49447,8 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	},
 	render: function( html ){
 
+		html = Array.isArray( html ) ? html.join('') : html;
+		
 		var $html = $( html );
 		LJ.lang.translate( $html );
 		LJ.pictures.applyFilterlay( $html );
@@ -51310,6 +51248,243 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 			}
 		}
 
+	});
+	
+
+	window.LJ = _.merge( window.LJ || {} , {
+
+		typeahead_legacy: {
+			users: {
+				class_names: {
+					input      :'',
+					hint       :'',
+					menu       :'search-results-users',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-users',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			// places: {
+			// 	class_names: {
+			// 		input:'',
+			// 		hint:'hint-places',
+			// 		menu:'search-results-autocomplete search-results-party-places',
+			// 		dataset:'search-wrap',
+			// 		suggestion:'search-result-default search-result-party-places',
+			// 		empty:'empty',
+			// 		open:'open',
+			// 		cursor:'cursor',
+			// 		highlight:'highlight'
+			// 	}
+			// },
+			friends: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			groups: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends search-results-groups',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			}
+		}
+
+	});
+
+
+	window.LJ.fn = _.merge( window.LJ.fn || {} , 
+
+	{
+		initTypeaheadUsers: function(){
+
+			var users = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			users.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
+
+			$('#search input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
+				classNames: LJ.typeahead.users.class_names
+			},
+			{
+				name:'users',
+				display:'name',
+				source: users.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			})
+			.on('typeahead:select', function( ev, suggestion ){
+
+				LJ.fn.displayUserProfile( suggestion.facebook_id );
+				$(this).typeahead('val', '');
+
+			});
+
+		},
+		initTypeaheadHosts: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-create-friends input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.friends.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadGroups: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-requestin-group-members input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.groups.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadPlaces: function(){
+
+			var places = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			places.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
+
+			$('.row-create-party-place input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1,
+				classNames: LJ.typeahead.places.class_names
+			},
+			{
+				name:'places',
+				display:'name',
+				source: places.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
+				}
+			});
+
+		}
+		
 	});
 
 window.LJ = _.merge( window.LJ || {}, {

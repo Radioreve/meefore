@@ -2,10 +2,13 @@
 	window.LJ.store = _.merge( window.LJ.store || {}, {
 
 		mode: null,
+		namespace: null,
 
 		init: function(){
 
 			LJ.store.activateStoreMode();
+			LJ.store.setStoreNamespace();
+
 			return;
 		},
 		activateStoreMode: function(){
@@ -24,6 +27,22 @@
 			// } else {
 			// 	LJ.store.mode = "cookie";
 			// }
+
+		},
+		setStoreNamespace: function(){
+
+			LJ.store.namespace = LJ.app_mode;
+
+		},
+		getNs: function(){
+
+			var ns = LJ.store.namespace;
+
+			if( !ns ){
+				return LJ.wlog("Warning, the store namespace is not properly set");
+			} else {
+				return ns;
+			}
 
 		},
 		setStoreMode: function( new_mode ){
@@ -89,11 +108,13 @@
 				item = JSON.stringify( item );
 			}
 
-			window.localStorage.setItem( key, item );
+			window.localStorage.setItem( LJ.store.getNs() + ":" + key, item );
 
 		},
 		getLocalItem: function( key ){
 
+			key = LJ.store.getNs() + ":" + key;
+			
 			var item = window.localStorage.getItem( key );
 
 			try {
@@ -122,10 +143,12 @@
 
 		    var expires = "expires="+ d.toUTCString();
 
-		    document.cookie = cname + "=" + cvalue + "; " + expires;
+		    document.cookie = LJ.store.getNs() + ":" + cname + "=" + cvalue + "; " + expires;
 
 		},
 		getCookie: function( cname ){
+
+			cname += LJ.store.getNs() + ":";
 
 		    var name = cname + "=";
 		    var ca = document.cookie.split(';');

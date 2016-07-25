@@ -156,9 +156,9 @@
 					if( !req.sent.bot ){
 						console.log('Sending email notification to admins');
 						alerter.sendAdminEmail({
-							subjet : user.name + ' (' + user.contact_email + ')(' + user.gender[0] + ') vient de s\'inscrire sur meefore',
-							html   : user.facebook_url
-						})
+							subject : user.name + ' (' + user.contact_email + ')(' + user.gender[0] + ') vient de s\'inscrire sur meefore',
+							html    : user.facebook_url
+						});
 					}
 
 					console.log('Account created successfully');

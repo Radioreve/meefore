@@ -2,6 +2,10 @@
 	window.LJ.before = _.merge( window.LJ.before || {}, {
 
 		fetched_befores: [],
+		switch_view_duration: 1000,
+		render_mode_active : null,
+		render_mode_primary: "hive",
+		render_mode_secondary: "flat",
 
 
 		init: function(){
@@ -30,6 +34,8 @@
 			LJ.ui.$body.on('click', '.js-request', LJ.before.handleRequest );
 			LJ.ui.$body.on('click', '.js-request-pending', LJ.before.handleClickOnRequestPending );
 			LJ.ui.$body.on('click', '.js-request-accepted', LJ.before.handleClickOnRequestAccepted );
+			LJ.ui.$body.on('click', '.js-show-profile', LJ.before.handleShowUserProfile );
+			LJ.ui.$body.on('click', '.js-switch-mode', LJ.before.handleSwitchInviewMode );
 
 
 		},
@@ -726,7 +732,47 @@
 			return '<button class="x--round-icon js-request"><i class="icon icon-meedrink"></i></button>'
 
 		},
+		// renderBeforeInview__Base: LJ.before.renderBeforeInviewHive,
 		renderBeforeInview__Base: function( before, hosts, options ){
+			
+			LJ.before.active_before  = before;
+			LJ.before.active_hosts   = hosts;
+			LJ.before.active_options = options;
+
+			LJ.before.render_mode_active = LJ.before.render_mode_primary;
+			var renderFn = LJ.before.getRenderFn( LJ.before.render_mode_primary );
+
+			return renderFn( before, hosts, options );
+
+		},
+		getRenderFn: function( mode ){
+
+			var mode = mode || LJ.before.render_mode_active || LJ.before.render_mode_primary;
+
+			if( mode == "hive" ){
+				return LJ.before.renderBeforeInviewHive;
+			}
+
+			if( mode == "flat" ){
+				return LJ.before.renderBeforeInviewFlat;
+			}
+
+			if( mode == "rows" ){
+				return LJ.before.renderBeforeInviewRows;
+			}
+
+		},	
+		switchBeforeInview: function( mode ){
+
+			var renderFn = LJ.before.getRenderFn( mode );
+		
+			$( renderFn( LJ.before.active_before, LJ.before.active_hosts, LJ.before.active_options ) )
+				.css({ 'display': 'flex' })
+				.replaceAll('.be-inview');
+
+
+		},
+		renderBeforeInviewHive: function( before, hosts, options ){
 
 			options = options || [];
 
@@ -753,9 +799,10 @@
 						'<span>'+ usernames +'</span>',
 					'</div>',
 		            '<div class="be-actions">',
+		              '<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-refresh"></i></div>',
 		        	  be_action,
 		            '</div>',
-			      	'<div class="be-pictures">',
+			      	'<div class="be-pictures js-switch-mode">',
 			           be_pictures,
 			        '</div>',
 			        '<div class="be-inview-address">',
@@ -778,7 +825,81 @@
 			].join(''));
 
 		},
-		renderBeforeInview__Base2: function( before, hosts, options ){
+		renderUserFlat: function( user ){
+
+			var n = user.name;
+			var a = user.age;
+			var i = user.facebook_id;
+			var c = user.country_code;
+			var g = user.gender;
+			var j = user.job;
+
+			var img_html = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, 'user-flat');
+
+			return LJ.ui.render([
+
+				'<div class="user-flat" data-facebook-id="'+ i +'">',
+		            '<div class="flat-user__pic js-show-profile js-filterlay">',
+		            	img_html,
+		            '</div>',
+		           '<div class="flat-user-body">',
+		               '<div class="flat-user__h1">',
+		            	  '<span class="flat-user__gender user-gender js-user-gender x--'+ g +'"></span>',
+		                  '<span class="flat-user__name">'+ n +'</span>',
+			              '<span class="flat-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
+			              '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
+		               '</div>',
+		               '<div class="flat-user__h2">',
+		                  '<span class="flat-user__age age">'+ a +'</span>',
+	                  	  '<span class="comma">-</span>',
+	               		  '<span class="flat-user__job">'+ j +'</span>',
+		               '</div>',
+		           '</div>',
+		            '<div class="flat-user-actions">',
+		              // '<div class="flat-user__action x--round-icon js-show-profile"><i class="icon icon-main-picture"></i></div>',
+		            '</div>',
+	          '</div>'
+
+			]);
+
+		},
+		renderBeforeInviewFlat: function( before, hosts, options ){
+
+			options = options || [];
+
+			if( !before || !hosts ){
+				return LJ.wlog('Cannot render before without before object and hosts profiles');
+			}
+			
+			var flat_users = [ '<div class="flat-users">' ];
+			hosts.forEach(function( h ){
+				flat_users.push( LJ.before.renderUserFlat( h ) );
+			});
+			flat_users.push( '</div>' );
+
+			var be_action  = options.be_action;
+
+			var be_request = '<div class="be-request">' + options.be_button + '</div>';
+			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
+				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
+			}
+
+ 
+			return LJ.ui.render([
+
+				'<div class="be-inview x--flat" data-before-id="'+ before._id +'">',
+					'<div class="be-actions">',
+			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-refresh"></i></div>',
+			          	be_action,
+			        '</div>',
+					flat_users.join(''),
+			        be_request,
+		      	'</div>'
+
+			]);
+
+		},
+		renderBeforeInviewRows: function( before, hosts, options ){
 
 			options = options || [];
 
@@ -804,6 +925,7 @@
 				'<div class="be-inview" data-before-id="'+ before._id +'">',
 			      	'<div class="be-pictures">',
 			          '<div class="be-actions">',
+			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-refresh"></i></div>',
 			          	be_action,
 			          '</div>',
 			          be_pictures,
@@ -822,12 +944,12 @@
 			        be_request,
 		      	'</div>'
 
-			].join(''));
+			]);
 
 		},
 		handleCancelBefore: function(){
 
-			var $s = $(this);
+			var $s = $( this );
 
 			var before_id  = $s.closest('.slide').find('[data-before-id]').attr('data-before-id');
 			var new_status = "canceled";
@@ -1010,12 +1132,30 @@
 
 				"$wrap"        : $('.slide.x--before'),
 				"duration"     : 8000,
-				"message_html" : "<span>"+ LJ.text("before_just_canceled") +"</span>",
+				"message_html" : "<span>" + LJ.text("before_just_canceled") + "</span>",
 				"callback"     : function(){
 					LJ.ui.hideSlide({ type: 'before' });
 				}
 
 			});
+
+		},
+		handleSwitchInviewMode: function(){
+
+			LJ.before.render_mode_active = ( LJ.before.render_mode_active == LJ.before.render_mode_primary ) ?
+										     LJ.before.render_mode_secondary : 
+										     LJ.before.render_mode_primary;
+						
+			LJ.before.switchBeforeInview( LJ.before.render_mode_active );
+
+		},
+		handleShowUserProfile: function(){
+
+			var $s = $( this );
+			var facebook_id = $s.closest('[data-facebook-id]').attr('data-facebook-id');
+
+			LJ.profile_user.showUserProfile( facebook_id );
+
 
 		}
 

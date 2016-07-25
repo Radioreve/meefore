@@ -11,15 +11,15 @@
 	var every_ten_sec = 1000 * 10;
 
 	// Job #0 - Print how long server has been on
-	var hours = 0;
+	var min = 0;
 	(function checkingTime(){
-		hours += 1;
-		console.log('Scheduler up and running for ' + hours + ' hours now. ');
-		setTimeout( checkingTime, every_hour );
+		min += 1;
+		console.log('Scheduler up and running for ' + min + ' minutes now. ');
+		setTimeout( checkingTime, every_min );
 	})();
 
 
-	// Job #1 - Put "ended" all befores of yesterday, every day at 3:30 am	
+	// Job #1 - Put "ended" all befores of yesterday, every day at 6 am	
 	(function terminateBeforesEveryHour(){
 		require('./jobs/terminate-befores').terminateBefores();
 		setTimeout( terminateBeforesEveryHour, every_hour );

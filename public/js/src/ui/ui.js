@@ -209,6 +209,8 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	},
 	render: function( html ){
 
+		html = Array.isArray( html ) ? html.join('') : html;
+		
 		var $html = $( html );
 		LJ.lang.translate( $html );
 		LJ.pictures.applyFilterlay( $html );

@@ -726,7 +726,7 @@ button:hover {
     margin-left: 6px;
     border-radius: 100px;
     opacity: 0;
-    display: inline-block;
+    display: none;
 }
 
 
@@ -1052,6 +1052,7 @@ button:hover {
 .x--online {
     background: #6ae74f;
     opacity: 1;
+    display: inline-block;
 }
 
 .padded {
@@ -1480,7 +1481,7 @@ button:hover {
     position: absolute;
     top: 0px;
     transform: translate(0, -50%);
-    right: 0px;
+    right: 2px;
     /* background: #3C7FEE; */
     color: #868686;
     color: white;

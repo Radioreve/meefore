@@ -1257,13 +1257,14 @@
 		},
 		refreshChatRowPicture: function( chat_id ){
 
-			var last_message = LJ.chat.getLastMessage( chat_id );
+			var last_message       = LJ.chat.getLastMessage( chat_id );
+			var last_message_other = LJ.chat.getLastMessageOther( chat_id );
 
-			if( !last_message ){
+			if( !last_message || !last_message_other ){
 				return;
 			}
 
-			var sender = LJ.chat.getUser( last_message.sender_id );
+			var sender = LJ.chat.getUser( last_message_other.sender_id );
 			var pictures_html = LJ.pictures.makeRosaceHtml([{
 				img_id: sender.img_id,
 				img_vs: sender.img_vs

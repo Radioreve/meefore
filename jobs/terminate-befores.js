@@ -18,7 +18,7 @@
 		timezone          : null,
 		server_time		  : null,
 		target_time		  : null,
-		n_befores_updated : null,
+		n_befores_updated : 0,
 		before_list       : []
 	};
 
@@ -142,7 +142,9 @@
 			handleMongooseOpen( callback );
 		}
 
-		mongoose.connection.on('open', handleMongooseOpen );
+		mongoose.connection.on('open', function(){
+			handleMongooseOpen( callback );
+		});
 		
 		function formatTime( m ){
 			if( !m._isAMomentObject ){
@@ -156,8 +158,6 @@
 			console.log('Connected to the database! Updating... ');
 
 				updateBefores(function(){
-
-					console.log( tracked.n_users_updated + ' users updated');
 
 					var before_list_html = [];
 					tracked.before_list.forEach(function( bfr, i ){
@@ -185,6 +185,8 @@
 							html    : mail_html.join('') 
 						});
 					}
+
+					console.log( JSON.stringify( tracked, null, 4 ) );
 					
 					if( typeof callback == "function" ){
 						callback( null, tracked );

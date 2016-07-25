@@ -14,6 +14,7 @@
 			'menu-row'       : { width: 90,  height: 90,  crop: 'fill', gravity: 'face' },
 			'user-profile'   : { width: 320, height: 320, crop: 'fill', gravity: 'face' }, 
 			'user-search'    : { width: 240, height: 240, crop: 'fill', gravity: 'face' },
+			'user-flat'      : { width: 240, height: 240, crop: 'fill', gravity: 'face' },
 			'user-modal'     : { width: 50,  height: 50,  crop: 'fill', gravity: 'face' },
 			'user-before'    : { width: 185, height: 185, crop: 'fill', gravity: 'face' },
 			'user-row'       : { width: 60,  height: 60,  crop: 'fill', gravity: 'face' },
@@ -473,7 +474,7 @@
 				var part = parts[ L ][ i ];
 				hive_imgs_html.push([
 
-					'<div class="hive__picture ' + part + '">',
+					'<div class="hive__picture js-filterlay ' + part + '">',
 						img_html,
 					'</div>'
 
@@ -664,12 +665,20 @@
 			if( $img_wrapper.find('.x--filterlay').length != 0 ){
 				return;
 			}
+			
+			$img_wrapper.each(function( i, imgwrp ){
+				
+				var $img_wrapper = $( imgwrp );
+				
+				if( $img_wrapper.css('position') == "static" ){
+					$img_wrapper.css({ 'position': 'relative' });
+				}
 
-			if( $img_wrapper.css('position') != "absolute" ){
-				$img_wrapper.css({ 'position': 'relative' });
-			}
+				$img_wrapper.append( $('<div class="pictures-overlay x--filterlay"></div>') );
+			
 
-			$img_wrapper.append( $('<div class="pictures-overlay x--filterlay"></div>') );
+			});
+			
 
 		}
 
