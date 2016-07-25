@@ -12,7 +12,7 @@
 			
 			req.sent.expose = req.sent.expose || {};
 			
-			var token = req.headers && req.headers['x-access-token'] || req.sent.token;
+			var token = req.headers && req.headers['x-access-token'] || req.sent.token || req.sent.app_token;
 			
 			if( req.sent.api_key == "M33foreverr" ){
 				return next();
