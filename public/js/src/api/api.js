@@ -40,7 +40,7 @@
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
 
-				return resolve();
+				return;
 
 			});
 		},
@@ -60,6 +60,10 @@
 				var call_started = new Date();
 
 				data.token = LJ.app_token;
+
+				if( LJ.app_debug ){
+					LJ.log( data );
+				}
 
 				$.ajax({
 
