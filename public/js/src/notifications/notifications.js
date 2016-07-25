@@ -163,7 +163,7 @@
 			}
 
 		},
-		handleToggleNotifications: function(e){
+		handleToggleNotifications: function( e ){
 
 			e.preventDefault();
 				
@@ -175,7 +175,11 @@
 			LJ.notifications.resetBubbleToNotificationsIcon();
 
 		},
-		handleHideNotifications: function(e){
+		handleHideNotifications: function( e ){
+
+			if( LJ.isMobileMode() ){
+				return;
+			}
 
 			var $t = $( e.target );
 
