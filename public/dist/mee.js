@@ -29667,14 +29667,6 @@ function closure ( target, options ){
 
 }));
 
-	window.LJ.admin = _.merge( window.LJ.admin || {}, {
-
-		init: function(){
-			LJ.log('Initializing admin script');
-		}
-
-	});
-
 	window.LJ.analytics = _.merge( window.LJ.analytics || {}, {
 
 		init: function(){
@@ -29741,116 +29733,6 @@ function closure ( target, options ){
 		}
 
 	});
-	
-	
-	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
-
-		init: function(){
-
-			return LJ.promise(function( resolve, reject ){
-
-				var code;
-				try {
-					code  = document.location.href.split('code=')[ 1 ].split(/&|#/i)[ 0 ];
-				} catch( e ){ }
-
-				var token;
-				try {
-					token = document.location.href.split('access_token=')[ 1 ].split(/&|#/i)[ 0 ];
-				} catch( e ){ }
-
-
-				if( history && history.pushState ){
-					history.pushState( {}, document.title, window.location.pathname );
-				}
-
-				if( code ){
-					return resolve({ fb_code: code });
-				}
-
-				if( token ){
-					return resolve({ fb_token: token });
-				}
-				
-
-				// Quick reference to the local store
-				var s = LJ.store;
-
-				if( !s.get('facebook_access_token') ){
-					return reject('No local data available, initializing lp...');
-				}
-
-				var facebook_access_token = s.get('facebook_access_token');
-
-				var token      = facebook_access_token.token;
-				var expires_at = facebook_access_token.expires_at;
-
-				if( !token || !expires_at ){
-					return reject('Missing init preference param, initializing lp...');
-				}
-
-				if( moment( expires_at ) < moment() ){
-					return reject('Facebook token found but has expired, initializing lp...');
-				} 
-
-				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
-				if( remaining_days < 30 ) {
-					return reject('Facebook token found but will expire soon, refresh is needed.');
-				}
-
-				// Unexpected error
-				if( s.get('reconnecting') && !token ){
-					return reject('User trying to reconnect but missing token from local store (unexpected)');
-				}
-
-				// Check if the app is trying to reconnect him 
-				if( s.get('reconnecting') && token ){
-					LJ.log('Reconnecting user from previous loss of connexion...');
-					s.remove('reconnecting');
-					return resolve({ fb_token: token });
-				}
-
-				if( s.get("autologin") == false ){
-					return reject("Autologin isnt activated, initializing lp...");
-				}
-
-				LJ.log('Init data ok, auto logging in...');
-				resolve({ fb_token: token });
-							
-			});
-		},
-		startLogin: function( login_params ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log('Starting login...');
-				LJ.start( login_params );
-			});
-
-		},
-		startLanding: function( message ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log( message );
-				LJ.log('Starting landing... v' + 1 );
-
-				$( LJ.static.renderStaticImage('slide_loader') )
-					.hide()
-					.appendTo('.curtain')
-					.velocity('shradeIn', { duration: 800 });
-
-				$('.curtain').find('.slide__loader').velocity('shradeOut', {
-					duration: 600,
-					complete: function(){
-						LJ.ui.hideCurtain({ duration: 800 });
-						LJ.landing.activateLanding( 2 );
-									
-					}
-				})
-			});
-		}
-
-	});
-
-
-
 
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
@@ -30598,6 +30480,2262 @@ function closure ( target, options ){
 		}
 
 	});
+
+	window.LJ.admin = _.merge( window.LJ.admin || {}, {
+
+		init: function(){
+			LJ.log('Initializing admin script');
+		}
+
+	});
+
+	window.LJ.before = _.merge( window.LJ.before || {}, {
+
+		fetched_befores: [],
+		switch_view_duration: 1000,
+		render_mode_active : null,
+		render_mode_primary: "hive",
+		render_mode_secondary: "flat",
+
+
+		init: function(){
+			
+			LJ.before.addCreateBefore();
+			LJ.before.handleDomEvents();
+			LJ.before.initBrowser();
+
+			return LJ.before.fetchNearestBefores__UserLocation()
+					.then(function(){
+						return LJ.before.initCreateBefore();
+					});
+
+		},
+		handleDomEvents: function(){
+
+			LJ.ui.$body.on('click', '.map__icon.js-create-before', LJ.before.handleShowCreateBefore );
+			// LJ.ui.$body.on('click', '.map__icon.js-expand-browser', LJ.map.handleShrinkBrowserDates );
+			LJ.ui.$body.on('click', '.be-create__close', LJ.before.handleHideCreateBefore );
+			LJ.ui.$body.on('click', '.be-dates__date', LJ.before.activateBrowserDate );
+			LJ.ui.$body.on('click', '.be-create.x--ready .be-create__button', LJ.before.handleCreateBefore );
+			LJ.ui.$body.on('click', '.be-inview .user-row', LJ.before.handleClickOnUserRow );
+			// LJ.ui.$body.on('click', '.be-actions__action.x--share', LJ.before.handleShareBefore );
+			LJ.ui.$body.on('click', '.js-cancel-before', LJ.before.handleCancelBefore );
+			LJ.ui.$body.on('click', '.slide.x--before .js-show-options', LJ.before.showBeforeOptions );
+			LJ.ui.$body.on('click', '.js-request', LJ.before.handleRequest );
+			LJ.ui.$body.on('click', '.js-request-pending', LJ.before.handleClickOnRequestPending );
+			LJ.ui.$body.on('click', '.js-request-accepted', LJ.before.handleClickOnRequestAccepted );
+			LJ.ui.$body.on('click', '.js-show-profile', LJ.before.handleShowUserProfile );
+			LJ.ui.$body.on('click', '.js-switch-mode', LJ.before.handleSwitchInviewMode );
+
+
+		},
+		initBrowser: function(){
+
+			LJ.before.addBrowser();
+
+		},
+		initCreateBefore: function(){
+
+		 	LJ.before.initHostsPicker();
+			LJ.before.initDatePicker();
+		 	LJ.before.initHourPicker( 17, 2, 30 );
+
+		 	return LJ.seek.activatePlacesInCreateBefore()
+		 			.then(function(){
+					 	LJ.before.initPlacePicker();
+					 	return;
+		 			});
+
+		},
+		handleShowCreateBefore: function(){
+
+			LJ.before.hideBrowser();
+			LJ.before.showCreateBefore();
+
+		},
+		handleHideCreateBefore: function(){
+
+			if( $('.slide').length == 0 ){
+				LJ.before.showBrowser();
+			}
+			LJ.before.hideCreateBefore();
+
+		},
+		findById: function( before_id ){
+
+			var bfr = _.find( LJ.before.fetched_befores, function( b ){
+				return b._id == before_id;
+			});
+
+			return bfr;
+
+		},
+		findMyGroup: function( before ){
+
+			var g = _.find( before.groups, function( g ){
+				return g.members.indexOf( LJ.user.facebook_id ) != -1;
+			});
+
+			return g;
+
+		},
+		activateBrowserDate: function(){
+
+			var $s = $( this );
+
+			var date = $s.attr('data-day');
+			var m = moment( date, 'DD/MM' );
+
+			LJ.map.activateDate( m );
+
+		},
+		sortIsoDates: function( iso_dates ){
+
+			return iso_dates.sort(function( i1, i2 ){
+				return moment( i1 ).dayOfYear() - moment( i2 ).dayOfYear();
+			});
+
+		},	
+		findDistinctDays: function( iso_dates ){
+
+			var days = [];
+			LJ.before.sortIsoDates( iso_dates ).forEach(function( isodate, i ){
+
+				days.push({
+					id        : i,
+					day_word  : LJ.text('day')[ parseInt(moment( isodate ).format('d')) ],
+					day_digit : moment( isodate ).format('DD/MM')
+				});
+
+			});
+
+			var distinct_days = [];
+			var found = [];
+
+			days.forEach(function( day ){
+
+				if( found.indexOf( day.day_digit ) == -1 ){
+					found.push( day.day_digit );
+					distinct_days.push( day );
+				}
+
+			});
+
+			return distinct_days;
+
+		},
+		addBrowser: function(){
+
+			$('.be-browser').remove();
+			$('.app-subheader.x--map')
+				.append( LJ.before.renderBrowser() );			
+
+		},
+		preRefreshBrowserLocation: function(){
+
+			$('.js-current-location')
+				.children()
+				.velocity({ opacity: [ 0.5, 1 ]}, {
+					duration: 100
+				});
+
+		},
+		refreshBrowserLocation: function(){
+
+			var center_latlng = LJ.meemap.center;
+			LJ.map.findAddressWithLatLng( center_latlng )
+				.then(function( address ){
+
+					$('.js-current-location')
+						.children()
+						.velocity({ opacity: [ 0, 0.5 ]}, {
+							duration: 200,
+							complete: function(){
+
+								$('.js-current-location').find('.js-closeto').html( address );
+								$( this ).velocity('fadeIn', {
+										duration: 400,
+										display: 'flex'
+									});
+
+							}
+						});
+				});
+
+		},
+		findActiveDateIndex: function(){
+
+			var i = 0;
+			var $bd = $('.be-dates__date.x--active');
+			if( $bd.length > 0 ){
+				$('.be-dates__date').each(function( j, el ){
+					if( $(el).hasClass('x--active') ){
+						i = j;
+					}
+				});
+			}
+			return i;
+
+		},
+		handleClickOnUserRow: function(){
+
+			var facebook_id = $(this).attr('data-facebook-id');
+			LJ.profile_user.showUserProfile( facebook_id );
+
+		},
+		refreshBrowserDates: function(){
+
+			var iso_dates  = _.map( LJ.before.fetched_befores, 'begins_at' );
+			var dates_html = [];
+
+			if( iso_dates.length == 0 ){
+
+				LJ.wlog('No iso_dates found');
+				dates_html.push( LJ.before.renderBrowserDatesEmpty() );
+
+			} else {
+
+				var dates = LJ.before.findDistinctDays( iso_dates );
+				dates.forEach(function( date, i ){
+
+					var d = date.day_digit;
+					var w = date.day_word.slice( 0, 3 );
+
+					dates_html.push([
+						'<div class="be-dates__date" data-day="'+ d +'">',
+							'<span class="be-dates__offset">' + w + '.<span>'+ d +'</span></span>',
+							'<div class="be-dates__bar"></div>',
+						'</div>'
+						].join(''));
+				});
+				
+			}
+
+
+			$('.js-be-dates').html( dates_html.join('') );
+			LJ.ui.turnToJsp( $('.js-be-dates'), {
+				jsp_id: 'before_dates'
+			});
+
+			LJ.before.refreshBrowserCount();
+
+		},
+		getBeforeCountByDate: function( date ){
+
+			var m = moment( date, 'DD/MM' );
+
+			return _.filter( LJ.before.fetched_befores, function( bfr ){
+				return m.dayOfYear() == moment( bfr.begins_at ).dayOfYear();
+			}).length;
+
+		},
+		refreshBrowserCount: function(){
+
+			$('.be-dates__date').each(function( i, el ){
+				var $el = $( el );
+
+				var day = $el.attr('data-day');
+				var cnt = LJ.before.getBeforeCountByDate( day );
+
+				$el.find('.be-dates__count').remove();
+				$el.append('<span class="be-dates__count">(' + cnt + ')</span>');
+
+			});
+
+
+		},
+		renderBrowser: function(){
+
+			return LJ.ui.render([
+
+				'<div class="be-browser">',
+					'<div class="be-dates js-be-dates">',
+					'</div>',
+					'<div class="be-address js-current-location">',
+						'<i class="icon icon-location"></i>',
+						'<span data-lid="be_close_to"></span>',
+						'<span class="js-closeto"></span>',
+					'</div>',
+				'</div>',
+
+			].join(''));
+
+		},
+		renderBrowserDatesEmpty: function(){
+
+			return LJ.ui.render([
+				'<div class="be-browser__empty">',
+					'<span data-lid="be_browser_empty"></span>',
+				'</div>'
+			].join(''));
+
+		},
+		hideBrowser: function(){
+
+			if( $('.app-subheader.x--map').css('opacity') != 1 ){
+				return;
+			}
+
+			$('.app-subheader.x--map').velocity('slideUpOut', {
+				duration : 500
+			});
+
+		},
+		showBrowser: function(){
+
+			var is_browser_visible   = $('.app-subheader.x--map').css('opacity') != 0 && $('.app-subheader.x--map').css('display') != 'none';
+			var is_slide_visible     = $('.slide').length > 0 && $('.slide').css('opacity') == '1';
+			var is_be_create_visible = $('.be-create').css('opacity') == '1';
+
+			if( is_browser_visible ){
+				return;
+			}
+
+
+			$('.app-subheader.x--map').velocity('slideDownIn', {
+				duration : 500,
+				display  : 'flex'
+			});
+
+		},
+		showCreateBeforeBtn: function(){
+
+			$('.js-create-before').velocity('bounceInQuick', { duration: 800, display: 'flex' });
+
+		},
+		hideCreateBeforeBtn: function(){
+
+			$('.js-create-before').velocity('bounceOut', { duration: 800, display: 'none' });
+		},
+		fetchBefores: function(){
+
+			LJ.log('Fetching befores...');
+			return LJ.api.fetchBefores();
+
+		},
+		fetchNearestBefores__UserLocation: function( max_distance ){
+
+			var latlng = LJ.user.location;
+			return LJ.before.fetchNearestBefores( latlng, max_distance );
+
+
+		},
+		fetchNearestBefores__MapCenter: function( max_distance ){
+
+			var latlng = {
+				lat: LJ.meemap.center.lat(),
+				lng: LJ.meemap.center.lng()
+			};
+
+			return LJ.before.fetchNearestBefores( latlng, max_distance );
+
+
+		},
+		refreshNearestBefores: function( max_distance ){
+
+			LJ.before.fetchNearestBefores__MapCenter( max_distance )
+				.then(function( befores ){
+					return LJ.before.displayBeforeMarkers( befores );
+
+				});
+
+		},
+		fetchNearestBefores: function( latlng, max_distance ){
+
+			max_distance = max_distance || null;
+
+			return LJ.api.fetchNearestBefores( latlng, max_distance )
+					.then(function( befores ){
+						LJ.before.fetched_befores = befores;
+						return befores;
+
+					});
+
+		},
+		displayBeforeMarkers: function( befores ){
+
+			befores.forEach(function( before ){
+				LJ.map.addBeforeMarker( before );
+			});
+
+			LJ.map.updateMarkers__byDate();
+			LJ.map.clearSeenMarkers();
+
+		},
+		getMyBeforeById: function( before_id ){
+
+			return _.find( LJ.user.befores, function( bfr ){
+                return bfr.before_id == before_id;
+            });
+
+		},
+		setPicturesSizes: function( $content ){
+			
+			var $pictures = $content.find('.be-pictures__pic');
+			var n_pics 	  = $pictures.length;
+
+			var left_step = Object.create({
+				2: 50, 3: 33.333333, 4: 25 }
+			)[ n_pics ];
+
+			var shadolay = Object.create({
+				 2: { opacity : 0,   right: 0 },
+				 3: { opacity : 0.5, right: 33.33333 },
+				 4: { opacity : 1,   right: 50 } 
+			})[ n_pics ];
+
+			$pictures.each(function( i, pic ){
+
+				var $p = $( pic );
+
+				$p.css({ 'width'  : '50%' })
+				  .css({ 'z-index': i + 1 })
+				  .css({ 'left'   : (i * left_step)+'%' })
+
+				$p.find('.be-pictures__shadolay')
+				  .css({ 'right'  : shadolay.right+'%' })
+				  .css({ 'opacity': shadolay.opacity })
+
+			});
+
+
+        },
+        fetchBeforeAndHosts: function( before_id ){
+
+        	var before_ref;
+        	return LJ.api.fetchBefore( before_id )
+        			.then(function( before ){
+        				before_ref = before;
+        				var host_ids = before.hosts;
+        				return LJ.api.fetchUsers( host_ids );
+
+        			})
+        			.then(function( expose ){
+        				expose.before = before_ref;
+        				return expose;
+        			});
+
+        },
+        handleCloseBeforeInview: function(){
+
+        	LJ.map.deactivateMarkers();
+        	LJ.map.refreshMarkers();
+
+        	LJ.before.showBrowser();
+
+        },
+        hideBeforeInview: function(){
+
+        	LJ.ui.hideSlide({ type: 'before' });
+
+        },
+        fetchAndShowBeforeInview: function( before_id ){
+			
+			var before;
+
+        	LJ.before.hideBrowser();
+        	return LJ.ui.showSlideAndFetch({
+
+				"type"			: "before",
+
+				"fetchPromise"	: LJ.before.fetchBeforeAndHosts,
+				"promise_arg"   : before_id,
+
+				"complete"      : LJ.before.handleCloseBeforeInview,
+				"errHandler"    : LJ.before.handleShowBeforeInviewError
+
+			})
+			.then(function( expose ){	
+				host_profiles = _.map( expose, 'user' );
+				before        = expose.before;
+				
+				return LJ.before.renderBeforeInview( before, host_profiles );
+
+			})
+			.then(function( before_html ){
+				$container = $('.slide.x--before').find('.slide-body');
+				LJ.before.addBefore( before_html, $container );
+				$content = $container.children(':not(.slide__loader)');
+
+			})
+			.then(function(){
+				return LJ.ui.shradeOut( $container.find('.slide__loader'), LJ.ui.slide_hide_duration );
+
+			})
+			.then(function(){
+				return LJ.before.processBeforePreDisplay( before );
+
+			})
+			.then(function(){
+				LJ.ui.shradeIn( $content, LJ.profile_user.slide_show_duration );				
+
+			});
+
+
+        },
+        handleShowBeforeInviewError: function( err ){
+
+        	if( err.err_id == "ghost_before" ){
+        		LJ.before.ghostifyBeforeInview();
+        	}
+
+        },
+        ghostifyBeforeInview: function(){
+
+        	var duration      = 400;
+        	var $before_ghost = $( LJ.before.renderBeforeGhost() );
+
+        	$('.slide.x--before')
+        		.find('.slide__loader')
+        		.velocity('shradeOut', {
+        			duration: duration,
+        			complete: function(){
+        				$( this ).remove();
+        			}
+        		});
+
+        	$before_ghost
+        		.hide()
+        		.appendTo( $('.slide-body') )
+        		.velocity('shradeIn', {
+        			duration: duration,
+        			delay   : duration,
+        			display : 'flex'
+        		});
+
+        },
+        renderBeforeGhost: function(){
+
+        	return LJ.ui.render([
+
+        		'<div class="slide-ghost">',
+        			'<div class="slide-ghost__icon x--round-icon">',
+        				'<i class="icon icon-search-light"></i>',
+        			'</div>',
+        			'<div class="slide-ghost__title">',
+        				'<span data-lid="be_ghost_title"></span>',
+        			'</div>',
+        			'<div class="slide-ghost__subtitle">',
+        				'<span data-lid="be_ghost_subtitle"></span>',
+        			'</div>',
+        			'<div class="slide-ghost__action">',
+        				'<button data-lid="be_ghost_btn" class="slide__close"></button>',
+        			'</div>',
+        		'</div>'
+
+        	].join(''));
+
+        },
+        showBeforeInview: function( before ){
+
+        	LJ.before.hideBrowser();
+
+			var host_ids  = before.hosts;
+
+			var host_profiles;
+			var $container;
+			var $content;
+
+        	return LJ.ui.showSlideAndFetch({
+
+				"type"			: "before",
+
+				"fetchPromise"	: LJ.api.fetchUsers,
+				"promise_arg"   : host_ids,
+
+				"complete"      : LJ.before.handleCloseBeforeInview,
+				"errHandler"    : LJ.before.handleShowBeforeInviewError
+
+			})
+			.then(function( expose ){	
+				host_profiles = _.map( expose, 'user' );
+				return LJ.before.renderBeforeInview( before, host_profiles );
+
+			})
+			.then(function( before_html ){
+				$container = $('.slide.x--before').find('.slide-body');
+				LJ.before.addBefore( before_html, $container );
+				$content = $container.children(':not(.slide__loader)');
+
+			})
+			.then(function(){
+				return LJ.ui.shradeOut( $container.find('.slide__loader'), LJ.ui.slide_hide_duration );
+
+			})
+			.then(function(){
+				return LJ.before.processBeforePreDisplay( before );
+
+			})
+			.then(function(){
+				LJ.ui.shradeIn( $content, LJ.profile_user.slide_show_duration );				
+
+			});
+
+            
+        },
+        processBeforePreDisplay: function( before ){
+
+			var $w        = $('.be-inview[data-before-id="'+ before._id +'"]');
+			var main_host = before.main_host;
+
+        	// Dynamically render the size of the pictures to fit, with a shade
+        	LJ.before.setPicturesSizes( $w );
+
+        	// Make sure the host is always on top of the list
+        	LJ.mainifyUserRow( $w, main_host );
+
+        	// Set the ux preferences
+        	LJ.settings.applyUxPreferences();
+
+        	// Prepend and hide the content, so that jsp compute the right height
+			$w.css({ 'opacity': 0 }).show();
+
+			LJ.ui.turnToJsp( $w.find('.be-users'), {
+				jsp_id: 'before_inview'
+			});
+
+			// Little delay to give Jsp the time to act
+			return LJ.delay(100)
+
+        },
+        addBefore: function( before_html, $container ){
+        	return $container.append( before_html );
+
+        },
+        renderCreateBefore: function(){
+
+            return LJ.ui.render([
+                '<div class="map__icon x--round-icon x--create-before js-create-before">',
+                    '<i class="icon icon-plus"></i>',
+                '</div>'
+                ].join(''));
+
+        },
+		renderBeforePictures: function( hosts ){
+
+			var be_pictures = [];
+			hosts.forEach(function( h ){
+
+				var img_medium = LJ.pictures.makeImgHtml( h.img_id, h.img_vs, "user-before" );
+				be_pictures.push([
+					'<div class="be-pictures__pic js-filterlay">',
+						'<div class="be-pictures__shadolay"></div>',
+						img_medium,
+					'</div>'
+				].join(''));
+
+			});
+
+			return LJ.ui.render( be_pictures.join('') );
+
+		},
+		renderBeforeDate: function( date ){
+
+			var m = moment( date );
+			return LJ.text("before_date", m );
+
+		},
+		renderBeforeAddress: function( address ){
+			return address.place_name;
+
+		},
+		renderBeforeInview: function( before, host_profiles ){
+
+			var html;
+			if( before.hosts.indexOf( LJ.user.facebook_id ) != -1 ){
+        		html = LJ.before.renderBeforeInview__Host( before, host_profiles );
+
+        	} else {
+        		var my_before = _.find( LJ.user.befores, function( bfr ){
+        			return bfr.before_id == before._id;
+        		});
+
+        		if( !my_before ){
+        			html = LJ.before.renderBeforeInview__UserDefault( before, host_profiles );
+        			
+        		} else {
+        			if( my_before.status == "pending" ){
+        				html = LJ.before.renderBeforeInview__UserPending( before, host_profiles );
+
+        			} else {
+        				html = LJ.before.renderBeforeInview__UserAccepted( before, host_profiles );
+
+        			}
+        		}
+
+        	}
+        	return html;
+
+		},
+		renderBeforeInview__Host: function( before, hosts ){
+
+			return LJ.before.renderBeforeInview__Base( before, hosts, {
+
+				be_action: '<div class="be-actions__action x--settings x--round-icon js-show-options"><i class="icon icon-cog-empty"></i></div>',
+				be_button: LJ.before.renderBeforeInviewBtn__Host()
+
+			});
+
+		},
+		renderBeforeInview__UserDefault: function( before, hosts ){
+
+			return LJ.before.renderBeforeInview__Base( before, hosts, {
+
+				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
+				be_button:  LJ.before.renderBeforeInviewBtn__UserDefault()
+
+			});
+
+		},
+		renderBeforeInview__UserPending: function( before, hosts ){
+
+			return LJ.before.renderBeforeInview__Base( before, hosts, {
+
+				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
+				be_button:  LJ.before.renderBeforeInviewBtn__UserPending()
+
+			});
+
+		},
+		renderBeforeInview__UserAccepted: function( before, hosts ){
+
+			return LJ.before.renderBeforeInview__Base( before, hosts, {
+
+				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
+				be_button:  LJ.before.renderBeforeInviewBtn__UserAccepted()
+
+			});
+
+		},
+		renderBeforeInviewBtn__Host: function(){
+			return '<div class="be-ended"><span data-lid="be_hosted"></span></div>';
+		},
+		renderBeforeInviewBtn__UserAccepted: function(){
+			return '<button class="x--round-icon x--accepted js-request-accepted"><i class="icon icon-chat-bubble-duo"></i></button>'
+
+		},
+		renderBeforeInviewBtn__UserPending: function(){
+			return '<button class="x--round-icon x--pending js-request-pending"><i class="icon icon-pending"></i></button>'
+
+		},
+		renderBeforeInviewBtn__UserDefault: function(){
+			return '<button class="x--round-icon js-request"><i class="icon icon-meedrink"></i></button>'
+
+		},
+		// renderBeforeInview__Base: LJ.before.renderBeforeInviewHive,
+		renderBeforeInview__Base: function( before, hosts, options ){
+			
+			LJ.before.active_before  = before;
+			LJ.before.active_hosts   = hosts;
+			LJ.before.active_options = options;
+
+			LJ.before.render_mode_active = LJ.before.render_mode_primary;
+			var renderFn = LJ.before.getRenderFn( LJ.before.render_mode_primary );
+
+			return renderFn( before, hosts, options );
+
+		},
+		getRenderFn: function( mode ){
+
+			var mode = mode || LJ.before.render_mode_active || LJ.before.render_mode_primary;
+
+			if( mode == "hive" ){
+				return LJ.before.renderBeforeInviewHive;
+			}
+
+			if( mode == "flat" ){
+				return LJ.before.renderBeforeInviewFlat;
+			}
+
+			if( mode == "rows" ){
+				return LJ.before.renderBeforeInviewRows;
+			}
+
+		},	
+		switchBeforeInview: function( mode ){
+
+			var renderFn = LJ.before.getRenderFn( mode );
+		
+			$( renderFn( LJ.before.active_before, LJ.before.active_hosts, LJ.before.active_options ) )
+				.css({ 'display': 'flex' })
+				.replaceAll('.be-inview');
+
+
+		},
+		renderBeforeInviewHive: function( before, hosts, options ){
+
+			options = options || [];
+
+			if( !before || !hosts ){
+				return LJ.wlog('Cannot render before without before object and hosts profiles');
+			}
+		
+			var usernames   = LJ.text("w_before").capitalize() + " " + LJ.text("w_with") + " " + LJ.renderMultipleNames( _.map( hosts, 'name') );
+			var be_addr     = LJ.before.renderBeforeAddress( before.address );
+			var be_date     = LJ.before.renderBeforeDate( before.begins_at );
+			var be_pictures = LJ.pictures.makeHiveHtml( hosts, "user-before",{
+				class_names : [ "js-show-profile" ],
+				attach_data : [ "facebook_id" ]
+			});
+			var be_action   = options.be_action;
+
+			var be_request = '<div class="be-request">' + options.be_button + '</div>';
+			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
+				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
+			}
+
+ 
+			return LJ.ui.render([
+
+				'<div class="be-inview x--hive" data-before-id="'+ before._id +'">',
+					'<div class="be-usernames">',
+						'<span>'+ usernames +'</span>',
+					'</div>',
+		            '<div class="be-actions">',
+		              '<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
+		        	  be_action,
+		            '</div>',
+			      	'<div class="be-pictures">',
+			           be_pictures,
+			        '</div>',
+			        '<div class="be-inview-address">',
+			          '<div class="be-inview-address__date">',
+			          	'<div class="be-inview-address__icon x--round-icon">',
+			          		'<i class="icon icon-clock-empty"></i>',
+			          	'</div>',
+			            '<span>'+ be_date +'</span>',
+			          '</div>',
+			          '<div class="be-inview-address__address">',
+			          	'<div class="be-inview-address__icon x--round-icon">',
+			          		'<i class="icon icon-location-empty"></i>',
+			          	'</div>',
+			            '<span>'+ be_addr +'</span>',
+			          '</div>',
+			        '</div>',
+			        be_request,
+		      	'</div>'
+
+			].join(''));
+
+		},
+		renderUserFlat: function( user ){
+
+			var n = user.name;
+			var a = user.age;
+			var i = user.facebook_id;
+			var c = user.country_code;
+			var g = user.gender;
+			var j = user.job;
+
+			var img_html = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, 'user-flat');
+
+			return LJ.ui.render([
+
+				'<div class="user-flat" data-facebook-id="'+ i +'">',
+		            '<div class="flat-user__pic js-show-profile js-filterlay">',
+		            	img_html,
+		            '</div>',
+		           '<div class="flat-user-body">',
+		               '<div class="flat-user__h1">',
+		            	  '<span class="flat-user__gender user-gender js-user-gender x--'+ g +'"></span>',
+		                  '<span class="flat-user__name">'+ n +'</span>',
+			              '<span class="flat-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
+			              '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
+		               '</div>',
+		               '<div class="flat-user__h2">',
+		                  '<span class="flat-user__age age">'+ a +'</span>',
+	                  	  '<span class="comma">-</span>',
+	               		  '<span class="flat-user__job">'+ j +'</span>',
+		               '</div>',
+		           '</div>',
+		            '<div class="flat-user-actions">',
+		              // '<div class="flat-user__action x--round-icon js-show-profile"><i class="icon icon-main-picture"></i></div>',
+		            '</div>',
+	          '</div>'
+
+			]);
+
+		},
+		renderBeforeInviewFlat: function( before, hosts, options ){
+
+			options = options || [];
+
+			if( !before || !hosts ){
+				return LJ.wlog('Cannot render before without before object and hosts profiles');
+			}
+			
+			var flat_users = [ '<div class="flat-users">' ];
+			hosts.forEach(function( h ){
+				flat_users.push( LJ.before.renderUserFlat( h ) );
+			});
+			flat_users.push( '</div>' );
+
+			var be_action  = options.be_action;
+
+			var be_request = '<div class="be-request">' + options.be_button + '</div>';
+			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
+				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
+			}
+
+ 
+			return LJ.ui.render([
+
+				'<div class="be-inview x--flat" data-before-id="'+ before._id +'">',
+					'<div class="be-actions">',
+			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
+			          	be_action,
+			        '</div>',
+					flat_users.join(''),
+			        be_request,
+		      	'</div>'
+
+			]);
+
+		},
+		renderBeforeInviewRows: function( before, hosts, options ){
+
+			options = options || [];
+
+			if( !before || !hosts ){
+				return LJ.wlog('Cannot render before without before object and hosts profiles');
+			}
+
+			var be_pictures = LJ.before.renderBeforePictures( hosts );
+			var user_rows   = LJ.renderUserRows( hosts );
+
+			var be_action  = options.be_action;
+			var be_request = '<div class="be-request">' + options.be_button + '</div>';
+
+			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
+				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
+			}
+
+			var be_date = LJ.before.renderBeforeDate( before.begins_at );
+			var be_addr = LJ.before.renderBeforeAddress( before.address );
+ 
+			return LJ.ui.render([
+
+				'<div class="be-inview" data-before-id="'+ before._id +'">',
+			      	'<div class="be-pictures">',
+			          '<div class="be-actions">',
+			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
+			          	be_action,
+			          '</div>',
+			          be_pictures,
+			        '</div>',
+			        '<div class="be-inview-address">',
+			          '<div class="be-inview-address__date">',
+			            '<span>'+ be_date +'</span>',
+			          '</div>',
+			          '<div class="be-inview-address__address">',
+			            '<span>'+ be_addr +'</span>',
+			          '</div>',
+			        '</div>',
+			        '<div class="be-users">',
+			        	user_rows,
+			        '</div>',
+			        be_request,
+		      	'</div>'
+
+			]);
+
+		},
+		handleCancelBefore: function(){
+
+			var $s = $( this );
+
+			var before_id  = $s.closest('.slide').find('[data-before-id]').attr('data-before-id');
+			var new_status = "canceled";
+
+			LJ.ui.showLoader("canceling_before");
+
+			LJ.api.changeBeforeStatus( before_id, new_status )
+				.then(function( before ){
+
+					LJ.ui.hideLoader("canceling_before");
+					LJ.ui.showToast( LJ.text('to_cancel_before_success') );
+
+					LJ.before.removeOneBefore( before_id );
+					LJ.before.refreshBrowserDates();
+					LJ.before.showBrowser();
+					
+					LJ.map.removeBeforeMarker( before_id );
+					LJ.ui.hideSlide({ type: 'before' });
+
+				})
+				.catch(function( err ){
+					LJ.wlog(err);
+
+				});
+
+		},
+		removeOneBefore: function( before_id ){
+
+			_.remove( LJ.before.fetched_befores, function( bfr ){
+				return bfr._id == before_id;
+			});
+
+		},
+		renderBeforeOptions: function(){
+
+			return LJ.ui.render([
+
+				'<div class="ioptions__actions">',
+					'<div class="ioptions__action-message">',
+						'<span data-lid="slide_overlay_before_message"></span>',
+					'</div>',
+					'<div class="ioptions__action js-cancel-before">',
+						'<span data-lid="slide_overlay_before_cancel"></span>',
+					'</div>',
+					'<div class="ioptions__action x--back js-ioptions-close">',
+						'<span data-lid="slide_overlay_back"></span>',
+					'</div>',
+				'</div>'
+
+				].join(''));
+
+		},
+		showBeforeOptions: function(){
+
+			var $wrap = $('.slide.x--before');
+
+			if( $wrap.length != 1 ){
+				return LJ.wlog('Cannot uniquely identify the wrapper');
+			}
+
+			LJ.ui.showSlideOverlay( LJ.before.renderBeforeOptions() );
+
+		},
+		showChatOptions: function(){
+
+			var duration = LJ.ui.show_slide_duration;
+
+			$('.chat-inview-options').velocity('fadeIn', {
+				display : 'flex',
+				duration: duration
+			});
+
+			$( LJ.chat.renderChatOptions() )
+				.hide()
+				.appendTo( $('.chat-inview-options') )
+				.velocity('shradeIn', {
+					duration: duration,
+					display: 'flex',
+					delay: duration/2,
+					complete: function(){
+						$(this).find('.js-close-overlay')
+							   .on('click', LJ.ui.hideSlideOverlay );
+					}
+				});
+
+		},
+		handleShareBefore: function(){	
+
+			var target_id = $( this ).closest('[data-before-id]').attr('data-before-id');
+
+			LJ.ui.showModal({
+				"title"			: LJ.text('modal_share_title_before'),
+				"type"      	: "share",
+				"search_input"	: true,
+				"jsp_body" 	    : true,
+				"attributes"	: [{ name: "item-id", val: target_id }],
+				"subtitle"		: LJ.text('modal_share_subtitle_before'),
+				"body"  		: LJ.friends.renderFriendsInModal(),
+				"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>"
+			})
+			.then(function(){
+				return LJ.ui.getModalItemIds();
+
+			})
+			.then(function( item_ids ){
+
+				var d = LJ.static.renderStaticImage('search_loader');
+				$( d ).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
+					duration: 400
+				});
+
+				return LJ.api.shareWithFriends({
+					target_id   : target_id,
+					target_type : 'before',
+					shared_with : item_ids
+				});
+
+			})
+			.then(function( exposed ){
+				return LJ.ui.hideModal();
+
+			})
+			.then(function(){
+				LJ.ui.showToast( LJ.text('to_before_shared_success') );
+				
+			})
+			.catch(function(e){
+				LJ.wlog(e);
+				LJ.ui.hideModal();
+
+			});
+
+		},
+		getBefore: function( before_id ){
+			return LJ.promise(function( resolve, reject ){
+
+				var before = _.find( LJ.before.fetched_befores, function( bfr ){
+					return bfr._id == before_id;
+				});
+
+				if( before ){
+					resolve( before );
+				} else {
+					return LJ.api.fetchBefore( before_id )
+						.then(function( before ){
+							LJ.before.fetched_befores.push( before );
+							resolve( before );
+						});
+				}
+
+			});
+		},
+		getBeforeItem: function( before_id ){
+
+			return _.find( LJ.user.befores, function( bfr ){
+				return bfr.before_id == before_id;
+			});
+
+		},
+		updateBeforeItem: function( before_id, opts ){
+
+			var before_item = LJ.before.getBeforeItem( before_id );
+
+			_.keys( before_item ).forEach(function( key ){
+				if( opts[ key ] && typeof opts[ key ] == typeof before_item[ key ] ){
+					before_item[ key ] = opts[ key ];
+				}
+			});
+
+		},
+		getChannelItem( before_id ){
+
+			return _.find( LJ.user.channels, function( chan ){
+				return chan.before_id == before_id;
+			});
+		},
+		cancelifyBeforeInview: function(){
+
+			LJ.ui.cancelify({
+
+				"$wrap"        : $('.slide.x--before'),
+				"duration"     : 8000,
+				"message_html" : "<span>" + LJ.text("before_just_canceled") + "</span>",
+				"callback"     : function(){
+					LJ.ui.hideSlide({ type: 'before' });
+				}
+
+			});
+
+		},
+		handleSwitchInviewMode: function(){
+
+			LJ.before.render_mode_active = ( LJ.before.render_mode_active == LJ.before.render_mode_primary ) ?
+										     LJ.before.render_mode_secondary : 
+										     LJ.before.render_mode_primary;
+						
+			LJ.before.switchBeforeInview( LJ.before.render_mode_active );
+
+		},
+		handleShowUserProfile: function(){
+
+			var $s = $( this );
+			var facebook_id = $s.closest('[data-facebook-id]').attr('data-facebook-id');
+
+			LJ.profile_user.showUserProfile( facebook_id );
+
+
+		}
+
+	});
+
+	window.LJ.before = _.merge( window.LJ.before || {}, {
+
+		initHostsPicker: function(){
+
+			LJ.before.handleDomEvents__HostsPicker();
+
+		},
+		initDatePicker: function(){
+
+			LJ.before.date_picker = new Pikaday({ 
+
+                field   : document.getElementsByClassName('be-create-row x--date')[0],
+                container : document.getElementsByClassName('be-create')[0],
+                i18n	: LJ.text_source[ "pikaday" ][ LJ.lang.getAppLang() ],
+                format  : 'DD/MM/YY',
+                minDate : new Date(),
+                bound   : false
+
+            });
+
+            $('.pika-single').insertAfter( $('.be-create') );
+            LJ.before.handleDomEvents__DatePicker();
+
+		},
+		initHourPicker: function( begin, stop, step ){
+
+			$('.be-create-row.x--hour')
+				.append( LJ.before.renderHourPicker( begin, stop, step ) );
+
+			LJ.before.hideHourPicker();
+			LJ.before.handleDomEvents__HourPicker();
+
+		},
+		initPlacePicker: function(){
+
+			LJ.before.handleDomEvents__PlacePicker();
+
+		},
+		handleDomEvents__PlacePicker: function(){
+
+			LJ.seek.be_create.addListener('place_changed', function(){
+
+				var place = LJ.seek.be_create.getPlace();
+
+				var place_id    = place.place_id;
+				var place_name  = place.formatted_address;
+				var lat 		= place.geometry.location.lat();
+				var lng 		= place.geometry.location.lng();
+
+				$('.be-create-row.x--location')
+					.attr('data-place-id', place_id )
+					.attr('data-place-name', place_name )
+					.attr('data-lat', lat )
+					.attr('data-lng', lng );
+
+				$('.be-create-row.x--location').removeClass('x--unset');
+				LJ.before.validateInputs();
+
+			});
+
+		},
+		handleDomEvents__HostsPicker: function(){
+
+			LJ.ui.$body.on('click', '.be-create-row.x--hosts', function(){
+
+				LJ.ui.showModal({
+					"type"      	: "be-create",
+					"title"			: LJ.text('modal_be_create_title'),
+					"subtitle"		: LJ.text('modal_be_create_subtitle'),
+					"body"  		: LJ.friends.renderFriendsInModal(),
+					"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>",
+					"search_input"	: true,
+					"max_items"     : (LJ.app_settings.app.max_hosts - 1),
+					"jsp_body" 	    : true
+				})
+				.then(function(){
+					return LJ.ui.getModalItemIds()
+				})
+				.then(function( facebook_ids ){
+					$('.be-create-row.x--hosts').attr('data-host-ids', facebook_ids.join(',') ).removeClass('x--unset');
+					LJ.before.validateInputs();
+					return LJ.before.addHostsNames( facebook_ids );
+
+				})
+				.then(function(){
+					return LJ.ui.hideModal();
+				})
+				.catch(function( e ){
+					LJ.wlog(e);
+					LJ.wlog('User has stopped selecting people');
+				});
+
+			});
+
+
+		},
+		handleDomEvents__HourPicker: function(){
+
+			LJ.ui.$body.on('mousedown', '.be-create .hourpicker__hour', function(){
+
+				var hour = $(this).attr('data-hour');
+
+				$('.be-create-row.x--hour input').val( hour );
+				$('.be-create-row.x--hour')
+					.attr('data-hh', hour.split(':')[0])
+					.attr('data-mm', hour.split(':')[1]);
+
+				LJ.before.hideHourPicker();
+				$('.be-create-row.x--hour').removeClass('x--unset');
+				LJ.before.validateInputs();
+
+			});
+
+			LJ.ui.$body.on('click', '.be-create-row.x--hour input', function(){
+				LJ.before.showHourPicker();
+
+			});
+
+			LJ.ui.$body.on('mouseleave', '.hourpicker', function(){
+				LJ.before.hideHourPicker();              
+
+            });
+
+		},
+		handleDomEvents__DatePicker: function(){
+
+			  /* Date picker custom handling for better ux */
+            LJ.ui.$body.on('mousedown', '.pika-day:not(.pika-prev,.pika-next)', function(e){
+
+                var $self = $(this);
+                var date_str =  moment({ 
+
+                    D: $self.attr('data-pika-day'),
+                    M: $self.attr('data-pika-month'),
+                    Y: $self.attr('data-pika-year') })
+
+                .format('DD/MM/YY');
+
+            	$('.be-create-row.x--date')
+               		.attr('data-dd', date_str.split('/')[0] )
+               		.attr('data-mm', date_str.split('/')[1] )
+               		.attr('data-yy', date_str.split('/')[2] )
+               		.find('input')
+               		.val( date_str );
+
+            	LJ.before.date_picker.hide();
+
+            	$('.be-create-row.x--date').removeClass('x--unset');
+				LJ.before.validateInputs();
+
+            });
+
+            LJ.ui.$body.on('mousedown', '.pika-next', function(e){             
+                LJ.before.date_picker.nextMonth();
+            });
+
+            LJ.ui.$body.on('mousedown', '.pika-prev', function(e){             
+                LJ.before.date_picker.prevMonth();
+            });
+
+
+            LJ.ui.$body.on('mouseleave', '.pika-single', function(){
+                LJ.before.hovering_datepicker_nav = false;
+                LJ.before.date_picker.hide();
+            });
+
+            LJ.ui.$body.on('focus', '.be-create-row.x--date input', function(){
+                LJ.before.date_picker.show();
+            });
+
+
+		},
+		addHostsNames: function( hosts_facebook_id ){
+
+			var profiles = LJ.friends.getFriendsProfiles( hosts_facebook_id );
+			var names    = _.map( profiles, 'name' );
+			names = LJ.renderMultipleNames( names );
+
+			$('.be-create-row.x--hosts')
+				.find('input')
+				.val( names );
+
+			return;
+
+		},
+		generateHourRange: function( begin, stop, step ){
+
+			if( !begin || !stop || !step ){
+				return LJ.wlog('Cannot generate hour range without begin, stop and step params');
+			}
+
+			var html = [];
+			var start_date = moment({ hour: begin });
+			var stop_date  = moment({ hour: stop });
+
+			if( stop_date < start_date ){
+				stop_date.add( 1, 'day' );
+			}
+
+			while( start_date <= stop_date ){
+				var s = start_date.format('HH:mm');
+				html.push( s );
+				start_date.add( step, 'minute' );
+			}
+
+			return html;
+
+		},
+		renderHourPicker: function( begin, stop, step ){
+
+			var html_hours = LJ.before.generateHourRange( begin, stop, step );
+			var html = [];
+
+			html_hours.forEach(function( hs, i ){
+				if( i == 0 ){
+					html.push('<div class="hourpicker-col">');
+					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
+				} else if ( i%4 == 0 ){
+					html.push('</div><div class="hourpicker-col">');
+					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
+				} else {
+					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
+				}
+			});
+			html.push('</div>');
+
+			return LJ.ui.render([
+
+				'<div class="hourpicker">',
+					html.join(''),
+				'</div>'
+
+				].join(''));
+
+		},
+		showHourPicker: function(){
+			$('.hourpicker').show();
+
+		},
+		hideHourPicker: function(){
+			$('.hourpicker').hide();
+
+		},
+		validateInputs: function(){
+
+			var $unset = $('.be-create-row.x--unset');
+
+			if( $unset.length == 0 ){
+				return $('.be-create').addClass('x--ready');
+			}
+
+		},
+		showCreateBefore: function(){
+
+			var $i = $('.map__icon.x--create-before');
+			var $w = $('.be-create');
+			var d  = LJ.search.filters_duration || 300;
+
+			LJ.before.clearCreateBefore();
+			LJ.ui.adjustWrapperHeight( $('.be-create') );
+
+			if( LJ.isMobileMode() ){
+				LJ.ui.deactivateHtmlScroll();
+			}
+
+			$i.velocity('shradeOut', {
+				duration : d,
+				display  : 'none'
+			});
+
+			LJ.delay( d )
+				.then(function(){
+					return LJ.ui.shradeIn( $w, d );
+				});
+
+
+		},
+		hideCreateBefore: function(){
+
+			var $i  = $('.map__icon.x--create-before');
+			var $w  = $('.be-create');
+			var d   = LJ.search.filters_duration;
+
+			$w.velocity('shradeOut', {
+				duration : d,
+				display  : 'none'
+			});
+
+			LJ.delay( d )
+				.then(function(){
+					LJ.ui.activateHtmlScroll();
+					return LJ.ui.shradeIn( $i, d );
+				});
+
+		},
+		hideCreateBeforeStraight: function(){
+
+			var $i  = $('.map__icon.x--create-before');
+			var $w  = $('.be-create');
+			var d   = LJ.search.filters_duration;
+
+			$w.hide();
+			$i.css({ 'display': 'flex', 'opacity': 1 });
+
+
+		},
+		clearCreateBefore: function(){
+
+			$('.be-create__loader').remove();
+			$('.be-create').removeClass('x--pending').removeClass('x--ready');
+			$('.be-create-row.x--hosts').addClass('x--unset').find('input').val('');
+			$('.be-create-row.x--date').addClass('x--unset').find('input').val('');
+			$('.be-create-row.x--hour').addClass('x--unset').find('input').val('');
+			$('.be-create-row.x--location').addClass('x--unset').find('input').val('');
+
+		},
+		readCreateAttributes: function(){
+
+			var req = {};
+
+			req.hosts_facebook_id = $('.be-create-row.x--hosts').attr('data-host-ids').split(',');
+			req.hosts_facebook_id.push( LJ.user.facebook_id );
+
+			req.begins_at = moment().set({
+
+				h: $('.be-create-row.x--hour').attr('data-hh'),
+				m: $('.be-create-row.x--hour').attr('data-mm'),
+				D: $('.be-create-row.x--date').attr('data-dd'),
+				M: parseInt( $('.be-create-row.x--date').attr('data-mm') ) - 1, // month starts at 0...
+				Y: $('.be-create-row.x--date').attr('data-yyyy')
+
+			}).toISOString();
+
+			// Important! Timezone is only known by the client and used to uniquely identify his..
+			// well, timezone, when updating multiple events every hours on the scheduler
+			req.timezone = moment().utcOffset();
+
+			req.address = {
+
+				place_id   : $('.be-create-row.x--location').attr('data-place-id'),
+				place_name : $('.be-create-row.x--location').attr('data-place-name'),
+				lat 	   : $('.be-create-row.x--location').attr('data-lat'),
+				lng 	   : $('.be-create-row.x--location').attr('data-lng')
+
+			}
+
+			return req;
+
+		},
+		readAndCreateBefore: function(){
+
+			var req = LJ.before.readCreateAttributes();
+
+			if( !(req.hosts_facebook_id && req.begins_at && req.timezone && req.address ) ){
+				return LJ.wlog('Missing parameter in the req object : ' + JSON.stringify( req, null, 4 ));
+			}
+
+			return LJ.api.createBefore( req );
+
+
+		},
+		showCreateBeforeOverlay: function(){
+
+			$('<div class="loader__overlay"></div>')
+				.hide()
+				.appendTo( $('.be-create') )
+				.velocity('fadeIn', {
+					duration: 500
+				});
+
+		},
+		hideCreateBeforeOverlay: function(){
+
+			$('.be-create')
+				.find('.loader__overlay')
+				.remove();
+
+		},
+		showCreateBeforeLoader: function(){
+
+			$( LJ.static.renderStaticImage('be_create_loader') )
+				.hide()
+				.appendTo('.be-create')
+				.show();
+
+		},
+		hideCreateBeforeLoader: function(){
+
+			$('.be-create')
+				.find('.be-create__loader')
+				.remove();
+
+		},
+		pendifyCreateBefore: function(){
+
+			$('.be-create').addClass('x--pending');
+			LJ.before.showCreateBeforeOverlay();
+			LJ.before.showCreateBeforeLoader();
+			
+			return;
+
+		},
+		dependifyCreateBefore: function(){
+
+			$('.be-create').removeClass('x--pending');
+			LJ.before.hideCreateBeforeLoader();
+			LJ.before.hideCreateBeforeOverlay();
+
+			return;
+
+		},
+		endCreateBefore: function( expose ){
+			
+			// Friendly loggin
+			var before      = expose.before;
+			var before_item = expose.before_item;
+
+			// Ui update
+			LJ.before.hideCreateBefore();
+			LJ.before.showBrowser();
+			LJ.before.refreshBrowserDates();
+			LJ.delay( 1000 ).then(function(){
+
+				LJ.before.dependifyCreateBefore();
+				LJ.map.activateDate( moment( before.begins_at ) );
+
+			});
+
+		},	
+		handleCreateBefore: function(){
+
+			LJ.log('Handling create before...');
+
+			var ux_done    = LJ.before.pendifyCreateBefore();
+			var be_created = LJ.before.readAndCreateBefore();
+
+			LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
+				var expose = res[0];
+
+				return LJ.before.endCreateBefore( expose );
+
+			})
+			.catch(function( e ){
+				LJ.before.handleCreateBeforeError(e);
+
+			});
+
+		},
+		handleCreateBeforeError: function( err ){
+			
+			if( !err ){
+				return LJ.wlog('Something went wrong, but no err object was provided');
+			}
+
+			var err_id = err.err_id;
+			var err_msg = '';
+
+			if( err_id == "missing_parameter" ){
+
+				if( err.parameter == "hosts_facebook_id" ){
+					err_msg = LJ.text('err_be_create_missing_hosts');
+
+				}
+				if( err.parameter == "begins_at" ){
+					err_msg = LJ.text('err_be_create_missing_date');
+
+				}
+				if( err.parameter == "address" ){
+					err_msg = LJ.text('err_be_create_missing_location');
+
+				}
+			}
+
+			if( err_id == "already_hosting" ){
+				
+				var profiles = LJ.friends.getFriendsProfiles( err.host_ids );
+				var names    = _.map( profiles, 'name' );
+				var formatted_names = LJ.renderMultipleNames( names );
+
+				if( err.host_ids.indexOf( LJ.user.facebook_id ) == -1 ){
+					err_msg = LJ.text('err_be_create_already_hosting').replace('%names', formatted_names );
+
+				} else {
+					err_msg = LJ.text('err_be_create_already_hosting_me');
+				}
+
+			}
+
+			LJ.ui.showToast( err_msg ,'error' );
+			LJ.before.dependifyCreateBefore();
+
+		},
+		addCreateBefore: function(){
+
+			$( LJ.before.renderCreateBefore() )
+				.hide()
+				.appendTo( $('.app-section.x--map') );
+
+		},
+		renderCreateBefore: function(){
+
+			return LJ.ui.render([
+
+				'<div class="be-create">',
+			        '<div class="be-create__close">',
+			          '<div class="icon icon-cross-fat"></div>',
+			        '</div>',
+			        '<div class="be-create__title">',
+			          '<h1 data-lid="be_create_title"></h1>',
+			        '</div>',
+			        '<div class="be-create-row__subtitle">',
+			          '<h2 data-lid="be_create_subtitle_hosts"></h2>',
+			        '</div>',
+			        '<div class="be-create-row x--hosts x--unset">',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-star-empty"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input readonly data-lid="be_create_hosts_placeholder"/>',
+			          '</div>',
+			          '<div class="be-create-row__explanations">',
+			            '<div data-lid="be_create_hosts_explanations"></div>',
+			          '</div>',
+			          '<div class="js-create-host-selected">',
+			            // Will be used to know where append the selected users 
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create-row__subtitle">',
+			          '<h2 data-lid="be_create_subtitle_before"></h2>',
+			        '</div>',
+			        '<div class="be-create-row x--date x--unset">',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-calendar-empty"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input data-lid="be_create_date_placeholder" readonly/>',
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create-row x--hour x--unset">',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-clock-empty"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input readonly data-lid="be_create_hour_placeholder"/>',
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create-row x--location x--unset">',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-location-empty"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input data-lid="be_create_location_placeholder" />',
+			          '</div>',
+			          '<div class="be-create-row__explanations">',
+			            '<div data-lid="be_create_before_explanations"></div>',
+			          '</div>',
+			        '</div>',
+			        '<div class="be-create__button">',
+			          '<button data-lid="be_create_button"></button>',
+			        '</div>',
+		      '</div>'
+
+			].join(''));
+		}
+
+
+
+	});
+
+	window.LJ.before = _.merge( window.LJ.before || {}, {
+
+		generateHourRange: function( begin, stop, step ){
+
+			if( !begin || !stop || !step ){
+				return LJ.wlog('Cannot generate hour range without begin, stop and step params');
+			}
+
+			var html = [];
+			var start_date = moment({ hour: begin });
+			var stop_date  = moment({ hour: stop });
+
+			if( stop_date < start_date ){
+				stop_date.add( 1, 'day' );
+			}
+
+			while( start_date <= stop_date ){
+				var s = start_date.format('HH:mm');
+				html.push( s );
+				start_date.add( step, 'minute' );
+			}
+
+			return html;
+
+		},
+		renderHourPicker: function( begin, stop, step ){
+
+			var html_hours = LJ.before.generateHourRange( begin, stop, step );
+			var html = [];
+
+			html_hours.forEach(function( hs, i ){
+				if( i == 0 ){
+					html.push('<div class="hourpicker-col">');
+					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
+				} else if ( i%4 == 0 ){
+					html.push('</div><div class="hourpicker-col">');
+					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
+				} else {
+					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
+				}
+			});
+			html.push('</div>');
+
+			return LJ.ui.render([
+
+				'<div class="hourpicker">',
+					html.join(''),
+				'</div>'
+
+				].join(''));
+
+		},
+		showHourPicker: function(){
+
+			$('.hourpicker').show();
+
+		},
+		hideHourPicker: function(){
+
+			$('.hourpicker').hide();
+
+		}
+
+	});
+
+	window.LJ.before = _.merge( window.LJ.before || {}, {
+
+		processRequest: function( before_id ){
+
+			return LJ.ui.getModalItemIds()
+				.then(function( item_ids ){
+
+					var d = LJ.static.renderStaticImage('search_loader')
+					$( d ).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
+						duration: 400
+					});
+					
+					item_ids.push( LJ.user.facebook_id );
+					return LJ.api.requestParticipation( before_id, item_ids );
+
+				})
+				.then(function( exposed ){
+					return LJ.ui.hideModal();
+
+				})
+				.catch(function(e){
+					LJ.wlog(e);
+					return LJ.before.handleRequestError( e, before_id );
+
+				});
+
+		},
+		handleRequest: function(){
+
+        	LJ.log('Handling request, waiting for friend ids...');
+
+        	var before_id = $( this ).closest('[data-before-id]').attr('data-before-id');
+
+			LJ.ui.showModal({
+				"title"			: LJ.lang.sayCheers(),
+				"type"      	: "request",
+				"search_input"	: true,
+				"jsp_body" 	    : true,
+				"attributes"	: [{ name: "item-id", val: before_id }],
+				"subtitle"		: LJ.text('modal_request_subtitle'),
+				"body"  		: LJ.friends.renderFriendsInModal(),
+				"max_items"     : (LJ.app_settings.app.max_group - 1),
+				"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>"
+			})
+			.then(function(){
+				return LJ.before.processRequest( before_id );
+
+			});
+
+
+        },
+        handleRequestError: function( err, before_id ){
+
+        	var err_id  = err.err_id;
+        	var err_msg = null;
+
+			if( err_id == "missing_parameter" ){
+				LJ.wlog('Missing parameter...!');
+
+			}
+			if( err_id == "already_there" ){
+				//var profiles = LJ.friends.getFriendsProfiles( _.map( err.already_there, 'member_id') );
+				//var names    = _.map( profiles, 'name' );
+				//var formatted_names = LJ.renderMultipleNames( names );
+				_.map( err.already_there, 'member_id').forEach(function( member_id ){
+					LJ.ui.noSelectModalRow( member_id, LJ.text('be_request_already_there'));
+				});
+
+				$('.modal')
+					.removeClass('x--pending')
+                    .addClass('x--disabled')
+					.find('.modal__search-loader').hide();
+					
+				return LJ.before.processRequest( before_id );
+
+			}
+			if( err_msg ){
+				LJ.ui.showToast( err_msg ,'error' );
+
+			}
+
+			LJ.ui.hideModal();
+
+        },
+        handleClickOnRequestPending: function(){
+
+        	LJ.ui.showToast( LJ.text('to_request_pending') );
+
+        },
+        handleClickOnRequestAccepted: function(){
+
+        	LJ.log('Redirecting to chat...');
+            var $self = $( this );
+
+            var before_id = $self.closest('.be-inview').attr('data-before-id');
+            var chat_id   = LJ.before.getChannelItem( before_id ).chat_id;
+
+            if( LJ.chat.getChatState() == "hidden" ){
+                LJ.chat.showChatWrap();
+            }
+
+            LJ.chat.hideChatInview();
+            LJ.chat.activateChat( chat_id );
+            LJ.chat.showChatInview( chat_id );
+
+        },
+        defaultifyBeforeInview: function( before_id ){
+
+        	var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
+
+        	$be.find('.be-request button')
+        		.velocity('shradeOut', {
+        			duration: 300,
+        			complete: function(){
+        				var $new = $( LJ.before.renderBeforeInviewBtn__UserDefault() ).hide();
+        				$( this ).replaceWith( $new );
+        				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
+        			}
+        		});
+
+        },
+        pendifyBeforeInview: function( before_id ){
+
+        	var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
+
+        	$be.find('.be-request button')
+        		.velocity('shradeOut', {
+        			duration: 300,
+        			complete: function(){
+        				var $new = $( LJ.before.renderBeforeInviewBtn__UserPending() ).hide();
+        				$( this ).replaceWith( $new );
+        				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
+        			}
+        		});
+
+        },
+        acceptifyBeforeInview: function( before_id ){
+
+        	var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
+
+        	$be.find('.be-request button')
+        		.velocity('shradeOut', {
+        			duration: 300,
+        			complete: function(){
+        				var $new = $( LJ.before.renderBeforeInviewBtn__UserAccepted() ).hide();
+        				$( this ).replaceWith( $new );
+        				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
+        			}
+        		});
+
+        },
+        pendifyBeforeMarker: function( before_id ){
+
+        	LJ.map.markers.forEach(function( mrk ){
+
+        		if( mrk.marker_id == before_id ){
+
+                    var active = ( mrk.status == "active" ) ? true : false;
+        			var icon   = LJ.map.makeIcon( LJ.map.getBeforeMarkerUrlByType("pending", active) );
+
+        			mrk.marker.setIcon( icon );
+
+        		}
+
+        	});
+
+        },
+        acceptifyBeforeMarker: function( before_id ){
+
+        	LJ.map.markers.forEach(function( mrk ){
+
+        		if( mrk.marker_id == before._id ){
+
+                    var active = ( mrk.status == "active" ) ? true : false;
+        			var icon   = LJ.map.makeIcon( LJ.map.getBeforeMarkerUrlByType("accepted", active) );
+
+        			mrk.marker.setIcon( icon );
+        			
+        		}
+
+        	});
+
+        }
+
+	});
+window.LJ.before = _.merge( window.LJ.before || {}, {
+
+		test: {
+				iso_dates: [
+					"2016-07-22T22:30:48.1234Z",
+					"2016-07-22T21:30:22.1234Z",
+					"2016-07-23T19:35:43.1234Z",
+					"2016-07-25T18:30:45.1234Z",
+					"2016-07-24T16:20:25.1234Z",
+					"2016-07-27T22:32:45.1234Z",
+					"2016-07-27T22:45:15.1234Z",
+					"2016-07-27T20:30:42.1234Z",
+					"2016-07-28T16:20:25.1234Z",
+					"2016-07-29T21:32:41.1234Z",
+					"2016-07-30T22:25:11.1234Z",
+					"2016-07-30T20:10:12.1234Z",
+					"2016-08-22T22:30:48.1234Z",
+					"2016-08-22T22:33:55.1234Z",
+					"2016-08-23T19:35:43.1234Z",
+					"2016-08-25T18:34:45.1234Z",
+					"2016-08-24T16:24:24.1234Z",
+					"2016-08-27T22:32:45.1234Z",
+					"2016-08-27T22:45:45.1234Z",
+					"2016-08-27T20:30:44.1234Z",
+					"2016-08-28T19:20:25.1234Z",
+					"2016-08-29T21:32:41.1234Z",
+					"2016-08-30T22:24:11.1234Z",
+					"2016-08-30T20:14:12.1234Z",
+
+			],
+			before_data: {
+
+				hosts_facebook_id: ["152108635187978","149685995430834"],
+				address: {
+					lat: "48.8526266",
+					lng: "2.332816600000001",
+					place_id: "ChIJHcrWXNdx5kcRssJewNDrBRM",
+					place_name: "Rue du Four, 75006 Paris, France"
+				},
+				begins_at: "2016-04-27T09:21:11.519Z",
+				timezone: 120
+
+			},
+			readAndCreateBefore: function( param ){
+
+				var req = {};
+
+				req.hosts_facebook_id = _.shuffle( LJ.user.friends ).slice(0,1).concat( LJ.user.facebook_id );
+				req.address   		  = _.shuffle( LJ.map.test.places )[0];
+				req.begins_at		  = '2016-0'+LJ.randomInt( 8,9 )+'-' + LJ.randomInt( 10, 30 )+'T18:18:18Z'
+				req.timezone 		  = 120;
+
+				if( param && req[ param ] ){
+					delete req[ param ];
+				}
+
+				return LJ.api.createBefore( req );
+
+			},
+			handleCreateBefore: function(){
+
+				LJ.log('Handling create before...');
+
+				var ux_done    = LJ.before.pendifyCreateBefore();
+				var be_created = LJ.before.test.readAndCreateBefore();
+
+				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
+					return LJ.before.endCreateBefore( res[0] );
+
+				})
+				.catch(function( e ){
+					LJ.before.handleCreateBeforeError(e);
+
+				});
+
+			},
+			handleCreateBeforeWithSpecificFriend: function( facebook_id ){
+
+				LJ.log('Handling create before with friend...');
+
+				var ux_done    = LJ.before.pendifyCreateBefore();
+				var be_created = LJ.before.test.readAndCreateBeforeWithFriend( facebook_id );
+
+				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
+					return LJ.before.endCreateBefore( res[0] );
+
+				})
+				.catch(function( e ){
+					LJ.before.handleCreateBeforeError(e);
+
+				});
+
+			},
+			readAndCreateBeforeWithFriend: function( friend_id ){
+
+				var req = {};
+
+				req.hosts_facebook_id = [ LJ.user.facebook_id, friend_id ];
+				req.address   		  = _.shuffle( LJ.map.test.places )[0];
+				req.begins_at		  = '2016-0'+LJ.randomInt(6,9)+'-' + LJ.randomInt(10,30)+'T18:18:18Z'
+				req.timezone 		  = 120;
+
+				return LJ.api.createBefore( req );
+
+			},
+			handleCreateBefore__MissingHosts: function(){
+
+				LJ.log('Handling create before...');
+
+				var ux_done    = LJ.before.pendifyCreateBefore();
+				var be_created = LJ.before.test.readAndCreateBefore('hosts_facebook_id');
+
+				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
+					return LJ.before.endCreateBefore( res[0] );
+
+				})
+				.catch(function( e ){
+					LJ.before.handleCreateBeforeError(e);
+
+				});
+			},
+			handleCreateBefore__MissingLocation: function(){
+
+				LJ.log('Handling create before...');
+
+				var ux_done    = LJ.before.pendifyCreateBefore();
+				var be_created = LJ.before.test.readAndCreateBefore('address');
+
+				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
+					return LJ.before.endCreateBefore( res[0] );
+
+				})
+				.catch(function( e ){
+					LJ.before.handleCreateBeforeError(e);
+
+				});
+			},
+			handleCreateBefore__MissingDate: function(){
+
+				LJ.log('Handling create before...');
+
+				var ux_done    = LJ.before.pendifyCreateBefore();
+				var be_created = LJ.before.test.readAndCreateBefore('begins_at');
+
+				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
+					return LJ.before.endCreateBefore( res[0] );
+
+				})
+				.catch(function( e ){
+					LJ.before.handleCreateBeforeError(e);
+
+				});
+			}
+		}
+
+	});
+
+	 window.bc  = LJ.before.test.handleCreateBefore;
+	 window.bcf = LJ.before.test.handleCreateBeforeWithSpecificFriend
+	 window.fid = function(){ return LJ.user.facebook_id;}
+
+	
+	
+	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
+
+		init: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				var code;
+				try {
+					code  = document.location.href.split('code=')[ 1 ].split(/&|#/i)[ 0 ];
+				} catch( e ){ }
+
+				var token;
+				try {
+					token = document.location.href.split('access_token=')[ 1 ].split(/&|#/i)[ 0 ];
+				} catch( e ){ }
+
+
+				if( history && history.pushState ){
+					history.pushState( {}, document.title, window.location.pathname );
+				}
+
+				if( code ){
+					return resolve({ fb_code: code });
+				}
+
+				if( token ){
+					return resolve({ fb_token: token });
+				}
+				
+
+				// Quick reference to the local store
+				var s = LJ.store;
+
+				if( !s.get('facebook_access_token') ){
+					return reject('No local data available, initializing lp...');
+				}
+
+				var facebook_access_token = s.get('facebook_access_token');
+
+				var token      = facebook_access_token.token;
+				var expires_at = facebook_access_token.expires_at;
+
+				if( !token || !expires_at ){
+					return reject('Missing init preference param, initializing lp...');
+				}
+
+				if( moment( expires_at ) < moment() ){
+					return reject('Facebook token found but has expired, initializing lp...');
+				} 
+
+				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
+				if( remaining_days < 30 ) {
+					return reject('Facebook token found but will expire soon, refresh is needed.');
+				}
+
+				// Unexpected error
+				if( s.get('reconnecting') && !token ){
+					return reject('User trying to reconnect but missing token from local store (unexpected)');
+				}
+
+				// Check if the app is trying to reconnect him 
+				if( s.get('reconnecting') && token ){
+					LJ.log('Reconnecting user from previous loss of connexion...');
+					s.remove('reconnecting');
+					return resolve({ fb_token: token });
+				}
+
+				if( s.get("autologin") == false ){
+					return reject("Autologin isnt activated, initializing lp...");
+				}
+
+				LJ.log('Init data ok, auto logging in...');
+				resolve({ fb_token: token });
+							
+			});
+		},
+		startLogin: function( login_params ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log('Starting login...');
+				LJ.start( login_params );
+			});
+
+		},
+		startLanding: function( message ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log( message );
+				LJ.log('Starting landing... v' + 1 );
+
+				$( LJ.static.renderStaticImage('slide_loader') )
+					.hide()
+					.appendTo('.curtain')
+					.velocity('shradeIn', { duration: 800 });
+
+				$('.curtain').find('.slide__loader').velocity('shradeOut', {
+					duration: 600,
+					complete: function(){
+						LJ.ui.hideCurtain({ duration: 800 });
+						LJ.landing.activateLanding( 2 );
+									
+					}
+				})
+			});
+		}
+
+	});
+
+
+
 
 	window.LJ.chat = _.merge( window.LJ.chat || {}, {
 
@@ -33502,2144 +35640,6 @@ function closure ( target, options ){
 
 
 	});
-
-	window.LJ.before = _.merge( window.LJ.before || {}, {
-
-		fetched_befores: [],
-		switch_view_duration: 1000,
-		render_mode_active : null,
-		render_mode_primary: "hive",
-		render_mode_secondary: "flat",
-
-
-		init: function(){
-			
-			LJ.before.addCreateBefore();
-			LJ.before.handleDomEvents();
-			LJ.before.initBrowser();
-
-			return LJ.before.fetchNearestBefores__UserLocation()
-					.then(function(){
-						return LJ.before.initCreateBefore();
-					});
-
-		},
-		handleDomEvents: function(){
-
-			LJ.ui.$body.on('click', '.map__icon.js-create-before', LJ.before.handleShowCreateBefore );
-			// LJ.ui.$body.on('click', '.map__icon.js-expand-browser', LJ.map.handleShrinkBrowserDates );
-			LJ.ui.$body.on('click', '.be-create__close', LJ.before.handleHideCreateBefore );
-			LJ.ui.$body.on('click', '.be-dates__date', LJ.before.activateBrowserDate );
-			LJ.ui.$body.on('click', '.be-create.x--ready .be-create__button', LJ.before.handleCreateBefore );
-			LJ.ui.$body.on('click', '.be-inview .user-row', LJ.before.handleClickOnUserRow );
-			// LJ.ui.$body.on('click', '.be-actions__action.x--share', LJ.before.handleShareBefore );
-			LJ.ui.$body.on('click', '.js-cancel-before', LJ.before.handleCancelBefore );
-			LJ.ui.$body.on('click', '.slide.x--before .js-show-options', LJ.before.showBeforeOptions );
-			LJ.ui.$body.on('click', '.js-request', LJ.before.handleRequest );
-			LJ.ui.$body.on('click', '.js-request-pending', LJ.before.handleClickOnRequestPending );
-			LJ.ui.$body.on('click', '.js-request-accepted', LJ.before.handleClickOnRequestAccepted );
-			LJ.ui.$body.on('click', '.js-show-profile', LJ.before.handleShowUserProfile );
-			LJ.ui.$body.on('click', '.js-switch-mode', LJ.before.handleSwitchInviewMode );
-
-
-		},
-		initBrowser: function(){
-
-			LJ.before.addBrowser();
-
-		},
-		initCreateBefore: function(){
-
-		 	LJ.before.initHostsPicker();
-			LJ.before.initDatePicker();
-		 	LJ.before.initHourPicker( 17, 2, 30 );
-
-		 	return LJ.seek.activatePlacesInCreateBefore()
-		 			.then(function(){
-					 	LJ.before.initPlacePicker();
-					 	return;
-		 			});
-
-		},
-		handleShowCreateBefore: function(){
-
-			LJ.before.hideBrowser();
-			LJ.before.showCreateBefore();
-
-		},
-		handleHideCreateBefore: function(){
-
-			if( $('.slide').length == 0 ){
-				LJ.before.showBrowser();
-			}
-			LJ.before.hideCreateBefore();
-
-		},
-		findById: function( before_id ){
-
-			var bfr = _.find( LJ.before.fetched_befores, function( b ){
-				return b._id == before_id;
-			});
-
-			return bfr;
-
-		},
-		findMyGroup: function( before ){
-
-			var g = _.find( before.groups, function( g ){
-				return g.members.indexOf( LJ.user.facebook_id ) != -1;
-			});
-
-			return g;
-
-		},
-		activateBrowserDate: function(){
-
-			var $s = $( this );
-
-			var date = $s.attr('data-day');
-			var m = moment( date, 'DD/MM' );
-
-			LJ.map.activateDate( m );
-
-		},
-		sortIsoDates: function( iso_dates ){
-
-			return iso_dates.sort(function( i1, i2 ){
-				return moment( i1 ).dayOfYear() - moment( i2 ).dayOfYear();
-			});
-
-		},	
-		findDistinctDays: function( iso_dates ){
-
-			var days = [];
-			LJ.before.sortIsoDates( iso_dates ).forEach(function( isodate, i ){
-
-				days.push({
-					id        : i,
-					day_word  : LJ.text('day')[ parseInt(moment( isodate ).format('d')) ],
-					day_digit : moment( isodate ).format('DD/MM')
-				});
-
-			});
-
-			var distinct_days = [];
-			var found = [];
-
-			days.forEach(function( day ){
-
-				if( found.indexOf( day.day_digit ) == -1 ){
-					found.push( day.day_digit );
-					distinct_days.push( day );
-				}
-
-			});
-
-			return distinct_days;
-
-		},
-		addBrowser: function(){
-
-			$('.be-browser').remove();
-			$('.app-subheader.x--map')
-				.append( LJ.before.renderBrowser() );			
-
-		},
-		preRefreshBrowserLocation: function(){
-
-			$('.js-current-location')
-				.children()
-				.velocity({ opacity: [ 0.5, 1 ]}, {
-					duration: 100
-				});
-
-		},
-		refreshBrowserLocation: function(){
-
-			var center_latlng = LJ.meemap.center;
-			LJ.map.findAddressWithLatLng( center_latlng )
-				.then(function( address ){
-
-					$('.js-current-location')
-						.children()
-						.velocity({ opacity: [ 0, 0.5 ]}, {
-							duration: 200,
-							complete: function(){
-
-								$('.js-current-location').find('.js-closeto').html( address );
-								$( this ).velocity('fadeIn', {
-										duration: 400,
-										display: 'flex'
-									});
-
-							}
-						});
-				});
-
-		},
-		findActiveDateIndex: function(){
-
-			var i = 0;
-			var $bd = $('.be-dates__date.x--active');
-			if( $bd.length > 0 ){
-				$('.be-dates__date').each(function( j, el ){
-					if( $(el).hasClass('x--active') ){
-						i = j;
-					}
-				});
-			}
-			return i;
-
-		},
-		handleClickOnUserRow: function(){
-
-			var facebook_id = $(this).attr('data-facebook-id');
-			LJ.profile_user.showUserProfile( facebook_id );
-
-		},
-		refreshBrowserDates: function(){
-
-			var iso_dates  = _.map( LJ.before.fetched_befores, 'begins_at' );
-			var dates_html = [];
-
-			if( iso_dates.length == 0 ){
-
-				LJ.wlog('No iso_dates found');
-				dates_html.push( LJ.before.renderBrowserDatesEmpty() );
-
-			} else {
-
-				var dates = LJ.before.findDistinctDays( iso_dates );
-				dates.forEach(function( date, i ){
-
-					var d = date.day_digit;
-					var w = date.day_word.slice( 0, 3 );
-
-					dates_html.push([
-						'<div class="be-dates__date" data-day="'+ d +'">',
-							'<span class="be-dates__offset">' + w + '.<span>'+ d +'</span></span>',
-							'<div class="be-dates__bar"></div>',
-						'</div>'
-						].join(''));
-				});
-				
-			}
-
-
-			$('.js-be-dates').html( dates_html.join('') );
-			LJ.ui.turnToJsp( $('.js-be-dates'), {
-				jsp_id: 'before_dates'
-			});
-
-			LJ.before.refreshBrowserCount();
-
-		},
-		getBeforeCountByDate: function( date ){
-
-			var m = moment( date, 'DD/MM' );
-
-			return _.filter( LJ.before.fetched_befores, function( bfr ){
-				return m.dayOfYear() == moment( bfr.begins_at ).dayOfYear();
-			}).length;
-
-		},
-		refreshBrowserCount: function(){
-
-			$('.be-dates__date').each(function( i, el ){
-				var $el = $( el );
-
-				var day = $el.attr('data-day');
-				var cnt = LJ.before.getBeforeCountByDate( day );
-
-				$el.find('.be-dates__count').remove();
-				$el.append('<span class="be-dates__count">(' + cnt + ')</span>');
-
-			});
-
-
-		},
-		renderBrowser: function(){
-
-			return LJ.ui.render([
-
-				'<div class="be-browser">',
-					'<div class="be-dates js-be-dates">',
-					'</div>',
-					'<div class="be-address js-current-location">',
-						'<i class="icon icon-location"></i>',
-						'<span data-lid="be_close_to"></span>',
-						'<span class="js-closeto"></span>',
-					'</div>',
-				'</div>',
-
-			].join(''));
-
-		},
-		renderBrowserDatesEmpty: function(){
-
-			return LJ.ui.render([
-				'<div class="be-browser__empty">',
-					'<span data-lid="be_browser_empty"></span>',
-				'</div>'
-			].join(''));
-
-		},
-		hideBrowser: function(){
-
-			if( $('.app-subheader.x--map').css('opacity') != 1 ){
-				return;
-			}
-
-			$('.app-subheader.x--map').velocity('slideUpOut', {
-				duration : 500
-			});
-
-		},
-		showBrowser: function(){
-
-			var is_browser_visible   = $('.app-subheader.x--map').css('opacity') != 0 && $('.app-subheader.x--map').css('display') != 'none';
-			var is_slide_visible     = $('.slide').length > 0 && $('.slide').css('opacity') == '1';
-			var is_be_create_visible = $('.be-create').css('opacity') == '1';
-
-			if( is_browser_visible ){
-				return;
-			}
-
-
-			$('.app-subheader.x--map').velocity('slideDownIn', {
-				duration : 500,
-				display  : 'flex'
-			});
-
-		},
-		showCreateBeforeBtn: function(){
-
-			$('.js-create-before').velocity('bounceInQuick', { duration: 800, display: 'flex' });
-
-		},
-		hideCreateBeforeBtn: function(){
-
-			$('.js-create-before').velocity('bounceOut', { duration: 800, display: 'none' });
-		},
-		fetchBefores: function(){
-
-			LJ.log('Fetching befores...');
-			return LJ.api.fetchBefores();
-
-		},
-		fetchNearestBefores__UserLocation: function( max_distance ){
-
-			var latlng = LJ.user.location;
-			return LJ.before.fetchNearestBefores( latlng, max_distance );
-
-
-		},
-		fetchNearestBefores__MapCenter: function( max_distance ){
-
-			var latlng = {
-				lat: LJ.meemap.center.lat(),
-				lng: LJ.meemap.center.lng()
-			};
-
-			return LJ.before.fetchNearestBefores( latlng, max_distance );
-
-
-		},
-		refreshNearestBefores: function( max_distance ){
-
-			LJ.before.fetchNearestBefores__MapCenter( max_distance )
-				.then(function( befores ){
-					return LJ.before.displayBeforeMarkers( befores );
-
-				});
-
-		},
-		fetchNearestBefores: function( latlng, max_distance ){
-
-			max_distance = max_distance || null;
-
-			return LJ.api.fetchNearestBefores( latlng, max_distance )
-					.then(function( befores ){
-						LJ.before.fetched_befores = befores;
-						return befores;
-
-					});
-
-		},
-		displayBeforeMarkers: function( befores ){
-
-			befores.forEach(function( before ){
-				LJ.map.addBeforeMarker( before );
-			});
-
-			LJ.map.updateMarkers__byDate();
-			LJ.map.clearSeenMarkers();
-
-		},
-		getMyBeforeById: function( before_id ){
-
-			return _.find( LJ.user.befores, function( bfr ){
-                return bfr.before_id == before_id;
-            });
-
-		},
-		setPicturesSizes: function( $content ){
-			
-			var $pictures = $content.find('.be-pictures__pic');
-			var n_pics 	  = $pictures.length;
-
-			var left_step = Object.create({
-				2: 50, 3: 33.333333, 4: 25 }
-			)[ n_pics ];
-
-			var shadolay = Object.create({
-				 2: { opacity : 0,   right: 0 },
-				 3: { opacity : 0.5, right: 33.33333 },
-				 4: { opacity : 1,   right: 50 } 
-			})[ n_pics ];
-
-			$pictures.each(function( i, pic ){
-
-				var $p = $( pic );
-
-				$p.css({ 'width'  : '50%' })
-				  .css({ 'z-index': i + 1 })
-				  .css({ 'left'   : (i * left_step)+'%' })
-
-				$p.find('.be-pictures__shadolay')
-				  .css({ 'right'  : shadolay.right+'%' })
-				  .css({ 'opacity': shadolay.opacity })
-
-			});
-
-
-        },
-        fetchBeforeAndHosts: function( before_id ){
-
-        	var before_ref;
-        	return LJ.api.fetchBefore( before_id )
-        			.then(function( before ){
-        				before_ref = before;
-        				var host_ids = before.hosts;
-        				return LJ.api.fetchUsers( host_ids );
-
-        			})
-        			.then(function( expose ){
-        				expose.before = before_ref;
-        				return expose;
-        			});
-
-        },
-        handleCloseBeforeInview: function(){
-
-        	LJ.map.deactivateMarkers();
-        	LJ.map.refreshMarkers();
-
-        	LJ.before.showBrowser();
-
-        },
-        hideBeforeInview: function(){
-
-        	LJ.ui.hideSlide({ type: 'before' });
-
-        },
-        fetchAndShowBeforeInview: function( before_id ){
-			
-			var before;
-
-        	LJ.before.hideBrowser();
-        	return LJ.ui.showSlideAndFetch({
-
-				"type"			: "before",
-
-				"fetchPromise"	: LJ.before.fetchBeforeAndHosts,
-				"promise_arg"   : before_id,
-
-				"complete"      : LJ.before.handleCloseBeforeInview,
-				"errHandler"    : LJ.before.handleShowBeforeInviewError
-
-			})
-			.then(function( expose ){	
-				host_profiles = _.map( expose, 'user' );
-				before        = expose.before;
-				
-				return LJ.before.renderBeforeInview( before, host_profiles );
-
-			})
-			.then(function( before_html ){
-				$container = $('.slide.x--before').find('.slide-body');
-				LJ.before.addBefore( before_html, $container );
-				$content = $container.children(':not(.slide__loader)');
-
-			})
-			.then(function(){
-				return LJ.ui.shradeOut( $container.find('.slide__loader'), LJ.ui.slide_hide_duration );
-
-			})
-			.then(function(){
-				return LJ.before.processBeforePreDisplay( before );
-
-			})
-			.then(function(){
-				LJ.ui.shradeIn( $content, LJ.profile_user.slide_show_duration );				
-
-			});
-
-
-        },
-        handleShowBeforeInviewError: function( err ){
-
-        	if( err.err_id == "ghost_before" ){
-        		LJ.before.ghostifyBeforeInview();
-        	}
-
-        },
-        ghostifyBeforeInview: function(){
-
-        	var duration      = 400;
-        	var $before_ghost = $( LJ.before.renderBeforeGhost() );
-
-        	$('.slide.x--before')
-        		.find('.slide__loader')
-        		.velocity('shradeOut', {
-        			duration: duration,
-        			complete: function(){
-        				$( this ).remove();
-        			}
-        		});
-
-        	$before_ghost
-        		.hide()
-        		.appendTo( $('.slide-body') )
-        		.velocity('shradeIn', {
-        			duration: duration,
-        			delay   : duration,
-        			display : 'flex'
-        		});
-
-        },
-        renderBeforeGhost: function(){
-
-        	return LJ.ui.render([
-
-        		'<div class="slide-ghost">',
-        			'<div class="slide-ghost__icon x--round-icon">',
-        				'<i class="icon icon-search-light"></i>',
-        			'</div>',
-        			'<div class="slide-ghost__title">',
-        				'<span data-lid="be_ghost_title"></span>',
-        			'</div>',
-        			'<div class="slide-ghost__subtitle">',
-        				'<span data-lid="be_ghost_subtitle"></span>',
-        			'</div>',
-        			'<div class="slide-ghost__action">',
-        				'<button data-lid="be_ghost_btn" class="slide__close"></button>',
-        			'</div>',
-        		'</div>'
-
-        	].join(''));
-
-        },
-        showBeforeInview: function( before ){
-
-        	LJ.before.hideBrowser();
-
-			var host_ids  = before.hosts;
-
-			var host_profiles;
-			var $container;
-			var $content;
-
-        	return LJ.ui.showSlideAndFetch({
-
-				"type"			: "before",
-
-				"fetchPromise"	: LJ.api.fetchUsers,
-				"promise_arg"   : host_ids,
-
-				"complete"      : LJ.before.handleCloseBeforeInview,
-				"errHandler"    : LJ.before.handleShowBeforeInviewError
-
-			})
-			.then(function( expose ){	
-				host_profiles = _.map( expose, 'user' );
-				return LJ.before.renderBeforeInview( before, host_profiles );
-
-			})
-			.then(function( before_html ){
-				$container = $('.slide.x--before').find('.slide-body');
-				LJ.before.addBefore( before_html, $container );
-				$content = $container.children(':not(.slide__loader)');
-
-			})
-			.then(function(){
-				return LJ.ui.shradeOut( $container.find('.slide__loader'), LJ.ui.slide_hide_duration );
-
-			})
-			.then(function(){
-				return LJ.before.processBeforePreDisplay( before );
-
-			})
-			.then(function(){
-				LJ.ui.shradeIn( $content, LJ.profile_user.slide_show_duration );				
-
-			});
-
-            
-        },
-        processBeforePreDisplay: function( before ){
-
-			var $w        = $('.be-inview[data-before-id="'+ before._id +'"]');
-			var main_host = before.main_host;
-
-        	// Dynamically render the size of the pictures to fit, with a shade
-        	LJ.before.setPicturesSizes( $w );
-
-        	// Make sure the host is always on top of the list
-        	LJ.mainifyUserRow( $w, main_host );
-
-        	// Set the ux preferences
-        	LJ.settings.applyUxPreferences();
-
-        	// Prepend and hide the content, so that jsp compute the right height
-			$w.css({ 'opacity': 0 }).show();
-
-			LJ.ui.turnToJsp( $w.find('.be-users'), {
-				jsp_id: 'before_inview'
-			});
-
-			// Little delay to give Jsp the time to act
-			return LJ.delay(100)
-
-        },
-        addBefore: function( before_html, $container ){
-        	return $container.append( before_html );
-
-        },
-        renderCreateBefore: function(){
-
-            return LJ.ui.render([
-                '<div class="map__icon x--round-icon x--create-before js-create-before">',
-                    '<i class="icon icon-plus"></i>',
-                '</div>'
-                ].join(''));
-
-        },
-		renderBeforePictures: function( hosts ){
-
-			var be_pictures = [];
-			hosts.forEach(function( h ){
-
-				var img_medium = LJ.pictures.makeImgHtml( h.img_id, h.img_vs, "user-before" );
-				be_pictures.push([
-					'<div class="be-pictures__pic js-filterlay">',
-						'<div class="be-pictures__shadolay"></div>',
-						img_medium,
-					'</div>'
-				].join(''));
-
-			});
-
-			return LJ.ui.render( be_pictures.join('') );
-
-		},
-		renderBeforeDate: function( date ){
-
-			var m = moment( date );
-			return LJ.text("before_date", m );
-
-		},
-		renderBeforeAddress: function( address ){
-			return address.place_name;
-
-		},
-		renderBeforeInview: function( before, host_profiles ){
-
-			var html;
-			if( before.hosts.indexOf( LJ.user.facebook_id ) != -1 ){
-        		html = LJ.before.renderBeforeInview__Host( before, host_profiles );
-
-        	} else {
-        		var my_before = _.find( LJ.user.befores, function( bfr ){
-        			return bfr.before_id == before._id;
-        		});
-
-        		if( !my_before ){
-        			html = LJ.before.renderBeforeInview__UserDefault( before, host_profiles );
-        			
-        		} else {
-        			if( my_before.status == "pending" ){
-        				html = LJ.before.renderBeforeInview__UserPending( before, host_profiles );
-
-        			} else {
-        				html = LJ.before.renderBeforeInview__UserAccepted( before, host_profiles );
-
-        			}
-        		}
-
-        	}
-        	return html;
-
-		},
-		renderBeforeInview__Host: function( before, hosts ){
-
-			return LJ.before.renderBeforeInview__Base( before, hosts, {
-
-				be_action: '<div class="be-actions__action x--settings x--round-icon js-show-options"><i class="icon icon-cog-empty"></i></div>',
-				be_button: LJ.before.renderBeforeInviewBtn__Host()
-
-			});
-
-		},
-		renderBeforeInview__UserDefault: function( before, hosts ){
-
-			return LJ.before.renderBeforeInview__Base( before, hosts, {
-
-				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
-				be_button:  LJ.before.renderBeforeInviewBtn__UserDefault()
-
-			});
-
-		},
-		renderBeforeInview__UserPending: function( before, hosts ){
-
-			return LJ.before.renderBeforeInview__Base( before, hosts, {
-
-				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
-				be_button:  LJ.before.renderBeforeInviewBtn__UserPending()
-
-			});
-
-		},
-		renderBeforeInview__UserAccepted: function( before, hosts ){
-
-			return LJ.before.renderBeforeInview__Base( before, hosts, {
-
-				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
-				be_button:  LJ.before.renderBeforeInviewBtn__UserAccepted()
-
-			});
-
-		},
-		renderBeforeInviewBtn__Host: function(){
-			return '<div class="be-ended"><span data-lid="be_hosted"></span></div>';
-		},
-		renderBeforeInviewBtn__UserAccepted: function(){
-			return '<button class="x--round-icon x--accepted js-request-accepted"><i class="icon icon-chat-bubble-duo"></i></button>'
-
-		},
-		renderBeforeInviewBtn__UserPending: function(){
-			return '<button class="x--round-icon x--pending js-request-pending"><i class="icon icon-pending"></i></button>'
-
-		},
-		renderBeforeInviewBtn__UserDefault: function(){
-			return '<button class="x--round-icon js-request"><i class="icon icon-meedrink"></i></button>'
-
-		},
-		// renderBeforeInview__Base: LJ.before.renderBeforeInviewHive,
-		renderBeforeInview__Base: function( before, hosts, options ){
-			
-			LJ.before.active_before  = before;
-			LJ.before.active_hosts   = hosts;
-			LJ.before.active_options = options;
-
-			LJ.before.render_mode_active = LJ.before.render_mode_primary;
-			var renderFn = LJ.before.getRenderFn( LJ.before.render_mode_primary );
-
-			return renderFn( before, hosts, options );
-
-		},
-		getRenderFn: function( mode ){
-
-			var mode = mode || LJ.before.render_mode_active || LJ.before.render_mode_primary;
-
-			if( mode == "hive" ){
-				return LJ.before.renderBeforeInviewHive;
-			}
-
-			if( mode == "flat" ){
-				return LJ.before.renderBeforeInviewFlat;
-			}
-
-			if( mode == "rows" ){
-				return LJ.before.renderBeforeInviewRows;
-			}
-
-		},	
-		switchBeforeInview: function( mode ){
-
-			var renderFn = LJ.before.getRenderFn( mode );
-		
-			$( renderFn( LJ.before.active_before, LJ.before.active_hosts, LJ.before.active_options ) )
-				.css({ 'display': 'flex' })
-				.replaceAll('.be-inview');
-
-
-		},
-		renderBeforeInviewHive: function( before, hosts, options ){
-
-			options = options || [];
-
-			if( !before || !hosts ){
-				return LJ.wlog('Cannot render before without before object and hosts profiles');
-			}
-		
-			var usernames   = LJ.text("w_before").capitalize() + " " + LJ.text("w_with") + " " + LJ.renderMultipleNames( _.map( hosts, 'name') );
-			var be_addr     = LJ.before.renderBeforeAddress( before.address );
-			var be_date     = LJ.before.renderBeforeDate( before.begins_at );
-			var be_pictures = LJ.pictures.makeHiveHtml( hosts, "user-before",{
-				class_names : [ "js-show-profile" ],
-				attach_data : [ "facebook_id" ]
-			});
-			var be_action   = options.be_action;
-
-			var be_request = '<div class="be-request">' + options.be_button + '</div>';
-			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
-				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
-			}
-
- 
-			return LJ.ui.render([
-
-				'<div class="be-inview x--hive" data-before-id="'+ before._id +'">',
-					'<div class="be-usernames">',
-						'<span>'+ usernames +'</span>',
-					'</div>',
-		            '<div class="be-actions">',
-		              '<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
-		        	  be_action,
-		            '</div>',
-			      	'<div class="be-pictures">',
-			           be_pictures,
-			        '</div>',
-			        '<div class="be-inview-address">',
-			          '<div class="be-inview-address__date">',
-			          	'<div class="be-inview-address__icon x--round-icon">',
-			          		'<i class="icon icon-clock-empty"></i>',
-			          	'</div>',
-			            '<span>'+ be_date +'</span>',
-			          '</div>',
-			          '<div class="be-inview-address__address">',
-			          	'<div class="be-inview-address__icon x--round-icon">',
-			          		'<i class="icon icon-location-empty"></i>',
-			          	'</div>',
-			            '<span>'+ be_addr +'</span>',
-			          '</div>',
-			        '</div>',
-			        be_request,
-		      	'</div>'
-
-			].join(''));
-
-		},
-		renderUserFlat: function( user ){
-
-			var n = user.name;
-			var a = user.age;
-			var i = user.facebook_id;
-			var c = user.country_code;
-			var g = user.gender;
-			var j = user.job;
-
-			var img_html = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, 'user-flat');
-
-			return LJ.ui.render([
-
-				'<div class="user-flat" data-facebook-id="'+ i +'">',
-		            '<div class="flat-user__pic js-show-profile js-filterlay">',
-		            	img_html,
-		            '</div>',
-		           '<div class="flat-user-body">',
-		               '<div class="flat-user__h1">',
-		            	  '<span class="flat-user__gender user-gender js-user-gender x--'+ g +'"></span>',
-		                  '<span class="flat-user__name">'+ n +'</span>',
-			              '<span class="flat-user__country js-user-country"><i class="flag-icon flag-icon-'+ c +'"></i></span>',
-			              '<span class="user-online js-user-online" data-facebook-id="'+ i +'"></span>',
-		               '</div>',
-		               '<div class="flat-user__h2">',
-		                  '<span class="flat-user__age age">'+ a +'</span>',
-	                  	  '<span class="comma">-</span>',
-	               		  '<span class="flat-user__job">'+ j +'</span>',
-		               '</div>',
-		           '</div>',
-		            '<div class="flat-user-actions">',
-		              // '<div class="flat-user__action x--round-icon js-show-profile"><i class="icon icon-main-picture"></i></div>',
-		            '</div>',
-	          '</div>'
-
-			]);
-
-		},
-		renderBeforeInviewFlat: function( before, hosts, options ){
-
-			options = options || [];
-
-			if( !before || !hosts ){
-				return LJ.wlog('Cannot render before without before object and hosts profiles');
-			}
-			
-			var flat_users = [ '<div class="flat-users">' ];
-			hosts.forEach(function( h ){
-				flat_users.push( LJ.before.renderUserFlat( h ) );
-			});
-			flat_users.push( '</div>' );
-
-			var be_action  = options.be_action;
-
-			var be_request = '<div class="be-request">' + options.be_button + '</div>';
-			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
-				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
-			}
-
- 
-			return LJ.ui.render([
-
-				'<div class="be-inview x--flat" data-before-id="'+ before._id +'">',
-					'<div class="be-actions">',
-			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
-			          	be_action,
-			        '</div>',
-					flat_users.join(''),
-			        be_request,
-		      	'</div>'
-
-			]);
-
-		},
-		renderBeforeInviewRows: function( before, hosts, options ){
-
-			options = options || [];
-
-			if( !before || !hosts ){
-				return LJ.wlog('Cannot render before without before object and hosts profiles');
-			}
-
-			var be_pictures = LJ.before.renderBeforePictures( hosts );
-			var user_rows   = LJ.renderUserRows( hosts );
-
-			var be_action  = options.be_action;
-			var be_request = '<div class="be-request">' + options.be_button + '</div>';
-
-			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
-				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
-			}
-
-			var be_date = LJ.before.renderBeforeDate( before.begins_at );
-			var be_addr = LJ.before.renderBeforeAddress( before.address );
- 
-			return LJ.ui.render([
-
-				'<div class="be-inview" data-before-id="'+ before._id +'">',
-			      	'<div class="be-pictures">',
-			          '<div class="be-actions">',
-			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
-			          	be_action,
-			          '</div>',
-			          be_pictures,
-			        '</div>',
-			        '<div class="be-inview-address">',
-			          '<div class="be-inview-address__date">',
-			            '<span>'+ be_date +'</span>',
-			          '</div>',
-			          '<div class="be-inview-address__address">',
-			            '<span>'+ be_addr +'</span>',
-			          '</div>',
-			        '</div>',
-			        '<div class="be-users">',
-			        	user_rows,
-			        '</div>',
-			        be_request,
-		      	'</div>'
-
-			]);
-
-		},
-		handleCancelBefore: function(){
-
-			var $s = $( this );
-
-			var before_id  = $s.closest('.slide').find('[data-before-id]').attr('data-before-id');
-			var new_status = "canceled";
-
-			LJ.ui.showLoader("canceling_before");
-
-			LJ.api.changeBeforeStatus( before_id, new_status )
-				.then(function( before ){
-
-					LJ.ui.hideLoader("canceling_before");
-					LJ.ui.showToast( LJ.text('to_cancel_before_success') );
-
-					LJ.before.removeOneBefore( before_id );
-					LJ.before.refreshBrowserDates();
-					LJ.before.showBrowser();
-					
-					LJ.map.removeBeforeMarker( before_id );
-					LJ.ui.hideSlide({ type: 'before' });
-
-				})
-				.catch(function( err ){
-					LJ.wlog(err);
-
-				});
-
-		},
-		removeOneBefore: function( before_id ){
-
-			_.remove( LJ.before.fetched_befores, function( bfr ){
-				return bfr._id == before_id;
-			});
-
-		},
-		renderBeforeOptions: function(){
-
-			return LJ.ui.render([
-
-				'<div class="ioptions__actions">',
-					'<div class="ioptions__action-message">',
-						'<span data-lid="slide_overlay_before_message"></span>',
-					'</div>',
-					'<div class="ioptions__action js-cancel-before">',
-						'<span data-lid="slide_overlay_before_cancel"></span>',
-					'</div>',
-					'<div class="ioptions__action x--back js-ioptions-close">',
-						'<span data-lid="slide_overlay_back"></span>',
-					'</div>',
-				'</div>'
-
-				].join(''));
-
-		},
-		showBeforeOptions: function(){
-
-			var $wrap = $('.slide.x--before');
-
-			if( $wrap.length != 1 ){
-				return LJ.wlog('Cannot uniquely identify the wrapper');
-			}
-
-			LJ.ui.showSlideOverlay( LJ.before.renderBeforeOptions() );
-
-		},
-		showChatOptions: function(){
-
-			var duration = LJ.ui.show_slide_duration;
-
-			$('.chat-inview-options').velocity('fadeIn', {
-				display : 'flex',
-				duration: duration
-			});
-
-			$( LJ.chat.renderChatOptions() )
-				.hide()
-				.appendTo( $('.chat-inview-options') )
-				.velocity('shradeIn', {
-					duration: duration,
-					display: 'flex',
-					delay: duration/2,
-					complete: function(){
-						$(this).find('.js-close-overlay')
-							   .on('click', LJ.ui.hideSlideOverlay );
-					}
-				});
-
-		},
-		handleShareBefore: function(){	
-
-			var target_id = $( this ).closest('[data-before-id]').attr('data-before-id');
-
-			LJ.ui.showModal({
-				"title"			: LJ.text('modal_share_title_before'),
-				"type"      	: "share",
-				"search_input"	: true,
-				"jsp_body" 	    : true,
-				"attributes"	: [{ name: "item-id", val: target_id }],
-				"subtitle"		: LJ.text('modal_share_subtitle_before'),
-				"body"  		: LJ.friends.renderFriendsInModal(),
-				"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>"
-			})
-			.then(function(){
-				return LJ.ui.getModalItemIds();
-
-			})
-			.then(function( item_ids ){
-
-				var d = LJ.static.renderStaticImage('search_loader');
-				$( d ).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
-					duration: 400
-				});
-
-				return LJ.api.shareWithFriends({
-					target_id   : target_id,
-					target_type : 'before',
-					shared_with : item_ids
-				});
-
-			})
-			.then(function( exposed ){
-				return LJ.ui.hideModal();
-
-			})
-			.then(function(){
-				LJ.ui.showToast( LJ.text('to_before_shared_success') );
-				
-			})
-			.catch(function(e){
-				LJ.wlog(e);
-				LJ.ui.hideModal();
-
-			});
-
-		},
-		getBefore: function( before_id ){
-			return LJ.promise(function( resolve, reject ){
-
-				var before = _.find( LJ.before.fetched_befores, function( bfr ){
-					return bfr._id == before_id;
-				});
-
-				if( before ){
-					resolve( before );
-				} else {
-					return LJ.api.fetchBefore( before_id )
-						.then(function( before ){
-							LJ.before.fetched_befores.push( before );
-							resolve( before );
-						});
-				}
-
-			});
-		},
-		getBeforeItem: function( before_id ){
-
-			return _.find( LJ.user.befores, function( bfr ){
-				return bfr.before_id == before_id;
-			});
-
-		},
-		updateBeforeItem: function( before_id, opts ){
-
-			var before_item = LJ.before.getBeforeItem( before_id );
-
-			_.keys( before_item ).forEach(function( key ){
-				if( opts[ key ] && typeof opts[ key ] == typeof before_item[ key ] ){
-					before_item[ key ] = opts[ key ];
-				}
-			});
-
-		},
-		getChannelItem( before_id ){
-
-			return _.find( LJ.user.channels, function( chan ){
-				return chan.before_id == before_id;
-			});
-		},
-		cancelifyBeforeInview: function(){
-
-			LJ.ui.cancelify({
-
-				"$wrap"        : $('.slide.x--before'),
-				"duration"     : 8000,
-				"message_html" : "<span>" + LJ.text("before_just_canceled") + "</span>",
-				"callback"     : function(){
-					LJ.ui.hideSlide({ type: 'before' });
-				}
-
-			});
-
-		},
-		handleSwitchInviewMode: function(){
-
-			LJ.before.render_mode_active = ( LJ.before.render_mode_active == LJ.before.render_mode_primary ) ?
-										     LJ.before.render_mode_secondary : 
-										     LJ.before.render_mode_primary;
-						
-			LJ.before.switchBeforeInview( LJ.before.render_mode_active );
-
-		},
-		handleShowUserProfile: function(){
-
-			var $s = $( this );
-			var facebook_id = $s.closest('[data-facebook-id]').attr('data-facebook-id');
-
-			LJ.profile_user.showUserProfile( facebook_id );
-
-
-		}
-
-	});
-
-	window.LJ.before = _.merge( window.LJ.before || {}, {
-
-		initHostsPicker: function(){
-
-			LJ.before.handleDomEvents__HostsPicker();
-
-		},
-		initDatePicker: function(){
-
-			LJ.before.date_picker = new Pikaday({ 
-
-                field   : document.getElementsByClassName('be-create-row x--date')[0],
-                container : document.getElementsByClassName('be-create')[0],
-                i18n	: LJ.text_source[ "pikaday" ][ LJ.lang.getAppLang() ],
-                format  : 'DD/MM/YY',
-                minDate : new Date(),
-                bound   : false
-
-            });
-
-            $('.pika-single').insertAfter( $('.be-create') );
-            LJ.before.handleDomEvents__DatePicker();
-
-		},
-		initHourPicker: function( begin, stop, step ){
-
-			$('.be-create-row.x--hour')
-				.append( LJ.before.renderHourPicker( begin, stop, step ) );
-
-			LJ.before.hideHourPicker();
-			LJ.before.handleDomEvents__HourPicker();
-
-		},
-		initPlacePicker: function(){
-
-			LJ.before.handleDomEvents__PlacePicker();
-
-		},
-		handleDomEvents__PlacePicker: function(){
-
-			LJ.seek.be_create.addListener('place_changed', function(){
-
-				var place = LJ.seek.be_create.getPlace();
-
-				var place_id    = place.place_id;
-				var place_name  = place.formatted_address;
-				var lat 		= place.geometry.location.lat();
-				var lng 		= place.geometry.location.lng();
-
-				$('.be-create-row.x--location')
-					.attr('data-place-id', place_id )
-					.attr('data-place-name', place_name )
-					.attr('data-lat', lat )
-					.attr('data-lng', lng );
-
-				$('.be-create-row.x--location').removeClass('x--unset');
-				LJ.before.validateInputs();
-
-			});
-
-		},
-		handleDomEvents__HostsPicker: function(){
-
-			LJ.ui.$body.on('click', '.be-create-row.x--hosts', function(){
-
-				LJ.ui.showModal({
-					"type"      	: "be-create",
-					"title"			: LJ.text('modal_be_create_title'),
-					"subtitle"		: LJ.text('modal_be_create_subtitle'),
-					"body"  		: LJ.friends.renderFriendsInModal(),
-					"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>",
-					"search_input"	: true,
-					"max_items"     : (LJ.app_settings.app.max_hosts - 1),
-					"jsp_body" 	    : true
-				})
-				.then(function(){
-					return LJ.ui.getModalItemIds()
-				})
-				.then(function( facebook_ids ){
-					$('.be-create-row.x--hosts').attr('data-host-ids', facebook_ids.join(',') ).removeClass('x--unset');
-					LJ.before.validateInputs();
-					return LJ.before.addHostsNames( facebook_ids );
-
-				})
-				.then(function(){
-					return LJ.ui.hideModal();
-				})
-				.catch(function( e ){
-					LJ.wlog(e);
-					LJ.wlog('User has stopped selecting people');
-				});
-
-			});
-
-
-		},
-		handleDomEvents__HourPicker: function(){
-
-			LJ.ui.$body.on('mousedown', '.be-create .hourpicker__hour', function(){
-
-				var hour = $(this).attr('data-hour');
-
-				$('.be-create-row.x--hour input').val( hour );
-				$('.be-create-row.x--hour')
-					.attr('data-hh', hour.split(':')[0])
-					.attr('data-mm', hour.split(':')[1]);
-
-				LJ.before.hideHourPicker();
-				$('.be-create-row.x--hour').removeClass('x--unset');
-				LJ.before.validateInputs();
-
-			});
-
-			LJ.ui.$body.on('click', '.be-create-row.x--hour input', function(){
-				LJ.before.showHourPicker();
-
-			});
-
-			LJ.ui.$body.on('mouseleave', '.hourpicker', function(){
-				LJ.before.hideHourPicker();              
-
-            });
-
-		},
-		handleDomEvents__DatePicker: function(){
-
-			  /* Date picker custom handling for better ux */
-            LJ.ui.$body.on('mousedown', '.pika-day:not(.pika-prev,.pika-next)', function(e){
-
-                var $self = $(this);
-                var date_str =  moment({ 
-
-                    D: $self.attr('data-pika-day'),
-                    M: $self.attr('data-pika-month'),
-                    Y: $self.attr('data-pika-year') })
-
-                .format('DD/MM/YY');
-
-            	$('.be-create-row.x--date')
-               		.attr('data-dd', date_str.split('/')[0] )
-               		.attr('data-mm', date_str.split('/')[1] )
-               		.attr('data-yy', date_str.split('/')[2] )
-               		.find('input')
-               		.val( date_str );
-
-            	LJ.before.date_picker.hide();
-
-            	$('.be-create-row.x--date').removeClass('x--unset');
-				LJ.before.validateInputs();
-
-            });
-
-            LJ.ui.$body.on('mousedown', '.pika-next', function(e){             
-                LJ.before.date_picker.nextMonth();
-            });
-
-            LJ.ui.$body.on('mousedown', '.pika-prev', function(e){             
-                LJ.before.date_picker.prevMonth();
-            });
-
-
-            LJ.ui.$body.on('mouseleave', '.pika-single', function(){
-                LJ.before.hovering_datepicker_nav = false;
-                LJ.before.date_picker.hide();
-            });
-
-            LJ.ui.$body.on('focus', '.be-create-row.x--date input', function(){
-                LJ.before.date_picker.show();
-            });
-
-
-		},
-		addHostsNames: function( hosts_facebook_id ){
-
-			var profiles = LJ.friends.getFriendsProfiles( hosts_facebook_id );
-			var names    = _.map( profiles, 'name' );
-			names = LJ.renderMultipleNames( names );
-
-			$('.be-create-row.x--hosts')
-				.find('input')
-				.val( names );
-
-			return;
-
-		},
-		generateHourRange: function( begin, stop, step ){
-
-			if( !begin || !stop || !step ){
-				return LJ.wlog('Cannot generate hour range without begin, stop and step params');
-			}
-
-			var html = [];
-			var start_date = moment({ hour: begin });
-			var stop_date  = moment({ hour: stop });
-
-			if( stop_date < start_date ){
-				stop_date.add( 1, 'day' );
-			}
-
-			while( start_date <= stop_date ){
-				var s = start_date.format('HH:mm');
-				html.push( s );
-				start_date.add( step, 'minute' );
-			}
-
-			return html;
-
-		},
-		renderHourPicker: function( begin, stop, step ){
-
-			var html_hours = LJ.before.generateHourRange( begin, stop, step );
-			var html = [];
-
-			html_hours.forEach(function( hs, i ){
-				if( i == 0 ){
-					html.push('<div class="hourpicker-col">');
-					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
-				} else if ( i%4 == 0 ){
-					html.push('</div><div class="hourpicker-col">');
-					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
-				} else {
-					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
-				}
-			});
-			html.push('</div>');
-
-			return LJ.ui.render([
-
-				'<div class="hourpicker">',
-					html.join(''),
-				'</div>'
-
-				].join(''));
-
-		},
-		showHourPicker: function(){
-			$('.hourpicker').show();
-
-		},
-		hideHourPicker: function(){
-			$('.hourpicker').hide();
-
-		},
-		validateInputs: function(){
-
-			var $unset = $('.be-create-row.x--unset');
-
-			if( $unset.length == 0 ){
-				return $('.be-create').addClass('x--ready');
-			}
-
-		},
-		showCreateBefore: function(){
-
-			var $i = $('.map__icon.x--create-before');
-			var $w = $('.be-create');
-			var d  = LJ.search.filters_duration || 300;
-
-			LJ.before.clearCreateBefore();
-			LJ.ui.adjustWrapperHeight( $('.be-create') );
-
-			if( LJ.isMobileMode() ){
-				LJ.ui.deactivateHtmlScroll();
-			}
-
-			$i.velocity('shradeOut', {
-				duration : d,
-				display  : 'none'
-			});
-
-			LJ.delay( d )
-				.then(function(){
-					return LJ.ui.shradeIn( $w, d );
-				});
-
-
-		},
-		hideCreateBefore: function(){
-
-			var $i  = $('.map__icon.x--create-before');
-			var $w  = $('.be-create');
-			var d   = LJ.search.filters_duration;
-
-			$w.velocity('shradeOut', {
-				duration : d,
-				display  : 'none'
-			});
-
-			LJ.delay( d )
-				.then(function(){
-					LJ.ui.activateHtmlScroll();
-					return LJ.ui.shradeIn( $i, d );
-				});
-
-		},
-		hideCreateBeforeStraight: function(){
-
-			var $i  = $('.map__icon.x--create-before');
-			var $w  = $('.be-create');
-			var d   = LJ.search.filters_duration;
-
-			$w.hide();
-			$i.css({ 'display': 'flex', 'opacity': 1 });
-
-
-		},
-		clearCreateBefore: function(){
-
-			$('.be-create__loader').remove();
-			$('.be-create').removeClass('x--pending').removeClass('x--ready');
-			$('.be-create-row.x--hosts').addClass('x--unset').find('input').val('');
-			$('.be-create-row.x--date').addClass('x--unset').find('input').val('');
-			$('.be-create-row.x--hour').addClass('x--unset').find('input').val('');
-			$('.be-create-row.x--location').addClass('x--unset').find('input').val('');
-
-		},
-		readCreateAttributes: function(){
-
-			var req = {};
-
-			req.hosts_facebook_id = $('.be-create-row.x--hosts').attr('data-host-ids').split(',');
-			req.hosts_facebook_id.push( LJ.user.facebook_id );
-
-			req.begins_at = moment().set({
-
-				h: $('.be-create-row.x--hour').attr('data-hh'),
-				m: $('.be-create-row.x--hour').attr('data-mm'),
-				D: $('.be-create-row.x--date').attr('data-dd'),
-				M: parseInt( $('.be-create-row.x--date').attr('data-mm') ) - 1, // month starts at 0...
-				Y: $('.be-create-row.x--date').attr('data-yyyy')
-
-			}).toISOString();
-
-			// Important! Timezone is only known by the client and used to uniquely identify his..
-			// well, timezone, when updating multiple events every hours on the scheduler
-			req.timezone = moment().utcOffset();
-
-			req.address = {
-
-				place_id   : $('.be-create-row.x--location').attr('data-place-id'),
-				place_name : $('.be-create-row.x--location').attr('data-place-name'),
-				lat 	   : $('.be-create-row.x--location').attr('data-lat'),
-				lng 	   : $('.be-create-row.x--location').attr('data-lng')
-
-			}
-
-			return req;
-
-		},
-		readAndCreateBefore: function(){
-
-			var req = LJ.before.readCreateAttributes();
-
-			if( !(req.hosts_facebook_id && req.begins_at && req.timezone && req.address ) ){
-				return LJ.wlog('Missing parameter in the req object : ' + JSON.stringify( req, null, 4 ));
-			}
-
-			return LJ.api.createBefore( req );
-
-
-		},
-		showCreateBeforeOverlay: function(){
-
-			$('<div class="loader__overlay"></div>')
-				.hide()
-				.appendTo( $('.be-create') )
-				.velocity('fadeIn', {
-					duration: 500
-				});
-
-		},
-		hideCreateBeforeOverlay: function(){
-
-			$('.be-create')
-				.find('.loader__overlay')
-				.remove();
-
-		},
-		showCreateBeforeLoader: function(){
-
-			$( LJ.static.renderStaticImage('be_create_loader') )
-				.hide()
-				.appendTo('.be-create')
-				.show();
-
-		},
-		hideCreateBeforeLoader: function(){
-
-			$('.be-create')
-				.find('.be-create__loader')
-				.remove();
-
-		},
-		pendifyCreateBefore: function(){
-
-			$('.be-create').addClass('x--pending');
-			LJ.before.showCreateBeforeOverlay();
-			LJ.before.showCreateBeforeLoader();
-			
-			return;
-
-		},
-		dependifyCreateBefore: function(){
-
-			$('.be-create').removeClass('x--pending');
-			LJ.before.hideCreateBeforeLoader();
-			LJ.before.hideCreateBeforeOverlay();
-
-			return;
-
-		},
-		endCreateBefore: function( expose ){
-			
-			// Friendly loggin
-			var before      = expose.before;
-			var before_item = expose.before_item;
-
-			// Ui update
-			LJ.before.hideCreateBefore();
-			LJ.before.showBrowser();
-			LJ.before.refreshBrowserDates();
-			LJ.delay( 1000 ).then(function(){
-
-				LJ.before.dependifyCreateBefore();
-				LJ.map.activateDate( moment( before.begins_at ) );
-
-			});
-
-		},	
-		handleCreateBefore: function(){
-
-			LJ.log('Handling create before...');
-
-			var ux_done    = LJ.before.pendifyCreateBefore();
-			var be_created = LJ.before.readAndCreateBefore();
-
-			LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
-				var expose = res[0];
-
-				return LJ.before.endCreateBefore( expose );
-
-			})
-			.catch(function( e ){
-				LJ.before.handleCreateBeforeError(e);
-
-			});
-
-		},
-		handleCreateBeforeError: function( err ){
-			
-			if( !err ){
-				return LJ.wlog('Something went wrong, but no err object was provided');
-			}
-
-			var err_id = err.err_id;
-			var err_msg = '';
-
-			if( err_id == "missing_parameter" ){
-
-				if( err.parameter == "hosts_facebook_id" ){
-					err_msg = LJ.text('err_be_create_missing_hosts');
-
-				}
-				if( err.parameter == "begins_at" ){
-					err_msg = LJ.text('err_be_create_missing_date');
-
-				}
-				if( err.parameter == "address" ){
-					err_msg = LJ.text('err_be_create_missing_location');
-
-				}
-			}
-
-			if( err_id == "already_hosting" ){
-				
-				var profiles = LJ.friends.getFriendsProfiles( err.host_ids );
-				var names    = _.map( profiles, 'name' );
-				var formatted_names = LJ.renderMultipleNames( names );
-
-				if( err.host_ids.indexOf( LJ.user.facebook_id ) == -1 ){
-					err_msg = LJ.text('err_be_create_already_hosting').replace('%names', formatted_names );
-
-				} else {
-					err_msg = LJ.text('err_be_create_already_hosting_me');
-				}
-
-			}
-
-			LJ.ui.showToast( err_msg ,'error' );
-			LJ.before.dependifyCreateBefore();
-
-		},
-		addCreateBefore: function(){
-
-			$( LJ.before.renderCreateBefore() )
-				.hide()
-				.appendTo( $('.app-section.x--map') );
-
-		},
-		renderCreateBefore: function(){
-
-			return LJ.ui.render([
-
-				'<div class="be-create">',
-			        '<div class="be-create__close">',
-			          '<div class="icon icon-cross-fat"></div>',
-			        '</div>',
-			        '<div class="be-create__title">',
-			          '<h1 data-lid="be_create_title"></h1>',
-			        '</div>',
-			        '<div class="be-create-row__subtitle">',
-			          '<h2 data-lid="be_create_subtitle_hosts"></h2>',
-			        '</div>',
-			        '<div class="be-create-row x--hosts x--unset">',
-			          '<div class="be-create__icon x--round-icon"><i class="icon icon-star-empty"></i></div>',
-			          '<div class="be-create-row__input">',
-			            '<input readonly data-lid="be_create_hosts_placeholder"/>',
-			          '</div>',
-			          '<div class="be-create-row__explanations">',
-			            '<div data-lid="be_create_hosts_explanations"></div>',
-			          '</div>',
-			          '<div class="js-create-host-selected">',
-			            // Will be used to know where append the selected users 
-			          '</div>',
-			        '</div>',
-			        '<div class="be-create-row__subtitle">',
-			          '<h2 data-lid="be_create_subtitle_before"></h2>',
-			        '</div>',
-			        '<div class="be-create-row x--date x--unset">',
-			          '<div class="be-create__icon x--round-icon"><i class="icon icon-calendar-empty"></i></div>',
-			          '<div class="be-create-row__input">',
-			            '<input data-lid="be_create_date_placeholder" readonly/>',
-			          '</div>',
-			        '</div>',
-			        '<div class="be-create-row x--hour x--unset">',
-			          '<div class="be-create__icon x--round-icon"><i class="icon icon-clock-empty"></i></div>',
-			          '<div class="be-create-row__input">',
-			            '<input readonly data-lid="be_create_hour_placeholder"/>',
-			          '</div>',
-			        '</div>',
-			        '<div class="be-create-row x--location x--unset">',
-			          '<div class="be-create__icon x--round-icon"><i class="icon icon-location-empty"></i></div>',
-			          '<div class="be-create-row__input">',
-			            '<input data-lid="be_create_location_placeholder" />',
-			          '</div>',
-			          '<div class="be-create-row__explanations">',
-			            '<div data-lid="be_create_before_explanations"></div>',
-			          '</div>',
-			        '</div>',
-			        '<div class="be-create__button">',
-			          '<button data-lid="be_create_button"></button>',
-			        '</div>',
-		      '</div>'
-
-			].join(''));
-		}
-
-
-
-	});
-
-	window.LJ.before = _.merge( window.LJ.before || {}, {
-
-		generateHourRange: function( begin, stop, step ){
-
-			if( !begin || !stop || !step ){
-				return LJ.wlog('Cannot generate hour range without begin, stop and step params');
-			}
-
-			var html = [];
-			var start_date = moment({ hour: begin });
-			var stop_date  = moment({ hour: stop });
-
-			if( stop_date < start_date ){
-				stop_date.add( 1, 'day' );
-			}
-
-			while( start_date <= stop_date ){
-				var s = start_date.format('HH:mm');
-				html.push( s );
-				start_date.add( step, 'minute' );
-			}
-
-			return html;
-
-		},
-		renderHourPicker: function( begin, stop, step ){
-
-			var html_hours = LJ.before.generateHourRange( begin, stop, step );
-			var html = [];
-
-			html_hours.forEach(function( hs, i ){
-				if( i == 0 ){
-					html.push('<div class="hourpicker-col">');
-					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
-				} else if ( i%4 == 0 ){
-					html.push('</div><div class="hourpicker-col">');
-					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
-				} else {
-					html.push('<div class="hourpicker__hour" data-hour="'+ hs +'">'+ hs +'</div>');
-				}
-			});
-			html.push('</div>');
-
-			return LJ.ui.render([
-
-				'<div class="hourpicker">',
-					html.join(''),
-				'</div>'
-
-				].join(''));
-
-		},
-		showHourPicker: function(){
-
-			$('.hourpicker').show();
-
-		},
-		hideHourPicker: function(){
-
-			$('.hourpicker').hide();
-
-		}
-
-	});
-
-	window.LJ.before = _.merge( window.LJ.before || {}, {
-
-		processRequest: function( before_id ){
-
-			return LJ.ui.getModalItemIds()
-				.then(function( item_ids ){
-
-					var d = LJ.static.renderStaticImage('search_loader')
-					$( d ).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
-						duration: 400
-					});
-					
-					item_ids.push( LJ.user.facebook_id );
-					return LJ.api.requestParticipation( before_id, item_ids );
-
-				})
-				.then(function( exposed ){
-					return LJ.ui.hideModal();
-
-				})
-				.catch(function(e){
-					LJ.wlog(e);
-					return LJ.before.handleRequestError( e, before_id );
-
-				});
-
-		},
-		handleRequest: function(){
-
-        	LJ.log('Handling request, waiting for friend ids...');
-
-        	var before_id = $( this ).closest('[data-before-id]').attr('data-before-id');
-
-			LJ.ui.showModal({
-				"title"			: LJ.lang.sayCheers(),
-				"type"      	: "request",
-				"search_input"	: true,
-				"jsp_body" 	    : true,
-				"attributes"	: [{ name: "item-id", val: before_id }],
-				"subtitle"		: LJ.text('modal_request_subtitle'),
-				"body"  		: LJ.friends.renderFriendsInModal(),
-				"max_items"     : (LJ.app_settings.app.max_group - 1),
-				"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>"
-			})
-			.then(function(){
-				return LJ.before.processRequest( before_id );
-
-			});
-
-
-        },
-        handleRequestError: function( err, before_id ){
-
-        	var err_id  = err.err_id;
-        	var err_msg = null;
-
-			if( err_id == "missing_parameter" ){
-				LJ.wlog('Missing parameter...!');
-
-			}
-			if( err_id == "already_there" ){
-				//var profiles = LJ.friends.getFriendsProfiles( _.map( err.already_there, 'member_id') );
-				//var names    = _.map( profiles, 'name' );
-				//var formatted_names = LJ.renderMultipleNames( names );
-				_.map( err.already_there, 'member_id').forEach(function( member_id ){
-					LJ.ui.noSelectModalRow( member_id, LJ.text('be_request_already_there'));
-				});
-
-				$('.modal')
-					.removeClass('x--pending')
-                    .addClass('x--disabled')
-					.find('.modal__search-loader').hide();
-					
-				return LJ.before.processRequest( before_id );
-
-			}
-			if( err_msg ){
-				LJ.ui.showToast( err_msg ,'error' );
-
-			}
-
-			LJ.ui.hideModal();
-
-        },
-        handleClickOnRequestPending: function(){
-
-        	LJ.ui.showToast( LJ.text('to_request_pending') );
-
-        },
-        handleClickOnRequestAccepted: function(){
-
-        	LJ.log('Redirecting to chat...');
-            var $self = $( this );
-
-            var before_id = $self.closest('.be-inview').attr('data-before-id');
-            var chat_id   = LJ.before.getChannelItem( before_id ).chat_id;
-
-            if( LJ.chat.getChatState() == "hidden" ){
-                LJ.chat.showChatWrap();
-            }
-
-            LJ.chat.hideChatInview();
-            LJ.chat.activateChat( chat_id );
-            LJ.chat.showChatInview( chat_id );
-
-        },
-        defaultifyBeforeInview: function( before_id ){
-
-        	var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
-
-        	$be.find('.be-request button')
-        		.velocity('shradeOut', {
-        			duration: 300,
-        			complete: function(){
-        				var $new = $( LJ.before.renderBeforeInviewBtn__UserDefault() ).hide();
-        				$( this ).replaceWith( $new );
-        				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
-        			}
-        		});
-
-        },
-        pendifyBeforeInview: function( before_id ){
-
-        	var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
-
-        	$be.find('.be-request button')
-        		.velocity('shradeOut', {
-        			duration: 300,
-        			complete: function(){
-        				var $new = $( LJ.before.renderBeforeInviewBtn__UserPending() ).hide();
-        				$( this ).replaceWith( $new );
-        				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
-        			}
-        		});
-
-        },
-        acceptifyBeforeInview: function( before_id ){
-
-        	var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
-
-        	$be.find('.be-request button')
-        		.velocity('shradeOut', {
-        			duration: 300,
-        			complete: function(){
-        				var $new = $( LJ.before.renderBeforeInviewBtn__UserAccepted() ).hide();
-        				$( this ).replaceWith( $new );
-        				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
-        			}
-        		});
-
-        },
-        pendifyBeforeMarker: function( before_id ){
-
-        	LJ.map.markers.forEach(function( mrk ){
-
-        		if( mrk.marker_id == before_id ){
-
-                    var active = ( mrk.status == "active" ) ? true : false;
-        			var icon   = LJ.map.makeIcon( LJ.map.getBeforeMarkerUrlByType("pending", active) );
-
-        			mrk.marker.setIcon( icon );
-
-        		}
-
-        	});
-
-        },
-        acceptifyBeforeMarker: function( before_id ){
-
-        	LJ.map.markers.forEach(function( mrk ){
-
-        		if( mrk.marker_id == before._id ){
-
-                    var active = ( mrk.status == "active" ) ? true : false;
-        			var icon   = LJ.map.makeIcon( LJ.map.getBeforeMarkerUrlByType("accepted", active) );
-
-        			mrk.marker.setIcon( icon );
-        			
-        		}
-
-        	});
-
-        }
-
-	});
-window.LJ.before = _.merge( window.LJ.before || {}, {
-
-		test: {
-				iso_dates: [
-					"2016-07-22T22:30:48.1234Z",
-					"2016-07-22T21:30:22.1234Z",
-					"2016-07-23T19:35:43.1234Z",
-					"2016-07-25T18:30:45.1234Z",
-					"2016-07-24T16:20:25.1234Z",
-					"2016-07-27T22:32:45.1234Z",
-					"2016-07-27T22:45:15.1234Z",
-					"2016-07-27T20:30:42.1234Z",
-					"2016-07-28T16:20:25.1234Z",
-					"2016-07-29T21:32:41.1234Z",
-					"2016-07-30T22:25:11.1234Z",
-					"2016-07-30T20:10:12.1234Z",
-					"2016-08-22T22:30:48.1234Z",
-					"2016-08-22T22:33:55.1234Z",
-					"2016-08-23T19:35:43.1234Z",
-					"2016-08-25T18:34:45.1234Z",
-					"2016-08-24T16:24:24.1234Z",
-					"2016-08-27T22:32:45.1234Z",
-					"2016-08-27T22:45:45.1234Z",
-					"2016-08-27T20:30:44.1234Z",
-					"2016-08-28T19:20:25.1234Z",
-					"2016-08-29T21:32:41.1234Z",
-					"2016-08-30T22:24:11.1234Z",
-					"2016-08-30T20:14:12.1234Z",
-
-			],
-			before_data: {
-
-				hosts_facebook_id: ["152108635187978","149685995430834"],
-				address: {
-					lat: "48.8526266",
-					lng: "2.332816600000001",
-					place_id: "ChIJHcrWXNdx5kcRssJewNDrBRM",
-					place_name: "Rue du Four, 75006 Paris, France"
-				},
-				begins_at: "2016-04-27T09:21:11.519Z",
-				timezone: 120
-
-			},
-			readAndCreateBefore: function( param ){
-
-				var req = {};
-
-				req.hosts_facebook_id = _.shuffle( LJ.user.friends ).slice(0,1).concat( LJ.user.facebook_id );
-				req.address   		  = _.shuffle( LJ.map.test.places )[0];
-				req.begins_at		  = '2016-0'+LJ.randomInt( 8,9 )+'-' + LJ.randomInt( 10, 30 )+'T18:18:18Z'
-				req.timezone 		  = 120;
-
-				if( param && req[ param ] ){
-					delete req[ param ];
-				}
-
-				return LJ.api.createBefore( req );
-
-			},
-			handleCreateBefore: function(){
-
-				LJ.log('Handling create before...');
-
-				var ux_done    = LJ.before.pendifyCreateBefore();
-				var be_created = LJ.before.test.readAndCreateBefore();
-
-				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
-					return LJ.before.endCreateBefore( res[0] );
-
-				})
-				.catch(function( e ){
-					LJ.before.handleCreateBeforeError(e);
-
-				});
-
-			},
-			handleCreateBeforeWithSpecificFriend: function( facebook_id ){
-
-				LJ.log('Handling create before with friend...');
-
-				var ux_done    = LJ.before.pendifyCreateBefore();
-				var be_created = LJ.before.test.readAndCreateBeforeWithFriend( facebook_id );
-
-				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
-					return LJ.before.endCreateBefore( res[0] );
-
-				})
-				.catch(function( e ){
-					LJ.before.handleCreateBeforeError(e);
-
-				});
-
-			},
-			readAndCreateBeforeWithFriend: function( friend_id ){
-
-				var req = {};
-
-				req.hosts_facebook_id = [ LJ.user.facebook_id, friend_id ];
-				req.address   		  = _.shuffle( LJ.map.test.places )[0];
-				req.begins_at		  = '2016-0'+LJ.randomInt(6,9)+'-' + LJ.randomInt(10,30)+'T18:18:18Z'
-				req.timezone 		  = 120;
-
-				return LJ.api.createBefore( req );
-
-			},
-			handleCreateBefore__MissingHosts: function(){
-
-				LJ.log('Handling create before...');
-
-				var ux_done    = LJ.before.pendifyCreateBefore();
-				var be_created = LJ.before.test.readAndCreateBefore('hosts_facebook_id');
-
-				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
-					return LJ.before.endCreateBefore( res[0] );
-
-				})
-				.catch(function( e ){
-					LJ.before.handleCreateBeforeError(e);
-
-				});
-			},
-			handleCreateBefore__MissingLocation: function(){
-
-				LJ.log('Handling create before...');
-
-				var ux_done    = LJ.before.pendifyCreateBefore();
-				var be_created = LJ.before.test.readAndCreateBefore('address');
-
-				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
-					return LJ.before.endCreateBefore( res[0] );
-
-				})
-				.catch(function( e ){
-					LJ.before.handleCreateBeforeError(e);
-
-				});
-			},
-			handleCreateBefore__MissingDate: function(){
-
-				LJ.log('Handling create before...');
-
-				var ux_done    = LJ.before.pendifyCreateBefore();
-				var be_created = LJ.before.test.readAndCreateBefore('begins_at');
-
-				LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
-					return LJ.before.endCreateBefore( res[0] );
-
-				})
-				.catch(function( e ){
-					LJ.before.handleCreateBeforeError(e);
-
-				});
-			}
-		}
-
-	});
-
-	 window.bc  = LJ.before.test.handleCreateBefore;
-	 window.bcf = LJ.before.test.handleCreateBeforeWithSpecificFriend
-	 window.fid = function(){ return LJ.user.facebook_id;}
-
 
 	window.LJ.cheers = _.merge( window.LJ.cheers || {}, {
 
@@ -44702,7 +44702,11 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 					} catch( e ){
 						LJ.ui.showToast( LJ.text("n_outdated_notification") );
 					}
-					LJ.notifications.hideNotificationsPanel();
+
+					if( !LJ.isMobileMode() ){
+						LJ.notifications.hideNotificationsPanel();
+					}
+					
 				});
 			}
 
@@ -48589,99 +48593,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 
 
-	
-	window.LJ.static = _.merge( window.LJ.static || {}, {
-
-		'images': [
-			{
-				'access_name' : 'main_loader',
-				'image_id' 	  : 'app_loader',
-				'param'		  : { 'class': 'app__loader', 'width': 80 }
-			},
-			{
-				'access_name' : 'modal_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'modal__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'menu_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'menu__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'slide_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'slide__loader', 'width': 32  }	
-			},
-			{
-				'access_name' : 'search_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'search__loader', 'width': 32  }	
-			},
-			{
-				'access_name' : 'be_create_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'       : { 'class': 'be-create__loader', 'width': 32  }
-			},
-			{
-				'access_name' : 'chat_loader',
-				'image_id'    : 'loader_circular_blue_thin',
-				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
-			},
-			{ "access_name" : ":D", "image_id": "emoticon_smile" },
-			{ "access_name" : "xD", "image_id": "emoticon_smilexd" },
-			{ "access_name" : ";)", "image_id": "emoticon_blink" },
-			{ "access_name" : ":p", "image_id": "emoticon_tongue" },
-			{ "access_name" : "<3", "image_id": "emoticon_love" },
-			{ "access_name" : ":%", "image_id": "emoticon_sun" },
-			{ "access_name" : "-)", "image_id": "emoticon_bg" },
-			{ "access_name" : ":o", "image_id": "emoticon_oh" },
-			{ "access_name" : ":(", "image_id": "emoticon_sad" },
-			{ "access_name" : ":â", "image_id": "emoticon_angel" },
-			{ "access_name" : ":z", "image_id": "emoticon_zzz" },
-			{ "access_name" : ":/", "image_id": "emoticon_noop" }
-		],
-		// Constructs a list of static pictures hosted on Cloudinary that are available
-		// to use accross all others modules
-		init: function(){
-
-			LJ.static.cacheStaticImages();
-			return;
-
-		},
-		cacheStaticImages: function(){
-
-			LJ.static.images.forEach(function( img ){
-
-				img.param = img.param || {};
-				img.param['cloud_name'] = 'radioreve';
-
-				LJ.static[ '$' + img.access_name ] = $.cloudinary.image(
-					img.image_id,
-					img.param
-				);
-
-
-			});
-
-		},
-		getLoader: function( loader_id ){
-			var $l = $('.app__loader[data-loaderid="' + loader_id + '"]');
-
-			if( $l.length != 1 ){
-				return LJ.wlog('Unable to uniquely identify the loader with id : ' + loader_id +', length is : ' + $l.length );
-			} else {
-				return $l;
-			}
-		},
-		renderStaticImage: function( access_name ){
-
-			return LJ.static[ '$' + access_name ].clone().prop('outerHTML');
-
-		}
-
-	});
-
 	window.LJ.shared = _.merge( window.LJ.shared || {}, {
 
 		shared_item_duration: 600,
@@ -49113,6 +49024,99 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 
+	
+	window.LJ.static = _.merge( window.LJ.static || {}, {
+
+		'images': [
+			{
+				'access_name' : 'main_loader',
+				'image_id' 	  : 'app_loader',
+				'param'		  : { 'class': 'app__loader', 'width': 80 }
+			},
+			{
+				'access_name' : 'modal_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'modal__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'menu_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'menu__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'slide_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'slide__loader', 'width': 32  }	
+			},
+			{
+				'access_name' : 'search_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'search__loader', 'width': 32  }	
+			},
+			{
+				'access_name' : 'be_create_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'be-create__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'chat_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
+			},
+			{ "access_name" : ":D", "image_id": "emoticon_smile" },
+			{ "access_name" : "xD", "image_id": "emoticon_smilexd" },
+			{ "access_name" : ";)", "image_id": "emoticon_blink" },
+			{ "access_name" : ":p", "image_id": "emoticon_tongue" },
+			{ "access_name" : "<3", "image_id": "emoticon_love" },
+			{ "access_name" : ":%", "image_id": "emoticon_sun" },
+			{ "access_name" : "-)", "image_id": "emoticon_bg" },
+			{ "access_name" : ":o", "image_id": "emoticon_oh" },
+			{ "access_name" : ":(", "image_id": "emoticon_sad" },
+			{ "access_name" : ":â", "image_id": "emoticon_angel" },
+			{ "access_name" : ":z", "image_id": "emoticon_zzz" },
+			{ "access_name" : ":/", "image_id": "emoticon_noop" }
+		],
+		// Constructs a list of static pictures hosted on Cloudinary that are available
+		// to use accross all others modules
+		init: function(){
+
+			LJ.static.cacheStaticImages();
+			return;
+
+		},
+		cacheStaticImages: function(){
+
+			LJ.static.images.forEach(function( img ){
+
+				img.param = img.param || {};
+				img.param['cloud_name'] = 'radioreve';
+
+				LJ.static[ '$' + img.access_name ] = $.cloudinary.image(
+					img.image_id,
+					img.param
+				);
+
+
+			});
+
+		},
+		getLoader: function( loader_id ){
+			var $l = $('.app__loader[data-loaderid="' + loader_id + '"]');
+
+			if( $l.length != 1 ){
+				return LJ.wlog('Unable to uniquely identify the loader with id : ' + loader_id +', length is : ' + $l.length );
+			} else {
+				return $l;
+			}
+		},
+		renderStaticImage: function( access_name ){
+
+			return LJ.static[ '$' + access_name ].clone().prop('outerHTML');
+
+		}
+
+	});
+
 	window.LJ.store = _.merge( window.LJ.store || {}, {
 
 		mode: null,
@@ -49293,6 +49297,243 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 		}
 
+	});
+	
+
+	window.LJ = _.merge( window.LJ || {} , {
+
+		typeahead_legacy: {
+			users: {
+				class_names: {
+					input      :'',
+					hint       :'',
+					menu       :'search-results-users',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-users',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			// places: {
+			// 	class_names: {
+			// 		input:'',
+			// 		hint:'hint-places',
+			// 		menu:'search-results-autocomplete search-results-party-places',
+			// 		dataset:'search-wrap',
+			// 		suggestion:'search-result-default search-result-party-places',
+			// 		empty:'empty',
+			// 		open:'open',
+			// 		cursor:'cursor',
+			// 		highlight:'highlight'
+			// 	}
+			// },
+			friends: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			groups: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends search-results-groups',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			}
+		}
+
+	});
+
+
+	window.LJ.fn = _.merge( window.LJ.fn || {} , 
+
+	{
+		initTypeaheadUsers: function(){
+
+			var users = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			users.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
+
+			$('#search input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
+				classNames: LJ.typeahead.users.class_names
+			},
+			{
+				name:'users',
+				display:'name',
+				source: users.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			})
+			.on('typeahead:select', function( ev, suggestion ){
+
+				LJ.fn.displayUserProfile( suggestion.facebook_id );
+				$(this).typeahead('val', '');
+
+			});
+
+		},
+		initTypeaheadHosts: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-create-friends input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.friends.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadGroups: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-requestin-group-members input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.groups.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadPlaces: function(){
+
+			var places = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			places.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
+
+			$('.row-create-party-place input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1,
+				classNames: LJ.typeahead.places.class_names
+			},
+			{
+				name:'places',
+				display:'name',
+				source: places.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
+				}
+			});
+
+		}
+		
 	});
 
 window.LJ.ui = _.merge( window.LJ.ui || {}, {
@@ -51820,241 +52061,3 @@ window.LJ = _.merge( window.LJ || {}, {
 
 
 });
-
-	
-
-	window.LJ = _.merge( window.LJ || {} , {
-
-		typeahead_legacy: {
-			users: {
-				class_names: {
-					input      :'',
-					hint       :'',
-					menu       :'search-results-users',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-users',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			// places: {
-			// 	class_names: {
-			// 		input:'',
-			// 		hint:'hint-places',
-			// 		menu:'search-results-autocomplete search-results-party-places',
-			// 		dataset:'search-wrap',
-			// 		suggestion:'search-result-default search-result-party-places',
-			// 		empty:'empty',
-			// 		open:'open',
-			// 		cursor:'cursor',
-			// 		highlight:'highlight'
-			// 	}
-			// },
-			friends: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			groups: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends search-results-groups',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			}
-		}
-
-	});
-
-
-	window.LJ.fn = _.merge( window.LJ.fn || {} , 
-
-	{
-		initTypeaheadUsers: function(){
-
-			var users = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			users.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
-
-			$('#search input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
-				classNames: LJ.typeahead.users.class_names
-			},
-			{
-				name:'users',
-				display:'name',
-				source: users.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			})
-			.on('typeahead:select', function( ev, suggestion ){
-
-				LJ.fn.displayUserProfile( suggestion.facebook_id );
-				$(this).typeahead('val', '');
-
-			});
-
-		},
-		initTypeaheadHosts: function( friends ){
-
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
-
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
-
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
-
-			$('.row-create-friends input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.friends.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
-
-		},
-		initTypeaheadGroups: function( friends ){
-
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
-
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
-
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
-
-			$('.row-requestin-group-members input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.groups.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
-
-		},
-		initTypeaheadPlaces: function(){
-
-			var places = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			places.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
-
-			$('.row-create-party-place input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1,
-				classNames: LJ.typeahead.places.class_names
-			},
-			{
-				name:'places',
-				display:'name',
-				source: places.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
-				}
-			});
-
-		}
-		
-	});

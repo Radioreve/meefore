@@ -18,9 +18,8 @@
     overflow: visible;
     background-color: white;
     position: relative;
-    /* height: 220px; */
     width: 100%;
-    padding-bottom: 100%;
+    height: 350px;
 }
 
 .user-pics__img {
@@ -48,7 +47,8 @@
     box-sizing: border-box;
     position: absolute;
     background: white;
-    top: 309px;
+    top: 310px;
+    left: 0;
     z-index: 101;
 }
 

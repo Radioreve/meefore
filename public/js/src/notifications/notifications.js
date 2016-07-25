@@ -630,7 +630,11 @@
 					} catch( e ){
 						LJ.ui.showToast( LJ.text("n_outdated_notification") );
 					}
-					LJ.notifications.hideNotificationsPanel();
+
+					if( !LJ.isMobileMode() ){
+						LJ.notifications.hideNotificationsPanel();
+					}
+					
 				});
 			}
 

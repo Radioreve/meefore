@@ -34,10 +34,10 @@ var settings = {
 		alerts_push: {},	 
 		alerts_phone: {},
 		alerts_email: {
-			"new_message"    : false,
-			"marked_as_host" : false,
-			"new_cheers"     : false,
-			"new_match"      : false
+			"new_message"    : true,
+			"marked_as_host" : true,
+			"new_cheers"     : true,
+			"new_match"      : true
 		},
       	ux: {
 	        'auto_login'   : true,
