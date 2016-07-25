@@ -29,6 +29,10 @@
 			// Global configuration of the uploader. Need to be called once !
 			$.cloudinary.config( LJ.pictures.cloudinary_upload_params );
 
+			if( LJ.isMobileMode() ){
+				LJ.pictures.hidePictureEditOptions();
+			}
+
 			return LJ.api.fetchCloudinaryTags()
 					.then(function( cloudinary_tags ){
 					  	return LJ.pictures.setupCloudinary( cloudinary_tags ); 
