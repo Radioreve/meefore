@@ -29675,73 +29675,6 @@ function closure ( target, options ){
 
 	});
 
-	window.LJ.analytics = _.merge( window.LJ.analytics || {}, {
-
-		init: function(){
-			return LJ.promise(function( resolve, reject ){
-
-				LJ.analytics.initGoogleAnalytics();
-				resolve();
-
-			});
-
-		},
-		initGoogleAnalytics: function(){
-
-			// Google Analytics Tracking Landing Page
-			$('body').on('ga', function( e, data ){
-				LJ.fn.log( data );
-				ga('send', data.hit_type, data.url );
-			});
-
-			var tracked_elements = [];
-
-			// Elements relative to the Landing Page
-			tracked_elements.concat([
-			
-				{ el : '#landingWrap #facebook_connect', url: '/landingpage/connection-top' },
-				{ el : '#landingWrap .landing-map-button', url: '/landingpage/connection-bottom' },
-				{ el : '#landingWrap .moving-arrow', url: '/landingpage/movingarrow' },
-				{ el : '#landingWrap .pick-lang[data-code="fr"]:not(.active)', url: '/landingpage/changelang/fr' },
-				{ el : '#landingWrap .pick-lang[data-code="en"]:not(.active)', url: '/landingpage/changelang/en'},
-				{ el : '#landingWrap [href="/legals"', url: '/landingpage/legals' },
-				{ el : '#landingWrap #contact', url: '/landingpage/contact' },
-				{ el : '#landingWrap .icon-facebook', url: '/landingpage/socials/facebook '},
-				{ el : '#landingWrap .icon-twitter', url: '/landingpage/socials/twitter '},
-				{ el : '#landingWrap .icon-youtube', url: '/landingpage/socials/youtube '},
-				{ el : '#landingWrap .icon-instagram', url: '/landingpage/socials/instagram '}
-				
-			]);
-
-			// Elements relative to the Main Page
-			tracked_elements.concat([
-
-				{ el : '#profile', url: '/mainpage/profile' },
-				{ el : '#events', url: '/mainpage/events' },
-				{ el : '#settings', url: '/mainpage/settings' }
-
-			]);
-
-			tracked_elements.forEach(function( element ){
-
-				var $el = $( element.el );
-
-				if( $el.length == 0 ){
-					return LJ.fn.warn('Cant track element ' + element.el + ', doesnt exist');
-				}
-
-				// Send to Google Analytics
-				$el.on('click', function(){
-					LJ.fn.log('Tracked a click');
-					ga('send', 'pageview', element.url );
-				});
-				
-			});
-
-		}
-
-	});
-
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
 		fetched_users : [],
@@ -30484,116 +30417,73 @@ function closure ( target, options ){
 		}
 
 	});
-	
-	
-	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
+
+	window.LJ.analytics = _.merge( window.LJ.analytics || {}, {
 
 		init: function(){
-
 			return LJ.promise(function( resolve, reject ){
 
-				var code;
-				try {
-					code  = document.location.href.split('code=')[ 1 ].split(/&|#/i)[ 0 ];
-				} catch( e ){ }
+				LJ.analytics.initGoogleAnalytics();
+				resolve();
 
-				var token;
-				try {
-					token = document.location.href.split('access_token=')[ 1 ].split(/&|#/i)[ 0 ];
-				} catch( e ){ }
+			});
 
+		},
+		initGoogleAnalytics: function(){
 
-				if( history && history.pushState ){
-					history.pushState( {}, document.title, window.location.pathname );
-				}
+			// Google Analytics Tracking Landing Page
+			$('body').on('ga', function( e, data ){
+				LJ.fn.log( data );
+				ga('send', data.hit_type, data.url );
+			});
 
-				if( code ){
-					return resolve({ fb_code: code });
-				}
+			var tracked_elements = [];
 
-				if( token ){
-					return resolve({ fb_token: token });
-				}
+			// Elements relative to the Landing Page
+			tracked_elements.concat([
+			
+				{ el : '#landingWrap #facebook_connect', url: '/landingpage/connection-top' },
+				{ el : '#landingWrap .landing-map-button', url: '/landingpage/connection-bottom' },
+				{ el : '#landingWrap .moving-arrow', url: '/landingpage/movingarrow' },
+				{ el : '#landingWrap .pick-lang[data-code="fr"]:not(.active)', url: '/landingpage/changelang/fr' },
+				{ el : '#landingWrap .pick-lang[data-code="en"]:not(.active)', url: '/landingpage/changelang/en'},
+				{ el : '#landingWrap [href="/legals"', url: '/landingpage/legals' },
+				{ el : '#landingWrap #contact', url: '/landingpage/contact' },
+				{ el : '#landingWrap .icon-facebook', url: '/landingpage/socials/facebook '},
+				{ el : '#landingWrap .icon-twitter', url: '/landingpage/socials/twitter '},
+				{ el : '#landingWrap .icon-youtube', url: '/landingpage/socials/youtube '},
+				{ el : '#landingWrap .icon-instagram', url: '/landingpage/socials/instagram '}
 				
+			]);
 
-				// Quick reference to the local store
-				var s = LJ.store;
+			// Elements relative to the Main Page
+			tracked_elements.concat([
 
-				if( !s.get('facebook_access_token') ){
-					return reject('No local data available, initializing lp...');
+				{ el : '#profile', url: '/mainpage/profile' },
+				{ el : '#events', url: '/mainpage/events' },
+				{ el : '#settings', url: '/mainpage/settings' }
+
+			]);
+
+			tracked_elements.forEach(function( element ){
+
+				var $el = $( element.el );
+
+				if( $el.length == 0 ){
+					return LJ.fn.warn('Cant track element ' + element.el + ', doesnt exist');
 				}
 
-				var facebook_access_token = s.get('facebook_access_token');
-
-				var token      = facebook_access_token.token;
-				var expires_at = facebook_access_token.expires_at;
-
-				if( !token || !expires_at ){
-					return reject('Missing init preference param, initializing lp...');
-				}
-
-				if( moment( expires_at ) < moment() ){
-					return reject('Facebook token found but has expired, initializing lp...');
-				} 
-
-				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
-				if( remaining_days < 30 ) {
-					return reject('Facebook token found but will expire soon, refresh is needed.');
-				}
-
-				// Unexpected error
-				if( s.get('reconnecting') && !token ){
-					return reject('User trying to reconnect but missing token from local store (unexpected)');
-				}
-
-				// Check if the app is trying to reconnect him 
-				if( s.get('reconnecting') && token ){
-					LJ.log('Reconnecting user from previous loss of connexion...');
-					s.remove('reconnecting');
-					return resolve({ fb_token: token });
-				}
-
-				if( s.get("autologin") == false ){
-					return reject("Autologin isnt activated, initializing lp...");
-				}
-
-				LJ.log('Init data ok, auto logging in...');
-				resolve({ fb_token: token });
-							
-			});
-		},
-		startLogin: function( login_params ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log('Starting login...');
-				LJ.start( login_params );
+				// Send to Google Analytics
+				$el.on('click', function(){
+					LJ.fn.log('Tracked a click');
+					ga('send', 'pageview', element.url );
+				});
+				
 			});
 
-		},
-		startLanding: function( message ){
-			return LJ.promise(function( resolve, reject ){
-				LJ.log( message );
-				LJ.log('Starting landing... v' + 1 );
-
-				$( LJ.static.renderStaticImage('slide_loader') )
-					.hide()
-					.appendTo('.curtain')
-					.velocity('shradeIn', { duration: 800 });
-
-				$('.curtain').find('.slide__loader').velocity('shradeOut', {
-					duration: 600,
-					complete: function(){
-						LJ.ui.hideCurtain({ duration: 800 });
-						LJ.landing.activateLanding( 2 );
-									
-					}
-				})
-			});
 		}
 
 	});
-
-
-
 
 	window.LJ.before = _.merge( window.LJ.before || {}, {
 
@@ -31379,7 +31269,10 @@ function closure ( target, options ){
 			var usernames   = LJ.text("w_before").capitalize() + " " + LJ.text("w_with") + " " + LJ.renderMultipleNames( _.map( hosts, 'name') );
 			var be_addr     = LJ.before.renderBeforeAddress( before.address );
 			var be_date     = LJ.before.renderBeforeDate( before.begins_at );
-			var be_pictures = LJ.pictures.makeHiveHtml( hosts, "user-before" );
+			var be_pictures = LJ.pictures.makeHiveHtml( hosts, "user-before",{
+				class_names : [ "js-show-profile" ],
+				attach_data : [ "facebook_id" ]
+			});
 			var be_action   = options.be_action;
 
 			var be_request = '<div class="be-request">' + options.be_button + '</div>';
@@ -31395,10 +31288,10 @@ function closure ( target, options ){
 						'<span>'+ usernames +'</span>',
 					'</div>',
 		            '<div class="be-actions">',
-		              '<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-refresh"></i></div>',
+		              '<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
 		        	  be_action,
 		            '</div>',
-			      	'<div class="be-pictures js-switch-mode">',
+			      	'<div class="be-pictures">',
 			           be_pictures,
 			        '</div>',
 			        '<div class="be-inview-address">',
@@ -31485,7 +31378,7 @@ function closure ( target, options ){
 
 				'<div class="be-inview x--flat" data-before-id="'+ before._id +'">',
 					'<div class="be-actions">',
-			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-refresh"></i></div>',
+			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
 			          	be_action,
 			        '</div>',
 					flat_users.join(''),
@@ -31521,7 +31414,7 @@ function closure ( target, options ){
 				'<div class="be-inview" data-before-id="'+ before._id +'">',
 			      	'<div class="be-pictures">',
 			          '<div class="be-actions">',
-			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-refresh"></i></div>',
+			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
 			          	be_action,
 			          '</div>',
 			          be_pictures,
@@ -32728,6 +32621,116 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 	 window.bc  = LJ.before.test.handleCreateBefore;
 	 window.bcf = LJ.before.test.handleCreateBeforeWithSpecificFriend
 	 window.fid = function(){ return LJ.user.facebook_id;}
+
+	
+	
+	window.LJ.autologin = _.merge( window.LJ.autologin || {}, {
+
+		init: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				var code;
+				try {
+					code  = document.location.href.split('code=')[ 1 ].split(/&|#/i)[ 0 ];
+				} catch( e ){ }
+
+				var token;
+				try {
+					token = document.location.href.split('access_token=')[ 1 ].split(/&|#/i)[ 0 ];
+				} catch( e ){ }
+
+
+				if( history && history.pushState ){
+					history.pushState( {}, document.title, window.location.pathname );
+				}
+
+				if( code ){
+					return resolve({ fb_code: code });
+				}
+
+				if( token ){
+					return resolve({ fb_token: token });
+				}
+				
+
+				// Quick reference to the local store
+				var s = LJ.store;
+
+				if( !s.get('facebook_access_token') ){
+					return reject('No local data available, initializing lp...');
+				}
+
+				var facebook_access_token = s.get('facebook_access_token');
+
+				var token      = facebook_access_token.token;
+				var expires_at = facebook_access_token.expires_at;
+
+				if( !token || !expires_at ){
+					return reject('Missing init preference param, initializing lp...');
+				}
+
+				if( moment( expires_at ) < moment() ){
+					return reject('Facebook token found but has expired, initializing lp...');
+				} 
+
+				var remaining_days  = moment( expires_at ).diff( moment(), 'd' );
+				if( remaining_days < 30 ) {
+					return reject('Facebook token found but will expire soon, refresh is needed.');
+				}
+
+				// Unexpected error
+				if( s.get('reconnecting') && !token ){
+					return reject('User trying to reconnect but missing token from local store (unexpected)');
+				}
+
+				// Check if the app is trying to reconnect him 
+				if( s.get('reconnecting') && token ){
+					LJ.log('Reconnecting user from previous loss of connexion...');
+					s.remove('reconnecting');
+					return resolve({ fb_token: token });
+				}
+
+				if( s.get("autologin") == false ){
+					return reject("Autologin isnt activated, initializing lp...");
+				}
+
+				LJ.log('Init data ok, auto logging in...');
+				resolve({ fb_token: token });
+							
+			});
+		},
+		startLogin: function( login_params ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log('Starting login...');
+				LJ.start( login_params );
+			});
+
+		},
+		startLanding: function( message ){
+			return LJ.promise(function( resolve, reject ){
+				LJ.log( message );
+				LJ.log('Starting landing... v' + 1 );
+
+				$( LJ.static.renderStaticImage('slide_loader') )
+					.hide()
+					.appendTo('.curtain')
+					.velocity('shradeIn', { duration: 800 });
+
+				$('.curtain').find('.slide__loader').velocity('shradeOut', {
+					duration: 600,
+					complete: function(){
+						LJ.ui.hideCurtain({ duration: 800 });
+						LJ.landing.activateLanding( 2 );
+									
+					}
+				})
+			});
+		}
+
+	});
+
+
 
 
 	window.LJ.chat = _.merge( window.LJ.chat || {}, {
@@ -41247,10 +41250,19 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 					return;
 				}
 
-				if( LJ.user.access.indexOf('bot') == -1 ){
-					LJ.pictures.uploadFacebookPicture_Intro();
-				}
-				
+				// Version 1 of the login
+				return LJ.login.updateProfileFirstLogin( LJ.map.city_locations[ "paris" ] )
+					.then(function(){
+
+						if( LJ.user.access.indexOf('bot') == -1 ){
+							return LJ.pictures.uploadFacebookPicture_Intro();
+						} else {
+							return;
+						}
+					});
+
+				// Version 2 of the login, only when users > 500
+				// Useless to prompt users for a location when so few of them 
 	            return LJ.login.break()
 	            		.then(function(){
 	            			return LJ.login.promptUserLocation();
@@ -41361,26 +41373,33 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 					});
 				});	
 			},
-			updateProfileFirstLogin: function(){
+			updateProfileFirstLogin: function( location ){
 
 				LJ.log('Updating user location for the first time...');
-
-				var place_id   = $('.init-location').attr('data-place-id');
-				var place_name = $('.init-location').attr('data-place-name');
-				var lat        = $('.init-location').attr('data-place-lat');
-				var lng        = $('.init-location').attr('data-place-lng');
-
-				if( !( place_id && place_name && lat && lng) ){
-					return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
-				}
-
 				var update = {};
-				update.location = {
-					place_name : place_name,
-					place_id   : place_id,
-					lat 	   : lat,
-					lng 	   : lng
-				};
+
+				if( location ){
+					update.location = location;
+
+				} else {					
+
+					var place_id   = $('.init-location').attr('data-place-id');
+					var place_name = $('.init-location').attr('data-place-name');
+					var lat        = $('.init-location').attr('data-place-lat');
+					var lng        = $('.init-location').attr('data-place-lng');
+
+					if( !( place_id && place_name && lat && lng) ){
+						return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
+					}
+
+					update.location = {
+						place_name : place_name,
+						place_id   : place_id,
+						lat 	   : lat,
+						lng 	   : lng
+					};
+
+				}
 
 				return LJ.api.updateProfile( update )
 						  .then(function( exposed ){
@@ -42239,7 +42258,7 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
             LJ.map.seenifyMarker( before._id );
             var mrk = LJ.map.getMarker( before._id );
             
-            if( mrk.marker.getOpacity() != 1 ){
+            if( mrk.marker.getOpacity() && mrk.marker.getOpacity() != 1 ){
 
                 LJ.map.deactivateDate();
                 LJ.before.handleCloseBeforeInview();
@@ -42369,6 +42388,19 @@ LJ.text_source = _.merge( LJ.text_source || {}, {
 
 
 
+
+	window.LJ.map = _.merge( window.LJ.map || {}, {
+
+		city_locations: {
+			"paris": {
+				place_name : "Paris, France",
+				place_id   : "ChIJD7fiBh9u5kcRYJSMaMOCCwQ",
+				lat        : "48.85661400000001",
+				lng        : "2.3522219000000177"
+			}
+		}
+
+	});
 
 
 	window.LJ.map = _.merge( window.LJ.map || {}, {
@@ -45851,7 +45883,12 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			};
 
 			LJ.api.uploadNewPictureUrl( update )
-				.then( LJ.pictures.handleUpdatePicturesSuccess );
+				.then(function( res ){
+					LJ.pictures.handleUpdatePicturesSuccess( res, {
+						show_toast: false
+					});
+
+				});
 
 		},
 		updateHashtag: function( img_place ){
@@ -45944,7 +45981,11 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			return LJ.pictures.updatePicture( img_place, 'delete' );
 
 		},
-		handleUpdatePicturesSuccess: function( res ){
+		handleUpdatePicturesSuccess: function( res, opts ){
+
+			opts = opts || {
+				show_toast: true
+			};
 
 			var call_id  = res.call_id;
 			var pictures = res.pictures;
@@ -45954,7 +45995,6 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			}
 
 			LJ.pictures.upload_id_profile = null;
-			LJ.ui.showToast( LJ.text('to_update_pic_success') );
 			LJ.user.pictures = pictures;
 
 			// Check if the main picture has changed
@@ -45997,6 +46037,10 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 					$hashtag_input.val( pic.hashtag );
 				}
 			});
+
+			if( opts.show_toast ){
+				LJ.ui.showToast( LJ.text('to_update_pic_success') );
+			}
 
 
 		},
@@ -46099,13 +46143,23 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			return rosace_imgs_html.join('');
 
 		},
-		makeHiveHtml: function( pictures, scope ){
+		makeHiveHtml: function( users, scope, opts ){
 
-			var L         = pictures.length;
-			var imgs_html = [];
+			opts = opts || { attach_data: [] };
 
-			pictures.forEach(function( pic ){
-				imgs_html.push( LJ.pictures.makeImgHtml( pic.img_id, pic.img_vs, scope ) );
+			var L            = users.length;
+			var imgs_objects = [];
+
+			users.forEach(function( u ){
+
+				var o = { data_attributes: [] };
+
+				o.img_tag = LJ.pictures.makeImgHtml( u.img_id, u.img_vs, scope );
+				opts.attach_data.forEach(function( data ){
+					o.data_attributes.push( 'data-'+ data.replace('_','-') +'=' + u[ data ] );
+				});
+
+				imgs_objects.push( o );
 			});
 
 			var hive_imgs_html = ['<div class="hive x--' + L + '"><div class="hive__background"></div>'];
@@ -46117,13 +46171,13 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 			};
 
-			imgs_html.forEach(function( img_html, i ){
+			imgs_objects.forEach(function( img_object, i ){
 
 				var part = parts[ L ][ i ];
 				hive_imgs_html.push([
 
-					'<div class="hive__picture js-filterlay ' + part + '">',
-						img_html,
+					'<div '+ img_object.data_attributes.join(' ') +' class="hive__picture '+ opts.class_names.join(' ') +' js-filterlay ' + part + '">',
+						img_object.img_tag,
 					'</div>'
 
 				].join(''));
@@ -48531,6 +48585,38 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 
 
+<<<<<<< Updated upstream
+	window.LJ.shared = _.merge( window.LJ.shared || {}, {
+
+		shared_item_duration: 600,
+
+		init: function(){
+
+			LJ.shared.handleDomEvents();
+			return;
+
+		},
+		handleDomEvents: function(){
+
+			$('.menu-item.x--shared').one('click', LJ.shared.handleShareClicked );
+			LJ.ui.$body.on('click', '.js-share-profile', LJ.shared.handleShareProfile );
+			LJ.ui.$body.on('keydown', '.modal-search__input input', LJ.ui.filterModalResults );
+			LJ.ui.$body.on('click', '.shared__item', LJ.shared.handleSharedItemClicked )
+
+		},
+		handleSharedItemClicked: function(){
+
+			var target_id   = $(this).attr('data-target-id');
+			var target_type = $(this).attr('data-target-type');
+
+			if( target_type == "user" ){
+				return LJ.profile_user.showUserProfile( target_id );
+			}
+
+			if( target_type == "before" ){
+				return LJ.before.fetchAndShowBeforeInview( target_id );
+			}
+||||||| merged common ancestors
 	
 	window.LJ.static = _.merge( window.LJ.static || {}, {
 
@@ -48654,6 +48740,38 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			if( target_type == "before" ){
 				return LJ.before.fetchAndShowBeforeInview( target_id );
 			}
+=======
+	window.LJ.shared = _.merge( window.LJ.shared || {}, {
+
+		shared_item_duration: 600,
+
+		init: function(){
+
+			LJ.shared.handleDomEvents();
+			return;
+
+		},
+		handleDomEvents: function(){
+
+			$('.menu-item.x--shared').one('click', LJ.shared.handleShareClicked );
+			LJ.ui.$body.on('click', '.js-share-profile', LJ.shared.handleShareProfile );
+			LJ.ui.$body.on('keydown', '.modal-search__input input', LJ.ui.filterModalResults );
+			LJ.ui.$body.on('click', '.shared__item', LJ.shared.handleSharedItemClicked )
+
+		},
+		handleSharedItemClicked: function(){
+
+			var target_id   = $(this).attr('data-target-id');
+			var target_type = $(this).attr('data-target-type');
+
+			if( target_type == "user" ){
+				return LJ.profile_user.showUserProfile( target_id );
+			}
+
+			if( target_type == "before" ){
+				return LJ.before.fetchAndShowBeforeInview( target_id );
+			}
+>>>>>>> Stashed changes
 
 		},	
 		handleShareClicked: function(){
@@ -49055,6 +49173,99 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	});
 
+	
+	window.LJ.static = _.merge( window.LJ.static || {}, {
+
+		'images': [
+			{
+				'access_name' : 'main_loader',
+				'image_id' 	  : 'app_loader',
+				'param'		  : { 'class': 'app__loader', 'width': 80 }
+			},
+			{
+				'access_name' : 'modal_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'modal__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'menu_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'menu__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'slide_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'slide__loader', 'width': 32  }	
+			},
+			{
+				'access_name' : 'search_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'search__loader', 'width': 32  }	
+			},
+			{
+				'access_name' : 'be_create_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'be-create__loader', 'width': 32  }
+			},
+			{
+				'access_name' : 'chat_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
+			},
+			{ "access_name" : ":D", "image_id": "emoticon_smile" },
+			{ "access_name" : "xD", "image_id": "emoticon_smilexd" },
+			{ "access_name" : ";)", "image_id": "emoticon_blink" },
+			{ "access_name" : ":p", "image_id": "emoticon_tongue" },
+			{ "access_name" : "<3", "image_id": "emoticon_love" },
+			{ "access_name" : ":%", "image_id": "emoticon_sun" },
+			{ "access_name" : "-)", "image_id": "emoticon_bg" },
+			{ "access_name" : ":o", "image_id": "emoticon_oh" },
+			{ "access_name" : ":(", "image_id": "emoticon_sad" },
+			{ "access_name" : ":â", "image_id": "emoticon_angel" },
+			{ "access_name" : ":z", "image_id": "emoticon_zzz" },
+			{ "access_name" : ":/", "image_id": "emoticon_noop" }
+		],
+		// Constructs a list of static pictures hosted on Cloudinary that are available
+		// to use accross all others modules
+		init: function(){
+
+			LJ.static.cacheStaticImages();
+			return;
+
+		},
+		cacheStaticImages: function(){
+
+			LJ.static.images.forEach(function( img ){
+
+				img.param = img.param || {};
+				img.param['cloud_name'] = 'radioreve';
+
+				LJ.static[ '$' + img.access_name ] = $.cloudinary.image(
+					img.image_id,
+					img.param
+				);
+
+
+			});
+
+		},
+		getLoader: function( loader_id ){
+			var $l = $('.app__loader[data-loaderid="' + loader_id + '"]');
+
+			if( $l.length != 1 ){
+				return LJ.wlog('Unable to uniquely identify the loader with id : ' + loader_id +', length is : ' + $l.length );
+			} else {
+				return $l;
+			}
+		},
+		renderStaticImage: function( access_name ){
+
+			return LJ.static[ '$' + access_name ].clone().prop('outerHTML');
+
+		}
+
+	});
+
 	window.LJ.store = _.merge( window.LJ.store || {}, {
 
 		mode: null,
@@ -49185,7 +49396,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		},
 		removeLocalItem: function( key ){
 
-			window.localStorage.removeItem( key );
+			window.localStorage.removeItem( LJ.store.getNs() + ":" + key );
 
 		},
 		setCookie: function( cname, cvalue, exdays ){
@@ -49231,10 +49442,484 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		},
 		removeCookie: function( cname ){
 
-			LJ.store.setCookie( cname, '', -1 );
+			LJ.store.setCookie( LJ.store.getNs() + ":" + cname, '', -1 );
 
 		}
 
+	});
+	
+
+	window.LJ = _.merge( window.LJ || {} , {
+
+		typeahead_legacy: {
+			users: {
+				class_names: {
+					input      :'',
+					hint       :'',
+					menu       :'search-results-users',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-users',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			// places: {
+			// 	class_names: {
+			// 		input:'',
+			// 		hint:'hint-places',
+			// 		menu:'search-results-autocomplete search-results-party-places',
+			// 		dataset:'search-wrap',
+			// 		suggestion:'search-result-default search-result-party-places',
+			// 		empty:'empty',
+			// 		open:'open',
+			// 		cursor:'cursor',
+			// 		highlight:'highlight'
+			// 	}
+			// },
+			friends: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			groups: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends search-results-groups',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			}
+		}
+
+	});
+
+
+	window.LJ.fn = _.merge( window.LJ.fn || {} , 
+
+	{
+		initTypeaheadUsers: function(){
+
+			var users = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			users.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
+
+			$('#search input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
+				classNames: LJ.typeahead.users.class_names
+			},
+			{
+				name:'users',
+				display:'name',
+				source: users.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			})
+			.on('typeahead:select', function( ev, suggestion ){
+
+				LJ.fn.displayUserProfile( suggestion.facebook_id );
+				$(this).typeahead('val', '');
+
+			});
+
+		},
+		initTypeaheadHosts: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-create-friends input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.friends.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadGroups: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-requestin-group-members input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.groups.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadPlaces: function(){
+
+			var places = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			places.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
+
+			$('.row-create-party-place input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1,
+				classNames: LJ.typeahead.places.class_names
+			},
+			{
+				name:'places',
+				display:'name',
+				source: places.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
+				}
+			});
+
+		}
+		
+	});
+	
+
+	window.LJ = _.merge( window.LJ || {} , {
+
+		typeahead_legacy: {
+			users: {
+				class_names: {
+					input      :'',
+					hint       :'',
+					menu       :'search-results-users',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-users',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			// places: {
+			// 	class_names: {
+			// 		input:'',
+			// 		hint:'hint-places',
+			// 		menu:'search-results-autocomplete search-results-party-places',
+			// 		dataset:'search-wrap',
+			// 		suggestion:'search-result-default search-result-party-places',
+			// 		empty:'empty',
+			// 		open:'open',
+			// 		cursor:'cursor',
+			// 		highlight:'highlight'
+			// 	}
+			// },
+			friends: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			},
+			groups: {
+				class_names: {
+					input      :'',
+					hint       :'hint-places',
+					menu       :'search-results-autocomplete search-results-friends search-results-groups',
+					dataset    :'search-wrap',
+					suggestion :'search-result-default search-result-friend',
+					empty      :'empty',
+					open       :'open',
+					cursor     :'cursor',
+					highlight  :'highlight'
+				}
+			}
+		}
+
+	});
+
+
+	window.LJ.fn = _.merge( window.LJ.fn || {} , 
+
+	{
+		initTypeaheadUsers: function(){
+
+			var users = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			users.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
+
+			$('#search input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
+				classNames: LJ.typeahead.users.class_names
+			},
+			{
+				name:'users',
+				display:'name',
+				source: users.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			})
+			.on('typeahead:select', function( ev, suggestion ){
+
+				LJ.fn.displayUserProfile( suggestion.facebook_id );
+				$(this).typeahead('val', '');
+
+			});
+
+		},
+		initTypeaheadHosts: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-create-friends input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.friends.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadGroups: function( friends ){
+
+			var friends = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 local: friends,
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			friends.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
+
+			var names = _.pluck( LJ.user.friends, 'name' );
+			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
+
+			function friendsWithDefaults( q, sync ){
+				if( q == '' ){
+					sync( friends.get( results ) );
+				} else {
+					friends.search( q, sync );
+				}
+			}
+
+			$('.row-requestin-group-members input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 0,
+				classNames: LJ.typeahead.groups.class_names
+			},
+			{
+				name:'friends',
+				display:'name',
+				source: friendsWithDefaults,
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
+				}
+			});
+
+		},
+		initTypeaheadPlaces: function(){
+
+			var places = new Bloodhound({
+				 datumTokenizer: Bloodhound.tokenizers.whitespace,
+  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
+  				 identify: function(o){ return o.name; },
+  				 remote: {
+  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
+  				 	wildcard: '%query'
+  				 },
+  				 transform: function(res){
+  				 	LJ.fn.log(res);
+  				 }
+			});
+
+			places.initialize()
+				 .done(function(){ })
+				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
+
+			$('.row-create-party-place input').typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 1,
+				classNames: LJ.typeahead.places.class_names
+			},
+			{
+				name:'places',
+				display:'name',
+				source: places.ttAdapter(),
+				templates: {
+					notFound   : LJ.fn.renderTypeaheadNotFound,
+					pending    : LJ.fn.renderTypeaheadPending,
+					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
+				}
+			});
+
+		}
+		
 	});
 
 window.LJ.ui = _.merge( window.LJ.ui || {}, {
@@ -51248,243 +51933,6 @@ window.LJ.fn = _.merge( window.LJ.fn || {}, {
 			}
 		}
 
-	});
-	
-
-	window.LJ = _.merge( window.LJ || {} , {
-
-		typeahead_legacy: {
-			users: {
-				class_names: {
-					input      :'',
-					hint       :'',
-					menu       :'search-results-users',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-users',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			// places: {
-			// 	class_names: {
-			// 		input:'',
-			// 		hint:'hint-places',
-			// 		menu:'search-results-autocomplete search-results-party-places',
-			// 		dataset:'search-wrap',
-			// 		suggestion:'search-result-default search-result-party-places',
-			// 		empty:'empty',
-			// 		open:'open',
-			// 		cursor:'cursor',
-			// 		highlight:'highlight'
-			// 	}
-			// },
-			friends: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			},
-			groups: {
-				class_names: {
-					input      :'',
-					hint       :'hint-places',
-					menu       :'search-results-autocomplete search-results-friends search-results-groups',
-					dataset    :'search-wrap',
-					suggestion :'search-result-default search-result-friend',
-					empty      :'empty',
-					open       :'open',
-					cursor     :'cursor',
-					highlight  :'highlight'
-				}
-			}
-		}
-
-	});
-
-
-	window.LJ.fn = _.merge( window.LJ.fn || {} , 
-
-	{
-		initTypeaheadUsers: function(){
-
-			var users = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/users?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			users.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized users'); })
-
-			$('#search input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1, // switch to 2 or 3 to reduce the amount of requests
-				classNames: LJ.typeahead.users.class_names
-			},
-			{
-				name:'users',
-				display:'name',
-				source: users.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound_Dark,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			})
-			.on('typeahead:select', function( ev, suggestion ){
-
-				LJ.fn.displayUserProfile( suggestion.facebook_id );
-				$(this).typeahead('val', '');
-
-			});
-
-		},
-		initTypeaheadHosts: function( friends ){
-
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends'); })
-
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
-
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
-
-			$('.row-create-friends input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.friends.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
-
-		},
-		initTypeaheadGroups: function( friends ){
-
-			var friends = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 local: friends,
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			friends.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized friends groups'); })
-
-			var names = _.pluck( LJ.user.friends, 'name' );
-			var results = _.shuffle( names ).slice( 0, _.max([ names.length, 3]) );
-
-			function friendsWithDefaults( q, sync ){
-				if( q == '' ){
-					sync( friends.get( results ) );
-				} else {
-					friends.search( q, sync );
-				}
-			}
-
-			$('.row-requestin-group-members input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 0,
-				classNames: LJ.typeahead.groups.class_names
-			},
-			{
-				name:'friends',
-				display:'name',
-				source: friendsWithDefaults,
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Users
-				}
-			});
-
-		},
-		initTypeaheadPlaces: function(){
-
-			var places = new Bloodhound({
-				 datumTokenizer: Bloodhound.tokenizers.whitespace,
-  				 queryTokenizer: Bloodhound.tokenizers.whitespace,
-  				 identify: function(o){ return o.name; },
-  				 remote: {
-  				 	url: '/api/v1/places?token=' + LJ.fn.getToken() + '&name=%query',
-  				 	wildcard: '%query'
-  				 },
-  				 transform: function(res){
-  				 	LJ.fn.log(res);
-  				 }
-			});
-
-			places.initialize()
-				 .done(function(){ })
-				 .fail(function(){ LJ.fn.log('Bloodhound engine failed to initialized places'); })
-
-			$('.row-create-party-place input').typeahead({
-				hint: true,
-				highlight: true,
-				minLength: 1,
-				classNames: LJ.typeahead.places.class_names
-			},
-			{
-				name:'places',
-				display:'name',
-				source: places.ttAdapter(),
-				templates: {
-					notFound   : LJ.fn.renderTypeaheadNotFound,
-					pending    : LJ.fn.renderTypeaheadPending,
-					suggestion : LJ.fn.renderTypeaheadSuggestion_Places
-				}
-			});
-
-		}
-		
 	});
 
 window.LJ = _.merge( window.LJ || {}, {

@@ -152,7 +152,7 @@
 	    	mdw.validate('update_profile_base'),
 			mdw.pop.populateUser(),
 	    	profileEvents.updateProfile,
-			// mdw.profile_watcher.updateCachedProfile,
+			mdw.profile_watcher.updateCachedProfile,
 	    	mdw.realtime.updateLocationChannel
 	    	// mdw.mailchimp.api("update_member")
 	    );

@@ -104,7 +104,7 @@
 				new_user.gender = fb.gender || "male";
 
 				// Job is not asked clientside, so put some placeholder until he changes it
-				new_user.job = '';
+				new_user.job = 'Meefan';
 
 				// Country code extracted from the facebook_profile, and defaulted to "fr" if fail
 				new_user.country_code = 'fr'; 
@@ -113,7 +113,7 @@
 				}
 
 				// Let client set his ideal_night on update
-				new_user.ideal_night = null;
+				new_user.ideal_night = "Les soirées, les amis, les rencontres...";
 
 				// Put the placeholders. His facebook profile picture is automatically fetched clientside on first conn anyway
 				new_user.pictures = _.cloneDeep( settings.default_pictures );

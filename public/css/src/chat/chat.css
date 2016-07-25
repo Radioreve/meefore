@@ -377,6 +377,9 @@
     width: 130px;
     height: 130px;
     margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .chat-empty__icon {
     font-size: 64px;

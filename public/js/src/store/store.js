@@ -129,7 +129,7 @@
 		},
 		removeLocalItem: function( key ){
 
-			window.localStorage.removeItem( key );
+			window.localStorage.removeItem( LJ.store.getNs() + ":" + key );
 
 		},
 		setCookie: function( cname, cvalue, exdays ){
@@ -175,7 +175,7 @@
 		},
 		removeCookie: function( cname ){
 
-			LJ.store.setCookie( cname, '', -1 );
+			LJ.store.setCookie( LJ.store.getNs() + ":" + cname, '', -1 );
 
 		}
 

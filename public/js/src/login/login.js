@@ -140,10 +140,19 @@
 					return;
 				}
 
-				if( LJ.user.access.indexOf('bot') == -1 ){
-					LJ.pictures.uploadFacebookPicture_Intro();
-				}
-				
+				// Version 1 of the login
+				return LJ.login.updateProfileFirstLogin( LJ.map.city_locations[ "paris" ] )
+					.then(function(){
+
+						if( LJ.user.access.indexOf('bot') == -1 ){
+							return LJ.pictures.uploadFacebookPicture_Intro();
+						} else {
+							return;
+						}
+					});
+
+				// Version 2 of the login, only when users > 500
+				// Useless to prompt users for a location when so few of them 
 	            return LJ.login.break()
 	            		.then(function(){
 	            			return LJ.login.promptUserLocation();
@@ -254,26 +263,33 @@
 					});
 				});	
 			},
-			updateProfileFirstLogin: function(){
+			updateProfileFirstLogin: function( location ){
 
 				LJ.log('Updating user location for the first time...');
-
-				var place_id   = $('.init-location').attr('data-place-id');
-				var place_name = $('.init-location').attr('data-place-name');
-				var lat        = $('.init-location').attr('data-place-lat');
-				var lng        = $('.init-location').attr('data-place-lng');
-
-				if( !( place_id && place_name && lat && lng) ){
-					return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
-				}
-
 				var update = {};
-				update.location = {
-					place_name : place_name,
-					place_id   : place_id,
-					lat 	   : lat,
-					lng 	   : lng
-				};
+
+				if( location ){
+					update.location = location;
+
+				} else {					
+
+					var place_id   = $('.init-location').attr('data-place-id');
+					var place_name = $('.init-location').attr('data-place-name');
+					var lat        = $('.init-location').attr('data-place-lat');
+					var lng        = $('.init-location').attr('data-place-lng');
+
+					if( !( place_id && place_name && lat && lng) ){
+						return LJ.wlog('Missing place attributes on the dom, cannot contine with login');
+					}
+
+					update.location = {
+						place_name : place_name,
+						place_id   : place_id,
+						lat 	   : lat,
+						lng 	   : lng
+					};
+
+				}
 
 				return LJ.api.updateProfile( update )
 						  .then(function( exposed ){

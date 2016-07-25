@@ -735,7 +735,7 @@
             LJ.map.seenifyMarker( before._id );
             var mrk = LJ.map.getMarker( before._id );
             
-            if( mrk.marker.getOpacity() != 1 ){
+            if( mrk.marker.getOpacity() && mrk.marker.getOpacity() != 1 ){
 
                 LJ.map.deactivateDate();
                 LJ.before.handleCloseBeforeInview();

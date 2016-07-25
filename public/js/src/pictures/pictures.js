@@ -203,7 +203,12 @@
 			};
 
 			LJ.api.uploadNewPictureUrl( update )
-				.then( LJ.pictures.handleUpdatePicturesSuccess );
+				.then(function( res ){
+					LJ.pictures.handleUpdatePicturesSuccess( res, {
+						show_toast: false
+					});
+
+				});
 
 		},
 		updateHashtag: function( img_place ){
@@ -296,7 +301,11 @@
 			return LJ.pictures.updatePicture( img_place, 'delete' );
 
 		},
-		handleUpdatePicturesSuccess: function( res ){
+		handleUpdatePicturesSuccess: function( res, opts ){
+
+			opts = opts || {
+				show_toast: true
+			};
 
 			var call_id  = res.call_id;
 			var pictures = res.pictures;
@@ -306,7 +315,6 @@
 			}
 
 			LJ.pictures.upload_id_profile = null;
-			LJ.ui.showToast( LJ.text('to_update_pic_success') );
 			LJ.user.pictures = pictures;
 
 			// Check if the main picture has changed
@@ -349,6 +357,10 @@
 					$hashtag_input.val( pic.hashtag );
 				}
 			});
+
+			if( opts.show_toast ){
+				LJ.ui.showToast( LJ.text('to_update_pic_success') );
+			}
 
 
 		},
@@ -451,13 +463,23 @@
 			return rosace_imgs_html.join('');
 
 		},
-		makeHiveHtml: function( pictures, scope ){
+		makeHiveHtml: function( users, scope, opts ){
 
-			var L         = pictures.length;
-			var imgs_html = [];
+			opts = opts || { attach_data: [] };
 
-			pictures.forEach(function( pic ){
-				imgs_html.push( LJ.pictures.makeImgHtml( pic.img_id, pic.img_vs, scope ) );
+			var L            = users.length;
+			var imgs_objects = [];
+
+			users.forEach(function( u ){
+
+				var o = { data_attributes: [] };
+
+				o.img_tag = LJ.pictures.makeImgHtml( u.img_id, u.img_vs, scope );
+				opts.attach_data.forEach(function( data ){
+					o.data_attributes.push( 'data-'+ data.replace('_','-') +'=' + u[ data ] );
+				});
+
+				imgs_objects.push( o );
 			});
 
 			var hive_imgs_html = ['<div class="hive x--' + L + '"><div class="hive__background"></div>'];
@@ -469,13 +491,13 @@
 
 			};
 
-			imgs_html.forEach(function( img_html, i ){
+			imgs_objects.forEach(function( img_object, i ){
 
 				var part = parts[ L ][ i ];
 				hive_imgs_html.push([
 
-					'<div class="hive__picture js-filterlay ' + part + '">',
-						img_html,
+					'<div '+ img_object.data_attributes.join(' ') +' class="hive__picture '+ opts.class_names.join(' ') +' js-filterlay ' + part + '">',
+						img_object.img_tag,
 					'</div>'
 
 				].join(''));

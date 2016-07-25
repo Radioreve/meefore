@@ -207,6 +207,12 @@ span.be-dates__count {
     font-size: 26px;
     z-index: 101;
     padding-left: 2px;
+    background: white;
+    height: 44px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .be-inview.x--hive .be-actions {
@@ -229,7 +235,7 @@ span.be-dates__count {
 }
 
 .be-actions__action.x--switch i {
-    font-size: .8em;
+    transform: rotate(140deg);
 }
 
 .be-actions__action.x--share {}
