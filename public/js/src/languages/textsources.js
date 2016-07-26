@@ -1289,7 +1289,7 @@
 		},
 		n_inscription_success_text: {
 			"fr": "Bienvenue sur Meefore",
-			"us": "Welcome on Meefore"
+			"us": "Welcome to Meefore"
 		},
 		n_inscription_success_subtext: {
 			"fr": "Faites des rencontres avant d'aller en soirée",

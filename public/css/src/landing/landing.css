@@ -39,16 +39,16 @@
 }
 
 .landing-lang {
-    position: absolute;
+    position: fixed;
     top: 20px;
     right: 20px;
 }
 
 .landing-lang button {
-    width: 150px;
+    width: 80px;
     height: 34px;
     border: 1px solid;
-    color: #3b5998;
+    color: #1b69ec;
     background: white;
     font-size: 12px;
     border-radius: 100px;
@@ -66,17 +66,21 @@
     font-family: 'creamy';
     font-size: 40px;
     flex-shrink: 0;
+    position: fixed;
+    top: 60px;
+    width: 90%;
+    text-align: center;
 }
 
 .landing-title h1 {}
 
 .landing-subtitle {
     line-height: 20px;
-    font-size: 13px;
+    font-size: 15px;
     width: 400px;
     text-align: center;
-    margin-bottom: 30px;
-    flex-shrink: 0;
+    position: fixed;
+    top: 104px;
 }
 
 .landing-subtitle h2 {}
@@ -102,23 +106,22 @@
     background: #3b5998;
 }
 
-.landing-screenshots { 
-    width: 100px;
-    margin: 40px;
+.landing-screenshots {
+    width: 132px;
     padding: 10px;
     height: 175px;
     flex-shrink: 0;
     position: relative;
-    flex-shrink: 0;
 }
 
 .landing__phone {
     position: absolute;
-    width: 100%;
-    top: -21%;
+    width: 150px;
+    top: 160px;
     left: 50%;
     transform: translate(-50%,0);
-    z-index: -1;
+    z-index: 1;
+    padding: 0 40px;
 }
 
 .landing__phone img {
@@ -131,6 +134,7 @@
     left: calc(51%);
     transform: translate(-50%,0);
     top: -7px;
+    display: none!important;
 }
 
 .landing__screenshot img {
@@ -140,11 +144,12 @@
 .landing-privacy {
     width: 350px;
     text-align: center;
-    margin-bottom: 10px;
     font-size: 9px;
     line-height: 14px;
-    color: #919191;
-    flex-shrink: 0;
+    position: fixed;
+    bottom: 50px;
+    width: 90%;
+    color: #454545;
 }
 
 .landing-privacy h3 {
@@ -163,11 +168,14 @@
  
 .landing-connexion {
     position: relative;
-    margin-bottom: 20px;
-    flex-shrink: 0;
     width: 260px;
     height: 46px;
     text-align: center;
+    position: absolute;
+    bottom: 2px;
+    left: -54px;
+    right: 0;
+    z-index: 10000;
 }
 
 .landing-connexion button {
@@ -177,6 +185,13 @@
     font-size: 15px;
     width: 100%;
     height: 100%;
+    background: #236de8;
+    border-radius: 100px;
+}
+
+.landing-connexion button:hover {
+  background: #5f96f1;
+  opacity: 1;
 }
 
 .landing-bold {
@@ -192,6 +207,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    display: none;
 }
 
 .landing-footer__item {
@@ -199,9 +215,10 @@
     text-transform: uppercase;
     font-size: 8px;
     font-weight: 700;
-    color: #3b5998;
+    color: #1b69ec;
     cursor: pointer;
     text-align: center;
+    /* display: none; */
 }
 
 .landing-footer__item:hover {
@@ -223,7 +240,6 @@
    }
   
    .landing-logo {
-     width: 30px;
    }
    
    .landing-screenshots {
@@ -242,20 +258,27 @@
        text-overflow: ellipsis;
        overflow: hidden;
        white-space: nowrap;
+       border: none;
    }
     
    .landing-body {
-       height: 200px;
+       height: 290px;
+       width: 402px;
    }
    
    .landing-subtitle {
-       width: 100%;
-       margin-bottom: 10px;
+       width: 90%;
+       top: 75px;
+       font-size: 11px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
    }
 
    .landing-privacy {
-       width: 100%;
+       width: 90%;
        font-size: 7px;
+       bottom: 22px;
    }
 
    .landing-footer__item {
@@ -264,12 +287,47 @@
    }
 
    .landing-connexion button {
-       width: 210px;
        font-size: 14px;
    }
 
    .landing-footer__item span {
      max-width: 50px;
+   }
+
+   .landing-connexion {
+     height: 42px;
+     position: absolute;
+     bottom: 2px;
+     right: 0;
+     left: 0;
+     top: 0;
+     margin-top: auto;
+     width: 100%;
+   }
+
+   .landing-lang {
+     top: 10px;
+     right: 0px;
+   }
+
+   .landing-logo {
+     left: 20px;
+     width: 24px;
+     top: 16px;
+   }
+
+   .landing-title {
+  top: 44px;
+  font-size: 32px;
+  }
+
+   .landing__phone {
+     top: 24%;
+     width: 42%;
+   }
+
+   .landing-footer {
+     height: 20px;
    }
 
 }

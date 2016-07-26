@@ -192,7 +192,7 @@
 							$('.modal__close').click();
 
 							LJ.delay( 500 ).then(function(){
-								LJ.ui.showToast( LJ.text('t_language_changed') );
+								// LJ.ui.showToast( LJ.text('t_language_changed') );
 							});
 
 						});	

@@ -60,7 +60,9 @@
 		hideModal: function(){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.ui.activateHtmlScroll();
+				if( LJ.user ){
+					LJ.ui.activateHtmlScroll();
+				}
 
 				$('.modal').velocity('shradeOut', {
 					duration: LJ.ui.hide_modal_duration
