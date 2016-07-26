@@ -153,6 +153,8 @@
     box-sizing: border-box;
 }
 
+.chat-row .user-online {width: 12px;height: 12px;position: relative;top: -1px;left: -6px;}
+
 .chat-row.x--loading {
     opacity: .5;
 }
@@ -276,7 +278,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-    width: 240px;
+    max-width: 240px;
     display: inline-block;
 }
 
@@ -479,3 +481,4 @@
 .chat-inview-group .be-request button.x--validating {
     opacity: .5;
 }
+
