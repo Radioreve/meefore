@@ -340,12 +340,40 @@ window.LJ.map.style = _.merge(window.LJ.map.style || {}, {
     }],
     apple: [
     {
+        "featureType": "all",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "all",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "color": "#faf5ec"
+            }
+        ]
+    },
+    {
+        "featureType": "all",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
         "featureType": "landscape.man_made",
         "elementType": "geometry",
         "stylers": [
             {
-                "color": "#f7f1df",
-                // "color": "#faf8f8" // apple map
                 "color": "#faf5ec"
             }
         ]

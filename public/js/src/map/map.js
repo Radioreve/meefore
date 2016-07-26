@@ -814,7 +814,7 @@
 
         	return LJ.ui.render([
         		'<div class="map-browse">',
-        			'<input id="map-browser-input"/>',
+        			'<input data-lid="map_browser_input_placeholder"id="map-browser-input"/>',
         		'</div>'
         		].join(''));
 

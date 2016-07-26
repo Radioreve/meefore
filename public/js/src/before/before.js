@@ -783,10 +783,12 @@
 			var usernames   = LJ.text("w_before").capitalize() + " " + LJ.text("w_with") + " " + LJ.renderMultipleNames( _.map( hosts, 'name') );
 			var be_addr     = LJ.before.renderBeforeAddress( before.address );
 			var be_date     = LJ.before.renderBeforeDate( before.begins_at );
+
 			var be_pictures = LJ.pictures.makeHiveHtml( hosts, "user-before",{
 				class_names : [ "js-show-profile" ],
 				attach_data : [ "facebook_id" ]
 			});
+
 			var be_action   = options.be_action;
 
 			var be_request = '<div class="be-request">' + options.be_button + '</div>';
@@ -802,8 +804,8 @@
 						'<span>'+ usernames +'</span>',
 					'</div>',
 		            '<div class="be-actions">',
-		              '<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
 		        	  be_action,
+		              '<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',
 		            '</div>',
 			      	'<div class="be-pictures">',
 			           be_pictures,
@@ -833,8 +835,8 @@
 			var n = user.name;
 			var a = user.age;
 			var i = user.facebook_id;
-			var c = user.country_code;
-			var g = user.gender;
+			var c = user.cc;
+			var g = user.g;
 			var j = user.job;
 
 			var img_html = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, 'user-flat');
@@ -892,8 +894,8 @@
 
 				'<div class="be-inview x--flat" data-before-id="'+ before._id +'">',
 					'<div class="be-actions">',
-			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
 			          	be_action,
+			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',
 			        '</div>',
 					flat_users.join(''),
 			        be_request,
@@ -928,8 +930,8 @@
 				'<div class="be-inview" data-before-id="'+ before._id +'">',
 			      	'<div class="be-pictures">',
 			          '<div class="be-actions">',
-			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch"></i></div>',
 			          	be_action,
+			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',
 			          '</div>',
 			          be_pictures,
 			        '</div>',

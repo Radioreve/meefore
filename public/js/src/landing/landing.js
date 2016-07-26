@@ -28,19 +28,19 @@
 		texts: {
 
 			"landing_browse_title": {
-				"fr" :"Trouvez votre before",
+				"fr" :"Trouve ton before",
 				"us": "Find your pregame"
 			},
 			"landing_browse_subtitle": {
-				"fr" :"Repérez les before qui s\'organisent près de chez vous en parcourant la Map.",
+				"fr" :"Repère les before qui s\'organisent près de chez toi en parcourant la Map.",
 				"us": "Spot the pregames around you by browsing the map"
 			},
 			"landing_cheers_title": {
-				"fr" :"Un before vous intéresse ?",
+				"fr" :"Un before t'intéresse ?",
 				"us": "Interested in a pregame ?"
 			},
 			"landing_cheers_subtitle": {
-				"fr" :"Envois un Cheers pour montrer ton intérêt",
+				"fr" :"Envoi un Cheers pour montrer ton intérêt",
 				"us": "Send a Cheers to show our interest"
 			},
 			"landing_chat_title": {

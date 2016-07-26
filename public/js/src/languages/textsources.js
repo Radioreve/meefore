@@ -373,7 +373,7 @@
 			"us": "My dream night"
 		},
 		p_name_explanation: {
-			"fr": "Pseudonyme par lequel les autres membres vous appelerons. Choose wisely.",
+			"fr": "Pseudonyme par lequel les autres membres t'appelleront. Choose wisely.",
 			"us": "Pseudo everyone will call you as. Choose wisely."
 		},
 		p_age_explanation: {
@@ -381,15 +381,15 @@
 			"us": "Please don't lie ;-)"
 		},
 		p_country_explanation: {
-			"fr": "Votre nationalité est celle indiquée sur Facebook. En cas d'erreur, envoyez-nous un mail.",
+			"fr": "Ta nationalité est celle indiquée sur Facebook. En cas d'erreur, envoie-nous un mail.",
 			"us": "Your nationality is the one indicated on Facebook. If there is a mistake, please email us."
 		},
 		p_job_explanation: {
-			"fr": "Concrètement, vous faites quoi dans la vie ?",
+			"fr": "Tu fais quoi dans la vie ?",
 			"us": "So, how do you keep busy everyday ?"
 		},
 		p_location_explanation: {
-			"fr": "Où sortez-vous en ce moment ? Meefore works everywhere",
+			"fr": "Où sors-tu habituellement ?",
 			"us": "Where do you get out these days ? Meefore works everywhere"
 		},
 		p_ideal_night_explanation: {
@@ -677,8 +677,8 @@
 			"us": "Newsletter"
 		},
 		s_newsletter_desc: {
-			"fr": "Notre newsletter est envoyée chaque semaine",
-			"us": "Our newsletter is sent every week"
+			"fr": "Reste connecté(e) à Meefore avec notre newsletter hebdomadaire",
+			"us": "Our weekly newsletter"
 		},
 		s_invits_label: {
 			"fr": "Invitations",
@@ -717,7 +717,7 @@
 			"us": "Signal message read"
 		},
 		s_message_seen_by_desc: {
-			"fr": "Signalez automatiquement aux autres utilisateurs que vous avez vu leur message",
+			"fr": "Pour informer les autres utilisateurs que tu as lu leurs messages",
 			"us": "Signal to other users that you have read their message"
 		},
 		s_min_frequency_label: {
@@ -1448,7 +1448,7 @@
 			"us": "Display the nationalities"
 		},
 		settings_ux_country_explanation: {
-			"fr": "Afficher les nationalités autre que la mienne sur les miniatures",
+			"fr": "Affiches les nationalités des utilisateurs sur les miniatures",
 			"us": "Display nationalities other than mine on the thumbnail"
 		},
 		settings_ux_gender_label: {
@@ -1488,7 +1488,7 @@
 			"us": "New message received"
 		},
 		settings_emails_new_message_explanation: {
-			"fr": "Envoyé à chaque nouveau message",
+			"fr": "Envoyée lorsque tu reçois un message quand tu n'es pas connecté(e)",
 			"us": "Sent every time you receive a new message"
 		},
 		settings_emails_marked_as_host_label: {
@@ -1496,7 +1496,7 @@
 			"us": "Marked as host"
 		},
 		settings_emails_marked_as_host_explanation: {
-			"fr": "Envoyé lorsqu'un ami vous désigne comme étant coorganisateur de son before",
+			"fr": "Envoyée lorsque l'un de tes amis organise un before avec toi",
 			"us": "Sent when your friends tags you as co-host of his pregame"
 		},
 		settings_emails_new_match_label: {
@@ -1504,7 +1504,7 @@
 			"us": "New Match"
 		},
 		settings_emails_new_match_explanation: {
-			"fr": "Envoyé lorsque vous avez un nouveau Match",
+			"fr": "Envoyée lorsque tes amis et toi avez un nouveau Match",
 			"us": "Sent when you have a new Match"
 		},
 		settings_emails_new_cheers_label: {
@@ -1512,7 +1512,7 @@
 			"us": "New Cheers"
 		},
 		settings_emails_new_cheers_explanation: {
-			"fr": "Envoyée lorsque vous reçu avez un nouveau Cheers",
+			"fr": "Envoyée lorsqu'un groupe vous envoie un Cheers",
 			"us": "Sent when you have received a new Cheers"
 		},
 		settings_notifs_newsletter_label: {
@@ -1576,23 +1576,23 @@
 			"us": "No Cheers sent"
 		},
 		empty_cheers_sent_subtitle: {
-			"fr": "Les Cheers permettent à chaque membre de montrer à des organisateurs qu'ils sont intéressé par leur before.",
-			"us": "Cheers allow each member to let hosts of pregames know that they are interested in their pregame."
+			"fr": "Envoie des Cheers pour montrer à des organisateurs que tu es intéréssé(e) par leur before.",
+			"us": "Les autres membres peuvent t'envoyer des Cheers pour te signifier leur intérêt à participer à tes before."
 		},
 		empty_cheers_received_title: {
 			"fr": "Aucun Cheers reçus",
 			"us": "No Cheers received"
 		},
 		empty_cheers_received_subtitle: {
-			"fr": "Les Cheers permettent à chaque membre de montrer à des organisateurs qu'ils sont intéressé par leur before.",
+			"fr": "Envoie des Cheers pour montrer à des organisateurs que tu es intéréssé(e) par leur before.",
 			"us": "Cheers allow each member to let hosts of pregames know that they are interested in their pregame."
 		},
 		empty_friends_title: {
-			"fr": "Pas encore d'amis",
+			"fr": "Où sont-ils ?",
 			"us": "No friends yet"
 		},
 		empty_friends_subtitle: {
-			"fr": "Il faut être au moins 2 pour créer ou participer à un before. Invitez vos amis à vous rejoindre pour sortir et faire de nouvelles rencontres.",
+			"fr": "l faut être au moins 2 pour créer un before ou envoyer des Cheers. Partage l'application avec tes amis pour qu'ils te rejoignent.",
 			"us": "You need to be at least 2 in order to pregrame. Invite your friends to join you to get out and meet new people."
 		},
 		hint_cheers_pending: {
@@ -1648,7 +1648,7 @@
 			"us": "See you soon"
 		},
 		logout_subtitle: {
-			"fr": "Êtes vous-sûr de vouloir vous déconnecter ?",
+			"fr": "Es-tu sûr(e) de vouloir te déconnecter ?Tu es coorganisateur de ce before",
 			"us": "Are you sure you want to log out ?"
 		},
 		modal_err_empty_fetch: {
@@ -1796,7 +1796,7 @@
 			"us": "Hosts"
 		},
 		be_create_hosts_explanations: {
-			"fr": "Sélectionnez les autres coorganisateurs parmis vos amis",
+			"fr": "Sélectionne les autres coorganisateurs parmi tes amis",
 			"us": "Select the other hosts among your friends"
 		},
 		be_create_subtitle_before: {
@@ -1835,7 +1835,7 @@
 			"fr": function(){
 				var min = LJ.app_settings.app.min_hosts - 1;
 				var max = LJ.app_settings.app.max_hosts - 1;
-				return "Sélectionnez les autres organisateurs parmis vos amis <br> (%min minimum, %max maximum)".replace('%min', min).replace('%max', max);
+				return "Sélectionne les autres organisateurs parmi tes amis <br> (%min minimum, %max maximum)".replace('%min', min).replace('%max', max);
 			},
 			"us": function(){
 				var min = LJ.app_settings.app.min_hosts - 1;
@@ -1900,7 +1900,7 @@
 			"us": "The pregame is over"
 		},
 		be_hosted: {
-			"fr": "Vous faites parti des organisateurs",
+			"fr": "Tu es coorganisateur de ce before",
 			"us": "You are one of the hosts"
 		},
 		to_friend_canceled_event: {
@@ -2008,7 +2008,7 @@
 			"us": "Match"
 		},
 		chat_inview_options_message: {
-			"fr": "Que souhaitez-vous faire ?",
+			"fr": "Que souhaites-tu faire ?",
 			"us": "What would you like to do ?"
 		},
 		chat_inview_options_message_show_users_all: {
@@ -2138,6 +2138,10 @@
 		mb_update_pictures: {
 			"fr": "Editer mes photos",
 			"us": "Edit my pictures"
+		},
+		map_browser_input_placeholder: {
+			"fr": "Où souhaites-tu sortir ?",
+			"us": "Where would you like to go out ?"
 		}
 
 

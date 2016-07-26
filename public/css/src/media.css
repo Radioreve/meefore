@@ -218,6 +218,7 @@ textarea,
     position: static;
     flex-shrink: 0;
     height: 100px;
+    background: none!important;
 }
 .be-usernames {
     flex-shrink: 0;

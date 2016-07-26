@@ -206,7 +206,8 @@ span.be-dates__count {
     /* color: white; */
     font-size: 26px;
     z-index: 101;
-    padding-left: 2px;
+    padding-left: 5px;
+    box-sizing: border-box;
     background: white;
     height: 44px;
     width: 100%;
@@ -231,11 +232,18 @@ span.be-dates__count {
     opacity: .8;
 }
 
+.be-actions__action.x-settings {
+}
+
+.be-actions__action.x--settings i {
+    font-size: .9em;
+}
+
 .be-actions__action.x--switch {
 }
 
 .be-actions__action.x--switch i {
-    transform: rotate(140deg);
+    /* transform: rotate(140deg); */
 }
 
 .be-actions__action.x--share {}
@@ -626,16 +634,21 @@ span.be-dates__count {
 }
 
 .user-flat:last-of-type {
-    margin-bottom: 110px;
+    margin-bottom: 140px;
 }
 
 .flat-user-body {
-    height: 54px;
+    height: 70px;
     display: flex;
     flex-flow: column;
     justify-content: center;
     align-items: center;
     position: relative;
+    width: 75%;
+    border: 1px solid #eee;
+    box-shadow: 0px 2px 2px -1px rgb(232, 232, 232);
+    box-sizing: border-box;
+    top: -2px;
 }
 
 .flat-user__pic {
