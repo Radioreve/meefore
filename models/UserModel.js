@@ -196,6 +196,12 @@ UserSchema.methods.getPrivateChannel = function(){
 
 }
 
+UserSchema.methods.isBot = function(){
+
+  return this.access.indexOf("bot") != -1;
+
+}
+
 UserSchema.statics._makeBeforeItem = function( before, opts ){
 
   return {

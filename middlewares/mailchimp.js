@@ -8,7 +8,8 @@
 
 	// Mailchimp interface
 	var MC        = require('../services/mc');
-	var Mailchimp = new MC( _.extend( {}, config.mailchimp, { list_id: "ace186c18c" } ) );
+	var Mailchimp = new MC( config.mailchimp[ process.env.APP_ENV ] );
+	// var Mailchimp = new MC( config.mailchimp );
 
 	var handleErr = function( err, err_ns ){
 
@@ -28,7 +29,7 @@
 			// otherwise, each requests would be slowed hugely
 			next();
 
-			if( req.sent.bot ){
+			if( req.sent.user && req.sent.user.isBot() ){
 				term.bold.green('Skipping the mailchimp update... (bearly)\n');
 				return next();
 			}

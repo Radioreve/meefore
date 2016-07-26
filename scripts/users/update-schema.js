@@ -30,16 +30,7 @@
 					tasks.push(function( done ){
 
 						// Update part
-						user.pictures.forEach(function( pic ){
-
-							if( /placeholder/i.test( pic.img_id ) ){
-								pic.img_id      = settings.placeholder.img_id,
-								pic.img_version = settings.placeholder.img_version
-							}
-
-						});	
-						
-						user.markModified('pictures');
+						user.mailchimp_id = null;
 
 						user.save(function( err ){
 							if( err ) console.log('Error : ' + err );

@@ -1,6 +1,7 @@
 	
 
 	var config = {
+
 		admins_facebook_id: [
 			'10152931836919063', // Léo
 			'10205618910126551',  // Ben
@@ -81,13 +82,7 @@
 				app_id    : '139958',
 				key       : 'f9e4bf4e8f1e0342ca27',
 				secret    : '316f1677d800392fde21'
-			},/*
-			stage: {
-				app_id    : '139959',
-				key       : 'eeb38a1856233b29d6df',
-				secret    : '1dff1e9eb62de66a5ae2'  // STAGE AND DEV SHARE THE SAME PUSHER ENV FOR TESTS
 			},
-			*/
 			prod: {
 				app_id    : '139960',
 				key       : 'e0e801db688ab26d8581',
@@ -101,34 +96,52 @@
 			api_key  : "iAyP05rC1H15WjCbcaNsSA"
 		}
 		, mailchimp: {
-			api_key   : '1975e0d603d5cb51d2cabd25dfab1d94-us10',
-			list_id   : '7d19672539',
-			dc	      : 'us10',
-			username  : 'methodezela@gmail.com',
-			interests: [
-				{
-		            "id" 	     	: "ec4795dc5b",
-		            "name"       	: "newsletter",
-					"category_id"	: "f02635c296",
-		            "default_value" : true
-	       	 	}
+			dev: {
+				api_key   : '1975e0d603d5cb51d2cabd25dfab1d94-us10',
+				list_id   : '49bfd88fd5',
+				dc	      : 'us10',
+				username  : 'methodezela@gmail.com',
+				interests: [
+					{
+			            "id" 	     	: "77b294f0f2",
+			            "name"       	: "newsletter",
+						"category_id"	: "fd526148e7",
+			            "default_value" : false
+		       	 	}
 
-			],
-			list_id2  : '0e8fd0d396', // legacy
-			groups2: { // legacy
-				invitations: {
-					name       : 'invitations',
-					id         : 'bdb7938e4e',
-					init_value : 'yes'
-				},
-				newsletter: {
-					name       : 'newsletter',
-					id         : '042add1e79',
-					init_value : 'yes'
-				}
+				]
+			},
+			staged: {
+				api_key   : '1975e0d603d5cb51d2cabd25dfab1d94-us10',
+				list_id   : '49bfd88fd5',
+				dc	      : 'us10',
+				username  : 'methodezela@gmail.com',
+				interests: [
+					{
+			            "id" 	     	: "77b294f0f2",
+			            "name"       	: "newsletter",
+						"category_id"	: "fd526148e7",
+			            "default_value" : false
+		       	 	}
+
+				]
+			},
+			prod: {
+				api_key   : '1975e0d603d5cb51d2cabd25dfab1d94-us10',
+				list_id   : '7e2bd8f4ed',
+				dc	      : 'us10',
+				username  : 'methodezela@gmail.com',
+				interests: [
+					{
+						"id" 	  	    : "447f527682",
+						"name" 			: "newsletter",
+						"category_id"	: "8d22a3c98e",
+						"default_value" : false
+					}
+				]
 			}
 		}
 
-	}
+	};
 
 	module.exports = config;

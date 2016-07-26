@@ -77,7 +77,7 @@ var settings = {
 	// Setting the mailchimp defaults 
 	settings.default_app_preferences.email = settings.default_app_preferences.email || {};
 	
-	config.mailchimp.interests.forEach(function( interest ){
+	config.mailchimp[ process.env.APP_ENV ].interests.forEach(function( interest ){
 		settings.default_app_preferences.subscribed_emails[ interest.name ] = interest.default_value;
 	});
 

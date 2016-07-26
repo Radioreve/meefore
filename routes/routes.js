@@ -153,8 +153,8 @@
 			mdw.pop.populateUser(),
 	    	profileEvents.updateProfile,
 			mdw.profile_watcher.updateCachedProfile,
-	    	mdw.realtime.updateLocationChannel
-	    	// mdw.mailchimp.api("update_member")
+	    	mdw.realtime.updateLocationChannel,
+	    	mdw.mailchimp.api("update_member")
 	    );
 
 	    // [ @user ] Ajoute une photo au profil
