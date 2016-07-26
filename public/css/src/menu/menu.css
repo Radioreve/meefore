@@ -149,9 +149,9 @@
     color: #454545;
 }
 
-.update-pictures {margin-bottom: 15px;font-weight: 600;font-size: 14px;border: 1px solid;padding: 10px 45px;color: #a3bbe4;}
+.update-pictures {margin-bottom: 15px;font-weight: 600;font-size: 14px;border: 1px solid;padding: 10px 45px;color: #1b69ec;}
 
-.update-pictures.x--active { color: #1b69ec; }
+.update-pictures.x--active {color: #a3bbe4;}
 .menu__loader {
     width: 32px;
 }

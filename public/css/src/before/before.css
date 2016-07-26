@@ -424,11 +424,11 @@ span.be-dates__count {
 }
 
 .user-row__education-icon i {}
-
+ 
 .be-request,
 .be-ended {
     order: 1;
-    height: 150px;
+    height: 130px;
     width: 100%;
     display: flex;
     margin-top: auto;

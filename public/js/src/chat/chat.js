@@ -928,6 +928,7 @@
 			if( LJ.isMobileMode() ){
 				LJ.nav.denavigate();
 				LJ.ui.deactivateHtmlScroll();
+				LJ.notifications.hideNotificationsPanel();
 			}
 
 			opts = opts || {};
