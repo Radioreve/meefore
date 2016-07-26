@@ -75,7 +75,7 @@
 				if( LJ.store.get("app_language") ){
 					app_language = LJ.store.get('app_language');
 				} else {
-					app_language = "us";
+					app_language = "fr";
 				}
 
 				return resolve( app_language );		

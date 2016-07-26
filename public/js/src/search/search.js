@@ -14,7 +14,11 @@
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.search.handleDomEvents();
-				LJ.search.fetchAndShowMoreUsers();
+
+				if( !LJ.isMobileMode() ){
+					LJ.search.fetchAndShowMoreUsers();
+				}
+
 				LJ.search.setCountriesInFilters();
 				LJ.search.addLoader();
 				resolve();
@@ -110,6 +114,15 @@
 				.then(function(){
 					return LJ.search.fetchAndShowMoreUsers();
 				});
+
+		},
+		fetchAndShowMoreUsers__Once: function(){
+
+			LJ.search.fetchAndShowMoreUsers();
+
+			LJ.search.fetchAndShowMoreUsers__Once = function(){
+				LJ.log('Already fetched once');
+			}
 
 		},
 		fetchAndShowMoreUsers: function(){

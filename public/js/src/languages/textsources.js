@@ -1,4 +1,4 @@
-	
+
 	LJ.text = function( text_id, param ){
 		var app_lang = LJ.lang.getAppLang();
 		var text_src = LJ.text_source[ text_id ];
@@ -1612,11 +1612,11 @@
 			"us": "You have a new Match !"
 		},
 		disconnected_title: {
-			"fr": "Vous êtes déconnecté",
+			"fr": "Tu es déconnecté",
 			"us": "You are offline"
 		},
 		disconnected_subtitle: {
-			"fr": "Vous serez reconnecté automatiquement dès que vous aurez retrouvé internet.",
+			"fr": "Tu seras reconnecté automatiquement dès que tu auras retrouvé internet.",
 			"us": "You will be automatically reconnected when you're back online. "
 		},
 		init_location_title: {
@@ -1624,11 +1624,11 @@
 			"us": "Bienvenidos !"
 		},
 		init_location_subtitle_placeholder: {
-			"fr": "Où souhaitez-vous sortir ?",
+			"fr": "Où souhaites-tu sortir ?",
 			"us": "Where would you like to go out ?"
 		},
 		init_location_explanation: {
-			"fr": "Vous pourrez toujours changer de ville ultérieurement",
+			"fr": "Tu pourras toujours changer de ville ultérieurement",
 			"us": "You'll still be able to change that later"
 		},
 		init_location_geoloc: {

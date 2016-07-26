@@ -107,6 +107,11 @@
 			} else {
 				$('.app').addClass('padded');
 				LJ.ui.activateHtmlScroll();
+
+				if( LJ.isMobileMode() ){
+					LJ.search.fetchAndShowMoreUsers__Once();
+				}
+
 			}
 
 			if( target_link != "menu" ){
