@@ -706,6 +706,21 @@
 			});
 			
 
+		},
+		sortPicturesWithMainFirst: function( pictures ){
+
+			var cloned_pictures = _.cloneDeep( pictures );
+
+			var main_picture = _.find( pictures, function( pic ){
+				return pic.is_main;
+			});
+
+			_.remove( cloned_pictures, function( pic ) {
+				return pic.is_main;
+			});
+
+			return _.concat( [main_picture], cloned_pictures );
+
 		}
 
 

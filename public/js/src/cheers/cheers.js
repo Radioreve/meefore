@@ -45,14 +45,17 @@
 				LJ.cheers.resetCheersBackState()
 
 				if( close_type == "hide_all" ){
-					LJ.chat.hideChatWrap().then(function(){
-						$('.cheers-back').remove();
-					});
+					LJ.chat.hideChatWrap();
+					$('.cheers-back').remove();
 				}
 
 				if( close_type == "hide_cheers_back" ){
 					$('.cheers-back').remove();
 				}
+
+				LJ.wlog("No close type was found, defaulting...");
+				LJ.cheers.setCloseType("hide_all");
+				LJ.cheers.handleCloseCheersBack();
 
 
 			});

@@ -86,6 +86,10 @@
 			var user;
 			var $container;
 			var $content;
+			
+			var params = {
+				main_img_place: null
+			};
 
 			LJ.ui.showSlideAndFetch({
 
@@ -99,6 +103,7 @@
 			})
 			.then(function( expose ){				
 				user = expose.user;
+				params.main_img_place = LJ.findMainPic( user ).img_place;
 				return LJ.profile_user.renderUserProfile( user );
 
 			})
@@ -113,7 +118,7 @@
 
 			})
 			.then(function(){
-				return LJ.profile_user.processProfileBeforeDisplay( $content );
+				return LJ.profile_user.processProfileBeforeDisplay( params );
 
 			})
 			.then(function(){
@@ -131,8 +136,9 @@
 			return $container.append( user_html );
 
 		},
-		processProfileBeforeDisplay: function(){
-			LJ.profile_user.activatePicture(0);
+		processProfileBeforeDisplay: function( params ){
+
+			LJ.profile_user.activatePicture( params.main_img_place );
 
 		},
 		renderUserProfileImage: function( pic ){
@@ -153,8 +159,10 @@
 			var country_html = LJ.text( 'country_' + user.country_code ) + '<i class="flag-icon flag-icon-' + user.country_code + '"></i>';
 
 			// Render the pictures block
-			var pictures_html = [];
-			user.pictures.forEach(function( pic ){
+			var pictures_html     = [];
+
+			var sorted_pictures = LJ.pictures.sortPicturesWithMainFirst( user.pictures );
+			sorted_pictures.forEach(function( pic ){
 
 				// Only append picture if its not the placeholder one. In case the placeholder has changed 
 				// on the server, make also a test on the name to make sure the string "placeholder" isnt in there"
