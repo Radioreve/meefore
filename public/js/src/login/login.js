@@ -407,6 +407,12 @@
 					location.reload();
 				});
 
+			},
+			handleLoginFail: function( e ){
+
+				LJ.wlog("Login fatal error");
+				LJ.wlog( e );
+
 			}
 
 

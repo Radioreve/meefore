@@ -405,7 +405,7 @@
 			"us": "All your Facebook friends are on Meefore. Are some of them missing? Invite them to join!"
 		},
 		p_friends_nofriends: {
-			"fr": "Vous n'avez aucun ami Facebook inscrit sur Meefore. Invitez-les pour commencer à participer à des meefore!",
+			"fr": "Tu n'as aucun ami Facebook inscrit sur Meefore. Invite-les pour commencer à participer à des meefore!",
 			"us": "You don't have any Facebook friends on Meefore. Invite them all to start taking part in meefore!"
 		},
 		p_button_validate: {
@@ -873,7 +873,7 @@
 			"us": "Something went wrong"
 		}, 
 		to_chat_inp_not_in: {
-			"fr": "Vous n'avez pas encore été accepté!",
+			"fr": "Votre groupe n'a pas encore été accepté!",
 			"us": "You haven't been accepted yet"
 		},
 		to_chat_inp_too_quick: {
@@ -949,15 +949,15 @@
 			"us": "A friend of yours has modified the status of one of your meefore"
 		},
 		to_push_request_accepted: {
-			"fr": "Vous avez été accepté dans un meefore!",
+			"fr": "Tu as été accepté dans un meefore!",
 			"us": "You have been accepted in a meefore!"
 		},
 		to_push_group_validated_by_friend: {
-			"fr": "Un de vos amis a validé un groupe",
+			"fr": "Un de tes amis a validé un groupe",
 			"us": "A friend of yours has validated a group"
 		},
 		to_push_group_suspended_by_friend: {
-			"fr": "Un de vos amis a suspendu un groupe de la discussion",
+			"fr": "Un de tes amis a suspendu un groupe de la discussion",
 			"us": "A friend of yours has suspended a group from the chat"
 		},
 		to_welcome: {
@@ -1404,7 +1404,7 @@
 			"us": "you"
 		},
 		w_with: {
-			"fr": "avez",
+			"fr": "avec",
 			"us": "with"
 		},
 		w_soon: {
@@ -1424,7 +1424,7 @@
 			"us": "Member since"
 		},
 		w_na: {
-			"fr": "Non renseigné(e)",
+			"fr": "Non renseigné",
 			"us": "Unfilled"
 		},
 		ghost_user_name: {
@@ -1536,7 +1536,7 @@
 			"us": "Activate an invitation code"
 		},
 		settings_code_sponsor_explanation: {
-			"fr": "Partagez ce code avec vos amis pour les parrainer",
+			"fr": "Partage ce code avec tes amis pour les parrainer",
 			"us": "Share this code with your friends to sponsor them"
 		},
 		settings_email_address_explanation: {
@@ -1604,11 +1604,11 @@
 			"us": "It's a Match !"
 		},
 		to_group_accepted_hosts: {
-			"fr": "Vous avez un Match !",
+			"fr": "Nouveau Match !",
 			"us": "You have a new Match !"
 		},
 		to_group_accepted_users: {
-			"fr": "Vous avez un Match !",
+			"fr": "Nouveau Match !",
 			"us": "You have a new Match !"
 		},
 		disconnected_title: {
@@ -1648,11 +1648,11 @@
 			"us": "See you soon"
 		},
 		logout_subtitle: {
-			"fr": "Es-tu sûr(e) de vouloir te déconnecter ?Tu es coorganisateur de ce before",
+			"fr": "Es-tu sûr(e) de vouloir te déconnecter ?",
 			"us": "Are you sure you want to log out ?"
 		},
 		modal_err_empty_fetch: {
-			"fr": "Nous n'avons pas trouvé vos photos de profil",
+			"fr": "Nous n'avons pas trouvé tes photos de profil",
 			"us": "We were unable to find your profile pictures album"
 		},
 		settings_account_email: {
@@ -1668,7 +1668,7 @@
 			"us": "See you around !"
 		},
 		settings_modal_delete_subtitle: {
-			"fr": "En supprimant votre compte, toutes les données vous concernant seront supprimées de nos serveurs."
+			"fr": "En supprimant ton compte, toutes les données te concernant seront supprimées de nos serveurs."
 				  + "<br><br><b>Attention, cette opération est irréversible.</b>",
 			"us": "By deleting your account, every data about you will be deleted from our servers."
 				  + "<br><br><b>Careful, this cannot be undone.</b>"
@@ -1734,7 +1734,7 @@
 			"us": "Share a profile"
 		},
 		modal_share_subtitle_profile: {
-			"fr": "Sélectionnez dans la liste les personnes avec qui vous souhaitez partager ce profil.",
+			"fr": "Sélectionnes dans la liste les personnes avec qui tu souhaites partager ce profil.",
 			"us": "Select in your friendlist who you wish to share this profile with."
 		},
 		to_profile_shared_success: {
@@ -1754,15 +1754,15 @@
 			"us": "The pregame has been shared"
 		},
 		to_cheers_sent_success: {
-			"fr": "Votre Cheers a bien été envoyée",
+			"fr": "Ton Cheers a bien été envoyée",
 			"us": "Your Cheers has been sent"
 		},
 		to_cheers_received_success: {
-			"fr": "Vous avez reçu un Cheers",
+			"fr": "Tu as reçu un Cheers",
 			"us": "You have received a Cheers"
 		},
 		to_cheers_sent_success_friend: {
-			"fr": "Un ami souhaite participer à un before avec vous",
+			"fr": "Un ami souhaite participer à un before avec toi",
 			"us": "A friend wishes to join a before with you"
 		},
 		meepass_ribbon2: {
@@ -1956,28 +1956,28 @@
 			"us": "Nothing on the horizon..."
 		},
 		chat_empty_subtitle_row: {
-			"fr": "Vous pourrez discuter avec vos amis et faire connaissance avec les autres membres lorsque vous aurez créé un before ou obtenu un Match",
+			"fr": "Tu pourras discuter avec tes amis et faire connaissance avec les autres membres lorsque tu auras créé un before ou obtenu un Match",
 			"us": "You will be able to chat with your friends and the other members once you have created a pregame or obtained a Match"
 		},
 		chat_empty_title_inview_hosts: {
-			"fr": "Vous avez un Match !",
+			"fr": "Nouveau Match !",
 			"us": "It's a Match !"
 		},
 		chat_empty_subtitle_inview_hosts: {
 			"fr": function( group_name ){
-				return  "Faîtes connaissance avec " + group_name + " dès maintenant."
+				return  "Fais connaissance avec " + group_name + " dès maintenant."
 			},
 			"us": function( group_name ){
 				return "Get to know " + group_name + " now."
 			} 
 		},
 		chat_empty_title_inview_accepted: {
-			"fr": "Vous avez un Match !",
+			"fr": "Nouveau Match !",
 			"us": "It's a Match !"
 		},
 		chat_empty_subtitle_inview_accepted: {
 			"fr": function( group_name ){
-				return  "Faîtes connaissance avec " + group_name + " dès maintenant."
+				return  "Fais connaissance avec " + group_name + " dès maintenant."
 			},
 			"us": function( group_name ){
 				return "Get to know " + group_name + " now."
@@ -2024,8 +2024,8 @@
 			"us": "See the pregame"
 		},
 		chat_inview_users_group_users: {
-			"fr": "Votre groupe",
-			"us": "Your group"
+			"fr": "Participants",
+			"us": "Requesters"
 		},
 		chat_inview_users_group_hosts: {
 			"fr": "Organisateurs",
@@ -2040,7 +2040,7 @@
 			"us": "Private discussion with your friends"
 		},
 		chat_row_request_all_subtitle: {
-			"fr": "Vous avez un Match !",
+			"fr": "Nouveau Match !",
 			"us": "It's a Match !"
 		},
 		// chat_row_request_all_subtitle: {
@@ -2076,8 +2076,8 @@
 			}
 		},
 		cheers_back_groupname: {
-			"fr": "Vous avez reçu un Cheers de...",
-			"us": "You have been sent a Cheers by..."
+			"fr": "Ton groupe a reçu un Cheers",
+			"us": "Your have received a Cheers"
 		},
 		be_ghost_title: {
 			"fr": "404 !",

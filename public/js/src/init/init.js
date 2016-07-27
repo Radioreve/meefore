@@ -37,8 +37,6 @@
             LJ.nav.init();
             // Scrolling globals etc
             LJ.ui.init();
-            // Cheers
-            LJ.cheers.init();
             // Shared module
             // LJ.shared.init();  // Keep it for ulterior version
             // Profile user
@@ -77,12 +75,14 @@
                 .then( LJ.notifications.init )
                 .then( LJ.before.init )
                 .then( LJ.chat.init )
+                .then( LJ.cheers.init )
                 .then( LJ.login.hideLoginSteps )
                 .then( LJ.map.init ) // Must be as close as possible to terminateLogin. Map doesnt render sometimes..
                 .then( LJ.login.terminateLoginProcess )
                 .then( LJ.onboarding.init )
                 .then( LJ.connecter.init )
-                .then( LJ.dev.init );
+                .then( LJ.dev.init )
+                .catch( LJ.login.handleLoginFail );
 
 
         }

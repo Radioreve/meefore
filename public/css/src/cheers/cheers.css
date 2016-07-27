@@ -102,11 +102,11 @@
     z-index: 1000;
 }
 
-.cheers-back-pictures { 
-    width: 110px;
-    height: 110px;
-    margin: 20px auto;
-    flex-shrink: 0;
+.cheers-back-pictures {
+    width: 230px;
+    height: 230px;
+    margin: 0px auto;
+    flex-shrink: 1;
     font-size: 12px;
     text-align: center;
 }
@@ -156,30 +156,9 @@
     cursor: pointer;
 }
 
-.cheers-back-groupname {
-    display: flex;
-    flex-shrink: 0;
-    /* justify-content: center; */
-    align-items: center;
-    max-width: 300px;
-    margin: -33px auto 30px;
-    /* background: #1b69ec; */
-    /* background: #34ab53; */
-    background: #e94f6a;
-    z-index: 1;
-    padding: 8px 20px;
-    border-radius: 100px;
-    color: white;
-    border: 2px solid;
-}
+.cheers-back-groupname {display: flex;justify-content: flex-end;flex-flow: column nowrap;align-items: center;flex-shrink: 0;height: 70px;margin-bottom: 10px;}
 
-.cheers-back-groupname__h1 {
-    font-size: 12px;
-    margin-right: 4px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
+.cheers-back-groupname__h1 {font-family: 'creamy';font-size: 24px;margin-bottom: 6px;color: #1B69ec;}
 
 .cheers-back-groupname__h1 span {}
 
@@ -189,7 +168,9 @@
     top: -2px;
 }
 
-.cheers-back-groupname__h2 span {}
+.cheers-back-groupname__h2 span {
+    font-size: 13px;
+}
 
 .cheers-back-users .jspPane {
     padding: 0!important;
@@ -218,7 +199,8 @@
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 0px;
     z-index: 100;
     margin: auto;
+    margin-bottom: 136px;
 }

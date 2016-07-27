@@ -307,22 +307,28 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	},
 	activateHtmlScroll: function(){
 
-		$('html').css({
-			'overflow': 'auto',
-			'position': 'static',
-			'width': '100%',
-			'height': '100%'
-		});
+		var opts = { "overflow": "auto" };
+
+		if( LJ.isMobileMode() ){
+			opts.position = "static";
+			opts.width    = "100%";
+			opts.height   = "100%";
+		}
+
+		$('html').css( opts );
 
 	},
 	deactivateHtmlScroll: function(){
 
-		$('html').css({
-			'overflow': 'hidden',
-			'position': 'fixed',
-			'width': '100%',
-			'height': '100%'
-		});
+		var opts = { "overflow": "hidden" };
+
+		if( LJ.isMobileMode() ){
+			opts.position = "fixed";
+			opts.width    = "100%";
+			opts.height   = "100%";
+		}
+
+		$('html').css( opts );
 
 	},
 	reconnectUser: function(){

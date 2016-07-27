@@ -6,6 +6,18 @@
 
 			return LJ.promise(function( resolve, reject ){
 
+				if( LJ.app_mode == "dev" ){
+					
+					var a = document.location.hash;
+					if( a == "#0" ){
+						return resolve({ 'fb_token' : 'EAAXR2Qo4lc4BAH6wJ4wcpXvaEFrgXjMsKmihajiozbGTUUyDghPEsZB7wqnWiO2CyUhU19NfL5qjPIiYY4On4cYQnTUiefiyZB8l39CZAck8ngPvHsU4yKtF0tLm35qkPv0DPg2DZCnZBRi2qXKB4EQxgwvwqIDAZD' });
+					}
+					if( a == "#1" ){
+						return resolve({ 'fb_token': 'EAAXR2Qo4lc4BADx1dNR5Cz2iSZCduZC05gJ5MsZCkR9uneJBQadFoBI5eXpfmaDVeuiQNSIPQvyP5I9aj7y2Cu6daZCd4EzAJGgZBQCnxlHudEPEpKQHb4yr6f8GkmNMZCiGBgBIMbdGbYDpbZC0uuzeae9MQuGfEnpjgAPAuTxegZDZD' });
+					}
+
+				}
+
 				var code;
 				try {
 					code  = document.location.href.split('code=')[ 1 ].split(/&|#/i)[ 0 ];

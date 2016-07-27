@@ -153,7 +153,9 @@
 			var $n              = $( this );
 			var notification_id = $n.attr('data-notification-id');
 			var n               = LJ.notifications.findById( notification_id );
-
+			
+			if( !n ) return LJ.wlog("Unable to find notification object for id : " + notification_id );
+			
 			if( !n.clicked_at ){
 
 				LJ.api.updateNotificationClickedAt( notification_id );
@@ -658,6 +660,7 @@
 			LJ.nav.navigate("menu");
 			LJ.menu.activateMenuSection("cheers");
 			LJ.cheers.activateCheers("received");
+			LJ.cheers.fetchAndAddCheers();
 
 
 		},
@@ -666,6 +669,7 @@
 			LJ.nav.navigate("menu");
 			LJ.menu.activateMenuSection("cheers");
 			LJ.cheers.activateCheers("sent");
+			LJ.cheers.fetchAndAddCheers();
 
 		},
 		notificationCallback__AcceptedInMembers: function( n ){

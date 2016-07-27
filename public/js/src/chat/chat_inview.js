@@ -997,8 +997,8 @@
 			var $w           = LJ.chat.getChatInview( chat_id );
 			var last_message = LJ.chat.getLastChatMessage( chat_id );
 
-			if( !last_message ){
-				return;
+			if( !last_message || !LJ.user.app_preferences.ux.message_seen ){
+				return LJ.log("No last message or app_preferences message_seen disabled");
 			}
 
 			var seen_by   = last_message.seen_by;
@@ -1009,7 +1009,7 @@
 
 				// It would be dumb to let others know that the sender has read its own message
 				// and weird for the user to see his own name on the "seen_by" list
-				if( facebook_id != sender_id ){
+				if( facebook_id != sender_id && LJ.user.facebook_id != facebook_id ){
 					names.push( LJ.chat.getUser( facebook_id ).name );
 				}
 
@@ -1084,7 +1084,7 @@
 
         	LJ.chat.getChatInview( chat_id )
         		.find('button')
-        		.replaceWith( LJ.before.renderBeforeInviewBtn__UserAccepted());
+        		.replaceWith( LJ.before.renderBeforeInviewBtn__UserAccepted() );
 
         },
         getChatInview: function( chat_id ){

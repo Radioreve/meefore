@@ -65,11 +65,12 @@
 .landing-title {
     font-family: 'creamy';
     font-size: 40px;
-    flex-shrink: 0;
     position: fixed;
     top: 60px;
-    width: 90%;
+    width: 100%;
     text-align: center;
+    left: 0;
+    right: 0;
 }
 
 .landing-title h1 {}
@@ -77,10 +78,12 @@
 .landing-subtitle {
     line-height: 20px;
     font-size: 15px;
-    width: 400px;
     text-align: center;
     position: fixed;
     top: 104px;
+    width: 100%;
+    left: 0;
+    right: 0;
 }
 
 .landing-subtitle h2 {}
@@ -141,7 +144,7 @@
 .landing__screenshot img {
     width: 100%;
 }
-
+ 
 .landing-privacy {
     width: 350px;
     text-align: center;
@@ -149,8 +152,10 @@
     line-height: 14px;
     position: fixed;
     bottom: 50px;
-    width: 90%;
+    width: 100%;
     color: #454545;
+    left: 0;
+    right: 0;
 }
 
 .landing-privacy h3 {

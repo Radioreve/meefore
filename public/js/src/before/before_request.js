@@ -103,6 +103,7 @@
             LJ.chat.hideChatInview();
             LJ.chat.activateChat( chat_id );
             LJ.chat.showChatInview( chat_id );
+            LJ.chat.refreshChatJsp( chat_id );
 
         },
         defaultifyBeforeInview: function( before_id ){
@@ -170,7 +171,7 @@
 
         	LJ.map.markers.forEach(function( mrk ){
 
-        		if( mrk.marker_id == before._id ){
+        		if( mrk.marker_id == before_id ){
 
                     var active = ( mrk.status == "active" ) ? true : false;
         			var icon   = LJ.map.makeIcon( LJ.map.getBeforeMarkerUrlByType("accepted", active) );

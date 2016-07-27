@@ -34,29 +34,27 @@
 			LJ.ui.hideSlide();
 			LJ.unoffsetRows();
 			
-
 		},
 		handleCloseCheersBack: function(){
 
 			var close_type = LJ.cheers.getCloseType();
 
-			LJ.chat.refreshChatRowsJsp().then(function(){
+			if( [ "hide_all", "hide_cheers_back" ].indexOf( close_type ) == -1 ){
 
-				LJ.cheers.resetCheersBackState()
+				LJ.wlog("No close type was found, close_type=" + close_type );
+				LJ.wlog("defaulting to close_type='hide_all'");
+				close_type = "hide_all";
+
+			}
+
+			LJ.chat.refreshChatRowsJsp().then(function(){
 
 				if( close_type == "hide_all" ){
 					LJ.chat.hideChatWrap();
-					$('.cheers-back').remove();
 				}
 
-				if( close_type == "hide_cheers_back" ){
-					$('.cheers-back').remove();
-				}
-
-				LJ.wlog("No close type was found, defaulting...");
-				LJ.cheers.setCloseType("hide_all");
-				LJ.cheers.handleCloseCheersBack();
-
+				LJ.cheers.resetCheersBackState();
+				$('.cheers-back').remove();
 
 			});
 		},
@@ -112,11 +110,13 @@
 		},
 		showCheersBackLoader: function(){
 
-			$( LJ.static.renderStaticImage('slide_loader') )
+			$( LJ.static.renderStaticImage('cheers_back_loader') )
 				.addClass('cheers-back__loader')
 				.hide()
 				.appendTo($('.cheers-back'))
-				.show();
+				.velocity('fadeIn', {
+					duration: 1000
+				});
 
 		},
 		hideCheersBackLoader: function(){
@@ -136,7 +136,7 @@
 		},
 		hideCheersBackOverlay: function(){
 
-			$('.cheers-back').find('.cheers-back__overlay').remove();
+			$('.cheers-back').find('.loader__overlay').remove();
 
 		},
 		handleCheersClicked: function(){
@@ -504,21 +504,24 @@
 		showValidateCheers: function( cheers_id ){
 
 			if( LJ.cheers.getActiveCheersBack() == cheers_id ){
-				return 
+				return LJ.log("The active cheers_back panel is already there");
 			}
 
 			LJ.cheers.setActiveCheersBack( cheers_id );
 			LJ.cheers.makeCheersBack( cheers_id );
 
 			if( LJ.chat.getChatState() == "hidden" ){
+
 				LJ.cheers.setCloseType("hide_all");
 				LJ.chat.showChatWrap();
+
 			} else {
 				// Chat was already opened. Only set a cheers_mode if none was set before
 				if( !LJ.cheers.getCloseType() ){
 					LJ.cheers.setCloseType("hide_cheers_back");
 				}
 			}
+
 			LJ.cheers.showCheersBack();
 
 		},
@@ -539,7 +542,9 @@
 			}
 
 			LJ.cheers.setCheersBackState("pending");
-			LJ.cheers.showCheersBackLoader();
+			LJ.cheers.scaleOutCheersBack();
+			LJ.ui.showLoader("cheers_back");
+			// LJ.cheers.showCheersBackLoader();
 			LJ.cheers.showCheersBackOverlay();
 
 		},
@@ -550,8 +555,26 @@
 			}
 
 			LJ.cheers.setCheersBackState("idle");
-			LJ.cheers.hideCheersBackLoader();
+			LJ.cheers.scaleInCheersBack();
+			LJ.ui.hideLoader("cheers_back");
+			// LJ.cheers.hideCheersBackLoader();
 			LJ.cheers.hideCheersBackOverlay();
+
+		},
+		scaleOutCheersBack: function(){
+
+			$('.cheers-back-pictures')
+				.velocity({ 'scale' : [ .9, 1 ]}, {
+					duration: 300
+				});
+
+		},
+		scaleInCheersBack: function(){
+
+			$('.cheers-back-pictures')
+				.velocity({ 'scale' : [ 1, .9 ]}, {
+					duration: 300
+				});
 
 		},
 		makeCheersBack: function( cheers_id ){
@@ -562,7 +585,7 @@
 				return cheers_item.members.indexOf( m.facebook_id ) != -1;
 			});
 
-			var html = LJ.cheers.renderCheersBack( members_profiles );
+			var html = LJ.cheers.renderCheersBackHive( members_profiles );
 
 			LJ.cheers.addCheersBack( html );
 			LJ.mainifyUserRow( $('.cheers-back'), cheers_item.main_member );
@@ -665,17 +688,17 @@
 
 			$('.chat, .chat .cheers-back').css({ 'display': 'flex', 'opacity': '0' })
 				.find('.cheers-back')
-				.css({ 'opacity': '0' });
+				.css({ 'display': 'flex', 'opacity': '0' });
 
 			LJ.cheers.refreshChatBackUsersJsp()
 				// .then(function(){
 				// 	return LJ.delay()
 				// })
-				.then(function(){
-					$('.chat, .chat .cheers-back')
-						.css({ 'display': 'flex', 'opacity': '1' });
+				// .then(function(){
+			$('.chat, .chat .cheers-back')
+				.css({ 'display': 'flex', 'opacity': '1' });
 
-				});
+				// });
 
 		},
 		renderChatHeaderCloseIcon: function(){
@@ -713,7 +736,42 @@
 			});
 
 		},
-		renderCheersBack: function( members_profiles ){
+		renderCheersBackHive: function( members_profiles ){
+
+			var pictures = LJ.pictures.makeHiveHtml( members_profiles, "user-cheers-back", {
+				class_names : [ "js-show-profile" ],
+				attach_data : [ "facebook_id" ]
+			});
+
+			var cheers_back_header = LJ.chat.renderChatInviewHeader(); // Borrow it to the chat module
+
+			return LJ.ui.render([
+
+				'<div class="cheers-back">',
+					cheers_back_header,
+					'<div class="cheers-back-groupname">',
+						'<div class="cheers-back-groupname__h1">',
+							'<span data-lid="cheers_back_groupname"></span>',
+						'</div>',
+						'<div class="cheers-back-groupname__h2">',
+							'<span>'+ LJ.renderMultipleNames( _.map( members_profiles, 'name' ) ) +'</span>',
+						'</div>',
+					'</div>',
+					'<div class="cheers-back-pictures">',
+			        	pictures, 
+			        '</div>',
+			        '<div class="cheers-back-actions">',
+			        	'<button class="x--round-icon js-validate">',
+			        		'<i class="icon icon-meedrink"></i>',
+			        		'<span data-lid="chat_inview_validate"></span>',
+			        	'</button>',
+			        '</div>',
+				'</div>'
+
+			]);
+
+		},
+		renderCheersBackRow: function( members_profiles ){
 
 			var pictures = [];
 			members_profiles.forEach(function( u ){
@@ -747,7 +805,7 @@
 			        '</div>',
 				'</div>'
 
-			].join(''));
+			]);
 
 		},
         handleValidate: function(){
@@ -778,6 +836,7 @@
         	})
     		.then(function( res ){
     			LJ.log("Cheers back successfully");
+    			LJ.ui.hideLoader("cheers_back");
 
     		})
     		.catch(function( e ){
@@ -793,17 +852,17 @@
         	return LJ.promise(function( resolve, reject ){	
 
         		var d = LJ.cheers.cheers_back_duration;
-
+									
         		$('.cheers-back')
         			.children()
         			.velocity('shradeOut', { duration: d, display: 'none' });
 
-	        	var d = LJ.static.renderStaticImage('slide_loader');
-				$( d ).addClass('js-cheers-back-loader')
+	        	var L = LJ.static.renderStaticImage('slide_loader');
+				$( L ).addClass('js-cheers-back-loader')
 					  .hide().appendTo('.cheers-back')
 					  .velocity('shradeIn', { duration: d, delay: d } );
 
-				LJ.delay( 2*d ).then( resolve );
+				LJ.delay( d ).then( resolve );
 
         	});
 

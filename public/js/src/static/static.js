@@ -24,6 +24,11 @@
 				'param'       : { 'class': 'slide__loader', 'width': 32  }	
 			},
 			{
+				'access_name' : 'cheers_back_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': 'slide__loader', 'width': 32  }	
+			},
+			{
 				'access_name' : 'search_loader',
 				'image_id'    : 'loader_circular_blue_thin',
 				'param'       : { 'class': 'search__loader', 'width': 32  }	

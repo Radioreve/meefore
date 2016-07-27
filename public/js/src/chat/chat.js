@@ -155,11 +155,11 @@
 
 		},
 		seenifyChatInview: function( chat_id, facebook_id ){
-
+        	
 			var chat = LJ.chat.getChat( chat_id );
 
 			chat.messages.forEach(function( m ){
-					
+				
 				m.seen_by.push( facebook_id );
 				m.seen_by = _.uniq( m.seen_by );
 
@@ -955,11 +955,6 @@
 
 			LJ.ui.activateHtmlScroll();
 
-			if( LJ.cheers.getActiveCheersBack() ){
-				LJ.log('Cheers back is active, resolving now');
-				return LJ.Promise.resolve();
-			}
-
 			LJ.chat.state = 'hidden';
 			$('.app__menu-item.x--chats').removeClass('x--active');
 
@@ -1261,8 +1256,8 @@
 			var last_message       = LJ.chat.getLastMessage( chat_id );
 			var last_message_other = LJ.chat.getLastMessageOther( chat_id );
 
-			if( !last_message || !last_message_other ){
-				return;
+			if( !last_message_other ){
+				return LJ.log("No message except from user ones, not refreshing the chat row picture");
 			}
 
 			var sender = LJ.chat.getUser( last_message_other.sender_id );
@@ -1278,30 +1273,39 @@
 		},
 		refreshChatRowPreview: function( chat_id ){
 
+			var channel_item       = LJ.chat.getChannelItem( chat_id );
 			var last_message       = LJ.chat.getLastMessage( chat_id );
 			var last_message_other = LJ.chat.getLastMessageOther( chat_id );
 
-			if( !last_message ){
-				return;
+			var sender, members, without_me, names, update;
+
+			if( !last_message_other ){
+				return LJ.log("No message except from user ones, not refreshing the chat row preview");
 			}
 			
-			var sender     = LJ.chat.getUser( last_message_other.sender_id );
-			var members    = _.concat( LJ.chat.getMembers( chat_id ), LJ.chat.getHosts( chat_id ) );
-			var without_me = _.filter( members, function( m ){ return m.facebook_id != LJ.user.facebook_id; });
-			var names 	   = _.map( without_me, 'name' );
+			sender  = LJ.chat.getUser( last_message_other.sender_id );
+			members = ( channel_item.type == "chat_all" && channel_item.role == "requested" ) ?
+					  LJ.chat.getHosts( chat_id ) :
+					  LJ.chat.getMembers( chat_id );
+
+			// Never display the user's name on the h1
+			without_me = _.filter( members, function( m ){
+				return m.facebook_id != LJ.user.facebook_id;
+			});
 				
-			var update = {
+			update = {
 				sender_id: sender.facebook_id,
-				h1       : LJ.renderMultipleNames( names )
+				h1       : LJ.renderMultipleNames( _.map( without_me, 'name' ) )
 			};
 
-			if( last_message_other ){
-				if( without_me.length != 1 ){
-					update.h2 = sender.name +' : ' + last_message_other.message;
-				} else {
-					update.h2 = last_message_other.message;
-				}
-			} 
+			// Little ehancement : when only chatting with one team user, dont double repeat his name 
+			// to avoid a weird visual effect
+			// if( without_me.length != 1 ){
+			// 	update.h2 = sender.name +' : ' + last_message_other.message;
+			// } else {
+				update.h2 = last_message_other.message;
+			// }
+			
 
 			LJ.chat.updateChatRowElements( chat_id, update );
 
@@ -1543,6 +1547,11 @@
 			return _.find( LJ.user.channels, function( chan ){
 				return chan.chat_id == chat_id;
 			});
+
+		},
+		isTeamChat: function( chat_id ){
+
+			return LJ.chat.getHosts( chat_id ).length == 0 ? true : false;
 
 		},
 		getChatRow: function( chat_id ){

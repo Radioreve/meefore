@@ -395,7 +395,6 @@
 			LJ.user.channels.push( channel_item );
 			LJ.realtime.subscribeToAllChannels();
 
-
 			// Add the new chat for people to get to know each otha :)
 			LJ.chat.fetchAndAddOneChat( channel_item )
 				.then(function(){
@@ -403,20 +402,17 @@
 					LJ.ui.showToast( LJ.text("to_group_accepted_users") );
 
 					// Update the cheer_item
-					LJ.cheers.updateCheersItem( cheers_id, { status: status });
+					LJ.cheers.updateCheersItem( cheers_id, { "status": status });
+					LJ.before.updateBeforeItem( before_id, { "status": status });
+					
 					LJ.cheers.acceptifyCheersRow( cheers_id );
-
-					// Update the before_item and the before marker
-					LJ.before.updateBeforeItem( before_id, { status: status });
 					LJ.before.acceptifyBeforeMarker( before_id );
+					LJ.chat.acceptifyChatInview( before_id );
 
 					// Add notification in real time
 					LJ.realtime.addNotification( data );
 
 				});
-
-			// Specific to the users
-			LJ.chat.acceptifyChatInview( before_id );
 
 		},	
 		handleNewChatMessage: function( data ){

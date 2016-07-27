@@ -104,7 +104,7 @@
 				new_user.gender = fb.gender || "male";
 
 				// Job is not asked clientside, so put some placeholder until he changes it
-				new_user.job = 'Meefan';
+				new_user.job = 'Etudiant(e)';
 
 				// Country code extracted from the facebook_profile, and defaulted to "fr" if fail
 				new_user.country_code = 'fr'; 

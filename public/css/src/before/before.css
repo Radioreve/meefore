@@ -590,6 +590,7 @@ span.be-dates__count {
     overflow: hidden;
     max-width: 240px;
     white-space: nowrap;
+    padding: 0 6px;
 }
 
 .be-inview.x--hive .be-pictures {
@@ -601,12 +602,11 @@ span.be-dates__count {
     cursor: pointer;
 }
 
-.be-inview.x--hive .be-pictures img {
+.x--hive img {
     transition: all ease-in .15s;
 }
 
-.be-inview .hive__picture:hover img,
-.hive__background:hover~div img {
+.hive__picture:hover img, .hive__background:hover~div img {
     transform: scale(1.2);
 }
 
