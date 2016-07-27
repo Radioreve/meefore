@@ -18,10 +18,12 @@
 		},
 		handleFriendsClicked: function(){
 
+			
+
+		},	
+		showFriendsLoader: function(){
+
 			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
-
-			$('.friends').html('');
-
 			$loader.addClass('none')
 				   .appendTo('.friends')
 				   .velocity('bounceInQuick', {
@@ -30,9 +32,12 @@
 				   	display: 'block'
 				   });
 
-			LJ.friends.fetchAndAddFacebookFriends();
+		},
+		removeAllFriends: function(){
 
-		},	
+			$('.friends').html('');
+
+		},
 		handleFriendProfileClicked: function(){
 
 			var $s = $(this);
@@ -42,6 +47,9 @@
 
 		},
 		fetchAndAddFacebookFriends: function(){
+
+			LJ.friends.removeAllFriends();
+			LJ.friends.showFriendsLoader();
 
 			var friend_ids = LJ.user.friends;
 			return LJ.api.fetchUsersFull( friend_ids )

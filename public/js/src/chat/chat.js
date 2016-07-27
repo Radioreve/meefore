@@ -1020,6 +1020,7 @@
 		emptifyChatRows: function(){
 
 			$('.chat-rows').find('.chat-rows-title').addClass('none');
+			$('.chat-rows').find('.chat-row').remove();
 			$('.chat-rows').append( LJ.chat.renderChatRowEmpty() );
 
 			return LJ.chat.refreshChatRowsJsp();
@@ -1637,7 +1638,7 @@
 				LJ.chat.clearChatStates();
 				LJ.chat.hideChatInviewWrap();
 				
-				var refresh_all_chats  = LJ.chat.refetchAndAddChats();
+				var refresh_all_chats = LJ.chat.refetchAndAddChats();
 
 				refresh_all_chats
 					.then(function(){

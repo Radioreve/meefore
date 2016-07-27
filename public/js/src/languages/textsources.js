@@ -1400,7 +1400,7 @@
 			"us": "Send"
 		},
 		w_you: {
-			"fr": "vous",
+			"fr": "toi",
 			"us": "you"
 		},
 		w_with: {
@@ -1988,16 +1988,8 @@
 			"us": function( group_name ){ return group_name; }
 		},
 		chat_empty_subtitle_inview_team: {
-			"fr": "Seuls vous et les autres membres de ce groupe recevront les messages qui seront envoyés sur cette discussion.",
+			"fr": "Seuls toi et les autres membres de ce groupe recevront les messages qui seront envoyés sur cette discussion.",
 			"us": "Only you and the other members of your group will receive messages that are sent on this chat."
-		},
-		chat_empty_title_inview_pending: {
-			"fr": "Un peu de patience...",
-			"us": "Be patient..."
-		},
-		chat_empty_subtitle_inview_pending: {
-			"fr": "Vous pourrez faire connaissance dès que vous aurez un Match avec les organisateurs.",
-			"us": "You'll be able to start chatting as soon as there is a Match with the hosts."
 		},
 		chat_rows_team_title: {
 			"fr": "Amis",

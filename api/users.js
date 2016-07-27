@@ -422,7 +422,7 @@
 	// User have access locally to all the channels for the events to come
 	// However, if he wants to access its history, he needs to be able to fetch
 	// oldest chat messages, and so request the associated group_ids;
-	var parallel_fetch_count = 1;
+	var parallel_fetch_count = 4;
 	var fetchMoreChannels = function( req, res, next ){
 
 		var err_ns = "fetching_more_channels";

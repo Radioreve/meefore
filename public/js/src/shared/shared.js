@@ -33,10 +33,17 @@
 		},	
 		handleShareClicked: function(){
 
-			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
+			LJ.shared.fetchSharedItems();
+
+		},
+		removeAllShared: function(){
 
 			$('.shared').html('');
 
+		},
+		showSharedLoader: function(){
+
+			var $loader = $( LJ.static.renderStaticImage('menu_loader') );
 			$loader.addClass('none')
 				   .appendTo('.shared')
 				   .velocity('bounceInQuick', {
@@ -45,11 +52,12 @@
 				   	display  : 'block'
 				  });
 
-			LJ.shared.fetchSharedItems();
-
-		},	
+		},
 		fetchSharedItems: function(){
 
+			LJ.shared.removeAllShared();
+			LJ.shared.showSharedLoader();
+			
 			/*
 				- Fetch user's share_objects, and format it
 				- Fetch the befores and users data to render. Hopefully, from cache.

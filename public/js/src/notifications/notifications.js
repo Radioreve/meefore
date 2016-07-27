@@ -660,7 +660,6 @@
 			LJ.nav.navigate("menu");
 			LJ.menu.activateMenuSection("cheers");
 			LJ.cheers.activateCheers("received");
-			LJ.cheers.fetchAndAddCheers();
 
 
 		},
@@ -669,7 +668,6 @@
 			LJ.nav.navigate("menu");
 			LJ.menu.activateMenuSection("cheers");
 			LJ.cheers.activateCheers("sent");
-			LJ.cheers.fetchAndAddCheers();
 
 		},
 		notificationCallback__AcceptedInMembers: function( n ){

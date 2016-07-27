@@ -144,7 +144,8 @@
 
 		// Remove the requester, he already knows he is validating the group
 		var query_hosts = { 
-			facebook_id: { $in: _.difference( hosts, [ requester ]) }
+			// Let the requester also has a "New match"  notif in this case
+			facebook_id: { $in: hosts }
 		};
 		var update_hosts = { 
 			$push: { 'notifications': req.sent.notification_hosts } 

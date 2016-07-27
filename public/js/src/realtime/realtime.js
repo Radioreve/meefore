@@ -28,8 +28,17 @@
 		},
 		addNotification: function( data ){
 
-			if( !data.notification || (data.requester && data.requester == LJ.user.facebook_id) ){
-				return;
+			if( !data.notification ) return;
+
+			if( data.requester && data.requester == LJ.user.facebook_id ) {
+
+				// ALmost all notifications are not added in user profile of the requester, except a few ones
+				//	- 'accepted_in_hosts' -> requester receives it too because everyone likes to see "New match!"
+				var n_type = data.notification_type;
+				if( [ "accepted_in_hosts" ].indexOf( n_type ) == -1 ){
+					return;
+				}
+
 			}
 
 			LJ.notifications.cacheNotification( data.notification );
@@ -232,7 +241,8 @@
 			if( status == "canceled" ){
 
 				LJ.map.removeBeforeMarker( before_id );
-				LJ.before.removeOneBefore( before_id );
+				LJ.before.removeFetchedBefore( before_id );
+				LJ.before.removeBeforeItem( before_id );
 				LJ.before.refreshBrowserDates();
 
 				// If the user is viewing the before, take control of his ui and notify before is gone
@@ -449,7 +459,6 @@
 				LJ.chat.seenifyChatInview( chat_id, LJ.user.facebook_id );
 
 			}
-
 
 			// Local variation regarding the inview ui of the chatline
 			sender_id == LJ.user.facebook_id ? LJ.chat.dependifyChatLine( call_id ) : LJ.chat.addChatLine( data );

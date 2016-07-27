@@ -8,14 +8,15 @@
 
 	var every_hour    = 1000 * 60 * 60;
 	var every_min     = 1000 * 60;
+	var every_15_min  = every_min * 15;
 	var every_ten_sec = 1000 * 10;
 
 	// Job #0 - Print how long server has been on
 	var min = 0;
 	(function checkingTime(){
-		min += 1;
+		min += 15;
 		console.log('Scheduler up and running for ' + min + ' minutes now. ');
-		setTimeout( checkingTime, every_min );
+		setTimeout( checkingTime, every_15_min );
 	})();
 
 

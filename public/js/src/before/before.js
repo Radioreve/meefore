@@ -967,7 +967,8 @@
 					LJ.ui.hideLoader("canceling_before");
 					LJ.ui.showToast( LJ.text('to_cancel_before_success') );
 
-					LJ.before.removeOneBefore( before_id );
+					LJ.before.removeBeforeItem( before_id );
+					LJ.before.removeFetchedBefore( before_id );
 					LJ.before.refreshBrowserDates();
 					LJ.before.showBrowser();
 					
@@ -981,9 +982,16 @@
 				});
 
 		},
-		removeOneBefore: function( before_id ){
+		removeFetchedBefore: function( before_id ){
 
 			_.remove( LJ.before.fetched_befores, function( bfr ){
+				return bfr._id == before_id;
+			});
+
+		},
+		removeBeforeItem: function( before_id ){
+
+			_.remove( LJ.user.befores, function( bfr ){
 				return bfr._id == before_id;
 			});
 

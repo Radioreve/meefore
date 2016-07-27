@@ -12,13 +12,14 @@
 
 			LJ.cheers.handleDomEvents();
 			LJ.cheers.activateCheers("received");
+			LJ.cheers.fetchAndAddCheers();
 			return;
 
 		},
 		handleDomEvents: function(){
 
 			$('.menu-section.x--cheers').on('click', '.segment__part', LJ.cheers.handleSegmentClicked );
-			$('.menu-item.x--cheers').one('click', LJ.cheers.handleCheersClicked );
+			// $('.menu-item.x--cheers').on('click', LJ.cheers.handleCheersClicked );
 			$('.cheers').on('click', '.cheers__item', LJ.cheers.handleCheersItemClicked );
 			$('.chat').on('click', '.js-validate', LJ.cheers.handleValidate );
 			$('body').on('click', '.js-close-cheers-back', LJ.cheers.handleCloseCheersBack );
@@ -76,11 +77,6 @@
 
 			$('.cheers').children().css({ display: 'none' });
 			$('.cheers [data-link="' + link + '"]').css({ display: 'flex' });
-
-		},
-		clearAllCheers: function(){
-
-			$('.cheers').html('');
 
 		},
 		showCheersLoader: function(){
@@ -141,9 +137,12 @@
 		},
 		handleCheersClicked: function(){
 
-			LJ.cheers.showCheersLoader();
-			LJ.cheers.clearAllCheers();
-			LJ.cheers.fetchAndAddCheers();
+			
+
+		},
+		refetchAndAddCheers: function(){
+
+
 
 		},
 		sortCheers: function(){
