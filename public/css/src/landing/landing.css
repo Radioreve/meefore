@@ -273,7 +273,7 @@
    }
    
    .landing-subtitle {
-       width: 90%;
+       width: 100%;
        top: 75px;
        font-size: 11px;
        display: flex;
@@ -282,7 +282,7 @@
    }
 
    .landing-privacy {
-       width: 90%;
+       width: 100%;
        font-size: 7px;
        bottom: 22px;
    }

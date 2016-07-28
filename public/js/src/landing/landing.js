@@ -61,7 +61,7 @@
 					"fr": [
 							'En continuant, tu acceptes nos <span class="js-terms landing-bold">Conditions d\'Utilisation</span>',
 							' et <span class="js-privacy landing-bold">Politique de Confidentialité.</span>',
-							' Nous ne publierons <span class="landing-bold">rien</span> sur Facebook.'
+							' <br>Nous ne publierons <span class="landing-bold">rien</span> sur Facebook.'
 						].join(''),
 					"us": [
 							'By continuing, you\'re agreeing to our <span class="js-terms landing-bold">Terms</span>',
