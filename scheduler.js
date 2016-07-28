@@ -11,6 +11,12 @@
 	var every_15_min  = every_min * 15;
 	var every_ten_sec = 1000 * 10;
 
+
+	(function wakeUp(){
+		require('http').get("http://staged.meefore.com");
+		setTimeout( wakeUp, every_15_min );
+	})();
+
 	// Job #0 - Print how long server has been on
 	var min = 0;
 	(function checkingTime(){

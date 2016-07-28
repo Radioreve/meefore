@@ -597,7 +597,7 @@
                 lng: before.address.lng
             };
 
-            var url  = LJ.map.getBeforeMarkerUrl( before, false );
+            var url = LJ.map.getBeforeMarkerUrl( before, false );
 
             LJ.map.addMarker({
                 marker_id : before_id,

@@ -436,7 +436,7 @@
 			var be_created = LJ.before.readAndCreateBefore();
 
 			LJ.Promise.all([ be_created, ux_done ]).then(function( res ){
-				var expose = res[0];
+				var expose = res[ 0 ];
 
 				return LJ.before.endCreateBefore( expose );
 

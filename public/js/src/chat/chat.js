@@ -1645,7 +1645,7 @@
 
 						LJ.chat.showAndActivateChatInview( current_active_chat );
 						LJ.ui.desynchronify({ $wrap: $('.chat-wrap') });
-						LJ.ui.showToast( LJ.text("chat_sync_done") );
+						// LJ.ui.showToast( LJ.text("chat_sync_done") );
 
 					})
 					.catch(function( err ){
