@@ -367,6 +367,11 @@
 				LJ.ui.showToast( LJ.text('to_update_pic_success') );
 			}
 
+			if( LJ.isMobileMode() ){
+				$('.js-edit-pictures').removeClass('x--active');
+				LJ.pictures.hidePictureEditOptions();
+			}
+
 
 		},
 		handleUpdatePicturesError: function( res ){

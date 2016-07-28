@@ -1100,6 +1100,10 @@ button:hover {
     background: black;
 }
 
+.toast__msg {
+    text-align: center
+}
+
 
 /* End app toasts */
 

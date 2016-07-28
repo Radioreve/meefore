@@ -31,7 +31,9 @@ window.LJ = _.merge( window.LJ || {}, {
 
         $('body').on('focus', 'input', function(){
 
-            if( LJ.isMobileMode() ){
+            // Disable the scroll on mobile views for map & chat to "block" the ui from going up
+            // Dont do it everywhere else
+            if( LJ.nav.getActiveView() != "menu" && LJ.isMobileMode() ){
                 LJ.ui.deactivateHtmlScroll();
             }
 

@@ -2134,6 +2134,10 @@
 		map_browser_input_placeholder: {
 			"fr": "Où souhaites-tu sortir ?",
 			"us": "Where would you like to go out ?"
+		},
+		mb_logout_btn: {
+			"fr": "Se déconnecter",
+			"us": "Logout"
 		}
 
 

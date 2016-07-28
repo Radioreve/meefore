@@ -51,9 +51,8 @@
     padding-top: 30px;
 }
 
-.menu-section .empty {
-    
-}
+.menu-section .empty {}
+
 .menu-item {
     display: flex;
     position: relative;
@@ -95,8 +94,7 @@
     color: #454545;
 }
 
-.menu-item.x--active .menu-item__body {
-}
+.menu-item.x--active .menu-item__body {}
 
 .menu-item.x--active .menu-item__icon {
     /* border: 2px solid; */
@@ -112,6 +110,7 @@
 .menu-item__body i.icon-meedrink {
     transform: rotate(20deg);
 }
+
 .menu-item__body h3 {
     font-weight: 500;
     margin: 0px;
@@ -149,9 +148,20 @@
     color: #454545;
 }
 
-.update-pictures {margin-bottom: 15px;font-weight: 600;font-size: 14px;border: 1px solid;padding: 10px 45px;color: #1b69ec;}
+.update-pictures {
+    margin-bottom: 15px;
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid;
+    padding: 10px 45px;
+    color: #1b69ec;
+}
 
-.update-pictures.x--active {color: #a3bbe4;}
+.update-pictures.x--active {
+    color: #a3bbe4;
+    border-color: #a3bbe4
+}
+
 .menu__loader {
     width: 32px;
 }
@@ -231,7 +241,7 @@
 }
 
 .row-pic__filterlay {
-	position: absolute;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -251,7 +261,6 @@
 }
 
 @media (max-width: 400px) {
-
     .app-subheader.x--menu h3 {
         display: none;
     }
