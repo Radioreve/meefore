@@ -885,10 +885,6 @@
         },
         sendSeenBy: function( chat_id ){
 
-        	if( !LJ.user.app_preferences.ux.message_seen ){
-        		return;
-        	}
-
         	var last_message = LJ.chat.getLastChatMessage( chat_id );
 
 			if( !last_message ){
@@ -918,10 +914,6 @@
 
         },
         sendSeenByProxy: function( chat_id, skip_cache ){
-
-        	if( !LJ.user.app_preferences.ux.message_seen ){
-        		return;
-        	}
         	
         	var last_message = LJ.chat.getLastChatMessage( chat_id );
 

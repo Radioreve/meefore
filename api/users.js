@@ -603,6 +603,18 @@
 
 	};
 
+	var fetchUserNotifications = function( req, res, next ){
+
+		var err_ns = "fetching_user_notifications";
+
+		var user        = req.sent.user;
+		var facebook_id = req.sent.user_id;
+
+		req.sent.expose.notifications = user.notifications;
+		next();
+
+	};
+
 	// Update user in a 'rest' way with a patch
 	// Make use of the custom patch method (see UserModel for code)
 	var updateUser = function( req, res, next ){
@@ -667,7 +679,8 @@
 
 		});
 
-	}
+	};
+
 
 	module.exports = {
 		fetchMe 				  	 : fetchMe,
@@ -688,6 +701,7 @@
 		updateNotificationsSeenAt 	 : updateNotificationsSeenAt,
 		updateNotificationsClickedAt : updateNotificationsClickedAt,
 		fetchUserCheers 			 : fetchUserCheers,
+		fetchUserNotifications 		 : fetchUserNotifications,
 		deleteUser 					 : deleteUser
 
 	};

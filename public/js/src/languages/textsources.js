@@ -1233,28 +1233,32 @@
 			"us": "There are currently %n meefore for this party"
 		},
 		n_accepted_in_text: {
-			"fr": "Vous avez un Match !",
-			"us": "It's a Match !"
+			"fr": "Nouveau Match !",
+			"us": "New Match !"
 		},
-		n_accepted_in_subtext: {
-			"fr": "Faites connaissance dès maintenant",
-			"us": "Get to know each other now"
+		n_accepted_in_hosts_subtext: {
+			"fr": "Vous avez accepté un Cheers",
+			"us": "You have accepted a Cheers"
+		},
+		n_accepted_in_members_subtext: {
+			"fr": "Votre Cheers a été accepté",
+			"us": "Your Cheers have been accepted"
 		},
 		n_group_request_hosts_text: {
-			"fr": "Cheers reçu",
-			"us": "Cheers received"
+			"fr": "Cheers reçu de %name",
+			"us": "Cheers received by %name"
 		},
 		n_group_request_hosts_subtext: {
 			"fr": "Un groupe a montré un intérêt pour votre before",
 			"us": "A group seems to be interested by your pregame"
 		},
 		n_group_request_members_text: {
-			"fr": "Cheers envoyé",
-			"us": "Cheers sent"
+			"fr": "Cheers envoyé par %name",
+			"us": "Cheers sent by %name"
 		},
 		n_group_request_members_subtext: {
-			"fr": "%name a envoyé un Cheers avec vous",
-			"us": "%name has sent a Cheers with you"
+			"fr": "avec %names",
+			"us": "with %names"
 		},
 		n_marked_as_host_text: {
 			"fr": "Marqué coorganisateur par %name",
@@ -1296,8 +1300,8 @@
 			"us": "Meet new people before going out"
 		},
 		n_before_canceled_text: {
-			"fr": "Before annulé",
-			"us": "Pregame canceled"
+			"fr": "Before annulé par %name",
+			"us": "Pregame canceled by %name"
 		},
 		n_before_canceled_subtext: {
 			"fr": "%address",
@@ -2008,19 +2012,19 @@
 			"us": "See everyone"
 		},
 		chat_inview_options_message_show_users_team: {
-			"fr": "Membres de mon groupe",
-			"us": "Members of my group"
+			"fr": "Voir les membres de mon groupe",
+			"us": "See the members of my group"
 		},
 		chat_inview_options_message_show_before: {
-			"fr": "Le before",
-			"us": "The pregame"
+			"fr": "Voir le before",
+			"us": "See the pregame"
 		},
 		chat_inview_users_group_users: {
-			"fr": "Participants",
-			"us": "Requesters"
+			"fr": "Membres du groupe",
+			"us": "Group members"
 		},
 		chat_inview_users_group_hosts: {
-			"fr": "Organisateurs",
+			"fr": "Organisateurs du before",
 			"us": "Hosts"
 		},
 		chat_groupname_all: {
@@ -2138,6 +2142,30 @@
 		mb_logout_btn: {
 			"fr": "Se déconnecter",
 			"us": "Logout"
+		},
+		ago_just_now: {
+			"fr": "A l'instant !",
+			"us": "Just now !"
+		},
+		ago_n_minutes: {
+			"fr": "il y a %n minute(s)",
+			"us": "%n minute(s) ago"
+		},
+		ago_yesterday: {
+			"fr": "hier",
+			"us": "yesterday"
+		},
+		ago_n_hours: {
+			"fr": "il y a %n heure(s)",
+			"us": "%n hour(s) ago"
+		},
+		ago_n_days: {
+			"fr": "il y a %n jour(s)",
+			"us": "%n day(s) ago"
+		},
+		ago_n_weeks: {
+			"fr": "il y a %n semaine(s)",
+			"us": "%n week(s) ago"
 		}
 
 

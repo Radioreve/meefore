@@ -125,7 +125,11 @@
 
 		},
 		showFilters: function(){
-			
+				
+			if( LJ.isMobileMode() ){
+				LJ.ui.deactivateHtmlScroll();
+			}
+
 			var $fi    = $('.search-filters__icon');
 			var $f     = $('.search-filters');
 			var d      = LJ.search.filters_duration;
@@ -147,6 +151,10 @@
 
 		},
 		hideFilters: function(){
+
+			if( LJ.isMobileMode() ){
+				LJ.ui.activateHtmlScroll();
+			}
 
 			var $fi    = $('.search-filters__icon');
 			var $f     = $('.search-filters');

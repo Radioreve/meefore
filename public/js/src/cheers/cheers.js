@@ -38,6 +38,11 @@
 		},
 		handleCloseCheersBack: function(){
 
+			if( LJ.isMobileMode() ){
+				LJ.nav.navigate("menu");
+				LJ.menu.activateMenuSection("cheers");
+			}
+
 			var close_type = LJ.cheers.getCloseType();
 
 			if( [ "hide_all", "hide_cheers_back" ].indexOf( close_type ) == -1 ){

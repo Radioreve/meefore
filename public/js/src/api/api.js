@@ -11,6 +11,7 @@
 		fetch_shared_url		  	 	 	: '/api/v1/users/:user_id/shared',
 		fetch_meepass_url 		  	 	 	: '/api/v1/users/:user_id/meepass',
 		fetch_cheers_url 		  	 	 	: '/api/v1/users/:user_id/cheers',
+		fetch_notifications_url 			: '/api/v1/users/:user_id/notifications',
 		fetch_user_core_url 	   	  	  	: '/api/v1/users/:user_id/core',
 		fetch_user_full_url    	 	 	    : '/api/v1/users/:user_id/full',
 		fetch_more_channels_url 	 	 	: '/api/v1/users/:user_id/channels',
@@ -195,6 +196,18 @@
 			return LJ.promise(function( resolve, reject ){
 
 				LJ.api.get( LJ.api.fetch_cheers_url.replace(':user_id', LJ.user.facebook_id) )
+					  .then(function( exposed ){
+					  		return resolve( exposed );
+					  }, function( err ){
+					  		return reject( err );
+					  });
+			});
+		},
+		fetchMeNotifications: function(){
+
+			return LJ.promise(function( resolve, reject ){
+
+				LJ.api.get( LJ.api.fetch_notifications_url.replace(':user_id', LJ.user.facebook_id) )
 					  .then(function( exposed ){
 					  		return resolve( exposed );
 					  }, function( err ){

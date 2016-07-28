@@ -18,6 +18,16 @@
     display: none;
 }
 
+.notifications__loader {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    z-index: 1;
+}
+
 .notifications-panel .jspVerticalBar {
     right: 6px;
 }
@@ -41,6 +51,7 @@
     padding: 0 16px 0 8px;
     border-radius: 4px;
     cursor: pointer;
+    position: relative;
 } 
 
 .notification:hover {
@@ -49,6 +60,12 @@
 }
 
 
+.notification-picture {display: flex;overflow: hidden;width: 58px;height: 58px;justify-content: center;align-items: center;position: relative;color: #919191;background: #eee;flex-shrink: 0;}
+
+.notification-picture  img {
+    width: 100%;
+    height: 100%;
+}
 .notification--header {
     /* height: 74px; */
     /* display: flex; */
@@ -203,6 +220,7 @@ Whispereen  : #58c170
 
 .notification.x--clicked .notification-message__text {
     font-weight: 500;
+    height: 15px;
 }
 
 .notification.x--clicked .notification-message__subtext {
@@ -246,6 +264,8 @@ Whispereen  : #58c170
     width: 9px;
 }
 
+
+.notification.x--outdated {opacity: .3;}
 
 
 @media (max-width: 650px ){

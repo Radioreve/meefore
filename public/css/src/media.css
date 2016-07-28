@@ -265,4 +265,10 @@
         font-size: 14px;
         font-weight: 600;
     }
+
+    .notification .notification__date {
+        position: absolute!important;
+        top: 2px!important;
+        right: 0px!important;
+    }
 }

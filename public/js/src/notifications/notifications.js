@@ -1,26 +1,105 @@
 
-	
 	window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
 
 		state : 'hidden',
 		jsp_id: 'notifications',
+		fetched_users: [],
 
 		init: function(){
 
+			LJ.notifications.handleDomEvents();
+
 			return LJ.notifications.addNotificationsPanel()
-					.then(function(){
-						LJ.notifications.refreshNotifications();
-						LJ.notifications.handleDomEvents();
-					});
+				.then(function(){
+					return LJ.notifications.fetchAndAddNotifications();
+				});
 
 		},
+		fetchAndAddNotifications: function( opts ){
+			
+			opts = opts || {};
+			
+			LJ.notifications.clearNotifications();
+			LJ.notifications.showNotificationsLoader();
+				
+			// Clear notifications & showloader
+			// Fetch notifications 
+			// Fetch the profiles user is gonna need to render pictures and names
+			// Hide loader and call refresh
+			LJ.notifications.fetchNotifications()
+
+				.then(function( res ){
+					LJ.user.notifications = opts.notifications || res.notifications;
+					return LJ.notifications.fetchUsersProfiles();
+
+				})
+				.then(function( res ){
+					LJ.notifications.fetched_users = _.filter( _.map( res, 'user' ), Boolean );
+
+				})
+				.then(function(){
+
+					LJ.notifications.hideNotificationsLoader();
+					LJ.notifications.refreshNotifications();
+
+				});
+
+		},
+		showNotificationsLoader: function(){
+
+			$( LJ.static.renderStaticImage('notifications_loader') )
+				.addClass('notifications__loader')
+				.appendTo('.notifications-panel');
+
+		},
+		hideNotificationsLoader: function(){
+
+			$('.notifications-panel').find('.notifications__loader').remove();
+
+		},	
+		fetchNotifications: function(){
+
+			return LJ.api.fetchMeNotifications();
+
+		},
+		clearNotifications: function(){
+
+			$('.js-notification-item').remove();
+			LJ.user.notifications = [];
+
+		},	
 		handleDomEvents: function(){
 
 			$('.app__menu-item.x--notifications').click( LJ.notifications.handleToggleNotifications );
 			$('.app__menu-item.x--notifications').click( LJ.notifications.updateNotificationsSeenAt );
-			$('.notifications-panel').on('click', '.notification', LJ.notifications.updateNotificationClickedAt );
-
+			LJ.ui.$body.on('click', '.notification', LJ.notifications.updateNotificationClickedAt );
 			LJ.ui.$body.on('click', LJ.notifications.handleHideNotifications );
+
+		},
+		getUniqUserIds: function(){
+
+			var user_ids = [];
+			LJ.user.notifications.forEach(function( n ){
+
+				user_ids = user_ids.concat( n.hosts );
+				user_ids = user_ids.concat( n.members );
+
+			});
+
+			return _.uniq( user_ids ).filter( Boolean );
+
+		},
+		getUserProfiles: function( user_ids ){
+
+			return _.filter( LJ.notifications.fetched_users, function( u ){
+				return user_ids.indexOf( u.facebook_id ) != -1;
+			});
+
+		},
+		fetchUsersProfiles: function(){
+
+			var user_ids = LJ.notifications.getUniqUserIds();
+			return LJ.api.fetchUsers( user_ids );
 
 		},
 		getNotification: function( n_id ){
@@ -38,6 +117,7 @@
 		refreshNotifications: function(){
 
 			LJ.ui.adjustWrapperHeight( $('.notifications-panel') );
+			LJ.notifications.markOutdatedNotifications();
 			LJ.notifications.addAndShowNotifications();
 			LJ.notifications.refreshNotificationsOrder();
 			LJ.notifications.refreshNotificationsJsp();
@@ -55,6 +135,32 @@
 
 			var $i = $('.app__menu-item.x--notifications');
 			LJ.ui.bubbleUp( $i );
+
+		},
+		// Concat all notifications regarding the same before to only keep the last one
+		// Esentially, its frontend logic to clear a before that has been cancele or ended
+		markOutdatedNotifications: function(){
+	
+			var n_groups = _.groupBy( LJ.user.notifications, 'before_id' );
+			_.keys( n_groups ).forEach(function( before_id ){
+				
+				
+				n_groups[ before_id ].sort(function( n1, n2 ){
+
+					if( moment( n1.happened_at ) > moment( n2.happened_at ) ){
+						return -1
+					} else {
+						return 1;
+					}
+
+				})
+				.slice( 1 )
+				.forEach(function( n ){
+					n.is_outdated = true;
+				});
+
+			});	
+
 
 		},
 		refreshNotificationsBubble: function(){
@@ -275,15 +381,31 @@
 			return LJ.notifications.renderNotificationsElement('wrapper');
 
 		},
-		renderNotification__RequestAcceptedHosts: function( notification ){
+		renderNotification__FillProfile: function( notification ){
 
-			var options    = {};
-			var group_html = LJ.notifications.renderNotificationsElement('group_name');
+			var options = {};
 			
-			options.icon_code   = "chat-bubble-duo";
-			options.text        = LJ.text("n_accepted_in_text");
-			options.subtext     = LJ.text("n_accepted_in_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+			options.picture     = "question-mark";
+			options.text        = LJ.text("n_fill_profile_text");
+			options.subtext     = LJ.text("n_fill_profile_subtext");
+
+			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
+
+
+		},
+		renderNotification__RequestAcceptedHosts: function( notification ){
+			
+			var options     = {};
+			var is_host     = notification.hosts.indexOf( LJ.user.facebook_id ) != -1;
+			var accepted_by = notification.accepted_by
+			
+			var others      = is_host ? notification.members : notification.hosts;
+			var profiles    = LJ.notifications.getUserProfiles( others );
+			
+			
+			options.picture = LJ.pictures.makeGroupRosace( profiles, 2, "notification" );
+			options.text    = LJ.text("n_accepted_in_text");
+			options.subtext = LJ.text("n_accepted_in_hosts_subtext");
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
@@ -291,58 +413,54 @@
 		// Identical to the one just above, for now at least 
 		renderNotification__RequestAcceptedMembers: function( notification ){
 
-			var options    = {};
-			var group_html = LJ.notifications.renderNotificationsElement('group_name');
+			var options     = {};
+			var is_host     = notification.hosts.indexOf( LJ.user.facebook_id ) != -1;
+			var accepted_by = notification.accepted_by
 			
-			options.icon_code   = "chat-bubble-duo";
-			options.text        = LJ.text("n_accepted_in_text");
-			options.subtext     = LJ.text("n_accepted_in_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+			var others      = is_host ? notification.members : notification.hosts;
+			var profiles    = LJ.notifications.getUserProfiles( others );
+			
+			options.picture = LJ.pictures.makeGroupRosace( profiles, 2, "notification" );
+			options.text    = LJ.text("n_accepted_in_text");
+			options.subtext = LJ.text("n_accepted_in_members_subtext");
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
 		},
-		renderNotification__FillProfile: function( notification ){
-
-			var options = {};
-			
-			options.icon_code   = "question-mark";
-			options.text        = LJ.text("n_fill_profile_text");
-			options.subtext     = LJ.text("n_fill_profile_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
-
-			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
-
-		},
+		// Cheers reçu
 		renderNotification__GroupRequestHosts: function( notification ){
 
 			var options = {};
+			var is_host = notification.hosts.indexOf( LJ.user.facebook_id ) != -1;
 
-			options.icon_code   = "meedrink";
-			options.text        = LJ.text("n_group_request_hosts_text");
+			var others   = is_host ? notification.members : notification.hosts;
+			var profile  = LJ.notifications.getUserProfiles( others )[ 0 ]
+
+			options.picture     = LJ.pictures.makeImgHtml( profile.img_id, profile.img_vs, "notification" );
+			options.text        = LJ.text("n_group_request_hosts_text").replace('%name', profile.name);
 			options.subtext     = LJ.text("n_group_request_hosts_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
 		},
+		// Cheers envoyé
 		renderNotification__GroupRequestMembers: function( notification ){
 
 			var options = {};
 
-			var friend = LJ.friends.getFriendProfile( notification.main_member );
+			var friend  = LJ.notifications.getUserProfiles([ notification.main_member ])[ 0 ];
+			var friends = LJ.notifications.getUserProfiles( notification.members );
+			var name    = friend && friend.name;
+			var names   = LJ.renderMultipleNames( _.map( friends, 'name' ), { lastify_user: LJ.user.name } );
 
-			var name = friend && friend.name;
-
-			options.icon_code   = "meedrink";
-			options.text        = LJ.text("n_group_request_members_text");
-			options.subtext     = LJ.text("n_group_request_members_subtext").replace( '%name', name );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
+			options.picture     = LJ.pictures.makeImgHtml( friend.img_id, friend.img_vs, "notification" );
+			options.text        = LJ.text("n_group_request_members_text").replace('%name', name);
+			options.subtext     = LJ.text("n_group_request_members_subtext").replace( '%names', names );
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
 		},
+		// Marqué(e) coorganisateur
 		renderNotification__MarkedAsHost: function( notification ){
 
 			var options = {};
@@ -350,16 +468,12 @@
 			var address   = notification.address;
 			var date 	  = moment( notification.begins_at ).format('DD/MM');
 
-			var friend = LJ.friends.getFriendProfile( main_host );
-
-			if( !friend ) return LJ.wlog('Cannot render marked as host, couldnt find friend: ' + friend );
-
-			var friend_name = friend.name;
+			var friend = LJ.notifications.getUserProfiles([ notification.main_host ])[ 0 ];
+			var name   = friend && friend.name;
 			
-			options.icon_code   = "star";
-			options.text        = LJ.text("n_marked_as_host_text").replace('%name', friend_name );
+			options.picture     = LJ.pictures.makeImgHtml( friend.img_id, friend.img_vs, "notification" );
+			options.text        = LJ.text("n_marked_as_host_text").replace('%name', name );
 			options.subtext     = LJ.text("n_marked_as_host_subtext").replace('%date', date ).replace('%address', address );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
@@ -370,10 +484,9 @@
 
 			var new_friends = _.map( notification.new_friends, 'facebook_name' );
 			
-			options.icon_code   = "users";
+			options.picture     = '<i class="icon icon-users"></i>';
 			options.text 		= LJ.text("n_new_friends_text", new_friends );
 			options.subtext     = LJ.text("n_new_friends_subtext", new_friends );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
@@ -382,11 +495,13 @@
 
 			var options = {};
 			var address = notification.address;
-			
-			options.icon_code   = "line";
-			options.text        = LJ.text("n_before_canceled_text");
+				
+			var canceled_by = notification.canceled_by;
+			var profile 	= LJ.notifications.getUserProfiles([ canceled_by ])[ 0 ];
+
+			options.picture     = LJ.pictures.makeImgHtml( profile.img_id, profile.img_vs, "notification" );
+			options.text        = LJ.text("n_before_canceled_text").replace('%name', profile.name)
 			options.subtext     = LJ.text("n_before_canceled_subtext").replace('%address', address);
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 			
@@ -400,10 +515,9 @@
 			var name = friend && friend.name;
 			var type = notification.target_type == "user" ? LJ.text('w_profile') : LJ.text('w_before');
 
-			options.icon_code   = "forward";
+			options.picture     = '<i class="icon icon-forward"></i>';
 			options.text        = LJ.text("n_item_shared_text").replace( '%name', name );
 			options.subtext     = LJ.text("n_item_shared_subtext").replace( '%name', name ).replace( '%type', type );
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 			
@@ -412,10 +526,9 @@
 
 			var options = {};
 			
-			options.icon_code   = "heart";
+			options.picture     = '<i class="icon icon-heart"></i>';
 			options.text        = LJ.text("n_inscription_success_text");
 			options.subtext     = LJ.text("n_inscription_success_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
@@ -425,10 +538,9 @@
 
 			var options = {};
 			
-			options.icon_code   = "add-friend";
+			options.picture     = '<i class="icon icon-add-friend"></i>';
 			options.text        = LJ.text("n_no_friends_text");
 			options.subtext     = LJ.text("n_no_friends_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
@@ -437,11 +549,10 @@
 		renderNotification__CheckEmail: function( notification ){
 
 			var options = {};
-			
-			options.icon_code   = "arobat";
+				
+			options.picture     = '<i class="icon icon-arobat"></i>';
 			options.text        = LJ.text("n_check_email_text");
 			options.subtext     = LJ.text("n_check_email_subtext");
-			options.happened_at = LJ.notifications.stringifyDuration( notification.happened_at );
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 
@@ -449,7 +560,11 @@
 		},
 		renderNotificationItem: function( options ){
 
-			return LJ.notifications.renderNotificationsElement( 'item', options );
+			try {
+				return LJ.notifications.renderNotificationsElement( 'item', options );
+			} catch( e ){
+				return LJ.notifications.renderNotificationsElement( 'error', options );
+			}
 
 		},
 		renderNotificationsElement: function( element, options ){
@@ -472,71 +587,90 @@
                             '<div data-lid="n_footer_text" class="notification--footer_text">This is the footer</div>',
                         '</div>',
                     '</div>'
-                ].join(''));
+                ]);
 
             }
 
             if( element == "item" ){
 
 				var type            = options.type;
-				var icon_code       = options.icon_code;
+				var picture         = options.picture;
 				var text            = options.text;
 				var subtext         = options.subtext;
-				var happened_at     = options.happened_at;
+				var happened_at     = LJ.notifications.makeFormattedDate( options.happened_at );
 				var notification_id = options.notification_id;
-
-				var happened_at_html = happened_at ? '<div class="notification__date">' + happened_at + '</div>' : '';
+				var is_oudated_html = options.is_outdated ? "x--outdated" : "";
 
             	return LJ.ui.render([
-            		'<div class="notification js-notification-item" data-type="'+ type +'" data-notification-id="'+ notification_id +'">',
-                    	'<div class="notification__icon x--round-icon"><i class="icon icon-' + icon_code + '"></i></div>',
+            		'<div class="notification js-notification-item '+ is_oudated_html +'" data-type="'+ type +'" data-notification-id="'+ notification_id +'">',
+            			'<div class="notification-picture js-filterlay x--round-icon">'+ picture +'</div>',
                     	'<div class="notification-message">',
 	                    	'<div class="notification-message__text">' + text + '</div>',
 	                    	'<div class="notification-message__subtext">' + subtext + '</div>',
                     	'</div>',
-                    	happened_at_html,
+                    	'<div class="notification__date">' + happened_at + '</div>',
                     '</div>',
-            	].join(''));
+            	]);
             }
 			
+			if( element == "error" ){
+
+				var type            = options.type;
+				var happened_at     = LJ.notifications.makeFormattedDate( options.happened_at );
+				var notification_id = options.notification_id;
+
+				return LJ.ui.render([
+					'<div class="notification">',
+						'<div class="notification-picture x--round-icon">',
+							'<i class="icon icon-question-mark"></i>',
+						'</div>',
+						'<div class="notification-message">',
+	                    	'<div class="notification-message__text"><span>Notification 404 !</span></div>',
+	                    	'<div class="notification-message__subtext">Une petite erreur s\'est produite</div>',
+                    	'</div>',
+					'</div>'
+				]);
+			}
 
 		},
-		stringifyDuration: function( happened_at ){
+		makeFormattedDate: function( happened_at, modes ){
 
-			var m = moment( happened_at );
-
-			var hour = m.hour();
-			var minute = m.minute();
-
-			if( hour == 0 ){
-				hour = "00";
-			}
-
-			if( minute < 10 ){
-				minute = "0" + minute;
-			}
-
+			var m   = moment( happened_at );
 			var now = moment();
 
-			if( (now - m)/1000 < 5 * 60 ){
-				return LJ.text("h_sec_ago");
+			var diff_in_sec     = ( now - m ) / 1000;
+			var diff_in_minutes = Math.floor( ( now - m ) / ( 1000 * 60 ) );
+			var diff_in_hours   = Math.floor( ( now - m ) / ( 1000 * 60 * 60 ) );
+			var diff_in_days    = Math.floor( ( now - m ) / ( 1000 * 60 * 60 * 24 ) );
+			var diff_in_weeks   = Math.floor( ( now - m ) / ( 1000 * 60 * 60 * 24 * 7) );
+
+			var five_min    = 5 * 60;
+			var one_hour    = 60 * 60;
+			var one_day     = 60 * 60 * 24;
+			var two_days    = 60 * 60 * 24 * 2;
+			var one_week    = 60 * 60 * 24 * 7;
+
+			if( diff_in_sec < five_min ){
+				return LJ.text("ago_just_now");
 			}
 
-			if( (now - m)/1000 < 15 * 60 ){
-				return LJ.text("h_min_ago");
+			if( diff_in_sec < one_hour ){
+				return LJ.text("ago_n_minutes").replace('%n', diff_in_minutes );
 			}
 
-			if( (now - m)/1000 < 3600 ){
-				return LJ.text("h_hour_ago");
+			if( diff_in_sec < one_day ){
+				return LJ.text("ago_n_hours").replace('%n', diff_in_hours );
 			}
 
-			if( m.dayOfYear() == now.dayOfYear() ){
-				return LJ.text("h_today").replace('%h', hour ).replace('%m', minute );
+			if( diff_in_sec < two_days ){
+				return LJ.text("ago_yesterday");
 			}
 
-			return LJ.text("h_past").replace('%moment', m.format('DD/MM'))
-															  .replace('%h', hour )
-															  .replace('%m', minute )
+			if( diff_in_sec < one_week ){
+				return LJ.text("ago_n_days").replace('%n', diff_in_days );
+			}
+
+			return LJ.text("ago_n_weeks").replace('%n', diff_in_weeks );
 			
 
 		},

@@ -114,22 +114,60 @@
 
 	}
 
+	function addNotification__NewFriends( req, res, next ){
+
+		var new_friends = req.sent.new_friends;
+		var user 		= req.sent.user;
+
+		if( new_friends.length > 0 ){
+			
+			var n = {
+				type : "new_friends",
+				new_friends     : new_friends,
+				happened_at     : new Date(),
+				seen_at 		: null,
+				clicked_at 		: null
+			};
+
+			n.notification_id = hash( n );
+			
+			user.notifications.push( n );
+			user.markModified('notifications');
+			user.save(function( err, user ){
+
+				if( err ) return handleErr( req, res, err_ns, err );
+
+				next();
+
+			});
+
+		} else {
+			next();
+
+		}
+
+	}
+
 
 	function addNotification__GroupStatus( req, res, next ){
 
 		var type = "accepted_in";
 
-		var status    = req.sent.status;
-		var requester = req.sent.facebook_id;
-		var before_id = req.sent.before._id;
-		var members   = req.sent.group.members;
-		var hosts 	  = req.sent.before.hosts;
+		var status      = req.sent.status;
+		var accepted_by = req.sent.facebook_id;
+		var before_id   = req.sent.before._id;
+		var members     = req.sent.group.members;
+		var hosts 	    = req.sent.before.hosts;
 
 		var n = {
-			before_id   : before_id,
-			happened_at : new Date(),
-			seen_at 	: null,
-			clicked_at 	: null
+			before_id     : before_id,
+			happened_at   : new Date(),
+			members 	  : members,
+			accepted_by   : accepted_by,
+			before_id     : before_id,
+			hosts 	      : hosts,
+			seen_at 	  : null,
+			clicked_at 	  : null
 		};
 
 		n.notification_id = hash( n );
@@ -167,40 +205,6 @@
 
 	}
 
-	function addNotification__NewFriends( req, res, next ){
-
-		var new_friends = req.sent.new_friends;
-		var user 		= req.sent.user;
-
-		if( new_friends.length > 0 ){
-			
-			var n = {
-				type : "new_friends",
-				new_friends     : new_friends,
-				happened_at     : new Date(),
-				seen_at 		: null,
-				clicked_at 		: null
-			};
-
-			n.notification_id = hash( n );
-			
-			user.notifications.push( n );
-			user.markModified('notifications');
-			user.save(function( err, user ){
-
-				if( err ) return handleErr( req, res, err_ns, err );
-
-				next();
-
-			});
-
-		} else {
-			next();
-
-		}
-
-	}
-
 	function addNotification__GroupRequest( req, res, next ){
 
 		var type = "group_request";
@@ -211,13 +215,13 @@
 		var main_member = req.sent.facebook_id;
 
 		var n = {
-			members 	    : members,
-			main_member 	: main_member,
-			hosts 			: hosts,
-			before_id   	: before_id,
-			happened_at		: new Date(),
-			seen_at 		: null,
-			clicked_at 		: null
+			members 	: members,
+			main_member : main_member,
+			hosts 		: hosts,
+			before_id   : before_id,
+			happened_at	: new Date(),
+			seen_at 	: null,
+			clicked_at 	: null
 		};
 
 		n.notification_id = hash( n );
@@ -258,18 +262,20 @@
 
 		var before_id = before._id;
 		var main_host = before.main_host;
+		var hosts 	  = before.hosts;
 		var address   = before.address.place_name;
 		var begins_at = before.begins_at;
 
 		var n = {
-			type : type,
-			before_id	    : before_id,
-			main_host       : main_host,
-			address 		: address,
-			begins_at  	    : begins_at,
-			happened_at     : new Date(),
-			seen_at 		: null,
-			clicked_at 		: null
+			type		: type,
+			before_id	: before_id,
+			main_host   : main_host,
+			hosts 		: hosts,
+			address 	: address,
+			begins_at  	: begins_at,
+			happened_at : new Date(),
+			seen_at 	: null,
+			clicked_at 	: null
 		};
 
 		n.notification_id = hash( n );
@@ -313,7 +319,7 @@
 		var n = {
 			type 		 : "before_canceled",
 			before_id	 : before_id,
-			requester    : facebook_id,
+			canceled_by  : canceled_by,
 			address 	 : before.address.place_name,
 			seen_at 	 : null,
 			clicked_at 	 : null,

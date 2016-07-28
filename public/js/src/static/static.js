@@ -39,6 +39,11 @@
 				'param'       : { 'class': 'be-create__loader', 'width': 32  }
 			},
 			{
+				'access_name' : 'notifications_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param'       : { 'class': '', 'width': 32  }
+			},
+			{
 				'access_name' : 'chat_loader',
 				'image_id'    : 'loader_circular_blue_thin',
 				'param'   	  : { 'class': 'chat__loader', 'width': 28  }

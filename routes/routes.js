@@ -241,7 +241,11 @@
 			api.users.fetchUserCheers
 		);
 
-
+		app.get('/api/v1/users/:user_id/notifications',
+			mdw.validate('myself'),
+			mdw.pop.populateUser({ force_presence: true }),
+			api.users.fetchUserNotifications
+		);
 
 
 	    app.get('/api/v1/all',

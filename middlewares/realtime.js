@@ -501,7 +501,7 @@
 		var notification = req.sent.notification;
 
 		// Carefull, must ne the requester location's place_id and not the before one
-		var place_id  = req.sent.requester.location.place_id;
+		var place_id = req.sent.requester.location.place_id;
 
 		var data_users = {
 			before_id 	 : before._id,
