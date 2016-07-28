@@ -1892,8 +1892,8 @@
 			"us": "We are sorry, this pregame just got canceled by one of the hosts."
 		},
 		chat_just_canceled: {
-			"fr": "Un de vos Match vient d'annulé son before. <span>Synchronization en cours...</span>",
-			"us": "One of your Match just canceled his pregame.<span>Resync..."
+			"fr": "Un before a été annulé",
+			"us": "A pregame has been canceled"
 		},
 		be_ended: {
 			"fr": "Le before est terminé",
@@ -2008,12 +2008,12 @@
 			"us": "See everyone"
 		},
 		chat_inview_options_message_show_users_team: {
-			"fr": "Voir les membres de mon groupe",
-			"us": "See members of my group"
+			"fr": "Membres de mon groupe",
+			"us": "Members of my group"
 		},
 		chat_inview_options_message_show_before: {
-			"fr": "Voir le before",
-			"us": "See the pregame"
+			"fr": "Le before",
+			"us": "The pregame"
 		},
 		chat_inview_users_group_users: {
 			"fr": "Participants",

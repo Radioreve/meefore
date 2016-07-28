@@ -29,6 +29,14 @@ window.LJ = _.merge( window.LJ || {}, {
             LJ.ui.activateHtmlScroll();
         });
 
+        $('body').on('focus', 'input', function(){
+
+            if( LJ.isMobileMode() ){
+                LJ.ui.deactivateHtmlScroll();
+            }
+
+        });
+
                 
     },
     promise: function( callback ){
