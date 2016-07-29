@@ -19,7 +19,7 @@
 			}
 
 			if( type == 'error' ){
-				show_duration = 5000;
+				show_duration = 4000;
 			}
 
 			if( $( '.toast' ).length === 0 ){	
@@ -36,7 +36,7 @@
 						
 						$toast.velocity('slideUpOut', {
 							duration: 300,
-							delay: show_duration || 3000,
+							delay: show_duration || 2000,
 							complete: function(){
 								$(this).remove();
 								if( LJ.ui.msg_queue.length != 0 )
