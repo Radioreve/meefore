@@ -66,7 +66,7 @@
 					"us": [
 							'By continuing, you\'re agreeing to our <span class="js-terms landing-bold">Terms</span>',
 							'and <span class="js-privacy landing-bold">Confidentiality.</span>',
-							' We will <span class="landing-bold">never</span> publish on Facebook.'
+							' <br>We will <span class="landing-bold">never</span> publish on Facebook.'
 						].join('')
 				},
 				"landing_connexion_btn": {
