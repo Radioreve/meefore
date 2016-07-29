@@ -30,7 +30,7 @@
 					tasks.push(function( done ){
 
 						// Update part
-						user.mailchimp_id = null;
+						user.notifications = [];
 
 						user.save(function( err ){
 							if( err ) console.log('Error : ' + err );

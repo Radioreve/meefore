@@ -8,7 +8,6 @@
 
 		replace_slide_duration: 300,
 
-		show_slide_delay   : 0,
 		show_slide_delay_children: 500,
 		hide_slide_delay   : 250,
 
@@ -50,19 +49,23 @@
 
 				var $l = $('.slide.x--'+ options.type ).find('.slide__loader');
 				
-				$l.siblings(':not(.slide__close)').velocity('shradeOut', {
-					duration : LJ.ui.replace_slide_duration,
-					display  : 'none',
-					complete: function(){
-						$(this).remove();
-						resolve();
-					}
-				});
+				// $l.siblings(':not(.slide__close)').velocity('shradeOut', {
+				// 	duration : LJ.ui.replace_slide_duration,
+				// 	display  : 'none',
+				// 	complete: function(){
+				// 		$(this).remove();
+				// 		resolve();
+				// 	}
+				// });
 
-				$l.velocity('shradeIn', {
-					duration : LJ.ui.replace_slide_duration / 1.5,
-					delay    : LJ.ui.replace_slide_duration
-				})
+				$l.velocity('bounceInQuick', { duration: 500, display: 'block' });
+				$l.siblings(':not(.slide__close)').remove();
+				LJ.delay( 650 ).then( resolve );
+
+				// $l.velocity('shradeIn', {
+				// 	duration : LJ.ui.replace_slide_duration / 1.5
+				// 	delay    : LJ.ui.replace_slide_duration
+				// });
 
 			});
 		},
@@ -83,14 +86,15 @@
 					  .appendTo('body')
 					  .css({ 'top': LJ.ui.slide_top, 'height': height })
 					  .velocity('shradeIn', {
-					  	delay    : LJ.ui.show_slide_delay,
 					  	display  : 'flex',
 					  	duration : LJ.ui.show_slide_duration,
 					  	complete : resolve
 					  })
 					  .on('click', '.slide__close', function(){
+					  	
 					  	LJ.ui.activateHtmlScroll();
 					  	LJ.ui.hideSlide( options );
+
 					  	if( typeof options.complete == 'function' ) {
 					  		options.complete();
 					  	}

@@ -2166,6 +2166,14 @@
 		ago_n_weeks: {
 			"fr": "il y a %n semaine(s)",
 			"us": "%n week(s) ago"
+		},
+		cheers_title: {
+			"fr": "Ils veulent faire un before avec toi",
+			"us": "They wanna have a pregame with you"
+		},
+		cheers_subtitle: {
+			"fr": "Sélectionne les groupes qui t'ambiancent le plus et organise ta prochaine soirée",
+			"us": "Select the groups that you like the most and throw your next pregame"
 		}
 
 

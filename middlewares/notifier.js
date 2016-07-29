@@ -319,7 +319,7 @@
 		var n = {
 			type 		 : "before_canceled",
 			before_id	 : before_id,
-			canceled_by  : canceled_by,
+			canceled_by  : facebook_id,
 			address 	 : before.address.place_name,
 			seen_at 	 : null,
 			clicked_at 	 : null,

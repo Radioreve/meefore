@@ -214,8 +214,7 @@
         top: -20px!important;
     }
 
-    .be-request,
-    .be-ended {
+    .be-action {
         position: static;
         flex-shrink: 0!important;
         height: 100px!important;

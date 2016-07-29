@@ -42,7 +42,7 @@
 .login__progress-bar-bg {
     height: 100%;
     width: 0%;
-    transition: all ease-in-out .8s;
+    transition: all ease-in-out .65s;
     background: #1b69ec;
     border-radius: 30px;
 }

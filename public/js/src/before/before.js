@@ -28,7 +28,7 @@
 			LJ.ui.$body.on('click', '.be-dates__date', LJ.before.activateBrowserDate );
 			LJ.ui.$body.on('click', '.be-create.x--ready .be-create__button', LJ.before.handleCreateBefore );
 			LJ.ui.$body.on('click', '.be-inview .user-row', LJ.before.handleClickOnUserRow );
-			// LJ.ui.$body.on('click', '.be-actions__action.x--share', LJ.before.handleShareBefore );
+			// LJ.ui.$body.on('click', '.be-options__option.x--share', LJ.before.handleShareBefore );
 			LJ.ui.$body.on('click', '.js-cancel-before', LJ.before.handleCancelBefore );
 			LJ.ui.$body.on('click', '.slide.x--before .js-show-options', LJ.before.showBeforeOptions );
 			LJ.ui.$body.on('click', '.js-request', LJ.before.handleRequest );
@@ -458,13 +458,13 @@
 			.then(function( expose ){	
 				host_profiles = _.map( expose, 'user' );
 				before        = expose.before;
-				
 				return LJ.before.renderBeforeInview( before, host_profiles );
-
+				
 			})
 			.then(function( before_html ){
 				$container = $('.slide.x--before').find('.slide-body');
 				LJ.before.addBefore( before_html, $container );
+				LJ.before.refreshBeforeInviewAction( before );
 				$content = $container.children(':not(.slide__loader)');
 
 			})
@@ -565,6 +565,7 @@
 			.then(function( before_html ){
 				$container = $('.slide.x--before').find('.slide-body');
 				LJ.before.addBefore( before_html, $container );
+				LJ.before.refreshBeforeInviewAction( before );
 				$content = $container.children(':not(.slide__loader)');
 
 			})
@@ -651,9 +652,40 @@
 		},
 		renderBeforeInview: function( before, host_profiles ){
 
-			var html;
+			LJ.before.active_before  = before;
+			LJ.before.active_hosts   = host_profiles;
+
+			LJ.before.render_mode_active = LJ.before.render_mode_primary;
+			var renderFn = LJ.before.getRenderFn( LJ.before.render_mode_primary );
+
+			return renderFn( before, host_profiles );
+
+		},
+		getBeforeInview: function( before_id ){
+
+			return $('.be-inview');
+
+		},	
+		updateBeforeInview: function( opts ){
+
+			opts = opts || {};
+
+			if( opts.option_html ){
+				LJ.before.getBeforeInview().find('.be-options').prepend( LJ.ui.render([opts.option_html]) );
+			}
+
+			if( opts.action_html ){
+				LJ.before.getBeforeInview().find('.be-action').html( LJ.ui.render([opts.action_html]) );
+			}
+
+		},
+		refreshBeforeInviewAction: function( before ){
+
+			var update = {};
+
 			if( before.hosts.indexOf( LJ.user.facebook_id ) != -1 ){
-        		html = LJ.before.renderBeforeInview__Host( before, host_profiles );
+        		update.action_html = '<div class="be-ended"><span data-lid="be_hosted"></span></div>';
+        		update.option_html = '<div class="be-options__option x--settings x--round-icon js-show-options"><i class="icon icon-cog-empty"></i></div>';
 
         	} else {
         		var my_before = _.find( LJ.user.befores, function( bfr ){
@@ -661,90 +693,23 @@
         		});
 
         		if( !my_before ){
-        			html = LJ.before.renderBeforeInview__UserDefault( before, host_profiles );
+        			update.action_html = '<button class="x--round-icon js-request"><i class="icon icon-meedrink"></i></button>';
         			
         		} else {
         			if( my_before.status == "pending" ){
-        				html = LJ.before.renderBeforeInview__UserPending( before, host_profiles );
+        				update.action_html = '<button class="x--round-icon x--pending js-request-pending"><i class="icon icon-pending"></i></button>';
 
         			} else {
-        				html = LJ.before.renderBeforeInview__UserAccepted( before, host_profiles );
+        				update.action_html = '<button class="x--round-icon x--accepted js-request-accepted"><i class="icon icon-chat-bubble-duo"></i></button>';
 
         			}
         		}
 
         	}
-        	return html;
 
-		},
-		renderBeforeInview__Host: function( before, hosts ){
+        	LJ.before.updateBeforeInview( update );
 
-			return LJ.before.renderBeforeInview__Base( before, hosts, {
-
-				be_action: '<div class="be-actions__action x--settings x--round-icon js-show-options"><i class="icon icon-cog-empty"></i></div>',
-				be_button: LJ.before.renderBeforeInviewBtn__Host()
-
-			});
-
-		},
-		renderBeforeInview__UserDefault: function( before, hosts ){
-
-			return LJ.before.renderBeforeInview__Base( before, hosts, {
-
-				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
-				be_button:  LJ.before.renderBeforeInviewBtn__UserDefault()
-
-			});
-
-		},
-		renderBeforeInview__UserPending: function( before, hosts ){
-
-			return LJ.before.renderBeforeInview__Base( before, hosts, {
-
-				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
-				be_button:  LJ.before.renderBeforeInviewBtn__UserPending()
-
-			});
-
-		},
-		renderBeforeInview__UserAccepted: function( before, hosts ){
-
-			return LJ.before.renderBeforeInview__Base( before, hosts, {
-
-				// be_action: '<div class="be-actions__action x--share x--round-icon"><i class="icon icon-forward"></i></div>',
-				be_button:  LJ.before.renderBeforeInviewBtn__UserAccepted()
-
-			});
-
-		},
-		renderBeforeInviewBtn__Host: function(){
-			return '<div class="be-ended"><span data-lid="be_hosted"></span></div>';
-		},
-		renderBeforeInviewBtn__UserAccepted: function(){
-			return '<button class="x--round-icon x--accepted js-request-accepted"><i class="icon icon-chat-bubble-duo"></i></button>'
-
-		},
-		renderBeforeInviewBtn__UserPending: function(){
-			return '<button class="x--round-icon x--pending js-request-pending"><i class="icon icon-pending"></i></button>'
-
-		},
-		renderBeforeInviewBtn__UserDefault: function(){
-			return '<button class="x--round-icon js-request"><i class="icon icon-meedrink"></i></button>'
-
-		},
-		// renderBeforeInview__Base: LJ.before.renderBeforeInviewHive,
-		renderBeforeInview__Base: function( before, hosts, options ){
-			
-			LJ.before.active_before  = before;
-			LJ.before.active_hosts   = hosts;
-			LJ.before.active_options = options;
-
-			LJ.before.render_mode_active = LJ.before.render_mode_primary;
-			var renderFn = LJ.before.getRenderFn( LJ.before.render_mode_primary );
-
-			return renderFn( before, hosts, options );
-
-		},
+		},	
 		getRenderFn: function( mode ){
 
 			var mode = mode || LJ.before.render_mode_active || LJ.before.render_mode_primary;
@@ -766,9 +731,11 @@
 
 			var renderFn = LJ.before.getRenderFn( mode );
 		
-			$( renderFn( LJ.before.active_before, LJ.before.active_hosts, LJ.before.active_options ) )
+			$( renderFn( LJ.before.active_before, LJ.before.active_hosts ) )
 				.css({ 'display': 'flex' })
 				.replaceAll('.be-inview');
+
+			LJ.before.refreshBeforeInviewAction( LJ.before.active_before, LJ.before.active_hosts )
 
 
 		},
@@ -788,14 +755,6 @@
 				class_names : [ "js-show-profile" ],
 				attach_data : [ "facebook_id" ]
 			});
-
-			var be_action   = options.be_action;
-
-			var be_request = '<div class="be-request">' + options.be_button + '</div>';
-			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
-				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
-			}
-
  
 			return LJ.ui.render([
 
@@ -803,9 +762,8 @@
 					'<div class="be-usernames">',
 						'<span>'+ usernames +'</span>',
 					'</div>',
-		            '<div class="be-actions">',
-		        	  be_action,
-		              '<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',
+		            '<div class="be-options">',
+		              '<div class="be-options__option x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',
 		            '</div>',
 			      	'<div class="be-pictures">',
 			           be_pictures,
@@ -824,7 +782,8 @@
 			            '<span>'+ be_addr +'</span>',
 			          '</div>',
 			        '</div>',
-			        be_request,
+			        '<div class="be-action">',
+			        '</div>',
 		      	'</div>'
 
 			].join(''));
@@ -861,7 +820,6 @@
 		               '</div>',
 		           '</div>',
 		            '<div class="flat-user-actions">',
-		              // '<div class="flat-user__action x--round-icon js-show-profile"><i class="icon icon-main-picture"></i></div>',
 		            '</div>',
 	          '</div>'
 
@@ -881,24 +839,16 @@
 				flat_users.push( LJ.before.renderUserFlat( h ) );
 			});
 			flat_users.push( '</div>' );
-
-			var be_action  = options.be_action;
-
-			var be_request = '<div class="be-request">' + options.be_button + '</div>';
-			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
-				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
-			}
-
  
 			return LJ.ui.render([
 
 				'<div class="be-inview x--flat" data-before-id="'+ before._id +'">',
-					'<div class="be-actions">',
-			          	be_action,
-			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',
+					'<div class="be-options">',
+			          	'<div class="be-options__option x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',
 			        '</div>',
 					flat_users.join(''),
-			        be_request,
+					'<div class="be-action">',
+					'</div>',
 		      	'</div>'
 
 			]);
@@ -915,13 +865,6 @@
 			var be_pictures = LJ.before.renderBeforePictures( hosts );
 			var user_rows   = LJ.renderUserRows( hosts );
 
-			var be_action  = options.be_action;
-			var be_request = '<div class="be-request">' + options.be_button + '</div>';
-
-			if( moment( before.begins_at ).dayOfYear() < moment().dayOfYear() ){
-				be_request = LJ.ui.render('<div class="be-ended"><span data-lid="be_ended"></span></div>');
-			}
-
 			var be_date = LJ.before.renderBeforeDate( before.begins_at );
 			var be_addr = LJ.before.renderBeforeAddress( before.address );
  
@@ -929,9 +872,8 @@
 
 				'<div class="be-inview" data-before-id="'+ before._id +'">',
 			      	'<div class="be-pictures">',
-			          '<div class="be-actions">',
-			          	be_action,
-			          	'<div class="be-actions__action x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',
+			          '<div class="be-options">',
+			          	'<div class="be-options__option x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',
 			          '</div>',
 			          be_pictures,
 			        '</div>',
@@ -946,7 +888,8 @@
 			        '<div class="be-users">',
 			        	user_rows,
 			        '</div>',
-			        be_request,
+			        '<div class="be-action">',
+			        '</div>',
 		      	'</div>'
 
 			]);
@@ -1004,7 +947,7 @@
 					'<div class="ioptions__action-message">',
 						'<span data-lid="slide_overlay_before_message"></span>',
 					'</div>',
-					'<div class="ioptions__action js-cancel-before">',
+					'<div class="ioptions__action x--cancel js-cancel-before">',
 						'<span data-lid="slide_overlay_before_cancel"></span>',
 					'</div>',
 					'<div class="ioptions__action x--back js-ioptions-close">',

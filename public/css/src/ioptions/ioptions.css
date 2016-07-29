@@ -35,6 +35,10 @@
     background: #F7F7F7;
 }
 
+.ioptions__action.x--cancel {
+    color: #d94962;
+}
+
 .ioptions__action.x--back {
     color: #DB4760;
     color: #1b69ec;

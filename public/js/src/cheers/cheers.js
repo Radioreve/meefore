@@ -301,10 +301,10 @@
 				if( ch.cheers_type == "received" ){
 
 					no_cheers_received = false;
-					var main_member_profile = _.find( user_profiles, function( u ){
-						return u.facebook_id == ch.main_member;
+					var members = _.filter( user_profiles, function( u ){
+						return ch.members.indexOf( u.facebook_id ) != -1;
 					});
-					html.push( LJ.cheers.renderCheersItem__Received( ch, main_member_profile, ch.place_name ) );
+					html.push( LJ.cheers.renderCheersItem__Received( ch, members, ch.place_name ) );
 
 				}
 
@@ -405,14 +405,14 @@
 			}
 
 		},
-		renderCheersItem__Received: function( cheers_object, main_requester, address ){
+		renderCheersItem__Received: function( cheers_object, members, address ){
 
 			var ch = cheers_object;
 
-			var formatted_date = LJ.text( "menurow_date", moment(ch.requested_at) );
-			var img_html       = LJ.pictures.makeImgHtml( main_requester.img_id, main_requester.img_vs, 'menu-row' );
+			var formatted_date = LJ.makeFormattedDate( ch.requested_at );
+			var img_html       = LJ.pictures.makeGroupRosace( members, 2, 'menu-row' );
 
-			var groupname 	   = LJ.renderGroupName( main_requester.name );
+			var groupname 	   = LJ.renderMultipleNames( _.map( members, 'name' ) );
 			var groupname_html = LJ.text('cheers_item_title_received').replace('%groupname', groupname);
 
 			var address  	   = ch.place_name;
@@ -436,7 +436,7 @@
 					'</div>',
 				'</div>'
 
-				].join(''));
+				]);
 
 		},
 		renderCheersItemIcon__Sent: function( status ){

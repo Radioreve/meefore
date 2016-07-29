@@ -517,6 +517,47 @@ window.LJ = _.merge( window.LJ || {}, {
                 
             }
 
+        },
+        makeFormattedDate: function( happened_at, modes ){
+
+            var m   = moment( happened_at );
+            var now = moment();
+
+            var diff_in_sec     = ( now - m ) / 1000;
+            var diff_in_minutes = Math.floor( ( now - m ) / ( 1000 * 60 ) );
+            var diff_in_hours   = Math.floor( ( now - m ) / ( 1000 * 60 * 60 ) );
+            var diff_in_days    = Math.floor( ( now - m ) / ( 1000 * 60 * 60 * 24 ) );
+            var diff_in_weeks   = Math.floor( ( now - m ) / ( 1000 * 60 * 60 * 24 * 7) );
+
+            var five_min    = 5 * 60;
+            var one_hour    = 60 * 60;
+            var one_day     = 60 * 60 * 24;
+            var two_days    = 60 * 60 * 24 * 2;
+            var one_week    = 60 * 60 * 24 * 7;
+
+            if( diff_in_sec < five_min ){
+                return LJ.text("ago_just_now");
+            }
+
+            if( diff_in_sec < one_hour ){
+                return LJ.text("ago_n_minutes").replace('%n', diff_in_minutes );
+            }
+
+            if( diff_in_sec < one_day ){
+                return LJ.text("ago_n_hours").replace('%n', diff_in_hours );
+            }
+
+            if( diff_in_sec < two_days ){
+                return LJ.text("ago_yesterday");
+            }
+
+            if( diff_in_sec < one_week ){
+                return LJ.text("ago_n_days").replace('%n', diff_in_days );
+            }
+
+            return LJ.text("ago_n_weeks").replace('%n', diff_in_weeks );
+            
+
         }
 
 

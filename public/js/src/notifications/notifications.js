@@ -34,7 +34,8 @@
 
 				})
 				.then(function( res ){
-					LJ.notifications.fetched_users = _.filter( _.map( res, 'user' ), Boolean );
+					var users = _.filter( _.map( res, 'user' ), Boolean );
+					LJ.notifications.cacheUsers( users );
 
 				})
 				.then(function(){
@@ -43,6 +44,13 @@
 					LJ.notifications.refreshNotifications();
 
 				});
+
+		},
+		cacheUsers: function( users ){
+
+			users.forEach(function( user ){
+			 	LJ.notifications.fetched_users.push( user );
+			});
 
 		},
 		showNotificationsLoader: function(){
@@ -98,8 +106,11 @@
 		},
 		fetchUsersProfiles: function(){
 
-			var user_ids = LJ.notifications.getUniqUserIds();
-			return LJ.api.fetchUsers( user_ids );
+			var user_ids    = LJ.notifications.getUniqUserIds();
+			var fetched_ids = _.map( LJ.notifications.fetched_users, 'facebook_id' );
+			var missing_ids = _.difference( user_ids, fetched_ids );
+
+			return LJ.api.fetchUsers( missing_ids );
 
 		},
 		getNotification: function( n_id ){
@@ -144,8 +155,9 @@
 			var n_groups = _.groupBy( LJ.user.notifications, 'before_id' );
 			_.keys( n_groups ).forEach(function( before_id ){
 				
+				var group = n_groups[ before_id ];
 				
-				n_groups[ before_id ].sort(function( n1, n2 ){
+				group.sort(function( n1, n2 ){
 
 					if( moment( n1.happened_at ) > moment( n2.happened_at ) ){
 						return -1
@@ -153,11 +165,19 @@
 						return 1;
 					}
 
-				})
-				.slice( 1 )
-				.forEach(function( n ){
-					n.is_outdated = true;
 				});
+
+				var most_recent_n = group[ 0 ];
+
+				// Only tag as out-dated the notifications that are followed by a canceled before
+				// Keep track of the other ones (cheers that has turned into a match etc.)
+				if( most_recent_n.type == "before_canceled" ){
+					group.slice( 1 )
+					.forEach(function( n ){
+						n.is_outdated = true;
+					});
+					
+				}
 
 			});	
 
@@ -597,7 +617,7 @@
 				var picture         = options.picture;
 				var text            = options.text;
 				var subtext         = options.subtext;
-				var happened_at     = LJ.notifications.makeFormattedDate( options.happened_at );
+				var happened_at     = LJ.makeFormattedDate( options.happened_at );
 				var notification_id = options.notification_id;
 				var is_oudated_html = options.is_outdated ? "x--outdated" : "";
 
@@ -631,47 +651,6 @@
 					'</div>'
 				]);
 			}
-
-		},
-		makeFormattedDate: function( happened_at, modes ){
-
-			var m   = moment( happened_at );
-			var now = moment();
-
-			var diff_in_sec     = ( now - m ) / 1000;
-			var diff_in_minutes = Math.floor( ( now - m ) / ( 1000 * 60 ) );
-			var diff_in_hours   = Math.floor( ( now - m ) / ( 1000 * 60 * 60 ) );
-			var diff_in_days    = Math.floor( ( now - m ) / ( 1000 * 60 * 60 * 24 ) );
-			var diff_in_weeks   = Math.floor( ( now - m ) / ( 1000 * 60 * 60 * 24 * 7) );
-
-			var five_min    = 5 * 60;
-			var one_hour    = 60 * 60;
-			var one_day     = 60 * 60 * 24;
-			var two_days    = 60 * 60 * 24 * 2;
-			var one_week    = 60 * 60 * 24 * 7;
-
-			if( diff_in_sec < five_min ){
-				return LJ.text("ago_just_now");
-			}
-
-			if( diff_in_sec < one_hour ){
-				return LJ.text("ago_n_minutes").replace('%n', diff_in_minutes );
-			}
-
-			if( diff_in_sec < one_day ){
-				return LJ.text("ago_n_hours").replace('%n', diff_in_hours );
-			}
-
-			if( diff_in_sec < two_days ){
-				return LJ.text("ago_yesterday");
-			}
-
-			if( diff_in_sec < one_week ){
-				return LJ.text("ago_n_days").replace('%n', diff_in_days );
-			}
-
-			return LJ.text("ago_n_weeks").replace('%n', diff_in_weeks );
-			
 
 		},
 		insertNotification: function( notification ){
@@ -709,9 +688,11 @@
 			}
 
 			// A group requested to join in a meefore, members version
+
+			// This has been decided not to be shown to simplify the application from a users perspective
 			if( type === "group_request_members" ){
-				html = LJ.notifications.renderNotification__GroupRequestMembers( notification );
-				notificationCallback = LJ.notifications.notificationCallback__GroupRequestMembers;
+				// html = LJ.notifications.renderNotification__GroupRequestMembers( notification );
+				// notificationCallback = LJ.notifications.notificationCallback__GroupRequestMembers;
 			}
 
 

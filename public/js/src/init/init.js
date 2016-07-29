@@ -77,7 +77,7 @@
                 .then( LJ.chat.init )
                 .then( LJ.cheers.init )
                 .then( LJ.login.hideLoginSteps )
-                .then( LJ.map.init ) // Must be as close as possible to terminateLogin. Map doesnt render sometimes..
+                .then( LJ.map.init ) 
                 .then( LJ.login.terminateLoginProcess )
                 .then( LJ.onboarding.init )
                 .then( LJ.connecter.init )

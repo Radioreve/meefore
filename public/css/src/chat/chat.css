@@ -441,13 +441,13 @@
     padding: 16px 20px;
 }
 
-.chat-inview-group .be-request {
+.chat-inview-group .be-action {
     display: flex;
     justify-content: center;
     margin-top: auto;
 }
 
-.chat-inview-group .be-request button {
+.chat-inview-group .be-action button {
     margin: 0 10px;
     position: relative;
     display: flex;
@@ -458,27 +458,27 @@
     height: 90px;
 }
 
-.chat-inview-group .be-request button.x--later {
+.chat-inview-group .be-action button.x--later {
     background: #eee;
     color: #919191;
 }
 
-.chat-inview-group .be-request button i {
+.chat-inview-group .be-action button i {
     font-size: 42px;
 }
 
-.chat-inview-group .be-request button.x--now {
+.chat-inview-group .be-action button.x--now {
     background: #1b69ec;
     /* background: #191919; */
 }
 
-.chat-inview-group .be-request button span {
+.chat-inview-group .be-action button span {
     position: relative;
     top: -13px;
     font-size: 12px;
 }
 
-.chat-inview-group .be-request button.x--validating {
+.chat-inview-group .be-action button.x--validating {
     opacity: .5;
 }
 

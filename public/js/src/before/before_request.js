@@ -106,51 +106,6 @@
             LJ.chat.refreshChatJsp( chat_id );
 
         },
-        defaultifyBeforeInview: function( before_id ){
-
-        	var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
-
-        	$be.find('.be-request button')
-        		.velocity('shradeOut', {
-        			duration: 300,
-        			complete: function(){
-        				var $new = $( LJ.before.renderBeforeInviewBtn__UserDefault() ).hide();
-        				$( this ).replaceWith( $new );
-        				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
-        			}
-        		});
-
-        },
-        pendifyBeforeInview: function( before_id ){
-
-        	var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
-
-        	$be.find('.be-request button')
-        		.velocity('shradeOut', {
-        			duration: 300,
-        			complete: function(){
-        				var $new = $( LJ.before.renderBeforeInviewBtn__UserPending() ).hide();
-        				$( this ).replaceWith( $new );
-        				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
-        			}
-        		});
-
-        },
-        acceptifyBeforeInview: function( before_id ){
-
-        	var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
-
-        	$be.find('.be-request button')
-        		.velocity('shradeOut', {
-        			duration: 300,
-        			complete: function(){
-        				var $new = $( LJ.before.renderBeforeInviewBtn__UserAccepted() ).hide();
-        				$( this ).replaceWith( $new );
-        				$new.velocity('shradeIn', { duration: 300, 'display': 'flex' });
-        			}
-        		});
-
-        },
         pendifyBeforeMarker: function( before_id ){
 
         	LJ.map.markers.forEach(function( mrk ){

@@ -199,7 +199,7 @@ span.be-dates__count {
 
 .be-pictures:hover {}
 
-.be-actions {
+.be-options {
     position: absolute;
     top: 0;
     left: 0;
@@ -216,10 +216,10 @@ span.be-dates__count {
     align-items: flex-start;
 }
 
-.be-inview.x--hive .be-actions {
+.be-inview.x--hive .be-options {
     display: flex;
 }
-.be-actions__action {
+.be-options__option {
     border: 2px solid white;
     height: 36px;
     width: 36px;
@@ -228,27 +228,27 @@ span.be-dates__count {
     color: #1b69ec;
 }
 
-.be-actions__action:hover {
+.be-options__option:hover {
     opacity: .8;
 }
 
-.be-actions__action.x-settings {
+.be-options__option.x-settings {
 }
 
-.be-actions__action.x--settings i {
+.be-options__option.x--settings i {
     font-size: .9em;
 }
 
-.be-actions__action.x--switch {
+.be-options__option.x--switch {
 }
 
-.be-actions__action.x--switch i {
+.be-options__option.x--switch i {
     /* transform: rotate(140deg); */
 }
 
-.be-actions__action.x--share {}
+.be-options__option.x--share {}
 
-.be-actions__action.x--share i {}
+.be-options__option.x--share i {}
 
 .be-pictures__pic {
     width: 50%;
@@ -295,6 +295,7 @@ span.be-dates__count {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 220px;
+    height: 15px;
 }
 
 .be-inview-address__date {
@@ -302,6 +303,7 @@ span.be-dates__count {
     font-weight: 700;
     font-size: 12px;
     display: flex;
+    height: 10px;
 }
 
 .be-inview-address__date span {
@@ -425,8 +427,7 @@ span.be-dates__count {
 
 .user-row__education-icon i {}
  
-.be-request,
-.be-ended {
+.be-action {
     order: 1;
     height: 130px;
     width: 100%;
@@ -436,8 +437,7 @@ span.be-dates__count {
     bottom: 0;
 }
 
-.be-inview.x--flat .be-request,
-.be-inview.x--flat .be-ended {
+.be-inview.x--flat .be-action {
     background: linear-gradient(transparent, white);
     width: 100%;
     height: 130px;
@@ -446,14 +446,14 @@ span.be-dates__count {
     bottom: 0;
 }
 
-.be-request button {
+.be-action button {
     width: 70px;
     height: 70px;
     background: #1B69EC;
     color: white;
 }
 
-.be-request button.x--pending {
+.be-action button.x--pending {
     color: white;
     border: 2px solid;
     background: #FD7124;
@@ -461,17 +461,17 @@ span.be-dates__count {
     color: #1b69ec;
 }
 
-.be-request button.x--accepted {
+.be-action button.x--accepted {
     /* background: white; */
     /* border: 2px solid; */
     /* color: #1B69EC; */
 }
 
-.be-request i {
+.be-action i {
     font-size: 30px;
 }
 
-.be-request i.icon-meedrink {
+.be-action i.icon-meedrink {
     transform: rotate(20deg)
 }
 
@@ -499,11 +499,13 @@ span.be-dates__count {
 
 .be-ended {
     color: #919191;
-    width: 100%;
+    width: 74%;
     text-align: center;
     /* padding: 16px 0px; */
     font-weight: 500;
     font-size: 12px;
+    margin: auto;
+    color: red;
 }
 
 .be-ended span {
@@ -511,11 +513,11 @@ span.be-dates__count {
     color: #d94962;
     border-radius: 100px;
     white-space: nowrap;
-    background: #d94962;
-    color: white;
     display: block;
     margin: auto;
     min-width: 200px;
+    font-weight: 600;
+    border: 2px solid #d94962;
 }
 
 

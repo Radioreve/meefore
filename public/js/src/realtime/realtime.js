@@ -42,7 +42,13 @@
 			}
 
 			LJ.notifications.cacheNotification( data.notification );
-			LJ.notifications.refreshNotifications();
+			LJ.notifications.fetchUsersProfiles()
+				.then(function( res ){
+					var users = _.filter( _.map( res, 'user' ), Boolean );
+					LJ.notifications.cacheUsers( users );
+					LJ.notifications.refreshNotifications();
+
+				});
 
 		},
 		setupRealtimeService: function(){
@@ -176,10 +182,11 @@
 			}
 
 			LJ.user.befores.push( data.before_item );
-			LJ.cheers.fetched_cheers.push( data.cheers_item );
-			LJ.cheers.refreshCheersItems();
+			// LJ.cheers.fetched_cheers.push( data.cheers_item );
+			// LJ.cheers.refreshCheersItems();
 			LJ.user.channels.push( data.channel_item_team );
 
+			// ---> Replace that with more global refresh functions (refreshMarkers and refreshBeforeInview)
 			LJ.before.pendifyBeforeInview( data.before_id );
 			LJ.before.pendifyBeforeMarker( data.before_id );
 
@@ -190,7 +197,7 @@
 			});
 
 			// Add notification in real time
-			LJ.realtime.addNotification( data );
+			// LJ.realtime.addNotification( data );
 
 		},
 		handleNewBeforeStatusMembers: function( data ){
