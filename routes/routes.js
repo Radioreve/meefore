@@ -123,14 +123,14 @@
 	    	mdw.facebook.fetchAndSyncFriends,
 	    	// Set cache basic info in Redis for max perf during fetch profile (short version)
 	    	mdw.profile_watcher.updateCachedProfile,
+	    	// Remove out-dated notifications from the profile
+	    	mdw.notifier.clearNotifications,
 	    	// Check if some notifications are needed
 	    	mdw.notifier.addNotification('inscription_success'),
 	    	// mdw.notifier.addNotification('new_friends'),
 	    	// Always ensure the user is subscribed at mailchimp
 	    	mdw.mailchimp.api("ensure_subscription")
 	    );
-
-
 
 
 	    // Création d'un bot

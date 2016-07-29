@@ -1,6 +1,8 @@
 	
 	var config      = require( '../config/config' );
 	var Alerter 	= require( '../middlewares/alerter' );
+	var User 		= require( '../models/UserModel');
+	var _ 			= require('lodash');
 
 	var apiDir      = '../api';
 	var jobsDir     = '../jobs';

@@ -574,6 +574,8 @@
 
 			befores.forEach(function( bfr ){
 
+				if( bfr.status == "canceled" ) return;
+
 				// User has sent a cheers in that before
 				if( bfr.hosts.indexOf( facebook_id ) == -1 ){
 

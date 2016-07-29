@@ -143,7 +143,7 @@ UserSchema.methods.findBeforesByIds = function( callback ){
 UserSchema.methods.findBeforesByPresence = function( callback ){
 
   Before.find({ 
-      'status': 'open',
+      'status': { '$in': [ 'open', 'canceled' ] },
       $or: [
         {
           'hosts': this.facebook_id

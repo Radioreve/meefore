@@ -990,7 +990,7 @@
 			var last_message = LJ.chat.getLastChatMessage( chat_id );
 
 			if( !last_message || !LJ.user.app_preferences.ux.message_seen ){
-				return LJ.log("No last message or app_preferences message_seen disabled");
+				return //LJ.log("No last message or app_preferences message_seen disabled");
 			}
 
 			var seen_by   = last_message.seen_by;

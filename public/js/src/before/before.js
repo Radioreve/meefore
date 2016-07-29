@@ -60,7 +60,11 @@
 		},
 		handleShowCreateBefore: function(){
 
-			LJ.nav.navigate("map");
+			if( LJ.nav.getActiveView() != "map" ){
+				LJ.nav.navigate("map");
+				return LJ.delay( 100 ).then( LJ.before.handleShowCreateBefore );
+			}
+
 			LJ.before.hideBrowser();
 			LJ.before.showCreateBefore();
 
@@ -700,8 +704,12 @@
 			if( before.hosts.indexOf( LJ.user.facebook_id ) != -1 ){
         		update.option_html = '<div class="be-options__option x--settings x--round-icon js-show-options"><i class="icon icon-cog-empty"></i></div>';
 
-        		var n_cheers = _.filter( LJ.cheers.fetched_cheers, function( ch ){ return ch.before_id == before._id }).length;
-        		update.action_html = '<button class="check-cheers js-navigate-cheers">'+ LJ.text("be_check_cheers").replace('%n',n_cheers) +'</button>';
+        		var n_cheers = _.filter( LJ.cheers.fetched_cheers, function( ch ){
+        			return ch.before_id == before._id;
+        		}).length;
+
+        		var text = n_cheers == 0 ? LJ.text('be_check_cheers_zero') : LJ.text("be_check_cheers").replace('%n',n_cheers );
+        		update.action_html = '<button class="check-cheers js-navigate-cheers">'+ text +'</button>';
 
         	} else {
         		var my_before = _.find( LJ.user.befores, function( bfr ){

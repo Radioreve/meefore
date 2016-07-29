@@ -864,7 +864,10 @@
 			
 		},
 		showAndActivateChatInview: function( chat_id ){
-
+			
+			if( !chat_id ){
+				return LJ.log("No chat_id to activate");
+			}
 			if( LJ.chat.getChatIds().indexOf( chat_id ) == -1 ){
 				return LJ.wlog('The chat ' + chat_id + ' doesnt exist.');
 			}
@@ -1258,7 +1261,7 @@
 			var last_message_other = LJ.chat.getLastMessageOther( chat_id );
 
 			if( !last_message_other ){
-				return LJ.log("No message except from user ones, not refreshing the chat row picture");
+				return //LJ.log("No message except from user ones, not refreshing the chat row picture");
 			}
 
 			var sender = LJ.chat.getUser( last_message_other.sender_id );
@@ -1281,7 +1284,7 @@
 			var sender, members, without_me, names, update;
 
 			if( !last_message_other ){
-				return LJ.log("No message except from user ones, not refreshing the chat row preview");
+				return //LJ.log("No message except from user ones, not refreshing the chat row preview");
 			}
 			
 			sender  = LJ.chat.getUser( last_message_other.sender_id );

@@ -86,7 +86,11 @@
 		var type   = "inscription_success";
 		var user   = req.sent.user;
 
-		if( user.status != "new" ){
+		var does_exists = _.find( user.notifications, function( n ){
+			return n && n.type == type;
+		});
+
+		if( does_exists ){
 			return next();
 		}
 		
@@ -94,10 +98,11 @@
 
 		var n = {
 			type 		: type,
-			happened_at : new Date(),
 			seen_at   	: null,
 			clicked_at  : null
 		};
+
+		n.happened_at = user.signed_up_at ? new Date( user.signed_up_at ) : new Date();
 
 		n.notification_id = hash( n );
 
@@ -153,17 +158,17 @@
 
 		var type = "accepted_in";
 
-		var status      = req.sent.status;
-		var accepted_by = req.sent.facebook_id;
-		var before_id   = req.sent.before._id;
-		var members     = req.sent.group.members;
-		var hosts 	    = req.sent.before.hosts;
+		var status       = req.sent.status;
+		var initiated_by = req.sent.facebook_id;
+		var before_id    = req.sent.before._id;
+		var members      = req.sent.group.members;
+		var hosts 	     = req.sent.before.hosts;
 
 		var n = {
 			before_id     : before_id,
 			happened_at   : new Date(),
 			members 	  : members,
-			accepted_by   : accepted_by,
+			initiated_by  : initiated_by,
 			before_id     : before_id,
 			hosts 	      : hosts,
 			seen_at 	  : null,
@@ -267,15 +272,16 @@
 		var begins_at = before.begins_at;
 
 		var n = {
-			type		: type,
-			before_id	: before_id,
-			main_host   : main_host,
-			hosts 		: hosts,
-			address 	: address,
-			begins_at  	: begins_at,
-			happened_at : new Date(),
-			seen_at 	: null,
-			clicked_at 	: null
+			type		 : type,
+			initiated_by : facebook_id,
+			before_id	 : before_id,
+			main_host    : main_host,
+			hosts 		 : hosts,
+			address 	 : address,
+			begins_at  	 : begins_at,
+			happened_at  : new Date(),
+			seen_at 	 : null,
+			clicked_at 	 : null
 		};
 
 		n.notification_id = hash( n );
@@ -319,7 +325,7 @@
 		var n = {
 			type 		 : "before_canceled",
 			before_id	 : before_id,
-			canceled_by  : facebook_id,
+			initiated_by : facebook_id,
 			address 	 : before.address.place_name,
 			seen_at 	 : null,
 			clicked_at 	 : null,
@@ -328,10 +334,9 @@
 
 		n.notification_id = hash( n );
 
-		// Notify every hosts and every members of every group, except the sender
 		var hosts        = before.hosts;
 		var members      = _.flatten( _.map( before.groups, 'members' ) );
-		var facebook_ids = _.difference( hosts.concat( members ), [ facebook_id ] );
+		var facebook_ids = hosts.concat( members );
 
 		var query = { 
 			facebook_id: { $in: facebook_ids }
@@ -362,7 +367,7 @@
 			type  : type,
 			target_type      : sh.target_type,
 			target_id 		 : sh.target_id,
-			shared_by 		 : sh.shared_by,
+			initiated_by     : sh.shared_by,
 			happened_at  	 : new Date(),
 			seen_at 		: null,
 			clicked_at 		: null
@@ -388,7 +393,50 @@
 
 	}
 
+	var clearNotifications = function( req, res, next ){
+
+		var err_ns = "clear_notifications";
+
+		var user            = req.sent.user;
+		var fetched_befores = req.sent.fetched_befores;
+			
+		// Filter out all notifictions that are tied to a specific  before
+		_.filter( user.notifications, function( n ){
+
+			return n && n.before_id; 
+
+		}).forEach(function( n, i ){
+
+			var before = _.find( fetched_befores, function( bfr ){
+				return bfr._id == n.before_id;
+			});
+
+			if( !before ){
+				console.log("Warning, no before were to be found, weird");
+			}
+
+			// Only remove notifications about befores that are outdated
+			if( before && moment( before.begins_at ) < moment() ){
+				delete user.notifications[ i ];
+			}
+
+		});
+
+		user.notifications = user.notifications.filter( Boolean );
+		user.markModified('notifications');
+		user.save(function( err, user ){
+
+			if( err ) return handleErr( req, res, err_ns, err );
+
+			req.sent.expose.user = user;
+			next();
+
+		});
+
+	}
+
 
 	module.exports = {
-		addNotification: addNotification
+		addNotification    : addNotification,
+		clearNotifications : clearNotifications
 	};

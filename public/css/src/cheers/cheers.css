@@ -208,13 +208,14 @@
     font-family: 'creamy';
     font-size: 30px;
     color: #454545;
+    margin-top: 30px;
 }
 
 .cheers-title h3 {
 
 }
 
-.cheers-subtitle {font-size: 12px;}
+.cheers-subtitle {font-size: 12px;margin-bottom: 40px;}
 
 .cheers-subtitle span {
 

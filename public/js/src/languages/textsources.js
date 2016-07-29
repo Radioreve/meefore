@@ -1296,7 +1296,7 @@
 			"us": "Welcome to Meefore"
 		},
 		n_inscription_success_subtext: {
-			"fr": "Faites des rencontres avant d'aller en soirée",
+			"fr": "Faites des befores avant d'aller en soirée",
 			"us": "Meet new people before going out"
 		},
 		n_before_canceled_text: {
@@ -2182,6 +2182,10 @@
 		be_check_cheers: {
 			"fr": "%n Cheers reçus",
 			"us": "%n Cheers received"
+		},
+		be_check_cheers_zero: {
+			"fr": "Cheers reçus",
+			"us": "Cheers received"
 		}
 
 

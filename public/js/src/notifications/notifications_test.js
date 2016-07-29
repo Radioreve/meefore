@@ -61,7 +61,7 @@ window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
 					"before_id" 	  : "before_1",
 
 					"hosts" 		  : LJ.notifications.test.getAdminIds(),
-					"accepted_by"	  : LJ.notifications.test.getAdminIds()[ 0 ],
+					"initiated_by"	  : LJ.notifications.test.getAdminIds()[ 0 ],
 					"members" 		  : [ LJ.user.facebook_id ].concat( random_friends_1 )
 
 				},
@@ -75,7 +75,7 @@ window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
 					"before_id" 	  : "before_2",
 
 					"hosts" 		  : [ LJ.user.facebook_id ].concat( random_friends_2 ),
-					"accepted_by"	  : random_friends_2[ 0 ],
+					"initiated_by"	  : random_friends_2[ 0 ],
 					"members" 		  : LJ.notifications.test.getAdminIds(),
 
 				},
@@ -105,7 +105,7 @@ window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
 
 					"hosts" 		  : LJ.notifications.test.getAdminIds(),
 					"main_member"     : random_friends_1[ 0 ],
-					"accepted_by"	  : LJ.notifications.test.getAdminIds()[ 0 ],
+					"initiated_by"	  : LJ.notifications.test.getAdminIds()[ 0 ],
 					"members" 		  : [ LJ.user.facebook_id ].concat( random_friends_1 )
 
 				},
@@ -119,7 +119,7 @@ window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
 					"before_id" 	  : "before_3",
 
 					"hosts" 		  : [ LJ.user.facebook_id ].concat( random_friends_1 ),
-					"accepted_by"	  : LJ.user.facebook_id,
+					"initiated_by"	  : LJ.user.facebook_id,
 					"members" 		  : LJ.notifications.test.getAdminIds()
 
 				},
@@ -132,7 +132,7 @@ window.LJ.notifications = _.merge( window.LJ.notifications || {}, {
 					"clicked_at"      : moment().subtract( '48', 'hours' ).toISOString(),
 					"before_id" 	  : "before_3",
 
-					"canceled_by"	  : LJ.notifications.test.getAdminIds()[ 0 ],
+					"initiated_by"	  : LJ.notifications.test.getAdminIds()[ 0 ],
 					"address" 		  : "37 rue des Pamplemousses, 75002 Paris",
 
 				}

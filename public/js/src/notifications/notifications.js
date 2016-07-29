@@ -89,8 +89,10 @@
 			var user_ids = [];
 			LJ.user.notifications.forEach(function( n ){
 
-				user_ids = user_ids.concat( n.hosts );
-				user_ids = user_ids.concat( n.members );
+				// Make sure this list of property is always up to date with server side code 
+				[ "hosts", "members", "initiated_by" ].forEach(function( prop ){
+					user_ids = user_ids.concat( n[ prop ] );
+				});
 
 			});
 
@@ -415,9 +417,9 @@
 		},
 		renderNotification__RequestAcceptedHosts: function( notification ){
 			
-			var options     = {};
-			var is_host     = notification.hosts.indexOf( LJ.user.facebook_id ) != -1;
-			var accepted_by = notification.accepted_by
+			var options      = {};
+			var is_host      = notification.hosts.indexOf( LJ.user.facebook_id ) != -1;
+			var initiated_by = notification.initiated_by
 			
 			var others      = is_host ? notification.members : notification.hosts;
 			var profiles    = LJ.notifications.getUserProfiles( others );
@@ -433,9 +435,9 @@
 		// Identical to the one just above, for now at least 
 		renderNotification__RequestAcceptedMembers: function( notification ){
 
-			var options     = {};
-			var is_host     = notification.hosts.indexOf( LJ.user.facebook_id ) != -1;
-			var accepted_by = notification.accepted_by
+			var options      = {};
+			var is_host      = notification.hosts.indexOf( LJ.user.facebook_id ) != -1;
+			var initiated_by = notification.initiated_by
 			
 			var others      = is_host ? notification.members : notification.hosts;
 			var profiles    = LJ.notifications.getUserProfiles( others );
@@ -451,10 +453,7 @@
 		renderNotification__GroupRequestHosts: function( notification ){
 
 			var options = {};
-			var is_host = notification.hosts.indexOf( LJ.user.facebook_id ) != -1;
-
-			var others   = is_host ? notification.members : notification.hosts;
-			var profile  = LJ.notifications.getUserProfiles( others )[ 0 ]
+			var profile  = LJ.notifications.getUserProfiles( [ notification.main_member ] )[ 0 ];
 
 			options.picture     = LJ.pictures.makeImgHtml( profile.img_id, profile.img_vs, "notification" );
 			options.text        = LJ.text("n_group_request_hosts_text").replace('%name', profile.name);
@@ -516,8 +515,8 @@
 			var options = {};
 			var address = notification.address;
 				
-			var canceled_by = notification.canceled_by;
-			var profile 	= LJ.notifications.getUserProfiles([ canceled_by ])[ 0 ];
+			var initiated_by = notification.initiated_by;
+			var profile 	 = LJ.notifications.getUserProfiles([ initiated_by ])[ 0 ];
 
 			options.picture     = LJ.pictures.makeImgHtml( profile.img_id, profile.img_vs, "notification" );
 			options.text        = LJ.text("n_before_canceled_text").replace('%name', profile.name)
@@ -528,10 +527,10 @@
 		},
 		renderNotification__ItemShared: function( notification ){
 
-			var options   = {};
-			var shared_by = notification.shared_by;
+			var options      = {};
+			var initiated_by = notification.initiated_by;
 
-			var friend = LJ.friends.getFriendProfile( shared_by );
+			var friend = LJ.friends.getFriendProfile( initiated_by );
 			var name = friend && friend.name;
 			var type = notification.target_type == "user" ? LJ.text('w_profile') : LJ.text('w_before');
 
@@ -546,7 +545,7 @@
 
 			var options = {};
 			
-			options.picture     = '<i class="icon icon-heart"></i>';
+			options.picture     = '<i class="icon icon-heart-empty"></i>';
 			options.text        = LJ.text("n_inscription_success_text");
 			options.subtext     = LJ.text("n_inscription_success_subtext");
 
@@ -613,17 +612,18 @@
 
             if( element == "item" ){
 
-				var type            = options.type;
-				var picture         = options.picture;
-				var text            = options.text;
-				var subtext         = options.subtext;
-				var happened_at     = LJ.makeFormattedDate( options.happened_at );
-				var notification_id = options.notification_id;
-				var is_oudated_html = options.is_outdated ? "x--outdated" : "";
+				var type             = options.type;
+				var picture          = options.picture;
+				var text             = options.text;
+				var subtext          = options.subtext;
+				var happened_at      = LJ.makeFormattedDate( options.happened_at );
+				var notification_id  = options.notification_id;
+				var is_outdated_html = options.is_outdated ? "x--outdated" : "";
+				var filterlay 	     = /icon/i.test( options.picture ) ? '' : 'js-filterlay';
 
             	return LJ.ui.render([
-            		'<div class="notification js-notification-item '+ is_oudated_html +'" data-type="'+ type +'" data-notification-id="'+ notification_id +'">',
-            			'<div class="notification-picture js-filterlay x--round-icon">'+ picture +'</div>',
+            		'<div class="notification js-notification-item '+ is_outdated_html +'" data-type="'+ type +'" data-notification-id="'+ notification_id +'">',
+            			'<div class="notification-picture '+ filterlay +' x--round-icon">'+ picture +'</div>',
                     	'<div class="notification-message">',
 	                    	'<div class="notification-message__text">' + text + '</div>',
 	                    	'<div class="notification-message__subtext">' + subtext + '</div>',
@@ -740,8 +740,9 @@
 			var $notif = $( html );
 
 			// Fire callback if registered
-			if( typeof notificationCallback == "function" ){
+			if( !notification.is_outdated && typeof notificationCallback == "function" ){
 				$notif.on('click', function(){
+
 					try {
 						notificationCallback( notification );
 					} catch( e ){

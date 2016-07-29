@@ -14,7 +14,7 @@
 			
 			var token = req.headers && req.headers['x-access-token'] || req.sent.token || req.sent.app_token;
 			
-			if( req.sent.api_key == "M33foreverr" ){
+			if( req.sent.api_key == config.admin_api_key ){
 				return next();
 			}
 			// if( process.env.APP_ENV == 'dev' && req.sent.env == "dev" ){

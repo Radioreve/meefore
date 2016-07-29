@@ -1,6 +1,7 @@
 	
 	var pusher     = require('../services/pusher');
 	var _          = require('lodash');
+	var moment 	   = require('moment');
 	var eventUtils = require('../pushevents/eventUtils');
 	var User 	   = require('../models/UserModel');
 	var Before     = require('../models/BeforeModel');
@@ -171,10 +172,16 @@
 
 			if( err ) return handleErr( req, res, err_ns, err );
 
+			// Safe the ref for other middlewares
 			befores.forEach(function( before ){
 
-				// Check if the user is hosting
-				if( before.hosts.indexOf( user.facebook_id ) != -1 ){
+				if( before.status == "canceled" ){
+					return console.log("Before was canceled, skipping the add in either before or channels array");
+				}
+
+				var is_hosting  = before.hosts.indexOf( user.facebook_id ) != -1;
+
+				if( is_hosting ){
 
 					console.log('User is hosting this event, rendering hosts related channels');
 
@@ -206,7 +213,15 @@
 			});
 
 			user.markModified('channels');
-			user.save( callback ); 
+			user.save(function( err, user ){
+
+				if( err ){
+					return callback( err );
+				} else {
+					return callback( null, user, befores );
+				}
+
+			}); 
 
 		});
 
@@ -229,11 +244,12 @@
 
 		} else {
 
-			resetChannels( user, function( err, user ){
+			resetChannels( user, function( err, user, fetched_befores ){
 
 				if( err ) return handleErr( req, res, err_ns, err );
 
-				req.sent.user = user;
+				req.sent.user            = user;
+				req.sent.fetched_befores = fetched_befores;
 				next();
 
 			});
@@ -509,54 +525,55 @@
 			status       : before.status
 		};
 
-		var data_hosts = {
+		var data_members = {
 			before_id    : before._id,
 			hosts        : before.hosts,
 			status       : before.status,
-			requester    : req.sent.facebook_id, // Used by ui to display the name of the requester,
+			requester    : req.sent.facebook_id, 
 			notification : notification
 		};
 
 		var users = before.hosts;
 		before.groups.forEach(function( group ){
-			users.concat( group.members );
+			users = users.concat( group.members );
 		});
 
 		var tasks = [];
 		users.forEach(function( user_id ){
 			tasks.push(function( callback ){
+
 				User.findOne({ facebook_id: user_id }, function( err, user ){
+
 					if( err ) handleErrAsync( err_ns, err );
-					resetChannels( user, function( err, user ){
+
+					resetChannels( user, function( err, user, fetched_befores ){
+
 						if( err ) handleErrAsync( err_ns, err );
 						callback();
-					})
+
+					});
 				});
 			})
 		});
+
 		async.parallel( tasks, function( err ){
+
 			if( err ) handleErrAsync( err_ns, err );
-		});
 
-		// Global message : everyone will received it.
-		var channel = makeLocationChannel( place_id );
-		pusher.trigger( channel, 'new before status', data_users, socket_id, handlePusherErr );
+			// Global message : everyone will received it.
+			var channel = makeLocationChannel( place_id );
+			pusher.trigger( channel, 'new before status', data_users, socket_id, handlePusherErr );
 
-		// Send a special message to all other hosts to let them know a before status was updated
-		// by one of their friends, on which they were also hosts
-		var channel = makeBeforeChannel( before._id );
-		pusher.trigger( channel, 'new before status hosts', data_hosts, socket_id, handlePusherErr );
+			// All members need to resync their chat status
+			users.forEach(function( user_id ){
+				var channel = makePersonnalChannel( user_id );
+				pusher.trigger( channel, 'new before status members', data_members, handlePusherErr );
 
-		// All members need to resync their chat status
-		users.forEach(function( user_id ){
-
-			var channel = makePersonnalChannel( user_id );
-			pusher.trigger( channel, 'new before status members', data_users, handlePusherErr );
-
+			});
+			
 		});
 
 		next();
-
 
 	};
 

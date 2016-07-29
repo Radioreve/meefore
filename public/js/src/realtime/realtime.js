@@ -28,19 +28,19 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 	},
 	addNotification: function( data ){
 
-		if( !data.notification ) return;
+		var n = data.notification;
 
-		if( data.requester && data.requester == LJ.user.facebook_id ) {
-
-			// ALmost all notifications are not added in user profile of the requester, except a few ones
-			//	- 'accepted_in_hosts' -> requester receives it too because everyone likes to see "New match!"
-			var n_type = data.notification_type;
-			if( [ "accepted_in_hosts" ].indexOf( n_type ) == -1 ){
-				return;
-			}
-
+		if( !n ){
+			return LJ.wlog('Trying to add a non-existent notification');
 		}
 
+
+		var n_type = n.type;
+		if( n.initiated_by == LJ.user.facebook_id && [ "accepted_in_hosts", "before_canceled" ].indexOf( n_type ) == -1 ){
+			return LJ.log("Not showing notification (own)");
+		}
+
+		
 		LJ.notifications.cacheNotification( data.notification );
 		LJ.notifications.fetchUsersProfiles()
 			.then(function( res ){
@@ -201,9 +201,18 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		var hosts     = data.hosts;
 		var status    = data.status;
 		var before_id = data._id;
+		var requester = data.requester;
+
+		// Refetch all cheers. 
+		if( hosts.indexOf( LJ.user.facebook_id ) != -1 ){
+			LJ.cheers.fetchAndAddCheers();			
+		}
 
 		// Force a resync of all the chats with updated server values
 		LJ.chat.resyncAllChats();
+
+		// Add notification in real time
+		LJ.realtime.addNotification( data );
 
 	},
 	// Subcribe to events about a specific geo area 
@@ -283,7 +292,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 		LJ.realtime.channels[ channel_name ].bind('new hello'		  	   , LJ.log ); // Test channel
 		LJ.realtime.channels[ channel_name ].bind('new request host'  	   , LJ.realtime.handleNewRequestHost );
-		LJ.realtime.channels[ channel_name ].bind('new before status host' , LJ.realtime.handleNewBeforeStatusHosts );
+		// LJ.realtime.channels[ channel_name ].bind('new before status host' , LJ.realtime.handleNewBeforeStatusHosts );
 
 	},
 	handleNewRequestHost: function( data ){
@@ -304,22 +313,16 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 	handleNewBeforeStatusHosts: function( data ){
 
 		// LJ.log('Push event received, data : ');
-		LJ.log( data );
+		// LJ.log( data );
 
-		var before_id   = data.before_id;
-		var hosts 	    = data.hosts;
-		var status 	    = data.status;
-		var requester   = data.requester;
+		// var before_id   = data.before_id;
+		// var hosts 	    = data.hosts;
+		// var status 	    = data.status;
+		// var requester   = data.requester;
 
-		var friend_name = LJ.friends.getFriendsProfiles( requester )[0].name;
 
-		if( status == "canceled" ){
-			// LJ.ui.showToast( LJ.text('to_friend_canceled_event').replace( '%name', friend_name ) );
-
-		}
-
-		// Add notification in real time
-		LJ.realtime.addNotification( data );
+		// // Add notification in real time
+		// LJ.realtime.addNotification( data );
 
 	},
 	// Subscribe to specific chat channels for hosts & requesters.
