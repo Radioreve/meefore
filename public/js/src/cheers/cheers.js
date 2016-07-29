@@ -53,6 +53,8 @@
 
 			}
 
+			close_type = "hide_all";
+
 			LJ.chat.refreshChatRowsJsp().then(function(){
 
 				if( close_type == "hide_all" ){
@@ -188,9 +190,9 @@
 
 				})
 				.then(function(){
-
-					var main_hosts     = _.map( LJ.cheers.fetched_cheers, 'main_host' );
-					var members        = _.flatten( _.map( LJ.cheers.fetched_cheers, 'members' ) );
+					
+					var main_hosts = _.map( LJ.cheers.fetched_cheers, 'main_host' );
+					var members    = _.flatten( _.map( LJ.cheers.fetched_cheers, 'members' ) );
 
 					var facebook_ids = _.uniq( _.concat( main_hosts, members ) );
 					return LJ.api.fetchUsers( facebook_ids )
@@ -211,7 +213,8 @@
 				})
 				.then(function(){
 					var type = LJ.cheers.getActiveCheersType();
-					return LJ.cheers.showCheersItems( type );
+					LJ.cheers.refreshCheersItemsState();
+					LJ.cheers.showCheersItems( type );
 
 				})
 				.catch(function( e ){
@@ -274,8 +277,35 @@
 
 			LJ.cheers.removeAllCheers();
 			LJ.cheers.addCheersItems( cheers_html );
+			LJ.cheers.refreshCheersItemsState();
 			LJ.cheers.showCheersItems( type, 1 );
 
+
+		},
+		refreshCheersItemsState: function(){
+
+			var sent_cheers = _.filter( LJ.cheers.fetched_cheers, function( ch ){
+				return ch.cheers_type == "received";
+			}); 
+
+			if( sent_cheers.length == 0 ){
+				LJ.cheers.emptifyCheersItems();
+			} else {
+				LJ.cheers.defaultifyCheersItem();
+			}
+
+		},
+		emptifyCheersItems: function(){
+
+			$('.cheers-title, .cheers-subtitle').hide();
+			$('.cheers').children().hide();
+			$('.cheers').append( LJ.cheers.renderCheersItem__ReceivedEmpty() );
+
+		},
+		defaultifyCheersItem: function(){
+
+			$('.cheers-title, .cheers-subtitle').show();
+			$('.cheers').find('.empty').remove();
 
 		},
 		removeAllCheers: function(){
@@ -291,16 +321,12 @@
 		renderCheersItems: function( cheers, user_profiles ){
 
 			var html = [];
-			
-			var no_cheers_received = true;
-			var no_cheers_sent     = true;
-				
+						
 			cheers.forEach(function( ch ){
 
 
 				if( ch.cheers_type == "received" ){
 
-					no_cheers_received = false;
 					var members = _.filter( user_profiles, function( u ){
 						return ch.members.indexOf( u.facebook_id ) != -1;
 					});
@@ -310,7 +336,6 @@
 
 				if( ch.cheers_type == "sent" ){
 
-					no_cheers_sent = false;
 					var main_host_profile = _.find( user_profiles, function( u ){
 						return u.facebook_id == ch.main_host;
 					})
@@ -321,14 +346,6 @@
 				}
 
 			});
-
-			if( no_cheers_sent ){
-				html.push( LJ.cheers.renderCheersItem__SentEmpty() );
-			}
-
-			if( no_cheers_received ){
-				html.push( LJ.cheers.renderCheersItem__ReceivedEmpty() );
-			}
 
 			return html.join('');
 
@@ -342,7 +359,7 @@
 		},
 		showCheersItems: function( type, duration ){
 
-			type = type || "sent";
+			type = type || "received";
 
 			var $w = $('.cheers');
 
@@ -365,6 +382,9 @@
 					'</div>',
 					'<div class="empty__subtitle">',
 						'<p data-lid="empty_cheers_received_subtitle"></p>',
+					'</div>',
+					'<div class="empty__btn">',
+						'<button class="js-create-before" data-lid="cheers_create_before_btn"></button>',
 					'</div>',
 				'</div>'
 
@@ -394,7 +414,7 @@
 
 			if( status == "pending" ){
 				return [ '<div data-hint="'+ LJ.text("hint_cheers_pending") +'" class="row-pic__icon x--round-icon x--pending hint--left hint--rounded">',
-					'<i class="icon icon-meedrink"></i>',
+					'<i class="icon icon-pending"></i>',
 				'</div>'].join('');
 			}
 
@@ -412,10 +432,12 @@
 			var formatted_date = LJ.makeFormattedDate( ch.requested_at );
 			var img_html       = LJ.pictures.makeGroupRosace( members, 2, 'menu-row' );
 
-			var groupname 	   = LJ.renderMultipleNames( _.map( members, 'name' ) );
-			var groupname_html = LJ.text('cheers_item_title_received').replace('%groupname', groupname);
+			var groupname       = LJ.renderMultipleNames( _.map( members, 'name' ) );
+			var groupname_html  = LJ.text('cheers_item_title_received').replace('%groupname', groupname);
+			var cheers_tag_html = cheers_object.status == "accepted" ? '<span class="row-body__tag">Match</span>' : '';
 
 			var address  	   = ch.place_name;
+
 
 			return LJ.ui.render([
 
@@ -428,6 +450,7 @@
 					'<div class="row-body">',
 						'<div class="row-body__title">',
 							'<h2>' + groupname_html +'</h2>',
+							cheers_tag_html,
 						'</div>',
 						'<div class="row-body__subtitle">',
 							'<div class="row-body__icon x--round-icon"><i class="icon icon-location-empty"></i></div>',
@@ -667,9 +690,11 @@
 				$icon = LJ.cheers.renderCheersItemIcon__Sent( "accepted" );
 			} else {
 				$icon = LJ.cheers.renderCheersItemIcon__Received( "accepted" );
+				$tag  = '<span class="row-body__tag">Match</span>';
 			}
 
 			$row.find('.row-pic__icon').replaceWith( $icon );
+			$('.row-body__title').append('<span class="row-body__tag">Match</span>');
 
 		},	
 		setActiveCheersBack: function( cheers_id ){
@@ -725,11 +750,6 @@
 			$chat_header.find('.chat-inview-title__h1').html( '<span class="x--date">'+ formatted_date +'</span>' );
 			$chat_header.find('.chat-inview-title__h2').html( '<span class="x--place">'+ cheers_item.place_name +'</span>' );
 
-		},
-		acceptifyChat: function(){
-
-			
-			
 		},
 		refreshChatBackUsersJsp: function(){
 			

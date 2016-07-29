@@ -1588,15 +1588,19 @@
 			"us": "No Cheers received"
 		},
 		empty_cheers_received_subtitle: {
-			"fr": "Envoie des Cheers pour montrer à des organisateurs que tu es intéréssé(e) par leur before.",
-			"us": "Cheers allow each member to let hosts of pregames know that they are interested in their pregame."
+			"fr": "Des Cheers te seront envoyés par les autres membres pour te montrer qu'ils seront intéressés par ton before.",
+			"us": "Cheers are sent to you by other members to show you they are interested in your pregame"
+		},
+		cheers_create_before_btn: {
+			"fr": "Proposer un before",
+			"us": "Throw a predrinks"
 		},
 		empty_friends_title: {
 			"fr": "Où sont-ils ?",
 			"us": "No friends yet"
 		},
 		empty_friends_subtitle: {
-			"fr": "l faut être au moins 2 pour créer un before ou envoyer des Cheers. Partage l'application avec tes amis pour qu'ils te rejoignent.",
+			"fr": "Il faut être au moins 2 pour créer un before ou envoyer des Cheers. Partage l'application avec tes amis pour qu'ils te rejoignent.",
 			"us": "You need to be at least 2 in order to pregrame. Invite your friends to join you to get out and meet new people."
 		},
 		hint_cheers_pending: {
@@ -2174,6 +2178,10 @@
 		cheers_subtitle: {
 			"fr": "Sélectionne les groupes qui t'ambiancent le plus et organise ta prochaine soirée",
 			"us": "Select the groups that you like the most and throw your next pregame"
+		},
+		be_check_cheers: {
+			"fr": "%n Cheers reçus",
+			"us": "%n Cheers received"
 		}
 
 

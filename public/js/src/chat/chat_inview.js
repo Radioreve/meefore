@@ -1072,13 +1072,6 @@
         	LJ.chat.refreshChatJsp( chat_id );
 
         },
-        acceptifyChatInview: function( chat_id ){
-
-        	LJ.chat.getChatInview( chat_id )
-        		.find('button')
-        		.replaceWith( LJ.before.renderBeforeInviewBtn__UserAccepted() );
-
-        },
         getChatInview: function( chat_id ){
 
         	if( !chat_id ){

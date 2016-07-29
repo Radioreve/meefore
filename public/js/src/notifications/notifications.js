@@ -768,6 +768,7 @@
 
 			LJ.nav.navigate("menu");
 			LJ.menu.activateMenuSection("friends");
+			LJ.unoffsetAll();
 
 		},
 		notificationCallback__GroupRequestHosts: function( n ){
@@ -775,6 +776,7 @@
 			LJ.nav.navigate("menu");
 			LJ.menu.activateMenuSection("cheers");
 			LJ.cheers.activateCheers("received");
+			LJ.unoffsetAll();
 
 
 		},
@@ -783,6 +785,7 @@
 			LJ.nav.navigate("menu");
 			LJ.menu.activateMenuSection("cheers");
 			LJ.cheers.activateCheers("sent");
+			LJ.unoffsetAll();
 
 		},
 		notificationCallback__AcceptedInMembers: function( n ){
@@ -842,7 +845,8 @@
 
 			LJ.nav.navigate("menu");
 			LJ.menu.activateMenuSection("settings");
-			LJ.settings.activateSubmenuSection("account")
+			LJ.settings.activateSubmenuSection("account");
+			LJ.unoffsetAll();
 
 		},
 		notificationCallback__BeforeCanceled: function( n ){

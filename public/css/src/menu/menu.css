@@ -51,7 +51,9 @@
     padding-top: 30px;
 }
 
-.menu-section .empty {}
+.menu-section .empty {
+    display: flex;
+}
 
 .menu-item {
     display: flex;

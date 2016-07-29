@@ -105,38 +105,6 @@
             LJ.chat.showChatInview( chat_id );
             LJ.chat.refreshChatJsp( chat_id );
 
-        },
-        pendifyBeforeMarker: function( before_id ){
-
-        	LJ.map.markers.forEach(function( mrk ){
-
-        		if( mrk.marker_id == before_id ){
-
-                    var active = ( mrk.status == "active" ) ? true : false;
-        			var icon   = LJ.map.makeIcon( LJ.map.getBeforeMarkerUrlByType("pending", active) );
-
-        			mrk.marker.setIcon( icon );
-
-        		}
-
-        	});
-
-        },
-        acceptifyBeforeMarker: function( before_id ){
-
-        	LJ.map.markers.forEach(function( mrk ){
-
-        		if( mrk.marker_id == before_id ){
-
-                    var active = ( mrk.status == "active" ) ? true : false;
-        			var icon   = LJ.map.makeIcon( LJ.map.getBeforeMarkerUrlByType("accepted", active) );
-
-        			mrk.marker.setIcon( icon );
-        			
-        		}
-
-        	});
-
         }
 
 	});

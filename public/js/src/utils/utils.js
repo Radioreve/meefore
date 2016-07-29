@@ -452,6 +452,10 @@ window.LJ = _.merge( window.LJ || {}, {
         },
         offsetElements: function(){
 
+            if( LJ.nav.getActiveView() == "map" ){
+                return
+            }
+            
             if( LJ.nav.getActiveView() == "search" ){
                 LJ.offsetSearchUsers();
             } else {

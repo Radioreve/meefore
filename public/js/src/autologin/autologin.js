@@ -15,6 +15,9 @@
 					if( a == "#1" ){
 						return resolve({ 'fb_token': 'EAAXR2Qo4lc4BADx1dNR5Cz2iSZCduZC05gJ5MsZCkR9uneJBQadFoBI5eXpfmaDVeuiQNSIPQvyP5I9aj7y2Cu6daZCd4EzAJGgZBQCnxlHudEPEpKQHb4yr6f8GkmNMZCiGBgBIMbdGbYDpbZC0uuzeae9MQuGfEnpjgAPAuTxegZDZD' });
 					}
+					if( a == "#racheel"){
+						return resolve({ 'fb_token': 'EAAXR2Qo4lc4BAGfYNotMdxT6iEVy1lURr7RLDw5X5X0ZAsCV6S9GlRw78F3uVrSo4K1AkptOl7ZBhOg31NuSGTtgzOV8Sl0Eg76olbihIZAHPQJe3LxTlzbnScWzt5lG6G0PHw03HAB0ZA5LDw01O9X4QMsoQzsQakHXi2td8QZDZD' })
+					}
 
 				}
 

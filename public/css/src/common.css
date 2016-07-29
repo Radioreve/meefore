@@ -192,6 +192,19 @@ button:hover {
 .row-body__title {
     margin-bottom: 8px;
     position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.row-body__tag {
+    font-size: 10px;
+    margin-left: 10px;
+    background: #1b69ec;
+    background: #1b69ec;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 100px;
+    order: 10;
 }
 
 .row-body__subtitle {
@@ -216,8 +229,7 @@ button:hover {
     font-weight: 700;
     font-size: 15px;
     color: #454545;
-    margin-right: 30px;
-    letter-spacing: -.5px;
+    letter-spacing: -.3px;
 }
 
 .row-body__icon {

@@ -493,9 +493,7 @@
 		},
 		addCreateBefore: function(){
 
-			$( LJ.before.renderCreateBefore() )
-				.hide()
-				.appendTo( $('.app-section.x--map') );
+			$( LJ.before.renderCreateBefore() ).hide().appendTo('body');
 
 		},
 		renderCreateBefore: function(){

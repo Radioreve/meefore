@@ -22,7 +22,7 @@
 		},
 		handleDomEvents: function(){
 
-			LJ.ui.$body.on('click', '.map__icon.js-create-before', LJ.before.handleShowCreateBefore );
+			LJ.ui.$body.on('click', '.js-create-before', LJ.before.handleShowCreateBefore );
 			// LJ.ui.$body.on('click', '.map__icon.js-expand-browser', LJ.map.handleShrinkBrowserDates );
 			LJ.ui.$body.on('click', '.be-create__close', LJ.before.handleHideCreateBefore );
 			LJ.ui.$body.on('click', '.be-dates__date', LJ.before.activateBrowserDate );
@@ -36,6 +36,7 @@
 			LJ.ui.$body.on('click', '.js-request-accepted', LJ.before.handleClickOnRequestAccepted );
 			LJ.ui.$body.on('click', '.js-show-profile', LJ.before.handleShowUserProfile );
 			LJ.ui.$body.on('click', '.js-switch-mode', LJ.before.handleSwitchInviewMode );
+			LJ.ui.$body.on('click',  '.js-navigate-cheers', LJ.before.handleNavigateToCheers );
 
 
 		},
@@ -59,6 +60,7 @@
 		},
 		handleShowCreateBefore: function(){
 
+			LJ.nav.navigate("map");
 			LJ.before.hideBrowser();
 			LJ.before.showCreateBefore();
 
@@ -185,6 +187,13 @@
 				});
 			}
 			return i;
+
+		},
+		handleNavigateToCheers: function(){
+
+			LJ.nav.navigate("menu");
+			LJ.menu.activateMenuSection("cheers");
+			LJ.unoffsetAll();
 
 		},
 		handleClickOnUserRow: function(){
@@ -464,7 +473,7 @@
 			.then(function( before_html ){
 				$container = $('.slide.x--before').find('.slide-body');
 				LJ.before.addBefore( before_html, $container );
-				LJ.before.refreshBeforeInviewAction( before );
+				LJ.before.refreshBeforeInviewAction();
 				$content = $container.children(':not(.slide__loader)');
 
 			})
@@ -565,7 +574,7 @@
 			.then(function( before_html ){
 				$container = $('.slide.x--before').find('.slide-body');
 				LJ.before.addBefore( before_html, $container );
-				LJ.before.refreshBeforeInviewAction( before );
+				LJ.before.refreshBeforeInviewAction();
 				$content = $container.children(':not(.slide__loader)');
 
 			})
@@ -679,13 +688,20 @@
 			}
 
 		},
-		refreshBeforeInviewAction: function( before ){
+		refreshBeforeInviewAction: function(){
 
 			var update = {};
+			var before = LJ.before.active_before;
+
+			if( !before ){
+				return LJ.wlog("Cannot refresh before inview action, no active before is set");
+			}
 
 			if( before.hosts.indexOf( LJ.user.facebook_id ) != -1 ){
-        		update.action_html = '<div class="be-ended"><span data-lid="be_hosted"></span></div>';
         		update.option_html = '<div class="be-options__option x--settings x--round-icon js-show-options"><i class="icon icon-cog-empty"></i></div>';
+
+        		var n_cheers = _.filter( LJ.cheers.fetched_cheers, function( ch ){ return ch.before_id == before._id }).length;
+        		update.action_html = '<button class="check-cheers js-navigate-cheers">'+ LJ.text("be_check_cheers").replace('%n',n_cheers) +'</button>';
 
         	} else {
         		var my_before = _.find( LJ.user.befores, function( bfr ){
@@ -735,7 +751,7 @@
 				.css({ 'display': 'flex' })
 				.replaceAll('.be-inview');
 
-			LJ.before.refreshBeforeInviewAction( LJ.before.active_before, LJ.before.active_hosts )
+			LJ.before.refreshBeforeInviewAction();
 
 
 		},
