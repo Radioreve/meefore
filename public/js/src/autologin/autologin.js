@@ -30,7 +30,7 @@
 					if( a == "#mary" ){
 						return resolve({ 'fb_token': 'EAAXR2fF8rkoBAHRj5DKOudMDrCmEwTXLbHCBO4inZABB6klLxu2uqMp26ZCHff8YoikmMc2AZBtCKSVoE8cYdMUCyCm7KXrsxzvv4OYyPQCf6NjaVWFEawyPsVXV48YO58FtuSj14ivBpZAqFPr7rgOvrvD6Us2giRiPqGzFMAZDZD' });
 					}
-					if( a == '#' ){
+					if( a == '#jenifer' ){
 						return resolve({ 'fb_token': 'EAAXR2fF8rkoBAG0J0kmg703N9LhjooHUdUKzOOZCr0bZBZCPO3JjyJ4hNaV2jr1nIG8x7EJzMJbSyKx2rRGeg3V7ZA2cCly5cZBuGzuKyzmpXFKEv1zM0cqxmSyjjziiArZC2hffiwVH03AeJQOmBUHfuWH0tSacnbjC6lIRbu1gZDZD' });
 					}
 				}
