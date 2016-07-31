@@ -60,7 +60,7 @@
 					return reject('No local data available, initializing lp...');
 				}
 
-				if( LJ.app_mode != "prod" ){
+				if( LJ.app_mode == "dev" ){
 					return reject('Autoreconnexion disabled in dev/stage mode');
 				}
 
