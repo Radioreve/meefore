@@ -389,8 +389,8 @@
 			"us": "So, how do you keep busy everyday ?"
 		},
 		p_location_explanation: {
-			"fr": "Où sors-tu habituellement ?",
-			"us": "Where do you get out these days ? Meefore works everywhere"
+			"fr": "Où es-tu en ce moment ?",
+			"us": "Where are you now ?"
 		},
 		p_ideal_night_explanation: {
 			"fr": "Sans alcool, la fête est plus...",
@@ -433,8 +433,8 @@
 			"us": "Looking for someone?"
 		},
 		search_title: {
-			"fr": "Tous les membres",
-			"us": "All our members"
+			"fr": "Autour de moi",
+			"us": "Around me"
 		},
 		h_logout: {
 			"fr": "Se déconnecter",
@@ -1828,8 +1828,8 @@
 			"us": "Address"
 		},
 		be_create_before_explanations: {
-			"fr": "Où et quand vous rejoignez-vous ?",
-			"us": "Where and when will you guys meet ?"
+			"fr": "Dans quel quartier se passe le before ?",
+			"us": "In which area will the pregame happen ?"
 		},
 		be_create_button: {
 			"fr": "Créer",
@@ -2000,12 +2000,16 @@
 			"us": "Only you and the other members of your group will receive messages that are sent on this chat."
 		},
 		chat_rows_team_title: {
-			"fr": "Amis",
-			"us": "Friends"
+			"fr": "Ta team",
+			"us": "Your team"
 		},
 		chat_rows_all_title: {
-			"fr": "Match",
-			"us": "Match"
+			"fr": "Tes Match",
+			"us": "Your Match"
+		},
+		chat_rows_cheers_title: {
+			"fr": "Cheers reçus",
+			"us": "Cheers received"
 		},
 		chat_inview_options_message: {
 			"fr": "Que souhaites-tu faire ?",
@@ -2043,18 +2047,14 @@
 			"fr": "Nouveau Match !",
 			"us": "It's a Match !"
 		},
-		// chat_row_request_all_subtitle: {
-		// 	"fr": function( names ){ return "avec " + names; },
-		// 	"us": function( names ){ return  "with " + names; } 
-		// },
 		chat_row_request_team_subtitle: {
 			"fr": "Nouvelle conversation",
 			"us": "New group conversation"
 		},
-		// chat_row_request_team_subtitle: {
-		// 	"fr": function( names ){ return "entre " + names; },
-		// 	"us": function( names ){ return  "between " + names; } 
-		// },
+		chat_row_cheers_subtitle: {
+			"fr": "Nouveau Cheers !",
+			"us": "New Cheers !"
+		},
 		chat_inview_validate_later: {
 			"fr": "Plus tard",
 			"us": "Later"
@@ -2112,16 +2112,12 @@
 			"us": "...one shares !"
 		},
 		invite_friends_popup_btn: {
-			"fr": "Message Facebook",
-			"us": "Facebook message"
+			"fr": "Inviter d'autres amis",
+			"us": "Invite more friends"
 		},
 		chat_input_placeholder: {
 			"fr": "Ecrivez un message...",
 			"us": "Write a message..."
-		},
-		be_browser_empty: {
-			"fr": "Aucun before n'est prévu dans cette ville dans les jours à venir",
-			"us": "No pregame is scheduled in this town for the days to come"
 		},
 		chat_sync_done: {
 			"fr": "Synchronization terminée",
@@ -2186,8 +2182,23 @@
 		be_check_cheers_zero: {
 			"fr": "Cheers reçus",
 			"us": "Cheers received"
+		},
+		cheers_back_h1: {
+			"fr": "Cheers envoyé par %groupname",
+			"us": "Cheers sent by %groupname"
+		},
+		cheers_back_h2: {
+			"fr": "%date",
+			"us": "%date"
+		},
+		chat_row_empty_match: {
+			"fr": "En attente de Match",
+			"us": "Waiting for a Match"
+		},
+		chat_row_empty_cheers: {
+			"fr": "Crée un before avec tes amis pour recevoir des cheers",
+			"us": "Create a before with your friends to receive Cheers"
 		}
-
 
 
 	});

@@ -592,7 +592,7 @@
 				$w = $w.find('.jspPane');
 			}
 
-			LJ.chat.deemptifyChatInview( chat_id );
+			LJ.chat.unemptifyChatInview( chat_id );
 			$( chat_line_html ).css({
 				'opacity': 0 // If display "none", its not detected by jScrollPane when refreshing the overflow
 			}); 
@@ -1065,7 +1065,7 @@
         	LJ.chat.refreshChatJsp( chat_id );
 
         },	
-        deemptifyChatInview: function( chat_id ){
+        unemptifyChatInview: function( chat_id ){
 
         	LJ.chat.getChatInview( chat_id ).find('.chat-empty').remove();
         	LJ.chat.getChatInview( chat_id ).find('.chat-inview-messages').show();

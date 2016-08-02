@@ -229,15 +229,15 @@
 }
 
 .app-subheader.x--menu .menu-item__bar {
-    width: 82%;
+    width: 90%;
     margin-left: 20px;
     top: 25px;
 }
 
 .app-subheader.x--menu h3 {
     display: block;
-    font-family: 'creamy';
-    font-size: 19px;
+    font-family: 'quenda';
+    font-size: 14px;
     position: relative;
     top: 2px;
 }

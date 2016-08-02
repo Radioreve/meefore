@@ -83,13 +83,11 @@
 			if( !$target_menuitem.is( $current_menuitem ) ){
 				LJ.ui.hideSlide();
 				LJ.before.hideCreateBeforeStraight();
-				LJ.before.showBrowser();
 				LJ.map.deactivateMarkers();
 				LJ.map.refreshMarkers();
 			}
 
 			// Specificities
-
 			if( target_link == 'map' ){
 				$('.app').removeClass('padded');
 

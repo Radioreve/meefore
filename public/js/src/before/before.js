@@ -12,7 +12,6 @@
 			
 			LJ.before.addCreateBefore();
 			LJ.before.handleDomEvents();
-			LJ.before.initBrowser();
 
 			return LJ.before.fetchNearestBefores__UserLocation()
 					.then(function(){
@@ -23,12 +22,9 @@
 		handleDomEvents: function(){
 
 			LJ.ui.$body.on('click', '.js-create-before', LJ.before.handleShowCreateBefore );
-			// LJ.ui.$body.on('click', '.map__icon.js-expand-browser', LJ.map.handleShrinkBrowserDates );
 			LJ.ui.$body.on('click', '.be-create__close', LJ.before.handleHideCreateBefore );
-			LJ.ui.$body.on('click', '.be-dates__date', LJ.before.activateBrowserDate );
 			LJ.ui.$body.on('click', '.be-create.x--ready .be-create__button', LJ.before.handleCreateBefore );
 			LJ.ui.$body.on('click', '.be-inview .user-row', LJ.before.handleClickOnUserRow );
-			// LJ.ui.$body.on('click', '.be-options__option.x--share', LJ.before.handleShareBefore );
 			LJ.ui.$body.on('click', '.js-cancel-before', LJ.before.handleCancelBefore );
 			LJ.ui.$body.on('click', '.slide.x--before .js-show-options', LJ.before.showBeforeOptions );
 			LJ.ui.$body.on('click', '.js-request', LJ.before.handleRequest );
@@ -40,16 +36,9 @@
 
 
 		},
-		initBrowser: function(){
-
-			LJ.before.addBrowser();
-
-		},
 		initCreateBefore: function(){
 
 		 	LJ.before.initHostsPicker();
-			LJ.before.initDatePicker();
-		 	LJ.before.initHourPicker( 17, 2, 30 );
 
 		 	return LJ.seek.activatePlacesInCreateBefore()
 		 			.then(function(){
@@ -65,15 +54,11 @@
 				return LJ.delay( 100 ).then( LJ.before.handleShowCreateBefore );
 			}
 
-			LJ.before.hideBrowser();
 			LJ.before.showCreateBefore();
 
 		},
 		handleHideCreateBefore: function(){
 
-			if( $('.slide').length == 0 ){
-				LJ.before.showBrowser();
-			}
 			LJ.before.hideCreateBefore();
 
 		},
@@ -95,230 +80,15 @@
 			return g;
 
 		},
-		activateBrowserDate: function(){
-
-			var $s = $( this );
-
-			var date = $s.attr('data-day');
-			var m = moment( date, 'DD/MM' );
-
-			LJ.map.activateDate( m );
-
-		},
-		sortIsoDates: function( iso_dates ){
-
-			return iso_dates.sort(function( i1, i2 ){
-				return moment( i1 ).dayOfYear() - moment( i2 ).dayOfYear();
-			});
-
-		},	
-		findDistinctDays: function( iso_dates ){
-
-			var days = [];
-			LJ.before.sortIsoDates( iso_dates ).forEach(function( isodate, i ){
-
-				days.push({
-					id        : i,
-					day_word  : LJ.text('day')[ parseInt(moment( isodate ).format('d')) ],
-					day_digit : moment( isodate ).format('DD/MM')
-				});
-
-			});
-
-			var distinct_days = [];
-			var found = [];
-
-			days.forEach(function( day ){
-
-				if( found.indexOf( day.day_digit ) == -1 ){
-					found.push( day.day_digit );
-					distinct_days.push( day );
-				}
-
-			});
-
-			return distinct_days;
-
-		},
-		addBrowser: function(){
-
-			$('.be-browser').remove();
-			$('.app-subheader.x--map')
-				.append( LJ.before.renderBrowser() );			
-
-		},
-		preRefreshBrowserLocation: function(){
-
-			$('.js-current-location')
-				.children()
-				.velocity({ opacity: [ 0.5, 1 ]}, {
-					duration: 100
-				});
-
-		},
-		refreshBrowserLocation: function(){
-
-			var center_latlng = LJ.meemap.center;
-			LJ.map.findAddressWithLatLng( center_latlng )
-				.then(function( address ){
-
-					$('.js-current-location')
-						.children()
-						.velocity({ opacity: [ 0, 0.5 ]}, {
-							duration: 200,
-							complete: function(){
-
-								$('.js-current-location').find('.js-closeto').html( address );
-								$( this ).velocity('fadeIn', {
-										duration: 400,
-										display: 'flex'
-									});
-
-							}
-						});
-				});
-
-		},
-		findActiveDateIndex: function(){
-
-			var i = 0;
-			var $bd = $('.be-dates__date.x--active');
-			if( $bd.length > 0 ){
-				$('.be-dates__date').each(function( j, el ){
-					if( $(el).hasClass('x--active') ){
-						i = j;
-					}
-				});
-			}
-			return i;
-
-		},
 		handleNavigateToCheers: function(){
 
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("cheers");
-			LJ.unoffsetAll();
+			LJ.chat.showChatWrap();
 
 		},
 		handleClickOnUserRow: function(){
 
 			var facebook_id = $(this).attr('data-facebook-id');
 			LJ.profile_user.showUserProfile( facebook_id );
-
-		},
-		refreshBrowserDates: function(){
-
-			var iso_dates  = _.map( LJ.before.fetched_befores, 'begins_at' );
-			var dates_html = [];
-
-			if( iso_dates.length == 0 ){
-
-				LJ.wlog('No iso_dates found');
-				dates_html.push( LJ.before.renderBrowserDatesEmpty() );
-
-			} else {
-
-				var dates = LJ.before.findDistinctDays( iso_dates );
-				dates.forEach(function( date, i ){
-
-					var d = date.day_digit;
-					var w = date.day_word.slice( 0, 3 );
-
-					dates_html.push([
-						'<div class="be-dates__date" data-day="'+ d +'">',
-							'<span class="be-dates__offset">' + w + '.<span>'+ d +'</span></span>',
-							'<div class="be-dates__bar"></div>',
-						'</div>'
-						].join(''));
-				});
-				
-			}
-
-
-			$('.js-be-dates').html( dates_html.join('') );
-			LJ.ui.turnToJsp( $('.js-be-dates'), {
-				jsp_id: 'before_dates'
-			});
-
-			LJ.before.refreshBrowserCount();
-
-		},
-		getBeforeCountByDate: function( date ){
-
-			var m = moment( date, 'DD/MM' );
-
-			return _.filter( LJ.before.fetched_befores, function( bfr ){
-				return m.dayOfYear() == moment( bfr.begins_at ).dayOfYear();
-			}).length;
-
-		},
-		refreshBrowserCount: function(){
-
-			$('.be-dates__date').each(function( i, el ){
-				var $el = $( el );
-
-				var day = $el.attr('data-day');
-				var cnt = LJ.before.getBeforeCountByDate( day );
-
-				$el.find('.be-dates__count').remove();
-				$el.append('<span class="be-dates__count">(' + cnt + ')</span>');
-
-			});
-
-
-		},
-		renderBrowser: function(){
-
-			return LJ.ui.render([
-
-				'<div class="be-browser">',
-					'<div class="be-dates js-be-dates">',
-					'</div>',
-					'<div class="be-address js-current-location">',
-						'<i class="icon icon-location"></i>',
-						'<span data-lid="be_close_to"></span>',
-						'<span class="js-closeto"></span>',
-					'</div>',
-				'</div>',
-
-			].join(''));
-
-		},
-		renderBrowserDatesEmpty: function(){
-
-			return LJ.ui.render([
-				'<div class="be-browser__empty">',
-					'<span data-lid="be_browser_empty"></span>',
-				'</div>'
-			].join(''));
-
-		},
-		hideBrowser: function(){
-
-			if( $('.app-subheader.x--map').css('opacity') != 1 ){
-				return;
-			}
-
-			$('.app-subheader.x--map').velocity('slideUpOut', {
-				duration : 500
-			});
-
-		},
-		showBrowser: function(){
-
-			var is_browser_visible   = $('.app-subheader.x--map').css('opacity') != 0 && $('.app-subheader.x--map').css('display') != 'none';
-			var is_slide_visible     = $('.slide').length > 0 && $('.slide').css('opacity') == '1';
-			var is_be_create_visible = $('.be-create').css('opacity') == '1';
-
-			if( is_browser_visible ){
-				return;
-			}
-
-
-			$('.app-subheader.x--map').velocity('slideDownIn', {
-				duration : 500,
-				display  : 'flex'
-			});
 
 		},
 		showCreateBeforeBtn: function(){
@@ -373,16 +143,6 @@
 						return befores;
 
 					});
-
-		},
-		displayBeforeMarkers: function( befores ){
-
-			befores.forEach(function( before ){
-				LJ.map.addBeforeMarker( before );
-			});
-
-			LJ.map.updateMarkers__byDate();
-			LJ.map.clearSeenMarkers();
 
 		},
 		getMyBeforeById: function( before_id ){
@@ -444,8 +204,6 @@
         	LJ.map.deactivateMarkers();
         	LJ.map.refreshMarkers();
 
-        	LJ.before.showBrowser();
-
         },
         hideBeforeInview: function(){
 
@@ -456,7 +214,6 @@
 			
 			var before;
 
-        	LJ.before.hideBrowser();
         	return LJ.ui.showSlideAndFetch({
 
 				"type"			: "before",
@@ -551,8 +308,6 @@
         },
         showBeforeInview: function( before ){
 
-        	LJ.before.hideBrowser();
-
 			var host_ids  = before.hosts;
 
 			var host_profiles;
@@ -569,7 +324,7 @@
 				"complete"      : LJ.before.handleCloseBeforeInview,
 				"errHandler"    : LJ.before.handleShowBeforeInviewError
 
-			})
+			}) 
 			.then(function( expose ){	
 				host_profiles = _.map( expose, 'user' );
 				return LJ.before.renderBeforeInview( before, host_profiles );
@@ -653,12 +408,6 @@
 			return LJ.ui.render( be_pictures.join('') );
 
 		},
-		renderBeforeDate: function( date ){
-
-			var m = moment( date );
-			return LJ.text("before_date", m );
-
-		},
 		renderBeforeAddress: function( address ){
 			return address.place_name;
 
@@ -698,7 +447,7 @@
 			var before = LJ.before.active_before;
 
 			if( !before ){
-				return LJ.wlog("Cannot refresh before inview action, no active before is set");
+				return LJ.log("Cannot refresh before inview action, no active before is set");
 			}
 
 			if( before.hosts.indexOf( LJ.user.facebook_id ) != -1 ){
@@ -773,7 +522,6 @@
 		
 			var usernames   = LJ.text("w_before").capitalize() + " " + LJ.text("w_with") + " " + LJ.renderMultipleNames( _.map( hosts, 'name') );
 			var be_addr     = LJ.before.renderBeforeAddress( before.address );
-			var be_date     = LJ.before.renderBeforeDate( before.begins_at );
 
 			var be_pictures = LJ.pictures.makeHiveHtml( hosts, "user-before",{
 				class_names : [ "js-show-profile" ],
@@ -786,25 +534,19 @@
 					'<div class="be-usernames">',
 						'<span>'+ usernames +'</span>',
 					'</div>',
-		            '<div class="be-options">',
-		              '<div class="be-options__option x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',
-		            '</div>',
-			      	'<div class="be-pictures">',
-			           be_pictures,
-			        '</div>',
 			        '<div class="be-inview-address">',
-			          '<div class="be-inview-address__date">',
-			          	'<div class="be-inview-address__icon x--round-icon">',
-			          		'<i class="icon icon-clock-empty"></i>',
-			          	'</div>',
-			            '<span>'+ be_date +'</span>',
-			          '</div>',
 			          '<div class="be-inview-address__address">',
 			          	'<div class="be-inview-address__icon x--round-icon">',
 			          		'<i class="icon icon-location-empty"></i>',
 			          	'</div>',
 			            '<span>'+ be_addr +'</span>',
 			          '</div>',
+			        '</div>',
+		            '<div class="be-options">',
+		              '<div class="be-options__option x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',
+		            '</div>',
+			      	'<div class="be-pictures">',
+			           be_pictures,
 			        '</div>',
 			        '<div class="be-action">',
 			        '</div>',
@@ -889,7 +631,6 @@
 			var be_pictures = LJ.before.renderBeforePictures( hosts );
 			var user_rows   = LJ.renderUserRows( hosts );
 
-			var be_date = LJ.before.renderBeforeDate( before.begins_at );
 			var be_addr = LJ.before.renderBeforeAddress( before.address );
  
 			return LJ.ui.render([
@@ -902,9 +643,6 @@
 			          be_pictures,
 			        '</div>',
 			        '<div class="be-inview-address">',
-			          '<div class="be-inview-address__date">',
-			            '<span>'+ be_date +'</span>',
-			          '</div>',
 			          '<div class="be-inview-address__address">',
 			            '<span>'+ be_addr +'</span>',
 			          '</div>',
@@ -936,8 +674,6 @@
 
 					LJ.before.removeBeforeItem( before_id );
 					LJ.before.removeFetchedBefore( before_id );
-					LJ.before.refreshBrowserDates();
-					LJ.before.showBrowser();
 					
 					LJ.map.removeBeforeMarker( before_id );
 					LJ.ui.hideSlide({ type: 'before' });
@@ -1016,53 +752,6 @@
 				});
 
 		},
-		handleShareBefore: function(){	
-
-			var target_id = $( this ).closest('[data-before-id]').attr('data-before-id');
-
-			LJ.ui.showModal({
-				"title"			: LJ.text('modal_share_title_before'),
-				"type"      	: "share",
-				"search_input"	: true,
-				"jsp_body" 	    : true,
-				"attributes"	: [{ name: "item-id", val: target_id }],
-				"subtitle"		: LJ.text('modal_share_subtitle_before'),
-				"body"  		: LJ.friends.renderFriendsInModal(),
-				"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>"
-			})
-			.then(function(){
-				return LJ.ui.getModalItemIds();
-
-			})
-			.then(function( item_ids ){
-
-				var d = LJ.static.renderStaticImage('search_loader');
-				$( d ).addClass('modal__search-loader').hide().appendTo('.modal').velocity('fadeIn', {
-					duration: 400
-				});
-
-				return LJ.api.shareWithFriends({
-					target_id   : target_id,
-					target_type : 'before',
-					shared_with : item_ids
-				});
-
-			})
-			.then(function( exposed ){
-				return LJ.ui.hideModal();
-
-			})
-			.then(function(){
-				LJ.ui.showToast( LJ.text('to_before_shared_success') );
-				
-			})
-			.catch(function(e){
-				LJ.wlog(e);
-				LJ.ui.hideModal();
-
-			});
-
-		},
 		getBefore: function( before_id ){
 			return LJ.promise(function( resolve, reject ){
 
@@ -1091,13 +780,9 @@
 		},
 		updateBeforeItem: function( before_id, opts ){
 
-			var before_item = LJ.before.getBeforeItem( before_id );
-
-			_.keys( before_item ).forEach(function( key ){
-				if( opts[ key ] && typeof opts[ key ] == typeof before_item[ key ] ){
-					before_item[ key ] = opts[ key ];
-				}
-			});
+			var before_item  = LJ.before.getBeforeItem( before_id );
+			
+			before_item	     = _.merge( before_item, opts );
 
 		},
 		getChannelItem( before_id ){

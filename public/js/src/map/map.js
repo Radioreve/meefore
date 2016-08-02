@@ -2,7 +2,6 @@
 	window.LJ.map = _.merge( window.LJ.map || {}, {		
 
         markers: [],
-        browser_uistate: null,
 
        	// Called as soon as the script finished loading everything
 		init: function(){
@@ -14,7 +13,7 @@
     			LJ.map.handleDomEvents();
                 LJ.map.handleMapEvents();
     			LJ.map.initPlacesServices();
-                LJ.before.displayBeforeMarkers( LJ.before.fetched_befores );
+                LJ.map.displayBeforeMarkers( LJ.before.fetched_befores );
                 
             } catch( e ){
                 LJ.wlog("unable to initialize the map");
@@ -22,7 +21,7 @@
             }
 
             
-            return LJ.before.refreshBrowserLocation();
+            return 
 			
 		},
         initGeocoder: function(){
@@ -71,7 +70,7 @@
 
 			var options = {
 				center: latlng,
-	            zoom: 13,
+	            zoom: 12,
 	            disableDefaultUI: true,
 	            zoomControlOptions: {
 	                style    : google.maps.ZoomControlStyle.SMALL,
@@ -82,7 +81,7 @@
 	            }
 			}
 
-			var $wrap = document.getElementsByClassName('js-map-wrap')[0];
+			var $wrap = document.getElementsByClassName('js-map-wrap')[ 0 ];
 
 			LJ.meemap = new google.maps.Map( $wrap, options );
 			
@@ -120,7 +119,6 @@
         		.append( LJ.map.renderChangeLocation() )
         		.append( LJ.map.renderGeoLocation() )
                 .append( LJ.map.renderCreateBefore() )
-                // .append( LJ.map.renderExpandBrowser() )
         		.append( LJ.map.renderPinLocation() );
 
 
@@ -155,11 +153,11 @@
         handleMapEvents: function(){
 
             LJ.meemap.addListener('dragstart', function(){
-                LJ.before.preRefreshBrowserLocation();
+                
             });
 
             LJ.meemap.addListener('dragend', function(){
-                LJ.before.refreshBrowserLocation();
+                
             });
 
             LJ.meemap.addListener('click', function(e){
@@ -173,38 +171,6 @@
             $('body').on('click', '.js-map-zoom-in', LJ.map.zoomIn );
             $('body').on('click', '.js-map-zoom-out', LJ.map.zoomOut );
 
-
-        },
-        expandBrowser: function(){
-
-            $('.map__icon.x--create-before, .map__icon.x--filter-dates, .be-browser' ).velocity({ 'translateY':'0' }, { duration: 300 });
-
-        },
-        shrinkBrowser: function(){
-
-            $('.map__icon.x--create-before, .map__icon.x--filter-dates, .be-browser' ).velocity({ 'translateY':'-54' }, { duration: 300 });
-
-        },
-        handleShrinkBrowserDates: function(){
-
-            if( LJ.map.browser_uistate == "shrinked" ){
-                LJ.map.activateBrowserState( "expanded" );
-            } else {
-                LJ.map.activateBrowserState( "shrinked" );
-            }
-
-        },
-        activateBrowserState: function( state ){
-
-            if( state == "expanded" ){
-                LJ.map.expandBrowser();
-                LJ.map.browser_uistate = "expanded";
-            }
-
-            if( state == "shrinked" ){
-                LJ.map.shrinkBrowser();
-                LJ.map.browser_uistate = "shrinked";
-            }
 
         },
         renderMapZoom: function(){
@@ -242,51 +208,6 @@
         },
         refreshMap: function(){
         	return google.maps.event.trigger( LJ.meemap, 'resize' );
-
-        },
-        deactivateDate: function(){
-
-            var $date_activated = $('.be-dates__date.x--active');
-
-            if( $date_activated.length == 0 ){
-                return LJ.log('Already deactivated');
-            }
-
-            var m = moment( $date_activated.attr('data-day') , 'DD/MM' );
-            LJ.map.activateDate( m );
-
-        },  
-        activateDate: function( m ){
-
-            var $date_activated   = $('.be-dates__date.x--active');
-            var $date_to_activate = $('.be-dates__date[data-day="'+ m.format('DD/MM') +'"]');
-
-             if( $date_to_activate.length != 1 ){
-                return LJ.wlog('Unable to find the date : ' + m.format('DD/MM') );
-            }
-
-            if( $date_activated.is( $date_to_activate ) ){
-
-                 $date_activated
-                    .removeClass('x--active')
-                    .find('.be-dates__bar')
-                    .velocity('bounceOut', { duration: 450, display: 'none' });
-
-            } else {
-
-                $date_activated
-                    .removeClass('x--active')
-                    .find('.be-dates__bar')
-                    .velocity('bounceOut', { duration: 450, display: 'none' });
-
-                $date_to_activate
-                    .addClass('x--active')
-                    .find('.be-dates__bar')
-                    .velocity('bounceInQuick', { duration: 450, display: 'block' });
-
-            }
-
-            LJ.map.updateMarkers__byDate();
 
         },
         findLocationWithLatLng: function( latlng ){
@@ -661,22 +582,29 @@
                     LJ.before.getBefore( mrk.marker_id )
                     .then(function( bfr ){
 
-                        var url;
-
-                        if( mrk.status == "active" ){
-                            url = LJ.map.getBeforeMarkerUrl( bfr, true );
-                        } else {
-                            url = LJ.map.getBeforeMarkerUrl( bfr, false );
-                        }
-
-                        var icon = LJ.map.makeIcon( url );     
-                        mrk.marker.setIcon( icon );                   
+                        LJ.map.refreshMarker__IconBased( mrk, bfr );
                         
                     });
 
                 }
 
             });
+
+        },
+        // Icon based version of the refresh marker function 
+        // No picture are displayed, only different icons basedon the before status
+        refreshMarker__IconBased: function( mrk, bfr ){
+
+            var url;
+
+            if( mrk.status == "active" ){
+                url = LJ.map.getBeforeMarkerUrl( bfr, true );
+            } else {
+                url = LJ.map.getBeforeMarkerUrl( bfr, false );
+            }
+
+            var icon = LJ.map.makeIcon( url );     
+            mrk.marker.setIcon( icon );   
 
         },
         getActiveMarker: function(){
@@ -737,7 +665,6 @@
             
             if( mrk.marker.getOpacity() && mrk.marker.getOpacity() != 1 ){
 
-                LJ.map.deactivateDate();
                 LJ.before.handleCloseBeforeInview();
                 LJ.before.hideBeforeInview();
                 LJ.profile_user.hideUserProfile();
@@ -764,16 +691,7 @@
 
             return LJ.ui.render([
                 '<div class="map__icon x--round-icon x--create-before js-create-before">',
-                    '<i class="icon icon-create-before"></i>',
-                '</div>'
-                ].join(''));
-
-        },
-        renderExpandBrowser: function(){
-
-            return LJ.ui.render([
-                '<div class="map__icon x--round-icon x--filter-dates js-expand-browser">',
-                    '<i class="icon icon-filters"></i>',
+                    '<i class="icon icon-meedrink"></i>',
                 '</div>'
                 ].join(''));
 
@@ -819,34 +737,14 @@
         		].join(''));
 
         },
-        updateMarkers__byDate: function(){
+        displayBeforeMarkers: function( befores ){
 
-            var active_day;
-            var $active_day = $('.be-dates__date.x--active');
-
-            if( $active_day.length == 1 ){
-                active_day = moment( $active_day.attr('data-day'), 'DD/MM' ).dayOfYear();
-                
-            } else {
-                active_day = null;
-            }
-
-
-            LJ.map.markers.forEach(function( mrk ){
-
-                if( mrk.type == "before" && active_day ){
-
-                    if( mrk.data && mrk.data.begins_at && moment( mrk.data.begins_at ).dayOfYear() == active_day ){
-                        mrk.marker.setOpacity( 1 );
-                    } else {
-                        mrk.marker.setOpacity( 0.2 );
-                    }
-
-                } else {
-                    mrk.marker.setOpacity( 1 );
-                }
-
+            befores.forEach(function( before ){
+                LJ.map.addBeforeMarker( before );
             });
+
+            LJ.map.clearSeenMarkers();
+            
         }
 
 

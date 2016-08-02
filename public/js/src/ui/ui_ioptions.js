@@ -16,7 +16,7 @@
 
 			$( html )
 				.hide()
-				.appendTo('.ioptions')
+				.appendTo( $wrap.find('.ioptions') )
 				.velocity('shradeIn', {
 					duration : LJ.ui.ioptions_show_duration,
 					delay    : LJ.ui.ioptions_show_duration/2,

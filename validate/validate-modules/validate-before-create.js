@@ -58,7 +58,8 @@
 		req.sent.timezone    = parseFloat( req.sent.timezone );
 		req.sent.address.lat = parseFloat( req.sent.address.lat );
 		req.sent.address.lng = parseFloat( req.sent.address.lng );
-
+		req.sent.begins_at 	 = new Date();
+		
 		nv.run( checkBefore, req.sent, function( n, errors ){
 			if( n != 0 ){
 				req.app_errors = req.app_errors.concat( errors );

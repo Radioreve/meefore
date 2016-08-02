@@ -203,11 +203,6 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		var before_id = data._id;
 		var requester = data.requester;
 
-		// Refetch all cheers. 
-		if( hosts.indexOf( LJ.user.facebook_id ) != -1 ){
-			LJ.cheers.fetchAndAddCheers();			
-		}
-
 		// Force a resync of all the chats with updated server values
 		LJ.chat.resyncAllChats();
 
@@ -236,7 +231,6 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		var before = data.before;
 
 		LJ.before.fetched_befores.push( before );
-		LJ.before.refreshBrowserDates();
 		LJ.map.addBeforeMarker( before );
 		LJ.map.refreshMarkers();
 	
@@ -255,7 +249,6 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 			LJ.map.removeBeforeMarker( before_id );
 			LJ.before.removeFetchedBefore( before_id );
 			LJ.before.removeBeforeItem( before_id );
-			LJ.before.refreshBrowserDates();
 
 			// If the user is viewing the before, take control of his ui and notify before is gone
 			var $be = $('.be-inview[data-before-id="'+ before_id +'"]');
@@ -292,37 +285,17 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 		LJ.realtime.channels[ channel_name ].bind('new hello'		  	   , LJ.log ); // Test channel
 		LJ.realtime.channels[ channel_name ].bind('new request host'  	   , LJ.realtime.handleNewRequestHost );
-		// LJ.realtime.channels[ channel_name ].bind('new before status host' , LJ.realtime.handleNewBeforeStatusHosts );
 
 	},
 	handleNewRequestHost: function( data ){
 
 		LJ.log( data );
-		// LJ.log('Someone requested to participate in your before');
-
-		// LJ.ui.showToast( LJ.text('to_cheers_received_success') );
 
 		// Refetch the whole cheers, to make sure all complete profiles are available.
 		LJ.cheers.fetchAndAddCheers();
 
 		// Add notification in real time
 		LJ.realtime.addNotification( data );
-
-
-	},
-	handleNewBeforeStatusHosts: function( data ){
-
-		// LJ.log('Push event received, data : ');
-		// LJ.log( data );
-
-		// var before_id   = data.before_id;
-		// var hosts 	    = data.hosts;
-		// var status 	    = data.status;
-		// var requester   = data.requester;
-
-
-		// // Add notification in real time
-		// LJ.realtime.addNotification( data );
 
 	},
 	// Subscribe to specific chat channels for hosts & requesters.
@@ -385,7 +358,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 				// Update the cheers
 				LJ.cheers.updateCheersItem( cheers_id, { status: status });
-				LJ.cheers.refreshCheersItems();
+				LJ.cheers.refreshCheersItems__Chat();
 
 				// Add notification in real time
 				LJ.realtime.addNotification( data );
@@ -420,7 +393,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 				// Update the cheer_item
 				LJ.cheers.updateCheersItem( cheers_id, { "status": status });
-				LJ.cheers.refreshCheersItems();
+				LJ.cheers.refreshCheersItems__Chat();
 
 				LJ.before.updateBeforeItem( before_id, { "status": status });
 				LJ.before.refreshBeforeInviewAction();

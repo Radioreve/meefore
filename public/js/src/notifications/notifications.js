@@ -774,19 +774,15 @@
 		},
 		notificationCallback__GroupRequestHosts: function( n ){
 
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("cheers");
-			LJ.cheers.activateCheers("received");
-			LJ.unoffsetAll();
-
+			LJ.chat.showChatWrap();
 
 		},
 		notificationCallback__GroupRequestMembers: function( n ){
 
-			LJ.nav.navigate("menu");
-			LJ.menu.activateMenuSection("cheers");
-			LJ.cheers.activateCheers("sent");
-			LJ.unoffsetAll();
+			// LJ.nav.navigate("menu");
+			// LJ.menu.activateMenuSection("cheers");
+			// LJ.cheers.activateCheers("sent");
+			// LJ.unoffsetAll();
 
 		},
 		notificationCallback__AcceptedInMembers: function( n ){

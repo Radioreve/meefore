@@ -341,10 +341,7 @@
 				}).then(function(){
 
 					// LJ.map.activateBrowserState("shrinked");
-					LJ.before.showBrowser();
-					LJ.before.refreshBrowserDates();
 					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
-					LJ.map.updateMarkers__byDate();
 					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
 					LJ.ui.$body.on('click', '.modal.x--logout .modal-footer button', LJ.login.logUserOut );
 					$('.multi-landing').remove();

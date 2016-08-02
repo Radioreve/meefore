@@ -454,7 +454,7 @@
 				imgs_html.push( LJ.pictures.makeImgHtml( pic.img_id, pic.img_vs, scope ) );
 			});
 
-			var rosace_imgs_html = ['<div class="rosace">'];
+			var rosace_imgs_html = ['<div class="rosace js-filterlay">'];
 			imgs_html.forEach(function( img_html, i ){
 
 				var part = [ "x--left", "x--right", "x--down" ][ i ];
@@ -471,7 +471,7 @@
 			});
 			rosace_imgs_html.push('</div>');
 
-			return rosace_imgs_html.join('');
+			return LJ.ui.render( rosace_imgs_html );
 
 		},
 		makeHiveHtml: function( users, scope, opts ){

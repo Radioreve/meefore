@@ -32,7 +32,8 @@
 .be-create-row__subtitle {
     font-weight: bold;
     margin-top: 30px;
-    font-size: 13px;
+    font-size: 15px;
+    font-family: 'quenda';
 }
 
 .be-create-row__subtitle h2 {}

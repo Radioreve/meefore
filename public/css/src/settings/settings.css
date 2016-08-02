@@ -96,6 +96,8 @@
     border: none;
     border-bottom: 1px solid #eee;
     transition: all ease-out .15s;
+    font-family: 'quenda';
+    font-size: 16px;
 }
 
 .settings-item.x--active {}

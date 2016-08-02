@@ -16,7 +16,8 @@
 }
 
 .me-item.x--no-edit input {
-    opacity: .5;
+    opacity: .25;
+    cursor: default;
 } 
 
 .me-item-body {
@@ -28,10 +29,12 @@
 }
 
 .me-item label {
-    font-size: 10px;
     font-weight: 700;
-    text-transform: uppercase;
-    /* margin-left: 30px; */
+    font-family: 'quenda';
+    font-size: 14px;
+    text-transform: none;
+    color: #ccc;
+    font-weight: normal;
 } 
 
 .me-item input,
@@ -49,6 +52,7 @@
     font-family: 'Open sans';
     cursor: pointer;
     border-top: none;
+    font-family: 'quenda';
 }
 
 .menu-section__input {

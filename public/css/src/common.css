@@ -170,9 +170,11 @@ button:hover {
     font-size: 16px;
     height: 30px;
     width: 30px;
+    z-index: 1;
 }
 
-.icon-meedrink {
+.icon-meedrink,
+.icon-meedrink-empty {
     transform: rotate(20deg);
 }
 
@@ -227,9 +229,10 @@ button:hover {
 
 .row-body h2 {
     font-weight: 700;
-    font-size: 15px;
+    font-size: 18px;
     color: #454545;
     letter-spacing: -.3px;
+    font-family: 'quenda';
 }
 
 .row-body__icon {
@@ -243,6 +246,7 @@ button:hover {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    height: 13px;
 }
 
 .row-body h4 span {
@@ -277,6 +281,7 @@ button:hover {
     margin-bottom: 4px;
     width: 100%;
     font-family: 'Open sans';
+    font-family: 'quenda';
 }
 
 .settings-input__icon {
@@ -1194,7 +1199,8 @@ button:hover {
 }
 
 .modal-subheader b {
-    color: #191919;
+    color: #1b69ec;
+    font-family: 'quenda';
 }
 
 .modal-body {
@@ -1387,14 +1393,14 @@ button:hover {
     align-items: center;
     margin-top: 21px;
     padding: 0 30px;
-}
+} 
 
 .modal-search__input input {
     padding: 10px 16px;
     border-radius: 100px;
     border: 1px solid #eee;
     width: 100%;
-    font-size: 16px;
+    font-size: 13px;
 }
 
 .modal.x--share .modal-body {

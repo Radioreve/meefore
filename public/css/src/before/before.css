@@ -276,10 +276,11 @@ span.be-dates__count {
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
-    height: 60px;
+    height: 20px;
     padding: 0px 40px;
     font-size: 12px;
     align-items: center;
+    margin-bottom: 10px;
 }
 
 .be-inview-address__address {
@@ -457,7 +458,7 @@ span.be-dates__count {
     min-width: 180px;
     height: 40px;
     border-radius: 100px;
-    background: #db4760;
+    background: #1b69ec;
     font-size: 13px;
 }
 
@@ -476,7 +477,7 @@ span.be-dates__count {
 }
 
 .be-action i {
-    font-size: 30px;
+    font-size: 28px;
 }
 
 .be-action i.icon-meedrink {
@@ -591,7 +592,7 @@ span.be-dates__count {
     font-size: 26px;
     display: flex;
     align-items: flex-end;
-    height: 90px;
+    height: 100px;
     justify-content: center;
 }
 
@@ -601,11 +602,14 @@ span.be-dates__count {
     max-width: 240px;
     white-space: nowrap;
     padding: 0 6px;
+    /* font-family: 'quenda'; */
+    /* font-size: 18px; */
+    margin-bottom: 4px;
 }
 
 .be-inview.x--hive .be-pictures {
-    width: 280px;
-    height: 280px;
+    width: 300px;
+    height: 300px;
     padding: 0;
     flex-shrink: 0;
     margin: 0 auto;
@@ -693,6 +697,8 @@ span.be-dates__count {
     display: flex;
     color: #919191;
     font-size: 12px;
+    /* color: #1b69ec; */
+    /* font-family: 'quenda'; */
 }
 
 .user-flat .comma {

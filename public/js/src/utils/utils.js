@@ -15,7 +15,51 @@ window.LJ = _.merge( window.LJ || {}, {
                 return _.map(array, function(item) {
                     return _.partial(_.pick, item).apply(null, propertiesToPluck);
                 });
-            }
+            },
+            patch: function( a, b ){
+
+                var o = {};
+                var distinct_keys = [];
+                
+                Object.keys( a ).forEach(function( key ){
+                    distinct_keys.push( key );
+                });
+
+                Object.keys( b ).forEach(function( key ){
+                  if( distinct_keys.indexOf( key ) == -1 ){
+                    distinct_keys.push( key );
+                  }
+                });
+                
+                distinct_keys.forEach(function( key ){
+                    
+                    if( !(key in a)  ){
+                      return;
+                    }        
+                    if( (key in a) && !(key in b) ){
+                      return o[ key ] = a[ key ];
+                    }
+                    
+                    if( (key in a) && (key in b) && (typeof a[ key ] == typeof b[ key ] || (a[ key ] == null && b[ key ] != null ) ) ){
+                      
+                      if( typeof a[ key ] == "object" && a[ key ] != null ){
+                        return o[ key ] = patchify( a[ key ], b[ key ] );
+                      } else {
+                        return o[ key ] = b[ key ];
+                      }
+                      
+                    } else {
+
+                      o[ key ] = a[ key ];
+
+                    }
+                  
+                });
+                  
+                return o;
+
+              }
+
         });
 
         // upgrading version

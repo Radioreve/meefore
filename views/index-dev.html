@@ -199,24 +199,6 @@
           </div>
           <div class="menu-item__bar"></div>
         </li>
-       <!--  <li class="menu-item x--shared" data-link="shared">
-          <div class="menu-item__body">
-            <div class="menu-item__icon x--round-icon">
-              <i class="icon icon-forward"></i>
-            </div>
-            <h3 data-lid="menu_shared"></h2>
-          </div>
-          <div class="menu-item__bar"></div>
-        </li> -->
-        <li class="menu-item x--cheers" data-link="cheers">
-          <div class="menu-item__body">
-            <div class="menu-item__icon x--round-icon">
-              <i class="icon icon-meedrink-empty"></i>
-            </div>
-            <h3 data-lid="menu_cheers"></h2>
-          </div>
-          <div class="menu-item__bar"></div>
-        </li>
         <li class="menu-item x--friends" data-link="friends">
           <div class="menu-item__body">
             <div class="menu-item__icon x--round-icon">
@@ -379,36 +361,7 @@
       </section>
       <!-- Profile end -->
 
-      
-      <!-- Shared begin -->
-      <!-- <section class="menu-section x--shared" data-link="shared">
-        <div class="shared">
-         
-        </div>
-      </section> -->
-      <!-- Shared end -->
-
-       <!-- Cheers begin -->
-      <section class="menu-section x--cheers" data-link="cheers">
-        <div class="cheers-title">
-          <h3 data-lid="cheers_title"></h3>
-        </div>
-        <div class="cheers-subtitle">
-          <span data-lid="cheers_subtitle"></span>
-        </div>
-        <div class="segment nonei">
-          <div class="segment__part" data-link="received">
-            <h3 data-lid="segment_cheers_received"></h3>
-          </div>
-          <div class="segment__part" data-link="sent">
-            <h3 data-lid="segment_cheers_sent"></h3>
-          </div>
-        </div>
-        <div class="cheers">
-          <!-- %% Dynamically injected %%-->
-        </div>
-      </section>
-      <!-- Cheers end -->
+    
 
     
       <!-- Friends begin -->
@@ -469,48 +422,12 @@
             <button class="settings__button x--delete" data-lid="settings_account_delete_button"></button>
           </div>
         </div>
-        <!-- code section -->
-        <!-- <div class="menu-section__subtitle">
-          <h3 data-lid="menu_subsection_code"></h3>
-        </div>
-        <div class="settings x--code" data-link="code">
-          <div class="settings__title">
-            <h3 data-lid="settings_part_title_code"></h3>
-          </div>
-           <div class="settings-item" data-settings-type-id="invite_code">
-            <div class="settings-input">
-              <div class="settings-input__icon x--round-icon">
-                <i class="icon icon-code"></i>
-              </div>
-              <div class="settings-input-label">
-                <input readonly placeholder="BL1347"  id="settings__invite-code" type="text">
-              </div>
-            </div>
-            <div class="settings-input__explanation" data-lid="settings_code_sponsor_explanation"></div>
-            <div class="edit">
-              <i class="icon icon-pen"></i>
-            </div>
-            <div class="action">
-              <div class="action__validate x--round-icon">
-                <i class="icon icon-check"></i>
-              </div>
-              <div class="action__cancel x--round-icon">
-                <i class="icon icon-cancel"></i>
-              </div>
-            </div>
-          </div>
-          <div class="settings-item">
-            <button class="settings__button x--sponsor" data-lid="settings_code_sponsor_button"></button>
-          </div>
-        </div> -->
+
         <!-- emails section -->
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_emails"></h3>
         </div>
         <div class="settings x--emails" data-link="emails">
-          <!-- <div class="settings__title">
-            <h3 data-lid="settings_part_title_email"></h3>
-          </div> -->
           <div class="settings-item" data-settings-type-id="newsletter">
             <div class="settings-input">
               <div class="settings-input__icon x--round-icon"><i class="icon icon-mail-empty"></i></div>
@@ -524,19 +441,6 @@
             </div>
             <div class="settings-input__explanation" data-lid="settings_notifs_newsletter_explanation"></div>
           </div>
-          <!-- <div class="settings-item" data-settings-type-id="invitations">
-            <div class="settings-input">
-              <div class="settings-input__icon x--round-icon"><i class="icon icon-newsletter"></i></div>
-              <div class="settings-input-label">
-                <div class="settings-input__label" data-lid="settings_notifs_invitations_label"></div>
-              </div>
-              <div class="toggle">
-                <div class="toggle__background"></div>
-                <div class="toggle__button"></div>
-              </div>
-            </div>
-            <div class="settings-input__explanation" data-lid="settings_notifs_invitations_explanation"></div>
-          </div> -->
          </div>
         <!-- notifications section -->
         <div class="menu-section__subtitle">
@@ -678,9 +582,9 @@
 
      <!-- Map start -->
     <section class="app-section x--map" data-link="map">
-      <div class="app-subheader x--map">
+     <!--  <div class="app-subheader x--map">
         
-      </div>
+      </div> -->
       <div class="js-map-wrap">
         <!-- Holds the Google map -->
       </div>
@@ -711,6 +615,12 @@
           <span data-lid="chat_rows_all_title"></span>
         </div>
         <div class="chat-rows-body x--all">
+          <!-- Dynamically injected -->
+        </div>
+        <div class="chat-rows-title x--cheers">
+          <span data-lid="chat_rows_cheers_title"></span>
+        </div>
+        <div class="chat-rows-body x--cheers">
           <!-- Dynamically injected -->
         </div>
       </div>
@@ -825,6 +735,7 @@
   <script src="js/lib/nouislider/nouislider.js"></script>
 
   <!-- custom scripts -->
+  <script src="js/src/on.js"></script>
   <script src="js/src/store/store.js"></script>
   <script src="js/src/router/router.js"></script>
   <script src="js/src/utils/utils.js"></script>
@@ -835,7 +746,11 @@
   <script src="js/src/admin/admin.js"></script>
   <script src="js/src/analytics/analytics_google.js"></script>
   <script src="js/src/cheers/cheers.js"></script>
+  <script src="js/src/cheers/cheers_rows.js"></script>
+  <script src="js/src/cheers/cheers_chat.js"></script>
+  <script src="js/src/cheers/cheers_legacy.js"></script>
   <script src="js/src/before/before.js"></script>
+  <script src="js/src/before/before_legacy.js"></script>
   <script src="js/src/before/before_create.js"></script>
   <script src="js/src/before/before_request.js"></script>
   <script src="js/src/chat/chat.js"></script>

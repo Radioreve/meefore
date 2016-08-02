@@ -162,7 +162,7 @@
     right: 30px;
     z-index: 100;
     font-size: 12px;
-    height: 100px;
+    height: 70px;
     background: white;
     border: 1px solid #f7f7f7;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.27);
@@ -172,13 +172,13 @@
 }
 
 .invite-friends-popup__icon {
-    font-size: 22px;
+    font-size: 20px;
     background: white;
     width: 50px;
     height: 50px;
     flex-shrink: 0;
     color: #e94f6a;
-    margin-right: 20px;
+    /* margin-right: 20px; */
     animation: pound .5s infinite alternate;
     transform-origin: center;
 }
@@ -188,8 +188,8 @@
     right: 6px;
     top: 6px;
     cursor: pointer;
-    color: #3b5998;
     font-size: 8px;
+    color: #ccc;
 }
 
 .invite-friends-popup__close i {}
@@ -198,14 +198,12 @@
     display: flex;
     flex-flow: column;
     width: 100%;
-    margin-right: 20px;
 }
 
 .invite-friends-popup__icon i {}
 
 .invite-friends-popup__h1 {
-    font-family: 'creamy';
-    font-size: 22px;
+   display: none;
 }
 
 .invite-friends-popup__h1 span {}
@@ -214,7 +212,9 @@
     font-size: 12px;
 }
 
-.invite-friends-popup__h2 span {}
+.invite-friends-popup__h2 span {
+    display: none;
+}
 
 .invite-friends-popup__btn {
     flex-shrink: 0;
@@ -222,10 +222,16 @@
 
 .invite-friends-popup__btn button {
     height: 40px;
-    width: 150px;
-    border-radius: 50px;
-    color: white;
-    background: #3b5998;
+    width: 170px;
+    border-radius: 2px;
+    /* color: white; */
+    background: #1b69ec;
+    /* border: 2px solid #e94f6a; */
+    color: #e94f6a;
+    background: white;
+    font-weight: 700;
+    font-family: 'quenda';
+    font-size: 15px;
 }
 
 @keyframes pound {

@@ -11,6 +11,7 @@
 			
 			LJ.log('Init chat...');
 			LJ.chat.handleDomEvents();
+			LJ.chat.handleAppEvents();
 			LJ.chat.setupChat();
 			
 			LJ.chat.setupChatRowsJsp()
@@ -31,11 +32,46 @@
 			$('.app__menu-item.x--chats').on('click', LJ.chat.handleToggleChatWrap );
 			$('.app__menu-item.x--notifications').on('click', LJ.chat.hideChatWrap );
 			$('.chat__close').on('click', LJ.chat.hideChatWrap );
-			$('.chat').on('click', '.chat-row', LJ.chat.handleChatRowClicked );
+			$('.chat').on('click', '.js-chat-row', LJ.chat.handleChatRowClicked );
 
 			LJ.chat.handleDocumentVisibilityChangeEvents();
 
 			LJ.chat.handleDomEvents__Inview();
+
+		},
+		handleAppEvents: function(){
+
+			LJ.on("fetch_chats_done",  LJ.chat.refreshChatRowsState );
+			LJ.on("fetch_cheers_done", LJ.chat.refreshChatRowsState);
+
+
+		},
+		// Check the chat row states and display the empty views if needed
+		// - display the macro empty view if nothing is present
+		// - display the sub-empty views if necessary
+		refreshChatRowsState: function(){
+
+			var n_chats_team = _.filter( LJ.user.channels, function( chan ){
+				return chan.type == "chat_team";
+			}).length;
+
+			var n_chats_all = _.filter( LJ.user.channels, function( chan ){
+				return chan.type == "chat_all";
+			}).length;
+
+			var n_cheers = _.filter( LJ.cheers.fetched_cheers, function( ch ){
+				return ch.cheers_type == "received" && ch.status == "pending";
+			}).length;
+
+			if( n_chats_team == 0 ){
+				return LJ.chat.emptifyChatRows();
+			}
+
+			LJ.chat.unemptifyChatRows();
+
+			n_chats_all == 0 ? LJ.chat.emptifyChatRowsMatches() : LJ.chat.unemptifyChatRowsMatches();
+			n_cheers    == 0 ? LJ.cheers.emptifyCheersItems__Chat() : LJ.cheers.unemptifyCheersItem__Chat();
+
 
 		},
 		handleDocumentVisibilityChangeEvents: function(){
@@ -487,7 +523,7 @@
 			}
 
 			LJ.log('Initializing one chat...');
-			LJ.chat.deemptifyChatRows();
+			LJ.chat.unemptifyChatRows();
 
 			return LJ.Promise.resolve()
 					// Render static HTML that will be dynamically filled (sync)
@@ -554,7 +590,8 @@
 
 					})
 					.then(function(){
-						return LJ.chat.refreshChatState( chat_id );
+						LJ.emit("fetch_chats_done");
+						return;
 
 					})
 					.catch(function( e ){
@@ -787,25 +824,6 @@
 			}
 
 		},
-		sortChatRows: function(){
-
-			var L = $('.chat-row').length;
-			for( var i = 0; i < L; i++ ){
-				for( var j = i; j < L; j++ ){
-
-					var e1 = $('.chat-row').eq(i);
-					var e2 = $('.chat-row').eq(j);
-
-					var t1 = e1.attr('data-last-message-at');
-					var t2 = e2.attr('data-last-message-at');
-
-					if( t1 < t2 ){
-						LJ.swapNodes( t1[0], t2[0] );
-					}
-				}
-			}
-
-		},
 		showChatRow: function( chat_id ){
 
 			var $chatrow = LJ.chat.getChatRow( chat_id );
@@ -1022,16 +1040,15 @@
 		},
 		emptifyChatRows: function(){
 
-			$('.chat-rows').find('.chat-rows-title').addClass('none');
-			$('.chat-rows').find('.chat-row').remove();
+			$('.chat-rows').find('.chat-rows-title, .chat-rows-body').hide();
 			$('.chat-rows').append( LJ.chat.renderChatRowEmpty() );
 
 			return LJ.chat.refreshChatRowsJsp();
 
 		},
-		deemptifyChatRows: function(){
+		unemptifyChatRows: function(){
 
-			$('.chat-rows').find('.chat-rows-title').removeClass('none');
+			$('.chat-rows').find('.chat-rows-title, .chat-rows-body').css({ display: 'flex' });
 			$('.chat-rows').find('.chat-empty').remove();
 
 			return LJ.chat.refreshChatRowsJsp();
@@ -1199,11 +1216,28 @@
 			LJ.chat.getChatIds().forEach(function( chat_id ){
 				LJ.chat.refreshChatState( chat_id );
 			});
-			
+
+			LJ.chat.refreshChatRowsState();
+
+		},
+		emptifyChatRowsMatches: function(){
+
+			LJ.chat.unemptifyChatRowsMatches();
+
+			$( LJ.chat.renderChatRow__MatchEmpty() )
+				.css({ display: 'flex' })
+				.appendTo( '.chat-rows-body.x--all' );
+
+		},
+		unemptifyChatRowsMatches: function(){
+
+			$('.chat-row.x--no-match').remove();
+
 		},
 		clearChatState: function( chat_id ){
 
 			LJ.chat.unsetChat( chat_id );
+			LJ.chat.unsetChannelItem( chat_id );
 			LJ.chat.removeChatRow( chat_id );
 			LJ.chat.removeChatInview( chat_id );
 
@@ -1220,6 +1254,13 @@
 		unsetChat: function( chat_id ){
 
 			delete LJ.chat.fetched_chats[ chat_id ];
+
+		},
+		unsetChannelItem: function( chat_id ){
+
+			_.remove( LJ.user.channels, function( channels ){
+				return channels.chat_id == chat_id;
+			});
 
 		},
 		checkAllChats: function(){
@@ -1411,7 +1452,7 @@
 
 			return LJ.ui.render([
 
-				'<div class="chat-row-pictures">',
+				'<div class="chat-row-pictures js-filterlay">',
 					LJ.pictures.makeImgHtml( LJ.app_settings.placeholder.img_id, LJ.app_settings.placeholder.img_version, 'chat-row' ),
 				'</div>'
 
@@ -1455,13 +1496,36 @@
 
 			return LJ.ui.render([
 
-				'<div class="chat-row" data-chat-id="'+ chat_id +'">',
+				'<div class="chat-row js-chat-row" data-chat-id="'+ chat_id +'">',
 					pics_html,
 					infos_html,
 					time_html,
 				'</div>'
 
 			].join(''));
+
+
+		},
+		renderChatRow__MatchEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="chat-row x--no-match">',
+			    	'<span data-lid="chat_row_empty_match"></span>',
+				'</div>'
+
+			]);
+
+		},
+		renderChatRow__CheersEmpty: function(){
+
+			return LJ.ui.render([
+
+				'<div class="chat-row x--no-match">',
+			    	'<span data-lid="chat_row_empty_cheers"></span>',
+				'</div>'
+
+			]);
 
 
 		},
@@ -1564,7 +1628,7 @@
 				return LJ.wlog('Cannot target chat row without chat_id');
 			}
 
-			return $('.chat-row[data-chat-id="'+ chat_id +'"]');
+			return $('.js-chat-row[data-chat-id="'+ chat_id +'"]');
 
 		},
 		updatePageTitle: function( title ){
@@ -1615,18 +1679,6 @@
 	    			    
 
 		},
-		cancelChatWrap: function( chat_id ){
-
-			LJ.chat.removeChatRow( chat_id );
-			LJ.chat.refreshChatRowsJsp();
-			LJ.chat.hideChatInview();
-			LJ.chat.removeChatInview( chat_id );
-
-			if( $('.chat-row').length == 0 ){
-				LJ.chat.emptifyChatRows();
-			}
-
-		},	
 		resyncAllChats: function(){
 
 			var ux_done = LJ.ui.synchronify({
@@ -1641,14 +1693,15 @@
 				LJ.chat.clearChatStates();
 				LJ.chat.hideChatInviewWrap();
 				
-				var refresh_all_chats = LJ.chat.refetchAndAddChats();
-
-				refresh_all_chats
+				LJ.chat.refetchAndAddChats()
+					.then(function(){
+						return LJ.cheers.fetchAndAddCheers();
+					})
 					.then(function(){
 
 						LJ.chat.showAndActivateChatInview( current_active_chat );
 						LJ.ui.desynchronify({ $wrap: $('.chat-wrap') });
-						// LJ.ui.showToast( LJ.text("chat_sync_done") );
+						
 
 					})
 					.catch(function( err ){

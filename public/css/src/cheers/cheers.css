@@ -102,8 +102,8 @@
 }
 
 .cheers-back-pictures {
-    width: 230px;
-    height: 230px;
+    width: 280px;
+    height: 280px;
     margin: 0px auto;
     flex-shrink: 1;
     font-size: 12px;
@@ -136,7 +136,7 @@
 }
 
 .cheers-back-actions button i {
-    font-size: 26px;
+    font-size: 28px;
     transform: rotate(-20deg);
     transition: all ease-in-out .15s;
 }
@@ -155,20 +155,18 @@
     cursor: pointer;
 }
 
-.cheers-back-groupname {display: flex;justify-content: flex-end;flex-flow: column nowrap;align-items: center;flex-shrink: 0;height: 70px;margin-bottom: 10px;}
+.cheers-back-groupname {display: flex;justify-content: flex-end;flex-flow: column nowrap;align-items: center;flex-shrink: 0;height: 100px;margin-bottom: 10px;}
 
-.cheers-back-groupname__h1 {font-family: 'creamy';font-size: 24px;margin-bottom: 6px;color: #1B69ec;}
+.cheers-back-groupname__h1 {font-family: 'creamy';font-size: 26px;margin-bottom: 3px;color: #1B69ec;}
 
 .cheers-back-groupname__h1 span {}
 
 .cheers-back-groupname__h2 {
     font-size: 11px;
-    position: relative;
-    top: -2px;
+    color: #454545;
 }
 
 .cheers-back-groupname__h2 span {
-    font-size: 13px;
 }
 
 .cheers-back-users .jspPane {
@@ -236,5 +234,11 @@
 
 .empty__btn button:hover {
     opacity: .8!important;
+}
+
+
+.cheers-chat__loader {
+    width: 26px!important;
+    margin-top: 28px;
 }
 

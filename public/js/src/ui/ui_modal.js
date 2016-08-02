@@ -317,7 +317,7 @@
 					return reject("No $wrapper element was found");
 				};
 
-				LJ.ui.shadeify( opts.$wrap, 400, 'light' );
+				LJ.ui.shadeify( opts.$wrap, 200, 'light' );
 
 				var content = '<div class="ui-overlay__message">' + opts.message_html + '</div>';
 				var loader  = LJ.static.renderStaticImage('slide_loader');
@@ -326,12 +326,12 @@
 						 .hide()
 						 .appendTo( opts.$wrap )
 						 .velocity('shradeIn', {
-						 	duration : 400,
-						 	delay    : 350,
+						 	duration : 200,
+						 	delay    : 100,
 						 	display  : 'flex'
 						 });
 
-				LJ.delay( 400 ).then( resolve );
+				LJ.delay( 200 ).then( resolve );
 				
 			});
 
