@@ -32,7 +32,9 @@
     height: 50px;
 }
 
-.map__icon.x--geoloc:hover, .map__icon.x--change-location:hover, .map__icon.map-zoom i:hover {
+.map__icon.x--geoloc:hover,
+.map__icon.x--change-location:hover,
+.map__icon.map-zoom i:hover {
     color: #508aea;
 }
 
@@ -40,7 +42,8 @@
     right: 20px;
 }
 
-.map__icon.x--create-before, .map__icon.x--filter-dates {
+.map__icon.x--create-before,
+.map__icon.x--filter-dates {
     position: fixed;
     height: 50px;
     width: 50px;
@@ -131,7 +134,7 @@
 .map-browse input:-ms-input-placeholder {
     color: #ccc!important;
 }
- 
+
 .map-zoom {
     bottom: 100px;
     right: 26px;
@@ -147,15 +150,118 @@
     color: #1b69ec;
     cursor: pointer;
 }
+
 .map-zoom__in,
 .map-zoom__out {
     width: 100%;
     height: 50%;
 }
+
 .map-zoom__out {}
+
 .map-zoom__splitter {
     background: #d9d9d9;
     height: 1px;
     width: 80%;
     flex-shrink: 0;
+}
+
+.mrk {
+    border: 2px solid transparent;
+    padding: 4px;
+    opacity: 0;
+}
+
+.marker.x--face {
+    width: 50px;
+    height: 50px;
+    border: 2px solid white;
+    box-sizing: border-box;
+    background: white;
+    border-radius: 100px;
+    border-radius: 100px;
+    position: absolute;
+}
+
+.marker.x--face > * {
+    position: absolute;
+}
+
+.mrk__img,
+.mrk__loader {
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    /* width: 40px; */
+    /* height: 40px; */
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+.mrk__loader {
+    width: 20px;
+    height: 20px;
+}
+
+.mrk img {
+    width: 100%;
+    height: 100%;
+}
+
+.mrk__img {
+    z-index: 1;
+}
+
+.mrk__status {
+    bottom: -2px;
+    right: -3px;
+    z-index: 2;
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+}
+
+.mrk__status.x--accepted {
+    background: #1b69ec;
+    color: white;
+    border: 2px solid white;
+}
+
+.mrk__status.x--pending {
+    color: #1b69ec;
+    background: white;
+    border: 2px solid #1b69ec;
+    font-size: 9px;
+}
+
+.mrk__status.x--host {
+    background: orange;
+    background: #ffec4d;
+    color: white;
+    color: #ffec4d;
+    color: #ffa900;
+    border: 2px solid white;
+}
+
+.mrk__status.x--pending {
+    color: #1b69ec;
+    background: white;
+    border: 1px solid #1b69ec;
+    font-size: 9px;
+}
+
+.mrk__status i {}
+
+.mrk__seen {
+    background: #e61515;
+    bottom: -1px;
+    right: -3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 100px;
+    z-index: 3;
+    border: 2px solid white;
+    display: none;
 }

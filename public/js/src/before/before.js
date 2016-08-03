@@ -12,6 +12,7 @@
 			
 			LJ.before.addCreateBefore();
 			LJ.before.handleDomEvents();
+			LJ.before.handleAppEvents();
 
 			return LJ.before.fetchNearestBefores__UserLocation()
 					.then(function(){
@@ -34,6 +35,19 @@
 			LJ.ui.$body.on('click', '.js-switch-mode', LJ.before.handleSwitchInviewMode );
 			LJ.ui.$body.on('click',  '.js-navigate-cheers', LJ.before.handleNavigateToCheers );
 
+
+		},
+		handleAppEvents: function(){
+
+			LJ.on("login:complete", LJ.before.handleLoginComplete );
+
+		},
+		handleLoginComplete: function(){
+
+			LJ.delay( 250 ).then(function(){
+				LJ.before.showCreateBeforeBtn();
+
+			});
 
 		},
 		initCreateBefore: function(){
@@ -201,7 +215,7 @@
         },
         handleCloseBeforeInview: function(){
 
-        	LJ.map.deactivateMarkers();
+        	LJ.map.deactivateMarker();
         	LJ.map.refreshMarkers();
 
         },
@@ -374,7 +388,7 @@
 			});
 
 			// Little delay to give Jsp the time to act
-			return LJ.delay(100)
+			return LJ.delay( 100 )
 
         },
         addBefore: function( before_html, $container ){

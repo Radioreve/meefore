@@ -48,6 +48,11 @@
 				'image_id'    : 'loader_circular_blue_thin',
 				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
 			},
+			{
+				'access_name' : 'marker_loader',
+				'image_id'    : 'loader_circular_blue_thin',
+				'param' 	  : { 'class': '', 'width': 28 }
+			},
 			{ "access_name" : ":D", "image_id": "emoticon_smile" },
 			{ "access_name" : "xD", "image_id": "emoticon_smilexd" },
 			{ "access_name" : ";)", "image_id": "emoticon_blink" },

@@ -2,26 +2,25 @@
 	window.LJ.map = _.merge( window.LJ.map || {}, {		
 
         markers: [],
+        fetched_profiles: [],
 
        	// Called as soon as the script finished loading everything
 		init: function(){
 
             try {
     			LJ.map.setupMap();
-                LJ.map.preloadMarkers();
-
+                LJ.map.initMarkerFactory();
     			LJ.map.handleDomEvents();
                 LJ.map.handleMapEvents();
+                LJ.map.handleAppEvents();
     			LJ.map.initPlacesServices();
-                LJ.map.displayBeforeMarkers( LJ.before.fetched_befores );
-                
+
             } catch( e ){
-                LJ.wlog("unable to initialize the map");
-                LJ.log( e );
+                LJ.wlog("Something went wrong initializing the map");
+                LJ.wlog( e );
             }
 
-            
-            return 
+            return;
 			
 		},
         initGeocoder: function(){
@@ -35,9 +34,19 @@
 
         },
 		sayHello: function(){
+
 			LJ.log('Map has been successfully loaded');
 
 		},
+        initMarkerFactory: function(){
+
+            LJ.map.markerFactory = MarkerFactory.init({
+                map     : LJ.meemap,
+                display : 'block'
+            });
+
+        },
+        // Obsolete
         preloadMarkers: function(){
 
             var markers_html = [];
@@ -57,6 +66,7 @@
             
 			LJ.ui.$body.on('click', '.map__icon.x--geoloc', LJ.map.centerMapAtUserLocation );
 			LJ.ui.$body.on('click', '.map__icon.x--change-location', LJ.map.toggleMapBrowser );
+            LJ.ui.$body.on('mousedown', '.js-before-marker', LJ.map.handleClickOnBeforeMarker );
 
 		},
 		setupMap: function(){
@@ -150,6 +160,11 @@
                     });
 
         },
+        handleAppEvents: function(){
+
+            LJ.on("login:complete", LJ.map.handleLoginComplete );
+
+        },  
         handleMapEvents: function(){
 
             LJ.meemap.addListener('dragstart', function(){
@@ -171,6 +186,22 @@
             $('body').on('click', '.js-map-zoom-in', LJ.map.zoomIn );
             $('body').on('click', '.js-map-zoom-out', LJ.map.zoomOut );
 
+
+        },
+        handleLoginComplete: function(){
+
+            LJ.delay( 250 ).then(function(){
+
+                LJ.map.addBeforeMarkers( LJ.before.fetched_befores );
+                LJ.map.clearSeenMarkers();
+                LJ.map.refreshMarkers();
+
+                LJ.delay( 300 ).then(function(){
+                    LJ.map.showBeforeMarkers();
+                    
+                });
+
+            });
 
         },
         renderMapZoom: function(){
@@ -339,9 +370,9 @@
             var offsetted = false;
             LJ.map.markers.forEach(function( mrk ){
 
-                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < 100 && !offsetted){
+                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < 100 && !offsetted ){
 
-                    LJ.wlog('Markers are too close, shifting latlng');
+                    LJ.log('Markers are too close, shifting latlng');
                     offsetted = true;
                     latlng = LJ.map.shiftLatLng( latlng );
 
@@ -355,31 +386,7 @@
         offsetLatLngRecursive: function( latlng, i ){
 
             // Display the marker in a more intelligent way, to put it randomy close to where its supposed to be
-            // But also taking into account where other markers are places :) 
-
-        },
-        validateMarkerOptions: function( opts ){
-
-        	var ok = true;
-
-        	if( !opts.url ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without url: %s', opts.url );
-        	}
-        	if( !opts.latlng ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without latlng: %s', opts.latlng );
-        	}
-        	if( !opts.marker_id ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without marke_id: %s', opts.marker_id );
-        	}
-        	if( !opts.type ){
-        		ok = false;
-        		LJ.wlog('Cannot add marker without type: %s', opts.tpye );
-        	}
-        	
-        	return ok
+            // But also taking into account where other markers are placed :) 
 
         },
         markerAlreadyExists: function( marker_id ){
@@ -409,43 +416,50 @@
             };
 
         },
-        addMarker: function( opts ){
+        renderMarkerPlaceholder: function( type ){
 
-        	if( !LJ.map.validateMarkerOptions( opts ) ) return;
+            if( type == "face" ){
+
+                var img_html = LJ.static.renderStaticImage("marker_loader");
+
+                return LJ.ui.render([
+                    '<div class="marker x--face js-before-marker">',
+                        '<div class="mrk__seen"></div>',
+                        '<div class="mrk__status"></div>',
+                        '<div class="mrk__loader">',
+                            img_html,
+                        '</div>',
+                        '<div class="mrk__img">',
+                        '</div>',
+                    '</div>'
+                ]);
+
+            }
+
+        },
+        addMarker: function( opts ){
 
             if( LJ.map.markerAlreadyExists( opts.marker_id ) ){
                 return LJ.wlog('A marker with id : ' + opts.marker_id + ' is already set on the map');
             }
 
             var latlng = LJ.map.offsetLatLng( opts.latlng );
-            var icon   = LJ.map.makeIcon( opts.url );
-
-        	var marker = new google.maps.Marker({
-                map        : LJ.meemap,
-                position   : latlng,
-                icon       : icon
-            });
-
-            var data = opts.data || null;
+            var data   = opts.data || null;
 
         	// Store the reference for further usage
+            var marker = LJ.map.markerFactory.create({
+                latlng    : new google.maps.LatLng( latlng ),
+                html      : LJ.map.renderMarkerPlaceholder("face"),
+                marker_id : opts.marker_id
+            });
+
         	LJ.map.markers.push({
         		marker_id : opts.marker_id,
         		marker 	  : marker,
-        		data      : data,
                 type      : opts.type,
                 latlng    : latlng
         	});
 
-        	// Attach listenres if there are any
-        	if( Array.isArray( opts.listeners )){
-                opts.listeners.forEach(function( listener ){
-                    marker.addListener( listener.event_type, function(){
-                    	listener.callback( marker, data );
-                    });
-                });
-
-            }
 
         },
         getBeforeMarkerUrlByType: function( type, active ){
@@ -508,7 +522,8 @@
             }
 
         },
-        // Before must be the whole before object and not an itemized version;
+        // Before must be the whole before object and not an itemized version
+        // in order to access to the address
         addBeforeMarker: function( before ){
 
         	var before_id = before._id;
@@ -518,20 +533,21 @@
                 lng: before.address.lng
             };
 
-            var url = LJ.map.getBeforeMarkerUrl( before, false );
-
             LJ.map.addMarker({
                 marker_id : before_id,
                 latlng    : latlng,
-                url       : url,
                 type      : 'before',
-                data      : before,
-                listeners : [
-                    {
-                        'event_type': 'click',
-                        'callback'  : LJ.map.handleClickOnBeforeMarker
-                    }]
+                data      : before
 
+            });
+
+
+        },
+        addAndShowBeforeMarker: function( before ){
+
+            LJ.map.addBeforeMarker( before );
+            LJ.delay( 200 ).then(function(){
+                LJ.map.showMarker( before._id );
             });
 
         },
@@ -547,42 +563,53 @@
             });
 
         },
-        deactivateMarkers: function(){
-
-            LJ.map.markers.forEach(function( mrk ){
-
-                mrk.status = "inactive";
-                mrk.marker.setZIndex( 1 );
- 
-            });
-
-        },
         activateMarker: function( marker_id ){
 
-            LJ.map.markers.forEach(function( mrk ){
+            LJ.map.deactivateMarker();
+            LJ.map.getMarkerDom( marker_id )
+                .css({ "z-index": "10" })
+                .children()
+                .css({ "transform": "scale(1.45)"})
+                // .velocity( "grounceIn", {
+                //     duration : 600,
+                //     display  : 'flex'
+                // });
 
-                if( mrk.marker_id == marker_id ){
-                    mrk.status = "active";
-                    mrk.marker.setZIndex( 10 );
+            LJ.map.setActiveMarker( marker_id );
 
-                } else {
-                    mrk.status = "inactive";
-                    mrk.marker.setZIndex( 1 );
-                }
+        },
+        deactivateMarker: function(){
 
-            });
+            var active_marker_id = LJ.map.getActiveMarker();
+            var $active_marker   = LJ.map.getMarkerDom( active_marker_id );
 
-        },  
+            $active_marker
+                .css({ "z-index": "1" })
+                .children()
+                .css({ "transform": "none" });
+
+            LJ.map.setActiveMarker( null );
+
+        },
+        getMarkerData: function( marker_id, marker_type ){
+
+            if( marker_type == "before" ){
+                return LJ.before.getBefore( marker_id );
+            }
+
+        },
         refreshMarkers: function(){
 
             LJ.map.markers.forEach(function( mrk ){
 
+                var marker_id = mrk.marker_id;
                 if( mrk.type == "before" ){
 
-                    LJ.before.getBefore( mrk.marker_id )
+                    // Need to access the group status, so whole before is required
+                    // before_item is not enough
+                    LJ.map.getMarkerData( marker_id, "before" )
                     .then(function( bfr ){
-
-                        LJ.map.refreshMarker__IconBased( mrk, bfr );
+                        LJ.map.refreshBeforeMarker( bfr );
                         
                     });
 
@@ -591,27 +618,206 @@
             });
 
         },
-        // Icon based version of the refresh marker function 
-        // No picture are displayed, only different icons basedon the before status
-        refreshMarker__IconBased: function( mrk, bfr ){
+        refreshBeforeMarker: function( bfr ){   
 
-            var url;
+            var marker_id = bfr._id;
 
-            if( mrk.status == "active" ){
-                url = LJ.map.getBeforeMarkerUrl( bfr, true );
-            } else {
-                url = LJ.map.getBeforeMarkerUrl( bfr, false );
+            LJ.map.faceifyMarker( marker_id )
+                .then(function(){
+                    LJ.map.refreshBeforeMarker__Status( marker_id );
+                    LJ.map.refreshBeforeMarker__Seen( marker_id );
+                    
+                });
+
+        },
+        refreshBeforeMarker__Seen: function( marker_id ){
+
+            LJ.map.hasSeenMarker( marker_id ) ?
+                LJ.map.seenifyMarker( marker_id ) : LJ.map.unseenifyMarker( marker_id );
+
+        },
+        getBeforeItem: function( before_id ){
+
+            return _.find( LJ.user.befores, function( bfr ){
+                return bfr.before_id == before_id;
+            });
+
+        },
+        refreshBeforeMarker__Status: function( marker_id ){
+
+            var before = LJ.map.getBeforeItem( marker_id );
+
+            if( !before ){
+                return LJ.map.defaultifyMarker( marker_id );
             }
 
-            var icon = LJ.map.makeIcon( url );     
-            mrk.marker.setIcon( icon );   
+            if( before.status == "hosting" ){
+
+                return LJ.map.hostifyMarker( marker_id );
+
+            } else {
+
+                if( before.status == "pending" ){
+                    return LJ.map.pendifyMarker( marker_id );
+                }
+
+                if( before.status == "accepted" ){
+                    return LJ.map.acceptifyMarker( marker_id );
+                }
+
+            }
+
+        },
+        addBeforeMarkers: function( befores ){
+
+            befores.forEach(function( before ){
+                LJ.map.addBeforeMarker( before );
+            });
+            
+        },
+        showBeforeMarkers: function(){
+
+            LJ.map.markers.forEach(function( mrk ){
+                LJ.map.showMarker( mrk.marker_id );
+            }); 
+
+        },
+        getMarkerDom: function( marker_id ){
+
+            return $('.mrk[data-id="'+ marker_id +'"]');
+
+        },
+        updateMarker: function( marker_id, update ){
+
+            update = update || {};
+
+            var $mrk = LJ.map.getMarkerDom( marker_id );
+
+            if( update.seen ){
+                $mrk.find('.mrk__seen').hide();
+            }
+
+            if( update.unseen ){
+                $mrk.find('.mrk__seen').show();
+            }
+
+            if( update.img_html ){
+                $mrk.find('.mrk__img').html( update.img_html );
+            }
+
+            if( update.status_html ){
+                $mrk.find('.mrk__status').replaceWith( update.status_html );
+            }
+
+        },
+        showMarker__NoTransition: function( marker_id ){
+
+             LJ.map.getMarkerDom( marker_id ).show();
+
+        },
+        hideMarker__NoTransition: function( marker_id ){
+
+             LJ.map.getMarkerDom( marker_id ).hide();
+
+        },
+        showMarker: function( marker_id ){
+
+            return LJ.map.showMarker__BounceIn( marker_id );
+
+        },
+        showMarker__BounceIn: function( marker_id ){
+
+
+            LJ.map.getMarkerDom( marker_id )
+                .css({ 'display': 'block', 'opacity': '1' })
+                .children()
+                .velocity('bounceInQuick', {
+                    duration : 500,
+                    display  : 'block'
+                });
+
+        },
+        showMarker__BounceOut: function( marker_id ){
+
+            LJ.map.getMarkerDom( marker_id )
+                .velocity('bounceOut', {
+                    duration: 900
+                });
+
+        },
+        faceifyMarker: function( marker_id ){
+
+            var mrk    = LJ.map.getMarker( marker_id );
+            
+            return LJ.map.getMarkerData( marker_id, "before" )
+                .then(function( before ){
+
+                    var mh = before.main_host;
+                    return LJ.api.fetchUser( mh )
+
+                })
+                .then(function( res ){
+
+                    var h        = res.user;
+                    var img_html = LJ.pictures.makeImgHtml( h.img_id, h.img_vs, "user-map" );
+
+                    return LJ.map.updateMarker( marker_id, {
+                        img_html: LJ.ui.render( '<div class="js-filterlay">' + img_html + '</div>' )
+                    });
+
+                });
+
+        },
+        unseenifyMarker: function( marker_id ){
+
+            LJ.map.updateMarker( marker_id, {
+                unseen: true
+            });
+
+        },
+        seenifyMarker: function( marker_id ){
+
+            LJ.map.updateMarker( marker_id, {
+                seen: true
+            });
+
+        },
+        defaultifyMarker: function( marker_id ){
+    
+            LJ.map.updateMarker( marker_id, {
+                status_html: '<div class="mrk__status x--default"></div>'
+            });
+
+        },
+        pendifyMarker: function( marker_id ){
+
+            LJ.map.updateMarker( marker_id, {
+                status_html: '<div class="mrk__status x--pending x--round-icon"><i class="icon icon-pending"></i></div>'
+            });
+
+        },
+        acceptifyMarker: function( marker_id ){
+
+            LJ.map.updateMarker( marker_id, {
+                status_html: '<div class="mrk__status x--accepted x--round-icon"><i class="icon icon-chat-bubble-duo"></i></div>'
+            });
+
+        },
+        hostifyMarker: function( marker_id ){
+
+            LJ.map.updateMarker( marker_id, {
+                status_html: '<div class="mrk__status x--host x--round-icon"><i class="icon icon-star"></i></div>'
+            });
+
+        },
+        setActiveMarker: function( marker_id ){
+
+            LJ.map.active_marker = marker_id;
 
         },
         getActiveMarker: function(){
 
-            return _.find( LJ.map.markers, function( mrk ){
-                return mrk.status == "active";
-            });
+            return LJ.map.active_marker;
 
         },
         clearSeenMarkers: function(){
@@ -635,7 +841,7 @@
             LJ.store.set('seen_markers', _.uniq( seen_markers.filter( Boolean ) ));
 
         },
-        seenifyMarker: function( marker_id ){
+        setMarkerAsSeen: function( marker_id ){
 
             var seen_markers = Array.isArray( LJ.store.get('seen_markers') ) ? LJ.store.get('seen_markers') : [];
 
@@ -648,7 +854,6 @@
             var seen_markers = Array.isArray( LJ.store.get('seen_markers') ) ? LJ.store.get('seen_markers') : [];
 
             return seen_markers.indexOf( marker_id ) != -1;
-            
 
         },
         getMarker: function( marker_id ){
@@ -658,33 +863,38 @@
 			});
         		
         },
-        handleClickOnBeforeMarker: function( marker, before ){
+        handleClickOnBeforeMarker: function( e ){
 
-            LJ.map.seenifyMarker( before._id );
-            var mrk = LJ.map.getMarker( before._id );
-            
-            if( mrk.marker.getOpacity() && mrk.marker.getOpacity() != 1 ){
+            var $self     = $( this );
+            var marker_id = $self.parent().attr('data-id');
+			var mrk       = LJ.map.getMarker( marker_id );
+            var $mrk      = mrk.marker.$elem;
 
-                LJ.before.handleCloseBeforeInview();
-                LJ.before.hideBeforeInview();
-                LJ.profile_user.hideUserProfile();
-                return;
-            }
+            LJ.map.getMarkerData( marker_id, "before" )
+            .then(function( before ){
 
-            if( !mrk.status || mrk.status == "inactive" ){
+                var before_id = before._id;
 
-                LJ.before.showBeforeInview( before );
-                LJ.map.activateMarker( before._id );
+                if( LJ.map.getActiveMarker() == before_id ){
 
-            } else {
+                    LJ.map.deactivateMarker( before_id );
+                    LJ.before.hideBeforeInview();
+                    LJ.profile_user.hideUserProfile();
+                    return;
 
-                LJ.before.handleCloseBeforeInview();
-                LJ.before.hideBeforeInview();
-                LJ.profile_user.hideUserProfile();
+                } else {
 
-            }
+                    LJ.map.activateMarker( before_id );
+                    LJ.before.showBeforeInview( before );
+                    LJ.map.setMarkerAsSeen( before_id );
 
-            LJ.map.refreshMarkers();
+                }
+
+                LJ.map.refreshMarkers();
+
+            });
+
+
 
         },
         renderCreateBefore: function(){
@@ -693,7 +903,7 @@
                 '<div class="map__icon x--round-icon x--create-before js-create-before">',
                     '<i class="icon icon-meedrink"></i>',
                 '</div>'
-                ].join(''));
+                ]);
 
         },
         renderChangeLocation: function(){
@@ -702,7 +912,7 @@
         		'<div class="map__icon x--round-icon x--change-location js-map-change-location">',
         			'<i class="icon icon-search-zoom"></i>',
         		'</div>'
-        		].join(''));
+        		]);
 
         },
         renderGeoLocation: function(){
@@ -711,7 +921,7 @@
         		'<div class="map__icon x--round-icon x--geoloc js-map-geoloc">',
         			'<i class="icon icon-geoloc"></i>',
         		'</div>'
-        		].join(''));
+        		]);
         },
         renderPinLocation: function(){
 
@@ -719,13 +929,13 @@
         		'<div class="map__icon x--round-icon x--location js-map-location">',
         			'<i class="icon icon-location"></i>',
         		'</div>'
-        		].join(''));
+        		]);
         },
         renderMapOverlay: function(){
 
         	return LJ.ui.render([
         		'<div class="map__overlay"></div>'
-        		].join(''));
+        		]);
 
         },
         renderMapBrowser: function(){
@@ -734,17 +944,8 @@
         		'<div class="map-browse">',
         			'<input data-lid="map_browser_input_placeholder"id="map-browser-input"/>',
         		'</div>'
-        		].join(''));
+        		]);
 
-        },
-        displayBeforeMarkers: function( befores ){
-
-            befores.forEach(function( before ){
-                LJ.map.addBeforeMarker( before );
-            });
-
-            LJ.map.clearSeenMarkers();
-            
         }
 
 

@@ -1,9 +1,6 @@
 
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
-		fetched_users : [],
-		fetched_users_full: [], 
-
 		app_token_url 			  	 	 	: '/auth/facebook',
 		me_url		  			  	 	 	: '/api/v1/users/:user_id/self',
 		user_url 							: '/api/v1/users/:user_id',
@@ -222,8 +219,10 @@
 				LJ.api.post( LJ.api.me_friends.replace(':user_id', LJ.user.facebook_id), { friend_ids: friend_ids })
 					  .then(function( exposed ){
 					  	return resolve( exposed );
+
 					  }, function( err ){
 					  	return reject( err );
+
 					  });
 
 			});
@@ -244,6 +243,7 @@
 
 					  }, function( err ){
 					  	return reject( err );
+
 					  });
 
 			});
@@ -284,6 +284,7 @@
 						}
 					}, function( err ){
 						return reject( err );
+
 					});
 
 			});
@@ -294,8 +295,10 @@
 				LJ.api.get( LJ.api.fetch_user_full_url.replace(':user_id', facebook_id ) )
 					  .then(function( exposed ){
 					  	return resolve( exposed );
+
 					  }, function( err ){
 					  	return reject( err );
+
 					  });
 
 			});

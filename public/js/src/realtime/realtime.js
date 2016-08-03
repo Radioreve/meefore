@@ -162,6 +162,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 		}
 
+		LJ.map.setMarkerAsSeen( before._id )
 		LJ.map.refreshMarkers();
 
 	},
@@ -231,7 +232,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		var before = data.before;
 
 		LJ.before.fetched_befores.push( before );
-		LJ.map.addBeforeMarker( before );
+		LJ.map.addAndShowBeforeMarker( before );
 		LJ.map.refreshMarkers();
 	
 	},

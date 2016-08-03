@@ -453,9 +453,25 @@ return function (global, window, document, undefined) {
             "bounceInQuick": {
                 defaultDuration: 800,
                 calls: [
-                    [ { opacity: [ 1, 0 ], scaleX: [ 1.07, 0.3 ], scaleY: [ 1.07, 0.3 ] }, window.t[0]|| 0.40  ],
+                    [ { opacity: [ 1, 0 ], scaleX: [ 1.07, 0.3 ], scaleY: [ 1.07, 0.3 ] }, window.t[0] || 0.40  ],
                     [ { scaleX: 0.99, scaleY: 0.99, translateZ: 0 }, window.t[1] || 0.30 ],
                     [ { scaleX: 1, scaleY: 1 }, window.t[2] || 0.15 ]
+                ]
+            },
+            "grounceIn": {
+                defaultDuration: 800,
+                calls: [
+                    [ { scaleX: [ 1.5, 1 ], scaleY: [ 1.5, 1 ] }, window.t[0] || 0.40  ],
+                    [ { scaleX: 1.295, scaleY: 1.295, translateZ: 0 }, window.t[1] || 0.30 ],
+                    [ { scaleX: 1.3, scaleY: 1.3 }, window.t[2] || 0.15 ]
+                ]
+            },
+            "grounceOut": {
+                defaultDuration: 800,
+                calls: [
+                    [ { scaleX: [ 1.5, 1.3 ], scaleY: [ 1.5, 1.3 ] }, window.t[0] || 0.15  ],
+                    [ { scaleX: 0.95, scaleY: 0.95, translateZ: 0 }, window.t[1] || 0.40 ],
+                    [ { scaleX: 1, scaleY: 1 }, window.t[2] || 0.30 ]
                 ]
             },
             /* Animate.css */

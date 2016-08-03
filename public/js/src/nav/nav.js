@@ -83,7 +83,7 @@
 			if( !$target_menuitem.is( $current_menuitem ) ){
 				LJ.ui.hideSlide();
 				LJ.before.hideCreateBeforeStraight();
-				LJ.map.deactivateMarkers();
+				LJ.map.deactivateMarker();
 				LJ.map.refreshMarkers();
 			}
 

@@ -330,7 +330,7 @@
 					.velocity({ 'opacity': [ 0, 0.09 ]}, {
 						duration: LJ.login.prompt_duration/2,
 						complete: function(){
-							$(this).remove();
+							$( this ).remove();
 						}
 					});
 
@@ -340,10 +340,11 @@
 
 				}).then(function(){
 
-					// LJ.map.activateBrowserState("shrinked");
-					LJ.delay( 250 ).then( LJ.before.showCreateBeforeBtn );
+					LJ.emit("login:complete");
+
 					LJ.ui.$body.on('click', '.js-logout', LJ.login.handleLogout );
 					LJ.ui.$body.on('click', '.modal.x--logout .modal-footer button', LJ.login.logUserOut );
+
 					$('.multi-landing').remove();
 					
 					return
