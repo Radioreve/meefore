@@ -455,11 +455,13 @@ span.be-dates__count {
 }
 
 .be-action .check-cheers {
-    min-width: 180px;
-    height: 40px;
     border-radius: 100px;
-    background: #1b69ec;
-    font-size: 13px;
+    background: white;
+    color: #1b69ec;
+}
+
+.be-action .check-cheers i {
+    font-size: 40px;
 }
 
 .be-action button.x--pending {

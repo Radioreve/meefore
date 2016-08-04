@@ -4,7 +4,7 @@
     align-items: center;
     z-index: 1000;
     top: 10px;
-    right: 22%;
+    right: 20%;
 }
  
 .thumbnail__picture {
@@ -31,6 +31,22 @@
     top: 10px;
     font-family: 'creamy';
     font-size: 30px;
+}
+
+.app-thumbnail.x--light {
+    
+}
+ 
+.app-thumbnail.x--light .thumbnail__picture {
+    
+}
+
+.app-thumbnail.x--light .thumbnail__picture img {
+    
+} 
+
+.app-thumbnail.x--light .thumbnail__name {
+    
 }
 
 @media (max-width: 500px) {

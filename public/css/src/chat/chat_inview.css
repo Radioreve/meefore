@@ -72,6 +72,8 @@
     height: 42px;
 }
 
+.chat-inview-header .bubble {background: #1b69ec;border: none;width: 18px;height: 18px;border: 2px solid white;top: -2px;right: -4px;}
+
 .chat-inview__icon:hover {
     background: #f5f5f5;
 }

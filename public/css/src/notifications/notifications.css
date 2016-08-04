@@ -7,7 +7,6 @@
 
 .notifications-panel {
     width: 420px;
-    height: 80%;
     position: fixed;
     background: white;
     color: #191919;
@@ -31,9 +30,9 @@
 .notifications-panel .jspVerticalBar {
     right: 6px;
 }
-
+ 
 .notifications-panel__wrapper {
-    height: 90%;
+    height: 100%;
     outline: none;
     position: relative;
 }
@@ -174,7 +173,7 @@ Whispereen  : #58c170
     margin-left: 20px;
 }
  
-.notification .notification-message__text {font-weight: 700;font-size: 13.5px;letter-spacing: -.2px;max-width: 200px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;line-height: 14px;color: #454545;/* color: #1b69ec; *//* font-family: 'quenda'; *//* font-size: 15px; */}
+.notification .notification-message__text {font-weight: 700;font-size: 13.5px;letter-spacing: -.2px;max-width: 200px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;line-height: 15px;color: #454545;/* color: #1b69ec; *//* font-family: 'quenda'; *//* font-size: 15px; */}
 
 .notification .notification-message__subtext {
     font-size: 11.5px;

@@ -17,6 +17,8 @@
 		},
 		handleChatBack: function(){
 
+			LJ.chat.checkAllChats();
+			LJ.chat.refreshChatStates();
 			LJ.chat.hideChatInview();
 
 		},

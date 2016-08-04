@@ -282,6 +282,10 @@
 		},
 		refreshChatIconBubble: function(){
 
+			if( LJ.chat.getChatState() == "visible" ){
+				return;
+			}
+
 			var nu_messages = 0;
 			LJ.chat.resetBubbleToChatIcon();	
 			LJ.chat.getChatIds().forEach(function( chat_id ){
@@ -297,6 +301,28 @@
 			});
 
 			LJ.chat.addBubbleToChatIcon( nu_messages );
+
+		},
+		refreshChatInviewBubble: function(){
+
+			var nu_messages = 0;
+			LJ.chat.getChatIds().forEach(function( chat_id ){
+
+				LJ.chat.resetBubbleToBackIcon( chat_id );
+
+				if( LJ.chat.getLastMessage( chat_id ) && LJ.chat.getUncheckedMessagesCount( chat_id ) > 0 ){
+					nu_messages += LJ.chat.getUncheckedMessagesCount( chat_id );
+				} else {
+					if( !LJ.chat.getLastMessage( chat_id ) && LJ.chat.wasNeverChecked( chat_id ) ){
+						nu_messages += 1;
+					}
+				}
+
+			});
+
+			LJ.chat.getChatIds().forEach(function( chat_id ){
+				LJ.chat.addBubbleToBackIcon( chat_id, nu_messages );
+			});
 
 		},
 		getUnseenMessagesCount: function( chat_id ){
@@ -377,6 +403,18 @@
 			});
 
 			return i;
+
+		},
+		addBubbleToBackIcon: function( chat_id, n ){
+
+			var $chatinviewicon = LJ.chat.getChatInview( chat_id ).find('.chat-inview__icon.x--previous');
+			LJ.ui.setBubble( $chatinviewicon, n );
+
+		},
+		resetBubbleToBackIcon: function( chat_id ){
+
+			var $chatinviewicon = LJ.chat.getChatInview( chat_id ).find('.chat-inview__icon.x--previous');
+			LJ.ui.setBubble( $chatinviewicon, 0 );
 
 		},
 		addBubbleToChatIcon: function( n ){
@@ -1185,14 +1223,19 @@
 					if( !before ){
 						return LJ.wlog('Unable to find user before details (event after fetch)');
 					}
+					
+					var place_name = before.address.place_name;
 
-					var m              = moment( before.begins_at );
-					var place_name     = before.address.place_name;
-					var formatted_date = LJ.text("chatinview_date", m );
+					var renderNamesFn = channel_item.role == "hosting" ?
+						LJ.chat.getMembers : 
+						LJ.chat.getHosts;
+
+					var names = _.map( renderNamesFn( chat_id ), 'name' );
+					names     = LJ.renderMultipleNames( names );
 
 					LJ.chat.updateChatInviewElements( chat_id, {
 
-						header_h1  : '<span class="x--date">'+ formatted_date +'</span>',
+						header_h1  : '<span>'+ names +'</span>',
 						header_h2  : '<span class="x--place-name">'+ place_name +'</span>'
 
 					});
@@ -1279,11 +1322,12 @@
 			// Refresh the bubbles on the row, and inside the chat inview
 			// Only refresh the state if the panel is hidden
 			if( LJ.chat.getChatState() == "visible" ){
-				LJ.chat.checkAllChats();
+				// LJ.chat.checkAllChats();
 			}
 
 			LJ.chat.refreshChatRowBubbles( chat_id );
 			LJ.chat.refreshChatIconBubble();
+			LJ.chat.refreshChatInviewBubble();
 			LJ.chat.refreshAppTitle( true );
 
 			// Order rows in the right position before moving the ui, requires access to cached messages to work properly
@@ -1297,6 +1341,9 @@
 
 		},
 		refreshChatRowPicture: function( chat_id ){
+
+			return ;
+
 
 			var last_message       = LJ.chat.getLastMessage( chat_id );
 			var last_message_other = LJ.chat.getLastMessageOther( chat_id );
@@ -1318,17 +1365,17 @@
 		},
 		refreshChatRowPreview: function( chat_id ){
 
-			var channel_item       = LJ.chat.getChannelItem( chat_id );
-			var last_message       = LJ.chat.getLastMessage( chat_id );
-			var last_message_other = LJ.chat.getLastMessageOther( chat_id );
+			var channel_item = LJ.chat.getChannelItem( chat_id );
+			var last_message = LJ.chat.getLastMessage( chat_id );
+			var last_message = LJ.chat.getLastMessage( chat_id );
 
 			var sender, members, without_me, names, update;
 
-			if( !last_message_other ){
+			if( !last_message ){
 				return //LJ.log("No message except from user ones, not refreshing the chat row preview");
 			}
 			
-			sender  = LJ.chat.getUser( last_message_other.sender_id );
+			sender  = LJ.chat.getUser( last_message.sender_id );
 			members = ( channel_item.type == "chat_all" && channel_item.role == "requested" ) ?
 					  LJ.chat.getHosts( chat_id ) :
 					  LJ.chat.getMembers( chat_id );
@@ -1348,7 +1395,7 @@
 			// if( without_me.length != 1 ){
 			// 	update.h2 = sender.name +' : ' + last_message_other.message;
 			// } else {
-				update.h2 = last_message_other.message;
+				update.h2 = sender.name + ' ~ ' + last_message.message;
 			// }
 			
 

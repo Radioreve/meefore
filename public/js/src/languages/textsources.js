@@ -1572,7 +1572,7 @@
 			"us": "Nothing on the horizon..."
 		},
 		empty_shared_subtitle: {
-			"fr": "Partagez des profils ou des before avec vos amis pour pouvoir vous organiser plus rapidement.",
+			"fr": "Partagez des profils ou des before avec tes amis pour pouvoir vous organiser plus rapidement.",
 			"us": "Share profiles or pregame with your friends to help you organize your nights."
 		},
 		empty_cheers_sent_title: {
@@ -1808,8 +1808,8 @@
 			"us": "Select the other hosts among your friends"
 		},
 		be_create_subtitle_before: {
-			"fr": "Le before",
-			"us": "The pregame"
+			"fr": "Lieu du before",
+			"us": "Pregame location"
 		},
 		be_create_hosts_placeholder: {
 			"fr": "Coorganisateurs",
@@ -1824,12 +1824,12 @@
 			"us": "Hour"
 		},
 		be_create_location_placeholder: {
-			"fr": "Lieu",
-			"us": "Address"
+			"fr": "Un apparte, un quartier, un bar...",
+			"us": "A flat, a neighborhood, a bar..."
 		},
 		be_create_before_explanations: {
-			"fr": "Dans quel quartier se passe le before ?",
-			"us": "In which area will the pregame happen ?"
+			"fr": "Ton before disparaitra de la map demain à 6h ?",
+			"us": "Your pregame will disappear from the map tomorrow at 6am ?"
 		},
 		be_create_button: {
 			"fr": "Créer",
@@ -2040,7 +2040,7 @@
 			"us": "All"
 		},
 		chat_team_h2: {
-			"fr": "Discussion privée avec vos amis",
+			"fr": "Discussion privée avec tes amis",
 			"us": "Private discussion with your friends"
 		},
 		chat_row_request_all_subtitle: {
@@ -2196,7 +2196,7 @@
 			"us": "Waiting for a Match"
 		},
 		chat_row_empty_cheers: {
-			"fr": "Crée un before avec tes amis pour recevoir des cheers",
+			"fr": "Crée un before avec tes amis pour recevoir des Cheers",
 			"us": "Create a before with your friends to receive Cheers"
 		}
 

@@ -121,11 +121,12 @@
 
 					var host_before_dayofyear = moment( bfr.begins_at ).dayOfYear();
 
-					if( new_before_dayofyear == host_before_dayofyear ){
+					if( bfr.status == "hosting" && new_before_dayofyear == host_before_dayofyear ){
 						err_data.host_ids.push( host.facebook_id );
 					}
 				});
 			});
+			
 			if( err_data.host_ids.length != 0 ){
 				return callback( _.merge( err_data, {
 					message : 'Host(s) already hosting a before this day',

@@ -175,12 +175,13 @@
 .marker.x--face {
     width: 50px;
     height: 50px;
-    border: 2px solid white;
+    border: 2px solid;
     box-sizing: border-box;
     background: white;
     border-radius: 100px;
     border-radius: 100px;
     position: absolute;
+    border-color: rgb(88, 88, 88);
 }
 
 .marker.x--face > * {
@@ -215,8 +216,8 @@
 }
 
 .mrk__status {
-    bottom: -2px;
-    right: -3px;
+    bottom: -4px;
+    right: -4px;
     z-index: 2;
     width: 16px;
     height: 16px;
@@ -242,13 +243,14 @@
     color: white;
     color: #ffec4d;
     color: #ffa900;
-    border: 2px solid white;
+    border: 2px solid;
+    border-color: #5f5f5f;
 }
 
 .mrk__status.x--pending {
     color: #1b69ec;
     background: white;
-    border: 1px solid #1b69ec;
+    border: 2px solid #1b69ec;
     font-size: 9px;
 }
 
@@ -256,12 +258,12 @@
 
 .mrk__seen {
     background: #e61515;
-    bottom: -1px;
-    right: -3px;
+    top: 3px;
+    right: -1px;
     width: 8px;
     height: 8px;
     border-radius: 100px;
     z-index: 3;
-    border: 2px solid white;
+    border: 1px solid #191919;
     display: none;
 }

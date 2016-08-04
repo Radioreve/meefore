@@ -162,7 +162,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 		}
 
-		LJ.map.setMarkerAsSeen( before._id )
+		LJ.map.setMarkerAsSeen( before._id );
 		LJ.map.refreshMarkers();
 
 	},

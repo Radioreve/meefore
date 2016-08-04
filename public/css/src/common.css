@@ -744,6 +744,7 @@ button:hover {
     border-radius: 100px;
     opacity: 0;
     display: none;
+    flex-shrink: 0;
 }
 
 
@@ -960,7 +961,6 @@ button:hover {
     background: #1b69ec;
     /* background: #009bff; */
     height: 5px;
-    /* display: none; */
 }
 
 .app-header__logo {
@@ -979,7 +979,6 @@ button:hover {
     justify-content: flex-start;
     flex-direction: row;
     color: #454545;
-    background: #191919;
     position: relative;
 }
 
@@ -1013,7 +1012,7 @@ button:hover {
 }
 
 .app__menu-item.x--active {
-    background: black;
+    /* background: black; */
 }
 
 .app__menu-item.x--active .app__menu-icon {
@@ -1058,6 +1057,78 @@ button:hover {
 .app-header__title {}
 
 
+
+
+.app-header.x--light {
+   background: #3258a7;
+}
+
+.app-header.x--light .app-header__splitter {
+   background: #6891e6;
+}
+
+.app-header.x--light .app-header__logo {
+    
+}
+
+.app-header.x--light .app-header__logo img {
+   
+}
+
+.app-header.x--light .app-nav {
+    
+}
+
+.app-header.x--light .app-nav.x--thumbnail {
+    
+}
+
+.app-header.x--light .app-header.x--light .app-nav ul {
+   
+}
+
+.app-header.x--light .app__menu-item,
+.app-thumbnail.x--light .app__menu-item,
+.app-header.x--light .app-logout {
+    color: white;
+}
+
+.app-header.x--light .app__menu-item:hover .app__menu-icon,
+.app-header.x--light .app__menu-item:hover .app__menu-icon,
+.app-header.x--light .app-logout:hover {
+    color: #cccccc;
+}
+
+.app-header.x--light .app__menu-item.x--active,
+.app-header.x--light .app__menu-item.x--active {
+    /* background: black; */
+}
+
+.app-header.x--light .app__menu-item.x--active .app__menu-icon,
+.app-header.x--light .app__menu-item.x--active .app__menu-icon {
+    
+}
+
+.app-header.x--light .app__menu-item .bubble {
+   
+}
+
+.app-header.x--light .app__menu-item a {
+    
+}
+
+.app-header.x--light .app__menu-icon {
+   
+}
+
+.app-header.x--light .app-header__title {
+    
+}
+
+.app-header.x--light .app-header-titles {
+    
+
+}
 
 /*
    - Curtain
@@ -1703,7 +1774,6 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'Open Sans';
     top: 4px;
     right: 4px;
     height: 20px;

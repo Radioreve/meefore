@@ -33,8 +33,6 @@
 			LJ.ui.$body.on('click', '.js-request-accepted', LJ.before.handleClickOnRequestAccepted );
 			LJ.ui.$body.on('click', '.js-show-profile', LJ.before.handleShowUserProfile );
 			LJ.ui.$body.on('click', '.js-switch-mode', LJ.before.handleSwitchInviewMode );
-			LJ.ui.$body.on('click',  '.js-navigate-cheers', LJ.before.handleNavigateToCheers );
-
 
 		},
 		handleAppEvents: function(){
@@ -92,11 +90,6 @@
 			});
 
 			return g;
-
-		},
-		handleNavigateToCheers: function(){
-
-			LJ.chat.showChatWrap();
 
 		},
 		handleClickOnUserRow: function(){
@@ -465,14 +458,14 @@
 			}
 
 			if( before.hosts.indexOf( LJ.user.facebook_id ) != -1 ){
-        		update.option_html = '<div class="be-options__option x--settings x--round-icon js-show-options"><i class="icon icon-cog-empty"></i></div>';
+        		// update.option_html = '<div class="be-options__option x--settings x--round-icon js-show-options"><i class="icon icon-cog-empty"></i></div>';
 
-        		var n_cheers = _.filter( LJ.cheers.fetched_cheers, function( ch ){
-        			return ch.before_id == before._id;
-        		}).length;
+        		// var n_cheers = _.filter( LJ.cheers.fetched_cheers, function( ch ){
+        		// 	return ch.before_id == before._id;
+        		// }).length;
 
-        		var text = n_cheers == 0 ? LJ.text('be_check_cheers_zero') : LJ.text("be_check_cheers").replace('%n',n_cheers );
-        		update.action_html = '<button class="check-cheers js-navigate-cheers">'+ text +'</button>';
+        		// var text = n_cheers == 0 ? LJ.text('be_check_cheers_zero') : LJ.text("be_check_cheers").replace('%n',n_cheers );
+        		update.action_html = '<button class="check-cheers js-show-options"><i class="icon icon-cog-empty"></i></button>';
 
         	} else {
         		var my_before = _.find( LJ.user.befores, function( bfr ){
