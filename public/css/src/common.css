@@ -1331,7 +1331,7 @@ button:hover {
     height: 30px;
     width: 30px;
     border-radius: 30px;
-    background: #1b69ec;
+    background: #1a59c3;
     color: white;
     box-sizing: border-box;
 }
@@ -1798,6 +1798,7 @@ button:hover {
     background: #1b69ec;
     height: 1px;
     background: #1a59c3;
+    background: #ccc;
 }
 
 .header-wrap.x--white .app__menu-item {

@@ -213,6 +213,7 @@
     margin-right: -10px;
     position: relative;
     right: 6px;
+    background: #8d65c3;
 }
 
 .chat-inview-message.x--friend .chat-inview-message__bubble {
