@@ -25,7 +25,8 @@
     .be-dates__count,
     .be-create-row__explanations,
     .app-subheader.x--map,
-    .modal-search__input {
+    .modal-search__input,
+    .app-header__brand {
         display: none!important;
     }
     .be-create,
@@ -156,9 +157,14 @@
         width: auto!important;
         background: none!important;
     }
-    .app-subheader.x--search {
+    .app-subheader {
         background: rgba( 255, 255, 255, .85)!important;
     }
+
+    .app-subheader.x--menu .menu-item__icon {
+        background: none;
+    }
+    
     .search-user .user-online {
         bottom: 80px!important;
         right: 10px!important;

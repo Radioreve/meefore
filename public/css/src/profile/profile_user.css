@@ -82,7 +82,7 @@
 
 .user-infos__item.x--base.x--male {
     background: rgba(63, 179, 198, 0.7);
-    background: rgb(63, 179, 198);
+    background: #1b69ec;
 }
  
 .user-infos__item.x--base h2 {

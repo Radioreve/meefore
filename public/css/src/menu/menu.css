@@ -226,6 +226,7 @@
     height: 24px;
     font-size: 12px;
     margin: 0 8px;
+    background: #fbfbfb;
 }
 
 .app-subheader.x--menu .menu-item__bar {
