@@ -95,7 +95,7 @@
 
 			LJ.meemap = new google.maps.Map( $wrap, options );
 			
-            LJ.map.setMapStyle('apple');
+            LJ.map.setMapStyle('purple_blue');
             LJ.map.setMapIcons();
             LJ.map.setMapOverlay();
             LJ.map.setMapBrowser();
