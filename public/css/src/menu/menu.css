@@ -101,6 +101,7 @@
 .menu-item.x--active .menu-item__icon {
     /* border: 2px solid; */
     color: #1b69ec;
+    color: #1a59c3;
     /* background: #1b69ec; */
     /* border: 1px solid #1b69ec; */
 }
@@ -129,6 +130,7 @@
     border-radius: 20px;
     left: 0px;
     background: #1b69ec;
+    background: #1a59c3;
     position: absolute;
 }
 
@@ -195,7 +197,7 @@
 }
 
 .segment__part.x--active {
-    background: #1b69ec;
+    background: #1a59c3;
     color: white;
     border-radius: 20px!important;
     width: 110%;

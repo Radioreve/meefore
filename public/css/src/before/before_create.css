@@ -18,7 +18,7 @@
     top: 16px;
     right: 10px;
     cursor: pointer;
-    color: #1b69ec;
+    color: #1a59c3;
     font-size: 14px;
 }
 
@@ -57,7 +57,11 @@
     display: flex;
 }
 
-.be-create__title h1 {}
+.be-create__title h1 {
+    font-family: 'quenda';
+    font-size: 18px;
+    font-weight: bold;
+}
 
 .be-create-row__input {
     width: 100%;
@@ -70,7 +74,7 @@
     border-radius: 4px;
     border: 1px solid #ccc;
     font-size: 13px;
-    color: #1b69ec;
+    color: #1a59c3;
     cursor: pointer;
     font-weight: 500;
 }
@@ -121,6 +125,7 @@
     background: #1B69EC;
     opacity: .3;
     border: none;
+    background: linear-gradient( 45deg, #1a59c3, #7b4cbb );
 }
 
 .be-create.x--pending .be-create__button button {

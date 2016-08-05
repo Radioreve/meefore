@@ -71,7 +71,7 @@
 .settings button.x--changelang {
     background: #FFFFFF;
     padding: 10px 50px;
-    color: #1b69ec;
+    color: #1a59c3;
     font-size: 12px;
     border: 1px dashed;
     font-weight: 600;
@@ -83,7 +83,7 @@
 .settings button.x--changelang {
     color: white;
     border: 1px solid;
-    background: #1b69ec;
+    background: #1a59c3;
     flex-shrink: 0;
 }
 

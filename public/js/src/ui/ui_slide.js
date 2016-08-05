@@ -14,7 +14,7 @@
 		facebook_img_min_width: 200,
 		facebook_img_max_width: 300,
 
-		slide_top: 56,
+		slide_top: 55,
 
 		showSlideAndFetch: function( options ){
 

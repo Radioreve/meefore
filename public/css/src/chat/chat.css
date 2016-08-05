@@ -2,7 +2,7 @@
     display: none;
     position: fixed;
     right: 0px;
-    top: 56px;
+    top: 55px;
     z-index: 101;
     background: #fff;
     width: 420px;
@@ -216,7 +216,7 @@
     width: 100%;
     font-weight: 600;
     font-size: 14px;
-    color: #1b69ec;
+    color: #1a59c3;
     font-family: 'quenda';
 }
 

@@ -307,7 +307,7 @@
   left: 50%;
   border-radius: 100px;
   transform: translate(-50%,0);
-  background: rgba(27,105,236,0.75);
+  background: #1a59c3;
   height: 26px;
 }
 

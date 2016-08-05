@@ -149,7 +149,7 @@ span.be-dates__count {
 
 .slide.x--before .slide__close {
     color: white;
-    color: #1b69ec;
+    color: #1a59c3;
     text-shadow: none;
 }
 
@@ -225,7 +225,7 @@ span.be-dates__count {
     width: 36px;
     cursor: pointer;
     font-size: 22px;
-    color: #1b69ec;
+    color: #1a59c3;
 }
 
 .be-options__option:hover {
@@ -457,7 +457,7 @@ span.be-dates__count {
 .be-action .check-cheers {
     border-radius: 100px;
     background: rgba(255, 255, 255, 0.77);
-    color: #1b69ec;
+    color: #1a59c3;
 }
 
 .be-action .check-cheers i {
@@ -589,7 +589,7 @@ span.be-dates__count {
 }
 
 .be-usernames {
-    color: #1b69ec;
+    color: #1a59c3;
     font-family: 'creamy';
     font-size: 26px;
     display: flex;

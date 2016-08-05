@@ -79,7 +79,7 @@
 }
 
 .chat-inview__icon i {
-    color: #1b69ec;
+    color: #1a59c3;
 }
 
 .chat-inview__icon.x--previous {
@@ -514,7 +514,7 @@
     height: 38px;
     display: flex;
     font-size: 11px;
-    color: #1b69ec;
+    color: #1a59c3;
     padding-right: 16px;
     justify-content: flex-end;
     align-items: center;

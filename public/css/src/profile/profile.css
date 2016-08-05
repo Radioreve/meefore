@@ -82,7 +82,7 @@
 
 .me-item.x--active input,
 .me-item.x--active textarea {
-    border-bottom: 1px solid #1B69EC;
+    border-bottom: 1px solid #;
     padding-left: 16px;
     cursor: text;
 }

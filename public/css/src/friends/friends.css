@@ -24,7 +24,7 @@
 
 .friend__item:hover i,
 .friend__item:hover .row-date {
-    color: #1b69ec;
+    color: #1a59c3;
 }
 
 .friend__item:last-of-type {
@@ -122,7 +122,7 @@
 .friend-modal.x--selected {}
 
 .friend-modal.x--selected .friend-modal__icon {
-    background: #1B69EC;
+    background: #1a59c3;
 }
 
 .friend-modal.x--selected .friend-modal__name {
