@@ -512,6 +512,8 @@
 
 	var pushNewBeforeStatus = function( req, res, next ){
 
+		var err_ns 		 = "pushin_before_status";
+		
 		var socket_id    = req.sent.socket_id;
 		var before       = req.sent.expose.before;
 		var notification = req.sent.notification;

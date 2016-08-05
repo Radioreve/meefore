@@ -202,21 +202,6 @@
 				});
 
 		},
-		acceptifyCheersItem: function( chat_id ){
-
-			LJ.log('Acceptifying cheers item... !');
-
-			// Prepare the chat in the background
-			LJ.chat.hideChatInview();
-			LJ.chat.activateChat( chat_id );
-			LJ.chat.showChatInview( chat_id );
-
-			LJ.chat.bounceChatHeaderIcons( chat_id, 400 );
-
-			// Fade out the chatback wrapper
-			LJ.cheers.hideCheersBack();
-
-		},
 		resetCheersBackState: function(){
 
 			LJ.cheers.setActiveCheersBack( null );

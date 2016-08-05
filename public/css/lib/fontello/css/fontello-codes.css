@@ -113,3 +113,7 @@
 .icon-chat-read-empty:before { content: '\e86f'; } /* '' */
 .icon-switch-empty:before { content: '\e870'; } /* '' */
 .icon-heart-empty:before { content: '\e871'; } /* '' */
+.icon-bell-empty:before { content: '\e872'; } /* '' */
+.icon-chat-bubble-duo-empty:before { content: '\e873'; } /* '' */
+.icon-members-empty:before { content: '\e874'; } /* '' */
+.icon-cross-fat-empty:before { content: '\e875'; } /* '' */

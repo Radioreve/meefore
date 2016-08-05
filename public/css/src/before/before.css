@@ -456,7 +456,7 @@ span.be-dates__count {
 
 .be-action .check-cheers {
     border-radius: 100px;
-    background: white;
+    background: rgba(255, 255, 255, 0.77);
     color: #1b69ec;
 }
 
@@ -594,7 +594,7 @@ span.be-dates__count {
     font-size: 26px;
     display: flex;
     align-items: flex-end;
-    height: 100px;
+    height: 90px;
     justify-content: center;
 }
 

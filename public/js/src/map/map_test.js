@@ -3,33 +3,30 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	test: {
 
-		addOneMarker_Url: function( url ){
-
-			var i = LJ.randomInt( 0, LJ.map.test.places.length -1 );
-			var latlng = LJ.map.test.places[ i ];	
-			
-			LJ.map.addMarker({
-				latlng    : latlng,
-				url       : url,
-				type      : 'test',
-				marker_id : 'test-' + LJ.generateId()
-			})		
-
-		},
 		addOneMarker: function( i ){
 
 			i = i || LJ.randomInt( 0, LJ.map.test.places.length -1 );
 			var latlng = LJ.map.test.places[ i ];
 
-			LJ.map.addBeforeMarker({
-				_id    : i + 'x--' + LJ.generateId(),
-				address: {
-					place_id : 'lol',
-					'lat'    : latlng.lat,
-					'lng' 	 : latlng.lng
-				},
-				begins_at: _.shuffle(LJ.before.test.iso_dates)[0]
+			var marker = LJ.map.markerFactory.create({
+                latlng    : new google.maps.LatLng( latlng ),
+                html      : LJ.map.renderMarkerPlaceholder("face"),
+                marker_id : i
+            });
+
+            LJ.map.markers.push({
+        		marker_id : i,
+        		marker 	  : marker,
+                type      : "test",
+                latlng    : latlng
+        	});
+
+			LJ.delay( 500 ).then(function(){
+
+				LJ.map.showMarker( i );
+
 			});
+
 
 		},
 		showMarkers: function(){
@@ -37,19 +34,50 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 				LJ.map.test.addOneMarker( i );
 			});
 		},
-		buildPlaces: function(){
+		refreshPictures: function(){
 
-			LJ.meemap.addListener('click', function( e ){
-				LJ.map.findLocationWithLatLng( e.latLng )
-					.then(function( location ){
-						LJ.map.test.places.push({
-							place_name: location.formatted_address,
-							place_id  : location.place_id,
-							lat       : e.latLng.lat(),
-							lng 	  : e.latLng.lng()
-						});
-					});
+			var j = LJ.randomInt( 0, 11 );
+			var u = LJ.search.fetched_users[ j ];
+			var i = LJ.findMainPic( u );
+			var h = LJ.pictures.makeImgHtml( i.img_id, i.img_version, "user-map");
+
+			LJ.map.test.places.forEach(function( latlng, i ){
+
+				var j = LJ.randomInt( 0, 9 );
+				var u = LJ.search.fetched_users[ j ];
+				var k = LJ.findMainPic( u );
+				var h = LJ.pictures.makeImgHtml( k.img_id, k.img_version, "user-map" );
+
+				var update = {};
+
+				if( i/2 == 0 ){
+					update.seen = true;
+				} else {
+					update.unseen = true;
+				}
+
+				var rnd = LJ.randomInt( 0, 2 );
+				if( rnd == 0 ){
+					update.status_html = '<div class="mrk__status x--pending x--round-icon"><i class="icon icon-pending"></i></div>';
+				}
+				if( rnd == 1 ){
+					update.status_html = '<div class="mrk__status x--default x--round-icon"></div>'
+				}
+				if( rnd == 2 ){
+					update.status_html = '<div class="mrk__status x--accepted x--round-icon"><i class="icon icon-thunder-right"></i></div>'
+				}
+
+				if( i == 10 ){
+					update.status_html = '<div class="mrk__status x--host x--round-icon"><i class="icon icon-star"></i></div>'
+				}
+
+				update.img_html = LJ.ui.render( '<div class="js-filterla">' + h + '</div>' );
+
+				LJ.map.updateMarker( i, update );
+
+
 			});
+
 
 		},
 		places: [

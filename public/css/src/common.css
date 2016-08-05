@@ -106,13 +106,13 @@ button:hover {
     height: 52px;
     padding-bottom: 0px;
     background: white;
-    box-shadow: 0 0 11px  #ADADAD;
+    /* box-shadow: 0 0 11px  #ADADAD; */
     align-items: center;
     border-bottom: none;
     position: fixed;
     z-index: 100;
     width: 100%;
-    top: 58px;
+    top: 55px;
     left: 0;
     margin-bottom: 0;
     display: flex;
@@ -217,7 +217,7 @@ button:hover {
 }
 
 .row-body__age {
-    font-size: 14px;
+    font-size: 18px;
     margin-left: 2px;
     font-weight: 400;
 }
@@ -945,12 +945,19 @@ button:hover {
 .app-header {
     display: flex;
     width: 100%;
-    height: 54px;
-    position: fixed;
-    top: 0;
-    left: 0;
+    height: 100%;
     background: #191919;
-    z-index: 101;
+}
+
+.app-header__brand {
+    font-family: 'quenda';
+    color: #1b69ec;
+    font-size: 24px;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    left: 50%;
+    font-weight: bold;
+    top: 54%;
 }
 
 .app-header__splitter {
@@ -982,12 +989,13 @@ button:hover {
     position: relative;
 }
 
-.app-nav.x--thumbnail {
+.app-nav.x--right {
     width: 130px;
     position: absolute;
-    left: -140px;
-    top: -10px;
+    right: 0;
+    top: 0;
     justify-content: flex-end;
+    z-index: 1000;
 }
 
 .app-nav ul {
@@ -1012,7 +1020,7 @@ button:hover {
 }
 
 .app__menu-item.x--active {
-    /* background: black; */
+    background: black;
 }
 
 .app__menu-item.x--active .app__menu-icon {
@@ -1056,79 +1064,6 @@ button:hover {
 
 .app-header__title {}
 
-
-
-
-.app-header.x--light {
-   background: #3258a7;
-}
-
-.app-header.x--light .app-header__splitter {
-   background: #6891e6;
-}
-
-.app-header.x--light .app-header__logo {
-    
-}
-
-.app-header.x--light .app-header__logo img {
-   
-}
-
-.app-header.x--light .app-nav {
-    
-}
-
-.app-header.x--light .app-nav.x--thumbnail {
-    
-}
-
-.app-header.x--light .app-header.x--light .app-nav ul {
-   
-}
-
-.app-header.x--light .app__menu-item,
-.app-thumbnail.x--light .app__menu-item,
-.app-header.x--light .app-logout {
-    color: white;
-}
-
-.app-header.x--light .app__menu-item:hover .app__menu-icon,
-.app-header.x--light .app__menu-item:hover .app__menu-icon,
-.app-header.x--light .app-logout:hover {
-    color: #cccccc;
-}
-
-.app-header.x--light .app__menu-item.x--active,
-.app-header.x--light .app__menu-item.x--active {
-    /* background: black; */
-}
-
-.app-header.x--light .app__menu-item.x--active .app__menu-icon,
-.app-header.x--light .app__menu-item.x--active .app__menu-icon {
-    
-}
-
-.app-header.x--light .app__menu-item .bubble {
-   
-}
-
-.app-header.x--light .app__menu-item a {
-    
-}
-
-.app-header.x--light .app__menu-icon {
-   
-}
-
-.app-header.x--light .app-header__title {
-    
-}
-
-.app-header.x--light .app-header-titles {
-    
-
-}
 
 /*
    - Curtain
@@ -1660,7 +1595,7 @@ button:hover {
     width: 200px;
     height: 36px;
     background: white;
-    border: 1px dashed;
+    border: 1px dashed #1b69ec;
     color: #1b69ec!important;
     text-shadow: none;
     font-size: 12px;
@@ -1774,15 +1709,14 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 4px;
-    right: 4px;
+    top: 8px;
+    right: 6px;
     height: 20px;
     font-size: 10px;
     width: 20px;
     font-weight: bolder;
     color: white;
     background: #1B69EC;
-    border: 4px solid #191919;
 }
 
 .bubble__number {
@@ -1819,4 +1753,106 @@ button:hover {
     transform: scale(1.1);
     border-radius: 1000px;
 }
+
+
+
+/* Header styles */
+
+.header-wrap {
+    position: relative;
+    z-index: 101;
+    width: 100%;
+    height: 54px;
+    position: fixed;
+    top: 0;
+}
+.header-wrap.x--blue .app-header {
+    background: #313198;
+}
+.header-wrap.x--blue .app-header__splitter {
+    background: white;
+}
+.header-wrap.x--blue .app__menu-item {}
+.header-wrap.x--blue .app__menu-icon {
+    color: white;
+}
+.header-wrap.x--blue .app__menu-item:hover .app__menu-icon {
+    color: red;
+}
+.header-wrap.x--blue .app__menu-item.x--active {
+
+}
+.header-wrap.x--blue .app__menu-item.x--active .app__menu-icon {
+    
+}
+.header-wrap.x--blue .app__menu-item.x--active:hover .app__menu-icon {
+    
+}
+
+.header-wrap.x--white .app-header {
+    background: white;
+}
+.header-wrap.x--white .app-header__splitter {
+    background: white;
+    background: #1b69ec;
+    height: 2px;
+}
+
+.header-wrap.x--white .app__menu-item {
+}
+.header-wrap.x--white .app__menu-icon {color: #ccc;color: #1b69ec;}
+.header-wrap.x--white .app__menu-item:hover .app__menu-icon {
+    color: #1B69ec;
+}
+
+.header-wrap.x--white .app__menu-item.x--active {background: white;}
+
+.header-wrap.x--white .app__menu-item.x--active .app__menu-icon {
+    color: #1b69ec;
+}
+.header-wrap.x--white .app__menu-item.x--active:hover .app__menu-icon {
+    
+}
+
+.header-wrap.x--red .app-header {
+    background: green;
+}
+.header-wrap.x--red .app-header__splitter {
+    /* background: orange; */
+}
+
+
+.header-wrap.x--red .app__menu-item {}
+.header-wrap.x--red .app__menu-icon {
+    color: white;
+}
+.header-wrap.x--red .app__menu-item:hover .app__menu-icon {
+    color: purple;
+}
+.header-wrap.x--red .app__menu-item.x--active {
+
+}
+.header-wrap.x--red .app__menu-item.x--active .app__menu-icon {
+    
+}
+.header-wrap.x--red .app__menu-item.x--active:hover .app__menu-icon {
+    
+}
+
+
+.header-wrap.x--empty .app__menu-item .app__menu-icon {
+    display: none;
+}
+.header-wrap.x--empty .app__menu-item .app__menu-icon.x--empty {
+    display: block;
+}
+.header-wrap.x--empty .app__menu-item.x--active .app__menu-icon {
+    display: block;
+}
+.header-wrap.x--empty .app__menu-item.x--active .app__menu-icon.x--empty {
+    display: none;
+}
+
+
+/* End header styles */
 

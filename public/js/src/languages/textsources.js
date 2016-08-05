@@ -1762,7 +1762,7 @@
 			"us": "The pregame has been shared"
 		},
 		to_cheers_sent_success: {
-			"fr": "Ton Cheers a bien été envoyée",
+			"fr": "Ton Cheers a bien été envoyé",
 			"us": "Your Cheers has been sent"
 		},
 		to_cheers_received_success: {
@@ -1824,12 +1824,12 @@
 			"us": "Hour"
 		},
 		be_create_location_placeholder: {
-			"fr": "Un apparte, un quartier, un bar...",
+			"fr": "Un appart', un quartier, un bar...",
 			"us": "A flat, a neighborhood, a bar..."
 		},
 		be_create_before_explanations: {
-			"fr": "Ton before disparaitra de la map demain à 6h ?",
-			"us": "Your pregame will disappear from the map tomorrow at 6am ?"
+			"fr": "Ton before disparaitra de la map demain à 6h",
+			"us": "Your pregame will disappear from the map tomorrow at 6am"
 		},
 		be_create_button: {
 			"fr": "Créer",
@@ -1880,7 +1880,7 @@
 			}
 		},
 		slide_overlay_before_message: {
-			"fr": "Que souhaitez-vous faire ?",
+			"fr": "Que souhaites-tu faire ?",
 			"us": "What would you like to do ?"
 		},
 		slide_overlay_before_cancel: {
@@ -2015,32 +2015,24 @@
 			"fr": "Que souhaites-tu faire ?",
 			"us": "What would you like to do ?"
 		},
-		chat_inview_options_message_show_users_all: {
-			"fr": "Voir tous les participants",
-			"us": "See everyone"
-		},
-		chat_inview_options_message_show_users_team: {
-			"fr": "Voir les membres de mon groupe",
-			"us": "See the members of my group"
+		chat_inview_options_message_show_users: {
+			"fr": "Voir les membres de la discussion",
+			"us": "See the members of the chat"
 		},
 		chat_inview_options_message_show_before: {
 			"fr": "Voir le before",
 			"us": "See the pregame"
 		},
-		chat_inview_users_group_users: {
-			"fr": "Membres du groupe",
-			"us": "Group members"
-		},
-		chat_inview_users_group_hosts: {
-			"fr": "Organisateurs du before",
-			"us": "Hosts"
+		chat_inview_users_group: {
+			"fr": "Membres de la discussion",
+			"us": "Chat members"
 		},
 		chat_groupname_all: {
 			"fr": "Tout le monde",
 			"us": "All"
 		},
 		chat_team_h2: {
-			"fr": "Discussion privée avec tes amis",
+			"fr": "Discussion entre ta team et toi",
 			"us": "Private discussion with your friends"
 		},
 		chat_row_request_all_subtitle: {

@@ -282,7 +282,7 @@
 		},
 		refreshChatIconBubble: function(){
 
-			if( LJ.chat.getChatState() == "visible" ){
+			if( LJ.chat.getActiveChatId() ){
 				return;
 			}
 
@@ -624,6 +624,8 @@
 						LJ.chat.setChatRowPicture( channel_item );
 						LJ.chat.setChatRowPreview( channel_item );
 						LJ.chat.setChatRowTime( channel_item );
+
+						LJ.chat.refreshChatState( chat_id );
 						return;
 
 					})
@@ -925,7 +927,7 @@
 				return LJ.log("No chat_id to activate");
 			}
 			if( LJ.chat.getChatIds().indexOf( chat_id ) == -1 ){
-				return LJ.wlog('The chat ' + chat_id + ' doesnt exist.');
+				return LJ.log('The chat ' + chat_id + ' doesnt exist.');
 			}
 			// Store in local storage the info to know if user has "seen" a chat. Only used when no messages
 			// have been sent. Act like a "seen_by"  property, even if none is available (cause no message)
@@ -1226,7 +1228,7 @@
 					
 					var place_name = before.address.place_name;
 
-					var renderNamesFn = channel_item.role == "hosting" ?
+					var renderNamesFn = channel_item.role == "hosted" ?
 						LJ.chat.getMembers : 
 						LJ.chat.getHosts;
 
@@ -1236,7 +1238,7 @@
 					LJ.chat.updateChatInviewElements( chat_id, {
 
 						header_h1  : '<span>'+ names +'</span>',
-						header_h2  : '<span class="x--place-name">'+ place_name +'</span>'
+						header_h2  : '<span class="x--place-name">'+ _.capitalize( LJ.text('w_before') ) + ' ' + place_name +'</span>'
 
 					});
 				});	

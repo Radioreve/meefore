@@ -2,7 +2,7 @@
     display: none;
     position: fixed;
     right: 0px;
-    top: 58px;
+    top: 56px;
     z-index: 100;
     background: #fff;
     width: 400px;
@@ -21,13 +21,13 @@
 .search-filters-section.x--gender {
     flex: 1 0 auto;
 }
-
+ 
 .search-filters-section.x--age {
     flex: 1 0 auto;
 }
 
 .search-filters-section.x--countries {
-    margin-bottom: 0px;
+    margin-bottom: 0px!important;
 }
 
 .search-filters-section__title {

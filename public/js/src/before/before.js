@@ -753,7 +753,7 @@
 					display: 'flex',
 					delay: duration/2,
 					complete: function(){
-						$(this).find('.js-close-overlay')
+						$( this ).find('.js-close-overlay')
 							   .on('click', LJ.ui.hideSlideOverlay );
 					}
 				});
@@ -773,6 +773,9 @@
 						.then(function( before ){
 							LJ.before.fetched_befores.push( before );
 							resolve( before );
+						})
+						.catch(function( err ){
+							reject( err );
 						});
 				}
 

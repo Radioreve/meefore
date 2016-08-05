@@ -114,75 +114,89 @@
 
   <section class="app nonei">
     
-    <!-- header -->
-    <header class="app-header">
-      <div class="app-header__splitter"></div>
-      <div class="app-header-titles">
-        <div class="app-header__title" data-link="menu" data-lid="nav_menu_title"></div>
-        <div class="app-header__title" data-link="map" data-lid="nav_map_title"></div>
-        <div class="app-header__title" data-link="search" data-lid="nav_search_title"></div>
-      </div>
-      <div class="app-header__logo nonei">
-        <img src="/img/app/logo_nobg.png" width="40"/>
-      </div>
-      <nav class="app-nav">
-        <ul>
-          <li class="app__menu-item x--menu" data-link="menu">
-            <a href="#menu">
-              <i class="app__menu-icon icon icon-menu-app"></i>
-            </a>
-          </li>
-          <li class="app__menu-item x--map" data-link="map">
-            <a href="#map"> 
-              <i class="app__menu-icon icon icon-location"></i>
-            </a>
-          </li>
-          <li class="app__menu-item x--search" data-link="search">
-            <a href="#search">
-              <i class="app__menu-icon icon icon-members"></i>
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <div class="app-lang nonei">
-        <div class="app-lang__icon">
-          <i class="icon icon-planet"></i>
-        </div>
-        <div class="app-lang__flag-icons">
-          <i class="flag-icon flag-icon-fr" data-cc="fr"></i>
-          <i class="flag-icon flag-icon-us" data-cc="us"></i>
-        </div>
-      </div>
-      <div class="app-logout js-logout">
-        <i class="icon icon-power"></i>
-      </div>
-    </header>
-    <!-- header end -->
+    <!-- header wrapper, for styles modifications -->
+    <div class="header-wrap x--white x--empty">
     
+      <!-- header -->
+      <header class="app-header">
+        <div class="app-header__splitter"></div>
+        <div class="app-header-titles">
+          <div class="app-header__title" data-link="menu" data-lid="nav_menu_title"></div>
+          <div class="app-header__title" data-link="map" data-lid="nav_map_title"></div>
+          <div class="app-header__title" data-link="search" data-lid="nav_search_title"></div>
+        </div>
+        <div class="app-header__logo nonei">
+          <img src="/img/app/logo_nobg.png" width="40"/>
+        </div>
+        <nav class="app-nav">
+          <ul>
+            <li class="app__menu-item x--menu" data-link="menu">
+              <a href="#menu">
+                <i class="app__menu-icon icon icon-menu-app"></i>
+                <i class="app__menu-icon icon icon-menu-app x--empty"></i>
+              </a>
+            </li>
+            <li class="app__menu-item x--map" data-link="map">
+              <a href="#map"> 
+                <i class="app__menu-icon icon icon-location"></i>
+                <i class="app__menu-icon icon icon-location-empty x--empty"></i>
+              </a>
+            </li>
+            <li class="app__menu-item x--search" data-link="search">
+              <a href="#search">
+                <i class="app__menu-icon icon icon-members"></i>
+                <i class="app__menu-icon icon icon-members-empty x--empty"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="app-lang nonei">
+          <div class="app-lang__icon">
+            <i class="icon icon-planet"></i>
+          </div>
+          <div class="app-lang__flag-icons">
+            <i class="flag-icon flag-icon-fr" data-cc="fr"></i>
+            <i class="flag-icon flag-icon-us" data-cc="us"></i>
+          </div>
+        </div>
+        <!-- <div class="app-logout js-logout">
+          <i class="icon icon-power"></i>
+        </div> -->
+      </header>
+      <!-- header end -->
+        
+      <div class="app-header__brand">
+        Meefore
+      </div>  
 
-    <!-- Thumbnail start -->
-    <section class="app-thumbnail">
-    <nav class="app-nav x--thumbnail">
+      <nav class="app-nav x--right">
         <ul>
           <li class="app__menu-item x--notifications">
             <a href="#notifications">
               <i class="app__menu-icon icon icon-bell"></i>
+              <i class="app__menu-icon icon icon-bell-empty x--empty"></i>
             </a>
           </li>
           <li class="app__menu-item x--chats">
             <a href="#chat">
               <i class="app__menu-icon icon icon-chat-bubble-duo"></i>
+              <i class="app__menu-icon icon icon-chat-bubble-duo-empty x--empty"></i>
             </a>
           </li>
         </ul>
       </nav>
-      <div class="thumbnail__picture x--filterlayable">
-        <img src="/img/bots/bot26f.jpg" width="45" alt="Just another bot">
-      </div>
-      <div class="thumbnail__name">Héléna</div>
-    </section>
-     <!-- Thumbnail end -->
-  
+
+
+      <!-- Thumbnail start -->
+      <section class="app-thumbnail nonei">
+        <div class="thumbnail__picture x--filterlayable">
+          <img src="/img/bots/bot26f.jpg" width="45" alt="Just another bot">
+        </div>
+        <div class="thumbnail__name">Héléna</div>
+      </section>
+       <!-- Thumbnail end -->
+    </div>
+    <!-- Header wrapper end -->
 
    <!-- Menu section start -->
     <section class="app-section x--menu" data-link="menu">

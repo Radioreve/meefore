@@ -546,7 +546,7 @@
         addAndShowBeforeMarker: function( before ){
 
             LJ.map.addBeforeMarker( before );
-            LJ.delay( 200 ).then(function(){
+            LJ.delay( 500 ).then(function(){
                 LJ.map.showMarker( before._id );
             });
 
@@ -892,9 +892,26 @@
 
                 LJ.map.refreshMarkers();
 
+            })
+            .catch(function( e ){
+
+                LJ.map.handleClickOnBeforeMarkerError( e );
+
             });
 
 
+
+        },
+        handleClickOnBeforeMarkerError: function( err ){
+
+            if( err.err_id == "ghost_before"){
+
+                LJ.ui.showSlide({ type: "before" })
+                .then(function(){
+                    LJ.before.ghostifyBeforeInview();
+                });
+                
+            }
 
         },
         renderCreateBefore: function(){

@@ -16,6 +16,7 @@
     overflow: hidden;
     text-align: center;
     cursor: pointer;
+    border-color: #313198;
 }
 
 .thumbnail__picture img {

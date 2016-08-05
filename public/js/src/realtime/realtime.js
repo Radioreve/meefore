@@ -336,9 +336,17 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		var channel_item = data.channel_item;
 		var status 	     = data.status;
 		var n_hosts 	 = data.n_hosts;
+		var chat_id 	 = channel_item.chat_id;
 
 		if( status != "accepted" ){
 			return LJ.wlog('Status != "accepted", not implemented yet');
+		}
+
+		var is_inview_active = LJ.cheers.getActiveCheersBack() == cheers_id;
+
+		// Prevent the chat refresh to display a bubble, especially for the one accepting the cheers
+		if( is_inview_active ){
+			LJ.chat.checkAllChats();
 		}
 
 		// Refresh all channels subscriptions
@@ -352,10 +360,18 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 				LJ.ui.showToast( LJ.text("to_group_accepted_hosts") );
 
 				// Smooth ui transition to terminate the cheers back process
-				try {
-					LJ.cheers.acceptifyCheersItem( channel_item.chat_id );						
-				} catch( e ){}
-				
+				if( is_inview_active ){
+
+					LJ.chat.hideChatInview();
+					LJ.chat.activateChat( chat_id );
+					LJ.chat.showChatInview( chat_id );
+					LJ.chat.bounceChatHeaderIcons( chat_id, 400 );
+
+					// Fade out the chatback wrapper
+					LJ.cheers.hideCheersBack();				
+
+				}
+			
 
 				// Update the cheers
 				LJ.cheers.updateCheersItem( cheers_id, { status: status });

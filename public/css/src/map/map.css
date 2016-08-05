@@ -173,15 +173,20 @@
 }
 
 .marker.x--face {
-    width: 50px;
-    height: 50px;
-    border: 2px solid;
-    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    border: 1px solid;
+    /* box-sizing: border-box; */
+    padding: 0px;
     background: white;
     border-radius: 100px;
     border-radius: 100px;
     position: absolute;
-    border-color: rgb(88, 88, 88);
+    border-color: rgb(49, 49, 49);
+    border-color: white;
+    border-color: #1b69ec;
+    /* border: none; */
+    /* box-shadow: 0px 2px 2px #cacaca; */
 }
 
 .marker.x--face > * {
@@ -213,6 +218,7 @@
 
 .mrk__img {
     z-index: 1;
+    margin: 3px;
 }
 
 .mrk__status {
@@ -244,8 +250,12 @@
     color: #ffec4d;
     color: #ffa900;
     border: 2px solid;
-    border-color: #5f5f5f;
+    border-color: white;
+    /* border-color: #ffa900; */
+    /* border-color: #ffec4d; */
 }
+
+.mrk__status.x--host.x--round-icon {}
 
 .mrk__status.x--pending {
     color: #1b69ec;
@@ -264,6 +274,6 @@
     height: 8px;
     border-radius: 100px;
     z-index: 3;
-    border: 1px solid #191919;
+    border: 0px solid #ffffff;
     display: none;
 }

@@ -685,7 +685,7 @@
 		renderChatOptions__All: function(){
 
 			return LJ.chat.renderChatOptions({
-				show_users_html  : '<span data-lid="chat_inview_options_message_show_users_all"></span>',
+				show_users_html  : '<span data-lid="chat_inview_options_message_show_users"></span>',
 				show_before_html : '<span data-lid="chat_inview_options_message_show_before"></span>'
 			});
 
@@ -693,7 +693,7 @@
 		renderChatOptions__Team: function(){
 
 			return LJ.chat.renderChatOptions({
-				show_users_html: '<span data-lid="chat_inview_options_message_show_users_team"></span>'
+				show_users_html: '<span data-lid="chat_inview_options_message_show_users"></span>'
 			});
 
 		},
@@ -728,7 +728,7 @@
 
 				'<div class="chat-inview-users__group">',
 	              	// '<i class="icon icon-star"></i>',
-	              	'<span data-lid="chat_inview_users_group_hosts"></span>',
+	              	'<span data-lid="chat_inview_users_group"></span>',
 		        '</div>',
 		        hosts_html
 
@@ -741,7 +741,7 @@
 
 				'<div class="chat-inview-users__group">',
 		              // '<i class="icon icon-bookmark"></i>',
-		              '<span data-lid="chat_inview_users_group_users"></span>',
+		              '<span data-lid="chat_inview_users_group"></span>',
 			    '</div>',
 			    members_html
 
@@ -863,7 +863,6 @@
 			}
 
 			LJ.ui.updateIoptions( h );
-			
 
 		},
 		handleShowBefore: function(){

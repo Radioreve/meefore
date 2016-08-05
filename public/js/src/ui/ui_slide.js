@@ -14,7 +14,7 @@
 		facebook_img_min_width: 200,
 		facebook_img_max_width: 300,
 
-		slide_top: 58,
+		slide_top: 56,
 
 		showSlideAndFetch: function( options ){
 
@@ -34,7 +34,8 @@
 				]).then(function( results ){
 					resolve( results[0] );
 
-				}, function( err ){
+				})
+				.catch(function( err ){
 
 					if( typeof options.errHandler == "function" ){
 						options.errHandler( err );

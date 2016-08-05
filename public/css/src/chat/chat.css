@@ -2,12 +2,12 @@
     display: none;
     position: fixed;
     right: 0px;
-    top: 59px;
+    top: 56px;
     z-index: 101;
     background: #fff;
     width: 420px;
     box-sizing: border-box;
-    box-shadow: 0 0 14px #949494;
+    box-shadow: 0 3px 14px #949494;
     /* box-shadow: -5px 10px 15px 5px rgba(0,0,0,.1); */
     flex-flow: column nowrap;
 }
@@ -304,7 +304,7 @@
 .chat-row-infos__name {
     margin-bottom: 4px;
     font-size: 14px;
-    display: flex;
+    display: flex; 
 }
 
 .chat-row-infos-name span {}
