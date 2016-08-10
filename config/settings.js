@@ -9,15 +9,17 @@ var settings = {
 
 	api_version: 1,
 	app: {
-		min_group: 2,
+		min_group: 1,
 		max_group: 4,
-		min_hosts: 2,
+		min_hosts: 1,
 		max_hosts: 4,
 		min_age  : min_age,
 		max_age  : 50,
 		max_pic  : 5,
+		max_hashtags: 5,
 		chat_fetch_count: 20
 	},
+	closed_map_hours: [ 6, 14 ],
 	facebook: {
 		token_lifespan_limit: 20
 	},
@@ -71,6 +73,14 @@ var settings = {
 		img_id      : placeholder_img_id,
 		img_version : placeholder_img_vs
 	},
+	onboarding_ids: [
+
+		"welcome_to_meefore",
+		"create_before",
+		"send_cheers",
+		"check_settings"
+
+	]
 
 };
 	

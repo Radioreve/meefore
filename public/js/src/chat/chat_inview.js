@@ -164,7 +164,7 @@
 
 			var $s      = $( this );
 			var chat_id = $s.closest('[data-chat-id]').attr('data-chat-id');
-			var keyname = LJ.chat.getKeyname( e.keyCode || e.which );
+			var keyname = LJ.getKeyname( e.keyCode || e.which );
 			var $input  = LJ.chat.getChatInview( chat_id ).find('input');
 			var message = $input.val();
 
@@ -190,8 +190,6 @@
 
             }
 
-            LJ.chat.updateInputState( chat_id, e );
-
 
 		},
 		handleSendMessageClick: function(){
@@ -209,30 +207,6 @@
             	chat_id  : chat_id,
             	message  : message
             });
-            return;
-
-            LJ.chat.updateInputState( chat_id, e );
-
-		},
-		getKeyname: function( key_code ){
-
-			if( key_code == 13 ){
-				return "enter";
-			}
-
-			if( key_code == 37 ){
-				return "arrow-left";
-			}
-
-			if( key_code == 39 ){
-				return "arrow-right";
-			}
-
-			if( key_code == 8 ){
-				return "return";
-			}
-
-			return false;
 
 		},
 		sendAndAddMessage: function( data ){
@@ -1104,17 +1078,6 @@
 
         	LJ.chat.getChatInview( chat_id )
         		.find('.chat-inview-seen-by__label').text('');
-
-        },
-        updateInputState: function( chat_id, e ){
-
-        	var chat = LJ.chat.getChat( chat_id );
-
-        	if( LJ.chat.getKeyname == "return" ){
-        		chat.input = chat.input.substring( 0, chat.input.length - 1 );
-        	} else {
-        		chat.input = chat.input + e.key;
-        	}
 
         },
         renderTextInputElement: function( reset ){

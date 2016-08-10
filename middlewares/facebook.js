@@ -295,6 +295,8 @@
 					return handleErr( req, res, err_ns, err );
 				}
 
+				console.log('...done.');
+
 				next();
 
 			});

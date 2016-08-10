@@ -7,14 +7,16 @@
     text-align: center;
     margin-top: 18px;
     color: #99c0ff;
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 700;
-    color: #1b69ec;
+    color: #1a59c3;
     animation: blink infinite .6s alternate linear;
+    font-family: 'quenda';
 }
 
 .login__loader {
     text-align: center;
+    display: none!important;
 }
 
 .login__bg {
@@ -30,23 +32,24 @@
 }
 
 .login__progress-bar {
-    width: 250px;
+    width: 300px;
     margin: 0 auto;
     height: 3px;
-    background: rgba(27, 105, 236, 0.19);
+    /* background: rgba(27, 105, 236, 0.19); */
     border-radius: 30px;
     margin-top: 20px;
     overflow: hidden;
+    border: 1px solid #1a59c3;
 }
 
 .login__progress-bar-bg {
     height: 100%;
     width: 0%;
     transition: all ease-in-out .65s;
-    background: #1b69ec;
+    background: #1a59c3;
     border-radius: 30px;
 }
-
+ 
 .init-location {
     display: flex;
     flex-flow: column nowrap;
@@ -102,7 +105,7 @@
     height: 45px;
     font-size: 13px;
     background: white;
-    color: #1b69ec;
+    color: #1a59c3;
     border: 1px solid;
 }
 
@@ -171,6 +174,6 @@
 
 @keyframes blink {
     to {
-        opacity: 0.4
+        opacity: 0.6;
     }
 }

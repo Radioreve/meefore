@@ -35,7 +35,7 @@
 .friends .x--invite-friends .row-pic {
     font-size: 50px;
     background: white;
-    color: #1b69ec;
+    color: #1a59c3;
     border: 2px solid;
     border-radius: 100px;
 }
@@ -84,7 +84,7 @@
 .friend-modal__name span {}
 
 .item-modal__noselect {
-    color: #1b69ec;
+    color: #1a59c3;
     font-weight: 600;
     font-size: 10px;
     margin-left: 10px;
@@ -162,12 +162,12 @@
     left: 0;
     z-index: 100;
     font-size: 12px;
-    height: 70px;
+    height: 90px;
     background: white;
     border: 1px solid #f7f7f7;
     justify-content: center;
     align-items: center;
-    border: 1px solid #eee;
+    box-shadow: 0 0 14px rgba(0, 0, 0, 0.27);
     width: 100%;
     display: flex;
     justify-content: center;
@@ -227,7 +227,7 @@
     width: 170px;
     border-radius: 2px;
     /* color: white; */
-    background: #1b69ec;
+    background: #1a59c3;
     /* border: 2px solid #e94f6a; */
     color: #e94f6a;
     background: white;
@@ -236,8 +236,3 @@
     font-size: 15px;
 }
 
-@keyframes pound {
-    to {
-        transform: scale(1.4);
-    }
-}

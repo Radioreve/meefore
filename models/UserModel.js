@@ -118,6 +118,10 @@
   },
   ideal_night: {
     type: String
+  },
+  onboarding: {
+    type: Array,
+    default: []
   }
 
 

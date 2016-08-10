@@ -51,6 +51,7 @@
 		initCreateBefore: function(){
 
 		 	LJ.before.initHostsPicker();
+		 	LJ.before.initHashtagsPicker();
 
 		 	return LJ.seek.activatePlacesInCreateBefore()
 		 			.then(function(){
@@ -534,6 +535,15 @@
 				class_names : [ "js-show-profile" ],
 				attach_data : [ "facebook_id" ]
 			});
+
+			var be_hashtags = _.map( before.hashtags, function( hash, i ){
+				return [
+					'<div class="be-inview__hashtag x--'+ LJ.randomInt( 1, 8 ) +'">',
+						'<span class="hash"><i class="icon icon-hashtag"></i></span>',
+						'<span class="value">'+ LJ.hashtagify( hash ) +'</span>',
+					'</div>'
+				].join('');
+			}).join('')
  
 			return LJ.ui.render([
 
@@ -548,6 +558,9 @@
 			          	'</div>',
 			            '<span>'+ be_addr +'</span>',
 			          '</div>',
+			        '</div>',
+			        '<div class="be-inview-hashtags">',
+			        	be_hashtags,
 			        '</div>',
 		            '<div class="be-options">',
 		              '<div class="be-options__option x--switch x--round-icon js-switch-mode"><i class="icon icon-switch-empty"></i></div>',

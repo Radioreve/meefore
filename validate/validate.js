@@ -34,7 +34,8 @@
 			update_picture_client	: 'validate-update-picture-client',
 			upload_picture_url		: 'validate-upload-picture-url',
 			users_fetch_more		: 'validate-users-fetch-more',
-			chat_seen_by			: 'validate-chat-seen-by'
+			chat_seen_by			: 'validate-chat-seen-by',
+			check_onboarding 		: 'validate-check-onboarding'
 			
 			//test                : 'validate-test'
 			

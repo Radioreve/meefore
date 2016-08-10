@@ -37,6 +37,7 @@
 		mdw.meepass           = require( mdwDir + '/meepass');
 		mdw.connecter 		  = require( mdwDir + '/connecter');
 		mdw.realtime 		  = require( mdwDir + '/realtime');
+		mdw.onboarding 	      = require( mdwDir + '/onboarding');
 
 		mdw.validate          = require('../validate/validate');
 
@@ -129,7 +130,9 @@
 	    	mdw.notifier.addNotification('inscription_success'),
 	    	// mdw.notifier.addNotification('new_friends'),
 	    	// Always ensure the user is subscribed at mailchimp
-	    	mdw.mailchimp.api("ensure_subscription")
+	    	mdw.mailchimp.api("ensure_subscription"),
+	    	// Make sure user is up to date with new onboarding content
+	    	mdw.onboarding.setOnboardings
 	    );
 
 
@@ -288,6 +291,12 @@
 	    	api.users.fetchMoreChannels
 	    );
 
+	    app.patch('/api/v1/users/:user_id/onboarding',
+	    	mdw.validate('myself'),
+	    	mdw.validate('check_onboarding'),
+	    	api.users.updateOnboarding
+	    );
+
 
 	    // [ @user ] Renvoie tous les befores auxquels participe un user
 	    app.get('/api/v1/api/v1/users/:user_id/befores',
@@ -353,7 +362,7 @@
 	    // [ @befores ] Crée un nouvel évènement
 	    app.post('/api/v1/befores',
 	    	mdw.validate('create_before'),
-	    	mdw.meepass.updateMeepass('before_created'),
+	    	// mdw.meepass.updateMeepass('before_created'),
 	    	api.befores.createBefore,
 	    	mdw.notifier.addNotification('marked_as_host'),
 	    	mdw.realtime.pushNewBefore

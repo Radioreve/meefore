@@ -135,7 +135,36 @@
 			LJ.notifications.refreshNotificationsOrder();
 			LJ.notifications.refreshNotificationsJsp();
 			LJ.notifications.classifyNotifications();  
-			LJ.notifications.refreshNotificationsBubble();   
+			LJ.notifications.refreshNotificationsBubble();
+			LJ.notifications.refreshNotificationsState();
+
+		},
+		refreshNotificationsState: function(){
+
+			var n = LJ.user.notifications.length;
+
+			n == 0 ? LJ.notifications.emptifyNotifications() : LJ.notifications.unemptifyNotifications();
+
+		},
+		emptifyNotifications: function(){
+
+			$('.notifications-panel')
+				.children()
+				.hide();
+
+			$( LJ.notifications.renderNotificationsElement("empty") )
+				.appendTo('.notifications-panel')
+				.css({ display: 'flex' });
+
+		},
+		unemptifyNotifications: function(){
+
+			$('.notification-empty').remove();
+			$('.notifications-panel')
+				.children()
+				.css({ 'display': 'flex' });
+
+			LJ.notifications.refreshNotificationsJsp();
 
 		},
 		resetBubbleToNotificationsIcon: function(){
@@ -649,6 +678,25 @@
 	                    	'<div class="notification-message__subtext">Une petite erreur s\'est produite</div>',
                     	'</div>',
 					'</div>'
+				]);
+			}
+
+			if( element == "empty" ){
+
+				return LJ.ui.render([
+
+					'<div class="notification-empty">',
+						'<div class="notification-empty__icon x--round-icon">',
+							'<i class="icon icon-telescope"></i>',
+						'</div>',
+						'<div class="notification-empty__title">',
+							'<span data-lid="notification_empty_title"></span>',
+						'</div>',
+						'<div class="notification-empty__subtitle">',
+							'<span data-lid="notification_empty_subtitle"></span>',
+						'</div>',
+					'</div>'
+
 				]);
 			}
 

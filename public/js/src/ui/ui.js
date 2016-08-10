@@ -8,7 +8,6 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 	show_curtain_duration	: 2000,
 	hide_curtain_duration	: 2000,
-	minimum_api_delay		: 350,
 
 	action_show_duration: 400,
 	action_hide_duration: 400,
@@ -77,6 +76,17 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		    c = $( window ).height();
 
 		return scrollPercent = (s / (d-c));
+
+	},
+	makeLoaderHtml: function( opts ){
+
+		opts = opts || {
+			type: "spinner"
+		};
+
+		if( opts.type == "spinner" ){
+			return '<div class="loader spin"'
+		}
 
 	},
 	showCurtain: function( o ){
@@ -192,19 +202,22 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		$( LJ.static.renderStaticImage('main_loader') )
 				 .attr('data-loaderid', loader_id)
 				 .appendTo('body')
-				 .velocity('fadeIn', { duration: 400 });
+				 .show();
+				 
+				 //.velocity('fadeIn', { duration: 400 });
 
 	},
 	hideLoader: function( loader_id ){
 
 		loader_id = loader_id || 'no_id';
-		LJ.static.getLoader( loader_id )
-				 .velocity('fadeOut', {
-				 	duration : 250,
-				 	complete : function(){
-				 		$( this ).remove();
-				 	}
-				 });
+		LJ.static.getLoader( loader_id ).remove();
+
+				// .velocity('fadeOut', {
+				// 	duration : 250,
+				// 	complete : function(){
+				// 		$( this ).remove();
+				// 	}
+				// });
 
 	},
 	render: function( html ){

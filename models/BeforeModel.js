@@ -29,6 +29,9 @@
 		},
 		geojson: {
 			type: Object
+		},
+		hashtags: {
+			type: Array
 		}
 
 

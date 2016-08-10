@@ -61,6 +61,12 @@
     .app__menu-item {
        width: 50px;
     }
+    .app__menu-item.x--right {
+        margin-left: 0px;
+    }
+    .app-nav ul {
+        justify-content: space-around;
+    }
     .thumbnail__picture, .thumbnail__name {
         display: none;
     }

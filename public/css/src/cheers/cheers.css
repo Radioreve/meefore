@@ -36,7 +36,7 @@
 .cheers__item:hover .halo {
     width: 130%;
     height: 130%;
-    border-color: #1b69ec;
+    border-color: #1a59c3;
 }
 
 .cheers__item:hover .row-body__icon,
@@ -45,7 +45,7 @@
 .shared__item:hover .row-date,
 .friends__item:hover .row-body__icon,
 .friends__item:hover .row-date {
-    color: #1b69ec;
+    color: #1a59c3;
 }
 
 .cheers__item.x--last {
@@ -53,13 +53,13 @@
 }
 
 .cheers .row-pic__icon {
-    background: #1b69ec;
+    background: #1a59c3;
 }
 
 .cheers .row-pic__icon.x--pending {
     background: #fd7124;
     background: white;
-    color: #1b69ec;
+    color: #1a59c3;
     border: 2px solid;
 }
 
@@ -131,7 +131,7 @@
 .cheers-back-actions button {
     width: 70px;
     height: 70px;
-    background: #1b69ec;
+    background: #1a59c3;
     color: white;
 }
 
@@ -157,7 +157,7 @@
 
 .cheers-back-groupname {display: flex;justify-content: flex-end;flex-flow: column nowrap;align-items: center;flex-shrink: 0;height: 100px;margin-bottom: 10px;}
 
-.cheers-back-groupname__h1 {font-family: 'creamy';font-size: 26px;margin-bottom: 3px;color: #1B69ec;}
+.cheers-back-groupname__h1 {font-family: 'creamy';font-size: 26px;margin-bottom: 3px;color: #1a59c3;}
 
 .cheers-back-groupname__h1 span {}
 
@@ -223,7 +223,7 @@
 .empty__btn button {
     width: 100%;
     height: 100%;
-    background: #1b69ec;
+    background: #1a59c3;
     color: white;
     border-radius: 110px;
     font-size: 15px;

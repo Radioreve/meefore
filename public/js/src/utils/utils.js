@@ -167,21 +167,34 @@ window.LJ = _.merge( window.LJ || {}, {
     },
     hashtagify: function( str ){
 
-        var hashtag_parts = [];
+        return _.map( str.trim().split(/[\s_-]/), function( str_part ){
+            return str_part.capitalize();
+        }).join('');
 
-        str.toLowerCase().trim().split(/[\s_-]/).forEach(function( el, i ){
+    },
+    getKeyname: function( key_code ){
 
-            if( i == 0 ){
-                hashtag_parts.push( el );
-            } else {
-                if( el != '') {
-                    var elm = el[0].toUpperCase() + el.substring(1);
-                    hashtag_parts.push( elm );
-                }
-            }
-        });
+        if( key_code == 13 ){
+            return "enter";
+        }
 
-        return hashtag_parts.join('');
+        if( key_code == 9 ){
+            return "tab";
+        }
+
+        if( key_code == 37 ){
+            return "arrow-left";
+        }
+
+        if( key_code == 39 ){
+            return "arrow-right";
+        }
+
+        if( key_code == 8 ){
+            return "return";
+        }
+
+        return key_code;
 
     },
     log: function log( message ){

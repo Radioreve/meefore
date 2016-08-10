@@ -18,9 +18,6 @@
 				type = 'success';
 			}
 
-			if( type == 'error' ){
-				show_duration = 4000;
-			}
 
 			if( $( '.toast' ).length === 0 ){	
 				var $toast = $( LJ.ui['$toast_' + type ] );
@@ -29,23 +26,36 @@
 						.css({ 'transform': 'translateX(-50%)!important'})
 						.find('.toast__msg').text( msg );
 
-				$toast.velocity('slideDownIn', {
-					duration : 600,
-					display  : 'flex',
-					complete : function(){
-						
-						$toast.velocity('slideUpOut', {
-							duration: 300,
-							delay: show_duration || 2000,
+				$toast.show();
+				$toast.velocity('fadeOut', {
+							duration: 200,
+							delay: show_duration || 4000,
 							complete: function(){
 								$(this).remove();
 								if( LJ.ui.msg_queue.length != 0 )
 									LJ.ui.showToast( LJ.ui.msg_queue[0].msg, LJ.ui.msg_queue[0].type );
 								    LJ.ui.msg_queue.splice( 0, 1 ) //remove le premier élément
 							}
-							});						
-					  }
-				});
+							});
+
+
+				// $toast.velocity('slideDownIn', {
+				// 	duration : 100,
+				// 	display  : 'flex',
+				// 	complete : function(){
+						
+				// 		$toast.velocity('slideUpOut', {
+				// 			duration: 100,
+				// 			delay: show_duration || 4000,
+				// 			complete: function(){
+				// 				$(this).remove();
+				// 				if( LJ.ui.msg_queue.length != 0 )
+				// 					LJ.ui.showToast( LJ.ui.msg_queue[0].msg, LJ.ui.msg_queue[0].type );
+				// 				    LJ.ui.msg_queue.splice( 0, 1 ) //remove le premier élément
+				// 			}
+				// 			});						
+				// 	  }
+				// });
 			}
 			else {
 				LJ.ui.msg_queue.push({ 

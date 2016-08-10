@@ -354,7 +354,7 @@
     top: 28px;
     width: 13px;
     height: 13px;
-    background: #1b69ec;
+    background: #1a59c3;
     color: #ffffff;
     border: 2px solid #ffffff;
     padding: 0;
@@ -367,7 +367,7 @@
 }
 
 .chat-row.x--new .chat-row__status {
-    color: #1B69EC;
+    color: #1a59c3;
 }
 
 .chat-row.x--new.x--pending .chat-row__status {
@@ -390,7 +390,7 @@
 }
 
 .chat-row.x--new .bubble {
-    color: #1B69EC;
+    color: #1a59c3;
 }
 
 .chat-row.x--new.x--pending .bubble {
@@ -423,11 +423,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background: rgba(233, 79, 106, 0.06);
+    border-radius: 1000px;
+    margin-bottom: 10px;
 }
 .chat-empty__icon {
-    font-size: 64px;
-    color: #eee;
-    margin-top: -20px;
+    font-size: 50px;
+    color: #db4760;
 }
  
 .chat-empty__icon i {}
@@ -435,7 +437,8 @@
 .chat-empty__title {
     font-size: 28px;
     font-family: 'creamy';
-    color: #1b69ec;
+    color: #1a59c3;
+    margin-top: 20px;
 }
 
 .chat-empty__title span {}
@@ -508,7 +511,7 @@
 }
 
 .chat-inview-group .be-action button.x--now {
-    background: #1b69ec;
+    background: #1a59c3;
     /* background: #191919; */
 }
 

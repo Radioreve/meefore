@@ -209,6 +209,7 @@
 			}
 			
 			var max = $('.modal').attr('data-max-items');
+
 			if( max && $('.modal-item.x--selected').length == parseInt( max ) && !$s.hasClass('x--selected') ){
 				return LJ.wlog('Already max items');
 			}
@@ -218,14 +219,26 @@
 
 			$s.toggleClass('x--selected').insertBefore( $el );
 
-			if( $('.modal-item.x--selected').length == 0 ){
+			LJ.ui.refreshModalState();
+			$('.modal-search__input input').val('');
+			
+			LJ.ui.filterModalResults();
+
+		},
+		refreshModalState: function( min ){
+
+			var $modal = $('.modal');
+			var min    = parseInt( $modal.attr('data-min-items') );
+
+			if( typeof min != "number" ){
+				return LJ.wlog("unable to parse the min number");
+			}
+
+			if( $('.modal-item.x--selected').length == min ){
 				$modal.addClass('x--disabled');
 			} else {
 				$modal.removeClass('x--disabled');
 			}
-			$('.modal-search__input input').val('');
-			
-			LJ.ui.filterModalResults();
 
 		},
 		getModalItemIds: function( max ){

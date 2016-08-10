@@ -198,7 +198,7 @@
 				Mailchimp.errLog( err );
 			});
 
-	})();
+	});
 
 
 	function isMailchimpPatchNeeded( user, patch ){

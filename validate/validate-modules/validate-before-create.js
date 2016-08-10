@@ -1,14 +1,12 @@
 
-	var eventUtils  = require('../../pushevents/eventUtils'),
-		moment      = require('moment'),
-		_     	    = require('lodash'),
-		settings    = require('../../config/settings');
-
-	var Before 	    = require('../../models/BeforeModel'),
-		User        = require('../../models/UserModel'),
-		Place   	= require('../../models/PlaceModel');
-
-	var nv          = require('node-validator');
+	var eventUtils = require('../../pushevents/eventUtils');
+	var moment     = require('moment');
+	var _          = require('lodash');
+	var settings   = require('../../config/settings');
+	var Before     = require('../../models/BeforeModel');
+	var User       = require('../../models/UserModel');
+	var Place      = require('../../models/PlaceModel');
+	var nv         = require('node-validator');
 
 	function check( req, res, next ){
 
@@ -19,7 +17,7 @@
 				return onError('Hosts are missing', 'hosts_facebook_id', val.hosts_facebook_id, {
 					err_id    : 'missing_parameter',
 					parameter : 'hosts_facebook_id'
-				})
+				});
 			}
 
 			// Make sure all hosts have the same value
@@ -37,7 +35,31 @@
 			}
 			
 
-		};
+		}
+
+		function isHashtagsOk( val, onError ){
+
+			for( var i=0; i< val.length; i++ ){
+				if( val[i].length > 30 ){
+					return onError('Hashtag value is too long (>30)', 'hashtags', val.hashtags, {
+						err_id: 'hashtags_length_limit'
+					});
+				}
+			}
+
+			if( val.length == 0 ){
+				return onError('Hashtag array is too short (0 minimum)', 'hashtags', val.hashtags, {
+					err_id: 'hashtags_length_too_short'
+				});
+			}
+
+			if( val.length > 5 ){
+				return onError('Hashtag array is too short (5 maximum)', 'hashtags', val.hashtags, {
+					err_id: 'hashtags_length_too_long'
+				});
+			}
+
+		}
 
 		var checkAddress = nv.isAnyObject()
 
@@ -50,9 +72,11 @@
 
 			.withRequired('facebook_id' 		, nv.isString())
 			.withRequired('begins_at'           , nv.isDate())
+			.withRequired('hashtags' 			, nv.isArray())
 			.withRequired('timezone'			, nv.isNumber({ min: -720, max: 840 }))
 			.withRequired('address'				, checkAddress)
 			.withCustom( isHostOk )
+			.withCustom( isHashtagsOk )
 
 
 		req.sent.timezone    = parseFloat( req.sent.timezone );
@@ -86,6 +110,7 @@
 		before_data.begins_at = data.begins_at;
 		before_data.timezone  = data.timezone;
 		before_data.address   = data.address;
+		before_data.hashtags  = data.hashtags;
 
 		// Weird, code auto converts it to string
 		before_data.address.lat = parseFloat( before_data.address.lat );
@@ -108,7 +133,7 @@
 					err_id		: "ghost_hosts",
 					n_sent  	: host_number,
 					n_found		: hosts.length,
-					missing_ids : _.difference( data.hosts_facebook_id, _.pluck( hosts, 'facebook_id' ) )
+					missing_ids : _.difference( data.hosts_facebook_id, _.map( hosts, 'facebook_id' ) )
 				}, null );
 			}
 

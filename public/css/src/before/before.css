@@ -75,7 +75,7 @@
     border-radius: 100px;
     position: absolute;
     height: 4px;
-    background: #1b69ec;
+    background: #1a59c3;
     top: 46px;
     left: 3px;
     display: none;
@@ -297,6 +297,8 @@ span.be-dates__count {
     text-overflow: ellipsis;
     max-width: 220px;
     height: 15px;
+    font-family: 'quenda';
+    color: #454545;
 }
 
 .be-inview-address__date {
@@ -450,7 +452,7 @@ span.be-dates__count {
 .be-action button {
     width: 70px;
     height: 70px;
-    background: #1B69EC;
+    background: #1a59c3;
     color: white;
 }
 
@@ -469,13 +471,13 @@ span.be-dates__count {
     border: 2px solid;
     background: #FD7124;
     background: white;
-    color: #1b69ec;
+    color: #1a59c3;
 }
 
 .be-action button.x--accepted {
     /* background: white; */
     /* border: 2px solid; */
-    /* color: #1B69EC; */
+    /* color: #1a59c3; */
 }
 
 .be-action i {
@@ -554,7 +556,7 @@ span.be-dates__count {
     font-family: 'creamy';
     font-weight: 700;
     font-size: 34px;
-    color: #1b69ec;
+    color: #1a59c3;
     margin-bottom: 20px;
 }
 
@@ -583,15 +585,15 @@ span.be-dates__count {
     height: 36px;
     background: white;
     border: 1px dashed;
-    color: #1b69ec!important;
+    color: #1a59c3!important;
     text-shadow: none;
     font-size: 12px;
 }
 
 .be-usernames {
     color: #1a59c3;
-    font-family: 'creamy';
-    font-size: 26px;
+    font-family: 'quenda';
+    font-size: 20px;
     display: flex;
     align-items: flex-end;
     height: 90px;
@@ -628,6 +630,7 @@ span.be-dates__count {
 
 .be-inview-address__icon {
     margin-right: 4px;
+    display: none;
 }
 
 .be-inview-address__icon i {}
@@ -699,7 +702,7 @@ span.be-dates__count {
     display: flex;
     color: #919191;
     font-size: 12px;
-    /* color: #1b69ec; */
+    /* color: #1a59c3; */
     /* font-family: 'quenda'; */
 }
 
@@ -729,7 +732,7 @@ span.be-dates__count {
     right: 50px;
     bottom: 62px;
     font-size: 20px;
-    color: #1b69ec;
+    color: #1a59c3;
     cursor: pointer!important;
     z-index: 1;
 }
@@ -749,3 +752,49 @@ span.be-dates__count {
 .flat-user-job i {}
 
 .flat-user__job {}
+
+.be-inview-hashtags {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-family: quenda;
+    order: 2;
+    color: #454545;
+}
+.be-inview__hashtag {
+    /* background: #eee; */
+    /* padding: 6px 12px; */
+    margin: 4px;
+    border-radius: 40px;
+}
+.be-inview__hashtag .hash {
+    font-size: 10px;
+}
+.be-inview__hashtag.x--1 .hash {color: #1ecc21;}
+.be-inview__hashtag.x--2 .hash {
+    color: #33afff;
+}
+.be-inview__hashtag.x--3 .hash {}
+.be-inview__hashtag.x--4 .hash {}
+.be-inview__hashtag.x--5 .hash {}
+.be-inview__hashtag.x--6 .hash {
+    color: #ffef00;
+}
+.be-inview__hashtag.x--7 .hash {
+    color: #3986ac;
+}
+.be-inview__hashtag.x--8 .hash {}
+
+.be-inview__hashtag.x--1 {}
+.be-inview__hashtag.x--2 {}
+.be-inview__hashtag.x--3 {}
+.be-inview__hashtag.x--4 {}
+.be-inview__hashtag.x--5 {}
+.be-inview__hashtag.x--6 {}
+.be-inview__hashtag.x--7 {
+}
+.be-inview__hashtag.x--8 {}
+
+.be-inview__hashtag .value {}
+

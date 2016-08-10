@@ -42,8 +42,7 @@
 		handleAppEvents: function(){
 
 			LJ.on("fetch_chats_done",  LJ.chat.refreshChatRowsState );
-			LJ.on("fetch_cheers_done", LJ.chat.refreshChatRowsState);
-
+			LJ.on("fetch_cheers_done", LJ.chat.refreshChatRowsState );
 
 		},
 		// Check the chat row states and display the empty views if needed
@@ -55,6 +54,10 @@
 				return chan.type == "chat_team";
 			}).length;
 
+			var n_chats_team_with_friends = _.filter( LJ.user.channels, function( chan ){
+				return chan.type == "chat_team" && chan.members.length > 1;
+			}).length;
+
 			var n_chats_all = _.filter( LJ.user.channels, function( chan ){
 				return chan.type == "chat_all";
 			}).length;
@@ -63,14 +66,15 @@
 				return ch.cheers_type == "received" && ch.status == "pending";
 			}).length;
 
-			if( n_chats_team == 0 ){
+			if( n_chats_team_with_friends == 0 && n_chats_all == 0 ){
 				return LJ.chat.emptifyChatRows();
 			}
 
 			LJ.chat.unemptifyChatRows();
 
-			n_chats_all == 0 ? LJ.chat.emptifyChatRowsMatches() : LJ.chat.unemptifyChatRowsMatches();
-			n_cheers    == 0 ? LJ.cheers.emptifyCheersItems__Chat() : LJ.cheers.unemptifyCheersItem__Chat();
+			n_chats_team_with_friends == 0 ? LJ.chat.emptifyChatRowsTeam() : LJ.chat.unemptifyChatRowsTeam();
+			n_chats_all               == 0 ? LJ.chat.emptifyChatRowsMatches() : LJ.chat.unemptifyChatRowsMatches();
+			n_cheers                  == 0 ? LJ.cheers.emptifyCheersItems__Chat() : LJ.cheers.unemptifyCheersItem__Chat();
 
 
 		},
@@ -555,6 +559,10 @@
 			var chat_id      = channel_item.chat_id;
 			var hosts        = channel_item.hosts;
 			var members      = channel_item.members;
+
+			if( members.length == 1 ){
+				return LJ.log('Lonely host, not adding a chat for himself');
+			}
 
 			if( LJ.chat.getChat( chat_id ) ){
 				return LJ.log('Chat already initialized, stop fetching');
@@ -1080,6 +1088,10 @@
 		},
 		emptifyChatRows: function(){
 
+			if( $('.chat-rows').find('.chat-empty').length != 0 ){
+				return;
+			}
+
 			$('.chat-rows').find('.chat-rows-title, .chat-rows-body').hide();
 			$('.chat-rows').append( LJ.chat.renderChatRowEmpty() );
 
@@ -1108,7 +1120,7 @@
 			var type 	 = opts.type;
 
 			var title    = opts.title || '<span data-lid="chat_empty_title"></span>';
-			var icon 	 = opts.icon  || '<i class="icon icon-chat-bubble-empty"></i>';
+			var icon 	 = opts.icon  || '<i class="icon icon-chat-bubble-duo"></i>';
 
 			var img_html = [
 				'<div class="chat-empty__icon x--round-icon">',
@@ -1263,6 +1275,19 @@
 			});
 
 			LJ.chat.refreshChatRowsState();
+
+		},
+		emptifyChatRowsTeam: function(){
+
+			$('.chat-rows-title.x--team').hide();
+			$('.chat-rows-body.x--team').hide();
+
+
+		},
+		unemptifyChatRowsTeam: function(){
+
+			$('.chat-rows-title.x--team').css({ 'display': 'flex' });
+			$('.chat-rows-body.x--team').css({ 'display': 'flex' });
 
 		},
 		emptifyChatRowsMatches: function(){
@@ -1516,7 +1541,7 @@
 				'<div class="chat-row-infos">',
 					'<div class="chat-row-infos__name">',
 						'<span class="x--name"></span>',
-						'<span class="js-user-online user-online"></span>',
+						// '<span class="js-user-online user-online"></span>',
 					'</div>',
 					'<div class="chat-row-infos__preview">',
 		              '<span></span>',

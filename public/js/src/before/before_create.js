@@ -11,6 +11,11 @@
 			LJ.before.handleDomEvents__PlacePicker();
 
 		},
+		initHashtagsPicker: function(){
+
+			LJ.before.handleDomEvents__HashtagsPicker();
+
+		},
 		handleDomEvents__PlacePicker: function(){
 
 			LJ.seek.be_create.addListener('place_changed', function(){
@@ -46,13 +51,17 @@
 					"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>",
 					"search_input"	: true,
 					"max_items"     : (LJ.app_settings.app.max_hosts - 1),
+					"min_items"     : LJ.app_settings.app.min_group,
 					"jsp_body" 	    : true
+
 				})
 				.then(function(){
+					LJ.ui.refreshModalState();
 					return LJ.ui.getModalItemIds()
+
 				})
 				.then(function( facebook_ids ){
-					$('.be-create-row.x--hosts').attr('data-host-ids', facebook_ids.join(',') ).removeClass('x--unset');
+					LJ.before.addHostToInput( facebook_ids );
 					LJ.before.validateInputs();
 					return LJ.before.addHostsNames( facebook_ids );
 
@@ -69,10 +78,77 @@
 
 
 		},
+		handleDomEvents__HashtagsPicker: function(){
+
+			LJ.ui.$body.on('keydown', '.be-create-row.x--hashtags input', function( e ){
+
+				var $s = $( this );
+				var kc = LJ.getKeyname( e.keyCode || e.which );
+
+				if( kc == "enter" || kc == "tab" ){
+					LJ.before.addHashtag();
+					$s.val('');
+					LJ.before.validateInputs();
+					LJ.delay( 100 ).then(function(){
+						$s.focus();
+					});
+				}
+
+			});
+
+		},
+		addHashtag: function(){
+
+			var n_hashes = $('.be-create__hashtag').length;
+
+			if( n_hashes == LJ.app_settings.app.max_hashtags ){
+				return;
+			}
+
+			var text = $('.be-create-row.x--hashtags input').val();
+
+			$( LJ.before.renderHashtag( text ) )
+				.hide()
+				.appendTo('.be-create__hashtags')
+				.velocity('bounceInQuick', {
+					duration : 400,
+					display  : 'flex'
+				})
+				.on('click', function(){
+					$( this ).remove();
+					LJ.before.validateInputs();
+				});
+
+		},
+		renderHashtag: function( text ){
+
+			return LJ.ui.render([
+
+				'<div class="be-create__hashtag js-be-hashtag" data-rawvalue="'+ text +'">',
+					'<span class="hash x--round-icon"><i class="icon icon-hashtag"></i></span>',
+					'<span class="value">'+ LJ.hashtagify( text ) +'</span>',
+				'</div>'
+
+			]);
+
+		},
+		addHostToInput: function( hosts_facebook_id ){
+
+			hosts_facebook_id = Array.isArray( hosts_facebook_id ) ? hosts_facebook_id : [ hosts_facebook_id ];
+
+			$('.be-create-row.x--hosts')
+				.attr('data-host-ids', hosts_facebook_id.join(',') );
+				
+
+		},
 		addHostsNames: function( hosts_facebook_id ){
 
 			var profiles = LJ.friends.getFriendsProfiles( hosts_facebook_id );
-			names        = LJ.renderMultipleNames( _.map( profiles, 'name' ) );
+			// names = LJ.renderMultipleNames( _.concat( _.map( profiles, 'name' ), LJ.user.name ), {
+			// 	lastify_user: LJ.user.name
+			// });
+
+			names = LJ.renderMultipleNames( _.concat( _.map( profiles, 'name' ), LJ.user.name ) );
 
 			return $('.be-create-row.x--hosts').find('input').val( names );
 
@@ -80,11 +156,25 @@
 		},
 		validateInputs: function(){
 
-			var $unset = $('.be-create-row.x--unset');
+			var $hashrow = $('.be-create-row.x--hashtags');
+			var n_hashes = $('.be-create__hashtag').length;
 
-			if( $unset.length == 0 ){
-				return $('.be-create').addClass('x--ready');
+			n_hashes == 0 ?
+				$hashrow.addClass('x--unset') :
+				$hashrow.removeClass('x--unset');
+
+			n_hashes == LJ.app_settings.app.max_hashtags ?
+				$hashrow.addClass('x--disabled').find('input').attr('readonly', true).attr('placeholder', '5 hashtags maximum!') :
+				$hashrow.removeClass('x--disabled').find('input').attr('readonly', false).attr('placeholder', LJ.text('be_create_hashtags_placeholder') );
+
+
+			var n_unset = $('.be-create-row.x--unset').length;
+			if( n_unset == 0){
+				$('.be-create').addClass('x--ready');
+			} else {
+				$('.be-create').removeClass('x--ready');
 			}
+
 
 		},
 		showCreateBefore: function(){
@@ -94,7 +184,8 @@
 			var d  = LJ.search.filters_duration || 300;
 
 			LJ.before.clearCreateBefore();
-			LJ.ui.adjustWrapperHeight( $('.be-create') );
+			LJ.before.addHostsNames([]);
+			// LJ.ui.adjustWrapperHeight( $('.be-create') );
 
 			if( LJ.isMobileMode() ){
 				LJ.ui.deactivateHtmlScroll();
@@ -145,10 +236,10 @@
 
 			$('.be-create__loader').remove();
 			$('.be-create').removeClass('x--pending').removeClass('x--ready');
-			$('.be-create-row.x--hosts').addClass('x--unset').find('input').val('');
-			$('.be-create-row.x--date').addClass('x--unset').find('input').val('');
-			$('.be-create-row.x--hour').addClass('x--unset').find('input').val('');
+			$('.be-create-row.x--hosts').find('input').val('');
 			$('.be-create-row.x--location').addClass('x--unset').find('input').val('');
+			$('.be-create-row.x--hashtags').addClass('x--unset').find('input').val('');
+			$('.be-create-row.x--hashtags').find('.js-be-hashtag').remove();
 
 		},
 		readCreateAttributes: function(){
@@ -157,6 +248,9 @@
 
 			req.hosts_facebook_id = $('.be-create-row.x--hosts').attr('data-host-ids').split(',');
 			req.hosts_facebook_id.push( LJ.user.facebook_id );
+
+			// Filter out empty strings in case host is hosting alone 
+			req.hosts_facebook_id = req.hosts_facebook_id.filter( Boolean );
 
 			// Important! Timezone is only known by the client and used to uniquely identify his..
 			// well, timezone, when updating multiple events every hours on the scheduler
@@ -169,7 +263,12 @@
 				lat 	   : $('.be-create-row.x--location').attr('data-lat'),
 				lng 	   : $('.be-create-row.x--location').attr('data-lng')
 
-			}
+			};
+
+			req.hashtags = [];
+			$('.js-be-hashtag').each(function( i, hashtag ){
+				req.hashtags.push( LJ.hashtagify( $( hashtag ).attr('data-rawvalue') ) );
+			});
 
 			return req;
 
@@ -327,20 +426,23 @@
 			        '<div class="be-create__close">',
 			          '<div class="icon icon-cross-fat"></div>',
 			        '</div>',
+			        '<div class="be-create__image x--round-icon">',
+			        	'<i class="icon icon-star-empty"></i>',
+			        '</div>',
 			        '<div class="be-create__title">',
 			          '<h1 data-lid="be_create_title"></h1>',
 			        '</div>',
 			        '<div class="be-create-row__subtitle">',
 			          '<h2 data-lid="be_create_subtitle_hosts"></h2>',
 			        '</div>',
-			        '<div class="be-create-row x--hosts x--unset">',
+			        '<div class="be-create-row x--hosts" data-host-ids="">',
 			          '<div class="be-create__icon x--round-icon"><i class="icon icon-star-empty"></i></div>',
 			          '<div class="be-create-row__input">',
 			            '<input readonly data-lid="be_create_hosts_placeholder"/>',
 			          '</div>',
-			          '<div class="be-create-row__explanations">',
-			            '<div data-lid="be_create_hosts_explanations"></div>',
-			          '</div>',
+			          // '<div class="be-create-row__explanations">',
+			          //   '<div data-lid="be_create_hosts_explanations"></div>',
+			          // '</div>',
 			          '<div class="js-create-host-selected">',
 			            // Will be used to know where append the selected users 
 			          '</div>',
@@ -356,6 +458,21 @@
 			          '<div class="be-create-row__explanations">',
 			            '<div data-lid="be_create_before_explanations"></div>',
 			          '</div>',
+			        '</div>',
+			        '<div class="be-create-row__subtitle">',
+			          '<h2 data-lid="be_create_subtitle_hashtags"></h2>',
+			        '</div>',
+			        '<div class="be-create-row x--hashtags x--unset">',
+			          '<div class="be-create__icon x--round-icon"><i class="icon icon-hashtag-empty"></i></div>',
+			          '<div class="be-create-row__input">',
+			            '<input data-lid="be_create_hashtags_placeholder" />',
+			          '</div>',
+			          '<div class="be-create__hashtags">',
+
+			          '</div>',
+			          // '<div class="be-create-row__explanations">',
+			          //   '<div data-lid="be_create_hashtags_explanations"></div>',
+			          // '</div>',
 			        '</div>',
 			        '<div class="be-create__button">',
 			          '<button data-lid="be_create_button"></button>',

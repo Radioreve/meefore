@@ -1,6 +1,9 @@
 
 	window.LJ.api = _.merge( window.LJ.api || {}, {
 
+		min_delay: 350,
+		max_delay: 1200,
+
 		app_token_url 			  	 	 	: '/auth/facebook',
 		me_url		  			  	 	 	: '/api/v1/users/:user_id/self',
 		user_url 							: '/api/v1/users/:user_id',
@@ -34,6 +37,7 @@
 		update_chat_seen_by_url 	 	 	: '/api/v1/chats/:chat_id/seen_by',
 		update_notifications_seen_at_url 	: '/api/v1/users/:user_id/notifications/seen_at',
 		update_notifications_clicked_at_url : '/api/v1/users/:user_id/notifications/clicked_at',
+		update_onboarding_seen_at_url 		: '/api/v1/users/:user_id/onboarding',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -42,11 +46,12 @@
 
 			});
 		},
-		ajax: function( url, method, data ){	
+		ajax: function( url, method, data, opts ){	
 			return LJ.promise(function( resolve, reject ){
 
-				// LJ.log('['+method+'] ' + url);
+				opts = opts || {};
 				data = data || {};
+
 				if( LJ.user && LJ.user.facebook_id ){
 					data.facebook_id = LJ.user.facebook_id;
 				}
@@ -62,6 +67,8 @@
 				if( LJ.app_debug ){
 					LJ.log( data );
 				}
+
+				var base_delay = opts.delayed ? LJ.api.max_delay : LJ.api.min_delay;
 
 				$.ajax({
 
@@ -79,7 +86,7 @@
 								LJ.cacheUser( data.user );
 							}
 							return resolve( data );
-	                    }, LJ.ui.minimum_api_delay - ( new Date() - call_started ) );
+	                    }, base_delay - ( new Date() - call_started ) );
 					},
 					error: function( err ){
 
@@ -89,23 +96,23 @@
 							
 							return reject( formatted_err );
 
-	                    }, LJ.ui.minimum_api_delay - ( new Date() - call_started ), err );
+	                    }, base_delay - ( new Date() - call_started ), err );
 					}
 
 				});
 
 			});
 		},
-		get: function( url, data ){
-			return LJ.api.ajax( url, 'get', data );
+		get: function( url, data, opts ){
+			return LJ.api.ajax( url, 'get', data, opts );
 
 		},
-		post: function( url, data ){
-			return LJ.api.ajax( url, 'post', data );
+		post: function( url, data, opts ){
+			return LJ.api.ajax( url, 'post', data, opts );
 			
 		},
-		patch: function( url, data ){
-			return LJ.api.ajax( url, 'patch', data );
+		patch: function( url, data, opts ){
+			return LJ.api.ajax( url, 'patch', data, opts );
 
 		},
 		makeFormattedError: function( err ){
@@ -311,15 +318,16 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.update_profile_url.replace(':user_id', LJ.user.facebook_id ), data )
+				LJ.api.post( LJ.api.update_profile_url.replace(':user_id', LJ.user.facebook_id ), data, { delayed: true })
 					  .then(function( exposed ){
+					  		LJ.ui.hideLoader( loader_id );
 					  		return resolve( exposed );
-					  }, function( err ){
+					  }) 
+					  .catch(function( err ){
 					  		return reject( err );
-					  }).then(function(){
-					  	LJ.ui.hideLoader( loader_id );
 					  });
 			});
+
 		},
 		fetchCloudinaryTags: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -413,7 +421,7 @@
 		deleteMyAccount: function(){
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.delete_my_account_url.replace(':user_id', LJ.user.facebook_id ) )
+				LJ.api.post( LJ.api.delete_my_account_url.replace(':user_id', LJ.user.facebook_id ), { delayed: true })
 					.then(function( exposed ){
 						return resolve( exposed );
 					}, function( err ){
@@ -549,7 +557,7 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.change_before_status_url.replace(':before_id', before_id ), request )
+				LJ.api.post( LJ.api.change_before_status_url.replace(':before_id', before_id ), request, { delayed: true } )
 					.then(function( exposed ){
 
 						if( exposed.before ){
@@ -577,7 +585,7 @@
 
 			return LJ.promise(function( resolve, reject ){
 
-				LJ.api.post( LJ.api.before_request_url.replace(':before_id', before_id), request )
+				LJ.api.post( LJ.api.before_request_url.replace(':before_id', before_id), request, { delayed: true } )
 					.then(function( exposed ){
 
 						return resolve( exposed );
@@ -743,7 +751,27 @@
 			return LJ.promise(function( resolve, reject ){
 
 				var url = LJ.api.user_url.replace(':user_id', LJ.user.facebook_id );
-				LJ.api.patch( url, update )
+				LJ.api.patch( url, update, { delayed: true } )
+					.then(function( exposed ){
+
+						if( !exposed.user ){
+							return LJ.wlog('The server didnt respond with the expected user object');
+						} else {
+							return resolve( exposed );
+						}
+
+					}, function( err ){
+						return reject( err );
+
+					});
+
+			});
+		},
+		updateOnboarding: function( onboarding_id ){
+			return LJ.promise(function( resolve, reject ){
+
+				var url = LJ.api.update_onboarding_seen_at_url.replace(':user_id', LJ.user.facebook_id );
+				LJ.api.patch( url, { onboarding_id: onboarding_id } )
 					.then(function( exposed ){
 
 						if( !exposed.user ){

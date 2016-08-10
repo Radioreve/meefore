@@ -1516,7 +1516,7 @@
 			"us": "New Cheers"
 		},
 		settings_emails_new_cheers_explanation: {
-			"fr": "Envoyée lorsqu'un groupe vous envoie un Cheers",
+			"fr": "Envoyée lorsqu'un groupe t'envoie un Cheers",
 			"us": "Sent when you have received a new Cheers"
 		},
 		settings_notifs_newsletter_label: {
@@ -1795,8 +1795,8 @@
 			"fr": "A proximité de",
 			"us": "Close to"
 		},
-		"be_create_title": {
-			"fr": "Créer un before",
+		be_create_title: {
+			"fr": "Propose ton before",
 			"us": "Create a pregame"
 		},
 		be_create_subtitle_hosts: {
@@ -1831,9 +1831,17 @@
 			"fr": "Ton before disparaitra de la map demain à 6h",
 			"us": "Your pregame will disappear from the map tomorrow at 6am"
 		},
+		be_create_subtitle_hashtags: {
+			"fr": "Hashtags",
+			"us": "Hashtags"
+		},
+		be_create_hashtags_placeholder: {
+			"fr": "Hashtag ton before comme tu l'entends",
+			"us": "Hashtag your before with anything you want"
+		},
 		be_create_button: {
-			"fr": "Créer",
-			"us": "Create"
+			"fr": "Ajouter",
+			"us": "Add"
 		},
 		modal_be_create_title: {
 			"fr": "Membres du groupe",
@@ -1843,12 +1851,12 @@
 			"fr": function(){
 				var min = LJ.app_settings.app.min_hosts - 1;
 				var max = LJ.app_settings.app.max_hosts - 1;
-				return "Sélectionne les autres organisateurs parmi tes amis <br> (%min minimum, %max maximum)".replace('%min', min).replace('%max', max);
+				return "Sélectionne les autres participants parmi tes amis <br> (%max maximum)".replace('%max', max);
 			},
 			"us": function(){
 				var min = LJ.app_settings.app.min_hosts - 1;
 				var max = LJ.app_settings.app.max_hosts - 1;
-				return "Select the other hosts among your friends <br> (%min minimum, %max maximum)".replace('%min', min).replace('%max', max);
+				return "Select the other hosts among your friends <br> (%max maximum)".replace('%max', max);
 			}
 		},
 		err_be_create_missing_hosts: {
@@ -1916,8 +1924,8 @@
 			"us": "%name just canceled a pregame that you organized together"
 		},
 		modal_request_subtitle: {
-			"fr": "Sélectionnez au plus 3 amis avec lesquels vous souhaiteriez participer.",
-			"us": "Select at most 3 friends you would like to go with."
+			"fr": "Envoie un Cheers tout seul ou à plusieurs ",
+			"us": "Send a Cheers alone or with your friends"
 		},
 		to_before_create_success: {
 			"fr": "Votre before vient d'être créé",
@@ -1960,8 +1968,8 @@
 			"us": "I join"
 		},
 		chat_empty_title: {
-			"fr": "Rien à l'horizon...",
-			"us": "Nothing on the horizon..."
+			"fr": "Cheer & Match",
+			"us": "Cheer & Match"
 		},
 		chat_empty_subtitle_row: {
 			"fr": "Tu pourras discuter avec tes amis et faire connaissance avec les autres membres lorsque tu auras créé un before ou obtenu un Match",
@@ -2190,6 +2198,39 @@
 		chat_row_empty_cheers: {
 			"fr": "Crée un before avec tes amis pour recevoir des Cheers",
 			"us": "Create a before with your friends to receive Cheers"
+		},
+		meemap_closed_h1: {
+			"fr": "On fait un break",
+			"us": "Let's have a break"
+		},
+		meemap_closed_h2: {
+			"fr": "La Meemap est fermée tous les matins. Tu pourras proposer un before pour ce soir à partir de 14h00.",
+			"us": "The Meemap is closed during the morning. You'll be able to add your pregame to the map at 2p.m."
+		},
+		onb_welcome_title: {
+			"fr": function( name ){
+				return "Bienvenidos %name!".replace('%name', name);
+			},
+			"fr": function( name ){
+				return "Bienvenidos %name!".replace('%name', name);
+			}
+		},
+		onb_welcome_subtitle: {
+			"fr": "La communauté des jeunes qui font des befores avant d'aller en soirée te souhaite la bienvenue. <br>"
+			     + "Tous les jours à 14h, la Meemap ouvre ses porte et permet à chacun de proposer un before pour le jour même. <br>",
+			"us": ""
+		},
+		onb_welcome_btn: {
+			"fr": "Montrez-moi la Meemap",
+			"us": "Show-me the Meemap"
+		},
+		notification_empty_title: {
+			"fr": "Rien à l'horizon",
+			"us": "Nothing on the horizon"
+		},
+		notification_empty_subtitle: {
+			"fr": "Tous les évènements concernant ta soirée de ce soir (Cheers, Matches..) seront listés ici. Pas d'actions, pas de notifications !",
+			"us": "Everything about you and tonight's pregames (Cheers, Matches...) will be listed here. No actions, no notifications !"
 		}
 
 

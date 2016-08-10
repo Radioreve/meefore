@@ -2,16 +2,17 @@
     display: none;
     position: fixed;
     right: 0px;
-    top: 56px;
-    z-index: 100;
+    top: 0;
+    z-index: 1000;
     background: rgb(255, 255, 255);
     width: 400px;
-    padding: 40px 24px;
+    padding: 0 24px 40px 24px;
     box-sizing: border-box;
     box-shadow: 0 0 14px #949494;
     flex-flow: column nowrap;
     opacity: 0;
-}
+    height: 100%;
+} 
 
 .be-create__close {
     position: absolute;
@@ -31,9 +32,10 @@
 
 .be-create-row__subtitle {
     font-weight: bold;
-    margin-top: 30px;
-    font-size: 15px;
+    margin-top: 26px;
+    font-size: 13px;
     font-family: 'quenda';
+    color: #454545;
 }
 
 .be-create-row__subtitle h2 {}
@@ -59,8 +61,9 @@
 
 .be-create__title h1 {
     font-family: 'quenda';
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
+    color: #1a59c3;
 }
 
 .be-create-row__input {
@@ -76,7 +79,7 @@
     font-size: 13px;
     color: #1a59c3;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 400;
 }
 
 .be-create-row.x--hosts {}
@@ -115,14 +118,18 @@
     opacity: 1;
 }
 
+.be-create.x--ready .be-create__button button:hover {
+    opacity: .7;
+}
+
 .be-create__button button {
-    width: 270px;
+    width: 90%;
     height: 48px;
     border-radius: 4px;
     font-size: 16px;
     color: white;
     font-weight: 500;
-    background: #1B69EC;
+    background: #1a59c3;
     opacity: .3;
     border: none;
     background: linear-gradient( 45deg, #1a59c3, #7b4cbb );
@@ -161,9 +168,58 @@
 .hourpicker__hour:hover {
     color: white;
     font-weight: bold;
-    background: #1b69ec;
+    background: #1a59c3;
 }
 
 .hourpicker-col {
     margin: 0px 10px;
 }
+
+.be-create__hashtags {
+    display: flex;
+    padding: 6px 1px;
+    flex-flow: row wrap;
+}
+
+.be-create__hashtags.x--disabled {}
+
+.be-create__hashtag {
+    background: rgba(26, 89, 195, 0.07);
+    color: #1a59c3;
+    font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: 'quenda';
+    margin: 0 4px 4px 0;
+}
+.be-create__hashtag:hover {
+    opacity: 0.6!important;
+}
+
+.be-create__hashtag .hash {
+    font-size: 10px;
+    position: relative;
+    top: 0px;
+}
+.be-create__hashtag .value {}
+
+.be-create-row.x--hashtags input {
+    cursor: text;
+}
+
+.x--disabled .be-create__icon,
+.x--disabled input {
+    opacity: .7;
+}
+
+.x--disabled input {
+    cursor: default!important;
+    border-style: dashed;
+    /* background: #fafafa; */
+    border: none;
+}
+
+.be-create__image {width: 50px;height: 50px;margin: 30px auto 10px;font-size: 30px;display: flex;justify-content: center;align-items: center;}
+
+.be-create__image i {transform: rotate(15deg);}

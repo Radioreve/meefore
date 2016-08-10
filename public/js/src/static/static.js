@@ -5,52 +5,52 @@
 		'images': [
 			{
 				'access_name' : 'main_loader',
-				'image_id' 	  : 'app_loader',
+				'image_id' 	  : 'loaders/bar_dots_meeblue',
 				'param'		  : { 'class': 'app__loader', 'width': 80 }
 			},
 			{
 				'access_name' : 'modal_loader',
-				'image_id'    : 'loader_circular_blue_thin',
+				'image_id'    : 'loaders/circular_meeblue',
 				'param'       : { 'class': 'modal__loader', 'width': 32  }
 			},
 			{
 				'access_name' : 'menu_loader',
-				'image_id'    : 'loader_circular_blue_thin',
+				'image_id'    : 'loaders/circular_meeblue',
 				'param'       : { 'class': 'menu__loader', 'width': 32  }
 			},
 			{
 				'access_name' : 'slide_loader',
-				'image_id'    : 'loader_circular_blue_thin',
+				'image_id'    : 'loaders/circular_meeblue',
 				'param'       : { 'class': 'slide__loader', 'width': 32  }	
 			},
 			{
 				'access_name' : 'cheers_back_loader',
-				'image_id'    : 'loader_circular_blue_thin',
+				'image_id'    : 'loaders/circular_meeblue',
 				'param'       : { 'class': 'slide__loader', 'width': 32  }	
 			},
 			{
 				'access_name' : 'search_loader',
-				'image_id'    : 'loader_circular_blue_thin',
+				'image_id'    : 'loaders/circular_meeblue',
 				'param'       : { 'class': 'search__loader', 'width': 32  }	
 			},
 			{
 				'access_name' : 'be_create_loader',
-				'image_id'    : 'loader_circular_blue_thin',
+				'image_id'    : 'loaders/circular_meeblue',
 				'param'       : { 'class': 'be-create__loader', 'width': 32  }
 			},
 			{
 				'access_name' : 'notifications_loader',
-				'image_id'    : 'loader_circular_blue_thin',
+				'image_id'    : 'loaders/circular_meeblue',
 				'param'       : { 'class': '', 'width': 32  }
 			},
 			{
 				'access_name' : 'chat_loader',
-				'image_id'    : 'loader_circular_blue_thin',
+				'image_id'    : 'loaders/circular_meeblue',
 				'param'   	  : { 'class': 'chat__loader', 'width': 28  }
 			},
 			{
 				'access_name' : 'marker_loader',
-				'image_id'    : 'loader_circular_blue_thin',
+				'image_id'    : 'loaders/circular_meeblue',
 				'param' 	  : { 'class': '', 'width': 28 }
 			},
 			{ "access_name" : ":D", "image_id": "emoticon_smile" },

@@ -40,6 +40,7 @@
 		new_before.begins_at = moment( data.begins_at );
 		new_before.timezone  = data.timezone;
 		new_before.address   = data.address;
+		new_before.hashtags  = data.hashtags;
 
     	new_before.created_at = moment();
     	new_before.groups 	 = [];

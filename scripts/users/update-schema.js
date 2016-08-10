@@ -30,7 +30,11 @@
 					tasks.push(function( done ){
 
 						// Update part
-						user.notifications = [];
+						user.onboarding = [
+							{
+								onboarding_id: "welcome"
+							}
+						];
 
 						user.save(function( err ){
 							if( err ) console.log('Error : ' + err );

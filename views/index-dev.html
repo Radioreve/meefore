@@ -148,6 +148,18 @@
                 <i class="app__menu-icon icon icon-members-empty x--empty"></i>
               </a>
             </li>
+            <li class="app__menu-item x--notifications x--right">
+            <a href="#notifications">
+              <i class="app__menu-icon icon icon-bell x--filled"></i>
+              <i class="app__menu-icon icon icon-bell-empty x--empty"></i>
+            </a>
+          </li>
+          <li class="app__menu-item x--chats">
+            <a href="#chat">
+              <i class="app__menu-icon icon icon-chat-bubble-duo x--filled"></i>
+              <i class="app__menu-icon icon icon-chat-bubble-duo-empty x--empty"></i>
+            </a>
+          </li>
           </ul>
         </nav>
         <div class="app-lang nonei">
@@ -166,26 +178,8 @@
       <!-- header end -->
         
       <div class="app-header__brand">
-        Meefore
+        meeven
       </div>  
-
-      <nav class="app-nav x--right">
-        <ul>
-          <li class="app__menu-item x--notifications">
-            <a href="#notifications">
-              <i class="app__menu-icon icon icon-bell x--filled"></i>
-              <i class="app__menu-icon icon icon-bell-empty x--empty"></i>
-            </a>
-          </li>
-          <li class="app__menu-item x--chats">
-            <a href="#chat">
-              <i class="app__menu-icon icon icon-chat-bubble-duo x--filled"></i>
-              <i class="app__menu-icon icon icon-chat-bubble-duo-empty x--empty"></i>
-            </a>
-          </li>
-        </ul>
-      </nav>
-
 
       <!-- Thumbnail start -->
       <section class="app-thumbnail nonei">
@@ -371,8 +365,8 @@
           </div>
         </div>
 
-        <div class="profile-logout js-logout x--mb">
-          <h3 data-lid="mb_logout_btn"></h3>
+        <div class="profile-logout js-logout">
+          <button data-lid="mb_logout_btn"></button>
         </div>
 
       </section>
@@ -805,6 +799,7 @@
   <script src="js/src/ui/ui_modal.js"></script>
   <script src="js/src/ui/ui_slide.js"></script>
   <script src="js/src/ui/ui_bubbles.js"></script>
+  <script src="js/src/ui/ui_spotlight.js"></script>
   <script src="js/src/ui/ui_ioptions.js"></script>
   <script src="js/src/dev/dev.js"></script>
   <script src="js/src/realtime/realtime.js"></script>

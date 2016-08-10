@@ -14,6 +14,7 @@
                 LJ.map.handleMapEvents();
                 LJ.map.handleAppEvents();
     			LJ.map.initPlacesServices();
+                LJ.map.refreshMapMode();
 
             } catch( e ){
                 LJ.wlog("Something went wrong initializing the map");
@@ -64,8 +65,9 @@
         },
 		handleDomEvents: function(){
             
-			LJ.ui.$body.on('click', '.map__icon.x--geoloc', LJ.map.centerMapAtUserLocation );
-			LJ.ui.$body.on('click', '.map__icon.x--change-location', LJ.map.toggleMapBrowser );
+			LJ.ui.$body.on('click', '.js-map-geoloc', LJ.map.centerMapAtUserLocation );
+            LJ.ui.$body.on('click', '.js-map-facebook', LJ.facebook.showModalSendMessageToFriends );
+			LJ.ui.$body.on('click', '.js-map-change-location', LJ.map.toggleMapBrowser );
             LJ.ui.$body.on('mousedown', '.js-before-marker', LJ.map.handleClickOnBeforeMarker );
 
 		},
@@ -95,9 +97,8 @@
 
 			LJ.meemap = new google.maps.Map( $wrap, options );
 			
-            LJ.map.setMapStyle('naked');
+            LJ.map.setMapStyle('meeven');
             LJ.map.setMapIcons();
-            LJ.map.setMapOverlay();
             LJ.map.setMapBrowser();
             LJ.map.setMapZoom();
 
@@ -127,16 +128,11 @@
 
         	$('.app-section.x--map')
         		.append( LJ.map.renderChangeLocation() )
-        		.append( LJ.map.renderGeoLocation() )
+                .append( LJ.map.renderInviteFacebookFriends )
+        		// .append( LJ.map.renderGeoLocation() )
                 .append( LJ.map.renderCreateBefore() )
         		.append( LJ.map.renderPinLocation() );
 
-
-        },
-        setMapOverlay: function(){
-
-        	$('.app-section.x--map')
-        		.append( LJ.map.renderMapOverlay() );
 
         },
         setMapBrowser: function(){
@@ -621,12 +617,15 @@
         refreshBeforeMarker: function( bfr ){   
 
             var marker_id = bfr._id;
+            var n_hosts   = bfr.hosts.length;
 
             LJ.map.faceifyMarker( marker_id )
                 .then(function(){
+                    LJ.map.setMarkerPicturesActive( marker_id );
                     LJ.map.refreshBeforeMarker__Status( marker_id );
+                    LJ.map.numerifyMarker( marker_id, n_hosts );
                     LJ.map.refreshBeforeMarker__Seen( marker_id );
-                    
+
                 });
 
         },
@@ -747,25 +746,112 @@
         },
         faceifyMarker: function( marker_id ){
 
-            var mrk    = LJ.map.getMarker( marker_id );
+            var mrk = LJ.map.getMarker( marker_id );
             
             return LJ.map.getMarkerData( marker_id, "before" )
                 .then(function( before ){
-
-                    var mh = before.main_host;
-                    return LJ.api.fetchUser( mh )
+                    return LJ.api.fetchUsers( before.hosts )
 
                 })
                 .then(function( res ){
 
-                    var h        = res.user;
-                    var img_html = LJ.pictures.makeImgHtml( h.img_id, h.img_vs, "user-map" );
+                    var users = _.map( res, 'user' );
+
+                    var imgs = [ '<div class="img-wrap js-filterlay">' ];
+                    users.forEach(function( user, i ){
+
+                        var img_html = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-map" );
+                        imgs.push( '<div class="img-item">' + img_html + '</div>' );
+                    });
+                    imgs.push('</div>');
 
                     return LJ.map.updateMarker( marker_id, {
-                        img_html: LJ.ui.render( '<div class="js-filterlay">' + img_html + '</div>' )
+                        img_html: LJ.ui.render( imgs.join('') )
                     });
 
                 });
+
+        },
+        activateMarkerPicturesAutoswap: function(){
+
+            LJ.map.autoswap_pictures = true;
+            LJ.map.autoswapMarkerPictures();
+
+        },
+        deactivateMarkerPicturesAutoswap: function(){
+
+            LJ.map.autoswap_pictures = false;
+
+        },
+        autoswapMarkerPictures: function(){
+
+            if( LJ.map.autoswap_pictures == false ){
+                return LJ.log("Autoswaping pictures has been stopped");
+            }
+
+            return LJ.delay( 4000 )
+            .then(function(){
+
+                var before_markers = _.filter( LJ.map.markers, function( mrk ){
+                    return mrk.type == "before" || mrk.type == "test";
+                });
+
+                before_markers.forEach(function( mrk ){
+
+                    if( LJ.randomInt( 0, 1 ) == 0 ){
+                        LJ.map.swapMarkerPictures( mrk.marker_id );
+
+                    }
+
+                });
+
+            })
+            .then(function(){
+                return LJ.map.autoswapMarkerPictures();
+
+            })
+            .catch(function( e ){
+                LJ.wlog( e );
+            });
+
+        },
+        setMarkerPicturesActive: function( marker_id ){
+
+            var $mrk  = LJ.map.getMarkerDom( marker_id );
+            var $imgs = $mrk.find('.img-item');
+
+            var j = LJ.randomInt( 0, $imgs.length - 1 );
+            $imgs.each(function( i, img ){
+
+                if( i == j ){
+                    $( img ).addClass('js-active').css({ "opacity": "1" });
+                } else {
+                    $( img ).css({ "opacity": "0" });
+                }
+
+            });
+
+        },
+        swapMarkerPictures: function( marker_id ){
+
+            var $mrk  = LJ.map.getMarkerDom( marker_id );
+            var $imgs = $mrk.find('.img-item');
+
+            if( $imgs.length == 1 ){
+                return LJ.log("Unique img element, doing nothing");
+            }
+
+            var current_active_idx = parseInt( $mrk.find('.js-active').attr('data-link') );
+            var target_active_idx  = _.shuffle( _.difference( _.range( 0, $imgs.length - 1 ), [ current_active_idx ] ) )[ 0 ];
+
+            $mrk.find('.img-item[data-link="'+ current_active_idx +'"]')
+                .removeClass('js-active')
+                .css({ "opacity": "0" });
+
+            $mrk.find('.img-item[data-link="'+ target_active_idx +'"]')
+                .addClass('js-active')
+                .css({ "opacity": "1" });
+
 
         },
         unseenifyMarker: function( marker_id ){
@@ -799,8 +885,15 @@
         acceptifyMarker: function( marker_id ){
 
             LJ.map.updateMarker( marker_id, {
-                status_html: '<div class="mrk__status x--accepted x--round-icon"><i class="icon icon-chat-bubble-duo"></i></div>'
+                status_html: '<div class="mrk__status x--accepted x--round-icon"><i class="icon icon-thunder-right"></i></div>'
             });
+
+        },
+        numerifyMarker: function( marker_id, n ){
+
+            LJ.map.updateMarker( marker_id, {
+                status_html: '<div class="mrk__status x--'+ n +' x--number x--round-icon"><span>'+ n +'</span></div>'
+            })
 
         },
         hostifyMarker: function( marker_id ){
@@ -932,6 +1025,15 @@
         		]);
 
         },
+        renderInviteFacebookFriends: function(){
+
+            return LJ.ui.render([
+                '<div class="map__icon x--round-icon x--facebook js-map-facebook">',
+                    '<i class="icon icon-facebook"></i>',
+                '</div>'
+                ]);
+
+        },
         renderGeoLocation: function(){
 
         	return LJ.ui.render([
@@ -939,6 +1041,7 @@
         			'<i class="icon icon-geoloc"></i>',
         		'</div>'
         		]);
+
         },
         renderPinLocation: function(){
 
@@ -946,12 +1049,6 @@
         		'<div class="map__icon x--round-icon x--location js-map-location">',
         			'<i class="icon icon-location"></i>',
         		'</div>'
-        		]);
-        },
-        renderMapOverlay: function(){
-
-        	return LJ.ui.render([
-        		'<div class="map__overlay"></div>'
         		]);
 
         },
@@ -963,20 +1060,93 @@
         		'</div>'
         		]);
 
+        },
+        refreshMapMode: function(){
+
+            var hour = moment().get('hour');
+
+            hour > LJ.app_settings.closed_map_hours[ 0 ] && hour < LJ.app_settings.closed_map_hours[ 1 ] ?
+                LJ.map.setMapMode("closed") :
+                LJ.map.setMapMode("open") ;
+
+            
+        },
+        setMapMode: function( mode ){
+
+            if( mode == "open" ){
+                LJ.map.active_mode = "open";
+                LJ.map.openMeemap();
+            }
+
+            if( mode == "closed" ){
+                LJ.map.active_mode = "closed";
+                LJ.map.closeMeemap();
+            }
+
+        },
+        getMeemapMode: function(){
+
+            return LJ.map.active_mode;
+            
+        },
+        openMeemap: function(){
+
+            LJ.map.hideOverlay();
+            LJ.map.hideMeemapClosed();
+
+        },
+        showOverlay: function(){
+
+            $('<div class="map__overlay"></div>')
+                .hide()
+                .appendTo('.app-section.x--map')
+                .velocity('fadeIn', { duration: 500 });
+
+        },
+        hideOverlay: function(){
+
+            $('.map__overlay').remove();
+
+        },
+        closeMeemap: function(){
+
+            LJ.map.showOverlay();
+            LJ.map.showMeemapClosed();
+
+        }, 
+        showMeemapClosed: function(){
+
+            $( LJ.map.renderMeemapClosed() )
+                .hide()
+                .appendTo('.app-section.x--map')
+                .show();
+
+        },
+        hideMeemapClosed: function(){
+
+            $('.meemap-closed').remove();
+
+        },
+        renderMeemapClosed: function(){
+
+            return LJ.ui.render([
+
+                '<div class="meemap-closed">',
+                    '<div class="meemap-closed__h1">',
+                        '<h1 data-lid="meemap_closed_h1"></h1>',
+                    '</div>',
+                    '<div class="meemap-closed__h2">',
+                        '<h2 data-lid="meemap_closed_h2"></h2>',
+                    '</div>',
+                    '<div class="meemap-closed__icon x--round-icon">',
+                        '<i class="icon icon-bednight"></i>',
+                    '</div>',
+                '</div>'
+
+            ]);
         }
 
 
 	});		
-
-	
-	testClearAllMarkers = function(){
-		if( LJ.map.marker_test ){
-
-			LJ.map.marker_test.forEach(function(mrk){
-				mrk.marker.setMap(null);
-			});
-		}			
-	};	
-
 
 

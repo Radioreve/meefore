@@ -38,7 +38,8 @@
     .empty,
     .settings__button.x--delete,
     .settings__button,
-    .map-browse input {
+    .map-browse input,
+    .profile-logout {
         width: 100%!important;
     }
     .modal {
@@ -255,23 +256,12 @@
         min-height: 0!important;
     }
 
-    .profile-logout {
-        order: 10;
-        height: 50px;
-        width: 220px;
-        border: 1px solid #1b69ec;
-        color: #1b69ec;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        top: -50px;
-        font-size: 14px;
-        font-weight: 600;
-    }
+
 
     .notification .notification__date {
         position: absolute!important;
         top: 2px!important;
         right: 0px!important;
     }
+    
 }

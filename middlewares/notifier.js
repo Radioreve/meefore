@@ -71,7 +71,7 @@
 			console.log('Error saving notifications : ' + err );
 		} else {
 			if( raw.n == 0 ){
-				term.bold.red("Zero users have been notified, could indicate an error..\n");
+				// term.bold.red("Zero users have been notified, could indicate an error..\n");
 			} else {
 				term.bold.green( raw.n + " users have been notified\n");
 			}
@@ -90,7 +90,11 @@
 			return n && n.type == type;
 		});
 
-		if( does_exists ){
+		// if( does_exists ){
+		// 	return next();
+		// }
+
+		if( user.status != "new" ){
 			return next();
 		}
 		
@@ -399,25 +403,23 @@
 
 		var user            = req.sent.user;
 		var fetched_befores = req.sent.fetched_befores;
+
+		var updated_needed = false;
+		user.notifications.forEach(function( n, i ){
 			
-		// Filter out all notifictions that are tied to a specific  before
-		_.filter( user.notifications, function( n ){
+			var is_outdated = moment( n.happened_at ).dayOfYear() < moment().dayOfYear();
+			var is_today    = moment( n.happened_at ).dayOfYear() == moment().dayOfYear();
+			var happn_hour  = moment( n.happened_at ).get("hour");
+			var now_hour    = moment().get("hour");
 
-			return n && n.before_id; 
-
-		}).forEach(function( n, i ){
-
-			var before = _.find( fetched_befores, function( bfr ){
-				return bfr._id == n.before_id;
-			});
-
-			if( !before ){
-				console.log("Warning, no before were to be found, weird");
+			if( is_outdated || ( is_today && happn_hour > 0 && happn_hour < 14 && now_hour > 14 ) ){
+				console.log("Cleaning notification : " + i );
+				updated_needed = true;
+				delete user.notifications[ i ];
 			}
 
-			// Only remove notifications about befores that are outdated
-			if( before && moment( before.begins_at ) < moment() ){
-				delete user.notifications[ i ];
+			if( !updated_needed ){
+				return next();
 			}
 
 		});
@@ -432,6 +434,7 @@
 			next();
 
 		});
+
 
 	}
 

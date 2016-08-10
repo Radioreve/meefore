@@ -347,7 +347,7 @@
 
 					$('.multi-landing').remove();
 					
-					return
+					return;
 				});	
 
 			},

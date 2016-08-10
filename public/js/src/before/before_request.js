@@ -41,9 +41,11 @@
 				"subtitle"		: LJ.text('modal_request_subtitle'),
 				"body"  		: LJ.friends.renderFriendsInModal(),
 				"max_items"     : (LJ.app_settings.app.max_group - 1),
+				"min_items"     : LJ.app_settings.app.min_group,
 				"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>"
 			})
 			.then(function(){
+				LJ.ui.refreshModalState();
 				return LJ.before.processRequest( before_id );
 
 			});

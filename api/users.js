@@ -683,6 +683,42 @@
 
 	};
 
+	var updateOnboarding = function( req, res, next ){
+
+		var err_ns = "updating_onboarding";
+
+		var facebook_id   = req.sent.user_id;
+		var onboarding_id = req.sent.onboarding_id;
+
+		req.sent.expose.facebook_id = facebook_id;
+		User.findOneAndUpdate(
+		{
+			'facebook_id': facebook_id,
+			'onboarding.onboarding_id': onboarding_id
+		},
+		{
+			'$set': {
+				'onboarding.$.seen_at': new Date()
+			}
+		}, 
+		{
+			multi : false,
+			new   : true
+		},
+		function( err, user ){
+
+			if( err ){
+				return handleErr( req, res, err_ns, err );
+			}
+
+			req.sent.expose.err = err;
+			req.sent.expose.user = user;
+			next();
+
+		});
+
+	};
+
 
 	module.exports = {
 		fetchMe 				  	 : fetchMe,
@@ -704,6 +740,7 @@
 		updateNotificationsClickedAt : updateNotificationsClickedAt,
 		fetchUserCheers 			 : fetchUserCheers,
 		fetchUserNotifications 		 : fetchUserNotifications,
-		deleteUser 					 : deleteUser
+		deleteUser 					 : deleteUser,
+		updateOnboarding 		     : updateOnboarding
 
 	};

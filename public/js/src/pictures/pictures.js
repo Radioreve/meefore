@@ -497,6 +497,7 @@
 			var hive_imgs_html = ['<div class="hive x--' + L + '"><div class="hive__background"></div>'];
 			var parts = {
 
+				"1": [ "x--1-center"],
 				"2": [ "x--2-top", "x--2-bottom" ],
 				"3": [ "x--3-top", "x--3-left", "x--3-right" ],
 				"4": [ "x--4-top", "x--4-bottom", "x--4-left", "x--4-right" ]

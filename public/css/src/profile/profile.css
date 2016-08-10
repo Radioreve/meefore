@@ -97,4 +97,22 @@
 
 .me-item.x--validating .menu-input-action {
     opacity: .5!important;
-}
+} 
+
+ .profile-logout {
+        order: 10;
+        height: 50px;
+        width: 320px;
+        position: relative;
+        top: -20px;
+    }
+
+    .profile-logout button {
+        width: 100%;
+        height: 100%;
+        background: none;
+        border: 1px solid #1a59c3;
+        color: #1a59c3;
+        font-weight: 600;
+        font-size: 14px;
+    }

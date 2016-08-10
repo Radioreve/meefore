@@ -109,7 +109,7 @@
 /*
 Mushia      : #db4760
 Gentle blue : #33afff
-Royal blue  : #1b69ec
+Royal blue  : #1a59c3
 Odébo       : #fd7124
 Blue boy    : #3fb3c6
 Pinkirl     : #d55d8c
@@ -125,11 +125,11 @@ Whispereen  : #58c170
 
 
 [data-type="accepted_in_hosts"] .notification__icon {
-    color: #1b69ec;
+    color: #1a59c3;
 }
 
 [data-type="accepted_in_members"] .notification__icon {
-    color: #1b69ec;
+    color: #1a59c3;
 }
 
 [data-type="before_canceled"] .notification__icon {
@@ -137,12 +137,12 @@ Whispereen  : #58c170
 }
 
 [data-type="group_request_hosts"] .notification__icon {
-    color: #1b69ec;
+    color: #1a59c3;
     font-size: 30px;
 }
 
 [data-type="group_request_members"] .notification__icon {
-    color: #1b69ec;
+    color: #1a59c3;
 }
 
 [data-type="inscription_success"] .notification__icon {
@@ -154,7 +154,7 @@ Whispereen  : #58c170
 }
 
 [data-type="group_request_members"] .notification__icon {
-    color: #1b69ec;
+    color: #1a59c3;
     font-size: 30px;
 }
 
@@ -173,7 +173,7 @@ Whispereen  : #58c170
     margin-left: 20px;
 }
  
-.notification .notification-message__text {font-weight: 700;font-size: 13.5px;letter-spacing: -.2px;max-width: 200px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;line-height: 15px;color: #454545;/* color: #1b69ec; *//* font-family: 'quenda'; *//* font-size: 15px; */}
+.notification .notification-message__text {font-weight: 700;font-size: 13.5px;letter-spacing: -.2px;max-width: 200px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;line-height: 15px;color: #454545;/* color: #1a59c3; *//* font-family: 'quenda'; *//* font-size: 15px; */}
 
 .notification .notification-message__subtext {
     font-size: 11.5px;
@@ -203,7 +203,7 @@ Whispereen  : #58c170
     height: 40px;
     width: 40px;
     font-size: 18px;
-    color: #1b69ec;
+    color: #1a59c3;
     flex-shrink: 0;
 }
 
@@ -265,9 +265,49 @@ Whispereen  : #58c170
     right: -2px;
     width: 9px;
 }
-
+ 
 
 .notification.x--outdated {opacity: .3;cursor: default;display: none;}
+
+.notification-empty {
+    height: 100%;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    width: 70%;
+    margin: auto;
+}
+.notification-empty__title {
+    font-size: 28px;
+    font-family: 'creamy';
+    color: #1a59c3;
+}
+.notification-empty__title span {}
+.notification-empty__subtitle {
+    color: #454545;
+    margin-top: 20px;
+    line-height: 20px;
+    text-align: center;
+    font-weight: 400;
+    font-size: 12px;
+}
+.notification-empty__subtitle span {}
+.notification-empty__icon {
+    width: 130px;
+    height: 130px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(219,71,96,0.07);
+    /* border: 2px solid #db4760; */
+    /* border-color: rgba(219, 71, 96, 0.3); */
+    border-radius: 1000px;
+    font-size: 50px;
+    color: #db4760;
+    margin-bottom: 30px;
+}
+.notification-empty__icon i {}
 
 
 @media (max-width: 650px ){

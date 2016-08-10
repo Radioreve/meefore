@@ -202,8 +202,8 @@ button:hover {
 .row-body__tag {
     font-size: 10px;
     margin-left: 10px;
-    background: #1b69ec;
-    background: #1b69ec;
+    background: #1a59c3;
+    background: #1a59c3;
     color: white;
     padding: 4px 10px;
     border-radius: 100px;
@@ -462,7 +462,7 @@ button:hover {
     margin-top: 30px;
     color: #454545;
     font-family: 'creamy';
-    color: #1b69ec;
+    color: #1a59c3;
 }
 
 .empty__title h2 {}
@@ -485,7 +485,7 @@ button:hover {
     font-size: 30px;
     margin-top: 30px;
     cursor: pointer;
-    color: #1b69ec;
+    color: #1a59c3;
     border: 1px solid;
     position: absolute;
     bottom: -20px;
@@ -513,7 +513,7 @@ button:hover {
 
 .disconnected__icon {
     display: flex;
-    color: #1b69ec;
+    color: #1a59c3;
     font-size: 60px;
 }
 
@@ -652,7 +652,7 @@ button:hover {
 }
 
 .change-lang__choice.x--active {
-    border-bottom: 3px solid #1b69ec;
+    border-bottom: 3px solid #1a59c3;
 }
 
 .change-lang__choice.x--active i {
@@ -952,7 +952,7 @@ button:hover {
 
 .app-header__brand {
     font-family: 'quenda';
-    font-size: 20px;
+    font-size: 22px;
     position: absolute;
     transform: translate(-50%,-50%);
     left: 50%;
@@ -966,7 +966,7 @@ button:hover {
     width: 100%;
     top: 54px;
     background: #33AFFF;
-    background: #1b69ec;
+    background: #1a59c3;
     /* background: #009bff; */
     height: 5px;
 }
@@ -982,7 +982,7 @@ button:hover {
 }
 
 .app-nav {
-    width: 350px;
+    width: 100%;
     display: flex;
     justify-content: flex-start;
     flex-direction: row;
@@ -1000,9 +1000,10 @@ button:hover {
 }
 
 .app-nav ul {
-    display: inline-block;
+    display: flex;
     position: relative;
     height: 100%;
+    width: 100%;
 }
 
 .app__menu-item {
@@ -1026,6 +1027,10 @@ button:hover {
 
 .app__menu-item.x--active .app__menu-icon {
     color: white;
+}
+
+.app__menu-item.x--right {
+    margin-left: auto;
 }
 
 .app__menu-item .bubble {
@@ -1109,7 +1114,8 @@ button:hover {
     font-size: 12px;
     border-radius: 40px;
     padding: 0 30px;
-    font-weight: 400;
+    font-weight: 700;
+    background: white;
 }
 
 .toast--info {
@@ -1117,16 +1123,18 @@ button:hover {
 }
 
 .toast--error {
-    background: #B10926;
-    background: #1B69EC;
+    background: #fbfbfb;
+    color: #db4760;
 }
 
 .toast--success {
-    background: black;
+    color: #1a59c3;
+    /* border: 1px solid; */
 }
 
 .toast__msg {
-    text-align: center
+    text-align: center;
+    margin-top: 4px;
 }
 
 
@@ -1139,8 +1147,10 @@ button:hover {
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
-    top: 23px;
+    top: 15px;
     z-index: 1000;
+    background: white;
+    padding: 10px 30px;
 }
 
 
@@ -1266,7 +1276,7 @@ button:hover {
 }
 
 .modal.x--logout button {
-    color: #1b69ec;
+    color: #1a59c3;
     transform: scale(0.75);
 }
 
@@ -1290,7 +1300,7 @@ button:hover {
     left: 50%;
     transform: translate(-50%, -50%)!important;
     background: rgba(27, 105, 236, 0.07);
-    color: #1b69ec;
+    color: #1a59c3;
     width: 70%;
     text-align: center;
     padding: 10px;
@@ -1596,8 +1606,8 @@ button:hover {
     width: 200px;
     height: 36px;
     background: white;
-    border: 1px dashed #1b69ec;
-    color: #1b69ec!important;
+    border: 1px dashed #1a59c3;
+    color: #1a59c3!important;
     text-shadow: none;
     font-size: 12px;
 }
@@ -1669,7 +1679,7 @@ button:hover {
 .ui-synchronify .ui-overlay__message span {
     width: 100%;
     display: block;
-    color: #1b69ec;
+    color: #1a59c3;
 }
 
 .ui-synchronify img {
@@ -1717,7 +1727,7 @@ button:hover {
     width: 20px;
     font-weight: bolder;
     color: white;
-    background: #1B69EC;
+    background: #1a59c3;
 }
 
 .bubble__number {
@@ -1726,7 +1736,7 @@ button:hover {
 }
 
 .app__menu-item.x--chats .bubble {
-    /* background: #1b69ec; */
+    /* background: #1a59c3; */
 }
 
 
@@ -1755,7 +1765,7 @@ button:hover {
     border-radius: 1000px;
 }
 
-
+ 
 
 /* Header styles */
 
@@ -1766,6 +1776,7 @@ button:hover {
     height: 54px;
     position: fixed;
     top: 0;
+    left: 0;
 }
 .header-wrap.x--blue .app-header {
     background: #313198;
@@ -1795,7 +1806,7 @@ button:hover {
 }
 .header-wrap.x--white .app-header__splitter {
     background: white;
-    background: #1b69ec;
+    background: #1a59c3;
     height: 1px;
     background: #1a59c3;
     background: #ccc;
@@ -1803,9 +1814,9 @@ button:hover {
 
 .header-wrap.x--white .app__menu-item {
 }
-.header-wrap.x--white .app__menu-icon {color: #ccc;color: #1b69ec;color: #454545;color: #1a59c3;}
+.header-wrap.x--white .app__menu-icon {color: #ccc;color: #1a59c3;color: #454545;color: #1a59c3;}
 .header-wrap.x--white .app__menu-item:hover .app__menu-icon {
-    /* color: #1B69ec; */
+    /* color: #1a59c3; */
 }
 
 .header-wrap.x--white .app__menu-item.x--active {background: white;}
@@ -1859,3 +1870,9 @@ button:hover {
 
 /* End header styles */
 
+
+.spotlight {
+    transform: translate(-50%,-50%);
+    z-index: 100000;
+    border-radius: 10000px;
+}

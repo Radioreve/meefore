@@ -41,6 +41,8 @@
             // LJ.shared.init();  // Keep it for ulterior version
             // Profile user
             LJ.profile_user.init();
+            // Onboarding strategies
+            LJ.onboarding.init();
 
             // Autologin for users who asked the "remember me" feature in their settings
             LJ.autologin.init()
@@ -79,7 +81,6 @@
                 .then( LJ.login.hideLoginSteps )
                 .then( LJ.map.init ) 
                 .then( LJ.login.terminateLoginProcess )
-                .then( LJ.onboarding.init )
                 .then( LJ.connecter.init )
                 .then( LJ.dev.init )
                 .catch( LJ.login.handleLoginFail );
