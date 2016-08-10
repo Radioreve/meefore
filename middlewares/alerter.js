@@ -166,28 +166,46 @@
 			// Dont wait for emails to continue with the request
 			next();
 
-			if( type == "new_message" ){
-				filterUsersToAlert()
-					.then(function( users ){
-						sendAlertEmail__NewMessage();
+			if([ "new_message", "marked_as_host", "group_request", "accepted_in" ].indexOf( type ) == -1 ){
+				return console.log("The type : " + type + " is not recognized as a valid type");
+			}
+
+			getUsersToAlertIds( type )
+				.then(function( facebook_ids ){
+					return getUsersToAlert( facebook_ids );
+				})
+				.then(function( users ){
+					users.forEach(function( user ){
+						sendAlertEmail( type, user );
 					});
-			}
-
-			if( type == "marked_as_host" ){
-				sendAlertEmail__MarkedAsHost();
-			}
-
-			if( type == "group_request" ){
-				sendAlertEmail__GroupRequest();
-			}
-
-			if( type == "accepted_in" ){
-				addNotification__AcceptedIn();
-			}
+				});
 
 		}
 	};
 
+	// Get the ids of the users to alerts, based on where they 
+	// reside on the req.sent object
+	function getUsersToAlertIds( type ){
+
+
+
+	}
+
+	// Make sure that users validate the three following conditions
+	// - They are offline
+	// - They want to receive this specific alert
+	// - They werent alerted too recently 
+	function getUsersToAlert( facebook_ids ){
+
+
+
+	}
+
+	function sendAlertEmail( type, user ){
+
+
+
+	}
 
 	var sendAlertEmail__Base = function( subject, html, targets ){
 

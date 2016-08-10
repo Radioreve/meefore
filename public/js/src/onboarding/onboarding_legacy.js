@@ -1,6 +1,6 @@
 
 	
-	window.LJ.onboarding = _.merge( window.LJ.onboarding || {}, {
+	window.LJ.onboarding_legacy = _.merge( window.LJ.onboarding_legacy || {}, {
 
         init: function(){
                 
