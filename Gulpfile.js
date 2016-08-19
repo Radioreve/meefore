@@ -44,7 +44,7 @@
             // Librairies
     		lodash, jquery, mousetrap, jsp, jsp_mousewhell, cloudinary,
             typeahead, typed, imagesloaded, velocity, velocity_ui, moment,
-            moment_locale, pikaday, nouislider, countdown
+            moment_locale, pikaday, nouislider, countdown,
 
             // Sources in any order
             src_path
