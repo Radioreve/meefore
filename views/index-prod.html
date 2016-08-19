@@ -73,75 +73,83 @@
 
   <section class="app nonei">
     
-    <!-- header -->
-    <header class="app-header">
-      <div class="app-header__splitter"></div>
-      <div class="app-header-titles">
-        <div class="app-header__title" data-link="menu" data-lid="nav_menu_title"></div>
-        <div class="app-header__title" data-link="map" data-lid="nav_map_title"></div>
-        <div class="app-header__title" data-link="search" data-lid="nav_search_title"></div>
-      </div>
-      <div class="app-header__logo nonei">
-        <img src="/img/app/logo_nobg.png" width="40"/>
-      </div>
-      <nav class="app-nav">
-        <ul>
-          <li class="app__menu-item x--menu" data-link="menu">
-            <a href="#menu">
-              <i class="app__menu-icon icon icon-menu-app"></i>
-            </a>
-          </li>
-          <li class="app__menu-item x--map" data-link="map">
-            <a href="#map"> 
-              <i class="app__menu-icon icon icon-location"></i>
-            </a>
-          </li>
-          <li class="app__menu-item x--search" data-link="search">
-            <a href="#search">
-              <i class="app__menu-icon icon icon-members"></i>
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <div class="app-lang nonei">
-        <div class="app-lang__icon">
-          <i class="icon icon-planet"></i>
-        </div>
-        <div class="app-lang__flag-icons">
-          <i class="flag-icon flag-icon-fr" data-cc="fr"></i>
-          <i class="flag-icon flag-icon-us" data-cc="us"></i>
-        </div>
-      </div>
-      <div class="app-logout js-logout">
-        <i class="icon icon-power"></i>
-      </div>
-    </header>
-    <!-- header end -->
+    <!-- header wrapper, for styles modifications -->
+    <div class="header-wrap x--white x--empty">
     
-
-    <!-- Thumbnail start -->
-    <section class="app-thumbnail">
-    <nav class="app-nav x--thumbnail">
-        <ul>
-          <li class="app__menu-item x--notifications">
+      <!-- header -->
+      <header class="app-header">
+        <div class="app-header__splitter"></div>
+        <div class="app-header-titles">
+          <div class="app-header__title" data-link="menu" data-lid="nav_menu_title"></div>
+          <div class="app-header__title" data-link="map" data-lid="nav_map_title"></div>
+          <div class="app-header__title" data-link="search" data-lid="nav_search_title"></div>
+        </div>
+        <div class="app-header__logo nonei">
+          <img src="/img/logo/5.png" width="40"/>
+        </div>
+        <nav class="app-nav">
+          <ul>
+            <li class="app__menu-item x--menu" data-link="menu">
+              <a href="#menu">
+                <i class="app__menu-icon icon icon-menu-app x--filled"></i>
+                <i class="app__menu-icon icon icon-menu-app x--empty"></i>
+              </a>
+            </li>
+            <li class="app__menu-item x--map" data-link="map">
+              <a href="#map"> 
+                <i class="app__menu-icon icon icon-location x--filled"></i>
+                <i class="app__menu-icon icon icon-location-empty x--empty"></i>
+              </a>
+            </li>
+            <li class="app__menu-item x--search" data-link="search">
+              <a href="#search">
+                <i class="app__menu-icon icon icon-members x--filled"></i>
+                <i class="app__menu-icon icon icon-members-empty x--empty"></i>
+              </a>
+            </li>
+            <li class="app__menu-item x--notifications x--right">
             <a href="#notifications">
-              <i class="app__menu-icon icon icon-bell"></i>
+              <i class="app__menu-icon icon icon-bell x--filled"></i>
+              <i class="app__menu-icon icon icon-bell-empty x--empty"></i>
             </a>
           </li>
           <li class="app__menu-item x--chats">
             <a href="#chat">
-              <i class="app__menu-icon icon icon-chat-bubble-duo"></i>
+              <i class="app__menu-icon icon icon-chat-bubble-duo x--filled"></i>
+              <i class="app__menu-icon icon icon-chat-bubble-duo-empty x--empty"></i>
             </a>
           </li>
-        </ul>
-      </nav>
-      <div class="thumbnail__picture x--filterlayable">
-        <img src="/img/bots/bot26f.jpg" width="45" alt="Just another bot">
-      </div>
-      <div class="thumbnail__name">Héléna</div>
-    </section>
-     <!-- Thumbnail end -->
-  
+          </ul>
+        </nav>
+        <div class="app-lang nonei">
+          <div class="app-lang__icon">
+            <i class="icon icon-planet"></i>
+          </div>
+          <div class="app-lang__flag-icons">
+            <i class="flag-icon flag-icon-fr" data-cc="fr"></i>
+            <i class="flag-icon flag-icon-us" data-cc="us"></i>
+          </div>
+        </div>
+        <!-- <div class="app-logout js-logout">
+          <i class="icon icon-power"></i>
+        </div> -->
+      </header>
+      <!-- header end -->
+        
+      <div class="app-header__brand">
+        Meefore
+      </div>  
+
+      <!-- Thumbnail start -->
+      <section class="app-thumbnail nonei">
+        <div class="thumbnail__picture x--filterlayable">
+          <img src="/img/bots/bot26f.jpg" width="45" alt="Just another bot">
+        </div>
+        <div class="thumbnail__name">Héléna</div>
+      </section>
+       <!-- Thumbnail end -->
+    </div>
+    <!-- Header wrapper end -->
 
    <!-- Menu section start -->
     <section class="app-section x--menu" data-link="menu">
@@ -152,34 +160,18 @@
         <li class="menu-item x--profile" data-link="profile">
           <div class="menu-item__body">
             <div class="menu-item__icon x--round-icon">
-              <i class="icon icon-profile-rounded-empty"></i>
+              <i class="icon icon-profile-rounded x--filled"></i>
+              <i class="icon icon-profile-rounded-empty x--empty"></i>
             </div>
             <h3 data-lid="menu_profile"></h2>
-          </div>
-          <div class="menu-item__bar"></div>
-        </li>
-       <!--  <li class="menu-item x--shared" data-link="shared">
-          <div class="menu-item__body">
-            <div class="menu-item__icon x--round-icon">
-              <i class="icon icon-forward"></i>
-            </div>
-            <h3 data-lid="menu_shared"></h2>
-          </div>
-          <div class="menu-item__bar"></div>
-        </li> -->
-        <li class="menu-item x--cheers" data-link="cheers">
-          <div class="menu-item__body">
-            <div class="menu-item__icon x--round-icon">
-              <i class="icon icon-meedrink-empty"></i>
-            </div>
-            <h3 data-lid="menu_cheers"></h2>
           </div>
           <div class="menu-item__bar"></div>
         </li>
         <li class="menu-item x--friends" data-link="friends">
           <div class="menu-item__body">
             <div class="menu-item__icon x--round-icon">
-              <i class="icon icon-users-empty"></i>
+              <i class="icon icon-users x--filled"></i>
+              <i class="icon icon-users-empty x--empty"></i>
             </div>
             <h3 data-lid="menu_friends"></h2>
           </div>
@@ -188,7 +180,8 @@
         <li class="menu-item x--settings" data-link="settings">
           <div class="menu-item__body">
             <div class="menu-item__icon">
-              <i class="icon icon-cog-empty x--round-icon"></i>
+              <i class="icon icon-cog x--filled"></i>
+              <i class="icon icon-cog-empty x--empty"></i>
             </div>
             <h3 data-lid="menu_settings"></h2>
           </div>
@@ -330,33 +323,15 @@
             </div>
           </div>
         </div>
+
+        <div class="profile-logout js-logout">
+          <button data-lid="mb_logout_btn"></button>
+        </div>
+
       </section>
       <!-- Profile end -->
 
-      
-      <!-- Shared begin -->
-      <!-- <section class="menu-section x--shared" data-link="shared">
-        <div class="shared">
-         
-        </div>
-      </section> -->
-      <!-- Shared end -->
-
-       <!-- Cheers begin -->
-      <section class="menu-section x--cheers" data-link="cheers">
-        <div class="segment">
-          <div class="segment__part" data-link="received">
-            <h3 data-lid="segment_cheers_received"></h3>
-          </div>
-          <div class="segment__part" data-link="sent">
-            <h3 data-lid="segment_cheers_sent"></h3>
-          </div>
-        </div>
-        <div class="cheers">
-          <!-- %% Dynamically injected %%-->
-        </div>
-      </section>
-      <!-- Cheers end -->
+    
 
     
       <!-- Friends begin -->
@@ -417,48 +392,12 @@
             <button class="settings__button x--delete" data-lid="settings_account_delete_button"></button>
           </div>
         </div>
-        <!-- code section -->
-        <!-- <div class="menu-section__subtitle">
-          <h3 data-lid="menu_subsection_code"></h3>
-        </div>
-        <div class="settings x--code" data-link="code">
-          <div class="settings__title">
-            <h3 data-lid="settings_part_title_code"></h3>
-          </div>
-           <div class="settings-item" data-settings-type-id="invite_code">
-            <div class="settings-input">
-              <div class="settings-input__icon x--round-icon">
-                <i class="icon icon-code"></i>
-              </div>
-              <div class="settings-input-label">
-                <input readonly placeholder="BL1347"  id="settings__invite-code" type="text">
-              </div>
-            </div>
-            <div class="settings-input__explanation" data-lid="settings_code_sponsor_explanation"></div>
-            <div class="edit">
-              <i class="icon icon-pen"></i>
-            </div>
-            <div class="action">
-              <div class="action__validate x--round-icon">
-                <i class="icon icon-check"></i>
-              </div>
-              <div class="action__cancel x--round-icon">
-                <i class="icon icon-cancel"></i>
-              </div>
-            </div>
-          </div>
-          <div class="settings-item">
-            <button class="settings__button x--sponsor" data-lid="settings_code_sponsor_button"></button>
-          </div>
-        </div> -->
+
         <!-- emails section -->
         <div class="menu-section__subtitle">
           <h3 data-lid="menu_subsection_emails"></h3>
         </div>
         <div class="settings x--emails" data-link="emails">
-          <!-- <div class="settings__title">
-            <h3 data-lid="settings_part_title_email"></h3>
-          </div> -->
           <div class="settings-item" data-settings-type-id="newsletter">
             <div class="settings-input">
               <div class="settings-input__icon x--round-icon"><i class="icon icon-mail-empty"></i></div>
@@ -472,19 +411,6 @@
             </div>
             <div class="settings-input__explanation" data-lid="settings_notifs_newsletter_explanation"></div>
           </div>
-          <!-- <div class="settings-item" data-settings-type-id="invitations">
-            <div class="settings-input">
-              <div class="settings-input__icon x--round-icon"><i class="icon icon-newsletter"></i></div>
-              <div class="settings-input-label">
-                <div class="settings-input__label" data-lid="settings_notifs_invitations_label"></div>
-              </div>
-              <div class="toggle">
-                <div class="toggle__background"></div>
-                <div class="toggle__button"></div>
-              </div>
-            </div>
-            <div class="settings-input__explanation" data-lid="settings_notifs_invitations_explanation"></div>
-          </div> -->
          </div>
         <!-- notifications section -->
         <div class="menu-section__subtitle">
@@ -626,9 +552,9 @@
 
      <!-- Map start -->
     <section class="app-section x--map" data-link="map">
-      <div class="app-subheader x--map">
+     <!--  <div class="app-subheader x--map">
         
-      </div>
+      </div> -->
       <div class="js-map-wrap">
         <!-- Holds the Google map -->
       </div>
@@ -659,6 +585,12 @@
           <span data-lid="chat_rows_all_title"></span>
         </div>
         <div class="chat-rows-body x--all">
+          <!-- Dynamically injected -->
+        </div>
+        <div class="chat-rows-title x--cheers">
+          <span data-lid="chat_rows_cheers_title"></span>
+        </div>
+        <div class="chat-rows-body x--cheers">
           <!-- Dynamically injected -->
         </div>
       </div>
@@ -717,9 +649,6 @@
               <div class="toggle__background"></div>
               <div class="toggle__button"></div>
             </div>
-          </div>
-          <div class="search-filters-section__explanations">
-            <h5 data-lid="search_filters_gender_explanations">Explications supplémentaires...</h5>
           </div>
         </div>
         <div class="search-filters-section x--age">

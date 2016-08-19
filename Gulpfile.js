@@ -38,7 +38,7 @@
         var moment_locale  = lib_path + '/moment/momentwithlocale.js';
         var nouislider     = lib_path + '/nouislider/nouislider.js';
         var pikaday        = lib_path + '/pikaday/pikaday.js';
-        var clock          = lib_path + '/countdown/countdown.js';
+        var countdown      = lib_path + '/countdown/countdown.js';
 
     	gulp.src([
             // Librairies
