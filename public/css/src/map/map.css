@@ -18,7 +18,7 @@
     position: absolute;
     z-index: 1;
     font-size: 30px;
-    border: 1px solid #ececec;
+    border: 1px solid #e7f1ff;
 }
 
 .map__icon.x--geoloc, .map__icon.x--change-location, .map__icon.x--facebook {
@@ -38,9 +38,22 @@
     color: #508aea;
 }
 
-.map__icon.x--facebook {
-
+.map__icon.x--facebook {z-index: 101;}
+.map__icon.x--facebook.x--hearted {
+    background: #1a59c3;color: white;
 }
+.map__icon.x--facebook i {
+    position: relative;
+    top: -2px;
+}
+.map__icon.x--facebook i.icon-heart {
+    position: absolute;
+    color: #f63c5d;
+    transform: rotate(30deg);
+}
+.map__icon.x--facebook i.icon-heart.x--1 {top: -5px;right: -10px;font-size: 18px;}
+.map__icon.x--facebook i.icon-heart.x--2 {top: 0px;right: -22px;font-size: 12px;color: rgba(246, 60, 93, 0.64);}
+.map__icon.x--facebook i.icon-heart.x--3 {top: -12px;right: -17px;font-size: 9px;color: rgba(246, 60, 93, 0.38);}
 
 .map__icon.x--facebook:hover{
     
@@ -63,11 +76,8 @@
 }
 
 .map__icon.x--create-before {
-    background: #1a59c3;
     padding: 2px;
     color: white;
-    right: 20px;
-    font-size: 20px;
     bottom: 30px;
     top: auto;
     left: 0;
@@ -78,9 +88,8 @@
     justify-content: center;
     align-items: center;
     font-family: 'quenda';
-    font-size: 20px;
+    font-size: 26px;
     box-shadow: 0 2px 3px #8a8a8a;
-    background: linear-gradient( 45deg, #1a59c3, #7b4cbb );
     border: none;
 }
 
@@ -88,6 +97,17 @@
 .map__icon.x--create-before:hover {
     /* background: red; */
 }
+
+.map__icon.x--create-before .x--plus {
+    position: absolute;
+    top: 0;
+    right: -2px;
+    font-size: 15px;
+    background: #f1245d;
+    height: 26px;
+    width: 26px;
+}
+
 .map__icon.x--create-before.js-create-before.x--round-icon {}
 
 .map__icon.x--filter-dates {
@@ -350,12 +370,11 @@
     left: 0;
     right: 0;
 }
-.meemap-closed__h1 {font-family: 'quenda';font-size: 22px;margin-bottom: 20px;color: #7b4cbb;}
+.meemap-closed__h1 {font-family: 'quenda';font-size: 22px;margin-bottom: 20px;font-weight: bolder;color: #1a59c3;}
 .meemap-closed__h1 h1 {}
 .meemap-closed__h2 {
     font-size: 12.5px;
-    margin-bottom: 80px;
-    width: 50%;
+    font-weight: bolder;
     text-align: center;
     line-height: 24px;
     align-items: center;
@@ -364,11 +383,37 @@
 .meemap-closed__h2 h2 {}
 .meemap-closed__icon {
     order: -1;
-    font-size: 54px;
+    font-size: 60px;
     margin-bottom: 30px;
-    width: 120px;
-    height: 120px;
-    background: #faf7ff;
-    color: #7b4cbb;
+    color: #ccc;
+    margin-top: auto;
 }
+.meemap-closed__h3 {
+    width: 50%;
+    text-align: center;
+    font-size: 12.5px;
+    line-height: 24px;
+    color: #454545;
+}
+.meemap-closed__h3 h3 {}
 .meemap-closed__icon i {}
+
+.meemap-igloo {
+    width: 260px;
+    height: 60px;
+    background: linear-gradient(45deg, #fe685C,#ed105d);
+    align-items: flex-end;
+    margin-top: auto;
+    border-top-left-radius: 220px 100px;
+    border-top-right-radius: 220px 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.meemap-countdown {
+    color: white;
+    font-size: 22px;
+    margin-top: 4px;
+    font-family: 'quenda';
+}

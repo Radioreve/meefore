@@ -163,7 +163,7 @@
     }
 
     .app-subheader.x--menu .menu-item__icon {
-        background: none;
+        background: none!important;
     }
     
     .search-user .user-online {

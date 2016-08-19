@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="175px" height="161px" viewBox="0 0 175 161" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 39.1 (31720) - http://www.bohemiancoding.com/sketch -->
+    <title>icone</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M166.325922,95.9073628 C168.660254,93.7040537 168.290234,90.5943854 165.505649,88.9981392 L160.254583,85.9844715 C157.469998,84.3872842 155.796415,80.5284343 156.534566,77.4112365 L162.857934,50.6835246 C163.595141,47.5663268 162.28969,46.8171452 159.957246,49.0204544 L127.563554,79.6041927 C125.230167,81.8075018 125.600186,84.9162289 128.384771,86.5143575 L133.634894,89.5261428 C136.418535,91.1242713 138.094005,94.9831212 137.356798,98.0993778 L131.031543,124.82709 C130.29528,127.944288 131.599787,128.692528 133.933175,126.49016 L166.325922,95.9073628 L166.325922,95.9073628 L166.325922,95.9073628 Z" id="path-1"></path>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="-4" y="-4" width="49.8322847" height="88">
+            <rect x="122.028986" y="43.755102" width="49.8322847" height="88" fill="white"></rect>
+            <use xlink:href="#path-1" fill="black"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Web-meefore" transform="translate(-977.000000, -154.000000)">
+            <g id="chat-empty" transform="translate(843.000000, 55.000000)">
+                <g id="icone" transform="translate(137.000000, 102.000000)">
+                    <path d="M27.50196,152 L27.50196,116.746447 C9.98414012,104.099674 0,85.9238938 0,66.4799956 C0,29.8237593 35.7282607,0 79.6451047,0 C123.561758,0 159.290209,29.8237593 159.290209,66.4799956 C159.290209,103.137372 123.561758,132.959991 79.6451047,132.959991 C74.4416863,132.959991 69.2028366,132.524931 64.0430404,131.665074 L27.50196,152 L27.50196,152 L27.50196,152 L27.50196,152 Z" id="Shape" stroke="#EEEEEE" stroke-width="6" fill="#FFFFFF"></path>
+                    <g id="Shape" transform="translate(146.945128, 87.755102) scale(-1, 1) translate(-146.945128, -87.755102) ">
+                        <use fill="#FDCDD5" fill-rule="evenodd" xlink:href="#path-1"></use>
+                        <use stroke="#F63C5D" mask="url(#mask-2)" stroke-width="8" xlink:href="#path-1"></use>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

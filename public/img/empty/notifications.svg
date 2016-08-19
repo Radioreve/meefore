@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="153px" height="160px" viewBox="0 0 153 160" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 39.1 (31720) - http://www.bohemiancoding.com/sketch -->
+    <title>icone-V4</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M61.1748622,10.2668791 C59.9079808,4.14871712 53.8058511,0.0872760988 47.3813444,1.17664061 C40.9662163,2.26441481 36.6633476,8.09481784 37.6527263,14.2553845 C15.9178747,23.2183138 2.5928652,45.6112352 6.87688621,68.9752503 L12.963487,102.1701 C4.4334301,103.616489 -1.26383055,111.440942 0.241075494,119.648336 L2.16189789,130.124037 L135.716609,107.477977 L133.795787,97.0022766 C132.294744,88.7895778 124.165382,83.3235708 115.635325,84.7699602 L109.547897,51.5706016 C105.26305,28.2020771 84.7828498,11.545949 61.1748622,10.2668791 L61.1748622,10.2668791 Z M73.880246,148.665047 C84.1313201,146.926834 91.4693235,138.84742 92.5307553,129.36791 L49.4865594,136.666652 C53.8648559,145.22378 63.6291716,150.403259 73.880246,148.665047 L73.880246,148.665047 Z" id="path-1"></path>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="-6" y="-6" width="147.716609" height="160">
+            <rect x="-6" y="-5" width="147.716609" height="160" fill="white"></rect>
+            <use xlink:href="#path-1" fill="black"></use>
+        </mask>
+        <path d="M17.6960685,59.1960685 C20.9434235,59.142654 24.0785209,59.819104 26.6905242,61.2041331 C29.6756714,62.7868895 32.1671052,65.4528629 32.4637097,68.9435484 C32.7702006,72.5507016 30.575386,75.6022903 27.7782258,77.7288306 C24.9810656,79.855371 21.3612053,81.2634258 17.5705645,81.577621 C14.0007077,81.8734758 10.577279,81.5656395 7.69758065,80.0297379 C4.8178836,78.4939702 2.70385753,75.4744435 2.42641129,71.7046371 C2.17664287,68.3071258 3.96295415,65.230771 6.52620968,63.0866935 C9.08946521,60.9426161 12.5340924,59.5512952 16.3155242,59.2379032 C16.7836054,59.1964032 17.2321601,59.2094556 17.6960685,59.1960685 L17.6960685,59.1960685 Z" id="path-3"></path>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="-4" y="-4" width="38.089196" height="30.4854452">
+            <rect x="-1.5968674" y="55.1931357" width="38.089196" height="30.4854452" fill="white"></rect>
+            <use xlink:href="#path-3" fill="black"></use>
+        </mask>
+        <path d="M28.405746,0.711189516 C30.0409959,0.648671774 31.4101318,1.69159355 31.5015121,3.5141129 L28.7404234,43.1733871 C28.6360147,44.5040645 27.3979332,45.6416331 26.063004,45.6416331 L8.99445565,45.7671371 C7.7215556,45.7826661 6.51595382,44.7652468 6.31703629,43.5080645 L1.12953629,7.94858871 C0.915353452,6.56904839 1.96867031,5.11822177 3.34677419,4.89465726 L28.405746,0.711189516 L28.405746,0.711189516 Z" id="path-5"></path>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="-4" y="-4" width="38.3997176" height="53.0587822">
+            <rect x="-2.89820547" y="-3.29146965" width="38.3997176" height="53.0587822" fill="white"></rect>
+            <use xlink:href="#path-5" fill="black"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Web-meefore" transform="translate(-584.000000, -151.000000)">
+            <g id="notification-empty" transform="translate(443.000000, 55.000000)">
+                <g id="icone-V4" transform="translate(147.000000, 101.000000)">
+                    <g id="Combined-Shape">
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                        <use stroke="#EEEEEE" mask="url(#mask-2)" stroke-width="12" xlink:href="#path-1"></use>
+                    </g>
+                    <g id="mark-bis" transform="translate(117.733871, 45.500000) rotate(16.000000) translate(-117.733871, -45.500000) translate(101.000000, 4.000000)">
+                        <g id="Path">
+                            <use fill="#FDCDD5" fill-rule="evenodd" xlink:href="#path-3"></use>
+                            <use stroke="#F63C5D" mask="url(#mask-4)" stroke-width="8" xlink:href="#path-3"></use>
+                        </g>
+                        <g id="Path">
+                            <use fill="#FDCDD5" fill-rule="evenodd" xlink:href="#path-5"></use>
+                            <use stroke="#F63C5D" mask="url(#mask-6)" stroke-width="8" xlink:href="#path-5"></use>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

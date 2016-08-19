@@ -97,7 +97,7 @@
 			"html": [
 				'<div class="landing">',
 				    '<div class="landing-logo x--round-icon">',
-				      '<img src="/img/logo-empty2.png" alt="Meefore logo"></span>',
+				      '<img src="/img/logo/3.png" alt="Meefore logo"></span>',
 				    '</div>',
 				    '<div class="landing-lang">',
 				      '<button class="js-changelang" data-lid="landing_change_lang"></button>',

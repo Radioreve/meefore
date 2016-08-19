@@ -172,6 +172,11 @@ window.LJ = _.merge( window.LJ || {}, {
         }).join('');
 
     },
+    paddWithZero: function( n ){
+
+        return Math.abs( parseInt( n ), 10 ) < 10 ? "0" + n : n;
+
+    },
     getKeyname: function( key_code ){
 
         if( key_code == 13 ){

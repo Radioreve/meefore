@@ -16,7 +16,7 @@ var settings = {
 		min_age  : min_age,
 		max_age  : 50,
 		max_pic  : 5,
-		max_hashtags: 5,
+		max_hashtags: 4,
 		chat_fetch_count: 20
 	},
 	closed_map_hours: [ 6, 14 ],

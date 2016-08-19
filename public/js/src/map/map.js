@@ -159,8 +159,25 @@
         handleAppEvents: function(){
 
             LJ.on("login:complete", LJ.map.handleLoginComplete );
+            LJ.on("clock", LJ.map.handleClock );
 
         },  
+        handleClock: function( data ){
+
+            // Check if the countdown needs to be started or cleared
+            if( LJ.forced_mode != "open" && data.hours > 6 && data.hours < 14 ){
+
+                LJ.map.startCountDown();
+                LJ.map.setMapMode("closed");
+
+            } else {
+
+                window.clearTimeout( LJ.map.countdown );
+                LJ.map.setMapMode("open");
+
+            }
+
+        },
         handleMapEvents: function(){
 
             LJ.meemap.addListener('dragstart', function(){
@@ -1010,8 +1027,11 @@
         renderCreateBefore: function(){
 
             return LJ.ui.render([
-                '<div class="map__icon x--round-icon x--create-before js-create-before">',
+                '<div class="map__icon x--meedient x--round-icon x--create-before js-create-before">',
                     '<i class="icon icon-meedrink"></i>',
+                    '<div class="x--plus x--round-icon">',
+                        '<i class="icon icon-plus-fat">',
+                    '</div>',
                 '</div>'
                 ]);
 
@@ -1029,7 +1049,10 @@
 
             return LJ.ui.render([
                 '<div class="map__icon x--round-icon x--facebook js-map-facebook">',
-                    '<i class="icon icon-facebook"></i>',
+                    '<i class="icon icon-gift"></i>',
+                    '<i class="icon icon-heart x--1"></i>',
+                    '<i class="icon icon-heart x--2"></i>',
+                    '<i class="icon icon-heart x--3"></i>',
                 '</div>'
                 ]);
 
@@ -1073,14 +1096,18 @@
         },
         setMapMode: function( mode ){
 
+            if( LJ.map.active_mode == mode ) return;
+
             if( mode == "open" ){
                 LJ.map.active_mode = "open";
                 LJ.map.openMeemap();
+                $('.map__icon.x--facebook').removeClass('x--hearted');
             }
 
             if( mode == "closed" ){
                 LJ.map.active_mode = "closed";
                 LJ.map.closeMeemap();
+                $('.map__icon.x--facebook').addClass('x--hearted');
             }
 
         },
@@ -1138,12 +1165,42 @@
                     '<div class="meemap-closed__h2">',
                         '<h2 data-lid="meemap_closed_h2"></h2>',
                     '</div>',
+                    '<div class="meemap-closed__h3">',
+                        '<h3 data-lid="meemap_closed_h3"></h3>',
+                    '</div>',
                     '<div class="meemap-closed__icon x--round-icon">',
                         '<i class="icon icon-bednight"></i>',
+                    '</div>',
+                    '<div class="meemap-igloo">',
+                        '<div class="meemap-countdown">',
+                        '</div>',
                     '</div>',
                 '</div>'
 
             ]);
+        },
+        startCountDown: function(){
+
+            var target_time = new Date( moment().set({
+                milliseconds: 0,
+                seconds: 0,
+                minutes: 0,
+                hours: 14
+            }).toISOString() );
+
+            LJ.map.countdown = countdown( LJ.map.updateCountdown, target_time );
+
+        },
+        updateCountdown: function( data ){
+
+            $('.meemap-countdown').html([
+
+                LJ.paddWithZero( data.hours ),
+                LJ.paddWithZero( data.minutes ),
+                LJ.paddWithZero( data.seconds )
+
+            ].join(':'));
+
         }
 
 

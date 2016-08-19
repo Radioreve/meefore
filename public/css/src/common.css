@@ -438,30 +438,30 @@ button:hover {
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
-    min-height: 400px;
     width: 400px;
+    min-height: 330px;
     margin: auto;
     text-align: center;
 }
 
 .empty__icon {
     display: flex;
-    color: #eee;
-    font-size: 80px;
+    justify-content: center;
+    width: 120px;
+    margin-bottom: 30px;
 }
 
-.empty__icon i {
-    margin: auto;
+.empty__icon img {
+    width: 100%;
+    height: 100%;
 }
 
 .icon-meedrink, .icon-meedrink-empty {
     transform: rotate(20deg);
 }
 .empty__title {
-    font-size: 30px;
-    margin-top: 30px;
-    color: #454545;
-    font-family: 'creamy';
+    font-size: 24px;
+    font-family: 'quenda';
     color: #1a59c3;
 }
 
@@ -699,7 +699,7 @@ button:hover {
 }
 
 .user-gender.x--male {
-    background: #1a59c3;
+    background: #4080ff;
 }
 
 .user-gender.x--female {
@@ -1241,8 +1241,8 @@ button:hover {
 }
 
 .modal__title {
-    font-family: 'creamy';
-    font-size: 40px;
+    font-family: 'quenda';
+    font-size: 28px;
 }
 
 .modal__title h1 {}
@@ -1875,4 +1875,10 @@ button:hover {
     transform: translate(-50%,-50%);
     z-index: 100000;
     border-radius: 10000px;
+}
+
+
+.x--meedient {
+    background: linear-gradient(45deg,#fe685c, #ed105d)!important;
+    border-color: #f84b5c;
 }

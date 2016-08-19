@@ -1120,7 +1120,7 @@
 			var type 	 = opts.type;
 
 			var title    = opts.title || '<span data-lid="chat_empty_title"></span>';
-			var icon 	 = opts.icon  || '<i class="icon icon-chat-bubble-duo"></i>';
+			var icon 	 = opts.icon  || '<img src="img/empty/chats.svg"/>';
 
 			var img_html = [
 				'<div class="chat-empty__icon x--round-icon">',

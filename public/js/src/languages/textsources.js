@@ -1968,8 +1968,8 @@
 			"us": "I join"
 		},
 		chat_empty_title: {
-			"fr": "Cheer & Match",
-			"us": "Cheer & Match"
+			"fr": "Cheers & Match",
+			"us": "Cheers & Match"
 		},
 		chat_empty_subtitle_row: {
 			"fr": "Tu pourras discuter avec tes amis et faire connaissance avec les autres membres lorsque tu auras créé un before ou obtenu un Match",
@@ -2200,12 +2200,16 @@
 			"us": "Create a before with your friends to receive Cheers"
 		},
 		meemap_closed_h1: {
-			"fr": "On fait un break",
-			"us": "Let's have a break"
+			"fr": "On fait un break...",
+			"us": "Let's have a break..."
 		},
 		meemap_closed_h2: {
-			"fr": "La Meemap est fermée tous les matins. Tu pourras proposer un before pour ce soir à partir de 14h00.",
-			"us": "The Meemap is closed during the morning. You'll be able to add your pregame to the map at 2p.m."
+			"fr": "La map est ouverte de 14h à 6h.",
+			"us": "The map is open from 2pm to 6pm."
+		},
+		meemap_closed_h3: {
+			"fr": "Reviens un peu plus tard pour proposer ton before ou voir ceux qui s'organisent près de chez toi.",
+			"us": "Come back later to check what's going on near your place."
 		},
 		onb_welcome_title: {
 			"fr": function( name ){
@@ -2229,8 +2233,8 @@
 			"us": "Nothing on the horizon"
 		},
 		notification_empty_subtitle: {
-			"fr": "Tous les évènements concernant ta soirée de ce soir (Cheers, Matches..) seront listés ici. Pas d'actions, pas de notifications !",
-			"us": "Everything about you and tonight's pregames (Cheers, Matches...) will be listed here. No actions, no notifications !"
+			"fr": "Les notifications concernant tes before de ce soir apparaîtront ici.",
+			"us": "Notifications about tonight's before will show up here"
 		}
 
 

@@ -123,7 +123,7 @@
 
 			var html = [];
 
-			if( fetched_friends.length == 0 ){
+			if( 1 || fetched_friends.length == 0 ){
 				html.push( LJ.friends.renderFriendItem__Empty() );
 
 			} else {
@@ -180,7 +180,7 @@
 
 				'<div class="empty">',
 					'<div class="empty__icon x--round-icon">',
-						'<i class="icon icon-users"></i>',
+						'<img src="img/empty/friends.svg"/>',
 					'</div>',
 					'<div class="empty__title">',
 						'<h2 data-lid="empty_friends_title"></h2>',
@@ -188,7 +188,7 @@
 					'<div class="empty__subtitle">',
 						'<p data-lid="empty_friends_subtitle"></p>',
 					'</div>',
-					'<div class="empty__subicon x--round-icon js-invite-friends">',
+					'<div class="nonei empty__subicon x--round-icon js-invite-friends">',
 						'<i class="icon icon-gift"></i>',
 					'</div>',
 				'</div>'
@@ -347,7 +347,7 @@
 
 			return LJ.ui.render([
 
-				'<div class="invite-friends-popup">',
+				'<div class="invite-friends-popup x--meedient">',
 					'<div class="invite-friends-popup__close js-close-friends-popup x--round-icon">',
 						'<i class="icon icon-cross-fat"></i>',
 					'</div>',

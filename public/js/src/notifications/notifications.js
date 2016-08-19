@@ -687,7 +687,7 @@
 
 					'<div class="notification-empty">',
 						'<div class="notification-empty__icon x--round-icon">',
-							'<i class="icon icon-telescope"></i>',
+							'<img src="img/empty/notifications.svg"/>',
 						'</div>',
 						'<div class="notification-empty__title">',
 							'<span data-lid="notification_empty_title"></span>',

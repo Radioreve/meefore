@@ -308,6 +308,7 @@
   border-radius: 100px;
   transform: translate(-50%,0);
   background: rgba(195, 26, 186, 0.78);
+  /* background: rgba(246, 60, 93, 0.76); */
   height: 26px;
 }
 

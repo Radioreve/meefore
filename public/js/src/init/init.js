@@ -44,6 +44,9 @@
             // Onboarding strategies
             LJ.onboarding.init();
 
+            // Emit a clock event every seconds
+            LJ.clock.init();
+
             // Autologin for users who asked the "remember me" feature in their settings
             LJ.autologin.init()
                 .then(  LJ.autologin.startLogin )
