@@ -433,8 +433,8 @@
 			"us": "Looking for someone?"
 		},
 		search_title: {
-			"fr": "Autour de moi",
-			"us": "Around me"
+			"fr": "Autour de toi",
+			"us": "Around you"
 		},
 		h_logout: {
 			"fr": "Se déconnecter",
@@ -1800,7 +1800,7 @@
 			"us": "Create a pregame"
 		},
 		be_create_subtitle_hosts: {
-			"fr": "Membres du groupe",
+			"fr": "Membres de ton groupe",
 			"us": "Hosts"
 		},
 		be_create_hosts_explanations: {
@@ -1832,19 +1832,19 @@
 			"us": "Your pregame will disappear from the map tomorrow at 6am"
 		},
 		be_create_subtitle_hashtags: {
-			"fr": "Hashtags",
-			"us": "Hashtags"
+			"fr": "Hashtag ton before",
+			"us": "Hashtag your before"
 		},
 		be_create_hashtags_placeholder: {
-			"fr": "Hashtag ton before comme tu l'entends",
-			"us": "Hashtag your before with anything you want"
+			"fr": "Bring Your Own",
+			"us": "Bring Your Own"
 		},
 		be_create_button: {
-			"fr": "Ajouter",
-			"us": "Add"
+			"fr": "Propose ton before",
+			"us": "Add your before"
 		},
 		modal_be_create_title: {
-			"fr": "Membres du groupe",
+			"fr": "Membres de ton groupe",
 			"us": "Group members"
 		},
 		modal_be_create_subtitle: {
@@ -1881,10 +1881,10 @@
 		},
 		shared_before_title: {
 			"fr": function( names ){
-				return 'Before avec ' + LJ.renderMultipleNames( names );
+				return LJ.renderMultipleNames( names );
 			},
 			"us": function( names ){
-				return 'Pregame with ' + LJ.renderMultipleNames( names );
+				return LJ.renderMultipleNames( names );
 			}
 		},
 		slide_overlay_before_message: {
@@ -1968,8 +1968,8 @@
 			"us": "I join"
 		},
 		chat_empty_title: {
-			"fr": "Cheers & Match",
-			"us": "Cheers & Match"
+			"fr": "Dans un instant...",
+			"us": "Soon..."
 		},
 		chat_empty_subtitle_row: {
 			"fr": "Tu pourras discuter avec tes amis et faire connaissance avec les autres membres lorsque tu auras créé un before ou obtenu un Match",
@@ -2233,7 +2233,7 @@
 			"us": "Nothing on the horizon"
 		},
 		notification_empty_subtitle: {
-			"fr": "Les notifications concernant tes before de ce soir apparaîtront ici.",
+			"fr": "Crée un before ou envoie des Cheers pour commencer à recevoir des notifications",
 			"us": "Notifications about tonight's before will show up here"
 		}
 

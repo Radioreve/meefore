@@ -32,6 +32,9 @@
 		},
 		hashtags: {
 			type: Array
+		},
+		gender: {
+			type: String
 		}
 
 
@@ -78,6 +81,18 @@
 		});
 
 		return group_ids;
+	};
+
+	BeforeSchema.statics.getHostsGender = function( genders ){
+
+		var has_males = genders.indexOf( "male" ) != -1;
+        var has_females = genders.indexOf( "female" ) != -1;
+
+        if( has_males  && !has_females ) return "male";
+        if( !has_males && has_females ) return "female";
+
+        return "mixed";
+
 	};
 
 	module.exports = mongoose.model('Befores', BeforeSchema);

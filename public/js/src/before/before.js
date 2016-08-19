@@ -33,6 +33,7 @@
 			LJ.ui.$body.on('click', '.js-request-accepted', LJ.before.handleClickOnRequestAccepted );
 			LJ.ui.$body.on('click', '.js-show-profile', LJ.before.handleShowUserProfile );
 			LJ.ui.$body.on('click', '.js-switch-mode', LJ.before.handleSwitchInviewMode );
+			LJ.ui.$body.on('click', '.js-add-hashtag', LJ.before.handleAddHashtag );
 
 		},
 		handleAppEvents: function(){
@@ -44,7 +45,20 @@
 
 			LJ.delay( 250 ).then(function(){
 				LJ.before.showCreateBeforeBtn();
+				LJ.map.refreshCreateBtnState();
 
+			});
+
+		},
+		handleAddHashtag: function(){
+
+			var $s = $('.be-create-row.x--hashtags input');
+			
+			LJ.before.addHashtag();
+			$s.val('');
+			LJ.before.validateInputs();
+			LJ.delay( 100 ).then(function(){
+				$s.focus();
 			});
 
 		},
@@ -107,6 +121,7 @@
 		hideCreateBeforeBtn: function(){
 
 			$('.js-create-before').velocity('bounceOut', { duration: 800, display: 'none' });
+
 		},
 		fetchBefores: function(){
 
@@ -118,7 +133,6 @@
 
 			var latlng = LJ.user.location;
 			return LJ.before.fetchNearestBefores( latlng, max_distance );
-
 
 		},
 		fetchNearestBefores__MapCenter: function( max_distance ){
@@ -312,6 +326,17 @@
         		'</div>'
 
         	].join(''));
+
+        },
+        showMyBefore: function(){
+
+        	var bfr = _.find( LJ.user.befores, function( bfr ){
+        		return bfr.status == "hosting";
+        	});
+
+        	before_id = bfr ? bfr.before_id : null;
+
+			LJ.before.fetchAndShowBeforeInview( before_id );        	
 
         },
         showBeforeInview: function( before ){
@@ -528,8 +553,8 @@
 				return LJ.wlog('Cannot render before without before object and hosts profiles');
 			}
 		
-			var usernames   = LJ.text("w_before").capitalize() + " " + LJ.text("w_with") + " " + LJ.renderMultipleNames( _.map( hosts, 'name') );
-			var be_addr     = LJ.before.renderBeforeAddress( before.address );
+			var usernames   = LJ.renderMultipleNames( _.map( hosts, 'name') );
+			var be_addr     = LJ.text("w_before").capitalize() + ' ' + LJ.before.renderBeforeAddress( before.address );
 
 			var be_pictures = LJ.pictures.makeHiveHtml( hosts, "user-before",{
 				class_names : [ "js-show-profile" ],

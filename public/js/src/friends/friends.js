@@ -123,7 +123,7 @@
 
 			var html = [];
 
-			if( 1 || fetched_friends.length == 0 ){
+			if( fetched_friends.length == 0 ){
 				html.push( LJ.friends.renderFriendItem__Empty() );
 
 			} else {

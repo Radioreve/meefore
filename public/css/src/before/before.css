@@ -299,6 +299,7 @@ span.be-dates__count {
     height: 15px;
     font-family: 'quenda';
     color: #454545;
+    font-size: 13px;
 }
 
 .be-inview-address__date {
@@ -757,33 +758,31 @@ span.be-dates__count {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 14px;
+    font-size: 12px;
     font-family: quenda;
-    order: 2;
-    color: #454545;
+    order: 1;
+    width: 80%;
+    align-items: center;
+    flex-flow: row wrap;
+    margin: 0 auto;
 }
 .be-inview__hashtag {
-    /* background: #eee; */
-    /* padding: 6px 12px; */
+    padding: 6px 12px;
     margin: 4px;
     border-radius: 40px;
+    color: #f63c5d;
+    border: 2px solid #fc3c5D;
 }
 .be-inview__hashtag .hash {
     font-size: 10px;
 }
-.be-inview__hashtag.x--1 .hash {color: #1ecc21;}
-.be-inview__hashtag.x--2 .hash {
-    color: #33afff;
-}
+.be-inview__hashtag.x--1 .hash {}
+.be-inview__hashtag.x--2 .hash {}
 .be-inview__hashtag.x--3 .hash {}
 .be-inview__hashtag.x--4 .hash {}
 .be-inview__hashtag.x--5 .hash {}
-.be-inview__hashtag.x--6 .hash {
-    color: #ffef00;
-}
-.be-inview__hashtag.x--7 .hash {
-    color: #3986ac;
-}
+.be-inview__hashtag.x--6 .hash {}
+.be-inview__hashtag.x--7 .hash {}
 .be-inview__hashtag.x--8 .hash {}
 
 .be-inview__hashtag.x--1 {}

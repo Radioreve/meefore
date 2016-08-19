@@ -69,6 +69,7 @@
             LJ.ui.$body.on('click', '.js-map-facebook', LJ.facebook.showModalSendMessageToFriends );
 			LJ.ui.$body.on('click', '.js-map-change-location', LJ.map.toggleMapBrowser );
             LJ.ui.$body.on('mousedown', '.js-before-marker', LJ.map.handleClickOnBeforeMarker );
+            LJ.ui.$body.on('click', '.js-show-own-before', LJ.map.handleClickOnShowOwnBefore );
 
 		},
 		setupMap: function(){
@@ -199,6 +200,11 @@
             $('body').on('click', '.js-map-zoom-in', LJ.map.zoomIn );
             $('body').on('click', '.js-map-zoom-out', LJ.map.zoomOut );
 
+
+        },
+        handleClickOnShowOwnBefore: function(){
+
+            LJ.before.showMyBefore();
 
         },
         handleLoginComplete: function(){
@@ -639,9 +645,10 @@
             LJ.map.faceifyMarker( marker_id )
                 .then(function(){
                     LJ.map.setMarkerPicturesActive( marker_id );
-                    LJ.map.refreshBeforeMarker__Status( marker_id );
                     LJ.map.numerifyMarker( marker_id, n_hosts );
+                    LJ.map.refreshBeforeMarker__Status( marker_id );
                     LJ.map.refreshBeforeMarker__Seen( marker_id );
+                    LJ.map.refreshBeforeMarker__Gender( marker_id, bfr.gender );
 
                 });
 
@@ -682,6 +689,13 @@
                 }
 
             }
+
+        },
+        refreshBeforeMarker__Gender: function( marker_id, gender ){
+
+            LJ.map.getMarkerDom( marker_id )
+                .find('.marker')
+                .addClass('x--' + gender);
 
         },
         addBeforeMarkers: function( befores ){
@@ -888,7 +902,7 @@
         defaultifyMarker: function( marker_id ){
     
             LJ.map.updateMarker( marker_id, {
-                status_html: '<div class="mrk__status x--default"></div>'
+                //status_html: '<div class="mrk__status x--default"></div>'
             });
 
         },
@@ -1009,8 +1023,6 @@
 
             });
 
-
-
         },
         handleClickOnBeforeMarkerError: function( err ){
 
@@ -1029,6 +1041,7 @@
             return LJ.ui.render([
                 '<div class="map__icon x--meedient x--round-icon x--create-before js-create-before">',
                     '<i class="icon icon-meedrink"></i>',
+                    '<i class="icon icon-star"></i>',
                     '<div class="x--plus x--round-icon">',
                         '<i class="icon icon-plus-fat">',
                     '</div>',
@@ -1200,6 +1213,42 @@
                 LJ.paddWithZero( data.seconds )
 
             ].join(':'));
+
+        },
+        refreshCreateBtnState: function(){
+
+            var my_before = _.find( LJ.user.befores, function( bfr ){
+                return bfr.status == "hosting";
+            });
+
+            my_before ? LJ.map.hostifyCreateBtn() : LJ.map.unhostifyCreateBtn();
+
+        },
+        hostifyCreateBtn: function(){
+
+            var $s = $('.map__icon.x--create-before');
+            
+            $s.removeClass('js-create-before')
+                .addClass('js-show-own-before')
+                .addClass('x--hosting');
+
+            $s.find('.x--plus').hide();
+            $s.find('.icon-meedrink').hide();
+            $s.find('.icon-star').show();
+
+
+        },
+        unhostifyCreateBtn: function(){
+
+            var $s = $('.map__icon.x--create-before');
+            
+            $s.addClass('js-create-before')
+                .removeClass('js-show-own-before')
+                .removeClass('x--hosting');
+
+            $s.find('.x--plus').css({ 'display': 'flex' });
+            $s.find('.icon-meedrink').show();
+            $s.find('.icon-star').hide();
 
         }
 

@@ -57,11 +57,12 @@
 				})
 				.then(function(){
 					LJ.ui.refreshModalState();
-					return LJ.ui.getModalItemIds()
+					return LJ.ui.getModalItemIds();
 
 				})
 				.then(function( facebook_ids ){
 					LJ.before.addHostToInput( facebook_ids );
+					LJ.before.refreshMedalImage( facebook_ids );
 					LJ.before.validateInputs();
 					return LJ.before.addHostsNames( facebook_ids );
 
@@ -78,6 +79,29 @@
 
 
 		},
+		refreshMedalImage: function( facebook_ids ){
+
+			facebook_ids = facebook_ids || [];
+
+			var users = [{
+				img_id: LJ.findMainPic( LJ.user ).img_id,
+				img_vs: LJ.findMainPic( LJ.user ).img_version
+			}];
+
+			var friends = _.filter( LJ.friends.fetched_friends, function( f ){
+				return facebook_ids.indexOf( f.facebook_id ) != -1;
+			});
+
+			friends.forEach(function( f ){
+				users.push({
+					img_id: LJ.findMainPic( f ).img_id,
+					img_vs: LJ.findMainPic( f ).img_version
+				});
+			});
+
+			$('.medal-img').html( LJ.pictures.makeRosaceHtml( users, "user-medal" ) );
+
+		},
 		handleDomEvents__HashtagsPicker: function(){
 
 			LJ.ui.$body.on('keydown', '.be-create-row.x--hashtags input', function( e ){
@@ -86,12 +110,7 @@
 				var kc = LJ.getKeyname( e.keyCode || e.which );
 
 				if( kc == "enter" || kc == "tab" ){
-					LJ.before.addHashtag();
-					$s.val('');
-					LJ.before.validateInputs();
-					LJ.delay( 100 ).then(function(){
-						$s.focus();
-					});
+					LJ.before.handleAddHashtag();
 				}
 
 			});
@@ -164,7 +183,7 @@
 				$hashrow.removeClass('x--unset');
 
 			n_hashes == LJ.app_settings.app.max_hashtags ?
-				$hashrow.addClass('x--disabled').find('input').attr('readonly', true).attr('placeholder', '5 hashtags maximum!') :
+				$hashrow.addClass('x--disabled').find('input').attr('readonly', true).attr('placeholder', LJ.app_settings.app.max_hashtags + ' hashtags maximum') :
 				$hashrow.removeClass('x--disabled').find('input').attr('readonly', false).attr('placeholder', LJ.text('be_create_hashtags_placeholder') );
 
 
@@ -198,6 +217,8 @@
 
 			LJ.delay( d )
 				.then(function(){
+					LJ.before.validateInputs();
+					LJ.before.refreshMedalImage();
 					return LJ.ui.shradeIn( $w, d );
 				});
 
@@ -420,6 +441,20 @@
 		},
 		renderCreateBefore: function(){
 
+			var img_id = LJ.findMainPic( LJ.user ).img_id;
+			var img_vs = LJ.findMainPic( LJ.user ).img_version;
+
+			var medal_html = [
+				'<div class="medal x--'+ LJ.user.gender +'">',
+					'<div class="medal-img">',
+						// LJ.pictures.makeImgHtml( img_id, img_vs, "user-medal" ),
+					'</div>',
+					'<div class="medal-status x--hosting x--round-icon">',
+						'<i class="icon icon-star"></i>',
+					'</div>',
+				'</div>'
+			].join('');
+
 			return LJ.ui.render([
 
 				'<div class="be-create">',
@@ -427,7 +462,7 @@
 			          '<div class="icon icon-cross-fat"></div>',
 			        '</div>',
 			        '<div class="be-create__image x--round-icon">',
-			        	'<i class="icon icon-star-empty"></i>',
+			        	medal_html,
 			        '</div>',
 			        '<div class="be-create__title">',
 			          '<h1 data-lid="be_create_title"></h1>',
@@ -465,7 +500,10 @@
 			        '<div class="be-create-row x--hashtags x--unset">',
 			          '<div class="be-create__icon x--round-icon"><i class="icon icon-hashtag-empty"></i></div>',
 			          '<div class="be-create-row__input">',
-			            '<input data-lid="be_create_hashtags_placeholder" />',
+			            '<input maxlength="15" data-lid="be_create_hashtags_placeholder" />',
+			            '<div class="js-add-hashtag x--meedient x--round-icon x--mb">',
+			            	'<i class="icon icon-plus"></i>',
+			            '</div>',
 			          '</div>',
 			          '<div class="be-create__hashtags">',
 
@@ -475,7 +513,7 @@
 			          // '</div>',
 			        '</div>',
 			        '<div class="be-create__button">',
-			          '<button data-lid="be_create_button"></button>',
+			          '<button class="x--meedient" data-lid="be_create_button"></button>',
 			        '</div>',
 		      '</div>'
 

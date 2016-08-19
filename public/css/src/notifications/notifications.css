@@ -307,7 +307,5 @@ Whispereen  : #58c170
 
 @media (max-width: 650px ){
     .notifications-panel {
-        width: 100%;
-        left: 0;
     }
 }

@@ -23,7 +23,8 @@
 			'chat-line'		   : { width: 35,  height: 35,  crop: 'fill', gravity: 'face' },
 			'chat-inview'      : { width: 200, height: 200, crop: 'fill', gravity: 'face' },
 			'notification'     : { width: 70,  height: 70,  crop: 'fill', gravity: 'face' },
-			'user-map'         : { width: 70,  height: 70,  crop: 'fill', gravity: 'face' }
+			'user-map'         : { width: 70,  height: 70,  crop: 'fill', gravity: 'face' },
+			'user-medal'       : { width: 110, height: 110, crop: 'fill', gravity: 'face' }
 		},
 		cached: [],
 

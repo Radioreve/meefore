@@ -101,13 +101,10 @@ button:hover {
     top: 50%;
     transform: translate(-50%, -50%)
 }
-
+ 
 .app-subheader {
     height: 52px;
     padding-bottom: 0px;
-    background: white;
-    /* box-shadow: 0 0 11px  #ADADAD; */
-    align-items: center;
     border-bottom: none;
     position: fixed;
     z-index: 100;
@@ -118,7 +115,7 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fafafa;
+    background: rgba(250, 250, 250, 0.8);
 }
 
 .row-date {
@@ -1033,9 +1030,7 @@ button:hover {
     margin-left: auto;
 }
 
-.app__menu-item .bubble {
-    background: #e61515;
-}
+.app__menu-item .bubble {background: linear-gradient(45deg,#fe685c, #ed105d);}
 
 .app__menu-item a {
     display: flex;
@@ -1219,17 +1214,17 @@ button:hover {
     color: #1a59c3;
     font-family: 'quenda';
 }
-
+ 
 .modal-body {
     min-height: 120px;
     margin-top: auto;
     display: flex;
-    flex-flow: row wrap;
-    /* overflow: hidden; */
+    overflow: hidden;
     align-items: center;
     justify-content: center;
     outline: none;
     position: relative;
+    flex-flow: row wrap;
 }
 
 .modal-footer {
@@ -1879,6 +1874,6 @@ button:hover {
 
 
 .x--meedient {
-    background: linear-gradient(45deg,#fe685c, #ed105d)!important;
+    background: linear-gradient(45deg,#fe685c, #ed105d);
     border-color: #f84b5c;
 }

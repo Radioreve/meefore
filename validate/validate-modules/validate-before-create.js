@@ -187,7 +187,8 @@
 
 			/* Hosts are validated*/
 			// before_data.hosts = _.pluckMany( hosts, settings.public_properties.users );
-			before_data.hosts = _.map( hosts, 'facebook_id' );
+			req.sent.hosts_profiles = hosts;
+			before_data.hosts       = _.map( hosts, 'facebook_id' );
 			// before_data.hosts.forEach(function( host, i ){
 
 			// 	var main_picture = _.find( host.pictures, function( pic ){

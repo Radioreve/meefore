@@ -26,7 +26,10 @@
     .be-create-row__explanations,
     .app-subheader.x--map,
     .modal-search__input,
-    .app-header__brand {
+    .app-header__brand,
+    .map-zoom,
+    .map__icon.x--change-location,
+    .map__icon.x--facebook {
         display: none!important;
     }
     .be-create,

@@ -157,13 +157,14 @@
 
 .cheers-back-groupname {display: flex;justify-content: flex-end;flex-flow: column nowrap;align-items: center;flex-shrink: 0;height: 100px;margin-bottom: 10px;}
 
-.cheers-back-groupname__h1 {font-family: 'creamy';font-size: 26px;margin-bottom: 3px;color: #1a59c3;}
+.cheers-back-groupname__h1 {font-family: 'quenda';font-size: 26px;margin-bottom: 3px;color: #1a59c3;max-width: 70%;justify-content: center;text-align: center;font-size: 18px;}
 
-.cheers-back-groupname__h1 span {}
+.cheers-back-groupname__h1 span {/* overflow: hidden; *//* text-overflow: ellipsis; *//* white-space: nowrap; *//* width: 300px; *//* display: inline-block; */}
 
 .cheers-back-groupname__h2 {
-    font-size: 11px;
+    font-size: 12px;
     color: #454545;
+    margin-top: 6px;
 }
 
 .cheers-back-groupname__h2 span {

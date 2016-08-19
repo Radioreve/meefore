@@ -164,6 +164,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 		LJ.map.setMarkerAsSeen( before._id );
 		LJ.map.refreshMarkers();
+		LJ.map.refreshCreateBtnState();
 
 	},
 	handleNewRequestGroup: function( data ){
@@ -250,6 +251,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 			LJ.map.removeBeforeMarker( before_id );
 			LJ.before.removeFetchedBefore( before_id );
 			LJ.before.removeBeforeItem( before_id );
+			LJ.map.refreshCreateBtnState();
 
 			// If the user is viewing the before, take control of his ui and notify before is gone
 			var $be = $('.be-inview[data-before-id="'+ before_id +'"]');

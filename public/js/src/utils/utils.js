@@ -623,8 +623,17 @@ window.LJ = _.merge( window.LJ || {}, {
 
             return LJ.text("ago_n_weeks").replace('%n', diff_in_weeks );
             
+        },
+        getGroupGender: function( genders ){
+
+            var has_males = genders.indexOf( "male" ) != -1;
+            var has_females = genders.indexOf( "female" ) != -1;
+
+            if( has_males  && !has_females ) return "male";
+            if( !has_males && has_females ) return "female";
+
+            return "mixed";
 
         }
-
 
 });

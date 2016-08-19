@@ -41,6 +41,7 @@
 		new_before.timezone  = data.timezone;
 		new_before.address   = data.address;
 		new_before.hashtags  = data.hashtags;
+		new_before.gender    = Before.getHostsGender( _.map( req.sent.hosts_profiles, 'gender' ) );
 
     	new_before.created_at = moment();
     	new_before.groups 	 = [];

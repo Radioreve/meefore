@@ -42,6 +42,9 @@
 .map__icon.x--facebook.x--hearted {
     background: #1a59c3;color: white;
 }
+.map__icon.x--facebook.x--hearted:hover {
+     opacity: .8;
+}
 .map__icon.x--facebook i {
     position: relative;
     top: -2px;
@@ -102,13 +105,18 @@
     position: absolute;
     top: 0;
     right: -2px;
-    font-size: 15px;
+    font-size: 12px;
     background: #f1245d;
     height: 26px;
     width: 26px;
 }
 
 .map__icon.x--create-before.js-create-before.x--round-icon {}
+
+.map__icon.x--create-before.x--hosting {
+    /* background: linear-gradient(45deg, #ffec4d, rgb(255, 236, 77)); */
+    /* color: #ffa900; */
+}
 
 .map__icon.x--filter-dates {
     color: #1a59c3;
@@ -221,21 +229,21 @@
     width: 50px;
     height: 50px;
     border: 1px solid;
-    /* box-sizing: border-box; */
     padding: 0px;
     background: white;
     border-radius: 100px;
-    border-radius: 100px;
     position: absolute;
-    border-color: rgb(49, 49, 49);
-    border-color: white;
     border-color: #1a59c3;
-    border-color: #1a59c3;
+    transform: scale(0.75);
 }
 
 .marker.x--face > * {
     position: absolute;
 }
+
+.marker.x--male {border-color: #33afff;}
+.marker.x--female {}
+.marker.x--mixed {}
 
 .mrk__img,
 .mrk__loader {

@@ -217,7 +217,8 @@
 			var $modal = $('.modal');
 			var $el = $('.friend-modal:not(.x--selected)').first();
 
-			$s.toggleClass('x--selected').insertBefore( $el );
+			$s.toggleClass('x--selected');
+			// $s.insertBefore( $el );
 
 			LJ.ui.refreshModalState();
 			$('.modal-search__input input').val('');
