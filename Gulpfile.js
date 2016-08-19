@@ -38,12 +38,13 @@
         var moment_locale  = lib_path + '/moment/momentwithlocale.js';
         var nouislider     = lib_path + '/nouislider/nouislider.js';
         var pikaday        = lib_path + '/pikaday/pikaday.js';
+        var clock          = lib_path + '/countdown/countdown.js';
 
     	gulp.src([
             // Librairies
     		lodash, jquery, mousetrap, jsp, jsp_mousewhell, cloudinary,
             typeahead, typed, imagesloaded, velocity, velocity_ui, moment,
-            moment_locale, pikaday, nouislider,
+            moment_locale, pikaday, nouislider, countdown
 
             // Sources in any order
             src_path
