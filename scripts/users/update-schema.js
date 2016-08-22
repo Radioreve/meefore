@@ -30,6 +30,7 @@
 					tasks.push(function( done ){
 
 						// Update part
+						user.alerted_at = new Date();
 						delete user.app_preferences.min_frequency;
 						user.markModified('app_preferences');
 

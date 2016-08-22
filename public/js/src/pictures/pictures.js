@@ -406,9 +406,15 @@
 		getDevicePixelRatio: function(){
 
             if( window.devicePixelRatio ){
-                return window.devicePixelRatio;
+                if( parseInt( window.devicePixelRatio ) < 1 ){
+                	return 1;
+                } else {
+                	return parseInt( window.devicePixelRatio );
+                }
+
             } else {
                 return 1;
+
             } 
 
         },
