@@ -715,13 +715,9 @@
 				.then(function( before ){
 
 					LJ.ui.hideLoader("canceling_before");
-					LJ.ui.showToast( LJ.text('to_cancel_before_success') );
-
-					LJ.before.removeBeforeItem( before_id );
-					LJ.before.removeFetchedBefore( before_id );
-					
-					LJ.map.removeBeforeMarker( before_id );
 					LJ.ui.hideSlide({ type: 'before' });
+
+					LJ.ui.showToast( LJ.text('to_cancel_before_success') );
 
 				})
 				.catch(function( err ){

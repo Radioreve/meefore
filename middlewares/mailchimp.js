@@ -4,7 +4,7 @@
 	var config     = require('../config/config');
 	var Alerter    = require('./alerter');
 	var _          = require('lodash');
-	var term 	   = require('terminal-kit').terminal;;
+	var term 	   = require('terminal-kit').terminal;
 
 	// Mailchimp interface
 	var MC        = require('../services/mc');

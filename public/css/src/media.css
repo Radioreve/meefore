@@ -208,6 +208,7 @@
     .be-create-row__input input {
         border: none!important;
         border-bottom: 1px solid #eee!important;
+        box-shadow: none;
     }
     .chat-inview-footer button {
         display: flex!important

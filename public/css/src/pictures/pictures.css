@@ -49,6 +49,7 @@
  
 .picture__icon {
    width: 50%;
+   height: 50%;
    display: flex;
    justify-content: center;
    align-items: center;
@@ -307,8 +308,7 @@
   left: 50%;
   border-radius: 100px;
   transform: translate(-50%,0);
-  background: rgba(195, 26, 186, 0.78);
-  /* background: rgba(246, 60, 93, 0.76); */
+  background: rgba(26, 89, 195, 0.69);
   height: 26px;
 }
 

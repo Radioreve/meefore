@@ -19,6 +19,7 @@ var settings = {
 		max_hashtags: 4,
 		chat_fetch_count: 20
 	},
+	min_frequency: 1,
 	closed_map_hours: [ 6, 14 ],
 	facebook: {
 		token_lifespan_limit: 20
@@ -32,7 +33,6 @@ var settings = {
 	],
 	default_app_preferences: {
 
-		min_frequency: 7200,
 		alerts_push: {},	 
 		alerts_phone: {},
 		alerts_email: {

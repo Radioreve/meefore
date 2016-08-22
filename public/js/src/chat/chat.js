@@ -66,7 +66,7 @@
 				return ch.cheers_type == "received" && ch.status == "pending";
 			}).length;
 
-			if( n_chats_team_with_friends == 0 && n_chats_all == 0 ){
+			if( n_chats_team_with_friends == 0 && n_chats_all == 0 && n_cheers == 0 ){
 				return LJ.chat.emptifyChatRows();
 			}
 
@@ -1168,7 +1168,7 @@
 
 			}
 
-			// Insert rosace into the markup
+			// Insert rosace into the markup,
 			var pictures_html = LJ.pictures.makeGroupRosace( users, 2, 'chat-row' );
 
 			LJ.chat.updateChatRowElements( chat_id, {

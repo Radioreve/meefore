@@ -19,19 +19,18 @@
     top: 16px;
     right: 10px;
     cursor: pointer;
-    color: #ee145d;
+    color: #1a59c3;
     font-size: 14px;
 }
 
 .be-create-row {
-    margin: 10px 0px;
+    margin: 6px 0px;
     display: flex;
     flex-flow: column;
     position: relative;
 }
 
 .be-create-row__subtitle {
-    font-weight: bold;
     margin-top: 26px;
     font-size: 14px;
     font-family: 'quenda';
@@ -46,6 +45,7 @@
     left: 6px;
     transform: translate(0, -50%);
     font-size: 14px;
+    color: #1a59c3;
 }
 
 .be-create__icon i {}
@@ -74,28 +74,28 @@
 
 .be-create-row__input input {
     width: 100%;
-    padding: 10px 10px 10px 32px;
+    padding: 12px 10px 12px 32px;
     box-sizing: border-box;
-    border-radius: 4px;
+    border-radius: 8px;
     border: 1px solid #ececec;
-    box-shadow: 3px 2px 2px #e0e0e0;
+    box-shadow: 3px 2px 2px #f1f1f1;
     font-size: 13px;
-    color: #ef1a5d;
+    color: #1a59c3;
     cursor: pointer;
     font-weight: 400;
 }
 
 .be-create-row__input div {
-    width: 22px;
-    height: 22px;
+    width: 34px;
+    height: 34px;
     font-size: 14px;
     position: absolute;
     right: 5px;
-    top: 8px;
-    color: #f13973;
-    background: #fbfbfb;
+    top: 4px;
+    color: #fa525c;
+    background: #fff5f5;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 20px;
 }
 
 .be-create-row.x--hosts {}
@@ -149,6 +149,7 @@
     border: none;
     font-weight: bold;
     font-family: 'quenda';
+    border-radius: 1000px;
 }
 
 .be-create.x--pending .be-create__button button {
@@ -200,7 +201,7 @@
 .be-create__hashtags.x--disabled {}
 
 .be-create__hashtag {
-    border: 1px solid;
+    border: 2px solid #f63c5d;
     color: #f63c5d;
     font-size: 12px;
     padding: 8px 12px;

@@ -1928,7 +1928,7 @@
 			"us": "Send a Cheers alone or with your friends"
 		},
 		to_before_create_success: {
-			"fr": "Votre before vient d'être créé",
+			"fr": "Ton before vient d'être créé !",
 			"us": "Your pregame was created successfully"
 		},
 		to_before_create_success_friends: {

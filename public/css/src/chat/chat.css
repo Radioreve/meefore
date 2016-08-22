@@ -218,6 +218,7 @@
     font-size: 14px;
     color: #1a59c3;
     font-family: 'quenda';
+    display: none!important;
 }
 
 .chat-rows-title span {
@@ -414,6 +415,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    flex-shrink: 1;
 }
 
 .chat-empty__image {
@@ -435,7 +437,12 @@
     height: 100%;
 }
 
-.chat-empty__title {font-size: 24px;font-family: 'quenda';color: #1a59c3;}
+.chat-empty__title {
+    font-size: 24px;
+    font-family: 'quenda';
+    color: #1a59c3;
+    text-align: center;
+}
 
 .chat-empty__title span {}
 

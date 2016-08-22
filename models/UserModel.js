@@ -122,6 +122,9 @@
   onboarding: {
     type: Array,
     default: []
+  },
+  alerted_at: {
+    type: Date
   }
 
 

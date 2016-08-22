@@ -336,7 +336,8 @@
 	    	api.befores.request,
 	    	mdw.realtime.updateChannelsRequest,
 	    	mdw.notifier.addNotification('group_request'),
-	    	mdw.realtime.pushNewRequest
+	    	mdw.realtime.pushNewRequest,
+	    	mdw.alerter.sendEmail("new_cheers")
 	    );
 
 	    // [ @befores ] Renvoie la liste des groupes d'un évènement
@@ -350,7 +351,8 @@
 	    	api.befores.changeGroupStatus,
 	    	mdw.notifier.addNotification('group_status'),
 	    	mdw.realtime.updateChannelsGroup,
-	    	mdw.realtime.pushNewGroupStatus
+	    	mdw.realtime.pushNewGroupStatus,
+	    	mdw.alerter.sendEmail("new_match")
 	    );
 
 	    // [ @befores ] Renvoie la liste des befores les plus proches
@@ -365,7 +367,8 @@
 	    	// mdw.meepass.updateMeepass('before_created'),
 	    	api.befores.createBefore,
 	    	mdw.notifier.addNotification('marked_as_host'),
-	    	mdw.realtime.pushNewBefore
+	    	mdw.realtime.pushNewBefore,
+	    	mdw.alerter.sendEmail("marked_as_host")
 	    );
 
 	     // [ @befores ] Fetch un before par son identifiant. 
@@ -385,7 +388,8 @@
 	    	mdw.pop.populateUser({ force_presence: true }),
 	    	mdw.validate('chat_message'),
 	    	api.chats.addChatMessage,
-	    	mdw.realtime.pushNewChatMessage
+	    	mdw.realtime.pushNewChatMessage,
+	    	mdw.alerter.sendEmail("new_message")
 	    );
 
 	    app.post('/api/v1/chats/:chat_id/seen_by',

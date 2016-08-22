@@ -564,7 +564,7 @@
 
 			// Global message : everyone will received it.
 			var channel = makeLocationChannel( place_id );
-			pusher.trigger( channel, 'new before status', data_users, socket_id, handlePusherErr );
+			pusher.trigger( channel, 'new before status', data_users, handlePusherErr );
 
 			// All members need to resync their chat status
 			users.forEach(function( user_id ){

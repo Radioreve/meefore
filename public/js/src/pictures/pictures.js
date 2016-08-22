@@ -423,8 +423,8 @@
 				var img_params        = _.cloneDeep( LJ.pictures.img_params[ scope ] );
 				img_params.cloud_name = LJ.pictures.cloudinary_cloud_name;
 				img_params.version    = img_version;
-				img_params.width      = img_params.width * LJ.pictures.getDevicePixelRatio();
-				img_params.height     = img_params.height * LJ.pictures.getDevicePixelRatio();
+				img_params.width      = img_params.width * parseInt( LJ.pictures.getDevicePixelRatio() );
+				img_params.height     = img_params.height * parseInt( LJ.pictures.getDevicePixelRatio() );
 
 				LJ.dev.n_cloudinary_api_calls++;
 				var img = $.cloudinary.image( img_id, img_params ).attr('data-scopeid', scope ).prop('outerHTML');

@@ -18,7 +18,7 @@
     position: absolute;
     z-index: 1;
     font-size: 30px;
-    border: 1px solid #e7f1ff;
+    border: 1px solid #a4bbe2;
 }
 
 .map__icon.x--geoloc, .map__icon.x--change-location, .map__icon.x--facebook {
@@ -27,7 +27,6 @@
     cursor: pointer;
     background: #ffffff;
     color: #1a59c3;
-    /* border: 2px solid; */
     width: 50px;
     height: 50px;
 }
@@ -36,11 +35,14 @@
 .map__icon.x--change-location:hover,
 .map__icon.map-zoom i:hover {
     color: #508aea;
-}
+} 
 
 .map__icon.x--facebook {z-index: 101;}
 .map__icon.x--facebook.x--hearted {
-    background: #1a59c3;color: white;
+    background: #1a59c3;
+    color: white;
+    right: 40px;
+    left: auto;
 }
 .map__icon.x--facebook.x--hearted:hover {
      opacity: .8;
@@ -146,7 +148,7 @@
     top: 0;
     left: 0;
     z-index: 10;
-    background: rgba(0, 0, 0, 0.17);
+    background: rgba(251, 251, 251, 0.5);
 }
 
 .map-browse {
@@ -241,8 +243,10 @@
     position: absolute;
 }
 
-.marker.x--male {border-color: #33afff;}
-.marker.x--female {}
+.marker.x--male {}
+.marker.x--female {
+    background: #d55d8c;
+}
 .marker.x--mixed {}
 
 .mrk__img,
@@ -299,6 +303,7 @@
     background: #1a59c3;
     color: white;
     border: 2px solid white;
+    background: #4080ff;
 }
 
 .mrk__status.x--pending {
@@ -308,30 +313,37 @@
     font-size: 9px;
 }
 
-.mrk__status.x--number {color: white;border: 2px solid white;font-family: 'quenda';}
+.mrk__status.x--number {color: white;border: 2px solid white;font-family: 'quenda';background: #7b4cbb;background: #1a59c3;background: #12b9a5;background: #d55d8c;}
 .mrk__status.x--number  span {
     position: relative;
     top: 1px;
 }
 .mrk__status.x--number.x--1 {
-    background: #1ecc21;
+    /* background: #1ecc21; */
 }
 .mrk__status.x--number.x--2 {
-    background: #7b4cbb;
+    /* background: #7b4cbb; */
 }
 .mrk__status.x--number.x--3 {
-    background: pink;
-    color: #771224;
+    /* background: pink; */
+    /* color: #771224; */
 }
 .mrk__status.x--number.x--4 {
-    background: #fd7124;
+    /* background: #fd7124; */
+}
+
+.marker.x--male .mrk__status {
+    background: #4080ff;
+}
+.marker.x--female .mrk__status {
+    background: red;
+}
+.marker.x--mixed .mrk__status {
+    background: #7b4cbb;
 }
 
 .mrk__status.x--host {
-    background: orange;
-    background: #ffec4d;
-    color: white;
-    color: #ffec4d;
+    background: #ffec4d!important;
     color: #ffa900;
     border: 1px solid;
     border-color: white;
@@ -342,7 +354,7 @@
 
 .mrk__status.x--pending {
     color: #1a59c3;
-    background: white;
+    background: white!important;
     border: 2px solid #1a59c3;
     font-size: 9px;
 }

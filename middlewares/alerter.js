@@ -1,126 +1,465 @@
 	
 	var config          = require('../config/config');
+	var settings        = require('../config/settings');
 	var User            = require('../models/UserModel');
-	var bluebird        = require('bluebird');
+	var Promise         = require('bluebird');
+	var rd 		 	    = require('../services/rd');
+	var connecter 	    = require('../middlewares/connecter');
 	var config          = require('../config/config');
 	var _               = require('lodash');
-	var term            = require('terminal-kit').term;
+	var term            = require('terminal-kit').terminal;
 	var mandrill        = require('mandrill-api/mandrill');
 	var mandrill_client = new mandrill.Mandrill( config.mandrill.api_key );
+	var moment 		 	= require('moment');
 	
+	function alertLog( message ){
+		term.bold.yellow( '[Alerter] ' + message + '\n' );
+	}
+
 	function handleErr( err, err_ns ){
 
 		err_ns = err_ns || "alerter";
 
-		term.bold.red('Error sending email, err_ns='+ err_ns );
+		term.bold.red('Error sending email, err_ns='+ err_ns + '\n' );
 		term.bold.red( err + '\n' );
 	}
 
-	var supported = ["fr", "en"];
+
+	var supported_in_templates = [ "fr", "us" ];
+
+
 	// var base_style = "\"background:#eee; padding: 5px 2px; border-radius:2px; display:inline-block;\""
 	var text_source = {
 
-		"alert_message_received_subject": {
-			"fr": "%sender_name vous a envoyé un message",
-			"en": "%sender_name has sent you a message"
+		"new_message_subject": {
+			"fr": "Nouveaux messages",
+			"us": "New messages"
 		},
-		"alert_message_received_body": {
-			"fr": [
-						"<div><b>Bonjour %receiver_name,</b></div>",
-						"<br>",
-						"<div>Il y a de l'activité sur une des discussion où vous participez.</div>",
-						"<div>Connectez-vous pour accéder à toutes vos <a href=\"http://www.meefore.com\">discussions.</a>.</div>",
-						"<br>",
-						"<div>A bientôt en soirée,</div>",
-						"<div>L'équipe de Meefore</div>"
-
-			].join(''),
-			"en": [
-						"<div><b>Hi %receiver_name,</b></div>",
-						"<br>",
-						"<div>There has been activity on one of your discussions since your your connection.</div>",
-						"<div>Connect to access all your <a href=\"http://www.meefore.com\">chats</a>.</div>",
-						"<br>",
-						"<div>See you soon around a drink,</div>",
-						"<div>The Meefore team</div>"
-			].join('')
+		"new_cheers_subject": {
+			"fr": "Nouveau Cheers",
+			"us": "New Cheers"
 		},
-		"alert_accepted_in_subject": {
-			"fr": "Vous avez un Match !",
-			"en": "It's a Match !"
+		"new_match_subject": {
+			"fr": "Nouveau Match",
+			"us": "New Match"
 		},
-		"alert_accepted_in_body": {
-			"fr": [
-						"<div><b>Bonjour %receiver_name,</b></div>",
-						"<br>",
-						"<div>Vous avez un nouveau Match.</div>",
-						"<div>Pour engager la discussion, c'est par <a href=\"http://www.meefore.com\">ici</a>.</div>",
-						"<br>",
-						"<div>A bientôt en soirée,</div>",
-						"<div>L'équipe de Meefore</div>"
-
-			].join(''),
-			"en": [
-						"<div><b>Hi %receiver_name,</b></div>",
-						"<br>",
-						"<div>You have a new Match.</div>",
-						"<div>To chat with people hosting the pregame party, go <a href=\"http://www.meefore.com\">here</a>.</div>",
-						"<br>",
-						"<div>See you soon around a drink,</div>",
-						"<div>The Meefore team</div>"
-			].join('')
-		},
-		"alert_marked_as_host_subject": {
-			"fr": "Vous avez été marqué coorganisateur",
-			"en": "You have been marked as host"
-		},
-		"alert_marked_as_host_body": {
-			"fr": [
-						"<div><b>Bonjour %receiver_name,</b></div>",
-						"<br>",
-						"<div>%friend_name vous a marqué coorganisateur de son <a href=\"http://www.meefore.com\">before</a></div>",
-						"<div>%address, %date</div>",
-						"<br>",
-						"<div>A bientôt en soirée,</div>",
-						"<div>L'équipe de Meefore</div>"
-
-			].join(''),
-			"en": [
-						"<div><b>Hi %receiver_name,</b></div>",
-						"<br>",
-						"<div>%friend_name has marked you as host of his <a href=\"http://www.meefore.com\">pregame</a></div>",
-						"<div>%address, %date</div>",
-						"<br>",
-						"<div>See you soon around a drink,</div>",
-						"<div>The Meefore team</div>"
-			].join('')
-		},
-		"alert_cheers_received_subject": {
-			"fr": "Vous avez reçu un Cheers",
-			"en": "You have received a Cheers"
-		},
-		"alert_cheers_received_body": {
-			"fr": [
-						"<div><b>Bonjour %receiver_name,</b></div>",
-						"<br>",
-						"<div>Un groupe a montré de l'intérêt pour votre before en vous envoyant en Cheers.</div>",
-						"<div>Pour voir leurs profils, c'est par <a href=\"http://www.meefore.com\">ici</a>.</div>",
-						"<br>",
-						"<div>A bientôt en soirée,</div>",
-						"<div>L'équipe de Meefore</div>"
-
-			].join(''),
-			"en": [
-						"<div><b>Hi %receiver_name,</b></div>",
-						"<br>",
-						"<div>A group showed you their interest in your pregame by sending you a Cheers.</div>",
-						"<div>To check them out, go <a href=\"http://www.meefore.com\">here</a>.</div>",
-						"<br>",
-						"<div>See you soon around a drink,</div>",
-						"<div>The Meefore team</div>"
-			].join('')
+		"marked_as_host_subject": {
+			"fr": "Marqué coorganisateur d'un before",
+			"us": "Marked cohost of a pregame"
 		}
 
+	};
+
+	var getChatAlertedAt = function( chat_id, callback ){
+
+		var ns = 'alerted_at/' + chat_id;
+		rd.get( ns, function( err, res ){
+
+			if( err ){
+				callback( err, null );
+			} else {
+				callback( null, res );
+			}
+
+		});
+
+	};
+
+	var setChatAlertedAt = function( chat_id, callback ){
+
+		var ns = 'alerted_at/' + chat_id;
+		rd.set( ns, Date.now(), function( err ){
+
+			if( err ){
+				callback( err, null );
+			} else {
+				callback( null );
+			}
+
+		});
+
+	};
+
+	var setChatAlertedAtExpire = function( chat_id, callback ){
+
+		var one_hour = 3600;
+		var one_week = 604800;
+
+		var ns = 'alerted_at/' + chat_id;
+		rd.expire( ns, one_week, function( err ){
+
+			if( err ){
+				callback( err, null );
+			} else {
+				callback( null );
+			}
+
+		});
+
+	};
+
+
+	var sendEmail = function( type ){
+		return function( req, res, next ){
+
+			var err_ns = "sending_alerts";
+
+			// Dont wait for emails to continue with the request
+			next();
+
+			if([ "new_message", "marked_as_host", "new_cheers", "new_match" ].indexOf( type ) == -1 ){
+				return alertLog("The type : " + type + " is not recognized as a valid type");
+			}
+
+			getUsersToAlert( req, type )
+				.then(function( users ){
+
+					alertLog("Sending an email to : " + _.map( users, 'name' ).join(', ') );
+					users.forEach(function( user ){
+						sendAlertEmail( req, type, user );
+					});
+
+				})	
+				.catch(function( err ){
+
+					if( err.msg ){
+						alertLog( err.msg );
+					} else {
+						handleErr( err, err_ns );
+					}
+
+
+				});
+
+		}
+	};
+
+	function checkChatAlertStatus( chat_id ){
+		return new Promise(function( resolve, reject ){
+
+			getChatAlertedAt( chat_id, function( err, alerted_at ){
+
+				if( err ){
+					return reject({ err: err });
+				}
+
+				if( alerted_at ){
+
+					alerted_at = parseInt( alerted_at ); // moment.js throw "invalid date" if its a string
+
+					alertLog("Chat was alerted at : " + moment( alerted_at ).toISOString() );
+					var diff_in_minutes = ( moment( Date.now() ) - moment( alerted_at ) ) / ( 1000 * 60 );
+
+					if( diff_in_minutes < 1 ){
+						return reject({ msg: "Alerter was activated less then 1 minute ago, doing nothing" });
+					}
+
+				}
+
+				setChatAlertedAt( chat_id, function( err ){
+					if( err ) return reject({ err: err });
+
+					setChatAlertedAtExpire( chat_id, function( err ){
+						if( err ) return reject({ err: err });
+
+						resolve();
+
+					});
+
+				});
+				
+
+
+			});
+
+		});
+	}
+
+	// Make sure that users validate the following conditions :
+	// 	- They werent alerted too recently (check that first in case of the chat alert)
+	// 	- They are offline ( tap into redis first then into mongo )
+	// 	- They want to receive this specific alert
+	function getUsersToAlert( req, type ){
+
+		var specific = Promise.resolve();
+
+		if( type == "new_message" ){
+			specific = checkChatAlertStatus( req.sent.chat_id );
+		}
+
+		return specific
+
+			.then(function(){
+				return findUserIds( req, type );
+			})
+
+			.then(function( user_ids ){
+				alertLog("Users that were found relevant : " + user_ids );
+				return filterOnlineUsers( user_ids );
+			})
+
+			.then(function( user_ids ){
+				alertLog("Users that are offline : " + user_ids );
+				return filterRequester( req, user_ids );
+			})
+
+			.then(function( user_ids ){
+				alertLog("Users that are offline (without sender) : " + user_ids );
+				return filterInterestedUsers( user_ids, type );
+			});
+
+	}
+
+	// Find all the relevant ids attached on the req.sent object.
+	// The place depends on the api signature, hence the different cases
+	function findUserIds( req, type ){
+		return new Promise(function( resolve, reject ){
+
+			if( type == "new_cheers" ){
+				resolve( req.sent.members.concat( req.sent.before.hosts ) );
+			}
+
+			if( type == "new_match" ){
+				resolve( req.sent.members.concat( req.sent.before.hosts ) );
+			}
+
+			if( type == "marked_as_host" ){
+				resolve( req.sent.hosts_facebook_id );
+			}
+
+			if( type == "new_message" ){
+
+				User.find(
+				{
+					"channels.chat_id": req.sent.chat_id
+				},
+				function( err, users ){
+
+					if( err ) return reject( err );
+					resolve( _.map( users, 'facebook_id' ) );
+
+				});
+
+			}
+
+		});
+	}
+
+	function filterOnlineUsers( user_ids ){
+		return connecter.filterOnlineUsers( user_ids )
+				.then(function( online_ids ){
+					return _.difference( user_ids, online_ids );
+				});
+
+	}
+
+	function filterRequester( req, user_ids ){
+		return _.filter( user_ids, function( uid ){
+			return uid !== req.sent.facebook_id;
+		});
+
+	}
+
+	function filterInterestedUsers( user_ids, type ){
+		return new Promise(function( resolve, reject ){
+
+			var interested_users = [];
+
+			User.find(
+			{
+				'facebook_id': { '$in': user_ids } 
+			},
+			function( err, users ){
+
+				if( err ) return reject( err );
+
+				users.forEach(function( usr ){
+
+					if( !usr.app_preferences.alerts_email.new_message ){
+						return alertLog( usr.name + " doesnt wish to receive new_messages alerts" );
+					}
+
+					var diff_in_minutes = ( moment() - moment( usr.alerted_at ) ) / ( 1000 * 60 );
+					if( diff_in_minutes < settings.min_frequency ){
+						return alertLog( usr.name + ' has been mailed too recently ('+ diff_in_minutes +' min)');
+					}
+
+					interested_users.push( usr );
+
+				});
+
+				resolve( interested_users );
+
+			});
+
+		});
+	}
+
+	function sendAlertEmail( req, type, user ){
+
+		// The language supported (translated in emails) is not necessarily the same
+		// as the one supported on the website. 
+		var cc = user.country_code;
+		if( supported_in_templates.indexOf( cc ) == -1 ){
+			cc = "us";
+		}
+
+		if( type == "new_message" ){
+			return sendAlertEmail__NewMessage({
+				cc 		 : cc,
+				sender   : req.sent.user,
+				receiver : user
+			});
+		}
+
+		if( type == "new_match" ){
+			return sendAlertEmail__NewMatch({
+				cc 		 : cc,
+				receiver : user
+			});
+		}
+
+		if( type == "new_cheers" ){
+			return sendAlertEmail__NewCheers({
+				cc 		 : cc,
+				receiver : user
+			});
+		}
+
+		if( type == "marked_as_host" ){
+			return sendAlertEmail__MarkedAsHost({
+				cc 		 : cc,
+				receiver : user
+			});
+		}
+	}
+
+	var sendAlertEmail__NewMessage = function( opts ){
+
+		var mandrill_opts = {};
+		
+		mandrill_opts.target           = { email: opts.receiver.contact_email, name: opts.receiver.name };
+		mandrill_opts.subject          = text_source[ "new_message_subject" ][ opts.cc ];
+		mandrill_opts.template_name    = "new-message-received";
+		mandrill_opts.template_content = [];
+		mandrill_opts.cc 			   = opts.cc;
+
+		sendAlertEmail__Base( mandrill_opts );
+
+	};
+
+	var sendAlertEmail__NewMatch = function( opts ){
+
+		var mandrill_opts = {};
+		
+		mandrill_opts.target           = { email: opts.receiver.contact_email, name: opts.receiver.name };
+		mandrill_opts.subject          = text_source[ "new_match_subject" ][ opts.cc ];
+		mandrill_opts.template_name    = "new-match";
+		mandrill_opts.template_content = [];
+		mandrill_opts.cc 			   = opts.cc;
+
+		sendAlertEmail__Base( mandrill_opts );
+		
+	};
+
+	var sendAlertEmail__NewCheers = function( opts ){
+
+		var mandrill_opts = {};
+		
+		mandrill_opts.target           = { email: opts.receiver.contact_email, name: opts.receiver.name };
+		mandrill_opts.subject          = text_source[ "new_cheers_subject" ][ opts.cc ];
+		mandrill_opts.template_name    = "new-cheers";
+		mandrill_opts.template_content = [];
+		mandrill_opts.cc 			   = opts.cc;
+
+		sendAlertEmail__Base( mandrill_opts );
+
+	};
+
+	var sendAlertEmail__MarkedAsHost = function( opts ){
+
+		var mandrill_opts = {};
+		
+		mandrill_opts.target           = { email: opts.receiver.contact_email, name: opts.receiver.name };
+		mandrill_opts.subject          = text_source[ "marked_as_host" ][ opts.cc ];
+		mandrill_opts.template_name    = "marked-as-host";
+		mandrill_opts.template_content = [];
+		mandrill_opts.cc 			   = opts.cc;
+
+		sendAlertEmail__Base( mandrill_opts );			
+
+	};
+
+
+	var sendAlertEmail__Base = function( opts ){
+
+		var is_prop_ok = true;
+		[ 'subject', 'target', 'template_name', 'template_content' ]
+		.forEach(function( prop ){
+			if( typeof opts[ prop ] == 'undefined' ){
+				alertLog("The opts object is missing the key :" + prop );
+				is_prop_ok = false;
+			}
+		});
+
+		if( !is_prop_ok ){
+			return
+		}
+
+		mandrill_client.messages.sendTemplate({
+
+			"key": config.mandrill.api_key,
+
+			"template_name"   : opts.template_name,
+			"template_content": opts.template_content,
+
+		    "message": {
+
+		        "from_email" : "hello@meefore.com",
+		        "from_name"  : "Meefore",
+
+		        "subject"	 : opts.subject,
+		        "to"		 : [{
+		        	email: opts.target.email,
+		        	name : opts.target.name,
+		        	type : "to"
+		        }],
+
+		        "headers": {
+		        	"Reply-To": "team@meefore.com"
+		        },
+
+		        "merge_vars": [
+		        	{
+		        		rcpt: opts.target.email,
+		        		vars: [
+		        			{
+		        				name   : 'username',
+		        				content: opts.target.name
+		        			},
+		        			{
+		        				name    : 'cc',
+		        				content : opts.cc
+		        			}
+		        		]
+		        	}
+		        ]
+
+		    }
+		},
+		function( res ){
+			alertLog( res );
+		},
+		function( err ){
+			term.bold.red( err );
+		});
+
+	};
+
+
+	function makeText( country_code, text_id ){
+
+		return text_source[ text_id ][ country_code ];
 
 	};
 
@@ -152,249 +491,18 @@
 		    }
 		},
 		function( res ){
-			console.log( res );
+			alertLog( res );
 		},
 		function( err ){
 			term.bold.red( err );
 		});
 
 	};
-
-	var sendAlertEmail = function( type ){
-		return function( req, res, next ){
-
-			// Dont wait for emails to continue with the request
-			next();
-
-			if([ "new_message", "marked_as_host", "group_request", "accepted_in" ].indexOf( type ) == -1 ){
-				return console.log("The type : " + type + " is not recognized as a valid type");
-			}
-
-			getUsersToAlertIds( type )
-				.then(function( facebook_ids ){
-					return getUsersToAlert( facebook_ids );
-				})
-				.then(function( users ){
-					users.forEach(function( user ){
-						sendAlertEmail( type, user );
-					});
-				});
-
-		}
-	};
-
-	// Get the ids of the users to alerts, based on where they 
-	// reside on the req.sent object
-	function getUsersToAlertIds( type ){
-
-
-
-	}
-
-	// Make sure that users validate the three following conditions
-	// - They are offline
-	// - They want to receive this specific alert
-	// - They werent alerted too recently 
-	function getUsersToAlert( facebook_ids ){
-
-
-
-	}
-
-	function sendAlertEmail( type, user ){
-
-
-
-	}
-
-	var sendAlertEmail__Base = function( subject, html, targets ){
-
-		targets = Array.isArray( targets ) ? targets : [ targets ];
-
-		var recipients = [];
-		targets.forEach(function( target ){
-			recipients.push({
-				email: target.email,
-				name : target.mail,
-				type : "to"
-			});
-		});
-
-		mandrill_client.messages.send({
-
-			"key": config.mandrill.api_key,
-
-		    "message": {
-
-		        "from_email" : "hello@meefore.com",
-		        "from_name"  : "Meefore",
-
-		        "subject"	 : subject,
-		        "html"       : html,
-		        "to"		 : recipients
-
-		    }
-		},
-		function( res ){
-			console.log( res );
-		},
-		function( err ){
-			term.bold.red( err );
-		});
-
-	};
-
-	var sendAlertEmail__MessageReceived = function( req, res, next ){
-
-		var err_ns = "sending_alert_message_received";
-
-		receiver_emails = Array.isArray( receiver_emails ) ? receiver_emails : [ receiver_emails ];
-		sender_name     = opts.sender_name;
-
-		User.find({ contact_email: receiver_emails }, function( err, users ){
-
-			if( err || !users ){
-				return handleErr( err)
-			}
-
-			var cc = user.country_code;
-
-			var subject = makeText( cc, "alert_message_received_subject" );
-			subject = subject.replace('%sender_name', sender_name );
-
-			var html = makeText( cc, "alert_message_received_body" );
-			html = html.replace('%receiver_name', user.name );
-
-
-			var alert_email = new sendgrid.Email({
-				from     : 'no-reply@meefore.com',
-				fromname : 'Meefore',
-				subject  : subject,
-				to       : receiver_email,
-				html     : html
-			});
-
-			sendAlertEmail__Base( opts );
-
-		});
-	};
-
-
-	var sendAlertEmail__AcceptedIn = function( receiver_emails ){
-
-		var err_ns = "sending_alert_accepted_in";
-
-		receiver_emails = Array.isArray( receiver_emails ) ? receiver_emails : [ receiver_emails ];
-
-		User.find({ contact_email: receiver_emails }, function( err, users ){
-
-			if( err || !user ) return;
-
-			var cc = user.country_code;
-
-			var subject = makeText( cc, "alert_accepted_in_subject" );
-
-			var html = makeText( cc, "alert_accepted_in_body" );
-			html = html.replace('%receiver_name', user.name );
-
-
-			var alert_email = new sendgrid.Email({
-				from     : 'no-reply@meefore.com',
-				fromname : 'Meefore',
-				subject  : subject,
-				to       : receiver_email,
-				html     : html
-			});
-
-			sendgrid.send( alert_email, function( err, res ){
-				if( err )
-					return console.log(err);
-			});
-
-		});
-
-	};
-
-	var sendAlertEmail__MarkedAsHost = function( receiver_emails ){
-
-		var err_ns = "sending_alert_marked_as_host";
-
-		receiver_emails = Array.isArray( receiver_emails ) ? receiver_emails : [ receiver_emails ];
-
-		User.find({ contact_email: receiver_emails })
-
-
-	}
-
-	var sendAlertEmail__CheersReceived = function( receiver_emails ){
-
-		var err_ns = "sending_alert_cheers_received";
-
-		receiver_emails = Array.isArray( receiver_emails ) ? receiver_emails : [ receiver_emails ];
-
-		User.find({ contact_email: receiver_emails })
-
-
-	}
-
-
-	function makeText( country_code, text_id ){
-
-		if( supported.indexOf( country_code ) == -1 ){
-			country_code = "en";
-		}
-
-		return text_source[ text_id ][ country_code ];
-
-	};
-
-	(function testAllEmails( test ){
-
-		if( !test ) return;
-
-		var send_to = [{ email: "ljayame@gmail.com" }, { email: "leo@blstudio.fr" }];
-
-		sendAlertEmail__Base(
-			makeText("fr", "alert_message_received_subject").replace('%sender_name','Frank'),
-			makeText("fr", "alert_message_received_body").replace('%receiver_name','Léo'),
-			send_to
-		);
-
-		sendAlertEmail__Base(
-			makeText("fr", "alert_accepted_in_subject"),
-			makeText("fr", "alert_accepted_in_body").replace('%receiver_name','Léo'),
-			send_to
-		);
-
-		sendAlertEmail__Base(
-			makeText("fr", "alert_marked_as_host_subject"),
-			makeText("fr", "alert_marked_as_host_body")
-				.replace('%receiver_name','Léo')
-				.replace('%friend_name','Céline')
-				.replace('%address', '37 rue du four, 75006 Paris')
-				.replace('%date', '26/06/16, 19:00'),
-			send_to
-		);
-
-		sendAlertEmail__Base(
-			makeText("fr", "alert_cheers_received_subject"),
-			makeText("fr", "alert_cheers_received_body").replace('%receiver_name','Léo'),
-			send_to
-		);
-
-	// Set to true to activate tests
-	})( false );
-
-	filterUsersToAlert = function(){
-		return new Promise(function( resolve, reject ){
-			resolve();
-		});
-	}
 
 
 	module.exports = {
 
 		sendAdminEmail : sendAdminEmail,
-		sendAlertEmail : sendAlertEmail
+		sendEmail      : sendEmail
 
 	};

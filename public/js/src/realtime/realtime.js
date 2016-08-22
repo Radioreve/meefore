@@ -205,6 +205,10 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		var before_id = data._id;
 		var requester = data.requester;
 
+		
+		LJ.before.removeBeforeItem( before_id );
+		LJ.map.refreshCreateBtnState();
+
 		// Force a resync of all the chats with updated server values
 		LJ.chat.resyncAllChats();
 
@@ -250,8 +254,6 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 			LJ.map.removeBeforeMarker( before_id );
 			LJ.before.removeFetchedBefore( before_id );
-			LJ.before.removeBeforeItem( before_id );
-			LJ.map.refreshCreateBtnState();
 
 			// If the user is viewing the before, take control of his ui and notify before is gone
 			var $be = $('.be-inview[data-before-id="'+ before_id +'"]');

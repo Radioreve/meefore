@@ -361,7 +361,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	},
 	adjustWrapperHeight: function( $w ){
 
-			var height = $( window ).height() - LJ.ui.slide_top;
+			var height = $( window ).height() - LJ.ui.adjust_top;
 			$w.css({ height: height });
 
 	},

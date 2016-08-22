@@ -3,6 +3,7 @@
 	var rd     	   = require('../services//rd');
 	var User   	   = require('../models/UserModel');
 	var config 	   = require('../config/config');
+	var Promise    = require('bluebird');
 	var eventUtils = require('../pushevents/eventUtils');
 
 
@@ -125,7 +126,6 @@
 
 	var getOnlineUsers = function( req, res, next ){
 
-		console.log(req.sent)
 		var err_ns = "getting_online_users";
 
 		rd.smembers('online_users', function( err, response ){
@@ -138,11 +138,30 @@
 		});
 	};
 
+	var filterOnlineUsers = function( user_ids ){
+		return new Promise(function( resolve, reject ){
+
+			rd.smembers('online_users', function( err, online_users ){
+
+				if( err ) return reject( err );
+
+				var filtered_ids = _.filter( user_ids, function( user_id ){
+					return online_users.indexOf( user_id ) !== -1;
+				});
+
+				return resolve( filtered_ids );
+
+			});
+
+		});
+	};
+
 
 
 	module.exports = {
 		updateConnectedUsers : updateConnectedUsers,
 		getUserStatus        : getUserStatus,
-		getOnlineUsers 		 : getOnlineUsers
+		getOnlineUsers 		 : getOnlineUsers,
+		filterOnlineUsers    : filterOnlineUsers
 	};
 

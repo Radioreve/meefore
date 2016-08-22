@@ -519,8 +519,8 @@ button:hover {
 }
 
 .disconnected__title {
-    font-size: 50px;
-    font-family: 'creamy';
+    font-size: 30px;
+    font-family: 'quenda';
     color: white;
 }
 
@@ -1460,7 +1460,7 @@ button:hover {
     position: fixed;
     right: 0;
     top: 59px;
-    z-index: 100;
+    z-index: 1000;
     height: 500px;
     box-shadow: 0 0 14px #949494;
     overflow: scroll;

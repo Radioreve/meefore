@@ -158,6 +158,7 @@ span.be-dates__count {
     background: white;
     width: 100%;
     height: 100%;
+    max-height: 630px;
     display: flex;
     flex-flow: column;
     z-index: 10;
@@ -208,7 +209,7 @@ span.be-dates__count {
     z-index: 101;
     padding-left: 5px;
     box-sizing: border-box;
-    background: white;
+    background: rgba(255,255,255,.8);
     height: 44px;
     width: 100%;
     display: flex;
@@ -277,7 +278,7 @@ span.be-dates__count {
     flex-flow: column nowrap;
     justify-content: center;
     height: 20px;
-    padding: 0px 40px;
+    padding: 0px 30px;
     font-size: 12px;
     align-items: center;
     margin-bottom: 10px;
@@ -295,11 +296,10 @@ span.be-dates__count {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 220px;
+    max-width: 260px;
     height: 15px;
-    font-family: 'quenda';
     color: #454545;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .be-inview-address__date {
@@ -594,7 +594,7 @@ span.be-dates__count {
 .be-usernames {
     color: #1a59c3;
     font-family: 'quenda';
-    font-size: 20px;
+    font-size: 24px;
     display: flex;
     align-items: flex-end;
     height: 90px;

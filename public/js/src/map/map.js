@@ -166,7 +166,7 @@
         handleClock: function( data ){
 
             // Check if the countdown needs to be started or cleared
-            if( LJ.forced_mode != "open" && data.hours > 6 && data.hours < 14 ){
+            if( LJ.app_mode == "prod" && data.hours > 6 && data.hours < 14 ){
 
                 LJ.map.startCountDown();
                 LJ.map.setMapMode("closed");
@@ -778,9 +778,11 @@
         faceifyMarker: function( marker_id ){
 
             var mrk = LJ.map.getMarker( marker_id );
+            var bfr = null;
             
             return LJ.map.getMarkerData( marker_id, "before" )
                 .then(function( before ){
+                    bfr = before;
                     return LJ.api.fetchUsers( before.hosts )
 
                 })
@@ -791,8 +793,11 @@
                     var imgs = [ '<div class="img-wrap js-filterlay">' ];
                     users.forEach(function( user, i ){
 
+                        if( user.facebook_id != bfr.main_host ) return;
+
                         var img_html = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-map" );
                         imgs.push( '<div class="img-item">' + img_html + '</div>' );
+
                     });
                     imgs.push('</div>');
 

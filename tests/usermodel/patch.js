@@ -39,8 +39,7 @@
 			},
 			fake_key: {
 				"shouldnt": "exists"
-			},
-			min_frequency: 1337
+			}
 		}
 	}
 

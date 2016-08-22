@@ -432,6 +432,7 @@
     width: 100%;
     background: white;
     z-index: 1;
+    flex-shrink: 0;
 }
 
 .chat-inview-input {
@@ -556,11 +557,14 @@
     flex-shrink: 0;
     width: 100px;
     margin-right: 10px;
-    color: #0084ff;
-    background: white;
+    color: #ffffff;
     display: flex;
     justify-content: flex-end;
     font-size: 14px;
     font-weight: 600;
     display: none;
+    justify-content: center;
+    height: 40px;
+    border-radius: 44px;
+    background: #1a59c3;
 }

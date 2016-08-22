@@ -30,11 +30,8 @@
 					tasks.push(function( done ){
 
 						// Update part
-						user.onboarding = [
-							{
-								onboarding_id: "welcome"
-							}
-						];
+						delete user.app_preferences.min_frequency;
+						user.markModified('app_preferences');
 
 						user.save(function( err ){
 							if( err ) console.log('Error : ' + err );
