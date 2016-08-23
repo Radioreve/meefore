@@ -149,7 +149,6 @@ span.be-dates__count {
 
 .slide.x--before .slide__close {
     color: white;
-    color: #1a59c3;
     text-shadow: none;
 }
 
@@ -453,8 +452,9 @@ span.be-dates__count {
 .be-action button {
     width: 70px;
     height: 70px;
-    background: #1a59c3;
     color: white;
+    background: linear-gradient(45deg,#fe685c, #ed105d);
+    border-color: #f84b5c;
 }
 
 .be-action .check-cheers {

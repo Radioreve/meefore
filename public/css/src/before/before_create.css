@@ -41,7 +41,7 @@
 
 .be-create__icon {
     position: absolute;
-    top: 19px;
+    top: 22px;
     left: 6px;
     transform: translate(0, -50%);
     font-size: 14px;
@@ -74,11 +74,11 @@
 
 .be-create-row__input input {
     width: 100%;
-    padding: 12px 10px 12px 32px;
+    padding: 14px 10px 14px 32px;
     box-sizing: border-box;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid #ececec;
-    box-shadow: 3px 2px 2px #f1f1f1;
+    /* box-shadow: 3px 2px 2px #f1f1f1; */
     font-size: 13px;
     color: #1a59c3;
     cursor: pointer;

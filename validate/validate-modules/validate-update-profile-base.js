@@ -20,8 +20,8 @@
 	function check( req, res, next ){
 
 		var isLocation = nv.isAnyObject()
-							.withRequired('place_name', nv.isString())
-							.withRequired('place_id'  , nv.isString());
+			.withRequired('place_name', nv.isString())
+			.withRequired('place_id'  , nv.isString());
 
 		var checkUpdateRequest = nv.isAnyObject()
 

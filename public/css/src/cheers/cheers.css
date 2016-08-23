@@ -133,6 +133,8 @@
     height: 70px;
     background: #1a59c3;
     color: white;
+    background: linear-gradient(45deg,#fe685c, #ed105d);
+    border-color: #f84b5c;
 }
 
 .cheers-back-actions button i {

@@ -48,7 +48,7 @@
 					"title"			: LJ.text('modal_be_create_title'),
 					"subtitle"		: LJ.text('modal_be_create_subtitle'),
 					"body"  		: LJ.friends.renderFriendsInModal(),
-					"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>",
+					"footer" 		: "<button class='x--bombed'>"+ LJ.text("modal_create_btn") +"</button>",
 					"search_input"	: true,
 					"max_items"     : (LJ.app_settings.app.max_hosts - 1),
 					"min_items"     : LJ.app_settings.app.min_group,

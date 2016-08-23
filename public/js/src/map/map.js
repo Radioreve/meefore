@@ -8,12 +8,12 @@
 		init: function(){
 
             try {
-    			LJ.map.setupMap();
+                LJ.map.setupMap();
                 LJ.map.initMarkerFactory();
-    			LJ.map.handleDomEvents();
+                LJ.map.handleDomEvents();
                 LJ.map.handleMapEvents();
                 LJ.map.handleAppEvents();
-    			LJ.map.initPlacesServices();
+                LJ.map.initPlacesServices();
                 LJ.map.refreshMapMode();
 
             } catch( e ){
@@ -35,7 +35,6 @@
 
         },
 		sayHello: function(){
-
 			LJ.log('Map has been successfully loaded');
 
 		},
@@ -103,6 +102,17 @@
             LJ.map.setMapBrowser();
             LJ.map.setMapZoom();
 
+            // google.maps.event.addListenerOnce( LJ.meemap, 'tilesloaded', function(){
+            //     google.maps.event.addListenerOnce( LJ.meemap, 'tilesloaded', function(){
+            //         LJ.ilog('Emitting map ready');
+            //         LJ.emit("map:ready");
+            //     });
+            // });
+
+            google.maps.event.addListenerOnce( LJ.meemap, 'idle', function(){
+                LJ.emit("map:ready");
+            });
+
             setTimeout(function(){
                 LJ.map.refreshMap();
             }, 10000 );
@@ -159,8 +169,9 @@
         },
         handleAppEvents: function(){
 
-            LJ.on("login:complete", LJ.map.handleLoginComplete );
+            // LJ.on("login:complete", LJ.map.handleLoginComplete );
             LJ.on("clock", LJ.map.handleClock );
+            LJ.on("map:ready", LJ.map.handleMapReady );
 
         },  
         handleClock: function( data ){
@@ -207,17 +218,17 @@
             LJ.before.showMyBefore();
 
         },
-        handleLoginComplete: function(){
+        handleMapReady: function(){
 
-            LJ.delay( 250 ).then(function(){
+            LJ.ilog("Map is fully ready");
+            LJ.delay( 50 ).then(function(){
 
                 LJ.map.addBeforeMarkers( LJ.before.fetched_befores );
                 LJ.map.clearSeenMarkers();
                 LJ.map.refreshMarkers();
 
-                LJ.delay( 300 ).then(function(){
+                LJ.delay( 400 ).then(function(){
                     LJ.map.showBeforeMarkers();
-                    
                 });
 
             });
@@ -723,6 +734,10 @@
 
             var $mrk = LJ.map.getMarkerDom( marker_id );
 
+            if( update.add_class ){
+                $mrk.children().addClass( update.add_class );
+            }
+
             if( update.seen ){
                 $mrk.find('.mrk__seen').hide();
             }
@@ -914,28 +929,31 @@
         pendifyMarker: function( marker_id ){
 
             LJ.map.updateMarker( marker_id, {
-                status_html: '<div class="mrk__status x--pending x--round-icon"><i class="icon icon-pending"></i></div>'
+                add_class   : 'x--pending',
+                status_html: '<div class="mrk__status x--round-icon"><i class="icon icon-pending"></i></div>'
             });
 
         },
         acceptifyMarker: function( marker_id ){
 
             LJ.map.updateMarker( marker_id, {
-                status_html: '<div class="mrk__status x--accepted x--round-icon"><i class="icon icon-thunder-right"></i></div>'
+                add_class   : 'x--accepted',
+                status_html : '<div class="mrk__status x--round-icon"><i class="icon icon-thunder-right"></i></div>'
             });
 
         },
         numerifyMarker: function( marker_id, n ){
 
             LJ.map.updateMarker( marker_id, {
-                status_html: '<div class="mrk__status x--'+ n +' x--number x--round-icon"><span>'+ n +'</span></div>'
+                status_html : '<div class="mrk__status x--'+ n +' x--number x--round-icon"><span>'+ n +'</span></div>'
             })
 
         },
         hostifyMarker: function( marker_id ){
 
             LJ.map.updateMarker( marker_id, {
-                status_html: '<div class="mrk__status x--host x--round-icon"><i class="icon icon-star"></i></div>'
+                add_class   : 'x--host',
+                status_html : '<div class="mrk__status x--round-icon"><i class="icon icon-star"></i></div>'
             });
 
         },
@@ -1108,7 +1126,7 @@
 
             hour > LJ.app_settings.closed_map_hours[ 0 ] && hour < LJ.app_settings.closed_map_hours[ 1 ] ?
                 LJ.map.setMapMode("closed") :
-                LJ.map.setMapMode("open") ;
+                LJ.map.setMapMode("open");
 
             
         },

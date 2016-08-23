@@ -35,7 +35,8 @@
 			upload_picture_url		: 'validate-upload-picture-url',
 			users_fetch_more		: 'validate-users-fetch-more',
 			chat_seen_by			: 'validate-chat-seen-by',
-			check_onboarding 		: 'validate-check-onboarding'
+			check_onboarding 		: 'validate-check-onboarding',
+			patch_user 				: 'validate-patch-user'
 			
 			//test                : 'validate-test'
 			

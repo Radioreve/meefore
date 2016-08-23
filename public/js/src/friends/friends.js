@@ -6,7 +6,7 @@
 		init: function(){
 
 			LJ.friends.handleDomEvents();
-			return LJ.friends.fetchAndAddFacebookFriends();
+			LJ.friends.fetchFacebookFriends();
 
 		},
 		handleDomEvents: function(){
@@ -44,6 +44,23 @@
 			var facebook_id = $s.attr('data-facebook-id');
 
 			LJ.profile_user.showUserProfile( facebook_id );
+
+		},
+		fetchFacebookFriends: function(){
+
+			var friend_ids = LJ.user.friends;
+			return LJ.api.fetchUsersFull( friend_ids )
+
+				.then(function( fetched_friends ){
+					fetched_friends = _.map( fetched_friends, 'user' );
+					LJ.friends.setFriendsProfiles( fetched_friends );
+					LJ.friends.sortFriends();
+					return;
+
+				})
+				.catch(function( e ){
+					LJ.wlog(e);
+				});
 
 		},
 		fetchAndAddFacebookFriends: function(){

@@ -1,7 +1,7 @@
 
-	var User   = require('../models/UserModel');
+	var User       = require('../models/UserModel');
 	var mongoose   = require('mongoose');
-	var Before      = require('../models/BeforeModel');
+	var Before     = require('../models/BeforeModel');
 	var eventUtils = require('./eventUtils');
 	var _          = require('lodash');
 	var cloudinary = require('cloudinary');

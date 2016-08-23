@@ -153,12 +153,12 @@
 		},
 		emptifyCheersItems__Chat: function(){
 
-			// $('.chat-rows-title.x--cheers').hide();
-			// $('.chat-rows-body.x--cheers').hide();
+			$('.chat-rows-title.x--cheers').hide();
+			$('.chat-rows-body.x--cheers').hide();
 
-			$( LJ.chat.renderChatRow__CheersEmpty() )
-				.css({ display: 'flex' })
-				.appendTo( '.chat-rows-body.x--cheers' );
+			// $( LJ.chat.renderChatRow__CheersEmpty() )
+			// 	.css({ display: 'flex' })
+			// 	.appendTo( '.chat-rows-body.x--cheers' );
 
 		},
 		unemptifyCheersItem__Chat: function(){

@@ -1292,16 +1292,22 @@
 		},
 		emptifyChatRowsMatches: function(){
 
-			LJ.chat.unemptifyChatRowsMatches();
+			$('.chat-rows-title.x--all').hide();
+			$('.chat-rows-body.x--all').hide();
 
-			$( LJ.chat.renderChatRow__MatchEmpty() )
-				.css({ display: 'flex' })
-				.appendTo( '.chat-rows-body.x--all' );
+			// LJ.chat.unemptifyChatRowsMatches();
+
+			// $( LJ.chat.renderChatRow__MatchEmpty() )
+			// 	.css({ display: 'flex' })
+			// 	.appendTo( '.chat-rows-body.x--all' );
 
 		},
 		unemptifyChatRowsMatches: function(){
 
-			$('.chat-row.x--no-match').remove();
+			$('.chat-rows-title.x--all').css({ 'display': 'flex' });
+			$('.chat-rows-body.x--all').css({ 'display': 'flex' });
+
+			// $('.chat-row.x--no-match').remove();
 
 		},
 		clearChatState: function( chat_id ){

@@ -755,7 +755,8 @@
 					.then(function( exposed ){
 
 						if( !exposed.user ){
-							return LJ.wlog('The server didnt respond with the expected user object');
+							LJ.wlog('The server didnt respond with the expected user object');
+							return resolve( exposed );
 						} else {
 							return resolve( exposed );
 						}

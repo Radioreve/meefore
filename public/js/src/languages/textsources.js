@@ -916,6 +916,14 @@
 			"fr": "Aucune mise à jour n'est nécessaire!",
 			"us": "No update is necessary!"
 		},
+		to_email_already_taken: {
+			"fr": "Cet email est déjà utilisé",
+			"us": "This email is already used"
+		},
+		to_email_wrong_pattern: {
+			"fr": "L'addresse email semble invalide",
+			"us": "That doesnt look like an email address"
+		},
 		to_upload_singlepic: {
 			"fr": "Ne téléchargez qu'une seule image à la fois",
 			"us": "Please, don't upload more than one picture at once"
@@ -2200,7 +2208,7 @@
 			"us": "Create a before with your friends to receive Cheers"
 		},
 		meemap_closed_h1: {
-			"fr": "On fait un break...",
+			"fr": "Dormir, pour mieux repartir...",
 			"us": "Let's have a break..."
 		},
 		meemap_closed_h2: {
@@ -2235,7 +2243,16 @@
 		notification_empty_subtitle: {
 			"fr": "Crée un before ou envoie des Cheers pour commencer à recevoir des notifications",
 			"us": "Notifications about tonight's before will show up here"
+		},
+		modal_create_btn: {
+			"fr": "Ajouter à ma team",
+			"us": "Add to my team"
+		},
+		modal_request_btn: {
+			"fr": "Envoyer un Cheers",
+			"us": "Send a Cheers"
 		}
+
 
 
 	});

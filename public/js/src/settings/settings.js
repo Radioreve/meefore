@@ -184,7 +184,7 @@
 			}
 
 			if( type_id = "contact_email" ){
-				return LJ.settings.updateContactEmail()
+				return LJ.settings.updateContactEmail();
 			}
 
 		},
@@ -291,7 +291,7 @@
 		handleApiError: function( err ){
 
 			var err_ns  = err.namespace;
-			var err_id  = err.errors[0].err_id || (err.errors[0].data && err.errors[0].data.err_id );
+			var err_id  = err.err_id || err.errors[0].err_id || (err.errors[0].data && err.errors[0].data.err_id );
 			var call_id = err.call_id;
 
 			if( err.namespace == 'update_settings' ){
@@ -302,6 +302,21 @@
 				return;
 
 			}
+
+			if( err_id == "email_already_taken" ){
+				LJ.ui.showToast( LJ.text('to_email_already_taken'), 'error' );
+				LJ.ui.hideLoader( call_id );
+				$('.settings-item[data-callid="' + call_id + '"]').removeClass('x--validating');
+				return;
+			}
+
+			if( err_id == "wrong_pattern" ){
+				LJ.ui.showToast( LJ.text('to_email_wrong_pattern'), 'error' );
+				LJ.ui.hideLoader( call_id );
+				$('.settings-item[data-callid="' + call_id + '"]').removeClass('x--validating');
+				return;
+			}
+
 
 			if( err_id == 'already_taken' ){
 				LJ.ui.showToast( LJ.text('to_invite_code_already_taken'), 'error' );

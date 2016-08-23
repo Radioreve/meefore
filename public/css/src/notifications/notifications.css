@@ -10,8 +10,6 @@
     position: fixed;
     background: white;
     color: #191919;
-    top: 55px;
-    box-shadow: 0 3px 14px #949494;
     right: 0;
     z-index: 300;
     display: none;
@@ -44,13 +42,14 @@
     flex-direction: row;
     height: 74px;
     color: #191919;
-    width: 95%;
+    width: 100%;
     margin: 2px auto;
     box-sizing: border-box;
-    padding: 0 16px 0 8px;
-    border-radius: 4px;
+    padding: 0 16px 0;
+    border-radius: 0px;
     cursor: pointer;
     position: relative;
+    border-bottom: 1px solid #eee;
 } 
 
 .notification:hover {

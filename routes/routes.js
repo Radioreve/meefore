@@ -196,6 +196,7 @@
 	    app.patch('/api/v1/users/:user_id',
 	    	mdw.validate('myself'),
 	    	mdw.pop.populateUser(),
+	    	mdw.validate('patch_user'),
 	    	mdw.mailchimp.api("update_member"),
 	    	api.users.updateUser
 	    );

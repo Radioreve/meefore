@@ -2,13 +2,10 @@
     display: none;
     position: fixed;
     right: 0px;
-    top: 55px;
     z-index: 101;
     background: #fff;
     width: 420px;
     box-sizing: border-box;
-    box-shadow: 0 3px 14px #949494;
-    /* box-shadow: -5px 10px 15px 5px rgba(0,0,0,.1); */
     flex-flow: column nowrap;
 }
 
@@ -212,13 +209,12 @@
     /* background: #f1f1f1; */
     color: #676767;
     border-bottom: 1px solid #eee;
-    padding: 8px 10px;
+    padding: 8px 16px;
     width: 100%;
     font-weight: 600;
     font-size: 14px;
     color: #1a59c3;
     font-family: 'quenda';
-    display: none!important;
 }
 
 .chat-rows-title span {
@@ -352,15 +348,16 @@
 .chat-row .bubble {
     position: absolute;
     left: 61px;
-    top: 28px;
-    width: 13px;
-    height: 13px;
+    top: 27px;
+    width: 14px;
+    height: 14px;
     background: #1a59c3;
     color: #ffffff;
     border: 2px solid #ffffff;
     padding: 0;
     font-weight: 500;
     z-index: 1;
+    background: linear-gradient(45deg,#fe685c, #ed105d);
 }
 
 .chat-row-bubble .chat-bubble {

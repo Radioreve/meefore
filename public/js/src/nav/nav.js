@@ -54,10 +54,7 @@
 			var $target_menuitem = $('.app__menu-item[data-link="' + target_link + '"]');
 			var $current_menuitem = $('.app__menu-item[data-link="' + current_link + '"]') || $target_menuitem
 
-			var $target_headertitle  = $('.app-header__title[data-link="' + target_link + '"]');
-			var $current_headertitle = $('.app-header__title[data-link="' + current_link + '"]') || $target_headertitle;
-
-			if( $target_section.length + $target_menuitem.length + $target_headertitle.length != 3 ){
+			if( $target_section.length + $target_menuitem.length != 2 ){
 				return LJ.wlog('Ghost target for link : ' + link );
 			}
 
@@ -89,7 +86,9 @@
 
 			// Specificities
 			if( target_link == 'map' ){
+
 				$('.app').removeClass('padded');
+				$('html').addClass('x--corner');
 
 				LJ.unoffsetAll();
 				LJ.ui.deactivateHtmlScroll();
@@ -103,7 +102,10 @@
 
 
 			} else {
+
 				$('.app').addClass('padded');
+				$('html').removeClass('x--corner');
+
 				LJ.ui.activateHtmlScroll();
 
 				if( LJ.isMobileMode() ){

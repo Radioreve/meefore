@@ -42,7 +42,7 @@
 				"body"  		: LJ.friends.renderFriendsInModal(),
 				"max_items"     : (LJ.app_settings.app.max_group - 1),
 				"min_items"     : LJ.app_settings.app.min_group,
-				"footer"		: "<button class='x--rounded'><i class='icon icon-check'></i></button>"
+				"footer" 		: "<button class='x--bombed'>"+ LJ.text("modal_request_btn") +"</button>",
 			})
 			.then(function(){
 				LJ.ui.refreshModalState();

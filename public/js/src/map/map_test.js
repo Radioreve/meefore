@@ -36,66 +36,87 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 		},
 		refreshPictures: function(){
 
-			LJ.map.test.places.forEach(function( latlng, i ){
+			LJ.search.fetchMoreUsers()
+				.then(function( users ){
 
-				var j = LJ.randomInt( 0, 9 );
-				var u = LJ.search.fetched_users[ j ];
-				var k = LJ.findMainPic( u );
-				var h = LJ.pictures.makeImgHtml( k.img_id, k.img_version, "user-map" );
+					LJ.search.fetched_users = users;
 
-				var update = {};
+					LJ.map.test.places.forEach(function( latlng, i ){
 
-				if( i/2 == 0 ){
-					update.seen = true;
-				} else {
-					update.unseen = true;
-				}
+						var j = LJ.randomInt( 0, 9 );
+						var u = LJ.search.fetched_users[ j ];
+						var k = LJ.findMainPic( u );
+						var h = LJ.pictures.makeImgHtml( k.img_id, k.img_version, "user-map" );
 
-				var rnd = LJ.randomInt( 0, 5 );
-				if( rnd == 0 ){
-					update.status_html = '<div class="mrk__status x--pending x--round-icon"><i class="icon icon-pending"></i></div>';
-				}
-				if( rnd == 1 ){
-					update.status_html = '<div class="mrk__status x--accepted x--round-icon"><i class="icon icon-thunder-right"></i></div>'
-				}
-				if( rnd == 2 ){
-					update.status_html = '<div class="mrk__status x--number x--round-icon x--1"><span>1</span></div>';
-				}
-				if( rnd == 3 ){
-					update.status_html = '<div class="mrk__status x--number x--round-icon x--2"><span>2</span></div>';
-				}
-				if( rnd == 4 ){
-					update.status_html = '<div class="mrk__status x--number x--round-icon x--3"><span>3</span></div>';
-				}
-				if( rnd == 5 ){
-					update.status_html = '<div class="mrk__status x--number x--round-icon x--4"><span>4</span></div>';
-				}
+						var update = {};
 
-				if( i == 10 ){
-					update.status_html = '<div class="mrk__status x--host x--round-icon"><i class="icon icon-star"></i></div>'
-				}
+						if( i%2 == 0 ){
+							update.seen = true;
+						} else {
+							update.unseen = true;
+						}
 
-				var users = _.uniq( _.map( [ LJ.randomInt( 0, 9 ), LJ.randomInt( 0, 9 ), LJ.randomInt( 0, 9 ), LJ.randomInt( 0, 9 ) ], function( i ){
-					var u = LJ.search.fetched_users[ i ];
-					u.img_id = LJ.findMainPic( u ).img_id;
-					u.img_vs = LJ.findMainPic( u ).img_version;
-					return u;
-				}));
+						update.add_class = 'x--male';
+						if( i%3 == 0 ){
+							update.add_class = 'x--mixed';
+						}
+						if( i%4 == 0 ){
+							update.add_class = 'x--female';
+						}
 
-				var imgs = [ '<div class="img-wrap">' ];
-                users.forEach(function( user, i ){
-                    var img_html = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-map" );
-                    imgs.push( LJ.ui.render( '<div class="img-item" data-link="'+ i +'">' + img_html + '</div>' ) );
-                });
-                imgs.push('</div>');
+						var rnd = LJ.randomInt( 0, 5 );
+						if( rnd == 0 ){
+							update.add_class += " x--pending";
+							update.status_html = '<div class="mrk__status x--round-icon"><i class="icon icon-pending"></i></div>';
+						}
+						if( rnd == 1 ){
+							update.add_class += " x--accepted";
+							update.status_html = '<div class="mrk__status x--round-icon"><i class="icon icon-thunder-right"></i></div>'
+						}
+						if( rnd == 2 ){
+							update.add_class += " x--number";
+							update.status_html = '<div class="mrk__status x--round-icon x--1"><span>1</span></div>';
+						}
+						if( rnd == 3 ){
+							update.add_class += " x--number";
+							update.status_html = '<div class="mrk__status x--round-icon x--2"><span>2</span></div>';
+						}
+						if( rnd == 4 ){
+							update.add_class += " x--number";
+							update.status_html = '<div class="mrk__status x--round-icon x--3"><span>3</span></div>';
+						}
+						if( rnd == 5 ){
+							update.add_class += " x--number";
+							update.status_html = '<div class="mrk__status x--round-icon x--4"><span>4</span></div>';
+						}
 
-				update.img_html = imgs.join('');
+						if( i == 10 ){
+							update.add_class += " x--host";
+							update.status_html = '<div class="mrk__status x--round-icon"><i class="icon icon-star"></i></div>'
+						}
 
-				LJ.map.updateMarker( i, update );
-				LJ.map.setMarkerPicturesActive( i );
+						var users = _.uniq( _.map( [ LJ.randomInt( 0, 9 ), LJ.randomInt( 0, 9 ), LJ.randomInt( 0, 9 ), LJ.randomInt( 0, 9 ) ], function( i ){
+							var u = LJ.search.fetched_users[ i ];
+							u.img_id = LJ.findMainPic( u ).img_id;
+							u.img_vs = LJ.findMainPic( u ).img_version;
+							return u;
+						}));
 
-			});
+						var imgs = [ '<div class="img-wrap">' ];
+		                users.forEach(function( user, i ){
+		                    var img_html = LJ.pictures.makeImgHtml( user.img_id, user.img_vs, "user-map" );
+		                    imgs.push( LJ.ui.render( '<div class="img-item" data-link="'+ i +'">' + img_html + '</div>' ) );
+		                });
+		                imgs.push('</div>');
 
+						update.img_html = imgs.join('');
+
+						LJ.map.updateMarker( i, update );
+						LJ.map.setMarkerPicturesActive( i );
+
+					});
+
+				});
 
 		},
 		places: [

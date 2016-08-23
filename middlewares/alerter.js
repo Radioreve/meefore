@@ -45,7 +45,7 @@
 		},
 		"marked_as_host_subject": {
 			"fr": "Marqué coorganisateur d'un before",
-			"us": "Marked cohost of a pregame"
+			"us": "Marked co-host of a predrink"
 		}
 
 	};
@@ -275,13 +275,19 @@
 
 				users.forEach(function( usr ){
 
-					if( !usr.app_preferences.alerts_email.new_message ){
-						return alertLog( usr.name + " doesnt wish to receive new_messages alerts" );
+					if( !usr.app_preferences.alerts_email[ type ] ){
+						return alertLog( usr.name + " doesnt wish to receive "+ type +" alerts" );
 					}
 
-					var diff_in_minutes = ( moment() - moment( usr.alerted_at ) ) / ( 1000 * 60 );
-					if( diff_in_minutes < settings.min_frequency ){
-						return alertLog( usr.name + ' has been mailed too recently ('+ diff_in_minutes +' min)');
+					// For some specific alerts, place an additionnal anti-spam filter, to make sure they are
+					// not alerted too often.
+					if( [ "new_message" ].indexOf( type ) !== -1 ){
+
+						var diff_in_minutes = ( moment() - moment( usr.alerted_at ) ) / ( 1000 * 60 );
+						if( diff_in_minutes < settings.min_frequency ){
+							return alertLog( usr.name + ' has been mailed too recently ('+ diff_in_minutes +' min)');
+						}
+
 					}
 
 					interested_users.push( usr );
@@ -381,7 +387,7 @@
 		var mandrill_opts = {};
 		
 		mandrill_opts.target           = { email: opts.receiver.contact_email, name: opts.receiver.name };
-		mandrill_opts.subject          = text_source[ "marked_as_host" ][ opts.cc ];
+		mandrill_opts.subject          = text_source[ "marked_as_host_subject" ][ opts.cc ];
 		mandrill_opts.template_name    = "marked-as-host";
 		mandrill_opts.template_content = [];
 		mandrill_opts.cc 			   = opts.cc;
@@ -410,8 +416,8 @@
 
 			"key": config.mandrill.api_key,
 
-			"template_name"   : opts.template_name,
-			"template_content": opts.template_content,
+			"template_name"    : opts.template_name + '-' opts.cc,
+			"template_content" : opts.template_content,
 
 		    "message": {
 
@@ -420,9 +426,11 @@
 
 		        "subject"	 : opts.subject,
 		        "to"		 : [{
+
 		        	email: opts.target.email,
 		        	name : opts.target.name,
 		        	type : "to"
+
 		        }],
 
 		        "headers": {

@@ -73,9 +73,9 @@
                 // .then(function(){ return LJ.delayd[ lol ]})
                 .then(function(){
                     var a = LJ.friends.init();
-                    var b = LJ.search.init();
+                    // var b = LJ.search.init();
                     var c = LJ.realtime.init();
-                    return LJ.Promise.all([ a, b, c ]);
+                    return LJ.Promise.all([ a, c ]);
                 })
                 .then( LJ.notifications.init )
                 .then( LJ.before.init )
