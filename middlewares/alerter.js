@@ -416,7 +416,7 @@
 
 			"key": config.mandrill.api_key,
 
-			"template_name"    : opts.template_name + '-' opts.cc,
+			"template_name"    : opts.template_name + '-' + opts.cc,
 			"template_content" : opts.template_content,
 
 		    "message": {
