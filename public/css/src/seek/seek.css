@@ -96,11 +96,13 @@
     box-shadow: none;
     top: auto;
     position: fixed!important;
-    bottom: 80px;
+    bottom: 86px;
     top: auto!important;
     right: 86px;
     left: auto;
     border-radius: 10px 10px 0 0;
+    border: 1px solid #adc2e5;
+    border-radius: 40px;
 }
 
 .seek-map-browser-places .pac-item {

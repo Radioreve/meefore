@@ -54,6 +54,12 @@
     .app-subheader.x--menu .menu-item__bar {
         margin-left: 8px!important;
     }
+    .meemap-closed {
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
     .map-browse {
         bottom: 0px!important;
         width: 100%!important;
@@ -200,7 +206,6 @@
         margin-top: 10px!important;
     }
     .app__menu-item:not(.x--active):hover .app__menu-icon {
-        color: inherit!important;
     }
     .search-filters {
         padding-bottom: 0!important;

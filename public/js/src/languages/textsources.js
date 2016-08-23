@@ -1928,8 +1928,8 @@
 			"us": "%name just canceled a pregame that you organized together"
 		},
 		modal_request_subtitle: {
-			"fr": "Envoie un Cheers tout seul ou à plusieurs ",
-			"us": "Send a Cheers alone or with your friends"
+			"fr": "Sélectionne les amis avec lesquels tu souhaites envoyer un Cheers",
+			"us": "Select the friends you want to send a Cheers with"
 		},
 		to_before_create_success: {
 			"fr": "Ton before vient d'être créé !",

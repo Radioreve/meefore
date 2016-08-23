@@ -19,9 +19,8 @@
 		},
 		sayCheers: function(){
 
-			return "Cheers";
+			// return "Cheers";
 
-			// Legacy
 			return _.shuffle([
 
 				'Santé',
@@ -36,7 +35,7 @@
 				'Prost',
 				'Kippis'
 
-			])[0] + ' !';
+			])[ 0 ] + ' !';
 
 		},
 		getAppLang: function(){

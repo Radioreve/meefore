@@ -122,7 +122,8 @@
 		startLanding: function( message ){
 			return LJ.promise(function( resolve, reject ){
 				LJ.log( message );
-				LJ.log('Starting landing... v' + 1 );
+				var landing_v = 1;
+				LJ.log('Starting landing... v' + landing_v );
 
 				$( LJ.static.renderStaticImage('slide_loader') )
 					.hide()
@@ -133,7 +134,7 @@
 					duration: 600,
 					complete: function(){
 						LJ.ui.hideCurtain({ duration: 800 });
-						LJ.landing.activateLanding( 2 );
+						LJ.landing.activateLanding( landing_v );
 									
 					}
 				})

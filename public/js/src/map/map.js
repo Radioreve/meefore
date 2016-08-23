@@ -1205,7 +1205,7 @@
                         '<h3 data-lid="meemap_closed_h3"></h3>',
                     '</div>',
                     '<div class="meemap-closed__icon x--round-icon">',
-                        '<i class="icon icon-bednight"></i>',
+                        '<img src="/img/empty/people.svg">',
                     '</div>',
                     '<div class="meemap-igloo">',
                         '<div class="meemap-countdown">',

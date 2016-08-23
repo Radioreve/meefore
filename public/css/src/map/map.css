@@ -18,19 +18,19 @@
     position: absolute;
     z-index: 1;
     font-size: 30px;
-    border: 1px solid #a4bbe2;
+    border: 1px solid #1a59c3;
 }
 
 .map__icon.x--geoloc,
 .map__icon.x--change-location,
 .map__icon.x--facebook {
     bottom: 31px;
-    font-size: 22px;
+    font-size: 18px;
     cursor: pointer;
     background: #ffffff;
     color: #1a59c3;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
 }
 
 .map__icon.x--geoloc:hover,
@@ -46,7 +46,7 @@
 .map__icon.x--facebook.x--hearted {
     background: #1a59c3;
     color: white;
-    right: 40px;
+    right: 46px;
     left: auto;
 }
 
@@ -175,12 +175,12 @@
     top: 0;
     left: 0;
     z-index: 10;
-    background: rgba(251, 251, 251, 0.5);
+    background: rgba(0, 0, 0, 0.28);
 }
 
 .map-browse {
     position: fixed;
-    bottom: 36px;
+    bottom: 32px;
     right: 86px;
     width: 300px;
     height: 44px;
@@ -188,6 +188,8 @@
     z-index: 10;
     box-sizing: border-box;
     display: none;
+    overflow: hidden;
+    border: 1px solid #adc2e5;
 }
 
 .map-browse input {
@@ -196,7 +198,6 @@
     padding: 0 30px;
     font-size: 13px;
     border: none;
-    border-bottom: 3px solid #1a59c3;
 }
 
 .map-browse input::-webkit-input-placeholder {
@@ -218,10 +219,10 @@
 }
 
 .map-zoom {
-    bottom: 100px;
-    right: 26px;
-    height: 90px;
-    width: 40px;
+    bottom: 90px;
+    right: 25px;
+    height: 70px;
+    width: 30px;
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
@@ -417,18 +418,17 @@
 
 .meemap-closed {
     display: flex;
-    width: 100%;
     justify-content: center;
     align-items: center;
     position: relative;
     z-index: 100;
     background: white;
-    height: 70%;
     position: fixed;
     flex-flow: column;
     bottom: 0;
     left: 0;
     right: 0;
+    margin: 0 auto;
 }
 
 .meemap-closed__h1 {
@@ -437,6 +437,7 @@
     margin-bottom: 20px;
     font-weight: bolder;
     color: #1a59c3;
+    text-align: center;
 }
 
 .meemap-closed__h1 h1 {}
