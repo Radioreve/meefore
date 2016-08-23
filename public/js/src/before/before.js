@@ -336,7 +336,8 @@
 
         	before_id = bfr ? bfr.before_id : null;
 
-			LJ.before.fetchAndShowBeforeInview( before_id );        	
+			LJ.before.fetchAndShowBeforeInview( before_id );       
+			LJ.map.activateMarker( before_id ); 	
 
         },
         showBeforeInview: function( before ){

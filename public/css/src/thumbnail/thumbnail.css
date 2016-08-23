@@ -58,6 +58,12 @@
     .app-thumbnail ul {
         margin-left: auto;
     }
+    .app__menu-item.x--map {
+        margin-right: 0;
+    }
+    .x--corner .app__menu-item.x--map {
+        margin-right: auto;
+    }
     .app__menu-item {
        width: 50px;
     }

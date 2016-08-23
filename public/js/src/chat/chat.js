@@ -998,6 +998,7 @@
 				LJ.nav.denavigate();
 				LJ.ui.deactivateHtmlScroll();
 				LJ.notifications.hideNotificationsPanel();
+				$('html').removeClass("x--corner");
 			}
 
 			opts = opts || {};

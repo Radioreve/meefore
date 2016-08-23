@@ -1576,6 +1576,7 @@ button:hover {
     display: none;
     text-shadow: 0 0 1px #919191;
     padding: 4px;
+    cursor: pointer;
 }
 
 .slide__close i {
@@ -1820,6 +1821,7 @@ button:hover {
     position: fixed;
     top: 0;
     left: 0;
+    background: transparent;
 }
 .header-wrap.x--blue .app-header {
     background: #313198;

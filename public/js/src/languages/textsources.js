@@ -1244,10 +1244,6 @@
 			"fr": "Nouveau Match !",
 			"us": "New Match !"
 		},
-		n_accepted_in_hosts_subtext: {
-			"fr": "Vous avez accepté un Cheers",
-			"us": "You have accepted a Cheers"
-		},
 		n_accepted_in_members_subtext: {
 			"fr": "Votre Cheers a été accepté",
 			"us": "Your Cheers have been accepted"

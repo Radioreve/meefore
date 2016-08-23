@@ -391,6 +391,7 @@
 			if( LJ.isMobileMode() ){
 				LJ.nav.denavigate();
 				LJ.ui.deactivateHtmlScroll();
+				$('html').removeClass("x--corner");
 			}
 
 			if( LJ.notifications.state == "visible" ){
@@ -436,12 +437,11 @@
 
 			var options = {};
 			
-			options.picture     = "question-mark";
-			options.text        = LJ.text("n_fill_profile_text");
-			options.subtext     = LJ.text("n_fill_profile_subtext");
+			options.picture = "question-mark";
+			options.text    = LJ.text("n_fill_profile_text");
+			options.subtext = LJ.text("n_fill_profile_subtext");
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
-
 
 		},
 		renderNotification__RequestAcceptedHosts: function( notification ){
@@ -452,11 +452,12 @@
 			
 			var others      = is_host ? notification.members : notification.hosts;
 			var profiles    = LJ.notifications.getUserProfiles( others );
-			
+			var names 		= _.map( profiles, 'name' );
+			var f_names     = LJ.renderMultipleNames( f_names );
 			
 			options.picture = LJ.pictures.makeGroupRosace( profiles, 2, "notification" );
 			options.text    = LJ.text("n_accepted_in_text");
-			options.subtext = LJ.text("n_accepted_in_hosts_subtext");
+			options.subtext = LJ.text("w_with") + " " + f_names;
 
 			return LJ.notifications.renderNotificationItem( _.extend( {}, notification, options ) );
 

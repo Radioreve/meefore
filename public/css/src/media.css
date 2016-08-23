@@ -11,7 +11,7 @@
     .x--mb {
         display: flex!important;
     }
-    .app-section {
+    .app-section.x--menu {
         padding-top: 45px!important;
     }
     .app-logout,
@@ -211,7 +211,8 @@
         box-shadow: none;
     }
     .chat-inview-footer button {
-        display: flex!important
+        display: flex!important;
+        justify-content: center!important;
     }
     .search-filters-section {
         margin-bottom: 40px!important;
@@ -264,8 +265,8 @@
 
     .notification .notification__date {
         position: absolute!important;
-        top: 2px!important;
-        right: 0px!important;
+        top: 4px!important;
+        right: 6px!important;
     }
     
 }
