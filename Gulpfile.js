@@ -22,6 +22,7 @@
 
         var lib_path = 'public/js/lib';
         var src_path = 'public/js/src/**/*.js';
+        var exclude  = '!public/js/src/landing/landing_*.js';
 
         var lodash         = lib_path + '/lodash/lodash.js';
         var jquery         = lib_path + '/jquery/jquery.js';
@@ -47,7 +48,8 @@
             moment_locale, pikaday, nouislider, countdown,
 
             // Sources in any order
-            src_path
+            src_path,
+            exclude
 
     		])
     		.pipe(concat( NAMESPACE + '.js'))
@@ -75,11 +77,13 @@
 
         // Sources, in any order
         var sources     = 'public/css/src/**/*.css';
+        var exclude     = '!public/css/src/landing/*.css';
 
         gulp.src([
             hint, jscrollpane, nouislider, pikadate, typeahead, reset,
             common,
             sources,
+            exclude,
             media
         ])
         .pipe(concat( NAMESPACE + '.css'))
