@@ -16,6 +16,9 @@
 
 	};
 
+	// This checks if any new onboarding content has been defined that the user isnt aware of
+	// The list of current onboarding is settings.js. It's the clients responsability to implement
+	// it and let the server know that any particular onboarding material has been completed.
 	var setOnboardings = function( req, res, next ){
 
 		var err_ns = "setting_onboarding";

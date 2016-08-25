@@ -136,6 +136,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     height: 18px;
+    font-weight: 500;
 }
 
 .chat-inview-title__h1 .x--hour {}

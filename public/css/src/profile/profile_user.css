@@ -70,8 +70,8 @@
     border-radius: 100px;
     font-weight: 600;
     z-index: 10;
-    padding: 5px 26px;
-    font-size: 20px;
+    padding: 10px 26px;
+    font-size: 22px;
     font-weight: 400;
 }
 
@@ -90,12 +90,7 @@
     text-overflow: ellipsis;
     max-width: 128px;
     overflow: hidden;
-    font-family: 'creamy';
-    font-size: 34px;
-    font-weight: 500;
-    position: relative;
-    top: 2px;
-    padding-right: 3px;
+    font-family: 'quenda';
 }
 
 .user-infos__item.x--base comma {}
@@ -103,6 +98,8 @@
 .user-infos__item.x--base span {
     margin-right: 4px;
     position: relative;
+    font-size: 0.9em;
+    top: -2px;
 }
 
 .user-infos__item.x--age {
@@ -151,8 +148,8 @@
     align-items: center;
     justify-content: center;
     margin: 16px 0 12px 0;
-    font-family: 'creamy';
-    font-size: 23px;
+    font-family: 'quenda';
+    font-size: 14px;
 }
 
 .user-infos__title label {

@@ -31,26 +31,6 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 				"fr" :"Discutez entre groupes dans le chat",
 				"us": "Chat with the other group"
 			},
-			"landing_change_lang": {
-				"fr": "Langue",
-				"us": "Lang"
-			},
-			"landing_privacy": {
-				"fr": [
-						'En continuant, tu acceptes nos <span class="js-terms landing-bold">Conditions d\'Utilisation</span>',
-						' et <span class="js-privacy landing-bold">Politique de Confidentialité.</span>',
-						' <br>Nous ne publierons <span class="landing-bold">rien</span> sur Facebook.'
-					].join(''),
-				"us": [
-						'By continuing, you\'re agreeing to our <span class="js-terms landing-bold">Terms</span>',
-						'and <span class="js-privacy landing-bold">Confidentiality.</span>',
-						' <br>We will <span class="landing-bold">never</span> publish on Facebook.'
-					].join('')
-			},
-			"landing_connexion_btn": {
-				"fr": "Se connecter via <span class=\"landing-bold\">Facebook</span>",
-				"us": "Connection with <span class=\"landing-bold\">Facebook</span>"
-			},
 			"landing_terms": {
 				"fr": "Conditions d\'Utilisation",
 				"us": "Terms"
@@ -74,8 +54,9 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 		},
 		"html": [
 			'<div class="landing x--v1">',
-			    LJ.landing.elems.logo_inverse,
+			    LJ.landing.elems.logo_brand,
 			    LJ.landing.elems.change_lang,
+			    LJ.landing.elems.facebook_page,
 			      '<div class="landing-title">',
 			        '<h1 data-lid="landing_browse_title"></h1>',
 			      '</div>',
@@ -84,10 +65,7 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 			      '</div>',
 		          '<div class="landing__phone">',
 			          '<img src="/img/iphone4.png" alt=iPhone">',
-				      '<div class="landing-connexion">',
-				      	'<a class="js-no-popup" href="http://www.meefore.com/home"></a>',
-				        '<button class="js-login" data-lid="landing_connexion_btn"></button>',
-				      '</div>',
+				      LJ.landing.elems.connexion_btn,
 		          '</div>',
 			      '<div class="landing-bullets">',
 			        '<div class="landing__bullet x--active"></div>',

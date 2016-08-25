@@ -102,6 +102,10 @@
                 LJ.chat.showChatWrap();
             }
 
+            if( LJ.isMobileMode() ){
+            	LJ.before.hideBeforeInview();
+            }
+            
             LJ.chat.hideChatInview();
             LJ.chat.activateChat( chat_id );
             LJ.chat.showChatInview( chat_id );

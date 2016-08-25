@@ -48,6 +48,9 @@
     .modal {
         width: 80%!important;
     }
+    .modal__title {
+        font-size: 22px;
+    }
     .settings-input-label {
         margin: 0!important;
     }
@@ -272,6 +275,18 @@
         position: absolute!important;
         top: 4px!important;
         right: 6px!important;
+    }
+
+    .chat, .notifications-panel {
+        border: none;
+    }
+
+    .login__progress-bar {
+        width: 230px
+    }
+
+    .be-create {
+        padding: 0 20px 40px;
     }
     
 }

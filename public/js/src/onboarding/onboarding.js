@@ -10,25 +10,34 @@
         },
         handleDomEvents: function(){
 
-            $('body').on('click', '.js-onboard', LJ.onboarding.handleOnboarding );
+            $('body').on('click', '.tip.x--onb button', function(){
+                var tip_id = $( this ).closest('.tip').attr('data-tip-id');
+                LJ.ui.removeTip( tip_id );
+            });
 
         },
         handleAppEvents: function(){
 
             LJ.on("login:complete", LJ.onboarding.handleLoginComplete );
+            LJ.on("welcome:complete", LJ.onboarding.handleWelcomeComplete );
+            LJ.on("show_before_inview:complete", LJ.onboarding.handleShowBeforeInview );
 
         },
         handleLoginComplete: function(){
 
-            LJ.onboarding.showOnboarding("welcome_to_meefore");
+            LJ.onboarding.showOnboarding("welcome_to_meefore")
 
         },
-        handleOnboarding: function(){
+        handleWelcomeComplete: function(){
 
-            var $s     = $( this );
-            var onb_id = $s.attr('data-onboarding-id');
+            LJ.delay( 1000 ).then(function(){
+                LJ.onboarding.showOnboarding("create_before");
+            });
 
-            LJ.onboarding.showOnboarding( onb_id );
+        },
+        handleShowBeforeInview: function(){
+
+            LJ.onboarding.showOnboarding("send_cheers");
 
         },
         isOnboardingNecessary: function( onb_id ){
@@ -137,6 +146,8 @@
                                 delay    : 350
                             });
 
+                            LJ.emit("welcome:complete");
+
                         });
 
                 });
@@ -166,12 +177,28 @@
         },
         showHowToCreateBefore: function(){
 
+            LJ.ui.tipify( $('.js-create-before'), 'onb-create-before', {
 
+                position : "botleft",
+                title    : LJ.text("onb_create_before_title"),
+                body     : LJ.text("onb_create_before_body"),
+                tags     : [ 'onb', 'onb-create-before' ],
+                btn      : "<button>"+ LJ.text('onb_create_before_btn') +"</button>"
+
+            });
 
         },
         showHowToSendCheers: function(){
 
+            LJ.ui.tipify( $('.js-request'), 'onb-send-cheers', {
 
+                position : "botleft",
+                title    : LJ.text("onb_send_cheers_title"),
+                body     : LJ.text("onb_send_cheers_body"),
+                tags     : [ 'onb', 'onb-send-cheers' ],
+                btn      : "<button>"+ LJ.text('onb_send_cheers_btn') +"</button>"
+
+            });
 
         },
         showHowToChangeSettings: function(){
@@ -179,8 +206,6 @@
 
 
         }
-
-
 
 
     });

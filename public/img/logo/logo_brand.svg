@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="800px" height="310px" viewBox="0 0 800 310" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 39.1 (31720) - http://www.bohemiancoding.com/sketch -->
+    <title>Logo-white-bg-coloured Copy 7</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="17.8824844%" y1="86.7466952%" x2="79.3011275%" y2="12.6360809%" id="linearGradient-1">
+            <stop stop-color="#FF705C" offset="0%"></stop>
+            <stop stop-color="#ED0E5D" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Logo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Logo-white-bg-coloured-Copy-7">
+            <g id="button" transform="translate(34.000000, 65.000000)">
+                <circle id="btn" fill="url(#linearGradient-1)" cx="89.8875918" cy="89.8875918" r="89.8875918"></circle>
+                <g id="meedrink" transform="translate(39.053834, 30.538336)" fill="#FFFFFF">
+                    <path d="M12.8228433,33.0634247 C12.6320416,34.6290342 12.5337937,36.2235513 12.5337937,37.8412288 C12.5337937,56.5817979 25.7195445,72.214013 43.238111,75.8025624 L43.238111,94.9849935 L35.2453685,94.9849935 C31.0413435,94.9849935 27.6321976,98.3935874 27.6321976,102.598301 C27.6321976,106.803939 31.0407303,110.211609 35.2453685,110.211609 L66.4775965,110.211609 C70.6816216,110.211609 74.0907674,106.803015 74.0907674,102.598301 C74.0907674,98.3926629 70.6822347,94.9849935 66.4775965,94.9849935 L58.4633923,94.9849935 L58.4633923,75.827691 C76.0435618,72.2875526 89.2914307,56.6258893 89.2914307,37.8412288 C89.2914307,36.2235513 89.1931828,34.6290342 89.002381,33.0634247 L12.8228433,33.0634247 L12.8228433,33.0634247 Z M87.8496878,27.2265555 L84.9751916,16.0725152 C83.9263737,12.0027389 79.6675514,8.70084019 75.4637019,8.70084019 L26.3615225,8.70084019 C22.1571314,8.70084019 17.8992339,12.0012515 16.8500328,16.0725152 L13.9755366,27.2265555 L87.8496878,27.2265555 L87.8496878,27.2265555 Z" id="Shape" transform="translate(50.912612, 59.456224) rotate(16.000000) translate(-50.912612, -59.456224) "></path>
+                </g>
+            </g>
+            <text id="Meefore" font-family="Quenda-Heavy, Quenda" font-size="140" font-weight="600" letter-spacing="-0.140000001" fill="#EF1E46">
+                <tspan x="244.315385" y="200">Meefor</tspan>
+                <tspan x="687.555385" y="200" letter-spacing="-0.150769234">e</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

@@ -122,7 +122,7 @@
 		startLanding: function( message ){
 			return LJ.promise(function( resolve, reject ){
 				LJ.log( message );
-				var landing_v = 1;
+				var landing_v = 2;
 				LJ.log('Starting landing... v' + landing_v );
 
 				$( LJ.static.renderStaticImage('slide_loader') )

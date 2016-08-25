@@ -217,6 +217,8 @@
     font-family: 'quenda';
 }
 
+.chat-rows-title:not(:first-of-type) {margin-top: 18px;}
+
 .chat-rows-title span {
     position: relative;
     top: 1px;
@@ -448,7 +450,7 @@
     margin-top: 20px;
     line-height: 20px;
     text-align: center;
-    font-weight: 400;
+    font-weight: 500;
     font-size: 12px;
 }
 

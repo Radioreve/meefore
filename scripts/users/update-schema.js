@@ -30,9 +30,8 @@
 					tasks.push(function( done ){
 
 						// Update part
-						user.alerted_at = new Date();
-						delete user.app_preferences.min_frequency;
-						user.markModified('app_preferences');
+						user.onboarding = [];
+						user.markModified('onboarding');
 
 						user.save(function( err ){
 							if( err ) console.log('Error : ' + err );
@@ -48,7 +47,7 @@
 
 					if( err ) return console.log( err );
 					console.log('Everything has been updated successfully');
-					process.exit(0);
+					process.exit( 0 );
 				});
 
 			});

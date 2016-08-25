@@ -1,20 +1,85 @@
 
+.landing-connexion {
+    position: relative;
+    width: 260px;
+    height: 46px;
+    text-align: center;
+    position: absolute;
+    bottom: 2px;
+    right: 0;
+    z-index: 10000;
+    width: 100%;
+}
 
-.landing {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+.landing-connexion button {
+    color: white;
+    background: #3b5998;
+    border-radius: 5px;
+    font-size: 15px;
+    width: 100%;
+    height: 100%;
+    background: #1a59c3;
+    background: linear-gradient(45deg, #1a59c3, #1a85c3);
+    /* border-radius: 100px; */
+}
+
+.landing-connexion button:hover {
+    background: #5f96f1;
+    opacity: 1;
+}
+
+.js-no-popup {
+    display: none;
+    opacity: 0.01;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.js-no-popup:hover + button {
+    opacity: .75;
+}
+
+.landing-lang {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+}
+
+.landing-lang button {
+    width: 80px;
+    height: 34px;
+    border: 1px solid;
+    color: #1a59c3;
+    background: white;
+    font-size: 12px;
+    border-radius: 100px;
+}
+
+.landing-privacy {
+    width: 350px;
+    text-align: center;
+    font-size: 9px;
+    line-height: 14px;
+    position: fixed;
+    bottom: 50px;
+    width: 100%;
+    color: #454545;
+    left: 0;
+    right: 0;
+}
+
+.landing-privacy h3 {
+    margin-top: 10px;
 }
 
 .landing-logo {
     position: absolute;
     top: 15px;
     left: 15px;
-    font-family: 'quenda';
-    font-size: 24px;
-    font-weight: bolder;
     width: 36px;
 }
 
@@ -23,6 +88,59 @@
     height: 100%;
 }
 
+.landing-logo.x--inverse {}
+
+.landing-logo.x--brand {
+    width: 130px;
+    top: 12px;
+    left: 12px;
+}
+
+.landing-logo.x--rounded {
+    width: 50px;
+    top: 10px;
+    left: 15px;
+}
+
+.landing-facebook-page {
+    position: absolute;
+    top: 20px;
+    right: 110px;
+    border: 1px solid white;
+    height: 30px;
+    width: 30px;
+    font-size: 14px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.landing-facebook-page:hover {
+    opacity: .8;
+}
+.landing-facebook-page i {}
+
+
+
+.landing.x--v1 {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+.landing-connexion {
+    position: relative;
+    width: 260px;
+    height: 46px;
+    text-align: center;
+    position: absolute;
+    bottom: 2px;
+    right: 0;
+    z-index: 10000;
+    width: 100%;
+}
 
 .landing-body {
     height: 200px;

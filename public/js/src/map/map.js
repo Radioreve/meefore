@@ -226,10 +226,7 @@
                 LJ.map.addBeforeMarkers( LJ.before.fetched_befores );
                 LJ.map.clearSeenMarkers();
                 LJ.map.refreshMarkers();
-
-                LJ.delay( 400 ).then(function(){
-                    LJ.map.showBeforeMarkers();
-                });
+                LJ.map.showBeforeMarkers();
 
             });
 
@@ -721,6 +718,15 @@
             LJ.map.markers.forEach(function( mrk ){
                 LJ.map.showMarker( mrk.marker_id );
             }); 
+
+            LJ.delay( 1000 ).then(function(){
+
+                if( $('.mrk').first().css('opacity') == 0 ){
+                    LJ.map.showBeforeMarkers();
+                }
+
+            });
+
 
         },
         getMarkerDom: function( marker_id ){

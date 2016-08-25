@@ -176,6 +176,9 @@ button:hover {
     transform: rotate(20deg);
 }
 
+button:hover .icon-meedrink {
+    transform: rotate(20deg) scale(1.2)!important;
+}
 
 .row-pic__icon i {
     margin: auto;
@@ -455,6 +458,7 @@ button:hover {
 
 .icon-meedrink, .icon-meedrink-empty {
     transform: rotate(20deg);
+    transition: all ease-in-out .2s;
 }
 .empty__title {
     font-size: 24px;
@@ -1130,23 +1134,23 @@ button:hover {
 
 .toast {
     position: fixed;
-    left: 50%;
-    transform: translateX(-50%)!important;
-    top: 6px;
+    /* left: 50%; */
+    /* transform: translateX(-50%)!important; */
+    top: -1px;
+    width: 100%;
     min-width: 240px;
-    height: 34px;
+    height: 54px;
     z-index: 10000;
     color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 12px;
-    border-radius: 40px;
-    padding: 3px 30px;
+    font-size: 15px;
     font-weight: 700;
     background: white;
-    border: 1px solid #a4bbe2;
+    border: 1px solid #1a59c3;
+    font-family: 'quenda';
 }
 
 .toast--info {
@@ -1944,12 +1948,70 @@ button:hover {
 .chat, .notifications-panel {
     top: 55px;
     box-shadow: -5px 10px 15px 3px rgba(0, 0, 0, 0.07);
-    border: 1px solid #1a59c3;
-    border-right: none;
 }
 
 .x--corner .chat, .x--corner .notifications-panel {
     top: 70px;
     border-radius: 20px 0 0 0;
     overflow: hidden;
+    border: 1px solid #1a59c3;
+    border-right: none;
+}
+
+
+.tip {
+    display: flex;
+    flex-flow: column;
+    padding: 12px 22px;
+    width: 300px;
+    min-height: 80px;
+    color: white;
+    position: absolute;
+    z-index: 1001;
+    border-radius: 26px;
+    background: linear-gradient(205deg,#43a7da,#3572da);
+    /* background: #5c9fde; */
+}
+.tip__title {
+    height: 40px;
+    font-size: 18px;
+    font-family: 'quenda';
+    display: flex;
+    align-items: center;
+    font-weight: bolder;
+}
+.tip__body {
+    font-size: 12px;
+    padding: 0px 0 8px 0;
+    line-height: 20px;
+}
+.tip__btn {
+    width: 120px;
+    height: 38px;
+    margin: auto 0px 0px auto;
+}
+.tip__btn button {
+    width: 100%;
+    height: 100%;
+    border-radius: 100px;
+    background: #225fc5;
+    color: white;
+    font-size: 12px;
+    font-weight: bolder;
+}
+
+.tip__tri {
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 30px solid #3675da;
+    position: absolute;
+    border-top-color: #3777da;
+}
+
+.tip.x--botleft  .tip__tri{
+    bottom: -11px;
+    left: -16px;
+    transform: rotate(45deg);
 }

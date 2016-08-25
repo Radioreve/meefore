@@ -26,10 +26,10 @@
 						.css({ 'transform': 'translateX(-50%)!important'})
 						.find('.toast__msg').text( msg );
 
-				$toast.show();
-				$toast.velocity('fadeOut', {
+				$toast.velocity('slideDownIn', { duration: 400, display: 'flex' });
+				$toast.velocity('slideUpOut', {
 							duration: 200,
-							delay: show_duration || 4000,
+							delay: show_duration || 3000,
 							complete: function(){
 								$(this).remove();
 								if( LJ.ui.msg_queue.length != 0 )

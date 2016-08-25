@@ -6,7 +6,7 @@
     z-index: 1000;
     background: rgb(255, 255, 255);
     width: 400px;
-    padding: 0 60px 40px;
+    padding: 0 50px 40px;
     box-sizing: border-box;
     box-shadow: 0 0 14px #949494;
     flex-flow: column nowrap;
@@ -31,7 +31,7 @@
 }
 
 .be-create-row__subtitle {
-    margin-top: 26px;
+    margin-top: 16px;
     font-size: 14px;
     font-family: 'quenda';
     color: #454545;
@@ -238,7 +238,7 @@
     border: none;
 }
 
-.be-create__image {width: 110px;height: 110px;margin: auto auto 10px;font-size: 30px;display: flex;justify-content: center;align-items: center;}
+.be-create__image {width: 90px;height: 90px;margin: auto auto 10px;font-size: 30px;display: flex;justify-content: center;align-items: center;}
 
 .be-create__image i {transform: rotate(15deg);}
 

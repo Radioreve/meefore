@@ -125,7 +125,7 @@
 				})
 				.catch(function( e ){
 					LJ.cheers.hideCheersLoader__Chat();
-					LJ.cheers.hideCheersLoader__Rows();
+					// LJ.cheers.hideCheersLoader__Rows();
 					LJ.wlog(e);
 
 				});

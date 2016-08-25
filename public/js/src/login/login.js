@@ -59,7 +59,7 @@
 
 				$('.landing')
 					.children()
-					.velocity('shradeOut', {
+					.velocity('fadeOut', {
 						duration : 800,
 						display  : 'none'
 					});

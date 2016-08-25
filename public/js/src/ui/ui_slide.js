@@ -83,6 +83,8 @@
 					LJ.ui.deactivateHtmlScroll();
 				}
 
+				LJ.emit("show:slide");
+
 				$slide
 					  .hide()
 					  .appendTo('body')
@@ -96,6 +98,7 @@
 					  	
 					  	LJ.ui.activateHtmlScroll();
 					  	LJ.ui.hideSlide( options );
+					  	LJ.emit("hide:slide");
 
 					  	if( typeof options.complete == 'function' ) {
 					  		options.complete();
@@ -135,7 +138,11 @@
 			
 			var type = opts.type ? '.slide.x--' + opts.type : '.slide';
 
-			$( type ).velocity('shradeOut', {
+			if( LJ.isMobileMode() ){
+				return $( type ).remove();
+			}
+
+			$( type ).velocity( 'shradeOut', {
 				duration: LJ.ui.hide_slide_duration,
 				complete: function(){
 					$( this ).remove();

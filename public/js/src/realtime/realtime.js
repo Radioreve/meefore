@@ -35,8 +35,8 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		}
 
 
-		var n_type = n.type;
-		if( n.initiated_by == LJ.user.facebook_id && [ "accepted_in_hosts", "before_canceled" ].indexOf( n_type ) == -1 ){
+		// var n_type = n.type;
+		if( n.initiated_by == LJ.user.facebook_id ){
 			return LJ.log("Not showing notification (own)");
 		}
 
@@ -205,9 +205,17 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		var before_id = data._id;
 		var requester = data.requester;
 
-		
 		LJ.before.removeBeforeItem( before_id );
 		LJ.map.refreshCreateBtnState();
+
+		if( requester == LJ.user.facebook_id ){
+
+			LJ.ui.hideLoader("canceling_before");
+			LJ.ui.hideSlide({ type: 'before' });
+			LJ.ui.showToast( LJ.text('to_cancel_before_success') );
+			LJ.before.showCreateBeforeBtn();
+
+		}
 
 		// Force a resync of all the chats with updated server values
 		LJ.chat.resyncAllChats();

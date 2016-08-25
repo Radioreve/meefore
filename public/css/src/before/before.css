@@ -300,6 +300,7 @@ span.be-dates__count {
     height: 15px;
     color: #454545;
     font-size: 12px;
+    font-weight: 600;
 }
 
 .be-inview-address__date {
@@ -487,7 +488,7 @@ span.be-dates__count {
 }
 
 .be-action i.icon-meedrink {
-    transform: rotate(20deg)
+    transform: rotate(20deg);
 }
 
 .be-users .jspPane {

@@ -30,6 +30,7 @@
 
 				.then(function( res ){
 					LJ.user.notifications = opts.notifications || res.notifications;
+					LJ.notifications.filterNotifications();
 					return LJ.notifications.fetchUsersProfiles();
 
 				})
@@ -44,6 +45,19 @@
 					LJ.notifications.refreshNotifications();
 
 				});
+
+		},
+		filterNotifications: function(){
+
+			LJ.user.notifications.forEach(function( n, i ){
+
+				if( n.initiated_by == LJ.user.facebook_id ){
+					delete LJ.user.notifications[ i ];
+				}
+
+			});
+
+			LJ.user.notifications = LJ.user.notifications.filter( Boolean );
 
 		},
 		cacheUsers: function( users ){
@@ -453,7 +467,7 @@
 			var others      = is_host ? notification.members : notification.hosts;
 			var profiles    = LJ.notifications.getUserProfiles( others );
 			var names 		= _.map( profiles, 'name' );
-			var f_names     = LJ.renderMultipleNames( f_names );
+			var f_names     = LJ.renderMultipleNames( names );
 			
 			options.picture = LJ.pictures.makeGroupRosace( profiles, 2, "notification" );
 			options.text    = LJ.text("n_accepted_in_text");

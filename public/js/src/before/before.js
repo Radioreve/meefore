@@ -39,15 +39,28 @@
 		handleAppEvents: function(){
 
 			LJ.on("login:complete", LJ.before.handleLoginComplete );
+			LJ.on("show:slide", LJ.before.handleShowSlide );
+			LJ.on("hide:slide", LJ.before.handleHideSlide );
 
 		},
 		handleLoginComplete: function(){
 
 			LJ.delay( 250 ).then(function(){
-				LJ.before.showCreateBeforeBtn();
+				LJ.before.showCreateBeforeBtn("bounceInQuick");
 				LJ.map.refreshCreateBtnState();
 
 			});
+
+		},
+		handleShowSlide: function(){
+			LJ.before.hideCreateBeforeBtn();
+
+		},
+		handleHideSlide: function(){
+
+			if( $('.slide').length == 1 ){
+				LJ.before.showCreateBeforeBtn();
+			}
 
 		},
 		handleAddHashtag: function(){
@@ -76,17 +89,14 @@
 		},
 		handleShowCreateBefore: function(){
 
-			if( LJ.nav.getActiveView() != "map" ){
-				LJ.nav.navigate("map");
-				return LJ.delay( 100 ).then( LJ.before.handleShowCreateBefore );
-			}
-
 			LJ.before.showCreateBefore();
+			LJ.before.hideCreateBeforeBtn();
 
 		},
 		handleHideCreateBefore: function(){
 
 			LJ.before.hideCreateBefore();
+			LJ.before.showCreateBeforeBtn();
 
 		},
 		findById: function( before_id ){
@@ -113,14 +123,14 @@
 			LJ.profile_user.showUserProfile( facebook_id );
 
 		},
-		showCreateBeforeBtn: function(){
+		showCreateBeforeBtn: function( effect ){
 
-			$('.js-create-before').velocity('bounceInQuick', { duration: 800, display: 'flex' });
+			$('.map__icon.x--create-before').velocity( effect || "slideUpIn", { duration: 400, display: 'flex' });
 
 		},
 		hideCreateBeforeBtn: function(){
 
-			$('.js-create-before').velocity('bounceOut', { duration: 800, display: 'none' });
+			$('.map__icon.x--create-before').velocity('slideDownOut', { duration: 400, display: 'none' });
 
 		},
 		fetchBefores: function(){
@@ -269,7 +279,8 @@
 
 			})
 			.then(function(){
-				LJ.ui.shradeIn( $content, LJ.profile_user.slide_show_duration );				
+				LJ.ui.shradeIn( $content, LJ.profile_user.slide_show_duration );
+				LJ.emit("show_before_inview:complete");		
 
 			});
 
@@ -381,6 +392,7 @@
 			})
 			.then(function(){
 				LJ.ui.shradeIn( $content, LJ.profile_user.slide_show_duration );				
+				LJ.emit("show_before_inview:complete");		
 
 			});
 
@@ -714,11 +726,6 @@
 
 			LJ.api.changeBeforeStatus( before_id, new_status )
 				.then(function( before ){
-
-					LJ.ui.hideLoader("canceling_before");
-					LJ.ui.hideSlide({ type: 'before' });
-
-					LJ.ui.showToast( LJ.text('to_cancel_before_success') );
 
 				})
 				.catch(function( err ){

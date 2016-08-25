@@ -198,7 +198,6 @@
 		},
 		showCreateBefore: function(){
 
-			var $i = $('.map__icon.x--create-before');
 			var $w = $('.be-create');
 			var d  = LJ.search.filters_duration || 300;
 
@@ -209,11 +208,6 @@
 			if( LJ.isMobileMode() ){
 				LJ.ui.deactivateHtmlScroll();
 			}
-
-			$i.velocity('shradeOut', {
-				duration : d,
-				display  : 'none'
-			});
 
 			LJ.delay( d )
 				.then(function(){
@@ -226,7 +220,6 @@
 		},
 		hideCreateBefore: function(){
 
-			var $i  = $('.map__icon.x--create-before');
 			var $w  = $('.be-create');
 			var d   = LJ.search.filters_duration;
 
@@ -237,8 +230,7 @@
 
 			LJ.delay( d )
 				.then(function(){
-					LJ.ui.activateHtmlScroll();
-					return LJ.ui.shradeIn( $i, d );
+					return LJ.ui.activateHtmlScroll();
 				});
 
 		},
@@ -258,6 +250,7 @@
 			$('.be-create__loader').remove();
 			$('.be-create').removeClass('x--pending').removeClass('x--ready');
 			$('.be-create-row.x--hosts').find('input').val('');
+			$('.be-create-row.x--hosts').attr('data-host-ids', '');
 			$('.be-create-row.x--location').addClass('x--unset').find('input').val('');
 			$('.be-create-row.x--hashtags').addClass('x--unset').find('input').val('');
 			$('.be-create-row.x--hashtags').find('.js-be-hashtag').remove();

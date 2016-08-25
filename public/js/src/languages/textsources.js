@@ -381,8 +381,8 @@
 			"us": "Please don't lie ;-)"
 		},
 		p_country_explanation: {
-			"fr": "Ta nationalité est celle indiquée sur Facebook. En cas d'erreur, envoie-nous un mail.",
-			"us": "Your nationality is the one indicated on Facebook. If there is a mistake, please email us."
+			"fr": "Ta nationalité est celle indiquée sur Facebook. En cas d'erreur, envoie-nous un mail à team@meefore.com",
+			"us": "Your nationality is the one indicated on Facebook. If there is a mistake, please email us at team@meefore.com"
 		},
 		p_job_explanation: {
 			"fr": "Tu fais quoi dans la vie ?",
@@ -2044,7 +2044,7 @@
 			"us": "All"
 		},
 		chat_team_h2: {
-			"fr": "Discussion entre ta team et toi",
+			"fr": "Discussion avec ta team",
 			"us": "Private discussion with your friends"
 		},
 		chat_row_request_all_subtitle: {
@@ -2120,7 +2120,7 @@
 			"us": "Invite more friends"
 		},
 		chat_input_placeholder: {
-			"fr": "Ecrivez un message...",
+			"fr": "Ecris un message...",
 			"us": "Write a message..."
 		},
 		chat_sync_done: {
@@ -2247,8 +2247,31 @@
 		modal_request_btn: {
 			"fr": "Envoyer un Cheers",
 			"us": "Send a Cheers"
+		},
+		onb_create_before_title: {
+			"fr": "Proposer un before",
+			"us": "Create a predrinks"
+		},
+		onb_create_before_body: {
+			"fr": "Tu peux proposer un before seul ou à plusieurs. Il apparaîtra ensuite sur la map et disparaîtra le lendemain à 6h.",
+			"us": "You can create a predrinks alone or with your friends. It will then appear on the map and will disappear tomorrow at 6am."
+		},
+		onb_create_before_btn: {
+			"fr": "Ca marche",
+			"us": "Okay"
+		},
+		onb_send_cheers_title: {
+			"fr": "Envoyer un Cheers",
+			"us": "Send a Cheers"
+		},
+		onb_send_cheers_body: {
+			"fr": "Les Cheers te permettent de montrer aux organisateurs que tu es intéressé par leur before. S'ils t'envoient un Cheers en retour, c'est un Match.",
+			"us": "Cheers allow you to show the other hosts that you are interested by their predrinks. If they send you a Cheers back, it's a Match."
+		},
+		onb_send_cheers_btn: {
+			"fr": "Ca marche",
+			"us": "Okay"
 		}
-
 
 
 	});
