@@ -214,6 +214,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 			LJ.ui.hideSlide({ type: 'before' });
 			LJ.ui.showToast( LJ.text('to_cancel_before_success') );
 			LJ.before.showCreateBeforeBtn();
+			LJ.chat.refreshChatIconBubble();
 
 		}
 

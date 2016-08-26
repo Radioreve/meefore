@@ -65,6 +65,10 @@
     cursor: not-allowed;
 }
 
+.friend-modal.x--unselectable {
+    opacity: .4;
+}
+
 .friend-modal:hover {
     background: #fbfbfb;
 }

@@ -1169,6 +1169,10 @@
 
 			}
 
+			users = _.filter( users, function( u ){
+				return u.facebook_id != LJ.user.facebook_id;
+			});
+			
 			// Insert rosace into the markup,
 			var pictures_html = LJ.pictures.makeGroupRosace( users, 2, 'chat-row' );
 
@@ -1429,7 +1433,7 @@
 			// if( without_me.length != 1 ){
 			// 	update.h2 = sender.name +' : ' + last_message_other.message;
 			// } else {
-				update.h2 = sender.name + ' ~ ' + last_message.message;
+				update.h2 = sender.name + ' : ' + last_message.message;
 			// }
 			
 

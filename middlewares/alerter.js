@@ -114,7 +114,7 @@
 			getUsersToAlert( req, type )
 				.then(function( users ){
 
-					alertLog("Sending an email to : " + _.map( users, 'name' ).join(', ') );
+					alertLog("Sending an email to : " + _.map( users, 'contact_email' ).join(', ') );
 					users.forEach(function( user ){
 						sendAlertEmail( req, type, user );
 					});

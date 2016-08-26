@@ -356,11 +356,12 @@
 
 			var $t = $( e.target );
 
-			var is_not_nav_item    = !$t.closest('.app__menu-item.x--notifications').length;
+			var is_not_nav_item    = ! ( $t.closest('.app__menu-item.x--notifications').length == 1 );
 			var panel_visible      = $('.notifications-panel.x--active').length;
+			var is_not_menu_item   = ! ( $t.closest('.app__menu-item.x--menu,.app__menu-item.x--map').length == 1 )
 			var is_not_panel_child = !$t.closest('.notifications-panel').length;
 			
-			if( is_not_nav_item && is_not_panel_child && panel_visible ){
+			if( is_not_menu_item && is_not_nav_item && is_not_panel_child && panel_visible ){
 				LJ.notifications.hideNotificationsPanel();
 			}
 

@@ -2253,11 +2253,11 @@
 			"us": "Create a predrinks"
 		},
 		onb_create_before_body: {
-			"fr": "Tu peux proposer un before seul ou à plusieurs. Il apparaîtra ensuite sur la map et disparaîtra le lendemain à 6h.",
+			"fr": "Propose ton before seul ou à plusieurs. Il apparaîtra ensuite sur la map et disparaîtra définitivement le lendemain.",
 			"us": "You can create a predrinks alone or with your friends. It will then appear on the map and will disappear tomorrow at 6am."
 		},
 		onb_create_before_btn: {
-			"fr": "Ca marche",
+			"fr": "Ça marche !",
 			"us": "Okay"
 		},
 		onb_send_cheers_title: {
@@ -2269,7 +2269,7 @@
 			"us": "Cheers allow you to show the other hosts that you are interested by their predrinks. If they send you a Cheers back, it's a Match."
 		},
 		onb_send_cheers_btn: {
-			"fr": "Ca marche",
+			"fr": "Ça marche !",
 			"us": "Okay"
 		}
 

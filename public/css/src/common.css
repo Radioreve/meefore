@@ -1948,6 +1948,7 @@ button:hover .icon-meedrink {
 .chat, .notifications-panel {
     top: 55px;
     box-shadow: -5px 10px 15px 3px rgba(0, 0, 0, 0.07);
+    border-left: 1px solid #cccccc;
 }
 
 .x--corner .chat, .x--corner .notifications-panel {

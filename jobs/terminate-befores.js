@@ -146,54 +146,49 @@
 			handleMongooseOpen( callback );
 		});
 		
-		function formatTime( m ){
-			if( !m._isAMomentObject ){
-				m = moment( m );
-			}
-			return m.format('DD/MM') + ' - ' + m.format('HH:mm') 
-		}
-
 		function handleMongooseOpen( callback ){
 			
 			console.log('Connected to the database! Updating... ');
 
-				updateBefores(function(){
+				var tasks = [];
 
-					var before_list_html = [];
-					tracked.before_list.forEach(function( bfr, i ){
-						before_list_html.push([
-							'<div>'+ i +' - ' + bfr._id + ' - ' + bfr.address.place_name + ' - ' + formatTime( moment( bfr.begins_at ) )+ '</div>'
-						].join(''));
+				tasks.push(function( inner_cb ){
+					updateBefores(function( err ){
+						inner_cb( err );
 					});
+				});
 
-					before_list_html = before_list_html.join('');
+				tasks.push(function( inner_cb ){
+					updateUsers(function( err ){
+						inner_cb( err );
+					});
+				});
 
-					var mail_html = [
-						'<div>Scheduler updated the database successfully in zone : ' + tracked.timezone + '</div>',
-						'<div>Local time 	   	         : ' + tracked.server_time 		 +'</div>',
-						'<div>Target time 	   	         : ' + tracked.target_time 		 +'</div>',
-						'<div>Number of befores updated  : ' + tracked.n_befores_updated  +'</div>',
-						'<div>---------------------------</div>',
-						before_list_html
-					];
+				async.parallel( tasks, function( err ){
+
+					if( err ){
+						return Alerter.sendAdminEmail({
+							subject : 'Scheduler [' + process.env.APP_ENV + '] - the update process failed.',
+							html    : JSON.stringify( err, null, 4 )
+						});
+					}
 
 					console.log('Scheduled job completed successfully');
 
 					if( tracked.n_befores_updated != 0 ){
 						Alerter.sendAdminEmail({
 							subject : 'Scheduler [' + process.env.APP_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
-							html    : mail_html.join('') 
+							html    : makeEmailHtml()
 						});
 					}
 
-					console.log( JSON.stringify( tracked, null, 4 ) );
-					
 					if( typeof callback == "function" ){
 						callback( null, tracked );
 					}
 					// mongoose.connection.close();
 
 				});
+
 		}
 
 		function keeptrack( obj ){
@@ -206,36 +201,93 @@
 
 			Before.find( full_before_query, function( err, befores ){
 
-					if( err ){
-						return callback( err, null );
-					}
+				if( err ){
+					return callback( err, null );
+				}
 
-					var tasks = [];
-					befores.forEach(function( bfr ){
-						tasks.push(function( callback ){
-							bfr.status = "ended";
-							bfr.save(function( err ){
-								tracked.before_list.push( bfr );
-								callback();
-							});
+				var tasks = [];
+				befores.forEach(function( bfr ){
+					tasks.push(function( callback ){
+						bfr.status = "ended";
+						bfr.save(function( err ){
+							tracked.before_list.push( bfr );
+							callback();
 						});
 					});
+				});
 
-					async.parallel( tasks, function( err ){
+				async.parallel( tasks, function( err ){
 
-						if( err ){
-							callback( err, null );
-						} else {
-							keeptrack({ n_befores_updated: befores.length });
-							callback();
-						}
-
-					});
+					if( err ){
+						callback( err, null );
+					} else {
+						keeptrack({ n_befores_updated: befores.length });
+						callback();
+					}
 
 				});
+
+			});
 		};
 
+		function updateUsers( callback ){
+
+			User.update(
+				{
+					// All users
+				}, 
+				{
+					'$set': { 'befores': [] }
+				},
+				{
+					multi: true
+				},
+				function( err, raw ){
+
+				if( err ){
+					callback( err, null );
+				} else {
+					keeptrack({ n_users_updated: raw.n });
+					callback();
+				}
+
+			});
+
+		}
+
 	};
+
+	function formatTime( m ){
+		if( !m._isAMomentObject ){
+			m = moment( m );
+		}
+		return m.format('DD/MM') + ' - ' + m.format('HH:mm') 
+	}
+
+	function makeEmailHtml(){
+
+		var before_list_html = [];
+		tracked.before_list.forEach(function( bfr, i ){
+			before_list_html.push([
+				'<div>'+ i +' - ' + bfr._id + ' - ' + bfr.address.place_name + ' - ' + formatTime( moment( bfr.begins_at ) )+ '</div>'
+			].join(''));
+		});
+
+		before_list_html = before_list_html.join('');
+
+		var mail_html = [
+			'<div>Scheduler updated the database successfully in zone : ' + tracked.timezone + '</div>',
+			'<div>Local time 	   	         : ' + tracked.server_time 		 +'</div>',
+			'<div>Target time 	   	         : ' + tracked.target_time 		 +'</div>',
+			'<div>Number of befores updated  : ' + tracked.n_befores_updated +'</div>',
+			'<div>Number of users updated    : ' + tracked.n_users_updated   +'</div>',
+			'<div>---------------------------</div>',
+			before_list_html
+		];
+
+		return mail_html.join('');
+
+	}
 
 
 	module.exports = {

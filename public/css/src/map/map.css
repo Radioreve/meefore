@@ -361,6 +361,14 @@
 }
 
 
+.marker.x--pending .mrk__status {
+    background: white;
+    border: 2px solid;
+    font-size: 9px;
+    border-color: #1a59c3;
+    color: #1a59c3;
+}
+
 .marker.x--male.x--pending .mrk__status {
     border-color: #4080ff;
     color: #4080ff;
@@ -375,9 +383,10 @@
 }
 
 
+
 .marker.x--accepted .mrk__status {
-    border-color: white;
-    color: white;
+    border-color: white!important;
+    color: white!important;
     background: linear-gradient(45deg, #fe685c, #ed105d);
 }
 
@@ -391,13 +400,6 @@
 
 .mrk__status.x--host.x--round-icon {}
 
-.marker.x--pending .mrk__status {
-    background: white!important;
-    border: 2px solid;
-    font-size: 9px;
-    border-color: #1a59c3!important;
-    color: #1a59c3!important;
-}
 
 
 .mrk__status i {}

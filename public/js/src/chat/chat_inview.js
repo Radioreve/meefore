@@ -700,10 +700,10 @@
 
 			return LJ.ui.render([
 
-				'<div class="chat-inview-users__group">',
+				'<header class="chat-inview-users__group">',
 	              	// '<i class="icon icon-star"></i>',
 	              	'<span data-lid="chat_inview_users_group"></span>',
-		        '</div>',
+		        '</header>',
 		        hosts_html
 
 		    ].join(''));
@@ -713,10 +713,10 @@
 
 			return LJ.ui.render([
 
-				'<div class="chat-inview-users__group">',
+				'<header class="chat-inview-users__group">',
 		              // '<i class="icon icon-bookmark"></i>',
 		              '<span data-lid="chat_inview_users_group"></span>',
-			    '</div>',
+			    '</header>',
 			    members_html
 
 		    ].join(''));

@@ -116,7 +116,8 @@
             
             LJ.ui.showCurtain({
                duration : 400,
-               opacity  : .75
+               opacity  : .75,
+               sticky   : true
             });
 
             LJ.delay( 200 )

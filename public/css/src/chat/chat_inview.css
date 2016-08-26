@@ -498,7 +498,7 @@
     top: 0px;
     left: 0;
     z-index: 10;
-    color: #ccc;
+    color: #1a59c3;
     cursor: pointer;
     height: 40px;
     width: 40px;
@@ -506,7 +506,7 @@
 }
 
 .chat-inview-users {
-    width: 75%;
+    width: 100%;
     height: 100%;
     margin-left: auto;
     background: white;
@@ -525,6 +525,10 @@
     font-family: 'quenda';
     font-size: 13px;
     border-bottom: 1px solid #eee;
+}
+
+.chat-inview-users__group:nth-of-type(2){
+    display: none;
 }
 
 .chat-inview-users__group i {}

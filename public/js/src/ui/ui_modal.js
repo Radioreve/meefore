@@ -182,7 +182,6 @@
 			
 			LJ.delay( 100 ).then(function(){
 				
-				
 				var $modal = $('.modal');
 				var $input = $modal.find('.modal-search__input input');
 				var text   = $input.val().toLowerCase();
@@ -215,10 +214,7 @@
 			}
 
 			var $modal = $('.modal');
-			var $el = $('.friend-modal:not(.x--selected)').first();
-
 			$s.toggleClass('x--selected');
-			// $s.insertBefore( $el );
 
 			LJ.ui.refreshModalState();
 			$('.modal-search__input input').val('');
@@ -230,15 +226,22 @@
 
 			var $modal = $('.modal');
 			var min    = parseInt( $modal.attr('data-min-items') );
+			var max    = parseInt( $modal.attr('data-max-items') );
 
-			if( typeof min != "number" ){
-				return LJ.wlog("unable to parse the min number");
+			if( typeof min != "number" || typeof max != "number" ){
+				return LJ.wlog("unable to parse the min/max number");
 			}
 
 			if( $('.modal-item.x--selected').length == min ){
 				$modal.addClass('x--disabled');
 			} else {
 				$modal.removeClass('x--disabled');
+			}
+
+			if( $('.modal-item.x--selected').length == max ){
+				$('.modal-item:not(.x--selected)').addClass('x--unselectable');
+			} else {
+				$('.modal-item:not(.x--selected)').removeClass('x--unselectable');
 			}
 
 		},
