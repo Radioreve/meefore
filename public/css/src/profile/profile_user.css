@@ -158,7 +158,7 @@
 
 .user-infos__title-splitter {
     height: 1px;
-    background: #ccc;
+    background: #ccc; 
     margin: auto;
     flex: 1;
 }
@@ -175,7 +175,7 @@
     height: 100px;
     justify-content: flex-end;
     align-items: flex-end;
-    display: flex;
+    display: flex; 
 }
 
 .user-actions > div {

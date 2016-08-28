@@ -130,6 +130,8 @@
 		},
 		hideCreateBeforeBtn: function(){
 
+			if( LJ.isMobileMode() ) return;
+
 			$('.map__icon.x--create-before').velocity('slideDownOut', { duration: 400, display: 'none' });
 
 		},

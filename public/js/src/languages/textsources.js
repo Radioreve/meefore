@@ -1352,7 +1352,7 @@
 			"us": "Change language"
 		},
 		mod_change_lang_subtitle: {
-			"fr": "La langue ne devrait pas être une barrière pour faire la fête. L'application se traduit instantanément dans le langage de votre choix.",
+			"fr": "La langue ne devrait pas être une barrière pour faire la fête. L'application se traduit instantanément dans le langage de ton choix.",
 			"us": "The language should never be an obstacle to partying. The application translates itself instantaneously in the language of your choosing"
 		},
 		segment_cheers_received: {
@@ -2224,13 +2224,16 @@
 			}
 		},
 		onb_welcome_subtitle: {
-			"fr": "La communauté des jeunes qui font des befores avant d'aller en soirée te souhaite la bienvenue. <br>"
-			     + "Tous les jours à 14h, la Meemap ouvre ses porte et permet à chacun de proposer un before pour le jour même. <br>",
-			"us": ""
+			"fr": "Bienvenue sur l'application qui te permet de t'ambiancer avant d'aller en soirée.<br>"
+			     + "Parcours la Map et repère les before qui s'organisent près de chez toi. Envoie des Cheers pour montrer ton intérêt pour un before. Si on te Cheers back, it's a Match!<br>"
+			     + "A bientôt en soirée ;)",
+			"us": "Welcome on the application for people who like to predrink before going out.<br>"
+				 + 'Browse the map and spot the predrinks that are happening around you. Send a Cheers to show your interest. If people Cheers back, its a Match!<br>',
+				 + 'See you at our next predrink ;)'
 		},
 		onb_welcome_btn: {
-			"fr": "Montrez-moi la Meemap",
-			"us": "Show-me the Meemap"
+			"fr": "Montrez-moi la map",
+			"us": "Show-me the map"
 		},
 		notification_empty_title: {
 			"fr": "Rien à l'horizon",

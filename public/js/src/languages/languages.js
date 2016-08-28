@@ -112,6 +112,15 @@
 				var lpm  = $el.attr('data-lpm') && $el.attr('data-lpm');
 				var lpmt = $el.attr('data-lpmt') && $el.attr('data-lpmt');
 
+
+				if( /img/i.test( lid ) ){
+					var src     = $el.attr('src');
+					var rg      = new RegExp( LJ.lang.supported_languages.join('|') );
+					var new_src = src.replace( rg, app_language );
+					$( el ).attr('src', new_src );
+					return;
+				}
+
 				var text_object = LJ.text_source[ lid ];
 				if( !text_object ){
 					return LJ.elog('Cannot find the lang object for lid : ' + lid );

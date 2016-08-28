@@ -29,7 +29,8 @@
     .app-header__brand,
     .map-zoom,
     .map__icon.x--change-location,
-    .map__icon.x--facebook {
+    .map__icon.x--facebook,
+    .user-actions {
         display: none!important;
     }
     .be-create,
@@ -249,8 +250,8 @@
     }
 
     .user-pics {
-        padding-bottom: 100%!important;
-        height: 0!important;
+        padding-bottom: 0%!important;
+        height: 200px!important;
     }
 
     .chat-row-infos__name .x--name {
@@ -289,4 +290,61 @@
         padding: 0 20px 40px;
     }
     
+    .tip {
+        width: 70%;
+        max-width: 400px;
+        left: 0!important;
+        right: 0!important;
+        margin: auto;
+    }
+    .tip__tri {transform: rotate(0deg) !important;right: 0;left: 0!important;margin: auto;bottom: -10px!important;border-top-color: #3980da;border-top-width: 20px;}
+    
+    .user-pics__navigate {
+        display: none;
+    }
+
+    .user-pics__img {
+        position: static;
+        opacity: 1;
+        padding-bottom: 0%;
+        margin: 0;
+        display: inline-block;
+        width: 200px;
+        height: 200px;
+    }
+
+    .user-pics {
+        height: 200px;
+        display: block;
+        width: 100%;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        white-space: nowrap;
+    }
+    .pictures-overlay {
+        display: none;
+    }
+    
+    .onb-welcome {
+        padding: 0 20px 0 20px;
+        border-radius: 0
+    }
+    .onb-welcome-body {
+        border-radius: 0;
+    }
+
+    .onb-welcome__title span {
+        font-size: 26px;
+    }
+
+    .onb-welcome__subtitle span {
+        line-height: 28px;
+        font-size: 11px;
+        display: block;
+    }
+
+    .onb-welcome br {
+        display: none;
+    }
+
 }

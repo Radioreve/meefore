@@ -43,6 +43,12 @@
 
 			LJ.ui.$body.on('click', '.be-create-row.x--hosts', function(){
 
+				var $s = $( this );
+
+				if( LJ.isMobileMode() ){
+					$s.hide();
+				}
+
 				LJ.ui.showModal({
 					"type"      	: "be-create",
 					"title"			: LJ.text('modal_be_create_title'),
@@ -61,6 +67,11 @@
 
 				})
 				.then(function( facebook_ids ){
+
+					if( LJ.isMobileMode() ){
+						$s.show();
+					}
+
 					LJ.before.addHostToInput( facebook_ids );
 					LJ.before.refreshMedalImage( facebook_ids );
 					LJ.before.validateInputs();
@@ -71,8 +82,11 @@
 					return LJ.ui.hideModal();
 				})
 				.catch(function( e ){
-					LJ.wlog(e);
-					LJ.wlog('User has stopped selecting people');
+					LJ.log(e);
+					LJ.log('User has stopped selecting people');
+					if( LJ.isMobileMode() ){
+						$s.show();
+					}
 				});
 
 			});

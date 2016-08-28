@@ -35,7 +35,7 @@
 			},
 			"landing_change_lang": {
 				"fr": "Langue",
-				"us": "Lang"
+				"us": "Langage"
 			},
 			"landing_privacy": {
 				"fr": [

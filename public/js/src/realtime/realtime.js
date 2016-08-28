@@ -213,13 +213,16 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 			LJ.ui.hideLoader("canceling_before");
 			LJ.ui.hideSlide({ type: 'before' });
 			LJ.ui.showToast( LJ.text('to_cancel_before_success') );
-			LJ.before.showCreateBeforeBtn();
-			LJ.chat.refreshChatIconBubble();
 
 		}
 
 		// Force a resync of all the chats with updated server values
 		LJ.chat.resyncAllChats();
+
+		// To fix a particular usecase where the bubble remains persistent which chat empty view
+		LJ.chat.refreshChatIconBubble();
+
+		LJ.before.showCreateBeforeBtn();
 
 		// Add notification in real time
 		LJ.realtime.addNotification( data );

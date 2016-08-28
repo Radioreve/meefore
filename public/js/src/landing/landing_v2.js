@@ -13,8 +13,8 @@
 					"us": "Hello."
 				},
 				"landing_h2": {
-					"fr": "N’attends plus d'être en soirée pour faire de nouvelles rencontres. Connecte-toi et repère chaque jour les before qui s'organisent près de chez toi.",
-					"us": "N’attends plus d'être en soirée pour faire de nouvelles rencontres. Connecte-toi et repère chaque jour les before qui s'organisent près de chez toi."
+					"fr": "N’attends plus d'être en soirée pour faire de nouvelles rencontres.<br>Connecte-toi et repère chaque jour les before qui s'organisent près de chez toi.",
+					"us": "N’attends plus d'être en soirée pour faire de nouvelles rencontres.<br>Connecte-toi et repère chaque jour les before qui s'organisent près de chez toi."
 				}
 			},
 			"html": [
@@ -38,13 +38,13 @@
 
 						'<div class="landing-screenshots">',
 							'<div class="landing__screenshot x--1">',
-								'<img src="/img/landing/iphone_before.png">',
+								'<img data-lid="img_landing_iphone_before" src="/img/landing/iphone_before_'+ LJ.lang.getAppLang() +'.png">',
 							'</div>',
 							'<div class="landing__screenshot x--2">',
-								'<img src="/img/landing/iphone_map.png">',
+								'<img data-lid="img_landing_iphone_map" src="/img/landing/iphone_map_'+ LJ.lang.getAppLang() +'.png">',
 							'</div>',
 							'<div class="landing__screenshot x--3">',
-								'<img src="/img/landing/iphone_chat_fr.png">',
+								'<img data-lid="img_landing_iphone_chat" src="/img/landing/iphone_chat_'+ LJ.lang.getAppLang() +'.png">',
 							'</div>',
 						'</div>',
 
@@ -78,7 +78,7 @@
 				});
 
 				$('body').on('click', '.js-landing-privacy', function(){
-					window.open("/privacy");
+					window.open("/legals");
 				});
 
 			}
