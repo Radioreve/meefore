@@ -2228,7 +2228,7 @@
 			     + "Parcours la Map et repère les before qui s'organisent près de chez toi. Envoie des Cheers pour montrer ton intérêt pour un before. Si on te Cheers back, it's a Match!<br>"
 			     + "A bientôt en soirée ;)",
 			"us": "Welcome on the application for people who like to predrink before going out.<br>"
-				 + 'Browse the map and spot the predrinks that are happening around you. Send a Cheers to show your interest. If people Cheers back, its a Match!<br>',
+				 + 'Browse the map and spot the predrinks that are happening around you. Send a Cheers to show your interest. If people Cheers back, its a Match!<br>'
 				 + 'See you at our next predrink ;)'
 		},
 		onb_welcome_btn: {
