@@ -153,13 +153,13 @@
 }
 
 .update-pictures {
-    margin-bottom: 15px;
     font-weight: 600;
     font-size: 14px;
     border: 1px solid;
-    padding: 10px 45px;
+    padding: 14px 45px;
     color: #1a59c3;
     border-radius: 100px;
+    margin: 10px 0 40px 0;
 }
 
 .update-pictures.x--active {
@@ -267,7 +267,7 @@
 }
 
 @media (max-width: 400px) {
-    .app-subheader.x--menu h3 {
+    .app-subheader.x--menu .menu-item__icon {
         display: none;
     }
 }

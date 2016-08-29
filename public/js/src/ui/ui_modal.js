@@ -283,6 +283,7 @@
 			$item.find('.item-modal__noselect').remove(); // clear
 			$item.removeClass('x--selected')
 				 .addClass('x--noselect')
+				 .addClass('x--unselectable')
 				 .append('<span class="item-modal__noselect">'+ message +'</span>');
 
 

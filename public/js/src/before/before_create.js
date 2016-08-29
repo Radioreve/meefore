@@ -507,7 +507,7 @@
 			        '<div class="be-create-row x--hashtags x--unset">',
 			          '<div class="be-create__icon x--round-icon"><i class="icon icon-hashtag-empty"></i></div>',
 			          '<div class="be-create-row__input">',
-			            '<input maxlength="15" data-lid="be_create_hashtags_placeholder" />',
+			            '<input maxlength="35" data-lid="be_create_hashtags_placeholder" />',
 			            '<div class="js-add-hashtag x--meedient x--round-icon x--mb">',
 			            	'<i class="icon icon-plus"></i>',
 			            '</div>',

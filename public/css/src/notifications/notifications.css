@@ -280,6 +280,7 @@ Whispereen  : #58c170
     font-size: 24px;
     font-family: 'quenda';
     color: #1a59c3;
+    text-align: center;
 }
 .notification-empty__title span {}
 .notification-empty__subtitle {

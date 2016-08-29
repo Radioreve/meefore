@@ -664,7 +664,7 @@ button:hover .icon-meedrink {
     cursor: pointer;
     opacity: .7;
     width: 100%;
-    border-radius: 16px 0 16px 0;
+    border-radius: 12px;
 }
 
 .change-lang__choice.x--unavailable {
@@ -965,10 +965,12 @@ button:hover .icon-meedrink {
 .app-header__corner.x--left {
     left: -1px;
     border-radius: 0 100px 100px 0;
+    padding-left: 10px;
 }
 .app-header__corner.x--right {
     right: -1px;
     border-radius: 100px 0 0 100px;
+    padding-right: 10px;
 }
 
 .app-header__brand {
@@ -1258,7 +1260,6 @@ button:hover .icon-meedrink {
  
 .modal-body {
     min-height: 120px;
-    margin-top: auto;
     display: flex;
     overflow: hidden;
     align-items: center;
@@ -1273,7 +1274,7 @@ button:hover .icon-meedrink {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    margin-top: auto;
 }
 
 .modal__title {

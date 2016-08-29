@@ -976,7 +976,7 @@
 		//mp stands for missing parameter
 		err_create_n_hosts: {
 			"fr": "Il faut être entre %min et %max pour organiser un before",
-			"us": "You must be between %min and %max to organize a pregame party",
+			"us": "You must be between %min and %max to organize a predrink party",
 		},
 		err_create_mp_ambiance: {
 			"fr": "Hashtag ton meefore pour le décrire",
@@ -1138,7 +1138,7 @@
 		},
 		lp_subtitle_sub: {
 			"fr": "Participez à des before près de chez vous.",
-			"us": "Join pregame parties around you."
+			"us": "Join predrink parties around you."
 		},
 		lp_conn_button: {
 			"fr": "Connexion",
@@ -1146,7 +1146,7 @@
 		},
 		lp_reason_1_h1: {
 			"fr": "Trouvez votre before",
-			"us": "Find a pregame party"
+			"us": "Find a predrink party"
 		},
 		lp_reason_2_h1: {
 			"fr": "Demandez à participer",
@@ -1158,11 +1158,11 @@
 		},
 		lp_reason_1_h2: {
 			"fr": "Parcourez et repérez sur la map les before qui s'organisent près de chez vous.",
-			"us": "Go on the map and find all the pregame parties happening around you."
+			"us": "Go on the map and find all the predrink parties happening around you."
 		},
 		lp_reason_2_h2: {
 			"fr": "Envoyez une demande de participation pour rejoindre le before qui vous ambiance le plus avec au moins un de vos amis.",
-			"us": "Request to join the pregame party that seems to fit you the most with at least one of your friends."
+			"us": "Request to join the predrink party that seems to fit you the most with at least one of your friends."
 		},
 		lp_reason_3_h2: {
 			"fr": "Une fois accepté, discutez avec les organisateurs pour préparer votre soirée avant de vous retrouver.",
@@ -1254,7 +1254,7 @@
 		},
 		n_group_request_hosts_subtext: {
 			"fr": "Un groupe a montré un intérêt pour votre before",
-			"us": "A group seems to be interested by your pregame"
+			"us": "A group seems to be interested by your predrink"
 		},
 		n_group_request_members_text: {
 			"fr": "Cheers envoyé par %name",
@@ -1305,7 +1305,7 @@
 		},
 		n_before_canceled_text: {
 			"fr": "Before annulé par %name",
-			"us": "Pregame canceled by %name"
+			"us": "predrink canceled by %name"
 		},
 		n_before_canceled_subtext: {
 			"fr": "%address",
@@ -1353,7 +1353,7 @@
 		},
 		mod_change_lang_subtitle: {
 			"fr": "La langue ne devrait pas être une barrière pour faire la fête. L'application se traduit instantanément dans le langage de ton choix.",
-			"us": "The language should never be an obstacle to partying. The application translates itself instantaneously in the language of your choosing"
+			"us": "The language should never be an obstacle to partying. The application translates itself instantaneously in the language of your choosing."
 		},
 		segment_cheers_received: {
 			"fr": "Reçus",
@@ -1389,7 +1389,7 @@
 		},
 		cheers_item_subtitle: {
 			"fr": "Pour un before le %date",
-			"us": "The pregame starts the %date"
+			"us": "The predrink starts the %date"
 		},
 		w_profile: {
 			"fr": "profil",
@@ -1421,7 +1421,7 @@
 		},
 		w_before: {
 			"fr": "before",
-			"us": "pregame"
+			"us": "predrink"
 		},
 		w_profile: {
 			"fr": "profil",
@@ -1505,7 +1505,7 @@
 		},
 		settings_emails_marked_as_host_explanation: {
 			"fr": "Envoyée lorsque l'un de tes amis organise un before avec toi",
-			"us": "Sent when your friends tags you as co-host of his pregame"
+			"us": "Sent when your friends tags you as co-host of his predrink"
 		},
 		settings_emails_new_match_label: {
 			"fr": "Nouveau Match",
@@ -1577,7 +1577,7 @@
 		},
 		empty_shared_subtitle: {
 			"fr": "Partagez des profils ou des before avec tes amis pour pouvoir vous organiser plus rapidement.",
-			"us": "Share profiles or pregame with your friends to help you organize your nights."
+			"us": "Share profiles or predrink with your friends to help you organize your nights."
 		},
 		empty_cheers_sent_title: {
 			"fr": "Aucun Cheers envoyés",
@@ -1593,7 +1593,7 @@
 		},
 		empty_cheers_received_subtitle: {
 			"fr": "Des Cheers te seront envoyés par les autres membres pour te montrer qu'ils seront intéressés par ton before.",
-			"us": "Cheers are sent to you by other members to show you they are interested in your pregame"
+			"us": "Cheers are sent to you by other members to show you they are interested in your predrink"
 		},
 		cheers_create_before_btn: {
 			"fr": "Proposer un before",
@@ -1755,15 +1755,15 @@
 		},
 		modal_share_title_before: {
 			"fr": "Partager un before",
-			"us": "Share a pregame"
+			"us": "Share a predrink"
 		},
 		modal_share_subtitle_before: {
 			"fr": "Sélectionnez dans la liste les personnes avec qui vous souhaitez partager ce before.",
-			"us": "Select in your friendlist who you wish to share this pregame with."
+			"us": "Select in your friendlist who you wish to share this predrink with."
 		},
 		to_before_shared_success: {
 			"fr": "Le before a bien été partagé",
-			"us": "The pregame has been shared"
+			"us": "The predrink has been shared"
 		},
 		to_cheers_sent_success: {
 			"fr": "Ton Cheers a bien été envoyé",
@@ -1801,7 +1801,7 @@
 		},
 		be_create_title: {
 			"fr": "Propose ton before",
-			"us": "Create a pregame"
+			"us": "Create a predrink"
 		},
 		be_create_subtitle_hosts: {
 			"fr": "Membres de ton groupe",
@@ -1813,7 +1813,7 @@
 		},
 		be_create_subtitle_before: {
 			"fr": "Lieu du before",
-			"us": "Pregame location"
+			"us": "predrink location"
 		},
 		be_create_hosts_placeholder: {
 			"fr": "Coorganisateurs",
@@ -1833,7 +1833,7 @@
 		},
 		be_create_before_explanations: {
 			"fr": "Ton before disparaitra de la map demain à 6h",
-			"us": "Your pregame will disappear from the map tomorrow at 6am"
+			"us": "Your predrink will disappear from the map tomorrow at 6am"
 		},
 		be_create_subtitle_hashtags: {
 			"fr": "Hashtag ton before",
@@ -1855,12 +1855,12 @@
 			"fr": function(){
 				var min = LJ.app_settings.app.min_hosts - 1;
 				var max = LJ.app_settings.app.max_hosts - 1;
-				return "Sélectionne les autres participants parmi tes amis <br> (%max maximum)".replace('%max', max);
+				return "(%max maximum)".replace('%max', max);
 			},
 			"us": function(){
 				var min = LJ.app_settings.app.min_hosts - 1;
 				var max = LJ.app_settings.app.max_hosts - 1;
-				return "Select the other hosts among your friends <br> (%max maximum)".replace('%max', max);
+				return "(%max maximum)".replace('%max', max);
 			}
 		},
 		err_be_create_missing_hosts: {
@@ -1897,7 +1897,7 @@
 		},
 		slide_overlay_before_cancel: {
 			"fr": "Annuler mon before",
-			"us": "Cancel my pregame"
+			"us": "Cancel my predrink"
 		},
 		slide_overlay_back: {
 			"fr": "Retour",
@@ -1905,19 +1905,19 @@
 		},
 		to_cancel_before_success: {
 			"fr": "Le before a bien été annulé",
-			"us": "The pregame have been canceled"
+			"us": "The predrink have been canceled"
 		},
 		before_just_canceled: {
 			"fr": "Nous sommes désolés, ce before vient d'être annulé par un des organisateurs.",
-			"us": "We are sorry, this pregame just got canceled by one of the hosts."
+			"us": "We are sorry, this predrink just got canceled by one of the hosts."
 		},
 		chat_just_canceled: {
 			"fr": "Un before a été annulé",
-			"us": "A pregame has been canceled"
+			"us": "A predrink has been canceled"
 		},
 		be_ended: {
 			"fr": "Le before est terminé",
-			"us": "The pregame is over"
+			"us": "The predrink is over"
 		},
 		be_hosted: {
 			"fr": "Tu es coorganisateur de ce before",
@@ -1925,7 +1925,7 @@
 		},
 		to_friend_canceled_event: {
 			"fr": "%name vient d'annulé un before que vous organisiez ensemble",
-			"us": "%name just canceled a pregame that you organized together"
+			"us": "%name just canceled a predrink that you organized together"
 		},
 		modal_request_subtitle: {
 			"fr": "Sélectionne les amis avec lesquels tu souhaites envoyer un Cheers",
@@ -1933,11 +1933,11 @@
 		},
 		to_before_create_success: {
 			"fr": "Ton before vient d'être créé !",
-			"us": "Your pregame was created successfully"
+			"us": "Your predrink was created successfully"
 		},
 		to_before_create_success_friends: {
 			"fr": "%name vous a marqué coorganisateur de son before",
-			"us": "%name marked you as host of his pregame"
+			"us": "%name marked you as host of his predrink"
 		},
 		modal_no_friends_btn: {
 			"fr": "Invitez des amis",
@@ -1948,8 +1948,8 @@
 			"us": "You need to be at least two to perform this action"
 		},
 		be_request_already_there: {
-			"fr": "a déjà envoyé un Cheers pour ce before",
-			"us": "has already sent a Cheers for this before"
+			"fr": "a déjà envoyé un Cheers",
+			"us": "has already sent a Cheers"
 		},
 		to_request_pending: {
 			"fr": "Vous pourrez discuter dès que vous aurez un Match",
@@ -1977,7 +1977,7 @@
 		},
 		chat_empty_subtitle_row: {
 			"fr": "Tu pourras discuter avec tes amis et faire connaissance avec les autres membres lorsque tu auras créé un before ou obtenu un Match",
-			"us": "You will be able to chat with your friends and the other members once you have created a pregame or obtained a Match"
+			"us": "You will be able to chat with your friends and the other members once you have created a predrink or obtained a Match"
 		},
 		chat_empty_title_inview_hosts: {
 			"fr": "Nouveau Match !",
@@ -2008,8 +2008,8 @@
 			"us": function( group_name ){ return group_name; }
 		},
 		chat_empty_subtitle_inview_team: {
-			"fr": "Seuls toi et les autres membres de ce groupe recevront les messages qui seront envoyés sur cette discussion.",
-			"us": "Only you and the other members of your group will receive messages that are sent on this chat."
+			"fr": "Seuls toi et les autres membres de ce groupe recevront les messages qui seront envoyés sur cette discussion",
+			"us": "Only you and the other members of your group will receive messages that are sent on this chat"
 		},
 		chat_rows_team_title: {
 			"fr": "Ta team",
@@ -2033,7 +2033,7 @@
 		},
 		chat_inview_options_message_show_before: {
 			"fr": "Voir le before",
-			"us": "See the pregame"
+			"us": "See the predrink"
 		},
 		chat_inview_users_group: {
 			"fr": "Membres de la discussion",
@@ -2129,7 +2129,7 @@
 		},
 		n_before_canceled: {
 			"fr": "Ce before a été annulé",
-			"us": "This pregame has been canceled"
+			"us": "This predrink has been canceled"
 		},
 		n_outdated_notification: {
 			"fr": "Cette notification n'est plus d'actualité",
@@ -2173,11 +2173,11 @@
 		},
 		cheers_title: {
 			"fr": "Ils veulent faire un before avec toi",
-			"us": "They wanna have a pregame with you"
+			"us": "They wanna have a predrink with you"
 		},
 		cheers_subtitle: {
 			"fr": "Sélectionne les groupes qui t'ambiancent le plus et organise ta prochaine soirée",
-			"us": "Select the groups that you like the most and throw your next pregame"
+			"us": "Select the groups that you like the most and throw your next predrink"
 		},
 		be_check_cheers: {
 			"fr": "%n Cheers reçus",
@@ -2217,23 +2217,23 @@
 		},
 		onb_welcome_title: {
 			"fr": function( name ){
-				return "Bienvenidos %name!".replace('%name', name);
+				return "Bienvenidos %name !".replace('%name', name);
 			},
 			"fr": function( name ){
-				return "Bienvenidos %name!".replace('%name', name);
+				return "Bienvenidos %name !".replace('%name', name);
 			}
 		},
 		onb_welcome_subtitle: {
 			"fr": "Bienvenue sur l'application qui te permet de t'ambiancer avant d'aller en soirée.<br>"
-			     + "Parcours la Map et repère les before qui s'organisent près de chez toi. Envoie des Cheers pour montrer ton intérêt pour un before. Si on te Cheers back, it's a Match!<br>"
+			     + "Parcours la Map et repère les before qui s'organisent près de chez toi. Envoie des Cheers pour montrer ton intérêt pour un before. Si on te Cheers back, it's a Match !<br>"
 			     + "A bientôt en soirée ;)",
 			"us": "Welcome on the application for people who like to predrink before going out.<br>"
-				 + 'Browse the map and spot the predrinks that are happening around you. Send a Cheers to show your interest. If people Cheers back, its a Match!<br>'
+				 + 'Browse the map and spot the predrinks that are happening around you. Send a Cheers to show your interest. If people Cheers back, its a Match !<br>'
 				 + 'See you at our next predrink ;)'
 		},
 		onb_welcome_btn: {
-			"fr": "Montrez-moi la map",
-			"us": "Show-me the map"
+			"fr": "Voir les before",
+			"us": "Show me the Map"
 		},
 		notification_empty_title: {
 			"fr": "Rien à l'horizon",

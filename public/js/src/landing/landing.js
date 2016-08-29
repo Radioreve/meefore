@@ -35,7 +35,7 @@
 			},
 			"landing_change_lang": {
 				"fr": "Langue",
-				"us": "Langage"
+				"us": "Language"
 			},
 			"landing_privacy": {
 				"fr": [
@@ -190,9 +190,9 @@
 						'<div class="landing-footer__item js-landing-privacy">',
 							'<span data-lid="landing_footer_privacy"></span>',
 						'</div>',
-						'<div class="landing-footer__item js-landing-facebook">',
-							'<span data-lid="landing_footer_facebook"></span>',
-						'</div>',
+						// '<div class="landing-footer__item js-landing-facebook">',
+						// 	'<span data-lid="landing_footer_facebook"></span>',
+						// '</div>',
 					'</div>'
 
 				].join('')

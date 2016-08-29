@@ -41,10 +41,10 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 							'<img data-lid="img_landing_iphone_before" src="/img/landing/iphone_before_tp_'+ LJ.lang.getAppLang() +'.png">',
 						'</div>',
 						'<div class="landing__screenshot x--2">',
-							'<img data-lid="img_landing_iphone_map" src="/img/landing/iphone_map_tp_'+ LJ.lang.getAppLang() +'.png">',
+							'<img data-lid="img_landing_iphone_map" src="/img/landing/iphone_chat_tp_'+ LJ.lang.getAppLang() +'.png">',
 						'</div>',
 						'<div class="landing__screenshot x--3">',
-							'<img data-lid="img_landing_iphone_chat" src="/img/landing/iphone_chat_tp_'+ LJ.lang.getAppLang() +'.png">',
+							'<img data-lid="img_landing_iphone_chat" src="/img/landing/iphone_map_tp_'+ LJ.lang.getAppLang() +'.png">',
 						'</div>',
 					'</div>',
 

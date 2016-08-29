@@ -314,8 +314,15 @@
 
 @media (max-width: 1000px ){
   .pictures {
+    /* display: block; */
+    width: 80%;
+    /* white-space: nowrap; */
+    /* overflow-x: scroll; */
     flex-flow: row wrap;
   }
+
+  .picture {}
+  
   .menu.x--downsized h3 {
     font-size: 18px;
   }
@@ -326,6 +333,14 @@
 }
 
 @media (max-width: 500px){
+    
+    .pictures {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow-x: scroll;
+    margin-bottom: 10px;
+  }
   
   .menu.x--downsized h3 {
     display: none;

@@ -17,7 +17,7 @@
     box-sizing: border-box;
 }
 
-.landing__h1 {font-family: 'Helvetica';/* font-weight: 700; */font-size: 66px;margin-bottom: 32px;font-family: 'pacifico';font-family: 'creamy';text-align: center;font-size: 35px;font-family: 'quenda';font-weight: bolder;}
+.landing__h1 {font-family: 'Helvetica';/* font-weight: 700; */font-size: 66px;margin-bottom: 32px;font-family: 'pacifico';font-family: 'creamy';text-align: center;font-size: 35px;font-family: 'quenda';font-weight: bolder;text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);}
 .landing__h1 h1 {}
 .landing__h2 {
     margin-bottom: 40px;
@@ -25,6 +25,7 @@
     font-weight: 400;
     line-height: 30px;
     text-align: center;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
 }
 .landing__h2 h2 {}
 
@@ -173,9 +174,9 @@
 .landing-screenshots {
   display: flex;
   width: 350px;
-  height: 400px; 
+  height: 400px;
   position: absolute;
-  bottom: 30px;
+  bottom: 70px;
   right: 20px;
 }
  
@@ -183,9 +184,9 @@
 
 .landing__screenshot.x--1 {width: 60%;left: 0;z-index: 3;}
 
-.landing__screenshot.x--2 {left: auto;right: 0;z-index: 2;bottom: 30px;}
+.landing__screenshot.x--2 {left: auto;right: 30px;z-index: 2;bottom: 30px;}
 
-.landing__screenshot.x--3 {width: 47%;left: -130px;z-index: 1;bottom: 30px;}
+.landing__screenshot.x--3 {width: 54%;left: -126px;z-index: 1;bottom: 20px;}
 
 .landing-screenshots img {
   width: 100%;
@@ -239,7 +240,7 @@
 }
 
 .landing-footerlay {
-    background: linear-gradient( transparent, black);
+    /* background: linear-gradient( transparent, black); */
     position: absolute;
     bottom: 0;
     left: 0;
@@ -293,7 +294,7 @@ path {
 
 .start-anim path {
   dash 520ms cubic-bezier(.63,.25,.25,.9) forwards;
-  animation: dash 520ms cubic-bezier(.63,.25,.25,.9) forwards;
+  animation: dash 700ms cubic-bezier(.63,.25,.25,.9) forwards;
 }
 
 @keyframes dash {
@@ -335,8 +336,8 @@ path {
 }
 @media (max-width: 700px) {
    
-   .landing-content {
-
+   .landing-background {
+      background-position: center center;
    }
    .landing__h2 {
      display: none;

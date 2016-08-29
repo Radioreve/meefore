@@ -15,7 +15,6 @@
         padding-top: 45px!important;
     }
     .app-logout,
-    .app-subheader.x--menu h3,
     .settings-input__explanation,
     .me-item__explanation,
     .me .icon-item,
@@ -33,21 +32,12 @@
     .user-actions {
         display: none!important;
     }
-    .be-create,
-    .notifications-panel,
-    .chat,
-    .slide,
-    .search-filters,
-    .menu-section.x--cheers .segment,
-    .empty,
-    .settings__button.x--delete,
-    .settings__button,
-    .map-browse input,
-    .profile-logout {
+    .be-create, .notifications-panel, .chat, .slide, .search-filters, .menu-section.x--cheers .segment, .empty, .settings__button.x--delete, .settings__button, .map-browse input, .profile-logout, .me {
         width: 100%!important;
     }
     .modal {
         width: 80%!important;
+        height: 70%!important;
     }
     .modal__title {
         font-size: 22px;
@@ -88,12 +78,17 @@
     .map-zoom {
         bottom: 70px!important;
     }
-    .picture,
-    .picture-icon {
-        width: 220px!important;
-        height: 220px!important;
+    .picture, .picture-icon {
+        width: 220px;
+        height: 220px;
+        display: inline-block;
+        width: 130px;
+        height: 130px;
+        padding: 4px;
     }
-
+    
+    .picture__ribbon-main {font-size: 10px;width: 130px;border-radius: 0;bottom: 4px;}
+     
     .picture-icon {
         display: none;
     }
@@ -262,8 +257,8 @@
     }
 
     .be-pictures {
-        width: 240px!important;
-        height: 240px!important
+        width: 230px!important;
+        height: 230px!important;
     }
 
     .empty {
@@ -320,14 +315,14 @@
         overflow-x: scroll;
         overflow-y: hidden;
         white-space: nowrap;
-    }
+    } 
     .pictures-overlay {
         display: none;
     }
     
     .onb-welcome {
-        padding: 0 20px 0 20px;
-        border-radius: 0
+        border-radius: 0;
+        padding: 0;
     }
     .onb-welcome-body {
         border-radius: 0;
@@ -338,12 +333,17 @@
     }
 
     .onb-welcome__subtitle span {
-        line-height: 28px;
+        line-height: 24px;
         font-size: 11px;
         display: block;
+        padding: 0 30px;
     }
 
     .onb-welcome br {
+        display: none;
+    }
+
+    .modal-subheader br {
         display: none;
     }
 

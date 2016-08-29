@@ -196,6 +196,9 @@
     display: flex;
     padding: 10px 0px;
     flex-flow: row wrap;
+    max-height: 70px;
+    overflow: hidden;
+    overflow-y: scroll;
 }
 
 .be-create__hashtags.x--disabled {}
