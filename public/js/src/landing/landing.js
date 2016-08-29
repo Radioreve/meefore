@@ -197,6 +197,25 @@
 
 				].join('')
 
+		},
+		renderFaq: function(){
+
+			return LJ.ui.render([
+
+				'<div class="landing-faq">',
+					'<div class="landing-faq-row">',
+						'<div class="landing-faq__q">',
+							'<span data-lid="landing_faq_q_about"></span>',
+						'</div>',
+						'<div class="landing-faq_a">',
+							'<span data-lid="landing_faq_a_about"></span>',
+						'</div>',
+					'</div>',
+				'</div>'
+
+			]);
+
+
 		}
 
 	});

@@ -262,7 +262,7 @@
 .landing-overlay {
     background: linear-gradient( #1A59C5, black );
     z-index: 2;
-    opacity: 0.75;
+    opacity: 0.6;
     /* background: linear-gradient(45deg,rgba(251, 89, 92, 0),#f0215d); */
     /* background: rgba(255, 255, 255, 0.45); */
     /* background: rgba(0, 0, 0, 0.49); */

@@ -1985,10 +1985,10 @@
 		},
 		chat_empty_subtitle_inview_hosts: {
 			"fr": function( group_name ){
-				return  "Fais connaissance avec " + group_name + " dès maintenant."
+				return  "Tu peux maintenant envoyer des messages à " + group_name
 			},
 			"us": function( group_name ){
-				return "Get to know " + group_name + " now."
+				return "You may now send messages to " + group_name
 			} 
 		},
 		chat_empty_title_inview_accepted: {

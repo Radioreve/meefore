@@ -10,11 +10,11 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 			
 			"landing_h1": {
 				"fr": "Des rencontres <span class='landing-avant'>avant</span> d'aller en soirée",
-				"us": "Hello."
+				"us": "Meet people <span class='landing-avant'>before</span> partying"
 			},
 			"landing_h2": {
 				"fr": "N’attends plus d'être en soirée pour faire de nouvelles rencontres.<br>Connecte-toi et repère chaque jour les before qui s'organisent près de chez toi.",
-				"us": "N’attends plus d'être en soirée pour faire de nouvelles rencontres.<br>Connecte-toi et repère chaque jour les before qui s'organisent près de chez toi."
+				"us": "No longer wait to be at a party to meet new people.<br>Sign up and take part to predrinks organized around you."
 			}
 		},
 		"html": [
@@ -70,11 +70,17 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 			});
 
 			$('body').on('click', '.js-landing-contact', function(){
-
+				window.location.href = "mailto:team@meefore.com";
 			});
 
 			$('body').on('click', '.js-landing-faq', function(){
-
+				LJ.ui.showModal({
+					"type"      	: "landing-faq",
+					"title"			: LJ.text('landing_faq_title'),
+					"subtitle"		: LJ.text('landing_faq_subtitle'),
+					"body"  		: LJ.landing.renderFaq(),
+					"jsp_body" 	    : true
+				});
 			});
 
 			$('body').on('click', '.js-landing-privacy', function(){
