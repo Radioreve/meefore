@@ -434,9 +434,15 @@ path {
   and (-webkit-min-device-pixel-ratio: 2)
   and (orientation: portrait) {
   
-  .landing__screenshot.x--1 {
-    width: 115px;
-  }
+  .landing__h1 {
+        font-size: 16px;
+        line-height: 20px;
+        top: 66px;
+        width: 250px;
+      }
+    .landing__screenshot.x--1 {
+      width: 124px;
+    }
 
 
 }
@@ -464,11 +470,18 @@ path {
 @media (min-width: 414px) and (max-width: 736px) { 
   
   .landing__screenshot.x--1 {
-    width: 200px;
-  }
+      width: 160px;
+      bottom: 140px;
+    }
+    .landing__h1 {
+      top: 80px;
+      line-height: 22px;
+      font-size: 22px;
+      width: 300px
+    }
 
-  .landing-connexion button {
-    width: 100%!important;
-  }
+    .landing-connexion button {
+      width: 100%!important;
+    }
 
 }

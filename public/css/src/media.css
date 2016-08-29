@@ -86,6 +86,12 @@
         height: 130px;
         padding: 4px;
     }
+
+    .picture-icon {
+        top: 0;
+        padding: 2px;
+        left: 0;
+    }
     
     .picture__ribbon-main {font-size: 10px;width: 130px;border-radius: 0;bottom: 4px;}
      
