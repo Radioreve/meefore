@@ -77,13 +77,15 @@
 
         // Sources, in any order
         var sources     = 'public/css/src/**/*.css';
-        var exclude     = '!public/css/src/landing/*.css, !public/css/src/legals.css';
+        var exclude_lp  = '!public/css/src/landing/*.css';
+        var excluse_lg  = '!public/css/src/legals.css'
 
         gulp.src([
             hint, jscrollpane, nouislider, pikadate, typeahead, reset,
             common,
             sources,
-            exclude,
+            exclude_lp,
+            excluse_lg,
             media
         ])
         .pipe(concat( NAMESPACE + '.css'))
