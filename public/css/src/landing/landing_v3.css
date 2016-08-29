@@ -293,7 +293,6 @@ path {
 }
 
 .start-anim path {
-  dash 520ms cubic-bezier(.63,.25,.25,.9) forwards;
   animation: dash 700ms cubic-bezier(.63,.25,.25,.9) forwards;
 }
 
