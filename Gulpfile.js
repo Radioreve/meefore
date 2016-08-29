@@ -77,7 +77,7 @@
 
         // Sources, in any order
         var sources     = 'public/css/src/**/*.css';
-        var exclude     = '!public/css/src/landing/*.css';
+        var exclude     = '!public/css/src/landing/*.css, !public/css/src/legals.css';
 
         gulp.src([
             hint, jscrollpane, nouislider, pikadate, typeahead, reset,
