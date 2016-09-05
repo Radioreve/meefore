@@ -148,7 +148,7 @@ span.be-dates__count {
 }
 
 .slide.x--before .slide__close {
-    color: white;
+    /* color: white; */
     text-shadow: none;
     color: #1a59c3;
 }
@@ -189,7 +189,7 @@ span.be-dates__count {
 
 .be-pictures {
     position: relative;
-    /* display: flex; */
+    display: flex;
     padding-bottom: 50%;
     width: 100%;
     overflow: hidden;
@@ -433,21 +433,19 @@ span.be-dates__count {
  
 .be-action {
     order: 1;
-    height: 130px;
+    height: 100px;
     width: 100%;
     display: flex;
     margin-top: auto;
-    position: fixed;
-    bottom: 0;
+    background: white;
+    flex-shrink: 0;
 }
 
 .be-inview.x--flat .be-action {
     background: linear-gradient(transparent, white);
     width: 100%;
-    height: 130px;
+    height: 100px;
     z-index: 10;
-    position: fixed;
-    bottom: 0;
 }
 
 .be-action button {

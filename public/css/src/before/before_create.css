@@ -3,10 +3,11 @@
     position: fixed;
     right: 0px;
     top: 0;
+    bottom: 0;
     z-index: 1000;
     background: rgb(255, 255, 255);
     width: 400px;
-    padding: 0 50px 40px;
+    padding: 0 50px 30px;
     box-sizing: border-box;
     box-shadow: 0 0 14px #949494;
     flex-flow: column nowrap;
@@ -212,6 +213,8 @@
     cursor: pointer;
     font-family: 'quenda';
     margin: 0 4px 4px 0;
+    box-sizing: border-box;
+    max-width: 100%;
 }
 .be-create__hashtag:hover {
     opacity: 0.6!important;

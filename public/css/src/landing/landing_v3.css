@@ -17,7 +17,7 @@
     box-sizing: border-box;
 }
 
-.landing__h1 {font-family: 'Helvetica';/* font-weight: 700; */font-size: 66px;margin-bottom: 32px;font-family: 'pacifico';font-family: 'creamy';text-align: center;font-size: 35px;font-family: 'quenda';font-weight: bolder;text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);}
+.landing__h1 {font-size: 66px;margin-bottom: 32px;font-family: 'pacifico';font-family: 'creamy';text-align: center;font-size: 35px;font-family: 'quenda';font-weight: bolder;text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);}
 .landing__h1 h1 {}
 .landing__h2 {
     margin-bottom: 40px;

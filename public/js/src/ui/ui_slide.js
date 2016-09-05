@@ -114,7 +114,7 @@
 		},
 		showSlideOverlay: function( html ){
 
-			var $wrap = $('.slide');
+			var $wrap = $('.slide-body').children().last();
 
 			LJ.ui.showIoptions( $wrap, html );
 

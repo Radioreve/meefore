@@ -199,7 +199,15 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	showLoader: function( loader_id ){
 
 		loader_id = loader_id || 'no_id';
-		$( LJ.static.renderStaticImage('main_loader') )
+
+		var loader_type = 'main_loader';
+
+		// huge ugly hack :)
+		if( LJ.isMobileMode() && $('.ioptions').length > 0 ){
+			// loader_type = 'main_loader_white';  // Transparent background gif needed
+		}
+
+		$( LJ.static.renderStaticImage( loader_type ) )
 				 .attr('data-loaderid', loader_id)
 				 .appendTo('body')
 				 .show();

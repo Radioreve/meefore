@@ -32,12 +32,24 @@
     .user-actions {
         display: none!important;
     }
-    .be-create, .notifications-panel, .chat, .slide, .search-filters, .menu-section.x--cheers .segment, .empty, .settings__button.x--delete, .settings__button, .map-browse input, .profile-logout, .me {
+    .be-create,
+    .notifications-panel,
+    .chat,
+    .slide,
+    .search-filters,
+    .menu-section.x--cheers .segment,
+    .empty,
+    .settings__button.x--delete,
+    .settings__button,
+    .map-browse input,
+    .profile-logout,
+    .me {
         width: 100%!important;
     }
-    .modal {
+    .modal.x--be-create,
+    .modal.x--request {
         width: 80%!important;
-        height: 70%!important;
+        height: 88%!important;
     }
     .modal__title {
         font-size: 22px;
@@ -78,23 +90,26 @@
     .map-zoom {
         bottom: 70px!important;
     }
-    .picture, .picture-icon {
+    .picture,
+    .picture-icon {
         width: 220px;
         height: 220px;
         display: inline-block;
         width: 130px;
         height: 130px;
-        padding: 4px;
+        padding: 2px!important; 
     }
-
     .picture-icon {
         top: 0;
         padding: 2px;
         left: 0;
     }
-    
-    .picture__ribbon-main {font-size: 10px;width: 130px;border-radius: 0;bottom: 4px;}
-     
+    .picture__ribbon-main {
+        font-size: 10px;
+        width: 130px;
+        border-radius: 0;
+        bottom: 2px;
+    }
     .picture-icon {
         display: none;
     }
@@ -175,18 +190,16 @@
     .app-subheader {
         background: rgba( 255, 255, 255, .85)!important;
     }
-
     .app-subheader.x--menu .menu-item__icon {
-        background: none!important;
+        display: none!important;
     }
-    
     .search-user .user-online {
         bottom: 80px!important;
         right: 10px!important;
         position: absolute!important;
         width: 16px!important;
         height: 16px;
-    } 
+    }
     .disconnected {
         padding: 0 10px!important;
         width: 80%!important;
@@ -205,13 +218,11 @@
         height: 20px!important;
         border: 2px solid!important;
     }
-    .map__icon.x--create-before {
-    }
+    .map__icon.x--create-before {}
     .search-users {
         margin-top: 10px!important;
     }
-    .app__menu-item:not(.x--active):hover .app__menu-icon {
-    }
+    .app__menu-item:not(.x--active):hover .app__menu-icon {}
     .search-filters {
         padding-bottom: 0!important;
     }
@@ -234,7 +245,6 @@
     .me-item .action {
         top: -20px!important;
     }
-
     .be-action {
         position: static;
         flex-shrink: 0!important;
@@ -245,52 +255,39 @@
         flex-shrink: 0!important;
         height: 70px!important;
     }
-
     .be-inview-address {
         flex-shrink: 0!important;
     }
-
     .user-pics {
-        padding-bottom: 0%!important;
-        height: 200px!important;
+        padding-bottom: 100%!important;
+        height: 0px!important;
     }
-
-    .chat-row-infos__name .x--name {
-    }
-
+    .chat-row-infos__name .x--name {}
     .chat-row-pictures {
         margin-left: 10px!important;
     }
-
     .be-pictures {
-        width: 230px!important;
-        height: 230px!important;
+        /* width: 230px!important; */
+        /* height: 230px!important; */
     }
-
     .empty {
         min-height: 0!important;
     }
-
-
-
     .notification .notification__date {
         position: absolute!important;
         top: 4px!important;
         right: 6px!important;
     }
-
-    .chat, .notifications-panel {
+    .chat,
+    .notifications-panel {
         border: none;
     }
-
     .login__progress-bar {
         width: 230px
     }
-
     .be-create {
         padding: 0 20px 40px;
     }
-    
     .tip {
         width: 70%;
         max-width: 400px;
@@ -298,34 +295,38 @@
         right: 0!important;
         margin: auto;
     }
-    .tip__tri {transform: rotate(0deg) !important;right: 0;left: 0!important;margin: auto;bottom: -10px!important;border-top-color: #3980da;border-top-width: 20px;}
-    
+    .tip__tri {
+        transform: rotate(0deg) !important;
+        right: 0;
+        left: 0!important;
+        margin: auto;
+        bottom: -10px!important;
+        border-top-color: #3980da;
+        border-top-width: 20px;
+    }
     .user-pics__navigate {
-        display: none;
+        /* display: none; */
     }
-
     .user-pics__img {
-        position: static;
-        opacity: 1;
-        padding-bottom: 0%;
-        margin: 0;
-        display: inline-block;
-        width: 200px;
-        height: 200px;
+        /* position: static; */
+        /* opacity: 1; */
+        /* padding-bottom: 0%; */
+        /* margin: 0; */
+        /* display: inline-block; */
+        /* width: 200px; */
+        /* height: 200px; */
     }
-
     .user-pics {
-        height: 200px;
-        display: block;
-        width: 100%;
-        overflow-x: scroll;
-        overflow-y: hidden;
-        white-space: nowrap;
-    } 
+        /* height: 200px; */
+        /* display: block; */
+        /* width: 100%; */
+        /* overflow-x: scroll; */
+        /* overflow-y: hidden; */
+        /* white-space: nowrap; */
+    }
     .pictures-overlay {
         display: none;
     }
-    
     .onb-welcome {
         border-radius: 0;
         padding: 0;
@@ -333,24 +334,23 @@
     .onb-welcome-body {
         border-radius: 0;
     }
-
     .onb-welcome__title span {
         font-size: 26px;
     }
-
     .onb-welcome__subtitle span {
         line-height: 24px;
         font-size: 11px;
         display: block;
         padding: 0 30px;
     }
-
     .onb-welcome br {
         display: none;
     }
-
     .modal-subheader br {
         display: none;
     }
-
+    .be-inview {
+        height: auto;
+        min-height: 100%;
+    }
 }

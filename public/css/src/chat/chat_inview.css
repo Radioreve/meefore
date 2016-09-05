@@ -573,3 +573,7 @@
     border-radius: 44px;
     background: #1a59c3;
 }
+
+.chat-inview-footer button span {
+    margin: 0 auto;
+}

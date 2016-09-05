@@ -16,6 +16,7 @@
   bottom: 0;
   margin: auto;
   background: #eee;
+  z-index: 1;
 }
 
 .hive.x--1 .hive__background {
@@ -35,6 +36,7 @@
   border: 2px solid #eee;
   border: 3px solid white;
   cursor: pointer;
+  z-index: 10;
 }
 
 .hive.x--1 .hive__picture {
@@ -62,6 +64,7 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
+  border-radius: 1000px;
   transition: all ease-in .15s;
 }
 

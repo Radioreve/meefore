@@ -83,7 +83,7 @@
 }
 
 .cheers-ribbon span {
-    font-family: 'Open sans';
+    font-family: 'Open sans'; 
 }
 
 .cheers-ribbon h2 {}
@@ -99,6 +99,7 @@
     top: 0;
     left: 0;
     z-index: 1000;
+    overflow: scroll;
 }
 
 .cheers-back-pictures {

@@ -216,7 +216,7 @@
 		return new Promise(function( resolve, reject ){
 
 			if( type == "new_cheers" ){
-				resolve( req.sent.members.concat( req.sent.before.hosts ) );
+				resolve( req.sent.before.hosts );
 			}
 
 			if( type == "new_match" ){

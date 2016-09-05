@@ -1659,7 +1659,7 @@ button:hover .icon-meedrink {
     font-size: 12px;
     border-radius: 100px;
     background: #1a59c3;
-    color: white;
+    color: white!important;
 }
 
 

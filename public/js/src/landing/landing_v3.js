@@ -87,6 +87,10 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 				window.open("/legals");
 			});
 
+			// Make sure the header is always at the "right" position
+			$('.landing__h1').css({ 'top': $('.landing__screenshot.x--1').offset().top - 60 });
+
+			// Display the "underline"
 			LJ.delay( 2000 )
 				.then(function(){
 

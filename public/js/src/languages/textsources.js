@@ -929,19 +929,19 @@
 			"us": "Please, don't upload more than one picture at once"
 		},
 		to_profile_update_success: {
-			"fr": "Vos informations ont été modifiées",
+			"fr": "Tes informations ont été modifiées",
 			"us": "Your informations has been updated"
 		},
 		to_settings_update_success: {
-			"fr": "Vos préférences ont été modifiées",
+			"fr": "Tes préférences ont été modifiées",
 			"us": "Your settings have been updated"
 		},
 		to_upload_pic_success: {
-			"fr": "Votre photo a été modifiée",
+			"fr": "Ta photo a été modifiée",
 			"us": "Your picture has been updated"
 		},
 		to_update_pic_success: {
-			"fr": "Vos photos ont été mise à jour",
+			"fr": "Tes photos ont été mises à jour",
 			"us": "Your pictures have been updated"
 		},
 		to_host_push_new_group: {
@@ -1111,15 +1111,15 @@
 			"us": "We need a valid contact email to change your preferences"
 		},
 		err_update_profile_age: {
-			"fr": "Votre âge ne semble pas avoir le bon format",
+			"fr": "Ton âge ne semble pas avoir le bon format",
 			"us": "Your age doesnt seem to be properly formatted"
 		},
 		err_update_profile_mainify_placeholder: {
-			"fr": "Votre photo de profil doit vous représenter",
+			"fr": "Ta photo de profil doit te représenter",
 			"us": "Your profile picture must represent yourself"
 		},
 		err_update_profile_delete_main_picture: {
-			"fr": "Vous ne pouvez pas supprimer votre photo de profil",
+			"fr": "Tu ne peux pas supprimer ta photo de profil",
 			"us": "You can't delete your profile picture"
 		},
 		err_update_profile_default: {
@@ -1128,7 +1128,7 @@
 		},
 		err_unexpected_message: {
 			"fr": "Une erreur inattendue s'est produite. <br> Cette erreur peut-être due à des circonstances exceptionnelles ou à un bug !" 
-			       + "<br> Nous vous invitons à retenter votre action plus tard et à nous contacter si l'erreur persiste :/",
+			       + "<br> Nous t'invitons à retenter ton action plus tard et à nous contacter si l'erreur persiste :/",
 			"us": "Something unexpected happened. <br> This error might be caused by exceptionnal circumstances or simply bug a bug."
 				   + "<br> Please try again later and we thank you in advance to contact us if the problem persists :/"
 		},
@@ -1189,7 +1189,7 @@
 			"us": "Message*"
 		},
 		lp_contact_send_success: {
-			"fr": "Votre message a bien été envoyé <br> Merci !",
+			"fr": "Ton message a bien été envoyé <br> Merci !",
 			"us": "Your message has been sent <br> Thank you !"
 		},
 		lp_contact_error_fields: {
@@ -1201,8 +1201,8 @@
 			"us": "Your email address doesn't look like one "
 		},
 		lp_contact_error_generic: {
-			"fr": "Une erreur s'est produite. Contactez-nous directement à contact@meefore.com",
-			"us": "Something wrong happened. Mail us directly at contact@meefore.com"
+			"fr": "Une erreur s'est produite. Contacte-nous directement à team@meefore.com",
+			"us": "Something wrong happened. Mail us directly at team@meefore.com"
 		},
 		login_loading_msg: {
 			"fr": "Chargement de l'application",
@@ -1813,7 +1813,7 @@
 		},
 		be_create_subtitle_before: {
 			"fr": "Lieu du before",
-			"us": "predrink location"
+			"us": "Predrink location"
 		},
 		be_create_hosts_placeholder: {
 			"fr": "Coorganisateurs",

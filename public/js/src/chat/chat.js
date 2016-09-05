@@ -21,6 +21,7 @@
 				})
 				.then(function(){
 					LJ.chat.refreshLocalChats();
+					LJ.chat.refreshChatRowsJsp();
 				})
 			// Non blocking promise, return now
 			LJ.log('Done');

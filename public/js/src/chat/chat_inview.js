@@ -783,7 +783,7 @@
 			            '<div class="chat-inview-input js-send-message">',
 			             	'<input data-lid="chat_input_placeholder" placeholder="lol">',
 			            '</div>',
-			            '<button data-lid="w_send" class="x--mb js-send-message">Envoyer</button>',
+			            '<button class="x--mb js-send-message"><span data-lid="w_send"></span></button>',
 		          	'</div>', 
 			    '</div>'
 

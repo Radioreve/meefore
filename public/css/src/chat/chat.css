@@ -424,8 +424,8 @@
     justify-content: center;
 }
 .chat-inview .chat-empty__image {
-    width: 150px;
-    height: 150px;
+    width: 130px;
+    height: 130px;
 }
 .chat-empty__icon {
     color: #db4760;
@@ -441,6 +441,7 @@
     font-family: 'quenda';
     color: #1a59c3;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .chat-empty__title span {}
@@ -452,6 +453,7 @@
     text-align: center;
     font-weight: 500;
     font-size: 12px;
+    flex-shrink: 0;
 }
 
 .chat-empty__subtitle {}
