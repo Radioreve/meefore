@@ -810,6 +810,7 @@
 					try {
 						notificationCallback( notification );
 					} catch( e ){
+						LJ.log(e);
 						LJ.ui.showToast( LJ.text("n_outdated_notification") );
 					}
 
@@ -837,8 +838,12 @@
 
 		},
 		notificationCallback__GroupRequestHosts: function( n ){
+			
+			var cheers_item = LJ.cheers.getCheersItemByMainMember( n.main_member );
+			var cheers_id   = cheers_item.cheers_id;
 
 			LJ.chat.showChatWrap();
+			LJ.cheers.showValidateCheers( cheers_id );
 
 		},
 		notificationCallback__GroupRequestMembers: function( n ){
@@ -858,10 +863,7 @@
 				LJ.chat.showChatWrap();
 			}
 
-			LJ.chat.showChatInview( chat_id );
-			LJ.chat.activateChat( chat_id );
-			LJ.chat.refreshChatJsp( chat_id );
-			LJ.chat.refreshChatState( chat_id );
+			LJ.chat.showAndActivateChatInview( chat_id );
 
 		},
 		notificationCallback__AcceptedInHosts: function( n ){
@@ -873,10 +875,7 @@
 				LJ.chat.showChatWrap();
 			}
 
-			LJ.chat.showChatInview( chat_id );
-			LJ.chat.activateChat( chat_id );
-			LJ.chat.refreshChatJsp( chat_id );
-			LJ.chat.refreshChatState( chat_id );
+			LJ.chat.showAndActivateChatInview( chat_id );
 
 		},
 		notificationCallback__MarkedAsHost: function( n ){

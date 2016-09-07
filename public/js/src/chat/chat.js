@@ -2,6 +2,7 @@
 	window.LJ.chat = _.merge( window.LJ.chat || {}, {
 
 		parallel_fetches_count: 30,
+		shift_key_pressed: false,
 
 		state: 'hidden',
 		fetched_profiles: {},
@@ -21,7 +22,11 @@
 				})
 				.then(function(){
 					LJ.chat.refreshLocalChats();
-					LJ.chat.refreshChatRowsJsp();
+					
+					// Kill the blink
+					LJ.delay( 1000 ).then(function(){
+						// LJ.chat.refreshChatRowsJsp();
+					});
 				})
 			// Non blocking promise, return now
 			LJ.log('Done');
@@ -77,6 +82,7 @@
 			n_chats_all               == 0 ? LJ.chat.emptifyChatRowsMatches() : LJ.chat.unemptifyChatRowsMatches();
 			n_cheers                  == 0 ? LJ.cheers.emptifyCheersItems__Chat() : LJ.cheers.unemptifyCheersItem__Chat();
 
+			LJ.chat.newifyChatRows();
 
 		},
 		handleDocumentVisibilityChangeEvents: function(){
@@ -287,9 +293,9 @@
 		},
 		refreshChatIconBubble: function(){
 
-			if( LJ.chat.getActiveChatId() ){
-				return;
-			}
+			// if( LJ.chat.getActiveChatId() ){
+			// 	return;
+			// }
 
 			var nu_messages = 0;
 			LJ.chat.resetBubbleToChatIcon();	
@@ -561,7 +567,7 @@
 			var hosts        = channel_item.hosts;
 			var members      = channel_item.members;
 
-			if( members.length == 1 ){
+			if( type == "chat_team" && members.length == 1 ){
 				return LJ.log('Lonely host, not adding a chat for himself');
 			}
 
@@ -693,10 +699,10 @@
 					handlers : [{
 						'event_name' : 'jsp-scroll-y',
 						'callback'   : function( e, scroll_pose_y, is_at_top, is_at_bottom ){
-
+														
 							// To make sure the first time usr loads the chat, no automatic refetch takes place
 							if( !$w.hasClass('x--fetch-ready') ){
-								return LJ.log('Cant fetch history, the chat is not set as ready');
+								return //LJ.log('Cant fetch history, the chat is not set as ready');
 							}
 
 							// After a fetch history, the 'seen_by' element might be bugged (half hidden)
@@ -799,16 +805,18 @@
 		},
 		getLastMessage: function( chat_id ){
 
-			var last_message  = LJ.chat.getChat( chat_id ).messages[ 0 ];
-
 			// If no messages was sent, let's use the fact that each chat has at least a last_sent_at attribute
 			// that is equals to requested_at. It is set server-side to help clientside deal with issues when no
 			// messages have been sent. 
-			if( !last_message ){
+			// The try/catch is necessary because some chat_id can come from the cheers module, and not yet be linked
+			// to any real chat.
+			
+			try {
+				return LJ.chat.getChat( chat_id ).messages[ 0 ];
+			} catch( e ){
 				return null;
-			} else {
-				return last_message;
 			}
+		
 
 		},
 		getLastMessageOther: function( chat_id ){
@@ -1364,7 +1372,7 @@
 				// LJ.chat.checkAllChats();
 			}
 
-			LJ.chat.refreshChatRowBubbles( chat_id );
+			// LJ.chat.refreshChatRowBubbles( chat_id );
 			LJ.chat.refreshChatIconBubble();
 			LJ.chat.refreshChatInviewBubble();
 			LJ.chat.refreshAppTitle( true );
@@ -1375,13 +1383,13 @@
 			// Refresh chat seenby, needs to be first
 			LJ.chat.refreshChatSeenBy( chat_id );
 			
-			// Obsolete (?)
 			LJ.chat.newifyChatRows( chat_id );
 
 		},
 		refreshChatRowPicture: function( chat_id ){
 
-			return ;
+			// Do not refresh pictures anymore (new system)
+			return;
 
 
 			var last_message       = LJ.chat.getLastMessage( chat_id );
@@ -1503,7 +1511,7 @@
 		},
 		newifyChatRows: function(){
 
-			var chat_ids = LJ.chat.getChatIds();
+			var chat_ids = _.uniq( [].concat( LJ.chat.getChatIds() ).concat( LJ.cheers.getChatIds() ) );
 
 			chat_ids.forEach(function( chat_id ){
 
@@ -1519,8 +1527,10 @@
 
 					if( LJ.chat.wasNeverSeen( chat_id ) ){
 						$chatrow.addClass('x--new');
+						LJ.chat.addBubbleToChatRow( chat_id );
 					} else {
 						$chatrow.removeClass('x--new');
+						LJ.chat.resetBubbleToChatRow( chat_id );
 					}
 
 				} else {
@@ -1714,7 +1724,7 @@
 				return LJ.wlog('Cannot target chat row without chat_id');
 			}
 
-			return $('.js-chat-row[data-chat-id="'+ chat_id +'"]');
+			return $('.chat-row[data-chat-id="'+ chat_id +'"]');
 
 		},
 		updatePageTitle: function( title ){
@@ -1797,6 +1807,21 @@
 
 			});
 				
+		},
+		isShiftKeyPressed: function(){
+
+			return LJ.chat.shift_key_pressed;
+
+		},
+		handleToggleShiftKeyStatus: function(){
+
+			LJ.chat.toggleShiftKeyStatus();
+
+		},
+		toggleShiftKeyStatus: function(){
+
+			LJ.chat.shift_key_pressed = ( LJ.chat.shift_key_pressed == true ) ? false : true;
+
 		}
 
 

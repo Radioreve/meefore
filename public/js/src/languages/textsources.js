@@ -693,7 +693,7 @@
 			"us": "Alerts and notifications"
 		},
 		s_alerts_subtitle: {
-			"fr": "Soyez alerté dès que de l'activité vous concernant se présente",
+			"fr": "Sois alerté dès que de l'activité te concernant se présente",
 			"us": "Be informed when anything about you happens"
 		},
 		s_accepted_in_label: {
@@ -701,7 +701,7 @@
 			"us": "Accepted in a meefore"
 		},
 		s_accepted_in_desc: {
-			"fr": "Recevez un email dès que vous êtes accepté dans un meefore",
+			"fr": "Reçois un email dès que tu es accepté dans un meefore",
 			"us": "Receive an email when you are accepted in a meefore"
 		},
 		s_new_message_received_label: {
@@ -709,7 +709,7 @@
 			"us": "Unread message"
 		},
 		s_new_message_received_desc: {
-			"fr": "Recevez un email dès que vous êtes hors-ligne et que vous recevez un nouveau message",
+			"fr": "Reçois un email dès que tu es hors-ligne et que tu reçois un nouveau message",
 			"us": "Receive an email when you're offline and someone sends you a new message"
 		},
 		s_message_seen_by_label: {
@@ -1344,7 +1344,7 @@
 			"us": "Facebook photos"
 		},
 		mod_facebook_pictures_subtitle: {
-			"fr": "Sélectionner la photo que vous souhaitez importer à partir de Facebook",
+			"fr": "Sélectionne la photo que tu souhaites importer à partir de Facebook",
 			"us ": "Select the photo you wish to import from Facebook"
 		},
 		mod_change_lang_title: {
@@ -1390,6 +1390,10 @@
 		cheers_item_subtitle: {
 			"fr": "Pour un before le %date",
 			"us": "The predrink starts the %date"
+		},
+		w_terminate: {
+			"fr": "Terminer",
+			"us": "Done"
 		},
 		w_profile: {
 			"fr": "profil",
@@ -2119,7 +2123,7 @@
 			"fr": "Inviter d'autres amis",
 			"us": "Invite more friends"
 		},
-		chat_input_placeholder: {
+		chat_input_ph: {
 			"fr": "Ecris un message...",
 			"us": "Write a message..."
 		},
@@ -2134,10 +2138,6 @@
 		n_outdated_notification: {
 			"fr": "Cette notification n'est plus d'actualité",
 			"us": "This notification is out of date"
-		},
-		mb_update_pictures: {
-			"fr": "Editer mes photos",
-			"us": "Edit my pictures"
 		},
 		map_browser_input_placeholder: {
 			"fr": "Où souhaites-tu sortir ?",
@@ -2274,6 +2274,14 @@
 		onb_send_cheers_btn: {
 			"fr": "Ça marche !",
 			"us": "Okay"
+		},
+		edit_pictures_btn_done: {
+			"fr": "Terminer",
+			"us": "Done"
+		},
+		edit_pictures_btn_edit: {
+			"fr": "Editer mes photos",
+			"us": "Edit my pictures"
 		}
 
 

@@ -48,6 +48,11 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 						'</div>',
 					'</div>',
 
+					'<div class="landing-oneshot">',
+						'<img data-lid="img_landing_iphone_before" src="/img/landing/iphone_before_tp_' + LJ.lang.getAppLang() +'.png">',
+						LJ.landing.elems.connexion_btn,
+					'</div>',
+
 					LJ.landing.elems.footer_flat,
 					'<div class="landing-footerlay"></div>',
 
@@ -88,7 +93,12 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 			});
 
 			// Make sure the header is always at the "right" position
-			$('.landing__h1').css({ 'top': $('.landing__screenshot.x--1').offset().top - 60 });
+			(function adjustPose(){
+				LJ.delay( 100 ).then(function(){
+					$('.landing__h1').css({ 'top': $('.landing-oneshot').offset().top - 50 });
+				});
+			})();
+
 
 			// Display the "underline"
 			LJ.delay( 2000 )

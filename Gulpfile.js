@@ -37,7 +37,7 @@
         var velocity_ui    = lib_path + '/velocity/velocity-ui.js';
         var moment         = lib_path + '/moment/moment.min.js';
         var moment_locale  = lib_path + '/moment/momentwithlocale.js';
-        var nouislider     = lib_path + '/nouislider/nouislider.js';
+        //var nouislider     = lib_path + '/nouislider/nouislider.js';
         var pikaday        = lib_path + '/pikaday/pikaday.js';
         var countdown      = lib_path + '/countdown/countdown.js';
 
@@ -45,7 +45,7 @@
             // Librairies
     		lodash, jquery, mousetrap, jsp, jsp_mousewhell, cloudinary,
             typeahead, typed, imagesloaded, velocity, velocity_ui, moment,
-            moment_locale, pikaday, nouislider, countdown,
+            moment_locale, pikaday, countdown,
 
             // Sources in any order
             src_path,

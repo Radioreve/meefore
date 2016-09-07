@@ -34,7 +34,7 @@
 			$.cloudinary.config( LJ.pictures.cloudinary_upload_params );
 
 			if( LJ.isMobileMode() ){
-				LJ.pictures.hidePictureEditOptions();
+				LJ.pictures.deactivateEditPictures();
 			}
 
 			return LJ.api.fetchCloudinaryTags()
@@ -83,15 +83,23 @@
 			LJ.ui.$body.on('click', LJ.pictures.handleClickInModal );
 
 		},
+		activateEditPictures: function(){
+
+			$('.js-edit-pictures').addClass('x--active').children().text( LJ.text("edit_pictures_btn_done") );
+			LJ.pictures.showPictureEditOptions();
+
+		},
+		deactivateEditPictures: function(){
+
+			$('.js-edit-pictures').children().text( LJ.text("edit_pictures_btn_edit") );
+			LJ.pictures.hidePictureEditOptions();
+
+		},
 		handleEditPicturesClicked: function(){
 
-			if( $('.picture-icon').css('display') != 'none' ){
-				$('.js-edit-pictures').removeClass('x--active');
-				LJ.pictures.hidePictureEditOptions();
-			} else {
-				$('.js-edit-pictures').addClass('x--active');
-				LJ.pictures.showPictureEditOptions();
-			}
+			$('.picture-icon').css('display') == 'none' ?
+				LJ.pictures.activateEditPictures() :
+				LJ.pictures.deactivateEditPictures();
 
 		},
 		showPictureEditOptions: function(){

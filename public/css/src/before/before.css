@@ -467,11 +467,8 @@ span.be-dates__count {
 }
 
 .be-action button.x--pending {
-    color: white;
-    border: 2px solid;
-    background: #FD7124;
-    background: white;
-    color: #1a59c3;
+    color: #fc3c5d;
+    background: none;
 }
 
 .be-action button.x--accepted {

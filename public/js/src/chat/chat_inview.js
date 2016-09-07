@@ -12,6 +12,10 @@
 			$('.chat').on('click', '.js-show-users', LJ.chat.handleShowUsers );
 			$('.chat').on('click', '.js-chat-back', LJ.chat.handleChatBack );
 			$('.chat').on('keydown', '.js-send-message', LJ.chat.handleSendMessageKeypress );
+			$('.chat').on('keydown', '.js-send-message', LJ.chat.handleToggleShiftKeyStatus );
+			$('.chat').on('keyup', '.js-send-message', LJ.chat.handleToggleShiftKeyStatus );
+			$('.chat').on('keyup', '.js-send-message', LJ.chat.handleShowPlaceholder );
+			$('.chat').on('keydown', '.js-send-message', LJ.chat.handleShowPlaceholder );
 			$('.chat').on('click', 'button.js-send-message', LJ.chat.handleSendMessageClick );
 
 		},
@@ -160,19 +164,49 @@
 			});
 
 		},
+		handleShowPlaceholder: function(){
+			
+			var $s      = $( this );
+			var chat_id = $s.closest('[data-chat-id]').attr('data-chat-id');
+			var $input  = LJ.chat.getChatInview( chat_id ).find('.chat-inview__input');
+		
+			LJ.delay( 15 ).then(function(){
+
+				var message = $input.text();
+
+				if( message.length == 0 ){
+					LJ.chat.showPlaceholder( chat_id );
+				} else {
+					LJ.chat.hidePlaceholder( chat_id );
+				}
+
+			});
+
+		},
+		showPlaceholder: function( chat_id ){
+
+			LJ.chat.getChatInview( chat_id ).find('.chat-inview__placeholder').show();
+
+		},
+		hidePlaceholder: function( chat_id ){
+
+			LJ.chat.getChatInview( chat_id ).find('.chat-inview__placeholder').hide();
+
+		},
 		handleSendMessageKeypress: function( e ){
 
 			var $s      = $( this );
 			var chat_id = $s.closest('[data-chat-id]').attr('data-chat-id');
 			var keyname = LJ.getKeyname( e.keyCode || e.which );
-			var $input  = LJ.chat.getChatInview( chat_id ).find('input');
-			var message = $input.val();
+			var $input  = LJ.chat.getChatInview( chat_id ).find('.chat-inview__input');
+			var message = $input.text();
 
-            if( keyname == "enter" ){
+            if( keyname == "enter" && !LJ.chat.isShiftKeyPressed() && message.length > 0 ){
 
-				if( message.length == 0 ) return;
-
-            	$input.val('');
+            	LJ.delay( 100 ).then(function(){
+            		$input.text('');
+            		LJ.chat.showPlaceholder( chat_id );
+            	});
 
                 LJ.chat.sendAndAddMessage({
                 	chat_id  : chat_id,
@@ -196,12 +230,15 @@
 
 			var $s      = $( this );
 			var chat_id = $s.closest('[data-chat-id]').attr('data-chat-id');
-			var $input  = LJ.chat.getChatInview( chat_id ).find('input');
-			var message = $input.val();
+			var $input  = LJ.chat.getChatInview( chat_id ).find('.chat-inview__input');
+			var message = $input.text();
 
 			if( message.length == 0 ) return;
 
-        	$input.val('');
+        	LJ.delay( 100 ).then(function(){
+            		$input.text('');
+            		LJ.chat.showPlaceholder( chat_id );
+            	});
 
             LJ.chat.sendAndAddMessage({
             	chat_id  : chat_id,
@@ -781,7 +818,8 @@
 	          		'</div>',
 		          	'<div class="chat-inview-footer">',
 			            '<div class="chat-inview-input js-send-message">',
-			             	'<input data-lid="chat_input_placeholder" placeholder="lol">',
+			             	'<div contenteditable="true" class="chat-inview__input"></div>',
+			             	'<div class="chat-inview__placeholder" data-lid="chat_input_ph"></div>',
 			            '</div>',
 			            '<button class="x--mb js-send-message"><span data-lid="w_send"></span></button>',
 		          	'</div>', 
@@ -1083,23 +1121,6 @@
         renderTextInputElement: function( reset ){
 
 			return LJ.ui.render( '<div class="chat-inview-input__text" contenteditable="true"></div>' );
-
-		},
-		placeholderifyChatInput: function( chat_id ){
-
-			var placeholder_text = LJ.text("chat_input_placeholder");
-			var placeholder_html = LJ.ui.render( '<div class="chat-inview-input__placeholder">'+ placeholder_text +'</div>' );
-
-			LJ.chat.getChatInview( chat_id )
-				.find('.chat-inview-input')
-				.prepend( placeholder_html );
-
-		},
-		deplaceholderifyChatInput: function( chat_id ){
-
-			LJ.chat.getChatInview( chat_id )
-				.find('.chat-inview-input__placeholder')
-				.remove();
 
 		},
 		parseChatInput: function( chat_id ){

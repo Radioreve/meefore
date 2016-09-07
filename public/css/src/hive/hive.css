@@ -5,6 +5,10 @@
   height: 100%;
 }
 
+.hive .pictures-overlay {
+  border-radius: 1000px;
+}
+
 .hive__background {
   border-radius: 1000px;
   width: 45%;

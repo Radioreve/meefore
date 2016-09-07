@@ -31,6 +31,10 @@
 	// var base_style = "\"background:#eee; padding: 5px 2px; border-radius:2px; display:inline-block;\""
 	var text_source = {
 
+		"welcome_subject": {
+			"fr": "Bienvenue",
+			"us": "Welcome"
+		},
 		"new_message_subject": {
 			"fr": "Nouveaux messages",
 			"us": "New messages"
@@ -107,29 +111,43 @@
 			// Dont wait for emails to continue with the request
 			next();
 
-			if([ "new_message", "marked_as_host", "new_cheers", "new_match" ].indexOf( type ) == -1 ){
-				return alertLog("The type : " + type + " is not recognized as a valid type");
-			}
+			if([ "new_message", "marked_as_host", "new_cheers", "new_match" ].indexOf( type ) != -1 ){
 
-			getUsersToAlert( req, type )
-				.then(function( users ){
+				getUsersToAlert( req, type )
+					.then(function( users ){
 
-					alertLog("Sending an email to : " + _.map( users, 'contact_email' ).join(', ') );
-					users.forEach(function( user ){
-						sendAlertEmail( req, type, user );
+						alertLog("Sending an email to : " + _.map( users, 'contact_email' ).join(', ') );
+						users.forEach(function( user ){
+							sendTemplateEmail( req, type, user );
+						});
+
+					})	
+					.catch(function( err ){
+
+						if( err.msg ){
+							alertLog( err.msg );
+						} else {
+							handleErr( err, err_ns );
+						}
+
+
 					});
 
-				})	
-				.catch(function( err ){
+			}
 
-					if( err.msg ){
-						alertLog( err.msg );
-					} else {
-						handleErr( err, err_ns );
-					}
+			if([ "welcome" ].indexOf( type ) != -1 ){
 
+				var user = req.sent.user;
 
-				});
+				if( user.status == "new" ){
+					// return alertLog("User isnt new, skipping the welcome email");
+				}
+
+				alertLog("Sending email ("+ type +") to : " + user.contact_email );
+				sendTemplateEmail( req, type, user );
+
+			}
+
 
 		}
 	};
@@ -301,7 +319,7 @@
 		});
 	}
 
-	function sendAlertEmail( req, type, user ){
+	function sendTemplateEmail( req, type, user ){
 
 		// The language supported (translated in emails) is not necessarily the same
 		// as the one supported on the website. 
@@ -310,8 +328,15 @@
 			cc = "us";
 		}
 
+		if( type == "welcome" ){
+			return sendTemplateEmail__Welcome({
+				cc 		 : cc,
+				receiver : user
+			});
+		}
+
 		if( type == "new_message" ){
-			return sendAlertEmail__NewMessage({
+			return sendTemplateEmail__NewMessage({
 				cc 		 : cc,
 				sender   : req.sent.user,
 				receiver : user
@@ -319,28 +344,42 @@
 		}
 
 		if( type == "new_match" ){
-			return sendAlertEmail__NewMatch({
+			return sendTemplateEmail__NewMatch({
 				cc 		 : cc,
 				receiver : user
 			});
 		}
 
 		if( type == "new_cheers" ){
-			return sendAlertEmail__NewCheers({
+			return sendTemplateEmail__NewCheers({
 				cc 		 : cc,
 				receiver : user
 			});
 		}
 
 		if( type == "marked_as_host" ){
-			return sendAlertEmail__MarkedAsHost({
+			return sendTemplateEmail__MarkedAsHost({
 				cc 		 : cc,
 				receiver : user
 			});
 		}
 	}
 
-	var sendAlertEmail__NewMessage = function( opts ){
+	var sendTemplateEmail__Welcome = function( opts ){
+
+		var mandrill_opts = {};
+
+		mandrill_opts.target           = { email: opts.receiver.contact_email, name: opts.receiver.name };
+		mandrill_opts.subject          = text_source[ "welcome_subject" ][ opts.cc ];
+		mandrill_opts.template_name    = "welcome-email";
+		mandrill_opts.template_content = [];
+		mandrill_opts.cc 			   = opts.cc;
+
+		sendTemplateEmail__Base( mandrill_opts );
+
+	};
+
+	var sendTemplateEmail__NewMessage = function( opts ){
 
 		var mandrill_opts = {};
 		
@@ -350,11 +389,11 @@
 		mandrill_opts.template_content = [];
 		mandrill_opts.cc 			   = opts.cc;
 
-		sendAlertEmail__Base( mandrill_opts );
+		sendTemplateEmail__Base( mandrill_opts );
 
 	};
 
-	var sendAlertEmail__NewMatch = function( opts ){
+	var sendTemplateEmail__NewMatch = function( opts ){
 
 		var mandrill_opts = {};
 		
@@ -364,11 +403,11 @@
 		mandrill_opts.template_content = [];
 		mandrill_opts.cc 			   = opts.cc;
 
-		sendAlertEmail__Base( mandrill_opts );
+		sendTemplateEmail__Base( mandrill_opts );
 		
 	};
 
-	var sendAlertEmail__NewCheers = function( opts ){
+	var sendTemplateEmail__NewCheers = function( opts ){
 
 		var mandrill_opts = {};
 		
@@ -378,11 +417,11 @@
 		mandrill_opts.template_content = [];
 		mandrill_opts.cc 			   = opts.cc;
 
-		sendAlertEmail__Base( mandrill_opts );
+		sendTemplateEmail__Base( mandrill_opts );
 
 	};
 
-	var sendAlertEmail__MarkedAsHost = function( opts ){
+	var sendTemplateEmail__MarkedAsHost = function( opts ){
 
 		var mandrill_opts = {};
 		
@@ -392,12 +431,12 @@
 		mandrill_opts.template_content = [];
 		mandrill_opts.cc 			   = opts.cc;
 
-		sendAlertEmail__Base( mandrill_opts );			
+		sendTemplateEmail__Base( mandrill_opts );			
 
 	};
 
 
-	var sendAlertEmail__Base = function( opts ){
+	var sendTemplateEmail__Base = function( opts ){
 
 		var is_prop_ok = true;
 		[ 'subject', 'target', 'template_name', 'template_content' ]
@@ -409,7 +448,7 @@
 		});
 
 		if( !is_prop_ok ){
-			return
+			return;
 		}
 
 		mandrill_client.messages.sendTemplate({

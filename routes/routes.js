@@ -132,7 +132,11 @@
 	    	// Always ensure the user is subscribed at mailchimp
 	    	mdw.mailchimp.api("ensure_subscription"),
 	    	// Make sure user is up to date with new onboarding content
-	    	mdw.onboarding.setOnboardings
+	    	mdw.onboarding.setOnboardings,
+	    	// Send a nice welcome email
+	    	mdw.alerter.sendEmail("welcome"),
+	    	// Set the user status to "idle"
+	    	api.users.updateUserStatus("idle")
 	    );
 
 

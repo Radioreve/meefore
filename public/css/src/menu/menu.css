@@ -163,8 +163,7 @@
 }
 
 .update-pictures.x--active {
-    color: #a3bbe4;
-    border-color: #a3bbe4
+    font-weight: 700;
 }
 
 .menu__loader {

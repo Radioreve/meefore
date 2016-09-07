@@ -199,6 +199,10 @@ window.LJ = _.merge( window.LJ || {}, {
             return "return";
         }
 
+        if( key_code == 16 ){
+            return "shift";
+        }
+
         return key_code;
 
     },

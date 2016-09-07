@@ -98,8 +98,6 @@
 			return next();
 		}
 		
-		user.status = "idle";
-
 		var n = {
 			type 		: type,
 			seen_at   	: null,

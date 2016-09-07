@@ -8,11 +8,11 @@
 				'image_id' 	  : 'loaders/bar_dots_meeblue',
 				'param'		  : { 'class': 'app__loader', 'width': 80 }
 			},
-			{
-				'access_name' : 'main_loader_white',
-				'image_id' 	  : 'loaders/bar_dots_white',
-				'param'		  : { 'class': 'app__loader', 'width': 80 }
-			},
+			// {
+			// 	'access_name' : 'main_loader_white',
+			// 	'image_id' 	  : 'loaders/bar_dots_white',
+			// 	'param'		  : { 'class': 'app__loader', 'width': 80 }
+			// },
 			{
 				'access_name' : 'modal_loader',
 				'image_id'    : 'loaders/circular_meeblue',

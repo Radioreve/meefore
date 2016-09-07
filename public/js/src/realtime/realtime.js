@@ -165,6 +165,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		LJ.map.setMarkerAsSeen( before._id );
 		LJ.map.refreshMarkers();
 		LJ.map.refreshCreateBtnState();
+		LJ.before.showCreateBeforeBtn();
 
 	},
 	handleNewRequestGroup: function( data ){
@@ -384,7 +385,8 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 					LJ.chat.bounceChatHeaderIcons( chat_id, 400 );
 
 					// Fade out the chatback wrapper
-					LJ.cheers.hideCheersBack();				
+					LJ.cheers.hideCheersBack();
+					LJ.ui.hideLoader("cheers_back");				
 
 				}
 			

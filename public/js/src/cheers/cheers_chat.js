@@ -204,9 +204,18 @@
 
 			var $s        = $( this );
 			var cheers_id = $s.attr('data-cheers-id');
+			var chat_id   = $s.attr('data-chat-id');
 
 			LJ.cheers.showValidateCheers( cheers_id );
+			LJ.chat.setChatRowSeenLocal( chat_id );
+			LJ.chat.newifyChatRows();
 			
+		},
+		getCheersRow__Chat: function( cheers_id ){
+
+			return $('.cheers-row[data-cheers-id="'+ cheers_id +'"]');
+
+
 		}
 		
 	});

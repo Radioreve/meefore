@@ -338,8 +338,8 @@
 		var f 			  = req.sent.filters;
 		var facebook_ids  = req.sent.facebook_ids;
 		
-		var min 		  = f && f.age[ 0 ];
-		var max 		  = f && f.age[ 1 ];
+		var min 		  = f && parseInt( f.age[ 0 ] );
+		var max 		  = f && parseInt( f.age[ 1 ] );
 		var gender 		  = f && f.gender;
 		var country_codes = f && f.countries;
 
@@ -349,10 +349,10 @@
 			query.facebook_id = { '$nin': facebook_ids };
 		}
 
-		if( min > settings.app.min_age ){
+		if( typeof min == "number" && min > settings.app.min_age ){
 			query.age = _.extend( query.age || {}, { '$gte': min });
 		}
-		if( max < settings.app.max_age ){
+		if( typeof max == "number" && max < settings.app.max_age ){
 			query.age = _.extend( query.age || {}, { '$lte': max });
 		}
 
@@ -365,7 +365,7 @@
 			query.country_code = { '$in': country_codes };
 		}
 
-		// console.log('Final query is : ' + JSON.stringify( query, null, 4 ));
+		console.log('Final query is : ' + JSON.stringify( query, null, 4 ));
 
 		User
 			.find( query )
@@ -719,6 +719,39 @@
 
 	};
 
+	var updateUserStatus = function( status ){
+
+		var err_ns = "updating_user_status";
+
+		return function( req, res, next ){
+
+			var facebook_id = req.sent.user.facebook_id;
+
+			User.findOneAndUpdate(
+			{
+				"facebook_id": facebook_id
+			},
+			{
+				$set: {
+					"status": "idle"
+				}
+			},
+			{
+				"new": true
+			},
+			function( err, user ){
+
+				if( err ) return handleErr( req, res, err_ns, err );
+
+				req.sent.expose.user = user;
+				next();
+
+			});
+
+		}
+
+	};
+
 
 	module.exports = {
 		fetchMe 				  	 : fetchMe,
@@ -741,6 +774,7 @@
 		fetchUserCheers 			 : fetchUserCheers,
 		fetchUserNotifications 		 : fetchUserNotifications,
 		deleteUser 					 : deleteUser,
-		updateOnboarding 		     : updateOnboarding
+		updateOnboarding 		     : updateOnboarding,
+		updateUserStatus 		     : updateUserStatus
 
 	};

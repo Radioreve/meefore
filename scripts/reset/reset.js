@@ -64,7 +64,19 @@
 					multi: true
 				}, function( err, raw ){
 					if( err ) console.log( err );
-					console.log('Users updated');
+					console.log('Users updated (befores)');
+				});
+
+			User.update({
+				}, {
+					$pull: {
+						notifications: { 'type': { $in: [ 'accepted_in_hosts', 'accepted_in_members', 'group_request_hosts', 'group_request_members' ] } }
+					}
+				}, { 
+					multi: true
+				}, function( err, raw ){
+					if( err ) console.log( err );
+					console.log('Users updated (notifications)');
 				});
 
 

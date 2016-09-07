@@ -14,7 +14,7 @@
 
 		initFilters: function(){
 			return LJ.promise(function( resolve, reject ){
-				LJ.search.initFiltersSlider();
+				// LJ.search.initFiltersSlider();
 				resolve();
 			});
 

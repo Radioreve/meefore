@@ -15,6 +15,10 @@
     width: 100%;
 }
 
+.rosace .pictures-overlay {
+    border-radius: 1000px;
+}
+
 .rosace__part img {
     width: 200%;
     height: 100%;

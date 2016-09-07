@@ -17,7 +17,7 @@
 		},
 		handlePictureNavigation: function(){
 
-			var $self = $(this);
+			var $self = $( this );
 			var $picture_activated = $('.user-pics__img.x--active');
 
 			if( $self.hasClass('x--right') ){

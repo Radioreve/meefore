@@ -1221,12 +1221,13 @@ button:hover .icon-meedrink {
 .modal {
     background: white;
     border-radius: 10px;
-    padding: 10px 10px 20px 10px;
+    padding: 10px 10px 20px 10px; 
     color: #191919;
     width: 400px;
     display: flex;
     flex-flow: column nowrap;
     max-height: 90%;
+    max-width: 80%;
 }
 
 .modal.x--facebook {
@@ -1954,10 +1955,11 @@ button:hover .icon-meedrink {
 
 .x--corner .chat, .x--corner .notifications-panel {
     top: 70px;
-    border-radius: 20px 0 0 0;
+    border-radius: 16px 0 0 0;
     overflow: hidden;
     border: 1px solid #1a59c3;
     border-right: none;
+    border-bottom: none;
 }
 
 

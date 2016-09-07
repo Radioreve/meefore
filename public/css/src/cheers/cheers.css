@@ -99,14 +99,13 @@
     top: 0;
     left: 0;
     z-index: 1000;
-    overflow: scroll;
 }
 
 .cheers-back-pictures {
     width: 280px;
     height: 280px;
     margin: 0px auto;
-    flex-shrink: 1;
+    flex-shrink: 0;
     font-size: 12px;
     text-align: center;
 }
@@ -140,7 +139,7 @@
 
 .cheers-back-actions button i {
     font-size: 28px;
-    transform: rotate(-20deg);
+    /* transform: rotate(-20deg); */
     transition: all ease-in-out .15s;
 }
 

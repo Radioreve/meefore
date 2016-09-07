@@ -16,7 +16,7 @@
     display: block;
     width: 100%!important;
     padding-top: 0!important;
-    padding-bottom: 20px!important;
+    padding-bottom: 84px!important;
 }
 
 .chat-inview-messages .jspVerticalBar {
@@ -424,7 +424,7 @@
 }
  
 .chat-inview-footer {
-    height: 64px;
+    min-height: 60px;
     border-top: 1px solid #eee;
     display: flex;
     align-items: center;
@@ -443,16 +443,29 @@
     align-items: center;
 }
 
-.chat-inview-input input {
+.chat-inview__input {
     padding-left: 20px;
     box-sizing: border-box;
-    border: none;
-    font-size: 12.5px;
-    font-family: 'Open sans';
-    outline: none;
     width: 100%;
+    outline: none;
+    border: none;
+    font-size: 13px;
+    height: 100%;
+    /* background: #eee; */
+    padding: 12px 20px;
+    direction: ltr;
+    white-space: pre-wrap;
+    line-height: 18px;
 }
 
+.chat-inview__placeholder {
+    position: absolute;
+    left: 20px;
+    top: 24px;
+    font-size: 13px;
+    color: #ccc;
+    z-index: -1;
+}
 
 /*.chat-inview-input__img {
     width: 17px;

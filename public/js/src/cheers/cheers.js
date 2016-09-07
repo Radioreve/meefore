@@ -366,7 +366,6 @@
         	})
     		.then(function( res ){
     			LJ.log("Cheers back successfully");
-    			LJ.ui.hideLoader("cheers_back");
 
     		})
     		.catch(function( e ){
@@ -376,6 +375,23 @@
     			LJ.cheers.dependifyCheersItem();
 
     		});
+
+        },
+        getCheersItemByMainMember: function( main_member ){
+
+        	return _.find( LJ.cheers.fetched_cheers, function( ch ){
+        		return ch.main_member == main_member;
+        	});
+
+        },
+        getChatIds: function(){
+
+        	return _.map( LJ.cheers.fetched_cheers, 'chat_id' );
+
+        },
+        getCheersIds: function(){
+
+        	return _.map( LJ.cheers.fetched_cheers, 'cheers_id' );
 
         }
 
