@@ -140,7 +140,7 @@
 				var user = req.sent.user;
 
 				if( user.status == "new" ){
-					// return alertLog("User isnt new, skipping the welcome email");
+					return alertLog("User isnt new, skipping the welcome email");
 				}
 
 				alertLog("Sending email ("+ type +") to : " + user.contact_email );
