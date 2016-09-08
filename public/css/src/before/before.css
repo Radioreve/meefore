@@ -761,8 +761,6 @@ span.be-dates__count {
     align-items: center;
     flex-flow: row wrap;
     margin: 0 auto;
-    overflow: hidden;
-    overflow-y: scroll;
 }
 .be-inview__hashtag {
     padding: 6px 12px;

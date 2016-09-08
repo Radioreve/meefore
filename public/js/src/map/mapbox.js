@@ -455,7 +455,6 @@
         refreshBeforeMarker__Gender: function( marker_id, gender ){
 
             LJ.map.getMarkerDom( marker_id )
-                .find('.marker')
                 .addClass('x--' + gender);
 
         },
