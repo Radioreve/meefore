@@ -1188,6 +1188,8 @@ button:hover .icon-meedrink {
     z-index: 1000;
     background: white;
     padding: 10px 30px;
+    border-radius: 100px;
+    /* border: 1px solid #1a59c3; */
 }
 
 

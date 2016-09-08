@@ -46,6 +46,9 @@
   <link rel="stylesheet" href="/css/src/reset.css">
   <link rel="stylesheet" href="/css/src/common.css">
   
+  <!-- Mapbox (GL) styles -->
+  <link href='https://api.mapbox.com/mapbox-gl-js/v0.23.0/mapbox-gl.css' rel='stylesheet' />
+
   <!-- App, in any order -->
   <link rel="stylesheet" href="/css/src/ioptions/ioptions.css">
   <link rel="stylesheet" href="/css/src/before/before.css">
@@ -759,6 +762,7 @@
   <script src="js/src/languages/textsources.js"></script>
   <script src="js/src/facebook/facebook.js"></script> 
   <script src="js/src/map/map.js"></script>
+  <script src="js/src/map/mapbox.js"></script>
   <script src="js/src/map/map_styles.js"></script>
   <script src="js/src/map/map_markers_url.js"></script>
   <script src="js/src/map/map_city_locations.js"></script>
@@ -792,11 +796,16 @@
   <script src="js/src/init/init.js"></script>
   <!-- endbuild -->
   <!-- build:remove -->
-  <script src="js/src/map/map_test.js"></script>
+  <!-- <script src="js/src/map/map_test.js"></script> -->
+  <script src="js/src/map/map_box_test.js"></script>
   <script src="js/src/before/before_test.js"></script>
   <!-- endbuild -->
 
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6QesJukMVpHVS6l8yvSt_pmCDCeYiYMI&libraries=places,geometry&callback=LJ.map.sayHello" type="text/javascript"></script>
+
+  <script src='https://api.mapbox.com/mapbox-gl-js/v0.23.0/mapbox-gl.js'></script>
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.3.0/mapbox-gl-geocoder.js'></script>
+
   
   <script id="app_ids">  
       //<!-- build:fb-app-id -->

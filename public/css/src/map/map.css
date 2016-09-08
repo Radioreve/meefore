@@ -249,10 +249,12 @@
     flex-shrink: 0;
 }
 
-.mrk {
+.marker {
     border: 2px solid transparent;
     padding: 4px;
     opacity: 0;
+    cursor: pointer;
+    transition: transform linear 0.05s;
 }
 
 .marker.x--face {
@@ -264,7 +266,7 @@
     border-radius: 100px;
     position: absolute;
     border-color: #1a59c3;
-    transform: scale(0.75);
+    /* transform: scale(0.75); */
 }
 
 .marker.x--face > * {
@@ -307,7 +309,7 @@
     height: 20px;
 }
 
-.mrk img {
+.marker img {
     width: 100%;
     height: 100%;
 }
@@ -393,8 +395,8 @@
 
 .marker.x--host .mrk__status {
     background: #ffec4d!important;
-    color: #ffa900;
-    border: 1px solid;
+    color: #ffa900!important;
+    border: 1px solid #ffec4d!important;
     border-color: white;
 }
 
@@ -493,4 +495,9 @@
     font-size: 22px;
     margin-top: 4px;
     font-family: 'quenda';
+}
+
+
+.mapboxgl-control-container {
+    opacity: .3;
 }

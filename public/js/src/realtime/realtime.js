@@ -252,6 +252,18 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		LJ.before.fetched_befores.push( before );
 		LJ.map.addAndShowBeforeMarker( before );
 		LJ.map.refreshMarkers();
+
+		// Fly the hosts to the newly created marker
+		if( before.hosts.indexOf( LJ.user.facebook_id ) != -1 ){
+
+			LJ.meemap.flyTo({
+				center : [ before.address.lng, before.address.lat ],
+				zoom   : 13,
+				speed  : 0.5,
+				curve  : 2
+			});
+
+		}
 	
 	},
 	handleNewBeforeStatus: function( data ){

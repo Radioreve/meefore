@@ -372,7 +372,7 @@
 			// Ui update
 			LJ.before.hideCreateBefore();
 			LJ.delay( 1000 ).then(function(){
-
+				
 				LJ.before.dependifyCreateBefore();
 
 			});

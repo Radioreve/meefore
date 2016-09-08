@@ -18,7 +18,7 @@
 						.then( LJ.settings.init )
 						.then( LJ.profile.handleDomEvents )
 						.then( LJ.search.initFilters )
-						.then( LJ.seek.activatePlacesInProfile )
+						.then( LJ.seek.activatePlacesInProfile ) 
 						.then( resolve );
 
 				});

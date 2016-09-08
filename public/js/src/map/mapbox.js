@@ -1,5 +1,5 @@
 
-	window.LJ.map_legacy = _.merge( window.LJ.map_legacy || {}, {		
+	window.LJ.map = _.merge( window.LJ.map || {}, {		
 
         markers: [],
         fetched_profiles: [],
@@ -9,11 +9,9 @@
 
             try {
                 LJ.map.setupMap();
-                LJ.map.initMarkerFactory();
                 LJ.map.handleDomEvents();
                 LJ.map.handleMapEvents();
                 LJ.map.handleAppEvents();
-                LJ.map.initPlacesServices();
                 LJ.map.refreshMapMode();
 
             } catch( e ){
@@ -24,115 +22,38 @@
             return;
 			
 		},
-        initGeocoder: function(){
-            LJ.meegeo = new google.maps.Geocoder();
-            return;
-
-        },
-        initPlacesServices: function(){
-            LJ.meeservices = new google.maps.places.PlacesService( LJ.meemap );
-            return;
-
-        },
-		sayHello: function(){
-			LJ.log('Map has been successfully loaded');
-
-		},
-        initMarkerFactory: function(){
-
-            LJ.map.markerFactory = MarkerFactory.init({
-                map     : LJ.meemap,
-                display : 'block'
-            });
-
-        },
-        // Obsolete
-        preloadMarkers: function(){
-
-            var markers_html = [];
-            Object.keys( LJ.map.markers_url ).forEach(function( type ){
-
-                var size = LJ.pictures.getDevicePixelRatio() + "x";
-                var url  = LJ.map.markers_url[ type ][ size ];
-
-                markers_html.push('<img src="'+ url +'">');
-
-            });
-
-            $( markers_html.join('') ).hide().appendTo('body');
-
-        },
 		handleDomEvents: function(){
             
-			LJ.ui.$body.on('click', '.js-map-geoloc', LJ.map.centerMapAtUserLocation );
             LJ.ui.$body.on('click', '.js-map-facebook', LJ.facebook.showModalSendMessageToFriends );
 			LJ.ui.$body.on('click', '.js-map-change-location', LJ.map.toggleMapBrowser );
             LJ.ui.$body.on('mousedown', '.js-before-marker', LJ.map.handleClickOnBeforeMarker );
             LJ.ui.$body.on('click', '.js-show-own-before', LJ.map.handleClickOnShowOwnBefore );
+            LJ.ui.$body.on('click', '.js-map-zoom-in', LJ.map.zoomIn );
+            LJ.ui.$body.on('click', '.js-map-zoom-out', LJ.map.zoomOut );
 
 		},
 		setupMap: function(){
 
-			LJ.log('Setting up google map...');
-
-            var latlng = {
-                lat: parseFloat( LJ.user.location.lat ),
-                lng: parseFloat( LJ.user.location.lng )
-            };
-
-			var options = {
-				center: latlng,
-	            zoom: 12,
-	            disableDefaultUI: true,
-	            zoomControlOptions: {
-	                style    : google.maps.ZoomControlStyle.SMALL,
-	                position : google.maps.ControlPosition.RIGHT_TOP
-	            },
-	            mapTypeControlOptions: {
-	                mapTypeIds: ['meemap']
-	            }
-			}
-
-			var $wrap = document.getElementsByClassName('js-map-wrap')[ 0 ];
-
-			LJ.meemap = new google.maps.Map( $wrap, options );
+			LJ.log('Setting up the map...');
 			
-            LJ.map.setMapStyle('meeven');
+            mapboxgl.accessToken = 'pk.eyJ1IjoibWVlZm9yZSIsImEiOiJjaXNieWhwNjMwMDE0MnRxZmhvY2twMGN5In0.k-iXWp3tVDVyNK9xYesmjA';
+
+            LJ.meemap = new mapboxgl.Map({
+                container       : document.getElementsByClassName('js-map-wrap')[ 0 ], 
+                style           : 'mapbox://styles/meefore/cisc01qir001s2ymxsolaa1uz', 
+                center          : [ parseFloat( LJ.user.location.lng ), parseFloat( LJ.user.location.lat ) ], 
+                zoom            : 11.5,
+                doubleClickZoom : false
+            });
+
             LJ.map.setMapIcons();
             LJ.map.setMapBrowser();
             LJ.map.setMapZoom();
 
-            // google.maps.event.addListenerOnce( LJ.meemap, 'tilesloaded', function(){
-            //     google.maps.event.addListenerOnce( LJ.meemap, 'tilesloaded', function(){
-            //         LJ.ilog('Emitting map ready');
-            //         LJ.emit("map:ready");
-            //     });
-            // });
-
-            google.maps.event.addListenerOnce( LJ.meemap, 'idle', function(){
+            LJ.meemap.on("load", function(){
                 LJ.emit("map:ready");
             });
 
-            setTimeout(function(){
-                LJ.map.refreshMap();
-            }, 10000 );
-
-			return;
-
-        },
-        setMapStyle: function( map_style ){
-
-        	var custom_style = LJ.map.style[ map_style ];
-        	if( !custom_style ){
-        		return LJ.wlog('Unable to find a custom style for : ' + map_style );
-        	}
-
-        	var styled_map = new google.maps.StyledMapType( custom_style, {
-                name: 'meemap'
-            });
-            // Set map styling 
-            LJ.meemap.mapTypes.set('meemap', styled_map );
-            LJ.meemap.setMapTypeId('meemap');
 
         },
         setMapIcons: function(){
@@ -159,7 +80,11 @@
                     		var place  = LJ.seek.map_browser_places.getPlace();
                     		var latlng = place.geometry.location;
 
-                    		LJ.meemap.setCenter( latlng );
+                    		LJ.meemap.flyTo({
+                                center : [ latlng.lng(), latlng.lat() ],
+                                zoom   : 11
+                            });
+
                             $('#map-browser-input').val('');
 
                     	});
@@ -192,26 +117,14 @@
         },
         handleMapEvents: function(){
 
-            LJ.meemap.addListener('dragstart', function(){
+            LJ.meemap.on('dragstart', function(){
                 
             });
 
-            LJ.meemap.addListener('dragend', function(){
-                
-            });
-
-            LJ.meemap.addListener('click', function(e){
+            LJ.meemap.on('click', function(e){
                 
             });
             
-            LJ.meemap.addListener('center_changed', function(){
-                // LJ.before.refreshNearestBefores();
-            });
-
-            $('body').on('click', '.js-map-zoom-in', LJ.map.zoomIn );
-            $('body').on('click', '.js-map-zoom-out', LJ.map.zoomOut );
-
-
         },
         handleClickOnShowOwnBefore: function(){
 
@@ -256,83 +169,13 @@
         },
         zoomIn: function(){
 
-            LJ.meemap.setZoom( LJ.meemap.getZoom() + 1 );
+            LJ.meemap.zoomIn();
 
         },
         zoomOut: function(){
 
-            LJ.meemap.setZoom( LJ.meemap.getZoom() - 1 );
+            LJ.meemap.zoomOut();
 
-        },
-        refreshMap: function(){
-        	return google.maps.event.trigger( LJ.meemap, 'resize' );
-
-        },
-        findLocationWithLatLng: function( latlng ){
-            return LJ.promise(function( resolve, reject ){
-
-                if( !latlng ){
-                    return LJ.wlog('Cant find address without latlng');
-                }
-
-                LJ.meegeo.geocode({ location: latlng }, function( res, status ){
-
-                    if( status === google.maps.GeocoderStatus.OK && res[0] ){
-                        resolve( res[0] );
-                    } else {
-                        reject( status );
-                    }
-                });
-
-            });
-
-
-        },
-        findAddressWithLatLng: function( latlng ){
-            return LJ.map.findLocationWithLatLng( latlng )
-
-                    .then(function( location ){
-                        return location.formatted_address;
-                    });
-
-        },
-        findLatLngWithAddress: function( address ){
-        	return LJ.promise(function( resolve, reject ){
-
-	        	if( !address ){
-	        		return LJ.wlog('Cant find LatLng without adress');
-	        	}
-
-	        	LJ.meegeo.geocode({ address: address }, function( res, status ){
-
-	        		if( status === google.maps.GeocoderStatus.OK && res[0] ){
-	        			resolve( res[0].geometry.location );
-	        		} else {
-	        			reject( status );
-	        		}
-	        	});
-
-        	});
-        	
-        },
-        findLatLngWithPlaceId: function( place_id ){
-        	return LJ.promise(function( resolve, reject ){
-
-	        	if( !place_id ){
-	        		return LJ.wlog('Cant find LatLng without place_id');
-	        	}
-
-	        	LJ.meegeo.geocode({ placeId: place_id }, function( res, status ){
-
-	        		if( status === google.maps.GeocoderStatus.OK && res[0] ){
-	        			resolve( res[0].geometry.location );
-	        		} else {
-	        			reject( status );
-	        		}
-	        	});
-
-        	});
-        	
         },
         toggleMapBrowser: function(){
 
@@ -350,40 +193,28 @@
 
         	}
         },
-        centerMapAtUserLocation: function( pan ){
+        distanceBetweenTwoLngLat: function( lnglat1, lnglat2 ){
 
-        	var place_id = LJ.user.location.place_id;
-        	return LJ.map.findLatLngWithPlaceId( place_id )
-        			.then(function( latlng ){
-        				pan ? LJ.meemap.panTo( latlng ) : LJ.meemap.setCenter( latlng );
-        			});
-
-        },
-        distanceBetweenTwoLatLng: function( latlng1, latlng2 ){
-
-            var a = new google.maps.LatLng( latlng1 );
-            var b = new google.maps.LatLng( latlng2 );
+            var a = new google.maps.LatLng({ lng: lnglat1[ 0 ], lat: lnglat1[ 1 ] });
+            var b = new google.maps.LatLng({ lng: lnglat2[ 0 ], lat: lnglat2[ 1 ] });
 
             return google.maps.geometry.spherical.computeDistanceBetween( a, b );
 
         },
-        shiftLatLng: function( latlng ){
+        shiftLngLat: function( lnglat ){
 
-            var a   = new google.maps.LatLng( latlng );
-            var rdm =  google.maps.geometry.spherical.computeOffset( a, LJ.randomInt( 100, 200 ), LJ.randomInt(0, 180) );
+            var a   = new google.maps.LatLng({ lng: lnglat[ 0 ], lat: lnglat[ 1 ] });
+            var rdm = google.maps.geometry.spherical.computeOffset( a, LJ.randomInt( 100, 200 ), LJ.randomInt( 0, 180 ) );
 
-            return {
-                lng: rdm.lng(),
-                lat: rdm.lat()
-            };
+            return [ rdm.lng(), rdm.lat() ];
 
         },
-        findClosestMarkers: function( latlng, distance ){
+        findClosestMarkers: function( lnglat, distance ){
 
             var markers = [];
             LJ.map.markers.forEach(function( mrk ){
 
-                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < distance ){
+                if( LJ.map.distanceBetweenTwoLngLat( lnglat, mrk.lnglat ) < distance ){
                     markers.push( mrk );
                 }
 
@@ -392,25 +223,26 @@
             return markers; 
 
         },
-        offsetLatLng: function( latlng ){
+        offsetLngLat: function( lnglat ){
 
             var offsetted = false;
+
             LJ.map.markers.forEach(function( mrk ){
 
-                if( LJ.map.distanceBetweenTwoLatLng( latlng, mrk.latlng ) < 100 && !offsetted ){
+                if( LJ.map.distanceBetweenTwoLngLat( lnglat, mrk.lnglat ) < 100 && !offsetted ){
 
-                    LJ.log('Markers are too close, shifting latlng');
+                    LJ.log('Markers are too close, shifting lnglat');
                     offsetted = true;
-                    latlng = LJ.map.shiftLatLng( latlng );
+                    lnglat = LJ.map.shiftLngLat( lnglat );
 
                 }
                 
             });
 
-            return latlng;
+            return lnglat
 
         },
-        offsetLatLngRecursive: function( latlng, i ){
+        offsetLngLatRecursive: function( latlng, i ){
 
             // Display the marker in a more intelligent way, to put it randomy close to where its supposed to be
             // But also taking into account where other markers are placed :) 
@@ -423,34 +255,14 @@
             });
             
         },
-        makeIcon: function( url ){
-
-            var scaledSize;
-            var base_width  = 34;
-            var base_height = 41;
-            var base_width_active  = 50;
-            var base_height_active = 60;
-
-            if( !/lg/i.test( url ) ){
-                scaledSize = new google.maps.Size( base_width, base_height );
-            } else {
-                scaledSize = new google.maps.Size( base_width_active, base_height_active );
-            }
-
-            return {
-                url        : url,
-                scaledSize : scaledSize
-            };
-
-        },
-        renderMarkerPlaceholder: function( type ){
+        renderMarkerPlaceholder: function( marker_id, type ){
 
             if( type == "face" ){
 
                 var img_html = LJ.static.renderStaticImage("marker_loader");
 
                 return LJ.ui.render([
-                    '<div class="marker x--face js-before-marker">',
+                    '<div class="marker x--face js-before-marker" data-marker-id="'+ marker_id +'">',
                         '<div class="mrk__seen"></div>',
                         '<div class="mrk__status"></div>',
                         '<div class="mrk__loader">',
@@ -464,110 +276,48 @@
             }
 
         },
+        sayHello: function(){
+            LJ.log('Google maps has been successfully loaded');
+
+        },
         addMarker: function( opts ){
 
             if( LJ.map.markerAlreadyExists( opts.marker_id ) ){
                 return LJ.wlog('A marker with id : ' + opts.marker_id + ' is already set on the map');
             }
 
-            var latlng = LJ.map.offsetLatLng( opts.latlng );
+            var lnglat = LJ.map.offsetLngLat( opts.lnglat );
             var data   = opts.data || null;
 
-        	// Store the reference for further usage
-            var marker = LJ.map.markerFactory.create({
-                latlng    : new google.maps.LatLng( latlng ),
-                html      : LJ.map.renderMarkerPlaceholder("face"),
-                marker_id : opts.marker_id
-            });
+            var dom    = $( '<div class="marker-wrapper">' + LJ.map.renderMarkerPlaceholder( opts.marker_id, "face" ) + '</div>' )[ 0 ];
+            var marker = new mapboxgl.Marker( dom );
+            
+            marker.setLngLat( opts.lnglat )
+                  .addTo( LJ.meemap );
 
         	LJ.map.markers.push({
         		marker_id : opts.marker_id,
         		marker 	  : marker,
                 type      : opts.type,
-                latlng    : latlng
+                lnglat    : lnglat
         	});
 
 
-        },
-        getBeforeMarkerUrlByType: function( type, active ){
-
-            var px     = LJ.pictures.getDevicePixelRatio() + 'x';
-            var suffix = active ? '_active' : '';
-
-            if( type == 'drink' ){
-                url = LJ.map.markers_url[ 'drink' + suffix ];
-            }
-
-            if( type == 'drinknew' ){
-               url = LJ.map.markers_url['drinknew'];
-            }
-
-            if( type == 'hosting' ){
-                url = LJ.map.markers_url[ 'star' + suffix ];
-            }
-
-            if( type == 'pending' ){
-                url = LJ.map.markers_url[ 'pending' + suffix ];
-            }
-
-            if( type == 'accepted' ){
-                url = LJ.map.markers_url[ 'chat' + suffix ];
-            }  
-
-            return url[ px ];
-
-
-        },  
-        getBeforeMarkerUrl: function( before, active ){
-
-            var url  = null;
-
-            var my_before = LJ.before.getMyBeforeById( before._id );
-
-            if( !my_before ){
-
-                // Moment.js expresses the difference between 2 dates in ms
-                var diff_in_hour = ( moment() - moment( before.created_at ) )/( 3600 * 1000 );
-
-                if( LJ.map.hasSeenMarker( before._id ) || diff_in_hour > 24 ){
-                    url = LJ.map.getBeforeMarkerUrlByType("drink", active );
-
-                } else {
-                    url = LJ.map.getBeforeMarkerUrlByType("drinknew", active );
-
-                }
-
-            } else {
-                url = LJ.map.getBeforeMarkerUrlByType( my_before.status, active );
-            }
-
-            if( !url ){
-                return LJ.wlog('Cant render marker, unable to find marker type');
-
-            } else {
-                return url;
-            }
-
-        },
+        }, 
         // Before must be the whole before object and not an itemized version
         // in order to access to the address
         addBeforeMarker: function( before ){
 
-        	var before_id = before._id;
-
-            var latlng  = {
-                lat: before.address.lat,
-                lng: before.address.lng
-            };
+            var before_id = before._id;
+            var lnglat    = [ before.address.lng, before.address.lat ];
 
             LJ.map.addMarker({
                 marker_id : before_id,
-                latlng    : latlng,
+                lnglat    : lnglat,
                 type      : 'before',
                 data      : before
 
             });
-
 
         },
         addAndShowBeforeMarker: function( before ){
@@ -582,9 +332,12 @@
 
             LJ.map.markers.forEach(function( mrk, i){
 
-                if( mrk.marker_id == before_id ){
-                    mrk.marker.setMap( null );
+                if( mrk.marker_id == before_id ){        
+
+                    mrk.marker.remove();
                     delete LJ.map.markers[ i ];
+                    LJ.map.markers = LJ.map.markers.filter( Boolean );
+                                
                 }
 
             });
@@ -594,9 +347,8 @@
 
             LJ.map.deactivateMarker();
             LJ.map.getMarkerDom( marker_id )
-                .css({ "z-index": "10" })
-                .children()
-                .css({ "transform": "scale(1.45)"})
+                .css({ "transform": "scale(1.45)" })
+                .parent().css({ "z-index": "10" })
                 // .velocity( "grounceIn", {
                 //     duration : 600,
                 //     display  : 'flex'
@@ -609,11 +361,12 @@
 
             var active_marker_id = LJ.map.getActiveMarker();
             var $active_marker   = LJ.map.getMarkerDom( active_marker_id );
-
+            
+            if( !active_marker_id ) return;
+            
             $active_marker
-                .css({ "z-index": "1" })
-                .children()
-                .css({ "transform": "none" });
+                .css({ "transform": "none" })
+                .parent().css({ "z-index": "1" })
 
             LJ.map.setActiveMarker( null );
 
@@ -721,7 +474,7 @@
 
             LJ.delay( 1000 ).then(function(){
 
-                if( $('.mrk').first().css('opacity') == 0 ){
+                if( $('.marker').first().css('opacity') == 0 ){
                     LJ.map.showBeforeMarkers();
                 }
 
@@ -731,7 +484,7 @@
         },
         getMarkerDom: function( marker_id ){
 
-            return $('.mrk[data-id="'+ marker_id +'"]');
+            return $('.marker[data-marker-id="'+ marker_id +'"]');
 
         },
         updateMarker: function( marker_id, update ){
@@ -741,7 +494,7 @@
             var $mrk = LJ.map.getMarkerDom( marker_id );
 
             if( update.add_class ){
-                $mrk.children().addClass( update.add_class );
+                $mrk.addClass( update.add_class );
             }
 
             if( update.seen ){
@@ -1019,9 +772,9 @@
         handleClickOnBeforeMarker: function( e ){
 
             var $self     = $( this );
-            var marker_id = $self.parent().attr('data-id');
+            var marker_id = $self.attr('data-marker-id');
 			var mrk       = LJ.map.getMarker( marker_id );
-            var $mrk      = mrk.marker.$elem;
+            var $mrk      = LJ.map.getMarkerDom( marker_id );
 
             LJ.map.getMarkerData( marker_id, "before" )
             .then(function( before ){

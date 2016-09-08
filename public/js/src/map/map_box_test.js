@@ -1,24 +1,24 @@
 
-window.LJ.map_legacy = _.merge( window.LJ.map_legacy || {}, {
+window.LJ.map = _.merge( window.LJ.map || {}, {
 
 	test: {
 
 		addOneMarker: function( i ){
 
 			i = i || LJ.randomInt( 0, LJ.map.test.places.length -1 );
-			var latlng = LJ.map.test.places[ i ];
+			var lnglat = [ LJ.map.test.places[ i ].lng, LJ.map.test.places[ i ].lat ];
 
-			var marker = LJ.map.markerFactory.create({
-                latlng    : new google.maps.LatLng( latlng ),
-                html      : LJ.map.renderMarkerPlaceholder("face"),
-                marker_id : i
-            });
+            var dom    = $( '<div class="marker-wrapper">' + LJ.map.renderMarkerPlaceholder( i, "face" ) + '</div>' )[ 0 ];
+            var marker = new mapboxgl.Marker( dom );
+            
+            marker.setLngLat( lnglat )
+                  .addTo( LJ.meemap );
 
-            LJ.map.markers.push({
+        	LJ.map.markers.push({
         		marker_id : i,
         		marker 	  : marker,
-                type      : "test",
-                latlng    : latlng
+                type      : 'test',
+                lnglat    : lnglat
         	});
 
 			LJ.delay( 500 ).then(function(){
