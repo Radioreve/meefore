@@ -167,6 +167,8 @@ window.LJ = _.merge( window.LJ || {}, {
     },
     hashtagify: function( str ){
 
+        if( typeof str != "string" ) return '';
+        
         return _.map( str.trim().split(/[\s_-]/), function( str_part ){
             return str_part.capitalize();
         }).join('');

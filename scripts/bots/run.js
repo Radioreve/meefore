@@ -9,7 +9,7 @@
 	var botsfacebook = require('./generate_facebook_user');
 
 	// Generate multiple bots from the source
-	var folder_path = '/Users/MacLJ/Node/App/Meefore/bots/girls';
+	var folder_path = '/Users/MacLJ/Node/App/Meefore/bots/boys';
 
 	// Constructor to iterate on a whole folder
 	var multiply = function( promiseFn, indexes ){

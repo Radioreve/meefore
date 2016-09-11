@@ -1537,8 +1537,10 @@
 
 					if( last_seen_by.indexOf( LJ.user.facebook_id ) == -1 ){
 						$chatrow.addClass('x--new');
+						LJ.chat.addBubbleToChatRow( chat_id );
 					} else {
 						$chatrow.removeClass('x--new');
+						LJ.chat.resetBubbleToChatRow( chat_id );
 					}
 
 				}

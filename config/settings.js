@@ -16,6 +16,7 @@ var settings = {
 		min_age  : min_age,
 		max_age  : 50,
 		max_pic  : 5,
+		min_hashtags: 1,
 		max_hashtags: 10,
 		chat_fetch_count: 20
 	},

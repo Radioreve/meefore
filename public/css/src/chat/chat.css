@@ -300,9 +300,10 @@
 }
 
 .chat-row-infos__name {
-    margin-bottom: 4px;
+    margin-bottom: 0px;
     font-size: 14px;
-    display: flex; 
+    display: flex;
+    height: 18px;
 }
 
 .chat-row-infos-name span {}

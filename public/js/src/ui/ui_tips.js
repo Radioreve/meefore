@@ -109,9 +109,18 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 	},
 	tagTip: function( tip_id, tags ){
 
-		tags = Array.isArray( tags ) ? tags : [ tags ];
+		tags = Array.isArray( tags ) ? tags : [ tags ].filter( Boolean );
 
 		LJ.ui.getTip( tip_id ).addClass( _.map( tags, function( t ){ return 'x--' + t; }).join(' ') );
+
+	},
+	dataTip: function( tip_id, dataset ){
+
+		dataset = Array.isArray( dataset ) ? dataset : [ dataset ].filter( Boolean );
+
+		dataset.forEach(function( dtset ){
+			LJ.ui.getTip( tip_id ).attr('data-' + dtset.key, dtset.val );
+		});
 
 	},
 	reposeTip: function( $elem, tip_id, position ){
@@ -126,6 +135,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		LJ.ui.makeTip( tip_id, opts );
 		LJ.ui.poseTip( $elem, tip_id, opts.position );
 		LJ.ui.tagTip( tip_id, opts.tags );
+		LJ.ui.dataTip( tip_id, opts.data );
 		LJ.ui.reposeTip( $elem, tip_id, opts.position );
 		LJ.ui.showTip( tip_id );
 

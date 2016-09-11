@@ -778,13 +778,12 @@
         },
         showMarker__BounceIn: function( marker_id ){
 
-
             LJ.map.getMarkerDom( marker_id )
-                .css({ 'display': 'block', 'opacity': '1' })
+                .css({ 'display': 'flex', 'opacity': '1' })
                 .children()
                 .velocity('bounceInQuick', {
                     duration : 500,
-                    display  : 'block'
+                    display  : 'flex'
                 });
 
         },

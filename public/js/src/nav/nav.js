@@ -84,6 +84,9 @@
 				LJ.map.refreshMarkers();
 			}
 
+			// Event emitting for other modules
+			LJ.emit("navigate", { link: target_link });
+
 			// Specificities
 			if( target_link == 'map' ){
 

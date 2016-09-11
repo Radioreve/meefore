@@ -47,14 +47,14 @@
 				}
 			}
 
-			if( val.length == 0 ){
-				return onError('Hashtag array is too short (0 minimum)', 'hashtags', val.hashtags, {
+			if( val.length < settings.app.min_hashtags ){
+				return onError('Hashtag array is too short ('+ settings.app.min_hashtags  +' minimum)', 'hashtags', val.hashtags, {
 					err_id: 'hashtags_length_too_short'
 				});
 			}
 
-			if( val.length > 5 ){
-				return onError('Hashtag array is too short (5 maximum)', 'hashtags', val.hashtags, {
+			if( val.length > settings.app.max_hashtags  ){
+				return onError('Hashtag array is too short ('+ settings.app.max_hashtags  +' maximum)', 'hashtags', val.hashtags, {
 					err_id: 'hashtags_length_too_long'
 				});
 			}
@@ -80,6 +80,7 @@
 
 
 		req.sent.timezone    = parseFloat( req.sent.timezone );
+		req.sent.hashtags    = req.sent.hashtags.filter( Boolean );
 		req.sent.address.lat = parseFloat( req.sent.address.lat );
 		req.sent.address.lng = parseFloat( req.sent.address.lng );
 		req.sent.begins_at 	 = new Date();
@@ -170,11 +171,15 @@
 			// the before creation in the right channel
 			req.sent.requester = requester;
 
-			data.hosts_facebook_id.forEach(function( host_id ){
-				if( requester.facebook_id != host_id && requester.friends.indexOf( host_id ) == -1 ){
-					err_data.hosts.push( host_id );
-				}
-			});
+
+			// Only bots are allowed to create a before with virtually anyfriends
+			if( requester.access.indexOf("bot") == -1 ){
+				data.hosts_facebook_id.forEach(function( host_id ){
+					if( requester.facebook_id != host_id && requester.friends.indexOf( host_id ) == -1 ){
+						err_data.hosts.push( host_id );
+					}
+				});
+			}
 
 			if( err_data.hosts.length != 0 ){
 				return callback( _.merge( err_data, {

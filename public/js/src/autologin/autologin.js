@@ -20,6 +20,12 @@
 					if( a == "#davida" ){
 						return resolve({ 'fb_token': 'EAAXR2Qo4lc4BAA0I0ZApWf4xmd9KDPDQlgMuXJXfHXct3n02upyYAYd8uzgym7xZB139x0pJHErfkZC83EtH8id3pOVTsU0qCulxSj20PyrB5M6YxJltReAmDyP6ZCPZABj9TSKF8ZCBhnCpaayflhwbUDX0wGe4gZD' });
 					}
+					if( a == "#alesso" ){
+						return resolve({ 'fb_token': 'EAAXR2Qo4lc4BAHqpIoUBGvNeZCFhSbFggVbT19dphbNhZBKPZAtX2xhKiWNO10dyZBSqDZAZBmFm5nBXCouhSAJxkFHPhpjVZCTd3KYfeThniSSA7fOiEgzrTZCETjGyvmCwXgEOpRvKhDSnglk7PIstpiStR1rDlrgZD' });
+					}
+					if( a == "#frank" ){
+						return resolve({ 'fb_token': 'EAAXR2Qo4lc4BAFaML7OLMbZBO5WxBMFUIN0ZBxsJDsgAOPnq9MZCckr55Iz65p4nbbK0rBdQDqMBvVNOIb5E1FNbDOxMfokJmKfSSZC3paumQzwu4iYJPQyTOtgwJmg9CLB1JTUovs2BKFOx40lOZCNbOQCXKsF4ZD' });
+					}
 				}
 
 				if( LJ.app_mode == "staged" ){
@@ -35,6 +41,13 @@
 					}
 					if( a == '#jenifer' ){
 						return resolve({ 'fb_token': 'EAAXR2fF8rkoBAG0J0kmg703N9LhjooHUdUKzOOZCr0bZBZCPO3JjyJ4hNaV2jr1nIG8x7EJzMJbSyKx2rRGeg3V7ZA2cCly5cZBuGzuKyzmpXFKEv1zM0cqxmSyjjziiArZC2hffiwVH03AeJQOmBUHfuWH0tSacnbjC6lIRbu1gZDZD' });
+					}
+				}
+
+				if( LJ.app_mode == "prod" ){
+					var a = document.location.hash;
+					if( a == "#alesso" ){
+						return resolve({ 'fb_token': "EAAVcy8kgYSoBAFfLmVCMUnKdxs673dmS7Q84NvENMugewCmyqZAHZCHSwmDoLQ9gVBoH3UVbDA5ZArBSo98TH8AZCsA1hXElXqNZAmKRVK4gEh1c2a7QW33o0y7vRy3gwxuP1lsR8PkzVSnF4TQos8vI6fTGdFq4ZD" });
 					}
 				}
 

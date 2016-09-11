@@ -1,6 +1,5 @@
 	
 	// Databases
-	var mongoose = require('mongoose');
 	var Alerter  = require( process.cwd() + '/middlewares/alerter');
 	// Models
 	var User     = require('../models/UserModel');
@@ -122,74 +121,46 @@
 			'status'    : { $in: ['open'] }
 		};
 
+		var tasks = [];
 
-		mongoose.connection.on('error', function( err ){
+		tasks.push(function( inner_cb ){
+			updateBefores(function( err ){
+				inner_cb( err );
+			});
+		});
 
-			var mail_html = []
-			mail_html.push('Connection to the database failed, Couldnt execute the cron job "terminateBefores"');
-			mail_html.push( err );
-			Alerter.sendAdminEmail({ subjet: 'Error connecting to Database', html: mail_html.join('') });
-			mail_html = [];
+		tasks.push(function( inner_cb ){
+			updateUsers(function( err ){
+				inner_cb( err );
+			});
+		});
+
+		async.parallel( tasks, function( err ){
+
+			if( err ){
+				return Alerter.sendAdminEmail({
+					subject : 'Scheduler [' + process.env.APP_ENV + '] - the update process failed.',
+					html    : JSON.stringify( err, null, 4 )
+				});
+			}
+
+			console.log('Scheduled job completed successfully');
+
+			if( tracked.n_befores_updated != 0 ){
+				Alerter.sendAdminEmail({
+					subject : 'Scheduler [' + process.env.APP_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
+					html    : makeEmailHtml()
+				});
+			}
+
+			if( typeof callback == "function" ){
+				callback( null, tracked );
+			}
+			// mongoose.connection.close();
 
 		});
 
-		// If already connected, fire handlers
-		if( mongoose.connection.readyState != 1 ){
-			console.log('Connection not opened yet, opening...');
-			mongoose.connect( mongo_uri );
-		} else {
-			console.log('Connection already opened');
-			handleMongooseOpen( callback );
-		}
-
-		mongoose.connection.on('open', function(){
-			handleMongooseOpen( callback );
-		});
 		
-		function handleMongooseOpen( callback ){
-			
-			console.log('Connected to the database! Updating... ');
-
-				var tasks = [];
-
-				tasks.push(function( inner_cb ){
-					updateBefores(function( err ){
-						inner_cb( err );
-					});
-				});
-
-				tasks.push(function( inner_cb ){
-					updateUsers(function( err ){
-						inner_cb( err );
-					});
-				});
-
-				async.parallel( tasks, function( err ){
-
-					if( err ){
-						return Alerter.sendAdminEmail({
-							subject : 'Scheduler [' + process.env.APP_ENV + '] - the update process failed.',
-							html    : JSON.stringify( err, null, 4 )
-						});
-					}
-
-					console.log('Scheduled job completed successfully');
-
-					if( tracked.n_befores_updated != 0 ){
-						Alerter.sendAdminEmail({
-							subject : 'Scheduler [' + process.env.APP_ENV + '], '+ tracked.n_befores_updated + ' befores have been successfully updated',
-							html    : makeEmailHtml()
-						});
-					}
-
-					if( typeof callback == "function" ){
-						callback( null, tracked );
-					}
-					// mongoose.connection.close();
-
-				});
-
-		}
 
 		function keeptrack( obj ){
 			

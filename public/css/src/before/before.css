@@ -437,7 +437,7 @@ span.be-dates__count {
     width: 100%;
     display: flex;
     margin-top: auto;
-    background: white;
+    background: rgba(255, 255, 255, 0.5);
     flex-shrink: 0;
 }
 

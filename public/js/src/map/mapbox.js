@@ -239,7 +239,7 @@
                 
             });
 
-            return lnglat
+            return lnglat;
 
         },
         offsetLngLatRecursive: function( latlng, i ){
@@ -292,7 +292,7 @@
             var dom    = $( '<div class="marker-wrapper">' + LJ.map.renderMarkerPlaceholder( opts.marker_id, "face" ) + '</div>' )[ 0 ];
             var marker = new mapboxgl.Marker( dom );
             
-            marker.setLngLat( opts.lnglat )
+            marker.setLngLat( lnglat )
                   .addTo( LJ.meemap );
 
         	LJ.map.markers.push({
@@ -536,7 +536,7 @@
                 .children()
                 .velocity('bounceInQuick', {
                     duration : 500,
-                    display  : 'block'
+                    display  : 'flex'
                 });
 
         },

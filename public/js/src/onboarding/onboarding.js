@@ -1,5 +1,4 @@
 
-	
 	window.LJ.onboarding = _.merge( window.LJ.onboarding || {}, {
 
         init: function(){
@@ -18,20 +17,43 @@
         },
         handleAppEvents: function(){
 
+            LJ.on("navigate", LJ.onboarding.handleNavigate );
             LJ.on("login:complete", LJ.onboarding.handleLoginComplete );
             LJ.on("welcome:complete", LJ.onboarding.handleWelcomeComplete );
             LJ.on("show_before_inview:complete", LJ.onboarding.handleShowBeforeInview );
 
         },
+        handleNavigate: function( data ){
+
+            var link  = data.link;
+            var $elem = $('[data-onb-link]');
+
+            if( $elem.attr('data-onb-link') == link ){
+                $elem.css({ display: 'flex' });
+            } else {
+                $elem.hide();
+            }
+
+        },
         handleLoginComplete: function(){
 
-            LJ.onboarding.showOnboarding("welcome_to_meefore")
+            if( LJ.onboarding.isOnboardingNecessary("welcome_to_meefore") ){
+                LJ.onboarding.showOnboarding("welcome_to_meefore");
+
+            } else {
+                LJ.onboarding.showOnboarding("create_before");
+
+            }
 
         },
         handleWelcomeComplete: function(){
 
             LJ.delay( 1000 ).then(function(){
+
+                if( LJ.map.getMeemapMode() == "closed" ) return;
+
                 LJ.onboarding.showOnboarding("create_before");
+
             });
 
         },
@@ -158,7 +180,7 @@
 
             return LJ.ui.render([
 
-                '<div class="onb-welcome">',
+                '<div class="onb-welcome" data-onb-link="map">',
                     '<div class="onb-welcome-body">',
                         '<div class="onb-welcome__icon x--round-icon">',
                             '<img src="/img/logo/logo_rounded.svg">',
@@ -186,6 +208,7 @@
                 title    : LJ.text("onb_create_before_title"),
                 body     : LJ.text("onb_create_before_body"),
                 tags     : [ 'onb', 'onb-create-before' ],
+                data     : [{ key: "onb-link", val: "map" }],
                 btn      : "<button>"+ LJ.text('onb_create_before_btn') +"</button>"
 
             });
@@ -199,6 +222,7 @@
                 title    : LJ.text("onb_send_cheers_title"),
                 body     : LJ.text("onb_send_cheers_body"),
                 tags     : [ 'onb', 'onb-send-cheers' ],
+                data     : [{ key: "onb-link", val: "map" }],
                 btn      : "<button>"+ LJ.text('onb_send_cheers_btn') +"</button>"
 
             });
