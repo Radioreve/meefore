@@ -40,7 +40,7 @@
 
 		// Job #1 - Put "ended" all befores of yesterday, every morning
 		(function terminateBeforesEveryHour(){
-			// require('./jobs/terminate-befores').terminateBefores();
+			require('./jobs/terminate-befores').terminateBefores();
 			setTimeout( terminateBeforesEveryHour, every_hour );
 		})();
 
@@ -49,9 +49,9 @@
 		(function scheduleBotsActivity(){
 			if( process.env.BOT_SCHEDULER === "on" ){
 
-				var random_minute = 1 || randomInt( process.env.BOT_SCHEDULER_MIN_DELAY || 5, process.env.BOT_SCHEDULER_MAX_DELAY || 15 );
+				var random_minute = randomInt( process.env.BOT_SCHEDULER_MIN_DELAY || 5, process.env.BOT_SCHEDULER_MAX_DELAY || 15 );
 				require('./jobs/bots-scheduler').scheduleBotsToCreateBefores( random_minute );
-				setTimeout( scheduleBotsActivity, 1000 * 10 * random_minute );
+				setTimeout( scheduleBotsActivity, 1000 * 60 * random_minute );
 
 			}
 		})();

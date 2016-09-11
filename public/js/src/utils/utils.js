@@ -104,11 +104,12 @@ window.LJ = _.merge( window.LJ || {}, {
         localStorage.setItem( key, value );
 
     },
-    isMobileMode: function(){
+    isMobileMode: function( max_width ){
 
-        var is_mobile = window.innerWidth <= 500;
+        max_width = max_width || 500;
 
-        return is_mobile;
+        return window.innerWidth <= max_width;
+        
 
     },
     isBrowserSafari: function(){

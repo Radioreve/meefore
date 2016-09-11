@@ -62,7 +62,7 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 			],
 		run: function(){
 
-			if( LJ.isMobileMode() ){
+			if( LJ.isMobileMode( 700 ) ){
 				$('.landing-connexion').addClass('x--fire');
 			} else {
 				$('.landing-connexion').addClass('x--bald');
