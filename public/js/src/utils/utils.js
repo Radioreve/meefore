@@ -344,7 +344,7 @@ window.LJ = _.merge( window.LJ || {}, {
 
     },
     randomInt: function(low, high) {
-        return Math.floor(Math.random() * (high - low + 1) + low);
+        return Math.floor(Math.random() * (parseInt(high) - parseInt(low) + 1) + parseInt(low));
 
     },
     renderDate: function( date ){

@@ -17,7 +17,7 @@
 	var every_ten_sec = 1000 * 10;
 
 	function randomInt(low, high) {
-	    return Math.floor(Math.random() * (high - low + 1) + low);
+	    return Math.floor(Math.random() * (parseInt(high) - parseInt(low) + 1) + parseInt(low));
 	}
 
 	function startServices( err ){
@@ -49,8 +49,9 @@
 		(function scheduleBotsActivity(){
 			if( process.env.BOT_SCHEDULER === "on" ){
 
-				var random_minute = randomInt( process.env.BOT_SCHEDULER_MIN_DELAY || 5, process.env.BOT_SCHEDULER_MAX_DELAY || 15 );
+				var random_minute = randomInt( process.env.BOT_SCHEDULER_MIN_DELAY, process.env.BOT_SCHEDULER_MAX_DELAY );
 				require('./jobs/bots-scheduler').scheduleBotsToCreateBefores( random_minute );
+
 				setTimeout( scheduleBotsActivity, 1000 * 60 * random_minute );
 
 			}

@@ -121,7 +121,6 @@
 		}
 
 
-
 		botLog("Initializing bot activity after " + rand_min + "min...");
 		User.find(
 		{
