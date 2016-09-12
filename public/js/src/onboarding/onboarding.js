@@ -49,9 +49,6 @@
         handleWelcomeComplete: function(){
 
             LJ.delay( 1000 ).then(function(){
-
-                if( LJ.map.getMeemapMode() == "closed" ) return;
-
                 LJ.onboarding.showOnboarding("create_before");
 
             });
@@ -67,6 +64,12 @@
             if( LJ.app_settings.onboarding_ids.indexOf( onb_id ) == -1 ){
                 LJ.wlog('This onboarding_id ('+ onb_id +') doesnt exist');
                 return false;
+            }
+
+            if( [ "create_before", "send_cheers" ].indexOf( onb_id ) != -1 ){
+                if( LJ.map.getMeemapMode() == "closed" ){
+                    return;
+                }
             }
 
             // If the user has already seen the onboarding tips, dont show it again
@@ -145,7 +148,11 @@
             LJ.delay( 200 )
                 .then(function(){
 
-                    $( LJ.onboarding.rendershowWelcomeUser() )
+                    var html = LJ.map.getMeemapMode() == "closed" ?
+                               LJ.onboarding.rendershowWelcomeUser__Closed():
+                               LJ.onboarding.rendershowWelcomeUser__Open();
+
+                    $( html )
                         .appendTo('.curtain')
                         .velocity('shradeIn', {
                             duration : 500,
@@ -158,7 +165,13 @@
                     $('.curtain')
                         .find('.js-close-modal')
                         .on('click', function(){
+        
+                            var $s = $( this );
 
+                            if( $s.hasClass('js-goto-profile') ){
+                               LJ.nav.navigate('menu');
+                            }
+                            
                             $('.onb-welcome')
                                 .velocity('bounceOut', {
                                     duration: 500
@@ -171,12 +184,41 @@
 
                             LJ.emit("welcome:complete");
 
+                
+
                         });
 
                 });
 
         },
-        rendershowWelcomeUser: function(){
+        rendershowWelcomeUser__Open: function(){
+
+            return LJ.ui.render([
+
+                '<div class="onb-welcome" >',
+                    '<div class="onb-welcome-body">',
+                        '<div class="onb-welcome__icon x--round-icon">',
+                            '<img src="/img/logo/logo_rounded.svg">',
+                        '</div>',
+                        '<div class="onb-welcome__title">',
+                            '<span data-lid="onb_welcome_title" data-lpm="'+ LJ.user.name +'"></span>',
+                        '</div>',
+                        '<div class="onb-welcome__subtitle">',
+                            '<span data-lid="onb_welcome_subtitle_open"></span>',
+                        '</div>',
+                        '<div class="onb-welcome__footer">',
+                            '<button class="js-close-modal" data-lid="onb_welcome_btn_see"></button>',
+                        '</div>',
+                        '<div class="onb-welcome__subfooter">',
+                            '<span data-lid="onb_welcome_last"></span>',
+                        '</div>',
+                    '</div>',
+                '</div>'
+
+            ].join(''));
+
+        },
+        rendershowWelcomeUser__Closed: function(){
 
             return LJ.ui.render([
 
@@ -189,10 +231,14 @@
                             '<span data-lid="onb_welcome_title" data-lpm="'+ LJ.user.name +'"></span>',
                         '</div>',
                         '<div class="onb-welcome__subtitle">',
-                            '<span data-lid="onb_welcome_subtitle"></span>',
+                            '<span data-lid="onb_welcome_subtitle_closed"></span>',
                         '</div>',
                         '<div class="onb-welcome__footer">',
-                            '<button class="js-close-modal" data-lid="onb_welcome_btn"></button>',
+                            '<button class="js-close-modal js-goto-profile" data-lid="onb_welcome_btn_check"></button>',
+                            '<button class="onb-welcome__btn-later js-close-modal" data-lid="onb_welcome_btn_later"></button>',
+                        '</div>',
+                        '<div class="onb-welcome__subfooter">',
+                            '<span data-lid="onb_welcome_last"></span>',
                         '</div>',
                     '</div>',
                 '</div>'

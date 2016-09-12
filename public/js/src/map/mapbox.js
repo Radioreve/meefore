@@ -97,8 +97,24 @@
             // LJ.on("login:complete", LJ.map.handleLoginComplete );
             LJ.on("clock", LJ.map.handleClock );
             LJ.on("map:ready", LJ.map.handleMapReady );
+            LJ.on('window:scroll', LJ.map.handleWindowScroll );
 
         },  
+        handleWindowScroll: function(){
+
+            
+        },
+        resetMapboxCanvasDimensions: function(){
+
+            var w = $( window ).width() * LJ.pictures.getDevicePixelRatio();
+            var h = $( window ).height() * LJ.pictures.getDevicePixelRatio();
+
+            $('.mapboxgl-canvas').css({
+                'width': w,
+                'height': h
+            });
+
+        },
         handleClock: function( data ){
 
             // Check if the countdown needs to be started or cleared
@@ -126,9 +142,21 @@
             });
             
         },
+        goToMyBefore: function(){
+
+            var before = LJ.before.getMyBefore();
+
+            LJ.meemap.easeTo({
+                center : [ before.address.lng, before.address.lat ],
+                speed  : 0.5,
+                curve  : 2
+            });
+
+        },
         handleClickOnShowOwnBefore: function(){
 
             LJ.before.showMyBefore();
+            LJ.map.goToMyBefore();
 
         },
         handleMapReady: function(){
@@ -262,13 +290,15 @@
                 var img_html = LJ.static.renderStaticImage("marker_loader");
 
                 return LJ.ui.render([
-                    '<div class="marker x--face js-before-marker" data-marker-id="'+ marker_id +'">',
-                        '<div class="mrk__seen"></div>',
-                        '<div class="mrk__status"></div>',
-                        '<div class="mrk__loader">',
-                            img_html,
-                        '</div>',
-                        '<div class="mrk__img">',
+                    '<div class="marker-wrapper">',
+                        '<div class="marker x--face js-before-marker" data-marker-id="'+ marker_id +'">',
+                            '<div class="mrk__seen"></div>',
+                            '<div class="mrk__status"></div>',
+                            '<div class="mrk__loader">',
+                                img_html,
+                            '</div>',
+                            '<div class="mrk__img">',
+                            '</div>',
                         '</div>',
                     '</div>'
                 ]);
@@ -289,7 +319,7 @@
             var lnglat = LJ.map.offsetLngLat( opts.lnglat );
             var data   = opts.data || null;
 
-            var dom    = $( '<div class="marker-wrapper">' + LJ.map.renderMarkerPlaceholder( opts.marker_id, "face" ) + '</div>' )[ 0 ];
+            var dom    = $( LJ.map.renderMarkerPlaceholder( opts.marker_id, "face" ) )[ 0 ];
             var marker = new mapboxgl.Marker( dom );
             
             marker.setLngLat( lnglat )
@@ -347,7 +377,7 @@
 
             LJ.map.deactivateMarker();
             LJ.map.getMarkerDom( marker_id )
-                .css({ "transform": "scale(1.45)" })
+                .css({ "transform": "translate(-50%,-50%) scale(1.45)" })
                 .parent().css({ "z-index": "10" })
                 // .velocity( "grounceIn", {
                 //     duration : 600,
@@ -365,7 +395,7 @@
             if( !active_marker_id ) return;
             
             $active_marker
-                .css({ "transform": "none" })
+                .css({ "transform": "translate(-50%,-50%)" })
                 .parent().css({ "z-index": "1" })
 
             LJ.map.setActiveMarker( null );
@@ -785,12 +815,14 @@
                     LJ.map.deactivateMarker( before_id );
                     LJ.before.hideBeforeInview();
                     LJ.profile_user.hideUserProfile();
+                    LJ.before.showCreateBeforeBtn();
                     return;
 
                 } else {
 
                     LJ.map.activateMarker( before_id );
                     LJ.before.showBeforeInview( before );
+                    LJ.before.hideCreateBeforeBtn();
                     LJ.map.setMarkerAsSeen( before_id );
 
                 }

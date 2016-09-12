@@ -73,16 +73,6 @@
 				});
 			*/
 			
-			// Display the view
-			$current_section.hide();
-			$target_section.css({ display: 'flex' });
-
-			if( !$target_menuitem.is( $current_menuitem ) ){
-				LJ.ui.hideSlide();
-				LJ.before.hideCreateBeforeStraight();
-				LJ.map.deactivateMarker();
-				LJ.map.refreshMarkers();
-			}
 
 			// Event emitting for other modules
 			LJ.emit("navigate", { link: target_link });
@@ -95,12 +85,11 @@
 
 				LJ.unoffsetAll();
 				LJ.ui.deactivateHtmlScroll();
-				// Refresh the map dued to a bug when the window is resized and the map not visible
-				// The try catch is to avoid an ugly error in the console during app intitialization
-				try {
-					LJ.map.refreshMap();
-				} catch( e ){
-
+				
+				// Epic hack to make it work. Only on mobile browsers and when scroll has started
+				// the map is messed up when we go back on it, unless manually setting its cont dimensions
+				if( LJ.isMobileMode() && $( window ).scrollTop() !== 0 ){
+					LJ.map.resetMapboxCanvasDimensions();
 				}
 
 
@@ -119,6 +108,17 @@
 
 			if( target_link != "menu" ){
 				LJ.friends.hideInviteFriendsPopup();
+			}
+
+			// Display the view
+			$current_section.hide();
+			$target_section.css({ display: 'flex' });
+
+			if( !$target_menuitem.is( $current_menuitem ) ){
+				LJ.ui.hideSlide();
+				LJ.before.hideCreateBeforeStraight();
+				LJ.map.deactivateMarker();
+				LJ.map.refreshMarkers();
 			}
 
 

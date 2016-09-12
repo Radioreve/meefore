@@ -179,10 +179,10 @@
 					});
 
 		},
-		getMyBeforeById: function( before_id ){
+		getMyBefore: function(){
 
-			return _.find( LJ.user.befores, function( bfr ){
-                return bfr.before_id == before_id;
+			return _.find( LJ.before.fetched_befores, function( bfr ){
+                return bfr.hosts.indexOf( LJ.user.facebook_id ) != -1;
             });
 
 		},
@@ -746,7 +746,7 @@
 		removeBeforeItem: function( before_id ){
 
 			_.remove( LJ.user.befores, function( bfr ){
-				return bfr._id == before_id;
+				return bfr.before_id == before_id;
 			});
 
 		},

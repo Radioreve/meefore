@@ -229,7 +229,7 @@
 
 	function getHashtags(){
 
-		var n_hashtags        = randomInt( 2, 6 );
+		var n_hashtags        = randomInt( 2, 5 );
 		var selected_hashtags = [];
 
 		var possible_hashtags = _.difference( hashtags, hashtags_in_use );

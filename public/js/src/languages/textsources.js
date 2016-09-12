@@ -1844,8 +1844,8 @@
 			"us": "Hashtag your before"
 		},
 		be_create_hashtags_placeholder: {
-			"fr": "Bring Your Own",
-			"us": "Bring Your Own"
+			"fr": "BringYourOwn",
+			"us": "BringYourOwn"
 		},
 		be_create_button: {
 			"fr": "Propose ton before",
@@ -2188,8 +2188,8 @@
 			"us": "Cheers received"
 		},
 		cheers_back_h1: {
-			"fr": "Cheers envoyé par %groupname",
-			"us": "Cheers sent by %groupname"
+			"fr": "Cheers reçu de %groupname",
+			"us": "Cheers received from %groupname"
 		},
 		cheers_back_h2: {
 			"fr": "%date",
@@ -2223,17 +2223,33 @@
 				return "Bienvenidos %name !".replace('%name', name);
 			}
 		},
-		onb_welcome_subtitle: {
+		onb_welcome_subtitle_open: {
 			"fr": "Bienvenue sur l'application qui te permet de t'ambiancer avant d'aller en soirée.<br>"
-			     + "Parcours la Map et repère les before qui s'organisent près de chez toi. Envoie des Cheers pour montrer ton intérêt pour un before. Si on te Cheers back, it's a Match !<br>"
-			     + "A bientôt en soirée ;)",
+			     + "Parcours la Map et repère les before qui s'organisent près de chez toi. Envoie des Cheers pour montrer ton intérêt pour un before. Si on te Cheers en retour, c'est un Match !<br>",
 			"us": "Welcome on the application for people who like to predrink before going out.<br>"
-				 + 'Browse the map and spot the predrinks that are happening around you. Send a Cheers to show your interest. If people Cheers back, its a Match !<br>'
-				 + 'See you at our next predrink ;)'
+				 + "Browse the map and spot the predrinks that are happening around you. Send a Cheers to show your interest. If people Cheers back, its a Match !<br>"
 		},
-		onb_welcome_btn: {
+		onb_welcome_last: {
+			"fr": "A bientôt en soirée ;)",
+			"us": "See you at our next predrink ;)"
+		},
+		onb_welcome_subtitle_closed: {
+			"fr": "Bienvenue sur l'application qui te permet de t'ambiancer avant d'aller en soirée.<br>"
+			     + "La Map avec les before ouvrira à 14h. En attendant, tu peux vérifier tes informations. <br>",
+			"us": "Welcome on the application for people who like to predrink before going out.<br>"
+				 + "The map will all the predrinks will open at 2pm. Until then, you can make sure your informations are correct.<br>"
+		},
+		onb_welcome_btn_see: {
 			"fr": "Voir les before",
 			"us": "Show me the Map"
+		},
+		onb_welcome_btn_check: {
+			"fr": "Vérifier mes informations",
+			"us": "Check my informations"
+		},
+		onb_welcome_btn_later: {
+			"fr": "Plus tard",
+			"us": "Later"
 		},
 		notification_empty_title: {
 			"fr": "Rien à l'horizon",

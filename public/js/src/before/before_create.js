@@ -130,7 +130,7 @@
 			});
 
 		},
-		addHashtag: function(){
+		addHashtag: function( hashtag ){
 
 			var n_hashes = $('.be-create__hashtag').length;
 
@@ -138,7 +138,8 @@
 				return;
 			}
 
-			var text = $('.be-create-row.x--hashtags input').val();
+			var text = $('.be-create-row.x--hashtags input').val().length > 0 ?
+					   $('.be-create-row.x--hashtags input').val() : hashtag;
 
 			$( LJ.before.renderHashtag( text ) )
 				.hide()
@@ -217,6 +218,8 @@
 
 			LJ.before.clearCreateBefore();
 			LJ.before.addHostsNames([]);
+			LJ.before.addHashtag("before");
+			
 			// LJ.ui.adjustWrapperHeight( $('.be-create') );
 
 			if( LJ.isMobileMode() ){

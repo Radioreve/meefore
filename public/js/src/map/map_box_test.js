@@ -8,7 +8,7 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
 			i = i || LJ.randomInt( 0, LJ.map.test.places.length -1 );
 			var lnglat = [ LJ.map.test.places[ i ].lng, LJ.map.test.places[ i ].lat ];
 
-            var dom    = $( '<div class="marker-wrapper">' + LJ.map.renderMarkerPlaceholder( i, "face" ) + '</div>' )[ 0 ];
+            var dom    = $( LJ.map.renderMarkerPlaceholder( i, "face" ) )[ 0 ];
             var marker = new mapboxgl.Marker( dom );
             
             marker.setLngLat( lnglat )

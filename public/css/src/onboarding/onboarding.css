@@ -31,23 +31,49 @@
 .onb-welcome__title span {font-family: 'quenda';font-size: 40px;font-weight: bold;}
 .onb-welcome__subtitle {
     font-size: 14px;
-    line-height: 30px;
+    line-height: 26px;
     text-align: center;
     width: 90%;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .onb-welcome__footer {
-    width: 250px;
-    height: 50px;
-    border-radius: 100px;
-    background: #1a59c3;
+    margin-bottom: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column nowrap;
 }
 .onb-welcome__footer button {
-    width: 100%;
-    height: 100%;
-    background: none;
+    width: 250px;
+    height: 50px;
+    background: #1a59c3;
     font-size: 16px;
     font-family: 'quenda';
     color: white;
+    border-radius: 100px;
+    margin: 4px;
+    flex-shrink: 0;
+}
+button.onb-welcome__btn-later {
+    color: #454545;
+    background: white;
+    height: 20px;
+    font-size: 14px;
+    margin-top: 12px;
+}
+.onb-welcome__subfooter {
+    font-weight: 500;
+    font-family: 'creamy';
+    font-size: 22px;
+    color: #454545;
+    margin-bottom: 20px;
+}
+.onb-welcome__subfooter span {
+}
+
+.onb-welcome.x--closed .onb-welcome__footer {
+}
+
+.onb-welcome.x--closed .onb-welcome__footer button {
 }

@@ -83,6 +83,11 @@ window.LJ = _.merge( window.LJ || {}, {
 
         });
 
+
+        $( window ).on('scroll', _.throttle(function(){
+            LJ.emit("window:scroll");
+        }, 200 ));
+
                 
     },
     promise: function( callback ){

@@ -211,7 +211,7 @@
 
 	function resetDbAll(){
 
-		mongoose.connect( config.db['dev'].uri );
+		mongoose.connect( config.db[ process.env.APP_ENV ].uri );
 
 		mongoose.connection.on('error', function(err){
 			console.log('Connection to the database failed : '+err);

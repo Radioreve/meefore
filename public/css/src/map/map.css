@@ -249,6 +249,11 @@
     flex-shrink: 0;
 }
 
+.marker-wrapper {}
+.marker-wrapper-translate {
+    transform: translate(-50%,-50%);
+}
+
 .marker {
     border: 2px solid transparent;
     padding: 4px;
@@ -266,7 +271,7 @@
     border-radius: 100px;
     position: absolute;
     border-color: #1a59c3;
-    /* transform: scale(0.75); */
+    transform: translate(-50%,-50%);
 }
 
 .marker.x--face > * {
