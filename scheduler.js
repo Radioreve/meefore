@@ -54,7 +54,7 @@
 				require('./jobs/bots-scheduler').scheduleBotsToCreateBefores( random_minute );
 
 				term.bold.green("Bot scheduler next tick in " + random_minute + " minutes\n");
-				setTimeout( scheduleBotsActivity, 1000 * 1 * random_minute );
+				setTimeout( scheduleBotsActivity, 1000 * 60 * random_minute );
 
 			} else {
 				term.bold.red("Bot scheduler is off\n");
