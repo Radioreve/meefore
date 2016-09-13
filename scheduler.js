@@ -4,6 +4,7 @@
 	var pusher   = require('./services/pusher');
 	var schedule = require('node-schedule');
 	var moment   = require('moment');
+	var term     = require('terminal-kit').terminal;
 
 	var config = require('./config/config');
 	var uri    = config.db[ process.env.APP_ENV ].uri;
@@ -52,8 +53,11 @@
 				var random_minute = randomInt( process.env.BOT_SCHEDULER_MIN_DELAY, process.env.BOT_SCHEDULER_MAX_DELAY );
 				require('./jobs/bots-scheduler').scheduleBotsToCreateBefores( random_minute );
 
-				setTimeout( scheduleBotsActivity, 1000 * 60 * random_minute );
+				term.bold.green("Bot scheduler next tick in " + random_minute + " minutes\n");
+				setTimeout( scheduleBotsActivity, 1000 * 1 * random_minute );
 
+			} else {
+				term.bold.red("Bot scheduler is off\n");
 			}
 		})();
 

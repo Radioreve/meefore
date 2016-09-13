@@ -116,8 +116,9 @@
 		}
 
 		hourly_activity = expected_activity[ moment().get('hours') ] || 0;
-		if( Math.random() > hourly_activity ){
-			return botLog("Passing the bot activity for this time");
+		var rand = Math.random();
+		if( rand > hourly_activity ){
+			return botLog("Passing the bot activity for this time (" + hourly_activity + " < " + rand +")");
 		}
 
 
