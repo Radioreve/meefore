@@ -839,11 +839,14 @@
 		},
 		notificationCallback__GroupRequestHosts: function( n ){
 			
-			var cheers_item = LJ.cheers.getCheersItemByMainMember( n.main_member );
-			var cheers_id   = cheers_item.cheers_id;
+			var cheers_item   = LJ.cheers.getCheersItemByMainMember( n.main_member );
+			var cheers_id     = cheers_item.cheers_id;
+			var chat_id 	  = cheers_item.chat_id;
 
 			LJ.chat.showChatWrap();
-			LJ.cheers.showValidateCheers( cheers_id );
+
+			cheers_item.status == "accepted" ? LJ.chat.showAndActivateChatInview( chat_id ):
+											   LJ.cheers.showValidateCheers( cheers_id );
 
 		},
 		notificationCallback__GroupRequestMembers: function( n ){
@@ -859,10 +862,7 @@
 			var before_id  = n.before_id;
 			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
 
-			if( LJ.chat.getChatState() == "hidden" ){
-				LJ.chat.showChatWrap();
-			}
-
+			LJ.chat.showChatWrap();
 			LJ.chat.showAndActivateChatInview( chat_id );
 
 		},
@@ -871,10 +871,7 @@
 			var before_id  = n.before_id;
 			var chat_id    = LJ.chat.getChatIdByBeforeId( before_id );
 
-			if( LJ.chat.getChatState() == "hidden" ){
-				LJ.chat.showChatWrap();
-			}
-
+			LJ.chat.showChatWrap();
 			LJ.chat.showAndActivateChatInview( chat_id );
 
 		},

@@ -46,7 +46,7 @@
 .hive.x--1 .hive__picture {
   width: 60%;
   height: 60%;
-  transform: translate(0);
+  /* transform: translate(0); */
 }
 
 .hive.x--2 .hive__picture {

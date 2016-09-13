@@ -219,10 +219,11 @@
 
 		User.update(
 		{
-			'befores.before_id' : mongoose.Types.ObjectId( before._id )
+			'facebook_id': { '$in': group.members },
+			'befores.before_id' :  before._id // already of type ObjectId
 		},
 		{
-			'$set': { 'before.$.status' : 'status', 'before.$.accepted_at' : req.sent.accepted_at }
+			'$set': { 'befores.$.status' : status, 'befores.$.accepted_at' : req.sent.accepted_at }
 		},
 		{
 			'multi': true

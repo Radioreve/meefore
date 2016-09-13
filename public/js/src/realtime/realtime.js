@@ -137,11 +137,11 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		var channel_item_team   = data.channel_item_team;
 
 		// Update user state and add marker accordingly
-		LJ.user.befores.push( before_item );
+		LJ.before.addBeforeItem( before_item );
 
 		// Cache new channels
-		LJ.user.channels.push( channel_item_before );
-		LJ.user.channels.push( channel_item_team );
+	 	LJ.addChannelItem( channel_item_before );
+	 	LJ.addChannelItem( channel_item_team );
 
 		// Refresh all channels subscriptions
 		LJ.realtime.subscribeToAllChannels();
@@ -183,8 +183,8 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 		}
 
-		LJ.user.befores.push( data.before_item );
-		LJ.user.channels.push( data.channel_item_team );
+		LJ.before.addBeforeItem( data.before_item );
+		LJ.addChannelItem( data.channel_item_team );
 
 		LJ.before.refreshBeforeInviewAction();
 		LJ.map.refreshMarkers();
@@ -203,30 +203,28 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 		var hosts     = data.hosts;
 		var status    = data.status;
-		var before_id = data._id;
+		var before_id = data.before_id;
 		var requester = data.requester;
 
+		// Update the before state and the btn accordingly
+		LJ.log("Removing before_item with id : " + before_id );
 		LJ.before.removeBeforeItem( before_id );
+		LJ.before.removeChannelItemBefore( before_id ); // ugly func, but tired of debuggin..
 		LJ.map.refreshCreateBtnState();
-
-		if( requester == LJ.user.facebook_id ){
-
-			LJ.ui.hideLoader("canceling_before");
-			LJ.ui.hideSlide({ type: 'before' });
-			LJ.ui.showToast( LJ.text('to_cancel_before_success') );
-
-		}
 
 		// Force a resync of all the chats with updated server values
 		LJ.chat.resyncAllChats();
 
-		// To fix a particular usecase where the bubble remains persistent which chat empty view
-		LJ.chat.refreshChatIconBubble();
-
-		LJ.before.showCreateBeforeBtn();
-
 		// Add notification in real time
 		LJ.realtime.addNotification( data );
+
+		// Specifics for the requester
+		if( requester == LJ.user.facebook_id ){
+			LJ.ui.hideLoader("canceling_before");
+			LJ.ui.hideSlide({ type: 'before' });
+			LJ.ui.showToast( LJ.text('to_cancel_before_success') );
+			LJ.before.showCreateBeforeBtn();
+		}
 
 	},
 	// Subcribe to events about a specific geo area 
@@ -379,7 +377,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		}
 
 		// Refresh all channels subscriptions
-		LJ.user.channels.push( channel_item );
+		LJ.addChannelItem( channel_item );
 		LJ.realtime.subscribeToAllChannels();
 
 		// Add the new chat for people to get to know each otha :)
@@ -402,8 +400,8 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 
 				}
 			
-
 				// Update the cheers
+				LJ.log("Updating cheers_item with new status : " + status );
 				LJ.cheers.updateCheersItem( cheers_id, { status: status });
 				LJ.cheers.refreshCheersItems__Chat();
 
@@ -429,7 +427,7 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 		}
 
 		// Refresh all channels subscriptions
-		LJ.user.channels.push( channel_item );
+		LJ.addChannelItem( channel_item );
 		LJ.realtime.subscribeToAllChannels();
 
 		// Add the new chat for people to get to know each otha :)
@@ -439,6 +437,8 @@ window.LJ.realtime = _.merge( window.LJ.realtime || {}, {
 				LJ.ui.showToast( LJ.text("to_group_accepted_users") );
 
 				// Update the cheer_item
+				LJ.log("Updating before : " + before_id + " with status : " + status );
+
 				LJ.cheers.updateCheersItem( cheers_id, { "status": status });
 				LJ.cheers.refreshCheersItems__Chat();
 

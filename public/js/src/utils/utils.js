@@ -94,7 +94,6 @@ window.LJ = _.merge( window.LJ || {}, {
         return new Promise( callback );
     },
     Promise: Promise,
-
     storeItem: function( key, value ){
 
         if( !key || !value ){
@@ -107,6 +106,23 @@ window.LJ = _.merge( window.LJ || {}, {
         return localStorage.setItem( key, value );
 
         localStorage.setItem( key, value );
+
+    },
+    addChannelItem: function( channel_item ){
+        
+        var is_absent = true;
+        LJ.user.channels.forEach(function( chan ){
+
+            if( channel_item.chat_id && chan.chat_id && channel_item.chat_id == chan.chat_id ){
+                LJ.log("A channel with this chat_id ("+ chan.chat_id +") already exist (not adding)");
+                is_absent = false;
+            } 
+           
+        });
+
+        if( is_absent ){
+            LJ.user.channels.push( channel_item ); 
+        }
 
     },
     isMobileMode: function( max_width ){

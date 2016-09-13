@@ -52,6 +52,12 @@
 			});
 
 		},
+		resetBeforeInviewAction: function(){
+
+			var new_top = $('.be-inview').height() - $('.be-action').height() - $('.be-inview').offset().top;
+			$('.be-action').css({ 'top': new_top });
+
+		},
 		handleShowSlide: function(){
 			LJ.before.hideCreateBeforeBtn();
 
@@ -421,6 +427,9 @@
 				jsp_id: 'before_inview'
 			});
 
+			LJ.before.resetBeforeInviewAction();
+			$('.slide').on('scroll',  _.throttle( LJ.before.resetBeforeInviewAction, 180 ) );
+
 			// Little delay to give Jsp the time to act
 			return LJ.delay( 100 )
 
@@ -728,7 +737,7 @@
 
 			LJ.api.changeBeforeStatus( before_id, new_status )
 				.then(function( before ){
-
+					LJ.log("Before canceled success, waiting for push response...");
 				})
 				.catch(function( err ){
 					LJ.wlog(err);
@@ -747,6 +756,13 @@
 
 			_.remove( LJ.user.befores, function( bfr ){
 				return bfr.before_id == before_id;
+			});
+
+		},
+		removeChannelItemBefore: function( before_id ){
+
+			_.remove( LJ.user.channels, function( chan ){
+				return chan.before_id == before_id;
 			});
 
 		},
@@ -854,6 +870,7 @@
 				"message_html" : "<span>" + LJ.text("before_just_canceled") + "</span>",
 				"callback"     : function(){
 					LJ.ui.hideSlide({ type: 'before' });
+					LJ.before.showCreateBeforeBtn();
 				}
 
 			});
@@ -875,6 +892,11 @@
 
 			LJ.profile_user.showUserProfile( facebook_id );
 
+
+		},
+		addBeforeItem: function( before_item ){
+
+			LJ.user.befores.push( before_item );
 
 		}
 

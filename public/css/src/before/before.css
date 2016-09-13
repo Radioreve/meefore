@@ -164,6 +164,7 @@ span.be-dates__count {
     display: none;
     flex: 1;
     overflow: hidden;
+    overflow: visible;
 }
 
 .be-inview.x--flat {
@@ -280,7 +281,7 @@ span.be-dates__count {
     padding: 0px 30px;
     font-size: 12px;
     align-items: center;
-    margin-bottom: 10px;
+    flex-shrink: 0;
 }
 
 .be-inview-address__address {
@@ -432,13 +433,13 @@ span.be-dates__count {
 .user-row__education-icon i {}
  
 .be-action {
-    order: 1;
-    height: 100px;
+    height: 90px;
     width: 100%;
-    display: flex;
-    margin-top: auto;
     background: rgba(255, 255, 255, 0.5);
-    flex-shrink: 0;
+    position: absolute;
+    z-index: 100;
+    transition: top linear .2s;
+    text-align: center;
 }
 
 .be-inview.x--flat .be-action {
@@ -593,8 +594,9 @@ span.be-dates__count {
     font-size: 24px;
     display: flex;
     align-items: flex-end;
-    height: 90px;
+    height: 84px;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .be-usernames span {
@@ -609,8 +611,8 @@ span.be-dates__count {
 }
 
 .be-inview.x--hive .be-pictures {
-    width: 300px;
-    height: 300px;
+    width: 280px;
+    height: 280px;
     padding: 0;
     flex-shrink: 0;
     margin: 0 auto;
@@ -621,7 +623,8 @@ span.be-dates__count {
     transition: all ease-in .15s;
 }
 
-.hive__picture:hover img, .hive__background:hover~div img {
+.hive__picture:hover img,
+.hive__background:hover~div img {
     transform: scale(1.2);
 }
 
@@ -757,10 +760,11 @@ span.be-dates__count {
     font-size: 12px;
     font-family: quenda;
     order: 1;
-    width: 90%;
+    width: 86%;
     align-items: center;
     flex-flow: row wrap;
-    margin: 0 auto;
+    margin: 0 auto 30px;
+    flex-shrink: 0;
 }
 .be-inview__hashtag {
     padding: 6px 12px;

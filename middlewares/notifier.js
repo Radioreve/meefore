@@ -410,7 +410,7 @@
 			var happn_hour  = moment( n.happened_at ).get("hour");
 			var now_hour    = moment().get("hour");
 
-			if( is_outdated || ( is_today && happn_hour > 0 && happn_hour < 14 && now_hour > 14 ) ){
+			if( is_outdated || ( is_today && happn_hour > 0 && happn_hour < 14 && now_hour > 6 ) ){
 				console.log("Cleaning notification : " + i );
 				updated_needed = true;
 				delete user.notifications[ i ];

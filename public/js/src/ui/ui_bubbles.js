@@ -56,7 +56,7 @@
 			var $bubble_text = $bubble.find('.bubble__number');
 
 			// Bubble element doesnt exist, create it and add n bubbles
-			if( $bubble_text.length != 1 ){
+			if( $bubble_text.length == 0 ){
 				if( already_added ){
 					return LJ.wlog('Unable to setup bubble, element probably didnt exist');
 				}

@@ -450,9 +450,26 @@
 			LJ.ui.hideBubble( $chatrowpic );
 
 		},
-		getChatIds: function(){
+		getChatIds: function( opts ){
 
-			return _.keys( LJ.chat.fetched_chats );
+			opts = opts || {};
+
+			var chat_ids = [];
+			var source   = opts.source || "fetched";
+
+			if( source == "channels" ){
+				chat_ids = _.map( LJ.user.channels, 'chat_id' ).filter( Boolean );
+			}
+
+			if( source == "fetched" ){
+				chat_ids = _.keys( LJ.chat.fetched_chats );
+			}
+
+			if( source == "mixed" ){
+				chat_ids = _.uniq(_.concat( _.map( LJ.user.channels, 'chat_id' ).filter( Boolean ), _.keys( LJ.chat.fetched_chats ) ) );
+			}
+
+			return chat_ids;
 
 		},
 		setChat: function( chat_id, channel_item ){
@@ -539,6 +556,8 @@
 						return LJ.chat.allChannelsFetched();
 					}
 
+					LJ.user.channels = LJ.user.channels.concat( channels );
+
 					var all_chat_fetched = [];
 
 					channels.forEach(function( channel_item ){
@@ -614,7 +633,6 @@
 						// Add messages to the all chat
 						LJ.chat.cacheChatMessages( chat_id,  res.messages, _.cloneDeep( channel_item ) );
 
-						
 						// Set all chats internal ui_status to "inactive";
 						LJ.chat.deactivateChats();
 						
@@ -1334,7 +1352,7 @@
 		},
 		clearChatStates: function(){
 
-			LJ.chat.getChatIds().forEach(function( chat_id ){
+			LJ.chat.getChatIds({ source: "mixed" }).forEach(function( chat_id ){
 				LJ.chat.clearChatState( chat_id );
 			});
 
@@ -1348,8 +1366,8 @@
 		},
 		unsetChannelItem: function( chat_id ){
 
-			_.remove( LJ.user.channels, function( channels ){
-				return channels.chat_id == chat_id;
+			_.remove( LJ.user.channels, function( chan ){
+				return chan.chat_id == chat_id;
 			});
 
 		},
@@ -1799,7 +1817,9 @@
 
 						LJ.chat.showAndActivateChatInview( current_active_chat );
 						LJ.ui.desynchronify({ $wrap: $('.chat-wrap') });
-						
+
+						// To fix a particular usecase where the bubble remains persistent which chat empty view
+						LJ.chat.refreshChatIconBubble();
 
 					})
 					.catch(function( err ){

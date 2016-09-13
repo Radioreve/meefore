@@ -45,10 +45,11 @@ window.LJ.before = _.merge( window.LJ.before || {}, {
 
 				var req = {};
 
-				req.hosts_facebook_id = _.shuffle( LJ.user.friends ).slice(0,1).concat( LJ.user.facebook_id );
+				req.hosts_facebook_id = [ LJ.user.facebook_id ]; //_.shuffle( LJ.user.friends ).slice(0,1).concat( LJ.user.facebook_id );
 				req.address   		  = _.shuffle( LJ.map.test.places )[0];
-				req.begins_at		  = '2016-0'+LJ.randomInt( 8,9 )+'-' + LJ.randomInt( 10, 30 )+'T18:18:18Z'
+				// req.begins_at		  = '2016-0'+LJ.randomInt( 8,9 )+'-' + LJ.randomInt( 10, 30 )+'T18:18:18Z'
 				req.timezone 		  = 120;
+				req.hashtags          = ["before","test","laVieEstDure","putainDeBugs"];
 
 				if( param && req[ param ] ){
 					delete req[ param ];
