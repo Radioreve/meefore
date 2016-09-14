@@ -80,7 +80,7 @@
                     		var place  = LJ.seek.map_browser_places.getPlace();
                     		var latlng = place.geometry.location;
 
-                    		LJ.meemap.flyTo({
+                    		LJ.meemap.jumpTo({
                                 center : [ latlng.lng(), latlng.lat() ],
                                 zoom   : 11
                             });

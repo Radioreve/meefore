@@ -35,7 +35,6 @@
     flex-flow: row wrap;
     height: 170px;
     width: 170px;
-    top: 10px;
     position: absolute;
     opacity: 0;
     cursor: pointer;
