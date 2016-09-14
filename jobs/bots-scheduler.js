@@ -79,32 +79,39 @@
 		botLog("Hydrating hashtags and places values...");
 		hydrated = true;
 
-		var tasks = [];
+		User.distinct('facebook_id', { 'access': 'bot' }, function( err, distinct_ids ){
 
-		tasks.push(function( done ){
-			Before.distinct('hashtags', function( err, distinct_hashtags ){
-				if( err ){
-					done( err );
-				} else {
-					hashtags_in_use = distinct_hashtags;
-					done();
-				}
+			if( err ) return callback( err );
+
+			var tasks = [];
+
+			var common_query = { 'status': 'open', 'hosts': { '$in': distinct_ids } };
+			tasks.push(function( done ){
+				Before.distinct('hashtags', common_query, function( err, distinct_hashtags ){
+					if( err ){
+						done( err );
+					} else {
+						hashtags_in_use = distinct_hashtags;
+						done();
+					}
+				});
 			});
-		});
 
-		tasks.push(function( done ){
-			Before.distinct('address.place_id', function( err, distinct_place_ids ){
-				if( err ){
-					done( err );
-				} else {
-					places_in_use = distinct_place_ids;
-					done();
-				}
+			tasks.push(function( done ){
+				Before.distinct('address.place_id', common_query, function( err, distinct_place_ids ){
+					if( err ){
+						done( err );
+					} else {
+						places_in_use = distinct_place_ids;
+						done();
+					}
+				});
 			});
-		});
 
-		async.parallel( tasks, function( err ){
-			err ? callback( err ) : callback( null );
+			async.parallel( tasks, function( err ){
+				err ? callback( err ) : callback( null );
+			});
+
 		});
 
 	}
@@ -134,7 +141,7 @@
 		botLog("Expected activity is : " + expected_activity[ now.get('hours') ] );
 		botLog("Day multiplier is : " + day_multiplier[ now.day() ] );
 
-		hourly_activity = expected_activity[ now.get('hours') ] * day_multiplier[ now.day() ];
+		hourly_activity = expected_activity[ now.get('hours') ] * day_multiplier[ now.day() ] || 0;
 		var rand = Math.random();
 		if( rand > hourly_activity ){
 			return botLog("Passing the bot activity for this time (" + hourly_activity + " < " + rand +")");
@@ -166,7 +173,7 @@
 			post_data.timezone          = 120;
 			post_data.hosts_facebook_id = getHosts( bot, bot_groups ).filter( Boolean );
 			post_data.address           = getAddress();
-			post_data.hashtags          = getHashtags();
+			post_data.hashtags          = _.uniq( getHashtags() );
 
 			if( post_data.address == null ){
 				return botLog("Impossible to come up with a unique address, aborting...");
