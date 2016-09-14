@@ -20,8 +20,8 @@
 
 	// Represents the probability that a creation of a before occurs
 	var low    = 0.05;
-	var medium = 0.1;
-	var high   = 0.2;
+	var medium = 0.15;
+	var high   = 0.4;
 	var nul    = 0;
 
 	var api_url = {
@@ -47,17 +47,28 @@
 
 	};
 
+	var day_multiplier = {
+		1: 0.3, // Lundi
+		2: 0.4,
+		3: 0.5,
+		4: 0.8,
+		5: 1,
+		6: 1,
+		7: 0.3
+	};
+
 
 	// Keep track of what bot did what to avoid suspicious duplications on the map
 	var hydrated        = false;
 	var hashtags_in_use = [];
 	var places_in_use   = [];
-	var is_closing_time = ( moment().get('hours') > closing_bot_hour && moment().get('hours') < closing_top_hour );
+	var is_closing_time;
 	var bot_groups      = { available_bots: [], unavailable_bots: [] };
 	var post_data       = {};
 	var hourly_activity;
 	var bot = {};
 	var url = "";
+	var now;
 
 	botLog( hashtags.length + " possible hashtags" );
 	botLog( places.length + " possible places" );
@@ -100,6 +111,10 @@
 
 	function scheduleBotsToCreateBefores( rand_min ){
 
+		now = moment().utcOffset( 120 ); // Paris local time
+
+		is_closing_time = ( now.get('hours') > closing_bot_hour && now.get('hours') < closing_top_hour );
+
 		if( is_closing_time ){
 			botLog("Reseting the bot scheduler state");
 			return hashtags_in_use = places_in_use = [];
@@ -115,10 +130,11 @@
 			});
 		}
 
-		botLog("Current hour is : " + moment().get('hours') );
-		botLog("Expected activity is : " + expected_activity[ moment().get('hours') ] );
-		
-		hourly_activity = expected_activity[ moment().get('hours') ] || 0;
+		botLog("Current hour is : " + now.get('hours') );
+		botLog("Expected activity is : " + expected_activity[ now.get('hours') ] );
+		botLog("Day multiplier is : " + day_multiplier[ now.day() ] );
+
+		hourly_activity = expected_activity[ now.get('hours') ] * day_multiplier[ now.day() ];
 		var rand = Math.random();
 		if( rand > hourly_activity ){
 			return botLog("Passing the bot activity for this time (" + hourly_activity + " < " + rand +")");
@@ -193,7 +209,7 @@
 		var hosts             = [ bot.facebook_id ];
 		var available_bot_ids = _.map( bot_groups.available_bots, 'facebook_id' );
 		var available_friends = _.difference( available_bot_ids, [ bot.facebook_id ] ); //_.intersection( bot.friends, available_bot_ids );
-		var n_other_hosts     = randomInt( 0, 3 );
+		var n_other_hosts     = randomInt( 1, 3 );
 
 		// botLog("Available friends = " + available_friends );
 		// botLog("Available bot ids = " + available_bot_ids );
