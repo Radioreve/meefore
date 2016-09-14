@@ -115,6 +115,9 @@
 			});
 		}
 
+		botLog("Current hour is : " + moment().get('hours') );
+		botLog("Expected activity is : " + expected_activity[ moment().get('hours') ] );
+		
 		hourly_activity = expected_activity[ moment().get('hours') ] || 0;
 		var rand = Math.random();
 		if( rand > hourly_activity ){
