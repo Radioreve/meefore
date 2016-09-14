@@ -14,7 +14,7 @@
 
 .jspPane {
    position: absolute;
-   padding: 10px 0px 10px 0!important;
+   /* padding: 10px 0px 10px 0!important; */
    z-index: 1;
    display: flex;
    flex-flow: row wrap;

@@ -1305,7 +1305,7 @@
 		},
 		n_before_canceled_text: {
 			"fr": "Before annulé par %name",
-			"us": "predrink canceled by %name"
+			"us": "Predrink canceled by %name"
 		},
 		n_before_canceled_subtext: {
 			"fr": "%address",

@@ -908,7 +908,7 @@
 		},
 		notificationCallback__BeforeCanceled: function( n ){
 
-			LJ.ui.showToast( LJ.text("n_before_canceled") );
+			// LJ.ui.showToast( LJ.text("n_before_canceled") );
 
 		}
 

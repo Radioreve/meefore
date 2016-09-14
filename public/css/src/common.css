@@ -1226,7 +1226,7 @@ button:hover .icon-meedrink {
 .modal {
     background: white;
     border-radius: 10px;
-    padding: 10px 10px 20px 10px;
+    padding: 30px 10px 30px 10px;
     color: #191919;
     width: 400px;
     display: flex;
@@ -1234,10 +1234,15 @@ button:hover .icon-meedrink {
     max-height: 90%;
     max-width: 90%;
     box-sizing: border-box;
+    /* height: 90%; */
 }
 
 .modal.x--facebook {
     padding: 10px 30px;
+}
+
+.modal.x--be-create .modal-body, .modal.x--request .modal-body {
+    height: 1000px;
 }
 
 .modal-content {}
