@@ -2001,10 +2001,10 @@
 		},
 		chat_empty_subtitle_inview_accepted: {
 			"fr": function( group_name ){
-				return  "Fais connaissance avec " + group_name + " dès maintenant."
+				return  "Fais connaissance avec " + group_name + " dès maintenant"
 			},
 			"us": function( group_name ){
-				return "Get to know " + group_name + " now."
+				return "Get to know " + group_name + " now"
 			} 
 		},
 		chat_empty_title_inview_team: {
@@ -2068,8 +2068,8 @@
 			"us": "Later"
 		},
 		chat_inview_validate: {
-			"fr": "Cheers !",
-			"us": "Cheers !"
+			"fr": "Accepter ce Cheers",
+			"us": "Accept this Cheers"
 		},
 		seen_by_everyone: {
 			"fr": "Vu par tout le monde",

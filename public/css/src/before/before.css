@@ -164,7 +164,12 @@ span.be-dates__count {
     display: none;
     flex: 1;
     overflow: hidden;
-    overflow: visible;
+}
+
+.be-content {
+    overflow: scroll;
+    display: flex;
+    flex-flow: column;
 }
 
 .be-inview.x--flat {
@@ -272,7 +277,7 @@ span.be-dates__count {
     position: absolute;
     right: 50%;
 }
-
+ 
 .be-inview-address {
     display: flex;
     flex-flow: column nowrap;
@@ -282,6 +287,7 @@ span.be-dates__count {
     font-size: 12px;
     align-items: center;
     flex-shrink: 0;
+    margin-bottom: 20px;
 }
 
 .be-inview-address__address {
@@ -433,20 +439,24 @@ span.be-dates__count {
 .user-row__education-icon i {}
  
 .be-action {
-    height: 90px;
+    height: 130px;
     width: 100%;
     background: rgba(255, 255, 255, 0.5);
     position: absolute;
     z-index: 100;
     transition: top linear .2s;
     text-align: center;
+    background: linear-gradient(rgba(255, 255, 255, 0.5),rgb(255, 255, 255) 50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .be-inview.x--flat .be-action {
-    background: linear-gradient(transparent, white);
-    width: 100%;
-    height: 100px;
-    z-index: 10;
+    background: none;
+    /* width: 100%; */
+    /* height: 100px; */
+    /* z-index: 10; */
 }
 
 .be-action button {
@@ -455,16 +465,19 @@ span.be-dates__count {
     color: white;
     background: linear-gradient(45deg,#fe685c, #ed105d);
     border-color: #f84b5c;
+    position: absolute;
+    bottom: 16px;
 }
 
 .be-action .check-cheers {
     border-radius: 100px;
-    background: rgba(255, 255, 255, 0.77);
     color: #1a59c3;
+    background: white;
+    border: 2px solid #1a59c3;
 }
 
 .be-action .check-cheers i {
-    font-size: 40px;
+    font-size: 36px;
 }
 
 .be-action button.x--pending {
@@ -625,9 +638,9 @@ span.be-dates__count {
 
 .hive__picture:hover img,
 .hive__background:hover~div img {
-    transform: scale(1.2);
+    opacity: .8;
 }
-
+ 
 .be-inview-address__icon {
     margin-right: 4px;
     display: none;
@@ -696,6 +709,7 @@ span.be-dates__count {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 4px;
 }
 
 .flat-user__h2 {
@@ -718,8 +732,8 @@ span.be-dates__count {
 
 .flat-user__name {
     font-weight: 700;
-    font-size: 30px;
-    font-family: 'creamy';
+    font-size: 20px;
+    font-family: quenda;
     font-weight: 400;
 }
 

@@ -125,16 +125,17 @@
     padding: 30px 0 40px 0;
     order: 1;
     flex-shrink: 0;
-    border-top: 1px solid #eee;
 }
 
 .cheers-back-actions button {
-    width: 70px;
-    height: 70px;
     background: #1a59c3;
     color: white;
     background: linear-gradient(45deg,#fe685c, #ed105d);
     border-color: #f84b5c;
+    display: flex;
+    font-family: 'quenda';
+    padding: 15px 20px;
+    font-size: 15px;
 }
 
 .cheers-back-actions button i {
@@ -144,7 +145,8 @@
 }
 
 .cheers-back-actions button span {
-    display: none;
+    /* display: none; */
+    font-size: 16px;
 }
 
 .cheers-back-actions button:hover i {

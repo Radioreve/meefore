@@ -214,7 +214,6 @@
 		showCreateBefore: function(){
 
 			var $w = $('.be-create');
-			var d  = LJ.search.filters_duration || 300;
 
 			LJ.before.clearCreateBefore();
 			LJ.before.addHostsNames([]);
@@ -226,12 +225,9 @@
 				LJ.ui.deactivateHtmlScroll();
 			}
 
-			LJ.delay( d )
-				.then(function(){
-					LJ.before.validateInputs();
-					LJ.before.refreshMedalImage();
-					return LJ.ui.shradeIn( $w, d );
-				});
+			LJ.before.validateInputs();
+			LJ.before.refreshMedalImage();
+			return LJ.ui.shradeIn( $w, 300 );
 
 
 		},

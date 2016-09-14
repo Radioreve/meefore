@@ -328,9 +328,8 @@
 			        	pictures, 
 			        '</div>',
 			        '<div class="cheers-back-actions">',
-			        	'<button class="x--round-icon js-validate">',
-			        		'<i class="icon icon-meedrink"></i>',
-			        		'<span data-lid="chat_inview_validate"></span>',
+			        	'<button data-lid="chat_inview_validate" class="x--round-icon js-validate">',
+			        		// '<i class="icon icon-meedrink"></i>',
 			        	'</button>',
 			        '</div>',
 				'</div>'

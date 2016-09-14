@@ -236,6 +236,10 @@
 
 			LJ.user.notifications.forEach(function( n ){
 
+				if( n.is_outdated ){
+					return LJ.wlog("Not bubbling up notification (outdated)");
+				}
+				
 				if( !n.seen_at ){
 					return LJ.notifications.addBubbleToNotificationsIcon();
 				}
