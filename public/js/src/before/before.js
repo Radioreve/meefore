@@ -427,8 +427,8 @@
 				jsp_id: 'before_inview'
 			});
 
-			LJ.before.resetBeforeInviewAction();
-			$('.slide').on('scroll',  _.throttle( LJ.before.resetBeforeInviewAction, 180 ) );
+			// LJ.before.resetBeforeInviewAction();
+			// $('.slide').on('scroll',  _.throttle( LJ.before.resetBeforeInviewAction, 180 ) );
 
 			// Little delay to give Jsp the time to act
 			return LJ.delay( 100 )
@@ -566,8 +566,8 @@
 				.replaceAll('.be-inview');
 
 			LJ.before.refreshBeforeInviewAction();
-			LJ.before.resetBeforeInviewAction();
-			$('.slide').on('scroll',  _.throttle( LJ.before.resetBeforeInviewAction, 180 ) );
+			// LJ.before.resetBeforeInviewAction();
+			// $('.slide').on('scroll',  _.throttle( LJ.before.resetBeforeInviewAction, 180 ) );
 
 
 		},

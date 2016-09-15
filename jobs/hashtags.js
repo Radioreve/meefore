@@ -295,10 +295,10 @@ module.exports = [
 	"Beforeparty",
 	"BeforeParty",
 	"TimeToDance",
-	"Predrink"
-	"Shooot"
-	"Shots"
-	"Shot"
+	"Predrink",
+	"Shooot",
+	"Shots",
+	"Shot",
 	"WarmUp",
 	"CaBougeCeSoir?",
 	"WhereIsTheParty?",

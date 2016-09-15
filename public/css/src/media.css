@@ -236,10 +236,10 @@
         top: -20px!important;
     }
     .be-action {
-        position: static;
-        flex-shrink: 0!important;
-        height: 100px!important;
-        background: none!important;
+        /* position: static; */
+        /* flex-shrink: 0!important; */
+        /* height: 100px!important; */
+        /* background: none!important; */
     }
     .be-usernames {
         flex-shrink: 0!important;
@@ -340,7 +340,7 @@
         display: none;
     }
     .be-inview {
-        height: auto;
+        /* height: auto; */
         min-height: 100%;
     }
 

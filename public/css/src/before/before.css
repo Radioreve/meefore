@@ -441,8 +441,6 @@ span.be-dates__count {
 .be-action {
     height: 130px;
     width: 100%;
-    background: rgba(255, 255, 255, 0.5);
-    position: absolute;
     z-index: 100;
     transition: top linear .2s;
     text-align: center;
@@ -450,13 +448,12 @@ span.be-dates__count {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: fixed;
+    bottom: 0;
 }
 
 .be-inview.x--flat .be-action {
     background: none;
-    /* width: 100%; */
-    /* height: 100px; */
-    /* z-index: 10; */
 }
 
 .be-action button {
@@ -467,6 +464,8 @@ span.be-dates__count {
     border-color: #f84b5c;
     position: absolute;
     bottom: 16px;
+    left: 0;
+    right: 0;
 }
 
 .be-action .check-cheers {
@@ -477,7 +476,7 @@ span.be-dates__count {
 }
 
 .be-action .check-cheers i {
-    font-size: 36px;
+    font-size: 32px;
 }
 
 .be-action button.x--pending {
@@ -600,11 +599,11 @@ span.be-dates__count {
     text-shadow: none;
     font-size: 12px;
 }
-
+ 
 .be-usernames {
     color: #1a59c3;
     font-family: 'quenda';
-    font-size: 24px;
+    font-size: 22px;
     display: flex;
     align-items: flex-end;
     height: 84px;
@@ -615,7 +614,7 @@ span.be-dates__count {
 .be-usernames span {
     text-overflow: ellipsis;
     overflow: hidden;
-    max-width: 240px;
+    max-width: 300px;
     white-space: nowrap;
     padding: 0 6px;
     /* font-family: 'quenda'; */
@@ -777,7 +776,7 @@ span.be-dates__count {
     width: 86%;
     align-items: center;
     flex-flow: row wrap;
-    margin: 0 auto 30px;
+    margin: 10px auto 130px;
     flex-shrink: 0;
 }
 .be-inview__hashtag {
@@ -786,6 +785,10 @@ span.be-dates__count {
     border-radius: 40px;
     color: #f63c5d;
     border: 2px solid #fc3c5D;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .be-inview__hashtag .hash {
     font-size: 10px;
