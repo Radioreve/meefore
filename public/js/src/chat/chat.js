@@ -1036,8 +1036,13 @@
 			LJ.ui.adjustWrapperHeight( $('.chat') );
 
 			// $('.chat').css({ 'display': 'flex', 'opacity': '1' });
-			$('.chat').show();
-			LJ.chat.refreshChatRowsJsp();
+			$('.chat')
+			    .css({ 'opacity': 0 })
+			    .show();
+			LJ.chat.refreshChatRowsJsp()
+			    .then(function(){
+			    	$('.chat').css({ 'opacity': 1 });
+			    })
 			return;
 
 			var duration  = 300;

@@ -1,41 +1,97 @@
 
-	Qu'est-ce que Meefore ?
-		-> Meefore est une application web (et bientôt mobile !) qui permet aux utilisateurs de repérer sur une map les before et les soirées qui s'organisent près de chez eux. 
+Qu'est-ce que Meefore ?
+	-> Meefore est une application web (et bientôt mobile !) qui permet aux utilisateurs de repérer sur une Map les before et les soirées qui s'organisent près de chez eux. 
 
-	Facebook est-il le seul moyen de s'inscrire ? 
-		-> Oui. L'inscription via Facebook est essentielle pour connaître les liens d'amitiés entre les membres, lorsqu'ils
-		créent un before ou qu'ils envoient un Cheers. Cela nous permet également de répertorier l'ensemble des évènements 
-		Facebook dans une ville donnée.
+Facebook est-il le seul moyen de s'inscrire ? 
+	-> Oui. L'inscription via Facebook est essentielle pour connaître les liens d'amitiés entre les membres lorsqu'ils
+	créent un before ou qu'ils envoient un Cheers. Cela nous permet également de te montrer l'ensemble des évènements 
+	Facebook publics qui ont lieu autour de toi. Et ne t’inquiète pas, nous ne publierons jamais rien sur ton wall.
 
-	Comment créer un before ?
-		-> Pour créer un before, rends-toi sur la Map et clic sur l'icone rouge qui est en bas de l'écran. Sélectionne ensuite les amis avec lesquels tu souhaites organiser ton before (parmi tes amis Facebook inscrits sur Meefore) ainsi qu'un lieu de rendez-vous : un appartement, un bar ou encore un parc... 
-		Tous les befores sont proposés pour le jour même et disparaissent de la map le lendemain matin.
+Comment créer un before ?
+	-> Pour créer un before, rends-toi sur la Map et clic sur l'icone rouge qui est en bas de l'écran. Sélectionne ensuite les amis avec lesquels tu souhaites organiser ton before (parmi tes amis Facebook inscrits sur Meefore) ainsi qu'un lieu de rendez-vous : un appartement, un bar ou encore un parc... 
+	Tous les befores sont proposés pour le jour même et disparaissent de la map le lendemain matin.
 
 
-	Qu'est-ce qu'un Cheers ?
-		-> Le Cheers te permet de montrer ton intérêt pour un before et sera visible par les organisateurs. Lorsque tu envois un Cheers tu peux ajouter jusqu'à 3 amis amis avec lesquels tu souhaites participer. C'est une façon fun et simple de dire à un autre groupe qu'ils ont l'air cools et que tu aimerais rentrer en contact avec eux.
+Qu'est-ce qu'un Cheers ?
+	-> Le Cheers te permet de montrer ton intérêt pour un before et sera visible par les organisateurs. Lorsque tu envois un Cheers tu peux ajouter jusqu'à 3 amis amis avec lesquels tu souhaites participer. C'est une façon fun et simple de dire à un autre groupe qu'ils ont l'air cools et que tu aimerais rentrer en contact avec eux.
 
-	Qu'est-ce qu'un Match ?
-		-> Un Match intervient lorsqu'un groupe organisateur a reçu un Cheers et qu'il décide d'envoyers un Cheers en retour. Chaque membre organisateur peut effectuer cette action. En cas de Match, une discussion entre les deux groupes s'ouvre.
+Qu'est-ce qu'un Match ?
+	-> Un Match intervient lorsqu'un groupe organisateur a reçu un Cheers et qu'il décide d'envoyers un Cheers en retour. Chaque membre organisateur peut effectuer cette action. En cas de Match, une discussion entre les deux groupes s'ouvre.
 
-	A quoi correspondent les pins sur la Map ?
-		-> Les pins représentent les soirées et les before. Des détails sont disponibles en cliquant dessus.
+A quoi correspondent les pins sur la Map ?
+	-> Les pins représentent les soirées et les before. Des détails sont disponibles en cliquant dessus.
 
-	A quoi correspondent les couleurs sur les pins des before ?
-		-> Les pins roses représentent les before organisés exclusivement par des utilisatrices, les bleues exclusivement par des utilisateurs et les violettes représentent les before mixtes. 
+A quoi correspondent les couleurs sur les pins des before ?
+	-> Les pins roses représentent les before organisés exclusivement par des utilisatrices, les bleues exclusivement par des utilisateurs et les violettes représentent les before mixtes. 
 
-	A quoi correspondent les chiffres et les symboles sur les pins des before ?
-		-> Les chiffres représentent le nombre d'organisateurs du before. L'icone des 3 points de suspension indiquent que tu as envoyé un Cheers. Cette icône sera remplacée par un éclair quand tu auras un Match.
+A quoi correspondent les chiffres et les symboles sur les pins des before ?
+	-> Les chiffres représentent le nombre d'organisateurs du before. L'icone des 3 points de suspension indiquent que tu as envoyé un Cheers. Cette icône sera remplacée par un éclair quand tu auras un Match.
 
-	Peut-on accepter plusieurs groupes à son before ? 
-		-> Tout à fait ! Les organisateurs sont entièrement libres de gérer leur before comme ils l'entendent.
+Peut-on accepter plusieurs groupes à son before ? 
+	-> Tout à fait ! Les organisateurs sont entièrement libres de gérer leur before comme ils l'entendent.
 
-	Si j'organise un before et que j'accepte un Cheers, suis-je tenu de rencontrer les personnes ?
-		-> Non. Le Cheers est un moyen de montrer son intérêt et un Match montre simplement que l'intérêt est réciproque. Le chat permet ensuite aux deux groupes de s'assurer qu'ils sont sur la même longueur d'onde avant de se retrouver.
+Si j'organise un before et que j'accepte un Cheers, suis-je tenu de rencontrer les personnes ?
+	-> Non. Le Cheers est un moyen de montrer son intérêt et un Match montre simplement que l'intérêt est réciproque. Le chat permet ensuite aux deux groupes de s'assurer qu'ils sont sur la même longueur d'onde avant de se retrouver.
 
-	Je reçois trop de notifications. Puis-je régler leurs fréquences d'envoi ?
-		-> Absolument. Nous détestons le spam. Tu peux choisir dans les préférences les notifications que tu souhaites recevoir et par quel moyen (email, notification push, sms...). Si tu as le moindre problème de ce côté là, n'hésite pas à nous envoyer un email à team@meefore.com.
+Je reçois trop de notifications. Puis-je régler leurs fréquences d'envoi ?
+	-> Absolument. Nous détestons le spam. Tu peux choisir dans les préférences les notifications que tu souhaites recevoir et par quel moyen (email, notification push, sms...). Si tu as le moindre problème de ce côté là, n'hésite pas à nous envoyer un email à team@meefore.com.
 
-	Comment puis-je inviter des amis sur l'application ?
-		-> Si tu le souhaites, tu as la possibilité d'envoyer un message Facebook personnalisé à tes amis depuis l'application. Il s'agit bien d'un message Facebook et non d'une publication sur ton mur. Nous ne publierons jamais rien sur ton mur.
+Comment puis-je inviter des amis sur l'application ?
+	-> Si tu le souhaites, tu as la possibilité d'envoyer un message Facebook personnalisé à tes amis depuis l'application. Il s'agit bien d'un message Facebook et non d'une publication sur ton mur. Nous ne publierons jamais rien sur ton mur.
+
+
+
+
+
+
+
+
+What is Meefore ?
+	-> Meefore is a web app (and will soon be a mobile app also !) that lets users spot on a Map predrinks and parties organized around them.
+
+
+Is Facebook the only way to subscribe ?
+	-> Yes. Facebook login lets you which of your friends have already joined Meefore so that you can create a before or send a Cheers with them. Thanks to Facebook login, we can also show you public events taking place around you. However, nothing will ever be published on your wall.
+
+
+How do I add my own predrink to the Map ?
+	-> To add your predrink to the Map, get first to the Map and clic on the bottom red drink icon. Select then the friends you are hosting your predrink with as well as the place where all of you will meet : an apartment, a bar or even a park… Your predrink will be displayed on the Map until the day after in the morning.
+
+
+What is a Cheers ?
+	-> Cheers let you demonstrate your interest for a predrink and will be notified to the host(s). when sending a Cheers, you can add up to 3 of your friends with whom you wish to attend the predrink. It’s basically a fun and simple way to tell another group that they seem cool and that you’d like to get in touch with them.
+
+
+What is a Match ?
+	-> A Match happens when a group of hosts has received a Cheers and sends a Cheers back. Each host member can send a Cheers back. When there is a Match, both groups can start sending messages to each other.
+
+
+What do the pins on the Map mean ?
+	-> The pins represent the parties and the predrinks around you. You can get further details clicking on the pins.
+
+
+What do the colors of the pins mean ?
+	-> Pink pins represent predrinks organized by female users, blue pins by male users and purple pins by a group of mix users.
+
+
+What do the numbers and symbols on the pins mean ?
+	-> Numbers represent the number of users organizing the predrink. The 3 dots icon appears when you have sent a Cheers for a predrink and this icon will be replaced with a thunderbolt when there is a Match.
+
+
+Can I invite different groups of users to my pre drinks ? 
+	-> Definitely ! Hosts are entirely free to manage their predrink as they wish.
+
+
+As a host, does sending a Cheers back mean that I have to meet the other group ?
+	-> Nope. A Cheers is only a way to demonstrates an interest for a predrink and a Match only means that this interest is cross way. The chat is there to make sure than both groups are on the same page.
+
+
+I receive too much notifications. How can I manage my preferences ?
+	-> We hate spam. You can manage your notifications preferences in the parameter panel available through the profile view. If you have any issus about this do not hesitate reaching us via email at team@meefore.com.
+
+
+I love Meefore and I want to share it to my friends. How can I do so ?
+	-> First of all, thanks ! You can send a personalized Facebook message to your friends form the web app (not available on phones). To do so, just clic on the gift icon displayed on the left bottom of the Map view. It is only a private message, not a post on your wall. Nothing will ever be published on your Facebook wall.
+
+
 

@@ -200,17 +200,23 @@
 		},
 		renderFaq: function(){
 
+			var qa_html = [];
+			_.range( 1, 13 ).forEach(function( i ){
+				qa_html.push([
+					'<div class="landing-faq-row x--'+ i +'">',
+						'<div class="landing-faq-row__question">',
+							'<span data-lid="faq_question_' + i + '"></span>',
+						'</div>',
+						'<div class="landing-faq-row__answer">',
+							'<span data-lid="faq_answer_' + i + '"></span>',
+						'</div>',
+					'</div>'
+				].join(''));
+			});
 			return LJ.ui.render([
 
 				'<div class="landing-faq">',
-					'<div class="landing-faq-row">',
-						'<div class="landing-faq__q">',
-							'<span data-lid="landing_faq_q_about"></span>',
-						'</div>',
-						'<div class="landing-faq_a">',
-							'<span data-lid="landing_faq_a_about"></span>',
-						'</div>',
-					'</div>',
+					qa_html.join(''),
 				'</div>'
 
 			]);

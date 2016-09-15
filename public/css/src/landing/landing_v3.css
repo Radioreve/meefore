@@ -4,6 +4,25 @@
     height: 100vh;
 }
 
+.modal.x--landing-faq {
+    width: 600px;
+}
+.modal.x--landing-faq .modal-footer {
+    display: none;
+}
+.landing-faq {padding: 40px;}
+.landing-faq-row {
+    margin: 0px 0 40px 0;
+}
+.landing-faq-row__question {font-family: 'quenda';margin-bottom: 8px;color: #1a59c3;}
+.landing-faq-row__question span {}
+.landing-faq-row__answer {
+    font-size: 13px;
+    color: #454545;
+    line-height: 24px;
+}
+.landing-faq-row__answer span {}
+
 .landing-hero {
     width: 60%;
     height: 100%;

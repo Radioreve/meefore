@@ -2298,7 +2298,141 @@
 		edit_pictures_btn_edit: {
 			"fr": "Editer mes photos",
 			"us": "Edit my pictures"
+		},
+		faq_title: {
+			"fr": "FAQ",
+			"us": "FAQ"
+		},
+		faq_subtitle: {
+			"fr": "Nous avons regroupé ici les questions les plus fréquentes qui nous sont posées. N'hésite pas à nous contacter "
+			     + " si tu en as d'autres.",
+			"us": "We have regrouped here our most frequently asked questions. Feel free to contact us if you have any other in mind."
+		},
+		faq_question_1: {
+			"fr": "Qu'est-ce que Meefore ?",
+			"us": "What is Meefore ?"
+		},
+		faq_answer_1: {
+			"fr": "Meefore est une application web (et bientôt mobile !) qui permet aux utilisateurs de repérer sur une map les before"
+			       +" et les soirées qui s'organisent près de chez eux.",
+			"us": "Meefore is a web app (and will soon be a mobile app also !) that lets users spot on a Map predrinks and parties organized around them."
+		},
+		faq_question_2: {
+			"fr": "Facebook est-il le seul moyen de s'inscrire ?",
+			"us": "Is Facebook the only way to subscribe ?"
+		},
+		faq_answer_2: {
+			"fr": "Oui. L'inscription via Facebook est essentielle pour connaître les liens d'amitiés entre les membres, lorsqu'ils"
+				   + "créent un before ou qu'ils envoient un Cheers. Cela nous permet également de répertorier l'ensemble des évènements" 
+				   + "Facebook dans une ville donnée.",
+			"us": "Yes. Facebook login lets you which of your friends have already joined Meefore so that you can create a before or send a Cheers"
+			       +" with them. Thanks to Facebook login, we can also show you public events taking place around you. However, nothing will ever"
+			       +" be published on your wall."
+		},
+		faq_question_3: {
+			"fr": "Comment créer un before ?",
+			"us": "How do I add my own predrink to the Map ?"
+		},
+		faq_answer_3: {
+			"fr": "Pour créer un before, rends-toi sur la Map et clic sur l'icone rouge qui est en bas de l'écran."
+			     + "Sélectionne ensuite les amis avec lesquels tu souhaites organiser ton before (parmi tes amis Facebook inscrits sur Meefore)" 
+			     + " ainsi qu'un lieu de rendez-vous : un appartement, un bar ou encore un parc..."
+				 + "Tous les befores sont proposés pour le jour même et disparaissent de la map le lendemain matin.",
+			"us": "To add your predrink to the Map, get first to the Map and clic on the bottom red drink icon. Select then the friends you are hosting"
+			     +" your predrink with as well as the place where all of you will meet : an apartment, a bar or even a park… Your predrink will be displayed"
+			     +" on the Map until the day after in the morning."
+		},
+		faq_question_4: {
+			"fr": "Qu'est-ce qu'un Cheers ?",
+			"us": "What is a Cheers ?"
+		},
+		faq_answer_4: {
+			"fr": "Le Cheers te permet de montrer ton intérêt pour un before et sera visible par les organisateurs."
+				 +" Lorsque tu envois un Cheers tu peux ajouter jusqu'à 3 amis amis avec lesquels tu souhaites participer."
+				 +" C'est une façon fun et simple de dire à un autre groupe qu'ils ont l'air cools et que tu aimerais rentrer en contact avec eux.",
+			"us": "Cheers let you demonstrate your interest for a predrink and will be notified to the host(s). when sending a Cheers, you can add up to 3 of your"
+			     +" friends with whom you wish to attend the predrink. It’s basically a fun and simple way to tell another group that they seem cool and that you’d"
+			     +" like to get in touch with them."
+		},
+		faq_question_5: {
+			"fr": "Qu'est-ce qu'un Match ?",
+			"us": "What is a Match ?"
+		},
+		faq_answer_5: {
+			"fr": "Un Match intervient lorsqu'un groupe organisateur a reçu un Cheers et qu'il décide d'envoyers un Cheers en retour."
+			     +" Chaque membre organisateur peut effectuer cette action. En cas de Match, une discussion entre les deux groupes s'ouvre.",
+			"us": "A Match happens when a group of hosts has received a Cheers and sends a Cheers back. Each host member can send a Cheers back."
+			     +" When there is a Match, both groups can start sending messages to each other."
+		},
+		faq_question_6: {
+			"fr": "A quoi correspondent les pins sur la Map ?",
+			"us": "What do the markers on the Map mean ?"
+		},
+		faq_answer_6: {
+			"fr": "Les pins représentent les soirées et les before. Des détails sont disponibles en cliquant dessus.",
+			"us": "The markers represent the parties and the predrinks around you. You can get further details clicking on the pins."
+		},
+		faq_question_7: {
+			"fr": "A quoi correspondent les couleurs sur les pins des before ?",
+			"us": "What do the colors of the markers mean ?"
+		},
+		faq_answer_7: {
+			"fr": "Les pins roses représentent les before organisés exclusivement par des utilisatrices, les bleues exclusivement par des utilisateurs"+
+			     +" et les violettes représentent les before mixtes.",
+			"us": "Pink markers represent predrinks organized by female users, blue markers by male users and purple markers by a group of mix users."
+		},
+		faq_question_8: {
+			"fr": "A quoi correspondent les chiffres et les symboles sur les pins des before ?",
+			"us": "Can I invite different groups of users to my pre drinks ?"
+		},
+		faq_answer_8: {
+			"fr": "Les chiffres représentent le nombre d'organisateurs du before. L'icone des 3 points de suspension indiquent que tu as envoyé un Cheers."
+			     +" Cette icône sera remplacée par un éclair quand tu auras un Match.",
+			"us": "Numbers represent the number of users organizing the predrink. The 3 dots icon appears when you have sent a Cheers for a predrink and"
+			     +" this icon will be replaced with a thunderbolt when there is a Match."
+		},
+		faq_question_9: {
+			"fr": "Peut-on accepter plusieurs groupes à son before ?",
+			"us": "Can I invite different groups of users to my pre drinks ? "
+		},
+		faq_answer_9: {
+			"fr": "Tout à fait ! Les organisateurs sont entièrement libres de gérer leur before comme ils l'entendent.",
+			"us": "Definitely ! Hosts are entirely free to manage their predrink as they wish."
+		},
+		faq_question_10: {
+			"fr": "Si j'organise un before et que j'accepte un Cheers, suis-je tenu de rencontrer les personnes ?",
+			"us": "As a host, does sending a Cheers back mean that I have to meet the other group ?"
+		},
+		faq_answer_10: {
+			"fr": "Non. Le Cheers est un moyen de montrer son intérêt et un Match montre simplement que l'intérêt est réciproque. Le chat permet ensuite"
+			     + "aux deux groupes de s'assurer qu'ils sont sur la même longueur d'onde avant de se retrouver.",
+			"us": "Nope. A Cheers is only a way to demonstrates an interest for a predrink and a Match only means that this interest is cross way. The chat"
+			     +" is there to make sure than both groups are on the same page."
+		},
+		faq_question_11: {
+			"fr": "Je reçois trop de notifications. Puis-je régler leurs fréquences d'envoi ?",
+			"us": "I receive too much notifications. How can I manage my preferences ?"
+		},
+		faq_answer_11: {
+			"fr": "Absolument. Nous détestons le spam. Tu peux choisir dans les préférences les notifications que tu souhaites recevoir et par quel moyen"
+			     +" (email, notification push, sms...). Si tu as le moindre problème de ce côté là, n'hésite pas à nous envoyer un email à team@meefore.com.",
+			"us": "We hate spamemrs too. You can manage your notifications preferences in the parameter panel available through the profile view. If you have any issues"
+			     +" about this do not hesitate reaching us via email at team@meefore.com."
+		},
+		faq_question_12: {
+			"fr": "Comment puis-je inviter des amis sur l'application ?",
+			"us": "I love Meefore and I want to share it to my friends. How can I do so ?"
+		},
+		faq_answer_12: {
+			"fr": "Si tu le souhaites, tu as la possibilité d'envoyer un message Facebook personnalisé à tes amis depuis l'application. Il s'agit bien d'un"
+			    +" message Facebook et non d'une publication sur ton mur. Nous ne publierons jamais rien sur ton mur.",
+			"us": "First of all, thanks ! You can send a personalized Facebook message to your friends form the web app (not available on phones). To do so,"
+			    +" just clic on the gift icon displayed on the left bottom of the Map view. It is only a private message, not a post on your wall. Nothing will"
+			    +" ever be published on your Facebook wall."
 		}
+		
+		
+
 
 
 	});

@@ -249,7 +249,15 @@
     flex-shrink: 0;
 }
 
-.marker-wrapper {}
+.marker-wrapper {
+    z-index: 1;
+}
+.marker-wrapper.x--hover {
+    z-index: 20;
+}
+.marker-wrapper.x--last-hovered {
+    z-index: 2;
+}
 .marker-wrapper-translate {
     transform: translate(-50%,-50%);
 }
@@ -261,6 +269,7 @@
     cursor: pointer;
     transition: transform linear 0.05s;
 }
+
 
 .marker.x--face {
     width: 50px;

@@ -58,7 +58,7 @@
 			// Bubble element doesnt exist, create it and add n bubbles
 			if( $bubble_text.length == 0 ){
 				if( already_added ){
-					return LJ.wlog('Unable to setup bubble, element probably didnt exist');
+					return // LJ.log('The bubble element was already previously added');
 				}
 				LJ.ui.addBubble( elem );
 				if( n != 0 && !n ){

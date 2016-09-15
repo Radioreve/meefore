@@ -81,8 +81,8 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 			$('body').on('click', '.js-landing-faq', function(){
 				LJ.ui.showModal({
 					"type"      	: "landing-faq",
-					"title"			: LJ.text('landing_faq_title'),
-					"subtitle"		: LJ.text('landing_faq_subtitle'),
+					"title"			: LJ.text('faq_title'),
+					"subtitle"		: LJ.text('faq_subtitle'),
 					"body"  		: LJ.landing.renderFaq(),
 					"jsp_body" 	    : true
 				});

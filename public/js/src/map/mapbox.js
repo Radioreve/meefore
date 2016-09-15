@@ -3,6 +3,7 @@
 
         markers: [],
         fetched_profiles: [],
+        current_z_index: 1,
 
        	// Called as soon as the script finished loading everything
 		init: function(){
@@ -1098,7 +1099,7 @@
 
             LJ.map.getMarkerDom( marker_id )
                 .parent()
-                .css({ "z-index": "20" });
+                .css({ "z-index": ++LJ.map.current_z_index })
 
         },
         handleMouseLeaveMarker: function(){
@@ -1106,9 +1107,7 @@
             var $s        = $( this );
             var marker_id = $s.attr('data-marker-id');
 
-            LJ.map.getMarkerDom( marker_id )
-                .parent()
-                .css({ "z-index": "1" });
+           // Nothing atm...
 
         }
 
