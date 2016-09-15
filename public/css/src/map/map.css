@@ -5,13 +5,13 @@
 .app-section.x--map {
     height: 100vh;
     position: relative;
-    top: -2px;
 }
 
 .js-map-wrap {
     height: 100%;
     width: 100%;
     position: absolute!important;
+    z-index: 11;
 }
 
 .map__icon {

@@ -30,6 +30,8 @@
             LJ.ui.$body.on('click', '.js-show-own-before', LJ.map.handleClickOnShowOwnBefore );
             LJ.ui.$body.on('click', '.js-map-zoom-in', LJ.map.zoomIn );
             LJ.ui.$body.on('click', '.js-map-zoom-out', LJ.map.zoomOut );
+            LJ.ui.$body.on('mouseenter' ,'.marker', LJ.map.handleMouseEnterMarker );
+            LJ.ui.$body.on('mouseleave' ,'.marker', LJ.map.handleMouseLeaveMarker );
 
 		},
 		setupMap: function(){
@@ -221,6 +223,7 @@
 
         	}
         },
+        // Expressed in meters
         distanceBetweenTwoLngLat: function( lnglat1, lnglat2 ){
 
             var a = new google.maps.LatLng({ lng: lnglat1[ 0 ], lat: lnglat1[ 1 ] });
@@ -237,18 +240,42 @@
             return [ rdm.lng(), rdm.lat() ];
 
         },
-        findClosestMarkers: function( lnglat, distance ){
+        findClosestMarkers: function( lnglat, opts ){
 
-            var markers = [];
+            opts = opts || {};
+
+            var close_markers = [],
+            n_markers = LJ.map.markers.length,
+            max_distance,
+            max_markers;
+
+            max_distance = (typeof opts.max_distance == "number" ) ? opts.max_distance : null;
+            min_distance = (typeof opts.min_distance == "number" ) ? opts.min_distance : null;
+            max_markers  = (typeof opts.max_markers == "number" ) ? opts.max_markers : null;
+
+            if( !min_distance ){
+                min_distance = 1;
+            }
+
             LJ.map.markers.forEach(function( mrk ){
-
-                if( LJ.map.distanceBetweenTwoLngLat( lnglat, mrk.lnglat ) < distance ){
-                    markers.push( mrk );
-                }
-
+                close_markers.push({
+                    marker   : mrk,
+                    distance : LJ.map.distanceBetweenTwoLngLat( lnglat, mrk.lnglat )
+                });
             });
 
-            return markers; 
+            return close_markers
+                  .sort(function( mrk1, mrk2 ){
+                        return mrk1.distance < mrk2.distance ? -1 : 1;
+                    })
+                  .map(function( mrk, i ){
+                    return (max_markers && ( i+1 > max_markers ))
+                           || (max_distance && mrk.distance > max_distance ) 
+                           || (min_distance && mrk.distance < min_distance )
+                           ? null : mrk;
+                    })
+                  .filter( Boolean );
+            
 
         },
         offsetLngLat: function( lnglat ){
@@ -1062,6 +1089,26 @@
             $s.find('.x--plus').css({ 'display': 'flex' });
             $s.find('.icon-meedrink').show();
             $s.find('.icon-star').hide();
+
+        },
+        handleMouseEnterMarker: function(){
+
+            var $s        = $( this );
+            var marker_id = $s.attr('data-marker-id');
+
+            LJ.map.getMarkerDom( marker_id )
+                .parent()
+                .css({ "z-index": "20" });
+
+        },
+        handleMouseLeaveMarker: function(){
+
+            var $s        = $( this );
+            var marker_id = $s.attr('data-marker-id');
+
+            LJ.map.getMarkerDom( marker_id )
+                .parent()
+                .css({ "z-index": "1" });
 
         }
 

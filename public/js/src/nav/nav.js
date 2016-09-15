@@ -84,16 +84,24 @@
 				$('html').addClass('x--corner');
 
 				LJ.unoffsetAll();
-				LJ.ui.deactivateHtmlScroll();
+
+				// Mobile weirdnesses
+				if( LJ.isMobileMode() ){
+					LJ.ui.activateHtmlScroll();
+				} else {
+					LJ.ui.deactivateHtmlScroll();
+				}
 				
-				// Epic hack to make it work. Only on mobile browsers and when scroll has started
-				// the map is messed up when we go back on it, unless manually setting its cont dimensions
-				if( LJ.isMobileMode() && $( window ).scrollTop() !== 0 ){
-					LJ.map.resetMapboxCanvasDimensions();
+				$('.js-map-wrap').show();
+				
+				if( LJ.meemap ){
+					LJ.meemap.resize();
 				}
 
 
 			} else {
+
+				$('.js-map-wrap').hide();
 
 				$('.app').addClass('padded');
 				$('html').removeClass('x--corner');
