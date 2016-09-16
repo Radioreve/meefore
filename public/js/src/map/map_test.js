@@ -900,7 +900,7 @@ window.LJ.map_legacy = _.merge( window.LJ.map_legacy || {}, {
 		    "lat": 48.83255477744976,
 		    "place_id": "ChIJYUgmjT9y5kcR72Bo9SMXpQc",
 		    "place_name": "75012 Paris, France"
-		}];
+		}]
 
 	}
 

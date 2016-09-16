@@ -4,6 +4,10 @@
         markers: [],
         fetched_profiles: [],
         current_z_index: 1,
+        marker_groups: {
+            inbounds  : [],
+            outbounds : []
+        },
 
        	// Called as soon as the script finished loading everything
 		init: function(){
@@ -54,7 +58,7 @@
             LJ.map.setMapIcons();
             LJ.map.setMapBrowser();
             LJ.map.setMapZoom();
-            LJ.meemap.setPitch( 30 );
+            LJ.meemap.setPitch( 35 );
 
             LJ.meemap.on("load", function(){
                 LJ.emit("map:ready");
@@ -139,13 +143,9 @@
         },
         handleMapEvents: function(){
 
-            LJ.meemap.on('dragstart', function(){
-                
-            });
 
-            LJ.meemap.on('click', function(e){
-                
-            });
+            LJ.meemap.on('drag', _.throttle( LJ.map.handleMapDragged, 800, { "leading": false }) );
+
             
         },
         goToMyBefore: function(){
@@ -176,6 +176,14 @@
                 LJ.map.showBeforeMarkers();
 
             });
+
+        },
+        handleMapDragged: function(){
+
+            var splitted = LJ.map.splitMarkersByBounds();
+
+            LJ.map.marker_groups.inbounds  = splitted.inbounds;
+            LJ.map.marker_groups.outbounds = splitted.outbounds;
 
         },
         renderMapZoom: function(){
@@ -1236,6 +1244,26 @@
             });
 
             return grid;
+
+        },
+        isMarkerInBounds: function( marker_id ){
+
+            var mrk    = LJ.map.getMarker( marker_id );
+            var bounds = new google.maps.LatLngBounds( LJ.meemap.getBounds().getSouthWest(), LJ.meemap.getBounds().getNorthEast() );
+            var latlng = new google.maps.LatLng( mrk.lnglat[ 1 ], mrk.lnglat[ 0 ] );
+
+            return bounds.contains( latlng );
+
+        },
+        splitMarkersByBounds: function(){
+
+            var splitted = { inbounds: [], outbounds: [] };
+
+            LJ.map.markers.forEach(function( mrk ){
+                LJ.map.isMarkerInBounds( mrk.marker_id ) ? splitted.inbounds.push( mrk ) : splitted.outbounds.push( mrk );
+            });
+
+            return splitted;
 
         }
 
