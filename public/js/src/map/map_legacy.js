@@ -370,7 +370,7 @@
         shiftLatLng: function( latlng ){
 
             var a   = new google.maps.LatLng( latlng );
-            var rdm =  google.maps.geometry.spherical.computeOffset( a, LJ.randomInt( 100, 200 ), LJ.randomInt(0, 180) );
+            var rdm =  google.maps.geometry.spherical.computeOffset( a, LJ.randomInt( 100, 200 ), LJ.randomInt( 0, 180 ) );
 
             return {
                 lng: rdm.lng(),

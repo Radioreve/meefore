@@ -18,7 +18,8 @@ window.LJ.map = _.merge( window.LJ.map || {}, {
         		marker_id : i,
         		marker 	  : marker,
                 type      : 'test',
-                lnglat    : lnglat
+                lnglat    : lnglat,
+                offset    : true
         	});
 
 			LJ.delay( 500 ).then(function(){

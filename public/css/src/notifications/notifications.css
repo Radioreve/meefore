@@ -266,7 +266,7 @@ Whispereen  : #58c170
 }
  
 
-.notification.x--outdated {opacity: .3;cursor: default;display: none;}
+.notification.x--outdated {opacity: .3;cursor: default;}
 
 .notification-empty {
     height: 100%;

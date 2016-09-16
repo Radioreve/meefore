@@ -807,23 +807,30 @@
 
 			var $notif = $( html );
 
-			// Fire callback if registered
-			if( !notification.is_outdated && typeof notificationCallback == "function" ){
-				$notif.on('click', function(){
+			$notif.on('click', function(){
 
-					try {
-						notificationCallback( notification );
-					} catch( e ){
-						LJ.log(e);
-						LJ.ui.showToast( LJ.text("n_outdated_notification") );
-					}
+				if( notification.is_outdated ){
+					LJ.ui.showToast( LJ.text("n_before_canceled") );
+					return LJ.log("Notification is out of date (before may have been canceled)");
+				}
 
-					if( !LJ.isMobileMode() ){
-						LJ.notifications.hideNotificationsPanel();
-					}
-					
-				});
-			}
+				if( typeof notificationCallback != "function" ){ 
+					return LJ.log("No callback is registered");
+				}
+
+				try {
+					notificationCallback( notification );
+				} catch( e ){
+					LJ.log(e);
+					LJ.ui.showToast( LJ.text("n_outdated_notification") );
+				}
+
+				if( !LJ.isMobileMode() ){
+					LJ.notifications.hideNotificationsPanel();
+				}
+				
+			});
+			
 
 			// Append the new notification on top of all
 			$notif.insertAfter( $('.js-notification-appender') );

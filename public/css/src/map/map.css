@@ -495,7 +495,7 @@
 .meemap-igloo {
     width: 260px;
     height: 60px;
-    background: linear-gradient(45deg, #fe685C, #ed105d);
+    background: linear-gradient( 45deg, #fe685C, #ed105d );
     align-items: flex-end;
     margin-top: auto;
     border-top-left-radius: 220px 100px;
@@ -519,4 +519,11 @@
     bottom: 0;
     right: 0;
     font-size: 10px;
+    width: 300px;
+}
+
+.mesh-point {
+    width: 8px;
+    height: 8px;
+    background: red;
 }

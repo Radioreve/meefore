@@ -444,7 +444,7 @@ span.be-dates__count {
     z-index: 100;
     transition: top linear .2s;
     text-align: center;
-    background: linear-gradient(rgba(255, 255, 255, 0.5),rgb(255, 255, 255) 50%);
+    background: linear-gradient(rgba(255, 255, 255, 0),rgb(255, 255, 255) 50%);
     display: flex;
     justify-content: center;
     align-items: center;

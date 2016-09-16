@@ -379,7 +379,7 @@
 			}
 
 			if( LJ.isMobileMode() ){
-				$('.js-edit-pictures').removeClass('x--active');
+				$('.js-edit-pictures').children().text( LJ.text("edit_pictures_btn_edit") );
 				LJ.pictures.hidePictureEditOptions();
 			}
 

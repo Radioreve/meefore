@@ -350,6 +350,7 @@ button:hover .icon-meedrink {
     box-shadow: 1px 1px 3px #ABABAB;
     position: relative;
     transition: all ease-in-out .2s;
+    top: -2px;
 }
 
 .toggle.x--active {

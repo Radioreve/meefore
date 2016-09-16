@@ -41,6 +41,8 @@
 			
             mapboxgl.accessToken = 'pk.eyJ1IjoibWVlZm9yZSIsImEiOiJjaXNieWhwNjMwMDE0MnRxZmhvY2twMGN5In0.k-iXWp3tVDVyNK9xYesmjA';
 
+            LJ.meegeo = new google.maps.Geocoder;
+
             LJ.meemap = new mapboxgl.Map({
                 container       : document.getElementsByClassName('js-map-wrap')[ 0 ], 
                 style           : 'mapbox://styles/meefore/cisc01qir001s2ymxsolaa1uz', 
@@ -52,6 +54,7 @@
             LJ.map.setMapIcons();
             LJ.map.setMapBrowser();
             LJ.map.setMapZoom();
+            LJ.meemap.setPitch( 30 );
 
             LJ.meemap.on("load", function(){
                 LJ.emit("map:ready");
@@ -344,10 +347,10 @@
                 return LJ.wlog('A marker with id : ' + opts.marker_id + ' is already set on the map');
             }
 
-            var lnglat = LJ.map.offsetLngLat( opts.lnglat );
+            var lnglat = opts.offset ? LJ.map.offsetLngLat( opts.lnglat ) : opts.lnglat;
             var data   = opts.data || null;
 
-            var dom    = $( LJ.map.renderMarkerPlaceholder( opts.marker_id, "face" ) )[ 0 ];
+            var dom    = opts.dom;
             var marker = new mapboxgl.Marker( dom );
             
             marker.setLngLat( lnglat )
@@ -373,7 +376,9 @@
                 marker_id : before_id,
                 lnglat    : lnglat,
                 type      : 'before',
-                data      : before
+                data      : before,
+                offset    : true,
+                dom       : $( LJ.map.renderMarkerPlaceholder( before_id, "face" ) )[ 0 ]
 
             });
 
@@ -1108,6 +1113,131 @@
             var marker_id = $s.attr('data-marker-id');
 
            // Nothing atm...
+
+        },
+        initStoreAddresses: function(){
+
+            LJ.map.stored_addresses = [];
+            LJ.meemap.on("click", function( res ){
+
+                LJ.map.addMeshMarker( res.lngLat );
+
+                var new_address = {};
+
+                new_address.lng = res.lngLat.lng;
+                new_address.lat = res.lngLat.lat;
+
+                LJ.meegeo.geocode({ 'location': res.lngLat }, function( res, status ){
+
+                    if( status === google.maps.GeocoderStatus.OK ){
+
+                        if( res[0] ){
+
+                            new_address.place_id   = res[ 0 ].place_id;
+                            new_address.place_name = res[ 0 ].formatted_address;
+                            LJ.map.stored_addresses.push( new_address );
+
+                        } else {
+
+                            LJ.log("No results were found");
+
+                        }
+
+                    } else {
+
+                        LJ.log("Geocode failed, status=" + status);
+
+                    }
+
+                });
+
+            });
+
+        },
+        addMeshMarker: function( lnglat, opts ){
+
+            opts = opts || {};
+
+            LJ.map.addMarker( _.merge({
+                type       : "mesh",
+                lnglat     : lnglat,
+                dom        : $('<div class="mesh-point x--round-icon"></div>')[0],
+                marker_id  : 'mesh-' + LJ.randomInt( 0, 100000000 )
+
+            }, opts ) );
+        },
+        computeMeshLine: function( opts ){
+
+            opts = opts || {};
+
+            if( !opts.lng && !opts.lat ){
+                return LJ.wlog("Unable to compute vertical mesh without starting lnglat and/or direction");
+            }
+
+            var angles = ( opts.direction == "vertical" ) ? [ 180, 0 ] : [ 270, 90 ];
+
+            var base_latlng = {
+                lat: opts.lat,
+                lng: opts.lng
+            };
+
+            var vertical_mesh = [];
+            var distance      = opts.distance || 1000;
+            var max           = opts.max || 10;
+
+            for( var j=Math.floor((max-1)/2); j>0; j-- ){
+                vertical_mesh.push({
+                    lat: google.maps.geometry.spherical.computeOffset( new google.maps.LatLng( base_latlng ), distance * j, angles[ 0 ] ).lat(),
+                    lng: google.maps.geometry.spherical.computeOffset( new google.maps.LatLng( base_latlng ), distance * j, angles[ 0 ] ).lng(),
+                });
+            }
+
+            vertical_mesh.push( base_latlng );
+
+            for( var i=1; i<= Math.ceil((max-1)/2); i++ ){
+                vertical_mesh.push({
+                    lat: google.maps.geometry.spherical.computeOffset( new google.maps.LatLng( base_latlng ), distance * i, angles[ 1 ] ).lat(),
+                    lng: google.maps.geometry.spherical.computeOffset( new google.maps.LatLng( base_latlng ), distance * i, angles[ 1 ] ).lng(),
+                });
+            }
+
+            return vertical_mesh;
+
+        },
+        computeMeshGrid: function( opts ){
+
+            var grid = [];
+
+            opts = opts || {};
+
+            if( !opts.lng && !opts.lat ){
+                return LJ.wlog("Unable to compute vertical mesh without starting lnglat");
+            }
+
+            var distance = opts.distance || 1000;
+            var max      = opts.max || 5;
+
+            var base_line = LJ.map.computeMeshLine({
+                distance: distance,
+                max: max,
+                lng: opts.lng,
+                lat: opts.lat,
+                direction: "vertical"
+            });
+
+            LJ.log("Base line contains " + base_line.length + " points");
+
+            base_line.forEach(function( latlng ){
+                grid = grid.concat(LJ.map.computeMeshLine({
+                    lat: latlng.lat,
+                    lng: latlng.lng,
+                    distance: distance,
+                    max: max,
+                    direction: "horizontal"
+                }));
+            });
+
+            return grid;
 
         }
 

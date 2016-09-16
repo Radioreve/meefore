@@ -2012,8 +2012,8 @@
 			"us": function( group_name ){ return group_name; }
 		},
 		chat_empty_subtitle_inview_team: {
-			"fr": "Seuls toi et les autres membres de ce groupe recevront les messages qui seront envoyés sur cette discussion",
-			"us": "Only you and the other members of your group will receive messages that are sent on this chat"
+			"fr": "Seuls les membres de ton groupe recevront les messages envoyés sur cette discussion",
+			"us": "Only the members of your group will receive the messages sent on this discussion"
 		},
 		chat_rows_team_title: {
 			"fr": "Ta team",
