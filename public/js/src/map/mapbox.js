@@ -230,6 +230,9 @@
             $('.marker.js-inbound').filter(function( i, mrk ){
                 return $( mrk ).css('opacity') == 0;
             })
+            .parent()
+            .show()
+            .children()
             .velocity('bounceInQuick', {
                 duration: 400,
                 display: 'flex'
@@ -238,9 +241,12 @@
         },
         hideOutboundMarkers: function(){
 
-            $('.marker.js-outbound')
+            $('.marker.js-outbound')            
             .css({ 'opacity': '0' }) // important for filtering out (see above);
             .hide()
+            // Fixing the boss bus
+            .parent()
+            .hide();
 
         },
         renderMapZoom: function(){
