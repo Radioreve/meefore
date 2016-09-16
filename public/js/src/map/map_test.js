@@ -119,7 +119,7 @@ window.LJ.map_legacy = _.merge( window.LJ.map_legacy || {}, {
 				});
 
 		},
-		places: module.exports = [
+		places: [
 		{
 		    "lng": 2.3412773507170925,
 		    "lat": 48.85182947840886,
