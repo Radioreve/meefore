@@ -144,7 +144,8 @@
         handleMapEvents: function(){
 
 
-            LJ.meemap.on('drag', _.throttle( LJ.map.handleMapDragged, 800, { "leading": false }) );
+            LJ.meemap.on('drag', _.throttle( LJ.map.handleMapDragged, 200, { "leading": false }) );
+            LJ.meemap.on('dragend', LJ.map.handleMapDraggedEnd );
 
             
         },
@@ -180,10 +181,66 @@
         },
         handleMapDragged: function(){
 
-            var splitted = LJ.map.splitMarkersByBounds();
+            LJ.map.refreshMarkersGroup("bounds");
+            LJ.map.tagMarkersByBounds();
 
-            LJ.map.marker_groups.inbounds  = splitted.inbounds;
-            LJ.map.marker_groups.outbounds = splitted.outbounds;
+        },
+        handleMapDraggedEnd: function(){
+
+            LJ.delay( 220 )
+                .then(function(){
+                    LJ.map.showInboundMarkers();
+                    LJ.map.hideOutboundMarkers();
+                });
+
+        },  
+        refreshMarkersGroup: function( group_type ){
+
+            if( group_type == "bounds" ){
+
+                var splitted = LJ.map.splitMarkersByBounds();
+
+                LJ.map.marker_groups.inbounds  = splitted.inbounds;
+                LJ.map.marker_groups.outbounds = splitted.outbounds;
+
+            }
+
+        },
+        tagMarkersByBounds: function(){
+
+            LJ.map.marker_groups.inbounds.forEach(function( mrk ){
+
+                var mrk = LJ.map.getMarkerDom( mrk.marker_id );
+
+                mrk.addClass('js-inbound').removeClass('js-outbound');
+                
+            });
+
+            LJ.map.marker_groups.outbounds.forEach(function( mrk ){
+
+                var mrk = LJ.map.getMarkerDom( mrk.marker_id );
+
+                mrk.addClass('js-outbound').removeClass('js-inbound');
+
+            });
+
+        },
+        showInboundMarkers: function(){
+
+            $('.marker.js-inbound').filter(function( i, mrk ){
+                return $( mrk ).css('opacity') == 0;
+            })
+            .velocity('bounceInQuick', {
+                duration: 400,
+                display: 'flex'
+            });
+
+        },
+        hideOutboundMarkers: function(){
+
+            $('.marker.js-outbound')
+            .css({ 'opacity': '0' }) // important for filtering out (see above);
+            .hide()
 
         },
         renderMapZoom: function(){
