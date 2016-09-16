@@ -145,6 +145,7 @@
 
 
             LJ.meemap.on('drag', _.throttle( LJ.map.handleMapDragged, 200, { "leading": false }) );
+            // LJ.meemap.on("zoom", _.throttle( LJ.map.handleMapDragged, 200, { "leading": false }) );
             LJ.meemap.on('dragend', LJ.map.handleMapDraggedEnd );
 
             
@@ -184,14 +185,20 @@
             LJ.map.refreshMarkersGroup("bounds");
             LJ.map.tagMarkersByBounds();
 
-        },
-        handleMapDraggedEnd: function(){
-
-            LJ.delay( 220 )
+            LJ.delay( 300 )
                 .then(function(){
                     LJ.map.showInboundMarkers();
                     LJ.map.hideOutboundMarkers();
                 });
+
+        },
+        handleMapDraggedEnd: function(){
+
+            // LJ.delay( 220 )
+            //     .then(function(){
+            //         LJ.map.showInboundMarkers();
+            //         LJ.map.hideOutboundMarkers();
+            //     });
 
         },  
         refreshMarkersGroup: function( group_type ){
