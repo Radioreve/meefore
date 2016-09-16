@@ -1210,18 +1210,16 @@
 
             opts = opts || {};
 
-            if( !opts.lng && !opts.lat ){
-                return LJ.wlog("Unable to compute vertical mesh without starting lnglat");
-            }
-
             var distance = opts.distance || 1000;
             var max      = opts.max || 5;
+            var lat      = opts.lat || LJ.meemap.getCenter().lat;
+            var lng      = opts.lat || LJ.meemap.getCenter().lng;
 
             var base_line = LJ.map.computeMeshLine({
                 distance: distance,
                 max: max,
-                lng: opts.lng,
-                lat: opts.lat,
+                lng: lng,
+                lat: lat,
                 direction: "vertical"
             });
 
