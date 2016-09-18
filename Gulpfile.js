@@ -89,7 +89,7 @@
             media
         ])
         .pipe(concat( NAMESPACE + '.css'))
-        //.pipe(postcss([ autoprefixer ]))
+        .pipe(postcss([ autoprefixer ]))
         .pipe(cssbeautify())
         .pipe(gulp.dest('./public/dist'));
     });

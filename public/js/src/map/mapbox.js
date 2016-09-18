@@ -51,7 +51,7 @@
                 container       : document.getElementsByClassName('js-map-wrap')[ 0 ], 
                 style           : 'mapbox://styles/meefore/cisc01qir001s2ymxsolaa1uz', 
                 center          : [ parseFloat( LJ.user.location.lng ), parseFloat( LJ.user.location.lat ) ], 
-                zoom            : 11.5,
+                zoom            : 12.5,
                 doubleClickZoom : false
             });
 
@@ -144,8 +144,8 @@
         handleMapEvents: function(){
 
 
-            LJ.meemap.on('drag', _.throttle( LJ.map.handleMapDragged, 200, { "leading": false }) );
-            // LJ.meemap.on("zoom", _.throttle( LJ.map.handleMapDragged, 200, { "leading": false }) );
+            LJ.meemap.on('drag', _.throttle( LJ.map.handleMapDragged, 100, { "leading": false }) );
+            LJ.meemap.on("zoomend", _.throttle( LJ.map.handleMapDragged, { "leading": false }) );
             LJ.meemap.on('dragend', LJ.map.handleMapDraggedEnd );
 
             
@@ -185,10 +185,11 @@
             LJ.map.refreshMarkersGroup("bounds");
             LJ.map.tagMarkersByBounds();
 
-            LJ.delay( 300 )
+            LJ.map.hideOutboundMarkers();
+
+            LJ.delay( 250 )
                 .then(function(){
                     LJ.map.showInboundMarkers();
-                    LJ.map.hideOutboundMarkers();
                 });
 
         },
@@ -234,12 +235,12 @@
         },
         showInboundMarkers: function(){
 
-            $('.marker.js-inbound').filter(function( i, mrk ){
+            $('.marker.js-inbound').closest('.marker-wrapper-scaled').filter(function( i, mrk ){
                 return $( mrk ).css('opacity') == 0;
             })
-            .parent()
+            .closest('.marker-wrapper')
             .show()
-            .children()
+            .find('.marker-wrapper-scaled')
             .velocity('bounceInQuick', {
                 duration: 400,
                 display: 'flex'
@@ -248,10 +249,11 @@
         },
         hideOutboundMarkers: function(){
 
-            $('.marker.js-outbound')            
+            $('.marker.js-outbound')
+            .closest('.marker-wrapper-scaled')          
             .css({ 'opacity': '0' }) // important for filtering out (see above);
             .hide()
-            // Fixing the boss bus
+            // Fixing the boss bug
             .parent()
             .hide();
 
@@ -400,13 +402,15 @@
 
                 return LJ.ui.render([
                     '<div class="marker-wrapper">',
-                        '<div class="marker x--face js-before-marker" data-marker-id="'+ marker_id +'">',
-                            '<div class="mrk__seen"></div>',
-                            '<div class="mrk__status"></div>',
-                            '<div class="mrk__loader">',
-                                img_html,
-                            '</div>',
-                            '<div class="mrk__img">',
+                        '<div class="marker-wrapper-scaled">',
+                            '<div class="marker x--face js-before-marker" data-marker-id="'+ marker_id +'">',
+                                '<div class="mrk__seen"></div>',
+                                '<div class="mrk__status"></div>',
+                                '<div class="mrk__loader">',
+                                    img_html,
+                                '</div>',
+                                '<div class="mrk__img">',
+                                '</div>',
                             '</div>',
                         '</div>',
                     '</div>'
