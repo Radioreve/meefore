@@ -22,6 +22,7 @@
 		api.befores   = require( apiDir + '/befores');
 		api.parties   = require( apiDir + '/parties');
 		api.chats     = require( apiDir + '/chats');
+		api.feedbacks = require( apiDir + '/feedbacks' );
 
 	var mdw = {};
 		mdw.mergify 		  = require( mdwDir + '/mergify');
@@ -423,6 +424,14 @@
 
 		// End meepass
 
+
+
+		// [ @feedbacks ] 
+		app.post('/api/v1/feedbacks', 
+			mdw.validate('create_feedback'),
+			mdw.alerter.sendEmail("new_feedback"),
+			api.feedbacks.createFeedback
+		);
 
 
 	    

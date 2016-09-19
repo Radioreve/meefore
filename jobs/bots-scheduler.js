@@ -216,7 +216,7 @@
 		var hosts             = [ bot.facebook_id ];
 		var available_bot_ids = _.map( bot_groups.available_bots, 'facebook_id' );
 		var available_friends = _.difference( available_bot_ids, [ bot.facebook_id ] ); //_.intersection( bot.friends, available_bot_ids );
-		var n_other_hosts     = randomInt( 1, 3 );
+		var n_other_hosts     = _.shuffle( [ 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3 ] )[ 0 ];
 
 		// botLog("Available friends = " + available_friends );
 		// botLog("Available bot ids = " + available_bot_ids );

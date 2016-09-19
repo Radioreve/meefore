@@ -2429,6 +2429,42 @@
 			"us": "First of all, thanks ! You can send a personalized Facebook message to your friends form the web app (not available on phones). To do so,"
 			    +" just clic on the gift icon displayed on the left bottom of the Map view. It is only a private message, not a post on your wall. Nothing will"
 			    +" ever be published on your Facebook wall."
+		},
+		modal_feedback_title: {
+			"fr": "Hi there.",
+			"us": "Hi there."
+		},
+		modal_feedback_subtitle: {
+			"fr": "Un message que tu as envie de nous faire parvenir ? N'hésites pas à nous faire remonter quoi que ce soit.",
+			"us": "Some message you would like to share with us ? Do not hesitate to tell us what you want to say"
+		},
+		placeholder_feedback_content: {
+			"fr": "Hello la team,",
+			"us": "Hello the team"
+		},
+		modal_feedback_btn: {
+			"fr": "Envoyer",
+			"us": "Send"
+		},
+		feedback_hello: {
+			"fr": "Dire bonjour",
+			"us": "Say Hello"
+		},
+		feedback_bug: {
+			"fr": "J'ai trouvé un bug",
+			"us": "I have found a bug"
+		},
+		feedback_improvement: {
+			"fr": "J'ai des idées d'amélioration",
+			"us": "I have ideas for improvement"
+		},
+		feedback_other: {
+			"fr": "Autre",
+			"us": "Other"
+		},
+		to_feedback_success: {
+			"fr": "Votre message a bien été envoyé",
+			"us": "Your message has been sent"
 		}
 		
 		

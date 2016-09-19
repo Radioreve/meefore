@@ -75,7 +75,8 @@
                     var a = LJ.friends.init();
                     // var b = LJ.search.init();
                     var c = LJ.realtime.init();
-                    return LJ.Promise.all([ a, c ]);
+                    var d = LJ.feedback.init();
+                    return LJ.Promise.all([ a, c, d ]);
                 })
                 .then( LJ.notifications.init )
                 .then( LJ.before.init )

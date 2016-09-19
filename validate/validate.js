@@ -36,7 +36,8 @@
 			users_fetch_more		: 'validate-users-fetch-more',
 			chat_seen_by			: 'validate-chat-seen-by',
 			check_onboarding 		: 'validate-check-onboarding',
-			patch_user 				: 'validate-patch-user'
+			patch_user 				: 'validate-patch-user',
+			create_feedback 		: 'validate-create-feedback'
 			
 			//test                : 'validate-test'
 			

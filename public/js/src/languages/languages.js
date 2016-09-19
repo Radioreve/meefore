@@ -102,7 +102,8 @@
 				return LJ.elog('This language (' + app_language + ') is not currently supported');
 			}
 			
-			var $container = container instanceof jQuery ? container : $(container);
+			var $container = container instanceof jQuery ? container : $( container );
+
 
 			$container.find('[data-lid]').each(function( i, el ){
 				

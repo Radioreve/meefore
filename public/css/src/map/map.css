@@ -23,7 +23,8 @@
 
 .map__icon.x--geoloc,
 .map__icon.x--change-location,
-.map__icon.x--facebook {
+.map__icon.x--facebook,
+.map__icon.x--feedback {
     bottom: 31px;
     font-size: 18px;
     cursor: pointer;
@@ -33,14 +34,20 @@
     height: 40px;
 }
 
+
 .map__icon.x--geoloc:hover,
 .map__icon.x--change-location:hover,
-.map__icon.map-zoom i:hover {
+.map__icon.map-zoom i:hover,
+.map__icon.x--feedback:hover {
     color: #508aea;
 } 
 
 .map__icon.x--facebook {
     z-index: 101;
+}
+
+.map__icon.x--feedback {
+    bottom: 90px;
 }
 
 .map__icon.x--facebook.x--hearted {
@@ -155,8 +162,7 @@
     opacity: .8!important;
 }
 
-.map__icon.x--geoloc,
-.map__icon.x--facebook {
+.map__icon.x--geoloc, .map__icon.x--facebook, .map__icon.x--feedback {
     left: 20px;
 }
 

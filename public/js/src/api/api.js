@@ -38,6 +38,7 @@
 		update_notifications_seen_at_url 	: '/api/v1/users/:user_id/notifications/seen_at',
 		update_notifications_clicked_at_url : '/api/v1/users/:user_id/notifications/clicked_at',
 		update_onboarding_seen_at_url 		: '/api/v1/users/:user_id/onboarding',
+		feedback_url 						: '/api/v1/feedbacks',
 
 		init: function(){
 			return LJ.promise(function( resolve, reject ){
@@ -780,6 +781,21 @@
 						} else {
 							return resolve( exposed );
 						}
+
+					}, function( err ){
+						return reject( err );
+
+					});
+
+			});
+		},
+		sendFeedback: function( subject_id, content ){
+			return LJ.promise(function( resolve, reject ){
+
+				var url = LJ.api.feedback_url;
+				LJ.api.post( url, { subject_id: subject_id, content: content }, { delayed: true })
+					.then(function( exposed ){
+						return resolve( exposed );
 
 					}, function( err ){
 						return reject( err );

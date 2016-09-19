@@ -148,6 +148,14 @@
 
 			}
 
+			if([ "new_feedback" ].indexOf( type ) != -1 ){
+				alertLog("Sending admin email (new feedback)");
+				sendAdminEmail({
+					subject: "New feedback received ("+ req.sent.subject_id +")",
+					html   : req.sent.content
+				})
+			}
+
 
 		}
 	};

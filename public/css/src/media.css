@@ -15,22 +15,7 @@
     .app-section.x--menu {
         padding-top: 45px!important;
     }
-    .app-logout,
-    .settings-input__explanation,
-    .me-item__explanation,
-    .me .icon-item,
-    .settings-input__icon,
-    .settings-input__label.x--lang,
-    .search-filters-section__explanations,
-    .be-dates__count,
-    .be-create-row__explanations,
-    .app-subheader.x--map,
-    .modal-search__input,
-    .app-header__brand,
-    .map-zoom,
-    .map__icon.x--change-location,
-    .map__icon.x--facebook,
-    .user-actions {
+    .app-logout, .settings-input__explanation, .me-item__explanation, .me .icon-item, .settings-input__icon, .settings-input__label.x--lang, .search-filters-section__explanations, .be-dates__count, .be-create-row__explanations, .app-subheader.x--map, .modal-search__input, .app-header__brand, .map-zoom, .map__icon.x--change-location, .map__icon.x--facebook, .map__icon.x--feedback, .user-actions, .modal.x--feedback .modal-subheader {
         display: none!important;
     }
     .be-create, .notifications-panel, .chat, .slide, .search-filters, .menu-section.x--cheers .segment, .empty, .settings__button.x--delete, .settings__button, .map-browse input {
@@ -38,7 +23,7 @@
     }
     .modal.x--be-create,
     .modal.x--request {
-        width: 80%!important;
+        width: 80%!important; 
         height: 88%!important;
     }
     .modal__title {

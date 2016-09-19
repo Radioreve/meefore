@@ -31,9 +31,13 @@
 					LJ.ui.deactivateHtmlScroll();
 				}
 
-				$modal.hide()
-					  .appendTo( $('.curtain') )
-					  .velocity('shradeIn', {
+				$modal.hide().appendTo( $('.curtain') );
+
+				if( typeof options.done == "function" ){
+					options.done();
+				}
+
+				$modal.velocity('shradeIn', {
 					  	delay: LJ.ui.show_modal_delay,
 					  	display: 'flex',
 					  	duration: LJ.ui.show_modal_duration,
@@ -77,6 +81,55 @@
 					}
 				});
 			})
+
+		},
+		loaderifyModal: function(){
+			
+			$('<div class="modal-overlay"></div>')
+				.hide()
+				.appendTo('.modal')
+				.css({
+					'position': 'absolute',
+					'top': '0',
+					'bottom': '0',
+					'left': '0',
+					'right': '0',
+					'margin': 'auto',
+					'width': '100%',
+					'height': '100%',
+					'z-index': '9',
+					'background': 'rgba(255,255,255, 0.6)'
+				})
+				.velocity('fadeIn', {
+					duration: 500
+				})
+
+			$( LJ.static.renderStaticImage('modal_loader') )
+				.css({
+					'position': 'absolute',
+					'top': '0',
+					'bottom': '0',
+					'left': '0',
+					'right': '0',
+					'margin': 'auto',
+					'z-index': '10'
+				})
+				.hide()
+				.appendTo('.modal')
+				.velocity('shradeIn', {
+					duration: 300
+				});
+
+
+		},
+		deloaderifyModal: function(){
+
+			$('.modal-overlay')
+				.remove();
+
+			$('.modal')
+				.children('img')
+				.remove();
 
 		},
 		shadeModal: function(){

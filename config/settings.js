@@ -20,6 +20,12 @@ var settings = {
 		max_hashtags: 10,
 		chat_fetch_count: 20
 	},
+	feedback_ids: [
+		"hello",
+		"bug",
+		"improvement",
+		"other"
+	],
 	min_frequency: 1,
 	closed_map_hours: [ 6, 14 ],
 	facebook: {
