@@ -177,7 +177,7 @@
 
 			max_distance = max_distance || null;
 
-			return LJ.api.fetchNearestBefores( latlng, max_distance )
+			return LJ.api.fetchNearestBefores( latlng, { max_distance: max_distance })
 					.then(function( befores ){
 						LJ.before.fetched_befores = befores;
 						return befores;
