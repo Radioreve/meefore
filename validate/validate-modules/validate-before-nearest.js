@@ -17,8 +17,9 @@
 
 		console.log('Checking the request');
 
-		req.sent.latlng.lat = parseFloat( req.sent.latlng.lat );
-		req.sent.latlng.lng = parseFloat( req.sent.latlng.lng );
+		req.sent.latlng.lat   = parseFloat( req.sent.latlng.lat );
+		req.sent.latlng.lng   = parseFloat( req.sent.latlng.lng );
+		req.sent.max_distance = parseFloat( req.sent.max_distance );
 
 		nv.run( checkRequest, req.sent, function( n, errors ){
 			if( n != 0 ){
