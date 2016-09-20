@@ -291,7 +291,7 @@
 		// coordinates array must start with longitude
 		var near = {
 			"type"        : "Point",
-			"coordinates" : [ req.sent.latlng.lng, req.sent.latlng.lat ]
+			"coordinates" : [ req.sent.lng, req.sent.lat ]
 		};
 
 		console.log('Maximum distance is : ' + maxDistance );

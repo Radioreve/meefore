@@ -526,7 +526,11 @@
 		fetchNearestBefores: function( latlng, options ){
 			return LJ.promise(function( resolve, reject ){
 
-				var request = _.extend({}, { latlng: latlng }, options );
+				var request = latlng;
+
+				if( options.max_distance ){
+					request.max_distance = options.max_distance;
+				}
 
 				LJ.api.get( LJ.api.fetch_nearest_before_url, request )
 					.then(function( exposed ){

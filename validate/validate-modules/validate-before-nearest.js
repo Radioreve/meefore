@@ -10,15 +10,16 @@
 	var checkRequest = nv.isAnyObject()
 
 		.withRequired('facebook_id' 	, nv.isString())
-		.withRequired('latlng'			, checkLatLng )
+		.withRequired('lat'				, nv.isNumber({ min: -85, max: 85 }))
+		.withRequired('lng'				, nv.isNumber({ min: -180, max: 180 }))
 		.withOptional('max_distance'	, nv.isNumber())
 
 	function check( req, res, next ){
 
 		console.log('Checking the request');
 
-		req.sent.latlng.lat   = parseFloat( req.sent.latlng.lat );
-		req.sent.latlng.lng   = parseFloat( req.sent.latlng.lng );
+		req.sent.lat   = parseFloat( req.sent.lat );
+		req.sent.lng   = parseFloat( req.sent.lng );
 
 		if( req.sent.max_distance ){
 			req.sent.max_distance = parseFloat( req.sent.max_distance );
@@ -32,8 +33,8 @@
 
 			// Probably needed because the upper check converts the type into string
 			// We want numbers for the database query
-			req.sent.latlng.lat   = parseFloat( req.sent.latlng.lat );
-			req.sent.latlng.lng   = parseFloat( req.sent.latlng.lng );
+			req.sent.lat   = parseFloat( req.sent.lat );
+			req.sent.lng   = parseFloat( req.sent.lng );
 			req.sent.max_distance = parseFloat( req.sent.max_distance );
 
 			next();
