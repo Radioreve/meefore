@@ -2435,7 +2435,7 @@
 			"us": "Hi there."
 		},
 		modal_feedback_subtitle: {
-			"fr": "Un message que tu as envie de nous faire parvenir ? N'hésites pas à nous faire remonter quoi que ce soit.",
+			"fr": "Un message que tu as envie de nous faire parvenir ? N'hésite pas à nous faire remonter quoi que ce soit.",
 			"us": "Some message you would like to share with us ? Do not hesitate to tell us what you want to say"
 		},
 		placeholder_feedback_content: {
