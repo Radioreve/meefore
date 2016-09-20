@@ -294,18 +294,20 @@
 			"coordinates" : [ req.sent.lng, req.sent.lat ]
 		};
 
-		console.log('Maximum distance is : ' + maxDistance );
+		var geonear_opts = {
+			spherical     : true,
+			near          : near,
+			distanceField : 'distance',
+			maxDistance   : maxDistance
+		}
+
+		console.log("JSON passed in the call : \n " + JSON.stringify( geonear_opts , null, 4 ));
 
 		// When near is GeoJSON type, the maxDistance is express in 'meters' !
 		// No need to convert with the earth radius
 		Before.aggregate([
 			{ 
-				$geoNear: {
-					spherical     : true,
-					near          : near,
-					distanceField : 'distance',
-					maxDistance   : maxDistance
-				}
+				$geoNear: geonear_opts
 			},
 			{
 				'$match': {
