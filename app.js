@@ -1,5 +1,7 @@
 
 	// Basic modules
+		var log 	     = require('./services/logger');
+		var print 		 = require('./services/print')( 'app.js' );
 		var term 		 = require('terminal-kit').terminal
 		var express      = require('express');
 		var bodyParser   = require('body-parser');
@@ -29,7 +31,7 @@
 	// Http server
 		var port = process.env.PORT || 1234;
 		server.listen( port, function(){
-			term.bold.green('Server listening on '+ port + '\n');
+			print.info('Server listening on '+ port);
 		});
 
 
@@ -38,7 +40,7 @@
 	(function checkingTime(){
 
 		min += 1;
-		console.log( 'App running for ' + min + ' minutes now. ');
+		print.info( 'App running for ' + min + ' minutes now. ');
 		setTimeout( checkingTime, 60000);
 
 	})();

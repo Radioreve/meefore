@@ -65,7 +65,7 @@
 
 		return function( req, res, next ){
 
-			req.app_namespace = namespace || 'void_namespace';
+			req.err_ns = namespace || 'void_namespace';
 			next();
 
 		}

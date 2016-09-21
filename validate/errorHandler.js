@@ -1,22 +1,26 @@
 	
-	var _ = require('lodash');
+	var _   = require('lodash');
+	var log = require( process.cwd() + '/services/logger' );
+	var err = require( process.cwd() + '/services/err' );
 
 	var handle = function( req, res, next ){
 
 		if( req.app_errors.length == 0 ){
 
-			console.log('Validation passed');
 			next();
 
 		} else {
 
-			res.status(403).json({ 
+			res.handleFrontErr( req, res, {
+				status: 403,
+				source: "client",
+				err_ns: req.err_ns,
+				err: req.app_errors[ 0 ],
+				err_id: req.app_errors[ 0 ].err_id,
+				call_id: req.sent.expose.call_id,
+				msg: req.app_errors[ 0 ].msg || req.app_errors[ 0 ].message
+			});
 
-				call_id   : req.sent.expose && req.sent.expose.call_id,
-				namespace : req.app_namespace,
-				errors    : req.app_errors
-
-			}).end();
 		}
 	};
 

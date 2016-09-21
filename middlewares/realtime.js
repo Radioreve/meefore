@@ -8,6 +8,9 @@
 	var Message    = require('../models/MessageModel');
 	var mongoose   = require('mongoose');
 	var async 	   = require('async');
+	var log 	   = require('../services/logger');
+	var print 	   = require('../services/print')('(Realtime)');
+	var err 	   = require('../services/err');
 
 
 	function handlePusherErr( err, req, res ){
@@ -160,8 +163,6 @@
 
 	function resetChannels( user, callback ){
 
-		console.log('Reseting channels');
-
 		user.channels = [];
 		user.channels.push( makeChannelItem__Personnal( user ) );
 		user.channels.push( makeChannelItem__Location( user ) );
@@ -174,10 +175,6 @@
 
 			// Safe the ref for other middlewares
 			befores.forEach(function( before ){
-
-				if( before.status == "canceled" ){
-					return console.log("Before was canceled, skipping the add in either before or channels array");
-				}
 
 				var is_hosting  = before.hosts.indexOf( user.facebook_id ) != -1;
 
@@ -239,11 +236,12 @@
 		var user   = req.sent.user;
 
 		if( !user ){
-			console.log('First connection, dont set channels');
+			print.info( req, 'First connection, dont set channels' );
 			return next();
 
 		} else {
 
+			print.info( req, "Reseting user 'channels' array" );
 			resetChannels( user, function( err, user, fetched_befores ){
 
 				if( err ) return handleErr( req, res, err_ns, err );

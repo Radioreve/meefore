@@ -1,5 +1,8 @@
 	
 	var _              = require('lodash');
+	var log 		   = require('../services/logger');
+	var print 		   = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/befores.js' );
+	var err 		   = require('../services/err');
 	var eventUtils     = require('../pushevents/eventUtils');
 	var User           = require('../models/UserModel');
 	var Before         = require('../models/BeforeModel');
@@ -278,7 +281,7 @@
 	
 	var fetchNearestBefores = function( req, res, next ){
 
-		console.log('Fetching nearest befores...');
+		print.info( req, 'Fetching nearest befores');
 
 		var err_ns = "fetching_nearest_befores";
 		// var earth_radius_in_meters = 6371000;
@@ -301,7 +304,7 @@
 			maxDistance   : maxDistance
 		}
 
-		console.log("JSON passed in the call : \n " + JSON.stringify( geonear_opts , null, 4 ));
+		req.log.debug({ '$geoNear': geonear_opts }, "Geonear options that are passed to mongodb" );
 
 		// When near is GeoJSON type, the maxDistance is express in 'meters' !
 		// No need to convert with the earth radius

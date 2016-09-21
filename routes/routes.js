@@ -1,36 +1,25 @@
 
 	var _      = require('lodash');
-	var async  = require('async');
-	var get_ip = require('ipware')().get_ip;
-
-	var rd        = require('../services/rd');
-	var pusher    = require('../services/pusher');
 	
 	var pushEventsDir = '../pushevents';
 	var apiDir        = '../api';
 	var mdwDir        = '../middlewares';
 
-	var User = require('../models/UserModel');
-
 	var profileEvents  = require( pushEventsDir + '/profileEvents'),
 		signEvents     = require( pushEventsDir + '/signEvents');
 
 	var api = {}
-	//	api.tests     = require( apiDir + '/tests');
 		api.users     = require( apiDir + '/users');
-		api.places    = require( apiDir + '/places');
 		api.befores   = require( apiDir + '/befores');
-		api.parties   = require( apiDir + '/parties');
 		api.chats     = require( apiDir + '/chats');
 		api.feedbacks = require( apiDir + '/feedbacks' );
 
 	var mdw = {};
-		mdw.mergify 		  = require( mdwDir + '/mergify');
-		mdw.boolify 	      = require( mdwDir + '/boolify');
 		mdw.expose 			  = require( mdwDir + '/expose');
 		mdw.auth              = require( mdwDir + '/auth');
 		mdw.mailchimp         = require( mdwDir + '/mailchimp');
 		mdw.pop               = require( mdwDir + '/pop');
+		mdw.log 			  = require( mdwDir + '/log' );
 		mdw.facebook          = require( mdwDir + '/facebook');
 		mdw.profile_watcher   = require( mdwDir + '/profile_watcher');
 		mdw.notifier          = require( mdwDir + '/notifier');
@@ -48,9 +37,16 @@
 
 	module.exports = function( app ) {
 
+		// Setting up convenience stuff (merging all params into a single req.sent object, ... ), and loggin
 		require('./setup')( app );
+
+		// Admin routes
 		require('./admin')( app );
+
+		// Test routes
 		require('./test')( app );
+
+		// Routes relative to webhooks
 		require('./webhooks')( app );
 
 
@@ -58,52 +54,17 @@
 		// All api calls must provid a valid token, which is then decoded.
 		// The token is given the client during the authentication process and contains client's ids
 		app.all('/api/*',
-			mdw.auth.authenticate(['standard'])
-		);
-
-	    // Main page
-	    app.get('/home',
-	    	function( req, res, next ){
-
-	    		var ip_info = get_ip( req );
-	    		next();
-	    	},
-	    	signEvents.sendHomepage
-	    );
-
-
-	    // Conditions générales
-	    app.get('/legals', function( req, res ){
-	    	res.sendFile( process.cwd() + '/views/legals.html' );
-	    });
-
-	    // Redirection à la page d'accueil
-	    app.get('/',
-	    	signEvents.redirectToHome
-	    );
-
-	    app.get('/devbuild', function( req, res ){
-	    	res.sendFile( process.cwd() + '/views/index-devbuild.html' );
-	    });
-
-
-	    // Provide valid token based on secret key, for api calls
-		app.post('/auth/token',
-			mdw.auth.makeToken
+			mdw.auth.authenticate(['standard']),
+			// Make sure all requests are logged with the user's facebook_id extracted from the token
+			mdw.log.addContext("request"),
+			mdw.log.addContext("auth")
 		);
 
 
-		function debugUser( step ){
-			return function( req, res, next ){
-				console.log( step );
-				if( req.sent.user ){ 
-					console.log( _.pick( req.sent.user, [ 'facebook_id','name','friends' ]) );
-				} else {
-					console.log("req.sent.user=undefined?")
-				}
-				next();
-			}
-		}
+		// Static routes (entry point for serving the app);
+		require('./static')( app );
+
+
 	    // Main entry point
 	    // Performs both the signup and the login 
 	    // Some middlewares are blocking and some are not
@@ -217,7 +178,8 @@
 	    	mdw.validate('myself'),
 	    	mdw.pop.populateUser(),
 	    	mdw.mailchimp.api("delete_member"),
-	    	api.users.deleteUser
+	    	api.users.deleteUser,
+	    	mdw.alerter.sendEmail("delete_account")
 	    );
 
 	 //    // Coupons, code & sponsorship
@@ -434,28 +396,9 @@
 		);
 
 
-	    
-	    // [ @places ] Fetch all places
-	    app.get('/api/v1/places', api.places.fetchPlaces );
-
-	    // [@places ] Create a new place
-	    app.post('/api/v1/places',
-	    	mdw.validate('create_place'),
-	    	api.places.createPlace
-	    );
-
-
 
 	   	app.all('*', mdw.expose.sendResponse );
 
-	    // Test & legacy
-
-
-	      /* Debug les appels clients */
-	    app.post('*', function(req, res, next) {
-	        console.log('-> body : ' + JSON.stringify( req.body, null, 4 ));
-	        next();
-	    });
 
 
 

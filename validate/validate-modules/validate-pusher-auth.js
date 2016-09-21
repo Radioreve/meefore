@@ -2,6 +2,7 @@
 	var nv   = require('node-validator');
 	var rd   = require('../../services/rd');
 	var _    = require('lodash');
+	var log  = require('../../services/logger');
 	var User = require('../../models/UserModel');
 
 	var check = function( req, res, next ){
@@ -36,7 +37,7 @@
 	// property array. All the channel logic is controlled and persisted server-side
 	function checkWithDatabase( req, callback ){
 
-		console.log('Checking user has permission to subscribe to this channel');
+		log.debug('Checking user has permission to subscribe to this channel');
 
 		// Passed in token, surcharged Pusher init clientside method [@48723]
 		var facebook_id  = req.sent.facebook_id;

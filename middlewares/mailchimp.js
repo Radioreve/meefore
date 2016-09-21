@@ -4,16 +4,19 @@
 	var config     = require('../config/config');
 	var Alerter    = require('./alerter');
 	var _          = require('lodash');
-	var term 	   = require('terminal-kit').terminal;
+	var log 	   = require('../services/logger');
+	var print 	   = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/mailchimp.js' );
 
 	// Mailchimp interface
 	var MC        = require('../services/mc');
 	var Mailchimp = new MC( config.mailchimp[ process.env.APP_ENV ] );
 	// var Mailchimp = new MC( config.mailchimp );
 
+
 	var handleErr = function( err, err_ns ){
 
-		MailchimpInterface.errLog( err_ns );
+		print.err( req, { err: err, err_ns: err_ns }, "Error in the Mailchimp middleware");
+
 		Alerter.sendAdminEmail({
 			subject : "Error in the mailchimp middleware ("+ err_ns +")",
 			html    : err
@@ -24,13 +27,12 @@
 
 		return function( req, res, next ){
 
-			Mailchimp.infoLog( action );
 			// All api calls are non blocking call (important)
 			// otherwise, each requests would be slowed hugely
 			next();
 
 			if( req.sent.user && req.sent.user.isBot() ){
-				term.bold.green('Skipping the mailchimp update... (bearly)\n');
+				print.info( req, 'Skipping the mailchimp update... (bearly)');
 				return next();
 			}
 
@@ -55,18 +57,18 @@
 		var user   = req.sent.user;
 
 		if( user.mailchimp_id ){
-			return Mailchimp.infoLog("User already has mailchimp_id " + user.mailchimp_id +'. Skipping...');
+			return print.info( req, { mailchimp_id: user.mailchimp_id }, "User already has mailchimp_id. Skipping...");
 		}
 
 		if( !Mailchimp.isEmail( user.contact_email ) ){
-			return Mailchimp.warnLog("User has no mailchimp_id but his email is malformed. Skipping until next time...");
+			return print.warn( req, { email: user.contact_email }, "User has no mailchimp_id but his email is malformed. Skipping until next time...");
 		}
 
-		Mailchimp.infoLog("User has no mailchimp_id and a valid email, subscribing now.");
+		print.info( req, "User has no mailchimp_id and a valid email, subscribing now.");
 		Mailchimp.createMember({ email_address: user.contact_email })
 			.then(function( member ){
 
-				Mailchimp.successLog("Mailchimp's member created with id : " + member.id );
+				print.info( req, { mailchimp_id: member.id }, "Mailchimp's member created");
 				User.findOneAndUpdate(
 					{
 						facebook_id: user.facebook_id
@@ -77,16 +79,17 @@
 					function( err, user ){
 
 						if( err ){
-							handleErr( err, err_ns );
+							handleErr( req, err, err_ns );
+
 						} else {
 
 							// Update the req.sent to prevent an infinite subscribe/update loop
 							req.sent.user = user;
 
-							Mailchimp.successLog("Member have been successfully subscribed");
+							print.info( req, "Member have been successfully subscribed");
 							Mailchimp.updateMember( req )
 								.then(function(){
-									Mailchimp.successLog("Member have been successfully patched");
+									print.info( req, "Member have been successfully patched");
 								});
 
 						}
@@ -108,12 +111,12 @@
 		var subscribed_emails = req.sent.app_preferences && req.sent.app_preferences.subscribed_emails;
 		var contact_email     = req.sent.contact_email;
 
-		if( !isMailchimpPatchNeeded( req.sent.user, req.sent ) ){
-			return Mailchimp.infoLog("User didnt update contact_email or subscription preferences, skippin...");
+		if( !isMailchimpPatchNeeded( req, req.sent.user, req.sent ) ){
+			return print.info( req, "User didnt update contact_email or subscription preferences, skippin...");
 		}
 
 		if( !user.mailchimp_id ){
-			Mailchimp.warnLog("User doesnt have a mailchimp_id, trying subscription...");
+			print.warn( req, "User doesnt have a mailchimp_id, trying subscription...");
 			return ensureSubscription( req );
 		}
 
@@ -149,18 +152,18 @@
 			patch.email_address = contact_email;
 		}
 
-		Mailchimp.debugLog( patch );
+		print.debug( req, patch );
 		
 		Mailchimp.updateMember( user.mailchimp_id, patch )
 			.then(function( member ){
-				Mailchimp.successLog("Member has been patched successfully, new_id: " + member.id + ", new_mail: " + member.email_address );
+				print.info( req, { mailchimp_id: member.id, email: member.email_address }, "Member has been patched successfully");
 				user.mailchimp_id = member.id;
 				user.save(function( err ){
-					if( err ) handleErr( err, err_ns );
+					if( err ) handleErr( req, err, err_ns );
 				});
 			})
 			.catch(function( err ){
-				handleErr( err, err_ns );
+				handleErr( req, err, err_ns );
 			});
 
 
@@ -172,16 +175,16 @@
 		var user   = req.sent.user;
 
 		if( !user.mailchimp_id ){
-			return Mailchimp.infoLog('No mailchimp_id field, nothing to delete');
+			return print.info( req, 'No mailchimp_id field, nothing to delete');
 		}
 
 		Mailchimp.deleteMember( user.mailchimp_id )
 			.then(function(){
-				Mailchimp.successLog("Member have been removed from Mailchimp successfully");
+				print.info( req, "Member have been removed from Mailchimp successfully");
 			})
 			.catch(function( err ){
-				handleErr( err, err_ns );
-			})
+				handleErr( req, req,err, err_ns );
+			});
 
 	};
 
@@ -195,25 +198,25 @@
 
 		Promise.all([ p1, p2, p3, p4 ])
 			.catch(function( err ){
-				Mailchimp.errLog( err );
+				print( req, "err",  err );
 			});
 
 	});
 
 
-	function isMailchimpPatchNeeded( user, patch ){
+	function isMailchimpPatchNeeded( req, user, patch ){
 
 		var is_patch_necessary = false;
 
 		if( patch.contact_email && patch.contact_email != user.contact_email ){
-			Mailchimp.infoLog("Patch email necessary, user is updating his email");
+			print.info( req, "Patch email necessary, user is updating his email");
 			is_patch_necessary = true;
 		}
 
 		if( patch.app_preferences && patch.app_preferences.subscribed_emails ){
 			Object.keys( patch.app_preferences.subscribed_emails ).forEach(function( key ){
 				if( patch.app_preferences.subscribed_emails[ key ] != user.app_preferences.subscribed_emails[ key ] ){
-					Mailchimp.infoLog("Patch email necessary, user is updating his subscriptions preferences");
+					print.info( req, "Patch email necessary, user is updating his subscriptions preferences");
 					is_patch_necessary = true;
 				}
 			});
@@ -222,7 +225,7 @@
 		[ "name", "age", "job" ].forEach(function( up_type ){
 
 			if( patch[ up_type ] ){
-				Mailchimp.infoLog("Patch email necessary, user is updating his " + up_type);
+				print.info( req, "Patch email necessary, user is updating his " + up_type);
 				is_patch_necessary = true;
 			}
 

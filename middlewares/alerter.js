@@ -7,21 +7,20 @@
 	var connecter 	    = require('../middlewares/connecter');
 	var config          = require('../config/config');
 	var _               = require('lodash');
-	var term            = require('terminal-kit').terminal;
 	var mandrill        = require('mandrill-api/mandrill');
 	var mandrill_client = new mandrill.Mandrill( config.mandrill.api_key );
-	var moment 		 	= require('moment');
-	
-	function alertLog( message ){
-		term.bold.yellow( '[Alerter] ' + message + '\n' );
-	}
+	var moment          = require('moment');
+	var log             = require('../services/logger');
+	var print 		    = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/alerter.js' );
+	var err             = require('../services/err');
+
 
 	function handleErr( err, err_ns ){
 
 		err_ns = err_ns || "alerter";
 
-		term.bold.red('Error sending email, err_ns='+ err_ns + '\n' );
-		term.bold.red( err + '\n' );
+		log.err({ err: err, err_ns: err_ns }, 'Alerter | Error sending email');
+
 	}
 
 
@@ -116,20 +115,14 @@
 				getUsersToAlert( req, type )
 					.then(function( users ){
 
-						alertLog("Sending an email to : " + _.map( users, 'contact_email' ).join(', ') );
+						print.info( req, "Sending an email to : " + _.map( users, 'contact_email' ).join(', ') );
 						users.forEach(function( user ){
 							sendTemplateEmail( req, type, user );
 						});
 
 					})	
 					.catch(function( err ){
-
-						if( err.msg ){
-							alertLog( err.msg );
-						} else {
-							handleErr( err, err_ns );
-						}
-
+						handleErr( err, err_ns );
 
 					});
 
@@ -138,22 +131,38 @@
 			if([ "welcome" ].indexOf( type ) != -1 ){
 
 				var user = req.sent.user;
-
 				if( user.status != "new" ){
-					return alertLog("User isnt new, skipping the welcome email");
+					return print.info( req, "User isnt new, skipping the welcome email");
 				}
 
-				alertLog("Sending email ("+ type +") to : " + user.contact_email );
+				print.info( req, "Sending email ("+ type +") to : " + user.contact_email );
+
 				sendTemplateEmail( req, type, user );
 
 			}
 
+
 			if([ "new_feedback" ].indexOf( type ) != -1 ){
-				alertLog("Sending admin email (new feedback)");
+
+				print.info( req, "Sending admin email (new feedback)");
+				
 				sendAdminEmail({
 					subject: "New feedback received ("+ req.sent.subject_id +")",
 					html   : req.sent.content
-				})
+				});
+
+			}
+
+
+			if([ "delete_account" ].indexOf( type ) != -1 ){
+
+				print.info( req, "Sending admin email (account deleted)");
+
+				sendAdminEmail({
+					subject: "User deleted his account ("+ req.sent.user.name + ")",
+					html   : "facebook_id=" + req.sent.user.facebook_id + "<br>" + "link=" + req.sent.user.facebook_url
+				});
+
 			}
 
 
@@ -173,7 +182,7 @@
 
 					alerted_at = parseInt( alerted_at ); // moment.js throw "invalid date" if its a string
 
-					alertLog("Chat was alerted at : " + moment( alerted_at ).toISOString() );
+					log.debug( "Chat was alerted at : " + moment( alerted_at ).toISOString() );
 					var diff_in_minutes = ( moment( Date.now() ) - moment( alerted_at ) ) / ( 1000 * 60 );
 
 					if( diff_in_minutes < 1 ){
@@ -220,18 +229,18 @@
 			})
 
 			.then(function( user_ids ){
-				alertLog("Users that were found relevant : " + user_ids );
+				print.info( req, "Users that were found relevant : " + user_ids );
 				return filterOnlineUsers( user_ids );
 			})
 
 			.then(function( user_ids ){
-				alertLog("Users that are offline : " + user_ids );
+				print.info( req, "Users that are offline : " + user_ids );
 				return filterRequester( req, user_ids );
 			})
 
 			.then(function( user_ids ){
-				alertLog("Users that are offline (without sender) : " + user_ids );
-				return filterInterestedUsers( user_ids, type );
+				print.info( req, "Users that are offline (without sender) : " + user_ids );
+				return filterInterestedUsers( req, user_ids, type );
 			});
 
 	}
@@ -286,7 +295,7 @@
 
 	}
 
-	function filterInterestedUsers( user_ids, type ){
+	function filterInterestedUsers( req, user_ids, type ){
 		return new Promise(function( resolve, reject ){
 
 			var interested_users = [];
@@ -302,7 +311,7 @@
 				users.forEach(function( usr ){
 
 					if( !usr.app_preferences.alerts_email[ type ] ){
-						return alertLog( usr.name + " doesnt wish to receive "+ type +" alerts" );
+						return print.info( req,  usr.name + " doesnt wish to receive "+ type +" alerts" );
 					}
 
 					// For some specific alerts, place an additionnal anti-spam filter, to make sure they are
@@ -311,7 +320,7 @@
 
 						var diff_in_minutes = ( moment() - moment( usr.alerted_at ) ) / ( 1000 * 60 );
 						if( diff_in_minutes < settings.min_frequency ){
-							return alertLog( usr.name + ' has been mailed too recently ('+ diff_in_minutes +' min)');
+							return print.info( req,  usr.name + ' has been mailed too recently ('+ diff_in_minutes +' min)');
 						}
 
 					}
@@ -450,7 +459,7 @@
 		[ 'subject', 'target', 'template_name', 'template_content' ]
 		.forEach(function( prop ){
 			if( typeof opts[ prop ] == 'undefined' ){
-				alertLog("The opts object is missing the key :" + prop );
+				printwarn( req, "The opts object is missing the key :" + prop );
 				is_prop_ok = false;
 			}
 		});
@@ -503,10 +512,10 @@
 		    }
 		},
 		function( res ){
-			alertLog( res );
+			log.debug({ res: res }, "Mandrill response");
 		},
 		function( err ){
-			term.bold.red( err );
+			handleErr( err );
 		});
 
 	};
@@ -546,10 +555,10 @@
 		    }
 		},
 		function( res ){
-			alertLog( res );
+			log.debug({ res: res }, "Mandrill response");
 		},
 		function( err ){
-			term.bold.red( err );
+			handleErr( err );
 		});
 
 	};

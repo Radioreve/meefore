@@ -20,6 +20,12 @@
 		this.dc           = opts.dc;
 		this.list_id      = opts.list_id
 		this.interests 	  = opts.interests;
+
+		this.log = {};
+		[ "info", "warn", "err", "debug" ].forEach(( log_type ) => {
+			this.log[ log_type ] = opts[ log_type ];
+		});
+
 		
 		// Generate HTTP helper functions to make api calls
 		this._generateHTTPHelper({ method: 'get' });
@@ -279,23 +285,48 @@
 	}
 
 	Mailchimp.prototype.debugLog = function( message ){
+
+		if( this.log && typeof this.log.debug == "function" ){
+			return this.log.debug( message );
+		}
+
 		term('[ ') + term.bold.white('Mailchimp') + term(' ]') + term(' -> ') + term( JSON.stringify(message, null, 4) ) + term('\n');
 	}
 
 	Mailchimp.prototype.infoLog = function( message ){
+
+		if( this.log && typeof this.log.info == "function" ){
+			return this.log.info( message );
+		}
+
 		term('[ ') + term.bold.magenta('Mailchimp') + term(' ]') + term(' -> ') + term( JSON.stringify(message, null, 4) )  + term('\n');
 	}
 
 	Mailchimp.prototype.warnLog = function( message ){
+
+		if( this.log && typeof this.log.warn == "function" ){
+			return this.log.warn( message );
+		}
+
 		term('[ ') + term.bold.yellow('Mailchimp') + term(' ]') + term(' -> ') + term( JSON.stringify(message, null, 4) )  + term('\n');
 	}
 
 	Mailchimp.prototype.successLog = function( message ){
+
+		if( this.log && typeof this.log.info == "function" ){
+			return this.log.info( message );
+		}
+
 		term('[ ') + term.bold.green('Mailchimp') + term(' ]') + term(' -> ') + term( JSON.stringify(message, null, 4) )  + term('\n');
 	}
 
 
 	Mailchimp.prototype.errLog = function( message ){
+
+		if( this.log && typeof this.log.err == "function" ){
+			return this.log.err( message );
+		}
+
 		term('[ ') + term.bold.red('Mailchimp') + term(' ]') + term(' -> ') + term( JSON.stringify(message, null, 4) )  + term('\n');
 	}
 

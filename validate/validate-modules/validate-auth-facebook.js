@@ -5,8 +5,7 @@
 	var _      = require('lodash');
 	var rg     = require('../../config/regex');
 	var fb     = require('../../middlewares/facebook');
-	var term   = require('terminal-kit').terminal;
-
+	var log    = require('../../services/logger');
 
 	function check( req, res, next ){
 
@@ -59,7 +58,7 @@
 			});
 		}
 
-		console.log('Verifying facebook token : ' + token.slice( 0, 10 ) + '....' );
+		log.info({ token: token.slice( 0, 10 ) + '...' }, 'Verifying facebook token' );
 		fb.verifyFacebookToken( token, function( err, res ){
 
 			if( err ){
@@ -74,7 +73,7 @@
 				return callback({
 					message   : 'Facebook api returned an error',
 					err_id    : 'fb_api_expected',
-					res_error : res.error
+					err       : res.error
 				});
 			}
 
@@ -82,7 +81,7 @@
 				return callback({
 					message : 'The token is not a valid Facebook token',
 					err_id  : 'fb_invalid_token',
-					raw_res : res
+					err     : res
 				});
 			}
 
@@ -97,8 +96,8 @@
 				return callback({
 					err_id     	   : 'fb_token_expired',
 					message    	   : 'The token expired',
-					expires_at     : res.data.expires_at,
-					expires_at_iso : moment.unix( res.data.expires_at ).toISOString() 
+					expires_at     : res.data.expires_at, // ignored so far
+					expires_at_iso : moment.unix( res.data.expires_at ).toISOString() // ignored so far
 				});
 			}
 

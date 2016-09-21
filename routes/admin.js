@@ -1,6 +1,7 @@
 	
 	var config      = require( '../config/config' );
 	var Alerter 	= require( '../middlewares/alerter' );
+	var err         = require('../services/err' );
 
 	var apiDir      = '../api';
 	var jobsDir     = '../jobs';
@@ -29,11 +30,15 @@
 		 app.all('/admin/*',
 	    	function( req, res, next ){
 	    		if( req.sent.api_key != config.admin_api_key ){
-	    			return res.status( 403 ).json({ msg: "unauthorized" });
+	    			return err.handleBackErr( req, res, {
+	    				msg: "Acces denied",
+	    				status: 403
+	    			})
 	    		} else {
 	    			next();
 	    		}
 	    	});
+
 
 	    app.post('/admin/credit_meepass',
 			mdw.auth.authenticate(['admin']),

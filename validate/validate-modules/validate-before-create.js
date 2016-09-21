@@ -135,7 +135,7 @@
 					n_sent  	: host_number,
 					n_found		: hosts.length,
 					missing_ids : _.difference( data.hosts_facebook_id, _.map( hosts, 'facebook_id' ) )
-				}, null );
+				});
 			}
 
 			// Make sure no host already has an before planned on this day
@@ -157,7 +157,7 @@
 				return callback( _.merge( err_data, {
 					message : 'Host(s) already hosting a before this day',
 					err_id  : "already_hosting" 
-				}, null ));
+				}));
 			}
 
 			// Make sure hosts are all friends
@@ -185,7 +185,7 @@
 				return callback( _.merge( err_data, {
 					message : 'Hosts are not all good ol\' friends',
 					err_id: "not_all_friends"
-				}, null ));
+				}));
 			}
 
 

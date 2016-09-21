@@ -9,6 +9,7 @@
 	var eventUtils = require('./eventUtils');
 	var moment     = require('moment');
 	var _          = require('lodash');
+	var tk 		   = require('../services/tk');
 	var facebook   = require('./../middlewares/facebook');
 	var term 	   = require('terminal-kit').terminal;
 
@@ -58,7 +59,7 @@
 
 			req.sent.expose.user        = user;
 			req.sent.expose.facebook_id = facebook_id;
-			req.sent.expose.app_token   = eventUtils.generateAppToken( "user", user );
+			req.sent.expose.app_token   = tk.generateAppToken( "user", user );
 
 			next();
 
@@ -167,7 +168,7 @@
 
 					req.sent.expose.user        = user;
 					req.sent.expose.facebook_id = facebook_id;				
-					req.sent.expose.app_token   = eventUtils.generateAppToken( "user", user ); ;
+					req.sent.expose.app_token   = tk.generateAppToken( "user", user ); ;
 
 					next();
 

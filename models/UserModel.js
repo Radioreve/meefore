@@ -147,10 +147,19 @@ UserSchema.methods.findBeforesByIds = function( callback ){
   });
 }
 
-UserSchema.methods.findBeforesByPresence = function( callback ){
+UserSchema.methods.findBeforesByPresence = function( opts, callback ){
+
+  if( typeof opts == "function" ){
+    callback = opts;
+    opts = undefined;
+  };
+
+  opts = ( typeof opts == "object" ) ? opts : {};
+
+  var status = Array.isArray( opts.status ) ? opts.status : [ 'open' ];
 
   Before.find({ 
-      'status': { '$in': [ 'open', 'canceled' ] },
+      'status': { '$in': status },
       $or: [
         {
           'hosts': this.facebook_id

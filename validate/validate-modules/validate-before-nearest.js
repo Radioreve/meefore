@@ -1,6 +1,6 @@
 
-	var nv = require('node-validator');
-	var _  = require('lodash');
+	var nv  = require('node-validator');
+	var _   = require('lodash');
 
 	var checkLatLng = nv.isAnyObject()
 
@@ -15,8 +15,6 @@
 		.withOptional('max_distance'	, nv.isNumber())
 
 	function check( req, res, next ){
-
-		console.log('Checking the request');
 
 		req.sent.lat   = parseFloat( req.sent.lat );
 		req.sent.lng   = parseFloat( req.sent.lng );

@@ -1,42 +1,48 @@
 
-	var jwt 	    = require('jsonwebtoken'),
-		eventUtils  = require('../pushevents/eventUtils'),
-		config      = require('../config/config');
+	var jwt 	    = require('jsonwebtoken');
+	var log 		= require('../services/logger');
+	var err 		= require('../services/err');
+	var eventUtils  = require('../pushevents/eventUtils');
+	var config      = require('../config/config');
+	var tk 	        = require('../services/tk');
 
 	var pusher = require('../services/pusher');
 
 
 	var authenticate = function( audience ){
 
+		var err_ns = "authenticating_user";
+
 		return function( req, res, next ){
-			
-			req.sent.expose = req.sent.expose || {};
-			
-			var token = req.headers && req.headers['x-access-token'] || req.sent.token || req.sent.app_token;
-			
+						
 			if( req.sent.api_key == config.admin_api_key ){
+				log.info("Bypassing the auth middleware (admin api_key provided)");
 				return next();
 			}
-			// if( process.env.APP_ENV == 'dev' && req.sent.env == "dev" ){
-			// 	return next();
-			// }
 
+			var token = req.headers && req.headers['x-access-token']
+			            || req.sent.token
+			            || req.sent.app_token;
+			
 			if( !token ){
-				return eventUtils.raiseError({ res: res,
-					toClient : "You need a valid app token to access this ressource"
+				return err.handleFrontErr( req, res, {
+					message: "You need a valid app token to access this ressource",
+					err_ns: err_ns
 				});
 			}
 
-			console.log('Authenticating [api]');
-
-			var payload;
 			try{
-				payload = jwt.verify( token, config.jwtSecret, { audience: audience });
-			} catch( err ){
-				console.log( err.message );
-				return eventUtils.raiseError({ res: res, err: err,
-					toClient : "Action unauthorized"
+				var payload = jwt.verify( token, config.jwtSecret, {
+					audience: audience
 				});
+
+			} catch( err ){
+				return err.handleFrontErr( req, res, {
+					msg: "Action unauthorized (unable to decode the token)",
+					err_ns: err_ns,
+					err: err
+				});
+
 			}
 			
 			// Important : make sure that the facebook_id used in all api calls via the req.sent object is always
@@ -52,27 +58,6 @@
 		};
 	};	
 
-	var makeToken = function( req, res ){
-
-		var api_key = req.body.api_key;
-		var data    = req.body.data;
-
-		if( api_key != 'meeforever' ){
-			return res.json({
-				err: "Unauthorized - wrong api_key"
-			});
-		}
-
-		if( !data ){
-			return res.json({
-				err: "Unauthorized - didnt provide data upon which to sign to token"
-			});
-		}
-
-		var access_token = eventUtils.generateAppToken( "app", data );
-
-		res.json({ token: access_token }).end();
-	};
 
 	var authPusherChannel = function( req, res ){
 
@@ -101,6 +86,5 @@
 
 	module.exports = {
 		authenticate      : authenticate,
-		makeToken         : makeToken,
 		authPusherChannel : authPusherChannel
 	};

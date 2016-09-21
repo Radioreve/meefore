@@ -2,7 +2,8 @@
 	var eventUtils  = require('../pushevents/eventUtils');
 	var User        = require('../models/UserModel');
 	var _     	    = require('lodash');
-
+	var log 		= require('../middlewares/log');
+	var err 		= require('../services/err');
 
 	function handleErr( req, res, err_ns, err ){
 		return eventUtils.raiseApiError( req, res, err_ns, err );
@@ -10,8 +11,8 @@
 
 	var populateUser = function( options ){
 
-		var err_ns  = "populate_user",
-			options = options || {};
+		var err_ns  = "populate_user";
+		var options = options || {};
 
 		return function( req, res, next ){
 
@@ -22,33 +23,30 @@
 				force_presence = true;
 			}
 
-			var query = {
-				facebook_id: req.sent.facebook_id || req.sent.user_id
-			};
-
-			User.findOne( query, function( err, user ){
+			var facebook_id = req.sent.facebook_id || req.sent.user_id;
+			User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
 				if( err ){
-					return handleErr( req, res, err_ns, {
-						error: err
+					return err.handleBackErr( req, res, {
+						source: "mongo",
+						err_ns: err_ns,
+						err: err
 					});
+
 				}
 
 				if( !user && force_presence ){
-					return handleErr( req, res, err_ns, { error: {
-						'err_id': 'ghost_user',
-						'msg'   : 'The presence of a user in database was necessary for this route. None was found.'
-					}});
-				}
+					return err.handleFrontErr( req, res, {
+						source: "empty",
+						err_ns: err_ns,
+						msg: "Unable to find user with id " + facebook_id + " in database"
+					});
 
-				if( user ){
-					console.log('Populated success, user name is : ' + user.name );
-				} else {
-					console.log('No user was found for id : ' + req.sent.facebook_id );
 				}
 				
 				req.sent.user = user;
-				next();
+
+				log.addContext("user")( req, res, next );
 
 			});
 		};

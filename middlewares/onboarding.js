@@ -4,6 +4,9 @@
 	var config     = require('../config/config');
 	var settings   = require('../config/settings');
 	var eventUtils = require('../pushevents/eventUtils');
+	var log 	   = require('../services/logger');
+	var print 	   = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/onboarding.js' );
+	var err 	   = require('../services/err');
 
 	var handleErr = function( req, res, namespace, err ){
 
@@ -46,7 +49,7 @@
 		});
 
 		if( !update_needed ){
-			console.log('Updating the onboarding unnecessary, user up to date.');
+			print.info( req, 'Updating the onboarding not necessary, user up to date.');
 			return next();
 		}
 

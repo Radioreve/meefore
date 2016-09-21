@@ -1,0 +1,53 @@
+
+body {
+	padding: 10px;
+	font-size: 13px;
+	font-family: inconsolata;
+}
+
+.logs {
+	padding: 20px;
+}
+
+.log-row {
+    cursor: pointer;
+    border-radius: 10px;
+}
+.log-row.x--active .log-preview,
+.log-preview:hover {
+	background: #f7f7f7;
+}
+
+.log-preview {
+    display: flex;
+    padding: 12px;
+    border-radius: 6px;
+
+}
+.log-preview__time {
+    margin-right: 10px;
+    color: #b3b3b3;
+}
+.log-preview__message {
+    margin-right: 10px;
+}
+.log-preview__username,
+.log-preview__id {
+    font-weight: bold;
+    color: #9a21d4;
+}
+
+.log-body {
+	white-space: pre-wrap;
+	font-size: 16px;
+	font-family: inconsolata;
+	padding: 10px 30px;
+	display: none;
+	border-radius: 0px;
+	line-height: 20px;
+	background: #f7f7f7;
+}
+
+.log-row.x--active .log-body {
+	display: block;
+}

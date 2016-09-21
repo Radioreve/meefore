@@ -1,10 +1,13 @@
 	
 	var mdwDir = process.cwd() + '/middlewares';
+
+
 	var mdw = {
 
 		mergify : require( mdwDir + '/mergify'),
 		boolify : require( mdwDir + '/boolify'),
-		expose  : require( mdwDir + '/expose' )
+		expose  : require( mdwDir + '/expose' ),
+		log     : require( mdwDir + '/log' )
 
 	};
 
@@ -34,6 +37,10 @@
 	    app.all('/api/v1/chats/:chat_id*', mdw.mergify.setParam('chat_id') );
 		app.all('/test/api/v1/chats/:chat_id*', mdw.mergify.setParam('chat_id') );
 		app.all('/api/v1/befores/:before_id*', mdw.mergify.setParam('before_id') );
+
+
+		// Make sure all requests are logged with an associated uuid
+		app.all('*', mdw.log.addContext("request") );
 
 
 	}	

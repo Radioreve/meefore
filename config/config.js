@@ -2,6 +2,18 @@
 
 	var config = {
 
+		log_level: {
+			console: {
+				dev    : "info",
+				staged : "info",
+				prod   : "info"
+			},
+			file: {
+				dev    : "warn",
+				staged : "warn",
+				prod   : "warn"
+			}
+		},
 		admins_facebook_id: [
 			'10152931836919063', // Léo
 			'10205618910126551',  // Ben

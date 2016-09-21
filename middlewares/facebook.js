@@ -6,20 +6,11 @@
 	var querystring = require('querystring');
 	var request     = require('request');
 	var _     	    = require('lodash');
-	var term 		= require('terminal-kit').terminal;
-
+	var log         = require('../services/logger');
+	var print 	   = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/facebook.js' );
+	var err 		= require('../services/err');
 	var User        = require('../models/UserModel');
 
-	var handleErr = function( req, res, namespace, err ){
-
-		var params = {
-			error   : err,
-			call_id : req.sent.call_id
-		};
-
-		eventUtils.raiseApiError( req, res, namespace, params );
-
-	};
 
 	var updateFacebookToken = function( req, res, next ){
 		
@@ -41,16 +32,24 @@
 		var remaining_days = moment( expires_at ).diff( moment(), 'd' );
 
 		if( user && remaining_days > settings.facebook.token_lifespan_limit ){
-			term.bold.green('Facebook long lived token doesnt need to be refreshed, remaining_days : ' + remaining_days  + '\n');
+
+			print.info( req, 'Facebook long lived token doesnt need to be refreshed, remaining_days : ' + remaining_days );
 			return next();
 		}
 
 		// Token is 
-		console.log('Updating Facebook token (long_lived)...');
+		print.info( req, 'Updating Facebook token (long_lived)...');
 		fetchLongLivedToken( token, function( err, body ){
-			
+		
+			var err_ns = "updating_facebook_token";
+
 			if( err ){
-				return handleErr( req, res, 'fetching_facebook_long_token', err );
+				return err.handleBackErr( req, res, {
+					source: "facebook",
+					err_ns: err_ns,
+					err: err
+				});
+
 			}	
 
 			// Parse with querystring because response is a querystring, and not JSON
@@ -67,7 +66,8 @@
 				user.facebook_access_token = req.sent.facebook_access_token;
 				user.save(function( err, user ){
 
-					if( err ) term.bold.red("Error saving the long_lived token for the user \n");
+					if( err ) log.warn({ err: err }, "Unable to save the long lived token");
+
 					next();
 
 				});
@@ -133,19 +133,20 @@
 
 	function verifyFacebookCode( code, callback ){
 
-		console.log('Fetching facebook_token with code : ' + code.slice( 0, 15 ) + '......' );
-
+		var err_ns = 'fetching_facebook_long_token';
 		fetchTokenWithCode( code, function( err, body ){
 
 			if( err ){
-				return handleErr( req, res, 'fetching_facebook_long_token', err );
+				return err.handleBackErr( req, res, {
+					source: "facebook",
+					err_ns: err_ns,
+					err: err
+				});
 			}
 
 			// Parse with querystring because response is a querystring, and not JSON
-			var r;
-
 			try {
-				r = JSON.parse( body );
+				var r = JSON.parse( body );
 			} catch( e ){
 				try {
 					r = querystring.parse( body );
@@ -256,7 +257,7 @@
 		var user = req.sent.user;
 
 		if( !user ){
-			console.log('Cant fetch facebook friends, no user object was found');
+			print.info( req, 'Unable to fetch facebook friends, no user object was found');
 			return next();
 		}
 
@@ -266,10 +267,14 @@
 		fetchFacebookFriends( facebook_id, access_token, function( err, res ){
 
 			if( err ){
-				return handleErr( req, res, err_ns, err );
+				return err.handleBackErr( req, res, {
+					source: "facebook",
+					err_ns: err_ns,
+					err: err
+				});
 			}
 
-			console.log('Syncing new friends! Updating...');
+			print.info( req, 'Syncing new friends from Facebook');
 
 			var friends = res.data;
 			var new_friends = [];
@@ -277,7 +282,6 @@
 			friends.forEach(function( f ){
 
 				if( user.friends.indexOf( f.id ) == -1 ){
-					// term.bold.red("[ Notificatons ] Pushing : " + f.id +", not found in : " + user.friends + '\n' );
 					new_friends.push({
 						facebook_name : f.name,
 						facebook_id   : f.id
@@ -292,10 +296,8 @@
 			user.save(function( err, user ){
 
 				if( err ){
-					return handleErr( req, res, err_ns, err );
+					return err.handleMongoErr( req, res, err_ns, err );
 				}
-
-				console.log('...done.');
 
 				next();
 
@@ -311,8 +313,6 @@
 				  + querystring.stringify({
 				  	access_token: access_token
 				  });
-
-		console.log('Requesting friends at url : ' + url );
 
 		request.get( url, function( err, response, body ){
 
@@ -336,8 +336,6 @@
 				  	access_token : access_token,
 				  	fields       : 'name,gender,email,link,locale'
 				  });
-
-		console.log('Requesting friends at url : ' + url );
 
 		request.get( url, function( err, response, body ){
 

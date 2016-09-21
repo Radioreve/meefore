@@ -1,0 +1,84 @@
+
+	<!doctype html>
+	<html lang="en">
+	
+	<head>
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	    <title>Léo Jacquemin | Personnal page</title>
+	    <meta name="author" content="Léo Jacquemin">
+	    <meta name="description" content="Léo Jacquemin's personnal website : work, interests and contact">
+		
+		<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800,300' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Inconsolata:Regular,Bold' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/src/logs/logs.css">
+	
+	    
+	</head>
+	
+	<body>
+		
+		<div class="logs">
+			
+		</div>
+	
+	    <!-- Content goes here -->
+	    
+	
+	    <!-- Footer end -->
+	    <!-- Librairies -->
+	    <script src="/js/lib/lodash/lodash.js"></script>
+	    <script src="/js/lib/jquery/jquery.js"></script>
+	    <script src="/js/lib/moment/moment.min.js"></script>
+	    <!-- Custom scripts -->
+	    <script>
+	    
+	    	$( document ).ready(function(){
+	    		$.ajax({
+	    			url: '/logs.log',
+	    			method: 'get'
+	    		})
+	    		.success(function( res ){
+	    			var json = JSON.parse( "[" + res.split("\n").filter( Boolean ).join(',')  + "]" );
+	    			var arr  = [];
+	    			json.forEach( ( log ) => {
+	    				arr.push([
+
+	    					'<div class="log-row">',
+	    						'<div class="log-preview">',
+	    							'<div class="log-preview__time">',
+	    								moment( log.time ).format('DD/MM HH:mm:ss'),
+	    							'</div>',
+	    							'<div class="log-preview__message">',
+	    								log.msg,
+	    							'</div>',
+	    							log.username ? '<div class="log-preview__username">('+ log.username +')</div>' : '',
+	    							// log.facebook_id ? '<div class="log-preview__id">('+ log.facebook_id +')</div>' : '',
+	    						'</div>',
+	    						'<div class="log-body">',
+	    							JSON.stringify( log, null, 2 ),
+	    						'</div>',
+	    					'</div>'
+
+	    				].join(''));
+	    			});
+	    			$('.logs').html( arr.join('') );
+	    			$('body').scrollTop( $('body').prop("scrollHeight"));
+	    		})
+	    		.error(function( err ){
+	    			$('.logs').html( err );
+	    		});
+
+	    		$('body').on('click', '.log-row', function(){
+	    			$(this).toggleClass('x--active');
+	    		})
+	    	});
+
+	    </script>
+	</body>
+	
+	</html>
+	
+	

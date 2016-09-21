@@ -1,4 +1,6 @@
 	
+	var log    = require( process.cwd() + '/services/logger' );
+	var print  = require( process.cwd() + '/services/print' )( __dirname.replace( process.cwd()+'/', '' ) + '/rd.js' );
 	var config = require('../config/config');
 	var redis  = require('redis')
 
@@ -11,11 +13,11 @@
 	);
 
 	client.on("error", function( err ){
-		console.log('Error connecting to redis : ' + err );
+		print.err('Error connecting to redis : ' + err );
 	});
 
 	client.on("ready", function(){
-		console.log("Connected to Redis");
+		print.info("Connected to Redis");
 	});
 
 	module.exports = client;
