@@ -22,8 +22,8 @@
 	LJ.text_source = _.merge( LJ.text_source || {}, {
 
 		page_title: {
-			"fr": "Des rencontres avant d'aller en soirée",
-			"us": "Meet new people before going out"
+			"fr": "Meefore | soirées & before",
+			"us": "Meefore | party & before"
 		},
 		pikaday: {
 			"us": {
@@ -1131,78 +1131,6 @@
 			       + "<br> Nous t'invitons à retenter ton action plus tard et à nous contacter si l'erreur persiste :/",
 			"us": "Something unexpected happened. <br> This error might be caused by exceptionnal circumstances or simply bug a bug."
 				   + "<br> Please try again later and we thank you in advance to contact us if the problem persists :/"
-		},
-		lp_subtitle: {
-			"fr": "<div class='lp-subpart'>Des rencontres <div class='lp-avant'><span>avant</span><img src='/img/app/avant.png' width='90%' /></div> d'aller en soirée.   " ,
-			"us": "<div class='lp-subpart'>Meeting new people <div class='lp-avant'><span>before</span><img src='/img/app/avant.png' width='90%' /></div> partying.</div>"
-		},
-		lp_subtitle_sub: {
-			"fr": "Participez à des before près de chez vous.",
-			"us": "Join predrink parties around you."
-		},
-		lp_conn_button: {
-			"fr": "Connexion",
-			"us": "Connection"
-		},
-		lp_reason_1_h1: {
-			"fr": "Trouvez votre before",
-			"us": "Find a predrink party"
-		},
-		lp_reason_2_h1: {
-			"fr": "Demandez à participer",
-			"us": "Request to join"
-		},
-		lp_reason_3_h1: {
-			"fr": "Faites connaissance",
-			"us": "Get to know each other"
-		},
-		lp_reason_1_h2: {
-			"fr": "Parcourez et repérez sur la map les before qui s'organisent près de chez vous.",
-			"us": "Go on the map and find all the predrink parties happening around you."
-		},
-		lp_reason_2_h2: {
-			"fr": "Envoyez une demande de participation pour rejoindre le before qui vous ambiance le plus avec au moins un de vos amis.",
-			"us": "Request to join the predrink party that seems to fit you the most with at least one of your friends."
-		},
-		lp_reason_3_h2: {
-			"fr": "Une fois accepté, discutez avec les organisateurs pour préparer votre soirée avant de vous retrouver.",
-			"us": "Once accepted, chat with the hosts to plan your evening before you meet with them."
-		},
-		lp_footer_followus: {
-			"fr": "Nous suivre",
-			"us": "Follow us"
-		},
-		lp_contact_title: {
-			"fr": "Contactez-nous",
-			"us": "Contact us"
-		},
-		lp_contact_name: {
-			"fr": "Nom*",
-			"us": "Name*"
-		},
-		lp_contact_email: {
-			"fr": "Email*",
-			"us": "Email*"
-		},
-		lp_contact_message: {
-			"fr": "Message*",
-			"us": "Message*"
-		},
-		lp_contact_send_success: {
-			"fr": "Ton message a bien été envoyé <br> Merci !",
-			"us": "Your message has been sent <br> Thank you !"
-		},
-		lp_contact_error_fields: {
-			"fr": "Il manque certains champs",
-			"us": "Some fields are missing"
-		},
-		lp_contact_error_email: {
-			"fr": "L'adresse email indiquée semble avoir une petite erreur",
-			"us": "Your email address doesn't look like one "
-		},
-		lp_contact_error_generic: {
-			"fr": "Une erreur s'est produite. Contacte-nous directement à team@meefore.com",
-			"us": "Something wrong happened. Mail us directly at team@meefore.com"
 		},
 		login_loading_msg: {
 			"fr": "Chargement de l'application",

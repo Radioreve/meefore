@@ -9,13 +9,23 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 		"texts": {
 			
 			"landing_h1": {
+				"fr": "Découvre les soirées autour de toi", //<span class='_landing-avant'>l'ambiance</span> ?",
+				"us": "Discover parties around you "// <span class='_landing-avant'>heat</span> ?"
+			},
+			"landing_h2": {
+				"fr": "Meefore geolocalise les soirées Facebook et les before autour de toi",
+				"us": "Meefore geolocalize Facebook events and predrinks around you"
+			},
+
+			"landing_h1a": {
 				"fr": "Des rencontres <span class='landing-avant'>avant</span> d'aller en soirée",
 				"us": "Meet people <span class='landing-avant'>before</span> partying"
 			},
-			"landing_h2": {
+			"landing_h2a": {
 				"fr": "N’attends plus d'être en soirée pour faire de nouvelles rencontres.<br>Connecte-toi et repère chaque jour les before qui s'organisent près de chez toi.",
 				"us": "No longer wait to be at a party to meet new people.<br>Sign up and take part to predrinks organized around you."
 			}
+
 		},
 		"html": [
 			'<div class="landing x--v3">',
@@ -37,14 +47,14 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 					'</div>',
 
 					'<div class="landing-screenshots">',
-						'<div class="landing__screenshot x--1">',
-							'<img data-lid="img_landing_iphone_before" src="/img/landing/iphone_before_tp_'+ LJ.lang.getAppLang() +'.png">',
+						'<div class="landing__screenshot x--3">',
+							'<img data-lid="img_landing_iphone_before" src="/img/landing/iphone_before_'+ LJ.lang.getAppLang() +'.png">',
 						'</div>',
 						'<div class="landing__screenshot x--2">',
-							'<img data-lid="img_landing_iphone_map" src="/img/landing/iphone_chat_tp_'+ LJ.lang.getAppLang() +'.png">',
+							'<img data-lid="img_landing_iphone_map" src="/img/landing/iphone_chat_'+ LJ.lang.getAppLang() +'.png">',
 						'</div>',
-						'<div class="landing__screenshot x--3">',
-							'<img data-lid="img_landing_iphone_chat" src="/img/landing/iphone_map_tp_'+ LJ.lang.getAppLang() +'.png">',
+						'<div class="landing__screenshot x--1">',
+							'<img data-lid="img_landing_iphone_chat" src="/img/landing/iphone_map_'+ LJ.lang.getAppLang() +'.png">',
 						'</div>',
 					'</div>',
 
@@ -63,9 +73,9 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 		run: function(){
 
 			if( LJ.isMobileMode( 700 ) ){
-				$('.landing-connexion').addClass('x--fire');
+				$('.landing-connexion').addClass('x--neutral');
 			} else {
-				$('.landing-connexion').addClass('x--bald');
+				$('.landing-connexion').addClass('x--neutral');
 			}
 			
 			LJ.ui.deactivateHtmlScroll();
