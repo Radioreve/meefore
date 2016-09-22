@@ -3,6 +3,8 @@
 
 		activateLanding: function( landing_version ){
 
+			LJ.landing.landing_version = landing_version;
+			
 			$('<link rel="stylesheet" href="/css/src/landing/landing_v'+ landing_version +'.css">').appendTo('head');
 			$.getScript('js/src/landing/landing_v'+ landing_version +'.js', function(){
 			

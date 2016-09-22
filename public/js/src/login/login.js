@@ -20,7 +20,16 @@
 	            }
 
 				return LJ.promise(function( resolve, reject ){
-					LJ.ui.$body.on('click', '.js-login', resolve );
+					LJ.ui.$body.on('click', '.js-login', function(){
+
+						fbq('track', 'CompleteRegistration', {
+							content_type: 'Subscription',
+							content_name: 'Landing v' + LJ.landing.landing_version
+						});
+
+						resolve();
+
+					});
 				});
 
 
