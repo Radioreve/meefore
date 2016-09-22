@@ -5,6 +5,7 @@
 	var User       = require('../models/UserModel');
 	var Message    = require('../models/MessageModel');
 	var rd		   = require('../services/rd');
+	var erh		   = require('../services/err');
 	var moment     = require('moment');
 	var async 	   = require('async');
 	var settings   = require('../config/settings');
@@ -23,7 +24,7 @@
 
 			rd.sadd( seen_by_ns, facebook_id, function( err ){
 
-				if( err){
+				if( err ){
 					return callback( err );
 				}
 
@@ -59,6 +60,8 @@
 
 		resetSeenBy( chat_id, facebook_id, function( err ){
 
+			if( err ) return erh.handleRedisErr( req, res, err_ns, err );
+
 			req.sent.sent_at = new Date();
 			req.sent.seen_by = [ facebook_id ];
 
@@ -74,7 +77,7 @@
 			var message = new Message( data );
 			message.save(function( err ){
 
-				if( err ) return handleErr( req, res, err_ns, err );
+				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
 
 				req.sent.expose.response = "Message sent successfully";
 				next();
@@ -125,15 +128,11 @@
 
 		getSeenBy( chat_id, function( err, seen_by ){
 
-			if( err ){
-				return handleErr( req, res, err_ns, err );
-			}
+			if( err ) return erh.handleRedisErr( req, res, err_ns, err );
 
 			fetchChatMessagesByDate( chat_id, req.sent, function( err, messages ){
 
-				if( err ){
-					return handleErr( req, res, err_ns, err );
-				};
+				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
 
 				req.sent.expose.messages = messages;
 				req.sent.expose.seen_by  = seen_by;
@@ -148,6 +147,8 @@
 
 	var setSeenBy = function( req, res, next ){
 
+		var err_ns    = "chat_set_seen_by";
+
 		var chat_id   = req.sent.chat_id;
 		var before_id = req.sent.before_id;
 
@@ -156,6 +157,8 @@
 		// Set & Get the updated set
 		rd.sadd( seen_by_ns, req.sent.name, function( err ){
 			rd.smembers( seen_by_ns, function( err, seen_by ){
+
+				if( err ) return erh.handleRedisErr( req, res, err_ns, err );
 
 				var data = {
 					chat_id   : chat_id,
@@ -180,6 +183,7 @@
 	var setMessageSeenBy = function( req, res, next ){
 
 		var err_ns      = "set_message_seen_by";
+
 		var chat_id     = req.sent.chat_id;
 		var facebook_id = req.sent.facebook_id;
 
@@ -195,7 +199,12 @@
 		}, function( err, raw ){
 
 			if( err ){
-				term.red.bold("Error saving seen_by for user : " + facebook_id + '\n');
+				return erh.handleBackErr( req, res, {
+					end_request: false,
+					source: "mongo",
+					err_ns: err_ns,
+					err: err
+				});
 			}
 
 		});

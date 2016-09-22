@@ -3,11 +3,8 @@
 	var User        = require('../models/UserModel');
 	var _     	    = require('lodash');
 	var log 		= require('../middlewares/log');
-	var err 		= require('../services/err');
+	var erh 		= require('../services/err');
 
-	function handleErr( req, res, err_ns, err ){
-		return eventUtils.raiseApiError( req, res, err_ns, err );
-	};
 
 	var populateUser = function( options ){
 
@@ -27,7 +24,7 @@
 			User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
 				if( err ){
-					return err.handleBackErr( req, res, {
+					return erh.handleBackErr( req, res, {
 						source: "mongo",
 						err_ns: err_ns,
 						err: err
@@ -36,7 +33,7 @@
 				}
 
 				if( !user && force_presence ){
-					return err.handleFrontErr( req, res, {
+					return erh.handleFrontErr( req, res, {
 						source: "empty",
 						err_ns: err_ns,
 						msg: "Unable to find user with id " + facebook_id + " in database"

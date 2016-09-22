@@ -323,8 +323,8 @@
 
 	Mailchimp.prototype.errLog = function( message ){
 
-		if( this.log && typeof this.log.err == "function" ){
-			return this.log.err( message );
+		if( this.log && typeof this.log.error == "function" ){
+			return this.log.error( message );
 		}
 
 		term('[ ') + term.bold.red('Mailchimp') + term(' ]') + term(' -> ') + term( JSON.stringify(message, null, 4) )  + term('\n');

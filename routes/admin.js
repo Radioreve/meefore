@@ -1,7 +1,7 @@
 	
 	var config      = require( '../config/config' );
 	var Alerter 	= require( '../middlewares/alerter' );
-	var err         = require('../services/err' );
+	var erh         = require('../services/err' );
 
 	var apiDir      = '../api';
 	var jobsDir     = '../jobs';
@@ -30,7 +30,7 @@
 		 app.all('/admin/*',
 	    	function( req, res, next ){
 	    		if( req.sent.api_key != config.admin_api_key ){
-	    			return err.handleBackErr( req, res, {
+	    			return erh.handleBackErr( req, res, {
 	    				msg: "Acces denied",
 	    				status: 403
 	    			})

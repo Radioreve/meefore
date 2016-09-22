@@ -1,7 +1,7 @@
 
 	var jwt 	    = require('jsonwebtoken');
 	var log 		= require('../services/logger');
-	var err 		= require('../services/err');
+	var erh 		= require('../services/err');
 	var eventUtils  = require('../pushevents/eventUtils');
 	var config      = require('../config/config');
 	var tk 	        = require('../services/tk');
@@ -25,7 +25,7 @@
 			            || req.sent.app_token;
 			
 			if( !token ){
-				return err.handleFrontErr( req, res, {
+				return erh.handleFrontErr( req, res, {
 					message: "You need a valid app token to access this ressource",
 					err_ns: err_ns
 				});
@@ -37,7 +37,7 @@
 				});
 
 			} catch( err ){
-				return err.handleFrontErr( req, res, {
+				return erh.handleFrontErr( req, res, {
 					msg: "Action unauthorized (unable to decode the token)",
 					err_ns: err_ns,
 					err: err

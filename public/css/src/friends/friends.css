@@ -139,26 +139,34 @@
     flex-flow: column;
     justify-content: center;
     align-items: center;
-    margin: 20px auto 0;
-    width: 310px;
+    margin: 20px auto 0px;
     text-align: center;
+    width: 70%;
+}
+
+.no-friends__icon {
+    color: #eee;
+    font-size: 100px;
 }
 
 .no-friends span {
-    font-weight: 600;
-    color: #D55D8C;
     font-size: 12px;
+    order: 0;
+    color: #ccc;
+    line-height: 18px;
 }
 
 .no-friends button {
-    width: 100%;
-    height: 50px;
-    background: #3b5998!important;
+    width: 160px;
+    height: 34px;
+    background: white!important;
     border: none!important;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bolder;
     margin-top: 12px;
+    border-radius: 100px;
+    color: #f7425c!important;
 }
 
 .invite-friends-popup {

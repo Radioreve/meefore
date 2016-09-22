@@ -3,8 +3,10 @@
 	var User       = require('../models/UserModel');
 	var config     = require('../config/config');
 	var Alerter    = require('./alerter');
+	var Promise    = require('bluebird');
 	var _          = require('lodash');
 	var log 	   = require('../services/logger');
+	var erh 	   = require('../services/mc');
 	var print 	   = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/mailchimp.js' );
 
 	// Mailchimp interface
@@ -13,15 +15,14 @@
 	// var Mailchimp = new MC( config.mailchimp );
 
 
-	var handleErr = function( err, err_ns ){
-
-		print.err( req, { err: err, err_ns: err_ns }, "Error in the Mailchimp middleware");
-
-		Alerter.sendAdminEmail({
-			subject : "Error in the mailchimp middleware ("+ err_ns +")",
-			html    : err
+	var handleChimpErr = function( err_ns, err ){
+		return erh.handleBackErr( null, null, {
+			err_ns: err_ns,
+			msg: message,
+			source: mailchimp,
+			end_request: false
 		});
-	};
+	}
 
 	var api = function( action ){
 
@@ -32,22 +33,34 @@
 			next();
 
 			if( req.sent.user && req.sent.user.isBot() ){
-				print.info( req, 'Skipping the mailchimp update... (bearly)');
-				return next();
+				return; print.info( req, 'Skipping the mailchimp update... (bearly)');
 			}
 
-			if( action == "ensure_subscription" ){
-				ensureSubscription( req );
-			}
+			return Promise.resolve()
+				.then(function(){
 
-			if( action == "update_member" ){
-				updateMember( req );
-			}
+					if( action == "ensure_subscription" ){
+						return ensureSubscription( req );
+					}
 
-			if( action == "delete_member"){
-				deleteMember( req );
-			}
+					if( action == "update_member" ){
+						return updateMember( req );
+					}
 
+					if( action == "delete_member"){
+						return deleteMember( req );
+					}
+
+				})
+				.catch(function( err ){
+					erh.handleBackErr({
+						err: err,
+						err_ns: action,
+						end_request: false,
+						source: err.source || "mailchimp",
+						msg: "Something went wrong in the mailchimp middleware"
+					});
+				});
 		}
 	}
 
@@ -65,11 +78,11 @@
 		}
 
 		print.info( req, "User has no mailchimp_id and a valid email, subscribing now.");
-		Mailchimp.createMember({ email_address: user.contact_email })
+		return Mailchimp.createMember({ email_address: user.contact_email })
 			.then(function( member ){
 
 				print.info( req, { mailchimp_id: member.id }, "Mailchimp's member created");
-				User.findOneAndUpdate(
+				return User.findOneAndUpdate(
 					{
 						facebook_id: user.facebook_id
 					},
@@ -78,25 +91,25 @@
 					},
 					function( err, user ){
 
-						if( err ){
-							handleErr( req, err, err_ns );
+						if( err ) throw { err: err, source: "mongo", err_ns: err_ns }
 
-						} else {
+						// Update the req.sent to prevent an infinite subscribe/update loop
+						req.sent.user = user;
 
-							// Update the req.sent to prevent an infinite subscribe/update loop
-							req.sent.user = user;
+						print.info( req, "Member have been successfully subscribed");
 
-							print.info( req, "Member have been successfully subscribed");
-							Mailchimp.updateMember( req )
-								.then(function(){
-									print.info( req, "Member have been successfully patched");
-								});
+						return Mailchimp.updateMember( req )
+							.then(function(){
+								print.info( req, "Member have been successfully patched");
+							});
+							// Do nothing, the proper error handling is already taken care of
+							// inside the update member fonction, propagated either as a mongo err
+							// or a mailchimp err
+							
 
-						}
+						
 
 					});
-
-				return;
 
 			});
 			
@@ -154,16 +167,17 @@
 
 		print.debug( req, patch );
 		
-		Mailchimp.updateMember( user.mailchimp_id, patch )
+		return Mailchimp.updateMember( user.mailchimp_id, patch )
 			.then(function( member ){
+
 				print.info( req, { mailchimp_id: member.id, email: member.email_address }, "Member has been patched successfully");
 				user.mailchimp_id = member.id;
-				user.save(function( err ){
-					if( err ) handleErr( req, err, err_ns );
+
+				return user.save(function( err ){
+					if( err ) throw { err: err, source: "mongo" }
+					
 				});
-			})
-			.catch(function( err ){
-				handleErr( req, err, err_ns );
+
 			});
 
 
@@ -178,12 +192,9 @@
 			return print.info( req, 'No mailchimp_id field, nothing to delete');
 		}
 
-		Mailchimp.deleteMember( user.mailchimp_id )
+		return Mailchimp.deleteMember( user.mailchimp_id )
 			.then(function(){
 				print.info( req, "Member have been removed from Mailchimp successfully");
-			})
-			.catch(function( err ){
-				handleErr( req, req,err, err_ns );
 			});
 
 	};

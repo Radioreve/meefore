@@ -10,7 +10,7 @@
 	var async 	   = require('async');
 	var log 	   = require('../services/logger');
 	var print 	   = require('../services/print')('(Realtime)');
-	var err 	   = require('../services/err');
+	var erh 	   = require('../services/err');
 
 
 	function handlePusherErr( err, req, res ){

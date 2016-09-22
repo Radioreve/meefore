@@ -49,7 +49,7 @@
 		fetchFacebookFriends: function(){
 
 			var friend_ids = LJ.user.friends;
-			return LJ.api.fetchUsersFull( friend_ids )
+			return LJ.api.fetchUsers( friend_ids )
 
 				.then(function( fetched_friends ){
 					fetched_friends = _.map( fetched_friends, 'user' );
@@ -304,11 +304,14 @@
 			return LJ.ui.render([
 
 				'<div class="no-friends">',
+					'<div class="no-friends__icon">',
+						'<i class="icon icon-users"></i>',
+					'</div>',
 					'<span data-lid="modal_no_friends_text"></span>',
 					'<button class="js-invite-friends" data-lid="modal_no_friends_btn"></button>',
 				'</div>'
 
-			].join(''));
+			]);
 
 		},
 		renderFriendInModal: function( f ){

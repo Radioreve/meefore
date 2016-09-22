@@ -1685,9 +1685,9 @@
 		},
 		settings_modal_delete_subtitle: {
 			"fr": "En supprimant ton compte, toutes les données te concernant seront supprimées de nos serveurs."
-				  + "<br><br><b>Attention, cette opération est irréversible.</b>",
+				  + "<br><br><b> Attention, cette opération est irréversible.</b>",
 			"us": "By deleting your account, every data about you will be deleted from our servers."
-				  + "<br><br><b>Careful, this cannot be undone.</b>"
+				  + "<br><br><b> Careful, this cannot be undone.</b>"
 		},
 		settings_modal_delete_button_confirm: {
 			"fr": "Supprimer mon compte",
@@ -1948,8 +1948,8 @@
 			"us": "Invite your friends"
 		},
 		modal_no_friends_text: {
-			"fr": "Il faut être au moins 2 pour effectuer cette action",
-			"us": "You need to be at least two to perform this action"
+			"fr": "Invite tes amis à Facebook à te rejoindre pour effectuer cette action à plusieurs",
+			"us": "Invite your friends to join you and perform this action with several people"
 		},
 		be_request_already_there: {
 			"fr": "a déjà envoyé un Cheers",

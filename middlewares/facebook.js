@@ -8,7 +8,7 @@
 	var _     	    = require('lodash');
 	var log         = require('../services/logger');
 	var print 	   = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/facebook.js' );
-	var err 		= require('../services/err');
+	var erh 		= require('../services/err');
 	var User        = require('../models/UserModel');
 
 
@@ -44,7 +44,7 @@
 			var err_ns = "updating_facebook_token";
 
 			if( err ){
-				return err.handleBackErr( req, res, {
+				return erh.handleBackErr( req, res, {
 					source: "facebook",
 					err_ns: err_ns,
 					err: err
@@ -136,13 +136,7 @@
 		var err_ns = 'fetching_facebook_long_token';
 		fetchTokenWithCode( code, function( err, body ){
 
-			if( err ){
-				return err.handleBackErr( req, res, {
-					source: "facebook",
-					err_ns: err_ns,
-					err: err
-				});
-			}
+			if( err ) return callback( err );
 
 			// Parse with querystring because response is a querystring, and not JSON
 			try {
@@ -267,7 +261,7 @@
 		fetchFacebookFriends( facebook_id, access_token, function( err, res ){
 
 			if( err ){
-				return err.handleBackErr( req, res, {
+				return erh.handleBackErr( req, res, {
 					source: "facebook",
 					err_ns: err_ns,
 					err: err
@@ -296,7 +290,7 @@
 			user.save(function( err, user ){
 
 				if( err ){
-					return err.handleMongoErr( req, res, err_ns, err );
+					return erh.handleMongoErr( req, res, err_ns, err );
 				}
 
 				next();

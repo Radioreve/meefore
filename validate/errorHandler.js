@@ -1,7 +1,7 @@
 	
 	var _   = require('lodash');
 	var log = require( process.cwd() + '/services/logger' );
-	var err = require( process.cwd() + '/services/err' );
+	var erh = require( process.cwd() + '/services/err' );
 
 	var handle = function( req, res, next ){
 
@@ -11,7 +11,7 @@
 
 		} else {
 
-			res.handleFrontErr( req, res, {
+			erh.handleFrontErr( req, res, {
 				status: 403,
 				source: "client",
 				err_ns: req.err_ns,

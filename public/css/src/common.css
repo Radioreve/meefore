@@ -1316,13 +1316,6 @@ button:hover .icon-meedrink {
     border: 4px solid;
 }
 
-.modal.x--share button,
-.modal.x--be-create button,
-.modal.x--request button {
-    background: #1a59c3;
-    color: white;
-    border: 4px solid #1a59c3;
-}
 
 .modal button.x--bombed {
     width: 200px;
@@ -1332,6 +1325,7 @@ button:hover .icon-meedrink {
     background: linear-gradient(45deg,#fe685c, #ed105d);
     border: #f84b5c;
     border-radius: 100px;
+    color: white;
 }
 
 .modal.x--logout button {

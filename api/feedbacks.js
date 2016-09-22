@@ -5,18 +5,8 @@
 	var settings   = require('../config/settings');
 	var eventUtils = require('../pushevents/eventUtils');
 	var moment	   = require('moment');
+	var erh 	   = require('../services/err');
 
-
-	var handleErr = function( req, res, namespace, err ){
-
-		var params = {
-			error   : err,
-			call_id : req.sent.call_id
-		};
-
-		eventUtils.raiseApiError( req, res, namespace, params );
-
-	};
 
 	var createFeedback = function( req, res, next ){
 
@@ -32,7 +22,7 @@
 		var new_feedback = new Feedback( feedback_data );
 		new_feedback.save(function( err, new_feedback ){
 
-			if( err ) return handleErr( req, res, err_ns, err );
+			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
 
 			req.sent.expose.feedback = new_feedback;
 			next();

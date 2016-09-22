@@ -1,41 +1,37 @@
 
 	var _     	   = require('lodash');
 	var rd     	   = require('../services//rd');
+	var print      = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/connecter.js' );
+	var erh 	   = require('../services/err');
 	var User   	   = require('../models/UserModel');
 	var config 	   = require('../config/config');
 	var Promise    = require('bluebird');
 	var eventUtils = require('../pushevents/eventUtils');
 
 
-	var handleErr = function( req, res, namespace, err ){
-
-		var params = {
-			error   : err,
-			call_id : req.sent.call_id
-		};
-
-		eventUtils.raiseApiError( req, res, namespace, params );
-
-	};
-
-
 	var updateConnectedUsers = function( req, res, next ){
 
 		//expected key : e0e801db688ab26d8581
 
+		var err_ns = "updating_connected_users";
+
 		var evts = req.sent.events;
 
 		if( !evts ){
-			return res.status( 400 ).json({
-				err: "Request malformed, need to have an 'events' object of type collection"
+			return erh.handleBackErr( req, res, {
+				source: "pusher",
+				err_ns: err_ns,
+				msg: "Request malformed, need to have an 'events' object of type collection"
 			});
 		}
 
 		// Check if proper call from pusher
 		if( req.headers['x-pusher-key'] != config.pusher[ process.env.APP_ENV ].key ){
-			console.log('Wrong Pusher Key');
-			return res.status( 400 ).json({
-				err: "Request failed, wrong api key"
+			return erh.handleBackErr( req, res, {
+				source: "pusher",
+				err_ns: err_ns,
+				err_id: "wrong_api_key",
+				msg: "The api key contained in the header x-pusher-key did not match the expected app key"
 			});
 		}
 
@@ -57,12 +53,16 @@
 		});
 
 		if( !webhook_event ){
-			return res.status( 400 ).json({
-				err: "Request failed, couldn't find webhook_event"
+			return erh.handleBackErr( req, res, {
+				source: "pusher",
+				err_ns: err_ns,
+				msg: "Request failed, couldn't find webhook_event"
 			});
+
 		}
 
 		if( !facebook_id ){
+			print.warn("The facebook_id wasnt find, unable to add to connected users list");
 			return res.status( 200 ).end();
 		}
 
@@ -70,6 +70,8 @@
 		if( webhook_event == 'channel_occupied' ){
 
 			rd.sadd('online_users', facebook_id, function( err ){
+
+				if( err ) return erh.handleRedisErr( res, res, err_ns, err );
 
 				res.status( 200 ).json({
 					msg: "Update success"
@@ -86,21 +88,15 @@
 			}, {
 				'disconnected_at': new Date()
 			}, { new: true }, function( err ){
-				if( err ){
 
-					console.log('Error saving disconnected_at property : ' + err );
-					res.status( 400 ).json({
-						msg: "Update failed", err: err
-					});
+				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
 
-				} else {
+				log.info("Update success, user 'disconnected_at' property updated.");
+				res.status( 200 ).json({
+					msg: "Request has completes successfully"
+				});
 
-					console.log("Update success, user 'disconnected_at' property updated.");
-					res.status( 200 ).json({
-						msg: "Update success, user 'disconnected_at' property updated."
-					});
-
-				}
+				
 			});
 		}
 
@@ -130,7 +126,7 @@
 
 		rd.smembers('online_users', function( err, response ){
 
-			if( err ) return handleErr( req, res, err_ns, err );
+			if( err ) return erh.handleRedisErr( req, res, err_ns, err );
 
 			req.sent.online_users = response;
 			next();

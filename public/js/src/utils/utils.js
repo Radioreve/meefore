@@ -170,6 +170,14 @@ window.LJ = _.merge( window.LJ || {}, {
 
         var user = user || LJ.user;
 
+        // Legacy interface
+        if( user.img_id && user.img_vs ){
+            return {
+                img_id: user.img_id,
+                img_version: user.img_vs
+            }
+        }
+
         return _.find( user.pictures, function( p ){
             return p.is_main;
         });

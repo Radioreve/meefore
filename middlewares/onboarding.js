@@ -6,7 +6,7 @@
 	var eventUtils = require('../pushevents/eventUtils');
 	var log 	   = require('../services/logger');
 	var print 	   = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/onboarding.js' );
-	var err 	   = require('../services/err');
+	var erh 	   = require('../services/err');
 
 	var handleErr = function( req, res, namespace, err ){
 

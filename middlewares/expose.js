@@ -1,7 +1,7 @@
 
 	var log   = require('../services/logger');
 	var print = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/expose.js' )
-	var err   = require('../services/err'); 
+	var erh   = require('../services/err'); 
 	var _     = require('lodash');
 
 
@@ -13,7 +13,7 @@
 
 		if( !expose || _.keys( expose ).length == 0 ){
 
-			err.handleFrontErr( req, res, {
+			erh.handleFrontErr( req, res, {
 				msg: "The requested url did not match any route (ressource not found)",
 				err_ns: "sending_response",
 				source: "route",

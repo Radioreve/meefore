@@ -12,14 +12,14 @@
 	var moment          = require('moment');
 	var log             = require('../services/logger');
 	var print 		    = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/alerter.js' );
-	var err             = require('../services/err');
+	var erh             = require('../services/err');
 
 
 	function handleErr( err, err_ns ){
 
 		err_ns = err_ns || "alerter";
 
-		log.err({ err: err, err_ns: err_ns }, 'Alerter | Error sending email');
+		log.error({ err: err, err_ns: err_ns }, 'Alerter | Error sending email');
 
 	}
 

@@ -5,7 +5,7 @@
 	var _      = require('lodash');
 	var rg     = require('../../config/regex');
 	var fb     = require('../../middlewares/facebook');
-	var log    = require('../../services/logger');
+	var print  = require('../../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/validate-auth-facebook.js' );
 
 	function check( req, res, next ){
 
@@ -58,7 +58,7 @@
 			});
 		}
 
-		log.info({ token: token.slice( 0, 10 ) + '...' }, 'Verifying facebook token' );
+		print.info( req, { token: token.slice( 0, 10 ) + '...' }, 'Verifying facebook token' );
 		fb.verifyFacebookToken( token, function( err, res ){
 
 			if( err ){

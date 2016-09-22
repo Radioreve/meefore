@@ -2,7 +2,7 @@
 	var _              = require('lodash');
 	var log 		   = require('../services/logger');
 	var print 		   = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/befores.js' );
-	var err 		   = require('../services/err');
+	var erh 		   = require('../services/err');
 	var eventUtils     = require('../pushevents/eventUtils');
 	var User           = require('../models/UserModel');
 	var Before         = require('../models/BeforeModel');
@@ -10,24 +10,6 @@
 
 	var mongoose = require('mongoose');
 	var pusher   = require('../services/pusher');
-
-
-	var handleErr = function( req, res, namespace, err ){
-
-		var params = {
-			error   : err,
-			call_id : req.sent.call_id
-		};
-
-		eventUtils.raiseApiError( req, res, namespace, params );
-
-	};
-
-	var handleErrAsync = function( namespace, err ){
-
-		console.log( err );
-
-	};
 
 
 	var createBefore = function( req, res, next ) {
@@ -60,7 +42,7 @@
 
 	    new_before.save(function( err, new_before ){
 
-	    	if( err ) return handleErr( req, res, err_ns, err );
+	    	if( err ) return erh.handleMongoErr( req, res, err_ns, err );
 
 	    	var before_id = new_before._id;
 
@@ -73,10 +55,10 @@
 				function( err, users ){
 
 					if( err ){
-						return eventUtils.raiseError({ err: err, res: res, toClient: "Error updating users"});
+						return erh.handleMongoErr( req, res, err_ns, err );
 					}
 
-			    	console.log('Before created!');
+			    	print.info( req, 'Before has been created created!');
 			    	
 			    	req.sent.before 		    = new_before;
 			    	req.sent.expose.before      = new_before;
@@ -115,7 +97,7 @@
 		// Used right after to make channel_item
 		req.sent.group = group_item;
 
-		console.log('Requesting in with before_id = ' + before_id );
+		print.info( req, 'Requesting in with before_id = ' + before_id );
 
 		Before.findByIdAndUpdate( before_id, {
 			$push: {
@@ -123,9 +105,7 @@
 			}
 		},{ new: true }, function( err, bfr ){
 
-			if( err ){
-				return handleErr( req, res, err_ns, err );
-			}
+			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
 
 			var before_item = User.makeBeforeItem__Member( bfr );
 
@@ -136,9 +116,7 @@
 					{ multi: true, new: true },
 					function( w ){
 
-						if( err ){
-							return handleErr( req, res, err_ns, err );
-						}
+						if( err ) return erh.handleMongoErr( req, res, err_ns, err );
 						
 						req.sent.before      = bfr;
 						req.sent.before_item = before_item;
@@ -156,12 +134,12 @@
 		var status    = req.sent.status;
 		var before_id = req.sent.before_id;
 
-		console.log('Changing event status, new status : ' + status + ' for event: ' + before_id );
+		print.info( req, 'Changing event status, new status : ' + status + ' for event: ' + before_id );
 
 		before.status = status;
 		before.save(function( err, before ){
 
-			if( err ) return handleErr( req, res, err_ns, err );
+			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
 
 			req.sent.expose.before = before;
 			next();
@@ -185,9 +163,14 @@
 				};
 
 				User.update( query, update, options, function( err, res ){
-					if( err ){
-						console.log('Cant remove canceled befores from users collection : ' + err );
-					}
+						
+						erh.handleBackErr( req, res, {
+							end_request: false,
+							source: "mongo",
+							err_ns: err_ns,
+							err: err
+						});
+
 				});
 
 			}
@@ -207,7 +190,7 @@
 		var status = req.sent.status;
 		var group  = req.sent.group;
 
-		console.log('Changing group status, new status : ' + status );
+		print.info( req, 'Changing group status, new status : ' + status );
 		req.sent.accepted_at = new Date();
 
 		group.status      = status;
@@ -216,7 +199,14 @@
 		before.markModified('groups');
 		before.save(function( err, bfr ){
 
-			if( err ) return handleErrAsync( err_ns, err );
+			if( err ){
+				return erh.handleBackErr( req, res, {
+					end_request: false,
+					err_ns: err_ns,
+					source: "mongo",
+					err: err
+				});
+			}
 
 		});
 
@@ -233,7 +223,14 @@
 		},
 		function( err, raw ){
 
-			if( err ) return handleErrAsync( err_ns, err );
+			if( err ){
+				return erh.handleBackErr( req, res, {
+					end_request: false,
+					err_ns: err_ns,
+					source: "mongo",
+					err: err
+				});
+			}
 
 		});
 
@@ -245,11 +242,11 @@
 		var err_ns   = "fetching_one_before";
 		var before_id = req.sent.before_id;
 
-		console.log('Requesting event by id : ' + before_id	);
+		print.info( req, { before_id: before_id }, 'Requesting event by id : ' + before_id );
 
 		Before.findById( before_id, function( err, bfr ){
 
-			if( err ) return handleErr( req, res, err_ns, err );
+			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
 
 			if( !bfr ){
 				req.sent.expose.message = "The ressource (before) couldnt be found (no entry)";
@@ -304,7 +301,7 @@
 			maxDistance   : maxDistance
 		}
 
-		req.log.debug({ '$geoNear': geonear_opts }, "Geonear options that are passed to mongodb" );
+		print.debug( req, { '$geoNear': geonear_opts }, "Geonear options that are passed to mongodb" );
 
 		// When near is GeoJSON type, the maxDistance is express in 'meters' !
 		// No need to convert with the earth radius
@@ -320,7 +317,7 @@
 		],
 		function( err, response ){
 
-			if( err ) return handleErr( req, res, err_ns, err );
+			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
 
 			response.forEach(function( bfr ){
 				delete bfr.groups;
