@@ -7,6 +7,10 @@
     position: relative;
 }
 
+.app-section.x--map canvas {
+    outline: none;
+}
+
 .js-map-wrap {
     height: 100%;
     width: 100%;
