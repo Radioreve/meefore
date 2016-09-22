@@ -40,10 +40,10 @@
 			{
 				stream : process.stdout,
 				level  : config.log_level.console.APP_ENV
-			},
-			{
-				path: process.cwd() + '/json/logs.log'
 			}
+			// {
+			// 	// path: process.cwd() + '/json/logs.log'
+			// }
 		]
 
 

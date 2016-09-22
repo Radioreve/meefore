@@ -303,14 +303,14 @@
         display: none;
     }
     .onb-welcome {
-        border-radius: 0;
-        padding: 0;
+        border-radius: 0!important;
+        padding: 0!important;
     }
     .onb-welcome-body {
-        border-radius: 0;
+        border-radius: 0!important;
     }
     .onb-welcome__title span {
-        font-size: 26px;
+        font-size: 26px!important;
     }
     .onb-welcome__subtitle span {
         line-height: 24px;

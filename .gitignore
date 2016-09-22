@@ -2,3 +2,4 @@
 /json/*
 /public/dist/*
 thoughts.rm
+json/*.log
