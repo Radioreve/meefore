@@ -91,7 +91,7 @@
 
 				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
 
-				log.info("Update success, user 'disconnected_at' property updated.");
+				print.info( req, "Update success, user 'disconnected_at' property updated.");
 				res.status( 200 ).json({
 					msg: "Request has completes successfully"
 				});

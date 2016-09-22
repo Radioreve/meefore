@@ -493,7 +493,7 @@
             LJ.map.deactivateMarker();
             LJ.map.getMarkerDom( marker_id )
                 .css({ "transform": "translate(-50%,-50%) scale(1.45)" })
-                .parent().css({ "z-index": "10" })
+                .closest('.marker-wrapper').css({ "z-index": "10" })
                 // .velocity( "grounceIn", {
                 //     duration : 600,
                 //     display  : 'flex'
@@ -511,7 +511,7 @@
             
             $active_marker
                 .css({ "transform": "translate(-50%,-50%)" })
-                .parent().css({ "z-index": "1" })
+                .closest('.marker-wrapper').css({ "z-index": "1" })
 
             LJ.map.setActiveMarker( null );
 
@@ -1185,7 +1185,7 @@
             var marker_id = $s.attr('data-marker-id');
 
             LJ.map.getMarkerDom( marker_id )
-                .parent()
+                .closest('.marker-wrapper')
                 .css({ "z-index": ++LJ.map.current_z_index })
 
         },
