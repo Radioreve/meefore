@@ -1,6 +1,7 @@
 
-	var nv  = require('node-validator');
-	var _   = require('lodash');
+	var nv    = require('node-validator');
+	var _     = require('lodash');
+	var print = require('../../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/validate-before-nearest.js' );
 
 	var checkLatLng = nv.isAnyObject()
 

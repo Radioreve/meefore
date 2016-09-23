@@ -8,16 +8,6 @@
 	var print 	   = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/onboarding.js' );
 	var erh 	   = require('../services/err');
 
-	var handleErr = function( req, res, namespace, err ){
-
-		var params = {
-			error   : err,
-			call_id : req.sent.call_id
-		};
-
-		eventUtils.raiseApiError( req, res, namespace, params );
-
-	};
 
 	// This checks if any new onboarding content has been defined that the user isnt aware of
 	// The list of current onboarding is settings.js. It's the clients responsability to implement
@@ -56,7 +46,7 @@
 		user.markModified('onboarding');
 		user.save(function( err, user ){
 
-			if( err ) return handleErr( req, res, err, err_ns );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			req.sent.expose.user = user;
 			next();

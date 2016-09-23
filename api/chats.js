@@ -60,7 +60,7 @@
 
 		resetSeenBy( chat_id, facebook_id, function( err ){
 
-			if( err ) return erh.handleRedisErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "redis" );
 
 			req.sent.sent_at = new Date();
 			req.sent.seen_by = [ facebook_id ];
@@ -77,7 +77,7 @@
 			var message = new Message( data );
 			message.save(function( err ){
 
-				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				req.sent.expose.response = "Message sent successfully";
 				next();
@@ -128,11 +128,11 @@
 
 		getSeenBy( chat_id, function( err, seen_by ){
 
-			if( err ) return erh.handleRedisErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "redis" );
 
 			fetchChatMessagesByDate( chat_id, req.sent, function( err, messages ){
 
-				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				req.sent.expose.messages = messages;
 				req.sent.expose.seen_by  = seen_by;
@@ -158,7 +158,7 @@
 		rd.sadd( seen_by_ns, req.sent.name, function( err ){
 			rd.smembers( seen_by_ns, function( err, seen_by ){
 
-				if( err ) return erh.handleRedisErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "redis" );
 
 				var data = {
 					chat_id   : chat_id,

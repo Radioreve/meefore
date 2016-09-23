@@ -1,31 +1,25 @@
 
-	var eventUtils  = require('../../pushevents/eventUtils');
 	var _     	    = require('lodash');
 	var settings    = require('../../config/settings');
 	var Before 	    = require('../../models/BeforeModel');
 	var User        = require('../../models/UserModel');
 	var nv 			= require('node-validator');
 	var rg 			= require('../../config/regex');
+	var print 	    = require('../../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/validate-before-group-request.js' );
 
 	function check( req, res, next ){
 
-		console.log('Validating request in');
+		print.info( req, 'Validating request in');
 
 		function isGroupOk( val, onError ){
 
 			if( !val.members || val.members.length < settings.app.min_group || val.members.length > settings.app.max_group ){
-				return onError("Group bad length", "members", val.members, {
-					err_id: "n_group"
-				});
+				return onError("Group bad length", "members", val.members );
 			}
 
 		};
 
 		req.sent.members = _.uniq( req.sent.members );
-		
-		if( req.sent.members.length == 0 ){
-			req.sent.members = null
-		};
 
 		var checkGroup = nv.isAnyObject()
 		
@@ -63,7 +57,7 @@
 
 		User
 		.find({ 'facebook_id': { $in: members }} )
-		.lean() // Get rid of the 'mongoose-inherited' prototype properties. Otherwise, too big to pass in websockets..
+		.lean() // Get rid of the all not own properties. Otherwise, too big for the wire (http, pusher)
 		.exec( function( err, members_profiles ){
 
 			if( err ){
@@ -74,13 +68,14 @@
 
 			if( members.length != group_number ){
 				return callback({
-					message : "Couldn't find " + ( group_number - members_profiles.length ) + " members",
-					data    : {
-						err_id		: 'ghost_members',
+					message: "Unable to retrieve " + ( group_number - members_profiles.length ) + " members",
+					err_id: 'ghost_users',
+					meta: {
 						n_sent  	: group_number,
 						n_found 	: members.length,
 						missing_ids : _.difference( members, _.map( members_profiles, 'facebook_id' ) )
-					}}, null );
+					}
+				});
 			}
 
 
@@ -99,24 +94,32 @@
 					return callback({
 						message   : "Before doesnt seem to exist",
 						err_id    : 'ghost_before',
-						before_id : before_id
-					}, null );
+						meta: {
+							before_id : before_id
+						}
+					});
 				}
 
 				if( bfr.status != "open" ){
 					return callback({
 						message : "Before is not open",
 						err_id  : "before_not_open",
-						status  : bfr.status
-					}, null );
+						meta: {
+							before_id: before_id,
+							status: bfr.status
+						}
+					});
 				}
 					
-				var err_data = { already_there: [] };
+				var meta = {
+					already_there: []
+				};
+
 				members.forEach(function( fb_id ){
 					if( bfr.hosts.indexOf( fb_id ) != -1 ){
-						err_data.already_there.push({
-							member_id : fb_id,
-							role      : 'host'
+						meta.already_there.push({
+							member_id: fb_id,
+							role: 'host'
 						});
 					}
 				});
@@ -125,20 +128,20 @@
 				groups.forEach(function( other_group ){
 					members.forEach(function( fb_id ){
 						if( other_group.members.indexOf( fb_id ) != -1 ){
-							err_data.already_there.push({
-								member_id : fb_id,
-								role      : 'user'
+							meta.already_there.push({
+								member_id: fb_id,
+								role: 'user'
 							});
 						}
 					});
 				});
 
-				if( err_data.already_there.length != 0 ){
-					return callback( _.merge({
-						message : "Friends are already in this before, either as host or regular user",
-						err_id  : "already_there"
-					}, err_data 
-					), null );
+				if( meta.already_there.length != 0 ){
+					return callback({
+						message: "Friends are already in this before, either as host or regular user",
+						err_id: "already_there",
+						meta: meta
+					});
 				}
 
 				console.log('Validation success!');
@@ -147,7 +150,7 @@
 				req.sent.members_profiles = members_profiles;
 				req.sent.before = bfr;
 
-				callback( null );
+				callback();
 				
 
 			});

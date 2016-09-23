@@ -1,7 +1,8 @@
-
-	var nv = require('node-validator');
-	var rd = require('../../services/rd');
-	var _  = require('lodash');
+	
+	var nv    = require('node-validator');
+	var rd    = require('../../services/rd');
+	var _     = require('lodash');
+	var print = require('../../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/validate-chat-message.js' );
 
 
 	function check( req, res, next ){

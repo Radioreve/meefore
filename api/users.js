@@ -26,7 +26,7 @@
 
 		User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			req.sent.expose.me       = user;
 			req.sent.expose.settings = settings; 
@@ -44,7 +44,7 @@
 
 		User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			if( !user ){
 				return erh.handleBackErr( req, res, {
@@ -139,7 +139,7 @@
 			.select( select )
 			.exec(function( err, user ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			if( !user ){
 				print.info( req, 'User (full) wasnt found either in cache or in db');
@@ -165,14 +165,14 @@
 		var profile_ns = 'user_profile/' + facebook_id;
 		rd.hgetall( profile_ns, function( err, user ){
 
-			if( err ) return erh.handleRedisErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "redis" );
 
 			if( !user ){
 
 				print.info( req, 'User wasnt found in cache, looking in Db...');
 				User.findOne({ 'facebook_id': facebook_id }, function( err, user ){
 
-					if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+					if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 					if( !user ){
 						print.info( req, 'User (core) wasnt found either in cache or in db');
@@ -236,7 +236,7 @@
 			.limit( 9 )
 			.exec(function( err, users ){
 
-				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				req.sent.expose.users = users;
 
@@ -255,7 +255,7 @@
 			.select( select )
 			.exec(function( err, users ){
 
-				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				req.sent.expose.users = users;
 				
@@ -285,7 +285,7 @@
 				},
 				function( err, befores ){
 
-					if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+					if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 					req.sent.expose.befores = befores;
 					
@@ -336,7 +336,7 @@
 			.select( select )
 			.exec(function( err, users ){
 
-				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				var random_users = _.chunk( _.shuffle( users ), 12 )[0];
 
@@ -365,7 +365,7 @@
 				.distinct('country_code')
 				.exec(function( err, res ){
 
-					if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+					if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 					req.sent.expose.countries = res;
 					distinct_countries = res;
@@ -396,7 +396,7 @@
 
 		User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			chat_channels = _.filter( user.channels, function( chan ){
 				return chan.chat_id;
@@ -439,7 +439,7 @@
 
 			User.count( {}, function( err, n ){
 
-				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				last_request_time = request_time;
 				cached_user_count = n;
@@ -483,7 +483,7 @@
 		user.markModified('notifications');
 		user.save(function( err, user ){
 
-			if( err && !err.name == "VersionError" ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err && !err.name == "VersionError" ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			req.sent.expose.user = user;
 			next();
@@ -511,7 +511,7 @@
 		user.markModified('notifications');
 		user.save(function( err, user ){
 
-			if( err && !err.name == "VersionError" ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err && !err.name == "VersionError" ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			req.sent.expose.user = user;
 			next();
@@ -533,7 +533,7 @@
 
 		user.findBeforesByPresence(function( err, befores ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			befores.forEach(function( bfr ){
 
@@ -591,11 +591,11 @@
 
 		User.findOne({ facebook_id: facebook_id }, function( err, user ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			user.patch( req.sent, function( err, user ){
 
-				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				req.sent.user = user;
 				req.sent.expose.user = user;
@@ -631,11 +631,11 @@
 			},
 			function( err, users ){
 
-				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				User.findOneAndRemove({ facebook_id: facebook_id }, function( err, user ){
 					
-					if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+					if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 					next();
 
@@ -670,7 +670,7 @@
 		},
 		function( err, user ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			req.sent.expose.err = err;
 			req.sent.expose.user = user;
@@ -702,7 +702,7 @@
 			},
 			function( err, user ){
 
-				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				req.sent.expose.user = user;
 				next();

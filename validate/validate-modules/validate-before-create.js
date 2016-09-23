@@ -1,5 +1,4 @@
 
-	var eventUtils = require('../../pushevents/eventUtils');
 	var moment     = require('moment');
 	var _          = require('lodash');
 	var settings   = require('../../config/settings');
@@ -7,31 +6,26 @@
 	var User       = require('../../models/UserModel');
 	var Place      = require('../../models/PlaceModel');
 	var nv         = require('node-validator');
+	var print 	   = require('../../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/validate-before-create.js' );
 
 	function check( req, res, next ){
 
-		console.log('Validating before');
+		print.info( req, 'Validating before creation');
+
 		function isHostOk( val, onError ){
 
 			if( !val.hosts_facebook_id ){
-				return onError('Hosts are missing', 'hosts_facebook_id', val.hosts_facebook_id, {
-					err_id    : 'missing_parameter',
-					parameter : 'hosts_facebook_id'
-				});
+				return onError('Hosts are missing', 'hosts_facebook_id', val.hosts_facebook_id );
 			}
-
+ 
 			// Make sure all hosts have the same value
 			if( val.hosts_facebook_id && _.uniq( val.hosts_facebook_id ).length != val.hosts_facebook_id.length ){
-				return onError('Hosts with the same id have been provided', 'hosts_facebook_id', val.hosts_facebook_id, {
-					err_id: "twin_hosts"
-				});
+				return onError('Hosts with the same id have been provided', 'hosts_facebook_id', val.hosts_facebook_id );
 			}
 
 			// Make sure the number of hosts is right
 			if( val.hosts_facebook_id.length < settings.app.min_hosts || val.hosts_facebook_id.length > settings.app.max_hosts ){
-				return onError('Hosts array too short/long', 'hosts_facebook_id', val.hosts_facebook_id, {
-					err_id: "n_hosts"
-				});
+				return onError('Hosts array too short/long', 'hosts_facebook_id', val.hosts_facebook_id );
 			}
 			
 
@@ -41,22 +35,16 @@
 
 			for( var i=0; i< val.length; i++ ){
 				if( val[i].length > 30 ){
-					return onError('Hashtag value is too long (>30)', 'hashtags', val.hashtags, {
-						err_id: 'hashtags_length_limit'
-					});
+					return onError('Hashtag value is too long (>30)', 'hashtags', val.hashtags );
 				}
 			}
 
 			if( val.length < settings.app.min_hashtags ){
-				return onError('Hashtag array is too short ('+ settings.app.min_hashtags  +' minimum)', 'hashtags', val.hashtags, {
-					err_id: 'hashtags_length_too_short'
-				});
+				return onError('Hashtag array is too short ('+ settings.app.min_hashtags  +' minimum)', 'hashtags', val.hashtags );
 			}
 
 			if( val.length > settings.app.max_hashtags  ){
-				return onError('Hashtag array is too short ('+ settings.app.max_hashtags  +' maximum)', 'hashtags', val.hashtags, {
-					err_id: 'hashtags_length_too_long'
-				});
+				return onError('Hashtag array is too long ('+ settings.app.max_hashtags  +' maximum)', 'hashtags', val.hashtags );
 			}
 
 		}
@@ -79,11 +67,26 @@
 			.withCustom( isHashtagsOk )
 
 
-		req.sent.timezone    = parseFloat( req.sent.timezone );
-		req.sent.hashtags    = req.sent.hashtags.filter( Boolean );
-		req.sent.address.lat = parseFloat( req.sent.address.lat );
-		req.sent.address.lng = parseFloat( req.sent.address.lng );
-		req.sent.begins_at 	 = new Date();
+
+		try {
+
+			req.sent.timezone    = parseFloat( req.sent.timezone );
+			req.sent.address     = req.sent.address || {};
+			req.sent.address.lat = parseFloat( req.sent.address.lat );
+			req.sent.address.lng = parseFloat( req.sent.address.lng );
+			req.sent.hashtags    = req.sent.hashtags.filter( Boolean );
+			req.sent.begins_at 	 = new Date();
+
+		} catch( err ){
+
+			req.app_errors = req.app_errors.concat([{
+				msg: "Unable to sanitize params. Make sure the request have the requested params types",
+				err_id: "sanitize",
+				err: err
+			}]);
+
+			return next();
+		}
 		
 		nv.run( checkBefore, req.sent, function( n, errors ){
 			if( n != 0 ){
@@ -130,16 +133,18 @@
 			// Make sure all provided hosts are users of meefore, and none left the app
 			if( hosts.length != host_number ){
 				return callback({
-					message 	: "Couldn't find " + ( host_number - hosts.length ) + " members",
-					err_id		: "ghost_hosts",
-					n_sent  	: host_number,
-					n_found		: hosts.length,
-					missing_ids : _.difference( data.hosts_facebook_id, _.map( hosts, 'facebook_id' ) )
+					message: "Couldn't find " + ( host_number - hosts.length ) + " members",
+					err_id: "ghost_hosts",
+					meta: {
+						n_sent: host_number,
+						n_found: hosts.length,
+						missing_ids: _.difference( data.hosts_facebook_id, _.map( hosts, 'facebook_id' ) )
+					}
 				});
 			}
 
 			// Make sure no host already has an before planned on this day
-			var err_data = { host_ids: [] };
+			var meta = { hosts: [] };
 			var new_before_dayofyear = moment( data.begins_at ).dayOfYear();
 
 			hosts.forEach(function( host ){
@@ -148,20 +153,22 @@
 					var host_before_dayofyear = moment( bfr.begins_at ).dayOfYear();
 
 					if( bfr.status == "hosting" && new_before_dayofyear == host_before_dayofyear ){
-						err_data.host_ids.push( host.facebook_id );
+						meta.hosts.push( host.facebook_id );
 					}
+					
 				});
 			});
 			
-			if( err_data.host_ids.length != 0 ){
-				return callback( _.merge( err_data, {
-					message : 'Host(s) already hosting a before this day',
-					err_id  : "already_hosting" 
-				}));
+			if( meta.hosts.length != 0 ){
+				return callback({
+					message: 'Host(s) already hosting a before this day',
+					err_id: "already_hosting",
+					meta: meta
+				});
 			}
 
-			// Make sure hosts are all friends
-			var err_data = { hosts: [] };
+			// Meta object is intact, use the same one
+
 			var requester = _.find( hosts, function(h){
 				return h.facebook_id == req.sent.facebook_id;
 			});
@@ -176,16 +183,17 @@
 			if( requester.access.indexOf("bot") == -1 ){
 				data.hosts_facebook_id.forEach(function( host_id ){
 					if( requester.facebook_id != host_id && requester.friends.indexOf( host_id ) == -1 ){
-						err_data.hosts.push( host_id );
+						meta.hosts.push( host_id );
 					}
 				});
 			}
 
-			if( err_data.hosts.length != 0 ){
-				return callback( _.merge( err_data, {
-					message : 'Hosts are not all good ol\' friends',
-					err_id: "not_all_friends"
-				}));
+			if( meta.hosts.length != 0 ){
+				return callback({
+					message: 'Hosts are not all good ol\' friends',
+					err_id: "not_all_friends",
+					meta: meta
+				});
 			}
 
 

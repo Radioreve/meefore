@@ -15,15 +15,6 @@
 	var erh             = require('../services/err');
 
 
-	function handleErr( err, err_ns ){
-
-		err_ns = err_ns || "alerter";
-
-		log.error({ err: err, err_ns: err_ns }, 'Alerter | Error sending email');
-
-	}
-
-
 	var supported_in_templates = [ "fr", "us" ];
 
 
@@ -122,7 +113,13 @@
 
 					})	
 					.catch(function( err ){
-						handleErr( err, err_ns );
+						erh.handleBackErr( req, res, {
+							source: "alerter",
+							end_request: false,
+							msg: "Error attempting to send the alert " + type,
+							err: err,
+							err_ns: err_ns
+						});
 
 					});
 
@@ -455,6 +452,8 @@
 
 	var sendTemplateEmail__Base = function( opts ){
 
+		var err_ns = "alerter";
+
 		var is_prop_ok = true;
 		[ 'subject', 'target', 'template_name', 'template_content' ]
 		.forEach(function( prop ){
@@ -515,7 +514,12 @@
 			log.debug({ res: res }, "Mandrill response");
 		},
 		function( err ){
-			handleErr( err );
+			erh.handleBackErr( req, res, {
+				msg: "Mandrill error sending the transactionnal email",
+				source: "mandrill",
+				err:err,
+				err_ns:err_ns
+			});
 		});
 
 	};
@@ -558,7 +562,12 @@
 			log.debug({ res: res }, "Mandrill response");
 		},
 		function( err ){
-			handleErr( err );
+			erh.handleBackErr( req, res, {
+				msg: "Mandrill error sending the transactionnal email",
+				source: "mandrill",
+				err:err,
+				err_ns:err_ns
+			});
 		});
 
 	};

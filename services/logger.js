@@ -17,9 +17,9 @@
 				return bunyan.stdSerializers.res
 			},
 			// Err object
-			err: ( err ) => {
-				return bunyan.stdSerializers.err
-			},
+			// err: ( err ) => {
+			// 	return bunyan.stdSerializers.err
+			// },
 			// User object, that is returned at each REST api call on the users edge
 			user: ( user ) => {
 				return {

@@ -261,6 +261,7 @@
 
 .marker-wrapper {
     z-index: 1;
+    position: relative;
 }
 .marker-wrapper.x--hover {
     z-index: 20;

@@ -4,15 +4,12 @@
 	var settings   = require('../config/settings');
 	var eventUtils = require('../pushevents/eventUtils');
 	var User 	   = require('../models/UserModel');
+	var print      = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/profile_watcher.js' )
 
-	var handleErr = function( err_ns, err ){
-
-		console.log( err_ns );
-		console.log( err );
-
-	};
 
 	var updateCachedProfile = function( req, res, next ){
+
+		print.info( req, "Updating cached profile");
 
 		var err_ns = "update_cache_base";
 
@@ -20,7 +17,7 @@
 		var user 		= req.sent.user;
 
 		if( !user ){
-			console.log('Error - Unable to find user object, make sure it was populated');
+			print.warn( req, 'Unable to find user object, make sure it was populated' );
 			return next();
 		}
 
@@ -42,7 +39,8 @@
 		rd.hmset( profile_ns, updated_profile, function( err, res ){
 
 			if( err ){
-				handleErr( err_ns, err );
+				print.warn( req, "Error saving to redis");
+				erh.handleDbErr( err_ns, err, "redis" );
 				return next();
 			}
 
@@ -50,10 +48,11 @@
 			rd.expire( profile_ns, one_week, function( err, res ){
 
 				if( err ){
-					handleErr( err_ns, err );
+					erh.handleDbErr( err_ns, err, "redis" );
 				}
-
+				
 				next();
+
 			});
 			
 

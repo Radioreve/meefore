@@ -1,5 +1,6 @@
 
-	var nv = require('node-validator');
+	var nv    = require('node-validator');
+	var print = require('../../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/validate-myself.js' );
 
 	function check( req, res, next ){
 

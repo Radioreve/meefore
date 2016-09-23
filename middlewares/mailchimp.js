@@ -15,15 +15,6 @@
 	// var Mailchimp = new MC( config.mailchimp );
 
 
-	var handleChimpErr = function( err_ns, err ){
-		return erh.handleBackErr( null, null, {
-			err_ns: err_ns,
-			msg: message,
-			source: mailchimp,
-			end_request: false
-		});
-	}
-
 	var api = function( action ){
 
 		return function( req, res, next ){

@@ -13,8 +13,8 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 				"us": "Discover parties around you "// <span class='_landing-avant'>heat</span> ?"
 			},
 			"landing_h2": {
-				"fr": "Meefore geolocalise les soirées Facebook et les before autour de toi",
-				"us": "Meefore geolocalize Facebook events and predrinks around you"
+				"fr": "Meefore géolocalise les soirées et les évènements Facebook autour de toi",
+				"us": "Meefore geolocalizes private parties and Facebook events around you"
 			},
 
 			"landing_h1a": {
@@ -55,11 +55,14 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 						'</div>',
 						'<div class="landing__screenshot x--1">',
 							'<img data-lid="img_landing_iphone_chat" src="/img/landing/iphone_map_'+ LJ.lang.getAppLang() +'.png">',
+							'<div class="landing-coming-soon">',
+								'<span data-lid="landing_coming_soon"></span>',
+							'</div>',
 						'</div>',
 					'</div>',
 
 					'<div class="landing-oneshot">',
-						'<img data-lid="img_landing_iphone_before" src="/img/landing/iphone_before_tp_' + LJ.lang.getAppLang() +'.png">',
+						'<img data-lid="img_landing_iphone_before" src="/img/landing/iphone_map_' + LJ.lang.getAppLang() +'.png">',
 						LJ.landing.elems.connexion_btn,
 					'</div>',
 

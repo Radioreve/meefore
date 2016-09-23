@@ -1,7 +1,8 @@
 
-	var nv   = require('node-validator');
-	var rg 	 = require('../../config/regex');
-	var User = require('../../models/UserModel');
+	var nv    = require('node-validator');
+	var rg    = require('../../config/regex');
+	var User  = require('../../models/UserModel');
+	var print = require('../../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/validate-chat-fetch.js' );
 
 	function check( req, res, next ){
 

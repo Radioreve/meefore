@@ -9,13 +9,15 @@
 				message = object;
 				object  = req;
 				req     = log;
+			} else {
+				log = req.log;
 			}
 
 			if( typeof object == "string" ){
 				return log[ level ]({ path: prefix }, object );
 			} else {
 				object.path = prefix;
-				return log[ level ]( object, message);
+				return log[ level ]( object, message );
 			}
 		}
 	};
@@ -23,7 +25,7 @@
 	module.exports = function( prefix ){
 
 		var expose = {};
-		[ "info", "warn", "debug", "err", "fatal", "trace" ]
+		[ "info", "warn", "debug", "error", "fatal", "trace" ]
 		.forEach(function( level ){
 			expose[ level ] = base_print( prefix, level );
 		});

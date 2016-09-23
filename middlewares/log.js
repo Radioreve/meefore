@@ -11,7 +11,9 @@
 			req.log = req.log || log;
 
 			if( context == "request" ){
-				req.log = req.log.child({ request_id: randomInt( 0, 100 )});
+				if( process.env.APP_ENV == "prod" ){
+					req.log = req.log.child({ request_id: randomInt( 0, 100 )});
+				}
 				req.log.debug("HTTP %s %s", req.method, req.url.split('?')[0] );
 			}
 

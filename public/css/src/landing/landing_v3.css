@@ -41,10 +41,10 @@
     font-family: 'pacifico';
     font-family: 'creamy';
     text-align: center;
-    font-size: 35px;
+    font-size: 44px;
     font-family: 'quenda';
     font-weight: bolder;
-    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
 }
 
 .landing__h1 h1 {}
@@ -322,10 +322,10 @@
 }
 
 .landing-background {
-    background-image: url(/img/landing/lp24.jpg);
+    background-image: url(http://res.cloudinary.com/radioreve/image/upload/v1474638310/lp24min_ou0f9i.jpg);
     z-index: 1;
     background-size: cover;
-    background-position: top left;
+    background-position: center center;
 }
 
 .landing-overlay {
@@ -373,6 +373,17 @@ path {
 .start-anim path {
     animation: dash 700ms cubic-bezier(.63, .25, .25, .9) forwards;
 }
+
+.landing-coming-soon {
+    color: gainsboro;
+    position: absolute;
+    bottom: -40px;
+    transform: translate(-50%,0);
+    left: 50%;
+    white-space: nowrap;
+    font-size: 12px;
+}
+.landing-coming-soon span {}
 
 @keyframes dash {
     to {
@@ -482,8 +493,11 @@ path {
         font-size: .8em;
     }
 
-}
+    .landing-coming-soon {
+        display: none;
+    }
 
+}
 
 /* iPhone 5/5S Portrait mode  */
 

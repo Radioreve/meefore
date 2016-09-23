@@ -1,17 +1,15 @@
 	
-	var eventUtils  = require('../../pushevents/eventUtils'),
-		_     	    = require('lodash'),
-		settings    = require('../../config/settings');
-
-	var Before 	    = require('../../models/BeforeModel'),
-		User        = require('../../models/UserModel');
-
+	var _     	    = require('lodash');
 	var nv 			= require('node-validator');
+	var settings    = require('../../config/settings');
+	var Before 	    = require('../../models/BeforeModel');
+	var User        = require('../../models/UserModel');
+	var print 	    = require('../../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/validate-before-status.js' );
 
 
 	function check( req, res, next ){
 
-		console.log('Validating change before status');
+		print.info( req, 'Validating change before status');
 
 		var checkReq = nv.isAnyObject()
 			.withRequired('status'   , nv.isString({ expected: ['open','suspended','canceled'] }))

@@ -1,8 +1,9 @@
 
-	var nv = require('node-validator');
-	var st = require('../../config/settings');
-	var _  = require('lodash');
-	var rg = require('../../config/regex');
+	var nv    = require('node-validator');
+	var st    = require('../../config/settings');
+	var _     = require('lodash');
+	var rg    = require('../../config/regex');
+	var print = require('../../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/validate-update-picture-client.js' );
 
 	var User  = require('../../models/UserModel');
 

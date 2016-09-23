@@ -8,32 +8,26 @@
 	var Message    = require('../models/MessageModel');
 	var mongoose   = require('mongoose');
 	var async 	   = require('async');
-	var log 	   = require('../services/logger');
 	var print 	   = require('../services/print')('(Realtime)');
 	var erh 	   = require('../services/err');
 
 
-	function handlePusherErr( err, req, res ){
-		console.log( err );
+	function handlePusherErr( req, res, err_ns ){
+		return function( err, request, response ){
+
+			if( err ){
+				erh.handleBackErr( req, res, {
+					end_request: false,
+					msg: "Pusher responded with an error",
+					source: "pusher",
+					err_ns: err_ns,
+					err: err
+				});
+			}
+
+		}
 	}
-
-	function handleErr( req, res, namespace, err ){
-
-		var params = {
-			error   : err,
-			call_id : req.sent.call_id
-		};
-
-		eventUtils.raiseApiError( req, res, namespace, params );
-
-	};
-
-	function handleErrAsync( namespace, err ){
-
-		console.log( err );
-
-	};
-
+		
 
 	function makePersonnalChannel( facebook_id ){
 		return "private-facebook-id=" + facebook_id;
@@ -161,7 +155,7 @@
 
 	}
 
-	function resetChannels( user, callback ){
+	function resetChannels( req, user, callback ){
 
 		user.channels = [];
 		user.channels.push( makeChannelItem__Personnal( user ) );
@@ -171,7 +165,7 @@
 
 		user.findBeforesByPresence(function( err, befores ){
 
-			if( err ) return handleErr( req, res, err_ns, err );
+			if( err ) return callback( err, null );
 
 			// Safe the ref for other middlewares
 			befores.forEach(function( before ){
@@ -180,7 +174,7 @@
 
 				if( is_hosting ){
 
-					console.log('User is hosting this event, rendering hosts related channels');
+					print.info( req, 'User is hosting this event, rendering hosts related channels');
 
 					user.befores.push( User.makeBeforeItem__Host( before ) );
 					user.channels.push( makeChannelItem__Before( before ) );
@@ -242,9 +236,9 @@
 		} else {
 
 			print.info( req, "Reseting user 'channels' array" );
-			resetChannels( user, function( err, user, fetched_befores ){
+			resetChannels( req, user, function( err, user, fetched_befores ){
 
-				if( err ) return handleErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				req.sent.user            = user;
 				req.sent.fetched_befores = fetched_befores;
@@ -272,11 +266,7 @@
 			{ multi: true },
 			function( err, raw ){
 
-				if( err ){
-					handleErr( req, res, err_ns, err );
-				} else {
-					next();
-				}
+				return err ? erh.handleDbErr( req, res, err_ns, err, "mongo" ) : next();
 
 			});
 
@@ -313,10 +303,7 @@
 			},
 			function( err, users ){
 
-				if( err ){
-					handleErrAsync( err_ns, err );
-				}
-				callback();
+				return err ? callback( err ) : callback();
 
 			});
 		});
@@ -335,21 +322,14 @@
 			},
 			function( err, users ){
 
-				if( err ){
-					handleErrAsync( err_ns, err );
-				}
-				callback();
+				return err ? callback( err ) : callback();
 
 			});
 		});
 
 		async.parallel( tasks, function( err ){
 
-			if( err ){
-				return handleErr( req, res, err_ns, err );
-			}
-
-			next();
+			return err ? erh.handleDbErr( req, res, err_ns, err, "mongo" ) : next();
 
 		});
 	}
@@ -365,7 +345,7 @@
 
 		if( req.sent.location ){
 
-			console.log('User changed its location, updating its channel required...');
+			print.info('User changed its location, updating its channel required...');
 
 			var channel_name = "placeid=" + user.location.place_id;
 
@@ -384,7 +364,7 @@
 
 			user.save(function( err, user ){
 
-				if( err ) return handleErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				req.sent.expose.user = user;
 				next();
@@ -418,7 +398,7 @@
 
 		], function( err, res_objects ){
 
-			if( err ) return handleErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			// All chats that have 0 entries in the Messages collection still need to have a 
 			//'last_sent_at' key updated.
@@ -439,7 +419,7 @@
 			user.markModified('channels');
 			user.save(function( err, user ){
 
-				if( err ) return handleErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				req.sent.user = user;
 				next();
@@ -466,7 +446,7 @@
 		};
 
 		var channel = makeLocationChannel( place_id );
-		pusher.trigger( channel, 'new before', data, handlePusherErr );
+		pusher.trigger( channel, 'new before', data, handlePusherErr( req, res, err_ns ) );
 
 		// Hosts only
 		data.before_item         = req.sent.expose.before_item;;
@@ -488,7 +468,7 @@
 			},
 			function( err, raw ){
 
-				if( err ) return handleErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				// Hosts are not yet in a global 'before' channel. Push the update to each one if them separately
 				before.hosts.forEach(function( h ){
@@ -498,7 +478,7 @@
 					data.requester    = req.sent.facebook_id;
 					data.notification = req.sent.notification;
 
-					pusher.trigger( channel, 'new before hosts', data, handlePusherErr );
+					pusher.trigger( channel, 'new before hosts', data, handlePusherErr( req, res, err_ns ) );
 
 				});
 
@@ -543,13 +523,10 @@
 			tasks.push(function( callback ){
 
 				User.findOne({ facebook_id: user_id }, function( err, user ){
+					if( err ) return callback( err );
 
-					if( err ) handleErrAsync( err_ns, err );
-
-					resetChannels( user, function( err, user, fetched_befores ){
-
-						if( err ) handleErrAsync( err_ns, err );
-						callback();
+					resetChannels( req, user, function( err, user, fetched_befores ){
+						err ? callback( err ) : callback();
 
 					});
 				});
@@ -558,16 +535,16 @@
 
 		async.parallel( tasks, function( err ){
 
-			if( err ) handleErrAsync( err_ns, err );
+			if( err ) erh.handleDbErr( err_ns, err, "mongo" );
 
 			// Global message : everyone will received it.
 			var channel = makeLocationChannel( place_id );
-			pusher.trigger( channel, 'new before status', data_users, handlePusherErr );
+			pusher.trigger( channel, 'new before status', data_users, handlePusherErr( req, res, err_ns ) );
 
 			// All members need to resync their chat status
 			users.forEach(function( user_id ){
 				var channel = makePersonnalChannel( user_id );
-				pusher.trigger( channel, 'new before status members', data_members, handlePusherErr );
+				pusher.trigger( channel, 'new before status members', data_members, handlePusherErr( req, res, err_ns ) );
 
 			});
 			
@@ -605,7 +582,7 @@
 		pusher.trigger( makeBeforeChannel( before._id ), 'new request host', data_hosts, socket_id );
 		// Notify group members
 		req.sent.members_profiles.forEach(function( user ){
-			pusher.trigger( makePersonnalChannel( user.facebook_id ), 'new request group', data_members, handlePusherErr );
+			pusher.trigger( makePersonnalChannel( user.facebook_id ), 'new request group', data_members, handlePusherErr( req, res, err_ns ) );
 		});	
 
 		next();
@@ -647,8 +624,8 @@
 		var hosts_channel_name = 'private-team-' + Message.makeTeamId( before.hosts );
 		var users_channel_name = 'private-team-' + Message.makeTeamId( group.members )
 
-		pusher.trigger( hosts_channel_name, 'new group status hosts', data_hosts, handlePusherErr );
-		pusher.trigger( users_channel_name, 'new group status users', data_members, handlePusherErr );
+		pusher.trigger( hosts_channel_name, 'new group status hosts', data_hosts, handlePusherErr( req, res, err_ns ) );
+		pusher.trigger( users_channel_name, 'new group status users', data_members, handlePusherErr( req, res, err_ns ) );
 
 		next();
 
@@ -672,7 +649,7 @@
 		// when he realizes its his own message that bounced back successfully
 		var channel_name = ( type == "chat_all" ) ? "private-all-%chatid" : "private-team-%chatid";
 		var channel = channel_name.replace( '%chatid', chat_id );
-		pusher.trigger( channel, 'new chat message', data_message, handlePusherErr );
+		pusher.trigger( channel, 'new chat message', data_message, handlePusherErr( req, res, err_ns ) );
 		next();
 
 
@@ -690,7 +667,7 @@
 			seen_by: facebook_id
 		};
 
-		pusher.trigger( channel_item.name, 'new chat seen by', data_seen_by, handlePusherErr );
+		pusher.trigger( channel_item.name, 'new chat seen by', data_seen_by, handlePusherErr( req, res, err_ns ) );
 		next();
 
 	};

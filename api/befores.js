@@ -42,7 +42,7 @@
 
 	    new_before.save(function( err, new_before ){
 
-	    	if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+	    	if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 	    	var before_id = new_before._id;
 
@@ -55,7 +55,7 @@
 				function( err, users ){
 
 					if( err ){
-						return erh.handleMongoErr( req, res, err_ns, err );
+						return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 					}
 
 			    	print.info( req, 'Before has been created created!');
@@ -105,7 +105,7 @@
 			}
 		},{ new: true }, function( err, bfr ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			var before_item = User.makeBeforeItem__Member( bfr );
 
@@ -116,7 +116,7 @@
 					{ multi: true, new: true },
 					function( w ){
 
-						if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+						if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 						
 						req.sent.before      = bfr;
 						req.sent.before_item = before_item;
@@ -139,7 +139,7 @@
 		before.status = status;
 		before.save(function( err, before ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			req.sent.expose.before = before;
 			next();
@@ -163,14 +163,9 @@
 				};
 
 				User.update( query, update, options, function( err, res ){
-						
-						erh.handleBackErr( req, res, {
-							end_request: false,
-							source: "mongo",
-							err_ns: err_ns,
-							err: err
-						});
 
+					if( err ) return erh.handleDbErr( err_ns, err, "mongo" );
+					
 				});
 
 			}
@@ -246,7 +241,7 @@
 
 		Before.findById( before_id, function( err, bfr ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			if( !bfr ){
 				req.sent.expose.message = "The ressource (before) couldnt be found (no entry)";
@@ -317,7 +312,7 @@
 		],
 		function( err, response ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			response.forEach(function( bfr ){
 				delete bfr.groups;

@@ -18,7 +18,7 @@
 
 		rd.hmset( alert_ns, data, function( err, res ){
 
-			if( err ) return erh.handleRedisErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "redis" );
 
 			next();
 
@@ -61,7 +61,7 @@
 
 		rd.hmset( alert_ns, data, function( err, res ){
 
-			if( err ) return erh.handleRedisErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "redis" );
 
 			next();
 

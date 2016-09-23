@@ -5,20 +5,13 @@
 	var moment     = require('moment');
 	var term       = require('terminal-kit').terminal;
 	var md5        = require('blueimp-md5');
+	var erh 	   = require('../services/err');
+	var print 	   = require('../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/notifier.js' );
 
-	var handleErr = function( req, res, namespace, err ){
 
-		var params = {
-			error   : err,
-			call_id : req.sent.call_id
-		};
-
-		eventUtils.raiseApiError( req, res, namespace, params );
-
-	};
-
+	// Notifications are not persisted more than one day so its useless to store them in db
+	// still, needs a simple way to generate a unique id for each of them
 	var hash = function( notification ){
-		
 		return md5( JSON.stringify( notification ) );
 
 	}
@@ -65,18 +58,22 @@
 
 	};
 		
-	function displayError( err, raw ){
+	function handleUpdateDone( req, err_ns ){
 
-		if( err ){
-			console.log('Error saving notifications : ' + err );
-		} else {
-			if( raw.n == 0 ){
-				// term.bold.red("Zero users have been notified, could indicate an error..\n");
-			} else {
-				term.bold.green( raw.n + " users have been notified\n");
+		return function( err, raw ){
+
+			if( err ){
+				return erh.handleDbErr( err_ns, err, "mongo" );
 			}
-		}
 
+			if( raw.n == 0 ){
+				print.warn( req, "Zero users have been notified, could indicate an error" );
+			} else {
+				print.info({ n_notifier: raw.n }, raw.n + " users have been notified" );
+			}
+
+
+		}
 	}
 
 
@@ -112,7 +109,7 @@
 		user.markModified('notifications');
 		user.save(function( err, user ){
 
-			if( err ) return handleErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err );
 
 			req.sent.user = user;
 			next();
@@ -142,7 +139,7 @@
 			user.markModified('notifications');
 			user.save(function( err, user ){
 
-				if( err ) return handleErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err );
 
 				next();
 
@@ -205,8 +202,8 @@
 			multi: true 
 		};
 
-		User.update( query_hosts, update_hosts, options, displayError );
-		User.update( query_members, update_members, options, displayError );
+		User.update( query_hosts, update_hosts, options, handleUpdateDone( req, "notifier_" + type ) );
+		User.update( query_members, update_members, options, handleUpdateDone( req, "notifier_" + type )  );
 
 		next();
 
@@ -253,8 +250,8 @@
 			multi: true 
 		};
 
-		User.update( query_hosts, update_hosts, options, displayError );
-		User.update( query_members, update_members, options, displayError );
+		User.update( query_hosts, update_hosts, options, handleUpdateDone( req, "notifier_" + type )  );
+		User.update( query_members, update_members, options, handleUpdateDone( req, "notifier_" + type )  );
 
 		next();
 
@@ -302,7 +299,7 @@
 			multi: true 
 		};
 
-		User.update( query, update, options, displayError );
+		User.update( query, update, options, handleUpdateDone( req, "notifier_" + type )  );
 
 		// Save notification reference and go to next, dont wait for db call to finish
 		req.sent.notification = n;
@@ -350,7 +347,7 @@
 			multi: true 
 		};
 
-		User.update( query, update, options, displayError );
+		User.update( query, update, options, handleUpdateDone( req, "notifier_" + type )  );
 
 		// Save notification reference and go to next, dont wait for db call to finish
 		req.sent.notification = n;
@@ -388,7 +385,7 @@
 			multi: true 
 		};
 
-		User.update( query, update, options, displayError );
+		User.update( query, update, options, handleUpdateDone( req, "notifier_" + type )  );
 
 		req.sent.notification = n; // not dispatched realtime atm
 		next();
@@ -396,6 +393,8 @@
 	}
 
 	var clearNotifications = function( req, res, next ){
+
+		print.info( req, "Clearing notifications");
 
 		var err_ns = "clear_notifications";
 
@@ -411,7 +410,6 @@
 			var now_hour    = moment().get("hour");
 
 			if( is_outdated || ( is_today && happn_hour > 0 && happn_hour < 14 && now_hour > 6 ) ){
-				console.log("Cleaning notification : " + i );
 				updated_needed = true;
 				delete user.notifications[ i ];
 			}
@@ -426,7 +424,7 @@
 		user.markModified('notifications');
 		user.save(function( err, user ){
 
-			if( err ) return handleErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err );
 
 			req.sent.expose.user = user;
 			next();

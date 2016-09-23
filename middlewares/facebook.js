@@ -45,6 +45,7 @@
 
 			if( err ){
 				return erh.handleBackErr( req, res, {
+					msg: "Unable to fetch a long lived facebook token",
 					source: "facebook",
 					err_ns: err_ns,
 					err: err
@@ -262,6 +263,7 @@
 
 			if( err ){
 				return erh.handleBackErr( req, res, {
+					msg: "Unable to fetch facebook friends",
 					source: "facebook",
 					err_ns: err_ns,
 					err: err
@@ -290,7 +292,7 @@
 			user.save(function( err, user ){
 
 				if( err ){
-					return erh.handleMongoErr( req, res, err_ns, err );
+					return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 				}
 
 				next();

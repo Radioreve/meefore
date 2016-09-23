@@ -71,7 +71,7 @@
 
 			rd.sadd('online_users', facebook_id, function( err ){
 
-				if( err ) return erh.handleRedisErr( res, res, err_ns, err );
+				if( err ) return erh.handleDbErr( res, res, err_ns, err, "redis" );
 
 				res.status( 200 ).json({
 					msg: "Update success"
@@ -89,7 +89,7 @@
 				'disconnected_at': new Date()
 			}, { new: true }, function( err ){
 
-				if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+				if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 				print.info( req, "Update success, user 'disconnected_at' property updated.");
 				res.status( 200 ).json({
@@ -126,7 +126,7 @@
 
 		rd.smembers('online_users', function( err, response ){
 
-			if( err ) return erh.handleRedisErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "redis" );
 
 			req.sent.online_users = response;
 			next();

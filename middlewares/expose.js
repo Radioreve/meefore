@@ -7,6 +7,9 @@
 
 	var sendResponse = function( req, res ){
 
+		// Time profiling end
+		req.request_ended_at = new Date();
+
 		// Convention : all middleware placed before is to setup an expose variable 
 		// To notifiy that the route indeed existed
 		var expose = req.sent.expose;
@@ -23,7 +26,8 @@
 
 		} else{
 
-			print.info( req, 'Request reached the end successfully');
+			var request_time = req.request_ended_at - req.request_started_at;
+			print.info(req, { request_time: request_time }, 'Request reached the end successfully in ' + request_time + 'ms' );
 			res.status( 200 ).json( expose );
 
 		} 
@@ -31,6 +35,9 @@
 	};
 
 	var setExpose = function( req, res, next ){
+
+		// Timeprofiling start
+		req.request_started_at = new Date();
 
 		req.sent.expose = {};
 		next();

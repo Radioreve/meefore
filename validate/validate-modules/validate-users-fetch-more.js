@@ -1,6 +1,7 @@
 
-	var nv = require('node-validator');
-	var st = require( process.cwd() + '/config/settings');
+	var nv    = require('node-validator');
+	var st    = require( process.cwd() + '/config/settings');
+	var print = require('../../services/print')( __dirname.replace( process.cwd()+'/', '' ) + '/validate-users-fetch-more.js' );
 
 	var checkFilters = nv.isAnyObject()
 

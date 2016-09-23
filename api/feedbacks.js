@@ -22,7 +22,7 @@
 		var new_feedback = new Feedback( feedback_data );
 		new_feedback.save(function( err, new_feedback ){
 
-			if( err ) return erh.handleMongoErr( req, res, err_ns, err );
+			if( err ) return erh.handleDbErr( req, res, err_ns, err, "mongo" );
 
 			req.sent.expose.feedback = new_feedback;
 			next();

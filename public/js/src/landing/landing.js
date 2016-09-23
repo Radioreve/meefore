@@ -72,6 +72,10 @@
 			"landing_footer_contact": {
 				"fr": "Contact",
 				"us": "Contact"
+			},
+			"landing_coming_soon": {
+				"fr": "Actuellement sur web & web mobile. Prochainement sur l'AppStore",
+				"us": "Currently available for web & web mobile. Soon on the AppStore"
 			}
 
 		},

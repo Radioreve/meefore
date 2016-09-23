@@ -16,9 +16,10 @@
 				source: "client",
 				err_ns: req.err_ns,
 				err: req.app_errors[ 0 ],
-				err_id: req.app_errors[ 0 ].err_id,
+				err_id: req.app_errors[ 0 ].err_id || "invalid_request",
 				call_id: req.sent.expose.call_id,
-				msg: req.app_errors[ 0 ].msg || req.app_errors[ 0 ].message
+				msg: "The request didn't pass the validation, request was either invalid or unallowed",
+				meta: req.app_errors[ 0 ]
 			});
 
 		}
