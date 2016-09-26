@@ -31,7 +31,8 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 			'<div class="landing x--v3">',
 
 				'<div class="landing-layer landing-background"></div>',
-				'<div class="landing-layer landing-overlay"></div>',
+				'<div class="landing-layer landing-overlay x--filter"></div>',
+				'<div class="landing-layer landing-overlay x--layer"></div>',
 				'<div class="landing-layer landing-content">',
 
 					LJ.landing.elems.logo_naked,
@@ -129,6 +130,9 @@ window.LJ.landing = _.merge( window.LJ.landing || {}, {
 					$('.landing-avant').addClass('start-anim');
 				});
 
+		},
+		hide: function(){
+			
 		}
 
 

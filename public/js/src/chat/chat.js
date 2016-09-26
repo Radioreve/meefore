@@ -575,7 +575,7 @@
 		},
 		allChannelsFetched: function(){
 
-			LJ.wlog('All channels have been fetched');
+			LJ.log('All channels have been fetched');
 			// LJ.ui.showToast('All channels have been fetched');
 
 		},

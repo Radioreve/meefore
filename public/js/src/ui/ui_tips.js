@@ -2,10 +2,14 @@
 window.LJ.ui = _.merge( window.LJ.ui || {}, {
 
 	all_tips: [],
-	showTip: function( tip_id ){
+	showTip: function( tip_id, opts ){
 
-		LJ.ui.getTip( tip_id )
-			 .show();
+		var $tip = LJ.ui.getTip( tip_id );
+		
+		opts.anim ?
+			$tip.velocity( opts.anim, { duration: opts.duration }) :
+			$tip.hide();
+		
 
 	},
 	hideTip: function( tip_id ){
@@ -137,7 +141,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		LJ.ui.tagTip( tip_id, opts.tags );
 		LJ.ui.dataTip( tip_id, opts.data );
 		LJ.ui.reposeTip( $elem, tip_id, opts.position );
-		LJ.ui.showTip( tip_id );
+		LJ.ui.showTip( tip_id, opts.show );
 
 	}
 

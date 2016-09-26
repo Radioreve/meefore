@@ -87,6 +87,7 @@
     border: 1px solid;
     background: #1a59c3;
     flex-shrink: 0;
+    border-radius: 100px;
 }
 
 .settings-item input {

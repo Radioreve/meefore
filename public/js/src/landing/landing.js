@@ -17,6 +17,7 @@
 				LJ.textAdd( _.merge( {}, LJ.landing.texts, landing_object.texts  ));
 				$('.multi-landing').html( LJ.ui.render( landing_object.html ) );
 				landing_object.run();
+				LJ.landing.hide = landing_object.hide;
 
 				LJ.login.init()
 	                .then( LJ.facebook.fetchFacebookToken )
@@ -227,6 +228,13 @@
 
 			]);
 
+
+		},
+		hide: function(){
+
+			$('.landing').velocity('fadeOut', {
+				duration: 1500
+			});
 
 		}
 

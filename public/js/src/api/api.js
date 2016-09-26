@@ -93,9 +93,9 @@
 
 						setTimeout(function( err ){
 							var err = err.responseJSON;
-							var formatted_err = LJ.api.makeFormattedError( err );
 							
-							return reject( formatted_err );
+							LJ.api.checkError( err );							
+							return reject( err );
 
 	                    }, base_delay - ( new Date() - call_started ), err );
 					}
@@ -116,30 +116,19 @@
 			return LJ.api.ajax( url, 'patch', data, opts );
 
 		},
-		makeFormattedError: function( err ){
+		checkError: function( err ){
 
-			var formatted_err = {};
-
-			if( err.namespace ){
-				formatted_err.namespace = err.namespace;
+			var err_keys = _.keys( err );
+			var expected = [ "err_ns", "err_id", "msg", "meta" ];
+			
+			if( _.difference( expected, err_keys ).length > 0 ){
+				LJ.wlog("Error object contains missing expected keys : " + _.difference( expected, err_keys ).join(', '));
 			}
 
-			if( err.call_id ){
-				formatted_err.call_id = err.call_id;
+			if( _.difference( err_keys, expected ).length > 0 ){
+				LJ.wlog("Error object contains unexpected keys : " + _.difference( err_keys, expected ).join(', '));
 			}
-
-			if( err.error ){
-				formatted_err = _.merge( formatted_err, err.error );
-
-			} else {
-				err = Array.isArray( err.errors ) ? err.errors[0] : err.errors;
-				err = err.data ? err.data : err;
-				formatted_err = _.merge( formatted_err, err );
-
-			}
-
-			return formatted_err;
-
+			
 		},
 		fetchAppToken: function( login_params ){
 

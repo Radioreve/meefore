@@ -1133,7 +1133,7 @@
 				   + "<br> Please try again later and we thank you in advance to contact us if the problem persists :/"
 		},
 		login_loading_msg: {
-			"fr": "Chargement de l'application",
+			"fr": "Chargement des soirées",
 			"us": "Loading the app"
 		},
 		app_mobile_warning: {

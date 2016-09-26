@@ -19,7 +19,7 @@
 				err_id: req.app_errors[ 0 ].err_id || "invalid_request",
 				call_id: req.sent.expose.call_id,
 				msg: "The request didn't pass the validation, request was either invalid or unallowed",
-				meta: req.app_errors[ 0 ]
+				meta: req.app_errors[ 0 ].meta
 			});
 
 		}

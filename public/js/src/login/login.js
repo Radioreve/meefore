@@ -22,11 +22,6 @@
 				return LJ.promise(function( resolve, reject ){
 					LJ.ui.$body.on('click', '.js-login', function(){
 
-						fbq('track', 'CompleteRegistration', {
-							content_type: 'Subscription',
-							content_name: 'Landing v' + LJ.landing.landing_version
-						});
-
 						resolve();
 
 					});
@@ -64,64 +59,44 @@
 
 
 			},
-			hideLandingElements: function(){
-
-				$('.landing')
-					.children()
-					.velocity('fadeOut', {
-						duration : 800,
-						display  : 'none'
-					});
-
-			},
-			showLoginProgressBar: function(){
-
-				$('.login__message').velocity('shradeIn', {
-			 		duration: 1600, delay: LJ.login.opening_duration/2
-			 	});
-
-			},
 			addLoginProgression: function(){
 
-				$( LJ.login.renderLoginProgression() ).hide().appendTo( $('.curtain') )
+				$( LJ.login.renderLoginProgression() )
+					.children().hide()
+					.end().appendTo('body');
 
 			},
 			showLoginProgression: function(){
 
-				$('.login').velocity('shradeIn', {
-					duration: 1000
-				});
+				$('.login')
+					.children()
+					.css({ 'display': 'block', 'opacity': '0' })
+					.velocity('shradeIn', { duration: 1000 });
 
-			},
-			showLoginProgressMessage: function(){
-
-				$('.login__message').velocity('shradeIn', {
-					duration: 1000
-				});
-
-			},
-			hideLoginProgressBar: function(){
-
-				$('.login__progress-bar').velocity('shradeIn', {
-			 		duration: 1000
-			 	});
+				// 	.velocity({ opacity: [ 1, 0 ], scale: [ 1, 1.1 ]}, {
+				// 	duration: 2000
+				// });
 
 			},
 			enterLoginProcess: function(){
 
-				LJ.login.hideLandingElements();
+				LJ.landing.hide();
 				LJ.ui.deactivateHtmlScroll();
 
-				return LJ.delay( 1000 )
+				LJ.delay( 1000 )
 						 .then(function(){
 
-						 	LJ.ui.showCurtain({ duration: 600, theme: "light", sticky: true });
+						 	LJ.ui.showCurtain({
+						 		duration: 0, theme: "light", sticky: true,
+						 		transition: { opacity: [ 1, 0 ], scale: [ 1, 1.2 ] }
+						 	});
+
 						 	LJ.login.addLoginProgression();
 						 	LJ.login.showLoginProgression();
-						 	// LJ.login.showLoginProgressMessage();
-						 	// LJ.login.showLoginProgressBar();
 
 						 });
+
+
 
 			},
 			hideLoginSteps: function(){
@@ -237,6 +212,7 @@
 					LJ.seek.login_places.addListener('place_changed', function(){
 
 						var place = LJ.seek.login_places.getPlace();
+
 						$('.init-location').attr('data-place-id'   , place.place_id )
 							  			   .attr('data-place-name' , place.formatted_address )
 							  			   .attr('data-place-lat'  , place.geometry.location.lat() )
@@ -355,6 +331,7 @@
 					LJ.ui.$body.on('click', '.modal.x--logout .modal-footer button', LJ.login.logUserOut );
 
 					$('.multi-landing').remove();
+					$('.login').remove();
 					
 					return;
 				});	

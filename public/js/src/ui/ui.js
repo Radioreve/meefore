@@ -94,6 +94,7 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 		o = o || {};
 
 		var already_there = false;
+		var transition    = o.transition || "fadeIn";
 		var $curtain;
 
 		if( $('.curtain').length > 0 ) {
@@ -113,13 +114,17 @@ window.LJ.ui = _.merge( window.LJ.ui || {}, {
 			$curtain.addClass('curtain--sticky');
 		}
 
+		if( o.css ){
+			$curtain.css( o.css );
+		}
+
 		return LJ.promise(function( resolve, reject ){
 
 			if( already_there ){
 				return resolve();
 			}
 
-			$('.curtain').velocity('fadeIn', {
+			$('.curtain').velocity( transition, {
 				display  : 'flex',
 				duration : o.duration || LJ.ui.show_curtain_duration,
 				complete : function(){

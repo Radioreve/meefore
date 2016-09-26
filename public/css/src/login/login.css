@@ -1,6 +1,16 @@
 .login {
     color: #454545;
     flex-flow: column nowrap;
+    position: absolute;
+    z-index: 10000;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .login__message {

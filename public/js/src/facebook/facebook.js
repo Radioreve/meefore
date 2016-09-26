@@ -63,6 +63,12 @@ window.LJ.facebook = _.merge( window.LJ.facebook || {}, {
 					LJ.login.data.access_token = access_token;
 
 					console.log('Short lived access token : ' + access_token.substring( 0, 20 ) + '.....');
+					
+					fbq('track', 'CompleteRegistration', {
+						content_type: 'Subscription',
+						content_name: 'Landing v' + LJ.landing.landing_version
+					});
+
 					return resolve({ fb_token: access_token });
 				}
 

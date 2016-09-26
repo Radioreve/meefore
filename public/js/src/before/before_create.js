@@ -390,8 +390,8 @@
 				return LJ.before.endCreateBefore( expose );
 
 			})
-			.catch(function( e ){
-				LJ.before.handleCreateBeforeError(e);
+			.catch(function( err ){
+				LJ.before.handleCreateBeforeError( err );
 
 			});
 
@@ -423,11 +423,11 @@
 
 			if( err_id == "already_hosting" ){
 				
-				var profiles = LJ.friends.getFriendsProfiles( err.host_ids );
+				var profiles = LJ.friends.getFriendsProfiles( err.meta.hosts );
 				var names    = _.map( profiles, 'name' );
 				var formatted_names = LJ.renderMultipleNames( names );
 
-				if( err.host_ids.indexOf( LJ.user.facebook_id ) == -1 ){
+				if( err.meta.hosts.indexOf( LJ.user.facebook_id ) == -1 ){
 					err_msg = LJ.text('err_be_create_already_hosting').replace('%names', formatted_names );
 
 				} else {

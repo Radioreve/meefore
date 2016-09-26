@@ -12,10 +12,10 @@
 						return resolve({ 'fb_token' : 'EAAXR2Qo4lc4BAH6wJ4wcpXvaEFrgXjMsKmihajiozbGTUUyDghPEsZB7wqnWiO2CyUhU19NfL5qjPIiYY4On4cYQnTUiefiyZB8l39CZAck8ngPvHsU4yKtF0tLm35qkPv0DPg2DZCnZBRi2qXKB4EQxgwvwqIDAZD' });
 					}
 					if( a == "#gabriela" ){
-						return resolve({ 'fb_token': 'EAAXR2Qo4lc4BADx1dNR5Cz2iSZCduZC05gJ5MsZCkR9uneJBQadFoBI5eXpfmaDVeuiQNSIPQvyP5I9aj7y2Cu6daZCd4EzAJGgZBQCnxlHudEPEpKQHb4yr6f8GkmNMZCiGBgBIMbdGbYDpbZC0uuzeae9MQuGfEnpjgAPAuTxegZDZD' });
+						return resolve({ 'fb_token': 'EAAXR2Qo4lc4BAPNfN6nA7LESHLGu0QF9ULP8fr6yMp7Wm1dlRg6fBw8XwlaukaOhvEalKQ9iLfXlyb9tN1XGmphVDIpyUzuw0kwudWrSbXwpWSHmVOPunej3eMM9O5WwYR4nxwWDCt6FZCSSKTdIAK7mX3dZAL9LZCKkXlDZCQZDZD' });
 					}
 					if( a == "#racheel"){
-						return resolve({ 'fb_token': 'EAAXR2Qo4lc4BAGfYNotMdxT6iEVy1lURr7RLDw5X5X0ZAsCV6S9GlRw78F3uVrSo4K1AkptOl7ZBhOg31NuSGTtgzOV8Sl0Eg76olbihIZAHPQJe3LxTlzbnScWzt5lG6G0PHw03HAB0ZA5LDw01O9X4QMsoQzsQakHXi2td8QZDZD' });
+						return resolve({ 'fb_token': 'EAAXR2Qo4lc4BALbNFfHYrVYU7FIvOtmbNu1pgZAtqeFpZAkAJloZB35cBH4SVDDFowpASLNzGA0E6hmDArPhDhXJ35TZBPxzGJL9P4n2ALmuubpFrQDKoYnqYZAyERZCUZB72BKoe4IU9lFf3SL8AryjTplZAWLb8AB9P4ZAZCmCl99wZDZD' });
 					}
 					if( a == "#davida" ){
 						return resolve({ 'fb_token': 'EAAXR2Qo4lc4BAA0I0ZApWf4xmd9KDPDQlgMuXJXfHXct3n02upyYAYd8uzgym7xZB139x0pJHErfkZC83EtH8id3pOVTsU0qCulxSj20PyrB5M6YxJltReAmDyP6ZCPZABj9TSKF8ZCBhnCpaayflhwbUDX0wGe4gZD' });
@@ -146,7 +146,7 @@
 				$('.curtain').find('.slide__loader').velocity('shradeOut', {
 					duration: 600,
 					complete: function(){
-						LJ.ui.hideCurtain({ duration: 800 });
+						LJ.ui.hideCurtain({ duration: 1500 });
 						LJ.landing.activateLanding( landing_v );
 									
 					}

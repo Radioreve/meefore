@@ -1976,7 +1976,7 @@ button:hover .icon-meedrink {
     min-height: 80px;
     color: white;
     position: absolute;
-    z-index: 1001;
+    z-index: 10000;
     border-radius: 26px;
     background: linear-gradient(205deg,#43a7da,#3572da);
     /* background: #5c9fde; */

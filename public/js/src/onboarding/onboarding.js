@@ -12,6 +12,7 @@
             $('body').on('click', '.tip.x--onb button', function(){
                 var tip_id = $( this ).closest('.tip').attr('data-tip-id');
                 LJ.ui.removeTip( tip_id );
+                LJ.ui.hideCurtain({ duration: 500 });
             });
 
         },
@@ -66,12 +67,6 @@
                 return false;
             }
 
-            if( [ "create_before", "send_cheers" ].indexOf( onb_id ) != -1 ){
-                if( LJ.map.getMeemapMode() == "closed" ){
-                    return;
-                }
-            }
-
             // If the user has already seen the onboarding tips, dont show it again
             var seen_at = _.find( LJ.user.onboarding, function( onb ){
                 return onb.onboarding_id == onb_id;
@@ -79,6 +74,28 @@
 
             if( seen_at ){
                 return false;
+            }
+
+            // Edge cases
+            if( [ "create_before", "send_cheers" ].indexOf( onb_id ) != -1 ){
+                if( LJ.map.getMeemapMode() == "closed" ){
+                    return;
+                }
+            }
+
+            if( [ "create_before" ].indexOf( onb_id ) != -1 ){
+                var hosted_before_id = LJ.before.getMyBefore();
+                if( hosted_before_id ){
+                    return LJ.log("Already created a before, onboarding unnecessary");
+                }
+            }
+
+            if( [ "send_cheers" ].indexOf( onb_id ) != -1 ){
+                var opened_before_id = LJ.before.getBeforeInview().attr('data-before-id');
+                var hosted_before_id = LJ.before.getMyBefore()._id;
+                if( opened_before_id == hosted_before_id ){
+                    return LJ.log("Opened his own before, onboarding unnecessary");
+                }
             }
 
            return true;
@@ -139,11 +156,7 @@
 
             LJ.log("Onboarding user : welcome");
             
-            LJ.ui.showCurtain({
-               duration : 400,
-               opacity  : .75,
-               sticky   : true
-            });
+            LJ.ui.showCurtain({ duration: 200, opacity: .5, sticky: true });
 
             LJ.delay( 200 )
                 .then(function(){
@@ -183,8 +196,6 @@
                             });
 
                             LJ.emit("welcome:complete");
-
-                
 
                         });
 
@@ -248,6 +259,8 @@
         },
         showHowToCreateBefore: function(){
 
+            LJ.ui.showCurtain({ theme: "light", duration: 200, opacity: .4, sticky: true }); 
+
             LJ.ui.tipify( $('.js-create-before'), 'onb-create-before', {
 
                 position : "botleft",
@@ -255,12 +268,15 @@
                 body     : LJ.text("onb_create_before_body"),
                 tags     : [ 'onb', 'onb-create-before' ],
                 data     : [{ key: "onb-link", val: "map" }],
-                btn      : "<button>"+ LJ.text('onb_create_before_btn') +"</button>"
+                btn      : "<button>"+ LJ.text('onb_create_before_btn') +"</button>",
+                show     : { anim: "shradeIn", duration: 500 }
 
             });
 
         },
         showHowToSendCheers: function(){
+
+            LJ.ui.showCurtain({ theme: "light", duration: 200, opacity: .4, sticky: true });
 
             LJ.ui.tipify( $('.js-request'), 'onb-send-cheers', {
 
@@ -269,7 +285,8 @@
                 body     : LJ.text("onb_send_cheers_body"),
                 tags     : [ 'onb', 'onb-send-cheers' ],
                 data     : [{ key: "onb-link", val: "map" }],
-                btn      : "<button>"+ LJ.text('onb_send_cheers_btn') +"</button>"
+                btn      : "<button>"+ LJ.text('onb_send_cheers_btn') +"</button>",
+                show     : { anim: "shradeIn", duration: 500 }
 
             });
 

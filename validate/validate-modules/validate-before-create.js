@@ -145,14 +145,11 @@
 
 			// Make sure no host already has an before planned on this day
 			var meta = { hosts: [] };
-			var new_before_dayofyear = moment( data.begins_at ).dayOfYear();
 
 			hosts.forEach(function( host ){
 				host.befores.forEach(function( bfr ){
 
-					var host_before_dayofyear = moment( bfr.begins_at ).dayOfYear();
-
-					if( bfr.status == "hosting" && new_before_dayofyear == host_before_dayofyear ){
+					if( bfr.status == "hosting"  ){
 						meta.hosts.push( host.facebook_id );
 					}
 					

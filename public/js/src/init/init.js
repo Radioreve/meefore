@@ -57,6 +57,9 @@
         start: function( login_params ){
 
             return LJ.Promise.resolve( login_params )
+                // .then(function(){
+                //     return LJ.delay( 200 );
+                // })
                 .then( LJ.login.enterLoginProcess )  
                 .then(function(){
                     return LJ.api.fetchAppToken( login_params );
