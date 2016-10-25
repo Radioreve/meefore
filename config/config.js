@@ -1,4 +1,6 @@
 	
+	// NOTE : All following services have been deactivated
+	// All subsequent api keys are obsolete
 
 	var config = {
 

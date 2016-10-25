@@ -556,6 +556,8 @@
 
 	var pushNewRequest = function( req, res, next ){
 		
+		var err_ns = "pushing_new_request";
+
 		var socket_id        = req.sent.socket_id;
 		var before_item 	 = req.sent.before_item;
 		var before 	 	     = req.sent.before;
@@ -578,7 +580,7 @@
 			notification      : req.sent.notification_users
 		};
 
-    	// Notify hosts
+    	// Notify hosts 
 		pusher.trigger( makeBeforeChannel( before._id ), 'new request host', data_hosts, socket_id );
 		// Notify group members
 		req.sent.members_profiles.forEach(function( user ){
@@ -590,6 +592,8 @@
 	};
 
 	var pushNewGroupStatus = function( req, res, next ){
+
+		var err_ns       = "pushing_new_group_status";
 
 		var before       = req.sent.before;
 		var group        = req.sent.group;
@@ -633,6 +637,8 @@
 
 	var pushNewChatMessage = function( req, res, next ){
 
+		var err_ns  = "pushing_new_message";
+
 		var chat_id = req.sent.chat_id;
 		var type    = req.sent.type;
 
@@ -657,6 +663,8 @@
 
 
 	var pushNewChatSeenBy = function( req, res, next ){
+		
+		var err_ns       = "pushing_new_seen_by";
 		
 		var chat_id      = req.sent.chat_id;
 		var facebook_id  = req.sent.facebook_id;
